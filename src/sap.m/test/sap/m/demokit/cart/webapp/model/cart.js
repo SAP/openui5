@@ -75,8 +75,9 @@ sap.ui.define([
 				// update existing entry
 				oCartEntry.Quantity += 1;
 			}
-			//if there is at least one entry, the edit button is shown
+			//update the cart model
 			oCartModel.setProperty("/cartEntries", $.extend({}, oCollectionEntries));
+			oCartModel.refresh(true);
 			MessageToast.show(oBundle.getText("productMsgAddedToCart", [oProductToBeAdded.Name] ));
 		}
 	};

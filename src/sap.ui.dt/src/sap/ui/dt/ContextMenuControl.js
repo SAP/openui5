@@ -4,8 +4,18 @@
 /* global Promise */
 // Provides control sap.ui.rta.ContextMenuControl.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem'
-], function(jQuery, library, Menu, MenuItem) {
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/unified/Menu',
+	'sap/ui/unified/MenuItem',
+	'sap/ui/fl/Utils'
+], function(
+	jQuery,
+	library,
+	Menu,
+	MenuItem,
+	flUtils
+) {
 	"use strict";
 
 	/**
@@ -31,6 +41,8 @@ sap.ui.define([
 		renderer: {}
 	// Standard renderer method is not overridden
 	});
+
+	ContextMenuControl.prototype.aStyleClasses = [];
 
 	/**
 	 * Initialize the context menu
@@ -65,6 +77,46 @@ sap.ui.define([
 		this._oOverlayDomRef = oOverlay.getDomRef();
 	};
 
+	ContextMenuControl.prototype.addStyleClass = function(sStyleClass) {
+		if (this.aStyleClasses.indexOf(sStyleClass) === -1) {
+			this.aStyleClasses.push(sStyleClass);
+		}
+		Menu.prototype.addStyleClass.apply(this, arguments);
+	};
+
+	ContextMenuControl.prototype._createSubMenuWithBinding = function(oRootMenuItem, oTargetOverlay, bEnabled) {
+		var oAppComponent = flUtils.getAppComponentForControl(oTargetOverlay.getElementInstance()),
+			oSubmenuModel = oAppComponent.getModel(oRootMenuItem.submenu.model),
+			sCurrentItemKey = oRootMenuItem.submenu.current(oTargetOverlay, oSubmenuModel),
+			aSubmenuItems = oRootMenuItem.submenu.items(oTargetOverlay, oSubmenuModel);
+
+		var aMenuItems = aSubmenuItems.map(function(oSubmenuItem) {
+			var bCurrentItem = (sCurrentItemKey === oSubmenuItem.key),
+				sIcon = bCurrentItem ? "sap-icon://journey-depart" : "";
+			var oMenuItemTemplate = new MenuItem({
+				text: oSubmenuItem.title,
+				icon: sIcon,
+				enabled: !bCurrentItem
+			});
+			return oMenuItemTemplate.data({
+				id: oRootMenuItem.id,
+				key: oSubmenuItem.key,
+				current: sCurrentItemKey,
+				targetOverlay: oTargetOverlay
+			});
+		}, this);
+
+		var oSubMenu = new Menu({
+			enabled: bEnabled,
+			items: aMenuItems
+		});
+
+		this.aStyleClasses.forEach(function(sStyleClass) {
+			oSubMenu.addStyleClass(sStyleClass);
+		});
+		return oSubMenu;
+	};
+
 	/**
 	 * Creates the context menu items based on the currently associated element
 	 *
@@ -78,10 +130,12 @@ sap.ui.define([
 	 * @param {function} aMenuItems.enabled? function to determine if the menu entry should be enabled, the element for which the menu should be
 	 *        opened is passed, default true
 	 * @param {object} oTargetOverlay overlay for which the menu should be opened
+	 * @return {object} this object will be returned
 	 * @private
 	 */
 	ContextMenuControl.prototype.setMenuItems = function(aMenuItems, oTargetOverlay) {
 		this.destroyItems();
+		var aSubMenus = [];
 
 		aMenuItems.forEach(function(oItem) {
 			if (!oItem.available || oItem.available(oTargetOverlay)) {
@@ -92,17 +146,30 @@ sap.ui.define([
 					sText = oItem.text(oTargetOverlay);
 				}
 
+				// create new MenuItem
 				var oMenuItem = new MenuItem({
 					text: sText,
 					enabled: bEnabled
 				});
+
+				// create new subMenu with Binding
+				if (oItem.type === "subMenuWithBinding") {
+					var oSubMenu = this._createSubMenuWithBinding(oItem, oTargetOverlay, bEnabled);
+					oMenuItem.setSubmenu(oSubMenu);
+				}
+
 				oMenuItem.data({
 					id: oItem.id
 				});
 				if ((oItem.startSection && typeof (oItem.startSection) === "boolean" ) || (typeof (oItem.startSection) === "function" && oItem.startSection(oTargetOverlay.getElementInstance()))) {
 					oMenuItem.setStartsSection(true);
 				}
-				this.addItem(oMenuItem);
+
+				if (aSubMenus.length > 0) {
+					aSubMenus.slice(-1)[0].addItem(oMenuItem);
+				} else {
+					this.addItem(oMenuItem);
+				}
 			}
 		}, this);
 		return this;

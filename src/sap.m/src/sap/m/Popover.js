@@ -1949,62 +1949,42 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			}
 		};
 
-		Popover.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
-			var that = this;
-			if (Popover._bIE9) {
-				//no animation in ie9 transition not supported
-				fnOpened();
-			} else {
-				var bOpenedCalled = false,
-					fnTransitionEnd = function () {
-						if (bOpenedCalled || !that.oPopup || that.oPopup.getOpenState() !== sap.ui.core.OpenState.OPENING) {
-							return;
-						}
-						$Ref.unbind("webkitTransitionEnd transitionend");
-						fnOpened();
-						bOpenedCalled = true;
-					};
+		Popover.prototype._animation = function (fnAnimationCb, $Ref) {
+			var vTimeout = null;
+			var fnTransitionEnd = function () {
+				$Ref.off("webkitTransitionEnd transitionend");
+				clearTimeout(vTimeout);
+
 				setTimeout(function () {
-					$Ref.addClass("sapMPopoverTransparent");
-					$Ref.css("display", "block");
-					// has to be done in a timeout to ensure transition properties are set
-					setTimeout(function () {
-						$Ref.bind("webkitTransitionEnd transitionend", fnTransitionEnd);
-						$Ref.removeClass("sapMPopoverTransparent");
-						//check if the transitionend event isn't fired, if it's not fired due to unexpected rerendering,
-						//fnOpened should be called again.
-						setTimeout(function () {
-							fnTransitionEnd();
-						}, 300);
-					}, Device.browser.firefox ? 50 : 0);
-				}, 0);
-			}
+					fnAnimationCb();
+				});
+			};
+
+			$Ref.on("webkitTransitionEnd transitionend", fnTransitionEnd);
+
+			vTimeout = setTimeout(fnTransitionEnd, 300);
 		};
 
-		Popover.prototype._closeAnimation = function ($Ref, iRealDuration, fnClose) {
-			if (Popover._bIE9) {
-				fnClose();
-			} else {
-				var bClosedCalled = false,
-					fnTransitionEnd = function () {
-						if (bClosedCalled) {
-							return;
-						}
-						$Ref.unbind("webkitTransitionEnd transitionend");
-						setTimeout(function () {
-							fnClose();
-							bClosedCalled = true;
-							$Ref.removeClass("sapMPopoverTransparent");
-						}, 0);
-					};
-				// has to be done in a timeout to ensure transition properties are set
-				$Ref.bind("webkitTransitionEnd transitionend", fnTransitionEnd).addClass("sapMPopoverTransparent");
-				//check if the transitionend event isn't fired, if it's not fired due to unexpected rerendering,
-				//fnClose should be called again.
-				setTimeout(function () {
-					fnTransitionEnd();
-				}, 300);
-			}
+		Popover.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
+			var that = this;
+
+			setTimeout(function () {
+				$Ref.css("display", "block");
+
+				that._animation(function () {
+					if (!that.oPopup || that.oPopup.getOpenState() !== sap.ui.core.OpenState.OPENING) {
+						return;
+					}
+					fnOpened();
+				}, $Ref);
+			}, Device.browser.firefox ? 50 : 0);
+		};
+
+		Popover.prototype._closeAnimation = function ($Ref, iRealDuration, fnClosed) {
+			this._animation(function () {
+				fnClosed();
+				$Ref.removeClass("sapMPopoverTransparent");
+			}, $Ref);
 		};
 
 		Popover.prototype._getInitialFocusId = function () {

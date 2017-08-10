@@ -86,10 +86,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * its old parent.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oParent the object that becomes this object's new parent
+	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @see {sap.ui.base.ManagedObject}
-	 *
-	 * @return {sap.ui.base.ManagedObject}
-	 *            Returns <code>this</code> to allow method chaining
 	 * @private
 	 */
 	ColumnMenu.prototype.setParent = function(oParent) {
@@ -386,7 +384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * Factory method for the column visibility menu item.
 	 * @param {string} sId the id of the menu item.
 	 * @param {sap.ui.table.Column} oColumn the associated column to the menu item.
-	 * @return {sap.ui.unified.MenuItem} the created menu item.
+	 * @returns {sap.ui.unified.MenuItem} the created menu item.
 	 * @private
 	 */
 	ColumnMenu.prototype._createColumnVisibilityMenuItem = function(sId, oColumn) {
@@ -435,7 +433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @param {string} sTextI18nKey the i18n key that should be used for the menu item text.
 	 * @param {string} sIcon the icon name
 	 * @param {function} fHandler the handler function to call when the item gets selected.
-	 * @return {sap.ui.unified.MenuItem} the created menu item.
+	 * @returns {sap.ui.unified.MenuItem} the created menu item.
 	 * @private
 	 */
 	ColumnMenu.prototype._createMenuItem = function(sId, sTextI18nKey, sIcon, fHandler) {
@@ -454,7 +452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @param {string} sIcon the icon name
 	 * @param {string} sValue the default value of the text field
 	 * @param {function} fHandler the handler function to call when the item gets selected.
-	 * @return {sap.ui.unified.MenuTextFieldItem} the created menu text field item.
+	 * @returns {sap.ui.unified.MenuTextFieldItem} the created menu text field item.
 	 * @private
 	 */
 	ColumnMenu.prototype._createMenuTextFieldItem = function(sId, sTextI18nKey, sIcon, sValue, fHandler) {
@@ -471,7 +469,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	/**
 	 * sets a new filter value into the filter field
 	 * @param {String} sValue value of the filter input field to be set
-	 * @return {sap.ui.table.ColumnMenu} this reference for chaining
+	 * @returns {sap.ui.table.ColumnMenu} this reference for chaining
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterValue = function(sValue) {
@@ -488,7 +486,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	/**
 	 * sets a new filter value into the filter field
 	 * @param {sap.ui.core.ValueState} sFilterState value state for filter text field item
-	 * @return {sap.ui.table.ColumnMenu} this reference for chaining
+	 * @returns {sap.ui.table.ColumnMenu} this reference for chaining
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterState = function(sFilterState) {

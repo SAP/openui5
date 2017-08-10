@@ -192,11 +192,15 @@ sap.ui.define([
 				}
 			});
 
-			this.oModel._updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
+			this.oModel.updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
 				this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
 			}; // overrule default
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
+			this.oVM._getLocalId = function() {
+				return this.getId();
+			};
+
 			this.oVM.setModel(this.oModel, "$FlexVariants");
 
 			var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext("$FlexVariants"));

@@ -1,7 +1,9 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe("sap.m.OverflowToolbarInRTE", function () {
 	"use strict";
+
+	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.richtexteditor.RichTextEditor';
 
 	function interactWithButtons(sButtonId, sScreenShotId) {
 		// Act

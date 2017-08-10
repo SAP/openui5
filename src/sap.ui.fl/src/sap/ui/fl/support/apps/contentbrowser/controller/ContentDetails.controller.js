@@ -191,11 +191,13 @@ sap.ui.define([
 		_deleteFile: function () {
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var oContentData = oSelectedContentModel.getData();
-			var sLayer = "";
+			var sSelectedLayer = oContentData.layer;
+			var sContentLayer = "";
 
-			oContentData.metadata.forEach(function (mMetadata) {
+			oContentData.metadata.some(function (mMetadata) {
 				if (mMetadata.name === "layer") {
-					sLayer = mMetadata.value;
+					sContentLayer = mMetadata.value;
+					return true;
 				}
 			});
 
@@ -205,9 +207,9 @@ sap.ui.define([
 
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
-			return LRepConnector.deleteFile(sLayer, sNamespace, sFileName, sFileType).then(function () {
+			return LRepConnector.deleteFile(sContentLayer, sNamespace, sFileName, sFileType).then(function () {
 				oRouter.navTo("LayerContentMaster", {
-					"layer": sLayer,
+					"layer": sSelectedLayer,
 					"namespace": HtmlEscapeUtils.escapeSlashes(sNamespace)
 				});
 			});

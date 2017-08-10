@@ -7,15 +7,16 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/Device',
 	'./_LogCollector',
+	'./_OpaLogger',
 	'./_ParameterValidator',
 	'sap/ui/thirdparty/URI'
-], function ($, Device, _LogCollector, _ParameterValidator,URI) {
+], function ($, Device, _LogCollector, _OpaLogger, _ParameterValidator,URI) {
 	"use strict";
 
 	///////////////////////////////
 	/// Privates
 	///////////////////////////////
-	var oLogger = $.sap.log.getLogger("sap.ui.test.Opa", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS),
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.Opa"),
 		oLogCollector = _LogCollector.getInstance(),
 		queue = [],
 		context = {},
@@ -176,6 +177,7 @@ sap.ui.define([
 		}
 		return sResult;
 	}
+
 	///////////////////////////////
 	/// Public
 	///////////////////////////////
@@ -197,7 +199,6 @@ sap.ui.define([
 		this.and = this;
 		$.extend(this, extensionObject);
 	};
-
 
 	/**
 	 * the global configuration of Opa.
@@ -455,6 +456,9 @@ sap.ui.define([
 
 	//create the default config
 	Opa.resetConfig();
+
+	// set the maximum level for OPA logs
+	_OpaLogger.setLevel(Opa.config.logLevel);
 
 	Opa.prototype = {
 

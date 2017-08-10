@@ -326,6 +326,29 @@
             fnFireItemSelectedSpy.restore();
         });
 
+        QUnit.test('MenuItem press event', function (assert) {
+            //prepare
+            var oMenu = this.sut; //storing the Menu object in a variable in order to interact with it inside the press event
+
+            //act
+            this.sut.addItem(new sap.m.MenuItem({
+                text: "iphone",
+                icon: "sap-icon://iphone",
+                press: function(){
+                    oMenu.addItem(new sap.m.MenuItem({
+                        text: " another iphone"
+                    }))
+                }
+            }));
+            this.sut.openBy();
+            this.clock.tick(1000);
+            this.sut._getVisualParent().getItems()[2].$().click();
+            this.clock.tick(1000);
+
+            //assert
+            assert.strictEqual(this.sut.getItems().length, 4, "MenuItem's press event is now handled");
+        });
+
         QUnit.module("[PHONE] Custom mutators", {
             beforeEach: function() {
                 prepareMobilePlatform.call(this);

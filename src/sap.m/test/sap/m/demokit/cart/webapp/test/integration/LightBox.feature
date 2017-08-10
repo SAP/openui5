@@ -2,7 +2,7 @@ Feature: Open the Light Box for a picture
 
   Background:
     Given I start my App
-    When on home: I press on "The second category"
+    When on home: I press on "The Flat Screens category"
     When on the category: I press on "The first Product"
 
   Scenario: Open the light box of a product picture

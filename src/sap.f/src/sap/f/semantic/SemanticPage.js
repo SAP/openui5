@@ -159,14 +159,16 @@ sap.ui.define([
 				/**
 				* The content, displayed in the title, when the header is in collapsed state.
 				*
-				* <b>Note:</b> The controls will be placed in the title`s middle area.
+				* <b>Note:</b> The controls will be placed in the title`s left area,
+				* under the <code>titleHeading</code> aggregation.
 				*/
 				titleSnappedContent: {type: "sap.ui.core.Control", multiple: true},
 
 				/**
 				* The content,displayed in the title, when the header is in expanded state.
 				*
-				* <b>Note:</b> The controls will be placed in the title`s middle area.
+				* <b>Note:</b> The controls will be placed in the title`s left area.
+				* under the <code>titleHeading</code> aggregation.
 				*/
 				titleExpandedContent: {type: "sap.ui.core.Control", multiple: true},
 

@@ -367,6 +367,7 @@ sap.ui.define([
 	VariantManagement.prototype.setInitialDefaultVariantKey = function(sKey) {
 		this._sInitialDefaultVariantKey = sKey;
 	};
+
 	VariantManagement.prototype.getInitialDefaultVariantKey = function() {
 		return this._sInitialDefaultVariantKey;
 	};
@@ -377,25 +378,24 @@ sap.ui.define([
 			oModel.setProperty(this.oContext + "/defaultVariant", sKey);
 		}
 	};
+
 	VariantManagement.prototype.getDefaultVariantKey = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
 			return oModel.getProperty(this.oContext + "/defaultVariant");
 		}
-
 		return null;
 	};
 
 	VariantManagement.prototype.setSelectedVariantKey = function(sKey) {
-		var oModel = this.getModel(VariantManagement.MODEL_NAME);
+		var sLocalId, oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
-			// oModel.setProperty(this.oContext + "/currentVariant", sKey);
-			var sLocalId = BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
-			oModel._updateCurrentVariant(sLocalId, sKey);
+			sLocalId = this._getLocalId();
+			oModel.updateCurrentVariant(sLocalId, sKey);
 		}
-
 		return null;
 	};
+
 	VariantManagement.prototype.getSelectedVariantKey = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
@@ -411,12 +411,12 @@ sap.ui.define([
 			oModel.setProperty(this.oContext + "/modified", bFlag);
 		}
 	};
+
 	VariantManagement.prototype.getModified = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
 			return oModel.getProperty(this.oContext + "/modified");
 		}
-
 		return false;
 	};
 
@@ -463,25 +463,31 @@ sap.ui.define([
 
 	VariantManagement.prototype._setBindingContext = function() {
 
-		var oModel, sVariantKey;
+		var oModel, sLocalId;
 
 		if (!this.oContext) {
 			oModel = this.getModel(VariantManagement.MODEL_NAME);
-			sVariantKey = this.getId();
-			var sLocalId = BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
-			if (oModel && sVariantKey) {
-				this.oContext = new Context(oModel, "/" + sLocalId);
+			if (oModel) {
+				sLocalId = this._getLocalId();
+				if (sLocalId) {
+					oModel.ensureStandardEntryExists(sLocalId);
+					this.oContext = new Context(oModel, "/" + sLocalId);
 
-				this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
+					this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
+				}
 			}
 		}
+	};
+
+	VariantManagement.prototype._getLocalId = function() {
+		return BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
 	};
 
 	VariantManagement.prototype._setModel = function() {
 		this._setBindingContext();
 	};
 
-// VARIANT LIST
+	// VARIANT LIST
 	VariantManagement.prototype._createVariantList = function() {
 
 		if (!this.oContext || this.oVariantPopOver) { // create only if context is available

@@ -160,7 +160,7 @@ sap.ui.define([
 
 			var aChanges = oWrappedChangeFileContent.changes.changes;
 
-			if (oWrappedChangeFileContent.changes.variantSection && oWrappedChangeFileContent.changes.variantSection !== {}) {
+			if (oWrappedChangeFileContent.changes.variantSection && Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0) {
 				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent);
 				var aVariantChanges = this._oVariantController.loadDefaultChanges();
 				aChanges = aChanges.concat(aVariantChanges);

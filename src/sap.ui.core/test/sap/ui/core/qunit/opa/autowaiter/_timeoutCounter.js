@@ -7,6 +7,7 @@ sap.ui.define([
 	$.sap.unloadResources("sap/ui/test/autowaiter/_timeoutCounter.js", false, true, true);
 	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._timeoutCounter");
 	var oDebugSpy = sinon.spy(oLogger, "debug");
+	var oTraceSpy = sinon.spy(oLogger, "trace");
 	var timeoutCounter = sap.ui.test.autowaiter._timeoutCounter;
 
 	function assertLog (iNumberBlocking, iNumberNonBlocking) {
@@ -27,6 +28,7 @@ sap.ui.define([
 		QUnit.module("timeoutCounter - no " + sFunctionUnderTest, {
 			afterEach: function () {
 				oDebugSpy.reset();
+				oTraceSpy.reset();
 			}
 		});
 
@@ -66,7 +68,7 @@ sap.ui.define([
 			var iID = setTimeout(function () {}, 1001);
 
 			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
-			sinon.assert.alwaysCalledWithMatch(oDebugSpy, "Long-running timeout is ignored");
+			sinon.assert.alwaysCalledWithMatch(oTraceSpy, "Long-running timeout is ignored");
 			// do not interfere with other tests
 			clearTimeout(iID);
 		});
@@ -196,7 +198,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
-			sinon.assert.alwaysCalledWithMatch(oDebugSpy, /Deep-nested timeout with ID [0-9]+ is ignored/);
+			sinon.assert.alwaysCalledWithMatch(oTraceSpy, /Deep-nested timeout with ID [0-9]+ is ignored/);
 			aTimeouts.forEach(function (iID) {
 				clearTimeout(iID);
 			});
@@ -216,7 +218,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
-			sinon.assert.alwaysCalledWithMatch(oDebugSpy, /Deep-nested timeout with ID [0-9]+ is ignored/);
+			sinon.assert.alwaysCalledWithMatch(oTraceSpy, /Deep-nested timeout with ID [0-9]+ is ignored/);
 			aTimeouts.forEach(function (iID) {
 				clearTimeout(iID);
 			});
@@ -251,7 +253,7 @@ sap.ui.define([
 		sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
 		setTimeout(function () {
 			assert.ok(!timeoutCounter.hasPendingTimeouts(), "Has no pending microtask");
-			sinon.assert.calledWithMatch(oDebugSpy, "Long-running timeout is ignored");
+			sinon.assert.calledWithMatch(oTraceSpy, "Long-running timeout is ignored");
 		}, 1400);
 
 		return oPromiseAfter2Sec;
@@ -277,7 +279,7 @@ sap.ui.define([
 			sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
 			setTimeout(function () {
 				assert.ok(!timeoutCounter.hasPendingTimeouts(), "Has no pending microtask");
-				sinon.assert.calledWithMatch(oDebugSpy, "Long-running timeout is ignored");
+				sinon.assert.calledWithMatch(oTraceSpy, "Long-running timeout is ignored");
 			}, 1400);
 
 			return oPromiseAfter2Sec;

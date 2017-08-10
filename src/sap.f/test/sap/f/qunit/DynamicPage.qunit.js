@@ -62,7 +62,8 @@
 				return new DynamicPage({
 					title: this.getDynamicPageTitleWithExpandSnapContent(),
 					header: this.getDynamicPageHeader(),
-					content: this.getContent(200)
+					content: this.getContent(200),
+					footer: this.getFooter()
 				});
 			},
 			getDynamicPageNoTitleAndHeader: function () {
@@ -453,7 +454,7 @@
 	/* --------------------------- DynamicPage Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering", {
 		beforeEach: function () {
-			this.oDynamicPage = oFactory.getDynamicPage();
+			this.oDynamicPage = oFactory.getDynamicPageWithExpandSnapContent();
 			oUtil.toDesktopMode(); //ensure the test will execute correctly even on mobile devices
 			oUtil.renderObject(this.oDynamicPage);
 		},
@@ -468,6 +469,8 @@
 			oDynamicPageTitle = oDynamicPage.getTitle(),
 			oDynamicPageHeader = oDynamicPage.getHeader(),
 			oDynamicPageFooter = oDynamicPage.getFooter(),
+			$oDynamicPageTitleSnappedWrapper = oDynamicPageTitle.$('snapped-wrapper'),
+			$oDynamicPageTitleExpandedWrapper = oDynamicPageTitle.$('expand-wrapper'),
 			$oDynamicPageHeader = oDynamicPageHeader.$();
 
 		assert.ok(oUtil.exists(oDynamicPage), "The DynamicPage has rendered successfully");
@@ -476,6 +479,9 @@
 		assert.ok(oUtil.exists(oDynamicPageFooter), "The DynamicPage Footer has rendered successfully");
 		assert.ok(oUtil.exists(oDynamicPageHeader.getAggregation("_pinButton").$()),
 			"The DynamicPage Header Pin Button has rendered successfully");
+
+		assert.equal($oDynamicPageTitleSnappedWrapper.length > 0, true, "The DynamicPage Title snapped content is rendered");
+		assert.equal($oDynamicPageTitleExpandedWrapper.length > 0, true, "The DynamicPage Title expanded content is rendered");
 
 		assert.ok($oDynamicPageHeader.hasClass("sapFDynamicPageHeaderWithContent"),
 			"The DynamicPage Header is not empty - sapFDynamicPageHeaderWithContent is added");

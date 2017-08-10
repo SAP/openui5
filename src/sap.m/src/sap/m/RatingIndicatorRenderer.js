@@ -101,7 +101,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
             "role": "slider",
             "orientation": "horizontal",
             "valuemin": 0,
-            "disabled": !oControl.getEnabled(),
+            "disabled": !oControl.getEnabled() || oControl.getDisplayOnly(),
             "labelledby": {
                 value: this._sLabelID,
                 append: true

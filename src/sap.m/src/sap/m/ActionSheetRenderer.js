@@ -58,6 +58,9 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
+		// This is needed in order to prevent JAWS from announcing the ActionSheet content multiple times
+		bAccessibilityOn && oRm.writeAttributeEscaped("role", "presentation");
+
 		oRm.write(">");
 
 		for (i = 0 ; i < iButtonsCount ; i++) {

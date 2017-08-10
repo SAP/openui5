@@ -118,9 +118,24 @@ sap.ui.define([
 			});
 
 		 return aFiltered.reduce(function(aResult, oVariant) {
-			return aResult.concat(oVariant.changes);
-		 },[]);
+			return oVariant.changes ? aResult.concat(oVariant.changes) : aResult;
+		},[]);
 		}
+	};
+
+	VariantController.prototype.setVariantChanges = function(sVariantManagementId, sVariantId, aChanges) {
+		if (!sVariantManagementId || !sVariantId || !jQuery.isArray(aChanges)) {
+			Utils.log.error("Cannot set variant changes without Variant reference");
+			return;
+		}
+
+		return this._mVariantManagement[sVariantManagementId].variants
+					.some(function (oVariant, iIndex) {
+						if (oVariant.content.fileName === sVariantId) {
+							this._mVariantManagement[sVariantManagementId].variants[iIndex].changes = aChanges;
+							return true;
+						}
+					}.bind(this));
 	};
 
 	/**
@@ -161,6 +176,7 @@ sap.ui.define([
 			mChanges[sControlId].forEach(function(oChange) {
 				var iChangeIndex = aCurrentChangeKeys.indexOf(oChange.getKey());
 				if (iChangeIndex !== -1) {
+					oChange.bFromLrep = true;
 					aCurrentFilteredChanges.push(oChange);
 				}
 			});
@@ -171,15 +187,21 @@ sap.ui.define([
 		var aNewChanges = this.getVariantChanges(sVariantManagementId, sNewVariant).map(function(oChangeContent) {
 			return new Change(oChangeContent);
 		});
-		var aRevertChanges = aCurrentVariantChanges.slice();
-		aCurrentVariantChanges.some(function(oChange) {
-			if (oChange.getKey() === aNewChanges[0].getKey()) {
-				aNewChanges.shift();
-				aRevertChanges.shift();
-			} else {
-				return true;
-			}
-		});
+
+		var aRevertChanges = [];
+		if (aNewChanges.length > 0) {
+			aRevertChanges = aCurrentVariantChanges.slice();
+			aCurrentVariantChanges.some(function (oChange) {
+				if (oChange.getKey() === aNewChanges[0].getKey()) {
+					aNewChanges.shift();
+					aRevertChanges.shift();
+				} else {
+					return true;
+				}
+			});
+		} else {
+			aRevertChanges = aCurrentVariantChanges;
+		}
 
 		var mSwitches = {
 			aRevert : aRevertChanges.reverse(),
@@ -214,6 +236,33 @@ sap.ui.define([
 		}.bind(this));
 
 		return oVariantData;
+	};
+
+	VariantController.prototype.addChangeToVariant = function (oChange, sVariantManagementId, sVariantId) {
+		var aNewChanges = this.getVariantChanges(sVariantManagementId, sVariantId);
+		var aChangeFileNames = aNewChanges.map(function (oChange) {
+			return oChange.fileName;
+		});
+		var iIndex = aChangeFileNames.indexOf(oChange.getDefinition().fileName);
+		if (iIndex === -1) {
+			aNewChanges.push(oChange.getDefinition());
+			return this.setVariantChanges(sVariantManagementId, sVariantId, aNewChanges);
+		}
+		return false;
+	};
+
+	VariantController.prototype.removeChangeFromVariant = function (oChange, sVariantMgmtRef, sVariantRef) {
+		var aNewChanges = this.getVariantChanges(sVariantMgmtRef , sVariantRef);
+
+		aNewChanges.forEach(function (oCurrentChangeContent, iIndex) {
+			var oCurrentChange = new Change(oCurrentChangeContent);
+			if (oCurrentChange.getKey
+				&& (oCurrentChange.getKey() === oChange.getKey())) {
+				aNewChanges.splice(iIndex, 1);
+			}
+		});
+		return this.setVariantChanges(sVariantMgmtRef, sVariantRef, aNewChanges);
+
 	};
 
 	return VariantController;

@@ -57,13 +57,28 @@ sap.ui.define([
 				counter: 1
 			}];
 
-			var oModel = new JSONModel();
+			var oModel = new JSONModel(),
+				that = this;
+
 			oModel.setData(aMockMessages);
 
 			this._oMessageView = new sap.m.MessageView({
+				showDetailsPageHeader: false,
+				itemSelect: function () {
+					that._oBackButton.setVisible(true);
+				},
 				items: {
 					path: "/",
 					template: oMessageTemplate
+				}
+			});
+
+			this._oBackButton = new sap.m.Button({
+				icon: sap.ui.core.IconPool.getIconURI("nav-back"),
+				visible: false,
+				press: function () {
+					that._oMessageView.navigateBack();
+					this.setVisible(false);
 				}
 			});
 
@@ -71,22 +86,30 @@ sap.ui.define([
 		},
 
 		handleDialogPress: function (oEvent) {
-
-			var oDialog = new sap.m.Dialog({
-				title: "Messages",
-				resizable: true,
-				content: this._oMessageView,
-				state: 'Error',
-				beginButton: new sap.m.Button({
-					press: function () {
-						oDialog.close();
-					},
-					text: "Close"
-				}),
-				contentHeight: "300px",
-				contentWidth: "500px",
-				verticalScrolling: false
-			});
+			var that = this,
+				oDialog = new sap.m.Dialog({
+					title: "Messages",
+					resizable: true,
+					content: this._oMessageView,
+					state: 'Error',
+					beginButton: new sap.m.Button({
+						press: function () {
+							oDialog.close();
+						},
+						text: "Close"
+					}),
+					customHeader: new sap.m.Bar({
+						contentMiddle: [
+							new sap.m.Text({ text: "Error"})
+						],
+						contentLeft: [
+							that._oBackButton
+						]
+					}),
+					contentHeight: "300px",
+					contentWidth: "500px",
+					verticalScrolling: false
+				});
 
 			oDialog.open();
 		}

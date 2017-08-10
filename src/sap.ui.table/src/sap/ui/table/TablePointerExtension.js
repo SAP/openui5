@@ -301,7 +301,7 @@ sap.ui.define([
 		 * Headers with column span are not taken into account.
 		 * @param {sap.ui.table.Column} oCol the column
 		 * @param {int} iColIndex index of the column
-		 * @return {int} iWidth calculated column width
+		 * @returns {int} iWidth calculated column width
 		 * @private
 		 */
 		_calculateAutomaticColumnWidth: function(oCol, iColIndex) {
@@ -680,7 +680,8 @@ sap.ui.define([
 		},
 
 		/*
-		 * Positions the reorder marker on the column (given by the position information (@see findColumnForPosition)).
+		 * Positions the reorder marker on the column (given by the position information).
+		 * @see findColumnForPosition
 		 */
 		adaptReorderMarkerPosition: function(oTable, oPos, bShow) {
 			if (!oPos || !oTable._$ReorderIndicator) {

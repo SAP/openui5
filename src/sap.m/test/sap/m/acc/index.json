@@ -51,6 +51,11 @@
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
+			"control": "sap.m.ColumnHeader",
+			"url": "../ColumnHeaderResponsiveTable.html",
+			"appComponent": "CA-UI5-TBL"
+		},
+		{
 			"control": "sap.m.ComboBox",
 			"url": "ComboBox.html",
 			"appComponent": "CA-UI5-CTR-RIL"

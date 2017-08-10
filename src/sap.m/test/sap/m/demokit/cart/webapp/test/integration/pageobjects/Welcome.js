@@ -50,12 +50,21 @@ sap.ui.define([
 						viewName: sViewName,
 						matchers: new BindingPath({
 							modelName: "view",
-							path: "/Promoted/0"
+							path: "/Viewed/0"
 						}),
 						actions: new Press(),
 						errorMessage: "The cart button was not displayed"
 					});
 				},
+
+                iPressOnTheProductSmartphoneAlphaTitle: function () {
+                    this.waitFor({
+                        controlType: "sap.m.ObjectIdentifier",
+                        matchers: new Properties({title : "Smartphone Alpha"}),
+                        actions: new Press(),
+                        errorMessage: "The product Smartphone Alpha was not found and could not be pressed"
+                    });
+                },
 
 				iPressTheProductImage: function () {
 					return this.waitFor({

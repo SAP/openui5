@@ -326,7 +326,7 @@ sap.ui.define([
 			if (mActions.reveal) {
 					aPromises.push(this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions));
 			}
-			if (mActions.addODataProperty){
+			if (mActions.addODataProperty) {
 				mActions.addODataProperty.relevantContainer = oOverlay.getRelevantContainer(!bOverlayIsSibling);
 				aPromises.push(this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty));
 			}
@@ -418,15 +418,15 @@ sap.ui.define([
 					var oCmd;
 					switch (oSelectedElement.type) {
 						case "invisible":
-							oCmd = this._createRevealCommandForInvisible(oSelectedElement, mActions, mParents, oSiblingElement);
-							oCompositeCommand.addCommand(oCmd);
-
+							// Move before changing visibility so that container behavior is not influenced (e.g. group becoming visible again)
 							oCmd = this._createMoveCommandForInvisible(oSelectedElement, mActions, mParents, oSiblingElement, iIndex);
 							if (oCmd) {
 								oCompositeCommand.addCommand(oCmd);
 							} else {
 								jQuery.sap.log.warning("No move action configured for " + mParents.parent.getMetadata().getName() + ", aggregation: " + mActions.aggregation , "sap.ui.rta");
 							}
+							oCmd = this._createRevealCommandForInvisible(oSelectedElement, mActions, mParents, oSiblingElement);
+							oCompositeCommand.addCommand(oCmd);
 							break;
 						case "odata":
 							var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);

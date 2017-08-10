@@ -14,26 +14,29 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 
 	/**
-	 * Constructor for a new Input.
+	 * Constructor for a new <code>Input</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * <strong><em>Overview</em></strong>
-	 * <br /><br />
-	 * A text input field allows you to enter and edit text or numeric values in one line.
-	 * To easily enter a valid value, you can enable the autocomplete suggestion feature and the value help option.
-	 * <br><br>
-	 * <strong>Guidelines:</strong>
+	 * Allows the user to enter and edit text or numeric values in one line.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * You can enable the autocomplete suggestion feature and the value help option to easily enter a valid value.
+	 *
+	 * <h3>Guidelines</h3>
+	 *
 	 * <ul>
 	 * <li> Always provide a meaningful label for any input field </li>
-	 * <li> Limit the length of the input field. This will visually emphasise the constraints for the field. </li>
+	 * <li> Limit the length of the input field. This will visually emphasize the constraints for the field. </li>
 	 * <li> Do not use the <code>placeholder</code> property as a label.</li>
 	 * <li> Use the <code>description</code> property only for small fields with no placeholders (i.e. for currencies).</li>
 	 * </ul>
-	 * <strong><em>Structure</em></strong>
-	 * <br><br>
+	 *
+	 * <h3>Structure</h3>
+	 *
 	 * The controls inherits from {@link sap.m.InputBase} which controls the core properties like:
 	 * <ul>
 	 * <li> editable / read-only </li>
@@ -52,15 +55,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * </ul>
 	 * The suggestions are stored in two aggregations <code>suggestionItems</code> (for single and double values) and <code>suggestionRows</code> (for tabular values).
 	 *
-	 * <br><br>
-	 * <strong><em>Usage</em></strong>
-	 * <br><br>
-	 * <strong>When to use:</strong>
+	 * <h3>Usage</h3>
+	 *
+	 * <b>When to use:</b>
 	 * Use the control for short inputs like emails, phones, passwords, fields for assisted value selection.
 	 *
-	 * <strong>When not to use:</strong>
+	 * <b>When not to use:</b>
 	 * Don't use the control for long texts, dates, designated search fields, fields for multiple selection.
-	 * <br><br>
 	 *
 	 * @extends sap.m.InputBase
 	 * @author SAP SE

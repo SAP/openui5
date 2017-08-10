@@ -327,6 +327,7 @@ sap.ui.define([
 		this._iOffset = parseInt(0.25 * this._iREMSize, 10);
 
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
+		this._iAfterRenderingDomReadyTimeout = null;
 
 		this._oABHelper = new ABHelper(this);
 
@@ -442,7 +443,7 @@ sap.ui.define([
 		if (this._bDomReady && this.$().parents(":hidden").length === 0) {
 			this._onAfterRenderingDomReady();
 		} else {
-			jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, this._onAfterRenderingDomReady);
+			this._iAfterRenderingDomReadyTimeout = jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, this._onAfterRenderingDomReady);
 		}
 	};
 
@@ -528,6 +529,10 @@ sap.ui.define([
 
 		if (this._iContentResizeId) {
 			ResizeHandler.deregister(this._iContentResizeId);
+		}
+
+		if (this._iAfterRenderingDomReadyTimeout) {
+			clearTimeout(this._iAfterRenderingDomReadyTimeout);
 		}
 
 		// setting these to null is necessary because
@@ -1732,6 +1737,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._onUpdateScreenSize = function (oEvent) {
+
+		if (oEvent.size.height === 0 || oEvent.size.width === 0) {
+			jQuery.sap.log.info("ObjectPageLayout :: not triggering calculations if height or width is 0");
+			return;
+		}
 
 		if (!this._bDomReady) {
 			jQuery.sap.log.info("ObjectPageLayout :: cannot _onUpdateScreenSize before dom is ready");

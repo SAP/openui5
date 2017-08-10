@@ -189,6 +189,7 @@ sap.ui.define([
 	 * @param {string} sReference the descriptor id for which the change is created
 	 * @param {object} oInlineChange the inline change instance
 	 * @param {string} sLayer layer of the descriptor change
+	 * @param {object} oAppComponent application component to get the version from
 	 *
 	 * @return {Promise} resolving the new Change instance
 	 *

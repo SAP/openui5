@@ -358,6 +358,16 @@
 				customButton.destroy();
 			});
 
+			QUnit.test("showDetailsPageHeader property", function(assert) {
+				this.oMessageView.setShowDetailsPageHeader(false);
+				sap.ui.getCore().applyChanges();
+
+				this.oDialog.open();
+				this.clock.tick(500);
+
+				assert.notOk(this.oMessageView._detailsPage.getShowHeader(), "Header show not be shown");
+			});
+
 			QUnit.module("Core integration", {
 				beforeEach: function () {
 					var that = this;
@@ -484,12 +494,16 @@
 					title: sLongTitle
 				}));
 
+				this.oMessageView.addItem(new sap.m.MessageItem({
+					title: "dummy item"
+				}));
+
 				sap.ui.getCore().applyChanges();
 
 				this.oDialog.open();
 				this.clock.tick(500);
 
-				assert.strictEqual(this.oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type")
+				assert.strictEqual(this.oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type");
 			});
 
 			QUnit.module("Binding", {
@@ -571,6 +585,31 @@
 
 				tempObject = null;
 			});
+
+
+		QUnit.module("Interaction", {
+			beforeEach: function () {
+				this.oMessageView = new sap.m.MessageView({
+					items: [
+						new sap.m.MessageItem({
+							title: "Test",
+							description: "Test Description"
+						})
+					]
+				});
+
+				this.oMessageView.placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oMessageView.destroy();
+			}
+		});
+
+		QUnit.test("First visible page should be details page", function (assert) {
+			assert.strictEqual(this.oMessageView._navContainer.getCurrentPage().getId(), this.oMessageView._detailsPage.getId(), "Details page should be initially shown if item is just one");
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

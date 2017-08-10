@@ -4,12 +4,12 @@
 
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/test/_LogCollector",
+	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/_ParameterValidator"
-], function ($, _LogCollector, _ParameterValidator) {
+], function ($, _OpaLogger, _ParameterValidator) {
 	"use strict";
 
-	var oLogger = $.sap.log.getLogger("sap.ui.test.autowaiter._timeoutCounter", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._timeoutCounter");
 	var oConfigValidator = new _ParameterValidator({
 		errorPrefix: "sap.ui.test.autowaiter._timeoutCounter#extendConfig"
 	});
@@ -43,7 +43,7 @@ sap.ui.define([
 
 			// do not track long runners and call the original directly
 			if (iDelay >= config.maxDelay) {
-				oLogger.debug("Long-running timeout is ignored. Timeout delay " + iDelay + " exceeds the limit of " + config.maxDelay);
+				oLogger.trace("Long-running timeout is ignored. Timeout delay " + iDelay + " reached the limit of " + config.maxDelay);
 				return fnOriginal.apply(this, arguments);
 			}
 
@@ -104,8 +104,8 @@ sap.ui.define([
 			var iNumberOfBlockingTimeouts = aTotalTimeouts.filter(function (iID) {
 				var bIgnored = mTimeouts[iID] >= config.maxDepth;
 				if (bIgnored) {
-					oLogger.debug("Deep-nested timeout with ID " + iID + " is ignored. Timeout depth " + mTimeouts[iID] +
-						" exceeds the limit of " + config.maxDepth);
+					oLogger.trace("Deep-nested timeout with ID " + iID + " is ignored. Timeout depth " + mTimeouts[iID] +
+						" reached the limit of " + config.maxDepth);
 				}
 				return !bIgnored;
 			}).length;

@@ -7,9 +7,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 	function(jQuery, XMLTemplateProcessor, library, View, ResourceModel, ManagedObject, Control, RenderManager, Cache/* , jQuerySap */) {
 	"use strict";
 
-	// shortcut for enum(s)
+	// actual constants
 	var RenderPrefixes = RenderManager.RenderPrefixes,
-		ViewType = library.mvc.ViewType;
+		ViewType = library.mvc.ViewType,
+		sXMLViewCacheError = "XMLViewCacheError";
 
 
 	/**
@@ -136,7 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * @experimental
 		 * @since 1.44
 		 */
-		XMLView._bUseCache = sap.ui.getCore().getConfiguration().getViewCache();
+		XMLView._bUseCache = sap.ui.getCore().getConfiguration().getViewCache() && Cache._isSupportedEnvironment();
 
 		function validatexContent(xContent) {
 			if (xContent.parseError.errorCode !== 0) {
@@ -218,9 +219,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		function getCacheInput(oView, mCacheSettings) {
 			var oRootComponent = getRootComponent(oView),
 				sManifest = oRootComponent ? JSON.stringify(oRootComponent.getManifest()) : null,
-				aFutureKeyParts = getCacheKeyPrefixes(oView, oRootComponent);
+				aFutureKeyParts = [];
 
-			aFutureKeyParts = aFutureKeyParts.concat(getVersionInfo(), getCacheKeyProviders(oView), mCacheSettings.keys);
+			aFutureKeyParts = aFutureKeyParts.concat(
+				getCacheKeyPrefixes(oView, oRootComponent),
+				getVersionInfo(), getCacheKeyProviders(oView),
+				mCacheSettings.keys
+			);
 
 			return validateCacheKey(oView, aFutureKeyParts).then(function(sKey) {
 				return {
@@ -241,6 +246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 					return aKeys.join('_');
 				} else {
 					var e = new Error("Provided cache keys may not be empty or undefined.");
+					e.name = sXMLViewCacheError;
 					return Promise.reject(e);
 				}
 			});
@@ -259,11 +265,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			var mPreprocessors = View._mPreprocessors["XML"],
 				oPreprocessorInfo = oView.getPreprocessorInfo(/*bSync =*/false),
 				aFutureCacheKeys = [];
+
 			function pushFutureKey(o) {
 				if (o.preprocessor.getCacheKey) {
 					aFutureCacheKeys.push(o.preprocessor.getCacheKey(oPreprocessorInfo));
 				}
 			}
+
 			for (var sType in mPreprocessors) {
 				mPreprocessors[sType].forEach(pushFutureKey);
 			}
@@ -281,6 +289,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 					});
 				}
 				return sTimestamp;
+			}).catch(function(error) {
+				// Do not populate the cache if the version info could not be retrieved.
+				jQuery.sap.log.warning("sap.ui.getVersionInfo could not be retrieved", "sap.ui.core.mvc.XMLView");
+				jQuery.sap.log.debug(error);
+				return "";
 			});
 		}
 
@@ -373,9 +386,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 							return mCacheOutput.xml;
 						}
 					});
-				}).catch(function(e) {
-					jQuery.sap.log.error(e);
-					return processResource(sResourceName);
+				}).catch(function(error) {
+					if (error.name === sXMLViewCacheError) {
+						// no sufficient cache keys, processing can continue
+						jQuery.sap.log.debug(error.message, error.name, "sap.ui.core.mvc.XMLView");
+						jQuery.sap.log.debug("Processing the View without caching.", "sap.ui.core.mvc.XMLView");
+						return processResource(sResourceName);
+					} else {
+						// an unknown error occured and should be exposed
+						return Promise.reject(error);
+					}
 				});
 			}
 

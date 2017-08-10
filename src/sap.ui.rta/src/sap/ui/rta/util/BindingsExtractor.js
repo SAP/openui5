@@ -18,23 +18,34 @@ function(
 	 *
 	 * @param {sap.ui.core.Control} oElement - Starting point of the search
 	 * @param {sap.ui.model.Model} oParentDefaultModel - Model for filtering irrelevant binding paths
+	 * @param {boolean} bTemplate - Whether we should consider provided element as a template
 	 *
 	 * @returns {Array} - returns array with all relevant bindings for all properties of the element
 	 *
 	 * @private
 	 */
-	function getBindings(oElement, oParentDefaultModel) {
-		var aBindings = [];
+	function getBindings(oElement, oParentDefaultModel, bTemplate) {
+		var aBindings = (
+			bTemplate
+			? getBindingsFromTemplateProperties(oElement)
+			: getBindingsFromProperties(oElement, oParentDefaultModel)
+		);
 
 		// Iterate through all aggregations
 		for (var sAggregationName in oElement.getMetadata().getAllAggregations()) {
 			// Getting children of the current aggregation and iterating through all of them
-			ElementUtil.getAggregation(oElement, sAggregationName).forEach(function (oChildElement) { // eslint-disable-line no-loop-func
+			var oBinding = oElement.getBindingInfo(sAggregationName);
+			var oTemplate = oBinding && oBinding.template;
+			var aElements = oTemplate ? [oTemplate] : ElementUtil.getAggregation(oElement, sAggregationName);
+
+			aElements.forEach(function (oChildElement) { // eslint-disable-line no-loop-func
 				if (oChildElement.getMetadata) {
 					// Fetching bindings from Element and all children of Element
 					aBindings = aBindings.concat(
-					    getBindingsFromProperties(oChildElement, oParentDefaultModel),
-					    getBindings(oChildElement, oParentDefaultModel)
+						oTemplate || bTemplate
+						? getBindingsFromTemplateProperties(oChildElement)
+						: getBindingsFromProperties(oChildElement, oParentDefaultModel),
+						getBindings(oChildElement, oParentDefaultModel, oTemplate || bTemplate)
 					);
 				}
 			});
@@ -82,26 +93,70 @@ function(
 	}
 
 	/**
+	 * Fetches all bindings from template
+	 *
+	 * @param {object} mBinding - map of bindings from Control (mBindingsInfo)
+	 * @returns {Array} - Returns a flattened array of found bindings
+	 * @private
+	 */
+	function flattenBindingsFromTemplate(mBinding) {
+		var aBindings = [];
+		var aParts = mBinding.parts;
+
+		// TODO: check if we need to filter bindings by modelName, relative indicator ("/")
+		aParts.forEach(function (mPart) {
+			aBindings.push({
+				parts: [mPart]
+			});
+		});
+
+		return aBindings;
+	}
+
+	/**
 	 * Retrieving all bindings from all available properties for a specified element
 	 *
-	 * @param {sap.ui.core.Control} oChildElement - element to get bindings from
+	 * @param {sap.ui.core.Control} oElement - element to get bindings from
 	 * @param {sap.ui.model.Model} oParentDefaultModel - parent model to filter irrelevant bindings
 	 *
 	 * @return {Array} - returns found bindings
 	 *
 	 * @private
 	 */
-	function getBindingsFromProperties(oChildElement, oParentDefaultModel) {
-		var aPropertiesKeys = Object.keys(oChildElement.getMetadata().getAllProperties());
+	function getBindingsFromProperties(oElement, oParentDefaultModel) {
+		var aPropertiesKeys = Object.keys(oElement.getMetadata().getAllProperties());
 
 		return aPropertiesKeys
 			// filter properties which are not bound
-			.filter(oChildElement.getBinding.bind(oChildElement))
+			.filter(oElement.getBinding.bind(oElement))
 			.reduce(function (aBindings, sPropertyName) {
 				return aBindings.concat(
 					flattenBindings(
-						oChildElement.getBinding(sPropertyName),
+						oElement.getBinding(sPropertyName),
 						oParentDefaultModel
+					)
+				);
+			}, []);
+	}
+
+	/**
+	 * Retrieving all bindings from all available properties for a specified element of template
+	 *
+	 * @param {sap.ui.core.Control} oElement - element to get bindings from
+	 * @return {Array} - returns found bindings
+	 * @private
+	 */
+	function getBindingsFromTemplateProperties(oElement) {
+		var aPropertiesKeys = Object.keys(oElement.getMetadata().getAllProperties());
+
+		return aPropertiesKeys
+			.filter(function (sPropertyName) {
+				return sPropertyName in oElement.mBindingInfos;
+			})
+			.reduce(function (aBindings, sPropertyName) {
+				return aBindings.concat(
+					flattenBindingsFromTemplate(
+						oElement.mBindingInfos[sPropertyName]
 					)
 				);
 			}, []);
@@ -109,7 +164,7 @@ function(
 
 	return {
 		getBindings: getBindings,
-		flattenBindings : flattenBindings,
+		flattenBindings: flattenBindings,
 		getBindingsFromProperties: getBindingsFromProperties
 	};
 }, true);

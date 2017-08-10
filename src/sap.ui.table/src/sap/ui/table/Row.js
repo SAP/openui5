@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 	 * function considers the scroll position of the table and also takes fixed rows and
 	 * fixed bottom rows into account.
 	 *
-	 * @return {int} index of the row (considers scroll position and fixed rows)
+	 * @returns {int} index of the row (considers scroll position and fixed rows)
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -108,9 +108,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 			var iNumberOfFixedBottomRows = oTable.getFixedBottomRowCount();
 			var iVisibleRowCount = oTable.getVisibleRowCount();
 			if (iNumberOfFixedBottomRows > 0 && iRowIndex >= iVisibleRowCount - iNumberOfFixedBottomRows) {
-				var oBinding = oTable.getBinding("rows");
-				if (oBinding && oBinding.getLength() >= iVisibleRowCount) {
-					return oBinding.getLength() - (iVisibleRowCount - iRowIndex);
+				var iTotalRowCount = oTable._getTotalRowCount();
+				if (iTotalRowCount >= iVisibleRowCount) {
+					return iTotalRowCount - (iVisibleRowCount - iRowIndex);
 				} else {
 					return iRowIndex;
 				}
@@ -123,9 +123,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 	};
 
 	/**
+	 * The basic {@link sap.ui.core.Element#getDomRef} only returns the main DOM reference. A row consists of multiple DOM elements, which are
+	 * returned by this function, either as native DOM references or as jQuery objects. The first time this function is called the references are
+	 * cached, and in subsequent calls retrieved from the cache. In case the DOM has changed, the cache has to be invalidated manually with
+	 * {@link sap.ui.table.Row#initDomRefs}.
 	 *
-	 * @param bJQuery Set to true to get jQuery object instead of DomRef
-	 * @returns {object} contains DomRefs or jQuery objects of the row
+	 * @param {boolean} bJQuery If set to <code>true</code>, jQuery objects are returned, otherwise native DOM references.
+	 * @returns {object} An object containing jQuery objects, or native references to the DOM elements of the row.
+	 * @see sap.ui.core.Element#getDomRef
+	 * @see sap.ui.table.Row#initDomRefs
+	 * @private
 	 */
 	Row.prototype.getDomRefs = function (bJQuery) {
 		var fnAccess;

@@ -119,8 +119,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ContextMenu.prototype._onItemSelected = function(oEvent) {
-		var aSelection = [];
-		var sId = oEvent.getParameter("item").data("id");
+		var aSelection = [],
+			oEventItem = oEvent.getParameter("item"),
+			sId = oEventItem.data("id");
 		this._aMenuItems.some(function(oItem) {
 			if (sId === oItem.id) {
 				var oDesignTime = this.getDesignTime();
@@ -128,7 +129,9 @@ sap.ui.define([
 
 				jQuery.sap.assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
 
-				oItem.handler(aSelection);
+				if (!oEventItem.getSubmenu()) {
+					oItem.handler(aSelection, oEventItem);
+				}
 				return true;
 			}
 		}, this);

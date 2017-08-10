@@ -121,7 +121,7 @@ sap.ui.define([
 		 * Returns the index of the column (in the array of visible columns (see Table._getVisibleColumns())) of the current focused cell
 		 * In case the focused cell is a row action the given index equals the length of the visible columns.
 		 * This function must not be used if the focus is on a row header.
-		 * @return {int}
+		 * @returns {int}
 		 */
 		getColumnIndexOfFocusedCell: function(oExtension) {
 			var oTable = oExtension.getTable();
@@ -903,9 +903,9 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.table.TableAccExtension.ELEMENTTYPES} sType The type of the table area to get the aria attributes for.
 		 * @param {Object} mParams Accessibility parameters.
-		 * @return {Object} The aria attributes.
-		 * @protected
+		 * @returns {Object} The aria attributes.
 		 * @see ExtensionHelper.getAriaAttributesFor
+		 * @protected
 		 */
 		getAriaAttributesFor: function(sType, mParams) {
 			return ExtensionHelper.getAriaAttributesFor(this, sType, mParams);
@@ -960,8 +960,8 @@ sap.ui.define([
 	 *     TABLE: string, TABLEHEADER: string, TABLEFOOTER: string, TABLESUBHEADER: string, COLUMNHEADER_TBL: string, COLUMNHEADER_ROW: string,
 	 *     ROWHEADER_COL: string, TH: string, ROWHEADER_TD: string, TR: string, TREEICON: string, ROWACTIONHEADER: string, NODATA: string, OVERLAY:
 	 *     string}|*}
-	 * @public
 	 * @see TableAccRenderExtension.writeAriaAttributesFor
+	 * @public
 	 */
 	TableAccExtension.ELEMENTTYPES = {
 		DATACELL: "DATACELL",					// Standard data cell (standard, group or sum)

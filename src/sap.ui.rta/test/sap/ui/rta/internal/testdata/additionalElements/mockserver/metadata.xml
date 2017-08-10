@@ -54,6 +54,10 @@
 					Relationship="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FE"
 					FromRole="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"
 					ToRole="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
+				<NavigationProperty Name="to_EntityType02Nav"
+					Relationship="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FA"
+					FromRole="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"
+					ToRole="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"/>
 			</EntityType>
 			<EntityType Name="EntityType02" sap:content-version="1" m:HasStream="true">
 				<Key>
@@ -118,11 +122,36 @@
 			</EntityType>
 			<EntityType Name="EntityTypeNav" sap:content-version="1" m:HasStream="true">
 				<Key>
-					<PropertyRef Name="EntityTypeNav_Property01" />
+					<PropertyRef Name="id" />
 				</Key>
+				<Property Name="id" Type="Edm.Int32"
+						  Nullable="false"
+						  sap:label="ID" sap:heading="ID"
+						  sap:quickinfo="ID" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
 				<Property Name="EntityTypeNav_Property01" Type="Edm.String"
 						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
-						  sap:label="EntityNav-Property01-Label" sap:heading="Doc. No."
+						  sap:label="Foreign Key (to entity EntityType01)" sap:heading="Doc. No."
+						  sap:quickinfo="EntityNav-PropertyNav-QuickInfo" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityTypeNav_Property02" Type="Edm.String"
+						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+						  sap:label="EntityNav-Property02-Label" sap:heading="Doc. No."
+						  sap:quickinfo="EntityNav-PropertyNav-QuickInfo" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityTypeNav_Property03" Type="Edm.String"
+						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+						  sap:label="EntityNav-Property03-Label" sap:heading="Doc. No."
+						  sap:quickinfo="EntityNav-PropertyNav-QuickInfo" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityTypeNav_Property04" Type="Edm.String"
+						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+						  sap:label="EntityNav-Property04-Label" sap:heading="Doc. No."
+						  sap:quickinfo="EntityNav-PropertyNav-QuickInfo" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityTypeNav_Property05" Type="Edm.String"
+						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+						  sap:label="EntityNav-Property05-Label" sap:heading="Doc. No."
 						  sap:quickinfo="EntityNav-PropertyNav-QuickInfo" sap:creatable="false"
 						  sap:updatable="false" sap:sortable="false" />
 				<Property Name="NavProperty" Type="Edm.String"
@@ -211,12 +240,25 @@
 
 			<Association Name="assoc_CF154B42F01DD8BEC0415968198AF5FE" sap:content-version="1">
 				<End Type="AdditionalElementsTest.EntityType01" Multiplicity="1" Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
-				<End Type="AdditionalElementsTest.EntityTypeNav" Multiplicity="0..1" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
+				<End Type="AdditionalElementsTest.EntityTypeNav" Multiplicity="*" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
 				<ReferentialConstraint>
 					<Principal Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FE">
 						<PropertyRef Name="Property04"/>
 					</Principal>
 					<Dependent Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FE">
+						<PropertyRef Name="EntityTypeNav_Property01"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+
+			<Association Name="assoc_CF154B42F01DD8BEC0415968198AF5FA" sap:content-version="1">
+				<End Type="AdditionalElementsTest.EntityType01" Multiplicity="1" Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"/>
+				<End Type="AdditionalElementsTest.EntityTypeNav" Multiplicity="*" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FA">
+						<PropertyRef Name="Property05"/>
+					</Principal>
+					<Dependent Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FA">
 						<PropertyRef Name="EntityTypeNav_Property01"/>
 					</Dependent>
 				</ReferentialConstraint>
@@ -246,6 +288,11 @@
 					sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
 					<End EntitySet="EntityTypes" Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
 					<End EntitySet="EntityTypesNav" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_CF154B42F01DD8BEC0415968198AF5FA" Association="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FA"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="EntityTypes" Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"/>
+					<End EntitySet="EntityTypesNav" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"/>
 				</AssociationSet>
 			</EntityContainer>
 		</Schema>

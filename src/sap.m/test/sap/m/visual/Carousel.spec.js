@@ -23,7 +23,8 @@ describe("sap.m.Carousel", function() {
 
 	// change height to 50%
 	it("should change the height to 50%", function () {
-		element(by.id("btnHeight50")).click();
+        element(by.id("myCarousel"));
+        element.all(by.css('.sapUiFormResGridCont .sapUiFormElementLbl .sapMLabel')).get(0).click();
 		expect(takeScreenshot(myCarousel)).toLookAs("2_height_50_percent");
 	});
 

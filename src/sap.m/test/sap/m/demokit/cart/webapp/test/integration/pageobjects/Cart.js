@@ -3,6 +3,7 @@ sap.ui.define([
 	'sap/ui/test/matchers/AggregationFilled',
 	'sap/ui/test/matchers/AggregationEmpty',
 	'sap/ui/test/matchers/Properties',
+	'sap/ui/test/matchers/PropertyStrictEquals',
 	'sap/ui/test/matchers/AggregationContainsPropertyEqual',
 	'sap/ui/test/matchers/AggregationLengthEquals',
 	'sap/ui/test/matchers/BindingPath',
@@ -12,6 +13,7 @@ sap.ui.define([
 			 AggregationFilled,
 			 AggregationEmpty,
 			 Properties,
+			 PropertyStrictEquals,
 			 AggregationContainsPropertyEqual,
 			 AggregationLengthEquals,
 			 BindingPath,
@@ -45,7 +47,7 @@ sap.ui.define([
 					});
 				},
 
-				iPressOnTheAcceptButton : function () {
+				iPressOnTheSaveChangesButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
 						matchers : new Properties({ text : "Save Changes"}),
@@ -68,16 +70,26 @@ sap.ui.define([
 						actions : new Press()
 					});
 				},
+
 				iPressOnAddBackToBasketForTheFirstProduct : function () {
 					return this.waitFor({
 						controlType : "sap.m.ObjectAttribute",
 						matchers : new BindingPath({path : "/savedForLaterEntries/HT-1254", modelName: "cartProducts"}),
 						actions : new Press()
 					});
-				}
+				},
+
+                iPressTheBackButton: function () {
+                    this.waitFor({
+                        controlType: "sap.m.Button",
+                        matchers: new Properties({type: "Back"}),
+                        actions: new Press(),
+                        errorMessage: "The back button was not found and could not be pressed"
+                    });
+                }
 			},
 
-			assertions : {
+            assertions : {
 
 				iShouldSeeTheProductInMyCart : function () {
 					return this.waitFor({
@@ -89,6 +101,16 @@ sap.ui.define([
 						errorMessage : "The cart does not contain any entries"
 					});
 				},
+
+                iShouldSeeTheCart: function () {
+                    return this.waitFor({
+                        viewName: "Cart",
+                        success: function () {
+                            Opa5.assert.ok(true, "The cart was successfully displayed");
+                        },
+                        errorMessage: "The cart was not displayed"
+                    });
+                },
 
 				iShouldNotSeeASaveForLaterFooter : function () {
 					return this.waitFor({
@@ -110,6 +132,37 @@ sap.ui.define([
 						errorMessage : "The cart does not contain any entries"
 					});
 				},
+
+				theProceedHelper  : function (bIsEnabled) {
+					var sErrorMessage = "The proceed button is enabled";
+					var sSuccessMessage = "The proceed button is disabled";
+					if (bIsEnabled) {
+						sErrorMessage = "The proceed button is disabled";
+						sSuccessMessage = "The proceed button is enabled";
+					}
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						autoWait: bIsEnabled,
+						matchers : new Properties({
+							type: "Accept"
+					}),
+						success : function (aButtons) {
+							Opa5.assert.strictEqual(
+								aButtons[0].getEnabled(), bIsEnabled, sSuccessMessage
+							);
+						},
+						errorMessage : sErrorMessage
+					});
+				},
+
+				iShouldSeeTheProceedButtonDisabled : function () {
+					return this.theProceedHelper(false);
+				},
+
+				iShouldSeeTheProceedButtonEnabled : function () {
+					return this.theProceedHelper(true);
+				},
+
 
 				theEditButtonHelper  : function (bIsEnabled) {
 					var sErrorMessage = "The edit button is enabled";
@@ -134,11 +187,11 @@ sap.ui.define([
 					});
 				},
 
-				theEditButtonShouldBeDisabled : function () {
+	            iShouldSeeTheEditButtonDisabled : function () {
 					return this.theEditButtonHelper(false);
 				},
 
-				theEditButtonShouldBeEnabled : function () {
+				iShouldSeeTheEditButtonEnabled : function () {
 					return this.theEditButtonHelper(true);
 				},
 
@@ -206,12 +259,37 @@ sap.ui.define([
 						errorMessage : "The savelist still has entries"
 					});
 				},
+
 				iShouldSeeTheWelcomeScreen: function () {
 					return this.waitFor({
 						id : "saveForLaterList",
 						success : function (oList) {
 							Opa5.assert.strictEqual(oList.getItems().length, 1, "Product saved for later");
 						}
+					});
+				},
+
+	            iShouldSeeTheTotalPriceEqualToZero : function () {
+		            return this.waitFor({
+			            id: "totalPriceText",
+			            matchers: new PropertyStrictEquals({name: "text", value: "Total: 0,00 EUR"}),
+			            success: function () {
+				            Opa5.assert.ok(true, "Total price is updated correctly");
+			            },
+			            errorMessage: "Total price is not updated correctly (If you have trouble running this test," +
+			            " delete your browser cache. This test will fail, if the products in the cart do not exactly match this tests expectations.)"
+		            });
+	            },
+
+				iShouldSeeTheTotalPriceUpdated: function () {
+					return this.waitFor({
+						id: "totalPriceText",
+						matchers: new PropertyStrictEquals({name: "text", value: "Total: 250,00 EUR"}),
+						success: function () {
+							Opa5.assert.ok(true, "Total price is updated correctly");
+						},
+						errorMessage: "Total price is not updated correctly (If you have trouble running this test," +
+						" delete your browser cache. This test will fail, if the products in the cart do not exactly match this tests expectations.)"
 					});
 				}
 			}

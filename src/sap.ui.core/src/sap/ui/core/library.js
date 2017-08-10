@@ -55,6 +55,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.ValueState",
 			"sap.ui.core.VerticalAlign",
 			"sap.ui.core.Wrapping",
+			"sap.ui.core.dnd.DropEffect",
+			"sap.ui.core.dnd.DropPosition",
 			"sap.ui.core.mvc.ViewType",
 			"sap.ui.core.routing.HistoryDirection"
 		],
@@ -64,12 +66,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.PopupInterface",
 			"sap.ui.core.Toolbar",
 			"sap.ui.core.IContextMenu",
-			"sap.ui.core.IFormContent"
+			"sap.ui.core.IFormContent",
+			"sap.ui.core.dnd.IDragInfo",
+			"sap.ui.core.dnd.IDropInfo"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
 			"sap.ui.core.Control",
-			"sap.ui.core.FragmentControl",
 			"sap.ui.core.HTML",
 			"sap.ui.core.Icon",
 			"sap.ui.core.InvisibleText",
@@ -98,6 +101,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.SeparatorItem",
 			"sap.ui.core.Title",
 			"sap.ui.core.VariantLayoutData",
+			"sap.ui.core.dnd.DragDropBase",
+			"sap.ui.core.dnd.DragDropInfo",
 			"sap.ui.core.search.OpenSearchProvider",
 			"sap.ui.core.search.SearchProvider",
 			"sap.ui.core.tmpl.DOMAttribute"
@@ -1465,6 +1470,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 */
 
 	/**
+	 * Marker interface for drag configuration providing information about the source of the drag operation.
+	 *
+	 * @since 1.50.0
+	 * @name sap.ui.core.dnd.IDragInfo
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Marker interface for drop configuration providing information about the target of the drop operation.
+	 *
+	 * @since 1.50.0
+	 * @name sap.ui.core.dnd.IDropInfo
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
 	 * Opens the control by given opener ref.
 	 * @param {string} oEvent oncontextmenu event
 	 * @param {sap.ui.core.Element|DOMRef} oOpenerRef The element which will get the focus back again after the menu was closed.
@@ -1629,6 +1654,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		 */
 		Off : "Off"
 
+	};
+
+
+	thisLib.dnd = thisLib.dnd || {};
+
+	/**
+	 * Configuration options for drop positions.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.50.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.dnd.DropPosition = {
+
+		/**
+		 * Drop on the control.
+		 * @public
+		 */
+		On : "On",
+
+		/**
+		 * Drop between the controls.
+		 * @public
+		 */
+		Between : "Between",
+
+		/**
+		 * Drop on the control or between the controls.
+		 * @public
+		 */
+		OnOrBetween : "OnOrBetween"
+	};
+
+	/**
+	 * Configuration options for visual drop effects that are given during a drag and drop operation.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.50.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.dnd.DropEffect = {
+
+		/**
+		 * A copy of the source item is made at the new location.
+		 * @public
+		 */
+		Copy : "Copy",
+
+		/**
+		 * An item is moved to a new location.
+		 * @public
+		 */
+		Move : "Move",
+
+		/**
+		 * A link is established to the source at the new location.
+		 * @public
+		 */
+		Link : "Link",
+
+		/**
+		 * The item cannot be dropped.
+		 * @public
+		 */
+		None : "None"
 	};
 
 

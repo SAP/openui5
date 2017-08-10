@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define([
+	"jquery.sap.global"
+], function(
+	jQuery
+) {
 	"use strict";
 
 	/**
@@ -24,33 +28,27 @@ sap.ui.define(function() {
 	 * Array of relevant change handlers settings
 	 * Initialize with the required entries for AddODataField
 	 */
-	ChangeHandlerMediator._aChangeHandlerSettings = [
-	{
-		key : { "scenario"   : "addODataField",
-				"oDataServiceVersion" : "2.0" },
-		content : {
-			"requiredLibraries" : {
-				"sap.ui.comp" : {
-					"minVersion" : "1.48",
-					"lazy" : false
-				}
-			}
-		},
-		scenarioInitialized : false
-	},
-	{
-		key : { "scenario"   : "addODataField",
-				"oDataServiceVersion" : "1.0" },
-		content : {
-			"requiredLibraries" : {
-				"sap.ui.comp" : {
-					"minVersion" : "1.48",
-					"lazy" : false
-				}
-			}
-		},
-		scenarioInitialized : false
-	}];
+	ChangeHandlerMediator._aChangeHandlerSettings = [];
+
+	["addODataField", "addODataFieldWithLabel"].forEach(function (sScenario) {
+		["2.0", "1.0"].forEach(function (sVersion) {
+			ChangeHandlerMediator._aChangeHandlerSettings.push({
+				key: {
+					"scenario": sScenario,
+					"oDataServiceVersion": sVersion
+				},
+				content: {
+					"requiredLibraries": {
+						"sap.ui.comp": {
+							"minVersion": "1.48",
+							"lazy": false
+						}
+					}
+				},
+				scenarioInitialized: false
+			});
+		});
+	});
 
 	/**
 	 * Add change handler settings to the mediated list
@@ -81,6 +79,7 @@ sap.ui.define(function() {
 			this._aChangeHandlerSettings[iIndex].scenarioInitialized = false;
 		} else {
 			this._aChangeHandlerSettings.push(mNewChangeHandlerSettings);
+			this._createChangeHandlerSettingsGetter(mNewChangeHandlerSettings);
 		}
 	};
 
@@ -151,36 +150,45 @@ sap.ui.define(function() {
 		}
 	};
 
-	/**
-	 * Retrieves the settings for the AddODataField scenario getting the oData
-	 * service version from the control and ensures that a create function is
-	 * available for the change handler
-	 * @param  {sap.ui.core.Control} oControl The control for the scenario
-	 * @return {Object} The Change Handler Settings for the scenario
-	 */
-	ChangeHandlerMediator.getAddODataFieldSettings = function(oControl){
-		var sODataServiceVersion;
-		var mFoundChangeHandlerSettings;
+	ChangeHandlerMediator._createChangeHandlerSettingsGetter = function(mChangeHandlerSettings){
+		var sGetterName = 'get' + jQuery.sap.charToUpperCase(mChangeHandlerSettings.key.scenario) + 'Settings';
+		if (!ChangeHandlerMediator[sGetterName]) {
+			/**
+			 * Retrieves the settings for the specified scenario, getting the oData
+			 * service version from the control and ensures that a create function is
+			 * available for the change handler
+			 * @param  {sap.ui.core.Control} oControl The control for the scenario
+			 * @return {Object} The Change Handler Settings for the scenario
+			 */
+			ChangeHandlerMediator[sGetterName] = function(oControl){
+				var sODataServiceVersion;
+				var mFoundChangeHandlerSettings;
 
-		try {
-			sODataServiceVersion = oControl.getModel().getMetaModel().getProperty("/dataServices/dataServiceVersion");
-		} catch (e) {
-			jQuery.sap.log.warning("Data service version could not be retrieved");
+				try {
+					sODataServiceVersion = oControl.getModel().getMetaModel().getProperty("/dataServices/dataServiceVersion");
+				} catch (e) {
+					jQuery.sap.log.warning("Data service version could not be retrieved");
+				}
+
+				mFoundChangeHandlerSettings = this.getChangeHandlerSettings({
+					"scenario" : mChangeHandlerSettings.key.scenario,
+					"oDataServiceVersion" : sODataServiceVersion
+				});
+
+				// Without a create function, the settings should not be returned
+				if (mFoundChangeHandlerSettings &&
+					mFoundChangeHandlerSettings.content &&
+					mFoundChangeHandlerSettings.content.createFunction){
+					return mFoundChangeHandlerSettings;
+				}
+			};
 		}
-
-		mFoundChangeHandlerSettings = this.getChangeHandlerSettings({
-			"scenario" : "addODataField",
-			"oDataServiceVersion" : sODataServiceVersion
-		});
-
-		// Without a create function, the settings should not be returned
-		if (mFoundChangeHandlerSettings &&
-			mFoundChangeHandlerSettings.content &&
-			mFoundChangeHandlerSettings.content.createFunction){
-			return mFoundChangeHandlerSettings;
-		}
-
 	};
+
+	// Create getters
+	ChangeHandlerMediator._aChangeHandlerSettings.forEach(function (mChangeHandlerSettings) {
+		ChangeHandlerMediator._createChangeHandlerSettingsGetter(mChangeHandlerSettings);
+	});
 
 	return ChangeHandlerMediator;
 }, /* bExport= */true);

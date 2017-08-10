@@ -1,16 +1,16 @@
-<core:View
+<mvc:View
 	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:uxap="sap.uxap"
 	xmlns:vm="sap.ui.fl.variants"
 	xmlns:layout="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
 	controllerName="sap.ui.rta.test.variantManagement.controller.Main">
-
 	<!--The view is is bound to EntityType01 in the controller -->
-	<Page title="{i18n>appTitle}" enableScrolling="false">
+	<Page title="{i18n>appTitleMain}" id="page" enableScrolling="false">
 		<headerContent>
-			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
+				<Button text="{= ${app>/showAdaptButton} ? ${i18n>btnAdapt} : ${i18n>btnNonAdapt} }"  press=".switchToAdaptionMode" />
 		</headerContent>
 		<content>
 			<layout:VerticalLayout width="100%">
@@ -44,9 +44,9 @@
 						<Text id="EntityType01.Text4" text="{Property08}" />
 					</form:content>
 				</form:SimpleForm>
-
-
 			</layout:VerticalLayout>
+
+
 			<uxap:ObjectPageLayout id="ObjectPageLayout">
 				<uxap:headerTitle>
 					<uxap:ObjectPageHeader
@@ -138,8 +138,6 @@
 				</uxap:sections>
 			</uxap:ObjectPageLayout>
 
-
-
 		</content>
 	</Page>
-</core:View>
+</mvc:View>

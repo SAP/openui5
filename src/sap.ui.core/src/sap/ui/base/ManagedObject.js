@@ -64,7 +64,27 @@ sap.ui.define([
 	 *   Each entry with key <i>k</i> in this object has the same effect as a call <code>this.setBindingContext(bindingContexts[k], k);</code></li>
 	 * <li><code>objectBindings : <i>object</i></code>  a map of binding paths keyed by the corresponding model name.
 	 *   Each entry with key <i>k</i> in this object has the same effect as a call <code>this.bindObject(objectBindings[k], k);</code></li>
-	 * <li><code>metadataContexts : <i>object</i></code>  a map of binding paths keyed by the corresponding model name.</li>
+	 * <li><code>metadataContexts : <i>object</i></code>  an array of single binding contexts keyed by the corresponding model or context name.
+	 *   The purpose of the <code>metadataContexts</code> special setting is to deduce as much information as possible from the binding context of the control in order
+	 *   to be able to predefine certain standard properties like e.g. <i>visible, enabled, tooltip,...</i>
+	 *
+	 *   The structure is an arry of single contexts, where a single context is a map containing the following keys:
+	 *   <ul>
+	 *   <li><code>path: <i>string (mandatory)</i></code> The path to the corresponding model property or object, e.g. '/Customers/Name'. Note: A path can also be relative, e.g. 'Name'</li>
+	 *   <li><code>model: <i>string (optional)</i></code> The name of the model, in case there is no name then the undefined model is taken</li>
+	 *   <li><code>name: <i>string (optional)</i></code> A name for the context to used in templating phase</li>
+	 *   <li><code>adapter: <i>string (optional)</i></code> The path to an interpretion class that dilivers control relevant data depending on the context, e.g. enabled, visible.
+	 *   If not supplied the OData metadata is interpreted.</li>
+	 *   </ul>
+	 *   The syntax for providing the <code>metadataContexts</code> is as follows:
+	 *   <code>{parts: [{SINGLE_CONTEXT1},...,{SINGLE_CONTEXTn}]}</code> or for simplicity in case there is only one context <code>{SINGLE_CONTEXT}</code>.
+	 *
+	 *   Examples for such metadataContexts are:
+	 *   <ul>
+	 *   <li><code>{/Customers/Name}</code> a single part with an absolute path to the property <i>Name</i> of the <i>Customers</i> entity set in the default model</li>
+	 *   <li><code>{path: 'Customers/Name', model:'json'}</code> a single part with an absolute path to the property <i>Name</i> of the <i>Customers</i> entity set in a named model</li>
+	 *   <li><code>{parts: [{path: 'Customers/Name'},{path: 'editable', model: 'viewModel'}]}</code> a combination of to single binding contexts, one context from the default model and one from the viewModel</li>
+	 *   </ul></li>
 	 * </ul>
 	 *
 	 * @param {string} [sId] id for the new managed object; generated automatically if no non-empty id is given
@@ -2485,7 +2505,7 @@ sap.ui.define([
 
 		if ( this._observer ) {
 			// TODO notify observer to cleanup bookkeeping?
-			this._observer = undefined;
+			this._observer.objectDestroyed(this);
 		}
 
 		EventProvider.prototype.destroy.apply(this, arguments);
@@ -2807,6 +2827,12 @@ sap.ui.define([
 	 *
 	 *            <b>Note</b>: use this flag only when using multiple bindings. If you use only one
 	 *            binding and want raw values then simply don't specify a type for that binding.
+	 * @param {boolean} [oBindingInfo.useInternalValues]
+	 *            Whether the parameters to the formatter function should be passed as the related JavaScript primitive values.
+	 *            In this case the values of the model are parsed by the {@link sap.ui.model.SimpleType#getModelFormat model format}
+	 *            of the specified types from the binding parts.
+	 *
+	 *            <b>Note</b>: use this flag only when using multiple bindings.
 	 * @param {sap.ui.model.Type|string} [oBindingInfo.type]
 	 *            A type object or the name of a type class to create such a type object; the type
 	 *            will be used for converting model data to a property value (aka "formatting") and
@@ -2908,6 +2934,10 @@ sap.ui.define([
 		// store binding info to create the binding, as soon as the model is available, or when the model is changed
 		this.mBindingInfos[sName] = oBindingInfo;
 
+		if (this._observer) {
+			this._observer.bindingChange(this, sName, "prepare", oBindingInfo, "property");
+		}
+
 		// if the models are already available, create the binding
 		if (bAvailable) {
 			this._bindProperty(sName, oBindingInfo);
@@ -3005,7 +3035,7 @@ sap.ui.define([
 				clType = jQuery.sap.getObject(oType);
 				oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
 			}
-			oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues);
+			oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);
 			oBinding.setType(oType, oBindingInfo.targetType || sInternalType);
 			oBinding.setBindingMode(oBindingInfo.mode || sCompositeMode);
 		} else {
@@ -3030,6 +3060,10 @@ sap.ui.define([
 		oBinding.attachEvents(oBindingInfo.events);
 
 		oBinding.initialize();
+
+		if (this._observer) {
+			this._observer.bindingChange(this, sName, "ready", oBindingInfo, "property");
+		}
 	};
 
 	/**
@@ -3051,6 +3085,11 @@ sap.ui.define([
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
 				oBindingInfo.binding.destroy();
 			}
+
+			if (this._observer) {
+				this._observer.bindingChange(this,sName,"remove", this.mBindingInfos[sName], "property");
+			}
+
 			delete this.mBindingInfos[sName];
 			if (!bSuppressReset) {
 				this.resetProperty(sName);
@@ -3284,6 +3323,10 @@ sap.ui.define([
 		// store binding info to create the binding, as soon as the model is available, or when the model is changed
 		this.mBindingInfos[sName] = oBindingInfo;
 
+		if (this._observer) {
+			this._observer.bindingChange(this, sName, "prepare", oBindingInfo, "aggregation");
+		}
+
 		// if the model is already available create the binding
 		if (this.getModel(oBindingInfo.model)) {
 			this._bindAggregation(sName, oBindingInfo);
@@ -3340,6 +3383,10 @@ sap.ui.define([
 		oBinding.attachEvents(oBindingInfo.events);
 
 		oBinding.initialize();
+
+		if (this._observer) {
+			this._observer.bindingChange(this, sName, "ready", oBindingInfo, "aggregation");
+		}
 	};
 
 	/**
@@ -3368,6 +3415,10 @@ sap.ui.define([
 				if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
 					oBindingInfo.template._sapui_candidateForDestroy = true;
 				}
+			}
+
+			if (this._observer) {
+				this._observer.bindingChange(this,sName,"remove", this.mBindingInfos[sName], "aggregation");
 			}
 
 			delete this.mBindingInfos[sName];
@@ -3685,6 +3736,11 @@ sap.ui.define([
 
 			// if there is a binding and if it became invalid through the current model change, then remove it
 			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
+				if (this._observer) {
+					var sMember = oBindingInfo.factory ? "aggregation" : "property";
+					this._observer.bindingChange(this, sName, "remove", oBindingInfo, sMember);
+				}
+
 				removeBinding(oBindingInfo);
 			}
 

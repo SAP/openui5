@@ -42,6 +42,7 @@ sap.ui.define([
 	 * A {@link sap.m.MessageView} is used to display a summarized list of different types of messages (errors, warnings, success and information).
 	 * It provides a handy and systemized way to navigate and explore details for every message.
 	 * It is meant to be embedded into container controls.
+	 * If the MessageView contains only one item, which has either description, markupDescription or longTextUrl, its details page will be displayed initially.
 	 * <br><br>
 	 * <strong>Notes:</strong>
 	 * <ul>
@@ -102,19 +103,25 @@ sap.ui.define([
 				/**
 				 * Defines whether the MessageItems are grouped or not
 				 */
-				groupItems: { type: "boolean", group: "Behavior", defaultValue: false }
+				groupItems: { type: "boolean", group: "Behavior", defaultValue: false },
+
+				/**
+				 * Defines whether the header of details page will be shown
+				 */
+				showDetailsPageHeader: { type: "boolean", group: "Behavior", defaultValue: true }
 			},
 			defaultAggregation: "items",
 			aggregations: {
 				/**
-				 * A list with message items
+				 * A list with message items.
+				 * If only one item is provided, the initial page will be the details page for the item.
 				 */
-				items: {type: "sap.m.MessageItem", multiple: true, singularName: "item"},
+				items: { type: "sap.m.MessageItem", multiple: true, singularName: "item" },
 
 				/**
 				 * A custom header button
 				 */
-				headerButton: {type: "sap.m.Button", multiple: false}
+				headerButton: { type: "sap.m.Button", multiple: false }
 			},
 			events: {
 				/**
@@ -210,8 +217,8 @@ sap.ui.define([
 	 * @static
 	 * @protected
 	 * @param {object} mDefaultHandlers An object setting default callbacks
-	 * @param {function} mDefaultHandlers.asyncDescriptionHandler
-	 * @param {function} mDefaultHandlers.asyncURLHandler
+	 * @param {function} mDefaultHandlers.asyncDescriptionHandler The description handler
+	 * @param {function} mDefaultHandlers.asyncURLHandler The URL handler
 	 */
 	MessageView.setDefaultHandlers = function (mDefaultHandlers) {
 		ASYNC_HANDLER_NAMES.forEach(function (sFuncName) {
@@ -244,16 +251,17 @@ sap.ui.define([
 	};
 
 	MessageView.prototype.onBeforeRendering = function () {
-		var oGroupedItems;
+		var oGroupedItems, aItems = this.getItems();
 
 		this._clearLists();
+		this._detailsPage.setShowHeader(this.getShowDetailsPageHeader());
 
 		if (this.getGroupItems()) {
-			oGroupedItems = this._groupItems(this.getItems());
+			oGroupedItems = this._groupItems(aItems);
 
 			this._fillGroupedLists(oGroupedItems);
 		} else {
-			this._fillLists(this.getItems());
+			this._fillLists(aItems);
 		}
 
 		this._clearSegmentedButton();
@@ -266,15 +274,23 @@ sap.ui.define([
 			this._oListHeader.insertContent(headerButton, 2);
 		}
 
+		if (aItems.length === 1 && this._oLists.all.getItems()[0].getType()  === ListType.Navigation) {
+
+			this._fnHandleForwardNavigation(this._oLists.all.getItems()[0], "show");
+
+			// TODO: adopt this to NavContainer's public API once a parameter for back navigation transition name is available
+			this._navContainer._pageStack[this._navContainer._pageStack.length - 1].transition = "slide";
+		}
+
 		// Bind automatically to the MessageModel if no items are bound
-		if (!this.getBindingInfo("items") && !this.getItems().length) {
+		if (!this.getBindingInfo("items") && !aItems.length) {
 			this._makeAutomaticBinding();
 		}
 	};
 
 	/**
 	 * Fills grouped items in the lists
-	 *
+	 * @param {sap.m.MessageItem[]} oGroupedItems An array of items
 	 * @private
 	 */
 	MessageView.prototype._fillGroupedLists = function(oGroupedItems) {
@@ -371,7 +387,8 @@ sap.ui.define([
 
 	/**
 	 * Groups items in an object of keys and correspoding array of items
-	 *
+	 * @param {sap.m.MessageItem[]} aItems An array of items
+	 * @returns oGroups Item object
 	 * @private
 	 */
 	MessageView.prototype._groupItems = function (aItems) {
@@ -402,7 +419,7 @@ sap.ui.define([
 	 */
 	MessageView.prototype._onkeypress = function (oEvent) {
 		if (oEvent.shiftKey && oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
-			this._fnHandleBackPress();
+			this.navigateBack();
 		}
 	};
 
@@ -476,7 +493,7 @@ sap.ui.define([
 
 		this._oBackButton = new Button({
 			icon: ICONS["back"],
-			press: this._fnHandleBackPress.bind(this),
+			press: this.navigateBack.bind(this),
 			ariaLabelledBy: oBackBtnARIAHiddenDescr,
 			tooltip: sBackBtnTooltipDescr
 		}).addStyleClass(CSS_CLASS + "BackBtn");
@@ -736,8 +753,8 @@ sap.ui.define([
 
 	/**
 	 * Sets icon in details page
-	 * @param {sap.m.MessageItem} oMessageItem
-	 * @param {sap.m.StandardListItem} oListItem
+	 * @param {sap.m.MessageItem} oMessageItem The message item
+	 * @param {sap.m.StandardListItem} oListItem The list item
 	 * @private
 	 */
 	MessageView.prototype._setIcon = function (oMessageItem, oListItem) {
@@ -753,7 +770,7 @@ sap.ui.define([
 
 	/**
 	 * Sets title part of details page
-	 * @param {sap.m.MessageItem} oMessageItem
+	 * @param {sap.m.MessageItem} oMessageItem The message item
 	 * @private
 	 */
 	MessageView.prototype._setTitle = function (oMessageItem) {
@@ -766,7 +783,7 @@ sap.ui.define([
 	/**
 	 * Sets description text part of details page
 	 * When markup description is used it is sanitized within it's container's setter method (MessageItem)
-	 * @param {sap.m.MessageItem} oMessageItem
+	 * @param {sap.m.MessageItem} oMessageItem The message item
 	 * @private
 	 */
 	MessageView.prototype._setDescription = function (oMessageItem) {
@@ -925,7 +942,6 @@ sap.ui.define([
 
 	/**
 	 * Perform description sanitization based on Caja HTML sanitizer
-	 * @param {sap.m.MessageItem} oMessageItem
 	 * @private
 	 */
 	MessageView.prototype._sanitizeDescription = function (oMessageItem) {
@@ -944,29 +960,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles click of the ListItems
+	 * Handles click on a list item
 	 *
-	 * @param {jQuery.Event} oEvent ListItem click event object
+	 * @param {sap.m.StandardListItem} oListItem ListItem that is pressed
+	 * @param {String} sTransiotionName name of transition could be slide, show, flip or fade
 	 * @private
 	 */
-	MessageView.prototype._fnHandleItemPress = function (oEvent) {
-		var oListItem = oEvent.getParameter("listItem"),
-			oMessageItem = oListItem._oMessageItem,
-			aDetailsPageContent = this._detailsPage.getContent() || [];
-
-		var asyncDescHandler = this.getAsyncDescriptionHandler();
-
-		var loadAndNavigateToDetailsPage = function (suppressNavigate) {
-			this._setTitle(oMessageItem);
-			this._sanitizeDescription(oMessageItem);
-			this._setIcon(oMessageItem, oListItem);
-			this._detailsPage.rerender();
-			this.fireLongtextLoaded();
-
-			if (!suppressNavigate) {
-				this._navContainer.to(this._detailsPage);
-			}
-		}.bind(this);
+	MessageView.prototype._fnHandleForwardNavigation = function (oListItem, sTransiotionName) {
+		var oMessageItem = oListItem._oMessageItem,
+			aDetailsPageContent = this._detailsPage.getContent() || [],
+			asyncDescHandler = this.getAsyncDescriptionHandler();
 
 		this._previousIconTypeClass = this._previousIconTypeClass || "";
 
@@ -975,15 +978,7 @@ sap.ui.define([
 			messageTypeFilter: this._getCurrentMessageTypeFilter()
 		});
 
-		aDetailsPageContent.forEach(function (oControl) {
-			if (oControl instanceof Link) {
-				// Move the Link back to the MessageItem
-				this._oLastSelectedItem.setLink(oControl);
-				oControl.removeAllAriaLabelledBy();
-			} else {
-				oControl.destroy();
-			}
-		}, this);
+		this._clearDetailsPage.call(this, aDetailsPageContent);
 
 		if (typeof asyncDescHandler === "function" && !!oMessageItem.getLongtextUrl()) {
 			// Set markupDescription to true as markup description should be processed as markup
@@ -998,7 +993,7 @@ sap.ui.define([
 
 			var proceed = function () {
 				this._detailsPage.setBusy(false);
-				loadAndNavigateToDetailsPage(true);
+				this._navigateToDetails.call(this, oMessageItem, oListItem, sTransiotionName, true);
 			}.bind(this);
 
 			oPromise
@@ -1017,18 +1012,57 @@ sap.ui.define([
 				item: oMessageItem
 			});
 		} else {
-			loadAndNavigateToDetailsPage();
+			this._navigateToDetails.call(this, oMessageItem, oListItem, sTransiotionName, false);
 		}
 
 		this._listPage.$().attr("aria-hidden", "true");
 	};
 
 	/**
-	 * Handles click of the BackButton
+	 * Handles click of the ListItems
+	 *
+	 * @param {jQuery.Event} oEvent ListItem click event object
+	 * @private
+	 */
+	MessageView.prototype._fnHandleItemPress = function (oEvent) {
+		this._fnHandleForwardNavigation(oEvent.getParameter("listItem"), "slide");
+	};
+
+	MessageView.prototype._navigateToDetails = function(oMessageItem, oListItem, sTransiotionName, bSuppressNavigate) {
+		this._setTitle(oMessageItem);
+		this._sanitizeDescription(oMessageItem);
+		this._setIcon(oMessageItem, oListItem);
+		this._detailsPage.rerender();
+		this.fireLongtextLoaded();
+
+		if (!bSuppressNavigate) {
+			this._navContainer.to(this._detailsPage, sTransiotionName);
+		}
+	};
+
+	/**
+	 * Destroys the content of details page
 	 *
 	 * @private
 	 */
-	MessageView.prototype._fnHandleBackPress = function () {
+	MessageView.prototype._clearDetailsPage = function (aDetailsPageContent) {
+		aDetailsPageContent.forEach(function (oControl) {
+			if (oControl instanceof Link) {
+				// Move the Link back to the MessageItem
+				this._oLastSelectedItem.setLink(oControl);
+				oControl.removeAllAriaLabelledBy();
+			} else {
+				oControl.destroy();
+			}
+		}, this);
+	};
+
+	/**
+	 * Navigates back to the list page
+	 *
+	 * @public
+	 */
+	MessageView.prototype.navigateBack = function () {
 		this._listPage.$().removeAttr("aria-hidden");
 		this._navContainer.back();
 	};

@@ -42,8 +42,7 @@ sap.ui.define([
 					type : "string"
 				},
 				newBinding : {
-					type : "string",
-					bindable : false
+					type : "string"
 				},
 				changeType : {
 					type : "string",

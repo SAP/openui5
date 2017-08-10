@@ -17,35 +17,46 @@ sap.ui.define([
 
 		// Assertions
 		Then.onHome.iShouldSeeTheCategoryList().
-			and.theCategoryListShouldHaveSomeEntries();
+			and.iShouldSeeSomeEntriesInTheCategoryList();
 	});
 
 	//We are still on the second category
 	opaTest("Should see the product list", function (Given, When, Then) {
 		// Actions
-		When.onHome.iPressOnTheSecondCategory();
+		When.onHome.iPressOnTheFlatScreensCategory();
 
 		// Assertions
-		Then.onTheCategory.iShouldBeTakenToTheSecondCategory().
+		Then.onTheCategory.iShouldBeTakenToTheFlatScreensCategory().
 			and.iShouldSeeTheProductList().
-			and.theProductListShouldHaveSomeEntries();
+			and.iShouldSeeSomeEntriesInTheProductList();
 	});
 
-	opaTest("Should add a product to the cart and see an avatar button", function (Given, When, Then) {
+	opaTest("Should see an avatar button on the product page", function (Given, When, Then) {
 		// Actions
 		When.onTheCategory.iPressOnTheFirstProduct();
-		When.onTheProduct.iAddTheDisplayedProductToTheCart().and.iShouldSeeAnAvatarButton();
+		// Assertions
+		Then.onTheProduct.iShouldSeeAnAvatarButton();
+
+	});
+
+	opaTest("Should add a product to the cart", function (Given, When, Then) {
+		// Actions
+
+		When.onTheProduct.iAddTheDisplayedProductToTheCart();
+
 		When.onTheCategory.iGoToTheCartPage();
 
 		// Assertions
-		Then.onTheCart.iShouldSeeTheProductInMyCart().and.iTeardownMyApp();
+		Then.onTheCart.iShouldSeeTheProductInMyCart()
+			.and.iShouldSeeTheTotalPriceUpdated().and.iTeardownMyApp();
 	});
+
 
 	opaTest("Should keep the cart when reloading", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp();
 		// Actions
-		When.onHome.iPressOnTheSecondCategory();
+		When.onHome.iPressOnTheFlatScreensCategory();
 		When.onTheCategory.iGoToTheCartPage();
 
 		// Assertions
@@ -61,12 +72,14 @@ sap.ui.define([
 		Then.onCheckout.iShouldSeeTheWizardStepContentsStep();
 	});
 
-	opaTest("Should return to the cart", function (Given, When, Then) {
+	opaTest("Should return to the home", function (Given, When, Then) {
 
 		// Actions
 		When.onCheckout.iPressOnTheReturnToShopButton();
 
-		Then.onTheCart.iShouldSeeTheProductInMyCart();
+		// Assertions
+		Then.onHome.iShouldSeeTheCategoryList().
+		and.iShouldSeeSomeEntriesInTheCategoryList();
 	});
 
 
@@ -74,6 +87,7 @@ sap.ui.define([
 	opaTest("Should return to checkout", function (Given, When, Then) {
 
 		// Actions
+		When.onHome.iGoToTheCartPage();
 		When.onTheCart.iPressOnTheProceedButton();
 
 		// Assertions

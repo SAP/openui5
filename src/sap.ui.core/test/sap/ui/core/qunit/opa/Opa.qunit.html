@@ -766,6 +766,24 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.test("Should configure the max log level", function (assert) {
+		var fnDone = assert.async();
+		var fnLogLevelSpy = sinon.spy(sap.ui.test._OpaLogger, "setLevel");
+		var oStub = sinon.stub(URI.prototype, "search", function () {
+			return {
+				opaLogLevel: "trace"
+			};
+		});
+
+		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
+		sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
+			assert.strictEqual(Opa.config.logLevel, "trace");
+			assert.ok(fnLogLevelSpy.calledOnce, "Log level was changed");
+			sinon.assert.calledWith(fnLogLevelSpy, "trace");
+			fnDone();
+		});
+	});
+
 	QUnit.module("Opa Empty queue", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;

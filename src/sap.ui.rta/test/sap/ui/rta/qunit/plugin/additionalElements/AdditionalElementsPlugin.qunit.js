@@ -1,7 +1,5 @@
 /*global QUnit sinon*/
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
 QUnit.config.autostart = false;
 
 sap.ui.require([
@@ -21,31 +19,36 @@ sap.ui.require([
 	"sap/ui/fl/fieldExt/Access",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-ie",
-	"sap/ui/thirdparty/sinon-qunit"],
-	function(
-		AdditionalElementsPlugin,
-		AdditionalElementsAnalyzer,
-		AddElementsDialog,
-		CommandFactory,
-		RTAUtils,
-		PaneContainer,
-		Button,
-		Input,
-		Bar,
-		ElementOverlay,
-		ElementDesignTimeMetadata,
-		AggregationOverlay,
-		AggregationDesignTimeMetadata,
-		FieldExtAccess,
-		ChangeRegistry,
-		SimpleChanges,
-		Settings
-	){
+	"sap/ui/fl/registry/Settings"
+], function(
+	AdditionalElementsPlugin,
+	AdditionalElementsAnalyzer,
+	AddElementsDialog,
+	CommandFactory,
+	RTAUtils,
+	PaneContainer,
+	Button,
+	Input,
+	Bar,
+	ElementOverlay,
+	ElementDesignTimeMetadata,
+	AggregationOverlay,
+	AggregationDesignTimeMetadata,
+	FieldExtAccess,
+	ChangeRegistry,
+	SimpleChanges,
+	Settings
+){
 	"use strict";
 	var oChangeRegistry = ChangeRegistry.getInstance();
+	var oDummyChangeHandler = {
+		applyChange : function(){
+			return true;
+		},
+		completeChangeContent : function(){
+			return true;
+		}
+	};
 	oChangeRegistry.registerControlsForChanges({
 		"sap.m.Button": [
 			SimpleChanges.unhideControl,
@@ -54,14 +57,14 @@ sap.ui.require([
 		"sap.m.Bar": [
 			{
 				changeType: "addFields",
-				changeHandler : "sap/ui/comp/smartform/flexibility/changes/AddFields"
+				changeHandler : oDummyChangeHandler
 			},
 			SimpleChanges.moveControls
 		],
 		"sap.ui.layout.PaneContainer": [
 			{
 				changeType: "addFields",
-				changeHandler : "sap/ui/comp/smartform/flexibility/changes/AddFields"
+				changeHandler : oDummyChangeHandler
 			},
 			SimpleChanges.moveControls,
 			SimpleChanges.unhideControl,
@@ -335,10 +338,10 @@ sap.ui.require([
 				var oCompositeCommand = oEvent.getParameter("command");
 				if (test.sibling) {
 					assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element reveal and move command is created as target position differs");
-					assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
-					assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unstashControl", "then the reveal command has the right changeType");
-					assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
-					assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 1, "then the move command goes to the right position");
+					assert.equal(oCompositeCommand.getCommands()[0].getName(), "move", "then one move command is created");
+					assert.equal(oCompositeCommand.getCommands()[0].getMovedElements()[0].targetIndex, 1, "then the move command goes to the right position");
+					assert.equal(oCompositeCommand.getCommands()[1].getName(), "reveal", "then one reveal command is created");
+					assert.equal(oCompositeCommand.getCommands()[1].getChangeType(), "unstashControl", "then the reveal command has the right changeType");
 				} else {
 					assert.equal(oCompositeCommand.getCommands().length, 1, "then for the one selected to be revealed element reveal command is created as target position is the same as its origin");
 					assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
@@ -451,10 +454,10 @@ sap.ui.require([
 		oPlugin.attachEventOnce("elementModified", function(oEvent){
 			var oCompositeCommand = oEvent.getParameter("command");
 				assert.equal(oCompositeCommand.getCommands().length, 3, "then for the one selected to be revealed element reveal and move command is created as target position differs");
-				assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
-				assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
-				assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
-				assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 0, "then the move command goes to the right position");
+				assert.equal(oCompositeCommand.getCommands()[0].getName(), "move", "then one move command is created");
+				assert.equal(oCompositeCommand.getCommands()[0].getMovedElements()[0].targetIndex, 0, "then the move command goes to the right position");
+				assert.equal(oCompositeCommand.getCommands()[1].getName(), "reveal", "then one reveal command is created");
+				assert.equal(oCompositeCommand.getCommands()[1].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
 				assert.equal(oCompositeCommand.getCommands()[2].getName(), "addODataProperty", "then one reveal command is created");
 				assert.equal(oCompositeCommand.getCommands()[2].getChangeType(), "addFields", "then the reveal command has the right changeType");
 				assert.equal(oCompositeCommand.getCommands()[2].getIndex(), 0, "then the move command goes to the right position");

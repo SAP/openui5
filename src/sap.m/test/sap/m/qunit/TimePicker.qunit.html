@@ -679,13 +679,13 @@
 			assert.equal($oElement.id, firstSlider.getId(), "picker exists and first slider is the current focussed element");
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			$oElement = document.activeElement;
 			assert.equal($oElement.id, lastSlider.getId(), "the last slider is the focussed element");
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			$oElement = document.activeElement;
 			assert.equal($oElement.id, secondLastSlider.getId(), "the second last slider is the focussed element");
@@ -711,17 +711,17 @@
 			assert.equal($oElement.id, firstSlider.getId(), "picker exists and first slider is the current focussed element");
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			$oElement = document.activeElement;
 			assert.equal($oElement.id, secondSlider.getId(), "the second slider is the focussed element");
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
-			this.clock.tick(1);
+			this.clock.tick(100);
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
-			this.clock.tick(1);
+			this.clock.tick(100);
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			$oElement = document.activeElement;
 			assert.equal($oElement.id, firstSlider.getId(), "the first slider is the focussed element again");
@@ -744,13 +744,13 @@
 			var lastSlider = sliders.getAggregation("_columns")[3];
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.END);
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			$oElement = document.activeElement;
 			assert.equal($oElement.id, lastSlider.getId(), "the last slider is the focussed element");
 
 			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.HOME);
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			$oElement = document.activeElement;
 			assert.equal($oElement.id, firstSlider.getId(), "the first slider is the focussed element again");
@@ -771,18 +771,18 @@
 			var firstSlider = sliders.getAggregation("_columns")[0];
 
 			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 
 			assert.equal(firstSlider.getSelectedValue(), firstSlider.getItems()[0].getKey(), "the selected value is the first value");
 
 			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			assert.equal(firstSlider.getSelectedValue(), firstSlider.getItems()[firstSlider.getItems().length - 1].getKey(), "the selected value is the last value");
 
 			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			assert.equal(firstSlider.getSelectedValue(), firstSlider.getItems()[0].getKey(), "the selected value is the first value again");
 
@@ -830,7 +830,7 @@
 			sap.ui.getCore().applyChanges();
 
 			tp._openPicker();
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			var sliders = tp._getSliders();
 			var firstSlider = sliders.getAggregation("_columns")[0];
@@ -863,7 +863,7 @@
 			sap.ui.getCore().applyChanges();
 
 			tp._openPicker();
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			var sliders = tp._getSliders();
 			var firstSlider = sliders.getAggregation("_columns")[0];
@@ -1392,7 +1392,7 @@
 
 			//arrange
 			tp._openPicker();
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			var sliders = tp._getSliders();
 			var sliderMinutes = sliders.getAggregation("_columns")[1];
@@ -1417,7 +1417,7 @@
 
 			//arrange
 			tp._openPicker();
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			var sliders = tp._getSliders();
 			var sliderHours = sliders.getAggregation("_columns")[0];
@@ -1449,7 +1449,7 @@
 
 			//arrange
 			tp._openPicker();
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			var sliders = tp._getSliders();
 			var sliderHours = sliders.getAggregation("_columns")[0];
@@ -1478,7 +1478,7 @@
 
 			//arrange
 			tp._openPicker();
-			this.clock.tick(1);
+			this.clock.tick(100);
 
 			var sliders = tp._getSliders();
 			var sliderHours = sliders.getAggregation("_columns")[0];
@@ -1738,20 +1738,27 @@
 				var bIsFormatType = oSlider.getLabel() === this.oRB.getText("TIMEPICKER_LBL_AMPM"),
 						iIterations = 3,
 						iNonZeroIndex = iIndex + 1,
+						oTP = sap.ui.getCore().byId(oSlider.getParent().getInvokedBy()),
+						sLocaleId = oTP.getLocaleId(),
+						oLocale = new sap.ui.core.Locale(sLocaleId),
 						sCurrentSelectionValue,
 						sExpectedSelectionValue,
+						sNewSelectedValue,
 						$Target = oSlider.$("valDescription");
 
 				for (var iLoopIndex = 1; iLoopIndex <= iIterations; iLoopIndex++) {
 					//arrange
 					sCurrentSelectionValue = oSlider.getSelectedValue();
 					if (!bIsFormatType) {
-						sExpectedSelectionValue = parseInt(sCurrentSelectionValue, 10) + iLoopIndex + "";
+						sNewSelectedValue = sExpectedSelectionValue = parseInt(sCurrentSelectionValue, 10) + iLoopIndex + "";
 					} else {
-						//TODO: oSlider.getSelectedValue() output is hardcoded to "am" "pm" and doesn't correspond to its localization value (showed in the UI)
-						sExpectedSelectionValue = sCurrentSelectionValue === "am" ? "pm" : "am";
+						sNewSelectedValue = sCurrentSelectionValue === "am" ? "pm" : "am";
+						if (sLocaleId) {
+							var oAPPMFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "a"}, oLocale);
+							sExpectedSelectionValue = oAPPMFormatter.format(sNewSelectedValue === "am" ? new Date(2017, 0, 1, 1) : new Date(2017, 0, 1, 13));
+						}
 					}
-					oSlider.setSelectedValue(sExpectedSelectionValue);
+					oSlider.setSelectedValue(sNewSelectedValue);
 
 					this.clock.tick(2000);
 					//assert
@@ -1915,6 +1922,29 @@
 					this.fnAriaSelectionChangeTest(oColumn, iIndex);
 				}, this);
 			}
+			this.clock.restore();
+		});
+
+
+		QUnit.test("AM/PM values when TimePicker localeId is different than English ", function (assert) {
+			this.clock = sinon.useFakeTimers();
+			//arrange
+			var oSliders, aColumns;
+			this.oTP.setValue("13:15");
+			this.oTP.setDisplayFormat("hh:mm:ss aa");
+
+			//Act
+			this.oTP.setLocaleId("de_DE");
+			sap.ui.getCore().applyChanges();
+			this.oTP._openPicker();
+			this.clock.tick(2000);
+			oSliders = this.oTP._getSliders(),
+			oAPPMColumn = oSliders.getAggregation("_columns")[3];
+
+			//assert
+			this.fnAriaSelectionChangeTest(oAPPMColumn, 3);
+
+			//Cleanup
 			this.clock.restore();
 		});
 

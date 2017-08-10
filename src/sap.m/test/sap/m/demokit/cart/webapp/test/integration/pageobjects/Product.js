@@ -49,18 +49,6 @@ sap.ui.define([
 					});
 				},
 
-				iShouldSeeAnAvatarButton: function () {
-					return this.waitFor({
-						controlType: "sap.m.Button",
-						viewName: sViewName,
-						matchers: new Properties({icon: "sap-icon://customer"}),
-						success: function () {
-							Opa5.assert.ok(true, "Avatar button is visible");
-						},
-						errorMessage: "There is no avatar button"
-					});
-				},
-
 				iPressTheBackButton: function () {
 					return this.waitFor({
 						id: "page",
@@ -83,15 +71,47 @@ sap.ui.define([
 					});
 				},
 
+				iShouldSeeAnAvatarButton: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						viewName: sViewName,
+						matchers: new Properties({icon: "sap-icon://customer"}),
+						success: function () {
+							Opa5.assert.ok(true, "Avatar button is visible");
+						},
+						errorMessage: "There is no avatar button"
+					});
+				},
+
 				iShouldSeeTheProductPage: function () {
 					return this.waitFor({
 						viewName: sViewName,
 						success: function () {
-							Opa5.assert.ok(true, "The product Page was successfully displayed");
+							Opa5.assert.ok(true, "The product page was successfully displayed");
 						},
 						errorMessage: "The product page was not displayed"
 					});
-				}
+				},
+
+                iShouldSeeTheBlasterExtremeDetailPage: function () {
+                    return this.waitFor({
+                        viewName: sViewName,
+                        success: function () {
+                            Opa5.assert.ok(true, "The Blaster Extreme page was successfully displayed");
+                        },
+                        errorMessage: "The Blaster Extreme page was not displayed"
+                    });
+                },
+
+                iShouldSeeTheSmartphoneAlphaDetailPage: function () {
+                    return this.waitFor({
+                        viewName: sViewName,
+                        success: function () {
+                            Opa5.assert.ok(true, "The Smartphone Alpha page was successfully displayed");
+                        },
+                        errorMessage: "The Smartphone Alpha page was not displayed"
+                    });
+                }
 			}
 		}
 	});

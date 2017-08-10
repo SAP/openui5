@@ -4,14 +4,14 @@
 
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/test/_LogCollector",
+	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/_ParameterValidator",
 	"sap/ui/test/autowaiter/_autoWaiter",
 	"sap/ui/test/autowaiter/_timeoutCounter"
-], function ($, _LogCollector, _ParameterValidator, _autoWaiter, _timeoutCounter) {
+], function ($, _OpaLogger, _ParameterValidator, _autoWaiter, _timeoutCounter) {
 	"use strict";
 
-	var oLogger = $.sap.log.getLogger("sap.ui.test.autowaiter._autoWaiterAsync", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._autoWaiterAsync");
 	var oConfigValidator = new _ParameterValidator({
 		errorPrefix: "sap.ui.test.autowaiter._autoWaiterAsync#extendConfig"
 	});

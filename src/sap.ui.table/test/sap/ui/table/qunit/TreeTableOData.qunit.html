@@ -552,23 +552,21 @@
 		var done = assert.async();
 		this.oModel.attachMetadataLoaded(function() {
 			this.oTable = createTable.call(this, {rootLevel: 2, expandFirstLevel:true});
-			var oBinding;
 
 			var fnHandler1 = function() {
-				oBinding = this.oTable.getBinding("rows");
 				this.oTable.selectAll();
 				assert.equal(this.oTable.getSelectedIndices().length, 55, "55 Nodes in Tree");
-				assert.equal(oBinding.getLength(), 55, "Binding length should be 55");
+				assert.equal(this.oTable._getTotalRowCount(), 55, "Binding length should be 55");
 
 				var i = 1;
 				var fnVisibleRowHandler = function() {
 					// section length is visibleRowCount, make sure to scroll to all the sections/nodes
 					i += this.oTable.getVisibleRowCount();
-					if (i <= oBinding.getLength() + this.oTable.getVisibleRowCount()) {
+					if (i <= this.oTable._getTotalRowCount() + this.oTable.getVisibleRowCount()) {
 						this.oTable.setFirstVisibleRow(i);
 					}
 
-					if(i >= oBinding.getLength() - 1 && i < 1000) {
+					if(i >= this.oTable._getTotalRowCount() - 1 && i < 1000) {
 						this.oTable.detachEvent("_rowsUpdated", fnVisibleRowHandler);
 						assert.equal(this.oTable.getSelectedIndices().length, 55, "55 Nodes in Tree, all selected");
 						i = 99999;

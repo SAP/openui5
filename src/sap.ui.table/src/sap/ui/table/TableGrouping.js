@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {number} iRowIndex the row index which should be toggled.
 		 * @param {boolean} [bExpand] If defined instead of toggling the desired state is set.
-		 * @return {boolean|null} the new expand state in case an action was performed, <code>null</code> otherwise.
+		 * @returns {boolean|null} the new expand state in case an action was performed, <code>null</code> otherwise.
 		 * @private
 		 */
 		toggleGroupHeader : function(oTable, iRowIndex, bExpand) {
@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {Object} oRef DOM reference of an element within the table group header
 		 * @param {boolean} [bExpand] If defined instead of toggling the desired state is set.
-		 * @return {boolean} <code>true</code> when the operation was performed, <code>false</code> otherwise.
+		 * @returns {boolean} <code>true</code> when the operation was performed, <code>false</code> otherwise.
 		 * @private
 		 */
 		toggleGroupHeaderByRef : function(oTable, oRef, bExpand) {
@@ -195,7 +195,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		/**
 		 * Returns whether the given cell is located in a group header.
 		 * @param {Object} oCellRef DOM reference of table cell
-		 * @return {boolean}
+		 * @returns {boolean}
 		 * @private
 		 */
 		isInGroupingRow : function(oCellRef) {
@@ -226,7 +226,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		/**
 		 * Returns whether the given cell is located in an analytical summary row.
 		 * @param {Object} oCellRef DOM reference of table cell
-		 * @return {boolean}
+		 * @returns {boolean}
 		 * @private
 		 */
 		isInSumRow : function(oCellRef) {
@@ -443,7 +443,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		 * @param {sap.ui.table.Row} oRow Instance of the row
 		 * @param {object} oRowBinding the binding object of the rows aggregation
 		 * @param {object} oRowBindingInfo the binding info object of the rows aggregation
-		 * @return {object} the group information for the given row
+		 * @returns {object} the group information for the given row
 		 * @private
 		 */
 		_getRowGroupInfo: function(oTable, oRow, oRowBinding, oRowBindingInfo) {
@@ -534,7 +534,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 			oBinding.sort(new Sorter(sPropertyName));
 
 			// fetch the contexts from the original binding
-			var iLength = oBinding.getLength(),
+			var iLength = oTable._getTotalRowCount(),
 				aContexts = oBinding.getContexts(0, iLength);
 
 			// add the context information for the group headers which are later on

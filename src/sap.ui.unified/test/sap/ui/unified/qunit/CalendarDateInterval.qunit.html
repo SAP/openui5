@@ -340,24 +340,6 @@
 				oCal2.setStartDate(new Date(2015, 1, 2));
 			});
 
-			QUnit.module("Calendar Picker");
-			QUnit.test("displayed months", function(assert) {
-				var oCalP = new sap.ui.unified.CalendarDateInterval("CalP",{
-					startDate: new Date("2015", "1", "2"),
-					pickerPopup: true
-				}).placeAt("qunit-fixture");
-
-				sap.ui.getCore().applyChanges();
-
-				assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar picker not initial rendered");
-				qutils.triggerEvent("click", "CalP--Head-B1");
-				assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker rendered");
-				assert.equal(jQuery("#CalP--Cal").parent().attr("id"), "sap-ui-static", "Calendar picker rendered in static area");
-				assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
-
-				// clean
-				oCalP.destroy();
-			});
 
 			QUnit.module("Focus private API");
 			QUnit.test("_getFocusedDate()", function(assert) {

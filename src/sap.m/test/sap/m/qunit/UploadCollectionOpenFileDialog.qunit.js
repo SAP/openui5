@@ -151,8 +151,7 @@
 	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the first case of uploadComplete", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
-		var oItemToUpdate = this.oUploadCollection.getItems()[0];
-		this.oUploadCollection._oItemToUpdate = oItemToUpdate;
+		this.oUploadCollection._oItemToUpdate = this.oUploadCollection.getItems()[0];
 		var sHeaderName = this.oUploadCollection._headerParamConst.requestIdName;
 		var aRequestHeaders = [{
 			name: sHeaderName,
@@ -165,6 +164,7 @@
 				sHeaderName: this.sRequestId
 			}
 		};
+
 		// Act
 		this.oUploadCollection._getFileUploader().fireChange({
 			files: this.aFile,

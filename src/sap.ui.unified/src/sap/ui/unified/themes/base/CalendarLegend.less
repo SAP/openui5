@@ -6,16 +6,16 @@
 .sapUiUnifiedLegend {
 	color: @sapUiContentLabelColor;
 	font-family: @sapUiFontFamily;
-	font-size: @sapUiFontSmallSize;
+	font-size: @sapMFontSmallSize;
 	font-weight: normal;
-	padding: 12px;
+	padding: 0.75rem;
   	background-color: @sapUiListBackground;
 }
 
 .sapUiUnifiedLegendItems {
-	column-gap: 8px;
-	-moz-column-gap: 8px; /* Firefox */
-	-webkit-column-gap: 8px; /* Safari and Chrome */
+	column-gap: 0.5rem;
+	-moz-column-gap: 0.5rem; /* Firefox */
+	-webkit-column-gap: 0.5rem; /* Safari and Chrome */
 }
 
 .sapUiUnifiedLegendDescription {
@@ -29,14 +29,6 @@
 	cursor: default;
 }
 
-.sapMDialog-CTX, .sapMPopup-CTX {
-	.sapUiUnifiedLegendDescription, .sapUiUfdCalLegendHeader {
-		font-size: @sapMFontMediumSize;
-	}
-	.sapUiUnifiedLegendDescription {
-		margin-bottom: 0.5rem;
-	}
-}
 
 .sapUiUnifiedLegendSquare {
 	display: inline-block;
@@ -68,14 +60,14 @@
 
 .sapUiSizeCompact .sapUiUnifiedLegend,
 .sapUiSizeCompact.sapUiUnifiedLegend {
-	padding: 8px;
+	padding: 0.5rem;
 }
 
 .sapUiSizeCompact .sapUiUnifiedLegendItems,
 .sapUiSizeCompact.sapUiUnifiedLegendItems {
-  column-gap: 6px;
-  -moz-column-gap: 6px; /* Firefox */
-  -webkit-column-gap: 6px; /* Safari and Chrome */
+  column-gap: 0.5rem;
+  -moz-column-gap: 0.5rem; /* Firefox */
+  -webkit-column-gap: 0.5rem; /* Safari and Chrome */
 }
 
 .sapUiSizeCompact .sapUiUnifiedLegendSquare {
@@ -108,16 +100,14 @@
 	background: @sapUiContentForegroundColor;
 }
 
-.sapUiUfdCalLegendHeader {
-  	padding-top: 0.5rem;
-}
-
-.sapUiUnifiedLegendSquareColor.Circle {
-  border-radius: 1rem;
-}
-
 .sapUiUnifiedLegend hr {
   margin-left: -0.5rem;
   margin-right:  -0.5rem;
   border-width: 0 0 1px 0;
+}
+
+.sapMDialog-CTX, .sapMPopup-CTX {
+	.sapUiUnifiedLegend {
+		padding: 1rem;
+	}
 }

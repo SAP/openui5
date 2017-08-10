@@ -6,17 +6,6 @@
 sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(ChangeHandlerMediator) {
 	"use strict";
 
-	var fnHasContent = function(oFormContainer) {
-		if (oFormContainer.getTitle()) {
-			return true;
-		} else {
-			var oSimpleForm = oFormContainer.getParent().getParent();
-			return oSimpleForm.getContent().some(function(oControl) {
-				return oControl.getVisible();
-			});
-		}
-	};
-
 	var fnGetStableElements = function(oElement) {
 		var aStableElements = [];
 		var oLabel;
@@ -132,7 +121,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 						changeType : "moveSimpleFormField"
 					},
 					addODataProperty : function (oFormContainer) {
-						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldSettings(oFormContainer);
+						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldWithLabelSettings(oFormContainer);
 
 						if (mChangeHandlerSettings){
 							return {
@@ -162,7 +151,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 				return {
 					changeType : "removeSimpleFormGroup",
 					changeOnRelevantContainer : true,
-					isEnabled : !(!oRemovedElement.getToolbar() && !fnHasContent.call(this, oRemovedElement)),
+					isEnabled : !!(oRemovedElement.getToolbar() || oRemovedElement.getTitle()),
 					getConfirmationText : function(oRemovedElement){
 						var bContent = false;
 						if (oRemovedElement.getMetadata().getName() === "sap.ui.layout.form.FormContainer"

@@ -2,7 +2,7 @@ Feature: Delete a Product
 
   Background:
     Given I start my App
-    When on home: I press on "The second category"
+    When on home: I press on "The Flat Screens category"
     When on the category: I press on "The first Product"
     When on the product: I add the displayed product to the cart
     When on the category: I go to the cart page

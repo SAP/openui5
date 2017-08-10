@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer', './ColumnListItemRenderer'],
-	function(jQuery, Renderer, ListBaseRenderer, ColumnListItemRenderer) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer', './ColumnListItemRenderer', './ColumnHeader'],
+	function(jQuery, Renderer, ListBaseRenderer, ColumnListItemRenderer, ColumnHeader) {
 	"use strict";
 
 
@@ -115,6 +115,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 
 			if (type === "Head") {
 				rm.writeElementData(oColumn);
+				// adding ColumnHeader specific class in order to overwrite the padding of the cell
+				if (control instanceof ColumnHeader) {
+					rm.addClass(clsPrefix + "CellCH");
+				}
 			}
 
 			rm.addClass(clsPrefix + "Cell");

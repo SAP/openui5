@@ -32,6 +32,10 @@ sap.ui.define([
 			this.bObserve = bObserve;
 			this.oFlexController = oFlexController;
 			this.oComponent = oComponent;
+			this.oVariantController = undefined;
+			if (oFlexController && oFlexController._oChangePersistence) {
+				this.oVariantController = oFlexController._oChangePersistence._oVariantController;
+			}
 
 			if (oData && typeof oData == "object") {
 
@@ -67,10 +71,10 @@ sap.ui.define([
 	 * @param {String} sNewVariantRef The newly selected variant Ref
 	 * @private
 	 */
-	VariantModel.prototype._updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
-		return this.switchToVariant(sVariantMgmtRef, sNewVariantRef).then(function() {
-			this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
-		}.bind(this));
+	VariantModel.prototype.updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
+		this._switchToVariant(sVariantMgmtRef, sNewVariantRef);
+		this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
+		this.refresh(true);
 	};
 
 	/**
@@ -83,6 +87,31 @@ sap.ui.define([
 		return this.oData[sVariantMgmtRef].currentVariant;
 	};
 
+	VariantModel.prototype.getVariantManagementReference = function(sVariantRef) {
+		var sVariantManagementReference = "";
+		Object.keys(this.oData).some(function(sKey) {
+			return this.oData[sKey].variants.some(function(oVariant) {
+				if (oVariant.key === sVariantRef) {
+					sVariantManagementReference = sKey;
+					return true;
+				}
+			});
+		}.bind(this));
+		return sVariantManagementReference;
+	};
+
+	VariantModel.prototype._addChange = function(oChange) {
+		var sVariantRef = oChange.getVariantReference();
+		var sVariantMgmtRef = this.getVariantManagementReference(sVariantRef);
+		return this.oVariantController.addChangeToVariant(oChange, sVariantMgmtRef, sVariantRef);
+	};
+
+	VariantModel.prototype._removeChange = function(oChange) {
+		var sVariantRef = oChange.getVariantReference();
+		var sVariantMgmtRef = this.getVariantManagementReference(sVariantRef);
+		return this.oVariantController.removeChangeFromVariant(oChange, sVariantMgmtRef, sVariantRef);
+	};
+
 	/**
 	 * Returns the variants for a given variant management Ref
 	 * @param {String} sVariantMgmtRef The variant management Ref
@@ -90,17 +119,57 @@ sap.ui.define([
 	 * @returns {promise} Returns promise that resolves after reverting of old variants and applying of new variants is completed
 	 * @public
 	 */
-	VariantModel.prototype.switchToVariant = function(sVariantMgmtRef, sNewVariantRef) {
+	VariantModel.prototype._switchToVariant = function(sVariantMgmtRef, sNewVariantRef) {
 		var sCurrentVariantRef = this.oData[sVariantMgmtRef].currentVariant;
 		var mChangesToBeSwitched = this.oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(sVariantMgmtRef, sCurrentVariantRef, sNewVariantRef);
 
 		var oAppComponent = Utils.getAppComponentForControl(this.oComponent);
 
-		return Promise.resolve()
+		this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.aRevert, oAppComponent);
+		this.oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, this.oComponent);
+	};
 
-		.then(this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.aRevert, oAppComponent))
+	VariantModel.prototype.ensureStandardEntryExists = function(sVariantManagementKey) {
+		var oData = this.getData();
+		if (!oData[sVariantManagementKey]) {
+			// Set Standard Data to Model
+			oData[sVariantManagementKey] = {
+				modified: false,
+				currentVariant: "Standard",
+				defaultVariant: "Standard",
+				variants: [
+					{
+						author: "SAP",
+						key: "Standard",
+						layer: "CUSTOMER",
+						originalTitle: "Standard",
+						readOnly: true,
+						title: "Standard",
+						toBeDeleted: false
+					}
+				]
+			};
+			this.setData(oData);
 
-		.then(this.oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, this.oComponent));
+			// Set Standard Data to VariantController
+			if (this.oVariantController) {
+				var oVariantControllerData = {changes: { variantSection: {}}};
+				oVariantControllerData.changes.variantSection[sVariantManagementKey] = {
+					defaultVariant: "Standard",
+					variants: [
+						{
+							content: {
+								fileName: sVariantManagementKey,
+								title: "Standard",
+								fileType: "variant",
+								variantMgmtRef: sVariantManagementKey
+							}
+						}
+					]
+				};
+				this.oVariantController._setChangeFileContent(oVariantControllerData);
+			}
+		}
 	};
 
 	return VariantModel;

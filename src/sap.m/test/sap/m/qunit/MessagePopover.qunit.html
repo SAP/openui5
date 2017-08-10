@@ -642,12 +642,16 @@
 				title: sLongTitle
 			}));
 
+			this.oMessagePopover.addItem(new sap.m.MessagePopoverItem({
+				title: "dummy item"
+			}));
+
 			sap.ui.getCore().applyChanges();
 
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 
-			assert.strictEqual(this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type")
+			assert.strictEqual(this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type");
 		});
 
 		QUnit.test("aria-labelledby attribute", function (assert) {

@@ -2,23 +2,36 @@
 
 QUnit.config.autostart = false;
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 jQuery.sap.require("sap.ui.thirdparty.sinon");
 jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-sap.ui.define([ "sap/ui/fl/Utils",
-				"sap/ui/layout/VerticalLayout",
-				"sap/ui/dt/DesignTime",
-				"sap/ui/rta/command/CommandFactory",
-				"sap/ui/dt/OverlayRegistry",
-				"sap/ui/fl/registry/ChangeRegistry",
-				"sap/ui/layout/form/FormContainer",
-				"sap/ui/layout/form/Form",
-				"sap/ui/layout/form/FormLayout",
-				"sap/ui/rta/plugin/CreateContainer",
-				"sap/ui/core/Title" ],
-	function(Utils, VerticalLayout, DesignTime, CommandFactory, OverlayRegistry, ChangeRegistry, FormContainer, Form, FormLayout, CreateContainerPlugin, Title) {
+sap.ui.require([
+	"sap/ui/fl/Utils",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormLayout",
+	"sap/ui/rta/plugin/CreateContainer",
+	"sap/ui/core/Title"
+],
+function(
+	Utils,
+	VerticalLayout,
+	DesignTime,
+	CommandFactory,
+	OverlayRegistry,
+	ChangeRegistry,
+	FormContainer,
+	Form,
+	FormLayout,
+	CreateContainerPlugin,
+	Title
+) {
 
 		"use strict";
 
@@ -256,29 +269,25 @@ sap.ui.define([ "sap/ui/fl/Utils",
 			assert.deepEqual(this.oCreateContainer._determineIndex(this.oForm, undefined, vAction.aggregationName, undefined), 2, "then the default index calculation would start and returns the right index");
 		});
 
-		QUnit.test("when the designTimeMetadata has a getCreatedContainerId property and a function _getCreatedContainerId() is called", function(assert) {
+		QUnit.test("when the designTimeMetadata has a getCreatedContainerId property and a function getCreatedContainerOverlay() is called", function(assert) {
 			var vAction = {
 				getCreatedContainerId : function(sNewControlID) {
 					return sNewControlID;
 				}
 			};
 
-			assert.deepEqual(this.oCreateContainer._getCreatedContainerId(vAction, this.sNewControlID), this.oNewFormContainerOverlay, "then the correct overlay is returned");
+			assert.deepEqual(this.oCreateContainer.getCreatedContainerOverlay(vAction, this.sNewControlID), this.oNewFormContainerOverlay, "then the correct overlay is returned");
 		});
 
-		QUnit.test("when the designTimeMetadata has no getCreatedContainerId property and a function _getCreatedContainerId() is called", function(assert) {
+		QUnit.test("when the designTimeMetadata has no getCreatedContainerId property and a function getCreatedContainerOverlay() is called", function(assert) {
 			var vAction = {
 				changeType : "addGroup"
 			};
 
-			assert.deepEqual(this.oCreateContainer._getCreatedContainerId(vAction, this.sNewControlID), this.oNewFormContainerOverlay, "then the correct overlay is returned");
+			assert.deepEqual(this.oCreateContainer.getCreatedContainerOverlay(vAction, this.sNewControlID), this.oNewFormContainerOverlay, "then the correct overlay is returned");
 		});
 
 		QUnit.test("when a child overlay has createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
-			var oNewContainerOverlay = this.oNewFormContainerOverlay;
-			sandbox.stub(this.oCreateContainer, "_getCreatedContainerId").returns(oNewContainerOverlay);
-			sandbox.stub(oNewContainerOverlay, "isSelectable").returns(true);
-
 			this.oFormOverlay.setDesignTimeMetadata({
 				aggregations : {
 					formContainers : {
@@ -308,19 +317,13 @@ sap.ui.define([ "sap/ui/fl/Utils",
 				var oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
+				assert.strictEqual(oEvent.getParameter("action").createContainer.changeType, "addGroup", "then the correct action is passed to the event" );
+				assert.strictEqual(oEvent.getParameter("newControlId"), this.sNewControlID, "then the correct id is passed to the event" );
 			});
 			assert.ok(true, "then plugin createContainer is called with this overlay");
-
-			assert.deepEqual(this.oCreateContainer.handleCreate(false, this.oFormOverlay), oNewContainerOverlay, "then the correct overlay is returned");
-
-			assert.strictEqual(oNewContainerOverlay.isSelected(), true, "then the correct overlay is selected");
 		});
 
 		QUnit.test("when a sibling overlay has createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
-			var oNewContainerOverlay = this.oNewFormContainerOverlay;
-			sandbox.stub(this.oCreateContainer, "_getCreatedContainerId").returns(oNewContainerOverlay);
-			sandbox.stub(oNewContainerOverlay, "isSelectable").returns(true);
-
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
@@ -331,11 +334,11 @@ sap.ui.define([ "sap/ui/fl/Utils",
 					var oCommand = oEvent.getParameter("command");
 					assert.ok(oCommand, "then command is available");
 					assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
+					assert.strictEqual(oEvent.getParameter("action").createContainer.changeType, "addGroup", "then the correct action is passed to the event" );
+					assert.strictEqual(oEvent.getParameter("newControlId"), this.sNewControlID, "then the correct id is passed to the event" );
 				});
 
 				assert.ok(true, "then plugin createContainer is called with this overlay");
-				assert.deepEqual(this.oCreateContainer.handleCreate(true, this.oFormContainerOverlay), oNewContainerOverlay, "then the correct overlay is returned");
-				assert.strictEqual(oNewContainerOverlay.isSelected(), true, "then the correct overlay is selected");
 				done();
 			}.bind(this));
 

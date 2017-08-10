@@ -31,7 +31,7 @@
 		"view/App.view.xml",
 		"view/Home.view.xml",
 		"view/settings/AppSettings.view.xml",
-		"view/settings/DetailSettings1.view.xml",
+		"view/settings/DetailSettings.view.xml",
 		"view/settings/MasterSettings.view.xml",
 		"view/Statistics.view.xml",
 		"view/StatisticsD3.view.xml",

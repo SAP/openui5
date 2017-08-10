@@ -33,7 +33,8 @@
 
 					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
 						<m:Label text="API Reference:"/>
-						<m:Link text="{/name}" enabled="true" href="#/api/{/name}"/>
+						<m:Link text="{/name}" enabled="true" href="#/api/{/name}" visible="{= ${/entity/category} !== 'Tutorial'}"/>
+						<m:Text text="N/A" visible="{= ${/entity/category} === 'Tutorial'}"/>
 					</m:HBox>
 
 					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">

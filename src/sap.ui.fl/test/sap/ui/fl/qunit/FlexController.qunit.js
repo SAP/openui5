@@ -1377,6 +1377,7 @@ function (
 			this.oChangeHandlerApplyChangeStub = sandbox.stub();
 			this.oChangeHandlerRevertChangeStub = sandbox.stub();
 			this.oAddChangeAndUpdateDependenciesSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addChangeAndUpdateDependencies");
+			this.oApplyChangesOnControlSpy = sandbox.spy(this.oFlexController, "applyChangesOnControl");
 			this.oDeleteChangeInMapSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_deleteChangeInMap");
 
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
@@ -1417,6 +1418,8 @@ function (
 
 	QUnit.test("when applyVariantChanges is called with 2 unapplied changes", function (assert) {
 		this.oFlexController.applyVariantChanges([this.oChange, this.oChange2], this.oComponent);
+		assert.ok(this.oApplyChangesOnControlSpy.firstCall.calledAfter(this.oAddChangeAndUpdateDependenciesSpy.secondCall), "then applyChangesOnControl after all dependencies have been udpated");
+		assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 2, "then 2 changes added to map");
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "both changes were applied");
 		assert.ok(this.oAddChangeAndUpdateDependenciesSpy.calledTwice, "both changes were added to the map and dependencies were updated");
 	});
@@ -1532,13 +1535,19 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		this.oChange.setVariantReference("testVarRef");
+		sandbox.stub(oComponent, "getModel").returns({_addChange: function(){}});
+		var oAddChangeStub = sandbox.stub(oComponent.getModel(), "_addChange");
+
+		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView, appComponent: oComponent});
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		assert.ok(oAddChangeStub.calledOnce, "then model's _addChange is called as VariantManagement Change is detected");
 		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
 		assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
 		var oCustomData = oCustomDataAggregationNode.childNodes[0];
 		assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
 		assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
+		this.oChange.setVariantReference();
 	 });
 
 	QUnit.test("reverts add custom data on the first change applied on a control", function (assert) {
@@ -1551,10 +1560,16 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true);
+		this.oChange.setVariantReference("testVarRef");
+		sandbox.stub(oComponent, "getModel").returns({_removeChange: function(){}});
+		var oRemoveChangeStub = sandbox.stub(oComponent.getModel(), "_removeChange");
+
+		this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView, appComponent: oComponent}, true);
 		assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
+		assert.ok(oRemoveChangeStub.calledOnce, "then model's _removeChange is called as VariantManagement Change is detected for which Change.bFromLrep flag is not set");
 		var oCustomData = this.oControl.getElementsByTagName("customData")[0].childNodes[0];
 		assert.equal(oCustomData.getAttribute("value"), "", "the change id got deleted");
+		this.oChange.setVariantReference();
 	});
 
 	QUnit.test("concatenate custom data on the later changes applied on a control", function (assert) {
@@ -1720,13 +1735,19 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		this.oChange.setVariantReference("testVarRef");
+		sandbox.stub(oComponent, "getModel").returns({_addChange: function(){}});
+		var oAddChangeStub = sandbox.stub(oComponent.getModel(), "_addChange");
+
+		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView, appComponent: oComponent});
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		assert.ok(oAddChangeStub.calledOnce, "then model's _addChange is called as VariantManagement Change is detected");
 		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
 		assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
 		var oCustomData = oCustomDataAggregationNode.childNodes[0];
 		assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
 		assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
+		this.oChange.setVariantReference();
 	 });
 
 });

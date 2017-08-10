@@ -56,10 +56,10 @@ sap.ui.define([
 					this.showAvailableElements(bOverlayIsSibling, [oOverlay], iIndex, sControlName);
 				}.bind(this);
 
-				var fnAddButton = function(oOverlay, oOverlayDom, bSibling, vControlName) {
+				var fnAddButton = function(oOverlay, oOverlayDom, bSibling, vControlName, iIndex) {
 					var fnCallback = function(oEvent) {
 						var oOverlay = sap.ui.getCore().byId(oEvent.getSource().getId().replace("-AddButton", ""));
-						onAddPressed(bSibling, oOverlay);
+						onAddPressed(bSibling, oOverlay, iIndex);
 						oEvent.cancelBubble();
 					};
 					var sControlName = typeof vControlName === "function" ? vControlName() : vControlName;
@@ -81,7 +81,7 @@ sap.ui.define([
 				} else if (oOverlay.$().hasClass("sapUiRtaPersAddTop")) {
 					if (oOverlay.getAggregationOverlay("sections").$().children(".sapUiRtaPersAddIconOuter").length <= 0) {
 						var $sectionsOverlay = oOverlay.getAggregationOverlay("sections").$();
-						fnAddButton(oOverlay, $sectionsOverlay, false, oOverlay.getDesignTimeMetadata().getAggregation("sections").childNames.singular);
+						fnAddButton(oOverlay, $sectionsOverlay, false, oOverlay.getDesignTimeMetadata().getAggregation("sections").childNames.singular, 0);
 					}
 				}
 

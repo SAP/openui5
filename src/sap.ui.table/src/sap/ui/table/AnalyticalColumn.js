@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 	/*
 	 * Factory method. Creates the column menu.
 	 *
-	 * @return {sap.ui.table.AnalyticalColumnMenu} The created column menu.
+	 * @returns {sap.ui.table.AnalyticalColumnMenu} The created column menu.
 	 */
 	AnalyticalColumn.prototype._createMenu = function() {
 		return new AnalyticalColumnMenu(this.getId() + "-menu");
@@ -276,7 +276,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 
 	/**
 	 * Checks whether or not the menu has items
-	 * @return {Boolean} True if the menu has or could have items.
+	 * @returns {Boolean} True if the menu has or could have items.
 	 */
 	AnalyticalColumn.prototype._menuHasItems = function() {
 		var fnMenuHasItems = function() {

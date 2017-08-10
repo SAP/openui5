@@ -1,26 +1,39 @@
-/*global QUnit sinon*/
+/* global QUnit sinon */
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+QUnit.config.autostart = false;
 
-jQuery.sap.require("sap.ui.qunit.QUnitUtils");
 jQuery.sap.require("sap.ui.thirdparty.sinon");
 jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-// jQuery.sap.require("sap.ui.layout.VerticalLayout");
-jQuery.sap.require("sap.m.VBox");
-jQuery.sap.require("sap.uxap.ObjectPageSection");
-jQuery.sap.require("sap.uxap.ObjectPageLayout");
-jQuery.sap.require("sap.uxap.ObjectPageSubSection");
-jQuery.sap.require("sap.ui.dt.DesignTime");
-jQuery.sap.require("sap.ui.rta.command.CommandFactory");
-jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
-jQuery.sap.require("sap.ui.rta.plugin.additionalElements.AddElementsDialog");
-jQuery.sap.require("sap.ui.rta.plugin.EasyAdd");
-
-(function() {
+sap.ui.require([
+	"sap/ui/dt/DesignTime",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/EasyAdd",
+	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/ObjectPageSubSection",
+	"sap/m/VBox",
+	"sap/m/Button"
+],
+function(
+	DesignTime,
+	CommandFactory,
+	EasyAdd,
+	AddElementsDialog,
+	AdditionalElementsPlugin,
+	OverlayRegistry,
+	ObjectPageSection,
+	ObjectPageLayout,
+	ObjectPageSubSection,
+	VBox,
+	Button
+) {
 	"use strict";
+	QUnit.start();
 
 	var oMockedAppComponent = {
 		getLocalId: function () {
@@ -48,59 +61,79 @@ jQuery.sap.require("sap.ui.rta.plugin.EasyAdd");
 		getModel: function () {}
 	};
 	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			this.oEasyAddPlugin = new sap.ui.rta.plugin.EasyAdd({
-				commandFactory : new sap.ui.rta.command.CommandFactory(),
-				dialog: new sap.ui.rta.plugin.additionalElements.AddElementsDialog({title: "hugo"}),
+			this.oEasyAddPlugin = new EasyAdd({
+				commandFactory : new CommandFactory(),
+				dialog: new AddElementsDialog({title: "hugo"}),
 				analyzer : sap.ui.rta.plugin.additionalElements.AdditionalElementsAnalyzer
 			});
 
-			this.oSubSection = new sap.uxap.ObjectPageSubSection("subsection", {
-				blocks: [new sap.m.Button({text: "abc"})]
+			this.oSubSection = new ObjectPageSubSection("subsection", {
+				blocks: [new Button({text: "abc"})]
 			});
-			this.oSection = new sap.uxap.ObjectPageSection("section", {
+			this.oSection = new ObjectPageSection("section", {
 				subSections: [this.oSubSection]
 			});
-			this.oLayout = new sap.uxap.ObjectPageLayout("layout", {
+			this.oLayout = new ObjectPageLayout("layout", {
 				sections : [this.oSection]
 			});
-			this.oVBox = new sap.m.VBox({
+			this.oVBox = new VBox({
 				items : [this.oLayout]
 			}).placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements : [this.oVBox],
 				plugins : [this.oEasyAddPlugin]
 			});
 
+			this.oShowAvailableElementsSpy = sandbox.spy(AdditionalElementsPlugin.prototype, "showAvailableElements");
+
 			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
-				this.oSectionOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSection);
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+				this.oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
 				done();
 			}.bind(this));
 
 		},
 		afterEach : function(assert) {
+			sandbox.restore();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
 		}
 	});
 
-	QUnit.test("when an ObjectPageSection is rendered and the EasyAddPlugin is used", function(assert) {
+	QUnit.test("when an ObjectPageSection is rendered and the EasyAddPlugin is used on the Layout", function(assert) {
 		var done = assert.async();
-		var oButton = sap.ui.getCore().byId(this.oSectionOverlay.getId() + "-AddButton-img");
-		assert.ok(!!oButton, "then the Add-Button is displayed on the Section");
 
-		oButton = sap.ui.getCore().byId(this.oLayoutOverlay.getId() + "-AddButton-img");
+		var oButton = sap.ui.getCore().byId(this.oLayoutOverlay.getId() + "-AddButton-img");
 		assert.ok(!!oButton, "then the Add-Button of the Layout is displayed");
 
 		this.oEasyAddPlugin.getDialog().attachOpened(function() {
 			assert.ok(true, "then dialog pops up,");
+			assert.equal(this.oShowAvailableElementsSpy.callCount, 1, "then showAvailableElements was called");
+			assert.ok(this.oShowAvailableElementsSpy.calledWith(false, [this.oLayoutOverlay], 0, "Sections"), "then showAvailableElements was called with the right parameters");
+			assert.equal(this.oEasyAddPlugin.getDialog().getTitle(), "Available Sections", "then the title is set");
+			this.oEasyAddPlugin.getDialog()._cancelDialog();
+			done();
+		}.bind(this));
+		sap.ui.qunit.QUnitUtils.triggerEvent("tap", oButton.getDomRef());
+	});
+
+	QUnit.test("when an ObjectPageSection is rendered and the EasyAddPlugin is used on the Section", function(assert) {
+		var done = assert.async();
+		var oButton = sap.ui.getCore().byId(this.oSectionOverlay.getId() + "-AddButton-img");
+		assert.ok(!!oButton, "then the Add-Button of the Layout is displayed");
+
+		this.oEasyAddPlugin.getDialog().attachOpened(function() {
+			assert.ok(true, "then dialog pops up,");
+			assert.equal(this.oShowAvailableElementsSpy.callCount, 1, "then showAvailableElements was called");
+			assert.ok(this.oShowAvailableElementsSpy.calledWith(true, [this.oSectionOverlay], undefined, "Sections"), "then showAvailableElements was called with the right parameters");
 			assert.equal(this.oEasyAddPlugin.getDialog().getTitle(), "Available Sections", "then the title is set");
 			this.oEasyAddPlugin.getDialog()._cancelDialog();
 			done();
@@ -137,26 +170,26 @@ jQuery.sap.require("sap.ui.rta.plugin.EasyAdd");
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			this.oEasyAddPlugin = new sap.ui.rta.plugin.EasyAdd({
-				commandFactory : new sap.ui.rta.command.CommandFactory(),
-				dialog: new sap.ui.rta.plugin.additionalElements.AddElementsDialog(),
+			this.oEasyAddPlugin = new EasyAdd({
+				commandFactory : new CommandFactory(),
+				dialog: new AddElementsDialog(),
 				analyzer : sap.ui.rta.plugin.additionalElements.AdditionalElementsAnalyzer
 			});
 
-			this.oLayout = new sap.uxap.ObjectPageLayout("layout", {});
-			this.oVBox = new sap.m.VBox({
+			this.oLayout = new ObjectPageLayout("layout", {});
+			this.oVBox = new VBox({
 				items : [this.oLayout]
 			}).placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements : [this.oVBox],
 				plugins : [this.oEasyAddPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
-				this.oSectionOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSection);
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+				this.oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
 				done();
 			}.bind(this));
 
@@ -177,29 +210,29 @@ jQuery.sap.require("sap.ui.rta.plugin.EasyAdd");
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			this.oEasyAddPlugin = new sap.ui.rta.plugin.EasyAdd({
-				commandFactory : new sap.ui.rta.command.CommandFactory()
+			this.oEasyAddPlugin = new EasyAdd({
+				commandFactory : new CommandFactory()
 			});
 
-			this.oSubSection = new sap.uxap.ObjectPageSubSection("subsection", {
-				blocks: [new sap.m.Button({text: "abc"})]
+			this.oSubSection = new ObjectPageSubSection("subsection", {
+				blocks: [new Button({text: "abc"})]
 			});
-			this.oSection = new sap.uxap.ObjectPageSection({
+			this.oSection = new ObjectPageSection({
 				subSections: [this.oSubSection]
 			});
-			this.oLayout = new sap.uxap.ObjectPageLayout("layout", {
+			this.oLayout = new ObjectPageLayout("layout", {
 				sections : [this.oSection]
 			}).placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements : [this.oLayout],
 				plugins : [this.oEasyAddPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
-				this.oSectionOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSection);
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+				this.oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
 				done();
 			}.bind(this));
 
@@ -215,4 +248,4 @@ jQuery.sap.require("sap.ui.rta.plugin.EasyAdd");
 		assert.notOk(!!oButton, "then the Add-Button is not displayed");
 	});
 
-})();
+});

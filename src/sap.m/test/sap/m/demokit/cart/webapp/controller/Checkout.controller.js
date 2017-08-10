@@ -212,10 +212,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * navigates to "cart" for further shopping / editing
+		 * navigates to "home" for further shopping
 		 */
 		onReturnToShopButtonPress: function () {
-			this.getRouter().navTo("cart");
+			this.getRouter().navTo("home");
 		},
 
 		// *** the following functions are private "helper" functions ***

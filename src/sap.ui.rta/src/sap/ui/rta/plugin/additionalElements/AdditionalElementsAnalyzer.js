@@ -109,14 +109,36 @@
 						var sBindingContextPath = oBindingContext.getPath();
 						var oMetaModelContext = oMetaModel.getMetaContext(sBindingContextPath);
 						var mODataEntity = oMetaModelContext.getObject();
+						var oDefaultAggregation = oElement.getMetadata().getAggregation();
+
+						if (oDefaultAggregation) {
+							var oBinding = oElement.getBindingInfo(oDefaultAggregation.name);
+							var oTemplate = oBinding && oBinding.template;
+
+							if (oTemplate) {
+								var sPath = oElement.getBindingPath(oDefaultAggregation.name);
+								if (sPath) {
+									var sFullyQualifiedEntityName = (
+										oMetaModel.getODataAssociationEnd(mODataEntity, sPath)
+										&& oMetaModel.getODataAssociationEnd(mODataEntity, sPath).type
+									);
+									var oEntityType = oMetaModel.getODataEntityType(sFullyQualifiedEntityName);
+									mODataEntity = oEntityType;
+								}
+							}
+						}
+
 						mData.property = mODataEntity.property || [];
 						mData.property = _expandComplexProperties(mData.property, oMetaModel, mODataEntity);
 						mData.property = _filterInvisibleProperties(mData.property, oElement);
+
 						if (mODataEntity.navigationProperty){
 							mData.navigationProperty = mODataEntity.navigationProperty;
 							mODataEntity.navigationProperty.forEach(function(oNavProp){
-								var sFullyQualifiedEntityName = oMetaModel.getODataAssociationEnd(mODataEntity, oNavProp.name)
-									&& oMetaModel.getODataAssociationEnd(mODataEntity, oNavProp.name).type;
+								var sFullyQualifiedEntityName = (
+									oMetaModel.getODataAssociationEnd(mODataEntity, oNavProp.name)
+									&& oMetaModel.getODataAssociationEnd(mODataEntity, oNavProp.name).type
+								);
 								var oEntityType = oMetaModel.getODataEntityType(sFullyQualifiedEntityName);
 								if (oEntityType && oEntityType.name){
 									if (mData.navigationEntityNames.indexOf(oEntityType.name) === -1){
@@ -178,7 +200,7 @@
 	 * @private
 	 */
 	function _getRelevantElements(oElement, oRelevantContainer){
-		if (oRelevantContainer) {
+		if (oRelevantContainer && oRelevantContainer !== oElement) {
 			var sEntityName = RtaUtils.getEntityTypeByPath(
 				oElement.getModel(),
 				oElement.getBindingContext().getPath()
@@ -223,18 +245,45 @@
 	function _collectBindingPaths(oInvisibleElement, oModel){
 		oInvisibleElement.bindingPaths = [];
 		oInvisibleElement.bindingContextPaths = [];
+		var sAggregationName = oInvisibleElement.sParentAggregationName;
+		var oParent = oInvisibleElement.getParent();
+		var aBindings = BindingsExtractor.getBindings(oInvisibleElement, oModel);
 
-		var oBindings = BindingsExtractor.getBindings(oInvisibleElement, oModel);
+		if (oParent) {
+			var oDefaultAggregation = oParent.getMetadata().getAggregation();
 
-		for (var i = 0, l = oBindings.length; i < l; i++) {
-			if (oBindings[i].getPath && oBindings[i].getPath()){
-				if (oInvisibleElement.bindingPaths.indexOf(oBindings[i].getPath()) === -1){
-					oInvisibleElement.bindingPaths.push(oBindings[i].getPath());
+			if (oDefaultAggregation) {
+				var iPositionOfInvisibleElement = oParent.getAggregation(sAggregationName).indexOf(oInvisibleElement);
+				var sParentDefaultAggregationName = oDefaultAggregation.name;
+				var oBinding = oParent.getBindingInfo(sParentDefaultAggregationName);
+				var oTemplate = oBinding && oBinding.template;
+
+				if (oTemplate) {
+					var oTemplateDefaultAggregation = oTemplate.getMetadata().getAggregation();
+
+					if (oTemplateDefaultAggregation) {
+						var sTemplateDefaultAggregationName = oTemplateDefaultAggregation.name;
+						var oTemplateElement = oTemplate.getAggregation(sTemplateDefaultAggregationName)[iPositionOfInvisibleElement];
+						aBindings = aBindings.concat(BindingsExtractor.getBindings(oTemplateElement, null, true));
+					}
 				}
 			}
-			if (oBindings[i].getContext && oBindings[i].getContext()){
-				if (oInvisibleElement.bindingContextPaths.indexOf(oBindings[i].getContext().getPath()) === -1){
-					oInvisibleElement.bindingContextPaths.push(oBindings[i].getContext().getPath());
+		}
+
+		for (var i = 0, l = aBindings.length; i < l; i++) {
+			if (aBindings[i].getPath && aBindings[i].getPath()){
+				if (oInvisibleElement.bindingPaths.indexOf(aBindings[i].getPath()) === -1){
+					oInvisibleElement.bindingPaths.push(aBindings[i].getPath());
+				}
+			}
+			if (aBindings[i].getContext && aBindings[i].getContext()){
+				if (oInvisibleElement.bindingContextPaths.indexOf(aBindings[i].getContext().getPath()) === -1){
+					oInvisibleElement.bindingContextPaths.push(aBindings[i].getContext().getPath());
+				}
+			}
+			if (jQuery.isPlainObject(aBindings[i])){
+				if (oInvisibleElement.bindingPaths.indexOf(aBindings[i].parts[0].path) === -1){
+					oInvisibleElement.bindingPaths.push(aBindings[i].parts[0].path);
 				}
 			}
 		}
@@ -439,8 +488,12 @@
 					aODataProperties = aODataProperties.filter(function(oDataProperty) {
 						var bHasBindingPath = false;
 						if (aBindings){
-							bHasBindingPath = aBindings.some(function(oBinding){
-								return !!oBinding.getPath && (oBinding.getPath() === oDataProperty.bindingPath);
+							bHasBindingPath = aBindings.some(function(vBinding) {
+								return (
+									jQuery.isPlainObject(vBinding)
+									? vBinding.parts[0].path
+									: !!vBinding.getPath && vBinding.getPath()
+								) === oDataProperty.bindingPath;
 							});
 						}
 						return !bHasBindingPath && fnFilter(mAction.relevantContainer, oDataProperty);
