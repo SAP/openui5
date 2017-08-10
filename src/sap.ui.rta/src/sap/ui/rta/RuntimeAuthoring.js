@@ -44,7 +44,8 @@ sap.ui.define([
 		"sap/ui/core/BusyIndicator",
 		"sap/ui/dt/DOMUtil",
 		"sap/ui/rta/util/StylesLoader",
-		"sap/ui/rta/appVariant/ManageAppsLoader"
+		"sap/ui/rta/appVariant/ManageAppsLoader",
+		"sap/ui/Device"
 	],
 	function(
 		jQuery,
@@ -87,7 +88,8 @@ sap.ui.define([
 		BusyIndicator,
 		DOMUtil,
 		StylesLoader,
-		ManageAppsLoader
+		ManageAppsLoader,
+		Device
 	) {
 	"use strict";
 
@@ -697,24 +699,36 @@ sap.ui.define([
 
 	RuntimeAuthoring.prototype._onKeyDown = function(oEvent) {
 		// if for example the addField Dialog/transport/reset Popup is open, we don't want the user to be able to undo/redo
+		var bMacintosh = Device.os.macintosh;
 		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().contains(document.activeElement);
 		var bFocusInsideRtaToolbar = this._oToolsMenu.getDomRef().contains(document.activeElement);
 		var bFocusOnBody = document.body === document.activeElement;
-		var bFocusInsideRenameField = jQuery(".sapUiRtaEditableField").get(0) ? jQuery(".sapUiRtaEditableField").get(0).contains(document.activeElement) : false;
+		var bFocusInsideRenameField = jQuery(document.activeElement).parents('.sapUiRtaEditableField').length > 0;
 
 		if ((bFocusInsideOverlayContainer || bFocusInsideRtaToolbar || bFocusOnBody) && !bFocusInsideRenameField) {
-			// on macintosh os cmd-key is used instead of ctrl-key
-			var bCtrlKey = sap.ui.Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
-			if ((oEvent.keyCode === jQuery.sap.KeyCodes.Z) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
-				// CTRL+Z
-				this._onUndo()
-
-				.then(oEvent.stopPropagation.bind(oEvent));
-			} else if ((oEvent.keyCode === jQuery.sap.KeyCodes.Y) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
-				// CTRL+Y
-				this._onRedo()
-
-				.then(oEvent.stopPropagation.bind(oEvent));
+			// OSX: replace CTRL with CMD
+			var bCtrlKey = bMacintosh ? oEvent.metaKey : oEvent.ctrlKey;
+			if (
+				oEvent.keyCode === jQuery.sap.KeyCodes.Z
+				&& oEvent.shiftKey === false
+				&& oEvent.altKey === false
+				&& bCtrlKey === true
+			) {
+				this._onUndo().then(oEvent.stopPropagation.bind(oEvent));
+			} else if (
+				(( // OSX: CMD+SHIFT+Z
+					bMacintosh
+					&& oEvent.keyCode === jQuery.sap.KeyCodes.Z
+					&& oEvent.shiftKey === true
+				) || ( // Others: CTRL+Y
+					!bMacintosh
+					&& oEvent.keyCode === jQuery.sap.KeyCodes.Y
+					&& oEvent.shiftKey === false
+				))
+				&& oEvent.altKey === false
+				&& bCtrlKey === true
+			) {
+				this._onRedo().then(oEvent.stopPropagation.bind(oEvent));
 			}
 		}
 	};
