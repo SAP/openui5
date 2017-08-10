@@ -149,6 +149,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         });
 
+        /**
+         * Sets initial values of the control.
+         *
+         * @name sap.m.NotificationListBase.init
+         * @method
+         * @protected
+         */
         NotificationListBase.prototype.init = function () {
             this.setAggregation('_overflowToolbar', new OverflowToolbar());
         };
@@ -157,6 +164,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
         // Overwritten setters and getters
         //================================================================================
 
+        /**
+         * Overwrites the setter of the title property.
+         *
+         * @overwrites
+         * @name sap.m.NotificationListBase.setTitle
+         * @method
+         * @public
+         * @param {string} title Title.
+         * @returns {sap.m.NotificationListBase} NotificationListBase reference for chaining.
+         */
         NotificationListBase.prototype.setTitle = function (title) {
             var result = this.setProperty('title', title);
 
@@ -165,6 +182,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             return result;
         };
 
+        /**
+         * Overwrites the setter for the datetime property.
+         *
+         * @overwrites
+         * @name sap.m.NotificationListBase.setDatetime
+         * @method
+         * @public
+         * @param {string} dateTime The datetime in string format.
+         * @returns {string} The set datetime value.
+         */
         NotificationListBase.prototype.setDatetime = function (dateTime) {
             var result = this.setProperty('datetime', dateTime);
 
@@ -173,6 +200,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             return result;
         };
 
+        /**
+         * Overwrites the authorName property.
+         *
+         * @name sap.m.NotificationListBase.setAuthorName
+         * @method
+         * @public
+         * @param {string} authorName The author name in string format.
+         * @returns {string} The set author name.
+         */
         NotificationListBase.prototype.setAuthorName = function(authorName) {
             var result = this.setProperty('authorName', authorName);
 
@@ -185,6 +221,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
         // Control methods
         //================================================================================
 
+        /**
+         * Clones the NotificationListBase.
+         *
+         * @name sap.m.NotificationListBase.clone
+         * @method
+         * @public
+         * @returns {sap.m.NotificationListBase} The cloned NotificationListBase.
+         */
         NotificationListBase.prototype.clone = function () {
             var clonedObject = Control.prototype.clone.apply(this, arguments);
 
@@ -195,6 +239,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             return clonedObject;
         };
 
+        /**
+         * Closes the NotificationListBase.
+         *
+         * @name sap.m.NotificationListBase.close
+         * @method
+         * @public
+         */
         NotificationListBase.prototype.close = function () {
             var parent = this.getParent();
             this.fireClose();
@@ -214,6 +265,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
         // Delegation aggregation methods to the Overflow Toolbar
         //================================================================================
 
+        /**
+         * Binds aggregation.
+         *
+         * @name sap.m.NotificationListBase.bindAggregation
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @param {object} bindingInfo The binding information for the aggregation.
+         */
         NotificationListBase.prototype.bindAggregation = function (aggregationName, bindingInfo) {
             if (aggregationName == 'buttons') {
                 this.getAggregation('_overflowToolbar').bindAggregation('content', bindingInfo);
@@ -223,6 +283,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Validates aggregation.
+         *
+         * @name sap.m.NotificationListBase.validateAggregation
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @param {object} object The object from which the aggregation will be validated.
+         * @param {boolean} multiple Indicator for multiple aggregation validation.
+         */
         NotificationListBase.prototype.validateAggregation = function (aggregationName, object, multiple) {
             if (aggregationName == 'buttons') {
                 this.getAggregation('_overflowToolbar').validateAggregation('content', object, multiple);
@@ -232,6 +302,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Sets aggregation.
+         *
+         * @name sap.m.NotificationListBase.setAggregation
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @param {object} object Object.
+         * @param {boolean} suppressInvalidate Indicator for suppressing invalidation.
+         */
         NotificationListBase.prototype.setAggregation = function (aggregationName, object, suppressInvalidate) {
             if (aggregationName == 'buttons') {
                 this.getAggregation('_overflowToolbar').setAggregation('content', object, suppressInvalidate);
@@ -241,6 +321,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Gets aggregation.
+         *
+         * @name sap.m.NotificationListBase.getAggregation
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @param {object} defaultObjectToBeCreated Default objects to be created.
+         */
         NotificationListBase.prototype.getAggregation = function (aggregationName, defaultObjectToBeCreated) {
             if (aggregationName == 'buttons') {
                 var toolbar = this.getAggregation('_overflowToolbar');
@@ -253,6 +342,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Gets index of an aggregation.
+         *
+         * @name sap.m.NotificationListBase.indexOfAggregation
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @param {object} object The object with the aggregation.
+         */
         NotificationListBase.prototype.indexOfAggregation = function (aggregationName, object) {
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').indexOfAggregation('content', object);
@@ -261,6 +359,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Inserts aggregation.
+         *
+         * @name sap.m.NotificationListBase.insertAggregation
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @param {object} object The object with the aggregation.
+         * @param {int} index The index of the aggregation.
+         * @param {boolean} suppressInvalidate Indicator for suppressing invalidation.
+         */
         NotificationListBase.prototype.insertAggregation = function (aggregationName, object, index, suppressInvalidate) {
             if (aggregationName == 'buttons') {
                 this.getAggregation('_overflowToolbar').insertAggregation('content', object, index, suppressInvalidate);
@@ -270,6 +379,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Adds aggregation.
+         *
+         * @name sap.m.NotificationListBase.addAggregation
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @param {object} object The object containing the aggregation.
+         * @param {boolean} suppressInvalidate Indicator for suppressing invalidation.
+         * @returns {any} The added aggregation.
+         */
         NotificationListBase.prototype.addAggregation = function (aggregationName, object, suppressInvalidate) {
             if (aggregationName == 'buttons') {
                 var toolbar = this.getAggregation('_overflowToolbar');
@@ -280,6 +400,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Removes aggregation.
+         *
+         * @name sap.m.NotificationListBase.removeAggregation
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @param {object} object The object containing the aggregation.
+         * @param {boolean} suppressInvalidate Indicator for suppressing invalidation.
+         * @returns {any} The removed aggregation.
+         */
         NotificationListBase.prototype.removeAggregation = function (aggregationName, object, suppressInvalidate) {
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').removeAggregation('content', object, suppressInvalidate);
@@ -288,6 +419,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Removes all aggregations.
+         *
+         * @name sap.m.NotificationListBase.removeAllAggregation
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @param {boolean} suppressInvalidate Indicator for suppressing invalidation.
+         * @returns {any} The removed aggregations.
+         */
         NotificationListBase.prototype.removeAllAggregation = function (aggregationName, suppressInvalidate) {
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').removeAllAggregation('content', suppressInvalidate);
@@ -296,6 +437,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Destroys aggregation.
+         *
+         * @name sap.m.NotificationListBase.destroyAggregation
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @param {boolean} suppressInvalidate Indicator for suppressing invalidation.
+         * @returns {any} The destroyed aggregations.
+         */
         NotificationListBase.prototype.destroyAggregation = function (aggregationName, suppressInvalidate) {
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').destroyAggregation('content', suppressInvalidate);
@@ -304,6 +455,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Gets binding.
+         *
+         * @name sap.m.NotificationListBase.getBinding
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @returns {any} The binding.
+         */
         NotificationListBase.prototype.getBinding = function (aggregationName) {
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').getBinding('content');
@@ -312,6 +472,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Gets binding information.
+         *
+         * @name sap.m.NotificationListBase.getBindingInfo
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @returns {any} The binding information.
+         */
         NotificationListBase.prototype.getBindingInfo = function (aggregationName) {
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').getBindingInfo('content');
@@ -320,6 +489,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             }
         };
 
+        /**
+         * Gets the binding path.
+         *
+         * @name sap.m.NotificationListBase.getBindingPath
+         * @method
+         * @public
+         * @param {string} aggregationName The name of the aggregation.
+         * @returns {any} The binding path.
+         */
         NotificationListBase.prototype.getBindingPath = function (aggregationName) {
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').getBindingPath('content');
@@ -334,8 +512,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
         /**
          * Returns the sap.m.Text control used in the NotificationListBase's header title.
-         * @returns {sap.m.Text} The title control inside the Notification List Base control
+         *
+         * @name sap.m.NotificationListBase._getHeaderTitle
+         * @method
          * @protected
+         * @returns {sap.m.Text} The title control inside the NotificationListBase control.
          */
         NotificationListBase.prototype._getHeaderTitle = function () {
             var title = this.getAggregation("_headerTitle");
@@ -355,8 +536,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
         /**
          * Returns the sap.m.Text control used in the NotificationListBase's header title.
-         * @returns {sap.m.Text} The datetime control inside the Notification List Base control
+         *
+         * @name sap.m.NotificationListBase._getDateTimeText
+         * @method
          * @protected
+         * @returns {sap.m.Text} The datetime control inside the NotificationListBase control.
          */
         NotificationListBase.prototype._getDateTimeText = function () {
             /** @type {sap.m.Text} */
@@ -376,8 +560,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
         /**
          * Returns the sap.m.Text control used in the NotificationListBase's author name.
-         * @returns {sap.m.Text} The notification author name text
+         *
+         * @name sap.m.NotificationListBase._getAuthorName
+         * @method
          * @protected
+         * @returns {sap.m.Text} The notification author name text.
          */
         NotificationListBase.prototype._getAuthorName = function() {
             /** @type {sap.m.Text} */
@@ -396,8 +583,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
         /**
          * Returns the sap.m.Image or the sap.ui.core.Control used in the NotificationListBase's author picture.
-         * @returns {sap.m.Image|sap.ui.core.Control} The notification author picture text
+         *
+         * @name sap.m.NotificationListBase._getAuthorImage
+         * @method
          * @protected
+         * @returns {sap.m.Image|sap.ui.core.Control} The notification author picture text.
          */
         NotificationListBase.prototype._getAuthorImage = function() {
             /** @type {sap.m.Image|sap.ui.core.Control} */
@@ -427,8 +617,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
         /**
          * Returns the sap.m.OverflowToolbar control used in the NotificationListBase.
-         * @returns {sap.m.OverflowToolbar} The footer toolbar
+         *
+         * @name sap.m.NotificationListBase._getToolbar
+         * @method
          * @protected
+         * @returns {sap.m.OverflowToolbar} The footer toolbar.
          */
         NotificationListBase.prototype._getToolbar = function () {
             var toolbar = this.getAggregation("_overflowToolbar");
@@ -447,10 +640,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
         //================================================================================
 
         /**
-         * Checks is an sap.ui.core.URI parameter is an icon src or not.
-         * @param {string} source The source to be checked.
-         * @returns {boolean} The result of the check
+         * Checks if an sap.ui.core.URI parameter is an icon src or not.
+         *
+         * @name isIcon
+         * @function
          * @protected
+         * @param {string} source The source to be checked.
+         * @returns {boolean} The result of the check.
          */
         function isIcon(source) {
             if (!source) {
