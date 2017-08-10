@@ -74,7 +74,7 @@ sap.ui.define([
 			var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 			ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
 			.then(function (fnGetChangesMap) {
-				oComponent.addPropagationListener(oFlexController.applyChangesOnControl.bind(oFlexController, fnGetChangesMap, oComponent));
+				oComponent.addPropagationListener(oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, oComponent));
 				var oData = oFlexController.getVariantModelData() || {};
 				oComponent.setModel(new VariantModel(oData, oFlexController, oComponent), "$FlexVariants");
 			});
