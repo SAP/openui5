@@ -180,6 +180,14 @@
 				aMonths = $MonthsRow.find(".sapUiCalItem");
 				assert.equal(jQuery(aMonths[0]).attr("data-sap-month"), "20140301", "Calendar2: new start month rendered");
 				assert.equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second month still has focus");
+
+				// BCP 1780270593
+				try {
+					oCal2.focusDate(null);
+					assert.ok(true, "focusDate() is called successfully with 'null'");
+				} catch (e) {
+					assert.ok(false, "focusDate() throws error when called with 'null'!");
+				}
 			});
 
 			QUnit.module("change date via navigation");
