@@ -839,6 +839,23 @@ sap.ui.define([
 		this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, false);
 	};
 
+	FlexController.prototype._updateControlsDependencies = function (mDependencies) {
+		var oControl;
+		Object.keys(mDependencies).forEach(function(sChangeKey) {
+			var oDependency = mDependencies[sChangeKey];
+			if (oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) {
+				var iLength = oDependency.controlsDependencies.length;
+				while (iLength--) {
+					var sId = oDependency.controlsDependencies[iLength];
+					oControl = sap.ui.getCore().byId(sId);
+					if (oControl) {
+						oDependency.controlsDependencies.splice(iLength, 1);
+					}
+				}
+			}
+		});
+	};
+
 	FlexController.prototype._updateDependencies = function (mDependencies, mDependentChangesOnMe, sChangeKey) {
 		if (mDependentChangesOnMe[sChangeKey]) {
 			mDependentChangesOnMe[sChangeKey].forEach(function (sKey) {
@@ -859,14 +876,18 @@ sap.ui.define([
 		do {
 			aAppliedChanges = [];
 			aDependenciesToBeDeleted = [];
+			this._updateControlsDependencies(mDependencies);
 			for (var i = 0; i < Object.keys(mDependencies).length; i++) {
 				var sDependencyKey = Object.keys(mDependencies)[i];
 				var oDependency = mDependencies[sDependencyKey];
-				if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0 && !oDependency[FlexController.PROCESSING]) {
-					oDependency[FlexController.PROCESSING] = true;
-					oDependency[FlexController.PENDING]();
-					aDependenciesToBeDeleted.push(sDependencyKey);
-					aAppliedChanges.push(oDependency.changeObject.getKey());
+				if (oDependency[FlexController.PENDING] &&
+					oDependency.dependencies.length === 0 &&
+					!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) &&
+					!oDependency[FlexController.PROCESSING]) {
+						oDependency[FlexController.PROCESSING] = true;
+						oDependency[FlexController.PENDING]();
+						aDependenciesToBeDeleted.push(sDependencyKey);
+						aAppliedChanges.push(oDependency.changeObject.getKey());
 				}
 			}
 

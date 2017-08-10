@@ -615,7 +615,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns all dependent global IDs, including the ID from selector of the changes.
+	 * Returns all dependent global IDs, including the ID from the selector of the change.
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - Application component, needed to translate the local ID into a global ID
 	 *
@@ -641,7 +641,7 @@ sap.ui.define([
 				if (oDependentSelector.idIsLocal) {
 					sId = oAppComponent.createId(oDependentSelector.id);
 				}
-				if (aDependentIds.indexOf(sId) === -1) {
+				if (sId && aDependentIds.indexOf(sId) === -1) {
 					aDependentIds.push(sId);
 				}
 			});
@@ -650,6 +650,34 @@ sap.ui.define([
 		}
 
 		return this._aDependentIdList;
+	};
+
+	/**
+	 * Returns list of IDs of controls which the change depends on, excluding the ID from the selector of the change.
+	 *
+	 * @param {sap.ui.core.Component} oAppComponent - Application component, needed to create a global ID from the local ID
+	 *
+	 * @returns {array} List of control IDs which the change depends on
+	 *
+	 * @public
+	 */
+	Change.prototype.getDependentControlIdList = function (oAppComponent) {
+		var sId;
+		var aDependentIds = this.getDependentIdList().concat();
+
+		if (aDependentIds.length > 0) {
+			var oSelector = this.getSelector();
+			sId = oSelector.id;
+			if (oSelector.idIsLocal) {
+				sId = oAppComponent.createId(oSelector.id);
+			}
+			var iIndex = aDependentIds.indexOf(sId);
+			if (iIndex > -1) {
+				aDependentIds.splice(iIndex, 1);
+			}
+		}
+
+		return aDependentIds;
 	};
 
 	/**
@@ -728,6 +756,7 @@ sap.ui.define([
 			reference: oPropertyBag.reference || "",
 			packageName: oPropertyBag.packageName || "",
 			content: oPropertyBag.content || {},
+			// TODO: Is an empty selector allowed?
 			selector: oPropertyBag.selector || {},
 			layer: oPropertyBag.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
 			texts: oPropertyBag.texts || {},
