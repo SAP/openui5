@@ -79,6 +79,7 @@ sap.ui.define([
 			this._aChangeHandlerSettings[iIndex].scenarioInitialized = false;
 		} else {
 			this._aChangeHandlerSettings.push(mNewChangeHandlerSettings);
+			this._createChangeHandlerSettingsGetter(mNewChangeHandlerSettings);
 		}
 	};
 
@@ -149,8 +150,7 @@ sap.ui.define([
 		}
 	};
 
-	// Create getters
-	ChangeHandlerMediator._aChangeHandlerSettings.forEach(function (mChangeHandlerSettings) {
+	ChangeHandlerMediator._createChangeHandlerSettingsGetter = function(mChangeHandlerSettings){
 		var sGetterName = 'get' + jQuery.sap.charToUpperCase(mChangeHandlerSettings.key.scenario) + 'Settings';
 		if (!ChangeHandlerMediator[sGetterName]) {
 			/**
@@ -183,6 +183,11 @@ sap.ui.define([
 				}
 			};
 		}
+	};
+
+	// Create getters
+	ChangeHandlerMediator._aChangeHandlerSettings.forEach(function (mChangeHandlerSettings) {
+		ChangeHandlerMediator._createChangeHandlerSettingsGetter(mChangeHandlerSettings);
 	});
 
 	return ChangeHandlerMediator;

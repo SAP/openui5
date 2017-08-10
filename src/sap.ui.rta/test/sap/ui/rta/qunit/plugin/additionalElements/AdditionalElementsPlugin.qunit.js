@@ -1,7 +1,5 @@
 /*global QUnit sinon*/
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
 QUnit.config.autostart = false;
 
 sap.ui.require([
@@ -46,6 +44,14 @@ sap.ui.require([
 	){
 	"use strict";
 	var oChangeRegistry = ChangeRegistry.getInstance();
+	var oDummyChangeHandler = {
+		applyChange : function(){
+			return true;
+		},
+		completeChangeContent : function(){
+			return true;
+		}
+	};
 	oChangeRegistry.registerControlsForChanges({
 		"sap.m.Button": [
 			SimpleChanges.unhideControl,
@@ -54,14 +60,14 @@ sap.ui.require([
 		"sap.m.Bar": [
 			{
 				changeType: "addFields",
-				changeHandler : "sap/ui/comp/smartform/flexibility/changes/AddFields"
+				changeHandler : oDummyChangeHandler
 			},
 			SimpleChanges.moveControls
 		],
 		"sap.ui.layout.PaneContainer": [
 			{
 				changeType: "addFields",
-				changeHandler : "sap/ui/comp/smartform/flexibility/changes/AddFields"
+				changeHandler : oDummyChangeHandler
 			},
 			SimpleChanges.moveControls,
 			SimpleChanges.unhideControl,

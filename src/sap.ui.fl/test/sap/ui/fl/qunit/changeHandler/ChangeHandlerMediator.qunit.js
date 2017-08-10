@@ -3,10 +3,12 @@
 QUnit.config.autostart = false;
 
 sap.ui.require([
-	'sap/ui/fl/changeHandler/ChangeHandlerMediator'
+	'sap/ui/fl/changeHandler/ChangeHandlerMediator',
+	'jquery.sap.global'
 ],
 function(
-	ChangeHandlerMediator
+	ChangeHandlerMediator,
+	jQuery
 ) {
 	'use strict';
 	QUnit.start();
@@ -14,8 +16,8 @@ function(
 	QUnit.module('Given some Change Handler settings...', {
 		beforeEach: function(assert) {
 
-			this.sAddFieldScenario = "addField";
-			this.sAddColumnScenario = "addColumn";
+			this.sAddFieldScenario = "testAddField";
+			this.sAddColumnScenario = "testAddColumn";
 			this.sModel = "ODataV2";
 
 			this.mAddFieldSettings = {
@@ -176,7 +178,17 @@ function(
 	QUnit.module('Given the AddODataField scenario is registered with a create function...', {
 
 		beforeEach : function(assert){
-			this.mAddODataFieldSettings = {
+
+			this.sAddFieldScenario = "testAddField";
+
+			this.mAddFieldSettings = {
+				"requiredLibraries" : {
+					"sap.ui.layout": {
+						"minVersion": "1.48",
+						"lazy": false
+					}
+				},
+				"appContext" : "AddFieldContext",
 				"createFunction" : function() {
 					return {
 						"label" : {},
@@ -185,11 +197,11 @@ function(
 				}
 			};
 
-			ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : "addODataField", "oDataServiceVersion" : "2.0" }, this.mAddODataFieldSettings);
+			ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sAddFieldScenario, "oDataServiceVersion" : "2.0" }, this.mAddFieldSettings);
 		}
 	});
 
-	QUnit.test('when getting settings for AddODataField in an ODataV2 control...', function(assert) {
+	QUnit.test('when getting settings for testAddField in an ODataV2 control...', function(assert) {
 
 		var oMockControl = {
 			getModel : function() {
@@ -207,7 +219,10 @@ function(
 			}
 		};
 
-		assert.equal(ChangeHandlerMediator.getAddODataFieldSettings(oMockControl).content.requiredLibraries["sap.ui.comp"].minVersion,
+		var sGetterName = 'get' + jQuery.sap.charToUpperCase(this.sAddFieldScenario) + 'Settings';
+
+		assert.equal(
+			ChangeHandlerMediator[sGetterName](oMockControl).content.requiredLibraries["sap.ui.layout"].minVersion,
 			"1.48", "then the settings for data service version 2.0 are found");
 	});
 
