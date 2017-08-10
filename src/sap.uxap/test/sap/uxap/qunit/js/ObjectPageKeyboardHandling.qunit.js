@@ -227,7 +227,7 @@
 
 		sap.ui.test.qunit.triggerKeydown(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
 		sap.ui.test.qunit.triggerKeyup(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
-		this.clock.tick();
+		this.clock.tick(500);
 
 		// Find the first, second and seventh anchors in the popover
 		var aPopoverAnchors = $(sPopOverAnchorSelector),
@@ -288,7 +288,7 @@
 
 		sap.ui.test.qunit.triggerKeydown(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
 		sap.ui.test.qunit.triggerKeyup(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
-		this.clock.tick();
+		this.clock.tick(500);
 
 		// Find the first, second and seventh anchors in the popover
 		var aPopoverAnchors = $(sPopOverAnchorSelector),
