@@ -638,8 +638,9 @@ sap.ui.define([
 			for (var i = 0; i < cLength; i++) {
 				aFileTypes[i] = aFileTypes[i].toLowerCase();
 			}
-			this.setProperty("fileType", aFileTypes);
-			if (this._getFileUploader().getFileType() !== aFileTypes) {
+
+			if (this.getFileType() !== aFileTypes) {
+				this.setProperty("fileType", aFileTypes, true);
 				this._getFileUploader().setFileType(aFileTypes);
 			}
 		}
@@ -649,11 +650,9 @@ sap.ui.define([
 	UploadCollection.prototype.setMaximumFilenameLength = function(iMaximumFilenameLength) {
 		if (!this.getInstantUpload()) {
 			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change maximumFilenameLength at runtime.");
-		} else {
+		} else if (this.getMaximumFilenameLength() !== iMaximumFilenameLength) {
 			this.setProperty("maximumFilenameLength", iMaximumFilenameLength, true);
-			if (this._getFileUploader().getMaximumFilenameLength() !== iMaximumFilenameLength) {
-				this._getFileUploader().setMaximumFilenameLength(iMaximumFilenameLength);
-			}
+			this._getFileUploader().setMaximumFilenameLength(iMaximumFilenameLength);
 		}
 		return this;
 	};
@@ -661,11 +660,9 @@ sap.ui.define([
 	UploadCollection.prototype.setMaximumFileSize = function(iMaximumFileSize) {
 		if (!this.getInstantUpload()) {
 			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change maximumFileSize at runtime.");
-		} else {
+		} else if (this.getMaximumFileSize() !== iMaximumFileSize) {
 			this.setProperty("maximumFileSize", iMaximumFileSize, true);
-			if (this._getFileUploader().getMaximumFileSize() !== iMaximumFileSize) {
-				this._getFileUploader().setMaximumFileSize(iMaximumFileSize);
-			}
+			this._getFileUploader().setMaximumFileSize(iMaximumFileSize);
 		}
 		return this;
 	};
@@ -673,11 +670,9 @@ sap.ui.define([
 	UploadCollection.prototype.setMimeType = function(aMimeTypes) {
 		if (!this.getInstantUpload()) {
 			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change mimeType at runtime.");
-		} else {
-			this.setProperty("mimeType", aMimeTypes);
-			if (this._getFileUploader().getMimeType() !== aMimeTypes) {
-				this._getFileUploader().setMimeType(aMimeTypes);
-			}
+		} else if (this.getMimeType() !== aMimeTypes) {
+			this.setProperty("mimeType", aMimeTypes, true);
+			this._getFileUploader().setMimeType(aMimeTypes);
 		}
 		return this;
 	};
@@ -685,18 +680,16 @@ sap.ui.define([
 	UploadCollection.prototype.setMultiple = function(bMultiple) {
 		if (!this.getInstantUpload()) {
 			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change multiple at runtime.");
-		} else {
+		} else if (this.getMultiple() !== bMultiple) {
 			this.setProperty("multiple", bMultiple);
-			if (this._getFileUploader().getMultiple() !== bMultiple) {
-				this._getFileUploader().setMultiple(bMultiple);
-			}
+			this._getFileUploader().setMultiple(bMultiple);
 		}
 		return this;
 	};
 
 	UploadCollection.prototype.setShowSeparators = function(bShowSeparators) {
-		this.setProperty("showSeparators", bShowSeparators);
-		if (this._oList.getShowSeparators() !== bShowSeparators) {
+		if (this.getShowSeparators() !== bShowSeparators) {
+			this.setProperty("showSeparators", bShowSeparators);
 			this._oList.setShowSeparators(bShowSeparators);
 		}
 		return this;
@@ -705,11 +698,9 @@ sap.ui.define([
 	UploadCollection.prototype.setUploadEnabled = function(bUploadEnabled) {
 		if (!this.getInstantUpload()) {
 			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change uploadEnabled at runtime.");
-		} else {
+		} else if (this.getUploadEnabled() !== bUploadEnabled) {
 			this.setProperty("uploadEnabled", bUploadEnabled);
-			if (this._getFileUploader().getEnabled() !== bUploadEnabled) {
-				this._getFileUploader().setEnabled(bUploadEnabled);
-			}
+			this._getFileUploader().setEnabled(bUploadEnabled);
 		}
 		return this;
 	};
@@ -717,11 +708,9 @@ sap.ui.define([
 	UploadCollection.prototype.setUploadUrl = function(sUploadUrl) {
 		if (!this.getInstantUpload()) {
 			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change uploadUrl at runtime.");
-		} else {
+		} else if (this.getUploadUrl() !== sUploadUrl) {
 			this.setProperty("uploadUrl", sUploadUrl);
-			if (this._getFileUploader().getUploadUrl() !== sUploadUrl) {
-				this._getFileUploader().setUploadUrl(sUploadUrl);
-			}
+			this._getFileUploader().setUploadUrl(sUploadUrl);
 		}
 		return this;
 	};
@@ -1492,8 +1481,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the given FileUploader object in to the current Toolbar on the position where the place holder is
-	 * @param {sap.ui.unified.FileUploader} fileUploader The FileUploader object to set in the Toolbar
+	 * Inserts the given FileUploader object into the current Toolbar at the position of the placeholder.
+	 * @param {sap.ui.unified.FileUploader} fileUploader The FileUploader object to insert into the Toolbar
 	 * @private
 	 */
 	UploadCollection.prototype._setFileUploaderInToolbar = function(fileUploader) {
@@ -2025,7 +2014,7 @@ sap.ui.define([
 	UploadCollection.prototype._setNumberOfAttachmentsTitle = function(count) {
 		var nItems = count || 0;
 		var sText;
-		// When a file is being updated to a new version, there is one file more on the server than in the list so this corrects that mismatch.
+		// When a file is being updated to a new version, there is one more file on the server than in the list so this corrects that mismatch.
 		if (this._oItemToUpdate) {
 			nItems--;
 		}

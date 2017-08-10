@@ -11,7 +11,7 @@
 	</script>
 
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<!--[if IE]>
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
@@ -247,22 +247,23 @@
 			},
 			afterEach : function() {
 				this.oUploadCollectionItem.destroy();
-				this.oUploadCollectionItem.fireEvent.restore();
 			}
 		});
 
 		QUnit.test("Test set and get selected", function(assert) {
 			//Arrange
-			var eventSpy = sinon.stub(this.oUploadCollectionItem, "fireEvent");
+			var oStub = sinon.stub(this.oUploadCollectionItem, "fireEvent");
 
 			//Act
 			this.oUploadCollectionItem.setSelected(true);
 
 			//Assert
-			assert.ok(eventSpy.called, "Function 'fireEvent' was called");
-			assert.ok(eventSpy.calledOnce, "Function 'fireEvent' was called once");
-			assert.ok(eventSpy.calledWithExactly("selected"), "Function 'fireEvent' was called with parameter 'selected'");
+			assert.equal(oStub.callCount, 1, "Function 'fireEvent' was called once");
+			assert.ok(oStub.calledWithExactly("selected"), "Function 'fireEvent' was called with parameter 'selected'");
 			assert.ok(this.oUploadCollectionItem.getSelected(), "Item has been selected");
+
+			//Cleanup
+			oStub.restore();
 		});
 
 		QUnit.module("UploadCollectionItem with markers", {
@@ -277,14 +278,11 @@
 			},
 			afterEach : function() {
 				this.oUploadCollectionItem.destroy();
-				this.oUploadCollectionItem.fireEvent.restore();
 			}
 		});
 
 		QUnit.test("Test accessing marker", function(assert) {
 			//Arrange
-			var eventSpy = sinon.stub(this.oUploadCollectionItem, "fireEvent");
-
 			//Act
 			var aMarkers = this.oUploadCollectionItem.getMarkers();
 
