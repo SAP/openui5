@@ -927,11 +927,21 @@ sap.ui.define([
 				return this.formatDeprecated(sSince, sDescription, "events");
 			},
 
+			formatExample: function (sCaption, sText) {
+				return this.formatDescription(
+					["<span><strong>Example: </strong>",
+						sCaption,
+						"<pre class='sapUiSmallMarginTop'>",
+						sText,
+						"</pre></span>"].join("")
+				);
+			},
+
 			/**
 			 * Formats the description of the property
 			 * @param description - the description of the property
 			 * @param deprecatedText - the text explaining this property is deprecated
-			 * @param deprecatedSince - the verstion when this property was deprecated
+			 * @param deprecatedSince - the version when this property was deprecated
 			 * @returns string - the formatted description
 			 */
 			formatDescription: function (description, deprecatedText, deprecatedSince) {
