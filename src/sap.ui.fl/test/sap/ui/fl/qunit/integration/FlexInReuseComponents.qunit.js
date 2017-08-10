@@ -171,7 +171,7 @@ function (
 				}
 			});
 
-			// simulate a to late loaded fl library... resulting in a not registered propagationListener
+			//simulate the belated load of the sap.ui.fl library with the effect that the propagationListener is not registered
 			this.oComponent.aPropagationListeners = [];
 		},
 

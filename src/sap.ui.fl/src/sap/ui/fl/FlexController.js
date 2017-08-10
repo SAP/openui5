@@ -969,10 +969,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get <code>_applyChangesOnControl</code> function bound to the FlexController instance.
-	 *
-	 * This function must be used within the addPropagationListener functionality to ensure a proper identification
-	 * of the bound function is possible. And identity check is not possible due to the wrapping of the .bind.
+	 * Get <code>_applyChangesOnControl</code> function bound to the <code>FlexController</code> instance; this function
+	 * must be used within the <code>addPropagationListener</code> function to ensure  proper identification of the bound
+	 * function (identity check is not possible due to the wrapping of the <code>.bind</code>).
 	 *
 	 * @param {function} fnGetChangesMap Getter to retrieve the mapped changes belonging to the app component
 	 * @param {object} oComponent Component instance that is currently loading
