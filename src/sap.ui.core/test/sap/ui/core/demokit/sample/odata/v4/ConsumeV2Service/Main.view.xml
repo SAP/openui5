@@ -5,12 +5,7 @@
 		xmlns:form="sap.ui.layout.form"
 		xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
-		<form:SimpleForm binding="{
-				path : '/EdmTypesCollection(\'1\')',
-				parameters : {
-					$select : 'ID,Binary,Boolean,Byte,Date,DateTime,DateTimeOffset,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String,Time'
-				}
-			}" layout="ResponsiveGridLayout">
+		<form:SimpleForm binding="{/EdmTypesCollection('1')}" layout="ResponsiveGridLayout">
 			<form:title>
 				<core:Title text="Single Entity"/>
 			</form:title>
@@ -58,10 +53,6 @@
 		<Table class="sapUiLargeMarginBottom" headerText="Multiple Entities"
 			   items="{
 					path : '/EdmTypesCollection',
-					parameters : {
-						$select :
-							['ID','Boolean','Byte','GlobalUID','Int16','Int32','SByte','String']
-					},
 					templateShareable : false
 				}">
 			<columns>

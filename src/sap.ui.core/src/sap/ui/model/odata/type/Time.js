@@ -68,18 +68,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 *   the <code>Time</code> instance
 	 * @param {object} [oConstraints]
 	 *   constraints
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> is accepted; note that
-	 *   {@link #parseValue} maps <code>""</code> to <code>null</code>
 	 */
 	function setConstraints(oType, oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
+		var vNullable;
 
 		oType.oConstraints = undefined;
-		if (vNullable === false || vNullable === "false") {
-			oType.oConstraints = {nullable : false};
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		if (oConstraints) {
+			vNullable = oConstraints.nullable;
+			if (vNullable === false || vNullable === "false") {
+				oType.oConstraints = {nullable : false};
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+			}
 		}
 	}
 
@@ -155,7 +155,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> is accepted
+	 *   if <code>true</code>, the value <code>null</code> is accepted; note that
+	 *   {@link #parseValue} maps <code>""</code> to <code>null</code>
 	 * @public
 	 * @since 1.27.0
 	 */

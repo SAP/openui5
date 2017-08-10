@@ -4,6 +4,20 @@
 	"GWSAMPLE_BASIC.": {
 		"$kind": "Schema",
 		"$Annotations" : {
+			"GWSAMPLE_BASIC.BusinessPartner": {
+				"@com.sap.vocabularies.Communication.v1.Contact": {
+					"address": [{
+						"uri": {
+							"$Path": "EmailAddress"
+						}
+					}],
+					"tel": [{
+						"uri": {
+							"$Path": "PhoneNumber"
+						}
+					}]
+				}
+			},
 			"GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID": {
 				"@com.sap.vocabularies.Common.v1.Label": "Bus. Part. ID"
 			},
@@ -23,7 +37,8 @@
 				"@com.sap.vocabularies.Common.v1.Label": "Currency"
 			},
 			"GWSAMPLE_BASIC.BusinessPartner/EmailAddress": {
-				"@com.sap.vocabularies.Common.v1.Label": "E-Mail Address"
+				"@com.sap.vocabularies.Common.v1.Label": "E-Mail Address",
+				"@com.sap.vocabularies.Communication.v1.IsEmailAddress": true
 			},
 			"GWSAMPLE_BASIC.BusinessPartner/FaxNumber": {
 				"@com.sap.vocabularies.Common.v1.Label": "Fax Number"
@@ -32,7 +47,8 @@
 				"@com.sap.vocabularies.Common.v1.Label": "Legal Form"
 			},
 			"GWSAMPLE_BASIC.BusinessPartner/PhoneNumber": {
-				"@com.sap.vocabularies.Common.v1.Label": "Phone No."
+				"@com.sap.vocabularies.Common.v1.Label": "Phone No.",
+				"@com.sap.vocabularies.Communication.v1.IsPhoneNumber": true
 			},
 			"GWSAMPLE_BASIC.BusinessPartner/WebAddress": {
 				"@com.sap.vocabularies.Common.v1.Label": "Web Address"
@@ -75,23 +91,33 @@
 			},
 			"GWSAMPLE_BASIC.Contact": {
 				"@com.sap.vocabularies.Communication.v1.Contact": {
+					"address": [{
+						"uri": {
+							"$Path": "EmailAddress"
+						}
+					}],
 					"bday": {
 						"$Path": "DateOfBirth"
-						},
+					},
 					"n": {
 						"additional": {
 							"$Path": "MiddleName"
-							},
+						},
 						"given": {
 							"$Path": "FirstName"
 						},
 						"surname": {
 							"$Path": "LastName"
 						}
-						},
+					},
 					"nickname": {
 						"$Path": "Nickname"
-					}
+					},
+					"tel": [{
+						"uri": {
+							"$Path": "PhoneNumber"
+						}
+					}]
 				}
 			},
 			"GWSAMPLE_BASIC.Contact/BusinessPartnerID": {
@@ -104,7 +130,8 @@
 				"@com.sap.vocabularies.Common.v1.Label": "Date of Birth"
 			},
 			"GWSAMPLE_BASIC.Contact/EmailAddress": {
-				"@com.sap.vocabularies.Common.v1.Label": "E-Mail Address"
+				"@com.sap.vocabularies.Common.v1.Label": "E-Mail Address",
+				"@com.sap.vocabularies.Communication.v1.IsEmailAddress": true
 			},
 			"GWSAMPLE_BASIC.Contact/FaxNumber": {
 				"@com.sap.vocabularies.Common.v1.Label": "Fax Number"
@@ -128,7 +155,8 @@
 				"@com.sap.vocabularies.Common.v1.Label": "Nickname"
 			},
 			"GWSAMPLE_BASIC.Contact/PhoneNumber": {
-				"@com.sap.vocabularies.Common.v1.Label": "Phone No."
+				"@com.sap.vocabularies.Common.v1.Label": "Phone No.",
+				"@com.sap.vocabularies.Communication.v1.IsPhoneNumber": true
 			},
 			"GWSAMPLE_BASIC.Contact/Sex": {
 				"@com.sap.vocabularies.Common.v1.Label": "Sex"
@@ -582,7 +610,8 @@
 		"ChangedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CompanyName": {
 			"$MaxLength": 80,
@@ -592,7 +621,8 @@
 		"CreatedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CurrencyCode": {
 			"$MaxLength": 5,
@@ -704,7 +734,8 @@
 		"DateOfBirth": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"EmailAddress": {
 			"$MaxLength": 255,
@@ -874,12 +905,14 @@
 		"ChangedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CreatedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CurrencyCode": {
 			"$MaxLength": 5,
@@ -1022,12 +1055,14 @@
 		"ChangedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CreatedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CurrencyCode": {
 			"$MaxLength": 5,
@@ -1125,7 +1160,8 @@
 		},
 		"DeliveryDate": {
 			"$Type": "Edm.Date",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"GrossAmount": {
 			"$Precision": 16,

@@ -294,48 +294,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type metadata
-		 * and entity instance runtime data.
-		 *
-		 * @param {object} oEntityType
-		 *   Entity type metadata
-		 * @param {object} oEntityInstance
-		 *   Entity instance runtime data
-		 * @param {boolean} [bIgnoreMissingKey=false]
-		 *   Do not throw an exception if a key property does not have a value
-		 * @returns {string}
-		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')" or undefined if one
-		 *   key property is undefined and <code>bIgnoreMissingKey</code> is true
-		 * @throws {Error}
-		 *   If there is no entity instance or if one key property is undefined
-		 *
-		 * @private
-		 */
-		getKeyPredicate : function (oEntityType, oEntityInstance, bIgnoreMissingKey) {
-			var bFailed,
-				aKeyProperties = [],
-				bSingleKey = oEntityType.$Key.length === 1;
-
-			if (!oEntityInstance) {
-				throw new Error("No instance to calculate key predicate");
-			}
-			bFailed = oEntityType.$Key.some(function (sName) {
-				var vValue = oEntityInstance[sName];
-
-				if (vValue === undefined) {
-					if (bIgnoreMissingKey) {
-						return true;
-					}
-					throw new Error("Missing value for key property '" + sName + "'");
-				}
-				vValue = encodeURIComponent(Helper.formatLiteral(vValue, oEntityType[sName].$Type));
-				aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sName) + "=" + vValue);
-			});
-
-			return bFailed ? undefined : "(" + aKeyProperties.join(",") + ")";
-		},
-
-		/**
 		 * Returns the properties that have been selected for the given path.
 		 *
 		 * @param {object} mQueryOptions

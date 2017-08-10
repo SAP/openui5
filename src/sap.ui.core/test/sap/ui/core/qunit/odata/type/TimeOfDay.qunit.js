@@ -59,7 +59,17 @@ sap.ui.require([
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.TimeOfDay", "type name");
 		assert.strictEqual(sap.ui.model.odata.type.TimeOfDay, TimeOfDay);
 		assert.strictEqual(oType.oFormatOptions, oFormatOptions, "format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.strictEqual(oType.oConstraints, undefined, "default constraints");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new TimeOfDay(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, null, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
