@@ -170,9 +170,9 @@ sap.ui.define([
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent
 			});
-			if (ChangeHandler.revertChange && oChangeSpecificData["variantManagementKey"] && oChangeSpecificData["variantKey"]) {
-				oChange.setVariantReference(oChangeSpecificData["variantKey"]);
-				jQuery.sap.log.error("VariantChange" + "-" + oChangeSpecificData["variantManagementKey"] + "-" + oChangeSpecificData["variantKey"]); /*Only temporary*/
+			if (ChangeHandler.revertChange && oChangeSpecificData["variantManagementReference"] && oChangeSpecificData["variantReference"]) {
+				oChange.setVariantReference(oChangeSpecificData["variantReference"]);
+				jQuery.sap.log.error("VariantChange" + "-" + oChangeSpecificData["variantManagementReference"] + "-" + oChangeSpecificData["variantReference"]); /*Only temporary*/
 			}
 		} else {
 			throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");

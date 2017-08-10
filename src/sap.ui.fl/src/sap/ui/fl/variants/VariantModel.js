@@ -67,31 +67,31 @@ sap.ui.define([
 
 	/**
 	 * Updates the storage of the current variant for a given variant management control
-	 * @param {String} sVariantMgmtRef The variant management Ref
-	 * @param {String} sNewVariantRef The newly selected variant Ref
+	 * @param {String} sVariantManagementReference The variant management Ref
+	 * @param {String} sNewVariantReference The newly selected variant Ref
 	 * @private
 	 */
-	VariantModel.prototype.updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
-		this._switchToVariant(sVariantMgmtRef, sNewVariantRef);
-		this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
+	VariantModel.prototype.updateCurrentVariant = function(sVariantManagementReference, sNewVariantReference) {
+		this._switchToVariant(sVariantManagementReference, sNewVariantReference);
+		this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
 		this.refresh(true);
 	};
 
 	/**
 	 * Returns the current variant for a given variant management control
-	 * @param {String} sVariantMgmtRef The variant management Ref
-	 * @returns {String} sVariantRef The current variant Ref
+	 * @param {String} sVariantManagementReference The variant management Ref
+	 * @returns {String} sVariantReference The current variant Ref
 	 * @public
 	 */
-	VariantModel.prototype.getCurrentVariantRef = function(sVariantMgmtRef) {
-		return this.oData[sVariantMgmtRef].currentVariant;
+	VariantModel.prototype.getCurrentVariantReference = function(sVariantManagementReference) {
+		return this.oData[sVariantManagementReference].currentVariant;
 	};
 
-	VariantModel.prototype.getVariantManagementReference = function(sVariantRef) {
+	VariantModel.prototype.getVariantManagementReference = function(sVariantReference) {
 		var sVariantManagementReference = "";
 		Object.keys(this.oData).some(function(sKey) {
 			return this.oData[sKey].variants.some(function(oVariant) {
-				if (oVariant.key === sVariantRef) {
+				if (oVariant.key === sVariantReference) {
 					sVariantManagementReference = sKey;
 					return true;
 				}
@@ -101,27 +101,27 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype._addChange = function(oChange) {
-		var sVariantRef = oChange.getVariantReference();
-		var sVariantMgmtRef = this.getVariantManagementReference(sVariantRef);
-		return this.oVariantController.addChangeToVariant(oChange, sVariantMgmtRef, sVariantRef);
+		var sVariantReference = oChange.getVariantReference();
+		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference);
+		return this.oVariantController.addChangeToVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
 	VariantModel.prototype._removeChange = function(oChange) {
-		var sVariantRef = oChange.getVariantReference();
-		var sVariantMgmtRef = this.getVariantManagementReference(sVariantRef);
-		return this.oVariantController.removeChangeFromVariant(oChange, sVariantMgmtRef, sVariantRef);
+		var sVariantReference = oChange.getVariantReference();
+		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference);
+		return this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
 	/**
 	 * Returns the variants for a given variant management Ref
-	 * @param {String} sVariantMgmtRef The variant management Ref
-	 * @param {String} sNewVariantRef The newly selected variant Ref
+	 * @param {String} sVariantManagementReference The variant management Ref
+	 * @param {String} sNewVariantReference The newly selected variant Ref
 	 * @returns {promise} Returns promise that resolves after reverting of old variants and applying of new variants is completed
 	 * @public
 	 */
-	VariantModel.prototype._switchToVariant = function(sVariantMgmtRef, sNewVariantRef) {
-		var sCurrentVariantRef = this.oData[sVariantMgmtRef].currentVariant;
-		var mChangesToBeSwitched = this.oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(sVariantMgmtRef, sCurrentVariantRef, sNewVariantRef);
+	VariantModel.prototype._switchToVariant = function(sVariantManagementReference, sNewVariantReference) {
+		var sCurrentVariantReference = this.oData[sVariantManagementReference].currentVariant;
+		var mChangesToBeSwitched = this.oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(sVariantManagementReference, sCurrentVariantReference, sNewVariantReference);
 
 		var oAppComponent = Utils.getAppComponentForControl(this.oComponent);
 
@@ -129,11 +129,11 @@ sap.ui.define([
 		this.oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, this.oComponent);
 	};
 
-	VariantModel.prototype.ensureStandardEntryExists = function(sVariantManagementKey) {
+	VariantModel.prototype.ensureStandardEntryExists = function(sVariantManagementReference) {
 		var oData = this.getData();
-		if (!oData[sVariantManagementKey]) {
+		if (!oData[sVariantManagementReference]) {
 			// Set Standard Data to Model
-			oData[sVariantManagementKey] = {
+			oData[sVariantManagementReference] = {
 				modified: false,
 				currentVariant: "Standard",
 				defaultVariant: "Standard",
@@ -154,15 +154,15 @@ sap.ui.define([
 			// Set Standard Data to VariantController
 			if (this.oVariantController) {
 				var oVariantControllerData = {changes: { variantSection: {}}};
-				oVariantControllerData.changes.variantSection[sVariantManagementKey] = {
+				oVariantControllerData.changes.variantSection[sVariantManagementReference] = {
 					defaultVariant: "Standard",
 					variants: [
 						{
 							content: {
-								fileName: sVariantManagementKey,
+								fileName: sVariantManagementReference,
 								title: "Standard",
 								fileType: "variant",
-								variantMgmtRef: sVariantManagementKey
+								variantMgmtRef: sVariantManagementReference
 							}
 						}
 					]
