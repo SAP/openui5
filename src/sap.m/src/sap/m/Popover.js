@@ -621,10 +621,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		/*                   begin: API method                         */
 		/* =========================================================== */
 		/**
-		 * Opens the Popover and set the Popover position according to the {@link #getPlacement() placement} property around the <code>oControl</code> parameter.
+		 * Opens the Popover and sets the Popover position according to the {@link #getPlacement() placement} property around the <code>oControl</code> parameter.
 		 *
 		 * @param {object} oControl This is the control to which the Popover will be placed. It can be not only a UI5 control, but also an existing DOM reference. The side of the placement depends on the placement property set in the Popover.
-		 * @param {boolean} bSkipInstanceManager
+		 * @param {boolean} bSkipInstanceManager Indicates whether popover should be managed by InstanceManager or not
 		 * @returns {sap.m.Popover} Reference to the control instance for chaining
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -972,6 +972,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		/**
 		 * Takes care of resizing the popover
+		 * @param {jQuery.Event} oEvent The event object
 		 */
 		Popover.prototype.onmousedown = function (oEvent) {
 
@@ -1033,7 +1034,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		/**
 		 * This method detects if there's an sap.m.NavContainer instance added as a single child into Popover's content aggregation or through one or more sap.ui.mvc.View controls.
 		 * If there is, sapMPopoverNav style class will be added to the root node of the control in order to apply some special css styles to the inner dom nodes.
-		 * @returns {boolean}
+		 * @returns {boolean} True is there is a single NavContainer within the Popover's content
 		 */
 		Popover.prototype._hasSingleNavContent = function () {
 			return !!this._getSingleNavContent();
@@ -1071,7 +1072,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 * This method detects if there's an sap.m.Page instance added as a single child into popover's content aggregation or through one or more sap.ui.mvc.View controls.
 		 * If there is, sapMPopoverPage style class will be added to the root node of the control in order to apply some special css styles to the inner dom nodes.
 		 *
-		 * @returns {boolean}
+		 * @returns {boolean} True is there is a Page within the Popover's content
 		 */
 		Popover.prototype._hasSinglePageContent = function () {
 			var aContent = this._getAllContent();
@@ -1093,7 +1094,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 *
 		 * If more than one scrollable control is added to popover, the scrolling needs to be disabled manually.
 		 *
-		 * @returns {boolean}
+		 * @returns {boolean} True if there is a scrollable element within the Popover's content
 		 */
 		Popover.prototype._hasSingleScrollableContent = function () {
 			var aContent = this._getAllContent(), i;
@@ -1117,7 +1118,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		/**
 		 * Returns the offsetX value by negating the value when in RTL mode.
 		 *
-		 * @returns {number} OffsetX
+		 * @returns {number} OffsetX The offset value
 		 * @private
 		 */
 		Popover.prototype._getOffsetX = function () {
@@ -1437,6 +1438,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 * Calculate outerWidth of the element; used as hook for SVG elements
 		 * @param {HTMLElement} oElement An Element for which outerWidth will be calculated.
 		 * @param {boolean} bIncludeMargin Determines if the margins should be included in the calculated outerWidth. Default value is false.
+		 * @returns {number} The outer width of the element
 		 * @protected
 		 */
 		Popover.outerWidth = function (oElement, bIncludeMargin) {
@@ -1451,6 +1453,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 * Calculate outerHeight of the element; used as hook for SVG elements
 		 * @param {HTMLElement} oElement An Element for which outerHeight will be calculated.
 		 * @param {boolean} bIncludeMargin Determines if the margins should be included in the calculated outerHeight. Default value is false.
+		 * * @returns {number} The outer height of the element
 		 * @protected
 		 */
 		Popover.outerHeight = function (oElement, bIncludeMargin) {
@@ -1778,7 +1781,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		/**
 		 * Gets the calculated placement of the Popover.
 		 *
-		 * @returns {sap.m.PlacementType}
+		 * @returns {sap.m.PlacementType} The placement of the popover
 		 * @private
 		 */
 		Popover.prototype._getCalculatedPlacement = function () {
@@ -1909,6 +1912,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		/**
 		 * Determine if the <code>oDomNode</code> is inside the Popover or inside the control that opens the Popover.
+		 * @returns {boolean} Whether the DOM node is inside the popover or its opening control
 		 * @private
 		 */
 		Popover.prototype._isPopupElement = function (oDOMNode) {
@@ -1919,7 +1923,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		/**
 		 * If customHeader is set, this will return the customHeaer. Otherwise it creates a header and put the
 		 * title and buttons if needed inside, and finally return this newly create header.
-		 *
+		 * @returns {object} The created header
 		 * @protected
 		 */
 		Popover.prototype._getAnyHeader = function () {
@@ -2129,7 +2133,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 *
 		 * Default value is empty
 		 *
-		 * @return {boolean} the value of property <code>bounce</code>
+		 * @returns {boolean} the value of property <code>bounce</code>
 		 * @private
 		 * @name sap.m.Popover#getBounce
 		 * @function
@@ -2382,7 +2386,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		/**
 		 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
-		 *
+		 * @returns {sap.ui.core.ScrollEnablement} The scroll delegate
 		 * @private
 		 */
 		Popover.prototype.getScrollDelegate = function () {
@@ -2445,7 +2449,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		/**
 		 * A hook for controls that extend popover to determine how the controls array is formed
-		 * @returns {sap.ui.core.Control[]}
+		 * @returns {sap.ui.core.Control[]} Control instance for method chaining
 		 * @private
 		 */
 		Popover.prototype._getAllContent = function () {
@@ -2454,6 +2458,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		/**
 		 * Popup controls should not propagate contextual width
+		 * @returns {sap.m.Popover} Control instance for method chaining
 		 * @private
 		 */
 		Popover.prototype._applyContextualSettings = function () {
