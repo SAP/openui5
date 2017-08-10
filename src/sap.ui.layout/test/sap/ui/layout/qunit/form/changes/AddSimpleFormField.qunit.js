@@ -8,15 +8,9 @@ sap.ui.require([
 	"sap/ui/layout/changeHandler/AddSimpleFormField",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/commons/TextView",
-	"sap/ui/comp/smartfield/SmartField",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier",
-	"sap/ui/fl/changeHandler/ChangeHandlerMediator",
-	// should be last:
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	"sap/ui/fl/changeHandler/XmlTreeModifier"
 ],
 function (
 	Title,
@@ -25,52 +19,16 @@ function (
 	AddFieldChangeHandler,
 	SimpleForm,
 	TextView,
-	SmartField,
 	Change,
 	JsControlTreeModifier,
-	XmlTreeModifier,
-	ChangeHandlerMediator) {
+	XmlTreeModifier
+) {
 	'use strict';
 
 	QUnit.start();
 
-	// Register an entry on the Change Handler Mediator (e.g. from SmartField)
-	ChangeHandlerMediator.addChangeHandlerSettings({
-		"scenario" : "addODataFieldWithLabel",
-		"oDataServiceVersion" : "2.0"
-	}, {
-		"requiredLibraries" : {
-			"sap.ui.comp": {
-				"minVersion": "1.48",
-				"lazy": "false"
-			}
-		},
-
-		 //Function returning a set of SmartField + SmartLabel ready to be added
-		"createFunction" : function(oModifier, mPropertyBag){
-			var oSmartField = oModifier.createControl("sap.ui.comp.smartfield.SmartField",
-				mPropertyBag.appComponent,
-				mPropertyBag.view,
-				mPropertyBag.fieldSelector,
-				{value : "{" + mPropertyBag.bindingPath + "}"}
-			);
-			var sNewFieldId = oModifier.getId(oSmartField);
-			var oSmartFieldLabel = oModifier.createControl("sap.ui.comp.smartfield.SmartLabel",
-				mPropertyBag.appComponent,
-				mPropertyBag.view,
-				sNewFieldId + "-label",
-				{labelFor: sNewFieldId}
-			);
-			return {
-				"label" : oSmartFieldLabel,
-				"control" : oSmartField
-			};
-		}
-	});
-
 	QUnit.module("AddField for SimpleForm", {
 		beforeEach: function () {
-			this.oAddFieldChangeHandler = AddFieldChangeHandler;
 			this.oMockedAppComponent = {
 				getLocalId: function () {
 					return undefined;
@@ -106,10 +64,10 @@ function (
 		assert.equal(this.oSimpleForm.getContent().length, 1, "the form only has the title in the beginning");
 		var oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
 
-		this.oAddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
 		assert.equal(oChange.getDependentControl("targetContainerHeader", {modifier: JsControlTreeModifier, appComponent: this.oMockedAppComponent}).getId(), oTitle.getId(), "parent is part of dependentSelector");
 
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
 			"the change to add a field was applied");
 
@@ -131,9 +89,9 @@ function (
 
 		var oChange2 = new Change({"changeType" : "addSimpleFormField"});
 
-		this.oAddFieldChangeHandler.completeChangeContent(oChange2, mSpecificChangeInfo2, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		AddFieldChangeHandler.completeChangeContent(oChange2, mSpecificChangeInfo2, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
 		assert.equal(oChange.getDependentControl("targetContainerHeader", {modifier: JsControlTreeModifier, appComponent: this.oMockedAppComponent}).getId(), oTitle.getId(), "parent is part of dependentSelector");
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange2, this.oSimpleForm,
+		assert.ok(AddFieldChangeHandler.applyChange(oChange2, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent}),
 			"the change adding a field to index 0 was applied");
 
@@ -161,8 +119,8 @@ function (
 
 		var oChange3 = new Change({"changeType" : "addSimpleFormField"});
 
-		this.oAddFieldChangeHandler.completeChangeContent(oChange3, mSpecificChangeInfo3, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange3, this.oSimpleForm,
+		AddFieldChangeHandler.completeChangeContent(oChange3, mSpecificChangeInfo3, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.ok(AddFieldChangeHandler.applyChange(oChange3, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent}),
 			"the change adding a field to index 1 was applied");
 
@@ -212,8 +170,8 @@ function (
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
-		this.oAddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
 			"the change to add a field was applied");
 
@@ -251,8 +209,8 @@ function (
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
-		this.oAddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
 			"the change to add a field was applied");
 
@@ -290,8 +248,8 @@ function (
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
-		this.oAddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
 			"the change to add a field was applied");
 
@@ -327,8 +285,8 @@ function (
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
-		this.oAddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+		AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
 			"the change to add a field was applied");
 
@@ -343,7 +301,6 @@ function (
 
 	QUnit.module("AddField for SimpleForm in XML", {
 		beforeEach: function () {
-			this.oAddFieldChangeHandler = AddFieldChangeHandler;
 			this.oMockedAppComponent = {
 				getLocalId: function () {
 					return undefined;
@@ -392,7 +349,7 @@ function (
 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 		this.oXmlSimpleForm = oXmlDocument.childNodes[0].childNodes[0];
 
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChangeXml, this.oXmlSimpleForm,
+		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oXmlSimpleForm,
 			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
 			"the change was successfully applied");
 
@@ -445,7 +402,7 @@ function (
 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 		this.oSimpleForm = oXmlDocument.childNodes[0].childNodes[0];
 
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
+		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
 			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
 			"the change was successfully applied");
 
@@ -502,7 +459,7 @@ function (
 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 		this.oSimpleForm = oXmlDocument.childNodes[0].childNodes[0];
 
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
+		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
 			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
 			"the change was successfully applied");
 
@@ -555,7 +512,7 @@ function (
 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 		this.oSimpleForm = oXmlDocument.childNodes[0].childNodes[0];
 
-		assert.ok(this.oAddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
+		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
 			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
 			"the change was successfully applied");
 
