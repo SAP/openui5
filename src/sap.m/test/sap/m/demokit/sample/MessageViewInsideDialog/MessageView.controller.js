@@ -63,7 +63,7 @@ sap.ui.define([
 			oModel.setData(aMockMessages);
 
 			this._oMessageView = new sap.m.MessageView({
-				showDetailsHeader: false,
+				showDetailsPageHeader: false,
 				itemSelect: function () {
 					that._oBackButton.setVisible(true);
 				},
