@@ -2,7 +2,9 @@
 	controllerName="sap.ui.demo.toolpageapp.controller.settings.MasterSettings"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<Page id="masterSettingsPage" showHeader="false">
+
+	<Page id="masterSettingsPage"
+		showHeader="false">
 		<List
 			id="masterSettingsList"
 			items="{side>/masterSettings}"
@@ -11,7 +13,7 @@
 			<StandardListItem
 				title="{side>title}"
 				type="Navigation"
-				selected="{side>selected}"/>
+				selected="{= ${device>/system/phone} ? false : ${side>selected}}"/>
 		</List>
 	</Page>
 </mvc:View>

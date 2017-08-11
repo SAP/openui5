@@ -75,20 +75,25 @@
 	  },
 	  "routes": [
 		{
-		  "pattern": "",
+			"pattern": "",
 			"name": "home",
 			"target": "home"
 		},
 		{
-		  "pattern": "SystemSettings",
-		  "name": "systemSettings",
-		  "target": ["masterSettings", "detailSettings"]
+			"pattern": "MasterSettings",
+			"name": "masterSettings",
+			"target": ["detailSettings", "masterSettings"]
 		},
-		  {
-		  "pattern": "Statistics",
-		  "name": "statistics",
-		  "target": "statistics"
-		  }
+		{
+			"pattern": "SystemSettings",
+			"name": "systemSettings",
+			"target": "detailSettings"
+		},
+		{
+			"pattern": "Statistics",
+			"name": "statistics",
+			"target": "statistics"
+		}
 	  ],
 	  "targets": {
 		"home": {
@@ -99,19 +104,19 @@
 			"viewName": "settings.AppSettings"
 		},
 		"masterSettings": {
-		  "viewName": "settings.MasterSettings",
+			"viewName": "settings.MasterSettings",
 			"controlId": "appSettings",
 			"controlAggregation": "masterPages",
 			"parent": "appSettings"
 		},
-		  "detailSettings": {
-			  "viewName": "settings.DetailSettings",
-			  "controlId": "appSettings",
-			  "controlAggregation": "detailPages",
-			  "parent": "appSettings"
+		"detailSettings": {
+			"viewName": "settings.DetailSettings",
+			"controlId": "appSettings",
+			"controlAggregation": "detailPages",
+			"parent": "appSettings"
 		  },
 		"statistics": {
-		  "viewName": "Statistics"
+			"viewName": "Statistics"
 		}
 	  }
 	}

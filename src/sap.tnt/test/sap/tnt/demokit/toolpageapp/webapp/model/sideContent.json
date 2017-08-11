@@ -9,7 +9,7 @@
 		{
 			"title": "Settings",
 			"icon": "sap-icon://settings",
-			"key": "systemSettings"
+			"key": "masterSettings"
 		},
 		{
 			"title": "Statistics",
