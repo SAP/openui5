@@ -280,8 +280,8 @@ sap.ui.require([
 				createContent : function() {
 					// store it in outer scope
 					var oView = sap.ui.xmlview({
-						 id : this.createId("view"),
-						 viewContent : oXmlString
+						id: this.createId("view"),
+						viewContent: oXmlString
 					 });
 					 return oView;
 				}
