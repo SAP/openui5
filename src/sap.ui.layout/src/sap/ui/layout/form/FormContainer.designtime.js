@@ -49,7 +49,7 @@ sap.ui.define(['sap/ui/fl/changeHandler/ChangeHandlerMediator'],
 				actions: {
 					move: "moveControls",
 					addODataProperty : function (oFormContainer) {
-						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldSettings(oFormContainer);
+						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldWithLabelSettings(oFormContainer);
 
 						if (mChangeHandlerSettings){
 							return {

@@ -6,67 +6,25 @@ sap.ui.require([
 		"sap/ui/core/mvc/View",
 		"sap/ui/layout/changeHandler/AddFormField",
 		"sap/ui/layout/form/Form",
-		"sap/ui/comp/smartfield/SmartField",
 		"sap/ui/fl/Change",
 		"sap/ui/fl/changeHandler/JsControlTreeModifier",
-		"sap/ui/fl/changeHandler/XmlTreeModifier",
-		"sap/ui/fl/changeHandler/ChangeHandlerMediator",
-		// should be last:
-		'sap/ui/thirdparty/sinon',
-		'sap/ui/thirdparty/sinon-ie',
-		'sap/ui/thirdparty/sinon-qunit'
+		"sap/ui/fl/changeHandler/XmlTreeModifier"
 	],
 	function (
 		Title,
 		View,
 		AddFieldChangeHandler,
 		Form,
-		SmartField,
 		Change,
 		JsControlTreeModifier,
-		XmlTreeModifier,
-		ChangeHandlerMediator
+		XmlTreeModifier
 	) {
 		'use strict';
 
 		QUnit.start();
 
-		// Register an entry on the Change Handler Mediator (e.g. from SmartField)
-		ChangeHandlerMediator.addChangeHandlerSettings({
-			"scenario" : "addODataField",
-			"oDataServiceVersion" : "2.0"}, {
-			"requiredLibraries" : {
-				"sap.ui.comp": {
-					"minVersion": "1.48",
-					"lazy": "false"
-				}
-			},
-
-			//Function returning a set of SmartField + SmartLabel ready to be added
-			"createFunction" : function(oModifier, mPropertyBag){
-				var oSmartField = oModifier.createControl("sap.ui.comp.smartfield.SmartField",
-					mPropertyBag.appComponent,
-					mPropertyBag.view,
-					mPropertyBag.fieldSelector,
-					{value : "{" + mPropertyBag.bindingPath + "}"}
-				);
-				var sNewFieldId = oModifier.getId(oSmartField);
-				var oSmartFieldLabel = oModifier.createControl("sap.ui.comp.smartfield.SmartLabel",
-					mPropertyBag.appComponent,
-					mPropertyBag.view,
-					sNewFieldId + "-label",
-					{labelFor: sNewFieldId}
-				);
-				return {
-					"label" : oSmartFieldLabel,
-					"control" : oSmartField
-				};
-			}
-		});
-
 		QUnit.module("AddField for Form", {
 			beforeEach: function () {
-				this.oAddFieldChangeHandler = AddFieldChangeHandler;
 				this.oMockedAppComponent = {
 					getLocalId: function () {
 						return undefined;
@@ -107,9 +65,9 @@ sap.ui.require([
 
 			assert.equal(this.oForm.getFormContainers()[0].getFormElements().length, 1, "the form has only one form element in the beginning");
 
-			this.oAddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+			AddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
 
-			assert.ok(this.oAddFieldChangeHandler.applyChange(oChange, this.oForm,
+			assert.ok(AddFieldChangeHandler.applyChange(oChange, this.oForm,
 				{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
 				"the change to add a field was applied");
 
@@ -134,9 +92,9 @@ sap.ui.require([
 
 			var oChange2 = new Change({"changeType" : "addFormField"});
 
-			this.oAddFieldChangeHandler.completeChangeContent(oChange2, mSpecificChangeInfo2, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+			AddFieldChangeHandler.completeChangeContent(oChange2, mSpecificChangeInfo2, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
 
-			assert.ok(this.oAddFieldChangeHandler.applyChange(oChange2, this.oForm,
+			assert.ok(AddFieldChangeHandler.applyChange(oChange2, this.oForm,
 				{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent}),
 				"the change adding a field to index 0 was applied");
 
@@ -156,7 +114,6 @@ sap.ui.require([
 
 		QUnit.module("AddFormField for Form in XML", {
 			beforeEach: function () {
-				this.oAddFieldChangeHandler = AddFieldChangeHandler;
 				this.oMockedAppComponent = {
 					getLocalId: function () {
 						return undefined;
@@ -225,10 +182,10 @@ sap.ui.require([
 
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 
-			this.oAddFieldChangeHandler.completeChangeContent(oChangeXml, XMLSpecificChangeInfo, {modifier: XmlTreeModifier, view : oXmlDocument, appComponent: this.oMockedAppComponent});
+			AddFieldChangeHandler.completeChangeContent(oChangeXml, XMLSpecificChangeInfo, {modifier: XmlTreeModifier, view : oXmlDocument, appComponent: this.oMockedAppComponent});
 
 			this.oXmlFormContainer = oXmlDocument.getElementById("container1");
-			assert.ok(this.oAddFieldChangeHandler.applyChange(oChangeXml, this.oXmlFormContainer,
+			assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oXmlFormContainer,
 					{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
 					"the change was successfully applied");
 
