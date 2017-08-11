@@ -318,6 +318,18 @@
 			}
 		});
 
+		QUnit.test("Magnitude of artificial node with relative binding path", function(assert){
+			createTreeBindingAdapter("root", oModel.getContext("/bing"), [], {
+				displayRootNode: false
+			});
+
+			// contexts should be now loaded
+			oBinding.getContexts(0, 5);
+			var oArtificialNode = oBinding._oRootNode;
+
+			assert.equal(oArtificialNode.magnitude, 4, "Artificial RootNode has correct magnitude");
+		});
+
 		QUnit.test("Display root node", function(assert){
 			createTreeBindingAdapter("/bing/root", null, [], {
 				displayRootNode: true
