@@ -5,13 +5,13 @@
 // Provides control sap.ui.table.Table.
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool',
-		'sap/ui/core/ResizeHandler', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters',
+		'sap/ui/core/ResizeHandler', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters',
 		'sap/ui/model/ChangeReason', 'sap/ui/model/Context', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter', "sap/ui/model/BindingMode",
 		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', './TablePointerExtension',
 		'./TableScrollExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
 	function(jQuery, Device,
 		Control, Element, IconPool,
-		ResizeHandler, ScrollBar, ItemNavigation, Parameters,
+		ResizeHandler, ItemNavigation, Parameters,
 		ChangeReason, Context, Filter, SelectionModel, Sorter, BindingMode,
 		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension,
 		TablePointerExtension, TableScrollExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
@@ -189,7 +189,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			minAutoRowCount : {type : "int", group : "Appearance", defaultValue : 5},
 
 			/**
-			 * Number of columns that are fix on the left. When you use a horizontal scroll bar, only
+			 * Number of columns that are fix on the left. When you use a horizontal scrollbar, only
 			 * the columns which are not fixed, will scroll. Fixed columns need a defined width for the feature to work.
 			 * Please note that the aggregated width of all fixed columns must not exceed the table width since there
 			 * will be no scrollbar for fixed columns.
@@ -197,12 +197,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			fixedColumnCount : {type : "int", group : "Appearance", defaultValue : 0},
 
 			/**
-			 * Number of rows that are fix on the top. When you use a vertical scroll bar, only the rows which are not fixed, will scroll.
+			 * Number of rows that are fix on the top. When you use a vertical scrollbar, only the rows which are not fixed, will scroll.
 			 */
 			fixedRowCount : {type : "int", group : "Appearance", defaultValue : 0},
 
 			/**
-			 * Number of rows that are fix on the bottom. When you use a vertical scroll bar, only the rows which are not fixed, will scroll.
+			 * Number of rows that are fix on the bottom. When you use a vertical scrollbar, only the rows which are not fixed, will scroll.
 			 * @since 1.18.7
 			 */
 			fixedBottomRowCount : {type : "int", group : "Appearance", defaultValue : 0},
@@ -650,9 +650,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 */
 		this._lastCalledUpdateRows = 0;
 		this._iBindingTimerDelay = 50;
-		this._iMaxScrollbarHeight = 1000000; // maximum px height of a DOM element in FF/IE/Chrome
 		this._aRowHeights = [];
-		this._iRowHeightsDelta = 0;
 		this._iRenderedFirstVisibleRow = 0;
 
 		this._aSortedColumns = [];
@@ -681,21 +679,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					that._updateRowHeights(that._aRowHeights, false); // table body rows
 
 					if (TableUtils.isVariableRowHeightEnabled(that)) {
-						that._iRowHeightsDelta = this._getRowHeightsDelta(that._aRowHeights);
+						that._getScrollExtension().updateInnerVerticalScrollRangeCache(that._aRowHeights);
 						that._iRenderedFirstVisibleRow = this.getFirstVisibleRow();
 					}
 					if (that._bBindingLengthChanged) {
-						that._updateVSbScrollTop();
+						that._getScrollExtension().updateVerticalScrollPosition();
 					}
-					that._toggleVSb();
+					that._getScrollExtension().updateVerticalScrollbarVisibility();
 
 					if (TableUtils.isVariableRowHeightEnabled(that)) {
-						var iScrollTop = 0;
-						var oVSb = that._getScrollExtension().getVerticalScrollbar();
-						if (oVSb) {
-							iScrollTop = oVSb.scrollTop;
-						}
-						that._adjustTablePosition(iScrollTop, that._aRowHeights);
+						that._getScrollExtension().updateInnerVerticalScrollPosition(that._aRowHeights);
 					}
 				}
 
@@ -732,8 +725,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
 		this._bInvalid = true;
-
-		this._bIsScrollVertical = null;
 	};
 
 
@@ -1066,7 +1057,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// Otherwise, check if the new fixed columns fit into the table. If they don't, the fixed column count setting will be ignored.
 			var bNonFixedColumnsFitIntoTable = oSizes.tableCtrlScrollWidth === oSizes.tableCtrlScrWidth; // Also true if no non-fixed columns exist.
 
-			if (!bNonFixedColumnsFitIntoTable) { // horizontal scroll bar should be at least 48px wide
+			if (!bNonFixedColumnsFitIntoTable) { // horizontal scrollbar should be at least 48px wide
 				iUsedHorizontalTableSpace += TableUtils.Column.getMinColumnWidth();
 			}
 
@@ -1170,8 +1161,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var bEventIsMarked = oEvent && oEvent.isMarked("renderRows");
 
 		if (bEventIsMarked) {
-			this._getScrollExtension().updateVerticalScrollbarHeight();
-			this._updateVSbRange();
+			var oScrollExtension = this._getScrollExtension();
+			oScrollExtension.updateVerticalScrollbarHeight();
+			oScrollExtension.updateVerticalScrollHeight();
 		}
 
 		this._bInvalid = false;
@@ -1263,7 +1255,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._aRowHeights = this._collectRowHeights(false);
 		var aColumnHeaderRowHeights = this._collectRowHeights(true);
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			this._iRowHeightsDelta = this._getRowHeightsDelta(this._aRowHeights);
+			this._getScrollExtension().updateInnerVerticalScrollRangeCache(this._aRowHeights);
 		}
 
 		var iRowContentSpace = 0;
@@ -1367,8 +1359,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._setRowContentHeight(iRowContentSpace);
 		}
 
-		this._updateHSb(oTableSizes);
-		this._updateVSbTop();
+		var oScrollExtension = this._getScrollExtension();
+		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
+		oScrollExtension.updateVerticalScrollbarPosition();
 
 		var $this = this.$();
 
@@ -1536,44 +1529,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this;
 	};
 
-	/**
-	 * Shifts the vertical table position according to the delta of the estimated row heights to actual row heights.
-	 * The table simulates the pixel-based scrolling by adjusting the vertical position of the scrolling areas.
-	 * Additionally when there are rows inside which have a larger height than estimated, this will also be corrected
-	 * and leads to a bigger vertical shift.
-	 * @private
-	 */
-	Table.prototype._adjustTablePosition = function(iScrollTop, aRowHeights) {
-		var bScrollPositionAtVirtualRange = iScrollTop < this._getVirtualScrollRange();
-		var bVirtualScrollingNeeded = this._getTotalRowCount() > this.getVisibleRowCount();
-
-		// Only update table scroll simulation when table is not waiting for an update of rows
-		if (bScrollPositionAtVirtualRange && this.getFirstVisibleRow() != this._iRenderedFirstVisibleRow) {
-			return;
-		}
-
-		var iRowCorrection = null;
-		if (bScrollPositionAtVirtualRange && bVirtualScrollingNeeded) {
-			var iFirstRowHeight = aRowHeights[0];
-			var iScrollingPixelsForRow = this._getScrollingPixelsForRow();
-			var iPixelOnCurrentRow = iScrollTop - (this.getFirstVisibleRow() * iScrollingPixelsForRow);
-			var iPercentOfFirstRowReached = iPixelOnCurrentRow / iScrollingPixelsForRow;
-			iRowCorrection = Math.ceil(iPercentOfFirstRowReached * iFirstRowHeight);
-			// Is scroll position over the first row height >> do nothing until performUpdateRows()
-			if (iRowCorrection > iFirstRowHeight) {
-				iRowCorrection = null;
-			}
-		} else if (this._iRowHeightsDelta >= 0) {
-			// Correct the total amount of RowHeightsDelta over the overflow scroll area.
-			var iScrollPositionAtOverflowRange = bVirtualScrollingNeeded ? iScrollTop - this._getVirtualScrollRange() : iScrollTop;
-			iRowCorrection = (this._iRowHeightsDelta / this._getRowCorrectionScrollRange()) * iScrollPositionAtOverflowRange;
-		}
-
-		if (iRowCorrection != null && iRowCorrection > -1) {
-			this.$().find(".sapUiTableCCnt").scrollTop(iRowCorrection);
-		}
-	};
-
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
@@ -1604,7 +1559,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				this.updateRows(sReason);
 
 				if (!bOnScroll) {
-					this._updateVSbScrollTop();
+					this._getScrollExtension().updateVerticalScrollPosition();
 				}
 			}
 
@@ -2027,12 +1982,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			// If the binding length changes, some parts of the UI need to be updated.
 			if (bUpdateUI === true) {
-				this._updateFixedBottomRows();
-				this._toggleVSb();
-				this._updateVSbRange();
+				var oScrollExtension = this._getScrollExtension();
+				var bClientBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientListBinding")
+									 || TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding");
 
-				var bClientBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientListBinding") ||
-									 TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding");
+				this._updateFixedBottomRows();
+				oScrollExtension.updateVerticalScrollbarVisibility();
+				oScrollExtension.updateVerticalScrollHeight();
 
 				if (oBinding == null || bClientBinding) {
 					// A client binding does not fire dataReceived events. Therefore we need to update the no data area here.
@@ -2104,12 +2060,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				this._updateRows(this._calculateRowsToDisplay(), sReason);
 			}
 		}
-
-		// when not scrolling we update also the scroll position of the scrollbar
-		//if (this._oVSb.getScrollPosition() !== iStartIndex) {
-			// TODO
-			//this._updateAriaRowOfRowsText(true);
-		//}
 
 		// update the bindings only once the table is rendered
 		if (!this.bIsDestroyed) {
@@ -2195,19 +2145,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._attachEvents = function() {
 		var $this = this.$();
 
-		// listen to the scroll events of the containers (for keyboard navigation)
-		$this.find(".sapUiTableColHdrScr").scroll(jQuery.proxy(this._oncolscroll, this));
-		$this.find(".sapUiTableCtrlScr").scroll(jQuery.proxy(this._oncntscroll, this));
-		$this.find(".sapUiTableCtrlScrFixed").scroll(jQuery.proxy(this._oncntscroll, this));
-
-		$this.find(".sapUiTableCtrlScrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			var oInnerScrollContainer = $this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableRowHdrScr");
-			oInnerScrollContainer.on("scroll.sapUiTableSyncScrollPosition", function(oEvent) {
-				oInnerScrollContainer.scrollTop(oEvent.target.scrollTop);
-			});
-		}
-
 		if (sap.ui.getCore().getConfiguration().getAnimation()) {
 			jQuery(document.body).on("webkitTransitionEnd transitionend",
 				function(oEvent) {
@@ -2234,19 +2171,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Collect the scroll wheel/touch targets needed for scrolling the table.
-	 * @returns {*}
-	 * @private
-	 */
-	Table.prototype._getScrollTargets = function() {
-		var $ctrlScr = jQuery(this.getDomRef("sapUiTableCtrlScr"));
-		var $rsz = jQuery(this.getDomRef("rsz"));
-		var $ctrlScrFixed = jQuery(this.getDomRef("sapUiTableCtrlScrFixed"));
-		var $rowHdrScr = jQuery(this.getDomRef("sapUiTableRowHdrScr"));
-		return $ctrlScr.add($ctrlScrFixed).add($rowHdrScr).add($rsz);
-	};
-
-	/**
 	 * cleanup the timers when not required anymore
 	 * @private
 	 */
@@ -2262,145 +2186,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 	// PRIVATE TABLE STUFF :)
 	// =============================================================================
-	/**
-	 * updates the horizontal scrollbar
-	 * @private
-	 */
-	Table.prototype._updateHSb = function(oTableSizes) {
-		// get the width of the container
-		var $this = this.$();
-		var iColsWidth = oTableSizes.tableCtrlScrollWidth;
-		if (!!Device.browser.safari) {
-			iColsWidth = Math.max(iColsWidth, this._getColumnsWidth(this.getFixedColumnCount()));
-		}
-
-		// add the horizontal scrollbar
-		if (iColsWidth > oTableSizes.tableCtrlScrWidth) {
-			// show the scrollbar
-			if (!this._getScrollExtension().isHorizontalScrollbarVisible()) {
-				$this.addClass("sapUiTableHScr");
-
-				if (!!Device.browser.safari) {
-					var $sapUiTableColHdr = $this.find(".sapUiTableCtrlScroll, .sapUiTableColHdrScr > .sapUiTableColHdr");
-					// min-width on table elements does not work for safari
-					$sapUiTableColHdr.outerWidth(iColsWidth);
-				}
-			}
-
-			var iScrollPadding = oTableSizes.tableCtrlFixedWidth;
-			if ($this.find(".sapUiTableRowHdrScr").length > 0) {
-				iScrollPadding += oTableSizes.tableRowHdrScrWidth;
-			}
-
-			if (this.getRows().length > 0) {
-				var $sapUiTableHSb = $this.find(".sapUiTableHSb");
-				if (this._bRtlMode) {
-					$sapUiTableHSb.css('margin-right', iScrollPadding + 'px');
-				} else {
-					$sapUiTableHSb.css('margin-left', iScrollPadding + 'px');
-				}
-			}
-
-			var oHSbContent = this.getDomRef("hsb-content");
-			if (oHSbContent) {
-				oHSbContent.style.width = iColsWidth + "px";
-			}
-		} else {
-			// hide the scrollbar
-			if (this._getScrollExtension().isHorizontalScrollbarVisible()) {
-				$this.removeClass("sapUiTableHScr");
-				if (!!Device.browser.safari) {
-					// min-width on table elements does not work for safari
-					$this.find(".sapUiTableCtrlScroll, .sapUiTableColHdr").css("width", "");
-				}
-			}
-		}
-	};
-
-	/**
-	 * Update the vertical scrollbar position
-	 * @private
-	 */
-	Table.prototype._updateVSbTop = function() {
-		var oVSb = this._getScrollExtension().getVerticalScrollbar();
-		if (!oVSb) {
-			return;
-		}
-
-		var oTableCCnt = this.getDomRef("tableCCnt");
-		if (oTableCCnt) {
-			var iTop = oTableCCnt.offsetTop;
-			var oVSbBg = this.getDomRef("vsb-bg");
-			oVSbBg.style.top = iTop + "px";
-
-			var iFixedRows = this.getFixedRowCount();
-			if (iFixedRows > 0) {
-				iTop += this._iVsbTop;
-			}
-			oVSb.style.top = iTop + "px";
-		}
-	};
-
-	Table.prototype._updateVSbScrollTop = function(iScrollTop) {
-		var oScrollExtension = this._getScrollExtension();
-		var oVSb = oScrollExtension.getVerticalScrollbar();
-		if (!oVSb) {
-			return;
-		}
-		if (!this._isVSbRequired()) {
-			return;
-		}
-		if (iScrollTop === undefined) {
-			iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
-		}
-
-		oScrollExtension._iVerticalScrollPosition = null;
-		window.requestAnimationFrame(function(){oVSb.scrollTop = iScrollTop;});
-	};
-
-	/**
-	 * Updates the vertical scroll bar range (inner element height)
-	 * @private
-	 */
-	Table.prototype._updateVSbRange = function() {
-		var oVSb = this._getScrollExtension().getVerticalScrollbar();
-		if (!oVSb) {
-			return;
-		}
-
-		jQuery(this.getDomRef("vsb-content")).height(this._getTotalScrollRange());
-	};
-
-	/**
-	 * Toggles the visibility of the Vertical Scroll Bar.
-	 * @private
-	 */
-	Table.prototype._toggleVSb = function() {
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			if (this._isVSbRequired()) {
-				if (!oDomRef.classList.contains("sapUiTableVScr")) {
-					oDomRef.classList.add("sapUiTableVScr");
-					this._updateVSbScrollTop(0);
-				}
-			} else {
-				oDomRef.classList.remove("sapUiTableVScr");
-			}
-		}
-	};
-
-	/**
-	 * Indicates whether a Vertical Scroll Bar is needed.
-	 * @private
-	 * @returns {Boolean} true/false when Vertical Scroll Bar is required
-	 */
-	Table.prototype._isVSbRequired = function() {
-		if (this._iRowHeightsDelta > 0 || (this._getTotalRowCount() > this.getVisibleRowCount())) {
-			return true;
-		}
-
-		return false;
-	};
 
 	/**
 	 * Updates the binding contexts of the cells (column template clones).
@@ -2554,98 +2339,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Returns the current top scroll position of the scrollbar (row number)
-	 * @private
-	 */
-	Table.prototype._getFirstVisibleRowByScrollTop = function(iScrollTop) {
-		if (TableUtils.isVariableRowHeightEnabled(this) && this._getTotalRowCount() < this.getVisibleRowCount()) {
-			return 0;
-		} else {
-			var iRowIndex = Math.floor(iScrollTop / this._getScrollingPixelsForRow());
-			var nDistanceToMaximumScrollPosition = this._getVirtualScrollRange() - iScrollTop;
-
-			// Calculation of the firstVisibleRow index can be inaccurate when scrolled to the end. This can happen due to rounding errors in case of
-			// large data or when zoomed in Chrome. In this case it can not be scrolled to the last row. To overcome this issue we consider the table
-			// to be scrolled to the end when the scroll position is less than 1 pixel away from the maximum.
-			var bScrolledToBottom = nDistanceToMaximumScrollPosition < 1;
-
-			return bScrolledToBottom ? this._getMaxRowIndex() : iRowIndex;
-		}
-	};
-
-	/**
-	 * Returns the amount of pixels which are to needed to scroll one data row
-	 * @private
-	 */
-	Table.prototype._getScrollingPixelsForRow = function() {
-		return this._getVirtualScrollRange() / Math.max(1, this._getMaxRowIndex());
-	};
-
-	/**
-	 * Returns the vertical scroll bar height
-	 * @private
-	 */
-	Table.prototype._getVSbHeight = function() {
-		return this._getScrollableRowCount() * this._getDefaultRowHeight();
-	};
-
-	/**
 	 * Returns the amount of scrollable rows
 	 * @private
 	 */
 	Table.prototype._getScrollableRowCount = function() {
 		return Math.max(1, this.getVisibleRowCount() - this.getFixedRowCount() - this.getFixedBottomRowCount());
-	};
-
-	/**
-	 * Returns the delta of the sum of the actual height of all rows, compared with sum of estimated row heights
-	 * @private
-	 */
-	Table.prototype._getRowHeightsDelta = function(aRowHeights) {
-		var iEstimatedViewportHeight = this._getDefaultRowHeight() * this.getVisibleRowCount();
-		// Case: Not enough data to fill all available rows, only sum used rows.
-		if (this.getVisibleRowCount() >= this._getTotalRowCount()) {
-			aRowHeights = aRowHeights.slice(0, this._getTotalRowCount());
-		}
-		var iRowHeightsDelta = aRowHeights.reduce(function(a, b) { return a + b; }, 0) - iEstimatedViewportHeight;
-		if (iRowHeightsDelta > 0) {
-			iRowHeightsDelta = Math.ceil(iRowHeightsDelta);
-		}
-		return Math.max(0, iRowHeightsDelta);
-	};
-
-	/**
-	 * Calculates the total scroll range for the vertical scroll bar
-	 * @private
-	 */
-	Table.prototype._getTotalScrollRange = function() {
-		var iRowCount = Math.max(this._getTotalRowCount(), this.getVisibleRowCount() + 1);
-		var iScrollbarRange = this._getDefaultRowHeight() * iRowCount;
-		return Math.min(this._iMaxScrollbarHeight, iScrollbarRange);
-	};
-
-	/**
-	 * Returns the amount of pixels which are used for virtual scrolling (from the total scroll range)
-	 * @private
-	 */
-	Table.prototype._getVirtualScrollRange = function() {
-		var iMaxScrollRange = this._getTotalScrollRange() - this._getVSbHeight();
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			iMaxScrollRange = iMaxScrollRange - this._iRowHeightsDelta;
-		}
-		return Math.max(1, iMaxScrollRange);
-	};
-
-	/**
-	 * Returns the amount of pixels which are used for the correction of the row heights delta (from total  scroll range)
-	 * @private
-	 */
-	Table.prototype._getRowCorrectionScrollRange = function() {
-		var iScrollOverflowRange = this._getTotalScrollRange() - this._getVSbHeight();
-		if (this._getTotalRowCount() > this.getVisibleRowCount()) {
-			iScrollOverflowRange -= this._getVirtualScrollRange();
-		}
-		return Math.max(1, iScrollOverflowRange);
 	};
 
 	/**
@@ -3742,7 +3440,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		this._toggleVSb();
+		this._getScrollExtension().updateVerticalScrollbarVisibility();
 	};
 
 	/**
@@ -4005,10 +3703,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Lets you control in which situation the <code>ScrollBar</code> fires scroll events.
+	 * Lets you control in which situation the <code>Scrollbar</code> fires scroll events.
 	 *
-	 * @param {boolean} bLargeDataScrolling Set to true to let the <code>ScrollBar</code> only fire scroll events when
-	 * the scroll handle is released. No matter what the setting is, the <code>ScrollBar</code> keeps on firing scroll events
+	 * @param {boolean} bLargeDataScrolling Set to true to let the <code>Scrollbar</code> only fire scroll events when
+	 * the scroll handle is released. No matter what the setting is, the <code>Scrollbar</code> keeps on firing scroll events
 	 * when the user scrolls with the mouse wheel or using touch.
 	 * @private
 	 */

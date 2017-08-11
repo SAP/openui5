@@ -793,7 +793,7 @@ sap.ui.define([
 
 				// In case of FireFox and CTRL+CLICK it selects the target TD
 				//   => prevent the default behavior only in this case (to still allow text selection)
-				// Also prevent default when clicking on ScrollBars to prevent ItemNavigation to re-apply
+				// Also prevent default when clicking on scrollbars to prevent ItemNavigation to re-apply
 				// focus to old position (table cell).
 				if ((Device.browser.firefox && !!(oEvent.metaKey || oEvent.ctrlKey))
 					|| $Target.closest(".sapUiTableHSb", this.getDomRef()).length === 1

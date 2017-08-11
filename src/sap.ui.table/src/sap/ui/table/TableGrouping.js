@@ -360,17 +360,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 
 			if (TableGrouping.showGroupMenuButton(oTable)) {
 				// Update the GroupMenuButton
-				var iScrollBarOffset = 0;
+				var iScrollbarOffset = 0;
 				var $Table = oTable.$();
 				if ($Table.hasClass("sapUiTableVScr")) {
-					iScrollBarOffset += $Table.find('.sapUiTableVSb').width();
+					iScrollbarOffset += $Table.find('.sapUiTableVSb').width();
 				}
 				var $GroupHeaderMenuButton = $RowHdr.find(".sapUiTableGroupMenuButton");
 
 				if (oTable._bRtlMode) {
-					$GroupHeaderMenuButton.css("right", ($Table.width() - $GroupHeaderMenuButton.width() + $RowHdr.position().left - iScrollBarOffset - 5) + "px");
+					$GroupHeaderMenuButton.css("right", ($Table.width() - $GroupHeaderMenuButton.width() + $RowHdr.position().left - iScrollbarOffset - 5) + "px");
 				} else {
-					$GroupHeaderMenuButton.css("left", ($Table.width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollBarOffset - 5) + "px");
+					$GroupHeaderMenuButton.css("left", ($Table.width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollbarOffset - 5) + "px");
 				}
 			}
 

@@ -386,10 +386,10 @@ sap.ui.define([
 
 			if (sDirection === NavigationDirection.UP) {
 				if (TableUtils.isFirstScrollableRow(oTable, oCellInfo.cell)) {
-					bScrolled = oTable._getScrollExtension().scroll(false, false, true); // Scroll one row up.
+					bScrolled = oTable._getScrollExtension().scrollVertically(false, false, true); // Scroll one row up.
 				}
 			} else if (TableUtils.isLastScrollableRow(oTable, oCellInfo.cell)) {
-				bScrolled = oTable._getScrollExtension().scroll(true, false, true); // Scroll one row down.
+				bScrolled = oTable._getScrollExtension().scrollVertically(true, false, true); // Scroll one row down.
 			}
 
 			if (bScrolled) {
@@ -1005,7 +1005,7 @@ sap.ui.define([
 				var bScrolled = false;
 
 				if (!bIsAbsoluteLastRow && bIsLastScrollableRow) {
-					bScrolled = this._getScrollExtension().scroll(true, null, true);
+					bScrolled = this._getScrollExtension().scrollVertically(true, null, true);
 				}
 
 				if (bIsAbsoluteLastRow) {
@@ -1120,7 +1120,7 @@ sap.ui.define([
 				var bScrolled = false;
 
 				if (!bIsAbsoluteFirstRow && bIsFirstScrollableRow) {
-					bScrolled = this._getScrollExtension().scroll(false, null, true);
+					bScrolled = this._getScrollExtension().scrollVertically(false, null, true);
 				}
 
 				if (bIsAbsoluteFirstRow) {
@@ -1239,7 +1239,7 @@ sap.ui.define([
 				}
 
 				if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
-					var bScrolled = this._getScrollExtension().scroll(true, false, true);
+					var bScrolled = this._getScrollExtension().scrollVertically(true, false, true);
 					if (bScrolled) {
 						preventItemNavigation(oEvent);
 					}
@@ -1318,7 +1318,7 @@ sap.ui.define([
 				}
 
 				if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
-					var bScrolled = this._getScrollExtension().scroll(false, false, true);
+					var bScrolled = this._getScrollExtension().scrollVertically(false, false, true);
 					if (bScrolled) {
 						preventItemNavigation(oEvent);
 					}
@@ -1632,7 +1632,7 @@ sap.ui.define([
 					/* Scrollable area */
 					} else if (iFocusedRow >= iHeaderRowCount + iFixedTopRowCount &&
 							   iFocusedRow < iHeaderRowCount + TableUtils.getNonEmptyVisibleRowCount(this) - iFixedBottomRowCount) {
-						this._getScrollExtension().scrollMax(false, true);
+						this._getScrollExtension().scrollVerticallyMax(false, true);
 						// If a fixed top area exists or we are in the row action column (has no header), then set the focus to the first row (of
 						// the top fixed area), otherwise set the focus to the first row of the column header area.
 						if (iFixedTopRowCount > 0 || oCellInfo.isOfType(CellType.ROWACTION)) {
@@ -1644,7 +1644,7 @@ sap.ui.define([
 					/* Bottom fixed area */
 					} else {
 						// Set the focus to the first row of the scrollable area and scroll to top.
-						this._getScrollExtension().scrollMax(false, true);
+						this._getScrollExtension().scrollVerticallyMax(false, true);
 						TableUtils.focusItem(this, iFocusedIndex - iColumnCount * (iFocusedRow - iHeaderRowCount - iFixedTopRowCount), oEvent);
 					}
 				}
@@ -1691,7 +1691,7 @@ sap.ui.define([
 							TableUtils.focusItem(
 								this, iFocusedIndex + iColumnCount * (iHeaderRowCount + iFixedTopRowCount - iFocusedRow - 1), oEvent);
 						} else {
-							this._getScrollExtension().scrollMax(true, true);
+							this._getScrollExtension().scrollVerticallyMax(true, true);
 							TableUtils.focusItem(
 								this,
 								iFocusedIndex + iColumnCount * (iHeaderRowCount + iNonEmptyVisibleRowCount - iFixedBottomRowCount - iFocusedRow - 1),
@@ -1702,7 +1702,7 @@ sap.ui.define([
 					/* Top fixed area */
 					} else if (iFocusedRow >= iHeaderRowCount && iFocusedRow < iHeaderRowCount + iFixedTopRowCount) {
 						// Set the focus to the last row of the scrollable area and scroll to bottom.
-						this._getScrollExtension().scrollMax(true, true);
+						this._getScrollExtension().scrollVerticallyMax(true, true);
 						TableUtils.focusItem(
 							this,
 							iFocusedIndex + iColumnCount * (iHeaderRowCount + iNonEmptyVisibleRowCount - iFixedBottomRowCount - iFocusedRow - 1),
@@ -1713,7 +1713,7 @@ sap.ui.define([
 					} else if (iFocusedRow >= iHeaderRowCount + iFixedTopRowCount &&
 							   iFocusedRow < iHeaderRowCount + iNonEmptyVisibleRowCount - iFixedBottomRowCount) {
 						// Set the focus to the last row of the scrollable area and scroll to bottom.
-						this._getScrollExtension().scrollMax(true, true);
+						this._getScrollExtension().scrollVerticallyMax(true, true);
 						TableUtils.focusItem(
 							this, iFocusedIndex + iColumnCount * (iHeaderRowCount + iNonEmptyVisibleRowCount - iFocusedRow - 1), oEvent);
 
@@ -1759,7 +1759,7 @@ sap.ui.define([
 					var iPageSize = TableUtils.getNonEmptyVisibleRowCount(this) - iFixedTopRowCount - iFixedBottomRowCount;
 					var iRowsToBeScrolled = this.getFirstVisibleRow();
 
-					this._getScrollExtension().scroll(false, true, true); // Scroll up one page
+					this._getScrollExtension().scrollVertically(false, true, true); // Scroll up one page
 
 					// Only change the focus if scrolling was not performed over a full page, or not at all.
 					if (iRowsToBeScrolled < iPageSize) {
@@ -1850,7 +1850,7 @@ sap.ui.define([
 					var iPageSize = TableUtils.getNonEmptyVisibleRowCount(this) - iFixedTopRowCount - iFixedBottomRowCount;
 					var iRowsToBeScrolled = this._getTotalRowCount() - iFixedBottomRowCount - this.getFirstVisibleRow() - iPageSize * 2;
 
-					this._getScrollExtension().scroll(true, true, true); // Scroll down one page
+					this._getScrollExtension().scrollVertically(true, true, true); // Scroll down one page
 
 					// If scrolling was not performed over a full page and there is a bottom fixed area,
 					// then set the focus to the last row of the bottom fixed area.
