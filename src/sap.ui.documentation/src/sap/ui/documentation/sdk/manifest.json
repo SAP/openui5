@@ -109,7 +109,14 @@
 		  {
 			"pattern": "controls",
 			"name": "controls",
-			"target": ["controlsMaster", "controls"]
+			"target": ["controlsMaster", "controls"],
+			  "subroutes": [
+				  {
+					  "pattern": "controls/filter/{value}",
+					  "name": "listFilter",
+					  "target": ["controlsMaster", "controls"]
+				  }
+			  ]
 		  },
 		  {
 			"pattern": "group/{id}",
