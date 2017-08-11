@@ -167,7 +167,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function returns the internally used scroll delegate
 	 *
 	 * @public
-	 * @returns {sap.ui.core.delegate.ScrollEnablement}
+	 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll delegate
 	 */
 	Tokenizer.prototype.getScrollDelegate = function() {
 		return this._oScroller;
@@ -208,8 +208,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function sets the tokenizer's width in pixels
 	 *
 	 * @public
-	 * @param {number}
-	 *          nWidth - the new width in pixels
+	 * @param {number} nWidth The new width in pixels
 	 */
 	Tokenizer.prototype.setPixelWidth = function(nWidth) {
 		if (typeof nWidth !== "number") {
@@ -252,8 +251,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @public
 	 *
-	 * @returns
-	 * 	the complete tokens' width
+	 * @returns {number} The complete width of all tokens
 	 */
 	Tokenizer.prototype.getScrollWidth = function(){
 		if (!this.getDomRef()) {
@@ -293,8 +291,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handle the focus leave event, deselects token
 	 *
-	 * @param {jQuery.Event}
-	 *            oEvent - the occuring event
+	 * @param {jQuery.Event} oEvent The occuring event
 	 * @private
 	 */
 	Tokenizer.prototype.onsapfocusleave = function(oEvent) {
@@ -307,7 +304,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * check if all tokens in the tokenizer are selected.
-	 *
+	 * @returns {boolean} True if all tokens are selected
 	 * @private
 	 */
 	Tokenizer.prototype.isAllTokenSelected = function() {
@@ -322,8 +319,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handle the key down event for Ctrl+ a , Ctrl+ c and Ctrl+ x
 	 *
-	 * @param {jQuery.Event}
-	 *            oEvent - the occuring event
+	 * @param {jQuery.Event}oEvent The occuring event
 	 * @private
 	 */
 	Tokenizer.prototype.onkeydown = function(oEvent) {
@@ -452,8 +448,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function is called on keyboard backspace, deletes selected tokens
 	 *
 	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 
 	Tokenizer.prototype.onsapbackspace = function(oEvent) {
@@ -471,8 +466,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function is called on keyboard delete, deletes token
 	 *
 	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 
 	Tokenizer.prototype.onsapdelete = function(oEvent) {
@@ -610,8 +604,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function adds a validation callback called before any new token gets added to the tokens aggregation
 	 *
 	 * @public
-	 * @param {function}
-	 *          fValidator
+	 * @param {function} fValidator The validation function
 	 */
 	Tokenizer.prototype.addValidator = function(fValidator) {
 		if (typeof (fValidator) === "function") {
@@ -623,8 +616,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function removes a validation callback
 	 *
 	 * @public
-	 * @param {function}
-	 *          fValidator
+	 * @param {function} fValidator The validation function
 	 */
 	Tokenizer.prototype.removeValidator = function(fValidator) {
 		var i = this._aTokenValidators.indexOf(fValidator);
@@ -646,11 +638,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function validates a given token using the set validators
 	 *
 	 * @private
-	 * @param {object}
-	 *          oParameters - parameter bag containing fields for text, token, suggestionObject and validation callback
-	 * @param {function[]}
-	 *          [optional] aValidator - all validators to be used
-	 * @returns {sap.m.Token} - a valid token or null
+	 * @param {object}oParameters Parameter bag containing fields for text, token, suggestionObject and validation callback
+	 * @param {function[]} aValidator [optional] Array of all validators to be used
+	 * @returns {sap.m.Token} A valid token or null
 	 */
 	Tokenizer.prototype._validateToken = function(oParameters, aValidators) {
 		var oToken = oParameters.token;
@@ -706,16 +696,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Function returns a callback function which is used for executing validators after an asynchronous validator was triggered
-	 * @param {array} aValidators
-	 * 					the validators
-	 * @param {int} iValidatorIndex
-	 * 						current validator index
-	 * @param {string} sInitialText
-	 * 					initial text used for validation
-	 * @param {object} oSuggestionObject
-	 * 					a pre-validated token or suggestion item
-	 * @param {function} fValidateCallback
-	 * 						callback after validation has finished
+	 * @param {function[]} aValidators The validator array
+	 * @param {int} iValidatorIndex The current validator index
+	 * @param {string} sInitialText The initial text used for validation
+	 * @param {object} oSuggestionObject A pre-validated token or suggestion item
+	 * @param {function} fValidateCallback Callback after validation has finished
 	 * @private
 	 */
 	Tokenizer.prototype._getAsyncValidationCallback = function(aValidators, iValidatorIndex, sInitialText,
@@ -754,10 +739,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @public
 	 * @param {object}
-	 *          oParameters - parameter bag containing following fields: {sap.m.String} text - the source text {sap.m.Token}
-	 *          [optional] token - a suggested token {object} [optional] suggestionObject - any object used to find the
-	 *          suggested token {function} [optional] validationCallback - callback which gets called after validation has
-	 *          finished
+	 *          oParameters - parameter bag containing following fields:
+	 *          {sap.m.String} text - the source text {sap.m.Token}
+	 *          [optional] token - a suggested token
+	 *          {object} [optional] suggestionObject - any object used to find the suggested token
+	 *          {function} [optional] validationCallback - callback which gets called after validation has finished
 	 */
 	Tokenizer.prototype.addValidateToken = function(oParameters) {
 		var oToken = this._validateToken(oParameters);
@@ -769,10 +755,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @private
 	 * @param {object}
-	 *          oParameters - parameter bag containing following fields: {sap.m.String} text - the source text {sap.m.Token}
-	 *          [optional] token - a suggested token {object} [optional] suggestionObject - any object used to find the
-	 *          suggested token {function} [optional] validationCallback - callback which gets called after validation has
-	 *          finished
+	 *          oParameters - parameter bag containing following fields:
+	 *          {sap.m.String} text - the source text
+	 *          {sap.m.Token} [optional] token - a suggested token
+	 *          {object} [optional] suggestionObject - any object used to find the suggested token
+	 *          {function} [optional] validationCallback - callback which gets called after validation has finished
 	 */
 	Tokenizer.prototype._addValidateToken = function(oParameters) {
 		var oToken = this._validateToken(oParameters),
@@ -791,10 +778,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function adds token if it does not already exist
 	 *
 	 * @private
-	 * @param {sap.m.Token}
-	 *          token
-	 * @param {function}
-	 *          [optional] fValidateCallback
+	 * @param {sap.m.Token} oToken The token to be added
+	 * @param {function} fValidateCallback [optional] A validation function callback
+	 * @returns {boolean} True if the token was added
 	 */
 	Tokenizer.prototype._addUniqueToken = function(oToken, fValidateCallback) {
 		if (!oToken) {
@@ -830,8 +816,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function parses given text, and text is separated by line break
 	 *
 	 * @private
-	 * @param {String} string needed parsed
-	 * @return {Array} array of string after parsing
+	 * @param {String} sString  The texts that needs to be parsed
+	 * @returns {array} Array of string after parsing
 	 */
 	Tokenizer.prototype._parseString = function(sString) {
 
@@ -842,7 +828,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Checks whether the Tokenizer or one of its internal DOM elements has the focus.
-	 *
+	 * @returns {object} The control that has the focus
 	 * @private
 	 */
 	Tokenizer.prototype._checkFocus = function() {
@@ -854,8 +840,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function checks if a given token already exists in the tokens aggregation based on their keys
 	 *
 	 * @private
-	 * @param {sap.m.Token}
-	 *          Token
+	 * @param {sap.m.Token} oToken The token to search for
 	 * @return {boolean} true if it exists, otherwise false
 	 */
 	Tokenizer.prototype._tokenExists = function(oToken) {
@@ -963,7 +948,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function removes all selected tokens
 	 *
 	 * @public
-	 * @returns {sap.m.Tokenizer} - this for chaining
+	 * @returns {sap.m.Tokenizer} this instance for method chaining
 	 */
 	Tokenizer.prototype._removeSelectedTokens = function() {
 		var tokensToBeDeleted = this.getSelectedTokens();
@@ -1023,9 +1008,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function selects all tokens
 	 *
 	 * @public
-	 * @param {boolean}
-	 *          [optional] bSelect - true for selecting, false for deselecting
-	 * @returns {sap.m.Tokenizer} - this for chaining
+	 * @param {boolean} bSelect -[optional] true for selecting, false for deselecting
+	 * @returns {sap.m.Tokenizer} this instance for method chaining
 	 */
 	Tokenizer.prototype.selectAllTokens = function(bSelect) {
 		if (bSelect === undefined) {
@@ -1047,8 +1031,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Function selects/deselects all tokens and fires the correct "select" or "deselect" events.
-	 * @param {sap.m.Token}
-	 * 			[optional] skipToken - this token will be skipped when changing the selection
+	 * @param {sap.m.Token} skipToken  [optional] this token will be skipped when changing the selection
 	 * @private
 	 */
 	Tokenizer.prototype._changeAllTokensSelection = function(bSelect, skipToken) {
@@ -1073,7 +1056,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function returns all currently selected tokens
 	 *
 	 * @public
-	 * @returns {sap.m.Token[]} - array of selected tokens or empty array
+	 * @returns {sap.m.Token[]} Array of selected tokens or empty array
 	 */
 	Tokenizer.prototype.getSelectedTokens = function() {
 		var aSelectedTokens = [],
@@ -1095,7 +1078,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function is called when token's delete icon was pressed function destroys token from Tokenizer's aggregation
 	 *
 	 * @private
-	 * @param oEvent
+	 * @param {jQuery.Event} oEvent  The event object
 	 */
 	Tokenizer.prototype._onTokenDelete = function(token) {
 		if (token && this.getEditable()) {
@@ -1196,8 +1179,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handle the home button, scrolls to the first token
 	 *
-	 * @param {jQuery.Event}
-	 *            oEvent - the occuring event
+	 * @param {jQuery.Event}oEvent The occuring event
 	 * @private
 	 */
 	Tokenizer.prototype.onsaphome = function(oEvent) {
@@ -1207,8 +1189,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handle the end button, scrolls to the last token
 	 *
-	 * @param {jQuery.Event}
-	 *            oEvent - the occuring event
+	 * @param {jQuery.Event} oEvent The occuring event
 	 * @private
 	 */
 	Tokenizer.prototype.onsapend = function(oEvent) {
@@ -1285,7 +1266,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Sets internal property defining if tokens should be rendered in reverse order
-	 * @param {boolean} bReverseTokens
+	 * @param {boolean} bReverseTokens Whether tokens should be rendered in reverse
 	 * @private
 	 */
 	Tokenizer.prototype.setReverseTokens = function(bReverseTokens) {

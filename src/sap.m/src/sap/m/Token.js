@@ -168,7 +168,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * Sets the selection status of the token.
 	 *
 	 * @param {boolean} bSelected Indicates if the token is selected.
-	 * @return {sap.m.Token} this for chaining
+	 * @return {sap.m.Token} this instance for method chaining
 	 * @public
 	 */
 	Token.prototype.setSelected = function(bSelected) {
@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * Sets the editable status of the token.
 	 *
 	 * @param {boolean} bEditable Indicates if the token is editable.
-	 * @return {sap.m.Token} this for chaining
+	 * @return {sap.m.Token} this instance for method chaining
 	 * @public
 	 */
 	Token.prototype.setEditable = function(bEditable) {
@@ -213,7 +213,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Function is called when token is pressed to select/deselect token.
 	 * @private
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Token.prototype._onTokenPress = function(oEvent) {
 		var bSelected = this.getSelected(),
@@ -272,8 +272,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Event handler called when control is on tap
 	 *
-	 * @param {jQuery.Event}
-	 * 			oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	Token.prototype.ontap = function(oEvent) {
@@ -287,8 +286,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Event handler called when control is loosing the focus, removes selection from token
 	 *
-	 * @param {jQuery.Event}
-	 * 			oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	Token.prototype.onsapfocusleave = function(oEvent) {
@@ -303,8 +301,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * Function is called on keyboard backspace, deletes token
 	 *
 	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Token.prototype.onsapbackspace = function(oEvent) {
 		this._deleteToken(oEvent);
@@ -314,8 +311,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * Function is called on keyboard delete, deletes token
 	 *
 	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Token.prototype.onsapdelete = function(oEvent) {
 		this._deleteToken(oEvent);
@@ -338,8 +334,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Function is called on keyboard space, select/deselect token
 	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Token.prototype.onsapspace = function(oEvent) {
 
@@ -354,8 +349,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Handle the key down event for Ctrl+ space
 	 *
-	 * @param {jQuery.Event}
-	 *            oEvent - the occuring event
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	Token.prototype.onkeydown = function(oEvent) {
