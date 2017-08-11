@@ -23,7 +23,8 @@
 				"UxFcThatMakeFieldInvisible": 0,
 				"EntityType02_Property05": "EntityType02_Property05Value-Partially-Visible",
 				"EntityType02_Property06": "EntityType02_Property06Value-Partially-Invisible",
-				"EntityType02_Property07_with_implicit_nav" :"EntityType02_Property07Value_with_implicit_nav"
+				"EntityType02_Property07_with_implicit_nav" :"EntityType02_Property07Value_with_implicit_nav",
+				"CommonPropertyName" : "Property on EntityType02"
 			}
 		]
 	}

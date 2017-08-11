@@ -429,20 +429,27 @@
 					aInvisibleElements.forEach(function(oInvisibleElement) {
 						var sType = oInvisibleElement.getMetadata().getName();
 						var mAction = mRevealData.types[sType].action;
-						//TODO fix with stashed type support
-
-						oInvisibleElement = _collectBindingPaths(oInvisibleElement, oModel);
-						oInvisibleElement.fieldLabel = RtaUtils.getLabelForElement(oInvisibleElement, mAction.getLabel);
-						oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aODataProperties);
-
 						var bIncludeElement = true;
 
-						//Add information from the oDataProperty to the InvisibleProperty if available;
-						//if oData is available and the element is not present in it, do not include it
-						//Example use case: custom field which was hidden and then removed from system
-						//should not be available for adding after the removal
-						if (mAddODataProperty && aODataProperties.length > 0){
-							bIncludeElement = _checkAndEnhanceODataProperty(oInvisibleElement, aODataProperties, aODataNavigationProperties, aODataNavigationEntityNames);
+						if (oParent.getBindingContext() === oInvisibleElement.getBindingContext()) {
+							//TODO fix with stashed type support
+							oInvisibleElement = _collectBindingPaths(oInvisibleElement, oModel);
+							oInvisibleElement.fieldLabel = RtaUtils.getLabelForElement(oInvisibleElement, mAction.getLabel);
+							oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aODataProperties);
+
+							//Add information from the oDataProperty to the InvisibleProperty if available;
+							//if oData is available and the element is not present in it, do not include it
+							//Example use case: custom field which was hidden and then removed from system
+							//should not be available for adding after the removal
+							if (mAddODataProperty && aODataProperties.length > 0){
+								bIncludeElement = _checkAndEnhanceODataProperty(oInvisibleElement, aODataProperties, aODataNavigationProperties, aODataNavigationEntityNames);
+							}
+						} else if (
+							oInvisibleElement.getParent()
+							&& oInvisibleElement.getBindingContext() === oInvisibleElement.getParent().getBindingContext()
+							&& BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0
+						) {
+							bIncludeElement = false;
 						}
 
 						if (bIncludeElement) {
