@@ -260,8 +260,8 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 
 	/**
 	 * Discards all input done after the step which is being edited.
-	 * @param {number} index - The index after which all input will be discarded. One-based.
-	 * @param {boolean} suppressEvent - Suppress the stepChanged event.
+	 * @param {number} index The index after which all input will be discarded. One-based.
+	 * @param {boolean} suppressEvent Suppress the stepChanged event.
 	 * @returns {void}
 	 * @public
 	 */
@@ -462,7 +462,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 	/**
 	 * Move to the specified step while updating the current step and active step.
 	 * @param {number} newStep The step number to which current step will be set. Non zero-based.
-	 * @param {boolean} suppressEvent - Suppress the stepChanged event.
+	 * @param {boolean} suppressEvent Suppress the stepChanged event.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @private
 	 */
@@ -485,7 +485,6 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 	 * Updates the active step in the control instance as well as the DOM structure.
 	 * @param {number} newStep The step number to which active step will be set. Non zero-based.
 	 * @param {number} oldStep The step number to which active step was set. Non zero-based.
-	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._updateActiveStep = function (newStep, oldStep) {
@@ -502,7 +501,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 	 * Updates the current step in the control instance as well as the DOM structure.
 	 * @param {number} newStep The step number to which current step will be set. Non zero-based.
 	 * @param {number} oldStep The step number to which current step was set. Non zero-based.
-	 * @param {boolean} suppressEvent - Suppress the stepChanged event.
+	 * @param {boolean} suppressEvent Suppress the stepChanged event.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @private
 	 */
@@ -682,8 +681,8 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 
 	/**
 	 * Checks whether the step is active.
-	 * @param {number} iStep The step number to be checked.
-	 * @returns {boolean} Returns true when the step number has been activated, false otherwise.
+	 * @param {stepNumber} iStep The step number to be checked.
+	 * @returns {boolean} True when the step number has been activated, false otherwise.
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._isActiveStep = function (stepNumber) {
@@ -692,7 +691,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 
 	/**
 	 * Extracts the step attribute from the argument.
-	 * @param {HTMLElement} domAnchor The dom element which represents the anchor tag in each step.
+	 * @param {HTMLElement} domAnchor The DOM element which represents the anchor tag in each step.
 	 * @returns {number} Returns parsed step number. Non-zero based.
 	 * @private
 	 */
