@@ -964,7 +964,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (aHeaderElements) {
 			var aColumns = this.getColumns();
 			for (var i = 0; i < aHeaderElements.length; i++) {
-				var iHeaderWidth = aHeaderElements[i].getBoundingClientRect().width;
+				var iHeaderWidth = parseInt(window.getComputedStyle(aHeaderElements[i]).width, 10);
 				aHeaderWidths.push(iHeaderWidth);
 
 				if (i < aColumns.length && aColumns[i] && !aColumns[i].getVisible()) {
