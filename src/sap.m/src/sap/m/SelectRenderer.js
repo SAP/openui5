@@ -138,6 +138,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 			oRm.write("<label");
 			oRm.writeAttribute("id", oSelect.getId() + "-label");
 			oRm.writeAttribute("for", oSelect.getId());
+			oRm.writeAttribute("aria-live", "polite");
 			oRm.addClass(CSS_CLASS + "Label");
 
 			if (oSelect.getValueState() !== ValueState.None) {
@@ -307,7 +308,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 			oRm.writeAccessibilityState(oSelect, {
 				role: this.getAriaRole(oSelect),
 				expanded: oSelect.isOpen(),
-				live: "polite",
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
 				labelledby: {
 					value: oSelect.getId() + "-label",
