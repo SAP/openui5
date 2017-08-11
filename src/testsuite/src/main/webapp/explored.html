@@ -58,8 +58,9 @@
 						});
 					} else {
 						jQuery.sap.log.info("No local documentation configuration found");
+						window['sap-ui-documentation-hideEmptySections'] = true;
 					}
-					
+
 					sap.ui.require([
 						"sap/m/Page",
 						"sap/ui/core/ComponentContainer"

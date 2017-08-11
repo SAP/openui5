@@ -26,7 +26,8 @@ sap.ui.define([
 					bPhoneSize: false,
 					bLandscape: Device.orientation.landscape,
 					bHasMaster: false,
-					bSearchMode: false
+					bSearchMode: false,
+					bHideEmptySections: window['sap-ui-documentation-hideEmptySections']
 				});
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
