@@ -180,8 +180,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Function is called when radiobutton is tapped.
-	 *
+	 * Function is called when the radio button is tapped.
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	RadioButton.prototype.ontap = function(oEvent) {
@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Function is called when radiobutton is being touched. Only necessary for Android/Blackberry.
-	 *
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	RadioButton.prototype.ontouchstart = function(oEvent) {
@@ -323,7 +323,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Determines next focusable item
 	 *
  	 * @param {enum} sNavigation any item from KH_NAVIGATION
-	 * @returns {RadioButton}
+	 * @returns {RadioButton} Control instance for method chaining
 	 * @private
 	 */
 	RadioButton.prototype._getNextFocusItem = function(sNavigation) {
