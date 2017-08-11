@@ -235,6 +235,14 @@
 				assert.ok((bFound && jQuery(aDays[i]).attr("data-sap-day") == "20121212"), "20121212 focused");
 				assert.equal(iStartDateChangeFired, 0, "no startdateChange event fired");
 
+				// BCP 1780270593
+				try {
+					oCal2.focusDate(null);
+					assert.ok(true, "focusDate() is called successfully with 'null'");
+				} catch (e) {
+					assert.ok(false, "focusDate() throws error when called with 'null'!");
+				}
+
 				oCal2.focusDate(new Date(2011, 0, 10));
 			});
 
