@@ -402,7 +402,7 @@ sap.ui.require([
 			});
 		});
 
-		QUnit.test(sPrefix + "when the control's dt metadata has an addODataProperty and a reveal action (but no move)", function(assert) {
+		QUnit.test(sPrefix + "when the control's dt metadata has an addODataProperty and a reveal action (but no move because parent control might not support it so far)", function(assert) {
 			this.oOverlay = test.overlay(
 				{
 					"addODataProperty" : {

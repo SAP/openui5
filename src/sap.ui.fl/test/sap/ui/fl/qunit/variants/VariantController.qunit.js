@@ -480,13 +480,14 @@ sap.ui.require([
 
 		var mCustomData = {appliedChanges : [this.aRevertedChanges[1].getId()]};
 		sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns(mCustomData);
+		sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
 
-		this.oFlexController.removeFromAppliedChangesOnControl(this.aRevertedChanges[1], this.oComponent, oMockControl); /* Change.bFromLrep not set*/
+		this.oFlexController.deleteChange(this.aRevertedChanges[1]);
 		assert.ok(this.oModelRemoveChangeStub.calledOnce, "remove change was called from model");
 
 
-		this.oFlexController.checkTargetAndApplyChange(this.aExpectedChanges[1], this.oComponent, this.mPropertyBag); /* Change.bFromLrep not set*/
+		this.oFlexController.addPreparedChange(this.aExpectedChanges[1], this.oComponent);
 		assert.ok(this.oModelAddChangeStub.calledOnce, "add change was called from model");
 
 		oMockControl.destroy();

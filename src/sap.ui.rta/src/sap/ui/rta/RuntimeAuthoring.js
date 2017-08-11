@@ -29,7 +29,6 @@ sap.ui.define([
 		"sap/ui/rta/plugin/Split",
 		"sap/ui/rta/plugin/Selection",
 		"sap/ui/rta/plugin/Settings",
-		"sap/ui/rta/plugin/ControlVariant",
 		"sap/ui/dt/plugin/ContextMenu",
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
@@ -74,7 +73,6 @@ sap.ui.define([
 		SplitPlugin,
 		SelectionPlugin,
 		SettingsPlugin,
-		ControlVariantPlugin,
 		ContextMenuPlugin,
 		TabHandlingPlugin,
 		FlexControllerFactory,
@@ -312,9 +310,9 @@ sap.ui.define([
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
 
 			// Control Variant
-			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
-				commandFactory: oCommandFactory
-			});
+//			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
+//				commandFactory: oCommandFactory
+//			});
 		}
 
 		return jQuery.extend({}, this._mDefaultPlugins);

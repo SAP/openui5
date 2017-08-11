@@ -169,7 +169,6 @@ sap.ui.define([
 			mChanges[sControlId].forEach(function(oChange) {
 				var iChangeIndex = aCurrentChangeKeys.indexOf(oChange.getKey());
 				if (iChangeIndex !== -1) {
-					oChange.bFromLrep = true;
 					aCurrentFilteredChanges.push(oChange);
 				}
 			});

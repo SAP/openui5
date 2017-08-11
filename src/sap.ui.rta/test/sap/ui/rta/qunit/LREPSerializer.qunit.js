@@ -15,6 +15,7 @@ sap.ui.require([
 	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory',
 	'sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory',
 	'sap/ui/fl/FlexControllerFactory',
+	'sap/ui/fl/Change',
 	//should be last:
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -31,6 +32,7 @@ sap.ui.require([
 	DescriptorInlineChangeFactory,
 	DescriptorChangeFactory,
 	FlexControllerFactory,
+	Change,
 	sinon
 ) {
 	"use strict";
@@ -241,6 +243,52 @@ sap.ui.require([
 			assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
 			assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
 		}.bind(this));
+	});
+
+	QUnit.test("when the LREPSerializer.handleCommandExecuted gets called after 2 remove commands created via CommandFactory and afterwards saveCommands gets called", function(assert) {
+		// then one change is expected to be written in LREP
+		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
+		var done = assert.async();
+
+		// Create commands
+		this.oRemoveCommand1 = CommandFactory.getCommandFor(this.oInput1, "Remove", {
+			removedElement : this.oInput1
+		}, this.oInputDesignTimeMetadata);
+		this.oRemoveCommand2 = CommandFactory.getCommandFor(this.oInput2, "Remove", {
+			removedElement : this.oInput2
+		}, this.oInputDesignTimeMetadata);
+
+		var oHandleCommandExecutedSpy = sinon.spy(this.oSerializer, "handleCommandExecuted");
+		sinon.stub(this.oRemoveCommand1.getPreparedChange(), "getVariantReference").returns("test-variant");
+		sinon.stub(this.oRemoveCommand2.getPreparedChange(), "getVariantReference").returns("test-variant");
+		sinon.stub(oMockedAppComponent, "getModel").returns({
+			_removeChange: function(){},
+			_addChange: function(){}
+		});
+		var oAddChangeSpy = sinon.spy(oMockedAppComponent.getModel(), "_addChange");
+		var oRemoveChangeSpy = sinon.spy(oMockedAppComponent.getModel(), "_removeChange");
+
+		var iCounter = 0;
+		this.oCommandStack.attachCommandExecuted(function(oEvent) {
+			iCounter++;
+			if (iCounter === 2) {
+				assert.equal(oHandleCommandExecutedSpy.callCount, 2, "then the promise for LREPSerializer.handleCommandExecuted() is called for both changes");
+				assert.ok(oAddChangeSpy.calledTwice, "then model's _addChange is called for both changes as VariantManagement Change is detected");
+				return this.oCommandStack.undo()
+				.then(function() {
+					assert.equal(oHandleCommandExecutedSpy.callCount, 3, "then the promise for LREPSerializer.handleCommandExecuted() is called for undo of change");
+					assert.ok(oRemoveChangeSpy.calledOnce, "then model's _removeChange is called as VariantManagement Change is detected");
+					return this.oSerializer.saveCommands()
+					.then(function() {
+						assert.ok( true, "then the promise for LREPSerializer.saveCommands() gets resolved");
+						assert.equal( this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
+						done();
+					}.bind(this));
+				}.bind(this));
+			}
+		}.bind(this));
+		this.oCommandStack.pushAndExecute(this.oRemoveCommand1);
+		this.oCommandStack.pushAndExecute(this.oRemoveCommand2);
 	});
 
 });
