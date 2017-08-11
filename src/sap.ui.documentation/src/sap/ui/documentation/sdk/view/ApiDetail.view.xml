@@ -229,6 +229,13 @@
 									<layout:VerticalLayout width="100%">
 										<core:HTML content="{parts: [{path: 'topics>/constructor/description'}],
 																	  formatter: '.formatDescription'}{}"/>
+
+										<layout:VerticalLayout visible="{= ${topics>/constructor/examples} !== undefined}"
+															   content="{ path : 'topics>/constructor/examples', templateShareable: 'false'}">
+											<core:HTML content="{parts: [{path: 'topics>caption'}, {path: 'topics>text'}],
+												formatter: '.formatExample'}"/>
+										</layout:VerticalLayout>
+
 										<ce:CodeEditor height="auto"
 													   maxLines="20"
 													   width="100%"
@@ -438,6 +445,12 @@
 
 										<core:HTML content="{parts: [{path: 'methods>description'}],
 																			 formatter: '.formatDescription'}"/>
+
+										<layout:VerticalLayout visible="{= ${methods>examples} !== undefined}"
+															   content="{ path : 'methods>examples', templateShareable: 'false'}">
+											<core:HTML content="{parts: [{path: 'methods>caption'}, {path: 'methods>text'}],
+												formatter: '.formatExample'}"/>
+										</layout:VerticalLayout>
 
 										<layout:HorizontalLayout class="sapUiTinyMarginBottom">
 											<m:ObjectStatus text="Visibility: {methods>visibility}" state="{= ${methods>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiTinyMarginEnd"/>
