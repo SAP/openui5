@@ -404,6 +404,9 @@
 					<Column hAlign="Right">
 						<Text text="Quantity"/>
 					</Column>
+					<Column>
+						<Text text="Quantity Unit"/>
+					</Column>
 					<Column hAlign="Right">
 						<Text text="Gross Amount"/>
 					</Column>
@@ -438,7 +441,10 @@
 							<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
 						</cells>
 						<cells>
-							<Input value="{Quantity}"/>
+							<Input value="{Quantity}" textAlign="Right"/>
+						</cells>
+						<cells>
+							<Input value="{QuantityUnit}"/>
 						</cells>
 						<cells>
 							<Text text="{GrossAmount}"/>

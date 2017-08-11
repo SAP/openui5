@@ -17,7 +17,7 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 		ID_COLUMN_INDEX = 0,
 		ITEM_COLUMN_INDEX = 1,
 		NOTE_COLUMN_INDEX = 5,
-		SOITEM_NOTE_COLUMN_INDEX = 10,
+		SOITEM_NOTE_COLUMN_INDEX = 11,
 		SOITEM_QUANTITY_COLUMN_INDEX = 7,
 		sLastNewNoteValue,
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";

@@ -711,6 +711,8 @@ sap.ui.define([
 	 *   The edit URL corresponding to the entity to be updated
 	 * @param {string} sEntityPath
 	 *   The resolved, absolute entity path (as delivered from ODataMetaModel#fetchUpdateData)
+	 * @param {string} [sUnitOrCurrencyPath]
+	 *   The path of the unit or currency for the property, relative to the entity
 	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>update</code> call
 	 * @throws {Error}
@@ -719,7 +721,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyPath, vValue,
-		fnErrorCallback, sEditUrl, sEntityPath) {
+		fnErrorCallback, sEditUrl, sEntityPath, sUnitOrCurrencyPath) {
 		var oCache;
 
 		if (!this.oCachePromise.isFulfilled()) {
@@ -730,11 +732,12 @@ sap.ui.define([
 		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
 			return oCache.update(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-				this.getRelativePath(sEntityPath));
+				this.getRelativePath(sEntityPath), sUnitOrCurrencyPath);
 		}
 
 		return this.oContext.getBinding()
-			.updateValue(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl, sEntityPath);
+			.updateValue(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl, sEntityPath,
+				sUnitOrCurrencyPath);
 	};
 
 	return function (oPrototype) {
