@@ -112,16 +112,8 @@ sap.ui.define(['jquery.sap.global',
 		 * @private
 		 */
 		PopupManager.prototype._getValidatedPopups = function(aOpenPopups) {
-				aOpenPopups.forEach(function(oPopup, iIndex) {
-					if (
-						!this._isSupportedPopup(oPopup)
-						|| (
-							this.oRtaRootAppComponent !== this._getAppComponentForControl(oPopup)
-							&& !this._isComponentInsidePopup(oPopup)
-						)
-					) {
-						aOpenPopups.splice(iIndex, 1);
-					}
+			aOpenPopups = aOpenPopups.filter(function(oPopup) {
+					return this._isPopupAdaptable(oPopup);
 				}.bind(this));
 
 			return (aOpenPopups.length > 0) ? aOpenPopups : false;
@@ -136,12 +128,14 @@ sap.ui.define(['jquery.sap.global',
 		 */
 		PopupManager.prototype._isComponentInsidePopup = function(oPopup) {
 			//check if root RTA component is directly inside a popupElement
-			return oPopup.getContent().some(
-				function(oContent) {
-					if (oContent instanceof sap.ui.core.ComponentContainer) {
-						return this.oRtaRootAppComponent === this._getAppComponentForControl(sap.ui.getCore().getComponent(oContent.getComponent()));
-					}
-				}.bind(this));
+			return jQuery.isArray(oPopup.getContent())
+				? oPopup.getContent().some(
+					function(oContent) {
+						if (oContent instanceof sap.ui.core.ComponentContainer) {
+							return this.oRtaRootAppComponent === this._getAppComponentForControl(sap.ui.getCore().getComponent(oContent.getComponent()));
+						}
+					}.bind(this))
+				: false ;
 		};
 
 		/**
@@ -250,11 +244,8 @@ sap.ui.define(['jquery.sap.global',
 		PopupManager.prototype._overrideAddFunctions = function(fnOriginalFunction) {
 			return function(oPopupElement) {
 				var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, arguments);
-				if (
-					this.getRta()._oDesignTime
-					&&  this.oRtaRootAppComponent === this._getAppComponentForControl(oPopupElement)
-					&&  this._isSupportedPopup(oPopupElement)
-				) {
+				if ( this._isPopupAdaptable(oPopupElement)
+					&& this.getRta()._oDesignTime ) {
 					oPopupElement.attachAfterOpen(this._createPopupOverlays, this);
 					//PopupManager internal method
 					this.fireOpen(oPopupElement);
@@ -347,11 +338,8 @@ sap.ui.define(['jquery.sap.global',
 			return function(oPopupElement) {
 				var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, arguments);
 
-				if (
-					this.getRta()._oDesignTime
-					&& this.oRtaRootAppComponent === this._getAppComponentForControl(oPopupElement)
-					&& this._isSupportedPopup(oPopupElement)
-				) {
+				if ( this._isPopupAdaptable(oPopupElement)
+					&& this.getRta()._oDesignTime ) {
 					this.getRta()._oDesignTime.removeRootElement(oPopupElement);
 					//PopupManager internal method
 					this.fireClose(oPopupElement);
@@ -456,7 +444,7 @@ sap.ui.define(['jquery.sap.global',
 				InstanceManager.removePopoverInstance = this._fnOriginalRemovePopoverInstance;
 			}
 
-			this._applyPopupMethods(this._removePopupPatch);
+			this._applyFocusEventsToOpenPopups(this._removePopupPatch);
 		};
 
 		/**
@@ -471,6 +459,21 @@ sap.ui.define(['jquery.sap.global',
 			if (this.fnOriginalPopupOnAfterRendering) {
 				oPopup.onAfterRendering = this.fnOriginalPopupOnAfterRendering;
 			}
+		};
+
+		PopupManager.prototype._isPopupAdaptable = function(oPopupElement) {
+			var oPopupAppComponent = this._getAppComponentForControl(oPopupElement);
+
+			if (oPopupAppComponent) {
+				var oPopupAppComponentForContainer;
+				do {
+					oPopupAppComponentForContainer = this._getAppComponentForControl(oPopupAppComponent.oContainer);
+					oPopupAppComponent = oPopupAppComponentForContainer ? oPopupAppComponentForContainer : oPopupAppComponent;
+				} while (oPopupAppComponentForContainer && oPopupAppComponent.oContainer instanceof sap.ui.core.ComponentContainer);
+			}
+
+			return (this.oRtaRootAppComponent === oPopupAppComponent || this._isComponentInsidePopup(oPopupElement))
+				&& this._isSupportedPopup(oPopupElement);
 		};
 
 		/**

@@ -262,6 +262,9 @@ sap.ui.define([
 					if (!this._oRTA) {
 						this._oRTA = new RuntimeAuthoring();
 						this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+						this._oRTA.attachStop(function () {
+							delete this._oRTA;
+						}.bind(this));
 						this._oRTA.start();
 					}
 				}.bind(this));
