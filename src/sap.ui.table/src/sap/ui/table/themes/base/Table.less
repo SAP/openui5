@@ -382,6 +382,7 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 }
 
 .sapUiTableCell {
+	display: flex;
 	height: inherit;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -784,11 +785,12 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableHSb {
 }
 
 .sapUiTableTreeIcon {
-	display: inline-block;
+	display: flex;
+	align-self: center;
+	justify-content: center;
 	width: 12px;
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
-	float: left;
 }
 
 .sapUiSizeCompact, .sapUiSizeCozy {
@@ -825,10 +827,6 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableHSb {
 		font-family: "SAP-icons";
 		font-size: 12px;
 		font-weight: normal;
-		display: inline-block;
-		width: @sapUiTableRowHdrWidth;
-		text-align: center;
-		vertical-align: middle;
 	}
 
 	// Show arrow

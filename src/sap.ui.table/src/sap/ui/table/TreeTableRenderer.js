@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './TableRenderer'],
 			}
 			rm.writeAttribute("tabindex", -1);
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TREEICON", {row: oRow});
-			rm.write(">&nbsp;</span>");
+			rm.write("></span>");
 		}
 		rm.renderControl(oCell);
 	};
