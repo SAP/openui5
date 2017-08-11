@@ -5,22 +5,8 @@
 	xmlns="sap.m">
 	<Page showHeader="false">
 		<content>
-			<OverflowToolbar>
+			<Toolbar>
 				<ToolbarSpacer />
-				<Label text="Upload button invisible" />
-				<Switch id="uploadInvisibleSwitch"
-					state="false"
-					change="onSwitchUploadInvisibleChange"
-					type="Transparent" />
-				<Label text="Layout: Enable FileUploader" />
-				<Switch state="true"
-					change="onSwitchUploaderChange"
-					type="Transparent" />
-				<Label text="Multi-selection mode" />
-				<Switch id="modeSwitch"
-					state="false"
-					change="onSwitchModeChange"
-					type="Transparent" />
 				<Label text="File types" />
 				<MultiComboBox id="fileTypesBox"
 					selectionChange="onFileTypeChange"
@@ -29,20 +15,15 @@
 					items="{fileTypes>/items}">
 					<core:Item key="{fileTypes>key}" text="{fileTypes>text}" />
 				</MultiComboBox>
-				<Select id="tbSelect"
-					items="{/items}"
-					selectedKey="{/selectedKey}"
-					change="onSeparatorsChange">
-					<core:Item key="{key}" text="{text}" />
-				</Select>
-			</OverflowToolbar>
+				<Button icon="sap-icon://action-settings" text="Settings" tooltip="More settings" press="onOpenAppSettings" />
+			</Toolbar>
 			<MessageStrip showIcon="true"
 				type="Information"
 				text="To add files, you can also use drag &amp; drop on your desktop or tablet."
 				class="sapUiTinyMargin" />
 			<UploadCollection id="UploadCollection"
-				maximumFilenameLength="55"
-				maximumFileSize="10"
+				maximumFilenameLength="{settings>/maximumFilenameLength}"
+				maximumFileSize="{settings>/maximumFileSize}"
 				multiple="true"
 				change="onChange"
 				fileDeleted="onFileDeleted"
@@ -56,7 +37,10 @@
 				uploadTerminated="onUploadTerminated"
 				items="{path : '/items', templateShareable : false}"
 				numberOfAttachmentsText="Uploaded (8)"
-				mode="SingleSelectMaster">
+				showSeparators="{settings>/showSeparators}"
+				uploadEnabled="{settings>/uploadEnabled}"
+				uploadButtonInvisible="{=!${settings>/uploadButtonVisible}}"
+				mode="{settings>/mode}">
 				<toolbar>
 					<OverflowToolbar id="myId">
 						<Title id="attachmentTitle" />
@@ -83,10 +67,10 @@
 						mimeType="{mimeType}"
 						thumbnailUrl="{thumbnailUrl}"
 						url="{url}"
-						enableEdit="{enableEdit}"
-						enableDelete="{enableDelete}"
-						visibleDelete="{visibleDelete}"
-						visibleEdit="{visibleEdit}"
+						enableEdit="{settings>/enableEdit}"
+						enableDelete="{settings>/enableDelete}"
+						visibleDelete="{settings>/visibleDelete}"
+						visibleEdit="{settings>/visibleEdit}"
 						attributes="{path : 'attributes', templateShareable : false}"
 						statuses="{path : 'statuses', templateShareable : false}"
 						markers="{path : 'markers', templateShareable : false}"
