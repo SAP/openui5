@@ -60,11 +60,11 @@ sap.ui.define([
 	/**
 	 * Returns the variants for a given variant management id
 	 *
-	 * @param {String} sVariantManagementId The variant management id
+	 * @param {String} sVariantManagementReference The variant management id
 	 * @returns {Array} The array containing all variants of the variant management control
 	 * @public
 	 */
-	VariantController.prototype.getVariants = function (sVariantManagementId) {
+	VariantController.prototype.getVariants = function (sVariantManagementReference) {
 		var aVariants = [];
 
 		function compareVariants(variant1, variant2) {
@@ -77,12 +77,12 @@ sap.ui.define([
 			}
 		}
 
-		if (this._mVariantManagement[sVariantManagementId]) {
-			aVariants = this._mVariantManagement[sVariantManagementId].variants.sort(compareVariants);
+		if (this._mVariantManagement[sVariantManagementReference]) {
+			aVariants = this._mVariantManagement[sVariantManagementReference].variants.sort(compareVariants);
 
 			var iIndex = -1;
 			aVariants.some(function(oVariant, index) {
-				if (oVariant.content.fileName === sVariantManagementId) {
+				if (oVariant.content.fileName === sVariantManagementReference) {
 					iIndex = index;
 					return true;
 				}
@@ -100,42 +100,36 @@ sap.ui.define([
 	/**
 	 * Gets the changes of a given variant
 	 *
-	 * @param {String} sVariantManagementId The variant management id
-	 * @param {String} sVariantId The id of the variant
+	 * @param {String} sVariantManagementReference The variant management id
+	 * @param {String} sVariantReference The id of the variant
 	 * @returns {Array} The array containing all changes of the variant
 	 * @public
 	 */
-	VariantController.prototype.getVariantChanges = function(sVariantManagementId, sVariantId) {
-		var sVarId = sVariantId || this._mVariantManagement[sVariantManagementId].defaultVariant;
-		var aVariants = this.getVariants(sVariantManagementId);
-		if (aVariants.length === 0) {
-			return aVariants;
-		} else {
-			var aFiltered = aVariants.filter(function(oVariant) {
-				if (oVariant.content.fileName === sVarId) {
-					return true;
-				}
-			});
+	VariantController.prototype.getVariantChanges = function(sVariantManagementReference, sVariantReference) {
+		var sVarRef = sVariantReference || this._mVariantManagement[sVariantManagementReference].defaultVariant;
+		var aVariants = this.getVariants(sVariantManagementReference);
+		var aFiltered = aVariants.filter(function(oVariant) {
+			return oVariant.content.fileName === sVarRef;
+		});
 
-		 return aFiltered.reduce(function(aResult, oVariant) {
+		return aFiltered.reduce(function(aResult, oVariant) {
 			return oVariant.changes ? aResult.concat(oVariant.changes) : aResult;
 		},[]);
-		}
 	};
 
-	VariantController.prototype.setVariantChanges = function(sVariantManagementId, sVariantId, aChanges) {
-		if (!sVariantManagementId || !sVariantId || !jQuery.isArray(aChanges)) {
+	VariantController.prototype.setVariantChanges = function(sVariantManagementReference, sVariantReference, aChanges) {
+		if (!sVariantManagementReference || !sVariantReference || !jQuery.isArray(aChanges)) {
 			Utils.log.error("Cannot set variant changes without Variant reference");
 			return;
 		}
 
-		return this._mVariantManagement[sVariantManagementId].variants
-					.some(function (oVariant, iIndex) {
-						if (oVariant.content.fileName === sVariantId) {
-							this._mVariantManagement[sVariantManagementId].variants[iIndex].changes = aChanges;
-							return true;
-						}
-					}.bind(this));
+		return this._mVariantManagement[sVariantManagementReference].variants
+			.some(function (oVariant, iIndex) {
+				if (oVariant.content.fileName === sVariantReference) {
+					oVariant.changes = aChanges;
+					return true;
+				}
+			});
 	};
 
 	/**
@@ -145,11 +139,11 @@ sap.ui.define([
 	 * @public
 	 */
 	VariantController.prototype.loadDefaultChanges = function() {
-		var sVarId;
+		var sVariantReference;
 		var aDefaultChanges = [];
-		for (var sVarMgmtId in this._mVariantManagement) {
-			sVarId = this._mVariantManagement[sVarMgmtId].defaultVariant;
-			aDefaultChanges = aDefaultChanges.concat(this.getVariantChanges(sVarMgmtId, sVarId));
+		for (var sVariantManagementReference in this._mVariantManagement) {
+			sVariantReference = this._mVariantManagement[sVariantManagementReference].defaultVariant;
+			aDefaultChanges = aDefaultChanges.concat(this.getVariantChanges(sVariantManagementReference, sVariantReference));
 		}
 
 		return aDefaultChanges;
@@ -158,20 +152,19 @@ sap.ui.define([
 	/**
 	 * Returns the map with all changes to be reverted and applied when switching variants
 	 *
-	 * @param {String} sVariantManagementId The variant management id
+	 * @param {String} sVariantManagementReference The variant management id
 	 * @param {String} sCurrentVariant The id of the currently used variant
 	 * @param {String} sNewVariant The id of the newly selected variant
 	 * @param {Object} mChanges The changes inside the current changes map
 	 * @returns {Object} The map containing all changes to be reverted and all new changes
 	 * @public
 	 */
-	VariantController.prototype.getChangesForVariantSwitch = function(sVariantManagementId, sCurrentVariant, sNewVariant, mChanges) {
-		var aCurrentChangeKeys = this.getVariantChanges(sVariantManagementId, sCurrentVariant).map(function(oChangeContent) {
+	VariantController.prototype.getChangesForVariantSwitch = function(sVariantManagementReference, sCurrentVariant, sNewVariant, mChanges) {
+		var aCurrentChangeKeys = this.getVariantChanges(sVariantManagementReference, sCurrentVariant).map(function(oChangeContent) {
 			return new Change(oChangeContent).getKey();
 		});
 
 		var aCurrentVariantChanges = Object.keys(mChanges).reduce(function(aChanges, sControlId) {
-
 			var aCurrentFilteredChanges = [];
 			mChanges[sControlId].forEach(function(oChange) {
 				var iChangeIndex = aCurrentChangeKeys.indexOf(oChange.getKey());
@@ -181,10 +174,9 @@ sap.ui.define([
 				}
 			});
 			return aChanges.concat(aCurrentFilteredChanges);
-
 		}, []);
 
-		var aNewChanges = this.getVariantChanges(sVariantManagementId, sNewVariant).map(function(oChangeContent) {
+		var aNewChanges = this.getVariantChanges(sVariantManagementReference, sNewVariant).map(function(oChangeContent) {
 			return new Change(oChangeContent);
 		});
 
@@ -238,21 +230,21 @@ sap.ui.define([
 		return oVariantData;
 	};
 
-	VariantController.prototype.addChangeToVariant = function (oChange, sVariantManagementId, sVariantId) {
-		var aNewChanges = this.getVariantChanges(sVariantManagementId, sVariantId);
+	VariantController.prototype.addChangeToVariant = function (oChange, sVariantManagementReference, sVariantReference) {
+		var aNewChanges = this.getVariantChanges(sVariantManagementReference, sVariantReference);
 		var aChangeFileNames = aNewChanges.map(function (oChange) {
 			return oChange.fileName;
 		});
 		var iIndex = aChangeFileNames.indexOf(oChange.getDefinition().fileName);
 		if (iIndex === -1) {
 			aNewChanges.push(oChange.getDefinition());
-			return this.setVariantChanges(sVariantManagementId, sVariantId, aNewChanges);
+			return this.setVariantChanges(sVariantManagementReference, sVariantReference, aNewChanges);
 		}
 		return false;
 	};
 
-	VariantController.prototype.removeChangeFromVariant = function (oChange, sVariantMgmtRef, sVariantRef) {
-		var aNewChanges = this.getVariantChanges(sVariantMgmtRef , sVariantRef);
+	VariantController.prototype.removeChangeFromVariant = function (oChange, sVariantManagementReference, sVariantReference) {
+		var aNewChanges = this.getVariantChanges(sVariantManagementReference , sVariantReference);
 
 		aNewChanges.forEach(function (oCurrentChangeContent, iIndex) {
 			var oCurrentChange = new Change(oCurrentChangeContent);
@@ -261,8 +253,8 @@ sap.ui.define([
 				aNewChanges.splice(iIndex, 1);
 			}
 		});
-		return this.setVariantChanges(sVariantMgmtRef, sVariantRef, aNewChanges);
 
+		return this.setVariantChanges(sVariantManagementReference, sVariantReference, aNewChanges);
 	};
 
 	return VariantController;
