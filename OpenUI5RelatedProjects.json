@@ -70,5 +70,14 @@
 			"owner": "mitch-b",
 			"license": "MIT",
 			"type": "Control"
+		},
+		"ui5-jsx-rm": {
+			"name": "JSX to UI5 Babel Plugin",
+			"decription": "A Babel plugin for converting JSX to UI5 render manager calls.",
+			"githubLink": "https://github.com/serban-petrescu/ui5-jsx-rm",
+			"documentationLink": "https://github.com/serban-petrescu/ui5-jsx-rm",
+			"owner": "serban-petrescu",
+			"license": "Apache 2.0",
+			"type": "Tool"
 		}
 	}
