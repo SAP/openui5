@@ -18,6 +18,8 @@
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<script>
 
@@ -246,17 +248,31 @@
 			var oMyForm = new sap.ui.layout.form.Form();
 			var oMyLayout = new sap.ui.layout.form.FormLayout();
 			var oMyContainer = new sap.ui.layout.form.FormContainer();
-			var oMyElement = new sap.ui.layout.form.FormElement();
+			var oMyElement = new sap.ui.layout.form.FormElement({label: "Test"});
+			var oLabel = oMyElement.getLabelControl();
 			assert.notOk(oMyElement.getRenderedDomRef(), "getRenderedDomRef on unasigned Element");
+			assert.notOk(oLabel.isDisplayOnly(), "Label is not display only");
 			oMyContainer.addFormElement(oMyElement);
 			assert.notOk(oMyElement.getRenderedDomRef(), "getRenderedDomRef for Element on unasigned container");
+			assert.notOk(oLabel.isDisplayOnly(), "Label is not display only");
 			oMyForm.addFormContainer(oMyContainer);
 			assert.notOk(oMyElement.getRenderedDomRef(), "getRenderedDomRef for element on Form without Layout");
+			assert.ok(oLabel.isDisplayOnly(), "Label is display only");
+			assert.notOk(oLabel.getDisplayOnly(), "Label displayOnly property not set");
 			oMyForm.setLayout(oMyLayout);
 			assert.notOk(oMyElement.getRenderedDomRef(), "getRenderedDomRef for element on unrendered Form");
 			oMyForm.placeAt("uiArea3");
 			sap.ui.getCore().applyChanges();
 			assert.ok(oMyElement.getRenderedDomRef(), "getRenderedDomRef for element on rendered Form");
+			sinon.spy(oLabel, "invalidate");
+			oMyForm.setEditable(true);
+			assert.notOk(oLabel.isDisplayOnly(), "Label is not display only");
+			assert.ok(oLabel.invalidate.called, "Label invalidated");
+			oLabel = new sap.m.Label({text: "Text"});
+			oMyElement.setLabel(oLabel);
+			assert.notOk(oLabel.isDisplayOnly(), "Label is not display only");
+			oLabel.setDisplayOnly(true);
+			assert.ok(oLabel.isDisplayOnly(), "Label is display only");
 			oMyForm.destroy();
 		});
 

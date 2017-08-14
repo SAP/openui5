@@ -161,6 +161,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 				this.$().removeClass("sapUiFormEdit").removeClass("sapUiFormEdit-CTX");
 				this.$().attr("aria-readonly", "true");
 			}
+
+			// invalidate Labels
+			var aFormContainers = this.getFormContainers();
+			for (var i = 0; i < aFormContainers.length; i++) {
+				var oFormContainer = aFormContainers[i];
+				oFormContainer.invalidateLabels();
+			}
+
 		}
 
 		return this;
