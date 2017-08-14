@@ -327,6 +327,7 @@ sap.ui.define([
 		this._iOffset = parseInt(0.25 * this._iREMSize, 10);
 
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
+		this._iAfterRenderingDomReadyTimeout = null;
 
 		this._oABHelper = new ABHelper(this);
 
@@ -442,7 +443,7 @@ sap.ui.define([
 		if (this._bDomReady && this.$().parents(":hidden").length === 0) {
 			this._onAfterRenderingDomReady();
 		} else {
-			jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, this._onAfterRenderingDomReady);
+			this._iAfterRenderingDomReadyTimeout = jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, this._onAfterRenderingDomReady);
 		}
 	};
 
@@ -528,6 +529,10 @@ sap.ui.define([
 
 		if (this._iContentResizeId) {
 			ResizeHandler.deregister(this._iContentResizeId);
+		}
+
+		if (this._iAfterRenderingDomReadyTimeout) {
+			clearTimeout(this._iAfterRenderingDomReadyTimeout);
 		}
 
 		// setting these to null is necessary because
