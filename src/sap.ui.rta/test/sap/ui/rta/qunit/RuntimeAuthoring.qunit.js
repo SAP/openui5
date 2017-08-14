@@ -348,11 +348,8 @@ sap.ui.require([
 		assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 0, "then Toolbar is not visible.");
 	});
 
-	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {
-		beforeEach : function(assert) {
-			FakeLrepLocalStorage.deleteChanges();
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
-
+	QUnit.module("Undo/Redo functionality", {
+		beforeEach: function(assert) {
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
 
@@ -362,7 +359,7 @@ sap.ui.require([
 			var oToolsMenuDom = jQuery('<input/>').appendTo('#qunit-fixture').get(0);
 			this.oToolsMenuDom = oToolsMenuDom;
 			this.oOverlayContainerDom = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
-			this.oDialogDom = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
+			this.oAnyOtherDom = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
 
 			this.oUndoEvent = new Event("dummyEvent", new EventProvider());
 			this.oUndoEvent.keyCode = jQuery.sap.KeyCodes.Z;
@@ -393,7 +390,6 @@ sap.ui.require([
 
 		afterEach : function(assert) {
 			sandbox.restore();
-			FakeLrepLocalStorage.deleteChanges();
 			Device.os.macintosh = this.bMacintoshOriginal;
 		}
 	});
@@ -417,8 +413,8 @@ sap.ui.require([
 		assert.equal(this.fnRedoSpy.callCount, 1, "then _onRedo was called once");
 	});
 
-	QUnit.test("with focus on an open dialog", function(assert) {
-		this.oDialogDom.focus();
+	QUnit.test("with focus on an outside element (e.g. dialog)", function(assert) {
+		this.oAnyOtherDom.focus();
 
 		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 		assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
@@ -438,6 +434,24 @@ sap.ui.require([
 
 		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
 		assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
+	});
+
+	QUnit.test("macintosh support", function(assert) {
+		Device.os.macintosh = true;
+		this.oUndoEvent.ctrlKey = false;
+		this.oUndoEvent.metaKey = true;
+
+		this.oOverlayContainerDom.focus();
+		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
+		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
+
+		this.oRedoEvent.keyCode = jQuery.sap.KeyCodes.Z;
+		this.oRedoEvent.ctrlKey = false;
+		this.oRedoEvent.metaKey = true;
+		this.oRedoEvent.shiftKey = true;
+
+		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
+		assert.equal(this.fnRedoSpy.callCount, 1, "then _onRedo was called once");
 	});
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available together with a CommandStack with changes...", {
@@ -531,7 +545,7 @@ sap.ui.require([
 			if (fnStackModifiedSpy.calledOnce) {
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CMD + Z the stack is empty");
 			} else if (fnStackModifiedSpy.calledTwice) {
-				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + Y is again 1 command in the stack");
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + SHIFT + Z is again 1 command in the stack");
 				Device.os.macintosh = bMacintoshOriginal;
 				done();
 			}
@@ -546,7 +560,7 @@ sap.ui.require([
 		fnTriggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, false, true);
 
 		//redo -> execute -> fireModified (inside promise)
-		fnTriggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Y, false, false, false, true);
+		fnTriggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Z, true, false, false, true);
 
 	});
 
@@ -554,9 +568,9 @@ sap.ui.require([
 		var done = assert.async();
 		var fnStackModifiedSpy = sinon.spy(function() {
 			if (fnStackModifiedSpy.calledOnce) {
-				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CMD + Z the stack is empty");
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CTRL + Z the stack is empty");
 			} else if (fnStackModifiedSpy.calledTwice) {
-				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + Y is again 1 command in the stack");
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CTRL + Y is again 1 command in the stack");
 				Device.os.macintosh = bMacintoshOriginal;
 				done();
 			}
