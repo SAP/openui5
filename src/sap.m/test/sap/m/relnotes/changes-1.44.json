@@ -2416,5 +2416,40 @@
         "references": []
       }
     ]
+  },
+  "1.44.19": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "6d1b50fedff2c0f1405e7d15e4667808ee7946e4",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Role for toolbar set to heading only for header",
+        "references": []
+      },
+      {
+        "id": "80c29754e198db6fe0f17c24f94bae0880fdbd6c",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Duplicate token entry now handled correctly",
+        "references": []
+      },
+      {
+        "id": "123ef460c43f9213cf1431f52590d4183699d43b",
+        "type": "FIX",
+        "text": " sap.m.Switch: Text ellipsis for labels removed",
+        "references": []
+      },
+      {
+        "id": "435e197874a86fef821a7f753b26dc14a927ca11",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Deletion handling corrected",
+        "references": []
+      },
+      {
+        "id": "4ffbffc05bbbead047b3f982840a10fc9518b9da",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: FileName property handling improved",
+        "references": []
+      }
+    ]
   }
 }

@@ -2055,5 +2055,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.25": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "8aaf730d3a549c24e5a221ba2092f7118eb4d9e5",
+        "type": "FIX",
+        "text": " jquery: prevent auto-detection of content type",
+        "references": []
+      }
+    ]
   }
 }
