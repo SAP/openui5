@@ -21,9 +21,9 @@
 				key="fileSize"
 				multiSelect="true">
 				<items>
-					<ViewSettingsItem text="Less than 100 KB" key="fileSize___LT___102400___X" />
-					<ViewSettingsItem text="Between 100 KB and 1 MB" key="fileSize___BT___102400___1048576" />
-					<ViewSettingsItem text="More Than 1 MB" key="fileSize___GT___1048576___X" />
+					<ViewSettingsItem text="Less than 100 KB" key="fileSize LT 102400" />
+					<ViewSettingsItem text="Between 100 KB and 1 MB" key="fileSize BT 102400 1048576" />
+					<ViewSettingsItem text="More Than 1 MB" key="fileSize GT 1048576" />
 				</items>
 			</ViewSettingsFilterItem>
 			<ViewSettingsFilterItem
@@ -31,9 +31,9 @@
 				key="version"
 				multiSelect="true">
 				<items>
-					<ViewSettingsItem text="1" key="version___EQ___1___X" />
-					<ViewSettingsItem text="2" key="version___EQ___2___X" />
-					<ViewSettingsItem text="Higher Than 2" key="version___GT___2___X" />
+					<ViewSettingsItem text="1" key="version EQ 1" />
+					<ViewSettingsItem text="2" key="version EQ 2" />
+					<ViewSettingsItem text="Higher Than 2" key="version GT 2" />
 				</items>
 			</ViewSettingsFilterItem>
 			<ViewSettingsFilterItem
@@ -41,10 +41,10 @@
 				key="status"
 				multiSelect="true">
 				<items>
-					<ViewSettingsItem text="None" key="status___EQ___None___X" />
-					<ViewSettingsItem text="Error" key="status___EQ___Error___X" />
-					<ViewSettingsItem text="Warning" key="status___EQ___Warning___X" />
-					<ViewSettingsItem text="Success" key="status___EQ___Success___X" />
+					<ViewSettingsItem text="None" key="status EQ None" />
+					<ViewSettingsItem text="Error" key="status EQ Error" />
+					<ViewSettingsItem text="Warning" key="status EQ Warning" />
+					<ViewSettingsItem text="Success" key="status EQ Success" />
 				</items>
 			</ViewSettingsFilterItem>
 		</filterItems>
