@@ -238,6 +238,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/plugin/Plugin', 'sap/ui/dt/Eleme
 
 		var oEditableControlDomRef = oDesignTimeMetadata.getAssociatedDomRef(oElement, vDomRef);
 
+		// if the Control is currently not visible on the screen, we have to scroll it into view
+		if (!Utils.isElementInViewport(oEditableControlDomRef)) {
+			oEditableControlDomRef.get(0).scrollIntoView();
+		}
+
 		this._$oEditableControlDomRef = jQuery(oEditableControlDomRef);
 
 		var oEditableControlOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oEditableControlDomRef.id) || oOverlay;
