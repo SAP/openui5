@@ -17,7 +17,6 @@
 .sapFDynamicPageTitle {
 	z-index: 2;
 	min-height: 3rem;
-	height: 100%; /* fixes IE flexbox item centering issue BCP: 1680351222 */
 	position: relative;
 	padding: 0.5rem 2rem 0.5rem 3rem;
 	display: flex;
@@ -29,6 +28,13 @@
 	-webkit-flex-direction: row;
 	box-sizing: border-box;
 	background: @sapUiObjectHeaderBackground;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapFDynamicPageTitle {
+		height: 100%; /* fixes IE flexbox item centering issue BCP: 1680351222 */
+	}
 }
 
 .sapFDynamicPageTitle:focus {
