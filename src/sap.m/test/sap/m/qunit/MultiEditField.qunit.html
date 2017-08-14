@@ -15,6 +15,7 @@
 	<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
@@ -30,7 +31,7 @@
 							text: "sample text"
 						})
 					]
-				})
+				});
 				this.oMultiEditField.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
@@ -89,6 +90,104 @@
 
 		QUnit.test("Check if blank item is initially displayed.", function(assert) {
 			assert.notEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems["nullable"]), -1, "Blank item will be displayed.");
+		});
+
+
+		QUnit.module("Selection change", {
+			beforeEach: function() {
+				this.oMultiEditField = new sap.m.MultiEditField();
+				this.oMultiEditField.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oMultiEditField.destroy();
+				this.oMultiEditField = null;
+			}
+		});
+
+		QUnit.test("Selection change event", function(assert) {
+			//Arrange
+			var oSelect = this.oMultiEditField.byId("select");
+			//Assert
+			assert.ok(oSelect.hasListeners("change"), "Selection change event handler is attached");
+		});
+
+		QUnit.test("Keep existing value selection", function(assert) {
+			//Arrange
+			var oSelect = this.oMultiEditField.byId("select");
+			var oItem = new sap.ui.core.Item({
+				key: "_keep"
+			});
+			//Act
+			oSelect.fireChange({
+				selectedItem: oItem
+			});
+			//Assert
+			assert.equal(this.oMultiEditField._sCurrentSelection, "_keep", "Keep existing value item is selected");
+		});
+
+		QUnit.test("Blank selection", function(assert) {
+			//Arrange
+			var oSelect = this.oMultiEditField.byId("select");
+			var oItem = new sap.ui.core.Item({
+				key: "_blank"
+			});
+			//Act
+			oSelect.fireChange({
+				selectedItem: oItem
+			});
+			//Assert
+			assert.equal(this.oMultiEditField._sCurrentSelection, "_blank", "Blank item is selected");
+		});
+
+		QUnit.test("Value help selection", function(assert) {
+			//Arrange
+			var oSelect = this.oMultiEditField.byId("select");
+			var oItem = new sap.ui.core.Item({
+				key: "_new"
+			});
+			//Act
+			oSelect.fireChange({
+				selectedItem: oItem
+			});
+			//Assert
+			assert.equal(this.oMultiEditField._sCurrentSelection, "_new", "Value help item is selected");
+		});
+
+		QUnit.module("Public methods", {
+			beforeEach: function() {
+				this.oMultiEditField = new sap.m.MultiEditField();
+				this.oMultiEditField.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oMultiEditField.destroy();
+				this.oMultiEditField = null;
+			}
+		});
+
+		QUnit.test("isBlankSelection function", function(assert) {
+			//Arrange
+			var oSelect = this.oMultiEditField.byId("select");
+			var oItem = this.oMultiEditField.getItems()[1];
+			//Act
+			oSelect.fireChange({
+				selectedItem: oItem
+			});
+			//Assert
+			assert.ok(this.oMultiEditField.isBlankSelected(), "Blank item is currently selected");
+		});
+
+		QUnit.test("isKeepExistingSelection function", function(assert) {
+			//Arrange
+			var oSelect = this.oMultiEditField.byId("select");
+			var oItem = this.oMultiEditField.getItems()[0];
+			//Act
+			oSelect.fireChange({
+				selectedItem: oItem
+			});
+			//Assert
+			assert.ok(this.oMultiEditField.isKeepExistingSelected(), "Keep existing value item is currently selected");
 		});
 	</script>
 </head>
