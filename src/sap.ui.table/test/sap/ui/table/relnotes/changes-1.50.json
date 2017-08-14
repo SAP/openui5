@@ -129,5 +129,22 @@
         "references": []
       }
     ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "88a48c8a0847a3411b83562e3cdbea3e7f0ffdfc",
+        "type": "FIX",
+        "text": " Table: Correctly set the checked state of the SelectAll checkbox",
+        "references": []
+      },
+      {
+        "id": "c80edd46d4d5364d82919deedcb30941f9a47ba6",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      }
+    ]
   }
 }

@@ -117,5 +117,102 @@
         "references": []
       }
     ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "77ca030a28e989af5f5231cb9b9b6431a77ae1d0",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.BlockLayoutCell - added 2 new properties for predefined themable colors also added contrast container capabilities",
+        "references": []
+      },
+      {
+        "id": "3a1a56281da6d493abbd236382a21b107093b2dd",
+        "type": "FIX",
+        "text": " sap.ui.layout.Form: Enables createContainer",
+        "references": []
+      },
+      {
+        "id": "ced8051b821a0e465bc92447bf617d78378b82af",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: PaneContainer\u0027s content is now properly resized and rendered.",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "5483a4acc33d00082fad5de09674eea011165095",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: IE fialing tests fixed.",
+        "references": []
+      },
+      {
+        "id": "3cec496f2e80fa888125dc7eec2b1234b8542e76",
+        "type": "FIX",
+        "text": " simpleform getIndex",
+        "references": []
+      }
+    ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "9cad083d3726721833d74aeca5b4f1bfd39322e2",
+        "type": "FIX",
+        "text": " Form: Link in Toolbar is not aligned",
+        "references": []
+      },
+      {
+        "id": "ee1d5912e86f99a68899f22bfb52a10b8f09238e",
+        "type": "FIX",
+        "text": " sap.ui.BlockLayout: Endless switching between breakpoints is now fixed.",
+        "references": []
+      },
+      {
+        "id": "4c67fed51b0b680c226b04e01b7d7c6b61f2be13",
+        "type": "FIX",
+        "text": " sap.ui.layout.AssociaveSplitter: Fixes size calculations",
+        "references": []
+      }
+    ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "177134ec66f723fd88f3c623e431b4d8ef9ac431",
+        "type": "FEATURE",
+        "text": " Form: adapt vertical alignment to current design",
+        "references": []
+      },
+      {
+        "id": "7dd05cf57020fe114c876cc962c10eff0851812c",
+        "type": "FIX",
+        "text": " sap.ui.fl changeHandler needs to store dependencies",
+        "references": []
+      }
+    ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "0a90b7fe1a70f4d539cd1c58a461da16e6e74267",
+        "type": "FIX",
+        "text": " SimpleForm removing Label creates empty container",
+        "references": []
+      },
+      {
+        "id": "a9958fddf7ea62cbc0b2c3d96972ce366823f303",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Inserting PaneConainers in a selected index is now working",
+        "references": []
+      }
+    ]
   }
 }

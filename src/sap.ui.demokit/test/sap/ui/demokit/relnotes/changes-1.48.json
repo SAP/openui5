@@ -15,5 +15,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "324824b1ec76ec74bdeaf5e23ce1b4ffbf436c73",
+        "type": "FIX",
+        "text": " RTA - Incorrect selectable overlays in OpenUI5 Explored",
+        "references": []
+      }
+    ]
   }
 }

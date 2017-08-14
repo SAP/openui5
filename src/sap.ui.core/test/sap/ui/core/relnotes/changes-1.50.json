@@ -489,5 +489,34 @@
         "references": []
       }
     ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "c80edd46d4d5364d82919deedcb30941f9a47ba6",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      },
+      {
+        "id": "a9e80ac252021e044d3c8ac02b44c8d21eee13b9",
+        "type": "FIX",
+        "text": " core.ThemeCheck: Null handling of getComputedStyle in Firefox",
+        "references": []
+      },
+      {
+        "id": "0ca2ae2902673b0fd025558df4d7be204f0ce7cb",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser#getPropertyValues: Improve the assert message",
+        "references": []
+      },
+      {
+        "id": "773834f4ce86a0b062966c3504146fe91c447e72",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.DateTime(Offset): allow UTC",
+        "references": []
+      }
+    ]
   }
 }

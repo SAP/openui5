@@ -141,5 +141,22 @@
         "references": []
       }
     ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "77e5aac277eb5f5b6d665d1c18bb963e7711aa43",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout - Added BlockLayoutCellData class",
+        "references": []
+      },
+      {
+        "id": "bd39148d6ce835cc53f977311bc624ad831b9c24",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayoutCellData: JSDoc is now fixed.",
+        "references": []
+      }
+    ]
   }
 }

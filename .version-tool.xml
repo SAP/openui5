@@ -59,7 +59,8 @@
           "src/testsuite-utils/pom.xml": "1",
           "src/sap.ui.support/pom.xml": "1"
         }
-      }
+      },
+      "lastCommitId": "128310a76596f4de1e7681f7454f5ac48b7842f9"
     }
   }
 }
