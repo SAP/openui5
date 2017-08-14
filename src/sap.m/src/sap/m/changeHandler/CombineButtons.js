@@ -51,9 +51,6 @@ sap.ui.define(["sap/ui/fl/Utils"],
 			iAggregationIndex = oParent.indexOfAggregation(sBarAggregation, oSourceControl);
 
 			oMenu = oModifier.createControl("sap.m.Menu", mPropertyBag.appComponent, oView);
-			oMenu.attachItemSelected(function (oEvent) {
-				oEvent.getParameter("item").firePress();
-			});
 
 			aButtons.forEach(function (oButton, index) {
 				var sId = oView.createId(jQuery.sap.uid()),
