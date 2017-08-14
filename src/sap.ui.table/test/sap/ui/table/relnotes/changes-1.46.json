@@ -303,5 +303,295 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "02884f0b3e9f31e271b92c1c3dd091b2364b5beb",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Clear selectAllMode from all nodes on clearSelection()",
+        "references": []
+      },
+      {
+        "id": "5dde4f2645717df4c3d3e9c98be617c2539f310e",
+        "type": "FIX",
+        "text": " TreeTable: Property expandFirstLevel deprecated",
+        "references": []
+      },
+      {
+        "id": "37d6e8e211ac4a0ff3ff3824576fe30420d9e7c2",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Avoid focus outline issues in Internet Explorer",
+        "references": []
+      },
+      {
+        "id": "fd0c5a1477b84c6509ea238c77aa3128f53fd405",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Avoid no data visualization during refresh",
+        "references": []
+      },
+      {
+        "id": "c3374059ad22cc649c21290102cf1e8595587f1f",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix positioning of table content in IE/Edge in case of row actions",
+        "references": []
+      },
+      {
+        "id": "96d491d290cb0db7ecff820ef06721e9c08441bb",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix positioning of table content with row actions (no scrollbar case)",
+        "references": []
+      },
+      {
+        "id": "1afbea349af45e3e4c970a7b65538bff295fcd19",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Scrolling to the last row when zoomed in/out in Chrome.",
+        "references": []
+      },
+      {
+        "id": "f6552d0cce78fc587e8f7512c0baa2227a666f94",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Skip cellClick event in case of text selection",
+        "references": []
+      },
+      {
+        "id": "cdb3d4c7c5eba49fbdc879adbfe8fa0b822959c0",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Tabbing in action mode when invisible columns exist.",
+        "references": []
+      },
+      {
+        "id": "45399fadea6efb8c15282006e612fc8ca7dd782a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: columns with minWidth disappear after window resize",
+        "references": []
+      }
+    ]
+  },
+  "1.46.4": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "301d418a4912f395af5833465c26819c80cb599d",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Harmonize selection behavior when expanding nodes using setNumberOfExpandedLevels()",
+        "references": []
+      }
+    ]
+  },
+  "1.46.5": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "029a02f060b15d468bac1dafcba3817606f5c514",
+        "type": "FIX",
+        "text": " AnalyticalTable: Ungrouping using the column menu",
+        "references": []
+      },
+      {
+        "id": "cf29d0a5c128c66f8b5e8fed8fb9147fe15b9a8b",
+        "type": "FIX",
+        "text": " AnalyticalTable: Ungrouping in SmartTable via ViewSettings dialog",
+        "references": []
+      }
+    ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "d610df1524b159dda2aef22d55f741a8796e4343",
+        "type": "FIX",
+        "text": " Table: Issues with zooming in Chrome",
+        "references": []
+      },
+      {
+        "id": "05342796aedd1430b62072b4244c401e6721dc7b",
+        "type": "FIX",
+        "text": " Table: Navigation while the busy indicator is shown",
+        "references": []
+      },
+      {
+        "id": "20c4affe56cca2408c8820f7bdd414ce3460a41c",
+        "type": "FIX",
+        "text": " Table: Resizing in interactive mode on touch devices",
+        "references": []
+      },
+      {
+        "id": "4707e839a8cfe7e14fdb6f9ad0a1742aaab6fb95",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Avoid error when cell control does not provide an accessibility info.",
+        "references": []
+      },
+      {
+        "id": "25abd888967d77adca8785aad99779f8e0f2e91c",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Avoid error while reorder columns via D\u0026D",
+        "references": []
+      },
+      {
+        "id": "ad4114edb65b8eb6210f7a7f28f066408a575f50",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Fix scrollbar alignment on touch enabled laptops (combi devices)",
+        "references": []
+      }
+    ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "ecaeb1856c5da0eb2a8c8f3702691e2585a18bf6",
+        "type": "FIX",
+        "text": " Table: Prevent scrolling and a second request on a binding refresh",
+        "references": []
+      },
+      {
+        "id": "8d65f280ba8b6ab3501d4b459c3b581b7cd6163c",
+        "type": "FIX",
+        "text": " TreeTable: Remove leaf icons from the tab chain in edit mode",
+        "references": []
+      },
+      {
+        "id": "a88dcad48ba6f4380debba0a6703cd03fe9c0076",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Suppress select all on empty table",
+        "references": []
+      },
+      {
+        "id": "574371c1a991f3a936e66dc48529e5dfe2777996",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - CSS corrections for column headers",
+        "references": []
+      },
+      {
+        "id": "85623122cb8e6daefcef248af39e5530583b7de8",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - column header spans in XLM views",
+        "references": []
+      },
+      {
+        "id": "0e40576cf4d960033dab2a948f10714277782c4b",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - row selection column is too wide in IE/Edge",
+        "references": []
+      },
+      {
+        "id": "cd9358136bde6c3540af9a938f190f7991c8c452",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - sort and filter icons in IE",
+        "references": []
+      },
+      {
+        "id": "ea89cdbab44955730764ecf5a1291c23f4a5da3f",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - touch scrolling in IE and Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.46.8": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "a0f40b43f3f93076d9ad4ac142065330b249b7a8",
+        "type": "FIX",
+        "text": " Table: Avoid null pointer exception when last row was removed",
+        "references": []
+      },
+      {
+        "id": "7ae9711009b0a214d791538fc8d730db9a3e3e5f",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Ensure visibility of scrollbars in IE on Win 10",
+        "references": []
+      }
+    ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "68e3d7140bf6e0b4b6a5a8aaf75a041d5949b466",
+        "type": "FIX",
+        "text": " Table: Select text of input fields in edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "580c721672b46867127f75be9f67fc9e723e686a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - infinite rerendering",
+        "references": []
+      },
+      {
+        "id": "bba5266978736a587080e819c6df39210ecc3d01",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: rendering issue with invisible fixed columns",
+        "references": []
+      }
+    ]
+  },
+  "1.46.10": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "adf1e3fd9331dddb6a9815a39a227356524cfe84",
+        "type": "FIX",
+        "text": " Table: Management of the column template clone stack",
+        "references": []
+      },
+      {
+        "id": "37a47515a1cab5334e1a1d8a9375b494ed98d422",
+        "type": "FIX",
+        "text": " TreeTable: Expand/Collapse with OData v1 models",
+        "references": []
+      }
+    ]
+  },
+  "1.46.11": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "5afd154c78f02e20939697c78fd7fd16a2211a36",
+        "type": "FIX",
+        "text": " Table: Column parameter of the ColumnSelect event",
+        "references": []
+      },
+      {
+        "id": "a0baff0c2eeae5aa9b08ee99943a924c6d317014",
+        "type": "FIX",
+        "text": " Table: Tooltip of SelectAll cell when manually selecting all rows",
+        "references": []
+      }
+    ]
+  },
+  "1.46.12": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "0e66cd57bb4b425ed11e11f54d5b958c658cfb61",
+        "type": "FIX",
+        "text": " Table: Correctly initialize the keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "4995aa5acb3aae34cd0bdd92e8af5020e2ec2259",
+        "type": "FIX",
+        "text": " Table: Correctly update the NoData text",
+        "references": []
+      },
+      {
+        "id": "3e27811603eb758d1f2f2d71f2fce97499f77ab1",
+        "type": "FIX",
+        "text": " TreeTable: Position of the TreeIcon",
+        "references": []
+      },
+      {
+        "id": "219c79442b9eedd27d36180df42610c499461028",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Ensure visible scrollbars on Safari / iOS",
+        "references": []
+      }
+    ]
   }
 }

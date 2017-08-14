@@ -21,5 +21,28 @@
         "references": []
       }
     ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "2dad12ef547d6f822f71861b92dc17f52dcc00f6",
+        "type": "FIX",
+        "text": " sap.ui.rta: Create Container + automatic rename activation",
+        "references": []
+      },
+      {
+        "id": "804ab73ff82d175e5ebb34c1a9c9be2c51c5f08c",
+        "type": "FIX",
+        "text": " sap.ui.rta: fixed index in EasyAdd Plugin",
+        "references": []
+      },
+      {
+        "id": "2bf07df48cc3c67a6f3566e789af714e7ef7b840",
+        "type": "FIX",
+        "text": "Remove test dependencies to sap.ui.comp",
+        "references": []
+      }
+    ]
   }
 }
