@@ -29,14 +29,14 @@
 			left: 0;
 		}
 	}
-}
 
-html.sap-desktop .sapUxAPHierarchicalSelect.sapMSlt:focus:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState) {
-	outline: none;
+	&.sapMSltHoverable.sapMSltIconOnly.sapMSltPressed.sapMSlt:focus > .sapMSltIcon {
+		outline: none;
+	}
 }
 
 .sapUiSizeCompact .sapUxAPHierarchicalSelect.sapMSlt {
-	height: 2.5rem;
+	height: 2rem;
 	margin-top: 0;
 	margin-bottom: 0;
 }
@@ -134,5 +134,42 @@ html .sapUiContainer-Wide .sapUxAPHierarchicalSelect.sapMSltIconOnly {
 		height: 3rem;
 		border: none;
 		padding-left: 1rem;
+	}
+
+	.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltLabel {
+		padding-bottom: 0.3rem;
+	}
+
+	.sapUiSizeCompact .sapMSlt.sapUxAPHierarchicalSelect {
+		height: 2rem;
+	}
+}
+
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSlt.sapUxAPHierarchicalSelect:focus  > .sapMSltArrow {
+		box-shadow: none;
+	}
+
+	.sapUxAPHierarchicalSelect.sapMSltHoverable.sapMSltIconOnly.sapMSlt:not(.sapMSltPressed):focus {
+		&:before {
+			border: none;
+		}
+		> .sapMSltIcon {
+			outline: none;
+			position: relative;
+		}
+		> .sapMSltIcon:after {
+			content: " ";
+			box-sizing: border-box;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			left: 0;
+			top: 0;
+			border: 1px dashed @sapUiContentFocusColor;
+			pointer-events: none;
+		}
 	}
 }
