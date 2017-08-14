@@ -1112,7 +1112,7 @@
 					} else if (iCurrentScrollPosition === 0 && iScrollDelta < 0) {
 						assert.ok(oWheelEvent.defaultPrevented, "Scroll position is already at the beginning: Default action was prevented");
 						assert.ok(oStopPropagationSpy.calledOnce, "Scroll position is already at the beginning: Propagation was stopped");
-					} else if (iCurrentScrollPosition === that.oHSb.scrollWidth - that.oHSb.clientWidth && iScrollDelta > 0) {
+					} else if (iCurrentScrollPosition === that.oHSb.scrollWidth - that.oHSb.getBoundingClientRect().width && iScrollDelta > 0) {
 						assert.ok(oWheelEvent.defaultPrevented, "Scroll position is already at the end: Default action was prevented");
 						assert.ok(oStopPropagationSpy.calledOnce, "Scroll position is already at the end: Propagation was stopped");
 					} else {
@@ -1143,66 +1143,156 @@
 	});
 
 	QUnit.test("Imitating touch", function(assert) {
+		Device.support.pointer = false;
+		Device.support.touch = true;
+		oTable._getKeyboardExtension()._suspendItemNavigation(); // Touch can set the focus, which can lead to scrolling. Prevent it!
+		oTable.setFixedRowCount(1);
+		initRowActions(oTable, 1, 1);
+		this.oHSb = this.oScrollExtension.getHorizontalScrollbar();
+		this.oHeaderScroll = oTable.getDomRef("sapUiTableColHdrScr");
+		this.oContentScroll = oTable.getDomRef("sapUiTableCtrlScr");
+
 		var done = assert.async();
 		var that = this;
+		var iAssertionDelay = 100;
 		var iTouchPosition;
 		var iCurrentScrollPosition = this.oHSb.scrollLeft;
-		var oScrollingHelper = oTable._getScrollExtension()._ScrollingHelper;
-		var oTarget = oTable.getDomRef("tableCCnt");
-		var iAssertionDelay = 100;
 
-		function touchStart(oTarget, iPageX) {
+		function scrollForwardAndBackToBeginning(oTargetElement) {
+			that.oHSb.scrollLeft = 0;
+			iCurrentScrollPosition = 0;
+
+			initTouchScrolling(oTargetElement, 200);
+			return scrollWithTouch(oTargetElement, 150, iCurrentScrollPosition + 150, true).then(function() {
+				return scrollWithTouch(oTargetElement, -150, iCurrentScrollPosition - 150, true);
+			});
+		}
+
+		function scrollBeyondBoundaries(oTargetElement) {
+			that.oHSb.scrollLeft = 0;
+			iCurrentScrollPosition = 0;
+
+			initTouchScrolling(oTargetElement, 200);
+			return scrollWithTouch(oTargetElement, -150, 0, true).then(function() {
+				that.oHSb.scrollLeft = that.oHSb.scrollWidth - that.oHSb.getBoundingClientRect().width;
+				iCurrentScrollPosition = that.oHSb.scrollLeft;
+
+				return scrollWithTouch(oTargetElement, 150, iCurrentScrollPosition, true);
+			});
+		}
+
+		function scrollOnInvalidTarget(oTargetElement) {
+			that.oHSb.scrollLeft = 50;
+			iCurrentScrollPosition = 50;
+
+			initTouchScrolling(oTargetElement, 200);
+			return scrollWithTouch(oTargetElement, 150, iCurrentScrollPosition, false).then(function() {
+				initTouchScrolling(oTargetElement, 200);
+				return scrollWithTouch(oTargetElement, -150, iCurrentScrollPosition, false);
+			});
+		}
+
+		function initTouchScrolling(oTargetElement, iPageX) {
+			var oTouchEvent;
+
 			iTouchPosition = iPageX;
 
-			var oTouchStartEventData = jQuery.Event("touchstart", {
-				target: oTarget,
-				touches: [
-					{
-						pageX: iPageX,
+			if (typeof Event === "function" && typeof window.Touch === "function") {
+				var oTouchObject = new window.Touch({
+					identifier: Date.now(),
+					target: oTargetElement,
+					pageX: iTouchPosition,
+					pageY: 0
+				});
+
+				oTouchEvent = new window.TouchEvent("touchstart", {
+					bubbles: true,
+					cancelable: true,
+					touches: [oTouchObject]
+				});
+			} else { // Firefox, Edge, IE, PhantomJS
+				oTouchEvent = document.createEvent("Event");
+				oTouchEvent.touches = [{
+					pageX: iTouchPosition,
+					pageY: 0
+				}];
+				oTouchEvent.initEvent("touchstart", true, true);
+			}
+
+			oTargetElement.dispatchEvent(oTouchEvent);
+		}
+
+		function scrollWithTouch(oTargetElement, iScrollDelta, iExpectedScrollPosition, bValidTarget) {
+			return new Promise(function(resolve) {
+				var oTouchEvent;
+
+				iTouchPosition -= iScrollDelta;
+
+				if (typeof Event === "function" && typeof window.Touch === "function") {
+					var oTouchObject = new window.Touch({
+						identifier: Date.now(),
+						target: oTargetElement,
+						pageX: iTouchPosition,
 						pageY: 0
-					}
-				],
-				originalEvent: {touches: true}
-			});
-			oScrollingHelper.onTouchStart.call(oTable, oTouchStartEventData);
-		}
-
-		function touchMove(oTarget, iScrollDelta, iExpectedScrollPosition) {
-			return new Promise(
-				function(resolve) {
-					iTouchPosition -= iScrollDelta;
-
-					var oTouchMoveEventData = jQuery.Event("touchmove", {
-						target: oTarget,
-						touches: [
-							{
-								pageX: iTouchPosition,
-								pageY: 0
-							}
-						],
-						originalEvent: {touches: true}
 					});
-					oScrollingHelper.onTouchMoveScrolling.call(oTable, oTouchMoveEventData);
 
-					window.setTimeout(function() {
-						that.assertSynchronization(assert, iExpectedScrollPosition);
-						iCurrentScrollPosition = iExpectedScrollPosition;
-						resolve();
-					}, iAssertionDelay);
+					oTouchEvent = new window.TouchEvent("touchmove", {
+						bubbles: true,
+						cancelable: true,
+						touches: [oTouchObject]
+					});
+				} else { // Firefox, Edge, IE, PhantomJS
+					oTouchEvent = document.createEvent("Event");
+					oTouchEvent.touches = [{
+						pageX: iTouchPosition,
+						pageY: 0
+					}];
+					oTouchEvent.initEvent("touchmove", true, true);
+
+					if (Device.browser.msie) {
+						var fnOriginalPreventDefault = oTouchEvent.preventDefault;
+						oTouchEvent.preventDefault = function() {
+							fnOriginalPreventDefault.apply(this, arguments);
+							Object.defineProperty(this, "defaultPrevented", {get: function() {return true;}});
+						};
+					}
 				}
-			);
+
+				oTargetElement.dispatchEvent(oTouchEvent);
+
+				window.setTimeout(function() {
+					that.assertSynchronization(assert, iExpectedScrollPosition);
+
+					if (!bValidTarget) {
+						assert.ok(!oTouchEvent.defaultPrevented, "Target does not support touch scrolling: Default action was not prevented");
+					} else if (iCurrentScrollPosition === 0 && iScrollDelta < 0) {
+						assert.ok(!oTouchEvent.defaultPrevented, "Scroll position is already at the beginning: Default action was not prevented");
+					} else if (iCurrentScrollPosition === that.oHSb.scrollWidth - that.oHSb.getBoundingClientRect().width && iScrollDelta > 0) {
+						assert.ok(!oTouchEvent.defaultPrevented, "Scroll position is already at the end: Default action was not prevented");
+					} else {
+						assert.ok(oTouchEvent.defaultPrevented, "Default action was prevented");
+					}
+
+					iCurrentScrollPosition = iExpectedScrollPosition;
+
+					resolve();
+				}, iAssertionDelay);
+			});
 		}
 
-		touchStart(oTarget, 200);
-		touchMove(oTarget, 150, iCurrentScrollPosition + 150).then(function() {
-			return touchMove(oTarget, 50, iCurrentScrollPosition + 50);
+		scrollForwardAndBackToBeginning(getCell(0, 0)[0]).then(function() { // Cell in fixed column.
+			return scrollForwardAndBackToBeginning(getCell(2, 2)[0]); // Cell in scrollable column.
 		}).then(function() {
-			return touchMove(oTarget, -150, iCurrentScrollPosition - 150);
+			return scrollForwardAndBackToBeginning(getRowHeader(0)[0]);
 		}).then(function() {
-			return touchMove(oTarget, -50, iCurrentScrollPosition - 50);
+			return scrollForwardAndBackToBeginning(getRowAction(0)[0]);
 		}).then(function() {
-			done();
-		});
+			return scrollBeyondBoundaries(getCell(2, 2)[0]); // Cell in scrollable column.
+		}).then(function() {
+			return scrollOnInvalidTarget(getSelectAll()[0]);
+		}).then(function() {
+			return scrollOnInvalidTarget(getColumnHeader(1)[0]);
+		}).then(done);
 	});
 
 	QUnit.module("Vertical scrolling", {

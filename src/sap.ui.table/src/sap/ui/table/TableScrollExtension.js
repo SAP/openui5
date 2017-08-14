@@ -415,6 +415,7 @@ sap.ui.define([
 					initialPageY: oTouchObject.pageY,
 					initialScrollTop: oVSb == null ? 0 : oVSb.scrollTop,
 					initialScrollLeft: oHSb == null ? 0 : oHSb.scrollLeft,
+					initialScrolledToEnd: null,
 					touchMoveDirection: null
 				};
 			}
@@ -437,6 +438,7 @@ sap.ui.define([
 				var oTouchObject = oEvent.touches ? oEvent.touches[0] : oEvent;
 				var iTouchDistanceX = (oTouchObject.pageX - mTouchSessionData.initialPageX);
 				var iTouchDistanceY = (oTouchObject.pageY - mTouchSessionData.initialPageY);
+				var bScrolledToEnd = false;
 				var bScrollingPerformed = false;
 
 				if (mTouchSessionData.touchMoveDirection === null) {
@@ -451,8 +453,20 @@ sap.ui.define([
 						var oHSb = oScrollExtension.getHorizontalScrollbar();
 
 						if (oHSb != null) {
-							oHSb.scrollLeft = mTouchSessionData.initialScrollLeft - iTouchDistanceX;
-							bScrollingPerformed = true;
+							if (iTouchDistanceX < 0) { // Scrolling to the right.
+								bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.clientWidth;
+							} else { // Scrolling to the left.
+								bScrolledToEnd = oHSb.scrollLeft === 0;
+							}
+
+							if (mTouchSessionData.initialScrolledToEnd === null) {
+								mTouchSessionData.initialScrolledToEnd = bScrolledToEnd;
+							}
+
+							if (!bScrolledToEnd && !mTouchSessionData.initialScrolledToEnd) {
+								oHSb.scrollLeft = mTouchSessionData.initialScrollLeft - iTouchDistanceX;
+								bScrollingPerformed = true;
+							}
 						}
 						break;
 
@@ -460,15 +474,26 @@ sap.ui.define([
 						var oVSb = oScrollExtension.getVerticalScrollbar();
 
 						if (oVSb != null) {
-							oVSb.scrollTop = mTouchSessionData.initialScrollTop - iTouchDistanceY;
-							bScrollingPerformed = true;
+							if (iTouchDistanceY < 0) { // Scrolling down.
+								bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.clientHeight;
+							} else { // Scrolling up.
+								bScrolledToEnd = oVSb.scrollTop === 0;
+							}
+
+							if (mTouchSessionData.initialScrolledToEnd === null) {
+								mTouchSessionData.initialScrolledToEnd = bScrolledToEnd;
+							}
+
+							if (!bScrolledToEnd && !mTouchSessionData.initialScrolledToEnd) {
+								oVSb.scrollTop = mTouchSessionData.initialScrollTop - iTouchDistanceY;
+								bScrollingPerformed = true;
+							}
 						}
 						break;
 					default:
 				}
 
-				if (bScrollingPerformed && Device.browser.safari) {
-					// Safari does not support touch-action:none and touch-action:pan-x/y
+				if (bScrollingPerformed) {
 					oEvent.preventDefault();
 				}
 			}
@@ -551,6 +576,8 @@ sap.ui.define([
 		 */
 		getEventListenerTargets: function(oTable) {
 			var aEventListenerTargets = [
+				// Safari does not support touch-action:none and touch-action:pan-x/y. That means, the user can scroll by touch actions anywhere
+				// in the body of the table.
 				oTable.getDomRef("tableCCnt")
 			];
 
