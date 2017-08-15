@@ -120,24 +120,37 @@ sap.ui.define([
 						oTarget = oMutation.target.parentNode;
 					}
 
-					var bIgnore = this._aIgnoredMutations.some(function(oIgnoredMutation, iIndex, aSource) {
-						if (oIgnoredMutation.target === oMutation.target && oIgnoredMutation.type === oMutation.type) {
-							aSource.splice(iIndex, 1);
-							return true;
-						}
-					});
+					// TODO: ignore all RTA dom elements (dialogs, context menus, toolbars etc.)
+					var bIsFromRTA = OverlayUtil.isInOverlayContainer(oTarget)
+						|| jQuery(oTarget).closest(".sapUiDtContextMenu").length > 0
+						|| jQuery(oTarget).closest(".sapUiRtaToolbar").length > 0;
 
-					// filter out all mutation in overlays
-					if (!OverlayUtil.isInOverlayContainer(oTarget) && !bIgnore) {
-						aTargetNodes.push(oTarget);
+					var bRelevantNode = document.contains(oTarget)
+						&& oTarget.id !== "sap-ui-static"
+						&& jQuery(oTarget).closest("#sap-ui-preserve").length === 0;
 
-						// define closest element to notify it's overlay about the dom mutation
-						var oOverlay = OverlayUtil.getClosestOverlayForNode(oTarget);
-						var sElementId = oOverlay ? oOverlay.getElementInstance().getId() : undefined;
-						if (sElementId) {
-							aElementIds.push(sElementId);
+					if (bRelevantNode && !bIsFromRTA) {
+						var bIgnore = this._aIgnoredMutations.some(function(oIgnoredMutation, iIndex, aSource) {
+							if (oIgnoredMutation.target === oMutation.target
+									&& (oIgnoredMutation.type ? oIgnoredMutation.type === oMutation.type : true)) {
+								aSource.splice(iIndex, 1);
+								return true;
+							}
+						});
+
+
+						if (!bIgnore) {
+							aTargetNodes.push(oTarget);
+
+							// define closest element to notify it's overlay about the dom mutation
+							var oOverlay = OverlayUtil.getClosestOverlayForNode(oTarget);
+							var sElementId = oOverlay ? oOverlay.getElementInstance().getId() : undefined;
+							if (sElementId) {
+								aElementIds.push(sElementId);
+							}
 						}
 					}
+
 				}.bind(this));
 
 				if (aTargetNodes.length) {
