@@ -120,6 +120,15 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: true
+				},
+
+				/**
+				 * Determine the visibility of the footer of the variant list.
+				 */
+				showVariantListFooter: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: true
 				}
 			},
 			associations: {
@@ -362,6 +371,11 @@ sap.ui.define([
 			path: "/showFavorites",
 			model: VariantManagement.INNER_MODEL_NAME
 		});
+		this.bindProperty("showVariantListFooter", {
+			path: "/showVariantListFooter",
+			model: VariantManagement.INNER_MODEL_NAME
+		});
+
 	};
 
 	VariantManagement.prototype.setInitialDefaultVariantKey = function(sKey) {
@@ -607,15 +621,12 @@ sap.ui.define([
 					new ToolbarSpacer(this.getId() + "-spacer"), oVariantManageBtn, this.oVariantSaveBtn, this.oVariantSaveAsBtn
 				]
 			}),
-// showSubHeader: {
-// path: "/items",
-// model: VariantManagement.MODEL_NAME,
-// formatter: function() {
-// return this.getContent()[0].getItems().length > 9 ? true : false; // TODO: check for better way
-// }
-// },
 			showNavButton: false,
-			showHeader: false
+			showHeader: false,
+			showFooter: {
+				path: "/showVariantListFooter",
+				model: VariantManagement.INNER_MODEL_NAME
+			}
 		});
 
 		this.oVariantPopOver = new ResponsivePopover(this.getId() + "-popover", {

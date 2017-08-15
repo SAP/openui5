@@ -16,6 +16,8 @@
 					press="onMarkAsChanged" />
 			</m:HBox>
 			<m:HBox fitContainer="true">
+				<m:Button id="idToggleFooterBtn" text="toggle show Footer"
+					press="onToggleFooterBtn" />			
 				<m:Button id="idToggleManageBtn" text="toggle show Manage"
 					press="onToggleManageBtn" />
 				<m:Button id="idToggleSaveBtn" text="toggle Save" press="onToggleSaveBtn" />
