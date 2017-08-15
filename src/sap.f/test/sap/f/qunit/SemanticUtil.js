@@ -102,8 +102,8 @@ SemanticUtil = (function (
 			}
 		],
 		oFactory = {
-			getSemanticPage: function () {
-				return new SemanticPage();
+			getSemanticPage: function (oConfiguration) {
+				return new SemanticPage(oConfiguration || {});
 			},
 			getSemanticTitle : function(oContainer) {
 				return new sap.f.semantic.SemanticTitle(oContainer, null);
