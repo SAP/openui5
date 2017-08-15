@@ -125,7 +125,7 @@ sap.ui.define([
 						|| jQuery(oTarget).closest(".sapUiDtContextMenu").length > 0
 						|| jQuery(oTarget).closest(".sapUiRtaToolbar").length > 0;
 
-					var bRelevantNode = document.contains(oTarget)
+					var bRelevantNode = jQuery.contains(document, oTarget)
 						&& oTarget.id !== "sap-ui-static"
 						&& jQuery(oTarget).closest("#sap-ui-preserve").length === 0;
 
