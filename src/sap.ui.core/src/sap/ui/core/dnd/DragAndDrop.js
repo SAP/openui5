@@ -500,11 +500,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				return [oDropControl, "On"];
 			}
 
-			var sDropPositionRelativeToItem = showIndicator(oEvent, oDropControl, oDropInfo.getDropPosition());
+			var sDropPositionRelativeToItem = showIndicator(oEvent, oDropControl, oDropInfo.getDropPosition(), oDropInfo.getDropLayout());
 			return [oDropControl, sDropPositionRelativeToItem];
 		};
 
-		var showIndicator = function(oEvent, oDropControl, sDropPosition) {
+		var showIndicator = function(oEvent, oDropControl, sDropPosition, sDropLayout) {
 			var sConfiguredDropPosition = sDropPosition,
 				mClientRect = oDropControl.getDomRef().getBoundingClientRect(),
 				iPageYOffset = window.pageYOffset,
@@ -520,8 +520,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 					height: mClientRect.height
 				};
 
-			if (sConfiguredDropPosition == "Horizontal") { // TODO horizontal calculation
-				oIndicator.attr("data-drag-direction", "vertical")
+			if (sDropLayout == "Horizontal") {
+				oIndicator.attr("data-drop-layout", "horizontal")
 						  .css("height", mDropRect.height)
 						  .css("top", mDropRect.top);
 
@@ -553,7 +553,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 					}
 				}
 			} else { // Vertical dragging
-				oIndicator.attr("data-drag-direction", "horizontal")
+				oIndicator.attr("data-drop-layout", "vertical")
 						  .css("width", mDropRect.width)
 						  .css("left", mDropRect.left);
 

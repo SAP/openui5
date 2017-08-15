@@ -53,7 +53,12 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			/**
 			 * Defines the position for the drop action, visualized by a rectangle.
 			 */
-			dropPosition: {type: "sap.ui.core.dnd.DropPosition", defaultValue : "On"}
+			dropPosition: {type: "sap.ui.core.dnd.DropPosition", defaultValue : "On"},
+
+			/**
+			 * Defines the layout of the droppable controls if <code>dropPosition</code> is set to <code>Between</code> or <code>OnOrBetween</code>.
+			 */
+			dropLayout: {type: "sap.ui.core.dnd.DropLayout", defaultValue : "Vertical"}
 		},
 
 		associations : {
@@ -61,7 +66,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 * The target element for this drag and drop action. If undefined, the control with this drag and drop configuration itself is the target.
 			 * Leaving this empty, but defining source and target aggregation, allows you to reorder the children within a control, for example.
 			 */
-			targetElement: {type : "sap.ui.core.Element", multiple : false} // TODO: or multiple?
+			targetElement: {type : "sap.ui.core.Element", multiple : false}
 		},
 
 		events: {
@@ -73,7 +78,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 				allowPreventDefault : true,
 				parameters : {
 					/**
-					 * The target element that is going to be dragged
+					 * The target element that eill be dragged
 					 */
 					target: {type: "sap.ui.core.Element"},
 
@@ -128,7 +133,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 					draggedControl: {type: "sap.ui.core.Element"},
 
 					/**
-					 * The element is dropped
+					 * The element is being dropped
 					 */
 					droppedControl: {type: "sap.ui.core.Element"},
 
