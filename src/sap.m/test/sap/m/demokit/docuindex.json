@@ -59,6 +59,7 @@
 				"desc": "Blank app as starting point for your app development",
 				"ref" : "test-resources/sap/m/demokit/basicTemplate/webapp/index.html",
 				"links": {
+					"View Documentation": "#docs/guide/7a4d93c0b0bb439b9d889ffc5b02eac9.html",
 					"Run Integration Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/integration/opaTests.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/unit/unitTests.qunit.html"
 				},
