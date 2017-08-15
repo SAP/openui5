@@ -344,6 +344,7 @@ sap.ui.define([
 				type: "destroy"
 			};
 		});
+		remove(oManagedObject, this, null);
 		delete oManagedObject._observer;
 	};
 
@@ -395,6 +396,11 @@ sap.ui.define([
 	// if the listener is already registered to the target only its configuration is updated.
 	// adds the observer to the target managed object if an observer is missing.
 	function remove(oTarget, oListener, oConfiguration) {
+		if (!oConfiguration) {
+			//take the complete configuration
+			var sId = oTarget.getId();
+			oConfiguration = mTargets[sId];
+		}
 		updateConfiguration(oTarget, oListener, oConfiguration, true);
 	}
 
@@ -596,7 +602,7 @@ sap.ui.define([
 
 		oConfiguration.bindings = oConfiguration.bindings === true ? aBindings : oConfiguration.bindings;
 		oConfiguration.events = oConfiguration.events === true ? aEvents : oConfiguration.events;
-		oConfiguration.destroy = (oConfiguration.destroy == null) ? true : !!oConfiguration.destroy;
+		oConfiguration.destroy = (oConfiguration.destroy == null) ? false : oConfiguration.destroy;
 	}
 
 	return ManagedObjectObserver;
