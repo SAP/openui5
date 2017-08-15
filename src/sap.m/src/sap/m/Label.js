@@ -68,7 +68,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Determines if the label is in displayOnly mode. Controls in this mode are not interactive, not editable, not focusable, and not in the tab chain. <b>Note:<b> This property should be used only in Form controls in review.
 			 */
-			displayOnly : {type : "boolean", group : "Appearance", defaultValue : false}
+			displayOnly : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Determines the wrapping of the text within the <code>Label</code>.
+			 *
+			 * <b>Note:</b> This property should be used only in Form.
+			 */
+			wrapping: {type : "boolean", group : "Appearance", defaultValue : true}
 		},
 		associations : {
 

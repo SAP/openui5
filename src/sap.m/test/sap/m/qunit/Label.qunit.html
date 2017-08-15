@@ -126,6 +126,45 @@
 			assert.ok(!sut.$().hasClass("sapMLabelMaxWidth"), "Label has width and does not have max width restriction.");
 		});
 
+		QUnit.test("Label wrapping", function(assert) {
+			var $l1 = l1.$(),
+				$l2 = l2.$();
+
+			assert.strictEqual(l1.getWrapping(), true, "Has to be set to true.");
+			assert.strictEqual(l2.getWrapping(), true, "Has to be set to true.");
+
+			assert.ok($l1.hasClass("sapMLabelWrapped"), true, "Has the appropriate class set.");
+			assert.ok($l2.hasClass("sapMLabelWrapped"), true, "Has the appropriate class set.");
+
+			l1.setWrapping(false);
+			l2.setWrapping(false);
+
+			assert.strictEqual(l1.getWrapping(), false, "Has to be set to false.");
+			assert.strictEqual(l2.getWrapping(), false, "Has to be set to false.");
+
+			assert.ok($l1.hasClass("sapMLabelWrapped"), false, "Doesn't need to have class set.");
+			assert.ok($l2.hasClass("sapMLabelWrapped"), false, "Doesn't need to have class set.");
+
+			//reset values
+			l1.setWrapping(true);
+			l2.setWrapping(true);
+
+			assert.strictEqual(l1.getWrapping(), true, "Has to be set to true.");
+			assert.strictEqual(l2.getWrapping(), true, "Has to be set to true.");
+
+			assert.ok($l1.hasClass("sapMLabelWrapped"), true, "Has the appropriate class set.");
+			assert.ok($l2.hasClass("sapMLabelWrapped"), true, "Has the appropriate class set.");
+
+			l2.setWrapping(false);
+
+			assert.strictEqual(l2.getWrapping(), false, "Has to be set to false.");
+
+			assert.ok($l2.hasClass("sapMLabelWrapped"), false, "Doesn't need to have class set.");
+
+			//reset value
+			l2.setWrapping(true);
+		})
+
 		QUnit.module("tooltip");
 
 		QUnit.test("Should render a tooltip", function(assert) {
