@@ -32,9 +32,7 @@ sap.ui.define(["jquery.sap.global",
 	ModelSupport.addRulesToRuleSet(oRuleSet);
 
 	// Adds the view related rules
-	ViewSupport.addRulesToRuleSet(oRuleSet, {
-		iNumberOfControlsThreshold: 20000
-	});
+	ViewSupport.addRulesToRuleSet(oRuleSet);
 
 	// Adds the app related rules
 	var aObsoleteFunctionNames = ["jQuery.sap.require", "$.sap.require", "sap.ui.requireSync", "jQuery.sap.sjax"];
