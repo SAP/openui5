@@ -76,7 +76,8 @@ sap.ui.define(['jquery.sap.global'],
 			var oMonth = aMonths[i];
 			oRm.renderControl(oMonth);
 		}
-		oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
+
+		this.renderCalContentOverlay(oRm, oCal, sId);
 
 		if (!oCal._bNamesLengthChecked) {
 			// render MonthPicker to check month names length
@@ -93,7 +94,16 @@ sap.ui.define(['jquery.sap.global'],
 		// dummy element to catch tabbing in from next element
 		oRm.write("<div id=\"" + sId + "-end\" tabindex=\"0\" style=\"width:0;height:0;position:absolute;right:0;bottom:0;\"></div>");
 
+		this.renderCalContentAndArrowsOverlay(oRm, oCal, sId);
+
 		oRm.write("</div>");
+	};
+
+	CalendarRenderer.renderCalContentOverlay = function(oRm, oCal, sId) {
+		oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
+	};
+
+	CalendarRenderer.renderCalContentAndArrowsOverlay = function(oRm, oCal, sId) {
 	};
 
 	return CalendarRenderer;

@@ -69,9 +69,6 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("<div id=\"" + sId + "-content\" class=\"sapUiCalContent\">");
 		oRm.renderControl(oMonthsRow);
 
-		if (!oCal.getPickerPopup()) {
-			oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
-		}
 		oRm.write("</div>");
 
 		oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");
