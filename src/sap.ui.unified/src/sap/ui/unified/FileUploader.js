@@ -139,6 +139,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
 
 			/**
+			 * Custom text for the value state message pop-up.
+			 *
+			 * <b>Note:</b> If not specified, a default text, based on the value state type, will be used instead.
+			 * @since 1.52
+			 */
+			valueStateText : {type : "string", group : "Misc", defaultValue : null},
+
+			/**
 			 * Icon to be displayed as graphical element within the button.
 			 * This can be a URI to an image or an icon font URI.
 			 * @since 1.26.0
@@ -724,6 +732,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		//as of 1.23.1 oFilePath can be an sap.ui.commons.TextField or an sap.m.Input, which both have a valueState
 		if (this.oFilePath.setValueState) {
 			this.oFilePath.setValueState(sValueState);
+		} else {
+			jQuery.sap.log.warning("Setting the valueState property with the combination of libraries used is not supported.", this);
 		}
 
 		if (this.oBrowse.getDomRef()) {
@@ -748,6 +758,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 		return this;
 
+	};
+
+	FileUploader.prototype.setValueStateText = function(sValueStateText) {
+		if (this.oFilePath.setValueStateText) {
+			this.oFilePath.setValueStateText(sValueStateText);
+		} else {
+			jQuery.sap.log.warning("Setting the valueStateText property with the combination of libraries used is not supported.", this);
+		}
+
+		return this.setProperty("valueStateText", sValueStateText, true);
 	};
 
 	FileUploader.prototype.setUploadUrl = function(sValue, bFireEvent) {

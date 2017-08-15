@@ -239,6 +239,29 @@
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Test valueStateText property - setter/getter", function (assert) {
+		var oFileUploader = createFileUploader(),
+			VALUE_STATE_TEXT = "Test";
+
+		//Set up
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert default
+		assert.equal(oFileUploader.getValueStateText(), "", "setValueStateText() --> getValueStateText() should return an empty string by default");
+
+		// act
+		oFileUploader.setValueStateText(VALUE_STATE_TEXT);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oFileUploader.getValueStateText(), VALUE_STATE_TEXT, "setValueStateText() --> getValueStateText() should return '" + VALUE_STATE_TEXT + "'");
+		assert.equal(oFileUploader.oFilePath.getValueStateText(), VALUE_STATE_TEXT, "Child input setValueStateText() --> getValueStateText() should return '" + VALUE_STATE_TEXT + "'");
+
+		//cleanup
+		oFileUploader.destroy();
+	});
+
 	QUnit.module("File validation");
 	QUnit.test("Test file type validation - handlechange()", function (assert){
 		//setup
