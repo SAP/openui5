@@ -1330,4 +1330,46 @@ function runODataMessagesTests() {
 	};
 
 	QUnit.test("Message target normalization", fnTestNormalization);
+
+	var fnTestNavProp = function() {
+		var done = assert.async();
+
+		assert.expect(8);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		sap.ui.getCore().setModel(oModel);
+		var oBinding = oModel.bindProperty("Supplier/Name");
+		oModel.addBinding(oBinding);
+		var oContext = oModel.getContext("/Products(1)");
+		oBinding.setContext(oContext);
+
+		var read = function(sPath, mParameters) {
+			return new Promise(function(resolve) {
+				mParameters = mParameters ? mParameters : {};
+				mParameters.success = resolve;
+				oModel.read(sPath, mParameters);
+			});
+		}
+
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
+
+		read("/Products(1)", {urlParameters:{"$expand":"Supplier"}}).then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			assert.equal(aMessages.length,1, "One message from the back-end");
+			assert.equal(aMessages[0].target, "/Suppliers(1)/Name", "Message has correct target");
+			assert.ok(oBinding.getDataState().getChanges(), "Messages propageted to binding");
+			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propageted to binding");
+			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propageted to binding");
+			assert.equal(oBinding.getDataState().getMessages()[0].message, "This is a server test message", "Message has correct message text");
+			oMessageManager.removeAllMessages();
+			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after removal of all messages");
+			oModel.destroy();
+			done();
+		});
+	};
+
+	QUnit.test("Propagate Message: Binding to NavProp",fnTestNavProp);
 }

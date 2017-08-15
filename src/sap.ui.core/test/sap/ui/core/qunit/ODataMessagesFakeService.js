@@ -116,6 +116,18 @@ var mPredefinedServiceResponses = {
 			var sAnswer = "Not found";
 
 			switch (sUrl) {
+				case "fakeservice://testdata/odata/northwind/Products(1)?$expand=Supplier":
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["json"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		"999",
+						"message":	"This is a server test message",
+						"severity":	"error",
+						"target":	"/Suppliers(1)/Name",
+						"details": []
+					});
+					sAnswer = mPredefinedServiceResponses.ProductsExpandSupplier;
+					break;
 				case "fakeservice://testdata/odata/function-imports/":
 					iStatus = 200;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
@@ -3350,6 +3362,7 @@ mPredefinedServiceResponses.technicalError400Json2 = '\
 		}\
 	}\
 }';
+mPredefinedServiceResponses.expandedData =
 
 mPredefinedServiceResponses.technicalError400Xml2 = '\
 <?xml version="1.0" encoding="utf-8"?>\
@@ -3402,3 +3415,28 @@ mPredefinedServiceResponses.technicalError400Xml2 = '\
 		</errordetails>\
 	</innererror>\
 </error>';
+
+mPredefinedServiceResponses.ProductsExpandSupplier = '\
+{\
+"d" : {\
+"__metadata": {\
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Products(1)", "type": "NorthwindModel.Product"\
+}\, "ProductID": 1, "ProductName": "Chai", "SupplierID": 1, "CategoryID": 1, "QuantityPerUnit": "10 boxes x 20 bags", "UnitPrice": "18.0000", "UnitsInStock": 39, "UnitsOnOrder": 0, "ReorderLevel": 10, "Discontinued": false, "Category": {\
+"__deferred": {\
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Products(1)/Category"\
+}\
+}\, "Order_Details": {\
+"__deferred": {\
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Products(1)/Order_Details"\
+}\
+}\, "Supplier": {\
+"__metadata": {\
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(1)", "type": "NorthwindModel.Supplier"\
+}\, "SupplierID": 1, "CompanyName": "Exotic Liquids", "ContactName": "Charlotte Cooper", "ContactTitle": "Purchasing Manager", "Address": "49 Gilbert St.", "City": "London", "Region": null, "PostalCode": "EC1 4SD", "Country": "UK", "Phone": "(171) 555-2222", "Fax": null, "HomePage": null, "Products": {\
+"__deferred": {\
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(1)/Products"\
+}\
+}\
+}\
+}\
+}';
