@@ -61,7 +61,7 @@
 	function initModel(mParameters) {
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, mParameters);
 	}
-	
+
 	var bChanged = false, bDataRequested = false, bDataReceived = false;
 
 	var fnChange = function(oEvent) {
@@ -78,7 +78,7 @@
 		bDataReceived = true;
 		ok(bChanged && bDataRequested,"dataRecieved fired");
 	};
-	
+
 	/**
 	 * Removes all shared Metadata
 	 */
@@ -155,7 +155,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test $batch: check accept header", function() {
 		oSpy = sinon.spy(oModel, "_submitBatchRequest");
 		oModel.read("/ProductSet", {
@@ -460,7 +460,7 @@
 	});
 
 	asyncTest("test oDataModel read error test", function() {
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				ok(false, "request succeeded...error expected");
 			},
@@ -1230,7 +1230,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test oDataModel setProperty - Response object", function() {
 		var iCount = 0;
 		oModel.setDefaultBindingMode("TwoWay");
@@ -1238,7 +1238,7 @@
 		var oInput = new sap.m.Input({value: "{Name}"});
 		oInput.setModel(oModel);
 		oInput.bindElement("/ProductSet('AD-1000')");
-		
+
 		var fnHandler = function() {
 			oInput.getElementBinding().detachDataReceived(fnHandler);
 			oInput.setValue("test");
@@ -1255,7 +1255,7 @@
 		};
 		oInput.getElementBinding().attachDataReceived(fnHandler);
 	});
-	
+
 	asyncTest("test oDataModel create", function() {
 		var iCount = 0;
 		var bCreate = false;
@@ -3139,13 +3139,13 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing			
+				start(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("Event order (single request): bindElement fails", function(){
 		expect(3);
 		oModel.setUseBatch(false);
@@ -3161,7 +3161,7 @@
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("Event order (batch request): bindElement fails --> refresh", function(){
 		expect(5);
 		oLabel = new sap.ui.commons.Label();
@@ -3178,13 +3178,13 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing			
+				start(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("Event order (batch request): bindElement fails", function(){
 		expect(3);
 		oLabel = new sap.ui.commons.Label();
@@ -3199,7 +3199,7 @@
 		}
 		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("test eventing when using read with batch on", function() {
 		var bSuccess = false;
 		var iReqComp = 0;
@@ -3352,7 +3352,7 @@
 		var iReqSent = 0;
 		var iReqFailed = 0;
 		var sReqId = null;
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				ok(false, "request succeeded...error expected");
 			},
@@ -3380,7 +3380,7 @@
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
 			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-			equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+			equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 			equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
 			sReqId = oEvent.getParameter('ID');
@@ -3403,7 +3403,7 @@
 				var aRequests = oEvent.getParameter('requests');
 				ok(aRequests.length == 1, "should contain one request");
 				equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-				equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+				equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 				equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 				equal(aRequests[0].response.statusCode, "404", "internal response, Param Check: statusCode");
 				equal(aRequests[0].response.statusText, "Not Found", "internal response, Param Check: statusText");
@@ -3420,7 +3420,7 @@
 		var iReqSent = 0;
 		var iReqFailed = 0;
 		var sReqId = null;
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				ok(false, "request succeeded...error expected");
 			},
@@ -3430,7 +3430,7 @@
 				iError++;
 			}
 		});
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				ok(false, "request succeeded...error expected");
 			},
@@ -3458,7 +3458,7 @@
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
 			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-			equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+			equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 			equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 			sReqId = oEvent.getParameter('ID');
 		});
@@ -3480,7 +3480,7 @@
 				var aRequests = oEvent.getParameter('requests');
 				ok(aRequests.length == 1, "should contain one request");
 				equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-				equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+				equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 				equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 				equal(aRequests[0].response.statusCode, "404", "internal response, Param Check: statusCode");
 				equal(aRequests[0].response.statusText, "Not Found", "internal response, Param Check: statusText");
@@ -3787,7 +3787,7 @@
 
 		oModel.setUseBatch(false);
 
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				ok(false, "request succeeded...error expected");
 			},
@@ -3797,7 +3797,7 @@
 				iError++;
 			}
 		});
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				ok(false, "request succeeded...error expected");
 			},
@@ -3829,7 +3829,7 @@
 			iReqSent++;
 			equal(oEvent.getId(), "requestSent", "event id check");
 			ok(oEvent.getParameter('url'), "Param check: url");
-			ok(oEvent.getParameter('url').indexOf("ProductXYSet") !== -1, "Param check: url should be non batch");
+			ok(oEvent.getParameter('url').indexOf("ProductSet('4711')") !== -1, "Param check: url should be non batch");
 			equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 			equal(oEvent.getParameter('async'), true , "Param check: async");
 			equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
@@ -3846,7 +3846,7 @@
 				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				equal(oEvent.getId(), "requestCompleted", "event id check");
 				ok(oEvent.getParameter('url'), "Param check: url");
-				ok(oEvent.getParameter('url').indexOf("ProductXYSet") !== -1, "Param check: url should be non batch");
+				ok(oEvent.getParameter('url').indexOf("ProductSet('4711')") !== -1, "Param check: url should be non batch");
 				equal(oEvent.getParameter('async'), true , "Param check: async");
 				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
