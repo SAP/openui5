@@ -24,7 +24,6 @@
 		QUnit.module("Basic methods", {
 			beforeEach: function() {
 				this.oMultiEditField = new sap.m.MultiEditField({
-					unit: new sap.m.MultiEditField(),
 					items: [
 						new sap.ui.core.Item({
 							key: "key",
@@ -45,14 +44,13 @@
 			//Act
 			var items = this.oMultiEditField.getItems();
 			//Assert
-			assert.strictEqual(items[0].getKey(), "_keep", "Item key correct.");
-			assert.strictEqual(items[0].getText(), "Keep existing value", "Item text correct.");
+			assert.strictEqual(items[0].getKey(), "_keep", "Item key 'keep' correct.");
+			assert.strictEqual(items[0].getText(), "Keep existing value", "Item text 'keep' correct.");
 
-			assert.strictEqual(items[1].getKey(), "_blank", "Item key correct.");
-			assert.strictEqual(items[1].getText(), "Leave blank", "Item text correct.");
+			assert.strictEqual(items[1].getKey(), "_new", "Item key 'new' correct.");
+			assert.strictEqual(items[1].getText(), "Select new value", "Item text 'new' correct.");
 
-			assert.strictEqual(items[2].getKey(), "_new", "Item key correct.");
-			assert.strictEqual(items[2].getText(), "Select new value", "Item text correct.");
+			assert.strictEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems.nullable), -1, "Blank item will not be displayed.");
 		});
 
 		QUnit.test("Check if items of _oPrefilledItems get destroyed on exit.", function(assert) {
@@ -66,26 +64,22 @@
 			assert.equal(this.oMultiEditField._oPrefilledItems, null, "_oPrefilledItems has been destroyed.");
 		});
 
-		QUnit.test("Check if ValueHelp is displayed on property change.", function(assert) {
+		QUnit.test("Check if ValueHelp is not displayed on property change.", function(assert) {
 			//Arrange
 			this.oMultiEditField.setShowValueHelp(false);
 			//Act
 			sap.ui.getCore().applyChanges();
 			//Assert
-			assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems["showValueHelp"]), -1, "ValueHelp will not be displayed.");
-		});
-
-		QUnit.test("Check if ValueHelp is initially displayed.", function(assert) {
-			assert.notEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems["showValueHelp"]), -1, "ValueHelp will be displayed.");
+			assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems.showValueHelp), -1, "ValueHelp will not be displayed.");
 		});
 
 		QUnit.test("Check if blank item is displayed on property change.", function(assert) {
 			//Arrange
-			this.oMultiEditField.setNullable(false);
+			this.oMultiEditField.setNullable(true);
 			//Act
 			sap.ui.getCore().applyChanges();
 			//Assert
-			assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems["nullable"]), -1, "Blank item will not be displayed.");
+			assert.notEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems.nullable), -1, "Blank item will be displayed.");
 		});
 
 		QUnit.test("Check if blank item is initially displayed.", function(assert) {
