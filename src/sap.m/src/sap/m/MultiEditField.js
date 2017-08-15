@@ -81,15 +81,15 @@ sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "s
 		MultiEditField.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oPrefilledItems = {
 			keep: new Item({
-				key: "_keep",
+				key: this._MultiEditFieldSelection.KeepAll,
 				text: this._oRb.getText("MULTI_EDIT_KEEP_TEXT")
 			}),
 			nullable: new Item({
-				key: "_blank",
+				key: this._MultiEditFieldSelection.Blank,
 				text: this._oRb.getText("MULTI_EDIT_BLANK_TEXT")
 			}),
 			showValueHelp: new Item({
-				key: "_new",
+				key: this._MultiEditFieldSelection.ValueHelp,
 				text: this._oRb.getText("MULTI_EDIT_NEW_TEXT")
 			})
 		};
@@ -119,6 +119,60 @@ sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "s
 				this._oPrefilledItems[i].destroy();
 			}
 			this._oPrefilledItems = null;
+		}
+	};
+
+	/**
+	 * MultiEditField special selection item keys.
+	 * @private
+	 */
+	MultiEditField.prototype._MultiEditFieldSelection = {
+		Blank: "_blank",
+		KeepAll: "_keep",
+		ValueHelp: "_new"
+	};
+
+	/* =========================================================== */
+	/* Public methods                                              */
+	/* =========================================================== */
+
+	/**
+	 * Returns true if the 'Leave blank' item is selected.
+	 * @public
+	 * @returns {boolean} True if the 'Leave blank' item is selected.
+	 */
+	MultiEditField.prototype.isBlankSelected = function() {
+		return this._sCurrentSelection === this._MultiEditFieldSelection.Blank;
+	};
+
+	/**
+	 * Returns true if the 'Keep existing value' item is selected.
+	 * @public
+	 * @returns {boolean} True if the 'Keep existing value' item is selected.
+	 */
+	MultiEditField.prototype.isKeepExistingSelected = function() {
+		return this._sCurrentSelection === this._MultiEditFieldSelection.KeepAll;
+	};
+
+	/* =========================================================== */
+	/* Private methods                                             */
+	/* =========================================================== */
+
+	/**
+	 * Handles the selection change event of sap.m.Select and triggers the corresponding event.
+	 * @private
+	 */
+	MultiEditField.prototype._handleSelectionChange = function(oEvent) {
+		var oItem = oEvent.getParameter("selectedItem");
+		this._sCurrentSelection = oItem.getKey();
+		switch (this._sCurrentSelection) {
+			case this._MultiEditFieldSelection.Blank:
+			case this._MultiEditFieldSelection.KeepAll:
+			case this._MultiEditFieldSelection.ValueHelp:
+				// fire special value selected event
+				break;
+			default:
+				break;
 		}
 	};
 	return MultiEditField;
