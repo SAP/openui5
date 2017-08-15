@@ -900,12 +900,11 @@
 	});
 
 	QUnit.test("Scroll bars can be accessed by inheriting controls", function(assert) {
-		var oScrollExtension = oTable._getScrollExtension();
-		var oHsb = oScrollExtension.getHorizontalScrollbar();
-		var oVsb = oScrollExtension.getVerticalScrollbar();
+		var oHsb = oTable.getDomRef(sap.ui.table.SharedDomRef["HorizontalScrollBar"]);
+		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef["VerticalScrollBar"]);
 
-		assert.ok(oHsb);
-		assert.ok(oVsb);
+		assert.ok(oHsb, "The horizontal scroll bar can be accessed with the help of SharedDomRef");
+		assert.ok(oVsb, "The vertical scroll bar can be accessed with the help of SharedDomRef");
 
 		sap.ui.getCore().applyChanges();
 
