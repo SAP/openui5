@@ -266,6 +266,19 @@ sap.ui.define([
 		this._mChanges.mDependentChangesOnMe[oChange.getKey()].push(oDependentChange.getKey());
 	};
 
+	ChangePersistence.prototype._addControlsDependencies = function (oDependentChange, aControlIdList) {
+		if (aControlIdList.length > 0) {
+			if (!this._mChanges.mDependencies[oDependentChange.getKey()]) {
+				this._mChanges.mDependencies[oDependentChange.getKey()] = {
+					changeObject: oDependentChange,
+					dependencies: [],
+					controlsDependencies: []
+				};
+			}
+			this._mChanges.mDependencies[oDependentChange.getKey()].controlsDependencies = aControlIdList;
+		}
+	};
+
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
@@ -301,6 +314,8 @@ sap.ui.define([
 
 		//create dependencies map
 		var aDependentIdList = oChange.getDependentIdList(oAppComponent);
+		var aDependentControlIdList = oChange.getDependentControlIdList(oAppComponent);
+		this._addControlsDependencies(oChange, aDependentControlIdList);
 		var oPreviousChange;
 		var aPreviousDependentIdList;
 		var iDependentIndex;
