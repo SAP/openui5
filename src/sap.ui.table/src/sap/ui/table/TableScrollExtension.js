@@ -816,7 +816,7 @@ sap.ui.define([
 
 		if (oTable != null && this._oHorizontalScrollbar === null) {
 			// Table#getDomRef (document#getElementById) returns null if the element does not exist in the DOM.
-			this._oHorizontalScrollbar = oTable.getDomRef(SharedDomRef.HorizontalScrollbar);
+			this._oHorizontalScrollbar = oTable.getDomRef(SharedDomRef.HorizontalScrollBar);
 		}
 
 		return this._oHorizontalScrollbar;
@@ -832,7 +832,7 @@ sap.ui.define([
 
 		if (oTable != null && this._oVerticalScrollbar === null) {
 			// Table#getDomRef (document#getElementById) returns null if the element does not exist in the DOM.
-			this._oVerticalScrollbar = oTable.getDomRef(SharedDomRef.VerticalScrollbar);
+			this._oVerticalScrollbar = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
 		}
 
 		return this._oVerticalScrollbar;

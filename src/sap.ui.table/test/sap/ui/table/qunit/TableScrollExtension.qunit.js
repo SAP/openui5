@@ -332,7 +332,7 @@
 	});
 
 	QUnit.test("getHorizontalScrollbar", function(assert) {
-		assert.strictEqual(this.oScrollExtension.getHorizontalScrollbar(), oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollbar),
+		assert.strictEqual(this.oScrollExtension.getHorizontalScrollbar(), oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar),
 			"Returned: Horizontal scrollbar element");
 
 		this.oScrollExtension.destroy();
@@ -341,7 +341,7 @@
 	});
 
 	QUnit.test("getVerticalScrollbar", function(assert) {
-		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollbar),
+		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar),
 			"Returned: Vertical scrollbar element");
 
 		this.oScrollExtension.destroy();
@@ -1344,7 +1344,7 @@
 			var iDelay = this.iAssertionDelay;
 
 			setTimeout(function() {
-				var oVSb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollbar);
+				var oVSb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 				oVSb.scrollTop = oSetting.scrollTop;
 
 				setTimeout(function() {

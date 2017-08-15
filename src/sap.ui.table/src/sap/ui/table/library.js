@@ -271,13 +271,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 		 * The element id of the Horizontal Scroll Bar of the sap.ui.table.Table.
 		 * @public
 		 */
-		HorizontalScrollbar : "hsb",
+		HorizontalScrollBar : "hsb",
 
 		/**
 		 * The element id of the Vertical Scroll Bar of the sap.ui.table.Table.
 		 * @public
 		 */
-		VerticalScrollbar : "vsb"
+		VerticalScrollBar : "vsb"
 	};
 
 	/**
