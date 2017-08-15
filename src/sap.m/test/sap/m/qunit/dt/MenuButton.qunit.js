@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 (function () {
 	'use strict';
 
@@ -7,8 +9,18 @@
 		"sap/m/MenuButton",
 		"sap/m/Menu",
 		"sap/m/MenuItem",
-		"sap/ui/rta/test/controlEnablingCheck"
-	], function (QUnitReport, ElementEnablementTest, MenuButton, Menu, MenuItem, rtaControlEnablingCheck) {
+		"sap/ui/rta/test/controlEnablingCheck",
+		"sap/m/changeHandler/SplitMenuButton",
+		"sap/f/DynamicPageTitle"
+	], function (
+		QUnitReport,
+		ElementEnablementTest,
+		MenuButton,
+		Menu,
+		MenuItem,
+		rtaControlEnablingCheck,
+		SplitMenuButton,
+		DynamicPageTitle) {
 
 		var oElementEnablementTest = new ElementEnablementTest({
 			type: "sap.m.MenuButton",
@@ -201,5 +213,50 @@
 			afterUndo : fnConfirmButtonIsSavedAsMenuItemDependent,
 			afterRedo : fnConfirmButtonIsTakenOutSuccessfully
 		});
+
+		QUnit.module("Additional tests: ");
+
+		// Sometimes the menu button can be in a control with overwritten aggregation methods.
+		// That is why we need new helper function which will find the index of the control in its parrent
+		// aggregation by applying the method with the overwritten logic.
+		QUnit.test("Find indexes in aggregation named content: ", function(assert) {
+			var oToolbar = new sap.m.Toolbar();
+			var oButton1 = new sap.m.Button({
+				text : "Button 1"
+			});
+			var oButton2 = new sap.m.Button({
+				text : "Button 2"
+			});
+
+			oToolbar.addContent(oButton1);
+			oToolbar.addContent(oButton2);
+			sap.ui.getCore().applyChanges();
+
+			var fnSplitHandlerHelper = SplitMenuButton.ADD_HELPER_FUNCTIONS._fnFindIndexInAggregation;
+
+			assert.ok(fnSplitHandlerHelper, "The '_fnFindIndexInAggregation' helper function exists.");
+			assert.strictEqual(fnSplitHandlerHelper(oToolbar, oButton1, "content"), 0, "The function finds the corect index of the first button in its parrent aggregation.");
+			assert.strictEqual(fnSplitHandlerHelper(oToolbar, oButton2, "content"), 1, "The function finds the corect index of the second button in its parrent aggregation.");
+		});
+
+		QUnit.test("Find indexes in aggregation named actions: ", function(assert) {
+			var oTitle = new DynamicPageTitle();
+			var oAction1 = new sap.m.Button({
+				text : "Action 1"
+			});
+			var oAction2 = new sap.m.Button({
+				text : "Action 2"
+			});
+
+			oTitle.addAction(oAction1);
+			oTitle.addAction(oAction2);
+			sap.ui.getCore().applyChanges();
+
+			var fnSplitHandlerHelper = SplitMenuButton.ADD_HELPER_FUNCTIONS._fnFindIndexInAggregation;
+
+			assert.strictEqual(fnSplitHandlerHelper(oTitle, oAction1, "actions"), 0, "The function finds the corect index of the first action in its parrent aggregation.");
+			assert.strictEqual(fnSplitHandlerHelper(oTitle, oAction2, "actions"), 1, "The function finds the corect index of the second action in its parrent aggregation.");
+		});
+
 	});
 })();
