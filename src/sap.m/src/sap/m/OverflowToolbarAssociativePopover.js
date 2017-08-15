@@ -49,6 +49,7 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	OverflowToolbarAssociativePopover.prototype.onBeforeRendering = function() {
 		Popover.prototype.onBeforeRendering.apply(this, arguments);
 		this.addStyleClass("sapMOTAPopover");
+		this.addStyleClass("sapMOverflowToolbarMenu-CTX");
 
 		var bHasButtonsWithIcons = this._getAllContent().some(function(oControl) {
 			return oControl.hasStyleClass("sapMOTAPButtonWithIcon");
@@ -88,9 +89,8 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	 * @private
 	 */
 	OverflowToolbarAssociativePopover.prototype._preProcessControl = function(oControl){
-		var sCtrlClass = OverflowToolbarAssociativePopoverControls.getControlClass(oControl),
-			oCtrlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oControl),
-			sAttachFnName, sPreProcessFnName;
+		var oCtrlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oControl),
+			sAttachFnName;
 
 		// For each event that must close the popover, attach a handler
 		oCtrlConfig.listenForEvents.forEach(function(sEventType) {
@@ -103,9 +103,8 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		}, this);
 
 		// Call preprocessor function, if any
-		sPreProcessFnName = "_preProcess" + sCtrlClass.split(".").map(fnCapitalize).join("");
-		if (typeof this.oControlsManager[sPreProcessFnName] === "function") {
-			this.oControlsManager[sPreProcessFnName](oControl);
+		if (typeof oCtrlConfig.preProcess === "function") {
+			oCtrlConfig.preProcess.call(this.oControlsManager, oControl);
 		}
 
 		var oLayoutData = oControl.getLayoutData();
@@ -124,9 +123,8 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	 * @private
 	 */
 	OverflowToolbarAssociativePopover.prototype._postProcessControl = function(oControl) {
-		var sCtrlClass = OverflowToolbarAssociativePopoverControls.getControlClass(oControl),
-			oCtrlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oControl),
-			sDetachFnName, sPostProcessFnName;
+		var oCtrlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oControl),
+			sDetachFnName;
 
 		// For each event that must close the popover, detach the handler
 		oCtrlConfig.listenForEvents.forEach(function(sEventType) {
@@ -139,9 +137,8 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		}, this);
 
 		// Call preprocessor function, if any
-		sPostProcessFnName =  "_postProcess" + sCtrlClass.split(".").map(fnCapitalize).join("");
-		if (typeof this.oControlsManager[sPostProcessFnName] === "function") {
-			this.oControlsManager[sPostProcessFnName](oControl);
+		if (typeof oCtrlConfig.postProcess === "function") {
+			oCtrlConfig.postProcess.call(this.oControlsManager, oControl);
 		}
 
 		oControl.removeStyleClass("sapMOTAPHidden");
