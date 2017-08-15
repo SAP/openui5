@@ -5,10 +5,22 @@
 	<Dialog
 		title="Settings"
 		class="sapUiPopupWithPadding"
-		contentWidth="350px"
+		contentWidth="450px"
+		stretchOnPhone="true"
 		id="uploadCollectionSettings">
 		<content>
 			<VBox class="sapUiTinyMarginTop">
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="File types:" labelFor="fileTypesBox" />
+					<MultiComboBox
+						width="200px"
+						selectionChange="onFileTypeChange"
+						placeholder="Choose the valid file types"
+						items="{fileTypes>/items}"
+						selectedKeys="{fileTypes>/selected}">
+						<core:Item key="{fileTypes>}" text="{fileTypes>}" />
+					</MultiComboBox>
+				</HBox>
 				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
 					<Label text="Upload button visible:" design="Standard" labelFor="uploadButtonVisibleSwitch" />
 					<Switch id="uploadButtonVisibleSwitch" state="{settings>/uploadButtonVisible}" />
@@ -35,19 +47,23 @@
 				</HBox>
 				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
 					<Label text="List Select Mode:" design="Standard" labelFor="listModeSelect" />
-					<Select id="listModeSelectSelect"
+					<Select
+						id="listModeSelectSelect"
 						items="{settings>/listModeItems}"
 						selectedKey="{settings>/mode}"
+						width="150px"
 						change="onModeChange">
 						<core:Item key="{settings>key}" text="{settings>text}" />
 					</Select>
 				</HBox>
 				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
 					<Label text="Show list separators:" design="Standard" labelFor="listSeparatorsSelect" />
-					<Select id="listSeparatorsSelect"
+					<Select
+						id="listSeparatorsSelect"
 						items="{settings>/listSeparatorItems}"
+						width="150px"
 						selectedKey="{settings>/showSeparators}">
-						<core:Item key="{settings>key}" text="{settings>text}" />
+						<core:Item key="{settings>}" text="{settings>}" />
 					</Select>
 				</HBox>
 			</VBox>

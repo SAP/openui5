@@ -1,40 +1,46 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageToast',
-		'sap/m/UploadCollectionParameter',
-		'sap/ui/core/mvc/Controller'
-	], function(jQuery, MessageToast, UploadCollectionParameter, Controller) {
+	"jquery.sap.global",
+	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageToast",
+	"sap/m/UploadCollectionParameter",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device"
+], function(jQuery, Controller, MessageToast, UploadCollectionParameter, JSONModel, Device) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.UploadCollectionForPendingUpload.Page", {
-		onChange : function(oEvent) {
+	return Controller.extend("sap.m.sample.UploadCollectionForPendingUpload.Page", {
+		onInit: function() {
+			this.getView().setModel(new JSONModel(Device), "device");
+		},
+
+		onChange: function(oEvent) {
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
 			var oCustomerHeaderToken = new UploadCollectionParameter({
-				name : "x-csrf-token",
-				value : "securityTokenFromModel"
+				name: "x-csrf-token",
+				value: "securityTokenFromModel"
 			});
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
 			MessageToast.show("Event change triggered");
 		},
 
-		onFileDeleted : function(oEvent) {
+		onFileDeleted: function(oEvent) {
 			MessageToast.show("Event fileDeleted triggered");
 		},
 
-		onFilenameLengthExceed : function(oEvent) {
+		onFilenameLengthExceed: function(oEvent) {
 			MessageToast.show("Event filenameLengthExceed triggered");
 		},
 
-		onFileSizeExceed : function(oEvent) {
+		onFileSizeExceed: function(oEvent) {
 			MessageToast.show("Event fileSizeExceed triggered");
 		},
 
-		onTypeMissmatch : function(oEvent) {
+		onTypeMissmatch: function(oEvent) {
 			MessageToast.show("Event typeMissmatch triggered");
 		},
 
-		onStartUpload : function(oEvent) {
+		onStartUpload: function(oEvent) {
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			var oTextArea = this.getView().byId("TextArea");
 			var cFiles = oUploadCollection.getItems().length;
@@ -55,11 +61,11 @@ sap.ui.define([
 			}
 		},
 
-		onBeforeUploadStarts : function(oEvent) {
+		onBeforeUploadStarts: function(oEvent) {
 			// Header Slug
 			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
-				name : "slug",
-				value : oEvent.getParameter("fileName")
+				name: "slug",
+				value: oEvent.getParameter("fileName")
 			});
 			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
 			setTimeout(function() {
@@ -67,7 +73,7 @@ sap.ui.define([
 			}, 4000);
 		},
 
-		onUploadComplete : function(oEvent) {
+		onUploadComplete: function(oEvent) {
 			var sUploadedFileName = oEvent.getParameter("files")[0].fileName;
 			setTimeout(function() {
 				var oUploadCollection = this.getView().byId("UploadCollection");
@@ -84,11 +90,9 @@ sap.ui.define([
 			}.bind(this), 8000);
 		},
 
-		onSelectChange : function(oEvent) {
+		onSelectChange: function(oEvent) {
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
 		}
 	});
-
-	return PageController;
 });

@@ -1,24 +1,21 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageToast',
-		'sap/m/UploadCollectionParameter',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, UploadCollectionParameter, Controller, JSONModel) {
+	"jquery.sap.global",
+	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageToast",
+	"sap/m/UploadCollectionParameter",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/format/FileSizeFormat",
+	"sap/ui/Device"
+], function(jQuery, Controller, MessageToast, UploadCollectionParameter, JSONModel, FileSizeFormat, Device) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.UploadCollection.Page", {
-
-		onInit: function () {
-			var sPath,
-				oModel,
-				oFileTypesBox,
-				oUploadCollection;
-
+	return Controller.extend("sap.m.sample.UploadCollection.Page", {
+		onInit: function() {
 			// set mock data
-			sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollection", "/uploadCollection.json");
-			oModel = new JSONModel(sPath);
-			this.getView().setModel(oModel);
+			var sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollection", "/uploadCollection.json");
+			this.getView().setModel(new JSONModel(sPath));
+
+			this.getView().setModel(new JSONModel(Device), "device");
 
 			this.getView().setModel(new JSONModel({
 				"maximumFilenameLength": 55,
@@ -30,77 +27,41 @@ sap.ui.define([
 				"enableDelete": true,
 				"visibleEdit": true,
 				"visibleDelete": true,
-				"listSeparatorItems": [{
-					"key": sap.m.ListSeparators.All,
-					"text": sap.m.ListSeparators.All
-				}, {
-					"key": sap.m.ListSeparators.None,
-					"text": sap.m.ListSeparators.None
-				}],
+				"listSeparatorItems": [
+					sap.m.ListSeparators.All,
+					sap.m.ListSeparators.None
+				],
 				"showSeparators": sap.m.ListSeparators.All,
-				"listModeItems": [{
-					"key": sap.m.ListMode.SingleSelectMaster,
-					"text": "Single"
-				}, {
-					"key": sap.m.ListMode.MultiSelect,
-					"text": "Multi"
-				}]
+				"listModeItems": [
+					{
+						"key": sap.m.ListMode.SingleSelectMaster,
+						"text": "Single"
+					}, {
+						"key": sap.m.ListMode.MultiSelect,
+						"text": "Multi"
+					}
+				]
 			}), "settings");
 
 			this.getView().setModel(new JSONModel({
-				"items": [
-					{
-						"key": "jpg",
-						"text": "jpg"
-					},
-					{
-						"key": "txt",
-						"text": "txt"
-					},
-					{
-						"key": "ppt",
-						"text": "ppt"
-					},
-					{
-						"key": "doc",
-						"text": "doc"
-					},
-					{
-						"key": "xls",
-						"text": "xls"
-					},
-					{
-						"key": "pdf",
-						"text": "pdf"
-					},
-					{
-						"key": "png",
-						"text": "png"
-					}
-				],
+				"items": ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"],
 				"selected": ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"]
 			}), "fileTypes");
 
-			oFileTypesBox = this.getView().byId("fileTypesBox");
-			oFileTypesBox.setSelectedItems(oFileTypesBox.getItems());
-
-			oUploadCollection = this.getView().byId("UploadCollection");
-			oUploadCollection.setFileType(oFileTypesBox.getSelectedKeys());
 			// Sets the text to the label
-			oUploadCollection.addEventDelegate({
-				onBeforeRendering : function () {
+			this.getView().byId("UploadCollection").addEventDelegate({
+				onBeforeRendering: function() {
 					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
 			});
 		},
 
-		formatAttribute : function (sValue) {
-			jQuery.sap.require("sap.ui.core.format.FileSizeFormat");
+		formatAttribute: function(sValue) {
 			if (jQuery.isNumeric(sValue)) {
-				return sap.ui.core.format.FileSizeFormat.getInstance({
-					binaryFilesize : false,
-					maxFractionDigits : 1,
-					maxIntegerDigits : 3
+				return FileSizeFormat.getInstance({
+					binaryFilesize: false,
+					maxFractionDigits: 1,
+					maxIntegerDigits: 3
 				}).format(sValue);
 			} else {
 				return sValue;
@@ -111,8 +72,8 @@ sap.ui.define([
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
 			var oCustomerHeaderToken = new UploadCollectionParameter({
-				name : "x-csrf-token",
-				value : "securityTokenFromModel"
+				name: "x-csrf-token",
+				value: "securityTokenFromModel"
 			});
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
 		},
@@ -156,7 +117,7 @@ sap.ui.define([
 			this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
 		},
 
-		onFilenameLengthExceed : function() {
+		onFilenameLengthExceed: function() {
 			MessageToast.show("FilenameLengthExceed event triggered.");
 		},
 
@@ -175,28 +136,21 @@ sap.ui.define([
 			MessageToast.show("FileRenamed event triggered.");
 		},
 
-		onFileSizeExceed : function() {
+		onFileSizeExceed: function() {
 			MessageToast.show("FileSizeExceed event triggered.");
 		},
 
-		onTypeMissmatch : function() {
+		onTypeMissmatch: function() {
 			MessageToast.show("TypeMissmatch event triggered.");
 		},
 
 		onUploadComplete: function(oEvent) {
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			var oData = oUploadCollection.getModel().getData();
-			var aItems = jQuery.extend(true, {}, oData).items;
-			var oItem;
-			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
-			// at the moment parameter fileName is not set in IE9
-			if (!sUploadedFile) {
-				var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
-				sUploadedFile = aUploadedFile[0];
-			}
-			oItem = {
+
+			oData.items.unshift({
 				"documentId": jQuery.now().toString(), // generate Id,
-				"fileName": sUploadedFile,
+				"fileName": oEvent.getParameter("files")[0].fileName,
 				"mimeType": "",
 				"thumbnailUrl": "",
 				"url": "",
@@ -214,14 +168,12 @@ sap.ui.define([
 						"text": "505000"
 					}
 				]
-			};
-
-			aItems.unshift(oItem);
-			this.getView().byId("UploadCollection").getModel().setData({
-				"items": aItems
 			});
+			this.getView().getModel().refresh();
+
 			// Sets the text to the label
 			this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+
 			// delay the success message for to notice onChange message
 			setTimeout(function() {
 				MessageToast.show("UploadComplete event triggered.");
@@ -231,8 +183,8 @@ sap.ui.define([
 		onBeforeUploadStarts: function(oEvent) {
 			// Header Slug
 			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
-				name : "slug",
-				value : oEvent.getParameter("fileName")
+				name: "slug",
+				value: oEvent.getParameter("fileName")
 			});
 			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
 			MessageToast.show("BeforeUploadStarts event triggered.");
@@ -335,7 +287,7 @@ sap.ui.define([
 			MessageToast.show("Marker press event - " + oEvent.getSource().getType());
 		},
 
-		onOpenAppSettings: function (oEvent) {
+		onOpenAppSettings: function(oEvent) {
 			if (!this.oSettingsDialog) {
 				this.oSettingsDialog = sap.ui.xmlfragment("sap.m.sample.UploadCollection.AppSettings", this);
 				this.getView().addDependent(this.oSettingsDialog);
@@ -343,11 +295,8 @@ sap.ui.define([
 			this.oSettingsDialog.open();
 		},
 
-		onDialogCloseButton: function () {
+		onDialogCloseButton: function() {
 			this.oSettingsDialog.close();
 		}
 	});
-
-	return PageController;
-
 });

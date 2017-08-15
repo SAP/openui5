@@ -11,9 +11,7 @@
 			<toolbar>
 				<OverflowToolbar>
 					<Breadcrumbs id="breadcrumbs" currentLocationText="{/currentLocationText}" links="{/history}">
-						<Link
-							press="onBreadcrumbPress"
-							text="{name}" />
+						<Link press="onBreadcrumbPress" text="{name}" />
 					</Breadcrumbs>
 					<ToolbarSpacer />
 					<UploadCollectionToolbarPlaceholder />

@@ -1,14 +1,13 @@
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
-	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, MessageToast, MessageBox, Controller, JSONModel) {
+], function(jQuery, Controller, MessageToast, MessageBox, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionFolderHierarchy.Page", {
-
 		onInit: function() {
 			// set mock data
 			this.oModel = new JSONModel(jQuery.sap.getModulePath("sap.m.sample.UploadCollectionFolderHierarchy", "/UploadCollectionData.json"));
@@ -33,11 +32,11 @@ sap.ui.define([
 			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
 
 			oItem = {
-				"documentId" : jQuery.now().toString(), // generate Id,
-				"fileName" : sUploadedFile,
-				"mimeType" : "",
-				"thumbnailUrl" : "",
-				"url" : ""
+				"documentId": jQuery.now().toString(), // generate Id,
+				"fileName": sUploadedFile,
+				"mimeType": "",
+				"thumbnailUrl": "",
+				"url": ""
 			};
 			if (aItems.length === 0) {
 				aItems.push(oItem);
@@ -84,7 +83,7 @@ sap.ui.define([
 		onFolderDeletePress: function(event) {
 			var oItem = event.getSource();
 			var sFolderName = oItem.getFileName();
-			MessageBox.show("Are you sure you want to delete '" +  sFolderName + "'?", {
+			MessageBox.show("Are you sure you want to delete '" + sFolderName + "'?", {
 				title: "Delete Folder",
 				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 				onClose: function(oAction) {
@@ -159,7 +158,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sItemToDeleteId The document id of the item
 		 */
-		deleteItemById: function(sItemToDeleteId){
+		deleteItemById: function(sItemToDeleteId) {
 			var sCurrentPath = this.getCurrentFolderPath();
 			var oData = this.oModel.getProperty(sCurrentPath);
 			var aItems = oData && oData.items;
@@ -173,7 +172,7 @@ sap.ui.define([
 
 		getCurrentLocationText: function() {
 			// Remove the previously added number of items from the currentLocationText in order to not show the number twice after rendering.
-			var sText = this.oBreadcrumbs.getCurrentLocationText().replace(/\s\([0-9]*\)/, '');
+			var sText = this.oBreadcrumbs.getCurrentLocationText().replace(/\s\([0-9]*\)/, "");
 			return sText;
 		},
 
