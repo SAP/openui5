@@ -14,34 +14,38 @@ describe('sap.m.SplitApp', function() {
 		expect(takeScreenshot()).toLookAs("SplitApp-InitialRendering");
 	});
 
-	if (bPhone) {
-		it('should hide the master form as mode is switched to Hide', function() {
+	it('should hide the master form as mode is switched to Hide', function() {
+		if (bPhone) {
 			element(by.id('saHideMasterMode')).click();
 			expect(takeScreenshot()).toLookAs('saModes-HideMaster');
-		});
+		} else {
+			it('should navigate to master page', function() {
+				element(by.id('saNavigateToMaster')).click();
+				element(by.id('listDetail')).click();
+				expect(takeScreenshot()).toLookAs('navigateTo-Deatil');
+			});
+		}
+	});
 
-		it('should show the master form again as mode is switched to Show/Hide', function() {
+	it('should show the master form again as mode is switched to Show/Hide', function() {
+		if (bPhone) {
 			element(by.id('saShowHideMasterMode')).click();
 			expect(takeScreenshot()).toLookAs('saModes-ShowHideMaster');
-		});
+		}
+	});
 
-		it('should navigate to master page 2', function() {
+	it('should navigate to master page 2', function() {
+		if (bPhone) {
 			element(by.id('saNavigateToMaster')).click();
 			expect(takeScreenshot()).toLookAs('navigateTo-Master2');
-		});
+		}
+	});
 
-		it('should navigate to detaildetail page', function() {
+	it('should navigate to detaildetail page', function() {
+		if (bPhone) {
 			element(by.id('saNavigationToDetail')).click();
 			expect(takeScreenshot()).toLookAs('navigateTo-DetailDetail');
-		});
-	} else {
-		it('should navigate to master page', function() {
-			element(by.id('saNavigateToMaster')).click();
-			element(by.id('listDetail')).click();
-			expect(takeScreenshot()).toLookAs('navigateTo-Deatil');
-		});
-
-	}
-
+		}
+	});
 
 });

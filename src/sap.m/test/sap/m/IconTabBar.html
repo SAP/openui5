@@ -123,6 +123,7 @@
 			for (var i = 1; i <= 30; i++) {
 				tabItems.push(new sap.m.IconTabFilter({
 					text : 'Tab ' + i,
+					id: 'testId_' + i,
 					content: new sap.m.Text({
 						text: 'Content ' + i
 					})
@@ -149,7 +150,7 @@
 						iconColor: sap.ui.core.IconColor.Neutral
 					}),
 					new sap.m.IconTabSeparator(),
-					new sap.m.IconTabFilter({
+					new sap.m.IconTabFilter("backgroundDesignIconTabBar_fileter3", {
 						icon: "sap-icon://task",
 						iconColor: sap.ui.core.IconColor.Critical,
 						count: "3",
@@ -436,6 +437,12 @@
 							text: "Samples 4",
 							press: function(){
 								app.to("page4");
+							}
+						}),
+						new sap.m.Button({
+							text: "Samples 5",
+							press: function(){
+								app.to("page5");
 							}
 						})
 					]
@@ -898,6 +905,12 @@
 							press: function(){
 								app.to("page4");
 							}
+						}),
+						new sap.m.Button({
+							text: "Samples 5",
+							press: function(){
+								app.to("page5");
+							}
 						})
 					]
 				}),
@@ -905,7 +918,7 @@
 			});
 			var page3 = new sap.m.Page("page3", {
 				showNavButton: true,
-				navButtonText: "Page 1",
+				navButtonText: "Page 3",
 				navButtonPress: function(){ app.back(); },
 				content:[
 					label5,
@@ -1062,6 +1075,12 @@
 							text: "Samples 4",
 							press: function(){
 								app.to("page4");
+							}
+						}),
+						new sap.m.Button({
+							text: "Samples 5",
+							press: function(){
+								app.to("page5");
 							}
 						})
 					]
@@ -1273,6 +1292,46 @@
 							}).addStyleClass("sapUiResponsiveContentPadding")
 						]
 					}).addStyleClass("ITBContainer")
+
+
+				],
+				footer: [new sap.m.Bar({
+					contentMiddle: [
+						new sap.m.Button( {
+							text: "Samples1",
+							press: function(){
+								app.to("page1");
+							}
+						}),
+						new sap.m.Button({
+							text: "Samples2",
+							press: function(){
+								app.to("page2");
+							}
+						}),
+						new sap.m.Button({
+							text: "Samples3",
+							press: function(){
+								app.to("page3");
+							}
+						}),
+						new sap.m.Button("sample5",{
+							text: "Samples 5",
+							press: function(){
+								app.to("page5");
+							}
+						})
+					]
+				})]
+			});
+
+			var page5 = new sap.m.Page("page5",{
+				showNavButton: true,
+				navButtonPress: function(){ app.back(); },
+				content:[
+					iconTabBarOverflowSelectList,
+					panelBackgroundDesign
+
 				],
 				footer: [new sap.m.Bar({
 					contentMiddle: [
@@ -1294,16 +1353,22 @@
 								app.to("page3");
 							}
 						}),
-						new sap.m.Button( {
+						new sap.m.Button({
 							text: "Samples 4",
 							press: function(){
 								app.to("page4");
+							}
+						}),
+						new sap.m.Button({
+							text: "Samples 5",
+							press: function(){
+								app.to("page5");
 							}
 						})
 					]
 				})]
 			});
-			app.addPage(page1).addPage(page2).addPage(page3).addPage(page4);
+			app.addPage(page1).addPage(page2).addPage(page3).addPage(page4).addPage(page5);
 
 		</script>
 	</head>

@@ -33,7 +33,7 @@
 			app.placeAt("body");
 
 			// create and add a page with texts
-			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 			var loremLineBreaks = "Lorem ipsum dolor sit amet,\r consetetur sadipscing elitr,\n sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,\r\n sed diam voluptua.";
 			var form = new sap.ui.layout.form.SimpleForm({
 				minWidth : 1024,
@@ -69,131 +69,87 @@
 			var initialPage = new sap.m.Page("tabBarPage", {
 				showHeader: false,
 				content: [
-					new sap.m.IconTabBar("itb1", {
-						expandable: false,
-						showOverflowSelectList: true,
-						items: [
-							new sap.m.IconTabFilter({
-								key: "key1",
-								text: "Sample 1",
-								tooltip: "Neutral with long text",
-								content: [
-									new sap.m.Text("text8", {
-										text: "[8. INVISIBLE] " + lorem,
-										visible: false
-									}),
-									new sap.m.Text("text1", {
-										text: "[1. STANDARD] " + lorem
-									}),
-									new sap.m.Text("text2", {
-										text: "[2. NO WRAPPING] " + lorem,
-										wrapping: false
-									}),
-									new sap.m.Text("text3", {
-										text: "[3. FIXED WIDTH in em] " + lorem,
-										width: "45em"
-									}),
-									new sap.m.Text("text5e", {
-										text: "[5e. ALIGN INITIAL] " + lorem,
-										textAlign: sap.ui.core.TextAlign.Inititial
-									})
-								]
-							}),
-							new sap.m.IconTabFilter({
-								key: "key2",
-								text: "Sample 2",
-								content: [
-									new sap.m.Text("text3a", {
-										text: "[3a. FIXED WIDTH in %] " + lorem,
-										width: "50%"
-									}),
-									new sap.m.Text("text3b", {
-										text: "[3b. FIXED WIDTH in px] " + lorem,
-										width: "600px"
-									})
-								]
-							}),
-							new sap.m.IconTabFilter({
-								key: "key3",
-								text: "Sample 3",
-								content: [
-									new sap.m.Text("text4", {
-										text: "[4. STYLED] " + lorem
-									}),
-									new sap.m.Text("text5", {
-										text: "[5. ALIGN RIGHT] " + lorem,
-										textAlign: sap.ui.core.TextAlign.Right
-									})
-								]
-							}),
-							new sap.m.IconTabFilter({
-								key: "key4",
-								text: "Sample 4",
-								content: [
-									new sap.m.Text("text5a", {
-										text: "[5a. ALIGN LEFT] " + lorem,
-										textAlign: sap.ui.core.TextAlign.Left
-									}),
-									new sap.m.Text("text5b", {
-										text: "[5b. ALIGN END] " + lorem,
-										textAlign: sap.ui.core.TextAlign.End
-									})
-								]
-							}),
-							new sap.m.IconTabFilter({
-								key: "key5",
-								text: "Sample 5",
-								content: [
-									new sap.m.Text("text5c", {
-										text: "[5c. ALIGN BEGIN] " + lorem,
-										textAlign: sap.ui.core.TextAlign.Begin
-									}),
-									new sap.m.Text("text5d", {
-										text: "[5d. ALIGN CENTER] " + lorem,
-										textAlign: sap.ui.core.TextAlign.Center
-									})
-								]
-							}),
-							new sap.m.IconTabFilter({
-								key: "key6",
-								text: "Sample 6",
-								content: [
-									new sap.m.Text("text6", {
-										text: "Text [6. RTL] " + lorem,
-										textDirection: sap.ui.core.TextDirection.RTL
-									}),
-									new sap.m.Text("text6a", {
-										text: "Text [6a. LTR] " + lorem,
-										textDirection: sap.ui.core.TextDirection.LTR
-									}), new sap.m.Text("text7", {
-										text: "[7. LINE BREAKS]\n...\n" + lorem
-									})
+					new sap.m.Text("text8", {
+						text: "[8. INVISIBLE] " + lorem,
+						visible: false
+					}),
+					new sap.m.Text("text1", {
+						text: "[1. STANDARD] " + lorem
+					}),
+					new sap.m.Text("text2", {
+						text: "[2. NO WRAPPING] " + lorem,
+						wrapping: false
+					}),
+					new sap.m.Text("text3", {
+						text: "[3. FIXED WIDTH in em] " + lorem,
+						width: "45em"
+					}),
+					new sap.m.Text("text5e", {
+						text: "[5e. ALIGN INITIAL] " + lorem,
+						textAlign: sap.ui.core.TextAlign.Inititial
+					}),
+					new sap.m.Text("text3a", {
+						text: "[3a. FIXED WIDTH in %] " + lorem,
+						width: "50%"
+					}),
+					new sap.m.Text("text3b", {
+						text: "[3b. FIXED WIDTH in px] " + lorem,
+						width: "600px"
+					}),
+					new sap.m.Text("text4", {
+						text: "[4. STYLED] " + lorem
+					}),
+					new sap.m.Text("text5", {
+						text: "[5. ALIGN RIGHT] " + lorem,
+						textAlign: sap.ui.core.TextAlign.Right
+					}),
+					new sap.m.Text("text5a", {
+						text: "[5a. ALIGN LEFT] " + lorem,
+						textAlign: sap.ui.core.TextAlign.Left
+					}),
+					new sap.m.Text("text5b", {
+						text: "[5b. ALIGN END] " + lorem,
+						textAlign: sap.ui.core.TextAlign.End
+					}),
+					new sap.m.Text("text5c", {
+						text: "[5c. ALIGN BEGIN] " + lorem,
+						textAlign: sap.ui.core.TextAlign.Begin
+					}),
+					new sap.m.Text("text5d", {
+						text: "[5d. ALIGN CENTER] " + lorem,
+						textAlign: sap.ui.core.TextAlign.Center
+					}),
+					new sap.m.Text("text6", {
+						text: "Text [6. RTL] " + lorem,
+						textDirection: sap.ui.core.TextDirection.RTL
+					}),
+					new sap.m.Text("text6a", {
+						text: "Text [6a. LTR] " + lorem,
+						textDirection: sap.ui.core.TextDirection.LTR
+					}),
+					new sap.m.Text("text6b", {
+						text: "Text [6b. DIRECTION INHERIT] " + lorem,
+						textDirection: sap.ui.core.TextDirection.Inherit
+					}),
+					new sap.m.Text("text7", {
+						text: "[7. LINE BREAKS]\n...\n" + lorem
+					}),
+					new sap.m.Text("text9", {
+						text: "[9. MAXLINES:3] " + lorem + lorem + lorem,
+						maxLines: 3
+					}),
+					new sap.m.Text("text10", {
+						text: "Text [10. RTL + MAXLINE:2] " + lorem,
+						textDirection: "RTL",
+						maxLines: 2
+					}),
+					new sap.m.Text("text11", {
+						text: "Text [11. Text with line breaks] " + loremLineBreaks
+					}),
+					form
 
-								]
-							}),
-							new sap.m.IconTabFilter({
-								key: "key7",
-								text: "Sample 7",
-								content: [
-									new sap.m.Text("text9", {
-										text: "[9. MAXLINES:3] " + lorem + lorem + lorem,
-										maxLines: 3
-									}),
-									new sap.m.Text("text10", {
-										text: "Text [10. RTL + MAXLINE:2] " + lorem,
-										textDirection: "RTL",
-										maxLines: 2
-									}),
-									new sap.m.Text("text11", {
-										text: "Text [11. Text with line breaks] " + loremLineBreaks
-									}),
-									form
-								]
-							})
 
-						]
-					})
-			   ]
+				]
 			});
 			app.addPage(initialPage);
 
