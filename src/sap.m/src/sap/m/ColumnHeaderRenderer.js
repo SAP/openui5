@@ -13,13 +13,17 @@ sap.ui.define([
 	var ColumnHeaderRenderer = {};
 
 	ColumnHeaderRenderer.render = function(oRm, oControl) {
+		var sControlId = oControl.getId();
+		var bInteractive = oControl.getTableAdapter().interactive;
 		// container
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
-		if (oControl.getTableAdapter().tabbable) {
-			// add control in tab chain only if it is tabbable
+		if (bInteractive) {
+			// add control in tab chain only if it is interactive
 			oRm.writeAttribute("tabindex", 0);
+			oRm.writeAttribute("role", "button");
 			oRm.addClass("sapMColumnHeaderFocusable");
+			oRm.writeAttributeEscaped("aria-labelledby", sControlId + "-info");
 		}
 		oRm.addClass("sapMColumnHeader");
 		oRm.writeClasses();
@@ -30,6 +34,19 @@ sap.ui.define([
 
 		// render icons for control
 		this.renderIcons(oRm, oControl);
+
+		// no special screen reader support for Grid Table
+		if (bInteractive && sap.ui.getCore().getConfiguration().getAccessibility()) {
+			// hidden span
+			oRm.write("<span");
+			oRm.writeAttributeEscaped("id", sControlId + "-info");
+			oRm.addClass("sapUiInvisibleText");
+			oRm.writeClasses();
+			oRm.writeAttributeEscaped("aria-hidden", "true");
+			oRm.write(">");
+			oRm.writeEscaped(oControl.getAccessibilityInfo().description);
+			oRm.write("</span>");
+		}
 
 		// container end
 		oRm.write("</div>");

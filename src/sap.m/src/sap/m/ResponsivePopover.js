@@ -16,6 +16,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * A popover-based control that behaves differently according to the device it is on.
 	 * @class
+	 * <h3>Overview</h3>
 	 * The responsive popover acts as a {@link sap.m.Popover popover} on desktop and tablet,
 	 * while on phone it acts as a {@link sap.m.Dialog dialog} with <code>stretch</code> set to true.
 	 *
@@ -367,10 +368,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	/**
 	 * Opens the ResponsivePopover. The ResponsivePopover is positioned relatively to the control parameter on tablet or desktop and is full screen on phone. Therefore the control parameter is only used on tablet or desktop and is ignored on phone.
 	 *
-	 * @param {object} oControl
-	 *
-	 *         When this control is displayed on tablet or desktop, the ResponsivePopover is positioned relatively to this control.
-	 * @type sap.ui.core.Control
+	 * @param {object} oControl When this control is displayed on tablet or desktop, the ResponsivePopover is positioned relative to this control.
+	 * @returns {object} Reference to the opening control
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -423,7 +422,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Adds content to the ResponsivePopover
-	 * @param {sap.ui.core.Control} oControl - The control to be added to the content
+	 * @param {sap.ui.core.Control} oControl The control to be added to the content
 	 * @public
 	 */
 	ResponsivePopover.prototype.addContent = function(oControl){
@@ -482,7 +481,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Inserts closeButton aggregation in the header's contentRight aggregation
-	 * @param {sap.m.IBar} oHeader - The header in which the closeButton will be inserted
+	 * @param {sap.m.IBar} oHeader The header in which the closeButton will be inserted
 	 * @private
 	 */
 	ResponsivePopover.prototype._insertCloseButton = function(oHeader){
@@ -496,7 +495,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Removes closeButton aggregation from header's contentRight aggregation
-	 * @param {sap.m.IBar} oHeader - The header from which the closeButton will be removed
+	 * @param {sap.m.IBar} oHeader The header from which the closeButton will be removed
 	 * @private
 	 */
 	ResponsivePopover.prototype._removeCloseButton = function(oHeader) {
@@ -509,7 +508,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Returns a string whose first letter is uppercase
-	 * @param {string} sValue - A string
+	 * @param {string} sValue A string
 	 * @returns {string} String whose first letter is uppercase
 	 * @private
 	 */
@@ -519,7 +518,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Returns the last index of an uppercase letter in a string
-	 * @param {string} sValue - A string
+	 * @param {string} sValue A string
 	 * @returns {number} Position on which an uppercase letter is found or -1 if there are no uppercase letters found
 	 * @private
 	 */
@@ -603,7 +602,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Returns the status of the step locking mechanism
-	 * @param {string} sPos - Defines if begin or end button will be returned
+	 * @param {string} sPos Defines if begin or end button will be returned
 	 * @returns {sap.m.Button} The button that is set to beginButton or endButton aggregation
 	 * @private
 	 */
@@ -619,7 +618,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Setter for beginButton aggregation
-	 * @param {sap.m.Button} oButton - The button that will be set as an aggregation
+	 * @param {sap.m.Button} oButton The button that will be set as an aggregation
 	 * @returns {sap.m.ResponsivePopover} Pointer to the control instance for chaining
 	 * @public
 	 */
@@ -634,7 +633,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Setter for endButton aggregation
-	 * @param {sap.m.Button} oButton - The button that will be set as an aggregation
+	 * @param {sap.m.Button} oButton The button that will be set as an aggregation
 	 * @returns {sap.m.ResponsivePopover} Pointer to the control instance for chaining
 	 * @public
 	 */
@@ -649,7 +648,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Determines if the close button to the ResponsivePopover is shown or not. Works only when ResponsivePopover is used as a dialog
-	 * @param {boolean} bShowCloseButton - Defines whether the close button is shown
+	 * @param {boolean} bShowCloseButton Defines whether the close button is shown
 	 * @returns {sap.m.ResponsivePopover} Pointer to the control instance for chaining
 	 * @public
 	 */

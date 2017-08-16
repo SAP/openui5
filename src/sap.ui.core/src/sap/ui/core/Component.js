@@ -1678,13 +1678,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @param {object} [vConfig.componentData] Initial data of the Component (@see sap.ui.core.Component#getComponentData)
 	 * @param {string} [vConfig.id] sId of the new Component
 	 * @param {object} [vConfig.settings] Settings of the new Component
-	 * @param {boolean} [vConfig.async=false] Indicates whether the Component creation should be done asynchronously (experimental setting)
+	 * @param {boolean} [vConfig.async] Indicates whether the Component creation should be done asynchronously; defaults to true when using the manifest property with a truthy value otherwise the default is false (experimental setting)
 	 * @param {object} [vConfig.asyncHints] Hints for the asynchronous loading (experimental setting)
 	 * @param {string[]} [vConfig.asyncHints.libs] Libraries that should be (pre-)loaded before the Component (experimental setting)
 	 * @param {string[]} [vConfig.asyncHints.components] Components that should be (pre-)loaded before the Component (experimental setting)
 	 * @param {Promise|Promise[]} [vConfig.asyncHints.waitFor] @since 1.37.0 a <code>Promise</code> or and array of <code>Promise</code>s for which the Component instantiation should wait (experimental setting)
 	 * @param {boolean|string|object} [vConfig.manifest=undefined] @since 1.49.0 Controls when and from where to load the manifest for the Component.
-	 *              When set to any truthy value, the manifest will be loaded and evaluated before the Component controller, if it is set to a falsy value
+	 *              When set to any truthy value, the manifest will be loaded asynchronously by default and evaluated before the Component controller, if it is set to a falsy value
 	 *              other than <code>undefined</code>, the manifest will be loaded after the controller.
 	 *              A non-empty string value will be interpreted as the URL location from where to load the manifest.
 	 *              A non-null object value will be interpreted as manifest content.
@@ -1692,11 +1692,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *              <code>manifestUrl</code> and <code>manifestFirst</code>, no matter what their values are.
 	 * @param {string} [vConfig.manifestUrl] @since 1.33.0 Specifies the URL from where the manifest should be loaded from
 	 *              Using this property implies <code>vConfig.manifestFirst=true</code>.
-	 *              <b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=url</code> instead!</b>.
+	 *              <br/><b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=url</code> instead!</b>.
 	 *              Note that this property is ignored when <code>vConfig.manifest</code> has a value other than <code>undefined</code>.
 	 * @param {boolean} [vConfig.manifestFirst] @since 1.33.0 defines whether the manifest is loaded before or after the
 	 *              Component controller. Defaults to <code>sap.ui.getCore().getConfiguration().getManifestFirst()</code>
-	 *              <b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=true|false</code> instead!</b>
+	 *              <br/><b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=true|false</code> instead!</b>
 	 *              Note that this property is ignored when <code>vConfig.manifest</code> has a value other than <code>undefined</code>.
 	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
 	 * @return {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
@@ -1896,6 +1896,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			sManifestUrl = oConfig.manifestUrl;
 			// oManifest = undefined;
 		} else {
+			// in case of manifest property is set, by default we load async
+			if ( oConfig.async === undefined ) {
+				oConfig.async = true;
+			}
+			// determine the semantic of the manifest property
 			bManifestFirst = !!vManifest;
 			sManifestUrl = vManifest && typeof vManifest === 'string' ? vManifest : undefined;
 			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest) : undefined;

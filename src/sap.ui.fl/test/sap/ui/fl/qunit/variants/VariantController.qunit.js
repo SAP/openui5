@@ -462,7 +462,7 @@ sap.ui.require([
 		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aRevertedChanges[1].getKey()] instanceof Object);
 		fnGetChanges.call(this, this.aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
-		var sCurrentVariant = this.oModel.getCurrentVariantRef("idMain1--variantManagementOrdersTable");
+		var sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
 		assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
 
 		this.oModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable");
@@ -471,7 +471,7 @@ sap.ui.require([
 		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getKey()] instanceof Object);
 		fnGetChanges.call(this, this.aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
-		sCurrentVariant = this.oModel.getCurrentVariantRef("idMain1--variantManagementOrdersTable");
+		sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
 		assert.equal(sCurrentVariant, "idMain1--variantManagementOrdersTable", "the current variant key after switch is correct");
 	});
 

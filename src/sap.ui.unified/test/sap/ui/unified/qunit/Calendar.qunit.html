@@ -31,6 +31,9 @@
 			jQuery.sap.require("sap.ui.core.LocaleData");
 			jQuery.sap.require("sap.ui.model.type.Date");
 
+			// set language to en-US, since we have specific language strings tested
+			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+
 			var bSelectFired = false;
 			var oSelectedDate = undefined;
 			var iStartDateChangeFired = 0;
@@ -234,6 +237,14 @@
 				}
 				assert.ok((bFound && jQuery(aDays[i]).attr("data-sap-day") == "20121212"), "20121212 focused");
 				assert.equal(iStartDateChangeFired, 0, "no startdateChange event fired");
+
+				// BCP 1780270593
+				try {
+					oCal2.focusDate(null);
+					assert.ok(true, "focusDate() is called successfully with 'null'");
+				} catch (e) {
+					assert.ok(false, "focusDate() throws error when called with 'null'!");
+				}
 
 				oCal2.focusDate(new Date(2011, 0, 10));
 			});

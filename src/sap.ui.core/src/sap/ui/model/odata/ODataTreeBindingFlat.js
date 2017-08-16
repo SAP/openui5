@@ -455,12 +455,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		this._requestServerIndexNodes(iSkip, iTop, iThreshold).then(function(oResponseData) {
 			that._addServerIndexNodes(oResponseData.oData, oResponseData.iSkip);
-			that._fireChange({reason: ChangeReason.Change});
 
-			//register datareceived call as callAfterUpdate
-			that.oModel.callAfterUpdate(function() {
-				that.fireDataReceived({data: oResponseData.oData});
-			});
+			that._fireChange({reason: ChangeReason.Change});
+			that.fireDataReceived({data: oResponseData.oData});
 		}, function(oError) {
 			var bAborted = oError.statusCode === 0;
 			if (!bAborted) {
@@ -690,12 +687,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		this._requestChildren(oParentNode, iSkip, iTop).then(function(oResponseData) {
 			that._addChildNodes(oResponseData.oData, oParentNode, oResponseData.iSkip);
-			that._fireChange({reason: ChangeReason.Change});
 
-			//register datareceived call as  callAfterUpdate
-			that.oModel.callAfterUpdate(function() {
-				that.fireDataReceived({data: oResponseData.oData});
-			});
+			that._fireChange({reason: ChangeReason.Change});
+			that.fireDataReceived({data: oResponseData.oData});
 		}, function(oError) {
 			var bAborted = oError.statusCode === 0;
 			if (!bAborted) {
@@ -2669,11 +2663,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 			// If all requests are aborted, the 'dataReceived' event shouldn't be fired
 			if (iAborted < aData.length) {
-				that.fireDataReceived({data: aData});
-
 				// Restore collapse state
 				restoreCollapseState();
+
 				that._fireChange({reason: ChangeReason.Change});
+				that.fireDataReceived({data: aData});
 			}
 
 			return bSuccess ? aData : Promise.reject(aData);

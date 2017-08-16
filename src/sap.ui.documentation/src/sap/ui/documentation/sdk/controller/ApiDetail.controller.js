@@ -43,6 +43,9 @@ sap.ui.define([
 				"sap.ui.core.CSSSize", // TODO discuss with Thomas, type is not a base type (it has documentation)
 				"null",
 				"any",
+				"any[]",
+				"array",
+				"element",
 				"object",
 				"object[]",
 				"object|object[]",
@@ -52,7 +55,10 @@ sap.ui.define([
 				"boolean",
 				"string",
 				"string[]",
-				"number"
+				"number",
+				"map",
+				"promise",
+				"undefined"
 			],
 
 			/* =========================================================== */
@@ -62,9 +68,6 @@ sap.ui.define([
 			onInit: function () {
 				this._objectPage = this.byId("apiDetailObjectPage");
 				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
-
-				// click handler for @link tags in JSdoc fragments
-				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
 
 				this.setModel(new JSONModel(), "topics");
 				this.setModel(new JSONModel(), "constructorParams");
@@ -85,16 +88,12 @@ sap.ui.define([
 				this._createMethodsSummary();
 				this._createEventsSummary();
 				this._createAnnotationsSummary();
+
+				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
 			},
 
 			onExit: function () {
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
-			},
-
-			onSampleLinkPress: function (oEvent) {
-				// Navigate to Control Sample section
-				var sEntityName = oEvent.getSource().data("name");
-				this.getRouter().navTo("entity", {id: sEntityName, part: "samples"}, true);
 			},
 
 			onToggleFullScreen: function (oEvent) {
@@ -102,52 +101,25 @@ sap.ui.define([
 			},
 
 			onJSDocLinkClick: function (oEvent) {
-				var sRoute = "apiId",
-					oComponent = this.getOwnerComponent(),
-					aLibsData = oComponent.getModel("libsData").getData(),
-					oTarget = oEvent.target,
-					sTarget = oTarget.getAttribute("data-sap-ui-target"),
-					sMethodName = "",
-					aNavInfo;
+				var oClassList = oEvent.target.classList,
+					bJSDocLink = oClassList.contains("jsdoclink"),
+					sEntityType;
 
-				// Handle link to method|event from a MessageStrip for which we can't use data-sap-ui-target
-				if (!sTarget && oTarget.getAttribute("href") === "#") {
-					sTarget = oTarget.getAttribute("target");
-				}
-
-				if (!sTarget) {
+				// Not a JSDocLink - we do nothing
+				if (!bJSDocLink) {
 					return;
 				}
 
-				if (sTarget.indexOf('/') >= 0) {
-					// link refers to a method or event data-sap-ui-target="<class name>/methods/<method name>" OR
-					// data-sap-ui-target="<class name>/events/<event name>
-					aNavInfo = sTarget.split('/');
-
-					if (aNavInfo[0] === this._sTopicid && aNavInfo[1] === this._sEntityType && aNavInfo[2] === this._sEntityId) {
-						this._scrollToEntity(aNavInfo[1], aNavInfo[2]);
-					} else {
-						oComponent.getRouter().navTo(sRoute, {
-							id: aNavInfo[0],
-							entityType: aNavInfo[1],
-							entityId: aNavInfo[2]
-						}, false);
-					}
-				} else if (!aLibsData[sTarget]) {
-					// link refers to a method
-					sMethodName = sTarget.slice(sTarget.lastIndexOf('.') + 1);
-					sTarget = sTarget.slice(0, sTarget.lastIndexOf("."));
-
-					oComponent.getRouter().navTo(sRoute, {
-						id: sTarget,
-						entityType: "methods",
-						entityId: sMethodName
-					}, false);
+				if (oClassList.contains("scrollToMethod")) {
+					sEntityType = "methods";
+				} else if (oClassList.contains("scrollToEvent")) {
+					sEntityType = "events";
 				} else {
-					oComponent.getRouter().navTo(sRoute, {id: sTarget}, false);
+					// We do not scroll
+					return;
 				}
 
-				oEvent.preventDefault();
+				this._scrollToEntity(sEntityType, oEvent.target.getAttribute("data-sap-ui-target"));
 			},
 
 			/* =========================================================== */
@@ -886,9 +858,8 @@ sap.ui.define([
 									sTarget = sEntity;
 								}
 
-								// link attributes should follow the pattern {href="#" target="entity|method|event"}
-								// so they could be handled by onJSDocLinkClick listener
-								return ['<a target="', sTarget, '" href="#">', (sName ? sName : sEntity), '</a>'].join("");
+								// link attributes should follow the pattern {href="URL" target="entity|method|event"}
+								return ['<a href="#/api/', sTarget, '">', (sName ? sName : sEntity), '</a>'].join("");
 							}
 
 						}.bind(this));
@@ -927,16 +898,28 @@ sap.ui.define([
 				return this.formatDeprecated(sSince, sDescription, "events");
 			},
 
+			formatExample: function (sCaption, sText) {
+				return this.formatDescription(
+					["<span><strong>Example: </strong>",
+						sCaption,
+						"<pre class='sapUiSmallMarginTop'>",
+						sText,
+						"</pre></span>"].join("")
+				);
+			},
+
 			/**
 			 * Formats the description of the property
 			 * @param description - the description of the property
 			 * @param deprecatedText - the text explaining this property is deprecated
-			 * @param deprecatedSince - the verstion when this property was deprecated
+			 * @param deprecatedSince - the version when this property was deprecated
 			 * @returns string - the formatted description
 			 */
 			formatDescription: function (description, deprecatedText, deprecatedSince) {
 				if (!description && !deprecatedText && !deprecatedSince) {
-					return "";
+					// Note we have to always return a string wrapped in a valid html tag else parsing it with
+					// sap.ui.core.HTML control will fail.
+					return "<span/>";
 				}
 
 				var result = description || "";
@@ -1141,7 +1124,7 @@ sap.ui.define([
 			 * @returns {boolean} - False if link points to a base type
 			 */
 			formatLinkEnabled: function (linkText) {
-				return this._baseTypes.indexOf(linkText) === -1;
+				return this._baseTypes.indexOf(linkText.toLowerCase()) === -1;
 			},
 
 			formatEventClassName: function (isSubProperty, isSubSubProperty, bPhoneSize) {
@@ -1164,16 +1147,6 @@ sap.ui.define([
 				} else {
 					return "sapUiDocumentationParamBold";
 				}
-			},
-
-			/**
-			 * Event handler when a link pointing to a non-base type is pressed
-			 * @param e
-			 */
-			onTypeLinkPress: function (e) {
-				var type = e.getSource().getText();
-				type = type.replace('[]', ''); // remove array brackets before navigation
-				this.getRouter().navTo("apiId", {id: type}, true);
 			},
 
 			onAnnotationsLinkPress: function (oEvent) {
@@ -1200,7 +1173,11 @@ sap.ui.define([
 
 						var iHashIndex, // indexOf('#')
 							iHashDotIndex, // indexOf('#.')
-							iHashEventIndex; // indexOf('#event:')
+							iHashEventIndex, // indexOf('#event:')
+							sTargetBase,
+							sScrollHandlerClass = "scrollToMethod",
+							sEntityName,
+							sLink;
 
 						text = text || target; // keep the full target in the fallback text
 
@@ -1217,7 +1194,7 @@ sap.ui.define([
 
 						if (iHashIndex === -1) {
 							var lastDotIndex = target.lastIndexOf('.'),
-								entityName = target.substring(lastDotIndex + 1),
+								entityName = sEntityName = target.substring(lastDotIndex + 1),
 								targetMethod = topicMethods.filter(function (method) {
 									if (method.name === entityName) {
 										return method;
@@ -1226,7 +1203,19 @@ sap.ui.define([
 
 							if (targetMethod) {
 								if (targetMethod.static === true) {
-									target = topicName + '/methods/' + target;
+									sEntityName = target;
+									// We need to handle links to static methods in a different way if static method is
+									// a child of the current or a different entity
+									sTargetBase = target.replace("." + entityName, "");
+									if (sTargetBase.length > 0 && sTargetBase !== topicName) {
+										// Different entity
+										target = sTargetBase + "/methods/" + target;
+										// We will navigate to a different entity so no scroll is needed
+										sScrollHandlerClass = false;
+									} else {
+										// Current entity
+										target = topicName + '/methods/' + target;
+									}
 								} else {
 									target = topicName + '/methods/' + entityName;
 								}
@@ -1241,20 +1230,30 @@ sap.ui.define([
 						} else if (iHashEventIndex === 0) {
 							// clear '#event:' from target string
 							target = target.slice('#event:'.length);
+							sEntityName = target;
 
 							target = topicName + '/events/' + target;
+							sScrollHandlerClass = "scrollToEvent";
 						} else if (iHashIndex === 0) {
 							// clear '#' from target string
 							target = target.slice(1);
+							sEntityName = target;
 
 							target = topicName + '/methods/' + target;
 						}
 
 						if (iHashIndex > 0) {
 							target = target.replace('#', '/methods/');
+							sEntityName = target;
 						}
 
-						return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + text + "</a>";
+						sLink = '<a class="jsdoclink';
+						if (sScrollHandlerClass) {
+							sLink += ' ' + sScrollHandlerClass;
+						}
+						sLink += '" href="#/api/' + target + '" data-sap-ui-target="' + sEntityName + '">' + text + '</a>';
+
+						return sLink;
 
 					}
 				});

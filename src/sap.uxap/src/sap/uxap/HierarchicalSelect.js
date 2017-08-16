@@ -43,8 +43,6 @@ sap.ui.define(["jquery.sap.global", "sap/m/Select", "sap/ui/Device", "./library"
 
 	HierarchicalSelect.prototype.onAfterRendering = function (){
 		Select.prototype.onAfterRendering.apply(this, arguments);
-			/*  incident 1680116122. Redundant tab comes from the select, and it's undesired */
-			this.$().attr("tabindex", "-1");
 	};
 
 	HierarchicalSelect.prototype.onAfterRenderingPicker = function () {

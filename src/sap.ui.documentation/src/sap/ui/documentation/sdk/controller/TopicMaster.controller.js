@@ -19,6 +19,7 @@ sap.ui.define([
 			onInit : function () {
 				this.oJSONContent = this._fetchDocuIndex();
 				var oModel = new JSONModel(this.oJSONContent);
+				oModel.setSizeLimit(10000);
 				this.getView().setModel(oModel);
 
 				this._initTreeUtil("key", "links");
@@ -57,10 +58,12 @@ sap.ui.define([
 				}
 
 				var oData = oResponse.data.links;
-				return this._preProcessDocuIndex(oData);
+				oData = this._reorderDocuIndex(oData);
+				oData = this._addSearchMetadata(oData, "");
+				return oData;
 			},
 
-			_preProcessDocuIndex: function (oData) {
+			_reorderDocuIndex: function (oData) {
 
 				var sMainSectionId = "95d113be50ae40d5b0b562b84d715227",
 					sTestPagesSectionId = "1b4124400a764ec0a8623d0d5c585321",
@@ -90,6 +93,16 @@ sap.ui.define([
 				return oProcessedData;
 			},
 
+			_addSearchMetadata: function (oData, sParentText) {
+				for (var i = 0; i < oData.length; i++) {
+					oData[i].name = sParentText ? sParentText + " " + oData[i].text : oData[i].text;
+					if (oData[i].links) {
+						oData[i].links = this._addSearchMetadata(oData[i].links, oData[i].text);
+					}
+				}
+				return oData;
+			},
+
 			onNodeSelect : function (oEvent) {
 				var oNode = oEvent.getParameter("listItem"),
 					sTopicId = oNode.getCustomData()[0].getValue(),
@@ -109,10 +122,6 @@ sap.ui.define([
 				}
 
 				oRouter.navTo("topicId", {id : sTopicId}, false);
-			},
-
-			onTreeFilter: function (oEvent) {
-				MasterTreeBaseController.prototype.onTreeFilter.apply(this, [oEvent, "text"]);
 			}
 
 		});

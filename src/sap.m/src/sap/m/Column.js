@@ -123,7 +123,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			 * Control to be displayed in the column footer.
 			 */
 			footer : {type : "sap.ui.core.Control", multiple : false}
-		}
+		},
+		designTime: true
 	}});
 
 

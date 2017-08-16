@@ -68,16 +68,17 @@ sap.ui.define([
 	 *   The purpose of the <code>metadataContexts</code> special setting is to deduce as much information as possible from the binding context of the control in order
 	 *   to be able to predefine certain standard properties like e.g. <i>visible, enabled, tooltip,...</i>
 	 *
-	 *   The structure is an arry of single contexts, where a single context is a map containing the following keys:
+	 *   The structure is an array of single contexts, where a single context is a map containing the following keys:
 	 *   <ul>
 	 *   <li><code>path: <i>string (mandatory)</i></code> The path to the corresponding model property or object, e.g. '/Customers/Name'. Note: A path can also be relative, e.g. 'Name'</li>
 	 *   <li><code>model: <i>string (optional)</i></code> The name of the model, in case there is no name then the undefined model is taken</li>
 	 *   <li><code>name: <i>string (optional)</i></code> A name for the context to used in templating phase</li>
+	 *   <li><code>kind: <i>string (optional)</i></code> The kind of the adapter, either <code>field</code> for single properties or <code>object</code> for structured contexts.
 	 *   <li><code>adapter: <i>string (optional)</i></code> The path to an interpretion class that dilivers control relevant data depending on the context, e.g. enabled, visible.
-	 *   If not supplied the OData metadata is interpreted.</li>
+	 *   If not supplied the OData meta data is interpreted.</li>
 	 *   </ul>
 	 *   The syntax for providing the <code>metadataContexts</code> is as follows:
-	 *   <code>{parts: [{SINGLE_CONTEXT1},...,{SINGLE_CONTEXTn}]}</code> or for simplicity in case there is only one context <code>{SINGLE_CONTEXT}</code>.
+	 *   <code>{SINGLE_CONTEXT1},...,{SINGLE_CONTEXTn}</code> or for simplicity in case there is only one context <code>{SINGLE_CONTEXT}</code>.
 	 *
 	 *   Examples for such metadataContexts are:
 	 *   <ul>
@@ -4099,8 +4100,9 @@ sap.ui.define([
 	 * get propagation listeners
 	 * @returns {array} aPropagationListeners Returns registered propagationListeners
 	 * @private
+	 * @sap-restricted sap.ui.fl
 	 */
-	ManagedObject.prototype._getPropagationListeners = function() {
+	ManagedObject.prototype.getPropagationListeners = function() {
 		return this.oPropagatedProperties.aPropagationListeners.concat(this.aPropagationListeners);
 	};
 
@@ -4117,7 +4119,7 @@ sap.ui.define([
 		if (listener) {
 			listener(this);
 		} else {
-			aListeners = this._getPropagationListeners();
+			aListeners = this.getPropagationListeners();
 			for (var i = 0; i < aListeners.length; i++) {
 				listener = aListeners[i];
 				listener(this);

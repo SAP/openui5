@@ -239,6 +239,9 @@ sap.ui.define([
 
 		},
 
+		onToggleFooterBtn: function(oEvent) {
+			this.oVM.setShowVariantListFooter(!this.oVM.getShowVariantListFooter());
+		},
 		onToggleShowShareBtn: function(oEvent) {
 			this.oVM.setShowShare(!this.oVM.getShowShare());
 		},

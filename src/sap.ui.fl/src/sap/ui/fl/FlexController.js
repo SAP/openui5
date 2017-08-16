@@ -170,9 +170,9 @@ sap.ui.define([
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent
 			});
-			if (ChangeHandler.revertChange && oChangeSpecificData["variantManagementKey"] && oChangeSpecificData["variantKey"]) {
-				oChange.setVariantReference(oChangeSpecificData["variantKey"]);
-				jQuery.sap.log.error("VariantChange" + "-" + oChangeSpecificData["variantManagementKey"] + "-" + oChangeSpecificData["variantKey"]); /*Only temporary*/
+			if (ChangeHandler.revertChange && oChangeSpecificData["variantManagementReference"] && oChangeSpecificData["variantReference"]) {
+				oChange.setVariantReference(oChangeSpecificData["variantReference"]);
+				jQuery.sap.log.error("VariantChange" + "-" + oChangeSpecificData["variantManagementReference"] + "-" + oChangeSpecificData["variantReference"]); /*Only temporary*/
 			}
 		} else {
 			throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
@@ -723,9 +723,9 @@ sap.ui.define([
 	 * @param {function} fnGetChangesMap Getter to retrieve the mapped changes belonging to the app component
 	 * @param {object} oAppComponent Component instance that is currently loading
 	 * @param {object} oControl Control instance that is being created
-	 * @public
+	 * @private
 	 */
-	FlexController.prototype.applyChangesOnControl = function (fnGetChangesMap, oAppComponent, oControl) {
+	FlexController.prototype._applyChangesOnControl = function (fnGetChangesMap, oAppComponent, oControl) {
 		var mChangesMap = fnGetChangesMap();
 		var mChanges = mChangesMap.mChanges;
 		var mDependencies = mChangesMap.mDependencies;
@@ -749,6 +749,22 @@ sap.ui.define([
 		}.bind(this));
 
 		this._processDependentQueue(mDependencies, mDependentChangesOnMe);
+	};
+
+	/**
+	 * Get _applyChangesOnControl function bound to the FlexController instance.
+	 *
+	 * This function must be used within the addPropagationListener functionality to ensure a proper identification
+	 * of the bound function is possible. And identity check is not possible due to the wrapping of the .bind.
+	 *
+	 * @param {function} fnGetChangesMap Getter to retrieve the mapped changes belonging to the app component
+	 * @param {object} oAppComponent Component instance that is currently loading
+	 * @public
+	 */
+	FlexController.prototype.getBoundApplyChangesOnControl = function (fnGetChangesMap, oComponent) {
+		var fnBoundApplyChangesOnControl = this._applyChangesOnControl.bind(this, fnGetChangesMap, oComponent);
+		fnBoundApplyChangesOnControl._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
+		return fnBoundApplyChangesOnControl;
 	};
 
 	/**
@@ -803,7 +819,7 @@ sap.ui.define([
 					Utils.log.error("A flexibility change tries to change a nonexistent control.");
 					return;
 				}
-				this.applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl);
+				this._applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl);
 			}.bind(this));
 		}.bind(this));
 		aApplyChanges.forEach(function (fnApplyChange) {
@@ -821,6 +837,23 @@ sap.ui.define([
 	 */
 	FlexController.prototype.removeFromAppliedChangesOnControl = function(oChange, oAppComponent, oControl) {
 		this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, false);
+	};
+
+	FlexController.prototype._updateControlsDependencies = function (mDependencies) {
+		var oControl;
+		Object.keys(mDependencies).forEach(function(sChangeKey) {
+			var oDependency = mDependencies[sChangeKey];
+			if (oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) {
+				var iLength = oDependency.controlsDependencies.length;
+				while (iLength--) {
+					var sId = oDependency.controlsDependencies[iLength];
+					oControl = sap.ui.getCore().byId(sId);
+					if (oControl) {
+						oDependency.controlsDependencies.splice(iLength, 1);
+					}
+				}
+			}
+		});
 	};
 
 	FlexController.prototype._updateDependencies = function (mDependencies, mDependentChangesOnMe, sChangeKey) {
@@ -843,14 +876,18 @@ sap.ui.define([
 		do {
 			aAppliedChanges = [];
 			aDependenciesToBeDeleted = [];
+			this._updateControlsDependencies(mDependencies);
 			for (var i = 0; i < Object.keys(mDependencies).length; i++) {
 				var sDependencyKey = Object.keys(mDependencies)[i];
 				var oDependency = mDependencies[sDependencyKey];
-				if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0 && !oDependency[FlexController.PROCESSING]) {
-					oDependency[FlexController.PROCESSING] = true;
-					oDependency[FlexController.PENDING]();
-					aDependenciesToBeDeleted.push(sDependencyKey);
-					aAppliedChanges.push(oDependency.changeObject.getKey());
+				if (oDependency[FlexController.PENDING] &&
+					oDependency.dependencies.length === 0 &&
+					!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) &&
+					!oDependency[FlexController.PROCESSING]) {
+						oDependency[FlexController.PROCESSING] = true;
+						oDependency[FlexController.PENDING]();
+						aDependenciesToBeDeleted.push(sDependencyKey);
+						aAppliedChanges.push(oDependency.changeObject.getKey());
 				}
 			}
 

@@ -15,6 +15,7 @@
         "Property04": "propValue04",
         "Property05": "propValue05",
         "Property08": "PropertyWithoutLabel",
+        "CommonPropertyName" : "Property on EntityType01",
         "PropertyNav" : "EntityType02Property01Value",
         "EntityType01_Complex": {
           "__metadata": {

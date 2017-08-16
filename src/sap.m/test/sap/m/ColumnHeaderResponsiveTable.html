@@ -165,7 +165,8 @@
 			}),
 			minScreenWidth : "XXLarge",
 			popinDisplay : "Inline",
-			demandPopin : true
+			demandPopin : true,
+			hAlign : "End"
 		}),
 		new sap.m.Column({
 			hAlign: "Center",
@@ -187,16 +188,7 @@
 				text : "Birthday"
 			}),
 			minScreenWidth: "800px"
-		}),
-		new sap.m.Column({
-			hAlign: "End",
-			header : new sap.m.Label({
-				text : "Salary"
-			}),
-			minScreenWidth : "Desktop",
-			popinDisplay : "Inline",
-			demandPopin : true
-		}),
+		})
 	];
 
 	var oTemplate = new sap.m.ColumnListItem({

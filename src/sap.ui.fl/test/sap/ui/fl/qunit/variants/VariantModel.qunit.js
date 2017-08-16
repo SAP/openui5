@@ -72,7 +72,7 @@ sap.ui.require([
 
 	QUnit.test("when calling 'getData'", function(assert) {
 		var sExpectedJSON = "{\"variantMgmtId1\":{" + "\"modified\":false," + "\"defaultVariant\":\"variant1\"," + "\"variants\":[{" + "\"author\":\"SAP\"," + "\"key\":\"variantMgmtId1\"," + "\"layer\":\"VENDOR\"," + "\"originalTitle\":\"Standard\"," + "\"readOnly\":true," + "\"title\":\"Standard\"," + "\"toBeDeleted\":false" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant0\"," + "\"layer\":\"CUSTOMER\"," + "\"originalTitle\":\"variant A\"," + "\"readOnly\":false," + "\"title\":\"variant A\"," + "\"toBeDeleted\":false" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant1\"," + "\"layer\":\"CUSTOMER\"," + "\"originalTitle\":\"variant B\"," + "\"readOnly\":false," + "\"title\":\"variant B\"," + "\"toBeDeleted\":false" + "}]," + "\"currentVariant\":\"variant1\"" + "}" + "}";
-		var sCurrentVariant = this.oModel.getCurrentVariantRef("variantMgmtId1");
+		var sCurrentVariant = this.oModel.getCurrentVariantReference("variantMgmtId1");
 		assert.deepEqual(this.oModel.getData(), JSON.parse(sExpectedJSON));
 		assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
 	});
@@ -134,6 +134,6 @@ sap.ui.require([
 
 	QUnit.test("when calling 'ensureStandardEntryExists'", function(assert) {
 		this.oModel.ensureStandardEntryExists("variant0");
-		assert.equal(this.oModel.getCurrentVariantRef("variant0"), "Standard", "then the Current Variant is set");
+		assert.equal(this.oModel.getCurrentVariantReference("variant0"), "Standard", "then the Current Variant is set");
 	});
 });

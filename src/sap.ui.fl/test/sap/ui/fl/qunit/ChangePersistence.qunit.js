@@ -1,26 +1,30 @@
 /*global sinon, QUnit*/
-jQuery.sap.require("sap.ui.fl.ChangePersistence");
-jQuery.sap.require("sap.ui.fl.Utils");
-jQuery.sap.require("sap.ui.fl.Change");
-jQuery.sap.require("sap.ui.fl.LrepConnector");
-jQuery.sap.require("sap.ui.core.Control");
-jQuery.sap.require("sap.ui.fl.Cache");
-jQuery.sap.require("sap.ui.fl.registry.Settings");
-
-(function (Utils, ChangePersistence, Control, Change, LrepConnector, Cache, Settings) {
+sap.ui.require([
+	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Cache",
+	"sap/ui/fl/registry/Settings"
+],
+function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector, Cache, Settings) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
+
+	// resource path for test manifests
+	jQuery.sap.registerModulePath("sap/ui/fl/qunit/integration", "./integration");
 
 	var sandbox = sinon.sandbox.create();
 	var controls = [];
 
 	QUnit.module("sap.ui.fl.ChangePersistence", {
 		beforeEach: function () {
-			this._oComponent = {
+			this._mComponentProperties = {
 				name: "MyComponent",
 				appVersion: "1.2.3"
 			};
-			this.oChangePersistence = new ChangePersistence(this._oComponent);
+			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			Utils.setMaxLayerParameter("USER");
 		},
 		afterEach: function () {
@@ -526,9 +530,15 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 				"group1": [oChange3]
 			},
 			mDependencies: {
+				"fileNameChange1USERnamespace": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
+					"dependencies": ["fileNameChange1USERnamespace"],
+					"controlsDependencies": ["group2", "group1"]
 				},
 				"fileNameChange3USERnamespace": {
 					"changeObject": oChange3,
@@ -599,9 +609,15 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 				"group1": [oChange0]
 			},
 			mDependencies: {
+				"fileNameChange1USERnamespace": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace", "fileNameChange0USERnamespace"]
+					"dependencies": ["fileNameChange1USERnamespace", "fileNameChange0USERnamespace"],
+					"controlsDependencies": ["group2", "group1"]
 				}
 			},
 			mDependentChangesOnMe: {
@@ -653,6 +669,11 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 				"group2": [oChange2]
 			},
 			mDependencies: {
+				"fileNameChange1USERnamespace": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
 					"dependencies": ["fileNameChange1USERnamespace"]
@@ -706,7 +727,8 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			mDependencies: {
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
+					"dependencies": ["fileNameChange1USERnamespace"],
+					"controlsDependencies": ["group3", "group2"]
 				}
 			},
 			mDependentChangesOnMe: {
@@ -939,11 +961,14 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
 		beforeEach: function () {
-			this._oComponent = {
-				name: "MyComponent",
-				appVersion: "1.2.3"
+			this._mComponentProperties = {
+				name : "saveChangeScenario",
+				appVersion : "1.2.3"
 			};
-			this.oChangePersistence = new ChangePersistence(this._oComponent);
+			this._oComponentInstance = sap.ui.component({
+				name: "sap/ui/fl/qunit/integration/testComponentComplex"
+			});
+			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -964,7 +989,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		};
 
 		//Call CUT
-		var newChange = this.oChangePersistence.addChange(oChangeContent);
+		var newChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
 		aChanges = this.oChangePersistence._aDirtyChanges;
 		assert.ok(aChanges);
@@ -973,18 +998,128 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		assert.strictEqual(aChanges[0], newChange);
 	});
 
+	QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet", function (assert) {
+		var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+			return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
+		});
+
+		// check in case the life cycle of flexibility processing changes (possibly incompatible)
+		assert.equal(aRegisteredFlexPropagationListeners.length, 0, "bo propagation listener is present at startup");
+
+		var oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+			return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
+		});
+
+		assert.equal(aRegisteredFlexPropagationListeners.length, 1, "one propagation listener is added");
+	});
+
+	QUnit.test("adds the flexibility propagation listener only once even when adding multiple changes", function (assert) {
+		var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+			return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
+		});
+
+		// check in case the life cycle of flexibility processing changes (possibly incompatible)
+		assert.equal(aRegisteredFlexPropagationListeners.length, 0, "bo propagation listener is present at startup");
+
+		var oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+			return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
+		});
+
+		assert.equal(aRegisteredFlexPropagationListeners.length, 1, "one propagation listener is added");
+	});
+
+	QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet (but other listeners)", function (assert) {
+		this._oComponentInstance.addPropagationListener(function () {});
+
+		var oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+			return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
+		});
+
+		assert.equal(aRegisteredFlexPropagationListeners.length, 1, "one propagation listener is added");
+	});
+
+	QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet (but other listeners)", function (assert) {
+
+		var fnGetChangesMap = function () {
+			return this.oChangePersistence._mChanges;
+		}.bind(this);
+		var oFlexController = FlexControllerFactory.create(this._mComponentProperties.name, this._mComponentProperties.appVersion);
+		var fnPropagationListener = oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, this._oComponentInstance);
+
+		this._oComponentInstance.addPropagationListener(fnPropagationListener);
+
+		var oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+			return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
+		});
+
+		assert.equal(aRegisteredFlexPropagationListeners.length, 1, "one propagation listener is added");
+	});
+
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
 		beforeEach: function () {
-			this._oComponent = {
+			this._mComponentProperties = {
 				name : "saveChangeScenario",
 				appVersion : "1.2.3"
 			};
+			this._oComponentInstance = sap.ui.component({
+				name: "sap/ui/fl/qunit/integration/testComponentComplex"
+			});
 			this.lrepConnectorMock = {
 				create: sinon.stub().returns(Promise.resolve()),
 				deleteChange: sinon.stub().returns(Promise.resolve()),
 				loadChanges: sinon.stub().returns(Promise.resolve({changes: {changes: []}}))
 			};
-			this.oChangePersistence = new ChangePersistence(this._oComponent);
+			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			this.oChangePersistence._oConnector = this.lrepConnectorMock;
 		},
 		afterEach: function () {
@@ -1006,7 +1141,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			originalLanguage: "DE"
 		};
 
-		this.oChangePersistence.addChange(oChangeContent);
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
 		//Call CUT
 		return this.oChangePersistence.saveDirtyChanges().then(function(){
@@ -1073,8 +1208,8 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			originalLanguage: "DE"
 		};
 
-		this.oChangePersistence.addChange(oChangeContent1);
-		this.oChangePersistence.addChange(oChangeContent2);
+		this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+		this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 
 		//Call CUT
 		return this.oChangePersistence.saveDirtyChanges().then(function(){
@@ -1093,7 +1228,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			originalLanguage: "DE"
 		};
 
-		this.oChangePersistence.addChange(oChangeContent);
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
 		//Call CUT
 		return this.oChangePersistence.getChangesForComponent().then(function() {
@@ -1122,7 +1257,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 
 		//Call CUT
 		return this.oChangePersistence.getChangesForComponent().then(function() {
-			this.oChangePersistence.addChange(oChangeContent);
+			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 			return this.oChangePersistence.saveDirtyChanges();
 		}.bind(this)).then(function() {
 			var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
@@ -1167,7 +1302,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			originalLanguage: "DE"
 		};
 
-		var oChange = this.oChangePersistence.addChange(oChangeContent);
+		var oChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
 		//Call CUT
 		this.oChangePersistence.deleteChange(oChange);
@@ -1188,7 +1323,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			originalLanguage: "DE"
 		};
 
-		var oChange = this.oChangePersistence.addChange(oChangeContent);
+		var oChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 		oChange.markForDeletion();
 
 		//Call CUT
@@ -1223,11 +1358,11 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 
 	QUnit.module("Given map dependencies need to be updated", {
 		beforeEach: function (assert) {
-			this._oComponent = {
+			this._mComponentProperties = {
 				name: "MyComponent",
 				appVersion: "1.2.3"
 			};
-			this.oChangePersistence = new ChangePersistence(this._oComponent);
+			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			Utils.setMaxLayerParameter("USER");
 
 			var oChangeContent1 = {
@@ -1294,16 +1429,12 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		}
 	});
 
-
 	QUnit.test("when '_deleteChangeInMap' is called", function (assert) {
-
 		this.oChangePersistence._deleteChangeInMap(this.oChange1);
 		assert.equal(this.oChangePersistence._mChanges.mChanges["control1"].length, 1, "then one change deleted from map");
 		assert.strictEqual(this.oChangePersistence._mChanges.mChanges["control1"][0].getKey(), this.oChange2.getKey(), "then only second change present");
 		assert.deepEqual(this.oChangePersistence._mChanges.mDependencies, {}, "then dependencies are cleared for change1");
 		assert.equal(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Key].length, 1, "then mDependentChangesOnMe for change2 only has one change");
 		assert.strictEqual(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Key][0], this.oChange3Key, "then mDependentChangesOnMe for change2 still has change3");
-
 	});
-
-}(sap.ui.fl.Utils, sap.ui.fl.ChangePersistence, sap.ui.core.Control, sap.ui.fl.Change, sap.ui.fl.LrepConnector, sap.ui.fl.Cache, sap.ui.fl.registry.Settings));
+});

@@ -193,7 +193,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 	});
 
 	QUnit.test("sap.ui.fl.Persistence.getChanges shall reject when the SAPUI5 component is unknown", function(assert) {
-		this.oPersistence._oComponent = {};
+		this.oPersistence._mComponent = {};
 
 		return this.oPersistence.getChanges()['catch'](function() {
 			assert.ok(true, "Promise shall reject");

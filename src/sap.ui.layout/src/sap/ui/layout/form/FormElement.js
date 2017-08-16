@@ -93,6 +93,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 				oOldLabel._sapuiIsRequired = undefined;
 				oOldLabel.disableRequiredChangeCheck(false);
 			}
+			if (oOldLabel && oOldLabel.isDisplayOnly) {
+				oOldLabel.isDisplayOnly = oOldLabel._sapuiIsDisplayOnly;
+				oOldLabel._sapuiIsDisplayOnly = undefined;
+			}
 		}
 
 		this.setAggregation("label", vAny);
@@ -104,6 +108,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 				this._oLabel.disableRequiredChangeCheck(true);
 				if (this._oLabel.isRequired) {
 					this._oLabel.isRequired = _labelIsRequired;
+				}
+				if (this._oLabel.isDisplayOnly) {
+					this._oLabel.isDisplayOnly = _labelIsDisplayOnly;
 				}
 			} else {
 				this._oLabel.setText(oLabel);
@@ -117,6 +124,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 				oLabel._sapuiIsRequired = oLabel.isRequired;
 				oLabel.isRequired = _labelIsRequired;
 				oLabel.disableRequiredChangeCheck(true);
+			}
+			if (oLabel && oLabel.isDisplayOnly) {
+				oLabel._sapuiIsDisplayOnly = oLabel.isDisplayOnly;
+				oLabel.isDisplayOnly = _labelIsDisplayOnly;
 			}
 		}
 
@@ -317,6 +328,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 	};
 
+	/**
+	 * Labels inside of a Form must be invalidated if "editable" changed on Form
+	 * @private
+	 */
+	FormElement.prototype.invalidateLabels = function(){
+
+		var oLabel = this.getLabelControl();
+
+		if (oLabel) {
+			oLabel.invalidate();
+		}
+
+	};
+
 	// *** Private helper functions ***
 
 	/*
@@ -337,6 +362,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			if (oField.getRequired && oField.getRequired() === true &&
 					(!oField.getEditable || oField.getEditable())) {
 				return true;
+			}
+		}
+
+		return false;
+
+	}
+
+	/*
+	 * overwrite Labels isDisplayOnly function to use the editable property of the Form
+	 * to determine the mode.
+	 *
+	 * If DisplayOnly is set explicitly on the Label, this is used.
+	 */
+	function _labelIsDisplayOnly(){
+
+		if (this.getDisplayOnly) {
+			if (!this.isPropertyInitial("displayOnly")) {
+				return this.getDisplayOnly();
+			}
+
+			var oFormElement = this.getParent();
+			var oFormContainer = oFormElement.getParent();
+
+			if (oFormContainer) {
+				var oForm = oFormContainer.getParent();
+
+				if (oForm) {
+					return !oForm.getEditable();
+				}
 			}
 		}
 

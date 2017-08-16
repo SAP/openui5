@@ -79,10 +79,6 @@ function(
 	sap.ui.getCore().applyChanges();
 
 	QUnit.module("Given that a SmartForm with OData Binding is given...", {
-		beforeEach : function(assert) {
-		},
-		afterEach : function(assert) {
-		}
 	});
 
 	QUnit.test("when getLabelForElement is called with a function", function(assert) {
@@ -283,14 +279,6 @@ function(
 		return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
 			assert.strictEqual(vResult, false, "then custom fields is disabled");
 		});
-	});
-
-	QUnit.done(function( details ) {
-		// If coverage is reuqested, remove the view to not overlap the coverage result
-		if (QUnit.config.coverage == true && details.failed === 0) {
-			jQuery("#test-view").hide();
-			oCompCont.getComponentInstance().destroy();
-		}
 	});
 
 	QUnit.module("Given that the getRelevantContainerDesigntimeMetadata method is called on an overlay", {
@@ -499,6 +487,46 @@ function(
 			"when oObjectPageSubSection3Overlay parameter set then oObjectPageSubSection1Overlay is returned");
 	});
 
+	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
+
+	QUnit.module("Given some dom elements in and out of viewport...", {
+		beforeEach: function(assert) {
+			if (oCompCont) {
+				oCompCont.destroy();
+			}
+
+			this.$insideDom = jQuery('<input/>').appendTo('#test-view');
+			this.$outsideDom = jQuery('<button/>').appendTo('#test-view');
+
+			this.$insideDom.css("margin-bottom", jQuery("#test-view").get(0).clientHeight);
+			this.$insideDom.css("margin-right", jQuery("#test-view").get(0).clientWidth);
+			this.$insideDom.css("margin-top", "10px");
+		},
+		afterEach: function(assert) {
+			this.$insideDom.remove();
+			this.$outsideDom.remove();
+		}
+	});
+
+	QUnit.test("when isElementInViewport is called from inside viewport", function(assert) {
+		assert.ok(Utils.isElementInViewport(this.$insideDom), "then the function returns true");
+		assert.ok(Utils.isElementInViewport(this.$insideDom.get(0)), "then the function returns true");
+	});
+
+	QUnit.test("when isElementInViewport is called from outside viewport", function(assert) {
+		assert.notOk(Utils.isElementInViewport(this.$outsideDom), "then the function returns false");
+		assert.notOk(Utils.isElementInViewport(this.$outsideDom.get(0)), "then the function returns false");
+	});
+
+	QUnit.module("Given a sinon sandbox...", {
+		beforeEach : function(assert) {
+			this.sandbox = sinon.sandbox.create();
+		},
+		afterEach : function(assert) {
+			this.sandbox.restore();
+		}
+	});
+
 	QUnit.test("when setRtaStyleClassName is called in sap_belize", function(assert) {
 		var sExpectedStyleClass = "sapContrast";
 		this.sandbox.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize");
@@ -533,5 +561,9 @@ function(
 
 		Utils.setRtaStyleClassName("VENDOR");
 		assert.equal(Utils.getRtaStyleClassName(), sExpectedStyleClass, "then the StyleClass is set");
+	});
+
+	QUnit.done(function() {
+		jQuery("#test-view").hide();
 	});
 });

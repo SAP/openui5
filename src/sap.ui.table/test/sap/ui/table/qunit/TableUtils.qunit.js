@@ -793,7 +793,7 @@ QUnit.test("getCellInfo", function(assert) {
 				assert.equal(TableUtils.isFirstScrollableRow(oTable, getCell(i, 0)), i == iFixedTop, "isFirstScrollableRow (" + i + ")");
 				assert.equal(TableUtils.isLastScrollableRow(oTable, getCell(i, 0)), i == iVisibleRowCount - iFixedBottom - 1, "isLastScrollableRow (" + i + ")");
 			}
-			oTable._getScrollExtension().scroll(true, false);
+			oTable._getScrollExtension().scrollVertically(true, false);
 		}
 	});
 

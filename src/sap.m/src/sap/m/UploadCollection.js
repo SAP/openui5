@@ -1911,7 +1911,6 @@ sap.ui.define([
 		if (errorState === "Error") {
 			bEnabled = false;
 		}
-
 		if (buttonType === "deleteButton") {
 			sGetterName = "DeleteButton";
 			fnGetter = item._getDeleteButton;
@@ -3075,10 +3074,13 @@ sap.ui.define([
 	 */
 	UploadCollection.prototype._handleDEL = function(event) {
 		if (!this.editModeItem) {
-			var o$Obj = jQuery.sap.byId(event.target.id);
-			var o$DeleteButton = o$Obj.find("[id$='-deleteButton']");
-			var oDeleteButton = sap.ui.getCore().byId(o$DeleteButton[0].id);
-			oDeleteButton.firePress();
+			// removing the -cli suffix to get the id of the UploadCollectionItem
+			var sTarget = event.target.id.slice(0, -4),
+				oItem = sap.ui.getCore().byId(sTarget),
+				oDeleteButton = oItem && oItem._getDeleteButton && oItem._getDeleteButton();
+			if (oDeleteButton) {
+				oDeleteButton.firePress();
+			}
 		}
 	};
 

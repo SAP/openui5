@@ -13,10 +13,22 @@
 </script>
 
 <style type="text/css">
-.ButtonSpace {
-	display: inline;
-	position: relative;
-}
+	.ButtonSpace {
+		display: inline;
+		position: relative;
+	}
+
+	.down-left {
+		position: absolute;
+		bottom: 1px;
+		left: 1px;
+	}
+
+	.down-right {
+		position: absolute;
+		bottom: 1px;
+		right: 1px;
+	}
 </style>
 
 <script>
@@ -41,6 +53,19 @@
 		]
 	});
 
+	var oListMenu = new sap.m.Menu({
+		items: [
+			new sap.m.MenuItem({ text: "Copy", icon: "sap-icon://copy" }),
+			new sap.m.MenuItem({ text: "Edit", icon: "sap-icon://edit" }),
+			new sap.m.MenuItem({ text: "Open in new tab", icon: "sap-icon://action" }),
+			new sap.m.MenuItem({ text: "Save as tile", icon: "sap-icon://save", startsSection: true }),
+			new sap.m.MenuItem({ text: "Action one" }),
+			new sap.m.MenuItem({ text: "Second action", enabled: false }),
+			new sap.m.MenuItem({ text: "Action three more ..."}),
+			new sap.m.MenuItem({ text: "Fourth option" }),
+		]
+	});
+
 	var oPageContextMenu = new sap.ui.unified.Menu({
 		items: [
 			new sap.ui.unified.MenuItem( { text: "Example with Unified Menu" } ),
@@ -50,9 +75,48 @@
 		]
 	});
 
+
+	var oList = new sap.m.List({
+		items: [
+			new sap.m.StandardListItem({
+				title: "Monitor Locking Cable",
+				description: "P1239123",
+				icon: "sap-icon://laptop",
+			}),
+			new sap.m.StandardListItem({
+				title: "Laptop Case",
+				description: "123-3123-111",
+				icon: "sap-icon://it-host",
+			}),
+			new sap.m.StandardListItem({
+				title: "USB Stick 16Gbyte",
+				description: "XKT-2342432432",
+				icon: "sap-icon://it-system",
+			}),
+			new sap.m.StandardListItem({
+				title: "Deskjet Super Highspeed",
+				description: "KTZ-23432423",
+				icon: "sap-icon://e-learning",
+			}),
+			new sap.m.StandardListItem({
+				title: "Laser Allround Pro",
+				description: "554325-423",
+				icon: "sap-icon://it-instance",
+			})
+		]
+	});
+
 	var oBasicButton = new sap.m.Button({
 		text: "Buton without a ContextMenu"
 	});
+
+	var oLeftDownButton = new sap.m.Button({
+		text: "Down Left"
+	}).addStyleClass("down-left");
+
+	var oRightDownButton = new sap.m.Button({
+		text: "Down Left"
+	}).addStyleClass("down-right");
 
 
 	/* ---------------------------------------- */
@@ -61,13 +125,25 @@
 	var oPage = new sap.m.Page({
 		content: [
 			oButtonSample,
-			oBasicButton
+			oBasicButton,
+			oList,
+			oLeftDownButton,
+			oRightDownButton
 		]
 	})
 	oApp.addPage(oPage);
 
 	oPage.setContextMenu(oPageContextMenu);
 	oButtonSample.setContextMenu(oButtonContextMenu);
+	oLeftDownButton.setContextMenu(oButtonContextMenu);
+	oRightDownButton.setContextMenu(oButtonContextMenu);
+
+
+	oList.getItems().forEach(function(oListItem) {
+		// mad hacks
+		sap.ui.core.ContextMenuSupport.apply(oListItem);
+		oListItem.setContextMenu(oListMenu);
+	});
 
 	oApp.addPage(oPage);
 	oApp.placeAt("body");

@@ -110,7 +110,7 @@ function(
 				tooltip : "idMain1--ObjectPageSectionStashed1",
 				type : "invisible",
 				elementId : "idMain1--ObjectPageSectionStashed1",
-				bindingPaths: []
+				bindingPaths: undefined
 			}, "the 1. stashed section is found", assert);
 			assertElementsEqual(aAdditionalElements[2], {
 				selected : false,
@@ -118,7 +118,7 @@ function(
 				tooltip : "idMain1--ObjectPageSectionStashed2",
 				type : "invisible",
 				elementId : "idMain1--ObjectPageSectionStashed2",
-				bindingPaths: []
+				bindingPaths: undefined
 			}, "the 2. stashed section is found", assert);
 		});
 	});
@@ -357,6 +357,72 @@ function(
 		});
 	});
 
+	QUnit.test("when getting invisible elements of a bound group containing a removed field with absolute binding pointing to another entity", function(assert) {
+		var oGroup = oView.byId("OtherGroup");
+		var oGroupElement1 = oView.byId("NavForm.EntityType01.Prop1");
+		oGroupElement1.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		var oActionsObject = {
+			aggregation: "formElements",
+			reveal : {
+				elements : [oGroupElement1],
+				types : {
+					"sap.ui.comp.smartform.GroupElement" : {
+						action : {
+							//nothing relevant for the analyzer
+						}
+					}
+				}
+			},
+			addODataProperty : {
+				action : {
+					//not relevant for test
+				}
+			}
+		};
+
+		function fnIsFieldPresent(oElement) {
+			return oElement.label === oGroupElement1.getLabelText();
+		}
+
+		return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+			assert.ok(aAdditionalElements.some(fnIsFieldPresent), "then the field is available on the dialog");
+		});
+	});
+
+	QUnit.test("when getting invisible elements of a bound group containing a field with the same property name as the one of an invisible field in a different entity", function(assert) {
+		var oGroup = oView.byId("GroupEntityType01");
+		var oGroupElement1 = oView.byId("EntityType02.CommonProperty");
+
+		var oActionsObject = {
+			aggregation: "formElements",
+			reveal : {
+				elements : [oGroupElement1],
+				types : {
+					"sap.ui.comp.smartform.GroupElement" : {
+						action : {
+							//nothing relevant for the analyzer
+						}
+					}
+				}
+			},
+			addODataProperty : {
+				action : {
+					//not relevant for test
+				}
+			}
+		};
+
+		function fnIsFieldPresent(oElement) {
+			return oElement.label === oGroupElement1.getLabelText();
+		}
+
+		return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+			assert.notOk(aAdditionalElements.some(fnIsFieldPresent), "then the other field is not available on the dialog");
+		});
+	});
+
 	QUnit.test("when renaming a smart element", function(assert) {
 		var oGroup = oView.byId("GroupEntityType02");
 		var oGroupElement1 = oGroup.getGroupElements()[3];
@@ -495,7 +561,7 @@ function(
 		};
 
 		return AdditionalElementsAnalyzer.getUnboundODataProperties(oSimpleForm, oActionObject).then(function(aAdditionalElements) {
-			assert.equal(aAdditionalElements.length, 4, "then 4 unbound elements are available");
+			assert.equal(aAdditionalElements.length, 5, "then 5 unbound elements are available");
 		});
 	});
 

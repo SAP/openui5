@@ -314,6 +314,27 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 
 		};
 
+		/**
+		 * Checks whether the Label should be rendered in display only mode.
+		 *
+		 * In the standard case it just uses the DisplayOnly property of the Label.
+		 *
+		 * In the Form an other logic is used.
+		 * Maybe later on also the labeled controls might be used to determine the rendering.
+		 *
+		 * @protected
+		 * @returns {Boolean} Returns if the Label should be rendered in display only mode
+		 */
+		oControl.isDisplayOnly = function(){
+
+			if (this.getDisplayOnly) {
+				return this.getDisplayOnly();
+			} else {
+				return false;
+			}
+
+		};
+
 		// as in the Form the required change is checked, it'd not needed here
 		oControl.disableRequiredChangeCheck = function(bNoCheck){
 

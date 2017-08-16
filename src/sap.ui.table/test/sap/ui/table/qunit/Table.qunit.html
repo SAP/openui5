@@ -899,13 +899,13 @@
 		}
 	});
 
-	QUnit.test("Scrollbars can be accessed by inheriting controls", function(assert) {
-		var oScrollExtension = oTable._getScrollExtension();
-		var oHsb = oScrollExtension.getHorizontalScrollbar();
-		var oVsb = oScrollExtension.getVerticalScrollbar();
+	QUnit.test("Scroll bars can be accessed by inheriting controls", function(assert) {
+		var sScrollBarSuffix = "ScrollBar";
+		var oHsb = oTable.getDomRef(sap.ui.table.SharedDomRef["Horizontal" + sScrollBarSuffix]);
+		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef["Vertical" + sScrollBarSuffix]);
 
-		assert.ok(oHsb);
-		assert.ok(oVsb);
+		assert.ok(oHsb, "The horizontal scroll bar can be accessed with the help of SharedDomRef");
+		assert.ok(oVsb, "The vertical scroll bar can be accessed with the help of SharedDomRef");
 
 		sap.ui.getCore().applyChanges();
 
@@ -992,7 +992,7 @@
 
 		oTable.setFirstVisibleRow(1);
 
-		var iRowHeightsDelta = oTable._iRowHeightsDelta;
+		var iRowHeightsDelta = oTable._getScrollExtension()._iInnerVerticalScrollRange;
 
 		var iHeight = 9735 - 10 * oTable._getDefaultRowHeight();
 
@@ -2761,35 +2761,6 @@
 		oTable.unbindRows();
 		assert.equal(oTable._getContexts(1,4,4).length, 0, "Empty contexts returned as row binding was destoryed");
 		assert.equal(oTable._getFixedBottomRowContexts().length, 0, "Binding does not exist, hence empty context returned");
-	});
-
-	QUnit.test("Get current top scroll position", function(assert) {
-		oTable._bVariableRowHeightEnabled = true;
-		var iOldVisibleRowCount = oTable.getVisibleRowCount();
-		oTable.setVisibleRowCount(500);
-		assert.equal(oTable._getFirstVisibleRowByScrollTop(50), 0, "visibleRowCount > bindingLength, hence 0 returned");
-		var $table = oTable.getDomRef();
-		sap.ui.Device.browser.internet_explorer ? $table.parentNode.removeChild($table) : $table.remove();
-		assert.equal(oTable._getFirstVisibleRowByScrollTop(50), 0, "Navigation mode is not paginator, hence returned 0");
-	});
-
-	QUnit.test("test _updateHSb function", function(assert) {
-		var oTableSizes = oTable._collectTableSizes(oTable._collectRowHeights());
-		var iOldTableCtrlScrWidth = oTableSizes.tableCtrlScrWidth;
-		oTableSizes.tableCtrlScrWidth = 900;
-		var $table = oTable.$();
-		var $sapUiTableHSb = $table.find(".sapUiTableHSb");
-		var sOldMarginRight = $sapUiTableHSb.css("margin-right");
-		var oHSbContent = oTable.getDomRef("hsb-content");
-		var sOldHSbContentWidth = oHSbContent.style.width;
-		oTable._updateHSb(oTableSizes);
-		assert.ok(oHSbContent.style.width !== sOldHSbContentWidth);
-		oTable._bRtlMode = true;
-		oTable._updateHSb(oTableSizes);
-		assert.ok($sapUiTableHSb.css("margin-right") !== sOldMarginRight);
-		oTableSizes.tableCtrlScrWidth = iOldTableCtrlScrWidth;
-		oTable._updateHSb(oTableSizes);
-		assert.ok(!$table.hasClass("sapUiTableHScr"));
 	});
 
 	QUnit.test("test _getBaseFontSize function", function(assert) {

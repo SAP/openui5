@@ -352,7 +352,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 			x = oOpenerRef.getDomRef().clientWidth - x;
 		}
 
-		this.open(true, oOpenerRef, eDock.BeginTop, eDock.BeginTop, oOpenerRef,  x + " " + y, 'flip');
+		this._iX = oEvent.clientX;
+		this._iY = oEvent.clientY;
+		this.open(true, oOpenerRef, eDock.BeginTop, eDock.BeginTop, oOpenerRef,  x + " " + y, 'fit');
+	};
+
+	Menu.prototype._handleOpened = function () {
+		var $Menu = this.$(),
+			$Window = jQuery(window),
+			iCalcedX = this._iX,
+			iCalcedY = this._iY,
+			iRight = $Window.scrollLeft() + $Window.width(),
+			iBottom = $Window.scrollTop() + $Window.height(),
+			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
+			bRecalculate = false,
+			iMenuWidth = $Menu.width(),
+			iMenuHeight = $Menu.height();
+
+		if (iCalcedY + iMenuHeight > iBottom) {
+			iCalcedY = iCalcedY - iMenuHeight;
+			bRecalculate = true;
+		}
+
+		if (bRTL) {
+			if ((iRight - iCalcedX) + iMenuWidth > iRight) {
+				iCalcedX = iRight - (iCalcedX + iMenuWidth);
+				bRecalculate = true;
+			} else {
+				iCalcedX = iRight - iCalcedX;
+				bRecalculate = true;
+			}
+		} else {
+			if (iCalcedX + iMenuWidth > iRight) {
+				iCalcedX = iCalcedX - iMenuWidth;
+				bRecalculate = true;
+			}
+		}
+
+		bRecalculate && this.oPopup.setPosition("begin top", "begin top", $Window, iCalcedX + " " + iCalcedY, "flip");
 	};
 
 	/**
@@ -753,6 +790,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 			this.oPopup = new Popup(this, false, true, false); // content, modal, shadow, autoclose (TBD: standard popup autoclose)
 			this.oPopup.setDurations(0, 0);
 			this.oPopup.attachClosed(this._menuClosed, this);
+
+			this.oPopup.attachOpened(this._handleOpened, this);
 		}
 		return this.oPopup;
 	};

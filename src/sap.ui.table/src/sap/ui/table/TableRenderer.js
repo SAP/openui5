@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			rm.addClass(sSapMTableClass);
 		}
 
-		if (oTable._isVSbRequired()) {
+		if (oTable._getScrollExtension().isVerticalScrollbarRequired()) {
 			rm.addClass("sapUiTableVScr"); // show vertical scrollbar
 		}
 		if (oTable.getEditable()) {
@@ -1080,6 +1080,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	};
 
 	TableRenderer.renderVSb = function(rm, oTable) {
+		var oScrollExtension = oTable._getScrollExtension();
 
 		rm.write("<div");
 		rm.addClass("sapUiTableVSbBg");
@@ -1092,7 +1093,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.writeClasses();
 		rm.writeAttribute("id", oTable.getId() + "-vsb");
 		rm.writeAttribute("tabindex", "-1"); // Avoid focusing in Firefox
-		rm.addStyle("max-height", oTable._getVSbHeight() + "px");
+		rm.addStyle("max-height", oScrollExtension.getVerticalScrollbarHeight() + "px");
 
 		if (oTable.getFixedRowCount() > 0) {
 			oTable._iVsbTop = (oTable.getFixedRowCount() * oTable._getDefaultRowHeight()) - 1;
@@ -1106,7 +1107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.writeAttribute("id", oTable.getId() + "-vsb-content");
 		rm.addClass("sapUiTableVSbContent");
 		rm.writeClasses();
-		rm.addStyle("height", oTable._getTotalScrollRange() + "px");
+		rm.addStyle("height", oScrollExtension.getVerticalScrollHeight() + "px");
 		rm.writeStyles();
 		rm.write(">");
 		rm.write("</div>");

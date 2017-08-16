@@ -29,10 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			sWidth = oLabel.getWidth(),
 			sLabelText = oLabel.getText(),
 			sTooltip = oLabel.getTooltip_AsString(),
-			// render bdi tag only if the browser is different from IE and Edge since it is not supported there
-			bIE_Edge = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge,
-			bRenderBDI = (sTextDir === sap.ui.core.TextDirection.Inherit) && !bIE_Edge,
-			bDisplayOnly = oLabel.getDisplayOnly();
+			bDisplayOnly = oLabel.isDisplayOnly();
 
 		// write the HTML into the render managerr
 		rm.write("<label");
@@ -41,6 +38,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		// styles
 		rm.addClass("sapMLabel");
 		rm.addClass("sapUiSelectable");
+
+		// label wrapping
+		if (oLabel.getWrapping()) {
+			rm.addClass("sapMLabelWrapped");
+		}
 		// set design to bold
 		if (oLabel.getDesign() == sap.m.LabelDesign.Bold) {
 			rm.addStyle("font-weight", "bold");
@@ -81,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		}
 
 		if (bDisplayOnly) {
-		    rm.addClass("sapMLabelDisplayOnly");
+			rm.addClass("sapMLabelDisplayOnly");
 		}
 
 		rm.writeStyles();
@@ -95,14 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 		// write the label text
 		if (sLabelText) {
-			if (bRenderBDI) {
-				//TODO: To be removed after change completion of BLI incident #1770022720
-				rm.write('<bdi>');
-				rm.writeEscaped(sLabelText);
-				rm.write('</bdi>');
-			} else {
-				rm.writeEscaped(sLabelText);
-			}
+			rm.writeEscaped(sLabelText);
 		}
 		rm.write("</label>");
 	};

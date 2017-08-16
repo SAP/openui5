@@ -239,8 +239,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 		 * @returns {*}
 		 */
 		OverflowToolbarAssociativePopoverControls.getControlConfig = function(oControl) {
+			var oConfig;
+
+			// First check if the control's class implements the sap.m.IOverflowToolbarContent interface
+			if (oControl.getMetadata().getInterfaces().indexOf("sap.m.IOverflowToolbarContent") !== -1) {
+				if (typeof oControl.getOverflowToolbarConfig !== "function") {
+					jQuery.sap.log.error("Required method getOverflowToolbarConfig not implemented by: " + oControl.getMetadata().getName());
+					return;
+				}
+
+				oConfig = oControl.getOverflowToolbarConfig();
+				if (typeof oConfig !== "object") {
+					jQuery.sap.log.error("Method getOverflowToolbarConfig implemented, but does not return an object in: " + oControl.getMetadata().getName());
+					return;
+				}
+
+				return {
+					canOverflow: !!oConfig.canOverflow,
+					listenForEvents: Array.isArray(oConfig.autoCloseEvents) ? oConfig.autoCloseEvents : [],
+					noInvalidationProps: Array.isArray(oConfig.propsUnrelatedToSize) ? oConfig.propsUnrelatedToSize : [],
+					preProcess: oConfig.onBeforeEnterOverflow,
+					postProcess: oConfig.onAfterExitOverflow
+				};
+			}
+
+			// The interface is not implemented - check the _mSupportedControls array (legacy scenario)
 			var sClassName = OverflowToolbarAssociativePopoverControls.getControlClass(oControl);
-			return OverflowToolbarAssociativePopoverControls._mSupportedControls[sClassName];
+			oConfig = OverflowToolbarAssociativePopoverControls._mSupportedControls[sClassName];
+
+			if (oConfig === undefined) {
+				return;
+			}
+
+			var sPreProcessFnName = "_preProcess" + sClassName.split(".").map(fnCapitalize).join("");
+			if (typeof OverflowToolbarAssociativePopoverControls.prototype[sPreProcessFnName] === "function") {
+				oConfig.preProcess = OverflowToolbarAssociativePopoverControls.prototype[sPreProcessFnName];
+			}
+
+			var sPostProcessFnName = "_postProcess" + sClassName.split(".").map(fnCapitalize).join("");
+			if (typeof OverflowToolbarAssociativePopoverControls.prototype[sPostProcessFnName] === "function") {
+				oConfig.postProcess = OverflowToolbarAssociativePopoverControls.prototype[sPostProcessFnName];
+			}
+
+			return oConfig;
 		};
 
 		/**
@@ -249,8 +290,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 		 * @returns {boolean}
 		 */
 		OverflowToolbarAssociativePopoverControls.supportsControl = function(oControl) {
-			var sClassName = OverflowToolbarAssociativePopoverControls.getControlClass(oControl);
-			var oCtrlConfig = OverflowToolbarAssociativePopoverControls._mSupportedControls[sClassName];
+			var oCtrlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oControl);
 			return typeof oCtrlConfig !== "undefined" && oCtrlConfig.canOverflow;
 		};
 
@@ -274,6 +314,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 			// All other controls must be the standard sap.m class in order to overflow
 			return oControl.getMetadata().getName();
 		};
+
+		function fnCapitalize(sName) {
+			return sName.substring(0, 1).toUpperCase() + sName.substr(1);
+		}
 
 		return OverflowToolbarAssociativePopoverControls;
 

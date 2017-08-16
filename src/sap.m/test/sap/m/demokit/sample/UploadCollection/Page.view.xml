@@ -1,74 +1,57 @@
 <mvc:View height="100%"
 	controllerName="sap.m.sample.UploadCollection.Page"
-	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page showHeader="false">
 		<content>
 			<OverflowToolbar>
+				<MessageStrip
+					visible="{=!${device>/browser/mobile}}"
+					showIcon="true"
+					type="Information"
+					text="To add files, you can also use drag &amp; drop on your desktop or tablet." />
 				<ToolbarSpacer />
-				<Label text="Upload button invisible" />
-				<Switch id="uploadInvisibleSwitch"
-					state="false"
-					change="onSwitchUploadInvisibleChange"
-					type="Transparent" />
-				<Label text="Layout: Enable FileUploader" />
-				<Switch state="true"
-					change="onSwitchUploaderChange"
-					type="Transparent" />
-				<Label text="Multi-selection mode" />
-				<Switch id="modeSwitch"
-					state="false"
-					change="onSwitchModeChange"
-					type="Transparent" />
-				<Label text="File types" />
-				<MultiComboBox id="fileTypesBox"
-					selectionChange="onFileTypeChange"
-					width="250px"
-					placeholder="Choose the valid file types"
-					items="{fileTypes>/items}">
-					<core:Item key="{fileTypes>key}" text="{fileTypes>text}" />
-				</MultiComboBox>
-				<Select id="tbSelect"
-					items="{/items}"
-					selectedKey="{/selectedKey}"
-					change="onSeparatorsChange">
-					<core:Item key="{key}" text="{text}" />
-				</Select>
+				<Button icon="sap-icon://action-settings" tooltip="More settings" press="onOpenAppSettings" />
 			</OverflowToolbar>
-			<MessageStrip showIcon="true"
-				type="Information"
-				text="To add files, you can also use drag &amp; drop on your desktop or tablet."
-				class="sapUiTinyMargin" />
-			<UploadCollection id="UploadCollection"
-				maximumFilenameLength="55"
-				maximumFileSize="10"
+			<UploadCollection
+				id="UploadCollection"
+				maximumFilenameLength="{settings>/maximumFilenameLength}"
+				maximumFileSize="{settings>/maximumFileSize}"
 				multiple="true"
 				change="onChange"
 				fileDeleted="onFileDeleted"
 				filenameLengthExceed="onFilenameLengthExceed"
 				fileRenamed="onFileRenamed"
 				fileSizeExceed="onFileSizeExceed"
+				fileType="{fileTypes>/selected}"
 				selectionChange="onSelectionChange"
 				typeMissmatch="onTypeMissmatch"
 				uploadComplete="onUploadComplete"
 				beforeUploadStarts="onBeforeUploadStarts"
 				uploadTerminated="onUploadTerminated"
-				items="{path : '/items', templateShareable : false}"
+				items="{
+					path: '/items',
+					templateShareable: false
+				}"
 				numberOfAttachmentsText="Uploaded (8)"
-				mode="SingleSelectMaster">
+				showSeparators="{settings>/showSeparators}"
+				uploadEnabled="{settings>/uploadEnabled}"
+				uploadButtonInvisible="{=!${settings>/uploadButtonVisible}}"
+				mode="{settings>/mode}">
 				<toolbar>
 					<OverflowToolbar id="myId">
 						<Title id="attachmentTitle" />
 						<ToolbarSpacer />
 						<SearchField width="10rem" search="onSearch" />
-						<Button id="deleteSelectedButton"
+						<Button
+							id="deleteSelectedButton"
 							text="Delete"
 							press="onDeleteSelectedItems"
 							enabled="false"
 							visible="false"
 							type="Transparent" />
-						<ToggleButton id="selectAllButton"
+						<ToggleButton
+							id="selectAllButton"
 							text="Select all"
 							press="onSelectAllPress"
 							enabled="false"
@@ -78,15 +61,16 @@
 					</OverflowToolbar>
 				</toolbar>
 				<items>
-					<UploadCollectionItem documentId="{documentId}"
+					<UploadCollectionItem
+						documentId="{documentId}"
 						fileName="{fileName}"
 						mimeType="{mimeType}"
 						thumbnailUrl="{thumbnailUrl}"
 						url="{url}"
-						enableEdit="{enableEdit}"
-						enableDelete="{enableDelete}"
-						visibleDelete="{visibleDelete}"
-						visibleEdit="{visibleEdit}"
+						enableEdit="{settings>/enableEdit}"
+						enableDelete="{settings>/enableDelete}"
+						visibleDelete="{settings>/visibleDelete}"
+						visibleEdit="{settings>/visibleEdit}"
 						attributes="{path : 'attributes', templateShareable : false}"
 						statuses="{path : 'statuses', templateShareable : false}"
 						markers="{path : 'markers', templateShareable : false}"

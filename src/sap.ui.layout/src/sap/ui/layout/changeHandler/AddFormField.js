@@ -42,7 +42,7 @@ sap.ui.define([
 			var oModifier = mPropertyBag.modifier;
 			var oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
 			var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings({
-				"scenario" : "addODataField",
+				"scenario" : "addODataFieldWithLabel",
 				"oDataServiceVersion" : oChangeDefinition.content && oChangeDefinition.content.oDataServiceVersion
 			});
 

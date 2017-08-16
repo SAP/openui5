@@ -45,6 +45,7 @@
 			maximumFileSize: mProps.maximumFileSize || 2,
 			uploadOnChange: mProps.uploadOnChange || false,
 			buttonText: mProps.buttonText || "Choose!",
+			buttonOnly: mProps.buttonOnly || false,
 			additionalData: mProps.additionalData ||"abc=123&test=456"
 		});
 	};
@@ -95,6 +96,36 @@
 		oFileUploader.setEnabled(true);
 		// assert
 		fnTestDisabledClass($fileUploader, false);
+
+		//cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Test buttonOnly property - setter/getter", function (assert) {
+		var oFileUploader = createFileUploader({
+				buttonOnly: true
+			}),
+			$fileUploader
+			sButtonOnlyClassName = "sapUiFupButtonOnly",
+			fnTestButtonOnlyClass = function(fileUploader, bExpected) {
+				assert.equal(fileUploader.hasClass(sButtonOnlyClassName), bExpected,
+					"The FUploader should " + (bExpected ? "" : "not") + " have the " + sButtonOnlyClassName + " class.");
+			};
+
+		//Set up
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$fileUploader = oFileUploader.$();
+
+		// assert default
+		fnTestButtonOnlyClass($fileUploader, true);
+
+		// act
+		oFileUploader.setButtonOnly(false);
+		sap.ui.getCore().applyChanges();
+		$fileUploader = oFileUploader.$();
+		// assert
+		fnTestButtonOnlyClass($fileUploader, false);
 
 		//cleanup
 		oFileUploader.destroy();

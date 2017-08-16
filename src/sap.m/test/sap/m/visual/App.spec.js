@@ -11,6 +11,7 @@ describe("sap.m.App", function () {
 	};
 
 	it("should load test page", function () {
+		element(by.id("page1-title-inner")).click();
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 

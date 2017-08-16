@@ -3,9 +3,25 @@
  */
 
 // Provides class sap.ui.rta.plugin.Rename.
-sap.ui.define(['jquery.sap.global', 'sap/ui/rta/plugin/Plugin', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/OverlayUtil',
-		'sap/ui/dt/OverlayRegistry', 'sap/ui/rta/Utils', 'sap/ui/dt/DOMUtil'],
-		function(jQuery, Plugin, ElementUtil, OverlayUtil, OverlayRegistry, Utils, DOMUtil) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/rta/plugin/Plugin',
+	'sap/ui/dt/Overlay',
+	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/OverlayUtil',
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/rta/Utils',
+	'sap/ui/dt/DOMUtil'
+], function(
+	jQuery,
+	Plugin,
+	Overlay,
+	ElementUtil,
+	OverlayUtil,
+	OverlayRegistry,
+	Utils,
+	DOMUtil
+) {
 	"use strict";
 
 	/**
@@ -238,6 +254,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/plugin/Plugin', 'sap/ui/dt/Eleme
 
 		var oEditableControlDomRef = oDesignTimeMetadata.getAssociatedDomRef(oElement, vDomRef);
 
+		// if the Control is currently not visible on the screen, we have to scroll it into view
+		if (!Utils.isElementInViewport(oEditableControlDomRef)) {
+			oEditableControlDomRef.get(0).scrollIntoView();
+		}
+
 		this._$oEditableControlDomRef = jQuery(oEditableControlDomRef);
 
 		var oEditableControlOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oEditableControlDomRef.id) || oOverlay;
@@ -267,6 +288,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/plugin/Plugin', 'sap/ui/dt/Eleme
 			"text-overflow" : "clip"
 		});
 
+		Overlay.getMutationObserver().ignoreOnce({
+			target: this._$oEditableControlDomRef.get(0)
+		});
 		this._$oEditableControlDomRef.css("visibility", "hidden");
 
 		this._$editableField.one("focus", this._onEditableFieldFocus.bind(this));
@@ -321,6 +345,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/plugin/Plugin', 'sap/ui/dt/Eleme
 		}
 
 		this._oEditedOverlay.$().find(".sapUiRtaEditableField").remove();
+		Overlay.getMutationObserver().ignoreOnce({
+			target: this._$oEditableControlDomRef.get(0)
+		});
 		this._$oEditableControlDomRef.css("visibility", "visible");
 
 		if (bRestoreFocus) {

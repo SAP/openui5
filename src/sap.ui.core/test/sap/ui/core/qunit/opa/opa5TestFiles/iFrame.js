@@ -724,7 +724,7 @@ sap.ui.define([
 				success: function (aMessages) {
 					var sOpaMessage = aMessages.eq(0).text();
 					QUnit.assert.contains(sOpaMessage, "Opa timeout");
-					QUnit.assert.contains(sOpaMessage, "There are '0' open XHRs and '1' open FakeXHRs.");
+					QUnit.assert.contains(sOpaMessage, "There are 0 open XHRs and 1 open FakeXHRs.");
 					QUnit.assert.doesNotContain(sOpaMessage, "Should not happen");
 				}
 			});

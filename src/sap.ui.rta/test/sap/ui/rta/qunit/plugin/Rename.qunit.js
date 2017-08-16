@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit, sinon*/
 
 QUnit.config.autostart = false;
 
@@ -7,19 +7,34 @@ jQuery.sap.require("sap.ui.thirdparty.sinon");
 jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-sap.ui.define([ "sap/ui/layout/VerticalLayout",
-				"sap/ui/dt/DesignTime",
-				"sap/ui/rta/command/CommandFactory",
-				"sap/ui/dt/OverlayRegistry",
-				"sap/ui/fl/registry/ChangeRegistry",
-				"sap/ui/layout/form/FormContainer",
-				"sap/ui/layout/form/Form",
-				"sap/ui/layout/form/FormLayout",
-				"sap/ui/rta/plugin/Rename",
-				"sap/ui/core/Title",
-				"sap/m/Button",
-				"sap/m/Label" ],
-	function(VerticalLayout, DesignTime, CommandFactory, OverlayRegistry, ChangeRegistry, FormContainer, Form, FormLayout, RenamePlugin, Title, Button, Label) {
+sap.ui.require([
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormLayout",
+	"sap/ui/rta/plugin/Rename",
+	"sap/ui/core/Title",
+	"sap/m/Button",
+	"sap/m/Label"
+],
+function(
+	VerticalLayout,
+	DesignTime,
+	CommandFactory,
+	OverlayRegistry,
+	ChangeRegistry,
+	FormContainer,
+	Form,
+	FormLayout,
+	RenamePlugin,
+	Title,
+	Button,
+	Label
+) {
 	"use strict";
 
 	QUnit.start();
@@ -41,7 +56,7 @@ sap.ui.define([ "sap/ui/layout/VerticalLayout",
 			});
 
 			this.oFormContainer = new FormContainer("formContainer",{
-				title: new Title({
+				title: new Title("title", {
 					text: "title"
 				})
 			});
@@ -149,9 +164,9 @@ sap.ui.define([ "sap/ui/layout/VerticalLayout",
 		assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), false, "then rename is not editable for the overlay");
 	});
 
+
 	QUnit.module("Given a designTime and rename plugin are instantiated", {
 		beforeEach : function(assert) {
-			var that = this;
 			var done = assert.async();
 
 			this.oRenamePlugin = new RenamePlugin({
@@ -175,8 +190,8 @@ sap.ui.define([ "sap/ui/layout/VerticalLayout",
 							rename: {
 								changeType: "renameField",
 								domRef: function(oControl) {
-									return that.oLabel.getDomRef();
-								}
+									return this.oLabel.getDomRef();
+								}.bind(this)
 							}
 						}
 					}
@@ -184,15 +199,15 @@ sap.ui.define([ "sap/ui/layout/VerticalLayout",
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				that.oLayoutOverlay = OverlayRegistry.getOverlay(that.oVerticalLayout);
-				that.oButtonOverlay = OverlayRegistry.getOverlay(that.oButton);
-				that.oLabelOverlay = OverlayRegistry.getOverlay(that.oLabel);
-				that.oLayoutOverlay.setSelectable(true);
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
+				this.oLayoutOverlay.setSelectable(true);
 
 				sap.ui.getCore().applyChanges();
 
 				done();
-			});
+			}.bind(this));
 
 		},
 		afterEach : function(assert) {
@@ -220,6 +235,19 @@ sap.ui.define([ "sap/ui/layout/VerticalLayout",
 		assert.ok(this.oLabelOverlay.getParent().$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") === -1, "then the ScrollBar Horizontal Style Class was not set");
 	});
 
+	QUnit.test("when the title is not on the currently visible viewport and gets renamed", function(assert) {
+		var $button = this.oButton.$();
+		var $label = this.oLabel.$();
+		$label.css("margin-bottom", document.documentElement.clientHeight);
+		$button.get(0).scrollIntoView();
+
+		var oScrollSpy = sinon.spy($label.get(0), "scrollIntoView");
+
+		this.oRenamePlugin.startEdit(this.oLayoutOverlay);
+		assert.equal(oScrollSpy.callCount, 1, "then the Label got scrolled");
+		$label.get(0).scrollIntoView.restore();
+	});
+
 	QUnit.test("when the Label gets modified with DELETE key", function(assert) {
 		var done = assert.async();
 
@@ -245,7 +273,6 @@ sap.ui.define([ "sap/ui/layout/VerticalLayout",
 	});
 
 
-
 	QUnit.module("Given a Rename plugin...", {
 		beforeEach : function(){
 			this.oRenamePlugin = new RenamePlugin({
@@ -266,5 +293,4 @@ sap.ui.define([ "sap/ui/layout/VerticalLayout",
 
 		assert.strictEqual(this.oRenamePlugin._getCurrentEditableFieldText(), "\xa0", "then the empty string is replaced by a non-breaking space");
 	});
-
 });

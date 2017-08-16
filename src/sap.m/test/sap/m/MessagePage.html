@@ -93,6 +93,7 @@
                             title: "Toggle Compact Mode",
                             type: "Navigation",
                             press: function() {
+                                oSplitApp.toDetail("messagePage");
                                 jQuery('body').toggleClass('sapUiSizeCompact');
                             }
                         })
@@ -100,7 +101,7 @@
                 })]
         });
 
-        var oSplitApp = new sap.m.SplitApp({
+        var oSplitApp = new sap.m.SplitApp("splitApp", {
             detailPages: [oMessagePage, oPageWithMessagePage, oCarousel, oNavContainer],
             masterPages: [oMasterPage],
             initialDetail: "messagePage",

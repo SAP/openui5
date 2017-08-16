@@ -374,6 +374,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	 * The event is customized and the <code>textArea</code> value is calculated manually
 	 * because when the <code>showExceededText</code> is set to
 	 * <code>true</code> the exceeded text should be selected on paste.
+	 * @param {jQuery.Event} oEvent The event object
+	 * @returns {boolean} Whether the paste event is triggered
 	 */
 	TextArea.prototype.onpaste = function (oEvent) {
 		if (this.getShowExceededText()) {
@@ -464,7 +466,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 	/**
 	 * Checks if the TextArea has exceeded the value for MaxLength
-	 * @return {boolean}
+	 * @param {number} bValue The value
+	 * @returns {boolean} True if the text area exceeded the max length
 	 * @private
 	 */
 	TextArea.prototype._maxLengthIsExceeded = function (bValue) {
@@ -552,7 +555,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 	/**
 	 * Special handling for the focusing issue in SAP Fiori Client on Windows Phone.
-	 *
+	 * @param {jQuery.Event} oEvent The event object
+	 * @returns {sap.m.TextArea} <code>this</code> pointer for chaining
 	 * @private
 	 */
 	TextArea.prototype.onfocusin = function(oEvent) {

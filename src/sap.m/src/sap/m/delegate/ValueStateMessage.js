@@ -221,8 +221,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			oAccDomRef.setAttribute("aria-hidden", "true");
 			oAccDomRef.appendChild(document.createTextNode(oRB.getText("INPUTBASE_VALUE_STATE_" + sState.toUpperCase())));
 
+			var oTextDomRef = document.createElement("span");
+			oTextDomRef.id = sID + "-text";
+			oTextDomRef.setAttribute("aria-hidden", "true");
+			oTextDomRef.appendChild(document.createTextNode(sText));
+
 			oMessageDomRef.appendChild(oAccDomRef);
-			oMessageDomRef.appendChild(document.createTextNode(sText));
+			oMessageDomRef.appendChild(oTextDomRef);
 			return oMessageDomRef;
 		};
 
