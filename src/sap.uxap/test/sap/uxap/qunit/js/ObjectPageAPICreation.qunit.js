@@ -322,12 +322,7 @@
 			oSecondSection = oPage.getSections()[1],
 			bTabsMode = oPage.getUseIconTabBar(),
 			done = assert.async(),
-			iRenderCount = 0,
 			fnOnDomReady = function() {
-				iRenderCount++;
-				if (iRenderCount === 1) { // the page is invalidated during rendering (anchor bar manipulations) => the final rendering is needed for the test
-					return;
-				}
 				//act
 				oPage.scrollToSection(oSecondSection.getId(), 0, null, true);
 
@@ -352,13 +347,7 @@
 			oSecondSection = oPage.getSections()[1],
 			bTabsMode = oPage.getUseIconTabBar(),
 			done = assert.async(),
-			iRenderCount = 0,
 			fnOnDomReady = function() {
-				iRenderCount++;
-				if (iRenderCount === 1) { // the page is invalidated during rendering (anchor bar manipulations) => the final rendering is needed for the test
-					return;
-				}
-
 				//act
 				oPage.scrollToSection(oSecondSection.getSubSections()[0].getId(), 0, null, true);
 
@@ -383,13 +372,7 @@
 			oSecondSection = oPage.getSections()[1],
 			oSubSectionToScrollTo = oSecondSection.getSubSections()[1],
 			done = assert.async(),
-			iRenderCount = 0,
 			fnOnDomReady = function() {
-				iRenderCount++;
-				if (iRenderCount === 1) { // the page is invalidated during rendering (anchor bar manipulations) => the final rendering is needed for the test
-					return;
-				}
-
 				//act
 				oPage.scrollToSection(oSubSectionToScrollTo.getId(), 0, null, true);
 
@@ -414,13 +397,7 @@
 		var oPage = this.oObjectPage,
 			oSecondSection = this.oSecondSection,
 			done = assert.async(),
-			iRenderCount = 0,
 			fnOnDomReady = function() {
-				iRenderCount++;
-				if (iRenderCount === 1) { // the page is invalidated during rendering (anchor bar manipulations) => the final rendering is needed for the test
-					return;
-				}
-
 				var oExpected = {
 					oSelectedSection: oSecondSection,
 					sSelectedTitle: oSecondSection.getTitle() //subsection is promoted
@@ -442,13 +419,7 @@
 		var oPage = this.oObjectPage,
 			oSecondSection = oPage.getSections()[1],
 			done = assert.async(),
-			iRenderCount = 0,
 			fnOnDomReady = function() {
-				iRenderCount++;
-				if (iRenderCount === 1) { // the page is invalidated during rendering (anchor bar manipulations) => the final rendering is needed for the test
-					return;
-				}
-
 				//act
 				oPage.setSelectedSection(oSecondSection.getId());
 
@@ -588,13 +559,7 @@
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = this.oFirstSection,
 			done = assert.async(),
-			iRenderCount = 0,
 			fnOnDomReady = function() {
-				iRenderCount++;
-				if (iRenderCount === 1) { // the page is invalidated during rendering (anchor bar manipulations) => the final rendering is needed for the test
-					return;
-				}
-
 				var oExpected = {
 					oSelectedSection: oFirstSection,
 					sSelectedTitle: "Updated Title"
