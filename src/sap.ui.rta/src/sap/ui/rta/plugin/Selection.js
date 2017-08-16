@@ -193,13 +193,20 @@ function(
 	 * @private
 	 */
 	Selection.prototype._onMouseDown = function(oEvent) {
+		// set focus after clicking, needed only for internet explorer
 		if (sap.ui.Device.browser.name == "ie"){
+			// when the EasyAdd Button is clicked, we don't want to focus/stopPropagation.
+			// but when the OverlayScrollContainer is the target, we want it to behave like a click on an overlay
+			var oTarget = sap.ui.getCore().byId(oEvent.target.id);
+			var bTargetIsScrollContainer = oEvent.target.className === "sapUiDtOverlayScrollContainer";
 			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-			if (oOverlay.getSelectable()){
-				oOverlay.focus();
-				oEvent.stopPropagation();
-			} else {
-				oOverlay.getDomRef().blur();
+			if ((bTargetIsScrollContainer || oTarget instanceof sap.ui.dt.Overlay) && oOverlay instanceof sap.ui.dt.Overlay) {
+				if (oOverlay.getSelectable()){
+					oOverlay.focus();
+					oEvent.stopPropagation();
+				} else {
+					oOverlay.getDomRef().blur();
+				}
 			}
 		}
 	};
