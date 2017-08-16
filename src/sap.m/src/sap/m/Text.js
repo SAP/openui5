@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @protected
 	 * @type {number}
 	 */
-	Text.prototype.normalLineHeight = 1.4;
+	Text.prototype.normalLineHeight = 1.2;
 
 	/**
 	 * Determines per instance whether line height should be cached or not.
