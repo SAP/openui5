@@ -6150,6 +6150,32 @@
 		});
 	});
 
+	QUnit.test("test oDataModel callFunction: empty string Parameter", function(assert) {
+		var done = assert.async();
+		oModel.callFunction("/SalesOrder_Confirm",{
+			method: "POST",
+			urlParameters: {"SalesOrderID": ""}
+		});
+
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID=''", "Valid parameter is added to URL");
+			done();
+		});
+	});
+
+		QUnit.test("test oDataModel callFunction: null Parameter", function(assert) {
+		var done = assert.async();
+		oModel.callFunction("/SalesOrder_Confirm",{
+			method: "POST",
+			urlParameters: {"SalesOrderID": "null"}
+		});
+
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='null'", "Valid parameter is added to URL");
+			done();
+		});
+	});
+
 	QUnit.test("test oDataModel callFunction: parameters are preserved", function(assert) {
 		var done = assert.async();
 		var mUrlParams = {
