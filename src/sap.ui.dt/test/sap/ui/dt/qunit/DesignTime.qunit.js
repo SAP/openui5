@@ -318,12 +318,12 @@ function(
 			'then the overlay container has been hidden'
 		);
 		assert.strictEqual(
-			OverlayRegistry.getOverlay(this.oOuterLayout).getEnabled(),
+			OverlayRegistry.getOverlay(this.oOuterLayout).getVisible(),
 			false,
 			'then the outer overlay has been disabled'
 		);
 		assert.strictEqual(
-			OverlayRegistry.getOverlay(this.oOuterLayout).getChildren()[0].getEnabled(),
+			OverlayRegistry.getOverlay(this.oOuterLayout).getChildren()[0].getVisible(),
 			false,
 			'then the aggregation overlay of outer overlay if disabled'
 		);

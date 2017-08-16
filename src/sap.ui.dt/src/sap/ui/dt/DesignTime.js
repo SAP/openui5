@@ -649,9 +649,9 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 		$OverlayContainer[bValue ? 'show' : 'hide']();
 
 		this.getElementOverlays().forEach(function (oOverlay) {
-			oOverlay.setEnabled(bValue);
+			oOverlay.setVisible(bValue);
 			oOverlay.getChildren().forEach(function (oOverlayChild) {
-				oOverlayChild.setEnabled(bValue);
+				oOverlayChild.setVisible(bValue);
 			});
 		});
 
