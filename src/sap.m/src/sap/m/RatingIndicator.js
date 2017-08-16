@@ -224,21 +224,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-
-	/**
-	 * Sets the displayOnly mode.
-	 *
-	 * @param {boolean} bDisplayOnly
-	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @override
-	 * @public
-	 */
-	RatingIndicator.prototype.setDisplayOnly = function (bDisplayOnly) {
-		this.toggleStyleClass("sapMRIDisplayOnly", bDisplayOnly);
-		this.setProperty("displayOnly", bDisplayOnly, true);
-		return this;
-	};
-
 	/**
 	 * Handler for theme changing
 	 *
