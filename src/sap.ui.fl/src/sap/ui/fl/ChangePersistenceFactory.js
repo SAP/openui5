@@ -30,16 +30,16 @@ sap.ui.define([
 	ChangePersistenceFactory.getChangePersistenceForComponent = function(sComponentName, sAppVersion) {
 		var oChangePersistence;
 		sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
-		var oComponent = {
-			name : sComponentName,
-			appVersion : sAppVersion
-		};
 
 		if (!ChangePersistenceFactory._instanceCache[sComponentName]) {
 			ChangePersistenceFactory._instanceCache[sComponentName] = {};
 		}
 		oChangePersistence = ChangePersistenceFactory._instanceCache[sComponentName][sAppVersion];
 		if (!oChangePersistence) {
+			var oComponent = {
+				name : sComponentName,
+				appVersion : sAppVersion
+			};
 			oChangePersistence = new ChangePersistence(oComponent);
 			ChangePersistenceFactory._instanceCache[sComponentName][sAppVersion] = oChangePersistence;
 		}
