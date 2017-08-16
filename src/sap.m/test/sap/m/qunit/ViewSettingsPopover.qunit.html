@@ -25,6 +25,9 @@
 		jQuery.sap.require("sap.m.ViewSettingsPopover");
 		sinon.config.useFakeTimers = true;
 
+		// set language to en-US, since we have specific language strings tested
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+
 		var PAGE_KEYS = {
 			Sort: 'sort',
 			Filter: 'filter',
@@ -1156,9 +1159,19 @@
 						})
 					],
 					filterItems: [
-						new sap.m.ViewSettingsItem({
-							key: "1",
-							text: "item 1"
+						new sap.m.ViewSettingsFilterItem({
+							key: "filter0",
+							text: "filter item 0",
+							items: [
+								new sap.m.ViewSettingsItem({
+									key: "filter0-sub0",
+									text: "filter item 0 sub 0"
+								}),
+								new sap.m.ViewSettingsItem({
+									key: "filter0-sub1",
+									text: "filter item 0 sub 1"
+								})
+							]
 						}),
 						new sap.m.ViewSettingsItem({
 							key: "2",
@@ -1187,16 +1200,55 @@
 			jQuery.sap.delayedCall(0, this, function () {
 				var sLabelledBy,
 					domRef = this.sut._getPopover().getDomRef();
+					sPopoverAriaLabelId = this.sut._getPopoverAriaLabel();
 
 				assert.ok(domRef, "Popover is available");
 				assert.strictEqual(domRef.getAttribute("role"), "dialog", "Popover has role='dialog'");
 
 				sLabelledBy = domRef.getAttribute("aria-labelledby");
 				assert.ok(sLabelledBy, "Has associated aria-labelledby");
-				assert.ok(jQuery("#" + sLabelledBy).length, "Popover's label element exists");
+				assert.ok(sLabelledBy.indexOf(sPopoverAriaLabelId), "Popover's label element exists");
 
 				assert.ok(domRef.querySelectorAll("[role=toolbar]").length, "Has div with role=toolbar inside");
 				done();
+			});
+		});
+
+		QUnit.test("Dialog ariaLabelledBy element changes its text when navigating to filter details page", function (assert) {
+			var done = assert.async();
+
+			assert.expect(5);
+
+			jQuery.sap.delayedCall(0, this, function () {
+				var sLabelledBy,
+					domRef = this.sut._getPopover().getDomRef(),
+					oFilterByButton = this.sut._getSegmentedButton().getItems()[1],
+					oFilterListItem0 = this.sut._getFilterList().getItems()[0];
+
+				//Act
+				oFilterByButton.firePress();
+				this.sut._getNavContainer().attachEventOnce("afterNavigate", function() {
+					var sPopoverAriaLabelId = this.sut._getPopoverAriaLabel();
+
+					//Assert
+					sLabelledBy = domRef.getAttribute("aria-labelledby");
+					assert.ok(sLabelledBy, "Has associated aria-labelledby");
+					assert.ok(sLabelledBy.indexOf(sPopoverAriaLabelId), "Has associated aria-labelledby with custom text");
+					assert.ok(jQuery("#" + sPopoverAriaLabelId).length, "Popover's label element exists");
+
+					assert.equal(jQuery("#" + sPopoverAriaLabelId).text(), "Filter By:filter item 0", "Popover's label element has certain text");
+
+					//Navigate Back
+					//Act
+					this.sut._getNavContainer().attachEventOnce("afterNavigate", function() {
+						//Assert
+						assert.equal(jQuery("#" + sPopoverAriaLabelId).text(), "Filter By", "After back navigation from Filter Details page, Popover's label element has certain text");
+						done();
+					});
+					jQuery("[title='Navigate Back']").control()[0].firePress();
+
+				}.bind(this));
+				oFilterListItem0.firePress();
 			});
 		});
 

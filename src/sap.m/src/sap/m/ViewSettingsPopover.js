@@ -247,7 +247,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @param {object} oControl Instance of the control that triggered the opening
 		 */
 		ViewSettingsPopover.prototype.openBy = function (oControl) {
-			this._getPopover(oControl).openBy(oControl);
+			var oPopover = this._getPopover(oControl);
+
+			oPopover.openBy(oControl);
 			if (sap.ui.Device.system.phone) {
 				this._showContentFor(this._determinePageToOpen());
 			} else {
@@ -261,6 +263,10 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			// if only one tab is present, directly show it's content
 			if (this._getSegmentedButton().getItems() && this._getSegmentedButton().getItems().length === 1) {
 				this._showContentFor(this._determinePageToOpen());
+			}
+
+			if (oPopover.getAriaLabelledBy() && oPopover.getAriaLabelledBy().indexOf(this._getPopoverAriaLabel()) === -1) {
+				oPopover.addAriaLabelledBy(this._getPopoverAriaLabel());
 			}
 		};
 
@@ -358,6 +364,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @private
 		 */
 		ViewSettingsPopover.prototype._showContentFor = function (sPageId, oParentItem, bDisableSlideEffect) {
+			var oPopoverAriaLabelledBy = sap.ui.getCore().byId(this._getPopoverAriaLabel()),
+				sAriaText;
+
 			this._getPopover().setContentHeight('300px');
 			this._getPopover().setContentWidth('300px');
 
@@ -368,15 +377,16 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			this._addPageContents(sPageId);
 
 			if (sPageId === this._tabMap['filterDetail']) {
-				this._updateTitleText(this._getText('VIEWSETTINGS_TITLE_FILTERBY') + oParentItem.getTitle(), true);
+				sAriaText = this._updateTitleText(this._getText('VIEWSETTINGS_TITLE_FILTERBY') + oParentItem.getTitle(), true);
 				this._goToDetailsPage(oParentItem, bDisableSlideEffect);
 			} else {
-				this._updateTitleText(sPageId);
+				sAriaText = this._updateTitleText(sPageId);
 				if (sPageId === this._tabMap['filter']) {
 					this._updateFilterListItemsCount();
 				}
 				this._goToMainPage();
 			}
+			oPopoverAriaLabelledBy.setText(sAriaText);
 			this._getSegmentedButton().setSelectedKey(sPageId); // make sure segmented button is always in sync
 			this._currentPageId = sPageId;
 		};
@@ -385,6 +395,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * Updates the text of the title aggregation.
 		 * @param {string} sText String to be shown as new title
 		 * @param {boolean} bSkipTranslate Whether to translate a key ot displayed a string directly
+		 * @returns {string} the computed title text
 		 * @private
 		 */
 		ViewSettingsPopover.prototype._updateTitleText = function (sText, bSkipTranslate) {
@@ -405,6 +416,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			} else {
 				this._getTitle().setText(sString);
 			}
+			return sString;
 		};
 
 		/**
