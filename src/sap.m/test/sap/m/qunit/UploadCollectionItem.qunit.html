@@ -422,6 +422,18 @@
 			assert.equal(bDownloadResult, false, "Item was downloaded successfully.");
 		});
 
+		QUnit.test("_splitFileName extracts the correct information", function(assert) {
+			//Arrange
+			var sFileName = "pic1.jpg";
+			//Act
+			var oResultWithDot = this.oUploadCollectionItem._splitFileName(sFileName, true),
+				oResultWithoutDot = this.oUploadCollectionItem._splitFileName(sFileName, false);
+			//Assert
+			assert.equal(oResultWithDot.name, "pic1", "File name has been extracted successfully");
+			assert.equal(oResultWithDot.extension, ".jpg", "File extension with dot has been extracted successfully");
+			assert.equal(oResultWithoutDot.extension, "jpg", "File extension without dot has been extracted successfully");
+		});
+
 		QUnit.module("Items related control instance management", {
 			beforeEach : function() {
 				this.oItem = new sap.m.UploadCollectionItem();
