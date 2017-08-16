@@ -12,24 +12,21 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          * @param {object} [mSettings] Initial settings for the new control
          *
          * @class
-         * <strong><i>Overview</i></strong>
-         *
-         * A {@link sap.m.RangeSlider} control represents a numerical interval and two handles to select a sub-range within it.
+         * Represents a numerical interval and two handles to select a sub-range within it.
+         * <h3>Overview</h3>
          * The purpose of the control is to enable visual selection of sub-ranges within a given interval.
-         *
-         * <strong>Notes:</strong>
+         * <h4>Notes:<h4>
          * <ul>
          * <li>The RangeSlider extends the functionality of the {@link sap.m.Slider Slider}</li>
          * <li>The right and left handle can be moved individually and their positions could therefore switch.</li>
          * <li>The entire range can be moved along the interval.</li>
          * <li>The right and left handle can select the same value</li>
          * </ul>
-         * <strong><i>Usage</i></strong>
          *
+         * <h3>Usage</h3>
          * The most common usecase is to select and move sub-ranges on a continuous numerical scale.
          *
-         * <strong><i>Responsive Behavior</i></strong>
-         *
+         * <h3>Responsive Behavior</h3>
          * You can move the currently selected range by clicking on it and dragging it along the interval.
          * @extends sap.m.Slider
          *
@@ -783,7 +780,8 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
          * Get the range normalized in the boundaries.
          * @param {Array} aRange range value
          * @param {Array} aInitialRange last range values
-         * @param {Array} aHandles
+         * @param {HTMLElement} [aHandles] The handles of the slider
+         * @returns {number} The normalized range
          * @private
          * @override
          */
