@@ -49,7 +49,7 @@
 				items="{path:'/ProductCollection'}">
 
 				<columns>
-					<Column minScreenWidth="Tablet" demandPopin="true">
+					<Column>
 						<Text text="Name"/>
 					</Column>
 					<Column minScreenWidth="Tablet" demandPopin="true">
