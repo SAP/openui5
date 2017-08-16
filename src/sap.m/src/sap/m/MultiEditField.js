@@ -54,24 +54,34 @@ sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "s
 				nullable: {
 					type: "boolean",
 					group: "Appearance",
-					defaultValue: true,
+					defaultValue: false,
 					invalidate: true
 				}
-			},
+			 },
+
 			aggregations: {
-				/**
-				* Defines personalization items.
-				*/
-				unit: {
-					type: "sap.m.MultiEditField",
-					multiple: false
-				},
 				/**
 				 * The items that should be displayed after the predefined items.
 				 */
 				items: {
 					type: "sap.ui.core.Item",
 					multiple: true
+				}
+			},
+
+			events: {
+				/**
+				 * This event is fired when the value in the selection field is changed.
+				 */
+				change: {
+					parameters: {
+						/**
+						 * The selected item.
+						 */
+						value: {
+							type: "string"
+						}
+					}
 				}
 			}
 		}
@@ -93,30 +103,60 @@ sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "s
 				text: this._oRb.getText("MULTI_EDIT_NEW_TEXT")
 			})
 		};
+		//this.setPrefilledItemTexts();
+		this.setPrefilledItems();
 	};
 
-	MultiEditField.prototype.onBeforeRendering = function() {
-		var oItem;
-		var i = 0;
-		var sGetter;
 
-		for (var property in this._oPrefilledItems) {
-			oItem = this._oPrefilledItems[property];
-			sGetter = "get" + jQuery.sap.charToUpperCase(property, 0);
+	MultiEditField.prototype.setPrefilledItems = function() {
+		var oItems = this._oPrefilledItems,
+			i = 0;
 
-			if (this.indexOfItem(oItem) === -1) {
-				this.insertAggregation("items", oItem, i, true);
-			} else if (this.indexOfItem(oItem) !== -1 && this[sGetter] && !this[sGetter]()) {
-				this.removeAggregation("items", oItem);
+		if (this.indexOfItem(oItems.keep) < 0) {
+			this.insertItem(oItems.keep, i++, true);
+		}
+
+		if (this.getNullable()) {
+			if (this.indexOfItem(oItems.nullable) < 0) {
+				this.insertItem(oItems.nullable, i++, true);
 			}
-			i++;
+		} else if (this.indexOfItem(oItems.nullable) >= 0) {
+			this.removeItem(oItems.nullable);
+		}
+
+		if (this.getShowValueHelp()) {
+			if (this.indexOfItem(oItems.showValueHelp) < 0) {
+				this.insertItem(oItems.showValueHelp, i++, true);
+			}
+		} else { // noinspection JSLint
+			if (this.indexOfItem(oItems.showValueHelp) >= 0) {
+						this.removeItem(oItems.showValueHelp);
+					}
 		}
 	};
 
+	MultiEditField.prototype.setNullable = function(bActive) {
+		if (this.getNullable() !== bActive) {
+			this.setProperty("nullable", bActive);
+			this.setPrefilledItems();
+		}
+	};
+
+	MultiEditField.prototype.setShowValueHelp = function(bActive) {
+		if (this.getShowValueHelp() !== bActive) {
+			this.setProperty("showValueHelp", bActive);
+			this.setPrefilledItems();
+		}
+	};
+	MultiEditField.prototype.onBeforeRendering = function() {
+	};
+
 	MultiEditField.prototype.exit = function() {
-		if (this._oPrefilledItems) {
-			for (var i = 0;  i < this._oPrefilledItems.length; i++) {
-				this._oPrefilledItems[i].destroy();
+		var sProperty;
+		var oPrefilledItems = this._oPrefilledItems;
+		if (oPrefilledItems) {
+			for (sProperty in oPrefilledItems) {
+				oPrefilledItems[sProperty].destroy();
 			}
 			this._oPrefilledItems = null;
 		}
