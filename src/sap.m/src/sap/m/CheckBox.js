@@ -69,9 +69,19 @@ sap.ui.define(['jquery.sap.global',
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
 
 			/**
-			 * Width of the checkbox`s label
+			 * Determines the total width of the control or the width of its label only, depending on the value of <code>useEntireWidth</code>.
+			 *
+			 * <b>Note:</b> When <code>useEntireWidth</code> is set to <code>true</code>, <code>width</code> is applied to the control as a whole (checkbox and label). Otherwise, <code>width</code> is applied to the label only.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
+
+			/**
+			 * Indicates if the given width will be applied to the control as a whole or to its label only.
+			 *
+			 * <b>Note:</b> by default the width is set to the label
+			 * @since 1.52
+			 */
+			useEntireWidth : {type : "boolean", group: "Appearance", defaultValue : false },
 
 			/**
 			 * Flag to switch on activeHandling, when it is switched off, there will be no visual changes on active state. Default value is 'true'
@@ -172,11 +182,16 @@ sap.ui.define(['jquery.sap.global',
 		return this;
 	};
 
-	CheckBox.prototype.setWidth = function (sWidth){
-		var oLabel = this._getLabel();
-
+	CheckBox.prototype.setWidth = function (sWidth) {
 		this.setProperty("width", sWidth, true);
-		oLabel.setWidth(sWidth);
+		this._setWidth();
+
+		return this;
+	};
+
+	CheckBox.prototype.setUseEntireWidth = function (bUseEntireWidth) {
+		this.setProperty("useEntireWidth", bUseEntireWidth, true);
+		this._setWidth();
 
 		return this;
 	};
@@ -310,6 +325,25 @@ sap.ui.define(['jquery.sap.global',
 		}
 
 		return this.getAggregation("_label");
+	};
+
+	/**
+	 * Sets the width of the CheckBox control or its label, based on the <code>useEntireWidth</code> property.
+	 * @param {string} sWidth - CSS size to be set as width
+	 * @private
+	 */
+	CheckBox.prototype._setWidth = function() {
+		var oLabel = this._getLabel(),
+			$oCheckBox = this.$(),
+			sWidth = this.getWidth();
+
+		if (this.getUseEntireWidth()) {
+			oLabel.setWidth("");
+			$oCheckBox.outerWidth(sWidth);
+		} else {
+			$oCheckBox.outerWidth("");
+			oLabel.setWidth(sWidth);
+		}
 	};
 
 	/**

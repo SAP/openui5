@@ -32,7 +32,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/ValueSta
 			bEditable = oCheckBox.getEditable(),
 			oCbLabel = oCheckBox.getAggregation("_label"),
 			bInErrorState = ValueState.Error === oCheckBox.getValueState(),
-			bInWarningState = ValueState.Warning === oCheckBox.getValueState();
+			bInWarningState = ValueState.Warning === oCheckBox.getValueState(),
+			bUseEntireWidth = oCheckBox.getUseEntireWidth();
 
 		// CheckBox wrapper
 		oRm.write("<div");
@@ -58,6 +59,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/ValueSta
 
 		oRm.writeControlData(oCheckBox);
 		oRm.writeClasses();
+
+		if (bUseEntireWidth) {
+			oRm.addStyle("width", oCheckBox.getWidth());
+			oRm.writeStyles();
+		}
 
 		var sTooltip = ValueStateSupport.enrichTooltip(oCheckBox, oCheckBox.getTooltip_AsString());
 		if (sTooltip) {
