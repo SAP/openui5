@@ -30,7 +30,7 @@ sap.ui.define([
 		if (oConfig.timeoutWaiter) {
 			_timeoutWaiter.extendConfig(oConfig.timeoutWaiter);
 			var iMaxDelay = oConfig.timeoutWaiter.maxDelay;
-			// _promiseWaiter's maxDelay should be at least as big as _timeoutWaiter's
+			// _promiseWaiter's maxDelay should be at least as big as _timeoutWaiter's delay
 			if (iMaxDelay) {
 				_promiseWaiter.extendConfig({maxDelay: iMaxDelay});
 			}
@@ -50,7 +50,7 @@ sap.ui.define([
 		_autoWaiterLogCollector.start();
 		fnCheck();
 
-		function fnCheck () {
+		function fnCheck() {
 			var pollTimeElapsed = (Date.now() - pollStartTime) / 1000;
 			if (pollTimeElapsed <= config.timeout) {
 				if (!_autoWaiter.hasToWait()) {
@@ -77,7 +77,7 @@ sap.ui.define([
 		}
 	}
 
-	function validateConfig (oConfig) {
+	function validateConfig(oConfig) {
 		oConfigValidator.validate({
 			inputToValidate: oConfig,
 			validationInfo: {

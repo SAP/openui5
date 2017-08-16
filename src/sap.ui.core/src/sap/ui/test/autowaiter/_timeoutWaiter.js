@@ -5,8 +5,9 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/test/_OpaLogger",
-	"sap/ui/test/_ParameterValidator"
-], function ($, _OpaLogger, _ParameterValidator) {
+	"sap/ui/test/_ParameterValidator",
+	"sap/ui/test/autowaiter/_utils"
+], function ($, _OpaLogger, _ParameterValidator, _utils) {
 	"use strict";
 
 	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._timeoutWaiter");
@@ -33,29 +34,51 @@ sap.ui.define([
 		var fnOriginalClear = window[sClearName];
 		window[sSetName] = function (fnCallback, iDelay) {
 			var fnWrappedCallback = function () {
-				iCurrentDepth = mTimeouts[iID] + 1;
+				iCurrentDepth = mTimeouts[iID].depth + 1;
 				delete mTimeouts[iID];
 				try {
 					fnCallback();
+					oLogger.trace("Timeout with ID " + iID + " finished");
 				} finally {
 					iCurrentDepth = 0;
 				}
 			};
 
+			var iID;
+			var mPendingTimeout = {
+				depth: iCurrentDepth,
+				delay: iDelay,
+				func: _utils.functionToString(fnCallback),
+				stack: _utils.resolveStackTrace()
+			};
+
 			// do not track long runners and call the original directly
+			// any deeper nested timeouts are non-blocking and will not be wrapped
 			if (iDelay >= config.maxDelay) {
-				oLogger.trace("Long-running timeout is ignored. Timeout delay " + iDelay + " reached the limit of " + config.maxDelay);
-				return fnOriginal.apply(this, arguments);
+				iID = fnOriginal.apply(this, arguments);
+				oLogger.trace("Timeout delay " + iDelay + " reached the limit of " + config.maxDelay +
+					". Long-running timeout is ignored:" + createLogForTimeout(iID, mPendingTimeout));
+			} else {
+				iID = fnOriginal.call(this, fnWrappedCallback, iDelay);
+				oLogger.trace("Timeout with ID " + iID + " scheduled. Delay: " + iDelay + " Depth: " + iCurrentDepth);
+				mTimeouts[iID] = mPendingTimeout;
+
+				// do not track non-blocking timeouts
+				// these are deeply nested timeouts which probably form a continuous polling process
+				// continue to wrap deeper calls in order to correctly ignore them later
+				if (iCurrentDepth >= config.maxDepth) {
+					oLogger.trace("Timeout depth reached the limit of " + config.maxDepth +
+						". Non-blocking timeout is ignored:" + createLogForTimeout(iID, mTimeouts[iID]));
+					mTimeouts[iID].nonBlocking = true;
+				}
 			}
 
-			var iID = fnOriginal.call(this, fnWrappedCallback, iDelay);
-
-			mTimeouts[iID] = iCurrentDepth;
 			return iID;
 		};
 
 		window[sClearName] = function (iID) {
 			delete mTimeouts[iID];
+			oLogger.trace("Timeout with ID " + iID + " cleared");
 			return fnOriginalClear.apply(this, arguments);
 		};
 	}
@@ -63,22 +86,27 @@ sap.ui.define([
 	createTimeoutWrapper("Timeout");
 	createTimeoutWrapper("Immediate");
 
+	function createLogForTimeout(iTimeoutID, mTimeout) {
+		return "\nTimeout: ID: " + iTimeoutID + " Delay: " + mTimeout.delay + " Depth: " + mTimeout.depth +
+			" Function: " + mTimeout.func + " Stack: " + mTimeout.stack;
+	}
+
+	function logPendingTimeouts(aBlockingTimeoutIds) {
+		var sLogMessage = "There are " + aBlockingTimeoutIds.length + " open blocking timeouts";
+		aBlockingTimeoutIds.forEach(function (iTimeoutID) {
+			sLogMessage += createLogForTimeout(iTimeoutID, mTimeouts[iTimeoutID]);
+		});
+		oHasPendingLogger.debug(sLogMessage);
+	}
 
 	return {
 		hasPending: function () {
-			var aTotalTimeouts = Object.keys(mTimeouts);
-			var iNumberOfBlockingTimeouts = aTotalTimeouts.filter(function (iID) {
-				var bIgnored = mTimeouts[iID] >= config.maxDepth;
-				if (bIgnored) {
-					oLogger.trace("Deep-nested timeout with ID " + iID + " is ignored. Timeout depth " + mTimeouts[iID] +
-						" reached the limit of " + config.maxDepth);
-				}
-				return !bIgnored;
-			}).length;
-			var bHasPendingTimeouts = iNumberOfBlockingTimeouts > 0;
+			var aBlockingTimeoutIds = Object.keys(mTimeouts).filter(function (iID) {
+				return !mTimeouts[iID].nonBlocking;
+			});
+			var bHasPendingTimeouts = aBlockingTimeoutIds.length > 0;
 			if (bHasPendingTimeouts) {
-				oHasPendingLogger.debug("There are '" + iNumberOfBlockingTimeouts + "' open blocking Timeouts. And " +
-					(aTotalTimeouts.length - iNumberOfBlockingTimeouts) + " non blocking timeouts");
+				logPendingTimeouts(aBlockingTimeoutIds);
 			}
 			return bHasPendingTimeouts;
 		},

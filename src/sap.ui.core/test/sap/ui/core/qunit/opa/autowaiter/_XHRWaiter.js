@@ -47,12 +47,14 @@ sap.ui.define([
 				aRequests.push(xhr);
 			};
 			this.aRequests = aRequests;
-			this.oDebugSpy = sinon.spy(aLoggers[0], "debug");
+			this.oTraceSpy = sinon.spy(aLoggers[0], "trace");
+			this.oDebugSpy = sinon.spy(aLoggers[1], "debug");
 		},
 		afterEach: function () {
 			sinon.FakeXMLHttpRequest.useFilters = true;
 			this.oXHR.restore();
 			this.oDebugSpy.restore();
+			this.oTraceSpy.restore();
 		}
 	});
 
@@ -60,18 +62,25 @@ sap.ui.define([
 		var oXHR = new XMLHttpRequest();
 		oXHR.open("GET", "/foo", true);
 		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
+		sinon.assert.notCalled(this.oDebugSpy);
+		sinon.assert.notCalled(this.oTraceSpy);
 	});
 
 	QUnit.test("Should return pending request if there is a send xhr", function (assert) {
 		createAndSendXHR("/foo");
 		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
-		sinon.assert.calledWith(this.oDebugSpy, "There are '0' open XHRs and '1' open FakeXHRs.\nFakeXHR: URL: '/foo' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 0 open XHRs and 1 open FakeXHRs.\nFakeXHR: URL: '/foo' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "New pending FakeXHR:\nFakeXHR: URL: '/foo' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 0 open XHRs and 1 open FakeXHRs.\nFakeXHR: URL: '/foo' Method: 'GET' Stack: ");
 	});
 
 	QUnit.test("Should return that there is no open xhr when the request has been responded", function (assert) {
 		createAndSendXHR("/foo");
 		this.aRequests[0].respond(200, {}, '{}');
+		sinon.assert.calledWithMatch(this.oTraceSpy, "New pending FakeXHR:\nFakeXHR: URL: '/foo' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "FakeXHR finished:\nFakeXHR: URL: '/foo' Method: 'GET'");
 		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
+		sinon.assert.notCalled(this.oDebugSpy);
 	});
 
 	QUnit.test("Should return that there is an open xhr when 1 of 2 request have been responded", function (assert) {
@@ -79,9 +88,8 @@ sap.ui.define([
 		createAndSendXHR("/foo");
 		createAndSendXHR("/bar");
 		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
-		sinon.assert.calledWith(this.oDebugSpy, "There are '0' open XHRs and '2' open FakeXHRs." +
-			"\nFakeXHR: URL: '/foo' Method: 'GET'" +
-			"\nFakeXHR: URL: '/bar' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 0 open XHRs and 2 open FakeXHRs." +
+			"\nFakeXHR: URL: '/foo' Method: 'GET' Stack: ");
 		this.aRequests[0].respond(200, {}, '{}');
 		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		this.aRequests[1].respond(200, {}, '{}');
@@ -92,6 +100,22 @@ sap.ui.define([
 		var oXHR = createAndSendXHR("/foo");
 		oXHR.abort();
 		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "New pending FakeXHR");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "FakeXHR finished");
+	});
+
+	QUnit.test("Should log args and execution stack trace", function callingFunction (assert) {
+		createAndSendXHR("/foo");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "New pending FakeXHR:\nFakeXHR: URL: '/foo' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "callingFunction");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 0 open XHRs and 1 open FakeXHRs");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "\nFakeXHR: URL: '/foo' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "callingFunction");
+		this.aRequests[0].respond(200, {}, '{}');
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "FakeXHR finished:\nFakeXHR: URL: '/foo' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "callingFunction");
 	});
 
 	QUnit.module("XHRWaiter - sinon cleanup");
@@ -122,10 +146,12 @@ sap.ui.define([
 
 	QUnit.module("XHR Waiter - Native XHR", {
 		beforeEach: function () {
-			this.oDebugSpy = sinon.spy(aLoggers[0], "debug");
+			this.oTraceSpy = sinon.spy(aLoggers[0], "trace");
+			this.oDebugSpy = sinon.spy(aLoggers[1], "debug");
 		},
 		afterEach: function () {
 			this.oDebugSpy.restore();
+			this.oTraceSpy.restore();
 		}
 	});
 
@@ -139,6 +165,7 @@ sap.ui.define([
 	QUnit.test("Should return pending request if there is a send xhr", function (assert) {
 		var oXHR = createAndSendXHR("actions.js");
 		assert.ok(XHRWaiter.hasPending(), "there are no pending xhrs");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "New pending XHR:\nXHR: URL: 'actions.js' Method: 'GET'");
 		return whenRequestDone(oXHR);
 	});
 
@@ -167,10 +194,9 @@ sap.ui.define([
 			var oXHR2 = createAndSendXHR("/bar");
 
 			assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
-
-			sinon.assert.calledWith(this.oDebugSpy, "There are '2' open XHRs and '0' open FakeXHRs." +
-				"\nXHR: URL: '/foo' Method: 'GET'" +
-				"\nXHR: URL: '/bar' Method: 'GET'");
+			sinon.assert.calledWithMatch(this.oDebugSpy, "There are 2 open XHRs and 0 open FakeXHRs." +
+				"\nXHR: URL: '/foo' Method: 'GET' Stack: ");
+			sinon.assert.calledWithMatch(this.oDebugSpy, "\nXHR: URL: '/bar' Method: 'GET' Stack:");
 
 			var oFirstRequestPromise = whenRequestDone(oXHR1);
 			var oSecondRequestPromise = whenRequestDone(oXHR2);
@@ -205,6 +231,21 @@ sap.ui.define([
 		var oXHR = createAndSendXHR("actions.js");
 		oXHR.abort();
 		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "New pending XHR:\nXHR: URL: 'actions.js' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "XHR finished:\nXHR: URL: 'actions.js' Method: 'GET'");
+	});
+
+	QUnit.test("Should log args and execution stack trace", function callingFunction (assert) {
+		var oXHR = createAndSendXHR("actions.js");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "New pending XHR:\nXHR: URL: 'actions.js' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oTraceSpy, "callingFunction");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 1 open XHRs and 0 open FakeXHRs");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "\nXHR: URL: 'actions.js' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "callingFunction");
+		return whenRequestDone(oXHR).then(function () {
+			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
+		});
 	});
 
 	QUnit.module("XHR Waiter - sinon fake server", {
@@ -220,7 +261,7 @@ sap.ui.define([
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.respondWith("GET", "/foo",
 				[200, {},'{}']);
-			this.oDebugSpy = sinon.spy(aLoggers[0], "debug");
+			this.oDebugSpy = sinon.spy(aLoggers[1], "debug");
 		},
 		afterEach: function () {
 			this.oServer.restore();
@@ -249,14 +290,14 @@ sap.ui.define([
 		createAndSendXHR("foo");
 		var oXHR = createAndSendXHR("actions.js");
 		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
-		sinon.assert.calledWith(this.oDebugSpy, "There are '1' open XHRs and '1' open FakeXHRs." +
-			"\nXHR: URL: 'actions.js' Method: 'GET'" +
-			"\nFakeXHR: URL: 'foo' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 1 open XHRs and 1 open FakeXHRs");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "\nXHR: URL: 'actions.js' Method: 'GET' Stack: ");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "\nFakeXHR: URL: 'foo' Method: 'GET' Stack: ");
 		this.oServer.respond();
 		this.oDebugSpy.reset();
 		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
-		sinon.assert.calledWith(this.oDebugSpy, "There are '1' open XHRs and '0' open FakeXHRs." +
-			"\nXHR: URL: 'actions.js' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 1 open XHRs and 0 open FakeXHRs." +
+			"\nXHR: URL: 'actions.js' Method: 'GET' Stack: ");
 		return whenRequestDone(oXHR).then(function () {
 			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});
@@ -278,7 +319,7 @@ sap.ui.define([
 
 			oMockServer.start();
 			this.oMockServer = oMockServer;
-			this.oDebugSpy = sinon.spy(aLoggers[0], "debug");
+			this.oDebugSpy = sinon.spy(aLoggers[1], "debug");
 		},
 		afterEach: function () {
 			this.oMockServer.stop();
@@ -290,8 +331,8 @@ sap.ui.define([
 	QUnit.test("Should hook into a oData request", function (assert) {
 		var oXHR = createAndSendXHR("/my/odata/service/Products");
 		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
-		sinon.assert.calledWith(this.oDebugSpy, "There are '0' open XHRs and '1' open FakeXHRs." +
-			"\nFakeXHR: URL: '/my/odata/service/Products' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 0 open XHRs and 1 open FakeXHRs." +
+			"\nFakeXHR: URL: '/my/odata/service/Products' Method: 'GET' Stack: ");
 		return whenRequestDone(oXHR).then(function () {
 			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});
@@ -300,8 +341,8 @@ sap.ui.define([
 	QUnit.test("Should hook into a defaked mockserver request", function (assert) {
 		var oXHR = createAndSendXHR("actions.js");
 		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
-		sinon.assert.calledWith(this.oDebugSpy, "There are '1' open XHRs and '0' open FakeXHRs." +
-			"\nXHR: URL: 'actions.js' Method: 'GET'");
+		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 1 open XHRs and 0 open FakeXHRs." +
+			"\nXHR: URL: 'actions.js' Method: 'GET' Stack: ");
 		return whenRequestDone(oXHR).then(function () {
 			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});
