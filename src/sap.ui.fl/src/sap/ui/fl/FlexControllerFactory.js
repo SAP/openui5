@@ -73,10 +73,9 @@ sap.ui.define([
 		if (Utils.isApplication(oManifest)) {
 			var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 			ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
-				.then(function (fnGetChangesMap) {
-						oComponent.addPropagationListener(oFlexController.applyChangesOnControl.bind(oFlexController, fnGetChangesMap, oComponent));
-					}
-				);
+			.then(function (fnGetChangesMap) {
+				oComponent.addPropagationListener(oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, oComponent));
+			});
 		}
 	};
 
