@@ -604,6 +604,40 @@
 
 			QUnit.module("Screen reader");
 
+			QUnit.test("Role presentation should be present", function(assert) {
+				var done = assert.async(),
+					oButton = new sap.m.Button({
+						text : "Open ActionSheet",
+						press : function() {
+							oActionSheet.openBy(this);
+						}
+					}),
+					oActionSheet = new sap.m.ActionSheet({
+						buttons: [
+							new sap.m.Button({
+								id: 'oButton2',
+								type: sap.m.ButtonType.Reject,
+								text: "Reject Action"
+							})
+						]
+					}),
+					oActionSheetContentDivRole;
+
+				page.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+
+				setTimeout(function(){
+					oActionSheetContentDivRole = oActionSheet.getDomRef().getAttribute("role");
+					assert.equal(oActionSheetContentDivRole, "presentation", 'role=presentation should be present');
+
+					oActionSheet.close();
+					oButton.destroy();
+					oActionSheet.destroy();
+					done();
+				});
+			});
+
 			QUnit.test("Popup should have ariaLabelledBy that points to the sPopupHiddenLabelId", function(assert) {
 				var done = assert.async(),
 					oButton = new sap.m.Button({
