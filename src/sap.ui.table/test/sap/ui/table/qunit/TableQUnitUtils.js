@@ -12,6 +12,7 @@
 				"src": "sap.ui.core.URI",
 				"alt": "string",
 				"visible": "boolean",
+				"focusable": "boolean",
 				"tabbable": "boolean",
 				"index": "int", //Results in different behavior of the control in different columns
 				"width": "sap.ui.core.CSSSize" // Table sets "width" for the title text
@@ -27,6 +28,8 @@
 			oRm.writeClasses();
 			if (oControl.getTabbable()) {
 				oRm.writeAttribute("tabindex", "0");
+			} else if (oControl.getFocusable()) {
+				oRm.writeAttribute("tabindex", "-1");
 			}
 			oRm.write(">");
 			oRm.writeEscaped(oControl.getText() || oControl.getAlt() || "");
@@ -50,8 +53,8 @@
 			oRm.writeAttribute("type", "text");
 			oRm.writeAttribute("value", oControl.getText());
 			oRm.writeClasses();
-			if (!oControl.getTabbable()) {
-				oRm.writeAttribute("tabindex", "-1");
+			if (oControl.getTabbable()) {
+				oRm.writeAttribute("tabindex", "0");
 			}
 			oRm.write(">");
 		}
