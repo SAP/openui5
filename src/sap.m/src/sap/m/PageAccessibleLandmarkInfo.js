@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	/**
 	 * Constructor for a new <code>sap.m.PageAccessibleLandmarkInfo</code> element.
 	 *
-	 * @param {string} [sId] Id for the new element, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new element
 	 *
 	 * @class
@@ -113,7 +113,9 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * of the given area (e.g. <code>"root"</code>).
 	 *
 	 * Must only be used with the <code>sap.m.Page</code> control!
-	 *
+	 * @param {sap.m.PageAccessibleLandmarkInfo} oInstance The ageAccessibleLandmarkInfo instance
+	 * @param {string} sArea The page area name
+	 * @returns {string} The landmark information
 	 * @private
 	 */
 	PageAccessibleLandmarkInfo._getLandmarkInfo = function(oInstance, sArea) {
@@ -145,7 +147,10 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * Writes the landmark information of the given page and area (e.g. <code>"root"</code>).
 	 *
 	 * Must only be used with the <code>sap.m.Page</code> control!
-	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager instance
+	 * @param {sap.m.Page} oPage The page instance
+	 * @param {string} sArea The page area name
+	 * @returns {sap.m.PageAccessibleLandmarkInfo} <code>this</code> to facilitate method chaining.
 	 * @private
 	 */
 	PageAccessibleLandmarkInfo._writeLandmarkInfo = function(oRm, oPage, sArea) {

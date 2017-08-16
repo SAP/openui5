@@ -478,7 +478,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		/**
 		 * Create internal header
-		 * @returns {sap.m.IBar}
+		 * @returns {sap.m.IBar} The header instance
 		 * @private
 		 */
 
@@ -500,7 +500,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		/**
 		 * Returns the custom or internal header
-		 * @returns {sap.m.IBar}
+		 * @returns {sap.m.IBar} The header instance
 		 * @private
 		 */
 		Page.prototype._getAnyHeader = function () {
@@ -516,7 +516,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		/**
 		 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
-		 * @returns {sap.ui.core.ScrollEnablement}
+		 * @returns {sap.ui.core.ScrollEnablement} The scroll enablement delegate
 		 * @private
 		 */
 		Page.prototype.getScrollDelegate = function () {
@@ -531,7 +531,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 *
 		 * @param {int} y The vertical pixel position to scroll to. Scrolling down happens with positive values.
 		 * @param {int} time The duration of animated scrolling. To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
-		 * @type sap.m.Page
+		 * @returns {sap.m.Page} <code>this</code> to facilitate method chaining.
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -597,13 +597,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			return this._getInternalHeader().destroyContentRight();
 		};
 
-		/**
-		 * Fiori 2.0 adaptation
-		 */
+
 		Page.prototype.setCustomHeader = function(oHeader) {
 
 			this.setAggregation("customHeader", oHeader);
-
+			/*
+			 * Runs Fiori 2.0 adaptation for the header
+			 */
 			if (oHeader && this.mEventRegistry["_adaptableContentChange"] ) {
 				this.fireEvent("_adaptableContentChange", {
 					"parent": this,
