@@ -68,7 +68,7 @@
 		assert.ok(!oExtension._delegate, "Delegate cleared");
 	});
 
-	QUnit.module("Scroll bars", {
+	QUnit.module("Scrollbars", {
 		beforeEach: function() {
 			this.sOriginalWidth = document.getElementById("content").style.width;
 			this.sOriginalHeight = document.getElementById("content").style.height;
