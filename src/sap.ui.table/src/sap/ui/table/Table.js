@@ -7,14 +7,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool',
 		'sap/ui/core/ResizeHandler', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters',
 		'sap/ui/model/ChangeReason', 'sap/ui/model/Context', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter', "sap/ui/model/BindingMode",
-		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', './TablePointerExtension',
-		'./TableScrollExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
+		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension',
+		'./TablePointerExtension', './TableScrollExtension', './TableDragAndDropExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
 	function(jQuery, Device,
 		Control, Element, IconPool,
 		ResizeHandler, ItemNavigation, Parameters,
 		ChangeReason, Context, Filter, SelectionModel, Sorter, BindingMode,
 		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension,
-		TablePointerExtension, TableScrollExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
+		TablePointerExtension, TableScrollExtension, TableDragAndDropExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
 	"use strict";
 
 
@@ -308,7 +308,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * the template's properties or aggregations are changed, the template has to be applied again via
 			 * <code>setRowSettingsTemplate</code> for the changes to take effect.
 			 */
-			rowSettingsTemplate : {type : "sap.ui.table.RowSettings", multiple : false}
+			rowSettingsTemplate : {type : "sap.ui.table.RowSettings", multiple : false},
+
+			/**
+			 * Defines the drag-and-drop configuration.
+			 *
+			 * The following restrictions apply:
+			 * <ul>
+			 *   <li>Columns cannot be configured to be draggable.</li>
+			 *   <li>The following rows are not draggable:
+			 *     <ul>
+			 *       <li>Empty rows</li>
+			 *       <li>Group header rows</li>
+			 *       <li>Sum rows</li>
+			 *     </ul>
+			 *   </li>
+			 *   <li>Columns cannot be configured to be droppable.</li>
+			 *   <li>The following rows are not droppable:
+			 *     <ul>
+			 *       <li>The dragged row itself</li>
+			 *       <li>Empty rows</li>
+			 *       <li>Group header rows</li>
+			 *       <li>Sum rows</li>
+			 *     </ul>
+			 *   </li>
+			 *   <li>Texts in draggable rows cannot be selected.</li>
+			 *   <li>The text of input fields in draggable rows can be selected, but not dragged.</li>
+			 * </ul>
+			 *
+			 * @since 1.52
+			 */
+			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
 		},
 		associations : {
 
@@ -736,7 +766,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		TableExtension.enrich(this, TablePointerExtension);
 		TableExtension.enrich(this, TableScrollExtension);
 		TableExtension.enrich(this, TableKeyboardExtension);
-		TableExtension.enrich(this, TableAccExtension); //Must be registered after keyboard to reach correct delegate order
+		TableExtension.enrich(this, TableAccExtension); // Must be registered after keyboard to reach correct delegate order
+		TableExtension.enrich(this, TableDragAndDropExtension);
 		this._bExtensionsInitialized = true;
 	};
 

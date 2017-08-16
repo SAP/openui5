@@ -202,3 +202,53 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 	color: @sapUiContentContrastTextColor;
 	z-index:10000;
 }
+
+.sapUiTableRowGhost {
+	z-index: auto;
+
+	> * {
+		z-index: auto;
+	}
+
+	> .sapUiTableRowGhostCount {
+		position: absolute;
+		top: -0.625rem;
+		right: 0;
+		height: @_sap_ui_table_RowHeight;
+		width: @_sap_ui_table_RowHeight;
+
+		.sapUiSizeCozy &,
+		.sapUiSizeCozy& {
+			height: @_sap_ui_table_RowHeightCozy;
+			width: @_sap_ui_table_RowHeightCozy;
+		}
+
+		.sapUiSizeCondensed &,
+		.sapUiSizeCondensed& {
+			height: @_sap_ui_table_RowHeightCondensed;
+			width: @_sap_ui_table_RowHeightCondensed;
+		}
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		background-color: @sapUiDragAndDropActiveBorderColor;
+		border-radius: 0.125rem;
+
+		> div {
+			font-size: @sapMFontMediumSize;
+			color: @sapUiListActiveTextColor;
+
+			.sapUiSizeCozy &,
+			.sapUiSizeCozy& {
+				font-size: @sapMFontLargeSize;
+			}
+
+			.sapUiSizeCondensed &,
+			.sapUiSizeCondensed& {
+				font-size: @sapMFontSmallSize;
+			}
+		}
+	}
+}

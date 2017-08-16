@@ -452,22 +452,6 @@ sap.ui.require([
 		assert.ok(oTable.$().find("tr[data-sap-ui-rowindex]").height() < 100, "RowHeight ok");
 	});
 
-	QUnit.test("TableExtensions", function(assert) {
-		assert.expect(6);
-		assert.ok(oTable._bExtensionsInitialized, "Extensions initialized");
-		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for PointerExtension");
-		assert.ok(typeof oTable._getAccExtension === "function", "Getter for AccExtension");
-		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for AccRenderExtension");
-		assert.ok(typeof oTable._getKeyboardExtension === "function", "Getter for KeyboardExtension");
-		oTable.destroy();
-		assert.ok(!oTable._bExtensionsInitialized, "Extensions cleaned up");
-		try {
-			oTable.destroy();
-		} catch (e) {
-			assert.ok(false, "Duplicate call of destroy should not raise errors.");
-		}
-	});
-
 	QUnit.test("test min-width", function(assert) {
 		oTable.getDomRef().style.width = "0px";
 		assert.ok(oTable.getDomRef("tableCCnt").clientHeight > 0, "CCnt still has clientHeight");
@@ -3069,5 +3053,61 @@ sap.ui.require([
 
 		oTable.getColumns()[0].setTemplate(new sap.ui.core.Control());
 		assert.equal(fnInvalidateRowsAggregation.callCount, 5, "invalidateRowsAggregation() called after changing the column template");
+	});
+
+	QUnit.module("Extensions", {
+		beforeEach: function() {
+			createTable();
+		},
+		afterEach: function() {
+			destroyTable();
+		}
+	});
+
+	QUnit.test("Applied extensions", function(assert) {
+		var aActualExtensions = [];
+		var aExpectedExtensions = [
+			"sap.ui.table.TablePointerExtension",
+			"sap.ui.table.TableScrollExtension",
+			"sap.ui.table.TableKeyboardExtension",
+			"sap.ui.table.TableAccRenderExtension",
+			"sap.ui.table.TableAccExtension",
+			"sap.ui.table.TableDragAndDropExtension"
+		];
+
+		oTable._aExtensions.forEach(function(oExtension) {
+			aActualExtensions.push(oExtension.getMetadata()._sClassName);
+		});
+
+		assert.deepEqual(aActualExtensions, aExpectedExtensions, "The table has the expected extensions applied.");
+	});
+
+	QUnit.test("Lifecycle", function(assert) {
+		var aExtensions = oTable._aExtensions;
+
+		assert.ok(oTable._bExtensionsInitialized, "The _bExtensionsInitialized flag properly indicates that extensions are initialized");
+
+		oTable.destroy();
+		var bAllExtensionsDestroyed = aExtensions.every(function(oExtension) {
+			return oExtension.bIsDestroyed;
+		});
+
+		assert.ok(bAllExtensionsDestroyed, "All extensions were destroyed");
+		assert.equal(oTable._aExtensions, null, "The table does not hold references to the destroyed extensions");
+		assert.ok(!oTable._bExtensionsInitialized, "The _bExtensionsInitialized flag properly indicates that extensions were cleaned up");
+
+		try {
+			oTable.destroy();
+		} catch (e) {
+			assert.ok(false, "Duplicate call of destroy should not raise errors.");
+		}
+	});
+
+	QUnit.test("Getter functions", function(assert) {
+		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for the PointerExtension exists");
+		assert.ok(typeof oTable._getScrollExtension === "function", "Getter for the ScrollExtension exists");
+		assert.ok(typeof oTable._getKeyboardExtension === "function", "Getter for the KeyboardExtension exists");
+		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for the AccRenderExtension exists");
+		assert.ok(typeof oTable._getAccExtension === "function", "Getter for the AccExtension exists");
 	});
 });

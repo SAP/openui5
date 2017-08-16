@@ -538,6 +538,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	TableRenderer.renderRowAddon = function(rm, oTable, oRow, iRowIndex, bHeader) {
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + (bHeader ? "-rowsel" : "-rowact") + iRowIndex);
+		rm.writeAttribute("data-sap-ui-related", oRow.getId());
 		rm.writeAttribute("data-sap-ui-rowindex", iRowIndex);
 		rm.addClass(bHeader ? "sapUiTableRowHdr" : "sapUiTableRowAction");
 		this._addFixedRowCSSClasses(rm, oTable, iRowIndex);
@@ -815,8 +816,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 			// check whether the row can be clicked to change the selection
 			var bSelectOnCellsAllowed = TableUtils.isRowSelectionAllowed(oTable);
+			var bRowsDraggable = oTable.getDragDropConfig().some(function(oDragDropInfo) {
+				return oDragDropInfo.getMetadata().isInstanceOf("sap.ui.core.dnd.IDragInfo") && oDragDropInfo.getSourceAggregation() === "rows";
+			});
+
 			for (row = iStartRow, count = iEndRow; row < count; row++) {
-				this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, bRenderDummyColumn, mTooltipTexts, bSelectOnCellsAllowed);
+				this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, bRenderDummyColumn, mTooltipTexts, bSelectOnCellsAllowed, bRowsDraggable);
 			}
 		}
 		rm.write("</tbody>");
@@ -931,7 +936,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.write("</tr>");
 	};
 
-	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed) {
+	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed, bDraggable) {
 		if (!oRow) {
 			return;
 		}
@@ -942,12 +947,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		rm.addClass("sapUiTableTr");
 		if (bFixedTable) {
 			rm.writeAttribute("id", oRow.getId() + "-fixed");
+			rm.writeAttribute("data-sap-ui-related", oRow.getId());
 		} else {
 			rm.writeElementData(oRow);
 		}
 		if (oRow._bHidden) {
 			rm.addClass("sapUiTableRowHidden");
 		} else {
+			if (bDraggable && bFixedTable) {
+				rm.writeAttribute("draggable", true);
+			}
 			if (oTable.isIndexSelected(oRow.getIndex())) {
 				rm.addClass("sapUiTableRowSel");
 			}
