@@ -38,6 +38,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		// styles
 		rm.addClass("sapMLabel");
 		rm.addClass("sapUiSelectable");
+
+		// label wrapping
+		if (oLabel.getWrapping()) {
+			rm.addClass("sapMLabelWrapped");
+		}
 		// set design to bold
 		if (oLabel.getDesign() == sap.m.LabelDesign.Bold) {
 			rm.addStyle("font-weight", "bold");

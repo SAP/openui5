@@ -130,6 +130,8 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-ch
 	height: auto;
 }
 
+
+
 .sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel{
 	/*
 		We guessed the width of a : here. 0.3em seems to be fine in chrome it works without the padding
@@ -147,6 +149,14 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-ch
 .sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel:after{
 	content:":";
 }
+
+/* wrapping label's text */
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel.sapMLabelWrapped {
+	white-space: pre-line;
+	text-overflow: clip;
+	word-wrap: break-word;
+}
+
 .sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel:lang(fr):after{
 	content:" :";
 }
