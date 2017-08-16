@@ -530,9 +530,15 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"group1": [oChange3]
 			},
 			mDependencies: {
+				"fileNameChange1USERnamespace": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
+					"dependencies": ["fileNameChange1USERnamespace"],
+					"controlsDependencies": ["group2", "group1"]
 				},
 				"fileNameChange3USERnamespace": {
 					"changeObject": oChange3,
@@ -603,9 +609,15 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"group1": [oChange0]
 			},
 			mDependencies: {
+				"fileNameChange1USERnamespace": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace", "fileNameChange0USERnamespace"]
+					"dependencies": ["fileNameChange1USERnamespace", "fileNameChange0USERnamespace"],
+					"controlsDependencies": ["group2", "group1"]
 				}
 			},
 			mDependentChangesOnMe: {
@@ -657,6 +669,11 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"group2": [oChange2]
 			},
 			mDependencies: {
+				"fileNameChange1USERnamespace": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
 					"dependencies": ["fileNameChange1USERnamespace"]
@@ -710,7 +727,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			mDependencies: {
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
+					"dependencies": ["fileNameChange1USERnamespace"],
+					"controlsDependencies": ["group3", "group2"]
 				}
 			},
 			mDependentChangesOnMe: {
