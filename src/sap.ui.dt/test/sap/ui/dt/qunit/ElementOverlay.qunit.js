@@ -97,7 +97,7 @@ function(
 
 		//Explicitly disable overlay
 		sWidth = fnGetWidth(this.oOverlay);
-		this.oOverlay.setEnabled(false);
+		this.oOverlay.setVisible(false);
 		this.oButton.setText('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi...');
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(sWidth, fnGetWidth(this.oOverlay), "overlay didn't change its width");
