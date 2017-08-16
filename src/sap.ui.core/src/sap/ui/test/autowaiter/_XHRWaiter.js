@@ -4,12 +4,12 @@
 
 /*global XMLHttpRequest */
 sap.ui.define([
-	"sap/ui/test/_OpaLogger",
-	"sap/ui/thirdparty/sinon"
-], function (_OpaLogger, sinon) {
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/test/_OpaLogger"
+], function (sinon, _OpaLogger) {
 	"use strict";
 
-	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._XHRCounter");
+	var oHasPendingLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._XHRWaiter#hasPending");
 	var aXHRs = [];
 	var aFakeXHRs = [];
 	var fnUseFakeOriginal = sinon.useFakeXMLHttpRequest;
@@ -80,7 +80,7 @@ sap.ui.define([
 			sLogMessage += createLogForSingleRequest(oXHR, true);
 		});
 
-		oLogger.debug(sLogMessage);
+		oHasPendingLogger.debug(sLogMessage);
 	}
 
 	function createLogForSingleRequest (oXHR, bIsFake) {
@@ -90,7 +90,7 @@ sap.ui.define([
 	}
 
 	return {
-		hasPendingRequests: function () {
+		hasPending: function () {
 			var bHasPendingRequests = aXHRs.length > 0 || aFakeXHRs.length > 0;
 			if (bHasPendingRequests) {
 				logPendingRequests();

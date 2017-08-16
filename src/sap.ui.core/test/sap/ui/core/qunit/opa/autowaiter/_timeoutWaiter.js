@@ -4,11 +4,11 @@ sap.ui.define([
 ], function ($, loggerInterceptor) {
 	"use strict";
 
-	$.sap.unloadResources("sap/ui/test/autowaiter/_timeoutCounter.js", false, true, true);
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._timeoutCounter");
-	var oDebugSpy = sinon.spy(oLogger, "debug");
-	var oTraceSpy = sinon.spy(oLogger, "trace");
-	var timeoutCounter = sap.ui.test.autowaiter._timeoutCounter;
+	$.sap.unloadResources("sap/ui/test/autowaiter/_timeoutWaiter.js", false, true, true);
+	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._timeoutWaiter");
+	var oTraceSpy = sinon.spy(oLogger[0], "trace");
+	var oDebugSpy = sinon.spy(oLogger[1], "debug");
+	var timeoutWaiter = sap.ui.test.autowaiter._timeoutWaiter;
 
 	function assertLog (iNumberBlocking, iNumberNonBlocking) {
 		if (!iNumberNonBlocking) {
@@ -25,7 +25,7 @@ sap.ui.define([
 			return;
 		}
 
-		QUnit.module("timeoutCounter - no " + sFunctionUnderTest, {
+		QUnit.module("timeoutWaiter - no " + sFunctionUnderTest, {
 			afterEach: function () {
 				oDebugSpy.reset();
 				oTraceSpy.reset();
@@ -36,7 +36,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			function noTimeout () {
-				var bHasTimeout = timeoutCounter.hasPendingTimeouts();
+				var bHasTimeout = timeoutWaiter.hasPending();
 				if (!bHasTimeout) {
 					assert.ok(true, "no timeout present");
 					fnDone();
@@ -51,14 +51,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("Should return that there are no pending timeouts", function (assert) {
-			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
+			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
 			sinon.assert.notCalled(oDebugSpy);
 		});
 
 		QUnit.test("Should return that there are no pending Timeouts if a timeout has finished", function (assert) {
 			var fnDone = assert.async();
 			fnSetFunction(function () {
-				assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
+				assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
 				sinon.assert.notCalled(oDebugSpy);
 				fnDone();
 			});
@@ -66,26 +66,25 @@ sap.ui.define([
 
 		QUnit.test("Should ignore long runners", function (assert) {
 			var iID = setTimeout(function () {}, 1001);
-
-			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
+			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
 			sinon.assert.alwaysCalledWithMatch(oTraceSpy, "Long-running timeout is ignored");
 			// do not interfere with other tests
 			clearTimeout(iID);
 		});
 
 		QUnit.test("Should have configurable max timeout delay", function (assert) {
-			timeoutCounter.extendConfig({maxDelay: 3000});
+			timeoutWaiter.extendConfig({maxDelay: 3000});
 			var iID = setTimeout(function () {}, 1001);
 			var iIDIgnored = setTimeout(function () {}, 3001);
 
-			assert.ok(timeoutCounter.hasPendingTimeouts(), "there is 1 pending timeout");
+			assert.ok(timeoutWaiter.hasPending(), "there is 1 pending timeout");
 			clearTimeout(iID);
 			clearTimeout(iIDIgnored);
 			// reset to default value
-			timeoutCounter.extendConfig({maxDelay: 1000});
+			timeoutWaiter.extendConfig({maxDelay: 1000});
 		});
 
-		QUnit.module("timeoutCounter - single " + sFunctionUnderTest);
+		QUnit.module("timeoutWaiter - single " + sFunctionUnderTest);
 
 		QUnit.test("Should respect the this pointer", function (assert) {
 			var oThis = {},
@@ -106,10 +105,10 @@ sap.ui.define([
 				fnDone();
 			});
 
-			assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
+			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
 		});
 
-		QUnit.module("timeoutCounter - multiple " + sFunctionUnderTest, {
+		QUnit.module("timeoutWaiter - multiple " + sFunctionUnderTest, {
 			afterEach: function () {
 				oDebugSpy.reset();
 			}
@@ -120,19 +119,19 @@ sap.ui.define([
 			var fnSecondTimeoutDone = assert.async();
 
 			fnSetFunction(function () {
-				assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
+				assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
 				assertLog(1);
 				oDebugSpy.reset();
 				fnFirstTimeoutDone();
 			});
 
 			fnSetFunction(function () {
-				assert.ok(!timeoutCounter.hasPendingTimeouts(), "There was no timeout");
+				assert.ok(!timeoutWaiter.hasPending(), "There was no timeout");
 				sinon.assert.notCalled(oDebugSpy);
 				fnSecondTimeoutDone();
 			}, 20);
 
-			assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
+			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
 			assertLog(2);
 			oDebugSpy.reset();
 		});
@@ -141,18 +140,18 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			fnSetFunction(function () {
-				assert.ok(!timeoutCounter.hasPendingTimeouts(), "There was no timeout");
+				assert.ok(!timeoutWaiter.hasPending(), "There was no timeout");
 				fnSetFunction(function () {
-					assert.ok(!timeoutCounter.hasPendingTimeouts(), "There was no timeout");
+					assert.ok(!timeoutWaiter.hasPending(), "There was no timeout");
 					fnDone();
 				});
-				assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
+				assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
 			});
 
-			assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
+			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
 		});
 
-		QUnit.module("timeoutCounter - clear " + sFunctionUnderTest, {
+		QUnit.module("timeoutWaiter - clear " + sFunctionUnderTest, {
 			afterEach: function () {
 				oDebugSpy.reset();
 			}
@@ -162,7 +161,7 @@ sap.ui.define([
 			var iId = fnSetFunction(function () {
 			});
 			fnClearFunction(iId);
-			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
+			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
 			sinon.assert.notCalled(oDebugSpy);
 		});
 
@@ -170,19 +169,19 @@ sap.ui.define([
 		QUnit.test("Should clear 1 of 2 timeouts", function (assert) {
 			var fnDone = assert.async();
 			fnSetFunction(function () {
-				assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
+				assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
 				sinon.assert.notCalled(fnSecondTimeoutSpy);
 				fnDone();
 			},20);
 			var fnSecondTimeoutSpy = sinon.spy();
 			var iId = fnSetFunction(fnSecondTimeoutSpy);
 			fnClearFunction(iId);
-			assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
+			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
 			assertLog(1);
 		});
 	});
 
-	QUnit.module("timeoutCounter - infinite timeout loops", {
+	QUnit.module("timeoutWaiter - infinite timeout loops", {
 		afterEach: function () {
 			oDebugSpy.reset();
 		}
@@ -197,7 +196,7 @@ sap.ui.define([
 		}
 
 		setTimeout(function () {
-			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
+			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
 			sinon.assert.alwaysCalledWithMatch(oTraceSpy, /Deep-nested timeout with ID [0-9]+ is ignored/);
 			aTimeouts.forEach(function (iID) {
 				clearTimeout(iID);
@@ -217,7 +216,7 @@ sap.ui.define([
 		}
 
 		setTimeout(function () {
-			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
+			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
 			sinon.assert.alwaysCalledWithMatch(oTraceSpy, /Deep-nested timeout with ID [0-9]+ is ignored/);
 			aTimeouts.forEach(function (iID) {
 				clearTimeout(iID);
@@ -225,65 +224,5 @@ sap.ui.define([
 			fnDone();
 		}, 600);
 		addTimeout();
-	});
-
-	QUnit.module("timeout Microtasks", {
-		afterEach: function () {
-			oDebugSpy.reset();
-		}
-	});
-
-	["resolve", "reject"].forEach(function (sPromiseFunction) {
-		QUnit.test("Should hook into the Promise." + sPromiseFunction + " function", function (assert) {
-			var fnDone = assert.async();
-			Promise[sPromiseFunction]().then(fnDone, fnDone);
-			assert.ok(timeoutCounter.hasPendingTimeouts(), "Has pending microtask");
-			sinon.assert.calledWith(oDebugSpy, "There are 1 pending microtasks");
-		});
-	});
-
-	QUnit.test("Should ignore long runners for resolve", function (assert) {
-		var oPromiseAfter2Sec = new Promise(function (fnResolve) {
-			setTimeout(fnResolve, 2000);
-		});
-
-		Promise.resolve(oPromiseAfter2Sec);
-
-		assert.ok(timeoutCounter.hasPendingTimeouts(), "Has pending microtask");
-		sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
-		setTimeout(function () {
-			assert.ok(!timeoutCounter.hasPendingTimeouts(), "Has no pending microtask");
-			sinon.assert.calledWithMatch(oTraceSpy, "Long-running timeout is ignored");
-		}, 1400);
-
-		return oPromiseAfter2Sec;
-	});
-
-	["all", "race"].forEach(function (sPromiseFunction) {
-		QUnit.test("Should hook into the Promise." + sPromiseFunction + " function", function (assert) {
-			var fnDone = assert.async();
-			Promise[sPromiseFunction]([Promise.resolve(), Promise.reject(), new Promise(function (fnResolve) { fnResolve(); })]).then(fnDone, fnDone);
-			assert.ok(timeoutCounter.hasPendingTimeouts(), "Has pending microtask");
-			// Promise might be wrapped twice or there are still pending ones
-			sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
-		});
-
-		QUnit.test("Should ignore long runners for " + sPromiseFunction, function (assert) {
-			var oPromiseAfter2Sec = new Promise(function (fnResolve) {
-				setTimeout(fnResolve, 2000);
-			});
-
-			Promise[sPromiseFunction]([oPromiseAfter2Sec, oPromiseAfter2Sec]);
-
-			assert.ok(timeoutCounter.hasPendingTimeouts(), "Has pending microtask");
-			sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
-			setTimeout(function () {
-				assert.ok(!timeoutCounter.hasPendingTimeouts(), "Has no pending microtask");
-				sinon.assert.calledWithMatch(oTraceSpy, "Long-running timeout is ignored");
-			}, 1400);
-
-			return oPromiseAfter2Sec;
-		});
-
 	});
 });

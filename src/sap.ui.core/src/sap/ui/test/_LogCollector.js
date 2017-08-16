@@ -30,13 +30,11 @@ sap.ui.define([
 						return;
 					}
 					var sLogText = oLogEntry.message + " - " + oLogEntry.details + " " + oLogEntry.component;
-					var aLogs = this._aLogs;
-
-					aLogs.push(sLogText);
+					this._aLogs.push(sLogText);
 
 					// guard against memory leaking - if OPA is required the logCollector will be instantiated.
-					if (aLogs.length > 500) {
-						aLogs.length = 0;
+					if (this._aLogs.length > 500) {
+						this._aLogs.length = 0;
 						_oLogger.error("Opa has received 500 logs without a consumer - " +
 							"maybe you loaded Opa.js inside of an IFrame? " +
 							"The logs are now cleared to prevent memory leaking");
