@@ -15,6 +15,7 @@ sap.ui.require([
 	"sap/m/Button",
 	"sap/m/VBox",
 	"sap/m/HBox",
+	"sap/m/Bar",
 	"sap/m/Text",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
@@ -30,6 +31,7 @@ sap.ui.require([
 	Button,
 	VBox,
 	HBox,
+	Bar,
 	Text,
 	ChangeRegistry,
 	SimpleChanges
@@ -46,6 +48,7 @@ sap.ui.require([
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox": [
+					SimpleChanges.hideControl,
 					{
 						changeType: "combineChange",
 						changeHandler : {}
@@ -93,7 +96,26 @@ sap.ui.require([
 							new Button(this.oComponent.createId("innerBtn21"))
 						]
 					}),
-					new VBox(this.oComponent.createId("othercontainer3"))
+					new Bar(this.oComponent.createId("othercontainer3")),
+					new HBox({
+						id : this.oComponent.createId("container4"),
+						items : [
+							new VBox({
+								id : this.oComponent.createId("innerVBox1"),
+								items : [
+									new Text(this.oComponent.createId("innerVBox1Txt"))
+								]
+							}),
+							new VBox({
+								id : this.oComponent.createId("innerVBox2"),
+								items : [
+									new Text(this.oComponent.createId("innerVBox2Txt")),
+									new Button(this.oComponent.createId("innerVBox2Btn"))
+								]
+							})
+
+						]
+					})
 				]
 			});
 			this.oVBox.placeAt("qunit-fixture");
@@ -111,16 +133,22 @@ sap.ui.require([
 				designTimeMetadata : {
 					"sap.m.VBox" : {
 						actions : {
+							remove : {
+								changeType: "hideControl"
+							}
 						}
-
 					},
 					"sap.m.HBox" : {
+						aggregations : {
+							items : {
+								propagateRelevantContainer : true
+							}
+						},
 						actions : {
 							remove : {
 								changeType: "hideControl"
 							}
 						}
-
 					},
 					"sap.m.Button" : {
 						actions : {
@@ -136,7 +164,6 @@ sap.ui.require([
 								changeType: "hideControl"
 							}
 						}
-
 					}
 				}
 			});
@@ -175,7 +202,7 @@ sap.ui.require([
 	});
 
 
-	QUnit.test("when trying to select the 2. control not multiselction enabled control (removable/combinable)", function(assert){
+	QUnit.test("when trying to select the 2. control not multiselection enabled control (removable/combinable)", function(assert){
 		var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("container1"));
 		var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("othercontainer3"));
 		oOverlay2.setSelectable(true);
@@ -187,7 +214,7 @@ sap.ui.require([
 		assert.notOk(oOverlay2.isSelected(), "then othercontainer3 overlay is not selected");
 	});
 
-	QUnit.test("when trying to select 3 overlays and the 2. control is multiselction enabled for a different action", function(assert){
+	QUnit.test("when trying to select 3 overlays and the 2. control is multiselection enabled for a different action", function(assert){
 		var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 		var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerTxt13"));
 		var oOverlay3 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
@@ -212,4 +239,50 @@ sap.ui.require([
 		assert.ok(oOverlay1.isSelected(), "then innerBtn12 overlay is selected");
 		assert.notOk(oOverlay2.isSelected(), "then btnOutsideContainer overlay from different parent is not selected");
 	});
+
+	QUnit.test("when trying to select innerVBox1Txt inside the innerVBox (both have HBox container4 as their relevant container, but innerVBox is parent of text)", function(assert){
+		var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
+		var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1"));
+
+		oOverlay1.setSelected(true);
+		oOverlay2.setSelected(true);
+
+		assert.ok(oOverlay1.isSelected(), "then innerVBox1Txt overlay is selected");
+		assert.notOk(oOverlay2.isSelected(), "then innerVBox1 overlay is not selected");
+	});
+
+	QUnit.test("when trying to select the texts inside the innerVBox1 & innerVBox2 (different parents, same control type and same relevant container)", function(assert){
+		var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
+		var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2Txt"));
+
+		oOverlay1.setSelected(true);
+		oOverlay2.setSelected(true);
+
+		assert.ok(oOverlay1.isSelected(), "then innerVBox1Txt overlay is selected");
+		assert.ok(oOverlay2.isSelected(), "then innerVBox2Txt overlay is selected");
+	});
+
+	QUnit.test("when trying to select innerVBox1Txt in innerVBox1 and the container innerVBox2 (different control types and same relevant container)", function(assert){
+		var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
+		var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2"));
+
+		oOverlay1.setSelected(true);
+		oOverlay2.setSelected(true);
+
+		assert.ok(oOverlay1.isSelected(), "then innerVBox1Txt overlay is selected");
+		assert.notOk(oOverlay2.isSelected(), "then innerVBox2 overlay is not selected");
+	});
+
+	//Note: we might support this case in the future
+	QUnit.test("when trying to select innerVBox1Txt in innerVBox1 and innerVBox2Btn in innerVBox2 (different control types, different parents and same relevant container)", function(assert){
+		var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
+		var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2Btn"));
+
+		oOverlay1.setSelected(true);
+		oOverlay2.setSelected(true);
+
+		assert.ok(oOverlay1.isSelected(), "then innerVBox1Txt overlay is selected");
+		assert.notOk(oOverlay2.isSelected(), "then innerVBox2Btn overlay is not selected");
+	});
+
 });

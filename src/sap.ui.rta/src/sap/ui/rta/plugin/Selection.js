@@ -8,7 +8,11 @@ sap.ui.define([
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/Utils'
 ],
-function(Plugin, Utils, FlexUtils) {
+function(
+	Plugin,
+	Utils,
+	FlexUtils
+){
 	"use strict";
 
 	/**
@@ -233,16 +237,18 @@ function(Plugin, Utils, FlexUtils) {
 			return;
 		}
 
-		//shared relevant container?
 		var bMultiSelectisValid = _hasSharedMultiSelectionPlugins(aSelections, this.getMultiSelectionRequiredPlugins())
-			&& _hasSharedRelevantContainer(aSelections);
+			&& _hasSharedRelevantContainer(aSelections)
+			&& (_hasSameParent(aSelections, oCurrentSelectedOverlay)
+				|| _isOfSameType(aSelections, oCurrentSelectedOverlay));
+
 		oCurrentSelectedOverlay.setSelected(bMultiSelectisValid);
 	};
 
 	function _hasSharedMultiSelectionPlugins(aSelections, aMultiSelectionRequiredPlugins){
 		var aSharedMultiSelectionPlugins = aMultiSelectionRequiredPlugins;
-		aSelections.forEach(function(oSelecedOverlay) {
-			var aEditableByPlugins = oSelecedOverlay.getEditableByPlugins();
+		aSelections.forEach(function(oSelectedOverlay) {
+			var aEditableByPlugins = oSelectedOverlay.getEditableByPlugins();
 			aSharedMultiSelectionPlugins = aSharedMultiSelectionPlugins.reduce(function(aSharedPlugins, sPluginName){
 				if (aEditableByPlugins.indexOf(sPluginName) !== -1){
 					aSharedPlugins.push(sPluginName);
@@ -261,6 +267,20 @@ function(Plugin, Utils, FlexUtils) {
 		var oPreviousRelevantContainer = oPreviousSelectedOverlay.getRelevantContainer();
 
 		return oCurrentRelevantContainer === oPreviousRelevantContainer;
+	}
+
+	function _hasSameParent(aSelections, oSelectedOverlay){
+		return !aSelections.some(function(oSelection){
+			return oSelection.getParentElementOverlay() !== oSelectedOverlay.getParentElementOverlay();
+		});
+	}
+
+	function _isOfSameType(aSelections, oSelectedOverlay){
+		var sSelectedOverlayElementName = oSelectedOverlay.getElementInstance().getMetadata().getName();
+		return !aSelections.some(function(oSelection){
+			var sCurrentSelectionElementName = oSelection.getElementInstance().getMetadata().getName();
+			return (sCurrentSelectionElementName !== sSelectedOverlayElementName);
+		});
 	}
 
 	return Selection;
