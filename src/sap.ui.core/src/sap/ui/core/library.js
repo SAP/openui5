@@ -56,6 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.VerticalAlign",
 			"sap.ui.core.Wrapping",
 			"sap.ui.core.dnd.DropEffect",
+			"sap.ui.core.dnd.DropLayout",
 			"sap.ui.core.dnd.DropPosition",
 			"sap.ui.core.mvc.ViewType",
 			"sap.ui.core.routing.HistoryDirection"
@@ -1686,6 +1687,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		 * @public
 		 */
 		OnOrBetween : "OnOrBetween"
+	};
+
+	/**
+	 * Configuration options for the layout of the droppable controls.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.52.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.dnd.DropLayout = {
+
+		/**
+		 * Droppable controls are arranged vertically.
+		 * @public
+		 */
+		Vertical : "Vertical",
+
+		/**
+		 * Droppable controls are arranged horizontally.
+		 * @public
+		 */
+		Horizontal : "Horizontal"
 	};
 
 	/**
