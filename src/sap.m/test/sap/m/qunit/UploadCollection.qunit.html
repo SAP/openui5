@@ -646,6 +646,19 @@
 			}
 		});
 
+		QUnit.test("Function _findById returns correct item from the list based on the id", function(assert) {
+			//Arrange
+			var sId0 = "item0", sId1 = "item1",
+				aListItems = [
+					{ getId: function() { return sId0; }},
+					{ getId: function() { return sId1; }}
+				];
+			//Act
+			oItem = sap.m.UploadCollection._findById(sId1, aListItems);
+			//Assert
+			assert.deepEqual(oItem, aListItems[1], "Correct item has been returned by _findById");
+		});
+
 		QUnit.test("Function _getFileNameControl", function(assert) {
 			//Arrange
 			this.oItem._requestIdName = 0;
@@ -1229,6 +1242,62 @@
 			assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.None, "Mode after setting 'Delete' is 'None'");
 		});
 
+		QUnit.test("Function _handleSelectionChange triggers the selection change", function(assert) {
+			//Arrange
+			var sListItem = "listItem", sListItems = "listItems", sSelected = "selected", aUploadCollectionListItems = ["dummy"],
+				oUploadCollectionItem = new sap.m.UploadCollectionItem(),
+				bSelected = true,
+				oListItem = {
+					getSelected: function(){
+						return true;
+					}
+				},
+				oEvent = {
+					getParameter: function(name) {
+						if (name === sListItem) {
+							return oListItem;
+						} else if (name === sListItems) {
+							return aUploadCollectionListItems;
+						} else if (name === sSelected) {
+							return bSelected;
+						}
+					}
+				},
+				oGetUploadCollectionItemsByListItems = sinon.stub(this.oUploadCollection, "_getUploadCollectionItemsByListItems")
+					.returns(aUploadCollectionListItems),
+				oGetUploadCollectionItemByListItem = sinon.stub(this.oUploadCollection, "_getUploadCollectionItemByListItem")
+					.returns(oUploadCollectionItem),
+				oFireSelectionChangeStub = sinon.stub(this.oUploadCollection, "fireSelectionChange"),
+				oSetSelectedStub = sinon.stub(oUploadCollectionItem, "setSelected");
+			//Act
+			this.oUploadCollection._handleSelectionChange(oEvent);
+			//Assert
+			assert.strictEqual(oGetUploadCollectionItemByListItem.getCall(0).args[0], oListItem, "The function _getUploadCollectionItemByListItem has been called with correct argument");
+			assert.strictEqual(oGetUploadCollectionItemsByListItems.getCall(0).args[0], aUploadCollectionListItems, "The function _getUploadCollectionItemsByListItems has been called with correct argument");
+			assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selectedItem"], oUploadCollectionItem, "The selectionChange event has correct selectedItem parameter");
+			assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selectedItems"], aUploadCollectionListItems, "The selectionChange event has correct selectedItems parameter");
+			assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selected"], bSelected, "The selectionChange event has correct selected parameter");
+			assert.strictEqual(oSetSelectedStub.getCall(0).args[0], oListItem.getSelected(), "The setSelected method has been called with correct argument");
+		});
+
+		QUnit.module("Download Item Tests", {
+			beforeEach: function() {
+				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+					items: {
+						path: "/items",
+						template: createItemTemplate(),
+						templateShareable: false
+					}
+				}).setModel(new sap.ui.model.json.JSONModel(oData));
+				this.oUploadCollection.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oUploadCollection.destroy();
+				this.oUploadCollection = null;
+			}
+		});
+
 		QUnit.test("To download an item without URL fails.", function(assert) {
 			//Arrange
 			var oItem = this.oUploadCollection.getItems()[0];
@@ -1248,6 +1317,24 @@
 			//Assert
 			assert.ok(stub.called, "Download method was called.");
 			assert.equal(stub.returns().toString(), "downloadItem", "Download returns the right method.");
+		});
+
+		QUnit.module("Terminate Upload Tests", {
+			beforeEach: function() {
+				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+					items: {
+						path: "/items",
+						template: createItemTemplate(),
+						templateShareable: false
+					}
+				}).setModel(new sap.ui.model.json.JSONModel(oData));
+				this.oUploadCollection.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oUploadCollection.destroy();
+				this.oUploadCollection = null;
+			}
 		});
 
 		QUnit.test("Terminate upload button is visible by default.", function(assert) {
