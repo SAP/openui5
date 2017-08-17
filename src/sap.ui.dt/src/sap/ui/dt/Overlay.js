@@ -67,13 +67,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 				focusable : {
 					type : "boolean",
 					defaultValue : false
-				},
-				/**
-				 * Whether the Overlay is enabled
-				 */
-				enabled: {
-					type: "boolean",
-					defaultValue: true
 				}
 			},
 			associations : {
@@ -330,10 +323,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype.applyStyles = function() {
 
-		if (!this.getEnabled()) {
-			return;
-		}
-
 		// invalidate cached geometry
 		delete this._mGeometry;
 
@@ -560,24 +549,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @private
 	 * @returns index of the scroll container containing this aggregation, -1 if scroll container exist, but this aggregation is not included, undefined if no scroll container exist
 	 */
-	Overlay.prototype._getScrollContainerIndex = function(oOverlayParent, oOverlay) {
-		var iScrollContainerIndex;
-		oOverlay = oOverlay || this;
-		if (oOverlayParent._aScrollContainers) {
-			iScrollContainerIndex = -1;
-			oOverlayParent._aScrollContainers.some(function(oScrollContainer, iIndex) {
-				if (oScrollContainer.aggregations) {
-					return oScrollContainer.aggregations.some(function(sAggregationName) {
-						if (oOverlay.getAggregationName() === sAggregationName) {
-							iScrollContainerIndex = iIndex;
-							return true;
-						}
-					});
-				}
-			});
-		}
-		return iScrollContainerIndex;
-	};
+	Overlay.prototype._getScrollContainerIndex = function(oOverlayParent, oOverlay) {};
 
 	/**
 	 * Returns an object, which describes the DOM geometry of the element associated with this overlay or null if it can't be found
@@ -778,7 +750,11 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype.setVisible = function(bVisible) {
 		bVisible = !!bVisible;
+
 		if (this.getVisible() !== bVisible) {
+			if (!bVisible) {
+				this._restoreVisibility();
+			}
 			this.setProperty("visible", bVisible);
 			this._bVisible = bVisible;
 			this.fireVisibleChanged({visible : bVisible});
@@ -826,21 +802,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 				return true;
 			}
 		}
-	};
-
-	/**
-	 * Custom setter for property 'enabled'
-	 *
-	 * @param {boolean} bEnabled value to be set
-	 */
-	Overlay.prototype.setEnabled = function(bEnabled) {
-		bEnabled = !!bEnabled;
-
-		if (!bEnabled) {
-			this._restoreVisibility();
-		}
-
-		this.setProperty('enabled', bEnabled);
 	};
 
 	return Overlay;
