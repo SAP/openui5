@@ -14,7 +14,7 @@
 
 <!-- QUnit libraries -->
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -227,13 +227,12 @@
 				return $Control.is(":focus");
 			};
 		},
-		afterEach : function() {
+		afterEach : function(assert) {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
-			QUnit.stop();
-			this.applyTheme(this.sStartTheme, function () {
-				QUnit.start();
-			});
+
+			var done = assert.async();
+			this.applyTheme(this.sStartTheme, done);
 		}
 	});
 
@@ -887,25 +886,31 @@
 	QUnit.test("Hover style update on rendering", function(assert) {
 		//Arrange
 		this.oGenericTile._updateHoverStyle.restore();
+
 		sinon.spy(this.oGenericTile, "_updateHoverStyle");
 		sinon.spy(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
 		sinon.stub(this.oGenericTile, "_getStyleData").returns(true);
 		sinon.spy(this.oGenericTile, "_queueAnimationEnd");
-		var done = assert.async();
+
+		var fnOriginalDelayedCall = jQuery.sap.delayedCall;
+		jQuery.sap.delayedCall = function(delay, thisRef, callback, args) {
+			if (jQuery.isFunction(callback)) {
+				callback.apply(thisRef, args);
+			}
+		};
 
 		//Act
 		this.oGenericTile.invalidate();
 		sap.ui.getCore().applyChanges();
 
-		jQuery.sap.delayedCall(100, this, function() {
-			//Assert
-			assert.equal(this.oGenericTile._updateHoverStyle.callCount, 1, "The hover style is updated when the control is rendered.");
-			assert.equal(this.oGenericTile._queueAnimationEnd.callCount, 1, "The hover style is update is queued when the control is rendered.");
-			assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1, "The renderer's update function is called if the style data changed.");
+		//Assert
+		assert.equal(this.oGenericTile._updateHoverStyle.callCount, 1, "The hover style is updated when the control is rendered.");
+		assert.equal(this.oGenericTile._queueAnimationEnd.callCount, 1, "The hover style update is queued when the control is rendered.");
+		assert.ok(sap.m.GenericTileLineModeRenderer._updateHoverStyle.called, "The renderer's update function is called if the style data changed.");
 
-			sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
-			done();
-		});
+		//Cleanup
+		sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+		jQuery.sap.delayedCall = fnOriginalDelayedCall;
 	});
 
 	QUnit.test("Hover style is not updated on rendering", function(assert) {
@@ -998,19 +1003,29 @@
 		sinon.stub(sap.m.GenericTileLineModeRenderer, "_updateHoverStyle");
 		var done = assert.async();
 
+		var fnOriginalDelayedCall = jQuery.sap.delayedCall;
+		jQuery.sap.delayedCall = function(delay, thisRef, callback, args) {
+			if (jQuery.isFunction(callback)) {
+				callback.apply(thisRef, args);
+			}
+		};
+
 		//Act
 		this.oParent.setWidth("500px");
-		this.oParent.invalidate();
-		sap.ui.getCore().applyChanges();
 
-		jQuery.sap.delayedCall(100, null, function() {
-			//Assert
-			assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1, "Renderer function _updateHoverStyle is called once.");
+		//Assert
+		sap.ui.getCore().attachIntervalTimer(checkAssertions);
+
+		function checkAssertions() {
+			assert.ok(sap.m.GenericTileLineModeRenderer._updateHoverStyle.called, "Renderer function _updateHoverStyle is called once.");
 
 			//Cleanup
+			jQuery.sap.delayedCall = fnOriginalDelayedCall;
+			sap.ui.getCore().detachIntervalTimer(checkAssertions);
 			sap.m.GenericTileLineModeRenderer._updateHoverStyle.restore();
+
 			done();
-		}.bind(this));
+		}
 	});
 
 	QUnit.test("Hover style update of siblings on state change", function(assert) {
@@ -1219,13 +1234,13 @@
 		this.oGenericTile._updateHoverStyle();
 		this.oGenericTile._$RootNode.trigger("transitionend");
 
-		jQuery.sap.delayedCall(50, null, function() { //50ms, to make sure to wait for the 10ms delay
+		jQuery.sap.delayedCall(1000, null, function() { //1000ms, to make sure to wait for the 10ms delay
 			//Assert
-			assert.equal(sap.m.GenericTileLineModeRenderer._updateHoverStyle.callCount, 1, "Rendering update has been executed only once.");
+			assert.ok(sap.m.GenericTileLineModeRenderer._updateHoverStyle.called, "Rendering update has been executed.");
 			assert.ok(sap.m.GenericTileLineModeRenderer._updateHoverStyle.calledOn(this.oGenericTile), "Rendering update has been executed.");
-			assert.equal(this.oGenericTile._getStyleData.callCount, 2, "Function _getStyleData has been called twice.");
-			assert.equal(this.oGenericTile._queueAnimationEnd.callCount, 2, "Function _handleAnimationEnd has been queued twice.");
-			assert.equal(this.oGenericTile._handleAnimationEnd.callCount, 2, "Function _handleAnimationEnd has been called twice.");
+			assert.ok(this.oGenericTile._getStyleData.called, "Function _getStyleData has been called.");
+			assert.ok(this.oGenericTile._queueAnimationEnd.called, "Function _queueAnimationEnd has been called.");
+			assert.ok(this.oGenericTile._handleAnimationEnd.called, "Function _handleAnimationEnd has been called.");
 			assert.ok(this.oGenericTile._handleAnimationEnd.calledWith(0), "Function _handleAnimationEnd has been called with correct index.");
 			assert.ok(this.oGenericTile._handleAnimationEnd.calledWith(1), "Function _handleAnimationEnd has been called with correct index.");
 
@@ -1925,11 +1940,12 @@
 			};
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach : function(assert) {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
-			QUnit.stop();
-			jQuery.sap.delayedCall(0, this, QUnit.start); // needed for to slow down until the tile is rendered
+
+			var done = assert.async();
+			jQuery.sap.delayedCall(0, this, done); // needed to slow down until the tile is rendered
 		}
 	});
 
