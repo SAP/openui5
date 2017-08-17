@@ -84,19 +84,19 @@ sap.ui.define([
 
 				/**
 				 * Determines the type of the transition/animation to apply for the <code>Begin</code> column when <code>to()</code> is called without defining the
-				 * transition to use. The default is <code>slide</code>, other options are <code>fade</code>, <code>show</code>, and the names of any registered custom transitions.
+				 * transition to use. The default is <code>slide</code>, other options are <code>fade</code>, <code>flip</code>, <code>show</code>, and the names of any registered custom transitions.
 				 */
 				defaultTransitionNameBeginColumn : {type : "string", group : "Appearance", defaultValue : "slide"},
 
 				/**
 				 * Determines the type of the transition/animation to apply for the <code>Mid</code> column when <code>to()</code> is called without defining the
-				 * transition to use. The default is <code>slide</code>, other options are <code>fade</code>, <code>show</code>, and the names of any registered custom transitions.
+				 * transition to use. The default is <code>slide</code>, other options are <code>fade</code>, <code>flip</code>, <code>show</code>, and the names of any registered custom transitions.
 				 */
 				defaultTransitionNameMidColumn : {type : "string", group : "Appearance", defaultValue : "slide"},
 
 				/**
 				 * Determines the type of the transition/animation to apply for the <code>End</code> column when <code>to()</code> is called without defining the
-				 * transition to use. The default is <code>slide</code>, other options are <code>fade</code>, <code>show</code>, and the names of any registered custom transitions.
+				 * transition to use. The default is <code>slide</code>, other options are <code>fade</code>, <code>flip</code>, <code>show</code>, and the names of any registered custom transitions.
 				 */
 				defaultTransitionNameEndColumn : {type : "string", group : "Appearance", defaultValue : "slide"}
 
