@@ -2221,27 +2221,30 @@ sap.ui.define([
 			sResolvedPath = this.resolve(sPath, oContext),
 			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey, oMetaModel;
 
+		if (!sResolvedPath) {
+			return oNode;
+		}
+
 		//check for metadata path
-		if (this.oMetadata && this.oMetadata.isLoaded() && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
-			if (this.isMetaModelPath(sResolvedPath)) {
-				// Metadata binding resolved by ODataMetaModel
-				iSeparator = sResolvedPath.indexOf('/##');
-				oMetaModel = this.getMetaModel();
-				if (!this.bMetaModelLoaded) {
-					return null;
+		if (this._isMetadataPath(sResolvedPath)) {
+			if (this.oMetadata && this.oMetadata.isLoaded())  {
+				if (this.isMetaModelPath(sResolvedPath)) {
+					// Metadata binding resolved by ODataMetaModel
+					iSeparator = sResolvedPath.indexOf('/##');
+					oMetaModel = this.getMetaModel();
+					if (!this.bMetaModelLoaded) {
+						return null;
+					}
+					sDataPath = sResolvedPath.substr(0, iSeparator);
+					sMetaPath = sResolvedPath.substr(iSeparator + 3);
+					oMetaContext = oMetaModel.getMetaContext(sDataPath);
+					oNode = oMetaModel.getProperty(sMetaPath, oMetaContext);
+				} else {
+					// Metadata binding resolved by ODataMetadata
+					oNode = this.oMetadata._getAnnotation(sResolvedPath);
 				}
-				sDataPath = sResolvedPath.substr(0, iSeparator);
-				sMetaPath = sResolvedPath.substr(iSeparator + 3);
-				oMetaContext = oMetaModel.getMetaContext(sDataPath);
-				oNode = oMetaModel.getProperty(sMetaPath, oMetaContext);
-			} else {
-				// Metadata binding resolved by ODataMetadata
-				oNode = this.oMetadata._getAnnotation(sResolvedPath);
 			}
 		} else {
-			if (!sResolvedPath) {
-				return oNode;
-			}
 			// doesn't make any sense, but used to work
 			if (sResolvedPath === "/") {
 				return this.oData;
@@ -5180,6 +5183,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if a given binding path is a metadata path
+	 *
+	 * @param {string} sPath Resolved binding path
+	 * @returns {boolean} bIsMetadataPath True if binding path is a metadata path starting with '/#'
+	 *
+	 */
+	ODataModel.prototype._isMetadataPath = function(sPath) {
+		var bIsMetadataPath = false;
+		if (sPath && sPath.indexOf('/#') > -1)  {
+			bIsMetadataPath = true;
+		}
+		return bIsMetadataPath;
+	};
+
+	/**
 	 * Checks if path points to a metamodel property.
 	 *
 	 * @param {string} sPath The binding path
@@ -5573,7 +5591,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.resolve = function(sPath, oContext, bCanonical) {
 		var sResolvedPath = Model.prototype.resolve.call(this,sPath, oContext);
-		if (bCanonical) {
+		if (!this._isMetadataPath(sResolvedPath) && bCanonical) {
 			var oEntityInfo = {},
 				oEntity = this.getEntityByPath(sPath, oContext, oEntityInfo);
 			if (oEntity) {
