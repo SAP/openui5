@@ -3,10 +3,11 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/m/UploadCollectionParameter",
+	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/FileSizeFormat",
 	"sap/ui/Device"
-], function(jQuery, Controller, MessageToast, UploadCollectionParameter, JSONModel, FileSizeFormat, Device) {
+], function(jQuery, Controller, MessageToast, UploadCollectionParameter, MobileLibrary, JSONModel, FileSizeFormat, Device) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollection.Page", {
@@ -20,7 +21,7 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel({
 				"maximumFilenameLength": 55,
 				"maximumFileSize": 10,
-				"mode": sap.m.ListMode.SingleSelectMaster,
+				"mode": MobileLibrary.ListMode.SingleSelectMaster,
 				"uploadEnabled": true,
 				"uploadButtonVisible": true,
 				"enableEdit": true,
@@ -28,16 +29,16 @@ sap.ui.define([
 				"visibleEdit": true,
 				"visibleDelete": true,
 				"listSeparatorItems": [
-					sap.m.ListSeparators.All,
-					sap.m.ListSeparators.None
+					MobileLibrary.ListSeparators.All,
+					MobileLibrary.ListSeparators.None
 				],
-				"showSeparators": sap.m.ListSeparators.All,
+				"showSeparators": MobileLibrary.ListSeparators.All,
 				"listModeItems": [
 					{
-						"key": sap.m.ListMode.SingleSelectMaster,
+						"key": MobileLibrary.ListMode.SingleSelectMaster,
 						"text": "Single"
 					}, {
-						"key": sap.m.ListMode.MultiSelect,
+						"key": MobileLibrary.ListMode.MultiSelect,
 						"text": "Multi"
 					}
 				]
@@ -232,7 +233,7 @@ sap.ui.define([
 
 		onModeChange: function(oEvent) {
 			var oSettingsModel = this.getView().getModel("settings");
-			if (oEvent.getParameters().selectedItem.getProperty("key") === sap.m.ListMode.MultiSelect) {
+			if (oEvent.getParameters().selectedItem.getProperty("key") === MobileLibrary.ListMode.MultiSelect) {
 				oSettingsModel.setProperty("/visibleEdit", false);
 				oSettingsModel.setProperty("/visibleDelete", false);
 				this.enableToolbarItems(true);
@@ -270,7 +271,7 @@ sap.ui.define([
 		onSelectionChange: function() {
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			// Only it is enabled if there is a selected item in multi-selection mode
-			if (oUploadCollection.getMode() === sap.m.ListMode.MultiSelect) {
+			if (oUploadCollection.getMode() === MobileLibrary.ListMode.MultiSelect) {
 				if (oUploadCollection.getSelectedItems().length > 0) {
 					this.getView().byId("deleteSelectedButton").setEnabled(true);
 				} else {
