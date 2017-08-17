@@ -126,9 +126,15 @@ sap.ui.define([
 			styleClass: Utils.getRtaStyleClassName()
 		};
 
+		var oChangeHandler;
+		var sVariantManagementReference;
 		return aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler(oElement, mPropertyBag).then(function(aChanges) {
 			aChanges.forEach(function(mChange) {
-				oSettingsCommand = this.getCommandFactory().getCommandFor(mChange.selectorControl, "settings", mChange.changeSpecificData);
+				oChangeHandler = this._getChangeHandlerForControlType(mChange.selectorControl.controlType, mChange.changeSpecificData.changeType);
+				if (aSelectedOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
+					sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
+				}
+				oSettingsCommand = this.getCommandFactory().getCommandFor(mChange.selectorControl, "settings", mChange.changeSpecificData, undefined, sVariantManagementReference);
 				this.fireElementModified({
 					"command" : oSettingsCommand
 				});

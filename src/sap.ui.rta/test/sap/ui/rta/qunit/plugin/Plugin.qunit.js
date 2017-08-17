@@ -6,6 +6,7 @@ sap.ui.require([
 	'sap/ui/dt/DesignTime',
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/plugin/Remove',
+	'sap/ui/rta/plugin/ControlVariant',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/m/Button',
@@ -16,12 +17,14 @@ sap.ui.require([
 	'sap/m/Input',
 	'sap/ui/layout/form/Form',
 	'sap/ui/layout/form/FormContainer',
-	'sap/ui/layout/form/SimpleForm'
+	'sap/ui/layout/form/SimpleForm',
+	'sap/uxap/ObjectPageSection'
 ],
 function(
 	DesignTime,
 	Plugin,
 	Remove,
+	ControlVariant,
 	CommandFactory,
 	ChangeRegistry,
 	Button,
@@ -32,7 +35,8 @@ function(
 	Input,
 	Form,
 	FormContainer,
-	SimpleForm
+	SimpleForm,
+	ObjectPageSection
 ) {
 	"use strict";
 	QUnit.start();
@@ -394,6 +398,81 @@ function(
 			}
 		});
 		assert.notOk(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then it returns false");
+	});
+
+	QUnit.module("Given the Plugin is initialized", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			oChangeRegistry.registerControlsForChanges({
+				"ObjectPageSection" : {
+					"rename": "sap/ui/fl/changeHandler/BaseRename"
+				},
+				"sap.m.Button" : {
+					"removeButton": "sap/ui/fl/changeHandler/Base"
+				}
+			});
+
+			this.oObjectPageSection = new ObjectPageSection();
+			this.oButton = new Button();
+			this.oLayout = new VerticalLayout({
+				content : [this.oObjectPageSection, this.oButton]
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oLayout]
+			});
+
+			this.oPlugin = new sap.ui.rta.plugin.Plugin({
+				commandFactory : new CommandFactory()
+			});
+			this.oControlVariantPlugin = new sap.ui.rta.plugin.ControlVariant({
+				commandFactory : new CommandFactory()
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+				this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				done();
+			}.bind(this));
+
+		},
+		afterEach : function() {
+			this.oLayout.destroy();
+			this.oDesignTime.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when the control is checked for a variant change handler", function(assert) {
+		var bVariantChangeHandlerForSectionRename = this.oPlugin._hasVariantChangeHandler("rename", this.oObjectPageSection);
+		var bVariantChangeHandlerForButtonRemove = this.oPlugin._hasVariantChangeHandler("removeButton", this.oButton);
+		assert.ok(bVariantChangeHandlerForSectionRename, "then the control has a variant ChangeHandler");
+		assert.notOk(bVariantChangeHandlerForButtonRemove, "then the control has no variant ChangeHandler");
+	});
+
+	QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
+		this.oButtonOverlay.setDesignTimeMetadata({
+			actions: {
+				remove: {
+					changeType: "removeButton"
+				}
+			}
+		});
+
+		sandbox.stub(this.oObjectPageSectionOverlay, "getVariantManagement").returns("variant-test");
+		sandbox.stub(this.oButtonOverlay, "getVariantManagement").returns(undefined);
+		var oObjectPageSectionAction = this.oObjectPageSectionOverlay.getDesignTimeMetadata().getAction("rename", this.oObjectPageSectionOverlay.getElementInstance());
+		var oButtonAction = this.oButtonOverlay.getDesignTimeMetadata().getAction("remove", this.oButtonOverlay.getElementInstance());
+
+		var sVarMgmtRefForObjectPageSection = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay, oObjectPageSectionAction);
+		var sVarMgmtRefForButton = this.oPlugin.getVariantManagementReference(this.oButtonOverlay, oButtonAction);
+		assert.equal(sVarMgmtRefForObjectPageSection, "variant-test", "then for the control with variant ChangeHandler the variant management reference is returned");
+		assert.equal(sVarMgmtRefForButton, undefined, "then for the control without variant ChangeHandler undefined is returned");
 	});
 
 });

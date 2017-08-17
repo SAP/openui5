@@ -129,11 +129,14 @@ sap.ui.define([
 			aNewElementIds.push(oView.createId(jQuery.sap.uid()));
 		}
 
+		var oSplitAction = this._getSplitAction(oElementOverlay);
+		var sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oSplitAction);
+
 		var oSplitCommand = this.getCommandFactory().getCommandFor(oSplitElement, "split", {
 			newElementIds : aNewElementIds,
 			source : oSplitElement,
 			parentElement : oParent
-		}, oDesignTimeMetadata);
+		}, oDesignTimeMetadata, sVariantManagementReference);
 		this.fireElementModified({
 			"command" : oSplitCommand
 		});

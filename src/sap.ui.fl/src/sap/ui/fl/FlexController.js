@@ -172,7 +172,6 @@ sap.ui.define([
 			});
 			if (ChangeHandler.revertChange && oChangeSpecificData["variantManagementReference"] && oChangeSpecificData["variantReference"]) {
 				oChange.setVariantReference(oChangeSpecificData["variantReference"]);
-				jQuery.sap.log.error("VariantChange" + "-" + oChangeSpecificData["variantManagementReference"] + "-" + oChangeSpecificData["variantReference"]); /*Only temporary*/
 			}
 		} else {
 			throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
@@ -193,7 +192,7 @@ sap.ui.define([
 	FlexController.prototype.addChange = function (oChangeSpecificData, oControl) {
 		var oChange = this.createChange(oChangeSpecificData, oControl);
 		var oComponent = Utils.getAppComponentForControl(oControl);
-		this._oChangePersistence.addChange(oChange, oComponent);
+		this.addPreparedChange(oChange, oComponent);
 		return oChange;
 	};
 
@@ -210,6 +209,9 @@ sap.ui.define([
 	 */
 	FlexController.prototype.addPreparedChange = function (oChange, oAppComponent) {
 		this._oChangePersistence.addChange(oChange, oAppComponent);
+		if (oChange.getVariantReference()) {
+			oAppComponent.getModel("$FlexVariants")._addChange(oChange);
+		}
 		return oChange;
 	};
 
@@ -227,6 +229,9 @@ sap.ui.define([
 	 */
 	FlexController.prototype.deleteChange = function (oChange) {
 		this._oChangePersistence.deleteChange(oChange);
+		if (oChange.getVariantReference()) {
+			Utils.getAppComponentForControl(oChange.getComponent()).getModel("$FlexVariants")._removeChange(oChange);
+		}
 	};
 
 	/**
@@ -407,9 +412,6 @@ sap.ui.define([
 
 			var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
 			this._writeCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
-			if (oChange.getVariantReference()) {
-				mPropertyBag.appComponent.getModel("$FlexVariants")._addChange(oChange);
-			}
 
 		}
 	};
@@ -443,10 +445,6 @@ sap.ui.define([
 				aAppliedChanges.splice(iIndex, 1);
 				this._writeCustomData(oAppliedChangeCustomData, aAppliedChanges.join(), mPropertyBag, oControl);
 			}
-			if (oChange.getVariantReference() && oChange.getVariantReference() !== "" && !oChange.bFromLrep) {
-				mPropertyBag.appComponent.getModel("$FlexVariants")._removeChange(oChange);
-			}
-			delete oChange.bFromLrep;
 		}
 	};
 

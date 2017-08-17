@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/rta/command/CommandFactory",
 	"sap/uxap/ObjectPageLayout"
-], function(Controller, MockServer, ResourceModel, ODataModel, JSONModel, RuntimeAuthoring, ControlVariantPlugin, ObjectPageLayout) {
+], function(Controller, MockServer, ResourceModel, ODataModel, JSONModel, RuntimeAuthoring, ControlVariantPlugin, CommandFactory, ObjectPageLayout) {
 	"use strict";
 
 	return Controller.extend("sap.ui.rta.test.variantManagement.controller.Main", {
@@ -46,7 +47,11 @@ sap.ui.define([
 			// Control Variant
 			RuntimeAuthoring.prototype.start = function () {
 				var mPlugins = this.getDefaultPlugins();
-				mPlugins["controlVariant"] = new ControlVariantPlugin();
+				mPlugins["controlVariant"] = new ControlVariantPlugin({
+					commandFactory : new CommandFactory({
+						flexSettings: this.getFlexSettings()
+					})
+				});
 				this.setPlugins(mPlugins);
 				return fnOriginalRtaStart.apply(this, arguments);
 			};

@@ -177,11 +177,13 @@ sap.ui.define([
 		var fnGetIndex = oDesignTimeMetadata.getAggregation(vAction.aggregation).getIndex;
 		var iIndex = this._determineIndex(oTargetElement, oSiblingElement, vAction.aggregation, fnGetIndex);
 
+		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay, vAction);
+
 		var oCommand = this.getCommandFactory().getCommandFor(oTargetElement, "createContainer", {
 			newControlId : sNewControlID,
 			label : this._getContainerTitle(vAction, oTargetElement, oDesignTimeMetadata),
 			index : iIndex
-		}, oDesignTimeMetadata);
+		}, oDesignTimeMetadata, sVariantManagementReference);
 
 		this.fireElementModified({
 			"command" : oCommand,
