@@ -158,6 +158,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	};
 
 	/**
+	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
+	 * methods: <code>format</code> takes a Date and returns a date as a String in the format
+	 * expected by the model, <code>parse</code> converts from the String to a Date.
+	 *
+	 * @returns {sap.ui.core.format.DateFormat}
+	 *   The formatter
+	 *
+	 * @override
+	 * @protected
+	 */
+	EdmDate.prototype.getModelFormat = function() {
+		return getModelFormatter();
+	};
+
+	/**
 	 * Returns the type's name.
 	 *
 	 * @returns {string}

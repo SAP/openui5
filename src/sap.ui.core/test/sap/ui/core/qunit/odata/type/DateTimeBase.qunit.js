@@ -266,6 +266,15 @@ sap.ui.require([
 			assert.strictEqual(oType.formatValue(oDateTime, "string"), sFormattedDateTime);
 			assert.deepEqual(oType.parseValue(sFormattedDateTime, "string"), oDateTime);
 		});
+
+		//*****************************************************************************************
+		QUnit.test("getModelFormat", function (assert) {
+			var oType = createInstance(sTypeName),
+				oFormat = oType.getModelFormat();
+
+			assert.equal(oFormat.format(oDateTime), oDateTime, "format");
+			assert.equal(oFormat.parse(sFormattedDateTime), sFormattedDateTime, "parse");
+		});
 	}
 
 	//*********************************************************************************************
@@ -554,5 +563,16 @@ sap.ui.require([
 
 		assert.strictEqual(oType.formatValue(sDateTime, "string"), sFormattedDateTime);
 		assert.strictEqual(oType.parseValue(sFormattedDateTime, "string"), sDateTime);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("V4: getModelFormat", function (assert) {
+		var oDateTimeOffset = new DateTimeOffset(undefined, {precision : 3}).setV4(),
+			oFormat = oDateTimeOffset.getModelFormat(),
+			oParsedDate = oFormat.parse(sDateTimeOffsetWithMS);
+
+		assert.ok(oParsedDate instanceof Date, "parse delivers a Date");
+		assert.strictEqual(oParsedDate.getTime(), oDateTimeWithMS.getTime(), "parse value");
+		assert.strictEqual(oFormat.format(oParsedDate), sDateTimeOffsetWithMS, "format");
 	});
 });
