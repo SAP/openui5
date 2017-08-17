@@ -105,6 +105,7 @@
 									layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true})
 								})
 							],
+							ariaLabelledBy: ["XXX"],
 							layoutData: new sap.ui.layout.ResponsiveFlowLayoutData("F3C2LD",{minWidth: 300})
 					}),
 				new sap.ui.layout.form.FormContainer("F3C3",{
@@ -309,7 +310,13 @@
 			ok(!jQuery("#F2C1--RFLayout").attr("role"), "Container-F2C1: role \"form\" not set on RFLayout level");
 			equal(jQuery("#F2C1--Panel").attr("aria-labelledby"), "F2C1--title", "Container-F2C1: aria-labelledby set");
 			equal(jQuery("#F3C1--Panel").attr("aria-labelledby"), "F3C1T", "Container-F3C1: aria-labelledby set");
-			equal(jQuery("#F3C6--RFLayout").attr("role"), "form", "Container-F3C6: role \"form\" set on RFLayout level");
+			equal(jQuery("#F3C2--Panel").attr("aria-labelledby"), "XXX F3C2--title", "Container-F3C1: aria-labelledby set");
+			ok(!jQuery("#F3C6--RFLayout").attr("role"), "Container-F3C6: role \"form\" not set on grid level");
+
+			sap.ui.getCore().byId("F3C6").addAriaLabelledBy("XXX");
+			sap.ui.getCore().applyChanges();
+			equal(jQuery("#F3C6--RFLayout").attr("role"), "form", "Container-F3C6: role \"form\" set on grid level");
+			equal(jQuery("#F3C6--RFLayout").attr("aria-labelledby"), "XXX", "Container-F3C6: aria-labelledby set on grid level");
 
 			equal(jQuery("#F4").attr("aria-labelledby"), "F4-Title", "Form4: aria-labelledby set");
 			equal(jQuery("#F4C1--Panel").attr("aria-labelledby"), "F4C1-Title", "Container-F4C1: aria-labelledby set");

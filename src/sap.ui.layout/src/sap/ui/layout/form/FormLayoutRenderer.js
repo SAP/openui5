@@ -241,13 +241,13 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	FormLayoutRenderer.writeAccessibilityStateContainer = function(rm, oContainer){
 
-		var mAriaProps = {role: "form"};
+		var mAriaProps = {};
 		var oTitle = oContainer.getTitle();
 		var oToolbar = oContainer.getToolbar();
 		if (oToolbar) {
 			if (!oContainer.getAriaLabelledBy() || oContainer.getAriaLabelledBy().length == 0) {
 				// no aria-label -> use complete Toolbar as fallback
-				mAriaProps["labelledby"] = oToolbar.getId();
+				mAriaProps["labelledby"] = {value: oToolbar.getId(), append: true};
 			}
 		} else if (oTitle) {
 			var sId = "";
@@ -256,7 +256,12 @@ sap.ui.define(['jquery.sap.global'],
 			} else {
 				sId = oTitle.getId();
 			}
-			mAriaProps["labelledby"] = sId;
+			mAriaProps["labelledby"] = {value: sId, append: true};
+		}
+
+		if (mAriaProps["labelledby"] || oContainer.getAriaLabelledBy().length > 0) {
+			// if no title or label do not set role because of JAWS 18 issues
+			mAriaProps["role"] = "form";
 		}
 
 		rm.writeAccessibilityState(oContainer, mAriaProps);

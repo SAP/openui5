@@ -45,6 +45,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 * Added content that should be positioned. Every content item should have a ResponsiveFlowLayoutData attached, or otherwise, the default values are used.
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+		},
+		associations: {
+
+			/**
+			 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+			 * @since 1.38.32
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		}
 	}});
 
