@@ -144,8 +144,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					contentOnlyBusy: {type: "boolean", group: "Appearance", defaultValue: false},
 
 					/**
-					 * Decides whether the floating footer behavior should be enabled.
-					 * When the floating footer behavior is used, the content is visible when it's underneath the footer.
+					 * Decides whether the footer can float.
+					 * When set to true, the footer is not fixed below the content area anymore, but rather floats over it with a slight offset from the bottom.
 					 */
 					floatingFooter: {type: "boolean", group:"Appearance", defaultValue: false }
 				},
