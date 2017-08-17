@@ -23,10 +23,10 @@ function testRule(oSettings) {
 				type: oSettings.executionScopeType,
 				selectors: oSettings.executionScopeSelectors
 			},
-			{
+			[{
 				libName: oSettings.libName,
 				ruleId: oSettings.ruleId
-			}
+			}]
 		).then(function () {
 			var oHistory = jQuery.sap.support.getLastAnalysisHistory();
 
