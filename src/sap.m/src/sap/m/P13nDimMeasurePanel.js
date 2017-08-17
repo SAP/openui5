@@ -601,7 +601,7 @@ sap.ui.define([
 					text: "{text}"
 				})
 			},
-			change: jQuery.proxy(this._onChartTypeChange, this),
+            selectionChange: jQuery.proxy(this._onChartTypeChange, this),
 			layoutData: new sap.m.OverflowToolbarLayoutData({
 				moveToOverflow: false,
 				stayInOverflow: false
