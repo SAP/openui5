@@ -910,6 +910,34 @@
 			sap.ui.getCore().applyChanges();
 		});
 
+		QUnit.test("Function _handleDelete creates the popup and changes the internal state of UploadCollection correctly", function(assert) {
+			//Arrange
+			var sItemId = this.oUploadCollection.aItems[0].sId,
+				oMessageBoxStub = sinon.stub(sap.m.MessageBox, "show"),
+				oCloseMessageBoxStub = sinon.stub(this.oUploadCollection, "_onCloseMessageBoxDeleteItem"),
+				sCompactClass = "sapUiSizeCompact",
+				oEvent = {
+					getParameters: function() {
+						return {
+							id: sItemId + "-deleteButton"
+						}
+					}
+				};
+			//Act
+			this.oUploadCollection.addStyleClass(sCompactClass);
+			this.oUploadCollection._handleDelete(oEvent);
+			oMessageBoxStub.getCall(0).args[1].onClose();
+			//Assert
+			assert.ok(oCloseMessageBoxStub.called, "The _onCloseMessageBoxDeleteItem is correctly registered to handle the closing of MessageBox");
+			assert.equal(this.oUploadCollection.sDeletedItemId, sItemId, "The internal id of the item that may be deleted is updated correctly");
+			assert.equal(oMessageBoxStub.getCall(0).args[1].dialogId, "messageBoxDeleteFile", "Correct dialog id has been handed to the show function");
+			assert.equal(oMessageBoxStub.getCall(0).args[1].actions[0], sap.m.MessageBox.Action.OK, "OK action is included in the MessageBox call");
+			assert.equal(oMessageBoxStub.getCall(0).args[1].actions[1], sap.m.MessageBox.Action.CANCEL, "Cancel action is included in the MessageBox call");
+			assert.equal(oMessageBoxStub.getCall(0).args[1].styleClass, sCompactClass, "Compact class has been handed from UploadCollection to the MessageBox successfully");
+			//Restore
+			oMessageBoxStub.restore();
+		});
+
 		QUnit.test("handleTerminate - abort on FileUploader is called.", function(assert) {
 			var done = assert.async();
 			// Prepare FileUploader Spy
