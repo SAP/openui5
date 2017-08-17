@@ -29,7 +29,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			sTooltip = oText.getTooltip_AsString(),
 			nMaxLines = oText.getMaxLines(),
 			bWrapping = oText.getWrapping(),
-			sTextAlign = oText.getTextAlign();
+			sTextAlign = oText.getTextAlign(),
+			bRenderWhiteSpaces = oText.getRenderWhiteSpaces();
 
 		// start writing html
 		oRm.write("<span");
@@ -58,6 +59,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			if (sTextAlign) {
 				oRm.addStyle("text-align", sTextAlign);
 			}
+		}
+
+		if (bRenderWhiteSpaces) {
+			var whiteSpaceClass = bWrapping ? "sapMTextRenderWhiteSpacesWrap" : "sapMTextRenderWhiteSpaces";
+			oRm.addClass(whiteSpaceClass);
 		}
 
 		// finish writing html
@@ -101,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.m.Text} oText An object representation of the control that should be rendered.
 	 */
 	TextRenderer.renderText = function(oRm, oText) {
-		var sText = oText.getText(true);
+		var sText = oText.getText(true).replace(/\\t/g,"\t");
 		oRm.writeEscaped(sText);
 	};
 
