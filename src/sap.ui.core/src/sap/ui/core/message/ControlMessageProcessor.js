@@ -80,8 +80,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 		//check messages
 		jQuery.each(mMessages, function(sTarget) {
 			var oBinding,
-				aParts = sTarget.split('/'),
-				oControl = sap.ui.getCore().byId(aParts[0]);
+				oControl,
+				aParts = sTarget.split('/');
+
+			// when target starts with a slash we shift the array
+			if (!aParts[0]) {
+				aParts.shift();
+			}
+			oControl = sap.ui.getCore().byId(aParts[0]);
 
 			//if control does not exist: nothing to do
 			if  (!oControl) {
