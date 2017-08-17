@@ -2,9 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	"sap/ui/fl/support/apps/contentbrowser/utils/HtmlEscapeUtils"
-], function (HtmlEscapeUtils) {
+sap.ui.define([], function () {
 	"use strict";
 
 	/**
@@ -66,7 +64,8 @@ sap.ui.define([
 				fnReject();
 			}
 
-			var sContentSuffix = HtmlEscapeUtils.unescapeSlashes(sNamespace) + sFilename + "." + sFileType;
+			var sContentSuffix = sNamespace + sFilename + "." + sFileType;
+			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = that._getLayerSuffix(sLayer);
 			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix;
 			that._getTokenAndSendPutRequest.call(that, sUrl, sContent, fnResolve, fnReject);
@@ -91,7 +90,8 @@ sap.ui.define([
 				fnReject();
 			}
 
-			var sContentSuffix = HtmlEscapeUtils.unescapeSlashes(sNamespace) + sFileName + "." + sFileType;
+			var sContentSuffix = sNamespace + sFileName + "." + sFileType;
+			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = that._getLayerSuffix(sLayer);
 			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix;
 			that._getTokenAndSendDeletionRequest.call(that, sUrl, fnResolve, fnReject);
