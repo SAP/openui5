@@ -443,6 +443,10 @@ sap.ui.define([
 		if (this._bDomReady && this.$().parents(":hidden").length === 0) {
 			this._onAfterRenderingDomReady();
 		} else {
+			// schedule instead
+			if (this._iAfterRenderingDomReadyTimeout) { // if the page was rerendered before the previous scheduled task completed, cancel the previous
+				clearTimeout(this._iAfterRenderingDomReadyTimeout);
+			}
 			this._iAfterRenderingDomReadyTimeout = jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, this._onAfterRenderingDomReady);
 		}
 	};
@@ -451,6 +455,7 @@ sap.ui.define([
 		var oSectionToSelect = this._oStoredSection || this._oFirstVisibleSection,
 			sSectionToSelectID;
 
+		this._iAfterRenderingDomReadyTimeout = null;
 		this._bDomReady = true;
 		this._adjustHeaderHeights();
 

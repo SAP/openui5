@@ -262,12 +262,7 @@
 				oSection1 = oPage.getSections()[1],
 				oSection1Subsection1 = oSection1.getSubSections()[1],
 				done = assert.async(),
-				iRenderCount = 0,
 				fnOnDomReady = function() {
-					iRenderCount++;
-					if (iRenderCount === 1) { // the page is invalidated during rendering (anchor bar manipulations) => the final rendering is needed for the test
-						return;
-					}
 					oPage.scrollToSection(oSection1Subsection1.getId(), 0);
 
 					setTimeout(function() {
@@ -297,12 +292,7 @@
 			var oPage = this.oObjectPage,
 				oSection1Subsection1 = oPage.getSections()[1].getSubSections()[1],
 				done = assert.async(),
-				iRenderCount = 0,
 				fnOnDomReady = function() {
-					iRenderCount++;
-					if (iRenderCount === 1) { // the page is invalidated during rendering (anchor bar manipulations) => the final rendering is needed for the test
-						return;
-					}
 					oPage.scrollToSection(oSection1Subsection1.getId(), 0);
 
 					setTimeout(function() {
