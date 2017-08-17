@@ -62,6 +62,9 @@
 									<smartForm:GroupElement id="EntityType01.UnboundButton" >
 										<Button text="No Binding"></Button>
 									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType01.CommonProperty" visible="false">
+										<smartField:SmartField value="{CommonPropertyName}" />
+									</smartForm:GroupElement>
 									<smartForm:GroupElement label="Invisible complex property" id="EntityType01.ComplexProperty031.Invisible" visible="false">
 										<smartField:SmartField value="{EntityType01_Complex/ComplexProperty031}" />
 									</smartForm:GroupElement>
@@ -93,6 +96,9 @@
 									<smartForm:GroupElement label="Partially visible combined field, real use case from SD CustomerReturn_OP_F1708Type" id="EntityType02.PartiallyVisible" >
 										<smartField:SmartField value="{EntityType02_Property05}"/>
 										<smartField:SmartField value="{EntityType02_Property06}" visible="false"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType02.CommonProperty" visible="false">
+										<smartField:SmartField value="{CommonPropertyName}" />
 									</smartForm:GroupElement>
 									<smartForm:GroupElement label="NavigationLabel01" id="EntityType02.NavigationProperty" visible="false">
 										<smartField:SmartField value="{to_EntityType02Nav/NavProperty}"/>

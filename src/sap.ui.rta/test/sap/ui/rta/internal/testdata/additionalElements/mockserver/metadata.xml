@@ -45,11 +45,15 @@
 					Nullable="false" MaxLength="25"
 					sap:label="Entity1-Property07-ignored-unbound" sap:quickinfo="Unbound Property"
 					sap:creatable="false" sap:sortable="false" />
-					<Property Name="Property08" Type="Edm.String"
+				<Property Name="Property08" Type="Edm.String"
 					Nullable="false" MaxLength="25" sap:quickinfo="Property without sap:label"
 					sap:creatable="false" sap:sortable="false" />
 				<Property Name="EntityType01_Complex" Type="AdditionalElementsTest.ComplexType03"
 					Nullable="false" />
+				<Property Name="CommonPropertyName" Type="Edm.String"
+					Nullable="false" MaxLength="25"
+					sap:label="Common Property in EntityType01" sap:quickinfo="Common Property in EntityType01"
+					sap:creatable="false" sap:sortable="false" />
 				<NavigationProperty Name="to_EntityType01Nav"
 					Relationship="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FE"
 					FromRole="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"
@@ -113,6 +117,10 @@
 					MaxLength="10" sap:semantics="currency-code"
 					sap:value-list="standard" sap:text="to_EntityType02Nav/EntityTypeNav_Property01" sap:label="EntityType02_Property07_with_implicit_nav"
 				 />
+				 <Property Name="CommonPropertyName" Type="Edm.String"
+					Nullable="false" MaxLength="25"
+					sap:label="Common Property in EntityType02" sap:quickinfo="Common Property in EntityType01"
+					sap:creatable="false" sap:sortable="false" />
 				<NavigationProperty Name="to_EntityType02Nav" Relationship="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FD"
 					FromRole="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FD" ToRole="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FD"/>
 			</EntityType>
