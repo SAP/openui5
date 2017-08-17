@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global sinon QUnit */
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 QUnit.config.autostart = false;
@@ -12,8 +12,10 @@ sap.ui.require([
 	"sap/ui/fl/ChangePersistenceFactory"
 ], function(LrepConnector,FakeLrepConnector, FakeLrepConnectorLocalStorage, FakeLrepLocalStorage, Cache, ChangePersistenceFactory) {
 	"use strict";
+	sinon.config.useFakeTimers = false;
 	QUnit.start();
 
+	var sandbox = sinon.sandbox.create();
 
 	FakeLrepConnectorLocalStorage.enableFakeConnector();
 
@@ -113,7 +115,7 @@ sap.ui.require([
 				"isKeyUser": true,
 				"isAtoAvailable": false,
 				"isProductiveSystem": false
-			}, "then still only the default settings are available, you cannot enable without diable the fake connector");
+			}, "then still only the default settings are available, you cannot enable without disable the fake connector");
 		});
 	});
 
@@ -134,6 +136,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("when enable then disable fake connector without app component data", function(assert) {
+		FakeLrepConnectorLocalStorage.disableFakeConnector();
 		//enable
 		FakeLrepConnectorLocalStorage.enableFakeConnector("dummy path");
 		var oConnector = LrepConnector.createConnector();
@@ -174,6 +177,164 @@ sap.ui.require([
 		assert.equal(FakeLrepConnectorLocalStorage.enableFakeConnector.original, undefined, "then original connector is erased");
 		assert.ok(oConnector instanceof LrepConnector , "new connector will be created with real instance");
 		assert.equal(FakeLrepConnectorLocalStorage._oFakeInstance, undefined, "and a stored fake instance is erased");
+	});
+
+	QUnit.module("Given JSON data passed during initiailization of FakeLrepConnectorLocalStorage", {
+		beforeEach : function(assert) {
+			oFakeLrepConnectorLocalStorage.deleteChanges();
+			FakeLrepConnectorLocalStorage.disableFakeConnector();
+			var mSettings = {};
+			mSettings.sInitialComponentJsonPath = jQuery.sap.getModulePath("sap.ui.fl.qunit.testResources").replace('resources', 'test-resources') + "/TestFakeVariantLrepResponse.json";
+			mSettings.isAtoAvailable = false;
+			FakeLrepConnectorLocalStorage.enableFakeConnector(mSettings, "json.component", "1.0.1");
+			this.oFakeLrepConnectorLocalStorage = sap.ui.fl.LrepConnector.createConnector();
+			this.createChangesMapsSpy = sandbox.spy(this.oFakeLrepConnectorLocalStorage, "_createChangesMap");
+			this.sortChangesSpy = sandbox.spy(this.oFakeLrepConnectorLocalStorage, "_sortChanges");
+		},
+		afterEach : function(assert) {
+			oFakeLrepConnectorLocalStorage.deleteChanges();
+		}
+	});
+
+	QUnit.test("when changes are loaded from FakeLrepConnectorLocalStorage", function(assert) {
+		return this.oFakeLrepConnectorLocalStorage.loadChanges("test.json.component")
+			.then(function (mResult) {
+				assert.equal(mResult.changes.changes.length, 3, "then three global changes read from the provided JSON file");
+				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].defaultVariant, "variant0", "then default variant for variantManagement reference 'variantManagementOrdersTable' set correctly for ");
+				assert.equal(mResult.changes.variantSection["variantManagementOrdersObjectPage"].defaultVariant, "variant00", "then default variant for variantManagement reference 'variantManagementOrdersObjectPage' set correctly for ");
+				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].variants.length, 3, "then three variant found for variantManagement reference 'variantManagementOrdersTable'");
+				assert.ok(this.createChangesMapsSpy.calledOnce, "then _createChangesMaps called once");
+				assert.ok(this.sortChangesSpy.calledOnce, "then _sortChanges called once");
+			}.bind(this));
+	});
+
+	QUnit.test("when _createChangesMap is called with change variant not existing", function(assert) {
+		var mResult = {
+			changes: {
+				variantSection: {
+					"varMgmt1": {},
+					"varMgmt2": {}
+				}
+			}
+		};
+
+		var aVariants = [
+			{variantManagementReference: "varMgmt3",
+			fileName: "fileName3"}
+		];
+		assert.notOk(mResult.changes.variantSection["varMgmt3"], "then no variantManagement exists");
+		var mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap({}, aVariants);
+		assert.equal(mResult.changes.variantSection["varMgmt3"].defaultVariant, "fileName3", "then default variant set for the newly added variantManagement reference, extracted from variant change");
+	});
+
+	QUnit.test("when _createChangesMap is called with variant change already existing", function(assert) {
+		var mResult = {
+			changes: {
+				variantSection: {
+					"varMgmt1": {
+						variants: [
+							{
+								content: {
+									fileName: "ExistingVariant1"
+								},
+								changes: []
+							}
+						]
+					},
+					"varMgmt2": {}
+				}
+			}
+		};
+
+		var aVariants = [
+			{
+				variantManagementReference: "varMgmt1",
+				fileName: "ExistingVariant1"
+			}
+		];
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 1, "then one variant already exists");
+		var mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap(mResult, aVariants);
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 1, "then variant not added since a duplicate variant already exists");
+	});
+
+	QUnit.test("when _createChangesMap is called with variant change not existing", function(assert) {
+		var mResult = {
+			changes: {
+				variantSection: {
+					"varMgmt1": {
+						variants: [
+							{
+								content: {
+									fileName: "ExistingVariant1"
+								},
+								changes: []
+							}
+						]
+					},
+					"varMgmt2": {}
+				}
+			}
+		};
+
+		var aVariants = [
+			{
+				variantManagementReference: "varMgmt1",
+				fileName: "ExistingVariant2"
+			}
+		];
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 1, "then one variant already exists");
+		var mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap(mResult, aVariants);
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 2, "then variant not added since a duplicate variant already exists");
+	});
+
+	QUnit.test("when _sortChanges is called with a mix of changes and variants", function(assert) {
+		var mResult = {
+			changes: {
+				changes: [
+					{
+						fileName: "Change1",
+						variantReference: ""
+					}
+				],
+				variantSection: {
+					"varMgmt1": {
+						variants: [
+							{
+								content: {
+									fileName: "ExistingVariant1"
+								},
+								changes: [
+									{
+										fileName: "Change2",
+										variantReference: "varMgmt1"
+									}
+								]
+							}
+						]
+					},
+					"varMgmt2": {
+						variants: []
+					}
+				}
+			}
+		};
+
+		var aChanges = [
+			{
+				fileName: "Change3",
+				variantReference: "ExistingVariant1"
+			},
+			{
+				fileName: "Change4",
+				variantReference: ""
+			}
+		];
+
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 1, "then only one change in variant ExistingVariant1");
+		assert.equal(mResult.changes.changes.length, 1, "then one global change exists");
+		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, aChanges);
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 2, "then two changes in variant ExistingVariant1");
+		assert.equal(mResult.changes.changes.length, 2, "then two global changes exist");
 	});
 
 });

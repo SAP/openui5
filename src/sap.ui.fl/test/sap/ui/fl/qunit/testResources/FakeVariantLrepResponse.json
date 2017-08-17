@@ -5,7 +5,7 @@
 			"fileName":"id_1445501120486_25",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"component":"sap.ui.rta.test.Demo.md.Component",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -28,7 +28,7 @@
 			"fileName":"id_1445501120486_26",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"component":"sap.ui.rta.test.Demo.md.Component",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -51,7 +51,7 @@
 			"fileName":"id_1445501120486_27",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"component":"sap.ui.rta.test.Demo.md.Component",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -80,7 +80,7 @@
 						"title":"variant A",
 						"fileType":"variant",
 						"variantManagementReference": "idMain1--variantManagementOrdersTable",
-						"component":"sap.ui.rta.test.Demo.md.Component",
+						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
 						"selector":{
@@ -103,7 +103,7 @@
 							"variantReference":"variant0",
 							"fileName":"id_1445501120486_41",
 							"fileType":"change",
-							"changeType":"hideControl",
+							"reference":"hideControl",
 							"component":"sap.ui.rta.test.Demo.md.Component",
 							"packageName":"$TMP",
 							"content":{},
@@ -127,7 +127,7 @@
 							"fileName":"id_1445501120486_42",
 							"fileType":"change",
 							"changeType":"hideControl",
-							"component":"sap.ui.rta.test.Demo.md.Component",
+							"reference":"sap.ui.rta.test.Demo.md.Component",
 							"packageName":"$TMP",
 							"content":{},
 							"selector":{
@@ -153,7 +153,7 @@
 						"title":"Standard",
 						"fileType":"variant",
 						"variantManagementReference":"idMain1--variantManagementOrdersTable",
-						"component":"sap.ui.rta.test.Demo.md.Component",
+						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
 						"selector":{
@@ -177,7 +177,7 @@
 							"fileName":"id_1445501120486_41",
 							"fileType":"change",
 							"changeType":"hideControl",
-							"component":"sap.ui.rta.test.Demo.md.Component",
+							"reference":"sap.ui.rta.test.Demo.md.Component",
 							"packageName":"$TMP",
 							"content":{},
 							"selector":{
@@ -200,7 +200,7 @@
 							"fileName":"id_1445501120486_43",
 							"fileType":"change",
 							"changeType":"hideControl",
-							"component":"sap.ui.rta.test.Demo.md.Component",
+							"reference":"sap.ui.rta.test.Demo.md.Component",
 							"packageName":"$TMP",
 							"content":{},
 							"selector":{
@@ -226,7 +226,7 @@
 						"title":"variant AA",
 						"fileType":"variant",
 						"variantManagementReference":"idMain1--variantManagementOrdersTable",
-						"component":"sap.ui.rta.test.Demo.md.Component",
+						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
 						"selector":{

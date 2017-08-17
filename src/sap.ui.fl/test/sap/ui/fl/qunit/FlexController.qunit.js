@@ -352,18 +352,37 @@ function (
 		assert.strictEqual(aDirtyChanges[0].getComponent(), 'testScenarioComponent');
 	});
 
+	QUnit.test("createVariant shall create a variant object", function(assert) {
+		this.stub(Utils,"getAppDescriptor").returns({
+			"sap.app":{
+				id: "testScenarioComponent",
+				applicationVersion: {
+					version: "1.0.0"
+				}
+			}
+		});
+
+		var oVariantSpecificData = {
+			fileName: "idOfVariantManagementReference",
+			title: "Standard",
+			fileType: "variant",
+			variantManagementReference: "idOfVariantManagementReference"
+		};
+
+		var oVariant = this.oFlexController.createVariant(oVariantSpecificData, oComponent);
+		assert.ok(oVariant);
+		assert.strictEqual(oVariant.isVariant(), true);
+		assert.strictEqual(oVariant.getTitle(), "Standard");
+		assert.strictEqual(oVariant.getVariantManagementReference(), "idOfVariantManagementReference");
+	});
+
 	QUnit.test("addPreparedChange shall add a change to flex persistence", function(assert) {
 
 		this.stub(Utils, "getAppComponentForControl").returns(oComponent);
 		var oChange = new Change(labelChangeContent);
 
-		oChange.setVariantReference("testVarRef");
-		sandbox.stub(oComponent, "getModel").returns({_addChange: function(){}});
-		var oAddChangeStub = sandbox.stub(oComponent.getModel(), "_addChange");
-
 		var oPrepChange = this.oFlexController.addPreparedChange(oChange, oComponent);
 		assert.ok(oPrepChange);
-		assert.ok(oAddChangeStub.calledOnce, "then model's _addChange is called as VariantManagement Change is detected");
 
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
 		var aDirtyChanges = oChangePersistence.getDirtyChanges();
@@ -371,6 +390,44 @@ function (
 		assert.strictEqual(aDirtyChanges.length, 1);
 		assert.strictEqual(aDirtyChanges[0].getSelector().id, "abc123");
 		assert.strictEqual(aDirtyChanges[0].getNamespace(), "b");
+	});
+
+	QUnit.test("addPreparedChange shall add a change with variant reference to flex persistence and create a variant change", function(assert) {
+
+		this.stub(Utils, "getAppComponentForControl").returns(oComponent);
+		var oChange = new Change(labelChangeContent);
+
+		oChange.setVariantReference("testVarRef");
+		var oModel = {
+			_addChange: function(){},
+			getVariant: function(){
+				return {
+					content : {
+						fileName: "idOfVariantManagementReference",
+						title: "Standard",
+						fileType: "variant",
+						variantManagementReference: "idOfVariantManagementReference"
+					}
+				};
+			},
+			bStandardVariantExists: false
+		};
+		sandbox.stub(oComponent, "getModel").returns(oModel);
+		var oAddChangeStub = sandbox.stub(oComponent.getModel(), "_addChange");
+
+		var oPrepChange = this.oFlexController.addPreparedChange(oChange, oComponent);
+		assert.ok(oPrepChange);
+		assert.ok(oAddChangeStub.calledOnce, "then model's _addChange is called as VariantManagement Change is detected");
+		assert.equal(oModel.bStandardVariantExists, true, "the value for bStandardVariantExists has changed");
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+		var aDirtyChanges = oChangePersistence.getDirtyChanges();
+
+		assert.strictEqual(aDirtyChanges.length, 2);
+		assert.strictEqual(aDirtyChanges[0].getVariantManagementReference(), "idOfVariantManagementReference");
+		assert.strictEqual(aDirtyChanges[0].isVariant(), true);
+		assert.strictEqual(aDirtyChanges[1].getSelector().id, "abc123");
+		assert.strictEqual(aDirtyChanges[1].getNamespace(), "b");
+		assert.strictEqual(aDirtyChanges[1].isVariant(), false);
 	});
 
 	QUnit.test("addChange shall add a change and contain the applicationVersion in the connector", function(assert) {

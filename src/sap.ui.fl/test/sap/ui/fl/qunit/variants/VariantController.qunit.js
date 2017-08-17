@@ -65,6 +65,14 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.test("when calling 'getVariant' of the VariantController", function(assert) {
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var oExpectedVariant = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0];
+		var oVariant = oVariantController.getVariant("idMain1--variantManagementOrdersTable", oExpectedVariant.content.fileName);
+		assert.deepEqual(oExpectedVariant, oVariant, "then the variant object of a given variantManagmentReference and variantReference is returned");
+	});
+
 	QUnit.test("when calling 'getVariants' of the VariantController", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
@@ -73,7 +81,6 @@ sap.ui.require([
 		assert.deepEqual(aExpectedVariants, aVariants, "then the variants of a given variantManagmentId are returned");
 		assert.equal(aVariants[0].content.fileName, "idMain1--variantManagementOrdersTable", "and ordered with standard variant first");
 	});
-
 
 	QUnit.test("when calling 'getVariants' of the VariantController with an invalid variantManagementId", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
@@ -457,13 +464,15 @@ sap.ui.require([
 
 
 	QUnit.test("when '_updateCurrentVariant' is triggered from the component model to carry switch and revert of changes", function(assert) {
-		assert.expect(18);
+		assert.expect(19);
 
 		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aRevertedChanges[1].getKey()] instanceof Object);
 		fnGetChanges.call(this, this.aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
 		var sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
 		assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
+		var oCurrentVariant = this.oModel.getVariant("variant0");
+		assert.equal(oCurrentVariant.content.fileName, "variant0", "'getVariant' of the model returns the correct variant object");
 
 		this.oModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable");
 		/*Dependencies still not updated as control doesn't exist*/
