@@ -99,6 +99,37 @@
 		}
 	}
 
+	function addColumn(sTitle, sText, bInputElement, bFocusable, bTabbable) {
+		var oControlTemplate;
+		if (bInputElement) {
+			oControlTemplate = new sap.ui.table.test.TestInputControl({
+				text: "{" + sText + "}",
+				index: iNumberOfCols,
+				visible: true,
+				tabbable: bTabbable
+			});
+		} else {
+			oControlTemplate = new sap.ui.table.test.TestControl({
+				text: "{" + sText + "}",
+				index: iNumberOfCols,
+				visible: true,
+				focusable: bFocusable,
+				tabbable: bFocusable && bTabbable
+			});
+		}
+
+		oTable.addColumn(new sap.ui.table.Column({
+			label: sTitle,
+			width: "100px",
+			template: oControlTemplate
+		}));
+		iNumberOfCols++;
+
+		for (var i = 0; i < iNumberOfRows; i++) {
+			oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
+		}
+	}
+
 	function setupTest() {
 		createTables(true, true);
 		var oFocus = new sap.ui.table.test.TestControl("Focus1", {text: "Focus1", tabbable: true});
@@ -333,76 +364,62 @@
 		beforeEach: function () {
 			createTables();
 
-			function addColumn(sTitle, sText, bFocusable, bTabbable) {
-				var oControlTemplate;
-				if (!bFocusable) {
-					oControlTemplate = new sap.ui.table.test.TestControl({
-						text: "{" + sText + "}",
-						index: iNumberOfCols,
-						visible: true,
-						tabbable: bTabbable
-					});
-				} else {
-					oControlTemplate = new sap.ui.table.test.TestInputControl({
-						text: "{" + sText + "}",
-						index: iNumberOfCols,
-						visible: true,
-						tabbable: bTabbable
-					});
-				}
-
-				oTable.addColumn(new sap.ui.table.Column({
-					label: sTitle,
-					width: "100px",
-					template: oControlTemplate
-				}));
-				iNumberOfCols++;
-
-				for (var i = 0; i < iNumberOfRows; i++) {
-					oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
-				}
-			}
-
-			addColumn("Not Focusable & Not Tabbable", "NoFocusNoTab", false, false);
-			addColumn("Focusable & Tabbable", "FocusTab", true, true);
-			addColumn("Focusable & Not Tabbable", "NoTab", true, false);
+			addColumn("Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false);
+			addColumn("Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false);
+			addColumn("Focusable & Tabbable", "Focus&TabInput", true, null, true);
+			addColumn("Focusable & Not Tabbable", "Focus&NoTabInput", true, null, false);
 
 			initRowActions(oTable, 2, 2);
 		},
 		afterEach: function () {
 			destroyTables();
-			iNumberOfCols -= 3;
+			iNumberOfCols -= 4;
 		}
 	});
 
 	QUnit.test("_isInteractiveElement", function (assert) {
-		var $NoFocusNoTab = getCell(0, iNumberOfCols - 3).find("span");
-		var $NoFocus = getCell(0, iNumberOfCols - 4).find("span");
-		$NoFocus[0].tabIndex = 0;
-		var $NoTab = getCell(0, iNumberOfCols - 1).find("input");
-		var $FullyInteractive = getCell(0, iNumberOfCols - 2).find("input");
+		var $FocusAndNoTabSpan = getCell(0, iNumberOfCols - 4).find("span");
+		var $NoFocusAndNoTabSpan = getCell(0, iNumberOfCols - 3).find("span");
+		var $FocusAndTabInput = getCell(0, iNumberOfCols - 2).find("input");
+		var $FocusAndNoTabInput = getCell(0, iNumberOfCols - 1).find("input");
 		var $TreeIconOpen = jQuery('<div class="sapUiTableTreeIcon sapUiTableTreeIconNodeOpen"></div>');
 		var $TreeIconClosed = jQuery('<div class="sapUiTableTreeIcon sapUiTableTreeIconNodeClosed"></div>');
 		var $TreeIconLeaf = jQuery('<div class="sapUiTableTreeIcon sapUiTableTreeIconLeaf"></div>');
 		var $RowActionIcon = getRowAction(0).find(".sapUiTableActionIcon");
 
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusNoTab), "(jQuery) Not focusable and not tabbable element is not interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($NoFocus), "(jQuery) Not focusable and tabbable element is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($NoTab), "(jQuery) Focusable and not tabbable input element is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($FullyInteractive), "(jQuery) Focusable and tabbable input element is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconOpen), "(jQuery) TreeIcon of open node is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconClosed), "(jQuery) TreeIcon of closed node is interactive");
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive($TreeIconLeaf), "(jQuery) TreeIcon of leaf node is not interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($RowActionIcon), "(jQuery) ActionItem is interactive");
+		assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusAndNoTabSpan),
+			"(jQuery) Not focusable and not tabbable span element is not interactive");
+		assert.ok(!TableKeyboardDelegate2._isElementInteractive($FocusAndNoTabSpan),
+			"(jQuery) Focusable and not tabbable span element is not interactive");
+		assert.ok(TableKeyboardDelegate2._isElementInteractive($FocusAndNoTabInput),
+			"(jQuery) Focusable and not tabbable input element is interactive");
+		assert.ok(TableKeyboardDelegate2._isElementInteractive($FocusAndTabInput),
+			"(jQuery) Focusable and tabbable input element is interactive");
+		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconOpen),
+			"(jQuery) TreeIcon of open node is interactive");
+		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconClosed),
+			"(jQuery) TreeIcon of closed node is interactive");
+		assert.ok(!TableKeyboardDelegate2._isElementInteractive($TreeIconLeaf),
+			"(jQuery) TreeIcon of leaf node is not interactive");
+		assert.ok(TableKeyboardDelegate2._isElementInteractive($RowActionIcon),
+			"(jQuery) ActionItem is interactive");
 
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusNoTab[0]), "(HTMLElement) Not focusable and not tabbable element is not interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($NoFocus[0]), "(HTMLElement) Not focusable and tabbable element is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($NoTab[0]), "(HTMLElement) Focusable and not tabbable input element is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($FullyInteractive[0]), "(HTMLElement) Focusable and tabbable input element is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconOpen[0]), "(HTMLElement) TreeIcon of open node is interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconClosed[0]), "(HTMLElement) TreeIcon of closed node is interactive");
-		assert.ok(!TableKeyboardDelegate2._isElementInteractive($TreeIconLeaf[0]), "(HTMLElement) TreeIcon of leaf node is not interactive");
-		assert.ok(TableKeyboardDelegate2._isElementInteractive($RowActionIcon[0]), "(HTMLElement) ActionItem is interactive");
+		assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusAndNoTabSpan[0]),
+			"(HTMLElement) Not focusable and not tabbable span element is not interactive");
+		assert.ok(!TableKeyboardDelegate2._isElementInteractive($FocusAndNoTabSpan)[0],
+			"(HTMLElement) Focusable and not tabbable span element is not interactive");
+		assert.ok(TableKeyboardDelegate2._isElementInteractive($FocusAndNoTabInput[0]),
+			"(HTMLElement) Focusable and not tabbable input element is interactive");
+		assert.ok(TableKeyboardDelegate2._isElementInteractive($FocusAndTabInput[0]),
+			"(HTMLElement) Focusable and tabbable input element is interactive");
+		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconOpen[0]),
+			"(HTMLElement) TreeIcon of open node is interactive");
+		assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconClosed[0]),
+			"(HTMLElement) TreeIcon of closed node is interactive");
+		assert.ok(!TableKeyboardDelegate2._isElementInteractive($TreeIconLeaf[0]),
+			"(HTMLElement) TreeIcon of leaf node is not interactive");
+		assert.ok(TableKeyboardDelegate2._isElementInteractive($RowActionIcon[0]),
+			"(HTMLElement) ActionItem is interactive");
 
 		assert.ok(!TableKeyboardDelegate2._isElementInteractive(), "No parameter passed: False was returned");
 	});
@@ -410,19 +427,23 @@
 	QUnit.test("_getInteractiveElements", function (assert) {
 		var $InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 1));
 		assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Data cell with focusable element: One element was returned");
-		assert.strictEqual($InteractiveElements[0].value, "NoTab1", "(JQuery) Data cell with focusable element: The correct element was returned");
+		assert.strictEqual($InteractiveElements[0].value, "Focus&NoTabInput1",
+			"(JQuery) Data cell with focusable element: The correct element was returned");
 
 		$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 1)[0]);
 		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Data cell with focusable element: One element was returned");
-		assert.strictEqual($InteractiveElements[0].value, "NoTab1", "(HTMLElement) Data cell with focusable element: The correct element was returned");
+		assert.strictEqual($InteractiveElements[0].value, "Focus&NoTabInput1",
+			"(HTMLElement) Data cell with focusable element: The correct element was returned");
 
 		$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2));
 		assert.strictEqual($InteractiveElements.length, 1, "(jQuery) Data cell with focusable & tabbable element: One element was returned");
-		assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "(jQuery) Data cell with focusable & tabbable element: The correct element was returned");
+		assert.strictEqual($InteractiveElements[0].value, "Focus&TabInput1",
+			"(jQuery) Data cell with focusable & tabbable element: The correct element was returned");
 
 		$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2)[0]);
 		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Data cell with focusable & tabbable element: One element was returned");
-		assert.strictEqual($InteractiveElements[0].value, "FocusTab1", "(HTMLElement) Data cell with focusable & tabbable element: The correct element was returned");
+		assert.strictEqual($InteractiveElements[0].value, "Focus&TabInput1",
+			"(HTMLElement) Data cell with focusable & tabbable element: The correct element was returned");
 
 		$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 3));
 		assert.strictEqual($InteractiveElements, null, "Data cell without interactive element: Null was returned");
@@ -515,7 +536,7 @@
 	QUnit.test("_getFirstInteractiveElement", function (assert) {
 		var $FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($FirstInteractiveElement.length, 1, "First row: One element was returned");
-		assert.strictEqual($FirstInteractiveElement[0].value, "FocusTab1", "First row: The correct element was returned");
+		assert.strictEqual($FirstInteractiveElement[0].value, "Focus&TabInput1", "First row: The correct element was returned");
 
 		oTable.getColumns().forEach(function (oColumn) {
 			oColumn.setVisible(false);
@@ -542,7 +563,7 @@
 		initRowActions(oTable, 2, 0);
 		$LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($LastInteractiveElement.length, 1, "First row without row actions: One element was returned");
-		assert.strictEqual($LastInteractiveElement[0].value, "NoTab1", "First row without row actions: The correct element was returned");
+		assert.strictEqual($LastInteractiveElement[0].value, "Focus&NoTabInput1", "First row without row actions: The correct element was returned");
 
 		$LastInteractiveElement = TableKeyboardDelegate2._getLastInteractiveElement();
 		assert.strictEqual($LastInteractiveElement, null, "No parameter passed: Null was returned");
@@ -557,11 +578,11 @@
 
 		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement);
 		assert.strictEqual($PreviousInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
-		assert.strictEqual($PreviousInteractiveElement[0].value, "NoTab1", "The correct previous element was returned");
+		assert.strictEqual($PreviousInteractiveElement[0].value, "Focus&NoTabInput1", "The correct previous element was returned");
 
 		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement);
 		assert.strictEqual($PreviousInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
-		assert.strictEqual($PreviousInteractiveElement[0].value, "FocusTab1", "The correct previous element was returned");
+		assert.strictEqual($PreviousInteractiveElement[0].value, "Focus&TabInput1", "The correct previous element was returned");
 
 		var $FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
 		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $FirstInteractiveElement);
@@ -574,11 +595,11 @@
 
 		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement[0]);
 		assert.strictEqual($PreviousInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
-		assert.strictEqual($PreviousInteractiveElement[0].value, "NoTab1", "The correct previous element was returned");
+		assert.strictEqual($PreviousInteractiveElement[0].value, "Focus&NoTabInput1", "The correct previous element was returned");
 
 		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $PreviousInteractiveElement[0]);
 		assert.strictEqual($PreviousInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
-		assert.strictEqual($PreviousInteractiveElement[0].value, "FocusTab1", "The correct previous element was returned");
+		assert.strictEqual($PreviousInteractiveElement[0].value, "Focus&TabInput1", "The correct previous element was returned");
 
 		$FirstInteractiveElement = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[0]);
 		$PreviousInteractiveElement = TableKeyboardDelegate2._getPreviousInteractiveElement(oTable, $FirstInteractiveElement[0]);
@@ -609,7 +630,7 @@
 
 		var $NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $FirstInteractiveElement);
 		assert.strictEqual($NextInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
-		assert.strictEqual($NextInteractiveElement[0].value, "NoTab1", "The correct next element was returned");
+		assert.strictEqual($NextInteractiveElement[0].value, "Focus&NoTabInput1", "The correct next element was returned");
 
 		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement);
 		assert.strictEqual($NextInteractiveElement.length, 1, "(jQuery) Passed an interactive element: One interactive element was returned");
@@ -626,7 +647,7 @@
 
 		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $FirstInteractiveElement[0]);
 		assert.strictEqual($NextInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
-		assert.strictEqual($NextInteractiveElement[0].value, "NoTab1", "The correct next element was returned");
+		assert.strictEqual($NextInteractiveElement[0].value, "Focus&NoTabInput1", "The correct next element was returned");
 
 		$NextInteractiveElement = TableKeyboardDelegate2._getNextInteractiveElement(oTable, $NextInteractiveElement[0]);
 		assert.strictEqual($NextInteractiveElement.length, 1, "(HTMLElement) Passed an interactive element: One interactive element was returned");
@@ -753,6 +774,23 @@
 		oElem = getCell(1, 1, true);
 		simulateTabEvent(oElem, true);
 		checkFocus(jQuery.sap.domById("Extension"), assert);
+	});
+
+	QUnit.test("On a non-interactive element inside a cell", function(assert) {
+		var oNonInteractiveElement = oTable.getRows()[0].getCells()[1].getDomRef();
+		oNonInteractiveElement.tabIndex = -1; // Make it non-interactive.
+
+		oNonInteractiveElement.focus();
+		checkFocus(oNonInteractiveElement, assert);
+
+		simulateTabEvent(oNonInteractiveElement, false);
+		checkFocus(getCell(0, 1), assert);
+
+		oNonInteractiveElement.focus();
+		checkFocus(oNonInteractiveElement, assert);
+
+		simulateTabEvent(oNonInteractiveElement, true);
+		checkFocus(getCell(0, 1), assert);
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Navigation > Arrow Keys", {
@@ -1062,6 +1100,23 @@
 		oElem = checkFocus(getRowAction(0, true), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
 		checkFocus(oElem, assert);
+	});
+
+	QUnit.test("On a non-interactive element inside a cell", function(assert) {
+		var oNonInteractiveElement = oTable.getRows()[1].getCells()[1].getDomRef();
+		oNonInteractiveElement.tabIndex = -1; // Make it non-interactive.
+
+		oNonInteractiveElement.focus();
+		checkFocus(oNonInteractiveElement, assert);
+
+		qutils.triggerKeydown(oNonInteractiveElement, Key.Arrow.UP, false, false, false);
+		checkFocus(getCell(1, 1), assert);
+
+		oNonInteractiveElement.focus();
+		checkFocus(oNonInteractiveElement, assert);
+
+		qutils.triggerKeydown(oNonInteractiveElement, Key.Arrow.DOWN, false, false, false);
+		checkFocus(getCell(1, 1), assert);
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Navigation > Shift+Arrow Keys", {
@@ -5233,45 +5288,16 @@
 		beforeEach: function () {
 			setupTest();
 
-			function addColumn(sTitle, sText, bFocusable, bTabbable) {
-				var oControlTemplate;
-				if (bFocusable) {
-					oControlTemplate = new sap.ui.table.test.TestInputControl({
-						text: "{" + sText + "}",
-						index: iNumberOfCols,
-						visible: true,
-						tabbable: bTabbable
-					});
-				} else {
-					oControlTemplate = new sap.ui.table.test.TestControl({
-						text: "{" + sText + "}",
-						index: iNumberOfCols,
-						visible: true,
-						tabbable: bTabbable
-					});
-				}
-
-				oTable.addColumn(new sap.ui.table.Column({
-					label: sTitle,
-					width: "100px",
-					template: oControlTemplate
-				}));
-				iNumberOfCols++;
-
-				for (var i = 0; i < iNumberOfRows; i++) {
-					oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
-				}
-			}
-
-			addColumn("Not Focusable & Not Tabbable", "NoFocus&NoTab", false, false);
-			addColumn("Focusable & Tabbable", "Focus&Tab", true, true);
-			addColumn("Focusable & Not Tabbable", "Focus&NoTab", true, false);
+			addColumn("Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false);
+			addColumn("Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false);
+			addColumn("Focusable & Tabbable", "Focus&TabInput", true, null, true);
+			addColumn("Focusable & Not Tabbable", "Focus&NoTabInput", true, null, false);
 
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			teardownTest();
-			iNumberOfCols -= 3;
+			iNumberOfCols -= 4;
 		},
 
 		/**
@@ -5442,7 +5468,13 @@
 		assert.strictEqual(document.activeElement, oElement, "Tabbable input element in the cell is focused");
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 
-		// Stay in Action Mode: Focus a non-tabbable input control inside a data cell.
+		// Enter Navigation Mode: Focus a non-interactive element inside a data cell.
+		oElement = oTable.getRows()[0].getCells()[iNumberOfCols - 4].getDomRef();
+		oElement.focus();
+		assert.strictEqual(document.activeElement, oElement, "Non-interactive element in the cell is focused");
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		// Enter Action Mode: Focus a non-tabbable input control inside a data cell.
 		oElement = getCell(0, iNumberOfCols - 1).find("input")[0];
 		oElement.focus();
 		assert.strictEqual(document.activeElement, oElement, "Non-Tabbable input element in the cell is focused");
@@ -5497,6 +5529,23 @@
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 		this.testOnDataCellWithoutInteractiveControls(assert, Key.F2, "F2", false, false, false, qutils.triggerKeydown);
+
+		// Enter Action Mode: Focus tabbable input control inside a data cell.
+		oElem = TableKeyboardDelegate2._getInteractiveElements(getCell(0, iNumberOfCols - 2))[0];
+		oElem.focus();
+		assert.strictEqual(document.activeElement, oElem, "Interactive element in a cell is focused");
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+
+		// Enter Navigation Mode: Focus a non-interactive element inside a data cell.
+		oElem = oTable.getRows()[0].getCells()[iNumberOfCols - 4].getDomRef();
+		oElem.focus();
+		assert.strictEqual(document.activeElement, oElem, "Non-interactive element in a cell is focused");
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		// Focus the cell.
+		qutils.triggerKeydown(oElem, Key.F2, false, false, false);
+		checkFocus(getCell(0, iNumberOfCols - 4), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	});
 
 	QUnit.test("F2 - On a Row Action Cell", function (assert) {
@@ -5579,17 +5628,7 @@
 
 	QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no click handler", function (assert) {
 		oTable.clearSelection();
-		oTable.addColumn(new sap.ui.table.Column({
-			label: "Not Focusable & Not Tabbable",
-			width: "100px",
-			template: new sap.ui.table.test.TestControl({
-				text: "{NoFocusNoTab}",
-				index: iNumberOfCols,
-				visible: true,
-				tabbable: false
-			})
-		}));
-		iNumberOfCols++;
+		addColumn("Not Focusable & Not Tabbable", "NoFocusNoTab", false, false, false);
 		sap.ui.getCore().applyChanges();
 
 		/* Test on a data cell with an interactive control inside */
@@ -5690,36 +5729,6 @@
 	QUnit.module("TableKeyboardDelegate2 - Action Mode > Navigation", {
 		beforeEach: function () {
 			setupTest();
-
-			function addColumn(sTitle, sText, bFocusable, bTabbable) {
-				var oControlTemplate;
-				if (bFocusable) {
-					oControlTemplate = new sap.ui.table.test.TestInputControl({
-						text: "{" + sText + "}",
-						index: iNumberOfCols,
-						visible: true,
-						tabbable: bTabbable
-					});
-				} else {
-					oControlTemplate = new sap.ui.table.test.TestControl({
-						text: "{" + sText + "}",
-						index: iNumberOfCols,
-						visible: true,
-						tabbable: bTabbable
-					});
-				}
-
-				oTable.addColumn(new sap.ui.table.Column({
-					label: sTitle,
-					width: "100px",
-					template: oControlTemplate
-				}));
-				iNumberOfCols++;
-
-				for (var i = 0; i < iNumberOfRows; i++) {
-					oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
-				}
-			}
 
 			addColumn("Not Focusable & Not Tabbable", "NoFocus&NoTab", false, false);
 			addColumn("Focusable & Tabbable", "Focus&Tab", true, true);
@@ -6226,25 +6235,7 @@
 		beforeEach: function () {
 			setupTest();
 
-			function addColumn(sTitle, sText) {
-				oTable.addColumn(new sap.ui.table.Column({
-					label: sTitle,
-					width: "100px",
-					template: new sap.ui.table.test.TestInputControl({
-						text: "{" + sText + "}",
-						index: iNumberOfCols,
-						visible: true,
-						tabbable: true
-					})
-				}));
-				iNumberOfCols++;
-
-				for (var i = 0; i < iNumberOfRows; i++) {
-					oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
-				}
-			}
-
-			addColumn("Focusable & Tabbable", "Focus&Tab");
+			addColumn("Focusable & Tabbable", "Focus&TabInput", true, null, true);
 
 			sap.ui.getCore().applyChanges();
 		},
@@ -6335,6 +6326,28 @@
 
 	QUnit.test("Navigate with Ctrl key", function (assert) {
 		goUpDownWithArrowKeys(assert, iNumberOfCols - 1, true);
+
+		var oElement = getCell(0, 1).find("span")[0];
+
+		oElement.tabIndex = -1;
+		oElement.focus();
+		checkFocus(oElement, assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		qutils.triggerKeydown(oElement, Key.Arrow.UP, false, false, true);
+		checkFocus(getCell(0, 1), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		oTable._getScrollExtension().scrollMax(true);
+		oElement = getCell(oTable.getVisibleRowCount() - 1, 1).find("span")[0];
+		oElement.tabIndex = -1;
+		oElement.focus();
+		checkFocus(oElement, assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		qutils.triggerKeydown(oElement, Key.Arrow.DOWN, false, false, true);
+		checkFocus(getCell(oTable.getVisibleRowCount() - 1, 1), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	});
 
 	QUnit.test("Navigate without Ctrl key", function (assert) {
@@ -6353,18 +6366,33 @@
 
 	QUnit.test("Navigate interchanging interactive and non-interactive cells", function (assert) {
 		var oElem;
+
 		getCell(1, 1).find("span").attr("tabindex", "-1"); // cell in the second row is non-interactive
 		oElem = getCell(0, 1, true, assert);
 		checkFocus(oElem, assert, false);
+
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true);
 		oElem = getCell(1, 1);
 		checkFocus(oElem, assert, false); // the cell with non-interactive element should be focused
+
+		oElem = oTable.getRows()[1].getCells()[1].getDomRef();
+		oElem.focus();
+		checkFocus(oElem, assert); // The non-interactive element should be focused.
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true);
 		oElem = getCell(2, 1);
 		checkFocus(oElem, assert, true); // the cells interactive element should be focused
+
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, true);
 		oElem = getCell(1, 1);
 		checkFocus(oElem, assert, false); // the cell with non-interactive element should be focused
+
+		oElem = oTable.getRows()[1].getCells()[1].getDomRef();
+		oElem.focus();
+		checkFocus(oElem, assert); // The non-interactive element should be focused.
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, true);
 		oElem = getCell(0, 1);
 		checkFocus(oElem, assert, true); // the cells interactive element should be focused
