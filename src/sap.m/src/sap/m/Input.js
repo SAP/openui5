@@ -1659,6 +1659,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				this._bShouldRefreshListItems = false;
 				this.cancelPendingSuggest();
 				this._oSuggestionPopup.close();
+				// Ensure the valueStateMessage is opened after the suggestion popup is closed.
+				// Only do this for desktop (not required for mobile) when the focus is on the input.
+				if (!this._bUseDialog && this.$().hasClass("sapMInputFocused")) {
+					this.openValueStateMessage();
+				}
 				this.$("SuggDescr").text(""); // initialize suggestion ARIA text
 				this.$("inner").removeAttr("aria-haspopup");
 				this.$("inner").removeAttr("aria-activedescendant");
@@ -2130,6 +2135,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	Input.prototype.onfocusin = function(oEvent) {
 		InputBase.prototype.onfocusin.apply(this, arguments);
 		this.$().addClass("sapMInputFocused");
+
+		// Close the ValueStateMessage when the suggestion popup is being opened.
+		// Only do this in case a popup is used.
+		if (!this._bUseDialog && this._oSuggestionPopup
+			&& this._oSuggestionPopup.isOpen()) {
+			this.closeValueStateMessage();
+		}
 
 		// fires suggest event when startSuggestion is set to 0 and input has no text
 		if (!this._bPopupHasFocus && !this.getStartSuggestion() && !this.getValue()) {
