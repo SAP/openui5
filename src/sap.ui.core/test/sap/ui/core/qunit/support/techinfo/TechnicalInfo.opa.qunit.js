@@ -432,6 +432,7 @@ sap.ui.require([
 					return this.waitFor({
 						id : "TechnicalInfoDialogDebugModules--tree",
 						actions : function(oTree) {
+							oTree.expandToLevel(3);
 							var aNodePaths = sWhich.split("/"),
 								oRootContext = oTree.getItems()[0].getItemNodeContext(),
 								oSubContext = oRootContext,
@@ -539,9 +540,16 @@ sap.ui.require([
 				theCustomDebugValueShouldBe: function (sValue) {
 					return this.waitFor({
 						id : "TechnicalInfoDialogDebugModules--customDebugValue",
-						matchers: new PropertyStrictEquals({name: "value", value: sValue}),
-						success : function () {
-							Opa5.assert.ok(true, "The custom debug value is: " + sValue);
+						success : function (sCustomDebugValue) {
+							if (sCustomDebugValue) {
+								var modules = sValue.split(",");
+								for (var i = 0; i < modules.length; i++) {
+									var bFound = sCustomDebugValue.getValue().indexOf(modules[i]) !== -1;
+									Opa5.assert.ok(bFound, "The custom debug value contains: " + modules[i]);
+								}
+							} else {
+								Opa5.assert.ok(false, "customDebugValue is empty");
+							}
 						}
 					});
 				},
@@ -698,8 +706,8 @@ sap.ui.require([
 
 		// Assert
 		Then.onTheModuleDialog.theCustomDebugValueShouldBe(bDebug.toString()).
-			and.theTreeNodeIsSelected("All", bDebug).
-			and.theSelectedModulesShouldBe(bDebug ? 1 : 0);
+		and.theTreeNodeIsSelected("All", bDebug).
+		and.theSelectedModulesShouldBe(bDebug ? 1 : 0);
 	});
 
 	opaTest("Should apply a custom debug configuration selected in the tree", function(Given, When, Then) {
@@ -712,12 +720,12 @@ sap.ui.require([
 
 		// Act
 		When.onTheModuleDialog.iSelectATreeNode("sap/ui").
-			and.iSelectATreeNode("sap/m/Button.js").
-			and.iSelectATreeNode("sap/m/Text.js");
+		and.iSelectATreeNode("sap/m/Button.js").
+		and.iSelectATreeNode("sap/m/Text.js");
 
 		// Assert
-		Then.onTheModuleDialog.theCustomDebugValueShouldBe("sap/ui/,sap/m/Button.js,sap/m/Text.js").
-			and.theSelectedModulesShouldBe(3);
+		Then.onTheModuleDialog.theCustomDebugValueShouldBe("sap/ui/,sap/m/Text.js,sap/m/Button.js").
+		and.theSelectedModulesShouldBe(3);
 	});
 
 	opaTest("Should apply a custom string debug configuration entered in the input field", function(Given, When, Then) {
@@ -736,8 +744,8 @@ sap.ui.require([
 
 		// Assert
 		Then.onTheModuleDialog.theCustomDebugValueShouldBe("false").
-			and.theTreeNodeIsSelected("All", false).
-			and.theSelectedModulesShouldBe(0);
+		and.theTreeNodeIsSelected("All", false).
+		and.theSelectedModulesShouldBe(0);
 	});
 
 	opaTest("Should apply a custom boolean debug configuration entered in the input field", function(Given, When, Then) {
@@ -771,7 +779,7 @@ sap.ui.require([
 
 		// Assert
 		Then.anywhere.iShouldSeeTheTechnicalInformationDialog().
-			and.iTeardownMyAppFrame();
+		and.iTeardownMyAppFrame();
 	});
 
 	QUnit.start();
