@@ -144,5 +144,27 @@ function(jQuery, Overlay) {
 		return this.getAggregation("children") || [];
 	};
 
+	/**
+	 * @inheritDoc
+	 */
+	Overlay.prototype._getScrollContainerIndex = function(oOverlayParent, oOverlay) {
+		var iScrollContainerIndex;
+		oOverlay = oOverlay || this;
+		if (oOverlayParent._aScrollContainers) {
+			iScrollContainerIndex = -1;
+			oOverlayParent._aScrollContainers.some(function(oScrollContainer, iIndex) {
+				if (oScrollContainer.aggregations) {
+					return oScrollContainer.aggregations.some(function(sAggregationName) {
+						if (oOverlay.getAggregationName() === sAggregationName) {
+							iScrollContainerIndex = iIndex;
+							return true;
+						}
+					});
+				}
+			});
+		}
+		return iScrollContainerIndex;
+	};
+
 	return AggregationOverlay;
 }, /* bExport= */ true);
