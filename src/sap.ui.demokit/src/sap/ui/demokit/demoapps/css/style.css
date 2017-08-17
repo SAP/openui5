@@ -10,7 +10,7 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineC
 }
 
 /* override color for link to demo apps overview (features, controls, libraries, etc.) */
-.sapUiLink {
+.readMoreLink {
     color: #7ed0ff;
 }
 
