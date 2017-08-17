@@ -840,16 +840,9 @@ sap.ui.define([
 
 		this.bOpen = true;
 
-		if (this._bModal || this._bAutoClose) { // initialize focus handling
-			this._addFocusEventListeners();
-		}
+		this._activateFocusHandle();
 
 		this._$(false, true).on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
-
-		//autoclose implementation for mobile or desktop browser in touch mode
-		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
-			jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
-		}
 
 		//  register resize handler for blindlayer resizing
 		if (this._oBlindLayer) {
@@ -1083,18 +1076,9 @@ sap.ui.define([
 
 		this._sTimeoutId = null;
 
-		if (this.fEventHandler) { // remove focus handling
-			this._removeFocusEventListeners();
-		}
+		this._deactivateFocusHandle();
 
 		this._$(false, true).off("keydown", this._F6NavigationHandler);
-
-		//deregister the autoclose handler for mobile
-		if (this.touchEnabled) {
-			if (!this._bModal && this._bAutoClose) {
-				jQuery(document).off("touchstart mousedown", this._fAutoCloseHandler);
-			}
-		}
 
 		//stop listening for touchmove on the window for preventing the scroll
 		if (Device.os.ios && Device.support.touch) {
@@ -2208,6 +2192,34 @@ sap.ui.define([
 			}
 		}
 		this.fEventHandler = null;
+	};
+
+	/**
+	 * Registers the focus event listeners for autoclose and modal popup for both mobile and desktop devices.
+	 */
+	Popup.prototype._activateFocusHandle = function() {
+		if (this._bModal || this._bAutoClose) { // initialize focus handling
+			this._addFocusEventListeners();
+		}
+
+		//autoclose implementation for mobile or desktop browser in touch mode
+		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
+			jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
+		}
+	};
+
+	/**
+	 * Deregisters the focus event listeners for autoclose and modal popup for both mobile and desktop devices.
+	 */
+	Popup.prototype._deactivateFocusHandle = function() {
+		if (this.fEventHandler) { // remove focus handling
+			this._removeFocusEventListeners();
+		}
+
+		//deregister the autoclose handler for mobile
+		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
+			jQuery(document).off("touchstart mousedown", this._fAutoCloseHandler);
+		}
 	};
 
 	/**
