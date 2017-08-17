@@ -7,11 +7,13 @@
 sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/supportRules/RuleSet",
 			   "./Button.support",
 			   "./Dialog.support",
-			   "./Input.support"],
+			   "./Input.support",
+			   "./Panel.support"],
 	function(jQuery, SupportLib, Ruleset,
 			 ButtonSupport,
 			 DialogSupport,
-			 InputSupport) {
+			 InputSupport,
+			 PanelSupport) {
 	"use strict";
 
 	var oLib = {
@@ -23,6 +25,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 	ButtonSupport.addRulesToRuleset(oRuleset);
 	DialogSupport.addRulesToRuleset(oRuleset);
 	InputSupport.addRulesToRuleset(oRuleset);
+	PanelSupport.addRulesToRuleset(oRuleset);
 
 	return {lib: oLib, ruleset: oRuleset};
 
