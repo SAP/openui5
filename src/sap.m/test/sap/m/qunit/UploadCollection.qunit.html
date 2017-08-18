@@ -2746,6 +2746,65 @@
 			assert.strictEqual(oDeleteButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"), "The delete button has correct tooltip");
 		});
 
+		QUnit.test("F2 button pressed for the item in display mode", function(assert) {
+			//Arrange
+			var oListItem = this.oUploadCollection._oList.getItems()[0],
+				sUCItemId = this.oUploadCollection.getItems()[0].getId(),
+				oPressEvent = {
+					target: {
+						id: oListItem.getId()
+					}
+				},
+				oEditButton = sap.ui.getCore().byId(sUCItemId + "-editButton"),
+				oFirePressStub = sinon.stub(oEditButton, "firePress");
+				oHandleClickStub = sinon.stub(this.oUploadCollection, "_handleClick");
+				this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[1].getId();
+			//Act
+			this.oUploadCollection._handleF2(oPressEvent);
+			//Assert
+			assert.deepEqual(oHandleClickStub.getCall(0).args[0], oPressEvent, "Press event has been forwarded to _handkeClick that has been called for other item that is already in the edit mode ");
+			assert.deepEqual(oHandleClickStub.getCall(0).args[1], this.oUploadCollection.editModeItem, "The function _handleClick gets the id of the item previously residing in the edit mode");
+			assert.strictEqual(oFirePressStub.callCount, 1, "The press event has been triggered on the correct edit button");
+		});
+
+		QUnit.test("F2 button pressed for item in editing mode when focused on the list item", function(assert) {
+			//Arrange
+			var oListItem = this.oUploadCollection._oList.getItems()[0],
+				sUCItemId = this.oUploadCollection.getItems()[0].getId(),
+				oPressEvent = {
+					target: {
+						id: oListItem.getId()
+					}
+				},
+				oHandleClickStub = sinon.stub(this.oUploadCollection, "_handleClick");
+			this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+			oListItem._status = undefined;
+			//Act
+			this.oUploadCollection._handleF2(oPressEvent);
+			//Assert
+			assert.deepEqual(oHandleClickStub.getCall(0).args[0], oPressEvent, "The press event has been triggered on the F2 button");
+			assert.deepEqual(oHandleClickStub.getCall(0).args[1], this.oUploadCollection.editModeItem, "The press event has been triggered on the F2 button");
+		});
+
+		QUnit.test("F2 button pressed for item in editing mode when focused on the input field", function(assert) {
+			//Arrange
+			var oListItem = this.oUploadCollection._oList.getItems()[0],
+				sUCItemId = this.oUploadCollection.getItems()[0].getId(),
+				oPressEvent = {
+					target: {
+						id: sUCItemId + "-ta_editFileName-inner"
+					}
+				},
+				oHandleOkStub = sinon.stub(this.oUploadCollection, "_handleOk");
+			this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+			//Act
+			this.oUploadCollection._handleF2(oPressEvent);
+			//Assert
+			assert.deepEqual(oHandleOkStub.getCall(0).args[0], oPressEvent, "The press event has been triggered on the F2 button");
+			assert.deepEqual(oHandleOkStub.getCall(0).args[1], this.oUploadCollection.editModeItem, "The press event has been triggered on the F2 button");
+			assert.deepEqual(oHandleOkStub.getCall(0).args[2], true, "The press event has been triggered on the F2 button");
+		});
+
 		QUnit.test("Pressing keyboard DEL button while focused on list item", function(assert) {
 			//Arrange
 			var sUCItemId = this.oUploadCollection.getItems()[0].getId(),
