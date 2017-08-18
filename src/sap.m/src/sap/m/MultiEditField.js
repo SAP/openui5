@@ -1,8 +1,9 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "sap/ui/core/Item" ],
-	function(jQuery, XMLComposite, library, Item) {
+sap.ui.define([
+	"jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "sap/ui/core/Item"
+], function(jQuery, XMLComposite, library, Item) {
 	"use strict";
 
 	/**
@@ -21,11 +22,11 @@ sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "s
 	 * @experimental since 1.52
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var MultiEditField = XMLComposite.extend("sap.m.MultiEditField", { /** @lends sap.m.MultiEditField.prototype */
-		interfaces : ["sap.ui.core.IFormContent"],
-		library: "sap.m",
-		metadata : {
-			properties : {
+	var MultiEditField = XMLComposite.extend("sap.m.MultiEditField", /** @lends sap.m.MultiEditField.prototype */ {
+		metadata: {
+			interfaces: ["sap.ui.core.IFormContent"],
+			library: "sap.m",
+			properties: {
 				/**
 				 * Can contain Date, Input or Select.
 				 */
@@ -63,7 +64,7 @@ sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "s
 					defaultValue: false,
 					invalidate: true
 				}
-			 },
+			},
 
 			aggregations: {
 				/**
@@ -71,7 +72,8 @@ sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "s
 				 */
 				items: {
 					type: "sap.ui.core.Item",
-					multiple: true
+					multiple: true,
+					bindable: "bindable"
 				}
 			},
 
@@ -107,34 +109,30 @@ sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "s
 			key: "new",
 			text: this._oRb.getText("MULTI_EDIT_NEW_TEXT")
 		}));
+	};
 
+	MultiEditField.prototype.onBeforeRendering = function() {
 		this.insertAggregation("items", this._getKeepAll(), 0, true);
-		this.insertAggregation("items", this._getValueHelp(), 1, true);
+		if (this.getNullable()) {
+			this.insertAggregation("items", this._getBlank(), 1, true);
+		} else {
+			this.removeAggregation("items", this._getBlank(), true);
+		}
+		if (this.getShowValueHelp()) {
+			this.insertAggregation("items", this._getValueHelp(), this.getNullable() ? 2 : 1, true);
+		} else {
+			this.removeAggregation("items", this._getValueHelp(), true);
+		}
 	};
 
-	MultiEditField.prototype.setNullable = function(bNullable) {
-		if (this.getNullable() !== bNullable) {
-			if (bNullable) {
-				this.insertAggregation("items", this._getBlank(), 1, true);
-			} else {
-				this.removeAggregation("items", this._getBlank(), true);
-			}
+	MultiEditField.prototype.setSelectedItem = function(oSelectedItem) {
+		var oSelect = this.byId("select");
+		if (!oSelectedItem || this.indexOfItem(oSelectedItem) < 0 || this._isSpecialValueItem(oSelectedItem)) {
+			return this;
+		} else {
+			oSelect.setSelectedItemId(oSelectedItem.getId());
+			return this.setProperty("selectedItem", oSelectedItem);
 		}
-		this.setProperty("nullable", bNullable);
-		return this;
-	};
-
-	MultiEditField.prototype.setShowValueHelp = function(bShowValueHelp) {
-		if (this.getShowValueHelp() !== bShowValueHelp) {
-			if (bShowValueHelp) {
-				var iIndex = this.indexOfItem(this._getBlank()) === 1 ? 2 : 1;
-				this.insertAggregation("items", this._getValueHelp(), iIndex, true);
-			} else {
-				this.removeAggregation("items", this._getValueHelp(), true);
-			}
-		}
-		this.setProperty("showValueHelp", bShowValueHelp);
-		return this;
 	};
 
 	MultiEditField.prototype.exit = function() {
@@ -143,14 +141,13 @@ sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "s
 		this._getValueHelp().destroy();
 	};
 
-	MultiEditField.prototype.setSelectedItem = function(oSelectedItem) {
-		var oSelect = this.byId("select");
-		if (this.indexOfItem(oSelectedItem) < 0 || this._isSpecialValueItem(oSelectedItem)) {
-			return this;
-		} else {
-			oSelect.setSelectedItemId(oSelectedItem.getId());
-			return this.setProperty("selectedItem", oSelectedItem);
-		}
+	/**
+	 * The field is not adjusted by the Form control to meet the cell's width
+	 * @protected
+	 * @returns {boolean} True this method always returns <code>true</code>
+	 */
+	MultiEditField.prototype.getFormDoNotAdjustWidth = function() {
+		return true;
 	};
 
 	/* =========================================================== */
@@ -158,42 +155,64 @@ sap.ui.define([ "jquery.sap.global", "sap/ui/core/XMLComposite", "./library", "s
 	/* =========================================================== */
 
 	/**
-	 * Returns true if the 'Leave blank' item is selected.
+	 * Checks if the 'Leave blank' item is selected.
 	 * @public
 	 * @returns {boolean} True if the 'Leave blank' item is selected.
 	 */
 	MultiEditField.prototype.isBlankSelected = function() {
-		return this._selectedItem === this._getBlank();
+		return this._getExternalItem(this.byId("select").getSelectedItem()) === this._getBlank();
 	};
 
 	/**
-	 * Returns true if the 'Keep existing value' item is selected.
+	 * Checks if the 'Keep existing value' item is selected.
 	 * @public
 	 * @returns {boolean} True if the 'Keep existing value' item is selected.
 	 */
 	MultiEditField.prototype.isKeepExistingSelected = function() {
-		return this._selectedItem === this._getKeepAll();
+		return this._getExternalItem(this.byId("select").getSelectedItem()) === this._getKeepAll();
 	};
 
 	/* =========================================================== */
 	/* Private methods                                             */
 	/* =========================================================== */
 
+	/**
+	 * Checks if the given item is one of three special items.
+	 * @param {sap.ui.core.Item} item that is to be checked
+	 * @private
+	 * returns {boolean} True if the given item is one of three special items.
+	 */
 	MultiEditField.prototype._isSpecialValueItem = function(item) {
 		return item === this._getKeepAll() || item === this._getBlank() || item === this._getValueHelp();
 	};
 
 	/**
-	 * Handles the selection change event of sap.m.Select and triggers the corresponding event.
+	 * Handles the select box change event and triggers the MultiEditField change event.
+	 * @param {sap.ui.base.Event} event The Event object.
 	 * @private
 	 */
-	MultiEditField.prototype._handleSelectionChange = function(oEvent) {
-		this._selectedItem = oEvent.getParameter("selectedItem");
-		if (!this._isSpecialValueItem(this._selectedItem)) {
+	MultiEditField.prototype._handleSelectionChange = function(event) {
+		var oItem = this._getExternalItem(event.getParameter("selectedItem"));
+		if (oItem && !this._isSpecialValueItem(oItem)) {
 			this.fireChange({
-				selectedItem: this._selectedItem
+				selectedItem: oItem
 			});
 		}
 	};
+
+	/**
+	 * Gets the MultiEditField item that corresponds to the internal Select control item.
+	 * @param {sap.ui.core.Item} item The item from the items aggregation of the internal Select control.
+	 * @private
+	 * returns {sap.ui.core.Item | null} The MultiEditField item that corresponds to the item from the internal Select control.
+	 */
+	MultiEditField.prototype._getExternalItem = function(item) {
+		var iIndex = this.byId("select").indexOfItem(item);
+		if (iIndex >= 0) {
+			return this.getItems()[iIndex];
+		}
+		return null;
+	};
+
 	return MultiEditField;
 });
