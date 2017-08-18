@@ -212,12 +212,8 @@
 					new sap.m.Label({text: "Text"}),
 					new sap.m.Label({text: "Text"}),
 					new sap.ui.core.Icon({
-						src : "sap-icon://undo",
-						width : "2rem",
-						press : function (evt) {
-							jQuery.sap.require("sap.m.MessageToast");
-							sap.m.MessageToast.show("Icon is pressed");
-						}
+						src : "sap-icon://collaborate",
+						width : "2rem"
 					})
 				]
 			}),
@@ -391,7 +387,7 @@
 		text : "Change page size",
 		press : function() { jQuery("#toolbar-page").width("300px"); }
 	});
-	
+
 	oB.placeAt("body");
 </script>
 </head>
