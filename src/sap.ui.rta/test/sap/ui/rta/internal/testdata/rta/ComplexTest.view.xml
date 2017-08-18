@@ -344,6 +344,7 @@
 					</smartForm:Group>
 				</smartForm:SmartForm>
 			</sap.ui.layout:VerticalLayout>
+
 			<sap.ui.layout:VerticalLayout id = "smartFilterLayout" width="100%">
 				<Button id="toggleUpdateMode" text="Change to 'LiveMode'" press="toggleUpdateMode"></Button>
 				<smartFilterBar:SmartFilterBar id="smartFilterBar"
@@ -376,6 +377,75 @@
 					</smartTable:layoutData>
 				</smartTable:SmartTable>
 			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%"  class="sapUiLargeMarginTop">
+				<smartForm:SmartForm id="SmartForm01" title="Smart Form with standard layout" editable="true" entityType="Header" ignoredFields="TransactionCode">  
+					<smartForm:Group id="SmartFormGroup01" label="SmartForm Group 01">
+						<smartForm:GroupElement id="SmartFormGroup01.CompanyCodeName" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{CompanyCodeName}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group id="SmartFormGroup02" label="SmartForm Group 02" >
+						<smartForm:GroupElement id="SmartFormGroup01.CreationTime" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{CreationTime}"/>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="SmartFormGroup01.BoundButton01" label="No-Bound-Field" >
+							<Button text="{i18n>buttonText}"></Button>
+							<TextArea value="Some Text"></TextArea>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="SmartFormGroup01.UnboundButton" label="No-Bound-Field-1">
+							<Button text="No Binding"></Button>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group id="SmartFormGroup03" label="SmartForm Group 03 with GridData ('L6 M6 S6')">
+						<smartForm:layout>
+							<sap.ui.layout:GridData span="L6 M6 S6" />
+						</smartForm:layout>
+						<smartForm:GroupElement id="SmartFormGroup01.ReferenceDocumentTypeName" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{ReferenceDocumentTypeName}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%">
+				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">  
+					<smartForm:Group id="SmartForm02Group01" label="SmartForm Group 01" >
+						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentType" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentType}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group id="SmartForm02Group02" label="SmartForm Group 02">
+						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentStatus" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentStatus}"/>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Partially visible combined field" id="SmartForm02Group01.PartiallyVisible" >
+							<smartField:SmartField value="{AccountingDocumentCategoryName}"/>
+							<smartField:SmartField value="{TaxIsCalculatedAutomatically}" visible="false"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%">
+				<smartForm:SmartForm id="SmartForm03" title="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
+					<smartForm:layout>
+						<smartForm:Layout gridDataSpan="L1 M1 S1" />
+					</smartForm:layout>
+					<smartForm:Group id="SmartForm03Group01" label="SmartForm Group 01" >
+						<smartForm:GroupElement id="SmartForm03Group01.AlternativeReferenceDocument" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{AlternativeReferenceDocument}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group id="SmartForm03Group02" label="SmartForm Group 02">
+						<smartForm:GroupElement id="SmartForm03Group01.CoCodeCurrency" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{CoCodeCurrency}"/>
+							<smartField:SmartField editable="true" contextEditable="true" value="{TransactionCurrency}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+
 		</content>
 	</Page>
 </core:View>
