@@ -526,6 +526,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			// call the hook to add additional content to the list
 			this.addContent();
 
+			// preserve the initially selected item
+			this._oInitiallytSelectedItem = this.getSelectedItem();
+
 			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
 		};
 
@@ -777,6 +780,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			// selected item on focus
 			this._oSelectionOnFocus = null;
 
+			// selected item on <code>SelectList</code> open
+			this._oInitiallytSelectedItem = null;
+
 			// to detect when the control is in the rendering phase
 			this.bRenderingPhase = false;
 
@@ -816,6 +822,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		Select.prototype.exit = function() {
 			var oValueStateMessage = this.getValueStateMessage();
 			this._oSelectionOnFocus = null;
+			this._oInitiallytSelectedItem = null;
 
 			if (oValueStateMessage) {
 				this.closeValueStateMessage();
@@ -900,17 +907,49 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		};
 
 		/**
-		 * Handles the <code>selectionChange</code> event on the list.
+		 * Handles the <code>selectionChange</code> event on the <code>SelectList</code>.
 		 *
 		 * @param {sap.ui.base.Event} oControlEvent
 		 * @private
 		 */
 		Select.prototype.onSelectionChange = function(oControlEvent) {
 			var oItem = oControlEvent.getParameter("selectedItem");
-			this.close();
-			this.setSelection(oItem);
-			this.fireChange({ selectedItem: oItem });
-			this.setValue(this._getSelectedItemText());
+			this._changeSelection(oItem);
+		};
+
+		/**
+		 * Handles the <code>itemPress</code> event on the <code>SelectList</code>.
+		 *
+		 * <b>Note:</b> <code>change</code> event will be fired if the user taps on an <code>item</code>,
+		 * different from the initially selected item on <code>SelectList</code> open.
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @private
+		 */
+		Select.prototype.onSelectItemPress = function(oControlEvent) {
+			var oItemPressed = oControlEvent.getParameter("item");
+
+			if (this._oInitiallytSelectedItem !== oItemPressed) {
+				this._changeSelection(oItemPressed);
+			}
+		};
+
+		/**
+		 * Changes the <code>Select</code> selection by:
+		 *
+		 * (1) updating the <code>selectedItem</code> <code>association</code>
+		 * (2) closing the <code>SelectList</code>
+		 * (3) firing the <code>change</code> event
+		 * (4) updating the label value
+		 *
+		 * The method is used in <code>onSelectionChange</code> and <code>onSelectItemPress</code>.
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @private
+		 */
+		Select.prototype._changeSelection = function(oItem) {
+				this.close();
+				this.setSelection(oItem);
+				this.fireChange({ selectedItem: oItem });
+				this.setValue(this._getSelectedItemText());
 		};
 
 		/* ----------------------------------------------------------- */
@@ -1450,7 +1489,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 					this.close();
 				}
 			}, this)
-			.attachSelectionChange(this.onSelectionChange, this);
+			.attachSelectionChange(this.onSelectionChange, this)
+			.attachItemPress(this.onSelectItemPress, this);
 			return this._oList;
 		};
 
