@@ -949,9 +949,7 @@ sap.ui.define([
 			jQuery.sap.log.debug("ObjectPageLayout :: _requestAdjustLayout", "delayed by " + ObjectPageLayout.DOM_CALC_DELAY + " ms because of dom modifications");
 		}
 
-		var aTaskArgs = arguments;
-		Array.prototype.splice.call(aTaskArgs, 0, 2); // the first two are not specific to the task execution, so remove them
-		return this._oLayoutTask.reSchedule(bImmediate, aTaskArgs).catch(function(reason) {
+		return this._oLayoutTask.reSchedule(bImmediate, {needLazyLoading: !!bNeedLazyLoading}).catch(function(reason) {
 			// implement catch function to prevent uncaught errors message
 		}); // returns promise
 	};
@@ -961,9 +959,11 @@ sap.ui.define([
 	 * Should not be called directly, but throttled via ObjectPageLayout.prototype._requestAdjustLayout
 	 * @private
 	 */
-	ObjectPageLayout.prototype._executeAdjustLayout = function (bNeedLazyLoading) { // this is an expensive function and is called often, so should not be called directly, but throttled via ObjectPageLayout.prototype._requestAdjustLayout
+	ObjectPageLayout.prototype._executeAdjustLayout = function (oOptions) { // this is an expensive function and is called often, so should not be called directly, but throttled via ObjectPageLayout.prototype._requestAdjustLayout
 
-		var bSuccess = this._updateScreenHeightSectionBasesAndSpacer();
+		var bNeedLazyLoading = oOptions.needLazyLoading,
+			bSuccess = this._updateScreenHeightSectionBasesAndSpacer();
+
 		if (bSuccess && bNeedLazyLoading) {
 			this._oLazyLoading.doLazyLoading();
 		}
