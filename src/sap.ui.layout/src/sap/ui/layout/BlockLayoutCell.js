@@ -83,8 +83,8 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Paramete
 					 * The content to be included inside the cell
 					 */
 					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
-
-				}
+				},
+				designTime: true
 			}
 		});
 
