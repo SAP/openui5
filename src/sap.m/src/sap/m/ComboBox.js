@@ -298,6 +298,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype._highlightList = function(sValue) {
 			var aItems = this.getVisibleItems(),
+				iInitialValueLength = sValue.length,
 				sValue = sValue.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'),
 				oRegex = new RegExp("^" + sValue, "i");
 
@@ -314,10 +315,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 					return oChildRef.tagName.toLowerCase() !== "b";
 				})[0] || oItemDomRef;
 
-				oItemTextRef.innerHTML = this._boldItemRef(oItem.getText(), oRegex, sValue);
+				oItemTextRef.innerHTML = this._boldItemRef(oItem.getText(), oRegex, iInitialValueLength);
 
 				if (oItemAdditionalTextRef && oItem.getAdditionalText) {
-					oItemAdditionalTextRef.innerHTML = this._boldItemRef(oItem.getAdditionalText(), oRegex, sValue);
+					oItemAdditionalTextRef.innerHTML = this._boldItemRef(oItem.getAdditionalText(), oRegex, iInitialValueLength);
 				}
 			}, this);
 		};
@@ -327,16 +328,16 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 *
 		 * @param {string} sItemText The item text
 		 * @param {RegExp} oRegex A regEx to split the item
-		 * @param {string} sValue The value of the item
+		 * @param {string} iInitialValueLength The characters length of the value of the item
 		 *
 		 * @returns {string}
 		 * @private
 		 * @since 1.48
 		 */
-		ComboBox.prototype._boldItemRef = function (sItemText, oRegex, sValue) {
+		ComboBox.prototype._boldItemRef = function (sItemText, oRegex, iInitialValueLength) {
 			var sResult;
 
-			var sTextReplacement = "<b>" + jQuery.sap.encodeHTML(sItemText.slice(0, sValue.length)) + "</b>";
+			var sTextReplacement = "<b>" + jQuery.sap.encodeHTML(sItemText.slice(0, iInitialValueLength)) + "</b>";
 
 			// parts should always be max of two because regex is not defined as global
 			// see above method
