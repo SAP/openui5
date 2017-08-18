@@ -640,7 +640,7 @@ sap.ui.require([
 					"property" : [{
 						"name" : "Property",
 						"sap:semantics" : sSemantics,
-						"type" : "Edm.String",
+						"type" : "Edm.String"
 					}]
 				},
 				oExpectedResult = clone(oType);
