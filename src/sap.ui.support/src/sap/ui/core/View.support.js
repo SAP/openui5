@@ -98,7 +98,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 				audiences: ["Control","Application"],
 				categories: ["Performance"],
 				enabled: true,
-				title: "Control tag in XMl view starts with lower case",
+				title: "Control tag in XML view starts with lower case",
 				description: "Control tags with lower case cannot be loaded in Linux-based systems",
 				resolution: "Start the Control tag with upper case",
 				resolutionurls: [],
@@ -107,7 +107,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 					//get all aggregations of each element
 					var aAggregationsOfElements = oScope.getElements().map(
 							function (oElement) {
-								return Object.keys(oElement.mAggregations);
+								return Object.keys(oElement.getMetadata().getAllAggregations());
 							}
 					);
 					//flatten array of arrays and filter duplicates
