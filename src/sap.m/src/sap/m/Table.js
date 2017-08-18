@@ -70,9 +70,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 	// class name for the navigation items
 	Table.prototype.sNavItemClass = "sapMListTblRow";
 
-	// announce all details at the initial focus
-	Table.prototype.iAnnounceDetails = 2;
-
 	Table.prototype.init = function() {
 		this._iItemNeedsColumn = 0;
 		ListBase.prototype.init.call(this);
@@ -570,13 +567,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 		}
 
 		ListBase.prototype.onfocusin.call(this, oEvent);
-	};
-
-	Table.prototype.onsapfocusleave = function(oEvent) {
-		ListBase.prototype.onsapfocusleave.call(this, oEvent);
-		if (this.iAnnounceDetails) {
-			this.iAnnounceDetails = 2;
-		}
 	};
 
 	return Table;

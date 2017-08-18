@@ -234,13 +234,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 	 * @returns {String|undefined}
 	 */
 	ListBaseRenderer.getAriaLabelledBy = function(oControl) {
-		var oHeaderTBar = oControl.getHeaderToolbar();
-		if (oHeaderTBar) {
-			return oHeaderTBar.getTitleId();
-		}
-		if (oControl.getHeaderText()) {
-			return oControl.getId("header");
-		}
 	};
 
 	/**

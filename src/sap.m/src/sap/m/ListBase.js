@@ -393,8 +393,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 
 	}});
 
-	// announce acc states at the initial focus
-	ListBase.prototype.iAnnounceDetails = 1;
+	// announce accessibility details at the initial focus
+	ListBase.prototype.bAnnounceDetails = true;
 
 	ListBase.getInvisibleText = function() {
 		return this.oInvisibleText || (this.oInvisibleText = new InvisibleText().toStatic());
@@ -1561,7 +1561,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			sDescription += this.getHeaderText() + " ";
 		}
 
-		sDescription += this.getAccessibilityType() + " ";
 		sDescription += this.getAccessibilityStates() + " ";
 		sDescription += this.getFooterText();
 
@@ -1629,13 +1628,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		var oInvisibleText = ListBase.getInvisibleText(),
 			$FocusedItem = jQuery(oItemDomRef || document.activeElement);
 
-		if (this.iAnnounceDetails) {
-			if (this.iAnnounceDetails == 1) {
-				sText = this.getAccessibilityStates() + " " + sText;
-			} else {
-				sText = this.getAccessibilityInfo().description + " " + sText;
-			}
-			this.iAnnounceDetails = 0;
+		if (this.bAnnounceDetails) {
+			this.bAnnounceDetails = false;
+			sText = this.getAccessibilityInfo().description + " " + sText;
 		}
 
 		oInvisibleText.setText(sText.trim());
@@ -1949,7 +1944,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 
 		// get the last tabbable item or itself and focus
 		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
-		this.iAnnounceDetails = 2;
+		this.bAnnounceDetails = true;
 		$FocusElement.focus();
 	};
 
@@ -1980,8 +1975,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 	};
 
 	ListBase.prototype.onsapfocusleave = function(oEvent) {
-		if (!this.iAnnounceDetails && this._oItemNavigation && !this.getNavigationRoot().contains(oEvent.target)) {
-			this.iAnnounceDetails = 1;
+		if (this._oItemNavigation &&
+			!this.bAnnounceDetails &&
+			!this.getNavigationRoot().contains(jQuery.sap.domById(oEvent.relatedControlId))) {
+			this.bAnnounceDetails = true;
 		}
 	};
 
