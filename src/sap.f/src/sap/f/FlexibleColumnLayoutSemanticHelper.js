@@ -58,7 +58,7 @@ sap.ui.define([
 	var FlexibleColumnLayoutSemanticHelper = function (oFlexibleColumnLayout, oSettings) {
 		this._oFCL = oFlexibleColumnLayout;
 		this._mode = "Normal";
-
+		oSettings || (oSettings = {});
 		// Currently only the the default 3-column type is configurable
 		this._defaultLayoutType = LT.OneColumn;
 		this._defaultTwoColumnLayoutType = [LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded].indexOf(oSettings.defaultTwoColumnLayoutType) !== -1 ?
@@ -96,6 +96,13 @@ sap.ui.define([
 
 		if (typeof FlexibleColumnLayoutSemanticHelper._oInstances[sId] === "undefined") {
 			FlexibleColumnLayoutSemanticHelper._oInstances[sId] = new FlexibleColumnLayoutSemanticHelper(oFlexibleColumnLayout, oSettings);
+
+			var oDelegate = {
+				onDestroy: function() {
+					delete FlexibleColumnLayoutSemanticHelper._oInstances[sId];
+				}
+			};
+			oFlexibleColumnLayout.addEventDelegate(oDelegate);
 		}
 
 		return FlexibleColumnLayoutSemanticHelper._oInstances[sId];

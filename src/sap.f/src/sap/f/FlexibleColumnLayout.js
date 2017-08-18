@@ -701,6 +701,7 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype.exit = function () {
 		this._deregisterResizeHandler();
+		this._handleEvent(jQuery.Event("Destroy"));
 	};
 
 	FlexibleColumnLayout.prototype._registerResizeHandler = function () {
