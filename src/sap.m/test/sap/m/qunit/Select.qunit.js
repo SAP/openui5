@@ -3343,6 +3343,62 @@
 		oModel.destroy();
 	});
 
+	// BCP 1780153332
+	QUnit.test("it should not fire the select event after losing focus, when the selection was changed while the select was focused", function (assert) {
+
+		// system under test
+		var oItemTemplate = new sap.ui.core.Item({
+			key: "{key}",
+			text: "{text}"
+		});
+
+		var oSelect = new sap.m.Select({
+			selectedKey: {
+				path: "/selected"
+			},
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+		// arrange
+		var oModel = new sap.ui.model.json.JSONModel();
+		var mData = {
+			"items": [
+				{
+					"key": "DZ",
+					"text": "Algeria"
+				},
+
+				{
+					"key": "AR",
+					"text": "Argentina"
+				}
+			],
+			"selected": "AR"
+		};
+
+		oModel.setData(mData);
+		sap.ui.getCore().setModel(oModel);
+		oSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act - focus, change the selection while focused, then blur
+		oSelect.focus();
+		oSelect.setSelectedKey("DZ");
+		oSelect.getFocusDomRef().blur();
+
+		// assert
+		assert.strictEqual(fnFireChangeSpy.callCount, 0);
+
+		// cleanup
+		oSelect.destroy();
+		oModel.destroy();
+	});
+
 	QUnit.module("value state");
 
 	QUnit.test("it should add the value state CSS classes (initial rendering)", function (assert) {
