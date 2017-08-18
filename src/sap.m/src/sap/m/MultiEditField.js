@@ -180,7 +180,7 @@ sap.ui.define([
 	 * Checks if the given item is one of three special items.
 	 * @param {sap.ui.core.Item} item that is to be checked
 	 * @private
-	 * returns {boolean} True if the given item is one of three special items.
+	 * @returns {boolean} True if the given item is one of three special items.
 	 */
 	MultiEditField.prototype._isSpecialValueItem = function(item) {
 		return item === this._getKeepAll() || item === this._getBlank() || item === this._getValueHelp();
@@ -204,7 +204,7 @@ sap.ui.define([
 	 * Gets the MultiEditField item that corresponds to the internal Select control item.
 	 * @param {sap.ui.core.Item} item The item from the items aggregation of the internal Select control.
 	 * @private
-	 * returns {sap.ui.core.Item | null} The MultiEditField item that corresponds to the item from the internal Select control.
+	 * @returns {sap.ui.core.Item | null} The MultiEditField item that corresponds to the item from the internal Select control.
 	 */
 	MultiEditField.prototype._getExternalItem = function(item) {
 		var iIndex = this.byId("select").indexOfItem(item);
