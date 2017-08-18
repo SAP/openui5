@@ -900,6 +900,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			rm.write("><div");
 			rm.addClass("sapUiTableCell");
 
+			var bIsTreeTableInTreeMode = oTable.getUseGroupMode && !oTable.getUseGroupMode();
+			if (bIsFirstColumn && bIsTreeTableInTreeMode) {
+				rm.addClass("sapUiTableCellFlex"); // without flex, icon pushes contents too wide
+			}
+
 			rm.writeClasses();
 
 			if (oTable.getRowHeight() && oTable.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
