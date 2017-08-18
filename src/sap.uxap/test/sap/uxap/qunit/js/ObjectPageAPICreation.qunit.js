@@ -542,6 +542,7 @@
 
 		//act
 		oObjectPage.removeSection(this.oFirstSection);
+		sap.ui.getCore().applyChanges();
 
 		var oExpected = {
 			oSelectedSection: this.oSecondSection,
