@@ -49,6 +49,11 @@
 											type="Emphasized"
 											press="onDownloadButtonPress">
 									</Button>
+									<Link
+											text="{i18n>linkText}"
+											target="_blank"
+											href="#docs/guide/a3ab54ecf7ac493b91904beb2095d208.html"
+											class="sapUiTinyMarginTop readMoreLink" />
 								</l:VerticalLayout>
 								<Image
 										src="resources/sap/ui/documentation/demoapps/img/demoAppsTeaser.png"
