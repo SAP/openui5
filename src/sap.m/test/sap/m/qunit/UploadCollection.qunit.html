@@ -2821,6 +2821,84 @@
 			assert.strictEqual(oFirePressStub.callCount, 1, "The press event has been triggered on the delete button");
 		});
 
+		QUnit.test("Pressing keyboard F2 button results in correct handler call", function(assert) {
+			//Arrange
+			var oEvent = {
+					keyCode: jQuery.sap.KeyCodes.F2,
+					setMarked: sinon.stub()
+				},
+				oHandleF2Stub = sinon.stub(this.oUploadCollection, "_handleF2");
+			//Act
+			this.oUploadCollection.onkeydown(oEvent);
+			//Assert
+			assert.deepEqual(oHandleF2Stub.getCall(0).args[0], oEvent, "Correct handler has been executed");
+			assert.ok(oEvent.setMarked.called, "Event has been marked");
+		});
+
+		QUnit.test("Pressing keyboard ESCAPE button results in correct handler call", function(assert) {
+			//Arrange
+			var oEvent = {
+					keyCode: jQuery.sap.KeyCodes.ESCAPE,
+					setMarked: sinon.stub()
+				},
+				oHandleESCAPEStub = sinon.stub(this.oUploadCollection, "_handleESC");
+			//Act
+			this.oUploadCollection.onkeydown(oEvent);
+			//Assert
+			assert.deepEqual(oHandleESCAPEStub.getCall(0).args[0], oEvent, "Correct handler has been executed");
+			assert.ok(oEvent.setMarked.called, "Event has been marked");
+		});
+
+		QUnit.test("Pressing keyboard DELETE button results in correct handler call", function(assert) {
+			//Arrange
+			var oEvent = {
+					keyCode: jQuery.sap.KeyCodes.DELETE,
+					setMarked: sinon.stub()
+				},
+				oHandleDELETEStub = sinon.stub(this.oUploadCollection, "_handleDEL");
+			//Act
+			this.oUploadCollection.onkeydown(oEvent);
+			//Assert
+			assert.deepEqual(oHandleDELETEStub.getCall(0).args[0], oEvent, "Correct handler has been executed");
+			assert.ok(oEvent.setMarked.called, "Event has been marked");
+		});
+
+		QUnit.test("Pressing keyboard ENTER button results in correct handler call", function(assert) {
+			//Arrange
+			var oEvent = {
+					keyCode: jQuery.sap.KeyCodes.ENTER,
+					setMarked: sinon.stub()
+				},
+				oHandleENTERStub = sinon.stub(this.oUploadCollection, "_handleENTER"),
+				oSetMarkedStub = oEvent.setMarked;
+			//Act
+			this.oUploadCollection.onkeydown(oEvent);
+			//Assert
+			assert.deepEqual(oHandleENTERStub.getCall(0).args[0], oEvent, "Correct handler has been executed");
+			assert.ok(oEvent.setMarked.called, "Event has been marked");
+		});
+
+		QUnit.test("Pressing other keyboard buttons is correctly processed", function(assert) {
+			//Arrange
+			var oEvent = {
+					keyCode: "Dummy",
+					setMarked: sinon.stub()
+				},
+				oHandleF2Stub = sinon.stub(this.oUploadCollection, "_handleF2"),
+				oHandleENTERStub = sinon.stub(this.oUploadCollection, "_handleENTER"),
+				oHandleDELETEStub = sinon.stub(this.oUploadCollection, "_handleDEL"),
+				oHandleESCAPEStub = sinon.stub(this.oUploadCollection, "_handleESC"),
+				oSetMarkedStub = oEvent.setMarked;
+			//Act
+			this.oUploadCollection.onkeydown(oEvent);
+			//Assert
+			assert.equal(oHandleF2Stub.called, false, "Handler for F2 has not been called");
+			assert.equal(oHandleENTERStub.called, false, "Handler for ENTER has not been called");
+			assert.equal(oHandleDELETEStub.called, false, "Handler for DELETE has not been called");
+			assert.equal(oHandleESCAPEStub.called, false, "Handler for ESCAPE has not been called");
+			assert.equal(oSetMarkedStub.called, false, "Event has not been marked");
+		});
+
 		QUnit.module("Managing event delegates when entering and exiting edit mode", {
 			beforeEach: function() {
 				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
