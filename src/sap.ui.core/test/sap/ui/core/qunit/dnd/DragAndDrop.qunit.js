@@ -140,10 +140,12 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oEvent = createjQueryDragEventDummy("dragstart", this.oControl.getTopItems()[0]);
+		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.equal(oEvent.dragSession, null, "No drag session was created for an input element");
 
 		oEvent = createjQueryDragEventDummy("dragstart", this.oControl.getTopItems()[1]);
+		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.equal(oEvent.dragSession, null, "No drag session was created for a textarea element");
 	});
