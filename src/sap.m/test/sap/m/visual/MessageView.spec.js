@@ -12,13 +12,29 @@ describe('sap.m.MessageView', function() {
 			element(by.id("mMView2-" + sMessageType)).click();
 			expect(takeScreenshot(element(by.id("mMView2")))).toLookAs("mMView2-" + sMessageType);
 
-			// turns compact mode on
+			// turn compact mode on
 			element(by.id("compactMode")).click();
 			expect(takeScreenshot(element(by.id("mMView2")))).toLookAs("mMView2-" + sMessageType + "-compact");
 
 			//turn compact mode off
 			element(by.id("compactMode")).click();
 		});
+	});
+
+	it("should open MessageView with one MessageViewItem in Popover", function () {
+		// open popover
+		element(by.id("mViewButton2")).click();
+		expect(takeScreenshot()).toLookAs("message-view-with-one-item");
+		element(by.id("closeBtn")).click();
+
+		// turn compact mode on
+		element(by.id("compactMode")).click();
+		element(by.id("mViewButton2")).click();
+		expect(takeScreenshot()).toLookAs("message-view-with-one-item-compact");
+		element(by.id("closeBtn")).click();
+
+		//turn compact mode off
+		element(by.id("compactMode")).click();
 	});
 
 	it("should open MessageView in Dialog", function () {
