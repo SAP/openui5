@@ -4,9 +4,19 @@
 
 // Provides class sap.ui.dt.Plugin.
 sap.ui.define([
-	'sap/ui/dt/Plugin', 'sap/ui/fl/Utils', 'sap/ui/fl/registry/ChangeRegistry'
+	'sap/ui/dt/Plugin',
+	'sap/ui/fl/Utils',
+	'sap/ui/fl/registry/ChangeRegistry',
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/OverlayUtil'
 ],
-function(Plugin, FlexUtils, ChangeRegistry) {
+function(
+	Plugin,
+	FlexUtils,
+	ChangeRegistry,
+	OverlayRegistry,
+	OverlayUtil
+) {
 	"use strict";
 
 	/**
@@ -55,6 +65,31 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 
 	BasePlugin.prototype._isEditable = function() {};
 
+	BasePlugin.prototype._attachReevaluationEditable = function(oOverlay) {
+		oOverlay.attachElementModified(function(oEvent) {
+			var oParams = oEvent.getParameters();
+			if ((oParams.type === "propertyChanged" && oParams.name === "visible") || oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
+				if (oOverlay.getRelevantOverlays().length === 0) {
+					var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay);
+					oOverlay.setRelevantOverlays(aRelevantOverlays);
+				}
+				this.evaluateEditable(oOverlay.getRelevantOverlays());
+			}
+		}.bind(this));
+	};
+
+	BasePlugin.prototype.evaluateEditable = function(aOverlays) {
+		aOverlays.forEach(function(oOverlay) {
+			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
+			// this means that getElementInstance is undefined when we get here via removeAggregation mutation
+			if (oOverlay.getElementInstance() && this._isEditable(oOverlay)) {
+				this.addToPluginsList(oOverlay);
+			} else {
+				this.removeFromPluginsList(oOverlay);
+			}
+		}.bind(this));
+	};
+
 	BasePlugin.prototype._isEditableByPlugin = function(oOverlay) {
 		var sPluginName = this.getMetadata().getName();
 		var aPluginList = oOverlay.getEditableByPlugins();
@@ -62,9 +97,8 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 	};
 
 	BasePlugin.prototype.registerElementOverlay = function(oOverlay) {
-		if (this._isEditable(oOverlay)) {
-			this.addToPluginsList(oOverlay);
-		}
+		this.evaluateEditable([oOverlay]);
+		this._attachReevaluationEditable(oOverlay);
 	};
 
 	BasePlugin.prototype.deregisterElementOverlay = function(oOverlay) {

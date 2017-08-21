@@ -1,4 +1,4 @@
-/*global QUnit*/
+/*global QUnit sinon*/
 
 sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
@@ -41,6 +41,8 @@ function(
 ) {
 	"use strict";
 
+	var sandbox = sinon.sandbox.create();
+
 	QUnit.start();
 
 	QUnit.module("Given that an Overlay Container is created", {
@@ -75,6 +77,7 @@ function(
 		afterEach : function() {
 			this.oButton.destroy();
 			this.oOverlay.destroy();
+			sandbox.restore();
 		}
 	});
 
@@ -102,6 +105,69 @@ function(
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(sWidth, fnGetWidth(this.oOverlay), "overlay didn't change its width");
 	});
+
+	QUnit.test("When _onElementModified is called ", function(assert) {
+		var oEventSpy = sandbox.spy(this.oOverlay, "fireElementModified");
+		var oSetRelevantSpy = sandbox.spy(this.oOverlay, "setRelevantOverlays");
+
+		var oEvent = {
+			getParameters: function() {
+				return {};
+			}
+		};
+		this.oOverlay._onElementModified(oEvent);
+		assert.equal(oEventSpy.callCount, 0, "without parameters, the modified event is not fired");
+		assert.equal(oSetRelevantSpy.callCount, 0, "and setRelevantOverlays was not called");
+
+		oEvent = {
+			getParameters: function() {
+				return {
+					type: "propertyChanged",
+					name: "visible"
+				};
+			}
+		};
+		this.oOverlay._onElementModified(oEvent);
+		assert.equal(oEventSpy.callCount, 1, "with propertyChanged and visible as parameters,the modified event is fired");
+		assert.equal(oSetRelevantSpy.callCount, 1, "and setRelevantOverlays was called");
+
+		oEvent = {
+			getParameters: function() {
+				return {
+					type: "propertyChanged",
+					name: "text"
+				};
+			}
+		};
+		this.oOverlay._onElementModified(oEvent);
+		assert.equal(oEventSpy.callCount, 1, "with propertyChanged and text as parameters, the modified event is not fired");
+		assert.equal(oSetRelevantSpy.callCount, 1, "and setRelevantOverlays was not called");
+
+		sandbox.stub(this.oOverlay, "getAggregationOverlay").returns(this.oOverlay);
+		oEvent = {
+			getParameters: function() {
+				return {
+					type: "insertAggregation",
+					name: "aggregationName"
+				};
+			}
+		};
+		this.oOverlay._onElementModified(oEvent);
+		assert.equal(oEventSpy.callCount, 2, "with inserAggregation and a name, the modified event is fired");
+		assert.equal(oSetRelevantSpy.callCount, 2, "and setRelevantOverlays was called");
+
+		oEvent = {
+			getParameters: function() {
+				return {
+					type: "setParent"
+				};
+			}
+		};
+		this.oOverlay._onElementModified(oEvent);
+		assert.equal(oEventSpy.callCount, 3, "with setParent as type, the modified event is fired");
+		assert.equal(oSetRelevantSpy.callCount, 2, "and setRelevantOverlays was not called");
+	});
+
 
 	QUnit.module("Given that an Overlay is created for a control with an existing designTime metadata", {
 		beforeEach : function(assert) {
