@@ -4817,6 +4817,43 @@
 
 	QUnit.module("Mobile mode (dialog)");
 
+	QUnit.test("Prevent endless focus loop on mobile", function(assert) {
+		//arrange
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oMultiComboBox = new sap.m.MultiComboBox( "multi", {
+				items: [
+					new sap.ui.core.Item({
+						text: "Example"
+					})
+				]
+			}).placeAt("MultiComboBox-content"),
+			oFakeEvent = new sap.ui.base.Event,
+			oHandleFocusleaveStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter"),
+			fnTapSpy = sinon.spy(oMultiComboBox, "onfocusin");
+
+		oFakeEvent.relatedControlId = oMultiComboBox.getPicker().getId();
+		sap.ui.getCore().applyChanges();
+
+		//act
+		sap.ui.test.qunit.triggerTouchEvent("tap", oMultiComboBox.getFocusDomRef(), {
+			srcControl: oMultiComboBox,
+			target: oMultiComboBox.getFocusDomRef()
+		});
+		this.clock.tick(500);
+		oMultiComboBox.onsapfocusleave(oFakeEvent);
+
+		//assert
+		assert.strictEqual(fnTapSpy.callCount, 0 , "onsapfocusleave should not trigger onfocusin on mobile");
+
+		//clean up
+		oMultiComboBox.destroy();
+	});
+
+
 	QUnit.test("_getFilterSelectedButton()", function(assert) {
 		this.stub(sap.ui.Device, "system", {
 			desktop: false,
