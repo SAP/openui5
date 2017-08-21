@@ -458,14 +458,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		for ( i = 0; i < iLength; i++) {
 			oContainer = aContainers[i];
 			oContainer._checkProperties();
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				iVisibleContainers++;
 				aVisibleContainers.push(oContainer);
 			}
 		}
 		for ( i = 0; i < iVisibleContainers; i++) {
 			oContainer = aVisibleContainers[i];
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				iVisibleContainer++;
 				sContainerId = oContainer.getId();
 				oPanel = undefined;
@@ -510,7 +510,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				var bFound = false;
 				for ( i = 0; i < iLength; i++) {
 					oContainer = aContainers[i];
-					if (sContainerId == oContainer.getId() && oContainer.getVisible()) {
+					if (sContainerId == oContainer.getId() && oContainer.isVisible()) {
 						bFound = true;
 						break;
 					}
@@ -566,7 +566,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				var oLabel;
 				for ( var i = 0; i < aElements.length; i++) {
 					var oElement = aElements[i];
-					if (oElement.getVisible()) {
+					if (oElement.isVisible()) {
 						oLabel = oElement.getLabelControl();
 						if (oLabel) {
 							aContent.push(oLabel);
@@ -921,7 +921,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				var aContainers = oLayout.getParent().getFormContainers();
 				var oFirstContainer;
 				for (var i = 0; i < aContainers.length; i++) {
-					if (aContainers[i].getVisible()) {
+					if (aContainers[i].isVisible()) {
 						oFirstContainer = aContainers[i];
 						break;
 					}
@@ -1196,7 +1196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		// count only visible containers
 		for ( i = 0; i < aContainers.length; i++) {
 			oContainer = aContainers[i];
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				iLength++;
 				aVisibleContainers.push(oContainer);
 			}
@@ -1253,7 +1253,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 						// it's a Grid
 						oContainer = sap.ui.getCore().byId(oContentElement.__myParentContainerId);
 					}
-					if (oContainer && oContainer.getVisible()) {
+					if (oContainer && oContainer.isVisible()) {
 						var oVisibleContainer = aVisibleContainers[j];
 						if (oContainer != oVisibleContainer) {
 							// order of containers has changed
@@ -1297,7 +1297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				}
 				for ( i = iStartIndex; i < aContainers.length; i++) {
 					oContainer = aContainers[i];
-					if (oContainer.getVisible()) {
+					if (oContainer.isVisible()) {
 						var sContainerId = oContainer.getId();
 						if (oLayout.mContainers[sContainerId]) {
 							if (oLayout.mContainers[sContainerId][0]) {

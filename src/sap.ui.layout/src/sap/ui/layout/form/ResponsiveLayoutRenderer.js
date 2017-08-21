@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		var iLength = 0;
 		for ( var i = 0; i < aContainers.length; i++) {
 			var oContainer = aContainers[i];
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				iLength++;
 				aVisibleContainers.push(oContainer);
 			}

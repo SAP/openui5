@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 			return FormLayout.prototype.findPrevFieldOfElement.apply(this, arguments);
 		}
 
-		if (!oElement.getVisible()) {
+		if (!oElement.isVisible()) {
 			return null;
 		}
 
@@ -152,7 +152,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 		var iCurrentIndex = oContainer.indexOfFormElement(oElement);
 		var oNewDomRef;
 
-		if (oContainer.getVisible()) {
+		if (oContainer.isVisible()) {
 			var aElements = oContainer.getFormElements();
 			var iMax = aElements.length;
 			var i = iCurrentIndex + 1;
@@ -182,7 +182,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 		var iCurrentIndex = oContainer.indexOfFormElement(oElement);
 		var oNewDomRef;
 
-		if (oContainer.getVisible()) {
+		if (oContainer.isVisible()) {
 			var aElements = oContainer.getFormElements();
 			var i = iCurrentIndex - 1;
 			var iLeft = oControl.$().offset().left;

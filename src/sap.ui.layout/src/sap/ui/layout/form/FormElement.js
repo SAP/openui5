@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.form.FormElement.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledPropagator', 'sap/ui/layout/library'],
-	function(jQuery, Element, EnabledPropagator, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedObjectObserver', 'sap/ui/layout/library'],
+	function(jQuery, Element, ManagedObjectObserver, library) {
 	"use strict";
 
 	/**
@@ -68,6 +68,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		this._oFieldDelegate = {oElement: this, onAfterRendering: _fieldOnAfterRendering};
 
+		this._oObserver = new ManagedObjectObserver(this._observeChanges.bind(this));
+
+		this._oObserver.observe(this, {
+			aggregations: ["fields"]
+		});
+
 	};
 
 	FormElement.prototype.exit = function(){
@@ -77,6 +83,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		}
 
 		this._oFieldDelegate = undefined;
+
+		this._oObserver.disconnect();
+		this._oObserver = undefined;
 
 	};
 
@@ -131,7 +140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			}
 		}
 
-		_updateLabelFor(this);
+		_updateLabelFor.call(this);
 
 		return this;
 
@@ -168,79 +177,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 	};
 
-	FormElement.prototype.addField = function(oField) {
-
-		this.addAggregation("fields", oField);
-
-		if (oField) {
-			if (!oField.getMetadata().isInstanceOf("sap.ui.core.IFormContent")) {
-				jQuery.sap.log.warning(oField + " is not valid Form content", this);
-			}
-			_attachDelegate.call(this, oField);
-			_updateLabelFor(this);
-		}
-
-		return this;
-
-	};
-
-	FormElement.prototype.insertField = function(oField, iIndex) {
-
-		this.insertAggregation("fields", oField, iIndex);
-
-		if (oField) {
-			if (!oField.getMetadata().isInstanceOf("sap.ui.core.IFormContent")) {
-				jQuery.sap.log.warning(oField + " is not valid Form content", this);
-			}
-			_attachDelegate.call(this, oField);
-			_updateLabelFor(this);
-		}
-
-		return this;
-
-	};
-
-	FormElement.prototype.removeField = function(oField) {
-
-		var oRemovedField = this.removeAggregation("fields", oField);
-		_detachDelegate.call(this, oRemovedField);
-		_updateLabelFor(this);
-
-		return oRemovedField;
-
-	};
-
-	FormElement.prototype.removeAllFields = function() {
-
-		var aRemovedFields = this.removeAllAggregation("fields");
-
-		for ( var i = 0; i < aRemovedFields.length; i++) {
-			var oRemovedField = aRemovedFields[i];
-			_detachDelegate.call(this, oRemovedField);
-		}
-		_updateLabelFor(this);
-
-		return aRemovedFields;
-
-	};
-
-	FormElement.prototype.destroyFields = function() {
-
-		var aFields = this.getFields();
-
-		for ( var i = 0; i < aFields.length; i++) {
-			var oField = aFields[i];
-			_detachDelegate.call(this, oField);
-		}
-
-		this.destroyAggregation("fields");
-
-		_updateLabelFor(this);
-
-		return this;
-
-	};
-
 	FormElement.prototype.updateFields = function() {
 
 		var aFields = this.getFields();
@@ -261,7 +197,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			_attachDelegate.call(this, oField);
 		}
 
-		_updateLabelFor(this);
+		_updateLabelFor.call(this);
 
 		return this;
 
@@ -332,7 +268,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	 * Labels inside of a Form must be invalidated if "editable" changed on Form
 	 * @private
 	 */
-	FormElement.prototype.invalidateLabels = function(){
+	FormElement.prototype.invalidateLabel = function(){
 
 		var oLabel = this.getLabelControl();
 
@@ -342,7 +278,77 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 	};
 
+	/**
+	 * Determines if the <code>FormElement</code> is visible or not. Per default it
+	 * just returns the value of the <code>visible</code> property.
+	 * But this might be overwritten by inherited elements.
+	 *
+	 * For rendering by <code>FormLayouts</code> this function has to be used instead of
+	 * <code>getVisible</code>.
+	 *
+	 * @returns {boolean} If true, the <code>FormElement</code> is visible, otherwise not
+	 * @public
+	 */
+	FormElement.prototype.isVisible = function(){
+
+		return this.getVisible();
+
+	};
+
+	/*
+	 * handles change of FormElement itself and content controls
+	 * @private
+	 */
+	FormElement.prototype._observeChanges = function(oChanges){
+
+		if (oChanges.object == this) {
+			// it's the FormElement
+			if (oChanges.name == "fields") {
+				_fieldsChanged.call(this, oChanges);
+			}
+		} else {
+			// it's some content control
+			_controlChanged.call(this, oChanges);
+		}
+
+	};
+
 	// *** Private helper functions ***
+
+	function _fieldsChanged(oChanges) {
+
+			if (oChanges.child) {
+				_fieldChanged.call(this, oChanges.child, oChanges.mutation);
+			} else if (oChanges.children) {
+				for (var i = 0; i < oChanges.chlidren.length; i++) {
+					_fieldChanged.call(this, oChanges.children[i], oChanges.mutation);
+				}
+			}
+
+		_updateLabelFor.call(this);
+
+	}
+
+	function _fieldChanged(oField, sMutation) {
+
+		if (sMutation == "insert") {
+			if (!oField.getMetadata().isInstanceOf("sap.ui.core.IFormContent")) {
+				jQuery.sap.log.warning(oField + " is not valid Form content", this);
+			}
+			_attachDelegate.call(this, oField);
+		} else {
+			_detachDelegate.call(this, oField);
+		}
+
+	}
+
+	function _controlChanged(oChanges) {
+
+		if (oChanges.name == "required") {
+			this.invalidateLabel();
+		}
+
+	}
 
 	/*
 	 * overwrite Labels isRequired function to check if one of the fields in the element is required,
@@ -401,15 +407,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	/*
 	 * Update the for association of the related label
 	 */
-	function _updateLabelFor(oFormElement){
-		var aFields = oFormElement.getFields();
+	function _updateLabelFor(){
+		var aFields = this.getFields();
 		var oField = aFields.length > 0 ? aFields[0] : null;
 
-		var oLabel = oFormElement._oLabel;
+		var oLabel = this._oLabel;
 		if (oLabel) {
 			oLabel.setLabelFor(oField); // as Label is internal of FormElement, we can use original labelFor
 		}
-		oLabel = oFormElement.getLabel();
+		oLabel = this.getLabel();
 		if (oLabel instanceof sap.ui.core.Control /*might also be a string*/) {
 			oLabel.setAlternativeLabelFor(oField);
 		}
@@ -419,7 +425,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		oField.addDelegate(this._oFieldDelegate);
 		if (oField.getMetadata().getProperty("required")) {
-			oField.attachEvent("_change", _handleControlChange, this);
+			this._oObserver.observe(oField, {
+				properties: ["required"]
+			});
 		}
 
 	}
@@ -427,9 +435,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	function _detachDelegate(oField){
 
 		oField.removeDelegate(this._oFieldDelegate);
-		if (oField.getMetadata().getProperty("required")) {
-			oField.detachEvent("_change", _handleControlChange, this);
-		}
+		// unbobserve in any case and everything
+		this._oObserver.unobserve(oField, {properties: true, aggregations: true, associations: true});
 
 	}
 
@@ -442,17 +449,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		var oParent = this.oElement.getParent();
 		if (oParent && oParent.contentOnAfterRendering) {
 			oParent.contentOnAfterRendering( this.oElement, oEvent.srcControl);
-		}
-
-	}
-
-	function _handleControlChange(oEvent) {
-
-		if (oEvent.getParameter("name") == "required") {
-			var oLabel = this.getLabelControl();
-			if (oLabel) {
-				oLabel.invalidate();
-			}
 		}
 
 	}
