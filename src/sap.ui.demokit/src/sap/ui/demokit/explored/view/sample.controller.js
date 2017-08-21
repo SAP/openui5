@@ -231,7 +231,10 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 				RuntimeAuthoring
 			) {
 				if (!this._oRTA) {
-					this._oRTA = new RuntimeAuthoring();
+					// default developerMode for CUSTOMER-Layer is 'true'
+					this._oRTA = new RuntimeAuthoring({flexSettings: {
+						developerMode: false
+					}});
 					this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
 					this._oRTA.start();
 				}
