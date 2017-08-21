@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		}
 	}});
 
-	/**
+	/*
 	 * Sets the title property.
 	 * @param {string} sTitle New value for property title
 	 * @returns {sap.m.FacetFilterList} <code>this</code> to allow method chaining
@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		return this;
 	};
 
-	/**
+	/*
 	 * Sets the multiSelect property (default value is <code>true</code>).
 	 * @param {boolean}	bVal New value for property multiSelect
 	 * @returns {sap.m.FacetFilterList}	this to allow method chaining

@@ -625,12 +625,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * Sets the given date as start date.
+	 * Sets the given date as start date. The current date is used as default.
 	 * Depending on the current view the start date may be adjusted (for example, the week view shows always the first weekday
 	 * of the same week as the given date).
 	 * @param {Date} oStartDate the date to set as <code>sap.m.PlanningCalendar</code> <code>startDate</code>. May be changed(adjusted) if
 	 * property <code>startDate</code> is adjusted. See remark about week view above.
 	 * @returns {sap.m.PlanningCalendar} <code>this</code> to allow method chaining
+	 * @public
 	*/
 	PlanningCalendar.prototype.setStartDate = function(oStartDate){
 		var oFirstDateOfWeek,

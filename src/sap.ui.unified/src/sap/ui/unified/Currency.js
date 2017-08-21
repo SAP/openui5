@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		};
 
-		/**
+		/*
 		 * Value property setter.
 		 *
 		 * @override
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		};
 
-		/**
+		/*
 		 * Currency property setter.
 		 * @param {string} sValue The ISO 4217 currency code
 		 * @return {sap.ui.unified.Currency} <code>this</code> pointer for chaining
@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return this;
 		};
 
-		/**
+		/*
 		 * UseSymbol property setter.
 		 * @param {boolean} bValue Whether the control must show the currency symbol instead of the ISO currency code
 		 * @return {sap.ui.unified.Currency} <code>this</code> pointer for chaining
@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return this;
 		};
 
-		/**
+		/*
 		 * MaxPrecision property setter.
 		 * @param {int} iValue The maximum precision value
 		 * @return {sap.ui.unified.Currency} <code>this</code> pointer for chaining

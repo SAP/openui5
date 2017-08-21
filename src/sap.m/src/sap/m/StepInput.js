@@ -290,7 +290,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			return Control.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
 		};
 
-		/**
+		/*
 		 * Sets the min value.
 		 *
 		 * @param {float} min The minimum value
@@ -316,7 +316,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			return oResult;
 		};
 
-		/**
+		/*
 		 * Sets the max value.
 		 *
 		 * @param {float} max The max value
@@ -358,7 +358,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			return false;
 		};
 
-		/**
+		/*
 		 * Sets the <code>displayValuePrecision</code>.
 		 *
 		 * @param {number} number The value precision
@@ -558,12 +558,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			}
 		};
 
-		/**
-		* Sets the <code>value</code> by doing some rendering optimizations in case the first rendering was completed.
-		* Otherwise the value is set in onBeforeRendering, where we have all needed parameters for obtaining correct value.
-		* @param {object} oValue The value to be set
-		*
-		*/
+		/*
+		 * Sets the <code>value</code> by doing some rendering optimizations in case the first rendering was completed.
+		 * Otherwise the value is set in onBeforeRendering, where we have all needed parameters for obtaining correct value.
+		 * @param {object} oValue The value to be set
+		 *
+		 */
 		StepInput.prototype.setValue = function (oValue) {
 			if (oValue == undefined) {
 				oValue = 0;
@@ -871,7 +871,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			return (iDigitsValueL > iDigitsStepL) ? iDigitsValueL : iDigitsStepL;
 		};
 
-		/**
+		/*
 		 * Handles the value state of the control.
 		 *
 		 * @param  {string} valueState The given value state
@@ -933,7 +933,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			return this._getInput().getValueStateText();
 		};
 
-		/**
+		/*
 		 * Sets the editable property.
 		 *
 		 * @param {boolean} editable - Indicates if the value is editable

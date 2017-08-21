@@ -358,7 +358,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return Control.prototype.addAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
 		};
 
-		/**
+		/*
 		 * Adds a new <code>TabContainerItem</code> to the <code>items</code> aggregation of the <code>TabContainer</code>.
 		 *
 		 * @param {sap.m.TabContainerItem} oItem The new <code>TabContainerItem</code> to be added
@@ -379,7 +379,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return oItem;
 		};
 
-		/**
+		/*
 		 * Destroys all <code>TabContainerItem</code> entities from the <code>items</code> aggregation of the <code>TabContainer</code>.
 		 *
 		 * @returns {sap.m.TabContainer} This instance for chaining
@@ -392,7 +392,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this.destroyAggregation("items");
 		};
 
-		/**
+		/*
 		 * Inserts a new <code>TabContainerItem</code> to the <code>items</code> aggregation of the <code>TabContainer</code> at a specified index.
 		 *
 		 * @param {sap.m.TabContainerItem} oItem The new <code>TabContainerItem</code> to be inserted
@@ -413,7 +413,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this.insertAggregation("items", oItem, iIndex);
 		};
 
-		/**
+		/*
 		 * Removes all <code>TabContainerItem</code> entities from the <code>items</code> aggregation of the <code>TabContainer</code>.
 		 *
 		 * @returns {sap.m.TabContainer} This instance for chaining
@@ -448,7 +448,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this._getTabStrip().getAddButton();
 		};
 
-		/**
+		/*
 		 * Override <code>showAddNewButton</code> property setter to proxy to the <code>TabStrip</code>.
 		 *
 		 * @param {boolean} bShowButton Whether to show the <code>addNewButton</code>
@@ -465,7 +465,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		};
 
-		/**
+		/*
 		 * Override <code>selectedItem</code> property setter.
 		 *
 		 * @param {sap.m.TabContainerItem} oSelectedItem The new <code>TabContainerItem</code> to be selected
