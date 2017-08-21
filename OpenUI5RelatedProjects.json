@@ -78,8 +78,8 @@
 			"documentationLink": "https://github.com/ui5experts/ui5-schemas",
 			"owner": "cschuff",
 			"license": "MIT",
-      "type": "Tool"
-    },
+			"type": "Tool"
+		},
 		"ui5-CRUDModel": {
 			"name": "OpenUI5-SAPUI5-CRUDModel",
 			"description": "OpenUI5/SAPUI5 Model implementation for mevdschee/php-crud-api and mevdschee/php-api-auth",
@@ -88,7 +88,7 @@
 			"owner": "VyseExhale",
 			"license": "MIT",
 			"type": "Model"
-    },
+		},
 		"ui5-jsx-rm": {
 			"name": "JSX to UI5 Babel Plugin",
 			"description": "A Babel plugin for converting JSX to UI5 render manager calls.",
@@ -97,5 +97,23 @@
 			"owner": "serban-petrescu",
 			"license": "Apache 2.0",
 			"type": "Tool"
-		}
+		},
+		"openui5-pwa-sample": {
+			"name": "openui5-pwa-sample",
+			"description": "The demo is a simple TODO list application. Add new tasks with the input field at the bottom of the screen. The tasks are stored locally and the application works online as well as offline without any difference.",
+			"githubLink": "https://github.com/SAP/openui5-pwa-sample",
+			"documentationLink": "https://github.com/SAP/openui5-pwa-sample",
+			"owner": "ulasenka",
+			"license": "Apache 2.0",
+			"type": "Tool"
+		},
+		"openui5-generic-app-testing": {
+			"name": "OpenUI5 Generic App Testing",
+			"description": "Generic App Testing is a client-side JavaScript library that uses the excellent OPA (One Page Acceptance) and Gherkin support already provided by OpenUI5 to allow UI5 app developers to write entire test scenarios in English language - without coding!",
+			"githubLink": "https://github.com/SAP/openui5-generic-app-testing",
+			"documentationLink": "https://github.com/SAP/openui5-generic-app-testing",
+			"owner": "jonathanbaker7",
+			"license": "Apache 2.0",
+			"type": "JS Library"
+	  }
 	}
