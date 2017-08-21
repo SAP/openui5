@@ -261,7 +261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		return oCalPicker;
 	};
 
-	/**
+	/*
 	 * Sets a start date.
 	 * @param {Date} oStartDate A JavaScript date
 	 * @return {sap.ui.unified.CalendarMonthInterval} <code>this</code> for method chaining
@@ -539,7 +539,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	/**
+	/*
 	 * Sets a minimum date for the calendar.
 	 * @param {Date} oDate a JavaScript date
 	 * @return {sap.ui.unified.Calendar} <code>this</code> for method chaining
@@ -598,7 +598,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	/**
+	/*
 	 * Sets a maximum date for the calendar.
 	 * @param {Date} oDate a JavaScript date
 	 * @return {sap.ui.unified.CalendarMonthInterval} <code>this</code> for method chaining
