@@ -1648,8 +1648,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			// (sPath, [oSorter], [aFilters])
 			if (oTemplate instanceof Sorter || jQuery.isArray(oSorter) && oSorter[0] instanceof Filter) {
-				oSorter = oTemplate;
 				aFilters = oSorter;
+				oSorter = oTemplate;
 				oTemplate = undefined;
 			}
 
