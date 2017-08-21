@@ -263,7 +263,10 @@ sap.ui.define([
 					RuntimeAuthoring
 				) {
 					if (!this._oRTA) {
-						this._oRTA = new RuntimeAuthoring();
+						// default developerMode for CUSTOMER-layer is 'true'
+						this._oRTA = new RuntimeAuthoring({flexSettings: {
+							developerMode: false
+						}});
 						this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
 						this._oRTA.attachStop(function () {
 							delete this._oRTA;
