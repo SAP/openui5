@@ -378,22 +378,22 @@ sap.ui.define(['jquery.sap.global',
 		 * @private
 		 */
 		PopupManager.prototype._getComponentForControl = function(oControl) {
-			var oComponent;
-
+			var oComponent, oRootComponent, oParentControl;
 			if (oControl) {
 				oComponent = Component.getOwnerComponentFor(oControl);
-
 				if (
 					!oComponent
 					&& typeof oControl.getParent === "function"
-					&& !(oControl.getParent() instanceof sap.ui.core.UIArea)
+					&& oControl.getParent() instanceof sap.ui.core.Element
 				) {
-					oControl = oControl.getParent();
-					oComponent = this._getComponentForControl(oControl);
+					oParentControl = oControl.getParent();
+				} else if (oComponent) {
+					oParentControl = oComponent;
 				}
+				oRootComponent = this._getComponentForControl(oParentControl);
 			}
 
-			return oComponent;
+			return oRootComponent ? oRootComponent : oComponent;
 		};
 
 		/**
@@ -463,14 +463,6 @@ sap.ui.define(['jquery.sap.global',
 
 		PopupManager.prototype._isPopupAdaptable = function(oPopupElement) {
 			var oPopupAppComponent = this._getAppComponentForControl(oPopupElement);
-
-			if (oPopupAppComponent) {
-				var oPopupAppComponentForContainer;
-				do {
-					oPopupAppComponentForContainer = this._getAppComponentForControl(oPopupAppComponent.oContainer);
-					oPopupAppComponent = oPopupAppComponentForContainer ? oPopupAppComponentForContainer : oPopupAppComponent;
-				} while (oPopupAppComponentForContainer && oPopupAppComponent.oContainer instanceof sap.ui.core.ComponentContainer);
-			}
 
 			return (this.oRtaRootAppComponent === oPopupAppComponent || this._isComponentInsidePopup(oPopupElement))
 				&& this._isSupportedPopup(oPopupElement);

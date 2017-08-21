@@ -192,6 +192,7 @@ sap.ui.define([
 				// create component only once
 				var sCompId = 'sampleComp-' + this._sId;
 				var sCompName = this._sId;
+				var oMainComponent = this.getOwnerComponent();
 
 				this._oComp = sap.ui.component(sCompId);
 
@@ -199,14 +200,16 @@ sap.ui.define([
 					this._oComp.destroy();
 				}
 
-				this._oComp = sap.ui.getCore().createComponent({
-					id : sCompId,
-					name : sCompName
-				});
-				// create component container
-				return new ComponentContainer({
-					component: this._oComp
-				});
+				return oMainComponent.runAsOwner(function() {
+					this._oComp = sap.ui.getCore().createComponent({
+						id: sCompId,
+						name: sCompName
+					});
+					// create component container
+					return new ComponentContainer({
+						component: this._oComp
+					});
+				}.bind(this));
 			},
 
 			onNavBack : function (oEvt) {
