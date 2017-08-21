@@ -167,10 +167,6 @@ sap.ui.define([
 		return this.setAssociation("selectedButton", oButton, true /* don't rerender */);
 	};
 
-	/*******************************************************************************
-	 * Responsive behavior
-	 ******************************************************************************/
-
 	AnchorBar.prototype.setShowPopover = function (bValue, bSuppressInvalidate) {
 
 		if (this.getShowPopover() === bValue) {
