@@ -689,6 +689,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						},
 
 						/**
+						 * Visit the given attribute of the given element. If the attribute value
+						 * represents a binding expression that can be resolved, it is replaced with
+						 * the resulting value.
+						 *
+						 * @param {Element} oElement
+						 *   The XML DOM element
+						 * @param {Attr} oAttribute
+						 *   One of the element's attribute nodes
+						 *
+						 * @function
+						 * @public
+						 * @see sap.ui.core.util.XMLPreprocessor.ICallback.visitAttributes
+						 * @since 1.51.0
+						 */
+						visitAttribute : function (oElement, oAttribute) {
+							visitAttribute(oElement, oAttribute, oWithControl);
+						},
+
+						/**
 						 * Visits all attributes of the given element. If an attribute value
 						 * represents a binding expression that can be resolved, it is replaced with
 						 * the resulting value.
@@ -1108,8 +1127,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 *
 				 * @param {Element} oElement
 				 *   the owning XML DOM element
-				 * @param {Attribute} oAttribute
-				 *   any XML DOM Attribute
+				 * @param {Attr} oAttribute
+				 *   any XML DOM attribute node
 				 * @param {sap.ui.core.util._with} oWithControl the "with" control
 				 */
 				function resolveAttributeBinding(oElement, oAttribute, oWithControl) {
@@ -1427,6 +1446,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				}
 
 				/**
+				 * Visits the given attribute of the given element. If the attribute value
+				 * represents a binding expression that can be resolved, it is replaced with the
+				 * resulting value.
+				 *
+				 * @param {Element} oElement the XML DOM element
+				 * @param {Attr} oAttribute one of the element's attribute nodes
+				 * @param {sap.ui.core.template._with} oWithControl the "with" control
+				 */
+				function visitAttribute(oElement, oAttribute, oWithControl) {
+					if (fnSupportInfo) {
+						fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttribute", before: {name: oAttribute.name, value: oAttribute.value}}});
+					}
+					resolveAttributeBinding(oElement, oAttribute, oWithControl);
+					if (fnSupportInfo) {
+						fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttribute", after: {name: oAttribute.name, value: oAttribute.value}}});
+					}
+				}
+
+				/**
 				 * Visits all attributes of the given element. If an attribute value represents a
 				 * binding expression that can be resolved, it is replaced with the resulting value.
 				 *
@@ -1435,19 +1473,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 */
 				function visitAttributes(oElement, oWithControl) {
 					var i,
-						oAttribute,
 						oAttributesList = oElement.attributes;
 
 					// Note: iterate backwards to account for removal of attributes!
 					for (i = oAttributesList.length - 1; i >= 0; i -= 1) {
-						oAttribute = oAttributesList.item(i);
-						if (fnSupportInfo) {
-							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", before: {name: oAttribute.name, value: oAttribute.value}}});
-						}
-						resolveAttributeBinding(oElement, oAttribute, oWithControl);
-						if (fnSupportInfo) {
-							fnSupportInfo({context:undefined /*context from node clone*/, env:{caller:"visitAttributes", after: {name: oAttribute.name, value: oAttribute.value}}});
-						}
+						visitAttribute(oElement, oAttributesList.item(i), oWithControl);
 					}
 				}
 

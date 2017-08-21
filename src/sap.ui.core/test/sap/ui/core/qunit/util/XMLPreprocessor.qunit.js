@@ -2587,6 +2587,7 @@ sap.ui.require([
 					getSettings : sinon.match.func,
 					getViewInfo : sinon.match.func,
 					insertFragment : sinon.match.func,
+					visitAttribute : sinon.match.func,
 					visitAttributes : sinon.match.func,
 					visitChildNodes : sinon.match.func,
 					visitNode : sinon.match.func,
@@ -2739,23 +2740,27 @@ sap.ui.require([
 				oInterface.visitNode(oChildNodes.item(2));
 				// this is initially returned as old visitor, see above
 				XMLPreprocessor.visitNodeWrapper(oChildNodes.item(3), oInterface);
+				// Note: there is also getAttributeNode()...
+				oInterface.visitAttribute(oChildNodes.item(4),
+					oChildNodes.item(4).getAttributeNodeNS("", "text"));
 			}, "foo", "Bar");
 
 			this.check(assert, [
 				mvcView(),
 				'<f:Bar xmlns:f="foo">',
 				'<In id="visitAttributes: {/answer}">',
-				'<Out id="no visitAttributes: {/answer}"/>',
+					'<Out id="no visitAttributes: {/answer}"/>',
 				'</In>',
 				'<Out id="no visitChildNodes: {/answer}">',
-				'<In id="visitChildNodes: {/answer}"/>',
+					'<In id="visitChildNodes: {/answer}"/>',
 				'</Out>',
 				'<In id="visitNode: {/answer}">',
-				'<In id="visitNode: {/pi}"/>',
+					'<In id="visitNode: {/pi}"/>',
 				'</In>',
 				'<In id="visitNodeWrapper: {/answer}">',
-				'<In id="visitNodeWrapper: {/pi}"/>',
+					'<In id="visitNodeWrapper: {/pi}"/>',
 				'</In>',
+				'<In id="visitAttribute" src="{/answer}" text="{/answer}"/>',
 				'</f:Bar>',
 				'</mvc:View>'
 			], {
@@ -2763,17 +2768,18 @@ sap.ui.require([
 			}, [
 				'<f:Bar xmlns:f="foo">',
 				'<In id="visitAttributes: 42">',
-				'<Out id="no visitAttributes: {/answer}"/>',
+					'<Out id="no visitAttributes: {/answer}"/>',
 				'</In>',
 				'<Out id="no visitChildNodes: {/answer}">',
-				'<In id="visitChildNodes: 42"/>',
+					'<In id="visitChildNodes: 42"/>',
 				'</Out>',
 				'<In id="visitNode: 42">',
-				'<In id="visitNode: 3.14"/>',
+					'<In id="visitNode: 3.14"/>',
 				'</In>',
 				'<In id="visitNodeWrapper: 42">',
-				'<In id="visitNodeWrapper: 3.14"/>',
+					'<In id="visitNodeWrapper: 3.14"/>',
 				'</In>',
+				'<In id="visitAttribute" src="{/answer}" text="42"/>',
 				'</f:Bar>'
 			]);
 		} finally {
