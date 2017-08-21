@@ -1551,7 +1551,7 @@ sap.ui.define([
 
 		var oSectionInfo = this._oSectionInfo[oSection.getId()];
 		if (oSectionInfo) {
-			return oSectionInfo.positionTop === this.iHeaderContentHeight;
+			return Math.abs(oSectionInfo.positionTop - this.iHeaderContentHeight) <= 1;
 		}
 		return false;
 	};
