@@ -149,10 +149,15 @@
 		</script>
 		<script id="video-template" type="text/template">
 			<div class="b-slide b-slide--fade">
-				<video width="100%" controls class="b-ui margin-bottom_10_5_percent" preload="metadata">
-					<source src="data/impressions/{{src}}" type="video/mp4">
-					Your browser does not support the video tag.
-				</video>
+				<div class="flex-container">
+					<div class="b-slide__video b-ui margin-bottom_10_5_percent">
+						<iframe
+							width="100%"
+							height="100%"
+							src="https://www.youtube.com/embed/mQkjAyoGfwI">
+						</iframe>
+					</div>
+				</div>
 			</div>
 		</script>
 		<script id="dot-template" type="text/template">
