@@ -52,7 +52,7 @@
 			"owner": "matz3",
 			"license": "Apache 2.0",
 			"type": "Tool"
-		},		
+		},
 		"XMPPJSONPatchSyncModel": {
 			"name": "XMPPJSONPatchSyncModel",
 			"decription": "This OpenUI5 data model uses a node on an XMPP server to synchronize itself to different connected clients.",
@@ -71,6 +71,15 @@
 			"license": "MIT",
 			"type": "Control"
 		},
+		"ui5-schemas": {
+			"name": "ui5-schemas",
+			"decription": "UI5 Schemas allows you to develop SAPUI5/OpenUI5 XML at a maximum convenience. It downloads, upgrades and sets up SAPUI5/OpenUI5 XML schemas for a better development experience in your favorite IDE (if it is WebStorm ;).",
+			"githubLink": "https://github.com/ui5experts/ui5-schemas",
+			"documentationLink": "https://github.com/ui5experts/ui5-schemas",
+			"owner": "cschuff",
+			"license": "MIT",
+      "type": "Tool"
+    },
 		"ui5-CRUDModel": {
 			"name": "OpenUI5-SAPUI5-CRUDModel",
 			"description": "OpenUI5/SAPUI5 Model implementation for mevdschee/php-crud-api and mevdschee/php-api-auth",
