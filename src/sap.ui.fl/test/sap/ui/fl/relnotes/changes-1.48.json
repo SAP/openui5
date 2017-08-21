@@ -38,8 +38,15 @@
       }
     ]
   },
-  "1.48.5": {
-    "date": "July 2017",
-    "notes": []
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "3b4c09045bb81cefb2c9319f16c8b055a9c601be",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
+      }
+    ]
   }
 }

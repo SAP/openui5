@@ -3424,5 +3424,46 @@
         "references": []
       }
     ]
+  },
+  "1.38.25": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "63f1bfaf8141651d1c098c1588f19e5924eaed92",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Special characters in the sender property are displayed correctly",
+        "references": []
+      },
+      {
+        "id": "7377010a66597cca19b0b8c43049a54639988e54",
+        "type": "FIX",
+        "text": " sap.m.Popover: Vertical calculations in IE fixed",
+        "references": []
+      },
+      {
+        "id": "87d3d2d7aa16c16c8ecc9c1b7aa4031a9e0931cb",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Testing touch event is now corrected",
+        "references": []
+      },
+      {
+        "id": "77238ab382ef64026ae53c20c688f96fac872ec0",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: FileName property handling improved",
+        "references": []
+      },
+      {
+        "id": "be2cfd444dca222e9ae46e4554593d6901551347",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus after item deletion corrected",
+        "references": []
+      },
+      {
+        "id": "df45a36d6f19f1b26fd722d507bc567f8bcf0832",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus handling in HCB and belize_hcb improved",
+        "references": []
+      }
+    ]
   }
 }

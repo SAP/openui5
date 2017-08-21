@@ -51,5 +51,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "3a7965bea2de5675ecc46bf0a163335482d13adc",
+        "type": "FIX",
+        "text": " sap.ui.commons.RichTooltip: Remove randomly failing qunit test.",
+        "references": []
+      }
+    ]
   }
 }
