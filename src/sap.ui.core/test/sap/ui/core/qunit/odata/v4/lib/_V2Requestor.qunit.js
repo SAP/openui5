@@ -250,6 +250,7 @@ sap.ui.require([
 		{sType : "Edm.Boolean"},
 		{sType : "Edm.Byte"},
 		{sType : "Edm.Date", sConvertMethod : "convertDate"},
+		{sType : "Edm.DateTimeOffset", sConvertMethod : "convertDateTimeOffset"},
 		{sType : "Edm.Decimal"},
 		{sType : "Edm.Double", sConvertMethod : "convertDoubleSingle"},
 		{sType : "Edm.Guid"},
