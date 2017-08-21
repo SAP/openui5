@@ -10,10 +10,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/_AnnotationHelperExpression",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
-	"sap/ui/model/odata/v4/ODataMetaModel",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/odata/v4/ODataMetaModel"
 ], function (jQuery, Icon, BaseContext, JSONModel, Basics, Expression, AnnotationHelper,
-		_SyncPromise, ODataMetaModel, TestUtils) {
+		_SyncPromise, ODataMetaModel) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";

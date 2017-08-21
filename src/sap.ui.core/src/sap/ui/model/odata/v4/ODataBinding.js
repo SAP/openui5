@@ -147,7 +147,7 @@ sap.ui.define([
 		if (this.oModel.bAutoExpandSelect) {
 			bHasNonSystemQueryOptions = that.mParameters
 				&& Object.keys(that.mParameters).some(function (sKey) {
-					return sKey[0] !== "$" || sKey[1] == "$";
+					return sKey[0] !== "$" || sKey[1] === "$";
 				});
 			if (bHasNonSystemQueryOptions) {
 				return oQueryOptionsPromise;

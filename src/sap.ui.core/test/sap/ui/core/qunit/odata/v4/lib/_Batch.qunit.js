@@ -1691,7 +1691,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					},
 					responseText : oNewEmployeeBody
 				}]]
-		}].forEach(function (oFixture, i) {
+		}].forEach(function (oFixture) {
 			QUnit[oFixture.skip ? "skip" : "test"](
 				"Multipart Integration Test: " + oFixture.testTitle,
 				function (assert) {
