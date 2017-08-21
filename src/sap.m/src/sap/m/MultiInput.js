@@ -202,6 +202,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 		this.attachLiveChange(this._onLiveChange, this);
 
+		this.attachValueHelpRequest(function () {
+			// Register the click on value help.
+			this._bValueHelpOpen = true;
+		}, this);
+
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			// create an ARIA announcement and remember its ID for later use in the renderer:
 			var sAriaMultiInputContainToken = new InvisibleText({
@@ -259,7 +264,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 			that = this,
 			iOldLength = this._tokenizer.getTokens().length; //length of tokens before validating
 
-		if (this.getMaxTokens() && iOldLength >= this.getMaxTokens()) {
+		// Tokenizer is "full" or ValueHelp is open.
+		if (this.getMaxTokens() && iOldLength >= this.getMaxTokens() || this._bValueHelpOpen) {
 			return;
 		}
 
@@ -1025,7 +1031,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 		Input.prototype.onsapfocusleave.apply(this, arguments);
 
-		if (this._bIsValidating) { // an asynchronous validation is running, no need to trigger validation again
+		// an asynchronous validation is running, no need to trigger validation again
+		// OR the ValueHelp is triggered. either ways- no need for validation
+		if (this._bIsValidating || this._bValueHelpOpen) {
 			return;
 		}
 
@@ -1105,6 +1113,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onfocusin = function (oEvent) {
+		this._bValueHelpOpen = false; //This means the ValueHelp is closed and the focus is back. So, reset that var
 
 		if (this.getEditable() && this.getEnableMultiLineMode() && (!oEvent.target.classList.contains("sapMInputValHelp") && !oEvent.target.classList.contains("sapMInputValHelpInner"))) {
 			this.openMultiLine();
