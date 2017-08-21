@@ -108,8 +108,8 @@ function(
 	});
 	//_getFocusEventName
 	QUnit.test("when _getValidatedPopups is called with 2 relevant and one non-relevant popups", function(assert) {
-		assert.strictEqual(this.oRta.oPopupManager._getFocusEventName("add"), "_addFocusEventListeners", "then 'add' as parameter returns _addFocusEventListeners");
-		assert.strictEqual(this.oRta.oPopupManager._getFocusEventName("remove"), "_removeFocusEventListeners", "then 'remove' as parameter returns _removeFocusEventListeners");
+		assert.strictEqual(this.oRta.oPopupManager._getFocusEventName("add"), "_activateFocusHandle", "then 'add' as parameter returns _addFocusEventListeners");
+		assert.strictEqual(this.oRta.oPopupManager._getFocusEventName("remove"), "_deactivateFocusHandle", "then 'remove' as parameter returns _removeFocusEventListeners");
 	});
 	QUnit.module("Given RTA instance is initialized", {
 		beforeEach : function(assert) {
@@ -139,8 +139,8 @@ function(
 			this.fnToolsMenuBringToFrontSpy = sandbox.spy(this.oRta._oToolsMenu, "bringToFront");
 			this.fnAddRootElementSpy = sandbox.spy(this.oRta._oDesignTime, "addRootElement");
 			this.fnRemoveRootElementSpy = sandbox.spy(this.oRta._oDesignTime, "removeRootElement");
-			this.fnAddPopupListeners = sandbox.spy(Popup.prototype, "_addFocusEventListeners");
-			this.fnRemovePopupListeners = sandbox.spy(Popup.prototype, "_removeFocusEventListeners");
+			this.fnAddPopupListeners = sandbox.spy(Popup.prototype, "_activateFocusHandle");
+			this.fnRemovePopupListeners = sandbox.spy(Popup.prototype, "_deactivateFocusHandle");
 			this.fnIsPopupAdaptableSpy = sandbox.spy(this.oRta.oPopupManager, "_isPopupAdaptable");
 			//mock same app component dialog
 			oComp.runAsOwner(function() {
