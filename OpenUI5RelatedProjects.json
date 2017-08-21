@@ -78,6 +78,24 @@
 			"documentationLink": "https://github.com/ui5experts/ui5-schemas",
 			"owner": "cschuff",
 			"license": "MIT",
+      "type": "Tool"
+    },
+		"ui5-CRUDModel": {
+			"name": "OpenUI5-SAPUI5-CRUDModel",
+			"description": "OpenUI5/SAPUI5 Model implementation for mevdschee/php-crud-api and mevdschee/php-api-auth",
+			"githubLink": "https://github.com/VyseExhale/OpenUI5-SAPUI5-CRUDModel",
+			"documentationLink": "https://github.com/VyseExhale/OpenUI5-SAPUI5-CRUDModel",
+			"owner": "VyseExhale",
+			"license": "MIT",
+			"type": "Model"
+    },
+		"ui5-jsx-rm": {
+			"name": "JSX to UI5 Babel Plugin",
+			"decription": "A Babel plugin for converting JSX to UI5 render manager calls.",
+			"githubLink": "https://github.com/serban-petrescu/ui5-jsx-rm",
+			"documentationLink": "https://github.com/serban-petrescu/ui5-jsx-rm",
+			"owner": "serban-petrescu",
+			"license": "Apache 2.0",
 			"type": "Tool"
 		}
 	}
