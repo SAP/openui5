@@ -341,7 +341,7 @@ sap.ui.define([
 
 			this._updateNextButtonState();
 			this._setNextButtonPosition();
-			this._restoreInitialValidatedState(index);
+			this._restoreInitialValidatedState(progressNavigatorIndex);
 			this._stepPath[index]._markAsLast();
 
 			for (var i = progressNavigatorIndex; i < steps.length; i++) {
