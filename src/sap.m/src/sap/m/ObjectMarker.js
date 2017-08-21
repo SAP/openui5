@@ -267,7 +267,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 		this._cleanup();
 	};
 
-	/**
+	/*
 	 * Intercepts <code>attachPress</code> to be able to re-render.
 	 * If <code>press</code> event is attached and the control is rendered as text, than the control will be
 	 * re-rendered as link.
@@ -289,7 +289,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 		return this;
 	};
 
-	/**
+	/*
 	 * Intercepts <code>detachPress</code> to be able to re-render.
 	 * If <code>press</code> event is detached and the control is rendered as a link, than the control will be
 	 * re-rendered as a text.

@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		}
 	}});
 
-	/**
+	/*
 	 * Sets count for the FacetFilterList.
 	 * @param {int} iCount The counter to be set to
 	 * @returns {sap.m.FacetFilterItem} this for chaining
