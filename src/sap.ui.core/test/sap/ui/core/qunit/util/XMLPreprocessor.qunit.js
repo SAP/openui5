@@ -1043,11 +1043,12 @@ sap.ui.require([
 					}
 				}
 			})
-		}, [ // Note: XML serializer outputs &gt; encoding...
+		}, [
 			'<!-- some comment node -->',
 			'<Label text="Customer"/>',
 			'<Text text="{CustomerName}"/>', // "maxLines" has been removed
 			'<Label text="A \\{ is a special character"/>',
+			// Note: XML serializer outputs &gt; encoding...
 			'<Text text="{unrelated&gt;/some/path}"/>',
 			'<Text text="' + "{path:'/some/path',formatter:'.someMethod'}" + '"/>',
 			// TODO is this the expected behaviour? And what about text nodes?
@@ -1057,7 +1058,62 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
-		QUnit.test("binding resolution: interface to formatter, debug = " + bDebug, function (assert) {
+		var sTitle = "binding resolution: ignore [object Object], debug = " + bDebug;
+
+		QUnit.test(sTitle, function (assert) {
+			this.checkTracing(assert, bDebug, [
+				{m : "[ 0] Start processing qux"},
+				{m : "[ 0] text = [object Object]", d : 1},
+				{m : "[ 0] Ignoring [object Array] value for attribute text", d : 3},
+				{m : "[ 0] Ignoring [object Date] value for attribute text", d : 4},
+				{m : "[ 0] Ignoring [object Object] value for attribute text", d : 5},
+				{m : "[ 0] Finished processing qux"}
+			], [
+				mvcView().replace(">", ' xmlns:html="http://www.w3.org/1999/xhtml">'),
+				// don't get fooled here
+				'<Text text="{/string}"/>',
+				'<Text text="[object Object]"/>',
+				// do not replace by "[object Object]" etc.
+				'<Text text="{/Array}"/>',
+				'<Text text="{/Date}"/>',
+				'<Text text="{/Object}"/>',
+				'</mvc:View>'
+			], {
+				models: new JSONModel({
+					"string" : "[object Object]",
+					"Array" : [],
+					"Date" : new Date(),
+					"Object" : {}
+				})
+			}, [
+				'<Text text="[object Object]"/>',
+				'<Text text="[object Object]"/>',
+				'<Text text="{/Array}"/>',
+				'<Text text="{/Date}"/>',
+				'<Text text="{/Object}"/>'
+			]);
+		});
+	});
+	/*
+	 * @see http://www.ecma-international.org/ecma-262/5.1/#sec-8.6.2, [[Class]]
+	 *
+	 * "Arguments" : arguments, // [object Arguments]
+	 * //[object Boolean]: http://eslint.org/docs/rules/no-new-wrappers
+	 * "Error" : new Error(), // [object Error]
+	 * "Function" : String, // [object Function]
+	 * "JSON" : JSON, // [object JSON]
+	 * "Math" : Math, // [object Math]
+	 * //[object Null]: ManagedObject#validateProperty maps null to default value (undefined)
+	 * //[object Number]: http://eslint.org/docs/rules/no-new-wrappers
+	 * "RegExp" : /./ // [object RegExp]
+	 * //[object String]: ManagedObject#getProperty unwraps String values
+	 */
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bDebug) {
+		var sTitle = "binding resolution: interface to formatter, debug = " + bDebug;
+
+		QUnit.test(sTitle, function (assert) {
 			var oModel = new JSONModel({
 					"somewhere" : {
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
@@ -1330,6 +1386,7 @@ sap.ui.require([
 				'<Text text="Customer"/>',
 				'<Text text="Value: {CustomerName}"/>',
 				'<Text text="Customer: {CustomerName}"/>',
+				// Note: XML serializer outputs &gt; encoding...
 				'<Text text="{unrelated&gt;/some/path}"/>',
 				'<Text text="[Customer] {CustomerName}"/>',
 				'<Text text="[Customer]"/>'
@@ -2360,7 +2417,7 @@ sap.ui.require([
 			'</mvc:View>'
 		], {
 			models : new JSONModel({/*don't care*/})
-		}, [ // Note: XML serializer outputs &gt; encoding...
+		}, [
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
 				'<Text text="/bar"/>',
