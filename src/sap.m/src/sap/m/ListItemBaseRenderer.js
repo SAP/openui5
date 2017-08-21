@@ -195,7 +195,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 * @protected
 	 */
 	ListItemBaseRenderer.addLegacyOutlineClass = function(rm, oLI) {
-		if (sap.ui.Device.browser.msie) {
+		if (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge) {
 			rm.addClass("sapMLIBLegacyOutline");
 		}
 	};
