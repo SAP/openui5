@@ -13,19 +13,22 @@
 		var sLorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vitae congue diam. Donec venenatis justo sed bibendum finibus.",
 				oSplitter = new sap.ui.layout.Splitter("mySplitter", {
 					contentAreas: [
-						new sap.m.VBox({
+						new sap.m.FlexBox({
+							width: 'auto',
 							items: [
 								new sap.m.Text({text: sLorem}),
 								new sap.m.Button({text: "Press me"})
 							]
 						}),
-						new sap.m.VBox({
+						new sap.m.FlexBox({
+							width: 'auto',
 							items: [
 								new sap.m.Text({text: sLorem}),
 								new sap.m.Button({text: "Press me 2"})
 							]
 						}),
-						new sap.m.VBox({
+						new sap.m.FlexBox({
+							width: 'auto',
 							items: [
 								new sap.m.Text({text: sLorem}),
 								new sap.m.Button({text: "Press me 3"})
