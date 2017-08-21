@@ -2291,6 +2291,10 @@ sap.ui.require([
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : {},
 		message : "No key predicate known at /TEAMS/0"
+	}, {
+		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
+		instance : new Error("failed to load team"),
+		message : "failed to load team at /TEAMS/0"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.message, function (assert) {
 			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),
@@ -2300,7 +2304,9 @@ sap.ui.require([
 				.returns(_SyncPromise.resolve(mScope));
 			if ("instance" in oFixture) {
 				this.mock(oContext).expects("fetchValue")
-					.returns(_SyncPromise.resolve(oFixture.instance));
+					.returns(oFixture.instance instanceof Error
+						? _SyncPromise.reject(oFixture.instance)
+						: _SyncPromise.resolve(oFixture.instance));
 			}
 			if (oFixture.warning) {
 				this.oLogMock.expects("isLoggable")
