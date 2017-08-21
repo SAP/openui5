@@ -1,7 +1,7 @@
 	{
 		"ui5-inspector": {
 			"name": "UI5 Inspector",
-			"decription": "The UI5 Inspector is a standard Chrome extension for debugging and getting to know UI5 applications.",
+			"description": "The UI5 Inspector is a standard Chrome extension for debugging and getting to know UI5 applications.",
 			"githubLink": "https://github.com/SAP/ui5-inspector",
 			"documentationLink": "https://openui5.hana.ondemand.com/#docs/guide/b24e72443eb34d0fb7bf6940f2d697eb.html",
 			"owner": "nvankov",
@@ -10,7 +10,7 @@
 		},
 		"UI5CustomControl": {
 			"name": "OpenUI5 Custom Controls for charting",
-			"decription": "This project shows how to use C3.js and Chart.js within OpenUI5 projects.",
+			"description": "This project shows how to use C3.js and Chart.js within OpenUI5 projects.",
 			"githubLink": "https://github.com/SAP/openui5-charting-custom-controls",
 			"documentationLink": "http://www.chartjs.org/docs/",
 			"owner": "michadelic",
@@ -19,7 +19,7 @@
 		},
 		"Meteor-UI5": {
 			"name": "Meteor-UI5",
-			"decription": "Meteor-UI5 is a collection of packages that brings together two powerful open source JavaScript web frameworks: Meteor and OpenUI5.",
+			"description": "Meteor-UI5 is a collection of packages that brings together two powerful open source JavaScript web frameworks: Meteor and OpenUI5.",
 			"githubLink": "https://github.com/propellerlabsio/meteor-ui5",
 			"documentationLink": "https://meteor-ui5.propellerlabs.com/",
 			"owner": "proehlen",
@@ -28,7 +28,7 @@
 		},
 		"openui5-i18n-util": {
 			"name": "openui5-i18n-util",
-			"decription": "This script will search all your i18n strings and build auto-magically every translations file for you.",
+			"description": "This script will search all your i18n strings and build auto-magically every translations file for you.",
 			"githubLink": "https://github.com/StErMi/openui5-i18n-util",
 			"documentationLink": "https://github.com/StErMi/openui5-i18n-util",
 			"owner": "StErMi",
@@ -37,7 +37,7 @@
 		},
 		"Ui5Strap": {
 			"name": "Ui5Strap",
-			"decription": "App Development Toolkit for Desktop, Cloud and Mobile. Based on OpenUI5 + Bootstrap.",
+			"description": "App Development Toolkit for Desktop, Cloud and Mobile. Based on OpenUI5 + Bootstrap.",
 			"githubLink": "https://github.com/pks5/ui5strap",
 			"documentationLink": "http://www.ui5strap.com/manual/",
 			"owner": "pks5",
@@ -46,7 +46,7 @@
 		},
 		"karma-openui5": {
 			"name": "karma-openui5",
-			"decription": "A Karma plugin for UI5",
+			"description": "A Karma plugin for UI5",
 			"githubLink": "https://github.com/SAP/karma-openui5",
 			"documentationLink": "https://github.com/SAP/karma-openui5",
 			"owner": "matz3",
@@ -55,7 +55,7 @@
 		},
 		"XMPPJSONPatchSyncModel": {
 			"name": "XMPPJSONPatchSyncModel",
-			"decription": "This OpenUI5 data model uses a node on an XMPP server to synchronize itself to different connected clients.",
+			"description": "This OpenUI5 data model uses a node on an XMPP server to synchronize itself to different connected clients.",
 			"githubLink": "https://github.com/ManuelB/XMPPJSONPatchSyncModel",
 			"documentationLink": "http://www.incentergy.de/blog/2017/03/19/real-time-syncing-and-offlince-capabilities-using-openui5-jsonpatch-xmpp-and-xxhash/",
 			"owner": "ManuelB",
@@ -64,7 +64,7 @@
 		},
 		"ui5-model-inspector": {
 			"name": "UI5 Interactive Model Inspector (Custom Control)",
-			"decription": "This custom control allows you to view (and modify) state of your client and server models for debugging and development.",
+			"description": "This custom control allows you to view (and modify) state of your client and server models for debugging and development.",
 			"githubLink": "https://github.com/mitch-b/ui5-model-inspector",
 			"documentationLink": "https://github.com/mitch-b/ui5-model-inspector",
 			"owner": "mitch-b",
@@ -73,13 +73,13 @@
 		},
 		"ui5-schemas": {
 			"name": "ui5-schemas",
-			"decription": "UI5 Schemas allows you to develop SAPUI5/OpenUI5 XML at a maximum convenience. It downloads, upgrades and sets up SAPUI5/OpenUI5 XML schemas for a better development experience in your favorite IDE (if it is WebStorm ;).",
+			"description": "UI5 Schemas allows you to develop SAPUI5/OpenUI5 XML at a maximum convenience. It downloads, upgrades and sets up SAPUI5/OpenUI5 XML schemas for a better development experience in your favorite IDE (if it is WebStorm ;).",
 			"githubLink": "https://github.com/ui5experts/ui5-schemas",
 			"documentationLink": "https://github.com/ui5experts/ui5-schemas",
 			"owner": "cschuff",
 			"license": "MIT",
-      "type": "Tool"
-    },
+			"type": "Tool"
+		},
 		"ui5-CRUDModel": {
 			"name": "OpenUI5-SAPUI5-CRUDModel",
 			"description": "OpenUI5/SAPUI5 Model implementation for mevdschee/php-crud-api and mevdschee/php-api-auth",
@@ -88,14 +88,32 @@
 			"owner": "VyseExhale",
 			"license": "MIT",
 			"type": "Model"
-    },
+		},
 		"ui5-jsx-rm": {
 			"name": "JSX to UI5 Babel Plugin",
-			"decription": "A Babel plugin for converting JSX to UI5 render manager calls.",
+			"description": "A Babel plugin for converting JSX to UI5 render manager calls.",
 			"githubLink": "https://github.com/serban-petrescu/ui5-jsx-rm",
 			"documentationLink": "https://github.com/serban-petrescu/ui5-jsx-rm",
 			"owner": "serban-petrescu",
 			"license": "Apache 2.0",
 			"type": "Tool"
-		}
+		},
+		"openui5-pwa-sample": {
+			"name": "openui5-pwa-sample",
+			"description": "The demo is a simple TODO list application. Add new tasks with the input field at the bottom of the screen. The tasks are stored locally and the application works online as well as offline without any difference.",
+			"githubLink": "https://github.com/SAP/openui5-pwa-sample",
+			"documentationLink": "https://github.com/SAP/openui5-pwa-sample",
+			"owner": "ulasenka",
+			"license": "Apache 2.0",
+			"type": "Tool"
+		},
+		"openui5-generic-app-testing": {
+			"name": "OpenUI5 Generic App Testing",
+			"description": "Generic App Testing is a client-side JavaScript library that uses the excellent OPA (One Page Acceptance) and Gherkin support already provided by OpenUI5 to allow UI5 app developers to write entire test scenarios in English language - without coding!",
+			"githubLink": "https://github.com/SAP/openui5-generic-app-testing",
+			"documentationLink": "https://github.com/SAP/openui5-generic-app-testing",
+			"owner": "jonathanbaker7",
+			"license": "Apache 2.0",
+			"type": "JS Library"
+	  }
 	}
