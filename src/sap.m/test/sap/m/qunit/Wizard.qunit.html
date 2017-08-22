@@ -125,7 +125,14 @@
 		QUnit.test("Wizard setCurrentStep()", function (assert) {
 			this.oWizard.nextStep().nextStep();
 			this.oWizard.setCurrentStep(this.oWizard.getSteps()[0]);
-			assert.equal(this.oWizard.getSteps()[0].getValidated(), false, " should reset the validated state");
+			assert.equal(this.oWizard.getSteps()[0].getValidated(), true, " should not reset the validated state");
+		});
+
+		QUnit.test("Wizard setCurrentStep() and setValidated()", function (assert) {
+			this.oWizard.nextStep().nextStep();
+			this.oWizard.setCurrentStep(this.oWizard.getSteps()[0]);
+			this.oWizard.getSteps()[0].setValidated(false);
+			assert.equal(this.oWizard.getSteps()[0].getValidated(), false, " should invalidate the current step");
 		});
 
 		QUnit.test("Scroll handler", function (assert) {
@@ -306,7 +313,14 @@
 		QUnit.test("DiscardProgress() ", function (assert) {
 			this.oWizard.nextStep().nextStep();
 			this.oWizard.discardProgress(this.oWizard.getSteps()[0]);
-			assert.strictEqual(this.oWizard.getSteps()[0].getValidated(), false, "should reset the initial validated state");
+			assert.strictEqual(this.oWizard.getSteps()[0].getValidated(), true, "should not reset the initial validated state");
+		});
+
+		QUnit.test("DiscardProgress() with setValidated()", function (assert) {
+			this.oWizard.nextStep().nextStep();
+			this.oWizard.discardProgress(this.oWizard.getSteps()[0]);
+			this.oWizard.getSteps()[0].setValidated(false);
+			assert.strictEqual(this.oWizard.getSteps()[0].getValidated(), false, "should validate the current step after discarding the progress");
 		});
 
 		QUnit.test("DiscardProgress() should hide the steps after the step", function (assert) {
