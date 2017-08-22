@@ -258,8 +258,13 @@ var AnnotationParser =  {
 					}
 
 					if (propertyAnnotationNode.hasChildNodes() === false) {
-						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] =
-							AnnotationParser.enrichFromPropertyValueAttributes({}, propertyAnnotationNode);
+						var o = {};
+						AnnotationParser.enrichFromPropertyValueAttributes(o, propertyAnnotationNode);
+						if (jQuery.isEmptyObject(o)) {
+							// assume DefaultValue="true" for annotation term w/o reading vocabulary
+							o.Bool = "true";
+						}
+						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = o;
 					} else {
 						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = AnnotationParser.getPropertyValue(propertyAnnotationNode);
 					}
