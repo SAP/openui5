@@ -28,7 +28,7 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * Can contain Date, Input or Select.
+				 * Select control can be rendered according to the type.
 				 */
 				type: {
 					type: "sap.m.MultiEditFieldType",
@@ -37,7 +37,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * The value of the field. This can be <code>null</code> if no valid value is selected or entered, or if the "Leave blank" entry is selected.
+				 * The selected item from items aggregation. This can be <code>null</code> if no valid item or special item is selected.
 				 */
 				selectedItem: {
 					type: "sap.ui.core.Item",
@@ -46,7 +46,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether a value help should be available in the control.
+				 * Defines whether the 'Select new value' item should be available in the selection field.
 				 */
 				showValueHelp: {
 					type: "boolean",
@@ -56,7 +56,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the value can be null or not.
+				 * Defines whether the 'Leave blank' item should be available in the selection field.
 				 */
 				nullable: {
 					type: "boolean",
@@ -68,7 +68,7 @@ sap.ui.define([
 
 			aggregations: {
 				/**
-				 * The items that should be displayed after the predefined items.
+				 * The items that should be displayed after the predefined special items in the selection field.
 				 */
 				items: {
 					type: "sap.ui.core.Item",
@@ -79,7 +79,7 @@ sap.ui.define([
 
 			events: {
 				/**
-				 * This event is fired when the value in the selection field is changed.
+				 * This event is fired when the item of items aggregation in the selection field is changed.
 				 */
 				change: {
 					parameters: {
@@ -187,7 +187,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the select box change event and triggers the MultiEditField change event.
+	 * Handles the change event of internal Select control and triggers the MultiEditField change event.
 	 * @param {sap.ui.base.Event} event The Event object.
 	 * @private
 	 */
