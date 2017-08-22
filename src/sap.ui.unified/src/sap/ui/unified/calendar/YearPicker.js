@@ -124,7 +124,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		return this;
 
 	};
-	/**
+	/*
 	 * Sets a date.
 	 * @param {Date} oDate a JavaScript date
 	 * @return {sap.ui.unified.YearPicker} <code>this</code> for method chaining

@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	/**
+	/*
 	 * Sets a start date.
 	 * @param {Date} oStartDate A JavaScript date
 	 * @return {sap.ui.unified.calendar.DatesRow} <code>this</code> for method chaining
