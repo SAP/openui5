@@ -343,4 +343,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 
 
 	return DynamicPageTitle;
-}, /* bExport= */ false);
+}, /* bExport= */ true);
