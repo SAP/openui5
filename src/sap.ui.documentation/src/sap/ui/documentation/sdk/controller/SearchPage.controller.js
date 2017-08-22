@@ -41,7 +41,7 @@ sap.ui.define([
 				var that = this,
 					sQuery = event.getParameter("arguments").searchParam;
 				this.dataObject.searchTerm = sQuery;
-				this.getModel().refresh();
+				this._modelRefresh();
 
 				try {
 					this.hideMasterSide();
@@ -135,8 +135,7 @@ sap.ui.define([
 								bShouldAddToSearchResults = false,
 								sCategory;
 							if (sNavURL.indexOf("topic/") === 0) {
-								sNavURL = sNavURL.substring("topic/".length, sNavURL.lastIndexOf(".html"));
-								sNavURL = "topicId/" + sNavURL;
+								sNavURL = sNavURL.substring(0, sNavURL.lastIndexOf(".html"));
 								bShouldAddToSearchResults = true;
 								sCategory = "Documentation";
 								this.dataObject.dataDoc.push({
@@ -164,7 +163,7 @@ sap.ui.define([
 								this.dataObject.ExploredLength++;
 							} else if (sNavURL.indexOf("docs/api/symbols/") === 0) {
 								sNavURL = sNavURL.substring("docs/api/symbols/".length, sNavURL.lastIndexOf(".html"));
-								sNavURL = "apiId/" + sNavURL;
+								sNavURL = "api/" + sNavURL;
 								bShouldAddToSearchResults = true;
 								sCategory = "API Reference";
 								this.dataObject.dataAPI.push({
@@ -196,7 +195,42 @@ sap.ui.define([
 				} else {
 					jQuery(".sapUiRrNoData").html("Search failed, please retry ...");
 				}
+				this._modelRefresh();
+			},
+
+			/**
+			 * Modify all search result links
+			 * @private
+			 */
+			_modifyLinks: function () {
+				var oView = this.getView(),
+					// Collect all possible items from all lists
+					aItems = [].concat(
+						oView.byId("allList").getItems(),
+						oView.byId("apiList").getItems(),
+						oView.byId("documentationList").getItems(),
+						oView.byId("samplesList").getItems()
+					),
+					iLen = aItems.length,
+					oItem;
+
+				while (iLen--) {
+					oItem = aItems[iLen];
+					// Access control lazy loading method if available
+					if (oItem._getLinkSender) {
+						// Set link href to allow open in new window functionality
+						oItem._getLinkSender().setHref("#/" + oItem.getCustomData()[0].getValue());
+					}
+				}
+			},
+
+			/**
+			 * Refresh model and modify links
+			 * @private
+ 			 */
+			_modelRefresh: function () {
 				this.getModel().refresh();
+				this._modifyLinks();
 			},
 
 			getGroupHeader : function (oGroup) {
@@ -220,31 +254,22 @@ sap.ui.define([
 
 			onAllLoadMore : function (oEvent) {
 				this.dataObject.visibleAllLength = oEvent.getParameter("actual");
-				this.getModel().refresh();
+				this._modelRefresh();
 			},
 
 			onAPILoadMore : function (oEvent) {
 				this.dataObject.visibleAPILength = oEvent.getParameter("actual");
-				this.getModel().refresh();
+				this._modelRefresh();
 			},
 
 			onDocLoadMore : function (oEvent) {
 				this.dataObject.visibleDocLength = oEvent.getParameter("actual");
-				this.getModel().refresh();
+				this._modelRefresh();
 			},
 
 			onExploredLoadMore : function (oEvent) {
 				this.dataObject.visibleExploredLength = oEvent.getParameter("actual");
-				this.getModel().refresh();
-			},
-
-			openSearchResult : function (oControlEvent) {
-				var aNavParams,
-					oCustomData = oControlEvent.getSource().getCustomData()[0];
-				if (oCustomData.getKey() === "path") {
-					aNavParams = oCustomData.getValue().split("/");
-				}
-				this.getRouter().navTo(aNavParams[0], {id: aNavParams[1]}, false);
+				this._modelRefresh();
 			}
 
 		});
