@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			sPerformanceInsertFragment = sXMLPreprocessor + "/insertFragment",
 			sPerformanceGetResolvedBinding = sXMLPreprocessor + "/getResolvedBinding",
 			sPerformanceProcess = sXMLPreprocessor + ".process",
+			fnToString = Object.prototype.toString,
 			mVisitors = {}, // maps "<namespace URI> <local name>" to visitor function
 			/**
 			 * <template:with> control holding the models and the bindings. Also used as substitute
@@ -1125,11 +1126,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							// (the default value of _With.any)
 							debug(oElement, "Removed attribute", oAttribute.name);
 							oElement.removeAttribute(oAttribute.name);
-						} else {
-							if (bDebug && vValue !== oAttribute.value) {
+						} else if (vValue !== oAttribute.value) {
+							switch (typeof vValue) {
+							case "boolean":
+							case "number":
+							case "string":
 								debug(oElement, oAttribute.name, "=", vValue);
+								oAttribute.value = vValue;
+								break;
+
+							default: // e.g. "function" or "object"; "undefined": see above
+								debug(oElement, "Ignoring", fnToString.call(vValue),
+									"value for attribute", oAttribute.name);
 							}
-							oAttribute.value = vValue;
 						}
 					} catch (ex) {
 						// just don't replace XML attribute value
