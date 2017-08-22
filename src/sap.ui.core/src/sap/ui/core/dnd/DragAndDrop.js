@@ -280,7 +280,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				}
 
 				// The text inside text input fields should still be selectable. Do not initiate DragAndDrop.
-				if (/^(input|textarea)$/i.test(oEvent.target.tagName)) {
+				if (/^(input|textarea)$/i.test(document.activeElement.tagName)) {
 					return;
 				}
 
