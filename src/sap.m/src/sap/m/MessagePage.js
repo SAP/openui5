@@ -10,17 +10,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Constructor for a new MessagePage.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
+		 * Displays an empty page with an icon and a header when certain conditions are met.
+		 * <h3>Overview</h3>
 		 * MessagePage is displayed when there is no data or matching content. There are different use cases where a MessagePage might be visualized, for example:
-		 *		- The search query returned no results
-		 *		- The app contains no items
-		 *		- There are too many items
-		 *		- The application is loading
-		 * The layout is unchanged but the text varies depending on the use case.
-		 * <br><b>Note:</b> The <code>MessagePage</code> is not intended to be used as a top-level control,
+		 *<ul>
+		 *<li>The search query returned no results</li>
+		 *<li>The app contains no items</li>
+		 *<li>There are too many items</li>
+		 *<li>The application is loading</li>
+		 *</ul>
+		 * The layout is unchanged but the text and icon vary depending on the use case.
+		 * <h3>Usage</h3>
+		 * <b>Note:</b> The <code>MessagePage</code> is not intended to be used as a top-level control,
 		 * but rather used within controls such as <code>NavContainer</code>, <code>App</code>, <code>Shell</code> or other container controls.
 		 *
 		 * @extends sap.ui.core.Control
@@ -249,7 +254,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Returns the internal header
 		 * Adding this functions because they are needed by the SplitContainer logic to show the "hamburger" button.
 		 * @private
-		 * @returns {sap.m.IBar}
+		 * @returns {sap.m.IBar} The internal header
 		 */
 		MessagePage.prototype._getAnyHeader = function() {
 			return this._getInternalHeader();
@@ -257,7 +262,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Adding this functions because they are needed by the SplitContainer logic to show the "hamburger" button.
-		 * @returns {sap.m.IBar}
+		 * @returns {sap.m.IBar} The header
 		 * @private
 		 */
 
