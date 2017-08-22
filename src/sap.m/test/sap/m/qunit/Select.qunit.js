@@ -3893,7 +3893,6 @@
 		// assert
 		assert.ok(oSelect.isOpen(), "Select is open");
 		assert.ok(oSelect.hasStyleClass(sap.m.SelectRenderer.CSS_CLASS + "Pressed"));
-		assert.strictEqual(oSelect.getPicker().$().width(), jQuery(window).width(), "The width of the popup is strictEqual to the width of the browser view port");
 
 		// cleanup
 		oSelect.destroy();
