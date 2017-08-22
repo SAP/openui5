@@ -15,11 +15,14 @@
 				var suite = new parent.jsUnitTestSuite();
 				var contextPath = "/" + window.location.pathname.split("/")[1];
 
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/ManageAppsDialog.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/ManageAppsLoader.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/ManageAppsUtils.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/appDescriptor/AddLibrary.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/AddODataProperty.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Combine.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/CreateContainer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/ControlVariantSwitch.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/CreateContainer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Move.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Remove.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Rename.qunit.html");
@@ -44,14 +47,8 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/ControlTreeModifier.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/LREPSerializer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/PopupManager.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/ControlVariant.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/RestartRTA.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/RTAControlEnabling.qunit.html");
-
-				// these qunit tests are for the app variants topic
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/ManageAppsDialog.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/ManageAppsLoader.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/ManageAppsUtils.qunit.html");
 
 				// these qunit tests require comp library
 				try {
