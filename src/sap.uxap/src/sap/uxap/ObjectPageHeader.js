@@ -450,11 +450,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * get current title and if it is different from the new one re-render the HeaderContent
-	 * @param {string} sNewTitle title string
-	 * @return {*} this
-	 */
 	ObjectPageHeader.prototype.setObjectTitle = function (sNewTitle) {
 
 		var sOldTitle = this.getProperty("objectTitle"),
@@ -950,10 +945,8 @@ sap.ui.define([
 		}
 	};
 
+	/* Fiori 2.0 adaptation */
 
-	/**
-	 * Fiori 2.0 adaptation
-	 */
 	ObjectPageHeader.prototype.setNavigationBar = function (oBar) {
 
 		this.setAggregation("navigationBar", oBar);

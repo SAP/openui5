@@ -167,44 +167,23 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 			return this;
 		};
 
-		/**
-		 * Validates the count position to ensure it is correct.
-		 * @param {number} iPosition
-		 * @override
-		 */
 		PagingButton.prototype.setPosition = function (iPosition) {
 			return this._validateProperty("position", iPosition);
 		};
 
-		/**
-		 * Validates the count property to ensure it is correct.
-		 * @param {number} iCount
-		 * @override
-		 */
 		PagingButton.prototype.setCount = function (iCount) {
 			return this._validateProperty("count", iCount);
 		};
 
-		/**
-		 * Modifies the tooltip of the previous button.
-		 * @param {string} sTooltip
-		 * @override
-		 */
 		PagingButton.prototype.setPreviousButtonTooltip = function (sTooltip) {
 			this._getPreviousButton().setTooltip(sTooltip);
 			return this.setProperty("previousButtonTooltip", sTooltip, true);
 		};
 
-		/**
-		 * Modifies the tooltip of the next button.
-		 * @param {string} sTooltip
-		 * @override
-		 */
 		PagingButton.prototype.setNextButtonTooltip = function (sTooltip) {
 			this._getNextButton().setTooltip(sTooltip);
 			return this.setProperty("nextButtonTooltip", sTooltip, true);
 		};
-
 
 		/**
 		 * Validates both the <code>count</code> and <code>position</code>

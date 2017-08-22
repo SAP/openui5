@@ -894,15 +894,8 @@ sap.ui.define([
 		this._oFirstVisibleSection = oFirstVisibleSection;
 	};
 
-	/*************************************************************************************
-	 * IconTabBar management
-	 ************************************************************************************/
+	/* IconTabBar management */
 
-	/**
-	 * Overrides the setter for the useIconTabBar property
-	 * @param {boolean} bValue
-	 * @returns {sap.uxap.ObjectPageLayout} this
-	 */
 	ObjectPageLayout.prototype.setUseIconTabBar = function (bValue) {
 
 		var bOldValue = this.getUseIconTabBar();
@@ -957,9 +950,7 @@ sap.ui.define([
 		}
 	};
 
-	/*************************************************************************************
-	 * anchor bar management
-	 ************************************************************************************/
+	/* AnchorBar management */
 
 	ObjectPageLayout.prototype.setShowAnchorBarPopover = function (bValue, bSuppressInvalidate) {
 		this._oABHelper._buildAnchorBar();
@@ -2106,10 +2097,7 @@ sap.ui.define([
 		return this._oScroller;
 	};
 
-
-	/************************************************************************************************************
-	 * Header specific methods
-	 ***********************************************************************************************************/
+	/* Header specific methods */
 
 	ObjectPageLayout.prototype.setHeaderTitle = function (oHeaderTitle, bSuppressInvalidate) {
 		if (oHeaderTitle && typeof oHeaderTitle.addEventDelegate === "function"){
@@ -2274,9 +2262,6 @@ sap.ui.define([
 		return oSelectedElement;
 	};
 
-	/**
-	 * get current visibility of the HeaderContent and if it is different from the new one rererender it
-	 */
 	ObjectPageLayout.prototype.setShowHeaderContent = function (bShow) {
 		var bOldShow = this.getShowHeaderContent();
 
@@ -2311,10 +2296,9 @@ sap.ui.define([
 		oRm.destroy();
 	};
 
-	/**
-	 * Maintain ObjectPageHeaderContent aggregation
-	 *
-	 */
+
+	/* Maintain ObjectPageHeaderContent aggregation */
+
 	ObjectPageLayout.prototype.getHeaderContent = function () {
 		return this._getHeaderContent().getAggregation("content");
 	};
