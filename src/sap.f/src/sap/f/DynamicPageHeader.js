@@ -224,4 +224,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		return DynamicPageHeader;
-	}, /* bExport= */ false);
+	}, /* bExport= */ true);
