@@ -434,22 +434,6 @@ sap.ui.define([
 		return this;
 	};
 
-	ObjectPageHeader.prototype._shiftHeaderTitle = function () {
-
-		var oParent = this.getParent(),
-			oShiftOffsetParams;
-
-		if (!oParent || (typeof oParent._calculateShiftOffset !== "function")) {
-			return;
-		}
-
-		oShiftOffsetParams = oParent._calculateShiftOffset();
-
-		if (typeof oParent._shiftHeader === "function") {
-			oParent._shiftHeader(oShiftOffsetParams.sStyleAttribute, oShiftOffsetParams.iMarginalsOffset + "px");
-		}
-	};
-
 	ObjectPageHeader.prototype.setObjectTitle = function (sNewTitle) {
 
 		var sOldTitle = this.getProperty("objectTitle"),
@@ -664,7 +648,6 @@ sap.ui.define([
 		if (!this._iResizeId) {
 			this._iResizeId = ResizeHandler.register(this, this._onHeaderResize.bind(this));
 		}
-		this._shiftHeaderTitle();
 
 		this._attachDetachActionButtonsHandler(true);
 	};

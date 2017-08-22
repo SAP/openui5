@@ -517,7 +517,7 @@ sap.ui.define([
 
 		this._registerOnContentResize();
 
-		this.getHeaderTitle() && this.getHeaderTitle()._shiftHeaderTitle();
+		this.getHeaderTitle() && this._shiftHeaderTitle();
 		this.getFooter() && this._shiftFooter();
 
 		this._setSectionsFocusValues();
@@ -1246,7 +1246,7 @@ sap.ui.define([
 
 			this._preloadSectionsOnScroll(oSection);
 
-			this.getHeaderTitle() && this.getHeaderTitle()._shiftHeaderTitle();
+			this.getHeaderTitle() && this._shiftHeaderTitle();
 
 			this._scrollTo(iScrollTo + iOffset, iDuration);
 		}
@@ -1531,7 +1531,7 @@ sap.ui.define([
 
 			if (bVisibilityChange) {
 				this._getCustomScrollBar().setVisible(bShouldBeVisible);
-				this.getHeaderTitle() && this.getHeaderTitle()._shiftHeaderTitle();
+				this.getHeaderTitle() && this._shiftHeaderTitle();
 			}
 		}
 	};
@@ -2374,8 +2374,12 @@ sap.ui.define([
 		return (this._getCustomScrollBar().getVisible() === true);
 	};
 
-	ObjectPageLayout.prototype._shiftHeader = function (sDirection, sPixels) {
-		this.$().find(".sapUxAPObjectPageHeaderTitle").css("padding-" + sDirection, sPixels);
+	ObjectPageLayout.prototype._shiftHeaderTitle = function () {
+
+		var oShiftOffsetParams = this._calculateShiftOffset(),
+			sDirection = oShiftOffsetParams.sStyleAttribute,
+			sPixels = oShiftOffsetParams.iMarginalsOffset;
+		this.$().find(".sapUxAPObjectPageHeaderTitle").css("padding-" + sDirection, sPixels + "px");
 	};
 
 	/**
