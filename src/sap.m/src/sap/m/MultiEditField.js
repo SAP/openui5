@@ -18,9 +18,10 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * @private
+	 * @protected
 	 * @experimental since 1.52
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.52.0
+	 * @sap-restricted sap.m.MultiEditField
 	 */
 	var MultiEditField = XMLComposite.extend("sap.m.MultiEditField", /** @lends sap.m.MultiEditField.prototype */ {
 		metadata: {
