@@ -2,7 +2,7 @@
 	<m:HBox>
 		<m:Select id="select" class="sapUiSmallMarginEnd" items="{$this>items}" change="_handleSelectionChange">
 			<m:items>
-				<core:Item text="{$this>text}" key="{$this>key}" />
+				<core:Item text="{$this>text}" key="{$this>key}" id="itemTemplate" />
 			</m:items>
 		</m:Select>
 		<core:AggregationProxy ref="{$this>unit}" />
