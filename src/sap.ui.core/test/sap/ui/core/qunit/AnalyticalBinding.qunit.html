@@ -439,6 +439,31 @@
 		});
 	});
 
+	QUnit.test("getGroupName: group by a dimension that is not in UI", function(assert) {
+		var done = assert.async();
+		setupAnalyticalBinding(2, {}, function () {
+
+			var oContext = {
+					getProperty : function () {}
+				},
+				oContextMock = sinon.mock(oContext),
+				sGroupProperty = "ControllingArea",
+				sTextProperty = "ControllingAreaText";
+
+			oContextMock.expects("getProperty").withExactArgs(sGroupProperty).returns("foo");
+			oContextMock.expects("getProperty").withExactArgs(sTextProperty).returns("bar");
+
+			oBinding.aAggregationLevel[0] = sGroupProperty; // group by a property that is not in UI
+			oBinding.oDimensionDetailsSet[sGroupProperty] = {
+				textPropertyName : sTextProperty
+			};
+
+			// Code under test
+			assert.strictEqual(oBinding.getGroupName(oContext, 1), "Controlling Area: foo - bar");
+
+			done();
+		});
+	});
 </script>
 
 </head>
