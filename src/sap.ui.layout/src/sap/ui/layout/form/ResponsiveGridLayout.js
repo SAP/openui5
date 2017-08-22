@@ -583,6 +583,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			}
 		};
 
+		oGrid.getAriaLabelledBy = function(){
+			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+			if (oContainer && !oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
+				return oContainer.getAriaLabelledBy();
+			}
+
+			return [];
+		};
+
 		// Form factors
 		var oBaseSize = {
 				labelSpan: 0,
@@ -970,7 +979,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
 			var oLayout = this.__myParentLayout;
-			if (oLayout._mainGrid && oLayout._mainGrid.__bIsUsed && !oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
+			if (oLayout._mainGrid && oLayout._mainGrid.__bIsUsed && !oContainer.getToolbar() &&
+					!oContainer.getTitle() && !oContainer.getExpandable() && oContainer.getAriaLabelledBy().length > 0) {
+				// set role only if Title or ariaLabelledBy is set as JAWS 18 has some issues without.
 				return "form";
 			}
 
