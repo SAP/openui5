@@ -524,6 +524,32 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			return this._oScroller;
 		};
 
+		/**
+		 * Formats <code>PageAccessibleLandmarkInfo</code> role and label of the provided <code>Page</code> part.
+		 *
+		 * @param {sap.m.PageAccessibleLandmarkInfo} oLandmarkInfo Page LandmarkInfo
+		 * @param {string} sPartName part of the page
+		 * @returns {object}
+		 * @private
+		 */
+		Page.prototype._formatLandmarkInfo = function (oLandmarkInfo, sPartName) {
+			if (oLandmarkInfo) {
+				var sRole = oLandmarkInfo["get" + sPartName + "Role"]() || "",
+					sLabel = oLandmarkInfo["get" + sPartName + "Label"]() || "";
+
+				if (sRole === sap.ui.core.AccessibleLandmarkRole.None) {
+					sRole = '';
+				}
+
+				return {
+					role: sRole.toLowerCase(),
+					label: sLabel
+				};
+			}
+
+			return {};
+		};
+
 		//*** API Methods ***
 
 

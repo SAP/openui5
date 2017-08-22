@@ -31,14 +31,9 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 		rm.addClass("sapMTB");
 
 		// ARIA
-		var aContent = oToolbar.getContent();
-		if (oToolbar.getActive() && (!aContent || aContent.length === 0)) {
-			rm.writeAccessibilityState(oToolbar, {
-				role: "button"
-			});
-		} else {
-			oToolbar._writeLandmarkInfo(rm, oToolbar);
-		}
+		rm.writeAccessibilityState(oToolbar, {
+			role: oToolbar._getAccessibilityRole()
+		});
 
 
 		if (!sap.m.Toolbar.hasNewFlexBoxSupport) {

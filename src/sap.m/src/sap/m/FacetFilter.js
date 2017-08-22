@@ -3,8 +3,8 @@
 */
 
 // Provides control sap.m.FacetFilter.
-sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, NavContainer, library, Control, IconPool, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText'],
+	function(jQuery, NavContainer, library, Control, IconPool, ItemNavigation, InvisibleText) {
 	"use strict";
 
 
@@ -391,6 +391,8 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		// to find a button for a list.
 		this._buttons = {};
 
+		this._aOwnedLabels = [];
+
 		// Remove icon map used to quickly get the remove icon for a given list. This avoids having to iterate through the removeIcon aggregation
 		// to find an icon for a list.
 		this._removeFacetIcons = {};
@@ -423,8 +425,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		if (sap.ui.Device.system.phone) {
 			this.setType(sap.m.FacetFilterType.Light);
 		}
-
-		this._aOwnedLabels = [];
 	};
 
 	/**
@@ -1780,6 +1780,14 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 						that.openFilterDialog();
 				}
 			});
+
+			var sFacetFilterText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTER_ARIA_FACET_FILTER"),
+				sInvisibleLabelId = new InvisibleText({text: sFacetFilterText}).toStatic().getId();
+
+			this._aOwnedLabels.push(sInvisibleLabelId);
+
+			oSummaryBar._setRootAccessibilityRole("button");
+			oSummaryBar._sInternalAriaLabelId = sInvisibleLabelId;
 
 			this.setAggregation("summaryBar", oSummaryBar);
 		}
