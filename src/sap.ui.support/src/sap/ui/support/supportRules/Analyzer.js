@@ -5,87 +5,50 @@
 /*global performance */
 
 /**
- * Creates an Analyser that async runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued.
- * THe analyser can be used to update the UI while a task is running with the current progress
+ * Creates an Analyzer that asynchronously runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued.
+ * runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued.
+ * The analyzer can be used to update the UI with the current progress of a task while it's running.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
-	function (jQuery, BaseObject) {
+sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","sap/ui/support/supportRules/Constants"],
+	function (jQuery, IssueManager, Constants) {
 		"use strict";
 
 		/**
-		 * @class
-		 * @constructor
+		 * @classdesc
 		 * <h3>Overview</h3>
 		 * Analyzer class that runs tasks. A Task runs a function for every entry in its object array.
 		 * The Analyzer counts the task objects and calculates the percentages.
 		 * <h3>Usage</h3>
 		 * With the start, restart, stop and pause methods the analyzer can be controlled.
 		 * While running it asynchronously, it selects objects from the list of each task and completes them.
-		 * @private
-		 * @name sap.ui.support.Analyzer
+		 * @public
+		 * @class sap.ui.support.Analyzer
 		 */
 		var Analyzer = function () {
+			this.dStartedAt = null;
+			this.dFinishedAt = null;
+			this.dElapsedTime = null;
 			this.reset();
 		};
-
 		/**
-		 * Returns the total progress for all tasks with all their objects.
+		 * Resets the analyzer and clears all tasks.
+		 *
 		 * @private
-		 * @method
-		 * @memberof sap.ui.support.Analyzer
-		 * @returns {int} Total progress for all tasks with all their objects
-		 */
-		Analyzer.prototype.getProgress = function () {
-			return this._iTotalProgress;
-		};
-
-		/**
-		 * Adds a task to with a name to the analyzer.
-		 * The <code>fnTaskProcessor</code> function is called if the task is run for every object in aObjects.
-		 * @private
-		 * @method
-		 * @memberof sap.ui.support.Analyzer
-		 * @param {string} sTaskName The name of the task to be executed
-		 * @param {function} fnTaskProcessor Custom function from the user
-		 * @param {object[]} aObjects All rules for a given task
-		 */
-		Analyzer.prototype.addTask = function (sTaskName, fnTaskProcessor, aObjects) {
-			var oTask = {
-				name: sTaskName,
-				handler: fnTaskProcessor,
-				objects: jQuery.extend(true, {arr: aObjects},{}).arr,
-				progress: 0
-			};
-			this._aTasks.push(oTask);
-			this._iTotalSteps = this._iTotalSteps + oTask.objects.length;
-		};
-
-		/**
-		 * Resets the analyzer and clears all tasks
-		 * @private
-		 * @method
-		 * @memberof sap.ui.support.Analyzer
 		 * @returns {void}
 		 */
 		Analyzer.prototype.reset = function () {
 			this._iTotalProgress = 0;
-			this._iTotalCompletedSteps = 0;
-			this._iTotalSteps = 0;
-			this._aTasks = [];
-			this._oCurrent = {};
+			this._iAllowedTimeout = 10000; //ms
+			this._iCompletedRules = 0;
+			this._iTotalRules = 0;
 			this._bRunning = false;
-			this._iStartTS = 0;
-			this.startedAt = null;
-			this.finishedAt = null;
-			this.elapsedTime = null;
+			this._aRulePromices = [];
 		};
 
 		/**
-		 * Returns whether the Analyzer is currently running
-		 * @private
-		 * @method
-		 * @name sap.ui.support.Analyzer.running
-		 * @memberof sap.ui.support.Analyzer
+		 * Returns whether the Analyzer is currently running.
+		 *
+		 * @public
 		 * @returns {boolean} Check if the Analyzer is still running
 		 */
 		Analyzer.prototype.running = function () {
@@ -93,137 +56,108 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		};
 
 		/**
-		 * Starts the analyzer to run all tasks
-		 * @private
-		 * @method
-		 * @name sap.ui.support.Analyzer.start
-		 * @memberof sap.ui.support.Analyzer
-		 * @param {function} fnResolve The function is called when the analyzer finishes all tasks
-		 * @returns {Promise} progressPromise
+		 * Starts the analyzer to run all rules.
+		 *
+		 * @public
+		 * @param {array} aRules Selected rules for execution
+		 * @param {object} oCoreFacade Metadata, Models, UI areas and Components of the Core object
+		 * @param {object} oExecutionScope selected execution scope from user in UI
+		 * @returns {promise} When all rules are analyzed
 		 */
-		Analyzer.prototype.start = function (fnResolve) {
+		Analyzer.prototype.start = function (aRules, oCoreFacade, oExecutionScope) {
+			var oIssueManagerFacade,
+				that = this;
+
+			this.dStartedAt = new Date();
+			this._iTotalRules = aRules.length;
+			this._bRunning = true;
+
+			aRules.forEach(function (oRule) {
+				that._aRulePromices.push(new Promise(function (fnResolve) {
+					try {
+						oIssueManagerFacade = IssueManager.createIssueManagerFacade(oRule);
+						if (oRule.async) {
+							that._runAsyncRule(oIssueManagerFacade, oCoreFacade, oExecutionScope, oRule, fnResolve);
+						} else {
+							oRule.check(oIssueManagerFacade, oCoreFacade, oExecutionScope);
+							fnResolve();
+							that._updateProgress();
+						}
+
+					} catch (eRuleExecException) {
+						var sMessage = "[" + Constants.SUPPORT_ASSISTANT_NAME + "] Error while execution rule \"" + oRule.id +
+							"\": " + eRuleExecException.message;
+						jQuery.sap.log.error(sMessage);
+						fnResolve();
+						that._updateProgress();
+					}
+				}));
+			});
+
+			return Promise.all(this._aRulePromices).then(function () {
+				that.reset();
+				that.dFinishedAt = new Date();
+				that.dElapsedTime = that.dFinishedAt.getTime() - that.dStartedAt.getTime(); // In milliseconds
+			});
+		};
+
+		/**
+		 * Updates ProgressBar in Main panel of Support Assistant.
+		 *
+		 * @private
+		 */
+		Analyzer.prototype._updateProgress = function () {
+			this._iCompletedRules++;
+			this._iTotalProgress = Math.ceil( this._iCompletedRules / this._iTotalRules * 100 );
+			this.onNotifyProgress(this._iTotalProgress);
+		};
+		/**
+		 * Analyzes async rules.
+		 *
+		 * @param {object} oIssueManagerFacade instance of the IssueManagerFacade
+		 * @param {object} oCoreFacade Metadata, Models, UI areas and Components of the Core object
+		 * @param {object} oExecutionScope selected execution scope from user in UI
+		 * @param {object} oRule support rule to be analyzed
+		 * @param {object}fnResolve inner resolve for async rules
+		 * @private
+		 */
+		Analyzer.prototype._runAsyncRule = function (oIssueManagerFacade, oCoreFacade, oExecutionScope, oRule, fnResolve) {
 			var that = this;
-			// resolve() is called when the analyzer finishes all tasks.
-			// It is called inside _done function.
-			that.resolve = fnResolve;
-			that.startedAt = new Date();
-			var progressPromise = new Promise(
-				function (resolve, reject) {
-					that._iStartTS = performance.now();
-					that._start(undefined, resolve);
-				}
-			);
+			var iTimeout = setTimeout(function () {
+				fnResolve();
+				that._updateProgress();
+			}, this._iAllowedTimeout);
 
-			return progressPromise;
+			new Promise(function (fnRuleResolve) {
+				oRule.check(oIssueManagerFacade, oCoreFacade, oExecutionScope, fnRuleResolve);
+			}).then(function () {
+				clearTimeout(iTimeout);
+				fnResolve();
+				that._updateProgress();
+			});
 		};
-
-		/**
-		 * Internal method to start the next run on the next object.
-		 * @private
-		 * @method
-		 * @name sap.ui.support.Analyzer._start
-		 * @memberof sap.ui.support.Analyzer
-		 * @param {boolean} bContinue True if called via timer, false if the Analyzer is started manually
-		 * @param {function} fnResolve Resolve function
-		 */
-		Analyzer.prototype._start = function (bContinue, fnResolve) {
-			if (this._bRunning && !bContinue) {
-				return;
-			}
-
-			if (this._oCurrent.task) {
-				if (bContinue) {
-					this._next(fnResolve);
-				}
-
-				return;
-			}
-
-			for (var i = 0; i < this._aTasks.length; i++) {
-				if (this._aTasks[i].progress < 100) {
-					this._oCurrent = {
-						task: this._aTasks[i],
-						index: -1
-					};
-
-					this._bRunning = true;
-					jQuery.sap.delayedCall(1, this, "_next", [fnResolve]);
-					break;
-				} else {
-					this._bRunning = false;
-				}
-			}
-		};
-
-		/**
-		 * Processes the next object in the current task
-		 * @private
-		 * @method
-		 * @name sap.ui.support.Analyzer._next
-		 * @memberof sap.ui.support.Analyzer
-		 * @param {function} fnResolve Resolves promise to notify of finished state
-		 */
-		Analyzer.prototype._next = function (fnResolve) {
-			if (!this._bRunning) {
-				return;
-			}
-
-			var oCurrent = this._oCurrent;
-
-			if (oCurrent.task) {
-
-				oCurrent.index++;
-				if (oCurrent.task.objects[oCurrent.index]) {
-					this._iTotalCompletedSteps++;
-					this._iTotalProgress = Math.min(Math.ceil((this._iTotalCompletedSteps / this._iTotalSteps) * 100), 100);
-					oCurrent.task.handler(oCurrent.task.objects[oCurrent.index]);
-					oCurrent.task.progress = Math.min(Math.ceil((oCurrent.index / oCurrent.task.objects.length) * 100), 100);
-				} else {
-					//finished
-					oCurrent.task.progress = 100;
-					this._iTotalCompletedSteps = this._iTotalCompletedSteps + (oCurrent.task.objects.length - oCurrent.index);
-					this._iTotalProgress = Math.min(Math.ceil((this._iTotalCompletedSteps / this._iTotalSteps) * 100), 100);
-					this._oCurrent = {};
-					this.finishedAt = new Date();
-					this.elapsedTime = this.finishedAt.getTime() - this.startedAt.getTime(); // In milliseconds
-					// _bRunning needs to be set to false in order to have
-					// results ready for reading in promise of fnResolve
-					this._bRunning = false;
-					fnResolve();
-				}
-				if (performance.now() - this._iStartTS  > 100) {
-					jQuery.sap.delayedCall(5, this, "_start", [true, fnResolve]);
-					this._iStartTS = performance.now();
-				} else {
-					jQuery.sap.delayedCall(0, this, "_start", [true, fnResolve]);
-				}
-			}
-		};
-
 		/**
 		 * Get the elapsed time in the form of a string.
-		 * @private
-		 * @method
-		 * @name sap.ui.support.Analyzer.getElapsedTimeString
-		 * @memberof sap.ui.support.Analyzer
+		 *
+		 * @public
 		 * @returns {string} Returns the total elapsed time since the Analyzer has started
 		 */
 		Analyzer.prototype.getElapsedTimeString = function () {
-			if (!this.elapsedTime) {
+			if (!this.dElapsedTime) {
 				return;
 			}
 
 			var oDate = new Date(null);
 			oDate.setHours(0, 0, 0, 0);
-			oDate.setMilliseconds(this.elapsedTime);
-			var oBuffer = [
+			oDate.setMilliseconds(this.dElapsedTime);
+			var aBuffer = [
 				(oDate.getHours() < 10 ? "0" : "") + oDate.getHours(),
 				(oDate.getMinutes() < 10 ? "0" : "") + oDate.getMinutes(),
 				(oDate.getSeconds() < 10 ? "0" : "") + oDate.getSeconds(),
 				oDate.getMilliseconds()
 			];
 
-			return oBuffer.join(":");
+			return aBuffer.join(":");
 
 		};
 
