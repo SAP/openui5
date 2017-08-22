@@ -77,6 +77,7 @@
                 <module>sap/m/SelectionDetailsItem</module>
                 <module>sap/m/SelectionDetailsItemFacade</module>
                 <module>sap/m/SelectionDetailsLine</module>
+                <module>sap/m/MultiEditField</module>
             </modules>
         </component>
         <component>
