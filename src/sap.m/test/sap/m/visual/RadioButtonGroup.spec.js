@@ -2,7 +2,7 @@
 
 describe('sap.m.RadioButtonGroup', function() {
 	"use strict";
-	var iconTabBar = sap.ui.getCore().byId("itb1");
+
 	// initial loading
 	it('should load test page', function () {
 		expect(takeScreenshot()).toLookAs('0_initial');
@@ -31,9 +31,10 @@ describe('sap.m.RadioButtonGroup', function() {
 		var group3 = element(by.id('RBG3'));
 		expect(takeScreenshot(group3)).toLookAs('4_cutting_3_columns');
 	});
-	iconTabBar.setSelectedKey("key2");
+
 	// 2 columns 200px width
 	it('should vizualize group with 2 columns 200px width', function () {
+		element(by.id('sample2')).click();
 		var group3a = element(by.id('RBG3a'));
 		expect(takeScreenshot(group3a)).toLookAs('5_cutting_2_columns');
 	});
