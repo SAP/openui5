@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global'],
 		var aContainers = oForm.getFormContainers();
 		for (var i = 0, il = aContainers.length; i < il; i++) {
 			var oContainer = aContainers[i];
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				this.renderContainer(rm, oLayout, oContainer);
 			}
 		}
@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			var oElement = aElements[j];
 
-			if (oElement.getVisible()) {
+			if (oElement.isVisible()) {
 				this.renderElement(rm, oLayout, oElement);
 			}
 

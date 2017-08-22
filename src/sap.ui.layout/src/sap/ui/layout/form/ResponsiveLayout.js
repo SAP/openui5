@@ -366,7 +366,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 		for ( i = 0; i < iLength; i++) {
 			oContainer = aContainers[i];
 			oContainer._checkProperties();
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				iVisibleContainers++;
 				sContainerId = oContainer.getId();
 				oPanel = undefined;
@@ -412,7 +412,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 				var bFound = false;
 				for ( i = 0; i < iLength; i++) {
 					oContainer = aContainers[i];
-					if (sContainerId == oContainer.getId() && oContainer.getVisible()) {
+					if (sContainerId == oContainer.getId() && oContainer.isVisible()) {
 						bFound = true;
 						break;
 					}
@@ -469,7 +469,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 		var i = 0;
 		for (i = 0; i < iLength; i++) {
 			oElement = aElements[i];
-			if (oElement.getVisible()) {
+			if (oElement.isVisible()) {
 				sElementId = oElement.getId();
 				_checkElementMoved(oLayout, oContainer, oElement, mRFLayouts, oContainerLayout, i);
 				if (mRFLayouts[sElementId]) {
@@ -523,7 +523,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 				var bFound = false;
 				for ( i = 0; i < iLength; i++) {
 					oElement = aElements[i];
-					if (sElementId == oElement.getId() && oElement.getVisible()) {
+					if (sElementId == oElement.getId() && oElement.isVisible()) {
 						bFound = true;
 						break;
 					}
@@ -817,7 +817,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 		// count only visible containers
 		for ( i = 0; i < aContainers.length; i++) {
 			oContainer = aContainers[i];
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				iLength++;
 				aVisibleContainers.push(oContainer);
 			}
@@ -843,7 +843,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 						// it's a RFLayout
 						oContainer = sap.ui.getCore().byId(oContentElement.__myParentContainerId);
 					}
-					if (oContainer && oContainer.getVisible()) {
+					if (oContainer && oContainer.isVisible()) {
 						var oVisibleContainer = aVisibleContainers[j];
 						if (oContainer != oVisibleContainer) {
 							// order of containers has changed
