@@ -803,7 +803,7 @@ sap.ui.require([
 
 			testAnnotationConversion(assert, '\
 						<EntityType Name="Foo">\
-							<Property Name="Bar" Type="Edm.String" ' + oFixture.v2Semantics +' />\
+							<Property Name="Bar" Type="Edm.String" ' + oFixture.v2Semantics + ' />\
 						</EntityType>',
 				{
 					"GWSAMPLE_BASIC.Foo" : oFixture.expectedSemanticsV4
@@ -920,7 +920,7 @@ sap.ui.require([
 									+ "com.sap.vocabularies.Communication.v1.PhoneType/work"
 							},
 							uri : {"$Path" : "P01"}
-						}],
+						}]
 					}
 				},
 				"GWSAMPLE_BASIC.Foo/P01" : {
@@ -949,7 +949,7 @@ sap.ui.require([
 									+ "com.sap.vocabularies.Communication.v1.ContactInformationType/home"
 							},
 							uri : {"$Path" : "P01"}
-						}],
+						}]
 					}
 				},
 				"GWSAMPLE_BASIC.Foo/P01" : {
@@ -975,7 +975,7 @@ sap.ui.require([
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
 						"address" : [{
 							uri : {"$Path" : "P01"}
-						}],
+						}]
 					}
 				},
 				"GWSAMPLE_BASIC.Foo/P01" : {
@@ -1003,8 +1003,8 @@ sap.ui.require([
 							uri : {"$Path" : "P01"},
 							"type": {
 								"EnumMember": "com.sap.vocabularies.Communication.v1.ContactInformationType/work"
-							},
-						}],
+							}
+						}]
 					}
 				},
 				"GWSAMPLE_BASIC.Foo/P01" : {
@@ -1112,16 +1112,16 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"fn" : { "$Path" : "P01" },
+						"fn" : { "$Path" : "P01" }
 					},
 					"@com.sap.vocabularies.Communication.v1.Event" : {
-						"dtend" : { "$Path" : "P02" },
+						"dtend" : { "$Path" : "P02" }
 					},
 					"@com.sap.vocabularies.Communication.v1.Task" : {
-						"percentcomplete" : { "$Path" : "P03" },
+						"percentcomplete" : { "$Path" : "P03" }
 					},
 					"@com.sap.vocabularies.Communication.v1.Message" : {
-						"body" : { "$Path" : "P04" },
+						"body" : { "$Path" : "P04" }
 					}
 				}
 			});

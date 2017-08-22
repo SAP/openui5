@@ -2062,7 +2062,7 @@ sap.ui.require([
 		QUnit.test("filter: FilterType=" + sFilterType, function (assert) {
 			var oBinding,
 				oBindingMock = this.mock(ODataListBinding.prototype),
-				oContext = Context.create(this.oModel, undefined, "/TEAMS"),
+				oContext,
 				oFilter = new Filter("Name", FilterOperator.Contains, "foo"),
 				aFilters = [oFilter],
 				sStaticFilter = "Age gt 18";

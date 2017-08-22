@@ -3,9 +3,8 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
-	"sap/ui/model/odata/v4/lib/_SyncPromise",
-	"sap/ui/test/TestUtils"
-], function (jQuery, _SyncPromise, TestUtils) {
+	"sap/ui/model/odata/v4/lib/_SyncPromise"
+], function (jQuery, _SyncPromise) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks:[1,5], no-warning-comments: 0 */
 	"use strict";

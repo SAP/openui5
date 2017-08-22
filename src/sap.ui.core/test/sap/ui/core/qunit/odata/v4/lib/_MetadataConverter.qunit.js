@@ -6,9 +6,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
-	"sap/ui/test/TestUtils",
 	"jquery.sap.xml" // unused, needed to have jQuery.sap.parseXML
-], function (jQuery, _MetadataConverter, _V2MetadataConverter, _V4MetadataConverter, TestUtils) {
+], function (jQuery, _MetadataConverter, _V2MetadataConverter, _V4MetadataConverter) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -44,6 +43,8 @@ sap.ui.require([
 	 *   QUnit's assert
 	 * @param {string} sXmlSnippet
 	 *   the XML snippet; it will be inserted below an Annotation element
+	 * @param {string} sODataVersion
+	 *   the OData version to use for the test
 	 * @param {any} vExpected
 	 *   the expected value for the annotation
 	 */
