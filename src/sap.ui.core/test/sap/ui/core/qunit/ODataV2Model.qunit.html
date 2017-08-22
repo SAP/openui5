@@ -5404,19 +5404,57 @@
 
 	QUnit.test("ListBinding: Custom params", function(assert) {
 		var done = assert.async();
-		assert.expect(6);
+		assert.expect(4);
 
 		var oModel = initModel(sURI);
 		oModel.metadataLoaded().then(function() {
 			var spy = sinon.spy(oModel, "createCustomParams");
 			var oContext = oModel.createBindingContext("/Categories(1)", null, {custom: {"test":undefined}}, function() {
-				assert.ok(true, "should not break");
 				assert.equal(spy.callCount, 1 , "custom Params created");
 				assert.equal(spy.returnValues[0], "test" , "params created correctly");
 				var oContext2 = oModel.createBindingContext("/Categories(1)", null, {custom: {"hubel": "dubel","test":undefined}}, function() {
-					assert.ok(true, "should not break");
 					assert.equal(spy.callCount, 2 , "custom Params created");
 					assert.equal(spy.returnValues[1], "hubel=dubel&test" , "params created correctly");
+					oModel.createCustomParams.restore();
+					done();
+				}, true);
+			});
+		});
+	});
+
+	QUnit.test("ListBinding: Custom params (null parameter)", function(assert) {
+		var done = assert.async();
+		assert.expect(4);
+
+		var oModel = initModel(sURI);
+		oModel.metadataLoaded().then(function() {
+			var spy = sinon.spy(oModel, "createCustomParams");
+			var oContext = oModel.createBindingContext("/Categories(1)", null, {custom: {"test":undefined}}, function() {
+				assert.equal(spy.callCount, 1 , "custom Params created");
+				assert.equal(spy.returnValues[0], "test" , "params created correctly");
+				var oContext2 = oModel.createBindingContext("/Categories(1)", null, {custom: {"hubel": "dubel","test":null}}, function() {
+					assert.equal(spy.callCount, 2 , "custom Params created");
+					assert.equal(spy.returnValues[1], "hubel=dubel&test" , "params created correctly");
+					oModel.createCustomParams.restore();
+					done();
+				}, true);
+			});
+		});
+	});
+
+	QUnit.test("ListBinding: Custom params ('empty' string parameter)", function(assert) {
+		var done = assert.async();
+		assert.expect(4);
+
+		var oModel = initModel(sURI);
+		oModel.metadataLoaded().then(function() {
+			var spy = sinon.spy(oModel, "createCustomParams");
+			var oContext = oModel.createBindingContext("/Categories(1)", null, {custom: {"test":''}}, function() {
+				assert.equal(spy.callCount, 1 , "custom Params created");
+				assert.equal(spy.returnValues[0], "test=" , "params created correctly");
+				var oContext2 = oModel.createBindingContext("/Categories(1)", null, {custom: {"hubel": "dubel","test":''}}, function() {
+					assert.equal(spy.callCount, 2 , "custom Params created");
+					assert.equal(spy.returnValues[1], "hubel=dubel&test=" , "params created correctly");
 					oModel.createCustomParams.restore();
 					done();
 				}, true);
