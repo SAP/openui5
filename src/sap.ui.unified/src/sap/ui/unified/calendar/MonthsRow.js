@@ -242,7 +242,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	/**
+	/*
 	 * Sets a date for the months row.
 	 * @param {Date} oDate a JavaScript date
 	 * @return {sap.ui.unified.calendar.MonthsRow} <code>this</code> for method chaining
@@ -281,7 +281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 
-	/**
+	/*
 	 * Sets a date for a start date of the months row.
 	 * @param {Date} oStartDate A JavaScript date
 	 * @return {sap.ui.unified.calendar.MonthsRow} <code>this</code> for method chaining
