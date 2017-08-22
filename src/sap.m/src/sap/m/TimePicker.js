@@ -447,7 +447,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			return this.setProperty("secondsStep", step, true);
 		};
 
-		/**
+		/*
 		 * Sets the title label inside the picker.
 		 *
 		 * @param {string} title A title
