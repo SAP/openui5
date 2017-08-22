@@ -12,6 +12,7 @@ sap.ui.define([
 		 * Initializes the mock server.
 		 * You can configure the delay with the URL parameter "serverDelay".
 		 * The local mock data in this folder is returned instead of the real data for testing.
+		 * @param {sap.ui.core.service.Service} oMainService The main service
 		 * @public
 		 */
 		init: function(oMainService) {

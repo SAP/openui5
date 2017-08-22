@@ -14,7 +14,7 @@ function(jQuery) {
 	 * CSS Transition helper
 	 * @param {jQuery} $element - jQuery element(s)
 	 * @param {Function} fnCallback - The function should start animation process (e.g. by adding class to the element)
-	 * @return {Promise}
+	 * @return {Promise} Returns a Promise performing the animation
 	 */
 	module.waitTransition = function ($element, fnCallback) {
 		if (!($element instanceof jQuery)) {

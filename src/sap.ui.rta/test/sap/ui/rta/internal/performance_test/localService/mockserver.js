@@ -107,8 +107,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * @public returns the mockserver of the app, should be used in integration tests
-		 * @returns {sap.ui.core.util.MockServer}
+		 * @public Returns the mock server of the app to be used in integration tests.
+		 * @returns {sap.ui.core.util.MockServer} Returns the mock server
 		 */
 		getMockServer: function() {
 			return oMockServer;

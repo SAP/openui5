@@ -500,10 +500,10 @@ function(
 	};
 
 	/**
-	 * Fetching entity metadata by specified path
+	 * Fetching entity metadata by specified path.
 	 * @param {sap.ui.model.Model} oModel - Model
-	 * @param {String} sPath - Path to resolve
-	 * @returns {Object|null} - Plain object with entity description
+	 * @param {string} sPath Path to resolve
+	 * @returns {Object|null} Plain object with entity description
 	 */
 	Utils.getEntityTypeByPath = function (oModel, sPath) {
 		return oModel.oMetadata._getEntityTypeByPath(sPath);
@@ -515,11 +515,15 @@ function(
 	 *
 	 * TODO: replace with lodash.mergeWith when it's available
 	 *
-	 * @param mDestination {Object} - Destionation object
-	 * @param mSource {Object} - Source object
-	 * @param fnCustomizer {Function} - The customizer is invoked with five arguments:
-	 *                                  (vDestinationValue, vSourceValue, sProperty, mDestination, mSource).
-	 * @return {Object} - returns mDestination object
+	 * @param {Object} mDestination Destination object
+	 * @param {Object} mSource Source object
+	 * @param {function} fnCustomizer The customizer is invoked with the following five arguments:
+	 *                                  vDestinationValue: Value of the property in the destination object
+	 *                                  vSourceValue: Value of the property in the source object
+	 *                                  sProperty: Property being processed
+	 *                                  mDestination: Destination object
+	 *                                  mSourve: Source object
+	 * @return {Object} - Returns <code>mDestination</code> object
 	 */
 	Utils.mergeWith = function (mDestination, mSource, fnCustomizer) {
 		if (!(typeof fnCustomizer === "function")) {
@@ -544,10 +548,10 @@ function(
 	};
 
 	/**
-	 * Returns if the Dom Element is currently visible on the screen
+	 * Returns if the <code>oDomElement</code> is currently visible on the screen.
 	 *
-	 * @param oDomElement {HTMLElement|jQuery} Element to be evaluated
-	 * @return {boolean} - returns if oDomElement is currently visible on the screen.
+	 * @param {HTMLElement|jQuery} oDomElement Element to be evaluated
+	 * @return {boolean} - Returns if <code>oDomElement</code> is currently visible on the screen.
 	 */
 	Utils.isElementInViewport = function(oDomElement) {
 		if (oDomElement instanceof jQuery) {

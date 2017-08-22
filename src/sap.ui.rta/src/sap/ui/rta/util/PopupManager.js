@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global',
 		/**
 		 * Retrieve relevant open popups for dynamic overlay creation.
 		 *
-		 * @returns {Object} relevant open popups
+		 * @returns {any} Returns open popups
 		 * @public
 		 */
 		PopupManager.prototype.getRelevantPopups = function() {
@@ -109,10 +109,10 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Retrieve array of validated popups after component comparision - this.oRtaRootAppComponent.oContainer.getParent()
+		 * Retrieves array of validated popups after component comparison: <code>this.oRtaRootAppComponent.oContainer.getParent()</code>.
 		 *
-		 * @param {array} specifying open popups
-		 * @returns {array|boolean} relevant popups or false
+		 * @param {sap.ui.core.Popup[]} aOpenPopups Specifies open popups
+		 * @returns {sap.ui.core.Popup[]|boolean} Returns relevant popups or false
 		 * @private
 		 */
 		PopupManager.prototype._getValidatedPopups = function(aOpenPopups) {
@@ -139,7 +139,7 @@ sap.ui.define(['jquery.sap.global',
 							return this.oRtaRootAppComponent === this._getAppComponentForControl(sap.ui.getCore().getComponent(oContent.getComponent()));
 						}
 					}.bind(this))
-				: false ;
+				: false;
 		};
 
 		/**
@@ -174,8 +174,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Attached to RTA mode change
-		 *
-		 * @private
+		 * @param  {sap.ui.base.Event} oEvent The Event triggered by the mode change
 		 */
 		PopupManager.prototype._onModeChange = function(oEvent) {
 			var sFocusEvent, sNewMode = oEvent.getParameters().mode;
@@ -194,8 +193,8 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Apply focus events to all open popups and give focus to the first
-		 *
+		 * Apply focus events to all open popups and set focus on the first.
+		 * @param {function} fnFocusEvent Function to apply to open popups
 		 * @private
 		 */
 		PopupManager.prototype._applyFocusEventsToOpenPopups = function(fnFocusEvent) {
@@ -203,8 +202,8 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Remove focus events from all open popups
-		 *
+		 * Remove focus events from all open popups.
+		 * @param {function} fnFocusEvent Function to apply to open popups
 		 * @private
 		 */
 		PopupManager.prototype._removeFocusEventsFromOpenPopups = function(fnFocusEvent) {
@@ -212,9 +211,9 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Return the popup focus event name
+		 * Return the popup focus event name.
 		 *
-		 * @param {string} operation name
+		 * @param {string} sOperation Operation name
 		 * @returns {string} focus event name
 		 * @private
 		 */
@@ -223,7 +222,7 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Overrides the AddDialogInstance/AddPopoverInstance for Instance Manager for dynamic overlay creation
+		 * Overrides the AddDialogInstance/AddPopoverInstance for Instance Manager for dynamic overlay creation.
 		 *
 		 * @private
 		 */
@@ -239,7 +238,7 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Returns overridden function for AddDialogInstance/AddPopoverInstance of Instance Manager
+		 * Returns overridden function for AddDialogInstance/AddPopoverInstance of Instance Manager.
 		 *
 		 * @param {function} fnOriginalFunction original InstanceManager function
 		 * @returns {function} overridden function
@@ -259,9 +258,10 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Applies the passed function to the relevant open popups
+		 * Applies the passed function to the relevant open popups.
 		 *
 		 * @param {function} fnPopupMethod specifies function to be applied
+		 * @param {boolean} bFocus Set to true if the popup is in focus
 		 * @private
 		 */
 		PopupManager.prototype._applyPopupMethods = function(fnPopupMethod, bFocus) {
@@ -455,8 +455,8 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Restore default popup settings and give focus
-		 * @param {sap.ui.core.Control} oControl popup element to remove custom and add default browser events
+		 * Restore default popup settings and give focus.
+		 * @param {sap.ui.core.Control} oPopupElement Popup element to remove custom browser events and add default browser events
 		 *
 		 * @private
 		 */

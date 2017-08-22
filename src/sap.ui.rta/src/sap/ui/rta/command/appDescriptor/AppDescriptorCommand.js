@@ -46,7 +46,6 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand',
 
 	/**
 	 * Template method to create the app descriptor change which is used in the createAndStore function
-	 * @return {Promise} with app descriptor inline change content e.g. from DescriptorInlineChangeFactory.create_xyz
 	 */
 	AppDescriptorCommand.prototype._create = function(){};
 
