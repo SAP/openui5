@@ -174,5 +174,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "f1c5fd290e7efc22122ff0168d3806399c6973e7",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Submit empty input value while picker open now works correctly",
+        "references": []
+      }
+    ]
   }
 }

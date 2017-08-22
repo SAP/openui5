@@ -516,6 +516,18 @@
         "type": "FIX",
         "text": " sap.ui.model.odata.type.DateTime(Offset): allow UTC",
         "references": []
+      },
+      {
+        "id": "e791a43cc236498b6481f5a07cdc741fd11aa708",
+        "type": "FIX",
+        "text": " ODataListBinding: Improve client mode handling",
+        "references": []
+      },
+      {
+        "id": "7036e108a222e193a6fdce52857a41fedf29a8a3",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
       }
     ]
   }

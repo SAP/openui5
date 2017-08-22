@@ -144,6 +144,12 @@
         "type": "FIX",
         "text": " core.ClientTreeBinding: Fix for relative treebinding",
         "references": []
+      },
+      {
+        "id": "ab34014b71d3437f218191f6281652dc9f750134",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - filter is not set",
+        "references": []
       }
     ]
   }

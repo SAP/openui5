@@ -241,5 +241,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.19": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "dcae79e2a1e31c41d56964b1556708aa78f2b8bf",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Layout is now correct on MS Edge browser",
+        "references": []
+      }
+    ]
   }
 }

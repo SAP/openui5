@@ -4416,5 +4416,16 @@
         "references": []
       }
     ]
+  },
+  "1.28.48": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "72751b5a9f90aea8c9a501fc6bb0c1199b20338f",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: qunit checking background color is corrected",
+        "references": []
+      }
+    ]
   }
 }

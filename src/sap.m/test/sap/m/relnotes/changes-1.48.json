@@ -2050,5 +2050,46 @@
         "references": []
       }
     ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "773455ac1e54cbc7a8a3641092f303587cb854d8",
+        "type": "FIX",
+        "text": " sap.m.Button: Press event fired twice after UI adaptation",
+        "references": []
+      },
+      {
+        "id": "591743967147b05f77930a83a03373dfddd1f60d",
+        "type": "FIX",
+        "text": " sap.m.MenuItem: Press event is now fired",
+        "references": []
+      },
+      {
+        "id": "4e5cb37a0bc88265bc854da342135c53507e9807",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Duplicate token entry now handled correctly",
+        "references": []
+      },
+      {
+        "id": "995cd32613ab357ef5e33a1bfdc906ad51b9a57e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Add missing valueStateText property",
+        "references": []
+      },
+      {
+        "id": "49ae256dcf9b52a786f9e218ac39c7c913ddc8a2",
+        "type": "FIX",
+        "text": " sap.m.Switch: Text ellipsis for labels removed",
+        "references": []
+      },
+      {
+        "id": "55c252a9daf63ecf7afc38432aaa2adf934ef01f",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Deletion handling corrected",
+        "references": []
+      }
+    ]
   }
 }

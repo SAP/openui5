@@ -1188,6 +1188,18 @@
         "type": "FIX",
         "text": " sap.m.UploadCollection: Deletion handling corrected",
         "references": []
+      },
+      {
+        "id": "8bf4fae32f62df7be8be1304f925b089e0ce40de",
+        "type": "FIX",
+        "text": " sap.m.Button: Press event fired twice after UI adaptation",
+        "references": []
+      },
+      {
+        "id": "55bb39f509c287e2deae5999158e9e9450ea7da1",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Hidden element that holds the placeholder value is of a correct type.",
+        "references": []
       }
     ]
   }

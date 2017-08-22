@@ -126,5 +126,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "586acf428239e88d5ddb9e8862573e3e2dbe959e",
+        "type": "FIX",
+        "text": " core.Icon: simulate focus outline with negative offset for IE and Edge",
+        "references": []
+      }
+    ]
   }
 }
