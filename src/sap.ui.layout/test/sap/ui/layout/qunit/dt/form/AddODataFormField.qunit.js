@@ -152,7 +152,7 @@ sap.ui.require([
 			var oChangeXml = new Change(oChangeDefinitionXml);
 			var oDOMParser = new DOMParser();
 
-			var oXmlString =
+			var sXmlString =
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m" xmlns:core="sap.ui.core">' +
 					'<f:Form id="idForm">' +
 						'<f:layout>' +
@@ -180,19 +180,19 @@ sap.ui.require([
 					'</f:Form>' +
 				'</mvc:View>';
 
-			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+			var oXmlDocument = oDOMParser.parseFromString(sXmlString, "application/xml");
 
 			AddFieldChangeHandler.completeChangeContent(oChangeXml, XMLSpecificChangeInfo, {modifier: XmlTreeModifier, view : oXmlDocument, appComponent: this.oMockedAppComponent});
 
-			this.oXmlFormContainer = oXmlDocument.getElementById("container1");
-			assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oXmlFormContainer,
+			var oXmlFormContainer = oXmlDocument.childNodes[0].childNodes[0].childNodes[1].childNodes[0];
+			assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, oXmlFormContainer,
 					{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
 					"the change was successfully applied");
 
-			assert.equal(this.oXmlFormContainer.childElementCount, 2, "the formContainer has 2 elements after the change");
+			assert.equal(oXmlFormContainer.childElementCount, 2, "the formContainer has 2 elements after the change");
 
-			assert.equal(this.oXmlFormContainer.getElementsByTagName("sap.ui.comp.smartfield.SmartLabel")[0].getAttribute("id"), sAddedFieldId + "-label", "the field's label was added in the right position");
-			assert.equal(this.oXmlFormContainer.getElementsByTagName("sap.ui.comp.smartfield.SmartField")[0].getAttribute("id"), sAddedFieldId, "the field was added in the right position");
+			assert.equal(oXmlFormContainer.getElementsByTagName("sap.ui.comp.smartfield.SmartLabel")[0].getAttribute("id"), sAddedFieldId + "-label", "the field's label was added in the right position");
+			assert.equal(oXmlFormContainer.getElementsByTagName("sap.ui.comp.smartfield.SmartField")[0].getAttribute("id"), sAddedFieldId, "the field was added in the right position");
 		});
 
 	});
