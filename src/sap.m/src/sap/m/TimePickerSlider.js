@@ -271,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			return this;
 		};
 
-		/**
+		/*
 		 * Sets the slider isCyclic property.
 		 * @param {boolean} bValue If the slider is cyclic or not
 		 * @returns {*} this

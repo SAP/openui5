@@ -762,7 +762,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			return Control.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 		};
 
-		/**
+		/*
 		 * Sets a <code>TabStripItem</code> as current.
 		 *
 		 * @param {sap.m.TabStripItem} oSelectedItem the item that should be set as current
@@ -1201,7 +1201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			}
 		};
 
-		/**
+		/*
 		 * Destroys all <code>TabStripItem</code> entities from the <code>items</code> aggregation of the <code>TabStrip</code>.
 		 *
 		 * @returns {sap.m.TabStrip} This instance for chaining
