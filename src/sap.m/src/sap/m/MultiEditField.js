@@ -18,7 +18,7 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * @protected
+	 * @public
 	 * @experimental since 1.52
 	 * @since 1.52.0
 	 * @sap-restricted sap.m.MultiEditField
@@ -140,6 +140,7 @@ sap.ui.define([
 		this._getKeepAll().destroy();
 		this._getBlank().destroy();
 		this._getValueHelp().destroy();
+		this.byId("itemTemplate").destroy();
 	};
 
 	/**
