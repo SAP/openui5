@@ -43,7 +43,6 @@ describe("sap.m.Text", function() {
 		expect(takeScreenshot(txt3b)).toLookAs("3b_fixed_width_in_px");
 	});
 
-
 	// styled
 	it("should vizualize styled text", function () {
 		var txt4 = element(by.id('text4'));
@@ -138,5 +137,13 @@ describe("sap.m.Text", function() {
 		//next line is to move the view in the window
 		txt10.click();
 		expect(takeScreenshot(txt10)).toLookAs("10_RTL_max_lines");
+	});
+
+	// Text with rendered white spaces
+	it("should vizualize text with preserved white spaces and tabs", function () {
+		var txt12 = element(by.id('text12'));
+		//next line is to move the view in the window
+		txt12.click();
+		expect(takeScreenshot(txt12)).toLookAs("12_preserve_white_spaces_and_tabs");
 	});
 });
