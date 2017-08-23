@@ -36,7 +36,7 @@ sap.ui.define([
 			sinon.assert.calledWithMatch(oDebugSpy, "There are 1 pending promises");
 			sinon.assert.calledWithMatch(oDebugSpy, "\nPromise: Function: " + sPromiseFunction + " Args: ['test', '");
 			sinon.assert.calledWithMatch(oDebugSpy, "function fnPromiseArg");
-			sinon.assert.calledWithMatch(oDebugSpy, "', {a: '2', b: 'foo'}] Stack: ");
+			sinon.assert.calledWithMatch(oDebugSpy, "', {\"a\":2,\"b\":\"foo\"}] Stack: ");
 			sinon.assert.calledWithMatch(oDebugSpy, "callingFunction");
 		});
 	});
@@ -90,7 +90,7 @@ sap.ui.define([
 			Promise[sPromiseFunction]([new Promise(function (fnResolve) { fnResolve(); }), Promise.resolve({foo: "bar", foo2: [1]})]).then(fnDone, fnDone);
 			assert.ok(promiseWaiter.hasPending(), "Has pending promise");
 			sinon.assert.calledWithMatch(oDebugSpy, /There are [2-4] pending promises/);
-			sinon.assert.calledWithMatch(oDebugSpy, "Args: {foo: 'bar', foo2: ['1']} Stack: ");
+			sinon.assert.calledWithMatch(oDebugSpy, "Args: {\"foo\":\"bar\",\"foo2\":[1]} Stack: ");
 			sinon.assert.calledWithMatch(oDebugSpy, "callingFunction");
 		});
 	});

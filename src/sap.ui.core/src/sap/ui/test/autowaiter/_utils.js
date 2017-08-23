@@ -27,23 +27,26 @@ sap.ui.define([
 	}
 
 	function argumentsToString(oArgs) {
+		try {
+			return Array.prototype.map.call(oArgs, argToString).join("; ");
+		} catch (e) {
+			// TODO: provide a proper solution
+			// IE 11 TypeError workaround: "Accessing the 'callee' property of an arguments object is not allowed in strict mode"
+			return "'" + oArgs + "'";
+		}
 		function argToString(arg) {
 			if ($.isFunction(arg)) {
 				return "'" + functionToString(arg) + "'";
 			}
 			if ($.isArray(arg)) {
-				var aValues = arg.map(argToString);
+				var aValues = Array.prototype.map.call(arg, argToString);
 				return "[" + aValues.join(", ") + "]";
 			}
 			if ($.isPlainObject(arg)) {
-				var aValues = Object.keys(arg).map(function (key) {
-					return key + ': ' + argToString(arg[key]);
-				});
-				return "{" + aValues.join(", ") + "}";
+				return JSON.stringify(arg);
 			}
-			return "'" + arg + "'";
+			return "'" + arg.toString() + "'";
 		}
-		return Array.prototype.map.call(oArgs, argToString).join("; ");
 	}
 
 	return {
