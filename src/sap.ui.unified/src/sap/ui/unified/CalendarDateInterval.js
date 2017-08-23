@@ -146,7 +146,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	// needs to be overwritten because differently implemented in Calendar
-	/**
+	/*
 	 * Gets current value of property startDate.
 	 *
 	 * Start date of the Interval
