@@ -250,6 +250,41 @@
 				oPage.destroy();
 			});
 
+			QUnit.test("showFooter toggling with floatingFooter disabled", function (assert) {
+				// Setup
+				var oBar = new sap.m.Bar({
+						contentRight: new sap.m.Button({text: "Hello World"})
+					}),
+					oPage = new sap.m.Page({
+						showFooter: false,
+						footer: oBar
+					}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(oBar.hasStyleClass("sapUiHidden"), "Footer is there, but is hidden.");
+
+				// Act
+				oPage.setShowFooter(true);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(!oBar.hasStyleClass("sapUiHidden"), "Footer is visible.");
+
+				// Act
+				oPage.setShowFooter(false);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(oBar.hasStyleClass("sapUiHidden"), "Footer is there, but is hidden.");
+
+				// Cleanup
+				oBar = null;
+
+				oPage.destroy();
+				oPage = null;
+			});
+
 			if (sap.ui.Device.browser.chrome) {
 				if (sap.ui.Device.os.ios) {
 
@@ -270,7 +305,8 @@
 						assert.ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarPH"), "title should be located in the middle");
 					});
 
-				} else if (sap.ui.Device.os.android) {
+				} else if (sap.ui.Device.os.android)
+				{
 
 					QUnit.test("NavButton", function(assert) {
 						var done = assert.async();

@@ -137,6 +137,11 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 
 		oBarControl._setLandmarkInfo(oPage.getLandmarkInfo(), oOptions.context);
 
+		// Should be stripped as it might have been added in some previous render iteration and now might not
+		// be needed anymore. Otherwise it'd be explicitly declared in oOptions.styleClass
+		if (oBarControl.hasStyleClass("sapUiHidden")) {
+			oBarControl.removeStyleClass("sapUiHidden");
+		}
 		oBarControl.addStyleClass(oOptions.styleClass);
 
 		oRm.renderControl(oBarControl);
