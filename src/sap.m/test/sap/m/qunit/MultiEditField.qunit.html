@@ -35,7 +35,9 @@
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function() {
-				this.oMultiEditField.destroy();
+				if (!this.oMultiEditField._bIsBeingDestroyed) {
+					this.oMultiEditField.destroy();
+				}
 				this.oMultiEditField = null;
 			}
 		});
@@ -53,12 +55,15 @@
 		});
 
 		QUnit.test("Check if special value items are destroyed on exit.", function(assert) {
+			//Arrange
+			var oItemTemplate = this.oMultiEditField.byId("itemTemplate");
 			//Act
 			this.oMultiEditField.destroy();
 			//Assert
 			assert.equal(this.oMultiEditField._getKeepAll()._bIsBeingDestroyed, true, "'Keep existing value' item has been destroyed.");
 			assert.equal(this.oMultiEditField._getBlank()._bIsBeingDestroyed, true, "'Leave blank' item has been destroyed.");
 			assert.equal(this.oMultiEditField._getValueHelp()._bIsBeingDestroyed, true, "'Set new value' item has been destroyed.");
+			assert.equal(oItemTemplate._bIsBeingDestroyed, true, "Item template has been destroyed");
 		});
 
 		QUnit.test("Check if blank item is initially displayed.", function(assert) {
