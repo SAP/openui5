@@ -2,10 +2,10 @@
 <html>
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-		<title>Test Page for ManageApps Loader</title>
+		<title>Test Page for App Variant Utils</title>
 		<script src="../../shared-config.js"></script>
 		<script>
-			window['sap-ui-config'].libs = 'sap.ui.rta';
+			window['sap-ui-config'].libs = 'sap.ui.rta,sap.ui.layout';
 			window['sap-ui-config'].resourceroots = {
 				'sap.ui.rta.test': '../testdata/rta/'
 			};
@@ -23,7 +23,7 @@
 
 			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta]');
 
-			jQuery.sap.includeScript('./ManageAppsLoader.qunit.js');
+			jQuery.sap.includeScript('./AppVariantUtils.qunit.js');
 		</script>
 	</head>
 	<body>

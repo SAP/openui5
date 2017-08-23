@@ -1121,8 +1121,11 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			};
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			this.oChangePersistence._oConnector = this.lrepConnectorMock;
+
+			this.oServer = sinon.fakeServer.create();
 		},
 		afterEach: function () {
+			this.oServer.restore();
 			sandbox.restore();
 			Cache._entries = {};
 		}
@@ -1145,6 +1148,39 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		//Call CUT
 		return this.oChangePersistence.saveDirtyChanges().then(function(){
+			sinon.assert.calledOnce(this.lrepConnectorMock.create);
+		}.bind(this));
+	});
+
+	QUnit.test("(Save As scenario) Shall save the dirty changes for the created app variant when pressing a 'Save As' button and return a promise", function (assert) {
+		var oChangeContent;
+
+		oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "CUSTOMER",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		this.oServer.respondWith([
+			200,
+			{
+				"Content-Type": "application/json",
+				"Content-Length": 13,
+				"X-CSRF-Token": "0987654321"
+			},
+			"{ \"changes\":[], \"contexts\":[], \"settings\":{\"isAtoEnabled\":true} }"
+		]);
+
+		this.oServer.autoRespond = true;
+
+		//Call CUT
+		return this.oChangePersistence.saveAsDirtyChanges("AppVariantId").then(function(){
 			sinon.assert.calledOnce(this.lrepConnectorMock.create);
 		}.bind(this));
 	});
@@ -1173,20 +1209,11 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("Shall save the dirty changes in a bulk", function (assert) {
-		assert.expect(4);
+		assert.expect(3);
 		// REVISE There might be more elegant implementation
-		var oChangeContent1, oChangeContent2, lrepConnectorMock;
+		var oChangeContent1, oChangeContent2, oCreateStub;
 
-		lrepConnectorMock = this.lrepConnectorMock;
-		lrepConnectorMock.create = function(aChanges){
-			assert.equal(aChanges.length, 2, "both changes should be passed within one call");
-			assert.equal(aChanges[0], oChangeContent1, "the first change was passed as first");
-			assert.equal(aChanges[1], oChangeContent2, "the second change was passed as second");
-
-			return Promise.resolve();
-		};
-
-		sinon.spy(lrepConnectorMock, "create");
+		oCreateStub = this.lrepConnectorMock.create;
 
 		oChangeContent1 = {
 			fileName: "Gizorillus1",
@@ -1213,7 +1240,58 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		//Call CUT
 		return this.oChangePersistence.saveDirtyChanges().then(function(){
-			sinon.assert.calledOnce(lrepConnectorMock.create, "the connector was called only once");
+			assert.ok(oCreateStub.calledOnce, "the create method of the connector is called once");
+			assert.deepEqual(oCreateStub.getCall(0).args[0][0], oChangeContent1, "the first change was processed first");
+			assert.deepEqual(oCreateStub.getCall(0).args[0][1], oChangeContent2, "the second change was processed afterwards");
+		});
+	});
+
+	QUnit.test("(Save As scenario) Shall save the dirty changes for the new created app variant in a bulk when pressing a 'Save As' button", function (assert) {
+		assert.expect(3);
+		var oChangeContent1, oChangeContent2, oCreateStub;
+
+		oCreateStub = this.lrepConnectorMock.create;
+
+		oChangeContent1 = {
+			fileName: "Gizorillus1",
+			layer: "CUSTOMER",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		oChangeContent2 = {
+			fileName: "Gizorillus2",
+			layer: "CUSTOMER",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+		this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
+
+		this.oServer.respondWith([
+			200,
+			{
+				"Content-Type": "application/json",
+				"Content-Length": 13,
+				"X-CSRF-Token": "0987654321"
+			},
+			"{ \"changes\":[], \"contexts\":[], \"settings\":{\"isAtoEnabled\":true} }"
+		]);
+
+		this.oServer.autoRespond = true;
+
+		//Call CUT
+		return this.oChangePersistence.saveAsDirtyChanges("AppVariantId").then(function(){
+			assert.ok(oCreateStub.calledOnce, "the create method of the connector is called once");
+			assert.deepEqual(oCreateStub.getCall(0).args[0][0], oChangeContent1, "the first change was processed first");
+			assert.deepEqual(oCreateStub.getCall(0).args[0][1], oChangeContent2, "the second change was processed afterwards");
 		});
 	});
 
@@ -1230,6 +1308,18 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
+		this.oServer.respondWith([
+			200,
+			{
+				"Content-Type": "application/json",
+				"Content-Length": 13,
+				"X-CSRF-Token": "0987654321"
+			},
+			"{ \"changes\":[], \"contexts\":[], \"settings\":{\"isAtoEnabled\":true} }"
+		]);
+
+		this.oServer.autoRespond = true;
+
 		//Call CUT
 		return this.oChangePersistence.getChangesForComponent().then(function() {
 			return this.oChangePersistence.saveDirtyChanges();
@@ -1239,6 +1329,29 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				assert.ok(aChanges.some(function(oChange) {
 					return oChange.getId() === "Gizorillus";
 				}), "Newly added change shall be added to Cache");
+		});
+	});
+
+	QUnit.test("(Save As scenario) after a change creation has been saved for the new app variant, the change shall not be added to the cache", function (assert) {
+		var oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		//Call CUT
+		return this.oChangePersistence.getChangesForComponent().then(function() {
+			return this.oChangePersistence.saveAsDirtyChanges("AppVariantId");
+		}.bind(this))
+			.then(this.oChangePersistence.getChangesForComponent.bind(this.oChangePersistence))
+			.then(function(aChanges) {
+				assert.equal(aChanges.length, 0, "Newly added change shall not be added to Cache");
 		});
 	});
 
@@ -1259,6 +1372,41 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		return this.oChangePersistence.getChangesForComponent().then(function() {
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 			return this.oChangePersistence.saveDirtyChanges();
+		}.bind(this)).then(function() {
+			var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
+			assert.strictEqual(aDirtyChanges.length, 0);
+		}.bind(this));
+	});
+
+	QUnit.test("(Save As scenario) shall remove the change from the dirty changes, after is has been saved for the new app variant", function (assert) {
+		var oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		this.lrepConnectorMock.loadChanges = sinon.stub().returns(Promise.resolve({changes: {changes: []}}));
+
+		this.oServer.respondWith([
+			200,
+			{
+				"Content-Type": "application/json",
+				"Content-Length": 13,
+				"X-CSRF-Token": "0987654321"
+			},
+			"{ \"changes\":[], \"contexts\":[], \"settings\":{\"isAtoEnabled\":true} }"
+		]);
+
+		this.oServer.autoRespond = true;
+
+		//Call CUT
+		return this.oChangePersistence.getChangesForComponent().then(function() {
+			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+			return this.oChangePersistence.saveAsDirtyChanges("AppVariantId");
 		}.bind(this)).then(function() {
 			var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
 			assert.strictEqual(aDirtyChanges.length, 0);
