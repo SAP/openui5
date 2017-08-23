@@ -19,10 +19,7 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oDynamicPageHeader An object representation of the control that should be rendered
 	 */
 	DynamicPageHeaderRenderer.render = function (oRm, oDynamicPageHeader) {
-		var aContent = oDynamicPageHeader.getContent(),
-			bHeaderHasContent = aContent.length > 0,
-			bPhone = sap.ui.Device.system.phone,
-			bHeaderPinnable = oDynamicPageHeader.getPinnable() && bHeaderHasContent && !bPhone;
+		var oDynamicPageHeaderState = oDynamicPageHeader._getState();
 
 		// Dynamic Page Layout Header Root DOM Element.
 		oRm.write("<header");
@@ -32,38 +29,45 @@ sap.ui.define([], function () {
 		});
 		oRm.addClass("sapContrastPlus");
 		oRm.addClass("sapFDynamicPageHeader");
-		if (bHeaderHasContent) {
+		if (oDynamicPageHeaderState.headerHasContent) {
 			oRm.addClass("sapFDynamicPageHeaderWithContent");
 		}
-		if (bHeaderPinnable) {
+		if (oDynamicPageHeaderState.headerPinnable) {
 			oRm.addClass("sapFDynamicPageHeaderPinnable");
 		}
 		oRm.writeClasses();
 		oRm.write(">");
 
 		// Header Content
-		if (bHeaderHasContent) {
-			oRm.write("<div");
-			oRm.addClass("sapFDynamicPageHeaderContent");
-			oRm.writeClasses();
-			oRm.write(">");
-			aContent.forEach(oRm.renderControl);
-			oRm.write("</div>");
+		this._renderHeaderContent(oRm, oDynamicPageHeaderState);
 
-			if (bHeaderPinnable) {
-				DynamicPageHeaderRenderer._renderPinUnpinArea(oDynamicPageHeader, oRm);
-			}
-		}
+		// Collapse button
+		oRm.renderControl(oDynamicPageHeaderState.collapseButton);
 
 		oRm.write("</header>");
 	};
 
-	DynamicPageHeaderRenderer._renderPinUnpinArea = function (oDynamicPageHeader, oRm) {
+	DynamicPageHeaderRenderer._renderHeaderContent = function (oRm, oDynamicPageHeaderState) {
+		if (oDynamicPageHeaderState.headerHasContent) {
+			oRm.write("<div");
+			oRm.addClass("sapFDynamicPageHeaderContent");
+			oRm.writeClasses();
+			oRm.write(">");
+			oDynamicPageHeaderState.content.forEach(oRm.renderControl);
+			oRm.write("</div>");
+
+			if (oDynamicPageHeaderState.headerPinnable) {
+				this._renderPinUnpinArea(oRm, oDynamicPageHeaderState);
+			}
+		}
+	};
+
+	DynamicPageHeaderRenderer._renderPinUnpinArea = function (oRm, oDynamicPageHeaderState) {
 		oRm.write("<div");
 		oRm.addClass("sapFDynamicPageHeaderPinButtonArea");
 		oRm.writeClasses();
 		oRm.write(">");
-		oRm.renderControl(oDynamicPageHeader._getPinButton());
+		oRm.renderControl(oDynamicPageHeaderState.pinButton);
 		oRm.write("</div>");
 	};
 

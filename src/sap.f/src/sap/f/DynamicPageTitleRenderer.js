@@ -30,8 +30,11 @@ sap.ui.define([], function () {
 		}
 		oRm.writeClasses();
 		oRm.write(">");
+
 		this._renderLeftArea(oRm, oDynamicPageTitleState);
 		this._renderRightArea(oRm, oDynamicPageTitleState);
+		oRm.renderControl(oDynamicPageTitleState.expandButton);
+
 		oRm.write("<span id=\"" + oDynamicPageTitleState.id + "-Descr\" class=\"sapUiInvisibleText\">" + oDynamicPageTitleState.ariaText + "</span>");
 		oRm.write("</div>"); // Root end.
 	};
