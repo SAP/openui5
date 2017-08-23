@@ -904,6 +904,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		};
 
 		/**
+		 * Getter for property <code>valueState</code>.
+		 *
+		 * Default value is <code>None</code>.
+		 *
+		 * @returns {string} the value of property <code>valueState</code>.
+		 * @public
+		 */
+		StepInput.prototype.getValueState = function () {
+			return this._getInput().getValueState();
+		};
+
+		/**
 		 * Setter for property <code>valueStateText</code>.
 		 *
 		 * Default value is empty/<code>undefined</code>.
