@@ -461,5 +461,95 @@ function(
 		return OverlayUtil.getClosestOverlayFor(oElement);
 	};
 
+
+	/**
+	 * Gets all the Overlays inside the relevant container which are in the same aggregations.
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay The overlay from which we get the aggregations
+	 * @returns {sap.ui.dt.ElementOverlay[]} Returns an array with all the overlays in it
+	 * @protected
+	 */
+	OverlayUtil.findAllOverlaysInContainer = function(oOverlay) {
+		// The root control has no relevant container, therefore we use the element itself
+		var oRelevantContainer = oOverlay.getRelevantContainer() || oOverlay.getElementInstance();
+		var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+		var aRelevantOverlays = [];
+
+		// Get all the siblings and parents of the overlay
+		var mRelevantOverlays = OverlayUtil._findAllSiblingsAndParents(oOverlay, oRelevantContainerOverlay, 0);
+
+		if (mRelevantOverlays[0]) {
+			for (var iLevel in mRelevantOverlays) {
+				aRelevantOverlays = aRelevantOverlays.concat(mRelevantOverlays[iLevel]);
+			}
+
+			// the overlay and its siblings are on the first level of the relevantOverlays. From those overlays we also need to get the children
+			var aChildren = [];
+			mRelevantOverlays[0].forEach(function(oOverlay) {
+				aChildren = aChildren.concat(OverlayUtil._findAllChildrenInContainer(oOverlay, oRelevantContainer));
+			});
+
+			aRelevantOverlays = aRelevantOverlays.concat(aChildren);
+		} else {
+			aRelevantOverlays = OverlayUtil._findAllChildrenInContainer(oOverlay, oRelevantContainer);
+		}
+		aRelevantOverlays.push(oRelevantContainerOverlay);
+		return aRelevantOverlays;
+	};
+
+	/**
+	 * This function returns all the siblings and parents inside the relevant container. Siblings in different aggregations are ignored.
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay The overlay from which we get the aggregations
+	 * @param {sap.ui.dt.ElementOverlay} oRelevantContainerOverlay The relevant container overlay
+	 * @param {integer} iLevel the current level in the hierarchy
+	 * @returns {object} Returns a map with all siblings sorted by the level.
+	 * @private
+	 */
+	OverlayUtil._findAllSiblingsAndParents = function(oOverlay, oRelevantContainerOverlay, iLevel) {
+		var oParent = oOverlay.getParentElementOverlay();
+		if (!oParent) {
+			return [];
+		}
+
+		if (oParent !== oRelevantContainerOverlay){
+			var mParents = OverlayUtil._findAllSiblingsAndParents(oParent, oRelevantContainerOverlay, iLevel + 1);
+			var aOverlays = mParents[iLevel + 1].map(function(oParent){
+				var oAggregationOverlay = oParent.getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName());
+				return oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
+			}).reduce(function(a, b) {
+				return a.concat(b);
+			}, []);
+			mParents[iLevel] = aOverlays;
+			return mParents;
+		}
+
+		var aChildren = oOverlay.getParentElementOverlay().getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName()).getChildren();
+		var mReturn = {};
+		mReturn[iLevel] = aChildren;
+		return mReturn;
+	};
+
+	/**
+	 * Finds all the children of an overlay which have the same relevant container.
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay The overlay from which we get the children
+	 * @param {object} oRelevantContainer The relevant container
+	 * @param {sap.ui.dt.ElementOverlay[]} _aRelevantOverlays The array with all the relevant overlays. Used for recursion. You don't have to set this.
+	 * @returns {sap.ui.dt.ElementOverlay[]} Returns a flat array with all the children
+	 * @private
+	 */
+	OverlayUtil._findAllChildrenInContainer = function(oElementOverlay, oRelevantContainer, _aRelevantOverlays) {
+		_aRelevantOverlays = _aRelevantOverlays ? _aRelevantOverlays : [];
+		if (oElementOverlay.getChildren().length > 0) {
+			oElementOverlay.getChildren().forEach(function(oAggregationOverlay) {
+				oAggregationOverlay.getChildren().forEach(function(oChildElementOverlay) {
+					if (oChildElementOverlay.getRelevantContainer() === oRelevantContainer) {
+						_aRelevantOverlays.push(oChildElementOverlay);
+						OverlayUtil._findAllChildrenInContainer(oChildElementOverlay, oRelevantContainer, _aRelevantOverlays);
+					}
+				});
+			});
+		}
+		return _aRelevantOverlays;
+	};
+
 	return OverlayUtil;
 }, /* bExport= */true);
