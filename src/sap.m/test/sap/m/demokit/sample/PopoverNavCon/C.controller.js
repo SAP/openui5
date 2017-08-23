@@ -22,11 +22,7 @@ sap.ui.define([
 				this.getView().addDependent(this._oPopover);
 			}
 
-			// delay because addDependent will do a async rerendering and the popover will immediately close without it
-			var oButton = oEvent.getSource();
-			jQuery.sap.delayedCall(0, this, function () {
-				this._oPopover.openBy(oButton);
-			});
+			this._oPopover.openBy(oEvent.getSource());
 		},
 
 		onNavToProduct : function (oEvent) {
