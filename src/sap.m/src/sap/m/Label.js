@@ -110,10 +110,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 
 	Label.prototype.setText = function(sText) {
+
 		var sValue = this.getText();
+
 		if (sValue !== sText) {
+
 			this.setProperty("text", sText, true);
-			this.$().html(jQuery.sap.encodeHTML(this.getProperty("text")));
+
+			this.$("bdi").html(jQuery.sap.encodeHTML(this.getProperty("text")));
+
+
 			if (sText) {
 				this.$().removeClass("sapMLabelNoText");
 			}else {

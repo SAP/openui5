@@ -99,9 +99,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		rm.write(">");
 
 		// write the label text
+		rm.write("<bdi id=\"" + oLabel.getId() + "-bdi\" >");
 		if (sLabelText) {
 			rm.writeEscaped(sLabelText);
 		}
+		rm.write("</bdi>");
+
 		rm.write("</" + htmlTagToRender + ">");
 	};
 

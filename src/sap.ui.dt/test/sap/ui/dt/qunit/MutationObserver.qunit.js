@@ -53,7 +53,7 @@ function(
 
 		this.oMutationObserver.attachEventOnce("domChanged", function(oEvent) {
 			assert.ok(oEvent, 'then a "domChanged" event is fired because of the mutation observer');
-			assert.notEqual(oEvent.mParameters.targetNodes.indexOf(this.oLabel.getDomRef()), -1, "the label change is not part of the event");
+			assert.notEqual(oEvent.mParameters.targetNodes.indexOf(this.oLabel.getDomRef().firstChild), -1, "the label change is not part of the event");
 			done();
 		}.bind(this));
 
