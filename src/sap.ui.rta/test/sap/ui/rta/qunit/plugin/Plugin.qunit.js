@@ -6,12 +6,14 @@ sap.ui.require([
 	'sap/ui/dt/DesignTime',
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/plugin/Remove',
+	'sap/ui/rta/plugin/Rename',
 	'sap/ui/rta/plugin/ControlVariant',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/m/Button',
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/OverlayUtil',
 	'sap/m/Label',
 	'sap/ui/core/Title',
 	'sap/m/Input',
@@ -24,12 +26,14 @@ function(
 	DesignTime,
 	Plugin,
 	Remove,
+	Rename,
 	ControlVariant,
 	CommandFactory,
 	ChangeRegistry,
 	Button,
 	VerticalLayout,
 	OverlayRegistry,
+	OverlayUtil,
 	Label,
 	Title,
 	Input,
@@ -121,7 +125,7 @@ function(
 		assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then it returns false");
 	});
 
-	QUnit.module("Given this the Plugin is initialized", {
+	QUnit.module("Given this the Plugin is initialized with 2 Plugins", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 
@@ -134,8 +138,15 @@ function(
 
 			sap.ui.getCore().applyChanges();
 
+			this.oRenamePlugin = new Rename({
+				commandFactory : new CommandFactory()
+			});
+			this.oRemovePlugin = new Remove({
+				commandFactory : new CommandFactory()
+			});
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout]
+				rootElements : [this.oLayout],
+				plugins: [this.oRemovePlugin, this.oRenamePlugin]
 			});
 
 			this.oPlugin = new sap.ui.rta.plugin.Plugin();
@@ -149,12 +160,26 @@ function(
 		afterEach : function() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
+			sandbox.restore();
 		}
 	});
 
 	QUnit.test("when the control has a stable id and hasStableId method is called", function(assert) {
 		assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then it returns true");
 	});
+
+	QUnit.test("when the event elementModified is thrown", function(assert) {
+		var oSetRelevantSpy = sandbox.spy(this.oButtonOverlay, "setRelevantOverlays");
+		var oGetRelevantSpy = sandbox.spy(this.oButtonOverlay, "getRelevantOverlays");
+		sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oButtonOverlay]);
+		this.oButtonOverlay.fireElementModified({
+			type: "propertyChanged",
+			name: "visible"
+		});
+		assert.equal(oSetRelevantSpy.callCount, 1, "then findAllOverlaysInContainer is only called once");
+		assert.equal(oGetRelevantSpy.callCount, 4, "then getRelevantOverlays is called 4 times");
+	});
+
 
 	QUnit.module("Given the Plugin is initialized", {
 		beforeEach : function(assert) {

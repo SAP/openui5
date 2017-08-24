@@ -83,6 +83,13 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 				editable : {
 					type : "boolean",
 					defaultValue : false
+				},
+				/**
+				 * all overlays inside the relevant container within the same aggregations
+				 */
+				relevantOverlays: {
+					type: "any[]",
+					defaultValue: []
 				}
 			},
 			aggregations : {
@@ -812,13 +819,17 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 */
 	ElementOverlay.prototype._onElementModified = function(oEvent) {
 		var oParams = oEvent.getParameters();
+		var sName = oParams.name;
 
-		var sAggregationName = oEvent.getParameters().name;
-		if (sAggregationName) {
-			var oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
+		if (oParams.type === "propertyChanged" && sName === "visible") {
+			this.setRelevantOverlays([]);
+			this.fireElementModified(oParams);
+		} else if (sName) {
+			var oAggregationOverlay = this.getAggregationOverlay(sName);
 			// private aggregations are also skipped
 			var bAggregationOverlayVisible = oAggregationOverlay && oAggregationOverlay.isVisible();
 			if (bAggregationOverlayVisible) {
+				this.setRelevantOverlays([]);
 				this.fireElementModified(oParams);
 			}
 		} else if (oEvent.getParameters().type === "setParent") {
