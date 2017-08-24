@@ -162,45 +162,51 @@ sap.ui.define([
 				});
 				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
 
+				function updateTabs() {
+					// handle unknown tab
+					if (this._TAB_KEYS.indexOf(this._sNewTab) === -1) {
+						this._sNewTab = "samples";
+					}
+
+					// handle invisible tab
+					if (!oData.show[this._sNewTab]) {
+						this._sNewTab = "samples";
+					}
+
+					this._switchPageTab();
+				}
+
 				// set data model
 				var oData;
 				if (this._sId !== sNewId) {
 
 					// retrieve entity docu from server
-					var oDoc = EntityInfo.getEntityDocu(sNewId, oEntity && oEntity.namespace);
+					EntityInfo.getEntityDocuAsync(sNewId, oEntity && oEntity.namespace).then(function (oDoc) {
 
-					// route to not found page IF there is NO index entry AND NO docu from server
-					if (!oEntity && !oDoc) {
-						this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false, {path: sNewId});
-						return;
-					}
+						// route to not found page IF there is NO index entry AND NO docu from server
+						if (!oEntity && !oDoc) {
+							this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false, {path: sNewId});
+							return;
+						}
 
-					// get view data
-					oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
+						// get view data
+						oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
 
-					// set view model
-					this.getView().getModel().setData(oData, false /* no merge with previous data */);
+						// set view model
+						this.getView().getModel().setData(oData, false /* no merge with previous data */);
 
+						// done, we can now switch the id
+						this._sId = sNewId;
 
-					// done, we can now switch the id
-					this._sId = sNewId;
+						updateTabs.call(this);
+
+					}.bind(this));
 
 				} else {
 					// get existing data model
 					oData = this.getView().getModel().getData();
+					updateTabs.call(this);
 				}
-
-				// handle unknown tab
-				if (this._TAB_KEYS.indexOf(this._sNewTab) === -1) {
-					this._sNewTab = "samples";
-				}
-
-				// handle invisible tab
-				if (!oData.show[this._sNewTab]) {
-					this._sNewTab = "samples";
-				}
-
-				this._switchPageTab();
 
 			},
 
