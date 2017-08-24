@@ -682,9 +682,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 						that._getScrollExtension().updateInnerVerticalScrollRangeCache(that._aRowHeights);
 						that._iRenderedFirstVisibleRow = this.getFirstVisibleRow();
 					}
-					if (that._bBindingLengthChanged) {
-						that._getScrollExtension().updateVerticalScrollPosition();
-					}
 					that._getScrollExtension().updateVerticalScrollbarVisibility();
 
 					if (TableUtils.isVariableRowHeightEnabled(that)) {

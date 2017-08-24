@@ -602,21 +602,21 @@ sap.ui.define([
 			var $FocusedDomRef = jQuery(oEvent.target);
 			if ($FocusedDomRef.parent(".sapUiTableTr").length > 0) {
 				$ctrlScr = jQuery(this.getDomRef("sapUiTableCtrlScr"));
-			} else if ($FocusedDomRef.parent(".sapUiTableColHdr").length > 0) {
+			} else if ($FocusedDomRef.parent(".sapUiTableColHdrTr").length > 0) {
 				$ctrlScr = jQuery(this.getDomRef("sapUiTableColHdrScr"));
 			}
 
-			// Firefox and Chrome do not always scroll the focused element into the viewport if it is partially visible.
-			// With this logic we ensure that the focused element always gets scrolled into the viewport in a similar way.
-			if ((Device.browser.firefox || Device.browser.chrome) && $ctrlScr && $ctrlScr.length > 0) {
+			// Many browsers do not scroll the focused element into the viewport, if it is partially visible. With this
+			// logic we ensure, that the focused element always gets scrolled into the viewport in a similar way.
+			if ($ctrlScr && $ctrlScr.length > 0) {
 				var iCtrlScrScrollLeft = $ctrlScr.scrollLeft();
 				var iCtrlScrWidth = $ctrlScr.width();
 				var iCellLeft = $FocusedDomRef.position().left;
 				var iCellRight = iCellLeft + $FocusedDomRef.width();
 				var iOffsetLeft = iCellLeft - iCtrlScrScrollLeft;
 				var iOffsetRight = iCellRight - iCtrlScrWidth - iCtrlScrScrollLeft;
-
 				var oHSb = this._getScrollExtension().getHorizontalScrollbar();
+
 				if (iOffsetRight > 0) {
 					oHSb.scrollLeft = oHSb.scrollLeft + iOffsetRight + 1;
 				} else if (iOffsetLeft < 0) {
