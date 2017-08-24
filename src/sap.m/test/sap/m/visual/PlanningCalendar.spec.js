@@ -249,6 +249,7 @@ describe("sap.m.PlanningCalendar", function() {
 		 expect(takeScreenshot(element(by.id("PC1-TimeInt--Cal")))).toLookAs("monthpicker_hours_view");
 		 element(by.id("PC1-TimeInt--Cal--Head-B2")).click();
 		 expect(takeScreenshot(element(by.id("PC1-TimeInt--Cal")))).toLookAs("yearpicker_hours_view");
+		 element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	 });
 	 it("should check that date,month,year picker work properly on days view", function() {
 		 element(by.id("PC1-IntType")).click();
@@ -259,12 +260,14 @@ describe("sap.m.PlanningCalendar", function() {
 		 expect(takeScreenshot(element(by.id("PC1-DateInt--Cal")))).toLookAs("monthpicker_days_view");
 		 element(by.id("PC1-DateInt--Cal--Head-B2")).click();
 		 expect(takeScreenshot(element(by.id("PC1-DateInt--Cal")))).toLookAs("yearpicker_days_view");
+		 element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	 });
 	 it("should check infotoolbar for months view that is rendering properly", function() {
 		 element(by.id("PC1-IntType")).click();
 		 element(by.id("PC1-2")).click();
 		 element(by.id("PC1-MonthInt--Head-B2")).click();
 		 expect(takeScreenshot(element(by.id("PC1-MonthInt--Cal")))).toLookAs("yearpicker_months_view");
+		 element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	 });
 	 it("should check infotoolbar for 1week view that is rendering properly", function() {
 		 element(by.id("PC1-IntType")).click();
@@ -275,6 +278,7 @@ describe("sap.m.PlanningCalendar", function() {
 		 expect(takeScreenshot(element(by.id("PC1-WeekInt--Cal")))).toLookAs("monthpicker_1week_view");
 		 element(by.id("PC1-WeekInt--Cal--Head-B2")).click();
 		 expect(takeScreenshot(element(by.id("PC1-WeekInt--Cal")))).toLookAs("yearpicker_1week_view");
+		 element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	 });
 	it("should check infotoolbar for 1month view that is rendering properly", function () {
 		element(by.id("PC1-IntType")).click();
@@ -283,6 +287,7 @@ describe("sap.m.PlanningCalendar", function() {
 		expect(takeScreenshot(element(by.id("PC1-OneMonthInt--Cal")))).toLookAs("monthpicker_1month_view");
 		element(by.id("PC1-OneMonthInt--Cal--Head-B2")).click();
 		expect(takeScreenshot(element(by.id("PC1-OneMonthInt--Cal")))).toLookAs("yearpicker_1month_view");
+		element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	});
 	/*
 	 27. Popups on hours,days,months,1week,1month on < 600px screensize
@@ -298,6 +303,7 @@ describe("sap.m.PlanningCalendar", function() {
 		 expect(takeScreenshot(element(by.id("PC1-TimeInt--Cal")))).toLookAs("monthview_on_hoursview");
 		 element(by.id("PC1-TimeInt--Cal--Head-B2")).click();
 		 expect(takeScreenshot(element(by.id("PC1-TimeInt--Cal")))).toLookAs("yearview_on_hoursview");
+		 element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	 });
 	it("should check that month and year view work properly on days view", function () {
 		element(by.id("PC1-IntType")).click();
@@ -308,22 +314,25 @@ describe("sap.m.PlanningCalendar", function() {
 		expect(takeScreenshot(element(by.id("PC1-DateInt--Cal")))).toLookAs("monthview_on_days_view");
 		element(by.id("PC1-DateInt--Cal--Head-B2")).click();
 		expect(takeScreenshot(element(by.id("PC1-DateInt--Cal")))).toLookAs("yearview_on_days_view");
+		element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	});
 	it("should check yearview on months view that is rendering properly", function () {
 		element(by.id("PC1-IntType")).click();
 		element(by.id("PC1-2")).click();
 		element(by.id("PC1-MonthInt--Head-B2")).click();
 		expect(takeScreenshot(element(by.id("PC1-MonthInt--Cal")))).toLookAs("yearView_on_monthview");
+		element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	});
 	it("should check infotoolbar for 1week view that is rendering properly", function() {
 		element(by.id("PC1-IntType")).click();
 		element(by.id("PC1-3")).click();
 		element(by.id("PC1-WeekInt--Head-B1")).click();
-		 expect(takeScreenshot(element(by.id("PC1-WeekInt--Cal")))).toLookAs("datepicker_1week_view");
-		 element(by.id("PC1-WeekInt--Cal--Head-B1")).click();
+		expect(takeScreenshot(element(by.id("PC1-WeekInt--Cal")))).toLookAs("datepicker_1week_view");
+		element(by.id("PC1-WeekInt--Cal--Head-B1")).click();
 		expect(takeScreenshot(element(by.id("PC1-WeekInt--Cal")))).toLookAs("monthview_on_1week_view");
 		element(by.id("PC1-WeekInt--Cal--Head-B2")).click();
 		expect(takeScreenshot(element(by.id("PC1-WeekInt--Cal")))).toLookAs("yearview_on_1week_view");
+		element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	});
 	it("should check infotoolbar for 1month view that is rendering properly", function () {
 		element(by.id("PC1-IntType")).click();
@@ -332,6 +341,7 @@ describe("sap.m.PlanningCalendar", function() {
 		expect(takeScreenshot(element(by.id("PC1-OneMonthInt--Cal")))).toLookAs("monthview_on_1month_view");
 		element(by.id("PC1-OneMonthInt--Cal--Head-B2")).click();
 		expect(takeScreenshot(element(by.id("PC1-OneMonthInt--Cal")))).toLookAs("yearview_on_1month_view");
+		element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	});
 	/*
 																				/\
