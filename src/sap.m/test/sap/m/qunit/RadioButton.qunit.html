@@ -714,21 +714,28 @@
 			oRadioButton2.destroy();
 		});
 
-		QUnit.test("Keybaord navigation with forward arrows", function(assert) {
-			var oRadioButton1 = new sap.m.RadioButton(),
-			 oRadioButton2 = new sap.m.RadioButton({groupName: "testGroup"}),
-			 oRadioButton3 = new sap.m.RadioButton();
+		QUnit.test("Keybaord navigation with forward arrows", function (assert) {
+			var oRadioButton1 = new sap.m.RadioButton({selected: true}),
+				oRadioButton2 = new sap.m.RadioButton({groupName: "testGroup"}),
+				oRadioButton3 = new sap.m.RadioButton(),
+				oFireSelectSpy1 = this.spy(oRadioButton1, "fireSelect"),
+				oFireSelectSpy2 = this.spy(oRadioButton3, "fireSelect");
 
 			oRadioButton1.placeAt("qunit-fixture");
 			oRadioButton2.placeAt("qunit-fixture");
 			oRadioButton3.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-
 			oRadioButton1.applyFocusInfo();
 			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			this.clock.tick(100);
 
 			assert.strictEqual(oRadioButton3.$().is(":focus"), true, "3rd RadioButton should be focussed");
+
+			assert.ok(oFireSelectSpy1.calledBefore(oFireSelectSpy2), "Unselect is called before select");
+			assert.strictEqual(oFireSelectSpy2.callCount, 1, "Button 3 fires selected=true event");
+			assert.strictEqual(oFireSelectSpy1.callCount, 1, "Button 1 fires selected=false (unselect) event");
+
 
 			oRadioButton1.destroy();
 			oRadioButton2.destroy();
