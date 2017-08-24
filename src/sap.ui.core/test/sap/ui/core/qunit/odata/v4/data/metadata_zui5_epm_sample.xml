@@ -112,7 +112,7 @@
 				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="SOItemCount" Type="Edm.Int16" />
-				<NavigationProperty Name="SO_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0001.BusinessPartner" Nullable="false" />
+				<NavigationProperty Name="SO_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0001.BusinessPartner" />
 				<NavigationProperty Name="SO_2_SCHDL" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrderSchedule)" ContainsTarget="true">
 					<OnDelete Action="Cascade" />
 				</NavigationProperty>
@@ -135,11 +135,9 @@
 				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" />
 				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" MaxLength="3" />
 				<Property Name="Product" Type="com.sap.gateway.default.zui5_epm_sample.v0001.ProductInfo" Nullable="false" />
-				<NavigationProperty Name="SOITEM_2_PRODUCT" Type="com.sap.gateway.default.zui5_epm_sample.v0001.Product" Nullable="false" />
+				<NavigationProperty Name="SOITEM_2_PRODUCT" Type="com.sap.gateway.default.zui5_epm_sample.v0001.Product" />
 				<NavigationProperty Name="SOITEM_2_SCHDL" Type="com.sap.gateway.default.zui5_epm_sample.v0001.ItemSchedule" Nullable="false" ContainsTarget="true" />
-				<NavigationProperty Name="SOITEM_2_SO" Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false">
-					<ReferentialConstraint Property="SalesOrderID" ReferencedProperty="SalesOrderID" />
-				</NavigationProperty>
+				<NavigationProperty Name="SOITEM_2_SO" Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false" />
 			</EntityType>
 			<EntityType Name="SalesOrderSchedule">
 				<Key>
