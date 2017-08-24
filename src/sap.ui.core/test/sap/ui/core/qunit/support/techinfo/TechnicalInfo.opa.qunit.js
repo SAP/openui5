@@ -720,12 +720,11 @@ sap.ui.require([
 
 		// Act
 		When.onTheModuleDialog.iSelectATreeNode("sap/ui").
-		and.iSelectATreeNode("sap/m/Button.js").
-		and.iSelectATreeNode("sap/m/Text.js");
+		and.iSelectATreeNode("sap/m/Button.js");
 
 		// Assert
-		Then.onTheModuleDialog.theCustomDebugValueShouldBe("sap/ui/,sap/m/Text.js,sap/m/Button.js").
-		and.theSelectedModulesShouldBe(3);
+		Then.onTheModuleDialog.theCustomDebugValueShouldBe("sap/ui/,sap/m/Button.js").
+		and.theSelectedModulesShouldBe(2);
 	});
 
 	opaTest("Should apply a custom string debug configuration entered in the input field", function(Given, When, Then) {
