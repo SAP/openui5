@@ -1,10 +1,10 @@
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/autowaiter/_autoWaiterLogCollector"
-], function ($, _autoWaiterLogCollector) {
+], function (_OpaLogger, _autoWaiterLogCollector) {
 	"use strict";
 
-	var oLogger = $.sap.log.getLogger("sap.ui.test.autowaiter._testComponent#hasPending", $.sap.log.Level.DEBUG);
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._testComponent#hasPending");
 
 	QUnit.module("AutoWaiterLogCollector");
 
@@ -18,8 +18,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should collect only filtered logs", function (assert) {
-		var oOtherPrefixLogger = $.sap.log.getLogger("someComponent", $.sap.log.Level.DEBUG);
-		var oOtherSuffixLogger = $.sap.log.getLogger("sap.ui.test.autowaiter._testComponent#someSuffix", $.sap.log.Level.DEBUG);
+		var oOtherPrefixLogger = _OpaLogger.getLogger("someComponent");
+		var oOtherSuffixLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._testComponent#someSuffix");
 		_autoWaiterLogCollector.start();
 		oLogger.debug("autoWaiterValidatorHasPendingLog");
 		oLogger.debug("autoWaiterValidatorHasPendingLog2");

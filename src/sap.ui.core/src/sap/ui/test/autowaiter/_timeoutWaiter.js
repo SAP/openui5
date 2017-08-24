@@ -34,7 +34,8 @@ sap.ui.define([
 		var fnOriginalClear = window[sClearName];
 		window[sSetName] = function (fnCallback, iDelay) {
 			var fnWrappedCallback = function () {
-				iCurrentDepth = mTimeouts[iID].depth + 1;
+				// TODO: find a proper solution
+				iCurrentDepth = (mTimeouts[iID] ? mTimeouts[iID].depth : 0) + 1;
 				delete mTimeouts[iID];
 				try {
 					fnCallback();
