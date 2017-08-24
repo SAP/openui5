@@ -1,213 +1,242 @@
-/* global QUnit sinon */
+/* global QUnit */
 
 QUnit.config.autostart = false;
+
 sap.ui.require([
 	"sap/ui/rta/appVariant/ManageAppsDialog",
 	"sap/ui/rta/appVariant/Utils",
-	"sap/ui/rta/appVariant/manageApps/webapp/controller/ManageApps.controller"
+	"sap/ui/thirdparty/sinon"
 ],
 function(
 	ManageAppsDialog,
-	ManageAppsUtils,
-	ManageAppsController) {
+	AppVariantOverviewUtils,
+	sinon) {
 	"use strict";
 
 	QUnit.start();
 
-	var oManageAppsDialog;
+	var oAppVariantOverviewDialog;
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that a ManageAppsDialog is available", {
-		beforeEach : function(assert) {},
 		afterEach : function(assert) {
-			oManageAppsDialog.destroy();
+			oAppVariantOverviewDialog.destroy();
 			sandbox.restore();
 		}
-	});
-
-	QUnit.test("when ManageAppsDialog gets initialized in an original app and open is called (app variants),", function(assert) {
-		var oMockedDescriptorData = {
-			"sap.ui5": {
-				componentName: "BaseAppId"
-			},
-			"sap.app": {
-				title: "BaseAppTitle",
-				subTitle: "BaseAppSubtitle",
-				description: "BaseAppDescription",
-				id: "BaseAppId"
-			},
-			"sap.ui": {
-				icons: {
-					icon: "sap-icon://history"
+	}, function() {
+		QUnit.test("when ManageAppsDialog gets opened from a reference app and reference app has app variants,", function(assert) {
+			var done = assert.async();
+			var oReferenceAppMockedDescriptor = {
+				"sap.app": {
+					id: "id1"
 				}
-			}
-		};
-		sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
+			};
+			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
 
-		var aMockAppVariantsProperties = [
-			{
-				"componentName": "component1",
-				"description" : "description1",
-				"icon" : "sap-icon://history",
-				"id" : "id1",
-				"subTitle" : "subTitle1",
-				"title" : "title1",
-				"type" :"App variant"
-			},
-			{
-				"componentName": "component2",
-				"description" : "description2",
-				"icon" : "sap-icon://history",
-				"id" : "id2",
-				"subTitle" : "subTitle2",
-				"title" : "title2",
-				"type" :"App variant"
-			},
-			{
-				"componentName": "component3",
-				"description" : "description3",
-				"icon" : "sap-icon://history",
-				"id" : "id3",
-				"subTitle" : "subTitle3",
-				"title" : "title3",
-				"type" :"App variant"
-			}
-		];
-
-		sandbox.stub(ManageAppsUtils, "getAppVariants").returns(Promise.resolve(aMockAppVariantsProperties));
-
-		sandbox.stub(ManageAppsController.prototype, "_paintCurrentlyAdaptedApp").returns(Promise.resolve(true));
-
-		oManageAppsDialog = new ManageAppsDialog({
-			rootControl: {
-				rootView: "demoRootControl"
-			}
-		});
-
-		return oManageAppsDialog.open().then(function(){
-			assert.ok(true, "then dialog displays properties of original app and its app variants");
-			assert.ok(true, "then the opened event is fired");
-			return oManageAppsDialog._closeDialog();
-		});
-	});
-
-	QUnit.test("when ManageAppsDialog gets initialized in an original app and open is called (no app variants),", function(assert) {
-		var oMockedDescriptorData = {
-			"sap.ui5": {
-				componentName: "BaseAppId"
-			},
-			"sap.app": {
-				title: "BaseAppTitle",
-				subTitle: "BaseAppSubtitle",
-				description: "BaseAppDescription",
-				id: "BaseAppId"
-			},
-			"sap.ui": {
-				icons: {
-					icon: "sap-icon://history"
+			var aAppVariantOverviewAttributes = [
+				{
+					appId : "id1",
+					title : "title1",
+					subTitle : "subTitle1",
+					description : "description1",
+					icon : "sap-icon://history",
+					referenceId : "referenceId1",
+					isReference : true,
+					typeOfApp : "Reference",
+					descriptorUrl : "url1"
+				},
+				{
+					appId : "id2",
+					title : "title2",
+					subTitle : "subTitle2",
+					description : "description2",
+					icon : "sap-icon://history",
+					referenceId : "referenceId2",
+					isReference : false,
+					typeOfApp : "App Variant",
+					descriptorUrl : "url2"
+				},
+				{
+					appId : "id3",
+					title : "title3",
+					subTitle : "subTitle3",
+					description : "description3",
+					icon : "sap-icon://history",
+					referenceId : "referenceId3",
+					isReference : false,
+					typeOfApp : "App Variant",
+					descriptorUrl : "url3"
 				}
-			}
-		};
-		sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
+			];
 
-		var aMockAppVariantsProperties = [];
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
 
-		sandbox.stub(ManageAppsUtils, "getAppVariants").returns(Promise.resolve(aMockAppVariantsProperties));
-
-		sandbox.stub(ManageAppsController.prototype, "_paintCurrentlyAdaptedApp").returns(Promise.resolve(true));
-
-		oManageAppsDialog = new ManageAppsDialog({
-			rootControl: {
-				rootView: "demoRootControl"
-			}
-		});
-
-		return oManageAppsDialog.open().then(function(){
-			assert.ok(true, "then dialog displays properties of only original app");
-			assert.ok(true, "then the opened event is fired");
-			return oManageAppsDialog._closeDialog();
-		});
-	});
-
-	QUnit.test("when ManageAppsDialog gets initialized in an app variant and open is called (app variants),", function(assert) {
-		var oMockedDescriptorData = {
-			"sap.ui5": {
-				componentName: "sapUi5Id"
-			},
-			"sap.app": {
-				title: "AppVariantTitle",
-				subTitle: "AppVariantSubtitle",
-				description: "AppVariantDescription",
-				id: "AppVariantId"
-			},
-			"sap.ui": {
-				icons: {
-					icon: "sap-icon://history"
+			oAppVariantOverviewDialog = new ManageAppsDialog({
+				rootControl: {
+					rootView: "demoRootControl"
 				}
-			}
-		};
-		sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
-
-		var aMockAppVariantsProperties = [
-			{
-				"componentName": "component1",
-				"description" : "description1",
-				"icon" : "sap-icon://history",
-				"id" : "id1",
-				"subTitle" : "subTitle1",
-				"title" : "title1",
-				"type" :"App variant"
-			},
-			{
-				"componentName": "component2",
-				"description" : "description2",
-				"icon" : "sap-icon://history",
-				"id" : "id2",
-				"subTitle" : "subTitle2",
-				"title" : "title2",
-				"type" :"App variant"
-			},
-			{
-				"componentName": "component3",
-				"description" : "description3",
-				"icon" : "sap-icon://history",
-				"id" : "id3",
-				"subTitle" : "subTitle3",
-				"title" : "title3",
-				"type" :"App variant"
-			}
-		];
+			});
 
 
-		sandbox.stub(ManageAppsUtils, "getAppVariants").returns(Promise.resolve(aMockAppVariantsProperties));
-
-		var aOriginalAppProperties = [
-			{
-				"componentName": "originalAppComponent",
-				"description" : "originalAppDescription",
-				"icon" : "sap-icon://history",
-				"id" : "originalAppId",
-				"subTitle" : "originalAppSubTitle",
-				"title" : "originalAppTitle",
-				"type" :"originalAppType"
-			}
-		];
-
-		sandbox.stub(ManageAppsUtils, "getOriginalAppProperties").returns(Promise.resolve(aOriginalAppProperties));
-
-		sandbox.stub(ManageAppsController.prototype, "_paintCurrentlyAdaptedApp").returns(Promise.resolve(true));
-
-		oManageAppsDialog = new ManageAppsDialog({
-			rootControl: {
-				rootView: "demoRootControl"
-			}
+			oAppVariantOverviewDialog.open();
+			oAppVariantOverviewDialog.oPopup.attachOpened(function() {
+				assert.ok(true, "then the app variant overview dialog displays the reference (currently adapting) and app variant entries");
+				done();
+			});
 		});
 
-		return oManageAppsDialog.open().then(function(){
-			assert.ok(true, "then dialog displays properties of app variants, variants of app variants and original app");
-			assert.ok(true, "then the opened event is fired");
-			return oManageAppsDialog._closeDialog();
+		QUnit.test("when ManageAppsDialog gets opened from a reference app and reference app has no app variants,", function(assert) {
+			var done = assert.async();
+			var oReferenceAppMockedDescriptor = {
+				"sap.app": {
+					id: "id1"
+				}
+			};
+
+			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+
+			var aAppVariantOverviewAttributes = [
+				{
+					appId : "id1",
+					title : "title1",
+					subTitle : "subTitle1",
+					description : "description1",
+					icon : "sap-icon://history",
+					referenceId : "referenceId1",
+					isReference : true,
+					typeOfApp : "Reference",
+					descriptorUrl : "url1"
+				}
+			];
+
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+
+			oAppVariantOverviewDialog = new ManageAppsDialog({
+				rootControl: {
+					rootView: "demoRootControl"
+				}
+			});
+
+
+			oAppVariantOverviewDialog.open();
+			oAppVariantOverviewDialog.oPopup.attachOpened(function() {
+				assert.ok(true, "then the app variant overview dialog displays the reference app (currently adapting) entry only");
+				done();
+			});
+		});
+
+		QUnit.test("when ManageAppsDialog gets opened from an app variant,", function(assert) {
+			var done = assert.async();
+			var oReferenceAppMockedDescriptor = {
+				"sap.app": {
+					id: "id3"
+				}
+			};
+
+			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+
+			var aAppVariantOverviewAttributes = [
+				{
+					appId : "id1",
+					title : "title1",
+					subTitle : "subTitle1",
+					description : "description1",
+					icon : "sap-icon://history",
+					referenceId : "referenceId1",
+					isReference : true,
+					typeOfApp : "Reference",
+					descriptorUrl : "url1"
+				},
+				{
+					appId : "id2",
+					title : "title2",
+					subTitle : "subTitle2",
+					description : "description2",
+					icon : "sap-icon://history",
+					referenceId : "referenceId2",
+					isReference : false,
+					typeOfApp : "App Variant",
+					descriptorUrl : "url2"
+				},
+				{
+					appId : "id3",
+					title : "title3",
+					subTitle : "subTitle3",
+					description : "description3",
+					icon : "sap-icon://history",
+					referenceId : "referenceId3",
+					isReference : false,
+					typeOfApp : "App Variant",
+					descriptorUrl : "url3"
+				}
+			];
+
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+
+			oAppVariantOverviewDialog = new ManageAppsDialog({
+				rootControl: {
+					rootView: "demoRootControl"
+				}
+			});
+
+			oAppVariantOverviewDialog.open();
+			oAppVariantOverviewDialog.oPopup.attachOpened(function() {
+				assert.ok(true, "then the app variant overview dialog displays the app variant (currently adapting) and other app variants grouping");
+				done();
+			});
+		});
+
+		QUnit.test("when ManageAppsDialog gets opened from a reference app, reference app has one new created app variant,", function(assert) {
+			var done = assert.async();
+			var oReferenceAppMockedDescriptor = {
+				"sap.app": {
+					id: "id1"
+				}
+			};
+
+			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+
+			var aAppVariantOverviewAttributes = [
+				{
+					appId : "id1",
+					title : "title1",
+					subTitle : "subTitle1",
+					description : "description1",
+					icon : "sap-icon://history",
+					referenceId : "referenceId1",
+					isReference : true,
+					typeOfApp : "Reference",
+					descriptorUrl : "url1"
+				},
+				{
+					appId : "id2",
+					title : "title2",
+					subTitle : "subTitle2",
+					description : "description2",
+					icon : "sap-icon://history",
+					referenceId : "referenceId2",
+					isReference : false,
+					typeOfApp : "App Variant",
+					descriptorUrl : "url2",
+					rowStatus : "Information"
+				}
+			];
+
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+
+			oAppVariantOverviewDialog = new ManageAppsDialog({
+				rootControl: {
+					rootView: "demoRootControl"
+				}
+			});
+
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getNewAppVariantId").returns("id2");
+
+			oAppVariantOverviewDialog.open();
+			oAppVariantOverviewDialog.oPopup.attachOpened(function() {
+				assert.ok(true, "then the app variant overview dialog displays the reference app (currently adapting) entry and a new created app variant with blue highlighter");
+				done();
+			});
 		});
 	});
-
 });

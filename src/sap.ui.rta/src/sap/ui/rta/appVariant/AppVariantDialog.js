@@ -6,12 +6,14 @@
 sap.ui.define([
 	'sap/m/Dialog',
 	'sap/m/DialogRenderer',
+	'sap/ui/rta/Utils',
 	'sap/ui/layout/form/SimpleForm',
 	'sap/ui/layout/form/ResponsiveGridLayout'
 ],
 function(
 	Dialog,
 	DialogRenderer,
+	RtaUtils,
 	SimpleForm,
 	ResponsiveGridLayout
 ){
@@ -86,6 +88,8 @@ function(
 				}
 			});
 		}
+
+		oSelectDialog.addStyleClass(RtaUtils.getRtaStyleClassName());
 
 		oSelectDialog.bindAggregation("items",{
             path:"/icons",
@@ -250,8 +254,8 @@ function(
 			this.setContentHeight("250px");
 
 			oCustomTileModel = new sap.ui.model.json.JSONModel({
-				title: "Title",
-				subtitle: "Subtitle",
+				title: oResources.getText("SAVE_AS_DIALOG_TITLE_TEXT"),
+				subtitle: "",
 				icon: "sap-icon://history",
 				iconname: "history"
 			});
@@ -269,6 +273,8 @@ function(
 
 			// create, and cancel buttons.
 			this._createButtons();
+
+			this.addStyleClass(RtaUtils.getRtaStyleClassName());
 		},
 		onAfterRendering: function() {
 			document.getElementById('title1').style.height = "0px";
@@ -301,8 +307,8 @@ function(
 			}));
 
 			this.addButton(new sap.m.Button({
-				text: oResources.getText("APP_VARIANT_DIALOG_CANCEL"),
-				tooltip: oResources.getText("TOOLTIP_APP_VARIANT_DIALOG_CANCEL"),
+				text: oResources.getText("SAVE_AS_APP_VARIANT_DIALOG_CANCEL"),
+				tooltip: oResources.getText("TOOLTIP_SAVE_AS_APP_VARIANT_DIALOG_CANCEL"),
 				press: function() {
 					this.fireCancel();
 					this.close();

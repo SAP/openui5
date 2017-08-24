@@ -10,7 +10,11 @@ sap.ui.define([
 
 		"use strict";
 		var AppVariantUtils = {};
-		var GENERATED_ID;
+
+		// S/4 Hana expects us to pass an ID of 56 characters
+		var HANA_CLOUD_ID_LENGTH = 56;
+
+		AppVariantUtils.newAppVariantId = "";
 
 		AppVariantUtils.getManifirstSupport = function(sRunningAppId) {
 	        var sRoute = '/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=' + sRunningAppId;
@@ -18,12 +22,16 @@ sap.ui.define([
 			return oLREPConnector.send(sRoute, 'GET');
 		};
 
+		AppVariantUtils.getNewAppVariantId = function() {
+			return AppVariantUtils.newAppVariantId;
+		};
+
+		AppVariantUtils.setNewAppVariantId = function(sNewAppVariantID) {
+			AppVariantUtils.newAppVariantId = sNewAppVariantID;
+		};
+
 		AppVariantUtils.trimIdIfRequired = function(sId) {
-			if (sId.length > 56) {
-				return sId.replace(sId.substr(56, sId.length), "");
-			} else {
-				return sId;
-			}
+			return sId.substr(0, HANA_CLOUD_ID_LENGTH);
 		};
 
 		AppVariantUtils.getId = function(sBaseAppID) {
@@ -49,10 +57,10 @@ sap.ui.define([
 				sChangedId = sChangedId + "." + jQuery.sap.uid().replace(/-/g, "_");
 			}
 
-			// S/4 Hana expects us to pass an ID of 56 characters
-			GENERATED_ID = this.trimIdIfRequired(sChangedId);
+			sChangedId = this.trimIdIfRequired(sChangedId);
+			this.setNewAppVariantId(sChangedId);
 
-			return GENERATED_ID;
+			return sChangedId;
 		};
 
 		AppVariantUtils.createDescriptorVariant = function(mParameters){
@@ -161,11 +169,11 @@ sap.ui.define([
 					"propertyValue": {
 						"required": true,
 						"filter": {
-							"value": GENERATED_ID,
+							"value": this.getNewAppVariantId(),
 							"format": "plain"
 						},
 						"launcherValue": {
-							"value": GENERATED_ID
+							"value": this.getNewAppVariantId()
 						}
 					}
 				}

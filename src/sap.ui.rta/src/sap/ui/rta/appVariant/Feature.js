@@ -7,28 +7,33 @@ sap.ui.define([
   "sap/ui/rta/Utils",
   "sap/ui/fl/Utils",
   "sap/ui/rta/appVariant/AppVariantUtils",
-  "sap/m/MessageBox"
-], function(jQuery, RtaUtils, FlexUtils, AppVariantUtils, MessageBox) {
+  "sap/m/MessageBox",
+  "sap/ui/core/BusyIndicator"
+], function(jQuery, RtaUtils, FlexUtils, AppVariantUtils, MessageBox, BusyIndicator) {
   "use strict";
 
+	var oAppVariantOverviewDialog, oAppVariantManager;
+	sap.ui.getCore().getEventBus().subscribe("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate", function() {
+		if (oAppVariantOverviewDialog) {
+			oAppVariantOverviewDialog.destroy();
+			oAppVariantOverviewDialog = null;
+		}
+	});
 
-	var oManageAppsDialog, oAppVariantManager;
 	return {
-		onGetOverview: function(sRootControl) {
-			var oRootControl = sap.ui.getCore().byId(sRootControl);
-
+		onGetOverview: function(oRootControl) {
 			return new Promise( function(resolve) {
+				var fnCancel = function() {
+					sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+				};
 				sap.ui.require(["sap/ui/rta/appVariant/ManageAppsDialog"], function(AppVariantOverviewDialog) {
-					if (!oManageAppsDialog) {
-						oManageAppsDialog = new AppVariantOverviewDialog({
-							rootControl: oRootControl,
-							close: function() {
-								this.destroy();
-								oManageAppsDialog = null;
-							}
+					if (!oAppVariantOverviewDialog) {
+						oAppVariantOverviewDialog = new AppVariantOverviewDialog("appVariantOverviewDialog", {
+							rootControl: oRootControl
 						});
 					}
-					resolve( oManageAppsDialog.open() );
+					oAppVariantOverviewDialog.attachCancel(fnCancel);
+					resolve(oAppVariantOverviewDialog.open());
 				});
 			});
 		},
@@ -51,7 +56,6 @@ sap.ui.define([
 							return aUriLayer[0] === 'true' ? true : false;
 						}
 					}
-
 					return false;
 				}).catch(function(oError) {
 					var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
@@ -70,16 +74,24 @@ sap.ui.define([
 
 			return Promise.resolve(false);
 		},
-		onSaveAs: function(sRootControl, fnStopRta) {
-			var oRootControl = sap.ui.getCore().byId(sRootControl);
+		onSaveAs: function(oRootControlRunningApp, oAppVariantDescriptor) {
+			var oDescriptor, bCloseRunningApp = false;
 
+			if (oAppVariantDescriptor) {
+				oDescriptor = oAppVariantDescriptor;
+			} else {
+				oDescriptor = FlexUtils.getAppDescriptor(oRootControlRunningApp);
+				bCloseRunningApp = true;
+			}
 			return new Promise( function(resolve) {
 				sap.ui.require(["sap/ui/rta/appVariant/AppVariantManager"], function(AppVariantManager) {
-					oAppVariantManager = new AppVariantManager();
-					return oAppVariantManager.processSaveAsDialog(FlexUtils.getAppDescriptor(oRootControl)).then(function(oAppVariantData) {
+					if (!oAppVariantManager) {
+						oAppVariantManager = new AppVariantManager();
+					}
+					return oAppVariantManager.processSaveAsDialog(oDescriptor).then(function(oAppVariantData) {
 						if (oAppVariantData) {
 							return oAppVariantManager.createDescriptor(oAppVariantData).then(function(oAppVariantDescriptor) {
-								resolve(oAppVariantManager.saveDescriptorAndFlexChangesToLREP(oAppVariantDescriptor, oRootControl, fnStopRta));
+								resolve(oAppVariantManager.saveDescriptorAndFlexChangesToLREP(oAppVariantDescriptor, oRootControlRunningApp, bCloseRunningApp));
 							});
 						} else {
 							resolve(false);
@@ -89,6 +101,5 @@ sap.ui.define([
 			});
 		}
 	};
-
 
 });

@@ -100,17 +100,8 @@ sap.ui.define([
 			handleGetTransports(sUri, sMethod, oData, mOptions, resolve, reject);
 			handleMakeChangesTransportable(sUri, sMethod, oData, mOptions, resolve, reject);
 			handleManifirstSupport(sUri, sMethod, oData, mOptions, resolve, reject);
-			handleAppDescrVariants(sUri, sMethod, oData, mOptions, resolve, reject);
 		});
 	};
-
-	function handleAppDescrVariants(sUri, sMethod, oData, mOptions, resolve) {
-		if (sUri.match(/^\/sap\/bc\/lrep\/appdescr_variants\//) && sMethod === 'POST') {
-			resolve({
-				status: "success"
-			});
-		}
-	}
 
 	function handleManifirstSupport(sUri, sMethod, oData, mOptions, resolve) {
 		if (sUri.match(/^\/sap\/bc\/ui2\/app_index\/ui5_app_mani_first_supported\//) && sMethod === 'GET') {

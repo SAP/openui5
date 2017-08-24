@@ -6,7 +6,7 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	var _oAdaptedAppProperties;
+	var _sIdRunningApp, _oRootControlRunningApp;
 
 	return UIComponent.extend("sap.ui.rta.appVariant.manageApps.webapp.Component", {
 
@@ -15,15 +15,18 @@ sap.ui.define([
 			"library": "sap.ui.rta",
 			"version": "0.9",
 			"properties": {
-				adaptedAppProperties : {
+				idRunningApp : {
+					type: "string"
+				},
+				rootControlRunningApp : {
 					type: "object"
 				}
 			}
-
 		},
 
 		constructor: function() {
-			_oAdaptedAppProperties = arguments[1].adaptedAppProperties;
+			_sIdRunningApp = arguments[1].idRunningApp;
+			_oRootControlRunningApp = arguments[1].rootControlRunningApp;
 			UIComponent.prototype.constructor.apply(this, arguments);
 		},
 
@@ -33,7 +36,8 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function() {
-			this.setAdaptedAppProperties(_oAdaptedAppProperties);
+			this.setIdRunningApp(_sIdRunningApp);
+			this.setRootControlRunningApp(_oRootControlRunningApp);
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 		}
