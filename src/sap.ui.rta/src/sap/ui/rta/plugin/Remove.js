@@ -46,8 +46,9 @@ sap.ui.define([
 	 * @override
 	 */
 	Remove.prototype.registerElementOverlay = function(oOverlay) {
-		oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
-
+		if (this.isRemoveEnabled(oOverlay)) {
+			oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
+		}
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
 	};
 
@@ -142,8 +143,9 @@ sap.ui.define([
 	 * @override
 	 */
 	Remove.prototype.deregisterElementOverlay = function(oOverlay) {
-		oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
-
+		if (this.isRemoveEnabled(oOverlay)) {
+			oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
+		}
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
 	};
 
@@ -174,8 +176,10 @@ sap.ui.define([
 			aSelection = oDesignTime.getSelection();
 		}
 
+		aSelection = aSelection.filter(this.isRemoveEnabled, this);
+
 		if (aSelection.length > 0) {
-			this._handleRemove( aSelection );
+			this._handleRemove(aSelection);
 		}
 	};
 
@@ -202,7 +206,6 @@ sap.ui.define([
 				oOverlay.focus();
 			}, 0);
 		};
-
 		var oNextOverlaySelection = Remove._getElementToFocus(aSelectedOverlays);
 
 		aSelectedOverlays.forEach(function(oOverlay) {
@@ -217,23 +220,21 @@ sap.ui.define([
 				oRelevantElement = oRemovedElement;
 			}
 			var sVariantManagementKey = this.getVariantManagementKey(oOverlay, oRelevantElement, oRemoveAction.changeType);
+			var sConfirmationText = this._getConfirmationText(oOverlay);
 
-			if (this.isRemoveEnabled(oOverlay)) {
-				var sConfirmationText = this._getConfirmationText(oOverlay);
-				if (sConfirmationText) {
-					aPromises.push(
-						Utils.openRemoveConfirmationDialog(oRemovedElement, sConfirmationText)
-						.then(function(bConfirmed) {
-							if (bConfirmed) {
-								oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementKey);
-								oCompositeCommand.addCommand(oCommand);
-							}
-						}.bind(this))
-					);
-				} else {
-					oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementKey);
-					oCompositeCommand.addCommand(oCommand);
-				}
+			if (sConfirmationText) {
+				aPromises.push(
+					Utils.openRemoveConfirmationDialog(oRemovedElement, sConfirmationText)
+					.then(function(bConfirmed) {
+						if (bConfirmed) {
+							oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementKey);
+							oCompositeCommand.addCommand(oCommand);
+						}
+					}.bind(this))
+				);
+			} else {
+				oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementKey);
+				oCompositeCommand.addCommand(oCommand);
 			}
 		}, this);
 
