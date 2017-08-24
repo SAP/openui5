@@ -349,7 +349,9 @@ function(
 	});
 
 	QUnit.module("Given that the DesignTime is created for two root controls", {
-		beforeEach : function() {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
 			this.oLayout1 = new VerticalLayout({
 				content : []
 			});
@@ -367,8 +369,12 @@ function(
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oLayout1, this.oLayout3]
 			});
-
 			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				sap.ui.getCore().applyChanges();
+				done();
+			});
 		},
 		afterEach : function() {
 			this.oOuterLayout.destroy();
@@ -397,10 +403,15 @@ function(
 	});
 
 	QUnit.test("when the DesignTime is initialized and one root element is added", function(assert) {
+		var done = assert.async();
+		this.oDesignTime.attachEventOnce("synced", function() {
+			sap.ui.getCore().applyChanges();
+			assert.ok(isOverlayForElementInDesignTime(this.oLayout1, this.oDesignTime), "overlay for layout1 exists");
+			assert.ok(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), "overlay for layout2 exists");
+			assert.ok(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), "overlay for layout3 exists");
+			done();
+		}, this);
 		this.oDesignTime.addRootElement(this.oLayout2);
-		assert.ok(isOverlayForElementInDesignTime(this.oLayout1, this.oDesignTime), "overlay for layout1 exists");
-		assert.ok(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), "overlay for layout2 exists");
-		assert.ok(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), "overlay for layout3 exists");
 	});
 
 	QUnit.module("Given that the DesignTime is created", {
