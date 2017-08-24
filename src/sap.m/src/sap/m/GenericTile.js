@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * @since 1.34
+	 * @since 1.34.0
 	 *
 	 * @public
 	 * @alias sap.m.GenericTile
@@ -89,8 +89,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				"tileContent" : {type : "sap.m.TileContent", multiple : true, bindable : "bindable"},
 				/**
 				 * An icon or image to be displayed in the control.
-				 * This aggregation is deprecated since version 1.36.0, to display an icon or image use sap.m.TileContent control instead.
-				 * @deprecated Since version 1.36.0. This aggregation is deprecated, use sap.m.TileContent control to display an icon instead.
+				 * This aggregation is deprecated since version 1.36.0, to display an icon or image use sap.m.ImageContent control instead.
+				 * @deprecated since version 1.36.0. This aggregation is deprecated, use sap.m.ImageContent control to display an icon instead.
 				 */
 				"icon" : {type : "sap.ui.core.Control", multiple : false},
 				/**
@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			},
 			events : {
 				/**
-				 * The event is fired when the user presses the tile.
+				 * The event is triggered when the user presses the tile.
 				 */
 				"press" : {
 					parameters: {
@@ -889,11 +889,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype._getAriaAndTooltipText = function() {
 		var sAriaText = (this.getTooltip_AsString() && !this._isTooltipSuppressed()) ? this.getTooltip_AsString() : (this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText());
 		switch (this.getState()) {
-			case library.LoadState.Disabled :
+			case library.LoadState.Disabled:
 				return "";
-			case library.LoadState.Loading :
+			case library.LoadState.Loading:
 				return sAriaText + "\n" + this._sLoading;
-			case library.LoadState.Failed :
+			case library.LoadState.Failed:
 				return sAriaText + "\n" + this._oFailedText.getText();
 			default :
 				if (jQuery.trim(sAriaText).length === 0) { // If the string is empty or just whitespace, IE renders an empty tooltip (e.g. "" + "\n" + "")
@@ -1143,7 +1143,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/**
-	 * Perform needed style adjustments through invalidation of control if GenericTile in LineMode.
+	 * Performs needed style adjustments through invalidation of control if GenericTile is in LineMode.
 	 * Triggered when changed from floating view (large screens) to list view (small screens) and vice versa.
 	 * @private
 	 */
