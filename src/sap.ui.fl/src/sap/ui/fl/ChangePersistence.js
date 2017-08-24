@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/variants/VariantController"
-], function(Change, Utils, LRepConnector, Cache, ContextManager, Settings, VariantController) {
+	"sap/ui/fl/Change", "sap/ui/fl/Variant", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/variants/VariantController"
+], function(Change, Variant, Utils, LRepConnector, Cache, ContextManager, Settings, VariantController) {
 	"use strict";
 
 	/**
@@ -407,7 +407,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.addChange = function(vChange, oComponent) {
 		var oNewChange;
-		if (vChange instanceof Change){
+		if (vChange instanceof Change || vChange instanceof Variant){
 			oNewChange = vChange;
 		}else {
 			oNewChange = new Change(vChange);

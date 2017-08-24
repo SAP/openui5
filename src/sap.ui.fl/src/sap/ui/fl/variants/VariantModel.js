@@ -32,6 +32,7 @@ sap.ui.define([
 			this.bObserve = bObserve;
 			this.oFlexController = oFlexController;
 			this.oComponent = oComponent;
+			this.bStandardVariantExists = true;
 			this.oVariantController = undefined;
 			if (oFlexController && oFlexController._oChangePersistence) {
 				this.oVariantController = oFlexController._oChangePersistence._oVariantController;
@@ -100,6 +101,11 @@ sap.ui.define([
 		return sVariantManagementReference;
 	};
 
+	VariantModel.prototype.getVariant = function(sVariantReference) {
+		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference);
+		return this.oVariantController.getVariant(sVariantManagementReference, sVariantReference);
+	};
+
 	VariantModel.prototype._addChange = function(oChange) {
 		var sVariantReference = oChange.getVariantReference();
 		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference);
@@ -132,16 +138,17 @@ sap.ui.define([
 	VariantModel.prototype.ensureStandardEntryExists = function(sVariantManagementReference) {
 		var oData = this.getData();
 		if (!oData[sVariantManagementReference]) {
+			this.bStandardVariantExists = false;
 			// Set Standard Data to Model
 			oData[sVariantManagementReference] = {
 				modified: false,
-				currentVariant: "Standard",
-				defaultVariant: "Standard",
+				currentVariant: sVariantManagementReference,
+				defaultVariant: sVariantManagementReference,
 				variants: [
 					{
 						author: "SAP",
-						key: "Standard",
-						layer: "CUSTOMER",
+						key: sVariantManagementReference,
+						layer: "VENDOR",
 						originalTitle: "Standard",
 						readOnly: true,
 						title: "Standard",
@@ -155,15 +162,16 @@ sap.ui.define([
 			if (this.oVariantController) {
 				var oVariantControllerData = {changes: { variantSection: {}}};
 				oVariantControllerData.changes.variantSection[sVariantManagementReference] = {
-					defaultVariant: "Standard",
+					defaultVariant: sVariantManagementReference,
 					variants: [
 						{
 							content: {
 								fileName: sVariantManagementReference,
 								title: "Standard",
 								fileType: "variant",
-								variantMgmtRef: sVariantManagementReference
-							}
+								variantManagementReference: sVariantManagementReference
+							},
+							changes: []
 						}
 					]
 				};

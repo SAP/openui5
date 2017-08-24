@@ -263,7 +263,18 @@ sap.ui.require([
 		sinon.stub(this.oRemoveCommand2.getPreparedChange(), "getVariantReference").returns("test-variant");
 		sinon.stub(oMockedAppComponent, "getModel").returns({
 			_removeChange: function(){},
-			_addChange: function(){}
+			_addChange: function(){},
+			getVariant: function(){
+				return {
+					content : {
+						fileName: "idOfVariantManagementReference",
+						title: "Standard",
+						fileType: "variant",
+						variantManagementReference: "idOfVariantManagementReference"
+					}
+				};
+			},
+			bStandardVariantExists: false
 		});
 		var oAddChangeSpy = sinon.spy(oMockedAppComponent.getModel(), "_addChange");
 		var oRemoveChangeSpy = sinon.spy(oMockedAppComponent.getModel(), "_removeChange");

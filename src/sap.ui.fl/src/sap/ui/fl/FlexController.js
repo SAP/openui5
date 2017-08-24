@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -16,7 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager"
-], function (jQuery, Persistence, ChangeRegistry, Utils, LrepConnector, Change, Cache, FlexSettings, ChangePersistenceFactory, View, JsControlTreeModifier, XmlTreeModifier, ContextManager) {
+], function (jQuery, Persistence, ChangeRegistry, Utils, LrepConnector, Change, Variant, Cache, FlexSettings, ChangePersistenceFactory, View, JsControlTreeModifier, XmlTreeModifier, ContextManager) {
 	"use strict";
 
 	/**
@@ -181,6 +182,58 @@ sap.ui.define([
 	};
 
 	/**
+	 * Create a variant
+	 *
+	 * @param {object} oVariantSpecificData property bag (nvp) holding the variant information (see sap.ui.fl.Variant#createInitialFileContent
+	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created.
+	 * @param {sap.ui.base.Component} oControl.appComponent application component of the control at runtime in case a map has been used
+	 * @returns {sap.ui.fl.Variant} the created variant
+	 * @public
+	 */
+	FlexController.prototype.createVariant = function (oVariantSpecificData, oAppComponent) {
+		var oVariantFileContent, oVariantSpecificData, oVariant;
+
+		var aCurrentDesignTimeContext = ContextManager._getContextIdsFromUrl();
+
+		if (aCurrentDesignTimeContext.length > 1) {
+			throw new Error("More than one DesignTime Context is currently active.");
+		}
+
+		if (!oVariantSpecificData.selector) {
+			oVariantSpecificData.selector = {};
+		}
+
+		if (!oAppComponent) {
+			throw new Error("No Application Component found - to offer flexibility the variant has to have a valid relation to its owning application component.");
+		}
+
+//		oVariantSpecificData.selector.id = sLocalId;
+//		oVariantSpecificData.selector.idIsLocal = true;
+
+		oVariantSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
+		oVariantSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
+		oVariantSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
+		oVariantSpecificData.isVariant = true;
+
+		//fallback in case no application descriptor is available (e.g. during unit testing)
+		var sAppVersion = this.getAppVersion();
+		var oValidAppVersions = {
+			creation: sAppVersion,
+			from: sAppVersion
+		};
+		if (sAppVersion && oVariantSpecificData.developerMode) {
+			oValidAppVersions.to = sAppVersion;
+		}
+
+		oVariantSpecificData.validAppVersions = oValidAppVersions;
+
+		oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
+		oVariant = new Variant(oVariantFileContent);
+
+		return oVariant;
+	};
+
+	/**
 	 * Adds a change to the flex persistence (not yet saved). Will be saved with #saveAll.
 	 *
 	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
@@ -208,10 +261,19 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.addPreparedChange = function (oChange, oAppComponent) {
-		this._oChangePersistence.addChange(oChange, oAppComponent);
 		if (oChange.getVariantReference()) {
-			oAppComponent.getModel("$FlexVariants")._addChange(oChange);
+			var oModel = oAppComponent.getModel("$FlexVariants");
+			if (!oModel.bStandardVariantExists) {
+				var oVariantContent = oModel.getVariant(oChange.getVariantReference()).content;
+				var oVariant = this.createVariant(oVariantContent, oAppComponent);
+				oModel.bStandardVariantExists = true;
+				this._oChangePersistence.addChange(oVariant, oAppComponent);
+			}
+			oModel._addChange(oChange);
 		}
+
+		this._oChangePersistence.addChange(oChange, oAppComponent);
+
 		return oChange;
 	};
 

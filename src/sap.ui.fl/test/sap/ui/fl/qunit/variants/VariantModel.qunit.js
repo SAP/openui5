@@ -60,13 +60,19 @@ sap.ui.require([
 					return oManifest;
 				}
 			};
+			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
 
-			var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
+			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
+			this.oLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
+			this.oRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl");
+			this.oApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
 
-			this.oModel = new VariantModel(this.oData, oFlexController, oComponent);
+
+			this.oModel = new VariantModel(this.oData, this.oFlexController, oComponent);
 		},
 		afterEach: function(assert) {
 			sandbox.restore();
+			delete this.oFlexController;
 		}
 	});
 
@@ -82,14 +88,16 @@ sap.ui.require([
 		assert.equal(sVariantManagementReference, "variantMgmtId1", "then the correct variant management reference is returned");
 	});
 
+	QUnit.test("when calling 'switchToVariant'", function(assert) {
+		this.oModel._switchToVariant("variantMgmtId1", "variant1");
+		assert.ok(this.oLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
+		assert.ok(this.oRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
+		assert.ok(this.oApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
+	});
+
 	QUnit.module("Given an instance of FakeLrepConnector with no Variants in the LREP response", {
 		beforeEach : function(assert) {
-			this.oData = {
-				"varMgmtRef1" : {
-					"defaultVariant": "variant0",
-					"variants": []
-				}
-			};
+			this.oData = {};
 
 			var oManifestObj = {
 				"sap.app": {
@@ -125,15 +133,10 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("when calling 'switchToVariants'", function(assert) {
-		this.oModel._switchToVariant("varMgmtRef1", "");
-		assert.ok(this.oLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
-		assert.ok(this.oRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
-		assert.ok(this.oApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
-	});
 
 	QUnit.test("when calling 'ensureStandardEntryExists'", function(assert) {
-		this.oModel.ensureStandardEntryExists("variant0");
-		assert.equal(this.oModel.getCurrentVariantReference("variant0"), "Standard", "then the Current Variant is set");
+		this.oModel.ensureStandardEntryExists("varMgmtRef1");
+		assert.equal(this.oModel.getCurrentVariantReference("varMgmtRef1"), "varMgmtRef1", "then the Current Variant is set to the standard variant");
 	});
+
 });
