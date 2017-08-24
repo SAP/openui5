@@ -87,9 +87,11 @@ sap.ui.require([
 
 	QUnit.module("Given a group element, overlays, RTAElementMover", {
 		beforeEach : function(assert) {
+
 			this.oSmartGroupElement = new GroupElement("stableField", {
 				elements: [new Button("button1")]
 			});
+
 			this.oSmartForm1 = new SmartForm("form1", {
 				groups : [
 					new Group("group1",{
@@ -158,6 +160,7 @@ sap.ui.require([
 
 	QUnit.test("and a group with stable id, when checking the target zone,", function(assert) {
 		assert.ok(this.oElementMover.checkTargetZone(this.oGroup1AggrOverlay), "then the group is a possible target zone");
+		assert.notOk(this.oElementMover.checkMovable(this.oSmartGroupElementOverlay), "but the element is not movable as there are no more elements in this group");
 	});
 
 	QUnit.test("and a group from another smart form, when checking the target zone,", function(assert) {
@@ -193,23 +196,30 @@ sap.ui.require([
 				}.bind(this));
 			}.bind(this))
 			.then(function () {
+				this.oNavGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
 				this.oOtherGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1];
 				this.oBoundGroupElement = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1].getGroupElements()[0];
-				this.oGroupAggrOverlay = OverlayRegistry.getOverlay(this.oOtherGroup).getAggregationOverlay("formElements");
+				this.oOtherGroupButton = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1].getGroupElements()[1];
+				this.oNavGroupAggrOverlay = OverlayRegistry.getOverlay(this.oNavGroup).getAggregationOverlay("formElements");
+				this.oOtherGroupAggrOverlay = OverlayRegistry.getOverlay(this.oOtherGroup).getAggregationOverlay("formElements");
 				this.oBoundGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
 				this.oElementMover = this.oDragDropPlugin.getElementMover();
+				this.oElementMover.setMovedOverlay(this.oBoundGroupElementOverlay);
 			}.bind(this));
 		},
 		afterEach : function(assert) {
+			this.oView.destroy();
 			this.oDesignTime.destroy();
 			this.oDragDropPlugin.destroy();
-			this.oView.destroy();
+			this.oElementMover.destroy();
 		}
 	});
 
 	QUnit.test("when moving the group element bound to EntityType01 inside the group bound to EntityTypeNav...", function(assert) {
-		this.oElementMover.setMovedOverlay(this.oBoundGroupElementOverlay);
-		assert.ok(this.oElementMover.checkTargetZone(this.oGroupAggrOverlay), "then the group is a possible target zone");
+		assert.notOk(this.oElementMover.checkTargetZone(this.oNavGroupAggrOverlay), "then the group bound to the navigation is not a possible target zone");
+		assert.ok(this.oElementMover.checkTargetZone(this.oOtherGroupAggrOverlay), "then the group with the element is a possible target zone");
+		this.oOtherGroupButton.setVisible(false);
+		assert.notOk(this.oElementMover.checkMovable(this.oBoundGroupElementOverlay), "then the field is no longer movable if there are no more target zones");
 	});
 
 	QUnit.module("Given a complex test view with oData Model and a MainForm bound to EntityType2,", {
@@ -262,10 +272,10 @@ sap.ui.require([
 		assert.ok(this.oElementMover.checkTargetZone(this.oFormAggrOverlay), "then the form is a possible target zone");
 	});
 
-	QUnit.module("Given verticalLayout with Buttons (first szenario) without relevantContainer propagation", {
+	QUnit.module("Given verticalLayout with Buttons (first scenario) without relevantContainer propagation", {
 		beforeEach : function(assert) {
 
-			// first szenario
+			// first scenario
 			// VerticalLayout
 			//    MovedButton1
 			//    Button2
@@ -324,6 +334,7 @@ sap.ui.require([
 			this.oLayoutAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
+			this.oButton2.destroy();
 			sandbox.restore();
 		}
 	});
@@ -340,10 +351,15 @@ sap.ui.require([
 		assert.notOk(this.oElementMover.checkTargetZone(this.oLayoutAggregationOverlay), "then the layout is not a possible target zone");
 	});
 
-	QUnit.module("Given verticalLayout with Button and another verticalLayout inside (second szenario) without relevantContainer propagation", {
+	QUnit.test("when Button2 is removed, leaving movedButton as the only element left in the Layout...", function(assert){
+		this.oLayout.removeContent(this.oButton2);
+		assert.notOk(this.oElementMover.checkMovable(this.oMovedButton1Overlay), "then the movedButton is no longer movable");
+	});
+
+	QUnit.module("Given verticalLayout with Button and another verticalLayout inside (second scenario) without relevantContainer propagation", {
 		beforeEach : function(assert) {
 
-			// second szenario
+			// second scenario
 			// VerticalLayout (outerLayout)
 			//    MovedButton1
 			//    VerticalLayout (innerLayout)
@@ -417,10 +433,10 @@ sap.ui.require([
 		assert.notOk(this.oElementMover.checkTargetZone(this.oInnerLayoutAggregationOverlay), "then the innerLayout is not a possible target zone");
 	});
 
-	QUnit.module("Given smartForm, Groups and GroupElements (third szenario) with relevantContainer propagation", {
+	QUnit.module("Given smartForm, Groups and GroupElements (third scenario) with relevantContainer propagation", {
 		beforeEach : function(assert) {
 
-			// third szenario
+			// third scenario
 			// SmartForm
 			//    Group1
 			//       MovedGroupElement1
@@ -507,6 +523,7 @@ sap.ui.require([
 			this.oGroupAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
 			this.oSmartForm1.destroy();
+			this.oGroup2.destroy();
 			sandbox.restore();
 		}
 	});
@@ -516,10 +533,15 @@ sap.ui.require([
 		assert.ok(this.oElementMover.checkTargetZone(this.oGroupAggregationOverlay), "then the group2 is a possible target zone");
 	});
 
-	QUnit.module("Given Bar with Buttons (fourth szenario) without relevantContainer propagation", {
+	QUnit.test("when Group 2 is removed and movedGroupElement1 does not have any valid target zones anymore...", function(assert) {
+		this.oSmartForm1.removeGroup(this.oGroup2);
+		assert.notOk(this.oElementMover.checkMovable(this.oMovedGroupElement1Overlay), "then the movedGroupElement1 is no longer movable");
+	});
+
+	QUnit.module("Given Bar with Buttons (fourth scenario) without relevantContainer propagation", {
 		beforeEach : function(assert) {
 
-			// fourth szenario
+			// fourth scenario
 			// Bar
 			//    Aggregation1 (contentLeft)
 			//        MovedButton1
@@ -602,4 +624,5 @@ sap.ui.require([
 		this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 		assert.notOk(this.oElementMover.checkTargetZone(this.oBarMiddleAggregationOverlay), "then the right bar aggregation is not a possible target zone");
 	});
+
 });

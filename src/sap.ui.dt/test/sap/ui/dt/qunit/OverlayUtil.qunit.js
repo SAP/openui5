@@ -282,7 +282,7 @@ function(
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			//	VBox
+			//	VBox0
 			//		Layout0
 			//			Section0
 			//				SubSection0
@@ -332,11 +332,11 @@ function(
 			this.oSection1 = new ObjectPageSection("section1", {
 				subSections: [this.oSubSection1, this.oSubSection2]
 			});
-			this.oLayout = new ObjectPageLayout("layout0", {
+			this.oLayout0 = new ObjectPageLayout("layout0", {
 				sections : [this.oSection0, this.oSection1]
 			});
 			this.oVBox0 = new VBox("VBox", {
-				items : [this.oLayout]
+				items : [this.oLayout0]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -348,7 +348,7 @@ function(
 				this.oVBoxOverlay0 = OverlayRegistry.getOverlay(this.oVBox0);
 				this.oVBoxOverlay1 = OverlayRegistry.getOverlay(this.oVBox1);
 				this.oVBoxOverlay2 = OverlayRegistry.getOverlay(this.oVBox2);
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+				this.oLayoutOverlay0 = OverlayRegistry.getOverlay(this.oLayout0);
 				this.oSectionOverlay0 = OverlayRegistry.getOverlay(this.oSection0);
 				this.oSectionOverlay1 = OverlayRegistry.getOverlay(this.oSection1);
 				this.oSubSectionOverlay0 = OverlayRegistry.getOverlay(this.oSubSection0);
@@ -380,7 +380,7 @@ function(
 	QUnit.test("when findAllOverlaysInContainer is called", function(assert) {
 		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oVBoxOverlay0).length, 2, "then it returns the correct overlays");
 
-		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay).length, 2, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay0).length, 2, "then it returns the correct overlays");
 
 		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oSectionOverlay0).length, 3, "then it returns the correct overlays");
 		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oSectionOverlay1).length, 3, "then it returns the correct overlays");
@@ -396,4 +396,37 @@ function(
 		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay8).length, 2, "then it returns the correct overlays");
 	});
 
+	QUnit.test("when findAllSiblingOverlaysInContainer is called", function(assert){
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oVBoxOverlay0, this.oVBoxOverlay0).length, 0, "then it returns no overlays");
+
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oLayoutOverlay0, this.oVBoxOverlay0).length, 1, "then it returns the correct overlays");
+
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oSectionOverlay0, this.oLayoutOverlay0).length, 2, "then it returns the correct overlays");
+
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oSubSectionOverlay0, this.oSectionOverlay0).length, 1, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oSubSectionOverlay1, this.oSectionOverlay1).length, 2, "then it returns the correct overlays");
+
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay0, this.oSubSectionOverlay0).length, 2, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay2, this.oSubSectionOverlay1).length, 2, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay4, this.oSectionOverlay1).length, 5, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay6, this.oSubSectionOverlay2).length, 2, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay8, this.oSubSectionOverlay1).length, 1, "then it returns the correct overlays");
+	});
+
+	QUnit.test("when findAllUniqueAggregationOverlaysInContainer is called", function(assert){
+		assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oVBoxOverlay0, this.oVBoxOverlay0).length, 0, "then it returns no overlays");
+
+		assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oLayoutOverlay0, this.oVBoxOverlay0).length, 1, "then it returns the correct overlays");
+
+		assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oSectionOverlay0, this.oLayoutOverlay0).length, 1, "then it returns the correct overlays");
+
+		assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oSubSectionOverlay0, this.oSectionOverlay0).length, 1, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oSubSectionOverlay1, this.oSectionOverlay1).length, 1, "then it returns the correct overlays");
+
+		assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay0, this.oSubSectionOverlay0).length, 1, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay2, this.oSubSectionOverlay1).length, 1, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay4, this.oSectionOverlay1).length, 2, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay6, this.oSubSectionOverlay2).length, 1, "then it returns the correct overlays");
+		assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay8, this.oSubSectionOverlay1).length, 1, "then it returns the correct overlays");
+	});
 });
