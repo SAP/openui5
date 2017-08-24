@@ -209,23 +209,52 @@
 	});
 
 	QUnit.test("setting displayOnly", function(assert) {
+		var oRating = new sap.m.RatingIndicator({});
+
+		oRating.placeAt("content");
+		sap.ui.getCore().applyChanges();
 
 		// initial assertion
-		assert.strictEqual(oRating1.$().hasClass("sapMRIDisplayOnly"), false, 'Initially the control does not have class "sapMRIDisplayOnly" on ' + oRating);
-		assert.strictEqual($RatingContainer.attr('aria-disabled'), "false", "aria-disabled does not exist on " + oRating);
+		assert.strictEqual(oRating.$().hasClass("sapMRIDisplayOnly"), false, 'Initially the control does not have class "sapMRIDisplayOnly" on ' + oRating);
+		assert.strictEqual(oRating.$().attr('aria-disabled'), "false", "aria-disabled is set to false on " + oRating);
+		assert.strictEqual(oRating.$().attr("tabindex"), "0", "The control is in the tab chain");
 
 		// act
-		oRating1.setDisplayOnly(true);
+		oRating.setDisplayOnly(true);
 		sap.ui.getCore().applyChanges();
 
 		// assertion
-		assert.strictEqual(oRating1.$().hasClass("sapMRIDisplayOnly"), true, 'The control have class "sapMRIDisplayOnly" on ' + oRating);
-		assert.ok($RatingContainer.attr('aria-disabled'), "aria-disabled is set on " + oRating);
+		assert.strictEqual(oRating.$().hasClass("sapMRIDisplayOnly"), true, 'The control have class "sapMRIDisplayOnly" on ' + oRating);
+		assert.strictEqual(oRating.$().attr('aria-disabled'), "true", "aria-disabled is set to true on " + oRating);
+		assert.strictEqual(oRating.$().attr("tabindex"), "-1", "The control is not in the tab chain");
 
-		//set to default
-		oRating1.setDisplayOnly(false);
+		// clean
+		oRating.destroy();
 	});
 
+	QUnit.test("setting enabled", function(assert) {
+		var oRating = new sap.m.RatingIndicator({});
+
+		oRating.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// initial assertion
+		assert.strictEqual(oRating.$().hasClass("sapMRIDisabled"), false, 'Initially the control does not have class "sapMRIDisabled" on ' + oRating);
+		assert.strictEqual(oRating.$().attr('aria-disabled'), "false", "aria-disabled is set to false on " + oRating);
+		assert.strictEqual(oRating.$().attr("tabindex"), "0", "The control is in the tab chain");
+
+		// act
+		oRating.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		// assertion
+		assert.strictEqual(oRating.$().hasClass("sapMRIDisabled"), true, 'The control have class "sapMRIDisabled" on ' + oRating);
+		assert.strictEqual(oRating.$().attr('aria-disabled'), "true", "aria-disabled is set to true on " + oRating);
+		assert.strictEqual(oRating.$().attr("tabindex"), "-1", "The control is not in the tab chain");
+
+		// clean
+		oRating.destroy();
+	});
 
 	QUnit.module("Methods");
 
