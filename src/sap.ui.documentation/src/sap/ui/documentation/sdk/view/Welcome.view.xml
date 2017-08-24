@@ -360,7 +360,7 @@
 								size="2.5rem"
 								color="Default"/>
 						<custom:TitleLink
-								href="https://www.sap.com/community/tag.html?id=sapui5"
+								href="https://www.sap.com/community/topic/ui5.html?"
 								target="_blank"
 								text="SAP Community"
 								titleStyle="H2"
