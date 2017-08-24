@@ -76,7 +76,7 @@ sap.ui.require([
 	 */
 	function createSalesOrdersModel(mModelParameters) {
 		return createModel(
-			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/",
+			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			mModelParameters);
 	}
 
@@ -135,7 +135,7 @@ sap.ui.require([
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
-				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/$metadata"
+				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);

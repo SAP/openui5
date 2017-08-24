@@ -158,7 +158,7 @@ sap.ui.require([
 				"contains(Supplier/Name,'SAP')",
 				"foo(bar,baz)", // see that the actual names do not matter
 				"name.space.foo(bar,baz)",
-				"(BuyerName eq 'SAP' and GrossAmount le 12345) and (GrossAmount ge 1000)",
+				"(SO_2_BP/CompanyName eq 'SAP' and GrossAmount le 12345) and (GrossAmount ge 1000)",
 				"((p1 eq 'v1') or (p2 eq 'v2' and contains( p3 , 'v3' ))) and p4 eq 'v4'",
 				"$root/Me",
 				"$root/Foo(key='va''lue')/bar",

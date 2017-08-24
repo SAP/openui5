@@ -13,10 +13,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1001",
-				"ProductName" : "modified by QUnit test"
-			},
+			"ProductID" : "HT-1001",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1001",
 				"TypeCode" : "PR",
