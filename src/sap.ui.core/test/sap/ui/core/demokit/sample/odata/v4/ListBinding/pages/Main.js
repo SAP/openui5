@@ -36,7 +36,7 @@ function (Helper, Opa5, Properties) {
 						success : function (oEmployeeEquipments) {
 							var oRow = oEmployeeEquipments.getItems()[iRow];
 							Opa5.assert.strictEqual(
-									oRow.getCells()[1].getValue(),
+									oRow.getCells()[2].getValue(),
 									sEquipmentName,
 									"Equipment name of row " + iRow + " as expected \""
 									+ sEquipmentName + "\"");
@@ -55,6 +55,23 @@ function (Helper, Opa5, Properties) {
 								sEmployeeName,
 								"Name of row " + iRow + " as expected \""
 									+ sEmployeeName + "\"");
+						},
+						viewName : sViewName
+					});
+				},
+				checkProductImageInRow : function (iRow, sUrl) {
+					var that = this;
+					return that.waitFor({
+						controlType : "sap.m.Table",
+						id : "EmployeeEquipments",
+						success : function (oEmployeeEquipments) {
+							var oRow = oEmployeeEquipments.getItems()[iRow],
+								oImage = oRow.getCells()[1];
+							Opa5.assert.strictEqual(
+								oImage.getSrc(),
+								oImage.getBinding("src").getModel().sServiceUrl + sUrl,
+								"URL of equipment image in row " + iRow + " as expected \""
+								+ sUrl + "\"");
 						},
 						viewName : sViewName
 					});

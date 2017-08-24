@@ -497,7 +497,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown", function (assert) {
-		var oCache = new _Cache(this.oRequestor),
+		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType),
 			oData = [{
 				foo : {
 					bar : 42,
@@ -572,6 +572,51 @@ sap.ui.require([
 
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/bar/toString"), undefined,
 			"0/foo/bar/toString");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_SingleCache#drillDown: stream property", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType),
+			oData = {productPicture : {}};
+
+		this.mock(oCache).expects("fnFetchType")
+			.withExactArgs("Products('42')/productPicture/picture", true)
+			.returns(_SyncPromise.resolve("Edm.Stream"));
+
+		// code under test
+		assert.strictEqual(oCache.drillDown(oData, "productPicture/picture"),
+			"/~/Products('42')/productPicture/picture");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_CollectionCache#drillDown: stream property", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products", defaultFetchType),
+			oData = [{productPicture : {}}];
+
+		oData.$byPredicate = {"('42')": oData[0]};
+
+		this.mock(oCache).expects("fnFetchType")
+			.withExactArgs("Products('42')/productPicture/picture", true)
+			.returns(_SyncPromise.resolve("Edm.Stream"));
+
+		// code under test
+		assert.strictEqual(oCache.drillDown(oData, "('42')/productPicture/picture"),
+			"/~/Products('42')/productPicture/picture");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: stream property, missing parent", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType);
+
+		this.mock(oCache).expects("fnFetchType")
+			.withExactArgs("Products('42')/productPicture", true)
+			.returns(_SyncPromise.resolve("some.ComplexType"));
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into productPicture/picture, invalid segment: productPicture",
+			oCache.toString(), "sap.ui.model.odata.v4.lib._Cache");
+
+		// code under test
+		assert.strictEqual(oCache.drillDown({}, "productPicture/picture"), undefined);
 	});
 
 	//*********************************************************************************************
