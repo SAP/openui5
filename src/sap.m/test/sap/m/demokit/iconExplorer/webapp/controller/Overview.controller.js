@@ -722,8 +722,7 @@ sap.ui.define([
 		_tagSelectionFactory: function (sId, oContext) {
 			if (oContext.getProperty("name") === "") {
 				return new Label(sId, {
-					text: "{i18n>overviewTagSelectionLabel}",
-					tooltip: "{i18n>overviewSelectTagsTooltip}"
+					text: "{i18n>overviewTagSelectionLabel}"
 				});
 			} else {
 				return new ToggleButton(sId, {

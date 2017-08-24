@@ -299,13 +299,27 @@ sap.ui.define([
 						id: "categorySelection",
 						viewName: sViewName,
 						actions: [
-							new EnterText({text: sName})
+							// press on the combo box to open the list of options
+							new Press()
 						],
+						success: function(oComboBox) {
+							// press on the item with the key specified by the parameter
+							return this.waitFor({
+								controlType: "sap.ui.core.Item",
+								matchers: new Ancestor(oComboBox),
+								success: function(aItems) {
+									aItems.some(function (oItem) {
+										if (oItem.getText() === sName) {
+											new Press().executeOn(oItem);
+											return true;
+										}
+									});
+								}
+							});
+						},
 						errorMessage: "Failed to find the category selection in overview view.'"
 					});
-
 				}
-
 			}),
 
 			assertions: jQuery.extend({
