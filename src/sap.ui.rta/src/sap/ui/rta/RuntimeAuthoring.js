@@ -1625,8 +1625,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	RuntimeAuthoring.prototype._handleVariantDuplicate = function() {
-		this.getPlugins()["controlVariant"].duplicateVariant();
+	RuntimeAuthoring.prototype._handleVariantDuplicate = function(aOverlays) {
+		this.getPlugins()["controlVariant"].duplicateVariant(aOverlays[0]);
 	};
 
 	/**

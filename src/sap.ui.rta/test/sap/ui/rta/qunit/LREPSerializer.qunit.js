@@ -270,6 +270,7 @@ sap.ui.require([
 						fileName: "idOfVariantManagementReference",
 						title: "Standard",
 						fileType: "variant",
+						reference: "dummyReference",
 						variantManagementReference: "idOfVariantManagementReference"
 					}
 				};

@@ -177,7 +177,7 @@ sap.ui.define([], function() {
 
 			if (oChange.fileType === "change") {
 				sChangeKey = this.createChangeKey(sId);
-			} else if (oChange.fileType === "variant") {
+			} else if (oChange.fileType === "ctrl_variant") {
 				sChangeKey = this.createVariantKey(sId);
 			}
 			sChange = JSON.stringify(oChange);

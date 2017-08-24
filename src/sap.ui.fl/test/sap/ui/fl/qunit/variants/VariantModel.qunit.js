@@ -95,6 +95,53 @@ sap.ui.require([
 		assert.ok(this.oApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
 	});
 
+	QUnit.test("when calling '_addVariant'", function(assert) {
+		var oAddVariantToControllerStub = sandbox.stub(this.oModel.oVariantController, "addVariantToVariantManagement").returns(3);
+		var oVariantData = {
+			"content": {
+				"fileName":"variant0",
+					"title":"variant A",
+					"fileType":"ctrl_variant",
+					"variantManagementReference":"variantMgmtId1",
+					"variantReference":"",
+					"reference":"Dummy.Component",
+					"packageName":"$TMP",
+					"content":{},
+				"selector":{},
+				"layer":"CUSTOMER",
+					"texts":{
+					"TextDemo": {
+						"value": "Text for TextDemo",
+							"type": "myTextType"
+					}
+				},
+				"namespace":"Dummy.Component",
+					"creation":"",
+					"originalLanguage":"EN",
+					"conditions":{},
+				"support":{
+					"generator":"Change.createInitialFileContent",
+						"service":"",
+						"user":""
+				}
+			},
+			"changes": []
+		};
+		this.oModel._addVariant(oVariantData, "variantMgmtId1");
+		assert.ok(oAddVariantToControllerStub.calledOnce, "then unction to add variant to VariantController called");
+		assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.content.fileName, "then variant added to VariantModel");
+	});
+
+	QUnit.test("when calling '_removeVariant'", function(assert) {
+		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "deleteChange");
+		var oRemoveVariantToControllerStub = sandbox.stub(this.oModel.oVariantController, "removeVariantFromVariantManagement").returns(2);
+		assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 3, "then initial length is 3");
+		this.oModel._removeVariant({}, "variantMgmtId1");
+		assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 2, "then one variant removed from VariantModel");
+		assert.ok(oRemoveVariantToControllerStub.calledOnce, "then function to remove variant from VariantController called");
+	});
+
+
 	QUnit.module("Given an instance of FakeLrepConnector with no Variants in the LREP response", {
 		beforeEach : function(assert) {
 			this.oData = {};

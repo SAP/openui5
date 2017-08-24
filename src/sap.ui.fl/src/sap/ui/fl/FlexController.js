@@ -191,7 +191,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.createVariant = function (oVariantSpecificData, oAppComponent) {
-		var oVariantFileContent, oVariantSpecificData, oVariant;
+		var oVariant;
 
 		var aCurrentDesignTimeContext = ContextManager._getContextIdsFromUrl();
 
@@ -227,8 +227,9 @@ sap.ui.define([
 
 		oVariantSpecificData.validAppVersions = oValidAppVersions;
 
-		oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
-		oVariant = new Variant(oVariantFileContent);
+		oVariantSpecificData.content = Variant.createInitialFileContent(oVariantSpecificData.content);
+
+		oVariant = new Variant(oVariantSpecificData);
 
 		return oVariant;
 	};
@@ -264,8 +265,8 @@ sap.ui.define([
 		if (oChange.getVariantReference()) {
 			var oModel = oAppComponent.getModel("$FlexVariants");
 			if (!oModel.bStandardVariantExists) {
-				var oVariantContent = oModel.getVariant(oChange.getVariantReference()).content;
-				var oVariant = this.createVariant(oVariantContent, oAppComponent);
+				var oVariantData = oModel.getVariant(oChange.getVariantReference());
+				var oVariant = this.createVariant(oVariantData, oAppComponent);
 				oModel.bStandardVariantExists = true;
 				this._oChangePersistence.addChange(oVariant, oAppComponent);
 			}
@@ -289,10 +290,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
 	 */
-	FlexController.prototype.deleteChange = function (oChange) {
+	FlexController.prototype.deleteChange = function (oChange, oAppComponent) {
 		this._oChangePersistence.deleteChange(oChange);
 		if (oChange.getVariantReference()) {
-			Utils.getAppComponentForControl(oChange.getComponent()).getModel("$FlexVariants")._removeChange(oChange);
+			oAppComponent.getModel("$FlexVariants")._removeChange(oChange);
 		}
 	};
 

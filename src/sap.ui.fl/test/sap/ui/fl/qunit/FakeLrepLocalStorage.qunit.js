@@ -17,7 +17,7 @@ sap.ui.require(["sap/ui/fl/FakeLrepLocalStorage"], function(FakeLrepLocalStorage
 
 	oTestData.oChange2 = {"fileName":"id_1445517849455_16","fileType":"change","changeType":"addField","component":"sap.ui.fl.test.Demo.Component","packageName":"$TMP","content":{"field":{"value":"SalesOrderId","valueProperty":"value","id":"FLDemoApp---detail--GroupDates_SalesOrder_SalesOrderId","jsType":"sap.ui.comp.smartfield.SmartField","index":4}},"selector":{"id":"FLDemoApp---detail--GroupDates"},"layer":"CUSTOMER","texts":{"fieldLabel":{"value":"Sales Order ID","type":"XFLD"}},"namespace":"sap.ui.fl.test.Demo.Component","creation":"","originalLanguage":"DE","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}};
 
-	oTestData.oVariant1 = {"fileName":"id_1445501120486_27", "fileType": "variant"};
+	oTestData.oVariant1 = {"fileName":"id_1445501120486_27", "fileType": "ctrl_variant"};
 
 	oTestData.sChangeId1 = oTestData.oChange1.fileName;
 	oTestData.sChangeId2 = oTestData.oChange2.fileName;

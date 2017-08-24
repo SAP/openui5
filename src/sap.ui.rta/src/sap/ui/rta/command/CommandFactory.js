@@ -128,6 +128,9 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		"switch" : {
 			clazz : 'sap.ui.rta.command.ControlVariantSwitch'
 		},
+		"duplicate" : {
+			clazz : 'sap.ui.rta.command.ControlVariantDuplicate'
+		},
 		"settings" : {
 			clazz : 'sap.ui.rta.command.Settings'
 		},

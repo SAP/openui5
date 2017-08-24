@@ -78,8 +78,9 @@
 					"content": {
 						"fileName":"variant0",
 						"title":"variant A",
-						"fileType":"variant",
+						"fileType":"ctrl_variant",
 						"variantManagementReference": "idMain1--variantManagementOrdersTable",
+						"variantReference":"",
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
@@ -151,8 +152,9 @@
 					"content": {
 						"fileName":"idMain1--variantManagementOrdersTable",
 						"title":"Standard",
-						"fileType":"variant",
+						"fileType":"ctrl_variant",
 						"variantManagementReference":"idMain1--variantManagementOrdersTable",
+						"variantReference":"",
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
@@ -224,8 +226,9 @@
 					"content": {
 						"fileName":"variant2",
 						"title":"variant AA",
-						"fileType":"variant",
+						"fileType":"ctrl_variant",
 						"variantManagementReference":"idMain1--variantManagementOrdersTable",
+						"variantReference":"",
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},

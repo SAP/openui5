@@ -17,16 +17,16 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Flexibility change class. Stores change content and related information.
+	 * Flexibility variant class. Stores variant content, changes and related information.
 	 *
-	 * @param {object} oFile - file content and admin data
+	 * @param {object} oFile - variant's content, changes and admin data
 	 *
 	 * @class Variant class.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.fl.Variant
-	 * @experimental Since 1.25.0
+	 * @experimental Since 1.52.0
 	 */
 	var Variant = ManagedObject.extend("sap.ui.fl.Variant", /** @lends sap.ui.fl.Variant.prototype */
 	{
@@ -72,7 +72,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Validates if the new state of change has a valid value
+	 * Validates if the new state of variant has a valid value
 	 * The new state value has to be in the <code>Variant.states<code> list
 	 * Moving of state directly from <code>Variant.states.NEW<code> to <code>Variant.states.DIRTY<code> is not allowed.
 	 * @param {string} sState - value of target state
@@ -99,7 +99,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns if the change protocol is valid
+	 * Returns if the variant protocol is valid
 	 * @returns {boolean} Variant is valid (mandatory fields are filled, etc)
 	 *
 	 * @public
@@ -110,25 +110,22 @@ sap.ui.define([
 		if (typeof (this._oDefinition) !== "object") {
 			bIsValid = false;
 		}
-		if (!this._oDefinition.fileType || this._oDefinition.fileType !== "variant") {
+		if (!this._oDefinition.content.fileType || this._oDefinition.content.fileType !== "ctrl_variant") {
 			bIsValid = false;
 		}
-		if (!this._oDefinition.fileName) {
+		if (!this._oDefinition.content.fileName) {
 			bIsValid = false;
 		}
-		if (!this._oDefinition.title) {
+		if (!this._oDefinition.content.title) {
 			bIsValid = false;
 		}
-		if (!this._oDefinition.variantManagementReference) {
+		if (!this._oDefinition.content.variantManagementReference) {
 			bIsValid = false;
 		}
-//		if (!this._oDefinition.changeType) {
-//			bIsValid = false;
-//		}
-		if (!this._oDefinition.layer) {
+		if (!this._oDefinition.content.layer) {
 			bIsValid = false;
 		}
-		if (!this._oDefinition.originalLanguage) {
+		if (!this._oDefinition.content.originalLanguage) {
 			bIsValid = false;
 		}
 
@@ -136,8 +133,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns if the change is of type variant
-	 * @returns {boolean} fileType of the change document is a variant
+	 * Returns if the variant is of type variant
+	 * @returns {boolean} fileType of the ctrl_variant document is a variant
 	 *
 	 * @public
 	 */
@@ -153,21 +150,19 @@ sap.ui.define([
 	 */
 	Variant.prototype.getTitle = function () {
 		if (this._oDefinition) {
-			return this._oDefinition.title;
+			return this._oDefinition.content.title;
 		}
 	};
 
 	/**
-	 * Returns the change type
+	 * Returns variant changes
 	 *
-	 * @returns {String} Changetype of the file, for example LabelChange
+	 * @returns {array} Array of changes belonging to Variant
 	 * @public
 	 */
-//	Variant.prototype.getChangeType = function () {
-//		if (this._oDefinition) {
-//			return this._oDefinition.changeType;
-//		}
-//	};
+	Variant.prototype.getChanges = function () {
+		return this._oDefinition.changes;
+	};
 
 	/**
 	 * Returns the original language in ISO 639-1 format
@@ -177,64 +172,47 @@ sap.ui.define([
 	 * @public
 	 */
 	Variant.prototype.getOriginalLanguage = function () {
-		if (this._oDefinition && this._oDefinition.originalLanguage) {
-			return this._oDefinition.originalLanguage;
+		if (this._oDefinition && this._oDefinition.content.originalLanguage) {
+			return this._oDefinition.content.originalLanguage;
 		}
 		return "";
 	};
 
 	/**
-	 * Returns the context in which the change should be applied
-	 *
-	 * @returns {Object[]} context - List of objects determine the context
-	 * @returns {string} selector  - names the key of the context
-	 * @returns {string} operator - instruction how the values should be compared
-	 * @returns {Object} value - values given to the comparison
-	 *
-	 * @public
-	 */
-//	Variant.prototype.getContext = function () {
-//		if (this._oDefinition && this._oDefinition.context) {
-//			return this._oDefinition.context;
-//		}
-//		return "";
-//	};
-
-	/**
 	 * Returns the abap package name
-	 * @returns {string} ABAP package where the change is assigned to
+	 * @returns {string} ABAP package where the variant is assigned to
 	 *
 	 * @public
 	 */
 	Variant.prototype.getPackage = function () {
-		return this._oDefinition.packageName;
+		return this._oDefinition.content.packageName;
 	};
 
 	/**
-	 * Returns the namespace. The changes' namespace is
+	 * Returns the namespace. The variants' namespace is
 	 * also the namespace of the change file in the repository.
 	 *
-	 * @returns {String} Namespace of the change document
+	 * @returns {String} Namespace of the variants document
 	 *
 	 * @public
 	 */
 	Variant.prototype.getNamespace = function () {
-		return this._oDefinition.namespace;
+		return this._oDefinition.content.namespace;
 	};
 
 	/**
-	 * Returns the id of the change
-	 * @returns {string} Id of the change document
+	 * Returns the id of the variant
+	 * @returns {string} Id of the variant document
 	 *
 	 * @public
 	 */
 	Variant.prototype.getId = function () {
-		return this._oDefinition.fileName;
+		return this._oDefinition.content.fileName;
 	};
 
 	/**
-	 * Returns the content section of the change
-	 * @returns {string} Content of the change document. The content structure can be any JSON.
+	 * Returns the content section of the variant
+	 * @returns {string} Content of the variant document. The content structure can be any JSON.
 	 *
 	 * @public
 	 */
@@ -245,7 +223,7 @@ sap.ui.define([
 	/**
 	 * Sets the object of the content attribute
 	 *
-	 * @param {object} oContent The content of the change document. Can be any JSON object.
+	 * @param {object} oContent The content of the variant document. Can be any JSON object.
 	 *
 	 * @public
 	 */
@@ -255,26 +233,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the variant reference of the change
-	 * @returns {string} variant reference of the change.
+	 * Returns the variant management reference of the variant
+	 * @returns {string} variant management reference of the variant.
 	 *
 	 * @public
 	 */
 	Variant.prototype.getVariantManagementReference = function () {
-		return this._oDefinition.variantManagementReference;
+		return this._oDefinition.content.variantManagementReference;
 	};
 
 	/**
-	 * Sets the variant management reference of the change
-	 *
-	 * @param {object} sVariantManagementReference The variant management reference of the change.
+	 * Returns the variant reference of the variant
+	 * @returns {string} variant reference of the variant.
 	 *
 	 * @public
 	 */
-//	Variant.prototype.setVariantManagementReference = function (sVariantReference) {
-//		this._oDefinition.variantManagementReference = sVariantManagementReference;
-//		this.setState(Variant.states.DIRTY);
-//	};
+	Variant.prototype.getVariantReference = function () {
+		return this._oDefinition.content.variantReference;
+	};
 
 	/**
 	 * Returns the selector from the file content
@@ -293,7 +269,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Variant.prototype.getOwnerId = function () {
-		return this._oDefinition.support ? this._oDefinition.support.user : "";
+		return this._oDefinition.content.support ? this._oDefinition.content.support.user : "";
 	};
 
 	/**
@@ -309,9 +285,9 @@ sap.ui.define([
 		if (typeof (sTextId) !== "string") {
 			Utils.log.error("sap.ui.fl.Variant.getTexts : sTextId is not defined");
 		}
-		if (this._oDefinition.texts) {
-			if (this._oDefinition.texts[sTextId]) {
-				return this._oDefinition.texts[sTextId].value;
+		if (this._oDefinition.content.texts) {
+			if (this._oDefinition.content.texts[sTextId]) {
+				return this._oDefinition.content.texts[sTextId].value;
 			}
 		}
 		return "";
@@ -331,9 +307,9 @@ sap.ui.define([
 			Utils.log.error("sap.ui.fl.Variant.setTexts : sTextId is not defined");
 			return;
 		}
-		if (this._oDefinition.texts) {
-			if (this._oDefinition.texts[sTextId]) {
-				this._oDefinition.texts[sTextId].value = sNewText;
+		if (this._oDefinition.content.texts) {
+			if (this._oDefinition.content.texts[sTextId]) {
+				this._oDefinition.content.texts[sTextId].value = sNewText;
 				this.setState(Variant.states.DIRTY);
 			}
 		}
@@ -341,9 +317,9 @@ sap.ui.define([
 
 	/**
 	 * Returns true if the current layer is the same as the layer
-	 * in which the change was created or the change is from the
+	 * in which the variant was created or the variant is from the
 	 * end-user layer and for this user created.
-	 * @returns {boolean} is the change document read only
+	 * @returns {boolean} is the variant read only
 	 *
 	 * @public
 	 */
@@ -352,62 +328,48 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if the change is read-only
+	 * Checks if the variant is read-only
 	 * because the current user is not a key user and the change is "shared"
-	 * @returns {boolean} Flag whether change is read only
+	 * @returns {boolean} Flag whether variant is read only
 	 *
 	 * @private
 	 */
 	Variant.prototype._isReadOnlyWhenNotKeyUser = function () {
 		if (this.isUserDependent()) {
-			return false; // the user always can edit its own changes
+			return false; // the user always can edit its own variants
 		}
 
 		var sReference = this.getDefinition().reference;
 		if (!sReference) {
-			return true; // without a reference the right to edit or delete a change cannot be determined
+			return true; // without a reference the right to edit or delete a variant cannot be determined
 		}
 
 		var oSettings = Settings.getInstanceOrUndef();
 		if (!oSettings) {
-			return true; // without settings the right to edit or delete a change cannot be determined
+			return true; // without settings the right to edit or delete a variant cannot be determined
 		}
 
 		return !oSettings.isKeyUser(); // a key user can edit changes
 	};
 
 	/**
-	 * Returns true if the label is read only. The label might be read only because of the current layer or because the logon language differs from the original language of the change document.
-	 *
-	 * @returns {boolean} is the label read only
-	 *
-	 * @public
-	 */
-	Variant.prototype.isLabelReadOnly = function () {
-		if (this._isReadOnlyDueToLayer()) {
-			return true;
-		}
-		return this._isReadOnlyDueToOriginalLanguage();
-	};
-
-	/**
 	 * Checks if the layer allows modifying the file
-	 * @returns {boolean} Flag whether change is read only
+	 * @returns {boolean} Flag whether variant is read only
 	 *
 	 * @private
 	 */
 	Variant.prototype._isReadOnlyDueToLayer = function () {
 		var sCurrentLayer;
 		sCurrentLayer = Utils.getCurrentLayer(this._bUserDependent);
-		return (this._oDefinition.layer !== sCurrentLayer);
+		return (this._oDefinition.content.layer !== sCurrentLayer);
 	};
 
 	/**
-	 * A change can only be modified if the current language equals the original language.
-	 * Returns false if the current language does not equal the original language of the change file.
+	 * A variant can only be modified if the current language equals the original language.
+	 * Returns false if the current language does not equal the original language of the variant's change file.
 	 * Returns false if the original language is initial.
 	 *
-	 * @returns {boolean} flag whether the current logon language differs from the original language of the change document
+	 * @returns {boolean} flag whether the current logon language differs from the original language of the variant's change document
 	 *
 	 * @private
 	 */
@@ -424,7 +386,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Marks the current change to be deleted persistently
+	 * Marks the current variant to be deleted persistently
 	 *
 	 * @public
 	 */
@@ -457,23 +419,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the layer type for the change
-	 * @returns {string} The layer of the change document
+	 * Gets the layer type for the variant
+	 * @returns {string} The layer of the variant
 	 *
 	 * @public
 	 */
 	Variant.prototype.getLayer = function () {
-		return this._oDefinition.layer;
+		return this._oDefinition.content.layer;
 	};
 
 	/**
-	 * Gets the component for the change
-	 * @returns {string} The SAPUI5 component this change is assigned to
+	 * Gets the component for the variant
+	 * @returns {string} The SAPUI5 component this variant is assigned to
 	 *
 	 * @public
 	 */
 	Variant.prototype.getComponent = function () {
-		return this._oDefinition.reference;
+		return this._oDefinition.content.reference;
 	};
 
 	/**
@@ -484,11 +446,11 @@ sap.ui.define([
 	 * @public
 	 */
 	Variant.prototype.getCreation = function () {
-		return this._oDefinition.creation;
+		return this._oDefinition.content.creation;
 	};
 
 	/**
-	 * Returns true if the change is user dependent
+	 * Returns true if the variant is user dependent
 	 * @returns {boolean} Variant is only relevant for the current user
 	 *
 	 * @public
@@ -498,7 +460,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the pending action on the change item
+	 * Returns the pending action on the variant item
 	 * @returns {string} contains one of these values: DELETE/NEW/UPDATE/NONE
 	 *
 	 * @public
@@ -508,18 +470,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the JSON definition of the change
-	 * @returns {object} the content of the change document
+	 * Gets the JSON definition of the variant
+	 * @returns {object} the content of the variant
 	 *
 	 * @public
 	 */
 	Variant.prototype.getDefinition = function () {
-		return this._oDefinition;
+		return this._oDefinition.content;
 	};
 
 	/**
-	 * Set the response from the back end after saving the change
-	 * @param {object} oResponse the content of the change document
+	 * Set the response from the back end after saving the variant
+	 * @param {object} oResponse the content of the variant
 	 *
 	 * @public
 	 */
@@ -535,177 +497,20 @@ sap.ui.define([
 	Variant.prototype.getFullFileIdentifier = function () {
 		var sLayer = this.getLayer();
 		var sNamespace = this.getNamespace();
-		var sFileName = this.getDefinition().fileName;
-		var sFileType = this.getDefinition().fileType;
+		var sFileName = this.getDefinition().content.fileName;
+		var sFileType = this.getDefinition().content.fileType;
 
 		return sLayer + "/" + sNamespace + "/" + sFileName + "." + sFileType;
 	};
 
 	/**
-	 * Adds the selector to the dependent selector list.
-	 *
-	 * @param {(string|sap.ui.core.Control|string[]|sap.ui.core.Control[])} vControl - SAPUI5 control, or ID string,
-	 * or array of SAPUI5 controls, for which the selector shall be determined
-	 * @param {string} sAlias - Dependent object is saved under this alias
-	 * @param {object} mPropertyBag
-	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
-	 * @param {sap.ui.core.Component} [mPropertyBag.appComponent] - Application component; only needed if <code>vControl</code> is a string or an XML node
-	 * @param {object} [mAdditionalSelectorInformation] - Additional mapped data which is added to the selector
-	 *
-	 * @throws {Exception} oException - If sAlias already exists, an error is thrown
-	 * @public
-	 */
-	Variant.prototype.addDependentControl = function (vControl, sAlias, mPropertyBag, mAdditionalSelectorInformation) {
-		if (!vControl) {
-			throw new Error("Parameter vControl is mandatory");
-		}
-		if (!sAlias) {
-			throw new Error("Parameter sAlias is mandatory");
-		}
-		if (!mPropertyBag) {
-			throw new Error("Parameter mPropertyBag is mandatory");
-		}
-
-		if (!this._oDefinition.dependentSelector) {
-			this._oDefinition.dependentSelector = {};
-		}
-
-		if (this._oDefinition.dependentSelector[sAlias]) {
-			throw new Error("Alias '" + sAlias + "' already exists in the change.");
-		}
-
-		var oModifier = mPropertyBag.modifier;
-		var oAppComponent = mPropertyBag.appComponent;
-
-		if (Array.isArray(vControl)) {
-			var aSelector = [];
-			vControl.forEach(function (oControl) {
-				aSelector.push(oModifier.getSelector(oControl, oAppComponent, mAdditionalSelectorInformation));
-			});
-			this._oDefinition.dependentSelector[sAlias] = aSelector;
-		} else {
-			this._oDefinition.dependentSelector[sAlias] = oModifier.getSelector(vControl, oAppComponent, mAdditionalSelectorInformation);
-		}
-
-		//remove dependency list so that it will be created again in method getDependentIdList
-		delete this._aDependentIdList;
-	};
-
-	/**
-	 * Returns the control or array of controls saved under the passed alias.
-	 *
-	 * @param {string} sAlias - Used to retrieve the selectors that have been saved under this alias
-	 * @param {object} mPropertyBag
-	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
-	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component, needed to retrieve the control from the selector
-	 * @param {Node} mPropertyBag.view - only for xml processing: the xml node of the view
-	 *
-	 * @returns {array | object} dependent selector list in format selectorPropertyName:selectorPropertyValue or the selector saved under the alias
-	 *
-	 * @public
-	 */
-	Variant.prototype.getDependentControl = function (sAlias, mPropertyBag) {
-		var aDependentControls = [];
-		var oDependentSelector;
-		if (!sAlias) {
-			throw new Error("Parameter sAlias is mandatory");
-		}
-		if (!mPropertyBag) {
-			throw new Error("Parameter mPropertyBag is mandatory");
-		}
-
-		var oModifier = mPropertyBag.modifier;
-		var oAppComponent = mPropertyBag.appComponent;
-
-		if (!this._oDefinition.dependentSelector) {
-			return undefined;
-		}
-
-		oDependentSelector = this._oDefinition.dependentSelector[sAlias];
-		if (Array.isArray(oDependentSelector)) {
-			oDependentSelector.forEach(function (oSelector) {
-				aDependentControls.push(oModifier.bySelector(oSelector, oAppComponent, mPropertyBag.view));
-			});
-			return aDependentControls;
-		} else {
-			return oModifier.bySelector(oDependentSelector, oAppComponent, mPropertyBag.view);
-		}
-	};
-
-	/**
-	 * Returns all dependent global IDs, including the ID from the selector of the change.
-	 *
-	 * @param {sap.ui.core.Component} oAppComponent - Application component, needed to translate the local ID into a global ID
-	 *
-	 * @returns {array} dependent global ID list
-	 *
-	 * @public
-	 */
-	Variant.prototype.getDependentIdList = function (oAppComponent) {
-		var that = this;
-		var sId;
-		var aDependentSelectors = [this.getSelector()];
-		var aDependentIds = [];
-
-		if (!this._aDependentIdList) {
-			if (this._oDefinition.dependentSelector){
-				aDependentSelectors = Object.keys(this._oDefinition.dependentSelector).reduce(function(aDependentSelectors, sAlias){
-					return aDependentSelectors.concat(that._oDefinition.dependentSelector[sAlias]);
-				}, aDependentSelectors);
-			}
-
-			aDependentSelectors.forEach(function (oDependentSelector) {
-				sId = oDependentSelector.id;
-				if (oDependentSelector.idIsLocal) {
-					sId = oAppComponent.createId(oDependentSelector.id);
-				}
-				if (sId && aDependentIds.indexOf(sId) === -1) {
-					aDependentIds.push(sId);
-				}
-			});
-
-			this._aDependentIdList = aDependentIds;
-		}
-
-		return this._aDependentIdList;
-	};
-
-	/**
-	 * Returns list of IDs of controls which the change depends on, excluding the ID from the selector of the change.
-	 *
-	 * @param {sap.ui.core.Component} oAppComponent - Application component, needed to create a global ID from the local ID
-	 *
-	 * @returns {array} List of control IDs which the change depends on
-	 *
-	 * @public
-	 */
-	Variant.prototype.getDependentControlIdList = function (oAppComponent) {
-		var sId;
-		var aDependentIds = this.getDependentIdList().concat();
-
-		if (aDependentIds.length > 0) {
-			var oSelector = this.getSelector();
-			sId = oSelector.id;
-			if (oSelector.idIsLocal) {
-				sId = oAppComponent.createId(oSelector.id);
-			}
-			var iIndex = aDependentIds.indexOf(sId);
-			if (iIndex > -1) {
-				aDependentIds.splice(iIndex, 1);
-			}
-		}
-
-		return aDependentIds;
-	};
-
-	/**
-	 * Returns the change key
+	 * Returns the variant key
 	 *
 	 * @returns {String} Variant key of the file which is a unique concatenation of fileName, layer and namespace
 	 * @public
 	 */
 	Variant.prototype.getKey = function () {
-		return this._oDefinition.fileName + this._oDefinition.layer + this._oDefinition.namespace;
+		return this._oDefinition.content.fileName + this._oDefinition.content.layer + this._oDefinition.content.namespace;
 	};
 
 	/**
@@ -745,7 +550,7 @@ sap.ui.define([
 	 * @param {Object}  [oPropertyBag.texts] map object with all referenced texts within the file
 	 *                                      these texts will be connected to the translation process
 	 * @param {Object}  [oPropertyBag.content] content of the new change
-	 * @param {Boolean} [oPropertyBag.isVariant] variant?
+	 * @param {Boolean} [oPropertyBag.isVariant] ctrl_variant?
 	 * @param {String}  [oPropertyBag.packageName] ABAP package name
 	 * @param {Object}  [oPropertyBag.selector] name value pair of the attribute and value
 	 * @param {String}  [oPropertyBag.id] name/id of the file. if not set implicitly created
@@ -767,24 +572,26 @@ sap.ui.define([
 			oPropertyBag = {};
 		}
 
+		var sFileName = oPropertyBag.fileName || Utils.createDefaultFileName();
+		var sNamespace = oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "variants");
 		var oNewFile = {
-			fileName: oPropertyBag.fileName || Utils.createDefaultFileName(),
+			fileName: sFileName,
 			title: oPropertyBag.title || "",
-			fileType: (oPropertyBag.isVariant) ? "variant" : "change",
-//			changeType: oPropertyBag.changeType || "",
+			fileType: "ctrl_variant",
 			reference: oPropertyBag.reference || "",
 			variantManagementReference: oPropertyBag.variantManagementReference,
+			variantReference: oPropertyBag.variantReference || "",
 			packageName: oPropertyBag.packageName || "",
+			self: sNamespace + sFileName + "." + "ctrl_variant",
 			content: oPropertyBag.content || {},
 			// TODO: Is an empty selector allowed?
 			selector: oPropertyBag.selector || {},
 			layer: oPropertyBag.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
 			texts: oPropertyBag.texts || {},
-			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "changes"), //TODO: we need to think of a better way to create namespaces from Adaptation projects.
+			namespace: sNamespace, //TODO: we need to think of a better way to create namespaces from Adaptation projects.
 			creation: "",
 			originalLanguage: Utils.getCurrentLanguage(),
 			conditions: {},
-//			context: oPropertyBag.context || "",
 			support: {
 				generator: "Variant.createInitialFileContent",
 				service: oPropertyBag.service || "",

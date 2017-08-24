@@ -49,6 +49,9 @@ sap.ui.define([], function() {
 		actions: {
 			"switch": {
 				changeType: "controlVariantSwitch"
+			},
+			"duplicate": {
+				changeType: "duplicateControlVariant"
 			}
 		}
 	};

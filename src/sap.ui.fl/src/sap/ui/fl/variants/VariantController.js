@@ -5,8 +5,9 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Change"
-], function (jQuery, Utils, Change) {
+	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant"
+], function (jQuery, Utils, Change, Variant) {
 	"use strict";
 
 	/**
@@ -68,9 +69,9 @@ sap.ui.define([
 		var aVariants = [];
 
 		function compareVariants(variant1, variant2) {
-			if (variant1.title < variant2.title) {
+			if (variant1.content.title < variant2.content.title) {
 				return -1;
-			} else if (variant1.title > variant2.title) {
+			} else if (variant1.content.title > variant2.content.title) {
 				return 1;
 			} else {
 				return 0;
@@ -255,7 +256,7 @@ sap.ui.define([
 	};
 
 	VariantController.prototype.removeChangeFromVariant = function (oChange, sVariantManagementReference, sVariantReference) {
-		var aNewChanges = this.getVariantChanges(sVariantManagementReference , sVariantReference);
+		var aNewChanges = this.getVariantChanges(sVariantManagementReference, sVariantReference);
 
 		aNewChanges.forEach(function (oCurrentChangeContent, iIndex) {
 			var oCurrentChange = new Change(oCurrentChangeContent);
@@ -266,6 +267,25 @@ sap.ui.define([
 		});
 
 		return this.setVariantChanges(sVariantManagementReference, sVariantReference, aNewChanges);
+	};
+
+	VariantController.prototype.addVariantToVariantManagement = function (oVariantData, sVariantManagementReference) {
+		return this._mVariantManagement[sVariantManagementReference].variants.push(oVariantData) - 1; /*Return index of inserted variant*/
+	};
+
+	VariantController.prototype.removeVariantFromVariantManagement = function (oVariant, sVariantManagementReference) {
+		var iIndex;
+		var bFound = this._mVariantManagement[sVariantManagementReference].variants.some(function(oCurrentVariantContent, index) {
+			var oCurrentVariant = new Variant(oCurrentVariantContent);
+			if (oCurrentVariant.getKey() === oVariant.getKey()) {
+				iIndex = index;
+				return true;
+			}
+		});
+		if (bFound) {
+			this._mVariantManagement[sVariantManagementReference].variants.splice(iIndex, 1);
+		}
+		return iIndex;
 	};
 
 	return VariantController;
