@@ -1,6 +1,7 @@
 sap.ui.define([
+    "jquery.sap.storage",
 	"sap/ui/test/Opa5"
-], function(Opa5) {
+], function($, Opa5) {
 	"use strict";
 
 	function getFrameUrl (sHash, sUrlParameters) {
@@ -19,15 +20,19 @@ sap.ui.define([
 	return Opa5.extend("sap.ui.demo.iconexplorer.test.integration.pages.Common", {
 
 		iStartMyApp: function (oOptions) {
-            var sUrlParameters;
-            oOptions = oOptions || {};
+			// reset local storage key to have stable testing environment
+			var oStorage = $.sap.storage("local");
+			oStorage.put("ICON_EXPLORER_FAVORITES", undefined);
 
-            // Start the app with a minimal delay to make tests run fast but still async to discover basic timing issues
-            var iDelay = oOptions.delay || 10;
+			var sUrlParameters;
+			oOptions = oOptions || {};
 
-            sUrlParameters = "serverDelay=" + iDelay;
+			// Start the app with a minimal delay to make tests run fast but still async to discover basic timing issues
+			var iDelay = oOptions.delay || 10;
 
-            this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash, sUrlParameters));
+			sUrlParameters = "serverDelay=" + iDelay;
+
+			this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash, sUrlParameters));
 		},
 
 		iStartMyAppOnTheDetailsTab: function (oOptions) {

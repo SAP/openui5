@@ -45,25 +45,20 @@ sap.ui.define([
 					});
 				},
 
-				iShouldSeeMessageToast: function() {
+				iShouldSeeAMessageToast: function(sMsg) {
 					return this.waitFor({
 						//increase opa's polling because the message toast is only shown for a brief moment
 						pollingInterval: 100,
-						viewName: "App",
 						check: function() {
 							return !!Opa5.getJQuery()(".sapMMessageToast").length;
 						},
-						success: function(oView) {
-							Opa5.assert.ok(oView, "The message toast was displayed");
+						success: function() {
+							Opa5.assert.ok(true, sMsg + ": The message toast was displayed");
 						},
-						errorMessage: "The message toast was not displayed"
+						errorMessage:  sMsg + ": The message toast was not displayed"
 					});
 				}
-
 			}
-
 		}
-
 	});
-
 });

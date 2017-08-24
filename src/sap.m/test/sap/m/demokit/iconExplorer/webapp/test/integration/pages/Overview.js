@@ -99,7 +99,7 @@ sap.ui.define([
 
 				if (oItem) {
 					return this.waitFor({
-						controlType: "sap.m.ToggleButton",
+						controlType: "sap.m.RatingIndicator",
 						matchers: new Ancestor(oItem),
 						actions: oOptions.actions,
 						success: oOptions.success
@@ -160,7 +160,7 @@ sap.ui.define([
 				iMarkAnIconAsFavorite: function (sName) {
 					return this.waitFor(createWaitForTableItemFavoriteWithName({
 						name: sName,
-						actions: new Press()
+						actions: new Press({idSuffix: "selector"})
 					}));
 				},
 
@@ -409,7 +409,7 @@ sap.ui.define([
 						success: function(aControls) {
 							var oControl = aControls[0];
 
-							Opa5.assert.ok(oControl.getPressed(), "The item is a favorite");
+							Opa5.assert.ok(oControl.getValue(), "The item is a favorite");
 						}
 					}));
 				},
@@ -514,11 +514,7 @@ sap.ui.define([
 						errorMessage: "The tabular results do not show the no data text for search"
 					});
 				}
-
 			})
-
 		}
-
 	});
-
 });
