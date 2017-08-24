@@ -107,6 +107,7 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 */
 		BlockLayout.prototype.onAfterRendering = function () {
 			this._onParentResize();
+			this._notifySizeListeners();
 		};
 
 		/**
