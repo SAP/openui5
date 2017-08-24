@@ -75,16 +75,6 @@ sap.ui.require([
 			spyCoreStateChanged.assertCalled(assert);
 		});
 
-		QUnit.test("Analyze support rule", function (assert) {
-			var spyProgressUpdate = spyChannel(channelNames.ON_PROGRESS_UPDATE);
-
-			Main._analyzeSupportRule({
-				check: function () {}
-			});
-
-			spyProgressUpdate.assertCalled(assert);
-		});
-
 		QUnit.test("Element tree", function (assert) {
 			var assertIsDirectChild = function (id1, id2, et) {
 				var root = et.constructor === Array ? et[0] : et;
