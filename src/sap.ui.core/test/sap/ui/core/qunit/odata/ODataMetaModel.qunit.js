@@ -38,6 +38,7 @@ sap.ui.require([
 					sap:sortable="false" sap:required-in-filter ="true" \
 					sap:display-format="UpperCase" >\
 				</Property>\
+				<Property Name="WebAddress" Type="Edm.String" />\
 				<Property Name="AnyProperty" Type="Edm.String" sap:display-format="NonNegative" \
 					sap:field-control="UX_FC_READONLY" sap:filterable="false" sap:sortable="false" \
 					sap:updatable="false" />\
@@ -168,6 +169,9 @@ sap.ui.require([
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID">\
 		<Annotation Term="Org.OData.Core.V1.Computed" Bool="false"/>\
 		<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="AnyProperty"/>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/WebAddress">\
+		<Annotation Term="Org.OData.Core.V1.IsURL"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/AnyProperty">\
 		<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" Path="UX_FC_READONLY"/>\
@@ -1314,11 +1318,12 @@ sap.ui.require([
 					oBusinessPartner = oGWSampleBasic.entityType[0],
 					oBusinessPartnerId = oBusinessPartner.property[0],
 					oBusinessPartnerSet = oEntityContainer.entitySet[0],
+					oBusinessPartnerWebAddress = oBusinessPartner.property[1],
 					oContact = oGWSampleBasic.entityType[3],
 					oContactTel = oContact.property[4],
-					oAnyProperty = oBusinessPartner.property[1],
-					oNonFilterable = oBusinessPartner.property[2],
-					oYearMonthDay = oBusinessPartner.property[3],
+					oAnyProperty = oBusinessPartner.property[2],
+					oNonFilterable = oBusinessPartner.property[3],
+					oYearMonthDay = oBusinessPartner.property[4],
 					oCTAddress = oGWSampleBasic.complexType[0],
 					oCTAddressCity = oCTAddress.property[0],
 					oFunctionImport = oEntityContainer.functionImport[0],
@@ -1470,6 +1475,11 @@ sap.ui.require([
 						}
 					});
 					delete oBusinessPartner["com.sap.vocabularies.UI.v1.HeaderInfo"];
+
+					// DefaultValue="true"
+					assert.deepEqual(oBusinessPartnerWebAddress["Org.OData.Core.V1.IsURL"],
+						{"Bool" : "true"}, 'DefaultValue="true"');
+					delete oBusinessPartnerWebAddress["Org.OData.Core.V1.IsURL"];
 
 					if (i > 1) { // additional tests for 2nd annotations file
 						// schema
@@ -1788,7 +1798,7 @@ sap.ui.require([
 				delete oAnyProperty["sap:display-format"];
 				oValue = oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
 				if (i === 2) {
-					assert.deepEqual(oValue, {}, "sap:display-format=NonNegative");
+					assert.deepEqual(oValue, {"Bool" : "true"}, "sap:display-format=NonNegative");
 				} else {
 					assert.deepEqual(oValue, { "Bool" : (i === 0 ? "true" : "false") },
 						"sap:display-format=NonNegative");
