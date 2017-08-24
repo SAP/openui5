@@ -4,8 +4,6 @@
 	xmlns:f="sap.ui.layout.form">
 	<VBox>
 		<f:SimpleForm id="SimpleFormShipAddress"
-			minWidth="1024"
-			maxContainerCols="2"
 			editable="false"
 			layout="ResponsiveGridLayout"
 			title="{i18n>detailShippingAddressTitle}"
