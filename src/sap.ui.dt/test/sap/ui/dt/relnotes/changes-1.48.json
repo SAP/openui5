@@ -167,5 +167,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "c833ae3db0e201dbfc9eecd15af8958ac6ec7792",
+        "type": "FIX",
+        "text": " sap.ui.rta: Paste without cut doesn\u0027t cause an error anymore",
+        "references": []
+      }
+    ]
   }
 }

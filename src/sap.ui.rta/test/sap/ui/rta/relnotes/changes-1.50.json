@@ -42,6 +42,18 @@
         "type": "FIX",
         "text": "Remove test dependencies to sap.ui.comp",
         "references": []
+      },
+      {
+        "id": "7036e108a222e193a6fdce52857a41fedf29a8a3",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
+      },
+      {
+        "id": "4b1343dabb8322c5d7e83798db65a017861a1193",
+        "type": "FIX",
+        "text": " sap.ui.rta: support \"redo\" for OSX - CMD+SHIFT+Z",
+        "references": []
       }
     ]
   }

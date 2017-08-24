@@ -721,5 +721,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.19": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "d303ee8a436bc4558e74d4a17470cb885561f97b",
+        "type": "FIX",
+        "text": " Table: Correctly set the checked state of the SelectAll checkbox",
+        "references": []
+      },
+      {
+        "id": "28f80fef9cf35610c3abdbbfc2f9d77fd500c94a",
+        "type": "FIX",
+        "text": " Table: No more infinite re-renderings if zoomed in Chrome",
+        "references": []
+      },
+      {
+        "id": "cd0b5c9ff33842e50c640e8555694839e30c7f2c",
+        "type": "FIX",
+        "text": " Table: The column resizer bar stays underneath the scroll bar",
+        "references": []
+      }
+    ]
   }
 }

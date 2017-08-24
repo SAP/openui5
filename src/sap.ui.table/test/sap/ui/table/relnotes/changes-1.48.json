@@ -322,5 +322,40 @@
         "references": []
       }
     ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "b023aa2e3372eda27f54132bce2c9951d50304ea",
+        "type": "FIX",
+        "text": " Table: Correctly process focus events related to the edit mode",
+        "references": []
+      },
+      {
+        "id": "dc8126df3223ad2cc715d9461ba9da7a7cf6f09a",
+        "type": "FIX",
+        "text": " Table: Correctly set the checked state of the SelectAll checkbox",
+        "references": []
+      },
+      {
+        "id": "749841eee33caab55ec52a2c1c8eeb8ede200975",
+        "type": "FIX",
+        "text": " Table: No more infinite re-renderings if zoomed in Chrome",
+        "references": []
+      },
+      {
+        "id": "5096ea8495a37d04c40947804a65cea6036d61d5",
+        "type": "FIX",
+        "text": " Table: Text will be properly deselected in edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "79ebbc4c60c6dd633c4ffc756db02d169d1748cf",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      }
+    ]
   }
 }

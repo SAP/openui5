@@ -821,5 +821,52 @@
         "references": []
       }
     ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "cff3021e459f26e41d99ebef35adb5868b93b49f",
+        "type": "FEATURE",
+        "text": "[TEST] Opa: add test lib config support",
+        "references": []
+      },
+      {
+        "id": "69929d8e1db831fed08853a88618a5a707203a18",
+        "type": "FIX",
+        "text": " ODataListBinding: Improve client mode handling",
+        "references": []
+      },
+      {
+        "id": "e1d64e5d66df5ad7605bde3d01c6c59db686a4a1",
+        "type": "FIX",
+        "text": " V2ODataModel.qunit",
+        "references": []
+      },
+      {
+        "id": "3b4c09045bb81cefb2c9319f16c8b055a9c601be",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
+      },
+      {
+        "id": "79ebbc4c60c6dd633c4ffc756db02d169d1748cf",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      },
+      {
+        "id": "586acf428239e88d5ddb9e8862573e3e2dbe959e",
+        "type": "FIX",
+        "text": " core.Icon: simulate focus outline with negative offset for IE and Edge",
+        "references": []
+      },
+      {
+        "id": "8ddb28f6c647b3afa1631e850df06b4012b82599",
+        "type": "FIX",
+        "text": " core.ThemeCheck: Null handling of getComputedStyle in Firefox",
+        "references": []
+      }
+    ]
   }
 }
