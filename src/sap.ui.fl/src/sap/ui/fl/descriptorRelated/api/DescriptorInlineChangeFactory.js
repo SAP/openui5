@@ -209,7 +209,8 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @param {object} mParameters parameters of the change type
 	 * @param {string} mParameters.inboundId the id of the inbound to be changed
 	 * @param {object} mParameters.entityPropertyChange - the entity property change
-	 * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the inbound
+	 * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the inbound.
+	 *        If the propertyPath contains a parameter id with slash(es), each slash of the parameter id has to be escaped by exactly 2 backslashes.
 	 * @param {object} mParameters.entityPropertyChange.operation - the operation (INSERT, UPDATE, UPSERT, DELETE)
 	 * @param {object} mParameters.entityPropertyChange.propertyValue - the new property value
 	 * @param {object} [mTexts] texts for the inline change
@@ -266,7 +267,8 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @param {object} mParameters parameters of the change type
 	 * @param {string} mParameters.outboundId the id of the outbound to be changed
 	 * @param {object} mParameters.entityPropertyChange - the entity property change
-	 * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the outbound
+	 * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the outbound.
+	 *        If the propertyPath contains a parameter id with slash(es), each slash of the parameter id has to be escaped by exactly 2 backslashes.
 	 * @param {object} mParameters.entityPropertyChange.operation - the operation (INSERT, UPDATE, UPSERT, DELETE)
 	 * @param {object} mParameters.entityPropertyChange.propertyValue - the new property value
 	 *
