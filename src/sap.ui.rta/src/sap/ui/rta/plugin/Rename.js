@@ -411,11 +411,13 @@ sap.ui.define([
 				var oRenameCommand;
 				var oRenamedElement = this._oEditedOverlay.getElementInstance();
 				var oDesignTimeMetadata = this._oEditedOverlay.getDesignTimeMetadata();
+				var oRenameAction = this._getRenameAction(this._oEditedOverlay);
+				var sVariantManagementReference = this.getVariantManagementReference(this._oEditedOverlay, oRenameAction);
 
 				oRenameCommand = this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
 					renamedElement : oRenamedElement,
 					newValue : sText
-				}, oDesignTimeMetadata/*, this._oEditedOverlay.getVariantMangement()*/);
+				}, oDesignTimeMetadata, sVariantManagementReference);
 				this.fireElementModified({
 					"command" : oRenameCommand
 				});

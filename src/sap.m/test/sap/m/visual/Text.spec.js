@@ -2,9 +2,9 @@
 
 describe("sap.m.Text", function() {
 	"use strict";
-	var iconTabBar = sap.ui.getCore().byId("itb1");
 	// initial loading
 	// there is one invisible text with ID "text8". If it gets visible this will be seen in this screenshot
+
 	it("should load test page", function () {
 		expect(takeScreenshot()).toLookAs("0_initial");
 	});
@@ -26,14 +26,7 @@ describe("sap.m.Text", function() {
 		var txt3 = element(by.id('text3'));
 		expect(takeScreenshot(txt3)).toLookAs("3_fixed_width_in_em");
 	});
-	// align initial
-	it("should vizualize initial aligned text", function () {
-		var txt5e = element(by.id('text5e'));
-		//next line is to move the view in the window
-		txt5e.click();
-		expect(takeScreenshot(txt5e)).toLookAs("5e_align_initial");
-	});
-	iconTabBar.setSelectedKey("key2");
+
 	// fixed width in %
 	it("should vizualize text with fixed width in %", function () {
 		var txt3a = element(by.id('text3a'));
@@ -50,7 +43,6 @@ describe("sap.m.Text", function() {
 		expect(takeScreenshot(txt3b)).toLookAs("3b_fixed_width_in_px");
 	});
 
-	iconTabBar.setSelectedKey("key3");
 	// styled
 	it("should vizualize styled text", function () {
 		var txt4 = element(by.id('text4'));
@@ -66,7 +58,7 @@ describe("sap.m.Text", function() {
 		txt5.click();
 		expect(takeScreenshot(txt5)).toLookAs("5_align_right");
 	});
-	iconTabBar.setSelectedKey("key4");
+
 	// align left
 	it("should vizualize left aligned text", function () {
 		var txt5a = element(by.id('text5a'));
@@ -82,7 +74,7 @@ describe("sap.m.Text", function() {
 		txt5b.click();
 		expect(takeScreenshot(txt5b)).toLookAs("5b_align_end");
 	});
-	iconTabBar.setSelectedKey("key5");
+
 	// align begin
 	it("should vizualize begin aligned text", function () {
 		var txt5c = element(by.id('text5c'));
@@ -98,7 +90,7 @@ describe("sap.m.Text", function() {
 		txt5d.click();
 		expect(takeScreenshot(txt5d)).toLookAs("5d_align_center");
 	});
-	iconTabBar.setSelectedKey("key6");
+
 	// RTL (Right-to-left)
 	it("should vizualize text with RTL direction", function () {
 		var txt6 = element(by.id('text6'));
@@ -130,7 +122,7 @@ describe("sap.m.Text", function() {
 		txt7.click();
 		expect(takeScreenshot(txt7)).toLookAs("7_line_breaks");
 	});
-	iconTabBar.setSelectedKey("key7");
+
 	// max lines 3
 	it("should vizualize text in 3 lines", function () {
 		var txt9 = element(by.id('text9'));
@@ -145,5 +137,13 @@ describe("sap.m.Text", function() {
 		//next line is to move the view in the window
 		txt10.click();
 		expect(takeScreenshot(txt10)).toLookAs("10_RTL_max_lines");
+	});
+
+	// Text with rendered white spaces
+	it("should vizualize text with preserved white spaces and tabs", function () {
+		var txt12 = element(by.id('text12'));
+		//next line is to move the view in the window
+		txt12.click();
+		expect(takeScreenshot(txt12)).toLookAs("12_preserve_white_spaces_and_tabs");
 	});
 });

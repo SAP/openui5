@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Text
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device'],
-	function(jQuery, library, Control, Device) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
+	function(jQuery, library, Control) {
 	"use strict";
 
 	/**
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @class
 	 * The <code>Text</code> control can be used for embedding longer text paragraphs, that need text wrapping, into your app.
 	 * If the configured text value contains HTML code or script tags, those will be escaped.<br>
-	 * <b>Note: </b>Line breaks (\r\n, \n\r, \r, \n) will always be visualized except when the <code>wrapping</code> property is set to <code>false</code>.
+	 * <b>Note: </b>Line breaks (\r\n, \n\r, \r, \n) will always be visualized except when the <code>wrapping</code> property is set to <code>false</code>. In addition, tabs (\t) and spaces (" ") can be preserved by setting the <code>renderWhiteSpaces</code> property to <code>true</code>
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent
 	 *
@@ -68,7 +68,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * <b>Note:</b> In multi-line text the overflow will be hidden (ellipsis won't be shown).
 			 * @since 1.13.2
 			 */
-			maxLines : {type : "int", group : "Appearance", defaultValue : null}
+			maxLines : {type : "int", group : "Appearance", defaultValue : null},
+
+			/**
+			 * Specifies how whitespaces and tabs inside the control are handled. If true whitespaces will be preserved by the browser.
+			 * Depending on wrapping property text will either only wrap on line breaks or wrap when necessary, and on line breaks.
+			 *
+			 * <b>Note:</b> Special characters that can be used are : \t , \n and " " respectively Tab, New line and Space.
+			 * @since 1.51
+			 */
+			renderWhiteSpaces : {type : "boolean", group : "Appearance", defaultValue : false}
+
 		},
 		designTime: true
 	}});
@@ -84,7 +94,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @protected
 	 * @type {number}
 	 */
-	Text.prototype.normalLineHeight = Device.browser.webkit ? 1 : 1.2;
+	Text.prototype.normalLineHeight = 1.2;
 
 	/**
 	 * Determines per instance whether line height should be cached or not.

@@ -7,46 +7,49 @@ sap.ui.define([
 
 	QUnit.module("Favorite");
 
-    opaTest("Marking an icon as a favorite should display a message toast", function (Given, When, Then) {
-        // Arrangements
-        Given.iStartMyAppOnTheDetailsTab();
+	opaTest("Marking an icon as a favorite should display a message toast", function (Given, When, Then) {
+		// Arrangements
+		Given.iStartMyAppOnTheDetailsTab();
 
-        //Actions
-        When.onTheOverviewPage.iMarkAnIconAsFavorite("activate");
+		//Actions
+		When.onTheOverviewPage.iWaitUntilTheTableIsLoaded();
+		When.onTheOverviewPage.iMarkAnIconAsFavorite("activate");
 
-        // Assertions
-        Then.onTheAppPage.iShouldSeeMessageToast();
-    });
+		// Assertions
+		Then.onTheAppPage.iShouldSeeAMessageToast("Mark Favourite");
+	});
 
-    opaTest("A favorite icon should be found in the favorite tab", function (Given, When, Then) {
-        //Actions
-        When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");
+	opaTest("A favorite icon should be found in the favorite tab", function (Given, When, Then) {
+		//Actions
+		When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");
 
-        // Assertions
-        Then.onTheOverviewPage.theTableContainsTheIcon("activate");
-    });
+		// Assertions
+		Then.onTheOverviewPage.theTableContainsTheIcon("activate");
+	});
 
-    opaTest("The icon is marked as favorite on the details tab", function (Given, When, Then) {
-        //Actions
-        When.onTheOverviewPage.iPressOnTheTabWithTheKey("details");
+	opaTest("The icon is marked as favorite on the details tab", function (Given, When, Then) {
+		//Actions
+		When.onTheOverviewPage.iPressOnTheTabWithTheKey("details");
 
-        // Assertions
-        Then.onTheOverviewPage.theIconIsMarkedAsFavorite("activate");
-    });
+		// Assertions
+		Then.onTheOverviewPage.theIconIsMarkedAsFavorite("activate");
+	});
 
-    opaTest("Unmarking an icon as a favorite should display a message toast", function (Given, When, Then) {
-        //Actions
-        When.onTheOverviewPage.iMarkAnIconAsFavorite("activate");
+	opaTest("Unmarking an icon as a favorite should display a message toast", function (Given, When, Then) {
+		//Actions
+		When.onTheOverviewPage.iWaitUntilTheTableIsLoaded();
+		When.onTheOverviewPage.iMarkAnIconAsFavorite("activate");
 
-        // Assertions
-        Then.onTheAppPage.iShouldSeeMessageToast();
-    });
+		// Assertions
+		Then.onTheAppPage.iShouldSeeAMessageToast("Unmark Favourite");
+	});
 
-    opaTest("The icon that was unmarked should not be found in the favorite tab", function (Given, When, Then) {
-        //Actions
-        When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");
+	opaTest("The icon that was unmarked should not be found in the favorite tab", function (Given, When, Then) {
+		//Actions
+		When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");
 
-        // Assertions
-        Then.onTheOverviewPage.theTableDoesNotContainTheIcon("activate");
-    });
+		// Assertions
+		Then.onTheOverviewPage.theTableDoesNotContainTheIcon("activate").
+			and.iTeardownMyAppFrame();
+	});
 });

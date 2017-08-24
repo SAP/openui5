@@ -243,6 +243,9 @@ function(
 		delete oSource.index;
 		delete oTarget.index;
 
+		var oMoveAction = this._getMoveAction(oMovedOverlay);
+		var sVariantManagementReference = this.oBasePlugin.getVariantManagementReference(oMovedOverlay, oMoveAction, true);
+
 		var oMove = this.getCommandFactory().getCommandFor(oRelevantContainer, "Move", {
 			movedElements : [{
 				element : oMovedElement,
@@ -251,7 +254,7 @@ function(
 			}],
 			source : oSource,
 			target : oTarget
-		}, oParentAggregationOverlay.getDesignTimeMetadata());
+		}, oParentAggregationOverlay.getDesignTimeMetadata(), sVariantManagementReference);
 
 		return oMove;
 

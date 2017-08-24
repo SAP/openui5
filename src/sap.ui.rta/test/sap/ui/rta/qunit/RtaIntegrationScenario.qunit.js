@@ -12,6 +12,7 @@ sap.ui.require([
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/rta/qunit/RtaQunitUtils',
+	'sap/ui/Device',
 	// should be last
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -25,6 +26,7 @@ sap.ui.require([
 	OverlayRegistry,
 	CommandFactory,
 	RtaQunitUtils,
+	Device,
 	sinon) {
 	"use strict";
 
@@ -32,6 +34,8 @@ sap.ui.require([
 
 	var sandbox = sinon.sandbox.create();
 	var oCompCont = RtaQunitUtils.renderTestAppAt("test-view");
+
+	FakeLrepConnectorLocalStorage.enableFakeConnector();
 
 	QUnit.module("Given RTA is started...", {
 		beforeEach : function(assert) {
@@ -151,6 +155,9 @@ sap.ui.require([
 		beforeEach : function(assert) {
 			var done = assert.async();
 
+			this.bMacintoshOriginal = Device.os.macintosh;
+			Device.os.macintosh = false;
+
 			FakeLrepLocalStorage.deleteChanges();
 			assert.equal(FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
 
@@ -179,6 +186,7 @@ sap.ui.require([
 		afterEach : function(assert) {
 			sandbox.restore();
 			this.oRta.destroy();
+			Device.os.macintosh = this.bMacintoshOriginal;
 			FakeLrepLocalStorage.deleteChanges();
 		}
 	});

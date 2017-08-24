@@ -150,10 +150,13 @@ sap.ui.define([
 			aToCombineElements.push(oSelectedElement);
 		}
 
+		var oCombineAction = this._getCombineAction(oElementOverlay);
+		var sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oCombineAction);
+
 		var oCombineCommand = this.getCommandFactory().getCommandFor(oCombineElement, "combine", {
 			source : oCombineElement,
 			combineFields : aToCombineElements
-		}, oDesignTimeMetadata);
+		}, oDesignTimeMetadata, sVariantManagementReference);
 		this.fireElementModified({
 			"command" : oCombineCommand
 		});

@@ -10,24 +10,28 @@ sap.ui.define(['jquery.sap.global',
 		'sap/ui/dt/OverlayRegistry',
 		'sap/ui/dt/Overlay',
 		'sap/ui/fl/Utils',
-		'sap/ui/core/Component'
+		'sap/ui/core/Component',
+		'sap/ui/core/ComponentContainer',
+		'sap/ui/core/Element'
 	],
 	function (jQuery,
-	          ManagedObject,
-	          Dialog,
-	          Popover,
-	          InstanceManager,
-	          Popup,
-	          OverlayRegistry,
-	          Overlay,
-	          flUtils,
-	          Component
+			  ManagedObject,
+			  Dialog,
+			  Popover,
+			  InstanceManager,
+			  Popup,
+			  OverlayRegistry,
+			  Overlay,
+			  flUtils,
+			  Component,
+			  ComponentContainer,
+			  Element
 	) {
 		"use strict";
 
 		var FOCUS_EVENT_NAMES = {
-			"add": "_addFocusEventListeners",
-			"remove": "_removeFocusEventListeners"
+			"add": "_activateFocusHandle",
+			"remove": "_deactivateFocusHandle"
 		};
 
 		/**
@@ -131,7 +135,7 @@ sap.ui.define(['jquery.sap.global',
 			return jQuery.isArray(oPopup.getContent())
 				? oPopup.getContent().some(
 					function(oContent) {
-						if (oContent instanceof sap.ui.core.ComponentContainer) {
+						if (oContent instanceof ComponentContainer) {
 							return this.oRtaRootAppComponent === this._getAppComponentForControl(sap.ui.getCore().getComponent(oContent.getComponent()));
 						}
 					}.bind(this))
@@ -358,7 +362,7 @@ sap.ui.define(['jquery.sap.global',
 		PopupManager.prototype._getAppComponentForControl = function(oControl) {
 			var oComponent, oAppComponent;
 
-			if (oControl instanceof sap.ui.core.Component) {
+			if (oControl instanceof Component) {
 				oComponent = oControl;
 			} else {
 				oComponent = this._getComponentForControl(oControl);
@@ -378,22 +382,25 @@ sap.ui.define(['jquery.sap.global',
 		 * @private
 		 */
 		PopupManager.prototype._getComponentForControl = function(oControl) {
-			var oComponent;
-
+			var oComponent, oRootComponent, oParentControl;
 			if (oControl) {
 				oComponent = Component.getOwnerComponentFor(oControl);
-
 				if (
 					!oComponent
 					&& typeof oControl.getParent === "function"
-					&& !(oControl.getParent() instanceof sap.ui.core.UIArea)
+					&& oControl.getParent() instanceof Element
 				) {
-					oControl = oControl.getParent();
-					oComponent = this._getComponentForControl(oControl);
+					oParentControl = oControl.getParent();
+				} else if (oComponent) {
+					oParentControl = oComponent;
+				}
+
+				if (oParentControl) {
+					oRootComponent = this._getComponentForControl(oParentControl);
 				}
 			}
 
-			return oComponent;
+			return oRootComponent ? oRootComponent : oComponent;
 		};
 
 		/**
@@ -406,7 +413,7 @@ sap.ui.define(['jquery.sap.global',
 			if (!oEvent) {
 				return;
 			}
-			var oPopupElement = (oEvent instanceof sap.ui.core.Control) ? oEvent : oEvent.getSource();
+			var oPopupElement = (oEvent instanceof Element) ? oEvent : oEvent.getSource();
 
 			//when application is opened in a popup, rootElement should not be added more than once
 			if (
@@ -463,14 +470,6 @@ sap.ui.define(['jquery.sap.global',
 
 		PopupManager.prototype._isPopupAdaptable = function(oPopupElement) {
 			var oPopupAppComponent = this._getAppComponentForControl(oPopupElement);
-
-			if (oPopupAppComponent) {
-				var oPopupAppComponentForContainer;
-				do {
-					oPopupAppComponentForContainer = this._getAppComponentForControl(oPopupAppComponent.oContainer);
-					oPopupAppComponent = oPopupAppComponentForContainer ? oPopupAppComponentForContainer : oPopupAppComponent;
-				} while (oPopupAppComponentForContainer && oPopupAppComponent.oContainer instanceof sap.ui.core.ComponentContainer);
-			}
 
 			return (this.oRtaRootAppComponent === oPopupAppComponent || this._isComponentInsidePopup(oPopupElement))
 				&& this._isSupportedPopup(oPopupElement);

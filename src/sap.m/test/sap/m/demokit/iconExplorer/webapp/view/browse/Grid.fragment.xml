@@ -12,15 +12,13 @@
 			sorter: {
 				path: 'name',
 				descending: false
-			},
-			events: {
-				change: '.onUpdateFinished'
 			}
 		}"
 		noDataText="{view>/overviewNoDataText}"
 		growing="true"
 		growingScrollToLoad="true"
-		growingThreshold="{view>/growingThreshold}">
+		growingThreshold="{view>/growingThreshold}"
+		updateFinished="onUpdateFinished">
 
 		<CustomListItem class="wrappingListItem sapUiTinyMargin">
 			<l:VerticalLayout
@@ -28,13 +26,14 @@
 				class="sapThemeBaseBG-asBackgroundColor gridLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
 				<core:Icon size="2.5rem" src="sap-icon://{name}" color="Default"/>
 				<Label text="{name}" textAlign="center" class="sapUiTinyMarginTopBottom"/>
-				<ToggleButton
-					icon="sap-icon://favorite"
-					press="onToggleFavorite"
-					pressed="{
+				<RatingIndicator
+					iconUnselected="sap-icon://unfavorite"
+					value="{
 						path: 'name',
-						formatter: '.formatter.isFavorite'
-					}"/>
+						formatter: '.formatter.favoriteRating'
+					}"
+					maxValue="1"
+					change="onToggleFavorite"/>
 			</l:VerticalLayout>
 		</CustomListItem>
 

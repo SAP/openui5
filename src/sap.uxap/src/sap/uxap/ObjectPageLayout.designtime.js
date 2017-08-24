@@ -32,6 +32,14 @@ sap.ui.define([],
 				actions : {
 					move : "moveControls"
 				}
+			},
+			headerContent : {
+				domRef : function(oElement) {
+					return oElement.$("headerContent").get(0);
+				},
+				actions : {
+					move : "moveControls"
+				}
 			}
 		},
 		scrollContainers : [{

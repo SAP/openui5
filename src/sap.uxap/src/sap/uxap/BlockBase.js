@@ -649,13 +649,6 @@ sap.ui.define([
 			return this;
 		};
 
-		/**
-		 * Set the showSubSectionMore property.
-		 * Ask the parent ObjectPageSubSection to refresh its see more visibility state if present.
-		 * @param {boolean} bValue
-		 * @param {boolean} bInvalidate
-		 * @returns {*}
-		 */
 		BlockBase.prototype.setShowSubSectionMore = function (bValue, bInvalidate) {
 			//suppress invalidate as ShowSubSectionMore has no impact on block itself.
 			if (bValue != this.getShowSubSectionMore()) {

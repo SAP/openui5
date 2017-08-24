@@ -29,7 +29,6 @@ sap.ui.define([
 		"sap/ui/rta/plugin/Split",
 		"sap/ui/rta/plugin/Selection",
 		"sap/ui/rta/plugin/Settings",
-		"sap/ui/rta/plugin/ControlVariant",
 		"sap/ui/dt/plugin/ContextMenu",
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
@@ -45,7 +44,7 @@ sap.ui.define([
 		"sap/ui/core/BusyIndicator",
 		"sap/ui/dt/DOMUtil",
 		"sap/ui/rta/util/StylesLoader",
-		"sap/ui/rta/appVariant/ManageAppsLoader",
+		"sap/ui/rta/appVariant/Feature",
 		"sap/ui/Device"
 	],
 	function(
@@ -74,7 +73,6 @@ sap.ui.define([
 		SplitPlugin,
 		SelectionPlugin,
 		SettingsPlugin,
-		ControlVariantPlugin,
 		ContextMenuPlugin,
 		TabHandlingPlugin,
 		FlexControllerFactory,
@@ -90,7 +88,7 @@ sap.ui.define([
 		BusyIndicator,
 		DOMUtil,
 		StylesLoader,
-		ManageAppsLoader,
+		RtaAppVariantFeature,
 		Device
 	) {
 	"use strict";
@@ -312,9 +310,9 @@ sap.ui.define([
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
 
 			// Control Variant
-			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
-				commandFactory: oCommandFactory
-			});
+//			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
+//				commandFactory: oCommandFactory
+//			});
 		}
 
 		return jQuery.extend({}, this._mDefaultPlugins);
@@ -514,18 +512,12 @@ sap.ui.define([
 				return Promise.resolve(bReloadTriggered);
 			}.bind(this))
 			.then(function (bReloadTriggered) {
-				var bIsAppVariantSupported;
 				if (this.getShowToolbars() && !bReloadTriggered) {
 					// Create ToolsMenu
-					return FlexSettings.getInstance(FlexUtils.getComponentClassName(this._oRootControl))
-						.then(function(oSettings) {
-							bIsAppVariantSupported = ManageAppsLoader.hasAppVariantsSupport(this.getLayer(), oSettings.isAtoEnabled() && oSettings.isAtoAvailable());
-							return !oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured();
-						}.bind(this))
-						.catch(function(oError) {
-							return false;
-						})
-						.then(function (bShowPublish) {
+					return this._getPublishAndAppVariantSupportVisibility()
+						.then(function (aButtonsSupport) {
+							var bShowPublish = aButtonsSupport[0];
+							var bIsAppVariantSupported = aButtonsSupport[1];
 							this._createToolsMenu(bShowPublish, bIsAppVariantSupported);
 							return this._oToolsMenu.show();
 						}.bind(this))
@@ -554,6 +546,17 @@ sap.ui.define([
 				return true;
 			});
 		}
+	};
+
+	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
+		return FlexSettings.getInstance(FlexUtils.getComponentClassName(this._oRootControl)).then(function(oSettings) {
+			return RtaAppVariantFeature.isPlatFormEnabled(this.getLayer(), oSettings.isAtoEnabled() && oSettings.isAtoAvailable(), this._oRootControl).then(function(bIsAppVariantSupported) {
+				return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), bIsAppVariantSupported];
+			});
+		}.bind(this))
+		.catch(function(oError) {
+			return false;
+		});
 	};
 
 	var fnShowTechnicalError = function(vError) {
@@ -794,7 +797,7 @@ sap.ui.define([
 					modeSwitcher: this.getMode(),
 					publishVisible: bPublishAvailable,
 					textResources: this._getTextResources(),
-					manageAppsVisible: bIsAppVariantSupported,
+					appVariantFeaturesSupported: bIsAppVariantSupported,
 					//events
 					exit: this.stop.bind(this, false, false),
 					transport: this._onTransport.bind(this),
@@ -802,7 +805,8 @@ sap.ui.define([
 					undo: this._onUndo.bind(this),
 					redo: this._onRedo.bind(this),
 					modeChange: this._onModeChange.bind(this),
-					manageApps: ManageAppsLoader.load.bind(null, this.getRootControl())
+					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, this.getRootControl()),
+					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, this.getRootControl(), this.stop.bind(this, false, false))
 				});
 			}
 

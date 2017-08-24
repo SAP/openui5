@@ -33,9 +33,8 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			oSubHeader = oPage.getSubHeader();
 		}
 
-		if (oPage.getShowFooter()) {
-			oFooter = oPage.getFooter();
-		}
+		oFooter = oPage.getFooter();
+
 		oRm.write("<div");
 		oRm.writeControlData(oPage);
 		oRm.addClass("sapMPage");
@@ -59,7 +58,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			oRm.addClass("sapMPageBusyCoversAll");
 		}
 
-		if (oPage.getFloatingFooter() && oPage.getShowFooter()) {
+		if (oPage.getFloatingFooter()) {
 			oRm.addClass("sapMPageFloatingFooter");
 		}
 
@@ -110,9 +109,12 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 		oRm.write("</section>");
 
 		// render footer Element
+		// if a footer is defined, it should always be rendered
+		// otherwise animation on show/hide won't work always
+
 		this.renderBarControl(oRm, oPage, oFooter, {
 			context : "footer",
-			styleClass : "sapMPageFooter"
+			styleClass : "sapMPageFooter" + (oPage.getShowFooter() ? "" : " sapUiHidden")
 		});
 
 		oRm.write("</div>");
@@ -135,6 +137,11 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 
 		oBarControl._setLandmarkInfo(oPage.getLandmarkInfo(), oOptions.context);
 
+		// Should be stripped as it might have been added in some previous render iteration and now might not
+		// be needed anymore. Otherwise it'd be explicitly declared in oOptions.styleClass
+		if (oBarControl.hasStyleClass("sapUiHidden")) {
+			oBarControl.removeStyleClass("sapUiHidden");
+		}
 		oBarControl.addStyleClass(oOptions.styleClass);
 
 		oRm.renderControl(oBarControl);

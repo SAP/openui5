@@ -99,17 +99,24 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 		return bStable;
 	};
 
-	BasePlugin.prototype.getVariantManagementKey = function (oOverlay, oElement, sChangeType) {
-		var sVariantManagementKey;
-		if (oOverlay.getVariantManagement && this._hasVariantChangeHandler(sChangeType, oElement)) {
-			sVariantManagementKey = oOverlay.getVariantManagement();
+	BasePlugin.prototype.getVariantManagementReference = function (oOverlay, oAction, bForceRelevantContainer) {
+		var oElement = oOverlay.getElementInstance();
+		var oRelevantElement;
+		if (oAction.changeOnRelevantContainer || bForceRelevantContainer) {
+			oRelevantElement = oOverlay.getRelevantContainer();
+		} else {
+			oRelevantElement = oElement;
 		}
-		return sVariantManagementKey;
+
+		var sVariantManagementReference;
+		if (oOverlay.getVariantManagement && this._hasVariantChangeHandler(oAction.changeType, oRelevantElement)) {
+			sVariantManagementReference = oOverlay.getVariantManagement();
+		}
+		return sVariantManagementReference;
 	};
 
 	BasePlugin.prototype._hasVariantChangeHandler = function (sChangeType, oElement){
 		var oChangeHandler = this._getChangeHandler(sChangeType, oElement);
-		oChangeHandler.revertChange = true;
 		return (oChangeHandler && oChangeHandler.revertChange);
 	};
 
@@ -158,6 +165,10 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 
 	BasePlugin.prototype._getChangeHandler = function(sChangeType, oElement) {
 		var sControlType = oElement.getMetadata().getName();
+		return this._getChangeHandlerForControlType(sControlType, sChangeType);
+	};
+
+	BasePlugin.prototype._getChangeHandlerForControlType = function(sControlType, sChangeType) {
 		var oResult = ChangeRegistry.getInstance().getRegistryItems({
 			controlType : sControlType,
 			changeTypeName : sChangeType,

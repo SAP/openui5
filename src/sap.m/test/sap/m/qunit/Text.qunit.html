@@ -236,6 +236,25 @@
 			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 		});
 
+		QUnit.test("setting renderWhiteSpaces property", function(assert) {
+			var oText = new sap.m.Text("Text7", {text:"This text is not wrapping.\t\t Line   breaks cannot make it wrap"}).placeAt("qunit-fixture");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpaces"), false, "Text does not have a class for render white spaces");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpacesWrap"), false, "Text does not have a class for render white spaces with wrapping");
+			oText.setRenderWhiteSpaces(true);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpacesWrap"), true, "Text should have sapMTextRenderWhiteSpacesWrap when wrapping is true ");
+
+			oText.setWrapping(false);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpaces"), true, "Text should have sapMTextRenderWhiteSpaces when wrapping is false ");
+
+			oText.setRenderWhiteSpaces(false);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpaces"), false, "Text should not have a class sapMTextRenderWhiteSpaces");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpacesWrap"), false, "Text should not have a class sapMTextRenderWhiteSpacesWrap");
+			oText.destroy();
+		});
+
 		QUnit.module("Accessibility");
 
 		QUnit.test("getAccessibilityInfo", function(assert) {

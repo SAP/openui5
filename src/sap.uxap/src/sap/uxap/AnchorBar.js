@@ -167,10 +167,6 @@ sap.ui.define([
 		return this.setAssociation("selectedButton", oButton, true /* don't rerender */);
 	};
 
-	/*******************************************************************************
-	 * Responsive behavior
-	 ******************************************************************************/
-
 	AnchorBar.prototype.setShowPopover = function (bValue, bSuppressInvalidate) {
 
 		if (this.getShowPopover() === bValue) {
@@ -987,6 +983,9 @@ sap.ui.define([
 		//initial state
 		if (this._bHasButtonsBar) {
 			jQuery.sap.delayedCall(AnchorBar.DOM_CALC_DELAY, this, function () {
+				if (this._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon) {
+					this._computeBarSectionsInfo();
+				}
 				this._adjustSize();
 			});
 		}

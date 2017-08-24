@@ -4,8 +4,11 @@
 
 // Provides class sap.ui.dt.plugin.CutPaste.
 sap.ui.define([
-	'sap/ui/dt/Plugin', 'sap/ui/dt/plugin/ElementMover', 'sap/ui/dt/OverlayUtil'
-], function(Plugin, ElementMover, OverlayUtil) {
+	'sap/ui/dt/Plugin',
+	'sap/ui/dt/plugin/ElementMover',
+	'sap/ui/dt/OverlayUtil',
+	'sap/ui/dt/OverlayRegistry'
+], function(Plugin, ElementMover, OverlayUtil, OverlayRegistry) {
 	"use strict";
 
 	/**
@@ -146,24 +149,28 @@ sap.ui.define([
 		if (!oCutOverlay) {
 			return false;
 		}
-		if (!this._isForSameElement(oCutOverlay, oTargetOverlay)) {
 
+		var bResult = false;
+		if (!this._isForSameElement(oCutOverlay, oTargetOverlay)) {
 			var oTargetZoneAggregation = this._getTargetZoneAggregation(oTargetOverlay);
 			if (oTargetZoneAggregation) {
 				this.getElementMover().insertInto(oCutOverlay, oTargetZoneAggregation);
-				return true;
+				bResult = true;
 			} else if (OverlayUtil.isInTargetZoneAggregation(oTargetOverlay)) {
 				this.getElementMover().repositionOn(oCutOverlay, oTargetOverlay);
-				return true;
-			} else {
-				return false;
+				bResult = true;
 			}
 		}
 
 		// focus get invalidated, see BCP 1580061207
-		setTimeout(function(){
-			oCutOverlay.focus();
-		},0);
+		if (bResult) {
+			oCutOverlay.setSelected(true);
+			setTimeout(function () {
+				oCutOverlay.focus();
+			}, 0);
+		}
+
+		return bResult;
 	};
 
 	/**

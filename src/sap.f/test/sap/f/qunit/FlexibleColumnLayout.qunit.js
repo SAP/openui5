@@ -1,7 +1,8 @@
 /* global QUnit,sinon*/
 
 jQuery.sap.require("sap.f.FlexibleColumnLayout");
-(function ($, QUnit, sinon, FlexibleColumnLayout, Page, Button, NavContainer, LT, bDebugMode) {
+jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
+(function ($, QUnit, sinon, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Button, NavContainer, LT, bDebugMode) {
 	"use strict";
 	var oCore = sap.ui.getCore(),
 		sQUnitFixture = bDebugMode ? "qunit-fixture-visible" : "qunit-fixture",
@@ -785,5 +786,27 @@ jQuery.sap.require("sap.f.FlexibleColumnLayout");
 			fnGetResourceBundleText("FCL_END_COLUMN_FORWARD_ARROW"), "End column forward arrow has correct tooltip");
 	});
 
+	QUnit.module("FlexibleColumnLayoutSemanticHelper");
 
-}(jQuery, QUnit, sinon, sap.f.FlexibleColumnLayout, sap.m.Page, sap.m.Button, sap.m.NavContainer, sap.f.LayoutType, false));
+	QUnit.test("SemanticHelper cleans destroyed FCL instance data", function (assert) {
+		var sId = "myFCL",
+			oFCL;
+
+		// setup
+		oFCL = new FlexibleColumnLayout(sId);
+
+		// act
+		FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL);
+
+		// assert
+		assert.ok(FlexibleColumnLayoutSemanticHelper._oInstances[sId], "Semantic helper has an entry for this FCL");
+
+		// act again
+		oFCL.destroy();
+
+		// assert the opposite
+		assert.ok(!FlexibleColumnLayoutSemanticHelper._oInstances[sId], "Semantic helper no longer has an entry for this FCL");
+	});
+
+
+}(jQuery, QUnit, sinon, sap.f.FlexibleColumnLayout, sap.f.FlexibleColumnLayoutSemanticHelper, sap.m.Page, sap.m.Button, sap.m.NavContainer, sap.f.LayoutType, false));

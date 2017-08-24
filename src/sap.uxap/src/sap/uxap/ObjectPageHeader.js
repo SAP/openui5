@@ -434,27 +434,6 @@ sap.ui.define([
 		return this;
 	};
 
-	ObjectPageHeader.prototype._shiftHeaderTitle = function () {
-
-		var oParent = this.getParent(),
-			oShiftOffsetParams;
-
-		if (!oParent || (typeof oParent._calculateShiftOffset !== "function")) {
-			return;
-		}
-
-		oShiftOffsetParams = oParent._calculateShiftOffset();
-
-		if (typeof oParent._shiftHeader === "function") {
-			oParent._shiftHeader(oShiftOffsetParams.sStyleAttribute, oShiftOffsetParams.iMarginalsOffset + "px");
-		}
-	};
-
-	/**
-	 * get current title and if it is different from the new one re-render the HeaderContent
-	 * @param {string} sNewTitle title string
-	 * @return {*} this
-	 */
 	ObjectPageHeader.prototype.setObjectTitle = function (sNewTitle) {
 
 		var sOldTitle = this.getProperty("objectTitle"),
@@ -669,7 +648,6 @@ sap.ui.define([
 		if (!this._iResizeId) {
 			this._iResizeId = ResizeHandler.register(this, this._onHeaderResize.bind(this));
 		}
-		this._shiftHeaderTitle();
 
 		this._attachDetachActionButtonsHandler(true);
 	};
@@ -788,6 +766,16 @@ sap.ui.define([
 		}
 
 		this._adaptObjectPageHeaderIndentifierLine();
+	};
+
+	ObjectPageHeader.prototype._adaptLayoutDelayed = function () {
+		if (this._adaptLayoutTimeout) {
+			jQuery.sap.clearDelayedCall(this._adaptLayoutTimeout);
+		}
+		this._adaptLayoutTimeout = jQuery.sap.delayedCall(0, this, function() {
+			this._adaptLayoutTimeout = null;
+			this._adaptLayout();
+		});
 	};
 
 	/**
@@ -940,10 +928,8 @@ sap.ui.define([
 		}
 	};
 
+	/* Fiori 2.0 adaptation */
 
-	/**
-	 * Fiori 2.0 adaptation
-	 */
 	ObjectPageHeader.prototype.setNavigationBar = function (oBar) {
 
 		this.setAggregation("navigationBar", oBar);

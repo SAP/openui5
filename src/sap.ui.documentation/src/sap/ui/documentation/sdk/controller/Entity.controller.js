@@ -9,9 +9,10 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/EntityInfo",
-		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler"
+		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
+		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
 	], function (JSONModel, ComponentContainer, BaseController, ControlsInfo,
-				 EntityInfo, ToggleFullScreenHandler) {
+				 EntityInfo, ToggleFullScreenHandler, JSDocUtil) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Entity", {
@@ -50,15 +51,6 @@ sap.ui.define([
 			onAPIRefPress: function (oEvt) {
 				var sEntityName = oEvt.getSource().data("name");
 				this.getRouter().navTo("apiId", {id: sEntityName}, false);
-			},
-
-			onIntroLinkPress: function (oEvt) {
-				// remove explored.html from URL
-				var aParts = document.location.pathname.split("/"),
-					sBaseLink = document.location.origin + aParts.splice(0, aParts.length - 1).join("/") + "/";
-
-				// open a relative documentation window
-				window.open(sBaseLink + this.getView().getModel().getProperty("/docuLink"), "_blank");
 			},
 
 			onTabSelect: function (oEvt) {
@@ -110,6 +102,53 @@ sap.ui.define([
 				}
 
 				oEvent.preventDefault();
+			},
+
+			/**
+			 * This function wraps a text in a span tag so that it can be represented in an HTML control.
+			 * @param {string} sText text to be wrapped and formatted
+			 * @returns {string} formatted and wrapped text
+			 * @private
+			 */
+			_wrapInSpanTag: function (sText) {
+
+				var sFormattedTextBlock = JSDocUtil.formatTextBlock(sText, {
+					linkFormatter: function (sTarget, sText) {
+						var sRoute = "entity",
+							aTargetParts,
+							iP;
+
+						sText = sText || sTarget; // keep the full target in the fallback text
+
+						// If the link has a protocol, do not modify, but open in a new window
+						if (sTarget.match("://")) {
+							return '<a target="_blank" href="' + sTarget + '">' + sText + '</a>';
+						}
+
+						sTarget = sTarget.trim().replace(/\.prototype\./g, "#");
+						iP = sTarget.indexOf("#");
+						if ( iP === 0 ) {
+							// a relative reference - we can't support that
+							return "<code>" + sTarget.slice(1) + "</code>";
+						} else if ( iP > 0 ) {
+							sTarget = sTarget.slice(0, iP);
+						}
+
+						// link refers to a method or event data-sap-ui-target="<class name>/methods/<method name>" OR
+						// data-sap-ui-target="<class name>/events/<event name>
+						// in this case we need to redirect to API Documentation section
+						aTargetParts = sTarget.split('/');
+						if (aTargetParts.length > 1 &&
+							["methods", "events"].indexOf(aTargetParts[1].toLowerCase()) !== -1) {
+							sRoute = "api";
+						}
+
+						return '<a class="jsdoclink" href="#/' + sRoute + '/' + sTarget + '">' + sText + '</a>';
+
+					}
+				});
+
+				return '<span class="sapUiDocumentationJsDoc">' + sFormattedTextBlock + '</span>';
 			},
 
 			_TAB_KEYS: ["samples", "about"],
@@ -200,7 +239,9 @@ sap.ui.define([
 					// make intro text active if a documentation link is set
 					if (oEntity.docuLink) {
 						oData.show.introLink = true;
-						oData.docuLink = oEntity.docuLink;
+						oData.docuLink = oEntity.docuLink.replace("docs/guide", "topic").replace(/\.html$/, "");
+					} else {
+						oData.show.introLink = false;
 					}
 
 					bShouldShowSamplesSection = oEntity.samples.length > 0;

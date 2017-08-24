@@ -93,6 +93,18 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.strictEqual(oInstance.getNamespace(), "apps/smartFilterBar/changes/");
 	});
 
+	QUnit.test("setNamespace should set the namespace of the definition", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		oInstance.setNamespace("apps/ReferenceAppId/changes/");
+		assert.strictEqual(oInstance.getNamespace(), "apps/ReferenceAppId/changes/");
+	});
+
+	QUnit.test("setComponent should set the reference of the definition", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		oInstance.setComponent("AppVariantId");
+		assert.strictEqual(oInstance.getComponent(), "AppVariantId");
+	});
+
 	QUnit.test("Change.getId", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		assert.equal(oInstance.getId(), "0815_1");

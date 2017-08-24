@@ -646,6 +646,19 @@
 			}
 		});
 
+		QUnit.test("Function _findById returns correct item from the list based on the id", function(assert) {
+			//Arrange
+			var sId0 = "item0", sId1 = "item1",
+				aListItems = [
+					{ getId: function() { return sId0; }},
+					{ getId: function() { return sId1; }}
+				];
+			//Act
+			oItem = sap.m.UploadCollection._findById(sId1, aListItems);
+			//Assert
+			assert.deepEqual(oItem, aListItems[1], "Correct item has been returned by _findById");
+		});
+
 		QUnit.test("Function _getFileNameControl", function(assert) {
 			//Arrange
 			this.oItem._requestIdName = 0;
@@ -908,6 +921,34 @@
 			});
 			oDialog.getButtons()[1].firePress();
 			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("Function _handleDelete creates the popup and changes the internal state of UploadCollection correctly", function(assert) {
+			//Arrange
+			var sItemId = this.oUploadCollection.aItems[0].sId,
+				oMessageBoxStub = sinon.stub(sap.m.MessageBox, "show"),
+				oCloseMessageBoxStub = sinon.stub(this.oUploadCollection, "_onCloseMessageBoxDeleteItem"),
+				sCompactClass = "sapUiSizeCompact",
+				oEvent = {
+					getParameters: function() {
+						return {
+							id: sItemId + "-deleteButton"
+						}
+					}
+				};
+			//Act
+			this.oUploadCollection.addStyleClass(sCompactClass);
+			this.oUploadCollection._handleDelete(oEvent);
+			oMessageBoxStub.getCall(0).args[1].onClose();
+			//Assert
+			assert.ok(oCloseMessageBoxStub.called, "The _onCloseMessageBoxDeleteItem is correctly registered to handle the closing of MessageBox");
+			assert.equal(this.oUploadCollection.sDeletedItemId, sItemId, "The internal id of the item that may be deleted is updated correctly");
+			assert.equal(oMessageBoxStub.getCall(0).args[1].dialogId, "messageBoxDeleteFile", "Correct dialog id has been handed to the show function");
+			assert.equal(oMessageBoxStub.getCall(0).args[1].actions[0], sap.m.MessageBox.Action.OK, "OK action is included in the MessageBox call");
+			assert.equal(oMessageBoxStub.getCall(0).args[1].actions[1], sap.m.MessageBox.Action.CANCEL, "Cancel action is included in the MessageBox call");
+			assert.equal(oMessageBoxStub.getCall(0).args[1].styleClass, sCompactClass, "Compact class has been handed from UploadCollection to the MessageBox successfully");
+			//Restore
+			oMessageBoxStub.restore();
 		});
 
 		QUnit.test("handleTerminate - abort on FileUploader is called.", function(assert) {
@@ -1201,6 +1242,62 @@
 			assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.None, "Mode after setting 'Delete' is 'None'");
 		});
 
+		QUnit.test("Function _handleSelectionChange triggers the selection change", function(assert) {
+			//Arrange
+			var sListItem = "listItem", sListItems = "listItems", sSelected = "selected", aUploadCollectionListItems = ["dummy"],
+				oUploadCollectionItem = new sap.m.UploadCollectionItem(),
+				bSelected = true,
+				oListItem = {
+					getSelected: function(){
+						return true;
+					}
+				},
+				oEvent = {
+					getParameter: function(name) {
+						if (name === sListItem) {
+							return oListItem;
+						} else if (name === sListItems) {
+							return aUploadCollectionListItems;
+						} else if (name === sSelected) {
+							return bSelected;
+						}
+					}
+				},
+				oGetUploadCollectionItemsByListItems = sinon.stub(this.oUploadCollection, "_getUploadCollectionItemsByListItems")
+					.returns(aUploadCollectionListItems),
+				oGetUploadCollectionItemByListItem = sinon.stub(this.oUploadCollection, "_getUploadCollectionItemByListItem")
+					.returns(oUploadCollectionItem),
+				oFireSelectionChangeStub = sinon.stub(this.oUploadCollection, "fireSelectionChange"),
+				oSetSelectedStub = sinon.stub(oUploadCollectionItem, "setSelected");
+			//Act
+			this.oUploadCollection._handleSelectionChange(oEvent);
+			//Assert
+			assert.strictEqual(oGetUploadCollectionItemByListItem.getCall(0).args[0], oListItem, "The function _getUploadCollectionItemByListItem has been called with correct argument");
+			assert.strictEqual(oGetUploadCollectionItemsByListItems.getCall(0).args[0], aUploadCollectionListItems, "The function _getUploadCollectionItemsByListItems has been called with correct argument");
+			assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selectedItem"], oUploadCollectionItem, "The selectionChange event has correct selectedItem parameter");
+			assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selectedItems"], aUploadCollectionListItems, "The selectionChange event has correct selectedItems parameter");
+			assert.strictEqual(oFireSelectionChangeStub.getCall(0).args[0]["selected"], bSelected, "The selectionChange event has correct selected parameter");
+			assert.strictEqual(oSetSelectedStub.getCall(0).args[0], oListItem.getSelected(), "The setSelected method has been called with correct argument");
+		});
+
+		QUnit.module("Download Item Tests", {
+			beforeEach: function() {
+				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+					items: {
+						path: "/items",
+						template: createItemTemplate(),
+						templateShareable: false
+					}
+				}).setModel(new sap.ui.model.json.JSONModel(oData));
+				this.oUploadCollection.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oUploadCollection.destroy();
+				this.oUploadCollection = null;
+			}
+		});
+
 		QUnit.test("To download an item without URL fails.", function(assert) {
 			//Arrange
 			var oItem = this.oUploadCollection.getItems()[0];
@@ -1220,6 +1317,24 @@
 			//Assert
 			assert.ok(stub.called, "Download method was called.");
 			assert.equal(stub.returns().toString(), "downloadItem", "Download returns the right method.");
+		});
+
+		QUnit.module("Terminate Upload Tests", {
+			beforeEach: function() {
+				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+					items: {
+						path: "/items",
+						template: createItemTemplate(),
+						templateShareable: false
+					}
+				}).setModel(new sap.ui.model.json.JSONModel(oData));
+				this.oUploadCollection.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oUploadCollection.destroy();
+				this.oUploadCollection = null;
+			}
 		});
 
 		QUnit.test("Terminate upload button is visible by default.", function(assert) {
@@ -2631,6 +2746,65 @@
 			assert.strictEqual(oDeleteButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"), "The delete button has correct tooltip");
 		});
 
+		QUnit.test("F2 button pressed for the item in display mode", function(assert) {
+			//Arrange
+			var oListItem = this.oUploadCollection._oList.getItems()[0],
+				sUCItemId = this.oUploadCollection.getItems()[0].getId(),
+				oPressEvent = {
+					target: {
+						id: oListItem.getId()
+					}
+				},
+				oEditButton = sap.ui.getCore().byId(sUCItemId + "-editButton"),
+				oFirePressStub = sinon.stub(oEditButton, "firePress");
+				oHandleClickStub = sinon.stub(this.oUploadCollection, "_handleClick");
+				this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[1].getId();
+			//Act
+			this.oUploadCollection._handleF2(oPressEvent);
+			//Assert
+			assert.deepEqual(oHandleClickStub.getCall(0).args[0], oPressEvent, "Press event has been forwarded to _handkeClick that has been called for other item that is already in the edit mode ");
+			assert.deepEqual(oHandleClickStub.getCall(0).args[1], this.oUploadCollection.editModeItem, "The function _handleClick gets the id of the item previously residing in the edit mode");
+			assert.strictEqual(oFirePressStub.callCount, 1, "The press event has been triggered on the correct edit button");
+		});
+
+		QUnit.test("F2 button pressed for item in editing mode when focused on the list item", function(assert) {
+			//Arrange
+			var oListItem = this.oUploadCollection._oList.getItems()[0],
+				sUCItemId = this.oUploadCollection.getItems()[0].getId(),
+				oPressEvent = {
+					target: {
+						id: oListItem.getId()
+					}
+				},
+				oHandleClickStub = sinon.stub(this.oUploadCollection, "_handleClick");
+			this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+			oListItem._status = undefined;
+			//Act
+			this.oUploadCollection._handleF2(oPressEvent);
+			//Assert
+			assert.deepEqual(oHandleClickStub.getCall(0).args[0], oPressEvent, "The press event has been triggered on the F2 button");
+			assert.deepEqual(oHandleClickStub.getCall(0).args[1], this.oUploadCollection.editModeItem, "The press event has been triggered on the F2 button");
+		});
+
+		QUnit.test("F2 button pressed for item in editing mode when focused on the input field", function(assert) {
+			//Arrange
+			var oListItem = this.oUploadCollection._oList.getItems()[0],
+				sUCItemId = this.oUploadCollection.getItems()[0].getId(),
+				oPressEvent = {
+					target: {
+						id: sUCItemId + "-ta_editFileName-inner"
+					}
+				},
+				oHandleOkStub = sinon.stub(this.oUploadCollection, "_handleOk");
+			this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+			//Act
+			this.oUploadCollection._handleF2(oPressEvent);
+			//Assert
+			assert.deepEqual(oHandleOkStub.getCall(0).args[0], oPressEvent, "The press event has been triggered on the F2 button");
+			assert.deepEqual(oHandleOkStub.getCall(0).args[1], this.oUploadCollection.editModeItem, "The press event has been triggered on the F2 button");
+			assert.deepEqual(oHandleOkStub.getCall(0).args[2], true, "The press event has been triggered on the F2 button");
+		});
+
 		QUnit.test("Pressing keyboard DEL button while focused on list item", function(assert) {
 			//Arrange
 			var sUCItemId = this.oUploadCollection.getItems()[0].getId(),
@@ -2645,6 +2819,84 @@
 			this.oUploadCollection._handleDEL(oPressEvent);
 			//Assert
 			assert.strictEqual(oFirePressStub.callCount, 1, "The press event has been triggered on the delete button");
+		});
+
+		QUnit.test("Pressing keyboard F2 button results in correct handler call", function(assert) {
+			//Arrange
+			var oEvent = {
+					keyCode: jQuery.sap.KeyCodes.F2,
+					setMarked: sinon.stub()
+				},
+				oHandleF2Stub = sinon.stub(this.oUploadCollection, "_handleF2");
+			//Act
+			this.oUploadCollection.onkeydown(oEvent);
+			//Assert
+			assert.deepEqual(oHandleF2Stub.getCall(0).args[0], oEvent, "Correct handler has been executed");
+			assert.ok(oEvent.setMarked.called, "Event has been marked");
+		});
+
+		QUnit.test("Pressing keyboard ESCAPE button results in correct handler call", function(assert) {
+			//Arrange
+			var oEvent = {
+					keyCode: jQuery.sap.KeyCodes.ESCAPE,
+					setMarked: sinon.stub()
+				},
+				oHandleESCAPEStub = sinon.stub(this.oUploadCollection, "_handleESC");
+			//Act
+			this.oUploadCollection.onkeydown(oEvent);
+			//Assert
+			assert.deepEqual(oHandleESCAPEStub.getCall(0).args[0], oEvent, "Correct handler has been executed");
+			assert.ok(oEvent.setMarked.called, "Event has been marked");
+		});
+
+		QUnit.test("Pressing keyboard DELETE button results in correct handler call", function(assert) {
+			//Arrange
+			var oEvent = {
+					keyCode: jQuery.sap.KeyCodes.DELETE,
+					setMarked: sinon.stub()
+				},
+				oHandleDELETEStub = sinon.stub(this.oUploadCollection, "_handleDEL");
+			//Act
+			this.oUploadCollection.onkeydown(oEvent);
+			//Assert
+			assert.deepEqual(oHandleDELETEStub.getCall(0).args[0], oEvent, "Correct handler has been executed");
+			assert.ok(oEvent.setMarked.called, "Event has been marked");
+		});
+
+		QUnit.test("Pressing keyboard ENTER button results in correct handler call", function(assert) {
+			//Arrange
+			var oEvent = {
+					keyCode: jQuery.sap.KeyCodes.ENTER,
+					setMarked: sinon.stub()
+				},
+				oHandleENTERStub = sinon.stub(this.oUploadCollection, "_handleENTER"),
+				oSetMarkedStub = oEvent.setMarked;
+			//Act
+			this.oUploadCollection.onkeydown(oEvent);
+			//Assert
+			assert.deepEqual(oHandleENTERStub.getCall(0).args[0], oEvent, "Correct handler has been executed");
+			assert.ok(oEvent.setMarked.called, "Event has been marked");
+		});
+
+		QUnit.test("Pressing other keyboard buttons is correctly processed", function(assert) {
+			//Arrange
+			var oEvent = {
+					keyCode: "Dummy",
+					setMarked: sinon.stub()
+				},
+				oHandleF2Stub = sinon.stub(this.oUploadCollection, "_handleF2"),
+				oHandleENTERStub = sinon.stub(this.oUploadCollection, "_handleENTER"),
+				oHandleDELETEStub = sinon.stub(this.oUploadCollection, "_handleDEL"),
+				oHandleESCAPEStub = sinon.stub(this.oUploadCollection, "_handleESC"),
+				oSetMarkedStub = oEvent.setMarked;
+			//Act
+			this.oUploadCollection.onkeydown(oEvent);
+			//Assert
+			assert.equal(oHandleF2Stub.called, false, "Handler for F2 has not been called");
+			assert.equal(oHandleENTERStub.called, false, "Handler for ENTER has not been called");
+			assert.equal(oHandleDELETEStub.called, false, "Handler for DELETE has not been called");
+			assert.equal(oHandleESCAPEStub.called, false, "Handler for ESCAPE has not been called");
+			assert.equal(oSetMarkedStub.called, false, "Event has not been marked");
 		});
 
 		QUnit.module("Managing event delegates when entering and exiting edit mode", {

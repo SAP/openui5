@@ -48,7 +48,8 @@ function(
 
 	var sandbox;
 	var oView, oApp;
-	var oComp = new (UIComponent.extend("MockController", {
+	FakeLrepConnectorLocalStorage.enableFakeConnector();
+	var oMockComponent = UIComponent.extend("MockController", {
 		metadata: {
 			manifest: 	{
 				"sap.app" : {
@@ -59,7 +60,6 @@ function(
 			}
 		},
 		createContent : function() {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
 			oApp = new sap.m.App(this.createId("mockapp"));
 			var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
 			oView = sap.ui.xmlview({
@@ -69,7 +69,8 @@ function(
 			oApp.addPage(oView);
 			return oApp;
 		}
-	}))("testComponent");
+	});
+	var oComp = new oMockComponent("testComponent");
 	new ComponentContainer("sap-ui-static", {
 		component: oComp
 	}).placeAt("test-view");
@@ -107,8 +108,8 @@ function(
 	});
 	//_getFocusEventName
 	QUnit.test("when _getValidatedPopups is called with 2 relevant and one non-relevant popups", function(assert) {
-		assert.strictEqual(this.oRta.oPopupManager._getFocusEventName("add"), "_addFocusEventListeners", "then 'add' as parameter returns _addFocusEventListeners");
-		assert.strictEqual(this.oRta.oPopupManager._getFocusEventName("remove"), "_removeFocusEventListeners", "then 'remove' as parameter returns _removeFocusEventListeners");
+		assert.strictEqual(this.oRta.oPopupManager._getFocusEventName("add"), "_activateFocusHandle", "then 'add' as parameter returns _addFocusEventListeners");
+		assert.strictEqual(this.oRta.oPopupManager._getFocusEventName("remove"), "_deactivateFocusHandle", "then 'remove' as parameter returns _removeFocusEventListeners");
 	});
 	QUnit.module("Given RTA instance is initialized", {
 		beforeEach : function(assert) {
@@ -138,8 +139,8 @@ function(
 			this.fnToolsMenuBringToFrontSpy = sandbox.spy(this.oRta._oToolsMenu, "bringToFront");
 			this.fnAddRootElementSpy = sandbox.spy(this.oRta._oDesignTime, "addRootElement");
 			this.fnRemoveRootElementSpy = sandbox.spy(this.oRta._oDesignTime, "removeRootElement");
-			this.fnAddPopupListeners = sandbox.spy(Popup.prototype, "_addFocusEventListeners");
-			this.fnRemovePopupListeners = sandbox.spy(Popup.prototype, "_removeFocusEventListeners");
+			this.fnAddPopupListeners = sandbox.spy(Popup.prototype, "_activateFocusHandle");
+			this.fnRemovePopupListeners = sandbox.spy(Popup.prototype, "_deactivateFocusHandle");
 			this.fnIsPopupAdaptableSpy = sandbox.spy(this.oRta.oPopupManager, "_isPopupAdaptable");
 			//mock same app component dialog
 			oComp.runAsOwner(function() {
@@ -393,6 +394,7 @@ function(
 		}.bind(this));
 		this.oNonRtaDialog.open();
 	});
+
 	//_getValidatedPopups
 	QUnit.test("when _getValidatedPopups is called with 2 relevant and one non-relevant popups", function(assert) {
 		sandbox.stub(this.oRta.oPopupManager, "getRta").returns(this.oRta);
@@ -421,6 +423,7 @@ function(
 	//when RTA is started and then dialogs are opened
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach : function(assert) {
+			sandbox = sinon.sandbox.create();
 			FakeLrepLocalStorage.deleteChanges();
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
@@ -448,6 +451,7 @@ function(
 			]).then(fnSpies.bind(this));
 		},
 		afterEach : function() {
+			sandbox.restore();
 			this.oRta.exit();
 			FakeLrepLocalStorage.deleteChanges();
 			if (this.oDialog) {
@@ -457,7 +461,6 @@ function(
 				this.oButton.destroy();
 			}
 			this.oNonRtaDialog.destroy();
-			sandbox.restore();
 		}
 	});
 	QUnit.test("when Dialog with the same app component is opened and then closed / destroyed", function(assert) {
@@ -559,7 +562,7 @@ function(
 		beforeEach: function (assert) {
 			sandbox = sinon.sandbox.create();
 			var oCompContInDialog = new sap.ui.core.ComponentContainer("CompCont2", {
-				component : oComp
+				component : new oMockComponent("compInContainer")
 			});
 			var oCompInDialog = oCompContInDialog.getComponentInstance();
 			this.oDialog = new Dialog("appinside");
@@ -603,6 +606,39 @@ function(
 		this.oDialog.oPopup.onAfterRendering();
 		assert.strictEqual(this.fnRemovePopupListeners.callCount, 2, "then popup event listeners removed - second call from overridden Popup.onAfterRendering()");
 	});
+
+	QUnit.module("Given RTA is started with an app containing dialog(s)", {
+		beforeEach: function (assert) {
+			//mock RTA instance
+			this.oRta = new RuntimeAuthoring({
+				rootControl : oComp.getAggregation("rootControl")
+			});
+			var done = assert.async();
+			this.oNonRtaDialog = new Dialog("nonRtaDialog");
+			oComp.runAsOwner(function() {
+				this.oCompContInside = new sap.ui.core.ComponentContainer("CompContInside", {
+					component : new oMockComponent("compInside")
+				});
+				oComp.byId("mockview").addContent(this.oCompContInside);
+				this.oCompContInside.getComponentInstance().byId("mockview").addContent(this.oNonRtaDialog);
+				done();
+			}.bind(this));
+		},
+		afterEach: function (assert) {
+			FakeLrepLocalStorage.deleteChanges();
+			if (this.oRta) {
+				this.oRta.exit();
+			}
+			this.oCompContInside.destroy();
+			this.oNonRtaDialog.destroy();
+		}
+	});
+	//_getComponentForControl
+	QUnit.test("when _getComponentForControl is called with a dialog inside an embedded component", function(assert) {
+		var  sBaseCompId = this.oRta.oPopupManager._getComponentForControl(this.oNonRtaDialog).getId();
+		assert.strictEqual(sBaseCompId, oComp.getId(), "then base component id returned");
+	});
+
 	QUnit.done(function( details ) {
 		// If coverage is requested, remove the view to not overlap the coverage result
 		if (QUnit.config.coverage == true && details.failed === 0) {

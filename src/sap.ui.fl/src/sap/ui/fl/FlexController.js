@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -16,7 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager"
-], function (jQuery, Persistence, ChangeRegistry, Utils, LrepConnector, Change, Cache, FlexSettings, ChangePersistenceFactory, View, JsControlTreeModifier, XmlTreeModifier, ContextManager) {
+], function (jQuery, Persistence, ChangeRegistry, Utils, LrepConnector, Change, Variant, Cache, FlexSettings, ChangePersistenceFactory, View, JsControlTreeModifier, XmlTreeModifier, ContextManager) {
 	"use strict";
 
 	/**
@@ -172,13 +173,64 @@ sap.ui.define([
 			});
 			if (ChangeHandler.revertChange && oChangeSpecificData["variantManagementReference"] && oChangeSpecificData["variantReference"]) {
 				oChange.setVariantReference(oChangeSpecificData["variantReference"]);
-				jQuery.sap.log.error("VariantChange" + "-" + oChangeSpecificData["variantManagementReference"] + "-" + oChangeSpecificData["variantReference"]); /*Only temporary*/
 			}
 		} else {
 			throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
 		}
 
 		return oChange;
+	};
+
+	/**
+	 * Create a variant
+	 *
+	 * @param {object} oVariantSpecificData property bag (nvp) holding the variant information (see sap.ui.fl.Variant#createInitialFileContent
+	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created.
+	 * @param {sap.ui.base.Component} oControl.appComponent application component of the control at runtime in case a map has been used
+	 * @returns {sap.ui.fl.Variant} the created variant
+	 * @public
+	 */
+	FlexController.prototype.createVariant = function (oVariantSpecificData, oAppComponent) {
+		var oVariantFileContent, oVariantSpecificData, oVariant;
+
+		var aCurrentDesignTimeContext = ContextManager._getContextIdsFromUrl();
+
+		if (aCurrentDesignTimeContext.length > 1) {
+			throw new Error("More than one DesignTime Context is currently active.");
+		}
+
+		if (!oVariantSpecificData.selector) {
+			oVariantSpecificData.selector = {};
+		}
+
+		if (!oAppComponent) {
+			throw new Error("No Application Component found - to offer flexibility the variant has to have a valid relation to its owning application component.");
+		}
+
+//		oVariantSpecificData.selector.id = sLocalId;
+//		oVariantSpecificData.selector.idIsLocal = true;
+
+		oVariantSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
+		oVariantSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
+		oVariantSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
+		oVariantSpecificData.isVariant = true;
+
+		//fallback in case no application descriptor is available (e.g. during unit testing)
+		var sAppVersion = this.getAppVersion();
+		var oValidAppVersions = {
+			creation: sAppVersion,
+			from: sAppVersion
+		};
+		if (sAppVersion && oVariantSpecificData.developerMode) {
+			oValidAppVersions.to = sAppVersion;
+		}
+
+		oVariantSpecificData.validAppVersions = oValidAppVersions;
+
+		oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
+		oVariant = new Variant(oVariantFileContent);
+
+		return oVariant;
 	};
 
 	/**
@@ -193,7 +245,7 @@ sap.ui.define([
 	FlexController.prototype.addChange = function (oChangeSpecificData, oControl) {
 		var oChange = this.createChange(oChangeSpecificData, oControl);
 		var oComponent = Utils.getAppComponentForControl(oControl);
-		this._oChangePersistence.addChange(oChange, oComponent);
+		this.addPreparedChange(oChange, oComponent);
 		return oChange;
 	};
 
@@ -209,7 +261,19 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.addPreparedChange = function (oChange, oAppComponent) {
+		if (oChange.getVariantReference()) {
+			var oModel = oAppComponent.getModel("$FlexVariants");
+			if (!oModel.bStandardVariantExists) {
+				var oVariantContent = oModel.getVariant(oChange.getVariantReference()).content;
+				var oVariant = this.createVariant(oVariantContent, oAppComponent);
+				oModel.bStandardVariantExists = true;
+				this._oChangePersistence.addChange(oVariant, oAppComponent);
+			}
+			oModel._addChange(oChange);
+		}
+
 		this._oChangePersistence.addChange(oChange, oAppComponent);
+
 		return oChange;
 	};
 
@@ -227,6 +291,9 @@ sap.ui.define([
 	 */
 	FlexController.prototype.deleteChange = function (oChange) {
 		this._oChangePersistence.deleteChange(oChange);
+		if (oChange.getVariantReference()) {
+			Utils.getAppComponentForControl(oChange.getComponent()).getModel("$FlexVariants")._removeChange(oChange);
+		}
 	};
 
 	/**
@@ -258,6 +325,16 @@ sap.ui.define([
 	 */
 	FlexController.prototype.saveAll = function () {
 		return this._oChangePersistence.saveDirtyChanges();
+	};
+
+	/**
+	 * Saves all changes of a persistence instance for a new app or app variant.
+	 * @param {string} sReferenceForChange - the ID of the new app variant
+	 * @returns {Promise} Returns a resolved promise with an array of responses or rejecting with the first error
+	 * @public
+	 */
+	FlexController.prototype.saveAs = function(sReferenceForChange) {
+		return this._oChangePersistence.saveAsDirtyChanges(sReferenceForChange);
 	};
 
 	/**
@@ -407,9 +484,6 @@ sap.ui.define([
 
 			var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
 			this._writeCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
-			if (oChange.getVariantReference()) {
-				mPropertyBag.appComponent.getModel("$FlexVariants")._addChange(oChange);
-			}
 
 		}
 	};
@@ -443,10 +517,6 @@ sap.ui.define([
 				aAppliedChanges.splice(iIndex, 1);
 				this._writeCustomData(oAppliedChangeCustomData, aAppliedChanges.join(), mPropertyBag, oControl);
 			}
-			if (oChange.getVariantReference() && oChange.getVariantReference() !== "" && !oChange.bFromLrep) {
-				mPropertyBag.appComponent.getModel("$FlexVariants")._removeChange(oChange);
-			}
-			delete oChange.bFromLrep;
 		}
 	};
 

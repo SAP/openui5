@@ -77,7 +77,8 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 				 * The Rows to be included in the content of the control
 				 */
 				content: { type: "sap.ui.layout.BlockLayoutRow", multiple: true }
-			}
+			},
+			designTime : true
 		}});
 
 		/**

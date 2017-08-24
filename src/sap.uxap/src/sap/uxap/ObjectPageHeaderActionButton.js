@@ -102,6 +102,14 @@ sap.ui.define(["sap/m/Button", "./library"], function (Button, library) {
 		}
 	};
 
+	ObjectPageHeaderActionButton.prototype.setVisible = function (bVisible) {
+		var vResult = Button.prototype.setVisible.apply(this, arguments);
+		if (this.getParent() && typeof this.getParent()._adaptLayoutDelayed === "function") {
+			this.getParent()._adaptLayoutDelayed();
+		}
+		return vResult;
+	};
+
 	ObjectPageHeaderActionButton.prototype._getInternalVisible = function () {
 		return this._bInternalVisible;
 	};

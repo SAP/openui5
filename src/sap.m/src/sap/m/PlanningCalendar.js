@@ -625,12 +625,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * Sets the given date as start date.
+	 * Sets the given date as start date. The current date is used as default.
 	 * Depending on the current view the start date may be adjusted (for example, the week view shows always the first weekday
 	 * of the same week as the given date).
 	 * @param {Date} oStartDate the date to set as <code>sap.m.PlanningCalendar</code> <code>startDate</code>. May be changed(adjusted) if
 	 * property <code>startDate</code> is adjusted. See remark about week view above.
 	 * @returns {sap.m.PlanningCalendar} <code>this</code> to allow method chaining
+	 * @public
 	*/
 	PlanningCalendar.prototype.setStartDate = function(oStartDate){
 		var oFirstDateOfWeek,
@@ -1398,8 +1399,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	PlanningCalendar.prototype.invalidate = function(oOrigin) {
-
-		if (this._bDateRangeChanged || (oOrigin && oOrigin instanceof DateRange)) {
+		var bOriginInstanceOfDateRange = oOrigin && oOrigin instanceof DateRange;
+		//The check for _bIsBeingDestroyed is because here there's no need of any actions when
+		//the control is destroyed. It's all handled in the Control's invalidate method.
+		if (!this._bIsBeingDestroyed && (this._bDateRangeChanged || bOriginInstanceOfDateRange)) {
 			// DateRange changed -> only invalidate calendar control
 			if (this.getDomRef()) {
 				var sKey = this.getViewKey();

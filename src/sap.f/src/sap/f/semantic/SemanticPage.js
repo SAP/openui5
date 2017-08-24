@@ -141,7 +141,17 @@ sap.ui.define([
 				/**
 				* Determines whether the footer is visible.
 				*/
-				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
+				showFooter: {type: "boolean", group: "Behavior", defaultValue: false},
+
+				/**
+				 * Determines which of the title areas (Begin, Middle) is primary.
+				 *
+				 * <b>Note:</b> The primary area is shrinking at a lower rate, remaining visible as long as it can.
+				 *
+				 * @since 1.52
+				 */
+				titlePrimaryArea : {type: "sap.f.DynamicPageTitleArea", group: "Appearance", defaultValue: sap.f.DynamicPageTitleArea.Begin}
+
 			},
 			defaultAggregation : "content",
 			aggregations: {
@@ -167,10 +177,18 @@ sap.ui.define([
 				/**
 				* The content,displayed in the title, when the header is in expanded state.
 				*
-				* <b>Note:</b> The controls will be placed in the title`s left area.
+				* <b>Note:</b> The controls will be placed in the title`s left area,
 				* under the <code>titleHeading</code> aggregation.
 				*/
 				titleExpandedContent: {type: "sap.ui.core.Control", multiple: true},
+
+				/**
+				 * The content, displayed in the title.
+				 *
+				 * <b>Note:</b> The controls will be placed in the middle area.
+				 * @since 1.52
+				 */
+				titleContent: {type: "sap.ui.core.Control", multiple: true},
 
 				/**
 				* A semantic-specific button which is placed in the <code>SemanticPage</code> title as first action.
@@ -395,6 +413,12 @@ sap.ui.define([
 		return this.setProperty("showFooter", bShowFooter, true);
 	};
 
+	SemanticPage.prototype.setTitlePrimaryArea = function (oPrimaryArea) {
+		var oDynamicPageTitle = this._getTitle();
+
+		oDynamicPageTitle.setPrimaryArea(oPrimaryArea);
+		return this.setProperty("titlePrimaryArea", oDynamicPageTitle.getPrimaryArea(), true);
+	};
 
 	/*
 	 * =================================================
@@ -518,6 +542,30 @@ sap.ui.define([
 		SemanticPage.prototype[sMethod] = function (oControl) {
 			var oDynamicPageTitle = this._getTitle(),
 				sTitleMethod = sMethod.replace(/TitleSnappedContent?/, "SnappedContent");
+
+			return oDynamicPageTitle[sTitleMethod].apply(oDynamicPageTitle, arguments);
+		};
+	});
+
+	/**
+	 * Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleContent</code>
+	 * aggregation methods to <code>sap.f.DynamicPageTitle</code> <code>content</code> aggregation.
+	 *
+	 * @override
+	 */
+
+	[
+		"addTitleContent",
+		"insertTitleContent",
+		"removeTitleContent",
+		"indexOfTitleContent",
+		"removeAllTitleContent",
+		"destroyTitleContent",
+		"getTitleContent"
+	].forEach(function (sMethod) {
+		SemanticPage.prototype[sMethod] = function (oControl) {
+			var oDynamicPageTitle = this._getTitle(),
+				sTitleMethod = sMethod.replace(/TitleContent?/, "Content");
 
 			return oDynamicPageTitle[sTitleMethod].apply(oDynamicPageTitle, arguments);
 		};

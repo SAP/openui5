@@ -5,7 +5,7 @@
 			"fileName":"id_1445501120486_25",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"component":"sap.ui.rta.test.Demo.md.Component",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -28,7 +28,7 @@
 			"fileName":"id_1445501120486_26",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"component":"sap.ui.rta.test.Demo.md.Component",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{
@@ -51,7 +51,7 @@
 			"fileName":"id_1445501120486_27",
 			"fileType":"change",
 			"changeType":"hideControl",
-			"component":"sap.ui.rta.test.Demo.md.Component",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
 			"packageName":"$TMP",
 			"content":{},
 			"selector":{

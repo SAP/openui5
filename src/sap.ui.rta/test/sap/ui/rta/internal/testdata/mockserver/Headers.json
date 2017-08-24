@@ -25,7 +25,7 @@
       "AdditionalCrcy2Name": "",
       "AdditionalCrcy2Role": "",
       "AdditionalCrcy2RoleName": "",
-      "AlternativeReferenceDocument": "",
+      "AlternativeReferenceDocument": "Long AlternativeReferenceDocument name for test purposes. Long AlternativeReferenceDocument name for test purposes. Long AlternativeReferenceDocument name for test purposes.",
       "AmountInCoCodeCrcy": "100.25",
       "AmountInTransactionCrcy": "100.25",
       "CoCodeCurrency": "EUR",

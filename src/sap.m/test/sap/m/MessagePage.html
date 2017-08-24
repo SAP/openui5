@@ -12,38 +12,23 @@
             >
     </script>
     <script>
+
+        var fnBackToMaster = function() {
+            sap.ui.getCore().byId("splitApp").toMaster("master"); // the menu is the master part
+        };
         // Simple MessagePage
         var oMessagePage = new sap.m.MessagePage("messagePage",{
             title:"Opportunity",
             text:"No Items are present",
             description: "Description",
-            customDescription: new sap.m.Link({text: "Custom Description", href: "http://go.sap.com/index.html"})
+            customDescription: new sap.m.Link({text: "Custom Description", href: "http://go.sap.com/index.html"}),
+            showNavButton: true,
+            navButtonPress: fnBackToMaster
         });
 
         var oPageWithMessagePage = new sap.m.Page("pageWithMessagePage", {
             title: "Detail",
-            content: new sap.m.MessagePage({title: "Opportunity",showNavButton: true})
-        });
-
-        var oCarousel = new sap.m.Carousel("carousel", {
-            activePage: oMessagePage,
-            loop: true,
-            pages: [
-                new sap.m.MessagePage({
-                    title: "Opportunity1",
-                    showNavButton: true,
-                    text: "MessagePage 1"
-                }),
-                new sap.m.MessagePage({
-                    title: "Opportunity2",
-                    showNavButton: true,
-                    text: "MessagePage 2"
-                }),
-                new sap.m.MessagePage({
-                    title: "Opportunity3",
-                    showNavButton: true,
-                    text: "MessagePage 3"
-                })]
+            content: new sap.m.MessagePage({title: "Opportunity",showNavButton: true, navButtonPress: fnBackToMaster})
         });
 
         var oNavContainer = new sap.m.NavContainer("navContainer", {
@@ -51,6 +36,7 @@
                 new sap.m.MessagePage({
                     title: "Opportunity1",
                     showNavButton: true,
+                    navButtonPress: fnBackToMaster,
                     customText: new sap.m.Link({text: "MessagePage insight NavContainer", href: "http://go.sap.com/index.html"})
                 })]
         });
@@ -75,13 +61,6 @@
                                 oSplitApp.toDetail("pageWithMessagePage");
                             }
                         }),
-                        new sap.m.StandardListItem("SLItem3", {
-                            title: "Carousel with message page",
-                            type: "Navigation",
-                            press: function() {
-                                oSplitApp.toDetail("carousel");
-                            }
-                        }),
                         new sap.m.StandardListItem("SLItem4", {
                             title: "Nav container with message page",
                             type: "Navigation",
@@ -102,7 +81,7 @@
         });
 
         var oSplitApp = new sap.m.SplitApp("splitApp", {
-            detailPages: [oMessagePage, oPageWithMessagePage, oCarousel, oNavContainer],
+            detailPages: [oMessagePage, oPageWithMessagePage, oNavContainer],
             masterPages: [oMasterPage],
             initialDetail: "messagePage",
             initialMaster: "master"

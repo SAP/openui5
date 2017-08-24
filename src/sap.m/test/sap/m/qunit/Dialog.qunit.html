@@ -407,8 +407,6 @@
 				this.clock.tick(500);
 
 				var $Dialog = oDialog.$();
-				assert.ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
-				assert.ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
 				assert.ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
 				assert.ok(oDialog.getDomRef('scrollCont').classList.contains('sapMDialogStretchContent'), "Stretched dialog should have class sapMDialogStretchContent");
 				oDialog.destroy();
@@ -462,8 +460,6 @@
 				this.clock.tick(500);
 
 				var $Dialog = oDialog.$();
-				assert.ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
-				assert.ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
 				assert.ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
 				oDialog.destroy();
 				jQuery("html").css("overflow", ""); // restore scrollbar after test

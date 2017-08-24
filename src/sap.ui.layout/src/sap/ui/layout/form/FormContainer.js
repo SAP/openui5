@@ -263,8 +263,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		for (var i = 0; i < aFormElements.length; i++) {
 			var oFormElement = aFormElements[i];
-			oFormElement.invalidateLabels();
+			oFormElement.invalidateLabel();
 		}
+
+	};
+
+	/**
+	 * Determines if the <code>FormContainer</code> is visible or not. Per default it
+	 * just returns the value of the <code>visible</code> property.
+	 * But this might be overwritten by inherited elements.
+	 *
+	 * For rendering by <code>FormLayouts</code> this function has to be used instead of
+	 * <code>getVisible</code>.
+	 *
+	 * @returns {boolean} If true, the <code>FormContainer</code> is visible, otherwise not
+	 * @public
+	 */
+	FormContainer.prototype.isVisible = function(){
+
+		return this.getVisible();
 
 	};
 

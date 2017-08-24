@@ -35,59 +35,43 @@
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function() {
-				this.oMultiEditField.destroy();
+				if (!this.oMultiEditField._bIsBeingDestroyed) {
+					this.oMultiEditField.destroy();
+				}
 				this.oMultiEditField = null;
 			}
 		});
 
-		QUnit.test("Check if items have the correct key and text", function(assert) {
-			//Act
-			var items = this.oMultiEditField.getItems();
+		QUnit.test("Check if special value items have the correct key and text", function(assert) {
 			//Assert
-			assert.strictEqual(items[0].getKey(), "_keep", "Item key 'keep' correct.");
-			assert.strictEqual(items[0].getText(), "Keep existing value", "Item text 'keep' correct.");
+			assert.strictEqual(this.oMultiEditField._getKeepAll().getKey(), "keep", "Item key 'keep' correct.");
+			assert.strictEqual(this.oMultiEditField._getKeepAll().getText(), "Keep existing value", "Item text 'Keep existing value' correct.");
 
-			assert.strictEqual(items[1].getKey(), "_new", "Item key 'new' correct.");
-			assert.strictEqual(items[1].getText(), "Select new value", "Item text 'new' correct.");
+			assert.strictEqual(this.oMultiEditField._getBlank().getKey(), "blank", "Item key 'blank' correct.");
+			assert.strictEqual(this.oMultiEditField._getBlank().getText(), "Leave blank", "Item text 'Leave blank' correct.");
 
-			assert.strictEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems.nullable), -1, "Blank item will not be displayed.");
+			assert.strictEqual(this.oMultiEditField._getValueHelp().getKey(), "new", "Item key 'new' correct.");
+			assert.strictEqual(this.oMultiEditField._getValueHelp().getText(), "Select new value", "Item text 'Select new value' correct.");
 		});
 
-		QUnit.test("Check if items of _oPrefilledItems get destroyed on exit.", function(assert) {
+		QUnit.test("Check if special value items are destroyed on exit.", function(assert) {
+			//Arrange
+			var oItemTemplate = this.oMultiEditField.byId("itemTemplate");
 			//Act
-			var prefilledItems = this.oMultiEditField._oPrefilledItems;
 			this.oMultiEditField.destroy();
 			//Assert
-			for (var property in prefilledItems) {
-				assert.equal(prefilledItems[property]._bIsBeingDestroyed, true, prefilledItems[property].sId + " has been destroyed.");
-			}
-			assert.equal(this.oMultiEditField._oPrefilledItems, null, "_oPrefilledItems has been destroyed.");
-		});
-
-		QUnit.test("Check if ValueHelp is not displayed on property change.", function(assert) {
-			//Arrange
-			this.oMultiEditField.setShowValueHelp(false);
-			//Act
-			sap.ui.getCore().applyChanges();
-			//Assert
-			assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems.showValueHelp), -1, "ValueHelp will not be displayed.");
-		});
-
-		QUnit.test("Check if blank item is displayed on property change.", function(assert) {
-			//Arrange
-			this.oMultiEditField.setNullable(true);
-			//Act
-			sap.ui.getCore().applyChanges();
-			//Assert
-			assert.notEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems.nullable), -1, "Blank item will be displayed.");
+			assert.equal(this.oMultiEditField._getKeepAll()._bIsBeingDestroyed, true, "'Keep existing value' item has been destroyed.");
+			assert.equal(this.oMultiEditField._getBlank()._bIsBeingDestroyed, true, "'Leave blank' item has been destroyed.");
+			assert.equal(this.oMultiEditField._getValueHelp()._bIsBeingDestroyed, true, "'Set new value' item has been destroyed.");
+			assert.equal(oItemTemplate._bIsBeingDestroyed, true, "Item template has been destroyed");
 		});
 
 		QUnit.test("Check if blank item is initially displayed.", function(assert) {
-			assert.notEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems["nullable"]), -1, "Blank item will be displayed.");
+			assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._getBlank()), -1, "Blank item will not be displayed initially.");
 		});
 
 
-		QUnit.module("Selection change", {
+		QUnit.module("Selection change event handler", {
 			beforeEach: function() {
 				this.oMultiEditField = new sap.m.MultiEditField();
 				this.oMultiEditField.placeAt("qunit-fixture");
@@ -106,46 +90,100 @@
 			assert.ok(oSelect.hasListeners("change"), "Selection change event handler is attached");
 		});
 
-		QUnit.test("Keep existing value selection", function(assert) {
+		QUnit.test("Change event for a regular item", function(assert) {
 			//Arrange
-			var oSelect = this.oMultiEditField.byId("select");
-			var oItem = new sap.ui.core.Item({
-				key: "_keep"
-			});
+			var oItem = new sap.ui.core.Item();
+			var oSpy = sinon.spy(this.oMultiEditField, "fireChange");
+			this.oMultiEditField.attachChange(onChangeHandler);
+			sinon.stub(this.oMultiEditField, "_getExternalItem").returns(oItem);
 			//Act
-			oSelect.fireChange({
+			this.oMultiEditField.byId("select").fireChange({
 				selectedItem: oItem
 			});
 			//Assert
-			assert.equal(this.oMultiEditField._sCurrentSelection, "_keep", "Keep existing value item is selected");
+			function onChangeHandler(oEvent) {
+				assert.equal(oEvent.getParameter("selectedItem"), oItem, "Event parameter item returns correctly");
+			}
 		});
 
-		QUnit.test("Blank selection", function(assert) {
+		QUnit.test("Change event for a special item", function(assert) {
 			//Arrange
+			var oSpy = sinon.spy(this.oMultiEditField, "fireChange");
 			var oSelect = this.oMultiEditField.byId("select");
-			var oItem = new sap.ui.core.Item({
-				key: "_blank"
-			});
+			var oItem = this.oMultiEditField._getKeepAll();
 			//Act
 			oSelect.fireChange({
 				selectedItem: oItem
 			});
 			//Assert
-			assert.equal(this.oMultiEditField._sCurrentSelection, "_blank", "Blank item is selected");
+			assert.equal(oSpy.callCount, 0, "The change event is not triggered");
 		});
 
-		QUnit.test("Value help selection", function(assert) {
+		QUnit.module("Setters and getters", {
+			beforeEach: function (){
+				this.oMultiEditField = new sap.m.MultiEditField();
+				this.oMultiEditField.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oMultiEditField.destroy();
+				this.oMultiEditField = null;
+			}
+		});
+
+		QUnit.test("Setter for property showValueHelp", function(assert) {
 			//Arrange
-			var oSelect = this.oMultiEditField.byId("select");
+			this.oMultiEditField.setShowValueHelp(false);
+			//Act
+			sap.ui.getCore().applyChanges();
+			//Assert
+			assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._getValueHelp()), -1, "'Set new value' item will not be displayed.");
+		});
+
+		QUnit.test("Setter for property nullable", function(assert) {
+			//Arrange
+			this.oMultiEditField.setNullable(true);
+			//Act
+			sap.ui.getCore().applyChanges();
+			//Assert
+			assert.notEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._getBlank()), -1, "'Leave blank' item will be displayed.");
+		});
+
+		QUnit.test("Set selected item with special value item", function(assert) {
+			//Arrange
+			var oItem = this.oMultiEditField._getKeepAll();
+			//Act
+			this.oMultiEditField.setSelectedItem(oItem);
+			//Assert
+			assert.equal(this.oMultiEditField.byId("select").getSelectedKey(), "keep", "The" + oItem.getText() + " item is selected and displayed in MultiEditField");
+			assert.equal(this.oMultiEditField.getSelectedItem(), null, "Null is returned by getSelectedItem when special value item is selected");
+		});
+
+		QUnit.test("Set regular item as selected item", function(assert) {
+			//Arrange
 			var oItem = new sap.ui.core.Item({
-				key: "_new"
+				key: "key",
+				text: "text"
+			});
+			this.oMultiEditField.addItem(oItem);
+			//Act
+			this.oMultiEditField.setSelectedItem(oItem);
+			//Assert
+			assert.equal(this.oMultiEditField.byId("select").getSelectedKey(), "key", "The item is selected and displayed in MultiEditField");
+			assert.deepEqual(this.oMultiEditField.getSelectedItem(), oItem, "The item is returned by getSelectedItem");
+		});
+
+		QUnit.test("Set foreign item as selected item", function(assert) {
+			//Arrange
+			var oItem = new sap.ui.core.Item({
+				key: "key",
+				text: "text"
 			});
 			//Act
-			oSelect.fireChange({
-				selectedItem: oItem
-			});
+			this.oMultiEditField.setSelectedItem(oItem);
 			//Assert
-			assert.equal(this.oMultiEditField._sCurrentSelection, "_new", "Value help item is selected");
+			assert.notEqual(this.oMultiEditField.byId("select").getSelectedKey(), "key", "The item is not selected and displayed in MultiEditField");
+			assert.equal(this.oMultiEditField.getSelectedItem(), null, "Null is returned because item is not from items aggregation");
 		});
 
 		QUnit.module("Public methods", {
@@ -162,26 +200,71 @@
 
 		QUnit.test("isBlankSelection function", function(assert) {
 			//Arrange
+			this.oMultiEditField.setNullable(true);
+			sap.ui.getCore().applyChanges();
 			var oSelect = this.oMultiEditField.byId("select");
-			var oItem = this.oMultiEditField.getItems()[1];
+			var oItem = oSelect.getItemByKey("blank");
 			//Act
-			oSelect.fireChange({
-				selectedItem: oItem
-			});
+			oSelect.setSelectedItem(oItem);
 			//Assert
-			assert.ok(this.oMultiEditField.isBlankSelected(), "Blank item is currently selected");
+			assert.ok(this.oMultiEditField.isBlankSelected(), "'Leave blank' item is currently selected");
 		});
 
 		QUnit.test("isKeepExistingSelection function", function(assert) {
 			//Arrange
 			var oSelect = this.oMultiEditField.byId("select");
-			var oItem = this.oMultiEditField.getItems()[0];
+			var oItem = oSelect.getItemByKey("keep");
 			//Act
-			oSelect.fireChange({
-				selectedItem: oItem
-			});
+			oSelect.setSelectedItem(oItem);
 			//Assert
-			assert.ok(this.oMultiEditField.isKeepExistingSelected(), "Keep existing value item is currently selected");
+			assert.ok(this.oMultiEditField.isKeepExistingSelected(), "'Keep existing value' item is currently selected");
+		});
+
+		QUnit.module("Private methods", {
+			beforeEach: function() {
+				this.oMultiEditField = new sap.m.MultiEditField();
+				this.oMultiEditField.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oMultiEditField.destroy();
+				this.oMultiEditField = null;
+			}
+		});
+
+		QUnit.test("_getExternalItem function", function(assert) {
+			//Arrange
+			var oValidItem = new sap.ui.core.Item({
+				key: "key",
+				text: "text"
+			});
+			var oInvalidItem = new sap.ui.core.Item();
+			this.oMultiEditField.setNullable(true);
+			this.oMultiEditField.addItem(oValidItem);
+			sap.ui.getCore().applyChanges();
+			var oKeepItem = this.oMultiEditField.byId("select").getItemByKey("keep");
+			var oBlankItem = this.oMultiEditField.byId("select").getItemByKey("blank");
+			var oValueHelpItem = this.oMultiEditField.byId("select").getItemByKey("new");
+			var oValidInternalItem = this.oMultiEditField.byId("select").getItemByKey("key");
+			//Assert
+			assert.deepEqual(this.oMultiEditField._getExternalItem(oKeepItem), this.oMultiEditField._getKeepAll(), "'Keep existing value' item is returned correctly");
+			assert.deepEqual(this.oMultiEditField._getExternalItem(oBlankItem), this.oMultiEditField._getBlank(), "'Leave blank' item is returned correctly");
+			assert.deepEqual(this.oMultiEditField._getExternalItem(oValueHelpItem), this.oMultiEditField._getValueHelp(), "'Set new value' item is returned correctly");
+			assert.deepEqual(this.oMultiEditField._getExternalItem(oValidInternalItem), oValidItem, "regular item is returned correctly");
+			assert.equal(this.oMultiEditField._getExternalItem(oInvalidItem), null, "Null is returned because item is not in the select box");
+		});
+
+		QUnit.test("_isSpecialValueItem function", function(assert) {
+			//Arrange
+			var oKeepAllItem = this.oMultiEditField._getKeepAll();
+			var oBlankItem = this.oMultiEditField._getBlank();
+			var oValueHelpItem = this.oMultiEditField._getValueHelp();
+			var oRegularItem = new sap.ui.core.Item();
+			//Act
+			assert.ok(this.oMultiEditField._isSpecialValueItem(oKeepAllItem), "'Keep existing value' item is special value item");
+			assert.ok(this.oMultiEditField._isSpecialValueItem(oBlankItem), "'Leave blank' item is special value item");
+			assert.ok(this.oMultiEditField._isSpecialValueItem(oValueHelpItem), "'Set new value' item is special value item");
+			assert.notOk(this.oMultiEditField._isSpecialValueItem(oRegularItem), "Item is not special value item");
 		});
 	</script>
 </head>

@@ -469,13 +469,18 @@ sap.ui.define([
 				oRefControlForId = mParents.relevantContainer; //e.g. SimpleForm
 			}
 			var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
+			var oChangeHandler = this._getChangeHandlerForControlType(mParents.parent.getMetadata().getName(), mODataPropertyActionDTMetadata.changeType);
+			var sVariantManagementReference;
+			if (mParents.parentOverlay.getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
+				sVariantManagementReference = mParents.parentOverlay.getVariantManagement();
+			}
 			return this.getCommandFactory().getCommandFor(mParents.parent, "addODataProperty", {
 				newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
 				index : iIndex !== undefined ? iIndex : iAddTargetIndex,
 				bindingString : oSelectedElement.bindingPath,
 				parentId : mParents.parent.getId(),
 				oDataServiceVersion : sODataServiceVersion
-			}, oParentAggregationDTMetadata);
+			}, oParentAggregationDTMetadata, sVariantManagementReference);
 		},
 
 		_createCommandForAddLibrary: function(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata){
@@ -494,13 +499,15 @@ sap.ui.define([
 			var sType = oRevealedElement.getMetadata().getName();
 			var mType = mActions.reveal.types[sType];
 			var oDesignTimeMetadata = mType.designTimeMetadata;
-			if (oDesignTimeMetadata.getAction("reveal").changeOnRelevantContainer) {
+			var oRevealAction = oDesignTimeMetadata.getAction("reveal");
+			var sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oRevealAction);
+			if (oRevealAction.changeOnRelevantContainer) {
 				return this.getCommandFactory().getCommandFor(oRevealedElement, "reveal", {
 					revealedElementId : oRevealedElement.getId(),
 					directParent : mParents.parent
-				}, oDesignTimeMetadata);
+				}, oDesignTimeMetadata, sVariantManagementReference);
 			} else {
-				return this.getCommandFactory().getCommandFor(oRevealedElement, "reveal", { }, oDesignTimeMetadata);
+				return this.getCommandFactory().getCommandFor(oRevealedElement, "reveal", { }, oDesignTimeMetadata, sVariantManagementReference);
 			}
 		},
 
@@ -520,6 +527,11 @@ sap.ui.define([
 			if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()){
 				var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ? OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
 				var SourceParentDesignTimeMetadata = oSourceParentOverlay.getDesignTimeMetadata();
+				var oMoveAction = SourceParentDesignTimeMetadata.getAction("move");
+				var sVariantManagementReference;
+				if (oMoveAction) {
+					var sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oMoveAction, true);
+				}
 				oCmd = this.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
 					movedElements : [{
 						element : oRevealedElement,
@@ -536,7 +548,7 @@ sap.ui.define([
 						parent : oTargetParent,
 						aggregation : sParentAggregationName
 					}
-				}, SourceParentDesignTimeMetadata);
+				}, SourceParentDesignTimeMetadata, sVariantManagementReference);
 			}
 			return oCmd;
 		},

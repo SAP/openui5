@@ -97,6 +97,18 @@ sap.ui.define([
 		return aVariants;
 	};
 
+	VariantController.prototype.getVariant = function (sVariantManagementReference, sVariantReference) {
+		var oVariant;
+		var aVariants = this.getVariants(sVariantManagementReference);
+		aVariants.some(function(oCurrentVariant, iIndex) {
+			if (oCurrentVariant.content.fileName === sVariantReference) {
+				oVariant = oCurrentVariant;
+				return true;
+			}
+		});
+		return oVariant;
+	};
+
 	/**
 	 * Gets the changes of a given variant
 	 *
@@ -169,7 +181,6 @@ sap.ui.define([
 			mChanges[sControlId].forEach(function(oChange) {
 				var iChangeIndex = aCurrentChangeKeys.indexOf(oChange.getKey());
 				if (iChangeIndex !== -1) {
-					oChange.bFromLrep = true;
 					aCurrentFilteredChanges.push(oChange);
 				}
 			});

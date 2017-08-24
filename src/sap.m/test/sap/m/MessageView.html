@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>sap.m.MessagePopover Testpage</title>
+        <title>sap.m.MessagView Testpage</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
         <script src="shared-config.js"></script>
@@ -55,6 +55,11 @@
                     title: "Information message (Long) 2",
                     description: "Just some text description",
                     longtextUrl: "./SampleHTML.html"
+                }],
+                reducedSet: [{
+                    type: "Error",
+                    title: "Error message",
+                    description: "First Error message description"
                 }]
             };
 
@@ -135,6 +140,13 @@
                 }
             });
 
+             var oMessageViewPopoverWithOneItem = new sap.m.MessageView("mMView4", {
+                 items: {
+                    path: "/reducedSet",
+                    template: oMessageTemplate
+                 }
+            });
+
             // Dialog will have no padding because of compatVersion setting on main script
             var oDialog1 = new sap.m.Dialog({
 //                title: "Dialog with MessageView",
@@ -200,6 +212,25 @@
                 ]
             });
 
+            var oPopoverWithOneItem = new sap.m.Popover("pop2", {
+                placement: sap.m.PlacementType.Top,
+                title: "Popover with MessageView",
+                showHeader: true,
+                endButton: new sap.m.Button("closeBtn", {
+                    text: "Close",
+                    press: function () {
+                        oPopoverWithOneItem.close();
+                    }
+                }),
+                modal: true,
+                contentWidth: "440px",
+                contentHeight: "440px",
+                verticalScrolling: false,
+               content: [
+                    oMessageViewPopoverWithOneItem
+               ]
+            });
+
             var oMessagePopoverButton = new sap.m.Button("mPopoverButton", {
                 icon: sap.ui.core.IconPool.getIconURI("message-popup"),
                 text: "Standard MessagePopover",
@@ -218,7 +249,17 @@
                 }
             });
 
+			var oMessageViewPopoverButton2 = new sap.m.Button("mViewButton2", {
+				icon: sap.ui.core.IconPool.getIconURI("message-popup"),
+				text: "MessageView with one item",
+				type: sap.m.ButtonType.Emphasized,
+				press: function () {
+					oPopoverWithOneItem.openBy(this);
+				}
+			});
+
             oMessagePopoverButton.addDependent(oMessagePopover);
+            oMessageViewPopoverButton2.addDependent(oPopoverWithOneItem);
 
             var page2 = new sap.m.Page("page2", {
                 content: [
@@ -229,6 +270,7 @@
                         new sap.m.ToolbarSpacer(),
                         oMessagePopoverButton,
                         oMessageViewPopoverButton,
+                        oMessageViewPopoverButton2,
                         sap.m.CheckBox("compactMode", {
                             selected: false,
                             text: "Compact mode",

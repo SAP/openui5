@@ -3893,7 +3893,6 @@
 		// assert
 		assert.ok(oSelect.isOpen(), "Select is open");
 		assert.ok(oSelect.hasStyleClass(sap.m.SelectRenderer.CSS_CLASS + "Pressed"));
-		assert.strictEqual(oSelect.getPicker().$().width(), jQuery(window).width(), "The width of the popup is strictEqual to the width of the browser view port");
 
 		// cleanup
 		oSelect.destroy();
@@ -6122,6 +6121,32 @@
 		// cleanup
 		oSelect.destroy();
 	});
+
+	QUnit.test("tap on pre-selected item with keyboard keys should fire change event", function (assert) {
+		var oItem2 = new sap.ui.core.Item({text : "2"}),
+			oSelect = new sap.m.Select({
+				items: [new sap.ui.core.Item({text : "1"}), oItem2]
+			}),
+			fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+		// arrange
+		oSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oSelect.focus();
+		oSelect.open();
+
+		// act
+		// move to the second item with ARROW_DOWN (pre-select item) and execute tap.
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerEvent("tap", oItem2.getDomRef());
+
+		// assert
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired once");
+
+		// cleanup
+		oSelect.destroy();
+	});
+
 
 	QUnit.module("onkeypress");
 

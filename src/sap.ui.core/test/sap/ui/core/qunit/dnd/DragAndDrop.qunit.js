@@ -109,7 +109,6 @@ sap.ui.define([
 
 	QUnit.module("DragSession", {
 		beforeEach: function() {
-			this.oControl = new DragAndDropControl();
 			this.oControl = new DragAndDropControl({
 				dragDropConfig: [
 					new DragDropInfo({
@@ -117,7 +116,7 @@ sap.ui.define([
 					})
 				]
 			});
-			this.oControl.placeAt("content");
+			this.oControl.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
@@ -141,10 +140,12 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oEvent = createjQueryDragEventDummy("dragstart", this.oControl.getTopItems()[0]);
+		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.equal(oEvent.dragSession, null, "No drag session was created for an input element");
 
 		oEvent = createjQueryDragEventDummy("dragstart", this.oControl.getTopItems()[1]);
+		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.equal(oEvent.dragSession, null, "No drag session was created for a textarea element");
 	});
@@ -223,7 +224,7 @@ sap.ui.define([
 					})
 				]
 			});
-			this.oControl.placeAt("content");
+			this.oControl.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
@@ -404,5 +405,103 @@ sap.ui.define([
 		//setTime(3999);
 		//assertLongdragover(1000);
 		//oDateNowStub.restore();
+	});
+
+	QUnit.module("Between Indicator", {
+		beforeEach: function() {
+			this.oControl = new DragAndDropControl({
+				topItems: [new DivControl(), new DivControl()],
+				dragDropConfig: [
+					new DragDropInfo({
+						sourceAggregation: "topItems",
+						targetAggregation: "topItems",
+						dropPosition: "Between"
+					})
+				]
+			});
+			this.oControl.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oControl.destroy();
+		}
+	});
+
+	QUnit.test("Indicator position with dropLayout property", function(assert) {
+		var oEvent, $Indicator, mIndicatorOffset, mTargetOffset;
+		var oDiv1 = this.oControl.getTopItems()[0];
+		var oDiv2 = this.oControl.getTopItems()[1];
+
+		// init drag session
+		oEvent = createjQueryDragEventDummy("dragstart", oDiv1);
+		DragAndDrop.preprocessEvent(oEvent);
+
+		// validation
+		oEvent = createjQueryDragEventDummy("dragenter", oDiv2);
+		DragAndDrop.preprocessEvent(oEvent);
+
+		// act for top indicator
+		oEvent = createjQueryDragEventDummy("dragover", oDiv2);
+		mTargetOffset = oDiv2.$().offset();
+		oEvent.pageY = mTargetOffset.top + 1;
+		oEvent.pageX = mTargetOffset.left + 1;
+		oDiv2.$().trigger(oEvent);
+		$Indicator = oEvent.dragSession.getIndicator();
+		mIndicatorOffset = $Indicator.offset();
+
+		assert.strictEqual($Indicator.attr("data-drop-position"), "between", "Indicator's data-drop-position attribute is set to between");
+		assert.strictEqual($Indicator.attr("data-drop-layout"), "vertical", "Indicator's data-drop-layout attribute is set to vertical.");
+		assert.strictEqual($Indicator.width(), oDiv2.$().width() , "Indicator's width is equal to dropped item's width.");
+		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
+		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left , "Indicator's left position is equal to dropped item's left position.");
+
+		// act for bottom indicator
+		oEvent = createjQueryDragEventDummy("dragover", oDiv2);
+		mTargetOffset = oDiv2.$().offset();
+		oEvent.pageX = mTargetOffset.left + 10;
+		oEvent.pageY = mTargetOffset.top + oDiv2.$().height() - 1;
+		oDiv2.$().trigger(oEvent);
+		$Indicator = oEvent.dragSession.getIndicator();
+		mIndicatorOffset = $Indicator.offset();
+
+		assert.strictEqual($Indicator.attr("data-drop-layout"), "vertical", "Indicator's data-drop-layout attribute is still vertical.");
+		assert.strictEqual($Indicator.width(), oDiv2.$().width() , "Indicator's width is equal to dropped item's width.");
+		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left , "Indicator's left position is equal to dropped item's left position.");
+		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top + oDiv2.$().height(), "Indicator's bottom position is equal to dropped item's bottom position.");
+
+		// change the drop layout
+		this.oControl.getDragDropConfig()[0].setDropLayout("Horizontal");
+
+		// act for bottom indicator
+		oEvent = createjQueryDragEventDummy("dragover", oDiv2);
+		mTargetOffset = oDiv2.$().offset();
+		oEvent.pageY = mTargetOffset.top + 1;
+		oEvent.pageX = mTargetOffset.left + 1;
+		oDiv2.$().trigger(oEvent);
+		$Indicator = oEvent.dragSession.getIndicator();
+		mIndicatorOffset = $Indicator.offset();
+
+		assert.strictEqual($Indicator.attr("data-drop-layout"), "horizontal", "Indicator's data-drop-layout attribute is set to horizontal.");
+		assert.strictEqual($Indicator.height(), oDiv2.$().height() , "Indicator's height is equal to dropped item's height.");
+		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
+		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left , "Indicator's left position is equal to dropped item's bottom position.");
+
+		// act for right indicator
+		oEvent = createjQueryDragEventDummy("dragover", oDiv2);
+		mTargetOffset = oDiv2.$().offset();
+		oEvent.pageY = mTargetOffset.top + 1;
+		oEvent.pageX = mTargetOffset.left + oDiv2.$().width() - 1;
+		oDiv2.$().trigger(oEvent);
+		$Indicator = oEvent.dragSession.getIndicator();
+		mIndicatorOffset = $Indicator.offset();
+
+		assert.strictEqual($Indicator.attr("data-drop-layout"), "horizontal", "Indicator's data-drop-layout attribute is still horizontal.");
+		assert.strictEqual($Indicator.height(), oDiv2.$().height() , "Indicator's height is equal to dropped item's height.");
+		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
+		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left + oDiv2.$().width(), "Indicator's left position is equal to dropped item's right position.");
+
+		// clean up
+		oDiv2.$().trigger("drop");
+		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop");
 	});
 });

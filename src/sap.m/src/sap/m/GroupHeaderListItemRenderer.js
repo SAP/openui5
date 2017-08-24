@@ -97,6 +97,14 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		}
 	};
 
+	GroupHeaderListItemRenderer.getAriaRole = function(oLI) {
+		if (oLI.getTable()) {
+			return "row";
+		}
+
+		return ListItemBaseRenderer.getAriaRole.apply(this, arguments);
+	};
+
 	return GroupHeaderListItemRenderer;
 
 }, /* bExport= */ true);

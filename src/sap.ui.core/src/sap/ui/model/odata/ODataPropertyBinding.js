@@ -139,11 +139,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.checkDataState = function(mPaths) {
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
+		var sCanonicalPath = this.oModel.resolve(this.sPath, this.oContext, true);
+
+		if (!mPaths || sCanonicalPath && sCanonicalPath in mPaths) {
 			var oDataState = this.getDataState();
-			oDataState.setLaundering(!!mPaths && !!(sResolvedPath in mPaths));
+			oDataState.setLaundering(!!mPaths && !!(sCanonicalPath in mPaths));
 			PropertyBinding.prototype.checkDataState.apply(this, arguments);
+			oDataState.setModelMessages(this.oModel.getMessagesByPath(sCanonicalPath));
 		}
 	};
 

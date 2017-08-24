@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/variants/VariantController"
-], function(Change, Utils, LRepConnector, Cache, ContextManager, Settings, VariantController) {
+	"sap/ui/fl/Change", "sap/ui/fl/Variant", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/variants/VariantController"
+], function(Change, Variant, Utils, LRepConnector, Cache, ContextManager, Settings, VariantController) {
 	"use strict";
 
 	/**
@@ -407,7 +407,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.addChange = function(vChange, oComponent) {
 		var oNewChange;
-		if (vChange instanceof Change){
+		if (vChange instanceof Change || vChange instanceof Variant){
 			oNewChange = vChange;
 		}else {
 			oNewChange = new Change(vChange);
@@ -450,9 +450,11 @@ sap.ui.define([
 	 * to ensure the correct order, the methods are called sequentially;
 	 * after a change was saved successfully, it is removed from the dirty changes and the cache is updated.
 	 *
+	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
+	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @returns {Promise} resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function() {
+	ChangePersistence.prototype.saveDirtyChanges = function(bSkipUpdateCache) {
 		var aDirtyChangesClone = this._aDirtyChanges.slice(0);
 		var aDirtyChanges = this._aDirtyChanges;
 		var aRequests = this._getRequests(aDirtyChangesClone);
@@ -461,15 +463,44 @@ sap.ui.define([
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
 			var sRequest = aRequests[0];
 			var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aDirtyChanges);
-			return this._oConnector.create(aPreparedDirtyChangesBulk, sRequest).then(this._massUpdateCacheAndDirtyState(aDirtyChanges, aDirtyChangesClone));
+			return this._oConnector.create(aPreparedDirtyChangesBulk, sRequest).then(this._massUpdateCacheAndDirtyState(aDirtyChanges, aDirtyChangesClone, bSkipUpdateCache));
 		} else {
 			return aDirtyChangesClone.reduce(function (sequence, oDirtyChange) {
 				var saveAction = sequence.then(this._performSingleSaveAction(oDirtyChange).bind(this));
-				saveAction.then(this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange));
+				saveAction.then(this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange, bSkipUpdateCache));
 
 				return saveAction;
 			}.bind(this), Promise.resolve());
 		}
+	};
+
+	/**
+	 * Adjust the dirty changes by setting the new namespace/component and later calls the method saveDirtyChanges.
+	 *
+	 * @param {string} sReferenceForChange ID of the new app variant for which the dirty changes would be saved
+	 * @returns {Promise} Returns a resolved promise after all dirty changes were saved
+	 */
+	ChangePersistence.prototype.saveAsDirtyChanges = function(sReferenceForChange) {
+		return Settings.getInstance(this._mComponent.name, this._mComponent.appVersion).then(function(oSettings) {
+
+			var oPropertyBag = {
+				reference: sReferenceForChange
+			};
+			var sNamespace = Utils.createNamespace(oPropertyBag, "changes");
+
+			var aDirtyChanges = this.getDirtyChanges();
+
+			aDirtyChanges.forEach(function(oChange) {
+				if (oSettings.isAtoEnabled()) {
+					oChange.setRequest("ATO_NOTIFICATION");
+				}
+
+				oChange.setNamespace(sNamespace);
+				oChange.setComponent(sReferenceForChange);
+			});
+
+			return this.saveDirtyChanges(true);
+		}.bind(this));
 	};
 
 	ChangePersistence.prototype._performSingleSaveAction = function (oDirtyChange) {
@@ -489,16 +520,22 @@ sap.ui.define([
 		};
 	};
 
-	ChangePersistence.prototype._updateCacheAndDirtyState = function (aDirtyChanges, oDirtyChange) {
+	/**
+	  * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
+	  * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
+	 */
+	ChangePersistence.prototype._updateCacheAndDirtyState = function (aDirtyChanges, oDirtyChange, bSkipUpdateCache) {
 		var that = this;
 
 		return function() {
-			if (oDirtyChange.getPendingAction() === "NEW") {
-				Cache.addChange(that._mComponent, oDirtyChange.getDefinition());
-			}
+			if (!bSkipUpdateCache) {
+				if (oDirtyChange.getPendingAction() === "NEW") {
+					Cache.addChange(that._mComponent, oDirtyChange.getDefinition());
+				}
 
-			if (oDirtyChange.getPendingAction() === "DELETE") {
-				Cache.deleteChange(that._mComponent, oDirtyChange.getDefinition());
+				if (oDirtyChange.getPendingAction() === "DELETE") {
+					Cache.deleteChange(that._mComponent, oDirtyChange.getDefinition());
+				}
 			}
 
 			var iIndex = aDirtyChanges.indexOf(oDirtyChange);
@@ -508,18 +545,20 @@ sap.ui.define([
 		};
 	};
 
-	ChangePersistence.prototype._massUpdateCacheAndDirtyState = function (aDirtyChanges, aDirtyChangesClone) {
-		var that = this;
-
-		jQuery.each(aDirtyChangesClone, function (index, oDirtyChange) {
-			that._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange)();
-		});
+	/**
+	  * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
+	  * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
+	 */
+	ChangePersistence.prototype._massUpdateCacheAndDirtyState = function (aDirtyChanges, aDirtyChangesClone, bSkipUpdateCache) {
+		aDirtyChangesClone.forEach(function(oDirtyChange) {
+			this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange, bSkipUpdateCache)();
+		}, this);
 	};
 
 	ChangePersistence.prototype._getRequests = function (aDirtyChanges) {
 		var aRequests = [];
 
-		jQuery.each(aDirtyChanges, function (index, oChange) {
+		aDirtyChanges.forEach(function(oChange) {
 			var sRequest = oChange.getRequest();
 			if (aRequests.indexOf(sRequest) === -1) {
 				aRequests.push(sRequest);
@@ -532,7 +571,7 @@ sap.ui.define([
 	ChangePersistence.prototype._getPendingActions = function (aDirtyChanges) {
 		var aPendingActions = [];
 
-		jQuery.each(aDirtyChanges, function (index, oChange) {
+		aDirtyChanges.forEach(function(oChange) {
 			var sPendingAction = oChange.getPendingAction();
 			if (aPendingActions.indexOf(sPendingAction) === -1) {
 				aPendingActions.push(sPendingAction);
@@ -545,7 +584,7 @@ sap.ui.define([
 	ChangePersistence.prototype._prepareDirtyChanges = function (aDirtyChanges) {
 		var aChanges = [];
 
-		jQuery.each(aDirtyChanges, function (index, oChange) {
+		aDirtyChanges.forEach(function(oChange) {
 			aChanges.push(oChange.getDefinition());
 		});
 

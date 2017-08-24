@@ -458,14 +458,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		for ( i = 0; i < iLength; i++) {
 			oContainer = aContainers[i];
 			oContainer._checkProperties();
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				iVisibleContainers++;
 				aVisibleContainers.push(oContainer);
 			}
 		}
 		for ( i = 0; i < iVisibleContainers; i++) {
 			oContainer = aVisibleContainers[i];
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				iVisibleContainer++;
 				sContainerId = oContainer.getId();
 				oPanel = undefined;
@@ -510,7 +510,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				var bFound = false;
 				for ( i = 0; i < iLength; i++) {
 					oContainer = aContainers[i];
-					if (sContainerId == oContainer.getId() && oContainer.getVisible()) {
+					if (sContainerId == oContainer.getId() && oContainer.isVisible()) {
 						bFound = true;
 						break;
 					}
@@ -566,7 +566,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				var oLabel;
 				for ( var i = 0; i < aElements.length; i++) {
 					var oElement = aElements[i];
-					if (oElement.getVisible()) {
+					if (oElement.isVisible()) {
 						oLabel = oElement.getLabelControl();
 						if (oLabel) {
 							aContent.push(oLabel);
@@ -581,6 +581,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			} else {
 				return false;
 			}
+		};
+
+		oGrid.getAriaLabelledBy = function(){
+			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+			if (oContainer && !oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
+				return oContainer.getAriaLabelledBy();
+			}
+
+			return [];
 		};
 
 		// Form factors
@@ -921,7 +930,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				var aContainers = oLayout.getParent().getFormContainers();
 				var oFirstContainer;
 				for (var i = 0; i < aContainers.length; i++) {
-					if (aContainers[i].getVisible()) {
+					if (aContainers[i].isVisible()) {
 						oFirstContainer = aContainers[i];
 						break;
 					}
@@ -970,7 +979,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
 			var oLayout = this.__myParentLayout;
-			if (oLayout._mainGrid && oLayout._mainGrid.__bIsUsed && !oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
+			if (oLayout._mainGrid && oLayout._mainGrid.__bIsUsed && !oContainer.getToolbar() &&
+					!oContainer.getTitle() && !oContainer.getExpandable() && oContainer.getAriaLabelledBy().length > 0) {
+				// set role only if Title or ariaLabelledBy is set as JAWS 18 has some issues without.
 				return "form";
 			}
 
@@ -1196,7 +1207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		// count only visible containers
 		for ( i = 0; i < aContainers.length; i++) {
 			oContainer = aContainers[i];
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				iLength++;
 				aVisibleContainers.push(oContainer);
 			}
@@ -1253,7 +1264,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 						// it's a Grid
 						oContainer = sap.ui.getCore().byId(oContentElement.__myParentContainerId);
 					}
-					if (oContainer && oContainer.getVisible()) {
+					if (oContainer && oContainer.isVisible()) {
 						var oVisibleContainer = aVisibleContainers[j];
 						if (oContainer != oVisibleContainer) {
 							// order of containers has changed
@@ -1297,7 +1308,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				}
 				for ( i = iStartIndex; i < aContainers.length; i++) {
 					oContainer = aContainers[i];
-					if (oContainer.getVisible()) {
+					if (oContainer.isVisible()) {
 						var sContainerId = oContainer.getId();
 						if (oLayout.mContainers[sContainerId]) {
 							if (oLayout.mContainers[sContainerId][0]) {

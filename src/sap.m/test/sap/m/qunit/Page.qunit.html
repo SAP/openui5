@@ -232,10 +232,57 @@
 				assert.equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "96px", "top of Page content with subHeader shown should be 96px (6rem)");
 			});
 
-			QUnit.test("showFooter", function(assert) {
+			QUnit.test("showFooter when floatingFooter=true and showFooter=false initially", function(assert) {
+				var oPage = new sap.m.Page({
+					id: "idPage",
+					floatingFooter: true,
+					showFooter: false,
+					footer: [ new sap.m.OverflowToolbar({id: "idFooter", content: [new sap.m.Button()]}) ]
+				});
+
+				oPage.placeAt("content");
+
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(!!jQuery.sap.domById("myFooter"), true, "footer should be rendered");
+				assert.equal(oPage.getFooter().hasStyleClass("sapUiHidden"), true, "footer is hidden");
+
+				oPage.destroy();
+			});
+
+			QUnit.test("showFooter toggling with floatingFooter disabled", function (assert) {
+				// Setup
+				var oBar = new sap.m.Bar({
+						contentRight: new sap.m.Button({text: "Hello World"})
+					}),
+					oPage = new sap.m.Page({
+						showFooter: false,
+						footer: oBar
+					}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(oBar.hasStyleClass("sapUiHidden"), "Footer is there, but is hidden.");
+
+				// Act
+				oPage.setShowFooter(true);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(!oBar.hasStyleClass("sapUiHidden"), "Footer is visible.");
+
+				// Act
 				oPage.setShowFooter(false);
 				sap.ui.getCore().applyChanges();
-				assert.equal(jQuery.sap.domById("myFooter"), undefined, "footer should not be rendered");
+
+				// Assert
+				assert.ok(oBar.hasStyleClass("sapUiHidden"), "Footer is there, but is hidden.");
+
+				// Cleanup
+				oBar = null;
+
+				oPage.destroy();
+				oPage = null;
 			});
 
 			if (sap.ui.Device.browser.chrome) {
@@ -258,7 +305,8 @@
 						assert.ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarPH"), "title should be located in the middle");
 					});
 
-				} else if (sap.ui.Device.os.android) {
+				} else if (sap.ui.Device.os.android)
+				{
 
 					QUnit.test("NavButton", function(assert) {
 						var done = assert.async();

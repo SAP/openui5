@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Button",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
-	"sap/ui/fl/support/apps/contentbrowser/utils/HtmlEscapeUtils",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils"
-], function (Controller, Dialog, Text, Button, LRepConnector, HtmlEscapeUtils, DataUtils) {
+], function (Controller, Dialog, Text, Button, LRepConnector, DataUtils) {
 	"use strict";
 
 	/**
@@ -61,7 +60,7 @@ sap.ui.define([
 
 			var oModelData = {};
 			oModelData.layer = mRouteArguments.layer;
-			oModelData.namespace = HtmlEscapeUtils.unescapeSlashes(mRouteArguments.namespace);
+			oModelData.namespace = decodeURIComponent(mRouteArguments.namespace);
 			oModelData.fileName = mRouteArguments.fileName;
 			oModelData.fileType = mRouteArguments.fileType;
 
@@ -141,7 +140,7 @@ sap.ui.define([
 
 			oRouter.navTo("ContentDetailsEdit", {
 				"layer": oContentData.layer,
-				"namespace": HtmlEscapeUtils.escapeSlashes(oContentData.namespace),
+				"namespace": encodeURIComponent(oContentData.namespace),
 				"fileName": oContentData.fileName,
 				"fileType": oContentData.fileType
 			});
@@ -210,7 +209,7 @@ sap.ui.define([
 			return LRepConnector.deleteFile(sContentLayer, sNamespace, sFileName, sFileType).then(function () {
 				oRouter.navTo("LayerContentMaster", {
 					"layer": sSelectedLayer,
-					"namespace": HtmlEscapeUtils.escapeSlashes(sNamespace)
+					"namespace": encodeURIComponent(sNamespace)
 				});
 			});
 		}

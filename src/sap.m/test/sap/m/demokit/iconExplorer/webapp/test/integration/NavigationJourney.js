@@ -11,8 +11,8 @@ sap.ui.define([
 
 		// Arrangements
 		Given.iStartMyApp({
-            delay: 2000 // to really see the busy indicator
-        });
+			delay: 2000 // to really see the busy indicator
+		});
 
 		//Actions
 		When.onTheOverviewPage.iLookAtTheScreen();
