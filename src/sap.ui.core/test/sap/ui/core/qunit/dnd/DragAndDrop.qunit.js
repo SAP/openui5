@@ -116,7 +116,7 @@ sap.ui.define([
 					})
 				]
 			});
-			this.oControl.placeAt("content");
+			this.oControl.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
@@ -224,7 +224,7 @@ sap.ui.define([
 					})
 				]
 			});
-			this.oControl.placeAt("content");
+			this.oControl.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
@@ -419,7 +419,7 @@ sap.ui.define([
 					})
 				]
 			});
-			this.oControl.placeAt("content");
+			this.oControl.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
