@@ -6,9 +6,9 @@
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
-	'sap/ui/rta/command/CompositeCommand'
-
-], function(Plugin, Utils, CompositeCommand) {
+	'sap/ui/rta/command/CompositeCommand',
+	'sap/ui/dt/OverlayRegistry'
+], function(Plugin, Utils, CompositeCommand, OverlayRegistry) {
 	"use strict";
 
 	/**
@@ -196,10 +196,17 @@ sap.ui.define([
 	Remove.prototype._handleRemove = function(aSelectedOverlays) {
 		var aPromises = [];
 		var oCompositeCommand = new CompositeCommand();
+		var fnSetFocus = function (oOverlay) {
+			oOverlay.setSelected(true);
+			setTimeout(function() {
+				oOverlay.focus();
+			}, 0);
+		};
+
+		var oNextOverlaySelection = Remove._getElementToFocus(aSelectedOverlays);
 
 		aSelectedOverlays.forEach(function(oOverlay) {
 			var oCommand;
-
 			var oRemovedElement = oOverlay.getElementInstance();
 			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 			var oRemoveAction = this._getRemoveAction(oOverlay);
@@ -234,10 +241,39 @@ sap.ui.define([
 		if (aPromises.length) {
 			Promise.all(aPromises).then(function() {
 				this._fireElementModified(oCompositeCommand);
+				fnSetFocus(oNextOverlaySelection);
 			}.bind(this));
 		} else {
 			this._fireElementModified(oCompositeCommand);
+			fnSetFocus(oNextOverlaySelection);
 		}
+	};
+
+	Remove._getElementToFocus = function(aSelectedOverlays) {
+		// BCP: 1780366011
+		// if one element is selected then we try to get next or previous sibling
+		// considering already hidden siblings, if not succeed then select relevant container
+		var oNextOverlaySelection;
+		if (aSelectedOverlays.length === 1) {
+			var oOverlay = aSelectedOverlays[0];
+			var aSiblings = oOverlay.getParent().getAggregation(oOverlay.sParentAggregationName);
+			if (aSiblings.length > 1) {
+				var iOverlayPosition = aSiblings.indexOf(oOverlay);
+				var aCandidates = aSiblings.slice(iOverlayPosition + 1);
+				if (iOverlayPosition !== 0) {
+					aCandidates = aCandidates.concat(
+						aSiblings.slice(0, iOverlayPosition).reverse()
+					);
+				}
+				oNextOverlaySelection = aCandidates.filter(function (oSibling) {
+					return oSibling.getElementInstance().getVisible();
+				}).shift();
+			}
+		}
+		if (!oNextOverlaySelection) {
+			oNextOverlaySelection = OverlayRegistry.getOverlay(aSelectedOverlays[0].getRelevantContainer());
+		}
+		return oNextOverlaySelection;
 	};
 
 	return Remove;
