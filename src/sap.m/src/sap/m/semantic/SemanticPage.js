@@ -123,6 +123,17 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 					type: "sap.m.semantic.SemanticRuleSetType",
 					group: "Misc",
 					defaultValue: sap.m.semantic.SemanticRuleSetType.Classic
+				},
+
+				/**
+				 * Determines the backgound color of the page. For more
+				 * information, see {@link sap.m.Page#backgroundDesign}.
+				 * @since 1.52
+				 */
+				backgroundDesign: {
+					type: "sap.m.PageBackgroundDesign",
+					group: "Appearance",
+					defaultValue: sap.m.PageBackgroundDesign.Standard
 				}
 			},
 			defaultAggregation: "content",
@@ -362,6 +373,12 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 
 	SemanticPage.prototype.destroyLandmarkInfo = function () {
 		return this._getPage().destroyLandmarkInfo();
+	};
+
+	SemanticPage.prototype.setBackgroundDesign = function (sBgDesign) {
+		this.setProperty("backgroundDesign", sBgDesign, true);
+		this._getPage().setBackgroundDesign(sBgDesign);
+		return this;
 	};
 
 	/*
