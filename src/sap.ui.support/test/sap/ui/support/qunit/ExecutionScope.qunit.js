@@ -48,10 +48,12 @@
 
 	QUnit.test("Fixed public methods", function (assert) {
 		var getElementsIsAMethod = this.es.getElements && typeof this.es.getElements == "function",
+			getPublicElementsIsAMethod = this.es.getPublicElements && typeof this.es.getElements == "function",
 			getLoggedObjectsIsAMethod = this.es.getLoggedObjects && typeof this.es.getLoggedObjects == "function",
 			getElementsByClassName = this.es.getElementsByClassName && typeof this.es.getElementsByClassName == "function";
 
 		assert.ok(getElementsIsAMethod, " should not be changed");
+		assert.ok(getPublicElementsIsAMethod, " should not be changed");
 		assert.ok(getLoggedObjectsIsAMethod, " should not be changed");
 		assert.ok(getElementsByClassName, " should not be changed");
 	});
@@ -76,6 +78,11 @@
 	QUnit.test("getElements with global context", function (assert) {
 		var elements = this.es.getElements();
 		assert.equal(elements.length, Object.keys(core.mElements).length, " should be equal to core mElements");
+	});
+
+	QUnit.test("getPublicElements with global context", function (assert) {
+		var publicElements = this.es.getPublicElements();
+		assert.equal(publicElements.length, 13, " should exclude internal controls from mElements");
 	});
 
 	QUnit.test("getElements with subtree context", function (assert) {
