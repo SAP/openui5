@@ -5,7 +5,6 @@
 	<Dialog
 		title="Settings"
 		class="sapUiPopupWithPadding"
-		contentWidth="450px"
 		stretchOnPhone="true"
 		id="uploadCollectionSettings">
 		<content>

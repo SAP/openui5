@@ -28,7 +28,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.26
+	 * @since 1.26.0
 	 * @alias sap.m.UploadCollectionItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -162,7 +162,7 @@ sap.ui.define([
 
 				/**
 				 * Aria label for the icon (or for the image).
-				 * @since 1.30
+				 * @since 1.30.0
 				 */
 				ariaLabelForPicture: {
 					type: "string",
@@ -172,7 +172,7 @@ sap.ui.define([
 
 				/**
 				 * Defines the selected state of the UploadCollectionItem.
-				 * @since 1.34
+				 * @since 1.34.0
 				 */
 				selected: {
 					type: "boolean",
@@ -190,7 +190,7 @@ sap.ui.define([
 				 * are displayed as these properties get displayed as an attribute.
 				 * Example: An application passes the property ‘contributor’ with the value ‘A’ and the aggregation attributes ‘contributor’: ‘B’. As a result, the attributes
 				 * ‘contributor’:’A’ and ‘contributor’:’B’ are displayed. To make sure the title does not appear twice, check if one of the properties is filled.
-				 * @since 1.30
+				 * @since 1.30.0
 				 */
 				attributes: {
 					type: "sap.m.ObjectAttribute",
@@ -199,7 +199,7 @@ sap.ui.define([
 				},
 				/**
 				 * Hidden aggregation for the attributes created from the deprecated properties uploadedDate, contributor and fileSize
-				 * @since 1.30
+				 * @since 1.30.0
 				 */
 				_propertyAttributes: {
 					type: "sap.m.ObjectAttribute",
@@ -209,7 +209,7 @@ sap.ui.define([
 				/**
 				 * Statuses of an uploaded item
 				 * Statuses will be displayed after an item has been uploaded
-				 * @since 1.30
+				 * @since 1.30.0
 				 */
 				statuses: {
 					type: "sap.m.ObjectStatus",
@@ -220,7 +220,7 @@ sap.ui.define([
 				 * Markers of an uploaded item
 				 * Markers will be displayed after an item has been uploaded
 				 * But not in Edit mode
-				 * @since 1.40
+				 * @since 1.40.0
 				 */
 				markers: {
 					type: "sap.m.ObjectMarker",
@@ -232,7 +232,7 @@ sap.ui.define([
 			associations: {
 				/**
 				 * ID of the FileUploader instance
-				 * @since 1.30
+				 * @since 1.30.0
 				 */
 				fileUploader: {
 					type: "sap.ui.unified.FileUploader",
@@ -245,7 +245,7 @@ sap.ui.define([
 				 * This event is triggered when the user presses the filename link.
 				 * If this event is provided, it overwrites the default behavior of opening the file.
 				 *
-				 * @since 1.50
+				 * @since 1.50.0
 				 */
 				press: {},
 
@@ -253,7 +253,7 @@ sap.ui.define([
 				 * When a deletePress event handler is attached to the item and the user presses the delete button, this event is triggered.
 				 * If this event is triggered, it overwrites the default delete behavior of UploadCollection and the fileDeleted event of UploadCollection is not triggered.
 				 *
-				 * @since 1.50
+				 * @since 1.50.0
 				 */
 				deletePress: {}
 			}
@@ -365,7 +365,7 @@ sap.ui.define([
 	/**
 	 * Update deprecated properties aggregation
 	 * @private
-	 * @since 1.30.
+	 * @since 1.30.0
 	 */
 	UploadCollectionItem.prototype._updateDeprecatedProperties = function() {
 		var aProperties = ["uploadedDate", "contributor", "fileSize"];
@@ -396,7 +396,7 @@ sap.ui.define([
 	/**
 	 * Return all attributes, the deprecated property attributes and the aggregated attributes in one array
 	 * @private
-	 * @since 1.30.
+	 * @since 1.30.0
 	 * @returns {sap.m.ObjectAttribute[]} Mapped properties
 	 */
 	UploadCollectionItem.prototype.getAllAttributes = function() {

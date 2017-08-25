@@ -1,9 +1,12 @@
 /*!
  * ${copyright}
  */
-// Provides sap.m.UploadCollectionToolbarPlaceholder.
-sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control' ],
-	function(jQuery, library, Control) {
+
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control'
+], function(jQuery, library, Control) {
 	"use strict";
 
 	/**
@@ -22,15 +25,17 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control' ],
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.34
+	 * @since 1.34.0
 	 * @alias sap.m.UploadCollectionToolbarPlaceholder
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
-	var UploadCollectionToolbarPlaceholder = Control.extend("sap.m.UploadCollectionToolbarPlaceholder", { metadata : {
-		library : "sap.m",
-		properties : {}
-	}});
+	var UploadCollectionToolbarPlaceholder = Control.extend("sap.m.UploadCollectionToolbarPlaceholder", {
+		metadata: {
+			library: "sap.m",
+			properties: {}
+		}
+	});
 
 	return UploadCollectionToolbarPlaceholder;
 
