@@ -897,6 +897,45 @@
 				oCal.destroy();
 			});
 
+			QUnit.test("getFocusDomRef", function (oAssert) {
+				//arrange
+				var $selectedDate,
+					oCal6 = new sap.ui.unified.Calendar("Cal6");
+				oCal6.placeAt("uiArea6");
+				sap.ui.getCore().applyChanges();
+
+				//act
+				oCal6.displayDate(new Date(2017, 06, 08));
+				$selectedDate = jQuery("#Cal6--Month0-20170725");
+				$selectedDate.focus();
+				qutils.triggerKeydown($selectedDate, jQuery.sap.KeyCodes.ENTER);
+
+				//assert
+				assert.equal(oCal6.getFocusDomRef().id, "Cal6--Month0-20170725",
+						"getFocusDomRef returns the correct selected date when only one month");
+
+				//arrange
+				var oCal7 = new sap.ui.unified.Calendar("Cal7", {
+					months: 2
+				});
+				oCal7.placeAt("uiArea6");
+				sap.ui.getCore().applyChanges();
+
+				//act
+				oCal7.displayDate(new Date(2017, 06, 08));
+				$selectedDate = jQuery("#Cal7--Month1-20170825");
+				$selectedDate.focus();
+				qutils.triggerKeydown($selectedDate, jQuery.sap.KeyCodes.ENTER);
+
+				//assert
+				assert.equal(oCal7.getFocusDomRef().id, "Cal7--Month1-20170825",
+						"getFocusDomRef returns the correct selected date when multiple months");
+
+				//cleanup
+				oCal6.destroy();
+				oCal7.destroy();
+			});
+
 		</script>
 
 	</head>
@@ -917,5 +956,7 @@
 		<div id="uiArea4"></div>
 		<br>
 		<div id="uiArea5"></div>
+		<br>
+		<div id="uiArea6"></div>
 	</body>
 </html>
