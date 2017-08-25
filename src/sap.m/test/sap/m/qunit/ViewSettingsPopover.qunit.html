@@ -8,9 +8,10 @@
 	<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
+			data-sap-ui-language="en_US"
 			data-sap-ui-libs="sap.m">
 	</script>
-
+	<!--language is en-US, since we have specific language strings tested-->
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -24,9 +25,6 @@
 		jQuery.sap.require("sap.ui.core.IconPool");
 		jQuery.sap.require("sap.m.ViewSettingsPopover");
 		sinon.config.useFakeTimers = true;
-
-		// set language to en-US, since we have specific language strings tested
-		sap.ui.getCore().getConfiguration().setLanguage("en_US");
 
 		var PAGE_KEYS = {
 			Sort: 'sort',
