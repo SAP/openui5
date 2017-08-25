@@ -139,11 +139,12 @@ var AnnotationParser =  {
 	 *
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata The metadata to be used for interpreting the annotation document
 	 * @param {document} oXMLDoc The annotation document
+	 * @param {string} [sSourceUrl="metadata document"] The source URL
 	 * @returns {object} The parsed annotation object
 	 * @static
 	 * @protected
 	 */
-	parse: function(oMetadata, oXMLDoc) {
+	parse: function(oMetadata, oXMLDoc, sSourceUrl) {
 		var mappingList = {}, schemaNodes, schemaNode,
 		termNodes, oTerms, termNode, sTermType, annotationNodes, annotationNode,
 		annotationTarget, annotationNamespace, annotation, propertyAnnotation, propertyAnnotationNodes,
@@ -158,6 +159,7 @@ var AnnotationParser =  {
 		AnnotationParser._parserData.xmlDocument = AnnotationParser._oXPath.setNameSpace(oXMLDoc);
 		AnnotationParser._parserData.schema = {};
 		AnnotationParser._parserData.aliases = {};
+		AnnotationParser._parserData.url = sSourceUrl ? sSourceUrl : "metadata document";
 
 		// Schema Alias
 		schemaNodes = AnnotationParser._oXPath.selectNodes("//d:Schema", AnnotationParser._parserData.xmlDocument);
@@ -862,7 +864,8 @@ var AnnotationParser =  {
 			oAnnotationTarget = oAnnotationTerm.parentElement;
 
 			return (sWhat + " '" + sName + "' is defined twice; "
-				+ "Annotation Target = " + oAnnotationTarget.getAttribute("Target")
+				+ "Source = " + AnnotationParser._parserData.url
+				+ ", Annotation Target = " + oAnnotationTarget.getAttribute("Target")
 				+ ", Term = " + oAnnotationTerm.getAttribute("Term"));
 		}
 
