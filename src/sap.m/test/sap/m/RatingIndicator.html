@@ -8,7 +8,7 @@
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
 
 		<style>
@@ -170,6 +170,18 @@
 				}]
 			};
 
+			var oRatingForm = new sap.ui.layout.form.SimpleForm({
+				layout: "ResponsiveGridLayout",
+				editable: true,
+				content: [
+					new sap.ui.core.Title({text: "Input"}),
+					new sap.m.Label({text: "Rating 1"}),
+					new sap.m.RatingIndicator({value: 2}),
+					new sap.m.Label({text: "Rating 2"}),
+					new sap.m.RatingIndicator({value: 4})
+				]
+			});
+
 			var oRatingTable = new sap.m.List("items", {
 					inset: true,
 					threshold: 2,
@@ -261,7 +273,8 @@
 					})
 				]
 			});
-
+			
+			oRatingPage.addContent(oRatingForm);
 			oRatingPage.addContent(oRatingTable);
 			oRatingPage.addContent(oRatingList);
 

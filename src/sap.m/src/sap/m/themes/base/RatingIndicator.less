@@ -9,6 +9,7 @@
 	overflow: hidden;
 	vertical-align: top;
 	padding: 0;
+	margin: 0.8125rem 0;
 
 	/* IE Windows 8 */
 	/* This elements receives events when not panning in vertial direction */
@@ -126,6 +127,7 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 .sapMRIDisplayOnly {
 	outline: none;
 	cursor: default;
+	margin: 0;
 }
 
 .sapMRI .sapUiIcon,
@@ -139,10 +141,14 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 }
 
 /* Compact mode */
-.sapUiSizeCompact .sapMRIIcon {
-	height: 1rem; /* default size for the compact mode */
+.sapUiSizeCompact {
+	.sapMRI {
+		margin: 0.5rem 0;
+	}
+	.sapMRIIcon {
+		height: 1rem; /* default size for the compact mode */
+	}
 }
-
 /* Condensed mode */
 .sapUiSizeCondensed .sapUiTableCell .sapMRI .sapUiIcon,
 .sapUiSizeCondensed .sapUiTableCell .sapMRI .sapMImg{
