@@ -453,18 +453,17 @@ function(
 			this.oVerticalLayout2.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
+			this.oOverlayButton1 = new ElementOverlay({
+				designTimeMetadata : {},
+				element : this.oButton1
+			});
+			this.oOverlayButton1.placeInOverlayContainer();
 
 			this.oOverlayLayout1 = new ElementOverlay({
 				designTimeMetadata : {},
 				element : this.oVerticalLayout1
 			});
 			this.oOverlayLayout1.placeInOverlayContainer();
-
-			this.oOverlayButton1 = new ElementOverlay({
-				designTimeMetadata : {},
-				element : this.oButton1
-			});
-			this.oOverlayButton1.placeInOverlayContainer();
 
 			this.oOverlayLayout2 = new ElementOverlay({
 				designTimeMetadata : {},

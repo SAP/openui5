@@ -548,12 +548,10 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.sync = function() {
-		if (this.isVisible()) {
-			var aAggregationOverlays = this.getAggregationOverlays();
-			aAggregationOverlays.forEach(function(oAggregationOverlay) {
-				this._syncAggregationOverlay(oAggregationOverlay);
-			}, this);
-		}
+		var aAggregationOverlays = this.getAggregationOverlays();
+		aAggregationOverlays.forEach(function(oAggregationOverlay) {
+			this._syncAggregationOverlay(oAggregationOverlay);
+		}, this);
 	};
 
 	ElementOverlay.prototype._getParentRelevantContainerPropagation = function() {
@@ -783,15 +781,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		}
 	};
 
-	/**
-	 * @param {boolean} bVisible visible attribute
-	 * @protected
-	 */
-	ElementOverlay.prototype.setVisible = function(bVisible) {
-		Overlay.prototype.setVisible.apply(this, arguments);
-
-		this.sync();
-	};
 
 	/**
 	 * @param {string} sAggregationName name of the aggregation
@@ -812,19 +801,16 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 */
 	ElementOverlay.prototype._onElementModified = function(oEvent) {
 		var oParams = oEvent.getParameters();
-
 		var sAggregationName = oEvent.getParameters().name;
 		if (sAggregationName) {
 			var oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
 			// private aggregations are also skipped
-			var bAggregationOverlayVisible = oAggregationOverlay && oAggregationOverlay.isVisible();
-			if (bAggregationOverlayVisible) {
+			if (oAggregationOverlay) {
 				this.fireElementModified(oParams);
 			}
 		} else if (oEvent.getParameters().type === "setParent") {
 			this.fireElementModified(oParams);
 		}
-
 		this.invalidate();
 	};
 
@@ -840,6 +826,8 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			if (this._mGeometry && !this._mGeometry.visible) {
 				delete this._mGeometry;
 				this.invalidate();
+			} else if (!this._mGeometry) {
+				this.sync();
 			}
 		}
 
