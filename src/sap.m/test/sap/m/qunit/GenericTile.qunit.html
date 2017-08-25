@@ -13,7 +13,7 @@
 </script>
 
 <!-- QUnit libraries -->
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css" media="screen">
 <script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
@@ -22,6 +22,7 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
 	jQuery.sap.require("sap.m.GenericTile");
+	QUnit.config.autostart = false;
 
 	QUnit.module("Control initialization core and theme checks", {
 		beforeEach: function() {
@@ -2680,6 +2681,8 @@
 			assert.equal(oEvent.getParameter("domRef"), oGenericTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
 		}
 	});
+
+	QUnit.start();
 </script>
 </head>
 

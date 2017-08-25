@@ -11,7 +11,7 @@
 		data-sap-ui-libs="sap.m">
 	</script>
 
-	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css" media="screen">
 	<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -21,6 +21,7 @@
 
 	<script>
 		jQuery.sap.require("sap.m.MultiEditField");
+		QUnit.config.autostart = false;
 		QUnit.module("Basic methods", {
 			beforeEach: function() {
 				this.oMultiEditField = new sap.m.MultiEditField({
@@ -266,6 +267,8 @@
 			assert.ok(this.oMultiEditField._isSpecialValueItem(oValueHelpItem), "'Set new value' item is special value item");
 			assert.notOk(this.oMultiEditField._isSpecialValueItem(oRegularItem), "Item is not special value item");
 		});
+
+		QUnit.start();
 	</script>
 </head>
 <body>

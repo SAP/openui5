@@ -10,7 +10,7 @@
 	        data-sap-ui-language="en">
 	</script>
 
-	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css" media="screen">
 	<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<!--[if IE]>
@@ -23,6 +23,7 @@
 
 	<script>
 
+		QUnit.config.autostart = false;
 		/* --------------------------------------- */
 		/* Test properties                         */
 		/* --------------------------------------- */
@@ -500,6 +501,8 @@
 			//Assert
 			assert.equal(this.oItem._getPressEnabled(this.oItem), true, "Press enabled when URL exists");
 		});
+
+		QUnit.start();
 	</script>
 
 </head>
