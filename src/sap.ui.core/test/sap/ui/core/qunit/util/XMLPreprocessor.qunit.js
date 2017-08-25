@@ -130,9 +130,15 @@ sap.ui.require([
 			// Note: browsers differ in whitespace for empty HTML(!) tags
 			.replace(/ \/>/g, '/>');
 		if (Device.browser.msie || Device.browser.edge) {
-			// Microsoft shuffles attribute order
-			// remove helper, type, value and var, then no tag should have more that one attribute
-			sXml = sXml.replace(/ (helper|type|value|var)=".*?"/g, "");
+			// Microsoft shuffles attribute order; sort multiple attributes alphabetically:
+			// - no escaped quotes in attribute values!
+			// - e.g. <In a="..." b="..."/> or <template:repeat a="..." b="...">
+			sXml = sXml.replace(/<[\w:]+( \w+="[^"]*"){2,}(?=\/?>)/g, function (sMatch) {
+				var aParts = sMatch.split(" ");
+				// aParts[0] e.g. "<In" or "<template:repeat"
+				// sMatch does not contain "/>" or ">" at end!
+				return aParts[0] + " " + aParts.slice(1).sort().join(" ");
+			});
 		}
 		return sXml;
 	}
@@ -285,9 +291,8 @@ sap.ui.require([
 			// assertions
 			sActual = _normalizeXml(jQuery.sap.serializeXML(oViewContent));
 			if (Array.isArray(vExpected)) {
-				sExpected = vExpected.join("");
-				assert.strictEqual(sActual, _normalizeXml(sExpected),
-						"XML looks as expected: " + sExpected);
+				sExpected = _normalizeXml(vExpected.join(""));
+				assert.strictEqual(sActual, sExpected, "XML looks as expected: " + sExpected);
 			} else {
 				assert.ok(vExpected.test(sActual), "XML: " + sActual + " matches " + vExpected);
 			}
