@@ -130,7 +130,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			 * This event is fired when the cancelButton is clicked. For iPad, this event is also fired when showCancelButton is set to true, and Popover is closed by clicking outside.
 			 */
 			cancelButtonPress : {}
-		}
+		},
+		designTime: true
 	}});
 
 	//Keeps the ID of the static aria text for Available Actions
