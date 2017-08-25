@@ -570,7 +570,14 @@ sap.ui.define([
 	 * @private
 	 */
 	NavContainer.prototype._safeBackToPage = function (pageId, transitionName, data, oTransitionParameters) {
+		var oCurrentPage;
+
 		if (!this.getPage(pageId)) {
+			return this;
+		}
+
+		oCurrentPage = this.getCurrentPage();
+		if (oCurrentPage && oCurrentPage.getId() === pageId) {
 			return this;
 		}
 
