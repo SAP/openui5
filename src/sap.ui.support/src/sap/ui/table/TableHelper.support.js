@@ -19,7 +19,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		DOCU_REF : "https://sapui5.hana.ondemand.com/",
 
 		DEFAULT_RULE_DEF : {
-			audience: [Audiences.Application],
+			audiences: [Audiences.Application],
 			categories: [Categories.Other],
 			enabled: true,
 			minversion: "1.38",
@@ -36,7 +36,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		 * The rule definition object can/must have the following parameters:
 		 *
 		 * 		id:				ID of the rule, MANDATORY
-		 * 		audience:		[Audiences.Application, ...] - Choose one or several, Default "Application"
+		 * 		audiences:		[Audiences.Application, ...] - Choose one or several, Default "Application"
 		 * 		categories:		[Categories.Accessibility, ...] - choose one or several, Default "Other" (TBD)
 		 * 		enabled:		true/false - Default true
 		 * 		minversion:		the minimum version required to run the rule - Default "1.38"
