@@ -1660,13 +1660,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	// recreate javascript date object from the given oDateValues.
 	// In case of oDateValue.valid == false, null value will be returned
 	var fnCreateDate = function(oDateValue, sCalendarType, bUTC, bStrict) {
-		var oDate;
+		var oDate,
+			iYear = typeof oDateValue.year === "number" ? oDateValue.year : 1970;
 
 		if (oDateValue.valid) {
 			if (bUTC || oDateValue.tzDiff !== undefined) {
 				oDate = UniversalDate.getInstance(new Date(0), sCalendarType);
 				oDate.setUTCEra(oDateValue.era || UniversalDate.getCurrentEra(sCalendarType));
-				oDate.setUTCFullYear(oDateValue.year || 1970);
+				oDate.setUTCFullYear(iYear);
 				oDate.setUTCMonth(oDateValue.month || 0);
 				oDate.setUTCDate(oDateValue.day || 1);
 				oDate.setUTCHours(oDateValue.hour || 0);
@@ -1696,7 +1697,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			} else {
 				oDate = UniversalDate.getInstance(new Date(1970, 0, 1, 0, 0, 0), sCalendarType);
 				oDate.setEra(oDateValue.era || UniversalDate.getCurrentEra(sCalendarType));
-				oDate.setFullYear(oDateValue.year || 1970);
+				oDate.setFullYear(iYear);
 				oDate.setMonth(oDateValue.month || 0);
 				oDate.setDate(oDateValue.day || 1);
 				oDate.setHours(oDateValue.hour || 0);
