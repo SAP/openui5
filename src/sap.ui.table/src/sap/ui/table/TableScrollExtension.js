@@ -623,6 +623,23 @@ sap.ui.define([
 					oHSb.scrollLeft = oHSb.scrollLeft + iOffsetLeft - 1;
 				}
 			}
+
+			// On focus, the browsers scroll elements which are not visible into the viewport (IE also scrolls if elements are partially visible).
+			// This causes scrolling inside table cells, which is not desired.
+			// Flickering of the cell content can not be avoided, as the browser performs scrolling after the event. This behavior can not be
+			// prevented, only reverted.
+			var $ParentCell = TableUtils.getParentCell(this, oEvent.target);
+
+			if ($ParentCell != null) {
+				Promise.resolve().then(function() {
+					var oInnerCellElement = $ParentCell.find(".sapUiTableCell")[0];
+
+					if (oInnerCellElement != null) {
+						oInnerCellElement.scrollLeft = 0;
+						oInnerCellElement.scrollTop = 0;
+					}
+				});
+			}
 		}
 	};
 
