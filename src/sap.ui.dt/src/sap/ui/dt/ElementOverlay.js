@@ -555,12 +555,10 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.sync = function() {
-		if (this.isVisible()) {
-			var aAggregationOverlays = this.getAggregationOverlays();
-			aAggregationOverlays.forEach(function(oAggregationOverlay) {
-				this._syncAggregationOverlay(oAggregationOverlay);
-			}, this);
-		}
+		var aAggregationOverlays = this.getAggregationOverlays();
+		aAggregationOverlays.forEach(function(oAggregationOverlay) {
+			this._syncAggregationOverlay(oAggregationOverlay);
+		}, this);
 	};
 
 	ElementOverlay.prototype._getParentRelevantContainerPropagation = function() {
@@ -790,15 +788,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		}
 	};
 
-	/**
-	 * @param {boolean} bVisible visible attribute
-	 * @protected
-	 */
-	ElementOverlay.prototype.setVisible = function(bVisible) {
-		Overlay.prototype.setVisible.apply(this, arguments);
-
-		this.sync();
-	};
 
 	/**
 	 * @param {string} sAggregationName name of the aggregation
@@ -826,9 +815,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			this.fireElementModified(oParams);
 		} else if (sName) {
 			var oAggregationOverlay = this.getAggregationOverlay(sName);
-			// private aggregations are also skipped
-			var bAggregationOverlayVisible = oAggregationOverlay && oAggregationOverlay.isVisible();
-			if (bAggregationOverlayVisible) {
+			if (oAggregationOverlay) {
 				this.setRelevantOverlays([]);
 				this.fireElementModified(oParams);
 			}
@@ -851,6 +838,8 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			if (this._mGeometry && !this._mGeometry.visible) {
 				delete this._mGeometry;
 				this.invalidate();
+			} else if (!this._mGeometry) {
+				this.sync();
 			}
 		}
 
