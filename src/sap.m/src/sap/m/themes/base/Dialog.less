@@ -115,20 +115,22 @@
 	transform: none;
 	-webkit-transform: none;
 	top: calc(~"5% + 0px") !important; //this is for preventing inline size/top sizes set the top
-	bottom: calc(~"5% + 0px");
+	bottom: calc(~"5% + 0px") !important;
 	left: calc(~"3.5% + 0px") !important; //this is for preventing inline size/top sizes set the top
-	right: calc(~"3.5% + 0px");
+	right: calc(~"3.5% + 0px") !important;
 	max-height: none !important;
 	max-width: none !important;
 	min-width: 0 !important; //this is for preventing the dialog to hold it's width in small screens
 	min-height: 0 !important; //this is for preventing the dialog to hold it's width in small screens
 }
 
-html.sap-phone .sapMDialog.sapMDialogStretched{
-	top: 0 !important; //this is for forcing mobile dialog when stretch property is set
-	bottom: 0 !important; //this is for forcing mobile dialog when stretch property is set
-	left: 0 !important; //this is for forcing mobile dialog when stretch property is set
-	right: 0 !important; //this is for forcing mobile dialog when stretch property is set
+html.sap-phone .sapMDialog.sapMDialogStretched {
+	top: 0 !important; // this is for forcing mobile dialog when stretch property is set
+	bottom: 0 !important; // this is for forcing mobile dialog when stretch property is set
+	left: 0 !important; // this is for forcing mobile dialog when stretch property is set
+	right: 0 !important; // this is for forcing mobile dialog when stretch property is set
+	height: auto !important;
+	width: auto !important;
 }
 
 html.sap-phone .sapMDialog {
