@@ -226,7 +226,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 		return "sap.ui.core";
 	}
 
-	function get(sEntityName, sLibraryName) {
+	function getAsync(sEntityName, sLibraryName) {
 
 		var oPackageInfo = getPackageInfo(sEntityName);
 		var oEntityDoc;
@@ -247,32 +247,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 
 		// api.json per library
 		if ( !oEntityDoc && !oPackageInfo.__noAPIJson ) {
-			var oEntityCollection = APIInfo.getLibraryElementsJSONSync(sLibraryName),
-				oEntity;
 
-			// Find single entity entry
-			for (var i = 0, iLen = oEntityCollection.length; i < iLen; i++) {
-				if (oEntityCollection[i].name === sEntityName) {
-					oEntity = oEntityCollection[i];
-					break;
+			// If we have APIInfo json file we return a new promise which will return the oEntityDoc
+			return APIInfo.getLibraryElementsJSONPromise(sLibraryName).then(function (oEntityCollection) {
+				var oEntity;
+
+				// Find single entity entry
+				for (var i = 0, iLen = oEntityCollection.length; i < iLen; i++) {
+					if (oEntityCollection[i].name === sEntityName) {
+						oEntity = oEntityCollection[i];
+						break;
+					}
 				}
-			}
 
-			if (oEntity) {
-				// Create oEntityDoc
-				oEntityDoc = {
-					baseType: oEntity.extends,
-					deprecation: oEntity.deprecated ? oEntity.deprecated.text : null,
-					doc: oEntity.description,
-					module: oEntity.module,
-					name: oEntity.name,
-					since: oEntity.since,
-					values: oEntity.properties
-				};
+				if (oEntity) {
+					// Create oEntityDoc
+					oEntityDoc = {
+						baseType: oEntity.extends,
+						deprecation: oEntity.deprecated ? oEntity.deprecated.text : null,
+						doc: oEntity.description,
+						module: oEntity.module,
+						name: oEntity.name,
+						since: oEntity.since,
+						values: oEntity.properties
+					};
 
-				oPackageInfo.__noSource = true;
-				oPackageInfo.__noMetamodel = true;
-			}
+					oPackageInfo.__noSource = true;
+					oPackageInfo.__noMetamodel = true;
+				}
+
+				return oEntityDoc;
+			});
+
 		} else if ( oPackageInfo.__noAPIJson ) {
 			jQuery.sap.log.debug("ancestor package for " + sEntityName + " is marked with 'noMetamodel'");
 		}
@@ -314,8 +320,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 
 	return {
 
-		getEntityDocu : function (sEntityName, sLibraryName) {
-			return get(sEntityName, sLibraryName);
+		getEntityDocuAsync : function (sEntityName, sLibraryName) {
+			return getAsync(sEntityName, sLibraryName);
 		}
 
 	};
