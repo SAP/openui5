@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			nMaxLines = oText.getMaxLines(),
 			bWrapping = oText.getWrapping(),
 			sTextAlign = oText.getTextAlign(),
-			bRenderWhiteSpaces = oText.getRenderWhiteSpaces();
+			bRenderWhitespace = oText.getRenderWhitespace();
 
 		// start writing html
 		oRm.write("<span");
@@ -61,9 +61,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			}
 		}
 
-		if (bRenderWhiteSpaces) {
-			var whiteSpaceClass = bWrapping ? "sapMTextRenderWhiteSpacesWrap" : "sapMTextRenderWhiteSpaces";
-			oRm.addClass(whiteSpaceClass);
+		if (bRenderWhitespace) {
+			var whitespaceClass = bWrapping ? "sapMTextRenderWhitespaceWrap" : "sapMTextRenderWhitespace";
+			oRm.addClass(whitespaceClass);
 		}
 
 		// finish writing html

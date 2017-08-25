@@ -1112,7 +1112,7 @@
 		  "samples": [
 			"sap.m.sample.Text",
 			"sap.m.sample.TextMaxLines",
-			"sap.m.sample.TextRenderWhiteSpaces"
+			"sap.m.sample.TextRenderWhitespace"
 		  ]
 		},
 		{
@@ -1748,9 +1748,9 @@
 		  "description": "The Text control has a property to limit the number of lines for wrapping texts."
 		},
 		{
-		  "id": "sap.m.sample.TextRenderWhiteSpaces",
-		  "name": "Text - Render White Spaces",
-		  "description": "The Text control has a property allowing browsers to render whitespaces and tabs."
+		  "id": "sap.m.sample.TextRenderWhitespace",
+		  "name": "Text - Render Whitespace",
+		  "description": "The Text control has a property allowing browsers to render whitespace and tabs."
 		},
 		{
 		  "id": "sap.m.sample.Title",

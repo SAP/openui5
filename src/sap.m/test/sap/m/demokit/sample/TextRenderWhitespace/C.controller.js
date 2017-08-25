@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 	function(Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.TextRenderWhiteSpaces.C", {
+	var CController = Controller.extend("sap.m.sample.TextRenderWhitespace.C", {
 
 		onInit: function () {
 			var oModel = new JSONModel({data: {}});
@@ -19,8 +19,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 		},
 		onWhiteSpacePressed: function(oEvent) {
 			var text = this.getView().byId("textSample");
-			text.setRenderWhiteSpaces(!text.getRenderWhiteSpaces());
-			this.getView().byId("btn2").setText(text.getRenderWhiteSpaces() ? "Turn Off RenderWhiteSpaces" : "Turn On RenderWhiteSpaces");
+			text.setRenderWhitespace(!text.getRenderWhitespace());
+			this.getView().byId("btn2").setText(text.getRenderWhitespace() ? "Turn Off RenderWhitespace" : "Turn On RenderWhitespace");
 		}
 	});
 
