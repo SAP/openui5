@@ -65,4 +65,14 @@ describe('sap.m.MessageView', function() {
 		});
 	});
 
+	it("should open MessageView in Dialog with hidden details header - details page", function () {
+		element(by.id("mView-in-dialog-btn-2")).click();
+		expect(takeScreenshot()).toLookAs("message-view-in-dialog-with-no-details-header-detailspage");
+	});
+
+	it("should open MessageView in Dialog with hidden details", function () {
+		element(by.id("mMView5-back")).click();
+		expect(takeScreenshot()).toLookAs("message-view-in-dialog-with-no-details-header-initialpage");
+	});
+
 });
