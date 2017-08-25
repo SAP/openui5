@@ -27,8 +27,14 @@ sap.ui.define([
 					bLandscape: Device.orientation.landscape,
 					bHasMaster: false,
 					bSearchMode: false,
-					bHideEmptySections: window['sap-ui-documentation-hideEmptySections']
+					bHideEmptySections: window['sap-ui-documentation-hideEmptySections'],
+					sAboutInfo: "Looking for the Demo Kit for a specific SAPUI5 version? " +
+					"Check at <a href = 'https://sapui5.hana.ondemand.com/versionoverview.html'>https://sapui5.hana.ondemand.com/versionoverview.html</a> " +
+					"which versions are available. " +
+					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
+					"<a href='https://sapui5.hana.ondemand.com/1.38.8/'>https://sapui5.hana.ondemand.com/1.38.8/</a>"
 				});
+
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
 					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
