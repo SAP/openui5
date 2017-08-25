@@ -115,5 +115,23 @@
 			"owner": "jonathanbaker7",
 			"license": "Apache 2.0",
 			"type": "JS Library"
-	  }
+	  },
+		"openui5-password": {
+			"name": "OpenUI5 Password",
+			"description": "An OpenUI5 Control which checks your password strength and validates it.",
+			"githubLink": "https://github.com/mauriciolauffer/openui5-password",
+			"documentationLink": "https://github.com/mauriciolauffer/openui5-password",
+			"owner": "mauriciolauffer",
+			"license": "MIT",
+			"type": "JS Library"
+		},
+		"openui5-validator": {
+			"name": "OpenUI5 Generic App Testing",
+			"description": "An OpenUI5 library to validate fields.",
+			"githubLink": "https://github.com/mauriciolauffer/openui5-validator",
+			"documentationLink": "https://github.com/mauriciolauffer/openui5-validator",
+			"owner": "mauriciolauffer",
+			"license": "MIT",
+			"type": "JS Library"
+		}
 	}
