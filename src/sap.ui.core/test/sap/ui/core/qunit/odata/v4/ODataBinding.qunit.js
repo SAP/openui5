@@ -1082,7 +1082,7 @@ sap.ui.require([
 		// code under test
 		oBinding.fetchCache(oContext);
 
-		return oBinding.oCachePromise.then(function (oCache0) {
+		return oBinding.oCachePromise.then(function () {
 			oCacheMock.expects("setActive").withExactArgs(false);
 			oCacheMock.expects("setActive").withExactArgs(true);
 

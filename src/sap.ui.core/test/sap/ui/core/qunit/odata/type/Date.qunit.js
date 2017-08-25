@@ -5,8 +5,9 @@ sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/type/Date",
-	"sap/ui/model/odata/type/ODataType"
-], function (jQuery, DateFormat, DateType, ODataType) {
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/test/TestUtils"
+], function (jQuery, DateFormat, DateType, ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
 	"use strict";
@@ -20,7 +21,7 @@ sap.ui.require([
 	 */
 	function checkError(assert, oType, oValue, sReason, sAction) {
 		var fnExpectedException;
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+		TestUtils.withNormalizedMessages(function () {
 			try {
 				if (sAction === "parseValue") {
 					fnExpectedException = sap.ui.model.ParseException;

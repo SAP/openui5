@@ -305,7 +305,7 @@ sap.ui.require([
 		{i : {nullable : "foo"}, o : undefined, warning : "Illegal nullable: foo"}
 	].forEach(function (oFixture) {
 		QUnit.test("constraints: " + JSON.stringify(oFixture.i) + ")", function (assert) {
-			var oType = new DateTime();
+			var oType;
 
 			if (oFixture.warning) {
 				this.oLogMock.expects("warning")

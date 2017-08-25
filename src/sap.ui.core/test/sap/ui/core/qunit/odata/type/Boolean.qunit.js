@@ -171,7 +171,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setConstraints", function (assert) {
-		var oType = new BooleanType();
+		var oType;
 
 		this.oLogMock.expects("warning")
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");

@@ -426,8 +426,6 @@ sap.ui.define([
 	 *   Entity type metadata
 	 * @param {object} oEntityInstance
 	 *   Entity instance runtime data
-	 * @param {boolean} [bIgnoreMissingKey=false]
-	 *   Do not throw an exception if a key property does not have a value
 	 * @returns {string}
 	 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')" or undefined if one
 	 *   key property is undefined

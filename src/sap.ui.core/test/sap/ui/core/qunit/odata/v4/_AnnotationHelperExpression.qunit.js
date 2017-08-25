@@ -68,7 +68,7 @@ sap.ui.require([
 		{constant : "$TimeOfDay", type : "Edm.TimeOfDay", expectType : "string",
 			values : ["23:59:59.123456789012"]}
 	].forEach(function (oFixture) {
-		oFixture.values.forEach(function (vConstantValue, i) {
+		oFixture.values.forEach(function (vConstantValue) {
 			var oValue = {};
 
 			function testIt(oRawValue, sProperty, vConstantValue) {
@@ -1083,7 +1083,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getExpression: failure", function (assert) {
-		var oError,
+		var oError = {},
 			oPathValue = {value : 42};
 
 		this.mock(Expression).expects("expression")

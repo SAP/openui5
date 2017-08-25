@@ -19,11 +19,6 @@ sap.ui.require([
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
-	jQuery.sap.require("sap.ui.core.Control");
-	jQuery.sap.require("sap.ui.core.LocaleData");
-	jQuery.sap.require("sap.ui.model.odata.type.Double");
-	jQuery.sap.require("sap.ui.test.TestUtils");
-
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Double", {
 		beforeEach : function () {

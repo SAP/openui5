@@ -37,8 +37,9 @@ sap.ui.define([
 				 *   expected to be a metadata document in the correct OData version
 				 * @returns {Promise}
 				 *   A promise fulfilled with the metadata as a JSON object, enriched with a
+				 *   "$ETag" property that contains the value of the response header "ETag" and a
 				 *   "$LastModified" property that contains the value of the response header
-				 *   "Last-Modified" (or, as a fallback, "Date"); the "$LastModified" property is
+				 *   "Last-Modified" (or, as a fallback, "Date"); these additional properties are
 				 *   missing if there is no such header
 				 */
 				read : function (sUrl, bAnnotations) {
@@ -50,10 +51,14 @@ sap.ui.define([
 						.then(function (oData, sTextStatus, jqXHR) {
 							var oConverter = sODataVersion === "4.0" || bAnnotations
 									? _V4MetadataConverter : _V2MetadataConverter,
+								sETag = jqXHR.getResponseHeader("ETag"),
 								oJSON = oConverter.convertXMLMetadata(oData, sUrl),
 								sLastModified = jqXHR.getResponseHeader("Last-Modified")
 									|| jqXHR.getResponseHeader("Date");
 
+							if (sETag) {
+								oJSON.$ETag = sETag;
+							}
 							if (sLastModified) {
 								oJSON.$LastModified = sLastModified;
 							}

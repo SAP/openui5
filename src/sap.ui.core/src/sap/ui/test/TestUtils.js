@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define("sap/ui/test/TestUtils", [
+sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/core/Core",
 		"sap/ui/thirdparty/URI",

@@ -235,7 +235,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 			if (this.oConstraints && this.oConstraints.nullable === false) {
 				throw new ValidateException(getErrorMessage(this));
 			}
-			return;
 		} else if (typeof sValue !== "string" || !rDate.test(sValue)) {
 			throw new ValidateException("Illegal " + this.getName() + " value: " + sValue);
 		}

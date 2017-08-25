@@ -1446,9 +1446,7 @@ sap.ui.require([
 					}),
 					fnGetContext = function () {
 						return {
-							created : function () {
-								return;
-							}
+							created : function () {}
 						};
 					},
 					oDependent0 = {
@@ -1495,9 +1493,7 @@ sap.ui.require([
 			}),
 			fnGetContext = function () {
 				return {
-					created : function () {
-						return;
-					}
+					created : function () {}
 				};
 			},
 			oDependent0 = {
@@ -1565,9 +1561,7 @@ sap.ui.require([
 			}),
 			fnGetContext = function () {
 				return {
-					created : function () {
-						return;
-					}
+					created : function () {}
 				};
 			},
 			oDependent0 = {

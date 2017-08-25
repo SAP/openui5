@@ -2291,6 +2291,10 @@ sap.ui.require([
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : {},
 		message : "No key predicate known at /TEAMS/0"
+	}, {
+		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
+		instance : new Error("failed to load team"),
+		message : "failed to load team at /TEAMS/0"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.message, function (assert) {
 			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),
@@ -2300,7 +2304,9 @@ sap.ui.require([
 				.returns(_SyncPromise.resolve(mScope));
 			if ("instance" in oFixture) {
 				this.mock(oContext).expects("fetchValue")
-					.returns(_SyncPromise.resolve(oFixture.instance));
+					.returns(oFixture.instance instanceof Error
+						? _SyncPromise.reject(oFixture.instance)
+						: _SyncPromise.resolve(oFixture.instance));
 			}
 			if (oFixture.warning) {
 				this.oLogMock.expects("isLoggable")
@@ -2969,7 +2975,7 @@ sap.ui.require([
 				"$LastModified" : "Fri, 07 Apr 2017 11:21:50 GMT"
 			},
 			mOldScopeClone = clone(mOldScope),
-			sUrl = "/~/$metadata";
+			sUrl = "/~/$metadata"; // Note: in real life, each URL is read at most once!
 
 		// code under test (together with c'tor)
 		assert.strictEqual(this.oMetaModel.getLastModified().getTime(), 0, "initial value");
@@ -3000,6 +3006,60 @@ sap.ui.require([
 
 		assert.ok(this.oMetaModel.getLastModified().getTime() >= iNow,
 			"missing $LastModified is like 'now': " + this.oMetaModel.getLastModified());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getETags", function (assert) {
+		var oDate,
+			sETag = 'W/"..."',
+			mETags,
+			iNow = Date.now(),
+			that = this;
+
+		function codeUnderTest(sUrl, mScope) {
+			// code under test
+			assert.strictEqual(that.oMetaModel.validate(sUrl, mScope), mScope);
+
+			assert.notOk("$ETag" in mScope);
+			assert.notOk("$LastModified" in mScope);
+		}
+
+		// code under test (together with c'tor)
+		assert.deepEqual(this.oMetaModel.getETags(), {}, "initial value");
+
+		codeUnderTest("/~/A", {
+			"$Version" : "4.0",
+			"$LastModified" : "Fri, 07 Apr 2017 11:21:50 GMT"
+		});
+		codeUnderTest("/~/B", {
+			"$Version" : "4.0",
+			"$LastModified" : "Tue, 18 Apr 2017 14:40:29 GMT"
+		});
+		codeUnderTest("/~/C", {
+			"$Version" : "4.0"
+		});
+		codeUnderTest("/~/D", {
+			"$Version" : "4.0",
+			"$ETag" : sETag
+		});
+
+		// code under test
+		mETags = this.oMetaModel.getETags();
+
+		oDate = mETags["/~/C"];
+		assert.deepEqual(mETags, {
+			"/~/A" : new Date(Date.UTC(2017, 3, 7, 11, 21, 50)),
+			"/~/B" : new Date(Date.UTC(2017, 3, 18, 14, 40, 29)),
+			"/~/C" : oDate,
+			"/~/D" : sETag // wins over 'now'!
+		});
+		assert.ok(oDate.getTime() >= iNow, "missing $LastModified is like 'now': " + oDate);
+
+		delete mETags["/~/C"];
+		assert.strictEqual(JSON.stringify(mETags),
+			'{"/~/A":"2017-04-07T11:21:50.000Z","/~/B":"2017-04-18T14:40:29.000Z","/~/D":'
+				+ JSON.stringify(sETag) + '}',
+			"map can easily be serialized into a useful short string (--> cache key)");
 	});
 
 	//*********************************************************************************************

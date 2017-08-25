@@ -12,7 +12,7 @@ sap.ui.require([
 ], function (jQuery, FormatException, ParseException, ValidateException, ODataType, StringType,
 		TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0*/
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	//*********************************************************************************************
@@ -71,7 +71,7 @@ sap.ui.require([
 		{maxLength : 0, warning : "Illegal maxLength: 0"}
 	].forEach(function (oFixture, i) {
 		QUnit.test("constraints error #" + i, function (assert) {
-			var oType = new StringType();
+			var oType;
 
 			this.oLogMock.expects("warning")
 				.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.String");
@@ -192,7 +192,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setConstraints w/ strings", function (assert) {
-		var oType = new StringType();
+		var oType;
 
 		oType = new StringType({}, {nullable : "true", maxLength : "10"});
 		assert.deepEqual(oType.oConstraints, {maxLength : 10});
@@ -219,7 +219,7 @@ sap.ui.require([
 				: {maxLength : 7}, "constructor test with maxLength #" + i);
 		});
 		// check invalid values for isDigitSequence constraint
-		["foo", 1, 0, null].forEach(function (vIsDigitSequence, i) {
+		["foo", 1, 0, null].forEach(function (vIsDigitSequence) {
 			that.oLogMock.expects("warning").withExactArgs("Illegal isDigitSequence: "
 				+ vIsDigitSequence, null, "sap.ui.model.odata.type.String");
 			oType = new StringType({}, {isDigitSequence : vIsDigitSequence});

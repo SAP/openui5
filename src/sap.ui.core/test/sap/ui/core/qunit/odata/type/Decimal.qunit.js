@@ -88,7 +88,7 @@ sap.ui.require([
 			warning : "Illegal maximumExclusive: X"}
 	].forEach(function (oFixture) {
 		QUnit.test("setConstraints(" + JSON.stringify(oFixture.i) + ")", function (assert) {
-			var oType = new Decimal();
+			var oType;
 
 			if (oFixture.warning) {
 				this.oLogMock.expects("warning")
@@ -242,7 +242,7 @@ sap.ui.require([
 		assert.strictEqual(oType.parseValue("1K", "string"), "1000", 'style: "short"');
 
 		// error handling with short style
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+		TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.parseValue("no number", "string");
 				assert.ok(false, "no error");
