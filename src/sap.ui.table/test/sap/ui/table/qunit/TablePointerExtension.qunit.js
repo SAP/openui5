@@ -767,6 +767,15 @@
 		oElem = getRowAction(0);
 		qutils.triggerMouseEvent(oElem, "click");
 		assert.ok(oTable.isIndexSelected(0), "Row selected");
+
+		// Range selection with Shift + Click.
+		oTable.setFirstVisibleRow(3); // Scroll down 3 rows
+		sap.ui.getCore().applyChanges();
+		qutils.triggerEvent("click", getCell(2, 0), {
+			shiftKey: true
+		});
+		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Range selection with Shift + Click should select the correct rows");
+		assert.strictEqual(window.getSelection().toString(), "", "Range selection with Shift + Click should not select text");
 	});
 
 
