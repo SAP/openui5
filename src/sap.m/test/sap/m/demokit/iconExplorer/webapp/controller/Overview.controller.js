@@ -402,6 +402,9 @@ sap.ui.define([
 
 			this.getOwnerComponent().iconsLoaded().then(function () {
 				// tab
+				if (!this.byId("iconTabBar")) {
+					return;
+				}
 				this.byId("iconTabBar").setSelectedKey(oQuery.tab);
 				if (bTabChanged) {
 					var oContent = this.byId("resultContainer").getContent();

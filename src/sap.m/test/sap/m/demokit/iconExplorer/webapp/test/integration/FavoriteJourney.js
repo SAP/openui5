@@ -49,7 +49,6 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");
 
 		// Assertions
-		Then.onTheOverviewPage.theTableDoesNotContainTheIcon("activate").
-			and.iTeardownMyAppFrame();
+		Then.onTheOverviewPage.theTableDoesNotContainTheIcon("activate");
 	});
 });

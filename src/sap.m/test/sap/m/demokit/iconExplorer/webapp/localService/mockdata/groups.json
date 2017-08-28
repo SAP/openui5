@@ -1,0 +1,151 @@
+{
+	"groups" : [
+		{
+			"name" : "med",
+			"text" : "Medical",
+			"icons" : [
+				{ "name" : "accidental-leave" },
+				{ "name" : "temperature" }
+			]
+		},
+		{
+			"name": "status",
+			"text": "Status",
+			"icons": [
+				{ "name" : "accidental-leave" },
+				{ "name" : "temperature" },
+				{ "name" : "error" }
+			]
+		},
+		{
+			"name": "people",
+			"text": "People",
+			"icons": [
+				{ "name" : "account" },
+				{ "name" : "visits" }
+			]
+		},
+		{
+			"name": "doc",
+			"text": "Documents",
+			"icons": [
+				{ "name": "ppt-attachment" },
+				{ "name": "sales-document" }
+			]
+		},
+		{
+			"name" : "time",
+			"text" : "Time",
+			"icons" : [
+				{ "name" : "present" }
+			]
+		},
+		{
+			"name": "objects",
+			"text": "Objects",
+			"icons": [
+				{ "name" : "product" },
+				{ "name" : "temperature" },
+				{ "name" : "video" },
+				{ "name" : "washing-machine" },
+				{ "name" : "windows-doors" }
+			]
+		},
+		{
+			"name": "arrow",
+			"text": "Arrows",
+			"icons": [
+				{ "name" : "refresh" },
+				{ "name" : "synchronize" },
+				{ "name" : "visits" }
+			]
+		},
+		{
+			"name": "action",
+			"text": "Actions",
+			"icons": [
+				{ "name" : "refresh" },
+				{ "name" : "search" },
+				{ "name" : "settings" },
+				{ "name" : "synchronize" },
+				{ "name" : "video" },
+				{ "name" : "wrench" },
+				{ "name" : "activate" },
+				{ "name" : "copy" }
+			]
+		},
+		{
+			"name" : "shop",
+			"text" : "Shopping",
+			"icons" : [
+				{ "name" : "retail-store" }
+			]
+		},
+		{
+			"name": "place",
+			"text": "Places",
+			"icons": [
+				{ "name" : "retail-store" }
+			]
+		},
+		{
+			"name": "money",
+			"text": "Money",
+			"icons": [
+				{ "name" : "sales-document" },
+				{ "name" : "travel-expense" }
+			]
+		},
+		{
+			"name" : "form",
+			"text" : "Form",
+			"icons" : [
+				{ "name" : "survey" }
+			]
+		},
+		{
+			"name": "clipboard",
+			"text": "Clipboards",
+			"icons": [
+				{
+					"name": "task"
+				}
+			]
+		},
+		{
+			"name": "things",
+			"text": "Things",
+			"icons": [
+				{ "name" : "temperature" },
+				{ "name" : "video" },
+				{ "name" : "washing-machine" },
+				{ "name" : "wrench" }
+			]
+		},
+		{
+			"name": "travel",
+			"text": "Travel",
+			"icons": [
+				{
+					"name": "travel-expense"
+				}
+			]
+		},
+		{
+			"name": "transport",
+			"text": "Transport",
+			"icons": [
+				{
+					"name": "travel-expense"
+				}
+			]
+		},
+		{
+			"name" : "devices",
+			"text" : "Devices",
+			"icons" : [
+				{ "name" : "video" }
+			]
+		}
+	]
+}
