@@ -67,7 +67,13 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					 * @returns {Promise} Notifies the finished state by starting the Analyzer
 					 */
 					analyze: function (oExecutionScope, aRuleDescriptors) {
-						return oMain.analyze(oExecutionScope, aRuleDescriptors);
+						if (oMain._rulesCreated) {
+							return oMain.analyze(oExecutionScope, aRuleDescriptors);
+						}
+
+						return oMain._oMainPromise.then(function () {
+							return oMain.analyze(oExecutionScope, aRuleDescriptors);
+						});
 					},
 					/**
 					 * Gets last analysis history.
@@ -206,7 +212,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 						});
 					});
 				} else {
-					that._fetchSupportRuleSets();
+					that._oMainPromise = that._fetchSupportRuleSets();
 				}
 			},
 			stopPlugin: function () {
@@ -231,7 +237,9 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		if (oEvent.getParameter("stereotype") === "library" && this._rulesCreated) {
 			var that = this;
 
-			this._fetchSupportRuleSets().then(function() {
+			that._oMainPromise = this._fetchSupportRuleSets();
+
+			that._oMainPromise.then(function() {
 				that._fetchNonLoadedRuleSets();
 			});
 		}
@@ -346,10 +354,11 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_INIT_ANALYSIS_CTRL, function () {
-			var onUpdateSupportRules = this._fetchSupportRuleSets(),
-				that = this;
+			var that = this;
 
-			onUpdateSupportRules.then(function () {
+			this._oMainPromise = this._fetchSupportRuleSets();
+
+			this._oMainPromise.then(function () {
 				that._fetchNonLoadedRuleSets();
 			});
 		}, this);
@@ -362,10 +371,11 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.LOAD_RULESETS, function (data) {
-			var onUpdateRules = this._fetchSupportRuleSets(data.libNames),
-				that = this;
+			var that = this;
 
-			onUpdateRules.then(function () {
+			this._oMainPromise = this._fetchSupportRuleSets(data.libNames);
+
+			this._oMainPromise.then(function () {
 				that._fetchNonLoadedRuleSets();
 			});
 		}, this);
