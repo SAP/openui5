@@ -1,0 +1,27 @@
+<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:b="sap.uxap.testblocks.objectpageblock" displayBlock="true" controllerName="blockbasetest.Main"
+        height="100%">
+
+    <ObjectPageLayout id="ObjectPageLayout">
+        <headerTitle>
+            <ObjectPageHeader
+                              objectTitle="Block base test Object Page">
+            </ObjectPageHeader>
+        </headerTitle>
+        <headerContent>
+            <m:Text width="200px"
+                    text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+        </headerContent>
+        <sections>
+            <ObjectPageSection title="2014 Goals Plan">
+                <subSections>
+                    <ObjectPageSubSection title=" ">
+                        <blocks>
+                            <b:InfoButton/>
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+        </sections>
+    </ObjectPageLayout>
+</m:View>
