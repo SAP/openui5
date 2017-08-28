@@ -288,7 +288,7 @@
 						</subSections>
 					</ObjectPageSection>
 
-					<ObjectPageSection id="controlProperties"
+					<ObjectPageSection id="controlproperties"
 									   title="Properties"
 									   visible="{topics>/hasControlProperties}"
 									   titleUppercase="false">
@@ -650,7 +650,7 @@
 						</subSections>
 					</ObjectPageSection>
 
-					<ObjectPageSection id="specialSettings"
+					<ObjectPageSection id="specialsettings"
 									   title="Special Settings"
 									   visible="{topics>/hasSpecialSettings}"
 									   titleUppercase="false">

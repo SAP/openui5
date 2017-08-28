@@ -239,19 +239,42 @@ sap.ui.define([
 
 			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
 
-				var oSection = this.getView().byId(sSectionId);
+				var aFilteredSubSections,
+					aSubSections,
+					oSection;
+
+				if (!sSectionId) {
+					return;
+				}
+
+				// LowerCase every input from URL
+				sSectionId = sSectionId.toLowerCase();
+
+				oSection = this.getView().byId(sSectionId);
 				if (!oSection) {
 					return;
 				}
 
-				var aSubSections = oSection.getSubSections();
-				var aFilteredSubSections = aSubSections.filter(function (oSubSection) {
-					return oSubSection.getTitle() === sSubSectionTitle;
-				});
+				// If we have a target sub-section we will scroll to it else we will scroll directly to the section
+				if (sSubSectionTitle) {
+					// Let's ignore case when searching for the section especially like in this case
+					// where sSubSectionTitle comes from the URL
+					sSubSectionTitle = sSubSectionTitle.toLowerCase();
 
-				if (aFilteredSubSections.length) {
-					this.getView().byId("apiDetailObjectPage").scrollToSection(aFilteredSubSections[0].getId(), 250);
+					aSubSections = oSection.getSubSections();
+					aFilteredSubSections = aSubSections.filter(function (oSubSection) {
+						return oSubSection.getTitle().toLowerCase() === sSubSectionTitle;
+					});
+
+					if (aFilteredSubSections.length) {
+						// We scroll to the first sub-section found
+						this.getView().byId("apiDetailObjectPage").scrollToSection(aFilteredSubSections[0].getId(), 250);
+					}
+				} else {
+					// We scroll to section
+					this.getView().byId("apiDetailObjectPage").scrollToSection(oSection.getId(), 250);
 				}
+
 			},
 
 			_scrollContentToTop: function () {
