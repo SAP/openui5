@@ -1895,6 +1895,56 @@
 
 			assert.ok(true, "No exceptions thrown");
 		});
+
+		QUnit.test("Group ID calculation should not add forward slashes from property values", function(assert) {
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true,
+				numberOfExpandedLevels: 2,
+				rootLevel: 1
+			});
+
+			var oFakeNode = {
+				context: {
+					getProperty: function(/* property name will be "GLAccount"*/) {
+						return "something/containing/forward/slashes";
+					}
+				},
+				parent: null // no parent -> no nesting with existing group IDs
+			};
+
+			var sResultGroupId = oBinding._calculateGroupID(oFakeNode);
+			assert.equal(sResultGroupId.match(/\//g).length, 2, "Group ID contains exactly two forward slashes");
+			// Group ID should contain exactly two forward slashes. One at the beginning and one at the end.
+			//	Level is then calculated with (slash count)-1
+
+			// Current implementation encodes the slashes, so let's also explicitly check for that:
+			assert.equal(sResultGroupId, "/something%2Fcontaining%2Fforward%2Fslashes/", "Slashes got encoded");
+		});
+
+		QUnit.test("Group ID calculation should also be able to handle integer property values", function(assert) {
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true,
+				numberOfExpandedLevels: 2,
+				rootLevel: 1
+			});
+
+			var oFakeNode = {
+				context: {
+					getProperty: function(/* property name will be "GLAccount"*/) {
+						return 1;
+					}
+				},
+				parent: null // no parent -> no nesting with existing group IDs
+			};
+
+			try {
+				var sResultGroupId = oBinding._calculateGroupID(oFakeNode);
+				assert.ok(true, "No exceptions thrown");
+				assert.equal(sResultGroupId, "/1/", "Integer got handled correctly");
+			} catch (e) {
+				assert.ok(false, "Threw exception: " + e);
+			}
+		});
 	});
 
 </script>
