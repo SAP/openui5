@@ -22,10 +22,8 @@ sap.ui.require([
 	});
 
 	sap.ui.require([
-		"sap/ui/demo/iconexplorer/test/integration/NavigationJourney",
-		"sap/ui/demo/iconexplorer/test/integration/OverviewJourney",
-		"sap/ui/demo/iconexplorer/test/integration/PreviewJourney",
-		"sap/ui/demo/iconexplorer/test/integration/NotFoundJourney"
+		"sap/ui/demo/iconexplorer/test/integration/FavoriteJourney",
+		"sap/ui/demo/iconexplorer/test/integration/SearchJourney"
 	], function () {
 		QUnit.start();
 	});
