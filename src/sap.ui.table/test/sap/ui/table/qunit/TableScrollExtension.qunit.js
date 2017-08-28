@@ -1,4 +1,4 @@
-/*global QUnit,qutils,sinon,oTable*/
+/*global QUnit,qutils,sinon,oTable,oTreeTable*/
 
 (function () {
 	"use strict";
@@ -878,4 +878,73 @@
 		});
 	});
 
+	QUnit.module("Special cases", {
+		beforeEach: function() {
+			createTables();
+		},
+		afterEach: function() {
+			destroyTables();
+		}
+	});
+
+	QUnit.test("Scrolling inside the cell", function(assert) {
+		var done = assert.async();
+		var iAssertionDelay = Device.browser.msie ? 100 : 0;
+
+		function test(iRowIndex, iColumnIndex) {
+			var oCellContentInColumn;
+
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					oCellContentInColumn = oTreeTable.getRows()[iRowIndex].getCells()[iColumnIndex].getDomRef();
+					oCellContentInColumn.focus();
+					resolve();
+				}, iAssertionDelay);
+			}).then(function(resolve) {
+				return new Promise(function(resolve) {
+					window.setTimeout(function() {
+						var oInnerCellElement = sap.ui.table.TableUtils.getCell(oTreeTable, oCellContentInColumn).find(".sapUiTableCell")[0];
+
+						assert.strictEqual(document.activeElement, oCellContentInColumn,
+							"The content of the cell in row " + iRowIndex + " column " + iColumnIndex + " is focused");
+						assert.strictEqual(oInnerCellElement.scrollLeft, 0, "The cell content is not scrolled horizontally");
+						assert.strictEqual(oInnerCellElement.scrollTop, 0, "The cell content is not scrolled vertically");
+
+						resolve();
+					}, iAssertionDelay);
+				});
+			});
+		}
+
+		var DummyControl = sap.ui.core.Control.extend("sap.ui.table.test.DummyControl", {
+			renderer: function (oRm, oControl) {
+				oRm.write("<div style=\"display: flex; flex-direction: column\">");
+				oRm.write("<span tabindex=\"0\" style=\"width: 100px; margin-top: 100px;\">really very looooooooooong text</span>");
+
+				oRm.write("<span tabindex=\"0\" style=\"width: 100px; margin-left: 100px;\"");
+				oRm.writeControlData(oControl); // This element should be returned by getDomRef()
+				oRm.write(">");
+				oRm.writeEscaped("really very looooooooooong text");
+				oRm.write("</span>");
+
+				oRm.write("</div>");
+			}
+		});
+
+		var oColumn1 = oTreeTable.getColumns()[0];
+		var oColumn2 = oTreeTable.getColumns()[1];
+
+		oTreeTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+		oTreeTable.setRowHeight(10);
+		oColumn1.setTemplate(new DummyControl());
+		oColumn1.setWidth("20px");
+		oColumn2.setTemplate(new DummyControl());
+		oColumn2.setWidth("20px");
+
+		test(0, 0).then(function() {
+			return test(0, 1);
+		}).then(function() {
+			done();
+		});
+	});
 }());
