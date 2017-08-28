@@ -575,6 +575,23 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("addSapSemantics: url", function (assert) {
+		var oType = {
+				"name" : "BusinessPartner",
+				"property" : [{
+					"name" : "WebAddress",
+					"sap:semantics" : "url"
+				}]
+			};
+
+		// code under test
+		Utils.addSapSemantics(oType);
+
+		assert.deepEqual(oType.property[0/*WebAddress*/]["Org.OData.Core.V1.IsURL"],
+			{"Bool" : "true"});
+	});
+
+	//*********************************************************************************************
 	[{
 		expectedAnnotations : {"Contact" : oContactAnnotationFromV2}, type : oContactType
 	}, {

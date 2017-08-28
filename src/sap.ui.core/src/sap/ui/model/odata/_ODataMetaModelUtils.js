@@ -268,6 +268,12 @@ sap.ui.define([
 					if (!sV2Semantics) {
 						return;
 					}
+
+					if (sV2Semantics === "url") {
+						oProperty["Org.OData.Core.V1.IsURL"] = oBoolTrue;
+						return;
+					}
+
 					if (sV2Semantics in mDatePartSemantics2CommonTerm) {
 						sV4Annotation = "com.sap.vocabularies.Common.v1."
 							+ mDatePartSemantics2CommonTerm[sV2Semantics];
