@@ -1,4 +1,4 @@
-/* global QUnit,oTable */
+/*global QUnit, oTable */
 
 sap.ui.require([
 	"sap/ui/table/RowSettings",
@@ -262,6 +262,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("_getHighlightText", function(assert) {
+        var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 		var aRows = oTable.getRows();
 
 		for (var iRowIndex = 0; iRowIndex <= 4; iRowIndex++) {
@@ -270,13 +271,13 @@ sap.ui.require([
 			var sHighlightText = "";
 
 			if (iRowIndex === 0) {
-				sHighlightText = "Success";
+				sHighlightText = oResBundle.getText("TBL_ROW_STATE_" + MessageType.Success.toUpperCase());
 			} else if (iRowIndex === 1) {
-				sHighlightText = "Warning";
+				sHighlightText = oResBundle.getText("TBL_ROW_STATE_" + MessageType.Warning.toUpperCase());
 			} else if (iRowIndex === 2) {
-				sHighlightText = "Error";
+				sHighlightText = oResBundle.getText("TBL_ROW_STATE_" + MessageType.Error.toUpperCase());
 			} else if (iRowIndex === 3) {
-				sHighlightText = "Information";
+				sHighlightText = oResBundle.getText("TBL_ROW_STATE_" + MessageType.Information.toUpperCase());
 			}
 			// Row with index 4 (MessageType.None) has no highlight.
 

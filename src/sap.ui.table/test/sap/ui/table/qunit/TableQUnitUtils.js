@@ -51,7 +51,7 @@
 			oRm.write("<input");
 			oRm.writeControlData(oControl);
 			oRm.writeAttribute("type", "text");
-			oRm.writeAttribute("value", oControl.getText());
+			oRm.writeAttribute("value", oControl.getText() || "");
 			oRm.writeClasses();
 			if (oControl.getTabbable()) {
 				oRm.writeAttribute("tabindex", "0");
@@ -152,8 +152,8 @@
 		oTable.setSelectedIndex(0);
 		oTreeTable.setModel(oModel);
 		if (!bSkipPlaceAt) {
-			oTable.placeAt("content");
-			oTreeTable.placeAt("content");
+			oTable.placeAt("qunit-fixture");
+			oTreeTable.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		}
 	};

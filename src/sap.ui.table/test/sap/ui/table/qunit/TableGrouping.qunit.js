@@ -1,6 +1,8 @@
-/*global QUnit,sinon,oTable,oTreeTable*/
+/*global QUnit, sinon, oTable, oTreeTable */
 
-(function () {
+sap.ui.require([
+	"sap/ui/table/TableUtils"
+], function(TableUtils) {
 	"use strict";
 
 	// mapping of global function calls
@@ -18,34 +20,24 @@
 	var fakeSumRow = window.fakeSumRow;
 	var fakeGroupRow = window.fakeGroupRow;
 
-	//************************************************************************
-	// Helper Functions
-	//************************************************************************
-
-	jQuery.sap.require("sap.ui.table.TableUtils");
-	var Grouping = sap.ui.table.TableUtils.Grouping;
-	var TableUtils = sap.ui.table.TableUtils;
-
-
-	//************************************************************************
-	// Test Code
-	//************************************************************************
+	// Shortcuts
+	var Grouping = TableUtils.Grouping;
 
 	QUnit.module("Misc", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-	QUnit.test("Connection to TableUtils", function (assert) {
-		assert.ok(!!sap.ui.table.TableUtils.Grouping, "Grouping namespace available");
-		assert.ok(sap.ui.table.TableUtils.Grouping.TableUtils === sap.ui.table.TableUtils, "Dependency forwarding of TableUtils correct");
+	QUnit.test("Connection to TableUtils", function(assert) {
+		assert.ok(!!TableUtils.Grouping, "Grouping namespace available");
+		assert.ok(TableUtils.Grouping.TableUtils === TableUtils, "Dependency forwarding of TableUtils correct");
 	});
 
-	QUnit.test("toggleGroupHeader", function (assert) {
+	QUnit.test("toggleGroupHeader", function(assert) {
 
 		function doToggle(sText, bForceExpand, bExpectExpanded, bExpectChange) {
 			var bRes = Grouping.toggleGroupHeader(oTreeTable, 0, bForceExpand);
@@ -76,14 +68,15 @@
 		doToggle("No Binding", true, false, false);
 	});
 
-	QUnit.test("toggleGroupHeaderByRef", function (assert) {
+	QUnit.test("toggleGroupHeaderByRef", function(assert) {
 		var oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
 			oToggleOpenStateEventSpy._mEventParameters = oEvent.mParameters;
 		});
 		oTreeTable.attachToggleOpenState(oToggleOpenStateEventSpy);
 
 		function checkExpanded(sType, bExpectExpanded) {
-			assert.equal(oTreeTable.getBinding("rows").isExpanded(0), bExpectExpanded, sType + ": First row " + (bExpectExpanded ? "" : "not ") + "expanded");
+			assert.equal(oTreeTable.getBinding("rows").isExpanded(0), bExpectExpanded,
+				sType + ": First row " + (bExpectExpanded ? "" : "not ") + "expanded");
 		}
 
 		function doToggle(sType, sText, oRef, bForceExpand, bExpectExpanded, bExpectChange) {
@@ -92,7 +85,7 @@
 			var bCalled = false;
 
 			var fOnGroupHeaderChanged = oTreeTable._onGroupHeaderChanged;
-			oTreeTable._onGroupHeaderChanged = function (iRowIndex, bIsExpanded) {
+			oTreeTable._onGroupHeaderChanged = function(iRowIndex, bIsExpanded) {
 				iIndex = iRowIndex;
 				bExpanded = bIsExpanded;
 				bCalled = true;
@@ -108,7 +101,7 @@
 				assert.ok(bExpectExpanded === bExpanded, sType + ": _onGroupHeaderChanged provides correct expand state");
 				assert.ok(iIndex == 0, sType + ": _onGroupHeaderChanged provides correct index");
 
-				assert.ok(oToggleOpenStateEventSpy.calledOnce,  "The toggleOpenState event was called once");
+				assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was called once");
 				assert.deepEqual(oToggleOpenStateEventSpy._mEventParameters, {
 					id: oTreeTable.getId(),
 					rowIndex: iIndex,
@@ -117,7 +110,7 @@
 				}, "The toggleOpenState event was called with the correct parameters");
 			} else {
 				assert.ok(!bCalled, sType + ": _onGroupHeaderChanged not called");
-				assert.ok(oToggleOpenStateEventSpy.notCalled,  "The toggleOpenState event was not called");
+				assert.ok(oToggleOpenStateEventSpy.notCalled, "The toggleOpenState event was not called");
 			}
 
 			checkExpanded(sType, bExpectExpanded);
@@ -147,7 +140,7 @@
 		doToggle("Wrong DomRef", "", oTreeTable.$(), null, false, false);
 	});
 
-	QUnit.test("isInSumRow", function (assert) {
+	QUnit.test("isInSumRow", function(assert) {
 		initRowActions(oTable, 1, 1);
 
 		fakeSumRow(0);
@@ -167,7 +160,7 @@
 		assert.ok(!TableUtils.Grouping.isInSumRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
 	});
 
-	QUnit.test("isInGroupingRow", function (assert) {
+	QUnit.test("isInGroupingRow", function(assert) {
 		initRowActions(oTable, 1, 1);
 
 		fakeGroupRow(0);
@@ -187,7 +180,7 @@
 		assert.ok(!TableUtils.Grouping.isInGroupingRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
 	});
 
-	QUnit.test("isGroupingRow", function (assert) {
+	QUnit.test("isGroupingRow", function(assert) {
 		fakeGroupRow(0);
 
 		assert.ok(!TableUtils.Grouping.isGroupingRow(), "Returned false: Invalid parameter passed");
@@ -201,17 +194,16 @@
 		assert.ok(!TableUtils.Grouping.isGroupingRow(getColumnHeader(0)), "Returned false: A column header cell is not a group header row");
 	});
 
-
 	QUnit.module("Grouping Modes", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-	QUnit.test("Mode Accessors", function (assert) {
+	QUnit.test("Mode Accessors", function(assert) {
 		var oTbl = {};
 
 		assert.ok(!Grouping.isGroupMode(oTbl), "Initial: No Group Mode");
@@ -237,7 +229,7 @@
 		assert.ok(!Grouping.getModeCssClass(oTbl), "Clear: No Mode Css Class");
 	});
 
-	QUnit.test("Table default modes", function (assert) {
+	QUnit.test("Table default modes", function(assert) {
 		assert.ok(!Grouping.isGroupMode(oTable), "No Group Mode in sap.ui.table.Table");
 		assert.ok(!Grouping.isTreeMode(oTable), "No Tree Mode in sap.ui.table.Table");
 
@@ -266,19 +258,18 @@
 		assert.ok(!Grouping.isTreeMode(oAnaTable), "No Tree Mode in sap.ui.table.AnalyticalTable");
 	});
 
-
 	QUnit.module("Rendering", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 			oTreeTable.setVisibleRowCount(12);
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-	QUnit.test("showGroupMenuButton", function (assert) {
+	QUnit.test("showGroupMenuButton", function(assert) {
 		var bOrigDesktop = sap.ui.Device.system.desktop;
 
 		sap.ui.Device.system.desktop = false;
@@ -294,7 +285,7 @@
 		sap.ui.Device.system.desktop = bOrigDesktop;
 	});
 
-	QUnit.test("_calcGroupIndent", function (assert) {
+	QUnit.test("_calcGroupIndent", function(assert) {
 		var oTable = new sap.ui.table.Table();
 		assert.equal(Grouping._calcGroupIndent(oTable, 0, true), 0, "sap.ui.table.Table, Level 0, Group Header");
 		assert.equal(Grouping._calcGroupIndent(oTable, 0, false), 0, "sap.ui.table.Table, Level 0, !Group Header");
@@ -332,14 +323,14 @@
 		assert.equal(Grouping._calcGroupIndent(oTable, 4, false), 36, "sap.ui.table.TreeTable, Level 4, !Group Header");
 	});
 
-	QUnit.test("Tree Mode", function (assert) {
+	QUnit.test("Tree Mode", function(assert) {
 		var done = assert.async();
 		var bSecondPass = false;
 
 		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
 		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 
-		var fnHandler = function () {
+		var fnHandler = function() {
 			var iCount = iNumberOfRows + 1;
 
 			if (bSecondPass) {
@@ -374,13 +365,14 @@
 			}
 
 			if (bSecondPass) {
-				var fnUnbindHandler = function () {
+				var fnUnbindHandler = function() {
 					for (var i = 0; i < 12; i++) {
 						var $Icon = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i + "-col0").find(".sapUiTableTreeIcon");
 						var $Row = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i);
 						assert.ok(!$Icon.hasClass("sapUiTableTreeIconNodeOpen"), "No state class on icon after unbind: sapUiTableTreeIconNodeOpen");
 						assert.ok(!$Icon.hasClass("sapUiTableTreeIconLeaf"), "No state class on icon after unbind: sapUiTableTreeIconLeaf");
-						assert.ok(!$Icon.hasClass("sapUiTableTreeIconNodeClosed"), "No state class on icon after unbind: sapUiTableTreeIconNodeClosed");
+						assert.ok(!$Icon.hasClass("sapUiTableTreeIconNodeClosed"),
+							"No state class on icon after unbind: sapUiTableTreeIconNodeClosed");
 						assert.ok(!$Row.data("sap-ui-level"), "Row " + i + " has no level in data.");
 						assert.ok(!$Row.attr("data-sap-ui-level"), "Row " + i + " has no level in dom.");
 					}
@@ -399,14 +391,14 @@
 		Grouping.toggleGroupHeaderByRef(oTreeTable, jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0").find(".sapUiTableTreeIcon"), true);
 	});
 
-	QUnit.test("Group Mode", function (assert) {
+	QUnit.test("Group Mode", function(assert) {
 		var done = assert.async();
 		var bSecondPass = false;
 
 		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
 		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 
-		var fnHandler = function () {
+		var fnHandler = function() {
 			var iCount = iNumberOfRows + 1;
 
 			if (bSecondPass) {
@@ -430,14 +422,17 @@
 				} else if (i == iCount - 1) {
 					bExpectGroupHeaderClass = false;
 				}
-				assert.ok($Row.hasClass("sapUiTableGroupHeader") && bExpectGroupHeaderClass || !$Row.hasClass("sapUiTableGroupHeader") && !bExpectGroupHeaderClass, "Row " + i + " is Group Header");
-				assert.ok($RowHdr.hasClass("sapUiTableGroupHeader") && bExpectGroupHeaderClass || !$RowHdr.hasClass("sapUiTableGroupHeader") && !bExpectGroupHeaderClass, "Row Header " + i + " is Group Header");
+				assert.ok($Row.hasClass("sapUiTableGroupHeader") && bExpectGroupHeaderClass || !$Row.hasClass("sapUiTableGroupHeader")
+						  && !bExpectGroupHeaderClass, "Row " + i + " is Group Header");
+				assert.ok($RowHdr.hasClass("sapUiTableGroupHeader") && bExpectGroupHeaderClass || !$RowHdr.hasClass("sapUiTableGroupHeader")
+						  && !bExpectGroupHeaderClass, "Row Header " + i + " is Group Header");
 				if (bExpectExpanded) {
 					assert.ok($GroupHdr.hasClass("sapUiTableGroupIconOpen"), "Header has correct expand state");
 				} else if (bExpectGroupHeaderClass) {
 					assert.ok($GroupHdr.hasClass("sapUiTableGroupIconClosed"), "Header has correct expand state");
 				} else {
-					assert.ok(!$GroupHdr.hasClass("sapUiTableGroupIconClosed") && !$GroupHdr.hasClass("sapUiTableGroupIconOpen"), "Header has correct expand state");
+					assert.ok(!$GroupHdr.hasClass("sapUiTableGroupIconClosed") && !$GroupHdr.hasClass("sapUiTableGroupIconOpen"),
+						"Header has correct expand state");
 				}
 
 				assert.equal($Row.data("sap-ui-level"), iLevel, "Row " + i + " has correct level in data.");
@@ -445,7 +440,7 @@
 			}
 
 			if (bSecondPass) {
-				var fnUnbindHandler = function () {
+				var fnUnbindHandler = function() {
 					for (var i = 0; i < 12; i++) {
 						var $Row = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i);
 						assert.ok(!$Row.hasClass("sapUiTableGroupHeader"), "No group headers any more after unbind");
@@ -470,7 +465,7 @@
 		Grouping.toggleGroupHeaderByRef(oTreeTable, jQuery.sap.byId(oTreeTable.getId() + "-rowsel0"), true);
 	});
 
-	QUnit.test("GroupMenuButton", function (assert) {
+	QUnit.test("GroupMenuButton", function(assert) {
 		var i;
 		var $RowHdr;
 		var $Button;
@@ -494,9 +489,8 @@
 		}
 	});
 
-
 	QUnit.module("sap.ui.table.Table: Experimental Grouping", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 			var oData = oModel.getData();
 			for (var i = 0; i < iNumberOfRows; i++) {
@@ -509,18 +503,18 @@
 			oTable.setEnableGrouping(true);
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-	QUnit.test("Activate Grouping", function (assert) {
+	QUnit.test("Activate Grouping", function(assert) {
 		var done = assert.async();
 		var oBinding = oTable.getBinding("rows");
 
 		assert.equal(oBinding.getLength(), 8, "Row count before Grouping");
 
-		var fnHandler = function () {
+		var fnHandler = function() {
 			for (var i = 0; i < iNumberOfRows + 2; i++) {
 				if (i == 0 || i == 5) {
 					assert.ok(getRowHeader(i).hasClass("sapUiTableGroupHeader"), "Row " + i + " is group header");
@@ -533,7 +527,7 @@
 			done();
 		};
 
-		var fnHandlerProxy = function () {
+		var fnHandlerProxy = function() {
 			oTable.attachEventOnce("_rowsUpdated", fnHandler);
 		};
 
@@ -542,7 +536,7 @@
 		oTable.setGroupBy(oTable.getColumns()[0]);
 	});
 
-	QUnit.test("Collapse / Expand", function (assert) {
+	QUnit.test("Collapse / Expand", function(assert) {
 		var oBinding = oTable.getBinding("rows");
 		var oClock = sinon.useFakeTimers();
 
@@ -575,7 +569,7 @@
 		oClock.restore();
 	});
 
-	QUnit.test("Reset Grouping", function (assert) {
+	QUnit.test("Reset Grouping", function(assert) {
 		var done = assert.async();
 
 		assert.equal(oTable._getTotalRowCount(), 8, "Row count before grouping");
@@ -614,4 +608,4 @@
 			});
 		}).then(done);
 	});
-}());
+});

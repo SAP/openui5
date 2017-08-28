@@ -1,6 +1,6 @@
-/*global QUnit*/
+/*global QUnit */
 
-(function () {
+sap.ui.require([], function() {
 	"use strict";
 
 	//************************************************************************
@@ -16,41 +16,41 @@
 	}
 
 	var oRm = {
-		write: function () {
+		write: function() {
 			for (var i = 0; i < arguments.length; i++) {
 				oOutput.txt = oOutput.txt + arguments[i];
 			}
 		},
-		addClass: function (sClass) {
+		addClass: function(sClass) {
 			oOutput.classes.push(sClass);
 		},
-		writeClasses: function () {
+		writeClasses: function() {
 			oOutput.writeClasses = true;
 		},
-		addStyle: function (sName, sValue) {
+		addStyle: function(sName, sValue) {
 			oOutput.styles.push(sName + "=" + sValue);
 		},
-		writeStyles: function () {
+		writeStyles: function() {
 			oOutput.writeStyles = true;
 		},
-		writeAttribute: function (sName, sValue) {
+		writeAttribute: function(sName, sValue) {
 			oOutput.attributes.push(sName + "=" + sValue);
 		},
-		writeControlData: function (oControl) {
+		writeControlData: function(oControl) {
 			oOutput.control = oControl;
 		},
-		writeElementData: function (oElement) {
+		writeElementData: function(oElement) {
 			oOutput.element = oElement;
 		}
 	};
 
 	var oTable = {
-		getId: function () {
+		getId: function() {
 			return "TABLEID";
 		},
-		_getAccRenderExtension: function () {
+		_getAccRenderExtension: function() {
 			return {
-				writeAriaAttributesFor: function (rm, oTable, sName, oConfig) {
+				writeAriaAttributesFor: function(rm, oTable, sName, oConfig) {
 					oOutput.aria = sName;
 					oOutput.ariaConfig = oConfig;
 				}
@@ -58,19 +58,18 @@
 		}
 	};
 
-
 	//************************************************************************
 	// Test Code
 	//************************************************************************
 
 	QUnit.module("TableRendererUtils", {
 		beforeEach: initOutput,
-		afterEach: function () {
+		afterEach: function() {
 			oOutput = null;
 		}
 	});
 
-	QUnit.test("addClass", function (assert) {
+	QUnit.test("addClass", function(assert) {
 		TableRendererUtils.addClass(oRm);
 		assert.equal(oOutput.classes.length, 0, "No class given, no class written");
 		initOutput();
@@ -86,9 +85,9 @@
 		assert.equal(oOutput.classes[0], "HELLO", "Class correct");
 	});
 
-	QUnit.test("addClass (startElement Context)", function (assert) {
+	QUnit.test("addClass (startElement Context)", function(assert) {
 		TableRendererUtils.startElement(oRm, oTable, {
-			furtherSettings: function () {
+			furtherSettings: function() {
 				TableRendererUtils.addClass(oRm);
 			}
 		});
@@ -96,7 +95,7 @@
 		assert.ok(!oOutput.writeClasses, "writeClasses not called");
 		initOutput();
 		TableRendererUtils.startElement(oRm, oTable, {
-			furtherSettings: function () {
+			furtherSettings: function() {
 				TableRendererUtils.addClass(oRm, "HELLO");
 			}
 		});
@@ -105,7 +104,7 @@
 		assert.ok(oOutput.writeClasses, "writeClasses called");
 		initOutput();
 		TableRendererUtils.startElement(oRm, oTable, {
-			furtherSettings: function () {
+			furtherSettings: function() {
 				TableRendererUtils.addClass(oRm, "HELLO", false);
 			}
 		});
@@ -113,7 +112,7 @@
 		assert.ok(!oOutput.writeClasses, "writeClasses not called");
 		initOutput();
 		TableRendererUtils.startElement(oRm, oTable, {
-			furtherSettings: function () {
+			furtherSettings: function() {
 				TableRendererUtils.addClass(oRm, "HELLO", true);
 			}
 		});
@@ -122,7 +121,7 @@
 		assert.ok(oOutput.writeClasses, "writeClasses called");
 	});
 
-	QUnit.test("addStyle", function (assert) {
+	QUnit.test("addStyle", function(assert) {
 		TableRendererUtils.addStyle(oRm);
 		assert.equal(oOutput.styles.length, 0, "No style name given, no style written");
 		initOutput();
@@ -141,9 +140,9 @@
 		assert.equal(oOutput.styles[0], "display=none", "Style correct");
 	});
 
-	QUnit.test("addStyle (startElement Context)", function (assert) {
+	QUnit.test("addStyle (startElement Context)", function(assert) {
 		TableRendererUtils.startElement(oRm, oTable, {
-			furtherSettings: function () {
+			furtherSettings: function() {
 				TableRendererUtils.addStyle(oRm);
 			}
 		});
@@ -151,7 +150,7 @@
 		assert.ok(!oOutput.writeStyles, "writeStyles not called");
 		initOutput();
 		TableRendererUtils.startElement(oRm, oTable, {
-			furtherSettings: function () {
+			furtherSettings: function() {
 				TableRendererUtils.addStyle(oRm, "display");
 			}
 		});
@@ -159,7 +158,7 @@
 		assert.ok(!oOutput.writeStyles, "writeStyles not called");
 		initOutput();
 		TableRendererUtils.startElement(oRm, oTable, {
-			furtherSettings: function () {
+			furtherSettings: function() {
 				TableRendererUtils.addStyle(oRm, "display", "none");
 			}
 		});
@@ -168,7 +167,7 @@
 		assert.ok(oOutput.writeStyles, "writeStyles called");
 		initOutput();
 		TableRendererUtils.startElement(oRm, oTable, {
-			furtherSettings: function () {
+			furtherSettings: function() {
 				TableRendererUtils.addStyle(oRm, "display", "none", false);
 			}
 		});
@@ -176,7 +175,7 @@
 		assert.ok(!oOutput.writeStyles, "writeStyles not called");
 		initOutput();
 		TableRendererUtils.startElement(oRm, oTable, {
-			furtherSettings: function () {
+			furtherSettings: function() {
 				TableRendererUtils.addStyle(oRm, "display", "none", true);
 			}
 		});
@@ -185,7 +184,7 @@
 		assert.ok(oOutput.writeStyles, "writeStyles called");
 	});
 
-	QUnit.test("startElement - Tag", function (assert) {
+	QUnit.test("startElement - Tag", function(assert) {
 		TableRendererUtils.startElement(oRm, oTable, {});
 		assert.equal(oOutput.txt, "<div>", "Default start tag written");
 		initOutput();
@@ -193,7 +192,7 @@
 		assert.equal(oOutput.txt, "<li>", "Custom start tag written");
 	});
 
-	QUnit.test("startElement - id", function (assert) {
+	QUnit.test("startElement - id", function(assert) {
 		var oElement = new sap.ui.core.Element("CUSTOMELEMENT");
 		var oControl = new sap.ui.core.Control("CUSTOMCONTROL");
 		TableRendererUtils.startElement(oRm, oTable, {id: "HELLO"});
@@ -215,7 +214,7 @@
 		oControl.destroy();
 	});
 
-	QUnit.test("startElement - classes", function (assert) {
+	QUnit.test("startElement - classes", function(assert) {
 		TableRendererUtils.startElement(oRm, oTable, {classname: "HELLO"});
 		assert.equal(oOutput.classes.length, 1, "Class written");
 		assert.equal(oOutput.classes[0], "HELLO", "Class correct");
@@ -232,7 +231,7 @@
 		assert.ok(!oOutput.writeClasses, "writeClasses not called");
 	});
 
-	QUnit.test("startElement - tabindex", function (assert) {
+	QUnit.test("startElement - tabindex", function(assert) {
 		TableRendererUtils.startElement(oRm, oTable, {tabindex: "HELLO"});
 		assert.equal(oOutput.attributes.length, 0, "Not a number");
 		initOutput();
@@ -241,7 +240,7 @@
 		assert.equal(oOutput.attributes[0], "tabindex=0", "Attribute correct");
 	});
 
-	QUnit.test("startElement - attributes", function (assert) {
+	QUnit.test("startElement - attributes", function(assert) {
 		TableRendererUtils.startElement(oRm, oTable, {attributes: {a: "HELLO", b: "HELLO2"}});
 		assert.equal(oOutput.attributes.length, 2, "Attributes written");
 		assert.ok(oOutput.attributes[0] == "a=HELLO" || oOutput.attributes[0] == "b=HELLO2", "Attribute 1 correct");
@@ -249,7 +248,7 @@
 		assert.ok(oOutput.attributes[0] != oOutput.attributes[1], "Attributes different");
 	});
 
-	QUnit.test("startElement - aria", function (assert) {
+	QUnit.test("startElement - aria", function(assert) {
 		var oConfig = {};
 		TableRendererUtils.startElement(oRm, oTable, {aria: "HELLO", ariaconfig: oConfig});
 		assert.equal(oOutput.aria, "HELLO", "ARIA Key");
@@ -264,16 +263,16 @@
 		assert.ok(!oOutput.ariaConfig, "ARIA Config");
 	});
 
-	QUnit.test("startElement - furtherSettings", function (assert) {
+	QUnit.test("startElement - furtherSettings", function(assert) {
 		assert.expect(1);
 		TableRendererUtils.startElement(oRm, oTable, {
-			furtherSettings: function () {
+			furtherSettings: function() {
 				assert.ok(true, "furtherSettings called");
 			}
 		});
 	});
 
-	QUnit.test("endElement - Tag", function (assert) {
+	QUnit.test("endElement - Tag", function(assert) {
 		TableRendererUtils.endElement(oRm);
 		assert.equal(oOutput.txt, "</div>", "Default end tag written");
 		initOutput();
@@ -281,12 +280,11 @@
 		assert.equal(oOutput.txt, "</li>", "Custom end tag written");
 	});
 
-	QUnit.test("renderElement - Tag", function (assert) {
+	QUnit.test("renderElement - Tag", function(assert) {
 		TableRendererUtils.renderElement(oRm, oTable);
 		assert.equal(oOutput.txt, "<div></div>", "Default tags written");
 		initOutput();
 		TableRendererUtils.renderElement(oRm, oTable, {tag: "li"});
 		assert.equal(oOutput.txt, "<li></li>", "Custom tags written");
 	});
-
-}());
+});
