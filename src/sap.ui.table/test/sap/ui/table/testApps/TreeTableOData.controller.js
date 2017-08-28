@@ -642,6 +642,49 @@ sap.ui.define([
 			this.onCreateTableClick(undefined, this._oTreeState);
 		},
 
+		onDragStart: function(oEvent) {
+			var oDragSession = oEvent.getParameter("dragSession");
+			var oDraggedRow = oEvent.getParameter("target");
+			var iDraggedRowIndex = oDraggedRow.getIndex();
+			var aSelectedIndices = oTable.getSelectedIndices();
+			var aDraggedRowContexts = [];
+
+			if (aSelectedIndices.length > 0) {
+				// If rows are selected, do not allow to start dragging from a row which is not selected.
+				if (aSelectedIndices.indexOf(iDraggedRowIndex) === -1) {
+					oEvent.preventDefault();
+				} else {
+					aSelectedIndices.forEach(function(iSelectedIndex) {
+						aDraggedRowContexts.push(oTable.getContextByIndex(iSelectedIndex));
+					});
+				}
+			} else {
+				aDraggedRowContexts.push(oTable.getContextByIndex(iDraggedRowIndex));
+			}
+
+			oDragSession.setComplexData("hierarchymaintenance", {
+				draggedRowContexts: aDraggedRowContexts
+			});
+		},
+
+		onDrop: function(oEvent) {
+			var oDragSession = oEvent.getParameter("dragSession");
+			var oDroppedRow = oEvent.getParameter("droppedControl");
+			var aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
+
+			if (aDraggedRowContexts.length > 0) {
+				var oBinding = oTable.getBinding("rows");
+				var oNewParentContext = oTable.getContextByIndex(oDroppedRow.getIndex());
+
+				if (oNewParentContext != null) {
+					for (var i = 0; i < aDraggedRowContexts.length; i++) {
+						oBinding.removeContext(aDraggedRowContexts[i]);
+					}
+					oBinding.addContexts(oNewParentContext, aDraggedRowContexts);
+				}
+			}
+		},
+
 		/**
 		 * Performance Measure download
 		 */
