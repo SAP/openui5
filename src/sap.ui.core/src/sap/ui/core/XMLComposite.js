@@ -371,12 +371,9 @@ sap.ui.define([
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 
-			// add proper CSS classes
-			oRm.addClass("sapUiXmlComposite");
-
 			// compare ViewRenderer.js - we negate since opposite default
 			if (!oControl.getDisplayBlock() && (oControl.getWidth() !== "100%" || oControl.getHeight() !== "100%")) {
-				oRm.addClass("display", "inline-block");
+				oRm.addStyle("display", "inline-block");
 			}
 			oRm.writeClasses(); // to make class="..." in XMLViews and addStyleClass() work
 

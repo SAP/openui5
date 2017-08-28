@@ -1,7 +1,7 @@
 <core:FragmentDefinition 
 	xmlns="sap.m" 
 	xmlns:core="sap.ui.core">
-	<Panel width="500px" height="100%" backgroundDesign="sap.m.BackgroundDesign.Solid">
+	<Panel height="100%">
 		<Button text="x"/>
 	</Panel>
 </core:FragmentDefinition>
