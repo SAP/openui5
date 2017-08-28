@@ -2066,5 +2066,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.26": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "83f800e8100dd7395cdcea40079d23b4292764b0",
+        "type": "FIX",
+        "text": " V2ODataModel.qunit",
+        "references": []
+      },
+      {
+        "id": "822496317487de3ce8875a86e6debb1d4f0e0275",
+        "type": "FIX",
+        "text": " core.ThemeCheck: Null handling of getComputedStyle in Firefox",
+        "references": []
+      }
+    ]
   }
 }
