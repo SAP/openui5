@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/Device",
 	"sap/ui/layout/form/ResponsiveGridLayout",
-	"./library"
-], function (Control, CustomData, BlockBaseMetadata, ModelMapping, Context, Device, ResponsiveGridLayout, library) {
+	"./library",
+	"sap/ui/core/Component"
+], function (Control, CustomData, BlockBaseMetadata, ModelMapping, Context, Device, ResponsiveGridLayout, library, Component) {
 		"use strict";
 
 		/**
@@ -401,7 +402,19 @@ sap.ui.define([
 		 * @protected
 		 */
 		BlockBase.prototype.createView = function (mParameter, sMode) {
-			return sap.ui.xmlview(this.getId() + "-" + sMode, mParameter);
+			var oOwnerComponent,
+				fnCreateView;
+
+			fnCreateView = function () {
+				return sap.ui.xmlview(this.getId() + "-" + sMode, mParameter);
+			}.bind(this);
+
+			oOwnerComponent = Component.getOwnerComponentFor(this);
+			if (oOwnerComponent) {
+				return oOwnerComponent.runAsOwner(fnCreateView);
+			} else {
+				return fnCreateView();
+			}
 		};
 
 		/**
