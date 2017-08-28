@@ -66,6 +66,14 @@
 					footer: this.getFooter()
 				});
 			},
+			getDynamicPageWithBreadCrumbs: function () {
+				return new DynamicPage({
+					title: this.getDynamicPageTitleWithBreadCrumbs(),
+					header: this.getDynamicPageHeader(),
+					content: this.getContent(200),
+					footer: this.getFooter()
+				});
+			},
 			getDynamicPageNoTitleAndHeader: function () {
 				return new DynamicPage({
 					content: this.getContent(20)
@@ -75,6 +83,21 @@
 				return new DynamicPageTitle({
 					heading: new sap.m.Title({
 						text: "Anna Maria Luisa"
+					})
+				});
+			},
+			getDynamicPageTitleWithBreadCrumbs: function () {
+				return new DynamicPageTitle({
+					heading: new sap.m.Title({
+						text: "Anna Maria Luisa"
+					}),
+					breadcrumbs: new sap.m.Breadcrumbs({
+						links: [
+							new sap.m.Link({text: "link1"}),
+							new sap.m.Link({text: "link2"}),
+							new sap.m.Link({text: "link3"}),
+							new sap.m.Link({text: "link4"})
+						]
 					})
 				});
 			},
@@ -680,8 +703,36 @@
 		core.applyChanges();
 
 		// Assert: DynamicPageTitle content aggregation is empty
-		assert.equal(oTitle.$().hasClass("sapFDynamicPageTitleWithoutContent"), true,
+		assert.equal(oTitle.$("main").hasClass("sapFDynamicPageTitleMainNoContent"), true,
 			"The css class has been added as the content aggregation is empty");
+	});
+
+	QUnit.module("DynamicPage - Rendering - Title with Breadcrumbs", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageWithBreadCrumbs();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage - Rendering - Title with Breadcrumbs", function (assert) {
+		var oTitle = this.oDynamicPage.getTitle(),
+			oBreadcrumbs = oTitle.getAggregation("breadcrumbs");
+
+		// Assert: DynamicPageTitle content aggregation is not empty
+		assert.equal(oTitle.$("top").hasClass("sapFDynamicPageTitleTop"), true, "Title top DOM element is rendered");
+		assert.equal(oBreadcrumbs.$().length > 0, true, "Title Breadcrumbs DOM is rendered");
+
+		// Act: remove breadCrumbs aggregation
+		oTitle.setBreadcrumbs(null);
+		core.applyChanges();
+
+		// Assert: DynamicPageTitle content aggregation is empty
+		assert.equal(oTitle.$("top").length > 0, false,
+			"Title top DOM element is not rendered");
 	});
 
 
