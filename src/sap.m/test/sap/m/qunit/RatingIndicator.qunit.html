@@ -342,6 +342,9 @@
 		var oRating = new sap.m.RatingIndicator({
 			value: 5
 		});
+		var oRating2 = new sap.m.RatingIndicator({
+			value: 5
+		});
 
 		// System under Test
 		oRating.placeAt("content");
@@ -359,6 +362,15 @@
 		jQuery("html").removeClass("sapUiSizeCondensed");
 		jQuery("html").addClass("sapUiSizeCozy");
 		assert.strictEqual(oRating._getDensityMode(), "Cozy", "The density mode is Cozy");
+
+		jQuery("html").removeClass("sapUiSizeCozy");
+		jQuery("body").addClass("sapUiSizeCondensed");
+		assert.strictEqual(oRating2._getDensityMode(), "Condensed", "The density mode is set in the body and is Condensed");
+		oRating2.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		jQuery("body").removeClass("sapUiSizeCondensed");
+		jQuery("html").addClass("sapUiSizeCozy");
+
 		oRating.destroy();
 	});
 
