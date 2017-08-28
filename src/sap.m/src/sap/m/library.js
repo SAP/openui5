@@ -315,6 +315,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		],
 		extensions: {
 			flChangeHandlers: {
+				"sap.m.ActionSheet": {
+					"moveControls": "default"
+				},
 				"sap.m.Bar": "sap/m/flexibility/Bar",
 				"sap.m.Button": "sap/m/flexibility/Button",
 				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
@@ -385,6 +388,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.OverflowToolbar":"sap/m/flexibility/OverflowToolbar",
 				"sap.m.Page": "sap/m/flexibility/Page",
 				"sap.m.Panel": "sap/m/flexibility/Panel",
+				"sap.m.Popover": {
+					"moveControls": "default"
+				},
 				"sap.m.RadioButton": "sap/m/flexibility/RadioButton",
 				"sap.m.RatingIndicator": {
 					"hideControl": "default",

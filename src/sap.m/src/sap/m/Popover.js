@@ -290,7 +290,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 							openBy: {type: "sap.ui.core.Control"}
 						}
 					}
-				}
+				},
+				designTime: true
 			}
 		});
 
