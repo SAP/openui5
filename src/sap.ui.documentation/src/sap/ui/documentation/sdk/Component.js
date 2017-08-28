@@ -178,7 +178,7 @@ sap.ui.define([
 			},
 
 			_addElementToTreeData : function (oJSONElement) {
-				if (oJSONElement.visibility === "public") {
+				if (["public", "protected"].indexOf(oJSONElement.visibility) !== -1) {
 					if (oJSONElement.kind !== "namespace") {
 						var oTreeNode = this._createTreeNode(oJSONElement.basename, oJSONElement.name, oJSONElement.name === this._topicId);
 						var sNodeNamespace = oJSONElement.name.substring(0, (oJSONElement.name.indexOf(oJSONElement.basename) - 1));
