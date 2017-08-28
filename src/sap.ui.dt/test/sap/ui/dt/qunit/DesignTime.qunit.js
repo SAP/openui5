@@ -336,12 +336,13 @@ function(
 			oInnerLayoutOverlay = OverlayRegistry.getOverlay(this.oInnerLayout);
 
 		// parentElementOverlay should be available before sync with renderAndCreateAggregation
-		sinon.stub(ElementOverlay.prototype, "_renderAndCreateAggregation", function() {});
+		var stub = sinon.stub(ElementOverlay.prototype, "_renderAndCreateAggregation", function() {});
 		this.oDesignTime.attachEventOnce("elementOverlayCreated", function(oEvent) {
 			oParentOfNewOverlay = oEvent.getParameter("elementOverlay").getParentElementOverlay();
 			assert.notEqual(oParentOfNewOverlay, undefined, "then new button overlay is created and knows his parent overlay");
 			assert.strictEqual(oParentOfNewOverlay.getId(), oInnerLayoutOverlay.getId(), "then the parent overlay of the new button is the oInnerLayoutOverlay");
 			oParentOfNewOverlay.destroy();
+			stub.restore();
 			done();
 		});
 
@@ -443,6 +444,102 @@ function(
 		var oOverlay = OverlayRegistry.getOverlay(this.oPage);
 		assert.strictEqual(oOverlay.getDesignTimeMetadata().getData().testField, "testValue", "DTMetadata from the DT is merged correctly");
 		assert.strictEqual(oOverlay.getDesignTimeMetadata().getAggregation("content").domRef, ":sap-domref > section", "UI5 DTMetadata is merged correctly");
+	});
+
+	QUnit.module("Given that the DesignTime is created with hidden layout", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+			this.oButton1 = new Button({ text: 'Button1' });
+			this.oLayout1 = new VerticalLayout({
+				content: [this.oButton1]
+			});
+			this.oLayoutOuter = new VerticalLayout({
+				content: [this.oLayout1]
+			});
+			this.oLayoutOuter.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				designTimeMetadata: {
+					"sap.ui.layout.VerticalLayout" : {
+						aggregations: {
+							content: {
+								domRef: function() {}
+							}
+						}
+					}
+				},
+				rootElements: [this.oLayoutOuter]
+			});
+
+			this.oDesignTime.attachEventOnce('synced', function () {
+				this.oOverlayLayoutOuter = OverlayRegistry.getOverlay(this.oLayout1);
+				done();
+			}, this);
+		},
+		afterEach : function() {
+			this.oDesignTime.destroy();
+		}
+	});
+
+	QUnit.test("when hidden layout becomes visible", function(assert) {
+		var done = assert.async();
+		this.oButton2 = new Button({ text: 'Button2' });
+		this.oLayout2 = new VerticalLayout({
+			content : [this.oButton2]
+		});
+		this.oLayout2.addStyleClass('hidden');
+
+		this.oDesignTime.attachEventOnce('synced', function () {
+			this.oOverlayButton2 = OverlayRegistry.getOverlay(this.oButton2);
+			assert.ok(!!this.oOverlayButton2, 'button2 overlay is created');
+			done();
+		}, this);
+
+		this.oLayoutOuter.removeContent(this.oLayout1);
+		this.oLayoutOuter.addContent(this.oLayout2);
+		this.oOverlayLayout2 = OverlayRegistry.getOverlay(this.oLayout2);
+		assert.ok(!!this.oOverlayLayout2, 'layout2 overlay is created');
+		this.oLayout2.removeStyleClass('hidden');
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("when switching between layouts", function(assert) {
+		var done = assert.async();
+		this.oButton2 = new Button({ text: 'Button2' });
+		this.oLayout2 = new VerticalLayout({
+			content : [this.oButton2]
+		});
+		this.oLayout2.addStyleClass('hidden');
+
+		this.oDesignTime.attachEventOnce('synced', function () {
+			this.oOverlayButton2 = OverlayRegistry.getOverlay(this.oButton2);
+			assert.ok(!!this.oOverlayButton2, 'button2 overlay is created');
+
+			this.oDesignTime.attachEventOnce('synced', function () {
+				this.oOverlayButton1 = OverlayRegistry.getOverlay(this.oButton1);
+				assert.ok(!!this.oOverlayButton1, 'button1 overlay is created');
+				done();
+			}, this);
+
+			setTimeout(function () {
+				this.oLayoutOuter.removeContent(this.oLayout2);
+				this.oLayoutOuter.addContent(this.oLayout1);
+				this.oOverlayLayout1 = OverlayRegistry.getOverlay(this.oLayout2);
+				assert.ok(!!this.oOverlayLayout1, 'layout1 overlay is created');
+				this.oLayout1.removeStyleClass('hidden');
+				sap.ui.getCore().applyChanges();
+			}.bind(this), 0);
+
+		}, this);
+
+		this.oLayout1.addStyleClass('hidden');
+		this.oLayoutOuter.removeContent(this.oLayout1);
+		this.oLayoutOuter.addContent(this.oLayout2);
+		this.oOverlayLayout2 = OverlayRegistry.getOverlay(this.oLayout2);
+		assert.ok(!!this.oOverlayLayout2, 'layout2 overlay is created');
+		this.oLayout2.removeStyleClass('hidden');
+		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.done(function( details ) {
