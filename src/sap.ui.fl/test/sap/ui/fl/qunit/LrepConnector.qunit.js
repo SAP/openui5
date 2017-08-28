@@ -82,9 +82,9 @@
 		var firstTry = {
 			async: true,
 			type: "GET",
-			contentType: "text/html",
+			contentType: "text/html; charset=ascii",
 			headers: {
-				"Content-Type": "text/html",
+				"Content-Type": "text/html; charset=ascii",
 				"X-CSRF-Token": "ABCDEFGHIJKLMN123456789"
 			},
 			processData: false
@@ -96,9 +96,9 @@
 		var secondTry = {
 			async: true,
 			type: "POST",
-			contentType: "text/plain",
+			contentType: "text/plain; charset=utf-8",
 			headers: {
-				"Content-Type": "text/plain",
+				"Content-Type": "text/plain; charset=utf-8",
 				"X-CSRF-Token": "ABCDEFGHIJKLMN123456789"
 			},
 			processData: false
@@ -110,9 +110,9 @@
 		var thirdTry = {
 			async: true,
 			type: "PUT",
-			contentType: "application/json",
+			contentType: "application/json; charset=utf-8",
 			headers: {
-				"Content-Type": "application/json",
+				"Content-Type": "application/json; charset=utf-8",
 				"X-CSRF-Token": "ABCDEFGHIJKLMN123456789"
 			},
 			processData: false
@@ -122,7 +122,7 @@
 		};
 
 		//Act & Assert
-		assert.deepEqual(this.oLrepConnector._getDefaultOptions("GET", "text/html", null), firstTry);
+		assert.deepEqual(this.oLrepConnector._getDefaultOptions("GET", "text/html; charset=ascii", null), firstTry);
 		assert.deepEqual(this.oLrepConnector._getDefaultOptions("POST", "text/plain"), secondTry);
 		assert.deepEqual(this.oLrepConnector._getDefaultOptions("PUT"), thirdTry);
 	});
