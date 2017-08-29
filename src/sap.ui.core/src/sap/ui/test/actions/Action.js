@@ -152,8 +152,8 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 		 */
 		_createAndDispatchMouseEvent: function (sName, oDomRef) {
 			var oOffset = $(oDomRef).offset(),
-				x = oOffset.x,
-				y = oOffset.y;
+				x = oOffset.left,
+				y = oOffset.top;
 
 			// See file jquery.sap.events.js for some insights to the magic
 			var oMouseEventObject = {
