@@ -158,5 +158,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "dcd79d37e226801afc0ebb2a18e5111d0db4fc36",
+        "type": "FIX",
+        "text": " FormContainer: render role\u003d\"form\" only if title exist",
+        "references": []
+      }
+    ]
   }
 }

@@ -530,5 +530,34 @@
         "references": []
       }
     ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "7f60750743dabd5ac7a073d014d5616e2ff3b12b",
+        "type": "FIX",
+        "text": " V2ODataModel.qunit",
+        "references": []
+      },
+      {
+        "id": "79f3337d0a5ec2e16baa9f6c3ce4c165a38064af",
+        "type": "FIX",
+        "text": " model.type: enable Interval Types to run with OData Types",
+        "references": []
+      },
+      {
+        "id": "d1956f07e531f6502ecd902bb29029f8dd83e8e7",
+        "type": "FIX",
+        "text": " sap.ui.support.TechnicalInfo: Failing opa test on firefox is now fixed.",
+        "references": []
+      },
+      {
+        "id": "d09a7c0f0eac9b9af2eae5ba9f2750f3f3dcd864",
+        "type": "FIX",
+        "text": " v2.ODataModel: function import parameter handling",
+        "references": []
+      }
+    ]
   }
 }

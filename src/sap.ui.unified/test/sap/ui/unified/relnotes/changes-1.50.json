@@ -140,5 +140,46 @@
         "references": []
       }
     ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "921d7b39be370e034bf7b81380d6336ebb532c1d",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "ef715ad7a4c61ecad464cdde9a2e712f1435bc2e",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "6ed5f36bc9681d9667e60fd1d1846b8b44d6a7a9",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "20d46dedd21193371a610dcb995326fae8371953",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "cac94fdec85c4d51a0606a67f48e9f7b5d9cfddf",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Submit empty input value while picker open now works correctly",
+        "references": []
+      },
+      {
+        "id": "3e63d2a168ff9d0477206257cea55c0a39c51fdb",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: direct navigation to date bugs fixed",
+        "references": []
+      }
+    ]
   }
 }

@@ -152,5 +152,22 @@
         "references": []
       }
     ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "31905d48ddabeac59408d2eaa8e7fa3f9582fe1a",
+        "type": "FIX",
+        "text": " Table: Avoid text selection in Edge, if selecting with Shift+Click",
+        "references": []
+      },
+      {
+        "id": "0d785d1f6a38865c93bdf539e42d7a9f4a97ec44",
+        "type": "FIX",
+        "text": " Table: Correctly process focus events related to the edit mode",
+        "references": []
+      }
+    ]
   }
 }

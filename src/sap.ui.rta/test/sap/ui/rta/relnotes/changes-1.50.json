@@ -56,5 +56,34 @@
         "references": []
       }
     ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "8475f0963e2182448832c9575949689bc2f66437",
+        "type": "FIX",
+        "text": " sap.ui.rta - First rename with double-click not working",
+        "references": []
+      },
+      {
+        "id": "de0f0f2698eb53bfb750c49dac5394dafa02c412",
+        "type": "FIX",
+        "text": " sap.ui.rta: disable macintosh hotkeys in RtaIntegrationScenario",
+        "references": []
+      },
+      {
+        "id": "c648f05fb9308e09c2b55e6f383ae43d82e96b94",
+        "type": "FIX",
+        "text": " sap.ui.rta: do not show OData fields from another context",
+        "references": []
+      },
+      {
+        "id": "f06e4f5b9c5f213bba3cfc5b0f99246d160400a5",
+        "type": "FIX",
+        "text": " sap.ui.rta: prevent remove action when pressing DELETE button if it\u0027s unavailable",
+        "references": []
+      }
+    ]
   }
 }

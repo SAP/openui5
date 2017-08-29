@@ -201,5 +201,22 @@
         "references": []
       }
     ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "6ed5f36bc9681d9667e60fd1d1846b8b44d6a7a9",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "20d46dedd21193371a610dcb995326fae8371953",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      }
+    ]
   }
 }

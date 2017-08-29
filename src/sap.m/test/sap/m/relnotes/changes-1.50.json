@@ -1202,5 +1202,100 @@
         "references": []
       }
     ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "7af28eb93c1a7b8f3991a37a6b217c8ac58b2f3c",
+        "type": "FEATURE",
+        "text": " sap.m.SemanticPage: Added backgroundDesign property.",
+        "references": []
+      },
+      {
+        "id": "921d7b39be370e034bf7b81380d6336ebb532c1d",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "ef715ad7a4c61ecad464cdde9a2e712f1435bc2e",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "6ed5f36bc9681d9667e60fd1d1846b8b44d6a7a9",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "50302d996f78c89ee33497198f5bd982992863d9",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Improved accessibillity speech output in IE",
+        "references": []
+      },
+      {
+        "id": "a9ee56b410dd3bdbf310d39ef95cae4dca458bd9",
+        "type": "FIX",
+        "text": " sap.m.FeedContent: Documentation issues solved",
+        "references": []
+      },
+      {
+        "id": "7d5aa1ed49d1597deb27e3dda92d162f2cfe5272",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Prevents announcing the control information multiple times.",
+        "references": []
+      },
+      {
+        "id": "4825c08dda479fb1c3bd7bcc6c6d614e318c7dc8",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent endless focus loop on mobile",
+        "references": []
+      },
+      {
+        "id": "f3dc87036c55be8fbc6282a3fe58be10b8d5dc97",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Do not tokenize text when ValueHelp is opened.",
+        "references": []
+      },
+      {
+        "id": "3999999294b1afbe6f8f86e141e3f35f1340652f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: SpecialDates are destroyed correctly",
+        "references": []
+      },
+      {
+        "id": "3e63d2a168ff9d0477206257cea55c0a39c51fdb",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: direct navigation to date bugs fixed",
+        "references": []
+      },
+      {
+        "id": "666ce08c9d5e7d8cb8e86bdc610bcc03b07122ec",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Unnecessary \u0027suggest\u0027 events are not fired any more",
+        "references": []
+      },
+      {
+        "id": "f3aef87a09b350ef33b2dcdf8790124dfd796c13",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsPopover - title is always propagated to dialog aria label.",
+        "references": []
+      },
+      {
+        "id": "a3d455388e351123988a19ef350a2d9aa0183bf3",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Regression in discardProgress fixed",
+        "references": []
+      },
+      {
+        "id": "a37199360fdd47d2fb812b2416b03128f4a3c15e",
+        "type": "FIX",
+        "text": " sap.m.delegate.ValueStateMessage: Value state text reading corrected",
+        "references": []
+      }
+    ]
   }
 }
