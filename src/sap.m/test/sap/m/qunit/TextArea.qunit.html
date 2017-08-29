@@ -400,6 +400,20 @@
 		oTA.destroy();
 	});
 
+	QUnit.test("after setValue the height is adjusted", function(assert) {
+		var sLongText = new Array(1000).join("text ");
+		var oTA = new sap.m.TextArea({
+			growing: true,
+			width: "100%"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oTA.setValue(sLongText);
+		sap.ui.getCore().applyChanges();
+		assert.ok(oTA.getFocusDomRef().clientHeight >= 250, "TextArea height is adjusted");
+		oTA.destroy();
+	});
+
 	test("maxHeight should be defined if maxLines is set", function() {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new sap.m.TextArea({
