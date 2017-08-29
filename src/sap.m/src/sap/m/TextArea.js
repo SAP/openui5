@@ -307,6 +307,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	TextArea.prototype.setValue = function (sValue) {
 		InputBase.prototype.setValue.call(this, sValue);
 		this._handleShowExceededText();
+        if (this.getGrowing()) {
+            this._adjustHeight();
+        }
 		return this;
 	};
 
@@ -357,7 +360,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 		// handle growing
 		if (this.getGrowing()) {
-			this._adjustHeight(oTextAreaRef);
+			this._adjustHeight();
 		}
 
 		this.fireLiveChange({
