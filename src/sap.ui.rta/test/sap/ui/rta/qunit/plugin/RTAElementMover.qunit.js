@@ -87,7 +87,9 @@ sap.ui.require([
 
 	QUnit.module("Given a group element, overlays, RTAElementMover", {
 		beforeEach : function(assert) {
-				this.oSmartGroupElement = new GroupElement("stableField");
+			this.oSmartGroupElement = new GroupElement("stableField", {
+				elements: [new Button("button1")]
+			});
 			this.oSmartForm1 = new SmartForm("form1", {
 				groups : [
 					new Group("group1",{
