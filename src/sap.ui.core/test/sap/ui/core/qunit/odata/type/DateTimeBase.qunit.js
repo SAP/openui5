@@ -285,6 +285,17 @@ sap.ui.require([
 			assert.equal(oFormat.format(oDateTime), oDateTime, "format");
 			assert.equal(oFormat.parse(sFormattedDateTime), sFormattedDateTime, "parse");
 		});
+
+		//*****************************************************************************************
+		QUnit.test("format: bad input type", function (assert) {
+			var oBadModelValue = "foo",
+				oType = createInstance(sTypeName);
+
+			assert.throws(function () {
+				oType.formatValue(oBadModelValue, "string");
+			}, new FormatException("Illegal " + oType.getName() + " value: " + oBadModelValue));
+			assert.strictEqual(oType.formatValue(oBadModelValue, "any"), oBadModelValue);
+		});
 	}
 
 	//*********************************************************************************************

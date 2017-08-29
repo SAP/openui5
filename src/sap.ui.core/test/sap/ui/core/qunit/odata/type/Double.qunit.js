@@ -245,4 +245,17 @@ sap.ui.require([
 			sinon.assert.calledWithExactly(oSpy, oFixture.expect);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("format: bad input type", function (assert) {
+		var oBadModelValue = new Date(),
+			oType = new Double();
+
+		["string", "int", "float"].forEach(function (sTargetType) {
+			assert.throws(function () {
+				oType.formatValue(oBadModelValue, sTargetType);
+			}, new FormatException("Illegal " + oType.getName() + " value: " + oBadModelValue));
+		});
+		assert.strictEqual(oType.formatValue(oBadModelValue, "any"), oBadModelValue);
+	});
 });
