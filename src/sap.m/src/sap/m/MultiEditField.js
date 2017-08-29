@@ -12,7 +12,7 @@ sap.ui.define([
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class MultiEditField
+	 * @class  This control allows you to add items to a sap.m.Select instance. In addition, based on the property set, a set of prefilled entries is added.
 	 * @extends sap.ui.core.XMLComposite
 	 * @implements sap.ui.core.IFormContent
 	 *
@@ -21,6 +21,7 @@ sap.ui.define([
 	 * @public
 	 * @experimental since 1.52
 	 * @since 1.52.0
+	 * @alias sap.m.MultiEditField
 	 * @sap-restricted sap.m.MultiEditField
 	 */
 	var MultiEditField = XMLComposite.extend("sap.m.MultiEditField", /** @lends sap.m.MultiEditField.prototype */ {
