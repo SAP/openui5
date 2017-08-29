@@ -143,6 +143,13 @@ sap.ui.define([
 				oComponent.loadVersionInfo()
 					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
 					.then(function () {
+						// If the entity does not exist in the available libs we redirect to the not found page and
+						// stop the immediate execution of this method.
+						if (!this.getModel("libsData").getData()[this._sTopicid]) {
+							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+							return;
+						}
+
 						oApiDetailObjectPage._suppressLayoutCalculations();
 						this._bindData(this._sTopicid);
 						this._bindEntityData(this._sTopicid);
@@ -314,7 +321,6 @@ sap.ui.define([
 					oMethodsModel,
 					oEventsModel = {events: []},
 					oUi5Metadata;
-
 
 				if (aControlChildren) {
 					if (!oControlData) {
