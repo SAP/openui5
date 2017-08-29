@@ -2744,7 +2744,7 @@
 			target: oTable.getColumns()[5].getDomRef()
 		});
 
-		oScrollExtension._ExtensionDelegate.onfocusin(oEvent);
+		oScrollExtension._ExtensionDelegate.onfocusin.bind(oTable)(oEvent);
 		assert.ok(jQuery(oEvent.target).parent('.sapUiTableColHdrTr').length > 0, "Column header is in focus");
 	});
 
