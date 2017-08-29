@@ -1539,10 +1539,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Builds the navigation arguments object required to trigger the navigation
-	 * using the CrossApplicationNavigation ushell service
-	 * @param  {map} mParsedHash The parsed URL hash
-	 * @return {map}             The argument map ("oArg" parameter of the "toExternal" function)
+	 * Build the navigation arguments object required to trigger the navigation
+	 * using the CrossApplicationNavigation ushell service.
+	 * @param  {Object} mParsedHash Parsed URL hash
+	 * @return {Object}             Returns argument map ("oArg" parameter of the "toExternal" function)
 	 */
 	RuntimeAuthoring.prototype._buildNavigationArguments = function(mParsedHash){
 		return {
@@ -1552,7 +1552,8 @@ sap.ui.define([
 				context : mParsedHash.contextRaw
 			},
 			params: mParsedHash.params,
-			appSpecificRoute : mParsedHash.appSpecificRoute
+			appSpecificRoute : mParsedHash.appSpecificRoute,
+			writeHistory : false
 		};
 	};
 
