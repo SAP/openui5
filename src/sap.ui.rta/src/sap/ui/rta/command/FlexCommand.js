@@ -120,9 +120,9 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	};
 
 	/**
-	 * This method converts command constructor parameters into change specific data
+	 * This method converts command constructor parameters into change specific data.
 	 * Default implementation of this method below is for commands, which do not have specific constructor parameters
-	 * @return {object} SpecificChangeInfo for ChangeHandler
+	 * @return {object} Returns the <code>SpecificChangeInfo</code> for change handler
 	 * @protected
 	 */
 	FlexCommand.prototype._getChangeSpecificData = function() {
@@ -135,8 +135,10 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	};
 
 	/**
-	 * @param {object} mFlexSettings - map contains flex settings
-	 * @returns {object} change object
+	 * Creates a change.
+	 * @param {object} mFlexSettings Map containing the flexibility settings
+	 * @param {string} sVariantManagementReference Reference to the variant management
+	 * @returns {object} Returns the change object
 	 * @private
 	 */
 	FlexCommand.prototype._createChange = function(mFlexSettings, sVariantManagementReference) {
@@ -144,12 +146,13 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	};
 
 	/**
-	 * Create a Flex change from a given Change Specific Data
+	 * Create a Flex change from a given Change Specific Data.
 	 * (This method can be reused to retrieve an Undo Change)
 	 *
-	 * @param {object} mChangeSpecificData - map contains change specific data
-	 * @param {object} mFlexSettings - map contains flex settings
-	 * @returns {object} change object
+	 * @param {object} mChangeSpecificData Map containing change specific data
+	 * @param {object} mFlexSettings Map containing flex settings
+	 * @param {string} sVariantManagementReference Reference to the variant management
+	 * @returns {object} Returns the change object
 	 * @private
 	 */
 	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementReference) {
@@ -189,9 +192,9 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 
 	/**
 	 * @private
-	 * @param {void} vChange - change object
-	 * @param {boolean} bNotMarkAsAppliedChange - optional - apply the change without marking them as applied change in the custom Data
-	 * @returns {promise} empty promise
+	 * @param {sap.ui.fl.Change|Object} vChange Change object or map containing the change object
+	 * @param {boolean} [bNotMarkAsAppliedChange] Apply the change without marking them as applied changes in the custom Data
+	 * @returns {Promise} Returns an empty promise
 	 */
 	FlexCommand.prototype._applyChange = function(vChange, bNotMarkAsAppliedChange) {
 		//TODO: remove the following compatibility code when concept is implemented

@@ -78,6 +78,7 @@ sap.ui.controller("sap.ui.rta.test.performance.ext.controller.ListReportExtensio
 	 * IMPORTANT:
 	 * Note that this example implementation is only a preliminary PoC until there is an official Smart Templates API.
 	 * Therefore, the functions currently used in the example implementation are not to be used in productive coding.
+	 * @param {sap.ui.base.Event} oEvent The event triggering the price change
 	 */
 	onChangePrice : function(oEvent) {
 		"use strict";
@@ -147,6 +148,7 @@ sap.ui.controller("sap.ui.rta.test.performance.ext.controller.ListReportExtensio
 	 * IMPORTANT:
 	 * Note that this example implementation is only a preliminary PoC until there is an official Smart Templates API.
 	 * Therefore, the functions currently used in the example implementation are not to be used in productive coding.
+	 * @param {sap.ui.base.Event} oEvent The event triggering the copy containing the supplier
 	 */
 	onCopyWithNewSupplier : function(oEvent) {
 		"use strict";

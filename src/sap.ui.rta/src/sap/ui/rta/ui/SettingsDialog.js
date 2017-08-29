@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global',
 	});
 
 	/**
-	 * Initialize the Dialog
+	 * Initialize the dialog.
 	 *
 	 * @private
 	 */
@@ -72,8 +72,8 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
-	 * Create the Dialog
-	 *
+	 * Create the dialog.
+	 * @return {sap.m.Dialog} Returns the created dialog
 	 * @private
 	 */
 	SettingsDialog.prototype._createDialog = function() {
@@ -103,6 +103,7 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
+	 * @param {function} fnCallback Function to be called for each executed command
 	 * @private
 	 */
 	SettingsDialog.prototype._iterateExecutedCommands = function(fnCallback) {
@@ -136,6 +137,11 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
+	 * Executes a property change command.
+	 * @param  {sap.ui.core.Element} oElement Element the property of which is changed
+	 * @param  {string} sPropertyName Property name
+	 * @param  {any} vNewValue New value of the property
+	 * @param  {any} vOldValue Old value of the property
 	 * @private
 	 */
 	SettingsDialog.prototype._executePropertyChangeCommand = function(oElement, sPropertyName, vNewValue, vOldValue) {
@@ -154,6 +160,11 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
+	 * Creates a boolean editor (CheckBox).
+	 * @param  {sap.ui.core.Element} oElement Element the property of which is changed
+	 * @param  {string} sPropertyName Property name
+	 * @param  {boolean} bPropertyValue Value of the property
+	 * @return {sap.m.Checkbox} Created check box
 	 * @private
 	 */
 	SettingsDialog.prototype._createBooleanEditor = function(oElement, sPropertyName, bPropertyValue) {
@@ -172,7 +183,11 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
-	 * @private
+	 * Creates a string editor (Input).
+	 * @param  {sap.ui.core.Element} oElement Element the property of which is changed
+	 * @param  {string} sPropertyName Property name
+	 * @param  {string} sPropertyValue Value of the property
+	 * @return {sap.m.Input} The created input
 	 */
 	SettingsDialog.prototype._createStringEditor = function(oElement, sPropertyName, sPropertyValue) {
 		var oInput = new Input({value : sPropertyValue});
@@ -188,6 +203,12 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
+	 * Creates an enumeration editor (Select).
+	 * @param  {sap.ui.core.Element} oElement Element the property of which is changed
+	 * @param  {any} oPropertyTypeDescription Property type description
+	 * @param  {string} sPropertyName Property name
+	 * @param  {any} vPropertyValue Value of the property
+	 * @return {sap.m.Selec} The created select
 	 * @private
 	 */
 	SettingsDialog.prototype._createEnumEditor = function(oElement, oPropertyTypeDescription, sPropertyName, vPropertyValue) {
@@ -214,7 +235,8 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
-	 * @private
+	 * Updates the content of the dialog.
+	 * @param  {sap.ui.core.Element} oElement Element being manipulated
 	 */
 	SettingsDialog.prototype._updateDialogContent = function(oElement) {
 		this._oDialog.removeAllContent();
@@ -262,7 +284,7 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
-	 * Open the Settings Dialog
+	 * Open the Settings Dialog.
 	 *
 	 * @param {sap.ui.core.Element}
 	 *          oElement Currently selected control

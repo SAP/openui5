@@ -216,7 +216,7 @@ function(
 			iNextZIndex = Popup.getNextZIndex();
 		}
 
-		return this.setZIndex(iNextZIndex);
+		this.setZIndex(iNextZIndex);
 	};
 
 	/**

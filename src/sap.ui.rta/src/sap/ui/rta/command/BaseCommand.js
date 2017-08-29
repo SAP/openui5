@@ -39,7 +39,7 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 
 
 	/**
-	 * @override returns element instance instead of id
+	 * @override Returns element instance instead of ID.
 	 */
 	BaseCommand.prototype.getElement = function() {
 		var sId = this.getAssociation("element");
@@ -47,29 +47,32 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	};
 
 	/**
-	 * @public Template Method will be called by the command factory when all data is provided to the change
+	 * @public Template Method called by the command factory when all data is provided to the change.
 	 */
 	BaseCommand.prototype.prepare = function() {
 	};
 
 	/**
-	 * @public Template Method to implement execute logic, with ensure precondition Element is available
+	 * @public Template method to implement execute logic. You have to ensure that the
+	 * element property is available.
+	 * @return {Promise} Returns a resolving Promise
 	 */
 	BaseCommand.prototype.execute = function() {
 		return Promise.resolve();
 	};
 
 	/**
-	 * @public Template Method to implement undo logic
+	 * @public Template method to implement undo logic.
+	 * @return {Promise} Returns a resolving Promise
 	 */
 	BaseCommand.prototype.undo = function() {
 		return Promise.resolve();
 	};
 
 	/**
-	 * Template Method to implement undo logic
+	 * Template method to check if the command is enabled.
 	 *
-	 * @returns {boolean} enabled boolean state
+	 * @return {boolean} Returns enabled boolean state
 	 * @public
 	 */
 	BaseCommand.prototype.isEnabled = function() {
