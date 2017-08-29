@@ -174,7 +174,10 @@ sap.ui.define([
 			}
 			throw new TypeError("ManagedObjectObserver can only handle ManagedObjects, but unobserve was called for " + oObject);
 		}
-		normalizeConfiguration(oObject, oConfiguration);
+
+		if (oConfiguration) {
+			normalizeConfiguration(oObject, oConfiguration);
+		}
 		remove(oObject, this, oConfiguration);
 	};
 
@@ -397,9 +400,13 @@ sap.ui.define([
 	// adds the observer to the target managed object if an observer is missing.
 	function remove(oTarget, oListener, oConfiguration) {
 		if (!oConfiguration) {
-			//take the complete configuration
 			var sId = oTarget.getId();
-			oConfiguration = mTargets[sId];
+			var oTargetConfig = mTargets[sId];
+			var iIndex = oTargetConfig.listeners.indexOf(oListener);
+			if (iIndex >= 0) {
+				// use the current configuration
+				oConfiguration = oTargetConfig.configurations[iIndex];
+			}
 		}
 		updateConfiguration(oTarget, oListener, oConfiguration, true);
 	}
