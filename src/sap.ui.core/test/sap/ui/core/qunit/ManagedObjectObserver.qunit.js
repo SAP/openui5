@@ -1480,5 +1480,54 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		}, "Observer is not created without a callback and threw error");
 	});
 
+	QUnit.test("ManagedObjectObserver unobserve complete object", function(assert) {
+
+		assert.strictEqual(this.obj._observer, undefined, "No observer");
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+		});
+
+		oObserver.observe(this.obj, {
+			properties: true
+		});
+
+		assert.ok(true, "Observation of all property changes started");
+
+		//setting the default value of a property
+		setExpected();
+		this.obj.setProperty("value", "");
+		this.checkExpected("Nothing changed");
+
+		//setting a value
+		setExpected({
+			object: this.obj,
+			type:"property",
+			name:"value",
+			old: "",
+			current: "test"
+		});
+
+		this.obj.setProperty("value", "test");
+		this.checkExpected("Set 'value' to 'test'. Observer called successfully");
+
+		setExpected({
+			object: this.obj,
+			type:"property",
+			name:"value",
+			old: "test",
+			current: "1"
+		});
+		this.obj.setProperty("value", 1);
+		this.checkExpected("Set 'value' to '1'. Observer called successfully");
+
+		oObserver.unobserve(this.obj);
+
+		this.obj.setProperty("value", 2);
+		this.checkExpected("Set 'value' to '2'. Observer not called, actual did not change");
+
+		oObserver.disconnect();
+	});
+
 
 });
