@@ -585,9 +585,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			return;
 		}
 
-		var sKey = this.getSelectedKey();
+		var sKey = this.getSelectedKey(),
+			bHasSelectedItem;
 
 		if (sKey === '') {
+			return;
+		}
+
+		if (this._hasTabularSuggestions()) {
+			bHasSelectedItem = !!this._oSuggestionTable.getSelectedItem();
+		} else {
+			bHasSelectedItem = !!this._oList.getSelectedItem();
+		}
+
+		if (bHasSelectedItem) {
 			return;
 		}
 
