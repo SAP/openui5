@@ -24,6 +24,7 @@ sap.ui.require([
 	'sap/uxap/ObjectPageSubSectionLayout',
 	'sap/ui/core/Title',
 	'sap/ui/comp/smartform/Group',
+	'sap/ui/comp/smartform/GroupElement',
 	'sap/ui/comp/smartform/SmartForm',
 	'sap/ui/thirdparty/sinon'
 ],
@@ -49,6 +50,7 @@ function(
 	ObjectPageSubSectionLayout,
 	Title,
 	Group,
+	GroupElement,
 	SmartForm,
     sinon
 ) {
@@ -332,7 +334,12 @@ function(
 	QUnit.module("Given that the getRelevantContainerDesigntimeMetadata method is called on an overlay", {
 		beforeEach : function(assert) {
 
-			this.oSmartGroup = new Group("group");
+			this.oGroupElement = new GroupElement("groupElement", {
+				elements: [new Button("button1")]
+			});
+			this.oSmartGroup = new Group("group", {
+				groupElements: [this.oGroupElement]
+			});
 			this.oSmartForm = new SmartForm("SmartForm", {
 				groups : [this.oSmartGroup]
 			});
