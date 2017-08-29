@@ -9,7 +9,9 @@
 			placement="VerticalPreferredTop">
 		<content>
 			<VBox binding="{/ProductCollection}" >
-				<Label design="Bold" text="{i18n>TechInfo.SupportAssistantConfigPopup.Locations}"></Label>
+				<Label
+					design="Bold"
+					text="{i18n>TechInfo.SupportAssistantConfigPopup.Locations}"/>
 				<RadioButton id="standard" select="onSelectBootstrapOption" groupName="Bootstrap" text="{i18n>TechInfo.SupportAssistantConfigPopup.StandardLocation}"/>
 				<Select
 					items="{path:'view>/SupportAssistantPopoverURLs'}"
@@ -21,6 +23,10 @@
 					<core:Item key="{view>Value}" text="{view>DisplayName}"/>
 				</Select>
 				<RadioButton id="custom" select="onSelectBootstrapOption" groupName="Bootstrap" text="{i18n>TechInfo.SupportAssistantConfigPopup.CustomLocation}"/>
+				<Label
+					visible="false"
+					text="{i18n>TechInfo.SupportAssistantConfigPopup.CustomLocation}"
+					labelFor="customBootstrapURL"/>
 				<Input
 					id="customBootstrapURL"
 					width="85%"
@@ -33,8 +39,10 @@
 					valueStateText="{i18n>TechInfo.SupportAssistantConfigPopup.URLValidationMessage}"
 					enabled="false"
 					placeholder="http://&lt;custom&gt;/resources/sap/ui/support/"/>
-
-				<Label design="Bold" text="{i18n>TechInfo.SupportAssistantConfigPopup.Options}" class="sapUiSmallMarginTop"></Label>
+				<Label
+					design="Bold"
+					text="{i18n>TechInfo.SupportAssistantConfigPopup.Options}"
+					class="sapUiSmallMarginTop"/>
 				<CheckBox
 					id="openInNewWindow"
 					selected="{view>/OpenSupportAssistantInNewWindow}"
