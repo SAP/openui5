@@ -1584,27 +1584,100 @@
 		beforeEach: function() {
 			createTable();
 		},
-		afterEach: destroyTable
+		afterEach: function() {
+			destroyTable();
+		},
+		assertBindingInfo: function(assert, sTestTitle, oActualBindingInfo, oExpectedBindingInfo) {
+			assert.strictEqual(oActualBindingInfo.path, oExpectedBindingInfo.path, sTestTitle + ": The path is correct");
+			assert.deepEqual(oActualBindingInfo.sorter, oExpectedBindingInfo.sorter, sTestTitle + ": The sorter is correct");
+			assert.deepEqual(oActualBindingInfo.filters, oExpectedBindingInfo.filters, sTestTitle + ": The filters are correct");
+			assert.deepEqual(oActualBindingInfo.template, oExpectedBindingInfo.template, sTestTitle + ": The template is correct");
+		}
 	});
 
-	QUnit.test("BindRows", function(assert) {
+	QUnit.test("Bind rows using bindRows method", function(assert) {
 		var spy = this.spy(oTable, "destroyRows");
+
 		// bind rows again, binding could be resolved because model is set
 		oTable.bindRows(oTable.getBindingInfo("rows"));
 
 		// bind rows to different model which is not yet set
 		oTable.bindRows("otherModel>/root");
+
 		// bind rows again. Binding was not yet resolved
 		oTable.bindRows("otherModel>/root");
-		// passing vTemplate as instanceof Sorter
-		var oGenderColumn = oTable.getColumns()[5];
-		var vTemplate = new sap.ui.model.Sorter("modelData>gender", true);
-		oTable.bindRows("otherModel>/root", vTemplate);
+
+		// BindingInfo
+		var oBindingInfo = {
+			path: "/modelData",
+			sorter: new sap.ui.model.Sorter({
+				path: "modelData>money",
+				descending: true
+			}),
+			filters: [
+				new sap.ui.model.Filter({
+					path: "modelData>money",
+					operator: "LT",
+					value: 5
+				})
+			],
+			template: new sap.m.Label({
+				text: "Last Name"
+			})
+		};
+		oTable.bindRows(oBindingInfo);
+		this.assertBindingInfo(assert, "BindingInfo", oTable.getBindingInfo("rows"), oBindingInfo);
+
 		// destroy rows must not be called
 		assert.ok(spy.notCalled, "destroyRows was not called");
 	});
 
-	QUnit.test("BindRows", function(assert) {
+	QUnit.test("Bind rows using bindRows method - legacy API", function(assert) {
+		var oSorter = new sap.ui.model.Sorter({
+			path: "modelData>money",
+			descending: true
+		});
+		var oFilter = new sap.ui.model.Filter({
+			path: "modelData>money",
+			operator: "LT",
+			value: 5
+		});
+		var oTemplate = new sap.m.Label({
+			text: "Last Name"
+		});
+
+		// (sPath)
+		oTable.bindRows("/modelData");
+		this.assertBindingInfo(assert, "(sPath)", oTable.getBindingInfo("rows"), {
+			path: "/modelData"
+		});
+
+		// (sPath, oSorter)
+		oTable.bindRows("/modelData", oSorter);
+		this.assertBindingInfo(assert, "(sPath, oSorter)", oTable.getBindingInfo("rows"), {
+			path: "/modelData",
+			sorter: oSorter
+		});
+
+		// (sPath, oSorter, aFilters)
+		oTable.bindRows("/modelData", oSorter, [oFilter]);
+		this.assertBindingInfo(assert, "(sPath, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
+			path: "/modelData",
+			sorter: oSorter,
+			filters: [oFilter]
+		});
+
+		// (sPath, vTemplate, oSorter, aFilters)
+		oTable.bindRows("/modelData", oTemplate, oSorter, [oFilter]);
+		this.assertBindingInfo(assert, "(sPath, vTemplate, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
+			path: "/modelData",
+			sorter: oSorter,
+			filters: [oFilter],
+			template: oTemplate
+		});
+	});
+
+	QUnit.test("Bind rows using the constructor", function(assert) {
 		var spy = this.spy(sap.ui.table.Table.prototype, "bindRows");
 		new sap.ui.table.Table({
 			rows: {path: "/modelData"},
@@ -1615,16 +1688,30 @@
 	});
 
 	QUnit.test("Binding events", function(assert) {
-		var oChangeSpy = this.spy();
-		var oDataRequestedSpy = this.spy();
-		var oDataReceivedSpy = this.spy();
+		var aEventListenerSequence = [];
+
+		oTable._onBindingChange = function() {
+			aEventListenerSequence.push("change_table");
+		};
+		oTable._onBindingDataRequestedListener = function() {
+			aEventListenerSequence.push("dataRequested_table");
+		};
+		oTable._onBindingDataReceivedListener = function() {
+			aEventListenerSequence.push("dataReceived_table");
+		};
 
 		oTable.bindRows({
 			path: "/modelData",
 			events: {
-				change: oChangeSpy,
-				dataRequested: oDataRequestedSpy,
-				dataReceived: oDataReceivedSpy
+				change: function() {
+					aEventListenerSequence.push("change_other");
+				},
+				dataRequested: function() {
+					aEventListenerSequence.push("dataRequested_other");
+				},
+				dataReceived: function() {
+					aEventListenerSequence.push("dataReceived_other");
+				}
 			}
 		});
 
@@ -1632,9 +1719,9 @@
 		oBinding.fireEvent("dataRequested");
 		oBinding.fireEvent("dataReceived");
 
-		assert.ok(oChangeSpy.calledOnce, "The original change event listener was called once");
-		assert.ok(oDataRequestedSpy.calledOnce, "The original dataRequested event listener was called once");
-		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
+		assert.deepEqual(aEventListenerSequence, [
+			"change_table", "change_other", "dataRequested_table", "dataRequested_other", "dataReceived_table", "dataReceived_other"
+		], "The binding event listeners where called in the correct order");
 	});
 
 	QUnit.module("Callbacks", {
