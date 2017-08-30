@@ -9,6 +9,7 @@ module.exports = [
 	// "Carousel.spec.js",
 	"CheckBox.spec.js",
 	"ComboBox.spec.js",
+	"ContextMenuSupportIntegration.spec.js",
 	// "Dialog.spec.js",
 	// "IconTabBar.spec.js",
 	"Image.spec.js",
