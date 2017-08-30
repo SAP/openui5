@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.f.DynamicPageTitle.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/OverflowToolbar"
-], function (jQuery, library, Control, OverflowToolbar) {
+sap.ui.define([
+	"jquery.sap.global",
+	"./library",
+	"sap/ui/core/Control",
+	"sap/m/OverflowToolbar",
+	"sap/m/Button"
+], function (jQuery, library, Control, OverflowToolbar, Button) {
 	"use strict";
 
 	/**
@@ -98,8 +103,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 				/**
 				 * Internal <code>OverflowToolbar</code> for the <code>DynamicPageTitle</code> actions.
 				 */
-				_overflowToolbar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
+				_overflowToolbar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
+				/**
+				 * Visual indication for expanding.
+				 */
+				_expandButton: {type: "sap.m.Button", multiple: false,  visibility: "hidden"}
 			},
 			designTime: true
 		}
@@ -112,6 +121,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	DynamicPageTitle.prototype.init = function () {
 		this._bShowSnappedContent = false;
 		this._bShowExpandContent = true;
+		this._bShowExpandButton = false;
 		this._fnActionSubstituteParentFunction = function () {
 			return this;
 		}.bind(this);
@@ -145,6 +155,14 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 		if (oEvent.srcControl === this || this.getAggregation("_overflowToolbar") === oEvent.srcControl) {
 			this.fireEvent("_titlePress");
 		}
+	};
+
+	DynamicPageTitle.prototype.onmouseover = function (oEvent) {
+		this.fireEvent("_titleMouseOver");
+	};
+
+	DynamicPageTitle.prototype.onmouseout = function (oEvent) {
+		this.fireEvent("_titleMouseOut");
 	};
 
 	/**
@@ -309,6 +327,73 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 		this.$middleArea.toggleClass("sapFDynamicPageTitleAreaLowPriority", isPrimaryAreaBegin);
 	};
 
+	/**
+	 * Lazily retrieves the <code>expandButton</code> aggregation.
+	 * @returns {sap.m.Button}
+	 * @private
+	 */
+	DynamicPageTitle.prototype._getExpandButton = function () {
+		if (!this.getAggregation("_expandButton")) {
+			var oExpandButton = new Button({
+				id: this.getId() + "-expandBtn",
+				icon: "sap-icon://slim-arrow-down",
+				press: this._onExpandButtonPress.bind(this)
+			}).addStyleClass("sapFDynamicPageToggleHeaderIndicator sapUiHidden");
+			this.setAggregation("_expandButton", oExpandButton, true);
+		}
+
+		return this.getAggregation("_expandButton");
+	};
+
+	/**
+	 * Handles <code>expandButton</code> press.
+	 * @private
+	 */
+	DynamicPageTitle.prototype._onExpandButtonPress = function () {
+		this.fireEvent("_titleVisualIndicatorPress");
+	};
+
+	/**
+	 * Toggles the <code>expandButton</code> visibility.
+	 * @param {boolean} bToggle
+	 * @private
+	 */
+	DynamicPageTitle.prototype._toggleExpandButton = function (bToggle) {
+		this._setShowExpandButton(bToggle);
+		this._getExpandButton().$().toggleClass("sapUiHidden", !bToggle);
+	};
+
+	/**
+	 * Returns the private <code>bShowExpandButton</code> property.
+	 * @returns {boolean}
+	 * @private
+	 */
+	DynamicPageTitle.prototype._getShowExpandButton = function () {
+		return this._bShowExpandButton;
+	};
+
+	/**
+	 * Sets the private <code>bShowExpandButton</code> property.
+	 * @param {boolean} bValue
+	 * @private
+	 */
+	DynamicPageTitle.prototype._setShowExpandButton = function (bValue) {
+		this._bShowExpandButton = !!bValue;
+	};
+
+	/**
+	 * Focuses the <code>expandButton</code> button.
+	 * @private
+	 */
+	DynamicPageTitle.prototype._focusExpandButton = function () {
+		this._getExpandButton().$().focus();
+	};
+
+	/**
+	* Determines the <code>DynamicPageHeader</code> state.
+	* @returns {Object}
+	* @private
+	*/
 	DynamicPageTitle.prototype._getState = function () {
 		var oActionsBar = this._getOverflowToolbar(),
 			sID = this.getId(),
@@ -321,7 +406,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 			bHasSnappedContent = aSnapContent.length > 0,
 			bShowSnapContent = this._getShowSnapContent(),
 			sAriaText = this._oRB.getText("TOGGLE_HEADER"),
-			sPrimaryArea = this.getPrimaryArea();
+			sPrimaryArea = this.getPrimaryArea(),
+			oExpandButton = this._getExpandButton();
+
+			oExpandButton.toggleStyleClass("sapUiHidden", !this._getShowExpandButton());
 
 			return {
 				id: sID,
@@ -330,6 +418,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 				content: aContent,
 				hasContent: aContent.length > 0,
 				heading: oHeading,
+				expandButton: oExpandButton,
 				snappedContent: aSnapContent,
 				expandedContent: aExpandContent,
 				hasSnappedContent: bHasSnappedContent,

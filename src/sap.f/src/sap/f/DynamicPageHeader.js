@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.f.DynamicPageHeader.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/InvisibleText", "sap/m/library", "sap/m/ToggleButton"],
-	function (jQuery, library, Control, InvisibleText, mobileLibrary, ToggleButton) {
+sap.ui.define(["jquery.sap.global", "./library",
+	"sap/ui/Device",
+	"sap/ui/core/Control",
+	"sap/ui/core/InvisibleText",
+	"sap/m/library",
+	"sap/m/ToggleButton",
+	"sap/m/Button"
+], function (jQuery, library, Device, Control, InvisibleText, mobileLibrary, ToggleButton, Button) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType
@@ -68,7 +74,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					/**
 					 *  The pin/unpin button in the header.
 					 */
-					_pinButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
+					_pinButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
+
+					/**
+					 * Visual indication for expanding/collapsing.
+					 */
+					_collapseButton: {type: "sap.m.Button", multiple: false,  visibility: "hidden"}
 				},
 				designTime: true
 			}
@@ -97,6 +108,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		/*************************************** Lifecycle members ******************************************/
+		DynamicPageHeader.prototype.init = function() {
+			this._bShowCollapseButton = true;
+		};
+
 		DynamicPageHeader.prototype.onAfterRendering = function () {
 			this._initARIAState();
 			this._initPinButtonARIAState();
@@ -128,6 +143,30 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 */
 		DynamicPageHeader.prototype._pinUnpinFireEvent = function () {
 			this.fireEvent("_pinUnpinPress");
+		};
+
+		/**
+		 * Handles <code>collapseButton</code> <code>press</code> event.
+		 * @private
+		 */
+		DynamicPageHeader.prototype._onCollapseButtonPress = function () {
+			this.fireEvent("_headerVisualIndicatorPress");
+		};
+
+		/**
+		* Handles <code>collapseButton</code> <code>mouseover</code> event.
+		* @private
+		*/
+		DynamicPageHeader.prototype._onCollapseButtonMouseOver = function () {
+			this.fireEvent("_visualIndicatorMouseOver");
+		};
+
+		/**
+		* Handles <code>collapseButton</code> <code>mouseout</code> event.
+		* @private
+		*/
+		DynamicPageHeader.prototype._onCollapseButtonMouseOut = function () {
+			this.fireEvent("_visualIndicatorMouseOut");
 		};
 
 		/**
@@ -207,6 +246,64 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		/**
+		 * Lazily retrieves the <code>collapseButton</code> aggregation.
+		 * @returns {sap.m.Button}
+		 * @private
+		 */
+		DynamicPageHeader.prototype._getCollapseButton = function () {
+			if (!this.getAggregation("_collapseButton")) {
+				var oCollapseButton = new Button({
+					id: this.getId() + "-collapseBtn",
+					icon: "sap-icon://slim-arrow-up",
+					press: this._onCollapseButtonPress.bind(this)
+				}).addStyleClass("sapFDynamicPageToggleHeaderIndicator");
+
+				oCollapseButton.onmouseover = this._onCollapseButtonMouseOver.bind(this);
+				oCollapseButton.onmouseout = this._onCollapseButtonMouseOut.bind(this);
+
+				this.setAggregation("_collapseButton", oCollapseButton, true);
+			}
+
+			return this.getAggregation("_collapseButton");
+		};
+
+		/**
+		 * Toggles the <code>collapseButton</code> visibility.
+		 * @param {boolean} bToggle
+		 * @private
+		 */
+		DynamicPageHeader.prototype._toggleCollapseButton = function (bToggle) {
+			this._setShowCollapseButton(bToggle);
+			this._getCollapseButton().$().toggleClass("sapUiHidden", !bToggle);
+		};
+
+		/**
+		 * Returns the private <code>bShowExpandButton</code> property.
+		 * @returns {boolean}
+		 * @private
+		 */
+		DynamicPageHeader.prototype._getShowCollapseButton = function () {
+			return this._bShowCollapseButton;
+		};
+
+		/**
+		 * Sets the private <code>_bShowCollapseButton</code> property.
+		 * @param {boolean} bValue
+		 * @private
+		 */
+		DynamicPageHeader.prototype._setShowCollapseButton = function (bValue) {
+			this._bShowCollapseButton = !!bValue;
+		};
+
+		/**
+		 * Focuses the <code>collapseButton</code> button.
+		 * @private
+		 */
+		DynamicPageHeader.prototype._focusCollapseButton = function () {
+			this._getCollapseButton().$().focus();
+		};
+
+		/**
 		 * Focuses the <code>DynamicPageHeader</code> pin/unpin button.
 		 * @private
 		 */
@@ -221,6 +318,30 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 */
 		DynamicPageHeader.prototype._getPinButtonJQueryRef = function () {
 			return this._getPinButton().$();
+		};
+
+		/**
+		* Determines the <code>DynamicPageHeader</code> state.
+		* @returns {Object}
+		* @private
+		*/
+		DynamicPageHeader.prototype._getState = function () {
+			var aContent = this.getContent(),
+				bHeaderHasContent = aContent.length > 0,
+				bHeaderPinnable = this.getPinnable() && bHeaderHasContent && !Device.system.phone,
+				oPinButton = this._getPinButton(),
+				oCollapseButton = this._getCollapseButton();
+
+			oCollapseButton.toggleStyleClass("sapUiHidden", !this._getShowCollapseButton());
+
+			return {
+				content: aContent,
+				headerHasContent: bHeaderHasContent,
+				headerPinnable: bHeaderPinnable,
+				hasContent: aContent.length > 0,
+				pinButton: oPinButton,
+				collapseButton: oCollapseButton
+			};
 		};
 
 		return DynamicPageHeader;

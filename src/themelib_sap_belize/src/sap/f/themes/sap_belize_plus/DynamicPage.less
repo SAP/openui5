@@ -1,13 +1,16 @@
 /* ================================== */
 /* CSS for control sap.f/DynamicPage  */
-/* Belize theme                       */
+/* Belize Plus theme                  */
 /* ================================== */
 
-.sapFDynamicPage {
-	.sapFDynamicPageContent {
-		background: @sapUiGlobalBackgroundColor;
-	}
+// Note:
+// The following structure, selectors and parameters are the same as the ones, defined in belize theme.
+// But, we still need to repeat the styles here in belize_plus, because of a limitation of the belize_plus generation build.
+// We have '.sapContrast' on Title and Header level, because they are the contrast areas by design,
+// but their appearance depends on classes, added to a parent element (.sapFDynamicPage).
+// As the generated css would be '.sapContrast.sapFDynamicPageTitle', it will never match '.sapFDynamicPage.sapFDynamicPageTitleClickEnabled .sapFDynamicPageTitle'
 
+.sapFDynamicPage {
 	// DynamicPageTitle and Toggle Header Visual Indicator hover state
 	&.sapFDynamicPageTitleClickEnabled:not(.sapFDynamicPageHeaderPinned) {
 		.sapFDynamicPageTitle:hover,
@@ -27,6 +30,7 @@
 	// Toggle Header Visual Indicator
 	.sapFDynamicPageToggleHeaderIndicator.sapMBtn {
 
+		// normal state
 		& > .sapMBtnInner {
 			border: none;
 			background-color: @sapUiObjectHeaderBorderColor;
@@ -43,15 +47,4 @@
 			color: @sapUiButtonActiveBackground;
 		}
 	}
-}
-
-// Note:
-// The footer selector can`t be nested in the sapFDynamicPage less structure,
-// because the contrast container would not work, as the theme generates css like ".sapContrast.sapFDynamicPageFooter"
-// and will never match ".sapFDynamicPage .sapFDynamicPageFooter"
-.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
-	background: fade(@sapUiPageFooterBackground, 90);
-	color: @sapUiPageFooterTextColor;
-	box-shadow: @sapUiShadowLevel1;
-	border-bottom: 0 none;
 }

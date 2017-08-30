@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/core/ScrollBar",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/delegate/ScrollEnablement",
-	"sap/ui/Device"
-], function (jQuery, library, Control, ScrollBar, ResizeHandler, ScrollEnablement, Device) {
+	"sap/ui/Device",
+	"sap/f/DynamicPageTitle"
+], function (jQuery, library, Control, ScrollBar, ResizeHandler, ScrollEnablement, Device, DynamicPageTitle) {
 	"use strict";
 
 	/**
@@ -188,7 +189,13 @@ sap.ui.define([
 
 	DynamicPage.EVENTS = {
 		TITLE_PRESS: "_titlePress",
-		PIN_UNPIN_PRESS: "_pinUnpinPress"
+		TITLE_MOUSE_OVER: "_titleMouseOver",
+		TITLE_MOUSE_OUT: "_titleMouseOut",
+		PIN_UNPIN_PRESS: "_pinUnpinPress",
+		VISUAL_INDICATOR_MOUSE_OVER: "_visualIndicatorMouseOver",
+		VISUAL_INDICATOR_MOUSE_OUT: "_visualIndicatorMouseOut",
+		HEADER_VISUAL_INDICATOR_PRESS: "_headerVisualIndicatorPress",
+		TITLE_VISUAL_INDICATOR_PRESS: "_titleVisualIndicatorPress"
 	};
 
 	DynamicPage.MEDIA = {
@@ -226,6 +233,9 @@ sap.ui.define([
 		}
 
 		this._attachTitlePressHandler();
+		this._attachVisualIndicatorsPressHandlers();
+		this._attachVisualIndicatorMouseOverHandlers();
+		this._attachTitleMouseOverHandlers();
 		this._detachScrollHandler();
 	};
 
@@ -260,6 +270,8 @@ sap.ui.define([
 				this._moveHeaderToTitleArea();
 			}
 		}
+
+		this._updateToggleHeaderVisualIndicators();
 	};
 
 	DynamicPage.prototype.exit = function () {
@@ -299,6 +311,7 @@ sap.ui.define([
 		var vResult = this.setProperty("toggleHeaderOnTitleClick", bToggleHeaderOnTitleClick, true);
 
 		this.$().toggleClass("sapFDynamicPageTitleClickEnabled", bToggleHeaderOnTitleClick);
+		this._updateToggleHeaderVisualIndicators();
 
 		return vResult;
 	};
@@ -445,6 +458,7 @@ sap.ui.define([
 
 		this.setProperty("headerExpanded", false, true);
 		this.$titleArea.addClass("sapFDynamicPageTitleSnapped");
+		this._updateToggleHeaderVisualIndicators();
 	};
 
 	/**
@@ -476,6 +490,7 @@ sap.ui.define([
 
 		this.setProperty("headerExpanded", true, true);
 		this.$titleArea.removeClass("sapFDynamicPageTitleSnapped");
+		this._updateToggleHeaderVisualIndicators();
 	};
 
 	/**
@@ -569,24 +584,45 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._pin = function () {
-		if (!this._bPinned) {
-			this._bPinned = true;
-			if (!this._bHeaderInTitleArea) {
-				this._moveHeaderToTitleArea(true);
-				this._updateScrollBar();
-			}
-			this._togglePinButtonARIAState(this._bPinned);
+		var $oDynamicPage = this.$();
+
+		if (this._bPinned) {
+			return;
+		}
+
+		this._bPinned = true;
+
+		if (!this._bHeaderInTitleArea) {
+			this._moveHeaderToTitleArea(true);
+			this._updateScrollBar();
+		}
+
+		this._updateToggleHeaderVisualIndicators();
+		this._togglePinButtonARIAState(this._bPinned);
+
+		if (exists($oDynamicPage)) {
+			$oDynamicPage.addClass("sapFDynamicPageHeaderPinned");
 		}
 	};
+
 
 	/**
 	 * Unpins the header.
 	 * @private
 	 */
 	DynamicPage.prototype._unPin = function () {
-		if (this._bPinned) {
-			this._bPinned = false;
-			this._togglePinButtonARIAState(this._bPinned);
+		var $oDynamicPage = this.$();
+
+		if (!this._bPinned) {
+			return;
+		}
+
+		this._bPinned = false;
+		this._updateToggleHeaderVisualIndicators();
+		this._togglePinButtonARIAState(this._bPinned);
+
+		if (exists($oDynamicPage)) {
+			$oDynamicPage.removeClass("sapFDynamicPageHeaderPinned");
 		}
 	};
 
@@ -980,6 +1016,78 @@ sap.ui.define([
 	};
 
 	/**
+	 * Toggles the <code>DynamicPageTitle</code> <code>expandButton</code> aggregation.
+	 * @param {boolean} bToggle
+	 * @private
+	 */
+	DynamicPage.prototype._toggleExpandVisualIndicator = function (bToggle) {
+		var oDynamicPageTitle = this.getTitle();
+
+		if (exists(oDynamicPageTitle)) {
+			oDynamicPageTitle._toggleExpandButton(bToggle);
+		}
+	};
+
+	/**
+	 * Focuses the <code>DynamicPageTitle</code> <code>expandButton</code> aggregation.
+	 * @private
+	 */
+	DynamicPage.prototype._focusExpandVisualIndicator = function () {
+		var oDynamicPageTitle = this.getTitle();
+
+		if (exists(oDynamicPageTitle)) {
+			oDynamicPageTitle._focusExpandButton();
+		}
+	};
+
+	/**
+	 * Toggles the <code>DynamicPageTitle</code> <code>collapseButton</code> aggregation.
+	 * @param {boolean} bToggle
+	 * @private
+	 */
+	DynamicPage.prototype._toggleCollapseVisualIndicator = function (bToggle) {
+		var oDynamicPageHeader = this.getHeader();
+
+		if (exists(oDynamicPageHeader)) {
+			oDynamicPageHeader._toggleCollapseButton(bToggle);
+		}
+	};
+
+	/**
+	 * Focuses the <code>DynamicPageTitle</code> <code>collapseButton</code> aggregation.
+	 * @private
+	 */
+	DynamicPage.prototype._focusCollapseVisualIndicator = function () {
+		var oDynamicPageHeader = this.getHeader();
+
+		if (exists(oDynamicPageHeader)) {
+			oDynamicPageHeader._focusCollapseButton();
+		}
+	};
+
+	/**
+	 * Updates the visibility of the <code>expandButton</code> and <code>collapseButton</code>.
+	 * @private
+	 */
+	DynamicPage.prototype._updateToggleHeaderVisualIndicators = function () {
+		var bHeaderExpanded,
+			bCollapseVisualIndicatorVisible,
+			bExpandVisualIndicatorVisible;
+
+		if (!this.getToggleHeaderOnTitleClick() || this._bPinned) {
+			bCollapseVisualIndicatorVisible = false;
+			bExpandVisualIndicatorVisible = false;
+		} else {
+			bHeaderExpanded = this.getHeaderExpanded();
+			bCollapseVisualIndicatorVisible = bHeaderExpanded;
+			bExpandVisualIndicatorVisible = !bHeaderExpanded;
+		}
+
+		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
+		this._toggleExpandVisualIndicator(bExpandVisualIndicatorVisible);
+	};
+
+	/**
 	 * Determines the height of a control safely. If the control doesn't exist it returns 0,
 	 * so it doesn't confuse any calculations based on it. If it exists it just returns its DOM element height.
 	 * @param  {sap.ui.core.Control} oControl
@@ -1138,19 +1246,21 @@ sap.ui.define([
 
 	/**
 	 * Reacts to the <code>DynamicPage</code> child controls re-rendering, updating the <code>ScrollBar</code> size.
-	 * In case <code>DynamicPageTitle</code> is re-rendering, the <code>DynamicPageTitle</code> DOM reference and resize handlers should be also updated.
+	 *
+	 * <b>Note:</b> In case <code>DynamicPageTitle</code> is re-rendered,
+	 * the <code>DynamicPageTitle</code> DOM reference and resize handlers should be also updated.
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	DynamicPage.prototype._onChildControlAfterRendering = function (oEvent) {
-		if (oEvent.srcControl instanceof sap.f.DynamicPageTitle ) {
+		if (oEvent.srcControl instanceof DynamicPageTitle ) {
 			this._cacheTitleDom();
 			this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE);
 			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE, this.$title[0], this._onChildControlsHeightChange.bind(this));
 		}
+
 		jQuery.sap.delayedCall(0, this, this._updateScrollBar);
 	};
-
 
 	/**
 	 * Reacts when the aggregated child controls change their height
@@ -1278,6 +1388,35 @@ sap.ui.define([
 		}
 	};
 
+	DynamicPage.prototype._onExpandHeaderVisualIndicatorPress = function () {
+		this._onTitlePress();
+		this._focusCollapseVisualIndicator();
+	};
+
+	DynamicPage.prototype._onCollapseHeaderVisualIndicatorPress = function () {
+		this._onTitlePress();
+		this._focusExpandVisualIndicator();
+	};
+
+	DynamicPage.prototype._onVisualIndicatorMouseOver = function() {
+		var $oDynamicPage = this.$();
+
+		if (exists($oDynamicPage)) {
+			$oDynamicPage.addClass("sapFDynamicPageTitleForceHovered");
+		}
+	};
+
+	DynamicPage.prototype._onVisualIndicatorMouseOut = function () {
+		var $oDynamicPage = this.$();
+
+		if (exists($oDynamicPage)) {
+			$oDynamicPage.removeClass("sapFDynamicPageTitleForceHovered");
+		}
+	};
+
+	DynamicPage.prototype._onTitleMouseOver = DynamicPage.prototype._onVisualIndicatorMouseOver;
+	DynamicPage.prototype._onTitleMouseOut = DynamicPage.prototype._onVisualIndicatorMouseOut;
+
 	/**
 	 * Еxpands/collapses the header when allowed to do so by the internal rules of the <code>DynamicPage</code>.
 	 * @private
@@ -1325,7 +1464,6 @@ sap.ui.define([
 			this._restorePinButtonFocus();
 		}
 	};
-
 
 	/**
 	 * ATTACH/DETACH HANDLERS
@@ -1392,6 +1530,7 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._attachPageChildrenAfterRenderingDelegates = function () {
 		var oTitle = this.getTitle(),
+			oHeader = this.getHeader(),
 			oContent = this.getContent(),
 			oPageChildrenAfterRenderingDelegate = {onAfterRendering: this._onChildControlAfterRendering.bind(this)};
 
@@ -1402,10 +1541,14 @@ sap.ui.define([
 		if (exists(oContent)) {
 			oContent.addEventDelegate(oPageChildrenAfterRenderingDelegate);
 		}
+
+		if (exists(oHeader)) {
+			oHeader.addEventDelegate(oPageChildrenAfterRenderingDelegate);
+		}
 	};
 
 	/**
-	 * Attaches the <code>DynamicPageTitle</code> press handler.
+	 * Attaches handler to the <code>DynamicPageTitle</code> <code>press</code> event.
 	 * @private
 	 */
 	DynamicPage.prototype._attachTitlePressHandler = function () {
@@ -1418,7 +1561,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attaches the <code>DynamicPageHeader</code> pin/unpin button press handler.
+	 * Attaches handler to the <code>DynamicPageHeader</code> pin/unpin button <code>press</code> event.
 	 * @private
 	 */
 	DynamicPage.prototype._attachPinPressHandler = function () {
@@ -1427,6 +1570,57 @@ sap.ui.define([
 		if (exists(oHeader) && !this._bAlreadyAttachedPinPressHandler) {
 			oHeader.attachEvent(DynamicPage.EVENTS.PIN_UNPIN_PRESS, this._onPinUnpinButtonPress, this);
 			this._bAlreadyAttachedPinPressHandler = true;
+		}
+	};
+
+	/**
+	 * Attaches handlers to <code>DynamicPageTitle</code> and <DynamicPageHeader</> visual indicators` <code>press</code> events.
+	 * @private
+	 */
+	DynamicPage.prototype._attachVisualIndicatorsPressHandlers = function () {
+		var oTitle = this.getTitle(),
+			oHeader = this.getHeader();
+
+		if (exists(oTitle) && !this._bAlreadyAttachedTitleIndicatorPressHandler) {
+			oTitle.attachEvent(DynamicPage.EVENTS.TITLE_VISUAL_INDICATOR_PRESS, this._onExpandHeaderVisualIndicatorPress, this);
+			this._bAlreadyAttachedTitleIndicatorPressHandler = true;
+		}
+
+		if (exists(oHeader) && !this._bAlreadyAttachedHeaderIndicatorPressHandler) {
+			oHeader.attachEvent(DynamicPage.EVENTS.HEADER_VISUAL_INDICATOR_PRESS, this._onCollapseHeaderVisualIndicatorPress, this);
+			this._bAlreadyAttachedHeaderIndicatorPressHandler = true;
+		}
+	};
+
+	/**
+	 * Attaches handlers to  <code>DynamicPageHeader</code> visual indicators` <code>mouseover</code> and <code>mouseout</code> events.
+	 *
+	 * <b>Note:</b> No need to attach for <code>DynamicPageTitle</code> visual indicator <code>mouseover</code> and <code>mouseout</code> events,
+	 * as being part of the <code>DynamicPageTitle</code>,
+	 * the visual indicator produces <code>mouseover</code> and <code>mouseout</code> events on the <code>DynamicPageTitle</code> by default.
+	 * @private
+	 */
+	DynamicPage.prototype._attachVisualIndicatorMouseOverHandlers = function () {
+		var oHeader = this.getHeader();
+
+		if (exists(oHeader) && !this._bAlreadyAttachedVisualIndicatorMouseOverOutHandler) {
+			oHeader.attachEvent(DynamicPage.EVENTS.VISUAL_INDICATOR_MOUSE_OVER, this._onVisualIndicatorMouseOver, this);
+			oHeader.attachEvent(DynamicPage.EVENTS.VISUAL_INDICATOR_MOUSE_OUT, this._onVisualIndicatorMouseOut, this);
+			this._bAlreadyAttachedVisualIndicatorMouseOverOutHandler = true;
+		}
+	};
+
+	/**
+	 * Attaches handlers to <code>DynamicPageTitle</code> <code>mouseover</code> and <code>mouseout</code> events.
+	 * @private
+	 */
+	DynamicPage.prototype._attachTitleMouseOverHandlers = function () {
+		var oTitle = this.getTitle();
+
+		if (exists(oTitle) && !this._bAlreadyAttachedTitleMouseOverOutHandler) {
+			oTitle.attachEvent(DynamicPage.EVENTS.TITLE_MOUSE_OVER, this._onTitleMouseOver, this);
+			oTitle.attachEvent(DynamicPage.EVENTS.TITLE_MOUSE_OUT, this._onTitleMouseOut, this);
+			this._bAlreadyAttachedTitleMouseOverOutHandler = true;
 		}
 	};
 
