@@ -250,6 +250,56 @@
 				oPage.destroy();
 			});
 
+			QUnit.test("showFooter toggling with floatingFooter disabled", function (assert) {
+				// Setup
+				var oBar = new sap.m.Bar({
+						contentRight: new sap.m.Button({text: "Hello World"})
+					}),
+					oPage = new sap.m.Page({
+						showFooter: false,
+						footer: oBar
+					}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
+				assert.equal(oPage.$().hasClass("sapMPageWithFooter"), false,
+						"The class .sapMPageWithFooter is not applied, although a footer exists, the showFooter is false");
+
+				// Act
+				oPage.setShowFooter(true);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(!oBar.$().parent().hasClass("sapUiHidden"), "Footer is visible.");
+				assert.equal(oPage.$().hasClass("sapMPageWithFooter"), true,
+						"The class .sapMPageWithFooter is applied, when a footer exists and showFooter is true.");
+
+				// Act
+				oPage.setShowFooter(false);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
+				assert.equal(oPage.$().hasClass("sapMPageWithFooter"), false,
+						"The class .sapMPageWithFooter is not applied, although the footer exists, the showFooter is false.");
+
+				// Act
+				oPage.setShowFooter(true);
+				oPage.setFooter(null);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.equal(oPage.$().hasClass("sapMPageWithFooter"), false,
+						"The class .sapMPageWithFooter is not applied, although the showFooter is true, the footer does not exist.");
+
+				// Cleanup
+				oBar = null;
+
+				oPage.destroy();
+				oPage = null;
+			});
+
 			if (sap.ui.Device.browser.chrome) {
 				if (sap.ui.Device.os.ios) {
 

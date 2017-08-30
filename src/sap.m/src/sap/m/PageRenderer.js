@@ -22,6 +22,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 	PageRenderer.render = function(oRm, oPage) {
 		var oHeader = null,
 			oFooter = null,
+			bShowFooter = oPage.getShowFooter(),
 			oSubHeader = null,
 			bLightHeader  = this._isLightHeader(oPage),
 			oLandmarkInfo = oPage.getLandmarkInfo();
@@ -50,7 +51,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			oRm.addClass("sapMPageWithSubHeader");
 		}
 
-		if (oFooter) {
+		if (oFooter && bShowFooter) {
 			// it is used in the PopOver to remove additional margin bottom for page with footer
 			oRm.addClass("sapMPageWithFooter");
 		}
