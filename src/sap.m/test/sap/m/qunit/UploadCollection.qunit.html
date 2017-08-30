@@ -10,7 +10,7 @@
 	        data-sap-ui-language="en">
 	</script>
 
-	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css" media="screen">
 	<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -22,6 +22,7 @@
 	<script src="UploadCollectionOpenFileDialog.qunit.js"></script>
 
 	<script>
+		QUnit.config.autostart = false;
 		jQuery.sap.require("sap.m.UploadCollection");
 
 		var oData = {
@@ -2943,6 +2944,8 @@
 			//Assert
 			assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, false, "Event delegation has been successfully deleted while exiting edit mode");
 		});
+
+		QUnit.start();
 	</script>
 </head>
 <body class="sapUiBody">
