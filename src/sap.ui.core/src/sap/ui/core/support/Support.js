@@ -352,6 +352,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 					this._oRemoteWindow = openWindow(sToolUrl + sParams);
 					this._sRemoteOrigin = checkLocalUrl(sToolUrl) ? this._sLocalOrigin : sToolUrl;
 				}
+			} else {
+				// The diagnostics dialog is opened. Call the focus methode to show it up
+				this._oRemoteWindow.focus();
 			}
 		} else if (this._sType === mTypes.IFRAME) {
 			this._oOpenedWindow = openWindow(sToolUrl + sParams);
