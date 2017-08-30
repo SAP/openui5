@@ -26,6 +26,20 @@
 								text: "item 2"
 							})
 						],
+						customTabs: [
+							new sap.m.ViewSettingsCustomTab({
+								icon: "sap-icon://action-settings",
+								title: "Settings",
+								tooltip: "Application Settings",
+								content: [new sap.m.Label({text: "test"})]
+							}),
+							new sap.m.ViewSettingsCustomTab({
+								icon: "sap-icon://comment",
+								title: "Comment",
+								tooltip: "Leave a comment",
+								content: [new sap.m.Label({text: "Leave a comment"})]
+							})
+						],
 						groupItems: [
 							new sap.m.ViewSettingsItem({
 								key: "1",
@@ -74,6 +88,7 @@
 						}
 					}).placeAt("content");
 		});
+
 	</script>
 </head>
 <body id="content" role="application"></body>
