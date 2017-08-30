@@ -155,7 +155,7 @@
 			</l:BlockLayoutCell>
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>maintCompl}"
+					text="{i18n>maintenanceCompletion}"
 					titleStyle="H2"
 					width="100%"/>
 				<Title

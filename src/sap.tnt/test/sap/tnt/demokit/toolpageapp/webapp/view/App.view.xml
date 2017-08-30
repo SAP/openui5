@@ -74,15 +74,14 @@
 						key="{side>key}">
 						<tnt:NavigationListItem
 							text="{side>title}"
-							key="{side>key}"
-							enabled="{side>enabled}">
+							key="{side>key}">
 						</tnt:NavigationListItem>
 					</tnt:NavigationListItem>
 				</tnt:NavigationList>
 				<tnt:fixedItem>
 					<tnt:NavigationList
 						items="{
-							path: 'side>fixedNavigation',
+							path: 'side>/fixedNavigation',
 							templateShareable: false
 						}">
 						<tnt:NavigationListItem

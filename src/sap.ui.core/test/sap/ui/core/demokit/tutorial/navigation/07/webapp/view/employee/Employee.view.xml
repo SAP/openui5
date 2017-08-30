@@ -14,7 +14,7 @@
 			<Panel
 				id="employeePanel"
 				width="auto"
-				class="sapUiResponsiveMargin sapUiNoContentPadding">
+				class="sapUiNoContentPadding">
 				<headerToolbar>
 					<Toolbar>
 						<Title text="{i18n>EmployeeIDColon} {EmployeeID}" level="H2"/>
@@ -23,25 +23,24 @@
 				</headerToolbar>
 				<content>
 					<f:SimpleForm
-						minWidth="1024"
 						editable="false"
 						layout="ResponsiveGridLayout"
 						labelSpanL="3" labelSpanM="3" emptySpanL="4" emptySpanM="4"
 						columnsL="1" columnsM="1">
 						<f:content>
-							<Label text="{i18n>FirstName}" />
+							<Label text="{i18n>formFirstName}" />
 							<Text text="{FirstName}" />
-							<Label text="{i18n>LastName}" />
+							<Label text="{i18n>formLastName}" />
 							<Text text="{LastName}" />
-							<Label text="{i18n>Address}" />
+							<Label text="{i18n>formAddress}" />
 							<Text text="{Address}" />
-							<Label text="{i18n>City}" />
+							<Label text="{i18n>formCity}" />
 							<Text text="{City}, {Region}" />
-							<Label text="{i18n>PostalCode}" />
+							<Label text="{i18n>formPostalCode}" />
 							<Text text="{PostalCode}" />
-							<Label text="{i18n>PhoneHome}" />
+							<Label text="{i18n>formPhoneHome}" />
 							<Text text="{HomePhone}" />
-							<Label text="{i18n>Country}" />
+							<Label text="{i18n>formCountry}" />
 							<Text text="{Country}" />
 						</f:content>
 					</f:SimpleForm>
