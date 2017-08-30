@@ -14,6 +14,8 @@
 				<m:Button id="idDestroyBtn" text="destroy VM" press="onDestroyVMBtn" />
 				<m:Button id="idMarkAsChangedBtn" text="Mark as Changed"
 					press="onMarkAsChanged" />
+				<m:Button id="idToggleErrorStateBtn" text="toggle error state"
+					press="onToggleErrorState" />					
 			</m:HBox>
 			<m:HBox fitContainer="true">
 				<m:Button id="idToggleFooterBtn" text="toggle show Footer"
@@ -30,7 +32,7 @@
 				<m:Button id="idToggleShowExeSelBtn" text="toggle show ExeSel"
 					press="onToggleShowExeOnSeltBtn" />
 				<m:Button id="idToggleShowShareBtn" text="toggle show Share"
-					press="onToggleShowShareBtn" />
+					press="onToggleShowShareBtn" />					
 			</m:HBox>
 		</m:VBox>
 		<m:Label text="Variants" />

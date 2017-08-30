@@ -7,6 +7,7 @@
 	jQuery.sap.require("sap.ui.fl.variants.VariantModel");
 	jQuery.sap.require("sap.ui.layout.Grid");
 	jQuery.sap.require("sap.m.Input");
+	jQuery.sap.require("sap.ui.core.Icon");
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
 
 	var oModel;
@@ -299,13 +300,13 @@
 			}
 		};
 
-		this.oVariantManagement._handleManageDefaultVariantChange("1");
+		this.oVariantManagement._handleManageDefaultVariantChange(null, "1");
 		assert.ok(bEnabled);
 
 		this.oVariantManagement._anyInErrorState.restore();
 		sinon.stub(this.oVariantManagement, "_anyInErrorState").returns(true);
 		bEnabled = false;
-		this.oVariantManagement._handleManageDefaultVariantChange("1");
+		this.oVariantManagement._handleManageDefaultVariantChange(null, "1");
 		assert.ok(!bEnabled);
 
 		this.oVariantManagement.oManagementSave = undefined;
@@ -458,8 +459,7 @@
 
 		var oItemFav = this.oVariantManagement._getItemByKey("4");
 		assert.ok(oItemFav);
-		oItemFav.favorite = false;
-		this.oVariantManagement._handleManageFavoriteChanged(oItemFav);
+		this.oVariantManagement._handleManageFavoriteChanged(null, oItemFav);
 
 		sinon.stub(oModel, "_switchToVariant").returns(Promise.resolve());
 		this.oVariantManagement.setSelectedVariantKey("1");
@@ -467,6 +467,166 @@
 		this.oVariantManagement._handleManageSavePressed();
 
 		assert.equal(this.oVariantManagement.getSelectedVariantKey(), this.oVariantManagement.getStandardVariantKey());
+
+	});
+
+	QUnit.test("Checking _triggerSearch", function(assert) {
+		var oEvent = {
+			params: {
+				newValue: "e"
+			},
+			getParameters: function() {
+				return this.params;
+			}
+		};
+
+		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+		this.oVariantManagement._createVariantList();
+		var aItems = this.oVariantManagement._oVariantList.getItems();
+		assert.ok(aItems);
+		assert.equal(aItems.length, 5);
+
+		this.oVariantManagement._triggerSearch(oEvent, this.oVariantManagement._oVariantList);
+		aItems = this.oVariantManagement._oVariantList.getItems();
+		assert.ok(aItems);
+		assert.equal(aItems.length, 2);
+
+	});
+
+	QUnit.test("Checking _setFavoriteIcon", function(assert) {
+		var oIcon = new sap.ui.core.Icon();
+
+		this.oVariantManagement._setFavoriteIcon(oIcon, true);
+		assert.equal(oIcon.getSrc(), "sap-icon://favorite");
+
+		this.oVariantManagement._setFavoriteIcon(oIcon, false);
+		assert.equal(oIcon.getSrc(), "sap-icon://unfavorite");
+
+	});
+
+	QUnit.test("Checking _assignTransport", function(assert) {
+		var oEvent = {
+			params: {
+				selectedPackage: "package",
+				selectedTransport: "transport"
+
+			},
+			getParameters: function() {
+				return this.params;
+			}
+		};
+
+		var fStub = function(obj, fOk, fError, bCompact) {
+			fOk(oEvent);
+		};
+
+		sinon.stub(this.oVariantManagement, "_selectTransport", fStub);
+
+		var sPackage, sTransport, oErrorResult = null;
+
+		var oItem = {
+			key: "1",
+			lifecyclePackage: "package0",
+			lifecycleTransportId: "transport0",
+			namespace: "ns"
+		};
+		var fOK = function(sPak, sTrans) {
+			sPackage = sPak;
+			sTransport = sTrans;
+		};
+		var fError = function(oObj) {
+			oErrorResult = oObj;
+		};
+
+		this.oVariantManagement._assignTransport(oItem, fOK, fError);
+		assert.equal(sPackage, "package0");
+		assert.equal(sTransport, "transport0");
+
+		this.oVariantManagement._assignTransport(null, fOK, fError);
+		assert.equal(sPackage, "package");
+		assert.equal(sTransport, "transport");
+		assert.ok(!oErrorResult); // not yet tested
+
+	});
+
+	QUnit.test("Checking _handleShareSelected", function(assert) {
+		var oEvent = {
+			params: {
+				selected: true,
+				selectedPackage: "package",
+				selectedTransport: "transport"
+			},
+			getParameters: function() {
+				return this.params;
+			}
+		};
+
+		var fStub = function(obj, fOk, fError) {
+			fOk(oEvent);
+		};
+
+		sinon.stub(this.oVariantManagement, "_selectTransport", fStub);
+		this.oVariantManagement._handleShareSelected(oEvent);
+		assert.equal(this.oVariantManagement.sPackage, "package");
+		assert.equal(this.oVariantManagement.sTransport, "transport");
+
+	});
+
+	QUnit.test("Checking handleOpenCloseVariantPopover ", function(assert) {
+
+		var bListClosed = false, bErrorListClosed = false;
+
+		sinon.stub(this.oVariantManagement, "_openVariantList");
+
+		this.oVariantManagement.bPopoverOpen = true;
+		this.oVariantManagement.handleOpenCloseVariantPopover();
+		assert.ok(!this.oVariantManagement._openVariantList.called);
+
+		this.oVariantManagement.bPopoverOpen = false;
+		this.oVariantManagement.handleOpenCloseVariantPopover();
+		assert.ok(this.oVariantManagement._openVariantList.calledOnce);
+
+		// -
+		this.oVariantManagement._openVariantList.restore();
+		sinon.stub(this.oVariantManagement, "_openVariantList");
+
+		this.oVariantManagement.oVariantPopOver = {
+			isOpen: function() {
+				return true;
+			},
+			close: function() {
+				bListClosed = true;
+			}
+		};
+		this.oVariantManagement.bPopoverOpen = true;
+
+		this.oVariantManagement.handleOpenCloseVariantPopover();
+		assert.ok(!this.oVariantManagement._openVariantList.called);
+		assert.ok(bListClosed);
+		assert.ok(!bErrorListClosed);
+
+		// --
+		bListClosed = false;
+		this.oVariantManagement.oVariantPopOver = null;
+		this.oVariantManagement.oErrorVariantPopOver = {
+			isOpen: function() {
+				return true;
+			},
+			close: function() {
+				bErrorListClosed = true;
+			}
+		};
+		this.oVariantManagement.handleOpenCloseVariantPopover();
+		assert.ok(!this.oVariantManagement._openVariantList.called);
+		assert.ok(!bListClosed);
+		assert.ok(!bErrorListClosed);
+
+		// -
+		this.oVariantManagement.setInErrorState(true);
+		this.oVariantManagement.handleOpenCloseVariantPopover();
+		assert.ok(!this.oVariantManagement._openVariantList.called);
+		assert.ok(!bListClosed);
+		assert.ok(bErrorListClosed);
 
 	});
 
