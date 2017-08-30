@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.form.FormContainer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/theming/Parameters', 'sap/ui/layout/library'],
-	function(jQuery, Element, EnabledPropagator, Parameters, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/Parameters', 'sap/ui/layout/library'],
+	function(jQuery, Element, Parameters, library) {
 	"use strict";
 
 
@@ -135,9 +135,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 	function _expandButtonCreated(oButton) {
 
-		this._oExpandButton = oButton;
-		this.setAggregation("_expandButton", this._oExpandButton); // invalidate because this could happen after Form is already rendered
-		_setExpanderIcon(this);
+		if (!this._bIsBeingDestroyed) {
+			this._oExpandButton = oButton;
+			this.setAggregation("_expandButton", this._oExpandButton); // invalidate because this could happen after Form is already rendered
+			_setExpanderIcon(this);
+		}
 
 	}
 

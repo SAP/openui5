@@ -378,6 +378,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		if (oSource instanceof sap.ui.layout.form.FormContainer) {
 			if (this._mainGrid) {
 				this._mainGrid.onLayoutDataChange(oEvent);
+				this.invalidate(); // as a new calculation of LayoutData on other Containers may be needed
 			}
 		} else if (!(oSource instanceof sap.ui.layout.form.FormElement)) { // LayoutData on FormElement not supported in ResponsiveGridLayout
 			var oParent = oSource.getParent();
@@ -1068,11 +1069,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			var bLinebreakL = (iVisibleContainer % iColumnsL) == 1;
 			var bLastL = (iVisibleContainer % iColumnsL) == 0;
-			var bLastRowL = iVisibleContainer > (iVisibleContainers - iColumnsL + (iVisibleContainers % iColumnsL));
+			var bLastRowL = iVisibleContainer > (iColumnsL * (Math.ceil(iVisibleContainers / iColumnsL) - 1));
 			var bFirstRowL = iVisibleContainer <= iColumnsL;
 			var bLinebreakM = (iVisibleContainer % iColumnsM) == 1;
 			var bLastM = (iVisibleContainer % iColumnsM) == 0;
-			var bLastRowM = iVisibleContainer > (iVisibleContainers - iColumnsM + (iVisibleContainers % iColumnsM));
+			var bLastRowM = iVisibleContainer > (iColumnsM * (Math.ceil(iVisibleContainers / iColumnsM) - 1));
 			var bFirstRowM = iVisibleContainer <= iColumnsM;
 
 			var bLinebreakXL = false;
@@ -1082,7 +1083,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			if (iColumnsXL > 0) {
 				bLinebreakXL = (iVisibleContainer % iColumnsXL) == 1;
 				bLastXL = (iVisibleContainer % iColumnsXL) == 0;
-				bLastRowXL = iVisibleContainer > (iVisibleContainers - iColumnsXL + (iVisibleContainers % iColumnsXL));
+				bLastRowXL = iVisibleContainer > (iColumnsXL * (Math.ceil(iVisibleContainers / iColumnsXL) - 1));
 				bFirstRowXL = iVisibleContainer <= iColumnsXL;
 			}
 
