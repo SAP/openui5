@@ -91,11 +91,7 @@ html.sap-desktop .sapMObjectAttributeActive:focus {
 }
 
 html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ie'] {
-	.sapMObjectAttributeDiv {
-		padding: 0.25rem 0.25rem 0.25rem 0.25rem;
-	}
-
-	.sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	.sapMObjectAttributeActive:focus .sapMObjectAttributeText::after {
 		outline-style: dashed;
 	}
 }
@@ -190,10 +186,4 @@ html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ie'] {
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
 .sapMOH .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
 	text-decoration: none;
-}
-
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapMObjectAttributeDiv {
-		padding: 0.125rem 0.125rem 0.125rem 0.125rem;
-	}
 }
