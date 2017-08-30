@@ -23,7 +23,8 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 		var oHeader = null,
 			oFooter = null,
 			oSubHeader = null,
-			bLightHeader  = this._isLightHeader(oPage);
+			bLightHeader  = this._isLightHeader(oPage),
+			oLandmarkInfo = oPage.getLandmarkInfo();
 
 		if (oPage.getShowHeader()) {
 			oHeader = oPage._getAnyHeader();
@@ -70,24 +71,43 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
-		PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, oPage, "root");
+		oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Root"));
 
 		oRm.write(">");
 
-		//render headers
-		this.renderBarControl(oRm, oPage, oHeader, {
-			context: "header",
-			styleClass: "sapMPageHeader" + (bLightHeader ? "" : " sapContrastPlus")
-		});
+		if (oHeader) {
+			// Header
+			oRm.write("<header");
+			oRm.addClass("sapMPageHeader");
+			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Header"));
+			oRm.writeClasses();
+			oRm.write(">");
+			//render headers
+			this.renderBarControl(oRm, oPage, oHeader, {
+				context: "header",
+				styleClass: bLightHeader ? "" : "sapContrastPlus"
+			});
+			oRm.write("</header>");
+		}
 
-		this.renderBarControl(oRm, oPage, oSubHeader, {
-			context: "subHeader",
-			styleClass: "sapMPageSubHeader" + (bLightHeader ? "" : " sapContrastPlus")
-		});
+		if (oSubHeader) {
+			// SubHeader
+			oRm.write("<header");
+			oRm.addClass("sapMPageSubHeader");
+			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "SubHeader"));
+			oRm.writeClasses();
+			oRm.write(">");
+			this.renderBarControl(oRm, oPage, oSubHeader, {
+				context: "subHeader",
+				styleClass: bLightHeader ? "" : "sapContrastPlus"
+			});
+			oRm.write("</header>");
+		}
 
 		// render child controls
 		oRm.write('<section id="' + oPage.getId() + '-cont"');
-		PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, oPage, "content");
+
+		oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Content"));
 
 		// The vertical scroll bar should be immediately available to avoid flickering
 		// and reduce size recalculations of embedded responsive controls that rely on
@@ -112,10 +132,20 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 		// if a footer is defined, it should always be rendered
 		// otherwise animation on show/hide won't work always
 
-		this.renderBarControl(oRm, oPage, oFooter, {
-			context : "footer",
-			styleClass : "sapMPageFooter" + (oPage.getShowFooter() ? "" : " sapUiHidden")
-		});
+		if (oFooter) {
+			oRm.write("<footer");
+			oRm.addClass("sapMPageFooter");
+			if (!oPage.getShowFooter()) {
+				oRm.addClass("sapUiHidden");
+			}
+			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Footer"));
+			oRm.writeClasses();
+			oRm.write(">");
+			this.renderBarControl(oRm, oPage, oFooter, {
+				context : "footer"
+			});
+			oRm.write("</footer>");
+		}
 
 		oRm.write("</div>");
 	};
@@ -133,16 +163,9 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			return;
 		}
 
-		oBarControl.applyTagAndContextClassFor(oOptions.context.toLowerCase());
+		oBarControl._applyContextClassFor(oOptions.context.toLowerCase());
 
-		oBarControl._setLandmarkInfo(oPage.getLandmarkInfo(), oOptions.context);
-
-		// Should be stripped as it might have been added in some previous render iteration and now might not
-		// be needed anymore. Otherwise it'd be explicitly declared in oOptions.styleClass
-		if (oBarControl.hasStyleClass("sapUiHidden")) {
-			oBarControl.removeStyleClass("sapUiHidden");
-		}
-		oBarControl.addStyleClass(oOptions.styleClass);
+		oBarControl.addStyleClass(oOptions.styleClass || "");
 
 		oRm.renderControl(oBarControl);
 	};
