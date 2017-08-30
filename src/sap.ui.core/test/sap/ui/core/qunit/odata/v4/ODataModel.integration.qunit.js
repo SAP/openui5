@@ -2665,6 +2665,56 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: PATCH an entity which is read via navigation from a complex type
+	QUnit.test("PATCH entity below a complex type", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'1\')}">\
+	<Table id="table" items="{LOCATION/City/EmployeesInCity}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="room" text="{ROOM_ID}"/>\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID"
+				+ "&$expand=LOCATION/City/EmployeesInCity($select=ID,ROOM_ID)", {
+			"ID" : "1",
+			"LOCATION" : {
+				"City" : {
+					"EmployeesInCity" : [{
+						"ID" : "1",
+						"ROOM_ID" : "1.01",
+						"@odata.etag" : "eTag"
+					}]
+				}
+			}
+		}).expectChange("room", ["1.01"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+				method : "PATCH",
+				url : "EMPLOYEES('1')",
+				headers : {
+					"If-Match" : "eTag"
+				},
+				payload : {
+					"ROOM_ID" : "1.02"
+				}
+			}).expectChange("room", "1.02", 0);
+
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
+				.setValue("1.02");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: test conversion of $select and $expand for V2 Adapter
 	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 	QUnit.test("V2 Adapter: select in expand", function (assert) {

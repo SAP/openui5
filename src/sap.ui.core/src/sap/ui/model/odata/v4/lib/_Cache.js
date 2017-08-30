@@ -320,7 +320,7 @@ sap.ui.define([
 				visitInstance(oInstance, sPath);
 				sPredicate = oInstance["@$ui5.predicate"];
 				if (sPredicate) {
-					aInstances.$byPredicate[oInstance["@$ui5.predicate"]] = oInstance;
+					aInstances.$byPredicate[sPredicate] = oInstance;
 				}
 			}
 		}
@@ -334,20 +334,20 @@ sap.ui.define([
 		function visitInstance(oInstance, sPath) {
 			var oType = mTypeForPath[sPath];
 
-			if (oType && oInstance) { // oType is only defined when at an entity
+			if (oType) { // oType is only defined when at an entity
 				oInstance["@$ui5.predicate"] = oRequestor.getKeyPredicate(oType, oInstance);
-
-				Object.keys(oInstance).forEach(function (sProperty) {
-					var vPropertyValue = oInstance[sProperty],
-						sPropertyPath = sPath + "/" + sProperty;
-
-					if (Array.isArray(vPropertyValue)) {
-						visitArray(vPropertyValue, sPropertyPath);
-					} else {
-						visitInstance(vPropertyValue, sPropertyPath);
-					}
-				});
 			}
+
+			Object.keys(oInstance).forEach(function (sProperty) {
+				var vPropertyValue = oInstance[sProperty],
+					sPropertyPath = sPath + "/" + sProperty;
+
+				if (Array.isArray(vPropertyValue)) {
+					visitArray(vPropertyValue, sPropertyPath);
+				} else if (vPropertyValue && typeof vPropertyValue === "object") {
+					visitInstance(vPropertyValue, sPropertyPath);
+				}
+			});
 		}
 
 		visitInstance(oRootInstance, this.sResourcePath);

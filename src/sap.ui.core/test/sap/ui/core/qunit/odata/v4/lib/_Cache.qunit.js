@@ -1017,16 +1017,21 @@ sap.ui.require([
 				bar : {
 					baz : {}
 				},
+				property : {
+					navigation : {} // an navigation property within a complex type
+				},
 				no : 4,
 				qux : null
 			},
 			sPredicate1 = "(foo='4711')",
 			sPredicate2 = "(bar='42')",
 			sPredicate3 = "(baz='67')",
+			sPredicate4 = "(entity='23')",
 			mTypeForPath = {
 				"~foo~" : {},
 				"~foo~/bar" : {},
 				"~foo~/bar/baz" : {},
+				"~foo~/property/navigation" : {},
 				"~foo~/qux" : {}
 			};
 
@@ -1041,6 +1046,10 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/bar/baz"]),
 				sinon.match.same(oEntity.bar.baz))
 			.returns(sPredicate3);
+		this.oRequestorMock.expects("getKeyPredicate")
+			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/property/navigation"]),
+				sinon.match.same(oEntity.property.navigation))
+			.returns(sPredicate4);
 
 		// code under test
 		oCache.calculateKeyPredicates(oEntity, mTypeForPath);
@@ -1048,6 +1057,7 @@ sap.ui.require([
 		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate1);
 		assert.strictEqual(oEntity.bar["@$ui5.predicate"], sPredicate2);
 		assert.strictEqual(oEntity.bar.baz["@$ui5.predicate"], sPredicate3);
+		assert.strictEqual(oEntity.property.navigation["@$ui5.predicate"], sPredicate4);
 	});
 
 	//*********************************************************************************************
