@@ -18,8 +18,16 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/OverflowToolbarLayoutData',
 	'sap/ui/core/IconPool',
-	'sap/m/OverflowToolbarButton'],
-	function(jQuery, Metadata, ManagedObjectObserver, Button, OverflowToolbarLayoutData, IconPool, OverflowToolbarButton) {
+	'sap/m/OverflowToolbarButton',
+	'sap/m/OverflowToolbarPriority'],
+	function(jQuery,
+			 Metadata,
+			 ManagedObjectObserver,
+			 Button,
+			 OverflowToolbarLayoutData,
+			 IconPool,
+			 OverflowToolbarButton,
+			 OverflowToolbarPriority) {
 	"use strict";
 
 	/**
@@ -387,8 +395,7 @@ sap.ui.define([
 				icon: IconPool.getIconURI("action"),
 				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
 				layoutData: new OverflowToolbarLayoutData({
-					moveToOverflow: false,
-					stayInOverflow: false
+					priority: OverflowToolbarPriority.NeverOverflow
 				}),
 				press: function () {
 					that._oActionSheet.openBy(that._oShareMenuBtn);
