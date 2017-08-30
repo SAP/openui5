@@ -610,14 +610,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Places the cursor on a given position (zero based).
-	 * @param {int} iPos The position the cursor to be placed on
+	 * @param {int} iPos The position the cursor to be placed on. If negative value is given, 0 is considered.
 	 * @private
 	 */
 	MaskInput.prototype._setCursorPosition = function (iPos) {
-		if (sap.ui.Device.browser.webkit && iPos < 0) {
-			/* For webkit browsers version >=58.0, negative value position the carret at the end of the string.
-			/* In previous versions the outcome was the same as if position is 0 => at the beginning of the string.
-			 */
+		if (iPos < 0) {
 			iPos = 0;
 		}
 		return jQuery(this.getFocusDomRef()).cursorPos(iPos);
