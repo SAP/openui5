@@ -13,13 +13,13 @@ sap.ui.require([
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/TableUtils",
 	'sap/ui/table/library',
-	"sap/ui/Device", "sap/ui/model/json/JSONModel",
+	"sap/ui/Device", "sap/ui/model/json/JSONModel", "sap/ui/model/Sorter", "sap/ui/model/Filter", "sap/ui/model/type/Float",
 	"sap/m/Text", "sap/m/Input", "sap/m/Label", "sap/m/CheckBox", "sap/m/Button", "sap/m/Link", "sap/m/RatingIndicator", "sap/m/Image",
-	"sap/m/Toolbar", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem"
+	"sap/m/Toolbar", "sap/m/ToolbarDesign", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem"
 ], function(qutils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction, RowActionItem,
 			RowSettings, TableUtils, TableLibrary,
-			Device, JSONModel,
-			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem) {
+			Device, JSONModel, Sorter, Filter, FloatType,
+			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, ToolbarDesign, Menu, MenuItem) {
 	"use strict";
 
 	// Shortcuts
@@ -125,7 +125,7 @@ sap.ui.require([
 					filterProperty: "rating",
 					showFilterMenuEntry: false
 				}));
-				var floatType = new sap.ui.model.type.Float({
+				var floatType = new FloatType({
 					decimalSeparator: ",",
 					groupingSeparator: "."
 				});
@@ -1424,20 +1424,20 @@ sap.ui.require([
 	});
 
 	QUnit.test("Table toolbar should have the transparent design by default without changing the design property", function(assert) {
-		var oToolbar = new sap.m.Toolbar();
+		var oToolbar = new Toolbar();
 		var oTable = new Table({
 			toolbar: oToolbar
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(sap.m.ToolbarDesign.Auto, oToolbar.getDesign(), "Design property of the Toolbar is Auto");
-		assert.strictEqual(sap.m.ToolbarDesign.Transparent, oToolbar.getActiveDesign(), "Active design of the Toolbar is Transparent");
+		assert.strictEqual(ToolbarDesign.Auto, oToolbar.getDesign(), "Design property of the Toolbar is Auto");
+		assert.strictEqual(ToolbarDesign.Transparent, oToolbar.getActiveDesign(), "Active design of the Toolbar is Transparent");
 
 		oTable.destroy();
 	});
 
 	QUnit.test("Table should respect the design property of the Toolbar when it is set", function(assert) {
-		var oToolbar = new sap.m.Toolbar({
+		var oToolbar = new Toolbar({
 			design: "Solid"
 		});
 		var oTable = new Table({
@@ -1445,8 +1445,8 @@ sap.ui.require([
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(sap.m.ToolbarDesign.Solid, oToolbar.getDesign(), "Design property of the Toolbar is Solid");
-		assert.strictEqual(sap.m.ToolbarDesign.Solid, oToolbar.getActiveDesign(), "Active design of the Toolbar is Solid as well");
+		assert.strictEqual(ToolbarDesign.Solid, oToolbar.getDesign(), "Design property of the Toolbar is Solid");
+		assert.strictEqual(ToolbarDesign.Solid, oToolbar.getActiveDesign(), "Active design of the Toolbar is Solid as well");
 
 		oTable.destroy();
 	});
@@ -1701,26 +1701,98 @@ sap.ui.require([
 		},
 		afterEach: function() {
 			destroyTable();
+		},
+		assertBindingInfo: function(assert, sTestTitle, oActualBindingInfo, oExpectedBindingInfo) {
+			assert.strictEqual(oActualBindingInfo.path, oExpectedBindingInfo.path, sTestTitle + ": The path is correct");
+			assert.deepEqual(oActualBindingInfo.sorter, oExpectedBindingInfo.sorter, sTestTitle + ": The sorter is correct");
+			assert.deepEqual(oActualBindingInfo.filters, oExpectedBindingInfo.filters, sTestTitle + ": The filters are correct");
+			assert.deepEqual(oActualBindingInfo.template, oExpectedBindingInfo.template, sTestTitle + ": The template is correct");
 		}
 	});
 
-	QUnit.test("BindRows", function(assert) {
+	QUnit.test("Bind rows using bindRows method", function(assert) {
 		var spy = this.spy(oTable, "destroyRows");
+
 		// bind rows again, binding could be resolved because model is set
 		oTable.bindRows(oTable.getBindingInfo("rows"));
 
 		// bind rows to different model which is not yet set
 		oTable.bindRows("otherModel>/root");
+
 		// bind rows again. Binding was not yet resolved
 		oTable.bindRows("otherModel>/root");
-		// passing vTemplate as instanceof Sorter
-		var vTemplate = new sap.ui.model.Sorter("modelData>gender", true);
-		oTable.bindRows("otherModel>/root", vTemplate);
+
+		// BindingInfo
+		var oBindingInfo = {
+			path: "/modelData",
+			sorter: new Sorter({
+				path: "modelData>money",
+				descending: true
+			}),
+			filters: [
+				new Filter({
+					path: "modelData>money",
+					operator: "LT",
+					value: 5
+				})
+			],
+			template: new Label({
+				text: "Last Name"
+			})
+		};
+		oTable.bindRows(oBindingInfo);
+		this.assertBindingInfo(assert, "BindingInfo", oTable.getBindingInfo("rows"), oBindingInfo);
+
 		// destroy rows must not be called
 		assert.ok(spy.notCalled, "destroyRows was not called");
 	});
 
-	QUnit.test("BindRows", function(assert) {
+	QUnit.test("Bind rows using bindRows method - legacy API", function(assert) {
+		var oSorter = new Sorter({
+			path: "modelData>money",
+			descending: true
+		});
+		var oFilter = new Filter({
+			path: "modelData>money",
+			operator: "LT",
+			value: 5
+		});
+		var oTemplate = new Label({
+			text: "Last Name"
+		});
+
+		// (sPath)
+		oTable.bindRows("/modelData");
+		this.assertBindingInfo(assert, "(sPath)", oTable.getBindingInfo("rows"), {
+			path: "/modelData"
+		});
+
+		// (sPath, oSorter)
+		oTable.bindRows("/modelData", oSorter);
+		this.assertBindingInfo(assert, "(sPath, oSorter)", oTable.getBindingInfo("rows"), {
+			path: "/modelData",
+			sorter: oSorter
+		});
+
+		// (sPath, oSorter, aFilters)
+		oTable.bindRows("/modelData", oSorter, [oFilter]);
+		this.assertBindingInfo(assert, "(sPath, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
+			path: "/modelData",
+			sorter: oSorter,
+			filters: [oFilter]
+		});
+
+		// (sPath, vTemplate, oSorter, aFilters)
+		oTable.bindRows("/modelData", oTemplate, oSorter, [oFilter]);
+		this.assertBindingInfo(assert, "(sPath, vTemplate, oSorter, aFilters)", oTable.getBindingInfo("rows"), {
+			path: "/modelData",
+			sorter: oSorter,
+			filters: [oFilter],
+			template: oTemplate
+		});
+	});
+
+	QUnit.test("Bind rows using the constructor", function(assert) {
 		var spy = this.spy(Table.prototype, "bindRows");
 		/*eslint-disable no-new */
 		new Table({
@@ -1733,16 +1805,30 @@ sap.ui.require([
 	});
 
 	QUnit.test("Binding events", function(assert) {
-		var oChangeSpy = this.spy();
-		var oDataRequestedSpy = this.spy();
-		var oDataReceivedSpy = this.spy();
+		var aEventListenerSequence = [];
+
+		oTable._onBindingChange = function() {
+			aEventListenerSequence.push("change_table");
+		};
+		oTable._onBindingDataRequestedListener = function() {
+			aEventListenerSequence.push("dataRequested_table");
+		};
+		oTable._onBindingDataReceivedListener = function() {
+			aEventListenerSequence.push("dataReceived_table");
+		};
 
 		oTable.bindRows({
 			path: "/modelData",
 			events: {
-				change: oChangeSpy,
-				dataRequested: oDataRequestedSpy,
-				dataReceived: oDataReceivedSpy
+				change: function() {
+					aEventListenerSequence.push("change_other");
+				},
+				dataRequested: function() {
+					aEventListenerSequence.push("dataRequested_other");
+				},
+				dataReceived: function() {
+					aEventListenerSequence.push("dataReceived_other");
+				}
 			}
 		});
 
@@ -1750,9 +1836,9 @@ sap.ui.require([
 		oBinding.fireEvent("dataRequested");
 		oBinding.fireEvent("dataReceived");
 
-		assert.ok(oChangeSpy.calledOnce, "The original change event listener was called once");
-		assert.ok(oDataRequestedSpy.calledOnce, "The original dataRequested event listener was called once");
-		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
+		assert.deepEqual(aEventListenerSequence, [
+			"change_table", "change_other", "dataRequested_table", "dataRequested_other", "dataReceived_table", "dataReceived_other"
+		], "The binding event listeners where called in the correct order");
 	});
 
 	QUnit.module("Callbacks", {
@@ -1972,8 +2058,8 @@ sap.ui.require([
 			});
 
 			oTable.addColumn(new Column({
-				label: new sap.m.Label({text: "Last Name"}),
-				template: new sap.m.Text({text: "{lastName}"})
+				label: new Label({text: "Last Name"}),
+				template: new Text({text: "{lastName}"})
 			}));
 
 			var oModel = new JSONModel();
