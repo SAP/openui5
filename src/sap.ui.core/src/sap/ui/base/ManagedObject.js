@@ -1693,6 +1693,11 @@ sap.ui.define([
 
 		if (oOldChild instanceof ManagedObject) { // remove old child
 			oOldChild.setParent(null);
+		} else {
+			if (this._observer != null && oOldChild != null) {
+				//alternative type
+				this._observer.aggregationChange(this, sAggregationName, "remove", oOldChild);
+			}
 		}
 		this.mAggregations[sAggregationName] = oObject;
 		if (oObject instanceof ManagedObject) { // adopt new child
@@ -1700,6 +1705,12 @@ sap.ui.define([
 		} else {
 			if (!this.isInvalidateSuppressed()) {
 				this.invalidate();
+			}
+
+
+			if (this._observer != null && oObject != null) {
+				//alternative type
+				this._observer.aggregationChange(this, sAggregationName, "insert", oObject);
 			}
 		}
 
