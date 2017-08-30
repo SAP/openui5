@@ -115,12 +115,22 @@
 			"owner": "jonathanbaker7",
 			"license": "Apache 2.0",
 			"type": "JS Library"
-	  	},"grunt-nwabap-ui5uploader": {
+	  	},
+		"grunt-nwabap-ui5uploader": {
 			"name": "grunt-nwabap-ui5uploader",
 			"description": "A Grunt plugin to upload UI5 sources to a SAP NetWeaver ABAP system.",
 			"githubLink": "https://github.com/pfefferf/grunt-nwabap-ui5uploader",
 			"documentationLink": "https://github.com/pfefferf/grunt-nwabap-ui5uploader",
 			"owner": "pfefferf",
+			"license": "Apache 2.0",
+			"type": "Tool"
+		},
+		"UI5Lab": {
+			"name": "ui5lab",
+			"description": "UI5Lab is a community driven project to establish a repository for UI5 Custom Control Libraries. It is meant to enable everyone to use UI5 Custom Controls easily.",
+			"githubLink": "https://github.com/ui5lab-central",
+			"documentationLink": "https://ui5lab.io",
+			"owner": "ui5lab",
 			"license": "Apache 2.0",
 			"type": "Tool"
 		}
