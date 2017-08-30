@@ -115,8 +115,26 @@
 			"owner": "jonathanbaker7",
 			"license": "Apache 2.0",
 			"type": "JS Library"
-	  	},
-		"grunt-nwabap-ui5uploader": {
+	  },
+		"openui5-password": {
+			"name": "OpenUI5 Password",
+			"description": "An OpenUI5 Control which checks your password strength and validates it.",
+			"githubLink": "https://github.com/mauriciolauffer/openui5-password",
+			"documentationLink": "https://github.com/mauriciolauffer/openui5-password",
+			"owner": "mauriciolauffer",
+			"license": "MIT",
+			"type": "JS Library"
+		},
+		"openui5-validator": {
+			"name": "OpenUI5 Validator",
+			"description": "An OpenUI5 library to validate fields.",
+			"githubLink": "https://github.com/mauriciolauffer/openui5-validator",
+			"documentationLink": "https://github.com/mauriciolauffer/openui5-validator",
+			"owner": "mauriciolauffer",
+			"license": "MIT",
+			"type": "JS Library"
+	  },
+    "grunt-nwabap-ui5uploader": {
 			"name": "grunt-nwabap-ui5uploader",
 			"description": "A Grunt plugin to upload UI5 sources to a SAP NetWeaver ABAP system.",
 			"githubLink": "https://github.com/pfefferf/grunt-nwabap-ui5uploader",
