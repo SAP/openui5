@@ -11,7 +11,6 @@
 		"controller/Home.controller.js",
 		"controller/settings/MasterSettings.controller.js",
 		"controller/Statistics.controller.js",
-		"css/style.css",
 		"i18n/i18n.properties",
 		"images/homeImage.jpg",
 		"images/homeImage_small.jpg",
