@@ -20,7 +20,8 @@ sap.ui.require([
 	'sap/ui/layout/form/Form',
 	'sap/ui/layout/form/FormContainer',
 	'sap/ui/layout/form/SimpleForm',
-	'sap/uxap/ObjectPageSection'
+	'sap/uxap/ObjectPageSection',
+	'sap/ui/fl/Utils'
 ],
 function(
 	DesignTime,
@@ -40,7 +41,8 @@ function(
 	Form,
 	FormContainer,
 	SimpleForm,
-	ObjectPageSection
+	ObjectPageSection,
+	FlexUtils
 ) {
 	"use strict";
 	QUnit.start();
@@ -123,6 +125,7 @@ function(
 
 	QUnit.test("when the control has no stable id and hasStableId method is called", function(assert) {
 		assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then it returns false");
+		assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), false, "then the 'getElementHasStableId' property of the Overlay is set to false");
 	});
 
 	QUnit.module("Given this the Plugin is initialized with 2 Plugins", {
@@ -137,6 +140,8 @@ function(
 			}).placeAt("content");
 
 			sap.ui.getCore().applyChanges();
+
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
 
 			this.oRenamePlugin = new Rename({
 				commandFactory : new CommandFactory()
@@ -164,8 +169,11 @@ function(
 		}
 	});
 
-	QUnit.test("when the control has a stable id and hasStableId method is called", function(assert) {
-		assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then it returns true");
+	QUnit.test("when the control has a stable id and at least one plugin has been initialized", function(assert) {
+		assert.equal(this.oCheckControlIdSpy.callCount, 1, "then the utility method to check the control id has been already called for this Overlay");
+		assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), true, "and the 'getElementHasStableId' property of the Overlay is set to true");
+		assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then if hasStableId is called again it also returns true");
+		assert.equal(this.oCheckControlIdSpy.callCount, 1, "but then the utility method to check the control id is not called a second time");
 	});
 
 	QUnit.test("when the event elementModified is thrown", function(assert) {
@@ -189,6 +197,7 @@ function(
 				formContainers : [this.oGroup]
 			}).placeAt("content");
 
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
 
 			sap.ui.getCore().applyChanges();
 
@@ -212,6 +221,7 @@ function(
 		afterEach : function(assert) {
 			this.oForm.destroy();
 			this.oDesignTime.destroy();
+			sandbox.restore();
 		}
 	});
 
@@ -257,6 +267,8 @@ function(
 			this.oForm = this.oSimpleForm.getAggregation("form");
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
+
 			this.oPlugin = new sap.ui.rta.plugin.Plugin({
 				commandFactory : new CommandFactory()
 			});
@@ -279,6 +291,7 @@ function(
 		afterEach : function(assert) {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
+			sandbox.restore();
 		}
 	});
 
@@ -299,7 +312,7 @@ function(
 		assert.ok(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "createContainer"), "then it returns true");
 	});
 
-	QUnit.test("when control has no stable id and hasStableId method is called", function(assert) {
+	QUnit.test("when control has no stable id, but it has stable elements retrieved by function in newly set DT Metadata", function(assert) {
 		this.oFormContainerOverlay.setDesignTimeMetadata({
 			aggregations : {
 				form : {
@@ -333,7 +346,12 @@ function(
 				}
 			}
 		});
-		assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then it returns true");
+		assert.equal(this.oCheckControlIdSpy.callCount, 0, "then the utility method to check the control id has not yet been called for this Overlay");
+		assert.strictEqual(this.oFormContainerOverlay.getElementHasStableId(), undefined, "and the 'getElementHasStableId' property of the Overlay is still undefined");
+		assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then if hasStableId is called it returns true");
+		assert.equal(this.oCheckControlIdSpy.callCount, 3, "and the utility method to check the control id is called once for each stable element");
+		assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then a second call of hasStableId also returns true");
+		assert.equal(this.oCheckControlIdSpy.callCount, 3, "but utility method to check the control id is not called again");
 	});
 
 	QUnit.module("Given this the Plugin is initialized.", {
@@ -355,6 +373,8 @@ function(
 
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
+
 			this.oPlugin = new sap.ui.rta.plugin.Plugin();
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -374,10 +394,11 @@ function(
 		afterEach : function(assert) {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
+			sandbox.restore();
 		}
 	});
 
-	QUnit.test("when the control has no stable id and hasStableId method is called", function(assert) {
+	QUnit.test("when the control has no stable id and it has no stable elements to be retrieved by function in newly set DT Metadata", function(assert) {
 		this.oFormContainerOverlay.setDesignTimeMetadata({
 			aggregations : {
 				form : {
@@ -411,7 +432,10 @@ function(
 				}
 			}
 		});
-		assert.notOk(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then it returns false");
+		assert.equal(this.oCheckControlIdSpy.callCount, 0, "then the utility method to check the control id has not yet been called for this Overlay");
+		assert.strictEqual(this.oFormContainerOverlay.getElementHasStableId(), undefined, "and the 'getElementHasStableId' property of the Overlay is still undefined");
+		assert.notOk(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then if hasStableId is called it returns false");
+		assert.equal(this.oCheckControlIdSpy.callCount, 1, "and the utility method to check the control id is called once for each stable element");
 	});
 
 	QUnit.test("when the control has no stable id, no actions and hasStableId method is called", function(assert) {
