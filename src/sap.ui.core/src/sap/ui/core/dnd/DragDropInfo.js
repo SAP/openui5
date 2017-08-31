@@ -191,7 +191,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 
 	// IDropInfo members
 
-	DragDropInfo.prototype.isDroppable = function (oDropTargetElement) {
+	DragDropInfo.prototype.isDroppable = function (oDropTargetElement, oDropTargetDomRef) {
 		if (!(oDropTargetElement instanceof Element)) {
 			return false;
 		}
@@ -217,9 +217,21 @@ sap.ui.define(["./DragDropBase", "../Element"],
 		// otherwise just anywhere in oValidTarget.
 		if (sTargetAggregationName) {
 			if (oDropTargetElement === oValidTarget) {
-				// Dragging over this element, not any child, so we need to check whether the current DOM element corresponds to the configured
-				// aggregation.
-				// TODO, use designtime.js
+
+				// Dragging over this element, not any child, so we need to check whether the current DOM element corresponds to the configured aggregation.
+				if (!oValidTarget.getAggregationDomRef) {
+					return false;
+				}
+
+				var oAggregationDomRef = oValidTarget.getAggregationDomRef(sTargetAggregationName);
+				if (!oAggregationDomRef || oAggregationDomRef === oDropTargetDomRef) {
+					return false;
+				}
+
+				if (oAggregationDomRef.contains(oDropTargetDomRef)) {
+					return true;
+				}
+
 				return false;
 
 			} else if (!(oDropTargetElement.sParentAggregationName === sTargetAggregationName && oDropTargetElement.getParent() === oValidTarget)) {

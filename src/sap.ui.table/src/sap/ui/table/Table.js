@@ -1104,6 +1104,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
+	 * Returns the aggregation containers DOM reference.
+	 * @private
+	 */
+	Table.prototype.getAggregationDomRef = function(sAggregationName) {
+		if (sAggregationName == "rows") {
+			return this.getDomRef("tableCCnt");
+		}
+	};
+
+	/**
 	 * Synchronizes the row heights.
 	 * @param {boolean} bHeader update of column headers if true, otherwise update data rows.
 	 * @private
