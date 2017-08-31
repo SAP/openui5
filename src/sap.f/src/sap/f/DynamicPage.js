@@ -106,8 +106,11 @@ sap.ui.define([
 
 				/**
 				 * Determines whether the user can switch between the expanded/collapsed states of the
-				 * <code>DynamicPageHeader</code> by clicking on the <code>DynamicPageTitle</code>. If set to
-				 * <code>false</code>, the <code>DynamicPageTitle</code> is not clickable and the application
+				 * <code>DynamicPageHeader</code> by clicking on the <code>DynamicPageTitle</code>
+				 * or by using the expand/collapse visual indicators,
+				 * positioned at the bottom of the <code>DynamicPageTitle</code> and the <code>DynamicPageHeader</code>.
+				 * If set to <code>false</code>, the <code>DynamicPageTitle</code> is not clickable,
+				 * the visual indicators are not available and the application
 				 * must provide other means for expanding/collapsing the <code>DynamicPageHeader</code>, if necessary.
 				 */
 				toggleHeaderOnTitleClick: {type: "boolean", group: "Behavior", defaultValue: true},
