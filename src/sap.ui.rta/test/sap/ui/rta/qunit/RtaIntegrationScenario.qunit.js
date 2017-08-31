@@ -234,17 +234,22 @@ sap.ui.require([
 	});
 
 	QUnit.test("during rename", function(assert) {
+		var fnDone = assert.async();
+		sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
+			if (mParams.overlay === this.oElementOverlay) {
+				sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Z, false, false, true);
+				assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
+
+				sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Y, false, false, true);
+				assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
+				fnDone();
+			}
+		}, this);
+
 		this.oElementOverlay.focus();
 		sap.ui.test.qunit.triggerKeydown(this.oElementOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
 		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[0];
 		oContextMenuItem.getDomRef().click();
-		sap.ui.getCore().applyChanges();
-
-		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Z, false, false, true);
-		assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
-
-		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Y, false, false, true);
-		assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
 	});
 
 	RtaQunitUtils.removeTestViewAfterTestsWhenCoverageIsRequested();
