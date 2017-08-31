@@ -8,14 +8,16 @@ sap.ui.define([
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/OverlayUtil'
+	'sap/ui/dt/OverlayUtil',
+	'sap/ui/dt/ElementOverlay'
 ],
 function(
 	Plugin,
 	FlexUtils,
 	ChangeRegistry,
 	OverlayRegistry,
-	OverlayUtil
+	OverlayUtil,
+	ElementOverlay
 ) {
 	"use strict";
 
@@ -39,6 +41,12 @@ function(
 	 * @alias sap.ui.rta.plugin.Plugin
 	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
+
+	/* Methods to save stable ID info on Overlay */
+	ElementOverlay.prototype._bElementHasStableId = undefined;
+	ElementOverlay.prototype.getElementHasStableId = function() { return this._bElementHasStableId;};
+	ElementOverlay.prototype.setElementHasStableId = function(bHasStableId) { this._bElementHasStableId = bHasStableId; };
+	ElementOverlay.prototype.hasElementStableId = function() { return this._bElementHasStableId ? true : false; };
 
 	var BasePlugin = Plugin.extend("sap.ui.rta.plugin.Plugin", /** @lends sap.ui.dt.Plugin.prototype */ {
 		metadata : {
@@ -105,32 +113,38 @@ function(
 		this.removeFromPluginsList(oOverlay);
 	};
 
+	/**
+	 * Checks if the element of an overlay has a stable ID.
+	 * Keeps this information on the Overlay, as stable IDs cannot be modified in runtime.
+	 * @param  {sap.ui.dt.ElementOverlay}  oOverlay Overlay for the element to be checked
+	 * @return {boolean} Returns true if the element has a stable ID
+	 */
 	BasePlugin.prototype.hasStableId = function(oOverlay) {
 		if (!oOverlay) {
 			return false;
-		} else if (!oOverlay.getDesignTimeMetadata()) {
-			return FlexUtils.checkControlId(oOverlay.getElementInstance());
 		}
 
-		var bStable = false;
-		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-		var oElement = oOverlay.getElementInstance();
+		if (oOverlay.getElementHasStableId() === undefined){
+			var bStable = false;
+			var oElement = oOverlay.getElementInstance();
+			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+			var fnGetStableElements = oDesignTimeMetadata && oDesignTimeMetadata.getData().getStableElements;
+			if (fnGetStableElements){
+				var aStableElements = fnGetStableElements(oElement);
+				var bUnstable = aStableElements ? aStableElements.some(function(vStableElement) {
+					var oControl = vStableElement.id || vStableElement;
+					if (!FlexUtils.checkControlId(oControl, vStableElement.appComponent)) {
+						return true;
+					}
+				}) : true;
+				bStable = !bUnstable;
+			} else {
+				bStable = FlexUtils.checkControlId(oElement);
+			}
 
-		var fnGetStableElements = oDesignTimeMetadata.getData().getStableElements;
-
-		if (fnGetStableElements) {
-			var aStableElements = fnGetStableElements(oElement);
-			var bUnstable = aStableElements ? aStableElements.some(function(vStableElement) {
-				var oControl = vStableElement.id || vStableElement;
-				if (!FlexUtils.checkControlId(oControl, vStableElement.appComponent)) {
-					return true;
-				}
-			}) : true;
-			bStable = !bUnstable;
-		} else {
-			bStable = FlexUtils.checkControlId(oElement);
+			oOverlay.setElementHasStableId(bStable);
 		}
-		return bStable;
+		return oOverlay.hasElementStableId();
 	};
 
 	BasePlugin.prototype.getVariantManagementReference = function (oOverlay, oAction, bForceRelevantContainer) {
