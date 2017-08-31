@@ -123,6 +123,28 @@
 			assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
 		});
 
+		/**
+		 *
+		 * Tests that <code>sap.ui.getCore().notifiyContentDensityChanged()</code> calls each control's #onThemeChanged method
+		 */
+		QUnit.test("test #notifiyContentDensityChanged", function(assert) {
+			var oBtn = new sap.ui.testlib.TestButton("testMyButton", {text:"Hallo JSUnit"});
+			var oEvent = false;
+			var oCtrlEvent = false;
+			oBtn.onThemeChanged = function(oCtrlEvt) {
+				oCtrlEvent = oCtrlEvt;
+			};
+			sap.ui.getCore().attachThemeChanged(function(oEvt){
+				oEvent = oEvt;
+			});
+
+			//call to #notifyContentDensityChanged
+			sap.ui.getCore().notifyContentDensityChanged();
+			assert.ok(oEvent, "attachThemeChanged is called");
+			assert.ok(oCtrlEvent, "TestButton#onThemeChanged is called");
+			assert.equal(oCtrlEvent.theme, sap.ui.getCore().getConfiguration().getTheme(), "Default theme is passed along");
+		});
+
 		QUnit.test("testGetControl", function(assert) {
 			var oButton = new sap.ui.testlib.TestButton("test4Button", {text:"Hallo JSUnit"});
 			sap.ui.getCore().setRoot("uiArea4", oButton);
