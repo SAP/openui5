@@ -431,8 +431,8 @@ sap.ui.define([
 	/**
 	 * Returns the combined info about the last focused data cell (based on the item navigation).
 	 *
-	 * @protected
 	 * @returns {sap.ui.table.TableUtils.FocusedItemInfo} The cell info of the last focused cell.
+	 * @protected
 	 */
 	TableKeyboardExtension.prototype._getLastFocusedCellInfo = function() {
 		var iHeader = TableUtils.getHeaderRowCount(this.getTable());
