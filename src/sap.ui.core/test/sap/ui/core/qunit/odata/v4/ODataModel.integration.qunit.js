@@ -18,7 +18,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
 	/**
 	 * Creates a V4 OData model.
@@ -118,6 +119,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel.integration", {
 		beforeEach : function () {
+			// We use a formatter to check for property changes. However before the formatter is
+			// called, the value is passed through the type's formatValue
+			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+
 			this.oSandbox = sinon.sandbox.create();
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
 			TestUtils.useFakeServer(this.oSandbox, "/sap/ui/core/qunit", {
@@ -156,6 +162,8 @@ sap.ui.require([
 			// avoid calls to formatters by UI5 localization changes in later tests
 			this.oView.destroy();
 			this.oModel.destroy();
+			// reset the language
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		},
 
 		/**
@@ -2610,6 +2618,51 @@ sap.ui.require([
 			});
 		}
 	);
+
+	//*********************************************************************************************
+	// Scenario: update a quantity. The corresponding unit of measure must be sent, too.
+	QUnit.test("Update quantity", function (assert) {
+		var sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')/SO_2_SOITEM(\'10\')}">\
+	<Text id="quantity" text="{Quantity}"/>\
+	<Text id="quantityUnit" text="{QuantityUnit}"/>\
+</FlexBox>',
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM('10')?" +
+			"$select=ItemPosition,Quantity,QuantityUnit,SalesOrderID", {
+				"@odata.etag" : "etag",
+				"Quantity" : "10.000",
+				"QuantityUnit" : "EA"
+			})
+			.expectChange("quantity", "10.000") // TODO duplicate change event
+			.expectChange("quantity", "10.000")
+			.expectChange("quantityUnit", "EA")
+			.expectChange("quantityUnit", "EA");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')/SO_2_SOITEM('10')",
+					headers : {
+						"If-Match" : "etag"
+					},
+					payload : {
+						"Quantity" : "11.000",
+						"QuantityUnit" : "EA"
+					}
+				}, {
+					"@odata.etag" : "changed",
+					"Quantity" : "11.000",
+					"QuantityUnit" : "EA"
+				})
+				.expectChange("quantity", "11.000");
+
+			that.oView.byId("quantity").getBinding("text").setValue("11.000");
+			return that.waitForChanges(assert);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: test conversion of $select and $expand for V2 Adapter

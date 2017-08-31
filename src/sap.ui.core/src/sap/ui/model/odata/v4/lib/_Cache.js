@@ -729,12 +729,15 @@ sap.ui.define([
 	 *   The edit URL for the entity which is updated via PATCH
 	 * @param {string} [sEntityPath]
 	 *   Path of the entity, relative to the cache
+	 * @param {string} [sUnitOrCurrencyPath]
+	 *   Path of the unit or currency for the property, relative to the entity
 	 * @returns {Promise}
 	 *   A promise for the PATCH request
 	 */
 	Cache.prototype.update = function (sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-			sEntityPath) {
+			sEntityPath, sUnitOrCurrencyPath) {
 		var aPropertyPath = sPropertyPath.split("/"),
+			aUnitOrCurrencyPath,
 			that = this;
 
 		return this.fetchValue(sGroupId, sEntityPath).then(function (oEntity) {
@@ -743,13 +746,20 @@ sap.ui.define([
 				oPatchPromise,
 				sParkedGroup,
 				sTransientGroup,
+				vUnitOrCurrencyValue,
 				oUpdateData = Cache.makeUpdateData(aPropertyPath, vValue);
+
+			function cacheValue(aPath) {
+				return aPath.reduce(function (oValue, sSegment) {
+					return oValue && oValue[sSegment];
+				}, oEntity);
+			}
 
 			/*
 			 * Synchronous callback to cancel the PATCH request so that it is really gone when
 			 * resetChangesForPath has been called on the binding or model.
 			 */
-			function onCancel () {
+			function onCancel() {
 				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				// write the previous value into the cache
 				_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity,
@@ -796,11 +806,23 @@ sap.ui.define([
 				}
 			}
 			// remember the old value
-			vOldValue = aPropertyPath.reduce(function (oValue, sSegment) {
-				return oValue && oValue[sSegment];
-			}, oEntity);
+			vOldValue = cacheValue(aPropertyPath);
 			// write the changed value into the cache
 			_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
+			if (sUnitOrCurrencyPath) {
+				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
+				vUnitOrCurrencyValue = cacheValue(aUnitOrCurrencyPath);
+				if (vUnitOrCurrencyValue === undefined) {
+					jQuery.sap.log.debug("Missing value for unit of measure "
+							+ _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath)
+							+ " when updating "
+							+ sFullPath,
+						that.toString(), "sap.ui.model.odata.v4.lib._Cache");
+				} else {
+					jQuery.extend(true, oUpdateData,
+						Cache.makeUpdateData(aUnitOrCurrencyPath, vUnitOrCurrencyValue));
+				}
+			}
 			if (sTransientGroup) {
 				// When updating a transient entity, _Helper.updateCache has already updated the
 				// POST request, because the request body is a reference into the cache.

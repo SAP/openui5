@@ -658,6 +658,74 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	["EUR", "", undefined].forEach(function (sUnitOrCurrencyValue, i) {
+		QUnit.test("_Cache#update: updates unit, " + i, function (assert) {
+			var oCache = new _Cache(this.oRequestor, "/ProductList", defaultFetchType, {}, true),
+				oCacheMock = this.mock(oCache),
+				sETag = 'W/"19700101000000.0000000"',
+				oEntity = {
+					"@odata.etag" : sETag,
+					"Pricing" : {
+						"Currency" : sUnitOrCurrencyValue
+					},
+					"ProductInfo" : {
+						"Amount" : "123"
+					}
+				},
+				fnError = sinon.spy(),
+				oHelperMock = this.mock(_Helper),
+				oPatchResult = {},
+				oPatchPromise = Promise.resolve(oPatchResult),
+				oStaticCacheMock = this.mock(_Cache),
+				oUnitUpdateData = {},
+				oUpdateData = {};
+
+			oCache.fetchValue = function () {};
+			oCacheMock.expects("fetchValue")
+				.withExactArgs("group", "path/to/entity").returns(_SyncPromise.resolve(oEntity));
+			this.oRequestorMock.expects("buildQueryString").returns("");
+			oStaticCacheMock.expects("makeUpdateData")
+				.withExactArgs(["ProductInfo", "Amount"], "123")
+				.returns(oUpdateData);
+			oHelperMock.expects("updateCache")
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+					sinon.match.same(oEntity), sinon.match.same(oUpdateData));
+			if (sUnitOrCurrencyValue === undefined) {
+				this.oLogMock.expects("debug").withExactArgs(
+					"Missing value for unit of measure path/to/entity/Pricing/Currency "
+						+ "when updating path/to/entity/ProductInfo/Amount",
+					oCache.toString(),
+					"sap.ui.model.odata.v4.lib._Cache");
+			} else {
+				oStaticCacheMock.expects("makeUpdateData")
+					.withExactArgs(["Pricing", "Currency"], sUnitOrCurrencyValue)
+					.returns(oUnitUpdateData);
+				this.mock(jQuery).expects("extend")
+					.withExactArgs(true, sinon.match.same(oUpdateData),
+						sinon.match.same(oUnitUpdateData));
+			}
+			this.oRequestorMock.expects("request")
+				.withExactArgs("PATCH", "ProductList('0')", "group", {
+						"If-Match" : sETag
+					}, sinon.match.same(oUpdateData), undefined, sinon.match.func)
+				.returns(oPatchPromise);
+			oPatchPromise.then(function () {
+				oHelperMock.expects("updateCache")
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+						sinon.match.same(oEntity), sinon.match.same(oPatchResult));
+			});
+
+			// code under test
+			return oCache.update("group", "ProductInfo/Amount", "123", fnError,
+					"ProductList('0')", "path/to/entity", "Pricing/Currency")
+				.then(function (oResult) {
+					sinon.assert.notCalled(fnError);
+					assert.strictEqual(oResult, oPatchResult);
+				});
+		});
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bCanceled) {
 		var sTitle = "_Cache#update: failure, then " + (bCanceled ? "cancel" : "success");
 		QUnit.test(sTitle, function (assert) {

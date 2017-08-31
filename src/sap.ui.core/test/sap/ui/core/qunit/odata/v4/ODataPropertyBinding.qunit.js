@@ -1141,7 +1141,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding) via control", function (assert) {
-		var oCacheMock = this.getSingleCacheMock(),
+		var oBindingMock,
+			oCacheMock = this.getSingleCacheMock(),
 			oModel = new ODataModel({
 				groupId : "$direct",
 				serviceUrl : "/service/?sap-client=111",
@@ -1163,6 +1164,7 @@ sap.ui.require([
 		oControl.applySettings({
 			text : "{path : 'Address/City', type : 'sap.ui.model.odata.type.String'}"
 		});
+		oBindingMock = this.mock(oControl.getBinding("text"));
 		oModelMock.expects("checkGroupId").withExactArgs(undefined);
 		oMetaModelMock.expects("fetchUpdateData")
 			.withExactArgs("Address/City", sinon.match.same(oContext))
@@ -1172,8 +1174,12 @@ sap.ui.require([
 				propertyPath : "Address/City"
 			}));
 		oParentBindingMock.expects("updateValue").withExactArgs(undefined, "Address/City", "foo",
-				sinon.match.func, "/BusinessPartnerList('0100000000')", "/BusinessPartnerList/0")
+				sinon.match.func, "/BusinessPartnerList('0100000000')", "/BusinessPartnerList/0",
+				"Unit")
 			.returns(Promise.resolve());
+		oBindingMock.expects("getUnitOrCurrencyPath")
+			.withExactArgs("Address/City")
+			.returns("Unit"); // the "Unit" property associated with Address/City
 
 		// code under test
 		oControl.setText("foo");
@@ -1187,8 +1193,12 @@ sap.ui.require([
 				propertyPath : "Address/City"
 			}));
 		oParentBindingMock.expects("updateValue").withExactArgs("up", "Address/City", null,
-				sinon.match.func, "/BusinessPartnerList('0100000000')", "/BusinessPartnerList/0")
+				sinon.match.func, "/BusinessPartnerList('0100000000')", "/BusinessPartnerList/0",
+				"Unit")
 			.returns(Promise.resolve());
+		oBindingMock.expects("getUnitOrCurrencyPath")
+			.withExactArgs("Address/City")
+			.returns("Unit");
 
 		// code under test
 		oControl.getBinding("text").setValue(null, "up");
@@ -1214,9 +1224,10 @@ sap.ui.require([
 			}));
 		this.oSandbox.mock(oParentBinding).expects("updateValue")
 			.withExactArgs(undefined, "Name", "foo", sinon.match.func, "/ProductList('HT-1000')",
-				"/ProductList/0")
+				"/ProductList/0", undefined)
 			.callsArgWith(3, oError)
 			.returns(oPromise);
+		this.mock(oPropertyBinding).expects("getUnitOrCurrencyPath").returns(undefined);
 		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to update path /ProductList('HT-1000')/Name", sClassName,
 			sinon.match.same(oError));
@@ -1269,8 +1280,9 @@ sap.ui.require([
 			}));
 		this.oSandbox.mock(oParentBinding).expects("updateValue")
 			.withExactArgs(undefined, "Name", "foo", sinon.match.func, "/ProductList('HT-1000')",
-				"/ProductList/0")
+				"/ProductList/0", undefined)
 			.returns(oPromise);
+		this.mock(oPropertyBinding).expects("getUnitOrCurrencyPath").returns(undefined);
 		this.oSandbox.mock(this.oModel).expects("reportError").never();
 
 		// code under test
@@ -1541,6 +1553,50 @@ sap.ui.require([
 
 		// code under test
 		oBinding.resetInvalidDataState();
+	});
+
+	//*********************************************************************************************
+	[{
+		mAnnotations : {},
+		sExpectedPath : undefined,
+		sPathInEntity : "Quantity"
+	}, {
+		mAnnotations : {
+			"@Org.OData.Measures.V1.Unit" : {$Path : "QuantityUnit"}
+		},
+		sExpectedPath : "QuantityUnit",
+		sPathInEntity : "Quantity"
+	}, {
+		mAnnotations : {
+			"@Org.OData.Measures.V1.ISOCurrency" : {$Path : "CurrencyCode"}
+		},
+		sExpectedPath : "CurrencyCode",
+		sPathInEntity : "GrossAmount"
+	}, {
+		mAnnotations : {
+			"@Org.OData.Measures.V1.Unit" : {$Path : "WeightUnit"}
+		},
+		sExpectedPath : "WeightUnit",
+		sPathInEntity : "ProductInfo/WeightMeasure"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("getUnitOrCurrencyPath, " + i, function (assert) {
+			var oContext = Context.create(this.oModel, {}, "/SalesOrderList('42')"),
+				oBinding = this.oModel.bindProperty("SO_2_SOITEM('10')/" + oFixture.sPathInEntity,
+					oContext),
+				oMetaContext = {},
+				oMetaModelMock = this.mock(oBinding.oModel.oMetaModel);
+
+			oMetaModelMock.expects("getMetaContext")
+				.withExactArgs("/SalesOrderList('42')/SO_2_SOITEM('10')/" + oFixture.sPathInEntity)
+				.returns(oMetaContext);
+			oMetaModelMock.expects("getObject")
+				.withExactArgs("@", sinon.match.same(oMetaContext))
+				.returns(oFixture.mAnnotations);
+
+			// code under test
+			assert.strictEqual(oBinding.getUnitOrCurrencyPath(oFixture.sPathInEntity),
+				oFixture.sExpectedPath);
+		});
 	});
 
 	//*********************************************************************************************
