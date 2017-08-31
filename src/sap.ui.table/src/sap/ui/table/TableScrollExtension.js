@@ -352,7 +352,7 @@ sap.ui.define([
 				}
 
 				if (bScrollingForward) {
-					bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.clientWidth;
+					bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.offsetWidth;
 				} else {
 					bScrolledToEnd = oHSb.scrollLeft === 0;
 				}
@@ -374,7 +374,7 @@ sap.ui.define([
 				}
 
 				if (bScrollingForward) {
-					bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.clientHeight;
+					bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetWidth;
 				} else {
 					bScrolledToEnd = oVSb.scrollTop === 0;
 				}
@@ -454,7 +454,7 @@ sap.ui.define([
 
 						if (oHSb != null) {
 							if (iTouchDistanceX < 0) { // Scrolling to the right.
-								bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.clientWidth;
+								bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.offsetWidth;
 							} else { // Scrolling to the left.
 								bScrolledToEnd = oHSb.scrollLeft === 0;
 							}
@@ -475,7 +475,7 @@ sap.ui.define([
 
 						if (oVSb != null) {
 							if (iTouchDistanceY < 0) { // Scrolling down.
-								bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.clientHeight;
+								bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetHeight;
 							} else { // Scrolling up.
 								bScrolledToEnd = oVSb.scrollTop === 0;
 							}

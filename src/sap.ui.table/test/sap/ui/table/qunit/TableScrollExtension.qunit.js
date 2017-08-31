@@ -1225,8 +1225,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("Imitating touch", function(assert) {
+		var bOriginalPointerSupport = Device.support.pointer;
+		var bOriginalTouchSupport = Device.support.touch;
 		Device.support.pointer = false;
 		Device.support.touch = true;
+
 		oTable._getKeyboardExtension()._suspendItemNavigation(); // Touch can set the focus, which can lead to scrolling. Prevent it!
 		oTable.setFixedRowCount(1);
 		initRowActions(oTable, 1, 1);
@@ -1259,6 +1262,7 @@ sap.ui.require([
 				that.oHSb.scrollLeft = that.oHSb.scrollWidth - that.oHSb.getBoundingClientRect().width;
 				iCurrentScrollPosition = that.oHSb.scrollLeft;
 
+				initTouchScrolling(oTargetElement, 200);
 				return scrollWithTouch(oTargetElement, 150, iCurrentScrollPosition, true);
 			});
 		}
@@ -1349,12 +1353,30 @@ sap.ui.require([
 				window.setTimeout(function() {
 					that.assertSynchronization(assert, iExpectedScrollPosition);
 
+					// Touch move is also a swipe on touch devices. See the moveHandler method in jquery-mobile-custom.js, to know why
+					// preventDefault is always called on touch devices (except in chrome on desktop).
+
 					if (!bValidTarget) {
-						assert.ok(!oTouchEvent.defaultPrevented, "Target does not support touch scrolling: Default action was not prevented");
+						if (!bOriginalTouchSupport || bOriginalTouchSupport && Device.system.desktop && Device.browser.chrome) {
+							assert.ok(!oTouchEvent.defaultPrevented, "Target does not support touch scrolling: Default action was not prevented");
+						} else {
+							assert.ok(oTouchEvent.defaultPrevented,
+								"Target does not support touch scrolling: Default action was still prevented on a touch device (swipe action)");
+						}
 					} else if (iCurrentScrollPosition === 0 && iScrollDelta < 0) {
-						assert.ok(!oTouchEvent.defaultPrevented, "Scroll position is already at the beginning: Default action was not prevented");
+						if (!bOriginalTouchSupport || bOriginalTouchSupport && Device.system.desktop && Device.browser.chrome) {
+							assert.ok(!oTouchEvent.defaultPrevented, "Scroll position is already at the beginning: Default action was not prevented");
+						} else {
+							assert.ok(oTouchEvent.defaultPrevented,
+								"Scroll position is already at the beginning: Default action was still prevented on a touch device (swipe action)");
+						}
 					} else if (iCurrentScrollPosition === that.oHSb.scrollWidth - that.oHSb.getBoundingClientRect().width && iScrollDelta > 0) {
-						assert.ok(!oTouchEvent.defaultPrevented, "Scroll position is already at the end: Default action was not prevented");
+						if (!bOriginalTouchSupport || bOriginalTouchSupport && Device.system.desktop && Device.browser.chrome) {
+							assert.ok(!oTouchEvent.defaultPrevented, "Scroll position is already at the end: Default action was not prevented");
+						} else {
+							assert.ok(oTouchEvent.defaultPrevented,
+								"Scroll position is already at the end: Default action was still prevented on a touch device (swipe action)");
+						}
 					} else {
 						assert.ok(oTouchEvent.defaultPrevented, "Default action was prevented");
 					}
@@ -1378,7 +1400,11 @@ sap.ui.require([
 			return scrollOnInvalidTarget(getSelectAll()[0]);
 		}).then(function() {
 			return scrollOnInvalidTarget(getColumnHeader(1)[0]);
-		}).then(done);
+		}).then(function() {
+			Device.support.pointer = bOriginalPointerSupport;
+			Device.support.touch = bOriginalTouchSupport;
+			done();
+		});
 	});
 
 	QUnit.module("Vertical scrolling", {
