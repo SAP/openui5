@@ -63,24 +63,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Selects the text of an input element.
-	 *
-	 * @param {HTMLInputElement} oInputElement The input element whose text will be selected.
-	 * @param {boolean} [bSelect=true] If set to <code>true/code>, the text will be selected, otherwise the text selection will be cleared.
-	 */
-	function toggleTextSelection(oInputElement, bSelect) {
-		if (!(oInputElement instanceof window.HTMLInputElement)) {
-			return;
-		}
-
-		if (bSelect === false) {
-			oInputElement.setSelectionRange(0, 0);
-		} else {
-			oInputElement.select();
-		}
-	}
-
-	/**
 	 * New Delegate for keyboard events of sap.ui.table.Table controls.
 	 *
 	 * @class Delegate for keyboard events of sap.ui.table.Table controls.
@@ -301,6 +283,50 @@ sap.ui.define([
 	};
 
 	/**
+	 * Focuses an element.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {HTMLElement} oElement The element which will be focused.
+	 * @param {boolean} [bSelectText=false] If set to <code>true</code> and the element has selectable text, the text will be selected.
+	 * @param {boolean} [bSilentFocus=false] If set to <code>true</code>, the <code>focusin</code> event will not be processed after focusing the
+	 *                                       element.
+	 * @private
+	 * @static
+	 */
+	TableKeyboardDelegate._focusElement = function(oTable, oElement, bSelectText, bSilentFocus) {
+		if (oTable == null || oElement == null) {
+			return;
+		}
+		if (bSelectText == null) {
+			bSelectText = false;
+		}
+		if (bSilentFocus == null) {
+			bSilentFocus = false;
+		}
+
+		function hasSelectableText(oElement) {
+			// Text selection is only supported for <input type="text|password|search|tel|url">
+			// In Chrome text selection could also be supported for other input types, but to have a consistent behavior we don't do that.
+			return oElement instanceof window.HTMLInputElement && /^(text|password|search|tel|url)$/.test(oElement.type);
+		}
+
+		// Clear text selection of the currently focused element.
+		if (hasSelectableText(document.activeElement)) {
+			document.activeElement.setSelectionRange(0, 0);
+		}
+
+		if (bSilentFocus) {
+			oTable._getKeyboardExtension()._setSilentFocus(oElement);
+		} else {
+			oElement.focus();
+		}
+
+		if (bSelectText && hasSelectableText(oElement)) {
+			oElement.select();
+		}
+	};
+
+	/**
 	 * Focus a content cell or the first interactive element inside a content cell.
 	 * If there are no interactive elements, the cell is focused instead.
 	 *
@@ -343,9 +369,7 @@ sap.ui.define([
 			var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements($Cell);
 
 			if ($InteractiveElements != null) {
-				toggleTextSelection(document.activeElement, false);
-				$InteractiveElements[0].focus();
-				toggleTextSelection($InteractiveElements[0]);
+				TableKeyboardDelegate._focusElement(oTable, $InteractiveElements[0], true);
 				return;
 			}
 		}
@@ -749,9 +773,7 @@ sap.ui.define([
 			// Target is a data cell with interactive elements inside. Focus the first interactive element in the data cell.
 			oKeyboardExtension._suspendItemNavigation();
 			oActiveElement.tabIndex = -1;
-			toggleTextSelection(oActiveElement, false);
-			oKeyboardExtension._setSilentFocus($InteractiveElements[0]);
-			toggleTextSelection($InteractiveElements[0]);
+			TableKeyboardDelegate._focusElement(this, $InteractiveElements[0], true, true);
 			return true;
 		} else if ($Cell !== null) {
 			// Target is an interactive element inside a data cell.
@@ -776,11 +798,10 @@ sap.ui.define([
 		var $Cell = TableUtils.getParentCell(this, oActiveElement);
 
 		oKeyboardExtension._resumeItemNavigation();
-		toggleTextSelection(oActiveElement, false);
 
 		if (bAdjustFocus) {
 			if ($Cell !== null) {
-				oKeyboardExtension._setSilentFocus($Cell);
+				TableKeyboardDelegate._focusElement(this, $Cell[0], false, true);
 			} else {
 				oKeyboardExtension._setSilentFocus(oActiveElement);
 			}
@@ -1056,9 +1077,7 @@ sap.ui.define([
 								TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, oCellInfo.rowIndex);
 							} else {
 								$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
-								toggleTextSelection(document.activeElement, false);
-								$InteractiveElement.focus();
-								toggleTextSelection($InteractiveElement[0]);
+								TableKeyboardDelegate._focusElement(this, $InteractiveElement[0], true);
 							}
 						}.bind(this), 0);
 					}.bind(this));
@@ -1074,25 +1093,19 @@ sap.ui.define([
 						TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, iNextRowIndex);
 					} else {
 						$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oNextRow);
-						toggleTextSelection(document.activeElement, false);
-						$InteractiveElement.focus();
-						toggleTextSelection($InteractiveElement[0]);
+						TableKeyboardDelegate._focusElement(this, $InteractiveElement[0], true);
 					}
 				}
 
 			} else if (oCellInfo.isOfType(CellType.ROWHEADER)) {
 				oEvent.preventDefault();
 				$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
-				toggleTextSelection(document.activeElement, false);
-				$InteractiveElement.focus();
-				toggleTextSelection($InteractiveElement[0]);
+				TableKeyboardDelegate._focusElement(this, $InteractiveElement[0], true);
 
 			} else {
 				oEvent.preventDefault();
 				$InteractiveElement = TableKeyboardDelegate._getNextInteractiveElement(this, oEvent.target);
-				toggleTextSelection(document.activeElement, false);
-				$InteractiveElement.focus();
-				toggleTextSelection($InteractiveElement[0]);
+				TableKeyboardDelegate._focusElement(this, $InteractiveElement[0], true);
 			}
 
 		} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
@@ -1171,9 +1184,7 @@ sap.ui.define([
 								TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, oCellInfo.rowIndex);
 							} else {
 								$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oRow);
-								toggleTextSelection(document.activeElement, false);
-								$InteractiveElement.focus();
-								toggleTextSelection($InteractiveElement[0]);
+								TableKeyboardDelegate._focusElement(this, $InteractiveElement[0], true);
 							}
 						}.bind(this), 0);
 					}.bind(this));
@@ -1189,18 +1200,14 @@ sap.ui.define([
 						TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, iPreviousRowIndex);
 					} else {
 						$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oPreviousRow);
-						toggleTextSelection(document.activeElement, false);
-						$InteractiveElement.focus();
-						toggleTextSelection($InteractiveElement[0]);
+						TableKeyboardDelegate._focusElement(this, $InteractiveElement[0], true);
 					}
 				}
 
 			} else {
 				oEvent.preventDefault();
 				$InteractiveElement = TableKeyboardDelegate._getPreviousInteractiveElement(this, oEvent.target);
-				toggleTextSelection(document.activeElement, false);
-				$InteractiveElement.focus();
-				toggleTextSelection($InteractiveElement[0]);
+				TableKeyboardDelegate._focusElement(this, $InteractiveElement[0], true);
 			}
 
 		} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER) || oEvent.target === this.getDomRef("noDataCnt")) {

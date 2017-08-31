@@ -14,8 +14,8 @@
 				"visible": "boolean",
 				"focusable": "boolean",
 				"tabbable": "boolean",
-				"index": "int", //Results in different behavior of the control in different columns
-				"width": "sap.ui.core.CSSSize" // Table sets "width" for the title text
+				"index": "int", // Results in different behavior of the control in different columns.
+				"width": "sap.ui.core.CSSSize" // Table sets "width" for the title text.
 			},
 			associations: {
 				"ariaLabelledBy": {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
@@ -43,15 +43,16 @@
 				"text": "string",
 				"visible": "boolean",
 				"tabbable": "boolean",
-				"index": "int" //Results in different behavior of the control in different columns
+				"index": "int", // Results in different behavior of the control in different columns.
+				"type": "string"
 			}
 		},
 
 		renderer: function (oRm, oControl) {
 			oRm.write("<input");
 			oRm.writeControlData(oControl);
-			oRm.writeAttribute("type", "text");
-			oRm.writeAttribute("value", oControl.getText());
+			oRm.writeAttribute("type", oControl.getType() || "text");
+			oRm.writeAttribute("value", oControl.getText() || "");
 			oRm.writeClasses();
 			if (oControl.getTabbable()) {
 				oRm.writeAttribute("tabindex", "0");
