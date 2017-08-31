@@ -1523,4 +1523,20 @@ sap.ui.require([
 	// Xable and NonXableNavigationProperties (e.g. Insertable and
 	// NonInsertableNavigationProperties); take care that both can contain values and do not
 	// overwrite the others
+
+	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=url to IsURL", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="url"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo/P01" : {
+					"@Org.OData.Core.V1.IsURL" : true
+				}
+			});
+	});
 });
