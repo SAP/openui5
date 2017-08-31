@@ -620,6 +620,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: stream property w/ read link", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType),
+			oData = {
+				productPicture : {
+					"picture@odata.mediaReadLink" : "my/Picture"
+				}
+			};
+
+		this.mock(oCache).expects("fnFetchType")
+			.withExactArgs("Products('42')/productPicture/picture", true)
+			.returns(_SyncPromise.resolve("Edm.Stream"));
+		this.mock(_Helper).expects("makeAbsolute")
+			.withExactArgs("my/Picture", this.oRequestor.getServiceUrl())
+			.returns("/~~~/");
+
+		// code under test
+		assert.strictEqual(oCache.drillDown(oData, "productPicture/picture"), "/~~~/");
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bCanceled) {
 		QUnit.test("_Cache#update: " + (bCanceled ? "canceled" : "success"), function (assert) {
 			var mQueryOptions = {},

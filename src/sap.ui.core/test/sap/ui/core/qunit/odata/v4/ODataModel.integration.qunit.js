@@ -2592,36 +2592,58 @@ sap.ui.require([
 </Table>',
 			that = this;
 
-			this.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)" +
-						"&$select=ID,Name&$skip=0&$top=100", {
-					"value" : [{
-						"ID" : "1",
-						"Name" : "Frederic Fall",
-						"LOCATION" : {
-							"City" : {
-								"EmployeesInCity" :
-									[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
-							}
+		this.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)" +
+					"&$select=ID,Name&$skip=0&$top=100", {
+				"value" : [{
+					"ID" : "1",
+					"Name" : "Frederic Fall",
+					"LOCATION" : {
+						"City" : {
+							"EmployeesInCity" :
+								[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
 						}
-					}, {
-						"ID" : "2",
-						"Name" : "Jonathan Smith",
-						"LOCATION" : {
-							"City" : {
-								"EmployeesInCity" :
-									[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
-							}
+					}
+				}, {
+					"ID" : "2",
+					"Name" : "Jonathan Smith",
+					"LOCATION" : {
+						"City" : {
+							"EmployeesInCity" :
+								[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
 						}
-					}]
-				}).expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+					}
+				}]
+			}).expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
-			return this.createView(assert, sView).then(function () {
-				assert.deepEqual(that.oView.byId("table").getItems().map(function (oItem) {
-					return oItem.getBindingContext().getPath();
-				}), ["/EMPLOYEES('1')", "/EMPLOYEES('2')"]);
-			});
-		}
-	);
+		return this.createView(assert, sView).then(function () {
+			assert.deepEqual(that.oView.byId("table").getItems().map(function (oItem) {
+				return oItem.getBindingContext().getPath();
+			}), ["/EMPLOYEES('1')", "/EMPLOYEES('2')"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: stream property with @odata.mediaReadLink
+	QUnit.test("stream property with @odata.mediaReadLink", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect: true}),
+			sView = '\
+<FlexBox binding="{/Equipments(\'1\')/EQUIPMENT_2_PRODUCT}">\
+	<Text id="url" text="{ProductPicture/Picture}"/>\
+</FlexBox>';
+
+		this.expectRequest("Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture",
+			{
+				"ID" : "42",
+				"ProductPicture" : {
+					"Picture@odata.mediaReadLink" : "ProductPicture('42')"
+				}
+			})
+			.expectChange("url",
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')")
+			.expectChange("url", // TODO unexpected change
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')");
+		return this.createView(assert, sView, oModel);
+	});
 
 	//*********************************************************************************************
 	// Scenario: update a quantity. The corresponding unit of measure must be sent, too.

@@ -695,4 +695,12 @@ sap.ui.require([
 			assert.deepEqual(oCacheBefore, oCacheAfter);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("makeAbsolute", function (assert) {
+		assert.strictEqual(_Helper.makeAbsolute("/foo/bar", "/baz"), "/foo/bar");
+		assert.strictEqual(_Helper.makeAbsolute("baz", "/foo/bar"), "/foo/baz");
+		assert.strictEqual(_Helper.makeAbsolute("Foo('1')/Bar(baz='2',qux=3)", "/service/"),
+			"/service/Foo('1')/Bar(baz='2',qux=3)");
+	});
 });

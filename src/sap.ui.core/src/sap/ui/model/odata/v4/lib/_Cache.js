@@ -489,9 +489,11 @@ sap.ui.define([
 
 		// Determine the implicit value if the value is missing in the cache. Report an invalid
 		// segment if there is no implicit value.
-		function missingValue(sSegment, iPathLength) {
+		function missingValue(oValue, sSegment, iPathLength) {
 			var sPropertyPath = that.sResourcePath,
-				sPropertyType;
+				sPropertyType,
+				sReadLink,
+				sServiceUrl;
 
 			if (sPath[0] !== '(') {
 				sPropertyPath += "/";
@@ -499,7 +501,12 @@ sap.ui.define([
 			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
 			sPropertyType = that.fnFetchType(sPropertyPath, true).getResult();
 			if (sPropertyType === "Edm.Stream") {
-				return that.oRequestor.getServiceUrl() + sPropertyPath;
+				sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
+				sServiceUrl = that.oRequestor.getServiceUrl();
+				if (sReadLink) {
+					return _Helper.makeAbsolute(sReadLink, sServiceUrl);
+				}
+				return sServiceUrl + sPropertyPath;
 			}
 			return invalidSegment(sSegment);
 		}
@@ -508,7 +515,7 @@ sap.ui.define([
 			return oData;
 		}
 		return sPath.split("/").reduce(function (vValue, sSegment, i) {
-			var aMatches;
+			var aMatches, oParentValue;
 
 			if (sSegment === "$count") {
 				return Array.isArray(vValue) ? vValue.$count : invalidSegment(sSegment);
@@ -521,6 +528,7 @@ sap.ui.define([
 			if (typeof vValue !== "object") {
 				return invalidSegment(sSegment);
 			}
+			oParentValue = vValue;
 			aMatches = rSegmentWithPredicate.exec(sSegment);
 			if (aMatches) {
 				if (aMatches[1]) { // e.g. "TEAM_2_EMPLOYEES('42')
@@ -532,7 +540,7 @@ sap.ui.define([
 			} else {
 				vValue = vValue[sSegment];
 			}
-			return vValue === undefined ? missingValue(sSegment, i + 1) : vValue;
+			return vValue === undefined ? missingValue(oParentValue, sSegment, i + 1) : vValue;
 		}, oData);
 	};
 
