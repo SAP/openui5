@@ -101,6 +101,12 @@ sap.ui.define([
 				expandedContent: {type: "sap.ui.core.Control", multiple: true},
 
 				/**
+				 * The breadcrumbs displayed in the <code>DynamicPageTitle</code> top-left area.
+				 * @since 1.52
+				 */
+				breadcrumbs: {type: "sap.m.IBreadcrumbs", multiple: false},
+
+				/**
 				 * Internal <code>OverflowToolbar</code> for the <code>DynamicPageTitle</code> actions.
 				 */
 				_overflowToolbar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
@@ -152,7 +158,11 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent
 	 */
 	DynamicPageTitle.prototype.ontap = function (oEvent) {
-		if (oEvent.srcControl === this || this.getAggregation("_overflowToolbar") === oEvent.srcControl) {
+		var oSrcControl = oEvent.srcControl;
+
+		if (oSrcControl === this
+			|| oSrcControl === this.getAggregation("_overflowToolbar")
+			|| oSrcControl === this.getAggregation("breadcrumbs")) {
 			this.fireEvent("_titlePress");
 		}
 	};
@@ -203,7 +213,7 @@ sap.ui.define([
 		if (!this.getAggregation("_overflowToolbar")) {
 			this.setAggregation("_overflowToolbar", new OverflowToolbar({
 				id: this.getId() + "-overflowToolbar"
-			}).addStyleClass("sapFDynamicPageTitleOverflowToolbar"), true); // suppress invalidate, as this is always called onBeforeRendering
+			}).addStyleClass("sapFDynamicPageTitleMainRightActionsBar"), true); // suppress invalidate, as this is always called onBeforeRendering
 		}
 
 		return this.getAggregation("_overflowToolbar");
@@ -282,7 +292,7 @@ sap.ui.define([
 	DynamicPageTitle.prototype._setShowSnapContent = function (bValue) {
 		this._bShowSnappedContent = bValue;
 		this.$snappedWrapper.toggleClass("sapUiHidden", !bValue);
-		this.$snappedWrapper.parent().toggleClass("sapFDynamicPageSnapContentVisible", bValue);
+		this.$snappedWrapper.parent().toggleClass("sapFDynamicPageTitleMainSnapContentVisible", bValue);
 	};
 
 	/**
@@ -302,7 +312,7 @@ sap.ui.define([
 	DynamicPageTitle.prototype._setShowExpandContent = function (bValue) {
 		this._bShowExpandContent = bValue;
 		this.$expandWrapper.toggleClass("sapUiHidden", !bValue);
-		this.$snappedWrapper.parent().toggleClass("sapFDynamicPageExpandContentVisible", bValue);
+		this.$snappedWrapper.parent().toggleClass("sapFDynamicPageTitleMainExpandContentVisible", bValue);
 	};
 
 	/**
@@ -407,6 +417,7 @@ sap.ui.define([
 			bShowSnapContent = this._getShowSnapContent(),
 			sAriaText = this._oRB.getText("TOGGLE_HEADER"),
 			sPrimaryArea = this.getPrimaryArea(),
+			oBreadCrumbs = this.getBreadcrumbs(),
 			oExpandButton = this._getExpandButton();
 
 			oExpandButton.toggleStyleClass("sapUiHidden", !this._getShowExpandButton());
@@ -426,7 +437,8 @@ sap.ui.define([
 				hasAdditionalContent: bHasExpandedContent || bHasSnappedContent,
 				showSnapContent: bShowSnapContent,
 				isPrimaryAreaBegin: sPrimaryArea === "Begin",
-				ariaText: sAriaText
+				ariaText: sAriaText,
+				breadcrumbs: oBreadCrumbs
 			};
 	};
 
