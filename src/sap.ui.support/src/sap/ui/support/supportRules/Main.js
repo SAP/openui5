@@ -628,6 +628,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * Analyzes all rules in the given execution scope.
 	 *
 	 * @private
+	 * @param {object} oExecutionScope The scope of the analysis
 	 * @param {object[]|object} aRuleDescriptors An array with rules against which the analysis will be run
 	 * @returns {Promise} Notifies the finished state by starting the Analyzer
 	 */
@@ -661,7 +662,9 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 
 		IssueManager.clearIssues();
 
-		return this._oAnalyzer.start(this._getSelectedRules(aRuleDescriptors), this._oCoreFacade, this._oExecutionScope).then(function() {
+		this._setSelectedRules(aRuleDescriptors);
+
+		return this._oAnalyzer.start(this._aSelectedRules, this._oCoreFacade, this._oExecutionScope).then(function() {
 			that._done();
 		});
 
@@ -678,30 +681,41 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	};
 
 	/**
-	 * Gets selected rules from rules descriptors.
+	 * Sets selected rules from rules descriptors.
 	 *
 	 * @private
-	 * @param {array} aRuleDescriptors Contains rulesDescriptor of selected rules
-	 * @returns {array} aSelectedRules Contains the selectedRules from the UI
+	 * @param {(array|object)} aRuleDescriptors Contains ruleDescriptors of selected rules.
+	 * If no ruleDescriptors are provided all rules will be selected.
 	 */
-	Main.prototype._getSelectedRules = function (aRuleDescriptors) {
-		var aSelectedRules = [],
-			that = this;
+	Main.prototype._setSelectedRules = function (aRuleDescriptors) {
+		this._aSelectedRules = [];
+		this._oSelectedRulesIds = {};
+
+		var that = this;
 
 		if (aRuleDescriptors
 			&& typeof aRuleDescriptors === "object"
 			&& aRuleDescriptors.ruleId
 			&& aRuleDescriptors.libName) {
-			aSelectedRules.push(aRuleDescriptors);
-		} else {
+			that._aSelectedRules.push(aRuleDescriptors);
+			that._oSelectedRulesIds[aRuleDescriptors.ruleId] = true;
+		} else if (Array.isArray(aRuleDescriptors)) {
 			aRuleDescriptors.forEach(function (oRuleDescriptor) {
 				var oLibWithRules = that._mRuleSets[oRuleDescriptor.libName],
 					oSelectedRule = oLibWithRules.ruleset.getRules()[oRuleDescriptor.ruleId];
-				aSelectedRules.push(oSelectedRule);
+				that._aSelectedRules.push(oSelectedRule);
+				that._oSelectedRulesIds[oRuleDescriptor.ruleId] = true;
+			});
+		} else {
+			Object.keys(that._mRuleSets).map(function (sLibName) {
+				var oRulesetRules = that._mRuleSets[sLibName].ruleset.getRules();
+
+				Object.keys(oRulesetRules).map(function (sRuleId) {
+					that._aSelectedRules.push(oRulesetRules[sRuleId]);
+					that._oSelectedRulesIds[sRuleId] = true;
+				});
 			});
 		}
-
-		return aSelectedRules;
 	};
 
 	/**
