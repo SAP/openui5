@@ -208,6 +208,18 @@ sap.ui.require([
 			}.bind(this));
 	});
 
+	QUnit.test("when a variant change with undefined variantManagement is loaded from local storage", function(assert) {
+		var aTestChangeWithoutVMRef = [{"fileName":"id_1449484290389_36","fileType":"variant"}];
+		return this.oFakeLrepConnectorLocalStorage.create(aTestChangeWithoutVMRef).then(function () {
+			return this.oFakeLrepConnectorLocalStorage.loadChanges("test.json.component")
+				.then(function (mResult) {
+					assert.equal(mResult.changes.changes.length, 4, "then three global changes from JSON and one newly added variant with undefined variantManagement reference");
+					assert.equal(mResult.changes.changes[3].fileName, aTestChangeWithoutVMRef[0].fileName, "then newly added variant added to changes");
+					assert.equal(Object.keys(mResult.changes.variantSection).length, 2,  "then only 2 pre-defined variantManagement references set, none added for the newly added variant,");
+			});
+		}.bind(this));
+	});
+
 	QUnit.test("when _createChangesMap is called with change variant not existing", function(assert) {
 		var mResult = {
 			changes: {
