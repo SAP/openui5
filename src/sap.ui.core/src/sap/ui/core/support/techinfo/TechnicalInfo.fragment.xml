@@ -8,11 +8,14 @@
 		id="Dialog"
 		class="sapUiNoContentPadding"
 		contentWidth="40%"
+		ariaLabelledBy="title"
 		draggable="true">
 		<customHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<Title text="{i18n>TechInfo.DialogTitle}"/>
+				<Title
+					id="title"
+					text="{i18n>TechInfo.DialogTitle}"/>
 				<ToolbarSpacer/>
 				<Button
 					class="sapUiTinyMarginBegin"
@@ -28,6 +31,7 @@
 		<f:SimpleForm
 			id="Form"
 			adjustLabelSpan="false"
+			layout="ResponsiveGridLayout"
 			editable="true">
 			<f:content>
 				<!-- Product Version info -->
@@ -101,12 +105,12 @@
 				<!-- Debug sources -->
 				<Label
 					text="{i18n>TechInfo.DebugSources.Label}"
-					tooltip="{i18n>TechInfo.DebugSources.Tooltip}"
 					labelFor="debugMode"/>
-				<HBox>
+				<HBox renderType="Bare">
 					<CheckBox
 						id="debugMode"
 						selected="{view>/DebugMode}"
+						tooltip="{i18n>TechInfo.DebugSources.Tooltip}"
 						select="onDebugSources"/>
 					<Link
 						text="{i18n>TechInfo.DebugSourcesModules.Link}"
@@ -129,6 +133,7 @@
 			</Button>
 			<Button
 				icon="sap-icon://settings"
+				tooltip="{i18n>Icon.settings}"
 				press="onConfigureAssistantBootstrap"
 				class="sapUiDebugTechnicalInfoAssistantSettingsButton"
 				type="Emphasized">
