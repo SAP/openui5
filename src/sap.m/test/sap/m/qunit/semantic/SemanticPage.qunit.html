@@ -1231,9 +1231,11 @@
 					oShareButton = oDetailPage._getPage().getFooter().getContent()[iFooterContentLength-1];
 
 
-			var layout = oShareButton.getLayoutData();
+			var layout = oShareButton.getLayoutData(),
+					sPriority = layout.getPriority(),
+					sExpectedPriority = sap.m.OverflowToolbarPriority.NeverOverflow;
 
-			assert.strictEqual(layout.getMoveToOverflow(), false, "The share button has correct default behavior");
+			assert.strictEqual(layout.getPriority(), sExpectedPriority, "The share button has correct priority: NeverOverflow");
 
 			// Clean up
 			oDetailPage.destroy();
