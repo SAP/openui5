@@ -49,11 +49,23 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", 
 			}],
 			async: true,
 			check: function(issueManager, oCoreFacade, oScope, resolve) {
-				var oFirstChild = oScope.getElements()[0];
-				if (!oFirstChild) {
+
+				var aElements = oScope.getElements(),
+					oElement,
+					oAppComponent;
+
+				for (var i = 0; i < aElements.length; i++) {
+					oElement = aElements[i];
+					oAppComponent = Utils.getAppComponentForControl(oElement);
+
+					if (oAppComponent) {
+						break;
+					}
+				}
+
+				if (!oAppComponent) {
 					return;
 				}
-				var oAppComponent = Utils.getAppComponentForControl(oFirstChild);
 
 				var oDesignTime = new DesignTime({
 					rootElements : [oAppComponent]
