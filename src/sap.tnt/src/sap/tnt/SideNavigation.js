@@ -66,6 +66,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 */
 					_bottomArrowControl: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
 				},
+				associations : {
+					/**
+					 * The selected <code>NavigationListItem</code>.
+					 *
+					 * @since 1.52.0
+					 */
+					selectedItem: {type: "sap.tnt.NavigationListItem", multiple: false}
+				},
 				events: {
 					/**
 					 * Fired when an item is selected.
@@ -192,6 +200,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 		SideNavigation.prototype.onBeforeRendering = function () {
+			var selectedItem = this.getSelectedItem();
+
+			if (selectedItem) {
+			    this.setSelectedItem(selectedItem, true);
+			}
+
 			this._deregisterControl();
 		};
 
@@ -201,6 +215,50 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		SideNavigation.prototype.onAfterRendering = function () {
 			this._ResizeHandler = ResizeHandler.register(this.getDomRef(), this._toggleArrows.bind(this));
 			this._toggleArrows();
+		};
+
+		/**
+		 * Sets the association for selectedItem
+		 * @param {string|sap.tnt.NavigationListItem} selectedItem The control to be set as selected
+		 * @param {boolean} suppressInvalidate If true, the managed object's invalidate method is not called
+		 * @return {sap.tnt.SideNavigation|null} The <code>selectedItem</code> association
+		 */
+		SideNavigation.prototype.setSelectedItem = function (selectedItem, suppressInvalidate) {
+			var navigationList = this.getAggregation('item');
+			var fixedNavigationList = this.getAggregation('fixedItem');
+			var listItemToSelect;
+
+			if (!selectedItem) {
+				if (navigationList.setSelectedItem) {
+					navigationList.setSelectedItem(null, true);
+				}
+				if (fixedNavigationList.setSelectedItem) {
+					fixedNavigationList.setSelectedItem(null, true);
+				}
+			}
+
+			if (typeof selectedItem === 'string') {
+				listItemToSelect = sap.ui.getCore().byId(selectedItem);
+			} else {
+				listItemToSelect = selectedItem;
+			}
+
+			var selectedInFlexibleList = listItemToSelect && listItemToSelect.getNavigationList && listItemToSelect.getNavigationList() === navigationList;
+			var selectedInFixedList = listItemToSelect && listItemToSelect.getNavigationList && listItemToSelect.getNavigationList() === fixedNavigationList;
+
+			if (selectedInFlexibleList) {
+				navigationList.setSelectedItem(listItemToSelect, suppressInvalidate);
+				fixedNavigationList.setSelectedItem(null, true);
+			}
+
+			if (selectedInFixedList) {
+				fixedNavigationList.setSelectedItem(listItemToSelect, suppressInvalidate);
+				navigationList.setSelectedItem(null, true);
+			}
+
+
+
+			return sap.ui.core.Control.prototype.setAssociation.call(this, 'selectedItem', listItemToSelect, true);
 		};
 
 		/**
@@ -225,6 +283,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var listId = event.getSource().getId();
 			var itemAggregation = this.getAggregation('item');
 			var fixedItemAggregation = this.getAggregation('fixedItem');
+			var item = event.getParameter('item');
 
 			if (itemAggregation && fixedItemAggregation && listId === itemAggregation.getId()) {
 				fixedItemAggregation.setSelectedItem(null);
@@ -234,8 +293,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				itemAggregation.setSelectedItem(null);
 			}
 
+			sap.ui.core.Control.prototype.setAssociation.call(this, 'selectedItem', item, true);
+
 			this.fireItemSelect({
-				item: event.getParameter('item')
+				item: item
 			});
 		};
 

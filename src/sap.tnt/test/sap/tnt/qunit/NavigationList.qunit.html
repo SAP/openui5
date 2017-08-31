@@ -251,6 +251,112 @@
 			assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is set");
 		});
 
+		QUnit.module('SelectedItem association', {
+		    beforeEach: function() {
+		        this.navigationList = getNavigationList();
+		    },
+		    afterEach: function() {
+		        this.navigationList.destroy();
+		        this.navigationList = null;
+		    }
+		});
+
+		QUnit.test('Passing a NavigationListItem for selectedItem', function (assert) {
+			// arrange
+			var result;
+			var logSpy = sinon.spy(jQuery.sap.log, 'warning');
+			var listItem = this.navigationList.getItems()[2];
+
+			// act
+			result = this.navigationList.setSelectedItem(listItem);
+
+			// assert
+			assert.strictEqual(this.navigationList._selectedItem, listItem, 'The _selectedItem should be set');
+			assert.strictEqual(this.navigationList.getSelectedItem().getId(), listItem.getId(), 'The association should be set');
+			assert.strictEqual(logSpy.callCount, 0, 'No warning should be raised');
+			assert.strictEqual(this.navigationList, result, 'The setSelectedItem should return this pointer');
+
+			// clean
+			jQuery.sap.log.warning.restore();
+		});
+
+		QUnit.test('Passing a NavigationListItem\'s ID for selectedItem', function (assert) {
+			// arrange
+			var result;
+			var logSpy = sinon.spy(jQuery.sap.log, 'warning');
+			var listItem = this.navigationList.getItems()[2].getId();
+
+			// act
+			result = this.navigationList.setSelectedItem(listItem);
+
+			// assert
+			assert.strictEqual(this.navigationList._selectedItem.getId(), listItem, 'The _selectedItem should be set');
+			assert.strictEqual(this.navigationList.getSelectedItem().getId(), listItem, 'The association should be set');
+			assert.strictEqual(logSpy.callCount, 0, 'No warning should be raised');
+			assert.strictEqual(this.navigationList, result, 'The setSelectedItem should return this pointer');
+
+			// clean
+			jQuery.sap.log.warning.restore();
+		});
+
+		QUnit.test('Passing a null should deselect the selected item', function (assert) {
+			// arrange
+			var result;
+			var listItem = this.navigationList.getItems()[2];
+			var selectSpy = sinon.spy(listItem, '_unselect');
+
+			// act
+			this.navigationList.setSelectedItem(listItem);
+
+			// assert
+			assert.strictEqual(this.navigationList.getSelectedItem().getId(), listItem.getId(), 'The selected item should be set');
+
+			// act
+			result = this.navigationList.setSelectedItem(null);
+
+			// assert
+			assert.strictEqual(this.navigationList.getSelectedItem(), null, 'The selected item should be deselected');
+			assert.strictEqual(this.navigationList, result, 'The setSelectedItem should return this pointer after deselecting the item');
+			assert.strictEqual(selectSpy.callCount, 1, 'The _unselect method of the item should be called');
+
+			// clean
+			listItem._unselect.restore();
+		});
+
+		QUnit.test('Passing an unexpected parameter type should trigger a warning', function (assert) {
+			// arrange
+			var result;
+			var logSpy = sinon.spy(jQuery.sap.log, 'warning');
+
+			// act
+			result = this.navigationList.setSelectedItem(1234);
+
+			// assert
+			assert.strictEqual(this.navigationList.getSelectedItem(), null, 'No item should be selected');
+			assert.strictEqual(this.navigationList, result, 'The setSelectedItem should return "this" pointer despite the parameter being wrong');
+			assert.strictEqual(logSpy.callCount, 1, 'A warning should be raised');
+
+			// clean
+			jQuery.sap.log.warning.restore();
+		});
+
+		QUnit.test('Passing an unexpected parameter type should trigger a warning', function (assert) {
+			// arrange
+			var result;
+			var logSpy = sinon.spy(jQuery.sap.log, 'warning');
+
+			// act
+			result = this.navigationList.setSelectedItem(new sap.m.Text());
+
+			// assert
+			assert.strictEqual(this.navigationList.getSelectedItem(), null, 'No item should be selected');
+			assert.strictEqual(this.navigationList, result, 'The setSelectedItem should return "this" pointer despite the parameter being wrong');
+			assert.strictEqual(logSpy.callCount, 1, 'A warning should be raised');
+
+			// clean
+			jQuery.sap.log.warning.restore();
+		});
+
 
 		QUnit.module("Interaction", {
 			beforeEach: function () {
