@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.Feed.C"
+	controllerName="sap.m.sample.Feed.Page"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<FeedInput

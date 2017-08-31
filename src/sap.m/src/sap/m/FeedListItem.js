@@ -2,9 +2,8 @@
  * ${copyright}
  */
 
-// Provides control sap.m.FeedListItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedText', 'sap/ui/core/IconPool', 'sap/ui/Device'],
-	function(jQuery, ListItemBase, library, FormattedText, IconPool, Device) {
+sap.ui.define([ "jquery.sap.global", "./ListItemBase", "./Link", "./library", "./FormattedText", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/ui/Device" ],
+	function(jQuery, ListItemBase, Link, library, FormattedText, Control, IconPool, Device) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -163,12 +162,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-
 	FeedListItem._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
 	FeedListItem._nMaxCharactersMobile = 300;
 	FeedListItem._nMaxCharactersDesktop = 500;
 
@@ -181,6 +175,14 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	FeedListItem.prototype.init = function () {
 		ListItemBase.prototype.init.apply(this);
 		this.setAggregation("_text", new FormattedText(this.getId() + "-formattedText"), true);
+	};
+
+	FeedListItem.prototype.invalidate = function () {
+		Control.prototype.invalidate.apply(this, arguments);
+		delete this._bTextExpanded;
+		if (this._oLinkExpandCollapse) {
+			this._oLinkExpandCollapse.setProperty("text", FeedListItem._sTextShowMore, true);
+		}
 	};
 
 	FeedListItem.prototype.onBeforeRendering = function() {
@@ -319,9 +321,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 */
 	FeedListItem.prototype._getLinkSender = function(withColon) {
 		if (!this._oLinkControl) {
-			jQuery.sap.require("sap.m.Link");
 			var that = this;
-			this._oLinkControl = new sap.m.Link({
+			this._oLinkControl = new Link({
 				press : function() {
 					that.fireSenderPress({
 						domRef : this.getDomRef(),
@@ -453,12 +454,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 */
 	FeedListItem.prototype._getLinkExpandCollapse = function() {
 		if (!this._oLinkExpandCollapse) {
-			jQuery.sap.require("sap.m.Link");
-			this._oLinkExpandCollapse = new sap.m.Link({
-				text : FeedListItem._sTextShowMore,
-				press : jQuery.proxy(function() {
-					this._toggleTextExpanded();
-				}, this)
+			this._oLinkExpandCollapse = new Link({
+				text: FeedListItem._sTextShowMore,
+				press: [this._toggleTextExpanded, this]
 			});
 			this._bTextExpanded = false;
 			// Necessary so this gets garbage collected and the text of the link changes at clicking on it
@@ -536,10 +534,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 * @returns {sap.m.FeedListItem} this allows method chaining
 	 */
 	FeedListItem.prototype.setType = function(type) {
-		if (type === ListType.Navigation) {
-			this.setProperty("type", ListType.Active);
-		} else {
-			this.setProperty("type", type);
+		if (this.getType() !== type) {
+			if (type === ListType.Navigation) {
+				this.setProperty("type", ListType.Active);
+			} else {
+				this.setProperty("type", type);
+			}
 		}
 		return this;
 	};
@@ -551,8 +551,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 * @returns {sap.m.FeedListItem} this allows method chaining
 	 */
 	FeedListItem.prototype.setUnread = function(value) {
-		this.setProperty("unread", false);
-		return this;
+		return this.setProperty("unread", false, true);
 	};
 
 	return FeedListItem;

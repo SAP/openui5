@@ -12,12 +12,12 @@
 
 		<!-- QUnit libraries -->
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script>
 
@@ -344,6 +344,40 @@
 				assert.ok(oFeedList.getItems()[10]._sShortText.length === 20, "the length of collapsed text without spaces equals to the property maxCharacters ");
 			});
 
+			QUnit.module("Overridden setter method for property 'type'", {
+				beforeEach: function () {
+					this.oFeedListItem = new sap.m.FeedListItem();
+				},
+				afterEach: function () {
+					this.oFeedListItem.destroy();
+				}
+			});
+
+			QUnit.test("Property is not set if value does not changed", function(assert) {
+				//Arrange
+				var oSpy = sinon.spy(this.oFeedListItem, "setProperty");
+				//Act
+				this.oFeedListItem.setType(this.oFeedListItem.getType());
+				//Assert
+				assert.notOk(oSpy.called, "Property not updated");
+			});
+
+			QUnit.test("ListType 'Navigation' ends in type 'Active'", function(assert) {
+				//Act
+				var oResult = this.oFeedListItem.setType(sap.m.ListType.Navigation);
+				//Assert
+				assert.equal(this.oFeedListItem.getType(), "Active", "Property 'type' set to 'Active'");
+				assert.deepEqual(this.oFeedListItem, oResult, "Instance returned");
+			});
+
+			QUnit.test("Other ListTypes in type corresponding type", function(assert) {
+				//Act
+				var oResult = this.oFeedListItem.setType(sap.m.ListType.Inactive);
+				//Assert
+				assert.equal(this.oFeedListItem.getType(), "Inactive", "Property 'type' set to 'Inactive'");
+				assert.deepEqual(this.oFeedListItem, oResult, "Instance returned");
+			});
+
 			QUnit.module("Behavior depending on device: only phone", {
 				beforeEach : function() {
 					this.bOriginalIsPhone = sap.ui.Device.system.phone;
@@ -507,10 +541,17 @@
 
 			QUnit.module("Rendering behavior");
 
-			QUnit.test("Expanded text should appear also after rerendering.", function(assert) {
+			QUnit.test("Expanded text should appear also after rerendering", function(assert) {
+				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowMore);
 				oFeedList.getItems()[10]._toggleTextExpanded();
-				oFeedList.getItems()[10].invalidate();
+				oFeedList.getItems()[10].rerender();
 				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowLess);
+				oFeedList.getItems()[10]._toggleTextExpanded();
+				oFeedList.getItems()[10].rerender();
+				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowMore);
+			});
+
+			QUnit.test("Invalidation leads to collapsed text", function(assert) {
 				oFeedList.getItems()[10]._toggleTextExpanded();
 				oFeedList.getItems()[10].invalidate();
 				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowMore);
@@ -644,8 +685,8 @@
 				//Arrange
 				this.oFeedListItem.setText("<p></p><ul></ul><strong></strong><p>Some</p> text");
 				this.oFeedListItem.setMaxCharacters(5);
-				this.oFeedListItem._bTextExpanded = true;
 				this.oFeedListItem.onBeforeRendering();
+				this.oFeedListItem._bTextExpanded = true;
 				var oSinonSpy = sinon.spy(this.oFeedListItem, "_clearEmptyTagsInCollapsedText");
 				//Act
 				this.oFeedListItem.onAfterRendering();
