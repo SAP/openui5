@@ -62,15 +62,16 @@ sap.ui.define([
 	};
 
 	Combine.prototype._checkForSameRelevantContainer = function(aSelectedOverlays) {
-		var aElements = [];
 		var aRelevantContainer = [];
 		for (var i = 0, n = aSelectedOverlays.length; i < n; i++) {
-			aElements[i] = aSelectedOverlays[i].getElementInstance();
 			aRelevantContainer[i] = aSelectedOverlays[i].getRelevantContainer();
+			var oCombineAction = this._getCombineAction(aSelectedOverlays[i]);
+			if (!oCombineAction || !oCombineAction.changeType){
+				return false;
+			}
 			if (i > 0) {
 				if ((aRelevantContainer[0] !== aRelevantContainer[i])
-					|| (aElements[0].getMetadata().getName() !== aElements[i].getMetadata().getName())) {
-
+					|| (this._getCombineAction(aSelectedOverlays[0]).changeType !== oCombineAction.changeType)) {
 					return false;
 				}
 			}
@@ -104,7 +105,7 @@ sap.ui.define([
 	Combine.prototype.isCombineEnabled = function(oOverlay) {
 		var aSelectedOverlays = this.getDesignTime().getSelection();
 
-		// check that no more than 3 fields can be combined
+		// check that at least 2 fields can be combined
 		if (!this.isCombineAvailable(oOverlay) || aSelectedOverlays.length <= 1) {
 			return false;
 		}
