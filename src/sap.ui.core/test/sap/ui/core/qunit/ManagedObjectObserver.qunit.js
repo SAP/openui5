@@ -258,6 +258,8 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 			destroy: true
 		});
 
+		assert.equal(true,oObserver.isObserved(this.obj),"The object is observed");
+
 		this.obj.destroy();
 
 		assert.equal(bDestroyed,true,"The object was destroyed");
@@ -1547,5 +1549,52 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		oObserver.disconnect();
 	});
 
+	QUnit.test("ManagedObjectObserver observe/isObserved", function(assert) {
+
+		assert.strictEqual(this.obj._observer, undefined, "No observer");
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+		});
+
+		oObserver.observe(this.obj, {
+			properties: true
+		});
+
+		assert.ok(true, "Observation of all property changes started");
+
+		var oConfiguration = oObserver.getConfiguration(this.obj);
+
+		assert.strictEqual(10,oConfiguration.properties.length,"All ten properties of the object are observed");
+		assert.equal(true,oObserver.isObserved(this.obj),"The object is observed");
+
+		oObserver.unobserve(this.obj, {
+			properties: ["value"]
+		});
+
+		oConfiguration = oObserver.getConfiguration(this.obj);
+
+		assert.ok(true, "Observation of property 'value' stopped");
+
+		assert.strictEqual(9,oConfiguration.properties.length,"Remain 9 properties of the object that are observed");
+		assert.equal(true,oObserver.isObserved(this.obj),"The object is still observed");
+
+		oObserver.observe(this.obj, {
+			aggregations: ["singleAggr"]
+		});
+
+		oConfiguration = oObserver.getConfiguration(this.obj);
+
+		assert.ok(true, "Observation of aggregation 'singleAggr' started");
+
+		assert.strictEqual(9,oConfiguration.properties.length,"Still 9 properties of the object that are observed");
+		assert.strictEqual(1,oConfiguration.aggregations.length,"Additionally one aggregation is observed");
+		assert.equal(true,oObserver.isObserved(this.obj),"The object is still observed");
+
+		oObserver.unobserve(this.obj);
+		assert.equal(false,oObserver.isObserved(this.obj),"The object is no longer observed");
+
+		oObserver.disconnect();
+	});
 
 });
