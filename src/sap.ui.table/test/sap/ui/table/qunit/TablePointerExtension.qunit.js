@@ -674,7 +674,7 @@ sap.ui.require([
 				"Cell Click Event: Parameter rowBindingContext");
 		});
 		var $Cell = oRowColCell.cell.$();
-		qutils.triggerMouseEvent($Cell, "click"); // Should incease the counter
+		qutils.triggerMouseEvent($Cell, "click"); // Should increase the counter
 		assert.equal(iSelectCount, 1, iSelectCount + " Selections should happen");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
@@ -690,7 +690,7 @@ sap.ui.require([
 			bClickHandlerCalled = true;
 		});
 		$Cell = jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0");
-		qutils.triggerMouseEvent($Cell, "click"); // Should incease the counter
+		qutils.triggerMouseEvent($Cell, "click"); // Should increase the counter
 		assert.equal(iSelectCount, 2, iSelectCount + " Selections should happen");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
@@ -702,7 +702,7 @@ sap.ui.require([
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
 		var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel0");
-		qutils.triggerMouseEvent($RowHdr, "click"); // Should incease the counter
+		qutils.triggerMouseEvent($RowHdr, "click"); // Should increase the counter
 		assert.equal(iSelectCount, 3, iSelectCount + " Selections should happen");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
@@ -721,7 +721,7 @@ sap.ui.require([
 		for (var i = 0; i < aKnownClickableControls.length; i++) {
 			$Cell.toggleClass(aKnownClickableControls[i], true);
 			qutils.triggerMouseEvent($Cell, "click");
-			assert.equal(iSelectCount, 3, iSelectCount + " Selections should happen");
+			assert.equal(iSelectCount, 3, iSelectCount + " Selections should not happen");
 			assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 			$Cell.toggleClass(aKnownClickableControls[i], false);
 		}
