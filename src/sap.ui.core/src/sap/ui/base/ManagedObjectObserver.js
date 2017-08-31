@@ -220,6 +220,16 @@ sap.ui.define([
 		destroy(this);
 	};
 
+	/**
+	 * Returns the current configuration of a given control
+	 *
+	 * @param {sap.ui.base.ManagedObject} oObject the managed object instance that is observed
+	 * @return {object} oConfiguration the configuration of the given object
+	 */
+	ManagedObjectObserver.prototype.getConfiguration = function (oObject) {
+		return getConfiguration(oObject, this);
+	};
+
 	// private implementation
 	var Observer = {},
 		mTargets = Object.create(null);
@@ -395,25 +405,38 @@ sap.ui.define([
 		updateConfiguration(oTarget, oListener, oConfiguration, false);
 	}
 
+	function getConfiguration(oTarget, oListener) {
+		var sId = oTarget.getId();
+		var oTargetConfig = mTargets[sId];
+		if (oTargetConfig && oTargetConfig.listeners) {
+			var iIndex = oTargetConfig.listeners.indexOf(oListener);
+			if (iIndex >= 0) {
+				//return the current configuration
+				var oConfiguration = jQuery.extend(true,{}, oTargetConfig.configurations[iIndex]);
+				return oConfiguration;
+			}
+		}
+
+		return null;
+	}
+
 	// removes a listener and its configuration to the internal list of observed targets mTargets.
 	// if the listener is already registered to the target only its configuration is updated.
 	// adds the observer to the target managed object if an observer is missing.
 	function remove(oTarget, oListener, oConfiguration) {
-		if (!oConfiguration) {
-			var sId = oTarget.getId();
-			var oTargetConfig = mTargets[sId];
-			var iIndex = oTargetConfig.listeners.indexOf(oListener);
-			if (iIndex >= 0) {
-				// use the current configuration
-				oConfiguration = oTargetConfig.configurations[iIndex];
-			}
+		if (oConfiguration != null) {
+			updateConfiguration(oTarget, oListener, oConfiguration, true);
+		} else {
+			destroy(oListener);
 		}
-		updateConfiguration(oTarget, oListener, oConfiguration, true);
 	}
 
 	function isObjectObserved(oTarget, oListener, oConfiguration) {
 		var sId = oTarget.getId(),
 			oTargetConfig = mTargets[sId];
+
+		//in case no configuration is given take the current configuration
+		oConfiguration = oConfiguration || getConfiguration(oTarget, oListener);
 
 		if (!oTargetConfig) {
 			return false;
@@ -425,7 +448,10 @@ sap.ui.define([
 			//make a subset check
 			return isSubArray(oTargetConfig.configurations[iIndex].properties, oConfiguration.properties) &&
 				isSubArray(oTargetConfig.configurations[iIndex].aggregations, oConfiguration.aggregations) &&
-				isSubArray(oTargetConfig.configurations[iIndex].associations, oConfiguration.associations);
+				isSubArray(oTargetConfig.configurations[iIndex].associations, oConfiguration.associations) &&
+				isSubArray(oTargetConfig.configurations[iIndex].bindings, oConfiguration.bindings) &&
+				isSubArray(oTargetConfig.configurations[iIndex].events, oConfiguration.events) &&
+				isBooleanEqual(oTargetConfig.configurations[iIndex].destroy, oConfiguration.destroy);
 
 		}
 	}
@@ -591,6 +617,15 @@ sap.ui.define([
 
 		//in case aSubArray is inside aFullArray the length did not change
 		return aFullArray.length === aUnion.length;
+	}
+
+	function isBooleanEqual(bOriginal,bCompare) {
+		if (bCompare == null) {
+			return true;
+		}
+
+		return bOriginal === bCompare;
+
 	}
 
 	// in case the configuration for a specific type is set to true translate this to the complete array in order not to get in trouble
