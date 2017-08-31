@@ -74,6 +74,11 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 					type: "sap.ui.test.TestElement",
 					multiple: true,
 					singularName: "subObj"
+				},
+				label : {
+					type : "sap.ui.core.Label",
+					altTypes : ["string"],
+					multiple : false
 				}
 			},
 			associations: {
@@ -556,6 +561,19 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		});
 
 		this.obj.setAggregation("singleAggr", oChild);
+		this.checkExpected("Single aggregation added. Observer called successfully");
+
+		//setting single aggegation with altType
+		setExpected({
+			object: this.obj,
+			type:"aggregation",
+			name:"label",
+			mutation: "insert",
+			child: "Text",
+			children: null
+		});
+
+		this.obj.setAggregation("label", "Text");
 		this.checkExpected("Single aggregation added. Observer called successfully");
 
 		oObserver.disconnect();
