@@ -2022,6 +2022,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			this.setSelection(vItem);
 			this.setValue(this._getSelectedItemText(vItem));
+			this._oSelectionOnFocus = vItem;
 			return this;
 		};
 
@@ -2046,6 +2047,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			this.setSelection(vItem);
 			this.setValue(this._getSelectedItemText());
+			this._oSelectionOnFocus = sap.ui.getCore().byId(vItem);
 			return this;
 		};
 
@@ -2088,6 +2090,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 				this.setSelection(oItem);
 				this.setValue(this._getSelectedItemText(oItem));
+				this._oSelectionOnFocus = oItem;
 				return this;
 			}
 
