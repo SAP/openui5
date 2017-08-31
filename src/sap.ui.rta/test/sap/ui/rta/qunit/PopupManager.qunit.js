@@ -83,7 +83,7 @@ function(
 	};
 	var fnSetRta = function (oRta) {
 		//setRTA instance for PopupManager
-		oRta.oPopupManager.setRta(oRta);
+		oRta.getPopupManager().setRta(oRta);
 	};
 	QUnit.module("Given RTA instance is created without starting", {
 		beforeEach : function(assert) {
@@ -92,7 +92,7 @@ function(
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
-			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.oPopupManager, "_overrideInstanceFunctions");
+			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideInstanceFunctions");
 		},
 		afterEach : function() {
 			FakeLrepLocalStorage.deleteChanges();
@@ -101,15 +101,15 @@ function(
 		}
 	});
 	QUnit.test("when PopupManager is initialized without setting RTA instance", function(assert) {
-		assert.ok(this.oRta.oPopupManager, "PopupManager instance exists");
-		assert.strictEqual(this.oRta.oPopupManager.getRta(), undefined, "then RTA instance is not set for PopupManager before RTA is started");
-		assert.strictEqual(this.oRta.oPopupManager.oRtaRootAppComponent, undefined, "then RTA root element is not set for PopupManager before RTA is started");
+		assert.ok(this.oRta.getPopupManager(), "PopupManager instance exists");
+		assert.strictEqual(this.oRta.getPopupManager().getRta(), undefined, "then RTA instance is not set for PopupManager before RTA is started");
+		assert.strictEqual(this.oRta.getPopupManager().oRtaRootAppComponent, undefined, "then RTA root element is not set for PopupManager before RTA is started");
 		assert.strictEqual(this.fnOverrideFunctionsSpy.callCount, 0, "then '_overrideInstanceFunctions' not called since rta is not set");
 	});
 	//_getFocusEventName
 	QUnit.test("when _getValidatedPopups is called with 2 relevant and one non-relevant popups", function(assert) {
-		assert.strictEqual(this.oRta.oPopupManager._getFocusEventName("add"), "_activateFocusHandle", "then 'add' as parameter returns _addFocusEventListeners");
-		assert.strictEqual(this.oRta.oPopupManager._getFocusEventName("remove"), "_deactivateFocusHandle", "then 'remove' as parameter returns _removeFocusEventListeners");
+		assert.strictEqual(this.oRta.getPopupManager()._getFocusEventName("add"), "_activateFocusHandle", "then 'add' as parameter returns _addFocusEventListeners");
+		assert.strictEqual(this.oRta.getPopupManager()._getFocusEventName("remove"), "_deactivateFocusHandle", "then 'remove' as parameter returns _removeFocusEventListeners");
 	});
 	QUnit.module("Given RTA instance is initialized", {
 		beforeEach : function(assert) {
@@ -122,26 +122,26 @@ function(
 			this.oRta._$document = jQuery(document);
 			sap.ui.getCore().applyChanges();
 			this.oRta._createToolsMenu(true);
-			this.oRta._oToolsMenu.show();
+			this.oRta.getToolbar().show();
 			//mock DesignTime
 			this.oRta._oDesignTime = new DesignTime({
 				rootElements : [oComp.getAggregation("rootControl")]
 			});
 			this.oOriginalInstanceManager = jQuery.extend( true, {}, InstanceManager);
 			//spy functions
-			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.oPopupManager, "_overrideInstanceFunctions");
-			this.fnApplyPopupMethods = sandbox.spy(this.oRta.oPopupManager, "_applyPopupMethods");
-			this.fnAddPopupInstanceSpy = sandbox.spy(this.oRta.oPopupManager, "_overrideAddPopupInstance");
-			this.fnOverrideAddFunctionsSpy = sandbox.spy(this.oRta.oPopupManager, "_overrideAddFunctions");
-			this.fnRemovePopupInstanceSpy = sandbox.spy(this.oRta.oPopupManager, "_overrideRemovePopupInstance");
-			this.fnOverrideRemoveFunctionsSpy = sandbox.spy(this.oRta.oPopupManager, "_overrideRemoveFunctions");
-			this.fnCreateDialogSpy = sandbox.spy(this.oRta.oPopupManager, "_createPopupOverlays");
-			this.fnToolsMenuBringToFrontSpy = sandbox.spy(this.oRta._oToolsMenu, "bringToFront");
+			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideInstanceFunctions");
+			this.fnApplyPopupMethods = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupMethods");
+			this.fnAddPopupInstanceSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideAddPopupInstance");
+			this.fnOverrideAddFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideAddFunctions");
+			this.fnRemovePopupInstanceSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideRemovePopupInstance");
+			this.fnOverrideRemoveFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideRemoveFunctions");
+			this.fnCreateDialogSpy = sandbox.spy(this.oRta.getPopupManager(), "_createPopupOverlays");
+			this.fnToolsMenuBringToFrontSpy = sandbox.spy(this.oRta.getToolbar(), "bringToFront");
 			this.fnAddRootElementSpy = sandbox.spy(this.oRta._oDesignTime, "addRootElement");
 			this.fnRemoveRootElementSpy = sandbox.spy(this.oRta._oDesignTime, "removeRootElement");
 			this.fnAddPopupListeners = sandbox.spy(Popup.prototype, "_activateFocusHandle");
 			this.fnRemovePopupListeners = sandbox.spy(Popup.prototype, "_deactivateFocusHandle");
-			this.fnIsPopupAdaptableSpy = sandbox.spy(this.oRta.oPopupManager, "_isPopupAdaptable");
+			this.fnIsPopupAdaptableSpy = sandbox.spy(this.oRta.getPopupManager(), "_isPopupAdaptable");
 			//mock same app component dialog
 			oComp.runAsOwner(function() {
 				this.oDialog = new Dialog({
@@ -185,8 +185,8 @@ function(
 	QUnit.test("when _overrideInstanceFunctions is called with no open dialog", function(assert) {
 		fnSetRta(this.oRta);
 		this.oDialog.open();
-		assert.strictEqual(this.oRta.oPopupManager.getRta(), this.oRta, "then RTA instance is set");
-		assert.strictEqual(this.oRta.oPopupManager.oRtaRootAppComponent, this.oRta.oPopupManager._getAppComponentForControl(oComp.getAggregation("rootControl")), "then component of RTA root element is set for PopupManager");
+		assert.strictEqual(this.oRta.getPopupManager().getRta(), this.oRta, "then RTA instance is set");
+		assert.strictEqual(this.oRta.getPopupManager().oRtaRootAppComponent, this.oRta.getPopupManager()._getAppComponentForControl(oComp.getAggregation("rootControl")), "then component of RTA root element is set for PopupManager");
 		assert.strictEqual(this.fnAddPopupInstanceSpy.callCount, 1, "then '_overrideAddPopupInstance' is called once since RTA is set");
 		assert.strictEqual(this.fnOverrideFunctionsSpy.callCount, 1, "then '_overrideInstanceFunctions' is called once since RTA is set");
 		assert.strictEqual(this.fnRemovePopupInstanceSpy.callCount, 1, "then '_overrideRemovePopupInstance' is called once since RTA is set");
@@ -197,8 +197,8 @@ function(
 		var done = assert.async();
 		this.oDialog.attachAfterOpen(function() {
 			fnSetRta(this.oRta);
-			assert.strictEqual(this.oRta.oPopupManager.getRta(), this.oRta, "then RTA instance is set");
-			assert.strictEqual(this.oRta.oPopupManager.oRtaRootAppComponent, this.oRta.oPopupManager._getAppComponentForControl(oComp.getAggregation("rootControl")), "then component of RTA root element is set for PopupManager");
+			assert.strictEqual(this.oRta.getPopupManager().getRta(), this.oRta, "then RTA instance is set");
+			assert.strictEqual(this.oRta.getPopupManager().oRtaRootAppComponent, this.oRta.getPopupManager()._getAppComponentForControl(oComp.getAggregation("rootControl")), "then component of RTA root element is set for PopupManager");
 			assert.strictEqual(this.fnAddPopupInstanceSpy.callCount, 1, "then '_overrideAddPopupInstance' is called once since RTA is set");
 			assert.strictEqual(this.fnOverrideFunctionsSpy.callCount, 1, "then '_overrideInstanceFunctions' is called once since RTA is set");
 			assert.strictEqual(this.fnRemovePopupInstanceSpy.callCount, 1, "then '_overrideRemovePopupInstance' is called once since RTA is set");
@@ -230,10 +230,10 @@ function(
 				//when dialog is opened, PopupManager.open() triggers bringToFront
 				assert.notStrictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 0, "then 'bringToFront' is called at least once");
 				assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then _createPopupOverlays called once for the relevant dialog");
-				assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.oPopupManager), "then _createPopupOverlays called with the context of PopupManager");
+				assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.getPopupManager()), "then _createPopupOverlays called with the context of PopupManager");
 				//check z-index
-				assert.ok(this.oDialog.oPopup.oContent.$().zIndex() < this.oRta._oToolsMenu.$().zIndex(), "then Toolbar is on top of the app component dialog");
-				assert.ok(this.oNonRtaDialog.oPopup.oContent.$().zIndex() > this.oRta._oToolsMenu.$().zIndex(), "then Toolbar is not placed on top of the non-RTA dialog");
+				assert.ok(this.oDialog.oPopup.oContent.$().zIndex() < this.oRta.getToolbar().$().zIndex(), "then Toolbar is on top of the app component dialog");
+				assert.ok(this.oNonRtaDialog.oPopup.oContent.$().zIndex() > this.oRta.getToolbar().$().zIndex(), "then Toolbar is not placed on top of the non-RTA dialog");
 				done();
 			}.bind(this));
 			this.oNonRtaDialog.open();
@@ -283,11 +283,11 @@ function(
 	//_restoreInstanceFunctions
 	QUnit.test("when _restoreInstanceFunctions is called", function(assert) {
 		fnSetRta(this.oRta);
-		this.oRta.oPopupManager._restoreInstanceFunctions();
+		this.oRta.getPopupManager()._restoreInstanceFunctions();
 		assert.strictEqual(this.oOriginalInstanceManager.addDialogInstance, InstanceManager.addDialogInstance, "then addDialogInstance function is restored in original state");
 		assert.strictEqual(this.oOriginalInstanceManager.removeDialogInstance, InstanceManager.removeDialogInstance, "then removeDialogInstance function is restored in original state");
 		assert.strictEqual(this.fnApplyPopupMethods.callCount, 2, "then _applyPopupMethods called second time");
-		assert.ok(this.fnApplyPopupMethods.calledWith(this.oRta.oPopupManager._removePopupPatch), "then _applyPopupMethods called with _removePopupPatch function as parameter with the correct context");
+		assert.ok(this.fnApplyPopupMethods.calledWith(this.oRta.getPopupManager()._removePopupPatch), "then _applyPopupMethods called with _removePopupPatch function as parameter with the correct context");
 	});
 	//_removePopupPatch
 	QUnit.test("when _removePopupPatch is called", function(assert) {
@@ -297,13 +297,13 @@ function(
 		this.oPopover.attachAfterOpen(function() {
 			var oPopup = this.oPopover.oPopup;
 			var vPopupElement = oPopup._$().get(0);
-			this.oRta.oPopupManager.fnOriginalPopupOnAfterRendering = oPopup.onAfterRendering;
+			this.oRta.getPopupManager().fnOriginalPopupOnAfterRendering = oPopup.onAfterRendering;
 			this.oPopover.oPopup.onAfterRendering = null;
 			vPopupElement.addEventListener("blur", function() {
 				assert.strictEqual(typeof this.oPopover.oPopup.onAfterRendering, "function", "then onAfterRendering is set back");
 				done();
 			}.bind(this), true);
-			this.oRta.oPopupManager._removePopupPatch(this.oPopover);
+			this.oRta.getPopupManager()._removePopupPatch(this.oPopover);
 			assert.strictEqual(this.fnAddPopupListeners.callCount, 2, "then popup event listeners attached back, called twice, once while open() and once while re-attaching");
 			jQuery.sap.focus(oPopup.oContent);
 			jQuery.sap.delayedCall(0, this, function() {
@@ -322,13 +322,13 @@ function(
 			this.oNonRtaDialog.attachAfterOpen(function() {
 				//Popover
 				this.oPopover.attachAfterOpen(function() {
-					assert.strictEqual(this.oRta.oPopupManager.getRelevantPopups()["aDialogs"].length, 1, "then one relevant dialog returned");
-					assert.deepEqual(this.oRta.oPopupManager.getRelevantPopups()["aDialogs"][0], this.oDialog, "then only dialog with same app component returned");
-					assert.strictEqual(this.oRta.oPopupManager.getRelevantPopups()["aPopovers"].length, 1, "then one relevant popover returned");
-					assert.deepEqual(this.oRta.oPopupManager.getRelevantPopups()["aPopovers"][0], this.oPopover, "then only popover with same app component returned");
+					assert.strictEqual(this.oRta.getPopupManager().getRelevantPopups()["aDialogs"].length, 1, "then one relevant dialog returned");
+					assert.deepEqual(this.oRta.getPopupManager().getRelevantPopups()["aDialogs"][0], this.oDialog, "then only dialog with same app component returned");
+					assert.strictEqual(this.oRta.getPopupManager().getRelevantPopups()["aPopovers"].length, 1, "then one relevant popover returned");
+					assert.deepEqual(this.oRta.getPopupManager().getRelevantPopups()["aPopovers"][0], this.oPopover, "then only popover with same app component returned");
 					//Dialog Close
 					this.oDialog.attachAfterClose(function () {
-						assert.notOk(this.oRta.oPopupManager.getRelevantPopups()["aDialogs"], "then no relevant dialogs available");
+						assert.notOk(this.oRta.getPopupManager().getRelevantPopups()["aDialogs"], "then no relevant dialogs available");
 						done();
 					}.bind(this));
 					this.oDialog.close();
@@ -346,24 +346,24 @@ function(
 		var oMessageToast = InstanceManager.getOpenPopovers()[0];
 		oMessageToast.destroy();
 		assert.ok(oMessageToast instanceof Popup, "then message toast returned");
-		assert.notOk(this.oRta.oPopupManager.getRelevantPopups()["aPopovers"], "then no valid popover returned");
+		assert.notOk(this.oRta.getPopupManager().getRelevantPopups()["aPopovers"], "then no valid popover returned");
 	});
 	//_applyPopupPatch
 	QUnit.test("when _applyPopupPatch is called", function(assert) {
 		var done = assert.async();
 
-		sandbox.stub(this.oRta.oPopupManager, "getRta").returns(this.oRta);
+		sandbox.stub(this.oRta.getPopupManager(), "getRta").returns(this.oRta);
 		sandbox.stub(this.oRta, "getMode").returns("adaptation");
 		var fnDefaultOnAfterRendering = this.oPopover.oPopup.onAfterRendering;
 		var oPopup = this.oPopover.oPopup;
 		this.oPopover.attachAfterOpen(function() {
 			var oPopoverOverlay = fnFindOverlay(this.oPopover, this.oRta._oDesignTime);
 			var oOverlayContainer = Overlay.getOverlayContainer(oPopoverOverlay);
-			this.oRta.oPopupManager._applyPopupPatch(this.oPopover);
+			this.oRta.getPopupManager()._applyPopupPatch(this.oPopover);
 			assert.strictEqual(this.fnRemovePopupListeners.callCount, 1, "then popup event listeners removed");
-			assert.strictEqual(oPopup._aAutoCloseAreas[0].id, this.oRta._oToolsMenu.getId(), "Toolbar added as an autoClose area");
-			assert.strictEqual(oPopup._aAutoCloseAreas[1].id, this.oPopover.getId(), "Popover added as an autoClose area");
-			assert.strictEqual(oPopup._aAutoCloseAreas[2].id, oOverlayContainer.id, "OverlayContainer added as an autoClose area");
+			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id === this.oRta.getToolbar().getId(); }, this), "Toolbar added as an autoClose area");
+			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id === this.oPopover.getId(); }, this), "Popover added as an autoClose area");
+			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id === oOverlayContainer.id; }), "OverlayContainer added as an autoClose area");
 			assert.notEqual(oPopup.onAfterRendering, fnDefaultOnAfterRendering, "then onAfterRendering was overwritten");
 			done();
 		}.bind(this));
@@ -371,23 +371,23 @@ function(
 	});
 	//_getAppComponentForControl - runAsOwner
 	QUnit.test("when _getAppComponentForControl is called with a dialog created inside Component.runAsOwner", function(assert) {
-		sandbox.stub(this.oRta.oPopupManager, "getRta").returns(this.oRta);
-		var oAppComponentForDialog = this.oRta.oPopupManager._getAppComponentForControl(this.oDialog);
+		sandbox.stub(this.oRta.getPopupManager(), "getRta").returns(this.oRta);
+		var oAppComponentForDialog = this.oRta.getPopupManager()._getAppComponentForControl(this.oDialog);
 		assert.strictEqual(oAppComponentForDialog, oComp, "then main component returned");
 	});
 	//_getAppComponentForControl - view as parent
 	QUnit.test("when _getAppComponentForControl is called with a dialog with view as parent", function(assert) {
-		sandbox.stub(this.oRta.oPopupManager, "getRta").returns(this.oRta);
+		sandbox.stub(this.oRta.getPopupManager(), "getRta").returns(this.oRta);
 		oComp.byId("mockview").addDependent(this.oNonRtaDialog);
-		var oAppComponentForNonRtaDialog = this.oRta.oPopupManager._getAppComponentForControl(this.oNonRtaDialog);
+		var oAppComponentForNonRtaDialog = this.oRta.getPopupManager()._getAppComponentForControl(this.oNonRtaDialog);
 		assert.strictEqual(oAppComponentForNonRtaDialog, oComp, "then view's component returned");
 	});
 	//_getAppComponentForControl - UIArea as parent
 	QUnit.test("when _getAppComponentForControl is called with a dialog with UIArea as parent", function(assert) {
 		var done = assert.async();
-		sandbox.stub(this.oRta.oPopupManager, "getRta").returns(this.oRta);
+		sandbox.stub(this.oRta.getPopupManager(), "getRta").returns(this.oRta);
 		this.oNonRtaDialog.attachAfterOpen(function() {
-			var oAppComponentForNonRtaDialog = this.oRta.oPopupManager._getAppComponentForControl(this.oNonRtaDialog);
+			var oAppComponentForNonRtaDialog = this.oRta.getPopupManager()._getAppComponentForControl(this.oNonRtaDialog);
 			assert.ok(this.oNonRtaDialog.getParent() instanceof sap.ui.core.UIArea, "then UIArea returned as parent");
 			assert.strictEqual(oAppComponentForNonRtaDialog, undefined, "then no component returned");
 			done();
@@ -397,10 +397,10 @@ function(
 
 	//_getValidatedPopups
 	QUnit.test("when _getValidatedPopups is called with 2 relevant and one non-relevant popups", function(assert) {
-		sandbox.stub(this.oRta.oPopupManager, "getRta").returns(this.oRta);
+		sandbox.stub(this.oRta.getPopupManager(), "getRta").returns(this.oRta);
 		var aPopups = [this.oDialog, this.oNonRtaDialog, this.oPopover];
-		this.oRta.oPopupManager.oRtaRootAppComponent = oComp;
-		var aRelevantPopups = this.oRta.oPopupManager._getValidatedPopups(aPopups);
+		this.oRta.getPopupManager().oRtaRootAppComponent = oComp;
+		var aRelevantPopups = this.oRta.getPopupManager()._getValidatedPopups(aPopups);
 		assert.strictEqual(aRelevantPopups.length, 2, "then relevant dialog and popover with same component are returned");
 		assert.ok(this.fnIsPopupAdaptableSpy.calledThrice, "then _isPopupAdaptable called thrice for all 3 popups");
 		assert.deepEqual(aRelevantPopups[0], this.oDialog, "then dialog returned");
@@ -409,9 +409,9 @@ function(
 	//_onModeChange
 	QUnit.test("when _onModeChange is called with after RTA mode is set to 'navigation'", function(assert) {
 		var done = assert.async();
-		sandbox.stub(this.oRta.oPopupManager, "getRta").returns(this.oRta);
+		sandbox.stub(this.oRta.getPopupManager(), "getRta").returns(this.oRta);
 		var oEvent = new Event("testevent", this.oRta, { mode: "navigation" });
-		this.oRta.oPopupManager._onModeChange(oEvent);
+		this.oRta.getPopupManager()._onModeChange(oEvent);
 		this.oDialog.attachAfterOpen(function () {
 			assert.strictEqual(this.fnApplyPopupMethods.callCount, 1, "then applyPopupMethods method called twice");
 			assert.strictEqual(this.fnAddPopupListeners.callCount, 1, "then applyPopupMethods method called twice");
@@ -430,8 +430,8 @@ function(
 			});
 			this.oNonRtaDialog = new Dialog("nonRtaDialog");
 			var fnSpies = function() {
-				this.fnAddDialogInstanceSpy = sinon.spy(this.oRta.oPopupManager, "_overrideAddPopupInstance");
-				this.fnCreateDialogSpy = sinon.spy(this.oRta.oPopupManager, "_createPopupOverlays");
+				this.fnAddDialogInstanceSpy = sinon.spy(this.oRta.getPopupManager(), "_overrideAddPopupInstance");
+				this.fnCreateDialogSpy = sinon.spy(this.oRta.getPopupManager(), "_createPopupOverlays");
 				this.fnRemoveDialogInstanceSpy = sinon.spy(this.oRta._oDesignTime, "removeRootElement");
 			}.bind(this);
 			this.oDialog = new Dialog("testDialog");
@@ -470,7 +470,7 @@ function(
 		this.oDialog.attachAfterOpen(function() {
 			assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then '_createPopupOverlays' called once");
 			assert.notEqual(this.oRta._oDesignTime.getRootElements().indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
-			assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.oPopupManager), "then '_createPopupOverlays' with the opened dialog");
+			assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.getPopupManager()), "then '_createPopupOverlays' with the opened dialog");
 			this.oRta._oDesignTime.attachEventOnce("synced", function() {
 				assert.ok(fnFindOverlay(this.oDialog, this.oRta._oDesignTime), "then overlay exists for root dialog element");
 				assert.ok(fnFindOverlay(sap.ui.getCore().byId("formindialog"), this.oRta._oDesignTime), "then overlay exists for root dialog element");
@@ -573,7 +573,7 @@ function(
 			});
 			this.oRta._$document = jQuery(document);
 			this.oRta._createToolsMenu(true);
-			this.oRta._oToolsMenu.show();
+			this.oRta.getToolbar().show();
 			//mock DesignTime
 			this.oRta._oDesignTime = new DesignTime({
 				rootElements : [oCompInDialog.getAggregation("rootControl")]
@@ -600,7 +600,7 @@ function(
 	});
 	QUnit.test("when _isComponentInsidePopup is called with an app component container inside dialog", function(assert) {
 		fnSetRta(this.oRta);
-		var bIsAppInsidePopup = this.oRta.oPopupManager._isComponentInsidePopup(this.oDialog);
+		var bIsAppInsidePopup = this.oRta.getPopupManager()._isComponentInsidePopup(this.oDialog);
 		assert.ok(bIsAppInsidePopup, "then a component container is discovered inside popup");
 		assert.strictEqual(this.fnRemovePopupListeners.callCount, 1, "then popup event listeners removed - first call from PopupManager");
 		this.oDialog.oPopup.onAfterRendering();
@@ -635,7 +635,7 @@ function(
 	});
 	//_getComponentForControl
 	QUnit.test("when _getComponentForControl is called with a dialog inside an embedded component", function(assert) {
-		var  sBaseCompId = this.oRta.oPopupManager._getComponentForControl(this.oNonRtaDialog).getId();
+		var  sBaseCompId = this.oRta.getPopupManager()._getComponentForControl(this.oNonRtaDialog).getId();
 		assert.strictEqual(sBaseCompId, oComp.getId(), "then base component id returned");
 	});
 
