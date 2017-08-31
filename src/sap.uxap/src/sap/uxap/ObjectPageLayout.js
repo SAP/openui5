@@ -1158,7 +1158,7 @@ sap.ui.define([
 			bExpandedMode = !this._bStickyAnchorBar;
 
 		if (bExpandedMode && this._isFirstVisibleSectionBase(oTargetSection)) { // preserve expanded header if no need to stick
-			iScrollTo -= this.iHeaderContentHeight; // scroll to the position where the header is still expanded
+			iScrollTo = 0;
 		}
 
 		return iScrollTo;
