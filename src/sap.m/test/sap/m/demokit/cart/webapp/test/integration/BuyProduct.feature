@@ -22,9 +22,9 @@ Feature: Buy a Product
     Then on checkout: I should see the step4 button enabled
 
     When on checkout: I press on the next step button
-    Then on checkout: I should see the billing step
+    Then on checkout: I should see the invoice step
 
-    When on checkout: I enter billing address text
+    When on checkout: I enter invoice address text
     Then on checkout: I should see the step5 button validated
 
     When on checkout: I press on the next step button
@@ -66,9 +66,9 @@ Feature: Buy a Product
     Then on checkout: I should see the step4 button enabled
 
     When on checkout: I press on the next step button
-    Then on checkout: I should see the billing step
+    Then on checkout: I should see the invoice step
 
-    When on checkout: I enter billing address text
+    When on checkout: I enter invoice address text
     Then on checkout: I should see the step5 button validated
 
     When on checkout: I press on the next step button
@@ -77,10 +77,10 @@ Feature: Buy a Product
     When on checkout: I press on the next step button
     Then on checkout: I should see the order summary
 
-    When on checkout: I press on the edit button back to billing address
+    When on checkout: I press on the edit button back to invoice address
     Then on checkout: I should see the wizard step contents step
 
-    When on checkout: I check different address text
+    When on checkout: I press on different address checkbox
     When on checkout: I press on the yes button
     When on checkout: I press on the next step button
     Then on checkout: I should see the delivery address step
