@@ -95,7 +95,7 @@ sap.ui.require([
 			]);
 		},
 		afterEach : function(assert) {
-			this.oRta.exit();
+			this.oRta.destroy();
 			FakeLrepLocalStorage.deleteChanges();
 			sandbox.restore();
 		}
@@ -121,10 +121,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("when setFlexSettings is called", function(assert) {
-		assert.deepEqual(this.oRta.getFlexSettings(), {
-			layer: "CUSTOMER",
-			developerMode: true
-		});
+		assert.deepEqual(
+			this.oRta.getFlexSettings(),
+			{
+				layer: "CUSTOMER",
+				developerMode: true
+			}
+		);
 
 		this.oRta.setFlexSettings({
 			layer: "USER",
@@ -297,8 +300,8 @@ sap.ui.require([
 		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
 
 		this.oRta.attachStart(function() {
-			assert.equal(this.oRta._oToolsMenu.getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
-			assert.equal(this.oRta._oToolsMenu.getControl('manageApps').getVisible(), false, "then the 'Manage Information' Icon Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'Manage Information' Icon Button is not visible");
 			done();
 		}.bind(this));
 
@@ -312,7 +315,7 @@ sap.ui.require([
 		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([this.oUserChange]));
 
 		this.oRta.attachStart(function() {
-			assert.equal(this.oRta._oToolsMenu.getControl('restore').getEnabled(), true, "then the Restore Button is enabled");
+			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), true, "then the Restore Button is enabled");
 			done();
 		}.bind(this));
 
@@ -356,10 +359,9 @@ sap.ui.require([
 			this.fnUndoSpy = sandbox.stub().returns(Promise.resolve());
 			this.fnRedoSpy = sandbox.stub().returns(Promise.resolve());
 
-			var oToolsMenuDom = jQuery('<input/>').appendTo('#qunit-fixture').get(0);
-			this.oToolsMenuDom = oToolsMenuDom;
+			this.oToolbarDomRef = jQuery('<input/>').appendTo('#qunit-fixture').get(0);
 			this.oOverlayContainerDom = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
-			this.oAnyOtherDom = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
+			this.oAnyOtherDomRef = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
 
 			this.oUndoEvent = new Event("dummyEvent", new EventProvider());
 			this.oUndoEvent.keyCode = jQuery.sap.KeyCodes.Z;
@@ -378,10 +380,15 @@ sap.ui.require([
 			sandbox.stub(sap.ui.dt.Overlay, "getOverlayContainer").returns(this.oOverlayContainerDom);
 
 			this.mContext = {
-				_oToolsMenu: {
-					getDomRef: function() {
-						return oToolsMenuDom;
-					}
+				getToolbar: function () {
+					return {
+						getDomRef: function() {
+							return this.oToolbarDomRef;
+						}.bind(this)
+					};
+				}.bind(this),
+				getShowToolbars: function () {
+					return true;
 				},
 				_onUndo: this.fnUndoSpy,
 				_onRedo: this.fnRedoSpy
@@ -404,7 +411,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("with focus on the toolbar", function(assert) {
-		this.oToolsMenuDom.focus();
+		this.oToolbarDomRef.focus();
 
 		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
@@ -414,7 +421,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("with focus on an outside element (e.g. dialog)", function(assert) {
-		this.oAnyOtherDom.focus();
+		this.oAnyOtherDomRef.focus();
 
 		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 		assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
@@ -1012,7 +1019,7 @@ sap.ui.require([
 		this.oRta.setShowToolbars(true);
 
 		this.oRta.start().then(function () {
-			this.oRta._oToolsMenu.getControl('exit').firePress();
+			this.oRta.getToolbar().getControl('exit').firePress();
 		}.bind(this));
 	});
 
@@ -1227,8 +1234,8 @@ sap.ui.require([
 	});
 
 	QUnit.test("and publish is disabled", function(assert) {
-		assert.equal(this.oRta._oToolsMenu.getControl('restore').getVisible(), true, "then the Reset Button is still visible");
-		assert.equal(this.oRta._oToolsMenu.getControl('publish').getVisible(), false, "then the Publish Button is invisible");
+		assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is still visible");
+		assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), false, "then the Publish Button is invisible");
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
@@ -1258,8 +1265,8 @@ sap.ui.require([
 	});
 
 	QUnit.test("and publish is enabled", function(assert) {
-		assert.equal(this.oRta._oToolsMenu.getControl('restore').getVisible(), true, "then the Reset Button is visible");
-		assert.equal(this.oRta._oToolsMenu.getControl('publish').getVisible(), true, "then the Publish Button is visible");
+		assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is visible");
+		assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), true, "then the Publish Button is visible");
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
@@ -1282,8 +1289,8 @@ sap.ui.require([
 	});
 
 	QUnit.test("and FL settings return rejected promise", function(assert) {
-		assert.equal(this.oRta._oToolsMenu.getControl('restore').getVisible(), true, "then the Reset Button is still visible");
-		assert.equal(this.oRta._oToolsMenu.getControl('publish').getVisible(), false, "then the Publish Button is invisible");
+		assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is still visible");
+		assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), false, "then the Publish Button is invisible");
 	});
 
 	QUnit.module("Given that changeSpecificData is given with changes for two controls...", {
