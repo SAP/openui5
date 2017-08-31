@@ -1992,7 +1992,7 @@
 		if (!sap.ui.Device.browser.phantomJS) {
 			assert.strictEqual(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
-		assert.strictEqual(oPopup.getContent()[0].$().find("tbody").find(".name").find("label").html(), oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
+		assert.strictEqual(oPopup.getContent()[0].$().find("tbody").find("tr>td>span" || "tr>td>label")[0].textContent, oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
 
 		// TODO: trigger selection with pseudo-events here
 		//oPopup.getContent()[0].getItems()[1].$().trigger("click");
