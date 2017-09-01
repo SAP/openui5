@@ -95,10 +95,11 @@ sap.ui.define([
 			}
 		};
 
-		AppVariantUtils.getCurrentInboundId = function(oInbounds) {
+		AppVariantUtils.getInboundInfo = function(oInbounds) {
+			var oInboundInfo = {};
 			var oParsedHash = this.getURLParsedHash();
 			var aInbounds = Object.keys(oInbounds);
-			var aInboundsFound = [], sCurrentRunningInboundId;
+			var aInboundsFound = [];
 
 			if (aInbounds.length) {
 				aInbounds.forEach(function(sInboundId) {
@@ -110,17 +111,19 @@ sap.ui.define([
 
 			switch (aInboundsFound.length) {
 				case 0:
-					sCurrentRunningInboundId = "customer.savedAsAppVariant";
+					oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
+					oInboundInfo.addNewInboundRequired = true;
 					break;
 				case 1:
-					sCurrentRunningInboundId = aInboundsFound[0];
+					oInboundInfo.currentRunningInbound = aInboundsFound[0];
+					oInboundInfo.addNewInboundRequired = false;
 					break;
 				default:
-					sCurrentRunningInboundId = null;
+					oInboundInfo = undefined;
 					break;
 			}
 
-			return sCurrentRunningInboundId;
+			return oInboundInfo;
 		};
 
 		AppVariantUtils.getInboundPropertiesKey = function(sAppVariantId, sCurrentRunningInboundId, sPropertyName) {

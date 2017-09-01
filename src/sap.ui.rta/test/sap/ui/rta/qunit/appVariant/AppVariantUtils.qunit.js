@@ -91,7 +91,7 @@ sap.ui.require(["jquery.sap.global",
 		assert.deepEqual(AppVariantUtils.getInlineChangeRemoveInbounds("testInbound"), {inboundId: "testInbound"}, "then the content of remove inbound inline change is correct");
 	});
 
-	QUnit.test("When getCurrentInboundId() is called, the semantic object and action of running inbound does not match with all possible inbounds", function (assert) {
+	QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does not match with all possible inbounds", function (assert) {
 		var oInbounds = {
 			"inbound1": {
 				semanticObject: "semanticObject1",
@@ -107,10 +107,10 @@ sap.ui.require(["jquery.sap.global",
 			}
 		};
 
-		assert.strictEqual(AppVariantUtils.getCurrentInboundId(oInbounds), "customer.savedAsAppVariant", "then the current inbound id is correct");
+		assert.deepEqual(AppVariantUtils.getInboundInfo(oInbounds), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
 	});
 
-	QUnit.test("When getCurrentInboundId() is called, the semantic object and action of running inbound match with 1 inbounds' SO and action", function (assert) {
+	QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 1 inbounds' SO and action", function (assert) {
 		var oInbounds = {
 			"inbound1": {
 				semanticObject: "semanticObject1",
@@ -126,10 +126,10 @@ sap.ui.require(["jquery.sap.global",
 			}
 		};
 
-		assert.strictEqual(AppVariantUtils.getCurrentInboundId(oInbounds), "inbound2", "then the current inbound id is correct");
+		assert.deepEqual(AppVariantUtils.getInboundInfo(oInbounds), {currentRunningInbound: "inbound2", addNewInboundRequired: false}, "then the current inbound info is correct");
 	});
 
-	QUnit.test("When getCurrentInboundId() is called, the semantic object and action of running inbound match with 2 inbounds' SO and action", function (assert) {
+	QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 2 inbounds' SO and action", function (assert) {
 		var oInbounds = {
 			"inbound1": {
 				semanticObject: "semanticObject1",
@@ -145,7 +145,7 @@ sap.ui.require(["jquery.sap.global",
 			}
 		};
 
-		assert.strictEqual(AppVariantUtils.getCurrentInboundId(oInbounds), null, "then the current inbound id is correct");
+		assert.strictEqual(AppVariantUtils.getInboundInfo(oInbounds), undefined, "then the current inbound info is correct");
 	});
 
 	QUnit.test("When getInlineChangesForInboundProperties() method is called for title inline change of inbound", function (assert) {
