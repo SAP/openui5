@@ -14,7 +14,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Provides a textual label for other controls. Label appearance can be manipulated by using the properties: <code>labelAligment<code> and <code>design</code>.
+	 * Provides a textual label for other controls.
+	 * Label appearance can be influenced by properties such as <code>textAlign</code>, <code>design</code>,
+	 * <code>displayOnly</code> and <code>wrapping</code>.
+	 * As of version 1.50 the default value of the <code>wrapping</code> property is set to <code>true</code>
 	 *
 	 * Labels for required fields are marked with an asterisk.
 	 * <h3>Overview</h3>
@@ -22,15 +25,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * <h3>Usage</h3>
 	 * <h4>When to use</h4>
 	 * <ul>
-	 * <li>Always use a label in form controls.</li>
-	 * <li>Use title case for labels</li>
+	 * <li>Always use a label in Form controls.</li>
+	 * <li>Use title case for labels.</li>
 	 * </ul>
 	 * <h4>When not to use</h4>
 	 * <ul>
-	 * <li>Do not use bold labels.</li>
+	 * <li> It is not recommended to use labels in Bold.</li>
 	 * </ul>
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.Label,sap.ui.core.IShrinkable
+	 * @implements sap.ui.core.Label, sap.ui.core.IShrinkable
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -75,14 +78,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
 			/**
-			 * Indicates that user input is required in the input this label labels.
+			 * Indicates that user input is required for input control labeled by the sap.m.Label.
+			 * When the property is set to true and associated input field is empty an asterisk character is added to the label text.
 			 */
 			required : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * Determines if the label is in displayOnly mode. Controls in this mode are not interactive, not editable, not focusable, and not in the tab chain.
+			 * Determines if the label is in displayOnly mode. Controls in this mode are neither interactive, nor editable, nor focusable, and not in the tab chain.
 			 *
-			 * <b>Note:<b> This property should be used only in Form controls in review to overwrite the Form standard logic.
+			 * <b>Note:</b> This property should be used only in Form controls in preview mode.
 			 *
 			 * @since 1.50.0
 			 */
@@ -90,8 +94,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Determines the wrapping of the text within the <code>Label</code>.
+			 * If set to false the label will wrap to only one line and the exceeding text will be cut and replaced with ellipsis.
 			 *
-			 * <b>Note:</b> This property should be used only in Form.
+			 * <b>Note:</b> This property should only be used in a Form.
+			 *
+			 * @since 1.50
 			 */
 			wrapping: {type : "boolean", group : "Appearance", defaultValue : true}
 		},
