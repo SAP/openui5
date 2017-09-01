@@ -15,17 +15,6 @@ html.sap-desktop .sapMObjectAttributeActive:focus {
 	outline: none;
 }
 
-html.sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.125rem;
-}
-
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapMObjectAttributeActive:focus > .sapMText {
-		outline-style: dashed;
-	}
-}
-
 .sapMObjectAttributeActive .sapMText {
 	color: @sapHCStandardFG;
 	cursor: pointer;
@@ -89,11 +78,6 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 	text-decoration: none;
 }
 
-.sapMOHR .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.125rem;
-}
-
 .sapMOHR .sapMOHRAttr .sapMObjectAttributeDiv {
 	display: block;
 	white-space: nowrap;
@@ -129,9 +113,4 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
 .sapMOH .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
 	text-decoration: none;
-}
-
-.sapMOH .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.125rem;
 }
