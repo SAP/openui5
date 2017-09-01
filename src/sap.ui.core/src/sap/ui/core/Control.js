@@ -45,8 +45,8 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 *     rendering or when the control is destroyed).</li>
 	 * </ul>
 	 *
-	 * See section "Developing OpenUI5/SAPUI5 Controls" in the documentation for an introduction
-	 * to control development.
+	 * See section "{@link topic:91f1703b6f4d1014b6dd926db0e91070 Developing OpenUI5/SAPUI5 Controls}"
+	 * in the documentation for an introduction to control development.
 	 *
 	 * @extends sap.ui.core.Element
 	 * @abstract
