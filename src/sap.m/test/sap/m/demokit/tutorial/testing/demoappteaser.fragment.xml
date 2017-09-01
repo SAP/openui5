@@ -12,7 +12,7 @@
 			<IconTabFilter icon="sap-icon://inspection" text="Statistics" key="statistics"/>
 		</items>
 		<content>
-			<form:SimpleForm>
+			<form:SimpleForm layout="ResponsiveGridLayout">
 				<form:content>
 					<Label text="Posted at"/>
 					<Text text="12/2016"/>

@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<VBox>
+	<VBox renderType="Bare">
 		<OverflowToolbar>
 			<SearchField
 			 width="auto"

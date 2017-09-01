@@ -27,7 +27,7 @@
 						class="sapUiNoContentPadding">
 				<items>
 					<IconTabFilter icon="sap-icon://hint" key="info" >
-						<form:SimpleForm>
+						<form:SimpleForm layout="ResponsiveGridLayout">
 							<form:content>
 								<Label text="{i18n>postDateLabel}"/>
 								<Text text="{Timestamp}"/>
@@ -37,7 +37,7 @@
 						</form:SimpleForm>
 					</IconTabFilter>
 					<IconTabFilter icon="sap-icon://inspection" key="statistics">
-						<Text text="{i18n>viewedManyTimes}" id="viewCounter"/>
+						<Text text="{i18n>viewedManyTimes}" id="viewCounter" class="sapUiSmallMargin"/>
 					</IconTabFilter>
 				</items>
 			</IconTabBar>

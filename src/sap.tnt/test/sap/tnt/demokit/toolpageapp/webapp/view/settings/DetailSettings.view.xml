@@ -6,6 +6,8 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc">
 	<m:Page
+		title="{i18n>systemSettingsTitle}"
+		showHeader="{device>/system/phone}"
 		showNavButton="{device>/system/phone}"
 		navButtonPress="onNavButtonPress">
 		<ObjectPageLayout

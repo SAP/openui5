@@ -86,7 +86,7 @@
 											<Column
 												minScreenWidth="Tablet"
 												demandPopin="true">
-												<FlexBox alignItems="Center" justifyContent="Start">
+												<FlexBox alignItems="Center" justifyContent="Start" renderType="Bare">
 													<items>
 														<Text text="{i18n>TableColumnClassText}" class="sapUiSmallMarginEnd"/>
 														<Button
