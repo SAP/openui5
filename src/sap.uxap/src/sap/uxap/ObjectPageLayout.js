@@ -2183,6 +2183,7 @@ sap.ui.define([
 				//adjust headerTitleStickied ----------------------------
 				$headerTitleClone.addClass("sapUxAPObjectPageHeaderStickied");
 				$headerTitleClone.appendTo(this._$headerTitle.parent());
+				this.getHeaderTitle() && this.getHeaderTitle()._adaptLayoutForDomElement($headerTitleClone);
 
 				this.iHeaderTitleHeightStickied = $headerTitleClone.height();
 			}

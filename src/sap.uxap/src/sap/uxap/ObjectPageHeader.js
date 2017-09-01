@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Icon",
+	"sap/ui/base/Event",
 	"sap/ui/Device",
 	"sap/m/Breadcrumbs",
 	"./ObjectPageHeaderActionButton",
@@ -18,7 +19,7 @@ sap.ui.define([
 	"sap/m/Image",
 	"./ObjectImageHelper",
 	"./library"
-], function (Control, IconPool, CustomData, Icon, Device, Breadcrumbs, ObjectPageHeaderActionButton,
+], function (Control, IconPool, CustomData, Icon, BaseEvent, Device, Breadcrumbs, ObjectPageHeaderActionButton,
 			 ResizeHandler, Text, Button, ActionSheet, Image, ObjectImageHelper, library) {
 	"use strict";
 
@@ -743,12 +744,28 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageHeader.prototype._adaptLayout = function (oEvent) {
-		var iIdentifierContWidth = this.$("identifierLine").width(),
+
+		this._adaptLayoutForDomElement(null, oEvent);
+	};
+
+	/**
+	 * Adapts the layout of the tiven headerTitle domElement
+	 *
+	 * @param {object} jQuery reference to the header dom element
+	 * @param {object} change event of child-element that brought the need to adapt the headerTitle layout
+	 *
+	 * @private
+	 */
+	ObjectPageHeader.prototype._adaptLayoutForDomElement = function ($headerDomRef, oEvent) {
+
+		var $identifierLine = this._findById($headerDomRef, "identifierLine"),
+			iIdentifierContWidth = $identifierLine.width(),
 			iActionsWidth = this._getActionsWidth(), // the width off all actions without hidden one
 			iActionsContProportion = iActionsWidth / iIdentifierContWidth, // the percentage(proportion) that action buttons take from the available space
 			iAvailableSpaceForActions = this._iAvailablePercentageForActions * iIdentifierContWidth,
 			$overflowButton = this._oOverflowButton.$(),
-			$actionButtons = this.$("actions").find(".sapMBtn").not(".sapUxAPObjectPageHeaderExpandButton");
+			$actions = this._findById($headerDomRef, "actions"),
+			$actionButtons = $actions.find(".sapMBtn").not(".sapUxAPObjectPageHeaderExpandButton");
 
 		if (iActionsContProportion > this._iAvailablePercentageForActions) {
 			this._adaptActions(iAvailableSpaceForActions);
@@ -765,7 +782,7 @@ sap.ui.define([
 			$overflowButton.hide();
 		}
 
-		this._adaptObjectPageHeaderIndentifierLine();
+		this._adaptObjectPageHeaderIndentifierLine($headerDomRef);
 	};
 
 	ObjectPageHeader.prototype._adaptLayoutDelayed = function () {
@@ -782,13 +799,18 @@ sap.ui.define([
 	 * Adapt title/subtitle container and action buttons
 	 * @private
 	 */
-	ObjectPageHeader.prototype._adaptObjectPageHeaderIndentifierLine = function () {
-		var iIdentifierContWidth = this.$("identifierLine").width(),
-			$subtitle = this.$("subtitle"),
-			$identifierLineContainer = this.$("identifierLineContainer"),
+	ObjectPageHeader.prototype._adaptObjectPageHeaderIndentifierLine = function ($domRef) {
+
+		var $identifierLine = this._findById($domRef, "identifierLine"),
+			iIdentifierContWidth = $identifierLine.width(),
+			$subtitle = this._findById($domRef, "subtitle"),
+			$innerTitle = this._findById($domRef, "innerTitle"),
+			$identifierLineContainer = this._findById($domRef, "identifierLineContainer"),
 			iSubtitleBottom,
 			iTitleBottom,
-			iActionsAndImageWidth = this.$("actions").width() + this.$().find(".sapUxAPObjectPageHeaderObjectImageContainer").width(),
+			$actions = this._findById($domRef, "actions"),
+			$imageContainer = $domRef ? $domRef.find(".sapUxAPObjectPageHeaderObjectImageContainer") : this.$().find(".sapUxAPObjectPageHeaderObjectImageContainer"),
+			iActionsAndImageWidth = $actions.width() + $imageContainer.width(),
 			iPixelTolerance = this.$().parents().hasClass('sapUiSizeCompact') ? 7 : 3;  // the tolerance of pixels from which we can tell that the title and subtitle are on the same row
 
 		if ($subtitle.length) {
@@ -797,7 +819,7 @@ sap.ui.define([
 			}
 
 			iSubtitleBottom = $subtitle.outerHeight() + $subtitle.position().top;
-			iTitleBottom = this.$("innerTitle").outerHeight() + this.$("innerTitle").position().top;
+			iTitleBottom = $innerTitle.outerHeight() + $innerTitle.position().top;
 			// check if subtitle is below the title and add it a display block class
 			if (Math.abs(iSubtitleBottom - iTitleBottom) > iPixelTolerance) {
 				$subtitle.addClass("sapOPHSubtitleBlock");
@@ -890,6 +912,30 @@ sap.ui.define([
 		});
 
 		return iWidthSum;
+	};
+
+	/**
+	 * Finds the sub-element with the given <code>sId</code> contained
+	 * within <code>$headerDomRef</code> (if <code>$headerDomRef</code> is supplied) or
+	 * globally, prepended with own id (if <code>$headerDomRef</code> is not supplied)
+	 *
+	 * @param {object} jQuery reference to the header dom element
+	 * @param {string} the id of the element to be found
+	 *
+	 * Returns the jQuery reference to the dom element with the given sId
+	 * @private
+	 */
+	ObjectPageHeader.prototype._findById = function ($headerDomRef, sId) {
+		if (!sId) {
+			return null;
+		}
+
+		if ($headerDomRef) {
+			sId = '#' + this.getId() + '-' + sId;
+			return $headerDomRef.find(sId);
+		}
+
+		return this.$(sId); //if no dom reference then search within its own id-space (prepended with own id)
 	};
 
 	/**
