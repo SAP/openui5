@@ -5,15 +5,24 @@
 
 @_sap_m_ObjectAttribute_ListTextShadowColor: none;
 
-html.sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
+.sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	position: relative;
 }
 
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapMObjectAttributeActive:focus > .sapMText {
-		outline-style: dashed;
-	}
+.sapMObjectAttributeActive:focus .sapMObjectAttributeText::after {
+	pointer-events: none;
+	display: block;
+	content: "";
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	bottom: 1px;
+	right: 1px;
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	text-decoration: none;
 }
 
 /*=========================================== */
@@ -26,11 +35,6 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 	text-decoration: underline;
 }
 
-.sapMOHR .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
-}
-
 /*=========================================== */
 /* Custom design for Static Object Header     */
 /*=========================================== */
@@ -38,11 +42,6 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover {
 	text-decoration: underline;
-}
-
-.sapMOH .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
 }
 
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText,

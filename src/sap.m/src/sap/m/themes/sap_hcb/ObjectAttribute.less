@@ -3,17 +3,6 @@
 /* High Contrast Black theme              */
 /* ====================================== */
 
-html.sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.125rem;
-}
-
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapMObjectAttributeActive:focus > .sapMText {
-		outline-style: dashed;
-	}
-}
-
 .sapMObjectAttributeActive .sapMText {
 	color: @sapUiListActiveTextColor;
 	cursor: pointer;
@@ -43,9 +32,4 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
 	text-decoration: underline;
-}
-
-.sapMOH .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.125rem;
 }

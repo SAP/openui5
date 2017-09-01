@@ -3,17 +3,6 @@
 /* BlueCrystal theme                      */
 /* ====================================== */
 
-html.sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
-}
-
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapMObjectAttributeActive:focus > .sapMText {
-		outline-style: dashed;
-	}
-}
-
 /*=========================================== */
 /* Custom design for Responsive Object Header */
 /*=========================================== */
@@ -24,11 +13,6 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 	text-decoration: underline;
 }
 
-.sapMOHR .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
-}
-
 /*=========================================== */
 /* Custom design for Static Object Header     */
 /*=========================================== */
@@ -36,9 +20,4 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover {
 	text-decoration: underline;
-}
-
-.sapMOH .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
 }
