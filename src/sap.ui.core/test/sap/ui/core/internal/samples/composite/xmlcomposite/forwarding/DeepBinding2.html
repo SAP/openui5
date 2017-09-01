@@ -40,7 +40,6 @@
 		model.setData(data);
 		sap.ui.getCore().setModel(model);
 
-
 		oPanel = new sap.m.Panel({ id: "panel" });
 		oPanel.setHeaderText("Standard control...");
 		oPanel.bindAggregation("content", {
@@ -55,7 +54,6 @@
 				})
 			})
 		});
-
 
 		var oDeepBinding = new composites.DeepBinding2({ id: "deepBinding" });
 		oDeepBinding.setText("XMLComposite control ...");

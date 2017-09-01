@@ -15,8 +15,7 @@ sap.ui.define([
 				}
 			},
 			defaultAggregation: "items"
-		},
-		alias: "forwardforwardtext"
+		}
 	});
 	
 	return ForwardForwardText;

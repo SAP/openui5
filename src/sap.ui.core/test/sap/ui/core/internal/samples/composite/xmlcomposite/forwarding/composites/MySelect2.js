@@ -1,0 +1,18 @@
+sap.ui.define(['sap/ui/core/XMLComposite'],
+	function (XMLComposite) {
+		"use strict";
+		var MySelect2 = sap.ui.core.XMLComposite.extend("composites.MySelect2", {
+			metadata: {
+				aggregations: {
+					myItems: {
+						type: "sap.ui.core.Item",
+						multiple: true,
+						bindable: "bindable"
+					}
+				},
+				defaultAggregation: "myItems"
+			}
+		});
+
+		return MySelect2;
+	}, /* bExport= */true);

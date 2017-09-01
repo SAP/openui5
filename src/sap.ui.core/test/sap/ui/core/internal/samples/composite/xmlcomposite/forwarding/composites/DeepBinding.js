@@ -1,6 +1,5 @@
-sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/XMLComposite'],
-	function (jQuery, XMLComposite) {
+sap.ui.define(['sap/ui/core/XMLComposite'],
+	function (XMLComposite) {
 		"use strict";
 		var DeepBinding = sap.ui.core.XMLComposite.extend("composites.DeepBinding", {
 			metadata: {
