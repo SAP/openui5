@@ -690,12 +690,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the appropriate position of the <code>ScrollBar</code> based on the used device.
+	 * Determines the current scroll position.
 	 * @returns {Number}
 	 * @private
 	 */
 	DynamicPage.prototype._getScrollPosition = function () {
-		return this.getScrollDelegate().getScrollTop();
+		return exists(this.$wrapper) ? this.$wrapper.scrollTop() : 0;
 	};
 
 	/**
