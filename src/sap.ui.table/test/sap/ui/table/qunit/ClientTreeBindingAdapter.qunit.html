@@ -318,6 +318,18 @@
 			}
 		});
 
+		test("Magnitude of artificial node with relative binding path", function(){
+			createTreeBindingAdapter("root", oModel.getContext("/bing"), [], {
+				displayRootNode: false
+			});
+
+			// contexts should be now loaded
+			oBinding.getContexts(0, 5);
+			var oArtificialNode = oBinding._oRootNode;
+
+			equal(oArtificialNode.magnitude, 4, "Artificial RootNode has correct magnitude");
+		});
+
 		test("Display root node", function(){
 			createTreeBindingAdapter("/bing/root", null, [], {
 				displayRootNode: true
