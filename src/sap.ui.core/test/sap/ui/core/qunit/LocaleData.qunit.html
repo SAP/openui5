@@ -184,6 +184,8 @@
 		equal(typeof oLocaleData.getNumberSymbol("group"), "string", "getNumberSymbol(\"group\")");
 		equal(typeof oLocaleData.getNumberSymbol("plusSign"), "string", "getNumberSymbol(\"plusSign\")");
 		equal(typeof oLocaleData.getNumberSymbol("minusSign"), "string", "getNumberSymbol(\"minusSign\")");
+		equal(typeof oLocaleData.getCurrencySpacing(), "object", "getCurrencySpacing()");
+		equal(typeof oLocaleData.getCurrencySpacing("after"), "object", "getCurrencySpacing(\"after\")");
 		equal(typeof oLocaleData.getFirstDayOfWeek(), "number", "getFirstDayOfWeek()");
 		ok(oLocaleData.getFirstDayOfWeek() >= 0 && oLocaleData.getFirstDayOfWeek() <7, "getFirstDayOfWeek()");
 		equal(typeof oLocaleData.getWeekendStart(), "number", "getWeekendStart()");
