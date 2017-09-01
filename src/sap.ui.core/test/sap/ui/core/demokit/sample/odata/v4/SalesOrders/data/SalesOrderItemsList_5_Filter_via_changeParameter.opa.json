@@ -14,10 +14,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1061",
-				"ProductName" : "Speed-Computermaus"
-			},
+			"ProductID" : "HT-1061",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1061",
 				"TypeCode" : "PR",

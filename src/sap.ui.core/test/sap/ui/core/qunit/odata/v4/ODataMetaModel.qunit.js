@@ -93,7 +93,7 @@ sap.ui.require([
 			}
 		},
 		sSampleServiceUrl
-			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/",
+			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		mScope = {
 			"$Annotations" : {
 				"name.space.Id" : {
@@ -4254,7 +4254,7 @@ sap.ui.require([
 
 			return oMetaModel.requestObject("/ProductList/").then(function () {
 				assert.strictEqual(oMetaModel.getValueListType(
-						"/com.sap.gateway.default.zui5_epm_sample.v0001.Contact/Sex"),
+						"/com.sap.gateway.default.zui5_epm_sample.v0002.Contact/Sex"),
 					ValueListType.Fixed);
 				assert.strictEqual(oMetaModel.getValueListType(sPropertyPath),
 					ValueListType.Standard);

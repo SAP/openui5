@@ -95,7 +95,7 @@
 					filters: {path: 'SalesOrderID', operator: 'GE', value1: '0500000000'},
 					parameters : {
 						$count : true,
-						$filter : 'BuyerName ge \'M\'',
+						$filter : 'SO_2_BP/CompanyName ge \'M\'',
 						$select : 'BuyerID'
 					},
 					events : {
@@ -167,9 +167,6 @@
 				<Column width="3em">
 					<Text text="Curr." tooltip="Currency"/>
 				</Column>
-				<Column demandPopin="true" minScreenWidth="Large">
-					<Text text="Supplier Company Name"/>
-				</Column>
 				<Column demandPopin="true" minScreenWidth="Medium">
 					<Text text="Note"/>
 				</Column>
@@ -186,16 +183,13 @@
 						<Text id="SalesOrders_ID" text="{SalesOrderID}"/>
 					</cells>
 					<cells>
-						<Text text="{BuyerName}"/>
+						<Text text="{SO_2_BP/CompanyName}"/>
 					</cells>
 					<cells>
 						<Text text="{GrossAmount}"/>
 					</cells>
 					<cells>
 						<Text text="{CurrencyCode}"/>
-					</cells>
-					<cells>
-						<Text text="{SO_2_BP/CompanyName}"/>
 					</cells>
 					<cells>
 						<Input enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
@@ -426,10 +420,10 @@
 							<Text text="{ItemPosition}"/>
 						</cells>
 						<cells>
-							<Text text="{Product/ProductID}"/>
+							<Text text="{ProductID}"/>
 						</cells>
 						<cells>
-							<Text text="{Product/ProductName}"/>
+							<Text text="{SOITEM_2_PRODUCT/Name}"/>
 						</cells>
 						<cells>
 							<demo:ValueHelp value="{SOITEM_2_PRODUCT/Category}"/>
