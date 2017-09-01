@@ -154,7 +154,10 @@ function(AppVariantManager, DescriptorVariantFactory, FakeLrepConnector) {
 	});
 
 	QUnit.test("When createDescriptor() method is called", function (assert) {
-		sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getCurrentInboundId").returns("customer.savedAsAppVariant");
+		sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getInboundInfo").returns({
+			currentRunningInbound: "customer.savedAsAppVariant",
+			addNewInboundRequired: true
+		});
 
 		var oParsedHashStub = {
 			semanticObject: "testSemanticObject",

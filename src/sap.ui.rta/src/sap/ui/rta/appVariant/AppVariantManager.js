@@ -67,10 +67,14 @@ sap.ui.define([
 		oPropertyChange = AppVariantUtils.getInlineChangeInputIcon(oAppVariantData.icon);
 		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "icon"));
 
-		// Inbounds handling
-		var sCurrentRunningInboundId = AppVariantUtils.getCurrentInboundId(oAppVariantData.inbounds);
+		/*********************************************************************************************************************************************
+		***********************************************************Inbounds handling******************************************************************
+		*********************************************************************************************************************************************/
+		var oInboundInfo = AppVariantUtils.getInboundInfo(oAppVariantData.inbounds);
+		var sCurrentRunningInboundId = oInboundInfo.currentRunningInbound;
+		var bAddNewInboundRequired = oInboundInfo.addNewInboundRequired;
 
-		if (sCurrentRunningInboundId === "customer.savedAsAppVariant") {
+		if (sCurrentRunningInboundId === "customer.savedAsAppVariant" && bAddNewInboundRequired) {
 			oPropertyChange = AppVariantUtils.getInlineChangeCreateInbound(sCurrentRunningInboundId);
 			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "createInbound"));
 		}
@@ -137,11 +141,23 @@ sap.ui.define([
 
 	AppVariantManager.prototype.saveDescriptorAndFlexChangesToLREP = function(oAppVariantDescriptor, oRootControl, fnStopRta) {
 		var fnShowCreateAppVariantError = function(vError) {
-			var sErrorMessage = vError.stack || vError.message || vError.status || vError;
+			var sErrorMessage = "";
+			if (vError.messages) {
+				if (vError.messages.length > 1) {
+					vError.messages.forEach(function(oError) {
+						sErrorMessage += oError.text + "\n";
+					});
+				} else {
+					sErrorMessage += vError.messages[0].text;
+				}
+			} else {
+				sErrorMessage += vError.stack || vError.message || vError.status || vError;
+			}
 			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			jQuery.sap.log.error("Failed to create an App Variant", sErrorMessage);
-			var sMsg = oTextResources.getText("MSG_CREATE_APP_VARIANT_ERROR") + "\n"
-					+ oTextResources.getText("MSG_CREATE_APP_VARIANT_ERROR_REASON", sErrorMessage);
+			var sMsg = oTextResources.getText("MSG_CREATE_APP_VARIANT_ERROR") + "\n\n"
+				+ oTextResources.getText("MSG_CREATE_APP_VARIANT_ERROR_REASON") + "\n"
+				+ sErrorMessage;
 			MessageBox.error(sMsg, {
 				styleClass: RtaUtils.getRtaStyleClassName()
 			});
@@ -160,6 +176,7 @@ sap.ui.define([
 
 			return false;
 		};
+
 		return oAppVariantDescriptor.submit().then(function(oResult) {
 			if (oResult.status === "success") {
 				return this._copyDirtyChangesToAppVariant(oAppVariantDescriptor._id, oRootControl).then(function() {
