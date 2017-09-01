@@ -30,10 +30,10 @@ sap.ui.define([
 			this._fnResolvePromise = null;
 			this._fnRejectPromise = null;
 			this._iTimer = null;
-			this._aTaskArgs = null;
+			this._oTaskOptions = null;
 		},
 
-		reSchedule: function (bImmediate, aTaskArgs) {
+		reSchedule: function (bImmediate, oTaskOptions) {
 
 			var oReturnPromise = this._getPromise();
 
@@ -42,18 +42,18 @@ sap.ui.define([
 				this._iTimer = null;
 			}
 
-			this._aTaskArgs = aTaskArgs; // the task arguments are redefined upon each reSchedule
+			this._oTaskOptions = this._mergeOptions(this._oTaskOptions || {}, oTaskOptions);
 
 			if (bImmediate) {
-				var bSuccess = this._fnTask.apply(this._oContext, this._aTaskArgs);
+				var bSuccess = this._fnTask.call(this._oContext, this._oTaskOptions);
 				this._completePromise(bSuccess);
 				return oReturnPromise;
 			}
 
 			// throttle
 			this._iTimer = jQuery.sap.delayedCall(this._iDelay, this, function () {
-                if (this._oPromise) {
-					var bSuccess = this._fnTask.apply(this._oContext, this._aTaskArgs);
+				if (this._oPromise) {
+					var bSuccess = this._fnTask.call(this._oContext, this._oTaskOptions);
 					this._completePromise(bSuccess);
 				}
 			}.bind(this));
@@ -83,7 +83,22 @@ sap.ui.define([
 			this._oPromise = null;
 			this._fnResolvePromise = null;
 			this._fnRejectPromise = null;
-			this._aTaskArgs = null;
+			this._oTaskOptions = null;
+		},
+
+		/**
+		 * Updates the task arguments
+		 * Default merge strategy is inclusive OR
+		 * @private
+		 */
+		_mergeOptions: function(oOldOptions, oNewOptions) {
+
+			var oMergedOptions = jQuery.extend({}, oOldOptions, oNewOptions);
+
+			jQuery.each(oMergedOptions, function(key) {
+				oMergedOptions[key] = oOldOptions[key] || oNewOptions[key]; // default merge strategy is inclusive OR
+			});
+			return oMergedOptions;
 		}
 	});
 
