@@ -17,7 +17,7 @@
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
-					"localUri" : "localService/metadata.xml"
+					"localUri": "localService/metadata.xml"
 				}
 			}
 		}
@@ -75,7 +75,7 @@
 					"bundleName": "sap.ui.demo.masterdetail.i18n.i18n"
 				}
 			},
-			"" : {
+			"": {
 				"dataSource": "mainService",
 				"preload": true
 			}
@@ -89,7 +89,10 @@
 				"controlId": "idAppControl",
 				"controlAggregation": "detailPages",
 				"bypassed": {
-					"target": ["master", "notFound"]
+					"target": [
+						"master",
+						"notFound"
+					]
 				},
 				"async": true
 			},
@@ -98,12 +101,18 @@
 				{
 					"pattern": "",
 					"name": "master",
-					"target": ["object", "master"]
+					"target": [
+						"object",
+						"master"
+					]
 				},
 				{
 					"pattern": "Objects/{objectId}",
 					"name": "object",
-					"target": ["master", "object"]
+					"target": [
+						"master",
+						"object"
+					]
 				}
 			],
 
