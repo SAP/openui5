@@ -3,6 +3,7 @@
 describe("sap.m.ContextMenuSupportIntegration", function() {
 	"use strict";
 
+	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.core.ContextMenuSupport';
 
 	var bDesktop = null;
 
@@ -47,14 +48,14 @@ describe("sap.m.ContextMenuSupportIntegration", function() {
 				browser.actions().mouseMove(oElementRef).perform();
 				browser.actions().click(protractor.Button.RIGHT).perform();
 
-				expect(takeScreenshot(element(by.id(oElement.id)))).toLookAs(oElement.id + "-contextMenu");
+				expect(takeScreenshot()).toLookAs(oElement.id + "-contextMenu");
 			} else {
 				// long press on mobile devices
 				browser.actions().mouseDown(oElementRef).perform();
 				browser.sleep(1000);
 				browser.actions().mouseUp(oElementRef).perform();
 
-				expect(takeScreenshot(element(by.id(oElement.id)))).toLookAs(oElement.id + "-contextMenu-mobile");
+				expect(takeScreenshot()).toLookAs(oElement.id + "-contextMenu-mobile");
 			}
 		});
 	});
