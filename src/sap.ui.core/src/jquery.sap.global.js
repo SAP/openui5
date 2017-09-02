@@ -3370,6 +3370,12 @@
 			jQuery.sap.measure.end(sModuleName);
 
 			if ( oModule.state !== READY ) {
+
+				//better error reporting for js errors in modules
+				if (window["sap-ui-debug"]) {
+					jQuery.sap.includeScript(oModule.url);
+				}
+
 				var oError = new Error("failed to load '" + sModuleName +  "' from " + oModule.url + ": " + oModule.errorMessage);
 				enhanceStacktrace(oError, oModule.errorStack);
 				oError.loadError = oModule.loadError;
@@ -3508,12 +3514,6 @@
 					oModule.errorStack = err && err.stack;
 					oModule.errorMessage = ((err.toString && err.toString()) || err.message) + (err.line ? "(line " + err.line + ")" : "" );
 					oModule.data = undefined;
-					if ( window["sap-ui-debug"] && (/sap-ui-xx-show(L|-l)oad(E|-e)rrors=(true|x|X)/.test(location.search) || oCfgData["xx-showloaderrors"]) ) {
-						log.error("error while evaluating " + sModuleName + ", embedding again via script tag to enforce a stack trace (see below)");
-						jQuery.sap.includeScript(oModule.url);
-						return;
-					}
-
 				} finally {
 
 					// restore AMD flag
