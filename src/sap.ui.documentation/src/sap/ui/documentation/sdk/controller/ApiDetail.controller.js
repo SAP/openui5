@@ -143,9 +143,26 @@ sap.ui.define([
 				oComponent.loadVersionInfo()
 					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
 					.then(function () {
+						var oLibsData = this.getModel("libsData").getData(),
+							bFound = false,
+							sEntity;
+
+						// Try to discover if entity exist
+						if (!oLibsData[this._sTopicid]) {
+							// Not an exact match - try to resolve partial namespace
+							for (sEntity in oLibsData) {
+								if (oLibsData.hasOwnProperty(sEntity) && sEntity.indexOf(this._sTopicid) === 0) {
+									bFound = true;
+									break;
+								}
+							}
+						} else {
+							bFound = true;
+						}
+
 						// If the entity does not exist in the available libs we redirect to the not found page and
 						// stop the immediate execution of this method.
-						if (!this.getModel("libsData").getData()[this._sTopicid]) {
+						if (!bFound) {
 							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 							return;
 						}
