@@ -355,7 +355,9 @@ sap.ui.define([
 					return;
 				}
 				if (this._oObjectPage) {
-					this._oObjectPage.setSelectedSection(oSection.getId());
+					this._oObjectPage.attachEvent("onAfterRenderingDOMReady", function () {
+						this._oObjectPage.setSelectedSection(oSection.getId());
+					}, this);
 				}
 			},
 
