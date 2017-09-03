@@ -116,6 +116,7 @@ sap.ui.define([
 					linkFormatter: function (sTarget, sText) {
 						var sRoute = "entity",
 							aTargetParts,
+							aMatched,
 							iP;
 
 						sText = sText || sTarget; // keep the full target in the fallback text
@@ -132,6 +133,13 @@ sap.ui.define([
 							return "<code>" + sTarget.slice(1) + "</code>";
 						} else if ( iP > 0 ) {
 							sTarget = sTarget.slice(0, iP);
+						}
+
+						// Handle links to documentation
+						aMatched = sTarget.match(/^topic:(\w{32})$/);
+						if (aMatched) {
+							sTarget = aMatched[1];
+							sRoute = "topic";
 						}
 
 						// link refers to a method or event data-sap-ui-target="<class name>/methods/<method name>" OR
