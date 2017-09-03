@@ -38,7 +38,7 @@
 
 					<m:HBox visible="{/show/introLink}" class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
 						<m:Label design="Bold" text="Documentation:"/>
-						<m:Link emphasized="true" text="Read article" enabled="true" href="{/docuLink}"/>
+						<m:Link emphasized="true" text="{/baseName}" enabled="true" href="{/docuLink}"/>
 					</m:HBox>
 
 					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
