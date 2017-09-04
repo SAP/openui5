@@ -594,6 +594,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this.fireSelect({
 						selectedIndex : iIndex
 					});
+					this.aRBs[iIndex].fireSelect({ selected: true });
 				}
 			};
 
