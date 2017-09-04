@@ -500,7 +500,19 @@ sap.ui.define([
 			var mType = mActions.reveal.types[sType];
 			var oDesignTimeMetadata = mType.designTimeMetadata;
 			var oRevealAction = oDesignTimeMetadata.getAction("reveal");
-			var sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oRevealAction);
+			var oElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
+
+			//Parent Overlay passed as argument as no overlay is yet available for stashed control
+			if	(!oElementOverlay) {
+				var oSourceParent = _getSourceParent(oRevealedElement, mParents);
+				oElementOverlay = OverlayRegistry.getOverlay(oSourceParent);
+			}
+
+			var sVariantManagementReference;
+			if (oElementOverlay) {
+				sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oRevealAction, false, oRevealedElement);
+			}
+
 			if (oRevealAction.changeOnRelevantContainer) {
 				return this.getCommandFactory().getCommandFor(oRevealedElement, "reveal", {
 					revealedElementId : oRevealedElement.getId(),
@@ -530,7 +542,7 @@ sap.ui.define([
 				var oMoveAction = SourceParentDesignTimeMetadata.getAction("move");
 				var sVariantManagementReference;
 				if (oMoveAction) {
-					var sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oMoveAction, true);
+					sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oMoveAction, true);
 				}
 				oCmd = this.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
 					movedElements : [{
