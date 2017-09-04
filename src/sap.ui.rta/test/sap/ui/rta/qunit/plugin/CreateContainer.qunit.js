@@ -144,7 +144,7 @@ function(
 
 			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), false, "then isCreateAvailable is called and it returns false");
 			assert.strictEqual(this.oCreateContainer.isCreateEnabled(false, this.oFormOverlay), false, "then isCreateEnabled is called and it returns false");
-			assert.strictEqual(this.oCreateContainer._isEditable(this.oFormOverlay), false, "then the overlay is not editable");
+			assert.strictEqual(this.oCreateContainer._isEditable(this.oFormOverlay, false), false, "then the overlay is not editable");
 		});
 
 		QUnit.test("when an overlay has createContainer action designTime metadata, but has no isEnabled property defined", function(assert) {
@@ -164,7 +164,7 @@ function(
 
 			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), true, "then isCreateAvailable is called and it returns true");
 			assert.strictEqual(this.oCreateContainer.isCreateEnabled(false, this.oFormOverlay), true, "then isCreateEnabled is called and it returns true");
-			assert.strictEqual(this.oCreateContainer._isEditable(this.oFormOverlay), true, "then the overlay is editable");
+			assert.strictEqual(this.oCreateContainer._isEditable(this.oFormOverlay, false), true, "then the overlay is editable");
 		});
 
 		QUnit.test("when an overlay has createContainer action designTime metadata, has no changeType and isEnabled property is true", function(assert) {
@@ -184,7 +184,7 @@ function(
 
 			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), false, "then isCreateAvailable is called and then it returns false");
 			assert.strictEqual(this.oCreateContainer.isCreateEnabled(false, this.oFormOverlay), true, "then isCreateEnabled is called and then it returns correct value");
-			assert.strictEqual(this.oCreateContainer._isEditable(this.oFormOverlay), false, "then the overlay is not editable");
+			assert.strictEqual(this.oCreateContainer._isEditable(this.oFormOverlay, false), false, "then the overlay is not editable");
 		});
 
 		QUnit.test("when an overlay has createContainer action designTime metadata, and isEnabled property is function", function(assert) {
@@ -207,7 +207,7 @@ function(
 
 			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), true, "then isCreateAvailable is called and it returns true");
 			assert.strictEqual(this.oCreateContainer.isCreateEnabled(false, this.oFormOverlay), true, "then isCreateEnabled is called and it returns correct value from function call");
-			assert.strictEqual(this.oCreateContainer._isEditable(this.oFormOverlay), true, "then the overlay is editable");
+			assert.strictEqual(this.oCreateContainer._isEditable(this.oFormOverlay, false), true, "then the overlay is editable");
 		});
 
 		QUnit.test("when an overlay has createContainer action, but its view has no stable id", function(assert) {
@@ -233,7 +233,7 @@ function(
 
 			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), false, "then isCreateAvailable is called and it returns false");
 			assert.strictEqual(this.oCreateContainer.isCreateEnabled(true, this.oFormOverlay), false, "then isCreateEnabled is called and it returns true");
-			assert.strictEqual(this.oCreateContainer._isEditable(this.oFormOverlay), false, "then the overlay is not editable");
+			assert.strictEqual(this.oCreateContainer._isEditable(this.oFormOverlay, false), false, "then the overlay is not editable");
 		});
 
 		QUnit.test("when the designTimeMetadata has childNames for the container name", function(assert) {
