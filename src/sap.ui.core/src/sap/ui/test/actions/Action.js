@@ -164,44 +164,27 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 		 * @private
 		 */
 		_createAndDispatchMouseEvent: function (sName, oDomRef) {
-			var oOffset = $(oDomRef).offset(),
-				x = oOffset.x,
-				y = oOffset.y;
-
+			// ignore scrolled down stuff (client X, Y not set)
+			// and assume stuff is over the whole screen (screen X, Y not set)
 			// See file jquery.sap.events.js for some insights to the magic
-			var oMouseEventObject = {
-				bubbles: true,
-				cancelable: true,
-				identifier: 1,
-				// Well offset should be fine here
-				pageX: x,
-				pageY: y,
-				// ignore scrolled down stuff in OPA
-				clientX: x,
-				clientY: y,
-				// Assume stuff is over the whole screen
-				screenX: x,
-				screenY: y,
-				target: oDomRef,
-				radiusX: 1,
-				radiusY: 1,
-				rotationAngle: 0,
-				// left mouse button
-				button: 0,
-				// include the type so jQuery.event.fixHooks can copy properties properly
-				type: sName
-			};
-
+			var iLeftMouseButtonIndex = 0;
 			var oMouseEvent;
 			if (Device.browser.phantomJS || (Device.browser.msie && (Device.browser.version < 12))) {
 				oMouseEvent = document.createEvent("MouseEvent");
-				oMouseEvent.initMouseEvent(sName, true, true, window, 0,
-					oMouseEventObject.screenX, oMouseEventObject.screenY,
-					oMouseEventObject.clientX, oMouseEventObject.clientY,
-					false, false, false, false,
-					oMouseEventObject.button, oDomRef);
-			}  else {
-				oMouseEvent = new MouseEvent(sName, oMouseEventObject);
+				oMouseEvent.initMouseEvent(sName, true, true, window, 0, 0, 0, 0, 0,
+					false, false, false, false, iLeftMouseButtonIndex, oDomRef);
+			} else {
+				oMouseEvent = new MouseEvent(sName, {
+					bubbles: true,
+					cancelable: true,
+					identifier: 1,
+					target: oDomRef,
+					radiusX: 1,
+					radiusY: 1,
+					rotationAngle: 0,
+					button: iLeftMouseButtonIndex,
+					type: sName // include the type so jQuery.event.fixHooks can copy properties properly
+				});
 			}
 			oDomRef.dispatchEvent(oMouseEvent);
 		},
