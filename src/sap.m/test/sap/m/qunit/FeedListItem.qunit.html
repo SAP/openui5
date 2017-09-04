@@ -640,6 +640,56 @@
 				assert.equal(sText, sFullText, "Full text remains the same");
 			});
 
+			QUnit.test("Collapsed text is not cleared from empty tags during onAfterRendering if rendered in expanded mode", function(assert) {
+				//Arrange
+				this.oFeedListItem.setText("<p></p><ul></ul><strong></strong><p>Some</p> text");
+				this.oFeedListItem.setMaxCharacters(5);
+				this.oFeedListItem._bTextExpanded = true;
+				this.oFeedListItem.onBeforeRendering();
+				var oSinonSpy = sinon.spy(this.oFeedListItem, "_clearEmptyTagsInCollapsedText");
+				//Act
+				this.oFeedListItem.onAfterRendering();
+				//Assert
+				assert.equal(oSinonSpy.called, false, "Empty HTML tags for collapsed text are not removed");
+			});
+
+			QUnit.test("Collapsed text is cleared from empty tags during onAfterRendering if rendered in collapsed mode", function(assert) {
+				//Arrange
+				this.oFeedListItem.setText("<p></p><ul></ul><strong></strong><p>Some</p> text");
+				this.oFeedListItem.setMaxCharacters(5);
+				this.oFeedListItem._bTextExpanded = false;
+				this.oFeedListItem.onBeforeRendering();
+				var oSinonSpy = sinon.spy(this.oFeedListItem, "_clearEmptyTagsInCollapsedText");
+				//Act
+				this.oFeedListItem.onAfterRendering();
+				//Assert
+				assert.equal(oSinonSpy.called, true, "Empty HTML tags are removed for collapsed text");
+				assert.equal(this.oFeedListItem._bEmptyTagsInShortTextCleared, true, "The flag variable has been set to prevent unnecessary clearing of empty tags");
+			});
+
+			QUnit.test("Collapsed text is cleared from empty tags during _toggleTextExpanded if collapsing the text", function(assert) {
+				//Arrange
+				this.oFeedListItem.setText("<p></p><ul></ul><strong></strong><p>Some</p> text");
+				this.oFeedListItem.setMaxCharacters(5);
+				this.oFeedListItem._bTextExpanded = true;
+				var oSinonSpy = sinon.spy(this.oFeedListItem, "_clearEmptyTagsInCollapsedText");
+				sap.ui.getCore().applyChanges();
+				//Act
+				this.oFeedListItem._toggleTextExpanded();
+				//Assert
+				assert.equal(oSinonSpy.called, true, "Empty HTML tags are removed for collapsed text");
+				assert.equal(this.oFeedListItem._bEmptyTagsInShortTextCleared, true, "The flag variable has been set to prevent unnecessary clearing of empty tags");
+			});
+
+			QUnit.test("A flag _bEmptyTagsInShortTextCleared is set to false before rendering", function(assert) {
+				//Arrange
+				this.oFeedListItem._bEmptyTagsInShortTextCleared = true;
+				//Act
+				this.oFeedListItem.onBeforeRendering();
+				//Assert
+				assert.equal(this.oFeedListItem._bEmptyTagsInShortTextCleared, false, "The flag variable has been reset to false");
+			});
+
 			QUnit.test("Treatment of newline character is backward compatible", function(assert) {
 				//Arrange
 				var sText = "Test\n with a \n \n newline\n";
