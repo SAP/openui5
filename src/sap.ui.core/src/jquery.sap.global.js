@@ -3006,13 +3006,16 @@
 				sUrlPrefix,
 				sResourceName;
 
+			// Make sure to have an absolute URL to check against absolute prefix URLs
+			sURL = new URI(sURL, sDocumentLocation).toString();
+
 			for (sNamePrefix in mUrlPrefixes) {
 				if ( mUrlPrefixes.hasOwnProperty(sNamePrefix) ) {
 
 					// Note: configured URL prefixes are guaranteed to end with a '/'
 					// But to support the legacy scenario promoted by the application tools ( "registerModulePath('Application','Application')" )
 					// the prefix check here has to be done without the slash
-					sUrlPrefix = mUrlPrefixes[sNamePrefix].url.slice(0, -1);
+					sUrlPrefix = mUrlPrefixes[sNamePrefix].absoluteUrl.slice(0, -1);
 
 					if ( sURL.indexOf(sUrlPrefix) === 0 ) {
 
@@ -3635,6 +3638,10 @@
 				if ( vUrlPrefix.url.slice(-1) != '/' ) {
 					vUrlPrefix.url += '/';
 				}
+
+				// calculate absolute url
+				// only to be used by 'guessResourceName'
+				vUrlPrefix.absoluteUrl = new URI(vUrlPrefix.url, sDocumentLocation).toString();
 
 				mUrlPrefixes[sResourceNamePrefix] = vUrlPrefix;
 
