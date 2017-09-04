@@ -4095,6 +4095,62 @@
 			});
 		});
 
+		QUnit.test("Keep selected items when updatedFinished event is fired (eg. when Growing)", function(assert) {
+			var done = assert.async(),
+				aSelectedKeys = [],
+				aSelectedItems = [],
+				aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}],
+				oFF = new sap.m.FacetFilter(),
+				oFFL = new sap.m.FacetFilterList({
+					growingThreshold: 2,
+					items: {
+						path: "/values",
+						template: new sap.m.FacetFilterItem( {
+							text: "{text}",
+							key: "{key}"
+						})
+					}
+				});
+
+			oFF.addList(oFFL);
+			var oModel = new sap.ui.model.json.JSONModel({
+				values: aItemsData
+			});
+			oFFL.setModel(oModel);
+
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			aSelectedItems = oFFL.getSelectedItems();
+			oFFL.setSelectedKeys({"1": "Val1", "3": "Val3"});
+
+			aSelectedItems = oFFL.getSelectedItems();
+			aSelectedKeys = Object.getOwnPropertyNames(oFFL.getSelectedKeys());
+
+			assert.equal(aSelectedItems.length, aSelectedKeys.length, "Number of selected keys should match the number of selected items");
+			assert.equal(aSelectedItems.length, 2, "All items selected via keys should be returned");
+			assert.equal(aSelectedItems[0].getKey(), "1", "First item key should be correct");
+			assert.equal(aSelectedItems[1].getKey(), "3", "Second item key should be correct");
+
+			oFFL.fireUpdateFinished({
+				reason : "Growing",
+				actual : 3,
+				total : 3
+			});
+
+			oFFL.attachUpdateFinished(function() {
+				//assert
+				var aSelectedKeys = Object.getOwnPropertyNames(oFFL.getSelectedKeys());
+				aSelectedItems = oFFL.getSelectedItems();
+				assert.equal(aSelectedItems.length, aSelectedKeys.length, "Number of selected keys should match the number of selected items");
+				assert.equal(aSelectedItems.length, 2, "All items selected via keys should be returned");
+				assert.equal(aSelectedItems[0].getKey(), "1", "First item key should be correct");
+				assert.equal(aSelectedItems[1].getKey(), "3", "Second item key should be correct");
+
+				destroyFF(oFF);
+				done();
+			});
+		});
+
 		// Helper functions
 
 		function getButtonCtrl(oFF, iIndex) {
