@@ -448,6 +448,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	};
 
+	if (sap.ui.Device.browser.internet_explorer) {
+		//In IE pasting of strings with line endings cutoffs the text after the 1st line ending, so make sure line endings are removed
+		TextField.prototype.onpaste = function(oEvent) {
+			var clipboardData,
+				pastedData,
+				modifiedData;
+
+			clipboardData = oEvent.clipboardData || window.clipboardData;
+			pastedData = clipboardData.getData('Text');
+
+			if (pastedData) {
+				modifiedData = pastedData.replace(/(?:\r\n|\r|\n)/g, ' ').replace(/\s+$/, "");
+				clipboardData.setData("Text", modifiedData);
+			}
+		};
+	}
+
 	TextField.prototype._realOninput = function(oEvent) {
 
 		if (sap.ui.Device.browser.internet_explorer) {
