@@ -2091,5 +2091,88 @@
         "references": []
       }
     ]
+  },
+  "1.48.7": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "4cfba742526bb7f60af981f96350b7d9d24e781a",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "6547cce06df8cd30531a560961748be7914c06d3",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "ba878bb257ff4ab289787fbdb98c2c8d4e6e1964",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "ba8721be9747cd4c0ef7c7d54c7052f1d613ba1e",
+        "type": "FIX",
+        "text": " sap.m.FeedContent: Documentation issues solved",
+        "references": []
+      },
+      {
+        "id": "b1772b60f7ff1998dfd6ed005f501608bb0c389c",
+        "type": "FIX",
+        "text": " sap.m.Input: Value help icon is now correct in rtl in Chrome",
+        "references": []
+      },
+      {
+        "id": "e279b597276b31aa19b361c68351657df697d0c2",
+        "type": "FIX",
+        "text": " sap.m.MaskInput-on Firefox if the cursor is at the beginning of the field, left arrow does nothing.",
+        "references": []
+      },
+      {
+        "id": "32650bd026d002f693e54c89781bf9bc5a1e44b3",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent endless focus loop on mobile",
+        "references": []
+      },
+      {
+        "id": "1b4b47accf09d556a5e5069dd0ac7cc0f555fc4f",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Do not tokenize text when ValueHelp is opened.",
+        "references": []
+      },
+      {
+        "id": "59a27103a62f64ba8d154dd750c988b3414643fa",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: suggestionItemSelected event is now fired only once",
+        "references": []
+      },
+      {
+        "id": "24aa67b5fb73f61e184a8df064e4d3c8fda567c1",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: SpecialDates are destroyed correctly",
+        "references": []
+      },
+      {
+        "id": "9daf97a2509aa4f5fae0d7dee344e7382f0f3d9a",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Unnecessary \u0027suggest\u0027 events are not fired any more",
+        "references": []
+      },
+      {
+        "id": "139224eb3e62280d92f35e9dc7c81bef6027e63e",
+        "type": "FIX",
+        "text": " sap.m.TileContainer - rendering of tiles is now performance optimized.",
+        "references": []
+      },
+      {
+        "id": "8cd72834bfe0c27b420376696d3bc9a1bab916f1",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Regression in discardProgress fixed",
+        "references": []
+      }
+    ]
   }
 }
