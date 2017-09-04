@@ -154,10 +154,11 @@
 			//Arrange
 			var oItem = this.oMultiEditField._getKeepAll();
 			//Act
-			this.oMultiEditField.setSelectedItem(oItem);
+			var oResult = this.oMultiEditField.setSelectedItem(oItem);
 			//Assert
 			assert.equal(this.oMultiEditField.byId("select").getSelectedKey(), "keep", "The" + oItem.getText() + " item is selected and displayed in MultiEditField");
 			assert.equal(this.oMultiEditField.getSelectedItem(), null, "Null is returned by getSelectedItem when special value item is selected");
+			assert.equal(this.oMultiEditField, oResult, "Instance is returned");
 		});
 
 		QUnit.test("Set regular item as selected item", function(assert) {
@@ -185,6 +186,14 @@
 			//Assert
 			assert.notEqual(this.oMultiEditField.byId("select").getSelectedKey(), "key", "The item is not selected and displayed in MultiEditField");
 			assert.equal(this.oMultiEditField.getSelectedItem(), null, "Null is returned because item is not from items aggregation");
+		});
+
+		QUnit.test("Setting a non core.Item leads to nothing", function(assert) {
+			//Arrange
+			//Act
+			this.oMultiEditField.setSelectedItem("otto");
+			//Assert
+			assert.equal(this.oMultiEditField.getSelectedItem(), null, "SelectedItem is still null");
 		});
 
 		QUnit.module("Public methods", {
