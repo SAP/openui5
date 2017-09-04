@@ -1220,6 +1220,8 @@ sap.ui.define([
 						var iHashIndex, // indexOf('#')
 							iHashDotIndex, // indexOf('#.')
 							iHashEventIndex, // indexOf('#event:')
+							aMatched,
+							sRoute = "api",
 							sTargetBase,
 							sScrollHandlerClass = "scrollToMethod",
 							sEntityName,
@@ -1265,6 +1267,13 @@ sap.ui.define([
 								} else {
 									target = topicName + '/methods/' + entityName;
 								}
+							} else {
+								// Handle links to documentation
+								aMatched = target.match(/^topic:(\w{32})$/);
+								if (aMatched) {
+									target = sEntityName = aMatched[1];
+									sRoute = "topic";
+								}
 							}
 						}
 
@@ -1297,7 +1306,8 @@ sap.ui.define([
 						if (sScrollHandlerClass) {
 							sLink += ' ' + sScrollHandlerClass;
 						}
-						sLink += '" href="#/api/' + target + '" data-sap-ui-target="' + sEntityName + '">' + text + '</a>';
+						sLink += '" href="#/' + sRoute + '/' + target +
+							'" data-sap-ui-target="' + sEntityName + '">' + text + '</a>';
 
 						return sLink;
 
