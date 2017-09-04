@@ -299,7 +299,6 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 	 * - filterProperty must be defined or it must be possible to derive it from the leadingProperty + filterable = true in the metadata
 	 * - showFilterMenuEntry must be true (which is the default)
 	 * - The filter property must be a property of the bound collection however it may differ from the leading property
-	 * - With OData v1 and v2 the filter property must not be a measure
 	 * - The analytical column must be a child of an AnalyticalTable
 	 *
 	 * @returns {boolean}
@@ -318,9 +317,12 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 			// metadata must be evaluated which can only be done when the collection is known and the metadata is loaded
 			// this is usually the case when a binding exists.
 			if (oBinding) {
-				// OData v2 does not allow to proper filter for measures
+				// The OData4SAP specification defines in section 3.3.3.2.2.3 how a filter condition on a measure property has to be used for data selection at runtime:
+				// “Conditions on measure properties refer to the aggregated measure value based on the selected dimensions”
+				// Although the generic OData providers (BW, SADL) do not support filtering measures, there may be specialized implementations that do support it.
+				// Conclusion for a fix therefore is to make sure that the AnalyticalTable solely checks sap:filterable=”false” for providing the filter function.
+				// Check for measure is hence removed. For more details, see BCP: 1770355530
 				if (jQuery.inArray(sFilterProperty, oBinding.getFilterablePropertyNames()) > -1 &&
-					!oBinding.isMeasure(sFilterProperty) &&
 					oBinding.getProperty(sFilterProperty)) {
 					return true;
 				}

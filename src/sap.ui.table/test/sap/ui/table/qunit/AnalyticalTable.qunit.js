@@ -785,7 +785,7 @@ sap.ui.require([
 
 		this._oColumn.setFilterProperty("m2_filterable");
 		this._oColumn.setShowFilterMenuEntry(true);
-		assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+		assert.ok(this._oColumn.isFilterableByMenu(), "Measure fields marked as filterable --> still filterable by menu: " +
 			"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
 			"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
 
