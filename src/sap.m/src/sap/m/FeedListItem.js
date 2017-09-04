@@ -187,16 +187,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 		}
 		this._sFullText = oFormattedText._getDisplayHtml().replace(/\n/g, "<br>");
 		this._sShortText = this._getCollapsedText();
+		this._bEmptyTagsInShortTextCleared = false;
 	};
 
 	FeedListItem.prototype.onAfterRendering = function() {
-		if (this._checkTextIsExpandable()) {
-			//removes the remaining empty tags for collapsed text
-			var sId = "#" + this.getId() + "-realtext", aRemoved;
-			do {
-				aRemoved = jQuery(sId + " *:empty").remove();
-			} while (aRemoved.length > 0);
-			this._sShortText = jQuery(sId).html();
+		if (this._checkTextIsExpandable() && !this._bTextExpanded) {
+			this._clearEmptyTagsInCollapsedText();
 		}
 		// Additional processing of the links takes place in the onAfterRendering function of sap.m.FormattedText, e.g. registration of the click event handlers.
 		// FeedListItem does not render sap.m.FormattedText control as part of its own DOM structure, therefore the onAfterRendering function of the FormattedText
@@ -370,7 +366,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 * this value, the text of the FeedListItem is collapsed once the text reaches this limit.
 	 *
 	 * @private
-	 * @returns {String} Collapsed string based on the "maxCharacter" property
+	 * @returns {String} Collapsed string based on the "maxCharacter" property. If the size of the string before collapsing
+	 * is smaller than the provided threshold, it returns null.
 	 */
 	FeedListItem.prototype._getCollapsedText = function() {
 		this._nMaxCollapsedLength = this.getMaxCharacters();
@@ -400,6 +397,23 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	};
 
 	/**
+	 * Removes the remaining empty tags for collapsed text
+	 *
+	 * @private
+	 */
+	FeedListItem.prototype._clearEmptyTagsInCollapsedText = function() {
+		var aRemoved;
+		if (this._bEmptyTagsInShortTextCleared) {
+			return;
+		}
+		this._bEmptyTagsInShortTextCleared = true;
+		do {
+			aRemoved = this.$("realtext").find(":empty").remove();
+		} while (aRemoved.length > 0);
+		this._sShortText = this.$("realtext").html();
+	};
+
+	/**
 	 * Expands or collapses the text of the FeedListItem expanded state: this._sFullText + ' ' + 'LESS' collapsed state:
 	 * this._sShortText + '...' + 'MORE'
 	 *
@@ -413,6 +427,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 			$threeDots.text(" ... ");
 			this._oLinkExpandCollapse.setText(FeedListItem._sTextShowMore);
 			this._bTextExpanded = false;
+			this._clearEmptyTagsInCollapsedText();
 		} else {
 			$text.html(this._sFullText.replace(/&#xa;/g, "<br>"));
 			$threeDots.text("  ");
@@ -493,10 +508,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	};
 
 	/**
-	 * Checks if the text is expandable
+	 * The text can be expanded if it is longer than the threshold. Then, the control can have two states:
+	 * a state where the text is expanded and a state where the text is collapsed.
+	 * The text cannot be expanded if the text is shorter than the threshold and the complete text is always visible.
 	 *
 	 * @private
-	 * @returns {boolean} true if the text is already expanded. Otherwise returns false.
+	 * @returns {boolean} true if the text can be expanded. Otherwise returns false.
 	 */
 	FeedListItem.prototype._checkTextIsExpandable = function() {
 		return this._sShortText !== null;
