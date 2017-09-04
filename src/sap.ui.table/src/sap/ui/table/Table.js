@@ -1569,6 +1569,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (this._getTotalRowCount() > 0) {
 			var iMaxRowIndex = this._getMaxRowIndex();
 
+			if (TableUtils.isVariableRowHeightEnabled(this)) {
+				iMaxRowIndex++;
+			}
+
 			if (iMaxRowIndex < iRowIndex) {
 				jQuery.sap.log.warning("The index of the first visible row must be lesser or equal than the scrollable row count minus the visible row count." +
 									   " The value has been set to " + iMaxRowIndex + ".", this);
