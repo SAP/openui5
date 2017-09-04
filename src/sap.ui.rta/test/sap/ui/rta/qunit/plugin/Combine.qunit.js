@@ -20,6 +20,7 @@ sap.ui.define([
 	'sap/ui/thirdparty/sinon-ie',
 	'sap/ui/thirdparty/sinon-qunit'
 ],
+
 function(
 	DesignTime,
 	CommandFactory,
@@ -83,18 +84,20 @@ function(
 		oOverlay.setDesignTimeMetadata(oDesignTimeMetadata);
 	};
 
-	//Standard DesignTime Metadata
+	//Designtime Metadata with fake isEnabled function (returns false)
 	var oDesignTimeMetadata1 = {
 			actions : {
 				combine : {
 					changeType: "combineStuff",
 					changeOnRelevantContainer : true,
-					isEnabled : true
+					isEnabled : function() {
+						return false;
+					}
 				}
 			}
 		};
 
-	//Designtime Metadata with fake isEnabled function
+	//Designtime Metadata with fake isEnabled function (returns true)
 	var oDesignTimeMetadata2 = {
 			actions : {
 				combine : {
@@ -270,7 +273,7 @@ function(
 	});
 
 	QUnit.test("when an overlay has a combine action in designTime metadata", function(assert) {
-		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
+		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata2);
 
 		sandbox.stub(this.oDesignTime, "getSelection").returns(
@@ -297,50 +300,14 @@ function(
 			"isCombineEnabled is called and returns false");
 	});
 
-	QUnit.test("when four controls are selected", function(assert) {
-		var fnGetControlsCount = function (oSelectedElement) {
-			if (oSelectedElement.getElements && oSelectedElement.getElements()) {
-				return oSelectedElement.getElements().length;
-			}
-			return 0;
-		};
-
-		// function which checks if less than 4 Elements are selected
-		var fnEnableCheck = function (aControls) {
-			var iControlsCount = 0;
-			aControls.forEach(function (oControl) {
-				iControlsCount += fnGetControlsCount(oControl);
-			});
-
-			if (iControlsCount < 2 || iControlsCount > 3) {
-				return false;
-			}
-			return true;
-		};
-
-		var oDesignTimeMetadata = {
-				actions : {
-					combine : {
-						changeType: "combineStuff",
-						changeOnRelevantContainer : true,
-						isEnabled : function (aControls) {
-							return fnEnableCheck(aControls);
-						}
-					}
-				}
-			};
-
+	QUnit.test("when controls which enabled-function delivers false are selected", function(assert) {
 		sandbox.stub(this.oDesignTime, "getSelection").returns([
 			this.oButton1Overlay,
-			this.oButton2Overlay,
-			this.oButton3Overlay,
-			this.oButton4Overlay
+			this.oButton2Overlay
 		]);
 
-		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata);
-		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata);
-		fnSetOverlayDesigntimeMetadata(this.oButton3Overlay, oDesignTimeMetadata);
-		fnSetOverlayDesigntimeMetadata(this.oButton4Overlay, oDesignTimeMetadata);
+		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
+		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata1);
 		assert.strictEqual(
 			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), true,
 			"isCombineAvailable is called and returns true");
@@ -355,7 +322,7 @@ function(
 			this.oButton4Overlay
 		]);
 
-		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
+		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oButton4Overlay, oDesignTimeMetadata3);
 		assert.strictEqual(
 			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), false,
@@ -408,8 +375,8 @@ function(
 			this.oButton6Overlay
 		]);
 
-		fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, oDesignTimeMetadata1);
-		fnSetOverlayDesigntimeMetadata(this.oButton6Overlay,oDesignTimeMetadata1);
+		fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
+		fnSetOverlayDesigntimeMetadata(this.oButton6Overlay,DEFAULT_DTM);
 		assert.strictEqual(
 			this.oCombinePlugin.isCombineAvailable(this.oOverflowToolbarButton1Overlay), true,
 			"isCombineAvailable is called and returns true");
@@ -424,7 +391,7 @@ function(
 			this.oCheckBox1Overlay
 		]);
 
-		fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, oDesignTimeMetadata1);
+		fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oCheckBox1Overlay,oDesignTimeMetadata5);
 		assert.strictEqual(
 			this.oCombinePlugin.isCombineAvailable(this.oOverflowToolbarButton1Overlay), false,
