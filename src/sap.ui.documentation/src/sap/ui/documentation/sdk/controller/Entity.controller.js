@@ -250,6 +250,10 @@ sap.ui.define([
 						oData.show.introLink = false;
 					}
 
+					if (!oData.baseName) {
+						oData.baseName = oEntity.name;
+					}
+
 					bShouldShowSamplesSection = oEntity.samples.length > 0;
 					iSamplesCount = oEntity.samples.length;
 				}
