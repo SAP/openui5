@@ -16,7 +16,7 @@
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<script src="../../../resources/sap/ui/qunit/qunit-coverage.js" data-cover-flags="branchTracking" data-sap-ui-cover-only="sap/ui/core/util"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <!-- use the sinon faketimers for this test -->
 <script>
 	sinon.config.useFakeTimers = true;
@@ -106,6 +106,38 @@ var oData2 = [
 				},
 				{
 					text: "Node2",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node3",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node4",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node5",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node6",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node7",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node8",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node9",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node10",
 					ref: "../images/action.png"
 				}
 			];
@@ -365,12 +397,21 @@ QUnit.test("tree item with icon", function(assert){
 QUnit.module("Binding");
 
 QUnit.test("data binding update", function(assert){
-	assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"));
+	assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "initial binding context.");
 
 	oModel.setProperty("/", oData2);
 	sap.ui.getCore().applyChanges();
 
-	assert.ok(!oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "binding update successfully.");
+	assert.ok(!oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "binding updated successfully.");
+});
+
+QUnit.test("context length", function(assert){
+	assert.strictEqual(oTree.getItems().length, 10, "initial length is 10.");
+
+	oTree.getModel().setSizeLimit(6);
+	oTree.getModel().refresh();
+
+	assert.strictEqual(oTree.getItems().length, 6, "new length is 6.");
 	oTree.destroy();
 });
 
