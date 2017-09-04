@@ -340,6 +340,83 @@
 		});
 	}
 
+	QUnit.module("Header expand|collapse", {
+		beforeEach: function () {
+			this.oObjectPage = new sap.uxap.ObjectPageLayout({
+				headerTitle: new sap.uxap.ObjectPageHeader()
+			});
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("Expand button listener lifecycle", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(this.oObjectPage, "_handleExpandButtonPressEventLifeCycle");
+
+		// Act
+		this.oObjectPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 2,
+			"Handler method is called twice - once onBeforeRendering and once onAfterRendering");
+
+		assert.ok(oSpy.calledWith(true), "Handler method is called once with 'true'");
+		assert.ok(oSpy.calledWith(false), "Handler method is called once with 'false'");
+
+		// Cleanup
+		oSpy.restore();
+	});
+
+	QUnit.test("Expand button handler method '_handleExpandButtonPressEventLifeCycle'", function (assert) {
+		// Arrange
+		var oExpandButton = this.oObjectPage.getHeaderTitle().getAggregation("_expandButton"),
+			oAttachSpy = sinon.spy(oExpandButton, "attachPress"),
+			oDetachSpy = sinon.spy(oExpandButton, "detachPress");
+
+		// Act - call handler with bAttach = true
+		this.oObjectPage._handleExpandButtonPressEventLifeCycle(true);
+
+		// Assert
+		assert.strictEqual(oAttachSpy.callCount, 1, "attachPress method called once");
+		assert.strictEqual(oDetachSpy.callCount, 0, "detachPress method not called");
+
+		// Arrange
+		oAttachSpy.reset();
+
+		// Act - call handler with bAttach = false
+		this.oObjectPage._handleExpandButtonPressEventLifeCycle(false);
+
+		// Assert
+		assert.strictEqual(oAttachSpy.callCount, 0, "attachPress method not called");
+		assert.strictEqual(oDetachSpy.callCount, 1, "detachPress method called once");
+
+		// Cleanup
+		oAttachSpy.restore();
+		oDetachSpy.restore();
+	});
+
+	QUnit.test("this.iHeaderContentHeight is acquired in the correct way", function (assert) {
+		// Arrange - add a button to the header content so we will have height
+		this.oObjectPage.addHeaderContent(new sap.m.Button());
+
+		// Act
+		this.oObjectPage.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Arrange spy method on the headerContent DOM instance
+		var oSpy = sinon.spy(this.oObjectPage._$headerContent[0], "getBoundingClientRect");
+
+		// Act - call internal method _adjustHeaderHeights
+		this.oObjectPage._adjustHeaderHeights();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "getBoundingClientRect is called once");
+		assert.ok(this.oObjectPage.iHeaderContentHeight > 0, "iHeaderContentHeight is higher than zero");
+	});
+
 	var bUseIconTabBar = true;
 
 	runParameterizedTests(bUseIconTabBar);
