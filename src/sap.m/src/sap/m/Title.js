@@ -71,7 +71,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			 * Defines the alignment of the text within the title. <b>Note:</b> This property only has an effect if the overall width of the title control is
 			 * larger than the displayed text.
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Initial}
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Initial},
+
+			/**
+			 * Enables text wrapping.
+			 * <b>Note:</b> Wrapping must only be activated if the surrounding container allows flexible heights.
+			 * @since 1.52
+			 */
+			wrapping : {type : "boolean", group : "Appearance", defaultValue : false}
 
 		},
 		associations : {
