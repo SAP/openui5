@@ -310,15 +310,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			{name: "Compact",  style: "sapUiSizeCompact"},
 			{name: "Condensed", style: "sapUiSizeCondensed"}
 		],
-		sDensityMode;
-
-		aDensityModes.forEach(function(mode){
-			if (jQuery("html").hasClass(mode.style) || this.$().is("." + mode.style) || this.$().closest("." + mode.style).length > 0) {
-				sDensityMode = mode.name;
-				return;
+		sDensityClass, sDensityMode, i;
+		for (i in aDensityModes) {
+			sDensityClass = aDensityModes[i].style;
+			if (jQuery("html").hasClass(sDensityClass) || jQuery("." + sDensityClass).length > 0) {
+				sDensityMode = aDensityModes[i].name;
 			}
-		}, this);
-
+		}
 		return sDensityMode || aDensityModes[0].name;
 	};
 
