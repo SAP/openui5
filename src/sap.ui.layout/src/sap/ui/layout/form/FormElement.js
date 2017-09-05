@@ -424,7 +424,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 	function _attachDelegate(oField){
 
 		oField.addDelegate(this._oFieldDelegate);
-		if (oField.getMetadata().getProperty("required")) {
+
+		if (!this._bNoObserverChange && oField.getMetadata().getProperty("required")) {
 			this._oObserver.observe(oField, {
 				properties: ["required"]
 			});
@@ -435,8 +436,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 	function _detachDelegate(oField){
 
 		oField.removeDelegate(this._oFieldDelegate);
-		// unbobserve in any case and everything
-		this._oObserver.unobserve(oField, {properties: true, aggregations: true, associations: true});
+
+		if (!this._bNoObserverChange) {
+			// unobserve in any case and everything; this._bNoObserverChange set in SmartForm
+			this._oObserver.unobserve(oField);
+		}
 
 	}
 
