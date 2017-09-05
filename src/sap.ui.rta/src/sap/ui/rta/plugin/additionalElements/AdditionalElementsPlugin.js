@@ -476,10 +476,11 @@ sap.ui.define([
 			}
 			return this.getCommandFactory().getCommandFor(mParents.parent, "addODataProperty", {
 				newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
-				index : iIndex !== undefined ? iIndex : iAddTargetIndex,
-				bindingString : oSelectedElement.bindingPath,
-				parentId : mParents.parent.getId(),
-				oDataServiceVersion : sODataServiceVersion
+				index: iIndex !== undefined ? iIndex : iAddTargetIndex,
+				bindingString: oSelectedElement.bindingPath,
+				entityType: oSelectedElement.entityType,
+				parentId: mParents.parent.getId(),
+				oDataServiceVersion: sODataServiceVersion
 			}, oParentAggregationDTMetadata, sVariantManagementReference);
 		},
 

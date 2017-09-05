@@ -34,6 +34,9 @@ sap.ui.define([
 				bindingString : {
 					type : "string"
 				},
+				entityType : {
+					type : "string"
+				},
 				parentId : {
 					type : "string"
 				},
@@ -47,12 +50,13 @@ sap.ui.define([
 	AddODataProperty.prototype._getChangeSpecificData = function() {
 		// general format
 		return {
-			changeType : this.getChangeType(),
-			index : this.getIndex(),
-			newControlId : this.getNewControlId(),
-			bindingPath : this.getBindingString(),
-			parentId : this.getParentId(),
-			oDataServiceVersion : this.getODataServiceVersion()
+			changeType: this.getChangeType(),
+			index: this.getIndex(),
+			newControlId: this.getNewControlId(),
+			bindingPath: this.getBindingString(),
+			entityType: this.getEntityType(),
+			parentId: this.getParentId(),
+			oDataServiceVersion: this.getODataServiceVersion()
 		};
 	};
 
