@@ -71,6 +71,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.46
 	 * @alias sap.f.FlexibleColumnLayout
+	 * @see topic:59a0e11712e84a648bb990a1dba76bc7
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FlexibleColumnLayout = Control.extend("sap.f.FlexibleColumnLayout", {
