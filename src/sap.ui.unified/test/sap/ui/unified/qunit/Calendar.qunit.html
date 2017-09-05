@@ -847,6 +847,48 @@
 					oAssert.strictEqual($Focus.attr("id"), oHTMLButton.getId(),
 						"Focus should remain on the button");
 
+					// Cleanup
+					oHTMLButton.destroy();
+
+					fnDone();
+				}, 0);
+
+			});
+
+			// BCP: 1780156715
+			QUnit.test("Adding selected date should not move the focus to the calendar control", function (oAssert) {
+				// Arrange
+				var fnDone = oAssert.async(), // Async test
+						oSelectedDate = new sap.ui.unified.DateRange({
+							startDate: new Date(2017, 1, 20)
+						}),
+						oHTMLButton = new sap.ui.core.HTML("persist_focus_target", {
+							content: "<button>Btn</button>"
+						}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				// Act - focus the control and add a selected date to the month
+				oHTMLButton.focus();
+				this.oCal.addSelectedDate(oSelectedDate);
+
+				// Assert
+				setTimeout(function () {
+					var $Focus = jQuery(document.activeElement);
+
+					if($Focus.length === 0) {
+						oAssert.ok(false, "The focus should be on the browser tab on which this " +
+								"QUnit is executed. If not the test will fail!");
+						fnDone(); // Complete async test
+						return;
+					}
+
+					oAssert.strictEqual($Focus.attr("id"), oHTMLButton.getId(),
+							"Focus should remain on the button");
+
+					// Cleanup
+					oHTMLButton.destroy();
+
 					fnDone();
 				}, 0);
 
