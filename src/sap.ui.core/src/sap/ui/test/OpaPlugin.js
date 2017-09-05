@@ -49,9 +49,8 @@ sap.ui.define(['jquery.sap.global',
 		 */
 		var OpaPlugin = UI5Object.extend("sap.ui.test.OpaPlugin", /** @lends sap.ui.test.OpaPlugin.prototype */ {
 
-			constructor : function(sLogPrefix) {
-				sLogPrefix = sLogPrefix || "sap.ui.test.OpaPlugin";
-				this._oLogger = _OpaLogger.getLogger(sLogPrefix);
+			constructor : function() {
+				this._oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5");
 			},
 
 			/**
@@ -476,16 +475,6 @@ sap.ui.define(['jquery.sap.global',
 				return true;
 			}
 		});
-
-		var oSingleton;
-
-		OpaPlugin.getInstance = function () {
-			if (!oSingleton) {
-				oSingleton = new OpaPlugin("sap.ui.test.Opa5");
-			}
-
-			return oSingleton;
-		};
 
 		/**
 		 * marker for a return type

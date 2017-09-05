@@ -4,30 +4,50 @@ sap.ui.define([
 		"unitTests/utils/browser"
 	], function (Opa5, opaTest, browser) {
 
-		QUnit.module("IFrame getters");
+		QUnit.module("IFrame utils");
 
-		QUnit.test("Should get the QUnit utils in an IFrame", function(assert) {
-			// Arrange
-			var done = assert.async(),
-				oOpa5 = new Opa5();
+		var mUtils = {
+			getPlugin: function (window) {
+				return new window.sap.ui.test.OpaPlugin("sap.ui.test.Opa5")
+			},
+			getJQuery: function (window) {
+				return window.$;
+			},
+			getWindow: function (window) {
+				return window;
+			},
+			getUtils: function (window) {
+				return window.sap.ui.qunit.QUnitUtils;
+			},
+			getHashChanger: function (window) {
+				return window.sap.ui.core.routing.HashChanger.getInstance();
+			}
+		};
 
-			assert.strictEqual(Opa5.getUtils(), null, "Initially null is returned");
+		Object.keys(mUtils).forEach(function (sGetter) {
+			QUnit.test("Should " + sGetter + " in an IFrame", function (assert) {
+				var done = assert.async(),
+					oOpa5 = new Opa5();
 
-			// Act
-			oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
-			oOpa5.waitFor({
-				success: function () {
-					assert.ok(Opa5.getUtils, "IFrame utils are available");
-				}
+				assert.deepEqual(Opa5[sGetter](), mUtils[sGetter](window), "Initially the outer context utils are returned");
+
+				oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+				oOpa5.waitFor({
+					success: function () {
+						var oFrame = document.getElementById("OpaFrame");
+						assert.ok(Opa5[sGetter](), "IFrame utils are returned when IFrame is started");
+						assert.deepEqual(Opa5[sGetter](), mUtils[sGetter](oFrame.contentWindow), "IFrame utils are returned after IFrame is started");
+					}
+				});
+				oOpa5.iTeardownMyAppFrame();
+				oOpa5.waitFor({
+					success: function () {
+						assert.deepEqual(Opa5[sGetter](), mUtils[sGetter](window), "After teardown the outer context utils are returned again");
+					}
+				});
+
+				Opa5.emptyQueue().done(done);
 			});
-			oOpa5.iTeardownMyAppFrame();
-			oOpa5.waitFor({
-				success: function () {
-					assert.strictEqual(Opa5.getUtils(), null, "After tearing everything down null is returned again");
-				}
-			});
-
-			Opa5.emptyQueue().done(done);
 		});
 
 		QUnit.module("IFrame");

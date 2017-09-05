@@ -21,7 +21,8 @@ sap.ui.define([
 		'./_LogCollector',
 		'./_OpaLogger',
 		'sap/ui/thirdparty/URI',
-		'sap/ui/base/EventProvider'
+		'sap/ui/base/EventProvider',
+		'sap/ui/qunit/QUnitUtils'
 	],
 	function($,
 			 Opa,
@@ -41,11 +42,12 @@ sap.ui.define([
 			 _LogCollector,
 			 _OpaLogger,
 			 URI,
-			 EventProvider) {
+			 EventProvider,
+			 QUnitUtils) {
 		"use strict";
 
 		var oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5"),
-			oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
+			oPlugin = new OpaPlugin(),
 			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
 			oValidator = new _ParameterValidator({
@@ -279,7 +281,7 @@ sap.ui.define([
 			// unload all extensions, schedule unload on flow so to be synchronized with waitFor's
 			var oExtensionOptions = createWaitForObjectWithoutDefaults();
 			oExtensionOptions.success = function () {
-				that._unloadExtensions(iFrameLauncher.getWindow() || window);
+				that._unloadExtensions(Opa5.getWindow());
 			};
 
 			var oOptions = createWaitForObjectWithoutDefaults();
@@ -692,8 +694,12 @@ sap.ui.define([
 			return Opa.prototype.waitFor.call(this, oOptionsPassedToOpa);
 		};
 
+		// we don't delegate to the respective selected launcher because
+		// these utils should be defined before and during launcher startup.
+		// in addition, principally, OPA5 could be used without a launched application
+
 		/**
-		 * Returns the Opa plugin used for retrieving controls. If an IFrame is used it will return the iFrame's plugin.
+		 * Returns the Opa plugin used for retrieving controls. If an IFrame is launched, it will return the IFrame's plugin.
 		 * @returns {sap.ui.test.OpaPlugin} The plugin instance
 		 * @public
 		 */
@@ -702,41 +708,40 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the jQuery object of the IFrame. If the IFrame is not loaded it will return null.
+		 * Returns the jQuery object in the current context. If an IFrame is launched, it will return the IFrame's jQuery object.
 		 * @returns {jQuery} The jQuery object
 		 * @public
 		 */
 		Opa5.getJQuery = function () {
-			return iFrameLauncher.getJQuery();
+			return iFrameLauncher.getJQuery() || $;
 		};
 
 		/**
-		 * Returns the window object of the IFrame or the current window. If the IFrame is not loaded it will return null.
+		 * Returns the window object in the current context. If an IFrame is launched, it will return the IFrame's window.
 		 * @returns {Window} The window of the IFrame
 		 * @public
 		 */
 		Opa5.getWindow = function () {
-			return iFrameLauncher.getWindow();
+			return iFrameLauncher.getWindow() || window;
 		};
 
 		/**
-		 * Returns QUnit utils object of the IFrame. If the IFrame is not loaded it will return null.
+		 * Returns the QUnit utils object in the current context. If an IFrame is launched, it will return the IFrame's QUnit utils.
 		 * @public
 		 * @returns {sap.ui.test.qunit} The QUnit utils
 		 */
 		Opa5.getUtils = function () {
-			return iFrameLauncher.getUtils();
+			return iFrameLauncher.getUtils() || QUnitUtils;
 		};
 
 		/**
-		 * Returns HashChanger object of the IFrame. If the IFrame is not loaded it will return null.
+		 * Returns the HashChanger object in the current context. If an IFrame is launched, it will return the IFrame's HashChanger.
 		 * @public
 		 * @returns {sap.ui.core.routing.HashChanger} The HashChanger instance
 		 */
 		Opa5.getHashChanger = function () {
-			return iFrameLauncher.getHashChanger();
+			return iFrameLauncher.getHashChanger() || HashChanger.getInstance();
 		};
-
 
 		/**
 		 *
