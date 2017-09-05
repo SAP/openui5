@@ -71,6 +71,9 @@ function(
 		}
 	});
 
+	/**
+	 * This function needs to be overwritten in every plugin.
+	 */
 	BasePlugin.prototype._isEditable = function() {};
 
 	BasePlugin.prototype._attachReevaluationEditable = function(oOverlay) {
@@ -81,20 +84,26 @@ function(
 					var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay);
 					oOverlay.setRelevantOverlays(aRelevantOverlays);
 				}
-				this.evaluateEditable(oOverlay.getRelevantOverlays());
+				this.evaluateEditable(oOverlay.getRelevantOverlays(), {onRegistration: false});
 			}
 		}.bind(this));
 	};
 
-	BasePlugin.prototype.evaluateEditable = function(aOverlays) {
+	/**
+	 * Checks if the overlay has an associated element and calls the _isEditable function.
+	 * If there is an associated element it also modifies the plugin list.
+	 * @param {sap.ui.dt.ElementOverlay[]} aOverlays Array of overlays to be checked
+	 * @param {object} mPropertyBag Map of additional information to be passed to isEditable
+	 */
+	BasePlugin.prototype.evaluateEditable = function(aOverlays, mPropertyBag) {
 		aOverlays.forEach(function(oOverlay) {
 			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 			// this means that getElementInstance is undefined when we get here via removeAggregation mutation
-			var isEditable = oOverlay.getElementInstance() && this._isEditable(oOverlay);
+			var isEditable = oOverlay.getElementInstance() && this._isEditable(oOverlay, mPropertyBag);
 
 			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
 			// for every other plugin isEditable should be a boolean.
-			if (isEditable) {
+			if (isEditable !== undefined) {
 				if (typeof isEditable === "boolean") {
 					this._modifyPluginList(oOverlay, isEditable);
 				} else {
@@ -128,7 +137,7 @@ function(
 	};
 
 	BasePlugin.prototype.registerElementOverlay = function(oOverlay) {
-		this.evaluateEditable([oOverlay]);
+		this.evaluateEditable([oOverlay], {onRegistration: true});
 		this._attachReevaluationEditable(oOverlay);
 	};
 

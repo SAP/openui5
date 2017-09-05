@@ -243,6 +243,15 @@ function(
 	};
 
 	/**
+	 *
+	 */
+	DOMUtil.getDraggable = function(oElement) {
+		oElement = jQuery(oElement);
+
+		return oElement.attr("draggable");
+	};
+
+	/**
 	 * Copy the given styles object to a destination DOM node.
 	 *
 	 * @param {Object} oStyles A styles object, which is retrieved from window.getComputedStyle
