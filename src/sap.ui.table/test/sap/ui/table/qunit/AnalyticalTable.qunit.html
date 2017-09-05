@@ -27,14 +27,10 @@
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
-	<!-- Fake Service Implementaton -->
-	<script src="../../core/qunit/analytics/o4aFakeService.js"></script>
-	<!-- The metadata Fake Content -->
-	<script src="../../core/qunit/analytics/o4aMetadata.js"></script>
-	<!-- Fake Service Document -->
-	<script src="../../core/qunit/analytics/TBA_ServiceDocument.js"></script>
-	<!-- ATBA Request Mocks -->
-	<script src="../../core/qunit/analytics/ATBA_Batch_Contexts.js"></script>
+<script>
+	jQuery.sap.registerModulePath("sap.ui.core.qunit",
+	"../../../../../test-resources/sap/ui/core/qunit");
+</script>
 
 	<link rel="stylesheet" href="shared-qunit.css">
 	<script src="AnalyticalTable.qunit.js"></script>
