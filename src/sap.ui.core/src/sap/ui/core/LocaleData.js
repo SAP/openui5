@@ -1055,7 +1055,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 
 			sKey = sScale + "-" + sStyle;
 
-			sPattern = this._get("dateFields", sKey, "relative-type-" + iDiff);
+			if (iDiff === 0 || iDiff === -2 || iDiff === 2) {
+				sPattern = this._get("dateFields", sKey, "relative-type-" + iDiff);
+			}
 
 			if (!sPattern) {
 				oTypes = this._get("dateFields", sKey, "relativeTime-type-" + (bFuture ? "future" : "past"));
