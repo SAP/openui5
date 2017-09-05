@@ -672,6 +672,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		}
 	};
 
+	// Calculates the magnitude of a server index node after the initial loading
+	ODataTreeBindingFlat.prototype._getInitialMagnitude = function(oNode) {
+		var iDelta = 0,
+			oChild;
+
+		if (oNode.isDeepOne) {
+			return 0;
+		}
+
+		if (oNode.children) {
+			for (var i = 0; i < oNode.children.length; i++) {
+				oChild = oNode.children[i];
+				iDelta += oChild.magnitude + 1;
+			}
+		}
+
+		return oNode.magnitude - iDelta;
+	};
+
 	/**
 	 * Loads the direct children of the <code>oParentNode</code> within the range [iSkip, iSkip + iTop) and merge the
 	 * new nodes into the <code>children</code> array under the parent node.
@@ -2347,7 +2366,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		mParameters = mParameters || {};
 
 		// group id
-		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext()),
+			oOptimizedChanges = this._optimizeChanges();
+
 		if (!sAbsolutePath) {
 			jQuery.sap.log.warning("ODataTreeBindingFlat: submitChanges failed, because the binding-path could nit be resolved.");
 			return;
@@ -2381,18 +2402,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 				}
 
 				if (bSomethingFailed) {
-					// TODO: How to handle error on change set?
-					// E-Tag? Pre-condition failed?
+					// Just like ODataModel.submitChanges, if a request fails we don't do anything.
+					// Example from other bindings: ODataPropertyBinding still keeps a value that could not be successfully submitted.
+					// It is up to the application to handle such errors.
+					// A tree state restoration won't happen. The tree state will stay the same as no data is getting reset.
 				} else if (this.mParameters.restoreTreeStateAfterChange) {
 					// This is an temporary flag on the binding to turn off the restore feature by default.
 					// This flag defines whether the tree state before submitChanges should be restored afterwards.
 					// If this is true, a batch request is sent after the save action is finished to load the nodes
 					// which were available before in order to properly restore the tree state.
-					this._restoreTreeState().catch(function(oEvent) {
-						// TODO error handling
-						jQuery.sap.log.error("Something went wrong TODO");
-						fnOrgError(oEvent);
-					});
+					this._restoreTreeState(oOptimizedChanges);
 				} else {
 					// Trigger a refresh to reload the newly updated hierarchy
 					// This is the happy path, and only here a refresh has to be triggered.
@@ -2414,7 +2433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		};
 
 		// built the actual requests for the change-set
-		this._generateSubmitData();
+		this._generateSubmitData(oOptimizedChanges);
 
 		// relay submit call to the model
 		this.oModel.submitChanges(mParameters);
@@ -2424,105 +2443,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 * Generates the request data for a submit request.
 	 * Generates a minimal set of UPDATE & DELETE requests, in the correct order.
 	 */
-	ODataTreeBindingFlat.prototype._generateSubmitData = function () {
-		// removal check function for the parent-chain of a node
-		var bIsRemovedInParent = false;
-		var fnCheckRemoved = function(oNode, oBreaker) {
-			if (oNode.nodeState.removed && !oNode.nodeState.reinserted) {
-				bIsRemovedInParent = true;
-				oBreaker.broken = true;
-			}
-		};
+	ODataTreeBindingFlat.prototype._generateSubmitData = function (oOptimizedChanges) {
+		var aRemoved = oOptimizedChanges.removed,
+			aCreationCancelled = oOptimizedChanges.creationCancelled,
+			aMoved = oOptimizedChanges.moved;
 
-		// Step (1)
-		// --------------------------------------------------------------------
-		// Iterate all changed nodes and check their current/new parent chain.
-		// Keep track of all nodes which are candidates for a DELETE requests.
-		// New (and wrongly) created UI-only nodes are removed directly, if
-		// one of their current parent nodes is also removed.
-		var aPotentiallyRemovedNodes = [];
-
-		var fnTrackRemovedNodes = function (oNode) {
-			// server indexed nodes and deep nodes
-			if ((oNode.isDeepOne || oNode.serverIndex >= 0) && aPotentiallyRemovedNodes.indexOf(oNode) == -1) {
-				aPotentiallyRemovedNodes.push(oNode);
-			}
-			// cancel create requests for removed new nodes
-			if (oNode.nodeState.added) {
-				this._generateDeleteRequest(oNode);
-			}
-		}.bind(this);
-
-
-		this._aAllChangedNodes.forEach(function (oNode) {
-			bIsRemovedInParent = false;
-			this._up(oNode, fnCheckRemoved, false /* current/new parent */);
-
-			// at least one of the parents of the node is removed
-			if (bIsRemovedInParent) {
-				fnTrackRemovedNodes(oNode);
-			} else {
-				// if none of the parents are removed, but the node itself is removed,
-				// we probably have reached the top-level, in this case the node of course shall also be removed
-				if (oNode.nodeState.removed && !oNode.nodeState.reinserted) {
-					fnTrackRemovedNodes(oNode);
-				} else {
-					// node is not removed
-					// so we have to change the parent
-					jQuery.sap.assert(oNode.context, "Node does not have a context.");
-					var sParentNodeID = oNode.parent.context.getProperty(this.oTreeProperties["hierarchy-node-for"]);
-					this.oModel.setProperty(this.oTreeProperties["hierarchy-parent-node-for"], sParentNodeID, oNode.context);
-				}
-			}
+		aMoved.forEach(function(oNode) {
+			jQuery.sap.assert(oNode.context, "Node does not have a context.");
+			var sParentNodeID = oNode.parent.context.getProperty(this.oTreeProperties["hierarchy-node-for"]);
+			this.oModel.setProperty(this.oTreeProperties["hierarchy-parent-node-for"], sParentNodeID, oNode.context);
 		}.bind(this));
 
-		// Step (2): Sort nodes based on their related server-index.
-		aPotentiallyRemovedNodes.sort(function (a, b) {
-			var iA = this._getRelatedServerIndex(a);
-			var iB = this._getRelatedServerIndex(b);
-			jQuery.sap.assert(iA != undefined, "_generateSubmitData: (containing) Server-Index not found for node 'a'");
-			jQuery.sap.assert(iB != undefined, "_generateSubmitData: (containing) Server-Index not found node 'b'");
-
-			// deep nodes are inside the same containing server-index --> sort them by their level
-			// this way we can make sure, that deeper nodes are sorted after higher-leveled ones
-			if (iA == iB && a.isDeepOne && b.isDeepOne) {
-				return a.originalLevel - b.originalLevel;
-			}
-
-			return iA - iB; // ascending
+		aRemoved.forEach(function(oNode) {
+			this._generateDeleteRequest(oNode);
+			jQuery.sap.log.debug("ODataTreeBindingFlat: DELETE " + oNode.key);
 		}.bind(this));
 
-		// Step (3): Create actual DELETE requests from a list of candidates.
-		// ----------------------------------------------------------------------
-		// Check if a node is deleted inside its old (server-side) parent chain.
-		// A node is deleted in its old parent chain, if at least one of its
-		// parent nodes was removed but not reinserted.
-		// The _up() function ends under two conditions:
-		//    1. if a node is not deleted at all
-		//    2. once the first deleted parent node is found
-		// Only nodes which are not deleted implicitly via their parent, need a DELETE request.
-		var fnNodeIsDeletedInOldParent = function (oDeletedNode) {
-			var bIsDeleted = false;
-			this._up(oDeletedNode, function (oParentNode, oBreak) {
-				if (oParentNode.nodeState.removed && !oParentNode.nodeState.reinserted) {
-					bIsDeleted = true;
-					oBreak.broken = true;
-				}
-			}, true /* original/old parent */);
-
-			return bIsDeleted;
-		}.bind(this);
-
-		// process all potentially deleted nodes
-		for (var i = 0; i < aPotentiallyRemovedNodes.length; i++) {
-			var oDeletedNode = aPotentiallyRemovedNodes[i];
-
-			// deep nodes can be deleted depending on their original parent
-			if (!fnNodeIsDeletedInOldParent(oDeletedNode)) {
-				this._generateDeleteRequest(oDeletedNode);
-				jQuery.sap.log.debug("ODataTreeBindingFlat: DELETE " + oDeletedNode.key);
-			}
-		}
+		aCreationCancelled.forEach(function(oNode) {
+			this._generateDeleteRequest(oNode);
+		}.bind(this));
 	};
 
 	/**
@@ -2563,6 +2502,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		}
 	};
 
+	ODataTreeBindingFlat.prototype._filterChangeForServerSections = function(oOptimizedChanges) {
+		var oChanges = {
+			removed: []
+		};
+
+		if (oOptimizedChanges.removed) {
+			oOptimizedChanges.removed.forEach(function(oRemovedNode) {
+				if (!oRemovedNode.isDeepOne) {
+					oChanges.removed.push(oRemovedNode);
+				}
+			});
+		}
+
+		return oChanges;
+	};
+
+	ODataTreeBindingFlat.prototype._filterChangesForDeepSections = function(oOptimizedChanges) {
+		var mChanges = {
+
+		}, oParent;
+
+		if (oOptimizedChanges.removed) {
+			oOptimizedChanges.removed.forEach(function(oRemovedNode) {
+				if (oRemovedNode.isDeepOne) {
+					oParent = oRemovedNode.parent;
+					if (!mChanges[oParent.key]) {
+						mChanges[oParent.key] = {
+							removed: []
+						};
+					}
+
+					mChanges[oParent.key].removed.push(oRemovedNode);
+				}
+			});
+		}
+
+		return mChanges;
+	};
+
 
 	/**
 	 * First collects all of the loaded server-index node and deep node sections. It then reloads all of them and merges
@@ -2575,12 +2553,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 * 						calculated iSkip, iTop and the loaded content under property oData. Otherwise the error property is
 	 * 						set with the error object which is returned from the server.
 	 */
-	ODataTreeBindingFlat.prototype._restoreTreeState = function () {
+	ODataTreeBindingFlat.prototype._restoreTreeState = function (oOptimizedChanges) {
 		var iCollapsedNodesCount,
-			oSection, aSections, oDeepNodeParent, oChildSection,
+			oSection, aSections, oDeepNodeSection, oChildSection,
 			mCollapsedKeys,
 			aPromises,
 			i, j, k, l,
+			oChanges,
+			mDeepChanges,
 			that = this;
 
 		this.fireDataRequested();
@@ -2589,6 +2569,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		// Collect server-index sections
 		aSections = this._collectServerSections(this._aNodes);
+
+		if (oOptimizedChanges) {
+			oChanges = this._filterChangeForServerSections(oOptimizedChanges);
+			this._adaptSections(aSections, oChanges);
+		}
 
 		// Request server-index nodes
 		//   (for all loaded server-index sections)
@@ -2599,12 +2584,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		// Request children
 		//   (for expanded nodes on intial-expand-level and expanded deep nodes)
-		var aDeepNodes = this._collectDeepNodes();
-		for (j = 0; j < aDeepNodes.length; j++) {
-			oDeepNodeParent = aDeepNodes[j];
-			for (k = 0; k < oDeepNodeParent.aChildSections.length; k++) {
-				oChildSection = oDeepNodeParent.aChildSections[k];
-				aPromises.push(this._restoreChildren(oDeepNodeParent.oParentNode, oChildSection.iSkip, oChildSection.iTop));
+		var aDeepNodeSections = this._collectDeepNodes();
+
+		if (oOptimizedChanges) {
+			mDeepChanges = this._filterChangesForDeepSections(oOptimizedChanges);
+		}
+
+		for (j = 0; j < aDeepNodeSections.length; j++) {
+			oDeepNodeSection = aDeepNodeSections[j];
+
+			if (mDeepChanges) {
+				oChanges = mDeepChanges[oDeepNodeSection.oParentNode.key];
+				if (oChanges) {
+					this._adaptSections(oDeepNodeSection.aChildSections, oChanges, {
+						indexName: "positionInParent",
+						ignoreMagnitude: true
+					});
+				}
+			}
+
+			for (k = 0; k < oDeepNodeSection.aChildSections.length; k++) {
+				oChildSection = oDeepNodeSection.aChildSections[k];
+				aPromises.push(this._restoreChildren(oDeepNodeSection.oParentNode, oChildSection.iSkip, oChildSection.iTop));
 			}
 		}
 
@@ -2616,7 +2617,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 
 		// Dump all data
-		this._refresh(true);
+		this.resetData();
 
 		function restoreCollapseState() {
 			if (iCollapsedNodesCount > 0) {
@@ -2646,17 +2647,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		});
 
 		return Promise.all(aPromises).then(function(aData) {
-			var bSuccess = true;
 			var iAborted = 0;
 
 			aData.forEach(function(oData) {
-				if (oData.error) {
-					// Error occured
-					bSuccess = false;
-
+				if (oData.error) { // Error occured
 					// The request is aborted if statusCode is set with 0
 					if (oData.error.statusCode === 0) {
 						iAborted++;
+					} else {
+						jQuery.sap.log.error("ODataTreeBindingFlat - Tree state restoration request failed. Complete or partial tree state might get lost. Error: " +
+							(oData.error.message.value || oData.error.message));
 					}
 				}
 			});
@@ -2670,7 +2670,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 				that.fireDataReceived({data: aData});
 			}
 
-			return bSuccess ? aData : Promise.reject(aData);
+			return aData;
 		});
 	};
 
@@ -2704,6 +2704,179 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		}
 
 		return aSections;
+	};
+
+	ODataTreeBindingFlat.prototype._adaptSections = function (aSections, oChanges, oConfig) {
+		var aRemoved = oChanges.removed,
+			sIndexName = (oConfig && oConfig.indexName) || "serverIndex",
+			oRemovedNode, oSection,
+			iRestLength, iDelta = 0, iSectionLoopBegin = 0, iMagnitude, iPosition;
+
+		if (aRemoved) {
+			for (var i = 0; i < aRemoved.length; i++) {
+				oRemovedNode = aRemoved[i];
+				iPosition = oRemovedNode[sIndexName] - iDelta;
+				iMagnitude = (oConfig && oConfig.ignoreMagnitude) ? 0 : this._getInitialMagnitude(oRemovedNode);
+
+				for (var j = iSectionLoopBegin; j < aSections.length; j++) {
+					oSection = aSections[j];
+
+					// the removed node is a server index node
+					if (iPosition >= oSection.iSkip && iPosition <= oSection.iSkip + oSection.iTop) {
+						// start point for the next outer for loop
+						iSectionLoopBegin = j;
+
+						aSections.splice(j, 1);
+
+						//         o---------> the node o is removed, the -------> means the children of node o
+						// ----------------------------- oSection
+						//                    |--------| the length of this range is the iRestLenth
+						// The amount of nodes within the oSection which appear after the oRemovedNode and are still left after the removal of the oRemoveNode
+						iRestLength = (oSection.iSkip + oSection.iTop) - iPosition - (1 + iMagnitude);
+
+						if (iRestLength > 0) {
+							// if there are still nodes left after the remove, the front part and the back part
+							// slide together with the same iSkip
+							// The iTop is calculated by adding the length of the two parts together
+							aSections.splice(j, 0, {
+								iSkip: oSection.iSkip,
+								iTop: iRestLength + (iPosition - oSection.iSkip)
+							});
+						} else if (iPosition !== oSection.iSkip) {
+							// if there's no nodes left after the remove, the front part is reserved when it's length is greater than 0
+							aSections.splice(j, 0, {
+								iSkip: oSection.iSkip,
+								iTop: iPosition - oSection.iSkip
+							});
+						} else {
+							// Section is deleted without inserting a new section.
+							// The next loop should start with the same index as the current one, otherwise
+							// the next section will be skipped
+							j--;
+						}
+
+						iDelta += iMagnitude + 1;
+					} else if (oSection.iSkip > iPosition) {
+						// if the section appears after the removed node, its iSkip is moved backward with the magnitude of removed node
+						oSection.iSkip -= (iMagnitude + 1);
+					}
+				}
+			}
+		}
+	};
+
+	ODataTreeBindingFlat.prototype._optimizeChanges = function () {
+		var aRemoved = [],
+			aCreationCancelled = [],
+			aMoved = [];
+
+		// removal check function for the parent-chain of a node
+		var bIsRemovedInParent = false;
+		var fnCheckRemoved = function(oNode, oBreaker) {
+			if (oNode.nodeState.removed && !oNode.nodeState.reinserted) {
+				bIsRemovedInParent = true;
+				oBreaker.broken = true;
+			}
+		};
+
+		// Step (1)
+		// --------------------------------------------------------------------
+		// Iterate all changed nodes and check their current/new parent chain.
+		// Keep track of all nodes which are candidates for a DELETE requests.
+		// New (and wrongly) created UI-only nodes are removed directly, if
+		// one of their current parent nodes is also removed.
+		var aPotentiallyRemovedNodes = [];
+
+		var fnTrackRemovedNodes = function (oNode) {
+			// server indexed nodes and deep nodes
+			if ((oNode.isDeepOne || oNode.serverIndex >= 0) && aPotentiallyRemovedNodes.indexOf(oNode) == -1) {
+				aPotentiallyRemovedNodes.push(oNode);
+			}
+			// cancel create requests for removed new nodes
+			if (oNode.nodeState.added) {
+				aCreationCancelled.push(oNode);
+			}
+		};
+
+
+		this._aAllChangedNodes.forEach(function (oNode) {
+			bIsRemovedInParent = false;
+			this._up(oNode, fnCheckRemoved, false /* current/new parent */);
+
+			// at least one of the parents of the node is removed
+			if (bIsRemovedInParent) {
+				fnTrackRemovedNodes(oNode);
+			} else {
+				// if none of the parents are removed, but the node itself is removed,
+				// we probably have reached the top-level, in this case the node of course shall also be removed
+				if (oNode.nodeState.removed && !oNode.nodeState.reinserted) {
+					fnTrackRemovedNodes(oNode);
+				} else {
+					// node is not removed
+					// so we have to change the parent
+					aMoved.push(oNode);
+				}
+			}
+		}.bind(this));
+
+		// Step (2): Sort nodes based on their related server-index.
+		aPotentiallyRemovedNodes.sort(function (a, b) {
+			var iA = this._getRelatedServerIndex(a);
+			var iB = this._getRelatedServerIndex(b);
+			jQuery.sap.assert(iA != undefined, "_generateSubmitData: (containing) Server-Index not found for node 'a'");
+			jQuery.sap.assert(iB != undefined, "_generateSubmitData: (containing) Server-Index not found node 'b'");
+
+			// deep nodes are inside the same containing server-index --> sort them first by their level. If they are under
+			// the same parent, sort them using their position in the parent
+			// this way we can make sure, that deeper nodes are sorted after higher-leveled ones
+			if (iA == iB && a.isDeepOne && b.isDeepOne) {
+				if (a.parent === b.parent) {
+					return a.positionInParent - b.positionInParent;
+				} else {
+					return a.originalLevel - b.originalLevel;
+
+				}
+			}
+
+			return iA - iB; // ascending
+		}.bind(this));
+
+		// Step (3): Create actual DELETE requests from a list of candidates.
+		// ----------------------------------------------------------------------
+		// Check if a node is deleted inside its old (server-side) parent chain.
+		// A node is deleted in its old parent chain, if at least one of its
+		// parent nodes was removed but not reinserted.
+		// The _up() function ends under two conditions:
+		//    1. if a node is not deleted at all
+		//    2. once the first deleted parent node is found
+		// Only nodes which are not deleted implicitly via their parent, need a DELETE request.
+		var fnNodeIsDeletedInOldParent = function (oDeletedNode) {
+			var bIsDeleted = false;
+			this._up(oDeletedNode, function (oParentNode, oBreak) {
+				if (oParentNode.nodeState.removed && !oParentNode.nodeState.reinserted) {
+					bIsDeleted = true;
+					oBreak.broken = true;
+				}
+			}, true /* original/old parent */);
+
+			return bIsDeleted;
+		}.bind(this);
+
+		// process all potentially deleted nodes
+		for (var i = 0; i < aPotentiallyRemovedNodes.length; i++) {
+			var oDeletedNode = aPotentiallyRemovedNodes[i];
+
+			// deep nodes can be deleted depending on their original parent
+			if (!fnNodeIsDeletedInOldParent(oDeletedNode)) {
+				aRemoved.push(oDeletedNode);
+			}
+		}
+
+		return {
+			removed: aRemoved,
+			creationCancelled: aCreationCancelled,
+			moved: aMoved
+		};
 	};
 
 	/**
