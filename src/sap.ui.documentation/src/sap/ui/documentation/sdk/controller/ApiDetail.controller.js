@@ -343,7 +343,8 @@ sap.ui.define([
 					oMethodsModelData = {methods: []},
 					oMethodsModel,
 					oEventsModel = {events: []},
-					oUi5Metadata;
+					oUi5Metadata,
+					i;
 
 				if (aControlChildren) {
 					if (!oControlData) {
@@ -412,7 +413,7 @@ sap.ui.define([
 				}
 
 				if (oControlData.hasConstructor && oControlData.constructor.parameters) {
-					for (var i = 0; i < oControlData.constructor.parameters.length; i++) {
+					for (i = 0; i < oControlData.constructor.parameters.length; i++) {
 						this.subParamPhoneName = oControlData.constructor.parameters[i].name;
 						oConstructorParamsModel.parameters =
 							oConstructorParamsModel.parameters.concat(this._getParameters(oControlData.constructor.parameters[i]));
@@ -451,6 +452,8 @@ sap.ui.define([
 				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;
 				oControlData.module = oControlData.module || this.NOT_AVAILABLE;
 
+				// Handle references
+				this._modifyReferences(oControlData);
 
 				oMethodsModel = this.getModel("methods");
 				oBorrowedMethodsModel = this.getModel("borrowedMethods");
@@ -472,6 +475,60 @@ sap.ui.define([
 
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
+				}
+
+				// TODO: This is a temporary solution
+				// It's executed here where we have all instances of the CodeEditor created
+				this.getView().findAggregatedObjects(true, function (oElement) {
+					if (oElement instanceof sap.ui.codeeditor.CodeEditor) {
+						// We are replacing the "focus" on the editor instance method as it is
+						// triggering the unwanted scroll
+						oElement._getEditorInstance().focus = function () {
+						};
+					}
+				});
+			},
+
+			/**
+			 * Pre-process and modify references
+			 * @param {object} oControlData control data object which will be modified
+			 * @private
+			 */
+			_modifyReferences: function (oControlData) {
+				var bHeaderDocuLinkFound = false,
+					aReferences = oControlData.references;
+
+				if (aReferences && aReferences.length > 0) {
+					oControlData.references = aReferences.map(function (sReference) {
+						var aParts;
+
+						// For the header we take into account only the first link that matches one of the patterns
+						if (!bHeaderDocuLinkFound) {
+							// Handled patterns:
+							// * topic:59a0e11712e84a648bb990a1dba76bc7
+							// * {@link topic:59a0e11712e84a648bb990a1dba76bc7}
+							// * {@link topic:59a0e11712e84a648bb990a1dba76bc7 Link text}
+							aParts = sReference.match(/^{@link\s+topic:(\w{32})(\s.+)?}$|^topic:(\w{32})$/);
+							if (aParts) {
+								if (aParts[3]) {
+									// Link is of type topic:GUID
+									oControlData.docuLink = aParts[3];
+									oControlData.docuLinkText = oControlData.basename;
+								} else if (aParts[1]) {
+									// Link of type {@link topic:GUID} or {@link topic:GUID Link text}
+									oControlData.docuLink = aParts[1];
+									oControlData.docuLinkText = aParts[2] ? aParts[2] : oControlData.basename;
+								}
+								bHeaderDocuLinkFound = true;
+							} else {
+								return sReference;
+							}
+						} else {
+							return sReference;
+						}
+					});
+				} else {
+					oControlData.references = [];
 				}
 			},
 
@@ -944,6 +1001,37 @@ sap.ui.define([
 						sText,
 						"</pre></span>"].join("")
 				);
+			},
+
+			/**
+			 * Formatter for Overview section
+			 * @param {string} sDescription - Class about description
+			 * @param {array} aReferences - References
+			 * @returns {string} - formatted text block
+			 */
+			formatOverviewDescription: function (sDescription, aReferences) {
+				var iLen,
+					i;
+
+				// format references
+				if (aReferences && aReferences.length > 0) {
+					sDescription += "<br/><br/><span>References:</span><ul>";
+
+					iLen = aReferences.length;
+					for (i = 0; i < iLen; i++) {
+						// We treat references as links but as they may not be defined as such we enforce it if needed
+						if (/{@link.*}/.test(aReferences[i])) {
+							sDescription += "<li>" + aReferences[i] + "</li>";
+						} else {
+							sDescription += "<li>{@link " + aReferences[i] + "}</li>";
+						}
+					}
+
+					sDescription += "</ul>";
+				}
+
+				// Calling formatDescription so it could handle further formatting
+				return this.formatDescription(sDescription);
 			},
 
 			/**
