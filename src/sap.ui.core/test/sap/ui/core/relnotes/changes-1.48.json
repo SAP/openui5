@@ -868,5 +868,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.7": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "a7ee6ebcf2b0d3a9c7b81db2ad72936c64048882",
+        "type": "FIX",
+        "text": " core.Popup: autoclose works under both blur and touch/mouse event",
+        "references": []
+      }
+    ]
   }
 }

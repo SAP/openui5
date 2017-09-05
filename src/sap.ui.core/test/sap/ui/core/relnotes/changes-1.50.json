@@ -557,6 +557,12 @@
         "type": "FIX",
         "text": " v2.ODataModel: function import parameter handling",
         "references": []
+      },
+      {
+        "id": "5f1cab0ae4bf7ceed12cc7710bd34d47e9313bff",
+        "type": "FIX",
+        "text": " ODataTreeBindingAdapter: Encode slashes in property values when calculation group IDs",
+        "references": []
       }
     ]
   }
