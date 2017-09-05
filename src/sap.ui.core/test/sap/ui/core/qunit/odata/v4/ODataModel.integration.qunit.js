@@ -1575,6 +1575,8 @@ sap.ui.require([
 				.expectChange("item", "Name", "/Equipments/EQUIPMENT_2_PRODUCT/Name")
 				.expectChange("item", "SupplierIdentifier",
 					"/Equipments/EQUIPMENT_2_PRODUCT/SupplierIdentifier")
+				.expectChange("item", "ProductPicture",
+					"/Equipments/EQUIPMENT_2_PRODUCT/ProductPicture")
 				.expectChange("item", "PRODUCT_2_CATEGORY",
 					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY")
 				.expectChange("item", "PRODUCT_2_SUPPLIER",
@@ -1627,7 +1629,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: Metadata access to Managers which is not loaded yet. The binding is unresolved
 	// initially and gets a context later. Then switch to Products (becoming asynchronous again).
-	QUnit.test("Metadata: Manager", function (assert) {
+	QUnit.test("Metadata: Manager -> Product", function (assert) {
 		var sView = '\
 <Table id="table" items="{}">\
 	<items>\
@@ -1655,6 +1657,8 @@ sap.ui.require([
 				.expectChange("item", "Name", "/Equipments/EQUIPMENT_2_PRODUCT/Name")
 				.expectChange("item", "SupplierIdentifier",
 					"/Equipments/EQUIPMENT_2_PRODUCT/SupplierIdentifier")
+				.expectChange("item", "ProductPicture",
+					"/Equipments/EQUIPMENT_2_PRODUCT/ProductPicture")
 				.expectChange("item", "PRODUCT_2_CATEGORY",
 					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY")
 				.expectChange("item", "PRODUCT_2_SUPPLIER",

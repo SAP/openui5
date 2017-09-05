@@ -479,8 +479,7 @@ sap.ui.define([
 	 *   The result matching to <code>sPath</code>
 	 */
 	Cache.prototype.drillDown = function (oData, sPath) {
-		var aMatches,
-			that = this;
+		var that = this;
 
 		function invalidSegment(sSegment) {
 			jQuery.sap.log.error("Failed to drill-down into " + sPath + ", invalid segment: "
@@ -488,10 +487,29 @@ sap.ui.define([
 			return undefined;
 		}
 
+		// Determine the implicit value if the value is missing in the cache. Report an invalid
+		// segment if there is no implicit value.
+		function missingValue(sSegment, iPathLength) {
+			var sPropertyPath = that.sResourcePath,
+				sPropertyType;
+
+			if (sPath[0] !== '(') {
+				sPropertyPath += "/";
+			}
+			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
+			sPropertyType = that.fnFetchType(sPropertyPath, true).getResult();
+			if (sPropertyType === "Edm.Stream") {
+				return that.oRequestor.getServiceUrl() + sPropertyPath;
+			}
+			return invalidSegment(sSegment);
+		}
+
 		if (!sPath) {
 			return oData;
 		}
-		return sPath.split("/").reduce(function (vValue, sSegment) {
+		return sPath.split("/").reduce(function (vValue, sSegment, i) {
+			var aMatches;
+
 			if (sSegment === "$count") {
 				return Array.isArray(vValue) ? vValue.$count : invalidSegment(sSegment);
 			}
@@ -514,7 +532,7 @@ sap.ui.define([
 			} else {
 				vValue = vValue[sSegment];
 			}
-			return vValue === undefined ? invalidSegment(sSegment) : vValue;
+			return vValue === undefined ? missingValue(sSegment, i + 1) : vValue;
 		}, oData);
 	};
 

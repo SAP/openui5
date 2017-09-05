@@ -67,6 +67,7 @@ sap.ui.define([
 			"Edm.Int64" : {type : "sap.ui.model.odata.type.Int64"},
 			"Edm.SByte" : {type : "sap.ui.model.odata.type.SByte"},
 			"Edm.Single" : {type : "sap.ui.model.odata.type.Single"},
+			"Edm.Stream" : {type : "sap.ui.model.odata.type.Stream"},
 			"Edm.String" : {
 				constraints : {
 					"@com.sap.vocabularies.Common.v1.IsDigitSequence" : "isDigitSequence",
