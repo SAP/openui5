@@ -294,7 +294,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var oNextItem = this._getNextFocusItem(sPosition);
 		oNextItem.focus();
-		bSelect && oNextItem.setSelected(true);
+		if (bSelect && !oNextItem.getSelected()) {
+			oNextItem.setSelected(true);
+
+			setTimeout(function() {
+				oNextItem.fireSelect({selected: true});
+			}, 0);
+		}
 	};
 
 	/**
