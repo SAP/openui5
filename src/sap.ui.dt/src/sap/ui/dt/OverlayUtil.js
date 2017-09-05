@@ -461,10 +461,35 @@ function(
 		return OverlayUtil.getClosestOverlayFor(oElement);
 	};
 
+	/**
+	 * Returns all the sibling overlays in a container. It checks recursively for every overlay belonging
+	 * to the same relevant container in the tree.
+	 * @param  {sap.ui.dt.Overlay} oOverlay                  Overlay for which we want to find the siblings
+	 * @param  {sap.ui.dt.Overlay} oRelevantContainerOverlay Relevant container of the overlay
+	 * @return {sap.ui.dt.Overlay[]}                         Returns a flat array with all sibling overlays
+	 */
+	OverlayUtil.findAllSiblingOverlaysInContainer = function(oOverlay, oRelevantContainerOverlay) {
+		var oParentOverlay = oOverlay.getParentElementOverlay();
+		if (!oParentOverlay) {
+			return [];
+		}
+
+		if (oParentOverlay !== oRelevantContainerOverlay){
+			var aParents = OverlayUtil.findAllSiblingOverlaysInContainer(oParentOverlay, oRelevantContainerOverlay);
+			return aParents.map(function(oParentOverlay){
+				var oAggregationOverlay = oParentOverlay.getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName());
+				return oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
+			}).reduce(function(aFlattenedArray, oCurrentValue) {
+				return aFlattenedArray.concat(oCurrentValue);
+			}, []);
+		}
+
+		return oOverlay.getParentElementOverlay().getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName()).getChildren();
+	};
 
 	/**
 	 * Gets all the Overlays inside the relevant container which are in the same aggregations.
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay The overlay from which we get the aggregations
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay Overlay from which we get the aggregations
 	 * @returns {sap.ui.dt.ElementOverlay[]} Returns an array with all the overlays in it
 	 * @protected
 	 */
@@ -498,10 +523,10 @@ function(
 
 	/**
 	 * This function returns all the siblings and parents inside the relevant container. Siblings in different aggregations are ignored.
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay The overlay from which we get the aggregations
-	 * @param {sap.ui.dt.ElementOverlay} oRelevantContainerOverlay The relevant container overlay
-	 * @param {integer} iLevel the current level in the hierarchy
-	 * @returns {object} Returns a map with all siblings sorted by the level.
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay Overlay from which we get the aggregations
+	 * @param {sap.ui.dt.ElementOverlay} oRelevantContainerOverlay Relevant container overlay
+	 * @param {integer} iLevel Current level in the hierarchy
+	 * @returns {object} Returns a map with all siblings sorted by the level
 	 * @private
 	 */
 	OverlayUtil._findAllSiblingsAndParents = function(oOverlay, oRelevantContainerOverlay, iLevel) {
@@ -530,9 +555,9 @@ function(
 
 	/**
 	 * Finds all the children of an overlay which have the same relevant container.
-	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay The overlay from which we get the children
-	 * @param {object} oRelevantContainer The relevant container
-	 * @param {sap.ui.dt.ElementOverlay[]} _aRelevantOverlays The array with all the relevant overlays. Used for recursion. You don't have to set this.
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay Overlay from which we get the children
+	 * @param {object} oRelevantContainer Relevant container
+	 * @param {sap.ui.dt.ElementOverlay[]} _aRelevantOverlays Array with all the relevant overlays. Used for recursion. You don't have to set this
 	 * @returns {sap.ui.dt.ElementOverlay[]} Returns a flat array with all the children
 	 * @private
 	 */
@@ -549,6 +574,21 @@ function(
 			});
 		}
 		return _aRelevantOverlays;
+	};
+
+	/**
+	 * Returns all the parent aggregation overlays of the sibling overlays in a container.
+	 * @param  {sap.ui.dt.Overlay} oOverlay                  Overlay for which we want to find the siblings
+	 * @param  {sap.ui.dt.Overlay} oRelevantContainerOverlay Relevant container of the overlay
+	 * @return {sap.ui.dt.Overlay[]}                         Returns a flat array with all aggregation overlays
+	 */
+	OverlayUtil.findAllUniqueAggregationOverlaysInContainer = function(oOverlay, oRelevantContainerOverlay) {
+		var aOverlays = OverlayUtil.findAllSiblingOverlaysInContainer(oOverlay, oRelevantContainerOverlay);
+		return aOverlays.map(function(oOverlay) {
+			return oOverlay.getParentAggregationOverlay();
+		}).filter(function(oOverlay, iPosition, aAggregationOverlays) {
+			return aAggregationOverlays.indexOf(oOverlay) === iPosition;
+		});
 	};
 
 	return OverlayUtil;

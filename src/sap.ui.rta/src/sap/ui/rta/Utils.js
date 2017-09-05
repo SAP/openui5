@@ -539,12 +539,40 @@ function(
 						sSourceProperty,
 						mDestination,
 						mSource
-						)
-					: mSource[sSourceProperty];
+					) : mSource[sSourceProperty];
 			}
 		}
 
 		return mDestination;
+	};
+
+	/**
+	 * Extending helper which allows custom function
+	 * for extending.
+	 *
+	 * @param {Object} mDestination - Destionation object
+	 * @param {Object} mSource - Source object
+	 * @param {Function} fnCustomizer - The customizer is invoked with five arguments:
+	 *                                  (vDestinationValue, vSourceValue, sProperty, mDestination, mSource).
+	 */
+	Utils.extendWith = function (mDestination, mSource, fnCustomizer) {
+		if (!(typeof fnCustomizer === "function")) {
+			throw new Error('In order to use extendWith() utility function fnCustomizer should be provided!');
+		}
+
+		for (var sSourceProperty in mSource) {
+			if (mSource.hasOwnProperty(sSourceProperty)) {
+				if (fnCustomizer(
+						mDestination[sSourceProperty],
+						mSource[sSourceProperty],
+						sSourceProperty,
+						mDestination,
+						mSource)
+				){
+					mDestination[sSourceProperty] = mSource[sSourceProperty];
+				}
+			}
+		}
 	};
 
 	/**
