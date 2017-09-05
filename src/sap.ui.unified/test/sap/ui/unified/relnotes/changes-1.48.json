@@ -185,5 +185,34 @@
         "references": []
       }
     ]
+  },
+  "1.48.7": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "4cfba742526bb7f60af981f96350b7d9d24e781a",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "6547cce06df8cd30531a560961748be7914c06d3",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "ba878bb257ff4ab289787fbdb98c2c8d4e6e1964",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "7753f98dfab1dc5771a629a9c152733158d9697c",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      }
+    ]
   }
 }

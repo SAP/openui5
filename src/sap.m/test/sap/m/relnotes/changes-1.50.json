@@ -1295,6 +1295,12 @@
         "type": "FIX",
         "text": " sap.m.delegate.ValueStateMessage: Value state text reading corrected",
         "references": []
+      },
+      {
+        "id": "ae93ab8c1184c4a2520981eecf3180aff4edcda2",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: keep selection when growing occurs.",
+        "references": []
       }
     ]
   }
