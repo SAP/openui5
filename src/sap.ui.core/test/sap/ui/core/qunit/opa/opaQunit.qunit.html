@@ -20,7 +20,7 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 QUnit.config.autostart = false;
 
 sap.ui.require(['sap/ui/test/opaQunit', 'sap/ui/test/Opa5'], function (opaTest, Opa5) {
-	opaTest("Should have a delay of 90 seconds", function () {
+	opaTest("Should have a timeout of 90 seconds", function () {
 		Opa5.assert.strictEqual(QUnit.config.testTimeout, 90000, "Increased the timeout to 90 sec");
 	});
 
