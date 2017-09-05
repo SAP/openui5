@@ -30,8 +30,7 @@ sap.ui.define([
 		try {
 			return Array.prototype.map.call(oArgs, argToString).join("; ");
 		} catch (e) {
-			// TODO: provide a proper solution
-			// IE 11 TypeError workaround: "Accessing the 'callee' property of an arguments object is not allowed in strict mode"
+			// IE 11 TypeError workaround: some objects cannot be safely stringified
 			return "'" + oArgs + "'";
 		}
 		function argToString(arg) {

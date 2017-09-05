@@ -34,7 +34,7 @@ sap.ui.define([
 		var fnOriginalClear = window[sClearName];
 		window[sSetName] = function (fnCallback, iDelay) {
 			var fnWrappedCallback = function () {
-				// TODO: find a proper solution
+				// workaround for FF: the mTimeouts[iID] is sometimes cleaned by GC before it is released
 				iCurrentDepth = (mTimeouts[iID] ? mTimeouts[iID].depth : 0) + 1;
 				delete mTimeouts[iID];
 				try {
