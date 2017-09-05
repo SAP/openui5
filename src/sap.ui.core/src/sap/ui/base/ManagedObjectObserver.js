@@ -424,11 +424,8 @@ sap.ui.define([
 	// if the listener is already registered to the target only its configuration is updated.
 	// adds the observer to the target managed object if an observer is missing.
 	function remove(oTarget, oListener, oConfiguration) {
-		if (oConfiguration != null) {
-			updateConfiguration(oTarget, oListener, oConfiguration, true);
-		} else {
-			destroy(oListener);
-		}
+		oConfiguration = oConfiguration || getConfiguration(oTarget, oListener);
+		updateConfiguration(oTarget, oListener, oConfiguration, true);
 	}
 
 	function isObjectObserved(oTarget, oListener, oConfiguration) {
@@ -542,6 +539,7 @@ sap.ui.define([
 					!hasObserverFor(oTarget, "destroy") &&
 					!hasObserverFor(oTarget, "bindings")) {
 				delete oTarget._observer;
+				delete mTargets[sId];
 			}
 		} else if (!oTarget._observer && !bRemove) {
 			//is any config listening to events

@@ -1501,8 +1501,10 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 	});
 
 	QUnit.test("ManagedObjectObserver unobserve complete object", function(assert) {
+		var obj2 = new sap.ui.test.TestElement("myObject2");
 
 		assert.strictEqual(this.obj._observer, undefined, "No observer");
+		assert.strictEqual(obj2._observer, undefined, "No observer");
 		//listen to all changes
 		var oObserver = new ManagedObjectObserver(function(oChanges) {
 			setActual(oChanges);
@@ -1512,12 +1514,16 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 			properties: true
 		});
 
-		assert.ok(true, "Observation of all property changes started");
+		oObserver.observe(obj2, {
+			properties: true
+		});
+
+		assert.ok(true, "Observation of all property changes started for object1 and object2");
 
 		//setting the default value of a property
 		setExpected();
 		this.obj.setProperty("value", "");
-		this.checkExpected("Nothing changed");
+		this.checkExpected("Nothing changed in object1");
 
 		//setting a value
 		setExpected({
@@ -1529,7 +1535,7 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		});
 
 		this.obj.setProperty("value", "test");
-		this.checkExpected("Set 'value' to 'test'. Observer called successfully");
+		this.checkExpected("Set 'value' to 'test'. Observer called successfully in object1");
 
 		setExpected({
 			object: this.obj,
@@ -1539,12 +1545,32 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 			current: "1"
 		});
 		this.obj.setProperty("value", 1);
-		this.checkExpected("Set 'value' to '1'. Observer called successfully");
+		this.checkExpected("Set 'value' to '1'. Observer called successfully in object 1");
+
+		setExpected({
+			object: obj2,
+			type:"property",
+			name:"value",
+			old: "test",
+			current: "2"
+		});
+		obj2.setProperty("value", 2);
+		this.checkExpected("Set 'value' to '2'. Observer called successfully in object2");
 
 		oObserver.unobserve(this.obj);
 
 		this.obj.setProperty("value", 2);
 		this.checkExpected("Set 'value' to '2'. Observer not called, actual did not change");
+
+		setExpected({
+			object: obj2,
+			type:"property",
+			name:"value",
+			old: "test",
+			current: "3"
+		});
+		obj2.setProperty("value", 3);
+		this.checkExpected("Set 'value' to '3'. Observer for object2 is still called successfully in object2");
 
 		oObserver.disconnect();
 	});
