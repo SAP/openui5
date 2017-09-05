@@ -33,7 +33,7 @@ sap.ui.define([
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
 		"sap/ui/rta/ui/SettingsDialog",
-		"./Utils",
+		"sap/ui/rta/Utils",
 		"sap/ui/fl/transport/Transports",
 		"sap/ui/fl/transport/TransportSelection",
 		"sap/ui/fl/Utils",
@@ -169,7 +169,11 @@ sap.ui.define([
 				 * @experimental
 				 */
 				"flexSettings": {
-					type: "object"
+					type: "object",
+					defaultValue: {
+						layer: "CUSTOMER",
+						developerMode: true
+					}
 				},
 
 				/** Defines view state of the RTA. Possible values: adaptation, navigation */
@@ -211,8 +215,22 @@ sap.ui.define([
 				"undoRedoStackModified" : {}
 			}
 		},
-		_sAppTitle : null
+		_sAppTitle : null,
+		_dependents: null,
+		constructor: function() {
+			// call parent constructor
+			ManagedObject.apply(this, arguments);
 
+			this._dependents = {};
+			this.iEditableOverlaysCount = 0;
+
+			this.addDependent(new PopupManager(), 'popupManager');
+
+			if (this.getShowToolbars()) {
+				this.getPopupManager().attachOpen(this.onPopupOpen, this);
+				this.getPopupManager().attachClose(this.onPopupClose, this);
+			}
+		}
 	});
 
 	/**
@@ -313,6 +331,24 @@ sap.ui.define([
 		return jQuery.extend({}, this._mDefaultPlugins);
 	};
 
+
+	RuntimeAuthoring.prototype.addDependent = function (oObject, sName) {
+		if (!(sName in this._dependents)) {
+			if (sName) {
+				this['get' + jQuery.sap.charToUpperCase(sName, 0)] = this.getDependent.bind(this, sName);
+			}
+			this._dependents[sName || oObject.getId()] = oObject;
+		}
+	};
+
+	RuntimeAuthoring.prototype.getDependent = function(sName) {
+		return this._dependents[sName];
+	};
+
+	RuntimeAuthoring.prototype.getDependents = function() {
+		return this._dependents;
+	};
+
 	/**
 	 * In order to clear the cache and to destroy the default plugins on exit use
 	 * _destroyDefaultPlugins()
@@ -340,38 +376,19 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * @override
-	 */
-	RuntimeAuthoring.prototype.init = function() {
-		this._onCommandStackModified = this._onStackModified.bind(this);
-		this.iEditableOverlaysCount = 0;
-
-		// call setFlexSettings with the defaultValues
-		this.setFlexSettings({
-			layer: "CUSTOMER",
-			developerMode: true
-		});
-
-		this.oPopupManager = new PopupManager({
-			open: this.onPopupOpen.bind(this),
-			close: this.onPopupClose.bind(this)
-		});
-	};
-
 	RuntimeAuthoring.prototype.onPopupOpen = function(oEvent) {
 		if (
 			oEvent.getParameters() instanceof sap.m.Dialog
-			&& this._oToolsMenu instanceof FioriToolbar
+			&& this.getToolbar() instanceof FioriToolbar
 		) {
-			this._oToolsMenu.setColor("contrast");
+			this.getToolbar().setColor("contrast");
 		}
-		this._oToolsMenu.bringToFront();
+		this.getToolbar().bringToFront();
 	};
 
 	RuntimeAuthoring.prototype.onPopupClose = function(oEvent) {
 		if (oEvent.getParameters() instanceof sap.m.Dialog) {
-			this._oToolsMenu.setColor();
+			this.getToolbar().setColor();
 		}
 	};
 
@@ -394,12 +411,15 @@ sap.ui.define([
 		// Check URI-parameters for sap-ui-layer
 		var oUriParams = jQuery.sap.getUriParameters();
 		var aUriLayer = oUriParams.mParams["sap-ui-layer"];
+
+		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);
+
 		if (aUriLayer && aUriLayer.length > 0) {
 			mFlexSettings.layer = aUriLayer[0];
 		}
 
 		Utils.setRtaStyleClassName(mFlexSettings.layer);
-		this.setProperty("flexSettings", jQuery.extend(this.getFlexSettings(), mFlexSettings));
+		this.setProperty("flexSettings", mFlexSettings);
 	};
 
 	/**
@@ -520,31 +540,25 @@ sap.ui.define([
 						})
 						.then(function (bShowPublish) {
 							this._createToolsMenu(bShowPublish, bIsAppVariantSupported);
-							return this._oToolsMenu.show();
-						}.bind(this))
-						.then(function() {
-							//Popup Overlays
-							this.oPopupManager.setRta(this);
+							return this.getToolbar().show();
 						}.bind(this));
 				}
 			}.bind(this))
 			.then(function() {
-				var oRelevantPopups = this.oPopupManager.getRelevantPopups();
+				this.getPopupManager().setRta(this);
+				var oRelevantPopups = this.getPopupManager().getRelevantPopups();
 				if (oRelevantPopups.aDialogs || oRelevantPopups.aPopovers) {
-					return this._oToolsMenu.bringToFront();
+					return this.getShowToolbars() && this.getToolbar().bringToFront();
 				}
-				return true;
 			}.bind(this))
 			.then(function () {
+				// non-blocking style loading
 				StylesLoader
 					.loadStyles('InPageStyles')
 					.then(function (sData) {
 						var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
 						DOMUtil.insertStyles(sStyles);
 					});
-
-				// non-blocking style loading
-				return true;
 			});
 		}
 	};
@@ -570,7 +584,7 @@ sap.ui.define([
 	RuntimeAuthoring.prototype.setCommandStack = function(oCommandStack) {
 		var  oOldCommandStack = this.getProperty("commandStack");
 		if (oOldCommandStack) {
-			oOldCommandStack.detachModified(this._onCommandStackModified);
+			oOldCommandStack.detachModified(this._onStackModified, this);
 		}
 
 		if (this._oInternalCommandStack) {
@@ -581,7 +595,7 @@ sap.ui.define([
 		var oResult = this.setProperty("commandStack", oCommandStack);
 
 		if (oCommandStack) {
-			oCommandStack.attachModified(this._onCommandStackModified);
+			oCommandStack.attachModified(this._onStackModified, this);
 		}
 
 		if (this.getPlugins() && this.getPlugins()["settings"]) {
@@ -616,10 +630,10 @@ sap.ui.define([
 		var bCanRedo = oCommandStack.canRedo();
 		var oUshellContainer = Utils.getUshellContainer();
 
-		if (this.getShowToolbars() && this._oToolsMenu) {
-			this._oToolsMenu.setUndoRedoEnabled(bCanUndo, bCanRedo);
-			this._oToolsMenu.setPublishEnabled(this._bChangesExist || bCanUndo);
-			this._oToolsMenu.setRestoreEnabled(this._bChangesExist || bCanUndo);
+		if (this.getShowToolbars()) {
+			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
+			this.getToolbar().setPublishEnabled(this._bChangesExist || bCanUndo);
+			this.getToolbar().setRestoreEnabled(this._bChangesExist || bCanUndo);
 		}
 		this.fireUndoRedoStackModified();
 
@@ -632,11 +646,9 @@ sap.ui.define([
 		}
 	};
 
-	RuntimeAuthoring.prototype._closeToolBars = function() {
-		if (this.getShowToolbars() && this._oToolsMenu) {
-			return this._oToolsMenu.hide();
-		} else {
-			return Promise.resolve();
+	RuntimeAuthoring.prototype._closeToolbar = function() {
+		if (this.getShowToolbars()) {
+			return this.getToolbar().hide();
 		}
 	};
 
@@ -663,7 +675,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.stop = function(bDontSaveChanges, bSkipCheckPersChanges) {
 		return ((bDontSaveChanges) ? Promise.resolve() : this._serializeToLrep())
-			.then(this._closeToolBars.bind(this))
+			.then(this._closeToolbar.bind(this))
 			.then(bSkipCheckPersChanges ? Promise.resolve() : this._handlePersonalizationChangesOnExit.bind(this))
 			.then(function(){
 				this.exit();
@@ -701,7 +713,7 @@ sap.ui.define([
 		// if for example the addField Dialog/transport/reset Popup is open, we don't want the user to be able to undo/redo
 		var bMacintosh = Device.os.macintosh;
 		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().contains(document.activeElement);
-		var bFocusInsideRtaToolbar = this._oToolsMenu.getDomRef().contains(document.activeElement);
+		var bFocusInsideRtaToolbar = this.getShowToolbars() && this.getToolbar().getDomRef().contains(document.activeElement);
 		var bFocusOnBody = document.body === document.activeElement;
 		var bFocusInsideRenameField = jQuery(document.activeElement).parents('.sapUiRtaEditableField').length > 0;
 
@@ -764,7 +776,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(bPublishAvailable, bIsAppVariantSupported) {
-		if (!this._oToolsMenu) {
+		if (!this.getDependent('toolbar')) {
 			var fnConstructor;
 
 			if (this.getLayer() === "USER") {
@@ -776,14 +788,14 @@ sap.ui.define([
 			}
 
 			if (this.getLayer() === "USER") {
-				this._oToolsMenu = new fnConstructor({
+				this.addDependent(new fnConstructor({
 					textResources: this._getTextResources(),
 					//events
 					exit: this.stop.bind(this, false, false),
 					restore: this._onRestore.bind(this)
-				});
+				}), 'toolbar');
 			} else {
-				this._oToolsMenu = new fnConstructor({
+				this.addDependent(new fnConstructor({
 					modeSwitcher: this.getMode(),
 					publishVisible: bPublishAvailable,
 					textResources: this._getTextResources(),
@@ -796,13 +808,13 @@ sap.ui.define([
 					redo: this._onRedo.bind(this),
 					modeChange: this._onModeChange.bind(this),
 					manageApps: ManageAppsLoader.load.bind(null, this.getRootControl())
-				});
+				}), 'toolbar');
 			}
 
 			this._checkChangesExist().then(function(bResult){
 				this._bChangesExist = bResult;
-				this._oToolsMenu.setPublishEnabled(bResult);
-				this._oToolsMenu.setRestoreEnabled(bResult);
+				this.getToolbar().setPublishEnabled(bResult);
+				this.getToolbar().setRestoreEnabled(bResult);
 			}.bind(this));
 		}
 	};
@@ -813,6 +825,10 @@ sap.ui.define([
 	 * @protected
 	 */
 	RuntimeAuthoring.prototype.exit = function() {
+		jQuery.map(this._dependents, function (oDependent) {
+			oDependent.destroy();
+		});
+
 		if (this._oDesignTime) {
 			jQuery(Overlay.getOverlayContainer()).removeClass("sapUiRta");
 			this._oDesignTime.destroy();
@@ -831,19 +847,11 @@ sap.ui.define([
 			this._oRootControl.removeStyleClass("sapUiRtaRoot");
 		}
 
-		if (this._oToolsMenu) {
-			this._oToolsMenu.destroy();
-			this._oToolsMenu = null;
-		}
 		this.setCommandStack(null);
 
 		var oUshellContainer = Utils.getUshellContainer();
 		if (oUshellContainer) {
 			oUshellContainer.setDirtyFlag(false);
-		}
-
-		if (this.oPopupManager) {
-			this.oPopupManager.destroy();
 		}
 
 		window.onbeforeunload = this._oldUnloadHandler;
@@ -1704,7 +1712,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.setMode = function (sNewMode) {
 		if (this.getProperty('mode') !== sNewMode) {
-			var oModeSwitcher = this._oToolsMenu.getControl('modeSwitcher');
+			var oModeSwitcher = this.getShowToolbars() && this.getToolbar().getControl('modeSwitcher');
 			var bOverlaysEnabled = sNewMode === 'adaptation';
 
 			if (oModeSwitcher) {
