@@ -295,27 +295,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 
 	};
 
-	// overwrite invalidate to recognize changes on selectedDates
-	Month.prototype.invalidate = function(oOrigin) {
-
-		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
-			Control.prototype.invalidate.apply(this, arguments);
-		} else if (this.getDomRef() && !this._sInvalidateMonth) {
-			// DateRange changed -> only rerender days
-			// do this only once if more DateRanges / Special days are changed
-			if (oOrigin && oOrigin.sParentAggregationName === "specialDates") {
-				// Don't restore focus if special dates are added
-				this._bNoFocus = true;
-			}
-			if (this._bInvalidateSync) { // set if calendar already invalidates in delayed call
-				_invalidateMonth.call(this);
-			} else {
-				this._sInvalidateMonth = jQuery.sap.delayedCall(0, this, _invalidateMonth, [this]);
-			}
-		}
-
-	};
-
 	// overwrite removing of date ranged because invalidate don't get information about it
 	Month.prototype.removeAllSelectedDates = function() {
 
@@ -1911,16 +1890,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 
 			this._bNamesLengthChecked = true;
 		}
-
-	}
-
-	function _invalidateMonth(){
-
-		this._sInvalidateMonth = undefined;
-
-		_renderMonth.call(this, this._bNoFocus);
-		this._bDateRangeChanged = undefined;
-		this._bNoFocus = undefined; // set in Calendar to prevent focus flickering for multiple months
 
 	}
 
