@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.dt.Plugin.
+// Provides class sap.ui.rta.plugin.Plugin.
 sap.ui.define([
 	'sap/ui/dt/Plugin',
 	'sap/ui/fl/Utils',
@@ -90,16 +90,39 @@ function(
 		aOverlays.forEach(function(oOverlay) {
 			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 			// this means that getElementInstance is undefined when we get here via removeAggregation mutation
-			if (oOverlay.getElementInstance() && this._isEditable(oOverlay)) {
-				this.addToPluginsList(oOverlay);
-			} else {
-				this.removeFromPluginsList(oOverlay);
+			var isEditable = oOverlay.getElementInstance() && this._isEditable(oOverlay);
+
+			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
+			// for every other plugin isEditable should be a boolean.
+			if (isEditable) {
+				if (typeof isEditable === "boolean") {
+					this._modifyPluginList(oOverlay, isEditable);
+				} else {
+					this._modifyPluginList(oOverlay, isEditable["asChild"], false);
+					this._modifyPluginList(oOverlay, isEditable["asSibling"], true);
+				}
 			}
 		}.bind(this));
 	};
 
-	BasePlugin.prototype._isEditableByPlugin = function(oOverlay) {
-		var sPluginName = this.getMetadata().getName();
+	BasePlugin.prototype._modifyPluginList = function(oOverlay, bIsEditable, bOverlayIsSibling) {
+		if (bIsEditable) {
+			this.addToPluginsList(oOverlay, bOverlayIsSibling);
+		} else {
+			this.removeFromPluginsList(oOverlay, bOverlayIsSibling);
+		}
+	};
+
+	BasePlugin.prototype._retrievePluginName = function(bSibling) {
+		var sName = this.getMetadata().getName();
+		if (bSibling !== undefined) {
+			sName += bSibling ? ".asSibling" : ".asChild";
+		}
+		return sName;
+	};
+
+	BasePlugin.prototype._isEditableByPlugin = function(oOverlay, bSibling) {
+		var sPluginName = this._retrievePluginName(bSibling);
 		var aPluginList = oOverlay.getEditableByPlugins();
 		return aPluginList.indexOf(sPluginName) > -1;
 	};
@@ -111,6 +134,8 @@ function(
 
 	BasePlugin.prototype.deregisterElementOverlay = function(oOverlay) {
 		this.removeFromPluginsList(oOverlay);
+		this.removeFromPluginsList(oOverlay, true);
+		this.removeFromPluginsList(oOverlay, false);
 	};
 
 	/**
@@ -201,15 +226,17 @@ function(
 		return bIsEditable;
 	};
 
-	BasePlugin.prototype.removeFromPluginsList = function(oOverlay) {
-		oOverlay.removeEditableByPlugin(this.getMetadata().getName());
+	BasePlugin.prototype.removeFromPluginsList = function(oOverlay, bSibling) {
+		var sName = this._retrievePluginName(bSibling);
+		oOverlay.removeEditableByPlugin(sName);
 		if (!oOverlay.getEditableByPlugins().length) {
 			oOverlay.setEditable(false);
 		}
 	};
 
-	BasePlugin.prototype.addToPluginsList = function(oOverlay) {
-		oOverlay.addEditableByPlugin(this.getMetadata().getName());
+	BasePlugin.prototype.addToPluginsList = function(oOverlay, bSibling) {
+		var sName = this._retrievePluginName(bSibling);
+		oOverlay.addEditableByPlugin(sName);
 		oOverlay.setEditable(true);
 	};
 

@@ -161,7 +161,7 @@ sap.ui.define([
 		},
 
 		isAvailable: function(bOverlayIsSibling, oOverlay){
-			return this._isEditable(oOverlay, bOverlayIsSibling);
+			return this._isEditableByPlugin(oOverlay, bOverlayIsSibling);
 		},
 
 		isEnabled: function(bOverlayIsSibling, oOverlay){
@@ -570,12 +570,15 @@ sap.ui.define([
 		 * On Startup bOverlayIsSibling is not defined as we don't know if it is a sibling or not. In this case we check both cases.
 		 * @param {sap.ui.dt.Overlay} oOverlay - overlay to be checked
 		 * @param {boolean} bOverlayIsSibling - (optional) describes whether given overlay is to be checked as a sibling or as a child on editable. Expected values: [true, false, undefined]
-		 * @returns {boolean} editable boolean value
+		 * @returns {boolean | object} editable boolean value or object with editable boolean values for "asChild" and "asSibling"
 		 * @protected
 		 */
 		_isEditable: function(oOverlay, bOverlayIsSibling) {
 			if (bOverlayIsSibling === undefined || bOverlayIsSibling === null) {
-				return _isEditableCheck.call(this, oOverlay, true) || _isEditableCheck.call(this, oOverlay, false);
+				return {
+					asSibling: _isEditableCheck.call(this, oOverlay, true),
+					asChild: _isEditableCheck.call(this, oOverlay, false)
+				};
 			} else {
 				return _isEditableCheck.call(this, oOverlay, bOverlayIsSibling);
 			}

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.plugin.Remove.
+// Provides class sap.ui.rta.plugin.CreateContainer.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/fl/Utils',
@@ -45,13 +45,16 @@ sap.ui.define([
 	 * On Startup bOverlayIsSibling is not defined as we don't know if it is a sibling or not. In this case we check both cases.
 	 * @param {sap.ui.dt.Overlay} oOverlay - overlay to be checked
 	 * @param {boolean} bOverlayIsSibling - (optional) describes whether given overlay is to be checked as a sibling or as a child on editable. Expected values: [true, false, undefined]
-	 * @return {boolean} true, if create container action is possible
+	 * @returns {boolean | object} editable boolean value or object with editable boolean values for "asChild" and "asSibling"
 	 * @private
 	 */
 	CreateContainer.prototype._isEditable = function(oOverlay, bOverlayIsSibling) {
 		if (bOverlayIsSibling === undefined || bOverlayIsSibling === null) {
-			return this._isEditableCheck(oOverlay, false) || this._isEditableCheck(oOverlay, true);
-		} else {
+			return {
+				asSibling: this._isEditableCheck(oOverlay, true),
+				asChild: this._isEditableCheck(oOverlay, false)
+			};
+	} else {
 			return this._isEditableCheck(oOverlay, bOverlayIsSibling);
 		}
 	};
@@ -98,7 +101,7 @@ sap.ui.define([
 	};
 
 	CreateContainer.prototype.isCreateAvailable = function(bSibling, oOverlay) {
-		return this._isEditable(oOverlay, bSibling);
+		return this._isEditableByPlugin(oOverlay, bSibling);
 	};
 
 	CreateContainer.prototype.isCreateEnabled = function(bSibling, oOverlay) {
