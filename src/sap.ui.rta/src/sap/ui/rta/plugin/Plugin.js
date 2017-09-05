@@ -147,10 +147,16 @@ function(
 		return oOverlay.hasElementStableId();
 	};
 
-	BasePlugin.prototype.getVariantManagementReference = function (oOverlay, oAction, bForceRelevantContainer) {
-		var oElement = oOverlay.getElementInstance();
+	BasePlugin.prototype.getVariantManagementReference = function (oOverlay, oAction, bForceRelevantContainer, oStashedElement) {
+		var oElement;
+		if (!oStashedElement) {
+			oElement = oOverlay.getElementInstance();
+		} else {
+			oElement = oStashedElement;
+		}
+
 		var oRelevantElement;
-		if (oAction.changeOnRelevantContainer || bForceRelevantContainer) {
+		if ((oAction.changeOnRelevantContainer || bForceRelevantContainer) && !oStashedElement) {
 			oRelevantElement = oOverlay.getRelevantContainer();
 		} else {
 			oRelevantElement = oElement;
