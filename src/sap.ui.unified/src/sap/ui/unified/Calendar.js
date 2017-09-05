@@ -1820,16 +1820,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oMonth = aMonths[i];
 				oMonth._bDateRangeChanged = true;
 				oMonth._bInvalidateSync = true;
-				if (aMonths.length > 1) {
-					oMonth._bNoFocus = true;
-				}
+				oMonth._bNoFocus = true;
 				oMonth.invalidate(oOrigin);
 				oMonth._bInvalidateSync = undefined;
-			}
-
-			if (aMonths.length > 1) {
-				// restore focus
-				this._focusDate(this._getFocusedDate(), true, true);
 			}
 		}
 
