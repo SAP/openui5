@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="../../../../sadl/sap/sepm_c_slsorder_tp_100/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.sadl.sepm_c_slsorder_tp_100.v0001" Alias="REF__SEPM_C_SLSORDER_TP_100" />
+	</edmx:Reference>
+	<edmx:Reference Uri="../../../../sadl/sap/sepm_i_currency/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.sadl.sepm_i_currency.v0001" Alias="REF__SEPM_I_CURRENCY" />
+	</edmx:Reference>
+	<edmx:Reference Uri="../../../../sadl/sap/sepm_i_product_e/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.sadl.sepm_i_product_e.v0001" Alias="REF__SEPM_I_PRODUCT_E" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="Core" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.sadl.sepm_c_slsorderitem_tp_100.v0001" Alias="SAP__self">
+			<EntityType Name="SEPM_C_SLSORDERITEM_TP_100Type">
+				<Key>
+					<PropertyRef Name="SalesOrderItemUUID" />
+				</Key>
+				<Property Name="SalesOrderItemUUID" Type="Edm.Guid" Nullable="false" />
+				<Property Name="SalesOrderUUID" Type="Edm.Guid" />
+				<Property Name="SalesOrder" Type="Edm.String" MaxLength="10" />
+				<Property Name="SalesOrderItem" Type="Edm.String" MaxLength="10" />
+				<Property Name="Product" Type="Edm.String" MaxLength="10" />
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" />
+				<Property Name="GrossAmount" Type="Edm.Decimal" Precision="16" Scale="variable" />
+				<Property Name="Quantity" Type="Edm.Decimal" Precision="13" Scale="3" />
+				<NavigationProperty Name="_Currency" Type="com.sap.gateway.sadl.sepm_i_currency.v0001.SEPM_I_CurrencyType" />
+				<NavigationProperty Name="_Product" Type="com.sap.gateway.sadl.sepm_i_product_e.v0001.SEPM_I_Product_EType" />
+				<NavigationProperty Name="_SalesOrder" Type="com.sap.gateway.sadl.sepm_c_slsorder_tp_100.v0001.SEPM_C_SLSORDER_TP_100Type" Nullable="false" />
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="SEPM_C_SLSORDERITEM_TP_100" EntityType="com.sap.gateway.sadl.sepm_c_slsorderitem_tp_100.v0001.SEPM_C_SLSORDERITEM_TP_100Type">
+					<NavigationPropertyBinding Path="_Currency" Target="com.sap.gateway.sadl.sepm_i_currency.v0001.Container/SEPM_I_Currency" />
+					<NavigationPropertyBinding Path="_Product" Target="com.sap.gateway.sadl.sepm_i_product_e.v0001.Container/SEPM_I_Product_E" />
+					<NavigationPropertyBinding Path="_SalesOrder" Target="com.sap.gateway.sadl.sepm_c_slsorder_tp_100.v0001.Container/SEPM_C_SLSORDER_TP_100" />
+				</EntitySet>
+			</EntityContainer>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDERITEM_TP_100Type/SalesOrderItemUUID">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Knotenschlüssel" />
+				<Annotation Term="SAP__common.Heading" String="Generischer Knotenschlüssel" />
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Generischer Knotenschlüssel" />
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDERITEM_TP_100Type/SalesOrderUUID">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Knotenschlüssel" />
+				<Annotation Term="SAP__common.Heading" String="Generischer Knotenschlüssel" />
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Generischer Knotenschlüssel" />
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDERITEM_TP_100Type/SalesOrder">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly" />
+				<Annotation Term="SAP__common.Label" String="Kundenauftr.-ID" />
+				<Annotation Term="SAP__common.Heading" String="Kundenauftrags-ID" />
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Kundenauftragsnummer" />
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDERITEM_TP_100Type/SalesOrderItem">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly" />
+				<Annotation Term="SAP__common.Label" String="Zeile der Position" />
+				<Annotation Term="SAP__common.Heading" String="Zeilennummer der Kundenauftragsposition" />
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Zeilennummer der Kundenauftragsposition" />
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDERITEM_TP_100Type/Product">
+				<Annotation Term="SAP__common.Text" Path="_Product/Product_Text" />
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../sadlf4/sap/sepm_i_product_e/0001;ps='sadl-sepm_c_slsorderitem_tp_100-0001';va='com.sap.gateway.sadl.sepm_c_slsorderitem_tp_100.v0001.ET-SEPM_C_SLSORDERITEM_TP_100.PRODUCT'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.Label" String="Produkt-ID" />
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Produkt-ID" />
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDERITEM_TP_100Type/CurrencyCode">
+				<Annotation Term="SAP__common.Text" Path="_Currency/Currency_Text" />
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../sadlf4/sap/sepm_i_currency/0001;ps='sadl-sepm_c_slsorderitem_tp_100-0001';va='com.sap.gateway.sadl.sepm_c_slsorderitem_tp_100.v0001.ET-SEPM_C_SLSORDERITEM_TP_100.CURRENCYCODE'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.Label" String="Währungscode" />
+				<Annotation Term="SAP__common.Heading" String="ISO-Währungscode" />
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Währungscode" />
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDERITEM_TP_100Type/GrossAmount">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly" />
+				<Annotation Term="SAP__common.Label" String="Bruttobetrag" />
+				<Annotation Term="SAP__common.Heading" String="Gesamtbruttobetrag" />
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Gesamtbruttobetrag" />
+				<Annotation Term="Measures.ISOCurrency" Path="CurrencyCode" />
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDERITEM_TP_100Type">
+				<Annotation Term="SAP__common.SemanticKey">
+					<Collection>
+						<PropertyPath>SalesOrderItem</PropertyPath>
+						<PropertyPath>SalesOrder</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="" />
+						<PropertyValue Property="TypeNamePlural" String="" />
+						<PropertyValue Property="Title">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value" Path="SalesOrderItem" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="SalesOrder" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="SalesOrderItem" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Product" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Quantity" />
+							<PropertyValue Property="Value" Path="Quantity" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="GrossAmount" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Currency" />
+							<PropertyValue Property="Value" Path="CurrencyCode" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="SalesOrder" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="SalesOrderItem" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Product" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Quantity" />
+							<PropertyValue Property="Value" Path="Quantity" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="GrossAmount" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.SelectionFields">
+					<Collection>
+						<PropertyPath>SalesOrder</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/SEPM_C_SLSORDERITEM_TP_100">
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false" />
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
