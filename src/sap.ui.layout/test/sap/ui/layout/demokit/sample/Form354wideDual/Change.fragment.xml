@@ -26,7 +26,7 @@
 					singleContainerFullSize="false" />
 			</f:layout>
 			<f:formContainers>
-				<f:FormContainer>
+				<f:FormContainer title="Office">
 					<f:formElements>
 						<f:FormElement label="Full name of the contact">
 							<f:fields>

@@ -7,7 +7,7 @@
 		<f:Form id="FormDisplay480_Trial"
 			editable="false">
 			<f:title>
-				<core:Title text="Address" />
+				<core:Title text="Supplier" />
 			</f:title>
 			<f:layout>
 				<f:ResponsiveGridLayout
@@ -26,7 +26,7 @@
 					singleContainerFullSize="false" />
 			</f:layout>
 			<f:formContainers>
-				<f:FormContainer title="Office">
+				<f:FormContainer title="Address">
 					<f:formElements>
 						<f:FormElement label="Name">
 							<f:fields>
@@ -54,7 +54,7 @@
 					<f:formElements>
 						<f:FormElement label="Web">
 							<f:fields>
-								<Text text="{Url}" />
+								<Link text="Url" href="{Url}" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Twitter">
@@ -62,13 +62,9 @@
 								<Text text="{Twitter}" />
 							</f:fields>
 						</f:FormElement>
-					</f:formElements>
-				</f:FormContainer>
-				<f:FormContainer title="Contact data">
-					<f:formElements>
 						<f:FormElement label="Email">
 							<f:fields>
-								<Text text="{EMail}" />
+								<Text text="{Email}" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Tel.">
@@ -79,6 +75,20 @@
 						<f:FormElement label="SMS">
 							<f:fields>
 								<Text text="{Sms}" />
+							</f:fields>
+						</f:FormElement>
+					</f:formElements>
+				</f:FormContainer>
+				<f:FormContainer title="Other">
+					<f:formElements>
+						<f:FormElement label="Rating">
+							<f:fields>
+								<RatingIndicator value="{Rating}" displayOnly="true" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Disposable">
+							<f:fields>
+								<ProgressIndicator percentValue="{Disposable}" displayOnly="true" />
 							</f:fields>
 						</f:FormElement>
 					</f:formElements>

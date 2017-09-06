@@ -46,6 +46,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	var RatingIndicator = Control.extend("sap.m.RatingIndicator", /** @lends sap.m.RatingIndicator.prototype */ { metadata : {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
 		properties : {
 			/**
