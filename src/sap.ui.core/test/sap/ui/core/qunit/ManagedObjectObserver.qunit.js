@@ -144,12 +144,13 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 
 
 	function compareObjects(o, p) {
-		var i, keysO = Object.keys(o).sort(), keysP = Object
-							.keys(p).sort();
-					if (keysO.length !== keysP.length)
-						return false;// not the same nr of keys
+		var i, keysO = Object.keys(o).sort(), keysP = Object.keys(p).sort();
+
+		if (keysO.length !== keysP.length)
+			return false;// not the same nr of keys
 		if (keysO.join('') !== keysP.join(''))
 			return false;// different keys
+
 		for (i = 0; i < keysO.length; ++i) {
 			if (o[keysO[i]] instanceof Array) {
 				if (!(p[keysO[i]] instanceof Array))
@@ -158,8 +159,7 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 				// === false) return false
 				// would work, too, and perhaps is a better fit,
 				// still, this is easy, too
-				if (p[keysO[i]].sort().join('') !== o[keysO[i]]
-						.sort().join(''))
+				if (p[keysO[i]].sort().join('') !== o[keysO[i]].sort().join(''))
 					return false;
 			} else if (o[keysO[i]] instanceof Date) {
 				if (!(p[keysO[i]] instanceof Date))
@@ -182,8 +182,7 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 					}
 					return true;
 				}
-			}
-			if (o[keysO[i]] !== p[keysO[i]] && p[keysO[i]] !== "__ignore") {
+			} else if (o[keysO[i]] !== p[keysO[i]] && p[keysO[i]] !== "__ignore") {
 				return false;// not the same value
 			}
 
@@ -192,8 +191,8 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 	}
 
 	var vExpectedResult,
-		vActualResult,
-		bChecked = false;
+			vActualResult,
+			bChecked = false;
 
 	function setExpected(vExpected) {
 		vExpectedResult = vExpected;
@@ -215,9 +214,14 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 			return;
 		}
 		if (Array.isArray(vActualResult)) {
+			var bOk = true;
 			for (var i = 0; i < vActualResult.length; i++) {
-				assert.ok(compareObjects(vActualResult[i], vExpectedResult[i]), "Expected result matched. " + sComment);
+				if (!compareObjects(vActualResult[i], vExpectedResult[i])) {
+					bOk = false;
+					break;
+				}
 			}
+			assert.ok(bOk, "Expected result matched. " + sComment);
 		} else {
 			assert.ok(compareObjects(vActualResult, vExpectedResult), "Expected result matched. " + sComment);
 		}
@@ -549,7 +553,7 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 			children: null
 		});
 
-		this.obj.setAggregation("singleAggr",null);
+		this.obj.setAggregation("singleAggr", null);
 		this.checkExpected("Single aggregation removed. Observer called successfully");
 
 		//adding a single aggregation again
@@ -565,7 +569,7 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		this.obj.setAggregation("singleAggr", oChild);
 		this.checkExpected("Single aggregation added. Observer called successfully");
 
-		//setting single aggegation with altType
+		//setting single aggregation with altType
 		setExpected({
 			object: this.obj,
 			type:"aggregation",
@@ -577,6 +581,27 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 
 		this.obj.setAggregation("label", "Text");
 		this.checkExpected("Single aggregation added. Observer called successfully");
+
+		// move object from one aggregation to an other
+		oChild = this.obj.getAggregation("multiAggr")[1];
+		setExpected([{
+			object: this.obj,
+			type:"aggregation",
+			name:"multiAggr",
+			mutation: "remove",
+			child: oChild,
+			children: null
+		},{
+			object: this.obj,
+			type:"aggregation",
+			name:"anotherMulti",
+			mutation: "insert",
+			child: oChild,
+			children: null
+		}]);
+
+		this.obj.addAggregation("anotherMulti", oChild);
+		this.checkExpected("move to other aggregation. Observer called twice");
 
 		oObserver.disconnect();
 	});
@@ -625,6 +650,19 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		this.obj.setAggregation("singleAggr", oChild);
 		this.checkExpected("Single aggregation added. Observer called successfully");
 
+		// destroy a single aggregation
+		setExpected({
+			object: this.obj,
+			type:"aggregation",
+			name:"singleAggr",
+			mutation: "remove",
+			child: oChild,
+			children: null
+		});
+
+		this.obj.destroyAggregation("singleAggr");
+		this.checkExpected("Single aggregation destroyed. Observer called successfully");
+
 		//setting an aggregation that is not observed
 		setExpected();
 		this.obj.addAggregation("multiAggr", this.obj.getAggregation("multiAggr")[1]);
@@ -665,7 +703,7 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		this.obj.addAggregation("multiAggr", oChild);
 		this.checkExpected("Remove and insert. Observer called twice");
 
-		//adding an aggregation
+		//removing an aggregation
 		setExpected({
 			object: this.obj,
 			type:"aggregation",
@@ -690,6 +728,50 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 
 		this.obj.insertAggregation("multiAggr", oChild, 0);
 		this.checkExpected("Multi aggregation added. Observer called successfully");
+
+		//removing all multi aggregation
+		var oChild2 = this.obj.getAggregation("multiAggr")[1];
+		setExpected([{
+			object: this.obj,
+			type:"aggregation",
+			name:"multiAggr",
+			mutation: "remove",
+			child: oChild,
+			children: null
+		},{
+			object: this.obj,
+			type:"aggregation",
+			name:"multiAggr",
+			mutation: "remove",
+			child: oChild2,
+			children: null
+		}]);
+		this.obj.removeAllAggregation("multiAggr");
+		this.checkExpected("RemoveAll Observer called twice");
+
+		this.obj.addAggregation("multiAggr", oChild);
+		this.obj.addAggregation("multiAggr", oChild2);
+
+		//destroy multi aggregation
+		vActualResult = undefined;
+		var oChild2 = this.obj.getAggregation("multiAggr")[1];
+		setExpected([{
+			object: this.obj,
+			type:"aggregation",
+			name:"multiAggr",
+			mutation: "remove",
+			child: oChild,
+			children: null
+		},{
+			object: this.obj,
+			type:"aggregation",
+			name:"multiAggr",
+			mutation: "remove",
+			child: oChild2,
+			children: null
+		}]);
+		this.obj.destroyAggregation("multiAggr");
+		this.checkExpected("Destroy Observer called twice");
 
 		//setting an aggregation that is not observed
 		setExpected();
@@ -746,7 +828,7 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 			ids: oChild.getId()
 		}]);
 
-		this.obj.setAssociation("singleAsso",oChild);
+		this.obj.setAssociation("singleAsso", oChild);
 		this.checkExpected("Single association set, remove and insert called. Observer called successfully");
 
 		//remove a single association again
@@ -882,6 +964,21 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 
 		this.obj.removeAssociation("multiAsso", oChild);
 		this.checkExpected("Multi association removed. Observer called successfully");
+
+		this.obj.addAssociation("multiAsso",oChild);
+		vActualResult = undefined;
+
+		//remove all multi associations
+		setExpected({
+			object: this.obj,
+			type:"association",
+			name:"multiAsso",
+			mutation: "remove",
+			ids: ["", oChild.getId()]
+		});
+
+		this.obj.removeAllAssociation("multiAsso");
+		this.checkExpected("Multi association removed all. Observer called successfully");
 
 		//setting another association that is not observed
 		setExpected();
