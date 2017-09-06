@@ -40,6 +40,9 @@ sap.ui.define([], function() {
 			},
 			showVariantListFooter: {
 				ignore: false
+			},
+			inErrorState: {
+				ignore: false
 			}
 		},
 		customData: {},
