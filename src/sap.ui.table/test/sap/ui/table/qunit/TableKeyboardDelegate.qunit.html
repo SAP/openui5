@@ -28,6 +28,12 @@
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
 	<link rel="stylesheet" href="shared-qunit.css">
+	<style>
+		/* BCP: 1780353075 */
+		[data-sap-ui-browser=ie11] #qunit-tests.hidepass li.running {
+			display: none;
+		}
+	</style>
 	<script src="TableQUnitUtils.js"></script>
 	<script src="TableKeyboardDelegate.qunit.js"></script>
 </head>
