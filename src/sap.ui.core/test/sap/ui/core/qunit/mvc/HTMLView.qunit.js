@@ -1,37 +1,9 @@
-<!DOCTYPE HTML>
-<html>
+sap.ui.define([
+	'sap/ui/core/library',
+	'./AnyView.qunit'
+], function(coreLibrary, testsuite) {
 
-<!--
-  Tested classes: sap.ui.core.mvc.HTMLView + sap.ui.core.mvc.Controller
--->
-
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for sap.ui.core.mvc.HTMLView +
-sap.ui.core.mvc.Controller</title>
-
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.commons"
-	data-sap-ui-xx-bindingSyntax="complex"
-	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
-</script>
-
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="AnyView.qunit.js"></script>
-<script>
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	var oConfig = {
 		viewClassName : "sap.ui.core.mvc.HTMLView",
@@ -48,14 +20,14 @@ sap.ui.core.mvc.Controller</title>
 	});
 
 	testsuite(oConfig, "HTMLView creation via generic view factory", function() {
-		return sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+		return sap.ui.view({type:ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 	}, true);
 
 	QUnit.module("Custom Tests");
 
 	QUnit.test("Embedded HTML", function(assert) {
 		assert.expect(13);
-		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery("#htmlRoot").html(), "THIS IS A TEST" , "HTML at root level rendered");
@@ -66,7 +38,7 @@ sap.ui.core.mvc.Controller</title>
 
 	QUnit.test("Assocations", function(assert) {
 		assert.expect(13);
-		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		var oLabel = oView.byId("MyLabel");
@@ -79,7 +51,7 @@ sap.ui.core.mvc.Controller</title>
 
 	QUnit.test("Custom Data", function(assert) {
 		assert.expect(12);
-		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		assert.equal(oView.byId("Button2").data("myData1"), "myvalue1", "Custom Data set properly");
@@ -106,31 +78,31 @@ sap.ui.core.mvc.Controller</title>
 		});
 
 		var htmlWithBindings = [
-      		'<template data-controller-name="example.mvc.test">',
-      		'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-enabled="{/booleanValue}" data-text="{/stringValue}" data-width="{/integerValue}"></div>',
-      		'</template>'
-      	].join('');
+			'<template data-controller-name="example.mvc.test">',
+			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-enabled="{/booleanValue}" data-text="{/stringValue}" data-width="{/integerValue}"></div>',
+			'</template>'
+		].join('');
 
 		var htmlWithNamedBindings = [
-       		'<template data-controller-name="example.mvc.test">',
-      		'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-enabled="{model2>/booleanValue}" data-text="{model1>/stringValue}" data-width="{/integerValue}"></div>',
-      		'</template>'
-   		].join('');
+			'<template data-controller-name="example.mvc.test">',
+			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-enabled="{model2>/booleanValue}" data-text="{model1>/stringValue}" data-width="{/integerValue}"></div>',
+			'</template>'
+		].join('');
 
 		var htmlWithElementBinding = [
-     		'<template data-controller-name="example.mvc.test">',
-      		'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-sap-ui-binding="{data}" data-enabled="{booleanValue}" data-text="{stringValue}" data-width="{integerValue}"></div>',
-      		'</template>'
-   		].join('');
+			'<template data-controller-name="example.mvc.test">',
+			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-sap-ui-binding="{data}" data-enabled="{booleanValue}" data-text="{stringValue}" data-width="{integerValue}"></div>',
+			'</template>'
+		].join('');
 
 		var htmlWithoutBindings = [
-       		'<template data-controller-name="example.mvc.test">',
-  			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn1" data-enabled="true" data-text="The following set is empty: \\{\\}" data-width="67"></div>',
-   			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn2" data-enabled="false" data-text="\\{\\} is an empty set" data-width="42"></div>',
-   			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn3" data-enabled="true" data-text="The following array is empty: []" data-width="67"></div>',
-   			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn4" data-enabled="false" data-text="[] is an empty array" data-width="42"></div>',
-   			'</template>'
-   		].join('');
+			'<template data-controller-name="example.mvc.test">',
+			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn1" data-enabled="true" data-text="The following set is empty: \\{\\}" data-width="67"></div>',
+			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn2" data-enabled="false" data-text="\\{\\} is an empty set" data-width="42"></div>',
+			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn3" data-enabled="true" data-text="The following array is empty: []" data-width="67"></div>',
+			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn4" data-enabled="false" data-text="[] is an empty array" data-width="42"></div>',
+			'</template>'
+		].join('');
 
 		var oViewWithBindings1 = sap.ui.htmlview({viewContent:htmlWithBindings});
 		oViewWithBindings1.setModel(oModel1);
@@ -167,14 +139,4 @@ sap.ui.core.mvc.Controller</title>
 		assert.equal(oViewWithoutBindings.byId("btn4").getText(), "[] is an empty array", "Check 'text' property of button 'btn4'");
 	});
 
-
-</script>
-</head>
-<body>
-<h1 id="qunit-header">QUnit Page for sap.ui.core.mvc.HTMLView + sap.ui.core.mvc.Controller</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<ol id="qunit-tests"></ol>
-<div id="content"></div>
-</body>
-</html>
+});
