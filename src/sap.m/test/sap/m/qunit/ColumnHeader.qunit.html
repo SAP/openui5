@@ -144,6 +144,57 @@
 				sut.destroy();
 			});
 
+			QUnit.test("ColumnHeader behaviour without viewSettingsPopover", function(assert) {
+				var oColumn = new sap.m.Column({
+					header: new sap.m.ColumnHeader({
+						text: "Test"
+					}),
+					demandPopin: true,
+					minScreenWidth : "Tablet",
+					popinDisplay: "Inline"
+				});
+				var oItem = new sap.m.ColumnListItem({});
+				var sut = new sap.m.Table({
+					columns: oColumn,
+					items: oItem
+				});
+				sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(!oColumn.getHeader()._isInteractive(), "ViewSettingPopover is not defined, hence the control is not interactive");
+
+				sut.destroy();
+			});
+
+			QUnit.test("Test for setSorted", function(assert) {
+				var oColumn = new sap.m.Column({
+					header: new sap.m.ColumnHeader({
+						text: "Test"
+					}),
+					demandPopin: true,
+					minScreenWidth : "Tablet",
+					popinDisplay: "Inline"
+				});
+				var oItem = new sap.m.ColumnListItem({});
+				var sut = new sap.m.Table({
+					columns: oColumn,
+					items: oItem
+				});
+				sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oColumnHeader = oColumn.getHeader();
+				assert.ok(!oColumnHeader.getSorted(), "Default value is false");
+				oColumnHeader.setSorted(false);
+				assert.ok(!oColumnHeader.getSorted(), "Default value is false");
+				oColumnHeader.setSortOrder("Ascending");
+				assert.ok(oColumnHeader.getAggregation("_sortIcon"), "Sort icon is initialised");
+				oColumnHeader.setSorted(false);
+				assert.ok(!oColumnHeader.getAggregation("_sortIcon").getVisible(), "Icon is initialised but not visible as sorted=false");
+
+				sut.destroy();
+			});
+
 			QUnit.test("ColumnHeader behavior for sorting", function(assert) {
 				var sut = createSUT();
 				sut.placeAt("content");
@@ -166,15 +217,19 @@
 
 				// check for Ascending
 				oSortButton.firePress();
+				sap.ui.getCore().applyChanges();
 				assert.equal(oColumnHeader.getSortOrder(), "Ascending", "onSortSelected() executed and sortOrder = Ascending");
 				assert.equal(oColumnHeader.getAggregation("_sortIcon").getSrc(), "sap-icon://sort-ascending", "Ascending sort icon added correctly.");
+				assert.equal(oColumnHeader.getAccessibilityInfo().description, "Name Sorted Ascending Access column actions", "Accessibility information set correctly");
 
 				// check for Descending
 				oSortButton.firePress();
+				sap.ui.getCore().applyChanges();
 				assert.ok(oColumnHeader.getSorted(), "Property sorted = true");
 				assert.ok(oColumnHeader.getAggregation("_sortIcon") instanceof sap.ui.core.Icon, "Sort icon aggregation found");
 				assert.equal(oColumnHeader.getSortOrder(), "Descending", "onSortSelected() executed and sortOrder = Descending");
 				assert.equal(oColumnHeader.getAggregation("_sortIcon").getSrc(), "sap-icon://sort-descending", "Descending sort icon added correctly.");
+				assert.equal(oColumnHeader.getAccessibilityInfo().description, "Name Sorted Descending Access column actions", "Accessibility information set correctly");
 
 				sut.destroy();
 			});
@@ -209,10 +264,12 @@
 				});
 
 				oViewSettingsPopover._confirmFilterDetail();
+				sap.ui.getCore().applyChanges();
 
 				assert.ok(oColumnHeader.getFiltered(), "fitlered = true, onFilterSeleted() executed");
 				assert.ok(oColumnHeader.getAggregation("_filterIcon") instanceof sap.ui.core.Icon, "Filter icon aggregation found");
 				assert.equal(oColumnHeader.getAggregation("_filterIcon").getSrc(), "sap-icon://filter", "Filter icon is set correctly");
+				assert.equal(oColumnHeader.getAccessibilityInfo().description, "Name Filtered Access column actions", "Accessibility information set correctly");
 
 				oColumnHeader.setFiltered(true);
 				assert.ok(oColumnHeader.getAggregation("_filterIcon").getVisible(), "Filter icon is visible when setFiltered(true) is called");
