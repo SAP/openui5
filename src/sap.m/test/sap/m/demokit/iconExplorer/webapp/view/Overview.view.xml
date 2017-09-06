@@ -92,7 +92,7 @@
 										width="auto"
 										design="Transparent"
 										content="{
-											path:'/groups/0/tags',
+											path: '/groups/0/tags',
 											factory: '._tagSelectionFactory',
 											length: 50
 										}"
