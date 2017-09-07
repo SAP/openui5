@@ -11,6 +11,15 @@
 			data-sap-ui-libs="sap.m">
 		</script>
 
+		<style>
+			.sapMCustomTile {
+				border: 1px dashed #cec9bb;
+				padding: 0.25rem;
+			}
+			.sapMCustomTile:focus{
+				border: none;
+			}
+		</style>
 		<script>
 		function getTiles(n){
 			var tiles = new Array();
@@ -32,19 +41,25 @@
 				// defines the UI of this View
 				createContent: function(oController) {
 					// button text is bound to Model, "press" action is bound to Controller's event handler
-					return new sap.m.StandardTile("tile" + i, {
-		                icon : "images/action.png",
-		                info : 1 + i,
-		                infoUnit : "EUR",
-		                title : "Coming from a View" + i,
-		                description : "1 day ago",
-		            })
+					return new sap.m.VBox({
+						height: "100%",
+						items: [
+							new sap.m.Text({
+								text: "Coming from a View " + i
+							}),
+							new sap.m.Input({
+								value: "input " + i
+							})
+						]
+					}).addStyleClass("myTileContent")
 				}
 			});
 
 			for (var i=0; i<n; i++){
+				var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.JS, viewName:"my.own.view"});
+				oView.setHeight("100%");
 				var oTile = new sap.m.CustomTile({
-					content: sap.ui.view({type:sap.ui.core.mvc.ViewType.JS, viewName:"my.own.view"})
+					content: oView
 				});
 				tiles.push(oTile);
 			}
@@ -60,7 +75,7 @@
 		app.setInitialPage(page1.getId());
 		page1.setEnableScrolling(false);
 		page1.setShowHeader(true);
-		page1.setTitle("Custom Tiles with View")
+		page1.setTitle("Custom Tiles with View");
 		app.addPage(page1);
 		page1.addContent(tc);
 		app.placeAt('body');
