@@ -108,7 +108,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *                 'odata4analytics.Model.ReferenceByURI': 1 (default), 2
 	 *                 see also: AnalyticalVersionInfo constants
 	 *            </li>
-	 * @constructor
 	 *
 	 * @class Representation of an OData model with analytical annotations defined
 	 *        by OData4SAP.
@@ -125,7 +124,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *
 	 * @param {string}
 	 *            sURI holding the URI.
-	 * @constructor
 	 *
 	 * @class Handle to an OData model by the URI pointing to it.
 	 * @name sap.ui.model.analytics.odata4analytics.Model.ReferenceByURI
@@ -143,7 +141,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *
 	 * @param {object}
 	 *            oModel holding the OData model.
-	 * @constructor
 	 *
 	 * @class Handle to an already instantiated SAPUI5 OData model.
 	 * @name sap.ui.model.analytics.odata4analytics.Model.ReferenceByModel
@@ -178,7 +175,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *            sap.odata4analytics.Model.ReferenceByURI.
 	 * @param {string[]}
 	 *            aWorkaroundID listing all workarounds to be applied.
-	 * @constructor
 	 *
 	 * @class Handle to an already instantiated SAPUI5 OData model.
 	 * @name sap.ui.model.analytics.odata4analytics.Model.ReferenceWithWorkaround
@@ -816,7 +812,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @param {sap.ui.model.analytics.odata4analytics.Parameterization}
 	 *            oParameterization The parameterization of this query, if any
 	 *
-	 * @constructor
 	 * @this (QueryResult)
 	 *
 	 * @class Representation of an entity type annotated with
@@ -1398,8 +1393,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @param {object}
 	 *            oProperty The datajs object object representing the text property
 	 *
-	 * @constructor
-	 *
 	 * @class Representation of a property annotated with sap:parameter.
 	 * @name sap.ui.model.analytics.odata4analytics.Parameter
 	 * @public
@@ -1660,8 +1653,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @param {object}
 	 *            oProperty The datajs object object representing the dimension
 	 *
-	 * @constructor
-	 *
 	 * @class Representation of a property annotated with
 	 *        sap:aggregation-role="dimension".
 	 * @name sap.ui.model.analytics.odata4analytics.Dimension
@@ -1916,8 +1907,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *            oProperty The datajs object object representing the dimension
 	 *            attribute
 	 *
-	 * @constructor
-	 *
 	 * @class Representation of a dimension attribute.
 	 * @name sap.ui.model.analytics.odata4analytics.DimensionAttribute
 	 * @public
@@ -2047,8 +2036,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *            oQueryResult The query result containing this measure
 	 * @param {object}
 	 *            oProperty The datajs object object representing the measure
-	 *
-	 * @constructor
 	 *
 	 * @class Representation of a property annotated with
 	 *        sap:aggregation-role="measure".
@@ -2213,8 +2200,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @param {object}
 	 *            oEntityType datajs object for the entity type
 	 *
-	 * @constructor
-	 *
 	 * @class Representation of an OData entity set.
 	 * @name sap.ui.model.analytics.odata4analytics.EntitySet
 	 * @public
@@ -2371,8 +2356,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *            oSchema datajs object for the schema containing this entity type
 	 * @param {object}
 	 *            oEntityType datajs object for the entity type
-	 *
-	 * @constructor
 	 *
 	 * @class Representation of an OData entity type.
 	 * @name sap.ui.model.analytics.odata4analytics.EntityType
@@ -2887,8 +2870,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *            value for the of the hierarchy node pointed to by the value of
 	 *            oNodeIDProperty
 	 *
-	 * @constructor
-	 *
 	 * @class Representation of a recursive hierarchy.
 	 * @name sap.ui.model.analytics.odata4analytics.RecursiveHierarchy
 	 * @public
@@ -3008,8 +2989,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *            oSchema datajs object for the schema containing this entity type
 	 * @param {sap.ui.model.analytics.odata4analytics.EntityType}
 	 *            oEntityType object for the entity type
-	 *
-	 * @constructor
 	 *
 	 * @class Representation of a $filter expression for an OData entity type.
 	 * @name sap.ui.model.analytics.odata4analytics.FilterExpression
@@ -3539,8 +3518,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @param {sap.ui.model.analytics.odata4analytics.EntityType}
 	 *            oEntityType object for the entity type
 	 *
-	 * @constructor
-	 *
 	 * @class Representation of a $orderby expression for an OData entity type.
 	 * @name sap.ui.model.analytics.odata4analytics.SortExpression
 	 * @public
@@ -3771,8 +3748,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @param {sap.ui.model.analytics.odata4analytics.Parameterization}
 	 *            oParameterization Description of a query parameterization
 	 *
-	 * @constructor
-	 *
 	 * @class Creation of URIs for query parameterizations.
 	 * @name sap.ui.model.analytics.odata4analytics.ParameterizationRequest
 	 * @public
@@ -3958,8 +3933,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *            [oParameterizationRequest] Request object for
 	 *            interactions with the parameterization of this query. Only
 	 *            required if the query service includes parameters.
-	 *
-	 * @constructor
 	 *
 	 * @class Creation of URIs for fetching query results.
 	 * @name sap.ui.model.analytics.odata4analytics.QueryResultRequest
@@ -4809,8 +4782,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @param {sap.ui.model.analytics.odata4analytics.Parameter}
 	 *            oParameter Description of a query parameter
 	 *
-	 * @constructor
-	 *
 	 * @class Creation of URIs for fetching a query parameter value set.
 	 * @name sap.ui.model.analytics.odata4analytics.ParameterValueSetRequest
 	 * @public
@@ -5061,8 +5032,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @param {boolean}
 	 *            bUseMasterData (optional) Indicates use of master data for
 	 *            determining the dimension members.
-	 *
-	 * @constructor
 	 *
 	 * @class Creation of URIs for fetching a query dimension value set.
 	 * @name sap.ui.model.analytics.odata4analytics.DimensionMemberSetRequest

@@ -22,7 +22,6 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.CustomData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

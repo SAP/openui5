@@ -25,7 +25,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	 * @param {object}
 	 *            oParentDomRef reference to the parent DOM element
 	 *
-	 * @constructor
 	 * @alias sap.ui.debug.PropertyList
 	 * @private
 	 */

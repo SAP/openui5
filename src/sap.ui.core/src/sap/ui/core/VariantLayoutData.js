@@ -20,7 +20,6 @@ sap.ui.define(['./LayoutData', './library'],
 	 * @extends sap.ui.core.LayoutData
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.9.2
 	 * @alias sap.ui.core.VariantLayoutData

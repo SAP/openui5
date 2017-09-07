@@ -9,10 +9,14 @@ sap.ui.define(['sap/ui/base/Exception'],
 
 
 	/**
-	 * ValidateException class
+	 * Creates a new ValidateException.
 	 *
-	 * This exception is thrown, when a validation error occurs while checking the
-	 * defined constraints for a type.
+	 * @class Instances of this exception are thrown when a validation error
+	 * occurs while checking the defined constraints for a type.
+	 *
+	 * @param {string} message Message explaining how the validation failed
+	 * @param {string[]} [violatedConstraints] Names of the constraints that will be violated;
+	 *   names should be the same as documented for the type constructor
 	 * @alias sap.ui.model.ValidateException
 	 * @public
 	 */

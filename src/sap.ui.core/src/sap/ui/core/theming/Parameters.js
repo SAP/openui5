@@ -25,9 +25,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 		/**
 		 * A helper used for (read-only) access to CSS parameters at runtime.
 		 *
-		 * @class A helper used for (read-only) access to CSS parameters at runtime
 		 * @author SAP SE
-		 * @static
+		 * @namespace
 		 *
 		 * @public
 		 * @alias sap.ui.core.theming.Parameters

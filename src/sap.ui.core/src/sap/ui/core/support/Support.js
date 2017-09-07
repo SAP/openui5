@@ -17,7 +17,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @version ${version}
-	 * @constructor
 	 * @private
 	 * @alias sap.ui.core.support.Support
 	 */

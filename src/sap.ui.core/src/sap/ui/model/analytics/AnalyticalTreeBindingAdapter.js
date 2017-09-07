@@ -815,7 +815,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	/**
 	 * Overrides the default from the TBA.
 	 * Returns the maximum number of currently selectable nodes, in this case the total number of leaves.
-	 * @returns
+	 * @returns {int} Maximum number of currently selectable node
 	 */
 	AnalyticalTreeBindingAdapter.prototype._getSelectableNodesCount = function (oNode) {
 		if (oNode) {

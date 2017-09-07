@@ -22,7 +22,6 @@ sap.ui.define([], function() {
 	 * @param {string[]}
 	 *            aMethods the names of the methods, that should be available on this interface
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.base.Interface
 	 */

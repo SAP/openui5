@@ -892,7 +892,7 @@ sap.ui.define([
 		 * Return particular test lib config object.
 		 * This method is intended to be used by test libraries to
 		 * access their configuration provided by the test in
-		 * the testLibs section in {@link sap.ui.test.Opa5#extendConfig}
+		 * the testLibs section in {@link sap.ui.test.Opa5.extendConfig}
 		 * @param {string} sTestLibName test library name
 		 * @returns {object} this test library config object or empty object if
 		 * configuration is not provided

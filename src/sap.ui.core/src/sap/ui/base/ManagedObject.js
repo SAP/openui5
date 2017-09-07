@@ -70,7 +70,7 @@ sap.ui.define([
 	 *
 	 *   The structure is an array of single contexts, where a single context is a map containing the following keys:
 	 *   <ul>
-	 *   <li><code>path: <i>string (mandatory)</i></code> The path to the corresponding model property or object, e.g. '/Customers/Name'. Note: A path can also be relative, e.g. 'Name'</li>
+	 *   <li><code>path: <i>string (mandatory)</i></code> The path to the corresponding model property or object, e.g. '/Customers/Name'. A path can also be relative, e.g. 'Name'</li>
 	 *   <li><code>model: <i>string (optional)</i></code> The name of the model, in case there is no name then the undefined model is taken</li>
 	 *   <li><code>name: <i>string (optional)</i></code> A name for the context to used in templating phase</li>
 	 *   <li><code>kind: <i>string (optional)</i></code> The kind of the adapter, either <code>field</code> for single properties or <code>object</code> for structured contexts.
@@ -89,7 +89,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {string} [sId] id for the new managed object; generated automatically if no non-empty id is given
-	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
+	 *      <b>Note:</b> this can be omitted, no matter whether <code>mSettings</code> will be given or not!
 	 * @param {object} [mSettings] Optional map/JSON-object with initial property values, aggregated objects etc. for the new object
 	 * @param {object} [oScope] Scope object for resolving string based type and formatter references in bindings.
 	 *      When a scope object is given, <code>mSettings</code> cannot be omitted, at least <code>null</code> or an empty object literal must be given.
@@ -546,7 +546,7 @@ sap.ui.define([
 	 *     events: {
 	 *       beforeOpen : {
 	 *         parameters : {
-	 *           opener : 'sap.ui.core.Control'
+	 *           opener : { type: 'sap.ui.core.Control' }
 	 *         }
 	 *       }
 	 *     },
@@ -3798,10 +3798,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get the object binding object for a specific model
+	 * Get the object binding object for a specific model.
 	 *
-	 * @param {string} sModelName the name of the model
-	 * @return {sap.ui.model.Binding} the element binding for the given model name
+	 * <b>Note:</b> to be compatible with future versions of this API, you must not use the following model names:
+	 * <ul>
+	 * <li><code>null</code></li>
+	 * <li>empty string <code>""</code></li>
+	 * <li>string literals <code>"null"</code> or <code>"undefined"</code></li>
+	 * </ul>
+	 * Omitting the model name (or using the value <code>undefined</code>) is explicitly allowed and
+	 * refers to the default model.
+	 *
+	 * @param {string} [sModelName=undefined] Non-empty name of the model or <code>undefined</code>
+	 * @return {sap.ui.model.ContextBinding} Context binding for the given model name or <code>undefined</code>
 	 * @public
 	 */
 	ManagedObject.prototype.getObjectBinding = function(sModelName){
@@ -3845,10 +3854,16 @@ sap.ui.define([
 	/**
 	 * Set the binding context for this ManagedObject for the model with the given name.
 	 *
-	 * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
-	 * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name.
+	 * <b>Note:</b> to be compatible with future versions of this API, you must not use the following model names:
+	 * <ul>
+	 * <li><code>null</code></li>
+	 * <li>empty string <code>""</code></li>
+	 * <li>string literals <code>"null"</code> or <code>"undefined"</code></li>
+	 * </ul>
+	 * Omitting the model name (or using the value <code>undefined</code>) is explicitly allowed and
+	 * refers to the default model.
 	 *
-	 * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of a UIArea.
+	 * <b>Note:</b> A ManagedObject inherits binding contexts from the Core only when it is a descendant of a UIArea.
 	 *
 	 * @param {sap.ui.model.Context} oContext the new binding context for this object
 	 * @param {string} [sModelName] the name of the model to set the context for or <code>undefined</code>
@@ -3975,10 +3990,16 @@ sap.ui.define([
 	 * If the object does not have a binding context set on itself and has no own model set,
 	 * it will use the first binding context defined in its parent hierarchy.
 	 *
-	 * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
-	 * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name.
+	 * <b>Note:</b> to be compatible with future versions of this API, you must not use the following model names:
+	 * <ul>
+	 * <li><code>null</code></li>
+	 * <li>empty string <code>""</code></li>
+	 * <li>string literals <code>"null"</code> or <code>"undefined"</code></li>
+	 * </ul>
+	 * Omitting the model name (or using the value <code>undefined</code>) is explicitly allowed and
+	 * refers to the default model.
 	 *
-	 * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of a UIArea.
+	 * <b>Note:</b> A ManagedObject inherits binding contexts from the Core only when it is a descendant of a UIArea.
 	 *
 	 * @param {string} [sModelName] the name of the model or <code>undefined</code>
 	 * @return {sap.ui.model.Context} The binding context of this object
@@ -4021,7 +4042,13 @@ sap.ui.define([
 	 * Sets or unsets a model for the given model name for this ManagedObject.
 	 *
 	 * The <code>sName</code> must either be <code>undefined</code> (or omitted) or a non-empty string.
-	 * When the name is omitted, the default model is set/unset.
+	 * When the name is omitted, the default model is set/unset. To be compatible with future versions
+	 * of this API, you must not use the following model names:
+	 * <ul>
+	 * <li><code>null</code></li>
+	 * <li>empty string <code>""</code></li>
+	 * <li>string literals <code>"null"</code> or <code>"undefined"</code></li>
+	 * </ul>
 	 *
 	 * When <code>oModel</code> is <code>null</code> or <code>undefined</code>, a previously set model
 	 * with that name is removed from this ManagedObject. If an ancestor (parent, UIArea or Core) has a model
@@ -4034,16 +4061,13 @@ sap.ui.define([
 	 * Any change (new model, removed model, inherited model) is also applied to all aggregated descendants
 	 * as long as a descendant doesn't have its own model set for the given name.
 	 *
-	 * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
-	 * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name.
-	 *
-	 * Note: By design, it is not possible to hide an inherited model by setting a <code>null</code> or
+	 * <b>Note:</b> By design, it is not possible to hide an inherited model by setting a <code>null</code> or
 	 * <code>undefined</code> model. Applications can set an empty model to achieve the same.
 	 *
-	 * Note: A ManagedObject inherits models from the Core only when it is a descendant of a UIArea.
+	 * <b>Note:</b> A ManagedObject inherits models from the Core only when it is a descendant of a UIArea.
 	 *
 	 * @param {sap.ui.model.Model} oModel the model to be set or <code>null</code> or <code>undefined</code>
-	 * @param {string} [sName] the name of the model or <code>undefined</code>
+	 * @param {string} [sName=undefined] the name of the model or <code>undefined</code>
 	 * @return {sap.ui.base.ManagedObject} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -4235,8 +4259,14 @@ sap.ui.define([
 	 *
 	 * The name can be omitted to reference the default model or it must be a non-empty string.
 	 *
-	 * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
-	 * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name.
+	 * <b>Note:</b> to be compatible with future versions of this API, you must not use the following model names:
+	 * <ul>
+	 * <li><code>null</code></li>
+	 * <li>empty string <code>""</code></li>
+	 * <li>string literals <code>"null"</code> or <code>"undefined"</code></li>
+	 * </ul>
+	 * Omitting the model name (or using the value <code>undefined</code>) is explicitly allowed and
+	 * refers to the default model.
 	 *
 	 * @param {string|undefined} [sName] name of the model to be retrieved
 	 * @return {sap.ui.model.Model} oModel
@@ -4250,7 +4280,7 @@ sap.ui.define([
 	/**
 	 * Check if any model is set to the ManagedObject or to one of its parents (including UIArea and Core).
 	 *
-	 * Note: A ManagedObject inherits models from the Core only when it is a descendant of a UIArea.
+	 * <b>Note:</b> A ManagedObject inherits models from the Core only when it is a descendant of a UIArea.
 	 *
 	 * @return {boolean} whether a model reference exists or not
 	 * @public

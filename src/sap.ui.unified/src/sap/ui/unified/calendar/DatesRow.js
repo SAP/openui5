@@ -182,7 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @protected
 	 * @param {int} iFirstDayOfWeek The first day of the week
 	 * @name sap.ui.unified.calendar.DatesRow#setFirstDayOfWeek
-	 * @returns {sap.ui.unified.DatesRow} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.unified.calendar.DatesRow} <code>this</code> to allow method chaining
 	 * @function
 	 */
 	DatesRow.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){

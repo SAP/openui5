@@ -42,7 +42,7 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 * </ul>
 		 * <h4>When not to use</h4>
 		 * <ul>
-		 * <li>You want to display properties or features of one content item. Use a {@link sap.uxap.ObjectPage object page} or {@link sap.f.DynamicPage dynamic page} instead.</li>
+		 * <li>You want to display properties or features of one content item. Use a {@link sap.uxap.ObjectPageLayout object page} or {@link sap.f.DynamicPage dynamic page} instead.</li>
 		 * </ul>
 		 * <h3>Responsive Behavior</h3>
 		 * <ul>
