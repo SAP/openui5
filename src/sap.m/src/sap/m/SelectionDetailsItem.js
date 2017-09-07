@@ -29,9 +29,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase",
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This protected Element provides an item for {@link sap.m.SelectionDetails} that is shown inside a list.
+	 * This protected element provides an item for {@link sap.m.SelectionDetails} that is shown inside a list.
 	 * The item includes SelectionDetailsItemLine as its lines that are displayed in one block above the optional actions.
-	 * <b><i>Note:</i></b>It is protected and should ony be used within the framework itself.
+	 * <b><i>Note:</i></b>It is protected and should only be used within the framework itself.
 	 *
 	 * @extends sap.ui.core.Element
 	 *
