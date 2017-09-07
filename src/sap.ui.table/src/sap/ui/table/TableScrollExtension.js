@@ -352,7 +352,7 @@ sap.ui.define([
 				}
 
 				if (bScrollingForward) {
-					bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.clientWidth;
+					bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.offsetWidth;
 				} else {
 					bScrolledToEnd = oHSb.scrollLeft === 0;
 				}
@@ -374,7 +374,7 @@ sap.ui.define([
 				}
 
 				if (bScrollingForward) {
-					bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.clientHeight;
+					bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetWidth;
 				} else {
 					bScrolledToEnd = oVSb.scrollTop === 0;
 				}
@@ -454,7 +454,7 @@ sap.ui.define([
 
 						if (oHSb != null) {
 							if (iTouchDistanceX < 0) { // Scrolling to the right.
-								bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.clientWidth;
+								bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.offsetWidth;
 							} else { // Scrolling to the left.
 								bScrolledToEnd = oHSb.scrollLeft === 0;
 							}
@@ -475,7 +475,7 @@ sap.ui.define([
 
 						if (oVSb != null) {
 							if (iTouchDistanceY < 0) { // Scrolling down.
-								bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.clientHeight;
+								bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetHeight;
 							} else { // Scrolling up.
 								bScrolledToEnd = oVSb.scrollTop === 0;
 							}
@@ -602,26 +602,43 @@ sap.ui.define([
 			var $FocusedDomRef = jQuery(oEvent.target);
 			if ($FocusedDomRef.parent(".sapUiTableTr").length > 0) {
 				$ctrlScr = jQuery(this.getDomRef("sapUiTableCtrlScr"));
-			} else if ($FocusedDomRef.parent(".sapUiTableColHdr").length > 0) {
+			} else if ($FocusedDomRef.parent(".sapUiTableColHdrTr").length > 0) {
 				$ctrlScr = jQuery(this.getDomRef("sapUiTableColHdrScr"));
 			}
 
-			// Firefox and Chrome do not always scroll the focused element into the viewport if it is partially visible.
-			// With this logic we ensure that the focused element always gets scrolled into the viewport in a similar way.
-			if ((Device.browser.firefox || Device.browser.chrome) && $ctrlScr && $ctrlScr.length > 0) {
+			// Many browsers do not scroll the focused element into the viewport, if it is partially visible. With this
+			// logic we ensure, that the focused element always gets scrolled into the viewport in a similar way.
+			if ($ctrlScr && $ctrlScr.length > 0) {
 				var iCtrlScrScrollLeft = $ctrlScr.scrollLeft();
 				var iCtrlScrWidth = $ctrlScr.width();
 				var iCellLeft = $FocusedDomRef.position().left;
 				var iCellRight = iCellLeft + $FocusedDomRef.width();
 				var iOffsetLeft = iCellLeft - iCtrlScrScrollLeft;
 				var iOffsetRight = iCellRight - iCtrlScrWidth - iCtrlScrScrollLeft;
-
 				var oHSb = this._getScrollExtension().getHorizontalScrollbar();
+
 				if (iOffsetRight > 0) {
 					oHSb.scrollLeft = oHSb.scrollLeft + iOffsetRight + 1;
 				} else if (iOffsetLeft < 0) {
 					oHSb.scrollLeft = oHSb.scrollLeft + iOffsetLeft - 1;
 				}
+			}
+
+			// On focus, the browsers scroll elements which are not visible into the viewport (IE also scrolls if elements are partially visible).
+			// This causes scrolling inside table cells, which is not desired.
+			// Flickering of the cell content can not be avoided, as the browser performs scrolling after the event. This behavior can not be
+			// prevented, only reverted.
+			var $ParentCell = TableUtils.getParentCell(this, oEvent.target);
+
+			if ($ParentCell != null) {
+				Promise.resolve().then(function() {
+					var oInnerCellElement = $ParentCell.find(".sapUiTableCell")[0];
+
+					if (oInnerCellElement != null) {
+						oInnerCellElement.scrollLeft = 0;
+						oInnerCellElement.scrollTop = 0;
+					}
+				});
 			}
 		}
 	};

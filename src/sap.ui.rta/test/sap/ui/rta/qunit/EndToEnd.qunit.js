@@ -109,46 +109,47 @@ sap.ui.require([
 
 	QUnit.test("when renaming a group (via double click) and setting a new title to Test...", function(assert) {
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-
-		var done = assert.async();
-
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oGroup);
 		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
 		this.oGroupOverlay.focus();
 		var $groupOverlay = this.oGroupOverlay.$();
-		$groupOverlay.click();
-		$groupOverlay.click();
 
-		sap.ui.getCore().applyChanges();
+		var done = assert.async();
 
-		var $editableField = $groupOverlay.find(".sapUiRtaEditableField");
+		sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
+			if (mParams.overlay === this.oGroupOverlay) {
+				var $editableField = $groupOverlay.find(".sapUiRtaEditableField");
 
-		assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
-		assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
+				assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
+				assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
 
-		var oCommandStack = this.oRta.getCommandStack();
-		oCommandStack.attachModified(function(oEvent) {
-			var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
-			if (oFirstExecutedCommand &&
-				oFirstExecutedCommand.getName() === "rename") {
-				sap.ui.getCore().applyChanges();
-				assert.strictEqual(this.oGroup.getLabel(), "Test", "then title of the group is Test");
-				assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+				var oCommandStack = this.oRta.getCommandStack();
+				oCommandStack.attachModified(function(oEvent) {
+					var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
+					if (oFirstExecutedCommand &&
+						oFirstExecutedCommand.getName() === "rename") {
+						assert.strictEqual(this.oGroup.getLabel(), "Test", "then title of the group is Test");
+						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 
-				// timeout is needed because of the timeout in rta.Rename plugin
-				setTimeout(function() {
-					assert.strictEqual(this.oGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
-					$editableField = $groupOverlay.find(".sapUiRtaEditableField");
-					assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
-					this.oRta.stop().then(done);
-				}.bind(this), 500);
+						sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
+							if (mParams.overlay === this.oGroupOverlay) {
+								assert.strictEqual(this.oGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
+								$editableField = $groupOverlay.find(".sapUiRtaEditableField");
+								assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
+								this.oRta.stop().then(done);
+							}
+						}, this);
+					}
+				}.bind(this));
+
+				document.activeElement.innerHTML = "Test";
+				sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			}
-		}.bind(this));
+		}, this);
 
-		document.activeElement.innerHTML = "Test";
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ENTER, false, false, false);
-
+		$groupOverlay.click();
+		$groupOverlay.click();
 	});
 
 	QUnit.test("when renaming a group element (via context menu) and setting a new label to Test...", function(assert) {
@@ -165,34 +166,36 @@ sap.ui.require([
 
 		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[0];
 		oContextMenuItem.getDomRef().click();
-		sap.ui.getCore().applyChanges();
 
-		var $editableField = $fieldOverlay.find(".sapUiRtaEditableField");
+		sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
+			if (mParams.overlay === this.oFieldOverlay) {
+				var $editableField = $fieldOverlay.find(".sapUiRtaEditableField");
 
-		assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
-		assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
+				assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
+				assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
 
-		var oCommandStack = this.oRta.getCommandStack();
-		oCommandStack.attachModified(function(oEvent) {
-			var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
-			if (oFirstExecutedCommand &&
-				oFirstExecutedCommand.getName() === "rename") {
-				sap.ui.getCore().applyChanges();
-				assert.strictEqual(this.oField._getLabel().getText(), "Test", "then label of the group element is Test");
-				assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+				var oCommandStack = this.oRta.getCommandStack();
+				oCommandStack.attachModified(function(oEvent) {
+					var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
+					if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
+						assert.strictEqual(this.oField._getLabel().getText(), "Test", "then label of the group element is Test");
+						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 
-				// timeout is needed because of the timeout in rta.Rename plugin
-				setTimeout(function() {
-					assert.strictEqual(document.activeElement, this.oFieldOverlay.getDomRef(), " and focus is on field overlay");
-					$editableField = $fieldOverlay.find(".sapUiRtaEditableField");
-					assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
-					this.oRta.stop().then(done);
-				}.bind(this), 500);
+						sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
+							if (mParams.overlay === this.oFieldOverlay) {
+								assert.strictEqual(document.activeElement, this.oFieldOverlay.getDomRef(), " and focus is on field overlay");
+								$editableField = $fieldOverlay.find(".sapUiRtaEditableField");
+								assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
+								this.oRta.stop().then(done);
+							}
+						}, this);
+					}
+				}.bind(this));
+
+				document.activeElement.innerHTML = "Test";
+				sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ENTER, false, false, false);
 			}
-		}.bind(this));
-
-		document.activeElement.innerHTML = "Test";
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		}, this);
 	});
 
 	QUnit.test("when adding a group element (via context menu) - addODataProperty", function(assert) {

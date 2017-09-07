@@ -33,7 +33,7 @@ sap.ui.define([
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
 		"sap/ui/rta/ui/SettingsDialog",
-		"./Utils",
+		"sap/ui/rta/Utils",
 		"sap/ui/fl/transport/Transports",
 		"sap/ui/fl/transport/TransportSelection",
 		"sap/ui/fl/Utils",
@@ -169,7 +169,11 @@ sap.ui.define([
 				 * @experimental
 				 */
 				"flexSettings": {
-					type: "object"
+					type: "object",
+					defaultValue: {
+						layer: "CUSTOMER",
+						developerMode: true
+					}
 				},
 
 				/** Defines view state of the RTA. Possible values: adaptation, navigation */
@@ -211,8 +215,22 @@ sap.ui.define([
 				"undoRedoStackModified" : {}
 			}
 		},
-		_sAppTitle : null
+		_sAppTitle : null,
+		_dependents: null,
+		constructor: function() {
+			// call parent constructor
+			ManagedObject.apply(this, arguments);
 
+			this._dependents = {};
+			this.iEditableOverlaysCount = 0;
+
+			this.addDependent(new PopupManager(), 'popupManager');
+
+			if (this.getShowToolbars()) {
+				this.getPopupManager().attachOpen(this.onPopupOpen, this);
+				this.getPopupManager().attachClose(this.onPopupClose, this);
+			}
+		}
 	});
 
 	/**
@@ -318,6 +336,24 @@ sap.ui.define([
 		return jQuery.extend({}, this._mDefaultPlugins);
 	};
 
+
+	RuntimeAuthoring.prototype.addDependent = function (oObject, sName) {
+		if (!(sName in this._dependents)) {
+			if (sName) {
+				this['get' + jQuery.sap.charToUpperCase(sName, 0)] = this.getDependent.bind(this, sName);
+			}
+			this._dependents[sName || oObject.getId()] = oObject;
+		}
+	};
+
+	RuntimeAuthoring.prototype.getDependent = function(sName) {
+		return this._dependents[sName];
+	};
+
+	RuntimeAuthoring.prototype.getDependents = function() {
+		return this._dependents;
+	};
+
 	/**
 	 * In order to clear the cache and to destroy the default plugins on exit use
 	 * _destroyDefaultPlugins()
@@ -345,38 +381,19 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * @override
-	 */
-	RuntimeAuthoring.prototype.init = function() {
-		this._onCommandStackModified = this._onStackModified.bind(this);
-		this.iEditableOverlaysCount = 0;
-
-		// call setFlexSettings with the defaultValues
-		this.setFlexSettings({
-			layer: "CUSTOMER",
-			developerMode: true
-		});
-
-		this.oPopupManager = new PopupManager({
-			open: this.onPopupOpen.bind(this),
-			close: this.onPopupClose.bind(this)
-		});
-	};
-
 	RuntimeAuthoring.prototype.onPopupOpen = function(oEvent) {
 		if (
 			oEvent.getParameters() instanceof sap.m.Dialog
-			&& this._oToolsMenu instanceof FioriToolbar
+			&& this.getToolbar() instanceof FioriToolbar
 		) {
-			this._oToolsMenu.setColor("contrast");
+			this.getToolbar().setColor("contrast");
 		}
-		this._oToolsMenu.bringToFront();
+		this.getToolbar().bringToFront();
 	};
 
 	RuntimeAuthoring.prototype.onPopupClose = function(oEvent) {
 		if (oEvent.getParameters() instanceof sap.m.Dialog) {
-			this._oToolsMenu.setColor();
+			this.getToolbar().setColor();
 		}
 	};
 
@@ -399,12 +416,15 @@ sap.ui.define([
 		// Check URI-parameters for sap-ui-layer
 		var oUriParams = jQuery.sap.getUriParameters();
 		var aUriLayer = oUriParams.mParams["sap-ui-layer"];
+
+		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);
+
 		if (aUriLayer && aUriLayer.length > 0) {
 			mFlexSettings.layer = aUriLayer[0];
 		}
 
 		Utils.setRtaStyleClassName(mFlexSettings.layer);
-		this.setProperty("flexSettings", jQuery.extend(this.getFlexSettings(), mFlexSettings));
+		this.setProperty("flexSettings", mFlexSettings);
 	};
 
 	/**
@@ -428,8 +448,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Start Runtime Authoring
-	 *
+	 * Start UI adaptation at runtime (RTA).
+	 * @return {Promise} Returns a Promise with the initialization of RTA
 	 * @public
 	 */
 	RuntimeAuthoring.prototype.start = function() {
@@ -519,31 +539,25 @@ sap.ui.define([
 							var bShowPublish = aButtonsSupport[0];
 							var bIsAppVariantSupported = aButtonsSupport[1];
 							this._createToolsMenu(bShowPublish, bIsAppVariantSupported);
-							return this._oToolsMenu.show();
-						}.bind(this))
-						.then(function() {
-							//Popup Overlays
-							this.oPopupManager.setRta(this);
+							return this.getToolbar().show();
 						}.bind(this));
 				}
 			}.bind(this))
 			.then(function() {
-				var oRelevantPopups = this.oPopupManager.getRelevantPopups();
+				this.getPopupManager().setRta(this);
+				var oRelevantPopups = this.getPopupManager().getRelevantPopups();
 				if (oRelevantPopups.aDialogs || oRelevantPopups.aPopovers) {
-					return this._oToolsMenu.bringToFront();
+					return this.getShowToolbars() && this.getToolbar().bringToFront();
 				}
-				return true;
 			}.bind(this))
 			.then(function () {
+				// non-blocking style loading
 				StylesLoader
 					.loadStyles('InPageStyles')
 					.then(function (sData) {
 						var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
 						DOMUtil.insertStyles(sStyles);
 					});
-
-				// non-blocking style loading
-				return true;
 			});
 		}
 	};
@@ -580,7 +594,7 @@ sap.ui.define([
 	RuntimeAuthoring.prototype.setCommandStack = function(oCommandStack) {
 		var  oOldCommandStack = this.getProperty("commandStack");
 		if (oOldCommandStack) {
-			oOldCommandStack.detachModified(this._onCommandStackModified);
+			oOldCommandStack.detachModified(this._onStackModified, this);
 		}
 
 		if (this._oInternalCommandStack) {
@@ -591,7 +605,7 @@ sap.ui.define([
 		var oResult = this.setProperty("commandStack", oCommandStack);
 
 		if (oCommandStack) {
-			oCommandStack.attachModified(this._onCommandStackModified);
+			oCommandStack.attachModified(this._onStackModified, this);
 		}
 
 		if (this.getPlugins() && this.getPlugins()["settings"]) {
@@ -626,10 +640,10 @@ sap.ui.define([
 		var bCanRedo = oCommandStack.canRedo();
 		var oUshellContainer = Utils.getUshellContainer();
 
-		if (this.getShowToolbars() && this._oToolsMenu) {
-			this._oToolsMenu.setUndoRedoEnabled(bCanUndo, bCanRedo);
-			this._oToolsMenu.setPublishEnabled(this._bChangesExist || bCanUndo);
-			this._oToolsMenu.setRestoreEnabled(this._bChangesExist || bCanUndo);
+		if (this.getShowToolbars()) {
+			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
+			this.getToolbar().setPublishEnabled(this._bChangesExist || bCanUndo);
+			this.getToolbar().setRestoreEnabled(this._bChangesExist || bCanUndo);
 		}
 		this.fireUndoRedoStackModified();
 
@@ -642,11 +656,9 @@ sap.ui.define([
 		}
 	};
 
-	RuntimeAuthoring.prototype._closeToolBars = function() {
-		if (this.getShowToolbars() && this._oToolsMenu) {
-			return this._oToolsMenu.hide();
-		} else {
-			return Promise.resolve();
+	RuntimeAuthoring.prototype._closeToolbar = function() {
+		if (this.getShowToolbars()) {
+			return this.getToolbar().hide();
 		}
 	};
 
@@ -673,7 +685,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.stop = function(bDontSaveChanges, bSkipCheckPersChanges) {
 		return ((bDontSaveChanges) ? Promise.resolve() : this._serializeToLrep())
-			.then(this._closeToolBars.bind(this))
+			.then(this._closeToolbar.bind(this))
 			.then(bSkipCheckPersChanges ? Promise.resolve() : this._handlePersonalizationChangesOnExit.bind(this))
 			.then(function(){
 				this.exit();
@@ -711,7 +723,7 @@ sap.ui.define([
 		// if for example the addField Dialog/transport/reset Popup is open, we don't want the user to be able to undo/redo
 		var bMacintosh = Device.os.macintosh;
 		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().contains(document.activeElement);
-		var bFocusInsideRtaToolbar = this._oToolsMenu.getDomRef().contains(document.activeElement);
+		var bFocusInsideRtaToolbar = this.getShowToolbars() && this.getToolbar().getDomRef().contains(document.activeElement);
 		var bFocusOnBody = document.body === document.activeElement;
 		var bFocusInsideRenameField = jQuery(document.activeElement).parents('.sapUiRtaEditableField').length > 0;
 
@@ -744,7 +756,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check for unsaved changes before Leaving Runtime Authoring
+	 * Check for unsaved changes before leaving UI adaptation at runtime
+	 * @return {string} Returns the message to be displayed in the unsaved changes dialog
 	 *
 	 * @private
 	 */
@@ -774,7 +787,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(bPublishAvailable, bIsAppVariantSupported) {
-		if (!this._oToolsMenu) {
+		if (!this.getDependent('toolbar')) {
 			var fnConstructor;
 
 			if (this.getLayer() === "USER") {
@@ -786,14 +799,14 @@ sap.ui.define([
 			}
 
 			if (this.getLayer() === "USER") {
-				this._oToolsMenu = new fnConstructor({
+				this.addDependent(new fnConstructor({
 					textResources: this._getTextResources(),
 					//events
 					exit: this.stop.bind(this, false, false),
 					restore: this._onRestore.bind(this)
-				});
+				}), 'toolbar');
 			} else {
-				this._oToolsMenu = new fnConstructor({
+				this.addDependent(new fnConstructor({
 					modeSwitcher: this.getMode(),
 					publishVisible: bPublishAvailable,
 					textResources: this._getTextResources(),
@@ -807,16 +820,24 @@ sap.ui.define([
 					modeChange: this._onModeChange.bind(this),
 					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, this.getRootControl()),
 					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, this.getRootControl(), this.stop.bind(this, false, false))
-				});
+				}), 'toolbar');
 			}
 
 			this._checkChangesExist().then(function(bResult){
 				this._bChangesExist = bResult;
-				this._oToolsMenu.setPublishEnabled(bResult);
-				this._oToolsMenu.setRestoreEnabled(bResult);
+				this.getToolbar().setPublishEnabled(bResult);
+				this.getToolbar().setRestoreEnabled(bResult);
 			}.bind(this));
 		}
 	};
+
+	// RuntimeAuthoring.prototype.setToolbar = function (oControl) {
+	// 	this._oToolbar = oControl;
+	// };
+	//
+	// RuntimeAuthoring.prototype.getToolbar = function () {
+	// 	return this._oToolbar;
+	// };
 
 	/**
 	 * Exit Runtime Authoring - destroy all controls and plugins
@@ -824,6 +845,10 @@ sap.ui.define([
 	 * @protected
 	 */
 	RuntimeAuthoring.prototype.exit = function() {
+		jQuery.map(this._dependents, function (oDependent) {
+			oDependent.destroy();
+		});
+
 		if (this._oDesignTime) {
 			jQuery(Overlay.getOverlayContainer()).removeClass("sapUiRta");
 			this._oDesignTime.destroy();
@@ -842,19 +867,11 @@ sap.ui.define([
 			this._oRootControl.removeStyleClass("sapUiRtaRoot");
 		}
 
-		if (this._oToolsMenu) {
-			this._oToolsMenu.destroy();
-			this._oToolsMenu = null;
-		}
 		this.setCommandStack(null);
 
 		var oUshellContainer = Utils.getUshellContainer();
 		if (oUshellContainer) {
 			oUshellContainer.setDirtyFlag(false);
-		}
-
-		if (this.oPopupManager) {
-			this.oPopupManager.destroy();
 		}
 
 		window.onbeforeunload = this._oldUnloadHandler;
@@ -863,6 +880,7 @@ sap.ui.define([
 
 	/**
 	 * Function to handle ABAP transport of the changes
+	 * @return {Promise} Returns a Promise processing the transport of changes
 	 *
 	 * @private
 	 */
@@ -916,7 +934,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {array} aChangeSpecificData - array of objects with change specific data
-	 * @param {sap.ui.fl.FlexController} - instance of FlexController
 	 * @returns {Promise} promise that resolves with no parameters
 	 */
 	RuntimeAuthoring.prototype._createAndApplyChanges = function(aChangeSpecificData) {
@@ -962,7 +979,6 @@ sap.ui.define([
 	 * Delete all changes for current layer and root control's component
 	 *
 	 * @private
-	 * @return {Promise} the promise from the FlexController
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
 		var oTransportSelection = new TransportSelection();
@@ -993,6 +1009,12 @@ sap.ui.define([
 	};
 
 	/**
+	 * Shows a message box.
+	 * @param  {sap.m.MessageBox.Icon} oMessageType The type of the message box (icon to be displayed)
+	 * @param  {string} sTitleKey The text key for the title of the message box
+	 * @param  {string} sMessageKey The text key for the message of the message box
+	 * @param  {any} oError Optional - If an error is passed on, the message box text is derived from it
+	 * @return {Promise} Promise displaying the message box; resolves when it is closed
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._showMessage = function(oMessageType, sTitleKey, sMessageKey, oError) {
@@ -1010,6 +1032,8 @@ sap.ui.define([
 	};
 
 	/**
+	 * Shows a message toast.
+	 * @param  {string} sMessageKey The text key for the message
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._showMessageToast = function(sMessageKey) {
@@ -1019,13 +1043,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check if restart of RTA is needed
-	 * the RTA FLP plugin will check this
-	 * and restart RTA if needed
+	 * The RTA FLP plugin checks whether RTA needs to be restarted and restarts it if needed.
 	 *
 	 * @public
 	 * @static
-	 * @returns {Boolean} if restart is needed
+	 * @param {string} sLayer The active layer
+	 * @returns {boolean} Returns true if restart is needed
 	 */
 	RuntimeAuthoring.needsRestart = function(sLayer) {
 
@@ -1035,10 +1058,11 @@ sap.ui.define([
 
 	/**
 	 * Enable restart of RTA
-	 * the RTA FLP plugin would handle the restart
+	 * the RTA FLP plugin handles the restart
 	 *
 	 * @public
 	 * @static
+	 * @param {string} sLayer The active layer
 	 */
 	RuntimeAuthoring.enableRestart = function(sLayer) {
 		window.localStorage.setItem("sap.ui.rta.restart." + sLayer, true);
@@ -1046,10 +1070,10 @@ sap.ui.define([
 
 	/**
 	 * Disable restart of RTA
-	 * the RTA FLP plugin whould handle the restart
 	 *
 	 * @public
 	 * @static
+	 * @param {string} sLayer The active layer
 	 */
 	RuntimeAuthoring.disableRestart = function(sLayer) {
 		window.localStorage.removeItem("sap.ui.rta.restart." + sLayer);
@@ -1089,14 +1113,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Prepare all changes and assign them to an existing transport
+	 * Prepare all changes and assign them to an existing transport.
 	 *
 	 * @private
-	 * @param {object} oTransportInfo - information about the selected transport
-	 * @param {sap.ui.fl.FlexController} - instance of FlexController
-	 * @returns {Promise} Promise which resolves without parameters
+	 * @param {Object} mTransportInfo - Map containing the package name and the transport
+	 * @param {string} mTransportInfo.packageName - Name of the package
+ 	 * @param {string} mTransportInfo.transport - ID of the transport
+	 * @returns {Promise} Returns a Promise which resolves without parameters
 	 */
-	RuntimeAuthoring.prototype._transportAllLocalChanges = function(oTransportInfo) {
+	RuntimeAuthoring.prototype._transportAllLocalChanges = function(mTransportInfo) {
 		return this._getFlexController().getComponentChanges({currentLayer: this.getLayer()}).then(function(aAllLocalChanges) {
 
 			// Pass list of changes to be transported with transport request to backend
@@ -1104,8 +1129,8 @@ sap.ui.define([
 			var aTransportData = oTransports._convertToChangeTransportData(aAllLocalChanges);
 			var oTransportParams = {};
 			//packageName is '' in CUSTOMER layer (no package input field in transport dialog)
-			oTransportParams.package = oTransportInfo.packageName;
-			oTransportParams.transportId = oTransportInfo.transport;
+			oTransportParams.package = mTransportInfo.packageName;
+			oTransportParams.transportId = mTransportInfo.transport;
 			oTransportParams.changeIds = aTransportData;
 
 			return oTransports.makeChangesTransportable(oTransportParams).then(function() {
@@ -1116,7 +1141,7 @@ sap.ui.define([
 
 					if (oChange.getPackage() === '$TMP') {
 						var oDefinition = oChange.getDefinition();
-						oDefinition.packageName = oTransportInfo.packageName;
+						oDefinition.packageName = mTransportInfo.packageName;
 						oChange.setResponse(oDefinition);
 					}
 				});
@@ -1128,13 +1153,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the two parent-information maps for equality
+	 * Checks whether the two parent information maps are equal.
 	 *
-	 * @param {object}
-	 *          oInfo1 *
-	 * @param {object}
-	 *          oInfo2
-	 * @return {boolean} true if equal, false otherwise
+	 * @param {Object}
+	 *          oInfo1 First map of information
+	 * @param {Object}
+	 *          oInfo2 Second map of information
+	 * @return {boolean} Returns true if they are equal, false otherwise
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._isEqualParentInfo = function(oInfo1, oInfo2) {
@@ -1202,6 +1227,8 @@ sap.ui.define([
 	};
 
 	/**
+	 * Increases or decreases the current number of editable Overlays.
+	 * @param  {sap.ui.base.Event} oEvent Event triggered by the 'editable' property change
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._onElementEditableChange = function(oEvent) {
@@ -1214,9 +1241,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle hiding an element by the context menu
+	 * Function to handle hiding an element by the context menu.
 	 *
-	 * @param {array} aOverlays list of selected overlays
+	 * @param {sap.ui.dt.Overlay[]} aOverlays List of selected overlays
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleRemoveElement = function(aOverlays) {
@@ -1224,7 +1251,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private
+	 * Open the settings dialog.
+	 * @param  {sap.ui.base.Event|Object} oEventOrOverlays Event or map containing list of selected overlays
 	 */
 	RuntimeAuthoring.prototype._openSettingsDialog = function(oEventOrOverlays) {
 		var aSelectedOverlays = (oEventOrOverlays.mParameters) ? oEventOrOverlays.getParameter("selectedOverlays") : oEventOrOverlays;
@@ -1506,10 +1534,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle renaming a label
+	 * Function to handle renaming a label.
 	 *
-	 * @param {array}
-	 *          aOverlays list of selected overlays
+	 * @param {sap.ui.dt.Overlay[]}
+	 *          aOverlays List of selected overlays
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleRename = function(aOverlays) {
@@ -1518,10 +1546,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle cutting an element
+	 * Function to handle cutting an element.
 	 *
-	 * @param {array}
-	 *          aOverlays list of selected overlays
+	 * @param {sap.ui.dt.Overlay[]}
+	 *          aOverlays List of selected overlays
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleCutElement = function(aOverlays) {
@@ -1530,9 +1558,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle pasting an element
+	 * Function to handle pasting an element.
 	 *
-	 * @param {array} aOverlays list of selected overlays
+	 * @param {sap.ui.dt.Overlay[]} aOverlays List of selected overlays
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handlePasteElement = function(aOverlays) {
@@ -1541,7 +1569,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handler function to stop cut and paste, because some other operation has started
+	 * Handler function to stop cut and paste, because some other operation has started.
 	 *
 	 * @private
 	 */
@@ -1550,7 +1578,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle combining of elements
+	 * Function to handle combining of elements.
 	 *
 	 * @private
 	 */
@@ -1562,7 +1590,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle ungrouping of elements
+	 * Function to handle ungrouping of elements.
 	 *
 	 * @private
 	 */
@@ -1574,9 +1602,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle settings
+	 * Function to handle settings.
 	 *
-	 * @param {array} aOverlays list of selected overlays
+	 * @param {sap.ui.dt.Overlay[]} aOverlays List of selected overlays
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleSettings = function(aOverlays) {
@@ -1584,7 +1612,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle variant rename
+	 * Function to handle variant rename.
 	 *
 	 * @private
 	 */
@@ -1593,7 +1621,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle variant duplicate
+	 * Function to handle variant duplicate.
 	 *
 	 * @private
 	 */
@@ -1611,9 +1639,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle variant switch
+	 * Function to handle variant switch.
 	 *
-	 * @param {array} aOverlays Selected overlays
+	 * @param {sap.ui.dt.Overlay[]} aOverlays Selected overlays
 	 * @param {object} oItem Pushed context menu item
 	 * @private
 	 */
@@ -1626,9 +1654,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle additional elements
+	 * Function to handle additional elements.
 	 *
-	 * @param {array} aOverlays Selected  overlays
+	 * @param {boolean} bOverlayIsSibling Set to true if overlay is a sibling of the selected overlays
+	 * @param {sap.ui.dt.Overlay[]} aOverlays Selected overlays
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleAdditionalElements = function(bOverlayIsSibling, aOverlays) {
@@ -1678,10 +1707,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Builds the navigation arguments object required to trigger the navigation
-	 * using the CrossApplicationNavigation ushell service
-	 * @param  {map} mParsedHash The parsed URL hash
-	 * @return {map}             The argument map ("oArg" parameter of the "toExternal" function)
+	 * Build the navigation arguments object required to trigger the navigation
+	 * using the CrossApplicationNavigation ushell service.
+	 * @param  {Object} mParsedHash Parsed URL hash
+	 * @return {Object}             Returns argument map ("oArg" parameter of the "toExternal" function)
 	 */
 	RuntimeAuthoring.prototype._buildNavigationArguments = function(mParsedHash){
 		return {
@@ -1691,7 +1720,8 @@ sap.ui.define([
 				context : mParsedHash.contextRaw
 			},
 			params: mParsedHash.params,
-			appSpecificRoute : mParsedHash.appSpecificRoute
+			appSpecificRoute : mParsedHash.appSpecificRoute,
+			writeHistory : false
 		};
 	};
 
@@ -1847,11 +1877,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter for property `mode`
+	 * Setter for property 'mode'.
+	 * @param {string} sNewMode The new value for the 'mode' property
 	 */
 	RuntimeAuthoring.prototype.setMode = function (sNewMode) {
 		if (this.getProperty('mode') !== sNewMode) {
-			var oModeSwitcher = this._oToolsMenu.getControl('modeSwitcher');
+			var oModeSwitcher = this.getShowToolbars() && this.getToolbar().getControl('modeSwitcher');
 			var bOverlaysEnabled = sNewMode === 'adaptation';
 
 			if (oModeSwitcher) {

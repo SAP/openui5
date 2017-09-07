@@ -2676,6 +2676,25 @@
 			//clean
 			oVSD.destroy();
 		});
+
+		QUnit.module("Screen reader", {
+			beforeEach : function () {
+				this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				this.oVSD = new sap.m.ViewSettingsDialog();
+				this.oVSD.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				this.oVSD.destroy();
+				this.oVSD = null;
+			}
+		});
+
+		QUnit.test("ViewSettingsDialog sets ariaLabeldBy of the Dialog to the title id", function (assert) {
+			var sExpectedId = this.oVSD._sTitleLabelId;
+			assert.strictEqual(this.oVSD._getTitleLabel().getId(), sExpectedId, "id of the Dialog title is equal to the 'dialogId + -title' suffix");
+			assert.strictEqual(this.oVSD._getDialog().getAriaLabelledBy()[0], sExpectedId, "ariaLabeledBy attribute of the Dialog is equal to the Dialog title id");
+		})
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

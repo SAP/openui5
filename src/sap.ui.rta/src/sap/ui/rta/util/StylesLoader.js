@@ -12,7 +12,7 @@ sap.ui.define([
 
 		/**
 		 * Loads styles from the specified file
-		 * @param sFileName - Name of the file
+		 * @param {string} sFileName - Name of the file
 		 * @return {jqXHR} - returns jqXHR object which can be thenable
 		 */
 		module.loadStyles = function (sFileName) {

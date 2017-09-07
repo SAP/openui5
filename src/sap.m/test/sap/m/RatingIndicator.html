@@ -8,7 +8,7 @@
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
 
 		<style>
@@ -67,8 +67,8 @@
 				tooltip: "This is a tooltip"
 			});
 
-			var oLabel01a = new sap.m.Label({text:'display only'});
-			var oRating01 = new sap.m.RatingIndicator("displayOnly", {
+			var oLabel01a = new sap.m.Label({text:'Display only'});
+			var oRating01a = new sap.m.RatingIndicator("displayOnly", {
 				displayOnly: true,
 				value: 2.5,
 				tooltip: "This is a tooltip"
@@ -124,6 +124,8 @@
 				items: [
 					oLabel01,
 					oRating01,
+					oLabel01a,
+					oRating01a,
 					oLabel0,
 					oRating0,
 					oLabel1,
@@ -167,6 +169,18 @@
 					rating: 5
 				}]
 			};
+
+			var oRatingForm = new sap.ui.layout.form.SimpleForm({
+				layout: "ResponsiveGridLayout",
+				editable: true,
+				content: [
+					new sap.ui.core.Title({text: "Input"}),
+					new sap.m.Label({text: "Rating 1"}),
+					new sap.m.RatingIndicator({value: 2}),
+					new sap.m.Label({text: "Rating 2"}),
+					new sap.m.RatingIndicator({value: 4})
+				]
+			});
 
 			var oRatingTable = new sap.m.List("items", {
 					inset: true,
@@ -259,7 +273,8 @@
 					})
 				]
 			});
-
+			
+			oRatingPage.addContent(oRatingForm);
 			oRatingPage.addContent(oRatingTable);
 			oRatingPage.addContent(oRatingList);
 

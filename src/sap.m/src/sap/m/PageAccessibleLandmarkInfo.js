@@ -66,7 +66,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 			 *
 			 * If set to <code>sap.ui.core.AccessibleLandmarkRole.None</code>, no landmark will be added to the container.
 			 */
-			headerRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "Region"},
+			headerRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "None"},
 
 			/**
 			 * Texts which describes the landmark of the header container of the corresponding <code>sap.m.Page</code> control.
@@ -81,7 +81,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 			 *
 			 * If set to <code>sap.ui.core.AccessibleLandmarkRole.None</code>, no landmark will be added to the container.
 			 */
-			subHeaderRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : null},
+			subHeaderRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "None"},
 
 			/**
 			 * Texts which describes the landmark of the subheader container of the corresponding <code>sap.m.Page</code> control.
@@ -96,7 +96,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 			 *
 			 * If set to <code>sap.ui.core.AccessibleLandmarkRole.None</code>, no landmark will be added to the container.
 			 */
-			footerRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "Region"},
+			footerRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "None"},
 
 			/**
 			 * Texts which describes the landmark of the header container of the corresponding <code>sap.m.Page</code> control.
@@ -107,71 +107,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 			footerLabel : {type : "string", defaultValue : null}
 		}
 	}});
-
-	/**
-	 * Returns the landmark information of the given <code>sap.m.PageAccessibleLandmarkInfo</code> instance
-	 * of the given area (e.g. <code>"root"</code>).
-	 *
-	 * Must only be used with the <code>sap.m.Page</code> control!
-	 * @param {sap.m.PageAccessibleLandmarkInfo} oInstance The ageAccessibleLandmarkInfo instance
-	 * @param {string} sArea The page area name
-	 * @returns {string} The landmark information
-	 * @private
-	 */
-	PageAccessibleLandmarkInfo._getLandmarkInfo = function(oInstance, sArea) {
-		if (!oInstance) {
-			return null;
-		}
-
-		var sRole = null;
-		var sText = null;
-
-		var oPropertyInfo = oInstance.getMetadata().getProperty(sArea + "Role");
-		if (oPropertyInfo) {
-			sRole = oInstance[oPropertyInfo._sGetter]();
-		}
-
-		if (!sRole) {
-			return null;
-		}
-
-		oPropertyInfo = oInstance.getMetadata().getProperty(sArea + "Label");
-		if (oPropertyInfo) {
-			sText = oInstance[oPropertyInfo._sGetter]();
-		}
-
-		return [sRole.toLowerCase(), sText];
-	};
-
-	/**
-	 * Writes the landmark information of the given page and area (e.g. <code>"root"</code>).
-	 *
-	 * Must only be used with the <code>sap.m.Page</code> control!
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager instance
-	 * @param {sap.m.Page} oPage The page instance
-	 * @param {string} sArea The page area name
-	 * @returns {sap.m.PageAccessibleLandmarkInfo} <code>this</code> to facilitate method chaining.
-	 * @private
-	 */
-	PageAccessibleLandmarkInfo._writeLandmarkInfo = function(oRm, oPage, sArea) {
-		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
-			return;
-		}
-		var oInfo = PageAccessibleLandmarkInfo._getLandmarkInfo(oPage.getLandmarkInfo(), sArea);
-		if (!oInfo) {
-			return;
-		}
-
-		var oLandMarks = {
-			role: oInfo[0]
-		};
-
-		if (oInfo[1]) {
-			oLandMarks["label"] =  oInfo[1];
-		}
-
-		oRm.writeAccessibilityState(oPage, oLandMarks);
-	};
 
 	return PageAccessibleLandmarkInfo;
 });

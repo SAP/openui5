@@ -8,13 +8,17 @@ sap.ui.define([
 	'sap/ui/dt/plugin/CutPaste',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/plugin/RTAElementMover'
+	'sap/ui/rta/plugin/RTAElementMover',
+	'sap/ui/rta/Utils'
 ],
-function(jQuery,
-		ControlCutPaste,
-		OverlayUtil,
-		Plugin,
-		RTAElementMover) {
+function(
+	jQuery,
+	ControlCutPaste,
+	OverlayUtil,
+	Plugin,
+	RTAElementMover,
+	Utils
+) {
 	"use strict";
 
 	/**
@@ -60,6 +64,11 @@ function(jQuery,
 		}
 	});
 
+	// Extends the CutPaste Plugin with all the functions from our rta base plugin
+	Utils.extendWith(CutPaste.prototype, Plugin.prototype, function(vDestinationValue, vSourceValue, sProperty, mDestination, mSource) {
+		return sProperty !== "getMetadata";
+	});
+
 	/**
 	 * @override
 	 */
@@ -69,16 +78,20 @@ function(jQuery,
 	};
 
 	/**
+	 * @override
+	 */
+	CutPaste.prototype._isEditable = function(oOverlay) {
+		return this.getElementMover().isEditable(oOverlay);
+	};
+
+	/**
 	 * Register an overlay
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
 	CutPaste.prototype.registerElementOverlay = function(oOverlay) {
 		ControlCutPaste.prototype.registerElementOverlay.apply(this, arguments);
-
-		if (oOverlay.isMovable()) {
-			Plugin.prototype.addToPluginsList.apply(this, arguments);
-		}
+		Plugin.prototype.registerElementOverlay.apply(this, arguments);
 	};
 
 	/**

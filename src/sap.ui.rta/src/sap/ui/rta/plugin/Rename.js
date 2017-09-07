@@ -276,8 +276,7 @@ sap.ui.define([
 
 		DOMUtil.copyComputedStyle(this._$oEditableControlDomRef, this._$editableField);
 		this._$editableField.children().remove();
-		this._$editableField.offset({ left: this._$oEditableControlDomRef.offset().left });
-		this._$editableField.offset({ top: this._$oEditableControlDomRef.offset().top });
+		this._$editableField.css('visibility', 'hidden');
 
 		// TODO : for all browsers
 		this._$editableField.css({
@@ -291,7 +290,6 @@ sap.ui.define([
 		Overlay.getMutationObserver().ignoreOnce({
 			target: this._$oEditableControlDomRef.get(0)
 		});
-		this._$oEditableControlDomRef.css("visibility", "hidden");
 
 		this._$editableField.one("focus", this._onEditableFieldFocus.bind(this));
 
@@ -304,12 +302,23 @@ sap.ui.define([
 		this._$editableField.on("click", this._stopPropagation.bind(this));
 		this._$editableField.on("mousedown", this._stopPropagation.bind(this));
 
-		this._$editableField.focus();
-
-		// keep Overlay selected while renaming
-		oOverlay.setSelected(true);
-
 		this.setOldValue(this._getCurrentEditableFieldText());
+
+		// BCP: 1780352883
+		setTimeout(function () {
+			this._$oEditableControlDomRef.css("visibility", "hidden");
+			this._$editableField.offset({ left: this._$oEditableControlDomRef.offset().left });
+			this._$editableField.offset({ top: this._$oEditableControlDomRef.offset().top });
+			this._$editableField.css('visibility', '');
+			this._$editableField.focus();
+
+			// keep Overlay selected while renaming
+			oOverlay.setSelected(true);
+			sap.ui.getCore().getEventBus().publish('sap.ui.rta', 'plugin.Rename.startEdit', {
+				overlay: oOverlay,
+				editableField: this._$editableField
+			});
+		}.bind(this), 0);
 	};
 
 	/**
@@ -358,6 +367,9 @@ sap.ui.define([
 			this._iStopTimeout = setTimeout(function() {
 				oOverlay.setSelected(true);
 				oOverlay.focus();
+				sap.ui.getCore().getEventBus().publish('sap.ui.rta', 'plugin.Rename.stopEdit', {
+					overlay: oOverlay
+				});
 			}, 500);
 		}
 

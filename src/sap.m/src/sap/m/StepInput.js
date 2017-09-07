@@ -183,7 +183,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * Property names which when set are directly forwarded to inner input <code>setProperty</code> method
 		 * @type {Array.<string>}
 		 */
-		var aForwardableProps = ["enabled", "editable", "name", "placeholder", "required"];
+		var aForwardableProps = ["enabled", "editable", "name", "placeholder", "required", "valueStateText"];
 
 		//Accessibility behaviour of the Input needs to be extended
 		var NumericInputRenderer = sap.ui.core.Renderer.extend(InputRenderer);
@@ -900,49 +900,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				this.$().toggleClass("sapMStepInputError", bError).toggleClass("sapMStepInputWarning", bWarning);
 			});
 
-			return this;
-		};
-
-		/**
-		 * Getter for property <code>valueState</code>.
-		 *
-		 * Default value is <code>None</code>.
-		 *
-		 * @returns {string} the value of property <code>valueState</code>.
-		 * @public
-		 */
-		StepInput.prototype.getValueState = function () {
-			return this._getInput().getValueState();
-		};
-
-		/**
-		 * Setter for property <code>valueStateText</code>.
-		 *
-		 * Default value is empty/<code>undefined</code>.
-		 *
-		 * @param {string} sText New value for property <code>valueStateText</code>.
-		 * @returns {sap.m.StepInput} <code>this</code> to allow method chaining
-		 * @public
-		 * @since 1.52
-		 */
-		StepInput.prototype.setValueStateText = function (sText) {
-			this._getInput().setValueStateText(sText);
+			this.setProperty("valueState", valueState, true);
 
 			return this;
-		};
-
-		/**
-		 * Getter for property <code>valueStateText</code>.
-		 * The text which is shown in the value state message popup.
-		 *
-		 * Default value is empty/<code>undefined</code>
-		 *
-		 * @returns {string} the value of property <code>valueStateText</code>
-		 * @public
-		 * @since 1.52
-		 */
-		StepInput.prototype.getValueStateText = function () {
-			return this._getInput().getValueStateText();
 		};
 
 		/*

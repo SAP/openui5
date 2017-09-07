@@ -633,7 +633,9 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oElementOverlay) {
 			OverlayUtil.iterateOverlayElementTree(oElementOverlay, function(oChildOverlay) {
-				aElementOverlays.push(oChildOverlay);
+				if (oChildOverlay.getDesignTimeMetadata()) {
+					aElementOverlays.push(oChildOverlay);
+				}
 			});
 		}
 

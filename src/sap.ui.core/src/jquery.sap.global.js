@@ -299,6 +299,19 @@
 
 	}
 
+	//getComputedStyle polyfill for firefox
+	if ( Device.browser.firefox ) {
+		var fnGetComputedStyle = window.getComputedStyle;
+		window.getComputedStyle = function(element, pseudoElt){
+			var oCSS2Style = fnGetComputedStyle.call(this, element, pseudoElt);
+			if (oCSS2Style === null) {
+				//Copy StyleDeclaration of document.body
+				return document.body.cloneNode(false).style;
+			}
+			return oCSS2Style;
+		};
+	}
+
 	// XHR proxy for Firefox
 	if ( Device.browser.firefox && window.Proxy ) {
 
@@ -3098,13 +3111,16 @@
 				sUrlPrefix,
 				sResourceName;
 
+			// Make sure to have an absolute URL to check against absolute prefix URLs
+			sURL = new URI(sURL, sDocumentLocation).toString();
+
 			for (sNamePrefix in mUrlPrefixes) {
 				if ( mUrlPrefixes.hasOwnProperty(sNamePrefix) ) {
 
 					// Note: configured URL prefixes are guaranteed to end with a '/'
 					// But to support the legacy scenario promoted by the application tools ( "registerModulePath('Application','Application')" )
 					// the prefix check here has to be done without the slash
-					sUrlPrefix = mUrlPrefixes[sNamePrefix].url.slice(0, -1);
+					sUrlPrefix = mUrlPrefixes[sNamePrefix].absoluteUrl.slice(0, -1);
 
 					if ( sURL.indexOf(sUrlPrefix) === 0 ) {
 
@@ -3357,6 +3373,12 @@
 			jQuery.sap.measure.end(sModuleName);
 
 			if ( oModule.state !== READY ) {
+
+				//better error reporting for js errors in modules
+				if (window["sap-ui-debug"]) {
+					jQuery.sap.includeScript(oModule.url);
+				}
+
 				var oError = new Error("failed to load '" + sModuleName +  "' from " + oModule.url + ": " + oModule.errorMessage);
 				enhanceStacktrace(oError, oModule.errorStack);
 				oError.loadError = oModule.loadError;
@@ -3495,12 +3517,6 @@
 					oModule.errorStack = err && err.stack;
 					oModule.errorMessage = ((err.toString && err.toString()) || err.message) + (err.line ? "(line " + err.line + ")" : "" );
 					oModule.data = undefined;
-					if ( window["sap-ui-debug"] && (/sap-ui-xx-show(L|-l)oad(E|-e)rrors=(true|x|X)/.test(location.search) || oCfgData["xx-showloaderrors"]) ) {
-						log.error("error while evaluating " + sModuleName + ", embedding again via script tag to enforce a stack trace (see below)");
-						jQuery.sap.includeScript(oModule.url);
-						return;
-					}
-
 				} finally {
 
 					// restore AMD flag
@@ -3733,6 +3749,10 @@
 				if ( vUrlPrefix.url.slice(-1) != '/' ) {
 					vUrlPrefix.url += '/';
 				}
+
+				// calculate absolute url
+				// only to be used by 'guessResourceName'
+				vUrlPrefix.absoluteUrl = new URI(vUrlPrefix.url, sDocumentLocation).toString();
 
 				mUrlPrefixes[sResourceNamePrefix] = vUrlPrefix;
 

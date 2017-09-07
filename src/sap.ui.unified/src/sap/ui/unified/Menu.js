@@ -118,6 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 		this.oOpenedSubMenu = null;
 		this.oHoveredItem = null;
 		this.oPopup = null; // Will be created lazily
+		this._bOpenedAsContextMenu = false; // defines whether the menu is opened as a context menu
 		this.fAnyEventHandlerProxy = jQuery.proxy(function(oEvent){
 			var oRoot = this.getRootMenu();
 			if (oRoot != this || !this.bOpen || !this.getDomRef() || (oEvent.type != "mousedown" && oEvent.type != "touchstart")) {
@@ -354,20 +355,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 
 		this._iX = oEvent.clientX;
 		this._iY = oEvent.clientY;
+		this._bOpenedAsContextMenu = true;
 		this.open(true, oOpenerRef, eDock.BeginTop, eDock.BeginTop, oOpenerRef,  x + " " + y, 'fit');
 	};
 
 	Menu.prototype._handleOpened = function () {
-		var $Menu = this.$(),
-			$Window = jQuery(window),
-			iCalcedX = this._iX,
-			iCalcedY = this._iY,
-			iRight = $Window.scrollLeft() + $Window.width(),
-			iBottom = $Window.scrollTop() + $Window.height(),
-			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
-			bRecalculate = false,
-			iMenuWidth = $Menu.width(),
-			iMenuHeight = $Menu.height();
+		var $Menu, $Window, iCalcedX, iCalcedY,
+			iRight, iBottom, bRTL, bRecalculate,
+			iMenuWidth, iMenuHeight;
+
+		if (!this._bOpenedAsContextMenu) {
+			return;
+		}
+
+		$Menu = this.$();
+		$Window = jQuery(window);
+		iCalcedX = this._iX;
+		iCalcedY = this._iY;
+		iRight = $Window.scrollLeft() + $Window.width();
+		iBottom = $Window.scrollTop() + $Window.height();
+		bRTL = sap.ui.getCore().getConfiguration().getRTL();
+		bRecalculate = false;
+		iMenuWidth = $Menu.width();
+		iMenuHeight = $Menu.height();
 
 		if (iCalcedY + iMenuHeight > iBottom) {
 			iCalcedY = iCalcedY - iMenuHeight;
@@ -388,6 +398,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 				bRecalculate = true;
 			}
 		}
+
+		// set the flag to initial state as same menu could be used as a context menu or a normal menu
+		this._bOpenedAsContextMenu = false;
 
 		bRecalculate && this.oPopup.setPosition("begin top", "begin top", $Window, iCalcedX + " " + iCalcedY, "flip");
 	};

@@ -372,7 +372,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 		var iCurrentIndex = oForm.indexOfFormContainer(oContainer);
 
 		// goto previous container
-		while (!oNewDomRef && iCurrentIndex >= 0) {
+		while (!oNewDomRef && iCurrentIndex > 0) {
 			var oPrevContainer = aContainers[iCurrentIndex - 1];
 			if (!oPrevContainer.getExpandable() || oPrevContainer.getExpanded()) {
 				oNewDomRef = this.findFirstFieldOfFirstElementInPrevContainer(oForm, iCurrentIndex - 1);

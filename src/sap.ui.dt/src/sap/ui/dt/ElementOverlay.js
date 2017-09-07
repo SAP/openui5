@@ -83,6 +83,13 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 				editable : {
 					type : "boolean",
 					defaultValue : false
+				},
+				/**
+				 * all overlays inside the relevant container within the same aggregations
+				 */
+				relevantOverlays: {
+					type: "any[]",
+					defaultValue: []
 				}
 			},
 			aggregations : {
@@ -548,12 +555,10 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @public
 	 */
 	ElementOverlay.prototype.sync = function() {
-		if (this.isVisible()) {
-			var aAggregationOverlays = this.getAggregationOverlays();
-			aAggregationOverlays.forEach(function(oAggregationOverlay) {
-				this._syncAggregationOverlay(oAggregationOverlay);
-			}, this);
-		}
+		var aAggregationOverlays = this.getAggregationOverlays();
+		aAggregationOverlays.forEach(function(oAggregationOverlay) {
+			this._syncAggregationOverlay(oAggregationOverlay);
+		}, this);
 	};
 
 	ElementOverlay.prototype._getParentRelevantContainerPropagation = function() {
@@ -783,15 +788,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		}
 	};
 
-	/**
-	 * @param {boolean} bVisible visible attribute
-	 * @protected
-	 */
-	ElementOverlay.prototype.setVisible = function(bVisible) {
-		Overlay.prototype.setVisible.apply(this, arguments);
-
-		this.sync();
-	};
 
 	/**
 	 * @param {string} sAggregationName name of the aggregation
@@ -812,13 +808,15 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 */
 	ElementOverlay.prototype._onElementModified = function(oEvent) {
 		var oParams = oEvent.getParameters();
+		var sName = oParams.name;
 
-		var sAggregationName = oEvent.getParameters().name;
-		if (sAggregationName) {
-			var oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
-			// private aggregations are also skipped
-			var bAggregationOverlayVisible = oAggregationOverlay && oAggregationOverlay.isVisible();
-			if (bAggregationOverlayVisible) {
+		if (oParams.type === "propertyChanged" && sName === "visible") {
+			this.setRelevantOverlays([]);
+			this.fireElementModified(oParams);
+		} else if (sName) {
+			var oAggregationOverlay = this.getAggregationOverlay(sName);
+			if (oAggregationOverlay) {
+				this.setRelevantOverlays([]);
 				this.fireElementModified(oParams);
 			}
 		} else if (oEvent.getParameters().type === "setParent") {
@@ -840,6 +838,8 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			if (this._mGeometry && !this._mGeometry.visible) {
 				delete this._mGeometry;
 				this.invalidate();
+			} else if (!this._mGeometry) {
+				this.sync();
 			}
 		}
 

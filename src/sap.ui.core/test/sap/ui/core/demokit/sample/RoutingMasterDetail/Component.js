@@ -14,13 +14,15 @@ sap.ui.define( ["sap/ui/core/UIComponent"], function (UIComponent) {
 					iframe : "RoutingMasterDetail.html",
 					stretch : true,
 					files : [
-						"routingApp/Component.js",
-						"routingApp/view/Master.view.xml",
-						"routingApp/view/Detail1.view.xml",
+						"routingApp/controller/data.json",
 						"routingApp/controller/Detail1.controller.js",
-						"routingApp/view/Detail2.view.xml",
 						"routingApp/controller/Detail2.controller.js",
+						"routingApp/controller/Master.controller.js",
 						"routingApp/view/App.view.xml",
+						"routingApp/view/Detail1.view.xml",
+						"routingApp/view/Detail2.view.xml",
+						"routingApp/view/Master.view.xml",
+						"routingApp/Component.js",
 						"RoutingMasterDetail.html"
 					]
 				}

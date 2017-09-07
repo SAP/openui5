@@ -47,6 +47,7 @@ sap.ui.require([
 		return jQuery.extend(true, {}, {
 			"changeType": "addTableColumn",
 			"content": {
+				"entityType": "EntityTypeNav",
 				"bindingPath": "EntityTypeNav_Property04",
 				"newFieldSelector": {
 					"id": "view--table_EntityTypeNav_EntityTypeNav_Property04",
@@ -63,76 +64,83 @@ sap.ui.require([
 	}
 
 
-	// QUnit.module("basic functionality with XmlTreeModifier", {
-	// 	beforeEach: function() {
-	// 		this.oChangeHandler = AddTableColumnChangeHandler;
-	// 		this.oChange = new Change(createChangeDefinition());
-	//
-	// 		var oDOMParser = new DOMParser();
-	// 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-	// 		this.oXmlView = oXmlDocument;
-	//
-	// 		this.oTable = oXmlDocument.childNodes[0].childNodes[0];
-	// 	},
-	// 	afterEach: function() {
-	// 		this.oChange = null;
-	// 	}
-	// });
-	//
-	// QUnit.test('applyChange on a xml control tree', function(assert) {
-	// 	this.oChangeHandler.applyChange(this.oChange, this.oTable, {
-	// 		modifier: XmlTreeModifier,
-	// 		appComponent: {
-	// 			createId: function (sControlId) {
-	// 				return sControlId;
-	// 			}
-	// 		},
-	// 		view: this.oXmlView
-	// 	});
-	//
-	// 	assert.strictEqual(
-	// 		this.oTable.childNodes[0].childNodes[1].id,
-	// 		this.oChange.getContent().newFieldSelector.id,
-	// 		"column has been created successfully"
-	// 	);
-	// 	assert.ok(
-	// 		this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1].id.indexOf(this.oChange.getContent().newFieldSelector.id) !== -1,
-	// 		"template has been modified successfully"
-	// 	);
-	// });
-	//
-	// QUnit.test('revertChange on a xml control tree', function(assert) {
-	// 	var sColumn1Id = this.oTable.childNodes[0].childNodes[1].id;
-	// 	var sTemplateForColumn1Id = this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1].id;
-	// 	this.oChangeHandler.applyChange(this.oChange, this.oTable, {
-	// 		modifier: XmlTreeModifier,
-	// 		appComponent: {
-	// 			createId: function (sControlId) {
-	// 				return sControlId;
-	// 			}
-	// 		},
-	// 		view: this.oXmlView
-	// 	});
-	// 	this.oChangeHandler.revertChange(this.oChange, this.oTable, {
-	// 		modifier: XmlTreeModifier,
-	// 		appComponent: {
-	// 			createId: function (sControlId) {
-	// 				return sControlId;
-	// 			}
-	// 		},
-	// 		view: this.oXmlView
-	// 	});
-	// 	assert.strictEqual(
-	// 		this.oTable.childNodes[0].childNodes[1].id,
-	// 		sColumn1Id,
-	// 		"column has been restored successfully"
-	// 	);
-	// 	assert.strictEqual(
-	// 		this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1].id,
-	// 		sTemplateForColumn1Id,
-	// 		"template has been restored successfully"
-	// 	);
-	// });
+	QUnit.module("bindingAggregation functionality with XmlTreeModifier", {
+		beforeEach: function() {
+			this.oChangeHandler = AddTableColumnChangeHandler;
+			this.oChange = new Change(createChangeDefinition());
+
+			var oDOMParser = new DOMParser();
+			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+			this.oXmlView = oXmlDocument;
+
+			this.oTable = oXmlDocument.childNodes[0].childNodes[0];
+		},
+		afterEach: function() {
+			this.oChange = null;
+		}
+	});
+
+	QUnit.test('applyChange on a xml control tree', function(assert) {
+		var mContent = this.oChange.getContent();
+
+		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
+			modifier: XmlTreeModifier,
+			appComponent: {
+				createId: function (sControlId) {
+					return sControlId;
+				}
+			},
+			view: this.oXmlView
+		});
+
+		assert.strictEqual(
+			this.oTable.childNodes[0].childNodes[1].getAttribute('id'),
+			this.oChange.getContent().newFieldSelector.id,
+			"column has been created successfully"
+		);
+		assert.strictEqual(
+			this.oTable.childNodes[0].childNodes[1].childNodes[0].getAttribute('text'),
+			"{/#" + mContent.entityType + "/" + mContent.bindingPath + "/@sap:label}",
+			"column has correct binding"
+		);
+		assert.ok(
+			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1].getAttribute('id').indexOf(this.oChange.getContent().newFieldSelector.id) !== -1,
+			"template has been modified successfully"
+		);
+	});
+
+	QUnit.test('revertChange on a xml control tree', function(assert) {
+		var sColumn1Id = this.oTable.childNodes[0].childNodes[1].getAttribute('id');
+		var sTemplateForColumn1Id = this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1].getAttribute('id');
+		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
+			modifier: XmlTreeModifier,
+			appComponent: {
+				createId: function (sControlId) {
+					return sControlId;
+				}
+			},
+			view: this.oXmlView
+		});
+		this.oChangeHandler.revertChange(this.oChange, this.oTable, {
+			modifier: XmlTreeModifier,
+			appComponent: {
+				createId: function (sControlId) {
+					return sControlId;
+				}
+			},
+			view: this.oXmlView
+		});
+		assert.strictEqual(
+			this.oTable.childNodes[0].childNodes[1].getAttribute('id'),
+			sColumn1Id,
+			"column has been restored successfully"
+		);
+		assert.strictEqual(
+			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1].getAttribute('id'),
+			sTemplateForColumn1Id,
+			"template has been restored successfully"
+		);
+	});
 
 	QUnit.module("bindingAggregation functionality with JsControlTreeModifier", {
 		beforeEach: function() {
@@ -210,6 +218,8 @@ sap.ui.require([
 	});
 
 	QUnit.test('applyChange on a js control tree', function(assert) {
+		var mContent = this.oChange.getContent();
+
 		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
 			modifier: JsControlTreeModifier,
 			appComponent: this.oUiComponent
@@ -217,6 +227,11 @@ sap.ui.require([
 
 		assert.ok(
 			this.oTable.getColumns()[1].getId().indexOf(this.oChange.getContent().newFieldSelector.id) === (this.oUiComponent.getId() + '---').length,
+			"column has been created successfully"
+		);
+		assert.strictEqual(
+			"{" + this.oTable.getColumns()[1].getHeader().getBindingInfo('text').binding.getPath() + "}",
+			"{/#" + mContent.entityType + "/" + mContent.bindingPath + "/@sap:label}",
 			"column has been created successfully"
 		);
 		assert.ok(

@@ -43,11 +43,6 @@ sap.ui.define([
 	 * @public
 	 */
 	AddTableColumn.applyChange = function(oChange, oTable, mPropertyBag) {
-
-		if (mPropertyBag.modifier.targets !== "jsControlTree") {
-			throw new Error("AddTableColumn change can't be applied on XML tree");
-		}
-
 		var oModifier = mPropertyBag.modifier;
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
@@ -76,10 +71,15 @@ sap.ui.define([
 
 		if (mContent && fnCheckChangeDefinition(mContent)) {
 			var oTemplate = oModifier.getBindingTemplate(oTable, ITEMS_AGGREGATION_NAME, oView);
-			// TODO: We can't assign static ID to the text field, otherwise it will be available for other actions
-			// (e.g. rename, delete) and then we will face to the problem that another change might be applied somewhere
-			// in the middle and we will replace its value in `initialise` event below.
-			var oText = oModifier.createControl('sap.m.Text', oAppComponent, oView);
+			var oText = oModifier.createControl(
+				'sap.m.Text',
+				oAppComponent,
+				oView,
+				mContent.newFieldSelector.id + '--column',
+				{
+					text: "{/#" + mContent.entityType + "/" + mContent.bindingPath + "/@sap:label}"
+				}
+			);
 
 			if (oTemplate) {
 				var mCreateProperties = {
@@ -91,21 +91,13 @@ sap.ui.define([
 
 				var oSmartField = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
 
-				// TODO: attach event handler via Modifier and/or move this logic to separate control inherited from SmartField
-				oSmartField.attachInitialise(function (oEvent) {
-					oModifier.setProperty(oText, 'text', oEvent.getSource().getTextLabel());
-				});
-
 				oModifier.insertAggregation(oTemplate, CELLS_AGGREGATION_NAME, oSmartField, mContent.newFieldIndex);
 				oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);
 				oChange.setRevertData(mContent.newFieldSelector.id + '--field');
 			}
 
-			var oControl = oModifier.createControl('sap.m.Column', oAppComponent, oView, mContent.newFieldSelector, {
-				header: [
-					oText
-				]
-			});
+			var oControl = oModifier.createControl('sap.m.Column', oAppComponent, oView, mContent.newFieldSelector);
+			oModifier.insertAggregation(oControl, 'header', oText, 0);
 			oModifier.insertAggregation(oTable, COLUMNS_AGGREGATION_NAME, oControl, mContent.newFieldIndex);
 
 			return true;
@@ -183,6 +175,11 @@ sap.ui.define([
 			oChangeDefinition.content.bindingPath = oSpecificChangeInfo.bindingPath;
 		} else {
 			throw new Error("oSpecificChangeInfo.bindingPath attribute required");
+		}
+		if (oSpecificChangeInfo.entityType) {
+			oChangeDefinition.content.entityType = oSpecificChangeInfo.entityType;
+		} else {
+			throw new Error("oSpecificChangeInfo.entityType attribute required");
 		}
 		if (oSpecificChangeInfo.newControlId) {
 			oChangeDefinition.content.newFieldSelector = mPropertyBag.modifier.getSelector(oSpecificChangeInfo.newControlId, oAppComponent);

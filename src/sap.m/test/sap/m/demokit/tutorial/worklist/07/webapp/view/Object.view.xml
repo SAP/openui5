@@ -55,7 +55,6 @@
 				headerText="{i18n>ObjectSupplierTabTitle}">
 				<content>
 					<form:SimpleForm
-						minWidth="1024"
 						maxContainerCols="2"
 						editable="false"
 						layout="ResponsiveGridLayout"

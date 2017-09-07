@@ -171,7 +171,7 @@ sap.ui.define([
 		this._oEditorDomRef.style.width = "100%";
 		this._oEditor = ace.edit(oDomRef);
 
-		this._oEditor.setValue("");
+		this._oEditor.getSession().setValue("");
 		this._oEditor.getSession().setUseWrapMode(true);
 		this._oEditor.getSession().setMode("ace/mode/javascript");
 		this._oEditor.setTheme("ace/theme/tomorrow");
@@ -300,7 +300,7 @@ sap.ui.define([
 	 */
 	CodeEditor.prototype.setValue = function(sValue) {
 		this.setProperty("value", sValue, true);
-		this._oEditor.setValue(this.getProperty("value"));
+		this._oEditor.getSession().setValue(this.getProperty("value"));
 		if (!this.getValueSelection()) {
 			this._oEditor.selection.clearSelection();
 		}

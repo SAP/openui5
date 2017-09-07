@@ -46,6 +46,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	var RatingIndicator = Control.extend("sap.m.RatingIndicator", /** @lends sap.m.RatingIndicator.prototype */ { metadata : {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
 		properties : {
 			/**
@@ -224,21 +225,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-
-	/**
-	 * Sets the displayOnly mode.
-	 *
-	 * @param {boolean} bDisplayOnly
-	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @override
-	 * @public
-	 */
-	RatingIndicator.prototype.setDisplayOnly = function (bDisplayOnly) {
-		this.toggleStyleClass("sapMRIDisplayOnly", bDisplayOnly);
-		this.setProperty("displayOnly", bDisplayOnly, true);
-		return this;
-	};
-
 	/**
 	 * Handler for theme changing
 	 *
@@ -325,15 +311,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			{name: "Compact",  style: "sapUiSizeCompact"},
 			{name: "Condensed", style: "sapUiSizeCondensed"}
 		],
-		sDensityMode;
-
-		aDensityModes.forEach(function(mode){
-			if (jQuery("html").hasClass(mode.style) || this.$().is("." + mode.style) || this.$().closest("." + mode.style).length > 0) {
-				sDensityMode = mode.name;
-				return;
+		sDensityClass, sDensityMode, i;
+		for (i in aDensityModes) {
+			sDensityClass = aDensityModes[i].style;
+			if (jQuery("html").hasClass(sDensityClass) || jQuery("." + sDensityClass).length > 0) {
+				sDensityMode = aDensityModes[i].name;
 			}
-		}, this);
-
+		}
 		return sDensityMode || aDensityModes[0].name;
 	};
 

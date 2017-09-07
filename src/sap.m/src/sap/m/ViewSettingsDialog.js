@@ -248,6 +248,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		this._oContentItem                  = null;
 		this._oPreviousState                = {};
 		this._sCustomTabsButtonsIdPrefix    = '-custom-button-';
+		this._sTitleLabelId                 = this.getId() + "-title";
 
 		/* setup a name map between the sortItems
 		 aggregation and an sap.m.List with items
@@ -1402,6 +1403,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		// create an internal instance of a dialog
 		if (this._dialog === undefined) {
 			this._dialog = new sap.m.Dialog(this.getId() + "-dialog", {
+				ariaLabelledBy      : this._sTitleLabelId,
 				showHeader          : false,
 				stretch             : sap.ui.Device.system.phone,
 				verticalScrolling   : true,
@@ -1466,7 +1468,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype._getTitleLabel = function() {
 		if (this._titleLabel === undefined) {
-			this._titleLabel = new sap.m.Label(this.getId() + "-title", {
+			this._titleLabel = new sap.m.Label(this._sTitleLabelId, {
 				text : this._rb.getText("VIEWSETTINGS_TITLE")
 			}).addStyleClass("sapMVSDTitle");
 		}

@@ -429,7 +429,7 @@ sap.ui.define([
 				},
 
 				theTableShouldHaveAllEntries: function () {
-					var iAllEntities = 626,
+					var iAllEntities = 23,
 						iExpectedNumberOfItems;
 
 					// retrieve all Objects
@@ -474,13 +474,14 @@ sap.ui.define([
 				},
 
 				theTableShouldHaveTheDoubleAmountOfInitialEntries: function () {
-					var iExpectedNumberOfItems;
+					var iAllEntities = 23,
+						iExpectedNumberOfItems;
 
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
 						matchers: function (oResults) {
-							iExpectedNumberOfItems = oResults.getGrowingThreshold() * 2;
+							iExpectedNumberOfItems = Math.min(oResults.getGrowingThreshold() * 2, iAllEntities);
 							return new AggregationLengthEquals({name: "items", length: iExpectedNumberOfItems}).isMatching(oResults);
 						},
 						success: function () {

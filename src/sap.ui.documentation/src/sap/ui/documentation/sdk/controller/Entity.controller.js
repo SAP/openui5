@@ -116,6 +116,7 @@ sap.ui.define([
 					linkFormatter: function (sTarget, sText) {
 						var sRoute = "entity",
 							aTargetParts,
+							aMatched,
 							iP;
 
 						sText = sText || sTarget; // keep the full target in the fallback text
@@ -132,6 +133,13 @@ sap.ui.define([
 							return "<code>" + sTarget.slice(1) + "</code>";
 						} else if ( iP > 0 ) {
 							sTarget = sTarget.slice(0, iP);
+						}
+
+						// Handle links to documentation
+						aMatched = sTarget.match(/^topic:(\w{32})$/);
+						if (aMatched) {
+							sTarget = aMatched[1];
+							sRoute = "topic";
 						}
 
 						// link refers to a method or event data-sap-ui-target="<class name>/methods/<method name>" OR
@@ -162,45 +170,51 @@ sap.ui.define([
 				});
 				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
 
+				function updateTabs() {
+					// handle unknown tab
+					if (this._TAB_KEYS.indexOf(this._sNewTab) === -1) {
+						this._sNewTab = "samples";
+					}
+
+					// handle invisible tab
+					if (!oData.show[this._sNewTab]) {
+						this._sNewTab = "samples";
+					}
+
+					this._switchPageTab();
+				}
+
 				// set data model
 				var oData;
 				if (this._sId !== sNewId) {
 
 					// retrieve entity docu from server
-					var oDoc = EntityInfo.getEntityDocu(sNewId, oEntity && oEntity.namespace);
+					EntityInfo.getEntityDocuAsync(sNewId, oEntity && oEntity.namespace).then(function (oDoc) {
 
-					// route to not found page IF there is NO index entry AND NO docu from server
-					if (!oEntity && !oDoc) {
-						this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false, {path: sNewId});
-						return;
-					}
+						// route to not found page IF there is NO index entry AND NO docu from server
+						if (!oEntity && !oDoc) {
+							this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false, {path: sNewId});
+							return;
+						}
 
-					// get view data
-					oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
+						// get view data
+						oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
 
-					// set view model
-					this.getView().getModel().setData(oData, false /* no merge with previous data */);
+						// set view model
+						this.getView().getModel().setData(oData, false /* no merge with previous data */);
 
+						// done, we can now switch the id
+						this._sId = sNewId;
 
-					// done, we can now switch the id
-					this._sId = sNewId;
+						updateTabs.call(this);
+
+					}.bind(this));
 
 				} else {
 					// get existing data model
 					oData = this.getView().getModel().getData();
+					updateTabs.call(this);
 				}
-
-				// handle unknown tab
-				if (this._TAB_KEYS.indexOf(this._sNewTab) === -1) {
-					this._sNewTab = "samples";
-				}
-
-				// handle invisible tab
-				if (!oData.show[this._sNewTab]) {
-					this._sNewTab = "samples";
-				}
-
-				this._switchPageTab();
 
 			},
 
@@ -242,6 +256,10 @@ sap.ui.define([
 						oData.docuLink = oEntity.docuLink.replace("docs/guide", "topic").replace(/\.html$/, "");
 					} else {
 						oData.show.introLink = false;
+					}
+
+					if (!oData.baseName) {
+						oData.baseName = oEntity.name;
 					}
 
 					bShouldShowSamplesSection = oEntity.samples.length > 0;
@@ -349,7 +367,9 @@ sap.ui.define([
 					return;
 				}
 				if (this._oObjectPage) {
-					this._oObjectPage.setSelectedSection(oSection.getId());
+					this._oObjectPage.attachEvent("onAfterRenderingDOMReady", function () {
+						this._oObjectPage.setSelectedSection(oSection.getId());
+					}, this);
 				}
 			},
 

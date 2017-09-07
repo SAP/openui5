@@ -1,17 +1,18 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
-	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core">
 
 	<Dialog
 		id="Dialog"
 		resizable="true"
 		contentWidth="600px"
-		class="sapUiNoContentPadding">
+		class="sapUiNoContentPadding"
+		ariaLabelledBy="title">
 		<customHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Title
+					id="title"
 					text="{
 						parts: [
 							'i18n>TechInfo.DebugModulesConfigPopup.SelectionCounter',
@@ -29,6 +30,7 @@
 					design="Bold"
 					width="6.5rem"
 					class="sapUiTinyMargin"
+					labelFor="customDebugValue"
 					text="sap-ui-debug ="/>
 				<Input
 					id="customDebugValue"

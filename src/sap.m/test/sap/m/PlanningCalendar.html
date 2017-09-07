@@ -90,6 +90,7 @@
 		var oEventLabel = new sap.m.Label({text: "Events log"});
 		function createFooter(){
 			return new sap.m.Bar({
+				contentLeft: new sap.m.Input("inputFocusHelper", {value: "VisualTest focus helper, Don't remove."}),
 				contentMiddle: [new sap.m.Button({
 					text: "PlanningCalendar",
 					press: function(){

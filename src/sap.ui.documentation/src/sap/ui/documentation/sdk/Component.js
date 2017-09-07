@@ -178,7 +178,10 @@ sap.ui.define([
 			},
 
 			_addElementToTreeData : function (oJSONElement) {
-				if (oJSONElement.visibility === "public") {
+				var oNewNodeNamespace,
+					aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
+
+				if (aAllowedMembers.indexOf(oJSONElement.visibility) !== -1) {
 					if (oJSONElement.kind !== "namespace") {
 						var oTreeNode = this._createTreeNode(oJSONElement.basename, oJSONElement.name, oJSONElement.name === this._topicId);
 						var sNodeNamespace = oJSONElement.name.substring(0, (oJSONElement.name.indexOf(oJSONElement.basename) - 1));
@@ -188,16 +191,20 @@ sap.ui.define([
 								oExistingNodeNamespace.nodes = [];
 							}
 							oExistingNodeNamespace.nodes.push(oTreeNode);
-						} else {
-							var oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId);
+						} else if (sNodeNamespace) {
+							oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId);
 							oNewNodeNamespace.nodes = [];
 							oNewNodeNamespace.nodes.push(oTreeNode);
 							aTreeContent.push(oNewNodeNamespace);
 
 							this._removeDuplicatedNodeFromTree(sNodeNamespace);
+						} else {
+							// Entities for which we can't resolve namespace we are shown in the root level
+							oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId);
+							aTreeContent.push(oNewNodeNamespace);
 						}
 					} else {
-						var oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId );
+						oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId );
 						aTreeContent.push(oNewNodeNamespace);
 					}
 				}
@@ -260,13 +267,20 @@ sap.ui.define([
 			},
 
 			_bindVersionModel : function (oVersionInfo) {
-				var sVersion, oVersionInfoData;
+				var sVersion,
+					oVersionInfoData,
+					bIsInternal = false,
+					aAllowedMembers = ["public", "protected"];
 
 				if (!oVersionInfo) {
 					return;
 				}
 
 				sVersion = oVersionInfo.version;
+				if (/internal/i.test(oVersionInfo.name)) {
+					bIsInternal = true;
+					aAllowedMembers.push("restricted");
+				}
 				oVersionInfoData = {
 					versionGav: oVersionInfo.gav,
 					version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor(),
@@ -274,8 +288,9 @@ sap.ui.define([
 					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav),
 					isSnapshotVersion: oVersionInfo && oVersionInfo.gav && /snapshot/i.test(oVersionInfo.gav),
 					isDevVersion: sVersion.indexOf("SNAPSHOT") > -1 || (sVersion.split(".").length > 1 && parseInt(sVersion.split(".")[1], 10) % 2 === 1),
-					isInternal: /internal/i.test(oVersionInfo.name),
-					libraries: oVersionInfo.libraries
+					isInternal: bIsInternal,
+					libraries: oVersionInfo.libraries,
+					allowedMembers: aAllowedMembers
 				};
 
 				this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);

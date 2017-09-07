@@ -143,6 +143,32 @@ sap.ui.define([
 				oComponent.loadVersionInfo()
 					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
 					.then(function () {
+						var oLibsData = this.getModel("libsData").getData(),
+							bFound = false,
+							sEntity;
+
+						// Try to discover if entity exist
+						if (!oLibsData[this._sTopicid]) {
+							// Not an exact match - try to resolve partial namespace
+							for (sEntity in oLibsData) {
+								if (oLibsData.hasOwnProperty(sEntity) && sEntity.indexOf(this._sTopicid) === 0) {
+									bFound = true;
+									break;
+								}
+							}
+						} else {
+							bFound = true;
+						}
+
+						// If the entity does not exist in the available libs we redirect to the not found page and
+						// stop the immediate execution of this method.
+						if (!bFound) {
+							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+							return;
+						}
+						// Cache allowed members
+						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
+
 						oApiDetailObjectPage._suppressLayoutCalculations();
 						this._bindData(this._sTopicid);
 						this._bindEntityData(this._sTopicid);
@@ -239,19 +265,42 @@ sap.ui.define([
 
 			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
 
-				var oSection = this.getView().byId(sSectionId);
+				var aFilteredSubSections,
+					aSubSections,
+					oSection;
+
+				if (!sSectionId) {
+					return;
+				}
+
+				// LowerCase every input from URL
+				sSectionId = sSectionId.toLowerCase();
+
+				oSection = this.getView().byId(sSectionId);
 				if (!oSection) {
 					return;
 				}
 
-				var aSubSections = oSection.getSubSections();
-				var aFilteredSubSections = aSubSections.filter(function (oSubSection) {
-					return oSubSection.getTitle() === sSubSectionTitle;
-				});
+				// If we have a target sub-section we will scroll to it else we will scroll directly to the section
+				if (sSubSectionTitle) {
+					// Let's ignore case when searching for the section especially like in this case
+					// where sSubSectionTitle comes from the URL
+					sSubSectionTitle = sSubSectionTitle.toLowerCase();
 
-				if (aFilteredSubSections.length) {
-					this.getView().byId("apiDetailObjectPage").scrollToSection(aFilteredSubSections[0].getId(), 250);
+					aSubSections = oSection.getSubSections();
+					aFilteredSubSections = aSubSections.filter(function (oSubSection) {
+						return oSubSection.getTitle().toLowerCase() === sSubSectionTitle;
+					});
+
+					if (aFilteredSubSections.length) {
+						// We scroll to the first sub-section found
+						this.getView().byId("apiDetailObjectPage").scrollToSection(aFilteredSubSections[0].getId(), 250);
+					}
+				} else {
+					// We scroll to section
+					this.getView().byId("apiDetailObjectPage").scrollToSection(oSection.getId(), 250);
 				}
+
 			},
 
 			_scrollContentToTop: function () {
@@ -292,7 +341,6 @@ sap.ui.define([
 					oEventsModel = {events: []},
 					oUi5Metadata;
 
-
 				if (aControlChildren) {
 					if (!oControlData) {
 						oControlData = {};
@@ -312,7 +360,7 @@ sap.ui.define([
 					oControlData.hasChildren = false;
 				}
 
-				if (oControlData.hasOwnProperty('properties') && this.hasPublicElement(oControlData.properties)) {
+				if (oControlData.hasOwnProperty('properties') && this.hasVisibleElement(oControlData.properties)) {
 					oControlData.hasProperties = true;
 				} else {
 					oControlData.hasProperties = false;
@@ -320,7 +368,7 @@ sap.ui.define([
 
 				oControlData.hasConstructor = oControlData.hasOwnProperty('constructor');
 
-				if (oUi5Metadata && oUi5Metadata.properties && this.hasPublicElement(oUi5Metadata.properties)) {
+				if (oUi5Metadata && oUi5Metadata.properties && this.hasVisibleElement(oUi5Metadata.properties)) {
 					oControlData.hasControlProperties = true;
 				} else {
 					oControlData.hasControlProperties = false;
@@ -333,21 +381,21 @@ sap.ui.define([
 				}
 
 				oControlData.hasMethods = oControlData.hasOwnProperty('methods') &&
-					this.hasPublicElement(oControlData.methods);
+					this.hasVisibleElement(oControlData.methods);
 
-				if (oUi5Metadata && oUi5Metadata.associations && this.hasPublicElement(oUi5Metadata.associations)) {
+				if (oUi5Metadata && oUi5Metadata.associations && this.hasVisibleElement(oUi5Metadata.associations)) {
 					oControlData.hasAssociations = true;
 				} else {
 					oControlData.hasAssociations = false;
 				}
 
-				if (oUi5Metadata && oUi5Metadata.aggregations && this.hasPublicElement(oUi5Metadata.aggregations)) {
+				if (oUi5Metadata && oUi5Metadata.aggregations && this.hasVisibleElement(oUi5Metadata.aggregations)) {
 					oControlData.hasAggregations = true;
 				} else {
 					oControlData.hasAggregations = false;
 				}
 
-				if (oUi5Metadata && oUi5Metadata.specialSettings && this.hasPublicElement(oUi5Metadata.specialSettings)) {
+				if (oUi5Metadata && oUi5Metadata.specialSettings && this.hasVisibleElement(oUi5Metadata.specialSettings)) {
 					oControlData.hasSpecialSettings = true;
 				} else {
 					oControlData.hasSpecialSettings = false;
@@ -565,8 +613,8 @@ sap.ui.define([
 				sBaseClass = aLibsData[sTopicId] ? aLibsData[sTopicId].extends : "";
 
 				var fnVisibilityFilter = function (item) {
-					return item.visibility === "public";
-				};
+					return this._aAllowedMembers.indexOf(item.visibility) !== -1;
+				}.bind(this);
 
 				// Get all method names
 				aMethods = aMethods || [];
@@ -1034,13 +1082,13 @@ sap.ui.define([
 			},
 
 			/**
-			 * Checks if the list has elements that have public visibility
+			 * Checks if the list has elements that have public or protected visibility
 			 * @param elements - a list of properties/methods/aggregations/associations etc.
 			 * @returns {boolean} - true if the list has at least one public element
 			 */
-			hasPublicElement: function (elements) {
+			hasVisibleElement: function (elements) {
 				for (var i = 0; i < elements.length; i++) {
-					if (elements[i].visibility === 'public') {
+					if (this._aAllowedMembers.indexOf(elements[i].visibility) !== -1) {
 						return true;
 					}
 				}
@@ -1174,6 +1222,8 @@ sap.ui.define([
 						var iHashIndex, // indexOf('#')
 							iHashDotIndex, // indexOf('#.')
 							iHashEventIndex, // indexOf('#event:')
+							aMatched,
+							sRoute = "api",
 							sTargetBase,
 							sScrollHandlerClass = "scrollToMethod",
 							sEntityName,
@@ -1219,6 +1269,13 @@ sap.ui.define([
 								} else {
 									target = topicName + '/methods/' + entityName;
 								}
+							} else {
+								// Handle links to documentation
+								aMatched = target.match(/^topic:(\w{32})$/);
+								if (aMatched) {
+									target = sEntityName = aMatched[1];
+									sRoute = "topic";
+								}
 							}
 						}
 
@@ -1251,7 +1308,8 @@ sap.ui.define([
 						if (sScrollHandlerClass) {
 							sLink += ' ' + sScrollHandlerClass;
 						}
-						sLink += '" href="#/api/' + target + '" data-sap-ui-target="' + sEntityName + '">' + text + '</a>';
+						sLink += '" href="#/' + sRoute + '/' + target +
+							'" data-sap-ui-target="' + sEntityName + '">' + text + '</a>';
 
 						return sLink;
 

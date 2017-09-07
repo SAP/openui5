@@ -236,22 +236,22 @@
 			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 		});
 
-		QUnit.test("setting renderWhiteSpaces property", function(assert) {
+		QUnit.test("setting renderWhitespace property", function(assert) {
 			var oText = new sap.m.Text("Text7", {text:"This text is not wrapping.\t\t Line   breaks cannot make it wrap"}).placeAt("qunit-fixture");
-			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpaces"), false, "Text does not have a class for render white spaces");
-			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpacesWrap"), false, "Text does not have a class for render white spaces with wrapping");
-			oText.setRenderWhiteSpaces(true);
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), false, "Text does not have a class for render whitespace characters");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), false, "Text does not have a class for render whitespace characters with wrapping");
+			oText.setRenderWhitespace(true);
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpacesWrap"), true, "Text should have sapMTextRenderWhiteSpacesWrap when wrapping is true ");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), true, "Text should have sapMTextRenderWhitespaceWrap when wrapping is true ");
 
 			oText.setWrapping(false);
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpaces"), true, "Text should have sapMTextRenderWhiteSpaces when wrapping is false ");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), true, "Text should have sapMTextRenderWhitespace when wrapping is false ");
 
-			oText.setRenderWhiteSpaces(false);
+			oText.setRenderWhitespace(false);
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpaces"), false, "Text should not have a class sapMTextRenderWhiteSpaces");
-			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhiteSpacesWrap"), false, "Text should not have a class sapMTextRenderWhiteSpacesWrap");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), false, "Text should not have a class sapMTextRenderWhitespace");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), false, "Text should not have a class sapMTextRenderWhitespaceWrap");
 			oText.destroy();
 		});
 

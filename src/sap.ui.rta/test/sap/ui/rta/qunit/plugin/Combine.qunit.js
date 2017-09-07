@@ -12,11 +12,15 @@ sap.ui.define([
 	'sap/ui/rta/plugin/Combine',
 	'sap/m/Button',
 	'sap/m/Panel',
+	'sap/m/OverflowToolbar',
+	'sap/m/OverflowToolbarButton',
+	'sap/m/CheckBox',
 	// should be last:
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
 	'sap/ui/thirdparty/sinon-qunit'
 ],
+
 function(
 	DesignTime,
 	CommandFactory,
@@ -25,7 +29,10 @@ function(
 	Utils,
 	CombinePlugin,
 	Button,
-	Panel
+	Panel,
+	OverflowToolbar,
+	OverflowToolbarButton,
+	CheckBox
 ) {
 	'use strict';
 
@@ -77,6 +84,66 @@ function(
 		oOverlay.setDesignTimeMetadata(oDesignTimeMetadata);
 	};
 
+	//Designtime Metadata with fake isEnabled function (returns false)
+	var oDesignTimeMetadata1 = {
+			actions : {
+				combine : {
+					changeType: "combineStuff",
+					changeOnRelevantContainer : true,
+					isEnabled : function() {
+						return false;
+					}
+				}
+			}
+		};
+
+	//Designtime Metadata with fake isEnabled function (returns true)
+	var oDesignTimeMetadata2 = {
+			actions : {
+				combine : {
+					changeType: "combineStuff",
+					changeOnRelevantContainer : true,
+					isEnabled : function() {
+						return true;
+					}
+				}
+			}
+		};
+
+	// DesignTime Metadata without changeType
+	var oDesignTimeMetadata3 = {
+			actions : {
+				combine : {
+					changeOnRelevantContainer : true,
+					isEnabled : true
+				}
+			}
+		};
+
+	// DesignTime Metadata without changeOnRelevantContainer
+	var oDesigntimeMetadata4 = {
+			actions : {
+				combine : {
+					changeType: "combineStuff",
+					isEnabled : function() {
+						return true;
+					}
+				}
+			}
+		};
+
+	//DesignTime Metadata with different changeType
+	var oDesignTimeMetadata5 = {
+			actions : {
+				combine : {
+					changeType: "combineOtherStuff",
+					changeOnRelevantContainer : true,
+					isEnabled : true
+				}
+			}
+		};
+
+
 	QUnit.module("Given a designTime and combine plugin are instantiated", {
 
 		beforeEach : function(assert) {
@@ -85,6 +152,10 @@ function(
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
 					"combineStuff" : { completeChangeContent: function() {} }
+				},
+				"sap.m.OverflowToolbar": {
+					"combineStuff" : { completeChangeContent: function() {} },
+					"combineOtherStuff" : { completeChangeContent: function() {} }
 				}
 			});
 
@@ -111,16 +182,45 @@ function(
 				]
 			}).placeAt("test-view");
 
+			this.oOverflowToolbarButton1 = new OverflowToolbarButton("owerflowbutton1");
+			this.oButton6 = new Button("button6");
+			this.oCheckBox1 = new CheckBox("checkbox1");
+			this.OverflowToolbar = new OverflowToolbar("OWFlToolbar",{
+				content : [
+					this.oOverflowToolbarButton1,
+					this.oButton6,
+					this.oCheckBox1
+				]
+			}).placeAt("test-view");
+
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oPanel, this.oPanel2],
+				rootElements : [this.oPanel, this.oPanel2, this.OverflowToolbar],
 				plugins : [this.oCombinePlugin],
 				designTimeMetadata : {
 					"sap.m.Button" : {
 						actions : {
 							combine : {
 								changeType: "combineStuff",
+								changeOnRelevantContainer : true,
+								isEnabled : true
+							}
+						}
+					},
+					"sap.m.OverflowToolbarButton" : {
+						actions : {
+							combine : {
+								changeType: "combineStuff",
+								changeOnRelevantContainer : true,
+								isEnabled : true
+							}
+						}
+					},
+					"sap.m.CheckBox" : {
+						actions : {
+							combine : {
+								changeType: "combineOtherStuff",
 								changeOnRelevantContainer : true,
 								isEnabled : true
 							}
@@ -136,8 +236,12 @@ function(
 				this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);
 				this.oButton4Overlay = OverlayRegistry.getOverlay(this.oButton4);
 				this.oButton5Overlay = OverlayRegistry.getOverlay(this.oButton5);
+				this.oButton6Overlay = OverlayRegistry.getOverlay(this.oButton6);
 				this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
 				this.oPanel2Overlay = OverlayRegistry.getOverlay(this.oPanel2);
+				this.oOverflowToolbarButton1Overlay = OverlayRegistry.getOverlay(this.oOverflowToolbarButton1);
+				this.oCheckBox1Overlay = OverlayRegistry.getOverlay(this.oCheckBox1);
+				this.OverflowToolbarOverlay = OverlayRegistry.getOverlay(this.OverflowToolbar);
 				done();
 			}.bind(this));
 
@@ -147,46 +251,29 @@ function(
 			sandbox.restore();
 			this.oPanel.destroy();
 			this.oPanel2.destroy();
+			this.OverflowToolbar.destroy();
 			this.oDesignTime.destroy();
 		}
 	});
 
 	QUnit.test("when an overlay has no combine action in designTime metadata", function(assert) {
-		fnSetOverlayDesigntimeMetadata(this.oPanelOverlay, {});
+		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, {});
+		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, {});
+
+		sandbox.stub(this.oDesignTime, "getSelection").returns(
+				[this.oButton1Overlay, this.oButton2Overlay]);
+
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineAvailable(this.oPanelOverlay), false,
+			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), false,
 			"isCombineAvailable is called and returns false");
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineEnabled(this.oPanelOverlay), false,
+			this.oCombinePlugin.isCombineEnabled(this.oButton1Overlay), false,
 			"isCombineEnabled is called and returns false");
-		assert.strictEqual(this.oCombinePlugin._isEditable(this.oPanelOverlay), false, "then the overlay is not editable");
+		assert.strictEqual(this.oCombinePlugin._isEditable(this.oButton1Overlay), false, "then the overlay is not editable");
 	});
 
 	QUnit.test("when an overlay has a combine action in designTime metadata", function(assert) {
-
-		var oDesignTimeMetadata1 = {
-				actions : {
-					combine : {
-						changeType: "combineStuff",
-						changeOnRelevantContainer : true,
-						isEnabled : true
-					}
-				}
-			};
-
-		var oDesignTimeMetadata2 = {
-				actions : {
-					combine : {
-						changeType: "combineStuff",
-						changeOnRelevantContainer : true,
-						isEnabled : function() {
-							return true;
-						}
-					}
-				}
-			};
-
-		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
+		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata2);
 
 		sandbox.stub(this.oDesignTime, "getSelection").returns(
@@ -205,7 +292,6 @@ function(
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 		sandbox.stub(this.oDesignTime, "getSelection").returns([this.oButton1Overlay]);
 
-		this.oCombinePlugin.registerElementOverlay(this.oButton1Overlay);
 		assert.strictEqual(
 			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), false,
 			"isCombineAvailable is called and returns false");
@@ -214,19 +300,14 @@ function(
 			"isCombineEnabled is called and returns false");
 	});
 
-	QUnit.test("when four controls are selected", function(assert) {
-
+	QUnit.test("when controls which enabled-function delivers false are selected", function(assert) {
 		sandbox.stub(this.oDesignTime, "getSelection").returns([
 			this.oButton1Overlay,
-			this.oButton2Overlay,
-			this.oButton3Overlay,
-			this.oButton4Overlay
+			this.oButton2Overlay
 		]);
 
-		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, undefined);
-		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, undefined);
-		fnSetOverlayDesigntimeMetadata(this.oButton3Overlay, undefined);
-		fnSetOverlayDesigntimeMetadata(this.oButton4Overlay, undefined);
+		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
+		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata1);
 		assert.strictEqual(
 			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), true,
 			"isCombineAvailable is called and returns true");
@@ -235,8 +316,23 @@ function(
 			"isCombineEnabled is called and returns false");
 	});
 
-	QUnit.test("when controls from different relevant containers are selected", function(assert) {
+	QUnit.test("when a control without changetype is selected", function(assert) {
+		sandbox.stub(this.oDesignTime, "getSelection").returns([
+			this.oButton1Overlay,
+			this.oButton4Overlay
+		]);
 
+		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
+		fnSetOverlayDesigntimeMetadata(this.oButton4Overlay, oDesignTimeMetadata3);
+		assert.strictEqual(
+			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), false,
+			"isCombineAvailable is called and returns false");
+		assert.strictEqual(
+			this.oCombinePlugin.isCombineEnabled(this.oButton1Overlay), false,
+			"isCombineEnabled is called and returns false");
+	});
+
+	QUnit.test("when controls from different relevant containers are selected", function(assert) {
 		sandbox.stub(this.oDesignTime, "getSelection").returns([
 			this.oButton1Overlay,
 			this.oButton5Overlay
@@ -253,7 +349,6 @@ function(
 	});
 
 	QUnit.test("when handleCombine is called with two selected elements", function(assert) {
-
 		var spy = sandbox.spy(this.oCombinePlugin, "fireElementModified");
 
 		sandbox.stub(this.oDesignTime, "getSelection").returns([
@@ -269,40 +364,41 @@ function(
 			"fireElementModified is called once");
 	});
 
-	QUnit.test("when an overlay has a combine action designTime metadata", function(assert) {
-		var oDesigntimeMetadata = {
-			actions : {
-				combine : {
-					changeType: "combineStuff",
-					changeOnRelevantContainer : true,
-					isEnabled : function() {
-						return true;
-					}
-				}
-			}
-		};
-		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesigntimeMetadata);
-		assert.strictEqual(this.oCombinePlugin._isEditable(this.oButton1Overlay), true, "then the overlay is editable");
-	});
-
 	QUnit.test("when an overlay has a combine action designTime metadata which has no changeOnRelevantContainer", function(assert) {
-		var oDesigntimeMetadata = {
-			actions : {
-				combine : {
-					changeType: "combineStuff",
-					isEnabled : function() {
-						return true;
-					}
-				}
-			}
-		};
-		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesigntimeMetadata);
+		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesigntimeMetadata4);
 		assert.strictEqual(this.oCombinePlugin._isEditable(this.oButton1Overlay), false, "then the overlay is not editable");
 	});
 
-	QUnit.test("when an overlay has no combine action designTime metadata", function(assert) {
-		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, {});
-		assert.strictEqual(this.oCombinePlugin._isEditable(this.oButton1Overlay), false, "then the overlay is not editable");
+	QUnit.test("when Controls of different type with same change type are selected", function(assert) {
+		sandbox.stub(this.oDesignTime, "getSelection").returns([
+			this.oOverflowToolbarButton1Overlay,
+			this.oButton6Overlay
+		]);
+
+		fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
+		fnSetOverlayDesigntimeMetadata(this.oButton6Overlay,DEFAULT_DTM);
+		assert.strictEqual(
+			this.oCombinePlugin.isCombineAvailable(this.oOverflowToolbarButton1Overlay), true,
+			"isCombineAvailable is called and returns true");
+		assert.strictEqual(
+			this.oCombinePlugin.isCombineEnabled(this.oOverflowToolbarButton1Overlay), true,
+			"isCombineEnabled is called and returns true");
+	});
+
+	QUnit.test("when Controls of different type with different change type are selected", function(assert) {
+		sandbox.stub(this.oDesignTime, "getSelection").returns([
+			this.oOverflowToolbarButton1Overlay,
+			this.oCheckBox1Overlay
+		]);
+
+		fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
+		fnSetOverlayDesigntimeMetadata(this.oCheckBox1Overlay,oDesignTimeMetadata5);
+		assert.strictEqual(
+			this.oCombinePlugin.isCombineAvailable(this.oOverflowToolbarButton1Overlay), false,
+			"isCombineAvailable is called and returns false");
+		assert.strictEqual(
+			this.oCombinePlugin.isCombineEnabled(this.oOverflowToolbarButton1Overlay), false,
+			"isCombineEnabled is called and returns false");
 	});
 
 });

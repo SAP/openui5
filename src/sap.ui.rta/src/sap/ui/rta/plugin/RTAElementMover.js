@@ -83,6 +83,16 @@ function(
 		this.oBasePlugin.setCommandFactory(oCommandFactory);
 	};
 
+	RTAElementMover.prototype.isEditable = function(oOverlay) {
+		var oElement = oOverlay.getElementInstance();
+		var bMovable = false;
+		if (this.isMovableType(oElement) && this.checkMovable(oOverlay)) {
+			bMovable = true;
+		}
+		oOverlay.setMovable(bMovable);
+		return bMovable;
+	};
+
 	/**
 	 * Check if the element is editable for the move
 	 * @param  {sap.ui.dt.Overlay}  oOverlay The overlay being moved or the aggregation overlay
@@ -116,6 +126,26 @@ function(
 			bValid = this.oBasePlugin.hasStableId(oOverlay) &&
 			this.oBasePlugin.hasStableId(oParentElementOverlay) &&
 			this.oBasePlugin.hasStableId(oRelevantContainerOverlay);
+		}
+
+		// element is only valid for move if it can be moved to somewhere else
+		if (bValid) {
+			var aOverlays = OverlayUtil.findAllUniqueAggregationOverlaysInContainer(oOverlay, oRelevantContainerOverlay);
+
+			var aValidAggregationOverlays = aOverlays.filter(function(oAggregationOverlay) {
+				return this.checkTargetZone(oAggregationOverlay, oOverlay, true);
+			}.bind(this));
+
+			if (aValidAggregationOverlays.length < 1) {
+				bValid = false;
+			} else if (aValidAggregationOverlays.length === 1) {
+				var aVisibleOverlays = aValidAggregationOverlays[0].getChildren().filter(function(oChildOverlay) {
+					var oChildElement = oChildOverlay.getElementInstance();
+					//At least one sibling has to be visible and still attached to the parent
+					return (oChildElement.getVisible() && oChildElement.getParent());
+				});
+				bValid = aVisibleOverlays.length > 1;
+			}
 		}
 
 		return bValid;
@@ -171,13 +201,14 @@ function(
 	 * @return {boolean} true if aggregation overlay is droppable, false if not
 	 * @override
 	 */
-	RTAElementMover.prototype.checkTargetZone = function(oAggregationOverlay) {
-		var bTargetZone = ElementMover.prototype.checkTargetZone.call(this, oAggregationOverlay);
+	RTAElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom) {
+		var oMovedOverlay = oOverlay ? oOverlay : this.getMovedOverlay();
+
+		var bTargetZone = ElementMover.prototype.checkTargetZone.call(this, oAggregationOverlay, oMovedOverlay, bOverlayNotInDom);
 		if (!bTargetZone) {
 			return false;
 		}
 
-		var oMovedOverlay = this.getMovedOverlay();
 		var oMovedElement = oMovedOverlay.getElementInstance();
 		var oTargetOverlay = oAggregationOverlay.getParent();
 		var oMovedRelevantContainer = oMovedOverlay.getRelevantContainer();

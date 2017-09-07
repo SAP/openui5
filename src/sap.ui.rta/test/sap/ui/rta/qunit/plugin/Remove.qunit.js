@@ -232,6 +232,16 @@ function(
 		assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), false, "then the overlay is not editable");
 	});
 
+	QUnit.test("when an overlay has no remove action designTime metadata and removeElement() is called (via delete button)", function(assert) {
+		this.oButtonOverlay.setDesignTimeMetadata({});
+		this.oButtonOverlay.setSelectable(true);
+		this.oButtonOverlay.setSelected(true);
+		this.oRemovePlugin._handleRemove = sinon.spy();
+		this.oRemovePlugin.removeElement();
+
+		assert.ok(this.oRemovePlugin._handleRemove.notCalled, "then element was filtered and internal '_handleRemove()' is not called");
+	});
+
 
 	QUnit.module("Given a designTime and a Layout with 3 Buttons in it, when _getElementToFocus is called...", {
 		beforeEach : function(assert) {

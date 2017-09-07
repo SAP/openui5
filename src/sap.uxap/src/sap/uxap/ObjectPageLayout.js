@@ -375,9 +375,24 @@ sap.ui.define([
 
 		this._bStickyAnchorBar = false; //reset default state in case of re-rendering
 
-		var oHeaderTitle = this.getHeaderTitle();
-		if (oHeaderTitle && oHeaderTitle.getAggregation("_expandButton")) {
-			oHeaderTitle.getAggregation("_expandButton").attachPress(this._handleExpandButtonPress, this);
+		// Detach expand button press event
+		this._handleExpandButtonPressEventLifeCycle(false);
+	};
+
+	/**
+	 * Attaches or detaches the "_handleExpandButtonPress" handler to the expand button of the HeaderTitle if available
+	 * @param {boolean} bAttach should the method attach the event
+	 * @private
+	 */
+	ObjectPageLayout.prototype._handleExpandButtonPressEventLifeCycle = function (bAttach) {
+		var oHeaderTitle = this.getHeaderTitle(),
+			oExpandButton;
+
+		if (oHeaderTitle) {
+			oExpandButton = oHeaderTitle.getAggregation("_expandButton");
+			if (oExpandButton) {
+				oExpandButton[bAttach ? "attachPress" : "detachPress"](this._handleExpandButtonPress, this);
+			}
 		}
 	};
 
@@ -482,6 +497,9 @@ sap.ui.define([
 			}
 			this._iAfterRenderingDomReadyTimeout = jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, this._onAfterRenderingDomReady);
 		}
+
+		// Attach expand button event
+		this._handleExpandButtonPressEventLifeCycle(true);
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
@@ -1275,7 +1293,7 @@ sap.ui.define([
 			bExpandedMode = !this._bStickyAnchorBar;
 
 		if (bExpandedMode && this._isFirstVisibleSectionBase(oTargetSection)) { // preserve expanded header if no need to stick
-			iScrollTo -= this.iHeaderContentHeight; // scroll to the position where the header is still expanded
+			iScrollTo = 0;
 		}
 
 		return iScrollTo;
@@ -2152,8 +2170,10 @@ sap.ui.define([
 		if (this._$headerTitle.length > 0) {
 			var $headerTitleClone = this._$headerTitle.clone();
 
-			//read the headerContentHeight ---------------------------
-			this.iHeaderContentHeight = this._$headerContent.height();
+			// read the headerContentHeight ---------------------------
+			// Note: we are using getBoundingClientRect on the Dom reference to get the correct height taking into account
+			// possible browser zoom level. For more details BCP: 1780309606
+			this.iHeaderContentHeight = this._$headerContent[0].getBoundingClientRect().height;
 
 			//read the sticky headerContentHeight ---------------------------
 			this.iStickyHeaderContentHeight = this._$stickyHeaderContent.height();
@@ -2183,6 +2203,7 @@ sap.ui.define([
 				//adjust headerTitleStickied ----------------------------
 				$headerTitleClone.addClass("sapUxAPObjectPageHeaderStickied");
 				$headerTitleClone.appendTo(this._$headerTitle.parent());
+				this.getHeaderTitle() && this.getHeaderTitle()._adaptLayoutForDomElement($headerTitleClone);
 
 				this.iHeaderTitleHeightStickied = $headerTitleClone.height();
 			}

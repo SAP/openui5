@@ -23,11 +23,11 @@
 					backgroundDesign="Translucent">
 			</ObjectHeader>
 			<IconTabBar id="iconTabBar"
-						expanded="{device>/isNoPhone}"
+						expanded="{=! ${device>/system/phone}}"
 						class="sapUiNoContentPadding">
 				<items>
 					<IconTabFilter icon="sap-icon://hint" key="info">
-						<form:SimpleForm>
+						<form:SimpleForm layout="ResponsiveGridLayout">
 							<form:content>
 								<Label text="{i18n>postDateLabel}"/>
 								<Text text="{Timestamp}"/>

@@ -640,23 +640,23 @@ sap.ui.require([
 		assert.ok(fnFragmentRetemplatingSpy.calledOnce);
 
 		assert.ok(oView);
-		assert.equal(oView.$().find("label")[0].textContent, "Click");
-		assert.equal(oView.$().find("button")[0].textContent, "Me");
+		assert.equal(oView.$().find("div").find("span.sapMLabel" || "label.sapMLabel")[0].textContent, "Click");
+		assert.equal(oView.$().find("div").find("button.sapMBtn")[0].textContent, "Me");
 
 		assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
 		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "BUTTON");
-		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "LABEL");
+		assert.ok(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "LABEL" || "SPAN");
 
 		// act: change the order to 'label' before 'button'
 		oXMLComposite.setLabelFirst(true);
 		this.clock.tick(500);
 
 		assert.ok(oView);
-		assert.equal(oView.$().find("label")[0].textContent, "Click");
-		assert.equal(oView.$().find("button")[0].textContent, "Me");
+		assert.equal(oView.$().find("div").find("span.sapMLabel" || "label.sapMLabel")[0].textContent, "Click");
+		assert.equal(oView.$().find("div").find("button.sapMBtn")[0].textContent, "Me");
 
 		assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
-		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "LABEL");
+		assert.ok(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "LABEL" || "SPAN");
 		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "BUTTON");
 
 		oComponentContainer.destroy();
@@ -714,9 +714,9 @@ sap.ui.require([
 
 		assert.ok(oView);
 		assert.equal(oView.$().find(".IDLabelButtonsTemplate").children().length, 4);
-		assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[0].firstChild.nodeName, "LABEL");
+		assert.ok(oView.$().find(".IDLabelButtonsTemplate").children()[0].firstChild.nodeName === "LABEL" || "SPAN");
 		assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[1].firstChild.nodeName, "BUTTON");
-		assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[2].firstChild.nodeName, "LABEL");
+		assert.ok(oView.$().find(".IDLabelButtonsTemplate").children()[2].firstChild.nodeName === "LABEL" || "SPAN");
 		assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[3].firstChild.nodeName, "BUTTON");
 
 		// ER: this 'act' should work in the future

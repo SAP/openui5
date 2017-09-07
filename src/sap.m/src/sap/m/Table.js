@@ -334,10 +334,8 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 		this.$("nodata-text").attr("colspan", this.getColCount());
 
 		// force IE to repaint in fixed layout mode
-		if (sap.ui.Device.browser.msie && this.getFixedLayout()) {
-			var oTableStyle = this.getTableDomRef().style;
-			oTableStyle.listStyleType = "circle";
-			window.setTimeout(function() { oTableStyle.listStyleType = "none"; }, 0);
+		if (this.getFixedLayout()) {
+			this._forceStyleChange();
 		}
 
 		// remove or show column header row(thead) according to column visibility value
@@ -347,6 +345,15 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 		} else if (bColVisible && !bHeaderVisible && !aVisibleColumns.length) {
 			$headRow[0].className = "sapMListTblHeaderNone";
 			this._headerHidden = true;
+		}
+	};
+
+	// force IE to repaint
+	Table.prototype._forceStyleChange = function() {
+		if (sap.ui.Device.browser.msie) {
+			var oTableStyle = this.getTableDomRef().style;
+			oTableStyle.listStyleType = "circle";
+			window.setTimeout(function() { oTableStyle.listStyleType = "none"; }, 0);
 		}
 	};
 
@@ -566,7 +573,18 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 			this.updateInvisibleText(this.getNoDataText(), oTarget);
 		}
 
+		if (this._bThemeChanged) {
+			// force IE to repaint if theme changed
+			this._bThemeChanged = false;
+			this._forceStyleChange();
+		}
+
 		ListBase.prototype.onfocusin.call(this, oEvent);
+	};
+
+	// event listener for theme changed
+	Table.prototype.onThemeChanged = function() {
+		this._bThemeChanged = true;
 	};
 
 	return Table;

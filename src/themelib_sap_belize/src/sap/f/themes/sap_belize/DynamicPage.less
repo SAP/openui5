@@ -3,13 +3,55 @@
 /* Belize theme                       */
 /* ================================== */
 
+.sapFDynamicPage {
+	.sapFDynamicPageContent {
+		background: @sapUiGlobalBackgroundColor;
+	}
+
+	// DynamicPageTitle and Toggle Header Visual Indicator hover state
+	&.sapFDynamicPageTitleClickEnabled:not(.sapFDynamicPageHeaderPinned) {
+		.sapFDynamicPageTitle:hover,
+		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+			background-color: darken(@sapUiObjectHeaderBackground, 3);
+		}
+
+		&.sapFDynamicPageTitleForceHovered {
+			.sapFDynamicPageToggleHeaderIndicator {
+				.sapMBtnInner {
+					background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+				}
+			}
+		}
+	}
+
+	// Toggle Header Visual Indicator
+	.sapFDynamicPageToggleHeaderIndicator.sapMBtn {
+
+		& > .sapMBtnInner {
+			border: none;
+			background-color: @sapUiObjectHeaderBorderColor;
+		}
+
+		// hover state
+		&:hover > .sapMBtnInner.sapMBtnHoverable {
+			background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+		}
+
+		// active state
+		&:focus > .sapMBtnInner.sapMFocusable.sapMBtnActive {
+			background: @sapUiSelected;
+			color: @sapUiButtonActiveBackground;
+		}
+	}
+}
+
+// Note:
+// The footer selector can`t be nested in the sapFDynamicPage less structure,
+// because the contrast container would not work, as the theme generates css like ".sapContrast.sapFDynamicPageFooter"
+// and will never match ".sapFDynamicPage .sapFDynamicPageFooter"
 .sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
 	background: fade(@sapUiPageFooterBackground, 90);
 	color: @sapUiPageFooterTextColor;
 	box-shadow: @sapUiShadowLevel1;
 	border-bottom: 0 none;
-}
-
-.sapFDynamicPage .sapFDynamicPageContent {
-	background: @sapUiGlobalBackgroundColor;
 }

@@ -264,9 +264,6 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Page.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Page_part2.qunit.html");
 
-			// PageAccessibleLandmarkInfo
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/PageAccessibleLandmarkInfo.qunit.html");
-
 			// PagingButton
 			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/PagingButton.qunit.html");
 
@@ -487,6 +484,7 @@
 			// Design Time & RTA Enabling
 			try {
 				sap.ui.getCore().loadLibrary("sap.ui.rta");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/ActionSheet.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/SplitContainer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Select.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/CustomTile.qunit.html");
@@ -506,6 +504,7 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/MenuButton.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Page.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Panel.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Popover.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/RadioButton.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/RatingIndicator.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/ScrollContainer.qunit.html");

@@ -109,7 +109,7 @@ sap.ui.require(["sap/ui/rta/appVariant/Feature",
 
 		sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: true}));
 
-		sandbox.stub(AppVariantUtils, "getCurrentInboundId").returns("testInboundId");
+		sandbox.stub(AppVariantUtils, "getInboundInfo").returns({currentRunningInbound: "testInboundId", addNewInboundRequired: true});
 
 		sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
 
@@ -184,7 +184,7 @@ sap.ui.require(["sap/ui/rta/appVariant/Feature",
 
 		sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: true}));
 
-		sandbox.stub(AppVariantUtils, "getCurrentInboundId").returns("testInboundId");
+		sandbox.stub(AppVariantUtils, "getInboundInfo").returns({currentRunningInbound: "testInboundId", addNewInboundRequired: true});
 		sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
 
 		return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {

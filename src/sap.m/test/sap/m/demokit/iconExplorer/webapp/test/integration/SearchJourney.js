@@ -8,9 +8,6 @@ sap.ui.define([
 	QUnit.module("Search");
 
 	opaTest("Search for the First object should deliver results that contain the firstObject in the name", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartMyAppOnTheDetailsTab();
-
 		//Actions
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("details").
 		and.iSearchForTheFirstObject();
@@ -51,6 +48,6 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheOverviewPage.theTableShouldHaveAllEntries().
-			and.iTeardownMyAppFrame();
+			and.iTeardownMyApp();
 	});
 });

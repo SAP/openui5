@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @class This control can be displayed as image content in a tile.
+	 * @class This control can be used to display image content in a GenericTile.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE

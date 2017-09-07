@@ -17,7 +17,7 @@
 
 .sapTntNavLIItem {
 	width : 100%;
-	height: 2.5rem;
+	height: 3rem;
 
 	box-sizing: border-box;
 
@@ -198,10 +198,6 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		height: 2rem;
 	}
 
-	.sapTntNavLIGroupItem > .sapMText {
-		padding-left: 2rem;
-	}
-
 	.sapTntNavLIPopup .sapTntNavLIGroupItem > .sapMText {
 		padding: 0 0.5rem;
 	}
@@ -212,6 +208,10 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 	.sapTntNavLI span.sapTntNavLIGroupIcon {
 		min-width: 2rem;
+		padding: 0.5rem;
+	}
+
+	.sapTntNavLI.sapTntNavLIPopup span.sapTntNavLIGroupIcon {
 		padding: 0.5rem 0;
 	}
 
@@ -222,14 +222,5 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapTntNavLIPopup span.sapTntNavLIGroupIcon {
 		width: 0.5rem;
 	  	min-width: 0.5rem;
-	}
-
-	.sapTntNavLI .sapTntNavLIExpandIcon {
-		min-width: 2rem;
-		padding: 0.5rem 0;
-	}
-
-	.sapTntNavLICollapsed {
-		width: 2rem;
 	}
 }

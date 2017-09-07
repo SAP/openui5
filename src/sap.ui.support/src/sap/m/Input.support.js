@@ -51,7 +51,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 			oScope.getElementsByClassName("sap.m.Label")
 				.forEach(function (oLabel){
 					var sLabelFor = oLabel.getLabelFor();
-					if (aInputIds.includes(sLabelFor)) {
+					if (aInputIds.indexOf(sLabelFor) > -1) {
 						var iIndex = aInputIds.indexOf(sLabelFor);
 						aInputIds.splice(iIndex, 1);
 					}

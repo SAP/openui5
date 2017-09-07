@@ -103,6 +103,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Sets if the control is in expanded or collapsed mode.
+		 *
+		 * @name sap.tnt.SideNavigation.setExpanded
+		 * @method
+		 * @public
+		 * @param {boolean} isExpanded Indication if the SideNavigation is expanded.
+		 * @returns {sap.tnt.SideNavigation} this SideNavigation reference for chaining.
 		 */
 		SideNavigation.prototype.setExpanded = function (isExpanded) {
 
@@ -138,14 +144,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			that._hasActiveAnimation = true;
-
-			var isCompact = $this.parents('.sapUiSizeCompact').length > 0;
-
-			if (isCompact) {
-				width = isExpanded ? '15rem' : '2rem';
-			} else {
-				width = isExpanded ? '15rem' : '3rem';
-			}
+			width = isExpanded ? '15rem' : '3rem';
 
 			$this.animate({
 					width: width

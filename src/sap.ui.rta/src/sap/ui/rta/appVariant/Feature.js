@@ -40,8 +40,8 @@ sap.ui.define([
 				if (bIsAtoAvailableAndEnabled && RtaUtils.getUshellContainer() && sLayer === "CUSTOMER" && oResult.response) {
 					var oUriParams = jQuery.sap.getUriParameters();
 					var aUriLayer = oUriParams.mParams["sap-ui-xx-rta-save-as"];
-					var sInbound = AppVariantUtils.getCurrentInboundId(oDescriptor["sap.app"].crossNavigation.inbounds);
-					if (aUriLayer && aUriLayer.length > 0 && sInbound) {
+					var oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
+					if (aUriLayer && aUriLayer.length > 0 && oInboundInfo) {
 						return aUriLayer[0] === 'true' ? true : false;
 					}
 				}

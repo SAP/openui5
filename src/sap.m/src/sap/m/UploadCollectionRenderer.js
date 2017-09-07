@@ -1,15 +1,15 @@
 /*!
-* ${copyright}
-*/
-sap.ui.define([ 'jquery.sap.global', './ListItemBaseRenderer'],
-	function(jQuery, ListItemBaseRenderer) {
+ * ${copyright}
+ */
+sap.ui.define([
+	'jquery.sap.global', './ListItemBaseRenderer'
+], function(jQuery, ListItemBaseRenderer) {
 	"use strict";
 
-
 	/**
-	* UploadCollection renderer.
-	* @namespace
-	*/
+	 * UploadCollection renderer.
+	 * @namespace
+	 */
 	var UploadCollectionRenderer = {};
 
 	/**
@@ -30,7 +30,7 @@ sap.ui.define([ 'jquery.sap.global', './ListItemBaseRenderer'],
 		oRm.write("</div>");
 	};
 
-	UploadCollectionRenderer.renderNoData = function (oRm, oControl) {
+	UploadCollectionRenderer.renderNoData = function(oRm, oControl) {
 		// If noDataText or noDataDescription property are set by user, the user's text will be rendered.
 		// If it is not set, the default no data text or description from resource bundle will be rendered.
 		var oUploadCollection = oControl.getParent();

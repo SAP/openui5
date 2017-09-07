@@ -47,10 +47,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
         oRm.writeControlData(oControl);
         oRm.addStyle("width", this._iWidth + "px");
         oRm.addStyle("height", this._iHeight + "px");
-        (bEnabled || !bDisplayOnly) ? oRm.writeAttribute("tabindex", "0") : oRm.writeAttribute("tabindex", "-1");
         if (bEnabled && !bDisplayOnly) {
+            // Interactive
+            oRm.writeAttribute("tabindex", "0");
             oRm.addClass("sapMPointer");
         } else {
+            // DisplayOnly or disabled
+            oRm.writeAttribute("tabindex", "-1");
             bEnabled ? oRm.addClass("sapMRIDisplayOnly") : oRm.addClass("sapMRIDisabled");
         }
         oRm.addClass("sapMRI");

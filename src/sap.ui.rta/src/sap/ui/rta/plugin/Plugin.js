@@ -2,11 +2,23 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.dt.Plugin.
+// Provides class sap.ui.rta.plugin.Plugin.
 sap.ui.define([
-	'sap/ui/dt/Plugin', 'sap/ui/fl/Utils', 'sap/ui/fl/registry/ChangeRegistry'
+	'sap/ui/dt/Plugin',
+	'sap/ui/fl/Utils',
+	'sap/ui/fl/registry/ChangeRegistry',
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/OverlayUtil',
+	'sap/ui/dt/ElementOverlay'
 ],
-function(Plugin, FlexUtils, ChangeRegistry) {
+function(
+	Plugin,
+	FlexUtils,
+	ChangeRegistry,
+	OverlayRegistry,
+	OverlayUtil,
+	ElementOverlay
+) {
 	"use strict";
 
 	/**
@@ -29,6 +41,12 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 	 * @alias sap.ui.rta.plugin.Plugin
 	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
+
+	/* Methods to save stable ID info on Overlay */
+	ElementOverlay.prototype._bElementHasStableId = undefined;
+	ElementOverlay.prototype.getElementHasStableId = function() { return this._bElementHasStableId;};
+	ElementOverlay.prototype.setElementHasStableId = function(bHasStableId) { this._bElementHasStableId = bHasStableId; };
+	ElementOverlay.prototype.hasElementStableId = function() { return this._bElementHasStableId ? true : false; };
 
 	var BasePlugin = Plugin.extend("sap.ui.rta.plugin.Plugin", /** @lends sap.ui.dt.Plugin.prototype */ {
 		metadata : {
@@ -55,54 +73,115 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 
 	BasePlugin.prototype._isEditable = function() {};
 
-	BasePlugin.prototype._isEditableByPlugin = function(oOverlay) {
-		var sPluginName = this.getMetadata().getName();
+	BasePlugin.prototype._attachReevaluationEditable = function(oOverlay) {
+		oOverlay.attachElementModified(function(oEvent) {
+			var oParams = oEvent.getParameters();
+			if ((oParams.type === "propertyChanged" && oParams.name === "visible") || oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
+				if (oOverlay.getRelevantOverlays().length === 0) {
+					var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay);
+					oOverlay.setRelevantOverlays(aRelevantOverlays);
+				}
+				this.evaluateEditable(oOverlay.getRelevantOverlays());
+			}
+		}.bind(this));
+	};
+
+	BasePlugin.prototype.evaluateEditable = function(aOverlays) {
+		aOverlays.forEach(function(oOverlay) {
+			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
+			// this means that getElementInstance is undefined when we get here via removeAggregation mutation
+			var isEditable = oOverlay.getElementInstance() && this._isEditable(oOverlay);
+
+			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
+			// for every other plugin isEditable should be a boolean.
+			if (isEditable) {
+				if (typeof isEditable === "boolean") {
+					this._modifyPluginList(oOverlay, isEditable);
+				} else {
+					this._modifyPluginList(oOverlay, isEditable["asChild"], false);
+					this._modifyPluginList(oOverlay, isEditable["asSibling"], true);
+				}
+			}
+		}.bind(this));
+	};
+
+	BasePlugin.prototype._modifyPluginList = function(oOverlay, bIsEditable, bOverlayIsSibling) {
+		if (bIsEditable) {
+			this.addToPluginsList(oOverlay, bOverlayIsSibling);
+		} else {
+			this.removeFromPluginsList(oOverlay, bOverlayIsSibling);
+		}
+	};
+
+	BasePlugin.prototype._retrievePluginName = function(bSibling) {
+		var sName = this.getMetadata().getName();
+		if (bSibling !== undefined) {
+			sName += bSibling ? ".asSibling" : ".asChild";
+		}
+		return sName;
+	};
+
+	BasePlugin.prototype._isEditableByPlugin = function(oOverlay, bSibling) {
+		var sPluginName = this._retrievePluginName(bSibling);
 		var aPluginList = oOverlay.getEditableByPlugins();
 		return aPluginList.indexOf(sPluginName) > -1;
 	};
 
 	BasePlugin.prototype.registerElementOverlay = function(oOverlay) {
-		if (this._isEditable(oOverlay)) {
-			this.addToPluginsList(oOverlay);
-		}
+		this.evaluateEditable([oOverlay]);
+		this._attachReevaluationEditable(oOverlay);
 	};
 
 	BasePlugin.prototype.deregisterElementOverlay = function(oOverlay) {
 		this.removeFromPluginsList(oOverlay);
+		this.removeFromPluginsList(oOverlay, true);
+		this.removeFromPluginsList(oOverlay, false);
 	};
 
+	/**
+	 * Checks if the element of an overlay has a stable ID.
+	 * Keeps this information on the Overlay, as stable IDs cannot be modified in runtime.
+	 * @param  {sap.ui.dt.ElementOverlay}  oOverlay Overlay for the element to be checked
+	 * @return {boolean} Returns true if the element has a stable ID
+	 */
 	BasePlugin.prototype.hasStableId = function(oOverlay) {
 		if (!oOverlay) {
 			return false;
-		} else if (!oOverlay.getDesignTimeMetadata()) {
-			return FlexUtils.checkControlId(oOverlay.getElementInstance());
 		}
 
-		var bStable = false;
-		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-		var oElement = oOverlay.getElementInstance();
+		if (oOverlay.getElementHasStableId() === undefined){
+			var bStable = false;
+			var oElement = oOverlay.getElementInstance();
+			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+			var fnGetStableElements = oDesignTimeMetadata && oDesignTimeMetadata.getData().getStableElements;
+			if (fnGetStableElements){
+				var aStableElements = fnGetStableElements(oElement);
+				var bUnstable = aStableElements ? aStableElements.some(function(vStableElement) {
+					var oControl = vStableElement.id || vStableElement;
+					if (!FlexUtils.checkControlId(oControl, vStableElement.appComponent)) {
+						return true;
+					}
+				}) : true;
+				bStable = !bUnstable;
+			} else {
+				bStable = FlexUtils.checkControlId(oElement);
+			}
 
-		var fnGetStableElements = oDesignTimeMetadata.getData().getStableElements;
-
-		if (fnGetStableElements) {
-			var aStableElements = fnGetStableElements(oElement);
-			var bUnstable = aStableElements ? aStableElements.some(function(vStableElement) {
-				var oControl = vStableElement.id || vStableElement;
-				if (!FlexUtils.checkControlId(oControl, vStableElement.appComponent)) {
-					return true;
-				}
-			}) : true;
-			bStable = !bUnstable;
-		} else {
-			bStable = FlexUtils.checkControlId(oElement);
+			oOverlay.setElementHasStableId(bStable);
 		}
-		return bStable;
+		return oOverlay.hasElementStableId();
 	};
 
-	BasePlugin.prototype.getVariantManagementReference = function (oOverlay, oAction, bForceRelevantContainer) {
-		var oElement = oOverlay.getElementInstance();
+	BasePlugin.prototype.getVariantManagementReference = function (oOverlay, oAction, bForceRelevantContainer, oStashedElement) {
+		var oElement;
+		if (!oStashedElement) {
+			oElement = oOverlay.getElementInstance();
+		} else {
+			oElement = oStashedElement;
+		}
+
 		var oRelevantElement;
-		if (oAction.changeOnRelevantContainer || bForceRelevantContainer) {
+		if ((oAction.changeOnRelevantContainer || bForceRelevantContainer) && !oStashedElement) {
 			oRelevantElement = oOverlay.getRelevantContainer();
 		} else {
 			oRelevantElement = oElement;
@@ -147,15 +226,17 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 		return bIsEditable;
 	};
 
-	BasePlugin.prototype.removeFromPluginsList = function(oOverlay) {
-		oOverlay.removeEditableByPlugin(this.getMetadata().getName());
+	BasePlugin.prototype.removeFromPluginsList = function(oOverlay, bSibling) {
+		var sName = this._retrievePluginName(bSibling);
+		oOverlay.removeEditableByPlugin(sName);
 		if (!oOverlay.getEditableByPlugins().length) {
 			oOverlay.setEditable(false);
 		}
 	};
 
-	BasePlugin.prototype.addToPluginsList = function(oOverlay) {
-		oOverlay.addEditableByPlugin(this.getMetadata().getName());
+	BasePlugin.prototype.addToPluginsList = function(oOverlay, bSibling) {
+		var sName = this._retrievePluginName(bSibling);
+		oOverlay.addEditableByPlugin(sName);
 		oOverlay.setEditable(true);
 	};
 

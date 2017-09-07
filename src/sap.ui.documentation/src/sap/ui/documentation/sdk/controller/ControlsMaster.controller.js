@@ -102,6 +102,7 @@ sap.ui.define([
 				this._vsFilterBar = this._oView.byId("vsFilterBar");
 				this._vsFilterLabel = this._oView.byId("vsFilterLabel");
 
+				this._oRouter.getRoute("listFilter").attachPatternMatched(this._onFilterMatched, this);
 				this._oRouter.getRoute("group").attachPatternMatched(this._onGroupMatched, this);
 				this._oRouter.getRoute("entity").attachPatternMatched(this._onEntityMatched, this);
 				this._oRouter.getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
@@ -144,7 +145,7 @@ sap.ui.define([
 
 			_viewSettingsResetOnNavigation: function (oEvent) {
 				var sRouteName = oEvent.getParameter("name");
-				if (["group", "entity", "sample", "code", "code_file", "controls", "controlsMaster"].indexOf(sRouteName) === -1) {
+				if (["group", "entity", "sample", "code", "code_file", "controls", "controlsMaster", "listFilter"].indexOf(sRouteName) === -1) {
 					// Reset view settings
 					this._applyAppConfiguration(this._oDefaultSettings.themeActive,
 						this._oDefaultSettings.compactOn,
@@ -241,6 +242,32 @@ sap.ui.define([
 				if (!Device.system.phone) {
 					this.getRouter().navTo("controls");
 				}
+			},
+
+			_onFilterMatched: function (oEvent) {
+				var sFilterValue = oEvent.getParameter("arguments").value,
+					oSearchField;
+
+				if (sFilterValue) {
+					// Get the search control, apply the value and fire a live change event so the list will be filtered
+					oSearchField = this.getView().byId("searchField");
+					oSearchField.setValue(sFilterValue).fireLiveChange({
+						newValue: sFilterValue
+					});
+
+					// Show master page: this call will show the master page only on small screen sizes but not on phone
+					jQuery.sap.delayedCall(0, this, function () {
+						this.getSplitApp().showMaster();
+					});
+
+					// On phone: navigation is needed so the user will see the master list
+					if (Device.system.phone) {
+						this.getRouter().navTo("controlsMaster", {});
+					}
+				}
+
+				// Call _onControlsMatched view to handle the rest of the needed initialization as this is a sub-route
+				this._onControlsMatched(oEvent);
 			},
 
 			_onControlsMatched: function() {

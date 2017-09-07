@@ -123,15 +123,28 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 		},
 
 		_tryOrSimulateFocusin: function ($DomRef, oControl) {
+			var isAlreadyFocused = $DomRef.is(":focus");
+			var bFireArtificialEvents;
 			var oDomRef = $DomRef[0];
-			$DomRef.focus();
-			var bWasFocused = $DomRef.is(":focus");
 
-			if (!bWasFocused) {
+			if (!isAlreadyFocused) {
+				$DomRef.focus();
+				// This check will only return false if you have the focus in the dev tools console,
+				// or a background tab, or the browser is not focused at all. We still want onfocusin to work
+				var bWasFocused = $DomRef.is(":focus");
+				// do not fire the artificial events in this case since we would recieve onfocusin twice
+				bFireArtificialEvents = !bWasFocused;
+			} else {
+				// This makes sure the onfocusin event of the control will be properly fired when executing this action,
+				// since blur cannot safely remove the focus
+				bFireArtificialEvents = true;
+			}
+
+			if (bFireArtificialEvents) {
 				$.sap.log.debug("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
 			}
 
-			if (!bWasFocused) {
+			if (bFireArtificialEvents) {
 				this._createAndDispatchFocusEvent("focusin", oDomRef);
 				this._createAndDispatchFocusEvent("focus", oDomRef);
 				this._createAndDispatchFocusEvent("activate", oDomRef);

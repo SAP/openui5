@@ -3,13 +3,13 @@
 		  xmlns="sap.m"
 		  xmlns:f="sap.ui.layout.form"
 		  xmlns:l="sap.ui.layout"
-		  controllerName="sap.m.sample.TextRenderWhiteSpaces.C"
+		  controllerName="sap.m.sample.TextRenderWhitespace.C"
 		  displayBlock="true">
 <f:SimpleForm
 		layout="ResponsiveGridLayout"
-		title="sap.m.Text preserves 'white spaces'"
-		emptySpanXL="6"
-		emptySpanL="2"
+		title="sap.m.Text preserves 'whitespace'"
+		emptySpanXL="3"
+		emptySpanL="1"
 		emptySpanM="0"
 		emptySpanS="0"
 		columnsXL="1"
@@ -22,26 +22,26 @@
 			<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
 			<l:VerticalLayout id="containerLayout" width="100%">
 				<Label text="Text 1" class="sapUiMediumMarginTop"/>
-				<Text  text="This text contains white spaces and it shall neither wrap no preserve the white spaces.
+				<Text  text="This text contains whitespace characters and it shall neither wrap no preserve the whitespace characters.
 						\n This is the(3 tabs follow)\t\t\tfirst line.
 						\n This is the second(10 spaces follow)          line."
 					  wrapping="false"/>
 				<Label text="Text 2" class="sapUiMediumMarginTop"/>
-				<Text text="This text contains white spaces and it shall wrap depending on the width space available, as well as preserve white spaces.
+				<Text text="This text contains whitespace characters and it shall wrap depending on the width space available, as well as preserve whitespace characters.
 						\n This is the(3 tabs follow)\t\t\tfirst line.
 						\n This is the second(10 spaces follow)         line."
-					  renderWhiteSpaces="true"/>
+					  renderWhitespace="true"/>
 				<Label text="Text 3" class="sapUiMediumMarginTop"/>
-				<Text id="textSample" text="This text contains white spaces and it shall not wrap, still preserving the white spaces.
+				<Text id="textSample" text="This text contains whitespace characters and it shall not wrap, still preserving the whitespace characters.
 						\n This is the(3 tabs follow)\t\t\tfirst line.
 						\n This is the second(10 spaces follow)         line."
-					  renderWhiteSpaces="true"
+					  renderWhitespace="true"
 					  wrapping="false"/>
 				<Label text="Use buttons to adjust properties for Text 3" class="sapUiMediumMarginTop"/>
 			</l:VerticalLayout>
 			<l:HorizontalLayout>
 				<Button id="btn1" text="Turn On Wrapping" press="onWrappingPressed"></Button>
-				<Button id="btn2" text="Turn Off RenderWhiteSpaces" press="onWhiteSpacePressed"></Button>
+				<Button id="btn2" text="Turn Off RenderWhitespace" press="onWhiteSpacePressed"></Button>
 			</l:HorizontalLayout>
 		</l:VerticalLayout>
 	</f:content>

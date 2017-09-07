@@ -532,7 +532,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			});
 		}
 
-		if (this._bUseDialog && this.getEditable()) {
+		if (this._bUseDialog && this.getEditable() && this.getEnabled()) {
 			// click event has to be used in order to focus on the input in dialog
 			// do not open suggestion dialog by click over the value help icon
 			this.$().on("click", jQuery.proxy(function (oEvent) {
@@ -585,9 +585,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			return;
 		}
 
-		var sKey = this.getSelectedKey();
+		var sKey = this.getSelectedKey(),
+			bHasSelectedItem;
 
 		if (sKey === '') {
+			return;
+		}
+
+		if (this._hasTabularSuggestions()) {
+			bHasSelectedItem = !!this._oSuggestionTable.getSelectedItem();
+		} else {
+			bHasSelectedItem = !!this._oList.getSelectedItem();
+		}
+
+		if (bHasSelectedItem) {
 			return;
 		}
 

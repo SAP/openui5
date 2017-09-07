@@ -41,6 +41,7 @@ sap.ui.define([
 	var Breadcrumbs = Control.extend("sap.m.Breadcrumbs", {
 		metadata: {
 			library: "sap.m",
+			interfaces: ["sap.m.IBreadcrumbs"],
 			properties: {
 
 				/**

@@ -1,7 +1,6 @@
-/*global QUnit,oTable*/
+/*global QUnit, oTable*/
 
-sap.ui.require([
-], function() {
+sap.ui.require([], function() {
 	"use strict";
 
 	// mapping of global function calls

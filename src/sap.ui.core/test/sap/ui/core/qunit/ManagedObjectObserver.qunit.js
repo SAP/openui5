@@ -74,6 +74,11 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 					type: "sap.ui.test.TestElement",
 					multiple: true,
 					singularName: "subObj"
+				},
+				label : {
+					type : "sap.ui.core.Label",
+					altTypes : ["string"],
+					multiple : false
 				}
 			},
 			associations: {
@@ -252,6 +257,8 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		oObserver.observe(this.obj, {
 			destroy: true
 		});
+
+		assert.equal(true,oObserver.isObserved(this.obj),"The object is observed");
 
 		this.obj.destroy();
 
@@ -556,6 +563,19 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		});
 
 		this.obj.setAggregation("singleAggr", oChild);
+		this.checkExpected("Single aggregation added. Observer called successfully");
+
+		//setting single aggegation with altType
+		setExpected({
+			object: this.obj,
+			type:"aggregation",
+			name:"label",
+			mutation: "insert",
+			child: "Text",
+			children: null
+		});
+
+		this.obj.setAggregation("label", "Text");
 		this.checkExpected("Single aggregation added. Observer called successfully");
 
 		oObserver.disconnect();
@@ -1480,5 +1500,127 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		}, "Observer is not created without a callback and threw error");
 	});
 
+	QUnit.test("ManagedObjectObserver unobserve complete object", function(assert) {
+		var obj2 = new sap.ui.test.TestElement("myObject2");
+
+		assert.strictEqual(this.obj._observer, undefined, "No observer");
+		assert.strictEqual(obj2._observer, undefined, "No observer");
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+		});
+
+		oObserver.observe(this.obj, {
+			properties: true
+		});
+
+		oObserver.observe(obj2, {
+			properties: true
+		});
+
+		assert.ok(true, "Observation of all property changes started for object1 and object2");
+
+		//setting the default value of a property
+		setExpected();
+		this.obj.setProperty("value", "");
+		this.checkExpected("Nothing changed in object1");
+
+		//setting a value
+		setExpected({
+			object: this.obj,
+			type:"property",
+			name:"value",
+			old: "",
+			current: "test"
+		});
+
+		this.obj.setProperty("value", "test");
+		this.checkExpected("Set 'value' to 'test'. Observer called successfully in object1");
+
+		setExpected({
+			object: this.obj,
+			type:"property",
+			name:"value",
+			old: "test",
+			current: "1"
+		});
+		this.obj.setProperty("value", 1);
+		this.checkExpected("Set 'value' to '1'. Observer called successfully in object 1");
+
+		setExpected({
+			object: obj2,
+			type:"property",
+			name:"value",
+			old: "test",
+			current: "2"
+		});
+		obj2.setProperty("value", 2);
+		this.checkExpected("Set 'value' to '2'. Observer called successfully in object2");
+
+		oObserver.unobserve(this.obj);
+
+		this.obj.setProperty("value", 2);
+		this.checkExpected("Set 'value' to '2'. Observer not called, actual did not change");
+
+		setExpected({
+			object: obj2,
+			type:"property",
+			name:"value",
+			old: "test",
+			current: "3"
+		});
+		obj2.setProperty("value", 3);
+		this.checkExpected("Set 'value' to '3'. Observer for object2 is still called successfully in object2");
+
+		oObserver.disconnect();
+	});
+
+	QUnit.test("ManagedObjectObserver observe/isObserved", function(assert) {
+
+		assert.strictEqual(this.obj._observer, undefined, "No observer");
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+		});
+
+		oObserver.observe(this.obj, {
+			properties: true
+		});
+
+		assert.ok(true, "Observation of all property changes started");
+
+		var oConfiguration = oObserver.getConfiguration(this.obj);
+
+		assert.strictEqual(10,oConfiguration.properties.length,"All ten properties of the object are observed");
+		assert.equal(true,oObserver.isObserved(this.obj),"The object is observed");
+
+		oObserver.unobserve(this.obj, {
+			properties: ["value"]
+		});
+
+		oConfiguration = oObserver.getConfiguration(this.obj);
+
+		assert.ok(true, "Observation of property 'value' stopped");
+
+		assert.strictEqual(9,oConfiguration.properties.length,"Remain 9 properties of the object that are observed");
+		assert.equal(true,oObserver.isObserved(this.obj),"The object is still observed");
+
+		oObserver.observe(this.obj, {
+			aggregations: ["singleAggr"]
+		});
+
+		oConfiguration = oObserver.getConfiguration(this.obj);
+
+		assert.ok(true, "Observation of aggregation 'singleAggr' started");
+
+		assert.strictEqual(9,oConfiguration.properties.length,"Still 9 properties of the object that are observed");
+		assert.strictEqual(1,oConfiguration.aggregations.length,"Additionally one aggregation is observed");
+		assert.equal(true,oObserver.isObserved(this.obj),"The object is still observed");
+
+		oObserver.unobserve(this.obj);
+		assert.equal(false,oObserver.isObserved(this.obj),"The object is no longer observed");
+
+		oObserver.disconnect();
+	});
 
 });

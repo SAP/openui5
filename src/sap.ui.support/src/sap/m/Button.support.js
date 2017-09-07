@@ -44,9 +44,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		check: function (oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName("sap.m.Button")
 				.forEach(function(oElement) {
-					if (!jQuery.isEmptyObject(oElement.getProperty("icon"))
-						&& jQuery.isEmptyObject(oElement.getProperty("text"))
-						&& jQuery.isEmptyObject(oElement.getAggregation("tooltip"))) {
+					if (oElement.getProperty("icon")
+						&& !oElement.getProperty("text")
+						&& !oElement.getAggregation("tooltip")) {
 
 						var sElementId = oElement.getId(),
 							sElementName = oElement.getMetadata().getElementName();

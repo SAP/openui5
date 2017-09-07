@@ -46,8 +46,9 @@ sap.ui.define([
 	 * @override
 	 */
 	Remove.prototype.registerElementOverlay = function(oOverlay) {
-		oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
-
+		if (this.isRemoveEnabled(oOverlay)) {
+			oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
+		}
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
 	};
 
@@ -142,8 +143,9 @@ sap.ui.define([
 	 * @override
 	 */
 	Remove.prototype.deregisterElementOverlay = function(oOverlay) {
-		oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
-
+		if (this.isRemoveEnabled(oOverlay)) {
+			oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
+		}
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
 	};
 
@@ -174,8 +176,10 @@ sap.ui.define([
 			aSelection = oDesignTime.getSelection();
 		}
 
+		aSelection = aSelection.filter(this.isRemoveEnabled, this);
+
 		if (aSelection.length > 0) {
-			this._handleRemove( aSelection );
+			this._handleRemove(aSelection);
 		}
 	};
 
@@ -205,15 +209,15 @@ sap.ui.define([
 
 		var oNextOverlaySelection = Remove._getElementToFocus(aSelectedOverlays);
 
-		aSelectedOverlays.forEach(function(oOverlay) {
-			var oCommand;
-			var oRemovedElement = oOverlay.getElementInstance();
-			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-			var oRemoveAction = this._getRemoveAction(oOverlay);
-			var sVariantManagementReference = this.getVariantManagementReference(oOverlay, oRemoveAction);
-
-			if (this.isRemoveEnabled(oOverlay)) {
+		aSelectedOverlays
+			.forEach(function(oOverlay) {
+				var oCommand;
+				var oRemovedElement = oOverlay.getElementInstance();
+				var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+				var oRemoveAction = this._getRemoveAction(oOverlay);
+				var sVariantManagementReference = this.getVariantManagementReference(oOverlay, oRemoveAction);
 				var sConfirmationText = this._getConfirmationText(oOverlay);
+
 				if (sConfirmationText) {
 					aPromises.push(
 						Utils.openRemoveConfirmationDialog(oRemovedElement, sConfirmationText)
@@ -228,7 +232,6 @@ sap.ui.define([
 					oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementReference);
 					oCompositeCommand.addCommand(oCommand);
 				}
-			}
 		}, this);
 
 		// since Promise.all is always asynchronous, we want to call it only if at least one promise exists

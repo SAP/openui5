@@ -161,7 +161,7 @@ sap.ui.define([
 		},
 
 		isAvailable: function(bOverlayIsSibling, oOverlay){
-			return this._isEditable(oOverlay, bOverlayIsSibling);
+			return this._isEditableByPlugin(oOverlay, bOverlayIsSibling);
 		},
 
 		isEnabled: function(bOverlayIsSibling, oOverlay){
@@ -476,10 +476,11 @@ sap.ui.define([
 			}
 			return this.getCommandFactory().getCommandFor(mParents.parent, "addODataProperty", {
 				newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
-				index : iIndex !== undefined ? iIndex : iAddTargetIndex,
-				bindingString : oSelectedElement.bindingPath,
-				parentId : mParents.parent.getId(),
-				oDataServiceVersion : sODataServiceVersion
+				index: iIndex !== undefined ? iIndex : iAddTargetIndex,
+				bindingString: oSelectedElement.bindingPath,
+				entityType: oSelectedElement.entityType,
+				parentId: mParents.parent.getId(),
+				oDataServiceVersion: sODataServiceVersion
 			}, oParentAggregationDTMetadata, sVariantManagementReference);
 		},
 
@@ -500,7 +501,19 @@ sap.ui.define([
 			var mType = mActions.reveal.types[sType];
 			var oDesignTimeMetadata = mType.designTimeMetadata;
 			var oRevealAction = oDesignTimeMetadata.getAction("reveal");
-			var sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oRevealAction);
+			var oElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
+
+			//Parent Overlay passed as argument as no overlay is yet available for stashed control
+			if	(!oElementOverlay) {
+				var oSourceParent = _getSourceParent(oRevealedElement, mParents);
+				oElementOverlay = OverlayRegistry.getOverlay(oSourceParent);
+			}
+
+			var sVariantManagementReference;
+			if (oElementOverlay) {
+				sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oRevealAction, false, oRevealedElement);
+			}
+
 			if (oRevealAction.changeOnRelevantContainer) {
 				return this.getCommandFactory().getCommandFor(oRevealedElement, "reveal", {
 					revealedElementId : oRevealedElement.getId(),
@@ -530,7 +543,7 @@ sap.ui.define([
 				var oMoveAction = SourceParentDesignTimeMetadata.getAction("move");
 				var sVariantManagementReference;
 				if (oMoveAction) {
-					var sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oMoveAction, true);
+					sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oMoveAction, true);
 				}
 				oCmd = this.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
 					movedElements : [{
@@ -558,12 +571,15 @@ sap.ui.define([
 		 * On Startup bOverlayIsSibling is not defined as we don't know if it is a sibling or not. In this case we check both cases.
 		 * @param {sap.ui.dt.Overlay} oOverlay - overlay to be checked
 		 * @param {boolean} bOverlayIsSibling - (optional) describes whether given overlay is to be checked as a sibling or as a child on editable. Expected values: [true, false, undefined]
-		 * @returns {boolean} editable boolean value
+		 * @returns {boolean | object} editable boolean value or object with editable boolean values for "asChild" and "asSibling"
 		 * @protected
 		 */
 		_isEditable: function(oOverlay, bOverlayIsSibling) {
 			if (bOverlayIsSibling === undefined || bOverlayIsSibling === null) {
-				return _isEditableCheck.call(this, oOverlay, true) || _isEditableCheck.call(this, oOverlay, false);
+				return {
+					asSibling: _isEditableCheck.call(this, oOverlay, true),
+					asChild: _isEditableCheck.call(this, oOverlay, false)
+				};
 			} else {
 				return _isEditableCheck.call(this, oOverlay, bOverlayIsSibling);
 			}

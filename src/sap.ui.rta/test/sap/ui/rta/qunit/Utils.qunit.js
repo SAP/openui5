@@ -24,6 +24,7 @@ sap.ui.require([
 	'sap/uxap/ObjectPageSubSectionLayout',
 	'sap/ui/core/Title',
 	'sap/ui/comp/smartform/Group',
+	'sap/ui/comp/smartform/GroupElement',
 	'sap/ui/comp/smartform/SmartForm',
 	'sap/ui/thirdparty/sinon'
 ],
@@ -49,6 +50,7 @@ function(
 	ObjectPageSubSectionLayout,
 	Title,
 	Group,
+	GroupElement,
 	SmartForm,
     sinon
 ) {
@@ -332,7 +334,12 @@ function(
 	QUnit.module("Given that the getRelevantContainerDesigntimeMetadata method is called on an overlay", {
 		beforeEach : function(assert) {
 
-			this.oSmartGroup = new Group("group");
+			this.oGroupElement = new GroupElement("groupElement", {
+				elements: [new Button("button1")]
+			});
+			this.oSmartGroup = new Group("group", {
+				groupElements: [this.oGroupElement]
+			});
 			this.oSmartForm = new SmartForm("SmartForm", {
 				groups : [this.oSmartGroup]
 			});
@@ -561,6 +568,57 @@ function(
 
 		Utils.setRtaStyleClassName("VENDOR");
 		assert.equal(Utils.getRtaStyleClassName(), sExpectedStyleClass, "then the StyleClass is set");
+	});
+
+	QUnit.module("Given two generic objects...", {
+		beforeEach : function(){
+
+			this.oObject1 = {
+				function11 : function(){
+					return "function11Object1";
+				},
+				function12 : function(){}
+			};
+
+			this.oObject2 = {
+				function21 : function(){},
+				function11 : function(){
+					return "function11Object2";
+				}
+			};
+		}
+	});
+
+	QUnit.test("when extendWith is called with a customizer function that always returns true", function(assert){
+		var fnCustomizer = function(){
+			return true;
+		};
+
+		assert.notOk(this.oObject1.function21, "then the object does not have function21");
+		Utils.extendWith(this.oObject1, this.oObject2, fnCustomizer);
+		assert.ok(this.oObject1.function21, "then the object has been extended to include function21");
+		assert.equal(this.oObject1.function11(), "function11Object2", "then function11 from Object2 is now in Object1");
+	});
+
+	QUnit.test("when extendWith is called with a customizer function that always returns false", function(assert){
+		var fnCustomizer = function(){
+			return false;
+		};
+
+		var oObject1Before = this.oObject1;
+		Utils.extendWith(this.oObject1, this.oObject2, fnCustomizer);
+		assert.deepEqual(oObject1Before, this.oObject1, "then the Object was not modified");
+	});
+
+	QUnit.test("when mergeWith is called with a customizer function", function(assert){
+
+		var fnCustomizer = function(vDestinationValue, vSourceValue, sProperty, mDestination, mSource){
+			return function(){ return "mergedProperty"; };
+		};
+
+		assert.equal(this.oObject1.function11(), "function11Object1", "at first the function returns 'function11Object1'");
+		Utils.mergeWith(this.oObject1, this.oObject2, fnCustomizer);
+		assert.equal(this.oObject1.function11(), "mergedProperty", "then the merged function returns 'mergedProperty'");
 	});
 
 	QUnit.done(function() {

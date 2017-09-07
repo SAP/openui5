@@ -222,6 +222,9 @@ sap.ui.define([
 
 			this.oVM.destroy();
 			var oVM = new VariantManagement(sVMId);
+			oVM._getLocalId = function() {
+				return this.getId();
+			};
 			oParent.addContent(oVM);
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
@@ -239,6 +242,9 @@ sap.ui.define([
 
 		},
 
+		onToggleErrorState: function(oEvent) {
+			this.oVM.setInErrorState(!this.oVM.getInErrorState());
+		},
 		onToggleFooterBtn: function(oEvent) {
 			this.oVM.setShowVariantListFooter(!this.oVM.getShowVariantListFooter());
 		},

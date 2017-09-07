@@ -1,10 +1,11 @@
 /*global QUnit,sinon*/
 
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/support/supportRules/Main",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels"],
-	function (Main, CommunicationBus, channelNames) {
+	function (jQuery, Main, CommunicationBus, channelNames) {
 		"use strict";
 
 		/*eslint-disable no-unused-vars*/
@@ -75,16 +76,6 @@ sap.ui.require([
 			spyCoreStateChanged.assertCalled(assert);
 		});
 
-		QUnit.test("Analyze support rule", function (assert) {
-			var spyProgressUpdate = spyChannel(channelNames.ON_PROGRESS_UPDATE);
-
-			Main._analyzeSupportRule({
-				check: function () {}
-			});
-
-			spyProgressUpdate.assertCalled(assert);
-		});
-
 		QUnit.test("Element tree", function (assert) {
 			var assertIsDirectChild = function (id1, id2, et) {
 				var root = et.constructor === Array ? et[0] : et;
@@ -146,5 +137,172 @@ sap.ui.require([
 			assertIsDirectChild("innerButton2", "innerPanel2",et);
 
 			oPanel.destroy();
+		});
+
+		QUnit.module("Main.js methods", {
+			setup: function () {
+				// Store _mRuleSets
+				this._mRuleSets = jQuery.extend(true, {}, Main._mRuleSets);
+
+				Main._mRuleSets = {
+					"temporary": {
+					   "lib": {
+						  "name": "temporary"
+					   },
+					   "ruleset": {
+						  "_oSettings": {
+							 "name": "temporary"
+						  },
+						  "_mRules": {
+							"tmpRule": {
+								"id": "tmpRule",
+								"libName": "temporary"
+							}
+						  },
+						  "getRules": function () {
+							return this._mRules;
+						  }
+					   }
+					},
+					"sap.ui.core": {
+					   "lib": {
+						  "name": "sap.ui.core",
+						  "niceName": "UI5 Core Library"
+					   },
+					   "ruleset": {
+						  "_oSettings": {
+							 "name": "sap.ui.core",
+							 "niceName": "UI5 Core Library"
+						  },
+						  "_mRules": {
+							"preloadAsyncCheck": {
+								"id": "preloadAsyncCheck",
+								"libName": "sap.ui.core"
+							},
+							 "cacheBusterToken": {
+								"id": "cacheBusterToken",
+								"libName": "sap.ui.core"
+							 },
+							 "unresolvedPropertyBindings": {
+								"id": "unresolvedPropertyBindings",
+								"libName": "sap.ui.core"
+							 },
+							 "bindingPathSyntaxValidation": {
+								"id": "bindingPathSyntaxValidation",
+								"libName": "sap.ui.core"
+							 },
+							 "XMLViewWrongNamespace": {
+								"id": "XMLViewWrongNamespace",
+								"libName": "sap.ui.core"
+							 },
+							 "XMLViewDefaultNamespace": {
+								"id": "XMLViewDefaultNamespace",
+								"libName": "sap.ui.core"
+							 }
+						  },
+						  "getRules": function () {
+							return this._mRules;
+						  }
+					   }
+					},
+					"sap.m": {
+					   "lib": {
+						  "name": "sap.m",
+						  "niceName": "UI5 Main Library"
+					   },
+					   "ruleset": {
+						  "_oSettings": {
+							 "name": "sap.m",
+							 "niceName": "UI5 Main Library"
+						  },
+						  "_mRules":{
+							 "onlyIconButtonNeedsTooltip": {
+								"id": "onlyIconButtonNeedsTooltip",
+								"libName": "sap.m"
+							 },
+							 "dialogarialabelledby": {
+								"id": "dialogarialabelledby",
+								"libName": "sap.m"
+							 },
+							 "inputNeedsLabel": {
+								"id": "inputNeedsLabel",
+								"libName": "sap.m"
+							 }
+						  },
+						  "getRules": function () {
+							return this._mRules;
+						  }
+					   }
+					}
+				 };
+			},
+			teardown: function () {
+				// Restore _mRuleSets
+				Main._mRuleSets = jQuery.extend(true, {}, this._mRuleSets);
+				this._mRuleSets = null;
+				Main._aSelectedRules = [];
+				Main._oSelectedRulesIds = {};
+			}
+		});
+
+		QUnit.test("_setSelectedRules with a single ruleDescriptor object", function (assert) {
+			// Arrange
+			var oRuleDescriptor = {
+				"libName": "sap.m",
+				"ruleId": "onlyIconButtonNeedsTooltip"
+			};
+
+			// Act
+			Main._setSelectedRules(oRuleDescriptor);
+
+			// Assert
+			assert.equal(Main._aSelectedRules.length, 1, "Should have only one selected rule in _aSelectedRules");
+			assert.equal(Object.keys(Main._oSelectedRulesIds).length, 1, "Should have only one selected rule in _oSelectedRulesIds");
+			assert.equal(Main._oSelectedRulesIds[oRuleDescriptor.ruleId], true, "Should have the id of the selected rule");
+		});
+
+		QUnit.test("_setSelectedRules with multiple ruleDescriptors", function (assert) {
+			// Arrange
+			var aRuleDescriptors = [
+				{
+					"ruleId": "tmpRule",
+					"libName": "temporary"
+				},
+				{
+					"ruleId": "preloadAsyncCheck",
+					"libName": "sap.ui.core"
+				},
+				{
+					"ruleId": "XMLViewWrongNamespace",
+					"libName": "sap.ui.core"
+				},
+				{
+					"ruleId": "inputNeedsLabel",
+					"libName": "sap.m"
+				}
+			];
+
+			// Act
+			Main._setSelectedRules(aRuleDescriptors);
+
+			// Assert
+			assert.equal(Main._aSelectedRules.length, 4, "Should have 4 selected rules in _aSelectedRules");
+			assert.equal(Object.keys(Main._oSelectedRulesIds).length, 4, "Should have 4 selected rules in _oSelectedRulesIds");
+		});
+
+		QUnit.test("_setSelectedRules with no ruleDescriptors", function (assert) {
+			// Arrange
+			var iTotalRules = 0;
+			Object.keys(Main._mRuleSets).map(function (sLibName) {
+				var oRulesetRules = Main._mRuleSets[sLibName].ruleset.getRules();
+				iTotalRules += Object.keys(oRulesetRules).length;
+			});
+
+			// Act
+			Main._setSelectedRules();
+
+			// Assert
+			assert.equal(Main._aSelectedRules.length, iTotalRules, "Should have all rules as selected in _aSelectedRules");
+			assert.equal(Object.keys(Main._oSelectedRulesIds).length, iTotalRules, "Should have all rules as selected in _oSelectedRulesIds");
 		});
 });

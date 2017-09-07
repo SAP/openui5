@@ -101,8 +101,8 @@
 				var sNavButtonTooltip = jQuery("#myFirstPage-navButton").attr("title");
 				assert.ok(sNavButtonTooltip && (sNavButtonTooltip.length > 0), "nav button should have a tooltip by default");
 				assert.ok(jQuery.sap.domById("qunit-header"), "Page content should be rendered");
-				assert.ok(jQuery.sap.byId("myFirstPage-intHeader").is("header"), "header should be rendered as header tag");
-				assert.ok(jQuery.sap.byId("myFooter").is("footer"), "footer should be rendered as footer tag");
+				assert.ok(jQuery.sap.byId("myFirstPage-intHeader").parent().is("header"), "header should be rendered as header tag");
+				assert.ok(jQuery.sap.byId("myFooter").parent().is("footer"), "footer should be rendered as footer tag");
 
  				// The following qunit is removed because of
  				// BCP: 1670157998
@@ -245,7 +245,7 @@
 				sap.ui.getCore().applyChanges();
 
 				assert.equal(!!jQuery.sap.domById("myFooter"), true, "footer should be rendered");
-				assert.equal(oPage.getFooter().hasStyleClass("sapUiHidden"), true, "footer is hidden");
+				assert.equal(oPage.getFooter().$().parent().hasClass("sapUiHidden"), true, "footer is hidden");
 
 				oPage.destroy();
 			});
@@ -262,21 +262,21 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				assert.ok(oBar.hasStyleClass("sapUiHidden"), "Footer is there, but is hidden.");
+				assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
 
 				// Act
 				oPage.setShowFooter(true);
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				assert.ok(!oBar.hasStyleClass("sapUiHidden"), "Footer is visible.");
+				assert.ok(!oBar.$().parent().hasClass("sapUiHidden"), "Footer is visible.");
 
 				// Act
 				oPage.setShowFooter(false);
 				sap.ui.getCore().applyChanges();
 
 				// Assert
-				assert.ok(oBar.hasStyleClass("sapUiHidden"), "Footer is there, but is hidden.");
+				assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
 
 				// Cleanup
 				oBar = null;
@@ -305,8 +305,7 @@
 						assert.ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarPH"), "title should be located in the middle");
 					});
 
-				} else if (sap.ui.Device.os.android)
-				{
+				} else if (sap.ui.Device.os.android) {
 
 					QUnit.test("NavButton", function(assert) {
 						var done = assert.async();

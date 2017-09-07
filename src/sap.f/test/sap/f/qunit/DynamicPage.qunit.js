@@ -66,6 +66,14 @@
 					footer: this.getFooter()
 				});
 			},
+			getDynamicPageWithBreadCrumbs: function () {
+				return new DynamicPage({
+					title: this.getDynamicPageTitleWithBreadCrumbs(),
+					header: this.getDynamicPageHeader(),
+					content: this.getContent(200),
+					footer: this.getFooter()
+				});
+			},
 			getDynamicPageNoTitleAndHeader: function () {
 				return new DynamicPage({
 					content: this.getContent(20)
@@ -75,6 +83,21 @@
 				return new DynamicPageTitle({
 					heading: new sap.m.Title({
 						text: "Anna Maria Luisa"
+					})
+				});
+			},
+			getDynamicPageTitleWithBreadCrumbs: function () {
+				return new DynamicPageTitle({
+					heading: new sap.m.Title({
+						text: "Anna Maria Luisa"
+					}),
+					breadcrumbs: new sap.m.Breadcrumbs({
+						links: [
+							new sap.m.Link({text: "link1"}),
+							new sap.m.Link({text: "link2"}),
+							new sap.m.Link({text: "link3"}),
+							new sap.m.Link({text: "link4"})
+						]
 					})
 				});
 			},
@@ -451,6 +474,62 @@
 		assert.equal(oDynamicPage.getHeaderExpanded(), true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
 	});
 
+	QUnit.test("DynamicPage toggle header indicators visibility", function (assert) {
+		var oDynamicPageTitle = this.oDynamicPage.getTitle(),
+			oDynamicPageHeader = this.oDynamicPage.getHeader(),
+			oCollapseButton = oDynamicPageHeader.getAggregation("_collapseButton"),
+			oExpandButton = oDynamicPageTitle.getAggregation("_expandButton"),
+			$oCollapseButton = oCollapseButton.$(),
+			$oExpandButton = oExpandButton.$();
+
+		// Assert: toggleHeaderOnTitleClick=true, headerExpanded=true, pinned=false
+		assert.equal(oDynamicPageTitle._getShowExpandButton(), false, "The Expand button should not be visible");
+		assert.equal(oDynamicPageHeader._getShowCollapseButton(), true, "The Collapse button should be visible");
+		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "The Expand Button is not visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), false, "The Collapse button is visible");
+
+		// Act
+		this.oDynamicPage.setToggleHeaderOnTitleClick(false);
+
+		// Assert: toggleHeaderOnTitleClick=false, headerExpanded=true, pinned=false
+		// Expected is both the buttons to be hidden
+		assert.equal(oDynamicPageTitle._getShowExpandButton(), false, "The Expand button should not be visible");
+		assert.equal(oDynamicPageHeader._getShowCollapseButton(), false, "The Collapse button should not be visible");
+		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Title click is not enabled, the Collapse button is not visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Title click is not enabled, the Expand button is not visible");
+
+		// Act
+		this.oDynamicPage.setToggleHeaderOnTitleClick(true);
+		this.oDynamicPage._pin();
+
+		// Assert: toggleHeaderOnTitleClick=true, headerExpanded=true, pinned=true
+		// Expected is both the buttons to be hidden
+
+		// Act: re-render the Title and Header
+		oDynamicPageTitle.rerender();
+		oDynamicPageHeader.rerender();
+		$oCollapseButton = oCollapseButton.$();
+		$oExpandButton = oExpandButton.$();
+
+		// Assert: toggleHeaderOnTitleClick=true, headerExpanded=true, pinned=true
+		// Expected is both the buttons to be hidden, after the Title and Header re-rendering
+		assert.equal(oDynamicPageHeader._getShowCollapseButton(), false, "The Collapse button should not be visible");
+		assert.equal(oDynamicPageTitle._getShowExpandButton(), false, "The Expand button should not be visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is pinned, the Expand button is not visible");
+		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Header is pinned, the Collapse button is not visible");
+
+		// Act
+		this.oDynamicPage._unPin();
+		this.oDynamicPage._snapHeader();
+
+		// Assert: toggleHeaderOnTitleClick=true, headerExpanded=false, pinned=false;
+		// Expected: Expand button to be visible and Collapse button to be hidden
+		assert.equal(oDynamicPageTitle._getShowExpandButton(), true, "The Expand button should be visible");
+		assert.equal(oDynamicPageHeader._getShowCollapseButton(), false, "The Collapse button should not be visible");
+		assert.equal($oExpandButton.hasClass("sapUiHidden"), false, "Header is collapsed, the Expand button is visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is collapsed, the Collapse button is not visible");
+	});
+
 	/* --------------------------- DynamicPage Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering", {
 		beforeEach: function () {
@@ -471,7 +550,9 @@
 			oDynamicPageFooter = oDynamicPage.getFooter(),
 			$oDynamicPageTitleSnappedWrapper = oDynamicPageTitle.$('snapped-wrapper'),
 			$oDynamicPageTitleExpandedWrapper = oDynamicPageTitle.$('expand-wrapper'),
-			$oDynamicPageHeader = oDynamicPageHeader.$();
+			$oDynamicPageHeader = oDynamicPageHeader.$(),
+			$oCollapseButton = oDynamicPageHeader.getAggregation("_collapseButton").$(),
+			$oExpandButton = oDynamicPageTitle.getAggregation("_expandButton").$();
 
 		assert.ok(oUtil.exists(oDynamicPage), "The DynamicPage has rendered successfully");
 		assert.ok(oUtil.exists(oDynamicPageTitle), "The DynamicPage Title has rendered successfully");
@@ -479,7 +560,8 @@
 		assert.ok(oUtil.exists(oDynamicPageFooter), "The DynamicPage Footer has rendered successfully");
 		assert.ok(oUtil.exists(oDynamicPageHeader.getAggregation("_pinButton").$()),
 			"The DynamicPage Header Pin Button has rendered successfully");
-
+		assert.equal($oExpandButton.length > 0, true, "The Expand Button is rendered");
+		assert.equal($oCollapseButton.length > 0, true, "The Collapse button is rendered");
 		assert.equal($oDynamicPageTitleSnappedWrapper.length > 0, true, "The DynamicPage Title snapped content is rendered");
 		assert.equal($oDynamicPageTitleExpandedWrapper.length > 0, true, "The DynamicPage Title expanded content is rendered");
 
@@ -621,8 +703,36 @@
 		core.applyChanges();
 
 		// Assert: DynamicPageTitle content aggregation is empty
-		assert.equal(oTitle.$().hasClass("sapFDynamicPageTitleWithoutContent"), true,
+		assert.equal(oTitle.$("main").hasClass("sapFDynamicPageTitleMainNoContent"), true,
 			"The css class has been added as the content aggregation is empty");
+	});
+
+	QUnit.module("DynamicPage - Rendering - Title with Breadcrumbs", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageWithBreadCrumbs();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage - Rendering - Title with Breadcrumbs", function (assert) {
+		var oTitle = this.oDynamicPage.getTitle(),
+			oBreadcrumbs = oTitle.getAggregation("breadcrumbs");
+
+		// Assert: DynamicPageTitle content aggregation is not empty
+		assert.equal(oTitle.$("top").hasClass("sapFDynamicPageTitleTop"), true, "Title top DOM element is rendered");
+		assert.equal(oBreadcrumbs.$().length > 0, true, "Title Breadcrumbs DOM is rendered");
+
+		// Act: remove breadCrumbs aggregation
+		oTitle.setBreadcrumbs(null);
+		core.applyChanges();
+
+		// Assert: DynamicPageTitle content aggregation is empty
+		assert.equal(oTitle.$("top").length > 0, false,
+			"Title top DOM element is not rendered");
 	});
 
 
@@ -775,6 +885,113 @@
 		oPinButton.firePress();
 
 		assert.ok(oPinPressSpy.calledOnce, "Title Pin Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage On Collapse Button Press", function (assert) {
+		var oCollapseButtonPressSpy = this.spy(sap.f.DynamicPage.prototype, "_onCollapseHeaderVisualIndicatorPress"),
+			oCollapseButtonPressSpy2 = this.spy(sap.f.DynamicPageHeader.prototype, "_onCollapseButtonPress"),
+			oCollapseButton = this.oDynamicPage.getHeader()._getCollapseButton();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Arrange
+		oCollapseButton.firePress();
+
+		// Assert
+		assert.ok(oCollapseButtonPressSpy.calledOnce, "DPage: Collapse Header Visual Indicator Press Handler is called");
+		assert.ok(oCollapseButtonPressSpy2.calledOnce, "DPageHeader: Collapse Header Visual Indicator Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage On Collapse Button MouseOver", function (assert) {
+		var oCollapseButtonMouseOverSpy = this.spy(sap.f.DynamicPage.prototype, "_onVisualIndicatorMouseOver"),
+			oCollapseButtonMouseOverSpy2 = this.spy(sap.f.DynamicPageHeader.prototype, "_onCollapseButtonMouseOver"),
+			oCollapseButton = this.oDynamicPage.getHeader()._getCollapseButton(),
+			$oDynamicPage;
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Act
+		oCollapseButton.$().trigger("mouseover");
+		$oDynamicPage = this.oDynamicPage.$();
+
+		// Assert
+		assert.ok(oCollapseButtonMouseOverSpy.calledOnce, "DPage: Collapse Header Visual Indicator MouseOver Handler is called");
+		assert.ok(oCollapseButtonMouseOverSpy2.calledOnce, "DPageHeader: Collapse Header Visual Indicator MouseOver Handler is called");
+		assert.ok($oDynamicPage.hasClass("sapFDynamicPageTitleForceHovered"), "DPageTitle hover state applied");
+	});
+
+	QUnit.test("DynamicPage On Collapse Button MouseOut", function (assert) {
+		var oCollapseButtonMouseOutSpy = this.spy(sap.f.DynamicPage.prototype, "_onVisualIndicatorMouseOut"),
+			oCollapseButtonMouseOutSpy2 = this.spy(sap.f.DynamicPageHeader.prototype, "_onCollapseButtonMouseOut"),
+			oCollapseButton = this.oDynamicPage.getHeader()._getCollapseButton(),
+			$oDynamicPage;
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Act
+		oCollapseButton.$().trigger("mouseout");
+		$oDynamicPage = this.oDynamicPage.$();
+
+		// Assert
+		assert.ok(oCollapseButtonMouseOutSpy.calledOnce, "DP: Collapse Header Visual Indicator MouseOut Handler is called");
+		assert.ok(oCollapseButtonMouseOutSpy2.calledOnce, "DPHeader: Collapse Header Visual Indicator MouseOut Handler is called");
+		assert.ok(!$oDynamicPage.hasClass("sapFDynamicPageTitleForceHovered"), "DPageTitle hover state removed");
+	});
+
+	QUnit.test("DynamicPage On Expand Button Press", function (assert) {
+		var oExpandButtonPressSpy = this.spy(sap.f.DynamicPage.prototype, "_onExpandHeaderVisualIndicatorPress"),
+			oExpandButtonPressSpy2 = this.spy(sap.f.DynamicPageTitle.prototype, "_onExpandButtonPress"),
+			oExpandButton = this.oDynamicPage.getTitle()._getExpandButton();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Act
+		oExpandButton.firePress();
+
+		assert.ok(oExpandButtonPressSpy.calledOnce, "DPage: Expand Header Visual Indicator Press Handler is called");
+		assert.ok(oExpandButtonPressSpy2.calledOnce, "DPageTitle: Expand Header Visual Indicator Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage Title MouseOver", function (assert) {
+		var oTitleMouseOverSpy = this.spy(sap.f.DynamicPage.prototype, "_onTitleMouseOver"),
+			oTitleMouseOverSpy2 = this.spy(sap.f.DynamicPageTitle.prototype, "onmouseover"),
+			oTitle = this.oDynamicPage.getTitle(),
+			$oDynamicPage;
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Act
+		oTitle.$().trigger("mouseover");
+		$oDynamicPage = this.oDynamicPage.$();
+
+		// Assert
+		assert.ok(oTitleMouseOverSpy.calledOnce, "DP: Expand Header Visual Indicator MouseOver Handler is called");
+		assert.ok(oTitleMouseOverSpy2.calledOnce, "DPTitle: Expand Header Visual Indicator MouseOver Handler is called");
+		assert.ok($oDynamicPage.hasClass("sapFDynamicPageTitleForceHovered"), "DPageTitle hover state applied");
+	});
+
+	QUnit.test("DynamicPage Title MouseOut", function (assert) {
+		var oTitleMouseOverSpy = this.spy(sap.f.DynamicPage.prototype, "_onTitleMouseOut"),
+			oTitleMouseOverSpy2 = this.spy(sap.f.DynamicPageTitle.prototype, "onmouseout"),
+			oTitle = this.oDynamicPage.getTitle(),
+			$oDynamicPage;
+
+		// Act
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Act
+		oTitle.$().trigger("mouseout");
+		$oDynamicPage = this.oDynamicPage.$();
+
+		// Assert
+		assert.ok(oTitleMouseOverSpy.calledOnce, "DP: Expand Header Visual Indicator MouseOut Handler is called");
+		assert.ok(oTitleMouseOverSpy2.calledOnce, "DPTitle: Expand Header Visual Indicator MouseOut Handler is called");
+		assert.ok(!$oDynamicPage.hasClass("sapFDynamicPageTitleForceHovered"), "DPageTitle hover state removed");
 	});
 
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
@@ -956,16 +1173,34 @@
 		var $headerWrapper = this.oDynamicPage.$("header"),
 			$contentWrapper = this.oDynamicPage.$("contentWrapper"),
 			sHeaderId = this.oDynamicPage.getHeader().getId(),
-			oPinSpy = this.spy(this.oDynamicPage, "_updateScrollBar");
+			oPinSpy = this.spy(this.oDynamicPage, "_updateScrollBar"),
+			oDynamicPageTitle = this.oDynamicPage.getTitle(),
+			oDynamicPageHeader = this.oDynamicPage.getHeader(),
+			$oDynamicPage =  this.oDynamicPage.$(),
+			$oCollapseButton = oDynamicPageHeader.getAggregation("_collapseButton").$(),
+			$oExpandButton = oDynamicPageTitle.getAggregation("_expandButton").$();
 
 		assert.equal($contentWrapper.find("#" + sHeaderId).length, 1, "The header is in the Content wrapper initially");
 
+		// Act
 		this.oDynamicPage._pin();
+
+		// Assert
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header is in the Header wrapper when pinned");
 		assert.ok(oPinSpy.called, "The ScrollBar is updated");
+		assert.equal($oDynamicPage.hasClass("sapFDynamicPageHeaderPinned"), true, "Header is pinned, Pinned class applied to DynamicPage root element");
+		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Header is pinned, the Expand Button is not visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is pinned, the Collapse button is not visible");
 
+		// Act
 		this.oDynamicPage._unPin();
+
+		// Assert
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header remains in the header wrapper when unpinned until scroll");
+		assert.equal($oDynamicPage.hasClass("sapFDynamicPageHeaderPinned"), false, "Header is unpinned, Pinned class is not applied to DynamicPage root element");
+		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Header is unpinned and expanded, the Collapse button is visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), false, "Header is unpinned and expanded, the Expand button is not visible");
+
 	});
 
 	QUnit.test("DynamicPage _canSnapHeaderOnScroll() should return the correct value", function (assert) {
@@ -1241,7 +1476,7 @@
 		assert.equal(Math.ceil($wrapper.scrollTop()), iExpectedScrollPosition, "Scroll position is correctly offset");
 	});
 
-	QUnit.module("DynamicPage - Header initially collapsed", { //TODO: may rework this structure to match existing structure
+	QUnit.module("DynamicPage - Header initially collapsed", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPage();
 		},
@@ -1268,13 +1503,36 @@
 		assert.strictEqual(oHeader.$().hasClass("sapFDynamicPageHeaderHidden"), true, "Header is hidden");
 	});
 
+	QUnit.test("Expand and Collapse buttons initial visibility", function (assert) {
+		var oHeader = this.oDynamicPage.getHeader(),
+			oTitle = this.oDynamicPage.getTitle(),
+			$oCollapseButton,
+			$oExpandButton;
+
+		// Act
+		this.oDynamicPage.setHeaderExpanded(false);
+		this.oDynamicPage.setPreserveHeaderStateOnScroll(true); // will toggle the value of headerExpanded
+		this.oDynamicPage.setContent(oFactory.getContent(300)); // enough content to allow snap
+
+		oUtil.renderObject(this.oDynamicPage);
+		$oCollapseButton = oHeader.getAggregation("_collapseButton").$();
+		$oExpandButton = oTitle.getAggregation("_expandButton").$();
+
+		// Assert
+		assert.equal($oExpandButton.hasClass("sapUiHidden"), false, "Header is collapsed, Expand button is visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is collapsed, Collapsed button is not visible");
+	});
+
 	function assertHeaderSnapped(assert, bExpectedHeaderInContent, oDynamicPage, iExpectedScrollPosition) {
 
 		var sSnappedClass = "sapFDynamicPageTitleSnapped",
 			oHeader = oDynamicPage.getHeader(),
+			oTitle = oDynamicPage.getTitle(),
 			$header = oHeader.$(),
 			$wrapper = oDynamicPage.$wrapper,
-			$titleWrapper = oDynamicPage.$("header");
+			$titleWrapper = oDynamicPage.$("header"),
+			$oCollapseButton = oHeader.getAggregation("_collapseButton").$(),
+			$oExpandButton = oTitle.getAggregation("_expandButton").$();
 
 		iExpectedScrollPosition = iExpectedScrollPosition || 0;
 
@@ -1284,15 +1542,20 @@
 		assert.equal($titleWrapper.find($header).length > 0, !bExpectedHeaderInContent, "Header in the title value is correct");
 		assert.equal($wrapper.find($header).length > 0, bExpectedHeaderInContent, "Header in the content value is correct");
 		assert.equal($wrapper.scrollTop(), iExpectedScrollPosition, "Scroll position is correct");
+		assert.equal($oExpandButton.hasClass("sapUiHidden"), false, "Header is collapsed, Expand button is visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is collapsed, Collapsed button is not visible");
 	}
 
 	function assertHeaderExpanded(assert, bExpectedHeaderInContent, oDynamicPage, iExpectedScrollPosition) {
 
 		var sSnappedClass = "sapFDynamicPageTitleSnapped",
 			oHeader = oDynamicPage.getHeader(),
+			oTitle = oDynamicPage.getTitle(),
 			$header = oHeader.$(),
 			$wrapper = oDynamicPage.$wrapper,
-			$titleWrapper = oDynamicPage.$("header");
+			$titleWrapper = oDynamicPage.$("header"),
+			$oCollapseButton = oHeader.getAggregation("_collapseButton").$(),
+			$oExpandButton = oTitle.getAggregation("_expandButton").$();
 
 		iExpectedScrollPosition = iExpectedScrollPosition || 0;
 
@@ -1302,6 +1565,8 @@
 		assert.equal($titleWrapper.find($header).length > 0, !bExpectedHeaderInContent, "Header in the title value is correct");
 		assert.equal($wrapper.find($header).length > 0, bExpectedHeaderInContent, "Header in the content value is correct");
 		assert.equal($wrapper.scrollTop(), iExpectedScrollPosition, "Scroll position is correct");
+		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Header is expanded, Expand button is not visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), false, "Header is expanded, Collapsed button is visible");
 	}
 
 	QUnit.test("{headerExpanded: false; preserveHeaderStateOnScroll: false; _canSnapHeaderOnScroll: true}", function (assert) {

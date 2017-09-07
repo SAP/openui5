@@ -19,6 +19,7 @@ sap.ui.define([
 		renderer: function(rm, oControl) {
 			rm.write("<div><" + oControl.getElementTag());
 			rm.writeControlData(oControl);
+			rm.writeAttribute("tabindex", 0);
 			rm.addStyle("width", "100px");
 			rm.addStyle("height", "50px");
 			rm.writeStyles();
@@ -56,6 +57,7 @@ sap.ui.define([
 
 			rm.write("<div");
 			rm.writeControlData(oControl);
+			rm.writeAttribute("tabindex", 0);
 			rm.write(">");
 			for (i = 0; i < aTopItems.length; i++) {
 				rm.renderControl(aTopItems[i]);
@@ -153,6 +155,7 @@ sap.ui.define([
 	QUnit.test("Draggable elements without control id", function(assert) {
 		var oEvent = createjQueryDragEventDummy("dragstart", this.oControl, true);
 
+		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.equal(oEvent.dragSession, null, "No drag session was created for an element without relation to a UI5 control");
 	});
@@ -162,6 +165,7 @@ sap.ui.define([
 		var oDragSession;
 
 		oEvent = createjQueryDragEventDummy("dragstart", this.oControl);
+		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.notEqual(oEvent.dragSession, null,
 			"dragstart: A drag session was created for an element with a data-sap-ui control id");
@@ -245,6 +249,8 @@ sap.ui.define([
 		var oEventTarget = this.oControl.getDomRef();
 		var i;
 
+		oEventTarget.focus();
+
 		this.oControl.ondragstart = function(oEvent) {aEventSequence.push({processor: "control", eventType: "dragstart"});};
 		this.oControl.ondragenter = function(oEvent) {aEventSequence.push({processor: "control", eventType: "dragenter"});};
 		this.oControl.ondragover = function(oEvent) {aEventSequence.push({processor: "control", eventType: "dragover"});};
@@ -327,6 +333,7 @@ sap.ui.define([
 			oOnLongDragOverSpy._oEventTarget = oEvent.target;
 		});
 		var iLastLongDragoverCount = 0;
+		var oEvent;
 
 		function executeDelayed(iDelayInMs, fn) {
 			return new Promise(function(resolve) {
@@ -340,6 +347,7 @@ sap.ui.define([
 		function assertLongdragover(iMsSinceDragEnter) {
 			var iCallCount = Math.floor(iMsSinceDragEnter / 1000);
 
+			oEventTarget.focus();
 			oEventTarget.dispatchEvent(createNativeDragEventDummy("dragover"));
 			assert.strictEqual(oOnLongDragOverSpy.callCount, iCallCount,
 				"Time since dragenter: " + iMsSinceDragEnter + "ms - longdragover count: " + iCallCount);
@@ -351,9 +359,12 @@ sap.ui.define([
 		}
 
 		this.oControl.onlongdragover = oOnLongDragOverSpy;
-		DragAndDrop.preprocessEvent(createjQueryDragEventDummy("dragstart", this.oControl)); // Create drag session.
+		oEvent = createjQueryDragEventDummy("dragstart", this.oControl);
+		oEvent.target.focus();
+		DragAndDrop.preprocessEvent(oEvent); // Create drag session.
 
 		oEventTarget = oControlADomRef;
+		oEventTarget.focus();
 		oEventTarget.dispatchEvent(createNativeDragEventDummy("dragenter"));
 		assertLongdragover(0);
 		executeDelayed(500, function() {
@@ -434,10 +445,12 @@ sap.ui.define([
 
 		// init drag session
 		oEvent = createjQueryDragEventDummy("dragstart", oDiv1);
+		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent);
 
 		// validation
 		oEvent = createjQueryDragEventDummy("dragenter", oDiv2);
+		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent);
 
 		// act for top indicator

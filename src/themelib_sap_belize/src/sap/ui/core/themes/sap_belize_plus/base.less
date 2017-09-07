@@ -37,7 +37,7 @@
 @sapShell_Background: lighten(saturate(@sapBaseColor, 4), 20.3);
 @sapShell_BackgroundImage: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 15), 24), lighten(saturate(@sapShell_Background, 24), 22.7));
 @sapShell_BackgroundGradient: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 15), 24), lighten(saturate(@sapShell_Background, 24), 22.7));
-@sapShell_TextColor: lighten(@sapTextColor, 2);
+@sapShell_TextColor: contrast(@sapShell_Background, lighten(@sapTextColor, 2), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Background: lighten(@sapBaseColor, 2);
 @sapButton_BorderColor: lighten(@sapButton_Background, 36);

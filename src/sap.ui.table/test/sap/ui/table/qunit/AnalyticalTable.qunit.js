@@ -1,6 +1,8 @@
-/*global QUnit,sinon*/
+/*global QUnit, sinon */
 
-(function () {
+sap.ui.require([
+	"sap/ui/qunit/QUnitUtils"
+], function(qutils) {
 	"use strict";
 
 	// mapping of global function calls
@@ -111,7 +113,7 @@
 
 		var oTable = new sap.ui.table.AnalyticalTable("analytical_table0", mParams);
 		oTable.setModel(this.oModel);
-		oTable.placeAt("content");
+		oTable.placeAt("qunit-fixture");
 
 		return oTable;
 	}
@@ -324,6 +326,7 @@
 
 		function doTest(oTable) {
 			/*eslint-disable new-cap */
+
 			var oEvent = jQuery.Event({type: "contextmenu"});
 			/*eslint-enable new-cap */
 			oEvent.target = oTable.getDomRef("rows-row0-col3");
@@ -782,7 +785,7 @@
 
 		this._oColumn.setFilterProperty("m2_filterable");
 		this._oColumn.setShowFilterMenuEntry(true);
-		assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+		assert.ok(this._oColumn.isFilterableByMenu(), "Measure fields marked as filterable --> still filterable by menu: " +
 			"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
 			"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
 
@@ -819,5 +822,4 @@
 		assert.ok(oMenu instanceof sap.ui.table.AnalyticalColumnMenu, "Menu available");
 		assert.equal(oMenu.getId(), this._oColumn.getId() + "-menu", "Menu Id");
 	});
-
-}());
+});

@@ -1,4 +1,4 @@
-/*global QUnit,sinon*/
+/*global QUnit*/
 
 (function(){
 	"use strict";
@@ -91,30 +91,6 @@
 		var oAggregationDesignTimeMetadata = this.oElementDesignTimeMetadata.createAggregationDesignTimeMetadata("testAggregation");
 		assert.equal(oAggregationDesignTimeMetadata.getMetadata().getName(), "sap.ui.dt.AggregationDesignTimeMetadata", "then aggregation designtime metadata class is created");
 		assert.equal(oAggregationDesignTimeMetadata.getLibraryName(), "fake.lib", "then the elements libraryName is passed to the AggregationDesignTimeMetadata");
-	});
-
-	QUnit.test("when asked for getRelevantContainer without function in ElementDesignTimeMetadata", function(assert) {
-		var oControl = new sap.ui.core.Control();
-		var stubControl = sinon.stub(oControl, "getParent");
-		this.oElementDesignTimeMetadata.getRelevantContainer(oControl);
-		stubControl.restore();
-		sinon.assert.calledOnce(stubControl);
-	});
-
-	QUnit.test("when asked for getRelevantContainer with function in ElementDesignTimeMetadata", function(assert) {
-		var fnStubRelvantContainer = sinon.stub();
-		var oElementDesignTimeMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
-			data : {
-				getRelevantContainer : fnStubRelvantContainer
-			}
-		});
-
-		var oControl = new sap.ui.core.Control();
-		oElementDesignTimeMetadata.getRelevantContainer(oControl);
-
-		sinon.assert.calledWith(fnStubRelvantContainer, oControl);
-
-		oElementDesignTimeMetadata.destroy();
 	});
 
 	//TODO: Remove when DTMetadata propagation is finalized

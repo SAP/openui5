@@ -9,9 +9,6 @@ sap.ui.define([
 
 	/* page not found tests */
 	opaTest("Should see the resource not found page when changing to an invalid hash", function (Given, When, Then) {
-		//Arrangement
-		Given.iStartMyAppOnTheDetailsTab();
-
 		//Actions
 		When.onTheOverviewPage.iWaitUntilTheTableIsLoaded();
 		When.onTheBrowser.iChangeTheHashToSomethingInvalid();
@@ -35,7 +32,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeResourceNotFound().
-		and.iTeardownMyAppFrame();
+		and.iTeardownMyApp();
 	});
 
 	/* no data text tests for all 4 tabs */
@@ -82,7 +79,7 @@ sap.ui.define([
 		// Assertions
 		Then.onThePreviewPage.iShouldSeeThePreviewArea().
 			and.iShouldSeeTheIcon("error").
-			and.iTeardownMyAppFrame();
+			and.iTeardownMyApp();
 	});
 
 });

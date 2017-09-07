@@ -31,10 +31,11 @@
 		sap.ui.getCore().setModel(model);
 
 		var oDeepBinding = new composites.DeepBinding({ id: "deepBinding" });
+		oDeepBinding.setText("Hello !");
 		oDeepBinding.bindAggregation("fcItems", {
 			path: "/names",
 			template: new sap.m.Panel({
-				headerText: "{firstName}",
+				headerText: "{$this>/text}",
 				content: new sap.m.Button({ text: "{lastName}" })
 			})
 		});

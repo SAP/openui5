@@ -123,7 +123,7 @@ sap.ui.define([
 		this._oInput =  new SearchField({
 			width : "100%",
 			liveChange : [this._updateModelFilter, this]
-		}).addStyleClass("resourceListIF");
+		});
 
 		// Button for sorting the List
 		var oResortButton = new Button({

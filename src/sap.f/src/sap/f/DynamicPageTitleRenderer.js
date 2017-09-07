@@ -25,33 +25,59 @@ sap.ui.define([], function () {
 		oRm.writeControlData(oDynamicPageTitle);
 		oRm.writeAccessibilityState({role: "heading", level: 2});
 		oRm.addClass("sapFDynamicPageTitle");
+		oRm.writeClasses();
+		oRm.write(">");
+
+		this._renderTopArea(oRm, oDynamicPageTitleState);
+		this._renderMainArea(oRm, oDynamicPageTitleState);
+		oRm.renderControl(oDynamicPageTitleState.expandButton);
+
+		oRm.write("<span id=\"" + oDynamicPageTitleState.id + "-Descr\" class=\"sapUiInvisibleText\">" + oDynamicPageTitleState.ariaText + "</span>");
+		oRm.write("</div>");
+	};
+
+	DynamicPageTitleRenderer._renderTopArea = function (oRm, oDynamicPageTitleState) {
+		if (oDynamicPageTitleState.breadcrumbs) {
+			oRm.write("<div id=" + oDynamicPageTitleState.id + "-top");
+			oRm.addClass("sapFDynamicPageTitleTop");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.renderControl(oDynamicPageTitleState.breadcrumbs);
+			oRm.write("</div>");
+		}
+	};
+
+	DynamicPageTitleRenderer._renderMainArea = function (oRm, oDynamicPageTitleState) {
+		oRm.write("<div id=" + oDynamicPageTitleState.id + "-main");
+		oRm.addClass("sapFDynamicPageTitleMain");
 		if (!oDynamicPageTitleState.hasContent) {
-			oRm.addClass("sapFDynamicPageTitleWithoutContent");
+			oRm.addClass("sapFDynamicPageTitleMainNoContent");
 		}
 		oRm.writeClasses();
 		oRm.write(">");
+
 		this._renderLeftArea(oRm, oDynamicPageTitleState);
 		this._renderRightArea(oRm, oDynamicPageTitleState);
-		oRm.write("<span id=\"" + oDynamicPageTitleState.id + "-Descr\" class=\"sapUiInvisibleText\">" + oDynamicPageTitleState.ariaText + "</span>");
+
 		oRm.write("</div>"); // Root end.
 	};
 
 	DynamicPageTitleRenderer._renderLeftArea = function (oRm, oDynamicPageTitleState) {
 		// Left Area
 		oRm.write("<div");
-		oRm.addClass("sapFDynamicPageTitleLeft");
+		oRm.addClass("sapFDynamicPageTitleMainLeft");
 		oRm.writeClasses();
 		oRm.write(">");
 
 		oRm.write("<div");
 		oRm.writeAttribute("id", oDynamicPageTitleState.id + "-left-inner");
-		oRm.addClass("sapFDynamicPageTitleLeftInner");
+		oRm.addClass("sapFDynamicPageTitleMainLeftInner");
 		oRm.addClass(oDynamicPageTitleState.isPrimaryAreaBegin ? "sapFDynamicPageTitleAreaHighPriority" : "sapFDynamicPageTitleAreaLowPriority");
 		oRm.writeClasses();
 		oRm.write(">");
 		// Left Area -> heading aggregation
 		oRm.write("<div");
-		oRm.addClass("sapFDynamicPageTitleLeftHeading");
+		oRm.addClass("sapFDynamicPageTitleMainLeftHeading");
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oDynamicPageTitleState.heading);
@@ -60,7 +86,7 @@ sap.ui.define([], function () {
 		// Left Area -> snappedContent/expandContent aggregation
 		if (oDynamicPageTitleState.hasAdditionalContent) {
 			oRm.write("<div");
-			oRm.addClass("sapFDynamicPageTitleLeftSnappedExpandContent");
+			oRm.addClass("sapFDynamicPageTitleMainLeftSnappedExpandContent");
 			oRm.writeClasses();
 			oRm.write(">");
 			if (oDynamicPageTitleState.hasSnappedContent) {
@@ -76,7 +102,7 @@ sap.ui.define([], function () {
 		// Content aggregation
 		oRm.write("<div");
 		oRm.writeAttributeEscaped("id", oDynamicPageTitleState.id + "-content");
-		oRm.addClass("sapFDynamicPageTitleContent");
+		oRm.addClass("sapFDynamicPageTitleMainContent");
 		oRm.addClass(oDynamicPageTitleState.isPrimaryAreaBegin ? "sapFDynamicPageTitleAreaLowPriority" : "sapFDynamicPageTitleAreaHighPriority");
 		oRm.writeClasses();
 		oRm.write(">");
@@ -86,18 +112,18 @@ sap.ui.define([], function () {
 		// Dummy invisible element just to let display:flex with justify-content: space between
 		// to allocate space between the Middle area and the Actions,
 		// otherwise the areas would be stickied together.
-		oRm.write("<span class=\"sapFDynamicPageTitleInvisibleEl\"></span>");
+		oRm.write("<span class=\"sapFDynamicPageTitleMainInvisibleEl\"></span>");
 		oRm.write("</div>");
 	};
 
 	DynamicPageTitleRenderer._renderRightArea = function (oRm, oDynamicPageTitleState) {
 		// Right Area
 		oRm.write("<div");
-		oRm.addClass("sapFDynamicPageTitleRight");
+		oRm.addClass("sapFDynamicPageTitleMainRight");
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.write("<div");
-		oRm.addClass("sapFDynamicPageTitleRightActions");
+		oRm.addClass("sapFDynamicPageTitleMainRightActions");
 		oRm.writeClasses();
 		oRm.write(">");
 		if (oDynamicPageTitleState.hasActions) {

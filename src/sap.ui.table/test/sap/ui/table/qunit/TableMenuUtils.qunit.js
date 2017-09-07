@@ -1,6 +1,9 @@
-/*global QUnit,qutils,oTable*/
+/*global QUnit, oTable */
 
-(function () {
+sap.ui.require([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/TableUtils"
+], function(qutils, TableUtils) {
 	"use strict";
 
 	// mapping of global function calls
@@ -14,70 +17,64 @@
 	var iNumberOfRows = window.iNumberOfRows;
 
 	//************************************************************************
-	// Helper Functions
-	//************************************************************************
-
-	jQuery.sap.require("sap.ui.table.TableUtils");
-	var TableUtils = sap.ui.table.TableUtils;
-
-	//************************************************************************
 	// Test Code
 	//************************************************************************
 
 	QUnit.module("Misc", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-	QUnit.test("Connection to TableUtils", function (assert) {
+	QUnit.test("Connection to TableUtils", function(assert) {
 		assert.ok(!!TableUtils.Menu, "MenuUtils namespace available");
 		assert.ok(TableUtils.Menu.TableUtils === TableUtils, "Dependency forwarding of TableUtils correct");
 	});
 
 	QUnit.module("Context Menus", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		},
-		assertAllColumnContextMenusClosed: function (assert) {
+		assertAllColumnContextMenusClosed: function(assert) {
 			var oColumns = oTable.getColumns();
 			for (var i = 0; i < oColumns.length; i++) {
 				var oColumn = oColumns[i];
 				this.assertColumnContextMenuOpen(assert, oColumn.getIndex(), false);
 			}
 		},
-		assertColumnContextMenuOpen: function (assert, iColumnIndex, bOpen) {
+		assertColumnContextMenuOpen: function(assert, iColumnIndex, bOpen) {
 			var oMenu = oTable.getColumns()[iColumnIndex].getMenu();
 			var bMenuOpen = oMenu.bOpen;
 			assert.strictEqual(bMenuOpen, bOpen,
 				"The column context menu is" + (bOpen ? " " : " not ") + "open (Column: " + (iColumnIndex + 1) + ")");
 		},
-		assertDataCellContextMenuOpen: function (assert, iColumnIndex, iRowIndex, bOpen) {
+		assertDataCellContextMenuOpen: function(assert, iColumnIndex, iRowIndex, bOpen) {
 			var bMenuOpen = oTable._oCellContextMenu && oTable._oCellContextMenu.bOpen;
 			var oCellElement = TableUtils.getCell(oTable, oTable.getRows()[iRowIndex].getCells()[iColumnIndex].getDomRef())[0];
 			var bMenuOpenAtSpecifiedCell = bMenuOpen && oTable._oCellContextMenu.oOpenerRef === oCellElement;
 			assert.strictEqual(bMenuOpenAtSpecifiedCell, bOpen,
-				"The data cell context menu is" + (bOpen ? " " : " not ") + "open (Column: " + (iColumnIndex + 1) + ", Row: " + (iRowIndex + 1) + ")");
+				"The data cell context menu is" + (bOpen ? " " : " not ") + "open (Column: " + (iColumnIndex + 1)
+				+ ", Row: " + (iRowIndex + 1) + ")");
 		},
-		assertFirstMenuItemHovered: function (assert, oMenu, bHovered) {
+		assertFirstMenuItemHovered: function(assert, oMenu, bHovered) {
 			var bFirstItemHovered = oMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
 			assert.strictEqual(bFirstItemHovered, bHovered,
 				"The first item in the menu is" + (bHovered ? " " : " not ") + "hovered");
 		},
-		assertNoColumnHeaderCellMenusExists: function (assert) {
+		assertNoColumnHeaderCellMenusExists: function(assert) {
 			var oColumns = oTable.getColumns();
 			for (var i = 0; i < oColumns.length; i++) {
 				var oColumn = oColumns[i];
 				this.assertColumnHeaderCellMenuExists(assert, oColumn.$(), false);
 			}
 		},
-		assertColumnHeaderCellMenuExists: function (assert, $Column, bExists) {
+		assertColumnHeaderCellMenuExists: function(assert, $Column, bExists) {
 			var iColumnIndex = $Column.data("sap-ui-colindex");
 
 			var bCellExists = $Column.find(".sapUiTableColCell").is(":hidden");
@@ -88,14 +85,14 @@
 			assert.strictEqual(bExists, bCellMenuExists,
 				"The cell menu does" + (bExists ? " " : " not ") + "exist (Column: " + (iColumnIndex + 1) + ")");
 		},
-		assertColumnHeaderCellMenuButtonExists: function (assert, $Column, bExists) {
+		assertColumnHeaderCellMenuButtonExists: function(assert, $Column, bExists) {
 			var iColumnIndex = $Column.data("sap-ui-colindex");
 
 			var bContextMenuButtonExists = $Column.find(".sapUiTableColCellMenu > .sapUiTableColDropDown").length > 0;
 			assert.strictEqual(bExists, bContextMenuButtonExists,
 				"The context menu button does" + (bExists ? " " : " not ") + "exist (Column: " + (iColumnIndex + 1) + ")");
 		},
-		assertColumnHeaderCellResizeButtonExists: function (assert, $Column, bExists) {
+		assertColumnHeaderCellResizeButtonExists: function(assert, $Column, bExists) {
 			var iColumnIndex = $Column.data("sap-ui-colindex");
 
 			var bResizeButtonExists = $Column.find(".sapUiTableColCellMenu > .sapUiTableColResizer").length > 0;
@@ -104,7 +101,7 @@
 		}
 	});
 
-	QUnit.test("openContextMenu", function (assert) {
+	QUnit.test("openContextMenu", function(assert) {
 		var mActualParameters;
 		var mExpectedParameters;
 
@@ -144,7 +141,7 @@
 		var $ColumnB = oColumnB.$();
 		oColumnB.setSortProperty("dummy");
 
-		var oColumnSelectEventHandler = this.spy(function (oEvent) {
+		var oColumnSelectEventHandler = this.spy(function(oEvent) {
 			mActualParameters = oEvent.mParameters;
 		});
 		oTable.attachColumnSelect(oColumnSelectEventHandler);
@@ -182,7 +179,7 @@
 			id: oTable.getId()
 		};
 
-		oTable.attachEventOnce("columnSelect", function (oEvent) {
+		oTable.attachEventOnce("columnSelect", function(oEvent) {
 			oEvent.preventDefault();
 		});
 
@@ -252,7 +249,7 @@
 		var oCellB = oTable.getRows()[0].getCells()[1];
 		var $CellB = oCellB.$();
 
-		var oCellContextMenuEventHandler = this.spy(function (oEvent) {
+		var oCellContextMenuEventHandler = this.spy(function(oEvent) {
 			mActualParameters = oEvent.mParameters;
 		});
 		oTable.attachCellContextmenu(oCellContextMenuEventHandler);
@@ -311,7 +308,7 @@
 			"The CellContextMenu event object contains the correct parameters");
 	});
 
-	QUnit.test("openColumnContextMenu", function (assert) {
+	QUnit.test("openColumnContextMenu", function(assert) {
 		var oColumnA = oTable.getColumns()[0];
 		var oColumnB = oTable.getColumns()[1];
 
@@ -354,7 +351,7 @@
 		this.assertFirstMenuItemHovered(assert, oColumnB.getMenu(), true);
 	});
 
-	QUnit.test("closeColumnContextMenu", function (assert) {
+	QUnit.test("closeColumnContextMenu", function(assert) {
 		// Open the column context menu.
 		oTable.getColumns()[0].setSortProperty("dummy");
 		TableUtils.Menu.openColumnContextMenu(oTable, 0);
@@ -381,7 +378,7 @@
 		this.assertColumnContextMenuOpen(assert, 0, false);
 	});
 
-	QUnit.test("openDataCellContextMenu", function (assert) {
+	QUnit.test("openDataCellContextMenu", function(assert) {
 		oTable.setVisibleRowCount(iNumberOfRows + 1);
 		sap.ui.getCore().applyChanges();
 
@@ -467,7 +464,7 @@
 			"There is still only one menu item select event handler attached");
 	});
 
-	QUnit.test("openDataCellContextMenu - Filter & Fire CustomFilter event", function (assert) {
+	QUnit.test("openDataCellContextMenu - Filter & Fire CustomFilter event", function(assert) {
 		var oColumn = oTable.getColumns()[0];
 		oColumn.setFilterProperty("A");
 
@@ -508,7 +505,7 @@
 			"The CustomFilter event handler has been called with the correct arguments");
 	});
 
-	QUnit.test("closeDataCellContextMenu", function (assert) {
+	QUnit.test("closeDataCellContextMenu", function(assert) {
 		var oColumn = oTable.getColumns()[0];
 		this.stub(oColumn, "isFilterableByMenu").returns(true);
 
@@ -524,7 +521,7 @@
 		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
 	});
 
-	QUnit.test("cleanupDataCellContextMenu", function (assert) {
+	QUnit.test("cleanupDataCellContextMenu", function(assert) {
 		var oColumn = oTable.getColumns()[0];
 		this.stub(oColumn, "isFilterableByMenu").returns(true);
 
@@ -545,7 +542,7 @@
 		assert.ok(!oTable._oCellContextMenu, "Context menu does not exist");
 	});
 
-	QUnit.test("applyColumnHeaderCellMenu", function (assert) {
+	QUnit.test("applyColumnHeaderCellMenu", function(assert) {
 		// Invalid parameters: No cell menu will be applied.
 		TableUtils.Menu.applyColumnHeaderCellMenu();
 		this.assertNoColumnHeaderCellMenusExists(assert);
@@ -605,7 +602,7 @@
 		this.assertColumnHeaderCellResizeButtonExists(assert, $Column, true);
 	});
 
-	QUnit.test("removeColumnHeaderCellMenu", function (assert) {
+	QUnit.test("removeColumnHeaderCellMenu", function(assert) {
 		var $Column = getColumnHeader(0);
 
 		// Apply the cell menu.
@@ -621,7 +618,7 @@
 		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
 	});
 
-	QUnit.test("removeColumnHeaderCellMenu - On Focus Out", function (assert) {
+	QUnit.test("removeColumnHeaderCellMenu - On Focus Out", function(assert) {
 		var spy = this.spy(TableUtils.Menu, "removeColumnHeaderCellMenu");
 		var $Column = getColumnHeader(0, true, assert);
 
@@ -636,5 +633,4 @@
 		assert.ok(spy.called, "removeColumnHeaderCellMenu was called when the column header cell has lost the focus");
 		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
 	});
-
-}());
+});

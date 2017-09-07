@@ -134,11 +134,15 @@ sap.ui.define([
 				resolve(mResult);
 			}
 		}.bind(this)).then(function(mResult) {
-			var aVariants = aChanges.filter(function(oChange) {
-				return oChange.fileType === "variant";
-			});
-			var aFilteredChanges = aChanges.filter(function(oChange) {
-				return oChange.fileType === "change";
+			var aVariants = [];
+			var aFilteredChanges = [];
+
+			aChanges.forEach(function(oChange) {
+				if (oChange.fileType === "variant" && oChange.variantManagementReference) {
+					aVariants.push(oChange);
+				} else {
+					aFilteredChanges.push(oChange);
+				}
 			});
 
 			mResult = this._createChangesMap(mResult, aVariants);

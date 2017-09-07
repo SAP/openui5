@@ -464,10 +464,8 @@
 		this.oRta.getPlugins()["contextMenu"].open({ pageX: 0, pageY: 0 }, oOverlay);
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
-		assert.ok(oContextMenu.bOpen, "then the context menu opens");
-		assert.equal(oContextMenu.getItems().length, 2, " and only 2 Menu Items are available, add section is not available");
-		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_CUT", "cut field is available");
-		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_PASTE", "paste field is available");
+		assert.notOk(oContextMenu.bOpen, "then the context menu does not open");
+		assert.equal(oContextMenu.getItems().length, 0, " and no Menu Items are available, add section is not available");
 	});
 
 	QUnit.module("Given RTA is started...", {

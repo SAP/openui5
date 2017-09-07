@@ -8,26 +8,26 @@
 		title="{i18n>ResumeOf} {FirstName} {LastName}"
 		id="employeeResumePage"
 		showNavButton="true"
-		navButtonPress="onNavBack"
-		class="sapUiResponsiveContentPadding">
+		navButtonPress="onNavBack">
 		<content>
 			<IconTabBar
 				id="iconTabBar"
+				headerBackgroundDesign="Transparent"
 				class="sapUiResponsiveContentPadding"
 				binding="{Resume}"
 				select="onTabSelect"
 				selectedKey="{view>/selectedTabKey}">
 				<items>
-					<IconTabFilter id="infoTab" text="{i18n>Info}" key="Info">
+					<IconTabFilter id="infoTab" text="{i18n>tabInfo}" key="Info">
 						<Text text="{Information}" />
 					</IconTabFilter>
-					<IconTabFilter id="projectsTab" text="{i18n>Projects}" key="Projects">
+					<IconTabFilter id="projectsTab" text="{i18n>tabProjects}" key="Projects">
 						<mvc:XMLView viewName="sap.ui.demo.nav.view.employee.ResumeProjects"></mvc:XMLView>
 					</IconTabFilter>
-					<IconTabFilter id="hobbiesTab" text="{i18n>Hobbies}" key="Hobbies">
+					<IconTabFilter id="hobbiesTab" text="{i18n>tabHobbies}" key="Hobbies">
 						<Text text="{Hobbies}" />
 					</IconTabFilter>
-					<IconTabFilter id="notesTab" text="{i18n>Notes}" key="Notes">
+					<IconTabFilter id="notesTab" text="{i18n>tabNotes}" key="Notes">
 						<Text text="{Notes}" />
 					</IconTabFilter>
 				</items>

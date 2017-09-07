@@ -147,6 +147,28 @@
                  }
             });
 
+             var oMessageViewDialogWithOneHeader = new sap.m.MessageView("mMView5", {
+                showDetailsPageHeader: false,
+                itemSelect: function () {
+                    _oBackButton.setVisible(true);
+                },
+                 items: [
+                new sap.m.MessagePopoverItem("mv-item1", {
+                    type: "Error",
+                    title: "Error message",
+                    description: "First Error message description"
+                })]
+            });
+
+			var _oBackButton = new sap.m.Button("mMView5-back", {
+				icon: sap.ui.core.IconPool.getIconURI("nav-back"),
+				visible: false,
+				press: function () {
+					oMessageViewDialogWithOneHeader.navigateBack();
+					this.setVisible(false);
+				}
+			});
+
             // Dialog will have no padding because of compatVersion setting on main script
             var oDialog1 = new sap.m.Dialog({
 //                title: "Dialog with MessageView",
@@ -169,6 +191,12 @@
                         text: "MessageView in Dialog",
                         press: function () {
                             oDialog1.open();
+                        }
+                    }),
+                    new sap.m.Button('mView-in-dialog-btn-2', {
+                        text: "MV in Dialog with hidden details header",
+                        press: function () {
+                            oDialogWithOneHeader.open();
                         }
                     })
                 ]
@@ -229,6 +257,28 @@
                content: [
                     oMessageViewPopoverWithOneItem
                ]
+            });
+
+            var oDialogWithOneHeader = new sap.m.Dialog("dialog2", {
+                title: "Dialog with MessageView",
+                content: oMessageViewDialogWithOneHeader,
+                resizable: true,
+                state: 'Error',
+                beginButton: new sap.m.Button({
+                    press: function () {
+                        oDialogWithOneHeader.close();
+                    },
+                    text: "Close"
+                }),
+                customHeader: new sap.m.Bar({
+                    contentMiddle: [
+                        new sap.m.Text({ text: "Error"})
+                    ],
+                    contentLeft: [_oBackButton]
+                }),
+                contentHeight: "300px",
+                contentWidth: "500px",
+                verticalScrolling: false
             });
 
             var oMessagePopoverButton = new sap.m.Button("mPopoverButton", {

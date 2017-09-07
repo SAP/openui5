@@ -18,6 +18,12 @@ QUnit.module("ODataTreeBindingFlat - Tree State: Expand", {
 	}
 });
 
+function getLogCallsFromSpy(oSpy, sText) {
+	return oSpy.args.reduce(function(iCount, args) {
+		return iCount + (args[0].indexOf(sText) !== -1);
+	}, 0);
+}
+
 QUnit.test("Restore tree state: Expand server index node", function(assert){
 
 	var done = assert.async();
@@ -55,12 +61,13 @@ QUnit.test("Restore tree state: Expand server index node", function(assert){
 				assert.ok(oBinding.findNode(1) === undefined, "All children removed");
 			});
 			oBinding.attachChange(handler3);
+			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				// Success: Promise resolved
 				assert.ok(Array.isArray(aResponseData), "Promise should be resolved");
+				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error logged");
+				oLogSpy.restore();
 				done();
-			}, function(oError) {
-				assert.ok(false, "Promise should be resolved");
 			});
 		}
 		function handler3 (oEvent) {
@@ -125,12 +132,13 @@ QUnit.test("Restore tree state: Expand deep node", function(assert){
 				assert.ok(oBinding.findNode(2) === undefined, "All children removed")
 			});
 			oBinding.attachChange(handler4);
+			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				// Success: Promise resolved
 				assert.ok(Array.isArray(aResponseData), "Promise should be resolved");
+				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error logged");
+				oLogSpy.restore();
 				done();
-			}, function(oError) {
-				assert.ok(false, "Promise should be resolved");
 			});
 		}
 		function handler4 (oEvent) {
@@ -194,11 +202,11 @@ QUnit.test("Restore tree state: Expand error handling, the whole batch request f
 			oBinding.attachChange(handler3);
 
 			that.fakeService.setServiceStatus({ batch: 500 });
+			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function() {
-				assert.ok(false, "Shouldn't be called.");
-			}, function(aResponseData) {
-				assert.ok(Array.isArray(aResponseData), "Promise should be rejected");
+				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 2, "Two errors got logged");
 				that.fakeService.resetServiceStatus();
+				oLogSpy.restore();
 				done();
 			});
 		}
@@ -256,12 +264,11 @@ QUnit.test("Restore tree state: Expand error handling, the whole batch request i
 			oBinding.attachChange(oChangeSpy);
 
 			that.fakeService.setServiceStatus({ batch: "abort" });
+			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function() {
-				assert.ok(false, "Shouldn't be called.");
-			}, function(aResponseData) {
-				assert.ok(Array.isArray(aResponseData), "Promise should be rejected");
-				assert.ok(oChangeSpy.notCalled, "no change event is fired");
+				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error got logged");
 				that.fakeService.resetServiceStatus();
+				oLogSpy.restore();
 				done();
 			});
 		}
@@ -319,12 +326,11 @@ QUnit.test("Restore tree state: Expand error handling, restore of deep nodes fai
 				}
 			});
 
+			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function() {
-				// Success: Promise resolved
-				assert.ok(false, "Promise should be rejected");
-			}, function(aResponseData) {
-				assert.ok(Array.isArray(aResponseData), "Promise should be rejected");
+				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 1, "One error got logged");
 				that.fakeService.resetServiceStatus();
+				oLogSpy.restore();
 				done();
 			});
 		}
@@ -390,12 +396,11 @@ QUnit.test("Restore tree state: Expand error handling, restore of server index n
 				}
 			});
 
+			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function() {
-				// Success: Promise resolved
-				assert.ok(false, "Promise should be rejected");
-			}, function(aResponseData) {
-				assert.ok(Array.isArray(aResponseData), "Promise should be rejected");
+				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 1, "One error got logged");
 				that.fakeService.resetServiceStatus();
+				oLogSpy.restore();
 				done();
 			});
 		}
@@ -460,12 +465,11 @@ QUnit.test("Restore tree state: Expand error handling, all sub requests fail", f
 				}
 			});
 
+			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function() {
-				// Success: Promise resolved
-				assert.ok(false, "Promise should be rejected");
-			}, function(aResponseData) {
-				assert.ok(Array.isArray(aResponseData), "Promise should be rejected");
+				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 2, "Two error got logged");
 				that.fakeService.resetServiceStatus();
+				oLogSpy.restore();
 				done();
 			});
 		}
@@ -526,11 +530,13 @@ QUnit.test("Restore tree state: Collapse server index node", function(assert){
 				assert.ok(oBinding.findNode(0) === undefined, "All nodes are removed");
 			});
 			oBinding.attachChange(handler2);
+
+			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				assert.ok(Array.isArray(aResponseData), "The promise should be resolved");
+				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error got logged");
+				oLogSpy.restore();
 				done();
-			}, function() {
-				assert.ok(false, "Promise should be resolved");
 			});
 		}
 		function handler2 (oEvent) {
@@ -592,10 +598,12 @@ QUnit.test("Restore tree state: Collapse deep node", function(assert){
 			assert.notOk(oBinding.isExpanded(1), "First child node is collapsed");
 
 			oBinding.attachChange(handler4);
-			oBinding._restoreTreeState().then(function() {
+			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			oBinding._restoreTreeState().then(function(aResponseData) {
+				assert.ok(Array.isArray(aResponseData), "The promise should be resolved");
+				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error got logged");
+				oLogSpy.restore();
 				done();
-			}, function() {
-				assert.ok(false, "Promise should be resolved");
 			});
 		}
 
@@ -656,11 +664,11 @@ QUnit.test("Restore tree state: Collapse error handling, whole batch fails", fun
 				}
 			});
 
+			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function() {
-				assert.ok(false, "Promise shouldn't be resolved");
-			}, function(aResponseData) {
-				assert.ok(Array.isArray(aResponseData), "Promise should be rejected with an array");
+				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 1, "One error got logged");
 				that.fakeService.resetServiceStatus();
+				oLogSpy.restore();
 				done();
 			});
 		}
@@ -672,4 +680,150 @@ QUnit.test("Restore tree state: Collapse error handling, whole batch fails", fun
 		oBinding.attachChange(handler1);
 		oBinding.getContexts(0, 120, 0);
 	});
+});
+
+QUnit.test("Restore tree state: adapt server node sections", function(assert) {
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 0,
+		restoreTreeStateAfterChange: true
+	});
+
+	var aSections = [
+		{ iSkip: 0, iTop: 20 },
+		{ iSkip: 80, iTop: 20 },
+		{ iSkip: 120, iTop: 40 },
+		{ iSkip: 200, iTop: 40 }
+	];
+
+	var aRemovedNodes = [
+		{ serverIndex: 10, magnitude: 5 },
+		{ serverIndex: 17, magnitude: 2 },
+		{ serverIndex: 90, magnitude: 15 },
+		{ serverIndex: 120, magnitude: 50 },
+		{ serverIndex: 200, magnitude: 10 }
+	];
+
+	oBinding._adaptSections(aSections, {
+		removed: aRemovedNodes
+	});
+
+	var aExpectedSections = [
+		{ iSkip:0, iTop:11 },
+		{ iSkip:71, iTop:10 },
+		{ iSkip:124, iTop:29 }
+	];
+
+	assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+});
+
+QUnit.test("Restore tree state: adapt deep node sections", function(assert) {
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 0,
+		restoreTreeStateAfterChange: true
+	});
+
+	var aSections = [
+		{ iSkip: 0, iTop: 20 },
+		{ iSkip: 80, iTop: 20 },
+		{ iSkip: 120, iTop: 40 },
+		{ iSkip: 200, iTop: 40 }
+	];
+
+	var aRemovedNodes = [
+		{ positionInParent: 0, magnitude: 0 },
+		{ positionInParent: 1, magnitude: 3 },
+		{ positionInParent: 2, magnitude: 0 },
+		{ positionInParent: 5, magnitude: 2 },
+		{ positionInParent: 19, magnitude: 0 },
+		{ positionInParent: 85, magnitude: 15 },
+		{ positionInParent: 200, magnitude: 0 },
+		{ positionInParent: 205, magnitude: 0 },
+		{ positionInParent: 239, magnitude: 0 },
+	];
+
+	oBinding._adaptSections(aSections, {
+		removed: aRemovedNodes
+	}, {
+		indexName: "positionInParent",
+		ignoreMagnitude: true
+	});
+
+	var aExpectedSections = [
+		{ iSkip: 0, iTop: 15 },
+		{ iSkip: 75, iTop: 19 },
+		{ iSkip: 114, iTop: 40 },
+		{ iSkip: 194, iTop: 37 }
+	];
+
+	assert.deepEqual(aSections, aExpectedSections, "The deep sections are correctly adapted");
+});
+
+QUnit.test("Restore tree state: after delete server index nodes", function(assert) {
+	var done = assert.async();
+
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 4,
+		restoreTreeStateAfterChange: true
+	});
+
+	var sDeletedKey = "ZTJ_G4_C_GLHIERResults('1.2.4.0.1.2.4.0%3A0.14.0.0_IEQCACNIEQ999952372%3A99993101')";
+	var oDeleteNode;
+	var sCollapsedKey;
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+
+		oDeleteNode = oBinding.findNode(53);
+
+		assert.equal(oDeleteNode.key, sDeletedKey, "The node which is going to be deleted exists in the loaded section");
+
+		oBinding.attachChange(handler2);
+		oBinding.getContexts(167, 20, 100);
+	}
+
+	function handler2() {
+		oBinding.detachChange(handler2);
+
+		var oNode = oBinding.findNode(167);
+
+		assert.ok(oNode, "The node which is going to be collapsed exists");
+		oBinding.collapse(oNode, true);
+		sCollapsedKey = oNode.key;
+
+		oBinding.removeContext(oDeleteNode.context);
+
+		oBinding.attachChange(handler3);
+		oBinding.submitChanges();
+	}
+
+	function handler3() {
+		oBinding.detachChange(handler3);
+
+		assert.ok(oBinding.findNode(116), "The loaded section is adapted");
+		assert.ok(!oBinding.findNode(117), "The loaded section is adapted with the deleted node's magnitude");
+
+		var oCollapsedNode;
+		oBinding._map(function(oNode, oRecursionBreaker) {
+			if (oNode && (oNode.key === sCollapsedKey)) {
+				oCollapsedNode = oNode;
+				oRecursionBreaker.broken = true;
+			}
+		});
+
+		assert.ok(oCollapsedNode && oCollapsedNode.nodeState.collapsed, "the collapsed node before save is loaded and collapsed again");
+
+		done();
+	}
+
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
 });
