@@ -4,6 +4,7 @@
 
 // Provides control sap.uxap.ObjectPageHeader.
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/CustomData",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/m/Image",
 	"./ObjectImageHelper",
 	"./library"
-], function (Control, IconPool, CustomData, Icon, BaseEvent, Device, Breadcrumbs, ObjectPageHeaderActionButton,
+], function (jQuery, Control, IconPool, CustomData, Icon, BaseEvent, Device, Breadcrumbs, ObjectPageHeaderActionButton,
 			 ResizeHandler, Text, Button, ActionSheet, Image, ObjectImageHelper, library) {
 	"use strict";
 
@@ -931,8 +932,8 @@ sap.ui.define([
 		}
 
 		if ($headerDomRef) {
-			sId = '#' + this.getId() + '-' + sId;
-			return $headerDomRef.find(sId);
+			sId = this.getId() + '-' + sId;
+			return jQuery.sap.byId(sId, $headerDomRef);
 		}
 
 		return this.$(sId); //if no dom reference then search within its own id-space (prepended with own id)
