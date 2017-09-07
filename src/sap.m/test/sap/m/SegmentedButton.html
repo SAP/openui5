@@ -626,7 +626,7 @@
 		 ****************************************/
 
 		var testPanel = new sap.m.Panel({
-			width: "600px"
+			width: "700px"
 		});
 
 		var testBar = new sap.m.Bar({
@@ -645,6 +645,7 @@
 
 		var testBar2 = new sap.m.Bar({
 			contentMiddle : [
+				new sap.m.Button({text: "Before SB", type: sap.m.ButtonType.Emphasized}),
 				new sap.m.SegmentedButton({
 					items : [
 						new sap.m.SegmentedButtonItem({text: "All"}),
@@ -652,7 +653,8 @@
 						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("business-objects-experience"), text: "Button2"}),
 						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("cart-5"), text: "Button3"})
 					]
-				})
+				}),
+				new sap.m.Button({text: "After SB", type: sap.m.ButtonType.Emphasized}),
 			]
 		});
 
@@ -715,7 +717,7 @@
 		vBox.addItem(oToolbar2);
 
 		vBox.addItem(createSpacer());
-		vBox.addItem(createLabel("Mixed content buttons in sap.m.bar:"));
+		vBox.addItem(createLabel("Mixed content buttons in sap.m.Bar:"));
 		vBox.addItem(testPanel);
 
 		/****************************************
