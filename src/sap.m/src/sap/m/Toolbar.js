@@ -11,17 +11,37 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	var ToolbarDesign = sap.m.ToolbarDesign;
 
 	/**
-	 * Constructor for a new Toolbar.
+	 * Constructor for a new <code>Toolbar</code>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Toolbar control is a horizontal container that is most commonly used to display buttons, labels, selects and various other input controls.
+	 * Horizontal container most commonly used to display buttons, labels, selects and various
+	 * other input controls.
 	 *
-	 * By default, Toolbar items are shrinkable if they have percent-based width (e.g. Input, Slider) or implement the {@link sap.ui.core.IShrinkable} interface (e.g. Text, Label). This behavior can be overridden by providing {@link sap.m.ToolbarLayoutData} for the Toolbar items.
+	 * <h3>Overview</h3>
 	 *
-	 * Note: It is recommended that you use {@link sap.m.OverflowToolbar} over Toolbar, unless you want to avoid overflow in favor of shrinking.
+	 * By default, the <code>Toolbar</code> items are shrinkable if they have percent-based width
+	 * (for example, {@link sap.m.Input} and {@link sap.m.Slider}) or implement the
+	 * {@link sap.ui.core.IShrinkable} interface (for example, {@link sap.m.Text} and {@link sap.m.Label}).
+	 * This behavior can be overridden by providing {@link sap.m.ToolbarLayoutData} for the <code>Toolbar</code> items.
+	 *
+	 * <b>Note:</b> It is recommended that you use {@link sap.m.OverflowToolbar} over <code>sap.m.Toolbar</code>,
+	 * unless you want to avoid the overflow behavior in favor of shrinking.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * You can add a visual separator between the preceding and succeeding {@link sap.m.Toolbar} item
+	 * with the use of the {@link sap.m.ToolbarSeparator}. The separator is theme dependent and can be
+	 * a padding, a margin or a line.
+	 *
+	 * To add horizontal space between the <code>Toolbar</code> items, use the {@link sap.m.ToolbarSpacer}.
+	 * You can define the width of the horizontal space or make it flexible to cover the remaining space
+	 * between the <code>Toolbar</code> items (for example, to to push an item to the edge of the <code>Toolbar</code>.
+	 *
+	 * <b>Note:</b> {@link sap.m.ToolbarLayoutData} should not be used together with {@link sap.m.ToolbarSpacer}.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.Toolbar,sap.m.IBar
 	 *
