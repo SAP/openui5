@@ -186,6 +186,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		return oTextArea ? oTextArea.value : this.getProperty("value");
 	};
 
+	TextArea.prototype.setValue = function (sValue) {
+		InputBase.prototype.setValue.call(this, sValue);
+		var oTextArea = this.getFocusDomRef();
+		if (this.getGrowing()) {
+			this._adjustHeight(oTextArea);
+		}
+		return this;
+	};
+
 	// mark the event that it is handled by the textarea
 	TextArea.prototype.onsapnext = function(oEvent) {
 		oEvent.setMarked();
