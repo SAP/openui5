@@ -615,7 +615,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Forwards a function call to a managed object based on the aggregation name.
 	 * If the name is items, it will be forwarded to the list, otherwise called locally.
 	 *
-	 * @name sap.m.IconTabBar
+	 * @name sap.m.IconTabBar._callMethodInManagedObject
 	 * @method
 	 * @private
 	 * @param {string} sFunctionName The name of the function to be called.
