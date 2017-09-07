@@ -17,6 +17,7 @@
 					footer: new sap.m.Text({ text: "footer" }),
 					beginButton: new sap.m.Button({ text: "begin" }),
 					endButton: new sap.m.Button({ text: "end" }),
+					contentWidth: "150px",
 					content: [
 						new Text({text: "Text"}),
 						new Text({text: "Text"})
