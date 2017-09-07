@@ -43,6 +43,57 @@ sap.ui.define([
 			this.persistingSettings = this.model.getProperty("/persistingSettings");
 		},
 
+		onAsyncSwitch: function (oEvent) {
+			var oSource = oEvent.getSource();
+
+			if (oEvent.getParameter("selected")) {
+				var bAsync = oSource.getCustomData()[0].getValue() === "true";
+				var sRule = oSource.getProperty("groupName") === "asyncContext" ? "/newRule" : "/editRule";
+				this.model.setProperty(sRule + "/async", bAsync);
+				this._updateCheckFunction(sRule, bAsync);
+			}
+		},
+
+		/**
+		 * Add fnResolve to the check function when async is set to true otherwise removes it.
+		 * @private
+		 * @param {string} sRule the model path to edit or new rule
+		 * @param {bAsync} bAsync the async property of the rule
+		 */
+		_updateCheckFunction: function (sRule, bAsync) {
+			var sCheckFunction = this.model.getProperty(sRule + "/check");
+
+			if (!sCheckFunction) {
+				return;
+			}
+
+			// Check if a function is found
+			var oMatch = sCheckFunction.match(/function[^(]*\(([^)]*)\)/);
+
+			if (!oMatch) {
+				return;
+			}
+
+			// Get the parameters of the function found and trim, then split by word.
+			var aParams = oMatch[1].trim().split(/\W+/);
+			// Add missing parameters to ensure the resolve function is passed on the correct position.
+			aParams[0] = aParams[0] || "oIssueManager";
+			aParams[1] = aParams[1] || "oCoreFacade";
+			aParams[2] = aParams[2] || "oScope";
+
+			// If async add a fnResolve to the template else remove it.
+			if (bAsync) {
+				aParams[3] = aParams[3] || "fnResolve";
+			} else {
+				aParams = aParams.slice(0, 3);
+			}
+
+			// Replace the current parameters with the new ones.
+			var sNewCheckFunction = sCheckFunction.replace(/function[^(]*\(([^)]*)\)/, "function (" + aParams.join(", ") + ")");
+
+			this.model.setProperty(sRule + "/check", sNewCheckFunction);
+		},
+
 		getTemporaryLib: function () {
 			var libs = this.model.getProperty("/libraries");
 
@@ -333,6 +384,7 @@ sap.ui.define([
 			var emptyRule = this.model.getProperty("/newEmptyRule");
 			this.model.setProperty("/selectedSetPreviewKey", "availableRules");
 			this.model.setProperty("/newRule", jQuery.extend(true, {}, emptyRule));
+			this.model.setProperty("/tempLink", { href: "", text: "" });
 			this.goToCreateRule();
 		},
 		goToRuleProperties: function () {
@@ -472,6 +524,8 @@ sap.ui.define([
 				this.model.setProperty(rule + "/resolutionurls", "");
 				urlProperty.push(copy);
 			}
+
+			this.model.setProperty("/tempLink", { href: "", text: "" });
 
 			this.model.checkUpdate(true, true);
 		},
