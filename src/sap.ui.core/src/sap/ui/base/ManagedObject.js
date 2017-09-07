@@ -821,7 +821,28 @@ sap.ui.define([
 	 */
 	ManagedObject._fnSettingsPreprocessor = null;
 
-	ManagedObject.runWithPreprocessors = function(fn, oPreprocessors) {
+	/**
+	 * Activates the given ID and settings preprocessors, executes the given function
+	 * and restores the previously active preprocessors.
+	 *
+	 * When a preprocessor is not defined in <code>oPreprocessors</code>, then the currently
+	 * active preprocessor is temporarily deactivated while <code>fn</code> is executed.
+	 *
+	 * See the <code>_fnIdPreprocessor</code> and <code>_fnSettingsPreprocessor</code>
+	 * members in this class for a detailed description of the preprocessors.
+	 *
+	 * This method is intended for internal use in the sap/ui/base and sap/ui/core packages only.
+	 *
+	 * @param {function} fn Function to execute
+	 * @param {object} [oPreprocessors] Preprocessors to use while executing <code>fn</code>
+	 * @param {function} [oPreprocessors.id] ID preprocessor that can transform the ID of a new ManagedObject
+	 * @param {function} [oPreprocessors.settings] Settings preprocessor that can modify settings before they are applied
+	 * @param {Object} [oThisArg=undefined] Value to use as <code>this</code> when executing <code>fn</code>
+	 * @returns {any} Returns the value that <code>fn</code> returned after execution
+	 * @private
+	 * @sap-restricted sap.ui.base,sap.ui.core
+	 */
+	ManagedObject.runWithPreprocessors = function(fn, oPreprocessors, oThisArg) {
 		jQuery.sap.assert(typeof fn === "function", "fn must be a function");
 		jQuery.sap.assert(!oPreprocessors || typeof oPreprocessors === "object", "oPreprocessors must be an object");
 
@@ -832,14 +853,11 @@ sap.ui.define([
 		this._fnSettingsPreprocessor = oPreprocessors.settings;
 
 		try {
-			var result = fn.call();
+			return fn.call(oThisArg);
+		} finally {
+			// always restore old preprocessor settings
 			this._fnIdPreprocessor = oOldPreprocessors.id;
 			this._fnSettingsPreprocessor = oOldPreprocessors.settings;
-			return result;
-		} catch (e) {
-			this._fnIdPreprocessor = oOldPreprocessors.id;
-			this._fnSettingsPreprocessor = oOldPreprocessors.settings;
-			throw e;
 		}
 
 	};
