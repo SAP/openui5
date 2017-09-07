@@ -157,9 +157,19 @@
 			assert.strictEqual(t4.$().css("word-wrap"), "normal", "Text has correct word-wrap style for non-wrapping");
 		});
 
+		if (t5.canUseNativeLineClamp()) {
+			test("native max lines", function() {
+				strictEqual(t5.$("inner").hasClass("sapMTextLineClamp"), true, "Text has correct class for native MaxLine");
+				equals(t5.$("inner").css("-webkit-line-clamp"), t5.getMaxLines(), "Text has correct line clamp value in CSS");
+				strictEqual(t5.hasOwnProperty("_sResizeListenerId"), false, "Text does not have resize handler");
+			});
+		}
+
 		QUnit.test("non-native max lines", function(assert) {
 			var done = assert.async();
-
+			t5.canUseNativeLineClamp = function() {
+				return false;
+			};
 			t5.addEventDelegate({
 				onAfterRendering : function() {
 					t5.clampText();

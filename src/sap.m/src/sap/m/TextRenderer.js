@@ -87,6 +87,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.writeAttribute("id", oText.getId() + "-inner");
 		oRm.addClass("sapMTextMaxLine");
 
+		// check native line clamp support
+		if (oText.canUseNativeLineClamp()) {
+			oRm.addClass("sapMTextLineClamp");
+			oRm.addStyle("-webkit-line-clamp", oText.getMaxLines());
+		}
+
 		oRm.writeClasses();
 		oRm.writeStyles();
 		oRm.write(">");

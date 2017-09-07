@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Limits the number of lines for wrapping texts.
 			 *
-			 * <b>Note:</b> In multi-line text the overflow will be hidden (ellipsis won't be shown).
+			 * <b>Note</b>: The multi-line overflow indicator depends on the browser line clamping support. For such browsers, this will be shown as ellipsis, for the other browsers the overflow will just be hidden.
 			 * @since 1.13.2
 			 */
 			maxLines : {type : "int", group : "Appearance", defaultValue : null}
@@ -111,8 +111,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Text.prototype.ellipsis = '…';
 
 	/**
-	 * To prevent from the layout thrashing of the textContent call, this method
-	 * first tries to set the nodeValue of the first child if it exists.
+	 * Defines whether browser supports native line clamp or not and if browser is Chrome
+	 *
+	 * @since 1.13.2
+	 * @returns {boolean}
+	 * @protected
+	 * @readonly
+	 * @static
+	 */
+	Text.hasNativeLineClamp = (function() {
+		return (typeof document.documentElement.style.webkitLineClamp != "undefined" && sap.ui.Device.browser.chrome);
+	})();
+
+	/**
+	 * To prevent from the layout thrashing of the <code>textContent</code> call, this method
+	 * first tries to set the <code>nodeValue</code> of the first child if it exists.
 	 *
 	 * @param {HTMLElement} oDomRef DOM reference of the text node container.
 	 * @param {String} [sNodeValue] new Node value.
@@ -170,7 +183,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Text.prototype.onAfterRendering = function() {
 		// check visible, max-lines and line-clamping support
 		if (this.getVisible() &&
-			this.hasMaxLines()) {
+			this.hasMaxLines() &&
+			!this.canUseNativeLineClamp()) {
 
 			// set max-height for maxLines support
 			this.clampHeight();
@@ -207,6 +221,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		return this.getDomRef();
+	};
+
+	/**
+	 * Decides whether the control can use native line clamp feature or not.
+	 *
+	 * In RTL mode native line clamp feature is not supported.
+	 *
+	 * @since 1.20
+	 * @protected
+	 * @return {Boolean}
+	 */
+	Text.prototype.canUseNativeLineClamp = function() {
+		// has line clamp feature
+		if (!Text.hasNativeLineClamp) {
+			return false;
+		}
+
+		// is text direction rtl
+		var oDirection = sap.ui.core.TextDirection;
+		if (this.getTextDirection() == oDirection.RTL) {
+			return false;
+		}
+
+		// is text direction inherited as rtl
+		if (this.getTextDirection() == oDirection.Inherit && sap.ui.getCore().getConfiguration().getRTL()) {
+			return false;
+		}
+
+		return true;
 	};
 
 	/**
