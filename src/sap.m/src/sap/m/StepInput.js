@@ -8,13 +8,52 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		"use strict";
 
 		/**
-		 * Constructor for a new StepInput.
+		 * Constructor for a new <code>StepInput</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The <code>StepInput</code> control allows the user to change the input values with predefined increments (steps).
+		 * Allows the user to change the input values with predefined increments (steps).
+		 *
+		 * <h3>Overview</h3>
+		 *
+		 * The <code>StepInput</code> consists of an input field and buttons with icons to increase/decrease the value.
+		 *
+		 * The user can change the value of the control by pressing the increase/decrease buttons,
+		 * by typing a number directly, by using the keyboard up/down and page up/down,
+		 * or by using the mouse scroll wheel. Decimal values are supported.
+		 *
+		 * <h3>Usage</h3>
+		 *
+		 * The default step is 1 but the app developer can set a different one.
+		 *
+		 * On desktop, the control supports a larger step, when using the keyboard page up/down keys.
+		 * You can set a multiple of the step with the use of the <code>largerStep</code> property.
+		 * The default value is 2 (two times the set step). For example, when using the keyboard page up/down keys
+		 * the value increases/decreases with a double of the default step. If the set step is 2, the larger step is also 2
+		 * and the current value is 1, using the page up key will increase the value to 5 (1 + 2*2).
+		 *
+		 * App developers can set a maximum and minimum value for the <code>StepInput</code>.
+		 * The increase/decrease button and the up/down keyboard navigation become disabled when
+		 * the value reaches the max/min or a new value is entered from the input which is greater/less than the max/min.
+		 *
+		 * <i>When to use</i>
+		 * <ul>
+		 * <li>To adjust amounts, quantities, or other values quickly.</li>
+		 * <li>To adjust values for a specific step.</li>
+		 * </ul>
+		 *
+		 * <i>When not to use</i>
+		 * <ul>
+		 * <li>To enter a static number (for example, postal code, phone number, or ID). In this case,
+		 * use the regular {@link sap.m.Input} instead.</li>
+		 * <li>To display a value that rarely needs to be adjusted and does not pertain to a particular step.
+		 * In this case, use the regular {@link sap.m.Input} instead.</li>
+		 * <li>To enter dates and times. In this case, use the {@link sap.m.DatePicker}, {@link sap.m.DateRangeSelection},
+		 * {@link sap.m.TimePicker}, or {@link sap.m.DateTimePicker} instead.</li>
+		 * </ul>
+		 *
 		 * @extends sap.ui.core.Control
 		 * @implements sap.ui.core.IFormContent
 		 *
