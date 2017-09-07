@@ -1539,4 +1539,25 @@ sap.ui.require([
 				}
 			});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("mergeAnnotations called", function (assert) {
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations")
+			.withExactArgs({ "GWSAMPLE_BASIC.Foo/P01" : { "@Org.OData.Core.V1.IsURL" : true } },
+				{ "GWSAMPLE_BASIC.Foo/P01" : { "@Org.OData.Core.V1.IsURL" : false } }
+			);
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="url"/>\
+				</EntityType>\
+				<Annotations Target="GWSAMPLE_BASIC.Foo/P01">\
+					<Annotation Term="Org.OData.Core.V1.IsURL" Bool="false"/>\
+				</Annotations>',
+			{
+				"GWSAMPLE_BASIC.Foo/P01" : {
+					"@Org.OData.Core.V1.IsURL" : false
+				}
+			});
+	});
 });
