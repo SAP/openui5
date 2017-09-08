@@ -252,20 +252,56 @@
 
 		});
 
-		QUnit.module("Accessibility");
+		QUnit.module("Accessibility", {
+		    beforeEach: function() {
+		        this.label = new sap.m.Label({text: "Label"});
+		        this.label.placeAt("qunit-fixture");
+		        sap.ui.getCore().applyChanges();
+		    },
+		    afterEach: function() {
+		        this.label.destroy();
+		        this.label = null;
+		    }
+		});
 
 		QUnit.test("getAccessibilityInfo", function(assert) {
-			var oControl = new sap.m.Label({text: "Text"});
-			assert.ok(!!oControl.getAccessibilityInfo, "Label has a getAccessibilityInfo function");
-			var oInfo = oControl.getAccessibilityInfo();
+			assert.ok(!!this.label.getAccessibilityInfo, "Label has a getAccessibilityInfo function");
+			var oInfo = this.label.getAccessibilityInfo();
 			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 			assert.strictEqual(oInfo.role, undefined, "AriaRole");
 			assert.strictEqual(oInfo.type, undefined, "Type");
-			assert.strictEqual(oInfo.description, "Text", "Description");
+			assert.strictEqual(oInfo.description, "Label", "Description");
 			assert.strictEqual(oInfo.focusable, undefined, "Focusable");
 			assert.strictEqual(oInfo.enabled, undefined, "Enabled");
 			assert.strictEqual(oInfo.editable, undefined, "Editable");
-			oControl.destroy();
+		});
+
+		QUnit.test("Label rendering when no labelFor association is set", function (assert) {
+			assert.strictEqual(this.label.getDomRef() instanceof HTMLSpanElement, true, "Should be rendered as a span element");
+		});
+
+		QUnit.test("Label rendering when labelFor association is set", function (assert) {
+			var oInput = new sap.m.Input().placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			this.label.setLabelFor(oInput);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(this.label.getDomRef() instanceof HTMLLabelElement, true, "Should be rendered as a label element");
+
+			oInput.destroy();
+		});
+
+		QUnit.test("Label rendering when labelFor association is set to non-labelable control", function (assert) {
+			var oLink = new sap.m.Link({text: "text"}).placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			this.label.setLabelFor(oLink);
+
+			assert.strictEqual(this.label.getDomRef() instanceof HTMLSpanElement, true,
+					"Should be rendered as a span element when the labelFor points to a non-labelable control");
+
+			oLink.destroy();
 		});
 
 		QUnit.module("DisplayOnly mode", {

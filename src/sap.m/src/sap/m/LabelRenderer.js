@@ -29,13 +29,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			sWidth = oLabel.getWidth(),
 			sLabelText = oLabel.getText(),
 			sTooltip = oLabel.getTooltip_AsString(),
-			// render bdi tag only if the browser is different from IE and Edge since it is not supported there
-			bIE_Edge = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge,
-			bRenderBDI = (sTextDir === sap.ui.core.TextDirection.Inherit) && !bIE_Edge,
+			labelForRendering = oLabel.getLabelForRendering(),
+			htmlTagToRender = labelForRendering ? "label" : "span",
 			bDisplayOnly = oLabel.getDisplayOnly();
 
-		// write the HTML into the render managerr
-		rm.write("<label");
+		// write the HTML into the render manager
+		// for accessibility reasons when a label doesn't have a "for" attribute, pointing at a HTML element it is rendered as span
+		rm.write("<" + htmlTagToRender);
 		rm.writeControlData(oLabel);
 
 		// styles
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			rm.addClass("sapMLabelRequired");
 		}
 
-		if (oLabel.getLabelForRendering()) {
+		if (labelForRendering) {
 			sap.ui.core.LabelEnablement.writeLabelForAttribute(rm, oLabel);
 		} else if (oLabel.getParent() instanceof sap.m.Toolbar) {
 			rm.addClass("sapMLabelTBHeader");
@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		}
 
 		if (bDisplayOnly) {
-		    rm.addClass("sapMLabelDisplayOnly");
+			rm.addClass("sapMLabelDisplayOnly");
 		}
 
 		rm.writeStyles();
@@ -100,16 +100,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 		// write the label text
 		if (sLabelText) {
-			if (bRenderBDI) {
-				//TODO: To be removed after change completion of BLI incident #1770022720
-				rm.write('<bdi>');
-				rm.writeEscaped(sLabelText);
-				rm.write('</bdi>');
-			} else {
-				rm.writeEscaped(sLabelText);
-			}
+			rm.writeEscaped(sLabelText);
 		}
-		rm.write("</label>");
+		rm.write("</" + htmlTagToRender + ">");
 	};
 
 	/**
