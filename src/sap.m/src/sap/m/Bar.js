@@ -10,14 +10,32 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 
 
 	/**
-	 * Constructor for a new Bar.
+	 * Constructor for a new <code>Bar</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Bar control can be used as a header, sub-header and a footer in a page.
-	 * It has the capability to center a content like a title, while having other controls on the left and right side.
+	 * Used as a header, sub-header and a footer of a page.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The <code>Bar</code> control consists of three areas to hold its content. It has the capability
+	 * to center content, such as a title, while having other controls on the left and right side.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * With the use of the <code>design</code> property, you can set the style of the <code>Bar</code> to appear
+	 * as a header, sub-header and footer.
+	 *
+	 * <b>Note:</b> Do not place a <code>sap.m.Bar</code> inside another <code>sap.m.Bar</code>
+	 * or inside any bar-like control. Doing so causes unpredictable behavior.
+	 *
+	 * <h3>Responsive Behavior</h3>
+	 *
+	 * The content in the middle area is centrally positioned if there is enough space. If the right
+	 * or left content overlaps the middle content, the middle content will be centered in the space between.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.m.IBar
 	 *
