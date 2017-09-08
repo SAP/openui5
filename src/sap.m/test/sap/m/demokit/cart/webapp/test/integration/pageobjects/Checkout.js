@@ -31,11 +31,11 @@ sap.ui.define([
 					});
 				},
 
-				iCheckDifferentAddressText: function () {
+				iPressOnDifferentAddressCheckbox: function () {
 					return this.waitFor({
 						id: "differentDeliveryAddress",
 						actions: new sap.ui.test.actions.Press(),
-						errorMessage: "Could not check Different Delivery Address"
+						errorMessage: "Could not press Different Delivery Address Checkbox"
 					});
 				},
 
@@ -56,32 +56,32 @@ sap.ui.define([
 					});
 				},
 
-				iEnterBillingAddressText: function () {
+				iEnterInvoiceAddressText: function () {
 					return this.waitFor({
-						id: "billingAddressAddress",
+						id: "invoiceAddressAddress",
 						actions: new EnterText({text: "My Name"}),
 						success: function () {
 							this.waitFor({
-								id: "billingAddressCity",
+								id: "invoiceAddressCity",
 								actions: new EnterText({text: "My City"}),
 								success: function () {
 									this.waitFor({
-										id: "billingAddressZip",
+										id: "invoiceAddressZip",
 										actions: new EnterText({text: "My Zip"}),
 										success: function () {
 											this.waitFor({
-												id: "billingAddressCountry",
+												id: "invoiceAddressCountry",
 												actions: new EnterText({text: "My Country"}),
-												errorMessage: "Could not enter Text on Input with id BillingAddressCountry"
+												errorMessage: "Could not enter Text on Input with id invoiceAddressCountry"
 											});
 										},
-										errorMessage: "Could not enter Text on Input with id BillingAddressZip"
+										errorMessage: "Could not enter Text on Input with id invoiceAddressZip"
 									});
 								},
-								errorMessage: "Could not enter Text on Input with id BillingAddressCity"
+								errorMessage: "Could not enter Text on Input with id invoiceAddressCity"
 							});
 						},
-						errorMessage: "Could not enter Text BillingAddressAddress"
+						errorMessage: "Could not enter Text invoiceAddressAddress"
 					});
 				},
 
@@ -151,13 +151,13 @@ sap.ui.define([
 
 				iPressOnTheEditButtonBackToPaymentType : function () {
 					return this.waitFor({
-						id: "backToBillingAddress",
+						id: "backToInvoiceAddress",
 						actions : new sap.ui.test.actions.Press(),
-						errorMessage : "The BackToBillingAddress button could not be pressed"
+						errorMessage : "The BackToInvoiceAddress button could not be pressed"
 					});
 				},
 
-				iPressOnTheEditButtonBackToBillingAddress : function () {
+				iPressOnTheEditButtonBackToInvoiceAddress : function () {
 					return this.waitFor({
 						id: "backToPaymentType",
 						actions : new sap.ui.test.actions.Press(),
@@ -177,7 +177,7 @@ sap.ui.define([
 				iPressOnTheBankTransferButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: new sap.ui.test.matchers.I18NText({ propertyName: "text", key: "checkoutPaymentBanktransfer"}),
+						matchers: new sap.ui.test.matchers.I18NText({ propertyName: "text", key: "checkoutPaymentBankTransfer"}),
 						actions: new sap.ui.test.actions.Press(),
 						errorMessage: "Cannot select Bank Transfer from Payment Methods"
 					});
@@ -195,7 +195,7 @@ sap.ui.define([
 				iPressOnTheExpressDeliveryButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: new sap.ui.test.matchers.I18NText({ propertyName: "text", key: "checkoutDeliverytypeExpress"}),
+						matchers: new sap.ui.test.matchers.I18NText({ propertyName: "text", key: "checkoutDeliveryTypeExpress"}),
 						actions: new sap.ui.test.actions.Press(),
 						errorMessage: "Cannot select express delivery"
 					});
@@ -278,11 +278,11 @@ sap.ui.define([
 						}
 					});
 				},
-				iShouldSeeTheBillingStep: function () {
+				iShouldSeeTheInvoiceStep: function () {
 					return this.waitFor({
-						id: "billingStep",
+						id: "invoiceStep",
 						success: function (oStep) {
-							Opa5.assert.ok(oStep, "Found the WizardStep 'BillingStep'");
+							Opa5.assert.ok(oStep, "Found the WizardStep 'invoiceStep'");
 						}
 					});
 				},
@@ -291,14 +291,14 @@ sap.ui.define([
 					return this.waitFor({
 						id: "deliveryAddressStep",
 						success: function (oStep) {
-							Opa5.assert.ok(oStep.getValidated(), "Found Step 5 Button");
+							Opa5.assert.ok(oStep, "Found the WizardStep 'deliveryAddressStep'");
 						}
 					});
 				},
 
 				iShouldSeeTheStep5ButtonValidated: function () {
 					return this.waitFor({
-						id: "billingStep",
+						id: "invoiceStep",
 						success: function (oStep) {
 							Opa5.assert.ok(oStep.getValidated(), "Found Step 5 Button");
 						}

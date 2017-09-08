@@ -164,13 +164,15 @@
 			],
 			"targets": {
 				"splitscreenTarget": {
-					"viewName": "SplitScreen"
+					"viewName": "SplitScreen",
+					"viewId": "splitView"
 				},
 				"productView": {
 					"viewName": "Product",
 					"viewLevel": 3,
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
+					"viewId": "productView",
 					"controlAggregation": "detailPages",
 					"title":"{Name}"
 				},
@@ -180,6 +182,7 @@
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
 					"controlAggregation": "masterPages",
+					"viewId": "categoryView",
 					"title": {
 						"parts": [
 							"i18n>tabTitle",
@@ -193,6 +196,7 @@
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
 					"controlAggregation": "detailPages",
+					"viewId": "notFoundView",
 					"title": "{i18n>categoryNoData}"
 				},
 				"welcome": {
@@ -200,6 +204,7 @@
 					"viewLevel": 0,
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
+					"viewId": "welcomeView",
 					"controlAggregation": "detailPages"
 				},
 				"home": {
@@ -208,6 +213,7 @@
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
 					"controlAggregation": "masterPages",
+					"viewId": "homeView",
 					"title": "{i18n>homeTitle}"
 				},
 				"homeSlide": {
@@ -222,6 +228,7 @@
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
 					"controlAggregation": "masterPages",
+					"viewId": "cartView",
 					"title": {
 						"parts": [
 							"i18n>tabTitle",
@@ -232,12 +239,14 @@
 				"checkout": {
 					"viewName": "Checkout",
 					"viewLevel": 1,
-					"title": "{i18n>checkoutTitle}"
+					"title": "{i18n>checkoutTitle}",
+					"viewId": "checkoutView"
 				},
 				"ordercompleted": {
 					"viewName": "OrderCompleted",
 					"viewLevel": 2,
-					"title": "{i18n>ordercompletedTitle}"
+					"viewId": "orderCompletedView",
+					"title": "{i18n>orderCompletedTitle}"
 				}
 			}
 		}

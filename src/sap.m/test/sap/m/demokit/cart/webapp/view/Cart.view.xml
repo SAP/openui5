@@ -1,5 +1,4 @@
 <mvc:View
-	id="cartView"
 	controllerName="sap.ui.demo.cart.controller.Cart"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">

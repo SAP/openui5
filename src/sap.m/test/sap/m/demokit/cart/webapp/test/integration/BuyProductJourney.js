@@ -121,19 +121,19 @@ sap.ui.define([
 		Then.onCheckout.iShouldSeeTheStep4ButtonEnabled();
 	});
 
-	opaTest("Should navigate to Billing Step", function (Given, When, Then) {
+	opaTest("Should navigate to invoice Step", function (Given, When, Then) {
 
 		// Actions
 		When.onCheckout.iPressOnTheNextStepButton();
 
 		// Assertions
-		Then.onCheckout.iShouldSeeTheBillingStep();
+		Then.onCheckout.iShouldSeeTheInvoiceStep();
 	});
 
 	opaTest("Should activate Step 5 Button", function (Given, When, Then) {
 
 		// Actions
-		When.onCheckout.iEnterBillingAddressText();
+		When.onCheckout.iEnterInvoiceAddressText();
 
 		// Assertions
 		Then.onCheckout.iShouldSeeTheStep5ButtonValidated();
@@ -185,7 +185,7 @@ sap.ui.define([
 		Then.onCheckout.iShouldSeeTheStep4ButtonEnabled();
 	});
 
-	opaTest("Should navigate to Billing Address", function (Given, When, Then) {
+	opaTest("Should navigate to invoice Address", function (Given, When, Then) {
 
 		// Actions
 		When.onCheckout.iPressOnTheNextStepButton();
@@ -250,20 +250,20 @@ sap.ui.define([
 		Then.onCheckout.iShouldSeeTheStep4ButtonEnabled();
 	});
 
-	opaTest("Should navigate to Billing Step", function (Given, When, Then) {
+	opaTest("Should navigate to invoice Step", function (Given, When, Then) {
 
 		// Actions
 		When.onCheckout.iPressOnTheNextStepButton();
 
 		// Assertions
-		Then.onCheckout.iShouldSeeTheBillingStep();
+		Then.onCheckout.iShouldSeeTheInvoiceStep();
 	});
 
 
 	opaTest("Should activate Step 5 Button", function (Given, When, Then) {
 
 		// Actions
-		When.onCheckout.iEnterBillingAddressText();
+		When.onCheckout.iEnterInvoiceAddressText();
 
 		// Assertions
 		Then.onCheckout.iShouldSeeTheStep5ButtonValidated();
@@ -290,23 +290,23 @@ sap.ui.define([
 	opaTest("Should return to checkout", function (Given, When, Then) {
 
 		// Actions
-		When.onCheckout.iPressOnTheEditButtonBackToBillingAddress();
+		When.onCheckout.iPressOnTheEditButtonBackToInvoiceAddress();
 
 		// Assertions
 		Then.onCheckout.iShouldSeeTheWizardStepContentsStep();
 	});
-	// Checkout with Different Delivery Address
 
+	// Checkout with Different Delivery Address
 	opaTest("Should navigate to Delivery Address Step", function (Given, When, Then) {
 
 		// Actions
-		When.onCheckout.iCheckDifferentAddressText().and.iPressOnTheYesButton().and.iPressOnTheNextStepButton();
+		When.onCheckout.iPressOnDifferentAddressCheckbox().and.iPressOnTheYesButton().and.iPressOnTheNextStepButton();
 
 		// Assertions
 		Then.onCheckout.iShouldSeeTheDeliveryAddressStep();
 	});
 
-	opaTest("Should activate Step 5 Button", function (Given, When, Then) {
+	opaTest("Should activate Step 6 Button", function (Given, When, Then) {
 
 		// Actions
 		When.onCheckout.iEnterDeliveryAddressText();

@@ -28,7 +28,7 @@ sap.ui.define([
 						PhoneNumber: "",
 						Email: ""
 					},
-					BillingAddress: {
+					InvoiceAddress: {
 						Address: "",
 						City: "",
 						ZipCode: "",
@@ -51,6 +51,24 @@ sap.ui.define([
 				}
 			);
 			this.getView().setModel(oModel);
+		},
+
+		/**
+		 * Checks the corresponding step after activation to decide whether the user can proceed or needs
+		 * to correct his input
+		 */
+		onCheckStepActivation: function(oEvent) {
+			var sWizardStepId = oEvent.getSource().getId();
+
+			if (sWizardStepId === this.createId("creditCardStep")) {
+				this.checkCreditCardStep();
+			} else if (sWizardStepId === this.createId("cashOnDeliveryStep")) {
+				this.checkCashOnDeliveryStep();
+			} else if (sWizardStepId === this.createId("invoiceStep")) {
+				this.checkInvoiceStep();
+			} else if (sWizardStepId === this.createId("deliveryAddressStep")) {
+				this.checkDeliveryStep();
+			}
 		},
 
 		/**
@@ -78,7 +96,7 @@ sap.ui.define([
 		 */
 		setPaymentMethod: function () {
 			this._setDiscardableProperty({
-				message: this.getResourceBundle().getText("checkoutControllerChangepayment"),
+				message: this.getResourceBundle().getText("checkoutControllerChangePayment"),
 				discardStep: this.byId("paymentTypeStep"),
 				modelPath: "/SelectedPayment",
 				historyPath: "prevPaymentSelect"
@@ -90,22 +108,22 @@ sap.ui.define([
 		 */
 		setDifferentDeliveryAddress: function () {
 			this._setDiscardableProperty({
-				message: this.getResourceBundle().getText("checkoutControllerChangedelivery"),
-				discardStep: this.byId("billingStep"),
+				message: this.getResourceBundle().getText("checkoutControllerChangeDelivery"),
+				discardStep: this.byId("invoiceStep"),
 				modelPath: "/DifferentDeliveryAddress",
 				historyPath: "prevDiffDeliverySelect"
 			});
 		},
 
 		/**
-		 * Called from WizardStep "BillingStep"
+		 * Called from WizardStep "invoiceStep"
 		 * shows next WizardStep "DeliveryAddressStep" or "DeliveryTypeStep" according to user selection
 		 */
-		billingAddressComplete: function () {
+		invoiceAddressComplete: function () {
 			var sNextStepId = (this.getModel().getProperty("/DifferentDeliveryAddress"))
 				? "deliveryAddressStep"
 				: "deliveryTypeStep";
-			this.byId("billingStep").setNextStep(this.byId(sNextStepId));
+			this.byId("invoiceStep").setNextStep(this.byId(sNextStepId));
 
 		},
 
@@ -114,7 +132,7 @@ sap.ui.define([
 		 * shows warning message and cancels order if affirmed
 		 */
 		handleWizardCancel: function () {
-			var sText = this.getResourceBundle().getText("checkoutControllerAreyousurecancel");
+			var sText = this.getResourceBundle().getText("checkoutControllerConfirmCancel");
 			this._handleSubmitOrCancel(sText, "warning", "home");
 		},
 
@@ -123,7 +141,7 @@ sap.ui.define([
 		 * shows warning message and submits order if affirmed
 		 */
 		handleWizardSubmit: function () {
-			var sText = this.getResourceBundle().getText("checkoutControllerAreyousuresubmit");
+			var sText = this.getResourceBundle().getText("checkoutControllerConfirmSubmit");
 			this._handleSubmitOrCancel(sText, "confirm", "ordercompleted");
 		},
 
@@ -166,15 +184,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * Called from  WizardStep "BillingStep" on <code>activate</code> or <code>liveChange</code>
+		 * Called from  WizardStep "invoiceStep" on <code>activate</code> or <code>liveChange</code>
 		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
 		 */
-		checkBillingStep: function () {
-			var sAddress = this.getModel().getProperty("/BillingAddress/Address") || "";
-			var sCity = this.getModel().getProperty("/BillingAddress/City") || "";
-			var sZipCode = this.getModel().getProperty("/BillingAddress/ZipCode") || "";
-			var sCountry = this.getModel().getProperty("/BillingAddress/Country") || "";
-			var oElement = this.byId("billingStep");
+		checkInvoiceStep: function () {
+			var sAddress = this.getModel().getProperty("/InvoiceAddress/Address") || "";
+			var sCity = this.getModel().getProperty("/InvoiceAddress/City") || "";
+			var sZipCode = this.getModel().getProperty("/InvoiceAddress/ZipCode") || "";
+			var sCountry = this.getModel().getProperty("/InvoiceAddress/Country") || "";
+			var oElement = this.byId("invoiceStep");
 			var oWizard = this.byId("shoppingCartWizard");
 
 			if (sAddress.length < 2 || sCity.length < 2 || sZipCode.length < 2 || sCountry.length < 2) {
@@ -271,7 +289,7 @@ sap.ui.define([
 						oModelData.SelectedDeliveryMethod = "Standard Delivery";
 						oModelData.DifferentDeliveryAddress = false;
 						oModelData.CashOnDelivery = {};
-						oModelData.BillingAddress = {};
+						oModelData.InvoiceAddress = {};
 						oModelData.DeliveryAddress = {};
 						oModelData.CreditCard = {};
 						oModel.setData(oModelData);
