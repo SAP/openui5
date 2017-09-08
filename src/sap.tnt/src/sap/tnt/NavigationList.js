@@ -230,6 +230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 				verticalScrolling: true,
 				initialFocus: selectedItem,
 				afterClose: function () {
+					that._popover.destroy();
 					that._popover = null;
 				},
 				content: list,
