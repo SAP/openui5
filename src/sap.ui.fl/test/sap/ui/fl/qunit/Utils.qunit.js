@@ -1034,6 +1034,26 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(Utils.getFlexReference(oManifest), sAppId + ".Component");
 	});
 
+	QUnit.test("getFlexReference returns the value from getComponentName function if neither the sap.ui5.variantId nor the sap.ui5.componentName exist and sap.app.id is at design time", function (assert) {
+
+		var sAppId = Utils.APP_ID_AT_DESIGN_TIME;
+		var sComName = "comName";
+		var oManifest = {
+			"sap.app": {
+				"type": "application",
+				"id": sAppId
+			},
+			getEntry: function (key) {
+				return this[key];
+			},
+			getComponentName: function(){
+				return sComName;
+			}
+		};
+
+		assert.equal(Utils.getFlexReference(oManifest), sComName + ".Component");
+	});
+
 	QUnit.test("isCustomerDependentLayer", function(assert) {
 		assert.ok(Utils.isCustomerDependentLayer("CUSTOMER"), "'CUSTOMER' layer is detected as customer dependent");
 		assert.ok(Utils.isCustomerDependentLayer("CUSTOMER_BASE"), "'CUSTOMER_BASE' layer is detected as customer dependent");
