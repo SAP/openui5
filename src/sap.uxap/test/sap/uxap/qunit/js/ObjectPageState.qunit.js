@@ -72,6 +72,22 @@
 		oApp.to(oPage1); //back page1
 	});
 
+	QUnit.test("CSS white-space rule reset. BCP: 1780382804", function (assert) {
+		// Arrange
+		var oOPL = new sap.uxap.ObjectPageLayout().placeAt("qunit-fixture"),
+			oComputedStyle;
+
+		// Act
+		sap.ui.getCore().applyChanges();
+
+		// Wrap the control in a element which apply's white-space
+		oOPL.$().wrap("<div style='white-space: nowrap;'></div>");
+
+		oComputedStyle = window.getComputedStyle(oOPL.getDomRef());
+		assert.strictEqual(oComputedStyle.whiteSpace, "normal",
+			"CSS white-space should be reset to 'normal' to prevent breaking of responsive behavior");
+	});
+
 	module("Invalidation");
 
 	QUnit.test("do not invalidate parent upon first rendering", function (assert) {
