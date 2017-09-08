@@ -14,10 +14,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "3",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1040",
-				"ProductName" : "Laser Professional Eco"
-			},
+			"ProductID" : "HT-1040",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1040",
 				"TypeCode" : "PR",
@@ -62,10 +59,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "1",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1041",
-				"ProductName" : "Laser Basic"
-			},
+			"ProductID" : "HT-1041",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1041",
 				"TypeCode" : "PR",
@@ -110,10 +104,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1042",
-				"ProductName" : "Laser Allround"
-			},
+			"ProductID" : "HT-1042",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1042",
 				"TypeCode" : "PR",
@@ -158,10 +149,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1050",
-				"ProductName" : "Ultra Jet Super Color"
-			},
+			"ProductID" : "HT-1050",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1050",
 				"TypeCode" : "PR",
@@ -206,10 +194,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "1",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1051",
-				"ProductName" : "Ultra Jet Mobile"
-			},
+			"ProductID" : "HT-1051",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1051",
 				"TypeCode" : "PR",
@@ -254,10 +239,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1052",
-				"ProductName" : "Ultra Jet Super Highspeed"
-			},
+			"ProductID" : "HT-1052",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1052",
 				"TypeCode" : "PR",
@@ -302,10 +284,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "1",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1055",
-				"ProductName" : "Multi Print"
-			},
+			"ProductID" : "HT-1055",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1055",
 				"TypeCode" : "PR",
@@ -350,10 +329,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1056",
-				"ProductName" : "Multi Color"
-			},
+			"ProductID" : "HT-1056",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1056",
 				"TypeCode" : "PR",

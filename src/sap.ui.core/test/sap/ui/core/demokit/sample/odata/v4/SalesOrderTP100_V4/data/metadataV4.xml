@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="../../../../sadl/sap/sepm_c_slsorderitem_tp_100/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.sadl.sepm_c_slsorderitem_tp_100.v0001" Alias="REF__SEPM_C_SLSORDERITEM_TP_100" />
+	</edmx:Reference>
+	<edmx:Reference Uri="../../../../sadl/sap/sepm_i_businesspartner_e/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.sadl.sepm_i_businesspartner_e.v0001" Alias="REF__SEPM_I_BUSINESSPARTNER_E" />
+	</edmx:Reference>
+	<edmx:Reference Uri="../../../../sadl/sap/sepm_i_salesordoverallstatus/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.sadl.sepm_i_salesordoverallstatus.v0001" Alias="REF__SEPM_I_SALESORDOVERALLSTATUS" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="Core" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.sadl.sepm_c_slsorder_tp_100.v0001" Alias="SAP__self">
+			<EntityType Name="SEPM_C_SLSORDER_TP_100Type">
+				<Key>
+					<PropertyRef Name="SalesOrderUUID" />
+				</Key>
+				<Property Name="SalesOrderUUID" Type="Edm.Guid" Nullable="false" />
+				<Property Name="SalesOrder" Type="Edm.String" MaxLength="10" />
+				<Property Name="Customer" Type="Edm.String" MaxLength="10" />
+				<Property Name="OverallStatus" Type="Edm.String" MaxLength="1" />
+				<NavigationProperty Name="_Customer" Type="com.sap.gateway.sadl.sepm_i_businesspartner_e.v0001.SEPM_I_BusinessPartner_EType" />
+				<NavigationProperty Name="_Item" Type="Collection(com.sap.gateway.sadl.sepm_c_slsorderitem_tp_100.v0001.SEPM_C_SLSORDERITEM_TP_100Type)" />
+				<NavigationProperty Name="_OverallStatus" Type="com.sap.gateway.sadl.sepm_i_salesordoverallstatus.v0001.Sepm_I_SalesOrdOverallStatusType" />
+			</EntityType>
+			<Action Name="SetToDelivered" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.sadl.sepm_c_slsorder_tp_100.v0001.SEPM_C_SLSORDER_TP_100Type" Nullable="false" />
+			</Action>
+			<EntityContainer Name="Container">
+				<EntitySet Name="SEPM_C_SLSORDER_TP_100" EntityType="com.sap.gateway.sadl.sepm_c_slsorder_tp_100.v0001.SEPM_C_SLSORDER_TP_100Type">
+					<NavigationPropertyBinding Path="_Customer" Target="com.sap.gateway.sadl.sepm_i_businesspartner_e.v0001.Container/SEPM_I_BusinessPartner_E" />
+					<NavigationPropertyBinding Path="_Item" Target="com.sap.gateway.sadl.sepm_c_slsorderitem_tp_100.v0001.Container/SEPM_C_SLSORDERITEM_TP_100" />
+					<NavigationPropertyBinding Path="_OverallStatus" Target="com.sap.gateway.sadl.sepm_i_salesordoverallstatus.v0001.Container/Sepm_I_SalesOrdOverallStatus" />
+				</EntitySet>
+			</EntityContainer>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDER_TP_100Type/SalesOrderUUID">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly" />
+				<Annotation Term="UI.Hidden" />
+				<Annotation Term="SAP__common.Label" String="Knotenschlüssel" />
+				<Annotation Term="SAP__common.Heading" String="Generischer Knotenschlüssel" />
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Generischer Knotenschlüssel" />
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDER_TP_100Type/SalesOrder">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly" />
+				<Annotation Term="SAP__common.Label" String="Kundenauftr.-ID" />
+				<Annotation Term="SAP__common.Heading" String="Kundenauftrags-ID" />
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Kundenauftragsnummer" />
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDER_TP_100Type/Customer">
+				<Annotation Term="SAP__common.Text" Path="_Customer/CompanyName" />
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../sadlf4/sap/sepm_i_businesspartner_e/0001;ps='sadl-sepm_c_slsorder_tp_100-0001';va='com.sap.gateway.sadl.sepm_c_slsorder_tp_100.v0001.ET-SEPM_C_SLSORDER_TP_100.CUSTOMER'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.Label" String="Geschäftspartner-ID" />
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Geschäftspartner-ID" />
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDER_TP_100Type/OverallStatus">
+				<Annotation Term="SAP__common.Text" Path="_OverallStatus/SalesOrderOverallStatus_Text" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../sadlf4/sap/sepm_i_salesordoverallstatus/0001;ps='sadl-sepm_c_slsorder_tp_100-0001';va='com.sap.gateway.sadl.sepm_c_slsorder_tp_100.v0001.ET-SEPM_C_SLSORDER_TP_100.OVERALLSTATUS'/$metadata</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.SEPM_C_SLSORDER_TP_100Type">
+				<Annotation Term="SAP__common.SemanticKey">
+					<Collection>
+						<PropertyPath>SalesOrder</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="" />
+						<PropertyValue Property="TypeNamePlural" String="" />
+						<PropertyValue Property="Title">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value" Path="SalesOrder" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="SalesOrder" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Customer" />
+							<PropertyValue Property="Value" Path="Customer" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="OverallStatus" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataFieldForAction">
+							<PropertyValue Property="Label" String="Set to Delivered" />
+							<PropertyValue Property="Action" String="com.sap.gateway.sadl.sepm_c_slsorder_tp_100.v0001.SetToDelivered" />
+							<PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="SalesOrder" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Customer" />
+							<PropertyValue Property="Value" Path="Customer" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="OverallStatus" />
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant">
+					<Record>
+						<PropertyValue Property="SortOrder">
+							<Collection>
+								<Record Type="SAP__common.SortOrderType">
+									<PropertyValue Property="Property" PropertyPath="Customer" />
+									<PropertyValue Property="Descending" Bool="false" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionFields">
+					<Collection>
+						<PropertyPath>SalesOrder</PropertyPath>
+						<PropertyPath>Customer</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/SEPM_C_SLSORDER_TP_100">
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="true" />
+						<PropertyValue Property="UnsupportedExpressions" EnumMember="Capabilities.SearchExpressions/AND Capabilities.SearchExpressions/OR Capabilities.SearchExpressions/NOT Capabilities.SearchExpressions/group Capabilities.SearchExpressions/phrase" />
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

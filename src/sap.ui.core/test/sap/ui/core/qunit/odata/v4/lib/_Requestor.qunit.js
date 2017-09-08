@@ -15,7 +15,7 @@ sap.ui.require([
 
 	var sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		sSampleServiceUrl
-			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/";
+			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/";
 
 	/**
 	 * Creates a mock for jQuery's XHR wrapper.
@@ -1750,7 +1750,7 @@ sap.ui.require([
 			$apply : "filter(Price gt 100)",
 			$count : "true",
 			$expand : oExpand,
-			$filter : "BuyerName eq 'SAP'",
+			$filter : "SO_2_BP/CompanyName eq 'SAP'",
 			$foo : "bar", // to show that any system query option is accepted
 			$levels : "5",
 			$orderby : "GrossAmount asc",
@@ -1761,7 +1761,7 @@ sap.ui.require([
 			$apply : "filter(Price gt 100)",
 			$count : "true",
 			$expand : "expand",
-			$filter : "BuyerName eq 'SAP'",
+			$filter : "SO_2_BP/CompanyName eq 'SAP'",
 			$foo : "bar",
 			$levels : "5",
 			$orderby : "GrossAmount asc",
@@ -1775,7 +1775,7 @@ sap.ui.require([
 			$apply : "filter(Price gt 100)",
 			$count : true,
 			$expand : oExpand,
-			$filter : "BuyerName eq 'SAP'",
+			$filter : "SO_2_BP/CompanyName eq 'SAP'",
 			$orderby : "GrossAmount asc",
 			$search : "EUR",
 			$select : ["select1", "select2"]

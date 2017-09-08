@@ -51,7 +51,8 @@
 				"@com.sap.vocabularies.Communication.v1.IsPhoneNumber": true
 			},
 			"GWSAMPLE_BASIC.BusinessPartner/WebAddress": {
-				"@com.sap.vocabularies.Common.v1.Label": "Web Address"
+				"@com.sap.vocabularies.Common.v1.Label": "Web Address",
+				"@Org.OData.Core.V1.IsURL" : true
 			},
 			"GWSAMPLE_BASIC.CT_Address": {
 				"@com.sap.vocabularies.Communication.v1.Contact": {

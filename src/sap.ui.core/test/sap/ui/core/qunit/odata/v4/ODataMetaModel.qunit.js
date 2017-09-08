@@ -93,7 +93,7 @@ sap.ui.require([
 			}
 		},
 		sSampleServiceUrl
-			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/",
+			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		mScope = {
 			"$Annotations" : {
 				"name.space.Id" : {
@@ -1792,6 +1792,8 @@ sap.ui.require([
 	}, {
 		$Type : "Edm.Single"
 	}, {
+		$Type : "Edm.Stream"
+	}, {
 		$Type : "Edm.String"
 	}, {
 		$MaxLength : 255,
@@ -3268,9 +3270,9 @@ sap.ui.require([
 	QUnit.test("_mergeAnnotations: with annotation files (legacy)", function (assert) {
 		var sNamespace = "com.sap.gateway.default.iwbep.tea_busi.v0001.",
 			sWorker = sNamespace + "Worker/",
-			sBasicSalaryCurr = sWorker + "ComplexType_Salary/BASIC_SALARY_CURR",
-			sBasicSalaryCurr2 = "another.schema.2.ComplexType_Salary/BASIC_SALARY_CURR",
-			sBonusCurr = sWorker + "ComplexType_Salary/BONUS_CURR",
+			sBasicSalaryCurr = sWorker + "SALARY/BASIC_SALARY_CURR",
+			sBasicSalaryCurr2 = "another.schema.2.SALARY/BASIC_SALARY_CURR",
+			sBonusCurr = sWorker + "SALARY/BONUS_CURR",
 			sCommonLabel = "@com.sap.vocabularies.Common.v1.Label",
 			sCommonQuickInfo = "@com.sap.vocabularies.Common.v1.QuickInfo",
 			sCommonText = "@com.sap.vocabularies.Common.v1.Text",
@@ -4254,7 +4256,7 @@ sap.ui.require([
 
 			return oMetaModel.requestObject("/ProductList/").then(function () {
 				assert.strictEqual(oMetaModel.getValueListType(
-						"/com.sap.gateway.default.zui5_epm_sample.v0001.Contact/Sex"),
+						"/com.sap.gateway.default.zui5_epm_sample.v0002.Contact/Sex"),
 					ValueListType.Fixed);
 				assert.strictEqual(oMetaModel.getValueListType(sPropertyPath),
 					ValueListType.Standard);

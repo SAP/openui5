@@ -436,15 +436,23 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The resource path, e.g. SalesOrderList('4711')/SO_2_BP
+     * @param {boolean} [bAsName]
+	 *   If <code>true</code>, the name of the type is delivered instead of the type itself. This
+	 *   must be used when asking for a property type to avoid that the function logs an error
+	 *   because there are no objects for primitive types like "Edm.Stream".
 	 * @returns {SyncPromise}
-	 *   A promise that is resolved with the type of the object at the given path.
+	 *   A promise that is resolved with the type of the object at the given path or its name.
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.fetchType = function (sPath) {
-		var oMetaModel = this.oModel.getMetaModel();
+	ODataParentBinding.prototype.fetchType = function (sPath, bAsName) {
+		var oMetaModel = this.oModel.getMetaModel(),
+			sMetaPath = oMetaModel.getMetaPath("/" + sPath + "/");
 
-		return oMetaModel.fetchObject(oMetaModel.getMetaPath("/" + sPath + "/"));
+		if (bAsName) {
+			sMetaPath += "$Type";
+		}
+		return oMetaModel.fetchObject(sMetaPath);
 	};
 
 	/**
@@ -711,6 +719,8 @@ sap.ui.define([
 	 *   The edit URL corresponding to the entity to be updated
 	 * @param {string} sEntityPath
 	 *   The resolved, absolute entity path (as delivered from ODataMetaModel#fetchUpdateData)
+	 * @param {string} [sUnitOrCurrencyPath]
+	 *   The path of the unit or currency for the property, relative to the entity
 	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>update</code> call
 	 * @throws {Error}
@@ -719,7 +729,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyPath, vValue,
-		fnErrorCallback, sEditUrl, sEntityPath) {
+		fnErrorCallback, sEditUrl, sEntityPath, sUnitOrCurrencyPath) {
 		var oCache;
 
 		if (!this.oCachePromise.isFulfilled()) {
@@ -730,11 +740,12 @@ sap.ui.define([
 		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
 			return oCache.update(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-				this.getRelativePath(sEntityPath));
+				this.getRelativePath(sEntityPath), sUnitOrCurrencyPath);
 		}
 
 		return this.oContext.getBinding()
-			.updateValue(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl, sEntityPath);
+			.updateValue(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl, sEntityPath,
+				sUnitOrCurrencyPath);
 	};
 
 	return function (oPrototype) {

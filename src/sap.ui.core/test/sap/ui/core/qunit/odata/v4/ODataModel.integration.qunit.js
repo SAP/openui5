@@ -18,7 +18,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
 	/**
 	 * Creates a V4 OData model.
@@ -75,7 +76,7 @@ sap.ui.require([
 	 */
 	function createSalesOrdersModel(mModelParameters) {
 		return createModel(
-			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/",
+			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			mModelParameters);
 	}
 
@@ -118,6 +119,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel.integration", {
 		beforeEach : function () {
+			// We use a formatter to check for property changes. However before the formatter is
+			// called, the value is passed through the type's formatValue
+			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+
 			this.oSandbox = sinon.sandbox.create();
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
 			TestUtils.useFakeServer(this.oSandbox, "/sap/ui/core/qunit", {
@@ -129,7 +135,7 @@ sap.ui.require([
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
-				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/$metadata"
+				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
@@ -156,6 +162,8 @@ sap.ui.require([
 			// avoid calls to formatters by UI5 localization changes in later tests
 			this.oView.destroy();
 			this.oModel.destroy();
+			// reset the language
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		},
 
 		/**
@@ -1567,6 +1575,8 @@ sap.ui.require([
 				.expectChange("item", "Name", "/Equipments/EQUIPMENT_2_PRODUCT/Name")
 				.expectChange("item", "SupplierIdentifier",
 					"/Equipments/EQUIPMENT_2_PRODUCT/SupplierIdentifier")
+				.expectChange("item", "ProductPicture",
+					"/Equipments/EQUIPMENT_2_PRODUCT/ProductPicture")
 				.expectChange("item", "PRODUCT_2_CATEGORY",
 					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY")
 				.expectChange("item", "PRODUCT_2_SUPPLIER",
@@ -1619,7 +1629,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: Metadata access to Managers which is not loaded yet. The binding is unresolved
 	// initially and gets a context later. Then switch to Products (becoming asynchronous again).
-	QUnit.test("Metadata: Manager", function (assert) {
+	QUnit.test("Metadata: Manager -> Product", function (assert) {
 		var sView = '\
 <Table id="table" items="{}">\
 	<items>\
@@ -1647,6 +1657,8 @@ sap.ui.require([
 				.expectChange("item", "Name", "/Equipments/EQUIPMENT_2_PRODUCT/Name")
 				.expectChange("item", "SupplierIdentifier",
 					"/Equipments/EQUIPMENT_2_PRODUCT/SupplierIdentifier")
+				.expectChange("item", "ProductPicture",
+					"/Equipments/EQUIPMENT_2_PRODUCT/ProductPicture")
 				.expectChange("item", "PRODUCT_2_CATEGORY",
 					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY")
 				.expectChange("item", "PRODUCT_2_SUPPLIER",
@@ -2580,36 +2592,153 @@ sap.ui.require([
 </Table>',
 			that = this;
 
-			this.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)" +
-						"&$select=ID,Name&$skip=0&$top=100", {
-					"value" : [{
-						"ID" : "1",
-						"Name" : "Frederic Fall",
-						"LOCATION" : {
-							"City" : {
-								"EmployeesInCity" :
-									[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
-							}
+		this.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)" +
+					"&$select=ID,Name&$skip=0&$top=100", {
+				"value" : [{
+					"ID" : "1",
+					"Name" : "Frederic Fall",
+					"LOCATION" : {
+						"City" : {
+							"EmployeesInCity" :
+								[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
 						}
-					}, {
-						"ID" : "2",
-						"Name" : "Jonathan Smith",
-						"LOCATION" : {
-							"City" : {
-								"EmployeesInCity" :
-									[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
-							}
+					}
+				}, {
+					"ID" : "2",
+					"Name" : "Jonathan Smith",
+					"LOCATION" : {
+						"City" : {
+							"EmployeesInCity" :
+								[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
 						}
-					}]
-				}).expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+					}
+				}]
+			}).expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
-			return this.createView(assert, sView).then(function () {
-				assert.deepEqual(that.oView.byId("table").getItems().map(function (oItem) {
-					return oItem.getBindingContext().getPath();
-				}), ["/EMPLOYEES('1')", "/EMPLOYEES('2')"]);
-			});
-		}
-	);
+		return this.createView(assert, sView).then(function () {
+			assert.deepEqual(that.oView.byId("table").getItems().map(function (oItem) {
+				return oItem.getBindingContext().getPath();
+			}), ["/EMPLOYEES('1')", "/EMPLOYEES('2')"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: stream property with @odata.mediaReadLink
+	QUnit.test("stream property with @odata.mediaReadLink", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect: true}),
+			sView = '\
+<FlexBox binding="{/Equipments(\'1\')/EQUIPMENT_2_PRODUCT}">\
+	<Text id="url" text="{ProductPicture/Picture}"/>\
+</FlexBox>';
+
+		this.expectRequest("Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture",
+			{
+				"ID" : "42",
+				"ProductPicture" : {
+					"Picture@odata.mediaReadLink" : "ProductPicture('42')"
+				}
+			})
+			.expectChange("url",
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')")
+			.expectChange("url", // TODO unexpected change
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')");
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: update a quantity. The corresponding unit of measure must be sent, too.
+	QUnit.test("Update quantity", function (assert) {
+		var sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')/SO_2_SOITEM(\'10\')}">\
+	<Text id="quantity" text="{Quantity}"/>\
+	<Text id="quantityUnit" text="{QuantityUnit}"/>\
+</FlexBox>',
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM('10')?" +
+			"$select=ItemPosition,Quantity,QuantityUnit,SalesOrderID", {
+				"@odata.etag" : "etag",
+				"Quantity" : "10.000",
+				"QuantityUnit" : "EA"
+			})
+			.expectChange("quantity", "10.000") // TODO duplicate change event
+			.expectChange("quantity", "10.000")
+			.expectChange("quantityUnit", "EA")
+			.expectChange("quantityUnit", "EA");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')/SO_2_SOITEM('10')",
+					headers : {
+						"If-Match" : "etag"
+					},
+					payload : {
+						"Quantity" : "11.000",
+						"QuantityUnit" : "EA"
+					}
+				}, {
+					"@odata.etag" : "changed",
+					"Quantity" : "11.000",
+					"QuantityUnit" : "EA"
+				})
+				.expectChange("quantity", "11.000");
+
+			that.oView.byId("quantity").getBinding("text").setValue("11.000");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: PATCH an entity which is read via navigation from a complex type
+	QUnit.test("PATCH entity below a complex type", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'1\')}">\
+	<Table id="table" items="{LOCATION/City/EmployeesInCity}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="room" text="{ROOM_ID}"/>\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID"
+				+ "&$expand=LOCATION/City/EmployeesInCity($select=ID,ROOM_ID)", {
+			"ID" : "1",
+			"LOCATION" : {
+				"City" : {
+					"EmployeesInCity" : [{
+						"ID" : "1",
+						"ROOM_ID" : "1.01",
+						"@odata.etag" : "eTag"
+					}]
+				}
+			}
+		}).expectChange("room", ["1.01"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+				method : "PATCH",
+				url : "EMPLOYEES('1')",
+				headers : {
+					"If-Match" : "eTag"
+				},
+				payload : {
+					"ROOM_ID" : "1.02"
+				}
+			}).expectChange("room", "1.02", 0);
+
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
+				.setValue("1.02");
+			return that.waitForChanges(assert);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: test conversion of $select and $expand for V2 Adapter

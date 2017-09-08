@@ -155,7 +155,8 @@ sap.ui.define([
 	 *   The formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>
 	 * @throws {sap.ui.model.FormatException}
-	 *   If <code>sTargetType</code> is not supported
+	 *   If <code>sTargetType</code> is not supported or <code>oValue</code> is not a model value
+	 *   for this type.
 	 *
 	 * @public
 	 * @since 1.27.0
@@ -168,6 +169,9 @@ sap.ui.define([
 		case "any":
 			return oValue;
 		case "string":
+			if (!(oValue instanceof Date)) {
+				throw new FormatException("Illegal " + this.getName() + " value: " + oValue);
+			}
 			return getFormatter(this).format(oValue);
 		default:
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
