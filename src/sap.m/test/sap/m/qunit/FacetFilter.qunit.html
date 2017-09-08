@@ -997,6 +997,7 @@
 		oFFL.getItems()[0].setSelected(true);
 		oFFL.getItems()[1].setSelected(true);
 		oFFL.getItems()[2].setSelected(true);
+
 		oFF._setButtonText(oFFL);
 
 		assert.equal(oButton.getText(), "List (All)", "Button should contain the 'All' if all items are selected");
@@ -1295,19 +1296,6 @@
 			oFF.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			function simulateUserSearch(sSearchStr) {
-				var oEventParams = { query: sSearchStr, newValue: sSearchStr};
-				if (sSearchStr === undefined) { //this is how the search field works when search value is cleared
-					oEventParams.query = undefined;
-					oEventParams.newValue = "";
-				}
-				var oEvent = {};
-				oEvent.getParameters = function() {
-					return oEventParams;
-				};
-				oFFL._handleSearchEvent(oEvent);
-			}
-
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
 				var sSearchId = getPopoverFilterItemsList(oPopover).getAssociation("search");
@@ -1338,7 +1326,7 @@
 
 						// Verify the select all checkbox state is set correctly after search
 						if (!sap.ui.Device.browser.msie) {
-							simulateUserSearch("c");
+							simulateUserSearch("c", oFFL);
 							oFFL.getItems()[0].setSelected(true);
 						}
 
@@ -1347,7 +1335,7 @@
 								assert.strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected after search, because 1 of 1 items is selected");
 							}
 
-							simulateUserSearch();
+							simulateUserSearch(undefined, oFFL);
 
 							// When no item.setSelected is called, no need to async wait via setTimeout. This is because when item.setSelected is called,
 							// the "All" checkbox update is postponed (see FacetFilterList.prototype.onItemSelectedChange)
@@ -1355,7 +1343,7 @@
 							// Verify the select all checkbox state remains unchanged after search
 							if (!sap.ui.Device.browser.msie) {
 								assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 1 of 3 items is selected");
-								simulateUserSearch("a");
+								simulateUserSearch("a", oFFL);
 								oFFL.getItems()[0].setSelected(false);
 							} else {
 								assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
@@ -1366,15 +1354,17 @@
 								if (!sap.ui.Device.browser.msie) {
 									assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
 								}
-								simulateUserSearch();
+								simulateUserSearch(undefined, oFFL);
 								assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
 
 								//When search finds no items, the "All" checkbox should not be selected
-								simulateUserSearch("This item surely not exist");
+								simulateUserSearch("This item surely not exist", oFFL);
 
 								assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because no result is found");
+
 								destroyFF(oFF);
 								done();
+
 							}, 1000);
 						}, 1000);
 					}, 1000);
@@ -3025,6 +3015,67 @@
 			openPopover(oFF, 0);
 		});
 
+		QUnit.test("Selection button text updated after popover close - binding and search scenario", function(assert) {
+			//arrange
+			var done = assert.async(),
+				aValues = [
+					{key : 'k1',text : "a"},
+					{key : 'k2',text : "ba"},
+					{key : 'k3',text : "c"}
+				],
+				aNewModel = [
+					{key : 'k4',text : "a1"},
+					{key : 'k5',text : "ba1"},
+					{key : 'k6',text : "a2"},
+					{key : 'k7',text : "d1"}
+				],
+				oModel = new sap.ui.model.json.JSONModel({
+					values : aValues
+				}),
+				oFF = new sap.m.FacetFilter(),
+				oFFL = new sap.m.FacetFilterList(),
+				oPopover = oFF._getPopover(),
+				oButton = oFF._getButtonForList(oFFL),
+				oList = getPopoverFilterItemsList(oPopover);
+
+			oFFL.bindAggregation("items", {
+				path : "/values",
+				template : new sap.m.FacetFilterItem({
+					text : "{text}",
+					key : "{key}"
+				})
+			});
+			oFFL.setModel(oModel);
+			oFF.addList(oFFL);
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oPopover.attachEventOnce("afterOpen", function(oEvent) {
+
+				//act
+				simulateUserSearch("a", oFFL);
+				//the search will result in exactly three of four items
+				oFFL.getItems()[0].setSelected(true);
+				oFFL.getItems()[1].setSelected(true);
+				oFFL.getItems()[2].setSelected(true);
+
+				oPopover.attachEventOnce("afterClose", function(oEvent) {
+					sap.ui.getCore().applyChanges();
+					//assert
+					assert.equal(oButton.getText(), " (3)",
+							"Button text is 3 because the model was changed with another one with 4 items, 3 of them - selected during the search");
+					destroyFF(oFF);
+					done();
+				});
+				oFF._closePopover();
+
+			});
+
+			oModel.setProperty("/values", aNewModel);
+
+			openPopover(oFF, 0);
+		});
+
 		QUnit.test("Selection button text updated after dialog close", function(assert) {
 			var done = assert.async();
 
@@ -4502,7 +4553,20 @@
 		function callIconDelegate(sEventName, oIcon) {
 			oIcon.aBeforeDelegates[0].oDelegate[sEventName].call(oIcon, {});
 		}
-//	}
+
+		function simulateUserSearch(sSearchStr, oFFL) {
+			var oEventParams = { query: sSearchStr, newValue: sSearchStr};
+			if (sSearchStr === undefined) { //this is how the search field works when search value is cleared
+				oEventParams.query = undefined;
+				oEventParams.newValue = "";
+			}
+			var oEvent = {};
+			oEvent.getParameters = function() {
+				return oEventParams;
+			};
+			oFFL._handleSearchEvent(oEvent);
+		}
+
 </script>
 </head>
 
