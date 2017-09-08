@@ -76,6 +76,7 @@ sap.ui.define([
 		destroy: function() {
 			this._table = null;
 			this._type = null;
+			this.bIsDestroyed = true;
 			BaseObject.prototype.destroy.apply(this, arguments);
 		},
 
