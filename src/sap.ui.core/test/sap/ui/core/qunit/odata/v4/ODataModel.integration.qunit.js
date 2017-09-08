@@ -370,9 +370,10 @@ sap.ui.require([
 			this.oView = sap.ui.xmlview({
 				controller : oController
 					&& new (Controller.extend(jQuery.sap.uid(), oController))(),
-				viewContent : '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">'
-					+ sViewXML
-					+ '</mvc:View>'
+				viewContent :
+					'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
+						+ sViewXML
+						+ '</mvc:View>'
 			});
 			Object.keys(this.mChanges).forEach(function (sControlId) {
 				var oControl = that.oView.byId(sControlId);
@@ -2711,6 +2712,46 @@ sap.ui.require([
 
 		// code under test
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: sap.ui.table.Table with VisibleRowCountMode="Auto" only calls ODLB.getContexts()
+	// after rendering (via setTimeout). This must not lead to separate requests for each table
+	// cell resp. console errors due to data access via virtual context.
+	// BCP 1770367083
+	QUnit.test("sap.ui.table.Table with VisibleRowCountMode='Auto'", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{/EMPLOYEES}" visibleRowCountMode="Auto">\
+	<t:columns>\
+		<t:Column>\
+			<t:label>\
+				<Label text="Name"/>\
+			</t:label>\
+			<t:template>\
+				<Text id="text" text="{Name}" />\
+			</t:template>\
+		</t:Column>\
+	</t:columns>\
+</t:Table>',
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			that = this;
+
+		this.expectChange("text", false); // test listens to changes on table template control
+		return this.createView(assert, sView, oModel).then(function () {
+			// table.Table must render to call getContexts on its row aggregation's list binding
+			that.oView.placeAt("qunit-fixture");
+			that.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=105", {
+					"value" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Jonathan Smith"}
+					]
+				})
+				//TODO The below null's are: Text has binding context null and its initial value is
+				// undefined (formatted to null by String type). (How) can we get rid of this?
+				.expectChange("text", null, null)
+				.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+			return that.waitForChanges(assert);
+		});
 	});
 });
 //TODO test bound action
