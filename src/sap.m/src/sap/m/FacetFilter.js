@@ -1055,6 +1055,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			if (oList.getWordWrap()) {
 				oPopover.setContentWidth("30%");
 			}
+
 			oList._applySearch();
 		}
 		return this;
@@ -1152,8 +1153,13 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * @private
 	 */
 	FacetFilter.prototype._setButtonText = function(oList) {
-
 		var oButton = this._buttons[oList.getId()];
+
+		//store the full count of list items initially and when there's items
+		if (oList._iAllItemsCount === undefined && oList.getMaxItemsCount()) {
+			oList._iAllItemsCount = oList.getMaxItemsCount();
+		}
+
 		if (oButton) { // Button may not be created yet if FFL.setTitle() is called before the button is rendered the first time
 
 			var sText = "";
@@ -1163,7 +1169,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			if (iLength === 1) { // Use selected item value for button label if only one selected
 				var sSelectedItemText = oList._oSelectedKeys[aSelectedKeyNames[0]];
 				sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [oList.getTitle(), sSelectedItemText]);
-			} else if (iLength > 0 && iLength === oList._getNonGroupItems().length) {
+			} else if (iLength > 0 && iLength === (oList._iAllItemsCount ? oList._iAllItemsCount : 0) ) { //if iAllItemsCount is undefined we must be sure that the check is between integers
 				sText = this._bundle.getText("FACETFILTER_ALL_SELECTED", [oList.getTitle()]);
 			} else if (iLength > 0) {
 				sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [oList.getTitle(), iLength]);

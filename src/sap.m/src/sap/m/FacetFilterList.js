@@ -420,6 +420,16 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 			var sUpdateReason = oEvent.getParameter("reason");
 			sUpdateReason = sUpdateReason ? sUpdateReason.toLowerCase() : sUpdateReason;
 
+			//only when a new binding is set, get its length and set it to this._iAllItemsCount in order to use it in _setButtonText
+			if (sUpdateReason === "change") {
+				var oBinding = this.getBinding("items"),
+					oModel = oBinding ? oBinding.getModel() : null;
+
+				if (oModel && oModel.getProperty(oBinding.getPath())) {
+					this._iAllItemsCount = oModel.getProperty(oBinding.getPath()).length || 0; //if the model is different than a simple array of objects
+				}
+			}
+
 			if (sUpdateReason !== "growing" && sUpdateReason !== ChangeReason.Filter.toLowerCase()) {
 				this._oSelectedKeys = {};
 				this._getNonGroupItems().forEach(function(item) {
@@ -434,6 +444,9 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 			}
 
 			this._updateFacetFilterButtonText();
+			//need to check if the visible items represent all of the items in order to handle the select all check box
+			this._updateSelectAllCheckBox();
+
 		});
 
 		this._allowRemoveSelections = true;
@@ -442,6 +455,10 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 		 popup FFL.active state can be switched off and on several times. This will help to determine the final active state
 		 of the FacetFilterList after closing the dialog/popup */
 		this._bOriginalActiveState;
+
+		//needed to store the full items count
+		this._iAllItemsCount;
+
 	};
 
 	/**
@@ -620,7 +637,6 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 			oCheckbox = sap.ui.getCore().byId(this.getAssociation("allcheckbox"));
 			bAtLeastOneItemIsSelected = iItemsCount > 0 && iItemsCount === aItems.filter(isSelected).length;
 			bSelectAllSelected = this.getActive() && bAtLeastOneItemIsSelected;
-
 			oCheckbox && oCheckbox.setSelected(bSelectAllSelected);
 		}
 	};
