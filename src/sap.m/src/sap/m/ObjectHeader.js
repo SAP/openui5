@@ -1119,7 +1119,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns {boolean}
 	 */
 	ObjectHeader.prototype._hasBottomContent = function() {
-		return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers());
+		return (this._hasAttributes() || this._hasStatus() || this._hasMarkers());
 	};
 
 	/**
@@ -1166,6 +1166,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 		return bHasStatus;
+	};
+
+	/**
+	 * @private
+	 * @returns {boolean} If there are markers
+	 */
+	ObjectHeader.prototype._hasMarkers = function() {
+		var aMarkers = this.getMarkers(),
+			bHasOldMarkers = this.getShowMarkers() && (this.getMarkFavorite() || this.getMarkFlagged()),
+			bHasMаrkers = aMarkers && aMarkers.length;
+
+		return (bHasOldMarkers || bHasMаrkers);
 	};
 
 	/**
