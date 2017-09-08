@@ -1461,8 +1461,39 @@
 			oObjectHeader.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(sap.ui.getCore().byId("draft"), "marker draft should be rendered.");
-			assert.ok(sap.ui.getCore().byId("draft"), "marker unsaved should be rendered.");
+			assert.ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
+			assert.ok(jQuery.sap.domById("unsaved"), "marker unsaved should be rendered.");
+
+			oObjectHeader.destroy();
+		});
+
+		QUnit.test("Test _hasMarkers function", function(assert) {
+			var oObjectHeader = new sap.m.ObjectHeader({
+				title : "Markers agregation",
+				markers: [
+						new sap.m.ObjectMarker({id: "draft", type: sap.m.ObjectMarkerType.Draft}),
+						new sap.m.ObjectMarker({id: "unsaved", type: sap.m.ObjectMarkerType.Unsaved})
+						]
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to false");
+
+			oObjectHeader.setShowMarkers(true);
+			oObjectHeader.setMarkFavorite(true);
+			assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to true and markFavourite set to true");
+
+			oObjectHeader.removeAggregation("markers");
+			assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with no markers aggregation and showMarkers property set to true and markFavourite set to true");
+
+			oObjectHeader.setMarkFavorite(false);
+			assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return false for - ObjectHeader with no markers aggregation and showMarkers property set to true and markFavourite set to false");
+
+			oObjectHeader.setShowMarkers(false);
+			assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return false for - ObjectHeader with no markers aggregation and showMarkers property set to false and markFavourite set to false");
 
 			oObjectHeader.destroy();
 		});
