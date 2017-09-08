@@ -4,12 +4,10 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc">
-
 	<Page showHeader="false">
 		<l:BlockLayout
 			id="BlockLayout"
-			background="Light">
-
+			background="Default">
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell class="sapUiNoContentPadding">
 					<Image
@@ -20,18 +18,18 @@
 						width="100%"/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
-
-			<l:BlockLayoutRow rowColorSet="ColorSet3">
+			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
 					class="sapUiResponsiveContentPadding"
 					title="{i18n>shopAdminTitle}"
 					backgroundColorSet="ColorSet9"
-					backgroundColorShade="ShadeB"
+					backgroundColorShade="ShadeA"
 					titleAlignment="Left"/>
 			</l:BlockLayoutRow>
-
-			<l:BlockLayoutRow rowColorSet="ColorSet2">
-				<l:BlockLayoutCell>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+					backgroundColorSet="ColorSet11"
+					backgroundColorShade="ShadeD">
 					<l:VerticalLayout>
 						<core:Icon
 							src="sap-icon://role"
@@ -48,7 +46,9 @@
 						<Link text="{i18n>learnLink}"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+					backgroundColorSet="ColorSet11"
+					backgroundColorShade="ShadeB">
 					<l:VerticalLayout>
 						<core:Icon
 							src="sap-icon://add-product"
@@ -65,7 +65,9 @@
 						<Link text="{i18n>learnLink}"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+					backgroundColorSet="ColorSet11"
+					backgroundColorShade="ShadeD">
 					<l:VerticalLayout>
 						<core:Icon
 							src="sap-icon://customer-financial-fact-sheet"
@@ -82,7 +84,9 @@
 						<Link text="{i18n>learnLink}"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+					backgroundColorSet="ColorSet11"
+					backgroundColorShade="ShadeB">
 					<l:VerticalLayout>
 						<core:Icon
 							src="sap-icon://supplier"
@@ -100,9 +104,10 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
-
-			<l:BlockLayoutRow rowColorSet="ColorSet3">
-				<l:BlockLayoutCell>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+					backgroundColorSet="ColorSet11"
+					backgroundColorShade="ShadeB">
 					<l:VerticalLayout>
 						<core:Icon
 							src="sap-icon://thumb-up"
@@ -120,9 +125,8 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
-					class="sapUiNoContentPadding"
 					backgroundColorSet="ColorSet9"
-					backgroundColorShade="ShadeB"
+					backgroundColorShade="ShadeA"
 					width="3">
 					<Table items="{path:'customer>/customers', templateShareable: false}">
 						<headerToolbar>
@@ -171,5 +175,4 @@
 			</l:BlockLayoutRow>
 		</l:BlockLayout>
 	</Page>
-
 </mvc:View>
