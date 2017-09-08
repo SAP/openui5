@@ -517,11 +517,6 @@ sap.ui.define([
 						this.fireFailed();
 					}, this);
 
-					// attach RuntimeAuthoring event to _$document
-					this._$document = jQuery(document);
-					this.fnKeyDown = this._onKeyDown.bind(this);
-					this._$document.on("keydown", this.fnKeyDown);
-
 					// Register function for checking unsaved before leaving RTA
 					this._oldUnloadHandler = window.onbeforeunload;
 					window.onbeforeunload = this._onUnload.bind(this);
@@ -542,6 +537,11 @@ sap.ui.define([
 							return this.getToolbar().show();
 						}.bind(this));
 				}
+			}.bind(this))
+			.then(function () {
+				this.fnKeyDown = this._onKeyDown.bind(this);
+				this.fnKeyDown = this._onKeyDown.bind(this);
+				jQuery(document).on("keydown", this.fnKeyDown);
 			}.bind(this))
 			.then(function() {
 				this.getPopupManager().setRta(this);
@@ -831,14 +831,6 @@ sap.ui.define([
 		}
 	};
 
-	// RuntimeAuthoring.prototype.setToolbar = function (oControl) {
-	// 	this._oToolbar = oControl;
-	// };
-	//
-	// RuntimeAuthoring.prototype.getToolbar = function () {
-	// 	return this._oToolbar;
-	// };
-
 	/**
 	 * Exit Runtime Authoring - destroy all controls and plugins
 	 *
@@ -855,7 +847,7 @@ sap.ui.define([
 			this._oDesignTime = null;
 
 			// detach browser events
-			this._$document.off("keydown", this.fnKeyDown);
+			jQuery(document).off("keydown", this.fnKeyDown);
 			// Destroy default plugins
 			this._destroyDefaultPlugins();
 			// plugins have been destroyed as _oDesignTime.destroy()

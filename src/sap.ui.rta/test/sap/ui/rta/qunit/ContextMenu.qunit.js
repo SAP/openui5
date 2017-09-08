@@ -49,15 +49,16 @@
 			this.oMultipleBoundFieldGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.BoundButton35");
 			this.oFieldInGroupWithoutStableId = sap.ui.getCore().byId("Comp1---idMain1--FieldInGroupWithoutStableId");
 
-			var done = assert.async();
-
 			this.oRta = new sap.ui.rta.RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
 			});
-			this.oRta.attachStart(function() {
-				done();
-			});
-			this.oRta.start();
+
+			return Promise.all([
+				new Promise(function (fnResolve) {
+					this.oRta.attachStart(fnResolve);
+				}.bind(this)),
+				this.oRta.start()
+			]);
 		},
 		afterEach : function(assert) {
 			this.oRta.destroy();
@@ -310,15 +311,16 @@
 			oEmbeddedPage.addContent(this.oObjectPageLayout);
 			sap.ui.getCore().applyChanges();
 
-			var done = assert.async();
-
 			this.oRta = new sap.ui.rta.RuntimeAuthoring({
 				rootControl : this.oObjectPageLayout
 			});
-			this.oRta.attachStart(function() {
-				done();
-			});
-			this.oRta.start();
+
+			return Promise.all([
+				new Promise(function (fnResolve) {
+					this.oRta.attachStart(fnResolve);
+				}.bind(this)),
+				this.oRta.start()
+			]);
 		},
 		afterEach : function(assert) {
 			this.oObjectPageLayout.destroy();
@@ -383,20 +385,25 @@
 			this.oObjectPageLayout.placeAt("test-view");
 			sap.ui.getCore().applyChanges();
 
-			var done = assert.async();
+			sandbox.stub(sap.ui.rta.RuntimeAuthoring.prototype, '_checkChangesExist', function () {
+				return Promise.resolve(false);
+			});
 
 			this.oRta = new sap.ui.rta.RuntimeAuthoring({
 				rootControl : this.oObjectPageLayout
 			});
-			this.oRta.attachStart(function() {
-				done();
-			});
 
-			this.oRta.start();
+			return Promise.all([
+				new Promise(function (fnResolve) {
+					this.oRta.attachStart(fnResolve);
+				}.bind(this)),
+				this.oRta.start()
+			]);
 		},
 		afterEach : function(assert) {
 			this.oObjectPageLayout.destroy();
 			this.oRta.destroy();
+			sandbox.restore();
 		}
 	});
 
@@ -442,15 +449,16 @@
 			oEmbeddedPage.addContent(oPage);
 			sap.ui.getCore().applyChanges();
 
-			var done = assert.async();
-
 			this.oRta = new sap.ui.rta.RuntimeAuthoring({
 				rootControl : oPage
 			});
-			this.oRta.attachStart(function() {
-				done();
-			});
-			this.oRta.start();
+
+			return Promise.all([
+				new Promise(function (fnResolve) {
+					this.oRta.attachStart(fnResolve);
+				}.bind(this)),
+				this.oRta.start()
+			]);
 		},
 		afterEach : function(assert) {
 			this.oObjectPageLayout.destroy();
@@ -473,15 +481,16 @@
 			this.oSimpleFormWithTitles = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
 			this.oSimpleFormWithToolbars = sap.ui.getCore().byId("Comp1---idMain1--SimpleFormWithToolbars");
 
-			var done = assert.async();
-
 			this.oRta = new sap.ui.rta.RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
 			});
-			this.oRta.attachStart(function() {
-				done();
-			});
-			this.oRta.start();
+
+			return Promise.all([
+				new Promise(function (fnResolve) {
+					this.oRta.attachStart(fnResolve);
+				}.bind(this)),
+				this.oRta.start()
+			]);
 		},
 		afterEach : function(assert) {
 			this.oRta.destroy();

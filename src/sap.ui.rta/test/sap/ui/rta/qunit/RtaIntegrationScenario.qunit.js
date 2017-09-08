@@ -153,8 +153,6 @@ sap.ui.require([
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {
 		beforeEach : function(assert) {
-			var done = assert.async();
-
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
 
@@ -174,13 +172,16 @@ sap.ui.require([
 				}
 			});
 
-			this.oRta.attachStart(function() {
-				this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
-				this.oElementOverlay = OverlayRegistry.getOverlay(sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
-				done();
-			}.bind(this));
-
-			this.oRta.start();
+			return Promise.all([
+				new Promise(function (fnResolve) {
+					this.oRta.attachStart(function() {
+						this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
+						this.oElementOverlay = OverlayRegistry.getOverlay(sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
+						fnResolve();
+					}.bind(this));
+				}.bind(this)),
+				this.oRta.start()
+			]);
 		},
 
 		afterEach : function(assert) {
