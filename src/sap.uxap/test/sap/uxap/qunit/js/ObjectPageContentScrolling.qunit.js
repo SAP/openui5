@@ -1,4 +1,7 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("view", "./view");
 	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
@@ -21,7 +24,9 @@
 		var oObjectPage = oObjectPageContentScrollingView.byId("ObjectPageLayout");
 
 		for (var section in oObjectPage._oSectionInfo) {
-			if (!oObjectPage._oSectionInfo.hasOwnProperty(section)) continue;
+			if (!oObjectPage._oSectionInfo.hasOwnProperty(section)) {
+				continue;
+			}
 
 			//Scroll to section
 			oObjectPage.scrollToSection(section,0,0);
@@ -104,6 +109,37 @@
 				iExpectedPosition =  oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection2-1"].positionTop;
 				assert.strictEqual(iScrollPosition, iExpectedPosition, "scrollPosition is correct");
 				ObjectPageContentScrollingView.destroy();
+				done();
+			}, 1000); // throttling delay
+		}, 1000); //dom calc delay
+	});
+
+	QUnit.test("Deleting the above section preserves the selected section position", function (assert) {
+
+		var done = assert.async();
+		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		});
+		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oFirstSection = ObjectPageContentScrollingView.byId("firstSection"),
+			oThirdSection = ObjectPageContentScrollingView.byId("thirdSection"),
+			iScrollPositionAfterRemove,
+			iExpectedPositionAfterRemove;
+
+		oObjectPage.setSelectedSection(oThirdSection.getId());
+
+		ObjectPageContentScrollingView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+
+		setTimeout(function() {
+			oObjectPage.removeSection(oFirstSection);
+			setTimeout(function() {
+				iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
+				iExpectedPositionAfterRemove = jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top; // top of third section content
+				assert.strictEqual(iScrollPositionAfterRemove, iExpectedPositionAfterRemove, "scrollPosition is correct");
+				ObjectPageContentScrollingView.destroy();
+				oFirstSection.destroy();
 				done();
 			}, 1000); // throttling delay
 		}, 1000); //dom calc delay
