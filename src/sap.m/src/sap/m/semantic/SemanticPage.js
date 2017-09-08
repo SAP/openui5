@@ -7,29 +7,48 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	"use strict";
 
 	/**
-	 * Constructor for a new SemanticPage
+	 * Constructor for a new <code>SemanticPage</code>.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A semantic page is an enhanced {@link sap.m.Page}, that can contain controls with semantic meaning, see {@link sap.m.semantic.SemanticControl}.
+	 * An enhanced {@link sap.m.Page}, that can contain controls with semantic meaning,
+	 * see {@link sap.m.semantic.SemanticControl}.
 	 *
-	 * <b>Note:</b> This control implements the SAP Fiori 1.0 design guidelines. For SAP Fiori 2.0, see the {@link sap.f.semantic.SemanticPage}.
+	 * <b>Note:</b> This control implements the SAP Fiori 1.0 design guidelines.
+	 * For SAP Fiori 2.0, see the {@link sap.f.semantic.SemanticPage}.
 	 *
-	 * Content specified in the {@link sap.m.semantic.SemanticPage#semanticControls} aggregations will be automatically positioned in dedicated sections of the footer or the header of the page, depending on the control's semantics.<br>
-	 * For example, a semantic button of type {@link sap.m.semantic.PositiveAction} will be positioned in the right side of the footer, and in logically correct sequence order with respect to any other included semantic controls.<br>
+	 * <h3>Overview</h3>
 	 *
-	 * The full list of what we internally define for semantic content is:
-	 *  <ul>
-	 *      <li>Visual properties (e.g. AddAction will be styled as an icon button)</li>
-	 *      <li>Position in the page (UX guidelines specify that some buttons should be in the header only, while others are in the footer or the "share" menu, so we do the correct positioning)</li>
-	 *      <li>Sequence order (UX guidelines define a specific sequence order of semantic controls with respect to each other)</li>
-	 *      <li>Default localized tooltip for icon-only buttons</li>
-	 *      <li>Overflow behavior (UX quidelines define which buttons are allowed to go to the overflow of the toolbar when the screen gets narrower). For icon buttons, we ensure that the text label of the button appears when the button is in overflow, as specified by UX.</li>
-	 *      <li>Screen reader support (invisible text for reading the semantic type)</li>
-	 *  </ul>
+	 * The main functionality of the <code>SemanticPage</code> is to predefine the placement,
+	 * behavior and styles of the page elements.
 	 *
-	 * In addition to the predefined semantic controls, the SemanticPage can host also custom application-provided controls. It preserves most of the API of {@link sap.m.Page} for specifying page content.<br>
+	 * Content specified in the semantic aggregations will be automatically positioned in
+	 * dedicated sections of the footer or the header of the page.
+	 *
+	 * <h3>Structure</h3>
+	 *
+	 * The semantics of the content are the following:
+	 * <ul>
+	 * <li>Visual properties (for example, <code>AddAction</code> will be styled as an icon button)</li>
+	 * <li>Position in the page (UX guidelines specify that some buttons should be in the header only,
+	 *  while others are in the footer or the "share" menu, so we do the correct positioning)</li>
+	 * <li>Sequence order (UX guidelines define a specific sequence order of semantic controls with
+	 * respect to each other)</li>
+	 * <li>Default localized tooltip for icon-only buttons</li>
+	 * <li>Overflow behavior (UX guidelines define which buttons are allowed to go to the overflow of
+	 * the toolbar when the screen gets narrower). For icon buttons, we ensure that the text label of
+	 * the button appears when the button is in overflow, as specified by UX.</li>
+	 * <li>Screen reader support (invisible text for reading the semantic type)</li>
+	 * </ul>
+	 *
+	 * In addition to the predefined semantic controls, the <code>SemanticPage</code> can host also
+	 * custom app controls. It preserves most of the API of the {@link sap.m.Page} for specifying page content.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * The app developer only has to specify the action type, and the required styling and
+	 * positioning are automatically added.
 	 *
 	 * @extends sap.ui.core.Control
 	 * @abstract
