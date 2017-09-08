@@ -27,9 +27,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 		var Analyzer = function () {
 			this.dStartedAt = null;
 			this.dFinishedAt = null;
-			this.dElapsedTime = null;
+			this.iElapsedTime = 0;
+			this._iAllowedTimeout = 10000; //ms
 			this.reset();
 		};
+
 		/**
 		 * Resets the analyzer and clears all tasks.
 		 *
@@ -38,7 +40,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 		 */
 		Analyzer.prototype.reset = function () {
 			this._iTotalProgress = 0;
-			this._iAllowedTimeout = 10000; //ms
 			this._iCompletedRules = 0;
 			this._iTotalRules = 0;
 			this._bRunning = false;
@@ -85,11 +86,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 						}
 
 					} catch (eRuleExecException) {
-						var sMessage = "[" + Constants.SUPPORT_ASSISTANT_NAME + "] Error while execution rule \"" + oRule.id +
-							"\": " + eRuleExecException.message;
-						jQuery.sap.log.error(sMessage);
-						fnResolve();
-						that._updateProgress();
+						that._handleException(eRuleExecException, oRule.id, fnResolve);
 					}
 				}));
 			});
@@ -97,8 +94,25 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 			return Promise.all(this._aRulePromices).then(function () {
 				that.reset();
 				that.dFinishedAt = new Date();
-				that.dElapsedTime = that.dFinishedAt.getTime() - that.dStartedAt.getTime(); // In milliseconds
+				that.iElapsedTime = that.dFinishedAt.getTime() - that.dStartedAt.getTime(); // In milliseconds
 			});
+		};
+
+		/**
+		 * Handles exceptions in async/sync rule executions.
+		 *
+		 * @private
+		 * @param {(object|string)} eRuleException The exception object
+		 * @param {string} sRuleId The ID of the rule
+		 * @param {function} fnResolve the resolve function of the promise
+		 */
+		Analyzer.prototype._handleException = function (eRuleException, sRuleId, fnResolve) {
+			var sText = eRuleException.message || eRuleException;
+			var sMessage = "[" + Constants.SUPPORT_ASSISTANT_NAME + "] Error while execution rule \"" + sRuleId +
+				"\": " + sText;
+			jQuery.sap.log.error(sMessage);
+			fnResolve();
+			this._updateProgress();
 		};
 
 		/**
@@ -109,8 +123,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 		Analyzer.prototype._updateProgress = function () {
 			this._iCompletedRules++;
 			this._iTotalProgress = Math.ceil( this._iCompletedRules / this._iTotalRules * 100 );
-			this.onNotifyProgress(this._iTotalProgress);
+
+			if (this.onNotifyProgress) {
+				this.onNotifyProgress(this._iTotalProgress);
+			}
 		};
+
 		/**
 		 * Analyzes async rules.
 		 *
@@ -118,24 +136,34 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 		 * @param {object} oCoreFacade Metadata, Models, UI areas and Components of the Core object
 		 * @param {object} oExecutionScope selected execution scope from user in UI
 		 * @param {object} oRule support rule to be analyzed
-		 * @param {object}fnResolve inner resolve for async rules
+		 * @param {object} fnResolve inner resolve for async rules
 		 * @private
 		 */
 		Analyzer.prototype._runAsyncRule = function (oIssueManagerFacade, oCoreFacade, oExecutionScope, oRule, fnResolve) {
-			var that = this;
+			var that = this,
+				bTimedOut = false;
+
 			var iTimeout = setTimeout(function () {
-				fnResolve();
-				that._updateProgress();
+				bTimedOut = true;
+				that._handleException("Check function timed out", oRule.id, fnResolve);
 			}, this._iAllowedTimeout);
 
 			new Promise(function (fnRuleResolve) {
 				oRule.check(oIssueManagerFacade, oCoreFacade, oExecutionScope, fnRuleResolve);
 			}).then(function () {
-				clearTimeout(iTimeout);
-				fnResolve();
-				that._updateProgress();
+				if (!bTimedOut) {
+					clearTimeout(iTimeout);
+					fnResolve();
+					that._updateProgress();
+				}
+			}).catch(function (eRuleExecException) {
+				if (!bTimedOut) {
+					clearTimeout(iTimeout);
+					that._handleException(eRuleExecException, oRule.id, fnResolve);
+				}
 			});
 		};
+
 		/**
 		 * Get the elapsed time in the form of a string.
 		 *
@@ -143,13 +171,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 		 * @returns {string} Returns the total elapsed time since the Analyzer has started
 		 */
 		Analyzer.prototype.getElapsedTimeString = function () {
-			if (!this.dElapsedTime) {
-				return;
+			if (!this.iElapsedTime) {
+				return "";
 			}
 
 			var oDate = new Date(null);
 			oDate.setHours(0, 0, 0, 0);
-			oDate.setMilliseconds(this.dElapsedTime);
+			oDate.setMilliseconds(this.iElapsedTime);
 			var aBuffer = [
 				(oDate.getHours() < 10 ? "0" : "") + oDate.getHours(),
 				(oDate.getMinutes() < 10 ? "0" : "") + oDate.getMinutes(),
@@ -158,7 +186,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 			];
 
 			return aBuffer.join(":");
-
 		};
 
 		return Analyzer;
