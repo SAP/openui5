@@ -5,11 +5,12 @@
 //Provides mixin sap.ui.model.odata.v4.ODataParentBinding for classes extending sap.ui.model.Binding
 //with dependent bindings
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/model/ChangeReason",
 	"./ODataBinding",
 	"./lib/_Helper",
 	"./lib/_SyncPromise"
-], function (ChangeReason, asODataBinding, _Helper, _SyncPromise) {
+], function (jQuery, ChangeReason, asODataBinding, _Helper, _SyncPromise) {
 	"use strict";
 
 	/**

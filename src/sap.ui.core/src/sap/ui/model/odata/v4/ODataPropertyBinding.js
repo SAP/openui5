@@ -5,14 +5,12 @@
 //Provides class sap.ui.model.odata.v4.ODataPropertyBinding
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/PropertyBinding",
 	"./lib/_Cache",
 	"./lib/_SyncPromise",
 	"./ODataBinding"
-], function (jQuery, BindingMode, ChangeReason, PropertyBinding, _Cache, _SyncPromise,
-		asODataBinding) {
+], function (jQuery, ChangeReason, PropertyBinding, _Cache, _SyncPromise, asODataBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
@@ -583,4 +581,4 @@ sap.ui.define([
 	};
 
 	return ODataPropertyBinding;
-}, /* bExport= */ true);
+});

@@ -2,9 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"../_AnnotationHelperBasics",
 	"./_AnnotationHelperExpression"
-], function (Basics, Expression) {
+], function (Expression) {
 	"use strict";
 
 	var rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars

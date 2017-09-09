@@ -1455,4 +1455,4 @@ sap.ui.define([
 	};
 
 	return ODataListBinding;
-}, /* bExport= */ true);
+});
