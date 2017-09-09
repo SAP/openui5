@@ -4,9 +4,12 @@
 
 // Provides control sap.m.P13nGroupPanel.
 sap.ui.define([
-	'jquery.sap.global', './P13nConditionPanel', './P13nPanel', './library', 'sap/ui/core/Control'
-], function(jQuery, P13nConditionPanel, P13nPanel, library, Control) {
+	'jquery.sap.global', './P13nConditionPanel', './P13nPanel', './library'
+], function(jQuery, P13nConditionPanel, P13nPanel, library) {
 	"use strict";
+
+	// shortcut for sap.m.P13nPanelType
+	var P13nPanelType = library.P13nPanelType;
 
 	/**
 	 * Constructor for a new P13nGroupPanel.
@@ -210,7 +213,7 @@ sap.ui.define([
 	};
 
 	P13nGroupPanel.prototype.init = function() {
-		this.setType(sap.m.P13nPanelType.group);
+		this.setType(P13nPanelType.group);
 		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("GROUPPANEL_TITLE"));
 
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
@@ -506,4 +509,4 @@ sap.ui.define([
 
 	return P13nGroupPanel;
 
-}, /* bExport= */true);
+});

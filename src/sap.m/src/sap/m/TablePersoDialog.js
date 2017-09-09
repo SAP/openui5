@@ -3,9 +3,17 @@
  */
 
 // Provides TablePersoDialog
-sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', './List', './Toolbar', 'sap/ui/base/ManagedObject'],
-	function(jQuery, Button, Dialog, InputListItem, List, Toolbar, ManagedObject) {
+sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', './List', './Toolbar', 'sap/ui/base/ManagedObject', 'sap/m/library', 'sap/ui/Device', 'sap/ui/model/Sorter', 'sap/ui/model/Filter'],
+	function(jQuery, Button, Dialog, InputListItem, List, Toolbar, ManagedObject, library, Device, Sorter, Filter) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
 
 
 
@@ -270,7 +278,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		this._oList =  new List(this.getId() + "-colList",{
 			includeItemInSelection: true,
 			noDataText: this._oRb.getText('PERSODIALOG_NO_DATA'),
-			mode: sap.m.ListMode.SingleSelectMaster,
+			mode: ListMode.SingleSelectMaster,
 			selectionChange: function(){ this._fnUpdateArrowButtons.call(this); }.bind(this),
 			updateFinished: this._fnListUpdateFinished
 		});
@@ -327,16 +335,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		this._oSelectAllToolbar = new Toolbar(this.getId() + "-toolbarSelAll", {
 			// makes sure that toolbar itself is not clickable and removed from tab chain
 			active: false,
-			design : sap.m.ToolbarDesign.Transparent,
+			design : ToolbarDesign.Transparent,
 			content: [this._oSelectAllCheckbox, this._resetAllButton]
 		}).addStyleClass("sapMPersoDialogFixedBar");
 
 		this._oDialog = new Dialog(this.getId() + "-Dialog", {
 			title : this._oRb.getText("PERSODIALOG_COLUMNS_TITLE"),
-			stretch: sap.ui.Device.system.phone,
+			stretch: Device.system.phone,
 			horizontalScrolling: false,
 			verticalScrolling: false,
-			initialFocus: (sap.ui.Device.system.desktop ? this._oList : null),
+			initialFocus: (Device.system.desktop ? this._oList : null),
 			content : [ this._oSelectAllToolbar, this._oScrollContainer],
 			subHeader : new Toolbar(this.getId() + "-toolbar", {
 				//makes sure that toolbar itself is not clickable and removed from tab chain
@@ -349,7 +357,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 					that._oDialog.close();
 					that._oSearchField.setValue("");
 					that._oSelectAllToolbar.setVisible(true);
-					sap.ui.Device.resize.detachHandler(that._fnHandleResize);
+					Device.resize.detachHandler(that._fnHandleResize);
 					that.fireConfirm();
 				}
 			}),
@@ -359,7 +367,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 					that._oDialog.close();
 					that._oSearchField.setValue("");
 					that._oSelectAllToolbar.setVisible(true);
-					sap.ui.Device.resize.detachHandler(that._fnHandleResize);
+					Device.resize.detachHandler(that._fnHandleResize);
 					that.fireCancel();
 				}
 			}),
@@ -390,7 +398,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 	TablePersoDialog.prototype.open = function () {
 		var aSorter = null;
 		if (this.getHasGrouping()) {
-			aSorter = [new sap.ui.model.Sorter('group', false, true)];
+			aSorter = [new Sorter('group', false, true)];
 		}
 		// Get the associated Table's column info and set it into the Personalization model
 		this._readCurrentSettingsFromTable();
@@ -432,7 +440,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		// _fnHandleResize is called to make sure that 'selectallToolBar' does not show
 		// scrollbar
 		this._fnHandleResize.call(this);
-		sap.ui.Device.resize.attachHandler(this._fnHandleResize);
+		Device.resize.attachHandler(this._fnHandleResize);
 	};
 
 
@@ -511,7 +519,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			// and can only be used once to restore the initial state
 
 			var aInitialStateCopy = jQuery.extend(true, [], this.getInitialColumnState()),
-			    that = this;
+				that = this;
 			// CSN 0120031469 0000184938 2014
 			// Remember last selected row, so it can be selected again after
 			// reset all is done
@@ -602,7 +610,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		if (oSwapItem.getDomRef()) {
 			var iElementOffset =  oSwapItem.$().position().top,
 				// This is the minimal height that should be visible from the selected element
-			    // 18 means 18px which corresponds to 3em
+				// 18 means 18px which corresponds to 3em
 				iMinHeight = 18,
 				iViewPortHeight = this._oScrollContainer.$().height(),
 				iViewPortStart = this._oScrollContainer.$().offset().top - this._oList.$().offset().top,
@@ -670,7 +678,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 	 */
 	TablePersoDialog.prototype._executeSearch = function () {
 		var sValue = this._oSearchField.getValue(),
-			oFilter = new sap.ui.model.Filter("text", sap.ui.model.FilterOperator.Contains, sValue),
+			oFilter = new Filter("text", sap.ui.model.FilterOperator.Contains, sValue),
 			oBinding = this._oList.getBinding("items");
 
 		this._oSelectAllToolbar.setVisible(!sValue && this.getShowSelectAll());
@@ -730,4 +738,4 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 
 	return TablePersoDialog;
 
-}, /* bExport= */ true);
+});

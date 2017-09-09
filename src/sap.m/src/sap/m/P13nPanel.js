@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nPanel.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control'
-], function(jQuery, library, Control) {
+	'./library', 'sap/ui/core/Control'
+], function(library, Control) {
 	"use strict";
 
 	/**
@@ -180,4 +180,4 @@ sap.ui.define([
 
 	return P13nPanel;
 
-}, /* bExport= */true);
+});
