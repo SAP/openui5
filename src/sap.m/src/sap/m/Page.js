@@ -3,9 +3,22 @@
  */
 
 // Provides control sap.m.Page.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/delegate/ScrollEnablement", "sap/m/Title", "sap/m/Button", "sap/m/Bar", 'sap/ui/core/ContextMenuSupport'],
-	function (jQuery, library, Control, ScrollEnablement, Title, Button, Bar, ContextMenuSupport) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/delegate/ScrollEnablement", "sap/m/Title", "sap/m/Button", "sap/m/Bar", "sap/ui/core/ContextMenuSupport", "sap/ui/core/library", "sap/ui/Device", "sap/ui/core/Element"],
+	function(jQuery, library, Control, ScrollEnablement, Title, Button, Bar, ContextMenuSupport, coreLibrary, Device, Element) {
 		"use strict";
+
+
+		// shortcut for sap.ui.core.AccessibleLandmarkRole
+		var AccessibleLandmarkRole = coreLibrary.AccessibleLandmarkRole;
+
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
+
+		// shortcut for sap.m.PageBackgroundDesign
+		var PageBackgroundDesign = library.PageBackgroundDesign;
+
+		// shortcut for sap.ui.core.TitleLevel
+		var TitleLevel = coreLibrary.TitleLevel;
 
 
 		/**
@@ -60,7 +73,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					titleLevel: {
 						type: "sap.ui.core.TitleLevel",
 						group: "Appearance",
-						defaultValue: sap.ui.core.TitleLevel.Auto
+						defaultValue: TitleLevel.Auto
 					},
 
 					/**
@@ -115,7 +128,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					backgroundDesign: {
 						type: "sap.m.PageBackgroundDesign",
 						group: "Appearance",
-						defaultValue: sap.m.PageBackgroundDesign.Standard
+						defaultValue: PageBackgroundDesign.Standard
 					},
 
 					/**
@@ -127,7 +140,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					navButtonType: {
 						type: "sap.m.ButtonType",
 						group: "Appearance",
-						defaultValue: sap.m.ButtonType.Back,
+						defaultValue: ButtonType.Back,
 						deprecated: true
 					},
 
@@ -236,9 +249,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			}
 		};
 
-        Page.prototype.onAfterRendering = function () {
-            jQuery.sap.delayedCall(10, this, this._adjustFooterWidth);
-        };
+		Page.prototype.onAfterRendering = function () {
+			jQuery.sap.delayedCall(10, this, this._adjustFooterWidth);
+		};
 
 		/**
 		 * Called when the control is destroyed.
@@ -302,8 +315,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					}, this)
 				});
 
-				if (sap.ui.Device.os.android && sNavButtonType == sap.m.ButtonType.Back) {
-					this._navBtn.setType(sap.m.ButtonType.Up);
+				if (Device.os.android && sNavButtonType == ButtonType.Back) {
+					this._navBtn.setType(ButtonType.Up);
 				} else {
 					this._navBtn.setType(sNavButtonType);
 				}
@@ -340,7 +353,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			}
 
 			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last(),
-			    useAnimation = sap.ui.getCore().getConfiguration().getAnimation();
+				useAnimation = sap.ui.getCore().getConfiguration().getAnimation();
 
 			if (!this.getFloatingFooter()) {
 				this.setProperty("showFooter", bShowFooter);
@@ -370,9 +383,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		Page.prototype.setNavButtonType = function (sNavButtonType) {
 			this._ensureNavButton(); // creates this._navBtn, if required
-			if (!sap.ui.Device.os.ios && sNavButtonType == sap.m.ButtonType.Back) {
+			if (!Device.os.ios && sNavButtonType == ButtonType.Back) {
 				// internal conversion from Back to Up for non-iOS platform
-				this._navBtn.setType(sap.m.ButtonType.Up);
+				this._navBtn.setType(ButtonType.Up);
 			} else {
 				this._navBtn.setType(sNavButtonType);
 			}
@@ -537,7 +550,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 				var sRole = oLandmarkInfo["get" + sPartName + "Role"]() || "",
 					sLabel = oLandmarkInfo["get" + sPartName + "Label"]() || "";
 
-				if (sRole === sap.ui.core.AccessibleLandmarkRole.None) {
+				if (sRole === AccessibleLandmarkRole.None) {
 					sRole = '';
 				}
 
@@ -578,7 +591,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 * @public
 		 */
 		Page.prototype.scrollToElement = function (oElement, iTime) {
-			if (oElement instanceof sap.ui.core.Element) {
+			if (oElement instanceof Element) {
 				oElement = oElement.getDomRef();
 			}
 
@@ -646,5 +659,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		return Page;
-
-	}, /* bExport= */ true);
+	});

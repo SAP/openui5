@@ -3,11 +3,10 @@
  */
 
 sap.ui.define([
-		'jquery.sap.global',
 		'./library',
 		'sap/ui/core/Element'
 	],
-	function (jQuery, library, Element) {
+	function (library, Element) {
 		"use strict";
 
 		/**
@@ -204,4 +203,4 @@ sap.ui.define([
 		};
 
 		return Scale;
-	}, true);
+	});

@@ -8,10 +8,18 @@ sap.ui.define([
 		'sap/ui/core/Control',
 		'sap/ui/core/EnabledPropagator',
 		'./Input',
-		'sap/ui/core/InvisibleText'
+		'sap/ui/core/InvisibleText',
+		'sap/ui/core/library',
+		'sap/ui/core/ResizeHandler'
 	],
-	function(jQuery, library, Control, EnabledPropagator, Input, InvisibleText) {
+	function(jQuery, library, Control, EnabledPropagator, Input, InvisibleText, coreLibrary, ResizeHandler) {
 		"use strict";
+
+		// shortcut for sap.m.touch
+		var touch = library.touch;
+
+		// shortcut for sap.ui.core.TextAlign
+		var TextAlign = coreLibrary.TextAlign;
 
 		/**
 		 * Constructor for a new <code>Slider</code>.
@@ -600,7 +608,7 @@ sap.ui.define([
 				value: this.getMin(),
 				width: this._iLongestRangeTextWidth + (2 * this._CONSTANTS.CHARACTER_WIDTH_PX) /*16 px in paddings for the input*/ + "px",
 				type: "Number",
-				textAlign: sap.ui.core.TextAlign.Center,
+				textAlign: TextAlign.Center,
 				ariaLabelledBy: oAriaLabel
 			});
 
@@ -695,7 +703,7 @@ sap.ui.define([
 			}
 
 			if (this._parentResizeHandler) {
-				sap.ui.core.ResizeHandler.deregister(this._parentResizeHandler);
+				ResizeHandler.deregister(this._parentResizeHandler);
 				this._parentResizeHandler = null;
 			}
 		};
@@ -745,7 +753,7 @@ sap.ui.define([
 
 			if (this.getEnableTickmarks()) {
 				jQuery.sap.delayedCall(0, this, function () {
-					this._parentResizeHandler = sap.ui.core.ResizeHandler.register(this, this._handleTickmarksResponsiveness.bind(this));
+					this._parentResizeHandler = ResizeHandler.register(this, this._handleTickmarksResponsiveness.bind(this));
 				});
 			}
 		};
@@ -775,7 +783,7 @@ sap.ui.define([
 			}
 
 			// only process single touches
-			if (sap.m.touch.countContained(oEvent.touches, this.getId()) > 1 ||
+			if (touch.countContained(oEvent.touches, this.getId()) > 1 ||
 				!this.getEnabled() ||
 
 				// detect which mouse button caused the event and only process the standard click
@@ -868,7 +876,7 @@ sap.ui.define([
 
 			var fMin = this.getMin(),
 				fValue = this.getValue(),
-				oTouch = sap.m.touch.find(oEvent.changedTouches, this._iActiveTouchId),	// find the active touch point
+				oTouch = touch.find(oEvent.changedTouches, this._iActiveTouchId),	// find the active touch point
 				iPageX = oTouch ? oTouch.pageX : oEvent.pageX,
 				fNewValue = (((iPageX - this._fDiffX - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;
 
@@ -1314,5 +1322,4 @@ sap.ui.define([
 		};
 
 		return Slider;
-
-	}, /* bExport= */ true);
+	});

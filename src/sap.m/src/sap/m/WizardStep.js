@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/core/Control"],
-	function (library, Control) {
+sap.ui.define(["./library", "sap/ui/core/Control", "jquery.sap.global"],
+	function (library, Control, jQuery) {
 
 	"use strict";
 
@@ -204,4 +204,4 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 
 	return WizardStep;
 
-}, /* bExport= */ true);
+});

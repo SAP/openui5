@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, ValueStateSupport) {
+sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(ValueStateSupport, coreLibrary, Device) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -25,8 +29,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		var bEnabled = oRadioButton.getEnabled();
 		var bEditable = oRadioButton.getEditable();
 		var bReadOnly = !bEnabled || !bEditable;
-		var bInErrorState = sap.ui.core.ValueState.Error == oRadioButton.getValueState();
-		var bInWarningState = sap.ui.core.ValueState.Warning == oRadioButton.getValueState();
+		var bInErrorState = ValueState.Error == oRadioButton.getValueState();
+		var bInWarningState = ValueState.Warning == oRadioButton.getValueState();
 		var bUseEntireWidth = oRadioButton.getUseEntireWidth();
 
 		// Radio Button style class
@@ -95,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		//set an id on this this to be able to focus it, on ApplyFocusInfo (rerenderAllUiAreas)
 		oRm.writeAttribute("id", sId + "-Button");
 
-		if (!bReadOnly && sap.ui.Device.system.desktop) {
+		if (!bReadOnly && Device.system.desktop) {
 			oRm.addClass("sapMRbHoverable");
 		}
 

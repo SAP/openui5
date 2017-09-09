@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
-	function(PageAccessibleLandmarkInfo, Device) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 

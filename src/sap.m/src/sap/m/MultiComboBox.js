@@ -2,9 +2,21 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField', './ComboBoxBase', './Dialog', './MultiInput', './Input', './ToggleButton', './List', './MultiComboBoxRenderer', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'jquery.sap.xml'],
-	function(jQuery, Bar, InputBase, ComboBoxTextField, ComboBoxBase, Dialog, MultiInput, Input, ToggleButton, List, MultiComboBoxRenderer, Popover, library, EnabledPropagator, InvisibleText, IconPool/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './ComboBoxBase', './Input', './ToggleButton', './List', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device', 'sap/ui/core/Item', 'jquery.sap.xml', 'jquery.sap.keycodes'],
+	function(jQuery, InputBase, ComboBoxTextField, ComboBoxBase, Input, ToggleButton, List, Popover, library, EnabledPropagator, IconPool/* , jQuerySap */, coreLibrary, Device, Item) {
 	"use strict";
+
+	// shortcut for sap.m.ListType
+	var ListType = library.ListType;
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.OpenState
+	var OpenState = coreLibrary.OpenState;
 
 	/**
 	 * Constructor for a new MultiComboBox.
@@ -406,7 +418,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	MultiComboBox.prototype._handleItemPress = function(oEvent) {
 
 		// If an item is selected clicking on checkbox inside of suggest list the list with all entries should be opened
-		if (this.isOpen() && this._isListInSuggestMode() && this.getPicker().oPopup.getOpenState() !== sap.ui.core.OpenState.CLOSING) {
+		if (this.isOpen() && this._isListInSuggestMode() && this.getPicker().oPopup.getOpenState() !== OpenState.CLOSING) {
 			this.clearFilter();
 			var oItem = this._getLastSelectedItem();
 
@@ -460,7 +472,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 
 		if (this._bCheckBoxClicked) {
 			this.setValue(this._sOldValue);
-			if (this.isOpen() && this.getPicker().oPopup.getOpenState() !== sap.ui.core.OpenState.CLOSING) {
+			if (this.isOpen() && this.getPicker().oPopup.getOpenState() !== OpenState.CLOSING) {
 				// workaround: this is needed because the List fires the "selectionChange" event during the popover is closing.
 				// So clicking on list item description the focus should be replaced to input field. Otherwise the focus is set to
 				// oListItem.
@@ -585,15 +597,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	MultiComboBox.prototype._showWrongValueVisualEffect = function() {
 		var sOldValueState = this.getValueState();
 
-		if (sOldValueState === sap.ui.core.ValueState.Error) {
+		if (sOldValueState === ValueState.Error) {
 			return;
 		}
 
 		if (this.isPickerDialog()) {
-			this.getPickerTextField().setValueState(sap.ui.core.ValueState.Error);
+			this.getPickerTextField().setValueState(ValueState.Error);
 			jQuery.sap.delayedCall(1000, this.getPickerTextField(), "setValueState", [sOldValueState]);
 		} else {
-			this.setValueState(sap.ui.core.ValueState.Error);
+			this.setValueState(ValueState.Error);
 			jQuery.sap.delayedCall(1000, this, "setValueState", [sOldValueState]);
 		}
 	};
@@ -778,7 +790,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 			sWidth;
 
 		if (oDomRef && oPopover) {
-			sWidth = (oDomRef.offsetWidth / parseFloat(sap.m.BaseFontSize)) + "rem";
+			sWidth = (oDomRef.offsetWidth / parseFloat(library.BaseFontSize)) + "rem";
 			oPopover.setContentMinWidth(sWidth);
 		}
 	};
@@ -882,7 +894,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		// list to use inside the picker
 		this._oList = new List({
 			width: "100%",
-			mode: sap.m.ListMode.MultiSelect,
+			mode: ListMode.MultiSelect,
 			includeItemInSelection: true,
 			rememberSelections: false
 		}).addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "List")
@@ -1469,7 +1481,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		}, this);
 
 		// required workaround
-		if (sap.ui.Device.support.touch) {
+		if (Device.support.touch) {
 			oListItem.addEventDelegate({
 				ontouchstart: function(oEvent) {
 					oEvent.setMark("cancelAutoClose");
@@ -2022,7 +2034,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 
 		aItems.forEach(function(oItem) {
 
-			if (!(oItem instanceof sap.ui.core.Item) && (typeof oItem !== "string")) {
+			if (!(oItem instanceof Item) && (typeof oItem !== "string")) {
 				jQuery.sap.log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
 
 				// Go to next item
@@ -2277,7 +2289,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		var sListItem = this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Item";
 		var sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
 		var oListItem = new sap.m.StandardListItem({
-			type: sap.m.ListType.Active,
+			type: ListType.Active,
 			visible: oItem.getEnabled()
 		}).addStyleClass(sListItem + " " + sListItemSelected);
 		oListItem.setTooltip(oItem.getTooltip());
@@ -2485,7 +2497,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 
 		// determines if value of the combobox should be empty string after popup's close
 		this._bPreventValueRemove = false;
-		this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Dropdown");
+		this.setPickerType(Device.system.phone ? "Dialog" : "Dropdown");
 		this._oTokenizer = this._createTokenizer();
 		this._aCustomerKeys = [];
 		this._aInitiallySelectedItems = [];
@@ -2777,4 +2789,4 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 
 	return MultiComboBox;
 
-	}, /* bExport= */ true);
+	});

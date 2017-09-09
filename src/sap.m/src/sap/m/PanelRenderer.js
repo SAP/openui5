@@ -1,9 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/m/library"],
+	function(library) {
 	"use strict";
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
 
 	/**
 	 * Panel renderer
@@ -82,7 +85,7 @@ sap.ui.define(['jquery.sap.global'],
 		var sHeaderText = oControl.getHeaderText();
 
 		if (oHeaderTBar) {
-			oHeaderTBar.setDesign(sap.m.ToolbarDesign.Transparent, true);
+			oHeaderTBar.setDesign(ToolbarDesign.Transparent, true);
 			oHeaderTBar.addStyleClass("sapMPanelHeaderTB");
 			oRm.renderControl(oHeaderTBar);
 
@@ -109,7 +112,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			// render infoBar
-			oInfoTBar.setDesign(sap.m.ToolbarDesign.Info, true);
+			oInfoTBar.setDesign(ToolbarDesign.Info, true);
 			oInfoTBar.addStyleClass("sapMPanelInfoTB");
 			oRm.renderControl(oInfoTBar);
 		}

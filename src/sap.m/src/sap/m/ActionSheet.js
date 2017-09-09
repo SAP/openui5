@@ -3,9 +3,20 @@
  */
 
 // Provides control sap.m.ActionSheet.
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText', 'sap/ui/base/ManagedObject'],
-	function(jQuery, Dialog, Popover, library, Control, ItemNavigation, InvisibleText, ManagedObject) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText', 'sap/ui/base/ManagedObject', 'sap/ui/Device'],
+	function(jQuery, Dialog, Popover, library, Control, ItemNavigation, InvisibleText, ManagedObject, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.m.DialogType
+	var DialogType = library.DialogType;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
 
 
@@ -51,7 +62,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			/**
 			 * The ActionSheet behaves as an sap.m.Popover in iPad and this property is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom. The default value is sap.m.PlacementType.Bottom.
 			 */
-			placement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : sap.m.PlacementType.Bottom},
+			placement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : PlacementType.Bottom},
 
 			/**
 			 * If this is set to true, there will be a cancel button shown below the action buttons. There won't be any cancel button shown in iPad regardless of this property. The default value is set to true.
@@ -143,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 
 	ActionSheet.prototype.exit = function() {
-		sap.ui.Device.resize.detachHandler(this._fnOrientationChange);
+		Device.resize.detachHandler(this._fnOrientationChange);
 
 		if (this._parent) {
 			this._parent.destroy();
@@ -236,7 +247,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				this.setParent(null);
 			}
 
-			if (!sap.ui.Device.system.phone) {
+			if (!Device.system.phone) {
 			//create a Popover instance for iPad
 				this._parent = new Popover({
 					placement: this.getPlacement(),
@@ -262,7 +273,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 					ariaLabelledBy: this.getPopupHiddenLabelId() || undefined
 				}).addStyleClass("sapMActionSheetPopover");
 
-				if (sap.ui.Device.browser.internet_explorer) {
+				if (Device.browser.internet_explorer) {
 					this._parent._fnAdjustPositionAndArrow = jQuery.proxy(function() {
 						Popover.prototype._adjustPositionAndArrow.apply(this);
 
@@ -283,7 +294,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				//create a Dialog instance for the rest
 				this._parent = new Dialog({
 					title: this.getTitle(),
-					type: sap.m.DialogType.Standard,
+					type: DialogType.Standard,
 					content: [this],
 					beforeOpen: function() {
 						that.fireBeforeOpen();
@@ -302,7 +313,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							origin: oEvent.getParameter("origin")
 						});
 
-						sap.ui.Device.resize.detachHandler(that._fnOrientationChange);
+						Device.resize.detachHandler(that._fnOrientationChange);
 					}
 				}).addStyleClass("sapMActionSheetDialog");
 
@@ -312,19 +323,19 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 					this._parent.addAriaLabelledBy(this.getPopupHiddenLabelId() || undefined);
 				}
 
-				if (!sap.ui.Device.system.phone) {
+				if (!Device.system.phone) {
 					this._parent.setBeginButton(this._getCancelButton());
 				}
 
 				//need to modify some internal methods of Dialog for phone, because
 				//the actionsheet won't be sized full screen if the content is smaller than the whole screen.
 				//Then the transform animation need to be set at runtime with some height calculation.
-				if (sap.ui.Device.system.phone) {
+				if (Device.system.phone) {
 					//remove the transparent property from blocklayer
 					this._parent.oPopup.setModal(true);
 
 					this._parent._setDimensions = function() {
-						sap.m.Dialog.prototype._setDimensions.apply(this);
+						Dialog.prototype._setDimensions.apply(this);
 
 						this.$("cont").css("max-height", "");
 					};
@@ -350,12 +361,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		}
 
 		//open the ActionSheet
-		if (!sap.ui.Device.system.phone) {
+		if (!Device.system.phone) {
 			this._parent.openBy(oControl);
 		} else {
 			this._parent.open();
 
-			sap.ui.Device.resize.attachHandler(this._fnOrientationChange);
+			Device.resize.attachHandler(this._fnOrientationChange);
 		}
 	};
 
@@ -390,9 +401,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	//			var sButtonStyle = (sap.ui.Device.os.ios) ? sap.m.ButtonType.Unstyled : sap.m.ButtonType.Default;
 			this._oCancelButton = new sap.m.Button(this.getId() + '-cancelBtn', {
 				text: sCancelButtonText,
-				type: sap.m.ButtonType.Reject,
+				type: ButtonType.Reject,
 				press : function() {
-					if (sap.ui.Device.system.phone && that._parent) {
+					if (Device.system.phone && that._parent) {
 						that._parent._oCloseTrigger = this;
 					}
 					that.close();
@@ -401,7 +412,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				}
 			}).addStyleClass("sapMActionSheetButton sapMActionSheetCancelButton sapMBtnTransparent sapMBtnInverted");
 
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				this.setAggregation("_cancelButton", this._oCancelButton, true);
 			}
 		}
@@ -409,7 +420,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 
 	ActionSheet.prototype._getCancelButton = function() {
-		if (sap.ui.Device.system.phone && this.getShowCancelButton()) {
+		if (Device.system.phone && this.getShowCancelButton()) {
 			this._createCancelButton();
 			return this._oCancelButton;
 		}
@@ -427,8 +438,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	ActionSheet.prototype._preProcessActionButton = function(oButton){
 		var sType = oButton.getType();
 
-		if (sType !== sap.m.ButtonType.Accept && sType !== sap.m.ButtonType.Reject) {
-			oButton.setType(sap.m.ButtonType.Transparent);
+		if (sType !== ButtonType.Accept && sType !== ButtonType.Reject) {
+			oButton.setType(ButtonType.Transparent);
 		}
 		oButton.addStyleClass("sapMBtnInverted"); // dark background
 
@@ -439,7 +450,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	ActionSheet.prototype.setShowCancelButton = function(bValue){
 		if (this._parent) {
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				//if iPhone, we need to rerender to show or hide the cancel button
 				this.setProperty("showCancelButton", bValue, false);
 			}
@@ -451,7 +462,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	ActionSheet.prototype.setTitle = function(sTitle){
 		this.setProperty("title", sTitle, true);
-		if (this._parent && sap.ui.Device.system.phone) {
+		if (this._parent && Device.system.phone) {
 			this._parent.setTitle(sTitle);
 			this._parent.toggleStyleClass("sapMDialog-NoHeader", !sTitle);
 		}
@@ -469,7 +480,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	ActionSheet.prototype.setPlacement = function(sPlacement){
 		this.setProperty("placement", sPlacement, true);
 
-		if (!sap.ui.Device.system.phone) {
+		if (!Device.system.phone) {
 			if (this._parent) {
 				this._parent.setPlacement(sPlacement);
 			}
@@ -478,7 +489,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 
 	ActionSheet.prototype._buttonSelected = function() {
-		if (sap.ui.Device.system.phone && this._parent) {
+		if (Device.system.phone && this._parent) {
 			this._parent._oCloseTrigger = this;
 		}
 		this.close();
@@ -602,4 +613,4 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	return ActionSheet;
 
-}, /* bExport= */ true);
+});

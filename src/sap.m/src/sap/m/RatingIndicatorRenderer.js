@@ -1,30 +1,30 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
-	function(jQuery, IconPool) {
+sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/Device'],
+	function(IconPool, Device) {
 	"use strict";
 
 
-	/* =========================================================== */
-	/*           temporary flags for jslint syntax check           */
-	/* =========================================================== */
-	/*jslint nomen: false */
+    /* =========================================================== */
+    /*           temporary flags for jslint syntax check           */
+    /* =========================================================== */
+    /*jslint nomen: false */
 
-	/**
-	 * RatingIndicator renderer.
-	 * @namespace
-	 */
-	var RatingIndicatorRenderer = {},
+    /**
+     * RatingIndicator renderer.
+     * @namespace
+     */
+    var RatingIndicatorRenderer = {},
         sIconSizeMeasure = 'px';
 
-	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 */
-	RatingIndicatorRenderer.render = function (oRm, oControl) {
+    /**
+     * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+     *
+     * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+     * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+     */
+    RatingIndicatorRenderer.render = function (oRm, oControl) {
         var that = this;
 
         this.initSharedState(oControl);
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
                 that.renderSelectorDiv(oRm, oControl);
             }
         );
-	};
+    };
 
     RatingIndicatorRenderer.renderControlContainer = function (oRm, oControl, innerRenderer) {
         var bEnabled = oControl.getEnabled(),
@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
         }
 
         // gradients in combination with background-clip: text are not supported by ie, android < 4.2 or blackberry
-        this._bUseGradient = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari;
+        this._bUseGradient = Device.browser.chrome || Device.browser.safari;
         this._sLabelID = oControl.getId() + "-ariaLabel";
         this._iSymbolCount = oControl.getMaxValue();
         this._iWidth = this._iSymbolCount * (fIconSize + fIconPadding) - fIconPadding;
@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
     RatingIndicatorRenderer.renderIcon = function (iconType, oRm, oControl) {
         var sIconURI = this.getIconURI(iconType, oControl),
             tag = this.getIconTag(sIconURI),
-            bIsIconURI = sap.ui.core.IconPool.isIconURI(sIconURI),
+            bIsIconURI = IconPool.isIconURI(sIconURI),
             size = this._fIconSize + sIconSizeMeasure;
 
         oRm.write("<" + tag + " ");
@@ -231,13 +231,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
     };
 
     RatingIndicatorRenderer.getIconTag = function (sIconURI) {
-        if (sap.ui.core.IconPool.isIconURI(sIconURI)) {
+        if (IconPool.isIconURI(sIconURI)) {
             return "span";
         }
 
         return "img";
     };
 
-	return RatingIndicatorRenderer;
+    return RatingIndicatorRenderer;
 
 }, /* bExport= */ true);

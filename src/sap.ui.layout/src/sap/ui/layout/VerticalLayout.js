@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.VerticalLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './library'],
-	function(jQuery, Control, EnabledPropagator, library) {
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './library'],
+	function(Control, EnabledPropagator, library) {
 	"use strict";
 
 	/**
@@ -81,4 +81,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 
 	return VerticalLayout;
 
-}, /* bExport= */ true);
+});

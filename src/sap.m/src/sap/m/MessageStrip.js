@@ -4,8 +4,11 @@
 
 // Provides control sap.m.MessageStrip.
 sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./MessageStripUtilities",
-	"./Text", "./Link", "./FormattedText"], function (jQuery, library, Control, MSUtils, Text, Link, FormattedText) {
+	"./Text", "./Link", "./FormattedText", "sap/ui/core/library", "sap/ui/Device"], function(jQuery, library, Control, MSUtils, Text, Link, FormattedText, coreLibrary, Device) {
 	"use strict";
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
 
 	/**
 	 * Constructor for a new MessageStrip.
@@ -62,7 +65,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 				 * Possible values are: Information (default), Success, Warning, Error.
 				 * If None is passed, the value is set to Information and a warning is displayed in the console.
 				 */
-				type: { type: "sap.ui.core.MessageType", group: "Appearance", defaultValue: sap.ui.core.MessageType.Information },
+				type: { type: "sap.ui.core.MessageType", group: "Appearance", defaultValue: MessageType.Information },
 
 				/**
 				 * Determines a custom icon which is displayed.
@@ -158,9 +161,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	 * @returns {sap.m.MessageStrip} this to allow method chaining
 	 */
 	MessageStrip.prototype.setType = function (sType) {
-		if (sType === sap.ui.core.MessageType.None) {
+		if (sType === MessageType.None) {
 			jQuery.sap.log.warning(MSUtils.MESSAGES.TYPE_NOT_SUPPORTED);
-			sType = sap.ui.core.MessageType.Information;
+			sType = MessageType.Information;
 		}
 
 		return this.setProperty("type", sType);
@@ -240,7 +243,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 			return;
 		}
 
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
+		if (Device.browser.internet_explorer && Device.browser.version < 10) {
 			MSUtils.closeTransitionWithJavascript.call(this, fnClosed);
 		} else {
 			MSUtils.closeTransitionWithCSS.call(this, fnClosed);
@@ -249,4 +252,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 
 	return MessageStrip;
 
-}, /* bExport= */ true);
+});

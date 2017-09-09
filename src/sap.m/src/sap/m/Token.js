@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.m.Token.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Tokenizer'],
-	function(jQuery, library, Control, Tokenizer) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Tokenizer', 'sap/ui/core/library', 'sap/ui/core/InvisibleText', 'sap/ui/core/Icon', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, Tokenizer, coreLibrary, InvisibleText, Icon) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 
@@ -64,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 			 * This property specifies the text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 		},
 		aggregations : {
 
@@ -112,11 +117,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	// create an ARIA announcement and remember its ID for later use in the renderer:
-	Token.prototype._sAriaTokenLabelId = new sap.ui.core.InvisibleText({
+	Token.prototype._sAriaTokenLabelId = new InvisibleText({
 		text: oRb.getText("TOKEN_ARIA_LABEL")
 	}).toStatic().getId();
 
-	Token.prototype._sAriaTokenDeletableId = new sap.ui.core.InvisibleText({
+	Token.prototype._sAriaTokenDeletableId = new InvisibleText({
 		text: oRb.getText("TOKEN_ARIA_DELETABLE")
 	}).toStatic().getId();
 
@@ -125,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 */
 	Token.prototype.init = function() {
 		var that = this;
-		this._deleteIcon = new sap.ui.core.Icon({
+		this._deleteIcon = new Icon({
 			id : that.getId() + "-icon",
 			src : "sap-icon://sys-cancel",
 			noTabStop: true,
@@ -369,4 +374,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 
 	return Token;
 
-}, /* bExport= */ true);
+});
