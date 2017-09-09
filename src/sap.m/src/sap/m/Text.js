@@ -3,9 +3,15 @@
  */
 
 // Provides control sap.m.Text
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(library, Control, coreLibrary, Device) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Constructor for a new Text.
@@ -45,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Available options for the text direction are LTR and RTL. By default the control inherits the text direction from its parent control.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Enables text wrapping.
@@ -55,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Sets the horizontal alignment of the text.
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
 			/**
 			 * Sets the width of the Text control. By default, the Text control uses the full width available. Set this property to restrict the width to a custom value.
@@ -289,7 +295,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		// on rasterizing the font, sub pixel line-heights are converted to integer
 		// for most of the font rendering engine but this is not the case for firefox
-		if (!sap.ui.Device.browser.firefox) {
+		if (!Device.browser.firefox) {
 			fLineHeight = Math.floor(fLineHeight);
 		}
 
@@ -434,4 +440,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	return Text;
 
-}, /* bExport= */ true);
+});

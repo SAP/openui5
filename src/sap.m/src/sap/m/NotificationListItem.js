@@ -2,10 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './NotificationListBase', 'sap/ui/core/InvisibleText'],
-	function (jQuery, library, Control, NotificationListBase, InvisibleText) {
-
+sap.ui.define(['./library', './NotificationListBase', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/ui/core/ResizeHandler'],
+	function (library, NotificationListBase, InvisibleText, IconPool, ResizeHandler) {
 	'use strict';
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new NotificationListItem.
@@ -75,7 +77,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	 * @public
 	 */
 	NotificationListItem.prototype.init = function () {
-		sap.m.NotificationListBase.prototype.init.call(this);
+		NotificationListBase.prototype.init.call(this);
 
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 		this._expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE');
@@ -90,8 +92,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		 * @private
 		 */
 		var _closeButton = new sap.m.Button(this.getId() + '-closeButton', {
-			type: sap.m.ButtonType.Transparent,
-			icon: sap.ui.core.IconPool.getIconURI('decline'),
+			type: ButtonType.Transparent,
+			icon: IconPool.getIconURI('decline'),
 			tooltip: this._closeText,
 			press: function () {
 				this.close();
@@ -105,7 +107,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		 * @private
 		 */
 		var _collapseButton = new sap.m.Button({
-			type: sap.m.ButtonType.Transparent,
+			type: ButtonType.Transparent,
 			text: this.getTruncate() ? this._expandText : this._collapseText,
 			id: this.getId() + '-expandCollapseButton',
 			press: function () {
@@ -162,7 +164,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	 * @returns {sap.m.NotificationListBase} NotificationListBase reference for chaining.
 	 */
 	NotificationListItem.prototype.setDatetime = function (dateTime) {
-		var result = sap.m.NotificationListBase.prototype.setDatetime.call(this, dateTime);
+		var result = NotificationListBase.prototype.setDatetime.call(this, dateTime);
 		this._updateAriaAdditionalInfo();
 
 		return result;
@@ -422,7 +424,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	 */
 	NotificationListItem.prototype._deregisterResize = function () {
 		if (this._sNotificationResizeHandler) {
-			sap.ui.core.ResizeHandler.deregister(this._sNotificationResizeHandler);
+			ResizeHandler.deregister(this._sNotificationResizeHandler);
 			this._sNotificationResizeHandler = null;
 		}
 	};
@@ -444,7 +446,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 
 		that._resizeNotification();
 
-		this._sNotificationResizeHandler = sap.ui.core.ResizeHandler.register(notificationDomRef, function () {
+		this._sNotificationResizeHandler = ResizeHandler.register(notificationDomRef, function () {
 			that._resizeNotification();
 		});
 	};
@@ -480,4 +482,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	};
 
 	return NotificationListItem;
-}, /* bExport= */ true);
+});

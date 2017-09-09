@@ -3,9 +3,15 @@
  */
 
 // Provides the default renderer for control sap.m.Label
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library'],
+	function(Renderer, library, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.m.LabelDesign
+	var LabelDesign = library.LabelDesign;
 
 	/**
 	 * Label renderer.
@@ -47,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			rm.addClass("sapMLabelWrapped");
 		}
 		// set design to bold
-		if (oLabel.getDesign() == sap.m.LabelDesign.Bold) {
+		if (oLabel.getDesign() == LabelDesign.Bold) {
 			rm.addStyle("font-weight", "bold");
 		}
 
@@ -62,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		}
 
 		// text direction
-		if (sTextDir !== sap.ui.core.TextDirection.Inherit){
+		if (sTextDir !== TextDirection.Inherit){
 			rm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 

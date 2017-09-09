@@ -4,9 +4,9 @@
 
 // Provides class sap.ui.core.support.plugins.ControlTree (ControlTree support plugin)
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/util/serializer/ViewSerializer', 'sap/ui/thirdparty/jszip',
+'jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/util/serializer/ViewSerializer', 'sap/ui/thirdparty/jszip',
 	'sap/ui/base/DataType', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'sap/ui/core/UIArea', 'sap/ui/core/mvc/View', 'sap/ui/core/mvc/Controller',
-	'sap/ui/model/Binding', 'sap/ui/model/CompositeBinding'
+	'sap/ui/model/Binding', 'sap/ui/model/CompositeBinding', 'jquery.sap.keycodes'
 ], function(jQuery, Plugin, ViewSerializer, JSZip, DataType, Element, ElementMetadata, UIArea, View, Controller, Binding, CompositeBinding) {
 	"use strict";
 

@@ -10,15 +10,18 @@ sap.ui.define([
 				'./Page', './Button', './Bar',
 				'./Title', './Image', './Link', './Text',
 				'./Label', './HBox', 'sap/ui/core/Icon', 'sap/ui/core/Title',
-				'sap/ui/core/CustomData', 'sap/ui/core/library', 'sap/ui/layout/library'],
+				'sap/ui/core/CustomData', 'sap/ui/core/library', 'sap/ui/layout/library', 'sap/ui/Device'],
 		function(jQuery, library, Control,
 					IconPool, SimpleForm,
 					VerticalLayout, HorizontalLayout,
 					Page, Button, Bar,
 					Title, Image, Link, Text,
 					Label, HBox, Icon, CoreTitle,
-					CustomData, coreLibrary, layoutLibrary) {
+					CustomData, coreLibrary, layoutLibrary, Device) {
 			"use strict";
+
+			// shortcut for sap.m.URLHelper
+			var URLHelper = library.URLHelper;
 
 			// shortcut for sap.ui.layout.form.SimpleFormLayout
 			var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
@@ -257,7 +260,7 @@ sap.ui.define([
 					);
 				}
 
-				if (mNavContext.popover && sap.ui.Device.system.phone) {
+				if (mNavContext.popover && Device.system.phone) {
 					oCustomHeader.addContentRight(
 						new Button({
 							icon : IconPool.getIconURI("decline"),
@@ -316,7 +319,7 @@ sap.ui.define([
 			 */
 			QuickViewPage.prototype._createForm = function () {
 				var aGroups = this.getAggregation("groups"),
-				    oForm = new SimpleForm({
+					oForm = new SimpleForm({
 						maxContainerCols: 1,
 						editable: false,
 						layout: SimpleFormLayout.ResponsiveGridLayout
@@ -457,7 +460,7 @@ sap.ui.define([
 
 					if (!oCurrentGroupElementValue) {
 						// Add dummy text element so that the form renders the oLabel
-						oForm.addContent(new sap.m.Text({text : ""}));
+						oForm.addContent(new Text({text : ""}));
 						continue;
 					}
 
@@ -468,7 +471,7 @@ sap.ui.define([
 					}
 
 					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.mobile &&
-						!sap.ui.Device.system.desktop) {
+						!Device.system.desktop) {
 						var oSmsLink = new Icon({
 							src: IconPool.getIconURI("post"),
 							tooltip : this._oResourceBundle.getText("QUICKVIEW_SEND_SMS"),
@@ -514,7 +517,7 @@ sap.ui.define([
 								}
 							);
 
-							sap.m.URLHelper.redirect(href);
+							URLHelper.redirect(href);
 						}
 					} else  if (that.getTitleUrl()) {
 						window.open(that.getTitleUrl(), "_blank");
@@ -633,4 +636,4 @@ sap.ui.define([
 
 			return QuickViewPage;
 
-		}, /* bExport= */true);
+		});

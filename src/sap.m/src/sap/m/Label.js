@@ -3,9 +3,18 @@
  */
 
 // Provides control sap.m.Label
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/LabelEnablement'],
-	function(jQuery, library, Control, LabelEnablement) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library'],
+	function(jQuery, library, Control, LabelEnablement, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.m.LabelDesign
+	var LabelDesign = library.LabelDesign;
 
 	/**
 	 * Constructor for a new Label.
@@ -55,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Sets the design of a Label to either Standard or Bold.
 			 */
-			design : {type : "sap.m.LabelDesign", group : "Appearance", defaultValue : sap.m.LabelDesign.Standard},
+			design : {type : "sap.m.LabelDesign", group : "Appearance", defaultValue : LabelDesign.Standard},
 
 			/**
 			 * Determines the Label text to be displayed.
@@ -65,12 +74,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
 			/**
 			 * Options for the text direction are RTL and LTR. Alternatively, the control can inherit the text direction from its parent container.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Determines the width of the label.
@@ -138,13 +147,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Label.prototype.setDisplayOnly = function(displayOnly) {
 		if (typeof displayOnly !== "boolean") {
-		    jQuery.sap.log.error("DisplayOnly property should be boolean. The new value will not be set");
-		    return this;
+			jQuery.sap.log.error("DisplayOnly property should be boolean. The new value will not be set");
+			return this;
 		}
 
 		this.$().toggleClass("sapMLabelDisplayOnly", displayOnly);
 
-		return sap.ui.core.Control.prototype.setProperty.call(this, "displayOnly", displayOnly);
+		return Control.prototype.setProperty.call(this, "displayOnly", displayOnly);
 	};
 
 	/**
@@ -160,4 +169,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return Label;
 
-}, /* bExport= */ true);
+});

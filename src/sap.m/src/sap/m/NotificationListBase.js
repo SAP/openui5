@@ -2,11 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListItemBase', './Text',
-        './Image', './OverflowToolbar', 'sap/ui/core/Icon'],
-    function (jQuery, library, Control, ListItemBase, Text, Image, OverflowToolbar, Icon) {
-
+sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
+        './Image', './OverflowToolbar', 'sap/ui/core/Icon', 'sap/ui/core/library', 'sap/ui/core/Element'],
+    function (library, Control, ListItemBase, Text, Image, OverflowToolbar, Icon, coreLibrary, Element) {
         'use strict';
+
+        // shortcut for sap.ui.core.Priority
+        var Priority = coreLibrary.Priority;
 
         /**
          * Constructor for a new NotificationListBase.
@@ -57,7 +59,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
                     priority: {
                         type: 'sap.ui.core.Priority',
                         group: 'Appearance',
-                        defaultValue: sap.ui.core.Priority.None
+                        defaultValue: Priority.None
                     },
 
                     /**
@@ -250,7 +252,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             var parent = this.getParent();
             this.fireClose();
 
-            if (parent && parent instanceof sap.ui.core.Element) {
+            if (parent && parent instanceof Element) {
                 var delegate = {
                     onAfterRendering: function() {
                         parent.getDomRef().focus();
@@ -279,7 +281,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
                 this.getAggregation('_overflowToolbar').bindAggregation('content', bindingInfo);
                 return this;
             } else {
-                return sap.ui.core.Control.prototype.bindAggregation.call(this, aggregationName, bindingInfo);
+                return Control.prototype.bindAggregation.call(this, aggregationName, bindingInfo);
             }
         };
 
@@ -298,7 +300,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
                 this.getAggregation('_overflowToolbar').validateAggregation('content', object, multiple);
                 return this;
             } else {
-                return sap.ui.core.Control.prototype.validateAggregation.call(this, aggregationName, object, multiple);
+                return Control.prototype.validateAggregation.call(this, aggregationName, object, multiple);
             }
         };
 
@@ -317,7 +319,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
                 this.getAggregation('_overflowToolbar').setAggregation('content', object, suppressInvalidate);
                 return this;
             } else {
-                return sap.ui.core.Control.prototype.setAggregation.call(this, aggregationName, object, suppressInvalidate);
+                return Control.prototype.setAggregation.call(this, aggregationName, object, suppressInvalidate);
             }
         };
 
@@ -338,7 +340,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
                     return item instanceof sap.m.Button;
                 });
             } else {
-                return sap.ui.core.Control.prototype.getAggregation.call(this, aggregationName, defaultObjectToBeCreated);
+                return Control.prototype.getAggregation.call(this, aggregationName, defaultObjectToBeCreated);
             }
         };
 
@@ -355,7 +357,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').indexOfAggregation('content', object);
             } else {
-                return sap.ui.core.Control.prototype.indexOfAggregation.call(this, aggregationName, object);
+                return Control.prototype.indexOfAggregation.call(this, aggregationName, object);
             }
         };
 
@@ -375,7 +377,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
                 this.getAggregation('_overflowToolbar').insertAggregation('content', object, index, suppressInvalidate);
                 return this;
             } else {
-                return sap.ui.core.Control.prototype.insertAggregation.call(this, object, index, suppressInvalidate);
+                return Control.prototype.insertAggregation.call(this, object, index, suppressInvalidate);
             }
         };
 
@@ -396,7 +398,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
                 return toolbar.addAggregation('content', object, suppressInvalidate);
             } else {
-                return sap.ui.core.Control.prototype.addAggregation.call(this, aggregationName, object, suppressInvalidate);
+                return Control.prototype.addAggregation.call(this, aggregationName, object, suppressInvalidate);
             }
         };
 
@@ -415,7 +417,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').removeAggregation('content', object, suppressInvalidate);
             } else {
-                return sap.ui.core.Control.prototype.removeAggregation.call(this, aggregationName, object, suppressInvalidate);
+                return Control.prototype.removeAggregation.call(this, aggregationName, object, suppressInvalidate);
             }
         };
 
@@ -433,7 +435,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').removeAllAggregation('content', suppressInvalidate);
             } else {
-                return sap.ui.core.Control.prototype.removeAllAggregation.call(this, aggregationName, suppressInvalidate);
+                return Control.prototype.removeAllAggregation.call(this, aggregationName, suppressInvalidate);
             }
         };
 
@@ -451,7 +453,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').destroyAggregation('content', suppressInvalidate);
             } else {
-                return sap.ui.core.Control.prototype.destroyAggregation.call(this, aggregationName, suppressInvalidate);
+                return Control.prototype.destroyAggregation.call(this, aggregationName, suppressInvalidate);
             }
         };
 
@@ -468,7 +470,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').getBinding('content');
             } else {
-                return sap.ui.core.Control.prototype.getBinding.call(this, aggregationName);
+                return Control.prototype.getBinding.call(this, aggregationName);
             }
         };
 
@@ -485,7 +487,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').getBindingInfo('content');
             } else {
-                return sap.ui.core.Control.prototype.getBindingInfo.call(this, aggregationName);
+                return Control.prototype.getBindingInfo.call(this, aggregationName);
             }
         };
 
@@ -502,7 +504,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             if (aggregationName == 'buttons') {
                 return this.getAggregation('_overflowToolbar').getBindingPath('content');
             } else {
-                return sap.ui.core.Control.prototype.getBindingPath.call(this, aggregationName);
+                return Control.prototype.getBindingPath.call(this, aggregationName);
             }
         };
 
@@ -547,7 +549,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             var dateTime = this.getAggregation('_dateTime');
 
             if (!dateTime) {
-                dateTime = new sap.m.Text({
+                dateTime = new Text({
                     id: this.getId() + '-datetime',
                     text: this.getDatetime()
                 }).addStyleClass('sapMNLI-Datetime');
@@ -658,4 +660,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
         }
 
         return NotificationListBase;
-    }, /* bExport= */ true);
+    });

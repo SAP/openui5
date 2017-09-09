@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SplitApp.
-sap.ui.define(['jquery.sap.global', './SplitContainer', './library'],
-	function(jQuery, SplitContainer, library) {
+sap.ui.define(['jquery.sap.global', './SplitContainer', './library', 'sap/ui/Device'],
+	function(jQuery, SplitContainer, library, Device) {
 	"use strict";
 
 
@@ -157,10 +157,10 @@ sap.ui.define(['jquery.sap.global', './SplitContainer', './library'],
 	 */
 	SplitApp.prototype._onOrientationChange = function(){
 		this.fireOrientationChange({
-			landscape: sap.ui.Device.orientation.landscape
+			landscape: Device.orientation.landscape
 		});
 	};
 
 	return SplitApp;
 
-}, /* bExport= */ true);
+});

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/Device"],
+	function(Device) {
 	"use strict";
 
 
@@ -34,8 +34,8 @@ sap.ui.define(['jquery.sap.global'],
 
 		// The following CSS classes need to be added using the addStyleClass function because
 		//  they are manipulated later on also using the togggleStyleClass function
-		if (!sap.ui.Device.system.phone) {
-			if (sap.ui.Device.orientation.portrait) {
+		if (!Device.system.phone) {
+			if (Device.orientation.portrait) {
 				oControl.addStyleClass("sapMSplitContainerPortrait");
 			}
 			switch (sMode) {
@@ -66,10 +66,10 @@ sap.ui.define(['jquery.sap.global'],
 			this.renderBeforeContent(oRm, oControl);
 		}
 
-		if (!sap.ui.Device.system.phone) {
+		if (!Device.system.phone) {
 			oControl._bMasterisOpen = false;
-			if ((sap.ui.Device.orientation.landscape && (sMode !== "HideMode")) ||
-					sap.ui.Device.orientation.portrait && (sMode === "StretchCompress")) {
+			if ((Device.orientation.landscape && (sMode !== "HideMode")) ||
+					Device.orientation.portrait && (sMode === "StretchCompress")) {
 				oControl._oMasterNav.addStyleClass("sapMSplitContainerMasterVisible");
 				oControl._bMasterisOpen = true;
 			} else {
@@ -77,7 +77,7 @@ sap.ui.define(['jquery.sap.global'],
 				oControl._oMasterNav.addStyleClass("sapMSplitContainerMasterHidden sapMSplitContainerNoTransition");
 			}
 
-			if (oControl.getMode() === "PopoverMode" && sap.ui.Device.orientation.portrait) {
+			if (oControl.getMode() === "PopoverMode" && Device.orientation.portrait) {
 				oControl._oDetailNav.addStyleClass("sapMSplitContainerDetail");
 				oRm.renderControl(oControl._oDetailNav);
 				//add master to popover if it's not yet added

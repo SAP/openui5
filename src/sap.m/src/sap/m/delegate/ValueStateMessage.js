@@ -8,9 +8,12 @@
  * @private
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/Popup'],
-	function(jQuery, Device, BaseObject, ValueStateSupport, Popup) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/Popup', 'sap/ui/core/library'],
+	function(jQuery, Device, BaseObject, ValueStateSupport, Popup, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * Creates a <code>sap.m.delegate.ValueState</code> delegate that can be attached to controls that require
@@ -199,11 +202,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			}
 
 			var sState = oControl.getValueState(),
-				sText = oControl.getValueStateText() || sap.ui.core.ValueStateSupport.getAdditionalText(oControl),
+				sText = oControl.getValueStateText() || ValueStateSupport.getAdditionalText(oControl),
 				sClass = "sapMValueStateMessage sapMValueStateMessage" + sState,
 				oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-			if (sState === sap.ui.core.ValueState.Success) {
+			if (sState === ValueState.Success) {
 				sClass = "sapUiInvisibleText";
 				sText = "";
 			}

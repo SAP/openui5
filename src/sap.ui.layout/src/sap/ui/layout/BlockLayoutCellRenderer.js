@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library'],
-	function(jQuery, library) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/library'],
+	function(jQuery, library, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.ui.core.TitleLevel
+		var TitleLevel = coreLibrary.TitleLevel;
 
 		var BlockLayoutCellRenderer = {};
 
@@ -74,7 +77,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 				}
 
 				var level = blockLayoutCell.getTitleLevel(),
-					autoLevel = level === sap.ui.core.TitleLevel.Auto,
+					autoLevel = level === TitleLevel.Auto,
 					tag = autoLevel ? "h2" : level;
 
 				rm.write("<" + tag + " id='" + this.getTitleId(blockLayoutCell) + "' class='" + titleClass + "'>");
@@ -106,5 +109,4 @@ sap.ui.define(['jquery.sap.global', './library'],
 		};
 
 		return BlockLayoutCellRenderer;
-
 	}, /* bExport= */ true);

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SearchField.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', './Suggest'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, InvisibleText, Suggest) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', './Suggest', 'sap/ui/Device', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, InvisibleText, Suggest, Device) {
 	"use strict";
 
 
@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SearchField.prototype.init = function() {
 
 		// IE9 does not fire input event when characters are deleted in an input field, use keyup instead
-		this._inputEvent = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10 ? "keyup" : "input";
+		this._inputEvent = Device.browser.internet_explorer && Device.browser.version < 10 ? "keyup" : "input";
 
 		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -302,12 +302,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			.on("focus", this.onFocus.bind(this))
 			.on("blur", this.onBlur.bind(this));
 
-		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+		if (Device.system.desktop || Device.system.combi) {
 			// Listen to native touchstart/mousedown.
 			this.$().on("touchstart mousedown", this.onButtonPress.bind(this));
 
 			// FF does not set :active by preventDefault, use class:
-			if (sap.ui.Device.browser.firefox) {
+			if (Device.browser.firefox) {
 				this.$().find(".sapMSFB").on("mouseup mouseout", function(oEvent){
 					jQuery(oEvent.target).removeClass("sapMSFBA");
 				});
@@ -359,7 +359,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.preventDefault();
 		}
 		// FF does not set :active by preventDefault, use class:
-		if (sap.ui.Device.browser.firefox){
+		if (Device.browser.firefox){
 			var button = jQuery(oEvent.target);
 			if (button.hasClass("sapMSFB")) {
 				button.addClass("sapMSFBA");
@@ -389,10 +389,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// When there was no "x" visible (bEmpty):
 			// - always focus
 			var active = document.activeElement;
-			if ((sap.ui.Device.system.desktop
+			if (((Device.system.desktop
 				|| bEmpty
-				|| /(INPUT|TEXTAREA)/i.test(active.tagName)
-				|| active ===  this._resetElement && this._active === this._inputElement // IE Mobile
+				|| /(INPUT|TEXTAREA)/i.test(active.tagName) || active ===  this._resetElement && this._active === this._inputElement) // IE Mobile
 				) && (active !== this._inputElement)) {
 				this._inputElement.focus();
 			}
@@ -401,7 +400,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			closeSuggestions(this);
 
 			// focus input only if the button with the search icon is pressed
-			if (sap.ui.Device.system.desktop && !this.getShowRefreshButton() && (document.activeElement !== this._inputElement)) {
+			if (Device.system.desktop && !this.getShowRefreshButton() && (document.activeElement !== this._inputElement)) {
 				this._inputElement.focus();
 			}
 			this.fireSearch({
@@ -423,7 +422,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		// on phone if the input is on focus and user taps again on it
-		if (sap.ui.Device.system.phone &&
+		if (Device.system.phone &&
 			this.getEnabled() &&
 			oEvent.target.tagName == "INPUT" &&
 			document.activeElement === oEvent.target &&
@@ -452,7 +451,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// If the user has pressed the search button on the soft keyboard - close it,
 		// but only in case of soft keyboard:
-		if (!sap.ui.Device.system.desktop) {
+		if (!Device.system.desktop) {
 			this._blur();
 		}
 	};
@@ -588,7 +587,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SearchField.prototype.onFocus = function(event) {
 
 		// IE does not really focuses inputs and does not blur them if the document itself is not focused
-		if (sap.ui.Device.browser.internet_explorer && !document.hasFocus()) {
+		if (Device.browser.internet_explorer && !document.hasFocus()) {
 			return;
 		}
 
@@ -820,7 +819,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SearchField.prototype.suggest = function(bShow) {
 		if (this.getEnableSuggestions()) {
 			bShow = bShow === undefined || !!bShow;
-			if (bShow && (this.getSuggestionItems().length || sap.ui.Device.system.phone)) {
+			if (bShow && (this.getSuggestionItems().length || Device.system.phone)) {
 				openSuggestions(this);
 			} else {
 				closeSuggestions(this);
@@ -866,4 +865,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return SearchField;
 
-}, /* bExport= */ true);
+});

@@ -3,9 +3,15 @@
  */
 
 // Provides element sap.m.FlexItemData
-sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/ui/core/LayoutData'],
-	function(jQuery, FlexBoxStylingHelper, library, LayoutData) {
+sap.ui.define(['./FlexBoxStylingHelper', './library', 'sap/ui/core/LayoutData'],
+ function(FlexBoxStylingHelper, library, LayoutData) {
 	"use strict";
+
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
+
+	// shortcut for sap.m.FlexAlignSelf
+	var FlexAlignSelf = library.FlexAlignSelf;
 
 	/**
 	 * Constructor for a new <code>sap.m.FlexItemData</code>.
@@ -33,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#align-items-property
 			 */
-			alignSelf : {type : "sap.m.FlexAlignSelf", group : "Misc", defaultValue : sap.m.FlexAlignSelf.Auto},
+			alignSelf : {type : "sap.m.FlexAlignSelf", group : "Misc", defaultValue : FlexAlignSelf.Auto},
 
 			/**
 			 * Determines the display order of flex items independent of their source code order.
@@ -102,7 +108,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			 *
 			 * @since 1.38.5
 			 */
-			backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: sap.m.BackgroundDesign.Transparent}
+			backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: BackgroundDesign.Transparent}
 		}
 	}});
 
@@ -287,4 +293,4 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 
 	return FlexItemData;
 
-}, /* bExport= */ true);
+});
