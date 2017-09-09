@@ -2,9 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 'sap/ui/core/Renderer', './ColumnHeader', './Label'],
-	function(jQuery, ListItemBaseRenderer, ListRenderer, Renderer, ColumnHeader, Label) {
+sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Renderer', './ColumnHeader', './Label', 'sap/ui/core/library', 'sap/m/library'],
+	function(jQuery, ListItemBaseRenderer, Renderer, ColumnHeader, Label, coreLibrary, library) {
 	"use strict";
+
+	// shortcut for sap.m.PopinDisplay
+	var PopinDisplay = library.PopinDisplay;
+
+	// shortcut for sap.ui.core.VerticalAlign
+	var VerticalAlign = coreLibrary.VerticalAlign;
 
 	/**
 	 * ColumnListItem renderer.
@@ -78,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	ColumnListItemRenderer.renderLIAttributes = function(rm, oLI) {
 		rm.addClass("sapMListTblRow");
 		var vAlign = oLI.getVAlign();
-		if (vAlign != sap.ui.core.VerticalAlign.Inherit) {
+		if (vAlign != VerticalAlign.Inherit) {
 			rm.addClass("sapMListTblRow" + vAlign);
 		}
 	};
@@ -255,7 +261,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 			rm.write(">");
 
 			/* header cell */
-			if (oHeader && sPopinDisplay != sap.m.PopinDisplay.WithoutHeader) {
+			if (oHeader && sPopinDisplay != PopinDisplay.WithoutHeader) {
 				rm.write("<div");
 				rm.addClass("sapMListTblSubCntHdr");
 				rm.writeClasses();

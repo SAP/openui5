@@ -3,9 +3,17 @@
  */
 
 // Provides control sap.m.GroupHeaderListItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
-	function(jQuery, ListItemBase, library) {
+sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/library'],
+	function(ListItemBase, library, coreLibrary) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 
@@ -57,13 +65,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			 * Defines the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 		}
 	}});
 
 	// GroupHeaderListItem does not respect the list mode
 	GroupHeaderListItem.prototype.getMode = function() {
-		return sap.m.ListMode.None;
+		return ListMode.None;
 	};
 
 	GroupHeaderListItem.prototype.shouldClearLastValue = function() {
@@ -107,4 +115,4 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 
 	return GroupHeaderListItem;
 
-}, /* bExport= */ true);
+});

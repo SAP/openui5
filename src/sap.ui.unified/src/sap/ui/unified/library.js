@@ -5,21 +5,15 @@
 /**
  * Initialization Code and shared classes of library sap.ui.unified.
  */
-sap.ui.define(['jquery.sap.global',
-	'sap/ui/core/library'], // library dependency
-	function(jQuery) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Core',
+	'sap/ui/base/Object',
+	'jquery.sap.dom',
+	'jquery.sap.script'
+], function(jQuery, Core, BaseObject/* jQuerySapDom,jQuerySapScript*/) {
 
 	"use strict";
-
-	/**
-	 * Unified controls intended for both, mobile and desktop scenarios
-	 *
-	 * @namespace
-	 * @name sap.ui.unified
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
-	 */
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
@@ -73,6 +67,16 @@ sap.ui.define(['jquery.sap.global',
 		]
 	});
 
+	/**
+	 * Unified controls intended for both, mobile and desktop scenarios
+	 *
+	 * @namespace
+	 * @alias sap.ui.unified
+	 * @author SAP SE
+	 * @version ${version}
+	 * @public
+	 */
+	var thisLib = sap.ui.unified;
 
 	/**
 	 * Types of a calendar day used for visualization.
@@ -82,7 +86,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @since 1.24.0
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.unified.CalendarDayType = {
+	thisLib.CalendarDayType = {
 
 		/**
 		 * No special type is used.
@@ -235,7 +239,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @since 1.50
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.unified.StandardCalendarLegendItem = {
+	thisLib.StandardCalendarLegendItem = {
 		/**
 		 * Type used for visualization of the current date.
          * @public
@@ -269,7 +273,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @since 1.34.0
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.unified.CalendarIntervalType = {
+	thisLib.CalendarIntervalType = {
 
 		/**
 		 * Intervals have the size of one hour.
@@ -317,7 +321,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @since 1.48.0
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.unified.GroupAppointmentsMode = {
+	thisLib.GroupAppointmentsMode = {
 
 		/**
 		 * Overlapping appointments are displayed as a collapsed group appointment.
@@ -341,7 +345,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @since 1.40.0
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.unified.CalendarAppointmentVisualization = {
+	thisLib.CalendarAppointmentVisualization = {
 
 		/**
 		 * Standard visualization with no fill color.
@@ -367,7 +371,7 @@ sap.ui.define(['jquery.sap.global',
 	 * API is not yet finished and might change completely
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.unified.ContentSwitcherAnimation = {
+	thisLib.ContentSwitcherAnimation = {
 
 		/**
 		 * No animation. Content is switched instantly.
@@ -420,7 +424,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.unified.ColorPickerMode = {
+	thisLib.ColorPickerMode = {
 
 		/**
 		 * Color picker works with HSV values.
@@ -436,9 +440,9 @@ sap.ui.define(['jquery.sap.global',
 
 	};
 
-	sap.ui.base.Object.extend("sap.ui.unified._ContentRenderer", {
+	thisLib._ContentRenderer = BaseObject.extend("sap.ui.unified._ContentRenderer", {
 		constructor : function(oControl, sContentContainerId, oContent, fAfterRenderCallback) {
-			sap.ui.base.Object.apply(this);
+			BaseObject.apply(this);
 			this._id = sContentContainerId;
 			this._cntnt = oContent;
 			this._ctrl = oControl;
@@ -457,7 +461,7 @@ sap.ui.define(['jquery.sap.global',
 				jQuery.sap.clearDelayedCall(this._rerenderTimer);
 				delete this._rerenderTimer;
 			}
-			sap.ui.base.Object.prototype.destroy.apply(this, arguments);
+			BaseObject.prototype.destroy.apply(this, arguments);
 		},
 
 		render : function() {
@@ -491,11 +495,11 @@ sap.ui.define(['jquery.sap.global',
 	});
 
 
-	sap.ui.unified._iNumberOfOpenedShellOverlays = 0;
+	thisLib._iNumberOfOpenedShellOverlays = 0;
 
 	// Default implementation of ColorPickerHelper - to be overwritten by commons or mobile library
-	if (!sap.ui.unified.ColorPickerHelper) {
-		sap.ui.unified.ColorPickerHelper = {
+	if (!thisLib.ColorPickerHelper) {
+		thisLib.ColorPickerHelper = {
 			isResponsive: function () { return false; },
 			factory: {
 				createLabel:  function () { throw new Error("no Label control available"); },
@@ -509,8 +513,8 @@ sap.ui.define(['jquery.sap.global',
 	}
 
 	//factory for the FileUploader to create TextField and Button to be overwritten by commons and mobile library
-	if (!sap.ui.unified.FileUploaderHelper) {
-		sap.ui.unified.FileUploaderHelper = {
+	if (!thisLib.FileUploaderHelper) {
+		thisLib.FileUploaderHelper = {
 			createTextField: function(sId){ throw new Error("no TextField control available!"); }, /* must return a TextField control */
 			setTextFieldContent: function(oTextField, sWidth){ throw new Error("no TextField control available!"); },
 			createButton: function(){ throw new Error("no Button control available!"); }, /* must return a Button control */
@@ -519,8 +523,8 @@ sap.ui.define(['jquery.sap.global',
 		};
 	}
 
-	sap.ui.unified.calendar = sap.ui.unified.calendar || {};
+	thisLib.calendar = thisLib.calendar || {};
 
-	return sap.ui.unified;
+	return thisLib;
 
 });

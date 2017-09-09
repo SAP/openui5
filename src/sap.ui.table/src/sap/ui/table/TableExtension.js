@@ -4,8 +4,8 @@
 
 // Provides helper sap.ui.table.TableExtension.
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/base/Object", "./TableUtils"
-], function(jQuery, BaseObject, TableUtils) {
+"sap/ui/base/Object", "./TableUtils"
+], function(BaseObject, TableUtils) {
 	"use strict";
 
 	/**

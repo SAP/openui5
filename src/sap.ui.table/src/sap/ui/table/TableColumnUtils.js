@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './library'],
-	function(jQuery, Element, Device, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
+	function(jQuery, Device, library) {
 		"use strict";
 
 		/**

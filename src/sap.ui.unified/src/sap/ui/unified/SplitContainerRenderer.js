@@ -3,9 +3,13 @@
  */
 
 // Provides default renderer for control sap.ui.unified.SplitContainer
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/core/library"],
+	function(coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.Orientation
+	var Orientation = coreLibrary.Orientation;
 
 
 	/**
@@ -23,7 +27,7 @@ sap.ui.define(['jquery.sap.global'],
 	SplitContainerRenderer.render = function(rm, oControl){
 		var sId = oControl.getId();
 
-		var bVertical = oControl.getOrientation() == sap.ui.core.Orientation.Vertical;
+		var bVertical = oControl.getOrientation() == Orientation.Vertical;
 
 		rm.write("<div");
 		rm.writeControlData(oControl);

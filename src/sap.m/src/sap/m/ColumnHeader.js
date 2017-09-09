@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedObject', 'sap/ui/core/Icon', './Table'
-], function(jQuery, Control, ManagedObject, Icon, Table) {
+	'sap/ui/core/Control', 'sap/ui/core/Icon'
+], function(Control, Icon) {
 	"use strict";
 
 	/**
@@ -311,4 +311,4 @@ sap.ui.define([
 	};
 
 	return ColumnHeader;
-}, /* bExport= */true);
+});

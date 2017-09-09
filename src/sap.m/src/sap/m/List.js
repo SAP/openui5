@@ -9,6 +9,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 
 
 
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
+
+
+
 	/**
 	 * Constructor for a new List.
 	 *
@@ -37,7 +42,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 			 * Sets the background style of the list. Depending on the theme, you can change the state of the background from <code>Solid</code> to <code>Translucent</code> or to <code>Transparent</code>.
 			 * @since 1.14
 			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid}
+			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid}
 		},
 		aggregations : {
 
@@ -86,4 +91,4 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 
 	return List;
 
-}, /* bExport= */ true);
+});

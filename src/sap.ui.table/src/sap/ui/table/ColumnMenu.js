@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.ColumnMenu.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/unified/MenuTextFieldItem', 'sap/ui/Device', './TableUtils'],
-	function(jQuery, RenderManager, library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/unified/MenuTextFieldItem', 'sap/ui/Device', './TableUtils'],
+	function(jQuery, library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils) {
 	"use strict";
 
 	/**

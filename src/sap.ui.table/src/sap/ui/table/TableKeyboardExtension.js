@@ -509,7 +509,7 @@ sap.ui.define([
 	};
 
 	return TableKeyboardExtension;
-}, /* bExport= */ true);
+	});
 
 /**
  * Gets the keyboard extension.

@@ -4,7 +4,7 @@
 
 // Provides helper sap.ui.table.TableScrollExtension.
 sap.ui.define([
-	"jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "./library"
+	"jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "./library", "jquery.sap.trace", "jquery.sap.events"
 ], function(jQuery, TableExtension, TableUtils, Device, library) {
 	"use strict";
 
@@ -1287,7 +1287,7 @@ sap.ui.define([
 	};
 
 	return TableScrollExtension;
-}, /* bExport= */ true);
+	});
 
 /**
  * Gets the scroll extension.

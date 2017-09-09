@@ -2,9 +2,19 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListItemBaseRenderer'],
-	function(jQuery, Parameters, ListItemBaseRenderer) {
+sap.ui.define(['./ListItemBaseRenderer', 'sap/m/library', 'sap/ui/Device'],
+	function(ListItemBaseRenderer, library, Device) {
 	"use strict";
+
+
+	// shortcut for sap.m.ListGrowingDirection
+	var ListGrowingDirection = library.ListGrowingDirection;
+
+	// shortcut for sap.m.ListKeyboardMode
+	var ListKeyboardMode = library.ListKeyboardMode;
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
 
 
 	/**
@@ -76,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		var sHeaderText = oControl.getHeaderText();
 		var oHeaderTBar = oControl.getHeaderToolbar();
 		if (oHeaderTBar) {
-			oHeaderTBar.setDesign(sap.m.ToolbarDesign.Transparent, true);
+			oHeaderTBar.setDesign(ToolbarDesign.Transparent, true);
 			oHeaderTBar.addStyleClass("sapMListHdrTBar");
 			rm.renderControl(oHeaderTBar);
 		} else if (sHeaderText) {
@@ -90,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		// render info bar
 		var oInfoTBar = oControl.getInfoToolbar();
 		if (oInfoTBar) {
-			oInfoTBar.setDesign(sap.m.ToolbarDesign.Info, true);
+			oInfoTBar.setDesign(ToolbarDesign.Info, true);
 			oInfoTBar.addStyleClass("sapMListInfoTBar");
 			rm.renderControl(oInfoTBar);
 		}
@@ -99,8 +109,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		var aItems = oControl.getItems(),
 			bShowNoData = oControl.getShowNoData(),
 			bRenderItems = oControl.shouldRenderItems() && aItems.length,
-			iTabIndex = oControl.getKeyboardMode() == sap.m.ListKeyboardMode.Edit ? -1 : 0,
-			bUpwardGrowing = oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards && oControl.getGrowing();
+			iTabIndex = oControl.getKeyboardMode() == ListKeyboardMode.Edit ? -1 : 0,
+			bUpwardGrowing = oControl.getGrowingDirection() == ListGrowingDirection.Upwards && oControl.getGrowing();
 
 		// render top growing
 		if (bUpwardGrowing) {
@@ -285,7 +295,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 	 */
 	ListBaseRenderer.renderNoData = function(rm, oControl) {
 		rm.write("<li");
-		rm.writeAttribute("tabindex", oControl.getKeyboardMode() == sap.m.ListKeyboardMode.Navigation ? -1 : 0);
+		rm.writeAttribute("tabindex", oControl.getKeyboardMode() == ListKeyboardMode.Navigation ? -1 : 0);
 		rm.writeAttribute("id", oControl.getId("nodata"));
 		rm.addClass("sapMLIB sapMListNoData sapMLIBTypeInactive");
 		ListItemBaseRenderer.addFocusableClasses.call(ListItemBaseRenderer, rm);
@@ -309,7 +319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		rm.writeAttribute("id", oControl.getId(sAreaId));
 		rm.writeAttribute("tabindex", iTabIndex);
 
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			rm.addClass("sapMListDummyArea").writeClasses();
 		}
 
