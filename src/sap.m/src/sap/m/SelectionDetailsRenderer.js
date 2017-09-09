@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/ButtonRenderer'],
-	function(jQuery, Renderer, ButtonRenderer) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/m/ButtonRenderer'],
+	function(Renderer, ButtonRenderer) {
 	"use strict";
 
 	/**

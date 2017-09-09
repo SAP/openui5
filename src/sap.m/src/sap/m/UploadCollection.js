@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/m/CustomListItem",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"jquery.sap.keycodes"
 ], function(jQuery, Library, MobileLibrary, MessageBox, Dialog, Control, Icon, IconPool, Image, Text, Title, Button, List, StandardListItem, FileUploaderParameter, FileUploader, FileSizeFormat, OverflowToolbar, ToolbarSpacer, ObjectAttribute, UploadCollectionItem, UploadCollectionParameter, UploadCollectionToolbarPlaceholder, HTML, CustomListItem, ResizeHandler, Device) {
 	"use strict";
 

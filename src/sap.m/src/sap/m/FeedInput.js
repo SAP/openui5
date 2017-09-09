@@ -3,11 +3,12 @@
  */
 
 // Provides control sap.m.FeedInput.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/HTML', 'sap/ui/core/IconPool', 'sap/m/TextArea', 'sap/m/Button'],
-	function(jQuery, library, Control, HTML, IconPool, TextArea, Button) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/m/TextArea', 'sap/m/Button'],
+	function(jQuery, library, Control, IconPool, TextArea, Button) {
 	"use strict";
 
-
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new FeedInput.
@@ -210,7 +211,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!this._oButton) {
 			this._oButton = new Button(this.getId() + "-button", {
 				enabled : false,
-				type : sap.m.ButtonType.Default,
+				type : ButtonType.Default,
 				icon : "sap-icon://feeder-arrow",
 				tooltip : this.getButtonTooltip(),
 				press : jQuery.proxy(function (oEvt) {
@@ -270,4 +271,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return FeedInput;
 
-}, /* bExport= */ true);
+});

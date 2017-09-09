@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Text' ],
-	function(jQuery, library, Control, Text) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/Device', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, Text, Device) {
 	"use strict";
+
+	// shortcut for sap.m.Size
+	var Size = library.Size;
 
 	/**
 	 * Constructor for a new sap.m.FeedContent control.
@@ -33,7 +36,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 				 * Updates the size of the chart. If not set then the default size is applied based on the device tile.
 				 * @deprecated Since version 1.38.0. The FeedContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
-				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : sap.m.Size.Auto},
+				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : Size.Auto},
 
 				/**
 				 * The content text.
@@ -174,7 +177,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	 * @param {sap.ui.base.Event} oEvent which was triggered
 	 */
 	FeedContent.prototype.ontap = function(oEvent) {
-		if (sap.ui.Device.browser.msie) {
+		if (Device.browser.msie) {
 			this.$().focus();
 		}
 		this.firePress();
@@ -192,7 +195,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	};
 
 	FeedContent.prototype.attachEvent = function(eventId, data, functionToCall, listener) {
-		sap.ui.core.Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
+		Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
 		if (this.hasListeners("press")) {
 			this.$().attr("tabindex", 0).addClass("sapMPointer");
 		}
@@ -200,7 +203,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	};
 
 	FeedContent.prototype.detachEvent = function(eventId, functionToCall, listener) {
-		sap.ui.core.Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
+		Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex").removeClass("sapMPointer");
 		}

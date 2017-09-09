@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for the sap.m.FeedListItem
-sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, ListItemBaseRenderer, Renderer) {
+sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/Device'],
+	function(ListItemBaseRenderer, Renderer, Device) {
 	"use strict";
 
 
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	 */
 	FeedListItemRenderer.renderLIContent = function(rm, oFeedListItem) {
 		// convenience variable
-		var sMyId = oFeedListItem.getId(), bIsPhone = sap.ui.Device.system.phone;
+		var sMyId = oFeedListItem.getId(), bIsPhone = Device.system.phone;
 
 		rm.write('<div');
 		rm.addClass('sapMFeedListItem');
