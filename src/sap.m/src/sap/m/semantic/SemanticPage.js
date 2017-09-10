@@ -2,9 +2,21 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SegmentedContainer', 'sap/m/semantic/SemanticConfiguration', 'sap/m/Button', 'sap/m/Title', 'sap/m/ActionSheet', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarButton', 'sap/m/OverflowToolbarLayoutData', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData', 'sap/ui/base/ManagedObject', 'sap/m/PageAccessibleLandmarkInfo','sap/ui/base/ManagedObjectObserver'],
-function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, ActionSheet, Page, OverflowToolbar, OverflowToolbarButton, OverflowToolbarLayoutData, ToolbarSpacer, Bar, CustomData, ManagedObject, PageAccessibleLandmarkInfo, ManagedObjectObserver) {
+sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SegmentedContainer', 'sap/m/semantic/SemanticConfiguration', 'sap/m/Button', 'sap/m/Title', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData', 'sap/ui/base/ManagedObject', 'sap/m/PageAccessibleLandmarkInfo', 'sap/ui/base/ManagedObjectObserver', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/m/library'],
+function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Page, OverflowToolbar, ToolbarSpacer, Bar, CustomData, ManagedObject, PageAccessibleLandmarkInfo, ManagedObjectObserver, Control, coreLibrary, library) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.m.PageBackgroundDesign
+	var PageBackgroundDesign = library.PageBackgroundDesign;
+
+	// shortcut for sap.m.semantic.SemanticRuleSetType
+	var SemanticRuleSetType = library.semantic.SemanticRuleSetType;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new <code>SemanticPage</code>.
@@ -62,7 +74,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	 * @alias sap.m.semantic.SemanticPage
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var SemanticPage = sap.ui.core.Control.extend("sap.m.semantic.SemanticPage", /** @lends sap.m.semantic.SemanticPage.prototype */ {
+	var SemanticPage = Control.extend("sap.m.semantic.SemanticPage", /** @lends sap.m.semantic.SemanticPage.prototype */ {
 		metadata: {
 
 			library: "sap.m",
@@ -84,7 +96,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 				titleLevel: {
 					type: "sap.ui.core.TitleLevel",
 					group: "Appearance",
-					defaultValue: sap.ui.core.TitleLevel.Auto
+					defaultValue: TitleLevel.Auto
 				},
 
 				/**
@@ -141,7 +153,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 				semanticRuleSet: {
 					type: "sap.m.semantic.SemanticRuleSetType",
 					group: "Misc",
-					defaultValue: sap.m.semantic.SemanticRuleSetType.Classic
+					defaultValue: SemanticRuleSetType.Classic
 				},
 
 				/**
@@ -152,7 +164,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 				backgroundDesign: {
 					type: "sap.m.PageBackgroundDesign",
 					group: "Appearance",
-					defaultValue: sap.m.PageBackgroundDesign.Standard
+					defaultValue: PageBackgroundDesign.Standard
 				}
 			},
 			defaultAggregation: "content",
@@ -581,7 +593,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	SemanticPage.prototype._getNavButton = function () {
 		if (!this._oNavButton) {
 			this._oNavButton = new Button(this.getId() + "-navButton", {
-				type: sap.m.ButtonType.Up,
+				type: ButtonType.Up,
 				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PAGE_NAVBUTTON_TEXT"),
 				press: jQuery.proxy(this.fireNavButtonPress, this)
 			});
@@ -860,4 +872,4 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	}
 
 	return SemanticPage;
-}, /* bExport= */ false);
+});

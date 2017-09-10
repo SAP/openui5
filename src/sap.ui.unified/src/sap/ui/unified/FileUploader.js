@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.ui.unified.FileUploader.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/LabelEnablement'],
-	function(jQuery, Control, library, LabelEnablement) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library', 'sap/ui/Device', 'jquery.sap.keycodes'],
+	function(jQuery, Control, library, LabelEnablement, coreLibrary, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 
@@ -136,7 +141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			 * Visualizes warnings or errors related to the text field. Possible values: Warning, Error, Success, None.
 			 * @since 1.24.0
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
 
 			/**
 			 * Custom text for the value state message pop-up.
@@ -417,8 +422,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	FileUploader.prototype.init = function(){
 
 		// load the respective UI-Elements from the FileUploaderHelper
-		this.oFilePath = sap.ui.unified.FileUploaderHelper.createTextField(this.getId() + "-fu_input");
-		this.oBrowse = sap.ui.unified.FileUploaderHelper.createButton();
+		this.oFilePath = library.FileUploaderHelper.createTextField(this.getId() + "-fu_input");
+		this.oBrowse = library.FileUploaderHelper.createButton();
 		this.oFilePath.setParent(this);
 		this.oBrowse.setParent(this);
 
@@ -608,7 +613,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		}
 		// in case of IE9 we prevent the browse button from being focused because the
 		// native file uploader requires the focus for catching the keyboard events
-		if ((!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9)) {
+		if ((!!Device.browser.internet_explorer && Device.browser.version == 9)) {
 			this.oBrowse.$().attr("tabindex", "-1");
 		}
 
@@ -620,7 +625,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 		this.oFilePath.$().find('input').removeAttr("role").attr("aria-live", "polite");
 
-		if (this.getValueState() == sap.ui.core.ValueState.Error) {
+		if (this.getValueState() == ValueState.Error) {
 			this.oBrowse.$().attr("aria-invalid", "true");
 		}
 
@@ -696,7 +701,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				var _newWidth = $fp.outerWidth() - _buttonWidth;
 				if (_newWidth < 0) {
 					this.oFilePath.getDomRef().style.width = "0px";
-					if (!sap.ui.Device.browser.internet_explorer) {
+					if (!Device.browser.internet_explorer) {
 						this.oFileUpload.style.width = $b.outerWidth(true);
 					}
 				} else {
@@ -737,7 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		}
 
 		if (this.oBrowse.getDomRef()) {
-			if (sValueState == sap.ui.core.ValueState.Error) {
+			if (sValueState == ValueState.Error) {
 				this.oBrowse.$().attr("aria-invalid", "true");
 			}else {
 				this.oBrowse.$().removeAttr("aria-invalid");
@@ -746,9 +751,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 		if (jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement)) {
 			switch (sValueState) {
-				case sap.ui.core.ValueState.Error:
-				case sap.ui.core.ValueState.Warning:
-				case sap.ui.core.ValueState.Success:
+				case ValueState.Error:
+				case ValueState.Warning:
+				case ValueState.Success:
 					this.openValueStateMessage();
 					break;
 				default:
@@ -936,7 +941,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		var oXhr = aXhr[iIndex];
 		var sFilename = oXhr.file.name ? oXhr.file.name : "MultipartFile";
 
-		if ((sap.ui.Device.browser.edge || sap.ui.Device.browser.internet_explorer) && oXhr.file.type && oXhr.xhr.readyState == 1) {
+		if ((Device.browser.edge || Device.browser.internet_explorer) && oXhr.file.type && oXhr.xhr.readyState == 1) {
 			var sContentType = oXhr.file.type;
 			oXhr.xhr.setRequestHeader("Content-Type", sContentType);
 			oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
@@ -1128,7 +1133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			// this does not work for IE9 and downwards! TODO: check with IE10/11
 			// consider to always put the focus on the hidden file uploader
 			// and let the fileuploader manager the keyboard interaction
-			if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9) && this.oFileUpload) {
+			if (!(!!Device.browser.internet_explorer && Device.browser.version <= 9) && this.oFileUpload) {
 				this.oFileUpload.click();
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
@@ -1231,13 +1236,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			}
 			if (this.getMultiple()) {
 				//multiple is not supported in IE <= 9
-				if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+				if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
 					sValue = sFileString;
 				}
 			}
 
 			//sValue has to be filled to avoid clearing the FilePath by pressing cancel
-			if (sValue || sap.ui.Device.browser.chrome) { // in Chrome the file path has to be cleared as the upload will be avoided
+			if (sValue || Device.browser.chrome) { // in Chrome the file path has to be cleared as the upload will be avoided
 				this.setValue(sValue, true);
 			}
 		}
@@ -1498,7 +1503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			if (this.getName()) {
 				if (this.getMultiple()) {
 					//multiple is not supported in IE <= 9
-					if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+					if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
 						aFileUpload.push('name="' + this.getName() + '[]" ');
 					}
 				} else {
@@ -1507,7 +1512,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			} else {
 				if (this.getMultiple()) {
 					//multiple is not supported in IE <= 9
-					if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+					if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
 						aFileUpload.push('name="' + this.getId() + '[]" ');
 					}
 				} else {
@@ -1515,7 +1520,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				}
 			}
 			aFileUpload.push('id="' + this.getId() + '-fu" ');
-			if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9)) {
+			if (!(!!Device.browser.internet_explorer && Device.browser.version == 9)) {
 				// for IE9 the file uploader itself gets the focus to make sure that the
 				// keyboard interaction works and there is no security issue - unfortunately
 				// this has the negative side effect that 2 tabs are required.
@@ -1535,7 +1540,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			}
 			if (this.getMultiple()) {
 				//multiple is not supported in IE <= 9
-				if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+				if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
 					aFileUpload.push('multiple ');
 				}
 			}
@@ -1633,4 +1638,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 	return FileUploader;
 
-}, /* bExport= */ true);
+});

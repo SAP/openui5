@@ -85,4 +85,4 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/semantic
 	};
 
 	return SemanticButton;
-}, /* bExport= */ true);
+});

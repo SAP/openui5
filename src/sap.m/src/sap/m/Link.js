@@ -3,9 +3,17 @@
  */
 
 // Provides control sap.m.Link.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, library, Control, InvisibleText, EnabledPropagator) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(library, Control, InvisibleText, EnabledPropagator, coreLibrary, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
 
 
 
@@ -100,13 +108,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Determines the horizontal alignment of the text.
 			 * @since 1.28.0
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Initial},
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Initial},
 
 			/**
 			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the parent DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Subtle links look more like standard text than like links. They should only be used to help with visual hierarchy between large data lists of important and less important links. Subtle links should not be used in any other use case.
@@ -204,7 +212,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Link.prototype.onsapenter = Link.prototype._handlePress;
 
-	if (sap.ui.Device.support.touch) {
+	if (Device.support.touch) {
 		Link.prototype.ontap = Link.prototype._handlePress;
 	} else {
 		Link.prototype.onclick = Link.prototype._handlePress;
@@ -426,4 +434,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return Link;
 
-}, /* bExport= */ true);
+});

@@ -188,4 +188,4 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library'],
 
 	return App;
 
-}, /* bExport= */ true);
+});

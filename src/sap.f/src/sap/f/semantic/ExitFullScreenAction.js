@@ -31,4 +31,4 @@ sap.ui.define(['./SemanticButton'], function(SemanticButton) {
 	});
 
 	return ExitFullScreenAction;
-}, /* bExport= */ true);
+});

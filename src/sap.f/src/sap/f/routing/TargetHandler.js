@@ -213,4 +213,4 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/ui/base/Object
 
 		return TargetHandler;
 
-	}, /* bExport= */ true);
+	});

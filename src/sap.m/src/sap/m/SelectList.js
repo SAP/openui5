@@ -3,9 +3,15 @@
  */
 
 // Provides control sap.m.SelectList.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Item'],
+	function(jQuery, library, Control, ItemNavigation, Item) {
 		"use strict";
+
+		// shortcut for sap.m.touch
+		var touch = library.touch;
+
+		// shortcut for sap.m.SelectListKeyboardNavigationMode
+		var SelectListKeyboardNavigationMode = library.SelectListKeyboardNavigationMode;
 
 		/**
 		 * Constructor for a new <code>sap.m.SelectList</code>.
@@ -101,7 +107,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					keyboardNavigationMode: {
 						type: "sap.m.SelectListKeyboardNavigationMode",
 						group: "Behavior",
-						defaultValue: sap.m.SelectListKeyboardNavigationMode.Delimited
+						defaultValue: SelectListKeyboardNavigationMode.Delimited
 					}
 				},
 				defaultAggregation: "items",
@@ -248,7 +254,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		SelectList.prototype._activateItem = function(oItem) {
 
-			if (oItem instanceof sap.ui.core.Item && oItem && oItem.getEnabled()) {
+			if (oItem instanceof Item && oItem && oItem.getEnabled()) {
 
 				this.fireItemPress({
 					item: oItem
@@ -311,7 +317,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		SelectList.prototype.onAfterRendering = function() {
-			if (this.getKeyboardNavigationMode() === sap.m.SelectListKeyboardNavigationMode.None) {
+			if (this.getKeyboardNavigationMode() === SelectListKeyboardNavigationMode.None) {
 				this.destroyItemNavigation();
 			} else {
 				this.createItemNavigation();
@@ -335,7 +341,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		SelectList.prototype.ontouchstart = function(oEvent) {
 
 			// only process single touches (only the first active touch point)
-			if (sap.m.touch.countContained(oEvent.touches, this.getId()) > 1 ||
+			if (touch.countContained(oEvent.touches, this.getId()) > 1 ||
 				!this.getEnabled()) {
 
 				return;
@@ -380,7 +386,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			// find the active touch point
-			oTouch = sap.m.touch.find(oEvent.changedTouches, this._iActiveTouchId);
+			oTouch = touch.find(oEvent.changedTouches, this._iActiveTouchId);
 
 			// only process the active touch
 			if (oTouch && ((Math.abs(oTouch.pageX - this._fStartX) > 10) || (Math.abs(oTouch.pageY - this._fStartY) > 10))) {
@@ -412,7 +418,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.setMarked();
 
 			// find the active touch point
-			oTouch = sap.m.touch.find(oEvent.changedTouches, this._iActiveTouchId);
+			oTouch = touch.find(oEvent.changedTouches, this._iActiveTouchId);
 
 			// process this event only if the touch we're tracking has changed
 			if (oTouch) {
@@ -517,7 +523,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				CSS_CLASS = this.getRenderer().CSS_CLASS;
 
 			this.setAssociation("selectedItem", vItem, true);
-			this.setProperty("selectedItemId", (vItem instanceof sap.ui.core.Item) ? vItem.getId() : vItem, true);
+			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
 
 			if (typeof vItem === "string") {
 				vItem = sap.ui.getCore().byId(vItem);
@@ -756,7 +762,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				vItem = sap.ui.getCore().byId(vItem);
 			}
 
-			if (!(vItem instanceof sap.ui.core.Item) && vItem !== null) {
+			if (!(vItem instanceof Item) && vItem !== null) {
 				return this;
 			}
 
@@ -932,5 +938,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		SelectList.prototype.setNoDataText = jQuery.noop;
 
 		return SelectList;
-
-	}, /* bExport= */ true);
+	});

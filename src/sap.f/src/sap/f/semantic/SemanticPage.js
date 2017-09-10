@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"sap/ui/base/ManagedObject",
 	"sap/f/library",
@@ -15,8 +14,7 @@ sap.ui.define([
 	"./SemanticFooter",
 	"./SemanticShareMenu",
 	"./SemanticConfiguration"
-], function (jQuery,
-			Control,
+], function(Control,
 			ManagedObject,
 			library,
 			DynamicPage,
@@ -29,6 +27,9 @@ sap.ui.define([
 			SemanticShareMenu,
 			SemanticConfiguration) {
 	"use strict";
+
+	// shortcut for sap.f.DynamicPageTitleArea
+	var DynamicPageTitleArea = library.DynamicPageTitleArea;
 
 	/**
 	* Constructor for a new <code>SemanticPage</code>.
@@ -150,7 +151,7 @@ sap.ui.define([
 				 *
 				 * @since 1.52
 				 */
-				titlePrimaryArea : {type: "sap.f.DynamicPageTitleArea", group: "Appearance", defaultValue: sap.f.DynamicPageTitleArea.Begin}
+				titlePrimaryArea : {type: "sap.f.DynamicPageTitleArea", group: "Appearance", defaultValue: DynamicPageTitleArea.Begin}
 
 			},
 			defaultAggregation : "content",
@@ -1011,4 +1012,4 @@ sap.ui.define([
 
 	return SemanticPage;
 
-}, /* bExport= */ true);
+});

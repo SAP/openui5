@@ -9,14 +9,10 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/library",
 	"sap/m/ToolbarSeparator",
-	"sap/m/ToolbarSpacer",
-	"./SemanticConfiguration",
 	"./SemanticContainer"
 ], function(jQuery,
 			mobileLibrary,
 			ToolbarSeparator,
-			ToolBarSpacer,
-			SemanticConfiguration,
 			SemanticContainer) {
 	"use strict";
 
@@ -584,4 +580,4 @@ sap.ui.define([
 
 	return SemanticTitle;
 
-}, /* bExport= */ false);
+});

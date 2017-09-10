@@ -43,4 +43,4 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 
 	return GroupAction;
 
-}, /* bExport= */ true);
+});

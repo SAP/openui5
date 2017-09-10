@@ -391,7 +391,7 @@ sap.ui.define([
 
 			var that = this;
 
-			this._oShareMenuBtn = new sap.m.Button(this._oActionSheet.getParent().getId() + "-shareButton", {
+			this._oShareMenuBtn = new Button(this._oActionSheet.getParent().getId() + "-shareButton", {
 				icon: IconPool.getIconURI("action"),
 				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
 				layoutData: new OverflowToolbarLayoutData({

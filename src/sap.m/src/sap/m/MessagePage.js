@@ -3,9 +3,15 @@
  */
 
 // Provides control sap.m.MessagePage.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, IconPool) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/library'],
+	function(jQuery, library, Control, IconPool, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.ui.core.TextAlign
+		var TextAlign = coreLibrary.TextAlign;
+
+		// shortcut for sap.ui.core.TextDirection
+		var TextDirection = coreLibrary.TextDirection;
 
 		/**
 		 * Constructor for a new MessagePage.
@@ -69,7 +75,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				/**
 				 * Determines the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 */
-				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 			},
 			aggregations : {
 				/**
@@ -217,7 +223,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._oText = new sap.m.Text({
 					id: this.getId() + "-customText",
 					text: this.getText(),
-					textAlign: sap.ui.core.TextAlign.Center,
+					textAlign: TextAlign.Center,
 					textDirection: this.getTextDirection()
 				});
 			}
@@ -228,7 +234,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._oDescription = new sap.m.Text({
 					id: this.getId() + "-customDescription",
 					text: this.getDescription(),
-					textAlign: sap.ui.core.TextAlign.Center,
+					textAlign: TextAlign.Center,
 					textDirection: this.getTextDirection()
 				});
 			}
@@ -272,4 +278,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 		return MessagePage;
-	}, /* bExport= */ true);
+	});

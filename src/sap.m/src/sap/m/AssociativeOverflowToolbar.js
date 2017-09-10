@@ -87,4 +87,4 @@ sap.ui.define(['./OverflowToolbar', './OverflowToolbarRenderer', './Toolbar'],
 
 		return AssociativeOverflowToolbar;
 
-	}, /* bExport= */ false);
+	});

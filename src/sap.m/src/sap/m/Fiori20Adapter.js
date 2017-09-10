@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.Fiori20Adapter
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObjectObserver'],
-	function(jQuery,  Object, EventProvider, ManagedObjectObserver) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObjectObserver', 'sap/ui/Device'],
+	function(jQuery, Object, EventProvider, ManagedObjectObserver, Device) {
 	"use strict";
 
 	var oEventProvider = new EventProvider(),
@@ -519,7 +519,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		 */
 		if (isInstanceOf(oParent, "sap/m/SplitContainer")) {
 
-			var bIsPhone = sap.ui.Device.system.phone,
+			var bIsPhone = Device.system.phone,
 				bMoveTitle = oAdaptOptions.bMoveTitle,
 				bAdaptChildBackButton = oAdaptOptions.bHideBackButton;
 			/**
@@ -533,7 +533,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			 * 2.1. - on phone
 			 * 2.2. - on the desktop initial page of either master/detail part
 			 */
-			if (bAdaptChildBackButton && !sap.ui.Device.system.phone) {
+			if (bAdaptChildBackButton && !Device.system.phone) {
 				bAdaptChildBackButton = 'initialPage';
 			}
 
@@ -710,4 +710,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 	return Fiori20Adapter;
 
-}, /* bExport= */ false);
+});

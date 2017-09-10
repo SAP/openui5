@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.Grid.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/Device', 'sap/ui/core/ResizeHandler'],
+	function(jQuery, Control, library, Device, ResizeHandler) {
 	"use strict";
 
 
@@ -93,9 +93,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	(function() {
 
 		Grid.prototype.init = function() {
-			this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
-			this._iBreakPointDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
-			this._iBreakPointLargeDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];
+			this._iBreakPointTablet = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
+			this._iBreakPointDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
+			this._iBreakPointLargeDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];
 
 			// Backward compatibility - if no any settings for XL - the settings for L are used
 			this._indentXLChanged = false;
@@ -109,10 +109,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		 */
 		Grid.prototype.onAfterRendering = function() {
 			if (this.getContainerQuery()) {
-				this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(this, jQuery.proxy(this._onParentResize, this));
+				this._sContainerResizeListener = ResizeHandler.register(this, jQuery.proxy(this._onParentResize, this));
 				this._onParentResize();
 			} else {
-				this._attachMediaContainerWidthChange(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
+				this._attachMediaContainerWidthChange(this._handleMediaChange, this, Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
 			}
 		};
 
@@ -134,12 +134,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		Grid.prototype._cleanup = function() {
 			// Cleanup resize event registration
 			if (this._sContainerResizeListener) {
-				sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
+				ResizeHandler.deregister(this._sContainerResizeListener);
 				this._sContainerResizeListener = null;
 			}
 
 			// Device Media Change handler
-			this._detachMediaContainerWidthChange(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
+			this._detachMediaContainerWidthChange(this._handleMediaChange, this, Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
 		};
 
 		Grid.prototype._handleMediaChange  = function(oParams) {
@@ -240,11 +240,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 
 		/*
-	     * Get span information for the Control
-	     * @param {sap.ui.core.Control} Control instance
-	     * @return {Object} Grid layout data
-	     * @private
-	     */
+		 * Get span information for the Control
+		 * @param {sap.ui.core.Control} Control instance
+		 * @return {Object} Grid layout data
+		 * @private
+		 */
 		Grid.prototype._getLayoutDataForControl = function(oControl) {
 			var oLayoutData = oControl.getLayoutData();
 
@@ -301,4 +301,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	return Grid;
 
-}, /* bExport= */ true);
+});

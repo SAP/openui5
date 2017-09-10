@@ -43,4 +43,4 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 
 		return FileUploaderXHRSettings;
 
-	}, /* bExport= */ true);
+	});

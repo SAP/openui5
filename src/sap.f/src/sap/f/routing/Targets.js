@@ -363,4 +363,4 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		});
 
 		return MobileTargets;
-	}, /* bExport= */ true);
+	});

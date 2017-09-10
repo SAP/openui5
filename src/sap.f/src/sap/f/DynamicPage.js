@@ -1648,4 +1648,4 @@ sap.ui.define([
 
 	return DynamicPage;
 
-}, /* bExport= */ true);
+});
