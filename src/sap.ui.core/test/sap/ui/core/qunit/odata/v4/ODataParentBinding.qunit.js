@@ -116,12 +116,12 @@ sap.ui.require([
 				.withExactArgs(sAbsolutePath).returns(sPathInCache);
 			this.mock(oCache).expects("update")
 				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI,
-					sinon.match.same(fnErrorCallback), "edit('URL')", sPathInCache)
+					sinon.match.same(fnErrorCallback), "edit('URL')", sPathInCache, "unitPath")
 				.returns(Promise.resolve(oResult));
 
 			// code under test
-			return oBinding.updateValue(sGroupId, "bar", Math.PI, fnErrorCallback,"edit('URL')",
-					sAbsolutePath)
+			return oBinding.updateValue(sGroupId, "bar", Math.PI, fnErrorCallback, "edit('URL')",
+					sAbsolutePath, "unitPath")
 				.then(function (oResult0) {
 					assert.strictEqual(oResult0, oResult);
 				});
@@ -145,7 +145,7 @@ sap.ui.require([
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(oBinding.sPath).returns("");
 		this.mock(oCache).expects("update")
 			.withExactArgs("group", "bar", Math.PI, sinon.match.same(fnErrorCallback),
-				"edit('URL')", "")
+				"edit('URL')", "", undefined)
 			.returns(Promise.resolve(oResult));
 
 		// code under test
@@ -190,13 +190,14 @@ sap.ui.require([
 
 		this.mock(oParentBinding).expects("updateValue")
 			.withExactArgs("up", "bar", Math.PI, sinon.match.same(fnErrorCallback),"edit('URL')",
-				sPath)
+				sPath, "unitPath")
 			.returns(Promise.resolve(oResult));
 
 		this.mock(oBinding).expects("getUpdateGroupId").never();
 
 		// code under test
-		return oBinding.updateValue("up", "bar", Math.PI, fnErrorCallback,"edit('URL')", sPath)
+		return oBinding.updateValue("up", "bar", Math.PI, fnErrorCallback,"edit('URL')", sPath,
+				"unitPath")
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
@@ -1819,6 +1820,30 @@ sap.ui.require([
 
 		// code under test
 		oResult = oBinding.fetchType("EMPLOYEES('1')/EMPLOYEE_2_TEAM");
+
+		assert.strictEqual(oResult, oPromise);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchType, bAsName=true", function (assert) {
+		var oMetaModel = {
+				getMetaPath : function () {},
+				fetchObject : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oModel : {
+					getMetaModel : function () { return oMetaModel; }
+				}
+			}),
+			oPromise = {},
+			oResult;
+
+		this.mock(oMetaModel).expects("getMetaPath")
+			.withExactArgs("/EMPLOYEES('1')/EMPLOYEE_2_TEAM/Team_ID/").returns("/~/");
+		this.mock(oMetaModel).expects("fetchObject").withExactArgs("/~/$Type").returns(oPromise);
+
+		// code under test
+		oResult = oBinding.fetchType("EMPLOYEES('1')/EMPLOYEE_2_TEAM/Team_ID", true);
 
 		assert.strictEqual(oResult, oPromise);
 	});

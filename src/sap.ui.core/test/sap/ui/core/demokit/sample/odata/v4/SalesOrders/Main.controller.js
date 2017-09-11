@@ -17,7 +17,7 @@ sap.ui.define([
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
-		sServiceNamespace = "com.sap.gateway.default.zui5_epm_sample.v0001.";
+		sServiceNamespace = "com.sap.gateway.default.zui5_epm_sample.v0002.";
 
 //	function onRejected(oError) {
 //		jQuery.sap.log.error(oError.message, oError.stack);
@@ -153,7 +153,6 @@ sap.ui.define([
 						"SalesOrderID" : "",
 						// properties
 						"BuyerID" : "0100000000",
-						"BuyerName" : "",
 						"ChangedAt" : "1970-01-01T00:00:00Z",
 						"CreatedAt" : "1970-01-01T00:00:00Z",
 						"CurrencyCode" : "EUR",
@@ -206,10 +205,7 @@ sap.ui.define([
 				"GrossAmount" : "1137.64",
 				"Note" : "",
 				"NoteLanguage" : "E",
-				"Product" : {
-					"ProductID" : "HT-1000",
-					"ProductName" : ""
-				},
+				"ProductID" : "HT-1000",
 				"Quantity" : "1.000",
 				"QuantityUnit" : "EA",
 				// navigation properties
@@ -367,7 +363,7 @@ sap.ui.define([
 				return;
 			}
 			oBinding.filter(sQuery
-				? new Filter("Product/ProductID", FilterOperator.EQ, sQuery)
+				? new Filter("SOITEM_2_PRODUCT/ProductID", FilterOperator.EQ, sQuery)
 				: null);
 		},
 

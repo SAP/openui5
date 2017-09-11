@@ -191,6 +191,9 @@
 			<Column>
 				<Text text="Equipment ID"/>
 			</Column>
+			<Column visible="{ui>/bRealOData}">
+				<Text text="Product Image"/>
+			</Column>
 			<Column>
 				<Text text="Product Name"/>
 			</Column>
@@ -205,6 +208,9 @@
 			<ColumnListItem>
 				<cells>
 					<Text text="{ID}"/>
+				</cells>
+				<cells>
+					<Image src="{EQUIPMENT_2_PRODUCT/ProductPicture/Picture}"/>
 				</cells>
 				<cells>
 					<Input value="{EQUIPMENT_2_PRODUCT/Name}"/>

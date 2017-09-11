@@ -6,8 +6,8 @@
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures" />
 	</edmx:Reference>
-	<edmx:Reference Uri="../../../../default/sap/zui5_epm_sample/0001/$metadata">
-		<edmx:Include Namespace="com.sap.gateway.default.zui5_epm_sample.v0001" Alias="ParentService" />
+	<edmx:Reference Uri="../../../../default/sap/zui5_epm_sample/0002/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.default.zui5_epm_sample.v0002" Alias="ParentService" />
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema Namespace="com.sap.gateway.f4.h_tcurc-sh.v0001" Alias="SAP__self">

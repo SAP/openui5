@@ -497,7 +497,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown", function (assert) {
-		var oCache = new _Cache(this.oRequestor),
+		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType),
 			oData = [{
 				foo : {
 					bar : 42,
@@ -572,6 +572,71 @@ sap.ui.require([
 
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/bar/toString"), undefined,
 			"0/foo/bar/toString");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_SingleCache#drillDown: stream property", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType),
+			oData = {productPicture : {}};
+
+		this.mock(oCache).expects("fnFetchType")
+			.withExactArgs("Products('42')/productPicture/picture", true)
+			.returns(_SyncPromise.resolve("Edm.Stream"));
+
+		// code under test
+		assert.strictEqual(oCache.drillDown(oData, "productPicture/picture"),
+			"/~/Products('42')/productPicture/picture");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_CollectionCache#drillDown: stream property", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products", defaultFetchType),
+			oData = [{productPicture : {}}];
+
+		oData.$byPredicate = {"('42')": oData[0]};
+
+		this.mock(oCache).expects("fnFetchType")
+			.withExactArgs("Products('42')/productPicture/picture", true)
+			.returns(_SyncPromise.resolve("Edm.Stream"));
+
+		// code under test
+		assert.strictEqual(oCache.drillDown(oData, "('42')/productPicture/picture"),
+			"/~/Products('42')/productPicture/picture");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: stream property, missing parent", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType);
+
+		this.mock(oCache).expects("fnFetchType")
+			.withExactArgs("Products('42')/productPicture", true)
+			.returns(_SyncPromise.resolve("some.ComplexType"));
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into productPicture/picture, invalid segment: productPicture",
+			oCache.toString(), "sap.ui.model.odata.v4.lib._Cache");
+
+		// code under test
+		assert.strictEqual(oCache.drillDown({}, "productPicture/picture"), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: stream property w/ read link", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType),
+			oData = {
+				productPicture : {
+					"picture@odata.mediaReadLink" : "my/Picture"
+				}
+			};
+
+		this.mock(oCache).expects("fnFetchType")
+			.withExactArgs("Products('42')/productPicture/picture", true)
+			.returns(_SyncPromise.resolve("Edm.Stream"));
+		this.mock(_Helper).expects("makeAbsolute")
+			.withExactArgs("my/Picture", this.oRequestor.getServiceUrl())
+			.returns("/~~~/");
+
+		// code under test
+		assert.strictEqual(oCache.drillDown(oData, "productPicture/picture"), "/~~~/");
 	});
 
 	//*********************************************************************************************
@@ -653,6 +718,74 @@ sap.ui.require([
 					sinon.assert.notCalled(fnError);
 					assert.strictEqual(bCanceled, true);
 					assert.strictEqual(oResult, oError);
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	["EUR", "", undefined].forEach(function (sUnitOrCurrencyValue, i) {
+		QUnit.test("_Cache#update: updates unit, " + i, function (assert) {
+			var oCache = new _Cache(this.oRequestor, "/ProductList", defaultFetchType, {}, true),
+				oCacheMock = this.mock(oCache),
+				sETag = 'W/"19700101000000.0000000"',
+				oEntity = {
+					"@odata.etag" : sETag,
+					"Pricing" : {
+						"Currency" : sUnitOrCurrencyValue
+					},
+					"ProductInfo" : {
+						"Amount" : "123"
+					}
+				},
+				fnError = sinon.spy(),
+				oHelperMock = this.mock(_Helper),
+				oPatchResult = {},
+				oPatchPromise = Promise.resolve(oPatchResult),
+				oStaticCacheMock = this.mock(_Cache),
+				oUnitUpdateData = {},
+				oUpdateData = {};
+
+			oCache.fetchValue = function () {};
+			oCacheMock.expects("fetchValue")
+				.withExactArgs("group", "path/to/entity").returns(_SyncPromise.resolve(oEntity));
+			this.oRequestorMock.expects("buildQueryString").returns("");
+			oStaticCacheMock.expects("makeUpdateData")
+				.withExactArgs(["ProductInfo", "Amount"], "123")
+				.returns(oUpdateData);
+			oHelperMock.expects("updateCache")
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+					sinon.match.same(oEntity), sinon.match.same(oUpdateData));
+			if (sUnitOrCurrencyValue === undefined) {
+				this.oLogMock.expects("debug").withExactArgs(
+					"Missing value for unit of measure path/to/entity/Pricing/Currency "
+						+ "when updating path/to/entity/ProductInfo/Amount",
+					oCache.toString(),
+					"sap.ui.model.odata.v4.lib._Cache");
+			} else {
+				oStaticCacheMock.expects("makeUpdateData")
+					.withExactArgs(["Pricing", "Currency"], sUnitOrCurrencyValue)
+					.returns(oUnitUpdateData);
+				this.mock(jQuery).expects("extend")
+					.withExactArgs(true, sinon.match.same(oUpdateData),
+						sinon.match.same(oUnitUpdateData));
+			}
+			this.oRequestorMock.expects("request")
+				.withExactArgs("PATCH", "ProductList('0')", "group", {
+						"If-Match" : sETag
+					}, sinon.match.same(oUpdateData), undefined, sinon.match.func)
+				.returns(oPatchPromise);
+			oPatchPromise.then(function () {
+				oHelperMock.expects("updateCache")
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+						sinon.match.same(oEntity), sinon.match.same(oPatchResult));
+			});
+
+			// code under test
+			return oCache.update("group", "ProductInfo/Amount", "123", fnError,
+					"ProductList('0')", "path/to/entity", "Pricing/Currency")
+				.then(function (oResult) {
+					sinon.assert.notCalled(fnError);
+					assert.strictEqual(oResult, oPatchResult);
 				});
 		});
 	});
@@ -949,16 +1082,21 @@ sap.ui.require([
 				bar : {
 					baz : {}
 				},
+				property : {
+					navigation : {} // an navigation property within a complex type
+				},
 				no : 4,
 				qux : null
 			},
 			sPredicate1 = "(foo='4711')",
 			sPredicate2 = "(bar='42')",
 			sPredicate3 = "(baz='67')",
+			sPredicate4 = "(entity='23')",
 			mTypeForPath = {
 				"~foo~" : {},
 				"~foo~/bar" : {},
 				"~foo~/bar/baz" : {},
+				"~foo~/property/navigation" : {},
 				"~foo~/qux" : {}
 			};
 
@@ -973,6 +1111,10 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/bar/baz"]),
 				sinon.match.same(oEntity.bar.baz))
 			.returns(sPredicate3);
+		this.oRequestorMock.expects("getKeyPredicate")
+			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/property/navigation"]),
+				sinon.match.same(oEntity.property.navigation))
+			.returns(sPredicate4);
 
 		// code under test
 		oCache.calculateKeyPredicates(oEntity, mTypeForPath);
@@ -980,6 +1122,7 @@ sap.ui.require([
 		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate1);
 		assert.strictEqual(oEntity.bar["@$ui5.predicate"], sPredicate2);
 		assert.strictEqual(oEntity.bar.baz["@$ui5.predicate"], sPredicate3);
+		assert.strictEqual(oEntity.property.navigation["@$ui5.predicate"], sPredicate4);
 	});
 
 	//*********************************************************************************************

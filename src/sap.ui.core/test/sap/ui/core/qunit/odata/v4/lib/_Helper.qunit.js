@@ -502,7 +502,7 @@ sap.ui.require([
 		QUnit.test("Integration test for formatLiteral", function (assert) {
 			var done = assert.async(),
 			sResolvedServiceUrl = TestUtils.proxy(
-				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/");
+				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
 
 			jQuery.ajax(sResolvedServiceUrl + "BusinessPartnerList?"
 				+ "$filter=CompanyName eq + " + _Helper.formatLiteral("Becker Berlin", "Edm.String")
@@ -694,5 +694,13 @@ sap.ui.require([
 
 			assert.deepEqual(oCacheBefore, oCacheAfter);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("makeAbsolute", function (assert) {
+		assert.strictEqual(_Helper.makeAbsolute("/foo/bar", "/baz"), "/foo/bar");
+		assert.strictEqual(_Helper.makeAbsolute("baz", "/foo/bar"), "/foo/baz");
+		assert.strictEqual(_Helper.makeAbsolute("Foo('1')/Bar(baz='2',qux=3)", "/service/"),
+			"/service/Foo('1')/Bar(baz='2',qux=3)");
 	});
 });

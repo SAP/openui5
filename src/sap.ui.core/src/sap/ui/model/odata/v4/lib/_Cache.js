@@ -320,7 +320,7 @@ sap.ui.define([
 				visitInstance(oInstance, sPath);
 				sPredicate = oInstance["@$ui5.predicate"];
 				if (sPredicate) {
-					aInstances.$byPredicate[oInstance["@$ui5.predicate"]] = oInstance;
+					aInstances.$byPredicate[sPredicate] = oInstance;
 				}
 			}
 		}
@@ -334,20 +334,20 @@ sap.ui.define([
 		function visitInstance(oInstance, sPath) {
 			var oType = mTypeForPath[sPath];
 
-			if (oType && oInstance) { // oType is only defined when at an entity
+			if (oType) { // oType is only defined when at an entity
 				oInstance["@$ui5.predicate"] = oRequestor.getKeyPredicate(oType, oInstance);
-
-				Object.keys(oInstance).forEach(function (sProperty) {
-					var vPropertyValue = oInstance[sProperty],
-						sPropertyPath = sPath + "/" + sProperty;
-
-					if (Array.isArray(vPropertyValue)) {
-						visitArray(vPropertyValue, sPropertyPath);
-					} else {
-						visitInstance(vPropertyValue, sPropertyPath);
-					}
-				});
 			}
+
+			Object.keys(oInstance).forEach(function (sProperty) {
+				var vPropertyValue = oInstance[sProperty],
+					sPropertyPath = sPath + "/" + sProperty;
+
+				if (Array.isArray(vPropertyValue)) {
+					visitArray(vPropertyValue, sPropertyPath);
+				} else if (vPropertyValue && typeof vPropertyValue === "object") {
+					visitInstance(vPropertyValue, sPropertyPath);
+				}
+			});
 		}
 
 		visitInstance(oRootInstance, this.sResourcePath);
@@ -479,8 +479,7 @@ sap.ui.define([
 	 *   The result matching to <code>sPath</code>
 	 */
 	Cache.prototype.drillDown = function (oData, sPath) {
-		var aMatches,
-			that = this;
+		var that = this;
 
 		function invalidSegment(sSegment) {
 			jQuery.sap.log.error("Failed to drill-down into " + sPath + ", invalid segment: "
@@ -488,10 +487,36 @@ sap.ui.define([
 			return undefined;
 		}
 
+		// Determine the implicit value if the value is missing in the cache. Report an invalid
+		// segment if there is no implicit value.
+		function missingValue(oValue, sSegment, iPathLength) {
+			var sPropertyPath = that.sResourcePath,
+				sPropertyType,
+				sReadLink,
+				sServiceUrl;
+
+			if (sPath[0] !== '(') {
+				sPropertyPath += "/";
+			}
+			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
+			sPropertyType = that.fnFetchType(sPropertyPath, true).getResult();
+			if (sPropertyType === "Edm.Stream") {
+				sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
+				sServiceUrl = that.oRequestor.getServiceUrl();
+				if (sReadLink) {
+					return _Helper.makeAbsolute(sReadLink, sServiceUrl);
+				}
+				return sServiceUrl + sPropertyPath;
+			}
+			return invalidSegment(sSegment);
+		}
+
 		if (!sPath) {
 			return oData;
 		}
-		return sPath.split("/").reduce(function (vValue, sSegment) {
+		return sPath.split("/").reduce(function (vValue, sSegment, i) {
+			var aMatches, oParentValue;
+
 			if (sSegment === "$count") {
 				return Array.isArray(vValue) ? vValue.$count : invalidSegment(sSegment);
 			}
@@ -503,6 +528,7 @@ sap.ui.define([
 			if (typeof vValue !== "object") {
 				return invalidSegment(sSegment);
 			}
+			oParentValue = vValue;
 			aMatches = rSegmentWithPredicate.exec(sSegment);
 			if (aMatches) {
 				if (aMatches[1]) { // e.g. "TEAM_2_EMPLOYEES('42')
@@ -514,7 +540,7 @@ sap.ui.define([
 			} else {
 				vValue = vValue[sSegment];
 			}
-			return vValue === undefined ? invalidSegment(sSegment) : vValue;
+			return vValue === undefined ? missingValue(oParentValue, sSegment, i + 1) : vValue;
 		}, oData);
 	};
 
@@ -729,12 +755,15 @@ sap.ui.define([
 	 *   The edit URL for the entity which is updated via PATCH
 	 * @param {string} [sEntityPath]
 	 *   Path of the entity, relative to the cache
+	 * @param {string} [sUnitOrCurrencyPath]
+	 *   Path of the unit or currency for the property, relative to the entity
 	 * @returns {Promise}
 	 *   A promise for the PATCH request
 	 */
 	Cache.prototype.update = function (sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-			sEntityPath) {
+			sEntityPath, sUnitOrCurrencyPath) {
 		var aPropertyPath = sPropertyPath.split("/"),
+			aUnitOrCurrencyPath,
 			that = this;
 
 		return this.fetchValue(sGroupId, sEntityPath).then(function (oEntity) {
@@ -743,13 +772,20 @@ sap.ui.define([
 				oPatchPromise,
 				sParkedGroup,
 				sTransientGroup,
+				vUnitOrCurrencyValue,
 				oUpdateData = Cache.makeUpdateData(aPropertyPath, vValue);
+
+			function cacheValue(aPath) {
+				return aPath.reduce(function (oValue, sSegment) {
+					return oValue && oValue[sSegment];
+				}, oEntity);
+			}
 
 			/*
 			 * Synchronous callback to cancel the PATCH request so that it is really gone when
 			 * resetChangesForPath has been called on the binding or model.
 			 */
-			function onCancel () {
+			function onCancel() {
 				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				// write the previous value into the cache
 				_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity,
@@ -796,11 +832,23 @@ sap.ui.define([
 				}
 			}
 			// remember the old value
-			vOldValue = aPropertyPath.reduce(function (oValue, sSegment) {
-				return oValue && oValue[sSegment];
-			}, oEntity);
+			vOldValue = cacheValue(aPropertyPath);
 			// write the changed value into the cache
 			_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
+			if (sUnitOrCurrencyPath) {
+				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
+				vUnitOrCurrencyValue = cacheValue(aUnitOrCurrencyPath);
+				if (vUnitOrCurrencyValue === undefined) {
+					jQuery.sap.log.debug("Missing value for unit of measure "
+							+ _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath)
+							+ " when updating "
+							+ sFullPath,
+						that.toString(), "sap.ui.model.odata.v4.lib._Cache");
+				} else {
+					jQuery.extend(true, oUpdateData,
+						Cache.makeUpdateData(aUnitOrCurrencyPath, vUnitOrCurrencyValue));
+				}
+			}
 			if (sTransientGroup) {
 				// When updating a transient entity, _Helper.updateCache has already updated the
 				// POST request, because the request body is a reference into the cache.

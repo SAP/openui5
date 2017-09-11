@@ -14,10 +14,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "3",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1105",
-				"ProductName" : "Smart Internet Antivirus"
-			},
+			"ProductID" : "HT-1105",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1105",
 				"TypeCode" : "PR",
@@ -62,10 +59,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "1",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1106",
-				"ProductName" : "Smart Firewall"
-			},
+			"ProductID" : "HT-1106",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1106",
 				"TypeCode" : "PR",
@@ -110,10 +104,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "3",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1107",
-				"ProductName" : "Smart Money"
-			},
+			"ProductID" : "HT-1107",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1107",
 				"TypeCode" : "PR",

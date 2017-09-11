@@ -1,9 +1,8 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID)",
+	"@odata.context" : "$metadata#SalesOrderList(CurrencyCode,GrossAmount,Note,SalesOrderID)",
 	"@odata.count" : 9,
 	"value" : [{
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "SAP",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "25867.03",

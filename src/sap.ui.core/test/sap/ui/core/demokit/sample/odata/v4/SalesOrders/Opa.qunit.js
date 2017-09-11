@@ -15,6 +15,7 @@ sap.ui.require([
 
 	var sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
+	QUnit.config.testTimeout = 180000;
 	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders");
 
 	//*****************************************************************************

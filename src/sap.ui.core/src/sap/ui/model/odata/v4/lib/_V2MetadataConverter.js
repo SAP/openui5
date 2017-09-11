@@ -482,13 +482,20 @@ sap.ui.define([
 	function convertPropertySemanticAnnotations(oAttribute, mTypeAnnotations,
 		mPropertyAnnotations) {
 		var oAnnotations,
+			sEnum,
 			oPath,
-			aResult = [],
+			aResult,
 			oSemantics,
 			aValue = oAttribute.value.split(";"),
 			sValue = aValue[0],
-			oV2toV4Semantic = mV2toV4Semantics[sValue];
+			oV2toV4Semantic;
 
+		if (sValue === "url") {
+			mPropertyAnnotations["@Org.OData.Core.V1.IsURL"] = true;
+			return;
+		}
+
+		oV2toV4Semantic = mV2toV4Semantics[sValue];
 		if (oV2toV4Semantic) {
 			oPath = {
 				"$Path" : oAttribute.ownerElement.getAttribute("Name")
@@ -507,7 +514,8 @@ sap.ui.define([
 					//Determination of space separated list of V4 annotations enumeration value for
 					//given sap:semantics "tel" and "email"
 					if (aValue[1]) {
-						var sEnum = aValue[1].split("=")[1];
+						aResult = [];
+						sEnum = aValue[1].split("=")[1];
 						sEnum.split(",").forEach(function (sType) {
 							var sTargetType = oV2toV4Semantic.typeMapping[sType];
 							if (sTargetType) {

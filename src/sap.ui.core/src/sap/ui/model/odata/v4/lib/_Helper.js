@@ -4,12 +4,16 @@
 
 //Provides class sap.ui.model.odata.v4.lib._Helper
 sap.ui.define([
-	"jquery.sap.global"
-], function (jQuery) {
+	"jquery.sap.global",
+	"sap/ui/thirdparty/URI"
+], function (jQuery, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,
 		rEquals = /\=/g,
+		rEscapedCloseBracket = /%29/g,
+		rEscapedOpenBracket = /%28/g,
+		rEscapedTick = /%27/g,
 		rHash = /#/g,
 		rNumber = /^-?\d+$/,
 		rPlus = /\+/g,
@@ -334,6 +338,24 @@ sap.ui.define([
 			// inclusive.
 			// 2^53 - 1 = 9007199254740991
 			return iNumber <= 9007199254740991 && Math.floor(iNumber) === iNumber;
+		},
+
+		/**
+		 * Make the given URL absolute using the given base URL. The URLs must not contain a host
+		 * or protocol part. Ensures that key predicates are not %-encoded.
+		 *
+		 * @param {string} sUrl
+		 *   The URL
+		 * @param {string} sBase
+		 *   The base URL
+		 * @returns {string}
+		 *   The absolute URL
+		 */
+		makeAbsolute : function (sUrl, sBase) {
+			return new URI(sUrl).absoluteTo(sBase).toString()
+				.replace(rEscapedTick, "'")
+				.replace(rEscapedOpenBracket, "(")
+				.replace(rEscapedCloseBracket, ")");
 		},
 
 		/**

@@ -323,6 +323,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the path for the unit or currency of the given property path.
+	 *
+	 * @param {string} sPropertyPath
+	 *   The path of this property relative to the entity
+	 * @returns {string}
+	 *   The path of the unit or currency relative to the entity
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.getUnitOrCurrencyPath = function (sPropertyPath) {
+		var oMetaModel = this.oModel.getMetaModel(),
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			mAnnotations = oMetaModel.getObject("@", oMetaModel.getMetaContext(sResolvedPath)),
+			oMeasureAnnotation = mAnnotations["@Org.OData.Measures.V1.Unit"]
+				|| mAnnotations["@Org.OData.Measures.V1.ISOCurrency"];
+
+		return oMeasureAnnotation && oMeasureAnnotation.$Path;
+	};
+
+	/**
 	 * Returns the current value.
 	 *
 	 * @returns {any}
@@ -554,7 +574,8 @@ sap.ui.define([
 						.then(function (oResult) {
 							return that.oContext.getBinding().updateValue(sGroupId,
 								oResult.propertyPath, vValue, reportError, oResult.editUrl,
-								oResult.entityPath);
+								oResult.entityPath,
+								that.getUnitOrCurrencyPath(oResult.propertyPath));
 						})
 						["catch"](function (oError) {
 							if (!oError.canceled) {

@@ -3100,7 +3100,7 @@ sap.ui.require([
 			oMetaModelMock.expects("getMetaContext").twice()
 				.withExactArgs(sResolvedPath).returns("~");
 			oMetaModelMock.expects("fetchObject")
-				.withExactArgs("BuyerName", "~")
+				.withExactArgs("SO_2_BP/CompanyName", "~")
 				.returns(_SyncPromise.resolve({$Type : "Edm.String"}));
 			oMetaModelMock.expects("fetchObject")
 				.withExactArgs("GrossAmount", "~")
@@ -3109,12 +3109,13 @@ sap.ui.require([
 				.returns("'SAP'");
 			oHelperMock.expects("formatLiteral").withExactArgs(12345, "Edm.Decimal")
 				.returns(12345);
-			oBinding.aApplicationFilters = [new Filter("BuyerName", FilterOperator.EQ, "SAP"),
-				new Filter("GrossAmount", FilterOperator.LE, 12345)];
+			oBinding.aApplicationFilters = [new Filter("SO_2_BP/CompanyName", FilterOperator.EQ,
+				"SAP"), new Filter("GrossAmount", FilterOperator.LE, 12345)];
 
 			assert.strictEqual(
 				oBinding.fetchFilter(oContext, "GrossAmount ge 1000").getResult(),
-				"(BuyerName eq 'SAP' and GrossAmount le 12345) and (GrossAmount ge 1000)");
+				"(SO_2_BP/CompanyName eq 'SAP' and GrossAmount le 12345) and (GrossAmount ge 1000)"
+			);
 		});
 	});
 
@@ -3137,11 +3138,11 @@ sap.ui.require([
 		this.mock(oBinding.oModel.oMetaModel).expects("getMetaContext")
 			.withExactArgs(oBinding.sPath).returns("~");
 		this.mock(oBinding.oModel.oMetaModel).expects("fetchObject")
-			.withExactArgs("BuyerName", "~")
+			.withExactArgs("SO_2_BP/CompanyName", "~")
 			.returns(_SyncPromise.resolve(oPropertyMetadata));
 		this.mock(_Helper).expects("formatLiteral").withExactArgs("SAP", "Edm.String")
 			.returns("'SAP'");
-		oBinding.aApplicationFilters = [new Filter("BuyerName", "invalid", "SAP")];
+		oBinding.aApplicationFilters = [new Filter("SO_2_BP/CompanyName", "invalid", "SAP")];
 
 		return oBinding.fetchFilter().then(function () {
 			assert.ok(false);
@@ -3153,7 +3154,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("fetchFilter: error no metadata for filter path", function (assert) {
 		var oBinding = this.oModel.bindList("/SalesOrderList"),
-			sPath = "/SalesOrderList/BuyerName",
+			sPath = "/SalesOrderList/SO_2_BP/CompanyName",
 			oMetaContext = {
 				getPath : function () { return sPath; }
 			};
@@ -3161,15 +3162,17 @@ sap.ui.require([
 		this.mock(oBinding.oModel.oMetaModel).expects("getMetaContext")
 			.withExactArgs(oBinding.sPath).returns(oMetaContext);
 		this.mock(oBinding.oModel.oMetaModel).expects("fetchObject")
-			.withExactArgs("BuyerName", sinon.match.same(oMetaContext))
+			.withExactArgs("SO_2_BP/CompanyName", sinon.match.same(oMetaContext))
 			.returns(_SyncPromise.resolve());
-		oBinding.aApplicationFilters = [new Filter("BuyerName", FilterOperator.EQ, "SAP")];
+		oBinding.aApplicationFilters = [new Filter("SO_2_BP/CompanyName", FilterOperator.EQ,
+			"SAP")];
 
 		return oBinding.fetchFilter().then(function () {
 			assert.ok(false);
 		}, function (oError) {
 			assert.strictEqual(oError.message,
-				"Type cannot be determined, no metadata for path: /SalesOrderList/BuyerName");
+				"Type cannot be determined, no metadata for path: " +
+				"/SalesOrderList/SO_2_BP/CompanyName");
 		});
 	});
 

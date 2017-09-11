@@ -16,8 +16,8 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 	var GROSS_AMOUNT_COLUMN_INDEX = 2,
 		ID_COLUMN_INDEX = 0,
 		ITEM_COLUMN_INDEX = 1,
-		NOTE_COLUMN_INDEX = 5,
-		SOITEM_NOTE_COLUMN_INDEX = 10,
+		NOTE_COLUMN_INDEX = 4,
+		SOITEM_NOTE_COLUMN_INDEX = 11,
 		SOITEM_QUANTITY_COLUMN_INDEX = 7,
 		sLastNewNoteValue,
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
@@ -274,7 +274,7 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 							// filter for SOItem with Product ID from 2nd row
 							oSOItemsTable.getBinding("items")
 								.changeParameters({
-									$filter : "Product/ProductID eq '" + sProductID + "'"
+									$filter : "ProductID eq '" + sProductID + "'"
 								});
 							Opa5.assert.ok(true, "Filter by ProductID with changeParameters:"
 								+ sProductID);
@@ -289,7 +289,7 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 						success : function (oSalesOrderItemsTable) {
 							// Note: filter cannot be triggered via UI; field is disabled
 							oSalesOrderItemsTable.getBinding("items")
-								.filter(new Filter("Product/ProductID", FilterOperator.EQ, sValue));
+								.filter(new Filter("ProductID", FilterOperator.EQ, sValue));
 						},
 						viewName : sViewName
 					});

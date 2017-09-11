@@ -122,7 +122,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>
 	 * @throws {sap.ui.model.FormatException}
-	 *   if <code>sTargetType</code> is unsupported
+	 *   If <code>sTargetType</code> is not supported or <code>vValue</code> is not a model value
+	 *   for this type.
 	 * @public
 	 */
 	Double.prototype.formatValue = function(vValue, sTargetType) {
@@ -132,7 +133,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 		if (vValue === null || vValue === undefined) {
 			return null;
 		}
-		fValue = typeof vValue !== "number" ? parseFloat(vValue) : vValue;
+		if (typeof vValue === "number") {
+			fValue = vValue;
+		} else if (typeof vValue === "string") {
+			fValue = parseFloat(vValue);
+		} else if (sTargetType !== "any") {
+			throw new FormatException("Illegal " + this.getName() + " value: " + vValue);
+		}
 		switch (this.getPrimitiveType(sTargetType)) {
 		case "any":
 			return vValue;
