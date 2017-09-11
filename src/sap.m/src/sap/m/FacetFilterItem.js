@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.FacetFilterItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
-	function(jQuery, ListItemBase, library) {
+sap.ui.define(['./ListItemBase', './library'],
+	function(ListItemBase, library) {
 	"use strict";
 
 
@@ -88,4 +88,4 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 
 	return FacetFilterItem;
 
-}, /* bExport= */ true);
+});

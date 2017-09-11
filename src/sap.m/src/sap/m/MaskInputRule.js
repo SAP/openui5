@@ -115,4 +115,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'], function(jQuery, Ele
 
 	return MaskInputRule;
 
-}, /* bExport= */ true);
+});

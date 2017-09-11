@@ -4,9 +4,12 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation',
-		'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/library'],
-	function(jQuery, Control, ItemNavigation, Date1, CalendarUtils, CalendarDate, UniversalDate, library) {
+		'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/library', 'sap/ui/core/format/DateFormat', 'sap/ui/core/library', 'jquery.sap.keycodes'],
+	function(jQuery, Control, ItemNavigation, CalendarUtils, CalendarDate, UniversalDate, library, DateFormat, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = coreLibrary.CalendarType;
 
 	/*
 	* Inside the YearPicker CalendarDate objects are used. But in the API JS dates are used.
@@ -94,8 +97,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("primaryCalendarType", sCalendarType);
 
 		// to format year with era in Japanese
-		this._oYearFormat = sap.ui.core.format.DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
-		this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
+		this._oYearFormat = DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
+		this._oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 
 		this._oMinDate = CalendarUtils._minDate(this.getPrimaryCalendarType());
 		this._oMaxDate = CalendarUtils._maxDate(this.getPrimaryCalendarType());
@@ -177,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 		this.setProperty("primaryCalendarType", sCalendarType);
 
-		this._oYearFormat = sap.ui.core.format.DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
+		this._oYearFormat = DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
 
 		if (this._oDate) {
 			this._oDate = new CalendarDate(this._oDate, sCalendarType);
@@ -591,4 +594,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	return YearPicker;
 
-}, /* bExport= */ true);
+});

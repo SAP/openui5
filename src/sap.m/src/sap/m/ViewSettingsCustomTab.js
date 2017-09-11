@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ViewSettingsCustomTab.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/ui/core/IconPool'],
-		function(jQuery, library, Item) {
+sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/core/IconPool'],
+		function(library, Item) {
 			"use strict";
 
 			/**
@@ -92,4 +92,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/ui/cor
 
 			return ViewSettingsCustomTab;
 
-		}, /* bExport= */ true);
+		});

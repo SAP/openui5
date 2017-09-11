@@ -3,9 +3,15 @@
  */
 
 // Provides control sap.m.Button.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/Device', 'sap/ui/core/ContextMenuSupport'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, Device, ContextMenuSupport) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/Device', 'sap/ui/core/ContextMenuSupport', 'sap/ui/core/library', 'sap/ui/core/InvisibleText', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, Device, ContextMenuSupport, coreLibrary, InvisibleText) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new <code>Button</code>.
@@ -60,7 +66,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Defines the <code>Button</code> type.
 			 */
-			type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : sap.m.ButtonType.Default},
+			type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : ButtonType.Default},
 
 			/**
 			 * Defines the <code>Button</code> width.
@@ -102,7 +108,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 		},
 		associations : {
 
@@ -453,7 +459,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Button.prototype._isUnstyled = function() {
 		var bUnstyled = false;
 
-		if (this.getType()	=== sap.m.ButtonType.Unstyled) {
+		if (this.getType()	=== ButtonType.Unstyled) {
 			bUnstyled = true;
 		}
 
@@ -535,7 +541,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (!sTooltip && !this.getText()) {
 			// get icon-font info. will return null if the icon is an image
-			var oIconInfo = sap.ui.core.IconPool.getIconInfo(this.getIcon());
+			var oIconInfo = IconPool.getIconInfo(this.getIcon());
 
 			// add tooltip if available
 			if (oIconInfo && oIconInfo.text) {
@@ -555,27 +561,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oRb;
 
 		switch (sType) {
-		case sap.m.ButtonType.Accept:
+		case ButtonType.Accept:
 			if (!Button._oStaticAcceptText) {
 				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_ACCEPT");
-				Button._oStaticAcceptText = new sap.ui.core.InvisibleText({text: sTypeText});
+				Button._oStaticAcceptText = new InvisibleText({text: sTypeText});
 				Button._oStaticAcceptText.toStatic(); //Put to Static UiArea
 			}
 			break;
-		case sap.m.ButtonType.Reject:
+		case ButtonType.Reject:
 			if (!Button._oStaticRejectText) {
 				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_REJECT");
-				Button._oStaticRejectText = new sap.ui.core.InvisibleText({text: sTypeText});
+				Button._oStaticRejectText = new InvisibleText({text: sTypeText});
 				Button._oStaticRejectText.toStatic(); //Put to Static UiArea
 			}
 			break;
-		case sap.m.ButtonType.Emphasized:
+		case ButtonType.Emphasized:
 			if (!Button._oStaticEmphasizedText) {
 				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_EMPHASIZED");
-				Button._oStaticEmphasizedText = new sap.ui.core.InvisibleText({text: sTypeText});
+				Button._oStaticEmphasizedText = new InvisibleText({text: sTypeText});
 				Button._oStaticEmphasizedText.toStatic(); //Put to Static UiArea
 			}
 			break;
@@ -595,7 +601,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Button.prototype.getAccessibilityInfo = function() {
 		var sDesc = this.getText() || this.getTooltip_AsString();
 		if (!sDesc && this.getIcon()) {
-			var oIconInfo = sap.ui.core.IconPool.getIconInfo(this.getIcon());
+			var oIconInfo = IconPool.getIconInfo(this.getIcon());
 			if (oIconInfo) {
 				sDesc = oIconInfo.text || oIconInfo.name;
 			}
@@ -612,4 +618,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return Button;
 
-}, /* bExport= */ true);
+});

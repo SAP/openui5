@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.DateRangeSelection.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'],
-	function(jQuery, Device, DatePicker, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library', 'sap/ui/core/LocaleData', 'sap/ui/core/format/DateFormat'],
+	function(jQuery, Device, DatePicker, library, LocaleData, DateFormat) {
 	"use strict";
 
 	/**
@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 			if (this._checkStyle(sPlaceholder)) {
 				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
-				var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+				var oLocaleData = LocaleData.getInstance(oLocale);
 				sPlaceholder = oLocaleData.getDatePattern(sPlaceholder);
 			}
 
@@ -818,7 +818,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 		if (!sDelimiter) {
 			if (!this._sLocaleDelimiter) {
 				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
-				var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+				var oLocaleData = LocaleData.getInstance(oLocale);
 				var sPattern = oLocaleData.getIntervalPattern();
 				var iIndex1 = sPattern.indexOf("{0}") + 3;
 				var iIndex2 = sPattern.indexOf("{1}");
@@ -851,9 +851,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 			oFormat = this._oDisplayFormat;
 		} else {
 			if (this._checkStyle(sPattern)) {
-				oFormat = sap.ui.core.format.DateFormat.getInstance({style: sPattern, strictParsing: true, calendarType: sCalendarType});
+				oFormat = DateFormat.getInstance({style: sPattern, strictParsing: true, calendarType: sCalendarType});
 			} else {
-				oFormat = sap.ui.core.format.DateFormat.getInstance({pattern: sPattern, strictParsing: true, calendarType: sCalendarType});
+				oFormat = DateFormat.getInstance({pattern: sPattern, strictParsing: true, calendarType: sCalendarType});
 			}
 			this._sUsedDisplayPattern = sPattern;
 			this._sUsedDisplayCalendarType = sCalendarType;
@@ -946,4 +946,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 	return DateRangeSelection;
 
-}, /* bExport= */ true);
+});

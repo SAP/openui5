@@ -7,6 +7,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	function(jQuery, library, Control, IconPool) {
 		"use strict";
 
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
+
 		/**
 		 * Constructor for a new <code>TabContainer</code>.
 		 *
@@ -180,7 +183,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (!oControl) {
 				oControl = new sap.m.Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					tooltip: oRb.getText("TABCONTAINER_ADD_NEW_TAB"),
 					icon: IconPool.getIconURI("add"),
 					press: function() {
@@ -528,5 +531,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		return TabContainer;
-
-	}, /* bExport= */ true);
+	});

@@ -11,8 +11,8 @@
  */
 
 // Provides class sap.ui.unified.calendar.CalendarUtils
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', './CalendarDate'],
-	function (jQuery, UniversalDate, CalendarDate) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', './CalendarDate', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData'],
+	function (jQuery, UniversalDate, CalendarDate, Locale, LocaleData) {
 		"use strict";
 
 		// Static class
@@ -148,7 +148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', './Calenda
 			var iWeekNum = 0;
 			var iWeekDay = 0;
 			var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
-			var oLocale = new sap.ui.core.Locale(sLocale);
+			var oLocale = new Locale(sLocale);
 
 			// search Locale for containing "en-US", since sometimes
 			// when any user settings have been defined, subtag "sapufmt" is added to the locale name
@@ -250,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', './Calenda
 		 */
 		CalendarUtils._getNumberOfWeeksForYear = function (iYear) {
 			var sLocale = sap.ui.getCore().getConfiguration().getFormatLocale(),
-				oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale(sLocale)),
+				oLocaleData = LocaleData.getInstance(new Locale(sLocale)),
 				o1stJan = new Date(Date.UTC(iYear, 0, 1)),
 				i1stDay = o1stJan.getUTCDay(),
 				iNumberOfWeeksInYear = 52;

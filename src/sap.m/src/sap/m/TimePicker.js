@@ -3,9 +3,12 @@
  */
 
 // Provides control sap.m.TimePicker.
-sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInputRule', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Time', 'sap/ui/model/odata/type/Time', './TimePickerSliders', './MaskEnabler', 'sap/ui/core/InvisibleText'],
-	function(jQuery, InputBase, DateTimeField, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimeODataModel, TimePickerSliders, MaskEnabler, InvisibleText) {
+sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInputRule', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './TimePickerSliders', './MaskEnabler', 'sap/ui/Device', 'sap/ui/core/format/DateFormat', 'sap/ui/core/Locale', 'sap/m/library', 'sap/ui/core/LocaleData', 'jquery.sap.keycodes'],
+	function(jQuery, InputBase, DateTimeField, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimePickerSliders, MaskEnabler, Device, DateFormat, Locale, library, LocaleData) {
 		"use strict";
+
+		// shortcut for sap.m.PlacementType
+		var PlacementType = library.PlacementType;
 
 		/**
 		 * Constructor for a new <code>TimePicker</code>.
@@ -285,7 +288,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 
 			if (!bPickerOpened && bIconClicked) {
 				this._openPicker();
-			} else if (bIconClicked && !sap.ui.Device.system.phone) {
+			} else if (bIconClicked && !Device.system.phone) {
 				//phone check: it wont be possible to click the icon while the dialog is opened
 				//but there is a bug that the event is triggered twice on Nokia Lumia 520 emulated in Chrome
 				//which closes the picker immediately after opening
@@ -664,9 +667,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		TimePicker.prototype._getFormatterInstance = function(oFormat, sPattern, bRelative, sCalendarType, bDisplayFormat) {
 
 			if (sPattern === TimeFormatStyles.Short || sPattern === TimeFormatStyles.Medium || sPattern === TimeFormatStyles.Long) {
-				oFormat = sap.ui.core.format.DateFormat.getTimeInstance({style: sPattern, strictParsing: true, relative: bRelative}, new sap.ui.core.Locale(this.getLocaleId()));
+				oFormat = DateFormat.getTimeInstance({style: sPattern, strictParsing: true, relative: bRelative}, new Locale(this.getLocaleId()));
 			} else {
-				oFormat = sap.ui.core.format.DateFormat.getTimeInstance({pattern: sPattern, strictParsing: true, relative: bRelative}, new sap.ui.core.Locale(this.getLocaleId()));
+				oFormat = DateFormat.getTimeInstance({pattern: sPattern, strictParsing: true, relative: bRelative}, new Locale(this.getLocaleId()));
 			}
 
 			if (bDisplayFormat) {
@@ -896,7 +899,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 				showHeader: false,
 				horizontalScrolling: false,
 				verticalScrolling: false,
-				placement: sap.m.PlacementType.VerticalPreferedBottom,
+				placement: PlacementType.VerticalPreferedBottom,
 				beginButton: new sap.m.Button({ text: sOKButtonText, press: jQuery.proxy(this._handleOkPress, this) }),
 				endButton: new sap.m.Button({ text: sCancelButtonText, press: jQuery.proxy(this._handleCancelPress, this) }),
 				content: [
@@ -928,7 +931,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 				return this.openBy(that);
 			};
 
-			if (sap.ui.Device.system.desktop) {
+			if (Device.system.desktop) {
 				this._oPopoverKeydownEventDelegate = {
 					onkeydown: function(oEvent) {
 						var oKC = jQuery.sap.KeyCodes,
@@ -1138,13 +1141,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 				sAllowedHourChars,
 				//Respect browser locale if no locale is explicitly set (BCP: 1670060658)
 				sLocaleId = oTimePicker.getLocaleId() || sap.ui.getCore().getConfiguration().getFormatLocale(),
-				oLocale  = new sap.ui.core.Locale(sLocaleId),
+				oLocale  = new Locale(sLocaleId),
 				i;
 
 			// Set the localeId and prevent infinite loop by suppressing rendering
 			oTimePicker.setProperty("localeId", sLocaleId, true);
 			this._oTimePicker = oTimePicker;
-			this.aOriginalAmPmValues = sap.ui.core.LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
+			this.aOriginalAmPmValues = LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
 			this.aAmPmValues = this.aOriginalAmPmValues.slice(0);
 			this.iAmPmValueMaxLength = Math.max(this.aAmPmValues[0].length, this.aAmPmValues[1].length);
 
@@ -1457,7 +1460,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 
 		function getDefaultDisplayFormat() {
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
-				oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+				oLocaleData = LocaleData.getInstance(oLocale);
 
 			return oLocaleData.getTimePattern(TimeFormatStyles.Medium);
 		}
@@ -1495,5 +1498,4 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		TimePicker._PICKER_CONTENT_HEIGHT = "25rem";
 
 		return TimePicker;
-
-	}, /* bExport= */ true);
+	});

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQuery, TabStripItem, TabStrip) {
+sap.ui.define(['./TabStripItem', './TabStrip', 'sap/ui/Device'], function(TabStripItem, TabStrip, Device) {
 	"use strict";
 
 	/**
@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 		this.beginTabStrip(oRm, oControl);
 
 		// for phones show only the select component of the strip & "+" button
-		if (sap.ui.Device.system.phone === true) {
+		if (Device.system.phone === true) {
 			this.renderTouchArea(oRm, oControl);
 		} else {
 			oRm.write("<div id='" + oControl.getId() + "-leftOverflowButtons' class='" + this.LEFT_OVERRFLOW_BTN_CLASS_NAME + "'>");

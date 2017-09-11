@@ -7,9 +7,15 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/model/type/Date',
 	'sap/ui/model/odata/type/ODataType',
-	'./InputBase'
-], function (jQuery, SimpleDateType, ODataType, InputBase) {
+	'./InputBase',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/library',
+	'sap/ui/core/format/DateFormat'
+], function (jQuery, SimpleDateType, ODataType, InputBase, LocaleData, coreLibrary, DateFormat) {
 	"use strict";
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = coreLibrary.CalendarType;
 
 	/**
 	 * Constructor for a new <code>sap.m.DateTimeField</code>.
@@ -195,7 +201,7 @@ sap.ui.define([
 
 			if (this._checkStyle(sPlaceholder)) {
 				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
-				var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+				var oLocaleData = LocaleData.getInstance(oLocale);
 				sPlaceholder = this._getPlaceholderPattern(oLocaleData, sPlaceholder);
 			}
 		}
@@ -249,7 +255,7 @@ sap.ui.define([
 				sCalendarType = this.getDisplayFormatType();
 			} else {
 				sPattern = ( this.getValueFormat() || this._getDefaultValueStyle() );
-				sCalendarType = sap.ui.core.CalendarType.Gregorian;
+				sCalendarType = CalendarType.Gregorian;
 			}
 		}
 
@@ -296,7 +302,7 @@ sap.ui.define([
 	};
 
 	DateTimeField.prototype._getFormatInstance = function (oArguments, bDisplayFormat) {
-		return sap.ui.core.format.DateFormat.getInstance(oArguments);
+		return DateFormat.getInstance(oArguments);
 	};
 
 	DateTimeField.prototype._checkStyle = function (sPattern) {
@@ -325,4 +331,4 @@ sap.ui.define([
 
 	return DateTimeField;
 
-}, /* bExport= */ true);
+});

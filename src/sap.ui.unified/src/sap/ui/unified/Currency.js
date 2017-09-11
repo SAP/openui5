@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.Currency.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/format/NumberFormat'],
-	function(jQuery, Control, LocaleData, NumberFormat) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/format/NumberFormat'],
+	function(jQuery, Control, NumberFormat) {
 		"use strict";
 
 		/**
@@ -287,4 +287,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		return Currency;
 
-}, /* bExport= */ true);
+});

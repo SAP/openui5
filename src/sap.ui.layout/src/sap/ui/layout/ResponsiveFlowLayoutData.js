@@ -102,4 +102,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 
 	return ResponsiveFlowLayoutData;
 
-}, /* bExport= */ true);
+});

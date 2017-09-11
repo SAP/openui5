@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SegmentedButtonItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/m/Button', 'sap/ui/core/CustomStyleClassSupport'],
-	function(jQuery, library, Item, Button, CustomStyleClassSupport) {
+sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/m/Button', 'sap/ui/core/CustomStyleClassSupport'],
+	function(library, Item, Button, CustomStyleClassSupport) {
 		"use strict";
 
 
@@ -166,4 +166,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/m/Butt
 
 		return SegmentedButtonItem;
 
-	}, /* bExport= */ true);
+	});

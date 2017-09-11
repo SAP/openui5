@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.m.Text
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 

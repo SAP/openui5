@@ -3,9 +3,32 @@
  */
 
 // Provides control sap.m.ObjectHeader.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, IconPool) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(jQuery, library, Control, IconPool, coreLibrary, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.m.ImageHelper
+	var ImageHelper = library.ImageHelper;
+
+	// shortcut for sap.m.ObjectMarkerType
+	var ObjectMarkerType = library.ObjectMarkerType;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 
@@ -143,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Determines the value state of the <code>number</code> and <code>numberUnit</code> properties.
 			 * @since 1.16.0
 			 */
-			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
+			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : ValueState.None},
 
 			/**
 			 * <code>ObjectHeader</code> with title, one attribute, number, and number unit.
@@ -240,19 +263,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Specifies the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Specifies the intro text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			introTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			introTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Specifies the number and unit text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			numberTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			numberTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Determines a custom text for the tooltip of the select title arrow. If not set, a default text of the tooltip will be displayed.
@@ -266,7 +289,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * This information is used by assistive technologies, such as screen readers to create a hierarchical site map for faster navigation.
 			 * Depending on this setting an HTML h1-h6 element is used.
 			 */
-			titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.H1}
+			titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.H1}
 
 		},
 		defaultAggregation : "attributes",
@@ -581,7 +604,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setMarkFavorite = function (bMarked) {
-		return this._setOldMarkers(sap.m.ObjectMarkerType.Favorite, bMarked);
+		return this._setOldMarkers(ObjectMarkerType.Favorite, bMarked);
 	};
 
 	/**
@@ -592,7 +615,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setMarkFlagged = function (bMarked) {
-		return this._setOldMarkers(sap.m.ObjectMarkerType.Flagged, bMarked);
+		return this._setOldMarkers(ObjectMarkerType.Flagged, bMarked);
 	};
 
 	/**
@@ -612,8 +635,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		for (i = 0; i < aAllMarkers.length; i++) {
 			sMarkerType = aAllMarkers[i].getType();
 
-			if ((sMarkerType === sap.m.ObjectMarkerType.Flagged && this.getMarkFlagged()) ||
-				(sMarkerType === sap.m.ObjectMarkerType.Favorite && this.getMarkFavorite())) {
+			if ((sMarkerType === ObjectMarkerType.Flagged && this.getMarkFlagged()) ||
+				(sMarkerType === ObjectMarkerType.Favorite && this.getMarkFavorite())) {
 					aAllMarkers[i].setVisible(bMarked);
 			}
 		}
@@ -870,13 +893,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype._onOrientationChange = function() {
 		var sId = this.getId();
 
-		if (sap.ui.Device.system.tablet && this.getFullScreenOptimized() && (this._hasAttributes() || this._hasStatus())){
+		if (Device.system.tablet && this.getFullScreenOptimized() && (this._hasAttributes() || this._hasStatus())){
 			this._rerenderStates();
 		}
 
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 
-			if (sap.ui.Device.orientation.portrait){
+			if (Device.orientation.portrait){
 
 				if (this.getTitle().length > 50) { // if on phone portrait mode, cut the title to 50 characters
 					this._rerenderTitle(50);
@@ -887,7 +910,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					jQuery.sap.byId(sId + "-titleIcon").addClass("sapMOHRHideIcon");
 				}
 			} else {
-				if (sap.ui.Device.orientation.landscape) {
+				if (Device.orientation.landscape) {
 
 					if (this.getTitle().length > 80) { // if on phone landscape mode, cut the title to 80 characters
 						this._rerenderTitle(80);
@@ -933,12 +956,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ObjectHeader.prototype.exit = function() {
-		if (!sap.ui.Device.system.phone) {
-			this._detachMediaContainerWidthChange(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+		if (!Device.system.phone) {
+			this._detachMediaContainerWidthChange(this._rerenderOHR, this, Device.media.RANGESETS.SAP_STANDARD);
 		}
 
-		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
-			sap.ui.Device.orientation.detachHandler(this._onOrientationChange, this);
+		if (Device.system.tablet || Device.system.phone) {
+			Device.orientation.detachHandler(this._onOrientationChange, this);
 		}
 
 		if (this._oImageControl) {
@@ -982,17 +1005,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				IconPool.isIconURI(this.getIcon()) ? { size : sSize } : {}
 		);
 
-		this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties);
+		this._oImageControl = ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties);
 
 		return this._oImageControl;
 	};
 
 	ObjectHeader.prototype.onBeforeRendering = function() {
-		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
-			sap.ui.Device.orientation.detachHandler(this._onOrientationChange, this);
+		if (Device.system.tablet || Device.system.phone) {
+			Device.orientation.detachHandler(this._onOrientationChange, this);
 		}
-		if (!sap.ui.Device.system.phone) {
-			this._detachMediaContainerWidthChange(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+		if (!Device.system.phone) {
+			this._detachMediaContainerWidthChange(this._rerenderOHR, this, Device.media.RANGESETS.SAP_STANDARD);
 		}
 
 		if (this._introText) {
@@ -1012,26 +1035,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._adjustIntroDiv();
 
 			if (oObjectNumber && oObjectNumber.getNumber()) {// adjust alignment according the design specification
-				if (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && this.getFullScreenOptimized() && this._iCountVisAttrStat >= 1 && this._iCountVisAttrStat <= 3) {
-					oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Right : sap.ui.core.TextAlign.Left);
+				if (Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && this.getFullScreenOptimized() && this._iCountVisAttrStat >= 1 && this._iCountVisAttrStat <= 3) {
+					oObjectNumber.setTextAlign(bPageRTL ? TextAlign.Right : TextAlign.Left);
 				} else {
-					oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right);
+					oObjectNumber.setTextAlign(bPageRTL ? TextAlign.Left : TextAlign.Right);
 				}
 			}
 			// adjust number div after initial alignment
 			this._adjustNumberDiv();
 
 			// watch for orientation change only on tablet and phone
-			if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
-				sap.ui.Device.orientation.attachHandler(this._onOrientationChange, this);
+			if (Device.system.tablet || Device.system.phone) {
+				Device.orientation.attachHandler(this._onOrientationChange, this);
 			}
 
 			// When size of the browser window is changed and sap ui media query is changed rerender Responsive OH
-			if (!sap.ui.Device.system.phone) {
-				this._attachMediaContainerWidthChange(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+			if (!Device.system.phone) {
+				this._attachMediaContainerWidthChange(this._rerenderOHR, this, Device.media.RANGESETS.SAP_STANDARD);
 			}
 		} else {
-			var sTextAlign = bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right;
+			var sTextAlign = bPageRTL ? TextAlign.Left : TextAlign.Right;
 			if (oObjectNumber && oObjectNumber.getNumber()) { // adjust alignment according the design specification
 				oObjectNumber.setTextAlign(sTextAlign);
 			}
@@ -1067,7 +1090,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (this._isMediaSize("Phone")) {
 				if ($numberDiv.hasClass("sapMObjectNumberBelowTitle")) {
 					// change alignment to fit the design depending
-					oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right);
+					oObjectNumber.setTextAlign(bPageRTL ? TextAlign.Left : TextAlign.Right);
 					$numberDiv.removeClass("sapMObjectNumberBelowTitle");
 					$titleDiv.removeClass("sapMOHRTitleDivFull");
 				}
@@ -1076,7 +1099,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				if ($numberDiv.outerWidth() > nParentWidth40) {
 					// change alignment to fit the design
-					oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Right : sap.ui.core.TextAlign.Left);
+					oObjectNumber.setTextAlign(bPageRTL ? TextAlign.Right : TextAlign.Left);
 					$numberDiv.addClass("sapMObjectNumberBelowTitle");
 					$titleDiv.addClass("sapMOHRTitleDivFull");
 				}
@@ -1175,12 +1198,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectHeader.prototype._getDefaultBackgroundDesign = function() {
 		if (this.getCondensed()) {
-			return sap.m.BackgroundDesign.Solid;
+			return BackgroundDesign.Solid;
 		} else {
 			if (this.getResponsive()) {
-				return sap.m.BackgroundDesign.Translucent;
+				return BackgroundDesign.Translucent;
 			} else { // old none responsive OH
-				return sap.m.BackgroundDesign.Transparent;
+				return BackgroundDesign.Transparent;
 			}
 		}
 
@@ -1222,9 +1245,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ObjectHeader.prototype._isMediaSize = function (sRangeName) {
-		return this._getCurrentMediaContainerRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD).name === sRangeName;
+		return this._getCurrentMediaContainerRange(Device.media.RANGESETS.SAP_STANDARD).name === sRangeName;
 	};
 
 	return ObjectHeader;
 
-}, /* bExport= */ true);
+});

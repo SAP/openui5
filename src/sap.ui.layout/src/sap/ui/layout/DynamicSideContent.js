@@ -3,9 +3,18 @@
  */
 
 // Provides control sap.ui.layout.DynamicSideContent.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler'],
-	function (jQuery, Control, ResizeHandler) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/layout/library'],
+	function (jQuery, Control, ResizeHandler, library) {
 		"use strict";
+
+		// shortcut for sap.ui.layout.SideContentPosition
+		var SideContentPosition = library.SideContentPosition;
+
+		// shortcut for sap.ui.layout.SideContentFallDown
+		var SideContentFallDown = library.SideContentFallDown;
+
+		// shortcut for sap.ui.layout.SideContentVisibility
+		var SideContentVisibility = library.SideContentVisibility;
 
 		/**
 		 * Constructor for a new <code>DynamicSideContent</code>.
@@ -96,12 +105,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				/**
 				 * Determines on which breakpoints the side content is visible.
 				 */
-				sideContentVisibility : {type : "sap.ui.layout.SideContentVisibility", group : "Appearance", defaultValue : sap.ui.layout.SideContentVisibility.ShowAboveS},
+				sideContentVisibility : {type : "sap.ui.layout.SideContentVisibility", group : "Appearance", defaultValue : SideContentVisibility.ShowAboveS},
 
 				/**
 				 * Determines on which breakpoints the side content falls down below the main content.
 				 */
-				sideContentFallDown : {type : "sap.ui.layout.SideContentFallDown", group : "Appearance", defaultValue : sap.ui.layout.SideContentFallDown.OnMinimumWidth},
+				sideContentFallDown : {type : "sap.ui.layout.SideContentFallDown", group : "Appearance", defaultValue : SideContentFallDown.OnMinimumWidth},
 
 				/**
 				 * Defines whether the control is in equal split mode. In this mode, the side and the main content
@@ -119,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				 * Determines whether the side content is on the left or on the right side of the main content.
 				 * @since 1.36
 				 */
-				sideContentPosition : {type : "sap.ui.layout.SideContentPosition", group : "Appearance", defaultValue : sap.ui.layout.SideContentPosition.End}
+				sideContentPosition : {type : "sap.ui.layout.SideContentPosition", group : "Appearance", defaultValue : SideContentPosition.End}
 			},
 			defaultAggregation : "mainContent",
 			events : {
@@ -503,7 +512,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 				if ((this._oldBreakPoint !== this._currentBreakpoint)
 					|| (this._currentBreakpoint === M
-					&& this.getSideContentFallDown() === sap.ui.layout.SideContentFallDown.OnMinimumWidth)) {
+					&& this.getSideContentFallDown() === SideContentFallDown.OnMinimumWidth)) {
 					this._setResizeData(this._currentBreakpoint, this.getEqualSplit());
 					this._changeGridState();
 				}
@@ -528,41 +537,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					case S:
 						this._setSpanSize(SPAN_SIZE_12, SPAN_SIZE_12);
 						if (this.getProperty("showSideContent") && this.getProperty("showMainContent")) {
-							this._SCVisible = sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow;
+							this._SCVisible = sideContentVisibility === SideContentVisibility.AlwaysShow;
 						}
 						this._bFixedSideContent = false;
 						break;
 					case M:
 						var iSideContentWidth = Math.ceil((33.333 / 100) * this._iWindowWidth);
-						if (sideContentFallDown === sap.ui.layout.SideContentFallDown.BelowL ||
-							sideContentFallDown === sap.ui.layout.SideContentFallDown.BelowXL ||
-							(iSideContentWidth <= 320 && sideContentFallDown === sap.ui.layout.SideContentFallDown.OnMinimumWidth)) {
+						if (sideContentFallDown === SideContentFallDown.BelowL ||
+							sideContentFallDown === SideContentFallDown.BelowXL ||
+							(iSideContentWidth <= 320 && sideContentFallDown === SideContentFallDown.OnMinimumWidth)) {
 							this._setSpanSize(SPAN_SIZE_12, SPAN_SIZE_12);
 							this._bFixedSideContent = false;
 						} else {
 							this._setSpanSize(SPAN_SIZE_4, SPAN_SIZE_8);
 							this._bFixedSideContent = true;
 						}
-						this._SCVisible = sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
-							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow;
+						this._SCVisible = sideContentVisibility === SideContentVisibility.ShowAboveS ||
+							sideContentVisibility === SideContentVisibility.AlwaysShow;
 
 						this._MCVisible = true;
 						break;
 					case L:
-						if (sideContentFallDown === sap.ui.layout.SideContentFallDown.BelowXL) {
+						if (sideContentFallDown === SideContentFallDown.BelowXL) {
 							this._setSpanSize(SPAN_SIZE_12, SPAN_SIZE_12);
 						} else {
 							this._setSpanSize(SPAN_SIZE_4, SPAN_SIZE_8);
 						}
-						this._SCVisible = sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
-							sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveM ||
-							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow;
+						this._SCVisible = sideContentVisibility === SideContentVisibility.ShowAboveS ||
+							sideContentVisibility === SideContentVisibility.ShowAboveM ||
+							sideContentVisibility === SideContentVisibility.AlwaysShow;
 						this._MCVisible = true;
 						this._bFixedSideContent = false;
 						break;
 					case XL:
 						this._setSpanSize(SPAN_SIZE_3, SPAN_SIZE_9);
-						this._SCVisible = sideContentVisibility !== sap.ui.layout.SideContentVisibility.NeverShow;
+						this._SCVisible = sideContentVisibility !== SideContentVisibility.NeverShow;
 						this._MCVisible = true;
 						this._bFixedSideContent = false;
 						break;
@@ -609,7 +618,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			bOneVisible = bOnlyScVisible || bOnlyMcVisible;
 
 			bFixedSC = this._fixedSideContent;
-			bSCNeverShow = this.getSideContentVisibility() === sap.ui.layout.SideContentVisibility.NeverShow;
+			bSCNeverShow = this.getSideContentVisibility() === SideContentVisibility.NeverShow;
 
 			return ((bSameLine && bBothVisible) || bOneVisible || bFixedSC || bSCNeverShow);
 		};
@@ -672,4 +681,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		};
 
 		return DynamicSideContent;
-	}, /* bExport= */ true);
+	});
