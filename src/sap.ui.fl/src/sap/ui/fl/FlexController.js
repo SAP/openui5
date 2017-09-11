@@ -942,29 +942,45 @@ sap.ui.define([
 	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe) {
 		var aAppliedChanges;
 		var aDependenciesToBeDeleted;
+		var aDependenciesToBeProcessed;
 
 		do {
 			aAppliedChanges = [];
 			aDependenciesToBeDeleted = [];
+			aDependenciesToBeProcessed = [];
 			this._updateControlsDependencies(mDependencies);
-			for (var i = 0; i < Object.keys(mDependencies).length; i++) {
-				var sDependencyKey = Object.keys(mDependencies)[i];
+			// Performance improvement. Object.keys is always calculated.
+			var aDependencyKeys = Object.keys(mDependencies);
+			for (var i = 0, n = aDependencyKeys.length; i < n; i++) {
+				var sDependencyKey = aDependencyKeys[i];
 				var oDependency = mDependencies[sDependencyKey];
 				if (oDependency[FlexController.PENDING] &&
 					oDependency.dependencies.length === 0 &&
 					!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) &&
 					!oDependency[FlexController.PROCESSING]) {
 						oDependency[FlexController.PROCESSING] = true;
-						oDependency[FlexController.PENDING]();
-						aDependenciesToBeDeleted.push(sDependencyKey);
-						aAppliedChanges.push(oDependency.changeObject.getKey());
+						// pending function doesn't get executed immediately because it might
+						// change mDependencies. Instead it gets called in a separate loop
+						aDependenciesToBeProcessed.push({
+							fnProcessing: oDependency[FlexController.PENDING],
+							sDependencyKey: sDependencyKey,
+							sChangeObjectKey: oDependency.changeObject.getKey()
+						});
 				}
 			}
 
+			for (var l = 0; l < aDependenciesToBeProcessed.length; l++) {
+				aDependenciesToBeProcessed[l].fnProcessing();
+				aDependenciesToBeDeleted.push(aDependenciesToBeProcessed[l].sDependencyKey);
+				aAppliedChanges.push(aDependenciesToBeProcessed[l].sChangeObjectKey);
+			}
+
+			// dependencies should be deleted after all processing functions are executed
 			for (var j = 0; j < aDependenciesToBeDeleted.length; j++) {
 				delete mDependencies[aDependenciesToBeDeleted[j]];
 			}
 
+			// dependencies should be updated after all processing functions are executed and dependencies are deleted
 			for (var k = 0; k < aAppliedChanges.length; k++) {
 				this._updateDependencies(mDependencies, mDependentChangesOnMe, aAppliedChanges[k]);
 			}
