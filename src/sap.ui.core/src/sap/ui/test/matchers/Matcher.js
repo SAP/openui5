@@ -45,4 +45,4 @@ sap.ui.define([
 	});
 
 	return Matcher;
-}, /* bExport= */ true);
+});

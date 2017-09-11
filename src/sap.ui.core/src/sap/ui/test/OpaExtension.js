@@ -3,10 +3,7 @@
  */
 
 // Provides class sap.ui.core.support.RuleEngineOpaExtension
-sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/base/Object'
-],function($, Ui5Object) {
+sap.ui.define(['sap/ui/base/Object'],function(Ui5Object) {
     "use strict";
 
     /*

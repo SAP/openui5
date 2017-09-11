@@ -63,4 +63,4 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 		}
 	});
 
-}, /* bExport= */ true);
+});

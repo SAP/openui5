@@ -2,11 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-  'jquery.sap.global',
   './Matcher',
   './I18NText',
   'sap/ui/test/Opa5'
-], function (jQuery, Matcher, I18NText, Opa5) {
+], function (Matcher, I18NText, Opa5) {
   "use strict";
 
   var oI18nMatcher = new I18NText();
@@ -125,4 +124,4 @@ sap.ui.define([
   });
 
   return LabelFor;
-}, /* bExport= */ true);
+});

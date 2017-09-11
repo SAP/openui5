@@ -165,4 +165,4 @@ sap.ui.define([
 
   return StepDefinitions;
 
-}, /* bExport= */ true);
+});

@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/core/ComponentContainer'
-], function ($, ComponentContainer) {
+	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/Component' // sap.ui.component
+], function ($, ComponentContainer/*, Component */) {
 	"use strict";
 
 	var _loadingStarted = false,
