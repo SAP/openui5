@@ -107,6 +107,35 @@ sap.ui.require([
 				<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1" Role="FromRole_Foo"/>\
 				<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="*" Role="ToRole_Foo"/>\
 			</Association>\
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+					Target="GWSAMPLE_BASIC.BusinessPartner">\
+				<Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">\
+						<Record>\
+							<PropertyValue xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+								xmlns:bar="http://docs.oasis-open.org/odata/ns/bar"\
+								Property="AttributeNotation" NavigationPropertyPath="ToFoo"/>\
+							<PropertyValue Property="Collection_PropertyPath">\
+									<Collection>\
+										<PropertyPath\
+											xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+											>ToFoo</PropertyPath>\
+									</Collection>\
+							</PropertyValue>\
+							<PropertyValue Property="ElementNotation">\
+								<NavigationPropertyPath\
+									xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+									>ToFoo</NavigationPropertyPath>\
+							</PropertyValue>\
+							<PropertyValue Property="NonInsertableNavigationProperties">\
+									<Collection>\
+										<NavigationPropertyPath\
+											xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+											>ToFoo</NavigationPropertyPath>\
+									</Collection>\
+							</PropertyValue>\
+						</Record>\
+				</Annotation>\
+			</Annotations>\
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
@@ -1322,6 +1351,22 @@ sap.ui.require([
 				assert.deepEqual(oBusinessPartner["sap:content-version"], "1");
 				delete oBusinessPartner["sap:content-version"];
 
+				assert.deepEqual(oBusinessPartner["Org.OData.Capabilities.V1.InsertRestrictions"], {
+					"AttributeNotation" : {
+						"NavigationPropertyPath" : "ToFoo"
+					},
+					"Collection_PropertyPath": [{
+						"PropertyPath": "ToFoo"
+					}],
+					"ElementNotation": {
+						"NavigationPropertyPath": "ToFoo"
+					},
+					"NonInsertableNavigationProperties" : [{
+						"NavigationPropertyPath" : "ToFoo"
+					}]
+				});
+				delete oBusinessPartner["Org.OData.Capabilities.V1.InsertRestrictions"];
+
 				assert.strictEqual(oCTAddress.namespace, "GWSAMPLE_BASIC");
 				delete oCTAddress.namespace;
 				assert.strictEqual(oCTAddress.$path, "/dataServices/schema/0/complexType/0",
@@ -1829,6 +1874,10 @@ sap.ui.require([
 				delete oProductSet["Org.OData.Capabilities.V1.UpdateRestrictions"];
 				assert.deepEqual(oProductSet["sap:searchable"], "true");
 				delete oProductSet["sap:searchable"];
+
+				// remove datajs artefact for inline annotations in $metadata
+				// @see _ODataMetaModelUtils.merge
+				delete oMetadata.dataServices.schema[0].annotations;
 
 				assert.deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 				assert.notStrictEqual(oMetaModelData, oMetadata, "is clone");

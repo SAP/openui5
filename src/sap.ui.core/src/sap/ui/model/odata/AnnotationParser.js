@@ -625,11 +625,16 @@ var AnnotationParser =  {
 	 * @private
 	 */
 	enrichFromPropertyValueAttributes: function(mAttributes, oNode) {
-		var mIgnoredAttributes = { "Property" : true, "Term": true, "Qualifier": true };
+		var mIgnoredAttributes = {
+				"Property" : true,
+				"Qualifier": true,
+				"Term": true,
+				"xmlns" : true
+			};
 
 		for (var i = 0; i < oNode.attributes.length; i += 1) {
-			if (!mIgnoredAttributes[oNode.attributes[i].name]) {
-				var sName = oNode.attributes[i].name;
+			var sName = oNode.attributes[i].name;
+			if (!mIgnoredAttributes[sName] && (sName.indexOf("xmlns:") !== 0)) {
 				var sValue = oNode.attributes[i].value;
 
 				// Special case: EnumMember can contain a space separated list of properties that must all have their
@@ -755,7 +760,7 @@ var AnnotationParser =  {
 					vPropertyValue = aPropertyValues;
 				}
 			} else {
-				var oCollectionNodes = xPath.selectNodes("./d:Collection/d:AnnotationPath | ./d:Collection/d:PropertyPath", oDocumentNode);
+				var oCollectionNodes = xPath.selectNodes("./d:Collection/d:AnnotationPath | ./d:Collection/d:NavigationPropertyPath | ./d:Collection/d:PropertyPath", oDocumentNode);
 
 				if (oCollectionNodes.length > 0) {
 					vPropertyValue = AnnotationParser._getTextValues(oCollectionNodes);
@@ -800,11 +805,13 @@ var AnnotationParser =  {
 								vPropertyValue[sNodeName] = vValue;
 							}
 						}
-					} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
-						vPropertyValue = AnnotationParser._getTextValue(oDocumentNode);
-					}
 
-					AnnotationParser.enrichFromPropertyValueAttributes(vPropertyValue, oDocumentNode);
+						AnnotationParser.enrichFromPropertyValueAttributes(vPropertyValue, oDocumentNode);
+					} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
+						vPropertyValue = AnnotationParser._getTextValue(oDocumentNode); // string
+					} else { // e.g. <Term Name="..." Type="...">
+						AnnotationParser.enrichFromPropertyValueAttributes(vPropertyValue, oDocumentNode);
+					}
 				}
 			}
 
