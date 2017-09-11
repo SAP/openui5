@@ -4,10 +4,10 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/ComponentContainer'
-], function (jQuery, ComponentContainer) {
+], function ($, ComponentContainer) {
 	"use strict";
-	var $ = jQuery,
-		_loadingStarted = false,
+
+	var _loadingStarted = false,
 		_oComponentContainer = null,
 		_$Component = null;
 
@@ -33,7 +33,7 @@ sap.ui.define([
 			_loadingStarted = true;
 
 			return oPromise.then(function (oComponent) {
-				var sId = jQuery.sap.uid();
+				var sId = $.sap.uid();
 
 				// create and add div to html
 				_$Component = $('<div id="' + sId + '" class="sapUiOpaComponent"></div>');
