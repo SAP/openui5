@@ -3,18 +3,22 @@
  */
 
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/Device",
-		"sap/ui/core/Component",
 		"sap/ui/core/Fragment",
 		"sap/ui/documentation/library",
 		"sap/ui/core/IconPool",
 		"sap/m/SplitAppMode",
-		"sap/m/MessageBox"
-	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, IconPool, SplitAppMode, MessageBox) {
+		"sap/m/MessageBox",
+		"sap/m/library"
+	], function (jQuery, BaseController, JSONModel, ResizeHandler, Device, Fragment, library, IconPool, SplitAppMode, MessageBox, mobileLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.URLHelper
+		var URLHelper = mobileLibrary.URLHelper;
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			onInit : function () {
@@ -226,7 +230,7 @@ sap.ui.define([
 				} else if (sTargetText === "Feedback") {
 					this.feedbackDialogOpen();
 				} else if (sTarget) {
-					sap.m.URLHelper.redirect(sTarget, true);
+					URLHelper.redirect(sTarget, true);
 				}
 			},
 
@@ -666,6 +670,5 @@ sap.ui.define([
 			}
 
 		});
-
 	}
 );

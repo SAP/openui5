@@ -11,16 +11,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 
 	'use strict';
 
-	/**
-	 * SAPUI5 library with controls specialized for administrative applications.
-	 *
-	 * @namespace
-	 * @name sap.ui.documentation
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
-	 */
-
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : 'sap.ui.documentation',
@@ -34,6 +24,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 		elements: []
 	});
 
+	/**
+	 * SAPUI5 library with controls specialized for administrative applications.
+	 *
+	 * @namespace
+	 * @name sap.ui.documentation
+	 * @author SAP SE
+	 * @version ${version}
+	 * @public
+	 */
 	var thisLibrary = sap.ui.documentation;
 
 	var _libraryInfoSingleton;

@@ -4,9 +4,10 @@
 
 /*global history */
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/Device"
-	], function (BaseController, Device) {
+	], function (jQuery, BaseController, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Controls", {
@@ -50,7 +51,7 @@ sap.ui.define([
 
 			/**
 			 * Filter for controls in the master search field when the title of a control section was pressed
- 			 */
+			 */
 			onPress: function(oEvent) {
 				var sFilter = oEvent.oSource.getFilter(),
 					oSearchField = this.getOwnerComponent().byId("controlsMaster").byId("searchField");

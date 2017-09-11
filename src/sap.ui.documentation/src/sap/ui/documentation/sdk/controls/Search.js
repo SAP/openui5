@@ -1,12 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/m/library'],
-    function(jQuery, Control, Button, SearchField, mobileLibrary) {
+sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/m/library'],
+    function(Control, Button, SearchField, mobileLibrary) {
     "use strict";
 
 
-        var Search = sap.ui.core.Control.extend("sap.ui.documentation.sdk.controls.Search", {
+        var Search = Control.extend("sap.ui.documentation.sdk.controls.Search", {
             metadata : {
                 properties : {
                     isOpen : {type : "boolean", group : "Appearance", defaultValue : false},

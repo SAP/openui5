@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.encoder", "sap/ui/demokit/SimpleTreeNode"],
+sap.ui.define(["jquery.sap.global", "sap/ui/demokit/SimpleTreeNode", "jquery.sap.encoder"],
 	function(jQuery, SimpleTreeNode) {
 		"use strict";
 

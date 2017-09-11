@@ -4,12 +4,13 @@
 
 /*global location */
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/XML2JSONUtils",
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler"
-	], function (BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler) {
+	], function (jQuery, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.TopicDetail", {

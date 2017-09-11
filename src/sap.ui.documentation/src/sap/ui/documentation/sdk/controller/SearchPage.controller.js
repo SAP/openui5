@@ -4,10 +4,11 @@
 
 /*global location */
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/m/GroupHeaderListItem"
-	], function (BaseController, JSONModel, GroupHeaderListItem) {
+	], function (jQuery, BaseController, JSONModel, GroupHeaderListItem) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SearchPage", {
@@ -227,7 +228,7 @@ sap.ui.define([
 			/**
 			 * Refresh model and modify links
 			 * @private
- 			 */
+			 */
 			_modelRefresh: function () {
 				this.getModel().refresh();
 				this._modifyLinks();

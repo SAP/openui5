@@ -9,11 +9,9 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/model/models",
 		"sap/ui/documentation/sdk/controller/ErrorHandler",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/util/DocumentationRouter",
 		"sap/ui/documentation/sdk/controller/util/ConfigUtil",
-		"sap/ui/documentation/sdk/controller/util/APIInfo",
-		"sap/m/ColumnListItem"
-	], function (jQuery, UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter, ConfigUtil, APIInfo, ColumnListItem) {
+		"sap/ui/documentation/sdk/controller/util/APIInfo"
+	], function (jQuery, UIComponent, Device, models, ErrorHandler, JSONModel, ConfigUtil, APIInfo) {
 		"use strict";
 
 		var aTreeContent = [],

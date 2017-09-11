@@ -3,13 +3,12 @@
  */
 
 /*global JSZip, URI *///declare unusual global vars for JSLint/SAPUI5 validation
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
+sap.ui.define(['jquery.sap.global',
 	'sap/ui/core/routing/History',
 	'sap/ui/core/Component', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
-	'sap/m/MessageToast',
 	'../data'],
-	function (jQuery, Device, History, Component, UIComponent, Controller, JSONModel, MessageToast, data) {
+	function (jQuery, History, Component, UIComponent, Controller, JSONModel, data) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.code", {

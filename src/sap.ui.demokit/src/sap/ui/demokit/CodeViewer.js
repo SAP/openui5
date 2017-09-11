@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.ui.demokit.CodeViewer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dialog', 'sap/ui/core/Control', './library'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dialog', 'sap/ui/core/Control', './library', 'jquery.sap.keycodes'],
 	function(jQuery, Button, Dialog, Control, library) {
 	"use strict";
 

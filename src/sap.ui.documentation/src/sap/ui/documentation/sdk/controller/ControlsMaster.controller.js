@@ -6,15 +6,13 @@ sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/m/GroupHeaderListItem",
-		"sap/ui/core/Component",
 		"sap/ui/model/Filter",
 		"sap/ui/model/Sorter",
 		"jquery.sap.storage"
-	], function (jQuery, Device, BaseController, APIInfo, JSONModel, ControlsInfo, GroupHeaderListItem, Component,
+	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, GroupHeaderListItem,
 				 Filter, Sorter, jQueryStorage) {
 		"use strict";
 

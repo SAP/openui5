@@ -80,9 +80,9 @@
 
 		function replace(node) {
 			var text = node.nodeValue,
-			    p = node.parentNode,
-			    start = 0,
-			    match,span;
+				p = node.parentNode,
+				start = 0,
+				match,span;
 
 			while ( (match = expr.exec(text)) != null ) {
 
