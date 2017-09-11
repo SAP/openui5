@@ -9,8 +9,9 @@
 		"sap/m/Label",
 		"sap/ui/core/Title",
 		"sap/ui/layout/form/SimpleForm",
-		"sap/m/Toolbar"
-	], function(QUnit, ElementEnablementTest, rtaControlEnablingCheck, Input, Label, Title, SimpleForm, Toolbar) {
+		"sap/m/Toolbar",
+		"sap/m/Button"
+	], function(QUnit, ElementEnablementTest, rtaControlEnablingCheck, Input, Label, Title, SimpleForm, Toolbar, Button) {
 
 		var oElementEnablementTest = new ElementEnablementTest({
 			type: "sap.ui.layout.form.SimpleForm",
@@ -18,6 +19,7 @@
 				return new SimpleForm({
 					toolbar: new Toolbar({
 						content : [
+							Button({text: "Button"})
 						]
 					}),
 					content: [
