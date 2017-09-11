@@ -716,7 +716,7 @@ sap.ui.require([
 
 		return oMetaModel.loaded().then(function () {
 			assert.strictEqual(arguments.length, 1, "almost no args");
-			assert.deepEqual(arguments[0], undefined, "almost no args");
+			assert.strictEqual(arguments[0], undefined, "almost no args");
 		});
 	});
 
@@ -731,7 +731,7 @@ sap.ui.require([
 
 		return oMetaModel.loaded().then(function () {
 			assert.strictEqual(arguments.length, 1, "almost no args");
-			assert.deepEqual(arguments[0], undefined, "almost no args");
+			assert.strictEqual(arguments[0], undefined, "almost no args");
 
 			assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
 				"GWSAMPLE_BASIC", "metadata available");
@@ -872,7 +872,7 @@ sap.ui.require([
 				oResult = {};
 
 			assert.strictEqual(arguments.length, 1, "almost no args");
-			assert.deepEqual(arguments[0], undefined, "almost no args");
+			assert.strictEqual(arguments[0], undefined, "almost no args");
 
 			oGlobalSandbox.mock(Model.prototype).expects("destroy");
 
@@ -1357,7 +1357,7 @@ sap.ui.require([
 							sProperty = "Insertable";
 					}
 
-					assert.deepEqual(oVHSexSet["sap:" + sExtension], "false");
+					assert.strictEqual(oVHSexSet["sap:" + sExtension], "false");
 					delete oVHSexSet["sap:" + sExtension];
 					oExpected = {};
 					oExpected[sProperty] = {"Bool" : "false"};
@@ -1390,10 +1390,10 @@ sap.ui.require([
 
 				assert.strictEqual(oGWSampleBasic.$path, "/dataServices/schema/0");
 				delete oGWSampleBasic.$path;
-				assert.deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
+				assert.strictEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
 
-				assert.deepEqual(oBusinessPartner["sap:content-version"], "1");
+				assert.strictEqual(oBusinessPartner["sap:content-version"], "1");
 				delete oBusinessPartner["sap:content-version"];
 
 				assert.strictEqual(oCTAddress.namespace, "GWSAMPLE_BASIC");
@@ -1402,7 +1402,7 @@ sap.ui.require([
 					"$path");
 				delete oCTAddress.$path;
 
-				assert.deepEqual(oAssociation["sap:content-version"], "1");
+				assert.strictEqual(oAssociation["sap:content-version"], "1");
 				delete oAssociation["sap:content-version"];
 
 				assert.strictEqual(oAssociation.namespace, "GWSAMPLE_BASIC");
@@ -1410,13 +1410,13 @@ sap.ui.require([
 				assert.strictEqual(oAssociation.$path, "/dataServices/schema/0/association/0");
 				delete oAssociation.$path;
 
-				assert.deepEqual(oAssociationSet["sap:creatable"], "false");
+				assert.strictEqual(oAssociationSet["sap:creatable"], "false");
 				delete oAssociationSet["sap:creatable"];
 
-				assert.deepEqual(oBusinessPartnerSet["sap:content-version"], "1");
+				assert.strictEqual(oBusinessPartnerSet["sap:content-version"], "1");
 				delete oBusinessPartnerSet["sap:content-version"];
 
-				assert.deepEqual(oEntityContainer["sap:use-batch"], "false");
+				assert.strictEqual(oEntityContainer["sap:use-batch"], "false");
 				delete oEntityContainer["sap:use-batch"];
 
 				assert.strictEqual(oEntityContainer.namespace, "GWSAMPLE_BASIC");
@@ -1425,20 +1425,20 @@ sap.ui.require([
 					"/dataServices/schema/0/entityContainer/0");
 				delete oEntityContainer.$path;
 
-				assert.deepEqual(oFunctionImport["sap:action-for"],
+				assert.strictEqual(oFunctionImport["sap:action-for"],
 					"GWSAMPLE_BASIC.BusinessPartner");
 				delete oFunctionImport["sap:action-for"];
 
-				assert.deepEqual(oEntityContainer.functionImport[1]["sap:action-for"],
+				assert.strictEqual(oEntityContainer.functionImport[1]["sap:action-for"],
 					"GWSAMPLE_BASIC.Product");
 				delete oEntityContainer.functionImport[1]["sap:action-for"];
 
-				assert.deepEqual(oNavigationProperty["sap:filterable"], "false");
+				assert.strictEqual(oNavigationProperty["sap:filterable"], "false");
 				delete oNavigationProperty["sap:filterable"];
 
-				assert.deepEqual(oVHSex["sap:content-version"], "1");
+				assert.strictEqual(oVHSex["sap:content-version"], "1");
 				delete oVHSex["sap:content-version"];
-				assert.deepEqual(oVHSexSet["sap:content-version"], "1");
+				assert.strictEqual(oVHSexSet["sap:content-version"], "1");
 				delete oVHSexSet["sap:content-version"];
 
 				if (i > 0) {
@@ -1548,7 +1548,7 @@ sap.ui.require([
 				delete oProductWeightMeasure["com.sap.vocabularies.Analytics.v1.Measure"];
 
 				// sap:label
-				assert.deepEqual(oBusinessPartnerId["sap:label"], "Bus. Part. ID");
+				assert.strictEqual(oBusinessPartnerId["sap:label"], "Bus. Part. ID");
 				delete oBusinessPartnerId["sap:label"];
 				assert.deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : "Bus. Part. ID"
@@ -1557,20 +1557,20 @@ sap.ui.require([
 
 				// in case of i > 1 property has been overwritten by annotation file
 				// complex type: property
-				assert.deepEqual(oCTAddressCity["sap:label"], "City");
+				assert.strictEqual(oCTAddressCity["sap:label"], "City");
 				delete oCTAddressCity["sap:label"];
 				assert.deepEqual(oCTAddressCity["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : i <= 1 ? "City" : "GWSAMPLE_BASIC.CT_Address/City"
 				}, "Label derived from sap:label");
 				delete oCTAddressCity["com.sap.vocabularies.Common.v1.Label"];
 				// check sap:semantics
-				assert.deepEqual(oCTAddressCity["sap:semantics"], "city");
+				assert.strictEqual(oCTAddressCity["sap:semantics"], "city");
 				delete oCTAddressCity["sap:semantics"];
 				assert.deepEqual(oCTAddress["com.sap.vocabularies.Communication.v1.Contact"],
 					{ "adr" : { "locality" : { "Path" : "City" } } });
 				delete oCTAddress["com.sap.vocabularies.Communication.v1.Contact"];
 
-				assert.deepEqual(oParameter["sap:label"], "ID");
+				assert.strictEqual(oParameter["sap:label"], "ID");
 				delete oParameter["sap:label"];
 				assert.deepEqual(oParameter["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : "ID"
@@ -1587,9 +1587,9 @@ sap.ui.require([
 				checkCapabilities("deletable");
 
 				// sap:creatable=false and sap:updatable=false on property level
-				assert.deepEqual(oBusinessPartnerId["sap:creatable"], "false");
+				assert.strictEqual(oBusinessPartnerId["sap:creatable"], "false");
 				delete oBusinessPartnerId["sap:creatable"];
-				assert.deepEqual(oBusinessPartnerId["sap:updatable"], "false");
+				assert.strictEqual(oBusinessPartnerId["sap:updatable"], "false");
 				delete oBusinessPartnerId["sap:updatable"];
 				assert.deepEqual(oBusinessPartnerId["Org.OData.Core.V1.Computed"], {
 					"Bool" : (i > 0 ? "false" : "true")
@@ -1598,7 +1598,7 @@ sap.ui.require([
 
 				// sap:creatable=true and sap:updatable=false on property level
 				// sap:creatable=true is the default and thus no SAP V2 annotation is added
-				assert.deepEqual(oAnyProperty["sap:updatable"], "false");
+				assert.strictEqual(oAnyProperty["sap:updatable"], "false");
 				delete oAnyProperty["sap:updatable"];
 				assert.deepEqual(oAnyProperty["Org.OData.Core.V1.Immutable"], {
 					"Bool" : "true"
@@ -1606,7 +1606,7 @@ sap.ui.require([
 				delete oAnyProperty["Org.OData.Core.V1.Immutable"];
 
 				// sap:searchable
-				assert.deepEqual(oVHSexSet["sap:searchable"], "true");
+				assert.strictEqual(oVHSexSet["sap:searchable"], "true");
 				delete oVHSexSet["sap:searchable"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"], {
@@ -1615,7 +1615,7 @@ sap.ui.require([
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"];
 
 				// sap:pageable
-				assert.deepEqual(oVHSexSet["sap:pageable"], "false");
+				assert.strictEqual(oVHSexSet["sap:pageable"], "false");
 				delete oVHSexSet["sap:pageable"];
 				assert.deepEqual(oVHSexSet["Org.OData.Capabilities.V1.TopSupported"],
 					{"Bool" : "false"}, "VH_SexSet not TopSupported");
@@ -1625,14 +1625,14 @@ sap.ui.require([
 				delete oVHSexSet["Org.OData.Capabilities.V1.SkipSupported"];
 
 				// sap:topable
-				assert.deepEqual(oBusinessPartnerSet["sap:topable"], "false");
+				assert.strictEqual(oBusinessPartnerSet["sap:topable"], "false");
 				delete oBusinessPartnerSet["sap:topable"];
 				assert.deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.TopSupported"],
 					{"Bool" : "false"}, "oBusinessPartnerSet not TopSupported");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.TopSupported"];
 
 				// sap:requires-filter
-				assert.deepEqual(oBusinessPartnerSet["sap:requires-filter"], "true");
+				assert.strictEqual(oBusinessPartnerSet["sap:requires-filter"], "true");
 				delete oBusinessPartnerSet["sap:requires-filter"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"].
@@ -1641,48 +1641,48 @@ sap.ui.require([
 					RequiresFilter;
 
 				// sap:text
-				assert.deepEqual(oBusinessPartnerId["sap:text"], "AnyProperty");
+				assert.strictEqual(oBusinessPartnerId["sap:text"], "AnyProperty");
 				delete oBusinessPartnerId["sap:text"];
 				assert.deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Text"],
 					{ "Path" : "AnyProperty" }, "BusinessPartnerId text");
 				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.Text"];
 
 				// sap:precision
-				assert.deepEqual(oProductPrice["sap:precision"], "PriceScale");
+				assert.strictEqual(oProductPrice["sap:precision"], "PriceScale");
 				delete oProductPrice["sap:precision"];
 				assert.deepEqual(oProductPrice["Org.OData.Measures.V1.Scale"],
 					{ "Path" : "PriceScale" }, "ProductPrice precision");
 				delete oProductPrice["Org.OData.Measures.V1.Scale"];
 
 				// sap:unit - currency
-				assert.deepEqual(oProductPrice["sap:unit"], "CurrencyCode");
+				assert.strictEqual(oProductPrice["sap:unit"], "CurrencyCode");
 				delete oProductPrice["sap:unit"];
-				assert.deepEqual(oProductCurrencyCode["sap:semantics"], "currency-code");
+				assert.strictEqual(oProductCurrencyCode["sap:semantics"], "currency-code");
 				delete oProductCurrencyCode["sap:semantics"];
 				assert.deepEqual(oProductPrice["Org.OData.Measures.V1.ISOCurrency"],
 					{ "Path" : (i > 0 ? "CurrencyCodeFromAnnotation" : "CurrencyCode") },
 					"ProductPrice currency");
 				delete oProductPrice["Org.OData.Measures.V1.ISOCurrency"];
 				// sap:unit - unit
-				assert.deepEqual(oProductWeightMeasure["sap:unit"], "WeightUnit");
+				assert.strictEqual(oProductWeightMeasure["sap:unit"], "WeightUnit");
 				delete oProductWeightMeasure["sap:unit"];
-				assert.deepEqual(oProductWeightUnit["sap:semantics"], "unit-of-measure");
+				assert.strictEqual(oProductWeightUnit["sap:semantics"], "unit-of-measure");
 				delete oProductWeightUnit["sap:semantics"];
 				assert.deepEqual(oProductWeightMeasure["Org.OData.Measures.V1.Unit"],
 					{ "Path" : "WeightUnit" }, "ProductWeightMeasure unit");
 				delete oProductWeightMeasure["Org.OData.Measures.V1.Unit"];
 
 				// sap:field-control
-				assert.deepEqual(oAnyProperty["sap:field-control"], "UX_FC_READONLY");
+				assert.strictEqual(oAnyProperty["sap:field-control"], "UX_FC_READONLY");
 				delete oAnyProperty["sap:field-control"];
 				assert.deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"],
 					{ "Path" : "UX_FC_READONLY" }, "AnyProperty FieldControl");
 				delete oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"];
 
 				// sap:sortable
-				assert.deepEqual(oBusinessPartnerId["sap:sortable"], "false");
+				assert.strictEqual(oBusinessPartnerId["sap:sortable"], "false");
 				delete oBusinessPartnerId["sap:sortable"];
-				assert.deepEqual(oAnyProperty["sap:sortable"], "false");
+				assert.strictEqual(oAnyProperty["sap:sortable"], "false");
 				delete oAnyProperty["sap:sortable"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"], {
@@ -1694,9 +1694,9 @@ sap.ui.require([
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"];
 
 				// sap:filterable
-				assert.deepEqual(oAnyProperty["sap:filterable"], "false");
+				assert.strictEqual(oAnyProperty["sap:filterable"], "false");
 				delete oAnyProperty["sap:filterable"];
-				assert.deepEqual(oNonFilterable["sap:filterable"], "false");
+				assert.strictEqual(oNonFilterable["sap:filterable"], "false");
 				delete oNonFilterable["sap:filterable"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]
@@ -1712,7 +1712,7 @@ sap.ui.require([
 					["NonFilterableProperties"];
 
 				// sap:required-in-filter
-				assert.deepEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
+				assert.strictEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
 				delete oBusinessPartnerId["sap:required-in-filter"];
 				// check that V4 annotations win
 				assert.deepEqual(
@@ -1724,7 +1724,7 @@ sap.ui.require([
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
 
 				// sap:semantics="yearmonthday" --> com.sap.vocabularies.Common.v1.IsCalendarDate
-				assert.deepEqual(oYearMonthDay["sap:semantics"], "yearmonthday");
+				assert.strictEqual(oYearMonthDay["sap:semantics"], "yearmonthday");
 				delete oYearMonthDay["sap:semantics"];
 				assert.deepEqual(
 					oYearMonthDay["com.sap.vocabularies.Common.v1.IsCalendarDate"],
@@ -1794,7 +1794,7 @@ sap.ui.require([
 				delete oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"];
 
 				// sap:display-format
-				assert.deepEqual(oAnyProperty["sap:display-format"], "NonNegative");
+				assert.strictEqual(oAnyProperty["sap:display-format"], "NonNegative");
 				delete oAnyProperty["sap:display-format"];
 				oValue = oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
 				if (i === 2) {
@@ -1805,7 +1805,7 @@ sap.ui.require([
 				}
 				delete oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
 
-				assert.deepEqual(oBusinessPartnerId["sap:display-format"], "UpperCase");
+				assert.strictEqual(oBusinessPartnerId["sap:display-format"], "UpperCase");
 				delete oBusinessPartnerId["sap:display-format"];
 				assert.deepEqual(
 					oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"], {
@@ -1814,7 +1814,7 @@ sap.ui.require([
 				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"];
 
 				// sap:heading
-				assert.deepEqual(oNonFilterable["sap:heading"], "No Filter");
+				assert.strictEqual(oNonFilterable["sap:heading"], "No Filter");
 				delete oNonFilterable["sap:heading"];
 				assert.deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.Heading"], {
 					"String" : (i === 0 ? "No Filter" : "No Filter via Annotation")
@@ -1822,7 +1822,7 @@ sap.ui.require([
 				delete oNonFilterable["com.sap.vocabularies.Common.v1.Heading"];
 
 				// sap:quickinfo
-				assert.deepEqual(oNonFilterable["sap:quickinfo"], "No Filtering");
+				assert.strictEqual(oNonFilterable["sap:quickinfo"], "No Filtering");
 				delete oNonFilterable["sap:quickinfo"];
 				assert.deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"], {
 					"String" : (i === 0 ? "No Filtering" : "No Filtering via Annotation")
@@ -1830,9 +1830,9 @@ sap.ui.require([
 				delete oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"];
 
 				// sap:visible
-				assert.deepEqual(oProductWeightUnit["sap:visible"], "false");
+				assert.strictEqual(oProductWeightUnit["sap:visible"], "false");
 				delete oProductWeightUnit["sap:visible"];
-				assert.deepEqual(oProductWeightMeasure["sap:visible"], "true");
+				assert.strictEqual(oProductWeightMeasure["sap:visible"], "true");
 				delete oProductWeightMeasure["sap:visible"];
 				assert.deepEqual(
 					oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"], {
@@ -1846,7 +1846,7 @@ sap.ui.require([
 				delete oProductWeightUnit["com.sap.vocabularies.UI.v1.Hidden"];
 
 				// sap:deletable-path (EntitySet)
-				assert.deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
+				assert.strictEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
 				delete oBusinessPartnerSet["sap:deletable-path"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.DeleteRestrictions"],
@@ -1855,7 +1855,7 @@ sap.ui.require([
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.DeleteRestrictions"];
 
 				// sap:updatable-path (EntitySet)
-				assert.deepEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
+				assert.strictEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
 				delete oBusinessPartnerSet["sap:updatable-path"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.UpdateRestrictions"],
@@ -1864,11 +1864,11 @@ sap.ui.require([
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.UpdateRestrictions"];
 
 				// sap:filter-restriction (Property)
-				assert.deepEqual(oBusinessPartnerId["sap:filter-restriction"], "multi-value");
+				assert.strictEqual(oBusinessPartnerId["sap:filter-restriction"], "multi-value");
 				delete oBusinessPartnerId["sap:filter-restriction"];
-				assert.deepEqual(oProductPrice["sap:filter-restriction"], "interval");
+				assert.strictEqual(oProductPrice["sap:filter-restriction"], "interval");
 				delete oProductPrice["sap:filter-restriction"];
-				assert.deepEqual(oProductCurrencyCode["sap:filter-restriction"], "single-value");
+				assert.strictEqual(oProductCurrencyCode["sap:filter-restriction"], "single-value");
 				delete oProductCurrencyCode["sap:filter-restriction"];
 
 				sPrefix = "com.sap.vocabularies.Common.v1.";
@@ -1899,23 +1899,23 @@ sap.ui.require([
 				delete oProductSet[sPrefix + "FilterExpressionRestrictions"];
 
 				// sap:deletable/updatable-path after sap:deletable/updatable (EntitySet)
-				assert.deepEqual(oProductSet["sap:deletable-path"], "Deletable");
+				assert.strictEqual(oProductSet["sap:deletable-path"], "Deletable");
 				delete oProductSet["sap:deletable-path"];
-				assert.deepEqual(oProductSet["sap:deletable"], "false");
+				assert.strictEqual(oProductSet["sap:deletable"], "false");
 				delete oProductSet["sap:deletable"];
 				assert.deepEqual(
 					oProductSet["Org.OData.Capabilities.V1.DeleteRestrictions"],
 					{"Deletable" : {"Bool" : "false"}}, "deletable-path");
 				delete oProductSet["Org.OData.Capabilities.V1.DeleteRestrictions"];
-				assert.deepEqual(oProductSet["sap:updatable-path"], "Updatable");
+				assert.strictEqual(oProductSet["sap:updatable-path"], "Updatable");
 				delete oProductSet["sap:updatable-path"];
-				assert.deepEqual(oProductSet["sap:updatable"], "true");
+				assert.strictEqual(oProductSet["sap:updatable"], "true");
 				delete oProductSet["sap:updatable"];
 				assert.deepEqual(
 					oProductSet["Org.OData.Capabilities.V1.UpdateRestrictions"],
 					{"Updatable" : {"Bool" : "false"}}, "updatable-path");
 				delete oProductSet["Org.OData.Capabilities.V1.UpdateRestrictions"];
-				assert.deepEqual(oProductSet["sap:searchable"], "true");
+				assert.strictEqual(oProductSet["sap:searchable"], "true");
 				delete oProductSet["sap:searchable"];
 
 				assert.deepEqual(oMetaModelData, oMetadata, "nothing else left...");
