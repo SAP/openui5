@@ -29,6 +29,7 @@
 	font-size: 0.875rem;
 }
 
+pre.sapUiDocumentationAPICode,
 .sapUiDocumentationJsDoc pre {
 	white-space: pre-wrap;
 }
