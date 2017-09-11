@@ -3196,6 +3196,25 @@
 			oCalendarRowRendererSpy.restore();
 		});
 
+		QUnit.test("Appointment select is fired", function (assert) {
+			//arrange
+			this._createCalendar();
+			this._oPC.setStartDate(new Date(2015, 0, 1));
+			this._oPC.placeAt("smallUiArea");
+			sap.ui.getCore().applyChanges();
+
+			oSelectedAppointment = undefined;
+			qutils.triggerEvent("tap", "_oPC-R1A1");
+
+			//act
+			assert.equal(oSelectedAppointment.getId(), "_oPC-R1A1", "appointmentSelect event fired and appointment returned");
+			assert.ok(sap.ui.getCore().byId("_oPC-R1A1").getSelected(), "Appointment is selected");
+
+			// clean
+			oSelectedAppointment = undefined;
+		});
+
+
 		QUnit.module("ARIA");
 
 		QUnit.test("Week day and date aria", function(assert) {
