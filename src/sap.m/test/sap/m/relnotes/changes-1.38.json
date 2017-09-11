@@ -3465,5 +3465,34 @@
         "references": []
       }
     ]
+  },
+  "1.38.26": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "9bdf314d778aff9f155a931f634949cea99a063b",
+        "type": "FIX",
+        "text": " sap.m.FeedContent: Documentation issues solved",
+        "references": []
+      },
+      {
+        "id": "8b773beea6aa6b3be82e0958a42df1b2a9c4581b",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: qunit checking background color is corrected",
+        "references": []
+      },
+      {
+        "id": "cf1865802b10306727dad0de7c287dd6625cf152",
+        "type": "FIX",
+        "text": " sap.m.Switch: Text ellipsis for labels removed",
+        "references": []
+      },
+      {
+        "id": "caabb5683ad3e56054960e5b7bdfdc9affe8dc67",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Deletion handling corrected",
+        "references": []
+      }
+    ]
   }
 }

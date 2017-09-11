@@ -1004,5 +1004,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.26": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "87b4495907b6aee36b371d451e958bba2d720309",
+        "type": "FIX",
+        "text": " Table: Correctly set the checked state of the SelectAll checkbox",
+        "references": []
+      },
+      {
+        "id": "2254e1f7609bfeb0e68abfa511097f556caa89d5",
+        "type": "FIX",
+        "text": " TreeTable: Align Expand/Collapse icons centered",
+        "references": []
+      }
+    ]
   }
 }
