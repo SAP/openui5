@@ -27,7 +27,10 @@
 				new Shell({
 					app: new ComponentContainer({
 						height : "100%",
-						name : "sap.ui.demo.orderbrowser"
+						name : "sap.ui.demo.orderbrowser",
+						settings : {
+							id : "orderbrowser"
+						}
 					})
 				}).placeAt("content");
 			});
