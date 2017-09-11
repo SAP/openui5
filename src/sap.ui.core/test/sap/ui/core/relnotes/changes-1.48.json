@@ -879,5 +879,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "2ee65071324038e53e8012c2e4125aaaf145a7d1",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: Use preloaded resources by fixing URL to name guessing",
+        "references": []
+      }
+    ]
   }
 }

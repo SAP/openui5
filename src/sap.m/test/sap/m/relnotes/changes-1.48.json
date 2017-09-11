@@ -2174,5 +2174,34 @@
         "references": []
       }
     ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "832afaab30c36e35f34fb58aaba55188938a10d6",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Improved the removal of empty HTML tags",
+        "references": []
+      },
+      {
+        "id": "e1e78d28f76fa139143f67f908b51b66237ba338",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      },
+      {
+        "id": "e0a3e9bed19c39c22d39d2a042ce084238d33cb4",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Fire select event with keyboard handling.",
+        "references": []
+      },
+      {
+        "id": "2487096fe3d9f28eb4bb763d7348881fb41c56b2",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjust height on setValue()",
+        "references": []
+      }
+    ]
   }
 }

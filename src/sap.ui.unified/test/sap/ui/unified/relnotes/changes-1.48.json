@@ -214,5 +214,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "9cd697e1f21dac37d873ed1754092a478b7abb2d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select event now has correct event source",
+        "references": []
+      }
+    ]
   }
 }
