@@ -9,6 +9,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 
 
+	// shortcut for sap.ui.unified.ContentSwitcherAnimation
+	var ContentSwitcherAnimation = library.ContentSwitcherAnimation;
+
+
+
 	/**
 	 * Constructor for a new ContentSwitcher.
 	 *
@@ -111,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	//////////////////////////////////////// Overridden Methods ////////////////////////////////////////
 
-	    ///////////////////////////////// Property "activeContent" /////////////////////////////////
+		///////////////////////////////// Property "activeContent" /////////////////////////////////
 
 	ContentSwitcher.prototype.setActiveContent = function(iNumber) {
 		iNumber = parseInt(iNumber, 10);
@@ -138,14 +143,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	};
 
 
-	    /////////////////////////////////// Property "animation" ///////////////////////////////////
+		/////////////////////////////////// Property "animation" ///////////////////////////////////
 
 	ContentSwitcher.prototype.setAnimation = function(sAnimation, bSuppressInvalidate){
 		if (typeof (sAnimation) !== "string") {
-			sAnimation = sap.ui.unified.ContentSwitcherAnimation.None;
+			sAnimation = ContentSwitcherAnimation.None;
 			jQuery.sap.log.warning(
 				"setAnimation argument must be a string. Animation was set to \"" +
-				sap.ui.unified.ContentSwitcherAnimation.None + "\"."
+				ContentSwitcherAnimation.None + "\"."
 			);
 		}
 
@@ -172,12 +177,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	};
 
 
-	    //////////////////////////////////////// Event "xxx" ///////////////////////////////////////
-	    ///////////////////////////////////// Aggregation "xxx" ////////////////////////////////////
-	    ///////////////////////////////////// Association "xxx" ////////////////////////////////////
+		//////////////////////////////////////// Event "xxx" ///////////////////////////////////////
+		///////////////////////////////////// Aggregation "xxx" ////////////////////////////////////
+		///////////////////////////////////// Association "xxx" ////////////////////////////////////
 
 	})(window);
 
 	return ContentSwitcher;
 
-}, /* bExport= */ true);
+});

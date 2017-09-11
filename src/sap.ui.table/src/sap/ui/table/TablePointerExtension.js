@@ -4,8 +4,8 @@
 
 // Provides helper sap.ui.table.TablePointerExtension.
 sap.ui.define([
-	"./library", "jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "sap/ui/core/Popup", "jquery.sap.dom"
-], function(library, jQuery, TableExtension, TableUtils, Device, Popup, jQueryDom) {
+"./library", "jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "sap/ui/core/Popup"
+], function(library, jQuery, TableExtension, TableUtils, Device, Popup) {
 	"use strict";
 
 	// shortcuts
@@ -1047,7 +1047,7 @@ sap.ui.define([
 	});
 
 	return TablePointerExtension;
-}, /* bExport= */ true);
+	});
 
 /**
  * Gets the pointer extension.

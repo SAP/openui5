@@ -1,9 +1,7 @@
 /*
  * !${copyright}
  */
-sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/theming/Parameters'
-], function(jQuery, Parameters) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**

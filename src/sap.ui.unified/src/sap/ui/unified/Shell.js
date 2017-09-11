@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.Shell.
-sap.ui.define(['jquery.sap.global', './ShellHeader', './ShellLayout', './library'],
-	function(jQuery, ShellHeader, ShellLayout, library) {
+sap.ui.define(['./ShellHeader', './ShellLayout', './library'],
+	function(ShellHeader, ShellLayout, library) {
 	"use strict";
 
 
@@ -241,4 +241,4 @@ sap.ui.define(['jquery.sap.global', './ShellHeader', './ShellLayout', './library
 
 	return Shell;
 
-}, /* bExport= */ true);
+});

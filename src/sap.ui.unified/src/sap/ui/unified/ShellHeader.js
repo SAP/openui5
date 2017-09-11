@@ -2,12 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library'],
-	function(jQuery, library) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device'],
+	function(jQuery, library, Control, Device) {
 	"use strict";
 
 
-	var ShellHeader = sap.ui.core.Control.extend("sap.ui.unified.ShellHeader", {
+	var ShellHeader = Control.extend("sap.ui.unified.ShellHeader", {
 
 		metadata: {
 			properties: {
@@ -169,7 +169,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 			}
 			that._refresh();
 		};
-		sap.ui.Device.media.attachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+		Device.media.attachHandler(this._handleMediaChange, this, Device.media.RANGESETS.SAP_STANDARD);
 
 		this._handleResizeChange = function(mParams){
 			if (!that.getDomRef() || !that.getUser()) {
@@ -182,15 +182,15 @@ sap.ui.define(['jquery.sap.global', './library'],
 				that._refresh();
 			}
 		};
-		sap.ui.Device.resize.attachHandler(this._handleResizeChange, this);
+		Device.resize.attachHandler(this._handleResizeChange, this);
 
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
 	ShellHeader.prototype.exit = function(){
-		sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+		Device.media.detachHandler(this._handleMediaChange, this, Device.media.RANGESETS.SAP_STANDARD);
 		delete this._handleMediaChange;
-		sap.ui.Device.resize.detachHandler(this._handleResizeChange, this);
+		Device.resize.detachHandler(this._handleResizeChange, this);
 		delete this._handleResizeChange;
 	};
 
@@ -250,4 +250,4 @@ sap.ui.define(['jquery.sap.global', './library'],
 
 	return ShellHeader;
 
-}, /* bExport= */ true);
+});

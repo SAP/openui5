@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.GrowingList.
-sap.ui.define(['jquery.sap.global', './List', './library'],
-	function(jQuery, List, library) {
+sap.ui.define(['./List', './library'],
+	function(List, library) {
 	"use strict";
 
 
@@ -86,4 +86,4 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 	return GrowingList;
 
-}, /* bExport= */ true);
+});

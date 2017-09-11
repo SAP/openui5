@@ -3,14 +3,14 @@
  */
 
 // Provides control sap.m.SuggestionsList.
-sap.ui.define(['./library'],
-	function(library) {
+sap.ui.define(['./library', 'sap/ui/core/Control'],
+	function(library, Control) {
 		"use strict";
 
 		//
 		// SuggestionsList has to be used exclusively by Suggest.js
 		//
-		var SuggestionsList = sap.ui.core.Control.extend("sap.m.SuggestionsList", {
+		var SuggestionsList = Control.extend("sap.m.SuggestionsList", {
 
 			metadata: {
 
@@ -160,4 +160,4 @@ sap.ui.define(['./library'],
 
 		return SuggestionsList;
 
-	}, /* bExport= */ true);
+	});

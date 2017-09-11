@@ -79,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 		"DateTime": new DateTime({UTC: true}),
 		"Float": new Float(),
 		"Integer": new Integer(),
-		"Boolean": new Boolean()
+		"Boolean": new BooleanType()
 	};
 
 	/*
@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 			if (isInstanceOfAnalyticalTable(oParent)) {
 				var oBinding = oParent.getBinding("rows");
 				var sLeadingProperty = this.getLeadingProperty(),
-				    oProperty = oBinding && oBinding.getProperty(sLeadingProperty);
+					oProperty = oBinding && oBinding.getProperty(sLeadingProperty);
 				if (oProperty) {
 					switch (oProperty.type) {
 						case "Edm.Time":

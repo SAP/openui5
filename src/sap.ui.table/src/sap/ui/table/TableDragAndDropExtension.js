@@ -300,7 +300,7 @@ sap.ui.define([
 
 	return TableDragAndDropExtension;
 
-}, /* bExport= */ true);
+	});
 
 /**
  * Gets the drag & drop extension.
