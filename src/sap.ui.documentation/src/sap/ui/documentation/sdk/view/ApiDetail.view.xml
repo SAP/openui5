@@ -4,7 +4,6 @@
 		xmlns:m="sap.m"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:ce="sap.ui.codeeditor"
 		xmlns:layout="sap.ui.layout"
 		xmlns:custom="sap.ui.documentation.sdk.controls">
 
@@ -236,16 +235,11 @@
 												formatter: '.formatExample'}"/>
 										</layout:VerticalLayout>
 
-										<ce:CodeEditor height="auto"
-													   maxLines="20"
-													   width="100%"
-													   visible="{topics>/hasConstructor}"
-													   editable="false" lineNumbers="true"
-													   syntaxHints="false"
-													   class="sapUiSmallMarginBottom"
-													   value="{parts: [{path: 'topics>/name'},
-																		{path: 'topics>/constructor/parameters'}],
-															   formatter: '.formatConstructor'}"/>
+										<core:HTML visible="{topics>/hasConstructor}"
+												   class="sapUiSmallMarginBottom"
+												   content="{parts: [{path: 'topics>/name'},
+																	{path: 'topics>/constructor/parameters'}],
+														   formatter: '.formatConstructor'}"/>
 
 										<m:Table items="{ path: 'constructorParams>/parameters'}"
 												showSeparators="Inner"
@@ -476,9 +470,7 @@
 											class="sapUiSmallMarginBottom">
 										</m:MessageStrip>
 
-										<ce:CodeEditor height="auto" maxLines="20" width="100%" editable="false" lineNumbers="true"
-											syntaxHints="false"
-											value="{parts: [{path: 'methods>name' },
+										<core:HTML content="{parts: [{path: 'methods>name' },
 														{path: 'methods>parameters'},
 														{path: 'methods>returnValue'}],
 													formatter: '.formatMethodCode'}"

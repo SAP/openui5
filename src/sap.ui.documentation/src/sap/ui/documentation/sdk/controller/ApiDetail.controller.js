@@ -472,17 +472,6 @@ sap.ui.define([
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
 				}
-
-				// TODO: This is a temporary solution
-				// It's executed here where we have all instances of the CodeEditor created
-				this.getView().findAggregatedObjects(true, function (oElement) {
-					if (oElement instanceof sap.ui.codeeditor.CodeEditor) {
-						// We are replacing the "focus" on the editor instance method as it is
-						// triggering the unwanted scroll
-						oElement._getEditorInstance().focus = function () {
-						};
-					}
-				});
 			},
 
 			_getControlChildren: function (aTreeData, sTopicId) {
@@ -784,7 +773,7 @@ sap.ui.define([
 			 * @returns string - The code needed to create an object of that class
 			 */
 			formatConstructor: function (name, params) {
-				var result = 'new ';
+				var result = '<pre class="sapUiDocumentationAPICode">new ';
 
 				if (name) {
 					result += name + '(';
@@ -805,7 +794,7 @@ sap.ui.define([
 				}
 
 				if (name) {
-					result += ')';
+					result += ')</pre>';
 				}
 
 				return result;
@@ -1121,7 +1110,7 @@ sap.ui.define([
 			},
 
 			formatMethodCode: function (sName, aParams, aReturnValue) {
-				var result = sName + '(';
+				var result = '<pre class="sapUiDocumentationAPICode">' + sName + '(';
 
 				if (aParams && aParams.length > 0) {
 					aParams.forEach(function (element, index, array) {
@@ -1149,6 +1138,7 @@ sap.ui.define([
 					result += 'void';
 				}
 
+				result += "</pre>";
 
 				return result;
 			},
