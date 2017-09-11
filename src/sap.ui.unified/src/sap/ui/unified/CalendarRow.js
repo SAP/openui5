@@ -590,7 +590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 		// check if part of an Interval
 		for (iIndex = 0; iIndex < aIntervals.length; iIndex++) {
 			var oInterval = aIntervals[iIndex];
-			if (jQuery.sap.containsOrEquals(oInterval, oEvent.target)) {
+			if (!this._isOneMonthIntervalOnSmallSizes() && jQuery.sap.containsOrEquals(oInterval, oEvent.target)) {
 				bInterval = true;
 				break;
 			}
@@ -845,6 +845,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 
 		return aNonWorkingDays;
 
+	};
+
+	/*
+	 *  returns if the appointments are rendered as list instead in a table
+	 */
+	CalendarRow.prototype._isOneMonthIntervalOnSmallSizes = function() {
+		return this.getIntervalType() === CalendarIntervalType.OneMonth && this.getIntervals() === 1;
 	};
 
 	function _getLocale(){
@@ -1374,9 +1381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	// as the top position of the appointments depends on the rendered height it must be calculated after rendering
 	function _positionAppointments() {
 
-		var iIntervals = this.getIntervals();
-		var sIntervalType = this.getIntervalType();
-		if (sIntervalType === CalendarIntervalType.OneMonth && iIntervals === 1) {
+		if (this._isOneMonthIntervalOnSmallSizes()) {
 			return;
 		}
 
