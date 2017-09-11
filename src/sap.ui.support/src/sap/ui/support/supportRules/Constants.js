@@ -54,7 +54,38 @@ sap.ui.define([],
 			/**
 			 * The name of the persistence cookie.
 			 */
-			COOKIE_NAME: "persistence-cookie"
+			COOKIE_NAME: "persistence-cookie",
+
+			/**
+			 * Color used for severity high issues
+			 */
+			SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR: "#bb0000",
+
+			/**
+			 * Color used for severity medium issues
+			 */
+			SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR: "#e78c07",
+
+			/**
+			 * Color used for severity high issues
+			 */
+			SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR: "#5e696e",
+
+			/**
+			 * Low severity of produced issue by Support Assistant
+			 */
+			SUPPORT_ASSISTANT_ISSUE_SEVERITY_LOW: "Low",
+
+			/**
+			 * Medium severity of produced issue by Support Assistant
+			 */
+			SUPPORT_ASSISTANT_ISSUE_SEVERITY_MEDIUM: "Medium",
+
+			/**
+			 * High severity of produced issue by Support Assistant
+			 */
+			SUPPORT_ASSISTANT_ISSUE_SEVERITY_HIGH: "High"
+
 		};
 
 
