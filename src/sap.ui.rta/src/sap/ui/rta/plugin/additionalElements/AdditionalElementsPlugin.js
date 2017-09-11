@@ -490,7 +490,7 @@ sap.ui.define([
 			var sReference = mManifest["sap.app"].id;
 			return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
 				reference : sReference,
-				requiredLibraries : mRequiredLibraries,
+				parameters : { libraries : mRequiredLibraries },
 				appComponent: oComponent
 			}, oParentAggregationDTMetadata);
 		},

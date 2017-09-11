@@ -21,11 +21,11 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand',
 	 * @constructor
 	 * @private
 	 * @since 1.49
-	 * @alias sap.ui.rta.command.appDescriptor.AppDescriptorCommand
+	 * @alias sap.ui.rta.command.AppDescriptorCommand
 	 * @experimental Since 1.49. This class is experimental and provides only limited functionality. Also the API might be
 	 *               changed in future.
 	 */
-	var AppDescriptorCommand = BaseCommand.extend("sap.ui.rta.command.AppDescriptorCommand", {
+	var AppDescriptorCommand = BaseCommand.extend("sap.ui.rta.command.AppDescriptor", {
 		metadata : {
 			library : "sap.ui.rta",
 			properties : {
@@ -34,35 +34,53 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand',
 				},
 				appComponent: {
 					type: "object"
+				},
+				layer : {
+					type : "string"
+				},
+				changeType : {
+					type : "string"
+				},
+				parameters : {
+					type : "object"
+				},
+				texts : {
+					type : "object"
 				}
 			},
 			events : {}
 		}
 	});
 
-	AppDescriptorCommand.prototype.getPreparedChange = function() {
-		return this._oPreparedChange;
+	/**
+	 * Prepare the app descriptor change, setting the layer.
+	 * @param  {object} mFlexSettings Map of flex Settings
+	 * @param  {string} mFlexSettings.layer Layer where the change is applied
+	 */
+	AppDescriptorCommand.prototype.prepare = function(mFlexSettings){
+		this.setLayer(mFlexSettings.layer);
 	};
 
 	/**
-	 * Template method to create the app descriptor change which is used in the createAndStore function
+	 * Template method to execute the app descriptor change in runtime.
+	 * If the runtime change is done by a Flex Command, implementing this method is not necessary
 	 */
-	AppDescriptorCommand.prototype._create = function(){};
+	AppDescriptorCommand.prototype.execute = function(){};
 
 	/**
-	 * Create the change for the app descriptor and add it to the ChangePersistence
-	 * @return {Promise} resolving after all changes have been created
+	 * Create the change for the app descriptor and add it to the ChangePersistence.
+	 * @return {Promise} resolving after all changes have been created and stored
 	 */
 	AppDescriptorCommand.prototype.createAndStore = function(){
-			return this._create()
+			return DescriptorInlineChangeFactory.createDescriptorInlineChange(
+				this.getChangeType(), this.getParameters(), this.getTexts())
 			.then(function(oAppDescriptorChangeContent){
 				return new DescriptorChangeFactory().createNew(this.getReference(),
 					oAppDescriptorChangeContent, this.getLayer(), this.getAppComponent());
 			}.bind(this))
 			.then(function(oAppDescriptorChange){
-				var oChange = oAppDescriptorChange.store();
-				this._oPreparedChange = oChange;
-			}.bind(this));
+				return oAppDescriptorChange.store();
+			});
 	};
 	return AppDescriptorCommand;
 

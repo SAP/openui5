@@ -133,6 +133,9 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		},
 		"addLibrary" : {
 			clazz : 'sap.ui.rta.command.appDescriptor.AddLibrary'
+		},
+		"appDescriptor" : {
+			clazz : 'sap.ui.rta.command.AppDescriptorCommand'
 		}
 	};
 

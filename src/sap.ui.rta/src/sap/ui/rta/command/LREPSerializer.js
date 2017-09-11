@@ -6,7 +6,7 @@ sap.ui.define([
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/FlexCommand',
 	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
+	'sap/ui/rta/command/AppDescriptorCommand',
 	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/ControlTreeModifier'
