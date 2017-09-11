@@ -328,27 +328,48 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 	};
 
 	/**
-	 * Calls the test callback function for all controls in the given array, unless they are explicitly excluded
+	 * Calls the callback function for all controls in the given array, unless they are explicitly excluded
 	 */
-	var testControlsInLibrary = function(sLibName, aControls, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback) {
-		var iControlCountInLib = 0,
-			oControlClass;
+	var loopControlsInLibrary = function(aControls, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback) {
+		return new Promise(function(resolve, reject){
+			var iControlCountInLib = 0;
 
-		for (var i = 0; i < aControls.length; i++) {
-			var sControlName = aControls[i];
+			var loop = function(i) {
+				if (i < aControls.length) {
+
+					var sControlName = aControls[i];
+					handleControl(sControlName, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback).then(function(bCountThisControl){
+						if (bCountThisControl) {
+							iControlCountInLib++;
+						}
+						loop(i + 1);
+					});
+				} else {
+					resolve(iControlCountInLib);
+				}
+			};
+
+			loop(0);
+		});
+	};
+
+	function handleControl(sControlName, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback) {
+		return new Promise(function(resolve){
+			var bCountThisControl = false;
+
 			if (shouldTestControl(sControlName, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable)) {
-				iControlCountInLib++;
-				oControlClass = jQuery.sap.getObject(sControlName);
+				bCountThisControl = true;
+				var oControlClass = jQuery.sap.getObject(sControlName);
 
 				fnCallback(sControlName, oControlClass, {
 					canInstantiate: ControlIterator.controlCanBeInstantiated(sControlName),
 					canRender: ControlIterator.controlCanBeRendered(sControlName)
 				});
 			}
-		}
 
-		return iControlCountInLib;
-	};
+			window.setTimeout(function(){resolve(bCountThisControl);}, 0); // give the UI the chance to be responsive to user interaction and to update information about the currently handled control
+		});
+	}
 
 
 	/**
@@ -436,14 +457,50 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		// get the libraries we are interested in
 		var mLibraries = getLibraries(aLibrariesToTest, aExcludedLibraries, bIncludeDistLayer, QUnit);
 
-		// loop over all libs and controls and create a test for each
-		var iControlCount = 0,
-			iLibCount = 0;
-		for (var sLibName in mLibraries) {
-			var oLibrary = mLibraries[sLibName];
+		loopLibraries(mLibraries, bIncludeElements, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback).then(function(aResults){
+			fnDone({
+				testedControlCount: aResults[0],
+				testedLibraryCount: aResults[1]
+			});
+		});
+	}
 
+	function loopLibraries(mLibraries, bIncludeElements, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback) {
+		return new Promise(function(resolve) {
+			// loop over all libs and controls and call the callback for each
+			var iControlCount = 0,
+				iLibCount = 0;
+
+			var aLibraryNames = [];
+			for (var sLibName in mLibraries) {
+				aLibraryNames.push(sLibName);
+			}
+
+			var loop = function(i) {
+				if (i < aLibraryNames.length) {
+					var sLibName = aLibraryNames[i];
+
+					handleLibrary(mLibraries, sLibName, bIncludeElements, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback).then(function(aResult){
+						iControlCount += aResult[0];
+						if (aResult[1]) {
+							iLibCount++;
+						}
+						loop(i + 1);
+					});
+				} else {
+					resolve([iControlCount, iLibCount]);
+				}
+			};
+
+			loop(0);
+		});
+	}
+
+	function handleLibrary(mLibraries, sLibName, bIncludeElements, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback) {
+		return new Promise(function(resolve) {
+			var oLibrary = mLibraries[sLibName];
 			if (!oLibrary) { // in case removed from the map
-				continue;
+				resolve([0, false]);
 			}
 
 			// we may need a concatenated array of Controls and Elements
@@ -452,13 +509,9 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 				aControls = aControls.concat(oLibrary.elements.slice());
 			}
 
-			iControlCount += testControlsInLibrary(sLibName, aControls, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback);
-			iLibCount++;
-		}
-
-		fnDone({
-			testedControlCount: iControlCount,
-			testedLibraryCount: iLibCount
+			loopControlsInLibrary(aControls, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback).then(function(iAnalyzedControls){
+				resolve([iAnalyzedControls, true]);
+			});
 		});
 	}
 
