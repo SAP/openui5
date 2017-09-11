@@ -651,8 +651,6 @@ sap.ui.define([
 
 			this.setValue(newValue);
 
-			oInput.focus();
-
 			this._fireChangeAndLiveChange({value: this.getValue()});
 		};
 
