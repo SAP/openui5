@@ -1,7 +1,8 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
-		"sap/ui/test/opaQunit"
-	], function (Opa5, opaTest) {
+		"sap/ui/test/opaQunit",
+		"unitTests/utils/browser"
+	], function (Opa5, opaTest, browser) {
 
 		QUnit.module("IFrame getters");
 
@@ -563,6 +564,9 @@ sap.ui.define([
 					QUnit.assert.contains(sOpaMessage, /Opa is executing the check:/);
 					QUnit.assert.contains(sOpaMessage, /Opa check was false/);
 					QUnit.assert.contains(sOpaMessage, /Callstack:/);
+					if (browser.supportsStacktraces()) {
+						QUnit.assert.contains(sOpaMessage, /failingOpaTest/);
+					}
 				}
 			});
 
@@ -591,6 +595,7 @@ sap.ui.define([
 				success: function ($Messages) {
 					QUnit.assert.strictEqual($Messages.eq(0).text(), "Test timed out");
 					var sOpaMessage = $Messages.eq(1).text();
+					QUnit.assert.contains(sOpaMessage, "QUnit timeout");
 					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
 					QUnit.assert.doesNotContain(sOpaMessage, "Log message that should not appear in the error");
 				}

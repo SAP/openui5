@@ -26,10 +26,10 @@ QUnit.config.reorder = false;
 
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/thirdparty/URI",
 	"unitTests/utils/loggerInterceptor",
-	"sap/ui/Device",
-	"sap/ui/thirdparty/URI"
-], function ($, loggerInterceptor, Device,URI) {
+	"unitTests/utils/browser",
+], function ($, URI, loggerInterceptor, browser) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -435,43 +435,71 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("Should stop running tests and fail the promise if 'stopQueue' is called", function(assert) {
-		// System under Test
+	QUnit.test("Should stop running tests and fail the promise if 'stopQueue' is called", function (assert) {
 		var oOpa = new Opa(),
 			fnDone = assert.async(),
 			fnShouldNotBeCalled = sinon.spy();
 
 		function callingFunction () {
 			Opa.stopQueue();
-			// stop during check should not trigger success
+			// stop during check should prevent success from running
 			return true;
 		}
 
-		// Act
 		oOpa.waitFor({
-			check : function () {
-				// special named function for stacks
-				callingFunction();
+			check: function () {
+				// use named function for stack validation
+				return callingFunction();
 			},
-			success : fnShouldNotBeCalled
+			success: fnShouldNotBeCalled
 		});
 
 		oOpa.emptyQueue().fail(function () {
+			sinon.assert.calledOnce(this.fnErrorLogStub);
+
 			oOpa.waitFor({success: fnShouldNotBeCalled});
 
 			Opa.emptyQueue().fail(function () {
 				sinon.assert.notCalled(fnShouldNotBeCalled);
 				sinon.assert.calledTwice(this.fnErrorLogStub);
-				if (theCurrentBrowserSupportsStacktraces()) {
-					sinon.assert.calledWith(this.fnErrorLogStub, sinon.match(/callingFunction/), "Opa");
+				if (browser.supportsStacktraces()) {
+					sinon.assert.alwaysCalledWithMatch(this.fnErrorLogStub, "callingFunction", "Opa");
 				}
-				sinon.assert.alwaysCalledWith(this.fnErrorLogStub, sinon.match(/Queue was stopped manually/) ,"Opa");
+				sinon.assert.alwaysCalledWithMatch(this.fnErrorLogStub, "Queue was stopped manually","Opa");
 				fnDone();
 			}.bind(this));
 
-			// stop twice to see if state is deleted correctly
+			// stop again outside check/success to validate state is deleted correctly
 			callingFunction();
 		}.bind(this));
+	});
+
+	QUnit.test("Should show info about last executed check on QUnit timeout", function callingFunction (assert) {
+		var oOpa = new Opa(),
+			fnCheckStub = sinon.stub(),
+			fnDone = assert.async();
+
+		fnCheckStub.returns(false);
+
+		oOpa.waitFor({
+			check: fnCheckStub,
+			success: function () {}
+		});
+
+		oOpa.emptyQueue().fail(function () {
+			sinon.assert.calledOnce(this.fnErrorLogStub);
+			if (browser.supportsStacktraces()) {
+				sinon.assert.calledWithMatch(this.fnErrorLogStub, "callingFunction", "Opa");
+			}
+			sinon.assert.calledWithMatch(this.fnErrorLogStub, "QUnit timeout", "Opa");
+			fnDone();
+		}.bind(this));
+
+		setTimeout(function () {
+			// _stopQueue on QUnit timeout is called outside the queue
+			// put this in a timeout to ensure the queue is started
+			Opa._stopQueue({qunitTimeout: true});
+		}, 50);
 	});
 
 	QUnit.module("Timeouts", {
@@ -519,27 +547,6 @@ sap.ui.require([
 
 	});
 
-	function theCurrentBrowserSupportsStacktraces () {
-		if (Device.browser.phantomJS) {
-			return false;
-		}
-
-		//Incident 1580223677: IOS does not support stacktraces
-		if (Device.os.ios) {
-			return false;
-		}
-
-		if(Device.browser.safari) {
-			return false;
-		}
-
-		if (navigator.userAgent.indexOf("SAPFioriClient") !== -1) {
-			return false;
-		}
-
-		return true;
-	}
-
 	QUnit.test("Should reject the promise if no error handler is defined", function thisIsTheCallingFunction (assert) {
 		// System under Test
 		var oOpa = new Opa();
@@ -559,7 +566,7 @@ sap.ui.require([
 			assert.ok(oOptions, "Options are passed");
 			assert.ok(oOptions.errorMessage, "Error message is there");
 
-			if (theCurrentBrowserSupportsStacktraces()) {
+			if (browser.supportsStacktraces()) {
 				assert.ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
 			}
 
@@ -601,7 +608,7 @@ sap.ui.require([
 			assert.ok(oOptions, "Options are passed");
 			assert.ok(oOptions.errorMessage, "Error message is there");
 
-			if (theCurrentBrowserSupportsStacktraces()) {
+			if (browser.supportsStacktraces()) {
 				assert.ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
 				assert.ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
 			}
@@ -793,8 +800,7 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Should throw an exception if EmptyQueue function is called twice", function(assert) {
-		// System under Test
+	QUnit.test("Should throw an exception if emptyQueue is called twice", function (assert) {
 		var oOpa = new Opa();
 
 		oOpa.waitFor({});
@@ -802,16 +808,16 @@ sap.ui.require([
 		oOpa.waitFor({});
 
 		assert.throws(
-				function() {
-					Opa.emptyQueue();
-				},
-				new Error("Opa is emptying its queue. Calling Opa.emptyQueue() is not supported at this time.")
+			function() {
+				Opa.emptyQueue();
+			},
+			new Error("Opa is emptying its queue. Calling Opa.emptyQueue() is not supported at this time.")
 		);
 
 		// cleanup the OPA queue to avoid side effects on following tests
 		Opa.stopQueue();
 
-		// make sure no exception is thrown now
+		// no exception should be thrown now after the queue is stopped
 		Opa.emptyQueue();
 	});
 
