@@ -4,10 +4,10 @@
 
 // Provides control sap.m.QuickView.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool',
+		'./library', 'sap/ui/Device', 'sap/ui/core/IconPool',
 		'./QuickViewBase', './ResponsivePopover', './NavContainer',
 		'./Page', './Bar', './Button'],
-	function(jQuery, library, Control, IconPool,
+	function(library, Device, IconPool,
 			QuickViewBase, ResponsivePopover, NavContainer,
 			Page, Bar, Button) {
 	"use strict";
@@ -237,7 +237,7 @@ sap.ui.define([
 
 			// add a close button on phone devices when there are no pages
 			var aPages = this.getAggregation("pages");
-			if (!aPages && sap.ui.Device.system.phone) {
+			if (!aPages && Device.system.phone) {
 				this._addEmptyPage();
 			}
 
@@ -280,7 +280,7 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickView.prototype._afterOpen = function(oEvent) {
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			this._restoreFocus();
 		}
 	};
@@ -347,7 +347,7 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickView.prototype.getCloseButton = function() {
-		if (!sap.ui.Device.system.phone) {
+		if (!Device.system.phone) {
 			return undefined;
 		}
 
@@ -445,4 +445,4 @@ sap.ui.define([
 
 	return QuickView;
 
-}, /* bExport= */true);
+});

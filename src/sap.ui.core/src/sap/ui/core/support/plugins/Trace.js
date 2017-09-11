@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Trace (Trace support plugin)
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', "sap/ui/core/format/DateFormat"],
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/format/DateFormat'],
 	function(jQuery, Plugin, DateFormat) {
 	"use strict";
 

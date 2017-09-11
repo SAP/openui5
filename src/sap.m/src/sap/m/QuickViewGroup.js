@@ -4,8 +4,8 @@
 
 // Provides control sap.m.QuickViewGroup
 sap.ui.define([
-		'jquery.sap.global', './library', 'sap/ui/core/Element'],
-	function(jQuery, library, Element) {
+		'./library', 'sap/ui/core/Element'],
+	function(library, Element) {
 		"use strict";
 
 		/**
@@ -98,4 +98,4 @@ sap.ui.define([
 
 		return Group;
 
-	}, /* bExport= */true);
+	});

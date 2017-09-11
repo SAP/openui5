@@ -9,7 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		'sap/ui/core/support/controls/TimelineOverview',
 		'sap/m/MessageToast',
 		'sap/ui/thirdparty/jszip',
-		'sap/ui/core/util/File'
+		'sap/ui/core/util/File',
+		'jquery.sap.trace'
 	],
 	function(jQuery, Plugin, InteractionSlider, InteractionTree, TimelineOverview, MessageToast, JSZip, File) {
 		"use strict";

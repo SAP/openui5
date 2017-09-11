@@ -365,5 +365,5 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 
 		return BusyDialog;
 
-	}, /* bExport= */ true
+	}
 );

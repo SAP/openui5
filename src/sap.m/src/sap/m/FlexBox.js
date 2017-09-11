@@ -3,9 +3,26 @@
  */
 
 // Provides control sap.m.FlexBox.
-sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', './library', 'sap/ui/core/Control'],
-	function(jQuery, FlexBoxStylingHelper, FlexItemData, library, Control) {
-	    "use strict";
+sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', './library', 'sap/ui/core/Control', 'sap/ui/core/RenderManager'],
+	function(jQuery, FlexBoxStylingHelper, FlexItemData, library, Control, RenderManager) {
+		"use strict";
+
+
+
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
+
+	// shortcut for sap.m.FlexAlignContent
+	var FlexAlignContent = library.FlexAlignContent;
+
+	// shortcut for sap.m.FlexWrap
+	var FlexWrap = library.FlexWrap;
+
+	// shortcut for sap.m.FlexAlignItems
+	var FlexAlignItems = library.FlexAlignItems;
+
+	// shortcut for sap.m.FlexJustifyContent
+	var FlexJustifyContent = library.FlexJustifyContent;
 
 
 
@@ -67,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#flex-direction-property
 			 */
-			direction : {type : "sap.m.FlexDirection", group : "Appearance", defaultValue : sap.m.FlexDirection.Row},
+			direction : {type : "sap.m.FlexDirection", group : "Appearance", defaultValue : FlexDirection.Row},
 
 			/**
 			 * Determines whether the <code>sap.m.FlexBox</code> will be sized to completely fill its container. If the <code>sap.m.FlexBox</code> is inserted into a Page, the property 'enableScrolling' of the Page needs to be set to 'false' for the FlexBox to fit the entire viewport.
@@ -79,21 +96,21 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 			 * <br>
 			 * We recommend to use <code>Bare</code> in most cases to avoid layout issues due to browser inconsistencies.
 			 */
-			renderType : {type : "sap.m.FlexRendertype", group : "Misc", defaultValue : sap.m.FlexRendertype.Div},
+			renderType : {type : "sap.m.FlexRendertype", group : "Misc", defaultValue : FlexRendertype.Div},
 
 			/**
 			 * Determines the layout behavior along the main axis.
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#justify-content-property
 			 */
-			justifyContent : {type : "sap.m.FlexJustifyContent", group : "Appearance", defaultValue : sap.m.FlexJustifyContent.Start},
+			justifyContent : {type : "sap.m.FlexJustifyContent", group : "Appearance", defaultValue : FlexJustifyContent.Start},
 
 			/**
 			 * Determines the layout behavior of items along the cross-axis. "Baseline" is not supported in Internet Explorer 10.
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#align-items-property
 			 */
-			alignItems : {type : "sap.m.FlexAlignItems", group : "Appearance", defaultValue : sap.m.FlexAlignItems.Stretch},
+			alignItems : {type : "sap.m.FlexAlignItems", group : "Appearance", defaultValue : FlexAlignItems.Stretch},
 
 			/**
 			 * Determines the wrapping behavior of the flex container. This property has no effect in older browsers, e.g. Android Native 4.3 and below.
@@ -102,7 +119,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 			 *
 			 * @since 1.36.0
 			 */
-			wrap : {type : "sap.m.FlexWrap", group : "Appearance", defaultValue : sap.m.FlexWrap.NoWrap},
+			wrap : {type : "sap.m.FlexWrap", group : "Appearance", defaultValue : FlexWrap.NoWrap},
 
 			/**
 			 * Determines the layout behavior of container lines when there's extra space along the cross-axis. This property has no effect in Internet Explorer 10.
@@ -111,14 +128,14 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 			 *
 			 * @since 1.36.0
 			 */
-			alignContent : {type : "sap.m.FlexAlignContent", group : "Appearance", defaultValue : sap.m.FlexAlignContent.Stretch},
+			alignContent : {type : "sap.m.FlexAlignContent", group : "Appearance", defaultValue : FlexAlignContent.Stretch},
 
 			/**
 			 * Defines the background style of the <code>sap.m.FlexBox</code>.
 			 *
 			 * @since 1.38.5
 			 */
-			backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: sap.m.BackgroundDesign.Transparent}
+			backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: BackgroundDesign.Transparent}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -140,10 +157,10 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 	 */
 	FlexBox.prototype.init = function() {
 		// Make sure that HBox and VBox have a valid direction
-		if (this instanceof sap.m.HBox && (this.getDirection() !== sap.m.FlexDirection.Row || this.getDirection() !== FlexDirection.RowReverse)) {
+		if (this instanceof sap.m.HBox && (this.getDirection() !== FlexDirection.Row || this.getDirection() !== FlexDirection.RowReverse)) {
 			this.setDirection('Row');
 		}
-		if (this instanceof sap.m.VBox && (this.getDirection() !== sap.m.FlexDirection.Column || this.getDirection() !== FlexDirection.ColumnReverse)) {
+		if (this instanceof sap.m.VBox && (this.getDirection() !== FlexDirection.Column || this.getDirection() !== FlexDirection.ColumnReverse)) {
 			this.setDirection('Column');
 		}
 
@@ -229,7 +246,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 	 * @param {object} oItem Inserted item.
 	 */
 	FlexBox.prototype._onItemInserted = function(oItem) {
-		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
+		if (oItem && !(oItem instanceof FlexBox)) {
 			oItem.attachEvent("_change", this._onItemChange, this);
 			if (this.getRenderType() === FlexRendertype.Bare) {
 				oItem.addEventDelegate(this._oItemDelegate, oItem);
@@ -246,7 +263,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 	 * @param {object} oItem Removed item.
 	 */
 	FlexBox.prototype._onItemRemoved = function(oItem) {
-		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
+		if (oItem && !(oItem instanceof FlexBox)) {
 			oItem.detachEvent("_change", this._onItemChange, this);
 			if (this.getRenderType() === FlexRendertype.Bare) {
 				oItem.removeEventDelegate(this._oItemDelegate, oItem);
@@ -276,7 +293,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 		if (oItem.getLayoutData()) {
 			oWrapper = jQuery.sap.byId(oItem.getLayoutData().getId());
 		} else {
-			oWrapper = jQuery.sap.byId(sap.ui.core.RenderManager.createInvisiblePlaceholderId(oItem)).parent();
+			oWrapper = jQuery.sap.byId(RenderManager.createInvisiblePlaceholderId(oItem)).parent();
 		}
 
 		if (oControlEvent.getParameter("newValue")) {
@@ -521,4 +538,4 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 
 	return FlexBox;
 
-}, /* bExport= */ true);
+});

@@ -4,7 +4,7 @@
 
 // Provides control sap.m.QuickViewBase.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.sap.dom'],
+	'jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.sap.dom', 'jquery.sap.keycodes'],
 	function(jQuery, library, Control) {
 	"use strict";
 
@@ -422,4 +422,4 @@ sap.ui.define([
 
 		return QuickViewBase;
 
-}, /* bExport= */true);
+});

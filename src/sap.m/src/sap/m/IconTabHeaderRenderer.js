@@ -2,14 +2,17 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
-	function(jQuery, IconPool) {
+sap.ui.define(['jquery.sap.global', 'sap/m/library'],
+	function(jQuery, library) {
 	"use strict";
 
-/**
-	 * HBox renderer.
-	 * @namespace
-	 */
+	// shortcut for sap.m.IconTabFilterDesign
+	var IconTabFilterDesign = library.IconTabFilterDesign;
+
+	/**
+		 * HBox renderer.
+		 * @namespace
+		 */
 	var IconTabHeaderRenderer = {
 	};
 
@@ -98,7 +101,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oItem.render(oRM);
 
 			if (oItem instanceof sap.m.IconTabFilter) {
-				bIsHorizontalDesign = oItem.getDesign() === sap.m.IconTabFilterDesign.Horizontal;
+				bIsHorizontalDesign = oItem.getDesign() === IconTabFilterDesign.Horizontal;
 				if (bIsHorizontalDesign) {
 					bHasHorizontalDesign = true;
 				}
