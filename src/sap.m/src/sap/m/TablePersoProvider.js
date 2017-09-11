@@ -142,4 +142,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 	return TablePersoProvider;
 
-}, /* bExport= */ true);
+});
