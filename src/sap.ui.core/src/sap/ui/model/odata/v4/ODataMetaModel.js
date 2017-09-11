@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/model/ClientPropertyBinding",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/Context",
-	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/type/Int64",
@@ -20,8 +19,8 @@ sap.ui.define([
 	"./lib/_SyncPromise",
 	"./ValueListType"
 ], function (jQuery, BindingMode, ChangeReason, ClientListBinding, ClientPropertyBinding,
-		ContextBinding, BaseContext, FilterProcessor, MetaModel, OperationMode, Int64, URI, _Helper,
-		_SyncPromise, ValueListType) {
+		ContextBinding, BaseContext, MetaModel, OperationMode, Int64, URI, _Helper, _SyncPromise,
+		ValueListType) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -1201,7 +1200,7 @@ sap.ui.define([
 				oEntitySet,      // The entity set that starts the edit URL
 				sEntitySetName,  // The name of this entity set (decoded)
 				sInstancePath,   // The absolute path to the instance currently in evaluation
-			                     // (encoded; re-builds sResolvedPath)
+								 // (encoded; re-builds sResolvedPath)
 				sNavigationPath, // The relative meta path starting from oEntitySet (decoded)
 				//sPropertyPath, // The relative path following sEntityPath (parameter re-used -
 								 // encoded)
@@ -2150,4 +2149,4 @@ sap.ui.define([
 	};
 
 	return ODataMetaModel;
-}, /* bExport= */ true);
+});
