@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Tile.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control'],
-	function(jQuery, library, InvisibleText, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/Device'],
+	function(jQuery, library, InvisibleText, Control, Device) {
 	"use strict";
 
 
@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 	 */
 	Tile.prototype.init = function() {
 		//keyboard support for desktop environments
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			var fnOnSpaceOrEnter = jQuery.proxy(function(oEvent) {
 				if (oEvent.srcControl === this && !oEvent.isMarked()) {
 					this.ontap();
@@ -267,4 +267,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 	};
 	return Tile;
 
-}, /* bExport= */ true);
+});

@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/DatesRow', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/library'],
-	function(jQuery, DatesRow, CalendarUtils, CalendarDate, library) {
+sap.ui.define(['sap/ui/unified/calendar/DatesRow', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/library'],
+	function(DatesRow, CalendarUtils, CalendarDate, library) {
 		"use strict";
 
 	/*
@@ -162,4 +162,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/DatesRow', 'sap/ui/
 
 	return OneMonthDatesRow;
 
-}, /* bExport=  */ true);
+});

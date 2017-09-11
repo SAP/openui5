@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.m.Bar.
-sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/core/Control'],
-	function(jQuery, BarInPageEnabler, library, Control) {
+sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/Device'],
+	function(jQuery, BarInPageEnabler, library, Control, ResizeHandler, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.BarDesign
+	var BarDesign = library.BarDesign;
 
 
 
@@ -75,7 +80,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 			 * Determines the design of the bar. If set to auto, it becomes dependent on the place where the bar is placed.
 			 * @since 1.22
 			 */
-			design : {type : "sap.m.BarDesign", group : "Appearance", defaultValue : sap.m.BarDesign.Auto}
+			design : {type : "sap.m.BarDesign", group : "Appearance", defaultValue : BarDesign.Auto}
 		},
 		aggregations : {
 
@@ -165,7 +170,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	Bar.prototype._removeListenerFailsave = function(sListenerName) {
 		if (this[sListenerName]) {
 
-			sap.ui.core.ResizeHandler.deregister(this[sListenerName]);
+			ResizeHandler.deregister(this[sListenerName]);
 			this[sListenerName] = null;
 
 		}
@@ -199,22 +204,22 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 
 		this._updatePosition(bContentLeft, bContentMiddle, bContentRight);
 
-		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handleResize, this));
+		this._sResizeListenerId = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handleResize, this));
 
 		if (this.getEnableFlexBox()) {
 			return;
 		}
 
 		if (bContentLeft) {
-			this._sResizeListenerIdLeft = sap.ui.core.ResizeHandler.register(this._$LeftBar[0], jQuery.proxy(this._handleResize, this));
+			this._sResizeListenerIdLeft = ResizeHandler.register(this._$LeftBar[0], jQuery.proxy(this._handleResize, this));
 		}
 
 		if (bContentMiddle) {
-			this._sResizeListenerIdMid = sap.ui.core.ResizeHandler.register(this._$MidBarPlaceHolder[0], jQuery.proxy(this._handleResize, this));
+			this._sResizeListenerIdMid = ResizeHandler.register(this._$MidBarPlaceHolder[0], jQuery.proxy(this._handleResize, this));
 		}
 
 		if (bContentRight) {
-			this._sResizeListenerIdRight = sap.ui.core.ResizeHandler.register(this._$RightBar[0], jQuery.proxy(this._handleResize, this));
+			this._sResizeListenerIdRight = ResizeHandler.register(this._$RightBar[0], jQuery.proxy(this._handleResize, this));
 		}
 	};
 
@@ -357,7 +362,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 		// Chrome browser has a problem in providing the correct div size when image inside does not have width explicitly set
 		//since ff version 24 the calculation is correct, since we don't support older versions we won't check it
 		// Edge also works correctly with this calculation unlike IE
-		if (sap.ui.Device.browser.webkit || sap.ui.Device.browser.firefox || sap.ui.Device.browser.edge) {
+		if (Device.browser.webkit || Device.browser.firefox || Device.browser.edge) {
 
 			for (i = 0; i < aContainerChildren.length; i++) {
 
@@ -530,4 +535,4 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 
 	return Bar;
 
-}, /* bExport= */ true);
+});

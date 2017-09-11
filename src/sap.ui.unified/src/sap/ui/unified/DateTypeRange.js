@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.ui.unified.DateTypeRange.
-sap.ui.define(['jquery.sap.global', './DateRange', './library'],
-	function(jQuery, DateRange, library) {
+sap.ui.define(['./DateRange', './library'],
+	function(DateRange, library) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.unified.CalendarDayType
+	var CalendarDayType = library.CalendarDayType;
 
 
 
@@ -34,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './DateRange', './library'],
 			/**
 			 * Type of the date range.
 			 */
-			type : {type : "sap.ui.unified.CalendarDayType", group : "Appearance", defaultValue : sap.ui.unified.CalendarDayType.Type01}
+			type : {type : "sap.ui.unified.CalendarDayType", group : "Appearance", defaultValue : CalendarDayType.Type01}
 		}
 	}});
 
@@ -48,4 +53,4 @@ sap.ui.define(['jquery.sap.global', './DateRange', './library'],
 
 	return DateTypeRange;
 
-}, /* bExport= */ true);
+});

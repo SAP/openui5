@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/CalendarLegendRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, CalendarLegendRenderer, Renderer) {
+sap.ui.define(['sap/ui/unified/CalendarLegendRenderer', 'sap/ui/core/Renderer'],
+	function(CalendarLegendRenderer, Renderer) {
 		"use strict";
 
 

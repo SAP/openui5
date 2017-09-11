@@ -3,9 +3,12 @@
  */
 
 // Provides default renderer for control sap.m.TimePicker
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/LabelEnablement' ],
-	function(jQuery, Renderer, InputBaseRenderer, ValueStateSupport, LabelEnablement) {
+sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/library'],
+	function(Renderer, InputBaseRenderer, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * TimePicker renderer.
@@ -120,7 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 				sAriaDescribedBy = this.getAriaDescribedBy(oControl),
 				mAccessibilityState = oControl.getAccessibilityInfo();
 
-			if (oControl.getValueState() === sap.ui.core.ValueState.Error) {
+			if (oControl.getValueState() === ValueState.Error) {
 				mAccessibilityState.invalid = true;
 			}
 
@@ -157,5 +160,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		};
 
 		return TimePickerRenderer;
-
 	}, /* bExport= */ true);

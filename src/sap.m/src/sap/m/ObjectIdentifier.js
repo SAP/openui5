@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.m.ObjectIdentifier.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText'],
-	function(jQuery, library, Control, IconPool, InvisibleText) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(library, Control, IconPool, InvisibleText, coreLibrary, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 
@@ -78,7 +83,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 		},
 		aggregations : {
 
@@ -214,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectIdentifier.prototype._getIcon = function(sURI, sImageId) {
 
-		var sSize = sap.ui.Device.system.phone ? "1em" : "1em";
+		var sSize = Device.system.phone ? "1em" : "1em";
 		var oImage;
 
 		oImage = this._icon || IconPool.createControlByURI({
@@ -447,4 +452,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return ObjectIdentifier;
 
-}, /* bExport= */ true);
+});

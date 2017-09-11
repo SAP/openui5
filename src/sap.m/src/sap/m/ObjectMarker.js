@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.m.ObjectMarker.
-sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer'], function(jQuery, Control, Renderer) {
+sap.ui.define(["sap/ui/core/Control", 'sap/ui/core/Renderer', "sap/ui/Device", "sap/m/library", "sap/ui/core/library", "sap/ui/core/Icon"], function(Control, Renderer, Device, library, coreLibrary, Icon) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.m.ObjectMarkerVisibility
+	var ObjectMarkerVisibility = library.ObjectMarkerVisibility;
 
 	/**
 	 * Constructor for a new ObjectMarker.
@@ -232,7 +238,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	 */
 	ObjectMarker.prototype.init = function() {
 		// Defines custom screen range set: smaller or equal 600px defines 'small' and bigger that defines 'large' screen
-		sap.ui.Device.media.initRangeSet("DeviceSet", [600], "px", ["small", "large"]);
+		Device.media.initRangeSet("DeviceSet", [600], "px", ["small", "large"]);
 	};
 
 	/**
@@ -409,9 +415,9 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 			sDeviceType = this._getDeviceType(),
 			bTypeIconVisibility = oType && oType.icon.visibility[sDeviceType] || false;
 
-		return sVisibility === sap.m.ObjectMarkerVisibility.IconOnly ||
-			sVisibility === sap.m.ObjectMarkerVisibility.IconAndText ||
-			(sVisibility !== sap.m.ObjectMarkerVisibility.TextOnly && bTypeIconVisibility);
+		return sVisibility === ObjectMarkerVisibility.IconOnly ||
+			sVisibility === ObjectMarkerVisibility.IconAndText ||
+			(sVisibility !== ObjectMarkerVisibility.TextOnly && bTypeIconVisibility);
 	};
 
 	/**
@@ -426,9 +432,9 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 			sDeviceType = this._getDeviceType(),
 			bTypeTextVisibility = oType && oType.text.visibility[sDeviceType] || false;
 
-		return sVisibility === sap.m.ObjectMarkerVisibility.TextOnly ||
-			sVisibility === sap.m.ObjectMarkerVisibility.IconAndText ||
-			(sVisibility !== sap.m.ObjectMarkerVisibility.IconOnly && bTypeTextVisibility);
+		return sVisibility === ObjectMarkerVisibility.TextOnly ||
+			sVisibility === ObjectMarkerVisibility.IconAndText ||
+			(sVisibility !== ObjectMarkerVisibility.IconOnly && bTypeTextVisibility);
 	};
 
 	/**
@@ -500,7 +506,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	 */
 	ObjectMarker.prototype._createCustomText = function () {
 		return new CustomText(this.getId() + "-text", {
-			textAlign: sap.ui.core.TextAlign.Initial
+			textAlign: TextAlign.Initial
 		});
 	};
 
@@ -536,7 +542,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 		var oIcon = this.getAggregation("_iconControl");
 
 		if (!oIcon) {
-			oIcon = new sap.ui.core.Icon();
+			oIcon = new Icon();
 			this.setAggregation("_iconControl", oIcon);
 		}
 
@@ -580,7 +586,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 		var oIcon = this.getAggregation("_iconControl");
 
 		if (!oIcon) {
-			oIcon = new sap.ui.core.Icon();
+			oIcon = new Icon();
 			this.setAggregation("_iconControl", oIcon);
 		}
 
@@ -593,5 +599,4 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 
 
 	return ObjectMarker;
-
-}, /* bExport= */ true);
+});

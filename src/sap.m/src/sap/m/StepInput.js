@@ -3,9 +3,18 @@
  */
 
 // Provides control sap.m.StepInput.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRenderer", "sap/ui/core/Control", "sap/ui/core/IconPool"],
-	function (jQuery, Icon, Input, InputRenderer, Control, IconPool) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRenderer", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/ui/core/library", "sap/ui/core/Renderer", "sap/m/library", "jquery.sap.keycodes"],
+	function (jQuery, Icon, Input, InputRenderer, Control, IconPool, coreLibrary, Renderer, library) {
 		"use strict";
+
+		// shortcut for sap.m.InputType
+		var InputType = library.InputType;
+
+		// shortcut for sap.ui.core.TextAlign
+		var TextAlign = coreLibrary.TextAlign;
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * Constructor for a new <code>StepInput</code>.
@@ -119,7 +128,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					/**
 					 * Accepts the core enumeration ValueState.type that supports <code>None</code>, <code>Error</code>, <code>Warning</code> and <code>Success</code>.
 					 */
-					valueState: {type: "sap.ui.core.ValueState", group: "Data", defaultValue: sap.ui.core.ValueState.None},
+					valueState: {type: "sap.ui.core.ValueState", group: "Data", defaultValue: ValueState.None},
 					/**
 					 * Defines the text that appears in the value state message pop-up.
 					 * @since 1.52
@@ -225,7 +234,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		var aForwardableProps = ["enabled", "editable", "name", "placeholder", "required", "valueStateText"];
 
 		//Accessibility behaviour of the Input needs to be extended
-		var NumericInputRenderer = sap.ui.core.Renderer.extend(InputRenderer);
+		var NumericInputRenderer = Renderer.extend(InputRenderer);
 
 		/**
 		 * Overwrites the accessibility state using the getAccessibilityState method of the InputBaseRenderer.
@@ -282,7 +291,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			return "inner";
 		};
 
-		var NumericInput = sap.m.Input.extend("NumericInput", {
+		var NumericInput = Input.extend("NumericInput", {
 			constructor: function(sId, mSettings) {
 				return Input.apply(this, arguments);
 			},
@@ -489,8 +498,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			if (!this.getAggregation("_input")) {
 				var oNumericInput = new NumericInput({
 					id: this.getId() + "-input",
-					textAlign: sap.ui.core.TextAlign.End,
-					type: sap.m.InputType.Number,
+					textAlign: TextAlign.End,
+					type: InputType.Number,
 					editable: this.getEditable(),
 					enabled: this.getEnabled(),
 					liveChange: this._inputLiveChangeHandler
@@ -591,9 +600,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			}
 
 			if ((this._isNumericLike(max) && value > max) || (this._isNumericLike(min) && value < min)) {
-				this.setValueState(sap.ui.core.ValueState.Error);
+				this.setValueState(ValueState.Error);
 			} else {
-				this.setValueState(sap.ui.core.ValueState.None);
+				this.setValueState(ValueState.None);
 			}
 		};
 
@@ -921,14 +930,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				bWarning = false;
 
 			switch (valueState) {
-				case sap.ui.core.ValueState.Error:
+				case ValueState.Error:
 					bError = true;
 					break;
-				case sap.ui.core.ValueState.Warning:
+				case ValueState.Warning:
 					bWarning = true;
 					break;
-				case sap.ui.core.ValueState.Success:
-				case sap.ui.core.ValueState.None:
+				case ValueState.Success:
+				case ValueState.None:
 					break;
 				default:
 					return this;
@@ -1050,5 +1059,4 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		}
 
 		return StepInput;
-
-	}, /* bExport= */ true);
+	});

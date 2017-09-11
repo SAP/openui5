@@ -184,4 +184,4 @@ sap.ui.define(['jquery.sap.global', './DateTypeRange', 'sap/ui/core/format/DateF
 
 	return CalendarAppointment;
 
-}, /* bExport= */ true);
+});

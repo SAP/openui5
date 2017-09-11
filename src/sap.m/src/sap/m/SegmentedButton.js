@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SegmentedButton.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, library, Control, EnabledPropagator, ItemNavigation, ResizeHandler) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item', 'sap/ui/core/IconPool'],
+	function(library, Control, EnabledPropagator, ItemNavigation, ResizeHandler, Item, IconPool) {
 	"use strict";
 
 
@@ -753,7 +753,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		oSelect.destroyItems();
 		this._getVisibleButtons().forEach(function (oButton) {
 			sButtonText = oButton.getText();
-			oSelect.addItem(new sap.ui.core.Item({
+			oSelect.addItem(new Item({
 				key: iKey.toString(),
 				text: sButtonText ? sButtonText : oButton.getTooltip_AsString(),
 				enabled: oButton.getEnabled()
@@ -816,7 +816,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SegmentedButton.prototype._getIconAriaLabel = function (oIcon) {
-		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oIcon.getSrc()),
+		var oIconInfo = IconPool.getIconInfo(oIcon.getSrc()),
 			sResult = "";
 		if (oIconInfo && oIconInfo.name) {
 			sResult = oIconInfo.name;
@@ -857,4 +857,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return SegmentedButton;
 
-}, /* bExport= */ true);
+});

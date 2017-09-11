@@ -2,9 +2,12 @@
  * ${copyright}
  */
 // Provides control sap.m.TabStripItem.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", 'sap/ui/core/IconPool', './AccButton'],
-	function(jQuery, library, Item, ManagedObject, IconPool, AccButton) {
+sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sap/ui/core/IconPool", "./AccButton"],
+	function(library, Item, ManagedObject, IconPool, AccButton) {
 		"use strict";
+
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
 
 		/**
 		 * Constructor for a new <code>TabStripItem</code>.
@@ -161,7 +164,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 		 */
 		TabStripItem.prototype.init = function () {
 			var oButton = new AccButton({
-				type: sap.m.ButtonType.Transparent,
+				type: ButtonType.Transparent,
 				icon: IconPool.getIconURI("decline"),
 				tabIndex: "-1",
 				ariaHidden: "true"
@@ -200,4 +203,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 
 		return TabStripItem;
 
-	}, /* bExport= */ false);
+	});

@@ -23,7 +23,7 @@ sap.ui.define([],
 					}
 				},
 				rename: {
-				    changeType: "rename",
+					changeType: "rename",
 					domRef: function (oControl) {
 						return oControl.$().find('.sapMBtn > .sapMBtnInner > .sapMBtnContent')[0];
 					}

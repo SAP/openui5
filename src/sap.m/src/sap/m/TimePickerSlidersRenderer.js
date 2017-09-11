@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(["sap/ui/Device"], function(Device) {
 	"use strict";
 
 	/**
@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 		oRenderManager.write(">");
 
-		if (!sap.ui.Device.system.desktop) {
+		if (!Device.system.desktop) {
 			oRenderManager.write("<div id=\"" + oControl.getId() + "-label" + "\"");
 			oRenderManager.addClass("sapMTimePickerContainerLabel");
 			oRenderManager.writeClasses();

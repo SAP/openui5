@@ -3,9 +3,12 @@
  */
 
 // Provides default renderer for control sap.ui.layout.DynamicSideContent
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
+	function(library, Device) {
 		"use strict";
+
+		// shortcut for sap.ui.layout.SideContentPosition
+		var SideContentPosition = library.SideContentPosition;
 
 		var SIDE_CONTENT_LABEL = "SIDE_CONTENT_LABEL";
 
@@ -37,7 +40,7 @@ sap.ui.define([],
 				bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
 				position = oSideControl.getSideContentPosition();
 
-			if ((position === sap.ui.layout.SideContentPosition.Begin && !bPageRTL) || (bPageRTL && position === sap.ui.layout.SideContentPosition.End)) {
+			if ((position === SideContentPosition.Begin && !bPageRTL) || (bPageRTL && position === SideContentPosition.End)) {
 				this._renderSideContent(oRm, oSideControl, iSideContentId, bShouldSetHeight);
 				this._renderMainContent(oRm, oSideControl, iSideContentId, bShouldSetHeight);
 			} else {
@@ -74,7 +77,7 @@ sap.ui.define([],
 
 		DynamicSideContentRenderer._renderSideContent = function(oRm, oSideControl, iSideContentId, bShouldSetHeight) {
 			// on firefox the 'aside' side content is not shown when below the main content; use div instead
-			var sSideContentTag = sap.ui.Device.browser.firefox ? "div" : "aside";
+			var sSideContentTag = Device.browser.firefox ? "div" : "aside";
 
 			oRm.write("<" + sSideContentTag + " id='" + iSideContentId + "-SCGridCell'");
 

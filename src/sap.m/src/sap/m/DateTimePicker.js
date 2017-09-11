@@ -3,9 +3,12 @@
  */
 
 //Provides control sap.m.DateTimePicker.
-sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', './library'],
-		function(jQuery, DatePicker, Date1, library) {
+sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/format/DateFormat', 'sap/ui/core/LocaleData', 'jquery.sap.keycodes'],
+		function(jQuery, DatePicker, Date1, library, Control, Device, DateFormat, LocaleData) {
 	"use strict";
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
 	/**
 	 * Constructor for a new <code>DateTimePicker</code>.
@@ -106,7 +109,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	}});
 
-	var PopupContent = sap.ui.core.Control.extend("DateTimePickerPopup", {
+	var PopupContent = Control.extend("DateTimePickerPopup", {
 
 		metadata: {
 			aggregations: {
@@ -162,7 +165,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 			var oSwitcher = this.getAggregation("_switcher");
 
-			if (sap.ui.Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 				if (!oSwitcher) {
 					var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 					var sDateText = oResourceBundle.getText("DATETIMEPICKER_DATE");
@@ -190,11 +193,11 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		onAfterRendering: function() {
 
-			if (sap.ui.Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 				var oSwitcher = this.getAggregation("_switcher");
 				var sKey = oSwitcher.getSelectedKey();
 				this._switchVisibility(sKey);
-				if (sap.ui.Device.system.phone) {
+				if (Device.system.phone) {
 					this._adjustTimePickerHeightOnPhone();
 				}
 			}
@@ -310,10 +313,10 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 				oDateArguments.style = oDateArguments.style.substr(0, iSlashIndex);
 			}
 
-			this._oDisplayFormatDate = sap.ui.core.format.DateFormat.getInstance(oDateArguments);
+			this._oDisplayFormatDate = DateFormat.getInstance(oDateArguments);
 		}
 
-		return sap.ui.core.format.DateFormat.getDateTimeInstance(oMyArguments);
+		return DateFormat.getDateTimeInstance(oMyArguments);
 
 	};
 
@@ -399,7 +402,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			this._oPopup = new sap.m.ResponsivePopover(this.getId() + "-RP", {
 				showCloseButton: false,
 				showHeader: false,
-				placement: sap.m.PlacementType.VerticalPreferedBottom,
+				placement: PlacementType.VerticalPreferedBottom,
 				beginButton: new sap.m.Button(this.getId() + "-OK", { text: sOKButtonText, press: jQuery.proxy(_handleOkPress, this) }),
 				endButton: new sap.m.Button(this.getId() + "-Cancel", { text: sCancelButtonText, press: jQuery.proxy(_handleCancelPress, this) }),
 				content: this._oPopupContent
@@ -417,7 +420,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			this._oPopup.attachAfterOpen(_handleAfterOpen, this);
 			this._oPopup.attachAfterClose(_handleAfterClose, this);
 
-			if (sap.ui.Device.system.desktop) {
+			if (Device.system.desktop) {
 				this._oPopoverKeydownEventDelegate = {
 						onkeydown: function(oEvent) {
 							var oKC = jQuery.sap.KeyCodes,
@@ -604,7 +607,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		if (sDisplayFormat == "short" || sDisplayFormat == "medium" || sDisplayFormat == "long" || sDisplayFormat == "full") {
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
-			var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+			var oLocaleData = LocaleData.getInstance(oLocale);
 			sTimePattern = oLocaleData.getTimePattern(sDisplayFormat);
 		} else {
 			sTimePattern = sDisplayFormat;
@@ -622,4 +625,4 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	return DateTimePicker;
 
-}, /* bExport= */ true);
+});

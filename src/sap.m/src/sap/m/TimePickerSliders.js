@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersRenderer', './TimePickerSlider', './VisibleItem'],
-	function (jQuery, Control, SlidersRenderer, TimePickerSlider, VisibleItem) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersRenderer', './TimePickerSlider', './VisibleItem', 'sap/ui/core/LocaleData', 'sap/ui/Device', 'sap/ui/core/Locale'],
+	function (jQuery, Control, SlidersRenderer, TimePickerSlider, VisibleItem, LocaleData, Device, Locale) {
 		"use strict";
 
 		/**
@@ -82,25 +82,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 */
 		TimePickerSliders.prototype.init = function () {
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
-				aPeriods = sap.ui.core.LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
+				aPeriods = LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
 
 			this._fnLayoutChanged = jQuery.proxy(this._onOrientationChanged, this);
-			sap.ui.Device.resize.attachHandler(this._fnLayoutChanged);
+			Device.resize.attachHandler(this._fnLayoutChanged);
 
 			this._sAM = aPeriods[0];
 			this._sPM = aPeriods[1];
 		};
 
 		TimePickerSliders.prototype.exit = function () {
-			this.$().off(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
-			sap.ui.Device.resize.detachHandler(this._fnOrientationChanged);
+			this.$().off(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			Device.resize.detachHandler(this._fnOrientationChanged);
 		};
 
 		TimePickerSliders.prototype.onAfterRendering = function() {
-			this.$().off(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
-			this.$().on(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this._onmousewheel, this));
+			this.$().off(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().on(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this._onmousewheel, this));
 
-			if (!sap.ui.Device.browser.msie) {
+			if (!Device.browser.msie) {
 				/* This method is called here prematurely to ensure slider loading on time.
 				 * Make sure _the browser native focus_ is not actually set on the early call (the "true" param)
 				 * because that fires events and results in unexpected behaviors */
@@ -124,8 +124,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 			this.setAssociation("invokedBy", sId);
 
 			if (sap.ui.getCore().byId(sId)) {
-				oLocale = new sap.ui.core.Locale(sap.ui.getCore().byId(sId).getLocaleId());
-				aPeriods = sap.ui.core.LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
+				oLocale = new Locale(sap.ui.getCore().byId(sId).getLocaleId());
+				aPeriods = LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
 
 				this._sAM = aPeriods[0];
 				this._sPM = aPeriods[1];
@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 
 			this.setProperty("labelText", sLabelText, true);
 
-			if (!sap.ui.Device.system.desktop) {
+			if (!Device.system.desktop) {
 				$ContainerLabel = jQuery(this.getDomRef("label"));
 				if ($ContainerLabel) {
 					$ContainerLabel.html(sLabelText);
@@ -440,7 +440,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 */
 		TimePickerSliders.prototype._initFocus = function(bSkipDesktopFocus) {
 			// the focus is supposed to trigger setIsExpanded(true) for the desktop
-			if (sap.ui.Device.system.desktop && !bSkipDesktopFocus) {
+			if (Device.system.desktop && !bSkipDesktopFocus) {
 				this.getAggregation("_columns")[0].focus();
 			} else {
 				this.getAggregation("_columns")[0].setIsExpanded(true);
@@ -601,4 +601,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		return TimePickerSliders;
-	}, /* bExport= */ false);
+	});

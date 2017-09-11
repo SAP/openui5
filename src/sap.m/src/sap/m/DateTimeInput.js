@@ -4,9 +4,21 @@
 
 // Provides control sap.m.DateTimeInput.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/model/type/Date', 'sap/ui/model/type/Time',
-	'sap/ui/model/type/DateTime', 'sap/ui/model/odata/type/ODataType'],
-	function(jQuery, Control, library, Date1, Time, DateTime, ODataType) {
+	'sap/ui/model/type/DateTime', 'sap/ui/model/odata/type/ODataType', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(jQuery, Control, library, Date1, Time, DateTime, ODataType, coreLibrary, Device) {
 	"use strict";
+
+	// shortcut for sap.m.DateTimeInputType
+	var DateTimeInputType = library.DateTimeInputType;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constructor for a new DateTimeInput.
@@ -65,7 +77,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			/**
 			 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
 			 */
-			valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: sap.ui.core.ValueState.None },
+			valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None },
 
 			/**
 			 * Defines the text that appears in the value state message pop-up. If this is not specified, a default text is shown from the resource bundle.
@@ -93,18 +105,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			 * Defines the horizontal alignment of the text that is shown inside the input field.
 			 * @since 1.26.0
 			 */
-			textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: sap.ui.core.TextAlign.Initial },
+			textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: TextAlign.Initial },
 
 			/**
 			 * Defines the text directionality of the input field, e.g. <code>RTL</code>, <code>LTR</code>
 			 * @since 1.28.0
 			 */
-			textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: sap.ui.core.TextDirection.Inherit },
+			textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: TextDirection.Inherit },
 
 			/**
 			 * Type of DateTimeInput (e.g. Date, Time, DateTime)
 			 */
-			type : {type : "sap.m.DateTimeInputType", group : "Data", defaultValue : sap.m.DateTimeInputType.Date},
+			type : {type : "sap.m.DateTimeInputType", group : "Data", defaultValue : DateTimeInputType.Date},
 
 			/**
 			 * Displays date value in this given format in text field. Default value is taken from locale settings.
@@ -171,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 	!(function(oPrototype, $, oDevice) {
 
-		var oi18n = sap.m.getLocaleData();
+		var oi18n = library.getLocaleData();
 
 		$.extend(oPrototype, {
 			_types : {
@@ -198,12 +210,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			});
 		});
 
-	}(DateTimeInput.prototype, jQuery, sap.ui.Device));
+	}(DateTimeInput.prototype, jQuery, Device));
 
 	DateTimeInput.prototype.init = function(){
 
 		// as date is the default type - > initialize with DatePicker
-		this.setType(sap.m.DateTimeInputType.Date);
+		this.setType(DateTimeInputType.Date);
 
 	};
 
@@ -237,12 +249,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		var oPicker;
 
 		switch (type) {
-			case sap.m.DateTimeInputType.DateTime:
+			case DateTimeInputType.DateTime:
 				jQuery.sap.require("sap.m.DateTimePicker");
 				oPicker = new sap.m.DateTimePicker(this.getId() + "-Picker");
 				break;
 
-			case sap.m.DateTimeInputType.Time:
+			case DateTimeInputType.Time:
 				jQuery.sap.require("sap.m.TimePicker");
 				oPicker = new sap.m.TimePicker(this.getId() + "-Picker",
 					{localeId: sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString()});
@@ -540,15 +552,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			oNewPicker;
 
 		switch  (type) {
-			case sap.m.DateTimeInputType.Time:
-			case sap.m.DateTimeInputType.Date:
-			case sap.m.DateTimeInputType.DateTime:
+			case DateTimeInputType.Time:
+			case DateTimeInputType.Date:
+			case DateTimeInputType.DateTime:
 				if (bTimeOnlyPattern && picker.getMetadata().getName() !== "sap.m.TimePicker") {
-					sNewPickerType = sap.m.DateTimeInputType.Time;
+					sNewPickerType = DateTimeInputType.Time;
 				} else if (bDateOnlyPattern && picker.getMetadata().getName() !== "sap.m.DatePicker") {
-					sNewPickerType = sap.m.DateTimeInputType.Date;
+					sNewPickerType = DateTimeInputType.Date;
 				} else if (bDateTimePattern && picker.getMetadata().getName() !== "sap.m.DateTimePicker") {
-					sNewPickerType = sap.m.DateTimeInputType.DateTime;
+					sNewPickerType = DateTimeInputType.DateTime;
 				}
 				break;
 			default: {
@@ -628,4 +640,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 	return DateTimeInput;
 
-}, /* bExport= */ true);
+});

@@ -4,8 +4,9 @@
 
 // Provides the Design Time Metadata for the sap.m.ObjectIdentifier control.
 sap.ui.define([
-	'sap/m/library'
-], function(MLibrary) {
+	'sap/m/library',
+	'jquery.sap.global'
+], function(MLibrary, jQuery) {
 	"use strict";
 	var oWrapper;
 	return {

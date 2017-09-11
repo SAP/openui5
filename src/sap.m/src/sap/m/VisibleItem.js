@@ -81,4 +81,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		};
 
 		return VisibleItem;
-	}, false);
+	});

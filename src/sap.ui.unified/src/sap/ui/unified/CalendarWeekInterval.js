@@ -3,9 +3,9 @@
  */
 
 //Provides control sap.ui.unified.CalendarWeekInterval.
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', './library',
+sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', './library',
 		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarDateIntervalRenderer'],
-	function (jQuery, CalendarUtils, CalendarDate, library, CalendarDateInterval, CalendarDateIntervalRenderer) {
+	function (CalendarUtils, CalendarDate, library, CalendarDateInterval, CalendarDateIntervalRenderer) {
 		"use strict";
 
 		/*
@@ -43,9 +43,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		 * @private
 		 * @since 1.44.0
 		 * @alias sap.ui.unified.CalendarWeekInterval
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var CalendarWeekInterval = CalendarDateInterval.extend("CalendarWeekInterval", /** @lends sap.ui.unified.CalendarWeekInterval.prototype */  {
+		var CalendarWeekInterval = CalendarDateInterval.extend("sap.ui.unified.CalendarWeekInterval", /** @lends sap.ui.unified.CalendarWeekInterval.prototype */  {
 			renderer: CalendarDateIntervalRenderer
 		});
 
@@ -179,4 +178,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		return CalendarWeekInterval;
 
-	}, /* bExport= */ true);
+	});

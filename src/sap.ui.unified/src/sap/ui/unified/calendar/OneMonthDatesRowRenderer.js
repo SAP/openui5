@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarUtils', './MonthRenderer', './DatesRowRenderer'],
-	function(jQuery, Renderer, CalendarUtils, MonthRenderer, DatesRowRenderer) {
+sap.ui.define(['sap/ui/core/Renderer', './MonthRenderer', './DatesRowRenderer'],
+	function(Renderer, MonthRenderer, DatesRowRenderer) {
 		"use strict";
 
 		/**

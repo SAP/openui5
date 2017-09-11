@@ -3,9 +3,18 @@
  */
 
 // Provides control sap.m.MenuButton.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', './SplitButton', './Dialog', 'sap/ui/Device', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, library, Control, Button, SplitButton, Dialog, Device, EnabledPropagator) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', './SplitButton', 'sap/ui/Device', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/library'],
+	function(jQuery, library, Control, Button, SplitButton, Device, EnabledPropagator, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.MenuButtonMode
+		var MenuButtonMode = library.MenuButtonMode;
+
+		// shortcut for sap.ui.core.TextDirection
+		var TextDirection = coreLibrary.TextDirection;
+
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
 
 		/**
 		 * Constructor for a new MenuButton.
@@ -39,7 +48,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				/**
 				 * Defines the type of the <code>MenuButton</code> (for example, Default, Accept, Reject, Back, etc.)
 				 */
-				type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : sap.m.ButtonType.Default},
+				type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : ButtonType.Default},
 
 				/**
 				 * Defines the width of the <code>MenuButton</code>.
@@ -78,12 +87,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				 * Specifies the element's text directionality with enumerated options.
 				 * By default, the control inherits text direction from the DOM.
 				 */
-				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 				/**
 				 * Defines whether the <code>MenuButton</code> is set to <code>Regular</code> or <code>Split</code> mode.
 				 */
-				buttonMode : { type : "sap.m.MenuButtonMode", group : "Misc", defaultValue : sap.m.MenuButtonMode.Regular },
+				buttonMode : { type : "sap.m.MenuButtonMode", group : "Misc", defaultValue : MenuButtonMode.Regular },
 
 				/**
 				 * Controls whether the default action handler is invoked always or it is invoked only until a menu item is selected.
@@ -370,7 +379,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		};
 
 		MenuButton.prototype._isSplitButton = function() {
-			return this.getButtonMode() === sap.m.MenuButtonMode.Split;
+			return this.getButtonMode() === MenuButtonMode.Split;
 		};
 
 		/**
@@ -384,7 +393,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		MenuButton.prototype.setProperty = function(sPropertyName, vValue, bSuppressInvalidate) {
 			// Several button type property values are not allowed
 			function isForbiddenType(sType) {
-				var aTypes = [sap.m.ButtonType.Up, sap.m.ButtonType.Back, sap.m.ButtonType.Unstyled];
+				var aTypes = [ButtonType.Up, ButtonType.Back, ButtonType.Unstyled];
 				return aTypes.indexOf(sType) !== -1;
 			}
 
@@ -495,5 +504,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		};
 
 		return MenuButton;
-
-	}, /* bExport= */ true);
+	});

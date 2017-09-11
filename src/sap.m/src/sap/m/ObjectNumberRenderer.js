@@ -2,9 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
+	function(Renderer, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 	/**
@@ -39,7 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
-		if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+		if (sTextDir !== TextDirection.Inherit) {
 			oRm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 
@@ -54,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 		// ARIA
 		// when the status is "None" there is nothing for reading
-		if (oON.getState() !== sap.ui.core.ValueState.None) {
+		if (oON.getState() !== ValueState.None) {
 			oRm.writeAccessibilityState({
 			labelledby: oON.getId() + "-state"
 			});
@@ -97,20 +104,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		var sARIAStateText = "",
 			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-		if (oON.getState() == sap.ui.core.ValueState.None) {
+		if (oON.getState() == ValueState.None) {
 			return;
 		}
 
 		oRm.write("<span id='" + oON.getId() + "-state' class='sapUiInvisibleText' aria-hidden='true'>");
 
 		switch (oON.getState()) {
-			case sap.ui.core.ValueState.Error:
+			case ValueState.Error:
 				sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR");
 				break;
-			case sap.ui.core.ValueState.Warning:
+			case ValueState.Warning:
 				sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_WARNING");
 				break;
-			case sap.ui.core.ValueState.Success:
+			case ValueState.Success:
 				sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_SUCCESS");
 				break;
 		}

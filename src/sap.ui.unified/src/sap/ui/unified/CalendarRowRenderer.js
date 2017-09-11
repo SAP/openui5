@@ -2,9 +2,19 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppointment', 'sap/ui/unified/CalendarRow'],
-	function(jQuery, UniversalDate, CalendarAppointment, CalendarRow) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppointment', 'sap/ui/unified/CalendarRow', 'sap/ui/Device', 'sap/ui/unified/library'],
+	function(jQuery, UniversalDate, CalendarAppointment, CalendarRow, Device, library) {
 	"use strict";
+
+
+	// shortcut for sap.ui.unified.CalendarDayType
+	var CalendarDayType = library.CalendarDayType;
+
+	// shortcut for sap.ui.unified.CalendarIntervalType
+	var CalendarIntervalType = library.CalendarIntervalType;
+
+	// shortcut for sap.ui.unified.CalendarAppointmentVisualization
+	var CalendarAppointmentVisualization = library.CalendarAppointmentVisualization;
 
 
 	/**
@@ -39,11 +49,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		oRm.writeControlData(oRow);
 		oRm.addClass("sapUiCalendarRow");
 
-		if (!sap.ui.Device.system.phone && oRow.getAppointmentsReducedHeight()) {
+		if (!Device.system.phone && oRow.getAppointmentsReducedHeight()) {
 			oRm.addClass("sapUiCalendarRowAppsRedHeight");
 		}
 
-		if (sVisualisation != sap.ui.unified.CalendarAppointmentVisualization.Standard) {
+		if (sVisualisation != CalendarAppointmentVisualization.Standard) {
 			oRm.addClass("sapUiCalendarRowVis" + sVisualisation);
 		}
 
@@ -68,7 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 			oRm.addStyle("height", sHeight);
 		}
 
-//		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+	//		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 		oRm.writeAccessibilityState(oRow/*, mAccProps*/);
 
 		oRm.writeClasses();
@@ -112,15 +122,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		var bLastOfType = false;
 
 		switch (sIntervalType) {
-			case sap.ui.unified.CalendarIntervalType.Hour:
+			case CalendarIntervalType.Hour:
 				aNonWorkingItems = oRow.getNonWorkingHours() || [];
 				iStartOffset = oStartDate.getUTCHours();
 				iNonWorkingMax = 24;
 				break;
 
-			case sap.ui.unified.CalendarIntervalType.Day:
-			case sap.ui.unified.CalendarIntervalType.Week:
-			case sap.ui.unified.CalendarIntervalType.OneMonth:
+			case CalendarIntervalType.Day:
+			case CalendarIntervalType.Week:
+			case CalendarIntervalType.OneMonth:
 				aNonWorkingItems = oRow._getNonWorkingDays();
 				aNonWorkingDates = oRow.getAggregation("_nonWorkingDates");
 				iStartOffset = oStartDate.getUTCDay();
@@ -130,7 +140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 				iNonWorkingSubMax = 24;
 				break;
 
-			case sap.ui.unified.CalendarIntervalType.Month:
+			case CalendarIntervalType.Month:
 				aNonWorkingSubItems = oRow._getNonWorkingDays();
 				iSubStartOffset = oStartDate.getUTCDay();
 				iNonWorkingSubMax = 7;
@@ -140,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 				break;
 		}
 
-		if (sIntervalType === sap.ui.unified.CalendarIntervalType.OneMonth && iIntervals === 1) {
+		if (sIntervalType === CalendarIntervalType.OneMonth && iIntervals === 1) {
 			this.renderSingleDayInterval(oRm, oRow, aAppointments, aTypes, aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, true, true);
 		} else {
 
@@ -153,23 +163,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 				bLastOfType = false;
 
 				switch (sIntervalType) {
-					case sap.ui.unified.CalendarIntervalType.Hour:
+					case CalendarIntervalType.Hour:
 						oIntervalNextStartDate.setUTCHours(oIntervalNextStartDate.getUTCHours() + 1);
 						if (oIntervalNextStartDate.getUTCHours() == 0) {
 							bLastOfType = true;
 						}
 						break;
 
-					case sap.ui.unified.CalendarIntervalType.Day:
-					case sap.ui.unified.CalendarIntervalType.Week:
-					case sap.ui.unified.CalendarIntervalType.OneMonth:
+					case CalendarIntervalType.Day:
+					case CalendarIntervalType.Week:
+					case CalendarIntervalType.OneMonth:
 						oIntervalNextStartDate.setUTCDate(oIntervalNextStartDate.getUTCDate() + 1);
 						if (oIntervalNextStartDate.getUTCDate() == 1) {
 							bLastOfType = true;
 						}
 						break;
 
-					case sap.ui.unified.CalendarIntervalType.Month:
+					case CalendarIntervalType.Month:
 						oIntervalNextStartDate.setUTCMonth(oIntervalNextStartDate.getUTCMonth() + 1);
 						if (oIntervalNextStartDate.getUTCMonth() == 0) {
 							bLastOfType = true;
@@ -214,7 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		oRm.addClass("sapUiCalendarRowAppsInt");
 		oRm.addStyle("width", iWidth + "%");
 
-		if (iInterval >= iDaysLength && oRow.getIntervalType() === sap.ui.unified.CalendarIntervalType.OneMonth){
+		if (iInterval >= iDaysLength && oRow.getIntervalType() === CalendarIntervalType.OneMonth){
 			oRm.addClass("sapUiCalItemOtherMonth");
 		}
 		for (i = 0; i < aNonWorkingItems.length; i++) {
@@ -282,17 +292,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 			var iSubIntervals = 0;
 
 			switch (sIntervalType) {
-			case sap.ui.unified.CalendarIntervalType.Hour:
+			case CalendarIntervalType.Hour:
 				iSubIntervals = 4;
 				break;
 
-			case sap.ui.unified.CalendarIntervalType.Day:
-			case sap.ui.unified.CalendarIntervalType.Week:
-			case sap.ui.unified.CalendarIntervalType.OneMonth:
+			case CalendarIntervalType.Day:
+			case CalendarIntervalType.Week:
+			case CalendarIntervalType.OneMonth:
 				iSubIntervals = 24;
 				break;
 
-			case sap.ui.unified.CalendarIntervalType.Month:
+			case CalendarIntervalType.Month:
 				var oStartDate = oRow._getStartDate();
 				var oIntervalStartDate = new UniversalDate(oStartDate);
 				oIntervalStartDate.setUTCMonth(oIntervalStartDate.getUTCMonth() + iInterval + 1, 0);
@@ -386,7 +396,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 
 		var sType = oIntervalHeader.appointment.getType();
 		var sColor = oIntervalHeader.appointment.getColor();
-		if (!sColor && sType && sType != sap.ui.unified.CalendarDayType.None) {
+		if (!sColor && sType && sType != CalendarDayType.None) {
 			oRm.addClass("sapUiCalendarRowAppsIntHead" + sType);
 		}
 
@@ -518,7 +528,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
-		if (!sColor && sType && sType != sap.ui.unified.CalendarDayType.None) {
+		if (!sColor && sType && sType != CalendarDayType.None) {
 			oRm.addClass("sapUiCalendarApp" + sType);
 		}
 
@@ -540,7 +550,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		oRm.write("<div");
 		oRm.addClass("sapUiCalendarAppCont");
 
-		if (sColor && oRow.getAppointmentsVisualization() === sap.ui.unified.CalendarAppointmentVisualization.Filled) {
+		if (sColor && oRow.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled) {
 			oRm.addStyle("background-color", oAppointment._getCSSColorForBackground(sColor));
 			oRm.writeStyles();
 		}
@@ -584,7 +594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 			sAriaText = sAriaText + "; " + sTooltip;
 		}
 
-		if (sType && sType != sap.ui.unified.CalendarDayType.None) {
+		if (sType && sType != CalendarDayType.None) {
 			// as legend must not be rendered add text of type
 			for (var i = 0; i < aTypes.length; i++) {
 				var oType = aTypes[i];
@@ -627,7 +637,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		oRm.addClass("sapUiCalendarMonthRowAppsS");
 		oRm.addStyle("width", iWidth + "%");
 
-		if (iInterval >= iDaysLength && oRow.getIntervalType() === sap.ui.unified.CalendarIntervalType.OneMonth){
+		if (iInterval >= iDaysLength && oRow.getIntervalType() === CalendarIntervalType.OneMonth){
 			oRm.addClass("sapUiCalItemOtherMonth");
 		}
 
@@ -696,17 +706,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 			var iSubIntervals = 0;
 
 			switch (sIntervalType) {
-				case sap.ui.unified.CalendarIntervalType.Hour:
+				case CalendarIntervalType.Hour:
 					iSubIntervals = 4;
 					break;
 
-				case sap.ui.unified.CalendarIntervalType.Day:
-				case sap.ui.unified.CalendarIntervalType.Week:
-				case sap.ui.unified.CalendarIntervalType.OneMonth:
+				case CalendarIntervalType.Day:
+				case CalendarIntervalType.Week:
+				case CalendarIntervalType.OneMonth:
 					iSubIntervals = 24;
 					break;
 
-				case sap.ui.unified.CalendarIntervalType.Month:
+				case CalendarIntervalType.Month:
 					var oIntervalStartDate = new UniversalDate(oRowStartDate);
 					oIntervalStartDate.setUTCMonth(oIntervalStartDate.getUTCMonth() + iInterval + 1, 0);
 					iSubIntervals = oIntervalStartDate.getUTCDate();

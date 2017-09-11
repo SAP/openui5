@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.MenuItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
-	function(jQuery, library, Item) {
+sap.ui.define(['./library', 'sap/ui/core/Item'],
+	function(library, Item) {
 		"use strict";
 
 
@@ -221,4 +221,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 
 		return MenuItem;
 
-	}, /* bExport= */ true);
+	});

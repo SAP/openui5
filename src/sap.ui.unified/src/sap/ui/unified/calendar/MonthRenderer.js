@@ -2,9 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/CalendarLegend'],
-	function(jQuery, CalendarUtils, CalendarDate, CalendarLegend) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/CalendarLegend', 'sap/ui/core/library', 'sap/ui/unified/library'],
+	function(jQuery, CalendarUtils, CalendarDate, CalendarLegend, coreLibrary, library) {
 	"use strict";
+
+
+	// shortcut for sap.ui.unified.CalendarDayType
+	var CalendarDayType = library.CalendarDayType;
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = coreLibrary.CalendarType;
 
 
 	/**
@@ -88,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			sCalendarType = oMonth.getPrimaryCalendarType(),
 			bShowWeekNumbers = oMonth.getShowWeekNumbers();
 
-		if (sCalendarType == sap.ui.core.CalendarType.Islamic || !bShowWeekNumbers) {
+		if (sCalendarType == CalendarType.Islamic || !bShowWeekNumbers) {
 			// on Islamic calendar week numbers are not used
 			sClasses = sClasses + " sapUiCalNoWeekNum";
 		}
@@ -244,7 +251,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		bShowWeekNumbers = oMonth.getShowWeekNumbers();
 
-		bWeekNum = oMonth.getPrimaryCalendarType() !== sap.ui.core.CalendarType.Islamic && bShowWeekNumbers; // on Islamic calendar week numbers are not used
+		bWeekNum = oMonth.getPrimaryCalendarType() !== CalendarType.Islamic && bShowWeekNumbers; // on Islamic calendar week numbers are not used
 
 		iLength = aDays.length;
 		for (i = 0; i < iLength; i++) {
@@ -388,8 +395,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-End";
 		}
 
-		if (oType && oType.type != sap.ui.unified.CalendarDayType.None) {
-			if (oType.type === sap.ui.unified.CalendarDayType.NonWorking) {
+		if (oType && oType.type != CalendarDayType.None) {
+			if (oType.type === CalendarDayType.NonWorking) {
 				oRm.addClass("sapUiCalItemWeekEnd");
 			} else {
 				oRm.addClass("sapUiCalItem" + oType.type);
@@ -428,7 +435,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		}
 		mAccProps["label"] = mAccProps["label"] + oHelper.oFormatLong.format(oDay.toUTCJSDate(), true);
 
-		if (oType && oType.type != sap.ui.unified.CalendarDayType.None) {
+		if (oType && oType.type != CalendarDayType.None) {
 			var sTypeLabelId,
 				oStaticLabel;
 
