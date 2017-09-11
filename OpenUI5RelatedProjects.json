@@ -151,5 +151,14 @@
 			"owner": "ui5lab",
 			"license": "Apache 2.0",
 			"type": "Tool"
-		}
+		},
+		"ui5-codecompletion": {
+			"name": "ui5-codecompletion",
+			"description": "node module (CLI) to configure WebStorm w/ UI5 code completion in *.js files",
+			"githubLink": "https://github.com/vobujs/ui5-codecompletion",
+			"documentationLink": "https://github.com/vobujs/ui5-codecompletion",
+			"owner": "vobu",
+			"license": "WTFPL",
+			"type": "Tool"
+		},
 	}
