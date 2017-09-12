@@ -48,6 +48,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 				details: oIssue.details,
 				ruleLibName: oIssue.rule.libName,
 				ruleId: oIssue.rule.id,
+				async: oIssue.rule.async === true, // Ensure async is either true or false
+				minVersion: oIssue.rule.minversion,
 				context: {
 					className: className,
 					id: oIssue.context.id

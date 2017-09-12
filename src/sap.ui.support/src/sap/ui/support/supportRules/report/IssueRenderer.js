@@ -38,6 +38,8 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			container += '<div class="expandable-title"> ' + ruleNumber + '. ' + getEscapedString(issue.name) + ' <span class="rule-issue-number">(' + issues.length + ' issues)</span></div></div>';
 			container += '<div id="' + groupId + '_rule_' + ruleNumber + '_content">';
 			container += '<div><span class="sapUiSupportLabel">Description: </span>' + getEscapedString(issue.description) + '</div>';
+			container += '<div><span class="sapUiSupportLabel">Min version: </span>' + getEscapedString(issue.minVersion) + '</div>';
+			container += '<div><span class="sapUiSupportLabel">Async: </span>' + getEscapedString(issue.async.toString()) + '</div>';
 			container += '<div><span class="sapUiSupportLabel">Resolution: </span>' + getEscapedString(issue.resolution) + '</div>';
 			container += '<div>';
 			if (issue.resolutionUrls) {

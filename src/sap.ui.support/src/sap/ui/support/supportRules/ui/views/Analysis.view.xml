@@ -114,6 +114,8 @@
 							<m:Text text="{/selectedRule/id}" />
 							<m:Label text="Title" />
 							<m:Text text="{/selectedRule/title}" />
+							<m:Label text="Async" />
+							<m:Text text="{= ${/selectedRule/async} === true }" />
 							<m:Label text="Audiences" />
 							<m:Text text="{/selectedRule/audiences}" />
 							<m:Label text="Categories" />
@@ -194,6 +196,35 @@
 					<f:content>
 						<m:Label text="ID" />
 						<m:Input value="{/editRule/id}" required = "true" />
+						<m:Label text="Async" />
+						<m:HBox>
+							<m:items>
+								<m:RadioButton groupName="asyncEditContext" text="true" selected="{= ${/editRule/async} === true }" select="onAsyncSwitch">
+									<m:customData>
+										<c:CustomData key="asyncEditContext" value="true" />
+									</m:customData>
+								</m:RadioButton>
+								<m:RadioButton groupName="asyncEditContext" text="false" selected="{= ${/editRule/async} !== true }" select="onAsyncSwitch">
+									<m:customData>
+										<c:CustomData key="asyncEditContext" value="false" />
+									</m:customData>
+								</m:RadioButton>
+								<c:Icon
+									src="sap-icon://message-warning"
+									class="sapUiSmallMarginBegin sapUiTinyMarginEnd"
+									color="#E09D00"
+									visible="{= ${/editRule/async} === true }">
+									<c:layoutData>
+										<m:FlexItemData alignSelf="Center" />
+									</c:layoutData>
+								</c:Icon>
+								<m:Text text="{/resolveDescription}" visible="{= ${/editRule/async} === true }">
+									<m:layoutData>
+										<m:FlexItemData alignSelf="Center" />
+									</m:layoutData>
+								</m:Text>
+							</m:items>
+						</m:HBox>
 						<m:Label text="Categories" />
 						<m:MultiComboBox selectedKeys="{/editRule/categories}" items="{/categories}"  required = "true">
 							<c:Item key="{}" text="{}" />
@@ -289,6 +320,41 @@
 					<f:content>
 						<m:Label text="ID" />
 						<m:Input value="{/newRule/id}"  required = "true"/>
+						<m:Label text="Async" />
+						<m:HBox>
+							<m:items>
+								<m:RadioButton groupName="asyncContext" text="true" selected="{= ${/newRule/async} === true }" select="onAsyncSwitch">
+									<m:customData>
+										<c:CustomData key="asyncContext" value="true" />
+									</m:customData>
+									<m:layoutData>
+										<m:FlexItemData alignSelf="Center" />
+									</m:layoutData>
+								</m:RadioButton>
+								<m:RadioButton groupName="asyncContext" text="false" selected="{= ${/newRule/async} !== true }" select="onAsyncSwitch">
+									<m:customData>
+										<c:CustomData key="asyncContext" value="false" />
+									</m:customData>
+									<m:layoutData>
+										<m:FlexItemData alignSelf="Center" />
+									</m:layoutData>
+								</m:RadioButton>
+								<c:Icon
+									src="sap-icon://message-warning"
+									class="sapUiSmallMarginBegin sapUiTinyMarginEnd"
+									color="#E09D00"
+									visible="{= ${/newRule/async} === true }">
+									<c:layoutData>
+										<m:FlexItemData alignSelf="Center" />
+									</c:layoutData>
+								</c:Icon>
+								<m:Text text="{/resolveDescription}" visible="{= ${/newRule/async} === true }">
+									<m:layoutData>
+										<m:FlexItemData alignSelf="Center" />
+									</m:layoutData>
+								</m:Text>
+							</m:items>
+						</m:HBox>
 						<m:Label text="Categories" />
 						<m:MultiComboBox selectedKeys="{/newRule/categories}" items="{/categories}"  required = "true">
 							<c:Item key="{}" text="{}" />
