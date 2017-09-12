@@ -1,14 +1,18 @@
 <mvc:View height="100%"
 	controllerName="sap.m.sample.UploadCollection.Page"
+	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page showHeader="false">
 		<content>
 			<OverflowToolbar>
-				<MessageStrip
+				<core:Icon
+					class="sapUiSmallMarginBegin"
 					visible="{=!${device>/browser/mobile}}"
-					showIcon="true"
-					type="Information"
+					src="sap-icon://message-information" />
+				<Text
+					wrapping="false"
+					visible="{=!${device>/browser/mobile}}"
 					text="To add files, you can also use drag &amp; drop on your desktop or tablet." />
 				<ToolbarSpacer />
 				<Button icon="sap-icon://action-settings" tooltip="More settings" press="onOpenAppSettings" />

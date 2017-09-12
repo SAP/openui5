@@ -293,6 +293,7 @@ sap.ui.define([
 				this.oSettingsDialog = sap.ui.xmlfragment("sap.m.sample.UploadCollection.AppSettings", this);
 				this.getView().addDependent(this.oSettingsDialog);
 			}
+			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this.oSettingsDialog);
 			this.oSettingsDialog.open();
 		},
 
