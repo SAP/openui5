@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var oNextItem = this._getNextFocusItem(sPosition);
 		oNextItem.focus();
-		if (bSelect && !oNextItem.getSelected()) {
+		if (bSelect && !oNextItem.getSelected() && oNextItem.getEditable() && oNextItem.getEnabled()) {
 			oNextItem.setSelected(true);
 
 			setTimeout(function() {
