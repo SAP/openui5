@@ -15,6 +15,17 @@
 			<NavigationListItem text="Sub Item 2" id="selectedListItem"/>
 			<NavigationListItem text="Sub Item 3"/>
 			<NavigationListItem text="Sub Item 4"/>
+			<NavigationListItem text="Invisible Sub Item 5" visible="false"/>
+			<NavigationListItem text="Invisible Sub Item 6" visible="false"/>
+		</NavigationListItem>
+		<NavigationListItem
+				text="Invisible Section"
+				icon="sap-icon://employee"
+				visible="false">
+			<NavigationListItem text="Sub Item 1"/>
+			<NavigationListItem text="Sub Item 2"/>
+			<NavigationListItem text="Sub Item 3"/>
+			<NavigationListItem text="Sub Item 4"/>
 		</NavigationListItem>
 		<NavigationListItem
 				text="Item 2"

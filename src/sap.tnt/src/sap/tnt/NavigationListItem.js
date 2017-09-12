@@ -41,7 +41,14 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 					/**
 					 * Specifies if the item has an expander.
 					 */
-					hasExpander : {type : "boolean", group : "Misc", defaultValue : true}
+					hasExpander : {type : "boolean", group : "Misc", defaultValue : true},
+
+					/**
+					 * Specifies if the item should be shown.
+					 *
+					 * @since 1.52
+					 */
+					visible : {type : "boolean", group : "Appearance", defaultValue : true}
 				},
 				defaultAggregation: "items",
 				aggregations: {
@@ -157,18 +164,21 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 				subItem = subItems[i];
 
-				popupSubItem = new NavigationListItem({
-					key: subItem.getId(),
-					text: subItem.getText(),
-					textDirection: subItem.getTextDirection(),
-					enabled: subItem.getEnabled()
-				});
+				if (subItem.getVisible()) {
+					popupSubItem = new NavigationListItem({
+						key: subItem.getId(),
+						text: subItem.getText(),
+						textDirection: subItem.getTextDirection(),
+						enabled: subItem.getEnabled()
+					});
 
-				newSubItems.push(popupSubItem);
+					newSubItems.push(popupSubItem);
 
-				if (selectedItem == subItem) {
-					popupSelectedItem = popupSubItem;
+					if (selectedItem == subItem) {
+						popupSelectedItem = popupSubItem;
+					}
 				}
+
 			}
 
 			var newGroup = new NavigationListItem({
@@ -374,8 +384,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		 * @private
 		 */
 		NavigationListItem.prototype.render = function (rm, control, index, length) {
+			if (!this.getVisible()) {
+			    return;
+			}
 
-			if (this.getLevel() == 0) {
+			if (this.getLevel() === 0) {
 				this.renderFirstLevelNavItem(rm, control, index, length);
 			} else {
 				this.renderSecondLevelNavItem(rm, control, index, length);
@@ -436,7 +449,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		 */
 		NavigationListItem.prototype.renderFirstLevelNavItem = function (rm, control, index, length) {
 			var item,
-				items = this.getItems(),
+				items = this._getVisibleItems(this),
 				childrenLength = items.length,
 				expanded = this.getExpanded(),
 				isListExpanded = control.getExpanded(),
@@ -444,7 +457,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			rm.write('<li');
 			rm.writeElementData(this);
-
 
 			if (this.getEnabled() && !isListExpanded) {
 				rm.write(' tabindex="-1"');
@@ -455,7 +467,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				level: '1',
 				expanded: this.getExpanded(),
 				posinset: index + 1,
-				setsize: length
+				setsize: this._getVisibleItems(control).length
 			};
 
 			if (!isListExpanded) {
@@ -493,7 +505,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				rm.writeClasses();
 				rm.write(">");
 
-				for (var i = 0; i < items.length; i++) {
+				for (var i = 0; i < childrenLength; i++) {
 					item = items[i];
 					item.render(rm, control, i, childrenLength);
 				}
@@ -695,6 +707,27 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			return domRefs;
+		};
+
+		/**
+		 * Returns all the items aggregation marked as visible
+		 * @param {sap.tnt.NavigationList|sap.tnt.NavigationListItem} control The control to check for visible items
+		 * @return {sap.tnt.NavigationListItem[]} All the visible NavigationListItems
+		 * @private
+		 */
+		NavigationListItem.prototype._getVisibleItems = function(control) {
+			var visibleItems = [];
+			var items = control.getItems();
+			var item;
+
+			for (var index = 0; index < items.length; index++) {
+				item = items[index];
+				if (item.getVisible()) {
+					visibleItems.push(item);
+				}
+			}
+
+			return visibleItems;
 		};
 
 		return NavigationListItem;
