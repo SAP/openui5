@@ -10,8 +10,10 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/ErrorHandler",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ConfigUtil",
-		"sap/ui/documentation/sdk/controller/util/APIInfo"
-	], function (jQuery, UIComponent, Device, models, ErrorHandler, JSONModel, ConfigUtil, APIInfo) {
+		"sap/ui/documentation/sdk/controller/util/APIInfo",
+		"sap/ui/documentation/sdk/util/DocumentationRouter", // used via manifest.json
+		"sap/m/ColumnListItem" // implements sap.m.TablePopin
+	], function (jQuery, UIComponent, Device, models, ErrorHandler, JSONModel, ConfigUtil, APIInfo /*, DocumentationRouter, ColumnListItem*/) {
 		"use strict";
 
 		var aTreeContent = [],
