@@ -33,17 +33,17 @@ sap.ui.require([
 			total: false,
 			visible: true
 		},
+		oControllingArea = {
+				name: "ControllingArea",
+				grouped: false,
+				inResult: false,
+				sortOrder: "Ascending",
+				sorted: false,
+				total: false,
+				visible: true
+		},
 		oCostCenterUngrouped = {
 			name: "CostCenter",
-			grouped: false,
-			inResult: false,
-			sortOrder: "Ascending",
-			sorted: false,
-			total: false,
-			visible: true
-		},
-		oControllingArea = {
-			name: "ControllingArea",
 			grouped: false,
 			inResult: false,
 			sortOrder: "Ascending",
@@ -171,7 +171,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.analytics.AnalyticalBinding", {
 		afterEach : function (assert) {
-			XMLHttpRequest.restore();
+			// this would ruin AnalyticalTable.qunit.js in testsuite4analytics
+//			XMLHttpRequest.restore();
 			this.oLogMock.verify();
 		},
 
