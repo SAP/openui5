@@ -200,6 +200,8 @@ sap.ui.define([
 			this.fireChange({
 				selectedItem: oItem
 			});
+		} else if (oItem === this._getValueHelp()) {
+			this.fireEvent("_valueHelpRequest");
 		}
 	};
 
