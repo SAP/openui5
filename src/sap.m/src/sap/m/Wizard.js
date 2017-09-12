@@ -364,6 +364,13 @@ sap.ui.define([
 
 		/**************************************** PROXY METHODS ***************************************/
 
+		/**
+		 * Sets association currentStep to the given step.
+		 *
+		 * @param {sap.m.WizardStep | String} stepId The step of the wizard that will be currently activated (meaning the last step)
+		 * @returns {sap.m.Wizard} Reference to the control instance for chaining.
+		 * @public
+		 */
 		Wizard.prototype.setCurrentStep = function (stepId) {
 			this.setAssociation("currentStep", stepId, true);
 			var step = (typeof stepId === "string") ? sap.ui.getCore().byId(stepId) : stepId;

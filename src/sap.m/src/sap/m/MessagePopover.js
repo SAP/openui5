@@ -487,6 +487,7 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 		 *
 		 * @param {sap.m.PlacementType} sPlacement Placement type
 		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
+		 * @public
 		 */
 		MessagePopover.prototype.setPlacement = function (sPlacement) {
 			this.setProperty("placement", sPlacement, true);
