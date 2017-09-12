@@ -323,7 +323,7 @@ sap.ui.define([
 
 		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
-			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
+			if (!this.oModel.isAutoGroup(sGroupId) && !this.oModel.isDirectGroup(sGroupId)) {
 				throw new Error("Illegal update group ID: " + sGroupId);
 			}
 			return oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);

@@ -329,7 +329,7 @@ sap.ui.require([
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 				}
 
-				if (sGroupId !== "$direct") { // "$batch" support
+				if (!that.oModel.isDirectGroup(sGroupId)) { // "$batch" support
 					aRequests = that.mBatchQueue[sGroupId];
 					if (!aRequests) {
 						aRequests = that.mBatchQueue[sGroupId] = [];
@@ -2839,6 +2839,34 @@ sap.ui.require([
 
 		// code under test
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Minimal test for two absolute ODataPropertyBindings using different auto groups.
+	QUnit.test("Absolute ODPBs using different $auto groups", function (assert) {
+		var sView = '\
+<Text id="text1" text="{\
+	path : \'/EMPLOYEES(\\\'2\\\')/Name\',\
+	parameters : {$$groupId : \'group1\'}}" />\
+<Text id="text2" text="{\
+	path : \'/EMPLOYEES(\\\'3\\\')/Name\',\
+	parameters : {$$groupId : \'group2\'}}"\
+/>';
+
+		this.expectRequest({url: "EMPLOYEES('2')/Name", groupId: "group1", method: "GET"},
+				{value : "Frederic Fall"})
+			.expectRequest({url: "EMPLOYEES('3')/Name", groupId: "group2", method: "GET"},
+				{value : "Jonathan Smith"})
+			.expectChange("text1", "Frederic Fall")
+			.expectChange("text2", "Jonathan Smith");
+		return this.createView(assert, sView,
+			createTeaBusiModel({
+				groupProperties : {
+					"group1" : {submit : "Direct"},
+					"group2" : {submit : "Direct"}
+				}
+			})
+		);
 	});
 });
 //TODO test bound action

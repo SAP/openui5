@@ -42,6 +42,7 @@
 					"Component.js",
 					"Main.controller.js",
 					"Main.view.xml",
+					"manifest.json",
 					"../../../common/ValueHelp.js"
 				]
 			}
@@ -62,6 +63,7 @@
 				"dataSource" : "default",
 				"settings" : {
 					"autoExpandSelect" : true,
+					"groupProperties" : {"FavoriteProductGroup" : {"submit" : "Auto"}},
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",
 					"updateGroupId" : "UpdateGroup"

@@ -20,7 +20,8 @@
 						events : {
 							dataReceived : '.onDataEvents',
 							dataRequested : '.onDataEvents'
-						}
+						},
+						parameters : {$$groupId : 'FavoriteProductGroup'}
 					}">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="false" />
