@@ -12,7 +12,7 @@ sap.ui.define([
 		Given.iStartMyAppOnTheDetailsTab();
 
 		//Actions
-		When.onTheOverviewPage.iSelectTheCategoryWithName("All"); //ll
+		When.onTheOverviewPage.iSelectTheCategoryWithName("All");
 
 		// Assertions
 		Then.onTheOverviewPage.iShouldSeeTheTable();

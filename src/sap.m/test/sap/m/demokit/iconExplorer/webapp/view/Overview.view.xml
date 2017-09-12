@@ -69,12 +69,12 @@
 													<FlexItemData growFactor="1"/>
 												</layoutData>
 											</SearchField>
-											<Select
+											<ComboBox
 												id="categorySelection"
 												items="{/groups}"
 												class=" sapUiTinyMarginEnd"
 												tooltip="{i18n>overviewSelectCategoryTooltip}"
-												change="onSelectCategory"
+												selectionChange="onSelectCategory"
 												visible="{= ${device>/system/phone} ? false : true}"
 												width="auto">
 												<layoutData>
@@ -83,7 +83,7 @@
 												<core:Item
 													key="{name}"
 													text="{text}"/>
-											</Select>
+											</ComboBox>
 										</items>
 									</FlexBox>
 									<OverflowToolbar
@@ -204,7 +204,7 @@
 														design="Solid"
 														class="sapContrast sapContrastPlus">
 														<Label
-															text="Toolbar"
+															text="{i18n>previewIconButtonText}"
 															class="sapUiTinyMarginBegin"/>
 														<ToolbarSpacer/>
 														<Button
@@ -229,7 +229,7 @@
 												<l:BlockLayoutCell>
 													<StandardListItem
 														id="previewListItem"
-														title="List Item"
+														title="{i18n>listItemText}"
 														description="sap-icon://{name}"
 														icon="sap-icon://{name}"
 														infoState="Warning"
@@ -263,7 +263,7 @@
 														</items>
 														<content>
 															<Label
-																text="IconTabBar"
+																text="{i18n>previewIconTabBarText}"
 																class="sapUiTinyMargin"/>
 														</content>
 													</IconTabBar>
@@ -296,7 +296,10 @@
 														src="sap-icon://{name}"
 														displaySize="L"
 														class="sapUiTinyMarginBottom"/>
-													<Text width="100%" textAlign="Center" text="Avatar"/>
+													<Text
+														width="100%"
+														textAlign="Center"
+														text="{i18n>avatarText}"/>
 												</l:BlockLayoutCell>
 											</l:BlockLayoutRow>
 										</l:BlockLayout>
@@ -340,14 +343,12 @@
 			<Button
 				id="surprise"
 				visible="{= ${device>/system/phone} ? false : true}"
-				text="{i18n>overviewRandomIconButtonTitle}"
 				tooltip="{i18n>overviewRandomIconButtonTooltip}"
 				icon="sap-icon://activate"
 				press="onSurpriseMe"/>
 			<Button
 				id="download"
 				visible="{= ${device>/system/phone} ? false : true}"
-				text="{i18n>overviewDownloadButtonTitle}"
 				tooltip="{i18n>overviewDownloadButtonTooltip}"
 				icon="sap-icon://download"
 				press="onDownload"/>
