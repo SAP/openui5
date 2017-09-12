@@ -618,4 +618,4 @@ sap.ui.define([
 		PDFViewerRenderManager.extendPdfViewer(PDFViewer);
 
 		return PDFViewer;
-	}, /* bExport= */ true);
+	});
