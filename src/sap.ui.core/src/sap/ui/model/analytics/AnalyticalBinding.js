@@ -4326,7 +4326,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var aExportCols = [];
 		for (var k = 0, m = this.aAnalyticalInfo.length; k < m; k++) {
 			var oCol = this.aAnalyticalInfo[k];
-			if ((oCol.visible || oCol.inResult) && oCol.name !== "") {
+			if ((oCol.visible || oCol.inResult)
+					&& oCol.name !== ""
+					&& oCol.name !== aExportCols[aExportCols.length - 1]) {
 				aExportCols.push(oCol.name);
 
 				// add belonging currency column implicitly if present

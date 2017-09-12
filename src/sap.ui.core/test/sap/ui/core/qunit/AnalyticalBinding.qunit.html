@@ -45,11 +45,80 @@
 
 	sinon.config.useFakeTimers = false;
 
-	var oModel,
-		oBinding;
+	var // Analytical info for dimensions
+		oCostCenterGrouped = {
+			name: "CostCenter",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oControllingArea = {
+			name: "ControllingArea",
+			grouped: false,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oCostElementGrouped = {
+			name: "CostElement",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oCurrencyGrouped = {
+			name: "Currency",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		// Analytical info for measures
+		oActualCostsTotal = {
+			name: "ActualCosts",
+			grouped: false,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: true,
+			visible: true
+		},
+		oPlannedCostsTotal = {
+			name: "PlannedCosts",
+			grouped: false,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: true,
+			visible: true
+		},
+		// Analytical info for other properties
+		oCostElementText = {
+			name: "CostElementText",
+			grouped: false,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oBinding,
+		oModel,
+		sPath = "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results";
 
-	var setupAnalyticalBinding = function(iVersion, mParameters, fnODataV2Callback) {
+	var setupAnalyticalBinding = function(iVersion, mParameters, fnODataV2Callback, aAnalyticalInfo) {
 		mParameters = mParameters || {};
+		aAnalyticalInfo = aAnalyticalInfo
+			|| [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped, oActualCostsTotal]
 
 		if (iVersion === 1) {
 			oModel = new sap.ui.model.odata.ODataModel(sServiceURI, {
@@ -64,40 +133,8 @@
 		}
 
 		sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
-		oBinding = new sap.ui.model.analytics.AnalyticalBinding(oModel, "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results", null, [], [], {
-			analyticalInfo: [{
-				name: "CostCenter",
-				grouped: true,
-				inResult: false,
-				sortOrder: "Ascending",
-				sorted: false,
-				total: false,
-				visible: true
-			}, {
-				name: "CostElement",
-				grouped: true,
-				inResult: false,
-				sortOrder: "Ascending",
-				sorted: false,
-				total: false,
-				visible: true
-			}, {
-				name: "Currency",
-				grouped: true,
-				inResult: false,
-				sortOrder: "Ascending",
-				sorted: false,
-				total: false,
-				visible: true
-			}, {
-				name: "ActualCosts",
-				grouped: false,
-				inResult: false,
-				sortOrder: "Ascending",
-				sorted: false,
-				total: true,
-				visible: true
-			}],
+		oBinding = new sap.ui.model.analytics.AnalyticalBinding(oModel, sPath, null, [], [], {
+			analyticalInfo: aAnalyticalInfo,
 			useBatchRequests: true,
 			numberOfExpandedLevels: mParameters.numberOfExpandedLevels || 0,
 			noPaging: mParameters.noPaging || false,
@@ -436,6 +473,37 @@
 			//just start() the test after the URL has been checked
 			done();
 
+		});
+	});
+
+	[{
+		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oActualCostsTotal,
+			oCurrencyGrouped, oPlannedCostsTotal, oCurrencyGrouped],
+		select : "CostCenter,CostElement,ActualCosts,Currency,PlannedCosts,Currency"
+	}, {
+		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oActualCostsTotal,
+			oPlannedCostsTotal, oCurrencyGrouped],
+		select : "CostCenter,CostElement,ActualCosts,Currency,PlannedCosts,Currency"
+	}, {// possible but unrealistic table in ui
+		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oActualCostsTotal,
+			oPlannedCostsTotal, oCostElementText, oCurrencyGrouped],
+		select : "CostCenter,CostElement,ActualCosts,Currency,PlannedCosts,Currency,CostElementText,Currency"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("getDownloadURL: no duplicate units: " + i, function(assert) {
+			// analytical info represents colum order of table and is taken for column order in
+			// $select of excel download urls
+			var done = assert.async(),
+				that = this;
+
+			setupAnalyticalBinding(2, {}, function () {
+				var sURL = oBinding.getDownloadUrl();
+
+				assert.strictEqual(sURL,
+					"http://o4aFakeService:8080/ActualPlannedCosts(P_ControllingArea='US01',"
+						+ "P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results?"
+						+ "$select=" + oFixture.select);
+				done();
+			}, oFixture.analyticalInfo);
 		});
 	});
 
