@@ -2,32 +2,18 @@
  * ${copyright}
  */
 /**
- * Adds support rules of the sap.m library to the support infrastructure.
+ * Adds support rules of the sap.layout library to the support infrastructure.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/supportRules/RuleSet",
-               "./Form.support"],
-	function(jQuery, SupportLib, Ruleset,
-			FormSupport) {
+sap.ui.define(["./Form.support"],
+	function(FormSupport) {
 	"use strict";
 
-	// shortcuts
-	//var Audiences = SupportLib.Audiences, // Control, Internal, Application
-	//	Categories = SupportLib.Categories, // Accessibility, Performance, Memory, Modelbindings, ...
-	//	Severity = SupportLib.Severity;	// Hint, Warning, Error
-
-	var oLib = {
+	return {
 		name: "sap.ui.layout",
-		niceName: "UI5 Layout Library"
+		niceName: "UI5 Layout Library",
+		ruleset: [
+			FormSupport
+		]
 	};
-
-	var oRuleset = new Ruleset(oLib);
-
-	// Adds the rules related to sap.m.List, sap.m.Table and sap.m.Tree
-	FormSupport.addRulesToRuleset(oRuleset);
-
-	//Add rules with the addRule method
-	//oRuleset.addRule({})
-
-	return {lib: oLib, ruleset: oRuleset};
 
 }, true);
