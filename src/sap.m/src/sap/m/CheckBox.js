@@ -14,13 +14,46 @@ sap.ui.define(['jquery.sap.global',
 	"use strict";
 
 	/**
-	 * Constructor for a new CheckBox.
+	 * Constructor for a new <code>CheckBox</code>.
 	 *
 	 * @param {string} [sId] The ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] The Initial settings for the new control
 	 *
 	 * @class
-	 * The CheckBox control allows the user to select one or multiple items from a list. To select each item the user has to select the square box in front of it.
+	 * Allows the user to set a binary value, such as true/false or yes/no for an item.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The <code>CheckBox</code> control consists of a box and a label that describes its purpose.
+	 * If it's checked, an indicator is displayed inside the box.
+	 *
+	 * To select/deselect the <code>CheckBox</code>, the user has to click or tap the square box or its label.
+	 * Clicking or tapping toggles the <code>CheckBox</code> between checked and unchecked state.
+	 * The <code>CheckBox</code> control only has 2 states - checked and unchecked. There is no third
+	 * state for partially selected.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * You can set the width of the element containing the box and the label manually with the use
+	 * of the <code>width<code> property. If the text exceeds the available width, it is truncated.
+	 *
+	 * <b>Note:</b> When <code>useEntireWidth</code> property is set to <code>true</code>, the value of the
+	 * <code>width</code> property is applied to the control as a whole (box and label). If
+	 * <code>useEntireWidth</code> is set to <code>false</code>, the <code>width</code> is applied to the label only.
+	 *
+	 * The touchable area for toggling the <code>CheckBox</code> ends where the text ends.
+	 *
+	 * If the width allows more space than the text requires, white space is added.
+	 * The text can be positioned manually in this space using the <code>textAlign<code> property.
+	 *
+	 * <b>Note:</b> Keep in mind that setting the <code>textAlign<code> property to <code>Right</code>
+	 * can result in a large amount of white space between the box and the text.
+	 *
+	 * You can disable the <code>CheckBox</code> by setting the <code>enabled</code> property to <code>false</code>,
+	 * or use the <code>CheckBox</code> in read-only mode by setting the <code>editable</code> property to false.
+	 *
+	 * <b>Note:</b> Disabled and read-only states shouldn't be used together.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
 	 *
