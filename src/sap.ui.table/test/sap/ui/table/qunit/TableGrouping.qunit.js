@@ -1,8 +1,9 @@
 /*global QUnit, sinon, oTable, oTreeTable */
 
 sap.ui.require([
-	"sap/ui/table/TableUtils"
-], function(TableUtils) {
+	"sap/ui/table/TableUtils",
+	"sap/ui/Device"
+], function(TableUtils, Device) {
 	"use strict";
 
 	// mapping of global function calls
@@ -581,8 +582,16 @@ sap.ui.require([
 			});
 
 			oTable.attachEventOnce("_rowsUpdated", function() {
-				mTestConfig.test();
-				fnPromiseResolver();
+				if (Device.browser.msie) {
+					/* BCP: 1780405070 */
+					window.setTimeout(function() {
+						mTestConfig.test();
+						fnPromiseResolver();
+					}, 1000);
+				} else {
+					mTestConfig.test();
+					fnPromiseResolver();
+				}
 			});
 
 			mTestConfig.act();
