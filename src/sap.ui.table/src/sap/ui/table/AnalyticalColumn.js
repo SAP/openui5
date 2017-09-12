@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 		}
 
 		var bReturn = this.setProperty("grouped", bGrouped, bSuppressInvalidate);
-		this._updateColumns(true);
+		this._updateColumns();
 
 		return bReturn;
 	};
@@ -228,10 +228,6 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 			}
 		}
 		return vFilterType;
-	};
-
-	AnalyticalColumn.prototype._afterSort = function() {
-		this._updateTableAnalyticalInfo();
 	};
 
 	AnalyticalColumn.prototype._updateColumns = function(bSupressRefresh, bForceChange) {

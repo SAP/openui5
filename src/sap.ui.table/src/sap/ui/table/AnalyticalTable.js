@@ -564,20 +564,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					if (oGroupColumnInfo != null && oGroupColumnInfo.column != null) {
 						var oUngroupedColumn = oGroupColumnInfo.column;
 
-						that.suspendUpdateAnalyticalInfo();
-
-						// Ungrouping a column invalidates the column which causes the table to re-render.
-						// When we later call _getRowContexts new requests from the AnalyticalBinding will be created in all cases, because the
-						// previous data can not be restored.
 						oUngroupedColumn.setGrouped(false);
-
 						that.fireGroup({column: oUngroupedColumn, groupedColumns: that._aGroupedColumns, type: GroupEventType.ungroup});
-
-						that.resumeUpdateAnalyticalInfo();
-
-						// Grouping is not executed directly. The table will be configured accordingly and then be rendered to reflect the changes
-						// of the columns. We need to trigger a context update manually to also update the rows.
-						that._getRowContexts();
 					}
 				}
 			}));
@@ -593,11 +581,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					}
 
 					that.resumeUpdateAnalyticalInfo();
-
-					// Grouping is not executed directly. The table will be configured accordingly and then be rendered to reflect the changes
-					// of the columns. We need to trigger a context update manually to also update the rows.
-					that._getRowContexts();
-
 					that.fireGroup({column: undefined, groupedColumns: [], type: GroupEventType.ungroupAll});
 				}
 			}));
@@ -644,7 +627,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 					if (oGroupColumnInfo) {
 						var oColumn = oGroupColumnInfo.column;
-
 						oColumn.sort(false); //update Analytical Info triggered by aftersort in column
 					}
 				},
@@ -657,7 +639,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 					if (oGroupColumnInfo) {
 						var oColumn = oGroupColumnInfo.column;
-
 						oColumn.sort(true); //update Analytical Info triggered by aftersort in column
 					}
 				},
@@ -883,6 +864,11 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 			oBinding.updateAnalyticalInfo(aColumnInfo, bForceChange);
 			this._updateTotalRow(bSuppressRefresh);
+
+			// An update of the contexts must be initiated manually.
+			if (!bSuppressRefresh) {
+				this._getRowContexts();
+			}
 		}
 	};
 
