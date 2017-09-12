@@ -4,11 +4,11 @@
 
 // Root component for the 'explored' app.
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
-	'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/core/routing/History',
+	'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View',
 	'sap/ui/model/json/JSONModel', 'sap/ui/model/resource/ResourceModel',
-	'sap/m/InstanceManager', 'sap/m/routing/RouteMatchedHandler',
-	'./util/ObjectSearch', './util/MyRouter', './util/ToggleFullScreenHandler', './data'],
-	function(jQuery, Device, UIComponent, View, History, JSONModel, ResourceModel, InstanceManager, RouteMatchedHandler, ObjectSearch, MyRouter, ToggleFullScreenHandler, data) {
+	'sap/m/routing/RouteMatchedHandler',
+	'./util/MyRouter', './util/ToggleFullScreenHandler', './data'],
+	function(jQuery, Device, UIComponent, View, JSONModel, ResourceModel, RouteMatchedHandler, MyRouter, ToggleFullScreenHandler, data) {
 	"use strict";
 
 

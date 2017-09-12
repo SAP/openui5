@@ -3,13 +3,14 @@
  */
 
 sap.ui.define([
-	"sap/ui/Device", "sap/ui/core/Component", "sap/ui/core/Fragment", "sap/ui/core/UIComponent", "sap/ui/core/mvc/Controller",
+	"jquery.sap.global",
+	"sap/ui/Device", "sap/ui/core/Component", "sap/ui/core/Fragment", "sap/ui/core/UIComponent",
 	"sap/ui/model/Filter", "sap/ui/model/Sorter",
 	"sap/m/GroupHeaderListItem",
 	"../util/ToggleFullScreenHandler",
-	"jquery.sap.storage",
-	"sap/ui/demokit/explored/view/base.controller"
-	], function (Device, Component, Fragment, UIComponent, Controller, Filter, Sorter, GroupHeaderListItem, ToggleFullScreenHandler, jQuery, Base) {
+	"sap/ui/demokit/explored/view/base.controller",
+	"jquery.sap.storage"
+	], function (jQuery, Device, Component, Fragment, UIComponent, Filter, Sorter, GroupHeaderListItem, ToggleFullScreenHandler, Base) {
 	"use strict";
 
 	return Base.extend("sap.ui.demokit.explored.view.master", {

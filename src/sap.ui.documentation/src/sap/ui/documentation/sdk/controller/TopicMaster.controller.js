@@ -4,11 +4,15 @@
 
 /*global history */
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/MasterTreeBaseController",
-		"sap/ui/documentation/sdk/controller/util/APIInfo",
-		"sap/ui/model/json/JSONModel"
-	], function (MasterTreeBaseController, APIInfo, JSONModel) {
+		"sap/ui/model/json/JSONModel",
+		"sap/m/library"
+	], function (jQuery, MasterTreeBaseController, JSONModel, mobileLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.SplitAppMode
+		var SplitAppMode = mobileLibrary.SplitAppMode;
 
 		return MasterTreeBaseController.extend("sap.ui.documentation.sdk.controller.TopicMaster", {
 
@@ -44,7 +48,7 @@ sap.ui.define([
 
 			_onMatched: function () {
 				var splitApp = this.getView().getParent().getParent();
-				splitApp.setMode(sap.m.SplitAppMode.ShowHideMode);
+				splitApp.setMode(SplitAppMode.ShowHideMode);
 
 				// When no particular topic is selected, collapse all nodes
 				this._collapseAllNodes();

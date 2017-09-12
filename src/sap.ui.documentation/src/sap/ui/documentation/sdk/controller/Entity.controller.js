@@ -5,13 +5,12 @@
 /*global location */
 sap.ui.define([
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/core/ComponentContainer",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/EntityInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
-	], function (JSONModel, ComponentContainer, BaseController, ControlsInfo,
+	], function (JSONModel, BaseController, ControlsInfo,
 				 EntityInfo, ToggleFullScreenHandler, JSDocUtil) {
 		"use strict";
 

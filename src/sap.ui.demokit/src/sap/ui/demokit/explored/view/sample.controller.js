@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/HTML',
 	'sap/ui/core/UIComponent',
-	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/routing/History',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/library',
@@ -17,10 +16,10 @@ sap.ui.define([
 	'../util/ToggleFullScreenHandler',
 	'../data',
 	'sap/ui/demokit/explored/view/base.controller',
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/fl/Utils"
+	'sap/ui/fl/FakeLrepConnectorLocalStorage',
+	'sap/ui/fl/Utils'
 ],
-function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Controller, History, JSONModel, mobileLibrary, Text, ToggleFullScreenHandler, data, Base, FakeLrepConnectorLocalStorage, Utils) {
+function(jQuery, Device, Component, ComponentContainer, HTML, UIComponent, History, JSONModel, mobileLibrary, Text, ToggleFullScreenHandler, data, Base, FakeLrepConnectorLocalStorage, Utils) {
 	"use strict";
 
 	var SampleController = Base.extend("sap.ui.demokit.explored.view.sample", {

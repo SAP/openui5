@@ -7,10 +7,13 @@ sap.ui.define([
 		"sap/ui/documentation/library",
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/core/routing/History",
-		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-		"sap/ui/Device"
-	], function (library, Controller, History, ControlsInfo, Device) {
+		"sap/ui/Device",
+		"sap/m/library"
+	], function (library, Controller, History, Device, mobileLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.SplitAppMode
+		var SplitAppMode = mobileLibrary.SplitAppMode;
 
 		return Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
 
@@ -26,12 +29,12 @@ sap.ui.define([
 
 			hideMasterSide : function() {
 				var splitApp = this.getSplitApp();
-				splitApp.setMode(sap.m.SplitAppMode.HideMode);
+				splitApp.setMode(SplitAppMode.HideMode);
 			},
 
 			showMasterSide : function() {
 				var splitApp = this.getSplitApp();
-				splitApp.setMode(sap.m.SplitAppMode.ShowHideMode);
+				splitApp.setMode(SplitAppMode.ShowHideMode);
 			},
 
 			getSplitApp: function() {
@@ -164,6 +167,5 @@ sap.ui.define([
 				this.getView().byId("landingImageHeadline").setVisible(true);
 			}
 		});
-
-	}
+}
 );

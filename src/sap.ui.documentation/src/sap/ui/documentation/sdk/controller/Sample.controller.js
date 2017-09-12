@@ -4,17 +4,23 @@
 
 /*global location */
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
+		"sap/ui/core/Component",
 		"sap/ui/core/ComponentContainer",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/m/Text",
 		"sap/ui/core/HTML",
 		"sap/ui/Device",
-		"sap/ui/core/routing/History"
-	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, Text, HTML, Device, History) {
+		"sap/ui/core/routing/History",
+		"sap/m/library"
+	], function (jQuery, BaseController, JSONModel, Component, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, Text, HTML, Device, History, mobileLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.URLHelper
+		var URLHelper = mobileLibrary.URLHelper;
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Sample", {
 
@@ -113,7 +119,7 @@ sap.ui.define([
 
 
 			onNewTab : function () {
-				sap.m.URLHelper.redirect(this.sIFrameUrl, true);
+				URLHelper.redirect(this.sIFrameUrl, true);
 			},
 
 			onPreviousSample: function (oEvent) {
