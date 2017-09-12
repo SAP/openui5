@@ -482,6 +482,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 							 "attachEvent","detachEvent","applyChanges", "getEventBus",
 							 "applyTheme","setThemeRoot","attachThemeChanged","detachThemeChanged","getStaticAreaRef",
 							 "attachThemeScopingChanged","detachThemeScopingChanged","fireThemeScopingChanged",
+							 "notifyContentDensityChanged",
 							 "registerPlugin","unregisterPlugin","getLibraryResourceBundle", "byId",
 							 "getLoadedLibraries", "loadLibrary", "loadLibraries", "initLibrary",
 							 "includeLibraryTheme", "setModel", "getModel", "hasModel", "isMobile",
@@ -2403,6 +2404,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
+	 * This method can be called to trigger realignment of controls after changing the cozy/compact CSS class of a DOM
+	 * element, for example, the <code>&lt;body&gt;</code> tag.
+	 *
+	 * @public
+	 */
+	Core.prototype.notifyContentDensityChanged = function() {
+		this.fireThemeChanged();
+	};
+
+	/**
 	 * Fired after a theme has been applied.
 	 *
 	 * More precisely, this event is fired when any of the following conditions is met:
@@ -2453,11 +2464,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Fire event <code>ThemeChanged</code> to attached listeners.
+	 * Fires event <code>ThemeChanged</code> to attached listeners.
 	 *
 	 * @param {object} [mParameters] Parameters to pass along with the event
-	 * @param {object} [mParameters.theme] Theme name
-	 * @protected
+	 * @param {object} [mParameters.theme] Theme name (default is <code>sap.ui.getCore().getConfiguration().getTheme()</code>)
 	 */
 	Core.prototype.fireThemeChanged = function(mParameters) {
 		jQuery.sap.scrollbarSize(true);
@@ -2472,7 +2482,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// notify all elements/controls via a pseudo browser event
 		var sEventId = Core.M_EVENTS.ThemeChanged;
 		var oEvent = jQuery.Event(sEventId);
-		oEvent.theme = mParameters ? mParameters.theme : null;
+		//set the current theme name as default if omitted
+		oEvent.theme = mParameters && mParameters.theme || this.getConfiguration().getTheme();
 		jQuery.each(this.mElements, function(sId, oElement) {
 			oElement._handleEvent(oEvent);
 		});
