@@ -9,27 +9,28 @@ describe('sap.m.StepInput', function() {
 		sChangeWidthButtonId = 'change_step_input_width_btn';
 
 	it("Prepare environment", function () {
-		var _prepareDesktopEnvironment = function () {};
-		var _prepareMobileEnvironment = function () {
-			/*
-			 * The step input under test is positioned out of the viewport for the majority of mobile devices
-			 * with low screens (height less than 1200px). This makes impossible a screen shot of it to be made
-			 * so that's why we need to focus it in order to provoke the page to scroll to it.
-			 */
-			element(by.id(sSutId)).focus();
+		var _fnOnPrepareBrowserEnvironmentSuccess = function () {
+			jQuery.sap.log.info("Environment prepared successfully!");
+		};
+		var _fnOnPrepareBrowserEnvironmentError = function (sResponse) {
+			throw new Error("Environment preparation failed with the following error:\n" + sResponse);
 		};
 
-		browser.executeScript(function () {
-			return sap.ui.Device.system.phone;
-		}).then(function (response) {
-			var oResponse = JSON.parse(response);
-
-			if (oResponse && oResponse === true) {
-				_prepareMobileEnvironment();
+		return browser.executeScript(function () {
+			/*
+			 * Note: This code is executed in separate browser environment so test environment variables are not available!
+			 */
+			if (sap.ui.Device.system.phone) {
+				/*
+				 * The step input under test is positioned out of the viewport for the majority of mobile devices
+				 * with low screens (height less than 1200px). This makes impossible a screen shot of it to be made
+				 * so that's why we need to focus it in order to provoke the page to scroll to it.
+				 */
+				sap.ui.getCore().byId("visual_test_step_input").focus();
 			} else {
-				_prepareDesktopEnvironment();
+				//Execute browser environment prepare code for desktop
 			}
-		});
+		}).then(_fnOnPrepareBrowserEnvironmentSuccess, _fnOnPrepareBrowserEnvironmentError);
 	});
 
 	it('value and buttons', function () {
