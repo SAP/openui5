@@ -1,12 +1,14 @@
-/*global QUnit, sinon */
-
+/*!
+ * ${copyright}
+ */
 sap.ui.require([
-	"sap/ui/qunit/QUnitUtils"
-], function(qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/qunit/analytics/o4aMetadata",
+	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
+	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts"
+], function (qutils, o4aFakeService) {
+	/*global QUnit,sinon*/
 	"use strict";
-
-	// mapping of global function calls
-	var o4aFakeService = window.o4aFakeService;
 
 	// ************** Preparation Code **************
 
