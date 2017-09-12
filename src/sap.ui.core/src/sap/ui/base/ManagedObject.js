@@ -5078,7 +5078,7 @@ sap.ui.define([
 	 * </ol>
 	 * This separation is necessary as the models for the bindings might be updated
 	 * in some ManagedObject or in the Core and the order in which the objects are visited
-	 * is not defined (order of Core.mElements)
+	 * is not defined.
 	 *
 	 * @private
 	 */

@@ -3,6 +3,7 @@ sap.ui.define([
 		'sap/ui/support/supportRules/ExecutionScope',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/core/CustomData',
+		'sap/ui/core/Element',
 		'sap/m/Page',
 		'sap/m/Panel',
 		'sap/m/Button',
@@ -14,6 +15,7 @@ sap.ui.define([
 	function(ExecutionScope,
 			 JSONModel,
 			 CustomData,
+			 Element,
 			 Page,
 			 Panel,
 			 Button,
@@ -197,8 +199,8 @@ sap.ui.define([
 			var elements = this.es.getElements();
 			assert.equal(
 				elements.length,
-				Object.keys(core.mElements).length,
-				" should be equal to core mElements"
+				Element.registry.size,
+				" should be equal to size of Element registry"
 			);
 		});
 

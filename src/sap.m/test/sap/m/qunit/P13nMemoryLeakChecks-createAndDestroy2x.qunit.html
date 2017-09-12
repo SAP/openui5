@@ -26,23 +26,13 @@
 		jQuery(function() {
 			sap.ui.require(
 				[
-					"jquery.sap.global"
+					"jquery.sap.global",
+					"sap/ui/core/Element"
 				],
-				function(jQuery) {
-					var oCore,
-						iAllControls = 0,
+				function(jQuery, Element) {
+					var iAllControls = 0,
 						iFullyTestedControls = 0,
 						iTestedWithoutRenderingControls = 0;
-
-					// get access to the real core object to access the control list
-					sap.ui.getCore().registerPlugin({
-						startPlugin: function(oRealCore) {
-							oCore = oRealCore;
-						},
-						stopPlugin: function() {
-							oCore = undefined;
-						}
-					});
 
 					/**
 					 * Iterates over all loaded libraries, but also all available libraries and tries to load them and their control lists.
@@ -60,7 +50,7 @@
 							if (!mLoadedLibraries[sInfoLibName]) {
 								jQuery.sap.log.info("Library '" + sInfoLibName + "' is not loaded! Trying...");
 								try {
-									var oLibrary = oCore.loadLibrary(sInfoLibName);
+									var oLibrary = sap.ui.getCore().loadLibrary(sInfoLibName);
 									mLoadedLibraries[sInfoLibName] = oLibrary.controls;
 									jQuery.sap.log.info("Library '" + sInfoLibName + "...successfully.");
 								} catch (e) {
@@ -75,9 +65,9 @@
 					}
 
 
-					// gets the map of all currently registered controls from the Core
+					// gets a snapshot of all currently registered controls (keyed by their ID)
 					function getAllAliveControls() {
-						return jQuery.extend({}, oCore.mElements);
+						return Element.registry.all();
 					}
 
 

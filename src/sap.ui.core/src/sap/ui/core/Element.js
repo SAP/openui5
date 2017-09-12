@@ -6,6 +6,7 @@
 sap.ui.define([
 	'../base/Object',
 	'../base/ManagedObject',
+	'../base/ManagedObjectRegistry',
 	'./ElementMetadata',
 	'../Device',
 	"sap/ui/performance/trace/Interaction",
@@ -16,6 +17,7 @@ sap.ui.define([
 	function(
 		BaseObject,
 		ManagedObject,
+		ManagedObjectRegistry,
 		ElementMetadata,
 		Device,
 		Interaction,
@@ -145,6 +147,25 @@ sap.ui.define([
 
 	}, /* Metadata constructor */ ElementMetadata);
 
+	// apply the registry mixin
+	ManagedObjectRegistry.apply(Element, {
+		onDuplicate: function(sId, oldElement, newElement) {
+			if ( oldElement._sapui_candidateForDestroy ) {
+				Log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
+				oldElement.destroy();
+			} else {
+				var sMsg = "adding element with duplicate id '" + sId + "'";
+				// duplicate ID detected => fail or at least log a warning
+				if (sap.ui.getCore().getConfiguration().getNoDuplicateIds()) {
+					Log.error(sMsg);
+					throw new Error("Error: " + sMsg);
+				} else {
+					Log.warning(sMsg);
+				}
+			}
+		}
+	});
+
 	/**
 	 * Creates metadata for a UI Element by extending the Object Metadata.
 	 *
@@ -260,31 +281,6 @@ sap.ui.define([
 
 	};
 
-
-	// Element is granted "friend" access by Core for (de-)registration
-	/**
-	 * Registers this instance of <code>sap.ui.core.Element</code> with the Core.
-	 *
-	 * The implementation of this method is provided with "friend" access by Core.
-	 * @see sap.ui.core.Core#constructor
-	 *
-	 * @function
-	 * @name sap.ui.core.Element.prototype.register
-	 * @private
-	 */
-	//sap.ui.core.Element.prototype.register = function() {...}
-
-	/**
-	 * Deregisters this instance of <code>sap.ui.core.Element</code> from the Core.
-	 *
-	 * The implementation of this method is provided with "friend" access by Core.
-	 * @see sap.ui.core.Core#constructor
-	 *
-	 * @function
-	 * @name sap.ui.core.Element.prototype.deregister
-	 * @private
-	 */
-	//sap.ui.core.Element.prototype.deregister = function() {...}
 
 	/**
 	 * Initializes the element instance after creation.
@@ -1069,7 +1065,7 @@ sap.ui.define([
 		}
 
 		if (this._sapui_declarativeSourceInfo) {
-			oClone._sapui_declarativeSourceInfo = jQuery.extend({}, this._sapui_declarativeSourceInfo);
+			oClone._sapui_declarativeSourceInfo = Object.assign({}, this._sapui_declarativeSourceInfo);
 		}
 
 		return oClone;
@@ -1375,6 +1371,120 @@ sap.ui.define([
 			}
 		}
 	};
+
+	/**
+	 * Registry of all <code>sap.ui.core.Element</code>s that currently exist.
+	 *
+	 * @namespace sap.ui.core.Element.registry
+	 * @public
+	 */
+
+	/**
+	 * Number of existing elements.
+	 *
+	 * @type {int}
+	 * @readonly
+	 * @name sap.ui.core.Element.registry.size
+	 * @public
+	 */
+
+	/**
+	 * Return an object with all instances of <code>sap.ui.core.Element</code>,
+	 * keyed by their ID.
+	 *
+	 * Each call creates a new snapshot object. Depending on the size of the UI,
+	 * this operation therefore might be expensive. Consider to use the <code>forEach</code>
+	 * or <code>filter</code> method instead of executing similar operations on the returned
+	 * object.
+	 *
+	 * <b>Note</b>: The returned object is created by a call to <code>Object.create(null)</code>,
+	 * and therefore lacks all methods of <code>Object.prototype</code>, e.g. <code>toString</code> etc.
+	 *
+	 * @returns {Object<sap.ui.core.ID,sap.ui.core.Element>} Object with all elements, keyed by their ID
+	 * @name sap.ui.core.Element.registry.all
+	 * @function
+	 * @public
+	 */
+
+	/**
+	 * Retrieves an Element by its ID.
+	 *
+	 * When the ID is <code>null</code> or <code>undefined</code> or when there's no element with
+	 * the given ID, then <code>undefined</code> is returned.
+	 *
+	 * @param {sap.ui.core.ID} id ID of the element to retrieve
+	 * @returns {sap.ui.core.Element} Element with the given ID or <code>undefined</code>
+	 * @name sap.ui.core.Element.registry.get
+	 * @function
+	 * @public
+	 */
+
+	/**
+	 * Calls the given <code>callback</code> for each element.
+	 *
+	 * The expected signature of the callback is
+	 * <pre>
+	 *    function callback(oElement, sID)
+	 * </pre>
+	 * where <code>oElement</code> is the currently visited element instance and <code>sID</code>
+	 * is the ID of that instance.
+	 *
+	 * If elements are created or destroyed within the <code>callback</code>, then the behavior is
+	 * not specified. Newly added objects might or might not be visited. When an element is destroyed during
+	 * the filtering and was not visited yet, it might or might not be visited. As the behavior for such
+	 * concurrent modifications is not specified, it may change in newer releases.
+	 *
+	 * If a <code>thisArg</code> is given, it will be provided as <code>this</code> context when calling
+	 * <code>callback</code>. The <code>this</code> value that the implementation of <code>callback</code>
+	 * sees, depends on the usual resolution mechanism. E.g. when <code>callback</code> was bound to some
+	 * context object, that object wins over the given <code>thisArg</code>.
+	 *
+	 * @param {function(sap.ui.core.Element,sap.ui.core.ID)} callback
+	 *        Function to call for each element
+	 * @param {Object} [thisArg=undefined]
+	 *        Context object to provide as <code>this</code> in each call of <code>callback</code>
+	 * @throws {TypeError} If <code>callback</code> is not a function
+	 * @name sap.ui.core.Element.registry.forEach
+	 * @function
+	 * @public
+	 */
+
+	/**
+	 * Returns an array with elements for which the given <code>callback</code> returns a value that coerces
+	 * to <code>true</code>.
+	 *
+	 * The expected signature of the callback is
+	 * <pre>
+	 *    function callback(oElement, sID)
+	 * </pre>
+	 * where <code>oElement</code> is the currently visited element instance and <code>sID</code>
+	 * is the ID of that instance.
+	 *
+	 * If elements are created or destroyed within the <code>callback</code>, then the behavior is
+	 * not specified. Newly added objects might or might not be visited. When an element is destroyed during
+	 * the filtering and was not visited yet, it might or might not be visited. As the behavior for such
+	 * concurrent modifications is not specified, it may change in newer releases.
+	 *
+	 * If a <code>thisArg</code> is given, it will be provided as <code>this</code> context when calling
+	 * <code>callback</code>. The <code>this</code> value that the implementation of <code>callback</code>
+	 * sees, depends on the usual resolution mechanism. E.g. when <code>callback</code> was bound to some
+	 * context object, that object wins over the given <code>thisArg</code>.
+	 *
+	 * This function returns an array with all elements matching the given predicate. The order of the
+	 * elements in the array is not specified and might change between calls (over time and across different
+	 * versions of UI5).
+	 *
+	 * @param {function(sap.ui.core.Element,sap.ui.core.ID):boolean} callback
+	 *        predicate against which each element is tested
+	 * @param {Object} [thisArg=undefined]
+	 *        context object to provide as <code>this</code> in each call of <code>callback</code>
+	 * @returns {sap.ui.core.Element[]}
+	 *        Array of elements matching the predicate; order is undefined and might change in newer versions of UI5
+	 * @throws {TypeError} If <code>callback</code> is not a function
+	 * @name sap.ui.core.Element.registry.filter
+	 * @function
+	 * @public
+	 */
 
 	return Element;
 

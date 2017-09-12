@@ -18,14 +18,14 @@
 sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/Object',
+	'sap/ui/core/Element',
 	'sap/ui/core/mvc/View',
 	'sap/ui/test/matchers/Ancestor',
 	'sap/ui/test/matchers/MatcherFactory',
 	'sap/ui/test/pipelines/MatcherPipeline',
-	'sap/ui/test/_opaCorePlugin',
 	'sap/ui/test/_OpaLogger'
-], function ($, UI5Object, View, Ancestor, MatcherFactory,
-			MatcherPipeline, _opaCorePlugin, _OpaLogger) {
+], function ($, UI5Object, UI5Element, View, Ancestor, MatcherFactory,
+			MatcherPipeline, _OpaLogger) {
 
 		var oMatcherFactory = new MatcherFactory();
 		var oMatcherPipeline = new MatcherPipeline();
@@ -52,8 +52,8 @@ sap.ui.define([
 			},
 
 			/**
-			 * Gets all the controls of a certain type that are currently instantiated.
-			 * If the control type is omitted, all controls are returned.
+			 * Gets all the controls or elements of a certain type that are currently instantiated.
+			 * If the type is omitted, all controls and elements are returned.
 			 *
 			 * @param {Function} [fnConstructorType] the control type, e.g: sap.m.CheckBox
 			 * @param {string} [sControlType] optional control type name, e.g: "sap.m.CheckBox"
@@ -61,7 +61,7 @@ sap.ui.define([
 			 * @public
 			 */
 			getAllControls : function (fnConstructorType, sControlType) {
-				var aControls = _opaCorePlugin.getAllControls(fnConstructorType);
+				var aControls = UI5Element.registry.filter( makeTypeFilterFn(fnConstructorType) );
 				this._oLogger.debug("Found " + aControls.length + " controls" +
 					(fnConstructorType ? " of type '" + (sControlType || fnConstructorType) + "'" : "") + " in page");
 				return aControls;
@@ -111,8 +111,8 @@ sap.ui.define([
 				}
 
 				if (oOptions.viewId) {
-					var oCoreElement = _opaCorePlugin.getCoreElement(oOptions.viewId, View);
-					if (oCoreElement && (!sViewName || oCoreElement.getViewName() === sViewName)) {
+					var oCoreElement = UI5Element.registry.get(oOptions.viewId);
+					if (oCoreElement instanceof View && (!sViewName || oCoreElement.getViewName() === sViewName)) {
 						oView = oCoreElement;
 					}
 				} else {
@@ -205,9 +205,8 @@ sap.ui.define([
 			// get all child controls of a certain control type
 			// the parents are controls whose roots are under the DOM node $Container
 			getAllControlsInContainer : function ($Container, fnControlType, sControlType, sContainerDescription) {
-				var aControls = this._filterUniqueControlsByCondition(this._getControlsInContainer($Container), function (oControl) {
-					return _opaCorePlugin.checkControlType(oControl, fnControlType);
-				});
+				var hasExpectedType = makeTypeFilterFn(fnControlType),
+					aControls = this._filterUniqueControlsByCondition(this._getControlsInContainer($Container), hasExpectedType);
 				this._oLogger.debug("Found " + aControls.length + " controls in " +
 					(sContainerDescription ? sContainerDescription : "container") + " with controlType '" + sControlType + "'");
 				return aControls;
@@ -253,9 +252,8 @@ sap.ui.define([
 				}
 
 				if (vControls.length && oOptions.controlType) {
-					vControls = this._filterUniqueControlsByCondition(vControls, function (oControl) {
-						return _opaCorePlugin.checkControlType(oControl, oOptions.controlType);
-					});
+					var hasExpectedType = makeTypeFilterFn(oOptions.controlType);
+					vControls = this._filterUniqueControlsByCondition(vControls, hasExpectedType);
 
 					this._oLogger.debug("Found " + (vControls.length ? vControls.length : "no") + " controls in the static area with control type matching '" + oOptions.controlType + "'");
 				}
@@ -465,13 +463,19 @@ sap.ui.define([
 			 *     <li>if a oOptions.id is a string, will return the single matching control or null if no controls match</li>
 			 *     <li>otherwise, will return an array of matching controls, or an empty array, if no controls match</li>
 			 * </ul>
+			 *
+			 * @param oOptions must contain ID property of type string, regex or array of strings; optionally it can contain a controlType property.
+			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|null} all controls matched by the regex or the control matched by the string or null
 			 * @public
 			 */
 			getControlByGlobalId : function (oOptions) {
-				if (typeof oOptions.id === "string") {
-					var oControl =  _opaCorePlugin.getCoreElement(oOptions.id);
 
-					if (oControl && !_opaCorePlugin.checkControlType(oControl, oOptions.controlType)) {
+				var hasExpectedType = makeTypeFilterFn(oOptions.controlType);
+
+				if (typeof oOptions.id === "string") {
+					var oControl = UI5Element.registry.get(oOptions.id) || null;
+
+					if (oControl && !hasExpectedType(oControl)) {
 						this._oLogger.error("A control with global ID '" + oOptions.id + "' is found but does not have required controlType '" +
 							oOptions.sOriginalControlType + "'. Found control is '" + oControl + "' but null is returned instead");
 						return null;
@@ -483,18 +487,15 @@ sap.ui.define([
 
 				var aMatchIds = [];
 				var bMatchById = $.type(oOptions.id) === "regexp";
-				var oCoreElements = _opaCorePlugin.getCoreElements();
 
 				if (bMatchById) {
 					//Performance critical
-					for (var sElement in oCoreElements) {
-						if (oCoreElements.hasOwnProperty(sElement) && oOptions.id.test(sElement)) {
-							aMatchIds.push(sElement);
+					UI5Element.registry.forEach(function(oElement, sId) {
+						if (oOptions.id.test(sId)) {
+							aMatchIds.push(sId);
 						}
-					}
-				}
-
-				if ($.isArray(oOptions.id)) {
+					});
+				} else if ($.isArray(oOptions.id)) {
 					aMatchIds = oOptions.id;
 				}
 
@@ -502,9 +503,9 @@ sap.ui.define([
 				var aUnmatchedIds = [];
 
 				aMatchIds.forEach(function (sId) {
-					var oControl = oCoreElements[sId];
+					var oControl = UI5Element.registry.get(sId);
 					// only return defined controls
-					if (oControl && _opaCorePlugin.checkControlType(oControl, oOptions.controlType) && !oControl.bIsDestroyed) {
+					if (oControl && hasExpectedType(oControl) && !oControl.bIsDestroyed) {
 						aMatchingControls.push(oControl);
 					} else {
 						aUnmatchedIds.push(sId);
@@ -607,6 +608,28 @@ sap.ui.define([
 				return sUnprefixedControlId;
 			}
 		});
+
+		/**
+		 * Creates a filter function that returns true when a given element
+		 * has the type <code>fnControlType</code>.
+		 *
+		 * When <code>fnControlType</code> is not a function, the returned
+		 * filter function will accept any element.
+		 *
+		 * @param {function} [fnControlType] Constructor to use for <code>instanceof</code> checks or null
+		 * @returns {function} Predicate function that returns true when a given element is of the expected type
+		 * @private
+		 */
+		function makeTypeFilterFn(fnControlType) {
+			if ( fnControlType ) {
+				$.sap.assert(typeof fnControlType === 'function', "fnControlType must be a function or falsy");
+				return function(oElement) {
+					return oElement instanceof fnControlType;
+				};
+			} else {
+				return function() { return true; };
+			}
+		}
 
 		/**
 		 * marker for a return type

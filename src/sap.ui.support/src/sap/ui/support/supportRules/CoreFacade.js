@@ -5,8 +5,8 @@
 /*!
  * An interface to the core to be used by rules
  */
-sap.ui.define([],
-	function () {
+sap.ui.define(['sap/ui/core/Component'],
+	function (Component) {
 		"use strict";
 
 		var coreInstance = null;
@@ -47,7 +47,7 @@ sap.ui.define([],
 				 * @public
 				 */
 				getComponents: function () {
-					return coreInstance.mObjects.component;
+					return Component.registry.all();
 				},
 				/**
 				 * Gets the Models from the Core object.

@@ -11,6 +11,7 @@ sap.ui.define([
     "sap/base/util/UriParameters",
     "sap/ui/dom/containsOrEquals",
     "sap/ui/events/KeyCodes",
+    "sap/ui/core/Element",
     "../resources/ExactData"
 ], function(
     qutils,
@@ -23,7 +24,8 @@ sap.ui.define([
 	Device,
 	UriParameters,
 	containsOrEquals,
-	KeyCodes
+	KeyCodes,
+	Element
 ) {
 	"use strict";
 
@@ -34,16 +36,14 @@ sap.ui.define([
 	createAndAppendDiv(["uiArea1", "uiArea2", "uiArea3"]);
 
 
-	var fnGetElementIds;
-	var aElementsBefore;
-	sap.ui.getCore().registerPlugin({
-		startPlugin : function(oCore) {
-			fnGetElementIds = function() {
-				return jQuery.map(oCore.mElements, function($) { return $.getId(); });
-			};
-			aElementsBefore = fnGetElementIds();
-		}
-	});
+	function fnGetElementIds() {
+		var aResult = [];
+		Element.registry.forEach(function(oElement, sId) {
+			aResult.push(sId);
+		});
+		return aResult;
+	}
+	var aElementsBefore = fnGetElementIds();
 
 
 
