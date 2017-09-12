@@ -4,29 +4,27 @@
 /**
  * Adds support rules of the sap.m library to the support infrastructure.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/supportRules/RuleSet",
+sap.ui.define(["jquery.sap.global", "sap/ui/support/library",
 			   "./Button.support",
 			   "./Dialog.support",
 			   "./Input.support",
 			   "./Panel.support"],
-	function(jQuery, SupportLib, Ruleset,
+	function(jQuery, SupportLib,
 			 ButtonSupport,
 			 DialogSupport,
 			 InputSupport,
 			 PanelSupport) {
 	"use strict";
 
-	var oLib = {
+	return {
 		name: "sap.m",
-		niceName: "UI5 Main Library"
+		niceName: "UI5 Main Library",
+		ruleset: [
+			ButtonSupport,
+			DialogSupport,
+			InputSupport,
+			PanelSupport
+		]
 	};
-	var oRuleset = new Ruleset(oLib);
-
-	ButtonSupport.addRulesToRuleset(oRuleset);
-	DialogSupport.addRulesToRuleset(oRuleset);
-	InputSupport.addRulesToRuleset(oRuleset);
-	PanelSupport.addRulesToRuleset(oRuleset);
-
-	return {lib: oLib, ruleset: oRuleset};
 
 }, true);
