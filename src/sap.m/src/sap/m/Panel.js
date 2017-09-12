@@ -313,7 +313,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			press: function () {
 				that.setExpanded(!that.getExpanded());
 			}
-		}).addStyleClass("sapMPanelExpandableIcon");
+		}).addStyleClass("sapMPanelExpandableIcon sapUiIconNoOutline");
 	};
 
 	Panel.prototype._getIcon = function () {
