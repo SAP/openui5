@@ -538,6 +538,8 @@ sap.ui.require([
 </edmx:Edmx>\
 		',
 		mHeaders = {"Content-Type" : "application/xml"},
+		sIgnoreThisWarning = "EventProvider sap.ui.model.odata.ODataModel path /$metadata should be"
+			+ " absolute if no Context is set",
 		mFixture = {
 			"/fake/currencyCodeViaPath/$metadata" :
 				{headers : mHeaders, message : sCurrencyCodeViaPath},
@@ -579,7 +581,6 @@ sap.ui.require([
 			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"}
 		},
 		oGlobalSandbox; // global sandbox for async tests
-
 
 	/**
 	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
@@ -659,8 +660,7 @@ sap.ui.require([
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
 			this.oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
-			// TODO activate when all warnings unrelated to this module have been removed
-			//this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 		afterEach : function () {
@@ -693,12 +693,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("compatibility with synchronous ODataModel", function (assert) {
-		var oModel = new ODataModel1("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
-				json : true,
-				loadMetadataAsync : false
-			}),
-			oMetaModel = oModel.getMetaModel();
+		var oMetaModel, oModel;
+
+		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
+
+		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+			annotationURI : "/GWSAMPLE_BASIC/annotations",
+			json : true,
+			loadMetadataAsync : false
+		});
+		oMetaModel = oModel.getMetaModel();
 
 		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
 			"GWSAMPLE_BASIC", "metadata available");
@@ -722,12 +726,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("compatibility with asynchronous old ODataModel", function (assert) {
-		var oModel = new ODataModel1("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
-				json : true,
-				loadMetadataAsync : true
-			}),
-			oMetaModel = oModel.getMetaModel();
+		var oMetaModel, oModel;
+
+		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
+
+		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+			annotationURI : "/GWSAMPLE_BASIC/annotations",
+			json : true,
+			loadMetadataAsync : true
+		});
+		oMetaModel = oModel.getMetaModel();
 
 		return oMetaModel.loaded().then(function () {
 			assert.strictEqual(arguments.length, 1, "almost no args");
@@ -753,14 +761,11 @@ sap.ui.require([
 	QUnit.test("compatibility w/ asynchronous old ODataModel: use after load", function (assert) {
 		var iCount = 0,
 			fnDone = assert.async(),
-			oModel = new ODataModel1("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
-				json : true,
-				loadMetadataAsync : true
-			}),
-			oMetaModel;
+			oModel;
 
 		function loaded() {
+			var oMetaModel;
+
 			iCount += 1;
 			if (iCount === 2) {
 				// ...then get meta model and use immediately
@@ -789,6 +794,14 @@ sap.ui.require([
 			}
 		}
 
+		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
+
+		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+			annotationURI : "/GWSAMPLE_BASIC/annotations",
+			json : true,
+			loadMetadataAsync : true
+		});
+
 		// wait for metadata and annotations to be loaded (but not via oMetaModel.loaded())...
 		oModel.attachAnnotationsLoaded(loaded);
 		oModel.attachMetadataLoaded(loaded);
@@ -796,14 +809,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("compatibility with old ODataModel: separate value list load", function (assert) {
-		var oModel = new ODataModel1("/FAR_CUSTOMER_LINE_ITEMS", {
-				json : true,
-				loadMetadataAsync : false
-			}),
-			oMetaModel = oModel.getMetaModel(),
-			oEntityType = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item"),
-			oProperty = oMetaModel.getODataProperty(oEntityType, "Customer"),
-			oContext = oMetaModel.getMetaContext("/Items('foo')/Customer");
+		var oContext, oEntityType, oMetaModel, oModel, oProperty;
+
+		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
+
+		oModel = new ODataModel1("/FAR_CUSTOMER_LINE_ITEMS", {
+			json : true,
+			loadMetadataAsync : false
+		});
+		oMetaModel = oModel.getMetaModel();
+		oContext = oMetaModel.getMetaContext("/Items('foo')/Customer");
+		oEntityType = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item");
+		oProperty = oMetaModel.getODataProperty(oEntityType, "Customer");
 
 		return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
 			assert.deepEqual(mValueLists, {
@@ -1306,6 +1323,15 @@ sap.ui.require([
 		title : "multiple annotation files"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("ODataMetaModel loaded: " + oFixture.title, function (assert) {
+			this.oLogMock.expects("warning")
+				.withExactArgs("Inconsistent service",
+					"Use either 'sap:deletable' or 'sap:deletable-path' at entity set 'ProductSet'",
+					sComponent);
+			this.oLogMock.expects("warning")
+				.withExactArgs("Inconsistent service",
+					"Use either 'sap:updatable' or 'sap:updatable-path' at entity set 'ProductSet'",
+					sComponent);
+
 			return withGivenService(assert,
 					"/fake/service", oFixture.annotationURI, function (oMetaModel, oModel) {
 				var oMetadata = oModel.getServiceMetadata(),
@@ -1930,12 +1956,17 @@ sap.ui.require([
 	// We make sure the same happens even with our asynchronous constructor.
 	[false, true].forEach(function (bAsync) {
 		QUnit.test("Errors thrown inside load(), async = " + bAsync, function (assert) {
-			var oError = new Error("This call failed intentionally"),
-				oModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
-					annotationURI : "",
-					json : true,
-					loadMetadataAsync : bAsync
-				});
+			var oError, oModel;
+
+			this.oLogMock.expects("warning").exactly(bAsync ? 0 : 1)
+				.withExactArgs(sIgnoreThisWarning);
+
+			oError = new Error("This call failed intentionally");
+			oModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
+				annotationURI : "",
+				json : true,
+				loadMetadataAsync : bAsync
+			});
 
 			if (bAsync) {
 				this.oLogMock.expects("error").withExactArgs(
@@ -2180,6 +2211,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getODataAssociation*Set*End: set not found", function (assert) {
+		this.oLogMock.expects("warning")
+			.withExactArgs("Inconsistent service",
+				"Use either 'sap:deletable' or 'sap:deletable-path' at entity set 'ProductSet'",
+				sComponent);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Inconsistent service",
+				"Use either 'sap:updatable' or 'sap:updatable-path' at entity set 'ProductSet'",
+				sComponent);
+
 		return withGivenService(assert, "/fake/service", "", function (oMetaModel, oModel) {
 				var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner");
 
@@ -2810,16 +2850,20 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("load: Performance measurement points", function (assert) {
-		var oAverageSpy = oGlobalSandbox.spy(jQuery.sap.measure, "average")
-				.withArgs("sap.ui.model.odata.ODataMetaModel/load", "", [sComponent]),
-			oEndSpy = oGlobalSandbox.spy(jQuery.sap.measure, "end")
-				.withArgs("sap.ui.model.odata.ODataMetaModel/load"),
-			oModel = new ODataModel1("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
-				json : true,
-				loadMetadataAsync : true
-			}),
-			oMetaModel = oModel.getMetaModel();
+		var oAverageSpy, oEndSpy, oMetaModel, oModel;
+
+		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
+
+		oAverageSpy = oGlobalSandbox.spy(jQuery.sap.measure, "average")
+			.withArgs("sap.ui.model.odata.ODataMetaModel/load", "", [sComponent]);
+		oEndSpy = oGlobalSandbox.spy(jQuery.sap.measure, "end")
+			.withArgs("sap.ui.model.odata.ODataMetaModel/load");
+		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+			annotationURI : "/GWSAMPLE_BASIC/annotations",
+			json : true,
+			loadMetadataAsync : true
+		});
+		oMetaModel = oModel.getMetaModel();
 
 		assert.strictEqual(oAverageSpy.callCount, 0, "load start measurement before");
 		assert.strictEqual(oEndSpy.callCount, 0, "load end measurement before");
