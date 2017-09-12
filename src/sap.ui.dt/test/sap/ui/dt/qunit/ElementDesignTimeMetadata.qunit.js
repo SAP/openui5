@@ -143,4 +143,10 @@
 		}, "then the translated texts are returned for static keys");
 	});
 
+	QUnit.test("when getAggregations method is called and DT Metadata has no aggregations nor associations", function(assert){
+		this.oElementDesignTimeMetadata.getData().aggregations = null;
+		this.oElementDesignTimeMetadata.getData().associations = null;
+		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregations(), {}, "then an empty object is returned");
+	});
+
 })();
