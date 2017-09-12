@@ -76,7 +76,7 @@ sap.ui.define([
 				this.setModel(new JSONModel(), "borrowedMethods");
 				this.setModel(new JSONModel(), "borrowedEvents");
 
-				this.getView().byId("apiDetailObjectPage").attachEvent("onAfterRenderingDOMReady", function () {
+				this._objectPage.attachEvent("onAfterRenderingDOMReady", function () {
 					jQuery.sap.delayedCall(250, this, function () {
 						this._scrollToEntity(this._sEntityType, this._sEntityId);
 					});
@@ -132,8 +132,9 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (oEvent) {
-				var oApiDetailObjectPage = this.byId("apiDetailObjectPage"),
-					oComponent = this.getOwnerComponent();
+				var oComponent = this.getOwnerComponent();
+
+				this._objectPage.setBusy(true);
 
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
@@ -162,19 +163,20 @@ sap.ui.define([
 						// If the entity does not exist in the available libs we redirect to the not found page and
 						// stop the immediate execution of this method.
 						if (!bFound) {
+							this._objectPage.setBusy(false);
 							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 							return;
 						}
 						// Cache allowed members
 						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-						oApiDetailObjectPage._suppressLayoutCalculations();
+						this._objectPage._suppressLayoutCalculations();
 						this._bindData(this._sTopicid);
 						this._bindEntityData(this._sTopicid);
 						this._createMethodsSummary();
 						this._createEventsSummary();
 						this._createAnnotationsSummary();
-						oApiDetailObjectPage._resumeLayoutCalculations();
+						this._objectPage._resumeLayoutCalculations();
 
 						if (this._sEntityType) {
 							this._scrollToEntity(this._sEntityType, this._sEntityId);
@@ -182,7 +184,10 @@ sap.ui.define([
 							this._scrollContentToTop();
 						}
 
-						setTimeout(this._prettify, 0);
+						jQuery.sap.delayedCall(0, this, function () {
+							this._prettify();
+							this._objectPage.setBusy(false);
+						});
 
 						this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
 					}.bind(this));
@@ -349,9 +354,6 @@ sap.ui.define([
 				}
 
 				oUi5Metadata = oControlData['ui5-metadata'];
-
-				this.getView().byId('apiDetailPage').setBusy(false);
-				this.getView().byId('apiDetailObjectPage').setVisible(true);
 
 				if (oControlData.controlChildren) {
 					oControlData.hasChildren = true;

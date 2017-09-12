@@ -12,8 +12,6 @@
 			showHeader="false"
 			showSubHeader="false"
 			showFooter="false"
-			busy="true"
-			busyIndicatorDelay="0"
 			class="apiDetailPage">
 
 		<m:content>
@@ -21,7 +19,7 @@
 							  enableLazyLoading="false"
 							  showAnchorBarPopover="true"
 							  upperCaseAnchorBar="false"
-							  visible="false">
+							  busyIndicatorDelay="0">
 				<headerTitle>
 					<ObjectPageHeader id="title" objectTitle="{topics>/kind} {topics>/name}"
 									  objectSubtitle="{parts : [{path: 'topics>/deprecated'}],

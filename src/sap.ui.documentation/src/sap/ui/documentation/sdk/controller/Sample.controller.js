@@ -50,6 +50,10 @@ sap.ui.define([
 			/* =========================================================== */
 
 			_onSampleMatched: function (event) {
+				var oPage = this.getView().byId("page");
+
+				oPage.setBusy(true);
+
 				this._sId = event.getParameter("arguments").id;
 
 				ControlsInfo.loadData().then(function (oData) {
@@ -58,18 +62,21 @@ sap.ui.define([
 			},
 
 			_loadSample: function(oData) {
-				var oSample = oData.samples[this._sId],
+				var oPage = this.getView().byId("page"),
+					oHistory = History.getInstance(),
+					oPrevHash = oHistory.getPreviousHash(),
+					oModelData = this._viewModel.getData(),
+					oSample = oData.samples[this._sId],
 					oContent;
 
 				if (!oSample) {
+					jQuery.sap.delayedCall(0, this, function () {
+						oPage.setBusy(false);
+					});
 					return;
 				}
 
 				// set nav button visibility
-				var oPage = this.getView().byId("page");
-				var oHistory = History.getInstance();
-				var oPrevHash = oHistory.getPreviousHash();
-				var oModelData = this._viewModel.getData();
 				oModelData.showNavButton = Device.system.phone || !!oPrevHash;
 				oModelData.previousSampleId = oSample.previousSampleId;
 				oModelData.nextSampleId = oSample.nextSampleId;
@@ -82,6 +89,9 @@ sap.ui.define([
 				} catch (ex) {
 					oPage.removeAllContent();
 					oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
+					jQuery.sap.delayedCall(0, this, function () {
+						oPage.setBusy(false);
+					});
 					return;
 				}
 
@@ -115,8 +125,11 @@ sap.ui.define([
 				// scroll to top of page
 				oPage.scrollTo(0);
 				this._viewModel.setData(oModelData);
-			},
 
+				jQuery.sap.delayedCall(0, this, function () {
+					oPage.setBusy(false);
+				});
+			},
 
 			onNewTab : function () {
 				URLHelper.redirect(this.sIFrameUrl, true);

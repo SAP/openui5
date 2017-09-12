@@ -181,6 +181,10 @@ sap.ui.define([
 					}
 
 					this._switchPageTab();
+
+					jQuery.sap.delayedCall(0, this, function () {
+						this._oObjectPage.setBusy(false);
+					});
 				}
 
 				// set data model
@@ -219,6 +223,7 @@ sap.ui.define([
 
 
 			onRouteMatched: function (oEvt) {
+				this._oObjectPage.setBusy(true);
 
 				this._sNewId = oEvt.getParameter("arguments").id;
 				this._sNewTab = oEvt.getParameter("arguments").sectionTab;
