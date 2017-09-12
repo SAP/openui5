@@ -1,9 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([
-	'jquery.sap.global', './ListItemBaseRenderer'
-], function(jQuery, ListItemBaseRenderer) {
+sap.ui.define(['./ListItemBaseRenderer'], function(ListItemBaseRenderer) {
 	"use strict";
 
 	/**

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SelectionDetailsItemLine.
-sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Element' ],
-	function(jQuery, Element) {
+sap.ui.define(['sap/ui/core/Element'],
+	function(Element) {
 	"use strict";
 
 	/**

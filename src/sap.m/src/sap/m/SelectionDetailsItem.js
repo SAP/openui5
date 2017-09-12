@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.m.SelectionDetailsItem.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase", "./library", "sap/m/Button", "sap/m/OverflowToolbar", "sap/m/ToolbarSpacer", 'sap/ui/base/Interface'],
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", "sap/m/ListItemBase", "./library", "sap/m/Button", "sap/m/OverflowToolbar", "sap/m/ToolbarSpacer", "sap/ui/base/Interface"],
 	function(jQuery, Element, ListItemBase, library, Button, OverflowToolbar, ToolbarSpacer, Interface) {
 	"use strict";
 
