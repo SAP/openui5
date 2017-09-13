@@ -10,7 +10,8 @@ sap.ui.define( ["sap/ui/core/UIComponent"], function (UIComponent) {
 					viewPath: "sap.ui.core.sample.TargetsStandalone.targetsApp.view",
 					controlId: "rootControl",
 					controlAggregation: "pages",
-					viewType: "XML"
+					viewType: "XML",
+					async: true
 				},
 				targets: {
 					page1: {
