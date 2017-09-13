@@ -13,17 +13,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		Severity = SupportLib.Severity,	// Hint, Warning, Error
 		Audiences = SupportLib.Audiences; // Control, Internal, Application
 
-	var aRules = [];
-
-	function createRule(oRuleDef) {
-		aRules.push(oRuleDef);
-	}
-
 	//**********************************************************
 	// Rule Definitions
 	//**********************************************************
 
-	createRule({
+	var oDialogRule = {
 		id : "dialogarialabelledby",
 		audiences: [Audiences.Control],
 		categories: [Categories.Accessibility],
@@ -64,14 +58,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 				}
 			});
 		}
-	});
-
-	return {
-		addRulesToRuleset: function(oRuleset) {
-			jQuery.each(aRules, function(idx, oRuleDef){
-				oRuleset.addRule(oRuleDef);
-			});
-		}
 	};
+
+	return [oDialogRule];
 
 }, true);

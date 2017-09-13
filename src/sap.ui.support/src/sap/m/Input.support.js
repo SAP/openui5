@@ -13,14 +13,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		Severity = SupportLib.Severity,	// Hint, Warning, Error
 		Audiences = SupportLib.Audiences; // Control, Internal, Application
 
-
-	var aRules = [];
-
-	function createRule(oRuleDef) {
-		aRules.push(oRuleDef);
-	}
-
-
 	//**********************************************************
 	// Rule Definitions
 	//**********************************************************
@@ -28,7 +20,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	/**
 	 * Input field needs to have a label association
 	 */
-	createRule({
+	var oInputNeedsLabelRule = {
 		id: "inputNeedsLabel",
 		audiences: [Audiences.Control],
 		categories: [Categories.Usability],
@@ -69,14 +61,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 				});
 			}
 		}
-	});
-
-	return {
-		addRulesToRuleset: function(oRuleset) {
-			jQuery.each(aRules, function(idx, oRuleDef){
-				oRuleset.addRule(oRuleDef);
-			});
-		}
 	};
+
+	return [oInputNeedsLabelRule];
 
 }, true);

@@ -12,11 +12,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		var Categories = SupportLib.Categories, // Accessibility, Performance, Memory, ...
 			Severity = SupportLib.Severity,	// Hint, Warning, Error
 			Audiences = SupportLib.Audiences; // Control, Internal, Application
-		var aRules = [];
-
-		function createRule(oRuleDef) {
-			aRules.push(oRuleDef);
-		}
 
 		//**********************************************************
 		// Rule Definitions
@@ -25,7 +20,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		/**
 		 *Checks if a panel has a title or a header toolbar with a title
 		 */
-		createRule({
+		var oPanelNeedHeaderRule = {
 			id : "panelWithheaderTextOrWithHeaderToolbarWithTitle",
 			audiences: [Audiences.Control],
 			categories: [Categories.Usability],
@@ -59,14 +54,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 						}
 					});
 			}
-		});
-
-		return {
-			addRulesToRuleset: function(oRuleset) {
-				jQuery.each(aRules, function(idx, oRuleDef){
-					oRuleset.addRule(oRuleDef);
-				});
-			}
 		};
+
+		return [oPanelNeedHeaderRule];
 
 	}, true);
