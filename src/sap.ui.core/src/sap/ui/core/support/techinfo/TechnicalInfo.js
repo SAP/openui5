@@ -304,9 +304,6 @@ sap.ui.define([
 				this._storage.put("sap-ui-custom-bootstrap-URL", sCustomUrl);
 				oModel.setProperty("/CustomBootstrapURL", this._storage.get("sap-ui-custom-bootstrap-URL"));
 				sBootstrapURL = sCustomUrl;
-			} else {
-				// returns active location to standard when custom location is selected but input filed is empty
-				sBootstrapURL = sStandardUrl;
 			}
 			this._startAssistant(sBootstrapURL);
 		},
@@ -327,6 +324,7 @@ sap.ui.define([
 		onChangeStandardBootstrapURL: function (oEvent) {
 			var sValue = oEvent.getParameter("selectedItem").getKey();
 			this._storage.put("sap-ui-standard-bootstrap-URL", sValue);
+			this._pingUrl(sValue, oEvent.getSource());
 		},
 
 		/**
@@ -334,6 +332,22 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent The input change event
 		 */
 		onChangeCustomBootstrapURL: function (oEvent) {
+			var sValue = oEvent.getParameter("value"),
+				oControl = oEvent.getSource();
+			this._storage.put("sap-ui-custom-bootstrap-URL", sValue);
+			var oBinding = oControl.getBinding("value");
+			try {
+				oBinding.getType().validateValue.call(this, oControl.getValue());
+				oControl.setValueState("None");
+			} catch (oException) {
+				this._showError(oControl, oException.message);
+			}
+		},
+		/**
+		 *  Handler for liveChange event fired by custom bootstrap URL.
+		 * @param oEvent
+		 */
+		onLiveChangeCustomBootstrapURL:function (oEvent) {
 			var sValue = oEvent.getParameter("value");
 			this._storage.put("sap-ui-custom-bootstrap-URL", sValue);
 		},
@@ -356,22 +370,17 @@ sap.ui.define([
 			if (this._oAssistantPopover && this._oAssistantPopover.isOpen()) {
 				return;
 			}
-
 			// create dialog lazily
 			if (!this._oAssistantPopover) {
 				this._oAssistantPopover = sap.ui.xmlfragment("technicalInfoDialogAssistantPopover", "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover", this);
+				this._oAssistantPopover.attachAfterOpen(this._onAssistantPopoverOpened, this);
 				this._oDialog.addDependent(this._oAssistantPopover);
 				jQuery.sap.syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oAssistantPopover);
 
 				// register message validation and trigger it once to validate the value coming from local storage
 				var oCustomBootstrapURL = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--customBootstrapURL");
 				sap.ui.getCore().getMessageManager().registerObject(oCustomBootstrapURL, true);
-				var oBinding = oCustomBootstrapURL.getBinding("value");
-				try {
-					oBinding.getType().validateValue(oCustomBootstrapURL.getValue());
-				} catch (oException) {
-					oCustomBootstrapURL.setValueState("Error");
-				}
+
 			}
 
 			// enable or disable default option for version >= 1.48
@@ -388,14 +397,10 @@ sap.ui.define([
 			var oModel = this._oDialog.getModel("view"),
 				sSelectedLocation = oModel.getProperty("/SelectedLocation");
 
-			if (sSelectedLocation === "custom" && !oModel.getProperty("/CustomBootstrapURL")) {
-				this._setActiveLocations("standard");
-			} else {
-				this._setActiveLocations(sSelectedLocation);
-			}
+			this._setActiveLocations(sSelectedLocation);
 
-			// refresh configuration data and open dialog
-			this._oAssistantPopover.openBy(oEvent.getSource());
+			var oSupportAssistantSettingsButton = sap.ui.getCore().byId("technicalInfoDialog--supportAssistantSettingsButton");
+			this._oAssistantPopover.openBy(oSupportAssistantSettingsButton);
 		},
 
 		/**
@@ -409,9 +414,17 @@ sap.ui.define([
 				return oValue;
 			},
 			validateValue: function (oValue) {
-				var oRegexpCoreURL = /^https?:\/\/(www\.)?([-a-zA-Z0-9.%_+~#=]{2,})([-a-zA-Z0-9@:%_+.~#?&/=]*)\/sap\/ui\/support\/?$/;
+				var oRegexpCoreURL = /^https?:\/\/(www\.)?([-a-zA-Z0-9.%_+~#=]{2,})([-a-zA-Z0-9@:%_+.~#?&/=]*)\/sap\/ui\/support\/?$/,
+					sApplicationProtocol = window.location.protocol,
+					oI18nModel = new ResourceModel({
+						bundleName: "sap.ui.core.messagebundle"
+					});
+
 				if (oValue && !oValue.match(oRegexpCoreURL)) {
-					throw new ValidateException("'" + oValue + "' is not a valid URL");
+					throw new ValidateException(oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.URLValidationMessage"));
+				}
+				if (oValue && sApplicationProtocol === "https:" && !oValue.match(sApplicationProtocol)) {
+					throw new ValidateException(oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.ProtocolError"));
 				}
 				return true;
 			}
@@ -497,7 +510,6 @@ sap.ui.define([
 				};
 
 			this._loadAssistant(sBootstrapURL, oSettings);
-			this.close();
 		},
 
 		/**
@@ -511,18 +523,38 @@ sap.ui.define([
 			jQuery.ajax({
 				type: "HEAD",
 				async: true,
+				context:this,
 				url: sUrl + "Bootstrap.js",
 				success: function () {
+					this.close();
 					jQuery.sap.registerModulePath("sap.ui.support", sUrl);
-					var oBootstrap = sap.ui.requireSync("sap/ui/support/Bootstrap");
+					var oBootstrap = sap.ui.requireSync("sap/ui/support/Bootstrap"),
 					// Settings needs to be converted to array required by initSupportRules function
-					var aSettings = [oSettings.support];
+					aSettings = [oSettings.support];
 					if (oSettings.window) {
 						aSettings.push("window");
 					}
 					oBootstrap.initSupportRules(aSettings);
 				},
-				error: function () {
+				error: function (jqXHR, exception) {
+					var msg = this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.SupportAssistantNotFound");
+					if (jqXHR.status === 0) {
+						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.ErrorTryingToGetRecourse");
+					} else if (jqXHR.status === 404) {
+						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.ErrorNotFound");
+					} else if (jqXHR.status === 500) {
+						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.InternalServerError");
+					} else if (exception === 'parsererror') {
+						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.ErrorOnJsonParse");
+					} else if (exception === 'timeout') {
+						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.ErrorOnTimeout");
+					} else if (exception === 'abort') {
+						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.ErrorWhenAborted");
+					} else {
+						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.UncaughtError") + jqXHR.responseText;
+					}
+					this._sErrorMessage = msg;
+					this.onConfigureAssistantBootstrap();
 					jQuery.sap.log.error("Support Assistant could not be loaded from the URL you entered");
 				}
 			});
@@ -661,6 +693,11 @@ sap.ui.define([
 				oStandard = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standardBootstrapURL"),
 				bStandardLocationEnabled;
 
+				oCustom.setValueState("None");
+				oStandard.setValueState("None");
+				oStandard.closeValueStateMessage();
+				oCustom.closeValueStateMessage();
+
 			if (sValue === "standard") {
 				bStandardLocationEnabled = true;
 				oModel.setProperty("/StandardBootstrapURL", this._storage.get("sap-ui-standard-bootstrap-URL"));
@@ -711,6 +748,71 @@ sap.ui.define([
 					}
 				}
 			);
+		},
+		/**
+		 * Handler for onAfterOpen event from popover
+		 * @private
+		 */
+		_onAssistantPopoverOpened: function () {
+			var oModel = this._oDialog.getModel("view"),
+				sSelectedLocation = oModel.getProperty("/SelectedLocation"),
+				oControl;
+
+			if (sSelectedLocation === "custom") {
+				oControl = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--customBootstrapURL");
+				var oBinding = oControl.getBinding("value"),
+					sValue = oControl.getValue();
+				try {
+					oBinding.getType().validateValue.call(this, sValue);
+				} catch (oException) {
+					this._showError(oControl, oException.message);
+					if (this._sErrorMessage) {
+						this._sErrorMessage = null;
+					}
+					return;
+				}
+			} else {
+				oControl = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standardBootstrapURL");
+			}
+
+			if (this._sErrorMessage) {
+				this._showError(oControl, this._sErrorMessage);
+				this._sErrorMessage = null;
+			}
+		},
+
+		/**
+		 * Display passed message as error state for the control.
+		 * @param oControl Control that should display the message.
+		 * @param sMessage Error message as text.
+		 * @private
+		 */
+		_showError : function (oControl, sMessage) {
+			oControl.setValueStateText(sMessage);
+			oControl.setValueState("Error");
+			oControl.openValueStateMessage();
+		},
+		/**
+		 * Pings specific Url to get the status.
+		 * @param sUrl {string} URL that needs to be ping
+		 * @param oControl {Object} Control that will display the status.
+		 * @private
+		 */
+		_pingUrl: function (sUrl, oControl) {
+			jQuery.ajax({
+				type: "HEAD",
+				async: true,
+				context:this,
+				url: sUrl + "Bootstrap.js",
+				success: function () {
+					oControl.setValueState("Success");
+				},
+				error: function () {
+					var sMessage = this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.NotAvailableAtTheMoment");
+					this._showError(oControl, sMessage);
+					jQuery.sap.log.error("Support Assistant could not be loaded from the URL you entered");
+				}
+			});
 		},
 
 		/**
