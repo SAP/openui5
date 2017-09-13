@@ -425,11 +425,12 @@ sap.ui.define([
 			}
 
 			if (bScrolled) {
+				oEvent.preventDefault(); // Prevent scrolling the page.
+
 				if (bActionModeNavigation) {
 					oTable.attachEventOnce("_rowsUpdated", function() {
 						setTimeout(function() {
 							TableKeyboardDelegate._focusCell(oTable, oCellInfo.type, oCellInfo.rowIndex, oCellInfo.columnIndex, true);
-							oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
 						}, 0);
 					});
 				}
@@ -868,7 +869,7 @@ sap.ui.define([
 
 	/*
 	 * Handled keys:
-	 * Shift, F2, F4, Shift+F10, Ctrl+A, Ctrl+Shift+A
+	 * Shift, Space, F2, F4, Shift+F10, Ctrl+A, Ctrl+Shift+A
 	 */
 	TableKeyboardDelegate.prototype.onkeydown = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
@@ -895,6 +896,10 @@ sap.ui.define([
 
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
+		}
+
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SPACE)) {
+			oEvent.preventDefault(); // Prevent scrolling the page.
 		}
 
 		var $Target = jQuery(oEvent.target);
@@ -1545,6 +1550,8 @@ sap.ui.define([
 			return;
 		}
 
+		oEvent.preventDefault(); // Prevent scrolling the page.
+
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
 			preventItemNavigation(oEvent);
@@ -1580,6 +1587,8 @@ sap.ui.define([
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
+
+		oEvent.preventDefault(); // Prevent scrolling the page.
 
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
@@ -1773,6 +1782,8 @@ sap.ui.define([
 			return;
 		}
 
+		oEvent.preventDefault(); // Prevent scrolling the page.
+
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNHEADER)) {
@@ -1840,6 +1851,8 @@ sap.ui.define([
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
+
+		oEvent.preventDefault(); // Prevent scrolling the page.
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 

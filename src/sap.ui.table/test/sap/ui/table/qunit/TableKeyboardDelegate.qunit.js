@@ -3837,10 +3837,10 @@
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Navigation > Special Cases", {
-		beforeEach: function () {
+		beforeEach: function() {
 			setupTest();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			teardownTest();
 		}
 	});
@@ -3857,6 +3857,59 @@
 		for (var i = 0; i < aKeys.length; i++) {
 			qutils.triggerKeydown(oElem, aKeys[i], false, false, false);
 			checkFocus(oElem, assert);
+		}
+	});
+
+	QUnit.test("Page scrolling", function(assert) {
+		var aEventTargetGetters = [
+			getCell.bind(window, 0, 0),
+			getCell.bind(window, oTable.getVisibleRowCount() - 1, 0),
+			getCell.bind(window, 2, 1),
+			getColumnHeader.bind(window, 0)
+		];
+		var aKeystrokes = [
+			{keyName: "Space (keyup)", trigger: qutils.triggerKeyup, arguments: [null, Key.SPACE, false, false, false]},
+			{keyName: "Space (keydown)", trigger: qutils.triggerKeydown, arguments: [null, Key.SPACE, false, false, false]},
+			{keyName: "ArrowUp", trigger: qutils.triggerKeydown, arguments: [null, Key.Arrow.UP, false, false, false]},
+			{keyName: "ArrowDown", trigger: qutils.triggerKeydown, arguments: [null, Key.Arrow.DOWN, false, false, false]},
+			{keyName: "ArrowLeft", trigger: qutils.triggerKeydown, arguments: [null, Key.Arrow.LEFT, false, false, false]},
+			{keyName: "ArrowRight", trigger: qutils.triggerKeydown, arguments: [null, Key.Arrow.RIGHT, false, false, false]},
+			{keyName: "Home", trigger: qutils.triggerKeydown, arguments: [null, Key.HOME, false, false, false]},
+			{keyName: "End", trigger: qutils.triggerKeydown, arguments: [null, Key.END, false, false, false]},
+			{keyName: "Ctrl+Home", trigger: qutils.triggerKeydown, arguments: [null, Key.HOME, false, false, true]},
+			{keyName: "Ctrl+End", trigger: qutils.triggerKeydown, arguments: [null, Key.END, false, false, true]},
+			{keyName: "PageUp", trigger: qutils.triggerKeydown, arguments: [null, Key.Page.UP, false, false, false]},
+			{keyName: "PageDown", trigger: qutils.triggerKeydown, arguments: [null, Key.Page.DOWN, false, false, false]}
+		];
+
+		assert.expect(aEventTargetGetters.length + aEventTargetGetters.length * aKeystrokes.length);
+
+		function assertDefaultPrevented(oEvent) {
+			assert.ok(oEvent.isDefaultPrevented(), oEvent.target._oKeystroke.keyName + ": Default action was prevented (Page scrolling)");
+		}
+
+		oTable.addEventDelegate({
+			onkeydown: assertDefaultPrevented,
+			onkeyup: assertDefaultPrevented
+		});
+
+		for (var i = 0; i < aEventTargetGetters.length; i++) {
+			oTable.setFirstVisibleRow(1);
+			sap.ui.getCore().applyChanges();
+
+			var oEventTarget = aEventTargetGetters[i]();
+			oEventTarget.focus();
+			checkFocus(oEventTarget, assert);
+
+			for (var j = 0; j < aKeystrokes.length; j++) {
+				var oKeystroke = aKeystrokes[j];
+				var aArguments = oKeystroke.arguments;
+
+				oEventTarget.focus();
+				oEventTarget[0]._oKeystroke = oKeystroke;
+				aArguments[0] = oEventTarget; // The first parameter is the event target.
+				oKeystroke.trigger.apply(qutils, aArguments);
+			}
 		}
 	});
 
