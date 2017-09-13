@@ -56,6 +56,18 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 				return oControl.getAttribute(sPropertyName);
 			},
 
+			/**
+			 * Creates the control (as XML element or node)
+			 *
+			 * @param {string} sClassName Class name for the control (for example, <code>sap.m.Button</code>)
+			 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an id
+			 * @param {Element} oView XML node of the view, required to create nodes and to find elements
+			 * @param {object} [oSelector] - Selector to calculate the ID for the control that is being created
+			 * @param {string} [oSelector.id] - Control ID targeted by the change
+			 * @param {boolean} [oSelector.isLocalId] - True if the ID within the selector is a local ID or a global ID
+			 * @param {object} [mSettings ] Further settings or properties for the control that is being created
+			 * @returns {Element} XML node of the control being created
+			 */
 			createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
 				var sId, sLocalName;
 				if (!this.bySelector(oSelector, oAppComponent, oView)) {
@@ -89,8 +101,8 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 			 * Returns the control for the given id. Undefined if control cannot be found.
 			 *
 			 * @param {string} sId control id
-			 * @param {Node} oView node of the view
-			 * @returns {Node} xml node of the Control
+			 * @param {Element} oView Node of the view
+			 * @returns {Element} XML node of the control
 			 * @private
 			 */
 			_byId: function (sId, oView) {
@@ -127,9 +139,9 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 				return oParent;
 			},
 
-			_getLocalName: function (xmlNode) {
+			_getLocalName: function (xmlElement) {
 				// localName for standard browsers, baseName for IE, nodeName in the absence of namespaces
-				return xmlNode.localName || xmlNode.baseName || xmlNode.nodeName;
+				return xmlElement.localName || xmlElement.baseName || xmlElement.nodeName;
 			},
 
 			getControlType: function (oControl) {
@@ -161,6 +173,17 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 				return aChildren;
 			},
 
+			/**
+			 * Insert the control (as XML element or node) into the specified aggregation;
+			 * if the aggregation node is not available in the current XML and is needed
+			 * because it's not the default aggregation, the aggregation node will be created automatically.
+			 *
+			 * @param {Element} oParent XML node or element of the control in which to insert <code>oObject</code>
+			 * @param {string} sName Aggregation name
+			 * @param {Element} oObject XML node or element of the control that will be inserted
+			 * @param {int} iIndex Index for <code>oObject</code> in the aggregation
+			 * @param {Element} oView xml node/element of the view - needed to potentially create (aggregation) nodes
+			 */
 			insertAggregation: function (oParent, sName, oObject, iIndex, oView) {
 				var oAggregationNode = this._findAggregationNode(oParent, sName);
 
@@ -219,7 +242,6 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 					}
 				}
 				if (!oAggregationNode && this._isDefaultAggregation(oParent, sName)) {
-					// expecting default aggregation
 					oAggregationNode = oParent;
 				}
 				return oAggregationNode;
@@ -249,8 +271,8 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 				return !!oAggregationMetadata.altTypes;
 			},
 
-			_getControlMetadata: function(oParent, sAggregationName){
-				var sControlType = this.getControlType(oParent);
+			_getControlMetadata: function(oControl){
+				var sControlType = this.getControlType(oControl);
 				jQuery.sap.require(sControlType);
 				var ControlType = jQuery.sap.getObject(sControlType);
 				return ControlType.getMetadata();
