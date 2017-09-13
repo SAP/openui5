@@ -104,7 +104,7 @@
 							<t:columns>
 								<t:Column label="Issues">
 									<t:template>
-										<Text text="{name}" wrapping="false"/>
+										<FormattedText htmlText="{formatedName}"/>
 									</t:template>
 								</t:Column>
 							</t:columns>
@@ -155,9 +155,14 @@
 								rowSelectionChange="onRowSelection"
 								id="issueTable">
 								<t:columns>
-									<t:Column label="Index" width="50px">
+									<t:Column label="Severity" width="80px">
 										<t:template>
-											<Text text="{= ${/selectedIssue/issues}.indexOf(${}) + 1 }"></Text>
+											<c:Icon color="{severityColor}"
+													src="{severityIcon}">
+												<c:layoutData>
+													<FlexItemData growFactor="1" />
+												</c:layoutData>
+											</c:Icon>
 										</t:template>
 									</t:Column>
 									<t:Column
