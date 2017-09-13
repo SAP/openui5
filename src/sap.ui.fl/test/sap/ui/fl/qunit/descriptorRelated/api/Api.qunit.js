@@ -744,6 +744,37 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("create_app_setInfo", function(assert) {
+		var _oDescriptorInlineChange;
+		var _oDescriptorVariant;
+		var mParameter = {
+				"maxLength" : 70,
+				"comment" : "comment on info",
+				"value" : {
+					"" : "Default Info",
+					"en":"English Info",
+					"de":"Deutsche Info",
+					"en_US":"English Info in en_US"
+				}
+			};
+		return DescriptorInlineChangeFactory.create_app_setInfo(mParameter).then(function(oDescriptorInlineChange) {
+			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
+			_oDescriptorInlineChange = oDescriptorInlineChange;
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setInfo");
+			return DescriptorVariantFactory.createNew({
+					"id" : "a.id",
+					"reference": "a.reference"
+			});
+		}).then(function(oDescriptorVariant){
+			_oDescriptorVariant = oDescriptorVariant;
+			return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
+		}).then(function(){
+			assert.ok(_oDescriptorVariant._content[0].texts['a.id_sap.app.info'], 'Initial empty text key replaced');
+			assert.ok(!_oDescriptorVariant._content[0].texts[''], 'Initial empty text key removed ');
+			assert.deepEqual(_oDescriptorVariant._content[0].texts['a.id_sap.app.info'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+		});
+	});
+
 	QUnit.test("create_app_setKeywords", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_setKeywords({
 			"keywords": ["{{customer.newid_sap.app.tags.keywords.0}}", "{{customer.newid_sap.app.tags.keywords.1}}"]
