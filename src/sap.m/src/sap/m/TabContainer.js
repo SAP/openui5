@@ -17,9 +17,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The <code>TabContainer</code> control represents a collection of tabs with associated content.
+		 * A container control for managing multiple tabs, allowing the user to open and edit different items simultaneously.
 		 *
-		 * The <code>TabContainer</code> is a full-page container that takes 100% of the parent width and height.
+		 * <h3>Overview</h3>
+		 *
+		 * The control contains a <code>TabStrip</code> area where the user can choose which tab to view/edit.
+		 * When the open tabs are more than what can be displayed on the screen, there is an overflow mechanism.
+		 * To access the tabs hidden in the overflow area, the user has to either use the overflow button (left or right arrow)
+		 * to scroll them horizontally or the overflow overview button (down arrow) and view all open items as a list.
+		 *
+		 * Each tab has a title and a <i>Close Tab</i> button. The title is truncated, if it's longer than 25 characters.
+		 * On desktop, the <i>Close Tab</i> button is displayed on the currently active tab and for the other tabs it appears on mouse hover.
+		 * On mobile devices, the <i>Close Tab</i> buttons are always visible.
+		 *
+		 * To show that the open items have unsaved changes, the corresponding tabs can display an asterisk (*) after the title
+		 * as a visual indication that the item is not saved. This is managed by the app developer using
+		 * {@link sap.m.TabContainerItem TabContainerItem}'s <code>modified</code> property.
+		 *
+		 * <h3>Usage</h3>
+		 *
+		 * The <code>TabContainer</code> can have an <i>Add New Tab</i> button, which appears as a '+' icon on the
+		 * top-right area of the control. When the user clicks or taps this button, the <code>addNewButtonPress</code> event is fired.
+		 *
+		 * <h3>Responsive behavior</h3>
+		 *
+		 * The <code>TabContainer</code> is a full-page container that takes 100% of its parent width and height.
 		 * As the control is expected to occupy the whole parent, it should be the only child of its parent.
 		 *
 		 * @extends sap.ui.core.Control
@@ -39,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				properties : {
 
 					/**
-					 * Defines whether an <code>Add New Tab</code> button is displayed in the TabStrip.
+					 * Defines whether an <i>Add New Tab</i> button is displayed in the <code>TabStrip</code>.
 					 */
 					showAddNewButton : {type : "boolean", group : "Misc", defaultValue : false}
 				},
@@ -51,7 +73,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					items : {type : "sap.m.TabContainerItem", multiple : true, singularName: "item", bindable: "bindable"},
 
 					/**
-					 * The <code>Add New Tab</code> button displayed in the <code>TabStrip</code>.
+					 * The <i>Add New Tab</i> button displayed in the <code>TabStrip</code>.
 					 */
 					_addNewButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
 
@@ -63,7 +85,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				associations : {
 
 					/**
-					 * Sets or retrieves the selected item from the aggregation named items.
+					 * Sets or retrieves the selected item from the <code>items</code> aggregation.
 					 */
 					selectedItem : {type : "sap.m.TabContainerItem", multiple : false}
 				},
@@ -97,7 +119,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					},
 
 					/**
-					 * Fired when <code>Add New Tab</code> button is pressed.
+					 * Fired when the <i>Add New Tab</i> button is pressed.
 					 */
 					addNewButtonPress: { }
 				}
