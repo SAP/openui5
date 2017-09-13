@@ -525,8 +525,6 @@ sap.ui.define([
 					// Register function for checking unsaved before leaving RTA
 					this._oldUnloadHandler = window.onbeforeunload;
 					window.onbeforeunload = this._onUnload.bind(this);
-
-					sap.ui.getCore().getEventBus().subscribe("sap.ushell.renderers.fiori2.Renderer", "appClosed", this._onAppClosed, this);
 				}
 
 				return Promise.resolve(bReloadTriggered);
@@ -582,10 +580,6 @@ sap.ui.define([
 		MessageBox.error(sMsg, {
 			styleClass: Utils.getRtaStyleClassName()
 		});
-	};
-
-	RuntimeAuthoring.prototype._onAppClosed = function() {
-		this.stop(true, true);
 	};
 
 	/**
@@ -875,7 +869,6 @@ sap.ui.define([
 		}
 
 		window.onbeforeunload = this._oldUnloadHandler;
-		sap.ui.getCore().getEventBus().unsubscribe("sap.ushell.renderers.fiori2.Renderer", "appClosed", this._onAppClosed, this);
 	};
 
 	/**
@@ -1848,8 +1841,6 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype._handlePersonalizationChangesOnExit = function() {
 		var oUshellContainer = Utils.getUshellContainer();
-		sap.ui.getCore().getEventBus()
-			.unsubscribe("sap.ushell.renderers.fiori2.Renderer", "appClosed", this._onAppClosed, this);
 		if (oUshellContainer && this.getLayer() !== "USER") {
 			// When working with RTA, the MaxLayer parameter will be present in the URL and must
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)

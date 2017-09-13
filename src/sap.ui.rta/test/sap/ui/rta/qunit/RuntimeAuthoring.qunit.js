@@ -979,24 +979,6 @@ sap.ui.require([
 		}.bind(this));
 	});
 
-	QUnit.test("when the appClosed event is raised", function(assert) {
-		var done = assert.async();
-
-		var oCheckPersChangesSpy = sandbox.spy(this.oRta, "_handlePersonalizationChangesOnExit");
-		var oSerializeSpy = sandbox.spy(this.oRta, "_serializeToLrep");
-
-		this.oRta.attachStop(function() {
-			assert.equal(oCheckPersChangesSpy.callCount, 0, "then the check for personalized changes wasn't executed");
-			assert.equal(oSerializeSpy.callCount, 0, "then _serializeToLrep wasn't called");
-			done();
-		});
-
-		this.oRta.attachStart(function() {
-			sap.ui.getCore().getEventBus().publish("sap.ushell.renderers.fiori2.Renderer", "appClosed", this);
-		});
-		this.oRta.start();
-	});
-
 	QUnit.test("when RTA toolbar gets closed (exit without appClosed)", function(assert) {
 		var done = assert.async();
 
