@@ -293,7 +293,11 @@ sap.ui.require([
 							return this.waitFor({
 								controlType : "sap.m.Link",
 								matchers: [
-									new Ancestor(oDialog)
+									new Ancestor(oDialog),
+									new I18NText({
+										propertyName : "text",
+										key: "TechInfo.DebugSourcesModules.Link"
+									})
 								],
 								actions : new Press(),
 								success : function () {
