@@ -2628,6 +2628,7 @@ sap.ui.require([
 				oCache = _Cache.createSingle(oRequestor, sResourcePath, defaultFetchType);
 
 			return oCache.fetchValue().then(function (oResult) {
+				delete oResult["@odata.metadataEtag"];
 				assert.deepEqual(oResult, oExpectedResult);
 			});
 		});
