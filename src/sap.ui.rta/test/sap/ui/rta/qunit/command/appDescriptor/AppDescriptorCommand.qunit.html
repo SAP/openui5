@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-		<title>Test Page for Add Library Command</title>
+		<title>Test Page for App Descriptor Command</title>
 		<script src="../shared-config.js"></script>
 		<script>
 			document.write('<script src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
@@ -18,7 +18,7 @@
 
 			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta]');
 
-			jQuery.sap.includeScript('./AddLibrary.qunit.js');
+			jQuery.sap.includeScript('./AppDescriptorCommand.qunit.js');
 		</script>
 	</head>
 	<body>

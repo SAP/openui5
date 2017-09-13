@@ -580,7 +580,7 @@ sap.ui.require([
 				"then the pseudo parent (relevant container) is used to create the new control ID");
 			assert.equal(oCompositeCommand.getCommands()[0].getReference(), "applicationId",
 				"then the addLibrary command is created with the proper reference");
-			assert.equal(oCompositeCommand.getCommands()[0].getRequiredLibraries()["sap.uxap"].minVersion, "1.44",
+			assert.equal(oCompositeCommand.getCommands()[0].getParameters().libraries["sap.uxap"].minVersion, "1.44",
 				"then the addLibrary command is created with the proper required libraries");
 			done();
 		});
