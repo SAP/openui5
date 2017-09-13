@@ -67,9 +67,8 @@ sap.ui.define([
 		if (oParams.undo) {
 			var oFlexController;
 			aCommands.forEach(function(oCommand) {
-				// for revertable changes which don't belong to lrep
-				// (e.g. variantSwitch)
-				if (!(oCommand instanceof FlexCommand)) {
+				// for revertable changes which don't belong to LREP (variantSwitch)
+				if (!(oCommand instanceof FlexCommand || oCommand instanceof AppDescriptorCommand)) {
 					return;
 				}
 				var oChange = oCommand.getPreparedChange();
@@ -89,13 +88,12 @@ sap.ui.define([
 					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 					oFlexController.addPreparedChange(oCommand.getPreparedChange(), oAppComponent);
 				} else if (oCommand instanceof AppDescriptorCommand) {
-					aDescriptorCreateAndAdd.push(oCommand.createAndStore());
+					aDescriptorCreateAndAdd.push(oCommand.createAndStoreChange());
 				}
 			});
 
 			return Promise.all(aDescriptorCreateAndAdd);
 		}
-
 	};
 
 	/**

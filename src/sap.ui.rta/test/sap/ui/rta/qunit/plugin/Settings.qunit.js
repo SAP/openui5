@@ -1,28 +1,42 @@
 /*global QUnit sinon*/
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+QUnit.config.autostart = false;
 
-jQuery.sap.require("sap.ui.thirdparty.sinon");
-jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-jQuery.sap.require("sap.m.Button");
-jQuery.sap.require("sap.ui.layout.VerticalLayout");
-jQuery.sap.require("sap.ui.dt.DesignTime");
-jQuery.sap.require("sap.ui.dt.ElementOverlay");
-jQuery.sap.require("sap.ui.dt.ElementDesignTimeMetadata");
-
-jQuery.sap.require("sap.ui.rta.command.CommandFactory");
-jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
-jQuery.sap.require("sap.ui.fl.changeHandler.PropertyChange");
-
-jQuery.sap.require("sap.ui.rta.command.Settings");
-jQuery.sap.require("sap.ui.rta.plugin.Settings");
-jQuery.sap.require("sap.ui.rta.command.Stack");
-
-(function() {
+sap.ui.require([
+	"sap/m/Button",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/AppDescriptorCommand",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/changeHandler/PropertyChange",
+	"sap/ui/rta/command/Settings",
+	"sap/ui/rta/plugin/Settings",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/fl/Utils"
+],
+function(
+	Button,
+	VerticalLayout,
+	DesignTime,
+	ElementOverlay,
+	ElementDesignTimeMetadata,
+	CommandFactory,
+	AppDescriptorCommand,
+	OverlayRegistry,
+	ChangeRegistry,
+	PropertyChange,
+	SettingsCommand,
+	SettingsPlugin,
+	Stack,
+	Utils
+) {
 	"use strict";
+
+	QUnit.start();
 
 	var oMockedAppComponent = {
 		getLocalId: function () {
@@ -43,40 +57,41 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 				"sap.app" : {
 					applicationVersion : {
 						version : "1.2.3"
-					}
+					},
+					id : "appId"
 				}
 			};
 		},
 		getModel: function () {}
 	};
-	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-	sinon.stub(sap.ui.fl.changeHandler.PropertyChange, "completeChangeContent");
+	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	sinon.stub(PropertyChange, "completeChangeContent");
 
 	QUnit.module("Given a designTime and settings plugin are instantiated", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			var oChangeRegistry = sap.ui.fl.registry.ChangeRegistry.getInstance();
+			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
-				"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
+					"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
 				}
 			});
 
-			this.oCommandStack = new sap.ui.rta.command.Stack();
-			this.oSettingsPlugin = new sap.ui.rta.plugin.Settings({
-				commandFactory : new sap.ui.rta.command.CommandFactory(),
+			this.oCommandStack = new Stack();
+			this.oSettingsPlugin = new SettingsPlugin({
+				commandFactory : new CommandFactory(),
 				commandStack : this.oCommandStack
 			});
 
-			this.oButton = new sap.m.Button("button", {text : "Button"});
+			this.oButton = new Button("button", {text : "Button"});
 
-			this.oVerticalLayout = new sap.ui.layout.VerticalLayout({
+			this.oVerticalLayout = new VerticalLayout({
 				content : [this.oButton]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements : [this.oVerticalLayout],
 				plugins : [this.oSettingsPlugin]
 			});
@@ -94,9 +109,9 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 
 	QUnit.test("when an overlay has no settings action designTime metadata", function(assert) {
 
-		var oButtonOverlay = new sap.ui.dt.ElementOverlay({
+		var oButtonOverlay = new ElementOverlay({
 			element : this.oButton,
-			designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+			designTimeMetadata : new ElementDesignTimeMetadata({
 				libraryName : "sap.m",
 				data : {
 					actions : {}
@@ -113,9 +128,9 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 
 	QUnit.test("when an overlay has settings action designTime metadata, but has no isEnabled property defined", function(assert) {
 
-		var oButtonOverlay = new sap.ui.dt.ElementOverlay({
+		var oButtonOverlay = new ElementOverlay({
 			element : this.oButton,
-			designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+			designTimeMetadata : new ElementDesignTimeMetadata({
 				libraryName : "sap.m",
 				data : {
 					actions : {
@@ -137,9 +152,9 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 	});
 
 	QUnit.test("when an overlay has settings action designTime metadata, and isEnabled property is boolean", function(assert) {
-		var oButtonOverlay = new sap.ui.dt.ElementOverlay({
+		var oButtonOverlay = new ElementOverlay({
 			element : this.oButton,
-			designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+			designTimeMetadata : new ElementDesignTimeMetadata({
 				libraryName : "sap.m",
 				data : {
 					actions : {
@@ -162,9 +177,9 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 	});
 
 	QUnit.test("when an overlay has settings action designTime metadata, and isEnabled is function", function(assert) {
-		var oButtonOverlay = new sap.ui.dt.ElementOverlay({
+		var oButtonOverlay = new ElementOverlay({
 			element : this.oButton,
-			designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+			designTimeMetadata : new ElementDesignTimeMetadata({
 				libraryName : "sap.m",
 				data : {
 					actions : {
@@ -201,9 +216,9 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 			}
 		};
 
-		var oButtonOverlay = new sap.ui.dt.ElementOverlay({
+		var oButtonOverlay = new ElementOverlay({
 			element : this.oButton,
-			designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+			designTimeMetadata : new ElementDesignTimeMetadata({
 				libraryName : "sap.m",
 				data : {
 					actions : {
@@ -225,8 +240,10 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 		var aSelectedOverlays = [oButtonOverlay];
 
 		this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
-			var oSettingsCommand = oEvent.getParameter("command");
-			assert.ok(oSettingsCommand, "... command is created");
+			var oCompositeCommand = oEvent.getParameter("command");
+			assert.ok(oCompositeCommand, "Composite command is created");
+			var oSettingsCommand = oCompositeCommand.getCommands()[0];
+			assert.ok(oSettingsCommand, "... which contains a settings command");
 			done();
 		});
 		return this.oSettingsPlugin.handleSettings(aSelectedOverlays);
@@ -235,9 +252,9 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 	QUnit.test("when the handle settings function is called and the handler returns a rejected promise with error object,", function(assert) {
 		var that = this;
 
-		var oButtonOverlay = new sap.ui.dt.ElementOverlay({
+		var oButtonOverlay = new ElementOverlay({
 			element : this.oButton,
-			designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+			designTimeMetadata : new ElementDesignTimeMetadata({
 				libraryName : "sap.m",
 				data : {
 					actions : {
@@ -277,7 +294,7 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 			changeType : "changeSettings",
 			content : "testchange1"
 			},
-			new sap.ui.dt.ElementDesignTimeMetadata({
+			new ElementDesignTimeMetadata({
 			libraryName : "sap.m",
 			data : {
 				actions : {
@@ -297,7 +314,7 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 				changeType : "changeSettings",
 				content : "testchange2"
 			},
-			new sap.ui.dt.ElementDesignTimeMetadata({
+			new ElementDesignTimeMetadata({
 				libraryName : "sap.m",
 				data : {
 					actions : {
@@ -316,4 +333,132 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 			}.bind(this));
 		}.bind(this));
 	});
-})();
+
+	QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change,", function(assert) {
+		var done = assert.async();
+		var mAppDescriptorChange = {
+			appComponent : oMockedAppComponent,
+			changeSpecificData : {
+				appDescriptorChangeType : "appDescriptorChangeType",
+				content : {
+					parameters : {
+						param1 : "param1"
+					},
+					texts : {
+						text1 : "text1"
+					}
+				}
+			}
+		};
+
+		var oButtonOverlay = new ElementOverlay({
+			element : this.oButton,
+			designTimeMetadata : new ElementDesignTimeMetadata({
+				libraryName : "sap.m",
+				data : {
+					actions : {
+						settings : function() {
+							return {
+								isEnabled : true,
+								handler : function() {
+									return new Promise(function(resolve, reject) {
+										resolve([mAppDescriptorChange]);
+									});
+								}
+							};
+						}
+					}
+				}
+			})
+		});
+
+		var aSelectedOverlays = [oButtonOverlay];
+
+		this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
+			var oCompositeCommand = oEvent.getParameter("command");
+			assert.ok(oCompositeCommand, "Composite command is created");
+			var oAppDescriptorCommand = oCompositeCommand.getCommands()[0];
+			assert.ok(oAppDescriptorCommand instanceof AppDescriptorCommand, "... which contains an App Descriptor command...");
+			assert.equal(oAppDescriptorCommand.getAppComponent(), oMockedAppComponent, "with the correct app component");
+			assert.equal(oAppDescriptorCommand.getReference(), "appId", "with the correct reference");
+			assert.equal(oAppDescriptorCommand.getChangeType(), mAppDescriptorChange.changeSpecificData.appDescriptorChangeType, "with the correct change type");
+			assert.equal(oAppDescriptorCommand.getParameters(), mAppDescriptorChange.changeSpecificData.content.parameters, "with the correct parameters");
+			assert.equal(oAppDescriptorCommand.getTexts(), mAppDescriptorChange.changeSpecificData.content.texts, "with the correct texts");
+
+			done();
+		});
+		return this.oSettingsPlugin.handleSettings(aSelectedOverlays);
+	});
+
+	QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change and a flex change,", function(assert) {
+		var done = assert.async();
+		var mAppDescriptorChange = {
+			appComponent : oMockedAppComponent,
+			changeSpecificData : {
+				appDescriptorChangeType : "appDescriptorChangeType",
+				content : {
+					parameters : {
+						param1 : "param1"
+					},
+					texts : {
+						text1 : "text1"
+					}
+				}
+			}
+		};
+		var mSettingsChange = {
+			selectorControl : {
+				id : "stableNavPopoverId",
+				controlType : "sap.m.Button",
+				appComponent : oMockedAppComponent
+			},
+			changeSpecificData : {
+				changeType : "changeSettings",
+				content : "testchange"
+			}
+		};
+
+		var oButtonOverlay = new ElementOverlay({
+			element : this.oButton,
+			designTimeMetadata : new ElementDesignTimeMetadata({
+				libraryName : "sap.m",
+				data : {
+					actions : {
+						settings : function() {
+							return {
+								isEnabled : true,
+								handler : function() {
+									return new Promise(function(resolve, reject) {
+										resolve([mAppDescriptorChange, mSettingsChange]);
+									});
+								}
+							};
+						}
+					}
+				}
+			})
+		});
+
+		var aSelectedOverlays = [oButtonOverlay];
+
+		this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
+			var oCompositeCommand = oEvent.getParameter("command");
+			assert.ok(oCompositeCommand, "Composite command is created");
+			var oAppDescriptorCommand = oCompositeCommand.getCommands()[0];
+			var oFlexCommand = oCompositeCommand.getCommands()[1];
+			assert.ok(oAppDescriptorCommand instanceof AppDescriptorCommand, "... containing an AppDescriptorCommand");
+			assert.equal(oAppDescriptorCommand.getAppComponent(), oMockedAppComponent, "with the correct app component");
+			assert.equal(oAppDescriptorCommand.getReference(), "appId", "with the correct reference");
+			assert.equal(oAppDescriptorCommand.getChangeType(), mAppDescriptorChange.changeSpecificData.appDescriptorChangeType, "with the correct change type");
+			assert.equal(oAppDescriptorCommand.getParameters(), mAppDescriptorChange.changeSpecificData.content.parameters, "with the correct parameters");
+			assert.equal(oAppDescriptorCommand.getTexts(), mAppDescriptorChange.changeSpecificData.content.texts, "with the correct texts");
+			assert.ok(oFlexCommand instanceof SettingsCommand, "... and a (flex) SettingsCommand");
+			assert.equal(oFlexCommand.getSelector().appComponent, oMockedAppComponent, "with the correct app component");
+			assert.equal(oFlexCommand.getChangeType(), mSettingsChange.changeSpecificData.changeType, "with the correct change type");
+			assert.equal(oFlexCommand.getContent(), mSettingsChange.changeSpecificData.content, "with the correct parameters");
+			done();
+		});
+		return this.oSettingsPlugin.handleSettings(aSelectedOverlays);
+	});
+
+});

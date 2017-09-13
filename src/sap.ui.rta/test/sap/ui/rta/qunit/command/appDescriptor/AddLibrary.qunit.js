@@ -113,7 +113,7 @@ function(
 		}, {}, {"layer" : this.sLayer});
 
 		assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
-		oAddLibraryCommand.createAndStore();
+		oAddLibraryCommand.createAndStoreChange();
 	});
 
 	QUnit.test("when calling execute for AddLibrary ...", function(assert) {

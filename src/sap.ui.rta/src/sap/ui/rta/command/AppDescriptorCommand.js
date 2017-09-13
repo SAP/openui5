@@ -62,25 +62,28 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand',
 	};
 
 	/**
-	 * Template method to execute the app descriptor change in runtime.
-	 * If the runtime change is done by a Flex Command, implementing this method is not necessary
+	 * Retrieves the prepared change for e.g. undo execution.
+	 * @return {sap.ui.fl.Change} Returns change after being created and stored
 	 */
-	AppDescriptorCommand.prototype.execute = function(){};
+	AppDescriptorCommand.prototype.getPreparedChange = function() {
+		return this._oPreparedChange;
+	};
 
 	/**
 	 * Create the change for the app descriptor and add it to the ChangePersistence.
-	 * @return {Promise} resolving after all changes have been created and stored
+	 * @return {Promise} Returns Promise resolving after change has been created and stored
 	 */
-	AppDescriptorCommand.prototype.createAndStore = function(){
-			return DescriptorInlineChangeFactory.createDescriptorInlineChange(
+	AppDescriptorCommand.prototype.createAndStoreChange = function(){
+		return DescriptorInlineChangeFactory.createDescriptorInlineChange(
 				this.getChangeType(), this.getParameters(), this.getTexts())
 			.then(function(oAppDescriptorChangeContent){
 				return new DescriptorChangeFactory().createNew(this.getReference(),
 					oAppDescriptorChangeContent, this.getLayer(), this.getAppComponent());
 			}.bind(this))
 			.then(function(oAppDescriptorChange){
-				return oAppDescriptorChange.store();
-			});
+				var oChange = oAppDescriptorChange.store();
+				this._oPreparedChange = oChange;
+			}.bind(this));
 	};
 	return AppDescriptorCommand;
 
