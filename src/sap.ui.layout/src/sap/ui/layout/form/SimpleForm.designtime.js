@@ -48,7 +48,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 					}
 					// if there is no Elements in the FormContainer, the SimpleForm is empty and
 					// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
-					if (aFormContainers[0].getFormElements().length === 0 &&
+					if (aFormContainers.length > 0 && aFormContainers[0].getFormElements().length === 0 &&
 						aFormContainers[0].getTitle() === null) {
 						return 0;
 					}
