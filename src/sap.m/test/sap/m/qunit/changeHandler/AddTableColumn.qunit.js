@@ -71,9 +71,8 @@ sap.ui.require([
 
 			var oDOMParser = new DOMParser();
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-			this.oXmlView = oXmlDocument;
-
-			this.oTable = oXmlDocument.childNodes[0].childNodes[0];
+			this.oXmlView = oXmlDocument.documentElement;
+			this.oTable = this.oXmlView.childNodes[0];
 		},
 		afterEach: function() {
 			this.oChange = null;
@@ -82,7 +81,6 @@ sap.ui.require([
 
 	QUnit.test('applyChange on a xml control tree', function(assert) {
 		var mContent = this.oChange.getContent();
-
 		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
 			modifier: XmlTreeModifier,
 			appComponent: {

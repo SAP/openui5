@@ -478,7 +478,7 @@ sap.ui.define([
 				oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
 			} catch (ex) {
 				this._setMergeError(true);
-				Utils.log.error("Change could not be applied. Merge error detected.");
+				Utils.log.error("Change could not be applied. Merge error detected.", ex.stack || "");
 				return;
 			}
 
@@ -531,7 +531,7 @@ sap.ui.define([
 			oCustomData = oModifier.createControl("sap.ui.core.CustomData", oAppComponent, oView);
 			oModifier.setProperty(oCustomData, "key", FlexController.appliedChangesCustomDataKey);
 			oModifier.setProperty(oCustomData, "value", sValue);
-			oModifier.insertAggregation(oControl, "customData", oCustomData, 0, oView, true);
+			oModifier.insertAggregation(oControl, "customData", oCustomData, 0, oView);
 		}
 	};
 

@@ -5,10 +5,7 @@ QUnit.config.autostart = false;
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 sap.ui.define([
-	'sap/ui/rta/test/controlEnablingCheck',
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/rta/test/controlEnablingCheck'
 ],
 function(rtaControlEnablingCheck){
 	"use strict";

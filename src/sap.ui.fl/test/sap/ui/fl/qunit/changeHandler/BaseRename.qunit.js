@@ -132,8 +132,8 @@ function (
 				'</mvc:View>';
 
 		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-		this.oXmlView = oXmlDocument;
-		this.oXmlLayout = oXmlDocument.childNodes[0].childNodes[0];
+		this.oXmlView = oXmlDocument.documentElement;
+		this.oXmlLayout = this.oXmlView.childNodes[0];
 		this.oXmlButton = this.oXmlLayout.childNodes[0].childNodes[0];
 
 		this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
