@@ -33,16 +33,13 @@
 
 		jQuery.sap.require("sap.ui.layout.form.SimpleForm");
 		jQuery.sap.require("sap.ui.layout.form.SimpleFormRenderer");
-		jQuery.sap.require("sap.ui.layout.form.ResponsiveLayout");
-		jQuery.sap.require("sap.ui.layout.form.ResponsiveGridLayout");
-		jQuery.sap.require("sap.ui.layout.form.GridLayout");
 		jQuery.sap.require("sap.ui.core.Title");
 		jQuery.sap.require("sap.m.Toolbar");
 		jQuery.sap.require("sap.m.Label");
 		jQuery.sap.require("sap.m.Input");
-		jQuery.sap.require("sap.ui.core.VariantLayoutData");
-		jQuery.sap.require("sap.ui.layout.GridData");
-		jQuery.sap.require("sap.ui.layout.ResponsiveFlowLayoutData");
+
+		// use no check with instanceof for layout or LayoutData to let the SimpleForm load the
+		// files async
 
 		var oSimpleForm;
 		var oForm;
@@ -89,6 +86,7 @@
 
 		function initTestWithContentRL() {
 			initTestWithContent("ResponsiveLayout");
+			jQuery.sap.require("sap.ui.layout.ResponsiveFlowLayoutData");
 		}
 
 		function initTestWithContentRGL() {
@@ -120,10 +118,28 @@
 			cleanupControls("TB3");
 		}
 
+		function asyncLayoutTest(assert, sLayout, fnTest) {
+			if (oFormLayout) {
+				fnTest(assert);
+			} else {
+				// wait until Layout is loaded
+				var fnDone = assert.async();
+				sap.ui.require([sLayout], function() {
+					oFormLayout = oForm.getLayout();
+					fnTest(assert);
+					fnDone();
+				});
+			}
+		}
+
 		QUnit.module("Form", {
 			beforeEach: initTestWithoutContent,
 			afterEach: afterTest
 		});
+
+		function layoutAfterRendering(assert) {
+			assert.ok(oFormLayout, "FormLayout is created after rendering if no Layout is set");
+		}
 
 		QUnit.test("initial state", function(assert) {
 			assert.ok(oSimpleForm, "SimpleForm is created");
@@ -138,7 +154,8 @@
 			oSimpleForm.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			var oFormLayout = oForm.getLayout();
-			assert.ok(oFormLayout, "FormLayout is created after rendering if no Layout is set");
+
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", layoutAfterRendering);
 		});
 
 		QUnit.test("width", function(assert) {
@@ -1447,21 +1464,25 @@
 			afterEach: afterTest
 		});
 
+		function RlUsedLayout(assert) {
+			assert.equal(oFormLayout.getMetadata().getName(), "sap.ui.layout.form.ResponsiveLayout", "ResponsiveLayout used");
+		}
+
 		QUnit.test("used Layout", function(assert) {
-			assert.ok(oFormLayout instanceof sap.ui.layout.form.ResponsiveLayout, "ResponsiveLayout used");
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlUsedLayout);
 		});
 
-		QUnit.test("default LayoutData on content", function(assert) {
+		function defaultLayoutDataOnContent(assert) {
 			var oLabel = sap.ui.getCore().byId("L1");
 			var oLayoutData = oLabel.getLayoutData();
 			assert.ok(oLayoutData, "Label has LayoutData");
-			assert.ok(oLayoutData instanceof sap.ui.layout.ResponsiveFlowLayoutData, "sap.ui.layout.ResponsiveFlowLayoutData used");
+			assert.equal(oLayoutData.getMetadata().getName(), "sap.ui.layout.ResponsiveFlowLayoutData", "sap.ui.layout.ResponsiveFlowLayoutData used");
 			assert.equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
 
 			var oField = sap.ui.getCore().byId("I1");
 			oLayoutData = oField.getLayoutData();
 			assert.ok(oLayoutData, "Field has LayoutData");
-			assert.ok(oLayoutData instanceof sap.ui.layout.ResponsiveFlowLayoutData, "sap.ui.layout.ResponsiveFlowLayoutData used");
+			assert.equal(oLayoutData.getMetadata().getName(), "sap.ui.layout.ResponsiveFlowLayoutData", "sap.ui.layout.ResponsiveFlowLayoutData used");
 			assert.equal(oLayoutData.getWeight(), 3, "Field LayoutData weight");
 
 			oField = sap.ui.getCore().byId("I2");
@@ -1498,9 +1519,13 @@
 			oLayoutData = oField.getLayoutData();
 			assert.ok(oLayoutData, "Field has LayoutData");
 			assert.equal(oLayoutData.getWeight(), 1, "Field LayoutData weight");
+		}
+
+		QUnit.test("default LayoutData on content", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", defaultLayoutDataOnContent);
 		});
 
-		QUnit.test("custom LayoutData on content", function(assert) {
+		function customLayoutDataOnContent(assert) {
 			var oLayoutData = new sap.ui.layout.ResponsiveFlowLayoutData("LD2", {linebreak: true, weight: 8});
 			var oField = sap.ui.getCore().byId("I2");
 			oField.setLayoutData(oLayoutData);
@@ -1586,10 +1611,13 @@
 			assert.ok(oLayoutData, "Field has LayoutData");
 			assert.equal(oLayoutData.getId(), "LD6", "Field custom LayoutData set");
 			assert.equal(oLayoutData.getWeight(), 8, "Field LayoutData weight");
+		}
 
+		QUnit.test("custom LayoutData on content", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", customLayoutDataOnContent);
 		});
 
-		QUnit.test("default LayoutData removed if content removed", function(assert) {
+		function RlDefaultLayoutDataRemovedIfContentRemoved(assert){
 			var oLabel = sap.ui.getCore().byId("L1");
 			oSimpleForm.removeContent(oLabel);
 			var oLayoutData = oLabel.getLayoutData();
@@ -1608,9 +1636,13 @@
 				assert.notOk(oLayoutData, "Field has no LayoutData");
 				aRemoved[i].destroy();
 			}
+		}
+
+		QUnit.test("default LayoutData removed if content removed", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlDefaultLayoutDataRemovedIfContentRemoved);
 		});
 
-		QUnit.test("default LayoutData on FormContainer", function(assert) {
+		function RlDefaultLayoutDataOnFormContainer(assert) {
 			var oTitle = new sap.ui.core.Title("T3", {text: "Test"});
 			oSimpleForm.addContent(oTitle);
 			sap.ui.getCore().applyChanges();
@@ -1618,7 +1650,7 @@
 			var aFormContainers = oForm.getFormContainers();
 			var oLayoutData = aFormContainers[0].getLayoutData();
 			assert.ok(oLayoutData, "FormContainer has LayoutData");
-			assert.ok(oLayoutData instanceof sap.ui.layout.ResponsiveFlowLayoutData, "sap.ui.layout.ResponsiveFlowLayoutData used");
+			assert.equal(oLayoutData.getMetadata().getName(), "sap.ui.layout.ResponsiveFlowLayoutData", "sap.ui.layout.ResponsiveFlowLayoutData used");
 			assert.equal(oLayoutData.getMinWidth(), 280, "LayoutData minWidth");
 			assert.notOk(oLayoutData.getLinebreak(), "LayoutData linebreak");
 
@@ -1631,19 +1663,27 @@
 			assert.ok(oLayoutData, "FormContainer has LayoutData");
 			assert.equal(oLayoutData.getMinWidth(), 280, "LayoutData minWidth");
 			assert.ok(oLayoutData.getLinebreak(), "LayoutData linebreak");
+		}
+
+		QUnit.test("default LayoutData on FormContainer", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlDefaultLayoutDataOnFormContainer);
 		});
 
-		QUnit.test("default LayoutData on FormElement", function(assert) {
+		function RlDefaultLayoutDataOnFormElement(assert) {
 			var aFormContainers = oForm.getFormContainers();
 			var aFormElements = aFormContainers[0].getFormElements();
 			var oLayoutData = aFormElements[0].getLayoutData();
 			assert.ok(oLayoutData, "FormElement has LayoutData");
-			assert.ok(oLayoutData instanceof sap.ui.layout.ResponsiveFlowLayoutData, "sap.ui.layout.ResponsiveFlowLayoutData used");
+			assert.equal(oLayoutData.getMetadata().getName(), "sap.ui.layout.ResponsiveFlowLayoutData", "sap.ui.layout.ResponsiveFlowLayoutData used");
 			assert.ok(oLayoutData.getLinebreak(), "LayoutData linebreak");
 			assert.notOk(oLayoutData.getMargin(), "LayoutData margin");
+		}
+
+		QUnit.test("default LayoutData on FormElement", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlDefaultLayoutDataOnFormElement);
 		});
 
-		QUnit.test("maxContainerCols", function(assert) {
+		function RlMaxContainerCols(assert) {
 			assert.equal(oSimpleForm.getMaxContainerCols(), 2, "default value");
 
 			oSimpleForm.setMaxContainerCols(3);
@@ -1668,9 +1708,13 @@
 			assert.ok(oLayoutData.getLinebreak(), "LayoutData linebreak");
 			oLayoutData = aFormContainers[2].getLayoutData();
 			assert.ok(oLayoutData.getLinebreak(), "LayoutData linebreak");
+		}
+
+		QUnit.test("maxContainerCols", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlMaxContainerCols);
 		});
 
-		QUnit.test("minWidth", function(assert) {
+		function RlMinWidth(assert) {
 			assert.equal(oSimpleForm.getMinWidth(), -1, "default value");
 
 			oSimpleForm.setMinWidth(5000);
@@ -1681,9 +1725,13 @@
 			assert.notOk(oLayoutData.getLinebreak(), "LayoutData linebreak");
 			oLayoutData = aFormContainers[1].getLayoutData();
 			assert.ok(oLayoutData.getLinebreak(), "LayoutData linebreak");
+		}
+
+		QUnit.test("minWidth", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlMinWidth);
 		});
 
-		QUnit.test("labelMinWidth", function(assert) {
+		function RlLabelMinWidth(assert) {
 			assert.equal(oSimpleForm.getLabelMinWidth(), 192, "default value");
 
 			var oLabel = sap.ui.getCore().byId("L1");
@@ -1693,9 +1741,13 @@
 			oSimpleForm.setLabelMinWidth(200);
 			sap.ui.getCore().applyChanges();
 			assert.equal(oLayoutData.getMinWidth(), 200, "Label LayoutData minWidth");
+		}
+
+		QUnit.test("labelMinWidth", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlLabelMinWidth);
 		});
 
-		QUnit.test("backgroundDesign", function(assert) {
+		function RlBackgroundDesign(assert) {
 			assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "default value");
 			assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "value on Layout");
 
@@ -1704,6 +1756,10 @@
 
 			assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on SimpleForm");
 			assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on Layout");
+		}
+
+		QUnit.test("backgroundDesign", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlBackgroundDesign);
 		});
 
 		QUnit.module("GridLayout", {
@@ -1711,11 +1767,15 @@
 			afterEach: afterTest
 		});
 
+		function GlUsedLayout(assert) {
+			assert.equal(oFormLayout.getMetadata().getName(), "sap.ui.layout.form.GridLayout", "GridLayout used");
+		}
+
 		QUnit.test("used Layout", function(assert) {
-			assert.ok(oFormLayout instanceof sap.ui.layout.form.GridLayout, "GridLayout used");
+			asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlUsedLayout);
 		});
 
-		QUnit.test("no default LayoutData", function(assert) {
+		function GlNoDefaultLayoutData(assert) {
 			var oLabel = sap.ui.getCore().byId("L1");
 			var oLayoutData = oLabel.getLayoutData();
 			assert.notOk(oLayoutData, "Label has no LayoutData");
@@ -1728,21 +1788,29 @@
 			var aFormElements = aFormContainers[0].getFormElements();
 			oLayoutData = aFormElements[0].getLayoutData();
 			assert.notOk(oLayoutData, "FormElement has no LayoutData");
+		}
+
+		QUnit.test("no default LayoutData", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlNoDefaultLayoutData);
 		});
 
-		QUnit.test("default LayoutData on FormContauiner", function(assert) {
+		function GlDefaultLayoutDataOnFormContauiner(assert) {
 			var aFormContainers = oForm.getFormContainers();
 			var oLayoutData = aFormContainers[0].getLayoutData();
 			assert.ok(oLayoutData, "FormContainer has LayoutData");
-			assert.ok(oLayoutData instanceof sap.ui.layout.form.GridContainerData, "sap.ui.layout.form.GridContainerData used");
+			assert.equal(oLayoutData.getMetadata().getName(), "sap.ui.layout.form.GridContainerData", "sap.ui.layout.form.GridContainerData used");
 			assert.ok(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
 
 			oLayoutData = aFormContainers[1].getLayoutData();
 			assert.ok(oLayoutData, "FormContainer has LayoutData");
 			assert.ok(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
+		}
+
+		QUnit.test("default LayoutData on FormContauiner", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlDefaultLayoutDataOnFormContauiner);
 		});
 
-		QUnit.test("maxContainerCols", function(assert) {
+		function GlMaxContainerCols(assert) {
 			oSimpleForm.setMaxContainerCols(1);
 			var oTitle = new sap.ui.core.Title("T3", {text: "Test"});
 			oSimpleForm.addContent(oTitle);
@@ -1765,9 +1833,13 @@
 			assert.ok(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
 			oLayoutData = aFormContainers[2].getLayoutData();
 			assert.notOk(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
+		}
+
+		QUnit.test("maxContainerCols", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlMaxContainerCols);
 		});
 
-		QUnit.test("backgroundDesign", function(assert) {
+		function GlBackgroundDesign(assert) {
 			assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "default value");
 			assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "value on Layout");
 
@@ -1776,6 +1848,10 @@
 
 			assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on SimpleForm");
 			assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on Layout");
+		}
+
+		QUnit.test("backgroundDesign", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlBackgroundDesign);
 		});
 
 		QUnit.module("ResponsiveGridLayout", {
@@ -1783,11 +1859,15 @@
 			afterEach: afterTest
 		});
 
+		function RGlUsedLayout(assert) {
+			assert.equal(oFormLayout.getMetadata().getName(), "sap.ui.layout.form.ResponsiveGridLayout", "ResponsiveGridLayout used");
+		}
+
 		QUnit.test("used Layout", function(assert) {
-			assert.ok(oFormLayout instanceof sap.ui.layout.form.ResponsiveGridLayout, "ResponsiveGridLayout used");
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlUsedLayout);
 		});
 
-		QUnit.test("no default LayoutData", function(assert) {
+		function RGlNoDefaultLayoutData(assert) {
 			var oLabel = sap.ui.getCore().byId("L1");
 			var oLayoutData = oLabel.getLayoutData();
 			assert.notOk(oLayoutData, "Label has no LayoutData");
@@ -1802,9 +1882,13 @@
 			assert.notOk(oLayoutData, "FormContainer has no LayoutData");
 			oLayoutData = aFormElements[0].getLayoutData();
 			assert.notOk(oLayoutData, "FormElement has no LayoutData");
+		}
+
+		QUnit.test("no default LayoutData", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlNoDefaultLayoutData);
 		});
 
-		QUnit.test("backgroundDesign", function(assert) {
+		function RGlBackgroundDesign(assert) {
 			assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "default value");
 			assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "value on Layout");
 
@@ -1813,9 +1897,13 @@
 
 			assert.equal(oSimpleForm.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on SimpleForm");
 			assert.equal(oFormLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "value on Layout");
+		}
+
+		QUnit.test("backgroundDesign", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlBackgroundDesign);
 		});
 
-		QUnit.test("other properties defaults", function(assert) {
+		function RGlOtherPropertiesDefaults(assert) {
 			assert.equal(oSimpleForm.getLabelSpanXL(), -1, "LabelSpanXL: default value");
 			assert.equal(oFormLayout.getLabelSpanXL(), -1, "LabelSpanXL: on Layout");
 			assert.equal(oSimpleForm.getLabelSpanL(), 4, "LabelSpanL: default value");
@@ -1848,9 +1936,13 @@
 			assert.equal(oFormLayout.getBreakpointL(), 1024, "BreakpointL: on Layout");
 			assert.equal(oSimpleForm.getBreakpointM(), 600, "BreakpointM: default value");
 			assert.equal(oFormLayout.getBreakpointM(), 600, "BreakpointM: on Layout");
-		});
+		}
 
 		QUnit.test("other properties defaults", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlOtherPropertiesDefaults);
+		});
+
+		function RGlOtherPropertiesSet(assert) {
 			oSimpleForm.setLabelSpanXL(6);
 			oSimpleForm.setLabelSpanL(5);
 			oSimpleForm.setLabelSpanM(4);
@@ -1901,6 +1993,10 @@
 			assert.equal(oFormLayout.getBreakpointL(), 1000, "BreakpointL: on Layout");
 			assert.equal(oSimpleForm.getBreakpointM(), 500, "BreakpointM: on SimpleForm");
 			assert.equal(oFormLayout.getBreakpointM(), 500, "BreakpointM: on Layout");
+		}
+
+		QUnit.test("other properties set", function(assert) {
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlOtherPropertiesSet);
 		});
 
 		QUnit.module("other", {
@@ -1908,20 +2004,74 @@
 			afterEach: afterTest
 		});
 
-		QUnit.test("change Layout", function(assert) {
-			var oOldLayout = oFormLayout;
-			oSimpleForm.setLayout("ResponsiveLayout");
-			sap.ui.getCore().applyChanges();
-			oFormLayout = oForm.getLayout();
-
-			assert.ok(oFormLayout instanceof sap.ui.layout.form.ResponsiveLayout, "ResponsiveLayout used");
+		function changeLayout(assert, oOldLayout) {
+			assert.equal(oFormLayout.getMetadata().getName(), "sap.ui.layout.form.ResponsiveLayout", "ResponsiveLayout used");
 			assert.ok(oOldLayout._bIsBeingDestroyed, "old layout destroyed");
 
 			var oLabel = sap.ui.getCore().byId("L1");
 			var oLayoutData = oLabel.getLayoutData();
 			assert.ok(oLayoutData, "Label has LayoutData");
-			assert.ok(oLayoutData instanceof sap.ui.layout.ResponsiveFlowLayoutData, "sap.ui.layout.ResponsiveFlowLayoutData used");
+			assert.equal(oLayoutData.getMetadata().getName(), "sap.ui.layout.ResponsiveFlowLayoutData", "sap.ui.layout.ResponsiveFlowLayoutData used");
 			assert.equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
+
+			var aFormContainers = oForm.getFormContainers();
+			oLayoutData = aFormContainers[0].getLayoutData();
+			assert.ok(oLayoutData, "FormContainer has LayoutData");
+			assert.equal(oLayoutData.getMetadata().getName(), "sap.ui.layout.ResponsiveFlowLayoutData", "sap.ui.layout.ResponsiveFlowLayoutData used");
+
+			oOldLayout = oFormLayout;
+			oSimpleForm.setLayout("ResponsiveGridLayout");
+			sap.ui.getCore().applyChanges();
+			oFormLayout = oForm.getLayout();
+
+			assert.equal(oFormLayout.getMetadata().getName(), "sap.ui.layout.form.ResponsiveGridLayout", "ResponsiveGridLayout used");
+			assert.ok(oOldLayout._bIsBeingDestroyed, "old layout destroyed");
+			oLayoutData = oLabel.getLayoutData();
+			assert.notOk(!!oLayoutData, "Label has no LayoutData");
+			oLayoutData = aFormContainers[0].getLayoutData();
+			assert.notOk(!!oLayoutData, "FormContainer has no LayoutData");
+		}
+
+		QUnit.test("change Layout", function(assert) {
+			var oOldLayout;
+			var fnDone;
+			if (oFormLayout) {
+				oOldLayout = oFormLayout;
+				oSimpleForm.setLayout("ResponsiveLayout");
+				sap.ui.getCore().applyChanges();
+				oFormLayout = oForm.getLayout();
+				if (oFormLayout) {
+					changeLayout(assert, oOldLayout);
+				} else {
+					fnDone = assert.async();
+					sap.ui.require(["sap/ui/layout/form/ResponsiveLayout"], function() {
+						oFormLayout = oForm.getLayout();
+						changeLayout(assert, oOldLayout);
+						fnDone();
+					});
+				}
+			} else {
+				// wait until Layout is loaded
+				var fnDone = assert.async();
+				sap.ui.require(["sap/ui/layout/form/ResponsiveGridLayout"], function() {
+					oFormLayout = oForm.getLayout();
+					oOldLayout = oFormLayout;
+					oSimpleForm.setLayout("ResponsiveLayout");
+					sap.ui.getCore().applyChanges();
+					oFormLayout = oForm.getLayout();
+
+					if (oFormLayout) {
+						changeLayout(assert, oOldLayout);
+						fnDone();
+					} else {
+						sap.ui.require(["sap/ui/layout/form/ResponsiveLayout"], function() {
+							oFormLayout = oForm.getLayout();
+							changeLayout(assert, oOldLayout);
+							fnDone();
+						});
+					}
+				});
+			}
 		});
 
 		QUnit.test("visibility of FormElement", function(assert) {
@@ -1934,11 +2084,10 @@
 			var oField2 = sap.ui.getCore().byId("I2");
 			oField1.setVisible(false);
 			assert.ok(aFormElements[0].isVisible(), "FormElement still visible");
-			assert.notOk(aFormElements[0].invalidate.called, "FormElement not invalidated");
+			assert.ok(aFormElements[0].invalidate.called, "FormElement invalidated");
 
 			oField2.setVisible(false);
 			assert.notOk(aFormElements[0].isVisible(), "FormElement not visible");
-			assert.ok(aFormElements[0].invalidate.called, "FormElement invalidated");
 
 			oField1.setVisible(true);
 			assert.ok(aFormElements[0].isVisible(), "FormElement again visible");
@@ -1958,16 +2107,7 @@
 			assert.notOk(bFound, "Field is not assigned to SimpleForm");
 		});
 
-		QUnit.test("clone", function(assert) {
-			oSimpleForm.setLayout("ResponsiveLayout");
-			var oToolbar = new sap.m.Toolbar("TB1");
-			oSimpleForm.addContent(oToolbar);
-			var oGD = new sap.ui.layout.GridData("GD1");
-			var oVD = new sap.ui.core.VariantLayoutData("VD1", {multipleLayoutData: [oGD]});
-			var oField = new sap.m.Input("I7", {layoutData: oVD});
-			oSimpleForm.addContent(oField);
-			sap.ui.getCore().applyChanges();
-
+		function clone(assert) {
 			var oClone = oSimpleForm.clone("MyClone");
 			oClone.placeAt("content");
 			sap.ui.getCore().applyChanges();
@@ -1988,19 +2128,19 @@
 			var oLabel = aContent[1];
 			var oLayoutData = oLabel.getLayoutData();
 			assert.ok(oLayoutData, "Clone-Label has LayoutData");
-			assert.ok(oLayoutData instanceof sap.ui.layout.ResponsiveFlowLayoutData, "sap.ui.layout.ResponsiveFlowLayoutData used");
+			assert.equal(oLayoutData.getMetadata().getName(), "sap.ui.layout.ResponsiveFlowLayoutData", "sap.ui.layout.ResponsiveFlowLayoutData used");
 			assert.equal(oLayoutData.getWeight(), 3, "Clone-Label LayoutData weight");
 			oField = aContent[12];
 			oLayoutData = oField.getLayoutData();
-			assert.ok(oLayoutData instanceof sap.ui.core.VariantLayoutData, "sap.ui.core.VariantLayoutData used");
+			assert.equal(oLayoutData.getMetadata().getName(), "sap.ui.core.VariantLayoutData", "sap.ui.core.VariantLayoutData used");
 			var aLayoutData = oLayoutData.getMultipleLayoutData();
 			assert.equal(aLayoutData.length, 2, "2 layoutData used");
-			oGD = undefined;
+			var oGD = undefined;
 			var oRD;
 			for (var i = 0; i < aLayoutData.length; i++) {
-				if (aLayoutData[i] instanceof sap.ui.layout.ResponsiveFlowLayoutData) {
+				if (aLayoutData[i].getMetadata().getName() == "sap.ui.layout.ResponsiveFlowLayoutData") {
 					oRD = aLayoutData[i];
-				} else if (aLayoutData[i] instanceof sap.ui.layout.GridData) {
+				} else if (aLayoutData[i].getMetadata().getName() == "sap.ui.layout.GridData") {
 					oGD = aLayoutData[i];
 				}
 			}
@@ -2024,6 +2164,22 @@
 			assert.ok(aFormElements[0].isVisible(), "FormElement on Original still visible");
 
 			oClone.destroy();
+		}
+
+		QUnit.test("clone", function(assert) {
+			oSimpleForm.setLayout("ResponsiveLayout");
+			var oToolbar = new sap.m.Toolbar("TB1");
+			oSimpleForm.addContent(oToolbar);
+
+			jQuery.sap.require("sap.ui.core.VariantLayoutData");
+			jQuery.sap.require("sap.ui.layout.GridData");
+			var oGD = new sap.ui.layout.GridData("GD1");
+			var oVD = new sap.ui.core.VariantLayoutData("VD1", {multipleLayoutData: [oGD]});
+			var oField = new sap.m.Input("I7", {layoutData: oVD});
+			oSimpleForm.addContent(oField);
+			sap.ui.getCore().applyChanges();
+
+			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", clone);
 		});
 
 		QUnit.test("resize", function(assert) {
