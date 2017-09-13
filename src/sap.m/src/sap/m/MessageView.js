@@ -127,7 +127,12 @@ sap.ui.define([
 				/**
 				 * A custom header button
 				 */
-				headerButton: { type: "sap.m.Button", multiple: false }
+				headerButton: { type: "sap.m.Button", multiple: false },
+
+				/**
+				 * A navContainer that contains both details and list pages
+				 */
+				_navContainer: { type: "sap.m.NavContainer", multiple: false, visibility : "hidden" }
 			},
 			events: {
 				/**
@@ -343,10 +348,6 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype.exit = function () {
-		if (this._navContainer) {
-			this._navContainer.destroy();
-		}
-
 		if (this._oLists) {
 			this._destroyLists();
 		}
@@ -547,6 +548,8 @@ sap.ui.define([
 			initialPage: this.getId() + "listPage",
 			pages: [this._listPage, this._detailsPage]
 		});
+
+		this.setAggregation("_navContainer", this._navContainer);
 
 		return this;
 	};
