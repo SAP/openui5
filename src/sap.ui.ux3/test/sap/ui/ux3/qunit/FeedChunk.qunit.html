@@ -79,14 +79,12 @@
 		sEventParameter = oEvent.getParameter('comment');
 	}
 
-	//without comments
-	  var oChunk1 = new sap.ui.ux3.FeedChunk("Chunk1", {
-			thumbnailSrc: "../images/feeder/m_01.png",
-		  sender: sSender,
-	    text: "Text",
+		//without comments
+	var oChunk1 = new sap.ui.ux3.FeedChunk("Chunk1", {
+		thumbnailSrc: "../images/feeder/m_01.png",
+		sender: sSender,
+		text: "Text",
 			timestamp: sTimestamp,
-//			feederThumbnailSrc: "../images/feeder/w_01.png",
-//			feederSender: 'FeederSender',
 			flagged: false,
 			favorite: true,
 			shared: false,
@@ -106,63 +104,69 @@
 			inspect: handleInspect,
 			toggleShared: handleToggleShared,
 			actionItemSelected: handleActionItemSelected
-			}).placeAt("uiArea1");
+	}).placeAt("uiArea1");
 
-		// with comments
-		var oChunk2 = new sap.ui.ux3.FeedChunk("Chunk2", {
-//			thumbnailSrc: "../images/feeder/m_01.png",
-		  sender: sSender,
-	    text: "Line1 \nLine2 with @Reference \nLine3 \nLine4 \nLine5",
-			timestamp: sTimestamp,
-			feederThumbnailSrc: "../images/feeder/w_01.png",
-			feederSender: 'FeederSender',
-			flagged: true,
-			favorite: true,
-			shared: true,
-			deletionAllowed: false,
-			deleted: handleDeleted,
-			senderClicked: handleSenderClicked,
-			referenceClicked: handleReferenceClicked,
-			commentAdded: handleCommentAdded,
-			toggleFlagged: handleToggleFlagged,
-			toggleFavorite: handleToggleFavorite,
-			inspect: handleInspect,
-			toggleShared: handleToggleShared,
-			actionItemSelected: handleActionItemSelected
-			}).placeAt("uiArea2");
+	// with comments
+	var oChunk2 = new sap.ui.ux3.FeedChunk("Chunk2", {
+		sender: sSender,
+		text: "Line1 \nLine2 with @Reference \nLine3 \nLine4 \nLine5",
+		timestamp: sTimestamp,
+		feederThumbnailSrc: "../images/feeder/w_01.png",
+		feederSender: 'FeederSender',
+		flagged: true,
+		favorite: true,
+		shared: true,
+		deletionAllowed: false,
+		deleted: handleDeleted,
+		senderClicked: handleSenderClicked,
+		referenceClicked: handleReferenceClicked,
+		commentAdded: handleCommentAdded,
+		toggleFlagged: handleToggleFlagged,
+		toggleFavorite: handleToggleFavorite,
+		inspect: handleInspect,
+		toggleShared: handleToggleShared,
+		actionItemSelected: handleActionItemSelected
+	}).placeAt("uiArea2");
 
-	  oChunk2.addComment( new sap.ui.ux3.FeedChunk("commentChunk1", {
-		  sender: sChunkSender+"1",
-		  thumbnailSrc: "../images/feeder/m_01.png",
-	    text: "Comment Text",
-	    timestamp: sTimestamp,
-	    deleted: handleDeleted,
-			senderClicked: handleSenderClicked,
-			referenceClicked: handleReferenceClicked
-	  }));
+	oChunk2.addComment( new sap.ui.ux3.FeedChunk("commentChunk1", {
+		sender: sChunkSender+"1",
+		thumbnailSrc: "../images/feeder/m_01.png",
+		text: "Comment Text",
+		timestamp: sTimestamp,
+		deleted: handleDeleted,
+		senderClicked: handleSenderClicked,
+		referenceClicked: handleReferenceClicked
+	}));
 
-	  oChunk2.addComment( new sap.ui.ux3.FeedChunk("commentChunk2", {
-		  sender: sChunkSender+"2",
-//		  thumbnailSrc: "../images/feeder/m_01.png",
-	    text: "Comment Text @Reference1 and @Reference2",
-	    timestamp: sTimestamp,
-	    deletionAllowed: true,
-	    deleted: handleDeleted,
-			senderClicked: handleSenderClicked,
-			referenceClicked: handleReferenceClicked
-	  }));
+	oChunk2.addComment( new sap.ui.ux3.FeedChunk("commentChunk2", {
+		sender: sChunkSender+"2",
+		text: "Comment Text @Reference1 and @Reference2",
+		timestamp: sTimestamp,
+		deletionAllowed: true,
+		deleted: handleDeleted,
+		senderClicked: handleSenderClicked,
+		referenceClicked: handleReferenceClicked
+	}));
 
-	  oChunk2.addComment( new sap.ui.ux3.FeedChunk("commentChunk3", {
-		  sender: sChunkSender+"3",
-		  thumbnailSrc: "../images/feeder/m_01.png",
-	    text: "Comment Text \nnext Line \nnext line \nlast line",
-	    timestamp:  sTimestamp,
-	    deleted: handleDeleted,
-			senderClicked: handleSenderClicked,
-			referenceClicked: handleReferenceClicked
-	  }));
+	oChunk2.addComment( new sap.ui.ux3.FeedChunk("commentChunk3", {
+		sender: sChunkSender+"3",
+		thumbnailSrc: "../images/feeder/m_01.png",
+		text: "Comment Text \nnext Line \nnext line \nlast line",
+		timestamp:  sTimestamp,
+		deleted: handleDeleted,
+		senderClicked: handleSenderClicked,
+		referenceClicked: handleReferenceClicked
+	}));
 
-	  var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
+	oChunk2.addDelegate({
+		onAfterRendering: function () {
+			test("Expand button rendering", function () {
+				ok(jQuery.sap.byId("Chunk2-exp").get(0), "Expand button rendered when the text is long");
+			});
+		}
+	});
+
+	var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
 
 		module("Appearance");
 
@@ -200,9 +204,6 @@
 			equal(jQuery.sap.byId("Chunk1").children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for Chunk without comments");
 			equal(jQuery.sap.byId("Chunk2").children(".sapUiFeedChunkByline").text().slice(0,sTimestamp.length), sTimestamp, "Timestamp rendered for Chunk with comments");
 			equal(jQuery.sap.byId("commentChunk2").children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for comment-Chunk");
-
-			// expand button if long text
-			ok(jQuery.sap.byId("Chunk2-exp").get(0), "Expand button if text is short");
 
 			// no expand button if short text
 			ok(!jQuery.sap.byId("Chunk1-exp").get(0), "No expand button if text is short");
@@ -435,6 +436,5 @@
 	<div id="uiArea1" style="width:80%;"></div>
 	<br>
 	<div id="uiArea2" style="width:80%;"></div>
-
 </body>
 </html>
