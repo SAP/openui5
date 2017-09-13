@@ -424,11 +424,12 @@ sap.ui.define([
 			}
 
 			if (bScrolled) {
+				oEvent.preventDefault(); // Prevent scrolling the page.
+
 				if (bActionModeNavigation) {
 					oTable.attachEventOnce("_rowsUpdated", function() {
 						setTimeout(function() {
 							TableKeyboardDelegate._focusCell(oTable, oCellInfo.type, oCellInfo.rowIndex, oCellInfo.columnIndex, true);
-							oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
 						}, 0);
 					});
 				}
@@ -866,7 +867,7 @@ sap.ui.define([
 
 	/*
 	 * Handled keys:
-	 * Shift, F2, F4, Shift+F10, Ctrl+A, Ctrl+Shift+A
+	 * Shift, Space, F2, F4, Shift+F10, Ctrl+A, Ctrl+Shift+A
 	 */
 	TableKeyboardDelegate.prototype.onkeydown = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
@@ -893,6 +894,10 @@ sap.ui.define([
 
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
+		}
+
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SPACE)) {
+			oEvent.preventDefault(); // Prevent scrolling the page.
 		}
 
 		var $Target = jQuery(oEvent.target);
@@ -923,7 +928,7 @@ sap.ui.define([
 
 		// Ctrl+A: Select/Deselect all.
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.A, ModKey.CTRL)) {
-			oEvent.preventDefault(); // To prevent full page text selection.
+			oEvent.preventDefault(); // Prevent full page text selection.
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER) && sSelectionMode === SelectionMode.MultiToggle) {
 				this._toggleSelectAll();
@@ -943,7 +948,7 @@ sap.ui.define([
 
 		// Shift+F10: Open the context menu.
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.F10, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // To prevent opening the default browser context menu.
+			oEvent.preventDefault(); // Prevent opening the default browser context menu.
 			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 		}
 	};
@@ -990,7 +995,7 @@ sap.ui.define([
 			return;
 		}
 
-		oEvent.preventDefault(); // To prevent opening the default browser context menu.
+		oEvent.preventDefault(); // Prevent opening the default browser context menu.
 
 		var $Cell = TableUtils.getCell(this, oEvent.target);
 		var oCellInfo = TableUtils.getCellInfo($Cell);
@@ -1013,7 +1018,7 @@ sap.ui.define([
 		}
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SPACE)) {
-			oEvent.preventDefault(); // To prevent the browser window to scroll down.
+			oEvent.preventDefault(); // Prevent scrolling the page.
 
 			// Open the column menu.
 			if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
@@ -1257,7 +1262,7 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // To avoid text selection flickering.
+			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1335,7 +1340,7 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // To avoid text selection flickering.
+			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1400,7 +1405,7 @@ sap.ui.define([
 		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // To avoid text selection flickering.
+			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1478,7 +1483,7 @@ sap.ui.define([
 		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // To avoid text selection flickering.
+			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1543,6 +1548,8 @@ sap.ui.define([
 			return;
 		}
 
+		oEvent.preventDefault(); // Prevent scrolling the page.
+
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
 			preventItemNavigation(oEvent);
@@ -1578,6 +1585,8 @@ sap.ui.define([
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
+
+		oEvent.preventDefault(); // Prevent scrolling the page.
 
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
@@ -1638,7 +1647,7 @@ sap.ui.define([
 		}
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
-			oEvent.preventDefault(); // To prevent the browser page from scrolling to the top.
+			oEvent.preventDefault(); // Prevent scrolling the page.
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNHEADER)) {
@@ -1696,7 +1705,7 @@ sap.ui.define([
 		}
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
-			oEvent.preventDefault(); // To prevent the browser page from scrolling to the bottom.
+			oEvent.preventDefault(); // Prevent scrolling the page.
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 			if (oCellInfo.isOfType(CellType.ANY)) {
@@ -1771,6 +1780,8 @@ sap.ui.define([
 			return;
 		}
 
+		oEvent.preventDefault(); // Prevent scrolling the page.
+
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNHEADER)) {
@@ -1838,6 +1849,8 @@ sap.ui.define([
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
+
+		oEvent.preventDefault(); // Prevent scrolling the page.
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
