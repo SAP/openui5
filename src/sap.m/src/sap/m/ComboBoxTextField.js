@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/core/InvisibleText'],
-	function(jQuery, InputBase, library, InvisibleText) {
+sap.ui.define(['./InputBase', './library', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(InputBase, library, InvisibleText, coreLibrary, Device) {
 		"use strict";
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * Constructor for a new <code>sap.m.ComboBoxTextField</code>.
@@ -72,7 +75,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/core/Inv
 		ComboBoxTextField.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
 			InputBase.prototype.updateValueStateClasses.apply(this, arguments);
 
-			var mValueState = sap.ui.core.ValueState,
+			var mValueState = ValueState,
 				CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD,
 				$DomRef = this.$();
 
@@ -136,7 +139,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/core/Inv
 		 * IE9 does not have a native placeholder support.
 		 * IE10+ fires the input event when an input field with a native placeholder is focused.
 		 */
-		ComboBoxTextField.prototype.bShowLabelAsPlaceholder = sap.ui.Device.browser.msie;
+		ComboBoxTextField.prototype.bShowLabelAsPlaceholder = Device.browser.msie;
 
 		/* =========================================================== */
 		/* API methods                                                 */
@@ -180,4 +183,4 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/core/Inv
 		};
 
 		return ComboBoxTextField;
-	}, true);
+	});

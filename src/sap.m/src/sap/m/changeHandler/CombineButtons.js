@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils"],
-	function(FlexUtils) {
+sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.global"],
+	function(FlexUtils, jQuery) {
 		"use strict";
 
 		/**

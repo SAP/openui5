@@ -11,7 +11,6 @@ sap.ui.define([
 	"./Button",
 	"./Toolbar",
 	"./ToolbarSpacer",
-	"./Bar",
 	"./List",
 	"./StandardListItem",
 	"./library",
@@ -20,12 +19,19 @@ sap.ui.define([
 	"./Page",
 	"./NavContainer",
 	"./Link",
-	"./Popover",
 	"./MessageItem",
-	"./GroupHeaderListItem"
-], function (jQuery, Control, IconPool, HTML, Icon, Button, Toolbar, ToolbarSpacer, Bar, List, StandardListItem,
-			 library, Text, SegmentedButton, Page, NavContainer, Link, Popover, MessageItem, GroupHeaderListItem) {
+	"./GroupHeaderListItem",
+	"sap/ui/core/library",
+	"jquery.sap.keycodes"
+], function (jQuery, Control, IconPool, HTML, Icon, Button, Toolbar, ToolbarSpacer, List, StandardListItem,
+			 library, Text, SegmentedButton, Page, NavContainer, Link, MessageItem, GroupHeaderListItem, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
 
 	// shortcut for sap.m.ListType
 	var ListType = library.ListType;
@@ -664,8 +670,6 @@ sap.ui.define([
 		if (!sType) {
 			return null;
 		}
-		var MessageType = sap.ui.core.MessageType,
-			ValueState = sap.ui.core.ValueState;
 
 		switch (sType) {
 			case MessageType.Warning:
@@ -1111,4 +1115,4 @@ sap.ui.define([
 
 	return MessageView;
 
-}, /* bExport= */ true);
+});

@@ -1,7 +1,7 @@
 /*!
 * ${copyright}
 */
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Control"], function (jQuery, Control) {
+sap.ui.define([], function() {
 	"use strict";
 
 	var RSUtil = {};

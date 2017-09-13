@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ScrollContainer
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/delegate/ScrollEnablement"],
-	function (jQuery, library, Control, ScrollEnablement) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/delegate/ScrollEnablement", "sap/ui/core/Element"],
+	function (jQuery, library, Control, ScrollEnablement, Element) {
 		"use strict";
 
 
@@ -163,7 +163,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 * @public
 		 */
 		ScrollContainer.prototype.scrollToElement = function (element, time) {
-			if (element instanceof sap.ui.core.Element) {
+			if (element instanceof Element) {
 				element = element.getDomRef();
 			}
 
@@ -185,4 +185,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		return ScrollContainer;
 
-	}, /* bExport= */ true);
+	});

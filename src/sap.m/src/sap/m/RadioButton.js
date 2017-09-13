@@ -3,9 +3,20 @@
  */
 
 // Provides control sap.m.RadioButton.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './RadioButtonGroup'],
-	function(jQuery, library, Control, EnabledPropagator, RadioButtonGroup) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './RadioButtonGroup', 'sap/ui/core/library'],
+	function(library, Control, EnabledPropagator, RadioButtonGroup, coreLibrary) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 
@@ -80,13 +91,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Options for the text direction are RTL and LTR. Alternatively, the control can inherit the text direction from its parent container.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
-             * Width of the RadioButton or it's label depending on the useEntireWidth property.
-             * By Default width is set only for the label.
-             * @see {sap.m.RadioButton#useEntireWidth}
-             */
+			 * Width of the RadioButton or it's label depending on the useEntireWidth property.
+			 * By Default width is set only for the label.
+			 * @see {sap.m.RadioButton#useEntireWidth}
+			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
 			/**
@@ -113,13 +124,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning, None
 			 * @since 1.25
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
 
 			/**
 			 * Specifies the alignment of the radio button. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
 			 * @since 1.28
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin}
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin}
 		},
 		events : {
 
@@ -310,7 +321,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RadioButton.prototype._keyboardHandler = function(sPosition, bSelect) {
-		if (this.getParent() instanceof sap.m.RadioButtonGroup) {
+		if (this.getParent() instanceof RadioButtonGroup) {
 			return;
 		}
 
@@ -328,7 +339,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Determines next focusable item
 	 *
- 	 * @param {enum} sNavigation any item from KH_NAVIGATION
+	 * @param {enum} sNavigation any item from KH_NAVIGATION
 	 * @returns {RadioButton} Control instance for method chaining
 	 * @private
 	 */
@@ -603,4 +614,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return RadioButton;
 
-}, /* bExport= */ true);
+});

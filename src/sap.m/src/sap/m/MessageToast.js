@@ -2,9 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
-	function(jQuery, InstanceManager, Popup) {
+sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 'sap/ui/core/library', 'sap/ui/core/Control', 'sap/ui/Device'],
+	function(jQuery, InstanceManager, Popup, coreLibrary, Control, Device) {
 		"use strict";
+
+		// shortcut for sap.ui.core.Dock
+		var Dock = coreLibrary.Dock;
+
+		// shortcut for sap.ui.core.CSSSize
+		var CSSSize = coreLibrary.CSSSize;
 
 		/**
 		 * @class
@@ -137,13 +143,13 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		};
 
 		MessageToast._validateWidth = function(sWidth) {
-			if (!sap.ui.core.CSSSize.isValid(sWidth)) {
+			if (!CSSSize.isValid(sWidth)) {
 				jQuery.sap.log.error(sWidth + ' is not of type ' + '"sap.ui.core.CSSSize" for property "width" on ' + this + "._validateWidth");
 			}
 		};
 
 		MessageToast._validateDockPosition = function(sDock) {
-			if (!sap.ui.core.Dock.isValid(sDock)) {
+			if (!Dock.isValid(sDock)) {
 				jQuery.sap.log.error('"' + sDock + '"' + ' is not of type ' + '"sap.ui.core.Popup.Dock" on ' + this + "._validateDockPosition");
 			}
 		};
@@ -151,7 +157,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		MessageToast._validateOf = function(vElement) {
 			if (!(vElement instanceof jQuery) &&
 				!(vElement && vElement.nodeType === 1) &&
-				!(vElement instanceof sap.ui.core.Control) &&
+				!(vElement instanceof Control) &&
 				vElement !== window) {
 
 				jQuery.sap.log.error('"of" needs to be an instance of sap.ui.core.Control or an Element or a jQuery object or the window on ' + this + "._validateOf");
@@ -253,7 +259,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 
 		MessageToast._handleResizeEvent = function() {
 
-			if (sap.ui.Device.system.phone || sap.ui.Device.system.tablet) {
+			if (Device.system.phone || Device.system.tablet) {
 				this._resetPosition(this._aPopups);
 			}
 
@@ -290,7 +296,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 				if (oPopup) {
 					mPosition = oPopup._oPosition;	// TODO _oPosition is a private property
 
-					if (sap.ui.Device.system.phone || sap.ui.Device.system.tablet) {
+					if (Device.system.phone || Device.system.tablet) {
 						jQuery.sap.delayedCall(0, this, "_applyPosition", [oPopup, mPosition]);
 					} else {
 						oPopup.setPosition(mPosition.my, mPosition.at, mPosition.of, mPosition.offset);
@@ -463,7 +469,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			oPopup.getContent().addEventListener("mouseover", fnClearTimeout);
 
 			// WP 8.1 fires mouseleave event on tap
-			if (sap.ui.Device.system.desktop) {
+			if (Device.system.desktop) {
 				oPopup.getContent().addEventListener("mouseleave", function () {
 					iCloseTimeoutId = jQuery.sap.delayedCall(mSettings.duration,  oPopup, "close");
 				});
@@ -475,5 +481,4 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		};
 
 		return MessageToast;
-
-}, /* bExport= */ true);
+	}, /* bExport= */ true);

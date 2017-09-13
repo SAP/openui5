@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Tokenizer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/Device'],
-	function(jQuery, library, Control, ScrollEnablement, Device) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/ResizeHandler', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, ScrollEnablement, Device, InvisibleText, ResizeHandler) {
 	"use strict";
 
 
@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	// create an ARIA announcement and remember its ID for later use in the renderer:
-	Tokenizer.prototype._sAriaTokenizerLabelId = new sap.ui.core.InvisibleText({
+	Tokenizer.prototype._sAriaTokenizerLabelId = new InvisibleText({
 		text: oRb.getText("TOKENIZER_ARIA_LABEL")
 	}).toStatic().getId();
 
@@ -188,7 +188,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (!this._sResizeHandlerId) {
 			that = this;
-			this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(domRef, function() {
+			this._sResizeHandlerId = ResizeHandler.register(domRef, function() {
 				that.scrollToEnd();
 			});
 		}
@@ -273,7 +273,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Tokenizer.prototype.onAfterRendering = function() {
 		if (!this._sResizeHandlerId) {
 			var that = this;
-			this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
+			this._sResizeHandlerId = ResizeHandler.register(this.getDomRef(), function() {
 				that.scrollToEnd();
 			});
 		}
@@ -1206,8 +1206,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// needed when the control is inside active controls
 		oEvent.setMarked();
 
-        // Workaround for chrome bug
-        // BCP: 1680011538
+		// Workaround for chrome bug
+		// BCP: 1680011538
 		if (Device.browser.chrome && window.getSelection()) {
 			window.getSelection().removeAllRanges();
 		}
@@ -1229,7 +1229,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype._deregisterResizeHandler = function(){
 		if (this._sResizeHandlerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeHandlerId);
+			ResizeHandler.deregister(this._sResizeHandlerId);
 			delete this._sResizeHandlerId;
 		}
 	};
@@ -1290,4 +1290,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return Tokenizer;
 
-}, /* bExport= */ true);
+});

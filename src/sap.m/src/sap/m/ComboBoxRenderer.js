@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, ComboBoxBaseRenderer, Renderer) {
+sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer'],
+	function(ComboBoxBaseRenderer, Renderer) {
 		"use strict";
 
 		/**

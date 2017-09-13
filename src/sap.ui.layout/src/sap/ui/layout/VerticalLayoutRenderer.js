@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.layout.VerticalLayout
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 

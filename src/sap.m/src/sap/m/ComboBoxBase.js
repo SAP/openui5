@@ -2,9 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolbar', './Button', './Bar', './Text', './Title', './SelectList', './Popover', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/ui/core/ValueStateSupport', './library', 'sap/ui/Device'],
-	function(jQuery, Dialog, ComboBoxTextField, Toolbar, Button, Bar, Text, Title, SelectList, Popover, InvisibleText, IconPool, ValueStateSupport, library, Device) {
+sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolbar', './Button', './Bar', './Text', './Title', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/ui/core/ValueStateSupport', './library', 'sap/ui/Device', 'sap/ui/core/library', 'jquery.sap.keycodes'],
+	function(jQuery, Dialog, ComboBoxTextField, Toolbar, Button, Bar, Text, Title, InvisibleText, IconPool, ValueStateSupport, library, Device, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.PlacementType
+		var PlacementType = library.PlacementType;
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * Constructor for a new <code>sap.m.ComboBoxBase</code>.
@@ -283,7 +289,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		};
 
 		ComboBoxBase.prototype.onBeforeRendering = function() {
-			var sNoneState = this.getValueState() === sap.ui.core.ValueState.None;
+			var sNoneState = this.getValueState() === ValueState.None;
 			ComboBoxTextField.prototype.onBeforeRendering.apply(this, arguments);
 
 			if (!this.isPickerDialog() && sNoneState) {
@@ -565,7 +571,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		ComboBoxBase.prototype.setValueState = function(sValueState) {
 			var sAdditionalText,
 				sValueStateText = this.getValueStateText(),
-				bShow = ( sValueState === sap.ui.core.ValueState.None ? false : this.getShowValueStateMessage());
+				bShow = ( sValueState === ValueState.None ? false : this.getShowValueStateMessage());
 
 			this._sOldValueState = this.getValueState();
 			ComboBoxTextField.prototype.setValueState.apply(this, arguments);
@@ -722,7 +728,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		ComboBoxBase.prototype.getDropdownSettings = function() {
 			return {
 				showArrow: false,
-				placement: sap.m.PlacementType.VerticalPreferredBottom,
+				placement: PlacementType.VerticalPreferredBottom,
 				offsetX: 0,
 				offsetY: 0,
 				bounce: false,
@@ -1311,5 +1317,4 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		};
 
 		return ComboBoxBase;
-
-	}, /* bExport= */ true);
+	});

@@ -3,7 +3,7 @@
 */
 
 // Provides control sap.ui.layout.ResponsiveSplitter.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./ResponsiveSplitterUtilities", "./ResponsiveSplitterPage", "./PaneContainer", "./SplitPane", "sap/ui/core/delegate/ItemNavigation"], function (jQuery, library, Control, RSUtil, ResponsiveSplitterPage, PaneContainer, SplitPane, ItemNavigation) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./ResponsiveSplitterUtilities", "./ResponsiveSplitterPage", "./PaneContainer", "./SplitPane", "sap/ui/core/delegate/ItemNavigation", "sap/ui/core/ResizeHandler"], function(jQuery, library, Control, RSUtil, ResponsiveSplitterPage, PaneContainer, SplitPane, ItemNavigation, ResizeHandler) {
 	"use strict";
 
 	/**
@@ -117,7 +117,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	};
 
 	ResponsiveSplitter.prototype.onAfterRendering = function () {
-		this._parentResizeHandler = sap.ui.core.ResizeHandler.register(this, this._onParentResize.bind(this));
+		this._parentResizeHandler = ResizeHandler.register(this, this._onParentResize.bind(this));
 		var oRootContainer = this.getRootPaneContainer();
 		if (oRootContainer) {
 			this._onParentResize();
@@ -335,7 +335,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	 */
 	ResponsiveSplitter.prototype._detachResizeHandler = function () {
 		if (this._parentResizeHandler) {
-			sap.ui.core.ResizeHandler.deregister(this._parentResizeHandler);
+			ResizeHandler.deregister(this._parentResizeHandler);
 			this._parentResizeHandler = null;
 		}
 	};
@@ -665,4 +665,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	return ResponsiveSplitter;
 
-}, /* bExport= */ true);
+});
