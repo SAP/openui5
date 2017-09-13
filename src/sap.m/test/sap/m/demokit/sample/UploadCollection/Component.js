@@ -7,7 +7,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 		metadata : {
 			rootView : "sap.m.sample.UploadCollection.Page",
 			dependencies : {
-				libs : [ "sap.m", "sap.ui.unified" ]
+				libs : [ "sap.m", "sap.ui.layout" ]
 			},
 			config : {
 				sample : {
