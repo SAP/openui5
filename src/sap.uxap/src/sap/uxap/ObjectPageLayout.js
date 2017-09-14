@@ -2126,6 +2126,20 @@ sap.ui.define([
 		return this.setAggregation("headerTitle", oHeaderTitle, bSuppressInvalidate);
 	};
 
+	/**
+	 * This triggers rerendering of itself and its children.
+	 * @param {sap.ui.base.ManagedObject} [oOrigin] Child control for which the method was called</br>
+	 * If the child is an instance of <code>sap.uxap.ObjectPageSection</code> that corresponds to an inactive tab, the invalidation will be suppressed (in iconTabBar mode)
+	 *
+	 * @protected
+	 */
+	ObjectPageLayout.prototype.invalidate = function (oOrigin) {
+		if (this.getUseIconTabBar() && oOrigin && (oOrigin instanceof ObjectPageSection) && !oOrigin.isActive()) {
+			return; // no need to invalidate when an inactive tab is changed
+		}
+		Control.prototype.invalidate.apply(this, arguments);
+	};
+
 	ObjectPageLayout.prototype._adjustHeaderBackgroundSize = function () {
 		// Update the background image size and position
 		var oHeaderTitle = this.getHeaderTitle();
