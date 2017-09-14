@@ -247,6 +247,7 @@
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
 												<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
 											</m:columns>
 											<m:items>
@@ -256,7 +257,8 @@
 																								{path: 'constructorParams>isSubSubProperty'},
 																								{path: 'appView>/bPhoneSize'}],
 																								formatter: '.formatEventClassName'}"
-																		  text="{= ${constructorParams>name}}"/>
+																		  text="{= ${constructorParams>name}}{= ${constructorParams>optional} ? '?' : ''}"
+																		  wrapping="false"/>
 
 														<layout:VerticalLayout content="{path: 'constructorParams>types', templateShareable: 'false'}">
 															<m:HBox>
@@ -269,6 +271,10 @@
 																</m:items>
 															</m:HBox>
 														</layout:VerticalLayout>
+
+														<m:Text text="{parts: [{path: 'constructorParams>defaultValue'}],
+																	   formatter: '.formatDefaultValue'}"
+															wrapping="false"/>
 
 														<core:HTML content="{parts: [{path: 'constructorParams>description'}],
 																	 formatter: '.formatDescription'}"/>
@@ -483,6 +489,7 @@
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
 												<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
 											</m:columns>
 											<m:items>
@@ -492,7 +499,7 @@
 														<custom:ParamText customClass="{parts: [{path: 'methods>isSubProperty'},
 																								{path: 'appView>/bPhoneSize'}],
 																						formatter: '.formatMethodClassName'}"
-																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${methods>phoneName} ? ${methods>phoneName} : ${methods>name} }"
+																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${methods>phoneName} ? ${methods>phoneName} : ${methods>name} }{= ${methods>optional} ? '?' : ''}"
 																		  wrapping="false"/>
 
 
@@ -507,6 +514,10 @@
 																</m:items>
 															</m:HBox>
 														</layout:VerticalLayout>
+
+														<m:Text text="{parts: [{path: 'methods>defaultValue'}],
+																	   formatter: '.formatDefaultValue'}"
+															wrapping="false"/>
 
 														<core:HTML content="{parts: [{path: 'methods>description'},
 																					 {path: 'methods>deprecated/text'},
