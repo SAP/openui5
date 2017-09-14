@@ -231,6 +231,12 @@ sap.ui.define([
 					}, this);
 				}
 
+				//When there is only a single page in QuickView and no header set the header should be removed and device is not a phone
+				if (this.getHeader() === "" && mNavContext.quickView.getPages().length === 1 && !Device.system.phone) {
+					oPage.setShowHeader(false);
+					oPage.addStyleClass('sapMQuickViewPageWithoutHeader');
+				}
+
 				if (mPageContent.header) {
 					oPage.addContent(mPageContent.header);
 				}
