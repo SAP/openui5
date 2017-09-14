@@ -182,8 +182,8 @@ sap.ui.define(["jquery.sap.global",
 									if (sJsonModelBestMatch) {
 										oIssueManager.addIssue({
 											severity: Severity.High,
-											details: "Element " + oElement.getId() + " " + oBinding.getPath() + " has unresolved bindings.",
-											resolution: "You could try '" + sJsonModelBestMatch + "' instead",
+											details: "Element " + oElement.getId() + " " + oBinding.getPath() + " has unresolved bindings." +
+											" You could try '" + sJsonModelBestMatch + "' instead",
 											context: {
 												id: oElement.getId()
 											}
