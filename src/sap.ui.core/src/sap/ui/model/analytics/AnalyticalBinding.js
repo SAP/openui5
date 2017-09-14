@@ -7,8 +7,20 @@
 /*eslint camelcase:0, valid-jsdoc:0, no-warning-comments:0 */
 
 // Provides class sap.ui.model.odata.ODataListBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/FilterType', 'sap/ui/model/Sorter', 'sap/ui/model/odata/CountMode', './odata4analytics', './BatchResponseCollector', './AnalyticalVersionInfo'],
-	function(jQuery, TreeBinding, ChangeReason, Filter, FilterOperator, FilterType, Sorter, CountMode, odata4analytics, BatchResponseCollector, AnalyticalVersionInfo) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/model/TreeBinding',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/model/FilterType',
+	'sap/ui/model/Sorter',
+	'sap/ui/model/odata/CountMode',
+	'./odata4analytics',
+	'./BatchResponseCollector',
+	'./AnalyticalVersionInfo'
+], function(jQuery, TreeBinding, ChangeReason, Filter, FilterOperator, FilterType, Sorter,
+		CountMode, odata4analytics, BatchResponseCollector, AnalyticalVersionInfo) {
 	"use strict";
 
 	/**
@@ -92,9 +104,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this.mMultiUnitKey = {}; // keys of multi-currency entities
 			this.aMultiUnitLoadFactor = {}; // compensate discarded multi-unit entities by a load factor per aggregation level to increase number of loaded entities
 			this.bNeedsUpdate = false;
-			    /* entity keys of loaded group Id's */
+			/* entity keys of loaded group Id's */
 			this.mEntityKey = {};
-			    /* increased load factor due to ratio of non-multi-unit entities versus loaded entities */
+			/* increased load factor due to ratio of non-multi-unit entities versus loaded entities */
 
 			// custom parameters which will be send with every request
 			// the custom parameters are extracted from the mParameters object, because the SmartTable does some weird things to the parameters
@@ -558,7 +570,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.providesGrandTotal
 	 * @return {boolean}
 	 *            true if and only if the binding provides a context for the grand totals of all selected measure properties.
-     *
+	 *
 	 * @public
 	 */
 	AnalyticalBinding.prototype.providesGrandTotal = function() {
@@ -2062,9 +2074,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @private
 	 */
 	AnalyticalBinding.prototype._executeBatchRequest = function(aRequestDetails) {
-		var iCurrentAnalyticalInfoVersion = this.iAnalyticalInfoVersionNumber;
-
-		var that = this;
+		var iCurrentAnalyticalInfoVersion = this.iAnalyticalInfoVersionNumber,
+			iRequestHandleId,
+			that = this;
 
 		var aBatchQueryRequest = [], aExecutedRequestDetails = [];
 
@@ -2170,7 +2182,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 //			this._trace_message("ReqExec", "submitting batch with " + aExecutedRequestDetails.length + " operations");
 
 			var oBatchRequestHandle;
-			var iRequestHandleId = this._getIdForNewRequestHandle();
+
+			iRequestHandleId = this._getIdForNewRequestHandle();
 
 			// fire events to indicate sending of a new request
 			this.fireDataRequested();
@@ -2487,20 +2500,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @private
 	 */
 	AnalyticalBinding.prototype._processGroupMembersQueryResponse = function(oRequestDetails, oData) {
-		var sGroupId = oRequestDetails.sGroupId,
+		var sEntryGroupId,
+			sGroupId = oRequestDetails.sGroupId,
 			aSelectedUnitPropertyName = oRequestDetails.aSelectedUnitPropertyName,
 			aAggregationLevel = oRequestDetails.aAggregationLevel,
 			iStartIndex = oRequestDetails.oKeyIndexMapping.iIndex,
 			iServiceStartIndex = oRequestDetails.oKeyIndexMapping.iServiceKeyIndex,
 			iLength = oRequestDetails.iLength,
 			oKeyIndexMapping = oRequestDetails.oKeyIndexMapping,
-			iGroupMembersLevel = sGroupId == null ? 0 : this._getGroupIdLevel(sGroupId) + 1;
-		var bUnitCheckRequired = (aSelectedUnitPropertyName.length > 0);
-		var sPreviousEntryDimensionKeyString, sDimensionKeyString;
-		var iFirstMatchingEntryIndex;
-		var iDiscardedEntriesCount = 0;
-		var bLastServiceKeyWasNew;
-		var oReloadMeasuresRequestDetails, aReloadMeasuresRequestDetails = [];
+			iGroupMembersLevel = sGroupId == null ? 0 : this._getGroupIdLevel(sGroupId) + 1,
+			bUnitCheckRequired = (aSelectedUnitPropertyName.length > 0),
+			sPreviousEntryDimensionKeyString, sDimensionKeyString,
+			iFirstMatchingEntryIndex,
+			iDiscardedEntriesCount = 0,
+			bLastServiceKeyWasNew,
+			oReloadMeasuresRequestDetails, aReloadMeasuresRequestDetails = [];
 
 // 		this._trace_enter("ReqExec", "_processGroupMembersQueryResponse", "groupId=" + oRequestDetails.sGroupId, { startIndex: iStartIndex, serviceStartIndex: iServiceStartIndex, length: iLength, resultCount: oData.__count, resultLength: oData.results.length }, ["startIndex","serviceStartIndex","length","resultCount","resultLength"]); // DISABLED FOR PRODUCTION
 
@@ -2619,7 +2633,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					var sMultiUnitKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
 					var oMultiUnitContext = this.oModel.getContext('/' + sMultiUnitKey);
 					this._getGroupIdFromContext(oMultiUnitContext, iGroupMembersLevel);
-					this.mEntityKey[sEntryGroupId] =  sMultiUnitKey;
+					this.mEntityKey[sEntryGroupId] = sMultiUnitKey;
 
 					// reset multi-unit indicator
 					iFirstMatchingEntryIndex = undefined;
@@ -2642,8 +2656,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 			// remember mapping between entry key and group Id
 			if (!oRequestDetails.bIsLeafGroupsRequest) {
-				var sLastEntryKey = this._getKey(sGroupId, oKeyIndexMapping.iIndex - 1),
-					sEntryGroupId = this._getGroupIdFromContext(this.oModel.getContext('/' + sLastEntryKey), iGroupMembersLevel);
+				var sLastEntryKey = this._getKey(sGroupId, oKeyIndexMapping.iIndex - 1);
+
+				sEntryGroupId = this._getGroupIdFromContext(this.oModel.getContext('/' + sLastEntryKey), iGroupMembersLevel);
 /* during development only
 				if (this.mEntityKey[sEntryGroupId]) {
 					if (this.mEntityKey[sEntryGroupId] != sLastEntryKey)
@@ -2931,7 +2946,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				}
 			}
 			processSingleGroupFromLevelSubset(bProcessFirstLoadedGroup,
-											  oData.results.length == oRequestDetails.iLength && i == oData.results.length - 1);
+											oData.results.length == oRequestDetails.iLength && i == oData.results.length - 1);
 			// setup for processing next parent group
 			bProcessFirstLoadedGroup = false;
 			if (sPreviousParentGroupId != sParentGroupId) {
@@ -2981,7 +2996,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @private
 	 */
 	AnalyticalBinding.prototype._getLoadedContextsForGroup = function(sGroupId, iStartIndex, iLength, bFetchAll) {
-		var aContext = [], oContext, fKey = this._getKeys(sGroupId), sKey;
+		var aContext = [], oContext, i, fKey = this._getKeys(sGroupId), sKey;
 
 		if (!fKey) {
 			return aContext;
@@ -3012,7 +3027,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 
 		// Loop through known data and check whether we already have all rows loaded
-		for (var i = iStartIndex; i < iStartIndex + iLength; i++) {
+		for (i = iStartIndex; i < iStartIndex + iLength; i++) {
 			sKey = fKey(i);
 			if (!sKey) {
 				break;
