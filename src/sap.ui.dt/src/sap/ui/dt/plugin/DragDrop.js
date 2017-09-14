@@ -244,8 +244,8 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 */
 	DragDrop.prototype._checkMovable = function(oEvent) {
 		var oOverlay = oEvent.srcControl;
-		if (oOverlay.isMovable()) {
-			DOMUtil.setDraggable(oOverlay.$(), true);
+		if (oOverlay.isMovable() || DOMUtil.getDraggable(oOverlay.$()) !== undefined) {
+			DOMUtil.setDraggable(oOverlay.$(), oOverlay.isMovable());
 		}
 	};
 

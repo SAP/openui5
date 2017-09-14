@@ -101,33 +101,47 @@ function(
 		assert.strictEqual(this.oPlugin.hasChangeHandler("moveControls", this.oLayout), true, "then the function returns true");
 	});
 
-	QUnit.test("when the addToPluginsList and removeFromPluginsList methods are called", function(assert) {
+	QUnit.test("when the addToPluginsList, removeFromPluginsList and _isEditableByPlugin methods are called", function(assert) {
 
 		assert.notOk(this.oButtonOverlay.getEditable(), "then the Overlay is not editable");
+		assert.notOk(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
+		assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 
 		this.oPlugin.registerElementOverlay(this.oButtonOverlay);
 		assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 1, "then a plugin got added");
 		assert.equal(this.oButtonOverlay.getEditableByPlugins()[0], "sap.ui.rta.plugin.Plugin", "then the name of the added plugin is correct");
 		assert.ok(this.oButtonOverlay.getEditable(), "then the Overlay is editable");
+		assert.ok(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is editable by this plugin");
+		assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 
 		this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
 		assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 2, "then another plugin got added");
 		assert.equal(this.oButtonOverlay.getEditableByPlugins()[1], "sap.ui.rta.plugin.Remove", "then the name of the added plugin is correct");
 		assert.ok(this.oButtonOverlay.getEditable(), "then the Overlay is editable");
+		assert.ok(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is editable by this plugin");
+		assert.ok(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is editable by this plugin");
 
 		this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
 		assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 1, "then a plugin got removed");
 		assert.equal(this.oButtonOverlay.getEditableByPlugins()[0], "sap.ui.rta.plugin.Plugin", "then the name of the plugin left is correct");
 		assert.ok(this.oButtonOverlay.getEditable(), "then the Overlay is editable");
+		assert.ok(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is editable by this plugin");
+		assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 
 		this.oPlugin.deregisterElementOverlay(this.oButtonOverlay);
 		assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 0, "then all plugins got removed");
 		assert.notOk(this.oButtonOverlay.getEditable(), "then the Overlay is not editable");
+		assert.notOk(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
+		assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 	});
 
 	QUnit.test("when the control has no stable id and hasStableId method is called", function(assert) {
 		assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then it returns false");
 		assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), false, "then the 'getElementHasStableId' property of the Overlay is set to false");
+	});
+
+	QUnit.test("when hasStableId method is called without an overlay", function(assert) {
+		assert.strictEqual(this.oPlugin.hasStableId(), false, "then it returns false");
 	});
 
 	QUnit.module("Given this the Plugin is initialized with 2 Plugins", {

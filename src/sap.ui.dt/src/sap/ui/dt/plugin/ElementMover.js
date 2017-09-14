@@ -131,8 +131,11 @@ sap.ui.define([
 	 */
 	ElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom) {
 		var oMovedOverlay = oOverlay ? oOverlay : this.getMovedOverlay();
+		var oGeometry = oAggregationOverlay.getGeometry();
+		var bGeometryVisible = oGeometry && oGeometry.size.height > 0 && oGeometry.size.width > 0;
+
 		// this function can get called on overlay registration, when there are no overlays in dom yet. In this case, $().is(":visible") is always false.
-		if ((bOverlayNotInDom && !oAggregationOverlay.getVisible())
+		if ((bOverlayNotInDom && !bGeometryVisible)
 			|| !bOverlayNotInDom && !oAggregationOverlay.$().is(":visible")
 			|| !(oAggregationOverlay.getElementInstance().getVisible && oAggregationOverlay.getElementInstance().getVisible())) {
 			return false;
