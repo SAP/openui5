@@ -119,6 +119,8 @@ sap.ui.define([
 			this._sResizeListenerId = undefined; //defined in onAfterRendering
 		}
 
+		this.oLibraryResourceBundleOP = library.i18nModel.getResourceBundle(); // get resource translation bundle
+
 		//composite controls
 		this.setDesign("Transparent"); //styling is coming from css
 	};
@@ -485,6 +487,7 @@ sap.ui.define([
 		var sArrowId,
 			sIconName,
 			sArrowClass,
+			sArrowTooltip,
 			oScrollButton,
 			that = this;
 
@@ -492,10 +495,12 @@ sap.ui.define([
 			sArrowId = this.getId() + "-arrowScrollLeft";
 			sIconName = "slim-arrow-left";
 			sArrowClass = "anchorBarArrowLeft";
+			sArrowTooltip = this.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SCROLL_LEFT_ARROW");
 		} else {
 			sArrowId = this.getId() + "-arrowScrollRight";
 			sIconName = "slim-arrow-right";
 			sArrowClass = "anchorBarArrowRight";
+			sArrowTooltip = this.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SCROLL_RIGHT_ARROW");
 		}
 
 		oScrollButton = new Button(sArrowId, {
@@ -504,7 +509,8 @@ sap.ui.define([
 			press: function (oEvent) {
 				oEvent.preventDefault();
 				that._handleScrollButtonTap(bLeft);
-			}
+			},
+			tooltip: sArrowTooltip
 		});
 
 		oScrollButton.addEventDelegate({
@@ -1085,6 +1091,10 @@ sap.ui.define([
 		if (this._oScroller) {
 			this._oScroller.destroy();
 			this._oScroller = null;
+		}
+
+		if (this.oLibraryResourceBundleOP) {
+			this.oLibraryResourceBundleOP = null;
 		}
 	};
 
