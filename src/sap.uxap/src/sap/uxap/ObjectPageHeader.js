@@ -327,7 +327,7 @@ sap.ui.define([
 			return new ActionSheet({placement: sap.m.PlacementType.Bottom});
 		},
 		"_lockIconCont": function (oParent) {
-			return this._getButton(oParent, "sap-icon://private", "lock-cont");
+			return this._getButton(oParent, "sap-icon://private", "lock-cont", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_LOCK_MARK_VALUE"));
 		},
 		"_breadCrumbs": function (oParent) {
 			return new Breadcrumbs({
@@ -350,7 +350,7 @@ sap.ui.define([
 			return this._getIcon(oParent, "flag", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_FLAG_MARK_VALUE"));
 		},
 		"_overflowButton": function (oParent) {
-			return this._getButton(oParent, "sap-icon://overflow", "overflow");
+			return this._getButton(oParent, "sap-icon://overflow", "overflow", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_OVERFLOW_BTN"));
 		},
 		"_expandButton": function (oParent) {
 			return this._getButton(oParent, "sap-icon://slim-arrow-down", "expand", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_EXPAND_HEADER_BTN"));
