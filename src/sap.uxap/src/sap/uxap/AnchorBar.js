@@ -987,6 +987,9 @@ sap.ui.define([
 		//initial state
 		if (this._bHasButtonsBar) {
 			jQuery.sap.delayedCall(AnchorBar.DOM_CALC_DELAY, this, function () {
+				if (this._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon) {
+					this._computeBarSectionsInfo();
+				}
 				this._adjustSize();
 			});
 		}
