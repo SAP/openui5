@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	'./SemanticButton',
-	'./SemanticControl',
-	'sap/m/library'
-], function(SemanticButton, SemanticControl, mobileLibrary) {
+	'sap/m/library',
+	'jquery.sap.keycodes'
+], function(SemanticButton, mobileLibrary, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -123,4 +123,4 @@ sap.ui.define([
 
 	return SemanticToggleButton;
 
-}, /* bExport= */ false);
+});

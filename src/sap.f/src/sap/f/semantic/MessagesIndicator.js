@@ -32,4 +32,4 @@ sap.ui.define(['./SemanticButton'], function(SemanticButton) {
 	});
 
 	return MessagesIndicator;
-}, /* bExport= */ true);
+});

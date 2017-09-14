@@ -11,14 +11,21 @@
 
 // Provides class sap.m.semantic.SemanticConfiguration
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/base/Metadata",
 	"sap/m/library",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/core/InvisibleText",
 	"sap/ui/core/IconPool"
-], function(jQuery, Metadata, library, OverflowToolbarLayoutData, InvisibleText, IconPool) {
+], function(Metadata, library, OverflowToolbarLayoutData, IconPool) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
+
+	// shortcut for sap.m.semantic.SemanticRuleSetType
+	var SemanticRuleSetType = library.semantic.SemanticRuleSetType;
 
 	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
@@ -92,18 +99,18 @@ sap.ui.define([
 
 		switch (sRuleSetType) {
 
-			case sap.m.semantic.SemanticRuleSetType.Classic:
+			case SemanticRuleSetType.Classic:
 
 				return {
-					baseButtonPlacement: sap.m.PlacementType.Bottom,
-					actionSheetPlacement: sap.m.PlacementType.Top
+					baseButtonPlacement: PlacementType.Bottom,
+					actionSheetPlacement: PlacementType.Top
 				};
 
-			case sap.m.semantic.SemanticRuleSetType.Optimized:
+			case SemanticRuleSetType.Optimized:
 
 				return {
-					baseButtonPlacement: sap.m.PlacementType.Top,
-					actionSheetPlacement: sap.m.PlacementType.Bottom
+					baseButtonPlacement: PlacementType.Top,
+					actionSheetPlacement: PlacementType.Bottom
 				};
 		}
 	};
@@ -127,7 +134,7 @@ sap.ui.define([
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_TextOnly,
 			getSettings: function() {
 				return {
-					type: sap.m.ButtonType.Emphasized,
+					type: ButtonType.Emphasized,
 					layoutData: new OverflowToolbarLayoutData({
 						priority: OverflowToolbarPriority.NeverOverflow
 					})};
@@ -141,7 +148,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_EDIT"),
-					type: sap.m.ButtonType.Emphasized,
+					type: ButtonType.Emphasized,
 					layoutData: new OverflowToolbarLayoutData({
 						priority: OverflowToolbarPriority.NeverOverflow
 					})
@@ -156,7 +163,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_SAVE"),
-					type: sap.m.ButtonType.Emphasized,
+					type: ButtonType.Emphasized,
 					layoutData: new OverflowToolbarLayoutData({
 						priority: OverflowToolbarPriority.NeverOverflow
 					})
@@ -183,7 +190,7 @@ sap.ui.define([
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_TextOnly,
 			getSettings: function() {
 				return {
-					type: sap.m.ButtonType.Accept,
+					type: ButtonType.Accept,
 					layoutData: new OverflowToolbarLayoutData({
 						priority: OverflowToolbarPriority.NeverOverflow
 					})};
@@ -195,7 +202,7 @@ sap.ui.define([
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_TextOnly,
 			getSettings: function() {
 				return {
-					type: sap.m.ButtonType.Reject,
+					type: ButtonType.Reject,
 					layoutData: new OverflowToolbarLayoutData({
 						priority: OverflowToolbarPriority.NeverOverflow
 					})};
@@ -461,7 +468,7 @@ sap.ui.define([
 						}
 					},
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR"),
-					type: sap.m.ButtonType.Emphasized,
+					type: ButtonType.Emphasized,
 					visible: {
 						path: "message>/",
 						formatter: function (aMessages) {
@@ -480,7 +487,7 @@ sap.ui.define([
 			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
 				return {
-					layoutData: new sap.m.OverflowToolbarLayoutData({shrinkable: false})
+					layoutData: new OverflowToolbarLayoutData({shrinkable: false})
 				};
 			},
 			order: 1
@@ -490,5 +497,4 @@ sap.ui.define([
 	})();
 
 	return SemanticConfiguration;
-
 }, /* bExport= */ false);

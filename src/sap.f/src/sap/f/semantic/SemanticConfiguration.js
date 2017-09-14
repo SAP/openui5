@@ -6,13 +6,11 @@
 * Provides a private class <code>sap.f.semantic.SemanticConfiguration</code>.
 */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/base/Metadata",
 	"sap/ui/core/IconPool",
 	"sap/m/library",
 	"sap/m/OverflowToolbarLayoutData"
-], function(jQuery,
-			Metadata,
+], function(Metadata,
 			IconPool,
 			mobileLibrary,
 			OverflowToolbarLayoutData) {

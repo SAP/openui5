@@ -3,9 +3,17 @@
  */
 
 // Provides control sap.m.ProgressIndicator.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, library, Control, ValueStateSupport) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
+	function(jQuery, library, Control, ValueStateSupport, coreLibrary) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 
@@ -42,7 +50,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Specifies the state of the bar. Enumeration sap.ui.core.ValueState provides Error (red), Warning (yellow), Success (green), None (blue) (default value).
 			 */
-			state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None},
+			state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : ValueState.None},
 
 			/**
 			 * Specifies the text value to be displayed in the bar.
@@ -74,7 +82,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Specifies the element's text directionality with enumerated options (RTL or LTR). By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Determines whether the control is in display-only state where the control has different visualization and cannot be focused.
@@ -216,4 +224,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return ProgressIndicator;
 
-}, /* bExport= */ true);
+});

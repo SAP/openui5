@@ -42,4 +42,4 @@ sap.ui.define(['sap/m/semantic/SemanticSelect'], function(SemanticSelect) {
 
 	return FilterSelect;
 
-}, /* bExport= */ true);
+});

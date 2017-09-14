@@ -34,4 +34,4 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 
 	return SendMessageAction;
 
-}, /* bExport= */ true);
+});

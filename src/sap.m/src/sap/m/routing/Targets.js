@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './async/Targets', './sync/Targets'],
-	function(Targets, TargetHandler, Target, asyncTargets, syncTargets) {
+sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './async/Targets', './sync/Targets', 'jquery.sap.global'],
+	function(Targets, TargetHandler, Target, asyncTargets, syncTargets, jQuery) {
 		"use strict";
 
 		/**
@@ -384,4 +384,4 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		});
 
 		return MobileTargets;
-	}, /* bExport= */ true);
+	});

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
-	function(jQuery, BarInPageEnabler) {
+sap.ui.define(['./BarInPageEnabler', 'sap/m/Toolbar'],
+	function(BarInPageEnabler, Toolbar) {
 	"use strict";
 
 
@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 		});
 
 
-		if (!sap.m.Toolbar.hasNewFlexBoxSupport) {
+		if (!Toolbar.hasNewFlexBoxSupport) {
 			rm.addClass("sapMTBOldFlex");
 		} else {
 			rm.addClass("sapMTBNewFlex");
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 
 	ToolbarRenderer.renderBarContent = function(rm, oToolbar) {
 		oToolbar.getContent().forEach(function(oControl) {
-			sap.m.BarInPageEnabler.addChildClassTo(oControl, oToolbar);
+			BarInPageEnabler.addChildClassTo(oControl, oToolbar);
 			rm.renderControl(oControl);
 		});
 	};

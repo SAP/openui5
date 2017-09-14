@@ -3,9 +3,17 @@
  */
 
 // Provides control sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover.
-sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePopoverControls', './OverflowToolbarLayoutData'],
-	function(Popover, PopoverRenderer, OverflowToolbarAssociativePopoverControls, OverflowToolbarLayoutData) {
+sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePopoverControls', './OverflowToolbarLayoutData', 'sap/m/library'],
+	function(Popover, PopoverRenderer, OverflowToolbarAssociativePopoverControls, OverflowToolbarLayoutData, library) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 
 
@@ -109,7 +117,7 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 
 		var oLayoutData = oControl.getLayoutData();
 
-		if (oLayoutData instanceof OverflowToolbarLayoutData && oLayoutData.getPriority() === sap.m.OverflowToolbarPriority.Disappear) {
+		if (oLayoutData instanceof OverflowToolbarLayoutData && oLayoutData.getPriority() === OverflowToolbarPriority.Disappear) {
 			oControl.addStyleClass("sapMOTAPHidden");
 		}
 
@@ -182,7 +190,7 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	 * @private
 	 */
 	OverflowToolbarAssociativePopover.prototype._recalculateMargins = function (sCalculatedPlacement, oPosParams) {
-		if (sCalculatedPlacement !== sap.m.PlacementType.Top){
+		if (sCalculatedPlacement !== PlacementType.Top){
 			return Popover.prototype._recalculateMargins.apply(this, arguments);
 		}
 
@@ -199,7 +207,7 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 			return sap.ui.getCore().byId(sId);
 		});
 
-		if (this.getPlacement() === sap.m.PlacementType.Top) {
+		if (this.getPlacement() === PlacementType.Top) {
 			aAssociatedContent.reverse();
 		}
 
@@ -224,4 +232,4 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 
 	return OverflowToolbarAssociativePopover;
 
-}, /* bExport= */ false);
+});

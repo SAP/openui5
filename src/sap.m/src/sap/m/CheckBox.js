@@ -8,10 +8,20 @@ sap.ui.define(['jquery.sap.global',
 	'./library',
 	'sap/ui/Device',
 	'sap/ui/core/Control',
-	"sap/ui/core/IconPool",
-	'sap/ui/core/EnabledPropagator'],
-	function(jQuery, Label, library, Device, Control, IconPool, EnabledPropagator) {
+	'sap/ui/core/IconPool',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/library'],
+	function(jQuery, Label, library, Device, Control, IconPool, EnabledPropagator, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Constructor for a new <code>CheckBox</code>.
@@ -94,12 +104,12 @@ sap.ui.define(['jquery.sap.global',
 			/**
 			 * Options for the text direction are RTL and LTR. Alternatively, the control can inherit the text direction from its parent container.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Aligns the text of the checkbox. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
 			/**
 			 * Determines the total width of the control or the width of its label only, depending on the value of <code>useEntireWidth</code>.
@@ -131,7 +141,7 @@ sap.ui.define(['jquery.sap.global',
 			 * Accepts the core enumeration ValueState.type that supports 'None', 'Error', 'Warning' and 'Success'.
 			 * @since 1.38
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None}
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None}
 		},
 		aggregations: {
 			/**
@@ -404,4 +414,4 @@ sap.ui.define(['jquery.sap.global',
 
 	return CheckBox;
 
-}, /* bExport= */ true);
+});

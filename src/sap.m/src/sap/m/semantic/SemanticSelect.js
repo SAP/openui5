@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (SemanticControl, Select) {
+sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select', 'jquery.sap.global'], function(SemanticControl, Select, jQuery) {
 	"use strict";
 
 	/**
@@ -149,4 +149,4 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 	};
 
 	return SemanticSelect;
-}, /* bExport= */ true);
+});

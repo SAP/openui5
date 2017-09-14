@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './NavContainerRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, NavContainerRenderer, Renderer) {
+sap.ui.define(['./NavContainerRenderer', 'sap/ui/core/Renderer', 'sap/m/library'],
+	function(NavContainerRenderer, Renderer, library) {
 	"use strict";
+
+
+	// shortcut for sap.m.BackgroundHelper
+	var BackgroundHelper = library.BackgroundHelper;
 
 
 	/**
@@ -17,11 +21,11 @@ sap.ui.define(['jquery.sap.global', './NavContainerRenderer', 'sap/ui/core/Rende
 	var AppRenderer = Renderer.extend(NavContainerRenderer);
 
 	AppRenderer.renderAttributes = function(rm, oControl) {
-		sap.m.BackgroundHelper.addBackgroundColorStyles(rm, oControl.getBackgroundColor(),  oControl.getBackgroundImage());
+		BackgroundHelper.addBackgroundColorStyles(rm, oControl.getBackgroundColor(),  oControl.getBackgroundImage());
 	};
 
 	AppRenderer.renderBeforeContent = function(rm, oControl) {
-		sap.m.BackgroundHelper.renderBackgroundImageTag(rm, oControl, "sapMAppBG",  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
+		BackgroundHelper.renderBackgroundImageTag(rm, oControl, "sapMAppBG",  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
 	};
 
 

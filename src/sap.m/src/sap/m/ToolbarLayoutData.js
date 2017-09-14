@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ToolbarLayoutData.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/LayoutData'],
-	function(jQuery, library, LayoutData) {
+sap.ui.define(['./library', 'sap/ui/core/LayoutData'],
+	function(library, LayoutData) {
 	"use strict";
 
 
@@ -86,4 +86,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/LayoutData'],
 
 	return ToolbarLayoutData;
 
-}, /* bExport= */ true);
+});

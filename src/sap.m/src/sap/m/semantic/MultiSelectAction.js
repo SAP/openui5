@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/semantic/SemanticToggleButton', 'sap/m/semantic/SemanticConfiguration'], function(SemanticToggleButton, SemanticConfiguration) {
+sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleButton) {
 	"use strict";
 
 	/**
@@ -66,4 +66,4 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton', 'sap/m/semantic/SemanticCo
 	};
 
 	return MultiSelectAction;
-}, /* bExport= */ true);
+});

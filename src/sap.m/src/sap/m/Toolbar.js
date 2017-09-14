@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	"use strict";
 
 
-	var ToolbarDesign = sap.m.ToolbarDesign;
+	var ToolbarDesign = library.ToolbarDesign;
 
 	/**
 	 * Constructor for a new <code>Toolbar</code>.
@@ -605,4 +605,4 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 
 	return Toolbar;
 
-}, /* bExport= */ true);
+});

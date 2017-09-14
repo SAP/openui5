@@ -46,4 +46,4 @@ sap.ui.define(['sap/ui/core/routing/Target', 'sap/f/FlexibleColumnLayout', './as
 
 		return MobileTarget;
 
-	}, /* bExport= */ true);
+	});

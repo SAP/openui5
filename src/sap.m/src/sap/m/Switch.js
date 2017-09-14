@@ -7,6 +7,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	function(jQuery, library, Control, EnabledPropagator, IconPool, Parameters) {
 		"use strict";
 
+		// shortcut for sap.m.touch
+		var touch = library.touch;
+
+		// shortcut for sap.m.SwitchType
+		var SwitchType = library.SwitchType;
+
 		/**
 		 * Constructor for a new Switch.
 		 *
@@ -64,7 +70,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				/**
 				 * Type of a Switch. Possibles values "Default", "AcceptReject".
 				 */
-				type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: sap.m.SwitchType.Default }
+				type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: SwitchType.Default }
 			},
 			associations: {
 
@@ -181,7 +187,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var sText = "";
 
 			switch (this.getType()) {
-				case sap.m.SwitchType.Default:
+				case SwitchType.Default:
 					if (bState) {
 						sText = this.getCustomTextOn().trim() || oBundle.getText("SWITCH_ON");
 					} else {
@@ -189,7 +195,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					}
 					break;
 
-				case sap.m.SwitchType.AcceptReject:
+				case SwitchType.AcceptReject:
 					if (bState) {
 						sText = oBundle.getText("SWITCH_ARIA_ACCEPT");
 					} else {
@@ -245,7 +251,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.setMarked();
 
 			// only process single touches (only the first active touch point)
-			if (sap.m.touch.countContained(oEvent.touches, this.getId()) > 1 ||
+			if (touch.countContained(oEvent.touches, this.getId()) > 1 ||
 				!this.getEnabled() ||
 
 				// detect which mouse button caused the event and only process the standard click
@@ -290,7 +296,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			var oTouch,
 				iPosition,
-				fnTouch = sap.m.touch;
+				fnTouch = touch;
 
 			if (!this.getEnabled() ||
 
@@ -345,7 +351,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.setMarked();
 
 			var oTouch,
-				fnTouch = sap.m.touch,
+				fnTouch = touch,
 				assert = jQuery.sap.assert;
 
 			if (!this.getEnabled() ||
@@ -462,5 +468,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		return Switch;
-
-	}, /* bExport= */ true);
+	});

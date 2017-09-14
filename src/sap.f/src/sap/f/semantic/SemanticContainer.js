@@ -8,10 +8,8 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/Metadata",
-	"sap/ui/core/CustomData",
-	"sap/m/ToolbarSpacer",
 	"./SemanticConfiguration"
-], function(jQuery, Metadata, CustomData, ToolBarSpacer, SemanticConfiguration) {
+], function(jQuery, Metadata, SemanticConfiguration) {
 	"use strict";
 
 	/**

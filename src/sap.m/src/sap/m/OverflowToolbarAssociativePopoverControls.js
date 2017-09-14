@@ -11,9 +11,15 @@
  * where CONTROL is a camel-cased version of the getMetadata().getName() value, f.e. "sap.m.Button" becomes "sapMButton"
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarButton', './ToggleButton', './Button'],
-	function(jQuery, Metadata, OverflowToolbarButton, ToggleButton, Button) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarButton', './ToggleButton', './Button', 'sap/m/library'],
+	function(jQuery, Metadata, OverflowToolbarButton, ToggleButton, Button, library) {
 		"use strict";
+
+		// shortcut for sap.m.SelectType
+		var SelectType = library.SelectType;
+
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
 
 		var OverflowToolbarAssociativePopoverControls = Metadata.createClass("sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopoverControls", {
 			/**
@@ -32,8 +38,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 				buttonType: oButtonType
 			};
 
-			if (oButtonType === sap.m.ButtonType.Default) {
-				oControl.setProperty("type", sap.m.ButtonType.Transparent, true);
+			if (oButtonType === ButtonType.Default) {
+				oControl.setProperty("type", ButtonType.Transparent, true);
 			}
 
 			// Set some css classes to apply the proper paddings in cases of buttons with/without icons
@@ -111,8 +117,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 				selectType: oControl.getType()
 			};
 
-			if (oControl.getType() !== sap.m.SelectType.Default) {
-				oControl.setProperty("type", sap.m.SelectType.Default, true);
+			if (oControl.getType() !== SelectType.Default) {
+				oControl.setProperty("type", SelectType.Default, true);
 			}
 		};
 
@@ -320,5 +326,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 		}
 
 		return OverflowToolbarAssociativePopoverControls;
-
-}, /* bExport= */ false);
+	}, /* bExport= */ false);

@@ -2,9 +2,27 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button', './delegate/ValueStateMessage', 'sap/ui/core/message/MessageMixin'],
-	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button, ValueStateMessage, MessageMixin) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button', './delegate/ValueStateMessage', 'sap/ui/core/message/MessageMixin', 'sap/ui/core/library', 'sap/ui/core/Item', 'sap/ui/Device', 'jquery.sap.keycodes'],
+	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button, ValueStateMessage, MessageMixin, coreLibrary, Item, Device) {
 		"use strict";
+
+		// shortcut for sap.m.SelectListKeyboardNavigationMode
+		var SelectListKeyboardNavigationMode = library.SelectListKeyboardNavigationMode;
+
+		// shortcut for sap.m.PlacementType
+		var PlacementType = library.PlacementType;
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
+
+		// shortcut for sap.ui.core.TextDirection
+		var TextDirection = coreLibrary.TextDirection;
+
+		// shortcut for sap.ui.core.TextAlign
+		var TextAlign = coreLibrary.TextAlign;
+
+		// shortcut for sap.m.SelectType
+		var SelectType = library.SelectType;
 
 		/**
 		 * Constructor for a new <code>sap.m.Select</code>.
@@ -117,7 +135,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 					type: {
 						type: "sap.m.SelectType",
 						group: "Appearance",
-						defaultValue: sap.m.SelectType.Default
+						defaultValue: SelectType.Default
 					},
 
 					/**
@@ -137,7 +155,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 					textAlign: {
 						type: "sap.ui.core.TextAlign",
 						group: "Appearance",
-						defaultValue: sap.ui.core.TextAlign.Initial
+						defaultValue: TextAlign.Initial
 					},
 
 					/**
@@ -148,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 					textDirection: {
 						type: "sap.ui.core.TextDirection",
 						group: "Appearance",
-						defaultValue: sap.ui.core.TextDirection.Inherit
+						defaultValue: TextDirection.Inherit
 					},
 
 					/**
@@ -159,7 +177,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 					valueState: {
 						type: "sap.ui.core.ValueState",
 						group: "Appearance",
-						defaultValue: sap.ui.core.ValueState.None
+						defaultValue: ValueState.None
 					},
 
 					/**
@@ -652,7 +670,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			var oPicker = new Popover({
 				showArrow: false,
 				showHeader: false,
-				placement: sap.m.PlacementType.VerticalPreferredBottom,
+				placement: PlacementType.VerticalPreferredBottom,
 				offsetX: 0,
 				offsetY: 0,
 				initialFocus: this,
@@ -664,7 +682,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 				ontouchstart: function(oEvent) {
 					var oPickerDomRef = this.getDomRef("cont");
 
-					if ((oEvent.target === oPickerDomRef) || (oEvent.srcControl instanceof sap.ui.core.Item)) {
+					if ((oEvent.target === oPickerDomRef) || (oEvent.srcControl instanceof Item)) {
 						that._bProcessChange = false;
 					}
 				}
@@ -695,7 +713,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 */
 		Select.prototype._onBeforeRenderingPopover = function() {
 			var oPopover = this.getPicker(),
-				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
+				sWidth = (this.$().outerWidth() / parseFloat(library.BaseFontSize)) + "rem";
 
 			if (oPopover) {
 				oPopover.setContentMinWidth(sWidth);
@@ -772,7 +790,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		Select.prototype.init = function() {
 
 			// set the picker type
-			this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Popover");
+			this.setPickerType(Device.system.phone ? "Dialog" : "Popover");
 
 			// initialize composites
 			this.createPicker(this.getPickerType());
@@ -806,7 +824,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			this.bRenderingPhase = true;
 
 			// note: in Firefox 38, the focusout event is not fired when the select is removed
-			if (sap.ui.Device.browser.firefox && (this.getFocusDomRef() === document.activeElement)) {
+			if (Device.browser.firefox && (this.getFocusDomRef() === document.activeElement)) {
 				this._handleFocusout();
 			}
 
@@ -1339,7 +1357,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			var oControl = sap.ui.getCore().byId(oEvent.relatedControlId),
 				oFocusDomRef = oControl && oControl.getFocusDomRef();
 
-			if (sap.ui.Device.system.desktop && jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
+			if (Device.system.desktop && jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
 
 				// force the focus to stay in the input field
 				this.focus();
@@ -1368,7 +1386,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 
 			this.setAssociation("selectedItem", vItem, true);
-			this.setProperty("selectedItemId", (vItem instanceof sap.ui.core.Item) ? vItem.getId() : vItem, true);
+			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
 
 			if (typeof vItem === "string") {
 				vItem = sap.ui.getCore().byId(vItem);
@@ -1477,8 +1495,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * @returns {sap.m.SelectList}
 		 */
 		Select.prototype.createList = function() {
-			var mListKeyboardNavigationMode = sap.m.SelectListKeyboardNavigationMode,
-				sKeyboardNavigationMode = sap.ui.Device.system.phone ? mListKeyboardNavigationMode.Delimited : mListKeyboardNavigationMode.None;
+			var mListKeyboardNavigationMode = SelectListKeyboardNavigationMode,
+				sKeyboardNavigationMode = Device.system.phone ? mListKeyboardNavigationMode.Delimited : mListKeyboardNavigationMode.None;
 
 			this._oList = new SelectList({
 				width: "100%",
@@ -1798,7 +1816,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			var $This = this.$(),
 				$Label = this.$("label"),
 				$Arrow = this.$("arrow"),
-				mValueState = sap.ui.core.ValueState,
+				mValueState = ValueState,
 				CSS_CLASS = this.getRenderer().CSS_CLASS;
 
 			if (sOldValueState !== mValueState.None) {
@@ -1909,7 +1927,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * @since 1.40.5
 		 */
 		Select.prototype.shouldValueStateMessageBeOpened = function() {
-			return ((this.getValueState() !== sap.ui.core.ValueState.None) && this.getEnabled());
+			return (this.getValueState() !== ValueState.None) && this.getEnabled();
 		};
 
 		/* ----------------------------------------------------------- */
@@ -2012,7 +2030,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 				vItem = sap.ui.getCore().byId(vItem);
 			}
 
-			if (!(vItem instanceof sap.ui.core.Item) && vItem !== null) {
+			if (!(vItem instanceof Item) && vItem !== null) {
 				return this;
 			}
 
@@ -2113,7 +2131,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 				return this;
 			}
 
-			var mValueState = sap.ui.core.ValueState;
+			var mValueState = ValueState;
 
 			if (sValueState === mValueState.Error) {
 				oDomRef.setAttribute("aria-invalid", true);
@@ -2351,5 +2369,4 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		};
 
 		return Select;
-
-}, /* bExport= */ true);
+	});
