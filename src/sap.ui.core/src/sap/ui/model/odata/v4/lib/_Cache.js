@@ -1290,26 +1290,28 @@ sap.ui.define([
 	 * @param {object} oResult The result
 	 */
 	Cache.computeCount = function (oResult) {
-		Object.keys(oResult).forEach(function (sKey) {
-			var sCount,
-				vValue = oResult[sKey];
+		if (oResult && typeof oResult === "object") {
+			Object.keys(oResult).forEach(function (sKey) {
+				var sCount,
+					vValue = oResult[sKey];
 
-			if (Array.isArray(vValue)) {
-				vValue.$count = undefined; // see setCount
-				sCount = oResult[sKey + "@odata.count"];
-				// Note: ignore change listeners, because any change listener that is already
-				// registered, is still waiting for its value and gets it via fetchValue
-				if (sCount) {
-					setCount({}, "", vValue, sCount);
-				} else if (!oResult[sKey + "@odata.nextLink"]) {
-					// Note: This relies on the fact that $skip/$top is not used on nested lists.
-					setCount({}, "", vValue, vValue.length);
+				if (Array.isArray(vValue)) {
+					vValue.$count = undefined; // see setCount
+					sCount = oResult[sKey + "@odata.count"];
+					// Note: ignore change listeners, because any change listener that is already
+					// registered, is still waiting for its value and gets it via fetchValue
+					if (sCount) {
+						setCount({}, "", vValue, sCount);
+					} else if (!oResult[sKey + "@odata.nextLink"]) {
+						// Note: This relies on the fact that $skip/$top is not used on nested lists.
+						setCount({}, "", vValue, vValue.length);
+					}
+					vValue.forEach(Cache.computeCount);
+				} else {
+					Cache.computeCount(vValue);
 				}
-				vValue.forEach(Cache.computeCount);
-			} else if (vValue && typeof vValue === "object") {
-				Cache.computeCount(vValue);
-			}
-		});
+			});
+		}
 	};
 
 	/**
