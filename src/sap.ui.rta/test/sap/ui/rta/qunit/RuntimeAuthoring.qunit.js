@@ -509,25 +509,27 @@ sap.ui.require([
 				//After command has been pushed
 				var fnStackModifiedSpy = sinon.spy(function() {
 
-				// Start RTA with command stack
-				var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
-				this.oRta = new RuntimeAuthoring({
-					rootControl : oRootControl,
-					commandStack : this.oCommandStack,
-					showToolbars : true,
-					flexSettings: {
-						developerMode: false
-					}
-				});
+					// Start RTA with command stack
+					var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+					this.oRta = new RuntimeAuthoring({
+						rootControl : oRootControl,
+						commandStack : this.oCommandStack,
+						showToolbars : true,
+						flexSettings: {
+							developerMode: false
+						}
+					});
 
-				this.oRta.attachStart(function() {
-					this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
-					this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
-					done();
-				}.bind(this));
-
-				this.oRta.start();
-
+					Promise.all([
+						new Promise(function (fnResolve) {
+							this.oRta.attachStart(function() {
+								this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
+								this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
+								fnResolve();
+							}.bind(this));
+						}.bind(this)),
+						this.oRta.start()
+					]).then(done);
 				}.bind(this));
 
 				this.oCommandStack = new Stack();
