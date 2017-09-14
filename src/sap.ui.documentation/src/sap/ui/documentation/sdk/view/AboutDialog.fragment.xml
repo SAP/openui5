@@ -37,7 +37,7 @@
 					<Link text="Version Details" press="onAboutVersionDetails" class="sapUiSmallMarginBottom"/>
 					<Text text="This software includes third-party open source software." class="sapUiTinyMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
 					<Link text="Included Third-Party Software" press="onAboutThirdParty" class="sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
-					<MessageStrip showIcon="true" text="{appView>/sAboutInfo}" class="sapUiSmallMarginBottom" enableFormattedText = "true" />
+					<MessageStrip showIcon="true" text="{= ${versionData>/isOpenUI5} ? ${appView>/sAboutInfoOpenUI5} : ${appView>/sAboutInfoSAPUI5}}" class="sapUiSmallMarginBottom" enableFormattedText="true"/>
 				</VBox>
 			</Page>
 			<Page
