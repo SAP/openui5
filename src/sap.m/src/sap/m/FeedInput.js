@@ -2,8 +2,7 @@
  * ${copyright}
  */
 
-// Provides control sap.m.FeedInput.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/m/TextArea', 'sap/m/Button'],
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/m/TextArea", "sap/m/Button"],
 	function(jQuery, library, Control, IconPool, TextArea, Button) {
 	"use strict";
 
@@ -140,7 +139,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	FeedInput.prototype.setIconDensityAware = function (iIconDensityAware) {
 		this.setProperty("iconDensityAware", iIconDensityAware, true);
-		if (this._getImageControl() instanceof sap.m.Image) {
+		var fnClass = sap.ui.require("sap/m/Image");
+		if (this._getImageControl() instanceof fnClass) {
 			this._getImageControl().setDensityAware(iIconDensityAware);
 		}
 		return this;
@@ -214,7 +214,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				type : ButtonType.Default,
 				icon : "sap-icon://feeder-arrow",
 				tooltip : this.getButtonTooltip(),
-				press : jQuery.proxy(function (oEvt) {
+				press : jQuery.proxy(function () {
 					this._oTextArea.focus();
 					this.firePost({
 						value : this.getValue()
