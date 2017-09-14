@@ -79,6 +79,17 @@ sap.ui.define([
 				}
 			},
 
+			associations: {
+				/**
+				 * The label that should be displayed before the field.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					singularName: "ariaLabelledBy"
+				}
+			},
+
 			events: {
 				/**
 				 * This event is fired when the item of items aggregation in the selection field is changed.
