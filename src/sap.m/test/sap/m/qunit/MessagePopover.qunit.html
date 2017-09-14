@@ -1094,6 +1094,14 @@
 			tempObject = null;
 		});
 
+		QUnit.test("Model should be forwarded to the internal MessageView", function (assert) {
+			var oSetModelStub = this.stub(this.oMessagepopover2._oMessageView, "setModel");
+
+			this.oMessagepopover2.setModel(new sap.ui.model.json.JSONModel([]), "test");
+
+			assert.ok(oSetModelStub.called, "setModel of the MessageView should be called");
+		});
+
 		QUnit.module("Refactoring", {
 			beforeEach: function () {
 				var oMessageTemplate = new sap.m.MessagePopoverItem({
