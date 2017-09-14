@@ -181,7 +181,7 @@ sap.ui.define(["sap/m/Carousel", "sap/m/library", "sap/ui/Device"],
 			sPageIndicatorDisplayStyle = bShowPageIndicator ? '' : 'opacity: 0',
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
 			sOffsetCSSClass = "",
-			sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT");
+			sTextBetweenNumbers = oResourceBundle.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iIndex + 1, iPageCount]);
 
 		// If there is only one page - do not render the indicator
 		if (iPageCount <= 1) {
@@ -222,7 +222,7 @@ sap.ui.define(["sap/m/Carousel", "sap/m/library", "sap/ui/Device"],
 			}
 		} else {
 			rm.write(' class="sapMCrslNumeric">');
-			rm.write('<span id=' + sId + '-' +  'slide-number>' + (iIndex + 1) + ' ' + sTextBetweenNumbers + ' ' + iPageCount + '</span>');
+			rm.write('<span id=' + sId + '-' +  'slide-number>' + sTextBetweenNumbers + '</span>');
 		}
 		rm.write('</div>');
 		// page indicator end
