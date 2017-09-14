@@ -8,13 +8,14 @@ sap.ui.require([
 	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/m/Text"
-], function(LrepConnector, FakeLrepConnector, Cache, Change, ChangePersistence, VariantController, VariantModel, FlexControllerFactory, Utils, Text) {
+], function(LrepConnector, FakeLrepConnector, Cache, Change, Variant, ChangePersistence, VariantController, VariantModel, FlexControllerFactory, Utils, Text) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
 	QUnit.start();
@@ -373,6 +374,36 @@ sap.ui.require([
 		done();
 	});
 
+	QUnit.test("when calling 'addVariantToVariantManagement' with a new variant", function(assert) {
+		var oChangeContent0 = {"fileName":"change0"};
+		var oChangeContent1 = {"fileName":"change1"};
+
+		var oFakeVariantData = {
+			"content" : {
+				"fileName": "newVariant"
+			},
+			"changes" : [oChangeContent0, oChangeContent1]
+		};
+
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		oVariantController.addVariantToVariantManagement(oFakeVariantData, "idMain1--variantManagementOrdersTable");
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		assert.equal(aVariants[aVariants.length - 1].content.fileName, "newVariant", "then the new variant added");
+	});
+
+	QUnit.test("when calling 'removeVariantFromVariantManagement' with a variant", function(assert) {
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+
+		var oVariantDataToBeRemoved = oVariantController.getVariants("idMain1--variantManagementOrdersTable")[0];
+		var oVariantToBeRemoved = new Variant(oVariantDataToBeRemoved);
+		oVariantController.removeVariantFromVariantManagement(oVariantToBeRemoved, "idMain1--variantManagementOrdersTable");
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var bPresent = aVariants.some( function(oVariant) {
+			return oVariant.content.fileName === oVariantDataToBeRemoved.content.fileName;
+		});
+		assert.notEqual(bPresent, "then the variant was removed");
+	});
+
 	//Integration tests
 
 	QUnit.module("Given an instance of FakeLrepConnector and a mock application", {
@@ -492,7 +523,7 @@ sap.ui.require([
 		sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
 
-		this.oFlexController.deleteChange(this.aRevertedChanges[1]);
+		this.oFlexController.deleteChange(this.aRevertedChanges[1], this.oComponent);
 		assert.ok(this.oModelRemoveChangeStub.calledOnce, "remove change was called from model");
 
 

@@ -79,7 +79,7 @@ sap.ui.define([
 					var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
 				}
-				oFlexController.deleteChange(oChange);
+				oFlexController.deleteChange(oChange, oAppComponent);
 			});
 		} else {
 			var aDescriptorCreateAndAdd = [];

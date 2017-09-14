@@ -138,7 +138,7 @@ sap.ui.define([
 			var aFilteredChanges = [];
 
 			aChanges.forEach(function(oChange) {
-				if (oChange.fileType === "variant" && oChange.variantManagementReference) {
+				if (oChange.fileType === "ctrl_variant" && oChange.variantManagementReference) {
 					aVariants.push(oChange);
 				} else {
 					aFilteredChanges.push(oChange);

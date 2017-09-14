@@ -8,6 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	/**
 	 * Constructor for a new sap.ui.fl.variants.VariantModel model.
 	 * @class Variant Model implementation for JSON format
 	 * @extends sap.ui.model.json.JSONModel
@@ -34,6 +35,7 @@ sap.ui.define([
 			this.oComponent = oComponent;
 			this.bStandardVariantExists = true;
 			this.oVariantController = undefined;
+			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 			if (oFlexController && oFlexController._oChangePersistence) {
 				this.oVariantController = oFlexController._oChangePersistence._oVariantController;
 			}
@@ -118,6 +120,42 @@ sap.ui.define([
 		return this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
+	VariantModel.prototype._addVariant = function(oVariantData, sVariantManagementReference) {
+		var oVariantModelData = {
+			author: "CUSTOMER",
+			key: oVariantData.content.fileName,
+			layer: oVariantData.content.layer,
+			originalTitle: oVariantData.content.title,
+			readOnly: false,
+			title: oVariantData.content.title,
+			toBeDeleted: false
+		};
+
+		//Flex Controller
+		var oVariant = this.oFlexController.createVariant(oVariantData, this.oComponent);
+		var aChangesToBeAdded = [oVariant].concat(oVariant.getChanges());
+		aChangesToBeAdded.forEach( function (oChange) {
+			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
+		}.bind(this));
+
+		//Variant Controller
+		var iIndex = this.oVariantController.addVariantToVariantManagement(oVariantData, sVariantManagementReference);
+
+		//Variant Model
+		this.oData[sVariantManagementReference].variants.splice(iIndex, 0, oVariantModelData);
+
+		this.checkUpdate(); /*For VariantManagement Control update*/
+
+		return oVariant;
+	};
+
+	VariantModel.prototype._removeVariant = function(oVariant, sVariantManagementReference) {
+		this.oFlexController._oChangePersistence.deleteChange(oVariant);
+		var iIndex =  this.oVariantController.removeVariantFromVariantManagement(oVariant, sVariantManagementReference);
+
+		this.oData[sVariantManagementReference].variants.splice(iIndex, 1);
+	};
+
 	/**
 	 * Returns the variants for a given variant management Ref
 	 * @param {String} sVariantManagementReference The variant management Ref
@@ -137,7 +175,7 @@ sap.ui.define([
 
 	VariantModel.prototype.ensureStandardEntryExists = function(sVariantManagementReference) {
 		var oData = this.getData();
-		if (!oData[sVariantManagementReference]) {
+		if (!oData[sVariantManagementReference]) { /*Ensure standard variant exists*/
 			this.bStandardVariantExists = false;
 			// Set Standard Data to Model
 			oData[sVariantManagementReference] = {
@@ -146,12 +184,12 @@ sap.ui.define([
 				defaultVariant: sVariantManagementReference,
 				variants: [
 					{
-						author: "SAP",
+						//author: "SAP",
 						key: sVariantManagementReference,
-						layer: "VENDOR",
-						originalTitle: "Standard",
+						//layer: "VENDOR",
+						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
 						readOnly: true,
-						title: "Standard",
+						title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
 						toBeDeleted: false
 					}
 				]
@@ -167,9 +205,10 @@ sap.ui.define([
 						{
 							content: {
 								fileName: sVariantManagementReference,
-								title: "Standard",
-								fileType: "variant",
-								variantManagementReference: sVariantManagementReference
+								title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
+								fileType: "ctrl_variant",
+								variantManagementReference: sVariantManagementReference,
+								variantReference: ""
 							},
 							changes: []
 						}
