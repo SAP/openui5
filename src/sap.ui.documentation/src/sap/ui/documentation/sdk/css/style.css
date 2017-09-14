@@ -1067,7 +1067,7 @@ html[data-sap-ui-browser="ie9"] .titlesHeader p {
 /* remove white shadow for header bars */
 .sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX,
 .sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMHeader-CTX {
-	box-shadow: inherit;
+	box-shadow: none;
 }
 
 /* correct split container right border */
