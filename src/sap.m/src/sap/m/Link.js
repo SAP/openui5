@@ -308,6 +308,8 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 	};
 
 	Link.prototype.setEnabled = function(bEnabled){
+		bEnabled = this.validateProperty("enabled", bEnabled);
+
 		if (bEnabled !== this.getProperty("enabled")) { // do nothing when the same value is set again (virtual table scrolling!) - don't use this.getEnabled() because of EnabledPropagator
 			this.setProperty("enabled", bEnabled, true);
 			var $this = this.$();

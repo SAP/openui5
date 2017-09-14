@@ -74,6 +74,15 @@
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
 
+		QUnit.test("Enabled is properly validated", function(assert) {
+			var sut = new sap.m.Link({text : "text"}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			sut.setEnabled(undefined);
+			sap.ui.getCore().applyChanges();
+			assert.ok(!sut.$().hasClass("sapMLnkDsbl"), "The disabled CSS class was not set when trying to set undefined for the enabled property.");
+		});
+
 		QUnit.test("When width is not set max-width should apply to control", function(assert) {
 			var sut = new sap.m.Link({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
