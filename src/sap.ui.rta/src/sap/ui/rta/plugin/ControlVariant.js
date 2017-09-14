@@ -128,13 +128,6 @@ sap.ui.define([
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
 	};
 
-	ControlVariant.prototype._getSwitchAction = function(oOverlay) {
-		if (oOverlay.getDesignTimeMetadata()) {
-			return oOverlay.getDesignTimeMetadata().getAction("switch", oOverlay.getElementInstance());
-		}
-		return undefined;
-	};
-
 	ControlVariant.prototype._getVariantModel = function(oElement) {
 		var oAppComponent = flUtils.getAppComponentForControl(oElement);
 		return oAppComponent.getModel(ControlVariant.MODEL_NAME);
@@ -146,18 +139,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ControlVariant.prototype._isEditable = function(oOverlay) {
-		var oSwitchAction = this._getSwitchAction(oOverlay);
-		if (oSwitchAction && oSwitchAction.changeType) {
-			return true;
-		} else {
-			return false;
-		}
+		return this._isVariantManagementControl(oOverlay);
 	};
 
 	ControlVariant.prototype._isVariantManagementControl = function(oOverlay) {
 		var oElement = oOverlay.getElementInstance(),
 			vAssociationElement = oElement.getAssociation("for");
-		return (vAssociationElement && oElement instanceof VariantManagement) ? true : false;
+		return !!(vAssociationElement && oElement instanceof VariantManagement);
 	};
 
 	/**
@@ -231,9 +219,8 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantDuplicateEnabled = function(oOverlay) {
-		var oElement = oOverlay.getElementInstance();
 		var sVariantManagementReference = oOverlay.getVariantManagement ? oOverlay.getVariantManagement() : undefined;
-		if (!sVariantManagementReference && oElement instanceof VariantManagement) {
+		if (!sVariantManagementReference || !this._isVariantManagementControl(oOverlay)) {
 			return false;
 		}
 	};

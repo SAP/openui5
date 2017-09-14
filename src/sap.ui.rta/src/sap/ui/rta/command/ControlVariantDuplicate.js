@@ -27,6 +27,9 @@ sap.ui.define([
 				sourceVariantReference : {
 					type : "string"
 				},
+				newVariantReference : {
+					type : "string"
+				},
 				duplicateVariant : {
 					type : "any"
 				}
@@ -45,52 +48,28 @@ sap.ui.define([
 		return this._oControlAppComponent;
 	};
 
-	ControlVariantDuplicate.prototype._performVariantDuplicate = function(sNewVariantFileName) {
-		var oElement = this.getElement(),
-			oAppComponent = this._getAppComponent(oElement),
-			oModel = oAppComponent.getModel(this.MODEL_NAME),
-			sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id,
-			sSourceVariantReference = this.getSourceVariantReference();
-
-		var oSourceVariant = oModel.getVariant(sSourceVariantReference);
-
-		var oDuplicateVariant = {
-			content: {},
-			changes: JSON.parse(JSON.stringify(oSourceVariant.changes))
-		};
-
-		Object.keys(oSourceVariant.content).forEach(function(sKey) {
-			if (sKey === "fileName") {
-				oDuplicateVariant.content[sKey] = sNewVariantFileName;
-			}else if (sKey === "variantReference") {
-				oDuplicateVariant.content[sKey] = sSourceVariantReference;
-			} else if (sKey === "title") {
-				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey] + " Copy";
-			} else {
-				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey];
-			}
-		});
-
-		//Assuming same layer
-		oDuplicateVariant.changes.forEach(function	(oChange) {
-			oChange.fileName += "_Copy";
-			oChange.variantReference = oDuplicateVariant.content.fileName;
-		});
-
-		return Promise.resolve(oModel._addVariant(oDuplicateVariant, sVariantManagementReference))
-			.then(function (oVariant) {
-				this.setDuplicateVariant(oVariant);
-				oModel.updateCurrentVariant(sVariantManagementReference, oVariant.getId());
-			}.bind(this));
-	};
-
 	/**
 	 * @public Template Method to implement execute logic, with ensure precondition Element is available
 	 * @returns {promise} Returns resolve after execution
 	 */
 	ControlVariantDuplicate.prototype.execute = function() {
-		var sNewVariantFileName = flUtils.createDefaultFileName(this.getSourceVariantReference() + "_Copy");
-		return Promise.resolve(this._performVariantDuplicate(sNewVariantFileName));
+		var oElement = this.getElement(),
+			oAppComponent = this._getAppComponent(oElement),
+			sSourceVariantReference = this.getSourceVariantReference(),
+			sNewVariantFileReference = this.getNewVariantReference();
+
+		if (!sNewVariantFileReference) {
+			sNewVariantFileReference = flUtils.createDefaultFileName(sSourceVariantReference + "_Copy");
+			this.setNewVariantReference(sNewVariantFileReference);
+		}
+
+		this.sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
+		this.oModel = oAppComponent.getModel(this.MODEL_NAME);
+
+		return Promise.resolve(this.oModel._copyVariant(oElement, oAppComponent, sNewVariantFileReference, sSourceVariantReference))
+			.then(function(oVariant){
+				this.setDuplicateVariant(oVariant);
+			}.bind(this));
 	};
 
 	/**
@@ -98,13 +77,11 @@ sap.ui.define([
 	 * @returns {promise} Returns resolve after undo
 	 */
 	ControlVariantDuplicate.prototype.undo = function() {
-		var oElement = this.getElement(),
-		oAppComponent = this._getAppComponent(oElement),
-		oModel = oAppComponent.getModel(this.MODEL_NAME),
-		sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
-
 		if (this.getDuplicateVariant()) {
-			return Promise.resolve(oModel._removeVariant(this.getDuplicateVariant(), sVariantManagementReference));
+			return Promise.resolve(this.oModel._removeVariant(this.getDuplicateVariant(), this.getSourceVariantReference(), this.sVariantManagementReference))
+				.then(function() {
+					this.setDuplicateVariant(null);
+				}.bind(this));
 		}
 	};
 

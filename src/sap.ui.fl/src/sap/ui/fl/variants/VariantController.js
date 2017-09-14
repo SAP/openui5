@@ -79,7 +79,7 @@ sap.ui.define([
 		}
 
 		if (this._mVariantManagement[sVariantManagementReference]) {
-			aVariants = this._mVariantManagement[sVariantManagementReference].variants.sort(compareVariants);
+			aVariants = this._mVariantManagement[sVariantManagementReference].variants.concat().sort(compareVariants);
 
 			var iIndex = -1;
 			aVariants.some(function(oVariant, index) {

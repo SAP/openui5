@@ -45,25 +45,18 @@ sap.ui.define([
 		return this._oControlAppComponent;
 	};
 
-	ControlVariantSwitch.prototype._performVariantSwitch = function(sVariantReference) {
-		var oElement = this.getElement(),
-			oAppComponent = this._getAppComponent(oElement),
-			oModel = oAppComponent.getModel(this.MODEL_NAME),
-			sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
-
-			if (this.getTargetVariantReference() !== this.getSourceVariantReference()) {
-			return Promise.resolve(oModel.updateCurrentVariant(sVariantManagementReference, sVariantReference));
-		}
-		return Promise.resolve();
-	};
-
 	/**
 	 * @public Template Method to implement execute logic, with ensure precondition Element is available
 	 * @returns {promise} Returns resolve after execution
 	 */
 	ControlVariantSwitch.prototype.execute = function() {
-		var sNewVariantReference = this.getTargetVariantReference();
-		return Promise.resolve(this._performVariantSwitch(sNewVariantReference));
+		var oElement = this.getElement(),
+			oAppComponent = this._getAppComponent(oElement),
+			sNewVariantReference = this.getTargetVariantReference();
+
+		this.oModel = oAppComponent.getModel(this.MODEL_NAME);
+		this.sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
+		return this._updateModelVariant(sNewVariantReference);
 	};
 
 	/**
@@ -72,7 +65,18 @@ sap.ui.define([
 	 */
 	ControlVariantSwitch.prototype.undo = function() {
 		var sOldVariantReference = this.getSourceVariantReference();
-		return Promise.resolve(this._performVariantSwitch(sOldVariantReference));
+		return this._updateModelVariant(sOldVariantReference);
+	};
+
+	/**
+	 * @private Update variant for the underlying model
+	 * @returns {promise} Returns promise resolve
+	 */
+	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference) {
+		if (this.getTargetVariantReference() !== this.getSourceVariantReference()) {
+			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference));
+		}
+		return Promise.resolve();
 	};
 
 	return ControlVariantSwitch;

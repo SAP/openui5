@@ -45,14 +45,6 @@ sap.ui.define([], function() {
 				ignore: false
 			}
 		},
-		customData: {},
-		actions: {
-			"switch": {
-				changeType: "controlVariantSwitch"
-			},
-			"duplicate": {
-				changeType: "duplicateControlVariant"
-			}
-		}
+		customData: {}
 	};
 }, /* bExport= */false);

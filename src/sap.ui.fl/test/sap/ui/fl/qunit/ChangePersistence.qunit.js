@@ -988,12 +988,12 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			originalLanguage: "DE"
 		};
 
-		var oAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
+		var fnAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
 
 		//Call CUT
 		var newChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-		assert.ok(oAddDirtyChangeSpy.calledWith(oChangeContent), "then addDirtyChange called with the change content");
+		assert.ok(fnAddDirtyChangeSpy.calledWith(oChangeContent), "then addDirtyChange called with the change content");
 		aChanges = this.oChangePersistence._aDirtyChanges;
 		assert.ok(aChanges);
 		assert.strictEqual(aChanges.length, 1);

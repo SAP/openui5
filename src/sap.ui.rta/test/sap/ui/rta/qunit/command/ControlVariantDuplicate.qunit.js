@@ -101,6 +101,7 @@ function(
 
 	sinon.stub(oModel, "getVariant").returns(oVariant);
 	sinon.stub(oModel.oVariantController, "addVariantToVariantManagement").returns(1);
+	sinon.stub(oModel.oVariantController, "removeVariantFromVariantManagement").returns(1);
 
 	QUnit.module("Given two controls with designtime metadata for combine ...", {
 		beforeEach : function(assert) {
@@ -111,22 +112,14 @@ function(
 		}
 	});
 
-	QUnit.test("when calling command factory for duplicate variants", function(assert) {
+	QUnit.test("when calling command factory for duplicate variants and undo", function(assert) {
 		var done = assert.async();
 
 		var oOverlay = new ElementOverlay();
 		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 		sinon.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
 
-		var oDesignTimeMetadata = new ElementDesignTimeMetadata({
-			data : {
-				actions : {
-					duplicate : {
-						changeType: "duplicateControlVariant"
-					}
-				}
-			}
-		});
+		var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
 
 		var oControlVariantDuplicateCommand = CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
 			sourceVariantReference : oVariant.content.variantReference
@@ -140,8 +133,16 @@ function(
 			assert.equal(oDuplicateVariant.getTitle(), oVariant.content.title + " Copy", "then variant reference correctly duplicated");
 			assert.equal(oDuplicateVariant.getChanges().length, 2, "then 2 changes duplicated");
 			assert.equal(oDuplicateVariant.getChanges()[0].fileName, oVariant.changes[0].fileName + "_Copy", "then changes duplicated with new fileNames");
-			done();
+			assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes present - variant and 2 changes");
+
+			oControlVariantDuplicateCommand.undo().then( function() {
+				oDuplicateVariant = oControlVariantDuplicateCommand.getDuplicateVariant();
+				assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then all dirty changes removed");
+				assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
+				done();
+			});
 		});
+
 	});
 
 
