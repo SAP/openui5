@@ -9,13 +9,6 @@ describe('sap.m.StepInput', function() {
 		sChangeWidthButtonId = 'change_step_input_width_btn';
 
 	it("Prepare environment", function () {
-		var _fnOnPrepareBrowserEnvironmentSuccess = function () {
-			jQuery.sap.log.info("Environment prepared successfully!");
-		};
-		var _fnOnPrepareBrowserEnvironmentError = function (sResponse) {
-			throw new Error("Environment preparation failed with the following error:\n" + sResponse);
-		};
-
 		return browser.executeScript(function () {
 			/*
 			 * Note: This code is executed in separate browser environment so test environment variables are not available!
@@ -30,7 +23,7 @@ describe('sap.m.StepInput', function() {
 			} else {
 				//Execute browser environment prepare code for desktop
 			}
-		}).then(_fnOnPrepareBrowserEnvironmentSuccess, _fnOnPrepareBrowserEnvironmentError);
+		});
 	});
 
 	it('value and buttons', function () {

@@ -17,24 +17,19 @@ describe("sap.m.TimePicker", function() {
 			sSutPickerId = sSutId + "-RP-dialog";
 			sSutPickerSliderId = sSutId + "-sliders-listSecs";
 		};
-		var _fnOnPrepareBrowserEnvironmentSuccess = function (sResponse) {
-			if (sResponse && sResponse === true) {
-				_fnPrepareTestEnvironment4Mobile();
-			} else {
-				_fnPrepareTestEnvironment4Desktop();
-			}
-			jQuery.sap.log.info("Environment prepared successfully");
-		};
-		var _fnOnPrepareBrowserEnvironmentError = function (sResponse) {
-			throw new Error("Environment preparation failed with the following error:\n" + sResponse);
-		};
 
 		return browser.executeScript(function () {
 			/*
 			 * Note: This code is executed in separate browser environment so test environment variables are not available!
 			 */
 			return sap.ui.Device.system.phone;
-		}).then(_fnOnPrepareBrowserEnvironmentSuccess, _fnOnPrepareBrowserEnvironmentError);
+		}).then(function (sResponse) {
+			if (sResponse && sResponse === true) {
+				_fnPrepareTestEnvironment4Mobile();
+			} else {
+				_fnPrepareTestEnvironment4Desktop();
+			}
+		});
 	});
 
 	it("correct margins", function () {
