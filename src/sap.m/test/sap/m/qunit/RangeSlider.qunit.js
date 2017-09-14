@@ -68,6 +68,13 @@
 		assert.equal(this.rangeSlider.$().find(".sapMSliderRangeLabel:eq(1)").html(), this.rangeSlider.getMax(), "The end label shows the max value");
 	});
 
+	QUnit.test("RangeSlider's Labels Width", function (assert) {
+		this.rangeSlider.setMax(10000000000000);
+		this.rangeSlider.rerender();
+		assert.equal(this.rangeSlider.$().find(".sapMSliderRangeLabel:eq(1)").width(), 120, "The end label should have 120px width when the value consists of 14 digits");
+
+	});
+
 	QUnit.test("Overlapping handles", function (assert) {
 		this.rangeSlider.setRange([50, 50]);
 		sap.ui.getCore().applyChanges();

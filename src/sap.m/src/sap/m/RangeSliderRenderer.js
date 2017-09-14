@@ -168,7 +168,9 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
     RangeSliderRenderer.renderEndLabel = function (oRM, oControl) {
         oRM.write("<div");
         oRM.addClass(SliderRenderer.CSS_CLASS + "RangeLabel");
+        oRM.addStyle("width", oControl._iLongestRangeTextWidth + "px");
         oRM.writeClasses();
+        oRM.writeStyles();
         oRM.write(">");
 
         oRM.write(oControl.getMax());
