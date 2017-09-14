@@ -22,12 +22,19 @@
 	if (sap.ui.Device.browser.chrome) {
 		//IFrame QUnits currently only work under chrome!
 		QUnit.testSuites('ResponsiveMargins',[
-       		"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=320px&sap-ui-height=460px&sap-ui-expect=0px 0px 16px",
-       		"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=599px&sap-ui-height=460px&sap-ui-expect=0px 0px 16px",
-       		"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=600px&sap-ui-height=460px&sap-ui-expect=16px",
-       		"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=1023px&sap-ui-height=460px&sap-ui-expect=16px",
-       		"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=1024px&sap-ui-height=460px&sap-ui-expect=16px 32px",
-       	]);
+			"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=320px&sap-ui-height=460px&sap-ui-expect=0px 0px 16px",
+			"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=599px&sap-ui-height=460px&sap-ui-expect=0px 0px 16px",
+			"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=600px&sap-ui-height=460px&sap-ui-expect=16px",
+			"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=1023px&sap-ui-height=460px&sap-ui-expect=16px",
+			"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=1024px&sap-ui-height=460px&sap-ui-expect=16px 32px",
+		]);
+
+		var contextPath = "/" + window.location.pathname.split("/")[1];
+		QUnit.testSuites('Demo Apps Phone journeys',[
+			contextPath + "/test-resources/sap/m/demokit/master-detail/webapp/test/integration/opaTestsPhone.qunit.html?sap-ui-xx-fakeOS=ios&sap-ui-width=320px&sap-ui-height=460",
+			contextPath + "/test-resources/sap/m/demokit/orderbrowser/webapp/test/integration/opaTestsPhone.qunit.html?sap-ui-xx-fakeOS=ios&sap-ui-width=320px&sap-ui-height=460"
+		]);
+
  	} else {
  		//Write a comment into the test protocol that responsive
  		//tests can not be executed.
