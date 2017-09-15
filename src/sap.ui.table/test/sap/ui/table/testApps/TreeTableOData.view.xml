@@ -6,6 +6,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:table="sap.ui.table"
+  	xmlns:dnd="sap.ui.core.dnd"
 	>
 	<App>
 	<pages>
@@ -213,7 +214,7 @@
 						visibleRowCountMode="{/visibleRowCountMode}"
 						threshold="{/tableThreshold}"
 						rootLevel="{/rootLevel}">
-						<table:toolbar>
+						<table:extension>
 							<Toolbar>
 								<Label text="Table-Tools" />
 								<Button text="Create" icon="sap-icon://add" press=".onCreate"></Button>
@@ -228,7 +229,14 @@
 								<ToolbarSpacer />
 								<Button type="Emphasized" text="doMagic()" icon="sap-icon://activate" press="onCreateTableClick"/>
 							</Toolbar>
-						</table:toolbar>
+						</table:extension>
+						<table:dragDropConfig>
+							<dnd:DragDropInfo
+								sourceAggregation="rows"
+								targetAggregation="rows"
+								dragStart="onDragStart"
+								drop="onDrop"/>
+						</table:dragDropConfig>
 					</table:TreeTable>
 				</content>
 			</Panel>
