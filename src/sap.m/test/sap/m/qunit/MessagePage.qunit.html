@@ -30,6 +30,7 @@
 	<script>
 		jQuery.sap.require("sap.ui.core.IconPool");
 		var messagePageId = "testMessagePage";
+		var IconPool = sap.ui.core.IconPool;
 
 		function createMessagePage(){
 			return new sap.m.MessagePage(messagePageId,{
@@ -37,7 +38,7 @@
 				text: "One Line Text",
 				showHeader: true,
 				description: "Description",
-				icon: sap.ui.core.IconPool.getIconURI("documents")
+				icon: IconPool.getIconURI("documents")
 			});
 		}
 
@@ -209,7 +210,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			sExpectedValue = sap.ui.core.IconPool.getIconURI("documents");
+			sExpectedValue = IconPool.getIconURI("documents");
 
 			assert.equal(oMessagePage.getIcon(), sExpectedValue, "The icon is correct");
 
@@ -319,6 +320,44 @@
 			oMessagePage.destroy();
 		});
 
+
+		QUnit.test("setIcon with icon URI", function(assert) {
+			// Arrange
+			var oMessagePage = createMessagePage(),
+				sNewIcon = IconPool.getIconURI("message-success");
+
+			oMessagePage.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Act: runtime change of the current Icon with new one, using standard icon URI.
+			// In this case the MessagePage just updates the existing Icon control src.
+ 			oMessagePage.setIcon(sNewIcon);
+
+			assert.equal(oMessagePage.getIcon(), sNewIcon, "New Icon is set.");
+
+			// Clean up
+			oMessagePage.destroy();
+		});
+
+		QUnit.test("setIcon with image URI", function(assert) {
+			// Arrange
+			var oMessagePage = createMessagePage(),
+				sNewImage = "test.png";
+
+			oMessagePage.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Act: runtime change of the current Icon with 'Image' (using none-existing URI).
+			// In this case the MessagePage removes and destroys the existing Icon control
+			// and creates new one.
+			oMessagePage.setIcon(sNewImage);
+
+			assert.equal(oMessagePage.getIcon(), sNewImage, "New Image is set.");
+
+			// Clean up
+			oMessagePage.destroy();
+		});
+
 		QUnit.module("Destroying");
 
 		QUnit.test("The control destroy should destroy the control and all the inner containers", function(assert) {
@@ -332,6 +371,8 @@
 
 			// System under test
 			oMessagePage.destroy();
+
+			assert.equal(oMessagePage._oVBox, null, "The VBox container should be null");
 
 			iActualResult = jQuery(".sapMEmptyPagCustomIcon").length;
 			assert.ok(!iActualResult, "The icon is destroyed");

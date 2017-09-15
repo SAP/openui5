@@ -3,15 +3,25 @@
  */
 
 // Provides control sap.m.MessagePage.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/library'],
-	function(jQuery, library, Control, IconPool, coreLibrary) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/library',
+	'sap/m/library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/m/Text',
+	'sap/m/VBox',
+	'sap/m/Page',
+	'sap/m/Image'
+], function(jQuery, library, coreLibrary, mobileLibrary, Control, IconPool, Text, VBox, Page, Image) {
 		"use strict";
 
-		// shortcut for sap.ui.core.TextAlign
 		var TextAlign = coreLibrary.TextAlign;
-
-		// shortcut for sap.ui.core.TextDirection
 		var TextDirection = coreLibrary.TextDirection;
+
+		var FlexJustifyContent = mobileLibrary.FlexJustifyContent;
+		var FlexAlignItems = mobileLibrary.FlexAlignItems;
 
 		/**
 		 * Constructor for a new MessagePage.
@@ -119,7 +129,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		MessagePage.prototype.init = function() {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-			this.setAggregation("_page", new sap.m.Page({
+			this.setAggregation("_page", new Page({
 				id: this.getId() + "-page",
 				showHeader : this.getShowHeader(),
 				navButtonPress : jQuery.proxy(function() {
@@ -143,6 +153,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oPage) {
 				oPage.destroy();
 				oPage = null;
+			}
+
+			if (this._oVBox) {
+				this._oVBox = null;
 			}
 
 			if (this._oText) {
@@ -200,27 +214,62 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setProperty("icon", sIconUri, true); // no re-rendering
 
 			if (this._oIconControl) {
-				// check if the value is changed and if URIs are from different type(icon or image) in order to avoid destroying and creating of icon control
-				if (sOldIconUri !== sIconUri && IconPool.isIconURI(sOldIconUri) != IconPool.isIconURI(sIconUri)) {
+				// check if the value is changed and if URIs are from different type(icon or image)
+				// in order to avoid destroying and creating of icon control
+				if (sOldIconUri !== sIconUri && IconPool.isIconURI(sOldIconUri) !== IconPool.isIconURI(sIconUri)) {
 					var oPage = this.getAggregation("_page");
 
-					oPage.removeContent(this._oIconControl);
-					this._oIconControl.destroy();
-					oPage.insertContent(this._getIconControl(), 0);
+					oPage.removeContent(this._oIconControl); // remove current the current Icon or Image control
+					oPage.insertContent(this._getIconControl(), 0); // insert new Icon or Image control
 				} else {
-					this._oIconControl.setSrc(sIconUri);
+					this._oIconControl.setSrc(sIconUri); // just update the current Icon control
 				}
 			}
 			return this;
 		};
 
 		MessagePage.prototype._addPageContent = function() {
-			var oPage = this.getAggregation("_page");
+			this.getAggregation("_page").addContent(this._getMessagePageContent());
+		};
 
+		MessagePage.prototype._getMessagePageContent = function() {
+			if (!this._oVBox) {
+				this._oVBox = new VBox(this.getId() + '-vbox', {
+					fitContainer: true,
+					justifyContent: FlexJustifyContent.Center,
+					alignItems: FlexAlignItems.Center,
+					items: [
+						this._getIconControl(),
+						this._getText(),
+						this._getDescription()
+					]
+				});
+			}
+
+			return this._oVBox;
+		};
+
+		MessagePage.prototype._getIconControl = function() {
+			if (this._oIconControl) {
+				this._oIconControl.destroy();
+			}
+
+			this._oIconControl = IconPool.createControlByURI({
+				id: this.getId() + "-pageIcon",
+				src: this.getIcon(),
+				height: "8rem",
+				useIconTooltip: true,
+				decorative: false
+			}, Image).addStyleClass("sapMMessagePageIcon");
+
+			return this._oIconControl;
+		};
+
+		MessagePage.prototype._getText = function() {
 			if (this.getAggregation("customText")) {
 				this._oText = this.getAggregation("customText");
 			} else {
-				this._oText = new sap.m.Text({
+				this._oText = new Text({
 					id: this.getId() + "-customText",
 					text: this.getText(),
 					textAlign: TextAlign.Center,
@@ -228,10 +277,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				});
 			}
 
+			this._oText.addStyleClass("sapMMessagePageMainText");
+
+			return this._oText;
+		};
+
+		MessagePage.prototype._getDescription = function() {
 			if (this.getAggregation("customDescription")) {
 				this._oDescription = this.getAggregation("customDescription");
 			} else {
-				this._oDescription = new sap.m.Text({
+				this._oDescription = new Text({
 					id: this.getId() + "-customDescription",
 					text: this.getDescription(),
 					textAlign: TextAlign.Center,
@@ -239,22 +294,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				});
 			}
 
-			oPage.addContent(this._getIconControl());
-			oPage.addContent(this._oText.addStyleClass("sapMMessagePageMainText"));
-			oPage.addContent(this._oDescription.addStyleClass("sapMMessagePageDescription"));
+			this._oDescription.addStyleClass("sapMMessagePageDescription");
+
+			return this._oDescription;
 		};
 
-		MessagePage.prototype._getIconControl = function() {
-			this._oIconControl = IconPool.createControlByURI({
-				id: this.getId() + "-pageIcon",
-				src: this.getIcon(),
-				height: "8rem",
-				useIconTooltip: true,
-				decorative: false
-			}, sap.m.Image).addStyleClass("sapMMessagePageIcon");
-
-			return this._oIconControl;
-		};
 
 		/**
 		 * Returns the internal header
