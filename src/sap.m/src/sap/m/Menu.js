@@ -92,11 +92,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		Menu.UNIFIED_MENU_ITEMS_ID_SUFFIX = '-unifiedmenu';
 
 		/**
+		 * Map of all available properties in the sap.ui.unified.MenuItem.
+		 * Needed when syncs between sap.m.MenuItem and unified.MenuItem are performed.
+		 * @type {map}
+		 * @private
+		 */
+		Menu.UNFIFIED_MENU_ITEMS_PROPS = sap.ui.unified.MenuItem.getMetadata().getAllProperties();
+
+		/**
 		 * List items ID prefix.
 		 *
 		 * @type {string}
 		 */
 		Menu.LIST_ITEMS_ID_SUFFIX = '-menuinnerlist';
+
+
+		/**
+		 * Map of all available properties in the sap.m.MenuListItem
+		 * Needed when syncs between sap.m.MenuItem and sap.m.MenuListItem are performed.
+		 * @type {map}
+		 * @private
+		 */
+		Menu.MENU_LIST_ITEMS_PROPS = MenuListItem.getMetadata().getAllProperties();
 
 		/**
 		 * Initializes the control.
@@ -678,25 +695,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		 * @param {object} oEvent The event data object
 		 * @private
 		 */
-		Menu.prototype._onPropertyChanged = function(oEvent) {
+		Menu.prototype._onPropertyChanged = function (oEvent) {
 			var sPropertyKey = oEvent.getParameter("propertyKey"),
-				oPropertyValue = oEvent.getParameter("propertyValue");
+				oPropertyValue = oEvent.getParameter("propertyValue"),
+				mTargetMenuItemProps = Device.system.phone ? Menu.MENU_LIST_ITEMS_PROPS : Menu.UNFIFIED_MENU_ITEMS_PROPS,
+				fnGenerateTargetItemId = Device.system.phone ? this._generateListItemId : this._generateUnifiedMenuItemId,
+				sTargetItemId;
 
-			if (Device.system.phone) {
-				if (sPropertyKey === 'text') {
-					sPropertyKey = 'title';
-				}
+			if (Device.system.phone && sPropertyKey === 'text') {
+				sPropertyKey = 'title';
+			}
 
-				var sListItemId = this._generateListItemId(oEvent.getSource().getId());
-				!!sListItemId && sap.ui.getCore().byId(sListItemId).setProperty(sPropertyKey, oPropertyValue);
+			if (!mTargetMenuItemProps[sPropertyKey]) {
+				return;
+			}
+			sTargetItemId = fnGenerateTargetItemId(oEvent.getSource().getId());
 
-				if (this._getDialog().isOpen()) {
+			if (sTargetItemId) {
+				sap.ui.getCore().byId(sTargetItemId).setProperty(sPropertyKey, oPropertyValue);
+				if (Device.system.phone && this._getDialog().isOpen()) {
 					this._getDialog().close();
 				}
-			} else {
-				// try to find and update an unified menu item corresponding to the source instance on which a property was changed
-				var sUnifiedMenuItemId = this._generateUnifiedMenuItemId(oEvent.getSource().getId());
-				!!sUnifiedMenuItemId && sap.ui.getCore().byId(sUnifiedMenuItemId).setProperty(sPropertyKey, oPropertyValue);
 			}
 		};
 
