@@ -2,19 +2,31 @@
 	<App>
 		<Page title="Drag And Drop Between Lists">
 
-			<my:DraggableList headerText="Available Developers (drag from here)" items="{/names}">
+			<my:DraggableList items="{/names}">
+				<my:headerToolbar>
+					<Toolbar>
+						<Title text="Available Developers (drag from here)" />
+					</Toolbar>
+				</my:headerToolbar>
 				<my:dragDropConfig>
 					<dnd:DragDropInfo
 							sourceAggregation="items"
 							targetElement="targetList"
+							targetAggregation="items"
 							drop="handleDrop"
+							dragEnter="handleDragEnter"
 							dropEffect="Copy"/>
 				</my:dragDropConfig>
 
 				<StandardListItem title="{lastName}" description="{firstName}"/>
 			</my:DraggableList>
 
-			<List id="targetList" headerText="Selected Developers (drop here)" items="{/selectedNames}">
+			<List id="targetList" items="{/selectedNames}">
+				<headerToolbar>
+					<Toolbar>
+						<Title text="Selected Developers (drop here)" />
+					</Toolbar>
+				</headerToolbar>
 				<StandardListItem title="{lastName}" description="{firstName}"/>
 			</List>
 

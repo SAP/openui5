@@ -357,7 +357,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 					var _oDropControl = oDropControl;
 					if (oDropInfo.getMetadata().isInstanceOf("sap.ui.core.dnd.IDropInfo")) {
 						while (_oDropControl) {
-							if (oDropInfo.isDroppable(_oDropControl)) {
+							if (oDropInfo.isDroppable(_oDropControl, oEvent.target)) {
 								aCurrentDropInfosMatchingTarget.push(oDropInfo);
 
 								// Remember the first found valid drop target and the corresponding info.
@@ -495,18 +495,27 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 
 		var getCurrentDropPositionAndShowIndicator = function(oDropInfo, oEvent, oDropControl) {
 			// TODO: For single aggregations (multiple=false) the drop position should also default to "On"
-			if (!oDropInfo.getTargetAggregation()) { // entire control is target -> drop position should be "On"
-				showIndicator(oEvent, oDropControl, "On");
+			var sTargetAggregation = oDropInfo.getTargetAggregation();
+			if (!sTargetAggregation) { // entire control is target -> drop position should be "On"
+				showIndicator(oEvent, oDropControl.getDomRef(), "On");
 				return [oDropControl, "On"];
 			}
 
-			var sDropPositionRelativeToItem = showIndicator(oEvent, oDropControl, oDropInfo.getDropPosition(), oDropInfo.getDropLayout());
+			var oTargetDomRef, sDropPosition = oDropInfo.getDropPosition();
+			if (oDropControl.getAggregationDomRef) {
+				oTargetDomRef = oDropControl.getAggregationDomRef(sTargetAggregation);
+				sDropPosition = "On";
+			}
+			if (!oTargetDomRef) {
+				oTargetDomRef = oDropControl.getDomRef();
+			}
+			var sDropPositionRelativeToItem = showIndicator(oEvent, oTargetDomRef, sDropPosition, oDropInfo.getDropLayout());
 			return [oDropControl, sDropPositionRelativeToItem];
 		};
 
-		var showIndicator = function(oEvent, oDropControl, sDropPosition, sDropLayout) {
+		var showIndicator = function(oEvent, oDropTarget, sDropPosition, sDropLayout) {
 			var sConfiguredDropPosition = sDropPosition,
-				mClientRect = oDropControl.getDomRef().getBoundingClientRect(),
+				mClientRect = oDropTarget.getBoundingClientRect(),
 				iPageYOffset = window.pageYOffset,
 				iPageXOffset = window.pageXOffset,
 				oIndicator = getIndicator(),

@@ -2028,6 +2028,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		oEvent.setMarked();
 	};
 
+	ListBase.prototype.getAggregationDomRef = function(sAggregationName) {
+		if (sAggregationName == "items") {
+			return this.getItemsContainerDomRef();
+		}
+	};
+
 	return ListBase;
 
 });
