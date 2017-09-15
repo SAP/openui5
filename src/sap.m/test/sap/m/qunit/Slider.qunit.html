@@ -234,6 +234,24 @@
 				}
 			});
 
+
+			QUnit.test("End labels should be rendered in correct order", function(assert) {
+
+				var oSlider = new sap.m.Slider();
+				// arrange
+				oSlider.setEnableTickmarks(true);
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				assert.equal(oSlider.$().find(".sapMSliderLabel:eq(1)").html(), oSlider.getMax(), "The end label shows the max value");
+				assert.equal(oSlider.$().find(".sapMSliderLabel:eq(1)").parent()[0].style.left, "100%", "The max label should be shown on the right side");
+				assert.equal(oSlider.$().find(".sapMSliderLabel:eq(0)").parent()[0].style.left, "0%", "The min label should be shown on the left side");
+				// clean up
+				oSlider.destroy()
+
+			});
+
 			QUnit.test("it should render two handles", function(assert) {
 
 				// system under test
@@ -2046,6 +2064,35 @@
 				// cleanup
 				oSlider.destroy();
 			});
+
+			/* =========================================================== */
+			/* RTL module                                                  */
+			/* =========================================================== */
+
+			QUnit.module("RTL", {
+				beforeEach: function () {
+					sap.ui.getCore().getConfiguration().setRTL(true);
+					this.oSlider = new sap.m.Slider();
+				},
+				afterEach: function () {
+					sap.ui.getCore().getConfiguration().setRTL(false);
+					this.oSlider.destroy()
+				}
+			});
+
+			QUnit.test("End labels should be rendered in correct order when in RTL mode", function(assert) {
+
+				// arrange
+				this.oSlider.setEnableTickmarks(true);
+				this.oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				assert.equal(this.oSlider.$().find(".sapMSliderLabel:eq(0)").html(), this.oSlider.getMin(), "The start label shows the min value");
+				assert.equal(this.oSlider.$().find(".sapMSliderLabel:eq(0)").parent()[0].style.right, "0%", "The min label should be shown on the right side");
+				assert.equal(this.oSlider.$().find(".sapMSliderLabel:eq(1)").parent()[0].style.right, "100%", "The max label should be shown on the left side");
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
