@@ -157,37 +157,39 @@ sap.ui.require([
 	QUnit.test("when createInitialFileContent is called", function(assert) {
 		var oExpectedInfo = {
 			"fileName": "variant0",
-				"title": "variant A",
-				"fileType": "ctrl_variant",
-				"reference": "sap.ui.rta.test.Demo.md.Component",
-				"variantManagementReference": "idMain1--variantManagementOrdersTable",
-				"variantReference": "",
-				"packageName": "$TMP",
-				"self": "sap.ui.rta.test.Demo.md.Componentvariant0.ctrl_variant",
-				"content": {},
+			"title": "variant A",
+			"fileType": "ctrl_variant",
+			"reference": "sap.ui.rta.test.Demo.md.Component",
+			"variantManagementReference": "idMain1--variantManagementOrdersTable",
+			"variantReference": "",
+			"packageName": "$TMP",
+			"self": "sap.ui.rta.test.Demo.md.Componentvariant0.ctrl_variant",
+			"content": {},
 			"selector": {
 				"id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus"
 			},
 			"layer": "CUSTOMER",
-				"texts": {
+			"texts": {
 				"TextDemo": {
 					"value": "Text for TextDemo",
-						"type": "myTextType"
+					"type": "myTextType"
 				}
 			},
 			"namespace": "sap.ui.rta.test.Demo.md.Component",
-				"creation": "",
-				"originalLanguage": "EN",
-				"conditions": {},
+			"creation": "",
+			"originalLanguage": "",
+			"conditions": {},
 			"support": {
 				"generator": "Variant.createInitialFileContent",
-					"service": "",
-					"user": "",
-					"sapui5Version": "1.51.0-SNAPSHOT"
+				"service": "",
+				"user": "",
+				"sapui5Version": "1.51.0-SNAPSHOT"
 			},
 			"dependentSelector": {},
 			"validAppVersions": {}
 		};
+
+		oExpectedInfo.originalLanguage = Utils.getCurrentLanguage();
 
 		var oVariantFileContent = Variant.createInitialFileContent(this.oVariantDef.content);
 
