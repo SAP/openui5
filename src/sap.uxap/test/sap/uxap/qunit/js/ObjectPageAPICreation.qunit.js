@@ -628,6 +628,33 @@
 		oObjectPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 	});
 
+	QUnit.test("section modified during layout calculation", function (assert) {
+
+		var oPage = this.oObjectPage,
+			oFirstSection = oPage.getSections()[0],
+			oThirdSection = oPage.getSections()[2],
+			bTabsMode = oPage.getUseIconTabBar(),
+			done = assert.async(),
+			fnOnDomReady = function() {
+				//act
+				oFirstSection.setVisible(false); // will trigger async request to adjust layout
+				oPage.setSelectedSection(oThirdSection.getId());
+
+				var oExpected = {
+					oSelectedSection: oThirdSection,
+					sSelectedTitle: oThirdSection.getTitle(),
+					bSnapped: !bTabsMode
+				};
+
+				//check
+				setTimeout(function() {
+					sectionIsSelected(oPage, assert, oExpected);
+					done();
+				}, 0);
+			};
+		oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
+	});
+
 	QUnit.module("ObjectPage API: sectionTitleLevel");
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is TitleLevel.Auto", function (assert) {
