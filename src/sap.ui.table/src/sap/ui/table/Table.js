@@ -1831,7 +1831,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._onBindingLengthChange = function(sReason) {
 		this._bBindingLengthChanged = true;
 
-		if (sReason === ChangeReason.Refresh) {
+		if (sReason === ChangeReason.Refresh && !this._iBindingLength) {
 			return;
 		}
 
