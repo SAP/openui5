@@ -1995,6 +1995,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		};
 
 		Popover.prototype._closeAnimation = function ($Ref, iRealDuration, fnClosed) {
+			$Ref.addClass("sapMPopoverTransparent");
 			this._animation(function () {
 				fnClosed();
 				$Ref.removeClass("sapMPopoverTransparent");
