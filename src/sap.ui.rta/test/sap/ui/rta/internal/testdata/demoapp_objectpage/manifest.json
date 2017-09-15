@@ -1,7 +1,6 @@
 {
-	"_version": "1.1.0",
+	"_version": "1.8.0",
 	"sap.app": {
-		"_version": "1.1.0",
 		"id": "sap.ui.rta.test.Demo.ObjectPage",
 		"type": "application",
 		"resources": "resources.json",
@@ -24,12 +23,10 @@
 		}
 	},
 	"sap.fiori": {
-		"_version": "1.1.0",
 		"registrationIds": [],
 		"archeType": "transactional"
 	},
 	"sap.ui": {
-		"_version": "1.1.0",
 		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://task",
@@ -50,7 +47,6 @@
 		]
 	},
 	"sap.ui5": {
-		"_version": "1.1.0",
 		"rootView": {
 			"viewName": "sap.ui.rta.test.Demo.ObjectPage.view.App",
 			"type": "XML",

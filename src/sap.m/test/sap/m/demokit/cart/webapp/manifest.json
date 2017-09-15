@@ -1,8 +1,7 @@
 {
-	"_version": "1.3.0",
+	"_version": "1.8.0",
 	"sap.app": {
-		"_version": "1.3.0",
-		"id": "sap.ui.demo.cart",
+	"id": "sap.ui.demo.cart",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"title": "{{appTitle}}",
@@ -22,8 +21,7 @@
 		}
 	},
 	"sap.ui": {
-		"_version": "1.3.0",
-		"technology": "UI5",
+	"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://detail-view",
 			"favIcon": "",
@@ -43,8 +41,7 @@
 		]
 	},
 	"sap.ui5": {
-		"_version": "1.2.0",
-		"rootView": {
+	"rootView": {
 			"viewName": "sap.ui.demo.cart.view.App",
 			"type": "XML",
 			"id": "app"
