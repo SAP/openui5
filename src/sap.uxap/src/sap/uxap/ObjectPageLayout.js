@@ -953,16 +953,24 @@ sap.ui.define([
 	/**
 	 * renders the given section in the ObjectPageContainer html element, without causing re-rendering of the ObjectPageLayout,
 	 * used for switching between sections, when the navigation is through IconTabBar
-	 * @param oSection
+	 * @param oSectionToRender
 	 * @private
 	 */
-	ObjectPageLayout.prototype._renderSection = function (oSection) {
+	ObjectPageLayout.prototype._renderSection = function (oSectionToRender) {
 		var $objectPageContainer = this.$().find(".sapUxAPObjectPageContainer"),
 			oRm;
 
-		if (oSection && $objectPageContainer.length) {
+		if (oSectionToRender && $objectPageContainer.length) {
 			oRm = this.oCore.createRenderManager();
-			oRm.renderControl(oSection);
+
+			this.getSections().forEach(function (oSection) {
+				if ((oSection.getId() === oSectionToRender.getId())) {
+					oRm.renderControl(oSectionToRender);
+				} else {
+					oRm.cleanupControlWithoutRendering(oSection); // clean the previously rendered sections
+				}
+			});
+
 			oRm.flush($objectPageContainer[0]); // place the section in the ObjectPageContainer
 			oRm.destroy();
 		}
