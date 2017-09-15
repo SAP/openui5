@@ -666,7 +666,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this._attachExtensions();
 
-		this._bBindingLengthChanged = false;
 		this._bRowAggregationInvalid = true;
 		this._mTimeouts = {};
 
@@ -721,8 +720,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				// Helper event for testing
 				that._fireRowsUpdated(sReason);
 			}
-
-			that._bBindingLengthChanged = false;
 		};
 
 		// basic selection model (by default the table uses multi selection)
@@ -1988,7 +1985,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Updates the cached total number of rows (binding length) and stores it in <code>Table._iBindingLength</code>.
 	 *
-	 * @param {boolean} [bUpdateUI=true] If set to <code>false</code>, UI is not updated.
+	 * @param {boolean} [bUpdateUI=true] If set to <code>true</code>, the parts of the UI which are dependent on the total row count will
+	 *                                   be updated, if the total row count has changed.
 	 * @returns {int} The updated total row count.
 	 * @private
 	 */
@@ -2007,7 +2005,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		if (iCurrentTotalRowCount !== iNewTotalRowCount) {
 			this._iBindingLength = iNewTotalRowCount;
-			this._bBindingLengthChanged = true;
 
 			// If the binding length changes, some parts of the UI need to be updated.
 			if (bUpdateUI !== false) {
@@ -2021,8 +2018,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 				if (oBinding == null || bClientBinding) {
 					// A client binding does not fire dataReceived events. Therefore we need to update the no data area here.
-					// When the binding has been removed, the table might not be completely re-rendered (just the content). But the bindingLengthChange event
-					// is fired. In this case we also need to update the no data area.
+					// When the binding has been removed, the table might not be completely re-rendered (just the content). But the cached binding
+					// length changes. In this case the no data area needs to be updated.
 					this._updateNoData();
 				}
 			}
@@ -3709,7 +3706,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
 			this._bPendingRequest = false;
-			this._updateTotalRowCount();
+
+			// The AnalyticalBinding updates the length after it fires dataReceived, therefore the total row count will not change here. Later,
+			// when the contexts are retrieved in Table#_getRowContexts, the AnalyticalBinding updates the length and Table#_updateTotalRowCount
+			// will be called again and actually perform the update.
+			this._updateTotalRowCount(true);
 
 			if (this._dataReceivedHandlerId != null) {
 				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
