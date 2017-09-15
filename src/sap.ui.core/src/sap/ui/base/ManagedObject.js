@@ -53,6 +53,38 @@ sap.ui.define([
 	 *
 	 * Each subclass should document the name and type of its supported settings in its constructor documentation.
 	 *
+	 * Example usage:
+	 * <pre>
+	 * new Dialog({
+	 *    title: "Some title text",            // property of type "string"
+	 *    showHeader: true,                    // property of type "boolean"
+	 *    endButton: new Button(...),          // 0..1 aggregation
+	 *    content: [                           // 0..n aggregation
+	 *       new Input(...),
+	 *       new Input(...)
+	 *    ],
+	 *    afterClose: function(oEvent) { ... } // event handler function
+	 * });
+	 * </pre>
+	 *
+	 * Instead of static values and object instances, data binding expressions can be used, either embedded in
+	 * a string or as a binding info object as described in {@link #bindProperty} or {@link #bindAggregation}.
+	 *
+	 * Example usage:
+	 * <pre>
+	 * new Dialog({
+	 *    title: "{/title}",       // embedded binding expression, points to a string property in the data model
+	 *    ...
+	 *    content: {               // binding info object
+	 *       path : "/inputItems", // points to a collection in the data model
+	 *       template : new Input(...)
+	 *    }
+	 * });
+	 * </pre>
+	 *
+	 * Note that when setting string values, any curly braces in those values need to be escaped, so they are not
+	 * interpreted as binding expressions. Use {@link #escapeSettingsValue} to do so.
+	 *
 	 * Besides the settings documented below, ManagedObject itself supports the following special settings:
 	 * <ul>
 	 * <li><code>id : <i>sap.ui.core.ID</i></code> an ID for the new instance. Some subclasses (Element, Component) require the id
@@ -1036,6 +1068,20 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	/**
+	 * Escapes the given value so it can be used in the constructor's settings object.
+	 * Should be used when property values are initialized with static string values which could contain binding characters (curly braces).
+	 *
+	 * @since 1.52
+	 * @param {any} vValue Value to escape; only needs to be done for string values, but the call will work for all types
+	 * @return {any} The given value, escaped for usage as static property value in the constructor's settings object (or unchanged, if not of type string)
+	 * @static
+	 * @public
+	 */
+	ManagedObject.escapeSettingsValue = function(vValue) {
+		return (typeof vValue === "string") ? ManagedObject.bindingParser.escape(vValue) : vValue;
 	};
 
 	/**
