@@ -23,19 +23,10 @@ sap.ui.require([
 	"use strict";
 
 	var sServiceURL = "http://o4aFakeService:8080/",
-	// Analytical info for dimensions
+		// Analytical info for dimensions
 		oCostCenterGrouped = {
 			name: "CostCenter",
 			grouped: true,
-			inResult: false,
-			sortOrder: "Ascending",
-			sorted: false,
-			total: false,
-			visible: true
-		},
-		oControllingArea = {
-			name: "ControllingArea",
-			grouped: false,
 			inResult: false,
 			sortOrder: "Ascending",
 			sorted: false,
@@ -93,13 +84,13 @@ sap.ui.require([
 	function setupAnalyticalBinding(iVersion, mParameters, fnODataV2Callback, aAnalyticalInfo) {
 		var oBinding,
 			oModel,
-			mParameters = mParameters || {},
 			sPath = "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',"
 				+ "P_CostCenterTo='999-9999')/Results";
 
 			aAnalyticalInfo = aAnalyticalInfo
 				|| [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped, oActualCostsTotal];
 
+		mParameters = mParameters || {};
 		if (iVersion === 1) {
 			oModel = new ODataModelV1(sServiceURL, {
 				json: true,
@@ -116,13 +107,13 @@ sap.ui.require([
 
 		ODataModelAdapter.apply(oModel);
 		oBinding = new AnalyticalBinding(oModel, sPath, null, [], [],
-				/*mParameters*/ {
-					analyticalInfo : aAnalyticalInfo,
-					useBatchRequests: true,
-					numberOfExpandedLevels: mParameters.numberOfExpandedLevels || 0,
-					noPaging: mParameters.noPaging || false,
-					custom: mParameters.custom || undefined
-				}
+			/*mParameters*/ {
+				analyticalInfo : aAnalyticalInfo,
+				useBatchRequests: true,
+				numberOfExpandedLevels: mParameters.numberOfExpandedLevels || 0,
+				noPaging: mParameters.noPaging || false,
+				custom: mParameters.custom || undefined
+			}
 		);
 		AnalyticalTreeBindingAdapter.apply(oBinding);
 
@@ -543,8 +534,7 @@ sap.ui.require([
 		QUnit.test("getDownloadURL: no duplicate units: " + i, function(assert) {
 			// analytical info represents colum order of table and is taken for column order in
 			// $select of excel download urls
-			var done = assert.async(),
-				that = this;
+			var done = assert.async();
 
 			setupAnalyticalBinding(2, {}, function (oBinding, oModel) {
 				var sURL = oBinding.getDownloadUrl();
