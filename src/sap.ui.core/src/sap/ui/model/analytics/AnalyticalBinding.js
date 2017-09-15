@@ -796,7 +796,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		var sGroupProperty = this.aAggregationLevel[iLevel - 1],
 			oDimension = this.oAnalyticalQueryResult.findDimensionByPropertyName(sGroupProperty),
-			fValueFormatter = this.mAnalyticalInfoByProperty[sGroupProperty].formatter,
+			// it might happen that grouped property is not contained in the UI (e.g. if grouping is
+			// done with a dimension's text property)
+			fValueFormatter = this.mAnalyticalInfoByProperty[sGroupProperty]
+				&& this.mAnalyticalInfoByProperty[sGroupProperty].formatter,
 			sPropertyValue = oContext.getProperty(sGroupProperty),
 			oTextProperty, sFormattedPropertyValue, sGroupName;
 
@@ -807,7 +810,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var sTextProperty, sTextPropertyValue, fTextValueFormatter;
 		if (oTextProperty) {
 			sTextProperty = oDimension.getTextProperty().name;
-			fTextValueFormatter = this.mAnalyticalInfoByProperty[sTextProperty].formatter;
+			// it might happen that text property is not contained in the UI
+			fTextValueFormatter = this.mAnalyticalInfoByProperty[sTextProperty]
+				&& this.mAnalyticalInfoByProperty[sTextProperty].formatter;
 			sTextPropertyValue = oContext.getProperty(sTextProperty);
 		}
 
