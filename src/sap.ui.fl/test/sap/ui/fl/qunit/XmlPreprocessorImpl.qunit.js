@@ -225,4 +225,23 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		});
 	});
 
+
+    QUnit.test("skips the processing in case of a synchronous view", function (assert) {
+        var oView = {
+            sId: "testView"
+        };
+        var mProperties = {
+            sync: true
+        };
+
+        var oLoggerSpy = this.spy(jQuery.sap.log, "warning");
+
+        var oProcessedView = XmlPreprocessorImpl.process(oView, mProperties);
+
+        assert.equal(oLoggerSpy.callCount, 1, "one warning was raised");
+        assert.equal(oLoggerSpy.getCall(0).args[0], "Flexibility feature for applying changes on an XML view is only available for " +
+            "asynchronous views; merge is be done later on the JS controls.");
+        assert.deepEqual(oProcessedView, oView, "the original view is returned");
+    });
+
 }(sap.ui.fl.XmlPreprocessorImpl, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.ChangePersistence, sap.ui.fl.FlexControllerFactory, sap.ui.fl.Utils));

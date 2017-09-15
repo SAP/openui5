@@ -17,6 +17,9 @@ function(
 	QUnit.module("Using the XmlTreeModifier...", {
 		beforeEach: function () {
 
+			this.HBOX_ID = "hboxId";
+			this.TEXT_ID = "textId";
+
 			jQuery.sap.registerModulePath("testComponent", "../testComponent");
 
 						this.oComponent = sap.ui.getCore().createComponent({
@@ -27,26 +30,25 @@ function(
 							}
 						});
 
-			this.oDOMParser = new DOMParser();
 			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:layout="sap.ui.layout">' +
+				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:layout="sap.ui.layout" >' +
 					'<VBox>' +
 						'<tooltip></tooltip>' +	//empty 0..1 aggregation
 						'<Label visible="true"></Label>' + //content in default aggregation
 						'<Label visible="false" design="Bold"></Label>' + //content in default aggregation, property set that has default value
 					'</VBox>' +
-					'<HBox>' +
+					'<HBox id="' + this.HBOX_ID + '">' +
 						'<tooltip>' +	//0..1 aggregation
 							'<TooltipBase xmlns="sap.ui.core"></TooltipBase>' + //inline namespace as sap.ui.core is use case for not existing namespace
 						'</tooltip>' +
 						'<items>' +
-							'<Text></Text>' + //content in default aggregation
+							'<Text id="' + this.TEXT_ID + '"></Text>' + //content in default aggregation
 						'</items>' +
 					'</HBox>' +
 					'<Bar tooltip="barTooltip">' + //control without default aggregation, tooltip aggregation filled with altType
 					'</Bar>' +
 				'</mvc:View>';
-			this.oXmlView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+			this.oXmlView = jQuery.sap.parseXML(this.oXmlString, "application/xml").documentElement;
 
 		},
 
@@ -207,5 +209,17 @@ function(
 		assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "design"), "Standard", "default value, property not in xml");
 		assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "text"), "", "default value, property not in xml");
 		assert.strictEqual(XmlTreeModifier.getProperty(oInvisibleLabel, "design"), "Bold", "property from xml");
+	});
+
+	QUnit.test("_byId finds the node specified", function (assert) {
+		var oExpectedHBox = this.oXmlView.childNodes[1];
+		oExpectedHBox.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
+		var oExpectedText = oExpectedHBox.childNodes[1].childNodes[0];
+		oExpectedText.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
+
+		var oHBox = XmlTreeModifier._byId(this.HBOX_ID, this.oXmlView);
+		assert.strictEqual(oHBox, oExpectedHBox, "HBox node found");
+		var oText = XmlTreeModifier._byId(this.TEXT_ID, this.oXmlView);
+		assert.strictEqual(oText, oExpectedText, "Text node found");
 	});
 });
