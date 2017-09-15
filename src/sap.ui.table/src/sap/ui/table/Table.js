@@ -1988,8 +1988,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Updates the cached total number of rows (binding length) and stores it in <code>Table._iBindingLength</code>.
 	 *
-	 * @param {boolean} [bUpdateUI=false] If set to <code>true</code>, the parts of the UI which are dependent on the total row count will
-	 * 									  be updated, if the total row count has changed.
+	 * @param {boolean} [bUpdateUI=true] If set to <code>false</code>, UI is not updated.
 	 * @returns {int} The updated total row count.
 	 * @private
 	 */
@@ -2011,7 +2010,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._bBindingLengthChanged = true;
 
 			// If the binding length changes, some parts of the UI need to be updated.
-			if (bUpdateUI === true) {
+			if (bUpdateUI !== false) {
 				var oScrollExtension = this._getScrollExtension();
 				var bClientBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientListBinding")
 									 || TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding");
