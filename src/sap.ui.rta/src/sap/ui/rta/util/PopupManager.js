@@ -53,6 +53,13 @@ function (
 			properties : {
 				rta:  "any"
 			},
+			associations : {
+				/**
+				 * To set the associated controls as an autoCloseArea for all sap.m.Popover/sap.m.Dialog open in RTA mode.
+				 * Needs to be filled before the popup is open.
+				 */
+				autoCloseAreas : {type : "sap.ui.core.Control", multiple : true, singularName : "autoCloseArea"}
+			},
 			events : {
 				open: {
 					parameters : {
@@ -296,7 +303,9 @@ function (
 		var aAutoCloseAreas = [
 			oPopup.oContent.getDomRef(),
 			oOverlayContainer
-		];
+		].concat(
+			this.getAutoCloseAreas()
+		);
 
 		if (this.getRta().getShowToolbars()) {
 			aAutoCloseAreas.push(this.getRta().getToolbar().getDomRef());
