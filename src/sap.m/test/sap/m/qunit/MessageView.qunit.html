@@ -435,6 +435,10 @@
 				assert.equal(this.oMessageView.getItems().length, 1, "The message should be one - from MessageManager");
 			});
 
+			QUnit.test("NavContainer should be child of the MessageView", function(assert) {
+				assert.equal(this.oMessageView._navContainer.getParent(), this.oMessageView, "Parent child relation is correct");
+			});
+
 			QUnit.module("HTML representation", {
 				beforeEach: function () {
 					var that = this;
