@@ -1,4 +1,7 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon, Importance) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("view", "view");
 
@@ -88,7 +91,7 @@
 			"CSS white-space should be reset to 'normal' to prevent breaking of responsive behavior");
 	});
 
-	module("Invalidation");
+	QUnit.module("Invalidation");
 
 	QUnit.test("do not invalidate parent upon first rendering", function (assert) {
 
@@ -110,12 +113,12 @@
 			}),
 			done = assert.async();
 
-        sinon.spy(oApp, "invalidate");
+		sinon.spy(oApp, "invalidate");
 
 		oTextArea.addEventDelegate({
 			onAfterRendering: function(oEvent) {
 				assert.strictEqual(oTextArea.getDomRef().scrollHeight > 0, true, "textarea on after rendering has scrollHeight greater than 0");
-                assert.strictEqual(oApp.invalidate.called, false, "invalidate not called");
+				assert.strictEqual(oApp.invalidate.called, false, "invalidate not called");
 			}
 		});
 
@@ -123,13 +126,12 @@
 		sap.ui.getCore().applyChanges();
 
 
-		var afterNavigatePage2 = function() {
+		var afterBackToPage1 = function() {
+				done();
+			},afterNavigatePage2 = function() {
 				oApp.detachAfterNavigate(afterNavigatePage2);
 				oApp.attachAfterNavigate(afterBackToPage1);
 				oApp.to("page01");
-			},
-			afterBackToPage1 = function() {
-				done();
 			};
 
 		oApp.attachAfterNavigate(afterNavigatePage2);
@@ -138,7 +140,7 @@
 	});
 
 
-	module("Sections invalidation", {
+	QUnit.module("Sections invalidation", {
 		beforeEach: function () {
 			this.oView = sap.ui.xmlview("UxAP-ObjectPageState", {
 				viewName: "view.UxAP-ObjectPageState"
@@ -175,7 +177,7 @@
 		}, 1000); //dom calc delay
 	});
 
-	module("update content size", {
+	QUnit.module("update content size", {
 		beforeEach: function () {
 			this.oView = sap.ui.xmlview("UxAP-ObjectPageState", {
 				viewName: "view.UxAP-ObjectPageState"
@@ -199,8 +201,6 @@
 			done = assert.async();
 
 		setTimeout(function() {
-
-			var oScrollPositionBeforeResize = oPage._$opWrapper.scrollTop();
 			//act
 			oBlock.setHeight("600px"); //add 300px more
 			setTimeout(function() {
@@ -216,11 +216,23 @@
 		}, 1000); //dom calc delay
 	});
 
+	function sectionIsSelected(oPage, assert, oExpected) {
+		var bSnapped = oExpected.bSnapped,
+			iAnchorBarSelectionIndex = oExpected.iAnchorBarSelectionIndex,
+			oAnchorBar = oPage.getAggregation("_anchorBar"),
+			sSelectedBtnId = oAnchorBar.getSelectedButton(),
+			oSelectedButton = sap.ui.getCore().byId(sSelectedBtnId),
+			iSelectedBtnIndex = oAnchorBar.indexOfContent(oSelectedButton);
+
+		assert.strictEqual(oPage._bStickyAnchorBar, bSnapped, "header snapped state is correct");
+		assert.strictEqual(iSelectedBtnIndex, iAnchorBarSelectionIndex, "index of anchorBar selected button is correct");
+	}
+
 	function runParameterizedTests (bUseIconTabBar) {
 
-		var sModulePrefix = bUseIconTabBar ? "IconTabBar": "AnchorBar"
+		var sModulePrefix = bUseIconTabBar ? "IconTabBar" : "AnchorBar";
 
-		module(sModulePrefix + "Mode", {
+		QUnit.module(sModulePrefix + "Mode", {
 			beforeEach: function () {
 				this.oView = sap.ui.xmlview("UxAP-ObjectPageState", {
 					viewName: "view.UxAP-ObjectPageState"
@@ -228,7 +240,6 @@
 				this.oObjectPage = this.oView.byId("ObjectPageLayout");
 				this.oObjectPage.setUseIconTabBar(bUseIconTabBar);
 				this.oView.placeAt('content');
-				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function () {
 				this.oView.destroy();
@@ -236,241 +247,99 @@
 			}
 		});
 
-		QUnit.test("Hide first section preserves expanded state", function (assert) {
+
+		QUnit.test("Delete first section", function (assert) {
 			//setup
 			var oPage = this.oObjectPage,
 				oFirstSection = oPage.getSections()[0],
-				oFirstSubsection = oFirstSection.getSubSections()[0];
+				done = assert.async(),
+				fnOnDomReady = function() {
+					// act
+					oPage.removeSection(oFirstSection); /* remove first section */
 
-			var done = assert.async();
-			setTimeout(function() {
-				assert.ok(oPage._bStickyAnchorBar === false, "header is expanded");
-				// act
-				oFirstSection.setVisible(false); /* hide subsection */
+					setTimeout(function() {
+						sectionIsSelected(oPage, assert, {
+							bSnapped: false,
+							iAnchorBarSelectionIndex: 0
+						});
 
-				setTimeout(function() {
-					assert.ok(oPage._bStickyAnchorBar === false, "header is still expanded");
-					done();
-				}, 1000); //scroll delay
-			}, 1000); //dom calc delay
-
+						//cleanup
+						oFirstSection.destroy();
+						done();
+					}, 0); //scroll delay
+				};
+			oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
 		});
 
 
-		QUnit.test("Hide first section changes selection", function (assert) {
-			//setup
-			var oPage = this.oObjectPage,
-				oFirstSection = oPage.getSections()[0],
-				oFirstSubsection = oFirstSection.getSubSections()[0];
-			oAnchorBar = this.oObjectPage.getAggregation("_anchorBar");
-
-			var done = assert.async();
-			setTimeout(function() {
-				// act
-				oFirstSection.setVisible(false); /* hide first section */
-
-				setTimeout(function() {
-					var sSelectedBtnId = oAnchorBar.getSelectedButton(),
-						sFirstButtonId = oAnchorBar.getContent()[0].getId();
-
-					assert.ok(sSelectedBtnId === sFirstButtonId, "first visible section is selected");
-					done();
-				}, 1000); //scroll delay
-			}, 1000); //dom calc delay
-
-		});
-
-
-		QUnit.test("Delete first section preserves expanded state", function (assert) {
-			//setup
-			var oPage = this.oObjectPage,
-				oFirstSection = oPage.getSections()[0];
-
-			var done = assert.async();
-			setTimeout(function() {
-				// act
-				oPage.removeSection(oFirstSection); /* remove first section */
-
-				setTimeout(function() {
-					assert.ok(oPage._bStickyAnchorBar === false, "page is still expanded");
-
-					//cleanup
-					oFirstSection.destroy();
-					done();
-				}, 1000); //scroll delay
-			}, 1000); //dom calc delay
-
-		});
-
-
-		QUnit.test("Delete first section changes selection", function (assert) {
-			//setup
-			var oPage = this.oObjectPage,
-				oAnchorBar = oPage.getAggregation("_anchorBar"),
-				oFirstSection = oPage.getSections()[0];
-
-			var done = assert.async();
-			setTimeout(function() {
-				// act
-				oPage.removeSection(oFirstSection);
-
-				setTimeout(function() {
-					var sSelectedBtnId = oAnchorBar.getSelectedButton(),
-						sFirstButtonId = oAnchorBar.getContent()[0].getId();
-					assert.ok(sSelectedBtnId === sFirstButtonId, "first visible section is selected");
-					done();
-					//cleanup
-					oFirstSection.destroy();
-				}, 1000); //scroll delay
-			}, 1000); //dom calc delay
-
-		});
-
-
-		QUnit.test("Hide first subSection preserves expanded state", function (assert) {
-			//setup
-			var oPage = this.oObjectPage,
-				oFirstSection = oPage.getSections()[0],
-				oFirstSubsection = oFirstSection.getSubSections()[0];
-
-			var done = assert.async();
-			setTimeout(function() {
-				assert.ok(oPage._bStickyAnchorBar === false, "header is expanded");
-				// act
-				oFirstSubsection.setVisible(false); /* hide subsection */
-
-				setTimeout(function() {
-					assert.ok(oPage._bStickyAnchorBar === false, "header is still expanded");
-					done();
-				}, 1000); //scroll delay
-			}, 1000); //dom calc delay
-
-		});
-
-
-		QUnit.test("Hide first subSection updates selection", function (assert) {
-			//setup
-			var oPage = this.oObjectPage,
-				oFirstSection = oPage.getSections()[0],
-				oFirstSubsection = oFirstSection.getSubSections()[0];
-			oAnchorBar = oPage.getAggregation("_anchorBar");
-
-			var done = assert.async();
-			setTimeout(function() {
-				// act
-				oFirstSubsection.setVisible(false); /* hide first section */
-
-				setTimeout(function() {
-					var sSelectedBtnId = oAnchorBar.getSelectedButton(),
-						sFirstButtonId = oAnchorBar.getContent()[0].getId();
-
-					assert.ok(sSelectedBtnId === sFirstButtonId, "second visible section is selected");
-					done();
-				}, 1000); //scroll delay
-			}, 1000); //dom calc delay
-
-		});
-
-		QUnit.test("Hide lower section preserves snapped state", function (assert) {
+		QUnit.test("Hide lower section", function (assert) {
 			//setup
 			var oPage = this.oObjectPage,
 				oSection1 = oPage.getSections()[1],
-				oSection1Subsection1 = oSection1.getSubSections()[1];
+				oSection1Subsection1 = oSection1.getSubSections()[1],
+				done = assert.async(),
+				iRenderCount = 0,
+				fnOnDomReady = function() {
+					iRenderCount++;
+					if (iRenderCount === 1) { // the page is invalidated during rendering (anchor bar manipulations) => the final rendering is needed for the test
+						return;
+					}
+					oPage.scrollToSection(oSection1Subsection1.getId(), 0);
 
-			var done = assert.async();
-			setTimeout(function() {
-				oPage.scrollToSection(oSection1Subsection1.getId());
+					setTimeout(function() {
+						sectionIsSelected(oPage, assert, {
+							bSnapped: true,
+							iAnchorBarSelectionIndex: 1
+						});
 
-				setTimeout(function() {
+						// act
+						oSection1.setVisible(false); /* hide subsection */
+						sap.ui.getCore().applyChanges();
 
-					assert.ok(oPage._bStickyAnchorBar === true, "header is snapped");
+						sectionIsSelected(oPage, assert, {
+							bSnapped: true,
+							iAnchorBarSelectionIndex: 0
+						});
 
-					// act
-					oSection1.setVisible(false); /* hide subsection */
-					sap.ui.getCore().applyChanges();
-
-					assert.ok(oPage._bStickyAnchorBar === true, "header is still snapped");
-					done();
-				}, 1000);
-			}, 1000); //dom calc delay
-
+						done();
+					}, 0);
+				};
+			oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 		});
 
-		QUnit.test("Hide lower section updates selection", function (assert) {
+
+		QUnit.test("Hide lower subSection", function (assert) {
 			//setup
 			var oPage = this.oObjectPage,
-				oAnchorBar = oPage.getAggregation("_anchorBar"),
-				oSection1 = oPage.getSections()[1],
-				oSection1Subsection1 = oSection1.getSubSections()[1];
+				oSection1Subsection1 = oPage.getSections()[1].getSubSections()[1],
+				done = assert.async(),
+				iRenderCount = 0,
+				fnOnDomReady = function() {
+					iRenderCount++;
+					if (iRenderCount === 1) { // the page is invalidated during rendering (anchor bar manipulations) => the final rendering is needed for the test
+						return;
+					}
+					oPage.scrollToSection(oSection1Subsection1.getId(), 0);
 
-			var done = assert.async();
-			setTimeout(function() {
-				oPage.scrollToSection(oSection1Subsection1.getId());
+					setTimeout(function() {
 
-				setTimeout(function() {
+						sectionIsSelected(oPage, assert, {
+							bSnapped: true,
+							iAnchorBarSelectionIndex: 1
+						});
 
-					// act
-					oSection1.setVisible(false); /* hide subsection */
-					sap.ui.getCore().applyChanges();
+						// act
+						oSection1Subsection1.setVisible(false); /* hide subsection */
+						sap.ui.getCore().applyChanges();
 
-					var sSelectedBtnId = oAnchorBar.getSelectedButton(),
-						sFirstButtonId = oAnchorBar.getContent()[0].getId();
-
-					assert.ok(sSelectedBtnId === sFirstButtonId, "first visible section is selected");
-					done();
-				}, 1000); //scroll delay
-			}, 1000); //dom calc delay
-
-		});
-
-		QUnit.test("Hide lower subSection preserves snapped state", function (assert) {
-			//setup
-			var oPage = this.oObjectPage,
-				oSection1Subsection1 = oPage.getSections()[1].getSubSections()[1];
-
-			var done = assert.async();
-			setTimeout(function() {
-				oPage.scrollToSection(oSection1Subsection1.getId());
-
-				setTimeout(function() {
-
-					assert.ok(oPage._bStickyAnchorBar === true, "header is snapped");
-
-					// act
-					oSection1Subsection1.setVisible(false); /* hide subsection */
-					sap.ui.getCore().applyChanges();
-
-					assert.ok(oPage._bStickyAnchorBar === true, "header is still snapped");
-					done();
-				}, 1000);
-			}, 1000); //dom calc delay
-
-		});
-
-		QUnit.test("Hide lower subSection updates selection", function (assert) {
-			//setup
-			var oPage = this.oObjectPage,
-				oAnchorBar = oPage.getAggregation("_anchorBar"),
-				oSection1Subsection1 = oPage.getSections()[1].getSubSections()[1];
-
-			var done = assert.async();
-			setTimeout(function() {
-				oPage.scrollToSection(oSection1Subsection1.getId());
-
-				setTimeout(function() {
-
-					// act
-					oSection1Subsection1.setVisible(false); /* hide subsection */
-					sap.ui.getCore().applyChanges();
-
-					var sSelectedBtnId = oAnchorBar.getSelectedButton(),
-						sSecondButtonId = oAnchorBar.getContent()[1].getId(); //remaining subsection is promoted
-
-					assert.ok(sSelectedBtnId === sSecondButtonId, "second visible section is selected");
-					done();
-				}, 1000); //scroll delay
-			}, 1000); //dom calc delay
-
+						sectionIsSelected(oPage, assert, {
+							bSnapped: true,
+							iAnchorBarSelectionIndex: 1
+						});
+						done();
+					}, 0); //scroll delay
+				};
+			oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 		});
 	}
 
