@@ -451,6 +451,11 @@
 				assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after date selection");
 
 				qutils.triggerEvent("click", "DP5-icon");
+				jQuery("#DP5-cal--Month0-20151124").focus();
+				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after selecting the same date");
+
+				qutils.triggerEvent("click", "DP5-icon");
 				jQuery("#DP5-cal").control(0).fireCancel();
 				assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after cancel");
 
@@ -461,6 +466,11 @@
 				jQuery("#DP5-cal--Month0-20151124").focus();
 				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after date selection");
+
+				qutils.triggerEvent("click", "DP5-icon");
+				jQuery("#DP5-cal--Month0-20151124").focus();
+				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after selecting the same date");
 
 				qutils.triggerEvent("click", "DP5-icon");
 				jQuery("#DP5-cal").control(0).fireCancel();
@@ -740,7 +750,7 @@
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
 					done();
-				}, 1);
+				}, 100);
 
 			});
 
@@ -764,7 +774,7 @@
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
 					done();
-				}, 1);
+				}, 100);
 
 			});
 
@@ -793,7 +803,7 @@
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
 					done();
-				}, 1);
+				}, 100);
 
 			});
 
