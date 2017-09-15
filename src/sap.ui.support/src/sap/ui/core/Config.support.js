@@ -365,7 +365,7 @@ sap.ui.define([
 
 					Object.keys(mComponents).forEach(function(sComponentId) {
 						// 2. Check router instances and collect connected views (also other view types than XML)
-						var oRouter = mComponents[sComponentId].getRouter();
+						var oRouter = mComponents[sComponentId].getRouter && mComponents[sComponentId].getRouter();
 						if (oRouter && oRouter._oConfig) {
 							if (oRouter._oConfig._async !== true) {
 								mComponentsRoutingSync[sComponentId] = [];
