@@ -110,7 +110,7 @@
 			},{
 				"id": "sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding",
 				"name": "Hierarchy Maintenance with a JSONModel",
-				"description": "Basic example that shows how hierarchy maintenance can be done using a JSONModel and drag and drop."
+				"description": "Shows how hierarchy maintenance can be done using drag and drop."
 			}
 		]
 	}
