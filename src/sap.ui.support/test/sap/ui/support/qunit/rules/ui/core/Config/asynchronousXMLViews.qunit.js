@@ -48,11 +48,14 @@ sap.ui.require([
 			});
 			this.oComponentAsyncConfig.getRouter()._oConfig._async = true;
 
+			this.oComponentWithoutRouter = new Component();
+
 		},
 		afterEach: function () {
 			this.oRootControl.destroy();
 			this.oComponent.destroy();
 			this.oComponentAsyncConfig.destroy();
+			this.oComponentWithoutRouter.destroy();
 		}
 	});
 
