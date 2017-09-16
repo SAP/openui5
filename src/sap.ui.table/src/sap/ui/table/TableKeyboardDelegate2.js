@@ -346,27 +346,27 @@ sap.ui.define([
 		}
 
 		var oRow = oTable.getRows()[iRowIndex];
-		var $Cell;
+		var oCell;
 
 		if (iCellType === CellType.ROWHEADER) {
 			oTable._getKeyboardExtension()._setFocus(oTable.getDomRef("rowsel" + iRowIndex));
 			return;
 		} else if (iCellType === CellType.ROWACTION) {
-			$Cell = TableUtils.getCell(oTable, oRow.getAggregation("_rowAction").getDomRef());
+			oCell = oTable.getDomRef("rowact" + iRowIndex);
 		} else if (iCellType === CellType.DATACELL
 				   && (iColumnIndex != null && iColumnIndex >= 0 && iColumnIndex < TableUtils.getVisibleColumnCount(oTable))) {
 			var oColumn = oTable.getColumns()[iColumnIndex];
 			var iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
 
-			$Cell = TableUtils.getCell(oTable, oRow.getCells()[iColumnIndexInCellsAggregation].getDomRef());
+			oCell = oRow.getDomRef("col" + iColumnIndexInCellsAggregation);
 		}
 
-		if ($Cell == null) {
+		if (oCell == null) {
 			return;
 		}
 
 		if (bFirstInteractiveElement) {
-			var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements($Cell);
+			var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oCell);
 
 			if ($InteractiveElements != null) {
 				TableKeyboardDelegate._focusElement(oTable, $InteractiveElements[0], true);
@@ -374,7 +374,7 @@ sap.ui.define([
 			}
 		}
 
-		$Cell.focus();
+		oCell.focus();
 	};
 
 	/**
