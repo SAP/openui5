@@ -3998,7 +3998,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
 			this._bPendingRequest = false;
-			this._updateBindingLength(true);
+			this._updateBindingLength();
 
 			if (this._dataReceivedHandlerId != null) {
 				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
