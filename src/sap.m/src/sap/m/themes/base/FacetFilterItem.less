@@ -23,18 +23,22 @@
 }
 
 .sapMFFLITitle {
-	font-size: 1.125rem;
+	font-size: @sapMFontLargeSize;
 	color: @sapUiListTextColor;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
 .sapMFFLITitleWrap {
-       word-wrap: break-word;
-       overflow: hidden;
-       text-overflow: ellipsis;
-       -webkit-box-flex: 1;
-       flex: auto;
-       -webkit-box-align: center;
-       align-items: center;
+	word-wrap: break-word;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-box-flex: 1;
+	flex: auto;
+	-webkit-box-align: center;
+	align-items: center;
+}
+
+.sapUiSizeCompact .sapMFFLITitle{
+	font-size: @sapMFontMediumSize;
 }
