@@ -5,13 +5,13 @@
 // Provides the base class for all objects with managed properties and aggregations.
 sap.ui.define([
 		'jquery.sap.global',
-		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata',
+		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', './Object',
 		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException', '../model/ListBinding',
 		'../model/Model', '../model/ParseException', '../model/TreeBinding', '../model/Type', '../model/ValidateException',
 		'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'
 	], function(
 		jQuery,
-		BindingParser, DataType, EventProvider, ManagedObjectMetadata,
+		BindingParser, DataType, EventProvider, ManagedObjectMetadata, BaseObject,
 		BindingMode, CompositeBinding, Context, FormatException, ListBinding,
 		Model, ParseException, TreeBinding, Type, ValidateException
 		/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
@@ -1747,15 +1747,10 @@ sap.ui.define([
 			return oObject;
 		}
 
-		oType = jQuery.sap.getObject(oAggregation.type);
-		// class types
-		if ( typeof oType === "function" && oObject instanceof oType ) {
+		if ( oObject instanceof BaseObject && oObject.isA(oAggregation.type) ) {
 			return oObject;
 		}
-		// interfaces
-		if ( oObject && oObject.getMetadata && oObject.getMetadata().isInstanceOf(oAggregation.type) ) {
-			return oObject;
-		}
+
 		// alternative types
 		aAltTypes = oAggregation.altTypes;
 		if ( aAltTypes && aAltTypes.length ) {
@@ -1771,6 +1766,12 @@ sap.ui.define([
 					}
 				}
 			}
+		}
+
+		// legacy validation for (unsupported) types that don't subclass BaseObject
+		oType = jQuery.sap.getObject(oAggregation.type);
+		if ( typeof oType === "function" && oObject instanceof oType ) {
+			return oObject;
 		}
 
 		// TODO make this stronger again (e.g. for FormattedText)
