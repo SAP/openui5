@@ -419,7 +419,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this.aExpandRefs = oRef;
 			if (Array.isArray(oRef)) {
 				// For performance, only check first and last entry, whether reload is needed
-				if (this.oModel._isReloadNeeded("/" + oRef[0]) || this.oModel._isReloadNeeded("/" + oRef[oRef.length - 1])) {
+				if (this.oModel._isReloadNeeded("/" + oRef[0], this.mParameters) || this.oModel._isReloadNeeded("/" + oRef[oRef.length - 1], this.mParameters)) {
 					this.bUseExpandedList = false;
 					this.aExpandRefs = undefined;
 					return false;
