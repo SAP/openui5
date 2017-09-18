@@ -337,18 +337,20 @@
 	QUnit.test("When 'pageChanged' event is fired the numeric value of the page indicator should change", function (assert) {
 		// Arrange
 		var done = assert.async();
-		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT");
+		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [2, 9]);
 
 		// Assert
-		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, "2 " + sTextBetweenNumbers + " 9", "Page indicator should show '2 " + sTextBetweenNumbers + " 9'");
+		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, sTextBetweenNumbers, "Page indicator should show '2 " + sTextBetweenNumbers + " 9'");
 
 		// Wait for CSS animation caused by activePage in constructor to complete
 		setTimeout(function () {
 			// Act
 			this.oCarousel.next();
 
+			sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [3, 9]);
+
 			// Assert
-			assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, "3 " + sTextBetweenNumbers + " 9", "Page indicator should show '3 " + sTextBetweenNumbers + " 9'");
+			assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, sTextBetweenNumbers, "Page indicator should show '3 " + sTextBetweenNumbers + " 9'");
 			done();
 
 		}.bind(this), sinonClockTickValue);

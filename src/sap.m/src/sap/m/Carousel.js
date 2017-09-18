@@ -485,9 +485,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sOldActivePageId = this.getActivePage();
 		var sNewActivePageId = this.getPages()[iNewPageIndex - 1].getId();
 		this.setAssociation("activePage", sNewActivePageId, true);
-		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT");
-		var sId = this.getId() + '-' + 'slide-number';
-		var sNewPageNumber = iNewPageIndex + ' ' + sTextBetweenNumbers + ' ' + this.getPages().length;
+		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iNewPageIndex, this.getPages().length]);
 
 		jQuery.sap.log.debug("sap.m.Carousel: firing pageChanged event: old page: " + sOldActivePageId
 				+ ", new page: " + sNewActivePageId);
@@ -500,10 +498,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.firePageChanged( { oldActivePageId: sOldActivePageId,
 			newActivePageId: sNewActivePageId});
 
-		//change the number in the page indicator
-		if (document.getElementById(sId)) {
-			document.getElementById(sId).innerHTML = sNewPageNumber;
-		}
+		// change the number in the page indicator
+		this.$('slide-number').text(sTextBetweenNumbers);
 	};
 
 	/**
