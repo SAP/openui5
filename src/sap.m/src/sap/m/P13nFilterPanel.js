@@ -698,10 +698,10 @@ sap.ui.define([
 					key: sKey,
 					columnKey: oNewData.keyField,
 					exclude: oNewData.exclude,
-					operation: oNewData.operation,
-					value1: oNewData.value1,
-					value2: oNewData.value2
+					operation: oNewData.operation
 				});
+				oFilterItem.setValue1(oNewData.value1);
+				oFilterItem.setValue2(oNewData.value2);
 				that._bIgnoreBindCalls = true;
 				that.fireAddFilterItem({
 					key: sKey,
