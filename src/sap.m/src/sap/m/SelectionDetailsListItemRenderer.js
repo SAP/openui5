@@ -35,7 +35,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Renderer", "sap/m/ListItemBaseR
 
 	SelectionDetailsListItemRenderer.renderLine = function(oRm, oControl, line) {
 		var sUnit = line.getUnit().trim(),
-			sValue = line.getValue(),
+			sValue = line._getValueToRender(),
 			sDisplayValue = line.getDisplayValue();
 
 		oRm.write("<div");
