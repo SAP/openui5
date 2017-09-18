@@ -11,8 +11,8 @@
  * where CONTROL is a camel-cased version of the getMetadata().getName() value, f.e. "sap.m.Button" becomes "sapMButton"
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarButton', './ToggleButton', './Button', 'sap/m/library'],
-	function(jQuery, Metadata, OverflowToolbarButton, ToggleButton, Button, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToolbarToggleButton', './ToggleButton', './Button', 'sap/m/library'],
+	function(jQuery, Metadata, OverflowToolbarButton, OverflowToolbarToggleButton, ToggleButton, Button, library) {
 		"use strict";
 
 		// shortcut for sap.m.SelectType
@@ -102,6 +102,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 		};
 
 
+		// OverflowToolbarToggleButton - same as ToggleButton, but also must add the _bInOverflow trigger
+		OverflowToolbarAssociativePopoverControls.prototype._preProcessSapMOverflowToolbarToggleButton = function(oControl) {
+			this._preProcessSapMToggleButton(oControl);
+			oControl._bInOverflow = true;
+		};
+
+		OverflowToolbarAssociativePopoverControls.prototype._postProcessSapMOverflowToolbarToggleButton = function(oControl) {
+			delete oControl._bInOverflow;
+			this._postProcessSapMToggleButton(oControl);
+		};
+
+
 		// SegmentedButton - switch to/from select mode
 		OverflowToolbarAssociativePopoverControls.prototype._preProcessSapMSegmentedButton = function(oControl) {
 			oControl._toSelectMode();
@@ -155,6 +167,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 				canOverflow: true,
 				listenForEvents: ["press"],
 				noInvalidationProps: ["enabled", "type"]
+			},
+			"sap.m.OverflowToolbarToggleButton": {
+				canOverflow: true,
+				listenForEvents: ["press"],
+				noInvalidationProps: ["enabled", "type", "pressed"]
 			},
 			"sap.m.CheckBox": {
 				canOverflow: true,
@@ -311,6 +328,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 			// For now only custom classes, extending the sap.m.Button and its derivatives, are supported for overflow
 			if (oControl instanceof OverflowToolbarButton) {
 				return "sap.m.OverflowToolbarButton";
+			} else if (oControl instanceof OverflowToolbarToggleButton) {
+				return "sap.m.OverflowToolbarToggleButton";
 			} else if (oControl instanceof ToggleButton) {
 				return "sap.m.ToggleButton";
 			} else if (oControl instanceof Button) {
