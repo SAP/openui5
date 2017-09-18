@@ -14,15 +14,38 @@
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m"
+			data-sap-ui-xx-bindingSyntax="complex"
 			data-sap-ui-language="en-US">
 		</script>
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script id="myxml" type="text/xmldata">
+		<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="my.own.controller">
+			<VBox>
+				<DateRangeSelection id="drs_odata"
+					value="{
+						parts: [{ path: 'Date'},{ path:'Date2'}],
+						type: 'sap.ui.model.type.DateInterval',
+						formatOptions: {
+							format: 'MEd'
+						}
+					}"
+				/>
+			</VBox>
+		</mvc:View>
+		</script>
 
 		<!-- Test functions -->
 		<script>
+			jQuery.sap.require("sap.ui.core.format.DateFormat");
+			jQuery.sap.require("sap.ui.test.TestUtils");
+
 			//Preparing input UTC dates for testing purposes:
 			//From: April 1, 2014 0:00 UTC
 			var dateFrom = new Date(Date.UTC(2014, 3, 1, 0, 0, 0))
@@ -267,6 +290,116 @@
 				assert.strictEqual(oInfo.description, "2014-03-26 @ 2014-03-27 Placeholder Date Tooltip", "Description");
 				oInput.destroy();
 			});
+
+			QUnit.module("binding type DateInterval", {
+				beforeEach: function() {
+					this.model = new sap.ui.model.json.JSONModel({
+						"ShipName": "Titanic",
+						"OrderDate": new Date(2017,5,28),
+						"ShippedDate": new Date(2017,6,1)
+					});
+
+					this.sut = new sap.m.DateRangeSelection();
+					this.sut.setModel(this.model);
+					this.sut.placeAt('qunit-fixture');
+				},
+				afterEach: function () {
+					this.sut.destroy();
+					this.sut = null;
+					this.model = null;
+				},
+				getDefaultFormat: function() {
+					return sap.ui.core.format.DateFormat.getDateInstance({
+						style: "medium",
+						interval: true
+					}, sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale());
+				},
+				getExpectedFormat: function (sFormat) {
+					return sap.ui.core.format.DateFormat.getDateInstance({
+						format: sFormat,
+						interval: true
+					}, sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale());
+				},
+				getDefaultLocaleData: function() {
+					var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+					return sap.ui.core.LocaleData.getInstance(oLocale);
+				}
+			});
+
+			QUnit.test("oFormatOptions.format: yMEd", function(assert) {
+				//arrange
+				var expectedValue = this.getExpectedFormat("yMEd").format([
+						this.model.oData.OrderDate,
+						this.model.oData.ShippedDate
+					]),
+					expectedDatePattern = this.getDefaultLocaleData().getCustomDateTimePattern("yMEd"),
+					expectedPlaceholder = expectedDatePattern + " - " + expectedDatePattern;
+
+				//act
+				this.sut.bindValue({
+					parts:[{path:'/OrderDate'}, {path:'/ShippedDate'}],
+					type: 'sap.ui.model.type.DateInterval',
+					formatOptions: {format: "yMEd"}
+				});
+
+				//assert
+				assert.equal(this.sut.getValue(), expectedValue, "value is correct");
+				assert.equal(this.sut._getPlaceholder(), expectedPlaceholder, "placeholder is correct");
+			});
+
+			QUnit.test("no format options", function() {
+				//arrange
+				var expectedValue = this.getDefaultFormat().format([
+						this.model.oData.OrderDate,
+						this.model.oData.ShippedDate
+					]),
+					expectedDatePattern = this.getDefaultLocaleData().getDatePattern("medium"),
+					expectedPlaceholder = expectedDatePattern + " - " + expectedDatePattern;
+
+				//act
+				this.sut.bindValue({
+					parts:[{path:'/OrderDate'}, {path:'/ShippedDate'}],
+					type: 'sap.ui.model.type.DateInterval'
+				});
+
+				//assert
+				assert.equal(this.sut.getValue(), expectedValue, "value is correct");
+				assert.equal(this.sut._getPlaceholder(), expectedPlaceholder, "placeholder is correct");
+			});
+
+			QUnit.test("binding with odata", function(assert) {
+				var done = assert.async();
+				sap.ui.controller("my.own.controller", {
+					onInit: function() {
+						this.getView().bindObject("/EdmTypesCollection(ID='1')");
+					}
+				});
+
+				sap.ui.test.TestUtils.useFakeServer(sinon.sandbox.create(),
+					"sap/ui/core/demokit/sample/ViewTemplate/types/data", {
+						"/sap/opu/odata/sap/ZUI5_EDM_TYPES/$metadata" : {
+							source : "metadataV2.xml"
+						},
+						"/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection(ID='1')" : {
+							source : "EdmTypesV2.json"
+						}
+					});
+
+				var oModelV2 = new sap.ui.model.odata.v2.ODataModel({
+					serviceUrl : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
+					useBatch : false
+				});
+
+				var view = sap.ui.view({ viewContent: document.scripts.myxml.innerText, type: sap.ui.core.mvc.ViewType.XML })
+					.setModel(oModelV2)
+					.placeAt("qunit-fixture");
+
+				oModelV2.attachRequestCompleted(function () {
+					//char code 8211 is a dash
+					assert.equal(view.byId("drs_odata")._$input.val(), "Wed, 3/25 " + String.fromCharCode(8211) + " Thu, 3/26", view.byId("drs_odata")._$input.val() + " is correct");
+					done();
+				});
+			});
 		</script>
 	</head>
 
@@ -276,6 +409,7 @@
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
 		<br>
 		<div id="uiArea1"></div>
 		<br>
