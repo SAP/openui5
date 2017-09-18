@@ -12,13 +12,14 @@ sap.ui.define([
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./ObjectPageSection",
 	"./ObjectPageSubSection",
+	"./ObjectPageHeaderContent",
 	"./LazyLoading",
 	"./ObjectPageLayoutABHelper",
 	"./ThrottledTaskHelper",
 	"sap/ui/core/ScrollBar",
 	"sap/ui/core/library",
 	"./library"
-], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, LazyLoading, ABHelper, ThrottledTask, ScrollBar, coreLibrary, library) {
+], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageHeaderContent, LazyLoading, ABHelper, ThrottledTask, ScrollBar, coreLibrary, library) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -126,7 +127,9 @@ sap.ui.define([
 				useTwoColumnsForLargeScreen: {type: "boolean", group: "Appearance", defaultValue: false},
 
 				/**
-				 * Determines whether the title, image, markers and selectTitleArrow are shown in the Header content area.
+				 * Determines whether the title, image, markers and selectTitleArrow are shown in the Header content area.</br></br>
+				 * <b>Note</b>: This property is only taken into account if an instance of
+				 * <code>sap.uxap.ObjectPageHeader</code> is used for the <code>headerTitle</code> aggregation.</li>
 				 */
 				showTitleInHeaderContent: {type: "boolean", group: "Appearance", defaultValue: false},
 
@@ -138,19 +141,25 @@ sap.ui.define([
 
 				/**
 				 * Determines whether the page is a child page and renders it with a different design.
-				 * Child pages have an additional (darker/lighter) stripe on the left side of their header content area.
+				 * Child pages have an additional (darker/lighter) stripe on the left side of their header content area.</br></br>
+				 * <b>Note</b>: This property is only taken into account if an instance of
+				 * <code>sap.uxap.ObjectPageHeader</code>is used for the <code>headerTitle</code> aggregation.
 				 * @since 1.34.0
 				 */
 				isChildPage: {type: "boolean", group: "Appearance", defaultValue: false},
 
 				/**
-				 * Determines whether Header Content will always be expanded on desktop.
+				 * Determines whether Header Content will always be expanded on desktop.</br></br>
+				 * <b>Note</b>: This property is only taken into account if an instance of
+				 * <code>sap.uxap.ObjectPageHeader</code>is used for the <code>headerTitle</code> aggregation.
 				 * @since 1.34.0
 				 */
 				alwaysShowContentHeader: {type: "boolean", group: "Behavior", defaultValue: false},
 
 				/**
-				 * Determines whether an Edit button will be shown in Header Content.
+				 * Determines whether an Edit button will be displayed in Header Content.</br></br>
+				 * <b>Note</b>: This property is only taken into account if an instance of
+				 * <code>sap.uxap.ObjectPageHeader</code>is used for the <code>headerTitle</code> aggregation.
 				 * @since 1.34.0
 				 */
 				showEditHeaderButton: {type: "boolean", group: "Behavior", defaultValue: false},
@@ -187,7 +196,7 @@ sap.ui.define([
 				/**
 				 * Object page header title - the upper, always static, part of the Object page header.
 				 */
-				headerTitle: {type: "sap.uxap.ObjectPageHeader", multiple: false},
+				headerTitle: {type: "sap.uxap.IHeaderTitle", multiple: false},
 
 				/**
 				 * Object page header content - the dynamic part of the Object page header.
@@ -211,9 +220,9 @@ sap.ui.define([
 				_iconTabBar: {type: "sap.m.IconTabBar", multiple: false, visibility: "hidden"},
 
 				/**
-				 * Internal aggregation to hold the reference to the ObjectPageHeaderContent.
+				 * Internal aggregation to hold the reference to the IHeaderContent implementation.
 				 */
-				_headerContent: {type: "sap.uxap.ObjectPageHeaderContent", multiple: false, visibility: "hidden"},
+				_headerContent: {type: "sap.uxap.IHeaderContent", multiple: false, visibility: "hidden"},
 
 				_customScrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
 			},
@@ -343,6 +352,8 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype.onBeforeRendering = function () {
 
+		var oHeaderTitle;
+
 		// The lazy loading helper needs media information, hence instantiated on onBeforeRendering, where contextual width is available
 		this._oLazyLoading = new LazyLoading(this);
 
@@ -358,6 +369,7 @@ sap.ui.define([
 
 		this._initializeScroller();
 
+		this._createHeaderContent();
 		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
 		this._oABHelper._getAnchorBar().setProperty("upperCase", this.getUpperCaseAnchorBar(), true);
 
@@ -377,8 +389,9 @@ sap.ui.define([
 
 		this._bStickyAnchorBar = false; //reset default state in case of re-rendering
 
+		oHeaderTitle = this.getHeaderTitle();
 		// Detach expand button press event
-		this._handleExpandButtonPressEventLifeCycle(false);
+		oHeaderTitle && oHeaderTitle._handleExpandButtonPressEventLifeCycle(false, this._handleExpandButtonPress, this);
 	};
 
 	/**
@@ -1958,7 +1971,7 @@ sap.ui.define([
 			this._oLazyLoading.lazyLoadDuringScroll(iScrollTop, oEvent.timeStamp, iPageHeight);
 		}
 
-		if (oHeader && this.getShowHeaderContent() && this.getShowTitleInHeaderContent() && oHeader.getShowTitleSelector()) {
+		if (oHeader && oHeader.supportsTitleInHeaderContent() &&  this.getShowHeaderContent() && this.getShowTitleInHeaderContent() && oHeader.getShowTitleSelector()) {
 			if (iScrollTop === 0) {
 				// if we have arrow from the title inside the ContentHeader and the ContentHeader isn't scrolled we have to put higher z-index to the ContentHeader
 				// otherwise part of the arrow is cut off
@@ -2033,11 +2046,11 @@ sap.ui.define([
 
 		if (!this._bStickyAnchorBar && bStick) {
 			this._restoreFocusAfter(this._convertHeaderToStickied);
-			oHeaderTitle && oHeaderTitle._adaptLayout();
+			oHeaderTitle && oHeaderTitle.snap();
 			this._adjustHeaderHeights();
 		} else if (this._bStickyAnchorBar && !bStick) {
 			this._restoreFocusAfter(this._convertHeaderToExpanded);
-			oHeaderTitle && oHeaderTitle._adaptLayout();
+			oHeaderTitle && oHeaderTitle.unSnap();
 			this._adjustHeaderHeights();
 		}
 	};
@@ -2133,7 +2146,14 @@ sap.ui.define([
 				onAfterRendering: this._adjustHeaderHeights.bind(this)
 			});
 		}
-		return this.setAggregation("headerTitle", oHeaderTitle, bSuppressInvalidate);
+		this.setAggregation("headerTitle", oHeaderTitle, bSuppressInvalidate);
+
+		// Once the title is resolved, set the correct header
+		if (oHeaderTitle) {
+			this._createHeaderContent();
+		}
+
+		return this;
 	};
 
 	/**
@@ -2148,6 +2168,21 @@ sap.ui.define([
 			return; // no need to invalidate when an inactive tab is changed
 		}
 		Control.prototype.invalidate.apply(this, arguments);
+	};
+
+	ObjectPageLayout.prototype._createHeaderContent = function () {
+		var oHeaderTitle = this.getHeaderTitle(),
+			oHeaderContent = this.getAggregation("_headerContent"),
+			oNewHeaderContent;
+
+		// If no title is set, but the header needs to be created, use the old class by default
+		var fnHeaderContentClass = oHeaderTitle ? oHeaderTitle.getCompatibleHeaderContentClass() : ObjectPageHeaderContent;
+
+		// If the header content is not set or is set, but is an instance of another class, create a new header content and use it
+		if (!(oHeaderContent instanceof fnHeaderContentClass)) {
+			var oNewHeaderContent = fnHeaderContentClass.createInstance(this.getAggregation("headerContent"), this.getShowHeaderContent(), this._getHeaderDesign());
+			this.setAggregation("_headerContent", oNewHeaderContent, true);
+		}
 	};
 
 	ObjectPageLayout.prototype._adjustHeaderBackgroundSize = function () {
@@ -2189,10 +2224,16 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._adjustHeaderHeights = function () {
+		var oTitle = this.getHeaderTitle(),
+			bPreviewTitleHeightViaDomClone = true; // default
+
+		if (oTitle && !oTitle.supportsAdaptLayoutForDomElement()) {
+			bPreviewTitleHeightViaDomClone = false;
+		}
+
 		//checking the $headerTitle we prevent from checking the headerHeights multiple times during the first rendering
 		//$headerTitle is set in the objectPageLayout.onAfterRendering, thus before the objectPageLayout is fully rendered once, we don't enter here multiple times (performance tweak)
 		if (this._$headerTitle.length > 0) {
-			var $headerTitleClone = this._$headerTitle.clone();
 
 			// read the headerContentHeight ---------------------------
 			// Note: we are using getBoundingClientRect on the Dom reference to get the correct height taking into account
@@ -2205,9 +2246,6 @@ sap.ui.define([
 			//figure out the anchorBarHeight  ------------------------
 			this.iAnchorBarHeight = this._bStickyAnchorBar ? this._$stickyAnchorBar.height() : this._$anchorBar.height();
 
-			//prepare: make sure it won't be visible ever and fix width to the original headerTitle which is 100%
-			$headerTitleClone.css({left: "-10000px", top: "-10000px", width: this._$headerTitle.width() + "px"});
-
 			//in sticky mode, we need to calculate the size of original header
 			if (this._bStickyAnchorBar) {
 
@@ -2215,25 +2253,15 @@ sap.ui.define([
 				this.iHeaderTitleHeightStickied = this._$headerTitle.height() - this.iAnchorBarHeight;
 
 				//adjust the headerTitle  -------------------------------
-				$headerTitleClone.removeClass("sapUxAPObjectPageHeaderStickied");
-				$headerTitleClone.appendTo(this._$headerTitle.parent());
-
-				this.iHeaderTitleHeight = $headerTitleClone.is(":visible") ? $headerTitleClone.height() - this.iAnchorBarHeight : 0;
+				this.iHeaderTitleHeight = this._obtainExpandedTitleHeight(bPreviewTitleHeightViaDomClone);
 			} else { //otherwise it's the sticky that we need to calculate
 
 				//read the headerTitle -----------------------------------
 				this.iHeaderTitleHeight = this._$headerTitle.is(":visible") ? this._$headerTitle.height() : 0;
 
 				//adjust headerTitleStickied ----------------------------
-				$headerTitleClone.addClass("sapUxAPObjectPageHeaderStickied");
-				$headerTitleClone.appendTo(this._$headerTitle.parent());
-				this.getHeaderTitle() && this.getHeaderTitle()._adaptLayoutForDomElement($headerTitleClone);
-
-				this.iHeaderTitleHeightStickied = $headerTitleClone.height();
+				this.iHeaderTitleHeightStickied = this._obtainSnappedTitleHeight(bPreviewTitleHeightViaDomClone);
 			}
-
-			//clean dom
-			$headerTitleClone.remove();
 
 			this._adjustHeaderBackgroundSize();
 
@@ -2241,6 +2269,59 @@ sap.ui.define([
 		} else {
 			jQuery.sap.log.debug("ObjectPageLayout :: adjustHeaderHeight", "skipped as the objectPageLayout is being rendered");
 		}
+	};
+
+	ObjectPageLayout.prototype._appendTitleCloneToDOM = function (bEnableStickyMode) {
+
+		var $headerTitleClone = this._$headerTitle.clone();
+		//prepare: make sure it won't be visible ever and fix width to the original headerTitle which is 100%
+		$headerTitleClone.css({left: "-10000px", top: "-10000px", width: this._$headerTitle.width() + "px"});
+		$headerTitleClone.toggleClass("sapUxAPObjectPageHeaderStickied", bEnableStickyMode);
+		$headerTitleClone.appendTo(this._$headerTitle.parent());
+
+		if (bEnableStickyMode) {
+			this.getHeaderTitle() && this.getHeaderTitle()._adaptLayoutForDomElement($headerTitleClone);
+		}
+
+		return $headerTitleClone;
+	};
+
+	ObjectPageLayout.prototype._obtainSnappedTitleHeight = function (bViaClone) {
+
+		var oTitle = this.getHeaderTitle(),
+			$Clone,
+			iHeight;
+
+		if (bViaClone) {
+			$Clone = this._appendTitleCloneToDOM(true /* enable snapped mode */);
+			iHeight = $Clone.height();
+			$Clone.remove(); //clean dom
+		} else if (oTitle && oTitle.snap) {
+			oTitle.snap();
+			iHeight = oTitle.$().outerHeight();
+			oTitle.unSnap();
+		}
+
+		return iHeight;
+	};
+
+	ObjectPageLayout.prototype._obtainExpandedTitleHeight = function (bViaClone) {
+
+		var oTitle = this.getHeaderTitle(),
+			$Clone,
+			iHeight;
+
+		if (bViaClone) {
+			$Clone = this._appendTitleCloneToDOM(false /* disable snapped mode */);
+			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
+			$Clone.remove(); //clean dom
+		} else if (oTitle && oTitle.unSnap) {
+			oTitle.unSnap();
+			iHeight = oTitle.$().outerHeight();
+			oTitle.snap();
+		}
+
+		return iHeight;
 	};
 
 	/**
@@ -2345,30 +2426,65 @@ sap.ui.define([
 	/* Maintain ObjectPageHeaderContent aggregation */
 
 	ObjectPageLayout.prototype.getHeaderContent = function () {
+		// If header content not resolved yet - use local aggregation until it is
+		if (!this._getHeaderContent()) {
+			return this.getAggregation("headerContent");
+		}
+
 		return this._getHeaderContent().getAggregation("content");
 	};
 
 	ObjectPageLayout.prototype.insertHeaderContent = function (oObject, iIndex, bSuppressInvalidate) {
+		// If header content not resolved yet - use local aggregation until it is
+		if (!this._getHeaderContent()) {
+			return this.insertAggregation("headerContent", oObject, iIndex, bSuppressInvalidate);
+		}
+
 		return this._getHeaderContent().insertAggregation("content", oObject, iIndex, bSuppressInvalidate);
 	};
 
 	ObjectPageLayout.prototype.addHeaderContent = function (oObject, bSuppressInvalidate) {
+		// If header content not resolved yet - use local aggregation until it is
+		if (!this._getHeaderContent()) {
+			return this.addAggregation("headerContent", oObject, bSuppressInvalidate);
+		}
+
 		return this._getHeaderContent().addAggregation("content", oObject, bSuppressInvalidate);
 	};
 
 	ObjectPageLayout.prototype.removeAllHeaderContent = function (bSuppressInvalidate) {
+		// If header content not resolved yet - use local aggregation until it is
+		if (!this._getHeaderContent()) {
+			return this.removeAllAggregation("headerContent", bSuppressInvalidate);
+		}
+
 		return this._getHeaderContent().removeAllAggregation("content", bSuppressInvalidate);
 	};
 
 	ObjectPageLayout.prototype.removeHeaderContent = function (oObject, bSuppressInvalidate) {
+		// If header content not resolved yet - use local aggregation until it is
+		if (!this._getHeaderContent()) {
+			return this.removeAggregation("headerContent", oObject, bSuppressInvalidate);
+		}
+
 		return this._getHeaderContent().removeAggregation("content", oObject, bSuppressInvalidate);
 	};
 
 	ObjectPageLayout.prototype.destroyHeaderContent = function (bSuppressInvalidate) {
+		// If header content not resolved yet - use local aggregation until it is
+		if (!this._getHeaderContent()) {
+			return this.destroyAggregation("headerContent", bSuppressInvalidate);
+		}
+
 		return this._getHeaderContent().destroyAggregation("content", bSuppressInvalidate);
 	};
 
 	ObjectPageLayout.prototype.indexOfHeaderContent = function (oObject) {
+		// If header content not resolved yet - use local aggregation until it is
+		if (!this._getHeaderContent()) {
+			return this.indexOfAggregation("headerContent", oObject);
+		}
+
 		return this._getHeaderContent().indexOfAggregation("content", oObject);
 	};
 
@@ -2378,20 +2494,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._getHeaderContent = function () {
-
-		if (!this.getAggregation("_headerContent")) {
-			this.setAggregation("_headerContent", new library.ObjectPageHeaderContent({
-				visible: this.getShowHeaderContent(),
-				contentDesign: this._getHeaderDesign(),
-				content: this.getAggregation("headerContent", [])
-			}), true);
-		}
-
 		return this.getAggregation("_headerContent");
 	};
 
 	ObjectPageLayout.prototype._checkAlwaysShowContentHeader = function () {
-		return !this._bMobileScenario
+		var oHeaderContent = this._getHeaderContent();
+		return oHeaderContent && oHeaderContent.supportsAlwaysExpanded()
+			&& !this._bMobileScenario
 			&& !this._bTabletScenario
 			&& this.getShowHeaderContent()
 			&& this.getAlwaysShowContentHeader();
