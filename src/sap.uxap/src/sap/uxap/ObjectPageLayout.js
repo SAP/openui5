@@ -298,6 +298,8 @@ sap.ui.define([
 		this._bFirstRendering = true;
 		this._bDomReady = false;                    //dom is fully ready to be inspected
 		this._bStickyAnchorBar = false;             //status of the header
+		this._bHeaderInTitleArea = false;
+		this._bPersistHeaderInTitleArea = false;
 		this._iStoredScrollPosition = 0;
 
 		// anchorbar management
@@ -352,7 +354,7 @@ sap.ui.define([
 		this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
 
 		// if we have Header Content on a desktop, check if it is always expanded
-		this._bHContentAlwaysExpanded = this._checkAlwaysShowContentHeader();
+		this._bPersistHeaderInTitleArea = this._checkAlwaysShowContentHeader();
 
 		this._initializeScroller();
 
@@ -765,8 +767,8 @@ sap.ui.define([
 	 * Toggles visual rules on manually expand or collapses the sticky header
 	 * @private
 	 */
-	ObjectPageLayout.prototype._toggleStickyHeader = function (bExpand) {
-		this._bIsHeaderExpanded = bExpand;
+	ObjectPageLayout.prototype._toggleHeaderTitle = function (bExpand) {
+		this._bHeaderInTitleArea = bExpand;
 		this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
 	};
 
@@ -775,17 +777,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._expandCollapseHeader = function (bExpand) {
-		if (this._bHContentAlwaysExpanded) {
+		if (this._bPersistHeaderInTitleArea) {
 			return;
 		}
 
 		if (bExpand && this._bStickyAnchorBar) {
 			this._$headerContent.css("height", this.iHeaderContentHeight).children().appendTo(this._$stickyHeaderContent); // when removing the header content, preserve the height of its placeholder, to avoid automatic repositioning of scrolled content as it gets shortened (as its topmost part is cut off)
-			this._toggleStickyHeader(bExpand);
-		} else if (!bExpand && this._bIsHeaderExpanded) {
+			this._toggleHeaderTitle(bExpand);
+		} else if (!bExpand && this._bHeaderInTitleArea) {
 			this._$headerContent.css("height", "auto").append(this._$stickyHeaderContent.children());
 			this._$stickyHeaderContent.children().remove();
-			this._toggleStickyHeader(bExpand);
+			this._toggleHeaderTitle(bExpand);
 		}
 	};
 
@@ -1238,7 +1240,7 @@ sap.ui.define([
 			this.fireNavigate({section: ObjectPageSection._getClosestSection(oSection)});
 		}
 
-		if (this._bIsHeaderExpanded) {
+		if (this._bHeaderInTitleArea) {
 			this._expandCollapseHeader(false);
 		}
 
@@ -1463,7 +1465,7 @@ sap.ui.define([
 				oInfo.positionTopMobile = oInfo.positionTop;
 			}
 
-			if (!this._bStickyAnchorBar && !this._bIsHeaderExpanded) { // in sticky mode the anchor bar is not part of the content
+			if (!this._bStickyAnchorBar && !this._bHeaderInTitleArea) { // in sticky mode the anchor bar is not part of the content
 				oInfo.positionTopMobile -= this.iAnchorBarHeight;
 				oInfo.positionTop -= this.iAnchorBarHeight;
 			}
@@ -1584,14 +1586,14 @@ sap.ui.define([
 
 		/* lastVisibleHeight = position.top of spacer - position.top of lastSection */
 
-		var bIsStickyMode = this._bStickyAnchorBar || this._bIsHeaderExpanded; // get current mode
+		var bIsStickyMode = this._bStickyAnchorBar || this._bHeaderInTitleArea; // get current mode
 		var iLastSectionPositionTop = this._getSectionPositionTop(oLastVisibleSubSection, bIsStickyMode); /* we need to get the position in the current mode */
 
 		return this._$spacer.position().top - iLastSectionPositionTop;
 	};
 
 	ObjectPageLayout.prototype._getStickyAreaHeight = function(bIsStickyMode) {
-		if (this._bHContentAlwaysExpanded) {
+		if (this._bPersistHeaderInTitleArea) {
 			return this.iHeaderTitleHeight;
 		}
 		if (bIsStickyMode) {
@@ -1850,7 +1852,7 @@ sap.ui.define([
 			this._bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange());
 			this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
 
-			if (this._bHContentAlwaysExpanded != this._checkAlwaysShowContentHeader()) {
+			if (this._bPersistHeaderInTitleArea != this._checkAlwaysShowContentHeader()) {
 				this.invalidate();
 			}
 
@@ -1891,20 +1893,20 @@ sap.ui.define([
 
 		//calculate the limit of visible sections to be lazy loaded
 		iPageHeight = this.iScreenHeight;
-		if (bShouldStick && !this._bHContentAlwaysExpanded) {
+		if (bShouldStick && !this._bPersistHeaderInTitleArea) {
 			iPageHeight -= (this.iAnchorBarHeight + this.iHeaderTitleHeightStickied);
 		} else {
-			if (bShouldStick && this._bHContentAlwaysExpanded) {
+			if (bShouldStick && this._bPersistHeaderInTitleArea) {
 				iPageHeight = iPageHeight - (this._$stickyAnchorBar.height() + this.iHeaderTitleHeight + this.iStickyHeaderContentHeight); // - this.iStickyHeaderContentHeight
 			}
 		}
 
-		if (this._bIsHeaderExpanded) {
+		if (this._bHeaderInTitleArea) {
 			this._expandCollapseHeader(false);
 		}
 
 		//don't apply parallax effects if there are not enough space for it
-		if (!this._bHContentAlwaysExpanded && ((oHeader && this.getShowHeaderContent()) || this.getShowAnchorBar())) {
+		if (!this._bPersistHeaderInTitleArea && ((oHeader && this.getShowHeaderContent()) || this.getShowAnchorBar())) {
 			this._toggleHeader(bShouldStick);
 
 			//if we happen to have been able to collapse it at some point (section height had increased)
@@ -1913,7 +1915,7 @@ sap.ui.define([
 			this._toggleHeader(false);
 		}
 
-		if (!this._bHContentAlwaysExpanded) {
+		if (!this._bPersistHeaderInTitleArea) {
 			this._adjustHeaderTitleBackgroundPosition(iScrollTop);
 		}
 
@@ -2025,7 +2027,7 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle();
 
 		//switch to stickied
-		if (!this._bHContentAlwaysExpanded && !this._bIsHeaderExpanded) {
+		if (!this._bPersistHeaderInTitleArea && !this._bHeaderInTitleArea) {
 			this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", bStick);
 		}
 
@@ -2065,7 +2067,7 @@ sap.ui.define([
 	 * @returns this
 	 */
 	ObjectPageLayout.prototype._convertHeaderToStickied = function () {
-		if (!this._bHContentAlwaysExpanded) {
+		if (!this._bPersistHeaderInTitleArea) {
 			this._$anchorBar.children().appendTo(this._$stickyAnchorBar);
 
 			this._toggleHeaderStyleRules(true);
@@ -2086,7 +2088,7 @@ sap.ui.define([
 	 * @returns this
 	 */
 	ObjectPageLayout.prototype._convertHeaderToExpanded = function () {
-		if (!this._bHContentAlwaysExpanded) {
+		if (!this._bPersistHeaderInTitleArea) {
 			this._$anchorBar.css("height", "auto").append(this._$stickyAnchorBar.children()); //TODO: css auto redundant?
 
 			this._toggleHeaderStyleRules(false);
@@ -2153,7 +2155,7 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle();
 		if (oHeaderTitle && oHeaderTitle.getHeaderDesign() == "Dark") {
 
-			if (!this._bHContentAlwaysExpanded) {
+			if (!this._bPersistHeaderInTitleArea) {
 				this.iTotalHeaderSize = this.iHeaderTitleHeight + this.iHeaderContentHeight;
 				this._$headerContent.css("background-size", "100% " + this.iTotalHeaderSize + "px");
 			} else {
@@ -2176,7 +2178,7 @@ sap.ui.define([
 			if (this._bStickyAnchorBar) {
 				oHeaderTitle.$().css("background-position", "0px " + ((this.iTotalHeaderSize - this.iHeaderTitleHeightStickied) * -1) + "px");
 			} else {
-				if (this._bHContentAlwaysExpanded) {
+				if (this._bPersistHeaderInTitleArea) {
 					// If the header is always expanded, there is no neeed to scroll the background so we setting it to 0 position
 					oHeaderTitle.$().css("background-position", "0px 0px");
 				} else {
@@ -2309,7 +2311,7 @@ sap.ui.define([
 		var bOldShow = this.getShowHeaderContent();
 
 		if (bOldShow !== bShow) {
-			if (bOldShow && this._bIsHeaderExpanded) {
+			if (bOldShow && this._bHeaderInTitleArea) {
 				this._expandCollapseHeader(false);
 			}
 			this.setProperty("showHeaderContent", bShow);

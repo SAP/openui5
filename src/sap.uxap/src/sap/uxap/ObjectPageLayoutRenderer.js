@@ -53,7 +53,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			}
 
 			// Sticky Header Content
-			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && oControl._bHContentAlwaysExpanded, "-stickyHeaderContent");
+			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && oControl._bPersistHeaderInTitleArea, "-stickyHeaderContent");
 
 			// Sticky anchorBar placeholder
 			oRm.write("<div ");
@@ -64,7 +64,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write(">");
 
 			// if the content is expanded render bars outside the scrolling div
-			this._renderAnchorBar(oRm, oControl, oAnchorBar, oControl._bHContentAlwaysExpanded);
+			this._renderAnchorBar(oRm, oControl, oAnchorBar, oControl._bPersistHeaderInTitleArea);
 
 			oRm.write("</div>");
 			oRm.write("</header>");
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write(">");
 
 			// Header Content
-			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && !oControl._bHContentAlwaysExpanded, "-headerContent",  true);
+			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && !oControl._bPersistHeaderInTitleArea, "-headerContent",  true);
 
 			// Anchor Bar
 			oRm.write("<section ");
@@ -98,7 +98,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.writeClasses();
 			oRm.write(">");
 
-			this._renderAnchorBar(oRm, oControl, oAnchorBar, !oControl._bHContentAlwaysExpanded);
+			this._renderAnchorBar(oRm, oControl, oAnchorBar, !oControl._bPersistHeaderInTitleArea);
 
 			oRm.write("</section>");
 
@@ -243,7 +243,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer._rerenderHeaderContentArea = function (oRm, oControl) {
-			var sHeaderContentDOMId = oControl._bHContentAlwaysExpanded ? "stickyHeaderContent" : "headerContent",
+			var sHeaderContentDOMId = oControl._bPersistHeaderInTitleArea ? "stickyHeaderContent" : "headerContent",
 			$headerContent;
 
 			this.renderHeaderContent(oRm, oControl);
