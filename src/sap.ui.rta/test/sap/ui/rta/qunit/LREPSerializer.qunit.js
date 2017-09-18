@@ -154,6 +154,34 @@ sap.ui.require([
 
 	});
 
+	QUnit.test("when the LREPSerializer.saveCommands gets called with 2 remove commands created via CommandFactory, but one is relevant for runtime only", function(assert) {
+		// then one change is expected to be written in LREP
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");
+
+		// Create commands
+		this.oRemoveCommand1 = CommandFactory.getCommandFor(this.oInput1, "Remove", {
+			removedElement : this.oInput1
+		}, this.oInputDesignTimeMetadata);
+		this.oRemoveCommand2 = CommandFactory.getCommandFor(this.oInput2, "Remove", {
+			removedElement : this.oInput2,
+			runtimeOnly : true
+		}, this.oInputDesignTimeMetadata);
+
+		return this.oCommandStack.pushAndExecute(this.oRemoveCommand1)
+		.then(function(){
+			return this.oCommandStack.pushAndExecute(this.oRemoveCommand2);
+		}.bind(this))
+		.then(function(){
+			return this.oSerializer.saveCommands();
+		}.bind(this))
+		.then(function() {
+			assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
+			assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
+			fnCleanUp();
+		}.bind(this));
+
+	});
+
 	QUnit.test("when the LREPSerializer.saveCommands gets called with a command stack with 1 'remove' command for a destroyed control", function(assert) {
 		var done = assert.async();
 
