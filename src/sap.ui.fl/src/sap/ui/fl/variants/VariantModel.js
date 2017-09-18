@@ -131,11 +131,17 @@ sap.ui.define([
 			changes: JSON.parse(JSON.stringify(oSourceVariant.changes))
 		};
 
+		var iCurrentLayerComp = Utils.isLayerAboveCurrentLayer(oSourceVariant.content.layer);
+
 		Object.keys(oSourceVariant.content).forEach(function(sKey) {
 			if (sKey === "fileName") {
 				oDuplicateVariant.content[sKey] = sNewVariantFileName;
-			}else if (sKey === "variantReference") {
-				oDuplicateVariant.content[sKey] = sSourceVariantFileName;
+			} else if (sKey === "variantReference") {
+				if (iCurrentLayerComp === 0) {
+					oDuplicateVariant.content[sKey] = oSourceVariant.content["variantReference"];
+				} else if (iCurrentLayerComp === -1)  {
+					oDuplicateVariant.content[sKey] = sSourceVariantFileName;
+				}
 			} else if (sKey === "title") {
 				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey] + " Copy";
 			} else {
@@ -143,11 +149,16 @@ sap.ui.define([
 			}
 		});
 
-		//Assuming same layer
-		oDuplicateVariant.changes.forEach(function	(oChange) {
-			oChange.fileName += "_Copy";
-			oChange.variantReference = oDuplicateVariant.content.fileName;
-		});
+		var aVariantChanges = oDuplicateVariant.changes.slice();
+
+		oDuplicateVariant.changes = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
+			if (!Utils.isLayerAboveCurrentLayer(oChange.layer) /*0*/) {
+				oChange.fileName += "_Copy";
+				oChange.variantReference = oDuplicateVariant.content.fileName;
+			}
+			aSameLayerChanges.push(oChange);
+			return aSameLayerChanges;
+		}, []);
 
 		return oDuplicateVariant;
 	};
@@ -167,8 +178,12 @@ sap.ui.define([
 
 		//Flex Controller
 		var oVariant = this.oFlexController.createVariant(oDuplicateVariantData, this.oComponent);
-		var aChangesToBeAdded = [oVariant].concat(oVariant.getChanges());
-		aChangesToBeAdded.forEach( function (oChange) {
+		var aChangesToBeSaved = [oVariant].concat(oVariant.getChanges()
+			.filter( function (oChange) {
+				return oChange.variantReference === oVariant.getId(); /*only same layer changes*/
+			})
+		);
+		aChangesToBeSaved.forEach( function (oChange) {
 			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
 		}.bind(this));
 

@@ -98,6 +98,55 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.test("when calling '_duplicateVariant' on the same layer", function(assert) {
+		var oSourceVariant = {
+			"content": {
+				"fileName":"variant0",
+				"title":"variant A",
+				"fileType":"ctrl_variant",
+				"variantManagementReference":"variantMgmtId1",
+				"variantReference":"variant2",
+				"content":{},
+				"selector":{},
+				"layer":"CUSTOMER",
+				"namespace":"Dummy.Component"
+			},
+			"changes": []
+		};
+		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
+		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
+		oSourceVariantCopy.content.fileName = "newVariant";
+		sandbox.stub(Utils, "isLayerAboveCurrentLayer").returns(0);
+		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
+		var oDuplicateVariant = this.oModel._duplicateVariant("newVariant", "variant0");
+		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy);
+	});
+
+	QUnit.test("when calling '_duplicateVariant' from different layer", function(assert) {
+		var oSourceVariant = {
+			"content": {
+				"fileName":"variant0",
+				"title":"variant A",
+				"fileType":"ctrl_variant",
+				"variantManagementReference":"variantMgmtId1",
+				"variantReference":"variant2",
+				"content":{},
+				"selector":{},
+				"layer":"CUSTOMER",
+				"namespace":"Dummy.Component"
+			},
+			"changes": []
+		};
+		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
+		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
+		oSourceVariantCopy.content.fileName = "newVariant";
+		oSourceVariantCopy.content.variantReference = "variant0";
+		sandbox.stub(Utils, "isLayerAboveCurrentLayer").returns(-1);
+		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
+		var oDuplicateVariant = this.oModel._duplicateVariant("newVariant", "variant0");
+		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy);
+	});
+
 	QUnit.test("when calling '_copyVariant'", function(assert) {
 		var fnAddVariantToControllerStub = sandbox.stub(this.oModel.oVariantController, "addVariantToVariantManagement").returns(3);
 		var oVariantData = {

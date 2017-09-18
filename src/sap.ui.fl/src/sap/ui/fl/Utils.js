@@ -336,6 +336,26 @@ sap.ui.define([
 		},
 
 		/**
+		 * Compares current layer with a provided layer
+		 *
+		 * @param {String} sLayer - Layer name to be evaluated
+		 * @returns {boolean} <code>true</code> if input layer is higher than current layer
+		 * @public
+		 * @function
+		 * @name sap.ui.fl.Utils.isLayerOverCurrentLayer
+		 */
+		isLayerAboveCurrentLayer: function(sLayer) {
+			var sCurrentLayer = Utils.getCurrentLayer(false);
+			if (this.getLayerIndex(sCurrentLayer) > this.getLayerIndex(sLayer)) {
+				return -1;
+			} else if (this.getLayerIndex(sCurrentLayer) === this.getLayerIndex(sLayer)) {
+				return 0;
+			} else {
+				return 1;
+			}
+		},
+
+		/**
 		 * Determines if filtering of changes based on layer is required.
 		 *
 		 * @returns {boolean} <code>true</code> if the top layer is also the max layer, otherwise <code>false</code>

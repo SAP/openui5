@@ -168,7 +168,7 @@ sap.ui.require([
 			"selector": {
 				"id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus"
 			},
-			"layer": "CUSTOMER",
+			"layer": "VENDOR",
 			"texts": {
 				"TextDemo": {
 					"value": "Text for TextDemo",

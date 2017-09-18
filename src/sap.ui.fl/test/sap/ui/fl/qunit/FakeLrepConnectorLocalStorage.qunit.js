@@ -9,8 +9,9 @@ sap.ui.require([
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/FakeLrepLocalStorage",
 	"sap/ui/fl/Cache",
-	"sap/ui/fl/ChangePersistenceFactory"
-], function(LrepConnector,FakeLrepConnector, FakeLrepConnectorLocalStorage, FakeLrepLocalStorage, Cache, ChangePersistenceFactory) {
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Utils"
+], function(LrepConnector,FakeLrepConnector, FakeLrepConnectorLocalStorage, FakeLrepLocalStorage, Cache, ChangePersistenceFactory, Utils) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
 	QUnit.start();
@@ -349,4 +350,62 @@ sap.ui.require([
 		assert.equal(mResult.changes.changes.length, 2, "then two global changes exist");
 	});
 
+	QUnit.test("when _assignVariantReferenceChanges with _getReferencedChanges is called with a valid variantReference", function(assert) {
+		sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+		var mResult = {
+			changes: {
+				changes: [
+					{
+						fileName: "Change1",
+						variantReference: ""
+					}
+				],
+				variantSection: {
+					"varMgmt1": {
+						variants: [
+							{
+								content: {
+									fileName: "ExistingVariant1",
+									variantReference: "ExistingVariant2",
+									variantManagementReference: "varMgmt1"
+								},
+								changes: [
+									{
+										fileName: "Change2",
+										variantReference: "ExistingVariant1"
+									}
+								]
+							},
+							{
+								content: {
+									fileName: "ExistingVariant2"
+								},
+								changes: [
+									{
+										fileName: "Change3",
+										variantReference: "ExistingVariant2",
+										layer: "VENDOR"
+									},
+									{
+										fileName: "Change4",
+										variantReference: "ExistingVariant2",
+										layer: "CUSTOMER"
+									}
+								]
+							}
+						]
+					}
+				}
+			}
+		};
+		var fnGetReferencedChangesSpy = sandbox.spy(this.oFakeLrepConnectorLocalStorage, "_getReferencedChanges")  ;
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 1, "then initially one change available in ExistingVariant1");
+		var mResult = this.oFakeLrepConnectorLocalStorage._assignVariantReferenceChanges(mResult);
+		assert.strictEqual(fnGetReferencedChangesSpy.returnValues[0][0], mResult.changes.variantSection["varMgmt1"].variants[1].changes[0], "then _getReferencedChanges returned the VENDOR layer referenced change");
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 2, "then two changes available in ExistingVariant1");
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes[0].fileName, "Change3", "then referenced change from ExistingVariant1 in the VENDOR layer is inserted before actual variant changes");
+		assert.notOk(mResult.changes.variantSection["varMgmt1"].variants[0].changes.some( function (oChange) {
+			return oChange.fileName === "Change4";
+		}), "then referenced change from ExistingVariant1 in the CUSTOMER layer is not references");
+	});
 });

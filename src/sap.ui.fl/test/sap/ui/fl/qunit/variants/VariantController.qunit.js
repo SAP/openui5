@@ -102,6 +102,18 @@ sap.ui.require([
 		assert.deepEqual(aExpectedChanges, aChanges, "then the changes of the given variant are returned");
 	});
 
+	QUnit.test("when calling 'getVariantChanges' of the VariantController with bLoadReferencedChanges flag", function(assert) {
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var fnGetReferencedChangesSpy = sandbox.spy(oVariantController, "_getReferencedChanges");
+		var aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[2].changes;
+		var oRefChange = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes[0];
+		aExpectedChanges.unshift(oRefChange);
+		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2", true);
+		assert.deepEqual(aExpectedChanges, aChanges, "then two changes of variant are returned with a new referenced change");
+		assert.deepEqual(fnGetReferencedChangesSpy.returnValues[0], [oRefChange], "then the referenced change is returned from etReferencedVariant");
+	});
+
 	QUnit.test("when calling 'loadVariantChanges' of the VariantController without changes in variant", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
@@ -198,11 +210,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'getChangesForVariantSwitch' of the VariantController", function(assert) {
-		var oChangeContent0 = {"fileName":"change0"};
-		var oChangeContent1 = {"fileName":"change1"};
-		var oChangeContent2 = {"fileName":"change2"};
-		var oChangeContent3 = {"fileName":"change3"};
-		var oChangeContent4 = {"fileName":"change4"};
+		var oChangeContent0 = {"fileName":"change0", "variantReference":"variant0", "layer": "VENDOR"};
+		var oChangeContent1 = {"fileName":"change1", "variantReference":"variant0"};
+		var oChangeContent2 = {"fileName":"change2", "variantReference":"variant0"};
+		var oChangeContent3 = {"fileName":"change3", "variantReference":"variant1"};
+		var oChangeContent4 = {"fileName":"change4", "variantReference":"variant1"};
 
 		var oFakeVariantResponse = {
 			"changes" : {
@@ -218,7 +230,8 @@ sap.ui.require([
 						{
 							"content" : {
 								"fileName": "variant1",
-								"title": "variant 1"
+								"title": "variant 1",
+								"variantReference":"variant0"
 							},
 							"changes" : [oChangeContent0, oChangeContent3, oChangeContent4]
 						}]
@@ -557,8 +570,8 @@ sap.ui.require([
 
 	QUnit.module("Given a VariantController with variants", {
 		beforeEach : function(assert) {
-			this.oChangeContent0 = {"fileName":"change0"};
-			this.oChangeContent1 = {"fileName":"change1"};
+			this.oChangeContent0 = {"fileName":"change0", "variantReference": "variant0"};
+			this.oChangeContent1 = {"fileName":"change1", "variantReference": "variant0"};
 			this.oChangeContent2 = {"fileName":"change2"};
 
 			var oFakeVariantResponse = {
@@ -575,7 +588,8 @@ sap.ui.require([
 							{
 								"content" : {
 									"fileName": "variant1",
-									"title": "variant 1"
+									"title": "variant 1",
+									"variantReference": "variant0"
 								},
 								"changes" : []
 							}]
@@ -613,6 +627,33 @@ sap.ui.require([
 		var aChanges = this.oVariantController.getVariantChanges("variantManagementId", "variant0");
 		assert.equal(aChanges.length, 1, "and the number of changes in the variant is correct");
 		assert.equal(aChanges[0], this.oChangeContent0, "and the remaining change is the correct one");
+	});
+
+	QUnit.test("when calling '_addDependentVariantsToMap' of the VariantController", function(assert) {
+		var oNewVariant = {
+			"content" : {
+			"fileName": "variantNew",
+			"title": "variant New",
+			"variantReference": "variant0"
+			},
+			"changes" : []
+		};
+		this.oVariantController._mVariantManagement["variantManagementId"].variants.push(oNewVariant);
+		this.oVariantController._addDependentVariantsToMap("variantManagementId", "newVariant", "variant0");
+		var aVariantsReferenced = this.oVariantController._mVariantManagement["variantManagementId"].mDependentVariantsOnMe["variant0"];
+		var iIndex = aVariantsReferenced.indexOf("newVariant");
+		assert.ok(iIndex > -1, "then newVariant added to map");
+	});
+
+	QUnit.test("when calling '_removeDependentVariantsFromMap' of the VariantController", function(assert) {
+		var aVariantsReferenced = this.oVariantController._mVariantManagement["variantManagementId"].mDependentVariantsOnMe["variant0"];
+		var iIndex = aVariantsReferenced.indexOf("variant1");
+		assert.notEqual(iIndex, -1,  "and the remaining change is the correct one");
+
+		this.oVariantController._removeDependentVariantsFromMap("variantManagementId", "variant1");
+		aVariantsReferenced = this.oVariantController._mVariantManagement["variantManagementId"].mDependentVariantsOnMe["variant0"];
+		iIndex = aVariantsReferenced.indexOf("variant2");
+		assert.equal(iIndex, -1,  "and the remaining change is the correct one");
 	});
 
 });
