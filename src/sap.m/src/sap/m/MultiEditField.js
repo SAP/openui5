@@ -63,6 +63,16 @@ sap.ui.define([
 				nullable: {
 					type: "boolean",
 					group: "Behavior",
+					defaultValue: true,
+					invalidate: true
+				},
+
+				/**
+				 * Defines whether the 'Label' is required for the selection field.
+				 */
+				required: {
+					type: "boolean",
+					group: "Behavior",
 					defaultValue: false,
 					invalidate: true
 				}

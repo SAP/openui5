@@ -22,6 +22,39 @@
 	<script>
 		jQuery.sap.require("sap.m.MultiEditField");
 		QUnit.config.autostart = false;
+
+		QUnit.module("Default values", {
+			beforeEach: function() {
+				this.oMultiEditField = new sap.m.MultiEditField();
+				this.oMultiEditField.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oMultiEditField.destroy();
+				this.oMultiEditField = null;
+			}
+		});
+
+		QUnit.test("Property 'type'", function(assert) {
+			assert.strictEqual(this.oMultiEditField.getProperty("type"), "Select", "Default value is 'Select'");
+		});
+
+		QUnit.test("Property 'selectedItem'", function(assert) {
+			assert.strictEqual(this.oMultiEditField.getProperty("selectedItem"), null, "Default value is null");
+		});
+
+		QUnit.test("Property 'showValueHelp'", function(assert) {
+			assert.equal(this.oMultiEditField.getProperty("showValueHelp"), true, "Default value is 'true'");
+		});
+
+		QUnit.test("Property 'nullable'", function(assert) {
+			assert.equal(this.oMultiEditField.getProperty("nullable"), true, "Default value is 'true'");
+		});
+
+		QUnit.test("Property 'required'", function(assert) {
+			assert.equal(this.oMultiEditField.getProperty("required"), false, "Default value is 'false'");
+		});
+
 		QUnit.module("Basic methods", {
 			beforeEach: function() {
 				this.oMultiEditField = new sap.m.MultiEditField({
@@ -68,7 +101,7 @@
 		});
 
 		QUnit.test("Check if blank item is initially displayed.", function(assert) {
-			assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._getBlank()), -1, "Blank item will not be displayed initially.");
+			assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._getBlank()), 1, "Blank item is displayed initially.");
 		});
 
 
