@@ -206,7 +206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				sClass = "sapMValueStateMessage sapMValueStateMessage" + sState,
 				oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-			if (sState === ValueState.Success) {
+			if (sState === ValueState.Success || sState === ValueState.None) {
 				sClass = "sapUiInvisibleText";
 				sText = "";
 			}
@@ -222,7 +222,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			oAccDomRef.id = sID + "hidden";
 			oAccDomRef.className = "sapUiHidden";
 			oAccDomRef.setAttribute("aria-hidden", "true");
-			oAccDomRef.appendChild(document.createTextNode(oRB.getText("INPUTBASE_VALUE_STATE_" + sState.toUpperCase())));
+
+			if (sState !== ValueState.None) {
+				oAccDomRef.appendChild(document.createTextNode(oRB.getText("INPUTBASE_VALUE_STATE_" + sState.toUpperCase())));
+			}
 
 			var oTextDomRef = document.createElement("span");
 			oTextDomRef.id = sID + "-text";
