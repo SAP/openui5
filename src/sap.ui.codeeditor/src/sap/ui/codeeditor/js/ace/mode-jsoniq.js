@@ -1,6 +1,28 @@
 ace.define("ace/mode/xquery/jsoniq_lexer",["require","exports","module"], function(require, exports, module) {
-module.exports = (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({
-1:[function(_dereq_,module,exports){
+module.exports = (function outer (modules, cache, entry) {
+    var previousRequire = typeof require == "function" && require;
+    function newRequire(name, jumped){
+        if(!cache[name]) {
+            if(!modules[name]) {
+                var currentRequire = typeof require == "function" && require;
+                if (!jumped && currentRequire) return currentRequire(name, true);
+                if (previousRequire) return previousRequire(name, true);
+                var err = new Error('Cannot find module \'' + name + '\'');
+                err.code = 'MODULE_NOT_FOUND';
+                throw err;
+            }
+            var m = cache[name] = {exports:{}};
+            modules[name][0].call(m.exports, function(x){
+                var id = modules[name][1][x];
+                return newRequire(id ? id : x);
+            },m,m.exports,outer,modules,cache,entry);
+        }
+        return cache[name].exports;
+    }
+    for(var i=0;i<entry.length;i++) newRequire(entry[i]);
+    return newRequire(entry[0]);
+})
+({"/node_modules/xqlint/lib/lexers/JSONiqTokenizer.js":[function(_dereq_,module,exports){
                                                             var JSONiqTokenizer = exports.JSONiqTokenizer = function JSONiqTokenizer(string, parsingEventHandler)
                                                             {
                                                               init(string, parsingEventHandler);
@@ -1823,9 +1845,7 @@ JSONiqTokenizer.TOKEN =
   "'}}'"
 ];
 
-},
-{}],
-2:[function(_dereq_,module,exports){
+},{}],"/node_modules/xqlint/lib/lexers/jsoniq_lexer.js":[function(_dereq_,module,exports){
 'use strict';
 
 var JSONiqTokenizer = _dereq_('./JSONiqTokenizer').JSONiqTokenizer;
@@ -1960,9 +1980,7 @@ var Rules = {
 };
     
 exports.JSONiqLexer = function(){ return new Lexer(JSONiqTokenizer, Rules); };
-},
-{"./JSONiqTokenizer":1,"./lexer":3}],
-3:[function(_dereq_,module,exports){
+},{"./JSONiqTokenizer":"/node_modules/xqlint/lib/lexers/JSONiqTokenizer.js","./lexer":"/node_modules/xqlint/lib/lexers/lexer.js"}],"/node_modules/xqlint/lib/lexers/lexer.js":[function(_dereq_,module,exports){
 'use strict';
 
 var TokenHandler = function(code) {
@@ -2063,9 +2081,7 @@ exports.Lexer = function(Tokenizer, Rules) {
         };
     };
 };
-},
-{}]},{},[2])
-(2)
+},{}]},{},["/node_modules/xqlint/lib/lexers/jsoniq_lexer.js"]);
 
 });
 
