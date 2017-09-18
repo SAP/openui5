@@ -20,6 +20,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		// shortcut for sap.ui.core.TitleLevel
 		var TitleLevel = coreLibrary.TitleLevel;
 
+		var DIV = "div";
+		var HEADER = "header";
+		var FOOTER = "footer";
+
 
 		/**
 		 * Constructor for a new Page.
@@ -561,6 +565,51 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			}
 
 			return {};
+		};
+
+		/**
+		 * Returns HTML tag of the page header.
+		 *
+		 * @param {sap.m.PageAccessibleLandmarkInfo} oLandmarkInfo Page LandmarkInfo
+		 * @returns {string}
+		 * @private
+		 */
+		Page.prototype._getHeaderTag = function (oLandmarkInfo) {
+			if (oLandmarkInfo && oLandmarkInfo.getHeaderRole() !== AccessibleLandmarkRole.None) {
+				return DIV;
+			}
+
+			return HEADER;
+		};
+
+		/**
+		 * Returns HTML tag of the page sub-header.
+		 *
+		 * @param {sap.m.PageAccessibleLandmarkInfo} oLandmarkInfo Page LandmarkInfo
+		 * @returns {string}
+		 * @private
+		 */
+		Page.prototype._getSubHeaderTag = function (oLandmarkInfo) {
+			if (oLandmarkInfo && oLandmarkInfo.getSubHeaderRole() !== AccessibleLandmarkRole.None) {
+				return DIV;
+			}
+
+			return HEADER;
+		};
+
+		/**
+		 * Returns HTML tag of the page footer.
+		 *
+		 * @param {sap.m.PageAccessibleLandmarkInfo} oLandmarkInfo Page LandmarkInfo
+		 * @returns {string}
+		 * @private
+		 */
+		Page.prototype._getFooterTag = function (oLandmarkInfo) {
+			if (oLandmarkInfo && oLandmarkInfo.getFooterRole() !== AccessibleLandmarkRole.None) {
+				return DIV;
+			}
+
+			return FOOTER;
 		};
 
 		//*** API Methods ***
