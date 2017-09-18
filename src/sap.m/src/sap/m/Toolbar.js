@@ -82,8 +82,11 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Defines the height of the control.
-			 * Note: By default, the Height property depends on the used theme and the Design property.
+			 * Defines the height of the control. By default, the <code>height</code>
+			 * property depends on the used theme and the <code>design</code> property.
+			 *
+			 * <b>Note:</b> It is not recommended to use this property if the
+			 * <code>sapMTBHeader-CTX</code> class is used
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''},
 
