@@ -1546,7 +1546,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		var sStates = "",
 			mMode = ListMode,
 			sMode = this.getMode(),
-			oBinding = this.getBinding("rows"),
 			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		if (LabelEnablement.isRequired(this)) {
@@ -1561,7 +1560,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			sStates += oBundle.getText("LIST_SELECTABLE") + " ";
 		}
 
-		if (oBinding && oBinding.isGrouped()) {
+		if (this.isGrouped()) {
 			sStates += oBundle.getText("LIST_GROUPED") + " ";
 		}
 
@@ -2032,6 +2031,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		if (sAggregationName == "items") {
 			return this.getItemsContainerDomRef();
 		}
+	};
+
+	// return true if grouping is enabled on the binding, else false
+	ListBase.prototype.isGrouped = function() {
+		var oBinding = this.getBinding("items");
+		return oBinding && oBinding.isGrouped();
 	};
 
 	return ListBase;

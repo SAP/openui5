@@ -17,3 +17,21 @@
 .sapMListBGSolid .sapMListTblFooter {
 	background-color: @sapUiListBackground;
 }
+
+/* adding alternating rows background color */
+/* alternating rows color for Table without popin */
+.sapMListTblAlternateRowColors > :nth-child(even),
+.sapMListTblAlternateRowColorsGrouped > .sapMListTblRowAlternate,
+.sapMListTblAlternateRowColorsGrouped > .sapMListTblRowAlternate + .sapMListTblSubRow {
+	background-color: darken(@sapUiListBackground, 2);
+}
+
+/* alternating rows color for Table with popins (main row "sapMListTblRow") */
+.sapMListTblAlternateRowColorsPopin > :nth-child(4n-1) {
+	background-color: darken(@sapUiListBackground, 2);
+}
+
+/* alternating rows color for popin rows (popin row "sapMListTblSubRow") */
+.sapMListTblAlternateRowColorsPopin > :nth-child(4n) {
+	background-color: darken(@sapUiListBackground, 2);
+}
