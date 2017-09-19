@@ -77,8 +77,9 @@ sap.ui.define([],
 		oRm.write(">");
 
 		if (oHeader) {
+			var sHeaderTag = oPage._getHeaderTag(oLandmarkInfo);
 			// Header
-			oRm.write("<header");
+			oRm.write("<" + sHeaderTag);
 			oRm.addClass("sapMPageHeader");
 			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Header"));
 			oRm.writeClasses();
@@ -88,12 +89,13 @@ sap.ui.define([],
 				context: "header",
 				styleClass: bLightHeader ? "" : "sapContrastPlus"
 			});
-			oRm.write("</header>");
+			oRm.write("</" + sHeaderTag + ">");
 		}
 
 		if (oSubHeader) {
+			var sSubHeaderTag = oPage._getSubHeaderTag(oLandmarkInfo);
 			// SubHeader
-			oRm.write("<header");
+			oRm.write("<" + sSubHeaderTag);
 			oRm.addClass("sapMPageSubHeader");
 			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "SubHeader"));
 			oRm.writeClasses();
@@ -102,7 +104,7 @@ sap.ui.define([],
 				context: "subHeader",
 				styleClass: bLightHeader ? "" : "sapContrastPlus"
 			});
-			oRm.write("</header>");
+			oRm.write("</" + sSubHeaderTag + ">");
 		}
 
 		// render child controls
@@ -134,7 +136,9 @@ sap.ui.define([],
 		// otherwise animation on show/hide won't work always
 
 		if (oFooter) {
-			oRm.write("<footer");
+			var sFooterTag = oPage._getFooterTag(oLandmarkInfo);
+
+			oRm.write("<" + sFooterTag);
 			oRm.addClass("sapMPageFooter");
 			if (!oPage.getShowFooter()) {
 				oRm.addClass("sapUiHidden");
@@ -145,7 +149,7 @@ sap.ui.define([],
 			this.renderBarControl(oRm, oPage, oFooter, {
 				context : "footer"
 			});
-			oRm.write("</footer>");
+			oRm.write("</" + sFooterTag + ">");
 		}
 
 		oRm.write("</div>");
