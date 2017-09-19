@@ -768,7 +768,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._toggleHeaderTitle = function (bExpand) {
-		this._bHeaderInTitleArea = bExpand;
 		this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
 	};
 
@@ -784,10 +783,12 @@ sap.ui.define([
 		if (bExpand && this._bStickyAnchorBar) {
 			this._$headerContent.css("height", this.iHeaderContentHeight).children().appendTo(this._$stickyHeaderContent); // when removing the header content, preserve the height of its placeholder, to avoid automatic repositioning of scrolled content as it gets shortened (as its topmost part is cut off)
 			this._toggleHeaderTitle(bExpand);
+			this._bHeaderInTitleArea = bExpand;
 		} else if (!bExpand && this._bHeaderInTitleArea) {
 			this._$headerContent.css("height", "auto").append(this._$stickyHeaderContent.children());
 			this._$stickyHeaderContent.children().remove();
 			this._toggleHeaderTitle(bExpand);
+			this._bHeaderInTitleArea = bExpand;
 		}
 	};
 
