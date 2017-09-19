@@ -58,7 +58,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Combine.prototype._getCombineAction = function(oOverlay) {
-		return oOverlay.getDesignTimeMetadata().getAction("combine", oOverlay.getElementInstance());
+		return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getAction("combine", oOverlay.getElementInstance()) : null;
 	};
 
 	Combine.prototype._checkForSameRelevantContainer = function(aSelectedOverlays) {
