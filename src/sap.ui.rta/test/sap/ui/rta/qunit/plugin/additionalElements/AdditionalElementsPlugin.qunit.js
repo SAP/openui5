@@ -123,6 +123,7 @@ sap.ui.require([
 			});
 
 			sandbox.stub(sap.ui.rta.plugin.Plugin.prototype, "hasChangeHandler", function() {return true;});
+			sandbox.stub(sap.ui.dt.Plugin.prototype, "isMultiSelectionInactive", function() {return true;});
 			givenSomeBoundControls(assert);
 
 			givenThePluginWithOKClosingDialog();
@@ -764,6 +765,45 @@ sap.ui.require([
 			//Simulate custom field button pressed, should trigger openNewWindow
 			oDialog.fireOpenCustomField();
 		});
+
+	QUnit.test("when retrieving the contextmenu items for the additional elements plugin,", function(assert){
+		this.oOverlay = createOverlayWithAggregationActions({
+			"addODataProperty" : {
+				changeType : "addFields"
+			}
+		}, ON_CHILD);
+		var bCheckValue = true;
+		var bIsAvailable = true;
+		var bFirstCall = true;
+		sandbox.stub(oPlugin, "isAvailable", function(bOverlayIsSibling, oOverlay){
+			assert.equal(bOverlayIsSibling, bFirstCall, "the isAvailable function is called once with bOverlayIsSibling = " + bFirstCall);
+			assert.deepEqual(oOverlay, this.oOverlay, "the isAvailable function is called with the correct overlay");
+			bFirstCall = false;
+			return bIsAvailable;
+		}.bind(this));
+		sandbox.stub(oPlugin, "showAvailableElements", function(bOverlayIsSibling, aOverlays){
+			assert.equal(bOverlayIsSibling, bCheckValue, "the 'handler' function calls showAvailableElements with bOverlayIsSibling = " + bCheckValue);
+			assert.deepEqual(aOverlays, [this.oOverlay], "the 'handler' function calls showAvailableElements with the correct overlays");
+		}.bind(this));
+		sandbox.stub(oPlugin, "isEnabled", function(bOverlayIsSibling, oOverlay){
+			assert.equal(bOverlayIsSibling, bCheckValue, "the 'enabled' function calls isEnabled with bOverlayIsSibling = " + bCheckValue);
+			assert.deepEqual(oOverlay, this.oOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
+		}.bind(this));
+		var aMenuItems = oPlugin.getMenuItems(this.oOverlay);
+
+		assert.equal(aMenuItems[0].id, "CTX_ADD_ELEMENTS_AS_SIBLING", "there is an entry for add elements as sibling");
+		aMenuItems[0].handler([this.oOverlay]);
+		aMenuItems[0].enabled(this.oOverlay);
+		bCheckValue = false;
+		assert.equal(aMenuItems[1].id, "CTX_ADD_ELEMENTS_AS_CHILD", "there is an entry for add elements as child");
+		aMenuItems[1].handler([this.oOverlay]);
+		aMenuItems[1].enabled(this.oOverlay);
+
+		bIsAvailable = false;
+		bFirstCall = true;
+		assert.equal(oPlugin.getMenuItems(this.oOverlay).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
+	});
+
 });
 
 	function givenSomeBoundControls(assert){
@@ -825,7 +865,6 @@ sap.ui.require([
 			dialog : oDialog,
 			commandFactory : new CommandFactory()
 		});
-
 	}
 
 	function createOverlayWithAggregationActions(mActions, sOverlayType, bInHiddenTree){

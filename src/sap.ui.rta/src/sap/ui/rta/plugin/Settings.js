@@ -51,12 +51,35 @@ sap.ui.define([
 			return false;
 		}
 
-		var oSettingsAction = this._getSettingsAction(oOverlay);
+		var oSettingsAction = this.getAction(oOverlay);
 		if (oSettingsAction && oSettingsAction.handler) {
 			return this.hasStableId(oOverlay);
 		}
 
 		return false;
+	};
+
+	/**
+	 * Checks if settings is enabled for oOverlay
+	 *
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay object
+	 * @returns {boolean} true if it's enabled
+	 * @public
+	 */
+	Settings.prototype.isEnabled = function(oOverlay) {
+		var oAction = this.getAction(oOverlay);
+		if (!oAction) {
+			return false;
+		}
+
+		if (typeof oAction.isEnabled !== "undefined") {
+			if (typeof oAction.isEnabled === "function") {
+				return oAction.isEnabled(oOverlay.getElementInstance());
+			} else {
+				return oAction.isEnabled;
+			}
+		}
+		return true;
 	};
 
 	Settings.prototype._getUnsavedChanges = function(sId, aChangeTypes) {
@@ -75,50 +98,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay object
-	 * @returns {string} changeType value for settingsAction if available
-	 * @private
+	 * Retrieves the available actions from the DesignTime Metadata and creates
+	 * the corresponding commands for them.
+	 * TODO: support for multiple actions
+	 * @param  {sap.ui.dt.ElementOverlay[]} aSelectedOverlays Target Overlays of the action
+	 * @return {Promise}                   Returns promise resolving with the creation of the commands
 	 */
-	Settings.prototype._getSettingsAction = function(oOverlay) {
-		return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getAction("settings", oOverlay.getElementInstance()) : null;
-	};
-
-	/**
-	 * Checks if settings is available for oOverlay
-	 *
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay object
-	 * @returns {boolean} true if it's editable
-	 * @public
-	 */
-	Settings.prototype.isSettingsAvailable = function(oOverlay) {
-		return this._isEditableByPlugin(oOverlay);
-	};
-
-	/**
-	 * Checks if settings is enabled for oOverlay
-	 *
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay object
-	 * @returns {boolean} true if it's enabled
-	 * @public
-	 */
-	Settings.prototype.isSettingsEnabled = function(oOverlay) {
-		var oAction = this._getSettingsAction(oOverlay);
-		if (!oAction) {
-			return false;
-		}
-
-		if (typeof oAction.isEnabled !== "undefined") {
-			if (typeof oAction.isEnabled === "function") {
-				return oAction.isEnabled(oOverlay.getElementInstance());
-			} else {
-				return oAction.isEnabled;
-			}
-		}
-		return true;
-	};
-
-
-	Settings.prototype.handleSettings = function(aSelectedOverlays) {
+	Settings.prototype.handler = function(aSelectedOverlays) {
 		var oSettingsCommand, oAppDescriptorCommand, oCompositeCommand;
 		var oElement = aSelectedOverlays[0].getElementInstance();
 		var mPropertyBag = {
@@ -172,6 +158,25 @@ sap.ui.define([
 				throw oError;
 			}
 		});
+	};
+
+	/**
+	 * Retrieve the context menu item for the actions.
+	 * TODO: Support for multiple items (multiple actions)
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
+	 * @return {object[]}          Returns array containing the items with required data
+	 */
+	Settings.prototype.getMenuItems = function(oOverlay){
+		return this._getMenuItems(oOverlay, {pluginId : "CTX_SETTINGS", rank : 110});
+	};
+
+	/**
+	 * Get the name of the action related to this plugin.
+	 * TODO: Support for multiple actions
+	 * @return {string} Returns the action name
+	 */
+	Settings.prototype.getActionName = function(){
+		return "settings";
 	};
 
 	return Settings;

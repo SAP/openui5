@@ -67,6 +67,8 @@ function(
 	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 	sinon.stub(PropertyChange, "completeChangeContent");
 
+	var sandbox = sinon.sandbox.create();
+
 	QUnit.module("Given a designTime and settings plugin are instantiated", {
 		beforeEach : function(assert) {
 			var done = assert.async();
@@ -102,6 +104,7 @@ function(
 
 		},
 		afterEach : function(assert) {
+			sandbox.restore();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -121,8 +124,8 @@ function(
 		this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
 		this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
 
-		assert.strictEqual(this.oSettingsPlugin.isSettingsAvailable(oButtonOverlay), false, "... then isSettingsAvailable is called, then it returns false");
-		assert.strictEqual(this.oSettingsPlugin.isSettingsEnabled(oButtonOverlay), false, "... then isSettingsEnabled is called, then it returns false");
+		assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), false, "... then isAvailable is called, then it returns false");
+		assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns false");
 		assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "then the overlay is not editable");
 	});
 
@@ -146,8 +149,8 @@ function(
 		this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
 		this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
 
-		assert.strictEqual(this.oSettingsPlugin.isSettingsAvailable(oButtonOverlay), true, "... then isSettingsAvailable is called, then it returns true");
-		assert.strictEqual(this.oSettingsPlugin.isSettingsEnabled(oButtonOverlay), true, "... then isSettingsEnabled is called, then it returns true");
+		assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), true, "... then isAvailable is called, then it returns true");
+		assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), true, "... then isEnabled is called, then it returns true");
 		assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "then the overlay is editable");
 	});
 
@@ -171,8 +174,8 @@ function(
 		this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
 		this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
 
-		assert.strictEqual(this.oSettingsPlugin.isSettingsAvailable(oButtonOverlay), true, "... then isSettingsAvailable is called, then it returns true");
-		assert.strictEqual(this.oSettingsPlugin.isSettingsEnabled(oButtonOverlay), false, "... then isSettingsEnabled is called, then it returns correct value");
+		assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), true, "... then isAvailable is called, then it returns true");
+		assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns correct value");
 		assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "then the overlay is editable");
 	});
 
@@ -197,8 +200,8 @@ function(
 		this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
 		this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
 
-		assert.strictEqual(this.oSettingsPlugin.isSettingsAvailable(oButtonOverlay), false, "... then isSettingsAvailable is called, then it returns false");
-		assert.strictEqual(this.oSettingsPlugin.isSettingsEnabled(oButtonOverlay), false, "... then isSettingsEnabled is called, then it returns correct value from function call");
+		assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), false, "... then isAvailable is called, then it returns false");
+		assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns correct value from function call");
 		assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "then the overlay is not editable because the handler is missing");
 	});
 
@@ -246,7 +249,7 @@ function(
 			assert.ok(oSettingsCommand, "... which contains a settings command");
 			done();
 		});
-		return this.oSettingsPlugin.handleSettings(aSelectedOverlays);
+		return this.oSettingsPlugin.handler(aSelectedOverlays);
 	});
 
 	QUnit.test("when the handle settings function is called and the handler returns a rejected promise with error object,", function(assert) {
@@ -275,7 +278,7 @@ function(
 
 		var aSelectedOverlays = [oButtonOverlay];
 
-		return this.oSettingsPlugin.handleSettings(aSelectedOverlays).catch(function() {
+		return this.oSettingsPlugin.handler(aSelectedOverlays).catch(function() {
 			assert.notOk(that.oSettingsCommand, "... command is not created");
 		});
 	});
@@ -387,7 +390,7 @@ function(
 
 			done();
 		});
-		return this.oSettingsPlugin.handleSettings(aSelectedOverlays);
+		return this.oSettingsPlugin.handler(aSelectedOverlays);
 	});
 
 	QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change and a flex change,", function(assert) {
@@ -458,7 +461,48 @@ function(
 			assert.equal(oFlexCommand.getContent(), mSettingsChange.changeSpecificData.content, "with the correct parameters");
 			done();
 		});
-		return this.oSettingsPlugin.handleSettings(aSelectedOverlays);
+		return this.oSettingsPlugin.handler(aSelectedOverlays);
+	});
+
+	QUnit.test("when retrieving the context menu item", function(assert) {
+		var oButtonOverlay = new ElementOverlay({
+			element : this.oButton,
+			designTimeMetadata : new ElementDesignTimeMetadata({
+				libraryName : "sap.m",
+				data : {
+					actions : {
+						settings : function() {
+							return {
+								handler : function() {}
+							};
+						}
+					}
+				}
+			})
+		});
+
+		var bIsAvailable = true;
+		sandbox.stub(this.oSettingsPlugin, "isAvailable", function(oOverlay){
+			assert.equal(oOverlay, oButtonOverlay, "the 'available' function calls isAvailable with the correct overlay");
+			return bIsAvailable;
+		});
+		sandbox.stub(this.oSettingsPlugin, "handler", function(aOverlays){
+			assert.deepEqual(aOverlays, [oButtonOverlay], "the 'handler' method is called with the right overlays");
+		});
+		sandbox.stub(this.oSettingsPlugin, "isEnabled", function(oOverlay){
+			assert.equal(oOverlay, oButtonOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
+		});
+
+		var aMenuItems = this.oSettingsPlugin.getMenuItems(oButtonOverlay);
+		assert.equal(aMenuItems[0].id, "CTX_SETTINGS", "'getMenuItems' returns the context menu item for the plugin");
+
+		aMenuItems[0].handler([oButtonOverlay]);
+		aMenuItems[0].enabled(oButtonOverlay);
+
+		bIsAvailable = false;
+		assert.equal(this.oSettingsPlugin.getMenuItems(oButtonOverlay).length,
+			0,
+			"and if plugin is not available for the overlay, no menu items are returned");
 	});
 
 });

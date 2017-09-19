@@ -275,15 +275,10 @@ sap.ui.define([
 				dragStarted: this._handleStopCutPaste.bind(this)
 			});
 
-			// Cut paste
-			this._mDefaultPlugins["cutPaste"] = new CutPastePlugin({
-				elementMover: oRTAElementMover,
-				commandFactory: oCommandFactory
-			});
-
-			// Remove
-			this._mDefaultPlugins["remove"] = new RemovePlugin({
-				commandFactory: oCommandFactory
+			// Rename
+			this._mDefaultPlugins["rename"] = new RTARenamePlugin({
+				commandFactory: oCommandFactory,
+				editable: this._handleStopCutPaste.bind(this)
 			});
 
 			// Additional elements
@@ -293,19 +288,24 @@ sap.ui.define([
 				dialog: new AdditionalElementsDialog()
 			});
 
-			// Rename
-			this._mDefaultPlugins["rename"] = new RTARenamePlugin({
-				commandFactory: oCommandFactory,
-				editable: this._handleStopCutPaste.bind(this)
+			// Create container
+			this._mDefaultPlugins["createContainer"] = new CreateContainerPlugin({
+				commandFactory: oCommandFactory
+			});
+
+			// Remove
+			this._mDefaultPlugins["remove"] = new RemovePlugin({
+				commandFactory: oCommandFactory
+			});
+
+			// Cut paste
+			this._mDefaultPlugins["cutPaste"] = new CutPastePlugin({
+				elementMover: oRTAElementMover,
+				commandFactory: oCommandFactory
 			});
 
 			// Settings
 			this._mDefaultPlugins["settings"] = new SettingsPlugin({
-				commandFactory: oCommandFactory
-			});
-
-			// Create container
-			this._mDefaultPlugins["createContainer"] = new CreateContainerPlugin({
 				commandFactory: oCommandFactory
 			});
 
@@ -474,12 +474,10 @@ sap.ui.define([
 						}
 					}.bind(this));
 
-					// Hand over currrent command stack to setting plugin
+					// Hand over currrent command stack to settings plugin
 					if (this.getPlugins()["settings"]) {
 						this.getPlugins()["settings"].setCommandStack(this.getCommandStack());
 					}
-
-					this._buildContextMenu();
 
 					this._oSerializer = new LREPSerializer({commandStack : this.getCommandStack(), rootControl : this.getRootControl()});
 
@@ -1222,19 +1220,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to handle hiding an element by the context menu.
-	 *
-	 * @param {sap.ui.dt.Overlay[]} aOverlays List of selected overlays
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleRemoveElement = function(aOverlays) {
-		this.getPlugins()["remove"].removeElement(aOverlays);
-	};
-
-	/**
 	 * Open the settings dialog.
 	 * @param  {sap.ui.base.Event|Object} oEventOrOverlays Event or map containing list of selected overlays
 	 */
+
+	//TODO: ask mayanak to remove
 	RuntimeAuthoring.prototype._openSettingsDialog = function(oEventOrOverlays) {
 		var aSelectedOverlays = (oEventOrOverlays.mParameters) ? oEventOrOverlays.getParameter("selectedOverlays") : oEventOrOverlays;
 		var oElement = aSelectedOverlays[0].getElementInstance();
@@ -1247,308 +1237,6 @@ sap.ui.define([
 		this._oSettingsDialog.open(oElement);
 	};
 
-
-	var fnMultiSelectionInactive = function(oOverlay) {
-		return this._oDesignTime.getSelection().length < 2;
-	};
-
-	var fnIsMovable = function(oOverlay) {
-		return oOverlay.getMovable();
-	};
-
-	var fnIsRemoveAvailable = function(oOverlay) {
-		return this.getPlugins()["remove"].isRemoveAvailable(oOverlay);
-	};
-
-	var fnIsRemoveEnabled = function(oOverlay) {
-		return this.getPlugins()["remove"].isRemoveEnabled(oOverlay);
-	};
-
-	var fnIsRenameAvailable = function(oOverlay) {
-		return this.getPlugins()["rename"].isRenameAvailable(oOverlay);
-	};
-
-	var fnIsRenameEnabled = function(oOverlay) {
-		return this.getPlugins()["rename"].isRenameEnabled(oOverlay);
-	};
-
-	var fnIsSettingsAvailable = function(oOverlay) {
-		return this.getPlugins()["settings"].isSettingsAvailable(oOverlay);
-	};
-
-	var fnIsSettingsEnabled = function(oOverlay) {
-		return this.getPlugins()["settings"].isSettingsEnabled(oOverlay);
-	};
-
-	var fnIsCombineAvailable = function(oOverlay) {
-		return this.getPlugins()["combine"].isCombineAvailable(oOverlay);
-	};
-
-	var fnIsCombineEnabled = function(oOverlay) {
-		return this.getPlugins()["combine"].isCombineEnabled(oOverlay);
-	};
-
-	var fnIsSplitAvailable = function(oOverlay) {
-		return this.getPlugins()["split"].isSplitAvailable(oOverlay);
-	};
-
-	var fnIsSplitEnabled = function(oOverlay) {
-		return this.getPlugins()["split"].isSplitEnabled(oOverlay);
-	};
-
-	var fnIsVariantSwitchAvailable = function(oOverlay) {
-		return this.getPlugins()["controlVariant"].isVariantSwitchAvailable(oOverlay);
-	};
-
-	var fnIsVariantSwitchEnabled = function(oOverlay) {
-		return this.getPlugins()["controlVariant"].isVariantSwitchEnabled(oOverlay);
-	};
-
-	var fnIsVariantRenameAvailable = function(oOverlay) {
-		return this.getPlugins()["controlVariant"].isVariantRenameAvailable(oOverlay);
-	};
-
-	var fnIsVariantRenameEnabled = function(oOverlay) {
-		return this.getPlugins()["controlVariant"].isVariantRenameEnabled(oOverlay);
-	};
-
-	var fnIsVariantDuplicateAvailable = function(oOverlay) {
-		return this.getPlugins()["controlVariant"].isVariantDuplicateAvailable(oOverlay);
-	};
-
-	var fnIsVariantDuplicateEnabled = function(oOverlay) {
-		return this.getPlugins()["controlVariant"].isVariantDuplicateEnabled(oOverlay);
-	};
-
-	var fnIsVariantConfigureAvailable = function(oOverlay) {
-		return this.getPlugins()["controlVariant"].isVariantConfigureAvailable(oOverlay);
-	};
-
-	var fnIsVariantConfigureEnabled = function(oOverlay) {
-		return this.getPlugins()["controlVariant"].isVariantConfigureEnabled(oOverlay);
-	};
-
-	RuntimeAuthoring.prototype._buildContextMenu = function() {
-		// Return if plugin missing
-		var oContextMenuPlugin = this.getPlugins()["contextMenu"];
-		if (!oContextMenuPlugin) {
-			return;
-		}
-
-		var oAdditionalElementsPlugin = this.getPlugins()["additionalElements"],
-			oCreateContainerPlugin = this.getPlugins()["createContainer"],
-			oControlVariantPlugin = this.getPlugins()["controlVariant"];
-
-		if (this.getPlugins()["rename"]) {
-
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_RENAME_LABEL",
-				text : this._getTextResources().getText("CTX_RENAME"),
-				handler : this._handleRename.bind(this),
-				available : fnIsRenameAvailable.bind(this),
-				enabled : function(oOverlay) {
-					return (fnMultiSelectionInactive.call(this, oOverlay) && fnIsRenameEnabled.call(this, oOverlay));
-				}.bind(this)
-			});
-		}
-
-		if (oAdditionalElementsPlugin){
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_ADD_ELEMENTS_AS_SIBLING",
-				text : oAdditionalElementsPlugin.getContextMenuTitle.bind(oAdditionalElementsPlugin, true),
-				handler : this._handleAdditionalElements.bind(this, true),
-				available : oAdditionalElementsPlugin.isAvailable.bind(oAdditionalElementsPlugin, true),
-				enabled : function(oOverlay) {
-					return fnMultiSelectionInactive.call(this, oOverlay) && oAdditionalElementsPlugin.isEnabled(true, oOverlay);
-				}.bind(this)
-			});
-
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_ADD_ELEMENTS_AS_CHILD",
-				text : oAdditionalElementsPlugin.getContextMenuTitle.bind(oAdditionalElementsPlugin, false),
-				handler : this._handleAdditionalElements.bind(this, false),
-				available : oAdditionalElementsPlugin.isAvailable.bind(oAdditionalElementsPlugin, false),
-				enabled : function(oOverlay) {
-					return fnMultiSelectionInactive.call(this, oOverlay) && oAdditionalElementsPlugin.isEnabled(false, oOverlay);
-				}.bind(this)
-			});
-
-		}
-
-		if (oCreateContainerPlugin) {
-
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_CREATE_CHILD_CONTAINER",
-				text : oCreateContainerPlugin.getCreateContainerText.bind(oCreateContainerPlugin, false),
-				handler : this._createContainer.bind(this, false),
-				available : oCreateContainerPlugin.isCreateAvailable.bind(oCreateContainerPlugin, false),
-				enabled : oCreateContainerPlugin.isCreateEnabled.bind(oCreateContainerPlugin, false)
-			});
-
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_CREATE_SIBLING_CONTAINER",
-				text : oCreateContainerPlugin.getCreateContainerText.bind(oCreateContainerPlugin, true),
-				handler : this._createContainer.bind(this, true),
-				available : oCreateContainerPlugin.isCreateAvailable.bind(oCreateContainerPlugin, true),
-				enabled : oCreateContainerPlugin.isCreateEnabled.bind(oCreateContainerPlugin, true)
-			});
-		}
-
-		if (this.getPlugins()["remove"]) {
-
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_REMOVE",
-				text : this._getTextResources().getText("CTX_REMOVE"), // text can be defined also in designtime metadata
-				handler : this._handleRemoveElement.bind(this),
-				available : fnIsRemoveAvailable.bind(this),
-				enabled : fnIsRemoveEnabled.bind(this)
-			});
-		}
-
-		oContextMenuPlugin.addMenuItem({
-			id : "CTX_CUT",
-			text : this._getTextResources().getText("CTX_CUT"),
-			handler : this._handleCutElement.bind(this),
-			available : fnIsMovable,
-			enabled : function () {
-				return this._oDesignTime.getSelection().length === 1;
-			}.bind(this)
-		});
-
-		if (this.getPlugins()["cutPaste"]) {
-
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_PASTE",
-				text : this._getTextResources().getText("CTX_PASTE"),
-				handler : this._handlePasteElement.bind(this),
-				available : fnIsMovable,
-				enabled : function(oOverlay) {
-					return this.getPlugins()["cutPaste"].isElementPasteable(oOverlay);
-				}.bind(this)
-			});
-		}
-
-		oContextMenuPlugin.addMenuItem({
-			id : "CTX_GROUP_FIELDS",
-			text : this._getTextResources().getText("CTX_GROUP_FIELDS"),
-			handler : this._handleCombineElements.bind(this),
-			available : fnIsCombineAvailable.bind(this),
-			enabled : fnIsCombineEnabled.bind(this)
-		});
-
-		oContextMenuPlugin.addMenuItem({
-			id : "CTX_UNGROUP_FIELDS",
-			text : this._getTextResources().getText("CTX_UNGROUP_FIELDS"),
-			handler : this._handleSplitElements.bind(this),
-			available : fnIsSplitAvailable.bind(this),
-			enabled : fnIsSplitEnabled.bind(this)
-		});
-
-		if (this.getPlugins()["settings"]) {
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_SETTINGS",
-				text : this._getTextResources().getText("CTX_SETTINGS"),
-				handler : this._handleSettings.bind(this),
-				available : fnIsSettingsAvailable.bind(this),
-				enabled : fnIsSettingsEnabled.bind(this)
-			});
-		}
-
-		if (oControlVariantPlugin) {
-			var VARIANT_MODEL_NAME = '$FlexVariants';
-
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_VARIANT_RENAME",
-				text : this._getTextResources().getText("CTX_RENAME"),
-				handler : this._handleVariantRename.bind(this),
-				available : fnIsVariantRenameAvailable.bind(this),
-				enabled : fnIsVariantRenameEnabled.bind(this)
-			});
-
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_VARIANT_DUPLICATE",
-				text : this._getTextResources().getText("CTX_VARIANT_DUPLICATE"),
-				handler : this._handleVariantDuplicate.bind(this),
-				available : fnIsVariantDuplicateAvailable.bind(this),
-				enabled : fnIsVariantDuplicateEnabled.bind(this)
-			});
-
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_VARIANT_CONFIGURE",
-				text : this._getTextResources().getText("CTX_VARIANT_CONFIGURE"),
-				handler : this._handleVariantConfigure.bind(this),
-				available : fnIsVariantConfigureAvailable.bind(this),
-				enabled : fnIsVariantConfigureEnabled.bind(this),
-				startSection : true
-			});
-
-			oContextMenuPlugin.addMenuItem({
-				id : "CTX_VARIANT_SWITCH_SUBMENU",
-				text : this._getTextResources().getText("CTX_VARIANT_SWITCH"),
-				/* handler for submenu items */
-				handler: this._handleSwitchVariant.bind(this),
-				available : fnIsVariantSwitchAvailable.bind(this),
-				enabled : fnIsVariantSwitchEnabled.bind(this),
-				submenu : {
-					id: "{" + VARIANT_MODEL_NAME + ">key}",
-					text: "{" + VARIANT_MODEL_NAME + ">title}",
-					model: VARIANT_MODEL_NAME,
-					current: function(oOverlay, oModel) {
-						var sManagementReferenceId = oOverlay.getVariantManagement();
-						return oModel.getData()[sManagementReferenceId].currentVariant;
-					},
-					items: function(oOverlay, oModel) {
-						var sManagementReferenceId = oOverlay.getVariantManagement();
-						return oModel.getData()[sManagementReferenceId].variants;
-					}
-				},
-				type: "subMenuWithBinding"
-			});
-		}
-	};
-
-	RuntimeAuthoring.prototype._createContainer = function(bSibling, aOverlays) {
-		this._handleStopCutPaste();
-
-		var oOverlay = aOverlays[0];
-		this.getPlugins()["createContainer"].handleCreate(bSibling, oOverlay);
-	};
-
-	/**
-	 * Function to handle renaming a label.
-	 *
-	 * @param {sap.ui.dt.Overlay[]}
-	 *          aOverlays List of selected overlays
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleRename = function(aOverlays) {
-		var oOverlay = aOverlays[0];
-		this.getPlugins()["rename"].startEdit(oOverlay);
-	};
-
-	/**
-	 * Function to handle cutting an element.
-	 *
-	 * @param {sap.ui.dt.Overlay[]}
-	 *          aOverlays List of selected overlays
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleCutElement = function(aOverlays) {
-		var oOverlay = aOverlays[0];
-		this.getPlugins()["cutPaste"].cut(oOverlay);
-	};
-
-	/**
-	 * Function to handle pasting an element.
-	 *
-	 * @param {sap.ui.dt.Overlay[]} aOverlays List of selected overlays
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handlePasteElement = function(aOverlays) {
-		var oOverlay = aOverlays[0];
-		this.getPlugins()["cutPaste"].paste(oOverlay);
-	};
-
 	/**
 	 * Handler function to stop cut and paste, because some other operation has started.
 	 *
@@ -1556,93 +1244,6 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype._handleStopCutPaste = function() {
 		this.getPlugins()["cutPaste"].stopCutAndPaste();
-	};
-
-	/**
-	 * Function to handle combining of elements.
-	 *
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleCombineElements = function() {
-		this._handleStopCutPaste();
-
-		var oSelectedElement = this.getPlugins()["contextMenu"].getContextElement();
-		this.getPlugins()["combine"].handleCombine(oSelectedElement);
-	};
-
-	/**
-	 * Function to handle ungrouping of elements.
-	 *
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleSplitElements = function() {
-		this._handleStopCutPaste();
-
-		var oSelectedElement = this.getPlugins()["contextMenu"].getContextElement();
-		this.getPlugins()["split"].handleSplit(oSelectedElement);
-	};
-
-	/**
-	 * Function to handle settings.
-	 *
-	 * @param {sap.ui.dt.Overlay[]} aOverlays List of selected overlays
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleSettings = function(aOverlays) {
-		this.getPlugins()["settings"].handleSettings(aOverlays);
-	};
-
-	/**
-	 * Function to handle variant rename.
-	 *
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleVariantRename = function() {
-		this.getPlugins()["controlVariant"].renameVariant();
-	};
-
-	/**
-	 * Function to handle variant duplicate.
-	 *
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleVariantDuplicate = function(aOverlays) {
-		this.getPlugins()["controlVariant"].duplicateVariant(aOverlays[0]);
-	};
-
-	/**
-	 * Function to handle variant configure
-	 *
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleVariantConfigure = function() {
-		this.getPlugins()["controlVariant"].configureVariants();
-	};
-
-	/**
-	 * Function to handle variant switch.
-	 *
-	 * @param {sap.ui.dt.Overlay[]} aOverlays Selected overlays
-	 * @param {object} oItem Pushed context menu item
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleSwitchVariant = function(aOverlays, oItem) {
-		var oData = oItem.data(),
-			oTargetOverlay = oData.targetOverlay,
-			sNewVariantKey = oData.key,
-			sCurrentVariantKey = oData.current;
-		this.getPlugins()["controlVariant"].switchVariant(oTargetOverlay, sNewVariantKey, sCurrentVariantKey);
-	};
-
-	/**
-	 * Function to handle additional elements.
-	 *
-	 * @param {boolean} bOverlayIsSibling Set to true if overlay is a sibling of the selected overlays
-	 * @param {sap.ui.dt.Overlay[]} aOverlays Selected overlays
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._handleAdditionalElements = function(bOverlayIsSibling, aOverlays) {
-		this.getPlugins()["additionalElements"].showAvailableElements(bOverlayIsSibling, aOverlays);
 	};
 
 	/**

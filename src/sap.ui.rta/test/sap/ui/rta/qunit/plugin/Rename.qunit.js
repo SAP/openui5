@@ -39,6 +39,8 @@ function(
 
 	QUnit.start();
 
+	var sandbox = sinon.sandbox.create();
+
 	QUnit.module("Given a designTime and rename plugin are instantiated", {
 		beforeEach : function(assert) {
 			var that = this;
@@ -87,6 +89,7 @@ function(
 
 		},
 		afterEach : function(assert) {
+			sandbox.restore();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -134,10 +137,10 @@ function(
 		this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
 
 		assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), true, "then the overlay is editable");
-		assert.strictEqual(this.oRenamePlugin.isRenameAvailable(this.oFormContainerOverlay), true, "then rename is available for the overlay");
+		assert.strictEqual(this.oRenamePlugin.isAvailable(this.oFormContainerOverlay), true, "then rename is available for the overlay");
 	});
 
-	QUnit.test("when isRenameAvailable and isRenameEnabled are called", function(assert) {
+	QUnit.test("when isAvailable and isEnabled are called", function(assert) {
 		this.oFormContainerOverlay.setDesignTimeMetadata({
 			actions: {
 				rename: {
@@ -154,18 +157,43 @@ function(
 		this.oRenamePlugin.deregisterElementOverlay(this.oFormContainerOverlay);
 		this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
 
-		assert.strictEqual(this.oRenamePlugin.isRenameAvailable(this.oFormContainerOverlay), true, "then rename is available for the overlay");
-		assert.strictEqual(this.oRenamePlugin.isRenameEnabled(this.oFormContainerOverlay), true, "then rename is not enabled for the overlay");
+		assert.strictEqual(this.oRenamePlugin.isAvailable(this.oFormContainerOverlay), true, "then rename is available for the overlay");
+		assert.strictEqual(this.oRenamePlugin.isEnabled(this.oFormContainerOverlay), true, "then rename is enabled for the overlay");
 		assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), true, "then rename is editable for the overlay");
 	});
 
-	QUnit.test("when isRenameAvailable and isRenameEnabled are called without designTime", function(assert) {
+	QUnit.test("when retrieving the context menu item", function(assert) {
+		var bIsAvailable = true;
+		sandbox.stub(this.oRenamePlugin, "isAvailable", function(oOverlay){
+			assert.equal(oOverlay, this.oFormContainerOverlay, "the 'available' function calls isAvailable with the correct overlay");
+			return bIsAvailable;
+		}.bind(this));
+		sandbox.stub(this.oRenamePlugin, "startEdit", function(oOverlay){
+			assert.deepEqual(oOverlay, this.oFormContainerOverlay, "the 'startEdit' method is called with the right overlay");
+		}.bind(this));
+		sandbox.stub(this.oRenamePlugin, "isEnabled", function(oOverlay){
+			assert.equal(oOverlay, this.oFormContainerOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
+		}.bind(this));
+
+		var aMenuItems = this.oRenamePlugin.getMenuItems(this.oFormContainerOverlay);
+		assert.equal(aMenuItems[0].id, "CTX_RENAME", "'getMenuItems' returns the context menu item for the plugin");
+
+		aMenuItems[0].handler([this.oFormContainerOverlay]);
+		aMenuItems[0].enabled(this.oFormContainerOverlay);
+
+		bIsAvailable = false;
+		assert.equal(this.oRenamePlugin.getMenuItems(this.oFormContainerOverlay).length,
+			0,
+			"and if plugin is not available for the overlay, no menu items are returned");
+	});
+
+	QUnit.test("when isAvailable and isEnabled are called without designTime", function(assert) {
 		this.oFormContainerOverlay.setDesignTimeMetadata({});
 		this.oRenamePlugin.deregisterElementOverlay(this.oFormContainerOverlay);
 		this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
 
-		assert.strictEqual(this.oRenamePlugin.isRenameAvailable(this.oFormContainerOverlay), false, "then rename is not available for the overlay");
-		assert.strictEqual(this.oRenamePlugin.isRenameEnabled(this.oFormContainerOverlay), false, "then rename is not enabled for the overlay");
+		assert.strictEqual(this.oRenamePlugin.isAvailable(this.oFormContainerOverlay), false, "then rename is not available for the overlay");
+		assert.strictEqual(this.oRenamePlugin.isEnabled(this.oFormContainerOverlay), false, "then rename is not enabled for the overlay");
 		assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), false, "then rename is not editable for the overlay");
 	});
 

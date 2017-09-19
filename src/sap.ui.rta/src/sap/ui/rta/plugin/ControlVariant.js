@@ -307,5 +307,80 @@ sap.ui.define([
 		return;
 	};
 
+	/**
+	 * Retrieve the context menu item for the actions.
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
+	 * @return {object[]}          Returns array containing the items with required data
+	 */
+	ControlVariant.prototype.getMenuItems = function(oOverlay){
+		var VARIANT_MODEL_NAME = '$FlexVariants';
+		var aMenuItems = [];
+
+		if (this.isVariantRenameAvailable(oOverlay)){
+			aMenuItems.push({
+				id: "CTX_VARIANT_RENAME",
+				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_RENAME'),
+				handler: this.renameVariant.bind(this),
+				enabled: this.isVariantRenameEnabled.bind(this),
+				rank: 210
+			});
+		}
+
+		if (this.isVariantDuplicateAvailable(oOverlay)){
+			aMenuItems.push({
+				id: "CTX_VARIANT_DUPLICATE",
+				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_DUPLICATE'),
+				handler: function(aOverlays){
+					return this.duplicateVariant(aOverlays[0]);
+				}.bind(this),
+				enabled: this.isVariantDuplicateEnabled.bind(this),
+				rank: 220
+			});
+		}
+
+		if (this.isVariantConfigureAvailable(oOverlay)){
+			aMenuItems.push({
+				id: "CTX_VARIANT_CONFIGURE",
+				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_CONFIGURE'),
+				handler: this.configureVariants.bind(this),
+				enabled: this.isVariantConfigureEnabled.bind(this),
+				startSection: true,
+				rank: 230
+			});
+		}
+
+		if (this.isVariantSwitchAvailable(oOverlay)){
+			aMenuItems.push({
+				id: "CTX_VARIANT_SWITCH_SUBMENU",
+				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_SWITCH'),
+				handler: function(aOverlays, oItem){
+					var oData = oItem.data(),
+						oTargetOverlay = oData.targetOverlay,
+						sNewVariantKey = oData.key,
+						sCurrentVariantKey = oData.current;
+					return this.switchVariant(oTargetOverlay, sNewVariantKey, sCurrentVariantKey);
+				}.bind(this),
+				enabled: this.isVariantSwitchEnabled.bind(this),
+				submenu: {
+					id: "{" + VARIANT_MODEL_NAME + ">key}",
+					text: "{" + VARIANT_MODEL_NAME + ">title}",
+					model: VARIANT_MODEL_NAME,
+					current: function(oOverlay, oModel) {
+						var sManagementReferenceId = oOverlay.getVariantManagement();
+						return oModel.getData()[sManagementReferenceId].currentVariant;
+					},
+					items: function(oOverlay, oModel) {
+						var sManagementReferenceId = oOverlay.getVariantManagement();
+						return oModel.getData()[sManagementReferenceId].variants;
+					}
+				},
+				type: "subMenuWithBinding",
+				rank: 240
+			});
+		}
+
+		return aMenuItems;
+	};
+
 	return ControlVariant;
 }, /* bExport= */true);

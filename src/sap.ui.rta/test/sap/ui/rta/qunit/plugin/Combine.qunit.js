@@ -264,11 +264,11 @@ function(
 				[this.oButton1Overlay, this.oButton2Overlay]);
 
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), false,
-			"isCombineAvailable is called and returns false");
+			this.oCombinePlugin.isAvailable(this.oButton1Overlay), false,
+			"isAvailable is called and returns false");
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineEnabled(this.oButton1Overlay), false,
-			"isCombineEnabled is called and returns false");
+			this.oCombinePlugin.isEnabled(this.oButton1Overlay), false,
+			"isEnabled is called and returns false");
 		assert.strictEqual(this.oCombinePlugin._isEditable(this.oButton1Overlay), false, "then the overlay is not editable");
 	});
 
@@ -280,11 +280,11 @@ function(
 				[this.oButton1Overlay, this.oButton2Overlay]);
 
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), true,
-			"isCombineAvailable is called and returns true");
+			this.oCombinePlugin.isAvailable(this.oButton1Overlay), true,
+			"isAvailable is called and returns true");
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineEnabled(this.oButton2Overlay), true,
-			"isCombineEnabled is called and returns true");
+			this.oCombinePlugin.isEnabled(this.oButton2Overlay), true,
+			"isEnabled is called and returns true");
 		assert.strictEqual(this.oCombinePlugin._isEditable(this.oButton1Overlay), true, "then the overlay is editable");
 	});
 
@@ -293,11 +293,11 @@ function(
 		sandbox.stub(this.oDesignTime, "getSelection").returns([this.oButton1Overlay]);
 
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), false,
-			"isCombineAvailable is called and returns false");
+			this.oCombinePlugin.isAvailable(this.oButton1Overlay), false,
+			"isAvailable is called and returns false");
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineEnabled(this.oButton1Overlay), false,
-			"isCombineEnabled is called and returns false");
+			this.oCombinePlugin.isEnabled(this.oButton1Overlay), false,
+			"isEnabled is called and returns false");
 	});
 
 	QUnit.test("when controls which enabled-function delivers false are selected", function(assert) {
@@ -309,11 +309,11 @@ function(
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
 		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata1);
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), true,
-			"isCombineAvailable is called and returns true");
+			this.oCombinePlugin.isAvailable(this.oButton1Overlay), true,
+			"isAvailable is called and returns true");
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineEnabled(this.oButton1Overlay), false,
-			"isCombineEnabled is called and returns false");
+			this.oCombinePlugin.isEnabled(this.oButton1Overlay), false,
+			"isEnabled is called and returns false");
 	});
 
 	QUnit.test("when a control without changetype is selected", function(assert) {
@@ -325,11 +325,11 @@ function(
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oButton4Overlay, oDesignTimeMetadata3);
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), false,
-			"isCombineAvailable is called and returns false");
+			this.oCombinePlugin.isAvailable(this.oButton1Overlay), false,
+			"isAvailable is called and returns false");
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineEnabled(this.oButton1Overlay), false,
-			"isCombineEnabled is called and returns false");
+			this.oCombinePlugin.isEnabled(this.oButton1Overlay), false,
+			"isEnabled is called and returns false");
 	});
 
 	QUnit.test("when controls from different relevant containers are selected", function(assert) {
@@ -341,11 +341,11 @@ function(
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oButton5Overlay, DEFAULT_DTM);
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineAvailable(this.oButton1Overlay), false,
-			"isCombineAvailable is called and returns false");
+			this.oCombinePlugin.isAvailable(this.oButton1Overlay), false,
+			"isAvailable is called and returns false");
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineEnabled(this.oButton1Overlay), false,
-			"isCombineEnabled is called and returns false");
+			this.oCombinePlugin.isEnabled(this.oButton1Overlay), false,
+			"isEnabled is called and returns false");
 	});
 
 	QUnit.test("when handleCombine is called with two selected elements", function(assert) {
@@ -378,11 +378,33 @@ function(
 		fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oButton6Overlay,DEFAULT_DTM);
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineAvailable(this.oOverflowToolbarButton1Overlay), true,
-			"isCombineAvailable is called and returns true");
+			this.oCombinePlugin.isAvailable(this.oOverflowToolbarButton1Overlay), true,
+			"isAvailable is called and returns true");
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineEnabled(this.oOverflowToolbarButton1Overlay), true,
-			"isCombineEnabled is called and returns true");
+			this.oCombinePlugin.isEnabled(this.oOverflowToolbarButton1Overlay), true,
+			"isEnabled is called and returns true");
+
+		var bIsAvailable = true;
+
+		sinon.stub(this.oCombinePlugin, "isAvailable", function(oOverlay){
+			assert.equal(oOverlay, this.oButton6Overlay, "the 'available' function calls isAvailable with the correct overlay");
+			return bIsAvailable;
+		}.bind(this));
+		sinon.stub(this.oCombinePlugin, "handleCombine", function(oSelectedElement){
+			assert.equal(oSelectedElement, this.oButton6Overlay.getElementInstance(), "the 'handler' method is called with the right element");
+		}.bind(this));
+		sinon.stub(this.oCombinePlugin, "isEnabled", function(oOverlay){
+			assert.equal(oOverlay, this.oButton6Overlay, "the 'enabled' function calls isEnabled with the correct overlay");
+		}.bind(this));
+
+		var aMenuItems = this.oCombinePlugin.getMenuItems(this.oButton6Overlay);
+		assert.equal(aMenuItems[0].id, "CTX_GROUP_FIELDS", "'getMenuItems' returns the context menu item for the plugin");
+
+		aMenuItems[0].handler([this.oButton6Overlay]);
+		aMenuItems[0].enabled(this.oButton6Overlay);
+
+		bIsAvailable = false;
+		assert.equal(this.oCombinePlugin.getMenuItems(this.oButton6Overlay).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
 	});
 
 	QUnit.test("when Controls of different type with different change type are selected", function(assert) {
@@ -394,11 +416,11 @@ function(
 		fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oCheckBox1Overlay,oDesignTimeMetadata5);
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineAvailable(this.oOverflowToolbarButton1Overlay), false,
-			"isCombineAvailable is called and returns false");
+			this.oCombinePlugin.isAvailable(this.oOverflowToolbarButton1Overlay), false,
+			"isAvailable is called and returns false");
 		assert.strictEqual(
-			this.oCombinePlugin.isCombineEnabled(this.oOverflowToolbarButton1Overlay), false,
-			"isCombineEnabled is called and returns false");
+			this.oCombinePlugin.isEnabled(this.oOverflowToolbarButton1Overlay), false,
+			"isEnabled is called and returns false");
 	});
 
 });

@@ -142,8 +142,8 @@ function(
 			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
 			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), false, "then isCreateAvailable is called and it returns false");
-			assert.strictEqual(this.oCreateContainer.isCreateEnabled(false, this.oFormOverlay), false, "then isCreateEnabled is called and it returns false");
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), false, "then isAvailable is called and it returns false");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), false, "then isEnabled is called and it returns false");
 			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), false, "then the overlay is not editable");
 		});
 
@@ -162,8 +162,8 @@ function(
 			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
 			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), true, "then isCreateAvailable is called and it returns true");
-			assert.strictEqual(this.oCreateContainer.isCreateEnabled(false, this.oFormOverlay), true, "then isCreateEnabled is called and it returns true");
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), true, "then isAvailable is called and it returns true");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), true, "then isEnabled is called and it returns true");
 			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), true, "then the overlay is editable");
 		});
 
@@ -182,8 +182,8 @@ function(
 			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
 			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), false, "then isCreateAvailable is called and then it returns false");
-			assert.strictEqual(this.oCreateContainer.isCreateEnabled(false, this.oFormOverlay), true, "then isCreateEnabled is called and then it returns correct value");
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), false, "then isAvailable is called and then it returns false");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), true, "then isEnabled is called and then it returns correct value");
 			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), false, "then the overlay is not editable");
 		});
 
@@ -205,9 +205,41 @@ function(
 			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
 			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), true, "then isCreateAvailable is called and it returns true");
-			assert.strictEqual(this.oCreateContainer.isCreateEnabled(false, this.oFormOverlay), true, "then isCreateEnabled is called and it returns correct value from function call");
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), true, "then isAvailable is called and it returns true");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), true, "then isEnabled is called and it returns correct value from function call");
 			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), true, "then the overlay is editable");
+
+			var bCheckValue = true;
+			var bFirstCall = true;
+			var bIsAvailable = true;
+			sandbox.stub(this.oCreateContainer, "isAvailable", function(bOverlayIsSibling, oOverlay){
+				assert.equal(bOverlayIsSibling, bFirstCall, "the 'available' function calls isAvailable with bOverlayIsSibling = " + bFirstCall);
+				assert.deepEqual(oOverlay, this.oFormOverlay, "the 'available' function calls isAvailable with the correct overlay");
+				bFirstCall = false;
+				return bIsAvailable;
+			}.bind(this));
+			sandbox.stub(this.oCreateContainer, "handleCreate", function(bOverlayIsSibling, oOverlay){
+				assert.equal(bOverlayIsSibling, bCheckValue, "the 'handleCreate' function is called with bOverlayIsSibling = " + bCheckValue);
+				assert.deepEqual(oOverlay, this.oFormOverlay, "the 'handleCreate' function is called with the correct overlay");
+			}.bind(this));
+			sandbox.stub(this.oCreateContainer, "isEnabled", function(bOverlayIsSibling, oOverlay){
+				assert.equal(bOverlayIsSibling, bCheckValue, "the 'enabled' function calls isEnabled with bOverlayIsSibling = " + bCheckValue);
+				assert.deepEqual(oOverlay, this.oFormOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
+			}.bind(this));
+
+			var aMenuItems = this.oCreateContainer.getMenuItems(this.oFormOverlay);
+
+			assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_CONTAINER", "there is an entry for create sibling container");
+			aMenuItems[0].handler([this.oFormOverlay]);
+			aMenuItems[0].enabled(this.oFormOverlay);
+			bCheckValue = false;
+			assert.equal(aMenuItems[1].id, "CTX_CREATE_CHILD_CONTAINER", "there is an entry for create child container");
+			aMenuItems[1].handler([this.oFormOverlay]);
+			aMenuItems[1].enabled(this.oFormOverlay);
+
+			bIsAvailable = false;
+			bFirstCall = true;
+			assert.equal(this.oCreateContainer.getMenuItems(this.oFormOverlay).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
 		});
 
 		QUnit.test("when an overlay has createContainer action, but its view has no stable id", function(assert) {
@@ -231,8 +263,8 @@ function(
 			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
 			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), false, "then isCreateAvailable is called and it returns false");
-			assert.strictEqual(this.oCreateContainer.isCreateEnabled(true, this.oFormOverlay), false, "then isCreateEnabled is called and it returns true");
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), false, "then isAvailable is called and it returns false");
+			assert.strictEqual(this.oCreateContainer.isEnabled(true, this.oFormOverlay), false, "then isEnabled is called and it returns true");
 			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), false, "then the overlay is not editable");
 		});
 
@@ -310,8 +342,8 @@ function(
 			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
 			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-			assert.strictEqual(this.oCreateContainer.isCreateAvailable(false, this.oFormOverlay), true, "then isCreateAvailable is called, then it returns true");
-			assert.strictEqual(this.oCreateContainer.isCreateEnabled(false, this.oFormOverlay), true, "then isCreateEnabled is called, then it returns true");
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), true, "then isAvailable is called, then it returns true");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), true, "then isEnabled is called, then it returns true");
 
 			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
 				var oCommand = oEvent.getParameter("command");
@@ -327,8 +359,8 @@ function(
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
-				assert.strictEqual(this.oCreateContainer.isCreateAvailable(true, this.oFormContainerOverlay), true, "then isCreateAvailable is called, then it returns true");
-				assert.strictEqual(this.oCreateContainer.isCreateEnabled(true, this.oFormContainerOverlay), true, "then isCreateEnabled is called, then it returns true");
+				assert.strictEqual(this.oCreateContainer.isAvailable(true, this.oFormContainerOverlay), true, "then isAvailable is called, then it returns true");
+				assert.strictEqual(this.oCreateContainer.isEnabled(true, this.oFormContainerOverlay), true, "then isEnabled is called, then it returns true");
 
 				this.oCreateContainer.attachEventOnce("elementModified", function (oEvent) {
 					var oCommand = oEvent.getParameter("command");
