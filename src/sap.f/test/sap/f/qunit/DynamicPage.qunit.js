@@ -164,6 +164,14 @@
 				return new sap.m.Label({
 					text: sText
 				});
+			},
+			getOverflowToolbar: function () {
+				return new sap.m.OverflowToolbar({
+					content: [
+						this.getLabel("Label 1"),
+						this.getLabel("Label 2")
+					]
+				});
 			}
 		},
 		oUtil = {
@@ -239,11 +247,13 @@
 	/* --------------------------- DynamicPage Title API ---------------------------------- */
 	QUnit.module("DynamicPage Title - API ", {
 		beforeEach: function () {
+			sinon.config.useFakeTimers = true;
 			this.oDynamicPage = oFactory.getDynamicPage();
 			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
 			oUtil.renderObject(this.oDynamicPage);
 		},
 		afterEach: function () {
+			sinon.config.useFakeTimers = false;
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
 			this.oDynamicPageTitle = null;
@@ -380,6 +390,41 @@
 			"The DynamicPageTitle" + sBeginArea + "  area is high priority");
 		assert.equal($middleArea.hasClass("sapFDynamicPageTitleAreaLowPriority"), true,
 			"The DynamicPageTitle" + sMiddleArea + "  area is low priority");
+	});
+
+	QUnit.test("Adding an OverflowToolbar to the content sets flex-basis and removing it resets it", function (assert) {
+		var oToolbar = oFactory.getOverflowToolbar();
+
+		// Act
+		this.oDynamicPageTitle.addContent(oToolbar);
+		core.applyChanges();
+		this.clock.tick(1000);
+
+		// Assert
+		var sFlexBasis = this.oDynamicPageTitle.$("content").css("flex-basis");
+		assert.notEqual(sFlexBasis, "auto", "Adding an OverflowToolbar sets flex-basis");
+
+		// Act
+		this.oDynamicPageTitle.removeAllContent();
+		core.applyChanges();
+		this.clock.tick(1000);
+
+		// Assert
+		var sFlexBasis = this.oDynamicPageTitle.$("content").css("flex-basis");
+		assert.equal(sFlexBasis, "auto", "Removing an OverflowToolbar resets flex-basis");
+	});
+
+	QUnit.test("Adding a control, other than OverflowToolbar to the content does not set flex-basis", function (assert) {
+		var oLabel = oFactory.getLabel("test");
+
+		// Act
+		this.oDynamicPageTitle.addContent(oLabel);
+		core.applyChanges();
+		this.clock.tick(1000);
+
+		// Assert
+		var sFlexBasis = this.oDynamicPageTitle.$("content").css("flex-basis");
+		assert.equal(sFlexBasis, "auto", "No flex-basis set");
 	});
 
 

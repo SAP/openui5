@@ -279,6 +279,7 @@ sap.ui.define([
 		this._aMovableControls = []; // Controls that can be in the toolbar or action sheet
 		this._aToolbarOnlyControls = []; // Controls that can't go to the action sheet (inputs, labels, buttons with special layout, etc...)
 		this._aActionSheetOnlyControls = []; // Controls that are forced to stay in the action sheet (buttons with layout)
+		this._iOldContentSize = this._iContentSize;
 		this._iContentSize = 0; // The total *optimal* size of all controls in the toolbar
 
 		this.getContent().forEach(function (oControl) {
@@ -312,6 +313,11 @@ sap.ui.define([
 		}
 
 		this._bControlsInfoCached = true;
+
+		// If the total width of all overflow-enabled children changed, fire a private event to notify interested parties
+		if (this._iOldContentSize !== this._iContentSize) {
+			this.fireEvent("_contentSizeChange", {contentSize: this._iContentSize});
+		}
 	};
 
 	/**
