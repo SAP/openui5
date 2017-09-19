@@ -73,6 +73,7 @@ sap.ui.define([
 					jQuery.sap.delayedCall(0, this, function () {
 						oPage.setBusy(false);
 					});
+					this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 					return;
 				}
 

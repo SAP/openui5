@@ -64,6 +64,9 @@ sap.ui.define([
 					jsonObj;
 
 				if (!htmlContent) {
+					jQuery.sap.delayedCall(0, this, function () {
+						this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+					});
 					return;
 				}
 

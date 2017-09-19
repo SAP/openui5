@@ -66,6 +66,7 @@ sap.ui.define([
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
+				this.oRouter.attachBypassed(this.onRouteNotFound.bind(this));
 
 				this.getRouter().getRoute("topicIdLegacyRoute").attachPatternMatched(this._onTopicOldRouteMatched, this);
 				this.getRouter().getRoute("apiIdLegacyRoute").attachPatternMatched(this._onApiOldRouteMatched, this);
@@ -189,6 +190,11 @@ sap.ui.define([
 				// hide master on route change
 				this.getView().byId("splitApp").hideMaster();
 				oViewModel.setProperty("/bIsShownMaster", false);
+			},
+
+			onRouteNotFound: function () {
+				this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+				return;
 			},
 
 			toggleMaster: function(oEvent) {
