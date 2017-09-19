@@ -198,7 +198,7 @@ sap.ui.define([
 
 	DynamicPage.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE = 0.6;
 
-	DynamicPage.FOOTER_ANIMATION_DURATION = 350;
+	DynamicPage.FOOTER_ANIMATION_DURATION = 350; // ms.
 
 	DynamicPage.BREAK_POINTS = {
 		TABLET: 1024,
@@ -1318,11 +1318,15 @@ sap.ui.define([
 	/**
 	 * Handles the resize event of the <code>DynamicPage</code>.
 	 * Unpins the header when its size threshold has been reached and updates the "fake" <code>ScrollBar</code> height.
+	 * Adjusts the expanded/collapsed state.
+	 * Triggers the <code>resize</code> handler of the <code>DynamicPageTitle</code>.
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	DynamicPage.prototype._onResize = function (oEvent) {
-		var oDynamicPageHeader = this.getHeader();
+		var oDynamicPageTitle = this.getTitle(),
+			oDynamicPageHeader = this.getHeader(),
+			iCurrentWidth = oEvent.size.width;
 
 		if (!this._preserveHeaderStateOnScroll() && oDynamicPageHeader) {
 			if (this._headerBiggerThanAllowedToPin(oEvent.size.height) || Device.system.phone) {
@@ -1334,10 +1338,13 @@ sap.ui.define([
 			}
 		}
 
-		this._adjustSnap();
+		if (exists(oDynamicPageTitle)) {
+			oDynamicPageTitle._onResize(iCurrentWidth);
+		}
 
+		this._adjustSnap();
 		this._updateScrollBar();
-		this._updateMedia(oEvent.size.width);
+		this._updateMedia(iCurrentWidth);
 	};
 
 	/**

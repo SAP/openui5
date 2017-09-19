@@ -14,6 +14,16 @@
 					<f:heading>
 						<Title text="Header Title"/>
 					</f:heading>
+					<f:breadcrumbs>
+						<Breadcrumbs currentLocationText="Page 6">
+							<Link text="Home" />
+							<Link text="Page 1" />
+							<Link text="Page 2" />
+							<Link text="Page 3" />
+							<Link text="Page 4" />
+							<Link text="Page 5" />
+						</Breadcrumbs>
+					</f:breadcrumbs>
 					<f:expandedContent>
 						<Text text="This is a subheading"/>
 					</f:expandedContent>
@@ -39,6 +49,17 @@
 								icon="sap-icon://action"
 								type="Transparent"/>
 					</f:actions>
+					<f:navigationActions>
+						<Button
+								icon="sap-icon://full-screen"
+								type="Transparent" />
+						<Button
+								icon="sap-icon://exit-full-screen"
+								type="Transparent" />
+						<Button
+								icon="sap-icon://decline"
+								type="Transparent" />
+					</f:navigationActions>
 				</f:DynamicPageTitle>
 			</f:title>
 			<!-- DynamicPage Header -->
