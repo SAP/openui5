@@ -280,6 +280,29 @@
 												</m:ColumnListItem>
 											</m:items>
 										</m:Table>
+
+										<m:Table items="{ path : 'topics>/constructor/throws', templateShareable: 'false'}"
+												 showSeparators="Inner"
+												 class="sapUiDocumentationReturnsTable"
+												 fixedLayout="true"
+												 visible="{= ${topics>/constructor/throws} !== undefined}">
+											<m:columns>
+												<m:Column vAlign="Top"><m:Label text="Throws"/></m:Column>
+												<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem>
+													<m:cells>
+														<m:Link text="{topics>type}"
+																href="#/api/{topics>type}"
+																enabled="{parts: [{path: 'topics>type'}],
+																		  formatter: '.formatExceptionLink'}"/>
+														<core:HTML content="{parts: [{path: 'topics>description'}],
+																			 formatter: '.formatDescription'}"/>
+													</m:cells>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
 									</layout:VerticalLayout>
 								</blocks>
 							</ObjectPageSubSection>
@@ -551,6 +574,29 @@
 														</layout:VerticalLayout>
 
 														<core:HTML content="{parts: [{path: 'methods>returnValue/description'}],
+																			 formatter: '.formatDescription'}"/>
+													</m:cells>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+
+										<m:Table items="{ path : 'methods>throws', templateShareable: 'false'}"
+												 showSeparators="Inner"
+												 class="sapUiDocumentationReturnsTable"
+												 fixedLayout="true"
+												 visible="{= ${methods>throws} !== undefined}">
+											<m:columns>
+												<m:Column vAlign="Top"><m:Label text="Throws"/></m:Column>
+												<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem>
+													<m:cells>
+														<m:Link text="{methods>type}"
+																			href="#/api/{methods>type}"
+																			enabled="{parts: [{path: 'methods>type'}],
+																				  formatter: '.formatExceptionLink'}"/>
+														<core:HTML content="{parts: [{path: 'methods>description'}],
 																			 formatter: '.formatDescription'}"/>
 													</m:cells>
 												</m:ColumnListItem>
