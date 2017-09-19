@@ -96,12 +96,6 @@ function (
 		assert.ok(this.oFlexController);
 	});
 
-	QUnit.test("applyChange shall not crash if parameters are missing", function (assert) {
-		QUnit.expect(0);
-
-		this.oFlexController.applyChange(null, null);
-	});
-
 	QUnit.test('createAndApplyChange shall not crash if no change handler can be found', function (assert) {
 		var oUtilsLogStub = this.stub(Utils.log, "warning");
 		var oChangeSpecificData = {};
@@ -305,18 +299,6 @@ function (
 		this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [oChange, oChange, oChange]);
 		sinon.assert.callOrder(changeHandlerApplyChangeStub0, changeHandlerApplyChangeStub1, changeHandlerApplyChangeStub2);
 		assert.strictEqual(oLoggerStub.callCount, 0, "Applied change was not logged");
-	});
-
-	QUnit.test("applyChange shall call the Change Handler", function (assert) {
-		var fChangeHandler = sinon.stub();
-		fChangeHandler.applyChange = sinon.stub();
-		fChangeHandler.completeChangeContent = sinon.stub();
-		sinon.stub(this.oFlexController, "_getChangeHandler").returns(fChangeHandler);
-
-		//Call CUT
-		this.oFlexController.applyChange(this.oChange, this.oControl);
-
-		sinon.assert.calledOnce(fChangeHandler.applyChange, "Change shall be applied");
 	});
 
 	QUnit.test("addChange shall add a change", function(assert) {

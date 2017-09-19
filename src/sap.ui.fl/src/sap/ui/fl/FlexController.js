@@ -567,33 +567,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the corresponding change handler for the change and applies the change to the control
-	 *
-	 * @param {sap.ui.fl.Change} oChange Change instance
-	 * @param {sap.ui.core.Control} oControl Control instance
-	 * @public
-	 * @deprecated
-	 */
-	FlexController.prototype.applyChange = function (oChange, oControl) {
-		var sControlType = Utils.getControlType(oControl);
-		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
-		if (!oChangeHandler) {
-			if (oChange && oControl) {
-				Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored.");
-			}
-			return;
-		}
-
-		try {
-			oChangeHandler.applyChange(oChange, oControl);
-		} catch (ex) {
-			this._setMergeError(true);
-			Utils.log.error("Change could not be applied. Merge error detected.");
-			throw ex;
-		}
-	};
-
-	/**
 	 * Retrieves the <code>sap.ui.fl.registry.ChangeRegistryItem</code> for the given change and control
 	 *
 	 * @param {sap.ui.fl.Change} oChange - Change instance
