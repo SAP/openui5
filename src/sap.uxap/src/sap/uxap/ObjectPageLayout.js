@@ -760,7 +760,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._handleExpandButtonPress = function (oEvent) {
-		this._expandCollapseHeader(true);
+		if (this._bStickyAnchorBar) {
+			this._moveHeaderToTitleArea();
+			this._toggleHeaderTitle(true /* expand */);
+		}
 	};
 
 	/**
@@ -772,19 +775,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Expands or collapses the sticky header
+	 * Moves the header to the title area
 	 * @private
 	 */
-	ObjectPageLayout.prototype._expandCollapseHeader = function (bExpand) {
-		if (bExpand && this._bStickyAnchorBar) {
+	ObjectPageLayout.prototype._moveHeaderToTitleArea = function () {
+		if (this._bStickyAnchorBar) {
 			this._$headerContent.css("height", this.iHeaderContentHeight).children().appendTo(this._$stickyHeaderContent); // when removing the header content, preserve the height of its placeholder, to avoid automatic repositioning of scrolled content as it gets shortened (as its topmost part is cut off)
-			this._toggleHeaderTitle(bExpand);
-			this._bHeaderInTitleArea = bExpand;
-		} else if (!bExpand && this._bHeaderInTitleArea) {
+			this._bHeaderInTitleArea = true;
+		}
+	};
+
+	/**
+	 * Moves the header to the content area
+	 * @private
+	 */
+	ObjectPageLayout.prototype._moveHeaderToContentArea = function () {
+		if (this._bHeaderInTitleArea) {
 			this._$headerContent.css("height", "auto").append(this._$stickyHeaderContent.children());
 			this._$stickyHeaderContent.children().remove();
-			this._toggleHeaderTitle(bExpand);
-			this._bHeaderInTitleArea = bExpand;
+			this._bHeaderInTitleArea = false;
 		}
 	};
 
@@ -1241,7 +1250,8 @@ sap.ui.define([
 		}
 
 		if (this._bHeaderInTitleArea && !this._bPersistHeaderInTitleArea) {
-			this._expandCollapseHeader(false);
+			this._moveHeaderToContentArea();
+			this._toggleHeaderTitle(false /* snap */);
 		}
 
 		iOffset = iOffset || 0;
@@ -1902,7 +1912,8 @@ sap.ui.define([
 		}
 
 		if (this._bHeaderInTitleArea && !this._bPersistHeaderInTitleArea) {
-			this._expandCollapseHeader(false);
+			this._moveHeaderToContentArea();
+			this._toggleHeaderTitle(false /* snap */);
 		}
 
 		//don't apply parallax effects if there are not enough space for it
@@ -2312,7 +2323,8 @@ sap.ui.define([
 
 		if (bOldShow !== bShow) {
 			if (bOldShow && this._bHeaderInTitleArea && !this._bPersistHeaderInTitleArea) {
-				this._expandCollapseHeader(false);
+				this._moveHeaderToContentArea();
+				this._toggleHeaderTitle(false /* snap */);
 			}
 			this.setProperty("showHeaderContent", bShow);
 			this._getHeaderContent().setProperty("visible", bShow);
