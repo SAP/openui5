@@ -8,6 +8,7 @@ sap.ui.require([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/ControlVariantSwitch",
+	"sap/ui/rta/command/ControlVariantDuplicate",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/registry/ChangeRegistry",
@@ -34,6 +35,7 @@ sap.ui.require([
 	DesignTime,
 	CommandFactory,
 	ControlVariantSwitch,
+	ControlVariantDuplicate,
 	OverlayRegistry,
 	ElementOverlay,
 	ChangeRegistry,
@@ -224,6 +226,17 @@ sap.ui.require([
 			assert.ok(bEnabled, "then variant switch is enabled for VariantManagement control");
 		});
 
+		QUnit.test("when isVariantDuplicateEnabled is called with VariantManagement overlay", function(assert) {
+			assert.notOk(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oObjectPageLayoutOverlay), "then duplicate not enabled for a non VariantManagement control overlay with variantReference");
+			assert.ok(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oVariantManagementOverlay), "then duplicate enabled for a VariantManagement control overlay withvariantReference");
+			assert.notOk(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oLayoutOuterOverlay), "then duplicate not enabled for a non VariantManagement control overlay without variantReference");
+		});
+
+		QUnit.test("when isVariantDuplicateAvailable is called with VariantManagement overlay", function(assert) {
+			var bAvailable = this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oVariantManagementOverlay);
+			assert.ok(bAvailable, "then variant duplicate is available for VariantManagement control");
+		});
+
 		QUnit.test("when isVariantRenameAvailable is called with VariantManagement overlay", function(assert) {
 			var bAvailable = this.oControlVariantPlugin.isVariantRenameAvailable(this.oVariantManagementOverlay);
 			assert.ok(bAvailable, "then variant rename is available for VariantManagement control");
@@ -254,15 +267,38 @@ sap.ui.require([
 			assert.notOk(bAvailable, "then variant configure is not implemented yet");
 		});
 
-		QUnit.test("when switchVarint is called", function(assert) {
+		QUnit.test("when switchVariant is called", function(assert) {
 			var done = assert.async();
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
 				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand instanceof ControlVariantSwitch, "then an switchVariant event is recieved with a switch command");
+				assert.ok(oCommand instanceof ControlVariantSwitch, "then an switchVariant event is received with a switch command");
 				done();
 			});
 			this.oControlVariantPlugin.switchVariant(this.oVariantManagementOverlay, "variant2", "variant1");
+		});
+
+		QUnit.test("when duplicateVariant is called", function(assert) {
+			var done = assert.async();
+			var oModelData = {};
+			oModelData[this.sLocalVariantManagementId] = {
+				variants: [
+					{key: "variant1"},
+					{key: "variant2"}
+				]
+			};
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			var oModel = new VariantModel(oModelData, {}),
+				oMockedAppComponent = fnGetMockedAppComponent(oModel);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(oModel, "getCurrentVariantReference").returns(oModelData[this.sLocalVariantManagementId].variants[0]);
+			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+				assert.ok(oEvent, "then fireElementModified is called once");
+				var oCommand = oEvent.getParameter("command");
+				assert.ok(oCommand instanceof ControlVariantDuplicate, "then a duplicate Variant event is received with a switch command");
+				done();
+			});
+			this.oControlVariantPlugin.duplicateVariant(this.oVariantManagementOverlay);
 		});
 
 		QUnit.test("when renameVariant is called", function(assert) {

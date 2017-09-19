@@ -77,10 +77,11 @@ sap.ui.require([
 	QUnit.test("when calling 'getVariants' of the VariantController", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		var aExpectedVariants = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants;
-		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
-		assert.deepEqual(aExpectedVariants, aVariants, "then the variants of a given variantManagmentId are returned");
-		assert.equal(aVariants[0].content.fileName, "idMain1--variantManagementOrdersTable", "and ordered with standard variant first");
+		var aVariants = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants;
+		var aSortedVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var aExpectedVariants = [aVariants[1], aVariants[0], aVariants[2]];
+		assert.deepEqual(aExpectedVariants, aSortedVariants, "then the variants of a given variantManagmentId are returned");
+		assert.equal(aExpectedVariants[0].content.fileName, "idMain1--variantManagementOrdersTable", "and ordered with standard variant first");
 	});
 
 	QUnit.test("when calling 'getVariants' of the VariantController with an invalid variantManagementId", function(assert) {
