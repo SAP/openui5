@@ -129,7 +129,7 @@ function(
 
 		assert.ok(this.oAppDescriptorCommand, "App Descriptor command exists for element");
 
-		this.oAppDescriptorCommand.createAndStore();
+		this.oAppDescriptorCommand.createAndStoreChange();
 	});
 
 });
