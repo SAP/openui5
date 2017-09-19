@@ -39,6 +39,7 @@
 }
 
 .sapUiFlVarMngmt .sapUiFlVarMngmtLayout .sapUiFlVarMngmtTriggerBtn {
+	cursor: pointer;
 	margin-left: 0.5rem;
 	color: @sapUiButtonTextColor;
 	text-shadow: @sapUiShadowText;
@@ -63,9 +64,9 @@
     border-radius: 0.2rem;	
 }
 
-.sapUiFlVarMngmt:focus {
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiFlVarMngmt:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
-    outline-offset: -2px;
+	outline-offset: -2px;
 }
 
 .sapUiFlVarMngmtPopover .sapMSelectList {
