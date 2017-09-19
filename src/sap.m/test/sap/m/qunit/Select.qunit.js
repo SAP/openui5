@@ -5961,7 +5961,7 @@
 			}
 
 			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-expanded"), "false");
-			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-live"), "polite");
+			assert.strictEqual(oSelect.$("label").attr("aria-live"), "polite");
 
 			// cleanup
 			oSelect.destroy();
