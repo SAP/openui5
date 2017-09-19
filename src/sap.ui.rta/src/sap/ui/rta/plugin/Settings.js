@@ -80,7 +80,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Settings.prototype._getSettingsAction = function(oOverlay) {
-		return oOverlay.getDesignTimeMetadata().getAction("settings", oOverlay.getElementInstance());
+		return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getAction("settings", oOverlay.getElementInstance()) : null;
 	};
 
 	/**
