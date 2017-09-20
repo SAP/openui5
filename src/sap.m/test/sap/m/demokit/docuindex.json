@@ -820,6 +820,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.OverflowToolbarToggleButton",
+		  "name": "Overflow Toolbar Toggle Button",
+		  "category": "Action",
+		  "since": "1.52",
+		  "samples": [
+			"sap.m.sample.OverflowToolbarFooter"
+		  ]
+		},
+		{
 		  "id": "sap.m.Page",
 		  "name": "Page",
 		  "category": "Container",
