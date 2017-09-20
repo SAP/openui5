@@ -30,10 +30,10 @@
 	</script>
 
 	<script id="view" type="application/xml">
-		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view">
+		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view" xmlns:dt="sap.ui.dt">
 			<Panel id="panel">
 				<content>
-					<Button text="Button" id="button"></Button>
+					<Button text="Button" id="button" dt:test="testvalue"></Button>
 					<Button text="StashedButton" id="stashedButton" stashed="true"></Button>
 					<core:ExtensionPoint name="extension">
 						<Button text="ExtensionButton" id="extensionButton"></Button>
@@ -241,6 +241,41 @@
 				}
 
 				assert.ok(sError,"Not ending with binding in {model: 'model', path: '/path'}{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}huhuhuh is detected");
+			});
+
+			QUnit.module("Custom Settings",{
+				beforeEach: function() {
+					this.oView = sap.ui.xmlview({
+						viewContent: sView,
+						id: "view",
+						async: true
+					});
+					this.xml = jQuery.sap.parseXML(sView);
+				},
+				afterEach: function() {
+					this.oView.destroy();
+				}
+			});
+			
+			QUnit.test("Adding and cloning of sap-ui-custom-settings from xml namespaced attributes", function (assert) {
+				return this.oView.loaded().then(function() {
+					var oButton = this.oView.byId("button"),
+						mCustomSettings = oButton.data("sap-ui-custom-settings");
+					assert.ok(mCustomSettings != null,"Custom Settings available for button with namespace sap.ui.dt");
+					assert.ok(mCustomSettings["sap.ui.dt"].test === "testvalue","Custom Settings test available for button in namespace sap.ui.dt");
+					assert.ok(mCustomSettings["sap.ui.dt"] !== null,"Custom Settings available for button with namespace sap.ui.dt");
+					assert.ok(mCustomSettings["sap.ui.dt"]["test"] === "testvalue","Custom Settings available for button in namespace sap.ui.dt/test");
+					assert.ok(mCustomSettings["notexisting"] === undefined,"Custom Settings available for button with not existing namespace");
+				
+					var oClone = oButton.clone(),
+						mCustomSettingsClone = oClone.data("sap-ui-custom-settings");
+					assert.ok(mCustomSettingsClone !== null,"Custom Settings available for clone with namespace sap.ui.dt");
+					assert.ok(mCustomSettingsClone["sap.ui.dt"].test === "testvalue","Custom Settings test available for clone in namespace sap.ui.dt");
+					assert.ok(mCustomSettingsClone["sap.ui.dt"] === mCustomSettings["sap.ui.dt"],"Custom Settings available for clone with namespace sap.ui.dt and is a reference");
+					assert.ok(mCustomSettingsClone["sap.ui.dt"] != null,"Custom Settings available for clone with namespace sap.ui.dt");
+					assert.ok(mCustomSettingsClone["sap.ui.dt"]["test"] === "testvalue","Custom Settings available for clone in namespace sap.ui.dt/test");
+					assert.ok(mCustomSettingsClone["notexisting"] === undefined,"Custom Settings available for clone with not existing namespace");
+				}.bind(this));
 			});
 		});
 	</script>
