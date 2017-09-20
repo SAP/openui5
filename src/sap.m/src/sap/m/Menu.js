@@ -211,6 +211,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				]
 			});
 			oDialog.addStyleClass("sapMRespMenuDialog");
+			// remove padding for the menu on phone
+			oDialog.removeStyleClass("sapUiPopupWithPadding");
 			this.setAggregation("_dialog", oDialog, true);
 		};
 

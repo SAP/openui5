@@ -589,6 +589,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	};
 
 	Menu.prototype.onkeyup = function(oEvent){
+		// focus menuItems
+		if (this.oHoveredItem) {
+			var oDomRef = this.oHoveredItem.getDomRef();
+			jQuery(oDomRef).attr("tabIndex", 0).focus();
+		}
+
 		//like sapselect but on keyup:
 		//Using keydown has the following side effect:
 		//If the selection leads to a close of the menu and the focus is restored to the caller (e.g. a button)
