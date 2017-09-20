@@ -1071,7 +1071,7 @@ html[data-sap-ui-browser="ie9"] .titlesHeader p {
 }
 
 /* correct split container right border */
-.sapUiDemokit .sapMSplitContainerMaster:after {
+.sapUiDemokit .sapMSplitContainerMaster {
 	border-right: 1px solid #4f667a;
 }
 
