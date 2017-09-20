@@ -73,7 +73,6 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 * This event is fired when the user starts dragging an element.
 			 */
 			dragStart: {
-				enableEventBubbling: true,
 				allowPreventDefault : true,
 				parameters : {
 					/**
@@ -96,7 +95,6 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 * This event is fired when a dragged element enters a drop target.
 			 */
 			dragEnter: {
-				enableEventBubbling: true,
 				allowPreventDefault : true,
 				parameters : {
 					/**
@@ -119,7 +117,6 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 * This event is fired when an element is dropped on a valid drop target, as specified by the drag and drop info.
 			 */
 			drop : {
-				enableEventBubbling: true,
 				parameters: {
 					/**
 					 * The UI5 <code>dragSession</code> object that exists only during drag and drop
