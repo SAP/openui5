@@ -72,7 +72,12 @@ sap.ui.define(['sap/ui/core/Element'],
 		if (jQuery.type(oValue) === "string") {
 			sValue = oValue;
 		} else if (jQuery.isPlainObject(oValue)) {
-			sValue = oValue.time + " " + oValue.day;
+			if (oValue.day && oValue.day.length > 0) {
+				sValue = oValue.day;
+			}
+			if (oValue.time && oValue.time.length > 0) {
+				sValue = (sValue.length > 0) ? oValue.time + " " + sValue : oValue.time;
+			}
 		}
 		return sValue;
 	};
