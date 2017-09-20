@@ -1454,6 +1454,9 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .sapUiDemokitLandingImageCell:not(.welcomeImageCell) {
 	padding-bottom: 24.6%;
 }
+html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .sapUiDemokitLandingImageCell.toolsImageCell {
+	padding-bottom: 19.5%;
+}
 html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
 	position: absolute;
 	max-height: 50%;

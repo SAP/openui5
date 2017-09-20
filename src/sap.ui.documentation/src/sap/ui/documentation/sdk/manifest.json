@@ -209,6 +209,11 @@
 			"target": ["demoApps"]
 		  },
 		  {
+			"pattern": "tools",
+			"name": "tools",
+			"target": ["tools"]
+		  },
+		  {
 			"pattern": "search/{searchParam}",
 			"name": "search",
 			"target": ["searchPage"]
@@ -290,6 +295,11 @@
 				"viewName": "DemoApps",
 				"viewLevel": 2,
 				"viewId": "demoApps"
+		  },
+		  "tools": {
+				"viewName": "Tools",
+				"viewLevel": 2,
+				"viewId": "tools"
 		  },
 		  "apiDetailInitial": {
 			"viewName": "ApiDetailInitial",
