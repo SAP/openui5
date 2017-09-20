@@ -1911,7 +1911,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			METHOD =  "sap.ui.core.Core.initLibrary()";
 
 		if ( bLegacyMode ) {
-			log.warning("[Deprecated] library " + sLibName + " uses old fashioned initLibrary() call (rebuild with newest generator)");
+			log.error("[Deprecated] library " + sLibName + " uses old fashioned initLibrary() call (rebuild with newest generator)");
 		}
 
 		if ( !sLibName || mLoadedLibraries[sLibName] ) {
@@ -1966,37 +1966,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			elements : []
 		}, oLibInfo);
 
-		// this code could be moved to a separate "legacy support" module
-		function readLibInfoFromProperties() {
-
-			// read library properties
-			var oProperties = jQuery.sap.properties({url : sap.ui.resource(sLibName, "library.properties")});
-
-			// version info
-			oLibInfo.version = oProperties.getProperty(sLibName + "[version]");
-
-			// dependencies
-			var sDepInfo = oProperties.getProperty(sLibName + "[dependencies]");
-			log.debug("Required Libraries: " + sDepInfo, null, METHOD);
-			oLibInfo.dependencies = (sDepInfo && sDepInfo.split(/[,;| ]/)) || [];
-
-			// collect types, controls and elements
-			var aKeys = oProperties.getKeys(),
-			  rPattern = /(.+)\.(type|interface|control|element)$/,
-			  aMatch;
-			for (var j = 0; j < aKeys.length; j++) {
-				var sEntityPath = oProperties.getProperty(aKeys[j]);
-				if ( (aMatch = sEntityPath.match(rPattern)) !== null ) {
-					oLibInfo[aMatch[2] + "s"].push(aKeys[j]);
-				}
-			}
-		}
-
-		// (legacy) if only a string was given, read the library.properties instead
-		if ( bLegacyMode ) {
-			readLibInfoFromProperties();
-		}
-
 		// resolve dependencies
 		for (var i = 0; i < oLibInfo.dependencies.length; i++) {
 			var sDepLib = oLibInfo.dependencies[i];
@@ -2018,7 +1987,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 		}
 
-		// create lazy imports for all controls and elements
+		// create lazy loading stubs for all controls and elements
 		var aElements = oLibInfo.controls.concat(oLibInfo.elements);
 		for (var i = 0; i < aElements.length; i++) {
 			sap.ui.lazyRequire(aElements[i], "new extend getMetadata"); // TODO don't create an 'extend' stub for final classes
@@ -2046,13 +2015,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// expose some legacy names
 		oLibInfo.sName = oLibInfo.name;
 		oLibInfo.aControls = oLibInfo.controls;
-
-		// load and execute the library.js script
-		if ( !jQuery.sap.isDeclared(sLibName + ".library") ) {
-			// TODO redundant to generated require calls
-			log.warning("Library Module " + sLibName + ".library" + " not loaded automatically", null, METHOD);
-			jQuery.sap.require(sLibName + ".library");
-		}
 
 		this.fireLibraryChanged({name : sLibName, stereotype : "library", operation: "add", metadata : oLibInfo});
 
