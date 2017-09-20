@@ -127,13 +127,24 @@ sap.ui.define([
 		When.onCheckout.iEnterCreditCardInformation("My name", "1234567891234567", "13", "01/2020");
 
 		// Assertions
-		Then.onCheckout.iShouldNotSeeTheStep4Button("creditCardStep");
+		Then.onCheckout.iShouldNotSeeTheStep4Button("creditCardStep").and.
+		iShouldSeeTheFooterWithTheErrorButton();
+	});
+
+	opaTest("Should see a message popover window", function (Given, When, Then) {
+
+		// Actions
+		When.onCheckout.iPressOnTheButtonInTheFooter();
+
+		// Assertions
+		Then.onCheckout.iShouldSeeTheMessagePopover();
 	});
 
 	opaTest("Should see Step 4 Button", function (Given, When, Then) {
 
 		// Actions
-		When.onCheckout.iEnterCreditCardInformation("My name", "1234567891234567", "123", "01/2020");
+		When.onCheckout.iPressTheCloseButton().
+		and.iEnterCreditCardInformation("My name", "1234567891234567", "123", "01/2020");
 
 		// Assertions
 		Then.onCheckout.iShouldSeeTheStep4Button();
@@ -398,5 +409,4 @@ sap.ui.define([
 		// Assertions
 		Then.onTheWelcomePage.iShouldSeeTheWelcomePage().and.iTeardownMyApp();
 	});
-
 });

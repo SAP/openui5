@@ -2,11 +2,20 @@ sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/matchers/BindingPath',
 	'sap/ui/test/matchers/Properties',
+	'sap/ui/test/matchers/PropertyStrictEquals',
 	'sap/ui/test/matchers/AggregationFilled',
 	'sap/ui/test/matchers/I18NText',
 	'sap/ui/test/actions/Press',
 	'sap/ui/test/actions/EnterText'
-], function (Opa5, BindingPath, Properties, AggregationFilled, I18NText, Press, EnterText) {
+], function (
+	Opa5,
+	BindingPath,
+	Properties,
+	PropertyStrictEquals,
+	AggregationFilled,
+	I18NText,
+	Press,
+	EnterText) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -17,7 +26,7 @@ sap.ui.define([
 				iPressOnTheReturnToShopButton: function () {
 					return this.waitFor({
 						id: "returnToShopButton",
-						actions: new sap.ui.test.actions.Press()
+						actions: new Press()
 					});
 				},
 
@@ -34,8 +43,16 @@ sap.ui.define([
 				iPressOnDifferentAddressCheckbox: function () {
 					return this.waitFor({
 						id: "differentDeliveryAddress",
-						actions: new sap.ui.test.actions.Press(),
+						actions: new Press(),
 						errorMessage: "Could not press Different Delivery Address Checkbox"
+					});
+				},
+
+				iPressOnTheButtonInTheFooter: function () {
+					return this.waitFor({
+						id: "showPopoverButton",
+						actions: new Press(),
+						errorMessage: "The button is not rendered and could not be pressed"
 					});
 				},
 
@@ -137,6 +154,7 @@ sap.ui.define([
 						errorMessage: "Could not enter Text invoiceAddressAddress"
 					});
 				},
+
 				iEnterDeliveryAddressText: function () {
 					return this.waitFor({
 						id: "deliveryAddressAddress",
@@ -181,7 +199,7 @@ sap.ui.define([
 					this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Button",
-						matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: "Yes"
 						}),
@@ -190,7 +208,7 @@ sap.ui.define([
 								return true;
 							});
 						},
-						actions: new sap.ui.test.actions.Press(),
+						actions: new Press(),
 						errorMessage: "Did not find the Yes button"
 					});
 					return this;
@@ -199,7 +217,7 @@ sap.ui.define([
 				iPressOnTheEditButtonBacktoList : function () {
 					return this.waitFor({
 						id: "backtoList",
-						actions : new sap.ui.test.actions.Press(),
+						actions : new Press(),
 						errorMessage : "The BacktoList button could not be pressed"
 					});
 				},
@@ -207,7 +225,7 @@ sap.ui.define([
 				iPressOnTheEditButtonBackToPaymentType : function () {
 					return this.waitFor({
 						id: "backToInvoiceAddress",
-						actions : new sap.ui.test.actions.Press(),
+						actions : new Press(),
 						errorMessage : "The BackToInvoiceAddress button could not be pressed"
 					});
 				},
@@ -215,7 +233,7 @@ sap.ui.define([
 				iPressOnTheEditButtonBackToInvoiceAddress : function () {
 					return this.waitFor({
 						id: "backToPaymentType",
-						actions : new sap.ui.test.actions.Press(),
+						actions : new Press(),
 						errorMessage : "The BackToPaymentType button could not be pressed"
 					});
 				},
@@ -223,7 +241,7 @@ sap.ui.define([
 				iPressOnTheEditButtonBackToDeliveryType: function () {
 					return this.waitFor({
 						id: "backToDeliveryType",
-						actions : new sap.ui.test.actions.Press(),
+						actions : new Press(),
 						errorMessage : "The BackToDeliveryType button could not be pressed"
 					});
 				},
@@ -232,8 +250,8 @@ sap.ui.define([
 				iPressOnTheBankTransferButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: new sap.ui.test.matchers.I18NText({ propertyName: "text", key: "checkoutPaymentBankTransfer"}),
-						actions: new sap.ui.test.actions.Press(),
+						matchers: new I18NText({ propertyName: "text", key: "checkoutPaymentBankTransfer"}),
+						actions: new Press(),
 						errorMessage: "Cannot select Bank Transfer from Payment Methods"
 					});
 				},
@@ -241,8 +259,8 @@ sap.ui.define([
 				iPressOnTheCashOnDeliveryButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: new sap.ui.test.matchers.I18NText({ propertyName: "text", key: "checkoutPaymentCod"}),
-						actions: new sap.ui.test.actions.Press(),
+						matchers: new I18NText({ propertyName: "text", key: "checkoutPaymentCod"}),
+						actions: new Press(),
 						errorMessage: "Cannot select Cash On Delivery from Payment Methods"
 					});
 				},
@@ -250,13 +268,24 @@ sap.ui.define([
 				iPressOnTheExpressDeliveryButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: new sap.ui.test.matchers.I18NText({ propertyName: "text", key: "checkoutDeliveryTypeExpress"}),
-						actions: new sap.ui.test.actions.Press(),
+						matchers: new I18NText({ propertyName: "text", key: "checkoutDeliveryTypeExpress"}),
+						actions: new Press(),
 						errorMessage: "Cannot select express delivery"
 					});
+				},
+
+				iPressTheCloseButton: function () {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						viewName: "",
+						matchers: new PropertyStrictEquals({
+							name: "icon",
+							value: "sap-icon://decline"
+						}),
+						actions: new Press(),
+						errorMessage: "The message popover close button was not found"
+					});
 				}
-
-
 			},
 			assertions: {
 				iShouldSeeTheWizardStepContentsStep: function () {
@@ -279,7 +308,7 @@ sap.ui.define([
 				iShouldSeeTheStep3Button: function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: "Step 3"
 						}),
@@ -291,7 +320,7 @@ sap.ui.define([
 				iShouldSeeTheStep4Button: function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: "Step 4"
 						}),
@@ -304,7 +333,7 @@ sap.ui.define([
 				iShouldSeeTheStep5Button: function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: "Step 5"
 						}),
@@ -317,7 +346,7 @@ sap.ui.define([
 				iShouldSeeTheStep6Button: function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: "Step 6"
 						}),
@@ -380,6 +409,26 @@ sap.ui.define([
 						success: function () {
 							Opa5.assert.ok("Express Delivery", "Found the Express Delivery Method");
 						}
+					});
+				},
+
+				iShouldSeeTheFooterWithTheErrorButton: function() {
+					return this.waitFor({
+						id : "wizardFooterBar",
+						success: function (oFooter) {
+							Opa5.assert.ok(oFooter.getAggregation("contentLeft")[0].getProperty("text") === "1", "Found the Footer containing the error button");
+						},
+						errorMessage: "Footer is not visible"
+					});
+				},
+
+				iShouldSeeTheMessagePopover: function() {
+					return this.waitFor({
+						id : "messagePopover",
+						success : function () {
+							Opa5.assert.ok("errorMessagePopover", "The MessagePopover is visible");
+						},
+						errorMessage: "The MessagePopover was not displayed"
 					});
 				}
 			}
