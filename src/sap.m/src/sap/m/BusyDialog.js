@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 		 * <li>The operation lasts more than one second.</li>
 		 * <li>You want to indicate loading in a page-to-page navigation (lightweight version).</li>
 		 * <li>Offer a Cancel button if you expect the process to run more than 10 seconds.</li>
-		 * <li> If you do not show a title or text, use the {@link sap.ui.core.InvisibleText invisible text} control to provide the reason for users with assertive technologies.</li>
+		 * <li> If you do not show a title or text, use the {@link sap.ui.core.InvisibleText invisible text} control to provide the reason for users with assistive technologies.</li>
 		 * </ul>
 		 * <h4>When not to use</h4>
 		 * <ul>
