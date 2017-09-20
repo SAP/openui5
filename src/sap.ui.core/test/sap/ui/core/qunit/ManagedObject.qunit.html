@@ -380,6 +380,18 @@
 				setAndTest("unknown", "testtest", ERROR);
 			});
 
+			QUnit.test("Escape property before setting", function(assert) {
+				// cannot test actual escaping because it does not change the value when bindingSyntax is not set to "complex"
+				sinon.spy(sap.ui.base.ManagedObject.bindingParser, "escape");
+
+				// string
+				sap.ui.base.ManagedObject.escapeSettingsValue("x");
+				assert.equal(sap.ui.base.ManagedObject.bindingParser.escape.callCount, 1, "strings should be escaped by escapeSettingsValue");
+
+				sap.ui.base.ManagedObject.escapeSettingsValue(41);
+				assert.equal(sap.ui.base.ManagedObject.bindingParser.escape.callCount, 1, "non-strings should not be escaped by escapeSettingsValue");
+			});
+
 			QUnit.test("Bind property", function(assert) {
 				this.obj.bindProperty("value", "/value");
 				assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
@@ -1860,14 +1872,14 @@
 				assert.ok(this.obj2._getContextualSettings() === sap.ui.base.ManagedObject._defaultContextualSettings, "Child now has the default contextual settings");
 
 			});
-			
+
 			QUnit.test("SpecialSettings default values", function(assert) {
 				var oControl = new sap.ui.core.TestManagedObject(),
 					mSpecial = oControl.getMetadata()._mAllSpecialSettings;
 				assert.ok(mSpecial["metadataContexts"].defaultValue, "Metadata context default value is set");
 				assert.ok(mSpecial["metadataContexts"].type == "object", "Metadata context of type object");
 				assert.ok(mSpecial["metadataContexts"].appData.myprop == "test", "Metadata context has appdata applied");
-				
+
 				oControl = new sap.test.TestManagedObject();
 				mSpecial = oControl.getMetadata()._mAllSpecialSettings;
 				assert.ok(mSpecial["metadataContexts"].defaultValue === undefined, "Metadata context default value is not set");
