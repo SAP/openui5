@@ -18,7 +18,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 				oAnchorBar = null,
 				bIsHeaderContentVisible = oControl.getHeaderContent() && oControl.getHeaderContent().length > 0 && oControl.getShowHeaderContent(),
 				bIsTitleInHeaderContent = oControl.getShowTitleInHeaderContent() && oControl.getShowHeaderContent(),
-				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent;
+				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent,
+				sTitleText;
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
 				oAnchorBar = oControl.getAggregation("_anchorBar");
@@ -27,7 +28,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			if (oHeader) {
-				oRm.writeAttributeEscaped("aria-label", oHeader.getObjectTitle());
+				sTitleText = oHeader.getTitleText() || "";
+				oRm.writeAttributeEscaped("aria-label", sTitleText);
 			}
 			oRm.addClass("sapUxAPObjectPageLayout");
 			oRm.writeClasses();
@@ -73,7 +75,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-opwrapper");
 			oRm.addClass("sapUxAPObjectPageWrapper");
 			// set transform only if we don't have title arrow inside the header content, otherwise the z-index is not working
-			if (!(oControl.getShowTitleInHeaderContent() && oHeader.getShowTitleSelector())) {
+			// always set transform if showTitleInHeaderConent is not supported
+			if (oHeader && !oHeader.supportsTitleInHeaderContent() || !(oControl.getShowTitleInHeaderContent() && oHeader.getShowTitleSelector())) {
 				oRm.addClass("sapUxAPObjectPageWrapperTransform");
 			}
 			oRm.writeClasses();
@@ -142,9 +145,11 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer._renderAnchorBar = function (oRm, oControl, oAnchorBar, bRender) {
-			var aSections = oControl.getAggregation("sections");
+			var aSections = oControl.getAggregation("sections"),
+				oHeaderContent;
 			if (bRender) {
-				if (oControl.getIsChildPage()) {
+				oHeaderContent = oControl._getHeaderContent();
+				if (oControl.getIsChildPage() && oHeaderContent && oHeaderContent.supportsChildPageDesign()) {
 					oRm.write("<div ");
 					oRm.writeAttributeEscaped("id", oControl.getId() + "-childPageBar");
 					if (jQuery.isArray(aSections) && aSections.length > 1) {

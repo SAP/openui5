@@ -19,9 +19,10 @@ sap.ui.define([
 	"sap/m/ActionSheet",
 	"sap/m/Image",
 	"./ObjectImageHelper",
+	"./ObjectPageHeaderContent",
 	"./library"
 ], function (jQuery, Control, IconPool, CustomData, Icon, BaseEvent, Device, Breadcrumbs, ObjectPageHeaderActionButton,
-			 ResizeHandler, Text, Button, ActionSheet, Image, ObjectImageHelper, library) {
+			 ResizeHandler, Text, Button, ActionSheet, Image, ObjectImageHelper, ObjectPageHeaderContent, library) {
 	"use strict";
 
 	/**
@@ -34,6 +35,7 @@ sap.ui.define([
 	 * ObjectPageHeader represents the static part of an Object page header.
 	 * Typically used to display the basic information about a business object, such as title/description/picture, as well as a list of common actions.
 	 * @extends sap.ui.core.Control
+	 * @implements sap.uxap.IHeaderTitle
 	 *
 	 * @author SAP SE
 	 *
@@ -46,6 +48,7 @@ sap.ui.define([
 	var ObjectPageHeader = Control.extend("sap.uxap.ObjectPageHeader", /** @lends sap.uxap.ObjectPageHeader.prototype */ {
 		metadata: {
 			library: "sap.uxap",
+			interfaces: ["sap.uxap.IHeaderTitle"],
 			properties: {
 
 				/**
@@ -995,6 +998,89 @@ sap.ui.define([
 		return this.getNavigationBar();
 	};
 
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 * @returns {sap.uxap.ObjectPageHeaderContent}
+	 */
+	ObjectPageHeader.prototype.getCompatibleHeaderContentClass = function () {
+		return ObjectPageHeaderContent;
+	};
+
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 * @returns {boolean}
+	 */
+	ObjectPageHeader.prototype.supportsTitleInHeaderContent = function () {
+		return true;
+	};
+
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 * @returns {boolean}
+	 */
+	ObjectPageHeader.prototype.supportsAdaptLayoutForDomElement = function () {
+		return false;
+	};
+
+	/**
+	 * Returns the text that represents the title of the page.
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 */
+	ObjectPageHeader.prototype.getTitleText = function () {
+		return this.getObjectTitle();
+	};
+
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 */
+	ObjectPageHeader.prototype.snap = function () {
+		this._adaptLayout();
+	};
+
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 */
+	ObjectPageHeader.prototype.unSnap = function () {
+		this._adaptLayout();
+	};
+
+	/**
+	 * Attaches or detaches the <code>"_handleExpandButtonPress"</code> handler to the expand button of the <code>HeaderTitle</code> if available.
+	 * @param {boolean} bAttach should the method attach the event
+	 * @private
+	 */
+	ObjectPageHeader.prototype._handleExpandButtonPressEventLifeCycle = function (bAttach, fnHandler, oContext) {
+		var oExpandButton = this.getAggregation("_expandButton");
+		if (oExpandButton) {
+			oExpandButton[bAttach ? "attachPress" : "detachPress"](fnHandler, oContext);
+		}
+	};
+
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 * @param {boolean} bToggle
+	 * @private
+	 */
+	ObjectPageHeader.prototype._toggleExpandButton = function (bToggle) {
+
+	};
+
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 * @param {boolean} bValue
+	 * @private
+	 */
+	ObjectPageHeader.prototype._setShowExpandButton = function (bValue) {
+
+	};
+
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 * @private
+	 */
+	ObjectPageHeader.prototype._focusExpandButton = function () {
+
+	};
 
 	return ObjectPageHeader;
 });
