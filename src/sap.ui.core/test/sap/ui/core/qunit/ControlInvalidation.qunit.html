@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Control invalidation - sap.ui.core</title>
+
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true">
+	</script>
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script>
+
+	sap.ui.define([
+		"sap/ui/core/Control",
+		"sap/ui/core/LayoutData"
+	], function(Control, LayoutData) {
+
+		var TestControl = Control.extend("test.TestControl", {
+			metadata: {
+				properties: {
+					label: { type: "string", defaultValue: "" },
+					action: { type: "function", defaultValue: Function.prototype }
+				},
+				aggregations: {
+					children: { type: "test.TestControl", multiple: true }
+				}
+			},
+			renderer: function(rm, oControl) {
+				rm.write("<div");
+				rm.writeControlData(oControl);
+				rm.write(">");
+				oControl.getAction().call(oControl);
+				rm.writeEscaped(oControl.getLabel());
+				oControl.getChildren().forEach(function(oChild) {
+					rm.renderControl(oChild);
+				});
+				rm.write("</div>");
+			}
+		});
+
+
+		QUnit.module("Invalidation", {
+			beforeEach: function() {
+				this.oControl = new TestControl({
+					label: "TestControl"
+				});
+
+				this.oParent = new TestControl({
+					label: "Parent",
+					children: this.oControl
+				});
+
+				this.oInvalidationSpy = sinon.spy(TestControl.prototype, "invalidate");
+			},
+			afterEach: function() {
+				this.oParent.destroy();
+				this.oInvalidationSpy.restore();
+			}
+		});
+
+		QUnit.test("property setter", function(assert) {
+			this.oControl.setLabel("New Label");
+			assert.ok(this.oInvalidationSpy.alwaysCalledOn(this.oControl), "only this.oControl is invalidated");
+		});
+
+		QUnit.test("add aggregation", function(assert) {
+			this.oControl.addChild(new TestControl());
+			assert.ok(this.oInvalidationSpy.alwaysCalledOn(this.oControl), "only this.oControl is invalidated");
+		});
+
+		QUnit.test("insert aggregation", function(assert) {
+			this.oControl.insertChild(new TestControl(), 0);
+			assert.ok(this.oInvalidationSpy.alwaysCalledOn(this.oControl), "only this.oControl is invalidated");
+		});
+
+		QUnit.test("remove aggregation", function(assert) {
+			this.oParent.removeChild(this.oControl);
+			assert.ok(this.oInvalidationSpy.alwaysCalledOn(this.oParent), "only this.oParent is invalidated");
+		});
+
+		QUnit.test("remove all aggregation while aggregations are exists", function(assert) {
+			assert.strictEqual(this.oParent.getChildren().length, 1, "this.oParent has a child");
+			this.oParent.removeAllChildren();
+			assert.ok(this.oInvalidationSpy.alwaysCalledOn(this.oParent), "only this.oParent is invalidated");
+		});
+
+		QUnit.test("remove all aggregation while aggregations are not exists", function(assert) {
+			assert.strictEqual(this.oControl.getChildren().length, 0, "this.oControl has no children");
+
+			this.oControl.removeAllChildren();
+
+			// @FIXME this.oControl has no aggregation so why it should be invalidated?
+			assert.ok(this.oInvalidationSpy.alwaysCalledOn(this.oControl), "only this.oControl is invalidated");
+		});
+
+		QUnit.test("self invalidation during the rendering", function(assert) {
+			this.oControl.setAction(function() {
+				this.setLabel("New Label");
+			});
+
+			this.oParent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(this.oInvalidationSpy.alwaysCalledOn(this.oControl), "only this.oControl is invalidated");
+			assert.equal(this.oControl.$().text(), "New Label","New Label set during the rendering");
+		});
+
+		QUnit.test("child invalidation during the rendering", function(assert) {
+			this.oParent.setAction(function() {
+				this.getChildren().forEach(function(oChild) {
+					oChild.setLabel("New Label");
+				});
+			});
+
+			this.oInvalidationSpy.reset();
+			this.oParent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(this.oInvalidationSpy.alwaysCalledOn(this.oControl), "only this.oControl is invalidated");
+			assert.equal(this.oControl.$().text(), "New Label","New Label set from the parent during the rendering");
+		});
+
+		QUnit.test("child invalidation for the invisible rendered parent", function(assert) {
+			this.oParent.setVisible(false);
+			this.oInvalidationSpy.reset();
+
+			this.oParent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oControl.setLabel("New Label");
+			assert.ok(this.oInvalidationSpy.alwaysCalledOn(this.oControl), "only this.oControl is invalidated");
+		});
+
+		QUnit.test("invalidation at onBeforeRendering", function(assert) {
+			this.oControl.addEventDelegate({
+				onBeforeRendering: function() {
+					this.setLabel("New Label");
+				}
+			}, this.oControl);
+
+			this.oParent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(this.oInvalidationSpy.alwaysCalledOn(this.oControl), "only this.oControl is invalidated");
+			assert.equal(this.oControl.$().text(), "New Label","New Label set onBeforeRendering");
+		});
+
+	});
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">QUnit Page for Control Invalidate</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+	<div id="content"></div>
+</body>
+</html>

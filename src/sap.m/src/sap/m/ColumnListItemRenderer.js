@@ -203,8 +203,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			oCell.getAriaLabelledBy &&
 			oHeader.getVisible()) {
 
-			// suppress the invalidation during the rendering
-			oCell.addAssociation("ariaLabelledBy", oHeader, true);
+			oCell.addAriaLabelledBy(oHeader);
 			oCell.data("ariaLabelledBy", oHeader.getId());
 		}
 	};
