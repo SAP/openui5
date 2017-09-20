@@ -385,7 +385,7 @@
 	});
 
 	asyncTest("ListBinding clientside sort on Edm.Decimal", function(){
-		var oBinding = oModel.bindList("/Products", null, null, null, {
+		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("UnitPrice"), null, {
 			operationMode: sap.ui.model.odata.OperationMode.Client
 		});
 
@@ -393,11 +393,11 @@
 			// contexts should be now loaded
 			var aContexts = oBinding.getContexts();
 			equal(aContexts.length, 20);
-			equal(oModel.getProperty("UnitPrice", aContexts[0]), "18.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[1]), "19.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[3]), "22.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[4]), "21.3500", "ListBinding before sort");
+			equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding after initial sort");
+			equal(oModel.getProperty("UnitPrice", aContexts[1]), "9.2000", "ListBinding after initial sort");
+			equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding after initial sort");
+			equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding after initial sort");
+			equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding after initial sort");
 
 			oBinding.detachChange(handler);
 			// descending
@@ -428,11 +428,11 @@
 
 			var aContexts = oBinding.getContexts();
 			equal(aContexts.length, 20);
-			equal(oModel.getProperty("UnitPrice", aContexts[0]), "18.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[1]), "19.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[3]), "22.0000", "ListBinding before sort");
-			equal(oModel.getProperty("UnitPrice", aContexts[4]), "21.3500", "ListBinding before sort");
+			equal(oModel.getProperty("UnitPrice", aContexts[0]), "18.0000", "ListBinding unsorted");
+			equal(oModel.getProperty("UnitPrice", aContexts[1]), "19.0000", "ListBinding unsorted");
+			equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding unsorted");
+			equal(oModel.getProperty("UnitPrice", aContexts[3]), "22.0000", "ListBinding unsorted");
+			equal(oModel.getProperty("UnitPrice", aContexts[4]), "21.3500", "ListBinding unsorted");
 
 			start();
 		};
@@ -792,7 +792,58 @@
 		});
 	});
 
-	asyncTest("ListBinding clientside filter before data is available", function(){
+	asyncTest("ListBinding clientside filter on Edm.Decimal", function(assert){
+		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("UnitPrice"), [new sap.ui.model.Filter("UnitPrice", "EQ", "10.0000")], {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 1);
+			equal(oModel.getProperty("UnitPrice", aContexts[0]), "10.0000", "ListBinding after initial filter");
+
+			oBinding.detachChange(handler);
+			// LT
+			var oFilter = new sap.ui.model.Filter("UnitPrice", "LT", "17.4500");
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length,4);
+			equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding after LT filter");
+			equal(oModel.getProperty("UnitPrice", aContexts[1]), "9.2000", "ListBinding after LT filter");
+			equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding after LT filter");
+			equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding after LT filter");
+			// GE
+			oFilter = new sap.ui.model.Filter("UnitPrice", "GE", "39.0000");
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 5);
+			equal(oModel.getProperty("UnitPrice", aContexts[0]), "39.0000", "ListBinding after GE filter");
+			equal(oModel.getProperty("UnitPrice", aContexts[1]), "40.0000", "ListBinding after GE filter");
+			equal(oModel.getProperty("UnitPrice", aContexts[2]), "62.5000", "ListBinding after GE filter");
+			equal(oModel.getProperty("UnitPrice", aContexts[3]), "81.0000", "ListBinding after GE filter");
+			equal(oModel.getProperty("UnitPrice", aContexts[4]), "97.0000", "ListBinding after GE filter");
+
+			oBinding.filter([], sap.ui.model.FilterType.Application);
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 20);
+			equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding unfiltered");
+			equal(oModel.getProperty("UnitPrice", aContexts[1]), "9.2000", "ListBinding unfiltered");
+			equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding unfiltered");
+			equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding unfiltered");
+			equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding unfiltered");
+
+			start();
+		};
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.attachChange(handler);
+	});
+
+	asyncTest("ListBinding clientside filter before data is available", function(assert){
 		var oBinding = oModel.bindList("/Categories", null, null, null, {
 			operationMode: sap.ui.model.odata.OperationMode.Client
 		});
