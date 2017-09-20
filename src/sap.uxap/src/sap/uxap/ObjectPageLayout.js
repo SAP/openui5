@@ -776,10 +776,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._expandCollapseHeader = function (bExpand) {
-		if (this._bPersistHeaderInTitleArea) {
-			return;
-		}
-
 		if (bExpand && this._bStickyAnchorBar) {
 			this._$headerContent.css("height", this.iHeaderContentHeight).children().appendTo(this._$stickyHeaderContent); // when removing the header content, preserve the height of its placeholder, to avoid automatic repositioning of scrolled content as it gets shortened (as its topmost part is cut off)
 			this._toggleHeaderTitle(bExpand);
@@ -1241,7 +1237,7 @@ sap.ui.define([
 			this.fireNavigate({section: ObjectPageSection._getClosestSection(oSection)});
 		}
 
-		if (this._bHeaderInTitleArea) {
+		if (this._bHeaderInTitleArea && !this._bPersistHeaderInTitleArea) {
 			this._expandCollapseHeader(false);
 		}
 
@@ -1902,7 +1898,7 @@ sap.ui.define([
 			}
 		}
 
-		if (this._bHeaderInTitleArea) {
+		if (this._bHeaderInTitleArea && !this._bPersistHeaderInTitleArea) {
 			this._expandCollapseHeader(false);
 		}
 
@@ -2312,7 +2308,7 @@ sap.ui.define([
 		var bOldShow = this.getShowHeaderContent();
 
 		if (bOldShow !== bShow) {
-			if (bOldShow && this._bHeaderInTitleArea) {
+			if (bOldShow && this._bHeaderInTitleArea && !this._bPersistHeaderInTitleArea) {
 				this._expandCollapseHeader(false);
 			}
 			this.setProperty("showHeaderContent", bShow);
