@@ -149,13 +149,15 @@ sap.ui.require([
 					"variantManagementId" : {
 						"variants" : [{
 							"content" : {
-								"fileName": "variant0"
+								"fileName": "variant0",
+								"title": "variant 0"
 							},
 							"changes" : []
 						},
 							{
 								"content" : {
-									"fileName": "variant1"
+									"fileName": "variant1",
+									"title": "variant 1"
 								},
 								"changes" : [oChangeContent0, oChangeContent1]
 							}]
@@ -208,13 +210,15 @@ sap.ui.require([
 					"variantManagementId" : {
 						"variants" : [{
 							"content" : {
-								"fileName": "variant0"
+								"fileName": "variant0",
+								"title": "variant 0"
 							},
 							"changes" : [oChangeContent0, oChangeContent1, oChangeContent2]
 						},
 						{
 							"content" : {
-								"fileName": "variant1"
+								"fileName": "variant1",
+								"title": "variant 1"
 							},
 							"changes" : [oChangeContent0, oChangeContent3, oChangeContent4]
 						}]
@@ -379,17 +383,32 @@ sap.ui.require([
 		var oChangeContent0 = {"fileName":"change0"};
 		var oChangeContent1 = {"fileName":"change1"};
 
-		var oFakeVariantData = {
+		var oFakeVariantData1 = {
 			"content" : {
-				"fileName": "newVariant"
+				"title": "AA",
+				"fileName": "newVariant1"
 			},
-			"changes" : [oChangeContent0, oChangeContent1]
+			"changes" : [oChangeContent0]
+		};
+
+		var oFakeVariantData2 = {
+			"content" : {
+				"title": "ZZ",
+				"fileName": "newVariant2"
+			},
+			"changes" : [oChangeContent1]
 		};
 
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		oVariantController.addVariantToVariantManagement(oFakeVariantData, "idMain1--variantManagementOrdersTable");
+		var iIndex1 = oVariantController.addVariantToVariantManagement(oFakeVariantData1, "idMain1--variantManagementOrdersTable");
+		var iIndex2 = oVariantController.addVariantToVariantManagement(oFakeVariantData2, "idMain1--variantManagementOrdersTable");
+
 		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
-		assert.equal(aVariants[aVariants.length - 1].content.fileName, "newVariant", "then the new variant added");
+
+		assert.equal(iIndex1, 1, "then index 1 received on adding variant AA");
+		assert.equal(iIndex2, aVariants.length - 1, "then last index received on adding variant ZZ");
+		assert.equal(aVariants[1].content.fileName, "newVariant1", "then the new variant with title AA added to the second position after Standard Variant");
+		assert.equal(aVariants[aVariants.length - 1].content.fileName, "newVariant2", "then the new variant with title ZZ added to the last position after Standard Variant");
 	});
 
 	QUnit.test("when calling 'removeVariantFromVariantManagement' with a variant", function(assert) {
@@ -546,13 +565,15 @@ sap.ui.require([
 						"variantManagementId" : {
 							"variants" : [{
 								"content" : {
-									"fileName": "variant0"
+									"fileName": "variant0",
+									"title": "variant 0"
 								},
 								"changes" : [this.oChangeContent0, this.oChangeContent1]
 							},
 							{
 								"content" : {
-									"fileName": "variant1"
+									"fileName": "variant1",
+									"title": "variant 1"
 								},
 								"changes" : []
 							}]
