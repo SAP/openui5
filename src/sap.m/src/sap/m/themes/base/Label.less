@@ -150,11 +150,11 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-ch
 	content:":";
 }
 
-/* wrapping label's text */
-.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel.sapMLabelWrapped {
+/* Wrapping of the Label's text */
+.sapMLabel.sapMLabelWrapped {
 	white-space: pre-line;
-	text-overflow: clip;
-	word-wrap: break-word;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel:lang(fr):after{

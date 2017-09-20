@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Provides a textual label for other controls.
 	 * Label appearance can be influenced by properties such as <code>textAlign</code>, <code>design</code>,
 	 * <code>displayOnly</code> and <code>wrapping</code>.
-	 * As of version 1.50 the default value of the <code>wrapping</code> property is set to <code>true</code>
+	 * As of version 1.50 the default value of the <code>wrapping</code> property is set to <code>false</code>
 	 *
 	 * Labels for required fields are marked with an asterisk.
 	 * <h3>Overview</h3>
@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * <h3>Usage</h3>
 	 * <h4>When to use</h4>
 	 * <ul>
-	 * <li>Always use a label in Form controls.</li>
+	 * <li>It's recommended to use the <code>Label</code> in Form controls.</li>
 	 * <li>Use title case for labels.</li>
 	 * </ul>
 	 * <h4>When not to use</h4>
@@ -103,13 +103,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Determines the wrapping of the text within the <code>Label</code>.
-			 * If set to false the label will wrap to only one line and the exceeding text will be cut and replaced with ellipsis.
-			 *
-			 * <b>Note:</b> This property should only be used in a Form.
+			 * If set to true the <code>Label</code> will wrap, when set to false the <code>Label</code> will be truncated and replaced with ellipsis which is the default behavior.
 			 *
 			 * @since 1.50
 			 */
-			wrapping: {type : "boolean", group : "Appearance", defaultValue : true}
+			wrapping: {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		associations : {
 
