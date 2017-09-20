@@ -21,7 +21,7 @@
 				<content>
 					<Wizard
 						id="shoppingCartWizard"
-						complete="completedHandler"
+						complete="checkCompleted"
 						enableBranching="true"
 						finishButtonText="{i18n>checkoutWizardReviewbtn}">
 						<steps>
@@ -126,7 +126,7 @@
 								editable="true"
 								layout="ResponsiveGridLayout">
 								<Label
-									labelFor="creditCardName"
+									labelFor="creditCardHolderName"
 									text="{i18n>checkoutCreditCardName}"
 									required="true">
 									<layoutData>
@@ -134,54 +134,102 @@
 									</layoutData>
 								</Label>
 								<Input
-									id="creditCardName"
+									id="creditCardHolderName"
 									placeholder="{i18n>creditCardHolderText}"
-									value="{/CreditCard/Name}"
-									liveChange="checkCreditCardStep"
-									valueLiveUpdate="true">
+									value="{
+										path: '/CreditCard/Name',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[a-zA-Z]+[\\s]?[a-zA-Z]+$'
+										}
+									}"
+									change="checkCreditCardStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
 								</Input>
 								<Label
 									text="{i18n>checkoutCreditCardCardNo}"
-									labelFor="creditCardNumber">
+									labelFor="creditCardNumber"
+									required="true">
 									<layoutData>
 										<layout:GridData span="XL4 L4 M4 S12"/>
 									</layoutData>
 								</Label>
-								<Input
+								<MaskInput
 									id="creditCardNumber"
 									placeholder="{i18n>creditCardNumberText}"
-									value="{/CreditCard/CardNumber}">
+									mask = "CCCC-CCCC-CCCC-CCCC"
+									placeholderSymbol = "_"
+									value="{
+										path: '/CreditCard/CardNumber',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											search: '^[0-9-]+$',
+											minLength: 16
+										}
+									}"
+									change="checkCreditCardStep">
+									<rules>
+										<MaskInputRule
+											maskFormatSymbol="C"
+											regex="[0-9]"/>
+									</rules>
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
-								</Input>
+								</MaskInput>
 								<Label
 									text="{i18n>checkoutCreditCardCode}"
-									labelFor="creditCardSecurityNumber">
+									labelFor="creditCardSecurityNumber"
+									required="true">
 									<layoutData>
 										<layout:GridData span="XL4 L4 M4 S12"/>
 									</layoutData>
 								</Label>
-								<Input
+								<MaskInput
 									id="creditCardSecurityNumber"
 									placeholder="{i18n>creditCardSecurityNumberText}"
-									value="{/CreditCard/SecurityCode}">
+									mask = "CCC"
+									placeholderSymbol = "_"
+									value="{
+										path: '/CreditCard/SecurityCode',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[0-9]+$'
+										}
+									}"
+									change="checkCreditCardStep">
+									<rules>
+										<MaskInputRule
+											maskFormatSymbol ="C"
+											regex = "[0-9]"/>
+									</rules>
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
-								</Input>
+								</MaskInput>
 								<Label text="{i18n>checkoutCreditCardExpiration}">
 									<layoutData>
 										<layout:GridData span="XL4 L4 M4 S12"/>
 									</layoutData>
 								</Label>
 								<DatePicker
-									value="{/CreditCard/Expire}"
+									id="creditCardExpirationDate"
+									value="{
+										path: '/CreditCard/Expire',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 7,
+											maxLength: 7
+										}
+									}"
 									valueFormat="MM/YYYY"
-									displayFormat="MM/YYYY">
+									displayFormat="MM/YYYY"
+									required="true"
+									change="checkCreditCardStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
@@ -234,16 +282,22 @@
 								<Input
 									id="cashOnDeliveryName"
 									placeholder="{i18n>firstNameText}"
-									value="{/CashOnDelivery/FirstName}"
-									liveChange="checkCashOnDeliveryStep"
-									valueLiveUpdate="true">
+									value="{
+										path: '/CashOnDelivery/FirstName',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 2
+										}
+									}"
+									change="checkCashOnDeliveryStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
 								</Input>
 								<Label
 									text="{i18n>checkoutCodLastName}"
-									labelFor="cashOnDeliveryLastName">
+									labelFor="cashOnDeliveryLastName"
+									required="true">
 									<layoutData>
 										<layout:GridData span="XL4 L4 M4 S12"/>
 									</layoutData>
@@ -251,14 +305,22 @@
 								<Input
 									id="cashOnDeliveryLastName"
 									placeholder="{i18n>lastNameText}"
-									value="{/CashOnDelivery/LastName}">
+									value="{
+										path: '/CashOnDelivery/LastName',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 2
+										}
+									}"
+									change="checkCashOnDeliveryStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
 								</Input>
 								<Label
 									text="{i18n>checkoutCodPhone}"
-									labelFor="cashOnDeliveryPhoneNumber">
+									labelFor="cashOnDeliveryPhoneNumber"
+									required="true">
 									<layoutData>
 										<layout:GridData span="XL4 L4 M4 S12"/>
 									</layoutData>
@@ -266,14 +328,22 @@
 								<Input
 									id="cashOnDeliveryPhoneNumber"
 									placeholder="{i18n>phoneNumberText}"
-									value="{/CashOnDelivery/PhoneNumber}">
+									value="{
+										path: '/CashOnDelivery/PhoneNumber',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											search: '^[(0-9+]+[)\\s]?[0-9\\/\\s]+$'
+										}
+									}"
+									change="checkCashOnDeliveryStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
 								</Input>
 								<Label
 									text="{i18n>checkoutCodEmail}"
-									labelFor="cashOnDeliveryEmail">
+									labelFor="cashOnDeliveryEmail"
+									required="true">
 									<layoutData>
 										<layout:GridData span="XL4 L4 M4 S12"/>
 									</layoutData>
@@ -281,7 +351,15 @@
 								<Input
 									id="cashOnDeliveryEmail"
 									placeholder="{i18n>emailAddressText}"
-									value="{/CashOnDelivery/Email}">
+									value="{
+										path: '/CashOnDelivery/Email',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+										minLength: 6,
+											search:'^\\w+[\\w-+\\.]*\\@\\w+([-\\.]\\w+)*\\.[a-zA-Z]{2,}$'
+										}
+									}"
+									change="checkCashOnDeliveryStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
@@ -296,7 +374,6 @@
 							complete="invoiceAddressComplete"
 							icon="sap-icon://sales-quote"
 							validated="false">
-							<MessageStrip text="{i18n>checkoutInvoiceAddressMessage}" />
 							<form:SimpleForm
 								layout="ResponsiveGridLayout"
 								editable="true">
@@ -324,9 +401,15 @@
 								<Input
 									id="invoiceAddressAddress"
 									placeholder="{i18n>addressText}"
-									value="{/InvoiceAddress/Address}"
-									liveChange="checkInvoiceStep"
-									valueLiveUpdate="true">
+									value="{
+										path: '/InvoiceAddress/Address',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 4,
+											search: '^[a-zA-Z]+\\.?\\s?[0-9a-zA-Z\\s]*$'
+										}
+									}"
+									change="checkInvoiceStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
@@ -342,9 +425,15 @@
 								<Input
 									id="invoiceAddressCity"
 									placeholder="{i18n>cityText}"
-									value="{/InvoiceAddress/City}"
-									liveChange="checkInvoiceStep"
-									valueLiveUpdate="true">
+									value="{
+										path: '/InvoiceAddress/City',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[a-zA-Z]+$'
+										}
+									}"
+									change="checkInvoiceStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
@@ -360,9 +449,15 @@
 								<Input
 									id="invoiceAddressZip"
 									placeholder="{i18n>zipCodeText}"
-									value="{/InvoiceAddress/ZipCode}"
-									liveChange="checkInvoiceStep"
-									valueLiveUpdate="true">
+									value="{
+										path: '/InvoiceAddress/ZipCode',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[0-9]+$'
+										}
+									}"
+									change="checkInvoiceStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
@@ -378,9 +473,15 @@
 								<Input
 									id="invoiceAddressCountry"
 									placeholder="{i18n>countryText}"
-									value="{/InvoiceAddress/Country}"
-									liveChange="checkInvoiceStep"
-									valueLiveUpdate="true">
+									value="{
+										path: '/InvoiceAddress/Country',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 2,
+											search: '^[a-zA-Z]+$'
+										}
+									}"
+									change="checkInvoiceStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
@@ -403,12 +504,12 @@
 							</form:SimpleForm>
 						</WizardStep>
 						<WizardStep
-							id="deliveryAddressStep"
-							title="{i18n>checkoutDeliveryAddressTitle}"
-							activate="onCheckStepActivation"
-							nextStep="deliveryTypeStep"
-							icon="sap-icon://sales-quote"
-							validated="false">
+								id="deliveryAddressStep"
+								activate="onCheckStepActivation"
+								validated="false"
+								title="{i18n>checkoutDeliveryAddressTitle}"
+								nextStep="deliveryTypeStep"
+								icon="sap-icon://sales-quote">
 							<form:SimpleForm
 								editable="true"
 								layout="ResponsiveGridLayout">
@@ -423,9 +524,15 @@
 								<Input
 									id="deliveryAddressAddress"
 									placeholder="{i18n>addressText}"
-									value="{/DeliveryAddress/Address}"
-									liveChange="checkDeliveryStep"
-									valueLiveUpdate="true">
+									value="{
+										path: '/DeliveryAddress/Address',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 4,
+											search: '^[a-zA-Z]+\\.?\\s?[0-9a-zA-Z\\s]*$'
+										}
+									}"
+									change="checkDeliveryAddressStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
@@ -441,9 +548,15 @@
 								<Input
 									id="deliveryAddressCity"
 									placeholder="{i18n>cityText}"
-									value="{/DeliveryAddress/City}"
-									liveChange="checkDeliveryStep"
-									valueLiveUpdate="true">
+									value="{
+										path: '/DeliveryAddress/City',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[a-zA-Z]+$'
+										}
+									}"
+									change="checkDeliveryAddressStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
@@ -459,9 +572,15 @@
 								<Input
 									id="deliveryAddressZip"
 									placeholder="{i18n>zipCodeText}"
-									value="{/DeliveryAddress/ZipCode}"
-									liveChange="checkDeliveryStep"
-									valueLiveUpdate="true">
+									value="{
+										path: '/DeliveryAddress/ZipCode',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[0-9]+$'
+										}
+									}"
+									change="checkDeliveryAddressStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>
@@ -477,9 +596,15 @@
 								<Input
 									id="deliveryAddressCountry"
 									placeholder="{i18n>countryText}"
-									value="{/DeliveryAddress/Country}"
-									liveChange="checkDeliveryStep"
-									valueLiveUpdate="true">
+									value="{
+										path: '/DeliveryAddress/Country',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 2,
+											search: '^[a-zA-Z]+$'
+										}
+									}"
+									change="checkDeliveryAddressStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
 									</layoutData>

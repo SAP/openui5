@@ -16,16 +16,12 @@ Feature: Buy a Product
     Then on checkout: I should see the wizard step payment type step
 
     When on checkout: I press on the next step button
-    Then on checkout: I should see the credit card step
-
-    When on checkout: I enter credit card text
-    Then on checkout: I should see the step4 button enabled
+    When on checkout: I enter correct credit card information
+    Then on checkout: I should see the step4 button
 
     When on checkout: I press on the next step button
-    Then on checkout: I should see the invoice step
-
-    When on checkout: I enter invoice address text
-    Then on checkout: I should see the step5 button validated
+    When on checkout: I enter invoice address
+    Then on checkout: I should see the step5 button
 
     When on checkout: I press on the next step button
     Then on checkout: I should see the delivery type step
@@ -38,13 +34,13 @@ Feature: Buy a Product
 
     When on checkout: I press on the bank transfer button
     When on checkout: I press on the yes button
-    Then on checkout: I should see the step3 button enabled
+    Then on checkout: I should see the step3 button
 
     When on checkout: I press on the next step button
-    Then on checkout: I should see the step4 button enabled
+    Then on checkout: I should see the step4 button
 
     When on checkout: I press on the next step button
-    Then on checkout: I should see the step5 button enabled
+    Then on checkout: I should see the step5 button
 
     When on checkout: I press on the next step button
     Then on checkout: I should see the delivery type step
@@ -57,19 +53,14 @@ Feature: Buy a Product
 
     When on checkout: I press on the cash on delivery button
     When on checkout: I press on the yes button
-    Then on checkout: I should see the step3 button enabled
+    Then on checkout: I should see the step3 button
 
     When on checkout: I press on the next step button
-    Then on checkout: I should see the cash on delivery step
-
-    When on checkout: I enter cash on delivery text
-    Then on checkout: I should see the step4 button enabled
+    When on checkout: I enter correct cash on delivery info
+    Then on checkout: I should see the step4 button
 
     When on checkout: I press on the next step button
-    Then on checkout: I should see the invoice step
-
-    When on checkout: I enter invoice address text
-    Then on checkout: I should see the step5 button validated
+    Then on checkout: I should see the step5 button
 
     When on checkout: I press on the next step button
     Then on checkout: I should see the delivery type step
@@ -86,10 +77,10 @@ Feature: Buy a Product
     Then on checkout: I should see the delivery address step
 
     When on checkout: I enter delivery address text
-    Then on checkout: I should see the step6 button validated
+    Then on checkout: I should see the step6 button
 
     When on checkout: I press on the next step button
-    Then on checkout: I should see the delivery type step
+    Then on checkout: I should see the delivery address step
 
     When on checkout: I press on the next step button
     Then on checkout: I should see the order summary

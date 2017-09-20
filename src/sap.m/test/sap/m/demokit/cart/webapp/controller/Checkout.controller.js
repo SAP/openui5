@@ -54,24 +54,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks the corresponding step after activation to decide whether the user can proceed or needs
-		 * to correct his input
-		 */
-		onCheckStepActivation: function(oEvent) {
-			var sWizardStepId = oEvent.getSource().getId();
-
-			if (sWizardStepId === this.createId("creditCardStep")) {
-				this.checkCreditCardStep();
-			} else if (sWizardStepId === this.createId("cashOnDeliveryStep")) {
-				this.checkCashOnDeliveryStep();
-			} else if (sWizardStepId === this.createId("invoiceStep")) {
-				this.checkInvoiceStep();
-			} else if (sWizardStepId === this.createId("deliveryAddressStep")) {
-				this.checkDeliveryStep();
-			}
-		},
-
-		/**
 		 * Shows next WizardStep according to user selection
 		 */
 		goToPaymentStep: function () {
@@ -154,79 +136,113 @@ sap.ui.define([
 		},
 
 		/**
-		 * Called from  WizardStep "CreditCardStep" on <code>activate</code> or <code>liveChange</code>
-		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
+		 * Removes validation error messages from the previous step
+		 */
+		_clearMessages: function () {
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+		},
+
+		/**
+		 * Checks the corresponding step after activation to decide whether the user can proceed or needs
+		 * to correct his input
+		 */
+		onCheckStepActivation: function(oEvent) {
+			this._clearMessages();
+			var sWizardStepId = oEvent.getSource().getId();
+			switch (sWizardStepId) {
+			case this.createId("creditCardStep"):
+				this.checkCreditCardStep();
+				break;
+			case this.createId("cashOnDeliveryStep"):
+				this.checkCashOnDeliveryStep();
+				break;
+			case this.createId("invoiceStep"):
+				this.checkInvoiceStep();
+				break;
+			case this.createId("deliveryAddressStep"):
+				this.checkDeliveryAddressStep();
+				break;
+			}
+		},
+
+		/**
+		 * Validates the credit card step initially and after each input
 		 */
 		checkCreditCardStep: function () {
-			var sCardName = this.getModel().getProperty("/CreditCard/Name") || "";
-			var oElement = this.byId("creditCardStep");
-			var oWizard = this.byId("shoppingCartWizard");
-			if (sCardName.length < 2) {
-				oWizard.invalidateStep(oElement);
-			} else {
-				oWizard.validateStep(oElement);
-			}
+			this._checkStep("creditCardStep", ["creditCardHolderName", "creditCardNumber", "creditCardSecurityNumber", "creditCardExpirationDate"]);
 		},
 
 		/**
-		 * Called from  WizardStep "CashOnDeliveryStep" on <code>activate</code> or <code>liveChange</code>
-		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
+		 * Validates the cash on delivery step initially and after each input
 		 */
 		checkCashOnDeliveryStep: function () {
-			var sFirstName = this.getModel().getProperty("/CashOnDelivery/FirstName") || "";
-			var oElement = this.byId("cashOnDeliveryStep");
-			var oWizard = this.byId("shoppingCartWizard");
-			if (sFirstName.length < 2) {
-				oWizard.invalidateStep(oElement);
-			} else {
-				oWizard.validateStep(oElement);
-			}
+			this._checkStep("cashOnDeliveryStep", ["cashOnDeliveryName", "cashOnDeliveryLastName", "cashOnDeliveryPhoneNumber", "cashOnDeliveryEmail"]);
 		},
 
 		/**
-		 * Called from  WizardStep "invoiceStep" on <code>activate</code> or <code>liveChange</code>
-		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
-		 */
+		 * Validates the invoice step initially and after each input
+		*/
 		checkInvoiceStep: function () {
-			var sAddress = this.getModel().getProperty("/InvoiceAddress/Address") || "";
-			var sCity = this.getModel().getProperty("/InvoiceAddress/City") || "";
-			var sZipCode = this.getModel().getProperty("/InvoiceAddress/ZipCode") || "";
-			var sCountry = this.getModel().getProperty("/InvoiceAddress/Country") || "";
-			var oElement = this.byId("invoiceStep");
-			var oWizard = this.byId("shoppingCartWizard");
-
-			if (sAddress.length < 2 || sCity.length < 2 || sZipCode.length < 2 || sCountry.length < 2) {
-				oWizard.invalidateStep(oElement);
-			} else {
-				oWizard.validateStep(oElement);
-			}
+			this._checkStep("invoiceStep", ["invoiceAddressAddress", "invoiceAddressCity", "invoiceAddressZip", "invoiceAddressCountry"]);
 		},
 
 		/**
-		 * Called from WizardStep "DeliveryAddressStep" on <code>activate</code> or <code>liveChange</code>
-		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
+		 * Validates the delivery address step initially and after each input
 		 */
-		checkDeliveryStep: function () {
-			var sAddress = this.getModel().getProperty("/DeliveryAddress/Address") || "";
-			var sCity = this.getModel().getProperty("/DeliveryAddress/City") || "";
-			var sZipCode = this.getModel().getProperty("/DeliveryAddress/ZipCode") || "";
-			var sCountry = this.getModel().getProperty("/DeliveryAddress/Country") || "";
-			var oElement = this.byId("deliveryAddressStep");
-			var oWizard = this.byId("shoppingCartWizard");
+		checkDeliveryAddressStep: function () {
+			this._checkStep("deliveryAddressStep", ["deliveryAddressAddress", "deliveryAddressCity", "deliveryAddressZip", "deliveryAddressCountry"]);
+		},
 
-			if (sAddress.length < 2 || sCity.length < 2 || sZipCode.length < 2 || sCountry.length < 2) {
-				oWizard.invalidateStep(oElement);
+		/**
+		 * Check if one or more of the inputs are empty
+		 * @param {array} aInputIds - Input ids to be checked
+		 * @returns {boolean}
+		 * @private
+		 */
+		_checkInputFields : function (aInputIds) {
+			var oView = this.getView();
+
+			return aInputIds.some(function (sInputId) {
+				var oInput = oView.byId(sInputId);
+				var oBinding = oInput.getBinding("value");
+				try {
+					oBinding.getType().validateValue(oInput.getValue());
+				} catch (oException) {
+					return true;
+				}
+				return false;
+			});
+		},
+
+		/**
+		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
+		 * @param {string} sStepName - the ID of the step to be checked
+		 * @param {array} aInputIds - Input IDs to be checked
+		 * @private
+		 */
+		_checkStep: function (sStepName, aInputIds) {
+			var oWizard = this.byId("shoppingCartWizard"),
+				oStep = this.byId(sStepName),
+				bEmptyInputs = this._checkInputFields(aInputIds),
+				bValidationError = !!sap.ui.getCore().getMessageManager().getMessageModel().getData().length;
+
+			if (!bValidationError && !bEmptyInputs) {
+				oWizard.validateStep(oStep);
 			} else {
-				oWizard.validateStep(oElement);
+				oWizard.invalidateStep(oStep);
 			}
 		},
 
 		/**
 		 * Called from  Wizard on <code>complete</code>
-		 * navigates to page "summaryPage"
+		 * Navigates to the summary page in case there are no errors
 		 */
-		completedHandler: function () {
-			this.byId("wizardNavContainer").to(this.byId("summaryPage"));
+		checkCompleted : function () {
+			if (sap.ui.getCore().getMessageManager().getMessageModel().getData().length > 0) {
+				MessageBox.error(this.getResourceBundle().getText("popOverMessageText"));
+			} else {
+				this.byId("wizardNavContainer").to(this.byId("summaryPage"));
+			}
 		},
 
 		/**
@@ -249,7 +265,7 @@ sap.ui.define([
 			if (oWizard.getProgressStep() !== oParams.discardStep) {
 				MessageBox.warning(oParams.message, {
 					actions: [MessageBox.Action.YES,
-							  MessageBox.Action.NO],
+						MessageBox.Action.NO],
 					onClose: function (oAction) {
 						if (oAction === MessageBox.Action.YES) {
 							oWizard.discardProgress(oParams.discardStep);
@@ -275,13 +291,13 @@ sap.ui.define([
 		_handleSubmitOrCancel: function (sMessage, sMessageBoxType, sRoute) {
 			MessageBox[sMessageBoxType](sMessage, {
 				actions: [MessageBox.Action.YES,
-						  MessageBox.Action.NO],
+					MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
 						// resets Wizard
 						var oWizard = this.byId("shoppingCartWizard");
-						var oModel =  this.getModel();
-						var oCartModel =  this.getOwnerComponent().getModel("cartProducts");
+						var oModel = this.getModel();
+						var oCartModel = this.getOwnerComponent().getModel("cartProducts");
 						this._navToWizardStep(this.byId("contentsStep"));
 						oWizard.discardProgress(oWizard.getSteps()[0]);
 						var oModelData = oModel.getData();
