@@ -106,7 +106,7 @@
 			},{
 				"id": "sap.ui.table.sample.RowHighlights",
 				"name": "Row Highlights",
-				"description": "Shows how row highlights can be used."
+				"description": "Shows how row highlights and alternating row colors can be used."
 			},{
 				"id": "sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding",
 				"name": "Hierarchy Maintenance with a JSONModel",

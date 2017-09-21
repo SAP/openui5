@@ -683,6 +683,69 @@ sap.ui.require([
 		assertLocalizationUpdates(false, false);
 	});
 
+	QUnit.test("AlternateRowColors", function(assert) {
+		assert.equal(oTable.$().find("sapUiTableRowAlternate").length, 0, "By default there is no alternating rows");
+
+		var isAlternatingRow = function() {
+			return this.getAttribute("data-sap-ui-rowindex") % 2;
+		};
+
+		oTable.setSelectionMode("None");
+		oTable.setAlternateRowColors(true);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.$().find(".sapUiTableRowAlternate").length,
+				 oTable.$().find(".sapUiTableRowAlternate").filter(isAlternatingRow).length,
+				 "Every second element with data-sap-ui-rowindex attribute has the sapUiTableRowAlternate class");
+
+		assert.equal(oTable.$().find(".sapUiTableRowAlternate").length,
+					 oTable.$().find(".sapUiTableRowAlternate").filter(isAlternatingRow).length,
+					 "Every second element with data-sap-ui-rowindex attribute has the sapUiTableRowAlternate class");
+
+		// check for row headers
+		oTable.setSelectionMode("MultiToggle");
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.$().find(".sapUiTableRowAlternate").length,
+				 oTable.$().find(".sapUiTableRowAlternate").filter(isAlternatingRow).length,
+				 "Every second element with data-sap-ui-rowindex attribute has the sapUiTableRowAlternate class");
+
+		// check for fixed columns
+		oTable.setFixedColumnCount(2);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.$().find(".sapUiTableRowAlternate").length,
+				 oTable.$().find(".sapUiTableRowAlternate").filter(isAlternatingRow).length,
+				 "Every second element with data-sap-ui-rowindex attribute has the sapUiTableRowAlternate class");
+
+		// check for fixed rows
+		oTable.setFixedRowCount(2);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.$().find(".sapUiTableRowAlternate").length,
+				 oTable.$().find(".sapUiTableRowAlternate").filter(isAlternatingRow).length,
+				 "Every second element with data-sap-ui-rowindex attribute has the sapUiTableRowAlternate class");
+
+		// check for fixed bottom rows
+		oTable.setFixedBottomRowCount(2);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.$().find(".sapUiTableRowAlternate").length,
+				 oTable.$().find(".sapUiTableRowAlternate").filter(isAlternatingRow).length,
+				 "Every second element with data-sap-ui-rowindex attribute has the sapUiTableRowAlternate class");
+
+		// check for row actions
+		oTable.setRowActionCount(1);
+		oTable.setRowActionTemplate(new sap.ui.table.RowAction({
+			items: new sap.ui.table.RowActionItem()
+		}));
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.$().find(".sapUiTableRowAlternate").length,
+				 oTable.$().find(".sapUiTableRowAlternate").filter(isAlternatingRow).length,
+				 "Every second element with data-sap-ui-rowindex attribute has the sapUiTableRowAlternate class");
+
+		// check tree mode
+		sinon.stub(TableUtils.Grouping, "isTreeMode").returns(false);
+		oTable.rerender();
+		assert.equal(oTable.$().find("sapUiTableRowAlternate").length, 0, "No alternating rows for tree mode");
+
+	});
+
 	QUnit.module("Column operations", {
 		beforeEach: function() {
 			createTable();
