@@ -647,7 +647,7 @@ sap.ui.define([
 				},
 				{
 					"DisplayName": "OpenUI5 (Nightly)",
-					"Value": "https://openui5nightly.hanas.ondemand.com/resources/sap/ui/support/"
+					"Value": "https://openui5nightly.hana.ondemand.com/resources/sap/ui/support/"
 				},
 				{
 					"DisplayName": "OpenUI5 (Beta)",
