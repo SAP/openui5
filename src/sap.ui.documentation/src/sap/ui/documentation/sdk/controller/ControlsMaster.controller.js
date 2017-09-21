@@ -172,41 +172,33 @@ sap.ui.define([
 			 */
 			_applyAppConfiguration: function(sThemeActive, bCompactOn, bRTL){
 				var oSampleFrameContent,
-					$SampleFrame,
-					oSampleRootControl,
-					oSamplePage;
+					oSampleFrameCore,
+					$SampleFrame;
 
 				// Switch theme if necessary
 				this._oCore.applyTheme(sThemeActive);
 
-				// Switch content density
+				// Switch content density and notify Core
 				jQuery(document.body).toggleClass("sapUiSizeCompact", bCompactOn);
 				jQuery(document.body).toggleClass("sapUiSizeCozy", !bCompactOn);
+				this._oCore.notifyContentDensityChanged();
 
+				// Manage RTL mode
 				this._oCore.getConfiguration().setRTL(bRTL);
-
-				// If there is a sample page loaded try to find it's root container and invalidate it to let controls
-				// adapt to compact mode changes
-				if (this._oComponent._oCurrentOpenedSample) {
-					oSampleRootControl = this._oComponent._oCurrentOpenedSample.getComponentInstance().getRootControl();
-					// Keep in mind that getRootControl might return 'null'
-					if (oSampleRootControl) {
-						oSamplePage = oSampleRootControl.getContent()[0];
-						if (oSamplePage) {
-							oSamplePage.invalidate();
-						}
-					}
-				}
 
 				// Apply theme and compact mode also to iframe samples
 				$SampleFrame = jQuery("#sampleFrame");
 				if ($SampleFrame.length > 0) {
 					oSampleFrameContent = $SampleFrame[0].contentWindow;
 					if (oSampleFrameContent) {
-						oSampleFrameContent.sap.ui.getCore().applyTheme(sThemeActive);
-						oSampleFrameContent.sap.ui.getCore().getConfiguration().setRTL(bRTL);
+						oSampleFrameCore = oSampleFrameContent.sap.ui.getCore();
+						oSampleFrameCore.applyTheme(sThemeActive);
+						oSampleFrameCore.getConfiguration().setRTL(bRTL);
 						oSampleFrameContent.jQuery('body').toggleClass("sapUiSizeCompact", bCompactOn)
 							.toggleClass("sapUiSizeCozy", !bCompactOn);
+
+						// Notify Core for content density change
+						oSampleFrameCore.notifyContentDensityChanged();
 					}
 				}
 			},

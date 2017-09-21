@@ -179,17 +179,21 @@ sap.ui.define([
 							// Do not attach on "load" event on every onAfterRendering of the HTML control
 							if (!this._oHtmlControl._jQueryHTMLControlLoadEventAttached) {
 								this._oHtmlControl.$().on("load", function () {
-									var oSampleFrame = this._oHtmlControl.$()[0].contentWindow;
+									var oSampleFrame = this._oHtmlControl.$()[0].contentWindow,
+										oSampleFrameCore = oSampleFrame.sap.ui.getCore();
 
 									// Apply theme settings to iframe sample
 									oSampleFrame.sap.ui.getCore().attachInit(function () {
-										var bCompact = this.getRootView().hasStyleClass("sapUiSizeCompact");
+										var bCompact = jQuery(document.body).hasClass("sapUiSizeCompact");
 
-										oSampleFrame.sap.ui.getCore().applyTheme(this._oCore.getConfiguration().getTheme());
-										oSampleFrame.sap.ui.getCore().getConfiguration().setRTL(this._oCore.getConfiguration().getRTL());
+										oSampleFrameCore.applyTheme(this._oCore.getConfiguration().getTheme());
+										oSampleFrameCore.getConfiguration().setRTL(this._oCore.getConfiguration().getRTL());
 										oSampleFrame.jQuery('body')
 											.toggleClass("sapUiSizeCompact", bCompact)
-											.toggleClass("sapUiSizeCozy", bCompact);
+											.toggleClass("sapUiSizeCozy", !bCompact);
+
+										// Notify Core for content density change
+										oSampleFrameCore.notifyContentDensityChanged();
 									}.bind(this));
 								}.bind(this));
 
