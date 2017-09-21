@@ -1016,36 +1016,21 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._onArrowClick = function (sShiftDirection) {
+		var sCurrentLayout = this.getLayout(),
+			bIsLayoutValid = typeof FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout] !== "undefined" && typeof FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout][sShiftDirection] !== "undefined",
+			sNewLayout;
 
-		var sLayout = this.getLayout(),
-			oMap = {
-				TwoColumnsBeginExpanded: {
-					"left": LT.TwoColumnsMidExpanded
-				},
-				TwoColumnsMidExpanded: {
-					"right": LT.TwoColumnsBeginExpanded
-				},
-				ThreeColumnsMidExpanded: {
-					"left": LT.ThreeColumnsEndExpanded,
-					"right": LT.ThreeColumnsMidExpandedEndHidden
-				},
-				ThreeColumnsEndExpanded: {
-					"right": LT.ThreeColumnsMidExpanded
-				},
-				ThreeColumnsMidExpandedEndHidden: {
-					"left": LT.ThreeColumnsMidExpanded,
-					"right": LT.ThreeColumnsBeginExpandedEndHidden
-				},
-				ThreeColumnsBeginExpandedEndHidden: {
-					"left": LT.ThreeColumnsMidExpandedEndHidden
-				}
-			};
+		jQuery.sap.assert(bIsLayoutValid, "An invalid layout was used for determining arrow behavior");
+		sNewLayout = bIsLayoutValid ? FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout][sShiftDirection] : LT.OneColumn;
 
-		jQuery.sap.assert(typeof oMap[sLayout] !== "undefined" && typeof oMap[sLayout][sShiftDirection] !== "undefined", "An invalid layout was used for determining arrow behavior");
-		sLayout = typeof oMap[sLayout] !== "undefined" && typeof oMap[sLayout][sShiftDirection] !== "undefined" ? oMap[sLayout][sShiftDirection] : LT.OneColumn;
+		this.setLayout(sNewLayout);
 
-		this.setLayout(sLayout);
+		// If the same arrow is hidden in the new layout, focus on the opposite one in it
+		if (FlexibleColumnLayout.ARROWS_NAMES[sNewLayout][sShiftDirection] !== FlexibleColumnLayout.ARROWS_NAMES[sCurrentLayout][sShiftDirection] && bIsLayoutValid) {
+			var sOppositeShiftDirection = sShiftDirection === 'right' ? 'left' : 'right';
 
+			this._$columnButtons[FlexibleColumnLayout.ARROWS_NAMES[sNewLayout][sOppositeShiftDirection]].focus();
+		}
 		this._fireStateChange(true, false);
 	};
 
@@ -1642,6 +1627,53 @@ sap.ui.define([
 	// The width above which (inclusive) we are in tablet mode
 	FlexibleColumnLayout.TABLET_BREAKPOINT = 960;
 
+	// Arrows names for each shift position in a given layout
+	FlexibleColumnLayout.ARROWS_NAMES = {
+		TwoColumnsBeginExpanded: {
+			"left": "beginBack"
+		},
+		TwoColumnsMidExpanded: {
+			"right": "midForward"
+		},
+		ThreeColumnsMidExpanded: {
+			"left": "midBack",
+			"right": "midForward"
+		},
+		ThreeColumnsEndExpanded: {
+			"right": "endForward"
+		},
+		ThreeColumnsMidExpandedEndHidden: {
+			"left": "midBack",
+			"right": "midForward"
+		},
+		ThreeColumnsBeginExpandedEndHidden: {
+			"left": "beginBack"
+		}
+	};
+
+	// Resulting layouts, after shifting in a given direction from a specific layout
+	FlexibleColumnLayout.SHIFT_TARGETS = {
+		TwoColumnsBeginExpanded: {
+			"left": LT.TwoColumnsMidExpanded
+		},
+		TwoColumnsMidExpanded: {
+			"right": LT.TwoColumnsBeginExpanded
+		},
+		ThreeColumnsMidExpanded: {
+			"left": LT.ThreeColumnsEndExpanded,
+			"right": LT.ThreeColumnsMidExpandedEndHidden
+		},
+		ThreeColumnsEndExpanded: {
+			"right": LT.ThreeColumnsMidExpanded
+		},
+		ThreeColumnsMidExpandedEndHidden: {
+			"left": LT.ThreeColumnsMidExpanded,
+			"right": LT.ThreeColumnsBeginExpandedEndHidden
+		},
+		ThreeColumnsBeginExpandedEndHidden: {
+			"left": LT.ThreeColumnsMidExpandedEndHidden
+		}
+	};
 
 	/**
 	 * Retrieves the resource bundle for the <code>sap.f</code> library.
