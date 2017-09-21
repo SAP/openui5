@@ -59,9 +59,30 @@ function(
 		var sLogoPath = this._oFioriHeader.getLogo();
 
 		if (this._oFioriHeader.getShowLogo() && sLogoPath) {
+			// Unstable: if FLP changes ID of <img/> element, logo could be not found
+			var $logo = this._oFioriHeader.$().find('#shell-header-icon');
+			var iWidth, iHeight;
+
+			if ($logo.length) {
+				var iNaturalWidth = $logo.get(0).naturalWidth;
+				var iNaturalHeight = $logo.get(0).naturalHeight;
+				iWidth = $logo.width();
+				iHeight = $logo.height();
+
+				if (iWidth !== iNaturalWidth || iHeight !== iNaturalHeight) {
+					jQuery.sap.log.error([
+						"sap.ui.rta: please check Fiori Launchpad logo, expected size is",
+						iWidth + "x" + iHeight + ",",
+						"but actual is " + iNaturalWidth + "x" + iNaturalHeight
+					].join(' '));
+				}
+			}
+
 			aControls.unshift(
 				new Image({
-					src: sLogoPath
+					src: sLogoPath,
+					width: iWidth ? iWidth + 'px' : iWidth,
+					height: iHeight ? iHeight + 'px' : iHeight
 				}).data('name', 'logo')
 			);
 		}
