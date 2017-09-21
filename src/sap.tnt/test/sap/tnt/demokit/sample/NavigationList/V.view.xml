@@ -7,12 +7,12 @@
 	<m:Button text="Toggle Collapse/Expand"
 		icon="sap-icon://menu2"
 		press="onCollapseExpandPress" />
-	<NavigationList id="navigationList" width="320px">
+	<NavigationList id="navigationList" width="320px" selectedItem="selectedListItem">
 		<NavigationListItem
 			text="Item 1"
 			icon="sap-icon://employee">
 			<NavigationListItem text="Sub Item 1"/>
-			<NavigationListItem text="Sub Item 2"/>
+			<NavigationListItem text="Sub Item 2" id="selectedListItem"/>
 			<NavigationListItem text="Sub Item 3"/>
 			<NavigationListItem text="Sub Item 4"/>
 		</NavigationListItem>
