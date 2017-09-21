@@ -353,6 +353,93 @@
 						</subSections>
 					</ObjectPageSection>
 
+					<ObjectPageSection id="aggregations"
+									   title="Aggregations"
+									   visible="{topics>/hasAggregations}"
+									   titleUppercase="false">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<m:Table items="{ path : 'topics>/ui5-metadata/aggregations'}"
+											 showSeparators="Inner"
+											 fixedLayout="false"
+											 class="sapUiSmallMarginTop">
+										<m:columns>
+											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
+												<m:cells>
+													<m:VBox>
+														<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
+														<m:ObjectStatus visible="{= ${topics>deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
+													</m:VBox>
+													<m:Text text="{topics>cardinality}" wrapping="false"/>
+													<m:Link text="{topics>type}"
+															href="#/api/{topics>type}"
+															enabled="{parts: [{path: 'topics>type'}],
+																      formatter: '.formatLinkEnabled'}"/>
+
+													<core:HTML content="{parts: [{path: 'topics>description'},
+																				 {path: 'topics>deprecated/text'},
+																				 {path: 'topics>deprecated/since'}],
+																		 formatter: '.formatDescription'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection id="associations"
+									   title="Associations"
+									   visible="{topics>/hasAssociations}"
+									   titleUppercase="false">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<m:Table items="{ path : 'topics>/ui5-metadata/associations'}"
+											 showSeparators="Inner"
+											 fixedLayout="false"
+											 class="sapUiSmallMarginTop">
+										<m:columns>
+											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
+											<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem visible="{topics>visibility === 'public'}">
+												<m:cells>
+													<m:VBox>
+														<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
+														<m:ObjectStatus visible="{= ${topics>deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
+													</m:VBox>
+													<m:Text text="{topics>cardinality}" wrapping="false"/>
+													<m:Link text="{topics>type}"
+															href="#/api/{topics>type}"
+															enabled="{parts: [{path: 'topics>type'}],
+																	  formatter: '.formatLinkEnabled'}"/>
+
+													<core:HTML content="{parts: [{path: 'topics>description'},
+																				 {path: 'topics>deprecated/text'},
+																				 {path: 'topics>deprecated/since'}],
+																		 formatter: '.formatDescription'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
 					<ObjectPageSection id="events"
 									   title="Events"
 									   visible="{topics>/hasEvents}"
@@ -559,93 +646,6 @@
 
 									</layout:VerticalLayout>
 
-								</blocks>
-							</ObjectPageSubSection>
-						</subSections>
-					</ObjectPageSection>
-
-					<ObjectPageSection id="aggregations"
-									   title="Aggregations"
-									   visible="{topics>/hasAggregations}"
-									   titleUppercase="false">
-						<subSections>
-							<ObjectPageSubSection>
-								<blocks>
-									<m:Table items="{ path : 'topics>/ui5-metadata/aggregations'}"
-											 showSeparators="Inner"
-											 fixedLayout="false"
-											 class="sapUiSmallMarginTop">
-										<m:columns>
-											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
-										</m:columns>
-										<m:items>
-											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
-												<m:cells>
-													<m:VBox>
-														<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
-														<m:ObjectStatus visible="{= ${topics>deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
-													</m:VBox>
-													<m:Text text="{topics>cardinality}" wrapping="false"/>
-													<m:Link text="{topics>type}"
-															href="#/api/{topics>type}"
-															enabled="{parts: [{path: 'topics>type'}],
-																      formatter: '.formatLinkEnabled'}"/>
-
-													<core:HTML content="{parts: [{path: 'topics>description'},
-																				 {path: 'topics>deprecated/text'},
-																				 {path: 'topics>deprecated/since'}],
-																		 formatter: '.formatDescription'}"/>
-												</m:cells>
-											</m:ColumnListItem>
-										</m:items>
-									</m:Table>
-								</blocks>
-							</ObjectPageSubSection>
-						</subSections>
-					</ObjectPageSection>
-
-					<ObjectPageSection id="associations"
-									   title="Associations"
-									   visible="{topics>/hasAssociations}"
-									   titleUppercase="false">
-						<subSections>
-							<ObjectPageSubSection>
-								<blocks>
-									<m:Table items="{ path : 'topics>/ui5-metadata/associations'}"
-											 showSeparators="Inner"
-											 fixedLayout="false"
-											 class="sapUiSmallMarginTop">
-										<m:columns>
-											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
-											<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
-										</m:columns>
-										<m:items>
-											<m:ColumnListItem visible="{topics>visibility === 'public'}">
-												<m:cells>
-													<m:VBox>
-														<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
-														<m:ObjectStatus visible="{= ${topics>deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
-													</m:VBox>
-													<m:Text text="{topics>cardinality}" wrapping="false"/>
-													<m:Link text="{topics>type}"
-															href="#/api/{topics>type}"
-															enabled="{parts: [{path: 'topics>type'}],
-																	  formatter: '.formatLinkEnabled'}"/>
-
-													<core:HTML content="{parts: [{path: 'topics>description'},
-																				 {path: 'topics>deprecated/text'},
-																				 {path: 'topics>deprecated/since'}],
-																		 formatter: '.formatDescription'}"/>
-												</m:cells>
-											</m:ColumnListItem>
-										</m:items>
-									</m:Table>
 								</blocks>
 							</ObjectPageSubSection>
 						</subSections>
