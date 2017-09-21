@@ -3868,7 +3868,6 @@
 			getColumnHeader.bind(window, 0)
 		];
 		var aKeystrokes = [
-			{keyName: "Space (keyup)", trigger: qutils.triggerKeyup, arguments: [null, Key.SPACE, false, false, false]},
 			{keyName: "Space (keydown)", trigger: qutils.triggerKeydown, arguments: [null, Key.SPACE, false, false, false]},
 			{keyName: "ArrowUp", trigger: qutils.triggerKeydown, arguments: [null, Key.Arrow.UP, false, false, false]},
 			{keyName: "ArrowDown", trigger: qutils.triggerKeydown, arguments: [null, Key.Arrow.DOWN, false, false, false]},

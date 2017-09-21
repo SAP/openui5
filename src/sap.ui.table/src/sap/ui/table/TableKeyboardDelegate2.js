@@ -898,7 +898,8 @@ sap.ui.define([
 			return;
 		}
 
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SPACE)) {
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SPACE) &&
+			TableUtils.getCellInfo(oEvent.target).type) {
 			oEvent.preventDefault(); // Prevent scrolling the page.
 		}
 
@@ -1020,8 +1021,6 @@ sap.ui.define([
 		}
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SPACE)) {
-			oEvent.preventDefault(); // To prevent the browser window to scroll down.
-
 			// Open the column menu.
 			if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
 				TableUtils.Menu.openContextMenu(this, oEvent.target, true);
