@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			}.bind(this));
 
 			if (aViolatedConstraints.length > 0) {
-				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(this.combineMessages(aMessages), aViolatedConstraints);
 			}
 		}
 	};

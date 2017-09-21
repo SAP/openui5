@@ -155,7 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/SimpleType', 'sap/ui/model/For
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(this.combineMessages(aMessages), aViolatedConstraints);
 			}
 		}
 	};

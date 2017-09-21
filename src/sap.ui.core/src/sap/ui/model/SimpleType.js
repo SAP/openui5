@@ -156,6 +156,21 @@ sap.ui.define(['sap/ui/base/DataType', './Type', './FormatException', './ParseEx
 		}
 	};
 
+	/**
+	 * Combine message texts.
+	 * Join multiple messages into a combined message text
+	 *
+	 * @param {array} aMessages an array of message strings
+	 * @return {string} the combined message text
+	 */
+	SimpleType.prototype.combineMessages = function(aMessages) {
+		if (aMessages.length === 1) {
+			return aMessages[0];
+		} else {
+			return aMessages.join(". ") + ".";
+		}
+	};
+
 	return SimpleType;
 
 });
