@@ -78,9 +78,6 @@ sap.ui.define([
 				this.oRouter.getRoute("entityEventsLegacyRoute").attachPatternMatched({entityType:"events"}, this._forwardToAPIRef, this);
 				this.oRouter.getRoute("entityMethodsLegacyRoute").attachPatternMatched({entityType:"methods"}, this._forwardToAPIRef, this);
 
-				// apply content density mode to root view
-				this._oView.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
 			},
@@ -90,6 +87,11 @@ sap.ui.define([
 			},
 
 			onAfterRendering: function() {
+				// apply content density mode to the body tag
+				// in order to get the controls in the static area styled correctly,
+				// such as Dialog and Popover.
+				jQuery(document.body).addClass(this.getOwnerComponent().getContentDensityClass());
+
 				Device.orientation.attachHandler(this._onOrientationChange, this);
 			},
 
@@ -560,14 +562,6 @@ sap.ui.define([
 					}
 				}
 			},
-
-			//onFeedbackInput : function() {
-			//	if (this._oFeedbackDialog.textInput.getValue() || this._oFeedbackDialog.ratingStatus.value) {
-			//		this._oFeedbackDialog.sendButton.setEnabled(true);
-			//	} else {
-			//		this._oFeedbackDialog.sendButton.setEnabled(false);
-			//	}
-			//},
 
 			onSearch : function (oEvent) {
 				var sQuery = oEvent.getParameter("query");
