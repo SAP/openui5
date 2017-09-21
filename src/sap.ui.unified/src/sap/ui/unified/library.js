@@ -26,7 +26,9 @@ sap.ui.define([
 			"sap.ui.unified.ContentSwitcherAnimation",
 			"sap.ui.unified.ColorPickerMode"
 		],
-		interfaces: [],
+		interfaces: [
+			"sap.ui.unified.IProcessableBlobs"
+		],
 		controls: [
 			"sap.ui.unified.calendar.DatesRow",
 			"sap.ui.unified.calendar.Header",
@@ -439,6 +441,30 @@ sap.ui.define([
 		HSL : "HSL"
 
 	};
+
+	/**
+	 * Marker interface for controls that process instances of window.Blob, i.e. window.File.
+	 * The implementation of this Interface should implement the following Interface methods:
+	 * <ul>
+	 * <li><code>getProcessedBlobsFromArray</code></li>
+	 * </ul>
+	 *
+	 * @name sap.ui.unified.IProcessableBlobs
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Allows to process Blobs before they get uploaded. This API can be used to create custom Blobs
+	 * and upload these custom Blobs instead of the received/initials Blobs in the parameter <code>aBlobs</code>.
+	 * One use case could be to create and upload zip archives based on the passed Blobs.
+	 * The default implementation of this API should simply resolve with the received Blobs (parameter <code>aBlobs</code>).
+	 * @param {Blob[]} aBlobs The initial Blobs which can be used to determine a new array of Blobs for further processing.
+	 * @return {Promise} A Promise that resolves with an array of Blobs which is used for the final uploading.
+	 * @function
+	 * @name sap.ui.unified.IProcessableBlobs.getProcessedBlobsFromArray
+	 */
 
 	thisLib._ContentRenderer = BaseObject.extend("sap.ui.unified._ContentRenderer", {
 		constructor : function(oControl, sContentContainerId, oContent, fAfterRenderCallback) {
