@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/core/library"],
 		oRm.writeControlData(oTitle);
 		oRm.addClass("sapMTitle");
 		oRm.addClass("sapMTitleStyle" + (oTitle.getTitleStyle() || TitleLevel.Auto));
-		oRm.addClass("sapMTitleNoWrap");
+		oRm.addClass(oTitle.getWrapping() ? "sapMTitleWrap" : "sapMTitleNoWrap");
 		oRm.addClass("sapUiSelectable");
 
 		var sWidth = oTitle.getWidth();
