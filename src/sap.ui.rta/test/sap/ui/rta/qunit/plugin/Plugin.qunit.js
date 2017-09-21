@@ -20,6 +20,8 @@ sap.ui.require([
 	'sap/ui/layout/form/Form',
 	'sap/ui/layout/form/FormContainer',
 	'sap/ui/layout/form/SimpleForm',
+	'sap/ui/layout/form/ResponsiveLayout',
+	'sap/ui/layout/ResponsiveFlowLayoutData',
 	'sap/uxap/ObjectPageSection',
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/ElementDesignTimeMetadata'
@@ -42,6 +44,8 @@ function(
 	Form,
 	FormContainer,
 	SimpleForm,
+	ResponsiveLayout,
+	ResponsiveFlowLayoutData,
 	ObjectPageSection,
 	FlexUtils,
 	ElementDesignTimeMetadata

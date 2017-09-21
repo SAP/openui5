@@ -5,11 +5,15 @@
 // Provides control sap.ui.rta.appVariant.AppVariantDialog.
 sap.ui.define([
 	'sap/m/Dialog',
-	'sap/m/DialogRenderer'
+	'sap/m/DialogRenderer',
+	'sap/ui/layout/form/SimpleForm',
+	'sap/ui/layout/form/ResponsiveGridLayout'
 ],
 function(
 	Dialog,
-	DialogRenderer
+	DialogRenderer,
+	SimpleForm,
+	ResponsiveGridLayout
 ){
 
 	"use strict";
