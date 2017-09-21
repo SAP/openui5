@@ -67,8 +67,9 @@ sap.ui.define([
 		if (oParams.undo) {
 			var oFlexController;
 			aCommands.forEach(function(oCommand) {
-				// for revertable changes which don't belong to LREP (variantSwitch)
-				if (!(oCommand instanceof FlexCommand || oCommand instanceof AppDescriptorCommand)) {
+				// for revertable changes which don't belong to LREP (variantSwitch) or runtime only changes
+				if (!(oCommand instanceof FlexCommand || oCommand instanceof AppDescriptorCommand)
+					|| oCommand.getRuntimeOnly()) {
 					return;
 				}
 				var oChange = oCommand.getPreparedChange();
@@ -83,6 +84,10 @@ sap.ui.define([
 		} else {
 			var aDescriptorCreateAndAdd = [];
 			aCommands.forEach(function(oCommand) {
+				// Runtime only changes should not be added to the persistence
+				if (oCommand.getRuntimeOnly()){
+					return;
+				}
 				if (oCommand instanceof FlexCommand){
 					var oAppComponent = oCommand.getAppComponent();
 					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
