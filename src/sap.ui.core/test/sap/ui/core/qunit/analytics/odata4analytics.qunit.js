@@ -17,14 +17,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.analytics.odata4analytics", {
 		afterEach : function (assert) {
-			this.oModel.getODataModel().destroy();
+			this.oODataModel.destroy();
 			XMLHttpRequest.restore();
 			this.oLogMock.verify();
 		},
 
 		beforeEach : function () {
-			var oModel,
-				oParameterizationRequest,
+			var oParameterizationRequest,
 				oQueryResult,
 				that = this;
 
@@ -34,10 +33,11 @@ sap.ui.require([
 			o4aFakeService.fake({
 				baseURI: sServiceURL
 			});
-			oModel = new ODataModel(sServiceURL);
-			return oModel.getMetaModel().loaded().then(function () {
+			this.oODataModel = new ODataModel(sServiceURL);
+			ODataModelAdapter.apply(this.oODataModel);
+			return this.oODataModel.getMetaModel().loaded().then(function () {
 				that.oModel = new odata4analytics.Model(
-					new odata4analytics.Model.ReferenceByModel(oModel));
+					new odata4analytics.Model.ReferenceByModel(that.oODataModel));
 
 				oQueryResult = that.oModel.findQueryResultByName("ActualPlannedCostsResults");
 				oParameterizationRequest = new odata4analytics.ParameterizationRequest(
@@ -937,4 +937,129 @@ sap.ui.require([
 		assert.strictEqual(sFilterOptionString, sRefFilterOptionString,
 			"FilterOptionString correctly constructed.");
 	});
+
+	//*********************************************************************************************
+	//*********************************************************************************************
+	QUnit.test("This is how it all begins", function (assert) {
+		var oModelReference = new odata4analytics.Model.ReferenceByModel(this.oODataModel),
+			oOData4SAPAnalyticsModel = new odata4analytics.Model(oModelReference);
+
+		assert.strictEqual(oOData4SAPAnalyticsModel.getODataModel(), this.oODataModel);
+
+		// Note: requires ODataModelAdapter.apply(this.oODataModel); beforehand
+		this.oODataModel.setAnalyticalExtensions(oOData4SAPAnalyticsModel);
+
+		assert.strictEqual(this.oODataModel.getAnalyticalExtensions(), oOData4SAPAnalyticsModel);
+	});
+
+	//*********************************************************************************************
+	// this is how Chart uses odata4analytics (nothing more)
+	QUnit.test("sap.chart.Chart", function (assert) {
+		var bIsAnalytical,
+			oModelReference = new odata4analytics.Model.ReferenceByModel(this.oODataModel),
+			oOData4SAPAnalyticsModel = new odata4analytics.Model(oModelReference);
+
+		// Note: sap.ui.table.AnalyticalTable only uses the following, no odata4analytics at all!
+		ODataModelAdapter.apply(this.oODataModel); // called by Chart!
+		this.oODataModel.setAnalyticalExtensions(oOData4SAPAnalyticsModel);
+
+		bIsAnalytical
+			= oOData4SAPAnalyticsModel.findQueryResultByName("ActualPlannedCostsResults")
+				!== undefined;
+
+		assert.strictEqual(bIsAnalytical, true);
+	});
+	//TODO var iLength = oBinding instanceof sap.ui.model.analytics.AnalyticalBinding
+	//                 ? oBinding.getTotalSize() : oBinding.getLength();
+
+	//*********************************************************************************************
+	QUnit.test("From model to query results", function (assert) {
+		var oActualPlannedCostsResults,
+			// Note: this is a simpler way to start
+			oOData4SAPAnalyticsModel = this.oODataModel.getAnalyticalExtensions();
+
+		assert.deepEqual(oOData4SAPAnalyticsModel.getAllQueryResultNames(),
+			["ActualPlannedCostsResults"]);
+
+		oActualPlannedCostsResults
+			= oOData4SAPAnalyticsModel.findQueryResultByName("ActualPlannedCostsResults");
+
+		assert.ok(oActualPlannedCostsResults instanceof odata4analytics.QueryResult);
+
+		assert.deepEqual(oOData4SAPAnalyticsModel.getAllQueryResults(),
+			{"ActualPlannedCostsResults" : oActualPlannedCostsResults});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Parameterization", function (assert) {
+		var oQueryResult = this.oODataModel.getAnalyticalExtensions()
+				.findQueryResultByName("ActualPlannedCostsResults"),
+			oQueryResultRequest,
+			oParameterization,
+			oParameterizationRequest;
+
+		assert.strictEqual(oQueryResult.getEntitySet().getQName(), "ActualPlannedCostsResults");
+
+		oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult);
+
+		assert.strictEqual(oQueryResultRequest.getQueryResult(), oQueryResult);
+
+		oParameterization = oQueryResult.getParameterization();
+
+		assert.ok(oParameterization instanceof odata4analytics.Parameterization);
+
+		oParameterizationRequest = new odata4analytics.ParameterizationRequest(oParameterization);
+
+		assert.strictEqual(oParameterizationRequest.getParameterization(), oParameterization);
+
+		// set a simple parameter
+		assert.ok(!oParameterization.findParameterByName("P_ControllingArea").isIntervalBoundary());
+
+		oParameterizationRequest.setParameterValue("P_ControllingArea", "US01");
+
+		// set a parameter interval
+		assert.ok(oParameterization.findParameterByName("P_CostCenter").isIntervalBoundary());
+
+		oParameterizationRequest.setParameterValue("P_CostCenter", "from", "to");
+		// Note: the following is implied by using the 3rd parameter above
+//		oParameterizationRequest.setParameterValue("P_CostCenterTo", "to");
+
+		oQueryResultRequest.setParameterizationRequest(oParameterizationRequest);
+
+		assert.strictEqual(oQueryResultRequest.getParameterizationRequest(),
+			oParameterizationRequest);
+
+		assert.strictEqual(oQueryResultRequest.getURIToQueryResultEntitySet(),
+			"/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27from%27"
+			+ ",P_CostCenterTo=%27to%27)/Results");
+	});
+
+	//*********************************************************************************************
+	// this is how AnnotationHelper uses odata4analytics (nothing more)
+	QUnit.test("sap.ovp.cards.AnnotationHelper", function (assert) {
+		var oModelReference = new odata4analytics.Model.ReferenceByModel(this.oODataModel),
+			oOData4SAPAnalyticsModel = new odata4analytics.Model(oModelReference),
+			oQueryResult = oOData4SAPAnalyticsModel
+				.findQueryResultByName("ActualPlannedCostsResults"),
+			oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult),
+			oParameterization = oQueryResult.getParameterization(),
+			oParameterizationRequest
+				= new odata4analytics.ParameterizationRequest(oParameterization);
+
+		oQueryResultRequest.setParameterizationRequest(oParameterizationRequest);
+		oParameterizationRequest.setParameterValue("P_ControllingArea", "US01");
+		oParameterizationRequest.setParameterValue("P_CostCenter", "from", "to");
+
+		assert.strictEqual(oQueryResultRequest.getURIToQueryResultEntitySet(),
+			"/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27from%27"
+			+ ",P_CostCenterTo=%27to%27)/Results",
+			"result of sap.ovp.cards.AnnotationHelper.resolveParameterizedEntitySet");
+		assert.strictEqual(oQueryResult.getEntitySet().getQName(), "ActualPlannedCostsResults",
+			"catch block in case getURIToQueryResultEntitySet() fails");
+
+		// also used:
+		// this.oODataModel.getServiceMetadata()...
+		// this.oODataModel.getMetaModel().getODataProperty(oEntityType, sPath);
+	});
 });
+//TODO odata4analytics.QueryResult
