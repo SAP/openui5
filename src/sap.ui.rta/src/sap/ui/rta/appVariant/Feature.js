@@ -36,29 +36,39 @@ sap.ui.define([
 		isPlatFormEnabled: function(sLayer, bIsAtoAvailableAndEnabled, oRootControl) {
 			var oDescriptor = FlexUtils.getAppDescriptor(oRootControl);
 
-			return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id).then(function(oResult) {
-				if (bIsAtoAvailableAndEnabled && RtaUtils.getUshellContainer() && sLayer === "CUSTOMER" && oResult.response) {
-					var oUriParams = jQuery.sap.getUriParameters();
-					var aUriLayer = oUriParams.mParams["sap-ui-xx-rta-save-as"];
-					var oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
-					if (aUriLayer && aUriLayer.length > 0 && oInboundInfo) {
-						return aUriLayer[0] === 'true' ? true : false;
-					}
-				}
-				return false;
-			}).catch(function(oError) {
-				var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-				var sMsg = oTextResources.getText("MSG_CREATE_APP_VARIANT_ERROR");
+			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
+				return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id).then(function(oResult) {
+					if (bIsAtoAvailableAndEnabled && RtaUtils.getUshellContainer() && sLayer === "CUSTOMER" && oResult.response) {
+						var oUriParams = jQuery.sap.getUriParameters();
+						var aUriLayer = oUriParams.mParams["sap-ui-xx-rta-save-as"];
 
-				return new Promise(function(resolve) {
-					MessageBox.error(sMsg, {
-						onClose: function() {
-							resolve(false);
-						},
-						styleClass: RtaUtils.getRtaStyleClassName()
+						var oInboundInfo;
+						if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
+							oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
+						}
+
+						if (aUriLayer && aUriLayer.length > 0 && oInboundInfo) {
+							return aUriLayer[0] === 'true' ? true : false;
+						}
+					}
+
+					return false;
+				}).catch(function(oError) {
+					var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					var sMsg = oTextResources.getText("MSG_CREATE_APP_VARIANT_ERROR");
+
+					return new Promise(function(resolve) {
+						MessageBox.error(sMsg, {
+							onClose: function() {
+								resolve(false);
+							},
+							styleClass: RtaUtils.getRtaStyleClassName()
+						});
 					});
 				});
-			});
+			}
+
+			return Promise.resolve(false);
 		},
 		onSaveAs: function(sRootControl, fnStopRta) {
 			var oRootControl = sap.ui.getCore().byId(sRootControl);
