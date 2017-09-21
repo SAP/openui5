@@ -280,6 +280,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 				sElementId = oParent.getId();
 				if (this.mContainers[sContainerId] && this.mContainers[sContainerId][2] &&
 				    this.mContainers[sContainerId][2][sElementId]) {
+					if (this.mContainers[sContainerId][2][sElementId][1]) {
+						// update fields RF-Layout
+						var aFields = oParent.getFields();
+						_updateLayoutDataOfContentResponsiveFlowLayout(this, this.mContainers[sContainerId][2][sElementId][1], aFields);
+					}
 					this.mContainers[sContainerId][2][sElementId][0].onLayoutDataChange(oEvent);
 				}
 			}
