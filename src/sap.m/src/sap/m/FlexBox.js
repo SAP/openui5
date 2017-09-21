@@ -287,8 +287,23 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 		}
 
 		// Sync visibility of flex item wrapper, if visibility changes
-		var oItem = sap.ui.getCore().byId(oControlEvent.getParameter("id")),
-			oWrapper = null;
+		this._syncItemWrapperVisibility(oControlEvent.getParameter("id"));
+	};
+
+	/**
+	 * Checks if the item's wrapper visibility should be updated.
+	 * This check is executed only when the visible property of the item is changed.
+	 *
+	 * @name sap.m.FlexBox._syncItemWrapperVisibility
+	 * @method
+	 * @private
+	 * @param {string} sItemId The ID of the item
+	 */
+	FlexBox.prototype._syncItemWrapperVisibility = function (sItemId) {
+		var oItem = sap.ui.getCore().byId(sItemId),
+			oWrapper = null,
+			that = this,
+			oDelegate;
 
 		if (oItem.getLayoutData()) {
 			oWrapper = jQuery.sap.byId(oItem.getLayoutData().getId());
@@ -296,7 +311,34 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 			oWrapper = jQuery.sap.byId(RenderManager.createInvisiblePlaceholderId(oItem)).parent();
 		}
 
-		if (oControlEvent.getParameter("newValue")) {
+		// If the item's wrapper is not rendered yet add the visibility class after
+		// rendering of the item as the wrapper is rendered along with the item.
+		if (oWrapper.length === 0) {
+			oDelegate = {
+				onAfterRendering: function () {
+					that._updateWrapperVisibility(oItem);
+					oItem.removeEventDelegate(oDelegate);
+				}
+			};
+
+			oItem.addEventDelegate(oDelegate);
+		} else {
+			this._updateWrapperVisibility(oItem);
+		}
+	};
+
+	/**
+	 * Sets the visibility class to the item wrapper.
+	 *
+	 * @name sap.m.FlexBox._updateWrapperVisibility
+	 * @method
+	 * @private
+	 * @param {object} oItem The item whose wrapper has to be updated
+	 */
+	FlexBox.prototype._updateWrapperVisibility = function (oItem) {
+		var oWrapper = jQuery.sap.byId(oItem.getLayoutData().getId());
+
+		if (oItem.getVisible()) {
 			oWrapper.removeClass("sapUiHiddenPlaceholder").removeAttr("aria-hidden");
 		} else {
 			oWrapper.addClass("sapUiHiddenPlaceholder").attr("aria-hidden", "true");
