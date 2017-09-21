@@ -928,6 +928,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			if (!this._header) {
 				// set parent of header to detect changes on title
 				this._header = new Bar(this.getId() + "-header").addStyleClass("sapMDialogTitle");
+				this._header._setRootAccessibilityRole("heading");
 				this.setAggregation("_header", this._header, false);
 			}
 		};
