@@ -123,6 +123,7 @@
 				text="{i18n>TechnInfo.DiagnosticsButton.Text}"
 				press="onOpenDiagnostics"/>
 			<Button
+				id="startSupportAssistantButton"
 				text="{i18n>TechnInfo.AssistantButton.Text}"
 				press="onOpenAssistant"
 				class="sapUiDebugTechnicalInfoAssistantButton"
@@ -132,6 +133,7 @@
 				</layoutData>
 			</Button>
 			<Button
+				id="supportAssistantSettingsButton"
 				icon="sap-icon://settings"
 				tooltip="{i18n>Icon.settings}"
 				press="onConfigureAssistantBootstrap"
