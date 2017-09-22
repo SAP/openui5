@@ -2853,6 +2853,9 @@ sap.ui.require([
 	}, {
 		binding : "Note eq null",
 		request : "Note%20eq%20null"
+	}, {
+		binding : "2017-05-23T00:00:00Z ge CreatedAt",
+		request : "datetime'2017-05-23T00:00:00'%20ge%20CreatedAt"
 	}].forEach(function (oFixture) {
 		// Scenario: test conversion of $filter for V2 Adapter
 		// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/

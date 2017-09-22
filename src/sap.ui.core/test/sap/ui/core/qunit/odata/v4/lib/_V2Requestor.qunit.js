@@ -949,9 +949,9 @@ sap.ui.require([
 		{literal : "null", type : "Edm.TimeOfDay", v2type : "Edm.Time",
 			result : "foo/bar eq null"}
 	].forEach(function (oFixture) {
-		QUnit.test("convertFilter: success", function (assert) {
+		QUnit.test("convertFilter: " + oFixture.type, function (assert) {
 			var sFilter = "foo/bar eq " + oFixture.literal,
-					oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
+				oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
 				oRequestor = {
 					oModelInterface : {fnFetchMetadata : function () {}}
 				},
@@ -969,6 +969,42 @@ sap.ui.require([
 		});
 	});
 	// TODO milliseconds in DateTimeOffset and TimeOfDay
+
+	//*********************************************************************************************
+	[{
+		v4 : "3.14 eq foo",
+		v2 : "3.14d eq foo"
+	}, {
+		v4 : "foo eq bar",
+		v2 : "foo eq bar"
+	}, {
+		v4 : "3.14 eq 3.14",
+		error : "Cannot convert filter for V2, saw literals on both sides of 'eq' at 6"
+	}].forEach(function (oFixture) {
+		QUnit.test("convertFilter: " + oFixture.v4, function (assert) {
+			var oProperty = {$Type : "Edm.Double"},
+				oRequestor = {
+					oModelInterface : {fnFetchMetadata : function () {}}
+				},
+				sResourcePath = "MyEntitySet";
+
+			asV2Requestor(oRequestor);
+
+			// simply declare all properties to be Edm.Double so that a conversion is necessary
+			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata").atLeast(0)
+				.returns(_SyncPromise.resolve(oProperty));
+
+			// code under test
+			if (oFixture.error) {
+				assert.throws(function () {
+					oRequestor.convertFilter(oFixture.v4, sResourcePath);
+				}, new Error(oFixture.error + ": " + oFixture.v4));
+			} else {
+				assert.strictEqual(oRequestor.convertFilter(oFixture.v4, sResourcePath),
+					oFixture.v2);
+			}
+		});
+	});
 
 	//*********************************************************************************************
 	[{
