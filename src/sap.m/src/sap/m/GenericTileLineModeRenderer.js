@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/library"],
-	function(TileRenderer, library) {
+sap.ui.define(["sap/m/library", "jquery.sap.global"],
+	function(library, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileScope

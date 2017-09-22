@@ -80,8 +80,8 @@ function(
 	/**
 	 * @override
 	 */
-	CutPaste.prototype._isEditable = function(oOverlay) {
-		return this.getElementMover().isEditable(oOverlay);
+	CutPaste.prototype._isEditable = function(oOverlay, mPropertyBag) {
+		return this.getElementMover().isEditable(oOverlay, mPropertyBag.onRegistration);
 	};
 
 	/**

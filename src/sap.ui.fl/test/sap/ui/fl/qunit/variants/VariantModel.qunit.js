@@ -4,8 +4,8 @@ jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 QUnit.config.autostart = false;
 
 sap.ui.require([
-	"sap/ui/fl/variants/VariantController", "sap/ui/fl/variants/VariantModel", "sap/ui/fl/Utils", "sap/ui/fl/FlexControllerFactory"
-], function(VariantController, VariantModel, Utils, FlexControllerFactory) {
+	"sap/ui/fl/variants/VariantController", "sap/ui/fl/variants/VariantModel", "sap/ui/fl/Utils", "sap/ui/fl/FlexControllerFactory", "sap/ui/fl/changeHandler/BaseTreeModifier"
+], function(VariantController, VariantModel, Utils, FlexControllerFactory, BaseTreeModifier) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
 	QUnit.start();
@@ -63,9 +63,9 @@ sap.ui.require([
 			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
 
 			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
-			this.oLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
-			this.oRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl");
-			this.oApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
+			this.fnLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
+			this.fnRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl");
+			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
 
 
 			this.oModel = new VariantModel(this.oData, this.oFlexController, oComponent);
@@ -90,10 +90,61 @@ sap.ui.require([
 
 	QUnit.test("when calling 'switchToVariant'", function(assert) {
 		this.oModel._switchToVariant("variantMgmtId1", "variant1");
-		assert.ok(this.oLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
-		assert.ok(this.oRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
-		assert.ok(this.oApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
+		assert.ok(this.fnLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
+		assert.ok(this.fnRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
+		assert.ok(this.fnApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
 	});
+
+	QUnit.test("when calling '_copyVariant'", function(assert) {
+		var fnAddVariantToControllerStub = sandbox.stub(this.oModel.oVariantController, "addVariantToVariantManagement").returns(3);
+		var oVariantData = {
+			"content": {
+				"fileName":"variant0",
+					"title":"variant A",
+					"fileType":"ctrl_variant",
+					"variantManagementReference":"variantMgmtId1",
+					"variantReference":"",
+					"reference":"Dummy.Component",
+					"packageName":"$TMP",
+					"content":{},
+				"selector":{},
+				"layer":"CUSTOMER",
+					"texts":{
+					"TextDemo": {
+						"value": "Text for TextDemo",
+							"type": "myTextType"
+					}
+				},
+				"namespace":"Dummy.Component",
+					"creation":"",
+					"originalLanguage":"EN",
+					"conditions":{},
+				"support":{
+					"generator":"Change.createInitialFileContent",
+						"service":"",
+						"user":""
+				}
+			},
+			"changes": []
+		};
+		sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
+		sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
+		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "addDirtyChange");
+		this.oModel._copyVariant();
+
+		assert.ok(fnAddVariantToControllerStub.calledOnce, "then unction to add variant to VariantController called");
+		assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.content.fileName, "then variant added to VariantModel");
+	});
+
+	QUnit.test("when calling '_removeVariant'", function(assert) {
+		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "deleteChange");
+		var fnRemoveVariantToControllerStub = sandbox.stub(this.oModel.oVariantController, "removeVariantFromVariantManagement").returns(2);
+		assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 3, "then initial length is 3");
+		this.oModel._removeVariant({}, "", "variantMgmtId1");
+		assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 2, "then one variant removed from VariantModel");
+		assert.ok(fnRemoveVariantToControllerStub.calledOnce, "then function to remove variant from VariantController called");
+	});
+
 
 	QUnit.module("Given an instance of FakeLrepConnector with no Variants in the LREP response", {
 		beforeEach : function(assert) {
@@ -121,9 +172,9 @@ sap.ui.require([
 			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
 
 			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
-			this.oLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
-			this.oRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl");
-			this.oApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
+			this.fnLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
+			this.fnRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl");
+			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
 
 			this.oModel = new VariantModel(this.oData, this.oFlexController, oComponent);
 		},

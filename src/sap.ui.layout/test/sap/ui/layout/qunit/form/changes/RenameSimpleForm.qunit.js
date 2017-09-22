@@ -88,9 +88,9 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		"</mvc:View>";
 
 		var oDOMParser = new DOMParser();
-		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 
-		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0].childNodes[0];
+		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
@@ -232,9 +232,9 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		"</mvc:View>";
 
 		var oDOMParser = new DOMParser();
-		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 
-		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0].childNodes[0];
+		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oXmlSimpleForm, {

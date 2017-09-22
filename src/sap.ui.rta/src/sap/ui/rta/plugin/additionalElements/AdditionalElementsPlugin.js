@@ -490,7 +490,7 @@ sap.ui.define([
 			var sReference = mManifest["sap.app"].id;
 			return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
 				reference : sReference,
-				requiredLibraries : mRequiredLibraries,
+				parameters : { libraries : mRequiredLibraries },
 				appComponent: oComponent
 			}, oParentAggregationDTMetadata);
 		},
@@ -567,56 +567,50 @@ sap.ui.define([
 		},
 
 		/**
-		 * This function gets called twice, on startup and when we create a context menu.
-		 * On Startup bOverlayIsSibling is not defined as we don't know if it is a sibling or not. In this case we check both cases.
+		 * This function gets called on startup. It checks if the Overlay is editable by this plugin.
 		 * @param {sap.ui.dt.Overlay} oOverlay - overlay to be checked
-		 * @param {boolean} bOverlayIsSibling - (optional) describes whether given overlay is to be checked as a sibling or as a child on editable. Expected values: [true, false, undefined]
-		 * @returns {boolean | object} editable boolean value or object with editable boolean values for "asChild" and "asSibling"
+		 * @returns {object} Returns object with editable boolean values for "asChild" and "asSibling"
 		 * @protected
 		 */
-		_isEditable: function(oOverlay, bOverlayIsSibling) {
-			if (bOverlayIsSibling === undefined || bOverlayIsSibling === null) {
-				return {
-					asSibling: _isEditableCheck.call(this, oOverlay, true),
-					asChild: _isEditableCheck.call(this, oOverlay, false)
-				};
+		_isEditable: function(oOverlay) {
+			return {
+				asSibling: this._isEditableCheck.call(this, oOverlay, true),
+				asChild: this._isEditableCheck.call(this, oOverlay, false)
+			};
+		},
+
+		_isEditableCheck: function(oOverlay, bOverlayIsSibling) {
+			var bEditable = false;
+
+			var oRelevantContainerDesigntimeMetadata = Utils.getRelevantContainerDesigntimeMetadata(oOverlay);
+			if (!oRelevantContainerDesigntimeMetadata) {
+				return false;
+			}
+
+			var mActions = this._getActions(bOverlayIsSibling, oOverlay);
+			var mParents = _getParents(bOverlayIsSibling, oOverlay);
+
+			if (mActions.addODataProperty) {
+				var oAddODataPropertyAction = mActions.addODataProperty.action;
+				bEditable = oAddODataPropertyAction && oAddODataPropertyAction.aggregation === oOverlay.getParentAggregationOverlay().getAggregationName();
+			}
+
+			if (!bEditable && mActions.reveal) {
+				bEditable = true;
+			}
+
+			if (!bEditable && !bOverlayIsSibling) {
+				bEditable = this._hasRevealActionsOnChildren(oOverlay) ||
+					this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
+			}
+
+			if (bEditable) {
+				return this.hasStableId(oOverlay);
 			} else {
-				return _isEditableCheck.call(this, oOverlay, bOverlayIsSibling);
+				return false;
 			}
 		}
 	});
-
-	function _isEditableCheck (oOverlay, bOverlayIsSibling) {
-		var bEditable = false;
-
-		var oRelevantContainerDesigntimeMetadata = Utils.getRelevantContainerDesigntimeMetadata(oOverlay);
-		if (!oRelevantContainerDesigntimeMetadata) {
-			return false;
-		}
-
-		var mActions = this._getActions(bOverlayIsSibling, oOverlay);
-		var mParents = _getParents(bOverlayIsSibling, oOverlay);
-
-		if (mActions.addODataProperty) {
-			var oAddODataPropertyAction = mActions.addODataProperty.action;
-			bEditable = oAddODataPropertyAction && oAddODataPropertyAction.aggregation === oOverlay.getParentAggregationOverlay().getAggregationName();
-		}
-
-		if (!bEditable && mActions.reveal) {
-			bEditable = true;
-		}
-
-		if (!bEditable && !bOverlayIsSibling) {
-			bEditable = this._hasRevealActionsOnChildren(oOverlay) ||
-				this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
-		}
-
-		if (bEditable) {
-			return this.hasStableId(oOverlay);
-		} else {
-			return false;
-		}
-	}
 
 	function _getAllElements (aPromises) {
 		return Promise.all(aPromises).then(function(aAnalyzerValues) {

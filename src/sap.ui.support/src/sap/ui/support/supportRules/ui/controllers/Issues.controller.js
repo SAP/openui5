@@ -11,24 +11,13 @@ sap.ui.define([
 	"sap/ui/support/supportRules/ui/external/ElementTree",
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/WCBChannels",
-	"sap/ui/support/supportRules/ui/models/formatter"
-], function ($, Controller, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter) {
+	"sap/ui/support/supportRules/ui/models/formatter",
+	"sap/ui/support/supportRules/Constants"
+], function ($, Controller, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter, constants) {
 	"use strict";
 
 	var mIssueSettings = {
-		severitytexts: {
-			High: "High",
-			Medium: "Medium",
-			Low: "Low",
-			All: "All Severities"
-		},
-		severitystates: {
-			High: "Error",
-			Medium: "Warning",
-			Low: "None",
-			All: "None"
-		},
-		severityicons: {
+		severityIcons: {
 			High: "sap-icon://message-error",
 			Medium: "sap-icon://message-warning",
 			Low: "sap-icon://message-information",
@@ -179,15 +168,6 @@ sap.ui.define([
 
 			return sevFilterApplied && catFilterApplied && elementFilterApplied && audienseFilterApplied;
 		},
-		filterSevirityIcon: function(sValue) {
-			return mIssueSettings.severityicons[sValue];
-		},
-		filterSevirityState: function(sValue) {
-			return mIssueSettings.severitystates[sValue];
-		},
-		filterSevirityText: function(sValue) {
-			return mIssueSettings.severitytexts[sValue];
-		},
 		setToolbarHeight: function() {
 				this.model.setProperty("/filterBarHeight", "4rem");
 		},
@@ -226,10 +206,37 @@ sap.ui.define([
 				this.issueTable.setSelectedIndex(0);
 				this.model.setProperty("/selectedIssue/details", selectionCopy.details);
 				this.model.setProperty("/selectedIssue", selectionCopy);
+				this._setIconAndColorToIssue(selectionCopy.issues);
 			} else {
 			this.model.setProperty("/selectedIssue", "");
 			}
 		},
+
+		/**
+		 * Set to model icon and color depending on severity.
+		 * @private
+		 * @param {array} aIssues
+		 * @returns {void}
+		 */
+		_setIconAndColorToIssue: function(aIssues) {
+			aIssues.forEach(function(element){
+				switch (element.severity) {
+					case constants.SUPPORT_ASSISTANT_ISSUE_SEVERITY_LOW:
+						element.severityIcon = mIssueSettings.severityIcons.Low;
+						element.severityColor = constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR;
+						break;
+					case constants.SUPPORT_ASSISTANT_ISSUE_SEVERITY_MEDIUM:
+						element.severityIcon = mIssueSettings.severityIcons.Medium;
+						element.severityColor = constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR;
+						break;
+					case constants.SUPPORT_ASSISTANT_ISSUE_SEVERITY_HIGH:
+						element.severityIcon = mIssueSettings.severityIcons.High;
+						element.severityColor = constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR;
+						break;
+				}
+			});
+		},
+
 		_setPropertiesOfResponsiveDetailsAndTable: function(visibleRowCountMode, heightDetailsArea){
 			this.model.setProperty("/visibleRowCountMode", visibleRowCountMode);
 			this.model.setProperty("/heightDetailsArea", heightDetailsArea);

@@ -1,22 +1,14 @@
 /* global QUnit sinon */
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+QUnit.config.autostart = false;
 
-if (window.blanket){
-	window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
-}
-
-sap.ui.define([
+sap.ui.require([
 	//internal
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory',
 	'sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory',
 	'sap/ui/rta/command/CommandFactory',
-	'sap/m/Button',
-	// should be last:
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/m/Button'
 ],
 function(
 	Utils,
@@ -26,6 +18,8 @@ function(
 	Button
 ) {
 	'use strict';
+
+	QUnit.start();
 
 	var oMockedAppComponent = {
 		getLocalId: function () {
@@ -59,6 +53,7 @@ function(
 
 			this.sReference = "appReference";
 			this.sLayer = "CUSTOMER";
+			this.sChangeType = "appdescr_ui5_addLibraries";
 
 			this.mLibraries = {
 				"sap.uxap": {
@@ -93,16 +88,18 @@ function(
 			"mockName" : "mocked"
 		};
 
-		this.createAddLibrariesStub = sinon.stub(DescriptorInlineChangeFactory, "create_ui5_addLibraries", function(mParameters){
-			assert.equal(mParameters.libraries, this.mLibraries, "libraries are properly passed to the 'create_ui5_addLibraries' function");
-			this.createAddLibrariesStub.restore();
+		this.createDescriptorInlineChangeStub = sinon.stub(DescriptorInlineChangeFactory, "createDescriptorInlineChange", function(sChangeType, mParameters){
+			assert.equal(sChangeType, this.sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' method");
+			assert.equal(mParameters.libraries, this.mLibraries, "libraries are properly passed to the 'create_ui5_addLibraries' method");
+			this.createDescriptorInlineChangeStub.restore();
 			return Promise.resolve(oMockAddLibraryInlineChange);
 		}.bind(this));
 
-		this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew", function(sReference, oAddLibraryInlineChange, sLayer){
-			assert.equal(sReference, this.sReference, "reference is properly passed to createNew function");
-			assert.equal(oAddLibraryInlineChange.mockName, oMockAddLibraryInlineChange.mockName, "oAddLibraryInlineChange is properly passed to createNew function");
-			assert.equal(sLayer, this.sLayer, "layer is properly passed to createNew function");
+		this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew", function(sReference, oAddLibraryInlineChange, sLayer, oAppComponent){
+			assert.equal(sReference, this.sReference, "reference is properly passed to createNew method");
+			assert.equal(oAddLibraryInlineChange.mockName, oMockAddLibraryInlineChange.mockName, "oAddLibraryInlineChange is properly passed to createNew method");
+			assert.equal(sLayer, this.sLayer, "layer is properly passed to createNew method");
+			assert.equal(oAppComponent, oMockedAppComponent, "app component is properly passed to createNew method");
 
 			this.createNewChangeStub.restore();
 
@@ -111,11 +108,12 @@ function(
 
 		oAddLibraryCommand = CommandFactory.getCommandFor(this.oButton, "addLibrary", {
 			reference : this.sReference,
-			requiredLibraries : this.mLibraries
+			parameters : { libraries : this.mLibraries },
+			appComponent : oMockedAppComponent
 		}, {}, {"layer" : this.sLayer});
 
 		assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
-		oAddLibraryCommand.createAndStore();
+		oAddLibraryCommand.createAndStoreChange();
 	});
 
 	QUnit.test("when calling execute for AddLibrary ...", function(assert) {
@@ -134,13 +132,13 @@ function(
 
 		var oAddLibraryCommand = CommandFactory.getCommandFor(this.oButton, "addLibrary", {
 			reference : this.sReference,
-			requiredLibraries : this.mLibraries
+			parameters : { libraries : this.mLibraries }
 		}, {}, {"layer" : this.sLayer});
 
 		assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
 
 		oAddLibraryCommand.execute().catch(function(e){
-			assert.ok(e, "then trying to load the non-existing library causes the error " + e);
+			assert.ok(e, "then trying to load a non-existing library causes the error " + e);
 			done();
 		});
 	});

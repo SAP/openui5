@@ -14,8 +14,8 @@
 }
 
 /* MessagePage inner controls styles*/
-.sapMMessagePage > .sapMPage > section > .sapMText,
-.sapMMessagePage > .sapMPage > section > .sapMLnk {
+.sapMMessagePage > .sapMPage > section .sapMText,
+.sapMMessagePage > .sapMPage > section .sapMLnk {
 	font-family: @sapUiFontFamily;
 	margin-top: 1rem;
 }
@@ -23,8 +23,6 @@
 	font-size: 1.5rem;
 	line-height: 2rem;
 	display: block;
-	margin-left: auto;
-	margin-right: auto;
 }
 
 .sapMMessagePage .sapMMessagePageDescription {
@@ -47,13 +45,7 @@
 	}
 }
 
-.sapMMessagePage > .sapMPage section::before {
-	display: block;
-	content: "";
-	height: 25%;
-}
-
-.sapMMessagePage > .sapMPage > section > .sapUiIcon::before {
+.sapMMessagePage > .sapMPage > section .sapUiIcon::before {
 	font-size: 6rem;
 	color: @sapUiContentNonInteractiveIconColor;
 }

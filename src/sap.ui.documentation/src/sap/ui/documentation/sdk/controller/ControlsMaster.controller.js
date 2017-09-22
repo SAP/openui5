@@ -6,15 +6,13 @@ sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/m/GroupHeaderListItem",
-		"sap/ui/core/Component",
 		"sap/ui/model/Filter",
 		"sap/ui/model/Sorter",
 		"jquery.sap.storage"
-	], function (jQuery, Device, BaseController, APIInfo, JSONModel, ControlsInfo, GroupHeaderListItem, Component,
+	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, GroupHeaderListItem,
 				 Filter, Sorter, jQueryStorage) {
 		"use strict";
 
@@ -132,8 +130,7 @@ sap.ui.define([
 				this._oComponent = this.getOwnerComponent();
 				this._oRootView = this.getRootView();
 
-				this._oViewSettings.compactOn = this._oComponent.getContentDensityClass() === "sapUiSizeCompact" &&
-					this._oRootView.hasStyleClass("sapUiSizeCompact");
+				this._oViewSettings.compactOn = this._oComponent.getContentDensityClass() === "sapUiSizeCompact";
 				this._oViewSettings.rtl = this._oCore.getConfiguration().getRTL();
 
 				// Keep default settings for compact mode up to date
@@ -181,9 +178,11 @@ sap.ui.define([
 
 				// Switch theme if necessary
 				this._oCore.applyTheme(sThemeActive);
+
 				// Switch content density
-				this._oRootView.toggleStyleClass("sapUiSizeCompact", bCompactOn)
-					.toggleStyleClass("sapUiSizeCozy", !bCompactOn);
+				jQuery(document.body).toggleClass("sapUiSizeCompact", bCompactOn);
+				jQuery(document.body).toggleClass("sapUiSizeCozy", !bCompactOn);
+
 				this._oCore.getConfiguration().setRTL(bRTL);
 
 				// If there is a sample page loaded try to find it's root container and invalidate it to let controls
@@ -469,11 +468,6 @@ sap.ui.define([
 				this._oVSDialog.setSelectedGroupItem(this._oListSettings.groupProperty);
 				this._oVSDialog.setGroupDescending(this._oListSettings.groupDescending);
 
-				// Apply cozy/compact mode to the dialog
-				this._oVSDialog
-					.toggleStyleClass("sapUiSizeCompact", this._oViewSettings.compactOn)
-					.toggleStyleClass("sapUiSizeCozy", !this._oViewSettings.compactOn);
-
 				// open
 				this._oVSDialog.open();
 
@@ -594,9 +588,6 @@ sap.ui.define([
 
 					// Compact mode select
 					this._oCore.byId("CompactModeSwitch").setState(bCompactMode);
-					this._oSettingsDialog
-						.toggleStyleClass("sapUiSizeCompact", bCompactMode)
-						.toggleStyleClass("sapUiSizeCozy", !bCompactMode);
 					this._oSettingsDialog.open();
 				});
 			},

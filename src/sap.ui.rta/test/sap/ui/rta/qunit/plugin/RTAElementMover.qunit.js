@@ -538,6 +538,7 @@ sap.ui.require([
 		assert.notOk(this.oElementMover.checkMovable(this.oMovedGroupElement1Overlay), "then the movedGroupElement1 is no longer movable");
 	});
 
+
 	QUnit.module("Given Bar with Buttons (fourth scenario) without relevantContainer propagation", {
 		beforeEach : function(assert) {
 

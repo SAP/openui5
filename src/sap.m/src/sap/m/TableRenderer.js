@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer', './ColumnListItemRenderer', './ColumnHeader'],
-	function(jQuery, Renderer, ListBaseRenderer, ColumnListItemRenderer, ColumnHeader) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer', './ColumnListItemRenderer', './ColumnHeader', 'sap/m/library'],
+	function(jQuery, Renderer, ListBaseRenderer, ColumnListItemRenderer, ColumnHeader, library) {
 	"use strict";
+
+
+	// shortcut for sap.m.ListKeyboardMode
+	var ListKeyboardMode = library.ListKeyboardMode;
 
 
 	/**
@@ -197,6 +201,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		this.renderColumns(rm, oControl, "Head");
 		rm.write("<tbody");
 		rm.writeAttribute("id", oControl.addNavSection(oControl.getId("tblBody")));
+		if (oControl.getAlternateRowColors()) {
+			rm.addClass(oControl._getAlternateRowColorsClass());
+			rm.writeClasses();
+		}
 		rm.write(">");
 	};
 
@@ -214,7 +222,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	 */
 	TableRenderer.renderNoData = function(rm, oControl) {
 		rm.write("<tr");
-		rm.writeAttribute("tabindex", oControl.getKeyboardMode() == sap.m.ListKeyboardMode.Navigation ? -1 : 0);
+		rm.writeAttribute("tabindex", oControl.getKeyboardMode() == ListKeyboardMode.Navigation ? -1 : 0);
 		rm.writeAttribute("id", oControl.getId("nodata"));
 		rm.addClass("sapMLIB sapMListTblRow sapMLIBTypeInactive");
 		ColumnListItemRenderer.addFocusableClasses.call(ColumnListItemRenderer, rm);

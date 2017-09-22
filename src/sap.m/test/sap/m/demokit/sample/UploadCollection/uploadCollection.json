@@ -169,13 +169,7 @@
 					"type": "Draft"
 				},
 				{
-					"type": "Locked"
-				},
-				{
 					"type": "Favorite"
-				},
-				{
-					"type": "Unsaved"
 				},
 				{
 					"type": "Flagged"

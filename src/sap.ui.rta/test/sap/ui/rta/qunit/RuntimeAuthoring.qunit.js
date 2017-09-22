@@ -509,25 +509,27 @@ sap.ui.require([
 				//After command has been pushed
 				var fnStackModifiedSpy = sinon.spy(function() {
 
-				// Start RTA with command stack
-				var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
-				this.oRta = new RuntimeAuthoring({
-					rootControl : oRootControl,
-					commandStack : this.oCommandStack,
-					showToolbars : true,
-					flexSettings: {
-						developerMode: false
-					}
-				});
+					// Start RTA with command stack
+					var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+					this.oRta = new RuntimeAuthoring({
+						rootControl : oRootControl,
+						commandStack : this.oCommandStack,
+						showToolbars : true,
+						flexSettings: {
+							developerMode: false
+						}
+					});
 
-				this.oRta.attachStart(function() {
-					this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
-					this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
-					done();
-				}.bind(this));
-
-				this.oRta.start();
-
+					Promise.all([
+						new Promise(function (fnResolve) {
+							this.oRta.attachStart(function() {
+								this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
+								this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
+								fnResolve();
+							}.bind(this));
+						}.bind(this)),
+						this.oRta.start()
+					]).then(done);
 				}.bind(this));
 
 				this.oCommandStack = new Stack();
@@ -977,24 +979,6 @@ sap.ui.require([
 				false,
 				"then the reload inside FLP is not triggered");
 		}.bind(this));
-	});
-
-	QUnit.test("when the appClosed event is raised", function(assert) {
-		var done = assert.async();
-
-		var oCheckPersChangesSpy = sandbox.spy(this.oRta, "_handlePersonalizationChangesOnExit");
-		var oSerializeSpy = sandbox.spy(this.oRta, "_serializeToLrep");
-
-		this.oRta.attachStop(function() {
-			assert.equal(oCheckPersChangesSpy.callCount, 0, "then the check for personalized changes wasn't executed");
-			assert.equal(oSerializeSpy.callCount, 0, "then _serializeToLrep wasn't called");
-			done();
-		});
-
-		this.oRta.attachStart(function() {
-			sap.ui.getCore().getEventBus().publish("sap.ushell.renderers.fiori2.Renderer", "appClosed", this);
-		});
-		this.oRta.start();
 	});
 
 	QUnit.test("when RTA toolbar gets closed (exit without appClosed)", function(assert) {

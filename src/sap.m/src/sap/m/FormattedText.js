@@ -8,6 +8,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 		"use strict";
 
 
+		// shortcut for sap.m.LinkConversion
+		var LinkConversion = library.LinkConversion;
+
+
 		/**
 		 * Constructor for a new FormattedText.
 		 *
@@ -78,7 +82,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 					 * and what are the criteria for recognizing them.
 					 * @since 1.45.5
 					 */
-					convertLinksToAnchorTags: {type: "sap.m.LinkConversion", group: "Behavior", defaultValue: sap.m.LinkConversion.None},
+					convertLinksToAnchorTags: {type: "sap.m.LinkConversion", group: "Behavior", defaultValue: LinkConversion.None},
 
 					/**
 					 * Determines the <code>target</code> attribute of the generated HTML anchor tags.
@@ -301,5 +305,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 
 
 		return FormattedText;
-
-	}, /* bExport= */ true);
+	});

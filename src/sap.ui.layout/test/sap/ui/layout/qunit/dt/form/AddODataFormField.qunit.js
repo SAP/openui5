@@ -76,11 +76,12 @@ sap.ui.require([
 			var oNewFormElement = oFormElements[1];
 
 			assert.equal(oFormElements.length, 2, "the form has now 2 form elements");
-
-			assert.equal(oNewFormElement.getLabel().getId(), "addedFieldId-label", "the new label was inserted for the first form element");
+			assert.equal(oNewFormElement.getId(), "addedFieldId", "the new form element has a stable id");
+			assert.equal(oNewFormElement.getLabel().getId(), "addedFieldId-field-label", "the new label was inserted for the first form element");
 
 			var oFormField = oNewFormElement.getFields()[0];
-			assert.equal(oFormField.getBindingPath("value"),"BindingPath1", "the field was inserted in the empty form");
+			assert.equal(oFormField.getId(),"addedFieldId-field", "the field has a stable id");
+			assert.equal(oFormField.getBindingPath("value"),"BindingPath1", "the field has the correct binding path");
 
 			var mSpecificChangeInfo2 = {
 				"newControlId": "addedFieldId2",
@@ -103,11 +104,11 @@ sap.ui.require([
 			oFormContainer = this.oForm.getFormContainers()[0];
 
 			var oFormElement1 = oFormContainer.getAggregation("formElements")[0];
-			assert.equal(oFormElement1.getLabel().getId(), "addedFieldId2-label", "the new label was inserted for the first form element");
+			assert.equal(oFormElement1.getLabel().getId(), "addedFieldId2-field-label", "the new label was inserted for the first form element");
 			assert.equal(oFormElement1.getFields()[0].getBindingPath("value"),"BindingPath2", "the new field was inserted in the first form element");
 
 			var oFormElement2 = oFormContainer.getAggregation("formElements")[2];
-			assert.equal(oFormElement2.getLabel().getId(), "addedFieldId-label", "the previous label is now in the second form element");
+			assert.equal(oFormElement2.getLabel().getId(), "addedFieldId-field-label", "the previous label is now in the second form element");
 			assert.equal(oFormElement2.getFields()[0].getBindingPath("value"),"BindingPath1", "the previous field is now in the second form element");
 
 		});
@@ -180,19 +181,19 @@ sap.ui.require([
 					'</f:Form>' +
 				'</mvc:View>';
 
-			var oXmlDocument = oDOMParser.parseFromString(sXmlString, "application/xml");
+			var oXmlDocument = oDOMParser.parseFromString(sXmlString, "application/xml").documentElement;
 
 			AddFieldChangeHandler.completeChangeContent(oChangeXml, XMLSpecificChangeInfo, {modifier: XmlTreeModifier, view : oXmlDocument, appComponent: this.oMockedAppComponent});
 
-			var oXmlFormContainer = oXmlDocument.childNodes[0].childNodes[0].childNodes[1].childNodes[0];
+			var oXmlFormContainer = oXmlDocument.childNodes[0].childNodes[1].childNodes[0];
 			assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, oXmlFormContainer,
 					{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
 					"the change was successfully applied");
 
 			assert.equal(oXmlFormContainer.childElementCount, 2, "the formContainer has 2 elements after the change");
 
-			assert.equal(oXmlFormContainer.getElementsByTagName("sap.ui.comp.smartfield.SmartLabel")[0].getAttribute("id"), sAddedFieldId + "-label", "the field's label was added in the right position");
-			assert.equal(oXmlFormContainer.getElementsByTagName("sap.ui.comp.smartfield.SmartField")[0].getAttribute("id"), sAddedFieldId, "the field was added in the right position");
+			assert.equal(oXmlFormContainer.getElementsByTagNameNS("sap.ui.comp.smartfield","SmartLabel")[0].getAttribute("id"), sAddedFieldId + "-field-label", "the field's label was added in the right position");
+			assert.equal(oXmlFormContainer.getElementsByTagNameNS("sap.ui.comp.smartfield","SmartField")[0].getAttribute("id"), sAddedFieldId + "-field", "the field was added in the right position");
 		});
 
 	});

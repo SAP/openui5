@@ -2,9 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
-	function(jQuery, FlexBoxStylingHelper) {
+sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', 'sap/m/library', 'sap/m/FlexBox'],
+	function(jQuery, FlexBoxStylingHelper, library, FlexBox) {
 	"use strict";
+
+	// shortcut for sap.m.FlexDirection
+	var FlexDirection = library.FlexDirection;
+
+	// shortcut for sap.m.FlexRendertype
+	var FlexRendertype = library.FlexRendertype;
 
 	// Issue warning if flex algorithm is unsupported
 	if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
@@ -27,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 	 */
 	FlexBoxRenderer.render = function(oRm, oControl) {
 		// Open FlexBox HTML element
-		if (oControl.getRenderType() === sap.m.FlexRendertype.List) {
+		if (oControl.getRenderType() === FlexRendertype.List) {
 			oRm.write('<ul');
 		} else {
 			oRm.write('<div');
@@ -37,7 +43,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 
 		// Special treatment if FlexBox is itself an item of a parent FlexBox
 		var oParent = oControl.getParent();
-		if (oControl.getParent() instanceof sap.m.FlexBox) {
+		if (oControl.getParent() instanceof FlexBox) {
 			oRm.addClass("sapMFlexItem");
 
 			// Set layout properties for flex item
@@ -47,7 +53,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 			}
 
 			// Wrap in list item
-			if (oParent.getRenderType() === sap.m.FlexRendertype.List) {
+			if (oParent.getRenderType() === FlexRendertype.List) {
 				oRm.write('<li');
 			}
 		} else if (oControl.getFitContainer()) {
@@ -60,13 +66,13 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 			oRm.addClass("sapMFlexBoxInline");
 		}
 
-		if (oControl.getDirection() === sap.m.FlexDirection.Column || oControl.getDirection() === sap.m.FlexDirection.ColumnReverse) {
+		if (oControl.getDirection() === FlexDirection.Column || oControl.getDirection() === FlexDirection.ColumnReverse) {
 			oRm.addClass("sapMVBox");
 		} else {
 			oRm.addClass("sapMHBox");
 		}
 
-		if (oControl.getDirection() === sap.m.FlexDirection.RowReverse || oControl.getDirection() === sap.m.FlexDirection.ColumnReverse) {
+		if (oControl.getDirection() === FlexDirection.RowReverse || oControl.getDirection() === FlexDirection.ColumnReverse) {
 			oRm.addClass("sapMFlexBoxReverse");
 		}
 
@@ -99,7 +105,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 		FlexBoxRenderer.renderItems(oControl, oRm);
 
 		// Close FlexBox HTML element
-		if (oControl.getRenderType() === sap.m.FlexRendertype.List) {
+		if (oControl.getRenderType() === FlexRendertype.List) {
 			oRm.write("</ul>");
 		} else {
 			oRm.write("</div>");
@@ -112,9 +118,9 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 
 		for (var i = 0; i < aChildren.length; i++) {
 			// Don't wrap if it's a FlexBox control
-			if (aChildren[i] instanceof sap.m.FlexBox || oControl.getRenderType() === sap.m.FlexRendertype.Bare) {
+			if (aChildren[i] instanceof FlexBox || oControl.getRenderType() === FlexRendertype.Bare) {
 				sWrapperTag = "";
-			} else if (oControl.getRenderType() === sap.m.FlexRendertype.List) {
+			} else if (oControl.getRenderType() === FlexRendertype.List) {
 				sWrapperTag = "li";
 			} else {
 				sWrapperTag = "div";

@@ -48,7 +48,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 			var oChangeRegistry = sap.ui.fl.registry.ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
-				"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
+					"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
 				}
 			});
 

@@ -400,23 +400,33 @@ sap.ui.define([
 	/**
 	 * Adds a new change (could be variant as well) and returns the id of the new change.
 	 *
-	 * @param {object} vChange - The complete and finalized JSON object representation the file content of the change or a Change instance
+	 * @param {object} vChange The complete and finalized JSON object representation the file content of the change or a Change instance
 	 * @param {object} oComponent Component instance
-	 * @returns {sap.ui.fl.Change} the newly created change object
+	 * @returns {sap.ui.fl.Change|sap.ui.fl.variant} the newly created change or variant
 	 * @public
 	 */
 	ChangePersistence.prototype.addChange = function(vChange, oComponent) {
+		var oChange = this.addDirtyChange(vChange);
+		this._addChangeIntoMap(oComponent, oChange);
+		this._addPropagationListener(oComponent);
+		return oChange;
+	};
+
+	/**
+	 * Adds a new dirty change (could be variant as well).
+	 *
+	 * @param {object} vChange - JSON object of change/variant or change/variant object
+	 * @returns {sap.ui.fl.Change|sap.ui.fl.Variant} oNewChange - Prepared change or variant
+	 * @public
+	 */
+	ChangePersistence.prototype.addDirtyChange = function(vChange) {
 		var oNewChange;
 		if (vChange instanceof Change || vChange instanceof Variant){
 			oNewChange = vChange;
-		}else {
+		} else {
 			oNewChange = new Change(vChange);
 		}
 		this._aDirtyChanges.push(oNewChange);
-		this._addChangeIntoMap(oComponent, oNewChange);
-		this._addPropagationListener(oComponent);
-
-
 		return oNewChange;
 	};
 
@@ -620,7 +630,7 @@ sap.ui.define([
 		}
 
 		oChange.markForDeletion();
-		this._aDirtyChanges.push(oChange);
+		this.addDirtyChange(oChange);
 		this._deleteChangeInMap(oChange);
 	};
 

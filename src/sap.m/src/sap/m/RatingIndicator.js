@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.m.RatingIndicator.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, IconPool, Parameters) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, Parameters) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.RatingIndicatorVisualMode
+	var RatingIndicatorVisualMode = library.RatingIndicatorVisualMode;
 
 
 
@@ -87,7 +92,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Defines how float values are visualized: Full, Half (see enumeration RatingIndicatorVisualMode)
 			 */
-			visualMode : {type : "sap.m.RatingIndicatorVisualMode", group : "Behavior", defaultValue : sap.m.RatingIndicatorVisualMode.Half},
+			visualMode : {type : "sap.m.RatingIndicatorVisualMode", group : "Behavior", defaultValue : RatingIndicatorVisualMode.Half},
 
 			/**
 			 * The RatingIndicator in displayOnly mode is not interactive, not editable, not focusable, and not in the tab chain. This setting is used for forms in review mode.
@@ -321,11 +326,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return sDensityMode || aDensityModes[0].name;
 	};
 
-		/**
-		 * Get icon size label
-		 *
-		 * @private
-		 */
+	/**
+	 * Get icon size label
+	 *
+	 * @private
+	 */
 	RatingIndicator.prototype._getIconSizeLabel = function (iPxIconSize) {
 		switch (true) {
 			case (iPxIconSize >= 32):
@@ -507,9 +512,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			fValue = Math.round(fValue);
 		} else { // for display we round to the correct behavior
-			if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Full) {
+			if (this.getVisualMode() === RatingIndicatorVisualMode.Full) {
 				fValue = Math.round(fValue);
-			} else if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Half) {
+			} else if (this.getVisualMode() === RatingIndicatorVisualMode.Half) {
 				fValue = Math.round(fValue * 2) / 2;
 			}
 		}
@@ -561,10 +566,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			fStep;
 
 		switch (sVisualMode) {
-			case sap.m.RatingIndicatorVisualMode.Full:
+			case RatingIndicatorVisualMode.Full:
 				fStep = 1;
 				break;
-			case sap.m.RatingIndicatorVisualMode.Half:
+			case RatingIndicatorVisualMode.Half:
 				// If the value is half, we return 0.5 in order to allow/force only full value selection via keyboard.
 				if (this.getValue() % 1 === 0.5) {
 					fStep = 0.5;
@@ -774,48 +779,48 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return false;
 		}
 
-        switch (oEvent.which) {
-            case jQuery.sap.KeyCodes.DIGIT_0:
-            case jQuery.sap.KeyCodes.NUMPAD_0:
-                this.setValue(0);
-                break;
-            case jQuery.sap.KeyCodes.DIGIT_1:
-            case jQuery.sap.KeyCodes.NUMPAD_1:
-                this.setValue(1);
-                break;
-            case jQuery.sap.KeyCodes.DIGIT_2:
-            case jQuery.sap.KeyCodes.NUMPAD_2:
-                this.setValue(Math.min(2, iMaxValue));
-                break;
-            case jQuery.sap.KeyCodes.DIGIT_3:
-            case jQuery.sap.KeyCodes.NUMPAD_3:
-                this.setValue(Math.min(3, iMaxValue));
-                break;
-            case jQuery.sap.KeyCodes.DIGIT_4:
-            case jQuery.sap.KeyCodes.NUMPAD_4:
-                this.setValue(Math.min(4, iMaxValue));
-                break;
-            case jQuery.sap.KeyCodes.DIGIT_5:
-            case jQuery.sap.KeyCodes.NUMPAD_5:
-                this.setValue(Math.min(5, iMaxValue));
-                break;
-            case jQuery.sap.KeyCodes.DIGIT_6:
-            case jQuery.sap.KeyCodes.NUMPAD_6:
-                this.setValue(Math.min(6, iMaxValue));
-                break;
-            case jQuery.sap.KeyCodes.DIGIT_7:
-            case jQuery.sap.KeyCodes.NUMPAD_7:
-                this.setValue(Math.min(7, iMaxValue));
-                break;
-            case jQuery.sap.KeyCodes.DIGIT_8:
-            case jQuery.sap.KeyCodes.NUMPAD_8:
-                this.setValue(Math.min(8, iMaxValue));
-                break;
-            case jQuery.sap.KeyCodes.DIGIT_9:
-            case jQuery.sap.KeyCodes.NUMPAD_9:
-                this.setValue(Math.min(9, iMaxValue));
-                break;
-        }
+		switch (oEvent.which) {
+			case jQuery.sap.KeyCodes.DIGIT_0:
+			case jQuery.sap.KeyCodes.NUMPAD_0:
+				this.setValue(0);
+				break;
+			case jQuery.sap.KeyCodes.DIGIT_1:
+			case jQuery.sap.KeyCodes.NUMPAD_1:
+				this.setValue(1);
+				break;
+			case jQuery.sap.KeyCodes.DIGIT_2:
+			case jQuery.sap.KeyCodes.NUMPAD_2:
+				this.setValue(Math.min(2, iMaxValue));
+				break;
+			case jQuery.sap.KeyCodes.DIGIT_3:
+			case jQuery.sap.KeyCodes.NUMPAD_3:
+				this.setValue(Math.min(3, iMaxValue));
+				break;
+			case jQuery.sap.KeyCodes.DIGIT_4:
+			case jQuery.sap.KeyCodes.NUMPAD_4:
+				this.setValue(Math.min(4, iMaxValue));
+				break;
+			case jQuery.sap.KeyCodes.DIGIT_5:
+			case jQuery.sap.KeyCodes.NUMPAD_5:
+				this.setValue(Math.min(5, iMaxValue));
+				break;
+			case jQuery.sap.KeyCodes.DIGIT_6:
+			case jQuery.sap.KeyCodes.NUMPAD_6:
+				this.setValue(Math.min(6, iMaxValue));
+				break;
+			case jQuery.sap.KeyCodes.DIGIT_7:
+			case jQuery.sap.KeyCodes.NUMPAD_7:
+				this.setValue(Math.min(7, iMaxValue));
+				break;
+			case jQuery.sap.KeyCodes.DIGIT_8:
+			case jQuery.sap.KeyCodes.NUMPAD_8:
+				this.setValue(Math.min(8, iMaxValue));
+				break;
+			case jQuery.sap.KeyCodes.DIGIT_9:
+			case jQuery.sap.KeyCodes.NUMPAD_9:
+				this.setValue(Math.min(9, iMaxValue));
+				break;
+		}
 	};
 
 	/**
@@ -864,4 +869,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return RatingIndicator;
 
-}, /* bExport= */ true);
+});

@@ -163,16 +163,18 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 	};
 
 	/**
-	 * Filters the list.
+	 * Applies a new set of filters to the list represented by this binding.
 	 *
-	 * Filters are first grouped according to their binding path.
-	 * All filters belonging to a group are ORed and after that the
-	 * results of all groups are ANDed.
-	 * Usually this means, all filters applied to a single table column
-	 * are ORed, while filters on different table columns are ANDed.
+	 * See {@link sap.ui.model.ListBinding#filter ListBinding#filter} for a more detailed
+	 * description of list filtering.
+	 *
+	 * When no <code>sFilterType</code> is given, any previously configured application
+	 * filters are cleared and the given filters are used as control filters
 	 *
 	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
-	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
+	 * @param {sap.ui.model.FilterType} [sFilterType=undefined] Type of the filter which should
+	 *  be adjusted; if no type is given, then any previously configured application filters are
+	 *  cleared and the given filters are used as control filters
 	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
 	 *
 	 * @public

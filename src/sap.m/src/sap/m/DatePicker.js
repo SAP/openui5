@@ -3,10 +3,19 @@
  */
 
 // Provides control sap.m.DatePicker.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeField', 'sap/ui/model/type/Date', 'sap/ui/model/odata/type/ODataType', 'sap/ui/core/date/UniversalDate', './library'],
-	function(jQuery, Device, InputBase, DateTimeField, Date1, ODataType, UniversalDate, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeField', 'sap/ui/core/date/UniversalDate', './library', 'sap/ui/core/Control', 'sap/ui/core/library'],
+	function(jQuery, Device, InputBase, DateTimeField, UniversalDate, library, Control, coreLibrary) {
 	"use strict";
 
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = coreLibrary.CalendarType;
+
+	// lazy dependency to sap/ui/unified/Calendar
+	var Calendar;
 
 	/**
 	 * Constructor for a new <code>DatePicker</code>.
@@ -270,7 +279,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 
 		if (!oOrigin || oOrigin != this._oCalendar) {
 			// Calendar is only invalidated by DatePicker itself -> so don't invalidate DatePicker
-			sap.ui.core.Control.prototype.invalidate.apply(this, arguments);
+			Control.prototype.invalidate.apply(this, arguments);
 			// Invalidate calendar with a delayed call so it could have updated specialDates aggregation from DatePicker
 			this._iInvalidateCalendar = jQuery.sap.delayedCall(0, this, _invalidateCalendar);
 		}
@@ -578,7 +587,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 
 		if (sDisplayFormatType) {
 			var bFound = false;
-			for ( var sType in sap.ui.core.CalendarType) {
+			for ( var sType in CalendarType) {
 				if (sType == sDisplayFormatType) {
 					bFound = true;
 					break;
@@ -707,12 +716,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 
 		var sId = this.getLegend();
 		if (sId) {
-			if (!sap.ui.unified.CalendarLegend) {
-				sap.ui.getCore().loadLibrary("sap.ui.unified");
-				jQuery.sap.require("sap.ui.unified.library");
-			}
+			var CalendarLegend = sap.ui.require("sap/ui/unified/CalendarLegend");
 			oLegend = sap.ui.getCore().byId(sId);
-			if (oLegend && !(oLegend instanceof sap.ui.unified.CalendarLegend)) {
+			if (oLegend && !(typeof CalendarLegend == "function" && oLegend instanceof CalendarLegend)) {
 				throw new Error(oLegend + " is not an sap.ui.unified.CalendarLegend. " + this);
 			}
 		}
@@ -902,7 +908,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 
 		var eDock = sap.ui.core.Popup.Dock;
 		var sAt;
-		if (this.getTextAlign() == sap.ui.core.TextAlign.End) {
+		if (this.getTextAlign() == TextAlign.End) {
 			sAt = eDock.EndBottom + "-4"; // as m.Input has some padding around
 			this._oPopup.open(0, eDock.EndTop, sAt, this, null, "fit", true);
 		}else {
@@ -932,9 +938,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 	DatePicker.prototype._createPopupContent = function(){
 
 		if (!this._oCalendar) {
-			sap.ui.getCore().loadLibrary("sap.ui.unified");
-			jQuery.sap.require("sap.ui.unified.library");
-			this._oCalendar = new sap.ui.unified.Calendar(this.getId() + "-cal", {
+			if ( !Calendar ) {
+				sap.ui.getCore().loadLibrary("sap.ui.unified");
+				Calendar = sap.ui.requireSync("sap/ui/unified/Calendar");
+			}
+			this._oCalendar = new Calendar(this.getId() + "-cal", {
 				intervalSelection: this._bIntervalSelection,
 				minDate: this.getMinDate(),
 				maxDate: this.getMaxDate(),
@@ -1050,6 +1058,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 				this.setProperty("value", sValue, true); // no rerendering
 				this.fireChangeEvent(sValue, {valid: true});
 			}
+		} else if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
+			this.focus();
 		}
 
 		// close popup and focus input after change event to allow application to reset value state or similar things
@@ -1180,12 +1190,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 
 	function _checkSpecialDate(oSpecialDate) {
 
-		if (!sap.ui.unified.DateTypeRange) {
-			sap.ui.getCore().loadLibrary("sap.ui.unified");
-			jQuery.sap.require("sap.ui.unified.library");
-		}
+		var DateTypeRange = sap.ui.require("sap/ui/unified/DateTypeRange");
 
-		if (oSpecialDate && !(oSpecialDate instanceof sap.ui.unified.DateTypeRange)) {
+		if (oSpecialDate && !(DateTypeRange && oSpecialDate instanceof DateTypeRange)) {
 			throw new Error(oSpecialDate + "is not valid for aggregation \"specialDates\" of " + this);
 		}
 
@@ -1214,7 +1221,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 	 * @public
 	 */
 
-	 /**
+	/**
 	 * Fire event change to attached listeners.
 	 *
 	 * Expects following event parameters:
@@ -1232,4 +1239,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 
 	return DatePicker;
 
-}, /* bExport= */ true);
+});

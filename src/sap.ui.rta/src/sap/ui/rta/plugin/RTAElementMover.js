@@ -83,10 +83,10 @@ function(
 		this.oBasePlugin.setCommandFactory(oCommandFactory);
 	};
 
-	RTAElementMover.prototype.isEditable = function(oOverlay) {
+	RTAElementMover.prototype.isEditable = function(oOverlay, bOnRegistration) {
 		var oElement = oOverlay.getElementInstance();
 		var bMovable = false;
-		if (this.isMovableType(oElement) && this.checkMovable(oOverlay)) {
+		if (this.isMovableType(oElement) && this.checkMovable(oOverlay, bOnRegistration)) {
 			bMovable = true;
 		}
 		oOverlay.setMovable(bMovable);
@@ -99,7 +99,7 @@ function(
 	 * @param  {[type]}  oMovedElement The element being moved if the aggregation overlay is present
 	 * @return {Boolean} true if editable
 	 */
-	function fnIsValidForMove(oOverlay) {
+	function fnIsValidForMove(oOverlay, bOnRegistration) {
 		var bValid = false,
 			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
 			oParentElementOverlay = oOverlay.getParentElementOverlay(),
@@ -133,7 +133,7 @@ function(
 			var aOverlays = OverlayUtil.findAllUniqueAggregationOverlaysInContainer(oOverlay, oRelevantContainerOverlay);
 
 			var aValidAggregationOverlays = aOverlays.filter(function(oAggregationOverlay) {
-				return this.checkTargetZone(oAggregationOverlay, oOverlay, true);
+				return this.checkTargetZone(oAggregationOverlay, oOverlay, bOnRegistration);
 			}.bind(this));
 
 			if (aValidAggregationOverlays.length < 1) {
@@ -191,8 +191,8 @@ function(
 	 * @return {boolean} true if embedded, false if not
 	 * @override
 	 */
-	RTAElementMover.prototype.checkMovable = function(oOverlay) {
-		return fnIsValidForMove.call(this, oOverlay);
+	RTAElementMover.prototype.checkMovable = function(oOverlay, bOnRegistration) {
+		return fnIsValidForMove.call(this, oOverlay, bOnRegistration);
 	};
 
 	/**

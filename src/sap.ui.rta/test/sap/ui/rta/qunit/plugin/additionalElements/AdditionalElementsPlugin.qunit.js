@@ -197,7 +197,7 @@ sap.ui.require([
 			assert.equal(oPlugin.getContextMenuTitle(test.sibling, this.oOverlay), sExpectedText, "then the translated context menu entry is properly set");
 			assert.ok(oPlugin.isAvailable(test.sibling, this.oOverlay), "then the action is available");
 			assert.ok(oPlugin.isEnabled(test.sibling, this.oOverlay), "then the action is enabled");
-			assert.ok(oPlugin._isEditable(this.oOverlay, test.sibling), "then the overlay is editable");
+			assert.ok(oPlugin._isEditableCheck(this.oOverlay, test.sibling), "then the overlay is editable");
 		});
 	});
 	[{
@@ -230,7 +230,7 @@ sap.ui.require([
 		QUnit.test(sPrefix + test.msg, function(assert) {
 			this.oOverlay = test.overlay();
 			assert.notOk(oPlugin.isAvailable(test.sibling, this.oOverlay), "then the action is not available");
-			assert.notOk(oPlugin._isEditable(this.oOverlay, test.sibling), "then the overlay is not editable");
+			assert.notOk(oPlugin._isEditableCheck(this.oOverlay, test.sibling), "then the overlay is not editable");
 		});
 	});
 
@@ -580,7 +580,7 @@ sap.ui.require([
 				"then the pseudo parent (relevant container) is used to create the new control ID");
 			assert.equal(oCompositeCommand.getCommands()[0].getReference(), "applicationId",
 				"then the addLibrary command is created with the proper reference");
-			assert.equal(oCompositeCommand.getCommands()[0].getRequiredLibraries()["sap.uxap"].minVersion, "1.44",
+			assert.equal(oCompositeCommand.getCommands()[0].getParameters().libraries["sap.uxap"].minVersion, "1.44",
 				"then the addLibrary command is created with the proper required libraries");
 			done();
 		});

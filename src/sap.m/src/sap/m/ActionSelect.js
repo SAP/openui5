@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ActionSelect.
-sap.ui.define(['jquery.sap.global', './Select', './library'],
-	function(jQuery, Select, library) {
+sap.ui.define(['./Select', './library'],
+	function(Select, library) {
 		"use strict";
 
 		/**
@@ -260,4 +260,4 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 
 		return ActionSelect;
 
-	}, /* bExport= */ true);
+	});

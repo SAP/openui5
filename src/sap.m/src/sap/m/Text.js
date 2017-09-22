@@ -3,9 +3,15 @@
  */
 
 // Provides control sap.m.Text
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(library, Control, coreLibrary, Device) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Constructor for a new Text.
@@ -45,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Available options for the text direction are LTR and RTL. By default the control inherits the text direction from its parent control.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Enables text wrapping.
@@ -55,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Sets the horizontal alignment of the text.
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
 			/**
 			 * Sets the width of the Text control. By default, the Text control uses the full width available. Set this property to restrict the width to a custom value.
@@ -65,7 +71,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Limits the number of lines for wrapping texts.
 			 *
-			 * <b>Note:</b> In multi-line text the overflow will be hidden (ellipsis won't be shown).
+			 * <b>Note</b>: The multi-line overflow indicator depends on the browser line clamping support. For such browsers, this will be shown as ellipsis, for the other browsers the overflow will just be hidden.
 			 * @since 1.13.2
 			 */
 			maxLines : {type : "int", group : "Appearance", defaultValue : null},
@@ -117,6 +123,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @type {string}
 	 */
 	Text.prototype.ellipsis = '...';
+
+	/**
+	 * Defines whether browser supports native line clamp or not and if browser is Chrome
+	 *
+	 * @since 1.13.2
+	 * @returns {boolean}
+	 * @protected
+	 * @readonly
+	 * @static
+	 */
+	Text.hasNativeLineClamp = (function() {
+		return (typeof document.documentElement.style.webkitLineClamp != "undefined" && sap.ui.Device.browser.chrome);
+	})();
 
 	/**
 	 * To prevent from the layout thrashing of the <code>textContent</code> call, this method
@@ -205,7 +224,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// required adaptations after rendering
 		// check visible, max-lines and line-clamping support
 		if (this.getVisible() &&
-			this.hasMaxLines()) {
+			this.hasMaxLines() &&
+			!this.canUseNativeLineClamp()) {
 
 			// set max-height for maxLines support
 			this.clampHeight();
@@ -245,6 +265,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		return this.getDomRef();
+	};
+
+	/**
+	 * Decides whether the control can use native line clamp feature or not.
+	 *
+	 * In RTL mode native line clamp feature is not supported.
+	 *
+	 * @since 1.20
+	 * @protected
+	 * @return {Boolean}
+	 */
+	Text.prototype.canUseNativeLineClamp = function() {
+		// has line clamp feature
+		if (!Text.hasNativeLineClamp) {
+			return false;
+		}
+
+		// is text direction rtl
+		var oDirection = sap.ui.core.TextDirection;
+		if (this.getTextDirection() == oDirection.RTL) {
+			return false;
+		}
+
+		// is text direction inherited as rtl
+		if (this.getTextDirection() == oDirection.Inherit && sap.ui.getCore().getConfiguration().getRTL()) {
+			return false;
+		}
+
+		return true;
 	};
 
 	/**
@@ -289,7 +338,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		// on rasterizing the font, sub pixel line-heights are converted to integer
 		// for most of the font rendering engine but this is not the case for firefox
-		if (!sap.ui.Device.browser.firefox) {
+		if (!Device.browser.firefox) {
 			fLineHeight = Math.floor(fLineHeight);
 		}
 
@@ -434,4 +483,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	return Text;
 
-}, /* bExport= */ true);
+});

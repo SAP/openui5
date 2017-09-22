@@ -2,10 +2,18 @@
  * ${copyright}
  */
 
-// Provides control sap.m.FeedListItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedText'],
-	function(jQuery, ListItemBase, library, FormattedText) {
+sap.ui.define([ "jquery.sap.global", "./ListItemBase", "./Link", "./library", "./FormattedText", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/ui/Device" ],
+	function(jQuery, ListItemBase, Link, library, FormattedText, Control, IconPool, Device) {
 	"use strict";
+
+	// shortcut for sap.m.ListType
+	var ListType = library.ListType;
+
+	// shortcut for sap.m.ImageHelper
+	var ImageHelper = library.ImageHelper;
+
+	// shortcut for sap.m.LinkConversion
+	var LinkConversion = library.LinkConversion;
 
 	/**
 	 * Constructor for a new FeedListItem.
@@ -90,7 +98,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 			 * Determines whether strings that appear to be links will be converted to HTML anchor tags, and what are the criteria for recognizing them.
 			 * @since 1.46.1
 			 */
-			convertLinksToAnchorTags : {type : "sap.m.LinkConversion", group : "Behavior", defaultValue : sap.m.LinkConversion.None},
+			convertLinksToAnchorTags : {type : "sap.m.LinkConversion", group : "Behavior", defaultValue : LinkConversion.None},
 
 			/**
 			 * Determines the target attribute of the generated HTML anchor tags. Note: Applicable only if ConvertLinksToAnchorTags property is used with a value other than sap.m.LinkConversion.None. Options are the standard values for the target attribute of the HTML anchor tag: _self, _top, _blank, _parent, _search.
@@ -154,12 +162,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 		}
 	}});
 
-	///**
-	// * This file defines behavior for the control,
-	// */
-
 	FeedListItem._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
 	FeedListItem._nMaxCharactersMobile = 300;
 	FeedListItem._nMaxCharactersDesktop = 500;
 
@@ -172,6 +175,14 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	FeedListItem.prototype.init = function () {
 		ListItemBase.prototype.init.apply(this);
 		this.setAggregation("_text", new FormattedText(this.getId() + "-formattedText"), true);
+	};
+
+	FeedListItem.prototype.invalidate = function () {
+		Control.prototype.invalidate.apply(this, arguments);
+		delete this._bTextExpanded;
+		if (this._oLinkExpandCollapse) {
+			this._oLinkExpandCollapse.setProperty("text", FeedListItem._sTextShowMore, true);
+		}
 	};
 
 	FeedListItem.prototype.onBeforeRendering = function() {
@@ -270,7 +281,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 */
 	FeedListItem.prototype._getImageControl = function() {
 		var sIcon = this.getIcon();
-		var sIconSrc = sIcon ? sIcon : sap.ui.core.IconPool.getIconURI("person-placeholder");
+		var sIconSrc = sIcon ? sIcon : IconPool.getIconURI("person-placeholder");
 		var sImgId = this.getId() + '-icon';
 		var mProperties = {
 			src : sIconSrc,
@@ -287,7 +298,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 		}
 
 		var that = this;
-		this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
+		this._oImageControl = ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
 		if (this.getIconActive()) {
 			this._oImageControl.attachPress(function() {
 				that.fireIconPress({
@@ -310,9 +321,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 */
 	FeedListItem.prototype._getLinkSender = function(withColon) {
 		if (!this._oLinkControl) {
-			jQuery.sap.require("sap.m.Link");
 			var that = this;
-			this._oLinkControl = new sap.m.Link({
+			this._oLinkControl = new Link({
 				press : function() {
 					that.fireSenderPress({
 						domRef : this.getDomRef(),
@@ -352,7 +362,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 * @private
 	 */
 	FeedListItem.prototype._inactiveHandlingInheritor = function() {
-		var sSrc = this.getIcon() ? this.getIcon() : sap.ui.core.IconPool.getIconURI("person-placeholder");
+		var sSrc = this.getIcon() ? this.getIcon() : IconPool.getIconURI("person-placeholder");
 		if (this._oImageControl) {
 			this._oImageControl.setSrc(sSrc);
 		}
@@ -372,7 +382,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	FeedListItem.prototype._getCollapsedText = function() {
 		this._nMaxCollapsedLength = this.getMaxCharacters();
 		if (this._nMaxCollapsedLength === 0) {
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				this._nMaxCollapsedLength = FeedListItem._nMaxCharactersMobile;
 			} else {
 				this._nMaxCollapsedLength = FeedListItem._nMaxCharactersDesktop;
@@ -444,12 +454,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 */
 	FeedListItem.prototype._getLinkExpandCollapse = function() {
 		if (!this._oLinkExpandCollapse) {
-			jQuery.sap.require("sap.m.Link");
-			this._oLinkExpandCollapse = new sap.m.Link({
-				text : FeedListItem._sTextShowMore,
-				press : jQuery.proxy(function() {
-					this._toggleTextExpanded();
-				}, this)
+			this._oLinkExpandCollapse = new Link({
+				text: FeedListItem._sTextShowMore,
+				press: [this._toggleTextExpanded, this]
 			});
 			this._bTextExpanded = false;
 			// Necessary so this gets garbage collected and the text of the link changes at clicking on it
@@ -527,10 +534,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 * @returns {sap.m.FeedListItem} this allows method chaining
 	 */
 	FeedListItem.prototype.setType = function(type) {
-		if (type === sap.m.ListType.Navigation) {
-			this.setProperty("type", sap.m.ListType.Active);
-		} else {
-			this.setProperty("type", type);
+		if (this.getType() !== type) {
+			if (type === ListType.Navigation) {
+				this.setProperty("type", ListType.Active);
+			} else {
+				this.setProperty("type", type);
+			}
 		}
 		return this;
 	};
@@ -542,10 +551,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 	 * @returns {sap.m.FeedListItem} this allows method chaining
 	 */
 	FeedListItem.prototype.setUnread = function(value) {
-		this.setProperty("unread", false);
-		return this;
+		return this.setProperty("unread", false, true);
 	};
 
 	return FeedListItem;
 
-}, /* bExport= */ true);
+});

@@ -58,21 +58,25 @@ describe('sap.m.MessageView', function() {
 		expect(takeScreenshot(element(by.id("mMView1")))).toLookAs("mMView1-compact");
 	});
 
-	["error", "warning", "success", "information", "all"].forEach(function (sMessageType) {
+	["error", "warning", "success", "information", "all"].forEach(function (sMessageType, nIndex) {
 		it("should open " + sMessageType + " messages in Dialog in compact mode.", function () {
 			element(by.id("mMView1-" + sMessageType)).click();
 			expect(takeScreenshot(element(by.id("mMView1")))).toLookAs("mMView1-" + sMessageType + "-compact");
+			if (nIndex === 4) {
+				element(by.id('dialogCloseButton')).click();
+			}
 		});
 	});
 
 	it("should open MessageView in Dialog with hidden details header - details page", function () {
 		element(by.id("mView-in-dialog-btn-2")).click();
-		expect(takeScreenshot()).toLookAs("message-view-in-dialog-with-no-details-header-detailspage");
+		expect(takeScreenshot()).toLookAs("mv-in-dialog-w-no-details-hdr-detpage");
 	});
 
 	it("should open MessageView in Dialog with hidden details", function () {
 		element(by.id("mMView5-back")).click();
-		expect(takeScreenshot()).toLookAs("message-view-in-dialog-with-no-details-header-initialpage");
+		expect(takeScreenshot()).toLookAs("mv-in-dialog-w-no-details-hdr-initpage");
+		element(by.id("dialogWOneHeader-close-btn")).click();
 	});
 
 });

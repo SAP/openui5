@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
-	function(PageAccessibleLandmarkInfo, Device) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -22,6 +22,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 	PageRenderer.render = function(oRm, oPage) {
 		var oHeader = null,
 			oFooter = null,
+			bShowFooter = oPage.getShowFooter(),
 			oSubHeader = null,
 			bLightHeader  = this._isLightHeader(oPage),
 			oLandmarkInfo = oPage.getLandmarkInfo();
@@ -50,7 +51,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			oRm.addClass("sapMPageWithSubHeader");
 		}
 
-		if (oFooter) {
+		if (oFooter && bShowFooter) {
 			// it is used in the PopOver to remove additional margin bottom for page with footer
 			oRm.addClass("sapMPageWithFooter");
 		}
@@ -76,8 +77,9 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 		oRm.write(">");
 
 		if (oHeader) {
+			var sHeaderTag = oPage._getHeaderTag(oLandmarkInfo);
 			// Header
-			oRm.write("<header");
+			oRm.write("<" + sHeaderTag);
 			oRm.addClass("sapMPageHeader");
 			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Header"));
 			oRm.writeClasses();
@@ -87,12 +89,13 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 				context: "header",
 				styleClass: bLightHeader ? "" : "sapContrastPlus"
 			});
-			oRm.write("</header>");
+			oRm.write("</" + sHeaderTag + ">");
 		}
 
 		if (oSubHeader) {
+			var sSubHeaderTag = oPage._getSubHeaderTag(oLandmarkInfo);
 			// SubHeader
-			oRm.write("<header");
+			oRm.write("<" + sSubHeaderTag);
 			oRm.addClass("sapMPageSubHeader");
 			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "SubHeader"));
 			oRm.writeClasses();
@@ -101,7 +104,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 				context: "subHeader",
 				styleClass: bLightHeader ? "" : "sapContrastPlus"
 			});
-			oRm.write("</header>");
+			oRm.write("</" + sSubHeaderTag + ">");
 		}
 
 		// render child controls
@@ -133,7 +136,9 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 		// otherwise animation on show/hide won't work always
 
 		if (oFooter) {
-			oRm.write("<footer");
+			var sFooterTag = oPage._getFooterTag(oLandmarkInfo);
+
+			oRm.write("<" + sFooterTag);
 			oRm.addClass("sapMPageFooter");
 			if (!oPage.getShowFooter()) {
 				oRm.addClass("sapUiHidden");
@@ -144,7 +149,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			this.renderBarControl(oRm, oPage, oFooter, {
 				context : "footer"
 			});
-			oRm.write("</footer>");
+			oRm.write("</" + sFooterTag + ">");
 		}
 
 		oRm.write("</div>");

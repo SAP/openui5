@@ -3,8 +3,8 @@
  */
 
 // Provides acustomized router class for the 'explored' app.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/routing/History', 'sap/ui/core/routing/Router', 'sap/ui/core/Core'],
-	function(jQuery, History, Router, Core) {
+sap.ui.define(['sap/ui/core/routing/History', 'sap/ui/core/routing/Router', 'sap/ui/core/Core'],
+	function(History, Router, Core) {
 	"use strict";
 
 

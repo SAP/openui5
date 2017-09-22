@@ -3,14 +3,13 @@
  */
 
 // Provides control sap.m.MessagePopover.
-sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./Bar", "./List",
-		"./StandardListItem", "sap/ui/core/Control", "sap/ui/core/IconPool",
-		"sap/ui/core/HTML", "./Text", "sap/ui/core/Icon", "./SegmentedButton", "./Page", "./NavContainer",
-		"./semantic/SemanticPage", "./Link" ,"./Popover", "./MessagePopoverItem", "./MessageView"],
-	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, Bar, List,
-			  StandardListItem, Control, IconPool,
-			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage, Link, Popover, MessagePopoverItem,
-			  MessageView) {
+sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./Bar",
+		"sap/ui/core/Control", "sap/ui/core/IconPool",
+		"./semantic/SemanticPage", "./Popover", "./MessageView", "sap/ui/Device"],
+	function (jQuery, ResponsivePopover, Button, Toolbar, Bar,
+			  Control, IconPool,
+			  SemanticPage, Popover,
+			  MessageView, Device) {
 		"use strict";
 
 		/**
@@ -315,7 +314,7 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 				onAfterRendering: this.onAfterRenderingPopover
 			}, this);
 
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				this._oPopover.setBeginButton(new Button({
 					text: this._oResourceBundle.getText("MESSAGEPOPOVER_CLOSE"),
 					press: this.close.bind(this)
@@ -487,6 +486,7 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 		 *
 		 * @param {sap.m.PlacementType} sPlacement Placement type
 		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
+		 * @public
 		 */
 		MessagePopover.prototype.setPlacement = function (sPlacement) {
 			this.setProperty("placement", sPlacement, true);
@@ -595,7 +595,7 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 			var sCloseBtnDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_CLOSE"),
 				oCloseBtn = new Button({
 				icon: ICONS["close"],
-				visible: !sap.ui.Device.system.phone,
+				visible: !Device.system.phone,
 				tooltip: sCloseBtnDescr,
 				press: this.close.bind(this)
 			}).addStyleClass(CSS_CLASS + "CloseBtn");
@@ -681,6 +681,16 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 			return this._oMessageView.getHeaderButton();
 		};
 
+		MessagePopover.prototype.setModel = function(oModel, sName) {
+			/* When a model is set to the MessagePopover it is propagated to all its aggregation
+				Unfortunately the MessageView is not an aggregation of the MessagePopover (due to some rendering issues)
+				Furthermore the MessageView is actually child of a ResponsivePopover
+				Therefore once the developer set a model to the MessagePopover we need to forward it to the internal MessageView */
+			this._oMessageView.setModel(oModel, sName);
+
+			return Control.prototype.setModel.apply(this, arguments);
+		};
+
 		["invalidate", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "getBusyIndicatorDelay",
 			"setBusyIndicatorDelay", "getVisible", "setVisible", "getBusy", "setBusy"].forEach(function(sName){
 			MessagePopover.prototype[sName] = function() {
@@ -727,4 +737,4 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 
 		return MessagePopover;
 
-	}, /* bExport= */ true);
+	});

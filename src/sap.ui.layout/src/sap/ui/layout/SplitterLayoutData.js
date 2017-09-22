@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.SplitterLayoutData.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
-	function(jQuery, LayoutData, library) {
+sap.ui.define(['sap/ui/core/LayoutData', './library'],
+	function(LayoutData, library) {
 	"use strict";
 
 
@@ -58,4 +58,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 
 	return SplitterLayoutData;
 
-}, /* bExport= */ true);
+});

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Parameters'],
-	function (Control, library, Parameters) {
+sap.ui.define(['sap/ui/core/Control', './library'],
+	function(Control, library) {
 		"use strict";
 
 		/**
@@ -121,4 +121,4 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Paramete
 
 		return BlockLayoutCell;
 
-	}, /* bExport= */ true);
+	});

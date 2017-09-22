@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>QUnit Test Page for sap.m.SelectionDetailsItemLine</title>
+
+<!-- UI5 Bootstrap -->
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.m"
+	data-sap-ui-language="en">
+</script>
+
+<!-- QUnit libraries -->
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css" media="screen">
+<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script>
+
+	QUnit.config.autostart = false;
+
+	QUnit.module("Default values", {
+		beforeEach: function() {
+			this.oLine = new sap.m.SelectionDetailsItemLine();
+		},
+		afterEach: function() {
+			this.oLine.destroy();
+			this.oLine = null;
+		}
+	});
+
+	QUnit.test("Default value of property unit", function(assert) {
+		assert.equal(this.oLine.getUnit(), "", "Default value is correct");
+	});
+
+	QUnit.test("Default value of property displayValue", function(assert) {
+		assert.equal(this.oLine.getDisplayValue(), "", "Default value is correct");
+	});
+
+	QUnit.module("Function _getValueToRender", {
+		beforeEach: function () {
+			this.oItemLine = new sap.m.SelectionDetailsItemLine({
+				label: "someLabel",
+				value: "someValue"
+			});
+		},
+		afterEach: function () {
+			this.oItemLine.destroy();
+			this.oItemLine = null;
+		}
+	});
+
+	QUnit.test("Accepts value type string", function(assert) {
+		//Act
+		var sValue = this.oItemLine._getValueToRender();
+
+		//Assert
+		assert.equal(sValue, "someValue","Returns string for value of type string");
+	});
+
+	QUnit.test("Accepts value type object containing day only", function(assert) {
+		//Arrange
+		var sValueFromObject;
+		this.oItemLine.setValue({
+			day: "someDay",
+			time: null
+		});
+
+		//Act
+		sValueFromObject = this.oItemLine._getValueToRender();
+
+		//Assert
+		assert.equal(sValueFromObject, "someDay", "Returns string containing day");
+	});
+
+	QUnit.test("Accepts value type object containing time only", function(assert) {
+		//Arrange
+		var sValueFromObject;
+		this.oItemLine.setValue({
+			day: null,
+			time: "someTime"
+		});
+
+		//Act
+		sValueFromObject = this.oItemLine._getValueToRender();
+
+		//Assert
+		assert.equal(sValueFromObject, "someTime", "Returns string containing time");
+	});
+
+	QUnit.test("Accepts value type object containing day and time", function(assert) {
+		//Arrange
+		var sValueFromObject;
+		this.oItemLine.setValue({
+			day: "someDay",
+			time: "someTime"
+		});
+
+		//Act
+		sValueFromObject = this.oItemLine._getValueToRender();
+
+		//Assert
+		assert.equal(sValueFromObject, "someTime someDay", "Returns string containing time and day");
+	});
+
+	QUnit.start();
+
+</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

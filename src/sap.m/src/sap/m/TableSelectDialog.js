@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.m.TableSelectDialog.
-sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './Table', './library', 'sap/ui/core/Control'],
-	function(jQuery, Button, Dialog, SearchField, Table, library, Control) {
+sap.ui.define(['./Button', './Dialog', './SearchField', './Table', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/ManagedObject'],
+	function(Button, Dialog, SearchField, Table, library, Control, Device, ManagedObject) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
 
 
 
@@ -218,7 +223,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		this._oTable = new Table(this.getId() + "-table", {
 			growing: true,
 			growingScrollToLoad: true,
-			mode: sap.m.ListMode.SingleSelectMaster,
+			mode: ListMode.SingleSelectMaster,
 			modeAnimationOn: false,
 			infoToolbar: new sap.m.Toolbar({
 				visible: false,
@@ -287,12 +292,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 
 		// store a reference to the internal dialog
 		this._oDialog = new Dialog(this.getId() + "-dialog", {
-			stretch: sap.ui.Device.system.phone,
+			stretch: Device.system.phone,
 			contentHeight: "2000px",
 			subHeader: this._oSubHeader,
 			content: [this._oBusyIndicator, this._oTable],
 			leftButton: this._getCancelButton(),
-			initialFocus: ((sap.ui.Device.system.desktop && this._oSearchField) ? this._oSearchField : null)
+			initialFocus: ((Device.system.desktop && this._oSearchField) ? this._oSearchField : null)
 		});
 		this._dialog = this._oDialog; // for downward compatibility
 		this.setAggregation("_dialog", this._oDialog);
@@ -504,12 +509,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	TableSelectDialog.prototype.setMultiSelect = function (bMulti) {
 		this.setProperty("multiSelect", bMulti, true);
 		if (bMulti) {
-			this._oTable.setMode(sap.m.ListMode.MultiSelect);
+			this._oTable.setMode(ListMode.MultiSelect);
 			this._oTable.setIncludeItemInSelection(true);
 			this._oDialog.setRightButton(this._getCancelButton());
 			this._oDialog.setLeftButton(this._getOkButton());
 		} else {
-			this._oTable.setMode(sap.m.ListMode.SingleSelectMaster);
+			this._oTable.setMode(ListMode.SingleSelectMaster);
 			this._oDialog.setLeftButton(this._getCancelButton());
 		}
 
@@ -711,7 +716,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 			return this._oTable[sFunctionName].apply(this._oTable, aArgs.slice(1));
 		} else {
 			// apply to this control
-			return sap.ui.base.ManagedObject.prototype[sFunctionName].apply(this, aArgs.slice(1));
+			return ManagedObject.prototype[sFunctionName].apply(this, aArgs.slice(1));
 		}
 	};
 
@@ -912,7 +917,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 			this._bInitBusy = false;
 		}
 
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 
 			if (this._oTable.getItems()[0]) {
 				this._oDialog.setInitialFocus(this._oTable.getItems()[0]);
@@ -1090,4 +1095,4 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 
 	return TableSelectDialog;
 
-}, /* bExport= */ true);
+});

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.TileContainer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, IconPool) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/Device', 'sap/ui/core/ResizeHandler'],
+	function(jQuery, library, Control, IconPool, Device, ResizeHandler) {
 	"use strict";
 
 
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._iScrollLeft = 0;
 		this._iScrollGap = 0;	// gap to the left and right that is allowed to be moved while touchmove event if max scrollwidth or min scrollwidth is already reached
 
-		if (!sap.ui.Device.system.desktop) {
+		if (!Device.system.desktop) {
 			this._iScrollGap = 0;
 		}
 
@@ -133,12 +133,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._bAvoidChildTapEvent = false;
 
 		// the amount on the left and right during drag drop of a tile needed to start showing the edge of the page
-		this._iEdgeShowStart = sap.ui.Device.system.phone ? 10 : 20;
+		this._iEdgeShowStart = Device.system.phone ? 10 : 20;
 
 		// the amount of pixels a tile needs to be moved over the left or right edge to trigger a scroll
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			this._iTriggerScrollOffset = 10;
-		} else if (sap.ui.Device.system.desktop) {
+		} else if (Device.system.desktop) {
 			this._iTriggerScrollOffset = -40;
 		} else {
 			this._iTriggerScrollOffset = 20;
@@ -146,7 +146,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// keyboard support
 		this._iCurrentFocusIndex = -1;
-		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+		if (Device.system.desktop || Device.system.combi) {
 			var fnOnHome = jQuery.proxy(function(oEvent) {
 				if (this._iCurrentFocusIndex >= 0) {
 					var iRowFirstTileIndex = this._iCurrentFocusIndex - this._iCurrentFocusIndex % this._iMaxTilesX;
@@ -383,7 +383,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 		}
 
-		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+		if (Device.system.tablet || Device.system.phone) {
 			this._fnOrientationChange = function(oEvent) {
 				if (this.getDomRef()) {
 					this._oTileDimensionCalculator.calc();
@@ -501,7 +501,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// unregister the resize listener
 		if (this._sResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
 		this._oPagesInfo.reset();
@@ -520,7 +520,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var aVisibleTiles = [];
 
 		// init resizing
-		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef().parentElement,  jQuery.proxy(this._resize, this));
+		this._sResizeListenerId = ResizeHandler.register(this.getDomRef().parentElement,  jQuery.proxy(this._resize, this));
 
 		// init the dimensions to the container scoll area
 		this._oDim = this._calculateDimension();
@@ -538,7 +538,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._update(true);
 		}
 
-		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+		if (Device.system.desktop || Device.system.combi) {
 			var aTiles = aVisibleTiles || this._getVisibleTiles();
 
 			if (aTiles.length > 0 && this._mFocusables && this._mFocusables[aTiles[0].getId()]) {
@@ -546,8 +546,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 
-		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
-			sap.ui.Device.orientation.attachHandler(this._fnOrientationChange, this);
+		if (Device.system.tablet || Device.system.phone) {
+			Device.orientation.attachHandler(this._fnOrientationChange, this);
 		}
 	};
 
@@ -613,9 +613,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		scrollPos  = $scroll.position();
 		scrollOuterHeight = $scroll.outerHeight();
 
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			iOffset = 2;
-		} else if (sap.ui.Device.system.desktop) {
+		} else if (Device.system.desktop) {
 			iOffset = 0;
 		}
 
@@ -690,12 +690,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	TileContainer.prototype.exit = function() {
 
 		if (this._sResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
 
-		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
-			sap.ui.Device.orientation.detachHandler(this._fnOrientationChange, this);
+		if (Device.system.tablet || Device.system.phone) {
+			Device.orientation.detachHandler(this._fnOrientationChange, this);
 		}
 		delete this._oPagesInfo;
 	};
@@ -787,7 +787,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var that = this,
 			aVisibleTiles;
 		// keyboard support for desktop environments
-		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+		if (Device.system.desktop || Device.system.combi) {
 			oTile.addEventDelegate({
 				"onAfterRendering": function() {
 					if (!that._mFocusables) {
@@ -847,7 +847,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			// When the control is initialized/updated with data binding and optimization for rendering
 			// tile by tile is used we need to be sure we have a focusable tile.
-			if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+			if (Device.system.desktop || Device.system.combi) {
 				this._updateTilesTabIndex(aVisibleTiles);
 			}
 		} else {
@@ -929,7 +929,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				if (oTile.getDomRef()) {
 					oTile.getDomRef().parentNode.removeChild(oTile.getDomRef());
 				}
-				if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+				if (Device.system.desktop || Device.system.combi) {
 					if (this._mFocusables && this._mFocusables[oTile.getId()]) {
 						delete this._mFocusables[oTile.getId()];
 					}
@@ -1059,7 +1059,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// When the control is initialized/updated with data binding and optimization for rendering
 			// tile by tile is used we need to be sure we have a focusable tile.
-			if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+			if (Device.system.desktop || Device.system.combi) {
 				this._updateTilesTabIndex();
 			}
 		}
@@ -1223,7 +1223,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oPager.childNodes[0].className = "";
 			}
 		}
-		if (sap.ui.Device.system.desktop &&
+		if (Device.system.desktop &&
 			(this._oPagesInfo.currentPageIsFirstChanged() || this._oPagesInfo.currentPageIsLastChanged())) {
 			if (this._bRtl) {
 				// Less builder swaps left and right in RTL styles,
@@ -1298,7 +1298,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			oDim.width  -= 45 * 2;
 		}
 
@@ -1315,7 +1315,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._iMaxTilesY = iMaxTilesY;
 		this._iOffsetX = Math.floor(( oDim.width  -  (oTileDimension.width * iNumTileX)) / 2);
 
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			this._iOffsetX += 45;
 		}
 
@@ -1523,7 +1523,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.scrollLeft();
 		} else if (oEvent.target.id == this.getId() + "-rightscroller" || oEvent.target.parentNode.id == this.getId() + "-rightscroller") {
 			this.scrollRight();
-		} else if (oEvent.target == oPager && sap.ui.Device.system.desktop) {
+		} else if (oEvent.target == oPager && Device.system.desktop) {
 			if (oEvent.offsetX < oPager.offsetWidth / 2) {
 				this.scrollLeft();
 			} else {
@@ -1672,7 +1672,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				this._applyPageStartIndex(this._iCurrentTileStartIndex + ((oTouchSession.fDiffX * iRtl > 0 ? 1 : -1) * this._iMaxTiles));
 				this._bAvoidChildTapEvent = true;
-			} else if (oEvent.target == oPager && !sap.ui.Device.system.desktop) {
+			} else if (oEvent.target == oPager && !Device.system.desktop) {
 
 				if ((oTouchSession.iOffsetX - oPager.offsetWidth / 2) * iRtl < 0) {
 					this.scrollLeft();
@@ -1903,7 +1903,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.moveTile(oTile, iIndex);
 			this.scrollIntoView(oTile, false);
 
-			if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+			if (Device.system.desktop || Device.system.combi) {
 				this._findTile(oTile.$()).focus();
 			}
 			this._handleAriaActiveDescendant();
@@ -2123,4 +2123,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return TileContainer;
 
-}, /* bExport= */ true);
+});

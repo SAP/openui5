@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nItem.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Element'
-], function(jQuery, library, Element) {
+	'./library', 'sap/ui/core/Element'
+], function(library, Element) {
 	"use strict";
 
 	/**
@@ -173,4 +173,4 @@ sap.ui.define([
 
 	return P13nItem;
 
-}, /* bExport= */true);
+});

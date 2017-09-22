@@ -101,7 +101,7 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 		 */
 		PagingButton.prototype._getNextButton = function () {
 			if (!this.getAggregation("nextButton")) {
-				this.setAggregation("nextButton", new sap.m.Button({
+				this.setAggregation("nextButton", new Button({
 					tooltip: this.getNextButtonTooltip() || resourceBundle.getText("PAGINGBUTTON_NEXT"),
 					icon: IconPool.getIconURI("slim-arrow-down"),
 					enabled: false,
@@ -119,7 +119,7 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 		 */
 		PagingButton.prototype._getPreviousButton = function () {
 			if (!this.getAggregation("previousButton")) {
-				this.setAggregation("previousButton", new sap.m.Button({
+				this.setAggregation("previousButton", new Button({
 					tooltip: this.getPreviousButtonTooltip() || resourceBundle.getText("PAGINGBUTTON_PREVIOUS"),
 					icon: IconPool.getIconURI("slim-arrow-up"),
 					enabled: false,
@@ -219,4 +219,4 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 
 		return PagingButton;
 
-	}, /* bExport= */ true);
+	});

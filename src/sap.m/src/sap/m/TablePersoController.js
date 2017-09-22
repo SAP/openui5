@@ -760,4 +760,4 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 
 	return TablePersoController;
 
-}, /* bExport= */ true);
+});

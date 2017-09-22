@@ -3,9 +3,12 @@
  */
 
 // Provides default renderer for control sap.m.Image
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/m/library'],
+	function(jQuery, library) {
 	"use strict";
+
+	// shortcut for sap.m.ImageMode
+	var ImageMode = library.ImageMode;
 
 	/**
 	 * Image renderer.
@@ -40,13 +43,13 @@ sap.ui.define(['jquery.sap.global'],
 
 
 		// Open the DOM element tag. The 'img' tag is used for mode sap.m.ImageMode.Image and 'span' tag is used for sap.m.ImageMode.Background
-		rm.write(sMode === sap.m.ImageMode.Image ? "<img" : "<span");
+		rm.write(sMode === ImageMode.Image ? "<img" : "<span");
 
 		if (!oLightBox) {
 			rm.writeControlData(oImage);
 		}
 
-		if (sMode === sap.m.ImageMode.Image) {
+		if (sMode === ImageMode.Image) {
 			rm.writeAttributeEscaped("src", oImage._getDensityAwareSrc());
 		} else {
 			// preload the image with a window.Image instance. The source uri is set to the output DOM node via CSS style 'background-image' after the source image is loaded (in onload function)

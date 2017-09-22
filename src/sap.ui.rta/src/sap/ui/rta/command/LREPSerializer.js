@@ -6,7 +6,7 @@ sap.ui.define([
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/FlexCommand',
 	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
+	'sap/ui/rta/command/AppDescriptorCommand',
 	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/ControlTreeModifier'
@@ -67,9 +67,9 @@ sap.ui.define([
 		if (oParams.undo) {
 			var oFlexController;
 			aCommands.forEach(function(oCommand) {
-				// for revertable changes which don't belong to lrep
-				// (e.g. variantSwitch)
-				if (!(oCommand instanceof FlexCommand)) {
+				// for revertable changes which don't belong to LREP (variantSwitch) or runtime only changes
+				if (!(oCommand instanceof FlexCommand || oCommand instanceof AppDescriptorCommand)
+					|| oCommand.getRuntimeOnly()) {
 					return;
 				}
 				var oChange = oCommand.getPreparedChange();
@@ -79,23 +79,26 @@ sap.ui.define([
 					var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
 				}
-				oFlexController.deleteChange(oChange);
+				oFlexController.deleteChange(oChange, oAppComponent);
 			});
 		} else {
 			var aDescriptorCreateAndAdd = [];
 			aCommands.forEach(function(oCommand) {
+				// Runtime only changes should not be added to the persistence
+				if (oCommand.getRuntimeOnly()){
+					return;
+				}
 				if (oCommand instanceof FlexCommand){
 					var oAppComponent = oCommand.getAppComponent();
 					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 					oFlexController.addPreparedChange(oCommand.getPreparedChange(), oAppComponent);
 				} else if (oCommand instanceof AppDescriptorCommand) {
-					aDescriptorCreateAndAdd.push(oCommand.createAndStore());
+					aDescriptorCreateAndAdd.push(oCommand.createAndStoreChange());
 				}
 			});
 
 			return Promise.all(aDescriptorCreateAndAdd);
 		}
-
 	};
 
 	/**

@@ -191,7 +191,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.createVariant = function (oVariantSpecificData, oAppComponent) {
-		var oVariantFileContent, oVariantSpecificData, oVariant;
+		var oVariant;
 
 		var aCurrentDesignTimeContext = ContextManager._getContextIdsFromUrl();
 
@@ -227,8 +227,9 @@ sap.ui.define([
 
 		oVariantSpecificData.validAppVersions = oValidAppVersions;
 
-		oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
-		oVariant = new Variant(oVariantFileContent);
+		oVariantSpecificData.content = Variant.createInitialFileContent(oVariantSpecificData.content);
+
+		oVariant = new Variant(oVariantSpecificData);
 
 		return oVariant;
 	};
@@ -264,8 +265,8 @@ sap.ui.define([
 		if (oChange.getVariantReference()) {
 			var oModel = oAppComponent.getModel("$FlexVariants");
 			if (!oModel.bStandardVariantExists) {
-				var oVariantContent = oModel.getVariant(oChange.getVariantReference()).content;
-				var oVariant = this.createVariant(oVariantContent, oAppComponent);
+				var oVariantData = oModel.getVariant(oChange.getVariantReference());
+				var oVariant = this.createVariant(oVariantData, oAppComponent);
 				oModel.bStandardVariantExists = true;
 				this._oChangePersistence.addChange(oVariant, oAppComponent);
 			}
@@ -289,10 +290,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
 	 */
-	FlexController.prototype.deleteChange = function (oChange) {
+	FlexController.prototype.deleteChange = function (oChange, oAppComponent) {
 		this._oChangePersistence.deleteChange(oChange);
 		if (oChange.getVariantReference()) {
-			Utils.getAppComponentForControl(oChange.getComponent()).getModel("$FlexVariants")._removeChange(oChange);
+			oAppComponent.getModel("$FlexVariants")._removeChange(oChange);
 		}
 	};
 
@@ -478,7 +479,7 @@ sap.ui.define([
 				oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
 			} catch (ex) {
 				this._setMergeError(true);
-				Utils.log.error("Change could not be applied. Merge error detected.");
+				Utils.log.error("Change could not be applied. Merge error detected.", ex.stack || "");
 				return;
 			}
 
@@ -531,7 +532,7 @@ sap.ui.define([
 			oCustomData = oModifier.createControl("sap.ui.core.CustomData", oAppComponent, oView);
 			oModifier.setProperty(oCustomData, "key", FlexController.appliedChangesCustomDataKey);
 			oModifier.setProperty(oCustomData, "value", sValue);
-			oModifier.insertAggregation(oControl, "customData", oCustomData, 0, oView, true);
+			oModifier.insertAggregation(oControl, "customData", oCustomData, 0, oView);
 		}
 	};
 
@@ -563,33 +564,6 @@ sap.ui.define([
 			return undefined;
 		}
 		return oChange.getSelector();
-	};
-
-	/**
-	 * Retrieves the corresponding change handler for the change and applies the change to the control
-	 *
-	 * @param {sap.ui.fl.Change} oChange Change instance
-	 * @param {sap.ui.core.Control} oControl Control instance
-	 * @public
-	 * @deprecated
-	 */
-	FlexController.prototype.applyChange = function (oChange, oControl) {
-		var sControlType = Utils.getControlType(oControl);
-		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
-		if (!oChangeHandler) {
-			if (oChange && oControl) {
-				Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored.");
-			}
-			return;
-		}
-
-		try {
-			oChangeHandler.applyChange(oChange, oControl);
-		} catch (ex) {
-			this._setMergeError(true);
-			Utils.log.error("Change could not be applied. Merge error detected.");
-			throw ex;
-		}
 	};
 
 	/**
@@ -942,29 +916,45 @@ sap.ui.define([
 	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe) {
 		var aAppliedChanges;
 		var aDependenciesToBeDeleted;
+		var aDependenciesToBeProcessed;
 
 		do {
 			aAppliedChanges = [];
 			aDependenciesToBeDeleted = [];
+			aDependenciesToBeProcessed = [];
 			this._updateControlsDependencies(mDependencies);
-			for (var i = 0; i < Object.keys(mDependencies).length; i++) {
-				var sDependencyKey = Object.keys(mDependencies)[i];
+			// Performance improvement. Object.keys is always calculated.
+			var aDependencyKeys = Object.keys(mDependencies);
+			for (var i = 0, n = aDependencyKeys.length; i < n; i++) {
+				var sDependencyKey = aDependencyKeys[i];
 				var oDependency = mDependencies[sDependencyKey];
 				if (oDependency[FlexController.PENDING] &&
 					oDependency.dependencies.length === 0 &&
 					!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) &&
 					!oDependency[FlexController.PROCESSING]) {
 						oDependency[FlexController.PROCESSING] = true;
-						oDependency[FlexController.PENDING]();
-						aDependenciesToBeDeleted.push(sDependencyKey);
-						aAppliedChanges.push(oDependency.changeObject.getKey());
+						// pending function doesn't get executed immediately because it might
+						// change mDependencies. Instead it gets called in a separate loop
+						aDependenciesToBeProcessed.push({
+							fnProcessing: oDependency[FlexController.PENDING],
+							sDependencyKey: sDependencyKey,
+							sChangeObjectKey: oDependency.changeObject.getKey()
+						});
 				}
 			}
 
+			for (var l = 0; l < aDependenciesToBeProcessed.length; l++) {
+				aDependenciesToBeProcessed[l].fnProcessing();
+				aDependenciesToBeDeleted.push(aDependenciesToBeProcessed[l].sDependencyKey);
+				aAppliedChanges.push(aDependenciesToBeProcessed[l].sChangeObjectKey);
+			}
+
+			// dependencies should be deleted after all processing functions are executed
 			for (var j = 0; j < aDependenciesToBeDeleted.length; j++) {
 				delete mDependencies[aDependenciesToBeDeleted[j]];
 			}
 
+			// dependencies should be updated after all processing functions are executed and dependencies are deleted
 			for (var k = 0; k < aAppliedChanges.length; k++) {
 				this._updateDependencies(mDependencies, mDependentChangesOnMe, aAppliedChanges[k]);
 			}

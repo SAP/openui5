@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 		"use strict";
 
 		/**
@@ -248,11 +248,15 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		SliderRenderer.renderTickmarksLabel = function (oRm, oSlider, fValue) {
-			var fLeft = oSlider._getPercentOfValue(fValue);
+			var fOffset = oSlider._getPercentOfValue(fValue);
+			var sLeftOrRightPosition = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
 			fValue = oSlider.toFixed(fValue, oSlider.getDecimalPrecisionOfNumber(oSlider.getStep()));
 
 			oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "TickLabel\"");
-			oRm.write(" style=\"left: " + fLeft + "%;\"");
+
+			oRm.addStyle(sLeftOrRightPosition, (fOffset + "%"));
+			oRm.writeStyles();
+
 			oRm.write(">");
 			oRm.write("<div class=\"" + SliderRenderer.CSS_CLASS + "Label\">");
 			oRm.writeEscaped("" + fValue);

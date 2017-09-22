@@ -26,6 +26,9 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 			properties : {
 				name : {
 					type : "string"
+				},
+				runtimeOnly : {
+					type : "boolean"
 				}
 			},
 			associations : {

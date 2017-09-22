@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
- sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement'],
-	function(jQuery, Renderer, LabelEnablement) {
+ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library'],
+	function(Renderer, LabelEnablement, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 	/**
@@ -99,7 +103,7 @@
 		}
 
 		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
-		if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+		if (sTextDir !== TextDirection.Inherit) {
 			oRm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 

@@ -4,5 +4,9 @@ sap.ui.controller("mvc.betweenLists", {
 		var sPath = oEvent.getParameter("draggedControl").getBindingContext().getPath();
 		oModel.getObject("/selectedNames").push(oModel.getProperty(sPath)); // TODO: clone?
 		oModel.refresh();
+	},
+
+	handleDragEnter: function(oEvent) {
+		console.log(oEvent.mParameters);
 	}
 });

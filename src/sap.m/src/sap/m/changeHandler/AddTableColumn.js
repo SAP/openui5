@@ -91,14 +91,14 @@ sap.ui.define([
 
 				var oSmartField = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
 
-				oModifier.insertAggregation(oTemplate, CELLS_AGGREGATION_NAME, oSmartField, mContent.newFieldIndex);
-				oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);
+				oModifier.insertAggregation(oTemplate, CELLS_AGGREGATION_NAME, oSmartField, mContent.newFieldIndex, oView);
+				oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);//only needed in JS case
 				oChange.setRevertData(mContent.newFieldSelector.id + '--field');
 			}
 
 			var oControl = oModifier.createControl('sap.m.Column', oAppComponent, oView, mContent.newFieldSelector);
-			oModifier.insertAggregation(oControl, 'header', oText, 0);
-			oModifier.insertAggregation(oTable, COLUMNS_AGGREGATION_NAME, oControl, mContent.newFieldIndex);
+			oModifier.insertAggregation(oControl, 'header', oText, 0, oView);
+			oModifier.insertAggregation(oTable, COLUMNS_AGGREGATION_NAME, oControl, mContent.newFieldIndex, oView);
 
 			return true;
 		} else {

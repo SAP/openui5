@@ -236,4 +236,4 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 
 		return MobileRouter;
 
-	}, /* bExport= */ true);
+	});

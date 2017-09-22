@@ -5,14 +5,13 @@
 /*global location */
 sap.ui.define([
 		"jquery.sap.global",
-		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/uxap/ObjectPageSubSection",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
-	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, JSDocUtil) {
+	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, JSDocUtil) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -77,7 +76,7 @@ sap.ui.define([
 				this.setModel(new JSONModel(), "borrowedMethods");
 				this.setModel(new JSONModel(), "borrowedEvents");
 
-				this.getView().byId("apiDetailObjectPage").attachEvent("onAfterRenderingDOMReady", function () {
+				this._objectPage.attachEvent("onAfterRenderingDOMReady", function () {
 					jQuery.sap.delayedCall(250, this, function () {
 						this._scrollToEntity(this._sEntityType, this._sEntityId);
 					});
@@ -133,8 +132,9 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (oEvent) {
-				var oApiDetailObjectPage = this.byId("apiDetailObjectPage"),
-					oComponent = this.getOwnerComponent();
+				var oComponent = this.getOwnerComponent();
+
+				this._objectPage.setBusy(true);
 
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
@@ -163,19 +163,20 @@ sap.ui.define([
 						// If the entity does not exist in the available libs we redirect to the not found page and
 						// stop the immediate execution of this method.
 						if (!bFound) {
+							this._objectPage.setBusy(false);
 							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 							return;
 						}
 						// Cache allowed members
 						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-						oApiDetailObjectPage._suppressLayoutCalculations();
+						this._objectPage._suppressLayoutCalculations();
 						this._bindData(this._sTopicid);
 						this._bindEntityData(this._sTopicid);
 						this._createMethodsSummary();
 						this._createEventsSummary();
 						this._createAnnotationsSummary();
-						oApiDetailObjectPage._resumeLayoutCalculations();
+						this._objectPage._resumeLayoutCalculations();
 
 						if (this._sEntityType) {
 							this._scrollToEntity(this._sEntityType, this._sEntityId);
@@ -183,7 +184,10 @@ sap.ui.define([
 							this._scrollContentToTop();
 						}
 
-						setTimeout(this._prettify, 0);
+						jQuery.sap.delayedCall(0, this, function () {
+							this._prettify();
+							this._objectPage.setBusy(false);
+						});
 
 						this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
 					}.bind(this));
@@ -351,9 +355,6 @@ sap.ui.define([
 
 				oUi5Metadata = oControlData['ui5-metadata'];
 
-				this.getView().byId('apiDetailPage').setBusy(false);
-				this.getView().byId('apiDetailObjectPage').setVisible(true);
-
 				if (oControlData.controlChildren) {
 					oControlData.hasChildren = true;
 				} else {
@@ -472,17 +473,6 @@ sap.ui.define([
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
 				}
-
-				// TODO: This is a temporary solution
-				// It's executed here where we have all instances of the CodeEditor created
-				this.getView().findAggregatedObjects(true, function (oElement) {
-					if (oElement instanceof sap.ui.codeeditor.CodeEditor) {
-						// We are replacing the "focus" on the editor instance method as it is
-						// triggering the unwanted scroll
-						oElement._getEditorInstance().focus = function () {
-						};
-					}
-				});
 			},
 
 			_getControlChildren: function (aTreeData, sTopicId) {
@@ -784,7 +774,7 @@ sap.ui.define([
 			 * @returns string - The code needed to create an object of that class
 			 */
 			formatConstructor: function (name, params) {
-				var result = 'new ';
+				var result = '<pre class="sapUiDocumentationAPICode">new ';
 
 				if (name) {
 					result += name + '(';
@@ -805,7 +795,7 @@ sap.ui.define([
 				}
 
 				if (name) {
-					result += ')';
+					result += ')</pre>';
 				}
 
 				return result;
@@ -1121,7 +1111,7 @@ sap.ui.define([
 			},
 
 			formatMethodCode: function (sName, aParams, aReturnValue) {
-				var result = sName + '(';
+				var result = '<pre class="sapUiDocumentationAPICode">' + sName + '(';
 
 				if (aParams && aParams.length > 0) {
 					aParams.forEach(function (element, index, array) {
@@ -1149,6 +1139,7 @@ sap.ui.define([
 					result += 'void';
 				}
 
+				result += "</pre>";
 
 				return result;
 			},

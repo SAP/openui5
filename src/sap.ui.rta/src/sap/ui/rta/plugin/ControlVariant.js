@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.50
 	 * @alias sap.ui.rta.plugin.ControlVariant
-	 * @experimental Since 1.44. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 * @experimental Since 1.50. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
 	/* Mix-in Variant Methods */
@@ -75,9 +75,9 @@ sap.ui.define([
 				this._propagateVariantManagement(oVariantManagementTargetOverlay , sVariantManagement);
 			}.bind(this));
 		} else if (!oOverlay.getVariantManagement()) {
-			var sVariantManagement = this._getVariantManagementFromParent(oOverlay);
-			if (sVariantManagement) {
-				oOverlay.setVariantManagement(sVariantManagement);
+			var sVariantManagementReference = this._getVariantManagementFromParent(oOverlay);
+			if (sVariantManagementReference) {
+				oOverlay.setVariantManagement(sVariantManagementReference);
 			}
 		}
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
@@ -87,17 +87,17 @@ sap.ui.define([
 	 * Top-down approach for setting VariantManagement reference to all children overlays
 	 *
 	 * @param {sap.ui.dt.Overlay} oParentElementOverlay overlay object for which children overlays are computed
-	 * @param {string} sVariantManagement VariantManagement reference to be set
+	 * @param {string} sVariantManagementReference VariantManagement reference to be set
 	 * @returns {array} array of rendered ElementOverlays which have been set with passed VariantManagement reference
 	 * @private
 	 */
-	ControlVariant.prototype._propagateVariantManagement = function(oParentElementOverlay, sVariantManagement) {
+	ControlVariant.prototype._propagateVariantManagement = function(oParentElementOverlay, sVariantManagementReference) {
 		var aElementOverlaysRendered = [];
-		oParentElementOverlay.setVariantManagement(sVariantManagement);
+		oParentElementOverlay.setVariantManagement(sVariantManagementReference);
 		aElementOverlaysRendered = OverlayUtil.getAllChildOverlays(oParentElementOverlay);
 
 		aElementOverlaysRendered.forEach( function(oElementOverlay) {
-			aElementOverlaysRendered = aElementOverlaysRendered.concat(this._propagateVariantManagement(oElementOverlay, sVariantManagement));
+			aElementOverlaysRendered = aElementOverlaysRendered.concat(this._propagateVariantManagement(oElementOverlay, sVariantManagementReference));
 		}.bind(this));
 
 		return aElementOverlaysRendered;
@@ -111,11 +111,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ControlVariant.prototype._getVariantManagementFromParent = function(oOverlay) {
-		var sVariantManagement = oOverlay.getVariantManagement();
-		if (!sVariantManagement && oOverlay.getParentElementOverlay()) {
+		var sVariantManagementReference = oOverlay.getVariantManagement();
+		if (!sVariantManagementReference && oOverlay.getParentElementOverlay()) {
 			return this._getVariantManagementFromParent(oOverlay.getParentElementOverlay());
 		}
-		return sVariantManagement;
+		return sVariantManagementReference;
 	};
 
 	/**
@@ -126,13 +126,6 @@ sap.ui.define([
 	 */
 	ControlVariant.prototype.deregisterElementOverlay = function(oOverlay) {
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
-	};
-
-	ControlVariant.prototype._getSwitchAction = function(oOverlay) {
-		if (oOverlay.getDesignTimeMetadata()) {
-			return oOverlay.getDesignTimeMetadata().getAction("switch", oOverlay.getElementInstance());
-		}
-		return undefined;
 	};
 
 	ControlVariant.prototype._getVariantModel = function(oElement) {
@@ -146,18 +139,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ControlVariant.prototype._isEditable = function(oOverlay) {
-		var oSwitchAction = this._getSwitchAction(oOverlay);
-		if (oSwitchAction && oSwitchAction.changeType) {
-			return true;
-		} else {
-			return false;
-		}
+		return this._isVariantManagementControl(oOverlay);
 	};
 
 	ControlVariant.prototype._isVariantManagementControl = function(oOverlay) {
 		var oElement = oOverlay.getElementInstance(),
 			vAssociationElement = oElement.getAssociation("for");
-		return (vAssociationElement) ? true : false;
+		return !!(vAssociationElement && oElement instanceof VariantManagement);
 	};
 
 	/**
@@ -180,14 +168,13 @@ sap.ui.define([
 	 */
 	ControlVariant.prototype.isVariantSwitchEnabled = function(oOverlay) {
 		var oElement = oOverlay.getElementInstance(),
-			sVariantManagementId = oOverlay.getVariantManagement ? oOverlay.getVariantManagement() : undefined;
-		if (sVariantManagementId === undefined ||
-			sVariantManagementId === null) {
+			sVariantManagementReference = oOverlay.getVariantManagement ? oOverlay.getVariantManagement() : undefined;
+		if (!sVariantManagementReference) {
 			return false;
 		}
 		var oModel = this._getVariantModel(oElement),
-			aVariants = oModel ? oModel.getData()[sVariantManagementId].variants : [],
-			bEnabled = aVariants.length > 1 ? true : false;
+			aVariants = oModel ? oModel.getData()[sVariantManagementReference].variants : [],
+			bEnabled = aVariants.length > 1;
 		return bEnabled;
 	};
 
@@ -232,7 +219,10 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantDuplicateEnabled = function(oOverlay) {
-		return false;
+		var sVariantManagementReference = oOverlay.getVariantManagement ? oOverlay.getVariantManagement() : undefined;
+		if (!sVariantManagementReference || !this._isVariantManagementControl(oOverlay)) {
+			return false;
+		}
 	};
 
 	/**
@@ -290,10 +280,22 @@ sap.ui.define([
 	/**
 	 * Performs a variant duplicate
 	 *
+	 * @param {object} oOverlay Variant management overlay
 	 * @public
 	 */
-	ControlVariant.prototype.duplicateVariant = function() {
-		return;
+	ControlVariant.prototype.duplicateVariant = function(oOverlay) {
+		var sVariantManagementReference = oOverlay.getVariantManagement();
+		var oElement = oOverlay.getElementInstance();
+		var oModel = this._getVariantModel(oElement);
+		var sCurrentVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
+		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+
+		var oDuplicateCommand = this.getCommandFactory().getCommandFor(oElement, "duplicate", {
+			sourceVariantReference: sCurrentVariantReference
+		}, oDesignTimeMetadata);
+		this.fireElementModified({
+			"command" : oDuplicateCommand
+		});
 	};
 
 	/**

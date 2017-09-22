@@ -3,18 +3,48 @@
  */
 
 // Provides control sap.ui.unified.Currency.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/format/NumberFormat'],
-	function(jQuery, Control, LocaleData, NumberFormat) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/format/NumberFormat'],
+	function(jQuery, Control, NumberFormat) {
 		"use strict";
 
 		/**
-		 * Constructor for a new Currency.
+		 * Constructor for a new <code>Currency</code>.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * A text view which displays currency values and aligns them at the separator
+		 * A text view which displays currency values and aligns them at the decimal point.
+		 *
+		 * <h3>Overview</h3>
+		 *
+		 * The currency control consists of an amount, which is formatted automatically according
+		 * to the user’s locale (using delimiter symbols for the decimal point and thousand separators)
+		 * and to the currency set for this specific number (number of decimal places).
+		 *
+		 * The currency is expressed as a three-letter code.
+		 *
+		 * <h3>Usage</h3>
+		 *
+		 * <i>When to use</i>
+		 * <ul>
+		 * <li>To display amounts with different currencies in a vertical layout, such as in a table,
+		 * list, or form, and it is important that the user is able to compare the amounts.</li>
+		 * </ul>
+		 *
+		 * <i>When not to use</i>
+		 * <ul>
+		 * <li>To display amounts with the same currency in a table. Use the {@link sap.m.ObjectNumber} instead.</li>
+		 * <li>to display a number with a unit of measurement that is not a currency. Use the
+		 * {@link sap.m.ObjectNumber} instead.</li>
+		 * <li>To display an amount in a structure other than a list, table, or form.</li>
+		 * </ul>
+		 *
+		 * <h3>Responsive behavior</h3>
+		 *
+		 * The control supports amounts smaller than 100 trillion, which still fit on a phone screen in portrait mode.
+		 * For larger amounts, the unit of measurement wraps to the next line, which makes it difficult to compare the amounts.
+		 *
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -32,13 +62,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			properties : {
 
 				/**
-				 * The currency value
+				 * Determines the currency value.
 				 */
 				value : {type : "float", group : "Appearance", defaultValue : 0},
 
 				/**
 				 * Determines the displayed currency code (ISO 4217).
-				 * <b>Note: </b>If a * character is set instead of currency code,
+				 *
+				 * <b>Note:</b> If a * character is set instead of currency code,
 				 * only the character itself will be rendered, ignoring the <code>value</code> property.
 				 */
 				currency : {type : "string", group : "Appearance", defaultValue : null},
@@ -49,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				maxPrecision : {type : "int", group : "Appearance", defaultValue : 3},
 
 				/**
-				 * Show the currency symbol instead of the ISO currency code
+				 * Displays the currency symbol instead of the ISO currency code.
 				 */
 				useSymbol : {type : "boolean", group : "Appearance", defaultValue : true}
 			}
@@ -287,4 +318,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		return Currency;
 
-}, /* bExport= */ true);
+});

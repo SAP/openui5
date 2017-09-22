@@ -1,9 +1,7 @@
 /*
  * !${copyright}
  */
-sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/theming/Parameters'
-], function(jQuery, Parameters) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
@@ -14,7 +12,7 @@ sap.ui.define([
 
 	ColumnHeaderRenderer.render = function(oRm, oControl) {
 		var sControlId = oControl.getId();
-		var bInteractive = oControl.getTableAdapter().interactive;
+		var bInteractive = oControl._isInteractive();
 		// container
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -24,6 +22,7 @@ sap.ui.define([
 			oRm.writeAttribute("role", "button");
 			oRm.addClass("sapMColumnHeaderFocusable");
 			oRm.writeAttributeEscaped("aria-labelledby", sControlId + "-info");
+			oRm.addClass("sapMColumnHeaderActive");
 		}
 		oRm.addClass("sapMColumnHeader");
 		oRm.writeClasses();

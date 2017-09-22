@@ -20,7 +20,6 @@ sap.ui.define(["./DragDropBase", "../Element"],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.52
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -74,7 +73,6 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 * This event is fired when the user starts dragging an element.
 			 */
 			dragStart: {
-				enableEventBubbling: true,
 				allowPreventDefault : true,
 				parameters : {
 					/**
@@ -97,7 +95,6 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 * This event is fired when a dragged element enters a drop target.
 			 */
 			dragEnter: {
-				enableEventBubbling: true,
 				allowPreventDefault : true,
 				parameters : {
 					/**
@@ -120,7 +117,6 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 * This event is fired when an element is dropped on a valid drop target, as specified by the drag and drop info.
 			 */
 			drop : {
-				enableEventBubbling: true,
 				parameters: {
 					/**
 					 * The UI5 <code>dragSession</code> object that exists only during drag and drop
@@ -192,7 +188,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 
 	// IDropInfo members
 
-	DragDropInfo.prototype.isDroppable = function (oDropTargetElement) {
+	DragDropInfo.prototype.isDroppable = function (oDropTargetElement, oDropTargetDomRef) {
 		if (!(oDropTargetElement instanceof Element)) {
 			return false;
 		}
@@ -218,9 +214,21 @@ sap.ui.define(["./DragDropBase", "../Element"],
 		// otherwise just anywhere in oValidTarget.
 		if (sTargetAggregationName) {
 			if (oDropTargetElement === oValidTarget) {
-				// Dragging over this element, not any child, so we need to check whether the current DOM element corresponds to the configured
-				// aggregation.
-				// TODO, use designtime.js
+
+				// Dragging over this element, not any child, so we need to check whether the current DOM element corresponds to the configured aggregation.
+				if (!oValidTarget.getAggregationDomRef) {
+					return false;
+				}
+
+				var oAggregationDomRef = oValidTarget.getAggregationDomRef(sTargetAggregationName);
+				if (!oAggregationDomRef || oAggregationDomRef === oDropTargetDomRef) {
+					return false;
+				}
+
+				if (oAggregationDomRef.contains(oDropTargetDomRef)) {
+					return true;
+				}
+
 				return false;
 
 			} else if (!(oDropTargetElement.sParentAggregationName === sTargetAggregationName && oDropTargetElement.getParent() === oValidTarget)) {

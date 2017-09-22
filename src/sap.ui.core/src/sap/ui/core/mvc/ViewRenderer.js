@@ -8,7 +8,8 @@ sap.ui.define(function() {
 
 
 	/**
-	 * @namespace View renderer.
+	 * View renderer.
+	 * @namespace
 	 * @alias sap.ui.core.mvc.ViewRenderer
 	 */
 	var ViewRenderer = {

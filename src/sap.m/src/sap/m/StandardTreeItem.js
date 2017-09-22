@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.StandardTreeItem.
-sap.ui.define(['jquery.sap.global', './TreeItemBase', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool',  'sap/ui/core/Icon', './StandardListItem'],
-	function(jQuery, TreeItemBase, library, EnabledPropagator, IconPool, Icon, StandardListItem) {
+sap.ui.define(['./TreeItemBase', './library', 'sap/ui/core/IconPool'],
+	function(TreeItemBase, library, IconPool) {
 	"use strict";
 
 	/**
@@ -83,4 +83,4 @@ sap.ui.define(['jquery.sap.global', './TreeItemBase', './library', 'sap/ui/core/
 
 	return StandardTreeItem;
 
-}, /* bExport= */ true);
+});

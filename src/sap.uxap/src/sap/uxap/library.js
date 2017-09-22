@@ -28,13 +28,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 			"sap.uxap.ObjectPageSubSectionLayout",
 			"sap.uxap.ObjectPageSubSectionMode"
 		],
-		interfaces: [],
+		interfaces: [
+			"sap.uxap.IHeaderTitle",
+			"sap.uxap.IHeaderContent"
+		],
 		controls: [
 			"sap.uxap.AnchorBar",
 			"sap.uxap.BlockBase",
 			"sap.uxap.BreadCrumbs",
 			"sap.uxap.HierarchicalSelect",
 			"sap.uxap.ObjectPageHeader",
+			"sap.uxap.ObjectPageDynamicHeaderTitle",
+			"sap.uxap.ObjectPageDynamicHeaderContent",
 			"sap.uxap.ObjectPageHeaderActionButton",
 			"sap.uxap.ObjectPageHeaderContent",
 			"sap.uxap.ObjectPageLayout",
@@ -305,6 +310,30 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 			return oRange && oRange.name === sMedia;
 		}
 	};
+
+	/**
+	 *
+	 *   Interface for controls that are eligible for the <code>headerTitle</code> aggregation of the {@link sap.uxap.ObjectPageLayout}.
+	 *
+	 *
+	 * @since 1.52
+	 * @name sap.uxap.IHeaderTitle
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 *
+	 *   Interface for controls that are eligible for the <code>headerContent</code> aggregation of the {@link sap.uxap.ObjectPageLayout}.
+	 *
+	 *
+	 * @since 1.52
+	 * @name sap.uxap.IHeaderContent
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
 
 	return sap.uxap;
 

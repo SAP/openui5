@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/Device"],
+	function(Device) {
 	"use strict";
 
 
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeAttribute("type", "search");
 			rm.writeAttribute("autocomplete", "off");
 
-			if (sap.ui.Device.browser.safari) {
+			if (Device.browser.safari) {
 				rm.writeAttribute("autocorrect", "off");
 			}
 
@@ -94,13 +94,13 @@ sap.ui.define(['jquery.sap.global'],
 
 			rm.addClass("sapMSFI");
 
-			if (sap.ui.Device.os.android && sap.ui.Device.os.version >= 4 && sap.ui.Device.os.version < 4.1 ) {
+			if (Device.os.android && Device.os.version >= 4 && Device.os.version < 4.1 ) {
 				rm.addClass("sapMSFIA4"); // specific CSS layout for Android 4.0x
 			}
 
 			rm.writeClasses();
 
-			if (oSF.getEnableSuggestions() && sap.ui.Device.system.phone) {
+			if (oSF.getEnableSuggestions() && Device.system.phone) {
 				// Always open a dialog on a phone if suggestions are on.
 				// To avoid soft keyboard flickering, set the readonly attribute.
 				rm.writeAttribute("readonly", "readonly");
@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeAttribute("id", oSF.getId() + "-reset");
 				rm.addClass("sapMSFR"); // reset
 				rm.addClass("sapMSFB"); // button
-				if (sap.ui.Device.browser.firefox) {
+				if (Device.browser.firefox) {
 					rm.addClass("sapMSFBF"); // firefox, active state by peventDefault
 				}
 				if (!bShowSearchBtn) {
@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global'],
 					rm.writeAttribute("id", oSF.getId() + "-search");
 					rm.addClass("sapMSFS"); // search
 					rm.addClass("sapMSFB"); // button
-					if (sap.ui.Device.browser.firefox) {
+					if (Device.browser.firefox) {
 						rm.addClass("sapMSFBF"); // firefox, active state by peventDefault
 					}
 					rm.writeClasses();

@@ -5961,7 +5961,7 @@
 			}
 
 			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-expanded"), "false");
-			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-live"), "polite");
+			assert.strictEqual(oSelect.$("label").attr("aria-live"), "polite");
 
 			// cleanup
 			oSelect.destroy();
@@ -6990,7 +6990,7 @@
 		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 
 		// assert
-		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired as escape reverts any changes");
 
 		// cleanup
 		oSelect.destroy();

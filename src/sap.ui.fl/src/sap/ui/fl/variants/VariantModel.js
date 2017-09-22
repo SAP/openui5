@@ -3,10 +3,11 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/model/json/JSONModel", "sap/ui/fl/Utils"
-], function(jQuery, JSONModel, Utils) {
+	"jquery.sap.global", "sap/ui/model/json/JSONModel", "sap/ui/fl/Utils", "sap/ui/fl/changeHandler/BaseTreeModifier"
+], function(jQuery, JSONModel, Utils, BaseTreeModifier) {
 	"use strict";
 
+	/**
 	/**
 	 * Constructor for a new sap.ui.fl.variants.VariantModel model.
 	 * @class Variant Model implementation for JSON format
@@ -34,6 +35,7 @@ sap.ui.define([
 			this.oComponent = oComponent;
 			this.bStandardVariantExists = true;
 			this.oVariantController = undefined;
+			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 			if (oFlexController && oFlexController._oChangePersistence) {
 				this.oVariantController = oFlexController._oChangePersistence._oVariantController;
 			}
@@ -118,6 +120,83 @@ sap.ui.define([
 		return this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
+	VariantModel.prototype._duplicateVariant = function(sNewVariantFileName, sSourceVariantFileName) {
+		var oSourceVariant = this.getVariant(sSourceVariantFileName);
+
+		var oDuplicateVariant = {
+			content: {},
+			changes: JSON.parse(JSON.stringify(oSourceVariant.changes))
+		};
+
+		Object.keys(oSourceVariant.content).forEach(function(sKey) {
+			if (sKey === "fileName") {
+				oDuplicateVariant.content[sKey] = sNewVariantFileName;
+			}else if (sKey === "variantReference") {
+				oDuplicateVariant.content[sKey] = sSourceVariantFileName;
+			} else if (sKey === "title") {
+				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey] + " Copy";
+			} else {
+				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey];
+			}
+		});
+
+		//Assuming same layer
+		oDuplicateVariant.changes.forEach(function	(oChange) {
+			oChange.fileName += "_Copy";
+			oChange.variantReference = oDuplicateVariant.content.fileName;
+		});
+
+		return oDuplicateVariant;
+	};
+
+	VariantModel.prototype._copyVariant = function(oElement, oAppComponent, sNewVariantFileName, sSourceVariantFileName) {
+		var oDuplicateVariantData = this._duplicateVariant(sNewVariantFileName, sSourceVariantFileName);
+		var	sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
+		var oVariantModelData = {
+			author: "CUSTOMER",
+			key: oDuplicateVariantData.content.fileName,
+			layer: oDuplicateVariantData.content.layer,
+			originalTitle: oDuplicateVariantData.content.title,
+			readOnly: false,
+			title: oDuplicateVariantData.content.title,
+			toBeDeleted: false
+		};
+
+		//Flex Controller
+		var oVariant = this.oFlexController.createVariant(oDuplicateVariantData, this.oComponent);
+		var aChangesToBeAdded = [oVariant].concat(oVariant.getChanges());
+		aChangesToBeAdded.forEach( function (oChange) {
+			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
+		}.bind(this));
+
+		//Variant Controller
+		var iIndex = this.oVariantController.addVariantToVariantManagement(oDuplicateVariantData, sVariantManagementReference);
+
+		//Variant Model
+		this.oData[sVariantManagementReference].variants.splice(iIndex, 0, oVariantModelData);
+		this.updateCurrentVariant(sVariantManagementReference, oVariant.getId());
+
+		this.checkUpdate(); /*For VariantManagement Control update*/
+
+		return oVariant;
+	};
+
+	VariantModel.prototype._removeVariant = function(oVariant, sSourceVariantFileName, sVariantManagementReference) {
+		var aChangesToBeDeleted = this.oFlexController._oChangePersistence.getDirtyChanges().filter(function(oChange) {
+			return (oChange.getVariantReference && oChange.getVariantReference() === oVariant.getId()) ||
+					oChange.getKey() === oVariant.getKey();
+		});
+		aChangesToBeDeleted.forEach( function(oChange) {
+			this.oFlexController._oChangePersistence.deleteChange(oChange);
+		}.bind(this));
+		var iIndex =  this.oVariantController.removeVariantFromVariantManagement(oVariant, sVariantManagementReference);
+
+		this.oData[sVariantManagementReference].variants.splice(iIndex, 1);
+		this.updateCurrentVariant(sVariantManagementReference, sSourceVariantFileName);
+
+		this.checkUpdate(); /*For VariantManagement Control update*/
+	};
+
 	/**
 	 * Returns the variants for a given variant management Ref
 	 * @param {String} sVariantManagementReference The variant management Ref
@@ -137,7 +216,7 @@ sap.ui.define([
 
 	VariantModel.prototype.ensureStandardEntryExists = function(sVariantManagementReference) {
 		var oData = this.getData();
-		if (!oData[sVariantManagementReference]) {
+		if (!oData[sVariantManagementReference]) { /*Ensure standard variant exists*/
 			this.bStandardVariantExists = false;
 			// Set Standard Data to Model
 			oData[sVariantManagementReference] = {
@@ -146,12 +225,12 @@ sap.ui.define([
 				defaultVariant: sVariantManagementReference,
 				variants: [
 					{
-						author: "SAP",
+						//author: "SAP",
 						key: sVariantManagementReference,
-						layer: "VENDOR",
-						originalTitle: "Standard",
+						//layer: "VENDOR",
+						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
 						readOnly: true,
-						title: "Standard",
+						title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
 						toBeDeleted: false
 					}
 				]
@@ -167,9 +246,10 @@ sap.ui.define([
 						{
 							content: {
 								fileName: sVariantManagementReference,
-								title: "Standard",
-								fileType: "variant",
-								variantManagementReference: sVariantManagementReference
+								title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
+								fileType: "ctrl_variant",
+								variantManagementReference: sVariantManagementReference,
+								variantReference: ""
 							},
 							changes: []
 						}

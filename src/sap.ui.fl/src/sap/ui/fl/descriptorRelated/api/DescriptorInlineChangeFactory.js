@@ -60,7 +60,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		        "appdescr_app_addNewOutbound", "appdescr_app_changeOutbound", "appdescr_app_removeOutbound",
 		        "appdescr_app_addNewDataSource", "appdescr_app_changeDataSource", "appdescr_app_removeDataSource",
 		        "appdescr_app_addAnnotationsToOData", "appdescr_app_addTechnicalAttributes", "appdescr_app_removeTechnicalAttributes",
-		        "appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription",
+		        "appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription", "appdescr_app_setInfo",
 		        "appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_ui5_addNewModel", "appdescr_ui5_replaceComponentUsage",
 		        "appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon",
 		        "appdescr_ui5_addLibraries", "appdescr_flp_setFccApp"];
@@ -469,7 +469,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	};
 
 	/**
-	 * Creates an inline change of change type appdescr_app_description
+	 * Creates an inline change of change type appdescr_app_setDescription
 	 *
 	 * @param {object} mParameters map of text properties
 	 * @param {object} mParameters.maxLength max length of description
@@ -495,6 +495,41 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId){
 					var that = oDescriptorInlineChange;
 					var sTextKey = sHostingId + "_sap.app.description";
+					that._mParameters.texts[sTextKey] = that._mParameters.texts[""];
+					delete that._mParameters.texts[""];
+				};
+				resolve(oDescriptorInlineChange);
+			});
+		});
+	};
+
+	/**
+	 * Creates an inline change of change type appdescr_app_setInfo
+	 *
+	 * @param {object} mParameters map of text properties
+	 * @param {object} mParameters.maxLength max length of info
+	 * @param {object} [mParameters.type='XTIT'] type of info
+	 * @param {object} [mParameters.comment] comment for additional information
+	 * @param {object} [mParameters.value] map of locale and text, "" represents the default info
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.create_app_setInfo = function(mParameters) {
+
+		var mTexts = {
+					"" : mParameters //property name = text key set when adding to descriptor variant
+		};
+
+		return this._createDescriptorInlineChange('appdescr_app_setInfo', {}, mTexts).then(function(oDescriptorInlineChange){
+
+			//TODO check how this can be done nicer, e.g. by sub classing
+			return new Promise(function(resolve){
+				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId){
+					var that = oDescriptorInlineChange;
+					var sTextKey = sHostingId + "_sap.app.info";
 					that._mParameters.texts[sTextKey] = that._mParameters.texts[""];
 					delete that._mParameters.texts[""];
 				};

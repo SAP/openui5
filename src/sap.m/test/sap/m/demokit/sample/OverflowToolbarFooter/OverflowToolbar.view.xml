@@ -75,6 +75,7 @@
 				<OverflowToolbarButton text="Add" icon="sap-icon://add"/>
 				<OverflowToolbarButton text="Favorite" icon="sap-icon://favorite"/>
 				<OverflowToolbarButton text="Flag" icon="sap-icon://flag"/>
+				<OverflowToolbarToggleButton text="Toggle" icon="sap-icon://action" press="onTogglePress"/>
 
 			</OverflowToolbar>
 		</footer>

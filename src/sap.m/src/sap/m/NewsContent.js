@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/Device' ],
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/Device', 'jquery.sap.keycodes'],
 	function(jQuery, library, Control, Text, Device) {
 	"use strict";
 

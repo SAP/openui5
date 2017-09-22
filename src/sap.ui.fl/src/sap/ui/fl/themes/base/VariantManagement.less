@@ -16,12 +16,13 @@
 	max-width:25rem;
 }
 
-.sapUiFlVarMngmt .sapUiFlVarMngmtTextMaxWidth.sapMLabelMaxWidth {
+.sapUiFlVarMngmt .sapUiFlVarMngmtTextMaxWidth {
 	max-width: 5em;
 }
 
-.sapUiFlVarMngmt .sapUiFlVarMngmtTitle {
+.sapUiFlVarMngmt .sapUiFlVarMngmtTitle {	
 	padding-left: 0.5rem;
+	max-width: 25rem;		
 }
 
 .sapUiFlVarMngmt .sapUiFlVarMngmtLayout .sapUiFlVarMngmtModified {
@@ -29,11 +30,16 @@
 	color: @sapUiContentMarkerIconColor;	
 }
 
-.sapFDynamicPageTitle .sapUiFlVarMngmt .sapUiFlVarMngmtLayout .sapUiFlVarMngmtModified {
-	padding-top: 0.17rem;	
+.sapFDynamicPageTitle .sapUiFlVarMngmt .sapUiFlVarMngmtLayout .sapUiFlVarMngmtTriggerBtn {
+	padding-top: 0.2rem;	
+}
+
+.sapUxAPObjectPageHeaderTitle .sapUiFlVarMngmt .sapUiFlVarMngmtLayout .sapUiFlVarMngmtTriggerBtn {
+	padding-top: 0rem;	
 }
 
 .sapUiFlVarMngmt .sapUiFlVarMngmtLayout .sapUiFlVarMngmtTriggerBtn {
+	cursor: pointer;
 	margin-left: 0.5rem;
 	color: @sapUiButtonTextColor;
 	text-shadow: @sapUiShadowText;
@@ -58,9 +64,9 @@
     border-radius: 0.2rem;	
 }
 
-.sapUiFlVarMngmt:focus {
-	outline: 1px dotted #000000;
-    outline-offset: -2px;
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiFlVarMngmt:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
 }
 
 .sapUiFlVarMngmtPopover .sapMSelectList {

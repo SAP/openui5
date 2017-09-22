@@ -29,6 +29,7 @@
 	font-size: 0.875rem;
 }
 
+pre.sapUiDocumentationAPICode,
 .sapUiDocumentationJsDoc pre {
 	white-space: pre-wrap;
 }
@@ -1066,11 +1067,11 @@ html[data-sap-ui-browser="ie9"] .titlesHeader p {
 /* remove white shadow for header bars */
 .sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX,
 .sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMHeader-CTX {
-	box-shadow: inherit;
+	box-shadow: none;
 }
 
 /* correct split container right border */
-.sapUiDemokit .sapMSplitContainerMaster:after {
+.sapUiDemokit .sapMSplitContainerMaster {
 	border-right: 1px solid #4f667a;
 }
 
@@ -1452,6 +1453,9 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 /* Landing pages aspect ratio */
 html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .sapUiDemokitLandingImageCell:not(.welcomeImageCell) {
 	padding-bottom: 24.6%;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .sapUiDemokitLandingImageCell.toolsImageCell {
+	padding-bottom: 19.5%;
 }
 html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
 	position: absolute;

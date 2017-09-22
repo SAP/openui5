@@ -3,9 +3,20 @@
  */
 
 // Provides control sap.m.ResponsivePopover.
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/base/ManagedObject'],
-	function(jQuery, Dialog, Popover, library, Control, IconPool, ManagedObject) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/base/ManagedObject', 'sap/ui/Device'],
+	function(jQuery, Dialog, Popover, library, Control, IconPool, ManagedObject, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.m.DialogType
+	var DialogType = library.DialogType;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
 
 
@@ -46,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			/**
 			 * This property only takes effect on desktop or tablet. Please see the documentation sap.m.Popover#placement.
 			 */
-			placement : {type : "sap.m.PlacementType", group : "Misc", defaultValue : sap.m.PlacementType.Right},
+			placement : {type : "sap.m.PlacementType", group : "Misc", defaultValue : PlacementType.Right},
 
 			/**
 			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#showHeader and sap.m.Dialog#showHeader
@@ -280,10 +291,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				that.fireAfterClose({openBy: oEvent.getParameter('openBy'), origin: oEvent.getParameter('origin')});
 			}
 		};
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			this._aNotSupportedProperties = ["placement", "modal", "offsetX", "offsetY", "showCloseButton"];
 			settings.stretch = true;
-			settings.type = sap.m.DialogType.Standard;
+			settings.type = DialogType.Standard;
 			this._oControl = new Dialog(this.getId() + "-dialog", settings);
 		} else {
 			this._aNotSupportedProperties = ["icon", "showCloseButton"];
@@ -300,7 +311,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 					oHeader = this._oControl._getAnyHeader(),
 					oNavContent, oPage, oRealPage;
 
-				if (!bShowCloseButton ||  !sap.ui.Device.system.phone) {
+				if (!bShowCloseButton ||  !Device.system.phone) {
 					this._removeCloseButton(oHeader);
 					return;
 				}
@@ -381,7 +392,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			this._bAppendedToUIArea = true;
 		}
 
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			return this._oControl.open();
 		} else {
 			return this._oControl.openBy(oParent);
@@ -624,7 +635,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 */
 	ResponsivePopover.prototype.setBeginButton = function(oButton){
 		if (oButton) {
-			oButton.setType(sap.m.ButtonType.Transparent);
+			oButton.setType(ButtonType.Transparent);
 		}
 
 		this._oControl.setBeginButton(oButton);
@@ -639,7 +650,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 */
 	ResponsivePopover.prototype.setEndButton = function(oButton){
 		if (oButton) {
-			oButton.setType(sap.m.ButtonType.Transparent);
+			oButton.setType(ButtonType.Transparent);
 		}
 
 		this._oControl.setEndButton(oButton);
@@ -728,4 +739,4 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	return ResponsivePopover;
 
-}, /* bExport= */ true);
+});

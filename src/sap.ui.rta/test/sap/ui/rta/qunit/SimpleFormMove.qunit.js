@@ -13,6 +13,13 @@ jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
 jQuery.sap.require("sap.ui.rta.plugin.CutPaste");
 jQuery.sap.require("sap.ui.rta.plugin.RTAElementMover");
 jQuery.sap.require("sap.ui.rta.command.CommandFactory");
+jQuery.sap.require("sap.ui.layout.form.SimpleForm");
+jQuery.sap.require("sap.ui.layout.form.ResponsiveLayout");
+jQuery.sap.require("sap.ui.layout.ResponsiveFlowLayoutData");
+jQuery.sap.require("sap.ui.layout.form.ResponsiveGridLayout");
+jQuery.sap.require("sap.ui.layout.form.GridLayout");
+jQuery.sap.require("sap.ui.layout.form.GridContainerData");
+jQuery.sap.require("sap.ui.layout.form.GridElementData");
 
 (function(DesignTime, OverlayRegistry, TabHandlingPlugin, MouseSelectionPlugin, CutPastePlugin, RTAElementMover, CommandFactory) {
 	"use strict";

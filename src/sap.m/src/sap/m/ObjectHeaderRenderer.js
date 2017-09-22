@@ -1,9 +1,19 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
-	function(jQuery, IconPool) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/m/library', 'sap/ui/Device'],
+	function(jQuery, Control, coreLibrary, library, Device) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 
 	/**
@@ -80,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	ObjectHeaderRenderer._renderObjects = function(oRM, aObjects, oOH) {
 
 		for (var i = 0; i < aObjects.length; i++) {
-			if (aObjects[i] instanceof sap.ui.core.Control) {
+			if (aObjects[i] instanceof Control) {
 				this._renderChildControl(oRM, oOH, aObjects[i]);
 			}
 		}
@@ -462,7 +472,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 
 		if (oOH.getTitle()) {
-			var sTitleLevel = (oOH.getTitleLevel() === sap.ui.core.TitleLevel.Auto) ? sap.ui.core.TitleLevel.H1 : oOH.getTitleLevel();
+			var sTitleLevel = (oOH.getTitleLevel() === TitleLevel.Auto) ? TitleLevel.H1 : oOH.getTitleLevel();
 
 			oOH._titleText.setText(oOH.getTitle());
 			// set text direction of the title
@@ -679,7 +689,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.addClass("sapMOH");
 
 		// set contrast container, only when the background is not transparent
-		if (oOH._getBackground() !== sap.m.BackgroundDesign.Transparent) {
+		if (oOH._getBackground() !== BackgroundDesign.Transparent) {
 			oRM.addClass("sapContrastPlus");
 		}
 
@@ -775,7 +785,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write("<div");
 		oRM.addClass("sapMOHR");
 		// set contrast container, only when the background is not transparent
-		if (oOH._getBackground() !== sap.m.BackgroundDesign.Transparent) {
+		if (oOH._getBackground() !== BackgroundDesign.Transparent) {
 			oRM.addClass("sapContrastPlus");
 		}
 
@@ -788,7 +798,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write(">");
 		oRM.write("<div");
 
-		if (sap.ui.Device.system.desktop && oOH._isMediaSize("Desktop") && oOH.getFullScreenOptimized() && oOH._iCountVisAttrStat >= 1 && oOH._iCountVisAttrStat <= 3) {
+		if (Device.system.desktop && oOH._isMediaSize("Desktop") && oOH.getFullScreenOptimized() && oOH._iCountVisAttrStat >= 1 && oOH._iCountVisAttrStat <= 3) {
 			oRM.addClass("sapMOHRStatesOneOrThree");
 		}
 
@@ -851,8 +861,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.addClass("sapMOHRTitleDiv");
 
 		if (oControl._hasIcon()) {
-			if (sap.ui.Device.system.phone || oControl._isMediaSize("Phone")) {
-				if (sap.ui.Device.orientation.landscape || (oControl._isMediaSize("Phone") && !sap.ui.Device.system.phone)) {
+			if (Device.system.phone || oControl._isMediaSize("Phone")) {
+				if (Device.orientation.landscape || (oControl._isMediaSize("Phone") && !Device.system.phone)) {
 					oRM.addClass("sapMOHRTitleIcon");
 				}
 			} else {
@@ -873,7 +883,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.write("<div");
 			oRM.writeAttribute("id", oControl.getId() + "-titleIcon");
 			oRM.addClass("sapMOHRIcon");
-			if ((sap.ui.Device.system.phone && sap.ui.Device.orientation.portrait)) {
+			if ((Device.system.phone && Device.orientation.portrait)) {
 				oRM.addClass("sapMOHRHideIcon");
 			}
 			if (oControl.getIconActive()) {
@@ -941,7 +951,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			return; //nothing to render
 		}
 
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			if (!oOH.getFullScreenOptimized()) { // if master detail
 				if (iCountAttrAndStat >= 1 && iCountAttrAndStat <= 4) {
 					iRenderCols = 2; // render two columns
@@ -963,12 +973,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 
-		if ((sap.ui.Device.system.tablet && !sap.ui.Device.system.desktop) || (sap.ui.Device.system.desktop && oOH._isMediaSize("Tablet"))) {
-			if (!oOH.getFullScreenOptimized() || (sap.ui.Device.orientation.portrait && oOH.getFullScreenOptimized())) { // full screen portrait or master detail
+		if ((Device.system.tablet && !Device.system.desktop) || (Device.system.desktop && oOH._isMediaSize("Tablet"))) {
+			if (!oOH.getFullScreenOptimized() || (Device.orientation.portrait && oOH.getFullScreenOptimized())) { // full screen portrait or master detail
 				iRenderCols = 2; //render two columns
 				sClassColCount = 'sapMOHRTwoCols';
 			} else {
-				if (oOH.getFullScreenOptimized() && ( sap.ui.Device.orientation.landscape || (sap.ui.Device.system.desktop && oOH._isMediaSize("Tablet")))) { //full screen landscape
+				if (oOH.getFullScreenOptimized() && ( Device.orientation.landscape || (Device.system.desktop && oOH._isMediaSize("Tablet")))) { //full screen landscape
 					if (iCountAttrAndStat >= 1 && iCountAttrAndStat <= 2) {
 						iRenderCols = 2; // render two columns
 						sClassColCount = 'sapMOHRTwoCols';
@@ -982,7 +992,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 
-		if (sap.ui.Device.system.phone || (sap.ui.Device.system.desktop && oOH._isMediaSize("Phone"))) {
+		if (Device.system.phone || (Device.system.desktop && oOH._isMediaSize("Phone"))) {
 			iRenderCols = 1; // render one column
 			sClassColCount = 'sapMOHROneCols';
 		}
@@ -1084,7 +1094,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write("<span");
 		oRM.addClass("sapMObjStatusMarker");
 
-		if ((sTextDir === sap.ui.core.TextDirection.LTR && bPageRTL) || (sTextDir === sap.ui.core.TextDirection.RTL && !bPageRTL)) {
+		if ((sTextDir === TextDirection.LTR && bPageRTL) || (sTextDir === TextDirection.RTL && !bPageRTL)) {
 			oRM.addClass("sapMObjStatusMarkerOpposite");
 		}
 		oRM.writeClasses();
@@ -1148,7 +1158,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * helper function to determine whether tabs need to be rendered or not
 	 * @param {sap.m.ObjectHeader} oControl The sap.m.ObjectHeader
-     * @returns {boolean} If there is need for rerendering
+	 * @returns {boolean} If there is need for rerendering
 	 *
 	 * @private
 	 */
@@ -1234,7 +1244,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write(">");
 
 		// Cut the title to 50 or 80 chars according to the design specification
-		if ((sap.ui.Device.system.phone && sap.ui.Device.orientation.portrait)) {
+		if ((Device.system.phone && Device.orientation.portrait)) {
 			nCutLen = 50;
 		} else {
 			nCutLen = 80;
@@ -1282,14 +1292,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	ObjectHeaderRenderer._renderResponsiveTitleAndArrow = function(oRM, oOH, nCutLen) {
 		var sOHTitle, sEllipsis = '', sTextDir = oOH.getTitleTextDirection();
 		var bMarkers = !!oOH._getVisibleMarkers().length;
-		var sTitleLevel = (oOH.getTitleLevel() === sap.ui.core.TitleLevel.Auto) ? sap.ui.core.TitleLevel.H1 : oOH.getTitleLevel();
+		var sTitleLevel = (oOH.getTitleLevel() === TitleLevel.Auto) ? TitleLevel.H1 : oOH.getTitleLevel();
 
 		oRM.write("<" + sTitleLevel + ">");
 		oRM.write("<span");
 		oRM.addClass("sapMOHRTitleTextContainer");
 		oRM.writeClasses();
 		// set title text direction, it will be inherit from the "flags" also
-		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+		if (sTextDir != TextDirection.Inherit) {
 			oRM.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 		oRM.write(">");
@@ -1400,7 +1410,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 
 		// tablet case
-		if (sap.ui.Device.orientation.portrait) { // full screen portrait or master detail
+		if (Device.orientation.portrait) { // full screen portrait or master detail
 			iRenderCols = 2; //render two columns
 			sClassColCount = 'sapMOHRTwoCols';
 		} else {

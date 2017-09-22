@@ -48,6 +48,21 @@
 		sut.destroy();
 	});
 
+	QUnit.test("Should render TextArea correctly when _adjustHeight is called before the DOM is ready", function(assert) {
+		var sut = new sap.m.TextArea()
+
+		// act
+		sut._adjustHeight();
+		sut.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(sut.getDomRef(), "TextArea rendered");
+
+		//Cleanup
+		sut.destroy();
+	});
+
 	QUnit.test("Should inherit from InputBase", function(assert) {
 		var sut = new sap.m.TextArea();
 		sut.placeAt("qunit-fixture");

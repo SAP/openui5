@@ -55,7 +55,6 @@ sap.ui.define([
 	 * @param {boolean} [bShadow=true] whether the popup should be have a visual shadow underneath (shadow appearance depends on active theme and browser support)
 	 * @param {boolean} [bAutoClose=false] whether the popup should automatically close when the focus moves out of the popup
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.Popup
 	 * @extends sap.ui.base.ManagedObject
@@ -1847,49 +1846,68 @@ sap.ui.define([
 		//TODO: also handle the case when 'aAutoCloseAreas' is set with null
 		jQuery.sap.assert(Array.isArray(aAutoCloseAreas), "aAutoCloseAreas must be an array which contains either sap.ui.core.Element, DOM Element or an ID");
 
-		this._aAutoCloseAreas = [];
+		if (!this._aAutoCloseAreas) {
+			this._aAutoCloseAreas = [];
+		}
 
 		var createDelegate = function (oAutoCloseArea) {
 			return {
 				onBeforeRendering: function() {
 					var oDomRef = oAutocloseArea.getDomRef();
 					if (oDomRef && this.isOpen()) {
-						oDomRef.removeEventListener("blur", this.fEventHandler, true);
+						if (Device.browser.msie) {
+							jQuery(oDomRef).unbind("deactivate." + this._popupUID, this.fEventHandler);
+						} else {
+							oDomRef.removeEventListener("blur", this.fEventHandler, true);
+						}
 					}
 				},
 				onAfterRendering: function() {
 					var oDomRef = oAutocloseArea.getDomRef();
 					if (oDomRef && this.isOpen()) {
-						oDomRef.addEventListener("blur", this.fEventHandler, true);
+						if (Device.browser.msie) {
+							// 'deactivate' needs to be used for msie to achieve event handling in capturing phase
+							jQuery(oDomRef).bind("deactivate." + this._popupUID, this.fEventHandler);
+						} else {
+							oDomRef.addEventListener("blur", this.fEventHandler, true);
+						}
 					}
 				}
 			};
 		};
 
-		for (var i = 0, l = aAutoCloseAreas.length; i < l; i++) {
-			var sId = "",
-				oAutocloseArea = aAutoCloseAreas[i],
-				oDelegate,
-				oAreaRef = {};
+		var sId,
+			oAutocloseArea,
+			oDelegate,
+			oAreaRef;
 
+		for (var i = 0, l = aAutoCloseAreas.length; i < l; i++) {
+			oAutocloseArea = aAutoCloseAreas[i];
 
 			if (oAutocloseArea instanceof Element) {
-				oDelegate = createDelegate(oAutocloseArea);
-				oAutocloseArea.addEventDelegate(oDelegate, this);
 				sId = oAutocloseArea.getId();
-
-				oAreaRef.delegate = oDelegate;
 			} else if (typeof oAutocloseArea === "object") {
 				sId = oAutocloseArea.id;
 			} else if (typeof oAutocloseArea === "string") {
 				sId = oAutocloseArea;
 			}
 
-			oAreaRef.id = sId;
-			this._aAutoCloseAreas.push(oAreaRef);
-
 			if (this.getChildPopups().indexOf(sId) === -1) {
+				// when the autoclose area isn't registered, add it as a child popup and
+				// also to _aAutoCloseAreas
 				this.addChildPopup(sId);
+
+				oAreaRef = {
+					id: sId
+				};
+
+				if (oAutocloseArea instanceof Element) {
+					oDelegate = createDelegate(oAutocloseArea);
+					oAutocloseArea.addEventDelegate(oDelegate, this);
+					oAreaRef.delegate = oDelegate;
+				}
+
+				this._aAutoCloseAreas.push(oAreaRef);
 			}
 		}
 

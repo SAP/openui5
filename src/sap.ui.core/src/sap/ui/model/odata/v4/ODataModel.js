@@ -1129,4 +1129,4 @@ sap.ui.define([
 	};
 
 	return ODataModel;
-}, /* bExport= */ true);
+});

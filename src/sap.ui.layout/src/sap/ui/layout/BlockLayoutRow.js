@@ -10,6 +10,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	function(jQuery, Control, library, BlockLayoutCellData) {
 		"use strict";
 
+		// shortcut for sap.ui.layout.BlockBackgroundType
+		var BlockBackgroundType = library.BlockBackgroundType;
+
+		// shortcut for sap.ui.layout.BlockRowColorSets
+		var BlockRowColorSets = library.BlockRowColorSets;
+
 		/**
 		 * Constructor for a new BlockLayoutRow.
 		 *
@@ -121,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				aParentContent = oBlockLayout && oBlockLayout.getContent(),
 				oPrevBlockRow = (iThisIndexInParent && aParentContent[iThisIndexInParent - 1]) || null,
 				oNextBlockRow = (aParentContent && aParentContent[iThisIndexInParent + 1]) || null,
-				oBlockRowColorSets = sap.ui.layout.BlockRowColorSets,
+				oBlockRowColorSets = BlockRowColorSets,
 				aColorSets = Object.keys(oBlockRowColorSets).map(function (sKey) {
 					return oBlockRowColorSets[sKey];
 				}),
@@ -159,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			var oObject,
 				sId = vId && vId.getId ? vId.getId() : vId,
 				args = Array.prototype.slice.call(arguments),
-				oBackgrounds = sap.ui.layout.BlockBackgroundType,
+				oBackgrounds = BlockBackgroundType,
 				oBlockLayout = this.getParent(),
 				sLayoutBackground = oBlockLayout && (oBlockLayout.getBackground() || "");
 
@@ -316,9 +322,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				if (bProcessAccentCells && oCell.getId() === sId && oCell.getWidth() === 1) {
 					oCell.addStyleClass("sapContrast").addStyleClass("sapContrastPlus");
 
-					oColorSets = sap.ui.layout.BlockRowColorSets;
-					bUseContrast2 = this._hasStyleClass("sapUiBlockLayoutBackground" + oColorSets.ColorSet1, sap.ui.layout.BlockBackgroundType.Mixed, false, oColorSets.ColorSet1) ||
-						this._hasStyleClass("sapUiBlockLayoutBackground" + oColorSets.ColorSet1, sap.ui.layout.BlockBackgroundType.Mixed, true, oColorSets.ColorSet1);
+					oColorSets = BlockRowColorSets;
+					bUseContrast2 = this._hasStyleClass("sapUiBlockLayoutBackground" + oColorSets.ColorSet1, BlockBackgroundType.Mixed, false, oColorSets.ColorSet1) ||
+						this._hasStyleClass("sapUiBlockLayoutBackground" + oColorSets.ColorSet1, BlockBackgroundType.Mixed, true, oColorSets.ColorSet1);
 
 					if (bUseContrast2) {
 						oCell.addStyleClass("sapUiBlockLayoutBackgroundContrast2");
@@ -397,8 +403,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		 * @returns {boolean} Determines if the row contains the class
 		 */
 		BlockLayoutRow.prototype._hasStyleClass = function (sStyleClass, sLayoutBackground, bIsColorInverted, sType) {
-			var oBackgrounds = sap.ui.layout.BlockBackgroundType,
-				oColorSets = sap.ui.layout.BlockRowColorSets,
+			var oBackgrounds = BlockBackgroundType,
+				oColorSets = BlockRowColorSets,
 				i, aStyleClasses, aEqualSets;
 
 			// Check if this is NOT Mixed or Light background and just do the normal check
@@ -436,5 +442,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		};
 
 		return BlockLayoutRow;
-
-	}, /* bExport= */ true);
+	});

@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.ui.demokit.FileUploadIntrospector.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'jquery.sap.act'],
 	function(jQuery, Control, library) {
 	"use strict";
 

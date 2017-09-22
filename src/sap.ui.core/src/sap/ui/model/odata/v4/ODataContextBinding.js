@@ -681,4 +681,4 @@ sap.ui.define([
 	};
 
 	return ODataContextBinding;
-}, /* bExport= */ true);
+});

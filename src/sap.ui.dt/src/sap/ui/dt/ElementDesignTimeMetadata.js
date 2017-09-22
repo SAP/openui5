@@ -112,7 +112,7 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	 * @public
 	 */
 	ElementDesignTimeMetadata.prototype.getAggregations = function() {
-		var mAggregations = this.getData().aggregations;
+		var mAggregations = this.getData().aggregations || {};
 		var mAssociations = this.getData().associations || {};
 		Object.keys(mAssociations).forEach(function(sAssociation){
 			var mAssociation = mAssociations[sAssociation];

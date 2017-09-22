@@ -87,7 +87,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Remove.prototype._getRemoveAction = function(oOverlay) {
-		return oOverlay.getDesignTimeMetadata().getAction("remove", oOverlay.getElementInstance());
+		return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getAction("remove", oOverlay.getElementInstance()) : null;
 	};
 
 	/**

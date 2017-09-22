@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeModifier) {
+sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType"], function (BaseTreeModifier, DataType) {
 
 		"use strict";
 
@@ -35,7 +35,17 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 			},
 
 			getProperty: function (oControl, sPropertyName) {
-				return oControl.getAttribute(sPropertyName);
+				var oPropertyInfo = this._getControlMetadata(oControl).getProperty(sPropertyName);
+				var vPropertyValue = oControl.getAttribute(sPropertyName);
+				if (oPropertyInfo) { //not a property like aggregation
+					var oType = oPropertyInfo.getType();
+					if (vPropertyValue === null){
+						vPropertyValue = oPropertyInfo.getDefaultValue() || oType.getDefaultValue();
+					} else {
+						vPropertyValue = oType.parseValue(vPropertyValue);
+					}
+				}
+				return vPropertyValue;
 			},
 
 			setPropertyBinding: function (oControl, sPropertyName, oPropertyBinding) {
@@ -46,10 +56,30 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				return oControl.getAttribute(sPropertyName);
 			},
 
+			/**
+			 * Creates the control (as XML element or node)
+			 *
+			 * @param {string} sClassName Class name for the control (for example, <code>sap.m.Button</code>)
+			 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an id
+			 * @param {Element} oView XML node of the view, required to create nodes and to find elements
+			 * @param {object} [oSelector] - Selector to calculate the ID for the control that is being created
+			 * @param {string} [oSelector.id] - Control ID targeted by the change
+			 * @param {boolean} [oSelector.isLocalId] - True if the ID within the selector is a local ID or a global ID
+			 * @param {object} [mSettings ] Further settings or properties for the control that is being created
+			 * @returns {Element} XML node of the control being created
+			 */
 			createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
-				var sId;
+				var sId, sLocalName;
 				if (!this.bySelector(oSelector, oAppComponent, oView)) {
-					var oNewElementNode = oView.createElement(sClassName);
+					var aClassNameParts = sClassName.split('.');
+					var sNamespaceURI = "";
+					if (aClassNameParts.length > 1) {
+						sLocalName = aClassNameParts.pop();
+						sNamespaceURI = aClassNameParts.join('.');
+					}
+
+					var oNewElementNode = oView.ownerDocument.createElementNS(sNamespaceURI, sLocalName);
+
 					sId = this.getControlIdBySelector(oSelector, oAppComponent);
 					if (sId) {
 						oNewElementNode.setAttribute("id", sId);
@@ -67,22 +97,12 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				}
 			},
 
-			/** SUBSTITUTION UNTIL SmartForm has adopted to the bySelector
-			 *
-			 * @param {string} sId
-			 * @param oView
-			 * @returns {*|Node}
-			 */
-			byId: function (sId, oView) {
-				return this._byId(sId, oView);
-			},
-
 			/**
 			 * Returns the control for the given id. Undefined if control cannot be found.
 			 *
 			 * @param {string} sId control id
-			 * @param {Node} oView node of the view
-			 * @returns {Node} xml node of the Control
+			 * @param {Element} oView Node of the view
+			 * @returns {Element} XML node of the control
 			 * @private
 			 */
 			_byId: function (sId, oView) {
@@ -119,9 +139,9 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				return oParent;
 			},
 
-			_getLocalName: function (xmlNode) {
+			_getLocalName: function (xmlElement) {
 				// localName for standard browsers, baseName for IE, nodeName in the absence of namespaces
-				return xmlNode.localName || xmlNode.baseName || xmlNode.nodeName;
+				return xmlElement.localName || xmlElement.baseName || xmlElement.nodeName;
 			},
 
 			getControlType: function (oControl) {
@@ -132,26 +152,56 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				return sControlType;
 			},
 
-			// TODO implement when getAggregation works
-			getAllAggregations: function (oParent) {
-				return {};
+			getAllAggregations: function (oControl) {
+				var oControlMetadata = this._getControlMetadata(oControl);
+				return oControlMetadata.getAllAggregations();
 			},
 
 			getAggregation: function (oParent, sName) {
 				var oAggregationNode = this._findAggregationNode(oParent, sName);
-				//convert NodeList to Array
-				return Array.prototype.slice.call(this._children(oAggregationNode));
+				var bSingleValueAggregation = this._isSingleValueAggregation(oParent, sName);
+				if (!oAggregationNode){
+					if (bSingleValueAggregation && this._isAltTypeAggregation(oParent, sName)){
+						return this.getProperty(oParent, sName);
+					}
+					return bSingleValueAggregation ? undefined : [];
+				}
+				var aChildren = this._getControlsInAggregation(oParent, oAggregationNode);
+				if (bSingleValueAggregation){
+					return aChildren[0];
+				}
+				return aChildren;
 			},
 
-			insertAggregation: function (oParent, sName, oObject, iIndex, oView, bNewParent, oAppComponent) {
-				var oAggregationNode = this._findAggregationNode(oParent, sName, oView, bNewParent, oAppComponent);
+			/**
+			 * Insert the control (as XML element or node) into the specified aggregation;
+			 * if the aggregation node is not available in the current XML and is needed
+			 * because it's not the default aggregation, the aggregation node will be created automatically.
+			 *
+			 * @param {Element} oParent XML node or element of the control in which to insert <code>oObject</code>
+			 * @param {string} sName Aggregation name
+			 * @param {Element} oObject XML node or element of the control that will be inserted
+			 * @param {int} iIndex Index for <code>oObject</code> in the aggregation
+			 * @param {Element} oView xml node/element of the view - needed to potentially create (aggregation) nodes
+			 */
+			insertAggregation: function (oParent, sName, oObject, iIndex, oView) {
+				var oAggregationNode = this._findAggregationNode(oParent, sName);
+
+				if (!oAggregationNode) {
+					// named aggregation must have the same namespace as the parent
+					var sNamespaceURI = oParent.namespaceURI;
+					// no ids for aggregation nodes => no need pass id or component
+					oAggregationNode = this.createControl(sNamespaceURI + "." + sName, undefined, oView);
+					oParent.appendChild(oAggregationNode);
+				}
 
 				if (iIndex >= oAggregationNode.childElementCount) {
 					oAggregationNode.appendChild(oObject);
 				} else {
-					var oReferenceNode = this._children(oAggregationNode)[iIndex];
+					var oReferenceNode = this._getControlsInAggregation(oParent, oAggregationNode)[iIndex];
 					oAggregationNode.insertBefore(oObject, oReferenceNode);
 				}
+
 			},
 
 			/**
@@ -164,43 +214,74 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 			 * @param {Node}
 			 *          oObject - aggregated object to be set
 			 */
-			removeAggregation: function (oParent, sName, oObject, oView) {
-				var oAggregationNode = this._findAggregationNode(oParent, sName, oView);
+			removeAggregation: function (oParent, sName, oObject) {
+				var oAggregationNode = this._findAggregationNode(oParent, sName);
 				oAggregationNode.removeChild(oObject);
 			},
 
-			removeAllAggregation: function (oControl, sName, oView) {
-				var oAggregationNode = this._findAggregationNode(oControl, sName, oView);
+			removeAllAggregation: function (oControl, sName) {
+				var oAggregationNode = this._findAggregationNode(oControl, sName);
 				if (oControl === oAggregationNode) {
-					var oChildren = this._children(oControl);
-					for (var i = 0; i < oChildren.length; i++) {
-						oControl.removeChild(oChildren[i]);
-					}
+					var aChildControls = this._getControlsInAggregation(oControl, oControl);
+					aChildControls.forEach(function(oChildControl){
+						oControl.removeChild(oChildControl);
+					});
 				} else {
 					oControl.removeChild(oAggregationNode);
 				}
 			},
 
-			_findAggregationNode: function (oParent, sName, oView, bNewParent, oAppComponent) {
+			_findAggregationNode: function (oParent, sName) {
 				var oAggregationNode;
-				if (bNewParent) {
-					oAggregationNode = this.createControl(sName, oAppComponent, oView);
-					oParent.appendChild(oAggregationNode);
-				} else {
-					var aChildren = this._children(oParent);
-					for (var i = 0; i < aChildren.length; i++) {
-						var oNode = aChildren[i];
-						if (oNode.localName === sName) {
-							oAggregationNode = oNode;
-							break;
-						}
-					}
-					if (!oAggregationNode) {
-						// expecting default aggregation
-						oAggregationNode = oParent;
+				var aChildren = this._children(oParent);
+				for (var i = 0; i < aChildren.length; i++) {
+					var oNode = aChildren[i];
+					if (oNode.localName === sName) {
+						oAggregationNode = oNode;
+						break;
 					}
 				}
+				if (!oAggregationNode && this._isDefaultAggregation(oParent, sName)) {
+					oAggregationNode = oParent;
+				}
 				return oAggregationNode;
+			},
+
+			_isDefaultAggregation: function(oParent, sAggregationName){
+				var oControlMetadata = this._getControlMetadata(oParent);
+				var oDefaultAggregation = oControlMetadata.getDefaultAggregation();
+				return oDefaultAggregation && sAggregationName === oDefaultAggregation.name;
+			},
+
+			_isNotNamedAggregationNode: function(oParent, oChildNode){
+				var mAllAggregatiosnMetadata = this.getAllAggregations(oParent);
+				var oAggregation = mAllAggregatiosnMetadata[oChildNode.localName];
+				return oParent.namespaceURI !== oChildNode.namespaceURI || !oAggregation; //same check as in XMLTemplateProcessor (handleChild)
+			},
+
+			_isSingleValueAggregation: function(oParent, sAggregationName){
+				var mAllAggregatiosnMetadata = this.getAllAggregations(oParent);
+				var oAggregationMetadata = mAllAggregatiosnMetadata[sAggregationName];
+				return !oAggregationMetadata.multiple;
+			},
+
+			_isAltTypeAggregation: function(oParent, sAggregationName){
+				var oControlMetadata = this._getControlMetadata(oParent);
+				var oAggregationMetadata = oControlMetadata.getAllAggregations()[sAggregationName];
+				return !!oAggregationMetadata.altTypes;
+			},
+
+			_getControlMetadata: function(oControl){
+				var sControlType = this.getControlType(oControl);
+				jQuery.sap.require(sControlType);
+				var ControlType = jQuery.sap.getObject(sControlType);
+				return ControlType.getMetadata();
+			},
+
+			_getControlsInAggregation: function(oParent, oAggregationNode){
+				//convert NodeList to Array
+				var aChildren = Array.prototype.slice.call(this._children(oAggregationNode));
+				return aChildren.filter(this._isNotNamedAggregationNode.bind(this, oParent));
 			},
 
 			_children: function (oParent) {
@@ -218,15 +299,17 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				}
 			},
 
-			getBindingTemplate: function (oControl, sAggregationName, oView) {
-				var oAggregationNode = this._findAggregationNode(oControl, sAggregationName, oView);
+			getBindingTemplate: function (oControl, sAggregationName) {
+				var oAggregationNode = this._findAggregationNode(oControl, sAggregationName);
 				if (oAggregationNode && oAggregationNode.childNodes.length === 1) {
 					return oAggregationNode.childNodes[0];
 				}
 
 			},
 
-			updateAggregation: function (oControl, sAggregationName) {}
+			updateAggregation: function (oControl, sAggregationName) {
+				/*only needed in JS case to indicate binding (template) has changed, in XML case binding has not been created yet (see managed object)*/
+			}
 		};
 
 		return jQuery.sap.extend(

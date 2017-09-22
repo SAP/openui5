@@ -63,9 +63,7 @@ sap.ui.define([
 	 * {string|string[]}
 	 *      change.ids the ids that changed<br>
 	 *
-	 * @param {function} fnCallback Callback function for this observer, to be called whenever a change happens
-	 *
-	 * <h4>Event Change</h4>
+	 * <h4>Event Registry Change</h4>
 	 * {string}
 	 *      change.name the name of the event that changed<br>
 	 * {string}
@@ -81,7 +79,7 @@ sap.ui.define([
 	 *{object}
 	 *      change.data the events data<br>
 	 *
-	 ** <h4>Binding Change</h4>
+	 * <h4>Binding Change</h4>
 	 * {string}
 	 *      change.name the name of the binding that changed<br>
 	 * {string}
@@ -95,15 +93,16 @@ sap.ui.define([
 	 * {string}
 	 *      change.memberType 'property' or 'aggregation'<br>
 	 *
-	 *
 	 * <h4>destroy managed Object</h4>
-	 *
 	 * {string}
 	 *      change.type 'destroy'<br>
 	 * {object}
 	 *      change.object the managed object instance on which the change occurred<br>
 	 *
+	 * @param {function} fnCallback Callback function for this observer, to be called whenever a change happens
+	 *
 	 * @private
+	 * @since 1.50.0
 	 * @sap-restricted sap.ui.model.base
 	 * @constructor
 	 * @alias sap.ui.base.ManagedObjectObserver
@@ -123,7 +122,7 @@ sap.ui.define([
 	 * Observing all settings (properties, aggregations, associations) should be avoided.
 	 *
 	 * @param {sap.ui.base.ManagedObject}
-	 *    oObject the managed object instance to be observed
+	 *     oObject the managed object instance to be observed
 	 * @param {object}
 	 *     oConfiguration a mandatory configuration specifying the settings to observe for the object
 	 * @param {boolean|string[]} [oConfiguration.properties]
@@ -132,6 +131,12 @@ sap.ui.define([
 	 *     true if all aggregations should be observed or list of the aggregation names to observe
 	 * @param {boolean|string[]} [oConfiguration.associations]
 	 *     true if all associations should be observed or list of the association names to observe
+	 * @param {boolean|string[]} [oConfiguration.bindings]
+	 *     true if all bindings should be observed or list of the binding names to observe
+	 * @param {boolean|string[]} [oConfiguration.events]
+	 *     true if all events should be observed or list of the event names to observe
+	 * @param {boolean} [oConfiguration.destroy]
+	 *     true if destroy should be observed
 	 * @throws {TypeError} if the given object is not a ManagedObject and not <code>null</code> or <code>undefined</code>
 	 *
 	 * @private
@@ -150,17 +155,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Stops observing the given object. A configuration is used to specify the meta data settings that should be ignored. Configuration should be as
-	 * specific as possible to avoid negative performance impact. Observing all settings (properties, aggregations, associations) should be avoided.
+	 * Stops observing the given object. A configuration is used to specify the meta data settings that should be ignored.
+	 * Configuration should be as specific as possible to avoid negative performance impact.
 	 *
-	 * @param {sap.ui.base.ManagedObject} oObject the managed object instance that was observed
-	 * @param {object} oConfiguration a mandatory configuration specifying the settings to stop observing for the object
-	 * @param {boolean|string[]} [oConfiguration.properties] true if all properties should be stopped observing or list of the property names to stop
-	 *        observing
-	 * @param {boolean|string[]} [oConfiguration.aggregations] true if all aggregations should be stopped observing or list of the aggregation names
-	 *        to stop observing
-	 * @param {boolean|string[]} [oConfiguration.associations] true if all associations should be stopped observing or list of the association names
-	 *        to stop observing
+	 * @param {sap.ui.base.ManagedObject} oObject
+	 *     the managed object instance that was observed
+	 * @param {object} oConfiguration
+	 *     a configuration specifying the settings to stop observing for the object.
+	 *     If no configuration is provided, the object is unobserved completely
+	 * @param {boolean|string[]} [oConfiguration.properties]
+	 *     true if all properties should be stopped observing or list of the property names to stop observing
+	 * @param {boolean|string[]} [oConfiguration.aggregations]
+	 *     true if all aggregations should be stopped observing or list of the aggregation names to stop observing
+	 * @param {boolean|string[]} [oConfiguration.associations]
+	 *     true if all associations should be stopped observing or list of the association names to stop observing
+	 * @param {boolean|string[]} [oConfiguration.bindings]
+	 *     true if all bindings should be stopped observing or list of the binding names to stop observing
+	 * @param {boolean|string[]} [oConfiguration.events]
+	 *     true if all events should be stopped observing or list of the event names to stop observing
+	 * @param {boolean} [oConfiguration.destroy]
+	 *     true if destroy should be stopped observing
 	 * @throws {TypeError} if the given object is not a ManagedObject and not <code>null</code> or <code>undefined</code>
 	 *
 	 * @private
@@ -186,14 +200,17 @@ sap.ui.define([
 	 *
 	 * All given settings must be observed for the method to return true.
 	 *
-	 * @param {sap.ui.base.ManagedObject} oObject the managed object instance that was observed
-	 * @param {object} oConfiguration a mandatory configuration specifying the settings to stop observing for the object
-	 * @param {boolean|string[]} [oConfiguration.properties] true if all properties should be stopped observing or list of the property names to stop
-	 *        observing
-	 * @param {boolean|string[]} [oConfiguration.aggregations] true if all aggregations should be stopped observing or list of the aggregation names
-	 *        to stop observing
-	 * @param {boolean|string[]} [oConfiguration.associations] true if all associations should be stopped observing or list of the association names
-	 *        to stop observing
+	 * @param {sap.ui.base.ManagedObject} oObject
+	 *        the managed object instance that was observed
+	 * @param {object} oConfiguration
+	 *        a configuration specifying the settings to check for the object.
+	 *        If no configuration is provided it checks if the object observes at least for one property, etc.
+	 * @param {boolean|string[]} [oConfiguration.properties]
+	 *        true if all properties should be checked or list of the property names to check
+	 * @param {boolean|string[]} [oConfiguration.aggregations]
+	 *        true if all aggregations should be checked or list of the aggregation names to check
+	 * @param {boolean|string[]} [oConfiguration.associations]
+	 *        true if all associations should be checked or list of the association names to check
 	 * @return {boolean} <code>true</code> if configuration is observed
 	 * @throws {TypeError} if the given object is not a ManagedObject and not <code>null</code> or <code>undefined</code>
 	 *
@@ -301,7 +318,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called from sap.ui.base.ManagedObject if an event is changed.
+	 * Called from sap.ui.base.ManagedObject if an event registration is changed.
 	 *
 	 * @param {string} sName the name of the event that changed
 	 * @param {string} sMutation "remove" or "insert"
@@ -326,7 +343,7 @@ sap.ui.define([
 	/**
 	 * Called from sap.ui.base.ManagedObject if a binding changed for a property or aggregation.
 	 *
-	 * @param {string} sName the name of the event that changed
+	 * @param {string} sName the name of the the name property or aggregation of which the binding is changed
 	 * @param {string} sMutation "prepared", "ready", "removed"
 	 * @param {object} oBindingInfo the binding info
 	 * @param {string} sMemberType 'aggregation' or 'property'

@@ -3,9 +3,9 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation',
-		'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/Month', 'sap/ui/unified/library'],
-	function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, CalendarDate, Month, library) {
+sap.ui.define(['jquery.sap.global',
+		'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/Month', 'sap/ui/unified/library'],
+	function(jQuery, CalendarUtils, CalendarDate, Month, library) {
 	"use strict";
 
 	/*
@@ -182,7 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @protected
 	 * @param {int} iFirstDayOfWeek The first day of the week
 	 * @name sap.ui.unified.calendar.DatesRow#setFirstDayOfWeek
-	 * @returns {sap.ui.unified.DatesRow} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.unified.calendar.DatesRow} <code>this</code> to allow method chaining
 	 * @function
 	 */
 	DatesRow.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
@@ -305,4 +305,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	return DatesRow;
 
-}, /* bExport= */ true);
+});

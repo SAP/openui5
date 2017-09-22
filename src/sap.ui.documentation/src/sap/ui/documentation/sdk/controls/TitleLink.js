@@ -9,6 +9,12 @@ sap.ui.define([
 ], function(coreLibrary, Device, Toolbar, Title) {
 	"use strict";
 
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	/**
 	 * @class
 	 * Adds link functionality and wrapping to the existing title control for display in the demo kit application
@@ -127,7 +133,7 @@ sap.ui.define([
 		renderer: function (oRm, oTitle) {
 			var oAssoTitle = oTitle._getTitle(),
 				sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || coreLibrary.TitleLevel.Auto,
-				bAutoLevel = sLevel == sap.ui.core.TitleLevel.Auto,
+				bAutoLevel = sLevel == TitleLevel.Auto,
 				sTag = bAutoLevel ? "div" : sLevel;
 
 			oRm.write("<", sTag);
@@ -153,7 +159,7 @@ sap.ui.define([
 			}
 
 			var sTextAlign = oTitle.getTextAlign();
-			if (sTextAlign && sTextAlign != sap.ui.core.TextAlign.Initial) {
+			if (sTextAlign && sTextAlign != TextAlign.Initial) {
 				oRm.addClass("sapMTitleAlign" + sTextAlign);
 			}
 

@@ -58,14 +58,16 @@ sap.ui.define([
 			description: "",
 			resolution: "",
 			resolutionurls: [],
-			check: "function(oIssueManager, oCoreFacade, oScope) {\n\t/* \n\t oIssueManager - allows you to add new issues with the addIssue() method \n\t oCoreFacade - gives you access to state of the core: getMetadata(), getUIAreas(), getComponents(), getModels() \n\t oScope - retrieves elements in the scope with these methods: getElements(), getElementsByClassName(className), getLoggedObjects(type) \n\t*/ \n}",
-			selected: true
+			check: "function (oIssueManager, oCoreFacade, oScope) {\n\t/* \n\t oIssueManager - allows you to add new issues with the addIssue() method \n\t oCoreFacade - gives you access to state of the core: getMetadata(), getUIAreas(), getComponents(), getModels() \n\t oScope - retrieves elements in the scope with these methods: getElements(), getElementsByClassName(className), getLoggedObjects(type) \n\t fnResolve - optional, passed when the rule property async is set to true \n\t*/ \n}",
+			selected: true,
+			async: false
 		},
 		editRule: null,
 		tempLink: {
 			href: "",
 			text: ""
 		},
+		resolveDescription: "Make sure to resolve your async rule by using the passed fnResolve function",
 		selectedRuleStringify: "",
 		analyzeContext: executionScopes.global,
 		executionScopes: executionScopes,
@@ -82,7 +84,9 @@ sap.ui.define([
 		issuesCount: 0,
 		visibleRowCountMode:"Auto",
 		visibleRowCount: 10,
-		heightDetailsArea: "inherit"
+		heightDetailsArea: "inherit",
+		supportAssistantOrigin: "",
+		supportAssistantVersion: ""
 	});
 
 	return model;

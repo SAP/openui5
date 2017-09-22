@@ -133,9 +133,9 @@ sap.ui.define([], function() {
 		}
 	};
 
-	FakeLrepLocalStorage._callModifyCallbacks = function() {
+	FakeLrepLocalStorage._callModifyCallbacks = function(sModifyType) {
 		this._aModifyCallbacks.forEach(function(fnCallback){
-			fnCallback();
+			fnCallback(sModifyType);
 		});
 	};
 	/**
@@ -149,7 +149,7 @@ sap.ui.define([], function() {
 			window.localStorage.removeItem(this.createChangeKey(sId));
 		}
 
-		this._callModifyCallbacks();
+		this._callModifyCallbacks("delete");
 	};
 
 	/**
@@ -161,7 +161,7 @@ sap.ui.define([], function() {
 		this.forEachLrepChangeInLocalStorage(function(sKey) {
 			window.localStorage.removeItem(sKey);
 		});
-		this._callModifyCallbacks();
+		this._callModifyCallbacks("delete");
 	};
 
 	/**
@@ -177,14 +177,14 @@ sap.ui.define([], function() {
 
 			if (oChange.fileType === "change") {
 				sChangeKey = this.createChangeKey(sId);
-			} else if (oChange.fileType === "variant") {
+			} else if (oChange.fileType === "ctrl_variant") {
 				sChangeKey = this.createVariantKey(sId);
 			}
 			sChange = JSON.stringify(oChange);
 
 			window.localStorage.setItem(sChangeKey, sChange);
 		}
-		this._callModifyCallbacks();
+		this._callModifyCallbacks("save");
 	};
 
 	return FakeLrepLocalStorage;

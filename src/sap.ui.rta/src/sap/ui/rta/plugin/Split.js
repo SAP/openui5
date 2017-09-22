@@ -57,7 +57,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Split.prototype._getSplitAction = function(oOverlay) {
-		return oOverlay.getDesignTimeMetadata().getAction("split", oOverlay.getElementInstance());
+		return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getAction("split", oOverlay.getElementInstance()) : null;
 	};
 
 	/**

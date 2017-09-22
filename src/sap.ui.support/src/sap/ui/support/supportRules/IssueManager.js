@@ -6,10 +6,9 @@
  * The IssueManager interface stores, groups and converts issues from the Core Object to a usable model by the Support Assistant.
  * Issues can be added only through the IssueManager using <code>addIssue</code> method.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
-	function (jQuery, BaseObject) {
+sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/supportRules/Constants"],
+	function (jQuery, BaseObject, constants) {
 		"use strict";
-
 		/**
 		 * @type {object[]} _aIssues Issues stored in the IssueManager
 		 * @private
@@ -48,6 +47,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 				details: oIssue.details,
 				ruleLibName: oIssue.rule.libName,
 				ruleId: oIssue.rule.id,
+				async: oIssue.rule.async === true, // Ensure async is either true or false
+				minVersion: oIssue.rule.minversion,
 				context: {
 					className: className,
 					id: oIssue.context.id
@@ -299,7 +300,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 				var treeTableModel = {},
 					index = 0,
 					innerIndex = 0,
-					issueCount = 0;
+					issueCount = 0,
+					oSortedSeverityCount,
+					iHighSeverityCount = 0,
+					iMediumSeverityCount = 0,
+					iLowSeverityCount = 0;
 
 				for (var libName in issuesModel) {
 					treeTableModel[index] = {
@@ -310,8 +315,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 					};
 
 					for (var rule in issuesModel[libName]) {
+
+						oSortedSeverityCount = this._sortSeverityIssuesByPriority(issuesModel[libName][rule]);
 						treeTableModel[index][innerIndex] = {
-							name: issuesModel[libName][rule][0].name + " (" + issuesModel[libName][rule].length + " issues)",
+							formatedName: issuesModel[libName][rule][0].name + " (<span style=\"color:" + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR +  ";\"> " +  oSortedSeverityCount.high + " H, </span> " + "<span style=\"color:" + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR +  ";\"> " +  oSortedSeverityCount.medium + " M, </span> " + "<span style=\"color:" + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR +  ";\"> " +  oSortedSeverityCount.low + " L) </span>",
+							name: issuesModel[libName][rule][0].name,
 							showAudiences: true,
 							showCategories: true,
 							categories: issuesModel[libName][rule][0].categories.join(", "),
@@ -327,18 +335,55 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 							severity: issuesModel[libName][rule][0].severity
 						};
 
+
 						issueCount += issuesModel[libName][rule].length;
 						innerIndex++;
+						iHighSeverityCount  += oSortedSeverityCount.high;
+						iMediumSeverityCount += oSortedSeverityCount.medium;
+						iLowSeverityCount += oSortedSeverityCount.low;
 					}
 
+
 					treeTableModel[index].name += " (" + issueCount + " issues)";
+					treeTableModel[index].formatedName = issuesModel[libName][rule][0].name + " (" + "<span style=\"color: " + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR +  "; \"> " +  iHighSeverityCount + " High, </span> " + "<span style=\"color:  " + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR +  ";\"> " +  iMediumSeverityCount + " Medim, </span> " + "<span style=\"color " + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR +  ";\"> " +  iLowSeverityCount + " Low </span>)";
 					treeTableModel[index].issueCount = issueCount;
 					issueCount = 0;
 					innerIndex = 0;
 					index++;
+					iHighSeverityCount = 0;
+					iMediumSeverityCount = 0;
+					iLowSeverityCount = 0;
 				}
 
 				return treeTableModel;
+			},
+
+			/**
+			 * Sorts number of severity issues e.g. 1 High, 0 Medium, 0 Low.
+			 * @private
+			 * @param {array} aIssues
+			 * @name sap.ui.support.IssueManager._sortSeverityIssuesByPriority
+			 * @returns {object} Object containing the number of issues sorted by severity.
+			 */
+			_sortSeverityIssuesByPriority: function(aIssues) {
+				var iHighIssues = 0,
+					iMediumIssues = 0,
+					iLowIssues = 0;
+				aIssues.forEach(function(element) {
+					switch (element.severity) {
+						case constants.SUPPORT_ASSISTANT_ISSUE_SEVERITY_LOW:
+							iLowIssues++;
+							break;
+						case constants.SUPPORT_ASSISTANT_ISSUE_SEVERITY_MEDIUM:
+							iMediumIssues++;
+							break;
+						case constants.SUPPORT_ASSISTANT_ISSUE_SEVERITY_HIGH:
+							iHighIssues++;
+							break;
+					}
+				});
+
+				return {high: iHighIssues, medium: iMediumIssues, low: iLowIssues};
 			},
 
 			/**

@@ -28,7 +28,7 @@ sap.ui.define([
 	 * Sample usage of the class:
 	 *
 	 * <pre>
- 	 * <code>
+	 * <code>
 	 *  var helper = sap.f.FlexibleColumnLayoutSemanticHelper.getInstanceFor(myFlexibleColumnLayout);
 	 *  helper.getCurrentUIState();
 	 *  helper.getNextUIState(2);

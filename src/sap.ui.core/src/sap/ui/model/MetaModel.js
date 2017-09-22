@@ -16,7 +16,6 @@ sap.ui.define(['./Model'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.MetaModel
 	 */

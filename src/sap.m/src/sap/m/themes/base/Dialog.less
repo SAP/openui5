@@ -114,10 +114,10 @@
 	box-shadow: 0;
 	transform: none;
 	-webkit-transform: none;
-	top: calc(~"5% + 0px") !important; //this is for preventing inline size/top sizes set the top
-	bottom: calc(~"5% + 0px") !important;
-	left: calc(~"3.5% + 0px") !important; //this is for preventing inline size/top sizes set the top
-	right: calc(~"3.5% + 0px") !important;
+	top: 5% !important; //this is for preventing inline size/top sizes set the top
+	bottom: 5% !important;
+	left: 3.5% !important; //this is for preventing inline size/top sizes set the top
+	right: 3.5% !important;
 	max-height: none !important;
 	max-width: none !important;
 	min-width: 0 !important; //this is for preventing the dialog to hold it's width in small screens
@@ -158,7 +158,7 @@ html.sap-phone .sapMDialog {
 
 html.sap-tablet .sapMDialog,
 html.sap-desktop .sapMDialog {
-	min-width: 25rem;
+	min-width: 20rem;
 }
 
 .sapMDialog > .sapMBar {
@@ -512,10 +512,6 @@ html[data-sap-ui-animation='off'] {
 }
 
 .sapMDialogError > header {
-	&.sapMDialogTitle .sapUiIcon {
-		color: @sapUiNegativeElement;
-	}
-
 	&.sapMBar:last-of-type {
 		box-shadow: inset 0 -0.125rem @sapUiErrorBorder;
 	}

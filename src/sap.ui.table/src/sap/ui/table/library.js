@@ -5,10 +5,10 @@
 /**
  * Initialization Code and shared classes of library sap.ui.table.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	'sap/ui/core/library', // library dependency
 	'sap/ui/unified/library'], // library dependency
-	function(jQuery, Core, TreeAutoExpandMode) {
+	function(Core, TreeAutoExpandMode) {
 
 	"use strict";
 

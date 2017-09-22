@@ -9,8 +9,8 @@ sap.ui.define(['./ViewRenderer', 'sap/ui/core/Control'],
 
 
 	/**
-	 * @class JSONView renderer.
-	 * @static
+	 * JSONView renderer.
+	 * @namespace
 	 * @alias sap.ui.core.mvc.JSONViewRenderer
 	 */
 	var JSONViewRenderer = {

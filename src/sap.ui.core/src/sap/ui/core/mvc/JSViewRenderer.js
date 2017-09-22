@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 
 
 	/**
-	 * @class JSView renderer.
-	 * @static
+	 * JSView renderer.
+	 * @namespace
 	 * @alias sap.ui.core.mvc.JSViewRenderer
 	 */
 	var JSViewRenderer = {

@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, ListItemBaseRenderer, Renderer) {
+sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/library'],
+	function(ListItemBaseRenderer, Renderer, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 	/**
@@ -75,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		var sTextDir = oLI.getTitleTextDirection();
 		rm.write("<span class='sapMGHLITitle'");
 
-		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+		if (sTextDir != TextDirection.Inherit) {
 			rm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 

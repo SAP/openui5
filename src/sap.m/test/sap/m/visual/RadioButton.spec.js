@@ -33,6 +33,7 @@ describe("sap.m.RadioButton", function() {
 
 	// check disabled state radiobutton
 	it('should show disabled state buttons', function() {
+		element(by.id('disabled-vbox')).click();
 		element(by.id('disabled-vbox-button-notselected')).click();
 		expect(takeScreenshot(element(by.id('disabled-vbox')))).toLookAs('disabled-state-buttons');
 	});

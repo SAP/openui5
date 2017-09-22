@@ -24,7 +24,6 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.ScrollBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -513,7 +512,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 				this._$OwnerDomRef.unbind(this._getTouchEventType("touchstart"), jQuery.proxy(this.ontouchstart, this));
 				this._$OwnerDomRef.unbind(this._getTouchEventType("touchmove"), jQuery.proxy(this.ontouchmove, this));
 				this._$OwnerDomRef.unbind(this._getTouchEventType("touchend"), jQuery.proxy(this.ontouchend, this));
-				this._$OwnerDomRef.unbind(this._getTouchEventType("touchcancle"), jQuery.proxy(this.ontouchcancle, this));
+				this._$OwnerDomRef.unbind(this._getTouchEventType("touchcancel"), jQuery.proxy(this.ontouchcancel, this));
 			}
 		}
 	};
@@ -537,7 +536,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 				this._$OwnerDomRef.bind(this._getTouchEventType("touchstart"), jQuery.proxy(this.ontouchstart, this));
 				this._$OwnerDomRef.bind(this._getTouchEventType("touchmove"), jQuery.proxy(this.ontouchmove, this));
 				this._$OwnerDomRef.bind(this._getTouchEventType("touchend"), jQuery.proxy(this.ontouchend, this));
-				this._$OwnerDomRef.bind(this._getTouchEventType("touchcancle"), jQuery.proxy(this.ontouchcancle, this));
+				this._$OwnerDomRef.bind(this._getTouchEventType("touchcancel"), jQuery.proxy(this.ontouchcancel, this));
 			}
 		}
 	};

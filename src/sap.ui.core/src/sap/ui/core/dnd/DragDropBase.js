@@ -20,7 +20,6 @@ sap.ui.define(["../Element", '../library', './DragAndDrop'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.50
 	 * @alias sap.ui.core.dnd.DragDropBase

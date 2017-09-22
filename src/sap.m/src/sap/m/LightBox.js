@@ -3,13 +3,22 @@
  */
 
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/m/Text',
-		'sap/m/Button', 'sap/m/Image', 'sap/ui/core/ResizeHandler', 'sap/ui/Device', 'sap/m/MessagePage',
-		'sap/ui/core/Icon', 'sap/ui/layout/VerticalLayout', './InstanceManager', 'sap/ui/core/InvisibleText'],
-	function (jQuery, library, Control, Popup, Text,
-			Button, Image, ResizeHandler, Device, MessagePage,
-			Icon, VerticalLayout, InstanceManager, InvisibleText) {
+		'sap/m/Button', 'sap/ui/core/ResizeHandler', 'sap/ui/Device',
+		'sap/ui/core/Icon', 'sap/ui/layout/VerticalLayout', './InstanceManager', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
+	function(jQuery, library, Control, Popup, Text,
+			Button, ResizeHandler, Device,
+			Icon, VerticalLayout, InstanceManager, InvisibleText, coreLibrary) {
 
 		'use strict';
+
+		// shortcut for sap.ui.core.TextAlign
+		var TextAlign = coreLibrary.TextAlign;
+
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
+
+		// shortcut for sap.m.LightBoxLoadingStates
+		var LightBoxLoadingStates = library.LightBoxLoadingStates;
 
 		/**
 		 * Constructor for a new LightBox.
@@ -157,16 +166,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			switch (sState) {
-				case sap.m.LightBoxLoadingStates.Loading:
+				case LightBoxLoadingStates.Loading:
 					this._timeoutId = setTimeout(function () {
-						oImageContent._setImageState(sap.m.LightBoxLoadingStates.TimeOutError);
+						oImageContent._setImageState(LightBoxLoadingStates.TimeOutError);
 					}, 10000);
 					break;
-				case sap.m.LightBoxLoadingStates.Loaded:
+				case LightBoxLoadingStates.Loaded:
 					clearTimeout(this._timeoutId);
 					this._calculateSizes(oNativeImage);
 					break;
-				case sap.m.LightBoxLoadingStates.Error:
+				case LightBoxLoadingStates.Error:
 					clearTimeout(this._timeoutId);
 					break;
 				default:
@@ -297,7 +306,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				closeButton = new Button({
 					id: this.getId() + '-closeButton',
 					text: this._closeButtonText,
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					press: function () {
 						this.close();
 					}.bind(this)
@@ -331,7 +340,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 		LightBox.prototype._imageStateChanged = function (newState) {
-			var stateUnfinished = newState === sap.m.LightBoxLoadingStates.Loaded || newState === sap.m.LightBoxLoadingStates.Error;
+			var stateUnfinished = newState === LightBoxLoadingStates.Loaded || newState === LightBoxLoadingStates.Error;
 
 			if (stateUnfinished && !this._isRendering) {
 				this.rerender();
@@ -377,7 +386,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var errorMessageTitle;
 			var errorMessageSubtitle;
 
-			if (this._getImageContent()._getImageState() === sap.m.LightBoxLoadingStates.TimeOutError) {
+			if (this._getImageContent()._getImageState() === LightBoxLoadingStates.TimeOutError) {
 				errorMessageTitle = resourceBundle.getText('LIGHTBOX_IMAGE_TIMED_OUT');
 				errorMessageSubtitle = resourceBundle.getText('LIGHTBOX_IMAGE_TIMED_OUT_DETAILS');
 			} else {
@@ -388,11 +397,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (!this.getAggregation('_verticalLayout')) {
 				var errorTitle = new Text({
 					text : errorMessageTitle,
-					textAlign : sap.ui.core.TextAlign.Center
+					textAlign : TextAlign.Center
 				}).addStyleClass("sapMLightBoxErrorTitle"),
 					errorSubtitle = new Text({
 						text : errorMessageSubtitle,
-						textAlign : sap.ui.core.TextAlign.Center
+						textAlign : TextAlign.Center
 					}).addStyleClass("sapMLightBoxErrorSubtitle"),
 					errorIcon = new Icon({
 						src : "sap-icon://picture"
@@ -421,7 +430,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				minimumOffset = calculateOffset(),
 				hcbBorderSize = 2;
 
-			if (oImageContent._getImageState() === sap.m.LightBoxLoadingStates.Loaded) {
+			if (oImageContent._getImageState() === LightBoxLoadingStates.Loaded) {
 				this._calculateSizes(oImageContent._getNativeImage());
 
 				lightBoxWidth = this._width;
@@ -603,7 +612,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		function calculateOffset() {
-			var system = sap.ui.Device.system;
+			var system = Device.system;
 
 			if (system.desktop) {
 				return 4 /*rem*/ * 16 /*px*/;
@@ -617,4 +626,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		return LightBox;
-	}, /* bExport= */ true);
+	});

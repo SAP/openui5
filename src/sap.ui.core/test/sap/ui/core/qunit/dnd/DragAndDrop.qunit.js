@@ -29,6 +29,9 @@ sap.ui.define([
 
 	var DragAndDropControl = Control.extend("sap.ui.core.dnd.test.DragAndDropControl", {
 		metadata: {
+			properties : {
+				showNoData : {type : "boolean", defaultValue : false},
+			},
 			aggregations: {
 				topItems: {
 					name: "topItems",
@@ -50,6 +53,9 @@ sap.ui.define([
 				}
 			}
 		},
+		getAggregationDomRef: function(sAggregationName) {
+			return this.getDomRef(sAggregationName);
+		},
 		renderer: function(rm, oControl) {
 			var aTopItems = oControl.getTopItems();
 			var aBottomItems = oControl.getBottomItems();
@@ -59,12 +65,32 @@ sap.ui.define([
 			rm.writeControlData(oControl);
 			rm.writeAttribute("tabindex", 0);
 			rm.write(">");
-			for (i = 0; i < aTopItems.length; i++) {
-				rm.renderControl(aTopItems[i]);
+
+			rm.write("<div");
+			rm.writeAttribute("id", oControl.getId() + "-topItems");
+			rm.write(">");
+
+			if (!aTopItems.length) {
+				rm.write('<div id="' + oControl.getId() + '-topNoData">No top items</div>"');
+			} else {
+				for (i = 0; i < aTopItems.length; i++) {
+					rm.renderControl(aTopItems[i]);
+				}
 			}
-			for (i = 0; i < aBottomItems.length; i++) {
-				rm.renderControl(aBottomItems[i]);
+			rm.write("</div>");
+
+			rm.write("<div");
+			rm.writeAttribute("id", oControl.getId() + "-bottomItems");
+			rm.write(">");
+			if (!aBottomItems.length) {
+				rm.write('<div id="' + oControl.getId() + '-bottomNoData">No bottom items</div>"');
+			} else {
+				for (i = 0; i < aBottomItems.length; i++) {
+					rm.renderControl(aBottomItems[i]);
+				}
 			}
+			rm.write("</div>");
+
 			rm.write("</div>");
 		}
 	});
@@ -515,6 +541,63 @@ sap.ui.define([
 
 		// clean up
 		oDiv2.$().trigger("drop");
+		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop");
+	});
+
+	QUnit.module("Drop on empty aggregation", {
+		beforeEach: function() {
+			this.oControl = new DragAndDropControl({
+				topItems: [new DivControl(), new DivControl()],
+				showNoData: true,
+				dragDropConfig: [
+					new DragDropInfo({
+						sourceAggregation: "topItems",
+						targetAggregation: "bottomItems",
+						dropPosition: "Between"
+					})
+				]
+			});
+			this.oControl.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oControl.destroy();
+		}
+	});
+
+	QUnit.test("Indicator position for no data", function(assert) {
+		var oEvent, $Indicator, mIndicatorOffset, mTargetOffset;
+		var oBottomItemsDomRef = this.oControl.getDomRef("bottomItems");
+		var oTargetDomRef = this.oControl.getDomRef("bottomNoData");
+		var oSourceControl = this.oControl.getTopItems()[0];
+		var oSourceDomRef = oSourceControl.getDomRef();
+
+		// init drag session
+		oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
+
+		// validation
+		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+
+		// act for the indicator
+		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragover"));
+
+		oEvent = jQuery.Event("dragover");
+		oEvent.originalEvent = createNativeDragEventDummy("dragover");
+		mTargetOffset = oTargetDomRef.getBoundingClientRect();
+		oEvent.pageY = mTargetOffset.top + 1;
+		oEvent.pageX = mTargetOffset.left + 1;
+		jQuery(oTargetDomRef).trigger(oEvent);
+		$Indicator = oEvent.dragSession.getIndicator();
+		mIndicatorOffset = $Indicator.offset();
+
+		assert.strictEqual($Indicator.attr("data-drop-position"), "on", "Indicator's data-drop-position attribute is set to on");
+		assert.strictEqual($Indicator.outerWidth(), oBottomItemsDomRef.offsetWidth , "Indicator's width is equal to dropped item's width.");
+		assert.strictEqual($Indicator.outerHeight(), oBottomItemsDomRef.offsetHeight , "Indicator's height is equal to dropped item's height.");
+		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
+		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left , "Indicator's left position is equal to dropped item's left position.");
+
+		// clean up
+		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
 		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop");
 	});
 });

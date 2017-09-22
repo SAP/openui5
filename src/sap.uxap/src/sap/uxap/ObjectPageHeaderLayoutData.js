@@ -13,7 +13,9 @@ sap.ui.define(["sap/ui/core/LayoutData", "./library"], function (LayoutData, lib
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * This is a LayoutData Element that can be added to a control if this control is used within an ObjectPage headerContent aggregation
+	 * This is a LayoutData Element that can be added to a control if this control is used within an ObjectPage headerContent aggregation.</br></br>
+	 * <b>Note:</b> This element is only taken into account when the <code>sap.uxap.ObjectPageLayout</code> control is used together with
+	 * <code>sap.uxap.ObjectPageHeader</code> as value of <code>headerTitle</code>.
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE

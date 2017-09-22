@@ -41,22 +41,16 @@ sap.ui.define([
 	});
 
 	/**
-	 * This function gets called twice, on startup and when we create a context menu.
-	 * On Startup bOverlayIsSibling is not defined as we don't know if it is a sibling or not. In this case we check both cases.
+	 * This function gets called on startup. It checks if the Overlay is editable by this plugin.
 	 * @param {sap.ui.dt.Overlay} oOverlay - overlay to be checked
-	 * @param {boolean} bOverlayIsSibling - (optional) describes whether given overlay is to be checked as a sibling or as a child on editable. Expected values: [true, false, undefined]
-	 * @returns {boolean | object} editable boolean value or object with editable boolean values for "asChild" and "asSibling"
+	 * @returns {object} Returns object with editable boolean values for "asChild" and "asSibling"
 	 * @private
 	 */
-	CreateContainer.prototype._isEditable = function(oOverlay, bOverlayIsSibling) {
-		if (bOverlayIsSibling === undefined || bOverlayIsSibling === null) {
-			return {
-				asSibling: this._isEditableCheck(oOverlay, true),
-				asChild: this._isEditableCheck(oOverlay, false)
-			};
-	} else {
-			return this._isEditableCheck(oOverlay, bOverlayIsSibling);
-		}
+	CreateContainer.prototype._isEditable = function(oOverlay) {
+		return {
+			asSibling: this._isEditableCheck(oOverlay, true),
+			asChild: this._isEditableCheck(oOverlay, false)
+		};
 	};
 
 	CreateContainer.prototype._isEditableCheck = function (oOverlay, bOverlayIsSibling) {

@@ -452,22 +452,6 @@ sap.ui.require([
 		assert.ok(oTable.$().find("tr[data-sap-ui-rowindex]").height() < 100, "RowHeight ok");
 	});
 
-	QUnit.test("TableExtensions", function(assert) {
-		assert.expect(6);
-		assert.ok(oTable._bExtensionsInitialized, "Extensions initialized");
-		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for PointerExtension");
-		assert.ok(typeof oTable._getAccExtension === "function", "Getter for AccExtension");
-		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for AccRenderExtension");
-		assert.ok(typeof oTable._getKeyboardExtension === "function", "Getter for KeyboardExtension");
-		oTable.destroy();
-		assert.ok(!oTable._bExtensionsInitialized, "Extensions cleaned up");
-		try {
-			oTable.destroy();
-		} catch (e) {
-			assert.ok(false, "Duplicate call of destroy should not raise errors.");
-		}
-	});
-
 	QUnit.test("test min-width", function(assert) {
 		oTable.getDomRef().style.width = "0px";
 		assert.ok(oTable.getDomRef("tableCCnt").clientHeight > 0, "CCnt still has clientHeight");
@@ -988,11 +972,49 @@ sap.ui.require([
 				firstVisibleRow: 1
 			});
 
+			var DummyControl = sap.ui.core.Control.extend("sap.ui.table.test.DummyControl", {
+				metadata: {
+					properties: {
+						height: "string"
+					}
+				},
+				renderer: function(oRm, oControl) {
+					oRm.write("<div style='height: " + (oControl.getHeight() || "10px") + "; width: 100px; background-color: orange'");
+					oRm.writeControlData(oControl);
+					oRm.write("></div>");
+				},
+				setHeight: function(sHeight) {
+					this.setProperty("height", sHeight, true);
+
+					var oDomRef = this.getDomRef();
+					if (oDomRef != null) {
+						oDomRef.style.height = sHeight;
+					}
+				}
+			});
+
+			oTable.removeAllColumns();
+			oTable.addColumn(new Column({
+				label: new Label({text: "Variable Row Heights"}),
+				template: new DummyControl({
+					height: "{height}"
+				}),
+				width: "200px"
+			}));
+
 			oTable._bVariableRowHeightEnabled = true;
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
 			destroyTable();
 		}
+	});
+
+	QUnit.test("Vertical scrollbar height", function(assert) {
+		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
+		var iVSbHeight = oVsb.clientHeight;
+
+		assert.equal(iVSbHeight, 10 * oTable._getDefaultRowHeight(), "iVSbHeight is correct");
 	});
 
 	QUnit.test("FirstVisibleRow on init stays the same", function(assert) {
@@ -1006,7 +1028,7 @@ sap.ui.require([
 
 		var done = assert.async();
 		window.setTimeout(function() {
-			assert.ok(oVsb.scrollTop > iDefaultHeight - 2 && oVsb.scrollTop < iDefaultHeight + 2, "ScrollTop is correct: " + oVsb.scrollTop);
+			assert.strictEqual(oVsb.scrollTop, iDefaultHeight, "ScrollTop is correct: " + oVsb.scrollTop);
 			done();
 		}, 100);
 	});
@@ -1023,20 +1045,16 @@ sap.ui.require([
 			var iVSbHeight = oVsb.clientHeight;
 			var oVSbScrollHeight = oVsb.scrollHeight;
 
-			assert.equal(iVSbHeight, 10 * oTable._getDefaultRowHeight(), "iVSbHeight is correct");
 			assert.equal(oVsb.scrollTop, oVSbScrollHeight - iVSbHeight, "ScrollTop is correct");
 			done();
 		}, 100);
 	});
 
 	QUnit.test("After scrolling to last row, the table correction is as expected", function(assert) {
-		// Create Data with different Row Heights
-		var aData = [{lastName: "De \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nte", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 4, money: 3.45},
-			{lastName: "De \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nte", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 4, money: 3.45},
-			{lastName: "De \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nte", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 4, money: 3.45},
-			{lastName: "De \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nte", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 4, money: 3.45},
-			{lastName: "De \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nte", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 4, money: 3.45}];
+		var done = assert.async();
 
+		// Create Data with different Row Heights
+		var aData = [{height: "800px"}, {height: "800px"}, {height: "800px"}, {height: "800px"}, {height: "800px"}];
 		aData = aData.concat(JSON.parse(JSON.stringify(aData)));
 		aData = aData.concat(JSON.parse(JSON.stringify(aData)));
 		aData = aData.concat(JSON.parse(JSON.stringify(aData)));
@@ -1049,20 +1067,16 @@ sap.ui.require([
 		oTable.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var iRowHeightsDelta = oTable._getScrollExtension()._iInnerVerticalScrollRange;
-		var iHeight = 8635 - 10 * oTable._getDefaultRowHeight();
+		window.setTimeout(function() {
+			var iRowHeightsDelta = oTable._getScrollExtension()._iInnerVerticalScrollRange;
+			var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
 
-		assert.equal(oTable.getFirstVisibleRow(), 1, "Initial FirstVisibleRow is correct");
-		assert.ok(iRowHeightsDelta > iHeight - 25 && iRowHeightsDelta < iHeight + 25,
-			"RowHeightsDelta is in expected range (" + iRowHeightsDelta + ")");
+			assert.equal(oTable.getFirstVisibleRow(), 1, "Initial FirstVisibleRow is correct");
+			assert.strictEqual(iRowHeightsDelta, 8321, "RowHeightsDelta is correct");
 
-		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
-		assert.ok(oVsb);
-
-		var done = assert.async();
-		setTimeout(function() {
 			oVsb.scrollTop = 1000000;
-			setTimeout(function() {
+
+			window.setTimeout(function() {
 				assert.equal(oTable.getFirstVisibleRow(), 29, "FirstVisibleRow is correct");
 				var iScrollRange = oTable._getTotalRowCount() * oTable._getDefaultRowHeight();
 				assert.equal(oVsb.scrollTop, iScrollRange - oVsb.clientHeight, "ScrollTop is at maximum and correct");
@@ -3069,5 +3083,61 @@ sap.ui.require([
 
 		oTable.getColumns()[0].setTemplate(new sap.ui.core.Control());
 		assert.equal(fnInvalidateRowsAggregation.callCount, 5, "invalidateRowsAggregation() called after changing the column template");
+	});
+
+	QUnit.module("Extensions", {
+		beforeEach: function() {
+			createTable();
+		},
+		afterEach: function() {
+			destroyTable();
+		}
+	});
+
+	QUnit.test("Applied extensions", function(assert) {
+		var aActualExtensions = [];
+		var aExpectedExtensions = [
+			"sap.ui.table.TablePointerExtension",
+			"sap.ui.table.TableScrollExtension",
+			"sap.ui.table.TableKeyboardExtension",
+			"sap.ui.table.TableAccRenderExtension",
+			"sap.ui.table.TableAccExtension",
+			"sap.ui.table.TableDragAndDropExtension"
+		];
+
+		oTable._aExtensions.forEach(function(oExtension) {
+			aActualExtensions.push(oExtension.getMetadata()._sClassName);
+		});
+
+		assert.deepEqual(aActualExtensions, aExpectedExtensions, "The table has the expected extensions applied.");
+	});
+
+	QUnit.test("Lifecycle", function(assert) {
+		var aExtensions = oTable._aExtensions;
+
+		assert.ok(oTable._bExtensionsInitialized, "The _bExtensionsInitialized flag properly indicates that extensions are initialized");
+
+		oTable.destroy();
+		var bAllExtensionsDestroyed = aExtensions.every(function(oExtension) {
+			return oExtension.bIsDestroyed;
+		});
+
+		assert.ok(bAllExtensionsDestroyed, "All extensions were destroyed");
+		assert.equal(oTable._aExtensions, null, "The table does not hold references to the destroyed extensions");
+		assert.ok(!oTable._bExtensionsInitialized, "The _bExtensionsInitialized flag properly indicates that extensions were cleaned up");
+
+		try {
+			oTable.destroy();
+		} catch (e) {
+			assert.ok(false, "Duplicate call of destroy should not raise errors.");
+		}
+	});
+
+	QUnit.test("Getter functions", function(assert) {
+		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for the PointerExtension exists");
+		assert.ok(typeof oTable._getScrollExtension === "function", "Getter for the ScrollExtension exists");
+		assert.ok(typeof oTable._getKeyboardExtension === "function", "Getter for the KeyboardExtension exists");
+		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for the AccRenderExtension exists");
+		assert.ok(typeof oTable._getAccExtension === "function", "Getter for the AccExtension exists");
 	});
 });

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.RowAction
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TableUtils', './library', 'sap/ui/core/Icon', 'sap/ui/unified/Menu', 'sap/ui/core/Popup', './RowActionItem'],
-function(jQuery, Control, TableUtils, library, Icon, Menu, Popup, RowActionItem) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/Icon', 'sap/ui/unified/Menu', 'sap/ui/core/Popup', 'jquery.sap.keycodes'],
+function(jQuery, Control, library, Icon, Menu, Popup) {
 	"use strict";
 
 	/**

@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/routing/History",
-	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/demokit/EntityInfo",
 	"sap/ui/demokit/util/JSDocUtil",
@@ -16,7 +15,7 @@ sap.ui.define([
 	"../util/ToggleFullScreenHandler",
 	"../data",
 	"sap/ui/demokit/explored/view/base.controller"
-], function (jQuery, Device, Component, UIComponent, History, Controller, JSONModel, EntityInfo, JSDocUtil, ObjectSearch, ToggleFullScreenHandler, data, Base) {
+], function (jQuery, Device, Component, UIComponent, History, JSONModel, EntityInfo, JSDocUtil, ObjectSearch, ToggleFullScreenHandler, data, Base) {
 	"use strict";
 
 	return Base.extend("sap.ui.demokit.explored.view.entity", {

@@ -4,9 +4,12 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation',
-		'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/library'],
-	function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, CalendarDate, library) {
+		'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/library', 'sap/ui/core/format/DateFormat', 'sap/ui/core/library', 'sap/ui/core/Locale', 'jquery.sap.keycodes'],
+	function(jQuery, Control, LocaleData, ItemNavigation, CalendarUtils, CalendarDate, library, DateFormat, coreLibrary, Locale) {
 	"use strict";
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = coreLibrary.CalendarType;
 
 	/*
 	 * Inside the Month CalendarDate objects are used. But in the API JS dates are used.
@@ -173,8 +176,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setProperty("primaryCalendarType", sCalendarType);
 		this.setProperty("secondaryCalendarType", sCalendarType);
 
-		this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
-		this._oFormatLong = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: sCalendarType});
+		this._oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
+		this._oFormatLong = DateFormat.getInstance({style: "long", calendarType: sCalendarType});
 
 		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
 
@@ -295,27 +298,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	// overwrite invalidate to recognize changes on selectedDates
-	Month.prototype.invalidate = function(oOrigin) {
-
-		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
-			Control.prototype.invalidate.apply(this, arguments);
-		} else if (this.getDomRef() && !this._sInvalidateMonth) {
-			// DateRange changed -> only rerender days
-			// do this only once if more DateRanges / Special days are changed
-			if (oOrigin && oOrigin.sParentAggregationName === "specialDates") {
-				// Don't restore focus if special dates are added
-				this._bNoFocus = true;
-			}
-			if (this._bInvalidateSync) { // set if calendar already invalidates in delayed call
-				_invalidateMonth.call(this);
-			} else {
-				this._sInvalidateMonth = jQuery.sap.delayedCall(0, this, _invalidateMonth, [this]);
-			}
-		}
-
-	};
-
 	// overwrite removing of date ranged because invalidate don't get information about it
 	Month.prototype.removeAllSelectedDates = function() {
 
@@ -421,7 +403,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this.setProperty("primaryCalendarType", sCalendarType); // rerender as month can change completely (week numbers can be hidden...)
 
-		this._oFormatLong = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: sCalendarType});
+		this._oFormatLong = DateFormat.getInstance({style: "long", calendarType: sCalendarType});
 
 		if (this._oDate) {
 			this._oDate = new CalendarDate(this._oDate, sCalendarType);
@@ -437,7 +419,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setProperty("secondaryCalendarType", sCalendarType); // rerender as month can change completely (class changes on root DOM)
 		this.invalidate(); // Invalidate in every case even if the type was set to the default one.
 
-		this._oFormatSecondaryLong = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: sCalendarType});
+		this._oFormatSecondaryLong = DateFormat.getInstance({style: "long", calendarType: sCalendarType});
 
 		return this;
 
@@ -490,7 +472,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return oParent._getLocaleData();
 		} else if (!this._oLocaleData) {
 			var sLocale = this._getLocale();
-			var oLocale = new sap.ui.core.Locale(sLocale);
+			var oLocale = new Locale(sLocale);
 			this._oLocaleData = LocaleData.getInstance(oLocale);
 		}
 
@@ -506,10 +488,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var sLocale = this._getLocale();
 
 		if (this._oFormatLong.oLocale.toString() != sLocale) {
-			var oLocale = new sap.ui.core.Locale(sLocale);
-			this._oFormatLong = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: this.getPrimaryCalendarType()} , oLocale);
+			var oLocale = new Locale(sLocale);
+			this._oFormatLong = DateFormat.getInstance({style: "long", calendarType: this.getPrimaryCalendarType()} , oLocale);
 			if (this._oFormatSecondaryLong) {
-				this._oFormatSecondaryLong = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: this._getSecondaryCalendarType()} , oLocale);
+				this._oFormatSecondaryLong = DateFormat.getInstance({style: "long", calendarType: this._getSecondaryCalendarType()} , oLocale);
 			}
 		}
 
@@ -1749,7 +1731,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				$DomRef = jQuery(aDomRefs[i]);
 				bStart = false;
 				bEnd = false;
-				oDay = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), sap.ui.core.CalendarType.Gregorian));
+				oDay = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), CalendarType.Gregorian));
 				if (oDay.isSame(aStartDate[0])) {
 					$DomRef.addClass("sapUiCalItemSelStart");
 					bStart = true;
@@ -1887,16 +1869,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	}
 
-	function _invalidateMonth(){
-
-		this._sInvalidateMonth = undefined;
-
-		_renderMonth.call(this, this._bNoFocus);
-		this._bDateRangeChanged = undefined;
-		this._bNoFocus = undefined; // set in Calendar to prevent focus flickering for multiple months
-
-	}
-
 	return Month;
 
-}, /* bExport= */ true);
+});

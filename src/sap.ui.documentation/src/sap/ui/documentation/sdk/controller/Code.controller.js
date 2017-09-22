@@ -7,10 +7,9 @@ sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-		'sap/ui/Device',
-		'sap/m/MessageToast',
-		"sap/ui/model/json/JSONModel"
-	], function (jQuery, BaseController, ControlsInfo, Device, MessageToast, JSONModel) {
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/core/Component" // implements sap.ui.component
+	], function (jQuery, BaseController, ControlsInfo, JSONModel) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Code", {

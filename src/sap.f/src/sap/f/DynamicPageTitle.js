@@ -4,13 +4,15 @@
 
 // Provides control sap.f.DynamicPageTitle.
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/m/OverflowToolbar",
 	"sap/m/Button"
-], function (jQuery, library, Control, OverflowToolbar, Button) {
+], function (library, Control, OverflowToolbar, Button) {
 	"use strict";
+
+	// shortcut for sap.f.DynamicPageTitleArea
+	var DynamicPageTitleArea = library.DynamicPageTitleArea;
 
 	/**
 	 * Constructor for a new <code>DynamicPageTitle</code>.
@@ -71,7 +73,7 @@ sap.ui.define([
 				*
 				* @since 1.50
 				*/
-				primaryArea : {type: "sap.f.DynamicPageTitleArea", group: "Appearance", defaultValue: sap.f.DynamicPageTitleArea.Begin}
+				primaryArea : {type: "sap.f.DynamicPageTitleArea", group: "Appearance", defaultValue: DynamicPageTitleArea.Begin}
 			},
 			aggregations: {
 
@@ -448,4 +450,4 @@ sap.ui.define([
 
 
 	return DynamicPageTitle;
-}, /* bExport= */ true);
+});

@@ -45,4 +45,4 @@ sap.ui.define(['sap/m/OverflowToolbarButton', 'sap/m/ButtonRenderer'],
 
 	return SemanticOverflowToolbarButton;
 
-}, /* bExport= */ false);
+});

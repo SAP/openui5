@@ -565,15 +565,6 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Should have the correct log prefix", function (assert) {
-		sinon.assert.calledWith(this.fnLoggerSpy, "sap.ui.test.OpaPlugin");
-
-		var sLogComponent = "a different log component";
-		new OpaPlugin(sLogComponent).destroy();
-
-		sinon.assert.calledWith(this.fnLoggerSpy, sLogComponent);
-	});
-
 	QUnit.test("Should not throw an exception if the core is not defined", function(assert) {
 		//Arrange
 		this.oPlugin.oCore = undefined;

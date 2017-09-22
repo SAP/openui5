@@ -138,16 +138,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *
 	 * @param {function} fn Function to execute
 	 * @param {string} sOwnerId Id of the owner
+	 * @param {Object} [oThisArg=undefined] Value to use as <code>this</code> when executing <code>fn</code>
 	 * @return {any} result of function <code>fn</code>
 	 */
-	function runWithOwner(fn, sOwnerId) {
+	function runWithOwner(fn, sOwnerId, oThisArg) {
 
 		jQuery.sap.assert(typeof fn === "function", "fn must be a function");
 
 		var oldOwnerId = ManagedObject._sOwnerId;
 		try {
 			ManagedObject._sOwnerId = sOwnerId;
-			return fn.call();
+			return fn.call(oThisArg);
 		} finally {
 			ManagedObject._sOwnerId = oldOwnerId;
 		}

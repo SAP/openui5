@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/InvisibleText"],
-    function (jQuery, Slider, Input, InvisibleText) {
+sap.ui.define(["jquery.sap.global", "./Slider", "sap/ui/core/InvisibleText"],
+    function (jQuery, Slider, InvisibleText) {
         "use strict";
 
         /**
@@ -113,7 +113,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
         RangeSlider.prototype.exit = function () {
             this._oResourceBundle = null;
             this._aInitialFocusRange = null;
-	        this._liveChangeLastValue = null;
+            this._liveChangeLastValue = null;
 
             if (this._oRangeLabel) {
                 this._oRangeLabel.destroy();
@@ -1084,4 +1084,4 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
 
 
         return RangeSlider;
-    }, /* bExport= */ true);
+    });

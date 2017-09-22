@@ -628,6 +628,33 @@
 		oObjectPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 	});
 
+	QUnit.test("section modified during layout calculation", function (assert) {
+
+		var oPage = this.oObjectPage,
+			oFirstSection = oPage.getSections()[0],
+			oThirdSection = oPage.getSections()[2],
+			bTabsMode = oPage.getUseIconTabBar(),
+			done = assert.async(),
+			fnOnDomReady = function() {
+				//act
+				oFirstSection.setVisible(false); // will trigger async request to adjust layout
+				oPage.setSelectedSection(oThirdSection.getId());
+
+				var oExpected = {
+					oSelectedSection: oThirdSection,
+					sSelectedTitle: oThirdSection.getTitle(),
+					bSnapped: !bTabsMode
+				};
+
+				//check
+				setTimeout(function() {
+					sectionIsSelected(oPage, assert, oExpected);
+					done();
+				}, 0);
+			};
+		oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
+	});
+
 	QUnit.module("ObjectPage API: sectionTitleLevel");
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is TitleLevel.Auto", function (assert) {
@@ -981,6 +1008,55 @@
 				});
 			}
 		});
+	});
+
+	QUnit.module("ObjectPage API: invalidate");
+
+	QUnit.test("inactive section does not invalidate the objectPage", function (assert) {
+
+		var oObjectPage = new sap.uxap.ObjectPageLayout({
+			useIconTabBar: true,
+			selectedSection: "section1",
+			sections: [
+				new sap.uxap.ObjectPageSection("section1", {
+					subSections: [
+						new sap.uxap.ObjectPageSubSection({
+							blocks: [
+								new sap.m.Link("section1Link", {})
+							]
+						})
+					]
+				}),
+				new sap.uxap.ObjectPageSection("section2", {
+					subSections: [
+						new sap.uxap.ObjectPageSubSection({
+							blocks: [
+								new sap.m.Link("section2Link", {})
+							]
+						})
+					]
+				})
+
+			]
+		}),
+		oObjectPageRenderSpy = this.spy(),
+		done = assert.async();
+
+		helpers.renderObject(oObjectPage);
+
+		oObjectPage.addEventDelegate({
+			onBeforeRendering: oObjectPageRenderSpy
+		});
+
+		//act
+		sap.ui.getCore().byId("section2Link").invalidate();
+
+		//check
+		setTimeout(function() {
+			assert.equal(oObjectPageRenderSpy.callCount, 0,
+				"OP is not rerendered");
+			done();
+		}, 0);
 	});
 
 	function checkObjectExists(sSelector) {

@@ -2,12 +2,12 @@
  * ${copyright}
  */
 
-// Provides control sap.m.FeedInput.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/HTML', 'sap/ui/core/IconPool', 'sap/m/TextArea', 'sap/m/Button'],
-	function(jQuery, library, Control, HTML, IconPool, TextArea, Button) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/m/TextArea", "sap/m/Button"],
+	function(jQuery, library, Control, IconPool, TextArea, Button) {
 	"use strict";
 
-
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new FeedInput.
@@ -139,7 +139,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	FeedInput.prototype.setIconDensityAware = function (iIconDensityAware) {
 		this.setProperty("iconDensityAware", iIconDensityAware, true);
-		if (this._getImageControl() instanceof sap.m.Image) {
+		var fnClass = sap.ui.require("sap/m/Image");
+		if (this._getImageControl() instanceof fnClass) {
 			this._getImageControl().setDensityAware(iIconDensityAware);
 		}
 		return this;
@@ -210,10 +211,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!this._oButton) {
 			this._oButton = new Button(this.getId() + "-button", {
 				enabled : false,
-				type : sap.m.ButtonType.Default,
+				type : ButtonType.Default,
 				icon : "sap-icon://feeder-arrow",
 				tooltip : this.getButtonTooltip(),
-				press : jQuery.proxy(function (oEvt) {
+				press : jQuery.proxy(function () {
 					this._oTextArea.focus();
 					this.firePost({
 						value : this.getValue()
@@ -270,4 +271,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return FeedInput;
 
-}, /* bExport= */ true);
+});

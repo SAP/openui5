@@ -567,8 +567,16 @@ sap.ui.require([
 		}).then(function() {
 			return testAsync({
 				act: function() {
+					oTable.setFirstVisibleRow(oTable._getMaxRowIndex() + 1);
+				},
+				test: function() {
+					assert.strictEqual(that.oVSb.scrollTop, oTable._getMaxRowIndex() * 49, "The vertical scroll position was updated correctly");
+				}
+			});
+		}).then(function() {
+			return testAsync({
+				act: function() {
 					oTable.setFirstVisibleRow(4);
-					that.oScrollExtension.updateVerticalScrollPosition();
 				},
 				test: function() {
 					assert.strictEqual(that.oVSb.scrollTop, 4 * 49, "The vertical scroll position was updated correctly");

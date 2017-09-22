@@ -3,9 +3,15 @@
  */
 
 // Provides control sap.m.Title.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './library'],
-	function(jQuery, Control, Device, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/library'],
+	function(jQuery, Control, library, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new Title control.
@@ -31,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 
 		library : "sap.m",
 		interfaces : [
-		     "sap.ui.core.IShrinkable"
+			 "sap.ui.core.IShrinkable"
 		],
 		properties : {
 
@@ -46,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 			 * Depending on this setting either an HTML h1-h6 element is used or when using level <code>Auto</code> no explicit level information is written (HTML5 header element).
 			 * This property does not influence the style of the control. Use the property <code>titleStyle</code> for this purpose instead.
 			 */
-			level : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
+			level : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
 
 			/**
 			 * Defines the style of the title.
@@ -54,7 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 			 * This default behavior can be overridden by setting a different style explicitly.
 			 * The actual appearance of the title and the different styles always depends on the theme being used.
 			 */
-			titleStyle : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
+			titleStyle : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
 
 			/**
 			 * Defines the width of the title.
@@ -65,7 +71,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 			 * Defines the alignment of the text within the title. <b>Note:</b> This property only has an effect if the overall width of the title control is
 			 * larger than the displayed text.
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Initial}
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Initial},
+
+			/**
+			 * Enables text wrapping.
+			 * <b>Note:</b> Wrapping must only be activated if the surrounding container allows flexible heights.
+			 * @since 1.52
+			 */
+			wrapping : {type : "boolean", group : "Appearance", defaultValue : false}
 
 		},
 		associations : {
@@ -157,4 +170,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 
 	return Title;
 
-}, /* bExport= */ true);
+});

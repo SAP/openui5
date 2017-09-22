@@ -463,32 +463,41 @@ function(
 
 	/**
 	 * Returns all the sibling overlays in a container. It checks recursively for every overlay belonging
-	 * to the same relevant container in the tree.
+	 * to the same relevant container in the tree which has DesignTime Metadata.
 	 * @param  {sap.ui.dt.Overlay} oOverlay                  Overlay for which we want to find the siblings
 	 * @param  {sap.ui.dt.Overlay} oRelevantContainerOverlay Relevant container of the overlay
 	 * @return {sap.ui.dt.Overlay[]}                         Returns a flat array with all sibling overlays
 	 */
 	OverlayUtil.findAllSiblingOverlaysInContainer = function(oOverlay, oRelevantContainerOverlay) {
 		var oParentOverlay = oOverlay.getParentElementOverlay();
-		if (!oParentOverlay) {
-			return [];
+		var aRelevantOverlays = [];
+
+		if (oParentOverlay){
+			if (oParentOverlay !== oRelevantContainerOverlay){
+				var aParents = OverlayUtil.findAllSiblingOverlaysInContainer(oParentOverlay, oRelevantContainerOverlay);
+				aRelevantOverlays = aParents.map(function(oParentOverlay){
+					var oAggregationOverlay = oParentOverlay.getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName());
+					return oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
+				}).reduce(function(aFlattenedArray, oCurrentValue) {
+					return aFlattenedArray.concat(oCurrentValue);
+				}, []);
+			} else {
+				aRelevantOverlays = oOverlay.getParentElementOverlay()
+										.getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName())
+										.getChildren();
+			}
 		}
 
-		if (oParentOverlay !== oRelevantContainerOverlay){
-			var aParents = OverlayUtil.findAllSiblingOverlaysInContainer(oParentOverlay, oRelevantContainerOverlay);
-			return aParents.map(function(oParentOverlay){
-				var oAggregationOverlay = oParentOverlay.getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName());
-				return oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
-			}).reduce(function(aFlattenedArray, oCurrentValue) {
-				return aFlattenedArray.concat(oCurrentValue);
-			}, []);
-		}
+		aRelevantOverlays = aRelevantOverlays.filter(function(oOverlay) {
+			return oOverlay.getDesignTimeMetadata();
+		});
 
-		return oOverlay.getParentElementOverlay().getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName()).getChildren();
+		return aRelevantOverlays;
 	};
 
 	/**
-	 * Gets all the Overlays inside the relevant container which are in the same aggregations.
+	 * Gets all the Overlays inside the relevant container which are in the same aggregations
+	 * and have DesignTime Metadata.
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay Overlay from which we get the aggregations
 	 * @returns {sap.ui.dt.ElementOverlay[]} Returns an array with all the overlays in it
 	 * @protected
@@ -517,7 +526,13 @@ function(
 		} else {
 			aRelevantOverlays = OverlayUtil._findAllChildrenInContainer(oOverlay, oRelevantContainer);
 		}
+
 		aRelevantOverlays.push(oRelevantContainerOverlay);
+
+		aRelevantOverlays = aRelevantOverlays.filter(function(oOverlay) {
+			return oOverlay.getDesignTimeMetadata();
+		});
+
 		return aRelevantOverlays;
 	};
 

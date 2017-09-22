@@ -12,9 +12,13 @@ sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/IconPool",
-	"sap/ui/Device"
-], function (Control, Text, Link, Select, Item, ItemNavigation, ResizeHandler, IconPool, Device) {
+	"sap/ui/Device",
+	"sap/m/library"
+], function (Control, Text, Link, Select, Item, ItemNavigation, ResizeHandler, IconPool, Device, library) {
 	"use strict";
+
+	// shortcut for sap.m.SelectType
+	var SelectType = library.SelectType;
 
 	/**
 	 * Constructor for a new Breadcrumbs
@@ -132,7 +136,7 @@ sap.ui.define([
 				forceSelection: false,
 				autoAdjustWidth: true,
 				icon: IconPool.getIconURI("slim-arrow-down"),
-				type: sap.m.SelectType.IconOnly,
+				type: SelectType.IconOnly,
 				tooltip: Breadcrumbs._getResourceBundle().getText("BREADCRUMB_SELECT_TOOLTIP")
 			})));
 		}
@@ -565,4 +569,4 @@ sap.ui.define([
 
 	return Breadcrumbs;
 
-}, /* bExport= */ true);
+});

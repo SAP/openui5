@@ -2,11 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
-	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory'
+	'sap/ui/rta/command/AppDescriptorCommand'
 ], function(
-		AppDescriptorCommand,
-		DescriptorInlineChangeFactory
+	AppDescriptorCommand
 ) {
 	"use strict";
 
@@ -29,26 +27,12 @@ sap.ui.define([
 	var AddLibrary = AppDescriptorCommand.extend("sap.ui.rta.command.appDescriptor.AddLibrary", {
 		metadata : {
 			library : "sap.ui.rta",
-			properties : {
-				// The libraries to be added to the app descriptor
-				requiredLibraries : {
-					type : "object"
-				},
-				layer : {
-					type : "string"
-				}
-			},
 			events : {}
 		}
 	});
 
-	/**
-	 * Prepare the change for the app descriptor
-	 *
-	 * @param  {object} mFlexSettings - map of Flex Settings including the layer
-	 */
-	AddLibrary.prototype.prepare = function(mFlexSettings){
-		this.setLayer(mFlexSettings.layer);
+	AddLibrary.prototype.init = function() {
+		this.setChangeType("appdescr_ui5_addLibraries");
 	};
 
 	/**
@@ -58,21 +42,14 @@ sap.ui.define([
 	AddLibrary.prototype.execute = function(){
 		var aPromises = [];
 
-		if (this.getRequiredLibraries()){
-			var aLibraries = Object.keys(this.getRequiredLibraries());
+		if (this.getParameters().libraries){
+			var aLibraries = Object.keys(this.getParameters().libraries);
 			aLibraries.forEach(function(sLibrary){
 				aPromises.push(sap.ui.getCore().loadLibrary(sLibrary, true));
 			});
 		}
 
 		return Promise.all(aPromises);
-	};
-
-	AddLibrary.prototype._create = function(){
-		var mParameters = {};
-		mParameters.libraries = this.getRequiredLibraries();
-
-		return DescriptorInlineChangeFactory.create_ui5_addLibraries(mParameters);
 	};
 
 	return AddLibrary;

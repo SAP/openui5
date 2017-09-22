@@ -9,7 +9,8 @@
 			id="ObjectPageLayout"
 			useIconTabBar="true"
 			selectedSection="samples"
-			upperCaseAnchorBar="false">
+			upperCaseAnchorBar="false"
+			busyIndicatorDelay="0">
 		<headerTitle>
 			<ObjectPageHeader
 					id="entityHeader"

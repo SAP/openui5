@@ -3,10 +3,10 @@
  */
 
 // Provides control sap.ui.table.Column.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library', 'sap/ui/core/Popup', 'sap/ui/core/RenderManager',
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library', 'sap/ui/core/Popup',
 		'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/FilterType', 'sap/ui/model/Sorter', 'sap/ui/model/Type',
 		'sap/ui/model/type/String', './TableUtils', './library', './ColumnMenu'],
-function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOperator, FilterType, Sorter, Type, StringType, TableUtils, library, ColumnMenu) {
+function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType, Sorter, Type, StringType, TableUtils, library, ColumnMenu) {
 	"use strict";
 
 	// shortcuts
@@ -682,12 +682,17 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 
 				var oBinding = oTable.getBinding("rows");
 				if (oBinding) {
+					// For the AnalyticalTable with an AnalyticalColumn.
+					if (this._updateTableAnalyticalInfo) {
+						// The analytical info must be updated before sorting via the binding. The request will still be correct, but the binding
+						// will create its internal data structure based on the analytical info. We also do not need to get the contexts right
+						// now (therefore "true" is passed"), this will be done later in refreshRows.
+						this._updateTableAnalyticalInfo(true);
+					}
+
 					// sort the binding
 					oBinding.sort(aSorters);
 
-					if (this._afterSort) {
-						this._afterSort();
-					}
 				} else {
 					jQuery.sap.log.warning("Sorting not performed because no binding present", this);
 				}

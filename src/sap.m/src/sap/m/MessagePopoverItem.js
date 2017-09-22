@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "./library", "./MessageItem"],
-	function(jQuery, library, MessageItem) {
+sap.ui.define(["./library", "./MessageItem"],
+	function(library, MessageItem) {
 		"use strict";
 
 		/**
@@ -30,4 +30,4 @@ sap.ui.define(["jquery.sap.global", "./library", "./MessageItem"],
 		var MessagePopoverItem = MessageItem.extend("sap.m.MessagePopoverItem", /** @lends sap.m.MessagePopoverItem.prototype */ {});
 
 		return MessagePopoverItem;
-	}, /* bExport= */true);
+	});

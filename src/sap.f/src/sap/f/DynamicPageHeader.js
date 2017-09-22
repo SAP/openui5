@@ -3,14 +3,13 @@
  */
 
 // Provides control sap.f.DynamicPageHeader.
-sap.ui.define(["jquery.sap.global", "./library",
+sap.ui.define(["./library",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
-	"sap/ui/core/InvisibleText",
 	"sap/m/library",
 	"sap/m/ToggleButton",
 	"sap/m/Button"
-], function (jQuery, library, Device, Control, InvisibleText, mobileLibrary, ToggleButton, Button) {
+], function (library, Device, Control, mobileLibrary, ToggleButton, Button) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType
@@ -345,4 +344,4 @@ sap.ui.define(["jquery.sap.global", "./library",
 		};
 
 		return DynamicPageHeader;
-	}, /* bExport= */ true);
+	});

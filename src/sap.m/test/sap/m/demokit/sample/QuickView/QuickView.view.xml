@@ -21,6 +21,11 @@
 						text="Generic QuickView"
 						width="200px"
 						press="handleGenericQuickViewPress" />
+				<Button id="genericQuickViewNoHeader"
+						class="sapUiSmallMarginBottom"
+						text="Generic QuickView No Header Set"
+						width="250px"
+						press="handleGenericNoHeaderQuickViewPress" />
 			</l:content>
 		</l:VerticalLayout>
 	</Page>

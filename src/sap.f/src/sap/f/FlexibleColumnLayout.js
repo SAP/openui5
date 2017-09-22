@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Button",
-	"sap/m/NavContainer"
+	"sap/m/NavContainer",
+	"jquery.sap.events"
 ], function (jQuery, library, Device, ResizeHandler, Control, InvisibleText, Button, NavContainer) {
 	"use strict";
 
@@ -71,6 +72,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.46
 	 * @alias sap.f.FlexibleColumnLayout
+	 * @see topic:59a0e11712e84a648bb990a1dba76bc7
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FlexibleColumnLayout = Control.extend("sap.f.FlexibleColumnLayout", {
@@ -80,7 +82,7 @@ sap.ui.define([
 				/**
 				 * Determines the layout of the control - number of visible columns and their relative sizes
 				 */
-				layout: {type: "sap.f.LayoutType", defaultValue: sap.f.LayoutType.OneColumn},
+				layout: {type: "sap.f.LayoutType", defaultValue: LT.OneColumn},
 
 				/**
 				 * Determines the type of the transition/animation to apply for the <code>Begin</code> column when <code>to()</code> is called without defining the
@@ -1716,4 +1718,4 @@ sap.ui.define([
 
 	return FlexibleColumnLayout;
 
-}, /* bExport= */ true);
+});

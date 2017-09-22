@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		toggleGroupHeader : function(oTable, iRowIndex, bExpand) {
 			var oBinding = oTable.getBinding("rows");
 
-			if (oBinding) {
+			if (oBinding && oBinding.expand) {
 				var bIsExpanded = oBinding.isExpanded(iRowIndex);
 				var bIsLeaf = true; // If the node state can not be determined, we assume it is a leaf.
 

@@ -3181,7 +3181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Gets the node info for the given row-index.
 	 * @param {int} iRowIndex
-	 * @returns
+	 * @returns {{index:int}} node info for the given row-index
 	 */
 	ODataTreeBindingFlat.prototype.getNodeInfoByRowIndex = function(iRowIndex) {
 		var iCPointer = 0, iEPointer = 0, oNode, bTypeCollapse, iValidCollapseIndex = -1;
@@ -3272,8 +3272,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 	/**
 	 * Retrieves the Row-Index for the given node.
-	 * @param oNode
-	 * @returns
+	 * @param {Object} oNode
+	 * @returns {int} Row-Index for the given node
 	 */
 	ODataTreeBindingFlat.prototype.getRowIndexByNode = function (oNode) {
 		var iDelta = 0;

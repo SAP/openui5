@@ -80,7 +80,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Settings.prototype._getSettingsAction = function(oOverlay) {
-		return oOverlay.getDesignTimeMetadata().getAction("settings", oOverlay.getElementInstance());
+		return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getAction("settings", oOverlay.getElementInstance()) : null;
 	};
 
 	/**
@@ -119,26 +119,54 @@ sap.ui.define([
 
 
 	Settings.prototype.handleSettings = function(aSelectedOverlays) {
-		var oSettingsCommand;
+		var oSettingsCommand, oAppDescriptorCommand, oCompositeCommand;
 		var oElement = aSelectedOverlays[0].getElementInstance();
 		var mPropertyBag = {
 			getUnsavedChanges: this._getUnsavedChanges.bind(this),
 			styleClass: Utils.getRtaStyleClassName()
 		};
 
-		var oChangeHandler;
-		var sVariantManagementReference;
 		return aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler(oElement, mPropertyBag).then(function(aChanges) {
+			oCompositeCommand = this.getCommandFactory().getCommandFor(oElement, "composite");
 			aChanges.forEach(function(mChange) {
-				oChangeHandler = this._getChangeHandlerForControlType(mChange.selectorControl.controlType, mChange.changeSpecificData.changeType);
-				if (aSelectedOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
-					sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
+				var mChangeSpecificData = mChange.changeSpecificData;
+				// Flex Change
+				if (mChangeSpecificData.changeType){
+					var sVariantManagementReference;
+					var mSelectorControl = mChange.selectorControl;
+					var oChangeHandler = this._getChangeHandlerForControlType(mSelectorControl.controlType, mChangeSpecificData.changeType);
+					if (aSelectedOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
+						sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
+					}
+					oSettingsCommand = this.getCommandFactory().getCommandFor(
+						mSelectorControl,
+						"settings",
+						mChangeSpecificData,
+						undefined,
+						sVariantManagementReference);
+					oCompositeCommand.addCommand(oSettingsCommand);
+				// App Descriptor Change
+				} else if (mChangeSpecificData.appDescriptorChangeType){
+					var oComponent = mChange.appComponent;
+					var mManifest = oComponent.getManifest();
+					var sReference = mManifest["sap.app"].id;
+					oAppDescriptorCommand = this.getCommandFactory().getCommandFor(
+						oElement,
+						"appDescriptor",
+						{
+							reference : sReference,
+							appComponent : oComponent,
+							changeType : mChangeSpecificData.appDescriptorChangeType,
+							parameters : mChangeSpecificData.content.parameters,
+							texts : mChangeSpecificData.content.texts
+						}
+					);
+					oCompositeCommand.addCommand(oAppDescriptorCommand);
 				}
-				oSettingsCommand = this.getCommandFactory().getCommandFor(mChange.selectorControl, "settings", mChange.changeSpecificData, undefined, sVariantManagementReference);
-				this.fireElementModified({
-					"command" : oSettingsCommand
-				});
 			}, this);
+			this.fireElementModified({
+				"command" : oCompositeCommand
+			});
 		}.bind(this))['catch'](function(oError) {
 			if (oError) {
 				throw oError;

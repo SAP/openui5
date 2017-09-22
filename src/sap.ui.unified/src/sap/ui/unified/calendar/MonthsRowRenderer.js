@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate'],
-	function(jQuery, CalendarUtils, CalendarDate) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/library'],
+	function(jQuery, CalendarUtils, CalendarDate, library) {
 	"use strict";
+
+
+	// shortcut for sap.ui.unified.CalendarDayType
+	var CalendarDayType = library.CalendarDayType;
 
 
 	/**
@@ -259,7 +263,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-End";
 		}
 
-		if (oType && oType.type != sap.ui.unified.CalendarDayType.None) {
+		if (oType && oType.type != CalendarDayType.None) {
 			oRm.addClass("sapUiCalItem" + oType.type);
 			if (oType.tooltip) {
 				oRm.writeAttributeEscaped('title', oType.tooltip);
@@ -275,7 +279,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		oRm.writeAttribute("data-sap-month", sYyyymm);
 		mAccProps["label"] = mAccProps["label"] + oHelper.oFormatLong.format(oDate.toUTCJSDate(), true);
 
-		if (oType && oType.type != sap.ui.unified.CalendarDayType.None) {
+		if (oType && oType.type != CalendarDayType.None) {
 			// as legend must not be rendered add text of type
 			for (var i = 0; i < oHelper.aTypes.length; i++) {
 				var oLegendType = oHelper.aTypes[i];

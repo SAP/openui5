@@ -5,11 +5,30 @@
 // Provides control sap.m.Input.
 sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List', './Popover',
 		'sap/ui/core/Item', './ColumnListItem', './StandardListItem', './DisplayListItem', 'sap/ui/core/ListItem',
-		'./Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText'],
+		'./Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText',
+		'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Control'],
 	function(jQuery, Bar, Dialog, InputBase, List, Popover,
 			Item, ColumnListItem, StandardListItem, DisplayListItem, ListItem,
-			Table, Toolbar, ToolbarSpacer, library, IconPool, InvisibleText) {
+			Table, Toolbar, ToolbarSpacer, library, IconPool, InvisibleText,
+			Device, ResizeHandler, Control) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
+
+	// shortcut for sap.m.ListType
+	var ListType = library.ListType;
+
+	// shortcut for sap.m.InputTextFormatMode
+	var InputTextFormatMode = library.InputTextFormatMode;
+
+	// shortcut for sap.m.InputType
+	var InputType = library.InputType;
 
 
 
@@ -86,7 +105,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			 * <code>sap.ui.model</code> defines extended formats that are mostly incompatible with normal HTML
 			 * representations for numbers and dates.
 			 */
-			type : {type : "sap.m.InputType", group : "Data", defaultValue : sap.m.InputType.Text},
+			type : {type : "sap.m.InputType", group : "Data", defaultValue : InputType.Text},
 
 			/**
 			 * Maximum number of characters. Value '0' means the feature is switched off.
@@ -175,7 +194,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			 * Defines the display text format mode.
 			 * @since 1.44
 			 */
-			textFormatMode: {type: "sap.m.InputTextFormatMode", group: "Misc", defaultValue: sap.m.InputTextFormatMode.Value},
+			textFormatMode: {type: "sap.m.InputTextFormatMode", group: "Misc", defaultValue: InputTextFormatMode.Value},
 			/**
 			 * Defines the display text formatter function.
 			 * @since 1.44
@@ -431,10 +450,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		this._fnFilter = Input._DEFAULTFILTER;
 
 		// Show suggestions in a dialog on phones:
-		this._bUseDialog = sap.ui.Device.system.phone;
+		this._bUseDialog = Device.system.phone;
 
 		// Show suggestions in a full screen dialog on phones:
-		this._bFullScreen = sap.ui.Device.system.phone;
+		this._bFullScreen = Device.system.phone;
 
 		// Counter for concurrent issues with setValue:
 		this._iSetCount = 0;
@@ -527,7 +546,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		if (!this._bFullScreen) {
 			this._resizePopup();
-			this._sPopupResizeHandler = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
+			this._sPopupResizeHandler = ResizeHandler.register(this.getDomRef(), function() {
 				that._resizePopup();
 			});
 		}
@@ -564,11 +583,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			textFormatMode = this.getTextFormatMode();
 
 		switch (textFormatMode) {
-			case sap.m.InputTextFormatMode.Key:
+			case InputTextFormatMode.Key:
 				return sKey;
-			case sap.m.InputTextFormatMode.ValueKey:
+			case InputTextFormatMode.ValueKey:
 				return sText + ' (' + sKey + ')';
-			case sap.m.InputTextFormatMode.KeyValue:
+			case InputTextFormatMode.KeyValue:
 				return '(' + sKey + ') ' + sText;
 			default:
 				return sText;
@@ -673,7 +692,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			this._closeSuggestionPopup();
 		}
 
-		if (!sap.ui.Device.support.touch) {
+		if (!Device.support.touch) {
 			this._doSelect();
 		}
 
@@ -846,7 +865,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			this._closeSuggestionPopup();
 		}
 
-		if (!sap.ui.Device.support.touch) {
+		if (!Device.support.touch) {
 			this._doSelect();
 		}
 
@@ -1041,7 +1060,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @private
 	 */
 	Input.prototype._doSelect = function(iStart, iEnd) {
-		if (sap.ui.Device.support.touch) {
+		if (Device.support.touch) {
 			return;
 		}
 		var oDomRef = this._$input[0];
@@ -1092,7 +1111,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		// CSN# 1390866/2014: The default for ListItemBase type is "Inactive", therefore disabled entries are only supported for single and two-value suggestions
 		// for tabular suggestions: only check visible
 		// for two-value and single suggestions: check also if item is not inactive
-		return oItem.getVisible() && (this._hasTabularSuggestions() || oItem.getType() !== sap.m.ListType.Inactive);
+		return oItem.getVisible() && (this._hasTabularSuggestions() || oItem.getType() !== ListType.Inactive);
 	};
 
 	// helper method for distinguish between incremental and non incremental types of input
@@ -1208,12 +1227,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			this.$("inner").attr("aria-activedescendant", aListItems[iSelectedIndex].getId());
 		}
 
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			this._scrollToItem(iSelectedIndex);
 		}
 
 		// make sure the value doesn't exceed the maxLength
-		if (sap.m.ColumnListItem && aListItems[iSelectedIndex] instanceof sap.m.ColumnListItem) {
+		if (ColumnListItem && aListItems[iSelectedIndex] instanceof ColumnListItem) {
 			// for tabular suggestions we call a result filter function
 			sNewValue = this._getInputValue(this._fnRowResultFilter(aListItems[iSelectedIndex]));
 		} else {
@@ -1364,7 +1383,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 	Input.prototype._deregisterEvents = function() {
 		if (this._sPopupResizeHandler) {
-			sap.ui.core.ResizeHandler.deregister(this._sPopupResizeHandler);
+			ResizeHandler.deregister(this._sPopupResizeHandler);
 			this._sPopupResizeHandler = null;
 		}
 
@@ -1599,7 +1618,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		};
 
 		Input.prototype.addSuggestionRow = function(oItem) {
-			oItem.setType(sap.m.ListType.Active);
+			oItem.setType(ListType.Active);
 			this.addAggregation("suggestionRows", oItem);
 			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
@@ -1608,7 +1627,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		};
 
 		Input.prototype.insertSuggestionRow = function(oItem, iIndex) {
-			oItem.setType(sap.m.ListType.Active);
+			oItem.setType(ListType.Active);
 			this.insertAggregation("suggestionRows", iIndex, oItem);
 			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
@@ -1723,7 +1742,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				(new Popover(oInput.getId() + "-popup", {
 					showArrow: false,
 					showHeader: false,
-					placement: sap.m.PlacementType.Vertical,
+					placement: PlacementType.Vertical,
 					initialFocus: oInput,
 					horizontalScrolling: true
 				}).attachAfterClose(function() {
@@ -1828,7 +1847,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				oInput._oList = new List(oInput.getId() + "-popup-list", {
 					width : "100%",
 					showNoData : false,
-					mode : sap.m.ListMode.SingleSelectMaster,
+					mode : ListMode.SingleSelectMaster,
 					rememberSelections : false,
 					itemPress : function(oEvent) {
 						var oListItem = oEvent.getParameter("listItem");
@@ -2001,7 +2020,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 							oListItem.setTitle(oItem.getText());
 						}
 
-						oListItem.setType(oItem.getEnabled() ? sap.m.ListType.Active : sap.m.ListType.Inactive);
+						oListItem.setType(oItem.getEnabled() ? ListType.Active : ListType.Inactive);
 						oListItem._oItem = oItem;
 						oListItem.addEventDelegate(oListItemDelegate);
 						aHitItems.push(oListItem);
@@ -2199,7 +2218,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		if (!this._oSuggestionTable) {
 			this._oSuggestionTable = new Table(this.getId() + "-popup-table", {
-				mode: sap.m.ListMode.SingleSelectMaster,
+				mode: ListMode.SingleSelectMaster,
 				showNoData: false,
 				showSeparators: "All",
 				width: "100%",
@@ -2234,7 +2253,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (this._iPopupListSelectedIndex >= 0) {
 			var oSelectedListItem = this._oList.getItems()[this._iPopupListSelectedIndex];
 			if (oSelectedListItem) {
-				if (sap.m.ColumnListItem && oSelectedListItem instanceof sap.m.ColumnListItem) {
+				if (ColumnListItem && oSelectedListItem instanceof ColumnListItem) {
 					this.fireSuggestionItemSelected({selectedRow : oSelectedListItem});
 				} else {
 					this.fireSuggestionItemSelected({selectedItem : oSelectedListItem._oItem});
@@ -2271,7 +2290,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			return oSuggestionsTable[sFunctionName].apply(oSuggestionsTable, ["items"].concat(aArgs.slice(2)));
 		} else {
 			// apply to this control
-			return sap.ui.core.Control.prototype[sFunctionName].apply(this, aArgs .slice(1));
+			return Control.prototype[sFunctionName].apply(this, aArgs .slice(1));
 		}
 	};
 
@@ -2328,7 +2347,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	Input.prototype.clone = function() {
-		var oInputClone = sap.ui.core.Control.prototype.clone.apply(this, arguments),
+		var oInputClone = Control.prototype.clone.apply(this, arguments),
 			bindingInfo;
 
 		// add suggestion columns
@@ -2428,18 +2447,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @function
 	 */
 
-	 /**
-	 * Getter for property <code>showValueStateMessage</code>.
-	 * Whether the value state message should be shown. This property is already available for sap.m.Input since 1.16.0.
-	 *
-	 * Default value is <code>true</code>
-	 *
-	 * @return {boolean} the value of property <code>showValueStateMessage</code>
-	 * @public
-	 * @since 1.16
-	 * @name sap.m.Input#getShowValueStateMessage
-	 * @function
-	 */
+	/**
+	* Getter for property <code>showValueStateMessage</code>.
+	* Whether the value state message should be shown. This property is already available for sap.m.Input since 1.16.0.
+	*
+	* Default value is <code>true</code>
+	*
+	* @return {boolean} the value of property <code>showValueStateMessage</code>
+	* @public
+	* @since 1.16
+	* @name sap.m.Input#getShowValueStateMessage
+	* @function
+	*/
 
 	/**
 	 * Setter for property <code>showValueStateMessage</code>.
@@ -2458,4 +2477,4 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 	return Input;
 
-}, /* bExport= */ true);
+});

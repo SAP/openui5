@@ -3,9 +3,16 @@
  */
 
 // Provides control sap.m.RadioButtonGroup.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-		function(jQuery, library, Control, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/library'],
+		function(jQuery, library, Control, ItemNavigation, coreLibrary) {
 			"use strict";
+
+			// shortcut for sap.ui.core.TextDirection
+			var TextDirection = coreLibrary.TextDirection;
+
+			// shortcut for sap.ui.core.ValueState
+			var ValueState = coreLibrary.ValueState;
+
 			/**
 			 * Constructor for a new RadioButtonGroup.
 			 *
@@ -72,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 * Note: Setting this attribute to sap.ui.core.ValueState.Error when the accessibility feature is enabled,
 					 * sets the value of the invalid propery for the whole RadioButtonGroup to "true".
 					 */
-					valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
+					valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
 
 					/**
 					 * Determines the index of the selected/checked RadioButton. Default is 0.
@@ -89,7 +96,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 					 * @since 1.28.0
 					 */
-					textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+					textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 				},
 				defaultAggregation : "buttons",
 				aggregations : {
@@ -600,4 +607,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			return RadioButtonGroup;
 
-		}, /* bExport= */ true);
+		});

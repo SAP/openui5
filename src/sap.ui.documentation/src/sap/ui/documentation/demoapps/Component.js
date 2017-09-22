@@ -6,7 +6,7 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/documentation/demoapps/model/libraryData',
-	"sap/ui/documentation/demoapps/model/models"
+	'sap/ui/documentation/demoapps/model/models'
 ], function(UIComponent, JSONModel, libraryData, models) {
 	"use strict";
 

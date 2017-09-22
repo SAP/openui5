@@ -6,7 +6,7 @@ sap.ui.define([
 		metadata: {
 			aggregations: {
 				textItems: {
-					type: "sap.m.Text",
+					type: "sap.ui.core.Control",
 					multiple: true,
 					invalidate: true
 				},

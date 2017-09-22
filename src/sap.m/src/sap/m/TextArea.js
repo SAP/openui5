@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.m.TextArea.
-sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/ResizeHandler", './library'],
-	function(jQuery, InputBase, Text, ResizeHandler, library) {
+sap.ui.define(['jquery.sap.global', './InputBase', './Text', 'sap/ui/core/ResizeHandler', './library', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(jQuery, InputBase, Text, ResizeHandler, library, coreLibrary, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.Wrapping
+	var Wrapping = coreLibrary.Wrapping;
 
 
 
@@ -101,7 +106,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 			/**
 			 * Indicates how the control wraps the text, e.g. <code>Soft</code>, <code>Hard</code>, <code>Off</code>.
 			 */
-			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : sap.ui.core.Wrapping.None},
+			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : Wrapping.None},
 
 			/**
 			 * Indicates when the <code>value</code> property gets updated with the user changes. Setting it to <code>true</code> updates the <code>value</code> property whenever the user has modified the text shown on the text area.
@@ -216,7 +221,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 						parseFloat(oStyle.paddingTop) + parseFloat(oStyle.borderTopWidth) + parseFloat(oStyle.borderBottomWidth);
 
 				// bottom padding is out of scrolling content in firefox
-				if (sap.ui.Device.browser.firefox) {
+				if (Device.browser.firefox) {
 					fMaxHeight += parseFloat(oStyle.paddingBottom);
 				}
 
@@ -228,7 +233,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 		this._updateMaxLengthAttribute();
 
-		if (!sap.ui.Device.support.touch) {
+		if (!Device.support.touch) {
 			return;
 		}
 
@@ -307,9 +312,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	TextArea.prototype.setValue = function (sValue) {
 		InputBase.prototype.setValue.call(this, sValue);
 		this._handleShowExceededText();
-        if (this.getGrowing()) {
-            this._adjustHeight();
-        }
+		if (this.getGrowing()) {
+			this._adjustHeight();
+		}
 		return this;
 	};
 
@@ -398,7 +403,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 	TextArea.prototype._adjustHeight = function() {
 		var oTextAreaRef = this.getFocusDomRef(),
-			fHeight = oTextAreaRef.scrollHeight + oTextAreaRef.offsetHeight - oTextAreaRef.clientHeight;
+			fHeight;
+
+		if (!oTextAreaRef) {
+			return;
+		}
+
+		fHeight = oTextAreaRef.scrollHeight + oTextAreaRef.offsetHeight - oTextAreaRef.clientHeight;
 
 		if (this.getValue() && fHeight !== 0) {
 			oTextAreaRef.style.height = fHeight + "px";
@@ -503,7 +514,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 			INSIDE_SCROLLABLE_WITHOUT_FOCUS : oDevice.os.ios || oDevice.os.blackberry || oDevice.browser.chrome,
 			PAGE_NON_SCROLLABLE_AFTER_FOCUS : oDevice.os.android && oDevice.os.version >= 4.1
 		};
-	}(sap.ui.Device));
+	}(Device));
 
 
 	/**
@@ -554,7 +565,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	};
 
 	// Flag for the Fiori Client on Windows Phone
-	var _bMSWebView = sap.ui.Device.os.windows_phone && (/MSAppHost/i).test(navigator.appVersion);
+	var _bMSWebView = Device.os.windows_phone && (/MSAppHost/i).test(navigator.appVersion);
 
 	/**
 	 * Special handling for the focusing issue in SAP Fiori Client on Windows Phone.
@@ -591,4 +602,4 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 	return TextArea;
 
-}, /* bExport= */ true);
+});

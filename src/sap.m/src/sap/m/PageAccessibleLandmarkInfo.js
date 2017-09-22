@@ -66,7 +66,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 			 *
 			 * If set to <code>sap.ui.core.AccessibleLandmarkRole.None</code>, no landmark will be added to the container.
 			 */
-			headerRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "None"},
+			headerRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "Region"},
 
 			/**
 			 * Texts which describes the landmark of the header container of the corresponding <code>sap.m.Page</code> control.
@@ -96,7 +96,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 			 *
 			 * If set to <code>sap.ui.core.AccessibleLandmarkRole.None</code>, no landmark will be added to the container.
 			 */
-			footerRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "None"},
+			footerRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "Region"},
 
 			/**
 			 * Texts which describes the landmark of the header container of the corresponding <code>sap.m.Page</code> control.

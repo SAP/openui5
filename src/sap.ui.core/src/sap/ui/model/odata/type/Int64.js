@@ -131,7 +131,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int64
 	 * @param {object} [oFormatOptions]
 	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}. In contrast to

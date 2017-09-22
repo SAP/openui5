@@ -3,10 +3,13 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils',
-               './calendar/Header', './calendar/TimesRow', './calendar/DatesRow', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/core/date/UniversalDate', './library'],
-               function(jQuery, Control, LocaleData, Date1, CalendarUtils, Header, TimesRow, DatesRow, MonthPicker, YearPicker, UniversalDate, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/unified/calendar/CalendarUtils',
+               './calendar/Header', './calendar/TimesRow', './calendar/DatesRow', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/core/date/UniversalDate', './library', 'sap/ui/core/format/DateFormat', 'sap/ui/Device', 'sap/ui/core/Locale', 'sap/ui/core/library'],
+               function(jQuery, Control, LocaleData, CalendarUtils, Header, TimesRow, DatesRow, MonthPicker, YearPicker, UniversalDate, library, DateFormat, Device, Locale, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = coreLibrary.CalendarType;
 
 	/*
 	 * Inside the CalendarTimeInterval UniversalDate objects are used. But in the API JS dates are used.
@@ -174,7 +177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this._iMode = 0; // months are shown
 
 		// to format year with era in Japanese
-		this._oYearFormat = sap.ui.core.format.DateFormat.getDateInstance({format: "y"});
+		this._oYearFormat = DateFormat.getDateInstance({format: "y"});
 
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
@@ -360,10 +363,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
 			if (!oOrigin ||
-					(!(oOrigin instanceof sap.ui.unified.calendar.DatesRow ||
-							oOrigin instanceof sap.ui.unified.calendar.MonthPicker ||
-							oOrigin instanceof sap.ui.unified.calendar.YearPicker ||
-							oOrigin instanceof sap.ui.unified.calendar.Header)
+					(!(oOrigin instanceof DatesRow ||
+							oOrigin instanceof MonthPicker ||
+							oOrigin instanceof YearPicker ||
+							oOrigin instanceof Header)
 					)) {
 				// do not invalidate if one of the child controls has changed
 				Control.prototype.invalidate.apply(this, arguments);
@@ -595,7 +598,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var iItems = this.getItems();
 
 		// in phone mode max 6 items are displayed
-		if (sap.ui.Device.system.phone && iItems > 6) {
+		if (Device.system.phone && iItems > 6) {
 			return 6;
 		} else {
 			return iItems;
@@ -611,7 +614,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (!this._oLocaleData) {
 			var sLocale = this.getLocale();
-			var oLocale = new sap.ui.core.Locale(sLocale);
+			var oLocale = new Locale(sLocale);
 			this._oLocaleData = LocaleData.getInstance(oLocale);
 		}
 
@@ -1660,12 +1663,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var sAriaLabel;
 		var bShort = false;
 		var aDay;
-		var sCalendarType = sap.ui.core.CalendarType.Gregorian;
+		var sCalendarType = CalendarType.Gregorian;
 		var bRelative = false;
 
 		if (oLocaleData.oLocale.sLanguage.toLowerCase() === "ja" || oLocaleData.oLocale.sLanguage.toLowerCase() === "zh") {
 			// format the day to have the specific day symbol in Japanese and Chinese
-			aDay = sap.ui.core.format.DateFormat.getDateInstance({format: "d"}).format(oStartDate, true);
+			aDay = DateFormat.getDateInstance({format: "d"}).format(oStartDate, true);
 		} else {
 			aDay = (oStartDate.getUTCDate()).toString();
 		}
@@ -1689,7 +1692,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oHeader.setTextButton1(sText);
 			oHeader.setTextButton2(this._oYearFormat.format(oStartDate, true));
 		} else {
-			oDateFormat = sap.ui.core.format.DateFormat.getInstance({style: "long", strictParsing: true, relative: bRelative, calendarType: sCalendarType}, oLocaleData.oLocale);
+			oDateFormat = DateFormat.getInstance({style: "long", strictParsing: true, relative: bRelative, calendarType: sCalendarType}, oLocaleData.oLocale);
 			sAriaLabel = aDay = oDateFormat.format(CalendarUtils._createLocalDate(oStartDate, true));
 			oHeader.setTextButton1(aDay);
 		}
@@ -2054,4 +2057,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	return CalendarTimeInterval;
 
-}, /* bExport= */ true);
+});

@@ -1905,5 +1905,53 @@ sap.ui.require([
 				assert.ok(false, "Threw exception: " + e);
 			}
 		});
+
+		QUnit.test("Expand with bSuppressChange flag should suppress the change event", function(assert) {
+			var done = assert.async();
+			oModel.attachMetadataLoaded(function() {
+				createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+					rootLevel: 2,
+					numberOfExpandedLevels: 2
+				});
+
+				oBinding.attachChange(changeHandler);
+				oBinding.getContexts(0, 10);
+
+				function changeHandler() {
+					oBinding.detachChange(changeHandler);
+					oBinding.getContexts(0, 10);
+					assert.ok(oBinding.findNode(1), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
+
+					var oSpy = sinon.spy(oBinding, "_fireChange");
+					oBinding.expand(1, true);
+					assert.ok(oSpy.notCalled, "No change event fired");
+					done();
+				}
+			});
+		});
+
+		QUnit.test("Collapse with bSuppressChange flag should suppress the change event", function(assert) {
+			var done = assert.async();
+			oModel.attachMetadataLoaded(function() {
+				createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+					rootLevel: 2,
+					numberOfExpandedLevels: 2
+				});
+
+				oBinding.attachChange(changeHandler);
+				oBinding.getContexts(0, 10);
+
+				function changeHandler() {
+					oBinding.detachChange(changeHandler);
+					oBinding.getContexts(0, 10);
+					assert.ok(oBinding.findNode(0), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
+
+					var oSpy = sinon.spy(oBinding, "_fireChange");
+					oBinding.collapse(0, true);
+					assert.ok(oSpy.notCalled, "No change event fired");
+					done();
+				}
+			});
+		});
 	});
 });

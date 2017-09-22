@@ -3,9 +3,20 @@
  */
 
 // Provides control sap.m.Carousel.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/thirdparty/mobify-carousel'],
-	function(jQuery, library, Control, mobifycarousel) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/thirdparty/mobify-carousel', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool', 'jquery.sap.keycodes', 'jquery.sap.events'],
+	function(jQuery, library, Control, mobifycarousel, Device, ResizeHandler, IconPool) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ImageHelper
+	var ImageHelper = library.ImageHelper;
+
+	// shortcut for sap.m.CarouselArrowsPlacement
+	var CarouselArrowsPlacement = library.CarouselArrowsPlacement;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
 
 
@@ -90,7 +101,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Defines where the carousel's page indicator is displayed. Possible values are sap.m.PlacementType.Top, sap.m.PlacementType.Bottom. Other values are ignored and the default value will be applied. The default value is sap.m.PlacementType.Bottom.
 			 */
-			pageIndicatorPlacement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : sap.m.PlacementType.Bottom},
+			pageIndicatorPlacement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : PlacementType.Bottom},
 
 			/**
 			 * Show or hide busy indicator in the carousel when loading pages after swipe.
@@ -111,7 +122,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * place the arrows on the sides of the carousel. Alternatively <code>sap.m.CarouselArrowsPlacement.PageIndicator</code> can
 			 * be used to place the arrows on the sides of the page indicator.
 			 */
-			arrowsPlacement : {type : "sap.m.CarouselArrowsPlacement", group : "Appearance", defaultValue : sap.m.CarouselArrowsPlacement.Content}
+			arrowsPlacement : {type : "sap.m.CarouselArrowsPlacement", group : "Appearance", defaultValue : CarouselArrowsPlacement.Content}
 		},
 		defaultAggregation : "pages",
 		aggregations : {
@@ -191,7 +202,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Carousel._LEFTMOST_CLASS = "sapMCrslLeftmost";
 	Carousel._RIGHTMOST_CLASS = "sapMCrslRightmost";
 	Carousel._LATERAL_CLASSES = "sapMCrslLeftmost sapMCrslRightmost";
-	Carousel._bIE9 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10);
+	Carousel._bIE9 = (Device.browser.internet_explorer && Device.browser.version < 10);
 	Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING = 10; // The number 10 is by keyboard specification
 	Carousel._BULLETS_TO_NUMBERS_THRESHOLD = 9; //The number 9 is by visual specification. Less than 9 pages - bullets for page indicator. 9 or more pages - numeric page indicator.
 
@@ -237,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (this._sResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
 		this.$().off('afterSlide');
@@ -313,7 +324,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setAssociation("activePage", this.getPages()[0].getId(), true);
 		}
 		if (this._sResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
 
@@ -392,7 +403,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this._$InnerDiv = this.$().find(Carousel._INNER_SELECTOR)[0];
 
-		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this._$InnerDiv, this._fnAdjustAfterResize);
+		this._sResizeListenerId = ResizeHandler.register(this._$InnerDiv, this._fnAdjustAfterResize);
 
 		// Fixes wrong focusing in IE
 		// BCP: 1670008915
@@ -474,25 +485,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sOldActivePageId = this.getActivePage();
 		var sNewActivePageId = this.getPages()[iNewPageIndex - 1].getId();
 		this.setAssociation("activePage", sNewActivePageId, true);
-		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT");
-		var sId = this.getId() + '-' + 'slide-number';
-		var sNewPageNumber = iNewPageIndex + ' ' + sTextBetweenNumbers + ' ' + this.getPages().length;
+		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iNewPageIndex, this.getPages().length]);
 
 		jQuery.sap.log.debug("sap.m.Carousel: firing pageChanged event: old page: " + sOldActivePageId
 				+ ", new page: " + sNewActivePageId);
 
 		// close the soft keyboard
-		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+		if (Device.system.tablet || Device.system.phone) {
 			jQuery(document.activeElement).blur();
 		}
 
 		this.firePageChanged( { oldActivePageId: sOldActivePageId,
 			newActivePageId: sNewActivePageId});
 
-		//change the number in the page indicator
-		if (document.getElementById(sId)) {
-			document.getElementById(sId).innerHTML = sNewPageNumber;
-		}
+		// change the number in the page indicator
+		this.$('slide-number').text(sTextBetweenNumbers);
 	};
 
 	/**
@@ -503,7 +510,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 */
 	Carousel.prototype._adjustHUDVisibility = function(iNextSlide) {
-		if (sap.ui.Device.system.desktop && !this.getLoop() && this.getPages().length > 1) {
+		if (Device.system.desktop && !this.getLoop() && this.getPages().length > 1) {
 			//update HUD arrow visibility for left- and
 			//rightmost pages
 			var $HUDContainer = this.$('hud');
@@ -609,7 +616,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns icon of the requested arrow
 	 */
 	Carousel.prototype._getNavigationArrow = function(sName) {
-		jQuery.sap.require("sap.ui.core.IconPool");
 		var mProperties = {
 			src: "sap-icon://slim-arrow-" + sName,
 			useIconTooltip : false
@@ -617,12 +623,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (sName === "left") {
 			if (!this._oArrowLeft) {
-				this._oArrowLeft = sap.m.ImageHelper.getImageControl(this.getId() + "-arrowScrollLeft", this._oArrowLeft, this, mProperties);
+				this._oArrowLeft = ImageHelper.getImageControl(this.getId() + "-arrowScrollLeft", this._oArrowLeft, this, mProperties);
 			}
 			return this._oArrowLeft;
 		} else if (sName === "right") {
 			if (!this._oArrowRight) {
-				this._oArrowRight = sap.m.ImageHelper.getImageControl(this.getId() + "-arrowScrollRight", this._oArrowRight, this, mProperties);
+				this._oArrowRight = ImageHelper.getImageControl(this.getId() + "-arrowScrollRight", this._oArrowRight, this, mProperties);
 			}
 			return this._oArrowRight;
 		}
@@ -640,7 +646,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Carousel.prototype._createScrollContainer = function (oPage) {
 		var imgClass;
-		var bShowIndicatorArrows = sap.ui.Device.system.desktop && this.getArrowsPlacement() === sap.m.CarouselArrowsPlacement.PageIndicator;
+		var bShowIndicatorArrows = Device.system.desktop && this.getArrowsPlacement() === CarouselArrowsPlacement.PageIndicator;
 		if (bShowIndicatorArrows) {
 			imgClass = "sapMCrslImg";
 		} else {
@@ -722,9 +728,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return result;
 	};
 
-	 //================================================================================
-	 // Keyboard handling
-	 //================================================================================
+	//================================================================================
+	// Keyboard handling
+	//================================================================================
 
 	/**
 	 * Handler for 'tab previous' key event.
@@ -1136,4 +1142,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return Carousel;
 
-}, /* bExport= */ true);
+});

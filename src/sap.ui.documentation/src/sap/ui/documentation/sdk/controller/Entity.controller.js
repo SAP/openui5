@@ -5,13 +5,12 @@
 /*global location */
 sap.ui.define([
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/core/ComponentContainer",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/EntityInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
-	], function (JSONModel, ComponentContainer, BaseController, ControlsInfo,
+	], function (JSONModel, BaseController, ControlsInfo,
 				 EntityInfo, ToggleFullScreenHandler, JSDocUtil) {
 		"use strict";
 
@@ -182,6 +181,10 @@ sap.ui.define([
 					}
 
 					this._switchPageTab();
+
+					jQuery.sap.delayedCall(0, this, function () {
+						this._oObjectPage.setBusy(false);
+					});
 				}
 
 				// set data model
@@ -220,6 +223,7 @@ sap.ui.define([
 
 
 			onRouteMatched: function (oEvt) {
+				this._oObjectPage.setBusy(true);
 
 				this._sNewId = oEvt.getParameter("arguments").id;
 				this._sNewTab = oEvt.getParameter("arguments").sectionTab;

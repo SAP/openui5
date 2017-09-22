@@ -116,11 +116,6 @@
                 <module>sap/m/GrowingList</module>
                 <module>sap/m/Column</module>
                 <module>sap/m/ColumnListItem</module>
-                <module>sap/m/FlexBox</module>
-                <module>sap/m/FlexItemData</module>
-                <module>sap/m/HBox</module>
-                <module>sap/m/VBox</module>
-                <module>sap/m/Title</module>
             </modules>
         </component>
     </ownership>

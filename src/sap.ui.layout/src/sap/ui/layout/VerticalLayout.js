@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.VerticalLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './library'],
-	function(jQuery, Control, EnabledPropagator, library) {
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './library'],
+	function(Control, EnabledPropagator, library) {
 	"use strict";
 
 	/**
@@ -59,6 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	 * Sets the width of the Vertical Layout without rerendering of the whole control, and everything inside it.
 	 * @param {sap.ui.core.CSSSize} width The new width
 	 * @returns {sap.ui.layout.VerticalLayout} This pointer for chaining
+	 * @public
 	 */
 	VerticalLayout.prototype.setWidth = function (width) {
 		this.setProperty("width", width, true);
@@ -81,4 +82,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 
 	return VerticalLayout;
 
-}, /* bExport= */ true);
+});

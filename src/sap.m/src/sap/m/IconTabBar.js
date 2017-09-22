@@ -3,9 +3,17 @@
  */
 
 // Provides control sap.m.IconTabBar.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/base/ManagedObject'],
+	function(jQuery, library, Control, ManagedObject) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.IconTabHeaderMode
+	var IconTabHeaderMode = library.IconTabHeaderMode;
+
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
 
 
 
@@ -144,7 +152,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Default is "Solid".
 			 * @since 1.26
 			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid},
+			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid},
 
 			/**
 			 * Specifies the header mode.
@@ -152,7 +160,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 *
 			 * @since 1.40
 			 */
-			headerMode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : sap.m.IconTabHeaderMode.Standard},
+			headerMode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : IconTabHeaderMode.Standard},
 
 			/**
 			 * Specifies if the overflow select list is displayed.
@@ -171,7 +179,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Default is "Solid".
 			 * @since 1.44
 			 */
-			headerBackgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid},
+			headerBackgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid},
 
 			/**
 			 * Specifies whether tab reordering is enabled. Relevant only for desktop devices.
@@ -615,7 +623,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Forwards a function call to a managed object based on the aggregation name.
 	 * If the name is items, it will be forwarded to the list, otherwise called locally.
 	 *
-	 * @name sap.m.IconTabBar
+	 * @name sap.m.IconTabBar._callMethodInManagedObject
 	 * @method
 	 * @private
 	 * @param {string} sFunctionName The name of the function to be called.
@@ -632,7 +640,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return oHeader[sFunctionName].apply(oHeader, aArgs.slice(1));
 		} else {
 			// apply to this control
-			return sap.ui.base.ManagedObject.prototype[sFunctionName].apply(this, aArgs.slice(1));
+			return ManagedObject.prototype[sFunctionName].apply(this, aArgs.slice(1));
 		}
 	};
 
@@ -848,4 +856,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	return IconTabBar;
 
-}, /* bExport= */ true);
+});

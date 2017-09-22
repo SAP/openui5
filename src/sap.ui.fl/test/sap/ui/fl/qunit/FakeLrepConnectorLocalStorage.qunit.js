@@ -209,7 +209,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("when a variant change with undefined variantManagement is loaded from local storage", function(assert) {
-		var aTestChangeWithoutVMRef = [{"fileName":"id_1449484290389_36","fileType":"variant"}];
+		var aTestChangeWithoutVMRef = [{"fileName":"id_1449484290389_36","fileType":"ctrl_variant"}];
 		return this.oFakeLrepConnectorLocalStorage.create(aTestChangeWithoutVMRef).then(function () {
 			return this.oFakeLrepConnectorLocalStorage.loadChanges("test.json.component")
 				.then(function (mResult) {

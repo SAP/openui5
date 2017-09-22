@@ -3,9 +3,20 @@
  */
 
 // Provides control sap.m.Table.
-sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library'],
-	function(jQuery, ListBase, ListItemBase, library) {
+sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library', 'sap/ui/Device'],
+	function(jQuery, ListBase, ListItemBase, library, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ListKeyboardMode
+	var ListKeyboardMode = library.ListKeyboardMode;
+
+	// shortcut for sap.m.ListGrowingDirection
+	var ListGrowingDirection = library.ListGrowingDirection;
+
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
 
 
 
@@ -38,7 +49,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 			/**
 			 * Sets the background style of the table. Depending on the theme, you can change the state of the background from <code>Solid</code> to <code>Translucent</code> or to <code>Transparent</code>.
 			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Translucent},
+			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent},
 
 			/**
 			 * Defines the algorithm to be used to layout the table cells, rows, and columns.
@@ -55,7 +66,15 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 			 * Setting this property to <code>true</code> will show an overlay on top of the table content and prevents the user interaction with it.
 			 * @since 1.22.1
 			 */
-			showOverlay : {type : "boolean", group : "Appearance", defaultValue : false}
+			showOverlay : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Enables alternating table row colors.
+			 * <b>Note:</b> This property can only be used with the Belize and Belize Deep themes.
+			 * Alternate row coloring is not available for the High Contrast Black/White themes.
+			 * @since 1.52
+			 */
+			alternateRowColors : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 
@@ -97,8 +116,8 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 
 	Table.prototype._renderOverlay = function() {
 		var $this = this.$(),
-		    $overlay = $this.find(".sapMTableOverlay"),
-		    bShowOverlay = this.getShowOverlay();
+			$overlay = $this.find(".sapMTableOverlay"),
+			bShowOverlay = this.getShowOverlay();
 		if (bShowOverlay && $overlay.length === 0) {
 			$overlay = jQuery("<div>").addClass("sapUiOverlay sapMTableOverlay").css("z-index", "1");
 			$this.append($overlay);
@@ -166,6 +185,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 	 */
 	Table.prototype.onAfterPageLoaded = function() {
 		this.updateSelectAllCheckbox();
+		if (this.getAlternateRowColors()) {
+			var $tblBody = this.$("tblBody").removeClass();
+			$tblBody.addClass(this._getAlternateRowColorsClass());
+		}
 		ListBase.prototype.onAfterPageLoaded.apply(this, arguments);
 	};
 
@@ -236,7 +259,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 		// header and footer are in the item navigation but
 		// initial focus should be at the first item row
 		if (oItemNavigation.getFocusedIndex() == -1) {
-			if (this.getGrowing() && this.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+			if (this.getGrowing() && this.getGrowingDirection() == ListGrowingDirection.Upwards) {
 				oItemNavigation.setFocusedIndex(aItemDomRefs.length - 1);
 			} else {
 				oItemNavigation.setFocusedIndex($Header[0] ? 1 : 0);
@@ -350,7 +373,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 
 	// force IE to repaint
 	Table.prototype._forceStyleChange = function() {
-		if (sap.ui.Device.browser.msie) {
+		if (Device.browser.msie) {
 			var oTableStyle = this.getTableDomRef().style;
 			oTableStyle.listStyleType = "circle";
 			window.setTimeout(function() { oTableStyle.listStyleType = "none"; }, 0);
@@ -526,7 +549,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 
 	// Handle tab key
 	Table.prototype.onsaptabnext = function(oEvent) {
-		if (oEvent.isMarked() || this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) {
+		if (oEvent.isMarked() || this.getKeyboardMode() == ListKeyboardMode.Edit) {
 			return;
 		}
 
@@ -548,7 +571,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 
 	// Handle shift-tab key
 	Table.prototype.onsaptabprevious = function(oEvent) {
-		if (oEvent.isMarked() || this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) {
+		if (oEvent.isMarked() || this.getKeyboardMode() == ListKeyboardMode.Edit) {
 			return;
 		}
 
@@ -587,6 +610,19 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 		this._bThemeChanged = true;
 	};
 
+	// returns the class that should be added to tbody element
+	Table.prototype._getAlternateRowColorsClass = function() {
+		if (this.isGrouped()) {
+			return "sapMListTblAlternateRowColorsGrouped";
+		}
+
+		if (this.hasPopin()) {
+			return "sapMListTblAlternateRowColorsPopin";
+		}
+
+		return "sapMListTblAlternateRowColors";
+	};
+
 	return Table;
 
-}, /* bExport= */ true);
+});

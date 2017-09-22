@@ -129,4 +129,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 
 	return ShellHeadUserItem;
 
-}, /* bExport= */ true);
+});

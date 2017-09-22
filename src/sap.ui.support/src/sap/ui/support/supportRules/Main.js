@@ -542,7 +542,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				var libFetchPromises = that._fetchLibraryFiles(aLibNames, function (libName) {
 					var normalizedLibName = libName.replace("." + customSuffix, "").replace(".internal", ""),
 						libSupport = jQuery.sap.getObject(libName).library.support,
-						library = that._mRuleSets[normalizedLibName];
+						library = that._mRuleSets[normalizedLibName],
+						tmpRuleset;
 
 					if (libSupport.ruleset instanceof RuleSet) {
 						if (library) {
@@ -552,7 +553,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 						}
 					} else {
 						if (library) {
-							library.ruleset._mRules = jQuery.extend(library.ruleset._mRules, that._createRuleSet(libSupport));
+							tmpRuleset = that._createRuleSet(libSupport);
+							library.ruleset._mRules = jQuery.extend(library.ruleset._mRules, tmpRuleset.ruleset._mRules);
 						} else {
 							library = that._createRuleSet(libSupport);
 						}

@@ -9,25 +9,19 @@ describe('sap.m.StepInput', function() {
 		sChangeWidthButtonId = 'change_step_input_width_btn';
 
 	it("Prepare environment", function () {
-		var _prepareDesktopEnvironment = function () {};
-		var _prepareMobileEnvironment = function () {
+		return browser.executeScript(function () {
 			/*
-			 * The step input under test is positioned out of the viewport for the majority of mobile devices
-			 * with low screens (height less than 1200px). This makes impossible a screen shot of it to be made
-			 * so that's why we need to focus it in order to provoke the page to scroll to it.
+			 * Note: This code is executed in separate browser environment so test environment variables are not available!
 			 */
-			element(by.id(sSutId)).focus();
-		};
-
-		browser.executeScript(function () {
-			return sap.ui.Device.system.phone;
-		}).then(function (response) {
-			var oResponse = JSON.parse(response);
-
-			if (oResponse && oResponse === true) {
-				_prepareMobileEnvironment();
+			if (sap.ui.Device.system.phone) {
+				/*
+				 * The step input under test is positioned out of the viewport for the majority of mobile devices
+				 * with low screens (height less than 1200px). This makes impossible a screen shot of it to be made
+				 * so that's why we need to focus it in order to provoke the page to scroll to it.
+				 */
+				sap.ui.getCore().byId("visual_test_step_input").focus();
 			} else {
-				_prepareDesktopEnvironment();
+				//Execute browser environment prepare code for desktop
 			}
 		});
 	});

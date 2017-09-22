@@ -2,15 +2,21 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './TileRenderer', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, TileRenderer, ValueStateSupport) {
+sap.ui.define(['./TileRenderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library'],
+	function(TileRenderer, ValueStateSupport, Renderer, library, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.m.StandardTileType
+	var StandardTileType = library.StandardTileType;
 
 	/**
 	 * CustomTile renderer.
 	 * @namespace
 	 */
-	var StandardTileRenderer = sap.ui.core.Renderer.extend(TileRenderer);
+	var StandardTileRenderer = Renderer.extend(TileRenderer);
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -30,10 +36,10 @@ sap.ui.define(['jquery.sap.global', './TileRenderer', 'sap/ui/core/ValueStateSup
 			rm.addClass("sapMStdTileIconDiv");
 
 			switch (oTile.getType()) {
-				case sap.m.StandardTileType.Monitor:
+				case StandardTileType.Monitor:
 					rm.addClass("sapMStdIconMonitor");
 					break;
-				case sap.m.StandardTileType.Create:
+				case StandardTileType.Create:
 					rm.addClass("sapMStdIconCreate");
 					break;
 			}
@@ -84,7 +90,7 @@ sap.ui.define(['jquery.sap.global', './TileRenderer', 'sap/ui/core/ValueStateSup
 
 		rm.write("<div"); // Start monitoring tile styling
 		rm.addClass("sapMStdTileBottomRow");
-		if (oTile.getType() === sap.m.StandardTileType.Monitor) {
+		if (oTile.getType() === StandardTileType.Monitor) {
 			rm.addClass("sapMStdTileMonitorType");
 		}
 		rm.writeClasses();
@@ -108,7 +114,7 @@ sap.ui.define(['jquery.sap.global', './TileRenderer', 'sap/ui/core/ValueStateSup
 			rm.writeClasses();
 
 			/* WAI ARIA for infoState */
-			if (infoState != sap.ui.core.ValueState.None) {
+			if (infoState != ValueState.None) {
 				rm.writeAccessibilityState(oTile, {
 					ariaDescribedBy: {
 						value: oTile.getId() + "-sapSRH",
@@ -125,7 +131,7 @@ sap.ui.define(['jquery.sap.global', './TileRenderer', 'sap/ui/core/ValueStateSup
 		}
 
 		/* WAI ARIA adding hidden element for infoStatus */
-		if (infoState != sap.ui.core.ValueState.None) {
+		if (infoState != ValueState.None) {
 			rm.write("<span");
 			rm.writeAttributeEscaped("id", oTile.getId() + "-sapSRH");
 			rm.addClass("sapUiInvisibleText");

@@ -3,18 +3,22 @@
  */
 
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/Device",
-		"sap/ui/core/Component",
 		"sap/ui/core/Fragment",
 		"sap/ui/documentation/library",
 		"sap/ui/core/IconPool",
 		"sap/m/SplitAppMode",
-		"sap/m/MessageBox"
-	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, IconPool, SplitAppMode, MessageBox) {
+		"sap/m/MessageBox",
+		"sap/m/library"
+	], function (jQuery, BaseController, JSONModel, ResizeHandler, Device, Fragment, library, IconPool, SplitAppMode, MessageBox, mobileLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.URLHelper
+		var URLHelper = mobileLibrary.URLHelper;
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			onInit : function () {
@@ -28,11 +32,16 @@ sap.ui.define([
 					bHasMaster: false,
 					bSearchMode: false,
 					bHideEmptySections: window['sap-ui-documentation-hideEmptySections'],
-					sAboutInfo: "Looking for the Demo Kit for a specific SAPUI5 version? " +
+					sAboutInfoSAPUI5: "Looking for the Demo Kit for a specific SAPUI5 version? " +
 					"Check at <a href = 'https://sapui5.hana.ondemand.com/versionoverview.html'>https://sapui5.hana.ondemand.com/versionoverview.html</a> " +
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
-					"<a href='https://sapui5.hana.ondemand.com/1.38.8/'>https://sapui5.hana.ondemand.com/1.38.8/</a>"
+					"<a href='https://sapui5.hana.ondemand.com/1.44.16/'>https://sapui5.hana.ondemand.com/1.44.16/</a>",
+					sAboutInfoOpenUI5: "Looking for the Demo Kit for a specific OpenUI5 version? " +
+					"Check at <a href = 'https://openui5.hana.ondemand.com/versionoverview.html'>https://openui5.hana.ondemand.com/versionoverview.html</a> " +
+					"which versions are available. " +
+					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
+					"<a href='https://openui5.hana.ondemand.com/1.44.16/'>https://openui5.hana.ondemand.com/1.44.16/</a>"
 				});
 
 				this.MENU_LINKS_MAP = {
@@ -69,9 +78,6 @@ sap.ui.define([
 				this.oRouter.getRoute("entityEventsLegacyRoute").attachPatternMatched({entityType:"events"}, this._forwardToAPIRef, this);
 				this.oRouter.getRoute("entityMethodsLegacyRoute").attachPatternMatched({entityType:"methods"}, this._forwardToAPIRef, this);
 
-				// apply content density mode to root view
-				this._oView.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
 			},
@@ -81,6 +87,11 @@ sap.ui.define([
 			},
 
 			onAfterRendering: function() {
+				// apply content density mode to the body tag
+				// in order to get the controls in the static area styled correctly,
+				// such as Dialog and Popover.
+				jQuery(document.body).addClass(this.getOwnerComponent().getContentDensityClass());
+
 				Device.orientation.attachHandler(this._onOrientationChange, this);
 			},
 
@@ -226,7 +237,7 @@ sap.ui.define([
 				} else if (sTargetText === "Feedback") {
 					this.feedbackDialogOpen();
 				} else if (sTarget) {
-					sap.m.URLHelper.redirect(sTarget, true);
+					URLHelper.redirect(sTarget, true);
 				}
 			},
 
@@ -552,14 +563,6 @@ sap.ui.define([
 				}
 			},
 
-			//onFeedbackInput : function() {
-			//	if (this._oFeedbackDialog.textInput.getValue() || this._oFeedbackDialog.ratingStatus.value) {
-			//		this._oFeedbackDialog.sendButton.setEnabled(true);
-			//	} else {
-			//		this._oFeedbackDialog.sendButton.setEnabled(false);
-			//	}
-			//},
-
 			onSearch : function (oEvent) {
 				var sQuery = oEvent.getParameter("query");
 				if (!sQuery) {
@@ -666,6 +669,5 @@ sap.ui.define([
 			}
 
 		});
-
 	}
 );

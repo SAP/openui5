@@ -192,6 +192,76 @@ sap.ui.require(["sap/ui/rta/appVariant/Feature",
 		});
 	});
 
+	QUnit.test("when isPlatFormEnabled() is called for an FLP app which has no crossNavigation in 'sap.app' property of a descriptor", function(assert) {
+		var oMockedDescriptorData = {
+			"sap.ui5": {
+				componentName: "BaseAppId"
+			},
+			"sap.app": {
+				title: "BaseAppTitle",
+				subTitle: "BaseAppSubtitle",
+				description: "BaseAppDescription",
+				id: "BaseAppId"
+			},
+			"sap.ui": {
+				icons: {
+					icon: "sap-icon://history"
+				}
+			}
+		};
+
+		var oMockedUriParams = {
+			mParams: {
+				"sap-ui-xx-rta-save-as": ["true"]
+			}
+		};
+
+		sandbox.stub(jQuery.sap, "getUriParameters").returns(oMockedUriParams);
+
+		sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
+
+		sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: true}));
+
+		sandbox.stub(AppVariantUtils, "getInboundInfo").returns({currentRunningInbound: "testInboundId", addNewInboundRequired: true});
+		sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
+
+		return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
+			assert.equal(bResult, false, "then the 'i' button is not visible");
+		});
+	});
+
+	QUnit.test("when isPlatFormEnabled() is called for FLP app which has no 'sap.app' property of a descriptor", function(assert) {
+		var oMockedDescriptorData = {
+			"sap.ui5": {
+				componentName: "BaseAppId"
+			},
+			"sap.ui": {
+				icons: {
+					icon: "sap-icon://history"
+				}
+			}
+		};
+
+		var oMockedUriParams = {
+			mParams: {
+				"sap-ui-xx-rta-save-as": ["true"]
+			}
+		};
+
+		sandbox.stub(jQuery.sap, "getUriParameters").returns(oMockedUriParams);
+
+		sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
+
+		sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: true}));
+
+		sandbox.stub(AppVariantUtils, "getInboundInfo").returns({currentRunningInbound: "testInboundId", addNewInboundRequired: true});
+		sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
+
+		return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
+			assert.equal(bResult, false, "then the 'i' button is not visible");
+		});
+	});
+
 	QUnit.test("when isPlatFormEnabled() is called with no isPlatFormEnabled support (NON S/4 Hana Cloud systems)", function(assert) {
 		var oMockedDescriptorData = {
 			"sap.app": {

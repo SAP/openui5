@@ -8,13 +8,14 @@ sap.ui.require([
 	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/m/Text"
-], function(LrepConnector, FakeLrepConnector, Cache, Change, ChangePersistence, VariantController, VariantModel, FlexControllerFactory, Utils, Text) {
+], function(LrepConnector, FakeLrepConnector, Cache, Change, Variant, ChangePersistence, VariantController, VariantModel, FlexControllerFactory, Utils, Text) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
 	QUnit.start();
@@ -76,10 +77,11 @@ sap.ui.require([
 	QUnit.test("when calling 'getVariants' of the VariantController", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		var aExpectedVariants = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants;
-		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
-		assert.deepEqual(aExpectedVariants, aVariants, "then the variants of a given variantManagmentId are returned");
-		assert.equal(aVariants[0].content.fileName, "idMain1--variantManagementOrdersTable", "and ordered with standard variant first");
+		var aVariants = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants;
+		var aSortedVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var aExpectedVariants = [aVariants[1], aVariants[0], aVariants[2]];
+		assert.deepEqual(aExpectedVariants, aSortedVariants, "then the variants of a given variantManagmentId are returned");
+		assert.equal(aExpectedVariants[0].content.fileName, "idMain1--variantManagementOrdersTable", "and ordered with standard variant first");
 	});
 
 	QUnit.test("when calling 'getVariants' of the VariantController with an invalid variantManagementId", function(assert) {
@@ -147,13 +149,15 @@ sap.ui.require([
 					"variantManagementId" : {
 						"variants" : [{
 							"content" : {
-								"fileName": "variant0"
+								"fileName": "variant0",
+								"title": "variant 0"
 							},
 							"changes" : []
 						},
 							{
 								"content" : {
-									"fileName": "variant1"
+									"fileName": "variant1",
+									"title": "variant 1"
 								},
 								"changes" : [oChangeContent0, oChangeContent1]
 							}]
@@ -206,13 +210,15 @@ sap.ui.require([
 					"variantManagementId" : {
 						"variants" : [{
 							"content" : {
-								"fileName": "variant0"
+								"fileName": "variant0",
+								"title": "variant 0"
 							},
 							"changes" : [oChangeContent0, oChangeContent1, oChangeContent2]
 						},
 						{
 							"content" : {
-								"fileName": "variant1"
+								"fileName": "variant1",
+								"title": "variant 1"
 							},
 							"changes" : [oChangeContent0, oChangeContent3, oChangeContent4]
 						}]
@@ -373,6 +379,51 @@ sap.ui.require([
 		done();
 	});
 
+	QUnit.test("when calling 'addVariantToVariantManagement' with a new variant", function(assert) {
+		var oChangeContent0 = {"fileName":"change0"};
+		var oChangeContent1 = {"fileName":"change1"};
+
+		var oFakeVariantData1 = {
+			"content" : {
+				"title": "AA",
+				"fileName": "newVariant1"
+			},
+			"changes" : [oChangeContent0]
+		};
+
+		var oFakeVariantData2 = {
+			"content" : {
+				"title": "ZZ",
+				"fileName": "newVariant2"
+			},
+			"changes" : [oChangeContent1]
+		};
+
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var iIndex1 = oVariantController.addVariantToVariantManagement(oFakeVariantData1, "idMain1--variantManagementOrdersTable");
+		var iIndex2 = oVariantController.addVariantToVariantManagement(oFakeVariantData2, "idMain1--variantManagementOrdersTable");
+
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+
+		assert.equal(iIndex1, 1, "then index 1 received on adding variant AA");
+		assert.equal(iIndex2, aVariants.length - 1, "then last index received on adding variant ZZ");
+		assert.equal(aVariants[1].content.fileName, "newVariant1", "then the new variant with title AA added to the second position after Standard Variant");
+		assert.equal(aVariants[aVariants.length - 1].content.fileName, "newVariant2", "then the new variant with title ZZ added to the last position after Standard Variant");
+	});
+
+	QUnit.test("when calling 'removeVariantFromVariantManagement' with a variant", function(assert) {
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+
+		var oVariantDataToBeRemoved = oVariantController.getVariants("idMain1--variantManagementOrdersTable")[0];
+		var oVariantToBeRemoved = new Variant(oVariantDataToBeRemoved);
+		oVariantController.removeVariantFromVariantManagement(oVariantToBeRemoved, "idMain1--variantManagementOrdersTable");
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var bPresent = aVariants.some( function(oVariant) {
+			return oVariant.content.fileName === oVariantDataToBeRemoved.content.fileName;
+		});
+		assert.notEqual(bPresent, "then the variant was removed");
+	});
+
 	//Integration tests
 
 	QUnit.module("Given an instance of FakeLrepConnector and a mock application", {
@@ -492,7 +543,7 @@ sap.ui.require([
 		sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
 
-		this.oFlexController.deleteChange(this.aRevertedChanges[1]);
+		this.oFlexController.deleteChange(this.aRevertedChanges[1], this.oComponent);
 		assert.ok(this.oModelRemoveChangeStub.calledOnce, "remove change was called from model");
 
 
@@ -514,13 +565,15 @@ sap.ui.require([
 						"variantManagementId" : {
 							"variants" : [{
 								"content" : {
-									"fileName": "variant0"
+									"fileName": "variant0",
+									"title": "variant 0"
 								},
 								"changes" : [this.oChangeContent0, this.oChangeContent1]
 							},
 							{
 								"content" : {
-									"fileName": "variant1"
+									"fileName": "variant1",
+									"title": "variant 1"
 								},
 								"changes" : []
 							}]

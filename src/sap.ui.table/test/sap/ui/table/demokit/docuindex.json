@@ -37,7 +37,8 @@
 				"samples": [
 			  	    "sap.ui.table.sample.TreeTable.JSONTreeBinding",
 					"sap.ui.table.sample.TreeTable.BasicODataTreeBinding",
-					"sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding"
+					"sap.ui.table.sample.TreeTable.ODataAnnotationsTreeBinding",
+                    "sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding"
 				]
 		  	}
 		],
@@ -106,6 +107,10 @@
 				"id": "sap.ui.table.sample.RowHighlights",
 				"name": "Row Highlights",
 				"description": "Shows how row highlights can be used."
+			},{
+				"id": "sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding",
+				"name": "Hierarchy Maintenance with a JSONModel",
+				"description": "Shows how hierarchy maintenance can be done using drag and drop."
 			}
 		]
 	}

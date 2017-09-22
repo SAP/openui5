@@ -3,9 +3,26 @@
  */
 
 // Provides control sap.m.ObjectListItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/ObjectNumber'],
-	function(jQuery, ListItemBase, library, IconPool, ObjectNumber) {
+sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/ObjectNumber', 'sap/ui/core/library'],
+	function(ListItemBase, library, IconPool, ObjectNumber, coreLibrary) {
 		"use strict";
+
+
+
+		// shortcut for sap.m.ObjectMarkerType
+		var ObjectMarkerType = library.ObjectMarkerType;
+
+		// shortcut for sap.m.ImageHelper
+		var ImageHelper = library.ImageHelper;
+
+		// shortcut for sap.ui.core.TextAlign
+		var TextAlign = coreLibrary.TextAlign;
+
+		// shortcut for sap.ui.core.TextDirection
+		var TextDirection = coreLibrary.TextDirection;
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
 
 
 
@@ -99,28 +116,28 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				 * Defines the ObjectListItem number and numberUnit value state.
 				 * @since 1.16.0
 				 */
-				numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
+				numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : ValueState.None},
 
 				/**
 				 * Determines the text direction of the item title.
 				 * Available options for the title direction are LTR (left-to-right) and RTL (right-to-left).
 				 * By default the item title inherits the text direction from its parent.
 				 */
-				titleTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+				titleTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 				/**
 				 * Determines the text direction of the item intro.
 				 * Available options for the intro direction are LTR (left-to-right) and RTL (right-to-left).
 				 * By default the item intro inherits the text direction from its parent.
 				 */
-				introTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+				introTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 				/**
 				 * Determines the text direction of the item number.
 				 * Available options for the number direction are LTR (left-to-right) and RTL (right-to-left).
 				 * By default the item number inherits the text direction from its parent.
 				 */
-				numberTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+				numberTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 				/**
 				 * Sets the locked state of the ObjectListItem.<br><br>
@@ -191,7 +208,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		ObjectListItem.prototype.onAfterRendering = function() {
 			var oObjectNumber = this.getAggregation("_objectNumber"),
 				bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
-				sTextAlign = bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right;
+				sTextAlign = bPageRTL ? TextAlign.Left : TextAlign.Right;
 
 			if (oObjectNumber && oObjectNumber.getNumber()) { // adjust alignment according the design specification
 				oObjectNumber.setTextAlign(sTextAlign);
@@ -315,7 +332,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 			var aCssClasses = ['sapMObjLIcon'];
 
-			this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
+			this._oImageControl = ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
 
 			return this._oImageControl;
 		};
@@ -413,7 +430,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setMarkFavorite = function (bMarked) {
-			return this._setOldMarkers(sap.m.ObjectMarkerType.Favorite, bMarked);
+			return this._setOldMarkers(ObjectMarkerType.Favorite, bMarked);
 		};
 
 		/**
@@ -424,7 +441,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setMarkFlagged = function (bMarked) {
-			return this._setOldMarkers(sap.m.ObjectMarkerType.Flagged, bMarked);
+			return this._setOldMarkers(ObjectMarkerType.Flagged, bMarked);
 		};
 
 		/**
@@ -435,7 +452,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setMarkLocked = function (bMarked) {
-			return this._setOldMarkers(sap.m.ObjectMarkerType.Locked, bMarked);
+			return this._setOldMarkers(ObjectMarkerType.Locked, bMarked);
 		};
 
 		/**
@@ -454,9 +471,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			for (var i = 0; i < aAllMarkers.length; i++) {
 				sMarkerType = aAllMarkers[i].getType();
 
-				if ((sMarkerType === sap.m.ObjectMarkerType.Flagged && this.getMarkFlagged()) ||
-					(sMarkerType === sap.m.ObjectMarkerType.Favorite && this.getMarkFavorite()) ||
-					(sMarkerType === sap.m.ObjectMarkerType.Locked && this.getMarkLocked())) {
+				if ((sMarkerType === ObjectMarkerType.Flagged && this.getMarkFlagged()) ||
+					(sMarkerType === ObjectMarkerType.Favorite && this.getMarkFavorite()) ||
+					(sMarkerType === ObjectMarkerType.Locked && this.getMarkLocked())) {
 						aAllMarkers[i].setVisible(bMarked);
 				}
 			}
@@ -523,5 +540,4 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		};
 
 		return ObjectListItem;
-
-	}, /* bExport= */ true);
+	});

@@ -4,9 +4,16 @@
 
 sap.ui.define([
 	'sap/ui/core/Control',
-	'./InputBase'
-], function(Control, InputBase) {
+	'./InputBase',
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/core/library',
+	'jquery.sap.keycodes'
+], function(Control, InputBase, jQuery, Device, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Applies mask support for input controls.
@@ -143,7 +150,7 @@ sap.ui.define([
 		 */
 		this.onkeydown = MaskEnabler.onkeydown = function (oEvent) {
 			var oKey = this._parseKeyBoardEvent(oEvent),
-				mBrowser = sap.ui.Device.browser,
+				mBrowser = Device.browser,
 				bIE9AndBackspaceDeleteScenario;
 
 			/* When user types character, the flow of triggered events is keydown -> keypress -> input. The MaskInput
@@ -891,7 +898,7 @@ sap.ui.define([
 			} else if ((!oKey.bShift && oKey.bDelete) || oKey.bBackspace) {
 				this._revertKey(oKey);
 				oEvent.preventDefault();
-			} else if (sap.ui.Device.browser.chrome && sap.ui.Device.os.android) {
+			} else if (Device.browser.chrome && Device.os.android) {
 				/*
 				 Needs a special handling for Chrome on Android, where keyrpess event is not firing.
 				 If the digit "9" is pressed, when the caret is at the beginning (0),
@@ -1077,7 +1084,7 @@ sap.ui.define([
 				bDelete: iPressedKey === mKC.DELETE,
 				bEscape: iPressedKey === mKC.ESCAPE,
 				bEnter: iPressedKey === mKC.ENTER,
-				bIphoneEscape: (sap.ui.Device.system.phone && sap.ui.Device.os.ios && iPressedKey === 127),
+				bIphoneEscape: (Device.system.phone && Device.os.ios && iPressedKey === 127),
 				bArrowRight: bArrowRight,
 				bArrowLeft: bArrowLeft,
 				bHome: iPressedKey === jQuery.sap.KeyCodes.HOME,
@@ -1124,7 +1131,7 @@ sap.ui.define([
 		 * @private
 		 */
 		this._getMinBrowserDelay = function () {
-			return !sap.ui.Device.browser.msie ? 4 : 50;
+			return !Device.browser.msie ? 4 : 50;
 		};
 
 		/**
@@ -1226,7 +1233,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the current control is in RTL mode
 		 */
 		this._isRtlMode = function () {
-			return sap.ui.getCore().getConfiguration().getRTL() || (this.getTextDirection() === sap.ui.core.TextDirection.RTL);
+			return sap.ui.getCore().getConfiguration().getRTL() || (this.getTextDirection() === TextDirection.RTL);
 		};
 
 		/**
@@ -1235,7 +1242,7 @@ sap.ui.define([
 		 * @returns {boolean|*} Whether the current environment and interaction lead to a bug in Webkit
 		 */
 		this._isWebkitProblematicCase = function () {
-			return (sap.ui.Device.browser.webkit && this._isRtlMode() && !this._containsRtlChars());
+			return Device.browser.webkit && this._isRtlMode() && !this._containsRtlChars();
 		};
 
 		/**
@@ -1313,5 +1320,4 @@ sap.ui.define([
 
 
 	return MaskEnabler;
-
 }, /* bExport= */ true);

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate'],
-	function(jQuery, CalendarDate, UniversalDate) {
+sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate'],
+	function(CalendarDate, UniversalDate) {
 	"use strict";
 
 	/*

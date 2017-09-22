@@ -393,7 +393,11 @@ function(
 		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay2).length, 3, "then it returns the correct overlays");
 		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay4).length, 8, "then it returns the correct overlays");
 		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay6).length, 7, "then it returns the correct overlays");
+		this.oButtonOverlay4.destroyDesignTimeMetadata();
+		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay6).length, 6, "then the overlay without DT Metadata is not returned");
 		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay8).length, 2, "then it returns the correct overlays");
+		this.oSubSectionOverlay1.destroyDesignTimeMetadata();
+		assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay8).length, 1, "then the overlay without DT Metadata is not returned");
 	});
 
 	QUnit.test("when findAllSiblingOverlaysInContainer is called", function(assert){
@@ -410,6 +414,9 @@ function(
 		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay2, this.oSubSectionOverlay1).length, 2, "then it returns the correct overlays");
 		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay4, this.oSectionOverlay1).length, 5, "then it returns the correct overlays");
 		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay6, this.oSubSectionOverlay2).length, 2, "then it returns the correct overlays");
+		this.oButtonOverlay7.destroyDesignTimeMetadata();
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay6, this.oSubSectionOverlay2).length, 1, "then the overlay without DT Metadata is not returned");
+		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay8, this.oSubSectionOverlay1).length, 1, "then it returns the correct overlays");
 		assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay8, this.oSubSectionOverlay1).length, 1, "then it returns the correct overlays");
 	});
 

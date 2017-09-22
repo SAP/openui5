@@ -5,16 +5,14 @@
 // Provides control sap.ui.table.Table.
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool',
-		'sap/ui/core/ResizeHandler', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters',
-		'sap/ui/model/ChangeReason', 'sap/ui/model/Context', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter', "sap/ui/model/BindingMode",
-		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', './TablePointerExtension',
-		'./TableScrollExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
+		'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter', 'sap/ui/model/BindingMode',
+		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension',
+		'./TablePointerExtension', './TableScrollExtension', './TableDragAndDropExtension', 'jquery.sap.dom', 'jquery.sap.trace', 'jquery.sap.events'],
 	function(jQuery, Device,
 		Control, Element, IconPool,
-		ResizeHandler, ItemNavigation, Parameters,
-		ChangeReason, Context, Filter, SelectionModel, Sorter, BindingMode,
+		ChangeReason, Filter, SelectionModel, Sorter, BindingMode,
 		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension,
-		TablePointerExtension, TableScrollExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
+		TablePointerExtension, TableScrollExtension, TableDragAndDropExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
 	"use strict";
 
 
@@ -308,7 +306,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * the template's properties or aggregations are changed, the template has to be applied again via
 			 * <code>setRowSettingsTemplate</code> for the changes to take effect.
 			 */
-			rowSettingsTemplate : {type : "sap.ui.table.RowSettings", multiple : false}
+			rowSettingsTemplate : {type : "sap.ui.table.RowSettings", multiple : false},
+
+			/**
+			 * Defines the drag-and-drop configuration.
+			 *
+			 * The following restrictions apply:
+			 * <ul>
+			 *   <li>Columns cannot be configured to be draggable.</li>
+			 *   <li>The following rows are not draggable:
+			 *     <ul>
+			 *       <li>Empty rows</li>
+			 *       <li>Group header rows</li>
+			 *       <li>Sum rows</li>
+			 *     </ul>
+			 *   </li>
+			 *   <li>Columns cannot be configured to be droppable.</li>
+			 *   <li>The following rows are not droppable:
+			 *     <ul>
+			 *       <li>The dragged row itself</li>
+			 *       <li>Empty rows</li>
+			 *       <li>Group header rows</li>
+			 *       <li>Sum rows</li>
+			 *     </ul>
+			 *   </li>
+			 *   <li>Texts in draggable rows cannot be selected.</li>
+			 *   <li>The text of input fields in draggable rows can be selected, but not dragged.</li>
+			 * </ul>
+			 *
+			 * @since 1.52
+			 */
+			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
 		},
 		associations : {
 
@@ -638,7 +666,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this._attachExtensions();
 
-		this._bBindingLengthChanged = false;
 		this._bRowAggregationInvalid = true;
 		this._mTimeouts = {};
 
@@ -693,8 +720,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				// Helper event for testing
 				that._fireRowsUpdated(sReason);
 			}
-
-			that._bBindingLengthChanged = false;
 		};
 
 		// basic selection model (by default the table uses multi selection)
@@ -736,7 +761,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		TableExtension.enrich(this, TablePointerExtension);
 		TableExtension.enrich(this, TableScrollExtension);
 		TableExtension.enrich(this, TableKeyboardExtension);
-		TableExtension.enrich(this, TableAccExtension); //Must be registered after keyboard to reach correct delegate order
+		TableExtension.enrich(this, TableAccExtension); // Must be registered after keyboard to reach correct delegate order
+		TableExtension.enrich(this, TableDragAndDropExtension);
 		this._bExtensionsInitialized = true;
 	};
 
@@ -950,7 +976,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oCCnt = oDomRef.querySelector(".sapUiTableCCnt");
 
 			if (oCCnt) {
-				var iUsedHeight = oDomRef.scrollHeight - parseFloat(window.getComputedStyle(oCCnt).height);
+				var iUsedHeight = oDomRef.scrollHeight - oCCnt.getBoundingClientRect().height;
 				// take into account controls above the table in the container
 				var iTableTop = 0;
 				if (oDomRef.parentNode.firstChild !== oDomRef) {
@@ -964,7 +990,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				// For simplicity always add the default height of the horizontal scrollbar to the used height, even if it will not be visible.
 				iUsedHeight += 18;
 
-				return jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop;
+				return Math.floor(oDomRef.parentNode.getBoundingClientRect().height - iUsedHeight - iTableTop);
 			}
 		}
 
@@ -1072,6 +1098,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		return oSizes;
+	};
+
+	/**
+	 * Returns the aggregation containers DOM reference.
+	 * @private
+	 */
+	Table.prototype.getAggregationDomRef = function(sAggregationName) {
+		if (sAggregationName == "rows") {
+			return this.getDomRef("tableCCnt");
+		}
 	};
 
 	/**
@@ -1538,6 +1574,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (this._getTotalRowCount() > 0) {
 			var iMaxRowIndex = this._getMaxRowIndex();
 
+			if (TableUtils.isVariableRowHeightEnabled(this)) {
+				iMaxRowIndex++;
+			}
+
 			if (iMaxRowIndex < iRowIndex) {
 				jQuery.sap.log.warning("The index of the first visible row must be lesser or equal than the scrollable row count minus the visible row count." +
 									   " The value has been set to " + iMaxRowIndex + ".", this);
@@ -1955,8 +1995,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Updates the cached total number of rows (binding length) and stores it in <code>Table._iBindingLength</code>.
 	 *
-	 * @param {boolean} [bUpdateUI=false] If set to <code>true</code>, the parts of the UI which are dependent on the total row count will
-	 * 									  be updated, if the total row count has changed.
+	 * @param {boolean} [bUpdateUI=true] If set to <code>true</code>, the parts of the UI which are dependent on the total row count will
+	 *                                   be updated, if the total row count has changed.
 	 * @returns {int} The updated total row count.
 	 * @private
 	 */
@@ -1975,10 +2015,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		if (iCurrentTotalRowCount !== iNewTotalRowCount) {
 			this._iBindingLength = iNewTotalRowCount;
-			this._bBindingLengthChanged = true;
 
 			// If the binding length changes, some parts of the UI need to be updated.
-			if (bUpdateUI === true) {
+			if (bUpdateUI !== false) {
 				var oScrollExtension = this._getScrollExtension();
 				var bClientBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientListBinding")
 									 || TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding");
@@ -1989,8 +2028,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 				if (oBinding == null || bClientBinding) {
 					// A client binding does not fire dataReceived events. Therefore we need to update the no data area here.
-					// When the binding has been removed, the table might not be completely re-rendered (just the content). But the bindingLengthChange event
-					// is fired. In this case we also need to update the no data area.
+					// When the binding has been removed, the table might not be completely re-rendered (just the content). But the cached binding
+					// length changes. In this case the no data area needs to be updated.
 					this._updateNoData();
 				}
 			}
@@ -2508,7 +2547,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				"-moz-user-select": "none",
 				"-webkit-user-select": "none",
 				"user-select": "none"
-	        }).
+			}).
 			bind("selectstart", function(oEvent) {
 				oEvent.preventDefault();
 				return false;
@@ -2537,15 +2576,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._clearTextSelection = function () {
 		if (window.getSelection) {
 		  if (window.getSelection().empty) {  // Chrome
-		    window.getSelection().empty();
+			window.getSelection().empty();
 		  } else if (window.getSelection().removeAllRanges) {  // Firefox
-		    window.getSelection().removeAllRanges();
+			window.getSelection().removeAllRanges();
 		  }
 		} else if (document.selection && document.selection.empty) {  // IE?
 			try {
-			    document.selection.empty();
+				document.selection.empty();
 			} catch (ex) {
-			    // ignore error to as a workaround for bug in IE8
+				// ignore error to as a workaround for bug in IE8
 			}
 		}
 	};
@@ -3677,7 +3716,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
 			this._bPendingRequest = false;
-			this._updateTotalRowCount();
+
+			// The AnalyticalBinding updates the length after it fires dataReceived, therefore the total row count will not change here. Later,
+			// when the contexts are retrieved in Table#_getRowContexts, the AnalyticalBinding updates the length and Table#_updateTotalRowCount
+			// will be called again and actually perform the update.
+			this._updateTotalRowCount(true);
 
 			if (this._dataReceivedHandlerId != null) {
 				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);

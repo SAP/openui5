@@ -3,12 +3,20 @@
  */
 
 // Provides control sap.ui.unified.ColorPicker.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/HTML', "sap/ui/core/ResizeHandler",
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/HTML", "sap/ui/core/ResizeHandler",
 	"sap/ui/layout/Grid", "sap/ui/layout/GridData", "sap/ui/layout/VerticalLayout", "sap/ui/layout/HorizontalLayout",
-	"sap/ui/core/Icon", "sap/ui/core/theming/Parameters", "sap/ui/core/InvisibleText"],
+	"sap/ui/core/Icon", "sap/ui/core/theming/Parameters", "sap/ui/core/InvisibleText", "sap/ui/Device", "sap/ui/core/library"],
 	function(jQuery, Library, Control, HTML, ResizeHandler, Grid, GridData, VLayout, HLayout, Icon, Parameters,
-		InvisibleText) {
+		InvisibleText, Device, coreLibrary) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.unified.ColorPickerMode
+	var ColorPickerMode = Library.ColorPickerMode;
 
 
 
@@ -58,7 +66,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Determines the color mode of the <code>ColorPicker</code>.
 			 * @since 1.48.0
 			 */
-			mode : {type : "sap.ui.unified.ColorPickerMode", group : "Appearance", defaultValue : sap.ui.unified.ColorPickerMode.HSV}
+			mode : {type : "sap.ui.unified.ColorPickerMode", group : "Appearance", defaultValue : ColorPickerMode.HSV}
 		},
 		aggregations: {
 			/**
@@ -193,8 +201,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
-		// variable that will be used for browser specific prefix of the slider background gradient
-		// it is set in the init function and is used inside _updateAlphaBackground() function
+	// variable that will be used for browser specific prefix of the slider background gradient
+	// it is set in the init function and is used inside _updateAlphaBackground() function
 	var sBrowserPrefix = "",
 		// get the background image of the slider
 		sBgSrc = sap.ui.resource('sap.ui.unified', 'img/ColorPicker/Alphaslider_BG.png'),
@@ -388,11 +396,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ColorPicker.prototype.init = function() {
 		// set gradient prefix depending of the browser
-		if (sap.ui.Device.browser.firefox) {
+		if (Device.browser.firefox) {
 			sBrowserPrefix = "-moz-linear-gradient";
-		} else if (sap.ui.Device.browser.msie) {
+		} else if (Device.browser.msie) {
 			sBrowserPrefix = "-ms-linear-gradient";
-		} else if (sap.ui.Device.browser.webkit) {
+		} else if (Device.browser.webkit) {
 			sBrowserPrefix = "-webkit-linear-gradient";
 		} else {
 			sBrowserPrefix = "linear-gradient";
@@ -1461,7 +1469,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		re = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 		if (re.test(sHexValue) === false) {
-			this.oHexField.setValueState(sap.ui.core.ValueState.Error);
+			this.oHexField.setValueState(ValueState.Error);
 			this.oSlider.setEnabled(false);
 			this.oAlphaSlider.setEnabled(false);
 			this.oHueField.setEnabled(false);
@@ -1477,8 +1485,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.oValField.setEnabled(false);
 			}
 			return;
-		} else if (this.oHexField.getValueState() === sap.ui.core.ValueState.Error) {
-			this.oHexField.setValueState(sap.ui.core.ValueState.None);
+		} else if (this.oHexField.getValueState() === ValueState.Error) {
+			this.oHexField.setValueState(ValueState.None);
 			this.oSlider.setEnabled(true);
 			this.oAlphaSlider.setEnabled(true);
 			this.oHueField.setEnabled(true);
@@ -2259,4 +2267,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return ColorPicker;
 
-}, /* bExport= */ true);
+});

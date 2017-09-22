@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.m.PullToRefresh.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, Parameters) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ImageHelper
+	var ImageHelper = library.ImageHelper;
 
 
 
@@ -66,7 +71,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 
 	PullToRefresh.prototype.init = function(){
-		this._bTouchMode = sap.ui.Device.support.touch && !sap.ui.Device.system.combi || jQuery.sap.simulateMobileOnDesktop;
+		this._bTouchMode = Device.support.touch && !Device.system.combi || jQuery.sap.simulateMobileOnDesktop;
 		this._iState = 0; // 0 - normal; 1 - release to refresh; 2 - loading
 	};
 
@@ -244,7 +249,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 		var aCssClasses = ['sapMPullDownCIImg'];
 
-		this._oCustomImage = sap.m.ImageHelper.getImageControl(null, this._oCustomImage, this, mProperties, aCssClasses);
+		this._oCustomImage = ImageHelper.getImageControl(null, this._oCustomImage, this, mProperties, aCssClasses);
 
 		return this._oCustomImage;
 	};
@@ -338,4 +343,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return PullToRefresh;
 
-}, /* bExport= */ true);
+});

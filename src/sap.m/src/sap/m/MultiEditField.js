@@ -63,6 +63,16 @@ sap.ui.define([
 				nullable: {
 					type: "boolean",
 					group: "Behavior",
+					defaultValue: true,
+					invalidate: true
+				},
+
+				/**
+				 * Defines whether the 'Label' is required for the selection field.
+				 */
+				required: {
+					type: "boolean",
+					group: "Behavior",
 					defaultValue: false,
 					invalidate: true
 				}
@@ -76,6 +86,17 @@ sap.ui.define([
 					type: "sap.ui.core.Item",
 					multiple: true,
 					bindable: "bindable"
+				}
+			},
+
+			associations: {
+				/**
+				 * The label that should be displayed before the field.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					singularName: "ariaLabelledBy"
 				}
 			},
 
@@ -200,6 +221,8 @@ sap.ui.define([
 			this.fireChange({
 				selectedItem: oItem
 			});
+		} else if (oItem === this._getValueHelp()) {
+			this.fireEvent("_valueHelpRequest");
 		}
 	};
 

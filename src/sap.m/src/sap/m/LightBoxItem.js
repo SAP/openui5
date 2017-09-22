@@ -4,9 +4,15 @@
 
 // Provides control sap.m.LightBoxItem
 sap.ui.define([
-        'jquery.sap.global', './library', 'sap/ui/core/Element', './Image', './Text'],
-    function(jQuery, library, Element, Image, Text) {
+        './library', 'sap/ui/core/Element', './Image', './Text', 'sap/ui/core/library'],
+    function(library, Element, Image, Text, coreLibrary) {
         "use strict";
+
+        // shortcut for sap.ui.core.OpenState
+        var OpenState = coreLibrary.OpenState;
+
+        // shortcut for sap.m.LightBoxLoadingStates
+        var LightBoxLoadingStates = library.LightBoxLoadingStates;
 
         /**
          * Constructor for a new LightBoxItem.
@@ -92,16 +98,16 @@ sap.ui.define([
         LightBoxItem.prototype._createNativeImage = function () {
             var that = this;
 
-            this._imageState = sap.m.LightBoxLoadingStates.Loading;
+            this._imageState = LightBoxLoadingStates.Loading;
             this._oImage = new window.Image();
             this._oImage.onload = function(oEvent) {
-                if (this.complete && that._imageState === sap.m.LightBoxLoadingStates.Loading) {
-                    that._setImageState(sap.m.LightBoxLoadingStates.Loaded);
+                if (this.complete && that._imageState === LightBoxLoadingStates.Loading) {
+                    that._setImageState(LightBoxLoadingStates.Loaded);
                 }
             };
 
             this._oImage.onerror = function(oEvent) {
-                that._setImageState(sap.m.LightBoxLoadingStates.Error);
+                that._setImageState(LightBoxLoadingStates.Error);
             };
         };
 
@@ -156,9 +162,9 @@ sap.ui.define([
                 return this;
             }
 
-            this._imageState = sap.m.LightBoxLoadingStates.Loading;
+            this._imageState = LightBoxLoadingStates.Loading;
 
-            if (oLightBox && oLightBox._oPopup.getOpenState() === sap.ui.core.OpenState.OPEN) {
+            if (oLightBox && oLightBox._oPopup.getOpenState() === OpenState.OPEN) {
                 this._oImage.src = sImageSrc;
             }
 
@@ -217,4 +223,4 @@ sap.ui.define([
         };
 
         return LightBoxItem;
-    }, /* bExport= */true);
+    });

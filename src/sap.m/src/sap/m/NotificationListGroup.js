@@ -2,10 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './NotificationListBase', 'sap/ui/core/InvisibleText', './ListItemBase'],
-	function (jQuery, library, Control, NotificationListBase, InvisibleText, ListItemBase) {
-
+sap.ui.define(['jquery.sap.global', './library', './NotificationListBase', 'sap/ui/core/InvisibleText', './ListItemBase', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device', 'jquery.sap.keycodes'],
+	function(jQuery, library, NotificationListBase, InvisibleText, ListItemBase, IconPool, coreLibrary, Device) {
 	'use strict';
+
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new NotificationListGroup.
@@ -89,7 +94,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	});
 
 	NotificationListGroup.prototype.init = function () {
-		sap.m.NotificationListBase.prototype.init.call(this);
+		NotificationListBase.prototype.init.call(this);
 
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 		this._closeText = resourceBundle.getText('NOTIFICATION_LIST_BASE_CLOSE');
@@ -99,8 +104,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		 * @private
 		 */
 		var _closeButton = new sap.m.Button(this.getId() + '-closeButton', {
-			type: sap.m.ButtonType.Transparent,
-			icon: sap.ui.core.IconPool.getIconURI('decline'),
+			type: ButtonType.Transparent,
+			icon: IconPool.getIconURI('decline'),
 			tooltip: this._closeText,
 			press: function () {
 				this.close();
@@ -114,7 +119,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		 * @private
 		 */
 		var _collapseButton = new sap.m.Button({
-			type: sap.m.ButtonType.Transparent,
+			type: ButtonType.Transparent,
 			press: function () {
 				this.setCollapsed(!this.getCollapsed());
 			}.bind(this)
@@ -157,7 +162,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		var notifications = this.getAggregation('items');
 
 		/** @type {sap.ui.core.Priority|string} */
-		var priority = sap.ui.core.Priority.None;
+		var priority = Priority.None;
 
 		if (notifications) {
 			notifications.forEach(function (item) {
@@ -192,7 +197,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		var notificationsCount = notifications.length;
 		var collapseButton = this.getAggregation('_collapseButton');
 
-		this._maxNumberOfNotifications = sap.ui.Device.system.desktop ? 400 : 100;
+		this._maxNumberOfNotifications = Device.system.desktop ? 400 : 100;
 		collapseButton.setEnabled(this._getCollapseButtonEnabled(), true);
 		this._maxNumberReached = notificationsCount > this._maxNumberOfNotifications;
 
@@ -223,7 +228,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	 */
 	NotificationListGroup.prototype._getHeaderTitle = function () {
 		/** @type {sap.m.Text} */
-		var title = sap.m.NotificationListBase.prototype._getHeaderTitle.call(this);
+		var title = NotificationListBase.prototype._getHeaderTitle.call(this);
 		title.addStyleClass('sapMNLG-Title');
 
 		if (this.getUnread()) {
@@ -240,7 +245,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	 */
 	NotificationListGroup.prototype._getDateTimeText = function () {
 		/** @type {sap.m.Text} */
-		var dateTime = sap.m.NotificationListBase.prototype._getDateTimeText.call(this);
+		var dateTime = NotificationListBase.prototype._getDateTimeText.call(this);
 		dateTime.setTextAlign('End');
 
 		return dateTime;
@@ -415,4 +420,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	}
 
 	return NotificationListGroup;
-}, /* bExport= */ true);
+});

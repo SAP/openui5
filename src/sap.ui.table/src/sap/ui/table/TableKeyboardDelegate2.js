@@ -4,8 +4,7 @@
 
 // Provides helper sap.ui.table.TableKeyboardDelegate2.
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/base/Object", "sap/ui/Device", "./library", "./TableUtils"
-], function(jQuery, BaseObject, Device, library, TableUtils) {
+"jquery.sap.global", "sap/ui/base/Object", "sap/ui/Device", "./library", "./TableUtils", "jquery.sap.keycodes"], function(jQuery, BaseObject, Device, library, TableUtils) {
 	"use strict";
 
 	// Shortcuts
@@ -346,27 +345,27 @@ sap.ui.define([
 		}
 
 		var oRow = oTable.getRows()[iRowIndex];
-		var $Cell;
+		var oCell;
 
 		if (iCellType === CellType.ROWHEADER) {
 			oTable._getKeyboardExtension()._setFocus(oTable.getDomRef("rowsel" + iRowIndex));
 			return;
 		} else if (iCellType === CellType.ROWACTION) {
-			$Cell = TableUtils.getCell(oTable, oRow.getAggregation("_rowAction").getDomRef());
+			oCell = oTable.getDomRef("rowact" + iRowIndex);
 		} else if (iCellType === CellType.DATACELL
 				   && (iColumnIndex != null && iColumnIndex >= 0 && iColumnIndex < TableUtils.getVisibleColumnCount(oTable))) {
 			var oColumn = oTable.getColumns()[iColumnIndex];
 			var iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
 
-			$Cell = TableUtils.getCell(oTable, oRow.getCells()[iColumnIndexInCellsAggregation].getDomRef());
+			oCell = oRow.getDomRef("col" + iColumnIndexInCellsAggregation);
 		}
 
-		if ($Cell == null) {
+		if (oCell == null) {
 			return;
 		}
 
 		if (bFirstInteractiveElement) {
-			var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements($Cell);
+			var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oCell);
 
 			if ($InteractiveElements != null) {
 				TableKeyboardDelegate._focusElement(oTable, $InteractiveElements[0], true);
@@ -374,7 +373,7 @@ sap.ui.define([
 			}
 		}
 
-		$Cell.focus();
+		oCell.focus();
 	};
 
 	/**
@@ -425,11 +424,12 @@ sap.ui.define([
 			}
 
 			if (bScrolled) {
+				oEvent.preventDefault(); // Prevent scrolling the page.
+
 				if (bActionModeNavigation) {
 					oTable.attachEventOnce("_rowsUpdated", function() {
 						setTimeout(function() {
 							TableKeyboardDelegate._focusCell(oTable, oCellInfo.type, oCellInfo.rowIndex, oCellInfo.columnIndex, true);
-							oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
 						}, 0);
 					});
 				}
@@ -867,7 +867,7 @@ sap.ui.define([
 
 	/*
 	 * Handled keys:
-	 * Shift, F2, F4, Shift+F10, Ctrl+A, Ctrl+Shift+A
+	 * Shift, Space, F2, F4, Shift+F10, Ctrl+A, Ctrl+Shift+A
 	 */
 	TableKeyboardDelegate.prototype.onkeydown = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
@@ -894,6 +894,11 @@ sap.ui.define([
 
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
+		}
+
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SPACE) &&
+			TableUtils.getCellInfo(oEvent.target).type) {
+			oEvent.preventDefault(); // Prevent scrolling the page.
 		}
 
 		var $Target = jQuery(oEvent.target);
@@ -924,7 +929,7 @@ sap.ui.define([
 
 		// Ctrl+A: Select/Deselect all.
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.A, ModKey.CTRL)) {
-			oEvent.preventDefault(); // To prevent full page text selection.
+			oEvent.preventDefault(); // Prevent full page text selection.
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER) && sSelectionMode === SelectionMode.MultiToggle) {
 				this._toggleSelectAll();
@@ -944,7 +949,7 @@ sap.ui.define([
 
 		// Shift+F10: Open the context menu.
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.F10, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // To prevent opening the default browser context menu.
+			oEvent.preventDefault(); // Prevent opening the default browser context menu.
 			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 		}
 	};
@@ -991,7 +996,7 @@ sap.ui.define([
 			return;
 		}
 
-		oEvent.preventDefault(); // To prevent opening the default browser context menu.
+		oEvent.preventDefault(); // Prevent opening the default browser context menu.
 
 		var $Cell = TableUtils.getCell(this, oEvent.target);
 		var oCellInfo = TableUtils.getCellInfo($Cell);
@@ -1014,8 +1019,6 @@ sap.ui.define([
 		}
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SPACE)) {
-			oEvent.preventDefault(); // To prevent the browser window to scroll down.
-
 			// Open the column menu.
 			if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
 				TableUtils.Menu.openContextMenu(this, oEvent.target, true);
@@ -1258,7 +1261,7 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // To avoid text selection flickering.
+			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1336,7 +1339,7 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // To avoid text selection flickering.
+			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1401,7 +1404,7 @@ sap.ui.define([
 		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // To avoid text selection flickering.
+			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1479,7 +1482,7 @@ sap.ui.define([
 		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // To avoid text selection flickering.
+			oEvent.preventDefault(); // Avoid text selection flickering.
 
 			/* Range Selection */
 
@@ -1544,6 +1547,8 @@ sap.ui.define([
 			return;
 		}
 
+		oEvent.preventDefault(); // Prevent scrolling the page.
+
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
 			preventItemNavigation(oEvent);
@@ -1579,6 +1584,8 @@ sap.ui.define([
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
+
+		oEvent.preventDefault(); // Prevent scrolling the page.
 
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
@@ -1639,7 +1646,7 @@ sap.ui.define([
 		}
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
-			oEvent.preventDefault(); // To prevent the browser page from scrolling to the top.
+			oEvent.preventDefault(); // Prevent scrolling the page.
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNHEADER)) {
@@ -1697,7 +1704,7 @@ sap.ui.define([
 		}
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
-			oEvent.preventDefault(); // To prevent the browser page from scrolling to the bottom.
+			oEvent.preventDefault(); // Prevent scrolling the page.
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 			if (oCellInfo.isOfType(CellType.ANY)) {
@@ -1772,6 +1779,8 @@ sap.ui.define([
 			return;
 		}
 
+		oEvent.preventDefault(); // Prevent scrolling the page.
+
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNHEADER)) {
@@ -1839,6 +1848,8 @@ sap.ui.define([
 		if (this._getKeyboardExtension().isInActionMode()) {
 			return;
 		}
+
+		oEvent.preventDefault(); // Prevent scrolling the page.
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 

@@ -23,7 +23,6 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int32
 	 * @param {object} [oFormatOptions]
 	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}. In contrast to

@@ -1,15 +1,15 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './TileRenderer'],
-	function(jQuery, TileRenderer) {
+sap.ui.define(['./TileRenderer', 'sap/ui/core/Renderer'],
+	function(TileRenderer, Renderer) {
 	"use strict";
 
 /**
 	 * CustomTile renderer.
 	 * @namespace
 	 */
-	var CustomTileRenderer = sap.ui.core.Renderer.extend(TileRenderer);
+	var CustomTileRenderer = Renderer.extend(TileRenderer);
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.

@@ -5,8 +5,9 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Change"
-], function (jQuery, Utils, Change) {
+	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant"
+], function (jQuery, Utils, Change, Variant) {
 	"use strict";
 
 	/**
@@ -26,7 +27,6 @@ sap.ui.define([
 		this._sComponentName = sComponentName || "";
 		this._sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
 		this._setChangeFileContent(oChangeFileContent);
-
 	};
 
 	/**
@@ -50,10 +50,39 @@ sap.ui.define([
 	};
 
 	VariantController.prototype._setChangeFileContent = function (oChangeFileContent) {
-		if (!oChangeFileContent || !oChangeFileContent.changes || !oChangeFileContent.changes.variantSection) {
-			this._mVariantManagement = {};
+		this._mVariantManagement = {};
+		if (oChangeFileContent && oChangeFileContent.changes && oChangeFileContent.changes.variantSection) {
+			Object.keys(oChangeFileContent.changes.variantSection).forEach(function (sVariantManagementReference) {
+				var oVariantManagementReference = oChangeFileContent.changes.variantSection[sVariantManagementReference];
+				var aVariants = oVariantManagementReference.variants.concat().sort(this.compareVariants);
+
+				var iIndex = -1;
+				aVariants.some(function (oVariant, index) {
+					if (oVariant.content.fileName === sVariantManagementReference) {
+						iIndex = index;
+						return true;
+					}
+					return false;
+				});
+				if (iIndex > -1) {
+					var oStandardVariant = aVariants.splice(iIndex, 1)[0];
+					aVariants.splice(0, 0, oStandardVariant);
+				}
+				this._mVariantManagement[sVariantManagementReference] = {
+					variants : aVariants,
+					defaultVariant : oVariantManagementReference.defaultVariant
+				};
+			}.bind(this));
+		}
+	};
+
+	VariantController.prototype.compareVariants = function (oVariantData1, oVariantData2) {
+		if (oVariantData1.content.title.toLowerCase() < oVariantData2.content.title.toLowerCase()) {
+			return -1;
+		} else if (oVariantData1.content.title.toLowerCase() > oVariantData2.content.title.toLowerCase()) {
+			return 1;
 		} else {
-			this._mVariantManagement = oChangeFileContent.changes.variantSection;
+			return 0;
 		}
 	};
 
@@ -65,36 +94,8 @@ sap.ui.define([
 	 * @public
 	 */
 	VariantController.prototype.getVariants = function (sVariantManagementReference) {
-		var aVariants = [];
-
-		function compareVariants(variant1, variant2) {
-			if (variant1.title < variant2.title) {
-				return -1;
-			} else if (variant1.title > variant2.title) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}
-
-		if (this._mVariantManagement[sVariantManagementReference]) {
-			aVariants = this._mVariantManagement[sVariantManagementReference].variants.sort(compareVariants);
-
-			var iIndex = -1;
-			aVariants.some(function(oVariant, index) {
-				if (oVariant.content.fileName === sVariantManagementReference) {
-					iIndex = index;
-					return true;
-				}
-				return false;
-			});
-			if (iIndex > -1) {
-				var oStandardVariant = aVariants.splice(iIndex, 1)[0];
-				aVariants.splice(0, 0, oStandardVariant);
-			}
-		}
-
-		return aVariants;
+		var aVariants = this._mVariantManagement[sVariantManagementReference] && this._mVariantManagement[sVariantManagementReference].variants;
+		return aVariants ? aVariants : [];
 	};
 
 	VariantController.prototype.getVariant = function (sVariantManagementReference, sVariantReference) {
@@ -255,7 +256,7 @@ sap.ui.define([
 	};
 
 	VariantController.prototype.removeChangeFromVariant = function (oChange, sVariantManagementReference, sVariantReference) {
-		var aNewChanges = this.getVariantChanges(sVariantManagementReference , sVariantReference);
+		var aNewChanges = this.getVariantChanges(sVariantManagementReference, sVariantReference);
 
 		aNewChanges.forEach(function (oCurrentChangeContent, iIndex) {
 			var oCurrentChange = new Change(oCurrentChangeContent);
@@ -266,6 +267,38 @@ sap.ui.define([
 		});
 
 		return this.setVariantChanges(sVariantManagementReference, sVariantReference, aNewChanges);
+	};
+
+	VariantController.prototype.addVariantToVariantManagement = function (oVariantData, sVariantManagementReference) {
+		var aVariants = this._mVariantManagement[sVariantManagementReference].variants.slice().splice(1),
+			iIndex = 0;
+		aVariants.some(function (oExistingVariantData, index) {
+			if (this.compareVariants(oVariantData, aVariants[index]) < 0) {
+				iIndex = index;
+				return true;
+			}
+			//insert to the end of array
+			iIndex = index + 1;
+		}.bind(this)); /*Return index of inserted variant*/
+
+		//Skipping standard variant with iIndex + 1
+		this._mVariantManagement[sVariantManagementReference].variants.splice(iIndex + 1, 0, oVariantData);
+		return iIndex + 1;
+	};
+
+	VariantController.prototype.removeVariantFromVariantManagement = function (oVariant, sVariantManagementReference) {
+		var iIndex;
+		var bFound = this._mVariantManagement[sVariantManagementReference].variants.some(function(oCurrentVariantContent, index) {
+			var oCurrentVariant = new Variant(oCurrentVariantContent);
+			if (oCurrentVariant.getKey() === oVariant.getKey()) {
+				iIndex = index;
+				return true;
+			}
+		});
+		if (bFound) {
+			this._mVariantManagement[sVariantManagementReference].variants.splice(iIndex, 1);
+		}
+		return iIndex;
 	};
 
 	return VariantController;

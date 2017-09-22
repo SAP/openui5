@@ -28,7 +28,7 @@ sap.ui.define([
 						PhoneNumber: "",
 						Email: ""
 					},
-					BillingAddress: {
+					InvoiceAddress: {
 						Address: "",
 						City: "",
 						ZipCode: "",
@@ -78,7 +78,7 @@ sap.ui.define([
 		 */
 		setPaymentMethod: function () {
 			this._setDiscardableProperty({
-				message: this.getResourceBundle().getText("checkoutControllerChangepayment"),
+				message: this.getResourceBundle().getText("checkoutControllerChangePayment"),
 				discardStep: this.byId("paymentTypeStep"),
 				modelPath: "/SelectedPayment",
 				historyPath: "prevPaymentSelect"
@@ -90,22 +90,22 @@ sap.ui.define([
 		 */
 		setDifferentDeliveryAddress: function () {
 			this._setDiscardableProperty({
-				message: this.getResourceBundle().getText("checkoutControllerChangedelivery"),
-				discardStep: this.byId("billingStep"),
+				message: this.getResourceBundle().getText("checkoutControllerChangeDelivery"),
+				discardStep: this.byId("invoiceStep"),
 				modelPath: "/DifferentDeliveryAddress",
 				historyPath: "prevDiffDeliverySelect"
 			});
 		},
 
 		/**
-		 * Called from WizardStep "BillingStep"
+		 * Called from WizardStep "invoiceStep"
 		 * shows next WizardStep "DeliveryAddressStep" or "DeliveryTypeStep" according to user selection
 		 */
-		billingAddressComplete: function () {
+		invoiceAddressComplete: function () {
 			var sNextStepId = (this.getModel().getProperty("/DifferentDeliveryAddress"))
 				? "deliveryAddressStep"
 				: "deliveryTypeStep";
-			this.byId("billingStep").setNextStep(this.byId(sNextStepId));
+			this.byId("invoiceStep").setNextStep(this.byId(sNextStepId));
 
 		},
 
@@ -114,7 +114,7 @@ sap.ui.define([
 		 * shows warning message and cancels order if affirmed
 		 */
 		handleWizardCancel: function () {
-			var sText = this.getResourceBundle().getText("checkoutControllerAreyousurecancel");
+			var sText = this.getResourceBundle().getText("checkoutControllerConfirmCancel");
 			this._handleSubmitOrCancel(sText, "warning", "home");
 		},
 
@@ -123,7 +123,7 @@ sap.ui.define([
 		 * shows warning message and submits order if affirmed
 		 */
 		handleWizardSubmit: function () {
-			var sText = this.getResourceBundle().getText("checkoutControllerAreyousuresubmit");
+			var sText = this.getResourceBundle().getText("checkoutControllerConfirmSubmit");
 			this._handleSubmitOrCancel(sText, "confirm", "ordercompleted");
 		},
 
@@ -136,79 +136,113 @@ sap.ui.define([
 		},
 
 		/**
-		 * Called from  WizardStep "CreditCardStep" on <code>activate</code> or <code>liveChange</code>
-		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
+		 * Removes validation error messages from the previous step
+		 */
+		_clearMessages: function () {
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+		},
+
+		/**
+		 * Checks the corresponding step after activation to decide whether the user can proceed or needs
+		 * to correct his input
+		 */
+		onCheckStepActivation: function(oEvent) {
+			this._clearMessages();
+			var sWizardStepId = oEvent.getSource().getId();
+			switch (sWizardStepId) {
+			case this.createId("creditCardStep"):
+				this.checkCreditCardStep();
+				break;
+			case this.createId("cashOnDeliveryStep"):
+				this.checkCashOnDeliveryStep();
+				break;
+			case this.createId("invoiceStep"):
+				this.checkInvoiceStep();
+				break;
+			case this.createId("deliveryAddressStep"):
+				this.checkDeliveryAddressStep();
+				break;
+			}
+		},
+
+		/**
+		 * Validates the credit card step initially and after each input
 		 */
 		checkCreditCardStep: function () {
-			var sCardName = this.getModel().getProperty("/CreditCard/Name") || "";
-			var oElement = this.byId("creditCardStep");
-			var oWizard = this.byId("shoppingCartWizard");
-			if (sCardName.length < 2) {
-				oWizard.invalidateStep(oElement);
-			} else {
-				oWizard.validateStep(oElement);
-			}
+			this._checkStep("creditCardStep", ["creditCardHolderName", "creditCardNumber", "creditCardSecurityNumber", "creditCardExpirationDate"]);
 		},
 
 		/**
-		 * Called from  WizardStep "CashOnDeliveryStep" on <code>activate</code> or <code>liveChange</code>
-		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
+		 * Validates the cash on delivery step initially and after each input
 		 */
 		checkCashOnDeliveryStep: function () {
-			var sFirstName = this.getModel().getProperty("/CashOnDelivery/FirstName") || "";
-			var oElement = this.byId("cashOnDeliveryStep");
-			var oWizard = this.byId("shoppingCartWizard");
-			if (sFirstName.length < 2) {
-				oWizard.invalidateStep(oElement);
-			} else {
-				oWizard.validateStep(oElement);
-			}
+			this._checkStep("cashOnDeliveryStep", ["cashOnDeliveryName", "cashOnDeliveryLastName", "cashOnDeliveryPhoneNumber", "cashOnDeliveryEmail"]);
 		},
 
 		/**
-		 * Called from  WizardStep "BillingStep" on <code>activate</code> or <code>liveChange</code>
-		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
-		 */
-		checkBillingStep: function () {
-			var sAddress = this.getModel().getProperty("/BillingAddress/Address") || "";
-			var sCity = this.getModel().getProperty("/BillingAddress/City") || "";
-			var sZipCode = this.getModel().getProperty("/BillingAddress/ZipCode") || "";
-			var sCountry = this.getModel().getProperty("/BillingAddress/Country") || "";
-			var oElement = this.byId("billingStep");
-			var oWizard = this.byId("shoppingCartWizard");
-
-			if (sAddress.length < 2 || sCity.length < 2 || sZipCode.length < 2 || sCountry.length < 2) {
-				oWizard.invalidateStep(oElement);
-			} else {
-				oWizard.validateStep(oElement);
-			}
+		 * Validates the invoice step initially and after each input
+		*/
+		checkInvoiceStep: function () {
+			this._checkStep("invoiceStep", ["invoiceAddressAddress", "invoiceAddressCity", "invoiceAddressZip", "invoiceAddressCountry"]);
 		},
 
 		/**
-		 * Called from WizardStep "DeliveryAddressStep" on <code>activate</code> or <code>liveChange</code>
-		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
+		 * Validates the delivery address step initially and after each input
 		 */
-		checkDeliveryStep: function () {
-			var sAddress = this.getModel().getProperty("/DeliveryAddress/Address") || "";
-			var sCity = this.getModel().getProperty("/DeliveryAddress/City") || "";
-			var sZipCode = this.getModel().getProperty("/DeliveryAddress/ZipCode") || "";
-			var sCountry = this.getModel().getProperty("/DeliveryAddress/Country") || "";
-			var oElement = this.byId("deliveryAddressStep");
-			var oWizard = this.byId("shoppingCartWizard");
+		checkDeliveryAddressStep: function () {
+			this._checkStep("deliveryAddressStep", ["deliveryAddressAddress", "deliveryAddressCity", "deliveryAddressZip", "deliveryAddressCountry"]);
+		},
 
-			if (sAddress.length < 2 || sCity.length < 2 || sZipCode.length < 2 || sCountry.length < 2) {
-				oWizard.invalidateStep(oElement);
+		/**
+		 * Check if one or more of the inputs are empty
+		 * @param {array} aInputIds - Input ids to be checked
+		 * @returns {boolean}
+		 * @private
+		 */
+		_checkInputFields : function (aInputIds) {
+			var oView = this.getView();
+
+			return aInputIds.some(function (sInputId) {
+				var oInput = oView.byId(sInputId);
+				var oBinding = oInput.getBinding("value");
+				try {
+					oBinding.getType().validateValue(oInput.getValue());
+				} catch (oException) {
+					return true;
+				}
+				return false;
+			});
+		},
+
+		/**
+		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
+		 * @param {string} sStepName - the ID of the step to be checked
+		 * @param {array} aInputIds - Input IDs to be checked
+		 * @private
+		 */
+		_checkStep: function (sStepName, aInputIds) {
+			var oWizard = this.byId("shoppingCartWizard"),
+				oStep = this.byId(sStepName),
+				bEmptyInputs = this._checkInputFields(aInputIds),
+				bValidationError = !!sap.ui.getCore().getMessageManager().getMessageModel().getData().length;
+
+			if (!bValidationError && !bEmptyInputs) {
+				oWizard.validateStep(oStep);
 			} else {
-				oWizard.validateStep(oElement);
+				oWizard.invalidateStep(oStep);
 			}
 		},
 
 		/**
 		 * Called from  Wizard on <code>complete</code>
-		 * navigates to page "summaryPage"
+		 * Navigates to the summary page in case there are no errors
 		 */
-		completedHandler: function () {
-			this.byId("wizardNavContainer").to(this.byId("summaryPage"));
+		checkCompleted : function () {
+			if (sap.ui.getCore().getMessageManager().getMessageModel().getData().length > 0) {
+				MessageBox.error(this.getResourceBundle().getText("popOverMessageText"));
+			} else {
+				this.byId("wizardNavContainer").to(this.byId("summaryPage"));
+			}
 		},
 
 		/**
@@ -231,7 +265,7 @@ sap.ui.define([
 			if (oWizard.getProgressStep() !== oParams.discardStep) {
 				MessageBox.warning(oParams.message, {
 					actions: [MessageBox.Action.YES,
-							  MessageBox.Action.NO],
+						MessageBox.Action.NO],
 					onClose: function (oAction) {
 						if (oAction === MessageBox.Action.YES) {
 							oWizard.discardProgress(oParams.discardStep);
@@ -257,13 +291,13 @@ sap.ui.define([
 		_handleSubmitOrCancel: function (sMessage, sMessageBoxType, sRoute) {
 			MessageBox[sMessageBoxType](sMessage, {
 				actions: [MessageBox.Action.YES,
-						  MessageBox.Action.NO],
+					MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
 						// resets Wizard
 						var oWizard = this.byId("shoppingCartWizard");
-						var oModel =  this.getModel();
-						var oCartModel =  this.getOwnerComponent().getModel("cartProducts");
+						var oModel = this.getModel();
+						var oCartModel = this.getOwnerComponent().getModel("cartProducts");
 						this._navToWizardStep(this.byId("contentsStep"));
 						oWizard.discardProgress(oWizard.getSteps()[0]);
 						var oModelData = oModel.getData();
@@ -271,7 +305,7 @@ sap.ui.define([
 						oModelData.SelectedDeliveryMethod = "Standard Delivery";
 						oModelData.DifferentDeliveryAddress = false;
 						oModelData.CashOnDelivery = {};
-						oModelData.BillingAddress = {};
+						oModelData.InvoiceAddress = {};
 						oModelData.DeliveryAddress = {};
 						oModelData.CreditCard = {};
 						oModel.setData(oModelData);

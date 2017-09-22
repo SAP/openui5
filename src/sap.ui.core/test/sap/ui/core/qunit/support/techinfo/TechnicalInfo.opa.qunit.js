@@ -20,8 +20,8 @@ sap.ui.require([
 ], function (Device, Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText) {
 	"use strict";
 
-	var sTestPageURL = "TechnicalInfoTestbench.html";
-	var sOpenUI5BetaKey = "https://openui5beta.hana.ondemand.com/resources/sap/ui/support/";
+	var sTestPageURL = "TechnicalInfoTestbench.html",
+		sOpenUI5BetaKey = "https://openui5beta.hana.ondemand.com/resources/sap/ui/support/";
 
 	Opa5.extendConfig({
 		autoWait : true
@@ -227,6 +227,20 @@ sap.ui.require([
 						}
 					});
 				},
+				iPressStartSupportAssistantButton : function () {
+					return this.waitFor({
+						id : "technicalInfoDialog--Dialog",
+						success : function () {
+							return this.waitFor({
+								id : "technicalInfoDialog--startSupportAssistantButton",
+								actions : new Press(),
+								success : function () {
+									Opa5.assert.ok(true, "Pressed the support assistant start button");
+								}
+							});
+						}
+					});
+				},
 				iOpenSupportAssistantSettings: function () {
 					return this.waitFor({
 						id : "technicalInfoDialog--Dialog",
@@ -293,7 +307,11 @@ sap.ui.require([
 							return this.waitFor({
 								controlType : "sap.m.Link",
 								matchers: [
-									new Ancestor(oDialog)
+									new Ancestor(oDialog),
+									new I18NText({
+										propertyName : "text",
+										key: "TechInfo.DebugSourcesModules.Link"
+									})
 								],
 								actions : new Press(),
 								success : function () {
@@ -377,6 +395,28 @@ sap.ui.require([
 							});
 						}
 					});
+				},
+				iEnterCustomBootstrapUrl: function (sValue) {
+					return this.waitFor({
+						id : "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						actions : new EnterText({
+							text: sValue
+						}),
+						success : function () {
+							Opa5.assert.ok(true, "Entered the custom debug value " + sValue);
+						}
+					});
+				},
+				iCloseThePopup: function () {
+					return this.waitFor({
+						id : "technicalInfoDialogAssistantPopover--Popover",
+						actions : function (oPopover) {
+							oPopover.close();
+						},
+						success : function () {
+							Opa5.assert.ok(true, "Popopver is closed.");
+						}
+					});
 				}
 			},
 			assertions: {
@@ -396,6 +436,26 @@ sap.ui.require([
 						matchers: new PropertyStrictEquals({name: "selectedKey", value: sKey}),
 						success: function () {
 							Opa5.assert.ok(true, "Item with key is selected: " + sKey);
+						}
+					});
+				},
+				theCustomBootstrapOptionIsInState: function (sState) {
+					return this.waitFor({
+						id: "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						autoWait: false,
+						matchers: new PropertyStrictEquals({name: "valueState", value: sState}),
+						success: function () {
+							Opa5.assert.ok(true, "The bootstrap option is in " + sState);
+						}
+					});
+				},
+				theMessageIs: function (sMessage) {
+					return this.waitFor({
+						id: "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						autoWait: false,
+						matchers: new PropertyStrictEquals({name: "ValueStateText", value: sMessage}),
+						success: function () {
+							Opa5.assert.ok(true, "The bootstrap option has message value sate message: " + sMessage);
 						}
 					});
 				}
@@ -672,23 +732,56 @@ sap.ui.require([
 
 		// Assert
 		Then.onTheConfigDialog.theStandardBootstrapOptionIsSelected(sOpenUI5BetaKey);
+		Then.iTeardownMyAppFrame();
 	});
 
-	opaTest("Should keep the standard option if custom option is set without custom url", function(Given, When, Then) {
-		// Act
-		When.onTheConfigDialog.iSelectBootstrapOption("custom");
-
+	opaTest("Should open the support assistant setting when a invalid custom url is entered.", function(Given, When, Then) {
+		var sErrorMessageForValidation = "Incorrect syntax of the location address. Correct syntax should be http://" + "<" + "Valid custom URI>/resources/sap/ui/support.";
 		// Arrange
-		Then.iTeardownMyAppFrame();
-		Then.iStartMyAppInAFrame(sTestPageURL);
+		When.iStartMyAppInAFrame(sTestPageURL);
 		When.anywhere.iPressCtrlAltShiftP();
 		Then.anywhere.iShouldSeeTheTechnicalInformationDialog();
 		When.onTheDialog.iOpenSupportAssistantSettings();
 		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
+		When.onTheConfigDialog.iSelectBootstrapOption("custom").
+		and.iEnterCustomBootstrapUrl("ivalidCustomUrl");
+		// Assert
+		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("Error").
+		and.theMessageIs(sErrorMessageForValidation);
+		When.onTheDialog.iPressTheCloseButton();
+		When.anywhere.iPressCtrlAltShiftP();
+		Then.anywhere.iShouldSeeTheTechnicalInformationDialog();
+
+		// Act
+		When.onTheDialog.iPressStartSupportAssistantButton();
 
 		// Assert
-		Then.onTheConfigDialog.theBootstrapOptionIsInTheRightState("custom", false).
-		and.theBootstrapOptionIsInTheRightState("standard", true);
+		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
+		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("Error").
+		and.theMessageIs(sErrorMessageForValidation);
+	});
+
+	opaTest("Should show error when a valid syntax's is provided", function(Given, When, Then) {
+		// Act
+		When.onTheConfigDialog.iEnterCustomBootstrapUrl(sOpenUI5BetaKey);
+
+		//Assert
+		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("None");
+	});
+
+	opaTest("Should show error when trying to start support assistant with empty custom bootstrap URL", function(Given, When, Then) {
+		var sErrorForResourceNotFound = "Support Assistant is not available in this location:Not Found [404]";
+		// Arrange
+		When.onTheConfigDialog.iEnterCustomBootstrapUrl("").iCloseThePopup();
+		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("None");
+
+		// Act
+		When.onTheDialog.iPressStartSupportAssistantButton();
+
+		// Assert
+		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
+		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("Error").
+		and.theMessageIs(sErrorForResourceNotFound);
 	});
 
 	QUnit.module("Debug Modules Configuration");

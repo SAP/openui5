@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library'],
-	function(Control, library) {
+sap.ui.define(['sap/ui/core/Control', './library', 'jquery.sap.global', 'sap/ui/core/ResizeHandler'],
+	function(Control, library, jQuery, ResizeHandler) {
 		"use strict";
 
 		/**
@@ -42,7 +42,7 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 * </ul>
 		 * <h4>When not to use</h4>
 		 * <ul>
-		 * <li>You want to display properties or features of one content item. Use a {@link sap.uxap.ObjectPage object page} or {@link sap.f.DynamicPage dynamic page} instead.</li>
+		 * <li>You want to display properties or features of one content item. Use a {@link sap.uxap.ObjectPageLayout object page} or {@link sap.f.DynamicPage dynamic page} instead.</li>
 		 * </ul>
 		 * <h3>Responsive Behavior</h3>
 		 * <ul>
@@ -192,7 +192,7 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 */
 		BlockLayout.prototype._attachResizeHandler = function () {
 			if (!this._parentResizeHandler) {
-				this._parentResizeHandler = sap.ui.core.ResizeHandler.register(this, this._onParentResize.bind(this));
+				this._parentResizeHandler = ResizeHandler.register(this, this._onParentResize.bind(this));
 			}
 		};
 
@@ -202,7 +202,7 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 */
 		BlockLayout.prototype._detachResizeHandler = function () {
 			if (this._parentResizeHandler) {
-				sap.ui.core.ResizeHandler.deregister(this._parentResizeHandler);
+				ResizeHandler.deregister(this._parentResizeHandler);
 				this._parentResizeHandler = null;
 			}
 		};
@@ -216,4 +216,4 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 
 		return BlockLayout;
 
-	}, /* bExport= */ true);
+	});

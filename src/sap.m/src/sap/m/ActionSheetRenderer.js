@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/Device"],
+	function(Device) {
 	"use strict";
 
 
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 
-		if (sap.ui.Device.system.phone && oControl.getShowCancelButton()) {
+		if (Device.system.phone && oControl.getShowCancelButton()) {
 			oRm.renderControl(oControl._getCancelButton());
 		}
 

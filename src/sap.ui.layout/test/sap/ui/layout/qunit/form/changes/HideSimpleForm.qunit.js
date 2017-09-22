@@ -159,22 +159,22 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
 		var oXmlString =
-		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:layout='sap.ui.layout' xmlns='sap.m'>" +
-		"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
-		"<layout:content>" +
+		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:form='sap.ui.layout.form' xmlns='sap.m'>" +
+		"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+		"<form:content>" +
 		"<Title id='Title0' text='Title 0' visible='true' />" +
 		"<Label id='Label0' text='Label 0' visible='true' />" +
 		"<Input id='Input0' visible='true' />" +
 		"<Label id='Label1' text='Label 1' visible='true' />" +
 		"<Input id='Input1' visible='true' />" +
-		"</layout:content>" +
-		"</layout:SimpleForm>" +
+		"</form:content>" +
+		"</form:SimpleForm>" +
 		"</mvc:View>";
 
 		var oDOMParser = new DOMParser();
-		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 
-		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0].childNodes[0];
+		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oXmlSimpleForm, {
@@ -315,22 +315,22 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 	QUnit.test("when removing a FormContainer in SimpleForm with Toolbars using XmlTreeModifier", function (assert) {
 		var oXmlString =
-		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:layout='sap.ui.layout' xmlns='sap.m'>" +
-		"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
-		"<layout:content>" +
+		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:form='sap.ui.layout.form' xmlns='sap.m'>" +
+		"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+		"<form:content>" +
 		"<Toolbar id='Toolbar0' text='Title 0' visible='true' />" +
 		"<Label id='Label0' text='Label 0' visible='true' />" +
 		"<Input id='Input0' visible='true' />" +
 		"<Label id='Label1' text='Label 1' visible='true' />" +
 		"<Input id='Input1' visible='true' />" +
-		"</layout:content>" +
-		"</layout:SimpleForm>" +
+		"</form:content>" +
+		"</form:SimpleForm>" +
 		"</mvc:View>";
 
 		var oDOMParser = new DOMParser();
-		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 
-		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0].childNodes[0];
+		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {

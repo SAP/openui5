@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.m.MultiInput.
-sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/Device', 'sap/ui/core/InvisibleText'],
+sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'jquery.sap.keycodes'],
 	function (jQuery, Input, Tokenizer, Token, library, EnabledPropagator, Device, InvisibleText) {
 		"use strict";
 
@@ -1502,4 +1502,4 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 	return MultiInput;
 
-}, /* bExport= */ true);
+});

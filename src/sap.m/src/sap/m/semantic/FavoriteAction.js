@@ -34,4 +34,4 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleBu
 
 	return FavoriteAction;
 
-}, /* bExport= */ true);
+});

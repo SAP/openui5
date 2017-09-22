@@ -42,7 +42,7 @@ sap.ui.define([
 			var sTargetAggregation = mContent.parentAggregationName;
 			var oTargetParent = oModifier.getParent(oControl);
 			oModifier.removeAggregation(oTargetParent, sTargetAggregation, oControl);
-			oModifier.insertAggregation(oTargetParent, sTargetAggregation, oControl, mContent.index);
+			oModifier.insertAggregation(oTargetParent, sTargetAggregation, oControl, mContent.index, mPropertyBag.view);
 		}
 		return true;
 	};

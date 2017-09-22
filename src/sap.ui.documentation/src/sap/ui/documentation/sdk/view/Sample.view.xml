@@ -8,7 +8,8 @@
 	<Page
 			id="page"
 			showNavButton="{/showNavButton}"
-			navButtonPress="onNavBack" >
+			navButtonPress="onNavBack"
+			busyIndicatorDelay="0">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
 		</landmarkInfo>

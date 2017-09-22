@@ -4,10 +4,12 @@
 
 sap.ui.define([
 		"jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/delegate/ScrollEnablement",
-		"./WizardStep", "./WizardProgressNavigator", "./Button"],
-	function (jQuery, library, Control, ScrollEnablement, WizardStep, WizardProgressNavigator, Button) {
-
+		"./WizardProgressNavigator", "./Button", "sap/ui/Device"],
+	function (jQuery, library, Control, ScrollEnablement, WizardProgressNavigator, Button, Device) {
 		"use strict";
+
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
 
 		/**
 		 * Constructor for a new Wizard.
@@ -364,6 +366,13 @@ sap.ui.define([
 
 		/**************************************** PROXY METHODS ***************************************/
 
+		/**
+		 * Sets association currentStep to the given step.
+		 *
+		 * @param {sap.m.WizardStep | String} stepId The step of the wizard that will be currently activated (meaning the last step)
+		 * @returns {sap.m.Wizard} Reference to the control instance for chaining.
+		 * @public
+		 */
 		Wizard.prototype.setCurrentStep = function (stepId) {
 			this.setAssociation("currentStep", stepId, true);
 			var step = (typeof stepId === "string") ? sap.ui.getCore().byId(stepId) : stepId;
@@ -565,7 +574,7 @@ sap.ui.define([
 				isStepValidated = (firstStep) ? firstStep.getValidated() : true,
 				nextButton = new Button(this.getId() + "-nextButton", {
 					text: this._resourceBundle.getText("WIZARD_STEP") + " " + 2,
-					type: sap.m.ButtonType.Emphasized,
+					type: ButtonType.Emphasized,
 					enabled: isStepValidated,
 					press: this._handleNextButtonPress.bind(this),
 					visible: this.getShowNextButton()
@@ -647,7 +656,7 @@ sap.ui.define([
 			 * we can't properly detect the offset of the step, that's why
 			 * additionalOffset is added like this.
 			 */
-			if (!sap.ui.Device.system.phone &&
+			if (!Device.system.phone &&
 				!jQuery.sap.containsOrEquals(progressStep.getDomRef(), this._nextButton.getDomRef())) {
 				additionalOffset = this._nextButton.$().outerHeight();
 			}
@@ -676,7 +685,7 @@ sap.ui.define([
 			var previousStepIndex = ((typeof event === "number") ? event : event.getParameter("current")) - 2;
 			var previousStep = this._stepPath[previousStepIndex];
 			var subsequentStep = this._getNextStep(previousStep, previousStepIndex);
-			var focusFirstElement = sap.ui.Device.system.desktop ? true : false;
+			var focusFirstElement = Device.system.desktop ? true : false;
 			this.goToStep(subsequentStep, focusFirstElement);
 		};
 
@@ -840,7 +849,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._setNextButtonPosition = function () {
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				return;
 			}
 
@@ -1006,5 +1015,4 @@ sap.ui.define([
 		};
 
 		return Wizard;
-
-	}, /* bExport= */ true);
+	});

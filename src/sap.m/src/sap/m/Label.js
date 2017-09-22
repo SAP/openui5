@@ -3,9 +3,18 @@
  */
 
 // Provides control sap.m.Label
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/LabelEnablement'],
-	function(jQuery, library, Control, LabelEnablement) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library'],
+	function(jQuery, library, Control, LabelEnablement, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
+
+	// shortcut for sap.m.LabelDesign
+	var LabelDesign = library.LabelDesign;
 
 	/**
 	 * Constructor for a new Label.
@@ -17,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Provides a textual label for other controls.
 	 * Label appearance can be influenced by properties such as <code>textAlign</code>, <code>design</code>,
 	 * <code>displayOnly</code> and <code>wrapping</code>.
-	 * As of version 1.50 the default value of the <code>wrapping</code> property is set to <code>true</code>
+	 * As of version 1.50 the default value of the <code>wrapping</code> property is set to <code>false</code>
 	 *
 	 * Labels for required fields are marked with an asterisk.
 	 * <h3>Overview</h3>
@@ -25,7 +34,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * <h3>Usage</h3>
 	 * <h4>When to use</h4>
 	 * <ul>
-	 * <li>Always use a label in Form controls.</li>
+	 * <li>It's recommended to use the <code>Label</code> in Form controls.</li>
 	 * <li>Use title case for labels.</li>
 	 * </ul>
 	 * <h4>When not to use</h4>
@@ -55,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Sets the design of a Label to either Standard or Bold.
 			 */
-			design : {type : "sap.m.LabelDesign", group : "Appearance", defaultValue : sap.m.LabelDesign.Standard},
+			design : {type : "sap.m.LabelDesign", group : "Appearance", defaultValue : LabelDesign.Standard},
 
 			/**
 			 * Determines the Label text to be displayed.
@@ -65,12 +74,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
 			/**
 			 * Options for the text direction are RTL and LTR. Alternatively, the control can inherit the text direction from its parent container.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Determines the width of the label.
@@ -94,13 +103,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Determines the wrapping of the text within the <code>Label</code>.
-			 * If set to false the label will wrap to only one line and the exceeding text will be cut and replaced with ellipsis.
-			 *
-			 * <b>Note:</b> This property should only be used in a Form.
+			 * If set to true the <code>Label</code> will wrap, when set to false the <code>Label</code> will be truncated and replaced with ellipsis which is the default behavior.
 			 *
 			 * @since 1.50
 			 */
-			wrapping: {type : "boolean", group : "Appearance", defaultValue : true}
+			wrapping: {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		associations : {
 
@@ -138,17 +145,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Label.prototype.setDisplayOnly = function(displayOnly) {
 		if (typeof displayOnly !== "boolean") {
-		    jQuery.sap.log.error("DisplayOnly property should be boolean. The new value will not be set");
-		    return this;
+			jQuery.sap.log.error("DisplayOnly property should be boolean. The new value will not be set");
+			return this;
 		}
 
 		this.$().toggleClass("sapMLabelDisplayOnly", displayOnly);
 
-		return sap.ui.core.Control.prototype.setProperty.call(this, "displayOnly", displayOnly);
+		return Control.prototype.setProperty.call(this, "displayOnly", displayOnly);
 	};
 
 	/**
-	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @see sap.ui.core.Control#getAccessibilityInfo Provides the current accessibility state of the control.
 	 * @protected
 	 */
 	Label.prototype.getAccessibilityInfo = function() {
@@ -160,4 +167,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return Label;
 
-}, /* bExport= */ true);
+});

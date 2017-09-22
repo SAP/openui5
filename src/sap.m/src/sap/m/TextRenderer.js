@@ -3,9 +3,12 @@
  */
 
 // Provides default renderer for control sap.m.Text
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
+	function(Renderer, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Text renderer.
@@ -50,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 		// write style and attributes
 		sWidth ? oRm.addStyle("width", sWidth) : oRm.addClass("sapMTextMaxWidth");
-		if (sTextDir !== sap.ui.core.TextDirection.Inherit){
+		if (sTextDir !== TextDirection.Inherit){
 			oRm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 		sTooltip && oRm.writeAttributeEscaped("title", sTooltip);
@@ -92,6 +95,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.write("<span");
 		oRm.writeAttribute("id", oText.getId() + "-inner");
 		oRm.addClass("sapMTextMaxLine");
+
+		// check native line clamp support
+		if (oText.canUseNativeLineClamp()) {
+			oRm.addClass("sapMTextLineClamp");
+			oRm.addStyle("-webkit-line-clamp", oText.getMaxLines());
+		}
 
 		oRm.writeClasses();
 		oRm.writeStyles();
