@@ -135,7 +135,7 @@
 							<Label text="unified.Currency"/>
 						</table:label>
 						<table:template>
-							<unified:currency value="{money}" currency="{currency}"/>
+							<unified:Currency value="{money}" currency="{currency}"/>
 						</table:template>
 					</table:Column>
 					<table:Column width="150px">
