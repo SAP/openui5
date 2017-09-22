@@ -16,6 +16,13 @@ Feature: Buy a Product
     Then on checkout: I should see the wizard step payment type step
 
     When on checkout: I press on the next step button
+    When on checkout: I enter wrong credit card information
+    Then on checkout: I should see the footer with the error button
+
+    When on checkout: I press on the button in the footer
+    Then on checkout: I should see the message Popover
+
+    When on checkout: I press the close button
     When on checkout: I enter correct credit card information
     Then on checkout: I should see the step4 button
 

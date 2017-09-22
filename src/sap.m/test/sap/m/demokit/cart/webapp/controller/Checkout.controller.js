@@ -4,14 +4,13 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/Device',
 	'sap/ui/demo/cart/model/formatter',
-	'sap/m/MessageBox'
-], function (BaseController, cart, JSONModel, Device, formatter, MessageBox) {
+	'sap/m/MessageBox',
+	'sap/ui/core/ValueState',
+	'sap/m/Link',
+	'sap/m/MessagePopover',
+	'sap/m/MessagePopoverItem'
+], function (BaseController, cart, JSONModel, Device, formatter, MessageBox, ValueState, Link, MessagePopover, MessagePopoverItem) {
 	"use strict";
-
-	var _oHistory = {
-		prevPaymentSelect: null,
-		prevDiffDeliverySelect: null
-	};
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Checkout", {
 		formatter: formatter,
@@ -50,7 +49,60 @@ sap.ui.define([
 					}
 				}
 			);
-			this.getView().setModel(oModel);
+			this.setModel(oModel);
+
+			// previously selected entries in wizard
+			this._oHistory = {
+				prevPaymentSelect: null,
+				prevDiffDeliverySelect: null
+			};
+
+			// Assign the model object to the SAPUI5 core
+			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
+		},
+
+		/**
+		 * Only validation on client side, does not involve a back-end server.
+		 * @param {sap.ui.base.Event} oEvent Press event of the button to display the MessagePopover
+		 */
+		onShowMessagePopoverPress: function (oEvent) {
+			var oButton = oEvent.getSource();
+
+			var oLink = new Link({
+				text: "Show more information",
+				href: "http://sap.com",
+				target: "_blank"
+			});
+
+			/**
+			 * Gather information that will be visible on the MessagePopover
+			 */
+			var oMessageTemplate = new MessagePopoverItem({
+				type: '{message>type}',
+				title: '{message>message}',
+				subtitle: '{message>additionalText}',
+				link: oLink
+			});
+
+			if (!this.byId("errorMessagePopover")) {
+				var oMessagePopover = new MessagePopover(this.createId("messagePopover"), {
+					items: {
+						path: 'message>/',
+						template: oMessageTemplate
+					},
+					afterClose: function () {
+						oMessagePopover.destroy();
+					}
+				});
+				this._addDependent(oMessagePopover);
+			}
+
+			oMessagePopover.openBy(oButton);
+		},
+
+		//To be able to stub the addDependent function in unit test, we added it in a separate function
+		_addDependent: function (oMessagePopover) {
+			this.getView().addDependent(oMessagePopover);
 		},
 
 		/**
@@ -237,7 +289,7 @@ sap.ui.define([
 		 * Called from  Wizard on <code>complete</code>
 		 * Navigates to the summary page in case there are no errors
 		 */
-		checkCompleted : function () {
+		checkCompleted: function () {
 			if (sap.ui.getCore().getMessageManager().getMessageModel().getData().length > 0) {
 				MessageBox.error(this.getResourceBundle().getText("popOverMessageText"));
 			} else {
@@ -269,14 +321,14 @@ sap.ui.define([
 					onClose: function (oAction) {
 						if (oAction === MessageBox.Action.YES) {
 							oWizard.discardProgress(oParams.discardStep);
-							_oHistory[oParams.historyPath] = this.getModel().getProperty(oParams.modelPath);
+							this._oHistory[oParams.historyPath] = this.getModel().getProperty(oParams.modelPath);
 						} else {
-							this.getModel().setProperty(oParams.modelPath, _oHistory[oParams.historyPath]);
+							this.getModel().setProperty(oParams.modelPath, this._oHistory[oParams.historyPath]);
 						}
 					}.bind(this)
 				});
 			} else {
-				_oHistory[oParams.historyPath] = this.getModel().getProperty(oParams.modelPath);
+				this._oHistory[oParams.historyPath] = this.getModel().getProperty(oParams.modelPath);
 			}
 		},
 

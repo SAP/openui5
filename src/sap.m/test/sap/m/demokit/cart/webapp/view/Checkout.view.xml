@@ -654,6 +654,18 @@
 						</steps>
 					</Wizard>
 				</content>
+				<footer>
+					<Bar id="wizardFooterBar" visible="{= ${message>/}.length === 0 ? false : true}">
+						<contentLeft>
+							<Button
+								id="showPopoverButton"
+								icon="sap-icon://message-popup"
+								text="{= ${message>/}.length }"
+								type="Emphasized"
+								press="onShowMessagePopoverPress"/>
+						</contentLeft>
+					</Bar>
+				</footer>
 			</Page>
 			<Page
 				id="summaryPage"
@@ -989,12 +1001,12 @@
 							</Toolbar>
 						</form:toolbar>
 						<form:content>
-							<Text text="{i18n>checkoutSummarySameAsBilling}" />
+							<Text text="{i18n>checkoutSummarySameAsInvoice}" />
 						</form:content>
 					</form:SimpleForm>
 				</content>
 				<footer>
-					<Bar>
+					<Bar id="summaryFooterBar">
 						<contentRight>
 							<Button
 								id="submitOrder"
