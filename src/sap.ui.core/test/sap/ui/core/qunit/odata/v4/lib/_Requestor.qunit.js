@@ -121,6 +121,7 @@ sap.ui.require([
 		QUnit.test(sTest, function (assert) {
 			var sBuildQueryResult = "foo",
 				fnFetchEntityContainer = function () {},
+				fnFetchMetadata = function () {},
 				mHeaders = {},
 				fnOnCreateGroup = function () {},
 				mQueryParams = {},
@@ -132,13 +133,14 @@ sap.ui.require([
 
 			// code under test
 			oRequestor = _Requestor.create(sServiceUrl, mHeaders, mQueryParams,
-				fnFetchEntityContainer, fnOnCreateGroup, oFixture.sODataVersion);
+				fnFetchEntityContainer, fnFetchMetadata, fnOnCreateGroup, oFixture.sODataVersion);
 
 			assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl, "parameter sServiceUrl");
 			assert.strictEqual(oRequestor.mHeaders, mHeaders, "parameter mHeaders");
 			assert.strictEqual(oRequestor.sQueryParams, sBuildQueryResult,
 				"parameter mQueryParams");
 			assert.strictEqual(oRequestor.fnFetchEntityContainer, fnFetchEntityContainer);
+			assert.strictEqual(oRequestor.fnFetchMetadata, fnFetchMetadata);
 			assert.strictEqual(oRequestor.fnOnCreateGroup, fnOnCreateGroup,
 				"parameter fnOnCreateGroup");
 			// OData version specific header maps
@@ -189,7 +191,7 @@ sap.ui.require([
 			fnOnCreateGroup = sinon.spy(),
 			oRequestor = _Requestor.create(sServiceUrl, undefined, {
 				"foo" : "URL params are ignored for normal requests"
-			}, fnOnCreateGroup),
+			}, undefined, undefined, fnOnCreateGroup),
 			oResult = {},
 			fnSubmit = sinon.spy();
 
@@ -239,7 +241,7 @@ sap.ui.require([
 		QUnit.test(sTitle, function (assert) {
 			var oConvertedResponse = {},
 				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-					undefined, oFixture.sODataVersion),
+					undefined, undefined, oFixture.sODataVersion),
 				oResponsePayload = {};
 
 			this.mock(jQuery).expects("ajax")
@@ -264,7 +266,7 @@ sap.ui.require([
 	QUnit.test("request: fail to convert payload, $direct", function (assert) {
 		var oError = {},
 			oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-				undefined, "2.0"),
+				undefined, undefined, "2.0"),
 			oResponsePayload = {};
 
 		this.mock(jQuery).expects("ajax")
@@ -296,7 +298,7 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-					undefined, oFixture.sODataVersion),
+					undefined, undefined, oFixture.sODataVersion),
 				oAjaxResponse = {},
 				oDeserializeBatchResponse = {};
 
@@ -360,7 +362,7 @@ sap.ui.require([
 				}],
 				oGetProductsPromise,
 				oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-					undefined, oFixture.sODataVersion),
+					undefined, undefined, oFixture.sODataVersion),
 				oRequestorMock = this.mock(oRequestor);
 
 			oRequestorMock.expects("doFetchV4Response")
@@ -387,7 +389,7 @@ sap.ui.require([
 		var oError = {},
 			oGetProductsPromise,
 			oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-					undefined, "2.0"),
+					undefined, undefined, "2.0"),
 			oRequestorMock = this.mock(oRequestor),
 			oResponse = {d : {foo : "bar"}};
 
@@ -476,7 +478,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request(), fnOnCreateGroup", function (assert) {
 		var fnOnCreateGroup = sinon.spy(),
-			oRequestor = _Requestor.create("/", {}, {}, undefined, fnOnCreateGroup);
+			oRequestor = _Requestor.create("/", {}, {}, undefined, undefined, fnOnCreateGroup);
 
 		oRequestor.request("GET", "SalesOrders", "groupId");
 		oRequestor.request("GET", "SalesOrders", "groupId");
@@ -1745,7 +1747,7 @@ sap.ui.require([
 		this.mock(oRequestor).expects("convertExpand")
 			.withExactArgs(sinon.match.same(oExpand), undefined).returns("expand");
 
-		assert.deepEqual(oRequestor.convertQueryOptions({
+		assert.deepEqual(oRequestor.convertQueryOptions("Foo", {
 			foo : "bar",
 			$apply : "filter(Price gt 100)",
 			$count : "true",
@@ -1769,7 +1771,7 @@ sap.ui.require([
 			$select : "select1,select2"
 		});
 
-		assert.deepEqual(oRequestor.convertQueryOptions({
+		assert.deepEqual(oRequestor.convertQueryOptions("Foo", {
 			foo : "bar",
 			"sap-client" : "111",
 			$apply : "filter(Price gt 100)",
@@ -1784,13 +1786,13 @@ sap.ui.require([
 			"sap-client" : "111"
 		});
 
-		assert.deepEqual(oRequestor.convertQueryOptions({
+		assert.deepEqual(oRequestor.convertQueryOptions("Foo", {
 			$select : "singleSelect"
 		}), {
 			$select : "singleSelect"
 		});
 
-		assert.strictEqual(oRequestor.convertQueryOptions(undefined), undefined);
+		assert.strictEqual(oRequestor.convertQueryOptions("Foo", undefined), undefined);
 	});
 
 	//*********************************************************************************************
@@ -1836,20 +1838,25 @@ sap.ui.require([
 			var oConvertedQueryParams = {},
 				oQueryParams = {},
 				oRequestor = _Requestor.create("/~/"),
-				oRequestorMock = this.mock(oRequestor);
+				oRequestorMock = this.mock(oRequestor),
+				sResourcePath = "Foo";
 
 			oRequestorMock.expects("convertQueryOptions")
-				.withExactArgs(undefined, undefined, undefined).returns(undefined);
+				.withExactArgs(sResourcePath, undefined, undefined, undefined).returns(undefined);
 
-			assert.strictEqual(oRequestor.buildQueryString(), "");
+			// code under test
+			assert.strictEqual(oRequestor.buildQueryString(sResourcePath), "");
 
 			oRequestorMock.expects("convertQueryOptions")
-				.withExactArgs(sinon.match.same(oQueryParams), true, bSortExpandSelect)
+				.withExactArgs(sResourcePath, sinon.match.same(oQueryParams), true,
+					bSortExpandSelect)
 				.returns(oConvertedQueryParams);
 			this.mock(_Helper).expects("buildQuery")
 				.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
 
-			assert.strictEqual(oRequestor.buildQueryString(oQueryParams, true, bSortExpandSelect),
+			// code under test
+			assert.strictEqual(
+				oRequestor.buildQueryString(sResourcePath, oQueryParams, true, bSortExpandSelect),
 				"?query");
 		});
 	});
@@ -1907,7 +1914,7 @@ sap.ui.require([
 			var oRequestor = _Requestor.create("/~/");
 
 			assert.strictEqual(
-				oRequestor.buildQueryString(oFixture.o, undefined, true), "?" + oFixture.s,
+				oRequestor.buildQueryString("Foo", oFixture.o, undefined, true), "?" + oFixture.s,
 				oFixture.s);
 		});
 	});
@@ -2034,6 +2041,13 @@ sap.ui.require([
 				oRequestor.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
 				undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ready()", function (assert) {
+		var oRequestor = _Requestor.create("/");
+
+		assert.strictEqual(oRequestor.ready().getResult(), undefined);
 	});
 
 	//*********************************************************************************************

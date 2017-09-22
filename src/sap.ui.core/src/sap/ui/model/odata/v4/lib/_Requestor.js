@@ -67,15 +67,19 @@ sap.ui.define([
 	 * @param {function} fnFetchEntityContainer
 	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
 	 *   container is fully available, or rejected with an error.
+	 * @param {function} fnFetchMetadata
+	 *   A function that returns a _SyncPromise which resolves with the metadata instance for a
+	 *   given absolute model path (it is automatically converted to a metapath)
 	 * @param {function (string)} [fnOnCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
 	 * @private
 	 */
-	function Requestor(sServiceUrl, mHeaders, mQueryParams, fnFetchEntityContainer,
+	function Requestor(sServiceUrl, mHeaders, mQueryParams, fnFetchEntityContainer, fnFetchMetadata,
 			fnOnCreateGroup) {
 		this.mBatchQueue = {};
 		this.fnFetchEntityContainer = fnFetchEntityContainer;
+		this.fnFetchMetadata = fnFetchMetadata;
 		this.mHeaders = mHeaders || {};
 		this.fnOnCreateGroup = fnOnCreateGroup;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
@@ -150,6 +154,8 @@ sap.ui.define([
 	 * options, all other OData system query options are rejected; with
 	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
 	 *
+	 * @param {string} sResourcePath
+	 *   The resource path (allows metadata access, but does not become part of the result)
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bDropSystemQueryOptions=false]
@@ -178,10 +184,11 @@ sap.ui.define([
 	 *		"sap-client" : "003"
 	 *	}
 	 */
-	Requestor.prototype.buildQueryString = function (mQueryOptions, bDropSystemQueryOptions,
-			bSortExpandSelect) {
+	Requestor.prototype.buildQueryString = function (sResourcePath, mQueryOptions,
+			bDropSystemQueryOptions, bSortExpandSelect) {
 		return _Helper.buildQuery(
-			this.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect));
+			this.convertQueryOptions(sResourcePath, mQueryOptions, bDropSystemQueryOptions,
+				bSortExpandSelect));
 	};
 
 	/**
@@ -315,9 +322,12 @@ sap.ui.define([
 			bSortExpandSelect) {
 		var aExpandOptions = [];
 
-		this.doConvertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
-			aExpandOptions.push(sOptionName + '=' + vOptionValue);
-		}, undefined, bSortExpandSelect);
+		// We do not pass a resource path, but within V4 this doesn't matter
+		this.doConvertSystemQueryOptions(undefined, vExpandOptions,
+			function (sOptionName, vOptionValue) {
+				aExpandOptions.push(sOptionName + '=' + vOptionValue);
+			},
+			undefined, bSortExpandSelect);
 		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
 			: sExpandPath;
 	};
@@ -327,6 +337,8 @@ sap.ui.define([
 	 * strings, so that the result can be used for _Helper.buildQuery; with
 	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
 	 *
+	 * @param {string} sResourcePath
+	 *   The resource path (allows metadata access, but does not become part of the result)
 	 * @param {object} mQueryOptions The query options
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
@@ -334,14 +346,14 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
 	 * @returns {object} The converted query options
 	 */
-	Requestor.prototype.convertQueryOptions = function (mQueryOptions, bDropSystemQueryOptions,
-			 bSortExpandSelect) {
+	Requestor.prototype.convertQueryOptions = function (sResourcePath, mQueryOptions,
+			bDropSystemQueryOptions, bSortExpandSelect) {
 		var mConvertedQueryOptions = {};
 
 		if (!mQueryOptions) {
 			return undefined;
 		}
-		this.doConvertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
+		this.doConvertSystemQueryOptions(sResourcePath, mQueryOptions, function (sKey, vValue) {
 			mConvertedQueryOptions[sKey] = vValue;
 		}, bDropSystemQueryOptions, bSortExpandSelect);
 		return mConvertedQueryOptions;
@@ -352,6 +364,8 @@ sap.ui.define([
 	 * other parameters are simply passed through.
 	 * May be overwritten for other OData service versions.
 	 *
+	 * @param {string} sResourcePath
+	 *   The resource path (allows metadata access, but does not become part of the result)
 	 * @param {object} mQueryOptions The query options
 	 * @param {function(string,any)} fnResultHandler
 	 *   The function to process the converted options getting the name and the value
@@ -360,8 +374,8 @@ sap.ui.define([
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
 	 */
-	Requestor.prototype.doConvertSystemQueryOptions = function (mQueryOptions, fnResultHandler,
-			bDropSystemQueryOptions, bSortExpandSelect) {
+	Requestor.prototype.doConvertSystemQueryOptions = function (sResourcePath, mQueryOptions,
+			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
 		var that = this;
 
 		Object.keys(mQueryOptions).forEach(function (sKey) {
@@ -478,6 +492,16 @@ sap.ui.define([
 			}
 		}
 		return Object.keys(this.mRunningChangeRequests).length > 0;
+	};
+
+	/**
+	 * Returns a sync promise that is resolved when the requestor is ready to be used. The V4
+	 * requestor is ready immediately. Subclasses may behave differently.
+	 *
+	 * @returns {_SyncPromise} A sync promise that is resolved immediately with no result
+	 */
+	Requestor.prototype.ready = function () {
+		return _SyncPromise.resolve();
 	};
 
 	/**
@@ -973,6 +997,9 @@ sap.ui.define([
 		 * @param {function} fnFetchEntityContainer
 		 *   A function that returns a _SyncPromise which resolves with the metadata entity
 		 *   container
+		 * @param {function} fnFetchMetadata
+		 *   A function that returns a _SyncPromise which resolves with the metadata instance for a
+		 *   given absolute model path (it is automatically converted to a metapath)
 		 * @param {function (string)} [fnOnCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
@@ -982,9 +1009,9 @@ sap.ui.define([
 		 *   A new <code>_Requestor</code> instance
 		 */
 		create : function (sServiceUrl, mHeaders, mQueryParams, fnFetchEntityContainer,
-				fnOnCreateGroup, sODataVersion) {
+				fnFetchMetadata, fnOnCreateGroup, sODataVersion) {
 			var oRequestor = new Requestor(sServiceUrl, mHeaders, mQueryParams,
-					fnFetchEntityContainer, fnOnCreateGroup);
+					fnFetchEntityContainer, fnFetchMetadata, fnOnCreateGroup);
 
 			if (sODataVersion === "2.0") {
 				asV2Requestor(oRequestor);

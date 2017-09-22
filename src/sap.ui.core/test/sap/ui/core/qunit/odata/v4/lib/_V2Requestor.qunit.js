@@ -602,8 +602,8 @@ sap.ui.require([
 				asV2Requestor(oRequestor);
 
 				// code under test
-				oRequestor.doConvertSystemQueryOptions(oFixture.queryOptions, fnResultHandlerSpy,
-					oFixture.dropSystemQueryOptions, bSorted);
+				oRequestor.doConvertSystemQueryOptions("Foo", oFixture.queryOptions,
+					fnResultHandlerSpy, oFixture.dropSystemQueryOptions, bSorted);
 
 				assert.strictEqual(fnResultHandlerSpy.callCount,
 					aExpectedResultHandlerCalls.length);
@@ -636,7 +636,7 @@ sap.ui.require([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.doConvertSystemQueryOptions({"$expand" : vExpandOption});
+				oRequestor.doConvertSystemQueryOptions("Foo", {"$expand" : vExpandOption});
 			}, new Error("$expand must be a valid object"));
 		});
 	});
@@ -683,9 +683,29 @@ sap.ui.require([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.doConvertSystemQueryOptions(oFixture.queryOptions, function () {});
+				oRequestor.doConvertSystemQueryOptions("Foo", oFixture.queryOptions,
+					function () {});
 			}, new Error(oFixture.error));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertSystemQueryOptions: $filter", function (assert) {
+		var sFilter = "foo eq 'bar'",
+			oRequestor = {},
+			fnResultHandlerSpy = sinon.spy();
+
+		asV2Requestor(oRequestor);
+
+		this.mock(oRequestor).expects("convertFilter")
+			.withExactArgs(sFilter, "Foo").returns("~");
+
+		// code under test
+		oRequestor.doConvertSystemQueryOptions("Foo", {$filter : sFilter},
+			fnResultHandlerSpy);
+
+		sinon.assert.calledOnce(fnResultHandlerSpy);
+		sinon.assert.calledWithExactly(fnResultHandlerSpy, "$filter", "~");
 	});
 
 	//*********************************************************************************************
@@ -726,6 +746,78 @@ sap.ui.require([
 			assert.throws(function () {
 				oRequestor.formatPropertyAsLiteral(vValue, oProperty);
 			}, new Error("Type 'Edm." + sType + "' in the key is not supported"));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertFilter: success", function (assert) {
+		var sFilter = "foo/bar eq 'baz'",
+			oRequestor = {
+				fnFetchMetadata : function () {}
+			},
+			sResourcePath = "MyEntitySet";
+
+		asV2Requestor(oRequestor);
+
+		this.mock(oRequestor).expects("fnFetchMetadata")
+			.withExactArgs("/" + sResourcePath + "/foo/bar/$Type")
+			.returns(_SyncPromise.resolve("Edm.String"));
+
+		// code under test
+		assert.strictEqual(oRequestor.convertFilter(sFilter, sResourcePath), sFilter);
+		});
+
+	//*********************************************************************************************
+	[{
+		type : "Edm.Int32",
+		literal : "'baz'",
+		error : "Unsupported type Edm.Int32: foo/bar"
+	}, {
+		type : "Edm.String",
+		literal : 1,
+		error : "Not a literal of type Edm.String: 1"
+	}, {
+		type : undefined,
+		literal : 1,
+		error : "Invalid filter path: foo/bar"
+	}].forEach(function (oFixture) {
+		QUnit.test("convertFilter: " + oFixture.error, function (assert) {
+			var oRequestor = {
+					fnFetchMetadata : function () {}
+				},
+				sResourcePath = "MyEntitySet";
+
+			asV2Requestor(oRequestor);
+
+			this.mock(oRequestor).expects("fnFetchMetadata")
+				.withExactArgs("/" + sResourcePath + "/foo/bar/$Type")
+				.returns(_SyncPromise.resolve(oFixture.type));
+
+			// code under test
+			assert.throws(function () {
+				oRequestor.convertFilter("foo/bar eq " + oFixture.literal, sResourcePath);
+			}, new Error(oFixture.error));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ready()", function (assert) {
+		var oRequestor = {
+				fnFetchEntityContainer : function () {}
+			},
+			oSyncPromise;
+
+		asV2Requestor(oRequestor);
+
+		this.mock(oRequestor).expects("fnFetchEntityContainer")
+			.returns(_SyncPromise.resolve(Promise.resolve({})));
+
+		// code under test
+		oSyncPromise = oRequestor.ready();
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), false);
+		return oSyncPromise.then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
 		});
 	});
 });

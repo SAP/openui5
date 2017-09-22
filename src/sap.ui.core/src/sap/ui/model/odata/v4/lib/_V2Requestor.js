@@ -5,8 +5,9 @@
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
-	"./_Helper"
-], function (DateFormat, ODataUtils, _Helper) {
+	"./_Helper",
+	"./_Parser"
+], function (DateFormat, ODataUtils, _Helper, _Parser) {
 	"use strict";
 
 	var // Example: "/Date(1395705600000)/", matching group: ticks in milliseconds
@@ -153,6 +154,36 @@ sap.ui.define([
 			default:
 				return parseFloat(sV2Value);
 		}
+	};
+
+	/**
+	 * Converts the filter string literals to OData V2 syntax
+	 *
+	 * @param {string} sFilter The filter string
+	 * @param {string} sResourcePath
+	 *   The resource path (allows metadata access, but does not become part of the result)
+	 * @returns {string} The filter string ready for a V2 query
+	 * @throws {Error} If a type is unsupported or a literal is invalid for the type.
+	 */
+	_V2Requestor.prototype.convertFilter = function (sFilter, sResourcePath) {
+		var oFilterTree = _Parser.parseFilter(sFilter),
+			sPath = oFilterTree.left.value,
+			sType,
+			sValue = oFilterTree.right.value;
+
+		sType = this.fnFetchMetadata("/" + sResourcePath + "/" + sPath + "/$Type").getResult();
+
+		if (!sType) {
+			throw new Error("Invalid filter path: " + sPath);
+		}
+		if (sType !== "Edm.String") {
+			 throw new Error("Unsupported type " + sType + ": " + sPath);
+		}
+		if (!/^'.*'$/.test(sValue)) {
+			throw new Error("Not a literal of type Edm.String: " + sValue);
+		}
+
+		return sFilter;
 	};
 
 	/**
@@ -320,6 +351,8 @@ sap.ui.define([
 	 * Converts the supported V4 OData system query options to the corresponding V2 OData system
 	 * query options.
 	 *
+	 * @param {string} sResourcePath
+	 *   The resource path (allows metadata access, but does not become part of the result)
 	 * @param {object} mQueryOptions The query options
 	 * @param {function(string,any)} fnResultHandler
 	 *   The function to process the converted options getting the name and the value
@@ -331,9 +364,10 @@ sap.ui.define([
 	 *   If a system query option other than $expand and $select is used or if any $expand value is
 	 *   not an object
 	 */
-	_V2Requestor.prototype.doConvertSystemQueryOptions = function (mQueryOptions, fnResultHandler,
-			bDropSystemQueryOptions, bSortExpandSelect) {
-		var aSelects = [];
+	_V2Requestor.prototype.doConvertSystemQueryOptions = function (sResourcePath, mQueryOptions,
+			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
+		var aSelects = [],
+			that = this;
 
 		/**
 		 * Converts the V4 $expand options to flat V2 $expand and $select structure.
@@ -408,6 +442,9 @@ sap.ui.define([
 					aSelects.push.apply(aSelects,
 						Array.isArray(vValue) ? vValue : vValue.split(","));
 					return; // don't call fnResultHandler; this is done later
+				case "$filter":
+					vValue = that.convertFilter(vValue, sResourcePath);
+					break;
 				default:
 					if (bIsSystemQueryOption) {
 						throw new Error("Unsupported system query option: " + sName);
@@ -451,6 +488,17 @@ sap.ui.define([
 			default:
 				return ODataUtils.formatValue(vValue, sType);
 		}
+	};
+
+	/**
+	 * Returns a sync promise that is resolved when the requestor is ready to be used. Waits for the
+	 * metadata to be available.
+	 *
+	 * @returns {_SyncPromise} A sync promise that is resolved with no result when the metadata is
+	 * available
+	 */
+	_V2Requestor.prototype.ready = function () {
+		return this.fnFetchEntityContainer().then(function () {});
 	};
 
 	return function (oObject) {

@@ -8,12 +8,19 @@ sap.ui.define([
 	"use strict";
 
 	var // The delimiters in a system query option, possibly %-encoded (their hex value listed in
-		// aMatches[1] if encoded)
+		// aMatches[3] if encoded)
 		sDelimiters = "[=(),; \"']|%(20|22|27|28|29|2c|2C|3b|3B)",
 		// A system query option
 		sSystemQueryOption = "\\$\\w+",
 		// ABNF rule oDataIdentifier
 		sODataIdentifier = "[a-zA-Z_\\u0080-\\uFFFF][\\w\\u0080-\\uFFFF]*",
+		// "required white space" (but only one char)
+		sRws = "(?:[ \\t]|%09|%20)",
+		// "required white space"
+		rRws = new RegExp(sRws + "+", "g"),
+		// OData operators (only recognized when surrounded by spaces; aMatches[1] contains the
+		// leading spaces, aMatches[2] the operator if found)
+		sOperators = "(" + sRws + "+)(eq|ge|gt|le|lt|ne)" + sRws + "*",
 		// '*' (poss. %-encoded)
 		sStar = "(?:\\*|%2[aA])",
 		// A path consisting of simple identifiers separated by '/' or '.' optionally followed by
@@ -28,10 +35,10 @@ sap.ui.define([
 		// All other characters in expressions (constants of type double/date/time/GUID), '/' as
 		// part of rootExpr or implicitVariableExpr, '+' may be %-encoded
 		sValue = '(?:[-+:./\\w"]|%2[bB])+',
-		// A Token: either a delimiter or a path (listed in aMatches[2]), a value (listed in
-		// aMatches[3]) or a system query option (listed in aMatches[4])
-		rToken = new RegExp("^(?:" + sDelimiters + "|(" + sPath + ")|(" + sValue + ")|("
-			+ sSystemQueryOption + "))"),
+		// A Token: either an operator, a delimiter, a path (in aMatches[4]), a value (in
+		// aMatches[5]) or a system query option (in aMatches[6])
+		rToken = new RegExp("^(?:" + sOperators +  "|" + sDelimiters + "|(" + sPath + ")|("
+			+ sValue + ")|(" + sSystemQueryOption + "))"),
 		// The two hex digits of a %-escape
 		rEscapeDigits = /^[0-9a-f]{2}$/i;
 
@@ -97,10 +104,13 @@ sap.ui.define([
 	 * @throws {SyntaxError} An error that the token was not as expected
 	 */
 	Parser.prototype.expected = function (sWhat, oToken) {
-		var sMessage = "Expected " + sWhat + " but instead saw ";
+		var sMessage = "Expected " + sWhat + " but instead saw ",
+			sValue;
 
 		if (oToken) {
-			sMessage += "'" + oToken.value + "' at " + oToken.at;
+			sValue = oToken.value;
+			sMessage += "'" + (sValue === " " ?  sValue : sValue.replace(rRws, "")) + "' at "
+				+ oToken.at;
 		} else {
 			sMessage += "end of input";
 		}
@@ -132,6 +142,53 @@ sap.ui.define([
 		this.iCurrentToken = 0;
 	};
 
+	/**
+	 * A parser that is able to parse a filter string into a syntax tree which recognizes paths,
+	 * comparison operators and literals.
+	 */
+	function FilterParser() {
+	}
+
+	FilterParser.prototype = Object.create(Parser.prototype);
+
+	/**
+	 * Parses a filter string.
+	 *
+	 * @param {string} sFilter The filter string
+	 * @returns {object} The syntax tree for the filter
+	 * @throws {SyntaxError} If there is a syntax error
+	 */
+	FilterParser.prototype.parse = function (sFilter) {
+		var oOperatorToken,
+			oPathToken,
+			oValueToken;
+
+		this.init(sFilter);
+		oPathToken = this.advance("PATH");
+		oOperatorToken = this.advance();
+		switch (oOperatorToken && oOperatorToken.id) {
+			case "eq":
+			case "ge":
+			case "gt":
+			case "le":
+			case "lt":
+			case "ne":
+				break;
+			default:
+				this.expected("operator", oOperatorToken);
+		}
+		oValueToken = this.advance("VALUE");
+
+		oOperatorToken.left = oPathToken;
+		oOperatorToken.right = oValueToken;
+
+		return oOperatorToken;
+	};
+
+	/**
+	 * A parser that is able to parse system query strings. It focuses on $select and $expand, all
+	 * other options remain strings, even when embedded into an expand statement.
+	 */
 	function SystemQueryOptionParser () {
 	}
 
@@ -377,23 +434,28 @@ sap.ui.define([
 			sId,
 			aMatches,
 			sNext = sOption,
+			iOffset,
 			oToken,
 			aTokens = [],
 			sValue;
 
 		while (sNext.length) {
 			aMatches = rToken.exec(sNext);
+			iOffset = 0;
 			if (aMatches) {
 				sValue = aMatches[0];
-				if (aMatches[4]) {
+				if (aMatches[6]) {
 					sId = "OPTION";
-				} else if (aMatches[3]) {
+				} else if (aMatches[5]) {
 					sId = "VALUE";
-				} else if (aMatches[2]) {
+				} else if (aMatches[4]) {
 					sId = "PATH";
-				} else if (aMatches[1]) {
-					sId = unescape(aMatches[1]);
-				} else {
+				} else if (aMatches[3]) { // a %-escaped delimiter
+					sId = unescape(aMatches[3]);
+				} else if (aMatches[2]) { // an operator
+					sId = aMatches[2];
+					iOffset = aMatches[1].length;
+				} else { // a delimiter
 					sId = aMatches[0];
 				}
 				if (sId === '"') {
@@ -404,7 +466,7 @@ sap.ui.define([
 					sValue = tokenizeSingleQuotedString(sNext, sOption, iAt);
 				}
 				oToken = {
-					at : iAt,
+					at : iAt + iOffset,
 					id : sId,
 					value : sValue
 				};
@@ -422,6 +484,44 @@ sap.ui.define([
 
 	return {
 		/**
+		 * Builds the filter string.
+		 *
+		 * @param {object} oSyntaxTree The syntax tree
+		 * @returns {string} The filter string
+		 */
+		buildFilterString : function (oSyntaxTree) {
+			return oSyntaxTree.left.value + oSyntaxTree.value + oSyntaxTree.right.value;
+		},
+
+		/**
+		 * Parses a filter string to a syntax tree. In this tree
+		 * <ul>
+		 * <li> paths are leafs with <code>id="PATH"</code> and the path in <code>value</code>
+		 * <li> literals are leafs with <code>id="VALUE"</code> and the literal (as parsed) in
+		 *   <code>value</code>
+		 * <li> binary operations are nodes with the operator in <code>id</code>, the operator incl.
+		 *   the surrounding space in <code>value</code> and <code>left</code> and
+		 *   <code>right</code> containing syntax trees for the operands.
+		 * </ul>
+		 * <code>at</code> always contains the position where this token started (starting with 1).
+		 *
+		 * Example: <code>parseFilter("foo eq 'bar')</code> results in
+		 * <pre>
+			 {
+				id : "eq", value : " eq ", at : 5,
+	            left : {id : "PATH", value : "foo", at : 1},
+				right : {id : "VALUE", value : "'bar'", at : 8}
+			 }
+		 * </pre>
+		 *
+		 * @param {string} sFilter The filter string
+		 * @returns {object} The syntax tree.
+		 */
+		parseFilter : function (sFilter) {
+			return new FilterParser().parse(sFilter);
+		},
+
+		/**
 		 * Parses a system query option "$select" or "$expand" into an object representation.
 		 *
 		 * The value for "$select" is an array of strings.
@@ -434,8 +534,7 @@ sap.ui.define([
 		 *
 		 * <b>Example:</b>
 		 *
-		 * <code>$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;$select=ID,Name);$select=*;$count=true;$orderby=Name desc)</code>
-		 * is converted to
+		 * <code>$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;$select=ID,Name);$select=*;$count=true;$orderby=Name desc)</code> is converted to
 		 * <pre>
 			{
 				"$expand" : {

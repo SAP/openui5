@@ -46,12 +46,21 @@ sap.ui.require([
 	/**
 	 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
 	 *
-	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 * @param {object} mModelParameters Map of parameters for model construction to enhance and
 	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
 	 *   synchronizationMode which are set by default
+	 * @param {object} oLogMock The log mock
 	 * @returns {ODataModel} The model
 	 */
-	function createModelForV2SalesOrderService(mModelParameters) {
+	function createModelForV2SalesOrderService(mModelParameters, oLogMock) {
+		// The following warnings are logged when the GWSAMPLE_BASIC metamodel is loaded
+		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+			oLogMock.expects("warning")
+				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
+					+ "', removing this FunctionImport", undefined,
+					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+		});
+
 		mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
 		return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
 	}
@@ -2767,8 +2776,7 @@ sap.ui.require([
 </FlexBox>',
 			oModel = createModelForV2SalesOrderService({
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
-			}),
-			that = this;
+			}, this.oLogMock);
 
 		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
 				"&$select=ToLineItems/ItemPosition,SalesOrderID",
@@ -2781,14 +2789,8 @@ sap.ui.require([
 				]
 			})
 			.expectChange("id", "0500000001")
+			.expectChange("id", "0500000001") // TODO duplicate change event
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
-
-		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
-			that.oLogMock.expects("warning")
-				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
-						+ "', removing this FunctionImport", undefined,
-					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
-		});
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
@@ -2819,8 +2821,7 @@ sap.ui.require([
 </Table>',
 			oModel = createModelForV2SalesOrderService({
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
-			}),
-			that = this;
+			}, this.oLogMock);
 
 		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID" +
 				"&$skip=0&$top=100",
@@ -2833,15 +2834,42 @@ sap.ui.require([
 			})
 			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
 
-		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
-			that.oLogMock.expects("warning")
-				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
-						+ "', removing this FunctionImport", undefined,
-					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
-		});
-
 		// code under test
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: test conversion of $filter for V2 Adapter
+	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.test("V2 Adapter: $filter", function (assert) {
+		var sView = '\
+<Table id="table" items="{path :\'/SalesOrderSet\',\
+		parameters : {\
+			$select : \'SalesOrderID\',\
+			$filter : \'Note eq \\\'foo\\\'\'\
+		}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="id" text="{SalesOrderID}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>';
+
+		this.expectRequest("SalesOrderSet?$filter=Note%20eq%20'foo'&$select=SalesOrderID" +
+			"&$skip=0&$top=100",
+			{
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		// code under test
+		return this.createView(assert, sView, createModelForV2SalesOrderService({}, this.oLogMock));
 	});
 
 	//*********************************************************************************************

@@ -224,6 +224,9 @@ sap.ui.define([
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters,
 						this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
+						function (sPath) {
+							return that.oMetaModel.fetchObject(that.oMetaModel.getMetaPath(sPath));
+						},
 						function (sGroupId) {
 							if (that.isAutoGroup(sGroupId)) {
 								sap.ui.getCore().addPrerenderingTask(

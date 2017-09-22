@@ -785,7 +785,11 @@ sap.ui.require([
 		var oBinding = new ODataBinding({
 				oCachePromise : _SyncPromise.resolve(),
 				doCreateCache : function () {},
-				oModel : {}
+				oModel : {
+					oRequestor : {
+						ready : function () { return _SyncPromise.resolve(); }
+					}
+				}
 			}),
 			oBindingMock = this.mock(oBinding);
 
@@ -805,6 +809,9 @@ sap.ui.require([
 				oCachePromise : _SyncPromise.resolve(),
 				doCreateCache : function () {},
 				oModel : {
+					oRequestor : {
+						ready : function () { return _SyncPromise.resolve(); }
+					},
 					mUriParameters : {}
 				},
 				sPath : "/absolute",
@@ -841,6 +848,9 @@ sap.ui.require([
 					oCachePromise : _SyncPromise.resolve(),
 					doCreateCache : function () {},
 					oModel : {
+						oRequestor : {
+							ready : function () { return _SyncPromise.resolve(); }
+						},
 						mUriParameters : {}
 					},
 					sPath : "relative",
@@ -881,6 +891,51 @@ sap.ui.require([
 				assert.strictEqual(oCache0, oCache);
 				assert.strictEqual(oCache0.$canonicalPath, "/canonicalPath");
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: requestor is not ready", function (assert) {
+		var oRequestor = {
+				ready : function () {}
+			},
+			oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(),
+				doCreateCache : function () {},
+				oModel : {
+					oRequestor : oRequestor,
+					mUriParameters : {}
+				},
+				sPath : "/absolute",
+				bRelative : false
+			}),
+			oBindingMock = this.mock(oBinding),
+			oCache = {},
+			mLocalQueryOptions = {},
+			mResultingQueryOptions = {},
+			that = this;
+
+		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(undefined)
+			.returns(_SyncPromise.resolve(mLocalQueryOptions));
+		oBindingMock.expects("doCreateCache").never(); // Do not expect cache creation yet
+		this.mock(oRequestor).expects("ready")
+			.returns(_SyncPromise.resolve(Promise.resolve().then(function () {
+				// Now that the requestor is ready, the cache must be created
+				that.mock(jQuery).expects("extend")
+					.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+						sinon.match.same(mLocalQueryOptions))
+					.returns(mResultingQueryOptions);
+				oBindingMock.expects("doCreateCache")
+					.withExactArgs("absolute", sinon.match.same(mResultingQueryOptions), undefined)
+					.returns(oCache);
+			})));
+
+		// code under test
+		oBinding.fetchCache();
+
+		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), false);
+		return oBinding.oCachePromise.then(function (oResult) {
+			assert.strictEqual(oResult, oCache);
 		});
 	});
 
@@ -958,7 +1013,9 @@ sap.ui.require([
 				oCachePromise : _SyncPromise.resolve(),
 				doCreateCache : function () {},
 				oModel : {
-					mUriParameters : {}
+					oRequestor : {
+						ready : function () { return _SyncPromise.resolve(); }
+					}
 				},
 				sPath : "quasiAbsolute",
 				bRelative : true
@@ -994,6 +1051,11 @@ sap.ui.require([
 	QUnit.test("fetchCache: relative to virtual context", function (assert) {
 		var oBinding = new ODataBinding({
 				oCachePromise : _SyncPromise.resolve(),
+				oModel : {
+					oRequestor : {
+						ready : function () { return _SyncPromise.resolve(); }
+					}
+				},
 				bRelative : true
 			}),
 			oContext = {
@@ -1019,6 +1081,11 @@ sap.ui.require([
 			}),
 			oBinding = new ODataBinding({
 				oCachePromise : oCachePromise,
+				oModel : {
+					oRequestor : {
+						ready : function () { return _SyncPromise.resolve(); }
+					}
+				},
 				oOperation : {}
 			});
 
@@ -1040,7 +1107,9 @@ sap.ui.require([
 						return _SyncPromise.resolve(undefined);
 					},
 					oModel : {
-						mUriParameters : {}
+						oRequestor : {
+							ready : function () { return _SyncPromise.resolve(); }
+						}
 					},
 					bRelative : true
 				}),
@@ -1061,6 +1130,9 @@ sap.ui.require([
 			oCachePromise : _SyncPromise.resolve(),
 			doCreateCache : function () {},
 				oModel : {
+					oRequestor : {
+						ready : function () { return _SyncPromise.resolve(); }
+					},
 					mUriParameters : {}
 				},
 				bRelative : true
@@ -1101,6 +1173,9 @@ sap.ui.require([
 				oCachePromise : _SyncPromise.resolve(),
 				doCreateCache : function () {},
 				oModel : {
+					oRequestor : {
+						ready : function () { return _SyncPromise.resolve(); }
+					},
 					mUriParameters : {}
 				},
 				sPath : "/EMPLOYEES",
@@ -1127,6 +1202,9 @@ sap.ui.require([
 				oCachePromise : _SyncPromise.resolve(),
 				doCreateCache : function () {},
 				oModel : {
+					oRequestor : {
+						ready : function () { return _SyncPromise.resolve(); }
+					},
 					reportError : function () {},
 					mUriParameters : {}
 				},
@@ -1190,6 +1268,9 @@ sap.ui.require([
 		var oBinding = new ODataBinding({
 				oCachePromise : _SyncPromise.resolve(),
 				oModel : {
+					oRequestor : {
+						ready : function () { return _SyncPromise.resolve(); }
+					},
 					reportError : function () {},
 					mUriParameters : {}
 				},

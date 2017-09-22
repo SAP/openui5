@@ -12,7 +12,8 @@
 							$select : ['SalesOrderItemUUID', 'SalesOrderUUID', 'SalesOrder',
 								'SalesOrderItem', 'Product', 'GrossAmount']
 						}},
-						$select : ['SalesOrderUUID', 'SalesOrder', 'Customer', 'OverallStatus']
+						$select : ['SalesOrderUUID', 'SalesOrder', 'Customer', 'OverallStatus'],
+						$filter : 'SalesOrder ge \'500000000\''
 				}}"
 			mode="SingleSelectMaster"
 			selectionChange="onSalesOrdersSelect">

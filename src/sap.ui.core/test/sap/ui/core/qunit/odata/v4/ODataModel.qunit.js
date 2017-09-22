@@ -179,7 +179,7 @@ sap.ui.require([
 
 			this.mock(_Requestor).expects("create")
 				.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, sinon.match.object,
-					sinon.match.func, sinon.match.func, sODataVersion)
+					sinon.match.func, sinon.match.func, sinon.match.func, sODataVersion)
 				.returns({});
 
 			this.mock(_MetadataRequestor).expects("create")
@@ -354,7 +354,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Model creates _Requestor", function (assert) {
-		var oExpectedBind,
+		var oEntitySetMetaDataPromise = {},
+			oExpectedBind,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
 			fnFetchEntityContainer = function () {},
 			oModel,
@@ -363,7 +364,7 @@ sap.ui.require([
 
 		oExpectedCreate
 			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"},
-				sinon.match.same(fnFetchEntityContainer), sinon.match.func, "4.0")
+				sinon.match.same(fnFetchEntityContainer), sinon.match.func, sinon.match.func, "4.0")
 			.returns(oRequestor);
 		oExpectedBind = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
 			.returns(fnFetchEntityContainer);
@@ -382,8 +383,18 @@ sap.ui.require([
 			.withExactArgs(fnSubmitAuto);
 
 		// code under test - call fnOnCreateGroup
-		oExpectedCreate.args[0][4]("$auto");
-		oExpectedCreate.args[0][4]("foo");
+		oExpectedCreate.args[0][5]("$auto");
+		oExpectedCreate.args[0][5]("foo");
+
+		this.mock(ODataMetaModel.prototype).expects("getMetaPath")
+			.withExactArgs("/EntitySet(42)")
+			.returns("/EntitySet");
+		this.mock(ODataMetaModel.prototype).expects("fetchObject")
+			.withExactArgs("/EntitySet")
+			.returns(oEntitySetMetaDataPromise);
+
+		// code under test
+		assert.strictEqual(oExpectedCreate.args[0][4]("/EntitySet(42)"), oEntitySetMetaDataPromise);
 	});
 
 	//*********************************************************************************************

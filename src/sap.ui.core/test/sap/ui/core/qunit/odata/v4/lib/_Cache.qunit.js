@@ -150,10 +150,12 @@ sap.ui.require([
 			oCache;
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mQueryOptions), false, "bSortExpandSelect")
+			.withExactArgs(sinon.match.same(sResourcePath), sinon.match.same(mQueryOptions), false,
+				"bSortExpandSelect")
 			.returns("?foo=bar");
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mNewQueryOptions), false, "bSortExpandSelect")
+			.withExactArgs(sinon.match.same(sResourcePath), sinon.match.same(mNewQueryOptions),
+				false, "bSortExpandSelect")
 			.returns("?baz=boo");
 
 		oCache = new _Cache(this.oRequestor, sResourcePath, defaultFetchType, mQueryOptions,
@@ -701,7 +703,7 @@ sap.ui.require([
 			oHelperMock.expects("buildPath").withExactArgs("path/to/entity", "Address/City")
 				.returns(sFullPath);
 			this.oRequestorMock.expects("buildQueryString")
-				.withExactArgs(sinon.match.same(mQueryOptions), true)
+				.withExactArgs("/BusinessPartnerList", sinon.match.same(mQueryOptions), true)
 				.returns("?foo=bar");
 			oStaticCacheMock.expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf")
@@ -858,7 +860,8 @@ sap.ui.require([
 			oHelperMock.expects("buildPath").withExactArgs("path/to/entity", "Address/City")
 				.returns(sFullPath);
 			this.oRequestorMock.expects("buildQueryString")
-				.withExactArgs(sinon.match.same(mQueryOptions), true).returns("?foo=bar");
+				.withExactArgs("/BusinessPartnerList", sinon.match.same(mQueryOptions), true)
+				.returns("?foo=bar");
 			oStaticCacheMock.expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf")
 				.returns(oUpdateData);
@@ -1765,7 +1768,7 @@ sap.ui.require([
 			sResourcePath = "Employees";
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mQueryParams), false, false)
+			.withExactArgs(sResourcePath, sinon.match.same(mQueryParams), false, false)
 			.returns(sQueryParams);
 
 		oCache = this.createCache(sResourcePath, mQueryParams, false);
@@ -1823,7 +1826,7 @@ sap.ui.require([
 		}
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mQueryOptions), true)
+			.withExactArgs("Employees", sinon.match.same(mQueryOptions), true)
 			.returns("?foo=bar");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
@@ -2193,7 +2196,8 @@ sap.ui.require([
 			that = this;
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mQueryParams), false, true).returns("?~");
+			.withExactArgs(sResourcePath, sinon.match.same(mQueryParams), false, true)
+			.returns("?~");
 		this.mock(_Cache.prototype).expects("fetchTypes")
 			.returns(Promise.resolve(mTypeForPath));
 
@@ -2529,7 +2533,8 @@ sap.ui.require([
 			sResourcePath = "Employees('1')";
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mQueryParams), false, undefined).returns("?~");
+			.withExactArgs(sResourcePath, sinon.match.same(mQueryParams), false, undefined)
+			.returns("?~");
 
 		oCache = _Cache.createProperty(this.oRequestor, sResourcePath, mQueryParams);
 		oCacheMock = this.mock(oCache);

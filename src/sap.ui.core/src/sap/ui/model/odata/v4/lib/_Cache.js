@@ -193,10 +193,10 @@ sap.ui.define([
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.oRequestor = oRequestor;
 		this.bSortExpandSelect = bSortExpandSelect;
-		this.setQueryOptions(mQueryOptions);
 		this.sResourcePath = sResourcePath;
 		this.bSentReadRequest = false;
 		this.oTypePromise = undefined;
+		this.setQueryOptions(mQueryOptions);
 	}
 
 	/**
@@ -240,7 +240,8 @@ sap.ui.define([
 			}
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
-			sEditUrl += that.oRequestor.buildQueryString(that.mQueryOptions, true);
+			sEditUrl += that.oRequestor.buildQueryString(that.sResourcePath, that.mQueryOptions,
+				true);
 			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
 				["catch"](function (oError) {
 					if (oError.status !== 404) {
@@ -411,7 +412,8 @@ sap.ui.define([
 		function request(sPostGroupId) {
 			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
 			return _SyncPromise.resolve(vPostPath).then(function (sPostPath) {
-				sPostPath += that.oRequestor.buildQueryString(that.mQueryOptions, true);
+				sPostPath += that.oRequestor.buildQueryString(that.sResourcePath,
+					that.mQueryOptions, true);
 				that.addByPath(that.mPostRequests, sPath, oEntityData);
 				return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
 						setCreatePending, cleanUp)
@@ -746,8 +748,9 @@ sap.ui.define([
 		}
 
 		this.mQueryOptions = mQueryOptions;
-		this.sQueryString = this.oRequestor.buildQueryString(mQueryOptions, false,
-			this.bSortExpandSelect);
+		// sResourcePath is only used for metadata access, it does not contribute to the result
+		this.sQueryString = this.oRequestor.buildQueryString(this.sResourcePath, mQueryOptions,
+			false, this.bSortExpandSelect);
 	};
 
 	/**
@@ -880,7 +883,8 @@ sap.ui.define([
 				return Promise.resolve({});
 			}
 			// send and register the PATCH request
-			sEditUrl += that.oRequestor.buildQueryString(that.mQueryOptions, true);
+			sEditUrl += that.oRequestor.buildQueryString(that.sResourcePath, that.mQueryOptions,
+				true);
 			return patch();
 		});
 	};
