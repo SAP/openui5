@@ -18,7 +18,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	function createLoadChangesErrorResponse() {
 		return Promise.reject({
-			error: 'error'
+			status: 'error'
 		});
 	}
 
@@ -137,19 +137,16 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		assert.equal(Cache._entries["testComponent1"], undefined);
 	});
 
-	QUnit.test('if error occours, subsequent calls in their own execution path should get the chance to make a new request', function(assert) {
+	QUnit.test('if error occurs, subsequent calls in their own execution path should not request the data anew', function(assert) {
 		var that = this;
-		var oErrorFromFirstCall;
 		var sComponentName = "test";
 
 		sinon.stub(this.oLrepConnector, 'loadChanges', createLoadChangesErrorResponse);
 
-		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(null, function(firstError) {
-			oErrorFromFirstCall = firstError;
+		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function() {
 			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
-		}).then(null, function(secondError) {
-			assert.notStrictEqual(oErrorFromFirstCall, secondError);
-			sinon.assert.calledTwice(that.oLrepConnector.loadChanges);
+		}).then(function() {
+			assert.equal(1, that.oLrepConnector.loadChanges.callCount, "only one call was done to the backend");
 		});
 	});
 
@@ -340,6 +337,159 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			assert.equal(oResult.changes.changes.length, 0, "but no change is present");
 			assert.equal(oResult.changes.contexts.length, 0, "but no context is present");
 			assert.equal(oResult.componentClassName, sComponentName, "the component class name was returned correctly");
+		});
+	});
+
+	QUnit.module("getChangesFillingCache and level0-changes", {
+		beforeEach: function() {
+			this.oChangeFromBackend = {};
+			this.sComponentName = "testComponent";
+			this.oLrepConnector = LrepConnector.createConnector();
+			this.mComponent = {
+				name : this.sComponentName,
+				appVersion : "1.2.3"
+			};
+		},
+
+		afterEach: function () {
+			Cache._entries = {};
+		}
+	});
+
+	var fnStubDebug = function (bDebug) {
+		var oCore = sap.ui.getCore();
+		var oCoreConfiguration = oCore.getConfiguration();
+		this.stub(oCoreConfiguration, "getDebug").returns(bDebug);
+	};
+
+	var fnStubBundle = function (bIsLoaded, aBundledChanges) {
+		this.stub(jQuery.sap, "isResourceLoaded").returns(bIsLoaded);
+		if (aBundledChanges) {
+			return this.stub(jQuery.sap, "loadResource").returns(aBundledChanges);
+		} else {
+			// if no bundle is specified the default error is thrown
+			return this.spy(jQuery.sap, "loadResource");
+		}
+	};
+
+	var fnStubBackend = function (bSuccessful, aChanges) {
+		var oResult;
+
+		if (bSuccessful) {
+			oResult = Promise.resolve({
+				response: {
+					changes: aChanges
+				},
+				componentClassName: this.sComponentName,
+				etag: "abc1234"
+			});
+		} else {
+			oResult = Promise.reject({
+				status: "mocked that way!"
+			});
+		}
+
+		return this.stub(this.oLrepConnector, "send").returns(oResult);
+	};
+
+	QUnit.test("can retrieve a preloaded changes-bundle in addition to the changes from the connector", function (assert) {
+		var that = this;
+
+		fnStubDebug.call(this, false); // debug is off
+		var oChangeFromBundle = {};
+		var oLoadResourceStub = fnStubBundle.call(this, true, [oChangeFromBundle]); // bundle is loaded and has a change
+		fnStubBackend.call(this, true, [that.oChangeFromBackend]); // backend call is successful and returns a change
+
+		var mPropertyBag = {
+			appName: "sap.app.name"
+		};
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, this.mComponent, mPropertyBag).then(function (oResponse) {
+			var aLoadedChanges = oResponse.changes.changes;
+			assert.equal(1, oLoadResourceStub.callCount, "the changes-bundle was requested");
+			assert.equal(2, aLoadedChanges.length, "two changes are returned");
+			assert.equal(oChangeFromBundle, aLoadedChanges[0], "the change form the changes-bundle is returned");
+			assert.equal(that.oChangeFromBackend, aLoadedChanges[1], "the change form the back end is returned");
+		});
+	});
+
+	QUnit.test("getChangesFillingCache does not send a request if the changes-bundle is not preloaded (on normal runtime = no debug)", function (assert) {
+		var that = this;
+
+		fnStubDebug.call(this, false); // debug is off
+		var oLoadResourceStub = fnStubBundle.call(this, false); // bundle is not loaded neither existing
+		fnStubBackend.call(this, true, [that.oChangeFromBackend]); // backend call is successful and returns a change
+
+		var mPropertyBag = {
+			appName: "sap.app.name"
+		};
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, this.mComponent, mPropertyBag).then(function (oResponse) {
+			var aLoadedChanges = oResponse.changes.changes;
+			assert.equal(0, oLoadResourceStub.callCount, "the changes-bundle was NOT requested");
+			assert.equal(1, aLoadedChanges.length, "one change was returned");
+			assert.equal(that.oChangeFromBackend, aLoadedChanges[0], "the change form the back end is returned");
+		});
+	});
+
+	QUnit.test("getChangesFillingCache requests the changes-bundle if it is not preloaded in debug mode", function (assert) {
+		var that = this;
+
+		fnStubDebug.call(this, true); // debug is on
+		var oChangeFromBundle = {};
+		var oLoadResourceStub = fnStubBundle.call(this, true, [oChangeFromBundle]); // bundle is not loaded and has a change
+		fnStubBackend.call(this, true, [that.oChangeFromBackend]); // backend call is successful and returns a change
+
+		var mPropertyBag = {
+			appName: "sap.app.name"
+		};
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, this.mComponent, mPropertyBag).then(function (oResponse) {
+			var aLoadedChanges = oResponse.changes.changes;
+			assert.equal(1, oLoadResourceStub.callCount, "the changes-bundle was requested");
+			assert.equal(2, aLoadedChanges.length, "two changes are returned");
+			assert.equal(oChangeFromBundle, aLoadedChanges[0], "the change form the changes-bundle is returned first");
+			assert.equal(that.oChangeFromBackend, aLoadedChanges[1], "the change form the back end is returned second");
+		});
+	});
+
+	QUnit.test("getChangesFillingCache returns the changes from the changes bundle in case the no changes is flagged by the async hints", function (assert) {
+		fnStubDebug.call(this, false); // debug is off
+		var oChangeFromBundle = {};
+		var oLoadResourceStub = fnStubBundle.call(this, true, [oChangeFromBundle]); // bundle is loaded and has a change
+		var oBackendStub = fnStubBackend.call(this, false); // backend call will fail (but should not be done anyhow)
+
+		var mPropertyBag = {
+			appName: "sap.app.name",
+			cacheKey: "<NO CHANGES>"
+		};
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, this.mComponent, mPropertyBag).then(function (oResponse) {
+			var aLoadedChanges = oResponse.changes.changes;
+			assert.equal(oBackendStub.callCount, 0, "no call was done to the back end");
+			assert.equal(1, oLoadResourceStub.callCount, "the changes-bundle was requested");
+			assert.equal(1, aLoadedChanges.length, "one change are returned");
+			assert.equal(oChangeFromBundle, aLoadedChanges[0], "the change form the changes-bundle is returned");
+		});
+	});
+
+	QUnit.test("getChangesFillingCache in case the connector cannot return a valid response (service unavailable) the changes-bundle is still returned", function (assert) {
+		fnStubDebug.call(this, false); // debug is off
+		var oChangeFromBundle = {};
+		var oLoadResourceStub = fnStubBundle.call(this, true, [oChangeFromBundle]); // bundle is loaded and has a change
+		var oBackendStub = fnStubBackend.call(this, false); // backend call will fail
+
+		var mPropertyBag = {
+			appName: "sap.app.name",
+			cacheKey: "abc123"
+		};
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, this.mComponent, mPropertyBag).then(function (oResponse) {
+			var aLoadedChanges = oResponse.changes.changes;
+			assert.equal(1, oLoadResourceStub.callCount, "the changes-bundle was requested");
+			assert.equal(1, aLoadedChanges.length, "one change are returned");
+			assert.equal(oChangeFromBundle, aLoadedChanges[0], "the change form the changes-bundle is returned");
+			assert.equal(oBackendStub.callCount, 1, "a backend call was done");
 		});
 	});
 
