@@ -11,7 +11,7 @@
 	<script id="sap-ui-bootstrap"
 		src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-noConflict="true"
-		data-sap-ui-libs="sap.ui.layout, sap.m",
+		data-sap-ui-libs="sap.ui.layout, sap.m"
 		data-sap-ui-language="en-US">
 	</script>
 	<title>QUnit Test for ResponsiveGridLayout</title>
@@ -21,15 +21,13 @@
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-	<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<script>
-	(function(QUnit, sinon) {
+	(function(QUnit) {
 		'use strict';
 
 		// Thest only the things relevant for ResponsiveGridLayout. The basic Form fuctionality
-		// is tested in For, FormContainer and FormElement qUnit tests.
+		// is tested in Form, FormContainer and FormElement qUnit tests.
 
 		jQuery.sap.require("sap.ui.layout.form.Form");
 		jQuery.sap.require("sap.ui.layout.form.FormRenderer");
@@ -63,6 +61,15 @@
 		var oField3;
 		var oField4;
 		var oTitle;
+
+		// if some test breaks internal controls of test may not destroyed
+		// what leads to duplicate ID errors in next test
+		function cleanupControl(oControl) {
+			if (oControl && !oControl._bIsBeingDestroyed) {
+				oControl.destroy();
+			}
+			oControl = undefined;
+		}
 
 		function initForm(bOneContainer) {
 			oResponsiveGridLayout = new sap.ui.layout.form.ResponsiveGridLayout("RGL1");
@@ -124,22 +131,22 @@
 			if (oForm) {
 				oForm.destroy();
 				oForm = undefined;
-				oResponsiveGridLayout = undefined;
-				oLabel1 = undefined;
-				oLabel2 = undefined;
-				oLabel3 = undefined;
-				oLabel4 = undefined;
-				oField1 = undefined;
-				oField2 = undefined;
-				oField3 = undefined;
-				oField4 = undefined;
-				oFormElement1 = undefined;
-				oFormElement2 = undefined;
-				oFormElement3 = undefined;
-				oFormElement4 = undefined;
-				oFormContainer1 = undefined;
-				oFormContainer2 = undefined;
-				oTitle = undefined;
+				cleanupControl(oResponsiveGridLayout);
+				cleanupControl(oLabel1);
+				cleanupControl(oLabel2);
+				cleanupControl(oLabel3);
+				cleanupControl(oLabel4);
+				cleanupControl(oField1);
+				cleanupControl(oField2);
+				cleanupControl(oField3);
+				cleanupControl(oField4);
+				cleanupControl(oFormElement1);
+				cleanupControl(oFormElement2);
+				cleanupControl(oFormElement3);
+				cleanupControl(oFormElement4);
+				cleanupControl(oFormContainer1);
+				cleanupControl(oFormContainer2);
+				cleanupControl(oTitle);
 			}
 		}
 
@@ -1165,7 +1172,7 @@
 			assert.notOk(oDom, "no Dom for FormElement returned");
 		});
 
-	}(QUnit, sinon));
+	}(QUnit));
 	</script>
 
 </head>
