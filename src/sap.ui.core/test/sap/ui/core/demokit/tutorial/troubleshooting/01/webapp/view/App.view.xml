@@ -23,7 +23,7 @@
 
                     <VBox>
                         <Button id="mybutton" icon="sap-icon://action" text="{i18n>doSomething}" press="onPress"
-                                type="Emphasized" class="sapUiMediumMarginBottom"/>
+                                type="Emphasized"/>
                         <Label id="LabelWithMissingI18NText" text="{i18n>Label_Missing_I18N_Text}"/>
                     </VBox>
                 </content>
