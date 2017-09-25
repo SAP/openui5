@@ -733,6 +733,29 @@ this is a batch request epilogue",
 			responseText : "{\"foo1\":\"bar1\"}"
 		}]
 	}, {
+		testTitle : "no final CRLF",
+		contentType : "multipart/mixed; boundary=batch_id-0123456789012-345",
+		body : "--batch_id-0123456789012-345\r\n\
+Content-Type: application/http\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+Content-Type: application/json;odata.metadata=minimal\r\n\
+Content-Length: 9\r\n\
+odata-version: 4.0\r\n\
+\r\n\
+{\"foo\":\"bar\"}\r\n\
+--batch_id-0123456789012-345--",
+		expectedResponses : [{
+			status : 200,
+			statusText : "OK",
+			headers : {
+				"Content-Type" : "application/json;odata.metadata=minimal",
+				"Content-Length" : "9",
+				"odata-version" : "4.0"
+			},
+			responseText : "{\"foo\":\"bar\"}"
+		}]
+	}, {
 		testTitle : "batch parts without headers",
 		contentType : 'multipart/mixed; boundary="batch_1 23456"',
 		body : "--batch_1 23456\r\n\
@@ -767,7 +790,7 @@ HTTP/1.1 200 OK\r\n\
 		testTitle : "batch boundary with special characters",
 		contentType : ' multipart/mixed; myboundary="invalid"; '
 		+ 'boundary="batch_id-0123456789012-345\'()+_,-./:=?"',
-		body : "--batch_id-0123456789012-345\'()+_,-./:=? \r\n\
+		body : "--batch_id-0123456789012-345\'()+_,-./:=?\t\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 4711\r\n\
 content-transfer-encoding: binary\r\n\
