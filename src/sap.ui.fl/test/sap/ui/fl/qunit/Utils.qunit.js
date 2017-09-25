@@ -1157,4 +1157,65 @@ jQuery.sap.require("sap.m.Button");
 		}.bind(this));
 	});
 
+	QUnit.module("Utils.FakePromise", {
+		beforeEach: function (assert) {
+		},
+
+		afterEach: function () {
+		}
+	});
+
+	[42, undefined, {then : 42}, {then : function () {}}, Promise.resolve(42)]
+	.forEach(function (vResult) {
+		QUnit.test("when instanciated with " + vResult + " value as parameter", function(assert) {
+			var oFakePromise = new Utils.FakePromise(vResult)
+			.then(function(vValue) {
+				assert.strictEqual(vValue, vResult, "then the parameter is passed to the 'then' method");
+			});
+			assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
+		});
+
+		QUnit.test("when instanciated with " + vResult + " error value as second parameter", function(assert) {
+			vResult = vResult || "undefined";
+			var oFakePromise = new Utils.FakePromise(undefined, vResult)
+			.then(function(vValue) {
+				assert.notOk(true, "then the 'then' method shouldn't be called");
+			})
+			.catch(function(vError) {
+				assert.strictEqual(vError, vResult, "then the error parameter is passed to the 'catch' method");
+			});
+			assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
+		});
+	});
+
+	QUnit.test("when 'then' method returns Promise", function(assert) {
+		var oPromise = new Utils.FakePromise()
+		.then(function() {
+			return Promise.resolve();
+		});
+		assert.ok(oPromise instanceof Promise, "then the returned value of the 'then' method is a Promise");
+	});
+
+	QUnit.test("when 'catch' method returns Promise", function(assert) {
+		var oPromise = new Utils.FakePromise(undefined, true)
+		.catch(function() {
+			return Promise.resolve();
+		});
+		assert.ok(oPromise instanceof Promise, "then the returned value of the 'catch' method is a Promise");
+	});
+
+	QUnit.test("when 'then' method throws an exception", function(assert) {
+		new Utils.FakePromise()
+		.then(function() {
+			throw new Error("Error");
+		})
+		.then(function(vValue) {
+			assert.notOk(true, "then the 'then' method shouldn't be called");
+		})
+		.catch(function(vError) {
+			assert.strictEqual(vError.name, "Error", "then the error parameter is passed to the 'catch' method");
+		});
+	});
+
+
 }(sap.ui.fl.Utils, sap.ui.layout.HorizontalLayout, sap.ui.layout.VerticalLayout, sap.m.Button));

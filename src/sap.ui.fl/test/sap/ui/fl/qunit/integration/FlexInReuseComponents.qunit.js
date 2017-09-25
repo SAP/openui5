@@ -71,7 +71,54 @@ function (
 		}
 	});
 
-	QUnit.test("applies the change after the recreation of the changed control", function (assert) {
+	QUnit.test("applies the change after the recreation of the changed control - without Promises/FakePromises", function (assert) {
+		var sFlexReference = this.oComponent.getManifest()["sap.app"].id + ".Component";
+		var oComponentContainer = this.oComponent.getRootControl();
+		var sEmbeddedComponentId = oComponentContainer.getAssociation("component");
+		var oEmbeddedComponent = sap.ui.getCore().getComponent(sEmbeddedComponentId);
+		var oView = oEmbeddedComponent.getRootControl();
+		var oForm = oView.byId("myForm");
+		var oInitialFieldInstance = oView.byId("myGroupField");
+
+		var oChangeContent = {
+			"fileType": "change",
+			"layer": "VENDOR",
+			"fileName": "a",
+			"namespace": "b",
+			"packageName": "c",
+			"changeType": "hideControl",
+			"reference": sFlexReference,
+			"content": ""
+		};
+
+		// simulate no component loaded callback (no loaded fl library)
+		Component._fnLoadComponentCallback = undefined;
+
+		// create a hide control change
+		var sAppVersion = Utils.getAppVersionFromManifest(this.oComponent.getManifest());
+		var oFlexController = sap.ui.fl.FlexControllerFactory.create(sFlexReference, sAppVersion);
+		return oFlexController.createAndApplyChange(oChangeContent, oInitialFieldInstance)
+
+		.then(function() {
+			assert.deepEqual(oInitialFieldInstance.getVisible(), false, "the label is hidden");
+
+			// simulate an event destroying the field
+			oInitialFieldInstance.destroy();
+
+			// simulate a recreation of the control
+			var oNewFieldInstance = new sap.m.Input(oView.createId("myGroupField"));
+			oForm.addContent(oNewFieldInstance);
+			return oNewFieldInstance;
+		})
+
+		.then(function(oNewFieldInstance) {
+			// final check
+			assert.deepEqual(oNewFieldInstance.getVisible(), false, "the label is still hidden");
+		});
+
+	});
+
+	QUnit.test("applies the change after the recreation of the changed control - with Promises/FakePromises", function (assert) {
 		var sFlexReference = this.oComponent.getManifest()["sap.app"].id + ".Component";
 		var oComponentContainer = this.oComponent.getRootControl();
 		var sEmbeddedComponentId = oComponentContainer.getAssociation("component");
@@ -98,6 +145,7 @@ function (
 		var sAppVersion = Utils.getAppVersionFromManifest(this.oComponent.getManifest());
 		var oFlexController = sap.ui.fl.FlexControllerFactory.create(sFlexReference, sAppVersion);
 		oFlexController.createAndApplyChange(oChangeContent, oInitialFieldInstance);
+
 		assert.deepEqual(oInitialFieldInstance.getVisible(), false, "the label is hidden");
 
 		// simulate an event destroying the field

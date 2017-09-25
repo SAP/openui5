@@ -525,14 +525,16 @@ sap.ui.require([
 		var oCurrentVariant = this.oModel.getVariant("variant0");
 		assert.equal(oCurrentVariant.content.fileName, "variant0", "'getVariant' of the model returns the correct variant object");
 
-		this.oModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable");
+		return this.oModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable")
 		/*Dependencies still not updated as control doesn't exist*/
 
-		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getKey()] instanceof Object);
-		fnGetChanges.call(this, this.aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
+		.then(function() {
+			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getKey()] instanceof Object);
+			fnGetChanges.call(this, this.aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
-		sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
-		assert.equal(sCurrentVariant, "idMain1--variantManagementOrdersTable", "the current variant key after switch is correct");
+			sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
+			assert.equal(sCurrentVariant, "idMain1--variantManagementOrdersTable", "the current variant key after switch is correct");
+		}.bind(this));
 	});
 
 	QUnit.test("when triggering _addChange and _removeChange on a control via the VariantModel", function(assert) {
