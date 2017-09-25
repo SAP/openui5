@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
+sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConnector, Utils) {
 	"use strict";
 
 	/**
@@ -201,6 +201,34 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 
 		return currentLoadChanges;
 	};
+
+    Cache.NOTAG = "<NoTag>";
+
+    /**
+     * Function to retrieve the cache key of the flex request of a given application
+     *
+     * @param {map} mComponent
+     * @param {string} mComponent.name name of the application component
+     * @param {string} mComponent.appVersion version of the application component
+     * @return {Promise} Promise resolving with the determined cache key
+     *
+     * @private
+     * @restricted sap.ui.fl
+     *
+     */
+	Cache.getCacheKey = function (mComponent) {
+	    if (!mComponent || !mComponent.name || !mComponent.appVersion) {
+            jQuery.sap.log("Not all parameters were passed to determine a flexibility cache key.");
+            return Promise.resolve(Cache.NOTAG);
+        }
+        return this.getChangesFillingCache(new LrepConnector(), mComponent).then(function (oWrappedChangeFileContent) {
+            if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
+                return oWrappedChangeFileContent.etag;
+            } else {
+                return Cache.NOTAG;
+            }
+        });
+    };
 
 	/**
 	 * @private
