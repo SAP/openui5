@@ -5,7 +5,7 @@
 			id="Popover"
 			title="{i18n>TechInfo.SupportAssistantConfigPopup.Title}"
 			class="sapUiContentPadding"
-			contentMinWidth="400px"
+			contentMinWidth="460px"
 			placement="VerticalPreferredTop">
 		<content>
 			<VBox binding="{/ProductCollection}" >
@@ -30,6 +30,8 @@
 							type : '.CustomTypeURL'
 						}"
 					change="onChangeCustomBootstrapURL"
+					liveChange="onLiveChangeCustomBootstrapURL"
+					valueLiveUpdate="true"
 					valueStateText="{i18n>TechInfo.SupportAssistantConfigPopup.URLValidationMessage}"
 					enabled="false"
 					placeholder="http://&lt;custom&gt;/resources/sap/ui/support/"/>
