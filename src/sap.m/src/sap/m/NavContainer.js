@@ -1087,8 +1087,15 @@ sap.ui.define([
 							} else {
 								// the second transition now also finished => clean up the style classes
 								bTransitionEndPending = false;
-								oToPage.removeStyleClass("sapMNavItemSliding").removeStyleClass("sapMNavItemCenter");
-								oFromPage.removeStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemLeft");
+
+								// update classes only of the active pages
+								if (oToPage.isActive()) {
+									oToPage.removeStyleClass("sapMNavItemSliding").removeStyleClass("sapMNavItemCenter");
+								}
+
+								if (oFromPage.isActive()) {
+									oFromPage.removeStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemLeft");
+								}
 
 								// notify the NavContainer that the animation is complete
 								fCallback();
@@ -1134,8 +1141,15 @@ sap.ui.define([
 						} else {
 							// the second transition now also finished => clean up the style classes
 							bTransitionEndPending = false;
-							oToPage.removeStyleClass("sapMNavItemSliding").removeStyleClass("sapMNavItemCenter");
-							oFromPage.removeStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemRight");
+
+							// update classes only of the active pages
+							if (oToPage.isActive()) {
+								oToPage.removeStyleClass("sapMNavItemSliding").removeStyleClass("sapMNavItemCenter");
+							}
+
+							if (oFromPage.isActive()) {
+								oFromPage.removeStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemRight");
+							}
 
 							// notify the NavContainer that the animation is complete
 							fCallback();
@@ -1155,6 +1169,7 @@ sap.ui.define([
 							}, fnGetDelay(50));
 						}, 0);
 					}
+
 
 					// set the new style classes that represent the end state (and thus start the transition)
 					oToPage.addStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemCenter").removeStyleClass("sapMNavItemLeft"); // transition from left position to normal/center position starts now
@@ -1224,8 +1239,15 @@ sap.ui.define([
 						jQuery(this).unbind("webkitTransitionEnd transitionend");
 						// clean up the style classes
 						bTransitionEndPending = false;
-						oFromPage.addStyleClass("sapMNavItemHidden");
-						oToPage.removeStyleClass("sapMNavItemFading").removeStyleClass("sapMNavItemOpaque");
+
+						// update classes only of the active pages
+						if (oFromPage.isActive()) {
+							oFromPage.addStyleClass("sapMNavItemHidden");
+						}
+
+						if (oToPage.isActive()) {
+							oToPage.removeStyleClass("sapMNavItemFading").removeStyleClass("sapMNavItemOpaque");
+						}
 
 						// notify the NavContainer that the animation is complete
 						fCallback();
@@ -1260,8 +1282,12 @@ sap.ui.define([
 						jQuery(this).unbind("webkitTransitionEnd transitionend");
 						// clean up the style classes
 						bTransitionEndPending = false;
-						oFromPage.removeStyleClass("sapMNavItemFading").addStyleClass("sapMNavItemHidden"); // TODO: destroy HTML?
-						oFromPage.removeStyleClass("sapMNavItemTransparent");
+
+						// update classes only of the active pages
+						if (oFromPage.isActive()) {
+							oFromPage.removeStyleClass("sapMNavItemFading").addStyleClass("sapMNavItemHidden"); // TODO: destroy HTML?
+							oFromPage.removeStyleClass("sapMNavItemTransparent");
+						}
 
 						// notify the NavContainer that the animation is complete
 						fCallback();
@@ -1339,8 +1365,16 @@ sap.ui.define([
 							} else {
 								// the second transition now also finished => clean up the style classes
 								bTransitionEndPending = false;
-								oToPage.removeStyleClass("sapMNavItemFlipping");
-								oFromPage.removeStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemFlipPrevious");
+
+								// update classes only of the active pages
+								if (oToPage.isActive()) {
+									oToPage.removeStyleClass("sapMNavItemFlipping");
+								}
+
+								if (oFromPage.isActive()) {
+									oFromPage.removeStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemFlipPrevious");
+								}
+
 								that.$().removeClass("sapMNavFlip");
 
 								// notify the NavContainer that the animation is complete
@@ -1389,8 +1423,16 @@ sap.ui.define([
 						} else {
 							// the second transition now also finished => clean up the style classes
 							bTransitionEndPending = false;
-							oToPage.removeStyleClass("sapMNavItemFlipping");
-							oFromPage.removeStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemFlipNext");
+
+							// update classes only of the active pages
+							if (oToPage.isActive()) {
+								oToPage.removeStyleClass("sapMNavItemFlipping");
+							}
+
+							if (oFromPage.isActive()) {
+								oFromPage.removeStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemFlipNext");
+							}
+
 							that.$().removeClass("sapMNavFlip");
 
 							// notify the NavContainer that the animation is complete
@@ -1450,8 +1492,16 @@ sap.ui.define([
 							} else {
 								// the second transition now also finished => clean up the style classes
 								bTransitionEndPending = false;
-								oToPage.removeStyleClass("sapMNavItemDooring").removeStyleClass("sapMNavItemDoorInNext");
-								oFromPage.removeStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemDoorInPrevious");
+
+								// update classes only of the active pages
+								if (oToPage.isActive()) {
+									oToPage.removeStyleClass("sapMNavItemDooring").removeStyleClass("sapMNavItemDoorInNext");
+								}
+
+								if (oFromPage.isActive()) {
+									oFromPage.removeStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemDoorInPrevious");
+								}
+
 								that.$().removeClass("sapMNavDoor");
 
 								// notify the NavContainer that the animation is complete
@@ -1500,8 +1550,16 @@ sap.ui.define([
 						} else {
 							// the second transition now also finished =>  clean up the style classes
 							bTransitionEndPending = false;
-							oToPage.removeStyleClass("sapMNavItemDooring").removeStyleClass("sapMNavItemDoorOutNext");
-							oFromPage.removeStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemDoorOutPrevious");
+
+							// update classes only of the active pages
+							if (oToPage.isActive()) {
+								oToPage.removeStyleClass("sapMNavItemDooring").removeStyleClass("sapMNavItemDoorOutNext");
+							}
+
+							if (oFromPage.isActive()) {
+								oFromPage.removeStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemDoorOutPrevious");
+							}
+
 							that.$().removeClass("sapMNavDoor");
 
 							// notify the NavContainer that the animation is complete
