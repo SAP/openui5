@@ -149,7 +149,8 @@
 										<m:Table visible="{topics>/hasChildren}"
 												 items="{ path : 'topics>/controlChildren'}"
 												 showSeparators="Inner"
-												 fixedLayout="false">
+												 fixedLayout="false"
+												 class="sapUiSmallMarginTop">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Namespaces &amp; Classes"/></m:Column>
 												<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
@@ -183,7 +184,8 @@
 								<blocks>
 									<m:Table items="{ path : 'topics>/properties'}"
 											 showSeparators="Inner"
-											 fixedLayout="true">
+											 fixedLayout="true"
+											 class="sapUiSmallMarginTop">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
@@ -241,7 +243,8 @@
 
 										<m:Table items="{ path: 'constructorParams>/parameters'}"
 												showSeparators="Inner"
-		 										fixedLayout="true">
+		 										fixedLayout="true"
+		 										visible="{= ${constructorParams>/parameters}.length > 0}">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
