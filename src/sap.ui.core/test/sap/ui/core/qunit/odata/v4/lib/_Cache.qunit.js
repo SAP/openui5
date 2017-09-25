@@ -2419,7 +2419,9 @@ sap.ui.require([
 				"list2@odata.nextLink" : "List2?skip=3",
 				"list3" : [{}, {}, {}],
 				"list3@odata.nextLink" : "List3?skip=3",
-				"null" : null
+				"collectionValuedProperty" : ["test1", "test2"],
+				"null" : null,
+				"collectionWithNullValue" : [null]
 			};
 
 		this.spy(_Helper, "updateCache");
@@ -2435,6 +2437,8 @@ sap.ui.require([
 		assert.strictEqual(oResult.list3.$count, undefined);
 		assert.strictEqual(oResult.list[2].nestedList.$count, 1);
 		assert.strictEqual(oResult.property.nestedList.$count, 1);
+		assert.strictEqual(oResult.collectionValuedProperty.$count, 2);
+		assert.strictEqual(oResult.collectionWithNullValue.$count, 1);
 	});
 
 	//*********************************************************************************************
