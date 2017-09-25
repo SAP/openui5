@@ -150,7 +150,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("when a namespace is too long", function(assert) {
-		oController.sNamespace = "path1%2Fpath2%2Fpath3%2Fpath4";
+		oController.sNamespace = "path1/path2/path3/path4";
 		oController.sLayer = "VENDOR";
 
 		assert.equal(oController._shortenNamespace(), "[VENDOR] .../path3", "then it is shortened correctly");
