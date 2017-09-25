@@ -372,6 +372,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 				mSettings = {},
 				sStyleClasses = "",
 				aCustomData = [],
+				mCustomSettings = null,
 				sSupportData = null;
 				if (!oClass) {
 					return [];
@@ -438,8 +439,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 								}));
 							} else if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.support.Support.info/1") {
 								sSupportData = sValue;
-							} else if ( sName.indexOf("xmlns:") !== 0 ) { // other, unknown namespace and not an xml namespace alias definition
-								jQuery.sap.log.warning(oView + ": XMLView parser encountered and ignored attribute '" + sName + "' (value: '" + sValue + "') with unknown namespace");
+							} else if (sName.indexOf("xmlns:") !== 0 ) { // other, unknown namespace and not an xml namespace alias definition
+								if (!mCustomSettings) {
+									mCustomSettings = {};
+								}
+								if (!mCustomSettings.hasOwnProperty(attr.namespaceURI)) {
+									mCustomSettings[attr.namespaceURI] = {};
+								}
+								mCustomSettings[attr.namespaceURI][localName(attr)] = attr.nodeValue;
+								jQuery.sap.log.debug(oView + ": XMLView parser encountered unknown attribute '" + sName + "' (value: '" + sValue + "') with unknown namespace, stored as sap-ui-custom-settings of customData");
 								// TODO: here XMLView could check for namespace handlers registered by the application for this namespace which could modify mSettings according to their interpretation of the attribute
 							}
 
@@ -497,6 +505,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 								});
 							}
 						}
+					}
+					//add custom settings as custom data "sap-ui-custom-settings"
+					if (mCustomSettings) {
+						aCustomData.push(new CustomData({
+							key:"sap-ui-custom-settings",
+							value: mCustomSettings
+						}));
 					}
 					if (aCustomData.length > 0) {
 						mSettings.customData = aCustomData;
@@ -599,7 +614,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 					} else {
 						// call the control constructor
 						// NOTE: the sap.ui.core.Fragment constructor can return an array containing multiple controls (for multi-root Fragments)
-						//   This is the reason for all the related functions around here returning arrays.
+						// This is the reason for all the related functions around here returning arrays.
 						vNewControlInstance = new oClass(mSettings);
 					}
 
