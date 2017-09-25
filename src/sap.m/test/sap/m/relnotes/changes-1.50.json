@@ -1303,5 +1303,106 @@
         "references": []
       }
     ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "8ed80f4ac7541e6615279f4c3f043f49b6ec547c",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Improved the removal of empty HTML tags",
+        "references": []
+      },
+      {
+        "id": "bddee1fd27e6c16ad459c7560b40a06e13a2e89d",
+        "type": "FIX",
+        "text": " sap.m.Input: Value help icon is now correct in rtl in Chrome",
+        "references": []
+      },
+      {
+        "id": "cfd1601b1628363c4cb007715a12fa15a19b4649",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is rendered as span when used decorative",
+        "references": []
+      },
+      {
+        "id": "9ab68132246aeb1adea36301347a1db6be1ebce6",
+        "type": "FIX",
+        "text": " sap.m.MaskInput-on Firefox if the cursor is at the beginning of the field, left arrow does nothing.",
+        "references": []
+      },
+      {
+        "id": "578d150d2c7642c6f8b4a53e1c9602c2a8144ff0",
+        "type": "FIX",
+        "text": " sap.m.MenuItem - setting key does not throw an error anymore.",
+        "references": []
+      },
+      {
+        "id": "8cb6120f28704c15b32491bcaab282f74bccab2f",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: suggestionItemSelected event is now fired only once",
+        "references": []
+      },
+      {
+        "id": "cf433ef64c658190ac15fbabf7bac98befd69806",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      },
+      {
+        "id": "6c6a359ab8d6b7628fcf59dcc51fbb3dff1ed420",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: even if they are no statuses set, markers are rendered.",
+        "references": []
+      },
+      {
+        "id": "4feded1a87752b9aabbf2e628ccaa75cc49ed660",
+        "type": "FIX",
+        "text": " sap.m.Panel: avoid showing duplicate icon focus outlines",
+        "references": []
+      },
+      {
+        "id": "ac7d3310ca2ac952ced9f21ebac139700d48efed",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selecting appointments fires event in OneMonth view on small screen size",
+        "references": []
+      },
+      {
+        "id": "63ab77c90a63b659069f40511c8a56342e5fabd3",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Fire select event with keyboard handling.",
+        "references": []
+      },
+      {
+        "id": "6df72e3ea4cef537c3782acb8eb042decbcf9898",
+        "type": "FIX",
+        "text": " sap.m.SelectionDetails: Rendering improved",
+        "references": []
+      },
+      {
+        "id": "4f34fc22639ca4fa2f78ed97ed5ae11c94d63012",
+        "type": "FIX",
+        "text": " sap.m.SelectionDetailsItemLine: Rendering of date and time improved",
+        "references": []
+      },
+      {
+        "id": "2e67c07acacca97ebdd7220dbdaec6ad25aee834",
+        "type": "FIX",
+        "text": " sap.m.Table: Reset padding when there is no visible header.",
+        "references": []
+      },
+      {
+        "id": "27161114374a8c90f811220d40925d0490363a93",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjust height on setValue()",
+        "references": []
+      },
+      {
+        "id": "0477ea78c26cdaabd2d87d8bd92b75a5da928dd1",
+        "type": "FIX",
+        "text": " sap.m.TextArea: _adjustHeight before control is rendered",
+        "references": []
+      }
+    ]
   }
 }

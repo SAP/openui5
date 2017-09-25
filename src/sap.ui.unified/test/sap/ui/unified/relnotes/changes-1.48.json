@@ -214,5 +214,27 @@
         "references": []
       }
     ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "9cd697e1f21dac37d873ed1754092a478b7abb2d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select event now has correct event source",
+        "references": []
+      }
+    ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "1b802e3ea7a0b15f6adbf37e1a233f3c393b7ebc",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selecting appointments fires event in OneMonth view on small screen size",
+        "references": []
+      }
+    ]
   }
 }

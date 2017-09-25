@@ -565,5 +565,82 @@
         "references": []
       }
     ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "ad0e7e97e58af45a944b7b3fc273799a2da90f75",
+        "type": "FIX",
+        "text": " AnalyticalBinding: no duplicate unit column in spread sheet export",
+        "references": []
+      },
+      {
+        "id": "072d33fa5d0598b6ab304746b70aba8390cc7d2f",
+        "type": "FIX",
+        "text": " Browser incompability in _Cache.js",
+        "references": []
+      },
+      {
+        "id": "48c71a7b6395ac4ea59e919df348e496c6c7e319",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Delay dataReceived event until bindings got updated",
+        "references": []
+      },
+      {
+        "id": "5b3d442a26ccbf44f39df85dcb036aaac3194b51",
+        "type": "FIX",
+        "text": " core.Popup: autoclose works under both blur and touch/mouse event",
+        "references": []
+      },
+      {
+        "id": "21190068c34e969f4ffb98819591d5341f8c0e19",
+        "type": "FIX",
+        "text": " core.Popup: use the \u0027deactivate\u0027 event on autoclose area in IE",
+        "references": []
+      },
+      {
+        "id": "954035c02476da64cd6c9f8775f3c4837f24b6c7",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: Use preloaded resources by fixing URL to name guessing",
+        "references": []
+      },
+      {
+        "id": "cfd1601b1628363c4cb007715a12fa15a19b4649",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is rendered as span when used decorative",
+        "references": []
+      },
+      {
+        "id": "4feded1a87752b9aabbf2e628ccaa75cc49ed660",
+        "type": "FIX",
+        "text": " sap.m.Panel: avoid showing duplicate icon focus outlines",
+        "references": []
+      },
+      {
+        "id": "f29b3fe8b6efab024a598c8a847c3115abebe0b3",
+        "type": "FIX",
+        "text": " sap.ui.core.DateFormat: year is correctly parsed when 0000 is passed",
+        "references": []
+      },
+      {
+        "id": "824686c6a39e141c7f0e1b58b26be680a68875dc",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: getGroupName: avoid cannot read property \u0027formatter\u0027 of undefined",
+        "references": []
+      },
+      {
+        "id": "188f35b986e5ce153b221d4ee1b91a0b58e6ff67",
+        "type": "FIX",
+        "text": " sap.ui.support.TechnicalInfo: Open sap-ui-version.json in new window is now fixed.",
+        "references": []
+      },
+      {
+        "id": "ca4d1ebf5fee1843d20bc18820187f00be1ebfbe",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: isReloadNeeded not parameterized correctly",
+        "references": []
+      }
+    ]
   }
 }

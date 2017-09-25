@@ -75,5 +75,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "cf433ef64c658190ac15fbabf7bac98befd69806",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      }
+    ]
   }
 }

@@ -879,5 +879,51 @@
         "references": []
       }
     ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "2ee65071324038e53e8012c2e4125aaaf145a7d1",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: Use preloaded resources by fixing URL to name guessing",
+        "references": []
+      }
+    ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "e3f678777f2ffa16452da762e7d8f6620be15a53",
+        "type": "FIX",
+        "text": " Browser incompability in _Cache.js",
+        "references": []
+      },
+      {
+        "id": "32b7456624f9877633afa25804fdbff742852c78",
+        "type": "FIX",
+        "text": " core.Popup: use the \u0027deactivate\u0027 event on autoclose area in IE",
+        "references": []
+      },
+      {
+        "id": "d67603270b98359df6786cf44de62e12df886a56",
+        "type": "FIX",
+        "text": " sap.m.Panel: avoid showing duplicate icon focus outlines",
+        "references": []
+      },
+      {
+        "id": "de38ceb4c2e3f1c434f18e64ad224deef7c22dc9",
+        "type": "FIX",
+        "text": " sap.ui.support.TechnicalInfo: Open sap-ui-version.json in new window is now fixed.",
+        "references": []
+      },
+      {
+        "id": "827d7e9e90ae775773209c41dcb3ac9ed52671cf",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: isReloadNeeded not parameterized correctly",
+        "references": []
+      }
+    ]
   }
 }

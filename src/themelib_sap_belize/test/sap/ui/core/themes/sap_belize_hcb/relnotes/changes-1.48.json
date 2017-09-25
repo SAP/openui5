@@ -416,5 +416,33 @@
         "references": []
       }
     ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "e1e78d28f76fa139143f67f908b51b66237ba338",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      },
+      {
+        "id": "486746bbc9ed65c23d6f2f334a548ecd46ec7db4",
+        "type": "FIX",
+        "text": " transparent toolbar in contrast mode fixed for sap_belize_plus",
+        "references": []
+      }
+    ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "91a216ab33dea62a6893008f21bbbc05185187d0",
+        "type": "FIX",
+        "text": " transparent icontabheader in contrast mode for sap_belize_plus",
+        "references": []
+      }
+    ]
   }
 }

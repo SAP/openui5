@@ -1071,5 +1071,40 @@
         "references": []
       }
     ]
+  },
+  "1.44.20": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "ff54ff8d7f3fb1af37870658161de0a933b480eb",
+        "type": "FIX",
+        "text": " V2ODataModel.qunit",
+        "references": []
+      },
+      {
+        "id": "d226ec8642f5928e16b97478ddb92b526431c670",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      },
+      {
+        "id": "7a29e6b3859f0f05fa6e8e2198042d88624499a1",
+        "type": "FIX",
+        "text": " core.Popup: autoclose works under both blur and touch/mouse event",
+        "references": []
+      },
+      {
+        "id": "e8ea3dbdc0e5baeca727affe5615b9231910b01f",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: Use preloaded resources by fixing URL to name guessing",
+        "references": []
+      },
+      {
+        "id": "a3ff5a925b231edf780f0f087dce23a60d333b26",
+        "type": "FIX",
+        "text": " v2.ODataModel: Fix _resolveGroup with not created entry key",
+        "references": []
+      }
+    ]
   }
 }

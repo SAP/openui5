@@ -175,5 +175,46 @@
         "references": []
       }
     ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "a9eae0806934ef108c4fc7f3a7a9244883146d75",
+        "type": "FIX",
+        "text": " AnalyticalTable: Sort and move group up/down",
+        "references": []
+      },
+      {
+        "id": "1df1ba9f1575efab7e1e7a8de3262e53c373f6a5",
+        "type": "FIX",
+        "text": " Table: Arrow key navigation if the cell content is not rendered",
+        "references": []
+      },
+      {
+        "id": "daf782286238ba0a97fc79e0af6e28a806f67d81",
+        "type": "FIX",
+        "text": " Table: Correctly update the vertical scrollbar",
+        "references": []
+      },
+      {
+        "id": "40e0ade6ef5b1e33fa6bfa742838cd338943c9a5",
+        "type": "FIX",
+        "text": " Table: Edit mode navigation with input elements with non-text type",
+        "references": []
+      },
+      {
+        "id": "e6a7e0042deb9542b6b5d0809a94f62767b1b15f",
+        "type": "FIX",
+        "text": " Table: Prevent page scrolling on keyboard navigation in the table",
+        "references": []
+      },
+      {
+        "id": "95e06eca3c57a25b46a5e51e74b7f9350ff1438e",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - space key is suppressed in the toolbar",
+        "references": []
+      }
+    ]
   }
 }

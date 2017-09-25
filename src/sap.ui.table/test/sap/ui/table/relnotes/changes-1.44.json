@@ -744,5 +744,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.20": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "d226ec8642f5928e16b97478ddb92b526431c670",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      }
+    ]
   }
 }

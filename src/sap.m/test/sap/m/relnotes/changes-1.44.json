@@ -2451,5 +2451,64 @@
         "references": []
       }
     ]
+  },
+  "1.44.20": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "d549c4da39bfd0aef0df677a1a1240a40dfb5937",
+        "type": "FIX",
+        "text": " sap.m.FeedContent: Documentation issues solved",
+        "references": []
+      },
+      {
+        "id": "499732eab2903c2452645b6fdbd2626e61f6a6d4",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Improved the removal of empty HTML tags",
+        "references": []
+      },
+      {
+        "id": "ac6ba6ee994ed8393b4abbfad40a5838da28f12f",
+        "type": "FIX",
+        "text": " sap.m.MaskInput-on Firefox if the cursor is at the beginning of the field, left arrow does nothing.",
+        "references": []
+      },
+      {
+        "id": "4e8b92fb7d749fb9b06cb9a84def3f804d2e98dd",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent endless focus loop on mobile",
+        "references": []
+      },
+      {
+        "id": "134c64991e6619de037ba3c90cec55e7b9b80336",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Do not tokenize text when ValueHelp is opened.",
+        "references": []
+      },
+      {
+        "id": "99ad0b12d32ce63fefc3896b3878e9e9b53b48b6",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      },
+      {
+        "id": "06398c365845965c2564081e41800165dc3db9cc",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Fire select event with keyboard handling.",
+        "references": []
+      },
+      {
+        "id": "a1c3950d183dbdd99fe351859a873992d2506f0c",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjust height on setValue()",
+        "references": []
+      },
+      {
+        "id": "9cec98c3a4f5fd80c9cbdfd723972381c7ee7c81",
+        "type": "FIX",
+        "text": " sap.m.TileContainer - rendering of tiles is now performance optimized.",
+        "references": []
+      }
+    ]
   }
 }
