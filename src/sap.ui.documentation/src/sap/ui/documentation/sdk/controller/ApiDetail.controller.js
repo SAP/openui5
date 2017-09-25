@@ -1166,6 +1166,11 @@ sap.ui.define([
 				return this._baseTypes.indexOf(linkText.toLowerCase()) === -1;
 			},
 
+			formatExceptionLink: function (linkText) {
+				linkText = linkText || '';
+				return linkText.indexOf('sap.ui.') !== -1;
+			},
+
 			formatEventClassName: function (isSubProperty, isSubSubProperty, bPhoneSize) {
 				if (bPhoneSize && (isSubProperty || isSubSubProperty)) {
 					return "sapUiDocumentationParamPhone";
