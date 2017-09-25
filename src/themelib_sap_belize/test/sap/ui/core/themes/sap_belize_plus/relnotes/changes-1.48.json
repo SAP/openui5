@@ -433,5 +433,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "91a216ab33dea62a6893008f21bbbc05185187d0",
+        "type": "FIX",
+        "text": " transparent icontabheader in contrast mode for sap_belize_plus",
+        "references": []
+      }
+    ]
   }
 }

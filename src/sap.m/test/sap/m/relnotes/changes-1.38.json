@@ -3494,5 +3494,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.28": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "f0c846ab58da124269a2307152c052d677aef3e5",
+        "type": "FIX",
+        "text": " sap.m.MaskInput-on Firefox if the cursor is at the beginning of the field, left arrow does nothing.",
+        "references": []
+      },
+      {
+        "id": "45098530110628a8c33126a69a85fc98539e6ffe",
+        "type": "FIX",
+        "text": " sap.m.MenuItem - setting key does not throw an error anymore.",
+        "references": []
+      },
+      {
+        "id": "24adc6c6d5581ed6739d67e71b4047f292470157",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Tokenizer behaviour adjusted",
+        "references": []
+      }
+    ]
   }
 }

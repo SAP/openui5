@@ -2203,5 +2203,58 @@
         "references": []
       }
     ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "7ff481ee516b0755b51cffa762fa83376df15231",
+        "type": "FIX",
+        "text": " sap.m.MenuItem - setting key does not throw an error anymore.",
+        "references": []
+      },
+      {
+        "id": "506f3f56722742eb1e464b11fd12c498cc839f7f",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: even if they are no statuses set, markers are rendered.",
+        "references": []
+      },
+      {
+        "id": "bf3f446af4bceb92ffbacfb4731d589653fff228",
+        "type": "FIX",
+        "text": " sap.m.Panel: Content height is now calculated responsively",
+        "references": []
+      },
+      {
+        "id": "d67603270b98359df6786cf44de62e12df886a56",
+        "type": "FIX",
+        "text": " sap.m.Panel: avoid showing duplicate icon focus outlines",
+        "references": []
+      },
+      {
+        "id": "1b802e3ea7a0b15f6adbf37e1a233f3c393b7ebc",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selecting appointments fires event in OneMonth view on small screen size",
+        "references": []
+      },
+      {
+        "id": "f959610610e48ae4793caff20304cd6e4c7ef5c8",
+        "type": "FIX",
+        "text": " sap.m.SelectionDetails: Rendering improved",
+        "references": []
+      },
+      {
+        "id": "a480fcf43cbaf51eb9cb229c73d9204f5baa5fce",
+        "type": "FIX",
+        "text": " sap.m.SelectionDetailsItemLine: Rendering of date and time improved",
+        "references": []
+      },
+      {
+        "id": "311b46ae8269c820e07a7365b77d80c86ee9a19c",
+        "type": "FIX",
+        "text": " sap.m.TextArea: _adjustHeight before control is rendered",
+        "references": []
+      }
+    ]
   }
 }

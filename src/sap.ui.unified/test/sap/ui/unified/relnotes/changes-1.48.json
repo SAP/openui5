@@ -225,5 +225,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "1b802e3ea7a0b15f6adbf37e1a233f3c393b7ebc",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selecting appointments fires event in OneMonth view on small screen size",
+        "references": []
+      }
+    ]
   }
 }

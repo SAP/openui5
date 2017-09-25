@@ -242,5 +242,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "ed0db3c487a71ecacef9ea1cfbd1fcdf40f85c8e",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: sideContentVisibility works correct with containerQuery now",
+        "references": []
+      }
+    ]
   }
 }
