@@ -634,7 +634,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	// ---- local busy indicator handling ---------------------------------------------------------------------------------------
 
 	var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart touchmove mouseup touchend click",
-		rForbiddenTags = /^(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)$/i,
+		rForbiddenTags = /^(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr|tr)$/i,
 		oBusyIndicatorDelegate = {
 			onAfterRendering: function() {
 				if (this.getBusy() && this.getDomRef() && !this._busyIndicatorDelayedCallId && !this.getDomRef("busyIndicator")) {
