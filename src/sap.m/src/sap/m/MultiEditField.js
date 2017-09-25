@@ -240,5 +240,14 @@ sap.ui.define([
 		return null;
 	};
 
+	/**
+	 * Gets the DOM reference of the internal Select control.
+	 * @returns {Element} The DOM reference of the internal Select control.
+	 * @private
+	 */
+	MultiEditField.prototype._getInternalDomRef = function() {
+		return this.byId("select").getDomRef();
+	};
+
 	return MultiEditField;
 });
