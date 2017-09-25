@@ -5,12 +5,11 @@
 		<title>QUnit - sap.ui.fl.FlexController</title>
 		<script src="../shared-config.js"></script>
 		<script>
-			window['sap-ui-config'].libs = 'sap.ui.fl';
 			document.write('<script src="'+ document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 		<script>
-			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
-			jQuery.sap.require('sap.ui.thirdparty.qunit');
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit-2') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
 			jQuery.sap.require('sap.ui.qunit.qunit-junit');
 			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
@@ -18,6 +17,7 @@
 			// code coverage report only for sap.ui.fl namespace
 			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/fl]');
 
+			sap.ui.getCore().loadLibrary('sap.ui.fl');
 			jQuery.sap.includeScript('./FlexController.qunit.js');
 		</script>
 	</head>

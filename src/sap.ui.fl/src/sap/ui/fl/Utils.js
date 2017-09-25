@@ -934,7 +934,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Execute the passed asynchronous functions serialized - one after the other.
+		 * Execute the passed asynchronous / synchronous (Utils.FakePromise) functions serialized - one after the other.
+		 * Errors do not break the sequentially execution of the queue. Error message will be written.
 		 *
 		 * @param {array.<function>} aPromiseQueue - List of asynchronous functions that returns promises
 		 * @param {boolean} bAsync - true: asynchronous processing with Promise, false: synchronous processing with FakePromise
@@ -958,7 +959,7 @@ sap.ui.define([
 				})
 
 				.catch(function(e) {
-					this.log.error("Changes could not be applied. Merge error detected. " + e);
+					this.log.error("Error during execPromiseQueueSequentially processing occured: " + (e && e.message));
 				}.bind(this))
 
 				.then(function() {
@@ -978,11 +979,12 @@ sap.ui.define([
 		 *
 		 * @param {any} vInitialValue - value on resolve FakePromise
 		 * @param {any} vError - value on reject FakePromise
+		 * @returns {sap.ui.fl.Utils.FakePromise|Promise} Returns instantiated FakePromise only if no Promise is passed by value parameter
 		 */
 		FakePromise : function(vInitialValue, vError) {
 			this.vValue = vInitialValue;
 			this.vError = vError;
-			this.then = function(fn) {
+			Utils.FakePromise.prototype.then = function(fn) {
 				if (!this.vError) {
 					try {
 						this.vValue = fn(this.vValue, true);
@@ -997,7 +999,7 @@ sap.ui.define([
 				}
 				return this;
 			};
-			this.catch = function(fn) {
+			Utils.FakePromise.prototype.catch = function(fn) {
 				if (this.vError) {
 					this.vValue = fn(this.vError, true);
 					this.vError = null;
@@ -1007,6 +1009,9 @@ sap.ui.define([
 				}
 				return this;
 			};
+			if (this.vValue instanceof Promise) {
+				return this.vValue;
+			}
 		}
 	};
 	return Utils;
