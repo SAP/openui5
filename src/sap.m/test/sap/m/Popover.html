@@ -94,6 +94,17 @@
 			right: auto;
 		}
 
+		.positioned11 {
+			position: absolute !important;
+			top: 300px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned11 {
+			left: 10px;
+			right: auto;
+		}
+
 		/* 			horizontal right */
 		.positioned7 {
 			position: absolute !important;
@@ -538,10 +549,21 @@
 
 		oVBox.addStyleClass("vbox");
 
+		var i,
+			aPopoverContent = [new sap.ui.core.Item({text: "UTC - (UTC+00:00) Burkina Faso, Bouvet Islands, Cote d'Ivoire, West Sahara, Ghana, Greenland, Gambia, Guinea, Guinea-Bissau, Heard/McDon.Isl, Brit.Ind.Oc.Ter, Iceland"})];
+		for (i = 0; i < 40; i++) {
+			aPopoverContent.push(new sap.ui.core.Item({text: "test"}));
+		}
+		var oOverflowingPopover = new sap.m.ComboBox({
+			id: "overflowing-popover",
+			items: aPopoverContent
+		});
+		oOverflowingPopover.addStyleClass("positioned11");
+
 		var page1 = new sap.m.Page("page1", {
 			title: "Page 1",
 			content: [
-				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oButton7, oButton8, oButton9, oVBox
+				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox
 			]
 		});
 
