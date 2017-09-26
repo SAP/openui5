@@ -119,7 +119,10 @@ sap.ui.define([
 	});
 
 	MultiEditField.prototype.init = function() {
-		MultiEditField.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		if (!MultiEditField.prototype._oRb) {
+			MultiEditField.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		}
+
 		this._getKeepAll = jQuery.sap.getter(new Item({
 			key: "keep",
 			text: this._oRb.getText("MULTI_EDIT_KEEP_TEXT")
@@ -145,6 +148,11 @@ sap.ui.define([
 			this.insertAggregation("items", this._getValueHelp(), this.getNullable() ? 2 : 1, true);
 		} else {
 			this.removeAggregation("items", this._getValueHelp(), true);
+		}
+
+		var oSelectedItem = this.getSelectedItem();
+		if (oSelectedItem) {
+			this.byId("select").setSelectedKey(oSelectedItem.getKey());
 		}
 	};
 
@@ -224,6 +232,7 @@ sap.ui.define([
 		} else if (oItem === this._getValueHelp()) {
 			this.fireEvent("_valueHelpRequest");
 		}
+		this.setProperty("selectedItem", oItem, true);
 	};
 
 	/**
