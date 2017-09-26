@@ -1614,6 +1614,43 @@
 		assert.ok(spy.calledOnce, "bindRows was called");
 	});
 
+	QUnit.test("Binding events", function(assert) {
+		var aEventListenerSequence = [];
+
+		oTable._onBindingChange = function() {
+			aEventListenerSequence.push("change_table");
+		};
+		oTable._onBindingDataRequestedListener = function() {
+			aEventListenerSequence.push("dataRequested_table");
+		};
+		oTable._onBindingDataReceivedListener = function() {
+			aEventListenerSequence.push("dataReceived_table");
+		};
+
+		oTable.bindRows({
+			path: "/modelData",
+			events: {
+				change: function() {
+					aEventListenerSequence.push("change_other");
+				},
+				dataRequested: function() {
+					aEventListenerSequence.push("dataRequested_other");
+				},
+				dataReceived: function() {
+					aEventListenerSequence.push("dataReceived_other");
+				}
+			}
+		});
+
+		var oBinding = oTable.getBinding("rows");
+		oBinding.fireEvent("dataRequested");
+		oBinding.fireEvent("dataReceived");
+
+		assert.deepEqual(aEventListenerSequence, [
+			"change_table", "change_other", "dataRequested_table", "dataRequested_other", "dataReceived_table", "dataReceived_other"
+		], "The binding event listeners where called in the correct order");
+	});
+
 	QUnit.module("Callbacks", {
 		afterEach: destroyTable
 	});
