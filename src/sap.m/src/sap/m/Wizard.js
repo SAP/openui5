@@ -441,8 +441,10 @@ sap.ui.define([
 
 		/**
 		 * Dynamic step insertion is not yet supported.
+		 * @param {sap.m.WizardStep} wizardStep The step to be inserted
+		 * @param {index} index The index at which to insert
 		 * @experimental
-		 * @public
+		 * @private
 		 */
 		Wizard.prototype.insertStep = function (wizardStep, index) {
 			throw new Error("Dynamic step insertion is not yet supported.");
@@ -450,8 +452,9 @@ sap.ui.define([
 
 		/**
 		 * Dynamic step removal is not yet supported.
+		 * @param {sap.m.WizardStep} wizardStep The step to be removed
 		 * @experimental
-		 * @public
+		 * @private
 		 */
 		Wizard.prototype.removeStep = function (wizardStep) {
 			throw new Error("Dynamic step removal is not yet supported.");
@@ -493,6 +496,7 @@ sap.ui.define([
 
 		/**
 		 * Checks if in branching mode and the nextStep association of the currentStep is not set.
+		 * @returns {boolean} Whether the check passed
 		 */
 		Wizard.prototype._isNextStepDetermined = function () {
 			if (!this.getEnableBranching()) {
@@ -505,6 +509,8 @@ sap.ui.define([
 
 		/**
 		 * Searches for the given step, starting from the firstStep, checking the nextStep in the path.
+		 * @param {sap.m.WizardStep} step The step to be reached
+		 * @returns {boolean} Whether the step is reachable
 		 */
 		Wizard.prototype._isStepReachable = function (step) {
 			if (this.getEnableBranching()) {
@@ -566,7 +572,7 @@ sap.ui.define([
 
 		/**
 		 * Creates the next button, and adds onAfterRendering delegate
-		 * @returns {Button}
+		 * @returns {Button} The created button
 		 * @private
 		 */
 		Wizard.prototype._createNextButton = function () {
@@ -640,8 +646,8 @@ sap.ui.define([
 
 		/**
 		 * Gets the distance between the step heading, and the top of the container
-		 * @param {sap.m.WizardStep} step - The step whose distance is going to be calculcated
-		 * @returns {number}
+		 * @param {sap.m.WizardStep} step The step whose distance is going to be calculcated
+		 * @returns {number} The measured distance
 		 * @private
 		 */
 		Wizard.prototype._getStepScrollOffset = function (step) {
@@ -666,7 +672,7 @@ sap.ui.define([
 
 		/**
 		 * Focuses the first focusable element of a given step
-		 * @param {sap.m.WizardStep} step - the step to be focused
+		 * @param {sap.m.WizardStep} step The step to be focused
 		 * @private
 		 */
 		Wizard.prototype._focusFirstStepElement = function (step) {
@@ -678,7 +684,7 @@ sap.ui.define([
 
 		/**
 		 * Handler for the stepChanged event. The event comes from the WizardProgressNavigator
-		 * @param {jQuery.Event} event
+		 * @param {jQuery.Event} event The event object
 		 * @private
 		 */
 		Wizard.prototype._handleStepChanged = function (event) {
@@ -691,7 +697,7 @@ sap.ui.define([
 
 		/**
 		 * Handler for the stepActivated event. The event comes from the WizardProgressNavigator
-		 * @param {jQuery.Event} event
+		 * @param {number} index The step index
 		 * @private
 		 */
 		Wizard.prototype._handleStepActivated = function (index) {
@@ -708,7 +714,7 @@ sap.ui.define([
 
 		/**
 		 * Checks whether the maximum step count is reached
-		 * @returns {boolean}
+		 * @returns {boolean} True if the max step count is reached
 		 * @private
 		 */
 		Wizard.prototype._isMaxStepCountExceeded = function () {
@@ -722,7 +728,7 @@ sap.ui.define([
 
 		/**
 		 * Checks whether the minimum step count is reached
-		 * @returns {boolean}
+		 * @returns {boolean} True if the min step count is reached
 		 * @private
 		 */
 		Wizard.prototype._isMinStepCountReached = function () {
@@ -769,7 +775,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the progress navigator element of the wizard
-		 * @returns {*}
+		 * @returns {sap.m.WizardProgressNavigator} The progress navigator
 		 * @private
 		 */
 		Wizard.prototype._getProgressNavigator = function () {
@@ -792,7 +798,7 @@ sap.ui.define([
 
 		/**
 		 * Restores the initial validated state of the steps, starting from the given index
-		 * @param {number} index - the index to start the restoring from
+		 * @param {number} index The index to start the restoring from
 		 * @private
 		 */
 		Wizard.prototype._restoreInitialValidatedState = function (index) {
@@ -810,9 +816,9 @@ sap.ui.define([
 
 		/**
 		 * Returns a reference to the subsequent step of the provided step
-		 * @param {sap.m.WizardStep} step - The parent step
-		 * @param {number} progress - The current progress of the Wizard, used in non branching mode.
-		 * @returns {sap.m.WizardStep}
+		 * @param {sap.m.WizardStep} step The parent step
+		 * @param {number} progress The current progress of the Wizard, used in non branching mode.
+		 * @returns {sap.m.WizardStep} The subsequent step
 		 * @private
 		 */
 		Wizard.prototype._getNextStep = function (step, progress) {
@@ -900,7 +906,7 @@ sap.ui.define([
 
 		/**
 		 * Returns a reference to the next button
-		 * @returns {sap.m.Button}
+		 * @returns {sap.m.Button} The button reference
 		 * @private
 		 */
 		Wizard.prototype._getNextButton = function () {
@@ -943,7 +949,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the entry point for the wizard.
-		 * @returns {sap.m.WizardStep} - Reference to the starting step
+		 * @returns {sap.m.WizardStep} Reference to the starting step
 		 * @private
 		 */
 		Wizard.prototype._getStartingStep = function () {
@@ -961,7 +967,7 @@ sap.ui.define([
 
 		/**
 		 * Handles the scroll event of the steps container element
-		 * @param {jQuery.Event} event
+		 * @param {jQuery.Event} event The event object
 		 * @private
 		 */
 		Wizard.prototype._scrollHandler = function (event) {
@@ -1004,7 +1010,7 @@ sap.ui.define([
 		/**
 		 * Activates the current step, adding it to the stepPath, and checks if the current step hasn't already
 		 * been visited. If visited - an Error is thrown.
-		 * @param {sap.m.WizardStep} step - the step to be activated
+		 * @param {sap.m.WizardStep} step The step to be activated
 		 * @private
 		 */
 		Wizard.prototype._activateStep = function (step) {
