@@ -11,7 +11,8 @@ sap.ui.define(['sap/ui/core/XMLComposite'],
 					}
 				},
 				defaultAggregation: "fcItems"
-			}
+			},
+			alias: "mySelectWrapper"
 		});
 
 		return MySelectWrapper;
