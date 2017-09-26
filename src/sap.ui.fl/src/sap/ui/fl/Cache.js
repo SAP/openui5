@@ -236,8 +236,10 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
      * This data is returned only in case it is part of the application preload or in debug mode.
      * In case no debugging takes place and the file is not loaded an empty list is returned.
      *
-     * @param mPropertyBag
-     * @param mPropertyBag.appName Full qualified name of the application
+     * @param {map}mPropertyBag
+     * @param {string} mPropertyBag.appName Full qualified name of the application
+     * @return {Promise} Promise resolving with an array of changes stored in the application source code
+     *
      * @private
      */
 	Cache._getChangesFromBundle = function (mPropertyBag) {
