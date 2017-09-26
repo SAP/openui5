@@ -7,6 +7,7 @@ describe("sap.m.Carousel", function() {
 
 	var myCarousel = element(by.id("myCarousel"));
 	var bPhone = null;
+	var animationTimeout = 600;
 
 	var _moveToCarousel = function () {
 		if (bPhone) {
@@ -30,16 +31,22 @@ describe("sap.m.Carousel", function() {
 	it("should change the height to 50%", function () {
 		element(by.id("btnHeight50")).click();
 		_moveToCarousel();
-		expect(takeScreenshot(myCarousel)).toLookAs("2_height_50_percent");
+
+		setTimeout(function () {
+			expect(takeScreenshot(myCarousel)).toLookAs("2_height_50_percent");
+		}, animationTimeout);
 	});
 
 	// change height to 600px
 	it("should change the height to 600px", function () {
 		element(by.id("btnHeight600px")).click();
 		_moveToCarousel();
-		expect(takeScreenshot(myCarousel)).toLookAs("3_height_600px");
-		element(by.id("btnReset")).click();
 
+		setTimeout(function () {
+			expect(takeScreenshot(myCarousel)).toLookAs("3_height_600px");
+		}, animationTimeout);
+
+		element(by.id("btnReset")).click();
 	});
 
 	// change width to 60%
@@ -47,7 +54,10 @@ describe("sap.m.Carousel", function() {
 		element(by.id("btnWidth60")).click();
 		//hover on the carousel to show the arrows
 		_moveToCarousel();
-		expect(takeScreenshot(myCarousel)).toLookAs("4_width_60_percent");
+
+		setTimeout(function () {
+			expect(takeScreenshot(myCarousel)).toLookAs("4_width_60_percent");
+		}, animationTimeout);
 	});
 
 	// change width to 400px
@@ -55,7 +65,10 @@ describe("sap.m.Carousel", function() {
 		element(by.id("btnWidth400px")).click();
 		//hover on the carousel to show the arrows
 		_moveToCarousel();
-		expect(takeScreenshot(myCarousel)).toLookAs("5_width_400px");
+
+		setTimeout(function () {
+			expect(takeScreenshot(myCarousel)).toLookAs("5_width_400px");
+		}, animationTimeout);
 
 		element(by.id("btnReset")).click();
 	});
@@ -71,14 +84,20 @@ describe("sap.m.Carousel", function() {
 	it("should change page indicator placement", function() {
 		element(by.id("RB-Top")).click();
 		_moveToCarousel();
-		expect(takeScreenshot(myCarousel)).toLookAs("7_page_indicator_visibility");
+
+		setTimeout(function () {
+			expect(takeScreenshot(myCarousel)).toLookAs("7_page_indicator_visibility");
+		}, animationTimeout);
 	});
 
 	// toggle page indicator visibility
 	it("should change page indicator placement", function() {
 		element(by.id("RB-No")).click();
 		_moveToCarousel();
-		expect(takeScreenshot(myCarousel)).toLookAs("8_page_indicator_placement");
+
+		setTimeout(function () {
+			expect(takeScreenshot(myCarousel)).toLookAs("8_page_indicator_placement");
+		}, animationTimeout);
 	});
 
 	// change the number of slides
@@ -87,7 +106,10 @@ describe("sap.m.Carousel", function() {
 		element(by.id("RB-Yes")).click();
 		element(by.id('input-slides-number-inner')).clear().sendKeys('9');
 		_moveToCarousel();
-		expect(takeScreenshot(myCarousel)).toLookAs("9_page_indicator_type");
+
+		setTimeout(function () {
+			expect(takeScreenshot(myCarousel)).toLookAs("9_page_indicator_type");
+		}, animationTimeout);
 	});
 
 
