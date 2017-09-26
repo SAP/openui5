@@ -1043,8 +1043,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		}
 
 		if (!this.bInitial) {
+			this.addComparators(aSorters);
 			if (this.useClientMode()) {
-				this.addSortComparators(aSorters, this.oEntityType);
 				// apply clientside sorters only if data is available
 				if (this.aAllKeys) {
 					// If no sorters are defined, restore initial sort order by calling applyFilter
@@ -1077,23 +1077,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	};
 
 	/**
-	 * Sets the comparator for each sorter in the sorters array according to the
-	 * Edm type of the sort property.
+	 * Sets the comparator for each sorter/filter in the array according to the
+	 * Edm type of the sort/filter property.
 	 * @private
 	 */
-	ODataListBinding.prototype.addSortComparators = function(aSorters, oEntityType) {
-		var oPropertyMetadata, sType;
+	ODataListBinding.prototype.addComparators = function(aEntries) {
+		var oPropertyMetadata, sType,
+			oEntityType = this.oEntityType,
+			that = this;
 
 		if (!oEntityType) {
-			jQuery.sap.log.warning("Cannot determine sort comparators, as entitytype of the collection is unkown!");
+			jQuery.sap.log.warning("Cannot determine sort/filter comparators, as entitytype of the collection is unkown!");
 			return;
 		}
-		jQuery.each(aSorters, function(i, oSorter) {
-			if (!oSorter.fnCompare) {
-				oPropertyMetadata = this.oModel.oMetadata._getPropertyMetadata(oEntityType, oSorter.sPath);
+		aEntries.forEach(function(oEntry) {
+			// Recurse to nested filters
+			if (oEntry.aFilters) {
+				that.addComparators(oEntry.aFilters);
+			} else if (!oEntry.fnCompare) {
+				oPropertyMetadata = this.oModel.oMetadata._getPropertyMetadata(oEntityType, oEntry.sPath);
 				sType = oPropertyMetadata && oPropertyMetadata.type;
-				jQuery.sap.assert(oPropertyMetadata, "PropertyType for property " + oSorter.sPath + " of EntityType " + oEntityType.name + " not found!");
-				oSorter.fnCompare = ODataUtils.getComparator(sType);
+				jQuery.sap.assert(oPropertyMetadata, "PropertyType for property " + oEntry.sPath + " of EntityType " + oEntityType.name + " not found!");
+				oEntry.fnCompare = ODataUtils.getComparator(sType);
 			}
 		}.bind(this));
 	};
@@ -1165,6 +1170,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		}
 
 		if (!this.bInitial) {
+			this.addComparators(this.aFilters);
+			this.addComparators(this.aApplicationFilters);
 
 			if (this.useClientMode()) {
 				// apply clientside filters/sorters only if data is available
@@ -1230,6 +1237,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			return;
 		}
 		this.oEntityType = this._getEntityType();
+		this.addComparators(this.aSorters);
+		this.addComparators(this.aFilters);
+		this.addComparators(this.aApplicationFilters);
 		if (!this.useClientMode()) {
 			this.createSortParams(this.aSorters);
 			this.createFilterParams(this.aFilters.concat(this.aApplicationFilters));
