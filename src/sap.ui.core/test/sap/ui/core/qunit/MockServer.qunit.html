@@ -4495,6 +4495,62 @@ QUnit.test("test ODataModel update", function(assert) {
 		oMockServer.destroy();
 	});
 
+	QUnit.test("Test inline-defined metadata for MockServer instance", 4,  function(assert) {
+		var done = assert.async();
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadata = '<?xml version="1.0" encoding="utf-8"?>'
+		+'<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">'
+		+'    <edmx:DataServices m:DataServiceVersion="2.0">'
+		+'        <Schema Namespace="MOCK_TYPES_TEST" xml:lang="en" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">'
+		+'            <EntityType Name="CustomerType" m:HasStream="true">'
+		+'                <Key>'
+		+'                    <PropertyRef Name="ID" />'
+		+'                </Key>'
+		+'                <Property Name="ID" Type="Edm.String" Nullable="false" />'
+		+'                <Property Name="Name" Type="Edm.String" />'
+		+'            </EntityType>'
+		+'            <EntityContainer Name="MOCK_TYPES_TEST" m:IsDefaultEntityContainer="true">'
+		+'                <EntitySet Name="CustomerSet" EntityType="MOCK_TYPES_TEST.CustomerType"  />'
+		+'            </EntityContainer>'
+		+'            <atom:link rel="self" href="http://testservice:8080/sap/opu/odata/sap/MOCK_TYPES_TEST/$metadata" xmlns:atom="http://www.w3.org/2005/Atom" />'
+		+'            <atom:link rel="latest-version" href="http://testservice:8080/sap/opu/odata/sap/MOCK_TYPES_TEST/$metadata" xmlns:atom="http://www.w3.org/2005/Atom" />'
+		+'        </Schema>'
+		+'    </edmx:DataServices>'
+		+'</edmx:Edmx>';
+
+		oMockServer.simulate(sMetadata, {
+			"bGenerateMissingMockData" : true
+		});
+
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel("/myservice", true);
+
+		oModel.getMetaModel().loaded().then(function(){
+			oModel.createEntry("CustomerSet", {properties: {ID: "0001", Name:"Gustav"}});
+			assert.ok(oModel.hasPendingChanges(), "Pending changes have been created but not yet submitted");
+			oModel.submitChanges({
+				groupId:"changes",
+				success: function() {
+					assert.ok(oModel.getObject("/CustomerSet('0001')") != undefined, "New entry has been created");
+					assert.ok(!oModel.hasPendingChanges(), "Pending changes have been submitted");
+					setTimeout(function(){
+						oMockServer.destroy();
+						done();
+					}, 0);
+				}.bind(this),
+				error: function() {
+					setTimeout(function(){
+						oMockServer.destroy();
+						done();
+					}, 0);
+				}.bind(this)
+			});
+		}.bind(this));
+	});
 
 	function countProperties(obj) {
 		return jQuery.map(obj, function(i, o) {
