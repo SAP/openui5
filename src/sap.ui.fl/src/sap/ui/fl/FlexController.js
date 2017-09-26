@@ -314,6 +314,107 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	FlexController.prototype._checkDependencies = function(oChange, mDependencies, mChanges, oAppComponent, aRelevantChanges) {
+		var bResult = this._checkChange(oChange, oAppComponent);
+		if (!bResult) {
+			return [];
+		}
+		aRelevantChanges.push(oChange);
+		var sDependencyKey = oChange.getId();
+		var aDependentChanges = mDependencies[sDependencyKey] && mDependencies[sDependencyKey].dependencies || [];
+		for (var i = 0, n = aDependentChanges.length; i < n; i++) {
+			var oDependentChange = Utils.getChangeFromChangesMap(mChanges, aDependentChanges[i]);
+			bResult = this._checkDependencies(oDependentChange, mDependencies, mChanges, oAppComponent, aRelevantChanges);
+			if (bResult.length === 0) {
+				aRelevantChanges = [];
+				break;
+			}
+			delete mDependencies[sDependencyKey];
+		}
+		return aRelevantChanges;
+	};
+
+	FlexController.prototype._checkChange = function(oChange, oAppComponent) {
+		// is control available
+		var sControlId;
+		var oSelector = oChange.getSelector();
+		if (oSelector.idIsLocal) {
+			sControlId = oAppComponent.createId(oSelector.id);
+		} else {
+			sControlId = oSelector.id;
+		}
+		var oControl = sap.ui.getCore().byId(sControlId);
+		if (!oControl) {
+			return false;
+		}
+
+		// has error occured during applying change
+		var aFailedCustomDataEntries = this._getFailedCustomData(oChange, oControl, JsControlTreeModifier).customDataEntries;
+		if (aFailedCustomDataEntries.indexOf(oChange.getId()) > -1) {
+			return false;
+		}
+		return true;
+	};
+
+	/**
+	 * Resolves with a Promise after all the changes for this control are applied.
+	 *
+	 * @param {sap.ui.core.Control} oControl The control whose changes are being waited for
+	 * @returns {Promise} Returns a promise when all changes on the control are applied
+	 */
+	FlexController.prototype.waitForChangesToBeApplied = function(oControl) {
+		var mChangesMap = this._oChangePersistence.getChangesMapForComponent();
+		var aPromises = [];
+		var mDependencies = jQuery.extend({}, mChangesMap.mDependencies);
+		var mChanges = mChangesMap.mChanges;
+		var aChangesForControl = mChanges[oControl.getId()] || [];
+		var aAppliedChanges = this._getAppliedCustomData(undefined, oControl, JsControlTreeModifier).customDataEntries;
+		var oAppComponent = Utils.getAppComponentForControl(oControl);
+		var aNotAppliedChanges = aChangesForControl.filter(function(oChange) {
+			return aAppliedChanges.indexOf(oChange.getId()) === -1;
+		});
+		var aRelevantChanges = [];
+		aNotAppliedChanges.forEach(function(oChange) {
+			var aChanges = this._checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
+			aRelevantChanges = aRelevantChanges.concat(aChanges);
+		}, this);
+
+		// remove duplicates
+		aRelevantChanges = aRelevantChanges.filter(function(oChange, iPosition, aAllChanges) {
+			return aAllChanges.indexOf(oChange) === iPosition;
+		});
+
+		// attach aRelevantChanges to the promises and wait for them to be applied
+		aRelevantChanges.forEach(function(oWaitForChange) {
+			if (!oWaitForChange.aPromiseFn) {
+				oWaitForChange.aPromiseFn = [];
+			}
+			aPromises.push(
+				new Promise(function(resolve, reject) {
+					oWaitForChange.aPromiseFn.push({
+						resolve: resolve,
+						reject: reject
+					});
+				})
+				.catch(function(oChange) {
+					// check mDependentChangesOnMe, reject all changes in aRelevantChanges.
+					var aDependentOnMe = oChange.getId && mChangesMap.mDependentChangesOnMe[oChange.getId()] || [];
+					aDependentOnMe.forEach(function(sDependencyKey) {
+						var oDependentChange = Utils.getChangeFromChangesMap(mChanges, sDependencyKey);
+						if (oDependentChange.aPromiseFn) {
+							oDependentChange.aPromiseFn.forEach(function(oPromiseFn) {
+								oPromiseFn.reject(oDependentChange);
+							});
+						}
+					});
+					Promise.resolve();
+				})
+			);
+		}, this);
+
+		return Promise.all(aPromises);
+	};
+
 	/**
 	 * Saves all changes of a persistence instance.
 	 *
@@ -498,10 +599,13 @@ sap.ui.define([
 			.then(function() {
 				var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
 				this._writeAppliedChangesCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
-				if (oChange.PROCESSING.resolve && typeof oChange.PROCESSING.resolve === 'function') {
-					oChange.PROCESSING.resolve();
+				if (oChange.aPromiseFn) {
+					oChange.aPromiseFn.forEach(function(oPromiseFn) {
+						oPromiseFn.resolve(oChange);
+					});
 				}
 				delete oChange.PROCESSING;
+				return true;
 			}.bind(this))
 
 			.catch(function(ex) {
@@ -525,10 +629,13 @@ sap.ui.define([
 					jQuery.sap.log.error(sLogMessage, ex.stack || "");
 				}
 
-				if (oChange.PROCESSING.reject && typeof oChange.PROCESSING.reject === 'function') {
-					oChange.PROCESSING.reject(ex);
+				if (oChange.aPromiseFn) {
+					oChange.aPromiseFn.forEach(function(oPromiseFn) {
+						oPromiseFn.reject(oChange);
+					});
 				}
 				delete oChange.PROCESSING;
+				return false;
 			}.bind(this));
 		}
 		return new Utils.FakePromise();
@@ -554,10 +661,11 @@ sap.ui.define([
 		if (iIndex === -1 && (oChange.PROCESSING || oChange.QUEUED)) {
 			// wait for the change to be applied
 			vResult = new Promise(function(resolve, reject) {
-				oChange.PROCESSING = {
+				oChange.aPromiseFn = oChange.aPromiseFn || [];
+				oChange.aPromiseFn.push({
 					resolve: resolve,
 					reject: reject
-				};
+				});
 			})
 			.then(function(vValue) {
 				return true;
@@ -869,8 +977,10 @@ sap.ui.define([
 						modifier: JsControlTreeModifier,
 						appComponent: oAppComponent
 					})
-					.then(function() {
-						this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getId());
+					.then(function(bUpdate) {
+						if (bUpdate) {
+							this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getId());
+						}
 						delete oChange.QUEUED;
 					}.bind(this));
 				}.bind(this));
