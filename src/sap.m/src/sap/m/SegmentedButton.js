@@ -10,13 +10,20 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 
 
 	/**
-	 * Constructor for a new SegmentedButton.
+	 * Constructor for a new <code>SegmentedButton</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * SegmentedButton is a horizontal control made of multiple buttons, which can display a title or an image. It automatically resizes the buttons to fit proportionally within the control. When no width is set, the control uses the available width.
+	 * A horizontal control made of multiple buttons, which can display a title or an image.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The <code>SegmentedButton</code> shows a group of buttons. When the user clicks or taps
+	 * one of the buttons, it stays in a pressed state. It automatically resizes the buttons
+	 * to fit proportionally within the control. When no width is set, the control uses the available width.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
 	 *
