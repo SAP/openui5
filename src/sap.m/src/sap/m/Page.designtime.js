@@ -25,7 +25,7 @@ sap.ui.define([],
 			},
 			aggregations: {
 				headerContent: {
-					domRef: ":sap-domref > .sapMPageHeader > .sapMBarRight"
+					domRef: ":sap-domref > .sapMPageHeader .sapMBarRight"
 				},
 				subHeader: {
 					domRef: ":sap-domref > .sapMPageSubHeader"
