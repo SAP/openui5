@@ -1,85 +1,46 @@
-<!DOCTYPE HTML>
-<html>
-
-<!--
-	Tested classes: sap.ui.core.mvc.XMLView
--->
-
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for async sap.ui.core.mvc.XMLView</title>
-
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-libs="sap.ui.commons"
-	data-sap-ui-resourceroots='{"example.mvc": "testdata/mvc/"}'
-	>
-</script>
-
-<link rel="stylesheet"
-  href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css"	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<script src="AnyViewAsync.qunit.js"></script>
-
-<script id="view" type="application/xml">
-	<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" id="my.view">
-	</mvc:View>
-</script>
-
-<script>
-
-QUnit.config.autostart = false;
-
-// setup test config with generic factory
-var oConfig = {
-	type : "XML",
-	receiveSource : function(source) {
-		return new XMLSerializer().serializeToString(source);
-	}
-};
-
-// set generic view factory
-oConfig.factory = function(bAsync) {
-	return sap.ui.view({
-		type : "XML",
-		viewName : "testdata.mvc.Async",
-		async : bAsync
-	});
-};
-asyncTestsuite("Generic View Factory", oConfig);
-
-// set XMLView factory
-oConfig.factory = function(bAsync) {
-	return sap.ui.xmlview({
-		viewName : "testdata.mvc.Async",
-		async : bAsync
-	});
-};
-asyncTestsuite("XMLView Factory", oConfig);
-
-// Cache-relevant test cases
-sap.ui.require(["jquery.sap.global",
+sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Component",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
-	"testdata/mvc/TestPreprocessor",
-	"jquery.sap.script"],
-	function(jQuery, Cache, Component, View, XMLView, TestPreprocessor /*, jQuery*/) {
+	"./testdata/TestPreprocessor",
+	"./AnyViewAsync.qunit",
+	"jquery.sap.script"
+], function(jQuery, Cache, Component, View, XMLView, TestPreprocessor, asyncTestsuite /*, jQuery*/) {
+
+	// setup test config with generic factory
+	var oConfig = {
+		type : "XML",
+		receiveSource : function(source) {
+			return new XMLSerializer().serializeToString(source);
+		}
+	};
+
+	// set generic view factory
+	oConfig.factory = function(bAsync) {
+		return sap.ui.view({
+			type : "XML",
+			viewName : "testdata.mvc.Async",
+			async : bAsync
+		});
+	};
+	asyncTestsuite("Generic View Factory", oConfig);
+
+	// set XMLView factory
+	oConfig.factory = function(bAsync) {
+		return sap.ui.xmlview({
+			viewName : "testdata.mvc.Async",
+			async : bAsync
+		});
+	};
+	asyncTestsuite("XMLView Factory", oConfig);
+
+	// ==== Cache-relevant test cases ===================================================
 
 	function viewFactory(mCacheSettings, mPreprocessors) {
 		return sap.ui.xmlview({
-			viewName: "example.mvc.cache",
+			viewName: "testdata.mvc.cache",
 			async: true,
 			id: "cachedView",
 			preprocessors: mPreprocessors,
@@ -153,7 +114,7 @@ sap.ui.require(["jquery.sap.global",
 				var error = new Error("Provided cache keys may not be empty or undefined."),
 					oSpy = this.oSpy,
 					oLogSpy = sinon.spy(jQuery.sap.log, "debug");
-				
+
 				assert.expect(3);
 				return viewFactory({keys: [Promise.resolve()]}).loaded().then(function(oView) {
 					sinon.assert.calledWith(oLogSpy, error.message, "XMLViewCacheError", "sap.ui.core.mvc.XMLView");
@@ -166,7 +127,7 @@ sap.ui.require(["jquery.sap.global",
 			QUnit.test("cache key error", function(assert) {
 				var error = new Error("Some Error"),
 					oView = viewFactory({keys: [Promise.reject(error)]});
-				
+
 				assert.expect(1);
 				return oView.loaded().catch(function(_error) {
 					assert.equal(_error, error, "Loaded Promise should reject with the thrown error.");
@@ -240,10 +201,10 @@ sap.ui.require(["jquery.sap.global",
 				var sKey = "key",
 					oSpy = this.oSpy,
 					oViewInfo = {
-						name: "example.mvc.cache",
+						name: "testdata.mvc.cache",
 						componentId: undefined,
 						id: "cachedView",
-						caller: "Element sap.ui.core.mvc.XMLView#cachedView (example.mvc.cache)",
+						caller: "Element sap.ui.core.mvc.XMLView#cachedView (testdata.mvc.cache)",
 						sync: false
 					};
 				assert.expect(4);
@@ -282,7 +243,7 @@ sap.ui.require(["jquery.sap.global",
 					return viewFactory({
 						keys: [sKey]
 					}).loaded().then(function(oView) {
-						assert.ok(that.oSpy.calledWith("example/mvc/cache.view.xml"), "load resource called");
+						assert.ok(that.oSpy.calledWith("testdata/mvc/cache.view.xml"), "load resource called");
 						assert.ok(oView.byId("Button2"), "controls created");
 						return Cache.get(sLocation + "_cachedView" + getKeyParts([sKey])).then(function(oCachedResource) {
 							assert.ok(oCachedResource, "cache filled");
@@ -303,16 +264,17 @@ sap.ui.require(["jquery.sap.global",
 					return viewFactory({
 						keys: [sKey]
 					}).loaded().then(function(oView) {
-						assert.ok(!that.oSpy.calledWith("example/mvc/cache.view.xml"), "load resource not called");
+						assert.ok(!that.oSpy.calledWith("testdata/mvc/cache.view.xml"), "load resource not called");
 						assert.ok(oView.byId("Button2"), "controls created");
 						oView.destroy();
 					});
 				});
 			});
 
-			QUnit.start();
 		});
+
 	} else {
+
 		QUnit.module("Cache integration - unsupported browser");
 
 		QUnit.test("should not break", function(assert) {
@@ -347,18 +309,5 @@ sap.ui.require(["jquery.sap.global",
 			});
 		});
 
-		QUnit.start();
 	}
 });
-
-</script>
-</head>
-<body>
-<h1 id="qunit-header">QUnit Page for async sap.ui.core.mvc.XMLView</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<div id="content"></div>
-</body>
-</html>

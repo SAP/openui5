@@ -499,6 +499,16 @@
 				oTable.setEnableCellFilter(bValue);
 			}
 		},
+		ALTERNATEROWCOLORS: {
+			text: "Alternate Row Colors",
+			value: function(oTable) {
+				return oTable.getAlternateRowColors();
+			},
+			input: "boolean",
+			action: function(oTable, bValue) {
+				oTable.setAlternateRowColors(bValue);
+			}
+		},
 		AREAS: {
 			text: "Areas",
 			group: {

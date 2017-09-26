@@ -934,33 +934,80 @@ sap.ui.define([
 		},
 
 		/**
-		 * Execute the passed asynchronous functions serialized - one after the other
+		 * Execute the passed asynchronous functions serialized - one after the other.
 		 *
 		 * @param {array.<function>} aPromiseQueue - List of asynchronous functions that returns promises
-		 * @returns {Promise} Empty resolved promise when all passed promises inside functions have been executed
+		 * @param {boolean} bAsync - true: asynchronous processing with Promise, false: synchronous processing with FakePromise
+		 * @returns {Promise} Returns empty resolved Promise or FakePromise when all passed promises inside functions have been executed
 		 */
-		execPromiseQueueSequentially : function(aPromiseQueue) {
+		execPromiseQueueSequentially : function(aPromiseQueue, bAsync) {
 			if (aPromiseQueue.length === 0) {
-				return Promise.resolve();
+				if (bAsync) {
+					return Promise.resolve();
+				}
+				return new Utils.FakePromise();
 			}
 			var fnPromise = aPromiseQueue.shift();
 			if (typeof fnPromise === "function") {
-				return fnPromise()
+				var vResult = fnPromise();
+
+				return vResult.then(function() {
+					if (!bAsync && vResult instanceof Promise) {
+						bAsync = true;
+					}
+				})
 
 				.catch(function(e) {
 					this.log.error("Changes could not be applied. Merge error detected. " + e);
 				}.bind(this))
 
 				.then(function() {
-					return this.execPromiseQueueSequentially(aPromiseQueue);
+					return this.execPromiseQueueSequentially(aPromiseQueue, bAsync);
 				}.bind(this));
 
 			} else {
 				this.log.error("Changes could not be applied, promise not wrapped inside function.");
-				return this.execPromiseQueueSequentially(aPromiseQueue);
+				return this.execPromiseQueueSequentially(aPromiseQueue, bAsync);
 			}
-		}
+		},
 
+		/**
+		 * Function that behaves like Promise (es6) but is synchronous. Implements 'then' and 'catch' functions.
+		 * After instantiating can be used simillar to standard Promises but synchronously.
+		 * As soon as one of the callback functions returns a Promise the asynchronus Promise replaces the FakePromise in further processing.
+		 *
+		 * @param {any} vInitialValue - value on resolve FakePromise
+		 * @param {any} vError - value on reject FakePromise
+		 */
+		FakePromise : function(vInitialValue, vError) {
+			this.vValue = vInitialValue;
+			this.vError = vError;
+			this.then = function(fn) {
+				if (!this.vError) {
+					try {
+						this.vValue = fn(this.vValue, true);
+					} catch (oError) {
+						this.vError = oError;
+						this.vValue = null;
+						return this;
+					}
+					if (this.vValue instanceof Promise) {
+						return this.vValue;
+					}
+				}
+				return this;
+			};
+			this.catch = function(fn) {
+				if (this.vError) {
+					this.vValue = fn(this.vError, true);
+					this.vError = null;
+					if (this.vValue instanceof Promise) {
+						return this.vValue;
+					}
+				}
+				return this;
+			};
+		}
 	};
 	return Utils;
 }, true);

@@ -1,57 +1,32 @@
-<!DOCTYPE HTML>
-<html>
-
-<!--
-  Tested classes: sap.ui.core.mvc.XMLView + sap.ui.core.mvc.Controller
--->
-
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-<title>QUnit Page for sap.ui.core.mvc.XMLView +
-sap.ui.core.mvc.Controller</title>
-
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.commons"
-	data-sap-ui-bindingSyntax="complex"
-	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
-</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="AnyView.qunit.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<script>
-
-	jQuery.sap.require("sap.ui.core.mvc.View");
-	jQuery.sap.require("sap.ui.core.mvc.XMLView");
-	jQuery.sap.require("jquery.sap.sjax");
+sap.ui.define([
+	'sap/ui/core/library',
+	'sap/ui/core/mvc/View',
+	'sap/ui/core/mvc/XMLView',
+	'sap/ui/core/RenderManager',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/layout/VerticalLayout',
+	'sap/ui/commons/Button',
+	'sap/ui/commons/Panel',
+	'./AnyView.qunit',
+	'jquery.sap.sjax'
+], function(coreLibrary, View, XMLView, RenderManager, JSONModel, VerticalLayout, Button, Panel, testsuite) {
 
 	// shortcut
 	function isPreserved(oDomRef) {
-		return sap.ui.core.RenderManager.isPreservedContent(oDomRef)
+		return RenderManager.isPreservedContent(oDomRef)
 	}
 
 	function isInPreservedArea(oDomRef) {
-		var oPreserveArea = sap.ui.core.RenderManager.getPreserveAreaRef();
+		var oPreserveArea = RenderManager.getPreserveAreaRef();
 		return !!(oPreserveArea.compareDocumentPosition(oDomRef) & Node.DOCUMENT_POSITION_CONTAINED_BY);
 	}
 
 	function dummyPlaceholder(oControl) {
-		return jQuery.sap.byId(sap.ui.core.RenderManager.RenderPrefixes.Dummy + oControl.getId())[0];
+		return jQuery.sap.byId(RenderManager.RenderPrefixes.Dummy + oControl.getId())[0];
 	}
 
 	function invisiblePlaceholder(oControl) {
-		return jQuery.sap.byId(sap.ui.core.RenderManager.RenderPrefixes.Invisible + oControl.getId())[0];
+		return jQuery.sap.byId(RenderManager.RenderPrefixes.Invisible + oControl.getId())[0];
 	}
 
 	var oConfig = {
@@ -186,7 +161,7 @@ sap.ui.core.mvc.Controller</title>
 
 		// load view, embed it in a Panel and force rendering
 		var oView = sap.ui.xmlview('example.mvc.test');
-		var oPanel = new sap.ui.commons.Panel({
+		var oPanel = new Panel({
 			text: "My View",
 			content: [oView]
 		}).placeAt('content');
@@ -230,7 +205,7 @@ sap.ui.core.mvc.Controller</title>
 				assert.ok(!xmlviewPlaceholderNode, "there should be no invisible placeholder for the xmlview");
 			} else {
 				assert.ok(xmlviewPlaceholderNode, "xmlview placeholder should be rendered");
-				assert.ok(sap.ui.core.RenderManager.isPreservedContent(xmlviewNode), "xmlview should be part of the preserved area");
+				assert.ok(RenderManager.isPreservedContent(xmlviewNode), "xmlview should be part of the preserved area");
 			}
 
 			if ( bVisible ) {
@@ -259,12 +234,12 @@ sap.ui.core.mvc.Controller</title>
 		}
 
 		var iLayoutRendered = 0;
-		var oLayout = new sap.ui.layout.VerticalLayout({
+		var oLayout = new VerticalLayout({
 			id: 'vLayout',
 			content: [
-				new sap.ui.commons.Button({id: 'btnBefore', text:'Button Before'}),
+				new Button({id: 'btnBefore', text:'Button Before'}),
 				xmlview = sap.ui.xmlview('xmlview', 'example.mvc.test'),
-				new sap.ui.commons.Button({id: 'btnAfter', text:'Button After'})
+				new Button({id: 'btnAfter', text:'Button After'})
 			]
 		});
 		oLayout.addEventDelegate({
@@ -363,11 +338,11 @@ sap.ui.core.mvc.Controller</title>
 		sap.ui.getCore().applyChanges();
 
 		var oDomRef = oView.getDomRef();
-		sap.ui.core.RenderManager.preserveContent(oDomRef, true);
+		RenderManager.preserveContent(oDomRef, true);
 
 		oView.destroy();
 
-		assert.ok(!sap.ui.core.RenderManager.getPreserveAreaRef().hasChildNodes(), "Preserve area is empty");
+		assert.ok(!RenderManager.getPreserveAreaRef().hasChildNodes(), "Preserve area is empty");
 	});
 
 	QUnit.test("Destroy with 'KeepDom'-mode removes preservable flag from DOM ref", function(assert) {
@@ -380,9 +355,9 @@ sap.ui.core.mvc.Controller</title>
 		var oDomRef = oView.getDomRef();
 
 		oView.destroy("KeepDom");
-		sap.ui.core.RenderManager.preserveContent(oDomRef, true);
+		RenderManager.preserveContent(oDomRef, true);
 
-		assert.ok(!sap.ui.core.RenderManager.getPreserveAreaRef().hasChildNodes(), "Nothing got preserved");
+		assert.ok(!RenderManager.getPreserveAreaRef().hasChildNodes(), "Nothing got preserved");
 
 		// Cleanup
 		var oDomRef = oView.getDomRef();
@@ -418,7 +393,7 @@ sap.ui.core.mvc.Controller</title>
 
 	QUnit.test("DataBinding", function(assert) {
 
-		var oModel1 = new sap.ui.model.json.JSONModel({
+		var oModel1 = new JSONModel({
 			booleanValue : true,
 			integerValue: 8015,
 			stringValue : 'Text1',
@@ -428,7 +403,7 @@ sap.ui.core.mvc.Controller</title>
 				stringValue : 'Text1'
 			}
 		});
-		var oModel2 = new sap.ui.model.json.JSONModel({
+		var oModel2 = new JSONModel({
 			booleanValue : false,
 			integerValue: 4711,
 			stringValue : '1txeT'
@@ -498,7 +473,7 @@ sap.ui.core.mvc.Controller</title>
 
 	QUnit.test("Custom Data", function(assert) {
 
-		var oModel = new sap.ui.model.json.JSONModel({
+		var oModel = new JSONModel({
 			value : 'myValue'
 		});
 
@@ -518,10 +493,8 @@ sap.ui.core.mvc.Controller</title>
 
 	QUnit.module("Preprocessor API", {
 		beforeEach: function() {
-			this.XMLView = jQuery.sap.getObject("sap.ui.core.mvc.XMLView");
-			this.View = jQuery.sap.getObject("sap.ui.core.mvc.View");
 			this.sViewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>';
-			this.runPreprocessorSpy = sinon.spy(this.View.prototype, "runPreprocessor");
+			this.runPreprocessorSpy = sinon.spy(View.prototype, "runPreprocessor");
 			this.fnGetConfig = function(fnPreprocessor, bSyncSupport) {
 				return {
 					preprocessor: fnPreprocessor,
@@ -549,23 +522,23 @@ sap.ui.core.mvc.Controller</title>
 		},
 		afterEach: function() {
 			// reset global preprocessors
-			this.View._mPreprocessors = {};
+			View._mPreprocessors = {};
 			this.runPreprocessorSpy.restore();
 			delete this.xml;
 		}
 	});
 
 	QUnit.test("registration", function(assert) {
-		this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.XML, jQuery.noop, false);
-		this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.VIEWXML, jQuery.noop, false);
-		this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.CONTROLS, jQuery.noop, false);
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, jQuery.noop, false);
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.VIEWXML, jQuery.noop, false);
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.CONTROLS, jQuery.noop, false);
 
-		assert.strictEqual(this.View._mPreprocessors["XML"]["xml"][1].preprocessor, jQuery.noop, "Registration for xml successful");
-		assert.strictEqual(this.View._mPreprocessors["XML"]["viewxml"][0].preprocessor, jQuery.noop, "Registration for viewxml successful");
-		assert.strictEqual(this.View._mPreprocessors["XML"]["controls"][0].preprocessor, jQuery.noop, "Registration for content successful");
-		assert.throws(this.XMLView.registerPreprocessor("unknown", jQuery.noop, false, {type: "unknown"}), "Error thrown when registering invalid type");
-		assert.throws(this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.XML, jQuery.noop, false, true), "Error thrown when registering more than one ondemand pp");
-		assert.strictEqual(this.View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
+		assert.strictEqual(View._mPreprocessors["XML"]["xml"][1].preprocessor, jQuery.noop, "Registration for xml successful");
+		assert.strictEqual(View._mPreprocessors["XML"]["viewxml"][0].preprocessor, jQuery.noop, "Registration for viewxml successful");
+		assert.strictEqual(View._mPreprocessors["XML"]["controls"][0].preprocessor, jQuery.noop, "Registration for content successful");
+		assert.throws(XMLView.registerPreprocessor("unknown", jQuery.noop, false, {type: "unknown"}), "Error thrown when registering invalid type");
+		assert.throws(XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, jQuery.noop, false, true), "Error thrown when registering more than one ondemand pp");
+		assert.strictEqual(View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
 	});
 
 	QUnit.test("sync / no execution", function(assert) {
@@ -668,7 +641,7 @@ sap.ui.core.mvc.Controller</title>
 		return bSync ? fnAssert(error) : oView.loaded().catch(fnAssert);
 	}
 
-	jQuery.each(sap.ui.core.mvc.XMLView.PreprocessorType, function(sProp, sType) {
+	jQuery.each(XMLView.PreprocessorType, function(sProp, sType) {
 		QUnit.test("sync - single preprocessor " + sType + " (compatible)", function(assert) {
 			testPreprocessor.call(this, assert, true, sType);
 		});
@@ -689,15 +662,4 @@ sap.ui.core.mvc.Controller</title>
 		});
 	});
 
-</script>
-</head>
-<body>
-<h1 id="qunit-header">QUnit Page for sap.ui.core.mvc.XMLView +
-sap.ui.core.mvc.Controller</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<div id="content"></div>
-</body>
-</html>
+});

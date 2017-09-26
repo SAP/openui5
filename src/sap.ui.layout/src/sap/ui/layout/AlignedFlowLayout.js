@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
-	function(Control, library, ResizeHandler) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
+	function(jQuery, Control, library, ResizeHandler) {
 		"use strict";
 
 		/**
@@ -125,20 +125,6 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 
 		AlignedFlowLayout.prototype.onAfterRendering = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 		AlignedFlowLayout.prototype.onThemeChanged = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
-
-		function getRootFontSize() {
-			var oRootDomRef = document.documentElement;
-
-			if (!oRootDomRef) {
-				return 16; // browser default font size
-			}
-
-			return parseFloat(window.getComputedStyle(oRootDomRef).getPropertyValue("font-size"));
-		}
-
-		function remToPx(vRem) {
-			return parseFloat(vRem) * getRootFontSize();
-		}
 
 		// this resize handler needs to be called on after rendering, theme change, and whenever the width of this
 		// control changes
@@ -294,9 +280,9 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 
 			// the CSS unit of the minItemWidth control property is in rem
 			if (sMinItemWidth.lastIndexOf("rem") !== -1) {
-				fMinItemWidth = remToPx(sMinItemWidth);
+				fMinItemWidth = jQuery.sap.remToPx(sMinItemWidth);
 
-				// the CSS unit of the minItemWidth control property is in px
+			// the CSS unit of the minItemWidth control property is in px
 			} else if (sMinItemWidth.lastIndexOf("px") !== -1) {
 				fMinItemWidth = parseFloat(sMinItemWidth);
 			}

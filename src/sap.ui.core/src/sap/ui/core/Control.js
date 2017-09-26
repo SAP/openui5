@@ -217,15 +217,8 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		} else {
 			// else we bubble up the hierarchy
 			var oParent = this.getParent();
-			if (oParent &&
-				(oParent.bOutput === true || oParent.bOutput === undefined) &&
-				// If the parent of the control is invisible or never rendered yet
-				// it should not be necessary to bubble up the invalidation to the parent
-				// since we need to wait the next rendering tick of the parent anyway to see the rendering results.
-				// If the parent does not have bOutput property, it is probably an Element or UIArea
-				// then we should let the invalidation bubble up to the parents e.g. for the initial rendering.
-
-				(this.bOutput /* && !this.getUIArea() */ ||
+			if (oParent && (
+					this.bOutput /* && !this.getUIArea() */ ||
 					/* !this.bOutput && */ !(this.getVisible && this.getVisible() === false))) {
 
 				// Note: the two comments in the condition above show additional conditions
@@ -641,7 +634,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	// ---- local busy indicator handling ---------------------------------------------------------------------------------------
 
 	var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart touchmove mouseup touchend click",
-		rForbiddenTags = /^(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)$/i,
+		rForbiddenTags = /^(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr|tr)$/i,
 		oBusyIndicatorDelegate = {
 			onAfterRendering: function() {
 				if (this.getBusy() && this.getDomRef() && !this._busyIndicatorDelayedCallId && !this.getDomRef("busyIndicator")) {

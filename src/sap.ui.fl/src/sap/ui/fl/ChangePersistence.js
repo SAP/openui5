@@ -54,8 +54,6 @@ sap.ui.define([
 		this._aDirtyChanges = [];
 	};
 
-	ChangePersistence.NOTAG = "<NoTag>";
-
 	/**
 	 * Return the name of the SAPUI5 component. All changes are assigned to 1 SAPUI5 component. The SAPUI5 component also serves as authorization
 	 * object.
@@ -78,14 +76,15 @@ sap.ui.define([
 	};
 
 
+	/**
+	 * Returns an cache key for caching views.
+	 *
+	 * @returns {string} Returns an ETag for caching
+	 * @private
+	 * @restricted sap.ui.fl
+	 */
 	ChangePersistence.prototype.getCacheKey = function() {
-		return Cache.getChangesFillingCache(this._oConnector, this._mComponent).then(function(oWrappedChangeFileContent) {
-			if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
-				return oWrappedChangeFileContent.etag;
-			}
-
-			return ChangePersistence.NOTAG;
-		});
+		return Cache.getCacheKey(this._mComponent);
 	};
 
 	/**

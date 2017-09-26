@@ -593,6 +593,12 @@ sap.ui.define([
 				oViewModel.setProperty("/bSearchMode", bSearchMode);
 
 				this._toggleTabHeaderClass();
+
+				if (bSearchMode) {
+					jQuery.sap.delayedCall(0, this, function () {
+						this._oView.byId("searchControl").getAggregation("_searchField").getFocusDomRef().focus();
+					});
+				}
 			},
 
 			/**

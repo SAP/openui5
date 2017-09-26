@@ -549,23 +549,6 @@
 		});
 	});
 
-	QUnit.test("_loadChangesBasedOnOldRoute", function(assert) {
-		//Arrange
-		sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("MyComponentClassName");
-		sandbox.stub(jQuery.sap, "getResourceName");
-		sandbox.stub(jQuery.sap, "loadResource").returns(Promise.resolve({changes: [{selector: 1}, {selector: 2}, {selector: 3}]}));
-		var expectedResult = {
-			changes: {changes: [{selector: 1}, {selector: 2}, {selector: 3}]},
-			componentClassName: "MyComponentClassName"
-		};
-
-		//Act
-		return this.oLrepConnector._loadChangesBasedOnOldRoute("MyComponentClassName").then(function(result) {
-			//Assert
-			assert.deepEqual(result, expectedResult);
-		});
-	});
-
 	QUnit.test("_buildParams - empty", function(assert) {
 		//Arrange
 		var aParams = [];

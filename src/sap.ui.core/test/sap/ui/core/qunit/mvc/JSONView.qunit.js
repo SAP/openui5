@@ -1,36 +1,9 @@
-<!DOCTYPE HTML>
-<html>
+sap.ui.define([
+	'sap/ui/core/library',
+	'./AnyView.qunit'
+], function(coreLibrary, testsuite) {
 
-<!--
-  Tested classes: sap.ui.core.mvc.JSONView + sap.ui.core.mvc.Controller
--->
-
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for sap.ui.core.mvc.JSONView +
-sap.ui.core.mvc.Controller</title>
-
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.commons"
-	data-sap-ui-bindingSyntax="complex"
-	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
-</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="AnyView.qunit.js"></script>
-<script>
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	var oConfig = {
 		viewClassName : "sap.ui.core.mvc.JSONView",
@@ -47,7 +20,7 @@ sap.ui.core.mvc.Controller</title>
 	});
 
 	testsuite(oConfig, "JSONView creation via generic view factory", function() {
-		return sap.ui.view({type:sap.ui.core.mvc.ViewType.JSON,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+		return sap.ui.view({type:ViewType.JSON,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 	}, true);
 
 	QUnit.test("JSONView should be able to resolve controller methods", function(assert) {
@@ -61,13 +34,4 @@ sap.ui.core.mvc.Controller</title>
 		oView.destroy();
 	});
 
-</script>
-</head>
-<body>
-<h1 id="qunit-header">QUnit Page for sap.ui.core.mvc.JSONView + sap.ui.core.mvc.Controller</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<ol id="qunit-tests"></ol>
-<div id="content"></div>
-</body>
-</html>
+});

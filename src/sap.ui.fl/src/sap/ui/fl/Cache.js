@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
+sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConnector, Utils) {
 	"use strict";
 
 	/**
@@ -149,46 +149,75 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 * loadChanges method of the given LrepConnector.
 	 *
 	 * @param {sap.ui.fl.LrepConnector} oLrepConnector - LrepConnector instance to retrieve the changes with
-	 * @param {object} oComponent - Contains component data needed for reading changes
-	 * @param {string} oComponent.name - Name of the component
-	 * @param {string} oComponent.appVersion - Current running version of application
+	 * @param {map} mComponent - Contains component data needed for reading changes
+	 * @param {string} mComponent.name - Name of the component
+	 * @param {string} mComponent.appVersion - Current running version of application
 	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
 	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to actual component
 	 * @param {string} [mPropertyBag.siteId] - <code>sideId</code> that belongs to actual component
 	 * @param {string} [mPropertyBag.cacheKey] - key to validate the client side stored cache entry
 	 * @param {string} [mPropertyBag.url] - address to which the request for change should be sent in case the data is not cached
+	 * @param {string} [mPropertyBag.appName] - name where bundled changes from the application development are stored
 	 * @returns {Promise} resolves with the change file for the given component, either from cache or back end
 	 *
 	 * @public
 	 */
-	Cache.getChangesFillingCache = function (oLrepConnector, oComponent, mPropertyBag) {
+	Cache.getChangesFillingCache = function (oLrepConnector, mComponent, mPropertyBag) {
 		if (!this.isActive()) {
-			return oLrepConnector.loadChanges(oComponent, mPropertyBag);
+			return oLrepConnector.loadChanges(mComponent, mPropertyBag);
 		}
-		var sComponentName = oComponent.name;
-		var sAppVersion = oComponent.appVersion || Utils.DEFAULT_APP_VERSION;
+		var sComponentName = mComponent.name;
+		var sAppVersion = mComponent.appVersion || Utils.DEFAULT_APP_VERSION;
 		var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion);
 
 		if (oCacheEntry.promise) {
 			return oCacheEntry.promise;
 		}
 
+		var oChangesBundleLoadingPromise = Cache._getChangesFromBundle(mPropertyBag);
+
 		// in case of no changes present according to async hints
 		if (mPropertyBag && mPropertyBag.cacheKey === "<NO CHANGES>") {
-			return Promise.resolve({
-				changes: {
-					changes : [],
-					contexts : []
-				},
-				componentClassName: sComponentName
+			return oChangesBundleLoadingPromise.then(function (aChanges) {
+				return {
+					changes: {
+						changes: aChanges,
+						contexts: []
+					},
+					componentClassName: sComponentName
+				};
 			});
 		}
 
-		var currentLoadChanges = oLrepConnector.loadChanges(oComponent, mPropertyBag).then(function (mChanges) {
-			if (mChanges && mChanges.changes && mChanges.changes.settings && mChanges.changes.settings.switchedOnBusinessFunctions) {
-				mChanges.changes.settings.switchedOnBusinessFunctions.forEach(function(sValue) {
-				Cache._switches[sValue] = true;
-				});
+		var oChangesLoadingPromise = oLrepConnector.loadChanges(mComponent, mPropertyBag).then(function (oResult) {
+			return oResult;
+		}, function (oError) {
+			// if the back end is not reachable we still cache the results in a valid way because the url request is
+			// cached by the browser in its negative cache anyway.
+			var sErrorMessage = jQuery.sap.formatMessage("flexibility service is not available:\nError message: {0}", oError.status);
+			jQuery.sap.log.error(sErrorMessage);
+			return Promise.resolve({
+				changes: {
+					changes: [],
+					contexts: [],
+					variantSection: {},
+					settings: {}
+				}
+			});
+		});
+
+		var currentLoadChanges = Promise.all([oChangesBundleLoadingPromise, oChangesLoadingPromise]).then(function (aValues) {
+			var aChangesFromBundle = aValues[0];
+			var mChanges = aValues[1];
+
+			if (mChanges && mChanges.changes) {
+				if (mChanges.changes.settings && mChanges.changes.settings.switchedOnBusinessFunctions) {
+					mChanges.changes.settings.switchedOnBusinessFunctions.forEach(function (sValue) {
+						Cache._switches[sValue] = true;
+					});
+				}
+
+				mChanges.changes.changes = aChangesFromBundle.concat(mChanges.changes.changes);
 			}
 			oCacheEntry.file = mChanges;
 			return oCacheEntry.file;
@@ -200,6 +229,70 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 		oCacheEntry.promise = currentLoadChanges;
 
 		return currentLoadChanges;
+	};
+
+    /**
+     * Function to get the changes-bundle.json file stored in the application sources.
+     * This data is returned only in case it is part of the application preload or in debug mode.
+     * In case no debugging takes place and the file is not loaded an empty list is returned.
+     *
+     * @param mPropertyBag
+     * @param mPropertyBag.appName Full qualified name of the application
+     * @private
+     */
+	Cache._getChangesFromBundle = function (mPropertyBag) {
+		var bChangesBundleDeterminable = mPropertyBag && mPropertyBag.appName;
+
+		if (!bChangesBundleDeterminable) {
+			return Promise.resolve([]);
+		}
+
+		var sResourcePath = jQuery.sap.getResourceName(mPropertyBag.appName, "/changes/changes-bundle.json");
+		var bChangesBundleLoaded = jQuery.sap.isResourceLoaded(sResourcePath);
+		if (bChangesBundleLoaded) {
+			return Promise.resolve(jQuery.sap.loadResource(sResourcePath));
+		} else {
+			if (!sap.ui.getCore().getConfiguration().getDebug()) {
+				return Promise.resolve([]);
+			}
+
+			// try to load the source in case a debugging takes place and the component could have no Component-preload
+			try {
+				return Promise.resolve(jQuery.sap.loadResource(sResourcePath));
+			} catch (e) {
+				jQuery.sap.log("flexibility did not find a changesBundle.json  for the application");
+				return Promise.resolve([]);
+			}
+		}
+	};
+
+
+	Cache.NOTAG = "<NoTag>";
+
+	/**
+	 * Function to retrieve the cache key of the SAPUI5 flexibility request of a given application
+	 *
+	 * @param {map} mComponent
+	 * @param {string} mComponent.name Name of the application component
+	 * @param {string} mComponent.appVersion Version of the application component
+	 * @return {Promise} Returns the promise resolved with the determined cache key
+	 *
+	 * @private
+	 * @restricted sap.ui.fl
+	 *
+	 */
+	Cache.getCacheKey = function (mComponent) {
+		if (!mComponent || !mComponent.name || !mComponent.appVersion) {
+			jQuery.sap.log("Not all parameters were passed to determine a flexibility cache key.");
+			return Promise.resolve(Cache.NOTAG);
+		}
+		return this.getChangesFillingCache(new LrepConnector(), mComponent).then(function (oWrappedChangeFileContent) {
+			if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
+				return oWrappedChangeFileContent.etag;
+			} else {
+				return Cache.NOTAG;
+			}
+		});
 	};
 
 	/**

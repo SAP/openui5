@@ -1435,15 +1435,20 @@ sap.ui.define([
 			iSpacerHeight,
 			sPreviousSubSectionId,
 			sPreviousSectionId,
-			bAllowSnap;
+			bAllowSnap,
+			$domRef = this.getDomRef();
 
-		if (!this._bDomReady) { //calculate the layout only if the object page is full ready
+		if (!$domRef || !this._bDomReady) { //calculate the layout only if the object page is full ready
 			return false; // return success flag
 		}
 
 		jQuery.sap.log.debug("ObjectPageLayout :: _updateScreenHeightSectionBasesAndSpacer", "re-evaluating dom positions");
 
-		this.iScreenHeight = this.$().height();
+		this.iScreenHeight = $domRef.parentElement ? $domRef.getBoundingClientRect().height : 0;
+
+		if (this.iScreenHeight === 0) {
+			return; // element is hidden or not in DOM => the resulting calculations would be invalid
+		}
 		var iSubSectionsCount = 0;
 
 		this._aSectionBases.forEach(function (oSectionBase) {
@@ -1842,6 +1847,9 @@ sap.ui.define([
 			.then(function () {
 				iScrollTop = this._$opWrapper.scrollTop();
 				iPageHeight = this.iScreenHeight;
+				if (iPageHeight === 0) {
+					return; // page is hidden and further computation will produce invalid results
+				}
 				sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
 				sSelectedSectionId = this.getSelectedSection();
 
@@ -1916,6 +1924,9 @@ sap.ui.define([
 
 		//calculate the limit of visible sections to be lazy loaded
 		iPageHeight = this.iScreenHeight;
+		if (iPageHeight === 0) {
+			return; // page is hidden
+		}
 		if (bShouldStick && !this._bPersistHeaderInTitleArea) {
 			iPageHeight -= (this.iAnchorBarHeight + this.iHeaderTitleHeightStickied);
 		} else {

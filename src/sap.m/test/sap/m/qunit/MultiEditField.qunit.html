@@ -342,6 +342,20 @@
 			assert.notOk(this.oMultiEditField._isSpecialValueItem(oRegularItem), "Item is not special value item");
 		});
 
+		QUnit.test("_getInternalDomRef function", function(assert) {
+			//Arrange
+			var oDomRef,
+				oDomRefSelect;
+
+			oDomRefSelect = this.oMultiEditField.byId("select").getDomRef();
+
+			//Act
+			oDomRef = this.oMultiEditField._getInternalDomRef();
+
+			//Assert
+			assert.deepEqual(oDomRef, oDomRefSelect, "The DOM reference of the select control is returned");
+		});
+
 		QUnit.start();
 	</script>
 </head>

@@ -142,7 +142,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * Enables or disables grouping. If grouping is enabled, the table is grouped by the column which is defined
 			 * in the <code>groupBy</code> association.
 			 *
-			 * @experimental Since 1.28. This feature has a limited functionality.
 			 * The following restrictions apply:
 			 * <ul>
 			 *  <li>Only client models are supported (e.g. {@link sap.ui.model.json.JSONModel}). Grouping does not work with OData models.</li>
@@ -153,6 +152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 *      column or grouping is disabled.</li>
 			 * </ul>
 			 *
+			 * @experimental As of 1.28. This feature has a limited functionality.
 			 * @see sap.ui.table.Table#setGroupBy
 			 */
 			enableGrouping : {type : "boolean", group : "Behavior", defaultValue : false},
@@ -251,7 +251,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * The values <code>0</code>, <code>1</code> and <code>2</code> are possible.
 			 * @since 1.45.0
 			 */
-			rowActionCount : {type : "int", group : "Appearance", defaultValue : 0}
+			rowActionCount : {type : "int", group : "Appearance", defaultValue : 0},
+
+			/**
+			 * Enables alternating table row colors.
+			 * Alternate row coloring is not available for the tree mode.
+			 * @since 1.52
+			 */
+			alternateRowColors : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		defaultAggregation : "columns",
 		aggregations : {

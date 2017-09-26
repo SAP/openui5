@@ -66,7 +66,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
 		return this.oChangePersistence.getCacheKey().then(function (oCacheKeyResponse) {
-			assert.equal(oCacheKeyResponse, ChangePersistence.NOTAG);
+			assert.equal(oCacheKeyResponse, Cache.NOTAG);
 		});
 	});
 

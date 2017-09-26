@@ -344,8 +344,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 					}
 
 
+					treeTableModel[index].formatedName = treeTableModel[index].name + " (" + "<span style=\"color: " + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR +  "; \"> " +  iHighSeverityCount + " High, </span> " + "<span style=\"color:  " + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR +  ";\"> " +  iMediumSeverityCount + " Medim, </span> " + "<span style=\"color " + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR +  ";\"> " +  iLowSeverityCount + " Low </span>)";
 					treeTableModel[index].name += " (" + issueCount + " issues)";
-					treeTableModel[index].formatedName = issuesModel[libName][rule][0].name + " (" + "<span style=\"color: " + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR +  "; \"> " +  iHighSeverityCount + " High, </span> " + "<span style=\"color:  " + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR +  ";\"> " +  iMediumSeverityCount + " Medim, </span> " + "<span style=\"color " + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR +  ";\"> " +  iLowSeverityCount + " Low </span>)";
 					treeTableModel[index].issueCount = issueCount;
 					issueCount = 0;
 					innerIndex = 0;

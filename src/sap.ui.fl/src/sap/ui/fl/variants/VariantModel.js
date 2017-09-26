@@ -72,12 +72,15 @@ sap.ui.define([
 	 * Updates the storage of the current variant for a given variant management control
 	 * @param {String} sVariantManagementReference The variant management Ref
 	 * @param {String} sNewVariantReference The newly selected variant Ref
+	 * @returns {Promise} Returns Promise that resolves after the variant is updated
 	 * @private
 	 */
 	VariantModel.prototype.updateCurrentVariant = function(sVariantManagementReference, sNewVariantReference) {
-		this._switchToVariant(sVariantManagementReference, sNewVariantReference);
-		this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
-		this.refresh(true);
+		return this._switchToVariant(sVariantManagementReference, sNewVariantReference)
+		.then(function() {
+			this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
+			this.refresh(true);
+		}.bind(this));
 	};
 
 	/**
@@ -201,7 +204,7 @@ sap.ui.define([
 	 * Returns the variants for a given variant management Ref
 	 * @param {String} sVariantManagementReference The variant management Ref
 	 * @param {String} sNewVariantReference The newly selected variant Ref
-	 * @returns {promise} Returns promise that resolves after reverting of old variants and applying of new variants is completed
+	 * @returns {promise} Returns Promise that resolves after reverting of old variants and applying of new variants is completed
 	 * @public
 	 */
 	VariantModel.prototype._switchToVariant = function(sVariantManagementReference, sNewVariantReference) {
@@ -210,8 +213,9 @@ sap.ui.define([
 
 		var oAppComponent = Utils.getAppComponentForControl(this.oComponent);
 
-		this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.aRevert, oAppComponent);
-		this.oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, this.oComponent);
+		return Promise.resolve()
+		.then(this.oFlexController.revertChangesOnControl.bind(this.oFlexController, mChangesToBeSwitched.aRevert, oAppComponent))
+		.then(this.oFlexController.applyVariantChanges.bind(this.oFlexController, mChangesToBeSwitched.aNew, this.oComponent));
 	};
 
 	VariantModel.prototype.ensureStandardEntryExists = function(sVariantManagementReference) {
