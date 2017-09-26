@@ -260,7 +260,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
 			try {
 				return Promise.resolve(jQuery.sap.loadResource(sResourcePath));
 			} catch (e) {
-				jQuery.sap.log("flexibility did not find a changesBundle.json  for the application");
+				jQuery.sap.log.warning("flexibility did not find a changesBundle.json  for the application");
 				return Promise.resolve([]);
 			}
 		}
@@ -283,7 +283,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
 	 */
 	Cache.getCacheKey = function (mComponent) {
 		if (!mComponent || !mComponent.name || !mComponent.appVersion) {
-			jQuery.sap.log("Not all parameters were passed to determine a flexibility cache key.");
+			jQuery.sap.log.warning("Not all parameters were passed to determine a flexibility cache key.");
 			return Promise.resolve(Cache.NOTAG);
 		}
 		return this.getChangesFillingCache(new LrepConnector(), mComponent).then(function (oWrappedChangeFileContent) {
