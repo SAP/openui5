@@ -301,7 +301,7 @@
 
 		setTimeout(function() {
 			sap.ui.test.qunit.triggerEvent("tap", jQuery(CLASS_CLOSE_BUTTON)[0]);
-		}, 0);
+		}, 300);
 
 	});
 
@@ -317,7 +317,7 @@
 		setTimeout(function() {
 			jQuery(CLASS_CLOSE_BUTTON)[0].focus();
 			sap.ui.test.qunit.triggerKeydown(jQuery(CLASS_CLOSE_BUTTON)[0], jQuery.sap.KeyCodes.ENTER);
-		}, 0);
+		}, 300);
 	});
 
 	QUnit.test("Pressing space on close button", function(assert) {
@@ -332,7 +332,7 @@
 		setTimeout(function() {
 			jQuery(CLASS_CLOSE_BUTTON)[0].focus();
 			sap.ui.test.qunit.triggerKeydown(jQuery(CLASS_CLOSE_BUTTON)[0], jQuery.sap.KeyCodes.SPACE);
-		}, 0);
+		}, 300);
 	});
 
 	QUnit.module("ARIA Support", {
