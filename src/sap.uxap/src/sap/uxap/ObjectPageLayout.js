@@ -2063,7 +2063,7 @@ sap.ui.define([
 
 		//switch to stickied
 		if (!this._bPersistHeaderInTitleArea && !this._bHeaderInTitleArea) {
-			this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", bStick);
+			this._toggleHeaderTitle(!bStick);
 		}
 
 		if (!this._bStickyAnchorBar && bStick) {
