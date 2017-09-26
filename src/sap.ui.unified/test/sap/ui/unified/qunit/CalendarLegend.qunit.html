@@ -26,12 +26,16 @@
 <script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
+<script
+	src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
 <!-- Test functions -->
 <script>
 	var oLeg1 = new sap.ui.unified.CalendarLegend("Leg1", {}).placeAt("uiArea1");
 	var oLeg2 = new sap.ui.unified.CalendarLegend("Leg2", {}).placeAt("uiArea2");
 
 	jQuery.sap.require("sap.ui.model.type.Date");
+	jQuery.sap.require("sap.ui.unified.CalendarLegendRenderer");
 
 	var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({
 		pattern : "yyyyMMdd"
@@ -224,6 +228,44 @@
 		assert.equal(sap.ui.unified.CalendarLegend.getTypeAriaText("Type03").getId(), oInvisibleText.getId(), "the label is static");
 		assert.ok(oInvisibleText.getDomRef(), "the label is in the dom");
 	});
+
+	QUnit.test("CalendarLegendRenderer.addCalendarTypeAccInfo", function() {
+		//Prepare
+		var mAccProps = {},
+			oLegendType01Type02 = new sap.ui.unified.CalendarLegend({
+				items : [
+					new sap.ui.unified.CalendarLegendItem({type: sap.ui.unified.CalendarDayType.Type01, text: "Day off"}),
+					new sap.ui.unified.CalendarLegendItem({type: sap.ui.unified.CalendarDayType.Type02, text: "On Duty"})
+				]
+			});
+
+
+		//Act
+		sap.ui.unified.CalendarLegendRenderer.addCalendarTypeAccInfo(mAccProps, sap.ui.unified.CalendarDayType.Type01, oLegendType01Type02);
+		//Assert
+		assert.equal(mAccProps["label"], "Day off", "When the given type matches legend item's, type 'label' is correct");
+		assert.equal(mAccProps["describedby"], undefined, "When the given type matches legend item's type, 'describedby' is correct");
+
+		//Prepare
+		mAccProps = { "label": "Day off", "describedby": "__text999"};
+
+		//Act
+		sap.ui.unified.CalendarLegendRenderer.addCalendarTypeAccInfo(mAccProps, sap.ui.unified.CalendarDayType.Type02, oLegendType01Type02);
+		//Assert
+		assert.equal(mAccProps["label"], "Day off; On Duty", "When the given type matches legend item's, type 'label' is correctly accumulated");
+		assert.equal(mAccProps["describedby"], "__text999", "When the given type matches legend item's, type 'describedby' is correctly accumulated");
+
+		//Prepare
+		mAccProps = {};
+		//Act
+		sap.ui.unified.CalendarLegendRenderer.addCalendarTypeAccInfo(mAccProps, sap.ui.unified.CalendarDayType.Type03, oLegendType01Type02);
+		//Assert
+		assert.equal(mAccProps["label"], undefined, "When the given type does not match legend item's, type 'label' is correct");
+		assert.equal(mAccProps["describedby"], sap.ui.unified.CalendarLegend.getTypeAriaText(sap.ui.unified.CalendarDayType.Type03).getId(),
+			"When the given type does not match legend item's type, 'describedby' is correct");
+
+	})
+
 </script>
 
 </head>

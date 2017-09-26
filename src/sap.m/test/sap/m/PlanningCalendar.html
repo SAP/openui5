@@ -20,57 +20,57 @@
 						items: [
 							new sap.ui.unified.CalendarLegendItem("T1", {
 								type: sap.ui.unified.CalendarDayType.Type01,
-								text: "Typ 1 in Calendar section"
+								text: "Type 1 in Legend Calendar area"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T2", {
 								type: sap.ui.unified.CalendarDayType.Type02,
-								text: "Typ 2 in Calendar section"
+								text: "Type 2 in Legend Calendar area"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T3", {
 								type: sap.ui.unified.CalendarDayType.Type03,
-								text: "Typ 3 in Calendar section"
+								text: "Type 3 in Legend Calendar area"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T4", {
 								type: sap.ui.unified.CalendarDayType.Type04,
-								text: "Typ 4 in Calendar section"
+								text: "Type 4 in Legend Calendar area"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T5", {
 								type: sap.ui.unified.CalendarDayType.Type05,
-								text: "Typ 5 in Calendar section"
+								text: "Type 5 in Legend Calendar area"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T6", {
 								type: sap.ui.unified.CalendarDayType.Type06,
-								text: "Typ 6 in Calendar section"
+								text: "Type 6 in Legend Calendar area"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T7", {
 								type: sap.ui.unified.CalendarDayType.Type07,
-								text: "Typ 7 in Calendar section"
+								text: "Type 7 in Legend Calendar area"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T8", {
 								type: sap.ui.unified.CalendarDayType.Type08,
-								text: "Typ 8 in Calendar section"
+								text: "Type 8 in Legend Calendar area"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T9", {
 								type: sap.ui.unified.CalendarDayType.Type09,
-								text: "Typ 9 in Calendar section"
+								text: "Type 9 in Legend Calendar area"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T10", {
 								type: sap.ui.unified.CalendarDayType.Type10,
-								text: "Typ 10 in Calendar section"
+								text: "Type 10 in Legend Calendar area"
 							}),
 						],
 						appointmentItems: [
 							new sap.ui.unified.CalendarLegendItem("T31", {
 								type: sap.ui.unified.CalendarDayType.Type01,
-								text: "Typ 1: in appointments section"
+								text: "Type Private Appointment"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T32", {
 								type: sap.ui.unified.CalendarDayType.Type02,
-								text: "Typ 2: in appointments section"
+								text: "Type Face2Face Appointment"
 							}),
 							new sap.ui.unified.CalendarLegendItem("T33", {
 								type: sap.ui.unified.CalendarDayType.Type12,
-								text: "Typ 12: in appointments section"
+								text: "Type Public Appointment"
 							})
 						]
 					});
@@ -574,6 +574,16 @@
 			text: "Title"
 		});
 
+
+		var oButtonSwitchLegendAssociation = new sap.m.Switch({
+			state: true,
+			change: function(oEvent) {
+				var vLegend = oEvent.getParameter("state") ? oLegend : "";
+				oPC1.setLegend(vLegend);
+			}
+		});
+		var oLegendLabel = new sap.m.Label({text: "Legend Connected to PC", labelFor: oButtonSwitchLegendAssociation.getId()});
+
 		var oPC1 = sap.m.PlanningCalendar("PC1", {
 			startDate: new Date("2015", "0", "1", "08", "00"),
 			rows: [ new sap.m.PlanningCalendarRow("Row1", {
@@ -1042,6 +1052,8 @@
 							 oButtonShowIntervalHeaders,
 							 oButtonShowRowHeaders,
 							 oButtonLegend,
+							 oLegendLabel,
+							 oButtonSwitchLegendAssociation,
 							 oButtonReducedHeight,
 							 oButtonToggleAlternatingRowColor,
 							 oButtonToggleSpecNoWork,
@@ -1050,7 +1062,7 @@
 							 oButtonToggleCustomViews,
 							 oVisSelect,
 							 oGroupModeSelect],
-			legend: "Legend1",
+			legend: oLegend,
 			appointmentSelect: handleAppointmentSelect,
 			startDateChange: handleStartDateChange,
 			rowHeaderClick: handleRowHeaderClick,

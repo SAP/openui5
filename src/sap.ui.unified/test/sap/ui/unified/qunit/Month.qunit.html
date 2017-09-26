@@ -18,6 +18,14 @@
 
 		<script>
 			jQuery.sap.require("sap.ui.unified.calendar.CalendarDate");
+			jQuery.sap.require("sap.ui.unified.CalendarLegend");
+			jQuery.sap.require("sap.ui.unified.calendar.Month");
+
+			var Month = sap.ui.unified.calendar.Month,
+				CalendarDayType = sap.ui.unified.CalendarDayType,
+				CalendarLegend = sap.ui.unified.CalendarLegend,
+				CalendarLegendItem = sap.ui.unified.CalendarLegendItem;
+
 			(function () {
 				var CalendarDate = sap.ui.unified.calendar.CalendarDate;
 				/**
@@ -64,7 +72,7 @@
 
 				QUnit.module("Rendering", {
 					beforeEach: function () {
-						this.oM = new sap.ui.unified.calendar.Month().placeAt("qunit-fixture");
+						this.oM = new Month().placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
 					afterEach: function () {
@@ -104,7 +112,7 @@
 
 				QUnit.module("_getVisibleDays", {
 					beforeEach: function () {
-						this.oM = new sap.ui.unified.calendar.Month();
+						this.oM = new Month();
 					},
 					afterEach: function () {
 						this.oM.destroy();
@@ -206,7 +214,7 @@
 
 				QUnit.module("Rendering", {
 					beforeEach: function () {
-						this.oM = new sap.ui.unified.calendar.Month().placeAt("qunit-fixture");
+						this.oM = new Month().placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
 					afterEach: function () {
@@ -264,7 +272,7 @@
 
 				QUnit.module("Internals", {
 					beforeEach: function () {
-						this.oM = new sap.ui.unified.calendar.Month();
+						this.oM = new Month();
 					},
 					afterEach: function () {
 						this.oM.destroy();
@@ -293,11 +301,69 @@
 						"aggregation 'specialDates' focus should be returned");
 				});
 
+				QUnit.module("Aria", {
+					beforeEach: function() {
+						//Prepare
+						this.sOldLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+						sap.ui.getCore().getConfiguration().setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
+
+						this.oLegend = new CalendarLegend({
+							items: [
+								new CalendarLegendItem({
+									type: CalendarDayType.Type01,
+									text: "National Holidays"
+								})]
+						});
+
+						this.oSut = new Month({
+							date: new Date(2016, 0, 1),
+							legend: this.oLegend,
+							specialDates: [
+								new sap.ui.unified.DateTypeRange({
+									startDate: new Date(2016, 0, 1),
+									endDate:  new Date(2016, 0, 1),
+									type: CalendarDayType.Type01 /* Calendar Legend Item exists for this type*/
+								}),
+								new sap.ui.unified.DateTypeRange({
+									startDate: new Date(2016, 0, 2),
+									endDate:  new Date(2016, 0, 2),
+									type: CalendarDayType.Type02 /* Calendar Legend Item DOES not exist for this type*/
+								})
+							]
+						});
+					},
+					afterEach: function() {
+						//Clear
+						this.oSut.destroy();
+						this.oLegend.destroy();
+						sap.ui.getCore().getConfiguration().setLanguage(this.sOldLanguage);
+					}
+				});
+
+				QUnit.test("Special Dates with legend", function (assert) {
+					//Act
+					this.oSut.placeAt('qunit-fixture');
+					sap.ui.getCore().applyChanges();
+
+					//Assert
+					assert.ok(jQuery("#" + this.oSut.getId() + "-20160101").attr("aria-label").indexOf("National Holidays") >= 0,
+							"The corresponding legend item's text is used as aria-label");
+				});
+
+				QUnit.test("Special Dates without legend", function (assert) {
+					//Act
+					this.oSut.placeAt('qunit-fixture');
+					sap.ui.getCore().applyChanges();
+
+					assert.ok(jQuery("#" + this.oSut.getId() + "-20160102").attr("aria-describedby").indexOf(CalendarLegend.typeARIATexts[CalendarDayType.Type02].getId()),
+							"The corresponding CalendarDayType.Type02 text is used as aria-describedby");
+				});
+
 				QUnit.module("Other");
 
 				QUnit.test("interval selection feedback", function(assert) {
 					//arrange
-					var oMonth = new sap.ui.unified.calendar.Month({
+					var oMonth = new Month({
 							intervalSelection: true,
 							date: new Date(2017, 6, 19) //2017, July 19
 						}),
