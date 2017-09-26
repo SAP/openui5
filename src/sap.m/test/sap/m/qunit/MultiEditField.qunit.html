@@ -122,6 +122,7 @@
 		QUnit.test("Selection change event", function(assert) {
 			//Arrange
 			var oSelect = this.oMultiEditField.byId("select");
+
 			//Assert
 			assert.ok(oSelect.hasListeners("change"), "Selection change event handler is attached");
 		});
@@ -132,10 +133,12 @@
 			var oSpy = sinon.spy(this.oMultiEditField, "fireChange");
 			this.oMultiEditField.attachChange(onChangeHandler);
 			sinon.stub(this.oMultiEditField, "_getExternalItem").returns(oItem);
+
 			//Act
 			this.oMultiEditField.byId("select").fireChange({
 				selectedItem: oItem
 			});
+
 			//Assert
 			function onChangeHandler(oEvent) {
 				assert.equal(oEvent.getParameter("selectedItem"), oItem, "Event parameter item returns correctly");
@@ -147,10 +150,12 @@
 			var oSpy = sinon.spy(this.oMultiEditField, "fireChange");
 			var oSelect = this.oMultiEditField.byId("select");
 			var oItem = this.oMultiEditField._getKeepAll();
+
 			//Act
 			oSelect.fireChange({
 				selectedItem: oItem
 			});
+
 			//Assert
 			assert.equal(oSpy.callCount, 0, "The change event is not triggered");
 		});
@@ -160,10 +165,12 @@
 			var oSpy = sinon.spy(this.oMultiEditField, "fireChange");
 			var oSelect = this.oMultiEditField.byId("select");
 			var oItem = this.oMultiEditField._getBlank();
+
 			//Act
 			oSelect.fireChange({
 				selectedItem: oItem
 			});
+
 			//Assert
 			assert.equal(oSpy.callCount, 0, "The change event is not triggered");
 		});
@@ -183,6 +190,42 @@
 			//Assert
 			assert.equal(oSpy.callCount, 1, "The fireEvent function has been called once.");
 			assert.equal(oSpy.firstCall.args[0], "_valueHelpRequest", "The _valueHelpRequest event has been triggered.");
+		});
+
+		QUnit.test("Selected items are synchronized on selection", function(assert) {
+			//Arrange
+			var oSelect = this.oMultiEditField.byId("select");
+			var oSpy = sinon.spy(this.oMultiEditField, "setProperty");
+			var oItem = oSelect.getItems()[2];
+
+			//Act
+			oSelect.fireChange({
+				selectedItem: oItem
+			});
+
+			//Assert
+			assert.equal(oSpy.callCount, 1, "The setProperty function has been called once.");
+			assert.equal(oSpy.firstCall.args[0], "selectedItem", "The first parameter has been correct.");
+			assert.equal(oSpy.firstCall.args[1], this.oMultiEditField._getValueHelp(), "The second parameter has been correct.");
+			assert.equal(oSpy.firstCall.args[2], true, "The third parameter has been correct.");
+		});
+
+		QUnit.test("Selected items are synchronized on rendering", function(assert) {
+			//Arrange
+			var oSelect = this.oMultiEditField.byId("select");
+			var oSpy = sinon.spy(oSelect, "setSelectedKey");
+			var oItem = oSelect.getItems()[2];
+
+			//Act
+			oSelect.fireChange({
+				selectedItem: oItem
+			});
+			this.oMultiEditField.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.equal(oSpy.callCount, 1, "The setSelectedKey function has been called once.");
+			assert.equal(oSpy.firstCall.args[0], "new", "The correct key parameter has been passed.");
 		});
 
 		QUnit.module("Setters and getters", {
