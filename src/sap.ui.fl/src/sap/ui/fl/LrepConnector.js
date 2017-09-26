@@ -12,7 +12,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters] - map of parameters, see below
 	 * @param {String} [mParameters.XsrfToken] - XSRF token which can be reused for back-end connectivity. If no XSRF token is passed, a new one
-	 *        will be fetched from back end.
+	 *		will be fetched from back end.
 	 * @constructor
 	 * @alias sap.ui.fl.LrepConnector
 	 * @private
@@ -310,10 +310,10 @@ sap.ui.define([
 					} else {
 						var result;
 						result = {
-							status: "error"
+							status: "error",
+							code: oXhr.statusCode().status,
+							messages: that._getMessagesFromXHR(oXhr)
 						};
-						result.code = oXhr.statusCode().status;
-						result.messages = that._getMessagesFromXHR(oXhr);
 						reject(result);
 					}
 				}
@@ -364,7 +364,6 @@ sap.ui.define([
 	 * @public
 	 */
 	Connector.prototype.loadChanges = function(oComponent, mPropertyBag) {
-		var that = this;
 		var mOptions = {};
 		var sComponentName = oComponent.name;
 		var sUrl = "/sap/bc/lrep/flex/data/";
@@ -430,12 +429,7 @@ sap.ui.define([
 					etag: oResponse.etag
 				};
 			}, function(oError) {
-				if (oError.code === 404 || oError.code === 405) {
-					// load changes based old route, because new route is not implemented
-					return that._loadChangesBasedOnOldRoute(sComponentName);
-				} else {
-					throw (oError);
-				}
+				throw (oError);
 			});
 	};
 
@@ -456,36 +450,6 @@ sap.ui.define([
 			.then(function(oResponse) {
 				return oResponse.response;
 			});
-	};
-
-	Connector.prototype._loadChangesBasedOnOldRoute = function(sComponentClassName) {
-		var resourceName, params;
-
-		try {
-			resourceName = jQuery.sap.getResourceName(sComponentClassName, "-changes.json");
-		} catch (e) {
-			return Promise.reject(e);
-		}
-
-		params = {
-			async: true,
-			dataType: "json",
-			failOnError: true,
-			headers: {
-				"X-UI5-Component": sComponentClassName
-			}
-		};
-
-		if (this._sClient) {
-			params.headers["sap-client"] = this._sClient;
-		}
-
-		return jQuery.sap.loadResource(resourceName, params).then(function(oResponse) {
-			return {
-				changes: oResponse,
-				componentClassName: sComponentClassName
-			};
-		});
 	};
 
 	/**
@@ -643,7 +607,7 @@ sap.ui.define([
 	 * @param {String} sName Name of the change
 	 * @param {String} sType File type extension
 	 * @param {Boolean} bIsRuntime The stored file content is handed over to the lrep provider that can dynamically adjust the content to the runtime
-	 *        context (e.g. do text replacement to the users' logon language) before
+	 *		context (e.g. do text replacement to the users' logon language) before
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */

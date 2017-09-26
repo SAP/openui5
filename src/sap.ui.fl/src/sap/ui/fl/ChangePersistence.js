@@ -76,15 +76,13 @@ sap.ui.define([
 	};
 
 
-    /**
-     * Returns an cache key for caching views.
-     *
-     * This function must not be called before the Cache.getChangesFillingCache on component creation was called
-     *
-     * @returns {string} etag for caching
-     * @private
-     * @restricted sap.ui.fl
-     */
+	/**
+	 * Returns an cache key for caching views.
+	 *
+	 * @returns {string} Returns an ETag for caching
+	 * @private
+	 * @restricted sap.ui.fl
+	 */
 	ChangePersistence.prototype.getCacheKey = function() {
 		return Cache.getCacheKey(this._mComponent);
 	};
