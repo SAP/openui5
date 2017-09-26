@@ -365,31 +365,17 @@ function(
 			this.oPlugin = new sap.ui.rta.plugin.Plugin({
 				commandFactory : new CommandFactory()
 			});
-			this.oDesignTime = new DesignTime({
-				rootElements: [
-					this.oVerticalLayout
-				],
-				plugins: []
-			});
-
-			var done = assert.async();
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-				this.oSimpleFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm);
-				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
-				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
-				done();
-			}.bind(this));
 		},
 		afterEach : function(assert) {
 			this.oVerticalLayout.destroy();
-			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
 	});
 
 	QUnit.test("when DesignTimeMetadata has no actions but aggregations with actions and checkAggregations method is called", function(assert) {
-		this.oFormOverlay.setDesignTimeMetadata({
+		var done = assert.async();
+
+		var oDesignTimeMetadata = {
 			aggregations : {
 				formContainer : {
 					actions : {
@@ -400,13 +386,30 @@ function(
 					}
 				}
 			}
+		};
+
+		this.oDesignTime = new DesignTime({
+			rootElements: [
+				this.oVerticalLayout
+			],
+			plugins: [],
+			designTimeMetadata : {
+				"sap.ui.layout.form.SimpleForm" : oDesignTimeMetadata
+			}
 		});
 
-		assert.ok(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "createContainer"), "then it returns true");
+		this.oDesignTime.attachEventOnce("synced", function() {
+			this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
+			assert.ok(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "createContainer"), "then it returns true");
+			this.oDesignTime.destroy();
+			done();
+		}.bind(this));
 	});
 
-	QUnit.test("when control has no stable id, but it has stable elements retrieved by function in newly set DT Metadata", function(assert) {
-		this.oFormContainerOverlay.setDesignTimeMetadata({
+	QUnit.test("when control has no stable id, but it has stable elements retrieved by function in DT Metadata", function(assert) {
+		var done = assert.async();
+
+		var oDesignTimeMetadata = {
 			aggregations : {
 				form : {
 					actions : {
@@ -438,13 +441,29 @@ function(
 					}
 				}
 			}
+		};
+
+		this.oDesignTime = new DesignTime({
+			rootElements: [
+				this.oVerticalLayout
+			],
+			plugins: [],
+			designTimeMetadata : {
+				"sap.ui.layout.form.SimpleForm" : oDesignTimeMetadata
+			}
 		});
-		assert.equal(this.oCheckControlIdSpy.callCount, 0, "then the utility method to check the control id has not yet been called for this Overlay");
-		assert.strictEqual(this.oFormContainerOverlay.getElementHasStableId(), undefined, "and the 'getElementHasStableId' property of the Overlay is still undefined");
-		assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then if hasStableId is called it returns true");
-		assert.equal(this.oCheckControlIdSpy.callCount, 3, "and the utility method to check the control id is called once for each stable element");
-		assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then a second call of hasStableId also returns true");
-		assert.equal(this.oCheckControlIdSpy.callCount, 3, "but utility method to check the control id is not called again");
+
+		this.oDesignTime.attachEventOnce("synced", function() {
+			this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
+			assert.equal(this.oCheckControlIdSpy.callCount, 0, "then the utility method to check the control id has not yet been called for this Overlay");
+			assert.strictEqual(this.oFormContainerOverlay.getElementHasStableId(), undefined, "and the 'getElementHasStableId' property of the Overlay is still undefined");
+			assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then if hasStableId is called it returns true");
+			assert.equal(this.oCheckControlIdSpy.callCount, 3, "and the utility method to check the control id is called once for each stable element");
+			assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then a second call of hasStableId also returns true");
+			assert.equal(this.oCheckControlIdSpy.callCount, 3, "but utility method to check the control id is not called again");
+			this.oDesignTime.destroy();
+			done();
+		}.bind(this));
 	});
 
 	QUnit.module("Given this the Plugin is initialized.", {
@@ -610,8 +629,8 @@ function(
 
 		sandbox.stub(this.oObjectPageSectionOverlay, "getVariantManagement").returns("variant-test");
 		sandbox.stub(this.oButtonOverlay, "getVariantManagement").returns(undefined);
-		var oObjectPageSectionAction = this.oObjectPageSectionOverlay.getDesignTimeMetadata().getAction("rename", this.oObjectPageSectionOverlay.getElementInstance());
-		var oButtonAction = this.oButtonOverlay.getDesignTimeMetadata().getAction("remove", this.oButtonOverlay.getElementInstance());
+		var oObjectPageSectionAction = this.oObjectPageSectionOverlay.getDesignTimeMetadata().getAction("rename", this.oObjectPageSectionOverlay.getElement());
+		var oButtonAction = this.oButtonOverlay.getDesignTimeMetadata().getAction("remove", this.oButtonOverlay.getElement());
 
 		var sVarMgmtRefForObjectPageSection = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay, oObjectPageSectionAction);
 		var sVarMgmtRefForButton = this.oPlugin.getVariantManagementReference(this.oButtonOverlay, oButtonAction);
@@ -639,7 +658,7 @@ function(
 
 		//Faked in AdditionalElementsPlugin
 		var oRevealAction = oDesignTimeMetadata.getAction("reveal");
-		var oObjectPageSectionAction = this.oObjectPageSectionOverlay.getDesignTimeMetadata().getAction("rename", this.oObjectPageSectionOverlay.getElementInstance());
+		var oObjectPageSectionAction = this.oObjectPageSectionOverlay.getDesignTimeMetadata().getAction("rename", this.oObjectPageSectionOverlay.getElement());
 
 		sandbox.stub(this.oObjectPageSectionOverlay, "getVariantManagement").returns("variant-test");
 

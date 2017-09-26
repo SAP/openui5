@@ -6,11 +6,13 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/dt/Plugin',
-	'sap/ui/dt/ContextMenuControl'
+	'sap/ui/dt/ContextMenuControl',
+	'sap/ui/dt/OverlayRegistry'
 ], function(
 	jQuery,
 	Plugin,
-	ContextMenuControl
+	ContextMenuControl,
+    OverlayRegistry
 ) {
 	"use strict";
 
@@ -88,7 +90,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Add menu items in the following format.
+	 * Add menu items in the following format
 	 *
 	 * @param {object} mMenuItem json object with the menu item settings
 	 * @param {string} mMenuItem.id id, which corresponds to the text key
@@ -117,7 +119,7 @@ sap.ui.define([
 	 * @param  {sap.ui.dt.ElementOverlay} oTargetOverlay Overlay where the menu was triggered
 	 */
 	ContextMenu.prototype.open = function(oOriginalEvent, oTargetOverlay) {
-		this.setContextElement(oTargetOverlay.getElementInstance());
+		this.setContextElement(oTargetOverlay.getElement());
 
 		//Remove all previous entries retrieved by plugins (the list should always be rebuilt)
 		this._aMenuItems = this._aMenuItems.filter(function(mMenuItemEntry){
@@ -215,7 +217,7 @@ sap.ui.define([
 		oEvent.preventDefault();
 		document.activeElement.blur();
 
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		var sTargetClasses = oEvent.target.className;
 
 		if (oOverlay && oOverlay.isSelectable() && sTargetClasses.indexOf("sapUiDtOverlay") > -1) {
@@ -235,7 +237,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ContextMenu.prototype._onKeyDown = function(oEvent) {
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 
 		if ((oEvent.keyCode === jQuery.sap.KeyCodes.F10) && (oEvent.shiftKey === true) && (oEvent.altKey === false) && (oEvent.ctrlKey === false)) {
 			// hide browser-context menu

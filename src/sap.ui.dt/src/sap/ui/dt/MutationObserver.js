@@ -144,7 +144,7 @@ sap.ui.define([
 
 							// define closest element to notify it's overlay about the dom mutation
 							var oOverlay = OverlayUtil.getClosestOverlayForNode(oTarget);
-							var sElementId = oOverlay ? oOverlay.getElementInstance().getId() : undefined;
+							var sElementId = oOverlay ? oOverlay.getElement().getId() : undefined;
 							if (sElementId) {
 								aElementIds.push(sElementId);
 							}

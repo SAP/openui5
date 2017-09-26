@@ -97,8 +97,8 @@ function(
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
-			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
+			this.oVerticalLayout.destroy();
 		}
 	});
 

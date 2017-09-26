@@ -91,7 +91,7 @@ function(
 
 	QUnit.test("when calling command factory for split ...", function(assert) {
 		var done = assert.async();
-		var oOverlay = new ElementOverlay();
+		var oOverlay = new ElementOverlay({ element: this.oButton1 });
 		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 		sinon.stub(oOverlay, "getRelevantContainer", function() {
 			return this.oPanel;

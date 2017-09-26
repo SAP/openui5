@@ -14,6 +14,7 @@ sap.ui.require([
 	'sap/ui/dt/plugin/ContextMenu',
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/Overlay',
 	'sap/ui/fl/registry/Settings',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/fl/LrepConnector',
@@ -47,6 +48,7 @@ sap.ui.require([
 	ContextMenu,
 	DesignTimeMetadata,
 	OverlayRegistry,
+	Overlay,
 	Settings,
 	ChangeRegistry,
 	LrepConnector,
@@ -368,7 +370,7 @@ sap.ui.require([
 			this.fnRedoSpy = sandbox.stub().returns(Promise.resolve());
 
 			this.oToolbarDomRef = jQuery('<input/>').appendTo('#qunit-fixture').get(0);
-			this.oOverlayContainerDom = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
+			this.oOverlayContainer = jQuery('<button/>').appendTo('#qunit-fixture');
 			this.oAnyOtherDomRef = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
 
 			this.oUndoEvent = new Event("dummyEvent", new EventProvider());
@@ -385,7 +387,7 @@ sap.ui.require([
 			this.oRedoEvent.altKey = false;
 			this.oRedoEvent.stopPropagation = function() {};
 
-			sandbox.stub(sap.ui.dt.Overlay, "getOverlayContainer").returns(this.oOverlayContainerDom);
+			sandbox.stub(Overlay, "getOverlayContainer").returns(this.oOverlayContainer);
 
 			this.mContext = {
 				getToolbar: function () {
@@ -410,7 +412,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("with focus on an overlay", function(assert) {
-		this.oOverlayContainerDom.focus();
+		this.oOverlayContainer.get(0).focus();
 		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
 
@@ -456,7 +458,7 @@ sap.ui.require([
 		this.oUndoEvent.ctrlKey = false;
 		this.oUndoEvent.metaKey = true;
 
-		this.oOverlayContainerDom.focus();
+		this.oOverlayContainer.get(0).focus();
 		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
 
@@ -550,8 +552,8 @@ sap.ui.require([
 		afterEach : function(assert) {
 			sandbox.restore();
 			this.oRemoveCommand1.destroy();
-			this.oRta.destroy();
 			this.oCommandStack.destroy();
+			this.oRta.destroy();
 			FakeLrepLocalStorage.deleteChanges();
 		}
 	});
@@ -614,29 +616,18 @@ sap.ui.require([
 	QUnit.test("when _handleElementModified is called if a create container command was executed", function(assert){
 		var done = assert.async();
 
-		// An existing Form is used for the test so we don't need to create a new overlay from scratch
+		// An existing Form is used for the test
 		var oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
-		var oDummyOverlay = OverlayRegistry.getOverlay(oForm.getId());
-		var oDummyCommand = new RTABaseCommand();
-		sandbox.stub(this.oRta.getPlugins()["createContainer"], "getCreatedContainerOverlay").returns(oDummyOverlay);
-		sandbox.stub(this.oRta, "getCommandStack").returns({
-			pushAndExecute : function(oCommand){
-				return Promise.resolve();
-			}
-		});
+		var oFormOverlay = OverlayRegistry.getOverlay(oForm.getId());
+
+		this.oRta.getPlugins()["createContainer"].handleCreate(false, oFormOverlay);
 
 		sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit", function(oNewContainerOverlay){
-			assert.equal(oNewContainerOverlay.getId(), oDummyOverlay.getId(), "then the new container starts the edit for rename");
+			assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
+			assert.ok(true, "then the new container starts the edit for rename");
+			this.oCommandStack.undo();
 			done();
-		});
-
-		var oEvent = new Event("dummyEvent", oForm, {
-			command : oDummyCommand,
-			action : "dummyDesignTimeAction",
-			newControlId : oForm.getId()
-		});
-
-		this.oRta._handleElementModified(oEvent);
+		}.bind(this));
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available together with a CommandStack with changes...", {
@@ -738,7 +729,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("when calling '_deleteChanges successfully', ", function(assert){
+	QUnit.test("when calling '_deleteChanges' successfully, ", function(assert){
 		var fnDone = assert.async();
 
 		var fnShowBusyIndicatorSpy = sandbox.spy(BusyIndicator, "show");

@@ -249,10 +249,10 @@ function(
 
 		afterEach : function(assert) {
 			sandbox.restore();
+			this.oDesignTime.destroy();
 			this.oPanel.destroy();
 			this.oPanel2.destroy();
 			this.OverflowToolbar.destroy();
-			this.oDesignTime.destroy();
 		}
 	});
 
@@ -391,7 +391,7 @@ function(
 			return bIsAvailable;
 		}.bind(this));
 		sinon.stub(this.oCombinePlugin, "handleCombine", function(oSelectedElement){
-			assert.equal(oSelectedElement, this.oButton6Overlay.getElementInstance(), "the 'handler' method is called with the right element");
+			assert.equal(oSelectedElement, this.oButton6Overlay.getElement(), "the 'handler' method is called with the right element");
 		}.bind(this));
 		sinon.stub(this.oCombinePlugin, "isEnabled", function(oOverlay){
 			assert.equal(oOverlay, this.oButton6Overlay, "the 'enabled' function calls isEnabled with the correct overlay");

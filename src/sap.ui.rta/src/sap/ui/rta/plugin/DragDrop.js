@@ -8,14 +8,16 @@ sap.ui.define([
 	'sap/ui/dt/plugin/ControlDragDrop',
 	'sap/ui/rta/plugin/RTAElementMover',
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/Utils'
+	'sap/ui/rta/Utils',
+	'sap/ui/dt/OverlayRegistry'
 ],
 function(
 	jQuery,
 	ControlDragDrop,
 	RTAElementMover,
 	Plugin,
-	Utils
+	Utils,
+    OverlayRegistry
 ) {
 	"use strict";
 
@@ -184,7 +186,7 @@ function(
 	 * @private
 	 */
 	DragDrop.prototype._onMouseOver = function(oEvent) {
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (oOverlay !== this._oPreviousHoverTarget) {
 			if (this._oPreviousHoverTarget) {
 				this._oPreviousHoverTarget.$().removeClass("sapUiRtaOverlayHover");

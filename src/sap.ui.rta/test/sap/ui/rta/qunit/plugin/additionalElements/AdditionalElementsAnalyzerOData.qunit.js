@@ -22,7 +22,7 @@ function(
 			var oGroup = this.oView.byId("GroupEntityType01");
 			return Promise.all([
 				this.oView.getController().isDataReady(),
-				ElementUtil.loadDesignTimeMetadata(oGroup).then(function(oDesignTime) {
+				oGroup.getMetadata().loadDesignTime().then(function(oDesignTime) {
 					this.mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
 				}.bind(this))
 			]);

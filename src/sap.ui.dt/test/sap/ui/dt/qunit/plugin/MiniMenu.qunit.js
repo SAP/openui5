@@ -47,7 +47,7 @@ sap.ui.require([
 				text: "enabled for button 1",
 				handler: sinon.spy(),
 				enabled: function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement === that.oButton1;
 				}
 			};
@@ -56,11 +56,11 @@ sap.ui.require([
 				text: "disabled for button 1",
 				handler: sinon.spy(),
 				available: function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement === that.oButton1 || oElement === that.oButton2;
 				},
 				enabled: function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement !== that.oButton1;
 				}
 			};
@@ -70,7 +70,7 @@ sap.ui.require([
 				rank: 1,
 				handler: sinon.spy(),
 				available: function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement === that.oButton2;
 				}
 			};
@@ -92,7 +92,7 @@ sap.ui.require([
 			this.oMenuEntries.dynamicTextItem = {
 				id: "CTX_DYNAMIC_TEXT",
 				text: function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement.getId();
 				},
 				handler: sinon.spy()
@@ -186,7 +186,7 @@ sap.ui.require([
 			text: "enabled for button 1",
 			handler: sinon.spy(),
 			enabled: function (oOverlay) {
-				var oElement = oOverlay.getElementInstance();
+				var oElement = oOverlay.getElement();
 				return oElement === that.oButton1;
 			},
 			group: "Test1"
@@ -201,7 +201,7 @@ sap.ui.require([
 			text: "enabled for button 1",
 			handler: sinon.spy(),
 			enabled: function (oOverlay) {
-				var oElement = oOverlay.getElementInstance();
+				var oElement = oOverlay.getElement();
 				return oElement === that.oButton1;
 			},
 			group: "Test1"
@@ -216,7 +216,7 @@ sap.ui.require([
 			text: "enabled for button 1",
 			handler: sinon.spy(),
 			enabled: function (oOverlay) {
-				var oElement = oOverlay.getElementInstance();
+				var oElement = oOverlay.getElement();
 				return oElement === that.oButton1;
 			},
 			group: "Test2"
@@ -236,7 +236,7 @@ sap.ui.require([
 			text: "enabled for button 1",
 			handler: sinon.spy(),
 			enabled: function (oOverlay) {
-				var oElement = oOverlay.getElementInstance();
+				var oElement = oOverlay.getElement();
 				return oElement === that.oButton1;
 			},
 			group: "Test1"
@@ -249,7 +249,7 @@ sap.ui.require([
 			text: "enabled for button 3",
 			handler: sinon.spy(),
 			enabled: function (oOverlay) {
-				var oElement = oOverlay.getElementInstance();
+				var oElement = oOverlay.getElement();
 				return oElement === that.oButton1;
 			},
 			group: "Test2",

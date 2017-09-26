@@ -198,7 +198,6 @@ function(jQuery, Test, DesignTime, ElementTest) {
 							rootElements : [this._oElement]
 						});
 						this._oDesignTime.attachEventOnce("synced", function() {
-							sap.ui.getCore().applyChanges();
 							if (this.getTimeout()) {
 								this._iTimeout = window.setTimeout(function() {
 									fnResolve();
