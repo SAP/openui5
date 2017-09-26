@@ -102,8 +102,8 @@
 				var sNavButtonTooltip = jQuery("#myFirstPage-navButton").attr("title");
 				ok(sNavButtonTooltip && (sNavButtonTooltip.length > 0), "nav button should have a tooltip by default");
 				ok(jQuery.sap.domById("qunit-header"), "Page content should be rendered");
-				ok(jQuery.sap.byId("myFirstPage-intHeader").is("header"), "header should be rendered as header tag");
-				ok(jQuery.sap.byId("myFooter").is("footer"), "footer should be rendered as footer tag");
+				ok(jQuery.sap.byId("myFirstPage-intHeader").parent().is("header"), "header should be rendered as header tag");
+				ok(jQuery.sap.byId("myFooter").parent().is("footer"), "footer should be rendered as footer tag");
 
  				// The following qunit is removed because of
  				// BCP: 1670157998
