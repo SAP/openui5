@@ -1601,6 +1601,21 @@ function (
 		}.bind(this));
 	});
 
+	QUnit.test("deletes the changeId from custom data without reverting the change", function (assert) {
+		var oFlexCustomData = new sap.ui.core.CustomData({
+			key: FlexController.appliedChangesCustomDataKey,
+			value: this.oChange.getId()
+		});
+		this.oControl.addCustomData(oFlexCustomData);
+		return this.oFlexController.removeFromAppliedChangesOnControl(this.oChange, {}, this.oControl)
+
+		.then(function() {
+			assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was NOT called");
+			assert.equal(this.oControl.getCustomData().length, 1, "the CustomData is still there");
+			assert.equal(this.oControl.getCustomData()[0].getValue(), "", "the changeId got deleted from the customData");
+		}.bind(this));
+	});
+
 	QUnit.test("does not add custom data if an exception was raised during sync applyChanges", function (assert) {
 		this.oChangeHandlerApplyChangeStub.throws();
 		var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");

@@ -289,6 +289,7 @@ sap.ui.define([
 	 * Otherwise it will be marked for deletion.
 	 *
 	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
+	 * @param {object} oAppComponent component object
 	 */
 	FlexController.prototype.deleteChange = function (oChange, oAppComponent) {
 		this._oChangePersistence.deleteChange(oChange);
@@ -491,7 +492,7 @@ sap.ui.define([
 		sChangeId = oChange.getId();
 
 		if (aAppliedChanges.indexOf(sChangeId) === -1) {
-			oChange.PROCESSING = true;
+			oChange.PROCESSING = oChange.PROCESSING ? oChange.PROCESSING : true;
 			var vResult;
 			var vError;
 			try {
@@ -500,22 +501,24 @@ sap.ui.define([
 				vError = e;
 			}
 
-			if (!(vResult instanceof Promise)) {
-				vResult = new Utils.FakePromise(vResult, vError);
-			}
+			return new Utils.FakePromise(vResult, vError)
 
-			return vResult.then(function() {
+			.then(function() {
 				var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
 				this._writeCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
+				if (oChange.PROCESSING.resolve && typeof oChange.PROCESSING.resolve === 'function') {
+					oChange.PROCESSING.resolve();
+				}
 				delete oChange.PROCESSING;
-				oChange.fireChangeApplied();
 			}.bind(this))
 
 			.catch(function(ex) {
-				delete oChange.PROCESSING;
 				this._setMergeError(true);
 				Utils.log.error("Change could not be applied. Merge error detected.", ex.stack || "");
-				oChange.fireChangeApplied({error: ex});
+				if (oChange.PROCESSING.reject && typeof oChange.PROCESSING.reject === 'function') {
+					oChange.PROCESSING.reject(ex);
+				}
+				delete oChange.PROCESSING;
 			}.bind(this));
 		}
 		return new Utils.FakePromise();
@@ -541,40 +544,37 @@ sap.ui.define([
 		if (iIndex === -1 && (oChange.PROCESSING || oChange.QUEUED)) {
 			// wait for the change to be applied
 			vResult = new Promise(function(resolve, reject) {
-				oChange.attachChangeApplied(function(oEvent) {
-					var oError = oEvent.getParameter("error");
-					if (oError) {
-						return reject(oError);
-					}
-					return resolve();
-				});
+				oChange.PROCESSING = {
+					resolve: resolve,
+					reject: reject
+				};
 			})
-
-			.then(function() {
-				mCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
-				aAppliedChanges = mCustomData.appliedChanges;
-				oAppliedChangeCustomData = mCustomData.appliedChangeCustomData;
-				iIndex = aAppliedChanges.indexOf(sChangeId);
-			}.bind(this));
+			.then(function(vValue) {
+				return true;
+			});
 		} else {
-			vResult = new Utils.FakePromise();
+			vResult = new Utils.FakePromise(false);
 		}
 
-		return vResult.then(function() {
-			if (iIndex > -1 && bRevert) {
+		return vResult.then(function(bPending) {
+			if (bRevert && (bPending || (!bPending && iIndex > -1))) {
 				return oChangeHandler.revertChange(oChange, oControl, mPropertyBag);
 			}
 		})
 
 		.then(function() {
+			mCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
+			aAppliedChanges = mCustomData.appliedChanges;
+			oAppliedChangeCustomData = mCustomData.appliedChangeCustomData;
+			iIndex = aAppliedChanges.indexOf(sChangeId);
 			if (iIndex > -1 && oAppliedChangeCustomData) {
 				aAppliedChanges.splice(iIndex, 1);
 				this._writeCustomData(oAppliedChangeCustomData, aAppliedChanges.join(), mPropertyBag, oControl);
 			}
 		}.bind(this))
 
-		.catch(function(sReason) {
-			Utils.log.error("Change could not be reverted.");
+		.catch(function(oError) {
+			Utils.log.error("Change could not be reverted:", oError);
 		});
 	};
 
@@ -842,7 +842,7 @@ sap.ui.define([
 						modifier: JsControlTreeModifier,
 						appComponent: oAppComponent
 					})
-					.then(function(a, b) {
+					.then(function() {
 						this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getKey());
 						delete oChange.QUEUED;
 					}.bind(this));
