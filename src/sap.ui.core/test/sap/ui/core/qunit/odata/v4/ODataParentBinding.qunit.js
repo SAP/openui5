@@ -1324,7 +1324,8 @@ sap.ui.require([
 				},
 				oBinding = new ODataParentBinding({
 					oCachePromise : _SyncPromise.resolve(oCache),
-					getUpdateGroupId : function () {}
+					getUpdateGroupId : function () {},
+					oModel : {isAutoGroup : function () {return true;}}
 				}),
 				fnCallback = {},
 				oResult = {};
@@ -1358,6 +1359,7 @@ sap.ui.require([
 				oCachePromise : _SyncPromise.resolve(),
 				oContext : oContext,
 				getUpdateGroupId : function () {},
+				oModel : {isAutoGroup : function () {return true;}},
 				sPath : "TEAM_2_EMPLOYEES"
 			}),
 			fnCallback = {},
@@ -1380,15 +1382,19 @@ sap.ui.require([
 	QUnit.test("deleteFromCache: check group ID", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oCachePromise : _SyncPromise.resolve({_delete : function () {}}),
-				getUpdateGroupId : function () {}
+				getUpdateGroupId : function () {},
+				oModel : {isAutoGroup : function () {}, isDirectGroup : function () {}}
 			}),
+			oModelMock = this.mock(oBinding.oModel),
 			fnCallback = {};
 
+		oModelMock.expects("isAutoGroup").withExactArgs("myGroup").returns(false);
 		assert.throws(function () {
 			oBinding.deleteFromCache("myGroup");
 		}, new Error("Illegal update group ID: myGroup"));
 
 		this.mock(oBinding).expects("getUpdateGroupId").returns("myGroup");
+		oModelMock.expects("isAutoGroup").withExactArgs("myGroup").returns(false);
 
 		assert.throws(function () {
 			oBinding.deleteFromCache();
@@ -1397,6 +1403,8 @@ sap.ui.require([
 		this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
 			.withExactArgs("$direct", "EMPLOYEES('1')", "42", sinon.match.same(fnCallback))
 			.returns(Promise.resolve());
+		oModelMock.expects("isAutoGroup").withExactArgs("$direct").returns(false);
+		oModelMock.expects("isDirectGroup").withExactArgs("$direct").returns(true);
 
 		return oBinding.deleteFromCache("$direct", "EMPLOYEES('1')", "42", fnCallback).then();
 	});

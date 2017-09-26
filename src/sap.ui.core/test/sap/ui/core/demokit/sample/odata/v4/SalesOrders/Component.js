@@ -31,6 +31,7 @@ sap.ui.define([
 			var sGroupId = jQuery.sap.getUriParameters().get("$direct")
 					? "$direct" // switch off batch
 					: undefined,
+				oGroupProperties,
 				bHasOwnProxy = this.proxy !== BaseComponent.prototype.proxy,
 				oLayout = new HBox({
 					renderType : "Bare"
@@ -49,10 +50,12 @@ sap.ui.define([
 				sQuery = URI.buildQuery(oModel.mUriParameters);
 				sQuery = sQuery ? "?" + sQuery : "";
 				sUpdateGroupId = sUpdateGroupId || oModel.getUpdateGroupId();
+				oGroupProperties = oModel.mGroupProperties;
 				oModel.destroy();
 				oModel = new ODataModel({
 					autoExpandSelect : true,
 					groupId : sGroupId,
+					groupProperties : oGroupProperties,
 					operationMode : OperationMode.Server,
 					serviceUrl : sServiceUrl + sQuery,
 					synchronizationMode : "None",
