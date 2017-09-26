@@ -50,8 +50,21 @@ sap.ui.require([
 	 *   the expected JSON object
 	 */
 	function testConversion(assert, sXmlSnippet, oExpected) {
-		var oXML = xml(assert, sEdmx + '<edmx:DataServices m:DataServiceVersion="2.0">'
-				+ sXmlSnippet + '</edmx:DataServices></edmx:Edmx>'),
+		testConversionForInclude(assert, '<edmx:DataServices m:DataServiceVersion="2.0">'
+			+ sXmlSnippet + '</edmx:DataServices>', oExpected);
+	}
+
+	/**
+	 * Tests the given XML snippet produces the expected aliases for include.
+	 * @param {object} assert
+	 *   QUnit's assert
+	 * @param {string} sXmlSnippet
+	 *   the XML snippet; it will be inserted below an <Edmx> element
+	 * @param {object} oExpected
+	 *   the expected JSON object
+	 */
+	function testConversionForInclude(assert, sXmlSnippet, oExpected) {
+		var oXML = xml(assert, sEdmx + sXmlSnippet + '</edmx:Edmx>'),
 			oResult = _V2MetadataConverter.convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
 		oExpected.$Version = "4.0";
@@ -103,6 +116,43 @@ sap.ui.require([
 					"Something" : {
 						"$kind" : "Property",
 						"$Type" : "bar.Something"
+					}
+				},
+				"foo." : {
+					"$kind" : "Schema"
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertXMLMetadata: aliases in include", function (assert) {
+		testConversionForInclude(assert, '\
+			<edmx:Reference Uri="/qux/$metadata">\
+				<edmx:Include Namespace="qux" Alias="q"/>\
+			</edmx:Reference>\
+			<edmx:DataServices m:DataServiceVersion="2.0">\
+				<Schema Namespace="bar" Alias="b">\
+					<ComplexType Name="Worker">\
+						<Property Name="Something" Type="b.Something"/>\
+						<Property Name="ManyThings" Type="Collection(q.Something)"/>\
+					</ComplexType>\
+				</Schema>\
+				<Schema Namespace="foo" Alias="f"/>\
+			</edmx:DataServices>',
+			{
+				"bar." : {
+					"$kind" : "Schema"
+				},
+				"bar.Worker" : {
+					"$kind" : "ComplexType",
+					"Something" : {
+						"$kind" : "Property",
+						"$Type" : "bar.Something"
+					},
+					"ManyThings" : {
+						"$kind" : "Property",
+						"$isCollection" : true,
+						"$Type" : "qux.Something"
 					}
 				},
 				"foo." : {
@@ -1536,6 +1586,27 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo/P01" : {
 					"@Org.OData.Core.V1.IsURL" : true
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("mergeAnnotations called", function (assert) {
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations")
+			.withExactArgs({ "GWSAMPLE_BASIC.Foo/P01" : { "@Org.OData.Core.V1.IsURL" : true } },
+				{ "GWSAMPLE_BASIC.Foo/P01" : { "@Org.OData.Core.V1.IsURL" : false } }
+			);
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="url"/>\
+				</EntityType>\
+				<Annotations Target="GWSAMPLE_BASIC.Foo/P01">\
+					<Annotation Term="Org.OData.Core.V1.IsURL" Bool="false"/>\
+				</Annotations>',
+			{
+				"GWSAMPLE_BASIC.Foo/P01" : {
+					"@Org.OData.Core.V1.IsURL" : false
 				}
 			});
 	});

@@ -2043,6 +2043,7 @@ sap.ui.require([
 				sResourcePath = "TEAMS('TEAM_01')";
 
 			function assertResult(oPayload) {
+				delete oPayload["@odata.metadataEtag"];
 				assert.deepEqual(oPayload, {
 					"@odata.context" : "$metadata#TEAMS/$entity",
 					"Team_Id" : "TEAM_01",
@@ -2069,6 +2070,7 @@ sap.ui.require([
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl));
 
 			oRequestor.request("GET", "TEAMS('TEAM_01')", "group").then(function (oResult) {
+				delete oResult["@odata.metadataEtag"];
 				assert.deepEqual(oResult, {
 					"@odata.context" : "$metadata#TEAMS/$entity",
 					"Team_Id" : "TEAM_01",

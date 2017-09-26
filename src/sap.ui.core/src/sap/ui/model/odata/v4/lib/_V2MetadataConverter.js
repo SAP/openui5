@@ -234,6 +234,11 @@ sap.ui.define([
 
 		// the configurations for traverse
 		oAliasConfig = {
+			"Reference" : {
+				"Include" : {
+					__processor : _MetadataConverter.processAlias
+				}
+			},
 			"DataServices" : {
 				"Schema" : {
 					__processor : _MetadataConverter.processAlias
