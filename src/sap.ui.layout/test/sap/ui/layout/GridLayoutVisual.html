@@ -174,8 +174,10 @@
 				]
 			});
 
-			oApp.addPage(oPage);
-
+			sap.ui.require(["sap/ui/layout/form/GridLayout", "sap/ui/layout/form/GridContainerData", "sap/ui/layout/form/GridElementData"], function() {
+				// to render only after everything is loaded to keep initial focus stable
+				oApp.addPage(oPage);
+			});
 		</script>
 
 	</head>
