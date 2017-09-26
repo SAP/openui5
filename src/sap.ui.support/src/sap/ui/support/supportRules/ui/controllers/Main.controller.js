@@ -29,6 +29,13 @@ sap.ui.define([
 
 		},
 
+		onAfterRendering: function () {
+			CommunicationBus.publish(channelNames.POST_UI_INFORMATION, {
+				version: sap.ui.getVersionInfo(),
+				location: new URI(jQuery.sap.getModulePath("sap.ui.support"), window.location.origin + window.location.pathname).toString()
+			});
+		},
+
 		initSettingsPopover: function () {
 			var supportAssistantOrigin = new URI(sap.ui.resource('sap.ui.support', ''), window.location.origin + window.location.pathname)._string,
 				supportAssistantVersion = sap.ui.version;
