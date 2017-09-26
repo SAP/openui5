@@ -162,16 +162,19 @@ sap.ui.define([
 	 *            [aSorter=null] predefined sorter/s contained in an array
 	 * @param {array}
 	 *            [aFilters=null] predefined filter/s contained in an array
-	 * @param {object}
-	 *            [mParameters=null] additional control parameters. Supported parameters are:
-	 *            <ul>
-	 *            <li>entitySet: if set, it explicitly specifies the entity set addressed by the last segment of the given binding path</li>
-	 *            <li>useBatchRequests: if true, multiple OData requests will be wrapped into a single batch request, wherever possible</li>
-	 *            <li>provideGrandTotals: if true, grand total values will be provided for all bound measure properties</li>
-	 *            <li>provideTotalResultSize: if true, the total number of matching entries in the bound OData entity set will be provided</li>
-	 *            <li>reloadSingleUnitMeasures: if true, the binding will check aggregated entries with multi-unit occurrences, if
-	 *            some measure properties have a unique unit and will trigger separate OData requests to fetch them</li>
-	 *            <li>{string} select: A comma separated list of property names that need to be
+	 * @param {object} [mParameters=null] a map which contains additional control parameters.
+	 * @param [mParameters.entitySet] if set, it explicitly specifies the entity set addressed by
+	 *            the last segment of the given binding path
+	 * @param [mParameters.useBatchRequests] if true, multiple OData requests will be wrapped into a
+	 *            single batch request, wherever possible
+	 * @param [mParameters.provideGrandTotals] if true, grand total values will be provided for all
+	 *            bound measure properties
+	 * @param [mParameters.provideTotalResultSize] if true, the total number of matching entries in
+	 *            the bound OData entity set will be provided
+	 * @param [mParameters.reloadSingleUnitMeasures] if true, the binding will check aggregated
+	 *            entries with multi-unit occurrences, if some measure properties have a unique unit
+	 *            and will trigger separate OData requests to fetch them
+	 * @param {string} [mParameters.select] a comma separated list of property names that need to be
 	 *            selected. If the <code>select</code> parameter is given, it has to contain all
 	 *            dimensions and measures that are contained in the analytical information (see
 	 *            {@link sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo}). It must
@@ -182,8 +185,6 @@ sap.ui.define([
 	 *            If the <code>select</code> parameter does not contain exactly all dimensions and
 	 *            measures as given in the analytical information, a warning is logged and the
 	 *            the <code>select</code> parameter is ignored.
-	 *            </li>
-	 *            </ul>
 	 *
 	 * @throws Will throw an error if no analytic query result object could be determined from the bound OData entity set, either from an explicitly
 	 *         given EntitySet (via optional mParameters.entitySet argument), or by default implicitly from
