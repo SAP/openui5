@@ -259,7 +259,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					collapse : {type : "boolean"}
 				}
 			}
-		}
+		},
+		designTime: true
 	}});
 
 
