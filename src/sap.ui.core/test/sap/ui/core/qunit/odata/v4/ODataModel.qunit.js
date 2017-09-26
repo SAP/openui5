@@ -21,11 +21,12 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
+	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Message, Binding, BindingMode, BaseContext, Model, TypeString, ODataUtils,
 		OperationMode, Context, _MetadataRequestor, _Parser, _Requestor, _SyncPromise,
 		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
-		TestUtils) {
+		SubmitMode, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -248,6 +249,88 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Model construction with groupProperties ", function (assert) {
+		var oGroupProperties = {
+				"myGroup0" : {submit : SubmitMode.API},
+				"myGroup1" : {submit : SubmitMode.Auto},
+				"myGroup2" : {submit : SubmitMode.Direct}
+			},
+			oModel;
+
+		// code under test
+		oModel = createModel("");
+		assert.deepEqual(oModel.mGroupProperties, {});
+
+		// code under test
+		oModel = createModel("", {groupProperties : oGroupProperties});
+		assert.notStrictEqual(oModel.mGroupProperties, oGroupProperties, "cloned");
+		assert.deepEqual(oModel.mGroupProperties, oGroupProperties);
+	});
+
+	//*********************************************************************************************
+	[{
+		groupProperties : {"$foo" : null},
+		// only one example for an invalid application group ID
+		error : "Invalid group ID: $foo"
+	}, {
+		groupProperties : {"myGroup" : "Foo"},
+		error : "Group 'myGroup' has invalid properties: 'Foo'"
+	}, {
+		groupProperties : {"myGroup" : undefined},
+		error : "Group 'myGroup' has invalid properties: 'undefined'"
+	}, {
+		groupProperties : {"myGroup" : {submit : SubmitMode.Auto, foo : "bar"}},
+		error : "Group 'myGroup' has invalid properties: '[object Object]'"
+	}, {
+		groupProperties : {"myGroup" : {submit : "foo"}},
+		error : "Group 'myGroup' has invalid properties: '[object Object]'"
+	}].forEach(function (oFixture) {
+		QUnit.test("Model construction with groupProperties, error: " + oFixture.error,
+				function (assert) {
+			assert.throws(function () {
+				// code under test
+				createModel("", {groupProperties : oFixture.groupProperties});
+			}, new Error(oFixture.error));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isAutoGroup", function (assert) {
+		var oModel = createModel("", {
+				groupProperties : {
+					"myAPIGroup" : {submit : SubmitMode.API},
+					"myAutoGroup" : {submit : SubmitMode.Auto},
+					"myDirectGroup" : {submit : SubmitMode.Direct}
+				}
+			});
+
+		// code under test
+		assert.ok(oModel.isAutoGroup("$auto"));
+		assert.notOk(oModel.isAutoGroup("Unknown"));
+		assert.ok(oModel.isAutoGroup("myAutoGroup"));
+		assert.notOk(oModel.isAutoGroup("myAPIGroup"));
+		assert.notOk(oModel.isAutoGroup("myDirectGroup"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isDirectGroup", function (assert) {
+		var oModel = createModel("", {
+				groupProperties : {
+					"myAPIGroup" : {submit : SubmitMode.API},
+					"myAutoGroup" : {submit : SubmitMode.Auto},
+					"myDirectGroup" : {submit : SubmitMode.Direct}
+				}
+			});
+
+		// code under test
+		assert.ok(oModel.isDirectGroup("$direct"));
+		assert.notOk(oModel.isDirectGroup("Unknown"));
+		assert.ok(oModel.isDirectGroup("myDirectGroup"));
+		assert.notOk(oModel.isDirectGroup("myAPIGroup"));
+		assert.notOk(oModel.isDirectGroup("myAutoGroup"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Model construction with autoExpandSelect", function (assert) {
 		var oModel;
 
@@ -461,7 +544,7 @@ sap.ui.require([
 			oModelMock = this.mock(oModel),
 			oSubmitPromise = {};
 
-		oModelMock.expects("checkGroupId").withExactArgs("groupId", true);
+		oModelMock.expects("checkDeferredGroupId").withExactArgs("groupId");
 		oModelMock.expects("_submitBatch").never(); // not yet
 		this.stub(sap.ui.getCore(), "addPrerenderingTask", function (fnCallback) {
 			setTimeout(function () {
@@ -487,9 +570,10 @@ sap.ui.require([
 			oModelMock = this.mock(oModel);
 
 		oModelMock.expects("_submitBatch").never();
-		oModelMock.expects("checkGroupId").withExactArgs("$auto", true).throws(oError);
+		oModelMock.expects("checkDeferredGroupId").withExactArgs("$auto").throws(oError);
 
 		assert.throws(function () {
+			//code under test
 			oModel.submitBatch("$auto");
 		}, oError);
 	});
@@ -498,7 +582,7 @@ sap.ui.require([
 	QUnit.test("resetChanges with group ID", function (assert) {
 		var oModel = createModel();
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs("groupId", true);
+		this.mock(oModel).expects("checkDeferredGroupId").withExactArgs("groupId");
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("groupId");
 
 		// code under test
@@ -515,7 +599,7 @@ sap.ui.require([
 				$$updateGroupId : "anotherGroup"
 			});
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs("updateGroupId", true);
+		this.mock(oModel).expects("checkDeferredGroupId").withExactArgs("updateGroupId");
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("updateGroupId");
 		this.mock(oBinding1).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oBinding2).expects("resetInvalidDataState").withExactArgs();
@@ -530,7 +614,7 @@ sap.ui.require([
 		var oError = new Error(),
 			oModel = createModel();
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs("$auto", true).throws(oError);
+		this.mock(oModel).expects("checkDeferredGroupId").withExactArgs("$auto").throws(oError);
 		this.mock(oModel.oRequestor).expects("cancelChanges").never();
 
 		assert.throws(function () {
@@ -878,6 +962,29 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkDeferredGroupId", function (assert) {
+		var oModel = createModel("", {
+				groupProperties : {
+					"myAPIGroup" : {submit : SubmitMode.API},
+					"myAutoGroup" : {submit : SubmitMode.Auto},
+					"myDirectGroup" : {submit : SubmitMode.Direct}
+				}
+			});
+
+		// valid group IDs
+		// code under test
+		assert.strictEqual(oModel.checkDeferredGroupId("myAPIGroup"), undefined);
+
+		// invalid group IDs, others already tested by checkGroupId
+		["myAutoGroup", "myDirectGroup"].forEach(function (sGroupId) {
+			assert.throws(function () {
+				// code under test
+				oModel.checkDeferredGroupId(sGroupId);
+			}, new Error("Group ID is not deferred: " + sGroupId));
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("buildBindingParameters, $$groupId", function (assert) {
 		var aAllowedParams = ["$$groupId"],
 			oModel = createModel();
@@ -913,7 +1020,7 @@ sap.ui.require([
 			oModel.buildBindingParameters({$$operationMode : "Client"}, aAllowedParams);
 		}, new Error("Unsupported operation mode: Client"));
 		assert.throws(function () {
-			oModel.buildBindingParameters({$$operationMode : "Auto"}, aAllowedParams);
+			oModel.buildBindingParameters({$$operationMode : SubmitMode.Auto}, aAllowedParams);
 		}, new Error("Unsupported operation mode: Auto"));
 		assert.throws(function () {
 			oModel.buildBindingParameters({$$operationMode : "any"}, aAllowedParams);
