@@ -121,7 +121,6 @@
 								activate="onCheckStepActivation"
 								icon="sap-icon://credit-card"
 								validated="false">
-							<MessageStrip text="{i18n>checkoutCreditCardMessage}" />
 							<form:SimpleForm
 								editable="true"
 								layout="ResponsiveGridLayout">
@@ -267,7 +266,6 @@
 							activate="onCheckStepActivation"
 							icon="sap-icon://money-bills"
 							validated="false">
-							<MessageStrip text="{i18n>checkoutCodMessage}" />
 							<form:SimpleForm
 								editable="true"
 								layout="ResponsiveGridLayout">
@@ -406,7 +404,7 @@
 										type: 'sap.ui.model.type.String',
 										constraints: {
 											minLength: 4,
-											search: '^[a-zA-Z]+\\.?\\s?[0-9a-zA-Z\\s]*$'
+											search: '^[a-zA-Z-]+\\.?\\s?[0-9a-zA-Z\\s]*$'
 										}
 									}"
 									change="checkInvoiceStep">
@@ -430,7 +428,7 @@
 										type: 'sap.ui.model.type.String',
 										constraints: {
 											minLength: 3,
-											search: '^[a-zA-Z]+$'
+											search: '^[a-zA-Z\\s]+$'
 										}
 									}"
 									change="checkInvoiceStep">
@@ -529,7 +527,7 @@
 										type: 'sap.ui.model.type.String',
 										constraints: {
 											minLength: 4,
-											search: '^[a-zA-Z]+\\.?\\s?[0-9a-zA-Z\\s]*$'
+											search: '^[a-zA-Z-]+\\.?\\s?[0-9a-zA-Z\\s]*$'
 										}
 									}"
 									change="checkDeliveryAddressStep">
@@ -553,7 +551,7 @@
 										type: 'sap.ui.model.type.String',
 										constraints: {
 											minLength: 3,
-											search: '^[a-zA-Z]+$'
+											search: '^[a-zA-Z\\s]+$'
 										}
 									}"
 									change="checkDeliveryAddressStep">
