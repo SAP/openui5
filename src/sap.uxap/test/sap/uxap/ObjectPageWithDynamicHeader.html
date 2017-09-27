@@ -51,6 +51,9 @@
 							<m:Button text="KPI 6" class="sapUiTinyMargin"/>
 						</content>
 						<actions>
+							<m:ToggleButton
+									id="toggleHeaderOnTitleClick"
+									text="ToggleOnTitleClick"/>
 							<m:Button
 									text="Delete"
 									type="Transparent"/>
@@ -284,7 +287,14 @@
 <script>
 	(function (jQuery, App, Page) {
 		var oApp = new App(),
-			myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()});
+			myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()}),
+				oToggleHeaderOnTitleClickBtn = myView.byId("toggleHeaderOnTitleClick"),
+				oObjectPage = myView.byId("ObjectPageLayout");
+
+		oToggleHeaderOnTitleClickBtn.setPressed(oObjectPage.getToggleHeaderOnTitleClick());
+		oToggleHeaderOnTitleClickBtn.attachPress(function(oEvent) {
+			oObjectPage.setToggleHeaderOnTitleClick(oEvent.getParameter("pressed"));
+		});
 		oApp.addPage(new Page({
 			title: "ObjectPage",
 			content: [myView]
