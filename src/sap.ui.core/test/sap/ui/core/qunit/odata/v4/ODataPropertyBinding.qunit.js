@@ -405,6 +405,40 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Unit test for scenario in
+	// ODataModel.integration.qunit, @sap.ui.table.Table with VisibleRowCountMode='Auto'
+	QUnit.test("checkUpdate(true): later checkUpdate call resets this.oContext", function (assert) {
+		var oParentBinding = {
+				fetchIfChildCanUseCache : function () {
+					return _SyncPromise.resolve(Promise.resolve(true));
+				}
+			},
+			oModel = new ODataModel({
+				autoExpandSelect : true,
+				serviceUrl : "/service/?sap-client=111",
+				synchronizationMode : "None"
+			}),
+			oContext = Context.create(oModel, oParentBinding, "/..."),
+			oBinding = oModel.bindProperty("relative", oContext),
+			oPromise0,
+			oPromise1;
+
+		this.mock(oModel.getMetaModel()).expects("fetchUI5Type")
+			.withExactArgs("/.../relative")
+			.returns(_SyncPromise.resolve());
+
+		// code under test
+		oPromise0 = oBinding.checkUpdate(true);
+
+		oBinding.oContext = null; // binding context reset in the meantime
+
+		// code under test
+		oPromise1 = oBinding.checkUpdate(true); // second call to checkUpdate must not fail
+
+		return Promise.all([oPromise0, oPromise1]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("checkUpdate(): unresolved path after setContext", function (assert) {
 		var done = assert.async(),
 			fnChangeHandler = function () {
