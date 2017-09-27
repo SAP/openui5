@@ -77,7 +77,7 @@
 						visibleEdit="{settings>/visibleEdit}"
 						attributes="{path : 'attributes', templateShareable : false}"
 						statuses="{path : 'statuses', templateShareable : false}"
-						markers="{path : 'markers', templateShareable : false}"
+						markers="{path : 'markers', factory: '.createObjectMarker'}"
 						selected="{selected}">
 						<attributes>
 							<ObjectAttribute title="{title}"
@@ -88,14 +88,8 @@
 						<statuses>
 							<ObjectStatus title="{title}"
 								text="{text}"
-								state="{state}"
-								icon="{icon}"
-								iconDensityAware="{iconDensityAware}"
-								textDirection="{textDirection}" />
+								state="{state}" />
 						</statuses>
-						<markers>
-							<ObjectMarker type="{type}" press="onMarkerPress" />
-						</markers>
 					</UploadCollectionItem>
 				</items>
 			</UploadCollection>
