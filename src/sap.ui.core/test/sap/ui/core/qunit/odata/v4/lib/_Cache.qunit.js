@@ -44,6 +44,19 @@ sap.ui.require([
 		return _SyncPromise.resolve({});
 	}
 
+	/*
+	 * Simulation of {@link sap.ui.model.odata.v4.ODataModel#getGroupProperty}
+	 */
+	function defaultGetGroupProperty(sGroupId, sPropertyName) {
+		if (sGroupId === "$direct") {
+			return "Direct";
+		}
+		if (sGroupId === "$auto") {
+			return "Auto";
+		}
+		return "API";
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
 		beforeEach : function () {
@@ -53,6 +66,9 @@ sap.ui.require([
 
 			this.oRequestor = {
 				buildQueryString : function () {return "";},
+				getGroupSubmitMode : function (sGroupId) {
+					return defaultGetGroupProperty(sGroupId);
+				},
 				getKeyPredicate : function (t, o) {return "('" + o.key + "')"; },
 				getServiceUrl : function () {return "/~/";},
 				relocate : function () {},
@@ -927,7 +943,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["$direct", "$auto"].forEach(function (sGroupId) {
+	["$direct", "$auto", "myDirect", "myAuto"].forEach(function (sGroupId) {
 		QUnit.test("_Cache#update: failure, group " + sGroupId, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "/BusinessPartnerList", defaultFetchType, {}),
 				oCacheMock = this.mock(oCache),
@@ -940,6 +956,12 @@ sap.ui.require([
 				},
 				fnError = sinon.spy(),
 				oError = new Error(),
+				mGroups = {
+					"$direct" : "Direct",
+					"$auto" : "Auto",
+					"myAuto" : "Auto",
+					"myDirect" : "Direct"
+				},
 				oPatchPromise = Promise.reject(oError),
 				oUpdateData = {
 					"Address" : {
@@ -955,6 +977,8 @@ sap.ui.require([
 						"If-Match" : sETag
 					}, oUpdateData, undefined, sinon.match.func)
 				.returns(oPatchPromise);
+			this.oRequestorMock.expects("getGroupSubmitMode")
+				.withExactArgs(sGroupId).returns(mGroups[sGroupId]);
 
 			// code under test
 			return oCache.update(sGroupId, "Address/City", "Walldorf", fnError,
@@ -1695,7 +1719,8 @@ sap.ui.require([
 	QUnit.test("_Cache#create: with given sPath and delete before submit", function (assert) {
 		var oBody,
 			// real requestor to avoid reimplementing callback handling of _Requestor.request
-			oRequestor = _Requestor.create("/~/"),
+			oRequestor = _Requestor.create("/~/", undefined, undefined, undefined, undefined,
+				defaultGetGroupProperty),
 			oCache = new _Cache(oRequestor),
 			oCacheMock = this.mock(oCache),
 			aCollection = [],
@@ -1976,12 +2001,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["$direct", "$auto"].forEach(function (sUpdateGroupId) {
+	["$direct", "$auto", "myAuto", "myDirect"].forEach(function (sUpdateGroupId) {
 		QUnit.test("CollectionCache#create: relocate on failed POST for " + sUpdateGroupId,
 				function (assert) {
 			var oCache = this.createCache("Employees"),
 				oFailedPostPromise = Promise.reject(new Error()),
+				mGroups = {
+					"$direct" : "Direct",
+					"$auto" : "Auto",
+					"myAuto" : "Auto",
+					"myDirect" : "Direct"
+				},
 				that = this;
+
+			this.oRequestorMock.expects("getGroupSubmitMode")
+				.withExactArgs(sUpdateGroupId).returns(mGroups[sUpdateGroupId]);
 
 			this.oRequestorMock.expects("request")
 				.withExactArgs("POST", "Employees", sUpdateGroupId, null, sinon.match.object,
@@ -2101,7 +2135,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: create and delete transient entry", function (assert) {
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
-		var oRequestor = _Requestor.create("/~/"),
+		var oRequestor = _Requestor.create("/~/", undefined, undefined, undefined, undefined,
+				defaultGetGroupProperty),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCancelCallback = sinon.spy(),
 			oDeletePromise,
@@ -2141,7 +2176,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: delete created entity", function (assert) {
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
-		var oRequestor = _Requestor.create("/~/"),
+		var oRequestor = _Requestor.create("/~/", undefined, undefined, undefined, undefined,
+				defaultGetGroupProperty),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCallback = sinon.spy(),
 			oCreatedPromise,
@@ -2683,7 +2719,8 @@ sap.ui.require([
 					Budget : "555.55"
 				},
 				oRequestor = _Requestor.create(TestUtils.proxy(
-					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/")),
+					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"), undefined, undefined,
+					undefined, undefined, defaultGetGroupProperty),
 				sResourcePath = "TEAMS('TEAM_01')",
 				oCache = _Cache.createSingle(oRequestor, sResourcePath, defaultFetchType);
 

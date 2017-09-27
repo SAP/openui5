@@ -70,16 +70,21 @@ sap.ui.define([
 	 * @param {function} fnFetchMetadata
 	 *   A function that returns a _SyncPromise which resolves with the metadata instance for a
 	 *   given absolute model path (it is automatically converted to a metapath)
+	 * @param {function} fnGetGroupProperty
+	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
+	 *   returning the property value in question. Only 'submit' is supported for <code>
+	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
 	 * @param {function (string)} [fnOnCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
 	 * @private
 	 */
 	function Requestor(sServiceUrl, mHeaders, mQueryParams, fnFetchEntityContainer, fnFetchMetadata,
-			fnOnCreateGroup) {
+			fnGetGroupProperty, fnOnCreateGroup) {
 		this.mBatchQueue = {};
 		this.fnFetchEntityContainer = fnFetchEntityContainer;
 		this.fnFetchMetadata = fnFetchMetadata;
+		this.fnGetGroupProperty = fnGetGroupProperty;
 		this.mHeaders = mHeaders || {};
 		this.fnOnCreateGroup = fnOnCreateGroup;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
@@ -433,6 +438,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the submit mode for the given group Id.
+	 *
+	 * @param {string} sGroupId
+	 *   The group Id
+	 * @returns {string} 'API'|'Auto'|'Direct'
+	 *
+	 * @private
+	 */
+	Requestor.prototype.getGroupSubmitMode = function (sGroupId) {
+		return this.fnGetGroupProperty(sGroupId, "submit");
+	};
+
+	/**
 	 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type metadata
 	 * and entity instance runtime data.
 	 *
@@ -639,7 +657,7 @@ sap.ui.define([
 			oBatchRequest = _Batch.serializeBatchRequest(_Requestor.cleanBatch(oPayload));
 			sPayload = oBatchRequest.body;
 		} else {
-			if (sGroupId !== "$direct") {
+			if (this.getGroupSubmitMode(sGroupId) !== "Direct") {
 				oPromise = new Promise(function (fnResolve, fnReject) {
 					var aRequests = that.mBatchQueue[sGroupId];
 
@@ -1000,6 +1018,11 @@ sap.ui.define([
 		 * @param {function} fnFetchMetadata
 		 *   A function that returns a _SyncPromise which resolves with the metadata instance for a
 		 *   given absolute model path (it is automatically converted to a metapath)
+		 * @param {function} fnGetGroupProperty
+		 *   A callback function called with parameters <code>sGroupId</code> and
+		 *   <code>sPropertyName</code> returning the value of the group property in question. Only
+		 *   'submit' is supported for <code>sPropertyName</code>. Supported property values are:
+		 *   'API', 'Auto' and 'Direct'.
 		 * @param {function (string)} [fnOnCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
@@ -1009,9 +1032,9 @@ sap.ui.define([
 		 *   A new <code>_Requestor</code> instance
 		 */
 		create : function (sServiceUrl, mHeaders, mQueryParams, fnFetchEntityContainer,
-				fnFetchMetadata, fnOnCreateGroup, sODataVersion) {
+				fnFetchMetadata, fnGetGroupProperty, fnOnCreateGroup, sODataVersion) {
 			var oRequestor = new Requestor(sServiceUrl, mHeaders, mQueryParams,
-					fnFetchEntityContainer, fnFetchMetadata, fnOnCreateGroup);
+					fnFetchEntityContainer, fnFetchMetadata, fnGetGroupProperty, fnOnCreateGroup);
 
 			if (sODataVersion === "2.0") {
 				asV2Requestor(oRequestor);

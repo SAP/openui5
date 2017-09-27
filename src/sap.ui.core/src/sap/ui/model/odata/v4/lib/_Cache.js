@@ -439,8 +439,8 @@ sap.ui.define([
 						if (fnErrorCallback) {
 							fnErrorCallback(oError);
 						}
-						return request(sPostGroupId === "$auto" || sPostGroupId === "$direct"
-							? "$parked." + sPostGroupId : sPostGroupId);
+						return request(that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
+							sPostGroupId : "$parked." + sPostGroupId);
 				});
 			});
 		}
@@ -829,7 +829,7 @@ sap.ui.define([
 					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 					if (!oError.canceled) {
 						fnErrorCallback(oError);
-						if (sGroupId !== "$auto" && sGroupId !== "$direct") {
+						if (that.oRequestor.getGroupSubmitMode(sGroupId) === "API") {
 							return patch();
 						}
 					}
