@@ -1144,7 +1144,10 @@
 		  "name": "Title",
 		  "category": "Display",
 		  "since": "1.28",
-		  "samples": ["sap.m.sample.Title"]
+			"samples": [
+				"sap.m.sample.Title",
+				"sap.m.sample.TitleWrapping"
+			]
 		},
 		{
 		  "id": "sap.m.ToggleButton",
@@ -1749,6 +1752,11 @@
 		  "id": "sap.m.sample.Title",
 		  "name": "Title",
 		  "description": "The Title control is a simple one line text with additional semantic information about the level of the following section in the page structure for accessibility purposes."
+		},
+		{
+			"id": "sap.m.sample.TitleWrapping",
+			"name": "Title - wrapping",
+			"description": "The Title wrapping property can be used to change the layout of the Title control within containers with dynamic width."
 		},
 		{
 		  "id": "sap.m.sample.ObjectAttributes",
