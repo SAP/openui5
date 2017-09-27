@@ -25,10 +25,7 @@ sap.ui.define([
 			metadata : {
 				manifest : "json",
 				includes : [
-					"css/style.css",
-					"thirdparty/google-code-prettify/prettify.css",
-					"thirdparty/google-code-prettify/prettify.js",
-					"thirdparty/google-code-prettify/lang-css.js"
+					"css/style.css"
 				]
 			},
 
