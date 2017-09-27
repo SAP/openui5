@@ -1022,6 +1022,59 @@
 		});
 	});
 
+	QUnit.module("ObjectPage API: sections removal", {
+		beforeEach: function () {
+			this.iDelay = 500;
+			this.oSelectedSection = oFactory.getSection(2, null, [
+				oFactory.getSubSection(2, [oFactory.getBlocks(), oFactory.getBlocks()], null)
+			]);
+
+			this.oOP = oFactory.getObjectPage();
+			this.oOP.addSection(oFactory.getSection(1, null, [
+				oFactory.getSubSection(1, [oFactory.getBlocks(), oFactory.getBlocks()], null)
+			])).addSection(this.oSelectedSection)
+				.setSelectedSection(this.oSelectedSection.getId());
+
+			this.oOP.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oOP.destroy();
+			this.oOP = null;
+			this.oSelectedSection.destroy();
+			this.oSelectedSection = null;
+		}
+	});
+
+	QUnit.test("test removeAllSections should reset selectedSection", function (assert) {
+		var oObjectPage = this.oOP,
+			done = assert.async();
+
+		// Act
+		oObjectPage.removeAllSections();
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			assert.equal(oObjectPage.getSections().length, 0, "There are no sections.");
+			assert.equal(oObjectPage.getSelectedSection(), null, "Selected section is null as there are no sections.");
+			done();
+		},  this.iDelay);
+	});
+
+	QUnit.test("test destroySections should reset selectedSection", function (assert) {
+		var oObjectPage = this.oOP,
+			done = assert.async();
+
+		// Act
+		oObjectPage.destroySections();
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			assert.equal(oObjectPage.getSections().length, 0, "There are no sections.");
+			assert.equal(oObjectPage.getSelectedSection(), null, "Selected section is null as there are no sections.");
+			done();
+		}, this.iDelay);
+	});
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;

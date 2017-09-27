@@ -396,19 +396,26 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageLayout.prototype._adjustSelectedSectionByUXRules = function () {
 
+	ObjectPageLayout.prototype._adjustSelectedSectionByUXRules = function () {
 		var oSelectedSection = this.oCore.byId(this.getSelectedSection()),
-		bValidSelectedSection = oSelectedSection && this._sectionCanBeRenderedByUXRules(oSelectedSection);
-		if (!bValidSelectedSection && this._oFirstVisibleSection) {
-			oSelectedSection = this._oFirstVisibleSection; // next candidate
-			this.setAssociation("selectedSection", oSelectedSection.getId(), true);
+			bValidSelectedSection = oSelectedSection && this._sectionCanBeRenderedByUXRules(oSelectedSection);
+
+		if (!bValidSelectedSection) {
+			if (this._oFirstVisibleSection) {
+				oSelectedSection = this._oFirstVisibleSection; // next candidate
+				this.setAssociation("selectedSection", oSelectedSection.getId(), true);
+			} else {
+				this.setAssociation("selectedSection", null, true);
+				return; // skip further computation as there is no a section to be selected
+			}
 		}
 
 		var oStoredSubSection = this.oCore.byId(this._sStoredScrolledSubSectionId),
 			bValidSelectedSubSection = oStoredSubSection
 				&& this._sectionCanBeRenderedByUXRules(oStoredSubSection)
-				&& (oSelectedSection.indexOfSubSection(oStoredSubSection) < 0);
+				&& (oSelectedSection.indexOfSubSection(oStoredSubSection) >= 0);
+
 		if (!bValidSelectedSubSection) {
 			this._sStoredScrolledSubSectionId = null; // the stored location is not valid anymore (e.g. section was removed/hidden or another section was explicitly selected)
 		}
