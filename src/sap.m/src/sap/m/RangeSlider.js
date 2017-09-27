@@ -188,6 +188,8 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
                     this._createInputField("RightTooltip", this._mHandleTooltip.end.label) : null;
             }
 
+            this._mHandleTooltip.bTooltipsSwapped = false; //Rest tooltips swapping
+
             this._iDecimalPrecision = this.getDecimalPrecisionOfNumber(this.getStep());
         };
 
@@ -225,6 +227,12 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
             // Setting the handles to the Start and the End points of the provided or the default range
             this._updateHandle(this._mHandleTooltip.start.handle, aRange[0]);
             this._updateHandle(this._mHandleTooltip.end.handle, aRange[1]);
+
+            //Swap tooltips so when range is with reversed values e.g. [12, 1]
+            //to have properly updated tooltips
+            if (aRange[0] > aRange[1]) {
+                this._swapTooltips(aRange);
+            }
         };
 
         /**
