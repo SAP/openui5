@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+
+<!--
+	Tested classes: sap.ui.model.odata.AnnotationParser
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
+		<title>sap.ui.model.odata.AnnotationParser</title>
+
+		<script src="../../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-compatversion="edge">
+		</script>
+		<link href="../../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen"
+			rel="stylesheet">
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-cover-flags="branchTracking"
+			data-sap-ui-cover-only="sap/ui/model/odata/AnnotationParser"></script>
+
+		<!-- @see ../testsuites/testsuite.databinding.qunit.html -->
+		<script src="../odata/AnnotationHelper.qunit.js"></script>
+		<script src="../odata/_AnnotationHelperBasics.qunit.js"></script>
+		<script src="../odata/_AnnotationHelperExpression.qunit.js"></script>
+		<script src="../odata/ODataMetaModel.qunit.js"></script>
+		<script src="../odata/_ODataMetaModelUtils.qunit.js"></script>
+
+		<script src="../ODataAnnotationsFakeService.js"></script>
+		<script src="../ODataAnnotationsTest.qunit.js"></script>
+		<script src="../ODataAnnotationsV2Test.qunit.js"></script>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				runODataAnnotationTests();
+				runODataAnnotationsV2Tests();
+			});
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>
