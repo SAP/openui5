@@ -22,6 +22,16 @@
 	}
 }
 
+.sapMRI.sapMRIReadOnly {
+  .sapMRIIconSel {
+	color: @sapUiContentIconColor;
+  }
+
+  .sapMRIIconReadOnly {
+	color: darken(@sapUiContentForegroundColor, 50);
+  }
+}
+
 /* Custom focus outline */
 html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 	outline: 0.125rem dotted @sapUiContentFocusColor;

@@ -98,7 +98,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * The RatingIndicator in displayOnly mode is not interactive, not editable, not focusable, and not in the tab chain. This setting is used for forms in review mode.
 			 * @since 1.50.0
 			 */
-			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false}
+			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Defines whether the user is allowed to edit the RatingIndicator. If editable is false the control is focusable, and in the tab chain but not interactive.
+			 * @since 1.52.0
+			 */
+			editable : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
 		associations : {
 			/**
@@ -600,7 +606,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype.ontouchstart = function (oEvent) {
-		if (oEvent.which == 2 || oEvent.which == 3 || !this.getEnabled() || this.getDisplayOnly()) {
+		if (oEvent.which == 2 || oEvent.which == 3 || !this.getEnabled() || this.getDisplayOnly()  || !this.getEditable()) {
 			return;
 		}
 
@@ -775,7 +781,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	RatingIndicator.prototype.onkeyup = function(oEvent) {
 		var iMaxValue = this.getMaxValue();
 
-		if (!this.getEnabled() || this.getDisplayOnly()) {
+		if (!this.getEnabled() || this.getDisplayOnly() || !this.getEditable()) {
 			return false;
 		}
 
@@ -831,7 +837,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype._handleKeyboardValueChange = function (oEvent, fValue) {
-		if (!this.getEnabled() || this.getDisplayOnly()) {
+		if (!this.getEnabled() || this.getDisplayOnly() || !this.getEditable()) {
 			return;
 		}
 
@@ -863,7 +869,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			type: oBundle.getText("ACC_CTR_TYPE_RATING"),
 			description: oBundle.getText("ACC_CTR_STATE_RATING", [this.getValue(), this.getMaxValue()]),
 			focusable: this.getEnabled() && !this.getDisplayOnly(),
-			enabled: this.getEnabled()
+			enabled: this.getEnabled(),
+			editable: this.getEditable()
 		};
 	};
 

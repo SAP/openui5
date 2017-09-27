@@ -40,9 +40,10 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/Device'],
     };
 
     RatingIndicatorRenderer.renderControlContainer = function (oRm, oControl, innerRenderer) {
-        var bEnabled = oControl.getEnabled(),
-            bDisplayOnly = oControl.getDisplayOnly();
-        oRm.write("<div");
+	    var bEnabled = oControl.getEnabled(),
+		    bEditable = oControl.getEditable(),
+		    bDisplayOnly = oControl.getDisplayOnly();
+	    oRm.write("<div");
 
         oRm.writeControlData(oControl);
         oRm.addStyle("width", this._iWidth + "px");
@@ -51,12 +52,16 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/Device'],
             // Interactive
             oRm.writeAttribute("tabindex", "0");
             oRm.addClass("sapMPointer");
+	        if (!bEditable) {
+		        oRm.addClass("sapMRIReadOnly");
+	        }
         } else {
             // DisplayOnly or disabled
             oRm.writeAttribute("tabindex", "-1");
             bEnabled ? oRm.addClass("sapMRIDisplayOnly") : oRm.addClass("sapMRIDisabled");
         }
-        oRm.addClass("sapMRI");
+	    oRm.writeAttribute("aria-readonly", !bEditable);
+	    oRm.addClass("sapMRI");
         oRm.addClass("sapUiRatingIndicator" + oControl._getIconSizeLabel(this._fIconSize));
         oRm.writeStyles();
         oRm.writeClasses();
@@ -176,6 +181,9 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/Device'],
             size = this._fIconSize + sIconSizeMeasure;
 
         oRm.write("<" + tag + " ");
+	    if (iconType === "UNSELECTED" && !oControl.getEditable()) {
+		    iconType = "READONLY";
+	    }
         oRm.write("class='sapUiIcon " + this.getIconClass(iconType) + "' ");
 
         var style = "";
@@ -207,6 +215,8 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/Device'],
                 return "sapMRIIconUnsel";
             case "HOVERED":
                 return "sapMRIIconHov";
+            case "READONLY":
+                return "sapMRIIconReadOnly";
         }
     };
 
@@ -220,14 +230,19 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/Device'],
             return IconPool.getIconURI('favorite');
         }
 
-        switch (sState) {
-             case "SELECTED":
-                return oControl.getIconSelected() || IconPool.getIconURI("favorite");
-            case "UNSELECTED":
-                return oControl.getIconUnselected() || IconPool.getIconURI("favorite");
-            case "HOVERED":
-                return oControl.getIconHovered() || IconPool.getIconURI("favorite");
-        }
+	    switch (sState) {
+		    case "SELECTED":
+			    return oControl.getIconSelected() || IconPool.getIconURI("favorite");
+		    case "UNSELECTED":
+				if (oControl.getEditable()) {
+				    return oControl.getIconUnselected() || IconPool.getIconURI("unfavorite");
+			    } else {
+				    return oControl.getIconUnselected() || IconPool.getIconURI("favorite");
+			    }
+			    break;
+		    case "HOVERED":
+			    return oControl.getIconHovered() || IconPool.getIconURI("favorite");
+	    }
     };
 
     RatingIndicatorRenderer.getIconTag = function (sIconURI) {

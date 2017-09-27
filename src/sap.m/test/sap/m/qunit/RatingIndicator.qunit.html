@@ -157,6 +157,7 @@
 			assert.strictEqual(oRating0.getIconHovered(), "", "By default the hovered icon is empty on " + oRating0);
 			assert.strictEqual(oRating0.getVisualMode(), "Half", "By default the visual mode is \"Half\" on " + oRating0);
 			assert.strictEqual(oRating0.getDisplayOnly(), false, "By default the displayOnly is false " + oRating0);
+			assert.strictEqual(oRating0.getEditable(), true, "By default the Editable is true " + oRating0);
 		});
 
 		QUnit.module("HTML");
@@ -237,6 +238,36 @@
 			assert.strictEqual(oRating.$().hasClass("sapMRIDisplayOnly"), true, 'The control have class "sapMRIDisplayOnly" on ' + oRating);
 			assert.strictEqual(oRating.$().attr('aria-disabled'), "true", "aria-disabled is set to true on " + oRating);
 			assert.strictEqual(oRating.$().attr("tabindex"), "-1", "The control is not in the tab chain");
+
+			// clean
+			oRating.destroy();
+		});
+
+		QUnit.test("setting editable", function (assert) {
+			var oRating = new RatingIndicator({
+				value: 3
+			});
+
+			oRating.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// initial assertion
+			assert.strictEqual(oRating.getEditable(), true, 'The Editable property is false on ' + oRating);
+			assert.strictEqual(oRating.$().hasClass("sapMRIReadOnly"), false, 'Initially the control does not have class "sapMRIReadOnly" on ' + oRating);
+			assert.strictEqual(oRating.$().attr('aria-disabled'), "false", "aria-disabled is set to false on " + oRating);
+			assert.strictEqual(oRating.$().attr('aria-readonly'), "false", "aria-readonly is set to false on " + oRating);
+			assert.strictEqual(oRating.$().attr("tabindex"), "0", "The control is in the tab chain");
+
+			// act
+			oRating.setEditable(false);
+			sap.ui.getCore().applyChanges();
+
+			// assertion
+			assert.strictEqual(oRating.getEditable(), false, 'The Editable property is true on ' + oRating);
+			assert.strictEqual(oRating.$().hasClass("sapMRIReadOnly"), true, 'The control have class "sapMRIReadOnly" on ' + oRating);
+			assert.strictEqual(oRating.$().attr('aria-disabled'), "false", "aria-disabled is set to true on " + oRating);
+			assert.strictEqual(oRating.$().attr('aria-readonly'), "true", "aria-readonly is set to false on " + oRating);
+			assert.strictEqual(oRating.$().attr("tabindex"), "0", "The control is in the tab chain");
 
 			// clean
 			oRating.destroy();
@@ -628,7 +659,7 @@
 			assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [5, 10]), "Description");
 			assert.strictEqual(oInfo.focusable, true, "Focusable");
 			assert.strictEqual(oInfo.enabled, true, "Enabled");
-			assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+			assert.strictEqual(oInfo.editable, oControl.getEditable(), "Editable");
 			oControl.setValue(0);
 			oControl.setEnabled(false);
 			oInfo = oControl.getAccessibilityInfo();
