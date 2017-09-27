@@ -75,6 +75,24 @@ sap.ui.define([
 				this.setModel(new JSONModel(), "entity");
 				this.setModel(new JSONModel(), "borrowedMethods");
 				this.setModel(new JSONModel(), "borrowedEvents");
+
+				this._objectPage.attachEvent("_sectionChange", function (oEvent) {
+					var sSection = oEvent.getParameter("section").getTitle().toLowerCase(),
+						sSubSection = (oEvent.getParameter("subsection") && oEvent.getParameter("subsection").getTitle() !== 'Overview') ? oEvent.getParameter("subsection").getTitle() : '';
+					if (sSection === 'properties') {
+						sSection = 'controlProperties';
+					}
+					if (sSection === 'fields') {
+						sSection = 'properties';
+					}
+					this.getRouter().stop();
+					this.getRouter().navTo("apiId", {
+						id: this._sTopicid,
+						entityType: sSection,
+						entityId: sSubSection
+					}, true);
+					this.getRouter().initialize(true);
+				}, this);
 			},
 
 			onAfterRendering: function () {

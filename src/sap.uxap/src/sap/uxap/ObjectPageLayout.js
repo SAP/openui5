@@ -288,7 +288,6 @@ sap.ui.define([
 						section: {type: "sap.uxap.ObjectPageSection"}
 					}
 				}
-
 			},
 			designTime: true
 		}
@@ -2096,6 +2095,7 @@ sap.ui.define([
 			bShouldStick = this._shouldSnapHeaderOnScroll(iScrollTop),
 			bShouldPreserveHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea(),
 			sClosestId,
+			sClosestSubSectionId,
 			bScrolled = false;
 
 		if (this._bSupressModifyOnScrollOnce) {
@@ -2142,6 +2142,7 @@ sap.ui.define([
 
 		//find the currently scrolled section = where position - iScrollTop is closest to 0
 		sClosestId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
+		sClosestSubSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight, true /* subSections only */);
 
 		if (sClosestId) {
 
@@ -2150,6 +2151,7 @@ sap.ui.define([
 			var sDestinationSectionId = this.getDirectScrollingToSection();
 
 			if (sClosestId !== this._sScrolledSectionId) {
+
 				jQuery.sap.log.debug("ObjectPageLayout :: closest id " + sClosestId, "----------------------------------------");
 
 				// check if scroll-destination section is explicitly set
@@ -2167,6 +2169,11 @@ sap.ui.define([
 				this._setAsCurrentSection(sClosestId);
 			} else if (sClosestId === this.getDirectScrollingToSection()) { //we are already in the destination section
 				this.clearDirectScrollingToSection();
+			}
+
+			if (sClosestSubSectionId !== this._sScrolledSubSectionId) {
+				this._sScrolledSubSectionId = sClosestSubSectionId;
+				this.fireEvent("_sectionChange", {section: this.oCore.byId(sClosestId), subsection: this.oCore.byId(sClosestSubSectionId)});
 			}
 		}
 
@@ -2231,7 +2238,7 @@ sap.ui.define([
 				// current section/subsection is inside the view port
 				if (oInfo.positionTop <= iScrollPageBottom && iScrollTop <= oInfo.positionBottom) {
 					// scrolling position is over current section/subsection
-					if (oInfo.positionTop <= iScrollTop && oInfo.positionBottom >= iScrollTop) {
+					if (oInfo.positionTop <= iScrollTop && oInfo.positionBottom > iScrollTop) {
 						sClosestId = sId;
 						return false;
 					}
