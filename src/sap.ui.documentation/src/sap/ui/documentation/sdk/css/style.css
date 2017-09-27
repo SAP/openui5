@@ -1452,6 +1452,40 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 	}
 }
 
+/* ==========================================================================
+   Tools Page Header styles
+  ========================================================================== */
+.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
+	top: 2.5rem;
+	left: 0;
+	font-size: 3rem;
+	margin-left: -0.2rem;
+	position: absolute;
+	padding-left: 2rem;
+	font-family: Arial;
+	color: #ffffff;
+	text-shadow: 0 0 0.125rem #000000;
+}
+
+/*SMALL*/
+@media (max-width: 64rem) {
+	.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
+		top: 1.25rem;
+		font-size: 1.625rem;
+		padding-left: 1rem;
+		margin-left: -0.0625rem;
+	}
+}
+
+/*XTRA LARGE*/
+@media (min-width: 90rem) {
+	.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
+		top: 2.5rem;
+		font-size: 4rem;
+		padding-left: 3rem;
+	}
+}
+
 /* Landing pages aspect ratio */
 html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .sapUiDemokitLandingImageCell:not(.welcomeImageCell) {
 	padding-bottom: 24.6%;
