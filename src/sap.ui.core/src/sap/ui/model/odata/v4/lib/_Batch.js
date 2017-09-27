@@ -32,7 +32,7 @@ sap.ui.define([
 
 		// escape RegExp-related characters
 		sBatchBoundary = jQuery.sap.escapeRegExp(sBatchBoundary);
-		return new RegExp('--' + sBatchBoundary + '-{0,2} *\r\n');
+		return new RegExp('--' + sBatchBoundary + '(?:[ \t]*\r\n|--)');
 	}
 
 	/**
