@@ -230,7 +230,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 				verticalScrolling: true,
 				initialFocus: selectedItem,
 				afterClose: function () {
-					that._popover = null;
+					if (that._popover) {
+						that._popover.destroy();
+						that._popover = null;
+					}
 				},
 				content: list,
 				ariaLabelledBy: [NavigationList._sAriaPopupLabelId]
