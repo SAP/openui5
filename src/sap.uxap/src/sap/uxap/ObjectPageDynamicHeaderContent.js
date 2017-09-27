@@ -47,11 +47,13 @@ sap.ui.define(['jquery.sap.global', './library'],
 		 * @param aContent
 		 * @param bVisible
 		 * @param sContentDesign
+		 * @param bPinnable
 		 */
-		ObjectPageDynamicHeaderContent.createInstance = function (aContent, bVisible, sContentDesign) {
+		ObjectPageDynamicHeaderContent.createInstance = function (aContent, bVisible, sContentDesign, bPinnable) {
 			return new ObjectPageDynamicHeaderContent({
 				content: aContent,
-				visible: bVisible
+				visible: bVisible,
+				pinnable: bPinnable
 			});
 		};
 
