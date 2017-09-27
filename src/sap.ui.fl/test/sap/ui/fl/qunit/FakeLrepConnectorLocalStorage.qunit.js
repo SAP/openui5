@@ -194,17 +194,46 @@ sap.ui.require([
 		},
 		afterEach : function(assert) {
 			oFakeLrepConnectorLocalStorage.deleteChanges();
+			sandbox.restore();
 		}
 	});
 
-	QUnit.test("when changes are loaded from FakeLrepConnectorLocalStorage", function(assert) {
+	QUnit.test("when changes are loaded from FakeLrepConnectorLocalStorage only from backend/JSON response", function(assert) {
 		return this.oFakeLrepConnectorLocalStorage.loadChanges("test.json.component")
 			.then(function (mResult) {
 				assert.equal(mResult.changes.changes.length, 3, "then three global changes read from the provided JSON file");
-				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].defaultVariant, "variant0", "then default variant for variantManagement reference 'variantManagementOrdersTable' set correctly for ");
-				assert.equal(mResult.changes.variantSection["variantManagementOrdersObjectPage"].defaultVariant, "variant00", "then default variant for variantManagement reference 'variantManagementOrdersObjectPage' set correctly for ");
+				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].defaultVariant, "variant0", "then default variant for variantManagement reference 'variantManagementOrdersTable' set correctly");
+				assert.equal(mResult.changes.variantSection["variantManagementOrdersObjectPage"].defaultVariant, "variant00", "then default variant for variantManagement reference 'variantManagementOrdersObjectPage' set correctly");
 				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].variants.length, 3, "then three variant found for variantManagement reference 'variantManagementOrdersTable'");
+				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].variantChanges["setTitle"][0].texts.title.value, "New Variant Title", "setTitle with correct value set in the loadChanges response");
 				assert.ok(this.createChangesMapsSpy.calledOnce, "then _createChangesMaps called once");
+				assert.ok(this.sortChangesSpy.calledOnce, "then _sortChanges called once");
+			}.bind(this));
+	});
+
+	QUnit.test("when changes are loaded from FakeLrepConnectorLocalStorage from backend/JSON response & local storage", function(assert) {
+		var aLocalStorageChanges = [
+			{
+				fileType: "change",
+				fileName: "Change1"
+			}, {
+				fileType: "ctrl_variant_change",
+				fileName: "Change1",
+				variantReference: "variant0",
+				changeType: "setTitle"
+			}, {
+				fileType: "ctrl_variant",
+				fileName: "Change1",
+				variantManagementReference: "idMain1--variantManagementOrdersTable"
+			}
+		];
+		sandbox.stub(FakeLrepLocalStorage, "getChanges").returns(aLocalStorageChanges);
+
+		return this.oFakeLrepConnectorLocalStorage.loadChanges("test.json.component")
+			.then(function (mResult) {
+				assert.equal(mResult.changes.changes.length, 4, "then four changes available, 3 from JSON and 1 from local storage");
+				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].variants.length, 4, "then 4 variants available, 3 from JSON and 1 from local storage");assert.ok(this.createChangesMapsSpy.calledOnce, "then _createChangesMaps called once");
+				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].variantChanges["setTitle"].length, 2, "then 2 variant changes available, one from JSON and one from local storage");
 				assert.ok(this.sortChangesSpy.calledOnce, "then _sortChanges called once");
 			}.bind(this));
 	});
@@ -298,6 +327,9 @@ sap.ui.require([
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 1, "then one variant already exists");
 		var mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap(mResult, aVariants);
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 2, "then variant not added since a duplicate variant already exists");
+		assert.ok(Array.isArray(mResult.changes.variantSection["varMgmt1"].variants[1].changes), "then the newly added variant contains changes array");
+		assert.ok(Array.isArray(mResult.changes.variantSection["varMgmt1"].variants[1].variantChanges["setTitle"]), "then the newly added variant contains setTitle variant changes array");
+		assert.ok(typeof mResult.changes.variantSection["varMgmt1"].variants[1].content === 'object', "then the newly added variant contains a content object");
 	});
 
 	QUnit.test("when _sortChanges is called with a mix of changes and variants", function(assert) {
@@ -321,7 +353,10 @@ sap.ui.require([
 										fileName: "Change2",
 										variantReference: "varMgmt1"
 									}
-								]
+								],
+								variantChanges: {
+									setTitle: []
+								}
 							}
 						]
 					},
@@ -343,10 +378,26 @@ sap.ui.require([
 			}
 		];
 
+		var aVariantChanges = [
+			{
+				fileName: "Change5",
+				variantReference: "ExistingVariant1",
+				changeType: "setTitle"
+			},
+			{
+				fileName: "Change6",
+				variantReference: "ExistingVariant1",
+				changeType: "setTitle"
+			}
+		];
+
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 1, "then only one change in variant ExistingVariant1");
 		assert.equal(mResult.changes.changes.length, 1, "then one global change exists");
-		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, aChanges);
-		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 2, "then two changes in variant ExistingVariant1");
+		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, aChanges, aVariantChanges);
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 2, "then two changes exist for variant ExistingVariant1");
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"].length, 2, "then two variant changes exist for variant ExistingVariant1");
+		assert.ok( mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"][0].fileName === "Change5" &&
+						mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"][1].fileName === "Change6", "then both variant changes passed as a parameter exist in order" );
 		assert.equal(mResult.changes.changes.length, 2, "then two global changes exist");
 	});
 

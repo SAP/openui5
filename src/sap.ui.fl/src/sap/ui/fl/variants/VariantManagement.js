@@ -293,7 +293,7 @@ sap.ui.define([
 			}
 		});
 
-		var oVariantText = new Title(this.getId() + "-text", {
+		this.oVariantText = new Title(this.getId() + "-text", {
 			text: {
 				path: 'currentVariant',
 				model: VariantManagement.MODEL_NAME,
@@ -304,11 +304,11 @@ sap.ui.define([
 			}
 		});
 
-		oVariantText.addStyleClass("sapUiFlVarMngmtClickable");
-		oVariantText.addStyleClass("sapMTitleStyleH4");
-		oVariantText.addStyleClass("sapUiFlVarMngmtTitle");
+		this.oVariantText.addStyleClass("sapUiFlVarMngmtClickable");
+		this.oVariantText.addStyleClass("sapMTitleStyleH4");
+		this.oVariantText.addStyleClass("sapUiFlVarMngmtTitle");
 		if (Device.system.phone) {
-			oVariantText.addStyleClass("sapUiFlVarMngmtTextMaxWidth");
+			this.oVariantText.addStyleClass("sapUiFlVarMngmtTextMaxWidth");
 		}
 
 		var oVariantModifiedText = new Label(this.getId() + "-modified", {
@@ -333,11 +333,15 @@ sap.ui.define([
 
 		this.oVariantLayout = new HorizontalLayout({
 			content: [
-				oVariantText, oVariantModifiedText, oVariantPopoverTrigger, this.oVariantInvisibleText
+				this.oVariantText, oVariantModifiedText, oVariantPopoverTrigger, this.oVariantInvisibleText
 			]
 		});
 		this.oVariantLayout.addStyleClass("sapUiFlVarMngmtLayout");
 		this.addDependent(this.oVariantLayout);
+	};
+
+	VariantManagement.prototype.getTitle = function() {
+		return this.oVariantText;
 	};
 
 	VariantManagement.prototype._createInnerModel = function() {
@@ -1824,6 +1828,7 @@ sap.ui.define([
 		this._oVariantList = undefined;
 		this.oVariantSelectionPage = undefined;
 		this.oVariantLayout = undefined;
+		this.oVariantText = undefined;
 		this.oVariantInvisibleText = undefined;
 		this._oSearchField = undefined;
 		this._oSearchFieldOnMgmtDialog = undefined;

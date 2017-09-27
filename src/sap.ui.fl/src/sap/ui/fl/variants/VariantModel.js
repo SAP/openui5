@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/model/json/JSONModel", "sap/ui/fl/Utils", "sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Change"
-], function(jQuery, JSONModel, Utils, BaseTreeModifier, Change) {
+	"jquery.sap.global", "sap/ui/model/json/JSONModel", "sap/ui/fl/Utils", "sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Change", "sap/ui/fl/changeHandler/Base"
+], function(jQuery, JSONModel, Utils, BaseTreeModifier, Change, BaseChangeHandler) {
 	"use strict";
 
 	/**
@@ -24,6 +24,7 @@ sap.ui.define([
 	 * @alias sap.ui.fl.variants.VariantModel
 	 * @experimental Since 1.50. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
+
 	var VariantModel = JSONModel.extend("sap.ui.fl.variants.VariantModel", /** @lends sap.ui.fl.variants.VariantModel.prototype */
 	{
 		constructor: function(oData, oFlexController, oComponent, bObserve) {
@@ -95,31 +96,40 @@ sap.ui.define([
 
 	VariantModel.prototype.getVariantManagementReference = function(sVariantReference) {
 		var sVariantManagementReference = "";
+		var iIndex = -1;
 		Object.keys(this.oData).some(function(sKey) {
-			return this.oData[sKey].variants.some(function(oVariant) {
+			return this.oData[sKey].variants.some(function(oVariant, index) {
 				if (oVariant.key === sVariantReference) {
 					sVariantManagementReference = sKey;
+					iIndex = index;
 					return true;
 				}
 			});
 		}.bind(this));
-		return sVariantManagementReference;
+		return {
+				variantManagementReference : sVariantManagementReference,
+				variantIndex : iIndex
+		};
 	};
 
 	VariantModel.prototype.getVariant = function(sVariantReference) {
-		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference);
+		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference).variantManagementReference;
 		return this.oVariantController.getVariant(sVariantManagementReference, sVariantReference);
+	};
+
+	VariantModel.prototype.getVariantProperty = function(sVariantReference, sProperty) {
+		return this.getVariant(sVariantReference).content[sProperty];
 	};
 
 	VariantModel.prototype._addChange = function(oChange) {
 		var sVariantReference = oChange.getVariantReference();
-		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference);
+		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference).variantManagementReference;
 		return this.oVariantController.addChangeToVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
 	VariantModel.prototype._removeChange = function(oChange) {
 		var sVariantReference = oChange.getVariantReference();
-		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference);
+		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference).variantManagementReference;
 		return this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
@@ -226,6 +236,42 @@ sap.ui.define([
 		this.updateCurrentVariant(sVariantManagementReference, sSourceVariantFileName);
 
 		this.checkUpdate(); /*For VariantManagement Control update*/
+	};
+
+	VariantModel.prototype._setVariantProperties = function(sVariantManagementReference, mPropertyBag, bAddChange) {
+		var iVariantIndex = this.getVariantManagementReference(mPropertyBag.variantReference).variantIndex;
+
+		var oData = this.getData();
+		var mNewChangeData = {
+			title : mPropertyBag.title,
+			layer : mPropertyBag.layer
+		};
+		var oChange = null;
+		var oVariant = oData[sVariantManagementReference].variants[iVariantIndex];
+
+		oVariant.title = mPropertyBag.title; /*Variant Model*/
+		var iSortedIndex = this.oVariantController._setVariantData(mNewChangeData, sVariantManagementReference, iVariantIndex); /*Variant Controller*/
+
+		oData[sVariantManagementReference].variants.splice(iVariantIndex, 1);
+		oData[sVariantManagementReference].variants.splice(iSortedIndex, 0, oVariant);
+
+		if (bAddChange) {
+			mNewChangeData.changeType = "setTitle";
+			mNewChangeData.fileType = "ctrl_variant_change";
+			mNewChangeData.fileName = Utils.createDefaultFileName();
+			mNewChangeData.variantReference = mPropertyBag.variantReference;
+			BaseChangeHandler.setTextInChange(mNewChangeData, "title", mPropertyBag.title, "XFLD");
+			oVariant.modified = true;
+
+			oChange = this.oFlexController.createBaseChange(mNewChangeData, mPropertyBag.appComponent);
+			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
+
+		} else {
+			this.oFlexController._oChangePersistence.deleteChange(mPropertyBag.change);
+		}
+		this.setData(oData);
+
+		return oChange;
 	};
 
 	/**

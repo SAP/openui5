@@ -41,13 +41,6 @@ sap.ui.define([
 
 	ControlVariantDuplicate.prototype.MODEL_NAME = "$FlexVariants";
 
-	ControlVariantDuplicate.prototype._getAppComponent = function(oElement) {
-		if (!this._oControlAppComponent) {
-			this._oControlAppComponent = oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
-		}
-		return this._oControlAppComponent;
-	};
-
 	/**
 	 * @override
 	 */
@@ -61,21 +54,21 @@ sap.ui.define([
 	 */
 	ControlVariantDuplicate.prototype.execute = function() {
 		var oVariantManagementControl = this.getElement(),
-			oAppComponent = this._getAppComponent(oVariantManagementControl),
-			sSourceVariantReference = this.getSourceVariantReference(),
-			sNewVariantReference = this.getNewVariantReference();
+		sSourceVariantReference = this.getSourceVariantReference(),
+		sNewVariantReference = this.getNewVariantReference();
+		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 
 		if (!sNewVariantReference) {
 			sNewVariantReference = flUtils.createDefaultFileName(sSourceVariantReference + "_Copy");
 			this.setNewVariantReference(sNewVariantReference);
 		}
 
-		this.sVariantManagementReference = BaseTreeModifier.getSelector(oVariantManagementControl, oAppComponent).id;
-		this.oModel = oAppComponent.getModel(this.MODEL_NAME);
+		this.sVariantManagementReference = BaseTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
+		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
 
 		var mPropertyBag = {
 				variantManagementControl : oVariantManagementControl,
-				appComponent : oAppComponent,
+				appComponent : this.oAppComponent,
 				layer : this.sLayer,
 				newVariantReference : sNewVariantReference,
 				sourceVariantReference : sSourceVariantReference

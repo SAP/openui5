@@ -9,6 +9,7 @@ sap.ui.require([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/ControlVariantSwitch",
 	"sap/ui/rta/command/ControlVariantDuplicate",
+	"sap/ui/rta/command/ControlVariantSetTitle",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/registry/ChangeRegistry",
@@ -36,6 +37,7 @@ sap.ui.require([
 	CommandFactory,
 	ControlVariantSwitch,
 	ControlVariantDuplicate,
+	ControlVariantSetTitle,
 	OverlayRegistry,
 	ElementOverlay,
 	ChangeRegistry,
@@ -144,8 +146,10 @@ sap.ui.require([
 				var oVariantManagementDesignTimeMetadata = {
 					"sap.ui.fl.variants.VariantManagement": {
 						actions : {
-							"switch" : {
-								changeType : "controlVariantSwitch"
+							setTitle: {
+								domRef: function (oControl) {
+									return this.oVariantManagementControl.getTitle().getDomRef();
+								}.bind(this)
 							}
 						}
 					}
@@ -190,6 +194,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("when registerElementOverlay is called with VariantManagement control Overlay", function(assert) {
+			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			assert.strictEqual(this.oObjectPageLayoutOverlay.getVariantManagement(), "varMgtKey", "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
 			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
@@ -228,35 +233,27 @@ sap.ui.require([
 			assert.ok(bEnabled, "then variant switch is enabled for VariantManagement control");
 		});
 
-		QUnit.test("when isVariantDuplicateEnabled is called with VariantManagement overlay", function(assert) {
-			assert.notOk(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oObjectPageLayoutOverlay), "then duplicate not enabled for a non VariantManagement control overlay with variantReference");
-			assert.ok(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oVariantManagementOverlay), "then duplicate enabled for a VariantManagement control overlay withvariantReference");
-			assert.notOk(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oLayoutOuterOverlay), "then duplicate not enabled for a non VariantManagement control overlay without variantReference");
+		QUnit.test("when isVariantDuplicateAvailable is called with different overlays", function(assert) {
+			assert.notOk(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oObjectPageLayoutOverlay), "then duplicate not available for a non VariantManagement control overlay with variantReference");
+			assert.ok(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oVariantManagementOverlay), "then duplicate available for a VariantManagement control overlay withvariantReference");
+			assert.notOk(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oLayoutOuterOverlay), "then duplicate not available for a non VariantManagement control overlay without variantReference");
 		});
 
-		QUnit.test("when isVariantDuplicateAvailable is called with VariantManagement overlay", function(assert) {
-			var bAvailable = this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oVariantManagementOverlay);
-			assert.ok(bAvailable, "then variant duplicate is available for VariantManagement control");
+		QUnit.test("when isVariantDuplicateEnabled is called with VariantManagement overlay", function(assert) {
+			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			var bEnabled = this.oControlVariantPlugin.isVariantDuplicateEnabled(this.oVariantManagementOverlay);
+			assert.ok(bEnabled, "then variant duplicate is enabled for VariantManagement control");
 		});
 
 		QUnit.test("when isVariantRenameAvailable is called with VariantManagement overlay", function(assert) {
-			var bAvailable = this.oControlVariantPlugin.isVariantRenameAvailable(this.oVariantManagementOverlay);
+			var bAvailable = this.oControlVariantPlugin.isRenameAvailable(this.oVariantManagementOverlay);
 			assert.ok(bAvailable, "then variant rename is available for VariantManagement control");
 		});
 
 		QUnit.test("when isVariantRenameEnabled is called with VariantManagement overlay", function(assert) {
-			var bAvailable = this.oControlVariantPlugin.isVariantRenameEnabled(this.oVariantManagementOverlay);
-			assert.notOk(bAvailable, "then variant rename is not implemented yet");
-		});
-
-		QUnit.test("when isVariantDuplicateAvailable is called with VariantManagement overlay", function(assert) {
-			var bAvailable = this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oVariantManagementOverlay);
-			assert.ok(bAvailable, "then variant duplicate is available for VariantManagement control");
-		});
-
-		QUnit.test("when isVariantDuplicateEnabled is called with VariantManagement overlay", function(assert) {
-			var bAvailable = this.oControlVariantPlugin.isVariantDuplicateEnabled(this.oVariantManagementOverlay);
-			assert.notOk(bAvailable, "then variant duplicate is not implemented yet");
+			var bEnabled = this.oControlVariantPlugin.isRenameEnabled(this.oVariantManagementOverlay);
+			assert.ok(bEnabled, "then variant rename is enabled for VariantManagement control");
 		});
 
 		QUnit.test("when isVariantConfigureAvailable is called with VariantManagement overlay", function(assert) {
@@ -265,8 +262,8 @@ sap.ui.require([
 		});
 
 		QUnit.test("when isVariantConfigureEnabled is called with VariantManagement overlay", function(assert) {
-			var bAvailable = this.oControlVariantPlugin.isVariantConfigureEnabled(this.oVariantManagementOverlay);
-			assert.notOk(bAvailable, "then variant configure is not implemented yet");
+			var bEnabled = this.oControlVariantPlugin.isVariantConfigureEnabled(this.oVariantManagementOverlay);
+			assert.notOk(bEnabled, "then variant configure is not implemented yet");
 		});
 
 		QUnit.test("when switchVariant is called", function(assert) {
@@ -281,6 +278,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("when duplicateVariant is called", function(assert) {
+			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
 			var done = assert.async();
 			var oModelData = {};
 			oModelData[this.sLocalVariantManagementId] = {
@@ -304,7 +302,30 @@ sap.ui.require([
 		});
 
 		QUnit.test("when renameVariant is called", function(assert) {
-			assert.ok(this.oControlVariantPlugin.renameVariant, "then renameVariant added to the  ElementOverlay prototype");
+			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			this.oVariantManagementOverlay.setSelectable(true);
+			var done = assert.async();
+			var fnDone = assert.async();
+			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.ControlVariant.startEdit', function (sChannel, sEvent, mParams) {
+				if (mParams.overlay === this.oVariantManagementOverlay) {
+					assert.strictEqual(this.oVariantManagementOverlay.getSelected(), true, "then the overlay is still selected");
+					this.oControlVariantPlugin._$oEditableControlDomRef.text("Test");
+					this.oControlVariantPlugin._$editableField.text(this.oControlVariantPlugin._$oEditableControlDomRef.text());
+					var $Event = jQuery.Event("keydown");
+					$Event.keyCode = jQuery.sap.KeyCodes.ENTER;
+					this.oControlVariantPlugin._$editableField.trigger($Event);
+					sap.ui.getCore().applyChanges();
+					fnDone();
+				}
+			}, this);
+			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
+			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+				assert.ok(oEvent, "then fireElementModified is called once");
+				var oCommand = oEvent.getParameter("command");
+				assert.ok(oCommand instanceof ControlVariantSetTitle, "then an set title Variant event is received with a setTitle command");
+				done();
+			});
 		});
 
 		QUnit.test("when duplicateVariant is called", function(assert) {
@@ -330,6 +351,7 @@ sap.ui.require([
 
 		//Integration Test
 		QUnit.test("when ControlVariant Plugin is added to designTime and a new overlay is rendered dynamically", function(assert) {
+			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
 			var done = assert.async();
 			assert.notOk(this.oButtonOverlay.getVariantManagement(), "then VariantManagement Key is initially undefined");
 			this.oDesignTime.addPlugin(this.oControlVariantPlugin);
@@ -349,15 +371,15 @@ sap.ui.require([
 			var bDuplicateAvailable = true;
 
 			// Rename
-			sandbox.stub(this.oControlVariantPlugin, "isVariantRenameAvailable", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'available' function calls isVariantRenameAvailable with the correct overlay");
+			sandbox.stub(this.oControlVariantPlugin, "isRenameAvailable", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'available' function calls isRenameAvailable with the correct overlay");
 				return true;
 			}.bind(this));
 			sandbox.stub(this.oControlVariantPlugin, "renameVariant", function(){
 				assert.ok(true, "the 'handler' function calls the renameVariant method");
 			});
-			sandbox.stub(this.oControlVariantPlugin, "isVariantRenameEnabled", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isVariantRenameEnabled with the correct overlay");
+			sandbox.stub(this.oControlVariantPlugin, "isRenameEnabled", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isRenameEnabled with the correct overlay");
 			}.bind(this));
 
 			// Duplicate
@@ -423,7 +445,7 @@ sap.ui.require([
 
 			var aMenuItems = this.oControlVariantPlugin.getMenuItems(this.oButtonOverlay);
 
-			assert.equal(aMenuItems[0].id, "CTX_VARIANT_RENAME", "there is an entry for rename variant");
+			assert.equal(aMenuItems[0].id, "CTX_VARIANT_SET_TITLE", "there is an entry for rename variant");
 			assert.equal(aMenuItems[0].rank, 210, "and the entry has the correct rank");
 			aMenuItems[0].handler([this.oButtonOverlay]);
 			aMenuItems[0].enabled(this.oButtonOverlay);

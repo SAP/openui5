@@ -106,17 +106,62 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
 	 */
-	FlexController.prototype.createChange = function (oChangeSpecificData, oControl) {
-		var oChangeFileContent, oChange, ChangeHandler;
-
-		if (!oControl) {
-			throw new Error("A flexibility change cannot be created without a targeted control.");
-		}
+	FlexController.prototype.createBaseChange = function (oChangeSpecificData, oAppComponent) {
+		var oChangeFileContent, oChange;
 
 		var aCurrentDesignTimeContext = ContextManager._getContextIdsFromUrl();
 
 		if (aCurrentDesignTimeContext.length > 1) {
 			throw new Error("More than one DesignTime Context is currently active.");
+		}
+
+		if (!oAppComponent) {
+			throw new Error("No Application Component found - to offer flexibility. Valid relation to its owning application component must be present.");
+		}
+
+		oChangeSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
+		oChangeSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
+		oChangeSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
+
+		//fallback in case no application descriptor is available (e.g. during unit testing)
+		var sAppVersion = this.getAppVersion();
+		var oValidAppVersions = {
+			creation: sAppVersion,
+			from: sAppVersion
+		};
+		if (sAppVersion && oChangeSpecificData.developerMode) {
+			oValidAppVersions.to = sAppVersion;
+		}
+
+		oChangeSpecificData.validAppVersions = oValidAppVersions;
+
+		oChangeFileContent = Change.createInitialFileContent(oChangeSpecificData);
+		oChange = new Change(oChangeFileContent);
+
+		if (oChangeSpecificData.variantReference) {
+			oChange.setVariantReference(oChangeSpecificData.variantReference);
+		}
+
+		return oChange;
+	};
+
+	/**
+	 * Create a change
+	 *
+	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
+	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created.
+	 * @param {sap.ui.core.Control | map} oControl - control for which the change will be added
+	 * @param {string} oControl.id id of the control in case a map has been used to specify the control
+	 * @param {sap.ui.base.Component} oControl.appComponent application component of the control at runtime in case a map has been used
+	 * @param {string} oControl.controlType control type of the control in case a map has been used
+	 * @returns {sap.ui.fl.Change} the created change
+	 * @public
+	 */
+	FlexController.prototype.createChange = function (oChangeSpecificData, oControl) {
+		var oChange, ChangeHandler;
+
+		if (!oControl) {
+			throw new Error("A flexibility change cannot be created without a targeted control.");
 		}
 
 		var sControlId = oControl.id || oControl.getId();
@@ -142,39 +187,20 @@ sap.ui.define([
 			oChangeSpecificData.selector.idIsLocal = false;
 		}
 
+		oChange = this.createBaseChange(oChangeSpecificData, oAppComponent);
 
-		oChangeSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
-		oChangeSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
-		oChangeSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
-
-		//fallback in case no application descriptor is available (e.g. during unit testing)
-		var sAppVersion = this.getAppVersion();
-		var oValidAppVersions = {
-			creation: sAppVersion,
-			from: sAppVersion
-		};
-		if (sAppVersion && oChangeSpecificData.developerMode) {
-			oValidAppVersions.to = sAppVersion;
-		}
-
-		oChangeSpecificData.validAppVersions = oValidAppVersions;
-
-		oChangeFileContent = Change.createInitialFileContent(oChangeSpecificData);
-		oChange = new Change(oChangeFileContent);
 		// for getting the change handler the control type and the change type are needed
 		var sControlType = oControl.controlType || Utils.getControlType(oControl);
 		if (!sControlType) {
 			throw new Error("No control type found - the change handler can not be retrieved.");
 		}
+
 		ChangeHandler = this._getChangeHandler(oChange, sControlType);
 		if (ChangeHandler) {
 			ChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent
 			});
-			if (ChangeHandler.revertChange && oChangeSpecificData["variantManagementReference"] && oChangeSpecificData["variantReference"]) {
-				oChange.setVariantReference(oChangeSpecificData["variantReference"]);
-			}
 		} else {
 			throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
 		}
