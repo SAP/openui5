@@ -50,6 +50,25 @@
 		assert.notEqual(jQuery.sap.domById("os3"), null, "Object Status #3 should be rendered.");
 	});
 
+	QUnit.test("render a placeholder if _isEmpty", function(assert) {
+		//arrange
+		var oOS = new sap.m.ObjectStatus(),
+			$OS;
+
+		//act
+		oOS.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$OS = jQuery("#" + oOS.getId());
+
+		//assert
+		assert.equal($OS.length, 1, "rendered even though it is empty");
+		assert.equal($OS.eq(0).css("display"), "none", "not visible because it is empty");
+
+		//clean
+		oOS.destroy();
+	});
+
 	/******************************************************************/
 
 	QUnit.module("Internal API");
