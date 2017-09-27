@@ -249,17 +249,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 
-	AnalyticalTable.prototype.bindRows = function(oBindingInfo) {
-		oBindingInfo = Table._getSanitizedBindingInfo(arguments);
-
-		if (oBindingInfo != null) {
-			this._applyAnalyticalBindingInfo(oBindingInfo);
-			this._updateTotalRow(true);
-		}
-
-		return Table.prototype.bindRows.call(this, oBindingInfo);
-	};
-
 	/**
 	 * This function will be called by either by {@link sap.ui.base.ManagedObject#bindAggregation} or {@link sap.ui.base.ManagedObject#setModel}.
 	 *
@@ -271,6 +260,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
 			this.setProperty("firstVisibleRow", 0, true);
 
+			this._applyAnalyticalBindingInfo(oBindingInfo);
+			this._updateTotalRow(true);
 			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
 
 			// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
