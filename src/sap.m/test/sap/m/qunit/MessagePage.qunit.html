@@ -331,7 +331,7 @@
 
 			// Act: runtime change of the current Icon with new one, using standard icon URI.
 			// In this case the MessagePage just updates the existing Icon control src.
- 			oMessagePage.setIcon(sNewIcon);
+			oMessagePage.setIcon(sNewIcon);
 
 			assert.equal(oMessagePage.getIcon(), sNewIcon, "New Icon is set.");
 
@@ -353,6 +353,52 @@
 			oMessagePage.setIcon(sNewImage);
 
 			assert.equal(oMessagePage.getIcon(), sNewImage, "New Image is set.");
+
+			// Clean up
+			oMessagePage.destroy();
+		});
+
+		QUnit.test("Set iconAlt ", function(assert) {
+			// Arrange
+			var oMessagePage = new sap.m.MessagePage(messagePageId,{
+				text: "One Line Text",
+				description: "Description",
+				icon: "documents",
+				iconAlt: "DocumentsAlt"
+			});
+
+			// System under test
+			oMessagePage.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oMessagePage._oIconControl.getAlt(), "DocumentsAlt", "Alt property of the inner Icon image is properly set");
+
+			// Clean up
+			oMessagePage.destroy();
+		});
+
+		QUnit.test("Update iconAlt", function(assert) {
+			// Arrange
+			var oMessagePage = new sap.m.MessagePage(messagePageId,{
+				text: "One Line Text",
+				description: "Description",
+				icon: "documents"
+			});
+
+			// System under test
+			oMessagePage.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oMessagePage._oIconControl.getAlt(), "", "Alt property of the inner Icon image is empty initially");
+
+			// Act
+			oMessagePage.setIconAlt("DocumentsAlt");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oMessagePage._oIconControl.getAlt(), "DocumentsAlt", "Alt property of the inner Icon image is properly updated");
 
 			// Clean up
 			oMessagePage.destroy();
