@@ -507,6 +507,22 @@
 		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
 	});
 
+	QUnit.test("Focus is not set if file uploader is invisible", function(assert) {
+		//Arrange
+		var oItem = new sap.m.UploadCollectionItem();
+		var oJQuerySpy = sinon.spy(this.oUploadCollection._oFileUploader, "$");
+		this.oUploadCollection._oItemForDelete = {
+			_iLineNumber: 0
+		};
+		this.oUploadCollection.aItems = [ oItem ];
+
+		//Act
+		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+
+		//Assert
+		assert.equal(oJQuerySpy.callCount, 0, "The FileUploader's DOM reference has not been accessed.");
+	});
+
 	QUnit.module("PendingUpload: upload method", {
 
 		beforeEach: function() {
