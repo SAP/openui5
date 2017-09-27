@@ -406,7 +406,7 @@ sap.ui.define([
 		/**
 		 * This is a custom model type for validating a URL ending with sap/ui/support/
 		 */
-		CustomTypeURL : SimpleType.extend("URL", {
+		CustomTypeURL : SimpleType.extend("sap.ui.core.support.techinfo.CustomTypeURL", {
 			formatValue: function (oValue) {
 				return oValue;
 			},
@@ -437,7 +437,7 @@ sap.ui.define([
 		 *  - list of modules separated with commas
 		 * Each module can contain wildcards with * or ** and regular expression characters
 		 */
-		CustomTypeMode : SimpleType.extend("URL", {
+		CustomTypeMode : SimpleType.extend("sap.ui.core.support.techinfo.CustomTypeMode", {
 			formatValue: function (oValue) {
 				return oValue;
 			},
