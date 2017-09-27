@@ -492,6 +492,27 @@
 		check({min: -100, max: 2000, range: [-500, 3000]});
 	});
 
+	QUnit.test("Swap tooltips when values are swapped.", function (assert) {
+		//Setup
+		var oRangeSlider = new sap.m.RangeSlider({
+			showAdvancedTooltip: false,
+			showHandleTooltip: false,
+			enableTickmarks: true,
+			range: [8, 2],
+			min: 2,
+			max: 10,
+			step: 1
+		}).placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oRangeSlider.getDomRef("LeftTooltip").innerHTML, "2");
+		assert.strictEqual(oRangeSlider.getDomRef("RightTooltip").innerHTML, "8");
+
+		//Cleanup
+		oRangeSlider.destroy();
+	});
+
 	QUnit.module("SAP KH", {
 		beforeEach: function () {
 			this.oRangeSlider = new sap.m.RangeSlider({range: [20, 30]});
@@ -990,4 +1011,3 @@
 		oRangeSlider = null;
 	});
 }());
-
