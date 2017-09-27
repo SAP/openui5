@@ -1038,7 +1038,7 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the effect of a trailing
 	 * slash.
 	 *
-	 * @param {string} sPath
+	 * @param {string} [sPath=""]
 	 *   A relative or absolute path within the data model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
@@ -1052,7 +1052,7 @@ sap.ui.define([
 	ODataModel.prototype.resolve = function (sPath, oContext) {
 		var sResolvedPath;
 
-		if (sPath[0] === "/") {
+		if (sPath && sPath[0] === "/") {
 			sResolvedPath = sPath;
 		} else if (oContext) {
 			if (sPath) {
