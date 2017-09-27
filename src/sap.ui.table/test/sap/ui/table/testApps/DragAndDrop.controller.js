@@ -21,15 +21,15 @@ sap.ui.define([
 			oTable.setModel(oModel);
 			oTreeTable.setModel(oModel);
 
-			oTable.setToolbar(new sap.m.Toolbar());
+			oTable.addExtension(new sap.m.Toolbar());
 			TABLESETTINGS.init(oTable, function(oButton) {
-				oTable.getToolbar().addContent(oButton);
+				oTable.getExtension()[0].addContent(oButton);
 			});
 
-			oTreeTable.setToolbar(new sap.m.Toolbar());
+			oTreeTable.addExtension(new sap.m.Toolbar());
 			// TODO: Make table settings interoperable with multi table pages
 			//TABLESETTINGS.init(oTreeTable, function(oButton) {
-			//	oTreeTable.getToolbar().addContent(oButton);
+			//	oTreeTable.getExtension()[0].addContent(oButton);
 			//});
 
 			window.oTable = oTable;
