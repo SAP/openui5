@@ -2067,6 +2067,74 @@
 			}, delay);
 		});
 
+		test("Reopening filter detail page after cancel button click", function () {
+			var that = this,
+					done = assert.async(),
+					filter = new sap.m.ViewSettingsFilterItem({
+						multiSelect: true,
+						key: "STATUS",
+						text: "STATUS",
+						items: [
+							new sap.m.ViewSettingsItem({
+								text: "Text 1",
+								selected: false
+							}),
+							new sap.m.ViewSettingsItem({
+								text: "Text 2",
+								selected: true
+							})
+						]
+					});
+
+			that.oVSD.addFilterItem(filter);
+
+			// Step 1
+			// Open ViewSettingsDialog
+			that.oVSD.open();
+			this.oVSD._dialog.attachAfterOpen(afterFirstOpen);
+
+			function afterFirstOpen() {
+				// Step 2
+				// Simulate navigation to filter details page of STATUS filter item
+				var vsdFilterItem = that.oVSD.getFilterItems()[0];
+				that.oVSD._switchToPage(3, vsdFilterItem);
+
+				// Assert selected items
+				var aFilterItems = that.oVSD._filterDetailList.getItems();
+				strictEqual(aFilterItems[0].getSelected(), false, "First item initially should be not selected");
+				strictEqual(aFilterItems[1].getSelected(), true, "Second item initially should be selected");
+
+				// Simulate confirm button click
+				that.oVSD._onConfirm();
+				that.oVSD._dialog.detachAfterOpen(afterFirstOpen);
+
+				// Open ViewSettingsDialog
+				that.oVSD.open();
+				that.oVSD._dialog.attachAfterOpen(afterSecondOpen);
+			}
+
+			function afterSecondOpen() {
+				// Step 3
+				// Simulate cancel button click
+				that.oVSD._onCancel();
+
+				that.oVSD._dialog.detachAfterOpen(afterSecondOpen);
+				that.oVSD._dialog.attachAfterClose(afterClose);
+			}
+
+			function afterClose() {
+				// Step 4
+				// Assert selected items
+				var aFilterItems = that.oVSD._filterDetailList.getItems();
+				strictEqual(aFilterItems[0].getSelected(), false, "First item should be not selected after cancel button click");
+				strictEqual(aFilterItems[1].getSelected(), true, "Second item should should be selected after cancel button click");
+
+				that.oVSD._dialog.detachAfterClose(afterClose);
+
+				done();
+			}
+		});
+
 		test("Reset Button is available on second open of the ViewSettinsDialog", function () {
 			var modelData = this.getFirstModelData();
 			var modelData2 = this.getSecondModelData();
