@@ -31,12 +31,13 @@ sap.ui.define([
 		 * @public
 		 */
 		onInit: function() {
-			var oVersionInfo = sap.ui.getVersionInfo(),
-				oViewModel = new JSONModel({
+
+			sap.ui.getVersionInfo({async: true}).then(function (oVersionInfo) {
+				var oViewModel = new JSONModel({
 					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
 				});
-
-			this.getView().setModel(oViewModel, "appView");
+				this.getView().setModel(oViewModel, "appView");
+			}.bind(this));
 
 			// manually call the handler once at startup as device API won't do this for us
 			this._onOrientationChange({
