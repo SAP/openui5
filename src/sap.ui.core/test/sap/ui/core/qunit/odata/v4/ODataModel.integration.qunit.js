@@ -11,7 +11,9 @@ sap.ui.require([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",
-	"sap/ui/test/TestUtils"
+	"sap/ui/test/TestUtils",
+	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
+	"sap/ui/table/Table"
 ], function (jQuery, ColumnListItem, Text, Controller, Filter, FilterOperator, OperationMode,
 		ODataModel, Sorter, TestUtils) {
 	/*global QUnit, sinon */
