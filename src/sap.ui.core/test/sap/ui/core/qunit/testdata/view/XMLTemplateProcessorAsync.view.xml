@@ -1,0 +1,11 @@
+<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view">
+    <Panel id="panel">
+        <content>
+            <Button text="Button" id="button"></Button>
+            <Button text="StashedButton" id="stashedButton" stashed="true"></Button>
+            <core:ExtensionPoint name="extension">
+                <Button text="ExtensionButton" id="extensionButton"></Button>
+            </core:ExtensionPoint>
+        </content>
+    </Panel>
+</mvc:View>
