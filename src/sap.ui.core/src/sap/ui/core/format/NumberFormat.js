@@ -718,7 +718,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			sResult += oOptions.decimalSeparator + sFractionPart;
 		}
 
-		if (oShortFormat && oShortFormat.formatString && oOptions.showScale) {
+		if (oShortFormat && oShortFormat.formatString && oOptions.showScale && oOptions.type !== mNumberType.CURRENCY) {
 			// Get correct format string based on actual decimal/fraction digits
 			sPluralCategory = this.oLocaleData.getPluralCategory(sIntegerPart + "." + sFractionPart);
 			oShortFormat.formatString = this.oLocaleData.getDecimalFormat(oOptions.style, oShortFormat.key, sPluralCategory);
@@ -729,8 +729,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			sResult = sResult.replace(/'.'/g, ".");
 		}
 
-		if (oOptions.type == mNumberType.CURRENCY) {
+		if (oOptions.type === mNumberType.CURRENCY) {
 			sPattern = oOptions.pattern;
+
+			if (oShortFormat && oShortFormat.formatString && oOptions.showScale) {
+				// Get correct format string based on actual decimal/fraction digits
+				sPluralCategory = this.oLocaleData.getPluralCategory(sIntegerPart + "." + sFractionPart);
+				sPattern = this.oLocaleData.getCurrencyFormat("short", oShortFormat.key, sPluralCategory);
+				//formatString may contain '.' (quoted to differentiate them decimal separator)
+				//which must be replaced with .
+				sPattern = sPattern.replace(/'.'/g, ".");
+			}
 
 			// The currency pattern is definde in some locale, for example in "ko", as: ¤#,##0.00;(¤#,##0.00)
 			// where the pattern after ';' should be used for negative numbers.
