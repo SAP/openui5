@@ -1122,7 +1122,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchCache: cache promise !== binding's cache promise", function (assert) {
+	QUnit.test("fetchCache: later calls to fetchCache exist => discard cache", function (assert) {
 		var oBinding = new ODataBinding({
 				oCachePromise : _SyncPromise.resolve(),
 				doCreateCache : function () {},
