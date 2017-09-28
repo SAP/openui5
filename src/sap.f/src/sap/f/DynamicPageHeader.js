@@ -102,6 +102,7 @@ sap.ui.define(["./library",
 			LABEL_SNAPPED: DynamicPageHeader._getResourceBundle().getText("SNAPPED_HEADER"),
 			LABEL_PINNED: DynamicPageHeader._getResourceBundle().getText("PIN_HEADER"),
 			LABEL_UNPINNED: DynamicPageHeader._getResourceBundle().getText("UNPIN_HEADER"),
+			TOOLTIP_COLLAPSE_BUTTON: DynamicPageHeader._getResourceBundle().getText("COLLAPSE_HEADER_BUTTON_TOOLTIP"),
 			STATE_TRUE: "true",
 			STATE_FALSE: "false"
 		};
@@ -254,7 +255,8 @@ sap.ui.define(["./library",
 				var oCollapseButton = new Button({
 					id: this.getId() + "-collapseBtn",
 					icon: "sap-icon://slim-arrow-up",
-					press: this._onCollapseButtonPress.bind(this)
+					press: this._onCollapseButtonPress.bind(this),
+					tooltip: DynamicPageHeader.ARIA.TOOLTIP_COLLAPSE_BUTTON
 				}).addStyleClass("sapFDynamicPageToggleHeaderIndicator");
 
 				oCollapseButton.onmouseover = this._onCollapseButtonMouseOver.bind(this);
