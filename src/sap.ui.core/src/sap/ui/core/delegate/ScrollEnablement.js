@@ -384,7 +384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				}
 
 				// Let container scroll into the configured directions
-				if (Device.os.ios || Device.os.blackberry) {
+				if (Device.os.ios) {
 					$Container
 						.css("overflow-x", this._bHorizontal && !this._bDragScroll ? "scroll" : "hidden")
 						.css("overflow-y", this._bVertical && !this._bDragScroll ? "scroll" : "hidden")
@@ -458,25 +458,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 					return;
 				}
 
-				this._iLastTouchMoveTime = 0;
-
 				// Drag instead of native scroll
-				// 1. when requested explicitly
-				// 2. bypass Windows Phone 8.1 scrolling issues when soft keyboard is opened
-				this._bDoDrag = this._bDragScroll || Device.os.windows_phone && /(INPUT|TEXTAREA)/i.test(document.activeElement.tagName);
-
-				// find if container is scrollable vertically or horizontally
-				if (!this._scrollable) {
-					this._scrollable = {};
-				}
-				this._scrollable.vertical = this._bVertical && container.scrollHeight > container.clientHeight;
-				this._scrollable.horizontal = this._bHorizontal && container.scrollWidth > container.clientWidth;
+				this._bDoDrag = this._bDragScroll;
 
 				// Store initial coordinates for drag scrolling
 				var point = oEvent.touches ? oEvent.touches[0] : oEvent;
 				this._iX = point.pageX;
 				this._iY = point.pageY;
+
 				if (this._oIOSScroll) { // preventing rubber page
+					// find if container is scrollable vertically or horizontally
+					if (!this._scrollable) {
+						this._scrollable = {};
+					}
+					this._scrollable.vertical = this._bVertical && container.scrollHeight > container.clientHeight;
+					this._scrollable.horizontal = this._bHorizontal && container.scrollWidth > container.clientWidth;
 					if (!this._scrollable.vertical) {
 						this._oIOSScroll.iTopDown = 0;
 					} else if (container.scrollTop === 0) {
@@ -556,16 +552,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 					return;
 				}
 
-				if (Device.os.blackberry) {
-					if (this._iLastTouchMoveTime && oEvent.timeStamp - this._iLastTouchMoveTime < 100) {
-						oEvent.stopPropagation();
-					} else {
-						this._iLastTouchMoveTime = oEvent.timeStamp;
+				if (this._oIOSScroll) {
+					if (this._scrollable.vertical || this._scrollable.horizontal && this._iDirection == "h") {
+						oEvent.setMarked &&  oEvent.setMarked(); // see jQuery.sap.mobile.js
 					}
-				}
-
-				if (!this._oIOSScroll || this._scrollable.vertical || this._scrollable.horizontal && this._iDirection == "h") {
-					oEvent.setMarked &&  oEvent.setMarked(); // see jQuery.sap.mobile.js
 				}
 			},
 
@@ -661,8 +651,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 					this._sResizeListenerId = ResizeHandler.register($Container[0], _fnRefresh);
 				}
 
+				//
 				// Set event listeners
-				$Container.scroll(jQuery.proxy(this._onScroll, this));
+				//
+				$Container.on("scroll", this._onScroll.bind(this));
 
 				var oContainerRef = $Container[0];
 				function addEventListeners (sEvents, fListener) {
@@ -682,17 +674,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 					return oEvent.pointerType == "touch" ? this._onEnd(oEvent) : this._onMouseUp(oEvent);
 				}
 
+				// Set pointer, touch or mouse event listeners, if needed:
 				if (Device.support.pointer && Device.system.desktop) {
-					// Chrome 55 cancels pointer events on Android too early, use them on desktop only
-					addEventListeners("pointerdown", onPointerDown.bind(this));
-					addEventListeners("pointermove", onPointerMove.bind(this));
-					addEventListeners("pointerup pointercancel pointerleave", onPointerUp.bind(this));
+					// Desktop + pointer events: drag scroll (IconTabBar, Tokenizer)
+					if (this._bDragScroll) {
+						addEventListeners("pointerdown", onPointerDown.bind(this));
+						addEventListeners("pointermove", onPointerMove.bind(this));
+						addEventListeners("pointerup pointercancel pointerleave", onPointerUp.bind(this));
+					}
 				} else if (Device.support.touch) {
-					$Container
-						.on("touchcancel touchend", this._onEnd.bind(this))
-						.on("touchstart", this._onStart.bind(this))
-						.on("touchmove", this._onTouchMove.bind(this));
+					// Touch devices: IOS, drag scroll, PullToRefresh
+					if (this._bDragScroll || this._oIOSScroll || this._oPullDown && this._oPullDown._bTouchMode) {
+						$Container
+							.on("touchcancel touchend", this._onEnd.bind(this))
+							.on("touchstart", this._onStart.bind(this))
+							.on("touchmove", this._onTouchMove.bind(this));
+					}
 				} else if (this._bDragScroll) {
+					// Everything else: drag scroll
 					$Container
 						.on("mouseup mouseleave", this._onMouseUp.bind(this))
 						.mousedown(this._onMouseDown.bind(this))
