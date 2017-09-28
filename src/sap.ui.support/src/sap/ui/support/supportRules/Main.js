@@ -345,6 +345,11 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			}, this);
 		}
 
+		CommunicationBus.subscribe(channelNames.POST_UI_INFORMATION, function (data) {
+			this._oDataCollector.setSupportAssistantLocation(data.location);
+			this._oDataCollector.setSupportAssistantVersion(data.version);
+		}, this);
+
 		CommunicationBus.subscribe(channelNames.GET_AVAILABLE_COMPONENTS, function () {
 			CommunicationBus.publish(channelNames.POST_AVAILABLE_COMPONENTS, Object.keys(this._oCore.mObjects.component));
 		}, this);
@@ -904,14 +909,15 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * @returns {object} Contains all the information required to create a report
 	 */
 	Main.prototype._getReportData = function (oReportConstants) {
-		var issues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
-			rules = this._mRuleSets,
-			selectedRules = this._oSelectedRulesIds;
+		var mIssues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
+			mRules = this._mRuleSets,
+			mSelectedRules = this._oSelectedRulesIds;
+
 		return {
-			issues: issues,
+			issues: mIssues,
 			technical: this._oDataCollector.getTechInfoJSON(),
 			application: this._oDataCollector.getAppInfo(),
-			rules: IssueManager.getRulesViewModel(rules, selectedRules, issues),
+			rules: IssueManager.getRulesViewModel(mRules, mSelectedRules, mIssues),
 			scope: {
 				executionScope: this._oExecutionScope,
 				scopeDisplaySettings: {

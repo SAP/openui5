@@ -51,6 +51,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/handlebars', 'sap/ui/supp
 				});
 				buffer.push("</table>");
 			});
+		},
+		subheader: function (buffer, title) {
+			buffer.push("<tr class='sapUiSupportTitle'><td valign='top' colspan='2'>", "<label class='sapUiSupportLabel'>",
+				jQuery.sap.escapeHTML(title || ""), "</label></td></tr>");
 		}
 	};
 
@@ -87,6 +91,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/handlebars', 'sap/ui/supp
 			var html = ["<div class='sapUiSupportToolbar'>",
 						"<div><div class='sapUiSupportTechInfoCntnt'>",
 						"<table border='0' cellpadding='3'>"];
+			techInfoRenderer.subheader(html, "Support Assistant Information");
+			techInfoRenderer.line(html, true, true, "Location", technicalInfo.supportAssistant.location);
+			techInfoRenderer.line(html, true, true, "Version", technicalInfo.supportAssistant.versionAsString);
+			techInfoRenderer.subheader(html, "Application Information");
 			techInfoRenderer.line(html, true, true, "SAPUI5 Version", function(buffer){
 				var sapUI5Version = technicalInfo.sapUi5Version;
 				if (sapUI5Version && sapUI5Version.version) {
