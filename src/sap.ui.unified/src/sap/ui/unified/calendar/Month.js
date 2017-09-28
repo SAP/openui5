@@ -839,8 +839,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						_updateSelection.call(this, oEndDate, oStartDate);
 					}
 				}
-			}else {
-				var oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($Target.attr("data-sap-day"), this.getPrimaryCalendarType()));
+			} else {
+				var oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($Target.attr("data-sap-day")), this.getPrimaryCalendarType());
 
 				if (!oFocusedDate.isSame(oOldFocusedDate)) {
 					if ($Target.hasClass("sapUiCalItemOtherMonth")) {
@@ -1688,7 +1688,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				$DomRef = jQuery(aDomRefs[i]);
 				bStart = false;
 				bEnd = false;
-				oDay = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), sap.ui.core.CalendarType.Gregorian));
+				oDay = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day")), sap.ui.core.CalendarType.Gregorian);
 				if (oDay.isSame(aStartDate[0])) {
 					$DomRef.addClass("sapUiCalItemSelStart");
 					bStart = true;
