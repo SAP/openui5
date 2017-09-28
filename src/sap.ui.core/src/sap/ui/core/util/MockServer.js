@@ -820,50 +820,80 @@ sap.ui
 			 */
 			MockServer.prototype._getOdataQuerySelect = function(aDataSet, sODataQueryValue, sEntitySetName) {
 				var that = this;
-				var sPropName, sComplexType;
+				var sPropName, sComplexOrNavProperty;
 				var aProperties = sODataQueryValue.split(',');
 				var aSelectedDataSet = [];
 				var oPushedObject;
 				var oDataEntry = aDataSet[0] ? aDataSet[0][aProperties[0].split('/')[0]] : null;
 				if (!(oDataEntry != null && oDataEntry.results && oDataEntry.results.length > 0)) {
-					var fnCreatePushedEntry = function(aProperties, oData, oPushedObject, sParentName) {
-						if (oData["__metadata"]) {
-							oPushedObject["__metadata"] = oData["__metadata"];
-						}
-						jQuery.each(aProperties, function(i, sPropertyName) {
-							var iComplexType = sPropertyName.indexOf("/");
-							// this is a complex type property
-							if (iComplexType !== -1) {
-								sPropName = sPropertyName.substring(iComplexType + 1);
-								sComplexType = sPropertyName.substring(0, iComplexType);
-								if (!oPushedObject[sComplexType]) {
-									oPushedObject[sComplexType] = {};
-								}
-								oPushedObject[sComplexType] = fnCreatePushedEntry([sPropName], oData[sComplexType], oPushedObject[sComplexType], sComplexType);
-								// this is a simple property
-							} else {
-								if (oData && !oData.hasOwnProperty(sPropertyName)) {
-									var bExist = false;
-									var aTypeProperties = [];
-									if (sParentName) {
-										var sTargetEntitySet = that._mEntitySets[sEntitySetName].navprops[sParentName].to.entitySet;
-										aTypeProperties = that._mEntityTypes[that._mEntitySets[sTargetEntitySet].type].properties;
-										for (var i = 0; i < aTypeProperties.length; i++) {
-											if (aTypeProperties[i].name === sPropertyName) {
-												bExist = true;
-												break;
-											}
-										}
-									}
-									if (!bExist) {
-										that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
-									}
-								}
-								oPushedObject[sPropertyName] = oData[sPropertyName];
-							}
-						});
-						return oPushedObject;
-					};
+                    var fnCreatePushedEntry = function (aProperties, oData, oPushedObject, sParentName) {
+                        // Get for each complex type or navigation property its list of properties
+                        var oComplexOrNav = {};
+                        jQuery.each(aProperties, function (i, sPropertyName) {
+                            var iComplexOrNavProperty = sPropertyName.indexOf("/");
+                            // This is a complex type or navigation property
+                            if (iComplexOrNavProperty !== -1) {
+                                sPropName = sPropertyName.substring(iComplexOrNavProperty + 1);
+                                sComplexOrNavProperty = sPropertyName.substring(0, iComplexOrNavProperty);
+                                if (oComplexOrNav[sComplexOrNavProperty]) {
+                                    oComplexOrNav[sComplexOrNavProperty].push(sPropName);
+                                } else {
+                                    oComplexOrNav[sComplexOrNavProperty] = [sPropName];
+                                }
+                            }
+                        });
+                        jQuery.each(Object.keys(oComplexOrNav), function (i, sComplexOrNav) {
+                            if (!oPushedObject[sComplexOrNav]) {
+                                oPushedObject[sComplexOrNav] = {};
+                            }
+                            // call recursively to get the properties of each complex type or navigation property
+                            oPushedObject[sComplexOrNav] = fnCreatePushedEntry(oComplexOrNav[sComplexOrNav], oData[sComplexOrNav], oPushedObject[sComplexOrNav], sComplexOrNav);
+                        });
+
+                        if (oData.results) {
+                            // Navigation property - filter the results for each navigation property based on the properties defined by $select
+                            var oFilteredResults = [];
+                            jQuery.each(oData.results, function (i, oResult) {
+                                var oFilteredResult = {};
+                                jQuery.each(aProperties, function (j, sPropertyName) {
+                                    oFilteredResult[sPropertyName] = oResult[sPropertyName];
+                                });
+                                oFilteredResults.push(oFilteredResult);
+                            });
+                            if (oPushedObject) {
+                                oPushedObject.results = oFilteredResults;
+                            }
+                        } else {
+                            // Complex types or flat properties
+                            if (oData["__metadata"]) {
+                                oPushedObject["__metadata"] = oData["__metadata"];
+                            }
+                            jQuery.each(aProperties, function (i, sPropertyName) {
+                                var iComplexType = sPropertyName.indexOf("/");
+                                if (iComplexType === -1) { // Complex types were already handled above
+                                    if (oData && !oData.hasOwnProperty(sPropertyName)) {
+                                        var bExist = false;
+                                        var aTypeProperties = [];
+                                        if (sParentName) {
+                                            var sTargetEntitySet = that._mEntitySets[sEntitySetName].navprops[sParentName].to.entitySet;
+                                            aTypeProperties = that._mEntityTypes[that._mEntitySets[sTargetEntitySet].type].properties;
+                                            for (var i = 0; i < aTypeProperties.length; i++) {
+                                                if (aTypeProperties[i].name === sPropertyName) {
+                                                    bExist = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (!bExist) {
+                                            that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
+                                        }
+                                    }
+                                    oPushedObject[sPropertyName] = oData[sPropertyName];
+                                }
+                            });
+                        }
+                        return oPushedObject;
+                    };
 
 					// in case of $select=* return the data as is
 					if (jQuery.inArray("*", aProperties) !== -1) {
