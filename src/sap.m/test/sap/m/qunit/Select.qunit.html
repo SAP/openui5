@@ -5871,6 +5871,107 @@
 			});
 		});
 
+		QUnit.module("Rendering - min width");
+
+		QUnit.test("min-width added/removed", function (assert) {
+			var oSel1 = new sap.m.Select({
+						width: "10%"
+					}),
+					oSel2 = new sap.m.Select({
+						width: "auto"
+					}),
+					oSel3 = new sap.m.Select({
+						autoAdjustWidth: true
+					}),
+					oSel4 = new sap.m.Select({
+						width: "10rem"
+					}),
+					oSel5 = new sap.m.Select({
+						width: "2px"
+					}),
+					oSel6 = new sap.m.Select({
+						width: "4rem",
+						autoAdjustWidth: true
+					});
+
+			// Arrange
+			oSel1.placeAt("content");
+			oSel2.placeAt("content");
+			oSel3.placeAt("content");
+			oSel4.placeAt("content");
+			oSel5.placeAt("content");
+			oSel6.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.equal(oSel1.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+			assert.equal(oSel2.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+			assert.equal(oSel3.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+
+			assert.equal(oSel4.$().hasClass("sapMSltMinWidth"), false, 'The select has no min-width');
+			assert.equal(oSel5.$().hasClass("sapMSltMinWidth"), false, 'The select has no min-width');
+			assert.equal(oSel6.$().hasClass("sapMSltMinWidth"), true,
+					'The select has min-width, the width is ignored if autoAdjustWidth is enabled');
+
+			// Clean up
+			oSel1.destroy();
+			oSel2.destroy();
+			oSel3.destroy();
+			oSel4.destroy();
+			oSel5.destroy();
+			oSel6.destroy();
+		});
+		QUnit.module("Rendering - min width");
+
+		QUnit.test("min-width added/removed", function (assert) {
+			var oSel1 = new sap.m.Select({
+						width: "10%"
+					}),
+					oSel2 = new sap.m.Select({
+						width: "auto"
+					}),
+					oSel3 = new sap.m.Select({
+						autoAdjustWidth: true
+					}),
+					oSel4 = new sap.m.Select({
+						width: "10rem"
+					}),
+					oSel5 = new sap.m.Select({
+						width: "2px"
+					}),
+					oSel6 = new sap.m.Select({
+						width: "4rem",
+						autoAdjustWidth: true
+					});
+
+			// Arrange
+			oSel1.placeAt("content");
+			oSel2.placeAt("content");
+			oSel3.placeAt("content");
+			oSel4.placeAt("content");
+			oSel5.placeAt("content");
+			oSel6.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.equal(oSel1.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+			assert.equal(oSel2.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+			assert.equal(oSel3.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+
+			assert.equal(oSel4.$().hasClass("sapMSltMinWidth"), false, 'The select has no min-width');
+			assert.equal(oSel5.$().hasClass("sapMSltMinWidth"), false, 'The select has no min-width');
+			assert.equal(oSel6.$().hasClass("sapMSltMinWidth"), true,
+					'The select has min-width, the width is ignored if autoAdjustWidth is enabled');
+
+			// Clean up
+			oSel1.destroy();
+			oSel2.destroy();
+			oSel3.destroy();
+			oSel4.destroy();
+			oSel5.destroy();
+			oSel6.destroy();
+		});
+
 		QUnit.module("touchstart");
 
 		QUnit.test("touchstart", function(assert) {

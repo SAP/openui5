@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool'],
-	function(jQuery, Renderer, ValueStateSupport, IconPool) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool', 'sap/m/library'],
+	function(jQuery, Renderer, ValueStateSupport, IconPool, library) {
 		"use strict";
+
+		// shortcut for sap.m.SelectType
+		var SelectType = library.SelectType;
 
 		/**
 		 * Select renderer.
@@ -30,6 +33,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				sType = oSelect.getType(),
 				bAutoAdjustWidth = oSelect.getAutoAdjustWidth(),
 				bEnabled = oSelect.getEnabled(),
+				vCSSWidth = oSelect.getWidth(),
+				bWidthPercentage = vCSSWidth.indexOf("%") > -1,
+				bSelectWithFlexibleWidth = bAutoAdjustWidth || vCSSWidth === "auto" || bWidthPercentage,
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
 			oRm.write("<div");
@@ -41,10 +47,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				oRm.addClass(CSS_CLASS + "Disabled");
 			}
 
+			if (bSelectWithFlexibleWidth && (sType === SelectType.Default)) {
+				oRm.addClass(CSS_CLASS + "MinWidth");
+			}
+
 			if (bAutoAdjustWidth) {
 				oRm.addClass(CSS_CLASS + "AutoAdjustedWidth");
 			} else {
-				oRm.addStyle("width", oSelect.getWidth());
+				oRm.addStyle("width", vCSSWidth);
 			}
 
 			if (oSelect.getIcon()) {
@@ -64,7 +74,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 			if (sTooltip) {
 				oRm.writeAttributeEscaped("title", sTooltip);
-			} else if (sType === sap.m.SelectType.IconOnly) {
+			} else if (sType === SelectType.IconOnly) {
 				var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
 
 				if (oIconInfo) {
@@ -80,11 +90,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			this.renderLabel(oRm, oSelect);
 
 			switch (sType) {
-				case sap.m.SelectType.Default:
+				case SelectType.Default:
 					this.renderArrow(oRm, oSelect);
 					break;
 
-				case sap.m.SelectType.IconOnly:
+				case SelectType.IconOnly:
 					this.renderIcon(oRm, oSelect);
 					break;
 
@@ -115,7 +125,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.writeAttribute("for", oSelect.getId());
 			oRm.addClass(SelectRenderer.CSS_CLASS + "Label");
 
-			if (oSelect.getType() === sap.m.SelectType.IconOnly) {
+			if (oSelect.getType() === SelectType.IconOnly) {
 				oRm.addClass("sapUiPseudoInvisibleText");
 			}
 
@@ -234,10 +244,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		 */
 		SelectRenderer.getAriaRole = function(oSelect) {
 			switch (oSelect.getType()) {
-				case sap.m.SelectType.Default:
+				case SelectType.Default:
 					return "combobox";
 
-				case sap.m.SelectType.IconOnly:
+				case SelectType.IconOnly:
 					return "button";
 
 				// no default
