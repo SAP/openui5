@@ -810,8 +810,8 @@ sap.ui.define([
 					undo: this._onUndo.bind(this),
 					redo: this._onRedo.bind(this),
 					modeChange: this._onModeChange.bind(this),
-					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, this.getRootControl()),
-					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, this.getRootControl(), this.stop.bind(this, false, false))
+					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, this._oRootControl),
+					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, this._oRootControl, null)
 				}), 'toolbar');
 			}
 

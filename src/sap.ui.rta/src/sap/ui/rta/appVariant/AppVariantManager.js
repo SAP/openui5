@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/m/MessageBox",
-	"sap/ui/rta/Utils"
-], function(AppVariantDialog, AppVariantUtils, MessageToast, FlexControllerFactory, MessageBox, RtaUtils) {
+	"sap/ui/rta/Utils",
+	"sap/ui/rta/appVariant/Feature"
+], function(AppVariantDialog, AppVariantUtils, MessageToast, FlexControllerFactory, MessageBox, RtaUtils, RtaAppVariantFeature) {
 	"use strict";
 
 	var AppVariantManager = function() {};
@@ -88,8 +89,10 @@ sap.ui.define([
 		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "title", oAppVariantData.title);
 		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundTitle"));
 
-		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "subTitle", oAppVariantData.subTitle);
-		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundSubtitle"));
+		if (oAppVariantData.subTitle) {
+			oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "subTitle", oAppVariantData.subTitle);
+			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundSubtitle"));
+		}
 
 		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "icon", oAppVariantData.icon);
 		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundIcon"));
@@ -134,12 +137,12 @@ sap.ui.define([
 	};
 
 	// Pending changes get copied to app variant
-	AppVariantManager.prototype._copyDirtyChangesToAppVariant = function(sReferenceForChange, oRootControl) {
-		var oFlexController = FlexControllerFactory.createForControl(oRootControl);
+	AppVariantManager.prototype._copyDirtyChangesToAppVariant = function(sReferenceForChange, oRootControlRunningApp) {
+		var oFlexController = FlexControllerFactory.createForControl(oRootControlRunningApp);
 		return oFlexController.saveAs(sReferenceForChange);
 	};
 
-	AppVariantManager.prototype.saveDescriptorAndFlexChangesToLREP = function(oAppVariantDescriptor, oRootControl, fnStopRta) {
+	AppVariantManager.prototype.saveDescriptorAndFlexChangesToLREP = function(oAppVariantDescriptor, oRootControlRunningApp, bCloseRunningApp) {
 		var fnShowCreateAppVariantError = function(vError) {
 			var sErrorMessage = "";
 			if (vError.messages) {
@@ -179,11 +182,17 @@ sap.ui.define([
 
 		return oAppVariantDescriptor.submit().then(function(oResult) {
 			if (oResult.status === "success") {
-				return this._copyDirtyChangesToAppVariant(oAppVariantDescriptor._id, oRootControl).then(function() {
-					return this._showSaveSuccessMessage().then(fnStopRta).then(fnNavigateToFLPHomepage);
+				return this._copyDirtyChangesToAppVariant(oAppVariantDescriptor._id, oRootControlRunningApp).then(function() {
+					return this._showSaveSuccessMessage().then(function() {
+						if (bCloseRunningApp) {
+							return fnNavigateToFLPHomepage();
+						} else {
+							return RtaAppVariantFeature.onGetOverview(oRootControlRunningApp);
+						}
+					});
 				}.bind(this));
 			} else {
-				return false;
+				return Promise.resolve(false);
 			}
 		}.bind(this))['catch'](fnShowCreateAppVariantError);
 	};
