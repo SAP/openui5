@@ -11,7 +11,15 @@ sap.ui.define([
 	'sap/ui/fl/Utils',
 	'sap/ui/core/StashedControlSupport',
 	'sap/ui/dt/ElementDesignTimeMetadata'
-], function(jQuery, Plugin, ElementUtil, OverlayRegistry, Utils, FlUtils, StashedControlSupport, ElementDesignTimeMetadata){
+], function(jQuery,
+	Plugin,
+	ElementUtil,
+	OverlayRegistry,
+	Utils,
+	FlUtils,
+	StashedControlSupport,
+	ElementDesignTimeMetadata
+){
 	"use strict";
 
 	function _getParents(bSibling, oOverlay) {
@@ -166,19 +174,24 @@ sap.ui.define([
 
 		isEnabled: function(bOverlayIsSibling, oOverlay){
 			var oParentOverlay;
+			var bIsEnabled;
 			if (bOverlayIsSibling) {
 				oParentOverlay = oOverlay.getParentElementOverlay();
 				if (oParentOverlay && this.hasStableId(oParentOverlay)) {
-					return true;
+					bIsEnabled = true;
 				} else {
-					return false;
+					bIsEnabled = false;
+				}
+			} else {
+				var mActions = this._getActions(bOverlayIsSibling, oOverlay);
+				if (mActions.reveal && mActions.reveal.elements.length === 0 && !mActions.addODataProperty){
+					bIsEnabled = false;
+				} else {
+					bIsEnabled = true;
 				}
 			}
-			var mActions = this._getActions(bOverlayIsSibling, oOverlay);
-			if (mActions.reveal && mActions.reveal.elements.length === 0 && !mActions.addODataProperty){
-				return false;
-			}
-			return true;
+
+			return bIsEnabled && this.isMultiSelectionInactive.call(this, oOverlay);
 		},
 
 		_getRevealActions: function(bSibling, oOverlay) {
@@ -316,8 +329,8 @@ sap.ui.define([
 			return !!mRevealActions && Object.keys(mRevealActions).length > 0;
 		},
 
-		showAvailableElements: function(bOverlayIsSibling, aOverlay, iIndex, sControlName) {
-			var oOverlay = aOverlay[0];
+		showAvailableElements: function(bOverlayIsSibling, aOverlays, iIndex, sControlName) {
+			var oOverlay = aOverlays[0];
 			var mParents = _getParents(bOverlayIsSibling, oOverlay);
 			var oSiblingElement = bOverlayIsSibling && oOverlay.getElementInstance();
 			var aPromises = [];
@@ -617,6 +630,40 @@ sap.ui.define([
 			} else {
 				return false;
 			}
+		},
+
+		/**
+		 * Retrieve the context menu item for the actions.
+		 * Two items are returned here: one for when the overlay is sibling and one for when it is child.
+		 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
+		 * @return {object[]}          Returns array containing the items with required data
+		 */
+		getMenuItems: function(oOverlay){
+			var bOverlayIsSibling = true;
+			var sPluginId = "CTX_ADD_ELEMENTS_AS_SIBLING";
+			var iRank = 20;
+			var aMenuItems = [];
+			for (var i = 0; i < 2; i++){
+				if (this.isAvailable(bOverlayIsSibling, oOverlay)){
+					var sMenuItemText = this.getContextMenuTitle.bind(this, bOverlayIsSibling);
+
+					aMenuItems.push({
+						id: sPluginId,
+						text: sMenuItemText,
+						handler: function(bOverlayIsSibling, aOverlays){
+							// showAvailableElements has optional parameters, so currying is not possible here
+							return this.showAvailableElements(bOverlayIsSibling, aOverlays);
+						}.bind(this, bOverlayIsSibling),
+						enabled: this.isEnabled.bind(this, bOverlayIsSibling),
+						rank: iRank
+					});
+				}
+
+				bOverlayIsSibling = false;
+				sPluginId = "CTX_ADD_ELEMENTS_AS_CHILD";
+				iRank = 30;
+			}
+			return aMenuItems;
 		}
 	});
 

@@ -99,18 +99,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay object
-	 * @returns {string} action value
-	 * @private
-	 */
-	Rename.prototype._getRenameAction = function(oOverlay) {
-		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-		if (oDesignTimeMetadata && oDesignTimeMetadata.getAction) {
-			return oDesignTimeMetadata.getAction("rename", oOverlay.getElementInstance());
-		}
-	};
-
-	/**
 	 * Checks if rename is available for oOverlay
 	 *
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
@@ -128,9 +116,9 @@ sap.ui.define([
 	 * @returns {boolean} true if it's enabled
 	 * @public
 	 */
-	Rename.prototype.isRenameEnabled = function(oOverlay) {
+	Rename.prototype.isEnabled = function(oOverlay) {
 		var bIsEnabled = true;
-		var oAction = this._getRenameAction(oOverlay);
+		var oAction = this.getAction(oOverlay);
 		if (!oAction) {
 			bIsEnabled = false;
 		}
@@ -150,7 +138,7 @@ sap.ui.define([
 			}
 		}
 
-		return bIsEnabled;
+		return bIsEnabled && this.isMultiSelectionInactive.call(this, oOverlay);
 	};
 
 	/**
@@ -176,7 +164,7 @@ sap.ui.define([
 			return false;
 		}
 
-		var oRenameAction = this._getRenameAction(oOverlay);
+		var oRenameAction = this.getAction(oOverlay);
 		if (oRenameAction && oRenameAction.changeType) {
 			if (oRenameAction.changeOnRelevantContainer) {
 				oElement = oOverlay.getRelevantContainer();
@@ -207,7 +195,7 @@ sap.ui.define([
 	 */
 	Rename.prototype._onClick = function(oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		if (this.isRenameEnabled(oOverlay) && !oEvent.metaKey && !oEvent.ctrlKey) {
+		if (this.isEnabled(oOverlay) && !oEvent.metaKey && !oEvent.ctrlKey) {
 			this.startEdit(oOverlay);
 			oEvent.preventDefault();
 		}
@@ -238,6 +226,10 @@ sap.ui.define([
 		} else {
 			oOverlay.detachBrowserEvent("click", this._onClick, this);
 		}
+	};
+
+	Rename.prototype.handler = function(aOverlays){
+		this.startEdit(aOverlays[0]);
 	};
 
 	/**
@@ -423,7 +415,7 @@ sap.ui.define([
 				var oRenameCommand;
 				var oRenamedElement = this._oEditedOverlay.getElementInstance();
 				var oDesignTimeMetadata = this._oEditedOverlay.getDesignTimeMetadata();
-				var oRenameAction = this._getRenameAction(this._oEditedOverlay);
+				var oRenameAction = this.getAction(this._oEditedOverlay);
 				var sVariantManagementReference = this.getVariantManagementReference(this._oEditedOverlay, oRenameAction);
 
 				oRenameCommand = this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
@@ -451,6 +443,23 @@ sap.ui.define([
 			sText = '\xa0'; // = non-breaking space (&nbsp)
 		}
 		return sText;
+	};
+
+	/**
+	 * Retrieve the context menu item for the action.
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
+	 * @return {object[]}          Returns array containing the items with required data
+	 */
+	Rename.prototype.getMenuItems = function(oOverlay){
+		return this._getMenuItems(oOverlay, {pluginId : "CTX_RENAME", rank : 10});
+	};
+
+	/**
+	 * Get the name of the action related to this plugin.
+	 * @return {string} Returns the action name
+	 */
+	Rename.prototype.getActionName = function(){
+		return "rename";
 	};
 
 	return Rename;

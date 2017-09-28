@@ -9,7 +9,12 @@ sap.ui.define([
 	'sap/ui/rta/Utils',
 	'sap/ui/dt/OverlayRegistry'
 
-], function(Plugin, FlexUtils, RtaUtils,  OverlayRegistry) {
+], function(
+	Plugin,
+	FlexUtils,
+	RtaUtils,
+	OverlayRegistry
+) {
 	"use strict";
 
 	/**
@@ -94,11 +99,11 @@ sap.ui.define([
 		return aActions[0];
 	};
 
-	CreateContainer.prototype.isCreateAvailable = function(bSibling, oOverlay) {
+	CreateContainer.prototype.isAvailable = function(bSibling, oOverlay) {
 		return this._isEditableByPlugin(oOverlay, bSibling);
 	};
 
-	CreateContainer.prototype.isCreateEnabled = function(bSibling, oOverlay) {
+	CreateContainer.prototype.isEnabled = function(bSibling, oOverlay) {
 		var vAction = this.getCreateAction(bSibling, oOverlay);
 		if (!vAction) {
 			return false;
@@ -187,6 +192,54 @@ sap.ui.define([
 			"action" : vAction,
 			"newControlId" : sNewControlID
 		});
+	};
+
+	/**
+	 * Retrieve the context menu item for the actions.
+	 * Two items are returned here: one for when the overlay is sibling and one for when it is child.
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
+	 * @return {object[]}          Returns array containing the items with required data
+	 */
+	CreateContainer.prototype.getMenuItems = function(oOverlay){
+		var bOverlayIsSibling = true;
+		var sPluginId = "CTX_CREATE_SIBLING_CONTAINER";
+		var iRank = 40;
+		var aMenuItems = [];
+		for (var i = 0; i < 2; i++){
+			if (this.isAvailable(bOverlayIsSibling, oOverlay)){
+				var sMenuItemText = this.getCreateContainerText.bind(this, bOverlayIsSibling);
+
+				aMenuItems.push({
+					id: sPluginId,
+					text: sMenuItemText,
+					handler: this.handler.bind(this, bOverlayIsSibling),
+					enabled: this.isEnabled.bind(this, bOverlayIsSibling),
+					rank: iRank
+				});
+			}
+			bOverlayIsSibling = false;
+			sPluginId = "CTX_CREATE_CHILD_CONTAINER";
+			iRank = 50;
+		}
+		return aMenuItems;
+	};
+
+	/**
+	 * Get the name of the action related to this plugin.
+	 * @return {string} Returns the action name
+	 */
+	CreateContainer.prototype.getActionName = function(){
+		return "createContainer";
+	};
+
+	/**
+	 * Trigger the plugin execution.
+	 * @param  {boolean} bOverlayIsSibling True if the overlay is sibling
+	 * @param  {sap.ui.dt.ElementOverlay[]} aOverlays Selected overlays; targets of the action
+	 */
+	CreateContainer.prototype.handler = function(bOverlayIsSibling, aOverlays){
+		//TODO: Handle "Stop Cut & Paste" depending on alignment with Dietrich!
+		this.handleCreate(bOverlayIsSibling, aOverlays[0]);
 	};
 
 	return CreateContainer;

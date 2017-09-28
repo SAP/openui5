@@ -17,6 +17,8 @@
 	jQuery.sap.require("sap.ui.layout.form.FormContainer");
 	jQuery.sap.require("sap.ui.core.Title");
 
+	var sandbox = sinon.sandbox.create();
+
 	QUnit.module("Given that an Plugin is initialized with register methods", {
 		beforeEach : function(assert) {
 			var done = assert.async();
@@ -26,7 +28,7 @@
 				content : [
 					this.oButton
 				]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			this.oDesignTime = new sap.ui.dt.DesignTime({
 				rootElements : [this.oLayout]
@@ -56,6 +58,7 @@
 			}.bind(this);
 		},
 		afterEach : function() {
+			sandbox.restore();
 			this.oButton.destroy();
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
@@ -96,7 +99,7 @@
 		this.iregisterElementOverlayCalls = 0;
 		this.iRegisterAggregationOverlayCalls = 0;
 
-		oLayout.placeAt("content");
+		oLayout.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		this.oDesignTime.attachEventOnce("synced", function() {
@@ -176,6 +179,133 @@
 		this.oDesignTime.removePlugin(this.oPlugin);
 		assert.strictEqual(this.iregisterElementOverlayCalls, 0, "registered overlays are deregistered");
 		assert.strictEqual(this.iRegisterAggregationOverlayCalls, 0, "registered aggregations are deregistered");
+	});
+
+	QUnit.test("Common methods for plugins", function(assert){
+		var aSelection = ["selection1"];
+		sandbox.stub(this.oPlugin, "getDesignTime").returns({
+			getSelection : function(){
+				return aSelection;
+			}
+		});
+		assert.equal(this.oPlugin.isMultiSelectionInactive(), true, "calling 'isMultiSelectionInactive' for a single selection returns true");
+		aSelection = ["selection1", "selection2"];
+		assert.equal(this.oPlugin.isMultiSelectionInactive(), false, "calling 'isMultiSelectionInactive' for multiple selection returns false");
+
+		this.oPlugin.getActionName = function(){
+			return "dummyActionName";
+		};
+		var oOverlay = {
+			getElementInstance : function(){
+				return "dummyElement";
+			},
+			getDesignTimeMetadata : function(){
+				return {
+					getAction : function(sActionName, oElement){
+						assert.equal(sActionName, "dummyActionName", "getAction gets called with the plugin action name");
+						assert.equal(oElement, "dummyElement", "getAction gets called with the right element");
+					}
+				};
+			}
+		};
+		this.oPlugin.getAction(oOverlay);
+
+		this.oPlugin._isEditableByPlugin = function(oOverlay){
+			assert.equal(oOverlay, "dummyOverlay", "when calling 'isAvailable', _isEditableByPlugin method of the plugin is called by default with the right overlay");
+		};
+
+		this.oPlugin.isAvailable("dummyOverlay");
+	});
+
+	QUnit.test("When calling _getMenuItems", function(assert){
+		var oOverlay = {
+			getDesignTimeMetadata : function(){
+				return;
+			}
+		};
+		assert.equal(this.oPlugin._getMenuItems(oOverlay).length,
+			0,
+			"if the overlay has no DesignTime Metadata, the method returns an empty array");
+		oOverlay = {
+			getElementInstance : function(){
+				return "dummyElement";
+			},
+			getDesignTimeMetadata : function(){
+				return {
+					getAction : function(sActionName, oElement){
+						return {
+							name : "dummyActionName"
+						};
+					},
+					getLibraryText : function(sName){
+						return sName;
+					}
+				};
+			}
+		};
+
+		var bIsAvailable = true;
+
+		this.oPlugin.handler = function(){
+			return true;
+		};
+		this.oPlugin.isAvailable = function(){
+			return bIsAvailable;
+		};
+		this.oPlugin.isEnabled = function(){
+			return true;
+		};
+
+		var mMenuItem = this.oPlugin._getMenuItems(oOverlay, {pluginId : "dummyPluginId", rank: 10})[0];
+
+		assert.equal(mMenuItem.id, "dummyPluginId", "the method returns the right ID for the menu item");
+		assert.equal(mMenuItem.text, "dummyActionName", "the method returns the right text when it is defined in DT Metadata");
+		assert.equal(mMenuItem.rank, 10, "the method returns the right rank for the menu item");
+		assert.ok(mMenuItem.handler(), "handler function is properly returned");
+		assert.ok(mMenuItem.enabled(), "enabled function is properly returned");
+
+		oOverlay = {
+			getElementInstance : function(){
+				return "dummyElement";
+			},
+			getDesignTimeMetadata : function(){
+				return {
+					getAction : function(sActionName, oElement){
+						return {};
+					}
+				};
+			}
+		};
+
+		assert.equal(this.oPlugin._getMenuItems(oOverlay, {pluginId : "CTX_RENAME"})[0].text,
+			sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+			"the method returns default text when no text is defined in DT Metadata");
+
+		oOverlay = {
+			getElementInstance : function(){
+				return "dummyElement";
+			},
+			getDesignTimeMetadata : function(){
+				return {
+					getAction : function(sActionName, oElement){
+						return {
+							name : function(oElement){
+								return oElement + "name";
+							}
+						};
+					}
+				};
+			}
+		};
+
+		assert.equal(this.oPlugin._getMenuItems(oOverlay, {pluginId : "CTX_DUMMY_ID"})[0].text,
+			"dummyElementname",
+			"the method returns the correct text when the name is defined as a function in DT Metadata");
+
+		bIsAvailable = false;
+		assert.equal(this.oPlugin._getMenuItems(oOverlay, {pluginId : "CTX_DUMMY_ID"}).length,
+			0,
+			"then if the plugin is not available no menu items are returned");
 	});
 
 })();

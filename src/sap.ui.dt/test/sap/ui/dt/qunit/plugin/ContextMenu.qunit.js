@@ -254,4 +254,34 @@ sap.ui.require([
 
 		assert.equal(this.oMenuEntries.disabledBtn1.handler.callCount, 0, "then other handler functions are not called");
 	});
+
+	QUnit.test("When calling _sortMenuItems", function(assert){
+		var mShouldBeSecond = {
+			rank : 10
+		};
+		var mShouldBeFirst = {};
+		var mShouldBeThird = {
+			rank : 20
+		};
+		var mShouldBeLast = {
+			rank : 50
+		};
+
+		var aItems = [
+			mShouldBeLast,
+			mShouldBeThird,
+			mShouldBeSecond,
+			mShouldBeFirst
+		];
+
+		var oContextMenuPlugin = this.oContextMenuPlugin;
+
+		var aSortedItems = oContextMenuPlugin._sortMenuItems(aItems);
+
+		assert.equal(aSortedItems[0], mShouldBeFirst, "first item is in the right position");
+		assert.equal(aSortedItems[1], mShouldBeSecond, "second item is in the right position");
+		assert.equal(aSortedItems[2], mShouldBeThird, "third item is in the right position");
+		assert.equal(aSortedItems[3], mShouldBeLast, "last item is in the right position");
+	});
+
 });

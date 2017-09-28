@@ -2,35 +2,10 @@
 <html>
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-		<title>Test Page for RTA ContextMenu</title>
-
-		<style>
-			html, body, #qunit-tests {
-				height: 100%;
-			}
-
-			.sapUiView {
-				height: 100%;
-			}
-
-			#test-view {
-				border: 1px solid grey;
-				position: fixed;
-				bottom: 0;
-				right: 0;
-				width: 50%;
-				height: 50%;
-			}
-		</style>
-
-
-		<script src="../shared-config.js"></script>
+		<title>Test Page for RTA CutPaste Plugin</title>
+		<script src="../../shared-config.js"></script>
 		<script>
-			window['sap-ui-config'].libs = 'sap.ui.rta, sap.ui.dt, sap.m, sap.ui.layout';
-
-			window['sap-ui-config'].resourceroots = {
-				'sap.ui.rta.test': '../internal/testdata/rta/'
-			};
+			window['sap-ui-config'].libs = 'sap.ui.rta, sap.ui.dt';
 
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
@@ -40,19 +15,17 @@
 			jQuery.sap.require('sap.ui.qunit.qunit-junit');
 			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+			jQuery.sap.require('sap.ui.thirdparty.sinon');
+			jQuery.sap.require('sap.ui.thirdparty.sinon-qunit')
 
-			// code coverage report only for sap.ui.rta/sap.ui.dt namespace (change if necessary)
 			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta,sap/ui/dt]');
 
-			//Replace with your qunit path
-			jQuery.sap.includeScript('./ContextMenu.qunit.js');
+			jQuery.sap.includeScript('./CutPaste.qunit.js');
 		</script>
 	</head>
 	<body>
 		<h2 id='qunit-banner'></h2>
 		<div id='qunit-testrunner-toolbar'></div>
 		<ol id='qunit-tests'></ol>
-		<div id='test-view'></div>
-
 	</body>
 </html>
