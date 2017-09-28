@@ -2147,6 +2147,31 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchTypeForPath", function (assert) {
+		var oPromise = {},
+			fnFetchMetadata = sinon.stub().returns(oPromise),
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, fnFetchMetadata);
+
+		// code under test
+		assert.strictEqual(oRequestor.fetchTypeForPath("EMPLOYEES('1')/EMPLOYEE_2_TEAM"), oPromise);
+
+		sinon.assert.calledWithExactly(fnFetchMetadata, "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchTypeForPath, bAsName=true", function (assert) {
+		var oPromise = {},
+			fnFetchMetadata = sinon.stub().returns(oPromise),
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, fnFetchMetadata);
+
+		// code under test
+		assert.strictEqual(oRequestor.fetchTypeForPath("EMPLOYEES('1')/EMPLOYEE_2_TEAM", true),
+			oPromise);
+
+		sinon.assert.calledWithExactly(fnFetchMetadata, "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/$Type");
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), undefined, undefined,

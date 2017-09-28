@@ -36,13 +36,6 @@ sap.ui.require([
 		return oResult;
 	}
 
-	/**
-	 * Returns an empty type for every path in order to ensure that no key predicate is calculated.
-	 * @returns {_SyncPromise} A sync promise that resolves with an empty type
-	 */
-	function defaultFetchType() {
-		return _SyncPromise.resolve({});
-	}
 
 	/*
 	 * Simulation of {@link sap.ui.model.odata.v4.ODataModel#getGroupProperty}
@@ -66,6 +59,7 @@ sap.ui.require([
 
 			this.oRequestor = {
 				buildQueryString : function () {return "";},
+				fetchTypeForPath : function () {return _SyncPromise.resolve({}); },
 				getGroupSubmitMode : function (sGroupId) {
 					return defaultGetGroupProperty(sGroupId);
 				},
@@ -94,8 +88,7 @@ sap.ui.require([
 		 *   The cache
 		 */
 		createCache : function (sResourcePath, mQueryOptions) {
-			return _Cache.create(this.oRequestor, sResourcePath, defaultFetchType, mQueryOptions,
-				false);
+			return _Cache.create(this.oRequestor, sResourcePath, mQueryOptions, false);
 		},
 		/**
 		 * Creates a collection cache. Only resource path and query options must be supplied. Uses
@@ -108,8 +101,7 @@ sap.ui.require([
 		 *   The cache
 		 */
 		createSingle : function (sResourcePath, mQueryOptions, bPost) {
-			return _Cache.createSingle(this.oRequestor, sResourcePath, defaultFetchType,
-				mQueryOptions, false, bPost);
+			return _Cache.createSingle(this.oRequestor, sResourcePath, mQueryOptions, false, bPost);
 		},
 
 		/**
@@ -144,7 +136,7 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(mQueryOptions));
 
 		// code under test
-		oCache = new _Cache(this.oRequestor, sResourcePath, defaultFetchType, mQueryOptions,
+		oCache = new _Cache(this.oRequestor, sResourcePath, mQueryOptions,
 			"bSortExpandSelect");
 
 		assert.strictEqual(oCache.bActive, true);
@@ -153,7 +145,6 @@ sap.ui.require([
 		assert.deepEqual(oCache.mPostRequests, {});
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.sResourcePath, "~");
-		assert.strictEqual(oCache.fnFetchType, defaultFetchType);
 		assert.strictEqual(oCache.bSentReadRequest, false);
 		assert.strictEqual(oCache.oTypePromise, undefined);
 	});
@@ -174,8 +165,7 @@ sap.ui.require([
 				false, "bSortExpandSelect")
 			.returns("?baz=boo");
 
-		oCache = new _Cache(this.oRequestor, sResourcePath, defaultFetchType, mQueryOptions,
-			"bSortExpandSelect");
+		oCache = new _Cache(this.oRequestor, sResourcePath, mQueryOptions, "bSortExpandSelect");
 		assert.strictEqual(oCache.sQueryString, "?foo=bar");
 
 		// code under test
@@ -194,9 +184,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache hierarchy", function (assert) {
-		assert.ok(_Cache.create(this.oRequestor, "TEAMS", defaultFetchType) instanceof _Cache);
-		assert.ok(_Cache.createSingle(this.oRequestor, "TEAMS('42')", defaultFetchType)
-			instanceof _Cache);
+		assert.ok(_Cache.create(this.oRequestor, "TEAMS") instanceof _Cache);
+		assert.ok(_Cache.createSingle(this.oRequestor, "TEAMS('42')") instanceof _Cache);
 		assert.ok(_Cache.createProperty(this.oRequestor) instanceof _Cache);
 	});
 
@@ -205,8 +194,7 @@ sap.ui.require([
 		[200, 404, 500].forEach(function (iStatus) {
 			QUnit.test("_Cache#_delete: from collection, status: " + iStatus + ", bCount: "
 					+ bCount, function (assert) {
-				var oCache = new _Cache(this.oRequestor, "EMPLOYEES('42'), defaultFetchType",
-						{foo : "bar"}),
+				var oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')", {foo : "bar"}),
 					sEtag = 'W/"19770724000000.0000000"',
 					aCacheData = [{
 						"@odata.etag" : "before"
@@ -280,7 +268,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#_delete: from collection, must not delete twice", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "EMPLOYEES", defaultFetchType),
+		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
 			aCacheData = [{"$ui5.deleting" : true}];
 
 		oCache.fetchValue = function () {};
@@ -298,7 +286,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#_delete: from collection, parallel delete", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "EMPLOYEES", defaultFetchType),
+		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
 			aCacheData = [],
 			fnCallback = sinon.spy(),
 			oSuccessor = {};
@@ -326,7 +314,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#_delete: nested entity", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')", defaultFetchType,
+		var oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')",
 				{$expand : {EMPLOYEE_2_TEAM : true}}),
 			sEtag = 'W/"19770724000000.0000000"',
 			oCacheData = {
@@ -545,7 +533,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType),
+		var oCache = new _Cache(this.oRequestor, "Products('42')"),
 			oData = [{
 				foo : {
 					bar : 42,
@@ -624,10 +612,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_SingleCache#drillDown: stream property", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType),
+		var oCache = new _Cache(this.oRequestor, "Products('42')"),
 			oData = {productPicture : {}};
 
-		this.mock(oCache).expects("fnFetchType")
+		this.oRequestorMock.expects("fetchTypeForPath")
 			.withExactArgs("Products('42')/productPicture/picture", true)
 			.returns(_SyncPromise.resolve("Edm.Stream"));
 
@@ -638,12 +626,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_CollectionCache#drillDown: stream property", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Products", defaultFetchType),
+		var oCache = new _Cache(this.oRequestor, "Products"),
 			oData = [{productPicture : {}}];
 
 		oData.$byPredicate = {"('42')": oData[0]};
 
-		this.mock(oCache).expects("fnFetchType")
+		this.oRequestorMock.expects("fetchTypeForPath")
 			.withExactArgs("Products('42')/productPicture/picture", true)
 			.returns(_SyncPromise.resolve("Edm.Stream"));
 
@@ -654,9 +642,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: stream property, missing parent", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType);
+		var oCache = new _Cache(this.oRequestor, "Products('42')");
 
-		this.mock(oCache).expects("fnFetchType")
+		this.oRequestorMock.expects("fetchTypeForPath")
 			.withExactArgs("Products('42')/productPicture", true)
 			.returns(_SyncPromise.resolve("some.ComplexType"));
 		this.oLogMock.expects("error").withExactArgs(
@@ -669,14 +657,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: stream property w/ read link", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Products('42')", defaultFetchType),
+		var oCache = new _Cache(this.oRequestor, "Products('42')"),
 			oData = {
 				productPicture : {
 					"picture@odata.mediaReadLink" : "my/Picture"
 				}
 			};
 
-		this.mock(oCache).expects("fnFetchType")
+		this.oRequestorMock.expects("fetchTypeForPath")
 			.withExactArgs("Products('42')/productPicture/picture", true)
 			.returns(_SyncPromise.resolve("Edm.Stream"));
 		this.mock(_Helper).expects("makeAbsolute")
@@ -691,7 +679,7 @@ sap.ui.require([
 	[false, true].forEach(function (bCanceled) {
 		QUnit.test("_Cache#update: " + (bCanceled ? "canceled" : "success"), function (assert) {
 			var mQueryOptions = {},
-				oCache = new _Cache(this.oRequestor, "/BusinessPartnerList", defaultFetchType,
+				oCache = new _Cache(this.oRequestor, "/BusinessPartnerList",
 					mQueryOptions, true),
 				oCacheMock = this.mock(oCache),
 				sETag = 'W/"19700101000000.0000000"',
@@ -773,7 +761,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	["EUR", "", undefined].forEach(function (sUnitOrCurrencyValue, i) {
 		QUnit.test("_Cache#update: updates unit, " + i, function (assert) {
-			var oCache = new _Cache(this.oRequestor, "/ProductList", defaultFetchType, {}, true),
+			var oCache = new _Cache(this.oRequestor, "/ProductList", {}, true),
 				oCacheMock = this.mock(oCache),
 				sETag = 'W/"19700101000000.0000000"',
 				oEntity = {
@@ -843,7 +831,7 @@ sap.ui.require([
 		var sTitle = "_Cache#update: failure, then " + (bCanceled ? "cancel" : "success");
 		QUnit.test(sTitle, function (assert) {
 			var mQueryOptions = {},
-				oCache = new _Cache(this.oRequestor, "/BusinessPartnerList", defaultFetchType,
+				oCache = new _Cache(this.oRequestor, "/BusinessPartnerList",
 					mQueryOptions),
 				oCacheMock = this.mock(oCache),
 				sETag = 'W/"19700101000000.0000000"',
@@ -945,7 +933,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	["$direct", "$auto", "myDirect", "myAuto"].forEach(function (sGroupId) {
 		QUnit.test("_Cache#update: failure, group " + sGroupId, function (assert) {
-			var oCache = new _Cache(this.oRequestor, "/BusinessPartnerList", defaultFetchType, {}),
+			var oCache = new _Cache(this.oRequestor, "/BusinessPartnerList", {}),
 				oCacheMock = this.mock(oCache),
 				sETag = 'W/"19700101000000.0000000"',
 				oEntity = {
@@ -995,7 +983,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#update: invalid entity path", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "/BusinessPartnerList", defaultFetchType, {});
+		var oCache = new _Cache(this.oRequestor, "/BusinessPartnerList", {});
 
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
@@ -1046,23 +1034,19 @@ sap.ui.require([
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("Cache#fetchTypes", function (assert) {
-			var oBinding = {
-					fetchType : function () {}
-				},
-				oBindingMock = this.mock(oBinding),
-				oCache,
-				oPromise;
+			var oCache,
+				oPromise,
+				that = this;
 
 			Object.keys(oFixture.types).forEach(function (sPath) {
-				oBindingMock.expects("fetchType").withExactArgs(sPath)
+				that.oRequestorMock.expects("fetchTypeForPath").withExactArgs(sPath)
 					.returns(Promise.resolve(oFixture.types[sPath]));
 				if (!oFixture.types[sPath].$Key) {// expect it in the result only if it has a $Key
 					delete oFixture.types[sPath];
 				}
 			});
 			// create after the mocks have been set up, otherwise they won't be called
-			oCache = new _Cache(this.oRequestor, "TEAMS('42')", oBinding.fetchType,
-					oFixture.options);
+			oCache = new _Cache(this.oRequestor, "TEAMS('42')", oFixture.options);
 
 			// code under test
 			oPromise = oCache.fetchTypes();
@@ -2237,7 +2221,7 @@ sap.ui.require([
 		this.mock(_Cache.prototype).expects("fetchTypes")
 			.returns(Promise.resolve(mTypeForPath));
 
-		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, defaultFetchType, mQueryParams,
+		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams,
 			true);
 		oCacheMock = this.mock(oCache);
 
@@ -2720,9 +2704,11 @@ sap.ui.require([
 				},
 				oRequestor = _Requestor.create(TestUtils.proxy(
 					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"), undefined, undefined,
-					undefined, undefined, defaultGetGroupProperty),
+					undefined, function () {
+						return _SyncPromise.resolve({});
+					}, defaultGetGroupProperty),
 				sResourcePath = "TEAMS('TEAM_01')",
-				oCache = _Cache.createSingle(oRequestor, sResourcePath, defaultFetchType);
+				oCache = _Cache.createSingle(oRequestor, sResourcePath);
 
 			return oCache.fetchValue().then(function (oResult) {
 				delete oResult["@odata.metadataEtag"];
