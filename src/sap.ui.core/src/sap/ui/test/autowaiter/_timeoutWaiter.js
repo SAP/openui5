@@ -16,14 +16,25 @@ sap.ui.define([
 		errorPrefix: "sap.ui.test.autowaiter._timeoutWaiter#extendConfig"
 	});
 	var mTimeouts = {};
-	var iDefaultMaxDepth = 3; // count
-	var iDefaultMaxDelay = 1000; // milliseconds
+	var iDefaultMaxDepth = 1; 		// count
+	var iDefaultMaxDelay = 1000; 	// milliseconds
+	var iDefaultMinDelay = 10; 		// milliseconds
 	var config = {
 		maxDepth: iDefaultMaxDepth,
-		maxDelay: iDefaultMaxDelay
+		maxDelay: iDefaultMaxDelay,
+		minDelay: iDefaultMinDelay
+	};
+	var timeoutStatus = {
+		TRACKED: "TRACKED",
+		STARTER: "STARTED",
+		FINISHED: "FINISHED",
+		CLEARED: "CLEARED"
 	};
 
-	var iCurrentDepth = 0;
+    // initiatorId is the timeout id of the currently running timeout callback
+    // for opa poll frame, will have the ID of the poll timeout
+    // undefined means this is native event frame
+    var iInitiatorId;
 
 	function createTimeoutWrapper (sName) {
 		var sSetName = "set" + sName;
@@ -34,84 +45,148 @@ sap.ui.define([
 			return;
 		}
 		var fnOriginalClear = window[sClearName];
-		window[sSetName] = function (fnCallback, iDelay) {
-			var fnWrappedCallback = function () {
+		window[sSetName] = function wrappedSetTimeout(fnCallback, iDelay) {
+			var fnWrappedCallback = function wrappedCallback() {
 				// workaround for FF: the mTimeouts[iID] is sometimes cleaned by GC before it is released
-				iCurrentDepth = (mTimeouts[iID] ? mTimeouts[iID].depth : 0) + 1;
-				delete mTimeouts[iID];
+				var oCurrentTimeout = mTimeouts[iID];
+				if (!oCurrentTimeout) {
+					oLogger.trace("Timeout data for timeout with ID " + iID + " disapered unexpectedly");
+					oCurrentTimeout = {};
+				}
+                iInitiatorId = iID;
+
+				oLogger.trace("Timeout with ID " + iID + " started");
+				oCurrentTimeout.status = timeoutStatus.STARTED;
 				try {
 					fnCallback();
-					oLogger.trace("Timeout with ID " + iID + " finished");
 				} finally {
-					iCurrentDepth = 0;
+					iInitiatorId = undefined;
 				}
+				oLogger.trace("Timeout with ID " + iID + " finished");
+				oCurrentTimeout.status = timeoutStatus.FINISHED;
 			};
+
+            iDelay = iDelay || 0;
 
 			var iID;
-			var mPendingTimeout = {
-				depth: iCurrentDepth,
+			var oNewTimeout = {
 				delay: iDelay,
+                initiator: iInitiatorId,
 				func: _utils.functionToString(fnCallback),
-				stack: _utils.resolveStackTrace()
+				stack: _utils.resolveStackTrace(),
+				status: timeoutStatus.TRACKED
 			};
 
-			// do not track long runners and call the original directly
-			// any deeper nested timeouts are non-blocking and will not be wrapped
-			if (iDelay >= config.maxDelay) {
-				iID = fnOriginal.apply(this, arguments);
-				oLogger.trace("Timeout delay " + iDelay + " reached the limit of " + config.maxDelay +
-					". Long-running timeout is ignored:" + createLogForTimeout(iID, mPendingTimeout));
-			} else {
-				iID = fnOriginal.call(this, fnWrappedCallback, iDelay);
-				oLogger.trace("Timeout with ID " + iID + " scheduled. Delay: " + iDelay + " Depth: " + iCurrentDepth);
-				mTimeouts[iID] = mPendingTimeout;
-
-				// do not track non-blocking timeouts
-				// these are deeply nested timeouts which probably form a continuous polling process
-				// continue to wrap deeper calls in order to correctly ignore them later
-				if (iCurrentDepth >= config.maxDepth) {
-					oLogger.trace("Timeout depth reached the limit of " + config.maxDepth +
-						". Non-blocking timeout is ignored:" + createLogForTimeout(iID, mTimeouts[iID]));
-					mTimeouts[iID].nonBlocking = true;
-				}
-			}
+			iID = fnOriginal.call(this, fnWrappedCallback, iDelay);
+			oLogger.trace("Timeout with ID " + iID + " is tracked. " +
+				" Delay: " + iDelay +
+				" Initiator: " + iInitiatorId);
+			mTimeouts[iID] = oNewTimeout;
 
 			return iID;
 		};
 
-		window[sClearName] = function (iID) {
-			delete mTimeouts[iID];
+		window[sClearName] = function wrappedClearTimeout(iID) {
+			if (!iID) {
+				oLogger.trace("Could not clead timeout with invalid ID: " + iID);
+				return;
+			}
+
+			var oCurrentTimeout = mTimeouts[iID];
+			if (!oCurrentTimeout) {
+				oLogger.trace("Timeout data for timeout with ID " + iID + " disapered unexpectedly");
+				oCurrentTimeout = {};
+			}
+
+			oCurrentTimeout.status = timeoutStatus.CLEARED;
 			oLogger.trace("Timeout with ID " + iID + " cleared");
-			return fnOriginalClear.apply(this, arguments);
+			fnOriginalClear.apply(this, arguments);
 		};
 	}
 
 	createTimeoutWrapper("Timeout");
 	createTimeoutWrapper("Immediate");
 
-	function createLogForTimeout(iTimeoutID, mTimeout) {
-		return "\nTimeout: ID: " + iTimeoutID + " Delay: " + mTimeout.delay + " Depth: " + mTimeout.depth +
-			" Function: " + mTimeout.func + " Stack: " + mTimeout.stack;
+	function createLogForTimeout(iTimeoutID, oTimeout,bBlocking,bDetails) {
+		return "\nTimeout: ID: " + iTimeoutID +
+			" Type: " + (bBlocking ?  "BLOCKING" : "NOT BLOCKING") +
+			" Status: " + oTimeout.status +
+            " Delay: " + oTimeout.delay +
+            " Initiator: " + oTimeout.initiator +
+			(bDetails ? ("\nFunction: " + oTimeout.func) : "") +
+            (bDetails ? ("\nStack: " + oTimeout.stack) : "");
 	}
 
-	function logPendingTimeouts(aBlockingTimeoutIds) {
-		var sLogMessage = "There are " + aBlockingTimeoutIds.length + " open blocking timeouts";
-		aBlockingTimeoutIds.forEach(function (iTimeoutID) {
-			sLogMessage += createLogForTimeout(iTimeoutID, mTimeouts[iTimeoutID]);
+	function logTrackedTimeouts(aBlockingTimeoutIds) {
+		var aTimeoutIds = Object.keys(mTimeouts);
+		// log overview of blocking timeouts at debug
+        var sLogMessage = "Found " + aBlockingTimeoutIds.length + " blocking out of " + aTimeoutIds.length + " tracked timeouts";
+        aBlockingTimeoutIds.forEach(function (iTimeoutID) {
+			sLogMessage += createLogForTimeout(iTimeoutID, mTimeouts[iTimeoutID],aBlockingTimeoutIds.some(function(currentValue){
+				return currentValue == iTimeoutID;
+			}),false);
 		});
+		// show the pending timeout details into the timeout message
 		oHasPendingLogger.debug(sLogMessage);
+
+		// log all tracked timeouts at trace
+		var sTraceLogMessage = "Tracked timeouts";
+		aTimeoutIds.forEach(function (iTimeoutID) {
+			sTraceLogMessage += createLogForTimeout(iTimeoutID, mTimeouts[iTimeoutID],aBlockingTimeoutIds.some(function(currentValue){
+				return currentValue == iTimeoutID;
+			}),true);
+		});
+		oLogger.trace(sTraceLogMessage);
+	}
+
+    function isBlocking(iID) {
+		var oCurrentTimeout = mTimeouts[iID];
+		// we do not care for finished timeouts
+		if (oCurrentTimeout.status !== timeoutStatus.TRACKED){
+			return false;
+		}
+
+		// long runnes are some application level timeouts => we do not care for them
+		if (oCurrentTimeout.delay > config.maxDelay ) {
+			return false;
+		}
+
+		// zero or up to some small delay timeouts are definitely execution flow so must be waited
+		if (oCurrentTimeout.delay > config.minDelay) {
+			return isExecutionFlow(iID);
+		}
+
+		// all that are left should be waited for
+		return true;
+	}
+
+	// analyse recursively if this timeout is either execution flow or polling
+	function isExecutionFlow(currentId,depth) {
+		depth = depth || 1;
+		var oCurrentTimeout = mTimeouts[currentId];
+
+		// initiator could be untracked or lost so consider as flow
+		if (oCurrentTimeout.initiator && mTimeouts[oCurrentTimeout.initiator])	{
+			// if the initiator has the same timeout => check recursively for its parrent
+			if (oCurrentTimeout.delay == mTimeouts[oCurrentTimeout.initiator].delay) {
+				// if maxDepth chain has equal delays => this is a poll chain
+				if (depth >= config.maxDepth) {
+					return false;
+				}
+				return isExecutionFlow(oCurrentTimeout.initiator,depth + 1);
+			}
+		}
+		return true;
 	}
 
 	return {
 		hasPending: function () {
 			var aBlockingTimeoutIds = Object.keys(mTimeouts).filter(function (iID) {
-				return !mTimeouts[iID].nonBlocking;
+				return isBlocking(iID);
 			});
-			var bHasPendingTimeouts = aBlockingTimeoutIds.length > 0;
-			if (bHasPendingTimeouts) {
-				logPendingTimeouts(aBlockingTimeoutIds);
-			}
-			return bHasPendingTimeouts;
+			var bHasBlockingTimeouts = aBlockingTimeoutIds.length > 0;
+			logTrackedTimeouts(aBlockingTimeoutIds);
+			return bHasBlockingTimeouts;
 		},
 		extendConfig: function (oConfig) {
 			oConfig = oConfig && oConfig.timeoutWaiter || {
@@ -122,7 +197,8 @@ sap.ui.define([
 				inputToValidate: oConfig,
 				validationInfo: {
 					maxDepth: "numeric",
-					maxDelay: "numeric"
+					maxDelay: "numeric",
+					minDelay: "numeric"
 				}
 			});
 			$.extend(config, oConfig);

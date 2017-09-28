@@ -48,10 +48,13 @@
 			"sap/m/semantic/DetailPage",
 			"sap/m/CheckBox",
 			"sap/m/ComboBox",
+			"sap/m/OverflowToolbar",
 			"sap/ui/test/Opa5",
 			"sap/ui/test/opaQunit",
 			"sap/ui/thirdparty/hasher",
-			"sap/ui/test/matchers/AggregationLengthEquals"
+			"sap/ui/test/matchers/AggregationLengthEquals",
+			"sap/ui/test/matchers/PropertyStrictEquals",
+			"sap/ui/test/matchers/Ancestor"
 		],
 		function(Press,
 				 Button,
@@ -77,10 +80,13 @@
 				 DetailPage,
 				 CheckBox,
 				 ComboBox,
+				 OverflowToolbar,
 				 Opa5,
 				 opaTest,
 				 hasher,
-				 AggregationLengthEquals){
+				 AggregationLengthEquals,
+				 PropertyStrictEquals,
+				 Ancestor){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
@@ -129,45 +135,45 @@
 				}),
 				event: "ValueHelpRequest"
 			}].forEach(function (oTestCase) {
-						QUnit.test("Should press a " + oTestCase.control.getMetadata().getName(), function (assert) {
-							var fnDone = assert.async();
+				QUnit.test("Should press a " + oTestCase.control.getMetadata().getName(), function (assert) {
+					var fnDone = assert.async();
 
-							// Arrange
-							var oControl = oTestCase.control;
-							aControlsToClean.push(oControl);
-							oControl.placeAt("qunit-fixture");
+					// Arrange
+					var oControl = oTestCase.control;
+					aControlsToClean.push(oControl);
+					oControl.placeAt("qunit-fixture");
 
-							//Make sure that the control is rendered
-							sap.ui.getCore().applyChanges();
+					//Make sure that the control is rendered
+					sap.ui.getCore().applyChanges();
 
-							// System under Test
-							var oPressAction = new Press();
+					// System under Test
+					var oPressAction = new Press();
 
-							oControl["attach" + oTestCase.event]( function () {
-								setTimeout(function () {
-									sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
-									sinon.assert.called(fnOnSapFocusInSpy);
-									//Focusleave check has been removed due to fixed Press action behavior
-									//since in real scenario manual press action does not fire focusout event
-									fnDone();
-								}.bind(this), 20);
-							}, this);
+					oControl["attach" + oTestCase.event]( function () {
+						setTimeout(function () {
+							sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
+							sinon.assert.called(fnOnSapFocusInSpy);
+							//Focusleave check has been removed due to fixed Press action behavior
+							//since in real scenario manual press action does not fire focusout event
+							fnDone();
+						}.bind(this), 20);
+					}, this);
 
-							// if no focus functions are defined - define them to spy on them
-							if(!oControl.onfocusin) {
-								oControl.onfocusin = $.noop;
-							}
-							if(!oControl.onsapfocusleave) {
-								oControl.onsapfocusleave = $.noop;
-							}
+					// if no focus functions are defined - define them to spy on them
+					if(!oControl.onfocusin) {
+						oControl.onfocusin = $.noop;
+					}
+					if(!oControl.onsapfocusleave) {
+						oControl.onsapfocusleave = $.noop;
+					}
 
-							var fnOnSapFocusInSpy = sinon.spy(oControl, "onfocusin");
-							var fnOnSapFocusLeaveSpy = sinon.spy(oControl, "onsapfocusleave");
+					var fnOnSapFocusInSpy = sinon.spy(oControl, "onfocusin");
+					var fnOnSapFocusLeaveSpy = sinon.spy(oControl, "onsapfocusleave");
 
-							// Act
-							oPressAction.executeOn(oControl);
-						});
-					});
+					// Act
+					oPressAction.executeOn(oControl);
+				});
+			});
 
 			QUnit.test("Should follow a link", function (assert) {
 				var sExpectedHash = "expectedHash";
@@ -575,6 +581,105 @@
 					assert.ok(true, "The Popover is removed from the DOM");
 				}
 			});
+
+			(function () {
+				function createButton(sText, fnPressCallback) {
+					return new sap.m.Button({
+						text: sText,
+						width: "150px",
+						press: function () {
+							Opa5.assert.ok(true, "Fired the press event on button with text " + sText);
+							if (fnPressCallback) {
+								fnPressCallback();
+							}
+						}
+					});
+				}
+
+				QUnit.module("OverflowToolbar");
+
+				opaTest("Should synchronize with overflow popup", function (oOpa) {
+					var done = Opa5.assert.async();
+					var oOverflowToolbar = new OverflowToolbar({
+                        width: "140px"
+					});
+
+					oOverflowToolbar.placeAt("qunit-fixture");
+			 		sap.ui.getCore().applyChanges();
+
+                    setTimeout(function () {
+                        oOverflowToolbar.addContent(createButton("Button1"));
+                        oOverflowToolbar.addContent(createButton("Button2"));
+                    },600);
+
+			 		oOpa.extendConfig({autoWait: true});
+
+					oOpa.waitFor({
+						controlType: "sap.m.ToggleButton",
+						errorMessage: "Did not find the popover area toggle button",
+						actions: new Press()
+					});
+
+					oOpa.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({name: "text", value: "Button2"}),
+						errorMessage: "Did not find the overflowing button with text Button2",
+						actions: new Press()
+					});
+
+					oOpa.waitFor({
+						success: function() {
+							oOverflowToolbar.destroy();
+                            done();
+						}
+					});
+				});
+                
+                opaTest("Should synchronize with resizing overflow toolbar", function (oOpa) {
+                    var done = Opa5.assert.async();
+                    var oOverflowToolbar = new OverflowToolbar({
+                        width: "400px"
+                    });
+                    oOverflowToolbar.addContent(createButton("Button1"));
+                    oOverflowToolbar.addContent(createButton("Button2"));
+                    oOverflowToolbar.placeAt("qunit-fixture");
+                    sap.ui.getCore().applyChanges();
+
+                    oOpa.extendConfig({autoWait: true});
+
+                    // cause overflow re-rendering
+                    oOpa.waitFor({                        
+                        success: function() {
+							oOverflowToolbar.setWidth("140px");
+							console.debug("Set smaller width to cause overflow");
+                        }
+                    });
+
+                    // should be clicking the toggle button only after overflow re-rendering is complete
+                    oOpa.waitFor({
+                        controlType: "sap.m.ToggleButton",
+                        errorMessage: "Did not find the popover area toggle button",
+                        actions: new Press()
+                    });
+
+                    // this click will close the popover by default
+                    oOpa.waitFor({
+                        controlType: "sap.m.Button",
+                        matchers: new PropertyStrictEquals({name: "text", value: "Button2"}),
+                        errorMessage: "Did not find the overflowing button with text Button2",
+                        actions: new Press()
+                    });
+
+					// should destry the toolbar only after everything is settled
+					oOpa.waitFor({
+						success: function() {
+							oOverflowToolbar.destroy();
+                            done();
+						}
+					});
+                });
+                
+			})();
 
 			QUnit.start();
 
