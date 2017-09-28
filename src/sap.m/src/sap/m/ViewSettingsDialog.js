@@ -982,7 +982,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			filterKeys : this.getSelectedFilterKeys(),
 			navPage : this._getNavContainer().getCurrentPage(),
 			contentPage : this._vContentPage,
-			contentItem : this._oContentItem
+			contentItem : this._oContentItem ? this._oContentItem.clone() : null
 		};
 
 		//focus the first focusable item in current page's content
