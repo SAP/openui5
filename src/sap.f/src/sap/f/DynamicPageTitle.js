@@ -353,7 +353,8 @@ sap.ui.define([
 			var oExpandButton = new Button({
 				id: this.getId() + "-expandBtn",
 				icon: "sap-icon://slim-arrow-down",
-				press: this._onExpandButtonPress.bind(this)
+				press: this._onExpandButtonPress.bind(this),
+				tooltip: this._oRB.getText("EXPAND_HEADER_BUTTON_TOOLTIP")
 			}).addStyleClass("sapFDynamicPageToggleHeaderIndicator sapUiHidden");
 			this.setAggregation("_expandButton", oExpandButton, true);
 		}
