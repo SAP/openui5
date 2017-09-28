@@ -1056,41 +1056,45 @@ sap.ui.define([
 	 */
 
 	ObjectPageLayout.prototype._adjustLayoutAndUxRules = function () {
+
+		var sSelectedSectionId,
+			oSelectedSection;
+
 		//in case we have added a section or subSection which change the ux rules
 		jQuery.sap.log.debug("ObjectPageLayout :: _requestAdjustLayout", "refreshing ux rules");
 
-		/* obtain the currently selected section in the navBar before navBar is destroyed,
-		 in order to reselect that section after that navBar is reconstructed */
-		var sSelectedSectionIdBeforeUXRules = this.getSelectedSection(),
-			sSelectedSectionIdAfterUXRules,
-			oSelectedSection = this.oCore.byId(sSelectedSectionIdBeforeUXRules),
-			bSelectionChanged = false;
-
 		this._applyUxRules(true);
 
-		/* check if the section that was previously selected is still available,
+		/* reset the selected section,
+		 as the previously selected section may not be available anymore,
 		 as it might have been deleted, or emptied, or set to hidden in the previous step */
 		this._adjustSelectedSectionByUXRules();
-
-		sSelectedSectionIdAfterUXRules = this.getSelectedSection();
-
-		if (sSelectedSectionIdAfterUXRules !== sSelectedSectionIdBeforeUXRules) {
-			bSelectionChanged = true;
-			oSelectedSection = this.oCore.byId(sSelectedSectionIdAfterUXRules);
-		}
+		sSelectedSectionId = this.getSelectedSection();
+		oSelectedSection = this.oCore.byId(sSelectedSectionId);
 
 		if (oSelectedSection) {
-			this._setSelectedSectionId(sSelectedSectionIdAfterUXRules); //reselect the current section in the navBar (because the anchorBar was freshly rebuilt from scratch)
+			this._setSelectedSectionId(sSelectedSectionId); //reselect the current section in the navBar (because the anchorBar was freshly rebuilt from scratch)
 			if (this.getUseIconTabBar()) {
 				this._setCurrentTabSection(oSelectedSection);
 			}
 			this._requestAdjustLayout(null, false, true /* requires a check on lazy loading */)
-				.then(function () { // scrolling must be done after the layout adjustment is done (so the section positions are determined)
-					if (bSelectionChanged) {
-						this.scrollToSection(sSelectedSectionIdAfterUXRules);
+				.then(function () { // scrolling must be done after the layout adjustment is done (so the latest section positions are determined)
+					this._adjustSelectedSectionByUXRules(); //section may have changed again from the app before the promise completed => ensure adjustment
+					sSelectedSectionId = this.getSelectedSection();
+					if (!this._isClosestScrolledSection(sSelectedSectionId)) {
+						// then change the selection to match the correct section
+						this.scrollToSection(sSelectedSectionId);
 					}
 				}.bind(this));
 		}
+	};
+
+	ObjectPageLayout.prototype._isClosestScrolledSection = function (sSectionId) {
+		var iScrollTop = this._$opWrapper.scrollTop(),
+			iPageHeight = this.iScreenHeight,
+			sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
+
+		return sClosestSectionId && (sSectionId !== sClosestSectionId);
 	};
 
 	ObjectPageLayout.prototype._getSelectedSectionId = function () {
