@@ -1735,7 +1735,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				this._oItemForDelete = null;
 			} else {
 				if (this.aItems.length === 1) {
-					this.sFocusId = this._oFileUploader.$().find(":button")[0].id;
+					if (!this.getUploadButtonInvisible()) {
+						this.sFocusId = this._oFileUploader.$().find(":button")[0].id;
+					}
 				} else {
 					if (this._oItemForDelete._iLineNumber < this.aItems.length - 1) {
 						this.sFocusId = this.aItems[this._oItemForDelete._iLineNumber + 1].getId() + "-cli";
