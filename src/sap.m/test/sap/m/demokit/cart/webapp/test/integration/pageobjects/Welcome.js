@@ -3,17 +3,19 @@ sap.ui.define([
 	'sap/ui/test/actions/Press',
 	'sap/ui/test/matchers/BindingPath',
 	'sap/ui/test/matchers/AggregationLengthEquals',
-	'sap/ui/test/matchers/Properties'
+	'sap/ui/test/matchers/Properties',
+	'sap/ui/test/matchers/PropertyStrictEquals'
 ], function (Opa5,
 			 Press,
 			 BindingPath,
 			 AggregationLengthEquals,
-			 Properties) {
+			 Properties,
+			 PropertyStrictEquals) {
 	"use strict";
 
-	var sViewName = "Welcome";
 	Opa5.createPageObjects({
 		onTheWelcomePage: {
+			viewName: "Welcome",
 			actions: {
 
 				iLookAtTheScreen : function () {
@@ -22,7 +24,6 @@ sap.ui.define([
 
 				iPressTheMenuButton : function () {
 					return this.waitFor({
-						viewName: sViewName,
 						matchers: new Properties({ icon : "sap-icon://menu2" }),
 						actions: new Press(),
 						errorMessage: "No Menu button found"
@@ -32,7 +33,6 @@ sap.ui.define([
 				iPressTheProductLink: function () {
 					return this.waitFor({
 						controlType: "sap.m.ObjectIdentifier",
-						viewName: sViewName,
 						matchers: new BindingPath({
 							modelName: "view",
 							path: "/Promoted/0"
@@ -47,7 +47,6 @@ sap.ui.define([
 				iPressOnTheCartButton: function () {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						viewName: sViewName,
 						matchers: new BindingPath({
 							modelName: "view",
 							path: "/Viewed/0"
@@ -69,13 +68,30 @@ sap.ui.define([
 				iPressTheProductImage: function () {
 					return this.waitFor({
 						controlType: "sap.m.Image",
-						viewName: sViewName,
 						matchers: new BindingPath({
 							modelName: "view",
 							path: "/Viewed/0"
 						}),
 						actions: new Press(),
 						errorMessage: "The product image was not displayed"
+					});
+				},
+
+				iPressTheCloseButtonOfTheLightBox: function () {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						matchers : [
+							new PropertyStrictEquals({
+								name : "text",
+								value : "Close"
+							}),
+							new PropertyStrictEquals({
+								name : "enabled",
+								value : true
+							})
+						],
+						actions : new Press(),
+						errorMessage : "Did not find the Close button"
 					});
 				}
 			},
@@ -84,7 +100,6 @@ sap.ui.define([
 
 				iShouldSeeTheWelcomePage: function () {
 					return this.waitFor({
-						viewName: sViewName,
 						success: function () {
 							Opa5.assert.ok(true, "The welcome page was successfully displayed");
 						},
@@ -95,7 +110,6 @@ sap.ui.define([
 				iShouldSeeAnAvatarButton: function () {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						viewName: sViewName,
 						matchers: new Properties({icon: "sap-icon://customer"}),
 						success: function () {
 							Opa5.assert.ok(true, "Avatar button is visible");
@@ -107,7 +121,6 @@ sap.ui.define([
 				iShouldSeeTheProductInLightBox: function () {
 					return this.waitFor({
 						controlType: "sap.m.LightBox",
-						viewName: sViewName,
 						success: function (oBox) {
 							Opa5.assert.ok(oBox[0].getImageContent()[0].getTitle().length > 0, "The product " + oBox[0].getImageContent()[0].getTitle() + " was displayed in light box");
 						},
@@ -118,7 +131,6 @@ sap.ui.define([
 				iShouldSeeTheRightAmountOfProducts: function() {
 					this.waitFor({
 						id: "promotedRow",
-						viewName: sViewName,
 						matchers: new AggregationLengthEquals({
 							name: "content",
 							length: 2
@@ -131,7 +143,6 @@ sap.ui.define([
 
 					 this.waitFor({
 						id: "viewedRow",
-						viewName: sViewName,
 						matchers: new AggregationLengthEquals({
 							name: "content",
 							length: 4
@@ -144,7 +155,6 @@ sap.ui.define([
 
 					return this.waitFor({
 						id: "favoriteRow",
-						viewName: sViewName,
 						matchers: new AggregationLengthEquals({
 							name: "content",
 							length: 4
