@@ -396,7 +396,21 @@
 			oDomRef = this.oMultiEditField._getInternalDomRef();
 
 			//Assert
-			assert.deepEqual(oDomRef, oDomRefSelect, "The DOM reference of the select control is returned");
+			assert.deepEqual(oDomRef, oDomRefSelect, "The DOM reference of the Select control is returned");
+		});
+
+		QUnit.test("_getInternalUIArea function", function(assert) {
+			//Arrange
+			var oUIArea,
+				oUIAreaSelect;
+
+			oUIAreaSelect = this.oMultiEditField.byId("select").getUIArea();
+
+			//Act
+			oUIArea = this.oMultiEditField._getInternalUIArea();
+
+			//Assert
+			assert.deepEqual(oUIArea, oUIAreaSelect, "The UI area of the Select control is returned");
 		});
 
 		QUnit.start();
