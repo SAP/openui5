@@ -39,9 +39,7 @@ sap.ui.define([],
 				},
 				actions : {
 					move : function(oElement){
-						if (oElement.getMetadata().getName() === 'sap.uxap.ObjectPageSection'){
-							return {};
-						} else {
+						if (!oElement || oElement.getMetadata().getName() !== 'sap.uxap.ObjectPageSection'){
 							return "moveControls";
 						}
 					}

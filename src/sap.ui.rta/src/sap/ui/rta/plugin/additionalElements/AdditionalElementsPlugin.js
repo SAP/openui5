@@ -516,7 +516,7 @@ sap.ui.define([
 			var sType = oRevealedElement.getMetadata().getName();
 			var mType = mActions.reveal.types[sType];
 			var oDesignTimeMetadata = mType.designTimeMetadata;
-			var oRevealAction = oDesignTimeMetadata.getAction("reveal");
+			var oRevealAction = oDesignTimeMetadata.getAction("reveal", oRevealedElement);
 			var oElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
 
 			//Parent Overlay passed as argument as no overlay is yet available for stashed control
@@ -563,7 +563,7 @@ sap.ui.define([
 			if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()){
 				var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ? OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
 				var SourceParentDesignTimeMetadata = oSourceParentOverlay.getDesignTimeMetadata();
-				var oMoveAction = SourceParentDesignTimeMetadata.getAction("move");
+				var oMoveAction = SourceParentDesignTimeMetadata.getAction("move", oRevealedElement);
 				var sVariantManagementReference;
 				if (oMoveAction) {
 					sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oMoveAction, true);
