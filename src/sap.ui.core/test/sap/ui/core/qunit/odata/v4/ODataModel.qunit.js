@@ -1341,6 +1341,11 @@ sap.ui.require([
 			oModel.resolve(0, new BaseContext(oModel, "/")),
 			Model.prototype.resolve(0, new BaseContext(oModel, "/")),
 			"/");
+		assert.strictEqual(
+			oModel.resolve(undefined, new BaseContext(oModel, "/")),
+			"/");
+		// Note: we do not go this far; JsDoc of @return wins: (string|undefined), nothing else!
+		assert.strictEqual(Model.prototype.resolve(null), null);
 	});
 });
 //TODO constructor: test that the service root URL is absolute?
