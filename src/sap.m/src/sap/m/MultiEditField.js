@@ -258,5 +258,14 @@ sap.ui.define([
 		return this.byId("select").getDomRef();
 	};
 
+	/**
+	 * Gets the UI area of the internal Select control.
+	 * @returns {sap.ui.core.UIArea} The UI area of the internal Select control.
+	 * @private
+	 */
+	MultiEditField.prototype._getInternalUIArea = function() {
+		return this.byId("select").getUIArea();
+	};
+
 	return MultiEditField;
 });
