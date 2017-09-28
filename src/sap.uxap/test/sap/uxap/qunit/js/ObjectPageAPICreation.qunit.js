@@ -695,6 +695,28 @@
 		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
 	});
 
+	QUnit.test("_isClosestScrolledSection", function (assert) {
+
+		var oPage = this.oObjectPage,
+			oFirstSection = oPage.getSections()[0],
+			oThirdSection = oPage.getSections()[2],
+			done = assert.async(),
+			fnOnDomReady = function() {
+
+				//check
+				assert.strictEqual(oPage._isClosestScrolledSection(oFirstSection.getId()), true, "first section is currently scrolled");
+
+				oPage.setSelectedSection(oThirdSection.getId());
+
+				//check
+				setTimeout(function() {
+					assert.strictEqual(oPage._isClosestScrolledSection(oThirdSection.getId()), true, "third section is currently scrolled");
+					done();
+				}, 0);
+			};
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+	});
+
 	QUnit.module("ObjectPage API: sectionTitleLevel");
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is TitleLevel.Auto", function (assert) {

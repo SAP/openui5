@@ -1085,7 +1085,7 @@ sap.ui.define([
 			iPageHeight = this.iScreenHeight,
 			sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
 
-		return sClosestSectionId && (sSectionId !== sClosestSectionId);
+		return sClosestSectionId && (sSectionId === sClosestSectionId);
 	};
 
 	/**
