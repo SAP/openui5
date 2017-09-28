@@ -1,4 +1,5 @@
 <mvc:View
+    controllerName="sap.m.sample.SegmentedButton.Page"
 	height="100%"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
@@ -41,13 +42,22 @@
 						<SegmentedButtonItem icon="sap-icon://competitor" text="Competitor" />
 					</items>
 				</SegmentedButton>
-				<SegmentedButton>
+				<SegmentedButton class="sapUiSmallMarginBottom">
 					<items>
 						<SegmentedButtonItem text="Selected" />
 						<SegmentedButtonItem text="Enabled" />
 						<SegmentedButtonItem text="Disabled" enabled="false"/>
 					</items>
 				</SegmentedButton>
+				<Label text="Fire selectionChange event"/>
+				<SegmentedButton id="item" selectionChange="onSelectionChange">
+					<items>
+						<SegmentedButtonItem text="One" />
+						<SegmentedButtonItem text="Two" />
+						<SegmentedButtonItem text="Three" />
+					</items>
+				</SegmentedButton>
+				<Text id="selectedItem"/>
 			</VBox>
 		</content>
 		<footer>

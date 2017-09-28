@@ -85,8 +85,15 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 			/**
 			 * A reference to the currently selected button control. By default or if the association is set to false (null, undefined, "", false), the first button will be selected.
 			 * If the association is set to an invalid value (for example, an ID of a button that does not exist) the selection on the SegmentedButton will be removed.
+			 * @deprecated Since version 1.52.
+			 * Use the <code>selectedItem</code> association instead.
 			 */
-			selectedButton : {type : "sap.m.Button", multiple : false},
+			selectedButton : {deprecated: true, type : "sap.m.Button", multiple : false},
+
+			/**
+			 * A reference to the currently selected item control.
+			 */
+			selectedItem : {type : "sap.m.SegmentedButtonItem", multiple : false},
 
 			/**
 			 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
@@ -102,8 +109,11 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 
 			/**
 			 * Fires when the user selects a button, which returns the ID and button object.
+			 * @deprecated Since version 1.52.
+			 * Use the <code>selectionChange</code> event instead.
 			 */
 			select : {
+				deprecated: true,
 				parameters : {
 
 					/**
@@ -121,6 +131,18 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 					 * @since 1.28.0
 					 */
 					key : {type : "string"}
+				}
+			},
+			/**
+			 * Fires when the user selects an item, which returns the item object.
+			 * @since 1.52
+			 */
+			selectionChange : {
+				parameters : {
+					/**
+					 * Reference to the item, that has been selected.
+					 */
+					item : {type : "sap.m.SegmentedButtonItem"}
 				}
 			}
 		}
@@ -505,7 +527,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 		if (aItems.length > 0 && aButtons.length > 0) {
 			for (; i < aItems.length; i++) {
 				if (aItems[i] && aItems[i].getKey() === sKey) {
-					this.setSelectedButton(aButtons[i]);
+					this.setSelectedItem(aItems[i]);
 					break;
 				}
 			}
@@ -513,7 +535,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 		this.setProperty("selectedKey", sKey, true);
 		return this;
 	};
-
 
 	SegmentedButton.prototype.removeButton = function (oButton) {
 		var oRemovedButton = this.removeAggregation("buttons", oButton);
@@ -562,14 +583,18 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 	 * @override
 	 */
 	SegmentedButton.prototype.removeItem = function (oItem, bSuppressInvalidate) {
-		this.removeAggregation("buttons", oItem.oButton, true);
-		this.removeAggregation("items", oItem, bSuppressInvalidate);
+		if (oItem !== null && oItem !== undefined) {
+			this.removeAggregation("buttons", oItem.oButton, true);
+			this.removeAggregation("items", oItem, bSuppressInvalidate);
+		}
 		// Reset selected button if the removed button is the currently selected one
-		if (oItem && oItem instanceof sap.m.SegmentedButtonItem &&
-			this.getSelectedButton() === oItem.oButton.getId()) {
+		if (oItem && oItem instanceof sap.m.SegmentedButtonItem && this.getSelectedButton() === oItem.oButton.getId()) {
 			this.setSelectedKey("");
 			this.setSelectedButton("");
+			this.setSelectedItem("");
 		}
+
+		this.setSelectedItem(this.getItems()[0]);
 	};
 
 	/**
@@ -595,9 +620,10 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 		this.removeAllAggregation("items", bSuppressInvalidate);
 		this.removeAllButtons();
 
-		// Reset selectedKey and selectedButton
+		// Reset selectedKey, selectedButton and selectedItem
 		this.setSelectedKey("");
 		this.setSelectedButton("");
+		this.setSelectedItem("");
 	};
 
 	/** Event handler for the internal button press events.
@@ -605,7 +631,8 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 	 * @private
 	 */
 	SegmentedButton.prototype._buttonPressed = function (oEvent) {
-		var oButtonPressed = oEvent.getSource();
+		var oButtonPressed = oEvent.getSource(),
+			oItemPressed;
 
 		if (this.getSelectedButton() !== oButtonPressed.getId()) {
 			// CSN# 0001429454/2014: remove class for all other items
@@ -613,11 +640,24 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 				oButton.$().removeClass("sapMSegBBtnSel");
 				oButton.$().attr("aria-checked", false);
 			});
+
+			//get the corresponding item regarding the pressed button
+			oItemPressed = this.getItems().filter(function (oItem) {
+				return oItem.oButton === oButtonPressed;
+			})[0];
+
 			oButtonPressed.$().addClass("sapMSegBBtnSel");
 			oButtonPressed.$().attr("aria-checked", true);
 
 			this.setAssociation('selectedButton', oButtonPressed, true);
 			this.setProperty("selectedKey", this.getSelectedKey(), true);
+
+			this.setAssociation('selectedItem', oItemPressed, true);
+			this.fireSelectionChange({
+				item: oItemPressed
+			});
+
+			// support old API
 			this.fireSelect({
 				button: oButtonPressed,
 				id: oButtonPressed.getId(),
@@ -636,6 +676,10 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 		// CSN# 0001429454/2014: when the id evaluates to false (null, undefined, "") the first button should be selected
 		if (aButtons.length > 0) {
 			this.setAssociation('selectedButton', aButtons[0], true);
+
+			if (this.getItems().length > 0) {
+				this.setAssociation('selectedItem', this.getItems()[0], true);
+			}
 		}
 	};
 
@@ -679,6 +723,29 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 		}
 
 		this._syncSelect();
+		return this;
+	};
+
+	/**
+	 * Setter for association <code>selectedItem</code>.
+	 *
+	 * @param {string | sap.m.SegmentedButtonItem | null | undefined} vItem New value for association <code>setSelectedItem</code>
+	 *    An sap.m.SegmentedButtonItem instance which becomes the new target of this <code>selectedItem</code> association.
+	 *    Alternatively, the ID of an sap.m.SegmentedButtonItem instance may be given as a string.
+	 *    If the value of null, undefined, or an empty string is provided the first item will be selected.
+	 * @returns {sap.m.SegmentedButton} <code>this</code> this pointer for chaining
+	 * @public
+	 * @override
+	 */
+	SegmentedButton.prototype.setSelectedItem = function (vItem) {
+		var oItem = typeof vItem === "string" && vItem !== "" ? sap.ui.getCore().byId(vItem) : vItem,
+			oItemInstanceOfSegBtnItem = oItem instanceof sap.m.SegmentedButtonItem,
+			vButton = oItemInstanceOfSegBtnItem ? oItem.oButton : vItem;
+
+		// set the new value
+		this.setAssociation("selectedItem", vItem, true);
+		this.setSelectedButton(vButton);
+
 		return this;
 	};
 
