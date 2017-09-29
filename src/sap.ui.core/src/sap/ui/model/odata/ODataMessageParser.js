@@ -453,13 +453,16 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		var sMethod = (mRequestInfo.request && mRequestInfo.request.method) ? mRequestInfo.request.method : "GET";
 		var bRequestCreatePost = (sMethod === "POST"
 			&& mRequestInfo.response
-			&& (mRequestInfo.response.statusCode === "201" || mRequestInfo.response.statusCode === 201)
+			&& mRequestInfo.response.statusCode == 201
 			&& mRequestInfo.response.headers
 			&& mRequestInfo.response.headers["location"]);
 
 		var sUrlForTargetCalculation;
 		if (bRequestCreatePost) {
 			sUrlForTargetCalculation = mRequestInfo.response.headers["location"];
+		} else if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.response && mRequestInfo.response.statusCode >= 400) {
+			// If a create request returns an error the target should be set to the internal entity key
+			sUrlForTargetCalculation = mRequestInfo.request.key;
 		} else {
 			sUrlForTargetCalculation = mRequestInfo.url;
 		}
