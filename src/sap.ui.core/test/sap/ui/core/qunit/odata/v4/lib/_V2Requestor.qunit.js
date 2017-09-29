@@ -91,27 +91,21 @@ sap.ui.require([
 		},
 		oExpectedResult : {"__metadata" : {}, "results" : "foo"}
 	}].forEach(function (oFixture, i) {
-		QUnit.test("doFetchV4Response, " + i, function (assert) {
+		QUnit.test("doConvertResponse, " + i, function (assert) {
 			var oRequestor = {fnFetchEntityContainer : function () {}},
-				oRequestorMock = this.mock(oRequestor),
-				mTypeByName = {};
+				oRequestorMock = this.mock(oRequestor);
 
 			asV2Requestor(oRequestor);
 
-			oRequestorMock.expects("fnFetchEntityContainer").withExactArgs()
-				.returns(_SyncPromise.resolve(mTypeByName));
 			oRequestorMock.expects("convertNonPrimitive")
-				.withExactArgs(sinon.match.same(oFixture.oResponsePayload.d),
-					sinon.match.same(mTypeByName))
+				.withExactArgs(sinon.match.same(oFixture.oResponsePayload.d))
 				.returns(oFixture.bIsCollection
 					? oFixture.oResponsePayload.d.results
 					: oFixture.oResponsePayload.d);
 
 			// code under test
-			return oRequestor.doFetchV4Response(oFixture.oResponsePayload)
-				.then(function (oPayload) {
-					assert.deepEqual(oPayload, oFixture.oExpectedResult);
-				});
+			assert.deepEqual(oRequestor.doConvertResponse(oFixture.oResponsePayload),
+				oFixture.oExpectedResult);
 		});
 	});
 
@@ -123,15 +117,16 @@ sap.ui.require([
 			},
 			oRequestor = {},
 			oRequestorMock = this.mock(oRequestor),
-			mTypeByName = {"TypeQName" : {property : {$Type : "Edm.Double"}}};
+			oType = {property : {$Type : "Edm.Double"}};
 
 		asV2Requestor(oRequestor);
+		oRequestorMock.expects("getTypeForName").twice().withExactArgs("TypeQName").returns(oType);
 		oRequestorMock.expects("convertPrimitive")
 			.withExactArgs("42", "Edm.Double", "TypeQName", "property")
 			.returns(42);
 
 		// code under test
-		oRequestor.convertNonPrimitive(oObject, mTypeByName);
+		oRequestor.convertNonPrimitive(oObject);
 
 		assert.deepEqual(oObject, {"complex" : {"property" : 42}});
 	});
@@ -146,10 +141,10 @@ sap.ui.require([
 			oRequestor = {};
 
 		asV2Requestor(oRequestor);
+		this.mock(oRequestor).expects("getTypeForName").withExactArgs("TypeQName").returns({});
 
 		// code under test
-		oConvertedObject = oRequestor.convertNonPrimitive(oObject,
-			{} /*mTypeByName not accessed by code under test*/);
+		oConvertedObject = oRequestor.convertNonPrimitive(oObject);
 
 		assert.deepEqual(oConvertedObject, {complex : null});
 	});
@@ -168,9 +163,10 @@ sap.ui.require([
 			},
 			oRequestor = {},
 			oRequestorMock = this.mock(oRequestor),
-			mTypeByName = {"TypeQName" : {property : {$Type : "Edm.Double"}}};
+			oType = {property : {$Type : "Edm.Double"}};
 
 		asV2Requestor(oRequestor);
+		oRequestorMock.expects("getTypeForName").thrice().withExactArgs("TypeQName").returns(oType);
 		oRequestorMock.expects("convertPrimitive")
 			.withExactArgs("42", "Edm.Double", "TypeQName", "property")
 			.returns(42);
@@ -179,7 +175,7 @@ sap.ui.require([
 			.returns(77);
 
 		// code under test
-		oConvertedObject = oRequestor.convertNonPrimitive(oObject, mTypeByName);
+		oConvertedObject = oRequestor.convertNonPrimitive(oObject);
 
 		assert.deepEqual(oConvertedObject, {
 			"complexCollection" : [
@@ -202,21 +198,22 @@ sap.ui.require([
 				property : "42"
 			},
 			oRequestor = {},
-			mTypeByName = {"TypeQName" : {property : {$Type : "Edm.Double"}}};
+			oType = {property : {$Type : "Edm.Double"}};
 
 		asV2Requestor(oRequestor);
 		// remember original function, do not call mock as "code under test" ;-)
 		fnConvertNonPrimitive = oRequestor.convertNonPrimitive.bind(oRequestor);
 
+		this.mock(oRequestor).expects("getTypeForName").withExactArgs("TypeQName").returns(oType);
 		this.mock(oRequestor).expects("convertNonPrimitive")
-			.withExactArgs(oObject.complex, mTypeByName)
+			.withExactArgs(sinon.match.same(oObject.complex))
 			.returns(oObject.complex);
 		this.mock(oRequestor).expects("convertPrimitive")
 			.withExactArgs(oObject.property, "Edm.Double", "TypeQName", "property")
 			.returns(42);
 
 		// code under test
-		fnConvertNonPrimitive(oObject, mTypeByName);
+		fnConvertNonPrimitive(oObject);
 
 		assert.deepEqual(oObject, {
 			complex : {},
@@ -819,5 +816,22 @@ sap.ui.require([
 		return oSyncPromise.then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getTypeForName", function (assert) {
+		var oRequestor = {
+				fnFetchMetadata : function () {}
+			},
+			oType = {};
+
+		asV2Requestor(oRequestor);
+
+		this.mock(oRequestor).expects("fnFetchMetadata")
+			.withExactArgs("/my.Type").returns(_SyncPromise.resolve(oType));
+
+		// code under test
+		assert.strictEqual(oRequestor.getTypeForName("my.Type"), oType);
+		assert.strictEqual(oRequestor.getTypeForName("my.Type"), oType);
 	});
 });
