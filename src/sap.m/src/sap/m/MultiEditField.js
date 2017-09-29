@@ -170,7 +170,11 @@ sap.ui.define([
 		this._getKeepAll().destroy();
 		this._getBlank().destroy();
 		this._getValueHelp().destroy();
-		this.byId("itemTemplate").destroy();
+
+		var oItemTemplate = this.byId("itemTemplate");
+		if (oItemTemplate) {
+			oItemTemplate.destroy();
+		}
 	};
 
 	/**
@@ -255,7 +259,8 @@ sap.ui.define([
 	 * @private
 	 */
 	MultiEditField.prototype._getInternalDomRef = function() {
-		return this.byId("select").getDomRef();
+		var oSelect = this.byId("select");
+		return oSelect && oSelect.getDomRef();
 	};
 
 	/**

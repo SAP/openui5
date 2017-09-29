@@ -399,6 +399,20 @@
 			assert.deepEqual(oDomRef, oDomRefSelect, "The DOM reference of the Select control is returned");
 		});
 
+		QUnit.test("_getInternalDomRef function returns undefined if the control has already been destroyed", function(assert) {
+			//Arrange
+			var oDomRef,
+				oDomRefSelect;
+
+			this.oMultiEditField.destroy();
+
+			//Act
+			oDomRef = this.oMultiEditField._getInternalDomRef();
+
+			//Assert
+			assert.equal(typeof oDomRef, "undefined", "The DOM reference of the Select does not exist and undefined is returned.");
+		});
+
 		QUnit.test("_getInternalUIArea function", function(assert) {
 			//Arrange
 			var oUIArea,
