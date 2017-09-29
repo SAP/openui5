@@ -1402,6 +1402,12 @@
         "type": "FIX",
         "text": " sap.m.TextArea: _adjustHeight before control is rendered",
         "references": []
+      },
+      {
+        "id": "6cc921c2a34283fe2e11c710c690b652e84ceab9",
+        "type": "FIX",
+        "text": " sap.m.Label: Label wrapping has been enabled outside of Form context",
+        "references": []
       }
     ]
   }
