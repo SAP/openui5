@@ -11,6 +11,12 @@ sap.ui.define([
 			var bExpanded = oSideNavigation.getExpanded();
 
 			oSideNavigation.setExpanded(!bExpanded);
+		},
+
+		onHideShowSubItemPress: function () {
+			var navListItem = this.getView().byId('subItemThree');
+
+			navListItem.setVisible(!navListItem.getVisible());
 		}
 	});
 
