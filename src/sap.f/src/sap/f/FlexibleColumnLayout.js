@@ -80,7 +80,9 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Determines the layout of the control - number of visible columns and their relative sizes
+				 * Determines the layout of the control - number of visible columns and their relative sizes.
+				 *
+				 * For more details, see {@link topic:3b9f760da5b64adf8db7f95247879086 Types of Layout} in the documentation.
 				 */
 				layout: {type: "sap.f.LayoutType", defaultValue: LT.OneColumn},
 
