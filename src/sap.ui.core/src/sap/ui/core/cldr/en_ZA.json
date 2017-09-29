@@ -3265,6 +3265,7 @@
 		"XPF": "CFPF",
 		"ZAR": "R"
 	},
+	"rtl": false,
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
