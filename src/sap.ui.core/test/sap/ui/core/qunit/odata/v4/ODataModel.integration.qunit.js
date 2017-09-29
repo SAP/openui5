@@ -541,9 +541,9 @@ sap.ui.require([
 
 			return new Promise(function (resolve) {
 				that.resolve = resolve;
-				// After one second everything should have run through
+				// After three seconds everything should have run through
 				// Resolve to have the missing requests and changes reported
-				window.setTimeout(resolve, 1000);
+				window.setTimeout(resolve, 3000);
 				that.checkFinish();
 			}).then(function () {
 				var sControlId, i, j;
