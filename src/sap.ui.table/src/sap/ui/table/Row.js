@@ -250,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 			$Row = $Row.add($DomRefs.rowFixedPart);
 		}
 
-		if (bSelectOnCellsAllowed) {
+		if (bSelectOnCellsAllowed && oTable.getContextByIndex(this.getIndex())) {
 			// the row requires a tooltip for selection if the cell selection is allowed
 			$Row.attr("title", mTooltipTexts.mouse[sSelectReference]);
 		} else {
