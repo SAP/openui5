@@ -19,6 +19,12 @@
 	background: @sapUiGroupContentBackground;
 }
 
+html[data-sap-ui-browser^="ie"] {
+	.sapFDynamicPageContent {
+		flex-shrink: 0;
+	}
+}
+
 .sapFDynamicPageContentWrapper {
 	.sapFDynamicPageContentWrapperSpacer {
 		height: 4rem;
