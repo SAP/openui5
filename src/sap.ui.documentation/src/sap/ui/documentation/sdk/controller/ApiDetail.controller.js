@@ -503,7 +503,7 @@ sap.ui.define([
 			 */
 			_modifyReferences: function (oControlData) {
 				var bHeaderDocuLinkFound = false,
-					aReferences = oControlData.references;
+					aReferences = oControlData.constructor.references;
 
 				if (aReferences && aReferences.length > 0) {
 					oControlData.references = aReferences.map(function (sReference) {
