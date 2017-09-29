@@ -396,6 +396,15 @@
 		return oMockServer;
 	};
 
+	var fnToMobileMode = function () {
+		jQuery("html").removeClass("sapUiMedia-Std-Desktop")
+			.removeClass("sapUiMedia-Std-Tablet")
+			.addClass("sapUiMedia-Std-Phone");
+		sap.ui.Device.system.desktop = false;
+		sap.ui.Device.system.tablet = false;
+		sap.ui.Device.system.phone = true;
+	};
+
 	QUnit.test("default values", function (assert) {
 
 		// system under test
@@ -8495,5 +8504,60 @@
 
 		// cleanup
 		oSelect.destroy();
+	});
+
+	QUnit.module("Picker's header", {
+		beforeEach: function () {
+			fnToMobileMode(); // Enter mobile mode
+
+			this.oLabel = new sap.m.Label({
+				text: "Label's text",
+				labelFor: "theSelect"
+			}).placeAt("content");
+
+			this.oSelect = new sap.m.Select("theSelect", {
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				]
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSelect.destroy();
+			this.oLabel.destroy();
+		}
+	});
+
+	QUnit.test("Text of the picker's title", 2, function(assert) {
+
+		var fnDone = assert.async(),
+			oDialog = this.oSelect.getAggregation("picker");
+
+		oDialog.attachBeforeOpen(function () {
+			// Checks the picker title after opening the dialog, since the title is updated in beforeOpen
+			assert.strictEqual(this.oSelect._getPickerTitle().getText(), this.oLabel.getText(), "The title of the picker is the same as the label referencing the Select");
+
+			fnDone();
+		}.bind(this));
+
+		// Checks the picker title before opening (the default one)
+		assert.strictEqual(this.oSelect._getPickerTitle().getText(), 'Select', "The default value of the picker's title");
+
+		// Open the Select, in order for the title to be updated.
+		this.oSelect.open();
 	});
 }());
