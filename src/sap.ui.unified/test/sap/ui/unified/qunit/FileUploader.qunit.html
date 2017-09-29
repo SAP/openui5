@@ -412,16 +412,16 @@
 	QUnit.test("Testing sending passed files with XHR", function (assert) {
 		var oFileUploader = createFileUploader(),
 			aFiles = {
-				"0": createFakeFile({
+				"0": new Blob([createFakeFile({
 					name:"FileUploader.qunit.html",
 					type:"text/html",
 					size:404450
-				}),
-				"1": createFakeFile({
+				})]),
+				"1": new Blob([createFakeFile({
 					name:"FileUploader2.qunit.html",
 					type:"text/html",
 					size:404450
-				}),
+				})]),
 				"length" : 2
 			},
 			oSpy = this.spy(window.XMLHttpRequest.prototype, "send");
