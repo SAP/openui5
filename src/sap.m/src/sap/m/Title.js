@@ -2,6 +2,10 @@
  * ${copyright}
  */
 
+ /**
+  * @typedef {Object} sap.m.Title
+  * @typedef {Object} sap.ui.core.Title
+  */
 // Provides control sap.m.Title.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/library'],
 	function(jQuery, Control, library, coreLibrary) {
@@ -94,6 +98,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 	}});
 
+	/**
+	 * Sets text within the title.
+	 *
+	 * @name sap.m.Title.setText
+	 * @method
+	 * @public
+	 * @param {string} sText Text that will be set for the title.
+	 * @returns {sap.m.Title} this Title reference for chaining.
+	 */
 	Title.prototype.setText = function(sText) {
 		var oRef = this.getDomRef("inner");
 		var bPatchDom = oRef && !this._getTitle();
@@ -105,7 +118,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	};
 
 
-	// Returns the instance of the associated sap.ui.core.Title if exists
+	/**
+	 * Gets the currently set title.
+	 *
+	 * @name sap.m.Title._getTitle
+	 * @method
+	 * @private
+	 * @returns {sap.m.Title} Instance of the associated sap.ui.core.Title if exists.
+	 */
 	Title.prototype._getTitle = function(){
 		var sTitle = this.getTitle();
 
@@ -119,10 +139,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		return null;
 	};
 
+	/**
+	 * Title on change handler.
+	 *
+	 * @name sap.m.Title._onTitleChanged
+	 * @method
+	 * @private
+	 */
 	Title.prototype._onTitleChanged = function(){
 		this.invalidate();
 	};
 
+	/**
+	 * Sets the title for a <code>sap.m.Title</code> or <code>sap.ui.core.Title</code>
+	 *
+	 * @name sap.m.Title.setTitle
+	 * @method
+	 * @public
+	 * @param {sap.m.Title|sap.ui.core.Title} vTitle Given variant of the a title which can be <code>sap.m.Title</code> or <code>sap.ui.core.Title</code>.
+	 * @returns {sap.m.Title} this Title reference for chaining.
+	 */
 	Title.prototype.setTitle = function(vTitle){
 		var that = this;
 
@@ -156,8 +192,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	};
 
 	/**
-	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * Gets the accessibility information for the <code>sap.m.Title</code> control.
+	 *
+	 * @name sap.m.Title.getAccessibilityInfo
+	 * @method
 	 * @protected
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 */
 	Title.prototype.getAccessibilityInfo = function() {
 		var oTitle = this._getTitle() || this;
