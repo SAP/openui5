@@ -51,17 +51,5 @@ sap.ui.define(['sap/ui/core/Control'], function(Control){
 		return "ManyAggregationsControl";
 	};
 
-	ManyAggregationsControl.prototype.addBottomControl = function (o) {
-		this.addGroundControl(o);
-	};
-
-	ManyAggregationsControl.prototype.insertBottomControl = function(o, i) {
-		this.insertGroundControl(o, i);
-	};
-
-	ManyAggregationsControl.prototype.getBottomControls = function () {
-		return this.getGroundControls();
-	};
-
 	return ManyAggregationsControl;
 });
