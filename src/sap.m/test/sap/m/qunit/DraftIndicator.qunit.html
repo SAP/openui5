@@ -74,7 +74,6 @@
 		assert.strictEqual(oDraftIndi.$("label").html(), "", "Draft saved is cleared");
 
 		// Clean up
-		oDraftIndi._resetDraftTimer();
 		oDraftIndi.destroy();
 	});
 
@@ -97,7 +96,6 @@
 		assert.ok(oDraftIndi.$("label").html()!="", "Draft saved state is not cleared after default timeout");
 
 		// Clean up
-		oDraftIndi._resetDraftTimer();
 		oDraftIndi.destroy();
 	});
 
@@ -120,7 +118,22 @@
 		assert.strictEqual(oDraftIndi.$("label").html(), "", "Draft saving state is cleared after default timeout");
 
 		// Clean up
-		oDraftIndi._resetDraftTimer();
+		oDraftIndi.destroy();
+	});
+
+	QUnit.test("the control doesn't recreate the label upon destruction", function (assert) {
+		// Arrange
+		var oDraftIndi = new sap.m.DraftIndicator();
+
+		// Act
+		oDraftIndi.showDraftSaving();
+		oDraftIndi.destroy();
+		this.clock.tick(1500);
+
+		// Assert
+		assert.strictEqual(oDraftIndi.getAggregation("_label"), null, "The label was not recreated");
+
+		// Clean up
 		oDraftIndi.destroy();
 	});
 

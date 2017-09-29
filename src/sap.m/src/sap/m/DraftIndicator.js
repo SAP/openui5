@@ -70,6 +70,9 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label", "sap/m/library", "jquery.sa
 		this.iDelayedCallId = null;
 	};
 
+	DraftIndicator.prototype.exit = function () {
+		this._resetDraftTimer();
+	};
 
 	/**
 	 * @Overwrites
