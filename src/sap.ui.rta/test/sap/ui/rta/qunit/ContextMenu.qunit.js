@@ -14,6 +14,7 @@ sap.ui.require([
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/SelectionMode',
+	'sap/ui/dt/Overlay',
 	'sap/ui/rta/plugin/Settings',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/m/Page',
@@ -32,6 +33,7 @@ function(
 	RuntimeAuthoring,
 	OverlayRegistry,
 	SelectionMode,
+	Overlay,
 	Settings,
 	ChangeRegistry,
 	Page,
@@ -70,6 +72,8 @@ function(
 			this.oMultipleFieldOneBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.BoundButton");
 			this.oMultipleBoundFieldGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.BoundButton35");
 			this.oFieldInGroupWithoutStableId = sap.ui.getCore().byId("Comp1---idMain1--FieldInGroupWithoutStableId");
+
+			sandbox.stub(Overlay.prototype, "isVisibleInDom").returns(true);
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
@@ -295,7 +299,7 @@ function(
 		beforeEach : function(assert) {
 			var oEmbeddedView = sap.ui.getCore().byId("Comp1---idMain1");
 
-			this.oSubSection = new ObjectPageSubSection({
+			var oSubSection = new ObjectPageSubSection({
 				id : oEmbeddedView.createId("subsection1"),
 				blocks: [new sap.m.Button({text: "abc"})]
 			});
@@ -304,16 +308,16 @@ function(
 				id : oEmbeddedView.createId("section1"),
 				title: "Section_1",
 				visible : true,
-				subSections: [this.oSubSection]
+				subSections: [oSubSection]
 			});
 
-			this.oObjectPageSection2 = new ObjectPageSection({
+			var oObjectPageSection2 = new ObjectPageSection({
 				id : oEmbeddedView.createId("section2"),
 				title: "Section_2",
 				visible : false
 			});
 
-			this.oObjectPageSection3 = new ObjectPageSection({
+			var oObjectPageSection3 = new ObjectPageSection({
 				id : oEmbeddedView.createId("section3"),
 				title: "Section_3",
 				visible : true
@@ -325,12 +329,19 @@ function(
 				id : oEmbeddedView.createId("ObjectPageLayout"),
 				sections : [
 					this.oObjectPageSection1,
-					this.oObjectPageSection2,
-					this.oObjectPageSection3
+					oObjectPageSection2,
+					oObjectPageSection3
 				]
 			});
 			oEmbeddedPage.addContent(this.oObjectPageLayout);
 			sap.ui.getCore().applyChanges();
+
+			sandbox.stub(Overlay.prototype, "isVisibleInDom", function() {
+				if (this.getElementInstance() === oObjectPageSection2) {
+					return false;
+				}
+				return true;
+			});
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oObjectPageLayout
@@ -346,6 +357,7 @@ function(
 		afterEach : function(assert) {
 			this.oObjectPageLayout.destroy();
 			this.oRta.destroy();
+			sandbox.restore();
 		}
 	});
 
@@ -372,7 +384,7 @@ function(
 	QUnit.module("Given RTA is started for Object Page without stable ids...", {
 		beforeEach : function(assert) {
 
-			this.oSubSection = new ObjectPageSubSection({
+			var oSubSection = new ObjectPageSubSection({
 				id : "subsection1",
 				blocks: [new Button({text: "abc"})]
 			});
@@ -381,16 +393,16 @@ function(
 				id : "section1",
 				title: "Section_1",
 				visible : true,
-				subSections: [this.oSubSection]
+				subSections: [oSubSection]
 			});
 
-			this.oObjectPageSection2 = new ObjectPageSection({
+			var oObjectPageSection2 = new ObjectPageSection({
 				id : "section2",
 				title: "Section_2",
 				visible : false
 			});
 
-			this.oObjectPageSection3 = new ObjectPageSection({
+			var oObjectPageSection3 = new ObjectPageSection({
 				id : "section3",
 				title: "Section_3",
 				visible : true
@@ -399,12 +411,19 @@ function(
 			this.oObjectPageLayout = new ObjectPageLayout({
 				sections : [
 					this.oObjectPageSection1,
-					this.oObjectPageSection2,
-					this.oObjectPageSection3
+					oObjectPageSection2,
+					oObjectPageSection3
 				]
 			});
 			this.oObjectPageLayout.placeAt("test-view");
 			sap.ui.getCore().applyChanges();
+
+			sandbox.stub(Overlay.prototype, "isVisibleInDom", function() {
+				if (this.getElementInstance() === oObjectPageSection2) {
+					return false;
+				}
+				return true;
+			});
 
 			sandbox.stub(RuntimeAuthoring.prototype, '_checkChangesExist', function () {
 				return Promise.resolve(false);

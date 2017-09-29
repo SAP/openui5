@@ -791,6 +791,16 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	};
 
 	/**
+	 * Returns if the Overlay is visible in the DOM (using jQuery).
+	 *
+	 * @return {boolean} Returns if the Overlay is visible in the DOM
+	 * @public
+	 */
+	Overlay.prototype.isVisibleInDom = function() {
+		return this.$().is(":visible");
+	};
+
+	/**
 	 * Returns if overlay is root
 	 * @public
 	 * @return {boolean} if the Overlay is root
