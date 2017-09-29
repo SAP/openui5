@@ -91,15 +91,21 @@ function(
 		},
 		"changes" : [
 			{
-				"fileName":"change44"
+				"fileName":"change44",
+				"layer":"CUSTOMER"
 			},
 			{
-				"fileName":"change45"
+				"fileName":"change45",
+				"layer":"CUSTOMER"
 			}
 		]
 	};
 
+
+
 	sinon.stub(oModel, "getVariant").returns(oVariant);
+	sinon.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+	sinon.stub(oModel.oVariantController, "getVariants").returns([oVariant]);
 	sinon.stub(oModel.oVariantController, "addVariantToVariantManagement").returns(1);
 	sinon.stub(oModel.oVariantController, "removeVariantFromVariantManagement").returns(1);
 

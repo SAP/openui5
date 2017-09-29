@@ -70,6 +70,53 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
+	QUnit.test("when getChangesForComponent is called with a variantSection", function (assert) {
+		var done = assert.async();
+		var oMockedWrappedContent = {
+			"changes" : {
+				"changes": [{
+					fileType: "change",
+					selector: {
+						id: "controlId"
+					}
+				}],
+				"variantSection" : {
+					"variantManagementId" : {
+						"variants" : [{
+							"content" : {
+								"fileName": "variant0",
+								"title": "variant 0"
+							},
+							"changes" : []
+						},
+							{
+								"content" : {
+									"fileName": "variant1",
+									"title": "variant 1"
+								},
+								"changes" : []
+							}]
+					}
+				}
+			}
+		};
+		var fnSetChangeFileContentSpy = this.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+		var fnLoadDefaultChangesStub = this.stub(this.oChangePersistence._oVariantController, "loadDefaultChanges").returns([]);
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+
+		return this.oChangePersistence.getChangesForComponent().then(function () {
+			assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement called once as file content is not set");
+			assert.ok(fnLoadDefaultChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement called once as file content is not set");
+		}).then(function () {
+			this.oChangePersistence.getChangesForComponent().then(function () {
+				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement not called again as file content is set");
+				assert.ok(fnLoadDefaultChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement not called again as file content is set");
+				done();
+			});
+		}.bind(this));
+	});
+
 	QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: []}}));
 

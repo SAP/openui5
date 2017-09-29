@@ -936,7 +936,10 @@ sap.ui.define([
 					Utils.log.error("A flexibility change tries to change a nonexistent control.");
 					return new Utils.FakePromise();
 				}
+
+				//Previous changes added as dependencies
 				return this._applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl);
+
 			}.bind(this));
 		}.bind(this));
 

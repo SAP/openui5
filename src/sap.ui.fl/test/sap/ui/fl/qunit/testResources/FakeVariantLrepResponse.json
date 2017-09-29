@@ -80,7 +80,7 @@
 						"title":"variant A",
 						"fileType":"ctrl_variant",
 						"variantManagementReference": "idMain1--variantManagementOrdersTable",
-						"variantReference":"",
+						"variantReference":"variant2",
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
@@ -111,7 +111,7 @@
 							"selector":{
 								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
 							},
-							"layer":"CUSTOMER",
+							"layer":"VENDOR",
 							"texts":{},
 							"namespace":"sap.ui.rta.test.Demo.md.Component",
 							"creation":"",
@@ -235,7 +235,7 @@
 						"selector":{
 							"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
 						},
-						"layer":"CUSTOMER",
+						"layer":"VENDOR",
 						"texts":{},
 						"namespace":"sap.ui.rta.test.Demo.md.Component",
 						"creation":"",
@@ -284,7 +284,7 @@
 								}
 							},
 							"selector": {
-								"id": "idMain1--ObjectPageLayout",
+								"id": "idMain1--ObjectPageSectionWithForm",
 								"idIsLocal": true
 							},
 							"layer": "CUSTOMER",
@@ -335,7 +335,7 @@
 								"id": "idMain1--ObjectPageSectionWithForm",
 								"idIsLocal": true
 							},
-							"layer": "CUSTOMER",
+							"layer": "VENDOR",
 							"texts": {
 								"newText": {
 									"value": "Renamed Section",
