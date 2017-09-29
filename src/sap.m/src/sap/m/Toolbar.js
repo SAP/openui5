@@ -540,6 +540,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * Returns if the bar is sensitive to the container context. Implementation of the IBar interface
 	 * @returns {boolean} isContextSensitive
 	 * @protected
+	 * @function
 	 */
 	Toolbar.prototype.isContextSensitive = BarInPageEnabler.prototype.isContextSensitive;
 
@@ -548,6 +549,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @param {string} sTag
 	 * @returns {IBar} this for chaining
 	 * @protected
+	 * @function
 	 */
 	Toolbar.prototype.setHTMLTag = BarInPageEnabler.prototype.setHTMLTag;
 
@@ -555,6 +557,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * Gets the HTML tag of the root domref
 	 * @returns {IBarHTMLTag} the HTML-tag
 	 * @protected
+	 * @function
 	 */
 	Toolbar.prototype.getHTMLTag = BarInPageEnabler.prototype.getHTMLTag;
 
@@ -562,6 +565,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * Sets classes and HTML tag according to the context of the page. Possible contexts are header, footer, subheader
 	 * @returns {IBar} <code>this</code> for chaining
 	 * @protected
+	 * @function
 	 */
 	Toolbar.prototype.applyTagAndContextClassFor = BarInPageEnabler.prototype.applyTagAndContextClassFor;
 
@@ -569,6 +573,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * Sets classes according to the context of the page. Possible contexts are header, footer and subheader.
 	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
+	 * @function
 	 */
 	Toolbar.prototype._applyContextClassFor  = BarInPageEnabler.prototype._applyContextClassFor;
 
@@ -576,6 +581,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * Sets HTML tag according to the context of the page. Possible contexts are header, footer and subheader.
 	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
+	 * @function
 	 */
 	Toolbar.prototype._applyTag  = BarInPageEnabler.prototype._applyTag;
 
