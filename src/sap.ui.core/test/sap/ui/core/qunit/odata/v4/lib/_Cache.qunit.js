@@ -78,9 +78,8 @@ sap.ui.require([
 				sResourcePath = "~",
 				oCache;
 
-			this.mock(_Cache).expects("buildQueryString")
-				.withExactArgs(sinon.match.same(mQueryOptions), false, bSortExpandSelect)
-				.returns("?foo=bar");
+			this.mock(_Cache.prototype).expects("setQueryOptions")
+				.withExactArgs(sinon.match.same(mQueryOptions));
 
 			// code under test
 			oCache = new _Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
@@ -89,11 +88,43 @@ sap.ui.require([
 			assert.deepEqual(oCache.mChangeListeners, {});
 			assert.deepEqual(oCache.mPatchRequests, {});
 			assert.deepEqual(oCache.mPostRequests, {});
-			assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
 			assert.strictEqual(oCache.oRequestor, oRequestor);
-			assert.strictEqual(oCache.sResourcePath, "~?foo=bar");
+			assert.strictEqual(oCache.sResourcePath, "~");
+			assert.strictEqual(oCache.bSentReadRequest, false);
 			assert.strictEqual(oCache.bSortExpandSelect, bSortExpandSelect);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#setQueryOptions", function (assert) {
+		var mNewQueryOptions = {},
+			mQueryOptions = {},
+			oCacheMock = this.mock(_Cache),
+			sResourcePath = "~",
+			oCache;
+
+		oCacheMock.expects("buildQueryString")
+			.withExactArgs(sinon.match.same(mQueryOptions), false, "bSortExpandSelect")
+			.returns("?foo=bar");
+		oCacheMock.expects("buildQueryString")
+			.withExactArgs(sinon.match.same(mNewQueryOptions), false, "bSortExpandSelect")
+			.returns("?baz=boo");
+
+		oCache = new _Cache(this.oRequestor, sResourcePath, mQueryOptions, "bSortExpandSelect");
+		assert.strictEqual(oCache.sQueryString, "?foo=bar");
+
+		// code under test
+		oCache.setQueryOptions(mNewQueryOptions);
+
+		assert.strictEqual(oCache.mQueryOptions, mNewQueryOptions);
+		assert.strictEqual(oCache.sQueryString, "?baz=boo");
+
+		oCache.bSentReadRequest = true;
+
+		// code under test
+		assert.throws(function () {
+			oCache.setQueryOptions(mQueryOptions);
+		}, new Error("Cannot set query options: Cache has already sent a read request"));
 	});
 
 	//*********************************************************************************************
@@ -783,6 +814,7 @@ sap.ui.require([
 
 			assert.ok(!oPromise.isFulfilled());
 			assert.ok(!oPromise.isRejected());
+			assert.ok(oCache.bSentReadRequest);
 			return oPromise.then(function (aResult) {
 				var oExpectedResult = {
 						"@odata.context" : "$metadata#TEAMS",
@@ -1851,6 +1883,7 @@ sap.ui.require([
 			fnDataRequested1 = {},
 			fnDataRequested2 = {},
 			oExpectedResult = {},
+			aFetchValuePromises,
 			oListener1 = {},
 			oListener2 = {},
 			mQueryParams = {},
@@ -1883,16 +1916,24 @@ sap.ui.require([
 				}));
 
 		// code under test
-		return Promise.all([
+		aFetchValuePromises = [
 			oCache.fetchValue("group", undefined, fnDataRequested1, oListener1)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
-				}),
+			})
+		];
+
+		assert.ok(oCache.bSentReadRequest);
+
+		// code under test
+		aFetchValuePromises.push(
 			oCache.fetchValue("group", "foo", fnDataRequested2, oListener2)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, "bar");
 				})
-		]);
+		);
+
+		return Promise.all(aFetchValuePromises);
 	});
 
 	//*********************************************************************************************
@@ -1928,6 +1969,8 @@ sap.ui.require([
 		assert.throws(function () {
 			oCache.fetchValue();
 		}, new Error("Cannot fetch a value before the POST request"));
+
+		assert.notOk(oCache.bSentReadRequest);
 		oPromise = oCache.post(sGroupId, oPostData, "etag").then(function (oPostResult1) {
 			assert.strictEqual(oPostResult1, oResult1);
 			return Promise.all([
@@ -2202,6 +2245,7 @@ sap.ui.require([
 			fnDataRequested1 = {},
 			fnDataRequested2 = {},
 			oExpectedResult = {},
+			aFetchValuePromises,
 			oListener1 = {},
 			oListener2 = {},
 			mQueryParams = {},
@@ -2226,18 +2270,26 @@ sap.ui.require([
 					return {value : oExpectedResult};
 				}));
 
-		return Promise.all([
+		// code under test
+		aFetchValuePromises = [
 			oCache.fetchValue("group", "", fnDataRequested1, oListener1)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
-
 					assert.strictEqual(oCache.fetchValue("group", "").getResult(), oExpectedResult);
-				}),
+				})
+		];
+
+		assert.ok(oCache.bSentReadRequest);
+
+		// code under test
+		aFetchValuePromises.push(
 			oCache.fetchValue("group", "", fnDataRequested2, oListener2)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
 				})
-		]);
+		);
+
+		return Promise.all(aFetchValuePromises);
 	});
 
 	//**********************************************W***********************************************

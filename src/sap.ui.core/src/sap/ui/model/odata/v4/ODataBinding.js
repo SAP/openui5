@@ -26,6 +26,7 @@ sap.ui.define([
 	 */
 	ODataBinding.prototype.fetchCache = function (oContext) {
 		var oCachePromise,
+			oCallToken = {},
 			oCurrentCache,
 			that = this;
 
@@ -54,8 +55,8 @@ sap.ui.define([
 						mCacheQueryOptions,
 						oError;
 
-					// create cache only if oCachePromise has not been changed in the meantime
-					if (!oCachePromise || that.oCachePromise === oCachePromise) {
+					// create cache only for the latest call to fetchCache
+					if (!oCachePromise || that.oFetchCacheCallToken === oCallToken) {
 						mCacheQueryOptions = jQuery.extend(true, {}, that.oModel.mUriParameters,
 							mQueryOptions);
 						if (sCanonicalPath) { // quasi-absolute or relative binding
@@ -91,6 +92,7 @@ sap.ui.define([
 				"sap.ui.model.odata.v4.ODataBinding", oError);
 		});
 		this.oCachePromise = oCachePromise;
+		this.oFetchCacheCallToken = oCallToken;
 	};
 
 	/**

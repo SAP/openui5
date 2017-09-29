@@ -229,6 +229,9 @@ sap.ui.define([
 					that.fireDataRequested();
 				}, that);
 			}
+			if (!that.oContext) { // context may have been reset by another call to checkUpdate
+				return undefined;
+			}
 			if (that.oContext.getIndex() === -2) {
 				bForceUpdate = false; // no "change" event for virtual parent context
 			}
