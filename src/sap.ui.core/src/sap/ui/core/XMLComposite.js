@@ -92,14 +92,16 @@ sap.ui.define([
 				return null;
 
 			} else if (mAggregations.hasOwnProperty(sPath)) {
-				var oAggregation = mAggregations[sPath];
+				var oAggregation = mAggregations[sPath],
+					sControlName = oMetadata.getName(),
+					sNamespace = sControlName.slice(0, sControlName.lastIndexOf("."));
 				if (oAggregation.multiple === true && oAggregation.type === "TemplateMetadataContext") {
 					if (!oElement.hasAttribute(sPath)) {
 						return null;
 					}
 					return oElement.getAttribute(sPath);
 				}
-				return oElement.getAttribute(sPath);
+				return oElement.getElementsByTagNameNS(sNamespace, sPath);
 			} else if (mSpecialSettings.hasOwnProperty(sPath)) {
 				var oSpecialSetting = mSpecialSettings[sPath];
 
