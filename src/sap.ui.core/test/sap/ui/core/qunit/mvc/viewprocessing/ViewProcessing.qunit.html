@@ -113,17 +113,22 @@
 
 						var aKeys = Object.keys(myManyAggregationsControl.mAggregations);
 
-						assert.equal(4, aKeys.length);
+						assert.equal(5, aKeys.length);
 						assert.equal("secondaryContent", aKeys[0]);
 						assert.equal("alternativeContent", aKeys[1]);
 						assert.equal("content", aKeys[2]);
-						assert.equal("groundControls", aKeys[3]);
+						assert.equal("bottomControls", aKeys[3]);
+						assert.equal("groundControls", aKeys[4]);
 
 						// check the ordering inside a splitted default aggregation
 						var oControl2 = oView.byId("myManyAggregationsControl2");
-						var aGroundControls = oControl2.getGroundControls();
+						var aBottomControls = oControl2.getBottomControls();
 
-						assert.equal(aGroundControls.length, 4);
+						assert.equal(aBottomControls.length, 4);
+						assert.equal(aBottomControls[0].sId, "myViewAggrs--InnerButton1");
+						assert.equal(aBottomControls[1].sId, "myViewAggrs--InnerButton2");
+						assert.equal(aBottomControls[2].sId, "myViewAggrs--InnerButton3");
+						assert.equal(aBottomControls[3].sId, "myViewAggrs--InnerButton4");
 
 						done();
 					});
