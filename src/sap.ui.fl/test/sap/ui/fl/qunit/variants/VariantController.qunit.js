@@ -36,7 +36,7 @@ sap.ui.require([
 
 			var iIndex = aVarMgmtChanges.indexOf(aChanges[i].getDefinition().fileName);
 			assert.ok(iIndex > -1, "change present in current map");
-			assert.ok(jQuery.isArray(this.oFlexController._oChangePersistence._mChanges.mDependencies[aChanges[i].getKey()].dependencies), "dependency map present for change in current map");
+			assert.ok(jQuery.isArray(this.oFlexController._oChangePersistence._mChanges.mDependencies[aChanges[i].getId()].dependencies), "dependency map present for change in current map");
 		}
 
 		assert.strictEqual(this.oFlexController._oChangePersistence._mChanges.mChanges["RTADemoAppMD---detail--GroupElementDatesShippingStatus"].length, 7, "7 changes in map");
@@ -519,7 +519,7 @@ sap.ui.require([
 				revertChange: sandbox.stub()
 			});
 
-			sandbox.stub(this.oFlexController, "_writeCustomData");
+			sandbox.stub(this.oFlexController, "_writeAppliedChangesCustomData");
 
 			this.mPropertyBag = {
 				viewId: "view1--view2",
@@ -576,7 +576,7 @@ sap.ui.require([
 	QUnit.test("when '_updateCurrentVariant' is triggered from the component model to carry switch and revert of changes", function(assert) {
 		assert.expect(19);
 
-		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aRevertedChanges[1].getKey()] instanceof Object);
+		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aRevertedChanges[1].getId()] instanceof Object);
 		fnGetChanges.call(this, this.aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
 		var sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
@@ -588,7 +588,7 @@ sap.ui.require([
 		/*Dependencies still not updated as control doesn't exist*/
 
 		.then(function() {
-			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getKey()] instanceof Object);
+			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getId()] instanceof Object);
 			fnGetChanges.call(this, this.aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
 			sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
@@ -599,7 +599,7 @@ sap.ui.require([
 	QUnit.test("when triggering _addChange and _removeChange on a control via the VariantModel", function(assert) {
 		var oMockControl = new Text("RTADemoAppMD---detail--GroupElementDatesShippingStatus");
 
-		var mCustomData = {appliedChanges : [this.aRevertedChanges[1].getId()]};
+		var mCustomData = {aCustomDataEntries : [this.aRevertedChanges[1].getId()]};
 		sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns(mCustomData);
 		sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 

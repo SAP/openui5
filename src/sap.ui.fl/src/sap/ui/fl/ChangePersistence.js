@@ -44,6 +44,8 @@ sap.ui.define([
 			mDependentChangesOnMe: {}
 		};
 
+		this._mChangesInitial = {};
+
 		if (!this._mComponent || !this._mComponent.name) {
 			Utils.log.error("The Control does not belong to an SAPUI5 component. Personalization and changes for this control might not work as expected.");
 			throw new Error("Missing component name.");
@@ -251,30 +253,30 @@ sap.ui.define([
 	};
 
 	ChangePersistence.prototype._addDependency = function (oDependentChange, oChange) {
-		if (!this._mChanges.mDependencies[oDependentChange.getKey()]) {
-			this._mChanges.mDependencies[oDependentChange.getKey()] = {
+		if (!this._mChanges.mDependencies[oDependentChange.getId()]) {
+			this._mChanges.mDependencies[oDependentChange.getId()] = {
 				changeObject: oDependentChange,
 				dependencies: []
 			};
 		}
-		this._mChanges.mDependencies[oDependentChange.getKey()].dependencies.push(oChange.getKey());
+		this._mChanges.mDependencies[oDependentChange.getId()].dependencies.push(oChange.getId());
 
-		if (!this._mChanges.mDependentChangesOnMe[oChange.getKey()]) {
-			this._mChanges.mDependentChangesOnMe[oChange.getKey()] = [];
+		if (!this._mChanges.mDependentChangesOnMe[oChange.getId()]) {
+			this._mChanges.mDependentChangesOnMe[oChange.getId()] = [];
 		}
-		this._mChanges.mDependentChangesOnMe[oChange.getKey()].push(oDependentChange.getKey());
+		this._mChanges.mDependentChangesOnMe[oChange.getId()].push(oDependentChange.getId());
 	};
 
 	ChangePersistence.prototype._addControlsDependencies = function (oDependentChange, aControlIdList) {
 		if (aControlIdList.length > 0) {
-			if (!this._mChanges.mDependencies[oDependentChange.getKey()]) {
-				this._mChanges.mDependencies[oDependentChange.getKey()] = {
+			if (!this._mChanges.mDependencies[oDependentChange.getId()]) {
+				this._mChanges.mDependencies[oDependentChange.getId()] = {
 					changeObject: oDependentChange,
 					dependencies: [],
 					controlsDependencies: []
 				};
 			}
-			this._mChanges.mDependencies[oDependentChange.getKey()].controlsDependencies = aControlIdList;
+			this._mChanges.mDependencies[oDependentChange.getId()].controlsDependencies = aControlIdList;
 		}
 	};
 
@@ -301,6 +303,10 @@ sap.ui.define([
 				mDependentChangesOnMe: {}
 			};
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oComponent));
+
+			if (sap.ui.getCore().getConfiguration().getDebug()) {
+				this._mChangesInitial = jQuery.extend(true, {}, this._mChanges);
+			}
 
 			return this.getChangesMapForComponent.bind(this);
 		}
@@ -640,7 +646,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ChangePersistence.prototype._deleteChangeInMap = function (oChange) {
-		var sChangeKey = oChange.getKey();
+		var sChangeKey = oChange.getId();
 		var mChanges = this._mChanges.mChanges;
 		var mDependencies = this._mChanges.mDependencies;
 		var mDependentChangesOnMe = this._mChanges.mDependentChangesOnMe;
@@ -650,8 +656,8 @@ sap.ui.define([
 			var aChanges = mChanges[key];
 			var nIndexInMapElement = aChanges
 				.map(function(oExistingChange){
-					return oExistingChange.getKey();
-				}).indexOf(oChange.getKey());
+					return oExistingChange.getId();
+				}).indexOf(oChange.getId());
 			if (nIndexInMapElement !== -1) {
 				aChanges.splice(nIndexInMapElement, 1);
 				return true;

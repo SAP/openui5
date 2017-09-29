@@ -703,16 +703,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the change key
-	 *
-	 * @returns {String} Change key of the file which is a unique concatenation of fileName, layer and namespace
-	 * @public
-	 */
-	Change.prototype.getKey = function () {
-		return this._oDefinition.fileName + this._oDefinition.layer + this._oDefinition.namespace;
-	};
-
-	/**
 	 * Returns the revert specific data
 	 *
 	 * @returns {*} revert specific data
