@@ -1725,6 +1725,40 @@
 			assert.strictEqual(sSize, 333);
 		});
 
+		QUnit.module("Control destroy");
+
+		QUnit.test("Popover is not re-created on layoutDataChange after Toolbar is destroyed", function (assert) {
+			var oOTB = createOverflowToolbar({}, [
+				getButton("B1"),
+				getButton("B2")
+			]), oPopover;
+
+			// Arrange
+			oOTB.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Overwrite the OverflowToolbar exit method
+			// to simulate layoutDataChange is fired before the _popover aggregation is unregistered from the Core.
+			oOTB.exit = function () {
+				var oPopover = this.getAggregation("_popover");
+				if (oPopover) {
+					var fnOriginalDeregister = oPopover.deregister;
+					oPopover.deregister = function(oElement) {};
+					oPopover.destroy();
+					this.onLayoutDataChange(); // call the layoutDataChange handler
+					oPopover.deregister = fnOriginalDeregister;
+					oPopover.deregister();
+				}
+			};
+
+			// Act: destroy the OverflowToolbar
+			oOTB.destroy(); // exit is called
+			oPopover = oOTB.getAggregation("_popover");
+
+			// Assert
+			assert.strictEqual(oOTB._bIsBeingDestroyed, true, "Toolbar is destroyed");
+			assert.strictEqual(oPopover, null, "Popover is destroyed");
+		});
 
 	})();
 	</script>

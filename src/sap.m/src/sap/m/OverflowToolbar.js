@@ -521,6 +521,9 @@ sap.ui.define([
 	 * @private
 	 */
 	OverflowToolbar.prototype._resetAndInvalidateToolbar = function (bHardReset) {
+		if (this._bIsBeingDestroyed) {
+			return;
+		}
 
 		this._resetToolbar();
 
