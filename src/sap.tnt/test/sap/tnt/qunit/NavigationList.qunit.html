@@ -364,7 +364,7 @@
 			// wait 500ms
 			this.clock.tick(500);
 
-			assert.ok(popover.oPopup.getOpenState() === sap.ui.core.OpenState.CLOSED, "should change popover status to CLOSED");
+			assert.ok(popover.bIsDestroyed, "popover should be destroyed");
 			assert.ok(!this.navigationList._popover, "should clean popover reference");
 		});
 
