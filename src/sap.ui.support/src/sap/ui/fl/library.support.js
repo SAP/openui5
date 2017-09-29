@@ -5,18 +5,13 @@
  * Adds support rules of the <code>sap.ui.fl</code>
  * library to the support infrastructure.
  */
-sap.ui.define(["sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "sap/ui/fl/Utils", "sap/ui/dt/DesignTime", "sap/ui/core/Component"],
-	function(SupportLib, Ruleset, Utils, DesignTime, Component) {
+sap.ui.define(["sap/ui/support/library", "sap/ui/fl/Utils", "sap/ui/dt/DesignTime", "sap/ui/core/Component"],
+	function(SupportLib, Utils, DesignTime, Component) {
 		"use strict";
+
 		var Categories = SupportLib.Categories,
 		Audiences = SupportLib.Audiences,
 		Severity = SupportLib.Severity;
-		var oLib = {
-			name: "sap.ui.fl",
-			niceName: "UI5 Flexibility Library"
-		};
-
-		var oRuleset = new Ruleset(oLib);
 
 		function isClonedElementFromListBinding(oControl) {
 			var sParentAggregationName = oControl.sParentAggregationName,
@@ -32,8 +27,8 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", 
 			return false;
 		}
 
-		oRuleset.addRule({
-			id : "stableId",
+		var oStableIdRule = {
+			id: "stableId",
 			audiences: [Audiences.Application],
 			categories: [Categories.Functionality],
 			enabled: true,
@@ -41,14 +36,14 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", 
 			title: "Stable control IDs are required for SAPUI5 flexibility services",
 			description: "Checks whether the IDs of controls support SAPUI5 flexibility services",
 			resolution: "Replace the generated control ID with a stable ID.\n" +
-						"We strongly recommend that you use stable IDs for all controls in your app, not only for the ones that are currently enabled for SAPUI5 flexiblity services.\n" +
-						"Reason: Only then you will be able to adapt the controls that will be enabled for flexibility services in future SAPUI5 versions",
+			"We strongly recommend that you use stable IDs for all controls in your app, not only for the ones that are currently enabled for SAPUI5 flexiblity services.\n" +
+			"Reason: Only then you will be able to adapt the controls that will be enabled for flexibility services in future SAPUI5 versions",
 			resolutionurls: [{
 				text: "Documentation: Stable IDs: All You Need to Know",
 				href: "https://sapui5.hana.ondemand.com/#docs/guide/f51dbb78e7d5448e838cdc04bdf65403.html"
 			}],
 			async: true,
-			check: function(issueManager, oCoreFacade, oScope, resolve) {
+			check: function (issueManager, oCoreFacade, oScope, resolve) {
 
 				var aElements = oScope.getElements(),
 					oElement,
@@ -68,13 +63,13 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", 
 				}
 
 				var oDesignTime = new DesignTime({
-					rootElements : [oAppComponent]
+					rootElements: [oAppComponent]
 				});
 
-				oDesignTime.attachEventOnce("synced", function() {
+				oDesignTime.attachEventOnce("synced", function () {
 					var aOverlays = oDesignTime.getElementOverlays();
 
-					aOverlays.forEach(function(oOverlay){
+					aOverlays.forEach(function (oOverlay) {
 						var oElement = oOverlay.getElementInstance();
 						var sControlId = oElement.getId();
 
@@ -105,8 +100,14 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", 
 					resolve();
 				});
 			}
-		});
+		};
 
-		return {lib: oLib, ruleset: oRuleset};
+		return {
+			name: "sap.ui.fl",
+			niceName: "UI5 Flexibility Library",
+			ruleset: [
+				oStableIdRule
+			]
+		};
 
 	}, true);
