@@ -75,12 +75,6 @@ sap.ui.define([
 				this.setModel(new JSONModel(), "entity");
 				this.setModel(new JSONModel(), "borrowedMethods");
 				this.setModel(new JSONModel(), "borrowedEvents");
-
-				this._objectPage.attachEvent("onAfterRenderingDOMReady", function () {
-					jQuery.sap.delayedCall(250, this, function () {
-						this._scrollToEntity(this._sEntityType, this._sEntityId);
-					});
-				}, this);
 			},
 
 			onAfterRendering: function () {
@@ -187,6 +181,13 @@ sap.ui.define([
 						jQuery.sap.delayedCall(0, this, function () {
 							this._prettify();
 							this._objectPage.setBusy(false);
+
+							// Init scrolling right after busy indicator is cleared and prettify is ready
+							jQuery.sap.delayedCall(0, this, function () {
+								if (this._sEntityType) {
+									this._scrollToEntity(this._sEntityType, this._sEntityId);
+								}
+							});
 						});
 
 						this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
@@ -253,18 +254,15 @@ sap.ui.define([
 			},
 
 			scrollToMethod: function (oEvent) {
-				var oLink = oEvent.getSource();
-				this._scrollToEntity("methods", oLink.getText());
+				this._scrollToEntity("methods", oEvent.getSource().getText());
 			},
 
 			scrollToEvent: function (oEvent) {
-				var oLink = oEvent.getSource();
-				this._scrollToEntity("events", oLink.getText());
+				this._scrollToEntity("events", oEvent.getSource().getText());
 			},
 
 			scrollToAnnotation: function (oEvent) {
-				var oLink = oEvent.getSource();
-				this._scrollToEntity("annotations", oLink.getText());
+				this._scrollToEntity("annotations", oEvent.getSource().getText());
 			},
 
 			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
@@ -297,6 +295,15 @@ sap.ui.define([
 					});
 
 					if (aFilteredSubSections.length) {
+
+						// Disable router as we are going to scroll only - this is only to prevent routing when a link
+						// pointing to a sub-section from the same entity with a href is clicked
+						this.getRouter().stop();
+						jQuery.sap.delayedCall(0, this, function () {
+							// Re-enable rooter after current operation
+							this.getRouter().initialize(true);
+						});
+
 						// We scroll to the first sub-section found
 						this.getView().byId("apiDetailObjectPage").scrollToSection(aFilteredSubSections[0].getId(), 250);
 					}
