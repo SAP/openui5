@@ -111,12 +111,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 
 		if (sap.ui.layout.form.FormHelper.bArrowKeySupport) {
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-			var that = this;
 
 			if (!bRtl) {
-				this.navigateForward(oEvent, that);
+				this.navigateForward(oEvent);
 			} else {
-				this.navigateBack(oEvent, that);
+				this.navigateBack(oEvent);
 			}
 		}
 
@@ -126,12 +125,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 
 		if (sap.ui.layout.form.FormHelper.bArrowKeySupport) {
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-			var that = this;
 
 			if (!bRtl) {
-				this.navigateBack(oEvent, that);
+				this.navigateBack(oEvent);
 			} else {
-				this.navigateForward(oEvent, that);
+				this.navigateForward(oEvent);
 			}
 		}
 
