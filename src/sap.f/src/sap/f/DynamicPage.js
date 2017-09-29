@@ -174,6 +174,21 @@ sap.ui.define([
 		});
 	}
 
+	// Determines if DOM element has both width and height.
+	// @param {DOM Element} oElement
+	// @returns {boolean}
+	function hasDOMElementSize(oElement) {
+		var oClientRect;
+
+		if (!oElement) {
+			return false;
+		}
+
+		oClientRect = oElement.getBoundingClientRect();
+
+		return !!(oClientRect.width && oClientRect.height);
+	}
+
 	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation();
 
 	/**
@@ -1206,10 +1221,22 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._adjustSnap = function () {
-		var oDynamicPageHeader = this.getHeader(),
-			bIsSnapped = !this.getHeaderExpanded(),
+		var oDynamicPageHeader,
+			bIsSnapped,
 			bCanSnapWithScroll,
-			bIsSnappedWithoutScroll;
+			bIsSnappedWithoutScroll,
+			$oDPage = this.$();
+
+		if (!exists($oDPage)) {
+			return;
+		}
+
+		if (!hasDOMElementSize($oDPage[0])) {
+			return;
+		}
+
+		oDynamicPageHeader = this.getHeader();
+		bIsSnapped = !this.getHeaderExpanded();
 
 		if (!oDynamicPageHeader || !bIsSnapped) {
 			return; //no adjustment needed
@@ -1272,11 +1299,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._onChildControlsHeightChange = function (oEvent) {
-		var bNeedsVerticalScrollbar = this._needsVerticalScrollBar();
+		var bNeedsVerticalScrollBar = this._needsVerticalScrollBar();
 
-		// FitContaner needs to be updated, when height is changed and scroll bar appear, to enable calc of original height
-		if (bNeedsVerticalScrollbar) {
-			this._updateFitContainer(bNeedsVerticalScrollbar);
+		// FitContainer needs to be updated, when height is changed and scroll bar appear, to enable calc of original height
+		if (bNeedsVerticalScrollBar) {
+			this._updateFitContainer(bNeedsVerticalScrollBar);
 		}
 
 		this._adjustSnap();
