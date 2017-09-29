@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 *
 	*/
 
-	sap.ui.core.Control.extend("sap.ui.layout.form.ResponsiveGridLayoutPanel", {
+	var Panel = sap.ui.core.Control.extend("sap.ui.layout.form.ResponsiveGridLayoutPanel", {
 
 		metadata : {
 			aggregations: {
@@ -294,11 +294,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 	ResponsiveGridLayout.prototype.exit = function(){
 
-		var that = this;
-
 		// clear panels
 		for ( var sContainerId in this.mContainers) {
-			_cleanContainer(that, sContainerId);
+			_cleanContainer.call(this, sContainerId);
 		}
 
 		// clear main Grid
@@ -321,9 +319,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		}
 
 		oForm._bNoInvalidate = true; // don't invalidate Form if only the Grids, Panels and LayoutData are created or changed)
-		var that = this;
-		_createPanels(that, oForm);
-		_createMainGrid(that, oForm);
+		_createPanels.call(this, oForm);
+		_createMainGrid.call(this, oForm);
 		oForm._bNoInvalidate = false;
 
 	};
@@ -444,7 +441,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 	};
 
-	function _createPanels( oLayout, oForm ) {
+	function _createPanels( oForm ) {
 
 		var aContainers = oForm.getFormContainers();
 		var iLength = aContainers.length;
@@ -472,42 +469,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				oPanel = undefined;
 				oGrid = undefined;
 				var oContainerNext = aVisibleContainers[i + 1];
-				if (oLayout.mContainers[sContainerId] && oLayout.mContainers[sContainerId][1]) {
+				if (this.mContainers[sContainerId] && this.mContainers[sContainerId][1]) {
 					// Grid already created
-					oGrid = oLayout.mContainers[sContainerId][1];
+					oGrid = this.mContainers[sContainerId][1];
 				} else {
-					oGrid = _createGrid(oLayout, oContainer);
+					oGrid = _createGrid.call(this, oContainer);
 				}
 
 				var oTitle = oContainer.getTitle();
 				var oToolbar = oContainer.getToolbar();
 				if (oToolbar || oTitle || oContainer.getExpandable()) {
 					// only if container has a title a panel is used
-					if (oLayout.mContainers[sContainerId] && oLayout.mContainers[sContainerId][0]) {
+					if (this.mContainers[sContainerId] && this.mContainers[sContainerId][0]) {
 						// Panel already created
-						oPanel = oLayout.mContainers[sContainerId][0];
+						oPanel = this.mContainers[sContainerId][0];
 					} else {
-						oPanel = _createPanel(oLayout, oContainer, oGrid);
+						oPanel = _createPanel.call(this, oContainer, oGrid);
 						_changeGetLayoutDataOfGrid(oGrid, true);
 					}
 					_setLayoutDataForLinebreak(oPanel, oContainer, iVisibleContainer, oContainerNext, iVisibleContainers);
 				} else {
-					if (oLayout.mContainers[sContainerId] && oLayout.mContainers[sContainerId][0]) {
+					if (this.mContainers[sContainerId] && this.mContainers[sContainerId][0]) {
 						// panel not longer needed
-						_deletePanel(oLayout.mContainers[sContainerId][0]);
+						_deletePanel(this.mContainers[sContainerId][0]);
 					}
 					_changeGetLayoutDataOfGrid(oGrid, false);
 					_setLayoutDataForLinebreak(oGrid, oContainer, iVisibleContainer, oContainerNext, iVisibleContainers);
 				}
 
-				oLayout.mContainers[sContainerId] = [oPanel, oGrid];
+				this.mContainers[sContainerId] = [oPanel, oGrid];
 			}
 		}
 
-		var iObjectLength = _objectLength(oLayout.mContainers);
+		var iObjectLength = _objectLength(this.mContainers);
 		if (iVisibleContainers < iObjectLength) {
 			// delete old containers panels
-			for ( sContainerId in oLayout.mContainers) {
+			for ( sContainerId in this.mContainers) {
 				var bFound = false;
 				for ( i = 0; i < iLength; i++) {
 					oContainer = aContainers[i];
@@ -517,19 +514,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					}
 				}
 				if (!bFound) {
-					_cleanContainer(oLayout, sContainerId);
+					_cleanContainer.call(this, sContainerId);
 				}
 			}
 		}
 
 	}
 
-	function _createPanel( oLayout, oContainer, oGrid ) {
+	function _createPanel( oContainer, oGrid ) {
 
 		var sContainerId = oContainer.getId();
-		var oPanel = new sap.ui.layout.form.ResponsiveGridLayoutPanel(sContainerId + "---Panel", {
+		var oPanel = new Panel(sContainerId + "---Panel", {
 			container: oContainer,
-			layout   : oLayout,
+			layout   : this,
 			content : oGrid
 		});
 
@@ -549,12 +546,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 	}
 
-	function _createGrid( oLayout, oContainer ) {
+	function _createGrid( oContainer ) {
 
 		var sId = oContainer.getId() + "--Grid";
 
 		var oGrid = new Grid(sId, {vSpacing: 0, hSpacing: 0, containerQuery: true});
-		oGrid.__myParentLayout = oLayout;
+		oGrid.__myParentLayout = this;
 		oGrid.__myParentContainerId = oContainer.getId();
 		oGrid.addStyleClass("sapUiFormResGridCont");
 
@@ -1175,9 +1172,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 	}
 
-	function _cleanContainer( oLayout, sContainerId ) {
+	function _cleanContainer( sContainerId ) {
 
-		var aContainerContent = oLayout.mContainers[sContainerId];
+		var aContainerContent = this.mContainers[sContainerId];
 
 		//delete Grid
 		var oGrid = aContainerContent[1];
@@ -1191,11 +1188,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			_deletePanel(oPanel);
 		}
 
-		delete oLayout.mContainers[sContainerId];
+		delete this.mContainers[sContainerId];
 
 	}
 
-	function _createMainGrid( oLayout, oForm ) {
+	function _createMainGrid( oForm ) {
 
 		var aContainers = oForm.getFormContainers();
 		var aVisibleContainers = [];
@@ -1215,14 +1212,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		}
 
 		// special case: only one container -> do not render an outer ResponsiveFlowLayout
-		if (iLength > 1 || !oLayout.getSingleContainerFullSize()) {
-			var iSpanM = Math.floor(12 / oLayout.getColumnsM());
-			var iSpanL = Math.floor(12 / oLayout.getColumnsL());
+		if (iLength > 1 || !this.getSingleContainerFullSize()) {
+			var iSpanM = Math.floor(12 / this.getColumnsM());
+			var iSpanL = Math.floor(12 / this.getColumnsL());
 			var iSpanXL;
 			var sDefaultSpan = "";
 
 			// If the columsnXL is not set the value of columnsL is used
-			var iColumnsXL = oLayout.getColumnsXL();
+			var iColumnsXL = this.getColumnsXL();
 			if (iColumnsXL >= 0) {
 				// if no columns for XL are defined ude no default span for XL. The grid then uses automatically the L one.
 				iSpanXL = Math.floor(12 / iColumnsXL);
@@ -1230,28 +1227,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			}
 			sDefaultSpan = sDefaultSpan + "L" + iSpanL + " M" + iSpanM + " S12";
 
-			if (!oLayout._mainGrid) {
-				oLayout._mainGrid = new Grid(oForm.getId() + "--Grid",{
+			if (!this._mainGrid) {
+				this._mainGrid = new Grid(oForm.getId() + "--Grid",{
 					defaultSpan: sDefaultSpan,
 					hSpacing: 0,
 					vSpacing: 0,
 					containerQuery: true
-					}).setParent(oLayout);
-				oLayout._mainGrid.addStyleClass("sapUiFormResGridMain");
+					}).setParent(this);
+				this._mainGrid.addStyleClass("sapUiFormResGridMain");
 				// change resize handler so that the main grid triggers the resize of it's children
-				oLayout._mainGrid._onParentResizeOrig = oLayout._mainGrid._onParentResize;
-				oLayout._mainGrid._onParentResize = function() {
+				this._mainGrid._onParentResizeOrig = this._mainGrid._onParentResize;
+				this._mainGrid._onParentResize = function() {
 					this._onParentResizeOrig();
 
-					for ( var sContainerId in oLayout.mContainers) {
-						oLayout.mContainers[sContainerId][1]._onParentResize();
+					for ( var sContainerId in this.mContainers) {
+						this.mContainers[sContainerId][1]._onParentResize();
 					}
 
 				};
 			} else {
-				oLayout._mainGrid.setDefaultSpan(sDefaultSpan);
+				this._mainGrid.setDefaultSpan(sDefaultSpan);
 				// update containers
-				var aLayoutContent = oLayout._mainGrid.getContent();
+				var aLayoutContent = this._mainGrid.getContent();
 				iContentLenght = aLayoutContent.length;
 				var bExchangeContent = false;
 				// check if content has changed
@@ -1273,7 +1270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 							break;
 						}
 
-						var aContainerContent = oLayout.mContainers[oContainer.getId()];
+						var aContainerContent = this.mContainers[oContainer.getId()];
 						if (aContainerContent[0] && aContainerContent[0] != oContentElement) {
 							// container uses panel but panel not the same element in content
 							bExchangeContent = true;
@@ -1287,19 +1284,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 						j++;
 					} else {
 						// no container exits for content -> just remove this content
-						oLayout._mainGrid.removeContent(oContentElement);
+						this._mainGrid.removeContent(oContentElement);
 					}
 				}
 				if (bExchangeContent) {
 					// remove all content and add it new.
-					oLayout._mainGrid.removeAllContent();
+					this._mainGrid.removeAllContent();
 					iContentLenght = 0;
 				}
 			}
-			oLayout._mainGrid._setBreakPointTablet(oLayout.getBreakpointM());
-			oLayout._mainGrid._setBreakPointDesktop(oLayout.getBreakpointL());
-			oLayout._mainGrid._setBreakPointLargeDesktop(oLayout.getBreakpointXL());
-			oLayout._mainGrid.__bIsUsed = true;
+			this._mainGrid._setBreakPointTablet(this.getBreakpointM());
+			this._mainGrid._setBreakPointDesktop(this.getBreakpointL());
+			this._mainGrid._setBreakPointLargeDesktop(this.getBreakpointXL());
+			this._mainGrid.__bIsUsed = true;
 
 			if (iContentLenght < iLength) {
 				// new containers added
@@ -1311,20 +1308,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					oContainer = aContainers[i];
 					if (oContainer.isVisible()) {
 						var sContainerId = oContainer.getId();
-						if (oLayout.mContainers[sContainerId]) {
-							if (oLayout.mContainers[sContainerId][0]) {
+						if (this.mContainers[sContainerId]) {
+							if (this.mContainers[sContainerId][0]) {
 								// panel used
-								oLayout._mainGrid.addContent(oLayout.mContainers[sContainerId][0]);
-							} else if (oLayout.mContainers[sContainerId][1]) {
+								this._mainGrid.addContent(this.mContainers[sContainerId][0]);
+							} else if (this.mContainers[sContainerId][1]) {
 								// no panel - used Grid directly
-								oLayout._mainGrid.addContent(oLayout.mContainers[sContainerId][1]);
+								this._mainGrid.addContent(this.mContainers[sContainerId][1]);
 							}
 						}
 					}
 				}
 			}
-		} else if ( oLayout._mainGrid ) {
-			oLayout._mainGrid.__bIsUsed = false;
+		} else if ( this._mainGrid ) {
+			this._mainGrid.__bIsUsed = false;
 		}
 
 	}

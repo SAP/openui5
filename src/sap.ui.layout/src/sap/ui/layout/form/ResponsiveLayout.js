@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 	 * as the panel can not be used in mobile environment an own internal control is needed to render the containers
 	 * use FormContainer as association to have access to it's content directly. So no mapping of properties and aggregations needed
 	 */
-	sap.ui.core.Control.extend("sap.ui.layout.form.ResponsiveLayoutPanel", {
+	var Panel = sap.ui.core.Control.extend("sap.ui.layout.form.ResponsiveLayoutPanel", {
 
 		metadata : {
 			aggregations: {
@@ -194,11 +194,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 
 	ResponsiveLayout.prototype.exit = function(){
 
-		var that = this;
-
 		// clear panels
 		for ( var sContainerId in this.mContainers) {
-			_cleanContainer(that, sContainerId);
+			_cleanContainer.call(this, sContainerId);
 		}
 
 		// clear ResponsiveFlowLayouts
@@ -221,9 +219,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 		}
 
 		oForm._bNoInvalidate = true; // don't invalidate Form if only the Grids, Panels and LayoutData are created or changed)
-		var that = this;
-		_createPanels(that, oForm);
-		_createMainResponsiveFlowLayout(that, oForm);
+		_createPanels.call(this, oForm);
+		_createMainResponsiveFlowLayout.call(this, oForm);
 		oForm._bNoInvalidate = false;
 
 	};
@@ -283,7 +280,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 					if (this.mContainers[sContainerId][2][sElementId][1]) {
 						// update fields RF-Layout
 						var aFields = oParent.getFields();
-						_updateLayoutDataOfContentResponsiveFlowLayout(this, this.mContainers[sContainerId][2][sElementId][1], aFields);
+						_updateLayoutDataOfContentResponsiveFlowLayout.call(this, this.mContainers[sContainerId][2][sElementId][1], aFields);
 					}
 					this.mContainers[sContainerId][2][sElementId][0].onLayoutDataChange(oEvent);
 				}
@@ -358,7 +355,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 
 	};
 
-	function _createPanels( oLayout, oForm ) {
+	function _createPanels( oForm ) {
 
 		var aContainers = oForm.getFormContainers();
 		var oContainer;
@@ -376,44 +373,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 				sContainerId = oContainer.getId();
 				oPanel = undefined;
 				oRFLayout = undefined;
-				if (oLayout.mContainers[sContainerId] && oLayout.mContainers[sContainerId][1]) {
+				if (this.mContainers[sContainerId] && this.mContainers[sContainerId][1]) {
 					// ResponsiveFlowLayout already created
-					oRFLayout = oLayout.mContainers[sContainerId][1];
+					oRFLayout = this.mContainers[sContainerId][1];
 				} else {
-					oRFLayout = _createResponsiveFlowLayout(oLayout, oContainer, undefined);
+					oRFLayout = _createResponsiveFlowLayout.call(this, oContainer, undefined);
 				}
 
 				var oTitle = oContainer.getTitle();
 				var oToolbar = oContainer.getToolbar();
 				if (oToolbar || oTitle || oContainer.getExpandable()) {
 					// only if container has a title a panel is used
-					if (oLayout.mContainers[sContainerId] && oLayout.mContainers[sContainerId][0]) {
+					if (this.mContainers[sContainerId] && this.mContainers[sContainerId][0]) {
 						// Panel already created
-						oPanel = oLayout.mContainers[sContainerId][0];
+						oPanel = this.mContainers[sContainerId][0];
 					} else {
-						oPanel = _createPanel(oLayout, oContainer, oRFLayout);
+						oPanel = _createPanel.call(this, oContainer, oRFLayout);
 						_changeGetLayoutDataOfResponsiveFlowLayout(oRFLayout, true);
 					}
 					oRFLayout.removeStyleClass("sapUiRLContainer");
 				} else {
 					// panel not longer needed
-					if (oLayout.mContainers[sContainerId] && oLayout.mContainers[sContainerId][0]) {
-						_deletePanel(oLayout.mContainers[sContainerId][0]);
+					if (this.mContainers[sContainerId] && this.mContainers[sContainerId][0]) {
+						_deletePanel(this.mContainers[sContainerId][0]);
 						_changeGetLayoutDataOfResponsiveFlowLayout(oRFLayout, false);
 					}
 					oRFLayout.addStyleClass("sapUiRLContainer");
 				}
 
-				var mContent = _createContent(oLayout, oContainer, oRFLayout);
+				var mContent = _createContent.call(this, oContainer, oRFLayout);
 
-				oLayout.mContainers[sContainerId] = [oPanel, oRFLayout, mContent];
+				this.mContainers[sContainerId] = [oPanel, oRFLayout, mContent];
 			}
 		}
 
-		var iObjectLength = _objectLength(oLayout.mContainers);
+		var iObjectLength = _objectLength(this.mContainers);
 		if (iVisibleContainers < iObjectLength) {
 			// delete old containers panels
-			for ( sContainerId in oLayout.mContainers) {
+			for ( sContainerId in this.mContainers) {
 				var bFound = false;
 				for ( i = 0; i < iLength; i++) {
 					oContainer = aContainers[i];
@@ -423,19 +420,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 					}
 				}
 				if (!bFound) {
-					_cleanContainer(oLayout, sContainerId);
+					_cleanContainer.call(this, sContainerId);
 				}
 			}
 		}
 
 	}
 
-	function _createPanel( oLayout, oContainer, oRFLayout ) {
+	function _createPanel( oContainer, oRFLayout ) {
 
 		var sContainerId = oContainer.getId();
-		var oPanel = new sap.ui.layout.form.ResponsiveLayoutPanel(sContainerId + "--Panel", {
+		var oPanel = new Panel(sContainerId + "--Panel", {
 			container: oContainer,
-			layout   : oLayout,
+			layout   : this,
 			content : oRFLayout
 		});
 
@@ -455,15 +452,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 
 	}
 
-	function _createContent( oLayout, oContainer, oContainerLayout ) {
+	function _createContent( oContainer, oContainerLayout ) {
 
 		var sContainerId = oContainer.getId();
 		var aElements = oContainer.getFormElements();
 		var iLength = aElements.length;
 		var iVisibleElements = 0;
 		var mRFLayouts = {};
-		if (oLayout.mContainers[sContainerId] && oLayout.mContainers[sContainerId][2]) {
-			mRFLayouts = oLayout.mContainers[sContainerId][2];
+		if (this.mContainers[sContainerId] && this.mContainers[sContainerId][2]) {
+			mRFLayouts = this.mContainers[sContainerId][2];
 		}
 
 		var oRFLayout;
@@ -476,7 +473,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 			oElement = aElements[i];
 			if (oElement.isVisible()) {
 				sElementId = oElement.getId();
-				_checkElementMoved(oLayout, oContainer, oElement, mRFLayouts, oContainerLayout, i);
+				_checkElementMoved.call(this, oContainer, oElement, mRFLayouts, oContainerLayout, i);
 				if (mRFLayouts[sElementId]) {
 					// ResponsiveFlowLayout already created
 					oRFLayout = mRFLayouts[sElementId][0];
@@ -488,7 +485,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 						iLastIndex = iVisibleElements;
 					}
 				} else {
-					oRFLayout = _createResponsiveFlowLayout(oLayout, oContainer, oElement);
+					oRFLayout = _createResponsiveFlowLayout.call(this, oContainer, oElement);
 					oRFLayout.addStyleClass("sapUiRLElement");
 					if (oElement.getLabel()) {
 						oRFLayout.addStyleClass("sapUiRLElementWithLabel");
@@ -504,11 +501,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 					if (mRFLayouts[sElementId][1]) {
 						oFieldsRFLayout = mRFLayouts[sElementId][1];
 					} else {
-						oFieldsRFLayout = _createResponsiveFlowLayout(oLayout, oContainer, oElement, true);
+						oFieldsRFLayout = _createResponsiveFlowLayout.call(this, oContainer, oElement, true);
 						oFieldsRFLayout.addStyleClass("sapUiRLElementFields");
 						mRFLayouts[sElementId][1] = oFieldsRFLayout;
 					}
-					_updateLayoutDataOfContentResponsiveFlowLayout(oLayout, oFieldsRFLayout, aFields);
+					_updateLayoutDataOfContentResponsiveFlowLayout.call(this, oFieldsRFLayout, aFields);
 				} else {
 					if (mRFLayouts[sElementId][1]) {
 						// ResponsiveFlowLayout for fields not longer needed
@@ -551,7 +548,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 
 	}
 
-	function _createResponsiveFlowLayout( oLayout, oContainer, oElement, bElementContent ) {
+	function _createResponsiveFlowLayout( oContainer, oElement, bElementContent ) {
 
 		var sId;
 		if (oElement && !bElementContent) {
@@ -565,7 +562,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 		}
 
 		var oRFLayout = new ResponsiveFlowLayout(sId);
-		oRFLayout.__myParentLayout = oLayout;
+		oRFLayout.__myParentLayout = this;
 		oRFLayout.__myParentContainerId = oContainer.getId();
 
 		if (oElement) {
@@ -704,13 +701,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 	 * If a ResponsiveFlowLayout for the fields of a FormElement is used it must get the weight
 	 * of all fields to have the right weight relative to the label.
 	 */
-	function _updateLayoutDataOfContentResponsiveFlowLayout( oLayout, oRFLayout, aFields ) {
+	function _updateLayoutDataOfContentResponsiveFlowLayout( oRFLayout, aFields ) {
 
 		var oLD;
 		var iWeight = 0;
 		for ( var i = 0; i < aFields.length; i++) {
 			var oField = aFields[i];
-			oLD = oLayout.getLayoutDataForElement(oField, "sap.ui.layout.ResponsiveFlowLayoutData");
+			oLD = this.getLayoutDataForElement(oField, "sap.ui.layout.ResponsiveFlowLayoutData");
 			if (oLD) {
 				iWeight = iWeight + oLD.getWeight();
 			} else {
@@ -746,9 +743,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 
 	}
 
-	function _cleanContainer( oLayout, sContainerId ) {
+	function _cleanContainer( sContainerId ) {
 
-		var aContainerContent = oLayout.mContainers[sContainerId];
+		var aContainerContent = this.mContainers[sContainerId];
 		var oRFLayout;
 
 		//delete Elements Content
@@ -778,11 +775,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 			_deletePanel(oPanel);
 		}
 
-		delete oLayout.mContainers[sContainerId];
+		delete this.mContainers[sContainerId];
 
 	}
 
-	function _checkElementMoved(oLayout, oContainer, oElement, mRFLayouts, oContainerLayout, iIndex){
+	function _checkElementMoved(oContainer, oElement, mRFLayouts, oContainerLayout, iIndex){
 
 		// if an Element is just moved from one Container to another this is not recognized
 		// so the ResponsiveFlowLayouts must be updated and the control object must be adjusted
@@ -796,7 +793,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 			var sOldContainerId = oRFLayout.__myParentContainerId;
 
 			// move to new containers control object
-			mRFLayouts[sElementId] = oLayout.mContainers[sOldContainerId][2][sElementId];
+			mRFLayouts[sElementId] = this.mContainers[sOldContainerId][2][sElementId];
 			oContainerLayout.insertContent(oRFLayout, iIndex);
 			oRFLayout.__myParentContainerId = oContainer.getId();
 			if (mRFLayouts[sElementId][1]) {
@@ -804,12 +801,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 			}
 
 			// delete from old container in control object
-			delete oLayout.mContainers[sOldContainerId][2][sElementId];
+			delete this.mContainers[sOldContainerId][2][sElementId];
 		}
 
 	}
 
-	function _createMainResponsiveFlowLayout( oLayout, oForm ) {
+	function _createMainResponsiveFlowLayout( oForm ) {
 
 		var aContainers = oForm.getFormContainers();
 		var aVisibleContainers = [];
@@ -830,11 +827,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 
 		// special case: only one container -> do not render an outer ResponsiveFlowLayout
 		if (iLength > 1) {
-			if (!oLayout._mainRFLayout) {
-				oLayout._mainRFLayout = new ResponsiveFlowLayout(oForm.getId() + "--RFLayout").setParent(oLayout);
+			if (!this._mainRFLayout) {
+				this._mainRFLayout = new ResponsiveFlowLayout(oForm.getId() + "--RFLayout").setParent(this);
 			} else {
 				// update containers
-				var aLayoutContent = oLayout._mainRFLayout.getContent();
+				var aLayoutContent = this._mainRFLayout.getContent();
 				iContentLenght = aLayoutContent.length;
 				var bExchangeContent = false;
 				// check if content has changed
@@ -856,7 +853,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 							break;
 						}
 
-						var aContainerContent = oLayout.mContainers[oContainer.getId()];
+						var aContainerContent = this.mContainers[oContainer.getId()];
 						if (aContainerContent[0] && aContainerContent[0] != oContentElement) {
 							// container uses panel but panel not the same element in content
 							bExchangeContent = true;
@@ -870,12 +867,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 						j++;
 					} else {
 						// no container exits for content -> just remove this content
-						oLayout._mainRFLayout.removeContent(oContentElement);
+						this._mainRFLayout.removeContent(oContentElement);
 					}
 				}
 				if (bExchangeContent) {
 					// remove all content and add it new.
-					oLayout._mainRFLayout.removeAllContent();
+					this._mainRFLayout.removeAllContent();
 					iContentLenght = 0;
 				}
 			}
@@ -888,13 +885,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 				for ( i = iStartIndex; i < iLength; i++) {
 					oContainer = aVisibleContainers[i];
 					var sContainerId = oContainer.getId();
-					if (oLayout.mContainers[sContainerId]) {
-						if (oLayout.mContainers[sContainerId][0]) {
+					if (this.mContainers[sContainerId]) {
+						if (this.mContainers[sContainerId][0]) {
 							// panel used
-							oLayout._mainRFLayout.addContent(oLayout.mContainers[sContainerId][0]);
-						} else if (oLayout.mContainers[sContainerId][1]) {
+							this._mainRFLayout.addContent(this.mContainers[sContainerId][0]);
+						} else if (this.mContainers[sContainerId][1]) {
 							// no panel - used ResponsiveFlowLayot directly
-							oLayout._mainRFLayout.addContent(oLayout.mContainers[sContainerId][1]);
+							this._mainRFLayout.addContent(this.mContainers[sContainerId][1]);
 						}
 					}
 				}
