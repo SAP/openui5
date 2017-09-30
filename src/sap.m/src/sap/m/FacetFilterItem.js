@@ -77,14 +77,31 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @private
 	 */
 	FacetFilterItem.prototype.init = function() {
+		this.attachEvent("_change", this._itemTextChange);
 
-	  ListItemBase.prototype.init.apply(this);
+		ListItemBase.prototype.init.apply(this);
 
-	  // This class must be added to the ListItemBase container element, not the FacetFilterItem container
-	  this.addStyleClass("sapMFFLI");
+		// This class must be added to the ListItemBase container element, not the FacetFilterItem container
+		this.addStyleClass("sapMFFLI");
 	};
 
+	/**
+	 * @private
+	 */
+	FacetFilterItem.prototype.exit = function() {
+		ListItemBase.prototype.exit.apply(this);
 
+		this.detachEvent("_change", this._itemTextChange);
+	};
+
+	/**
+	 * @private
+	 */
+	FacetFilterItem.prototype._itemTextChange = function (oEvent) {
+		if (oEvent.getParameter("name") === "text") {
+			this.informList("TextChange", oEvent.getParameter("newValue"));
+		}
+	};
 
 	return FacetFilterItem;
 
