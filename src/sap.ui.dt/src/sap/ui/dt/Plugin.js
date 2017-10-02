@@ -217,8 +217,8 @@ function(ManagedObject) {
 	 */
 	Plugin.prototype.getAction = function(oOverlay){
 		return oOverlay.getDesignTimeMetadata() ?
-				oOverlay.getDesignTimeMetadata().getAction(this.getActionName(), oOverlay.getElementInstance())
-				: null;
+			oOverlay.getDesignTimeMetadata().getAction(this.getActionName(), oOverlay.getElementInstance())
+			: null;
 	};
 
 	/**
