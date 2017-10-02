@@ -336,6 +336,11 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 	 * @param {object} oItem The item whose wrapper has to be updated
 	 */
 	FlexBox.prototype._updateWrapperVisibility = function (oItem) {
+		// Do not update item wrapper visibility when the item is not active.
+		if (!oItem.isActive()) {
+			return;
+		}
+
 		var oWrapper = jQuery.sap.byId(oItem.getLayoutData().getId());
 
 		if (oItem.getVisible()) {
