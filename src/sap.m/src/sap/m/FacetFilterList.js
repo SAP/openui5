@@ -721,6 +721,17 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
+	 * @private
+	 */
+	FacetFilterList.prototype.onItemTextChange = function(oItem, sNewValue) {
+		var sKeyName = oItem.getKey();
+
+		if (this._oSelectedKeys[sKeyName] && sNewValue) {
+			this._oSelectedKeys[sKeyName] = sNewValue;
+		}
+	};
+
+	/**
 	 * This method overrides runs when setSelected is called from ListItemBase.
 	 * Here we update the selected keys cache based on whether the item is being selected or not.
 	 * We also update the select all checkbox state and list active state based on the selected state of all items taken as a whole.
