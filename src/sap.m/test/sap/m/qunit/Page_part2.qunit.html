@@ -23,10 +23,10 @@
 			// global variables
 			oPage = sap.ui.getCore().byId(sId);
 			$Page = oPage.$();
-			$PageHeader = $Page.children("header.sapMBar.sapMHeader-CTX");
-			$PageSubHeader = $Page.children("header.sapMBar.sapMSubHeader-CTX");
-			$PageFooter = $Page.children("footer.sapMBar.sapMFooter-CTX");
-			$PageSection = $Page.children("section");
+			$PageHeader = $Page.find(".sapMBar.sapMHeader-CTX");
+			$PageSubHeader = $Page.find(".sapMBar.sapMSubHeader-CTX");
+			$PageFooter = $Page.find(".sapMBar.sapMFooter-CTX");
+			$PageSection = $Page.find("section");
 		};
 
 		/* =========================================================== */

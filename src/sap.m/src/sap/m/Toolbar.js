@@ -433,6 +433,17 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		this._doLayout();
 	};
 
+	Toolbar.prototype._getAccessibilityRole = function () {
+		var aContent = this.getContent(),
+			sRole = this._getRootAccessibilityRole();
+
+		if (this.getActive() && (!aContent || aContent.length === 0)) {
+			sRole = "button";
+		}
+
+		return sRole;
+	};
+
 	/*
 	 * Augment design property setter.
 	 * 2nd parameter can be used to define auto design context.
@@ -525,27 +536,52 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	Toolbar.prototype.getHTMLTag = BarInPageEnabler.prototype.getHTMLTag;
 
 	/**
-	 * Sets classes and tag according to the context in the page. Possible contexts are header, footer, subheader
-	 * @returns {IBar} this for chaining
+	 * Sets classes and HTML tag according to the context of the page. Possible contexts are header, footer, subheader
+	 * @returns {IBar} <code>this</code> for chaining
 	 * @protected
 	 */
 	Toolbar.prototype.applyTagAndContextClassFor = BarInPageEnabler.prototype.applyTagAndContextClassFor;
 
 	/**
-	 * Sets landmarks members to the bar instance
-	 *
-	 * @param bHasLandmarkInfo {boolean} indicates that bar has landmarkinfo
-	 * @param sContext {string} context of the bar
-	 * @private
+	 * Sets classes according to the context of the page. Possible contexts are header, footer and subheader.
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
+	 * @protected
 	 */
-	Toolbar.prototype._setLandmarkInfo = BarInPageEnabler.prototype._setLandmarkInfo;
+	Toolbar.prototype._applyContextClassFor  = BarInPageEnabler.prototype._applyContextClassFor;
 
 	/**
-	 * Writes landmarks info to the bar
+	 * Sets HTML tag according to the context of the page. Possible contexts are header, footer and subheader.
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
+	 * @protected
+	 */
+	Toolbar.prototype._applyTag  = BarInPageEnabler.prototype._applyTag;
+
+	/**
+	 * Get context options of the Page.
 	 *
+	 * Possible contexts are header, footer, subheader.
+	 * @param {string} sContext allowed values are header, footer, subheader.
+	 * @returns {object|null}
 	 * @private
 	 */
-	Toolbar.prototype._writeLandmarkInfo = BarInPageEnabler.prototype._writeLandmarkInfo;
+	Toolbar.prototype._getContextOptions  = BarInPageEnabler.prototype._getContextOptions;
+
+	/**
+	 * Gets accessibility role of the Root HTML element.
+	 *
+	 * @param {string} sRole AccessibilityRole of the root Element
+	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
+	 * @private
+	 */
+	Toolbar.prototype._setRootAccessibilityRole = BarInPageEnabler.prototype._setRootAccessibilityRole;
+
+	/**
+	 * Gets accessibility role of the Root HTML element.
+	 *
+	 * @returns {string} Accessibility role
+	 * @private
+	 */
+	Toolbar.prototype._getRootAccessibilityRole = BarInPageEnabler.prototype._getRootAccessibilityRole;
 
 	return Toolbar;
 
