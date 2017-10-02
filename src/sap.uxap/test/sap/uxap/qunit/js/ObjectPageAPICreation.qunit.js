@@ -1135,6 +1135,68 @@
 		}, 0);
 	});
 
+	QUnit.module("ObjectPage with ObjectPageDynamicHeaderTitle", {
+		beforeEach: function () {
+			this.NUMBER_OF_SECTIONS = 1;
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
+			this.oObjectPage.setHeaderTitle(new sap.uxap.ObjectPageDynamicHeaderTitle());
+			this.oObjectPage.addHeaderContent(new sap.m.Text({text: "test"}));
+			helpers.renderObject(this.oObjectPage);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("ObjectPage Header pinnable and not pinnable", function (assert) {
+
+		var oHeader = this.oObjectPage._getHeaderContent(),
+			oPinButton = oHeader.getAggregation("_pinButton");
+
+		this.oObjectPage.setHeaderContentPinnable(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oPinButton.$()[0],
+			"The ObjectPage Header Pin Button not rendered");
+
+		this.oObjectPage.setHeaderContentPinnable(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oPinButton.$()[0],
+			"The ObjectPage Header Pin Button rendered");
+
+		assert.equal(oPinButton.$().hasClass("sapUiHidden"), false,
+			"The ObjectPage Header Pin Button is visible");
+	});
+
+	QUnit.test("ObjectPage Header - expanding/collapsing by clicking the title", function (assert) {
+
+		var oObjectPage = this.oObjectPage,
+			oObjectPageTitle = oObjectPage.getHeaderTitle(),
+			oFakeEvent = {
+				srcControl: oObjectPageTitle
+			};
+
+		this.oObjectPage._bHeaderInTitleArea = true;
+
+		assert.equal(oObjectPage._bHeaderExpanded, true, "Initially the header is expanded");
+		assert.equal(oObjectPage.getToggleHeaderOnTitleClick(), true, "Initially toggleHeaderOnTitleClick = true");
+
+		oObjectPageTitle.ontap(oFakeEvent);
+
+		assert.equal(oObjectPage._bHeaderExpanded, false, "After one click, the header is collapsed");
+
+		oObjectPage.setToggleHeaderOnTitleClick(false);
+
+		oObjectPageTitle.ontap(oFakeEvent);
+		assert.equal(oObjectPage._bHeaderExpanded, false, "The header is still collapsed, because toggleHeaderOnTitleClick = false");
+
+		oObjectPage.setToggleHeaderOnTitleClick(true);
+
+		oObjectPageTitle.ontap(oFakeEvent);
+		assert.equal(oObjectPage._bHeaderExpanded, true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
+	});
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;

@@ -19,6 +19,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 				bIsHeaderContentVisible = oControl.getHeaderContent() && oControl.getHeaderContent().length > 0 && oControl.getShowHeaderContent(),
 				bIsTitleInHeaderContent = oControl.getShowTitleInHeaderContent() && oControl.getShowHeaderContent(),
 				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent,
+				bTitleClickable = oControl.getToggleHeaderOnTitleClick(),
 				sTitleText;
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
@@ -32,12 +33,15 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 				oRm.writeAttributeEscaped("aria-label", sTitleText);
 			}
 			oRm.addClass("sapUxAPObjectPageLayout");
+			if (bTitleClickable) {
+				oRm.addClass("sapUxAPObjectPageLayoutTitleClickEnabled");
+			}
 			oRm.writeClasses();
 			oRm.addStyle("height", oControl.getHeight());
 			oRm.writeStyles();
 			oRm.write(">");
 
-            // custom scrollbar
+			// custom scrollbar
 			if (sap.ui.Device.system.desktop) {
 				oRm.renderControl(oControl._getCustomScrollBar().addStyleClass("sapUxAPObjectPageCustomScroller"));
 			}

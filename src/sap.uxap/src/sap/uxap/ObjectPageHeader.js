@@ -1019,7 +1019,7 @@ sap.ui.define([
 	 * @returns {boolean}
 	 */
 	ObjectPageHeader.prototype.supportsAdaptLayoutForDomElement = function () {
-		return false;
+		return true;
 	};
 
 	/**
@@ -1042,18 +1042,6 @@ sap.ui.define([
 	 */
 	ObjectPageHeader.prototype.unSnap = function () {
 		this._adaptLayout();
-	};
-
-	/**
-	 * Attaches or detaches the <code>"_handleExpandButtonPress"</code> handler to the expand button of the <code>HeaderTitle</code> if available.
-	 * @param {boolean} bAttach should the method attach the event
-	 * @private
-	 */
-	ObjectPageHeader.prototype._handleExpandButtonPressEventLifeCycle = function (bAttach, fnHandler, oContext) {
-		var oExpandButton = this.getAggregation("_expandButton");
-		if (oExpandButton) {
-			oExpandButton[bAttach ? "attachPress" : "detachPress"](fnHandler, oContext);
-		}
 	};
 
 	/**

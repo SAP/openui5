@@ -108,6 +108,13 @@ body > .sapUxAPObjectPageLayout,
 	background: @sapUiObjectHeaderBorderColor;
 }
 
+// title hover
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
+  .sapFDynamicPageTitle:hover {
+    cursor: pointer;
+  }
+}
+
 .sapUxAPObjectPageLayout {
 	.sapUxAPObjectPageFooter {
 		position: absolute;

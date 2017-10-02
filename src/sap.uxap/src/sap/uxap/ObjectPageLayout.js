@@ -173,6 +173,18 @@ sap.ui.define([
 				headerContentPinnable: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
+				 * Determines whether the user can switch between the expanded/collapsed states of the
+				 * <code>sap.uxap.ObjectPageDynamicHeaderContent</code> by clicking on the <code>sap.uxap.ObjectPageDynamicHeaderTitle</code>.
+				 * If set to <code>false</code>, the <code>sap.uxap.ObjectPageDynamicHeaderTitle</code> is not clickable and the application
+				 * must provide other means for expanding/collapsing the <code>sap.uxap.ObjectPageDynamicHeaderContent</code>, if necessary.
+				 *
+				 * <b>Note:</b> This property is only taken into account if an instance of
+				 * <code>sap.uxap.ObjectPageDynamicHeaderTitle</code>is used for the <code>headerTitle</code> aggregation.
+				 * @since 1.52
+				 */
+				toggleHeaderOnTitleClick: {type: "boolean", group: "Behavior", defaultValue: true},
+
+				/**
 				 * Determines whether an Edit button will be displayed in Header Content.
 				 *
 				 * <b>Note</b>: This property is only taken into account if an instance of
@@ -288,9 +300,11 @@ sap.ui.define([
 	ObjectPageLayout.HEADER_CALC_DELAY = 350;			// ms.
 	ObjectPageLayout.DOM_CALC_DELAY = 200;				// ms.
 	ObjectPageLayout.FOOTER_ANIMATION_DURATION = 350;	// ms.
+	ObjectPageLayout.MAX_SNAP_POSITION_OFFSET = 20;		// px
 	ObjectPageLayout.TITLE_LEVEL_AS_ARRAY = Object.keys(TitleLevel);
 
 	ObjectPageLayout.EVENTS = {
+		TITLE_PRESS: "_titlePress",
 		PIN_UNPIN_PRESS: "_pinUnpinPress"
 	};
 
@@ -330,6 +344,7 @@ sap.ui.define([
 		this._bPinned = false;
 		this._bStickyAnchorBar = false;             //status of the header
 		this._bHeaderInTitleArea = false;
+		this._bHeaderExpanded = true;
 		this._iStoredScrollPosition = 0;
 
 		// anchorbar management
@@ -373,8 +388,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype.onBeforeRendering = function () {
 
-		var oHeaderTitle,
-			oHeaderContent,
+		var oHeaderContent,
 			bPinnable;
 
 		// The lazy loading helper needs media information, hence instantiated on onBeforeRendering, where contextual width is available
@@ -411,9 +425,9 @@ sap.ui.define([
 
 		this._bStickyAnchorBar = false; //reset default state in case of re-rendering
 
-		oHeaderTitle = this.getHeaderTitle();
 		// Detach expand button press event
-		oHeaderTitle && oHeaderTitle._handleExpandButtonPressEventLifeCycle(false, this._handleExpandButtonPress, this);
+		this._handleExpandButtonPressEventLifeCycle(false);
+		this._attachTitlePressHandler();
 
 		oHeaderContent = this._getHeaderContent();
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin()) {
@@ -422,6 +436,98 @@ sap.ui.define([
 			if (bPinnable) {
 				this._attachPinPressHandler();
 			}
+		}
+	};
+
+	ObjectPageLayout.prototype.setToggleHeaderOnTitleClick = function (bToggleHeaderOnTitleClick) {
+		var vResult = this.setProperty("toggleHeaderOnTitleClick", bToggleHeaderOnTitleClick, true);
+
+		this.$().toggleClass("sapUxAPObjectPageLayoutTitleClickEnabled", bToggleHeaderOnTitleClick);
+
+		return vResult;
+	};
+
+	ObjectPageLayout.prototype._attachTitlePressHandler = function () {
+		var oTitle = this.getHeaderTitle();
+
+		if (exists(oTitle) && !this._bAlreadyAttachedTitlePressHandler) {
+			oTitle.attachEvent(ObjectPageLayout.EVENTS.TITLE_PRESS, this._handleDynamicTitlePress, this);
+			this._bAlreadyAttachedTitlePressHandler = true;
+		}
+	};
+
+	ObjectPageLayout.prototype._snapHeader = function (bAppendHeaderToContent) {
+
+		if (this._bPinned) {
+			jQuery.sap.log.debug("ObjectPage :: aborted snapping, header is pinned", this);
+			return;
+		}
+
+		var bIsPageTop;
+
+		this._toggleHeaderTitle(false /* not expand */);
+		this._moveAnchorBarToTitleArea();
+
+		if (bAppendHeaderToContent) {
+			this._moveHeaderToContentArea();
+			this._bHeaderExpanded = false;
+
+			// recalculate layout of the content area
+			this._adjustHeaderHeights();
+			this._requestAdjustLayout(null, true);
+
+			bIsPageTop = (this._$opWrapper.scrollTop() <= (this._getSnapPosition() + 1));
+			if (bIsPageTop) {
+				this._scrollTo(this._getSnapPosition() + 1);
+			}
+			return;
+		}
+
+		this._bHeaderExpanded = false;
+
+		//recalculate layout of the content area
+		this._adjustHeaderHeights();
+		this._requestAdjustLayout();
+	};
+
+	ObjectPageLayout.prototype._expandHeader = function (bAppendHeaderToTitle) {
+
+		this._toggleHeaderTitle(true /* expand */);
+
+		if (bAppendHeaderToTitle) {
+			this._moveAnchorBarToTitleArea();
+			this._moveHeaderToTitleArea(false);
+			this._bHeaderExpanded = true;
+
+			//recalculate layout of the content area
+			this._adjustHeaderHeights();
+			this._requestAdjustLayout();
+			return;
+		}
+
+		this._moveAnchorBarToContentArea();
+		this._moveHeaderToContentArea();
+		this._scrollTo(0, 0, 0);
+		this._bHeaderExpanded = true;
+	};
+
+	ObjectPageLayout.prototype._handleDynamicTitlePress = function () {
+		if (!this.getToggleHeaderOnTitleClick()) {
+			return;
+		}
+
+		var bExpand = !this._bHeaderExpanded,
+			bIsPageTop,
+			bAppendHeaderToTitle,
+			bAppendHeaderToContent;
+
+		if (bExpand) {
+			bIsPageTop = (this._$opWrapper.scrollTop() <= (this._getSnapPosition() + 1));
+			bAppendHeaderToTitle = this._shouldPreserveHeaderInTitleArea() || !bIsPageTop;
+			this._expandHeader(bAppendHeaderToTitle);
+		} else {
+			bAppendHeaderToContent = !this._shouldPreserveHeaderInTitleArea();
+			this._snapHeader(bAppendHeaderToContent);
 		}
 	};
 
@@ -834,7 +940,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._toggleHeaderTitle = function (bExpand) {
+		var oHeaderTitle = this.getHeaderTitle();
+
+		// note that <code>this._$headerTitle</code> is the placeholder [of the sticky area] where both the header title and header content are placed
 		this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
+
+		if (bExpand) {
+			oHeaderTitle && oHeaderTitle.unSnap();
+		} else {
+			oHeaderTitle && oHeaderTitle.snap();
+		}
 	};
 
 	/**
@@ -842,12 +957,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._moveHeaderToTitleArea = function () {
-		if (this._shouldPreserveHeaderPlaceholderHeightInContentArea()) {
+		var bPreserveHeaderHeight = this._shouldPreserveHeaderPlaceholderHeightInContentArea();
+
+		if (bPreserveHeaderHeight) {
 			// before removing the header content, preserve the height of its placeholder, to avoid automatic repositioning of scrolled content as it gets shortened (as its topmost part is cut off)
 			this._$headerContent.css("height", this.iHeaderContentHeight);
 		}
 		this._$headerContent.children().appendTo(this._$stickyHeaderContent);
 		this._bHeaderInTitleArea = true;
+
+		if (!bPreserveHeaderHeight) {
+			// the height will change => the page will scroll => add a flag to prevent modification on scroll
+			this._bSupressModifyOnScrollOnce = true;
+		}
 	};
 
 	/**
@@ -1976,6 +2098,11 @@ sap.ui.define([
 			sClosestId,
 			bScrolled = false;
 
+		if (this._bSupressModifyOnScrollOnce) {
+			this._bSupressModifyOnScrollOnce = false;
+			return;
+		}
+
 		//calculate the limit of visible sections to be lazy loaded
 		iPageHeight = this.iScreenHeight;
 		if (iPageHeight === 0) {
@@ -2064,8 +2191,15 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageLayout.prototype._getSnapPosition = function() { // iHeaderContentHeight minus the gap between the two headerTitle
-		return (this.iHeaderContentHeight - (this.iHeaderTitleHeightStickied - this.iHeaderTitleHeight));
+	ObjectPageLayout.prototype._getSnapPosition = function() {
+		var iSnapPosition = this.iHeaderContentHeight,
+			iTitleHeightDelta = this.iHeaderTitleHeightStickied - this.iHeaderTitleHeight;
+
+		if (iTitleHeightDelta < ObjectPageLayout.MAX_SNAP_POSITION_OFFSET) {
+			iSnapPosition -= iTitleHeightDelta;
+		}
+
+		return iSnapPosition;
 	};
 
 	ObjectPageLayout.prototype._getClosestScrolledSectionId = function (iScrollTop, iPageHeight, bSubSectionsOnly) {
@@ -2124,12 +2258,14 @@ sap.ui.define([
 		}
 
 		if (!this._bStickyAnchorBar && bStick) {
-			this._restoreFocusAfter(this._convertHeaderToStickied);
+			this._restoreFocusAfter(this._moveAnchorBarToTitleArea);
 			oHeaderTitle && oHeaderTitle.snap();
+			this._bHeaderExpanded = false;
 			this._adjustHeaderHeights();
 		} else if (this._bStickyAnchorBar && !bStick) {
-			this._restoreFocusAfter(this._convertHeaderToExpanded);
+			this._restoreFocusAfter(this._moveAnchorBarToContentArea);
 			oHeaderTitle && oHeaderTitle.unSnap();
+			this._bHeaderExpanded = true;
 			this._adjustHeaderHeights();
 		}
 	};
@@ -2158,7 +2294,7 @@ sap.ui.define([
 	 * @private
 	 * @returns this
 	 */
-	ObjectPageLayout.prototype._convertHeaderToStickied = function () {
+	ObjectPageLayout.prototype._moveAnchorBarToTitleArea = function () {
 		this._$anchorBar.children().appendTo(this._$stickyAnchorBar);
 
 		this._toggleHeaderStyleRules(true);
@@ -2177,7 +2313,7 @@ sap.ui.define([
 	 * @private
 	 * @returns this
 	 */
-	ObjectPageLayout.prototype._convertHeaderToExpanded = function () {
+	ObjectPageLayout.prototype._moveAnchorBarToContentArea = function () {
 		if (!this._shouldPreserveHeaderInTitleArea()) {
 			this._$anchorBar.css("height", "auto").append(this._$stickyAnchorBar.children()); //TODO: css auto redundant?
 
@@ -2324,7 +2460,7 @@ sap.ui.define([
 			this.iAnchorBarHeight = this._bStickyAnchorBar ? this._$stickyAnchorBar.height() : this._$anchorBar.height();
 
 			//in sticky mode, we need to calculate the size of original header
-			if (this._bStickyAnchorBar && !this._bPinned) {
+			if (!this._bHeaderExpanded) {
 
 				//read the headerTitleStickied ---------------------------
 				this.iHeaderTitleHeightStickied = this._$headerTitle.height() - this.iAnchorBarHeight;
@@ -2778,21 +2914,28 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._pin = function () {
+		var $oObjectPage = this.$();
+
 		if (this._bPinned) {
 			return;
 		}
 
 		this._bPinned = true;
 		this._toggleHeaderTitle(true /* expand */);
-		this._convertHeaderToStickied();
+		this._moveAnchorBarToTitleArea();
 		this._moveHeaderToTitleArea(false);
 		this._adjustHeaderHeights();
 		this._requestAdjustLayout();
-
 		this._togglePinButtonARIAState(this._bPinned);
+
+		if (exists($oObjectPage)) {
+			$oObjectPage.addClass("sapUxAPObjectPageLayoutHeaderPinned");
+		}
 	};
 
 	ObjectPageLayout.prototype._unPin = function () {
+		var $oObjectPage = this.$();
+
 		if (!this._bPinned) {
 			return;
 		}
@@ -2800,6 +2943,10 @@ sap.ui.define([
 		this._bPinned = false;
 
 		this._togglePinButtonARIAState(this._bPinned);
+
+		if (exists($oObjectPage)) {
+			$oObjectPage.removeClass("sapUxAPObjectPageLayoutHeaderPinned");
+		}
 	};
 
 	/**
@@ -2813,6 +2960,10 @@ sap.ui.define([
 		if (exists(oHeaderContent) && oHeaderContent.supportsPinUnpin()) {
 			oHeaderContent._updateARIAPinButtonState(bPinned);
 		}
+	};
+
+	ObjectPageLayout.prototype._getHeight = function (oControl) {
+		return !(oControl instanceof Control) ? 0 : oControl.$().outerHeight() || 0;
 	};
 
 	function exists(vObject) {
