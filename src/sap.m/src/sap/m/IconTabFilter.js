@@ -221,9 +221,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item',
 	/**
 	 * Renders this item in the IconTabHeader.
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
+	 * @param {int} visibleIndex the visible index within the parent control
+	 * @param {int} visibleItemsCount the visible items count
 	 * @protected
 	 */
-	IconTabFilter.prototype.render = function (rm) {
+	IconTabFilter.prototype.render = function (rm, visibleIndex, visibleItemsCount) {
 		var that = this;
 
 		if (!that.getVisible()) {
@@ -275,6 +277,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item',
 		}
 
 		rm.write('<div ' + ariaParams + ' ');
+
+		if (visibleIndex !== undefined && visibleItemsCount !== undefined) {
+			rm.writeAccessibilityState({
+				posinset: visibleIndex + 1,
+				setsize: visibleItemsCount
+			});
+		}
 
 		rm.writeElementData(that);
 		rm.addClass('sapMITBItem');
@@ -381,9 +390,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item',
 	 * Renders this item in the IconTabSelectList.
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.IconTabBarSelectList} selectList the select list in which this filter is rendered
+	 * @param {int} visibleIndex the visible index within the parent control
+	 * @param {int} visibleItemsCount the visible items count
 	 * @protected
 	 */
-	IconTabFilter.prototype.renderInSelectList = function (rm, selectList) {
+	IconTabFilter.prototype.renderInSelectList = function (rm, selectList, visibleIndex, visibleItemsCount) {
 		var that = this;
 
 		if (!that.getVisible()) {
@@ -393,9 +404,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item',
 		var isTextOnly = true,
 			isIconOnly,
 			iconTabHeader = selectList._iconTabHeader,
-			items = selectList.getItems(),
-			length = items.length,
-			index = items.indexOf(that),
 			resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
 		if (iconTabHeader) {
@@ -408,8 +416,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item',
 
 		rm.writeAttribute('tabindex', '-1');
 		rm.writeAttribute('role', 'option');
-		rm.writeAttribute('aria-posinset', index + 1);
-		rm.writeAttribute('aria-setsize', length);
+
+		if (visibleIndex !== undefined && visibleItemsCount !== undefined) {
+			rm.writeAttribute('aria-posinset', visibleIndex + 1);
+			rm.writeAttribute('aria-setsize', visibleItemsCount);
+		}
 
 		var tooltip = that.getTooltip_AsString();
 		if (tooltip) {

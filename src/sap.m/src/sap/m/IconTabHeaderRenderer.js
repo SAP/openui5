@@ -26,10 +26,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 
 		var aItems = oControl.getItems(),
+			iItemsCount = aItems.length,
+			aVisibleTabFilters = oControl.getVisibleTabFilters(),
+			iVisibleTabFiltersCount = aVisibleTabFilters.length,
+			iVisibleTabFilterIndex = 0,
 			bTextOnly = oControl._checkTextOnly(aItems),
 			bNoText = oControl._checkNoText(aItems),
 			bInLine = oControl._checkInLine(aItems) || oControl.isInlineMode(),
 			bShowOverflowSelectList = oControl.getShowOverflowSelectList(),
+			oItem,
 			bIsHorizontalDesign,
 			bHasHorizontalDesign;
 
@@ -93,17 +98,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.writeClasses();
 		oRM.write(">");
 
-		jQuery.each(aItems, function(iIndex, oItem) {
+		for (var i = 0; i < iItemsCount; i++) {
+			oItem = aItems[i];
 
-			oItem.render(oRM);
+			oItem.render(oRM, iVisibleTabFilterIndex, iVisibleTabFiltersCount);
 
 			if (oItem instanceof sap.m.IconTabFilter) {
 				bIsHorizontalDesign = oItem.getDesign() === sap.m.IconTabFilterDesign.Horizontal;
 				if (bIsHorizontalDesign) {
 					bHasHorizontalDesign = true;
 				}
+
+				if (oItem.getVisible()) {
+					iVisibleTabFilterIndex++;
+				}
 			}
-		});
+		}
 
 		oRM.write("</div>");
 
