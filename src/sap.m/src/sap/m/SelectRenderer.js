@@ -39,6 +39,9 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 				sType = oSelect.getType(),
 				bAutoAdjustWidth = oSelect.getAutoAdjustWidth(),
 				bEnabled = oSelect.getEnabled(),
+				sCSSWidth = oSelect.getWidth(),
+				bWidthPercentage = sCSSWidth.indexOf("%") > -1,
+				bSelectWithFlexibleWidth = bAutoAdjustWidth || sCSSWidth === "auto" || bWidthPercentage,
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
 			oRm.write("<div");
@@ -50,14 +53,14 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 				oRm.addClass(CSS_CLASS + "Disabled");
 			}
 
-			if ((bAutoAdjustWidth || oSelect.getWidth() === "auto") && (sType === SelectType.Default)) {
+			if (bSelectWithFlexibleWidth && (sType === SelectType.Default)) {
 				oRm.addClass(CSS_CLASS + "MinWidth");
 			}
 
 			if (bAutoAdjustWidth) {
 				oRm.addClass(CSS_CLASS + "AutoAdjustedWidth");
 			} else {
-				oRm.addStyle("width", oSelect.getWidth());
+				oRm.addStyle("width", sCSSWidth);
 			}
 
 			if (oSelect.getIcon()) {
