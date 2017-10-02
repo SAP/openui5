@@ -41,14 +41,22 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.global"],
 				oParent = oModifier.getParent(oSourceControl),
 				iAggregationIndex, sParentAggregation, aButtons,
 				bIsRtl = sap.ui.getCore().getConfiguration().getRTL(),
-				oMenu, oMenuButton, aMenuButtonName = [];
+				oMenu, oMenuButton, aMenuButtonName = [],
+				oRevertData = {
+					menuButtonId: "",
+					parentAggregation: "",
+					insertIndex: 0
+				};
 
 			aButtons = oChangeDefinition.content.combineButtonSelectors.map(function (oCombineButtonSelector) {
 				return oModifier.bySelector(oCombineButtonSelector, oAppComponent);
 			});
 
 			sParentAggregation = aButtons[0].sParentAggregationName;
+			oRevertData.parentAggregation = sParentAggregation;
+
 			iAggregationIndex = oModifier.findIndexInParentAggregation(oSourceControl);
+			oRevertData.insertIndex = iAggregationIndex;
 
 			oMenu = oModifier.createControl("sap.m.Menu", mPropertyBag.appComponent, oView);
 
@@ -80,11 +88,50 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.global"],
 			});
 
 			oMenuButton = oModifier.createControl("sap.m.MenuButton", mPropertyBag.appComponent, oView, oView.createId(jQuery.sap.uid()));
+			oRevertData.menuButtonId = oModifier.getId(oMenuButton);
+
 			oModifier.setProperty(oMenuButton, "text", aMenuButtonName.join("/"));
 			oModifier.insertAggregation(oMenuButton, "menu", oMenu, 0);
 
 			oModifier.insertAggregation(oParent, sParentAggregation, oMenuButton, iAggregationIndex);
+			oChange.setRevertData(oRevertData);
 
+			return true;
+
+		};
+
+		/**
+		 * Reverts applied change
+		 *
+		 * @param {sap.ui.fl.Change} oChange change wrapper object with instructions to be applied on the control map
+		 * @param {sap.m.IBar} oControl Bar - Bar that matches the change selector for applying the change
+		 * @param {object} mPropertyBag - Property bag containing the modifier and the view
+		 * @param {object} mPropertyBag.modifier - modifier for the controls
+		 * @param {object} mPropertyBag.view - application view
+		 * @return {boolean} True if successful
+		 * @public
+		 */
+		CombineButtons.revertChange = function(oChange, oControl, mPropertyBag) {
+
+			var oModifier = mPropertyBag.modifier,
+				oRevertData =  oChange.getRevertData(),
+				oChangeDefinition = oChange.getDefinition(),
+				oParent = oControl,
+				sParentAggregation = oRevertData.parentAggregation,
+				iAggregationIndex = oRevertData.insertIndex,
+				oMenuButton =  oModifier.bySelector(oRevertData.menuButtonId, mPropertyBag.appComponent),
+				aButtonsIds = oChangeDefinition.content.combineButtonSelectors;
+
+			for (var i = 0; i < aButtonsIds.length; i++) {
+				var oButton = oModifier.bySelector(aButtonsIds[i], mPropertyBag.appComponent);
+				oModifier.insertAggregation(oParent, sParentAggregation, oButton, iAggregationIndex + i);
+			}
+
+			oModifier.removeAggregation(oParent, sParentAggregation, oMenuButton);
+
+			oChange.resetRevertData();
+
+			return true;
 		};
 
 		/**
