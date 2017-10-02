@@ -1,9 +1,15 @@
 [
 
 	{
-		"version": "1.48.8",
-		"date": "2017-09-25",
-		"WhatsNewId":"2818f800e7424c5c91dbd495f8cb757b"
+		"version": "1.48.9",
+		"date": "2017-09-29",
+		"WhatsNewId":""
+	},
+	{
+		"version": "1.50.3",
+		"date": "2017-09-29",
+		"beta": "true",
+		"WhatsNewId":"a8449849c81249bb8abd98b4b9342a4a"
 	},
 	{
 		"version": "1.46.12",
