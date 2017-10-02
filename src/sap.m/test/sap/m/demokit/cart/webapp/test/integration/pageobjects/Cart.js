@@ -104,7 +104,6 @@ sap.ui.define([
 
                 iShouldSeeTheCart: function () {
                     return this.waitFor({
-                        viewName: "Cart",
                         success: function () {
                             Opa5.assert.ok(true, "The cart was successfully displayed");
                         },

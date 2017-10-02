@@ -9,9 +9,9 @@ sap.ui.define([
 			 Properties) {
 	"use strict";
 
-	var sViewName = "Product";
 	Opa5.createPageObjects({
 		onTheProduct: {
+			viewName: "Product",
 
 			actions: {
 				iAddTheDisplayedProductToTheCart: function () {
@@ -26,35 +26,7 @@ sap.ui.define([
 				iPressOnTheProductPicture: function () {
 					return this.waitFor({
 						id : "productImage",
-						viewName : sViewName,
 						actions : new Press()
-					});
-				},
-
-				iPressTheCloseButtonOfTheLightBox: function () {
-					return this.waitFor({
-						controlType : "sap.m.Button",
-						matchers : [
-							new PropertyStrictEquals({
-								name : "text",
-								value : "Close"
-							}),
-							new PropertyStrictEquals({
-								name : "enabled",
-								value : true
-							})
-						],
-						actions : new Press(),
-						errorMessage : "Did not find the Close button"
-					});
-				},
-
-				iPressTheBackButton: function () {
-					return this.waitFor({
-						id: "page",
-						viewName: "Category",
-						actions: new Press(),
-						errorMessage: "The nav back button was not displayed"
 					});
 				}
 			},
@@ -63,7 +35,6 @@ sap.ui.define([
 
 				iShouldSeeALightBox: function () {
 					return this.waitFor({
-						viewName : sViewName,
 						id : "lightBox",
 						success : function () {
 							Opa5.assert.ok(true, "Light Box is visible");
@@ -74,7 +45,6 @@ sap.ui.define([
 				iShouldSeeAnAvatarButton: function () {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						viewName: sViewName,
 						matchers: new Properties({icon: "sap-icon://customer"}),
 						success: function () {
 							Opa5.assert.ok(true, "Avatar button is visible");
@@ -85,7 +55,6 @@ sap.ui.define([
 
 				iShouldSeeTheProductPage: function () {
 					return this.waitFor({
-						viewName: sViewName,
 						success: function () {
 							Opa5.assert.ok(true, "The product page was successfully displayed");
 						},
@@ -95,7 +64,6 @@ sap.ui.define([
 
                 iShouldSeeTheBlasterExtremeDetailPage: function () {
                     return this.waitFor({
-                        viewName: sViewName,
                         success: function () {
                             Opa5.assert.ok(true, "The Blaster Extreme page was successfully displayed");
                         },
@@ -105,7 +73,6 @@ sap.ui.define([
 
                 iShouldSeeTheSmartphoneAlphaDetailPage: function () {
                     return this.waitFor({
-                        viewName: sViewName,
                         success: function () {
                             Opa5.assert.ok(true, "The Smartphone Alpha page was successfully displayed");
                         },
