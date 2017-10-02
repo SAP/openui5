@@ -755,5 +755,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.21": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "10ee7d34939794e764fe40dbdaefb41b34d04f5c",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - vertical scrollbar is not updated",
+        "references": []
+      }
+    ]
   }
 }

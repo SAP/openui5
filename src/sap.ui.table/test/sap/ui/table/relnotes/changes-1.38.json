@@ -1021,5 +1021,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.28": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "7968599bde7ea5122b16fb196ff864e0f6aeac42",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: incorrect column header width in IE",
+        "references": []
+      }
+    ]
   }
 }
