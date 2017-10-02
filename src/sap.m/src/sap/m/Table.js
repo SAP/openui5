@@ -300,10 +300,9 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		}
 
 		// find first visible column
-		var $table = jQuery(this.getTableDomRef()),
-			$headRow = $table.find("thead > tr"),
+		var $headRow = this.$("tblHeader"),
 			bHeaderVisible = !$headRow.hasClass("sapMListTblHeaderNone"),
-			aVisibleColumns = $headRow.find(".sapMListTblCell").filter(":visible"),
+			aVisibleColumns = $headRow.find(".sapMListTblCell:visible"),
 			$firstVisibleCol = aVisibleColumns.eq(0);
 
 		// check if only one column is visible
@@ -316,8 +315,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 			});
 		}
 
-		// update GroupHeader colspan according to visible column count and additional selection column
-		$table.find(".sapMGHLICell").attr("colspan", aVisibleColumns.length + !!sap.m.ListBaseRenderer.ModeOrder[this.getMode()]);
+		// update the visible column count and colspan
+		// navigation columns are getting rendered always
+		this._colCount = aVisibleColumns.length + 1 + !!sap.m.ListBaseRenderer.ModeOrder[this.getMode()];
+		this.$("tblBody").find(".sapMGHLICell").attr("colspan", this.getColSpan());
+		this.$("nodata-text").attr("colspan", this.getColCount());
 
 		// remove or show column header row(thead) according to column visibility value
 		if (!bColVisible && bHeaderVisible) {
