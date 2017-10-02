@@ -1611,3 +1611,11 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 .sap-phone .sapMList .sapMFeedListItemTextName .sapMLnk {
 	white-space: pre-line;
 }
+
+/* Release notes */
+.sapUiCustomTitleText {
+	font-size: 0.875rem;
+}
+.sapUiCustomTitleText .sapMLnk {
+	display: inline;
+}
