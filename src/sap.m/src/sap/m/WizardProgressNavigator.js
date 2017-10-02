@@ -648,6 +648,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 				enabled: this._activeStep >= (i + 1),
 				press: function (stepNumber) {
 					this._moveToStep(stepNumber);
+					this.fireStepChanged({	current: stepNumber});
 				}.bind(this, i + 1)
 			}));
 		}
