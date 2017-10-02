@@ -573,9 +573,11 @@ sap.ui.define([
 		var oSourceDomRef = oSourceControl.getDomRef();
 
 		// init drag session
+		oSourceDomRef.focus();
 		oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
 
 		// validation
+		oTargetDomRef.focus();
 		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
 
 		// act for the indicator
