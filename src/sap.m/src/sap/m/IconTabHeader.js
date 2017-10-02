@@ -679,6 +679,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Returns all the visible tab filters.
+	 *
+	 * @private
+	 */
+	IconTabHeader.prototype.getVisibleTabFilters = function() {
+		var aItems = this.getTabFilters(),
+			aVisibleItems = [],
+			oItem;
+
+		for (var i = 0; i < aItems.length; i++) {
+			oItem = aItems[i];
+
+			if (oItem.getVisible()) {
+				aVisibleItems.push(oItem);
+			}
+		}
+
+		return aVisibleItems;
+	};
+
+	/**
 	 * Returns the first visible item, which is needed for correct arrow calculation.
 	 */
 	IconTabHeader.prototype._getFirstVisibleItem = function(aItems) {

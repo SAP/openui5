@@ -2511,6 +2511,40 @@
 				assert.strictEqual(this.oIconTabBar.getSelectedKey(), '10', 'Correct tab filter is selected');
 			});
 
+			QUnit.module("ARIA",{
+				beforeEach: function () {
+					this.oIconTabBar = getIconTabBarWithOverflowList();
+					this.oIconTabBar.getItems()[1].setVisible(false);
+					this.oIconTabBar.insertItem(new sap.m.IconTabSeparator(), 1);
+					this.oIconTabBar.placeAt('qunit-fixture');
+
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function () {
+					this.oIconTabBar.destroy();
+					this.oIconTabBar = null;
+				}
+			});
+
+			QUnit.test("Posinset and Setsize", function (assert) {
+
+				var $tabFilters = this.oIconTabBar.$().find('.sapMITBFilter');
+
+				assert.strictEqual($tabFilters[1].getAttribute('aria-posinset'), "2", "posinset is set correctly");
+				assert.strictEqual($tabFilters[1].getAttribute('aria-setsize'), "29", "setsize is set correctly");
+
+				var oButton = this.oIconTabBar.$().find('.sapMBtn');
+				oButton.trigger('tap');
+
+				sap.ui.getCore().applyChanges();
+
+				var $selectList = jQuery('.sapMITBSelectList');
+				var $selectItems = $selectList.find('.sapMITBSelectItem');
+
+				assert.strictEqual($selectItems[1].getAttribute('aria-posinset'), "2", "posinset is set correctly");
+				assert.strictEqual($selectItems[1].getAttribute('aria-setsize'), "29", "setsize is set correctly");
+			});
+
 			QUnit.module("padding");
 
 			QUnit.test("Container Padding Classes", function (assert) {
