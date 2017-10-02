@@ -29,13 +29,19 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
 	 * @param {sap.ui.core.Control} oObjStatus An object representation of the control that should be rendered
 	 */
 	ObjectStatusRenderer.render = function(oRm, oObjStatus){
-		if (!oObjStatus._isEmpty()) {
+		oRm.write("<div");
+
+		if (oObjStatus._isEmpty()) {
+			oRm.writeControlData(oObjStatus);
+			oRm.addStyle("display", "none");
+			oRm.writeStyles();
+			oRm.write(">");
+		} else {
 
 			var sState = oObjStatus.getState();
 			var sTextDir = oObjStatus.getTextDirection();
 			var sTitleDir = sTextDir;
 
-			oRm.write("<div");
 			oRm.writeControlData(oObjStatus);
 
 			var sTooltip = oObjStatus.getTooltip_AsString();
@@ -118,9 +124,9 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
 				oRm.writeEscaped(ValueStateSupport.getAdditionalText(sState));
 				oRm.write("</span>");
 			}
-
-			oRm.write("</div>");
 		}
+
+		oRm.write("</div>");
 	};
 
 	return ObjectStatusRenderer;
