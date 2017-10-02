@@ -138,7 +138,7 @@ function(
 			assert.equal(oDuplicateVariant.getVariantReference(), oVariant.content.variantReference, "then variant reference correctly duplicated");
 			assert.equal(oDuplicateVariant.getTitle(), oVariant.content.title + " Copy", "then variant reference correctly duplicated");
 			assert.equal(oDuplicateVariant.getChanges().length, 2, "then 2 changes duplicated");
-			assert.equal(oDuplicateVariant.getChanges()[0].fileName, oVariant.changes[0].fileName + "_Copy", "then changes duplicated with new fileNames");
+			assert.equal(oDuplicateVariant.getChanges()[0].support.sourceChangeFileName, oVariant.changes[0].fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
 			assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes present - variant and 2 changes");
 
 			oControlVariantDuplicateCommand.undo().then( function() {

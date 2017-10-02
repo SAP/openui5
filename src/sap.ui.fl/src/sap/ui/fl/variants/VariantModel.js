@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/model/json/JSONModel", "sap/ui/fl/Utils", "sap/ui/fl/changeHandler/BaseTreeModifier"
-], function(jQuery, JSONModel, Utils, BaseTreeModifier) {
+	"jquery.sap.global", "sap/ui/model/json/JSONModel", "sap/ui/fl/Utils", "sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Change"
+], function(jQuery, JSONModel, Utils, BaseTreeModifier, Change) {
 	"use strict";
 
 	/**
@@ -151,12 +151,18 @@ sap.ui.define([
 
 		var aVariantChanges = oDuplicateVariant.changes.slice();
 
+		var oDuplicateChange = {};
 		oDuplicateVariant.changes = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
-			if (!Utils.isLayerAboveCurrentLayer(oChange.layer) /*0*/) {
-				oChange.fileName += "_Copy";
-				oChange.variantReference = oDuplicateVariant.content.fileName;
+			if (Utils.isLayerAboveCurrentLayer(oChange.layer) === 0) {
+				oDuplicateChange = jQuery.extend(true, {}, oChange);
+				oDuplicateChange.fileName = Utils.createDefaultFileName(oChange.changeType);
+				oDuplicateChange.variantReference = oDuplicateVariant.content.fileName;
+				if (!oDuplicateChange.support) {
+					oDuplicateChange.support = {};
+				}
+				oDuplicateChange.support.sourceChangeFileName = oChange.fileName;
+				aSameLayerChanges.push(oDuplicateChange);
 			}
-			aSameLayerChanges.push(oChange);
 			return aSameLayerChanges;
 		}, []);
 
@@ -167,9 +173,9 @@ sap.ui.define([
 		var oDuplicateVariantData = this._duplicateVariant(sNewVariantFileName, sSourceVariantFileName);
 		var	sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
 		var oVariantModelData = {
-			author: "CUSTOMER",
+			author: Utils.getCurrentLayer(false),
 			key: oDuplicateVariantData.content.fileName,
-			layer: oDuplicateVariantData.content.layer,
+			layer: Utils.getCurrentLayer(false),
 			originalTitle: oDuplicateVariantData.content.title,
 			readOnly: false,
 			title: oDuplicateVariantData.content.title,
@@ -178,12 +184,8 @@ sap.ui.define([
 
 		//Flex Controller
 		var oVariant = this.oFlexController.createVariant(oDuplicateVariantData, this.oComponent);
-		var aChangesToBeSaved = [oVariant].concat(oVariant.getChanges()
-			.filter( function (oChange) {
-				return oChange.variantReference === oVariant.getId(); /*only same layer changes*/
-			})
-		);
-		aChangesToBeSaved.forEach( function (oChange) {
+
+		[oVariant].concat(oVariant.getChanges()).forEach(function(oChange) {
 			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
 		}.bind(this));
 
