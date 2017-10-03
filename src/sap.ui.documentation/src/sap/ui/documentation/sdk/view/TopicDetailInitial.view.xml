@@ -44,7 +44,7 @@
 							class="actionButton"
 							text="Download"
 							type="Emphasized"
-							press="onMainDownloadButtonPress"/>
+							press="onDownloadButtonPress"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
@@ -204,38 +204,5 @@
 				<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
 			</l:BlockLayoutRow>
 		</l:BlockLayout>
-		<dependents>
-			<SelectDialog
-					id="downloadDialog"
-					title="Download Documentation"
-					liveChange="onSearch"
-					confirm="onVersionDownloadPress">
-				<InputListItem
-					label="OpenUI5"
-					type="Active">
-					<Button
-						text="Download"
-						type="Emphasized"
-						press="onVersionDownloadButtonPress"/>
-				</InputListItem>
-				<InputListItem
-						label="SAPUI5"
-						type="Active">
-					<Button
-							text="Download"
-							type="Emphasized"
-							press="onVersionDownloadButtonPress"/>
-				</InputListItem>
-				<InputListItem
-						label="SAPUI5 Internal"
-						visible="{versionData>/isInternal}"
-						type="Active">
-					<Button
-							text="Download"
-							type="Emphasized"
-							press="onVersionDownloadButtonPress"/>
-				</InputListItem>
-			</SelectDialog>
-		</dependents>
 	</Page>
 </mvc:View>
