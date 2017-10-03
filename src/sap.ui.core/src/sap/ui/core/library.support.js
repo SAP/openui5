@@ -5,11 +5,11 @@
  * Adds support rules to the core
  */
 sap.ui.define(["jquery.sap.global",
-		"./Misc.support",
-		"./Config.support",
-		"./Model.support",
-		"./View.support",
-		"./App.support"],
+		"./rules/Misc.support",
+		"./rules/Config.support",
+		"./rules/Model.support",
+		"./rules/View.support",
+		"./rules/App.support"],
 	function(jQuery, MiscSupport, ConfigSupport, ModelSupport, ViewSupport, AppSupport) {
 	"use strict";
 
