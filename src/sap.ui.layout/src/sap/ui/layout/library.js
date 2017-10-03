@@ -227,6 +227,7 @@ sap.ui.define([
 		Light: "Light",
 		/**
 		 * Background with bright and dark background colors
+		 * @deprecated since 1.50
 		 * @public
 		 */
 		Mixed: "Mixed",

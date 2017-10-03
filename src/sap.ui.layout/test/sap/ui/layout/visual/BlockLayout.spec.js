@@ -19,10 +19,6 @@ describe('sap.ui.layout.BlockLayout', function () {
 		_switchBackgroundAndTakeScreenshot("navigate-to-light", "layout-light");
 	});
 
-	it('Mixed Background', function () {
-		_switchBackgroundAndTakeScreenshot("navigate-to-mixed", "layout-mixed");
-	});
-
 	it('Accent Background', function () {
 		_switchBackgroundAndTakeScreenshot("navigate-to-accent", "layout-accent");
 	});
