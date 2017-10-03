@@ -686,7 +686,34 @@
 			keyCode : jQuery.sap.KeyCodes.SPACE
 		});
 
-		QUnit.module("Event testing");
+		QUnit.module("Event testing", {
+			testArrowNavigation: function (oRadioButtonSettings, iKeyCode, oAssert) {
+				var oRadioButton1 = new sap.m.RadioButton(oRadioButtonSettings),
+					oRadioButton2 = new sap.m.RadioButton(oRadioButtonSettings),
+					oFireSelectSpy = this.spy(oRadioButton2, "fireSelect");
+
+				oRadioButton1.placeAt("qunit-fixture");
+				oRadioButton2.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				oRadioButton1.applyFocusInfo();
+				sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), iKeyCode);
+				this.clock.tick(100);
+
+				oAssert.strictEqual(oFireSelectSpy.callCount, 0, "Button 2 should not be selected");
+
+				oRadioButton1.destroy();
+				oRadioButton2.destroy();
+			}
+		});
+
+		QUnit.test("Event should not be fired when buttons are not editable", function(assert) {
+			this.testArrowNavigation({ editable: false }, jQuery.sap.KeyCodes.ARROW_RIGHT, assert);
+		});
+
+		QUnit.test("Event should not be fired when buttons are not enabled", function(assert) {
+			this.testArrowNavigation({ editable: false }, jQuery.sap.KeyCodes.ARROW_RIGHT, assert);
+		});
 
 		QUnit.test("Radio Button Select Event", function(assert) {
 
