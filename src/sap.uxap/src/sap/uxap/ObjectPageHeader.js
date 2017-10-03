@@ -999,6 +999,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface.
+	 * @returns {*}
+	 */
+	ObjectPageHeader.prototype.isDynamic = function () {
+		return false;
+	};
+
+	/**
 	 * Required by the {@link sap.uxap.IHeaderTitle} interface
 	 * @returns {sap.uxap.ObjectPageHeaderContent}
 	 */

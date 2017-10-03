@@ -185,6 +185,19 @@ sap.ui.define([
 				toggleHeaderOnTitleClick: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
+				 * Preserves the current header state when scrolling.
+				 * For example, if the user expands the header by clicking on the title and then scrolls down the page, the header will remain expanded.
+				 *
+				 * <b>Notes:</b>
+				 * <ul><li>This property is only taken into account if an instance of <code>sap.uxap.ObjectPageDynamicHeaderTitle</code>is used for the <code>headerTitle</code> aggregation.</li>
+				 * <li>Based on internal rules, the value of the property is not always taken into account - for example,
+				 * when the control is rendered on tablet or mobile and the control`s title and header
+				 * are with height larger than the given threshold.</li></ul>
+				 * @since 1.52
+				 */
+				preserveHeaderStateOnScroll: {type: "boolean", group: "Behavior", defaultValue: false},
+
+				/**
 				 * Determines whether an Edit button will be displayed in Header Content.
 				 *
 				 * <b>Note</b>: This property is only taken into account if an instance of
@@ -301,6 +314,7 @@ sap.ui.define([
 	ObjectPageLayout.DOM_CALC_DELAY = 200;				// ms.
 	ObjectPageLayout.FOOTER_ANIMATION_DURATION = 350;	// ms.
 	ObjectPageLayout.MAX_SNAP_POSITION_OFFSET = 20;		// px
+	ObjectPageLayout.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE = 0.6; // pct.
 	ObjectPageLayout.TITLE_LEVEL_AS_ARRAY = Object.keys(TitleLevel);
 
 	ObjectPageLayout.EVENTS = {
@@ -345,6 +359,7 @@ sap.ui.define([
 		this._bStickyAnchorBar = false;             //status of the header
 		this._bHeaderInTitleArea = false;
 		this._bHeaderExpanded = true;
+		this._bHeaderBiggerThanAllowedHeight = false;
 		this._iStoredScrollPosition = 0;
 
 		// anchorbar management
@@ -431,7 +446,7 @@ sap.ui.define([
 
 		oHeaderContent = this._getHeaderContent();
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin()) {
-			bPinnable = this.getHeaderContentPinnable();
+			bPinnable = this.getHeaderContentPinnable() && !this.getPreserveHeaderStateOnScroll();
 			this._getHeaderContent().setPinnable(bPinnable);
 			if (bPinnable) {
 				this._attachPinPressHandler();
@@ -453,6 +468,15 @@ sap.ui.define([
 		if (exists(oTitle) && !this._bAlreadyAttachedTitlePressHandler) {
 			oTitle.attachEvent(ObjectPageLayout.EVENTS.TITLE_PRESS, this._handleDynamicTitlePress, this);
 			this._bAlreadyAttachedTitlePressHandler = true;
+		}
+	};
+
+	ObjectPageLayout.prototype._toggleHeaderVisibility = function (bShow) {
+
+		var oHeaderContent = this._getHeaderContent();
+
+		if (exists(oHeaderContent)) {
+			oHeaderContent.$().toggleClass("sapUxAPObjectPageHeaderContentHidden", !bShow);
 		}
 	};
 
@@ -483,6 +507,7 @@ sap.ui.define([
 			return;
 		}
 
+		this._toggleHeaderVisibility(false);
 		this._bHeaderExpanded = false;
 
 		//recalculate layout of the content area
@@ -493,6 +518,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype._expandHeader = function (bAppendHeaderToTitle) {
 
 		this._toggleHeaderTitle(true /* expand */);
+		this._toggleHeaderVisibility(true);
 
 		if (bAppendHeaderToTitle) {
 			this._moveAnchorBarToTitleArea();
@@ -674,7 +700,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
-		var sSectionToSelectID, oSectionToSelect;
+		var sSectionToSelectID, oSectionToSelect, bAppendHeaderToContent;
 
 		if (this._bIsBeingDestroyed) {
 			return;
@@ -710,6 +736,15 @@ sap.ui.define([
 		this.getFooter() && this._shiftFooter();
 
 		this._setSectionsFocusValues();
+
+		if (this._preserveHeaderStateOnScroll()) {
+			this._overridePreserveHeaderStateOnScroll();
+		}
+
+		if (!this._bHeaderExpanded) {
+			bAppendHeaderToContent = !this._shouldPreserveHeaderInTitleArea();
+			this._snapHeader(bAppendHeaderToContent);
+		}
 
 		this._restoreScrollPosition();
 
@@ -1609,7 +1644,8 @@ sap.ui.define([
 			iSpacerHeight,
 			sPreviousSubSectionId,
 			sPreviousSectionId,
-			bAllowSnap,
+			bAllowScrollSectionToTop,
+			bStickyTitleMode = !this._bHeaderExpanded,
 			$domRef = this.getDomRef();
 
 		if (!$domRef || !this._bDomReady) { //calculate the layout only if the object page is full ready
@@ -1731,17 +1767,22 @@ sap.ui.define([
 				}
 			}
 
-			bAllowSnap = this._bStickyAnchorBar /* if already in sticky mode, then preserve it, even if the section does not require snap for its display */
+			// checks whether to ensure extra bottom space that allows scrolling the section up to the top of the page (right bellow the anchorBar)
+			bAllowScrollSectionToTop = this._bStickyAnchorBar /* if already in sticky mode, then preserve it, even if the section does not require scroll for its [entire content] display */
 			|| (iSubSectionsCount > 1) /* bringing any section (other than the first) bellow the anchorBar requires snap */
 			|| this._checkContentBottomRequiresSnap(oLastVisibleSubSection); /* check snap is needed in order to display the full section content in the viewport */
 
-			iSpacerHeight = this._computeSpacerHeight(oLastVisibleSubSection, iLastVisibleHeight, bAllowSnap);
+			if (bAllowScrollSectionToTop && !this._shouldPreserveHeaderInTitleArea()) {
+				bStickyTitleMode = true; // by the time the bottom of the page is reached, the header will be snapped on scroll => obtain the *sticky* title height
+			}
+
+			iSpacerHeight = this._computeSpacerHeight(oLastVisibleSubSection, iLastVisibleHeight, bAllowScrollSectionToTop, bStickyTitleMode);
 
 			this._$spacer.height(iSpacerHeight + "px");
 			jQuery.sap.log.debug("ObjectPageLayout :: bottom spacer is now " + iSpacerHeight + "px");
 		}
 
-		this._updateCustomScrollerHeight(bAllowSnap);
+		this._updateCustomScrollerHeight(bStickyTitleMode);
 		return true; // return success flag
 	};
 
@@ -1795,13 +1836,11 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._getStickyAreaHeight = function(bIsStickyMode) {
-		if (this._shouldPreserveHeaderInTitleArea()) {
-			return this.iHeaderTitleHeight;
-		}
-		if (bIsStickyMode) {
+		if (bIsStickyMode) { // we are pre-calculating the expected sticky area height in snapped mode => it is the sum of the pre-calculated stickyTitle + anchorBar height
 			return this.iHeaderTitleHeightStickied + this.iAnchorBarHeight;
 		}
-		//expanded mode
+
+		//in all other cases it is simply the height of the entire area above the scrollable content (where all [stickyTitle, stickyAnchorBar, stickyHeaderContent] reside)
 		return this.iHeaderTitleHeight;
 	};
 
@@ -1868,7 +1907,7 @@ sap.ui.define([
 		return this._getSectionPositionBottom(oSection, bSnappedMode) >= (this._getScrollableViewportHeight(bSnappedMode) + this._getSnapPosition());
 	};
 
-	ObjectPageLayout.prototype._computeSpacerHeight = function(oLastVisibleSubSection, iLastVisibleHeight, bStickyMode) {
+	ObjectPageLayout.prototype._computeSpacerHeight = function(oLastVisibleSubSection, iLastVisibleHeight, bAllowSpaceToSnapViaScroll, bStickyTitleMode) {
 
 		var iSpacerHeight,
 			iScrollableViewportHeight,
@@ -1878,9 +1917,9 @@ sap.ui.define([
 			iFooterHeight = this.$("footerWrapper").outerHeight();
 		}
 
-		iScrollableViewportHeight = this._getScrollableViewportHeight(bStickyMode);
+		iScrollableViewportHeight = this._getScrollableViewportHeight(bStickyTitleMode);
 
-		if (!bStickyMode) {
+		if (!bAllowSpaceToSnapViaScroll) {
 			iLastVisibleHeight = this._getSectionPositionBottom(oLastVisibleSubSection, false); /* in expanded mode, all the content above lastSection bottom is visible */
 		}
 
@@ -2009,6 +2048,10 @@ sap.ui.define([
 			sClosestSectionId,
 			sSelectedSectionId;
 
+		if (this._preserveHeaderStateOnScroll()) {
+			this._overridePreserveHeaderStateOnScroll();
+		}
+
 		// a special case: if the content that changed its height was *above* the current scroll position =>
 		// then the current scroll position updated respectively and => triggered a scroll event =>
 		// a new section may become selected during that scroll
@@ -2112,7 +2155,7 @@ sap.ui.define([
 			iPageHeight -= (this.iAnchorBarHeight + this.iHeaderTitleHeightStickied);
 		} else {
 			if (bShouldStick && bShouldPreserveHeaderInTitleArea) {
-				iPageHeight = iPageHeight - (this._$stickyAnchorBar.height() + this.iHeaderTitleHeight + this.iStickyHeaderContentHeight); // - this.iStickyHeaderContentHeight
+				iPageHeight = iPageHeight - (this._$stickyAnchorBar.height() + this.iHeaderTitleHeight + this.iStickyHeaderContentHeight);
 			}
 		}
 
@@ -2127,11 +2170,6 @@ sap.ui.define([
 		//don't apply parallax effects if there are not enough space for it
 		if (!bShouldPreserveHeaderInTitleArea && ((oHeader && this.getShowHeaderContent()) || this.getShowAnchorBar())) {
 			this._toggleHeader(bShouldStick);
-
-			//if we happen to have been able to collapse it at some point (section height had increased)
-			//and we no longer are (section height is reduced) and we are at the top of the page we expand it back anyway
-		} else if (iScrollTop == 0 && ((oHeader && this.getShowHeaderContent()) || this.getShowAnchorBar())) {
-			this._toggleHeader(false);
 		}
 
 		if (!bShouldPreserveHeaderInTitleArea) {
@@ -2892,7 +2930,15 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._shouldPreserveHeaderInTitleArea = function () {
-		return this._bPinned || this._checkAlwaysShowContentHeader();
+		return this._bPinned || this._preserveHeaderStateOnScroll() || this._checkAlwaysShowContentHeader();
+	};
+
+	ObjectPageLayout.prototype._checkAlwaysShowContentHeader = function () {
+			return !this._hasDynamicTitle()
+				&& !this._bMobileScenario
+				&& !this._bTabletScenario
+				&& this.getShowHeaderContent()
+				&& this.getAlwaysShowContentHeader();
 	};
 
 	/**
@@ -2903,6 +2949,41 @@ sap.ui.define([
 		var oHeaderContent = this._getHeaderContent(),
 			bPinnable = oHeaderContent && oHeaderContent.supportsPinUnpin() && oHeaderContent.getPinnable();
 		return !bPinnable; // should not preserve the height if the header is pinnable
+	};
+
+	ObjectPageLayout.prototype._shouldOverridePreserveHeaderStateOnScroll = function () {
+		return !Device.system.desktop && this._headerBiggerThanAllowedToBeFixed();
+	};
+
+	ObjectPageLayout.prototype._headerBiggerThanAllowedToBeFixed = function () {
+		var iControlHeight = this._getOwnHeight();
+
+		return this._getEntireHeaderHeight() > ObjectPageLayout.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE * iControlHeight;
+	};
+
+	ObjectPageLayout.prototype._getOwnHeight = function () {
+		return this._getHeight(this);
+	};
+
+	ObjectPageLayout.prototype._getHeight = function (oControl) {
+		return !(oControl instanceof Control) ? 0 : oControl.$().outerHeight() || 0;
+	};
+
+	ObjectPageLayout.prototype._getEntireHeaderHeight = function () {
+		var iTitleHeight = 0,
+			iHeaderHeight = 0,
+			oTitle = this.getHeaderTitle(),
+			oHeader = this._getHeaderContent();
+
+		if (exists(oTitle)) {
+			iTitleHeight = oTitle.$().outerHeight();
+		}
+
+		if (exists(oHeader)) {
+			iHeaderHeight = oHeader.$().outerHeight();
+		}
+
+		return iTitleHeight + iHeaderHeight;
 	};
 
 	ObjectPageLayout.prototype._onPinUnpinButtonPress = function (oEvent) {
@@ -2960,6 +3041,45 @@ sap.ui.define([
 		if (exists(oHeaderContent) && oHeaderContent.supportsPinUnpin()) {
 			oHeaderContent._updateARIAPinButtonState(bPinned);
 		}
+	};
+
+	/**
+	 * Determines the adjusted value of <code>preserveHeaderStateOnScroll</code>,
+	 * after the restrictions in <code>this._overridePreserveHeaderStateOnScroll</code> have been applied.
+	 * @returns {boolean}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._preserveHeaderStateOnScroll = function () {
+		return this._hasDynamicTitle() && this.getPreserveHeaderStateOnScroll() && !this._bHeaderBiggerThanAllowedHeight;
+	};
+
+	/**
+	 * If the header is larger than the allowed height, the <code>preserveHeaderStateOnScroll</code> property will be ignored
+	 * and the header can be expanded or collapsed on page scroll.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._overridePreserveHeaderStateOnScroll = function () {
+		if (!this._shouldOverridePreserveHeaderStateOnScroll()) {
+			this._bHeaderBiggerThanAllowedHeight = false;
+			return;
+		}
+
+		this._bHeaderBiggerThanAllowedHeight = true;
+
+		//move the header to content
+		if (this._bHeaderExpanded) {
+			this._moveAnchorBarToContentArea();
+			this._moveHeaderToContentArea(true);
+		} else {
+			this._snapHeader(true);
+		}
+		this._adjustHeaderHeights();
+		this._requestAdjustLayout();
+	};
+
+	ObjectPageLayout.prototype._hasDynamicTitle = function() {
+		var oTitle = this.getHeaderTitle();
+		return oTitle && oTitle.isDynamic();
 	};
 
 	ObjectPageLayout.prototype._getHeight = function (oControl) {

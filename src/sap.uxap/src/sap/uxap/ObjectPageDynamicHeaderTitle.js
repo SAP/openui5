@@ -46,6 +46,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/uxap/ObjectPageDynamicHead
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 * @returns {*}
 		 */
+		ObjectPageDynamicHeaderTitle.prototype.isDynamic = function () {
+			return true;
+		};
+
+		/**
+		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
+		 * @returns {*}
+		 */
 		ObjectPageDynamicHeaderTitle.prototype.getCompatibleHeaderContentClass = function () {
 			return ObjectPageDynamicHeaderContent;
 		};
