@@ -138,7 +138,7 @@ sap.ui.define([
 			MINIMUM_STEPS: 3,
 			MAXIMUM_STEPS: 8,
 			ANIMATION_TIME: 300,
-			SCROLL_OFFSET: 65
+			SCROLL_OFFSET: 16
 		};
 
 		/************************************** LIFE CYCLE METHODS ***************************************/
