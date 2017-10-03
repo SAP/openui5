@@ -491,7 +491,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				+ ", new page: " + sNewActivePageId);
 
 		// close the soft keyboard
-		if (Device.system.tablet || Device.system.phone) {
+		if (!Device.system.desktop) {
 			jQuery(document.activeElement).blur();
 		}
 
