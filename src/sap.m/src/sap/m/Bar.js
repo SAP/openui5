@@ -462,29 +462,54 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	Bar.prototype.getHTMLTag  = BarInAnyContentEnabler.prototype.getHTMLTag;
 
 	/**
-	 * Sets classes and tag according to the context of the page. Possible contexts are header, footer and sub-header.
-	 * @returns {sap.m.IBar} this for chaining
+	 * Sets classes and HTML tag according to the context of the page. Possible contexts are header, footer and subheader.
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
 	 */
 	Bar.prototype.applyTagAndContextClassFor  = BarInAnyContentEnabler.prototype.applyTagAndContextClassFor;
 
 	/**
-	 * Sets landmarks members to the bar instance
-	 *
-	 * @param bHasLandmarkInfo {boolean} indicates that bar has landmarkinfo
-	 * @param sContext {string} context of the bar
-	 * @private
+	 * Sets classes according to the context of the page. Possible contexts are header, footer and subheader.
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
+	 * @protected
 	 */
-	Bar.prototype._setLandmarkInfo  = BarInAnyContentEnabler.prototype._setLandmarkInfo;
+	Bar.prototype._applyContextClassFor  = BarInAnyContentEnabler.prototype._applyContextClassFor;
 
 	/**
-	 * Writes landmarks info to the bar
+	 * Sets HTML tag according to the context of the page. Possible contexts are header, footer and subheader.
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
+	 * @protected
+	 */
+	Bar.prototype._applyTag  = BarInAnyContentEnabler.prototype._applyTag;
+
+	/**
+	 * Get context options of the Page.
 	 *
+	 * Possible contexts are header, footer, subheader.
+	 * @param {string} sContext allowed values are header, footer, subheader.
+	 * @returns {object|null}
 	 * @private
 	 */
-	Bar.prototype._writeLandmarkInfo  = BarInAnyContentEnabler.prototype._writeLandmarkInfo;
+	Bar.prototype._getContextOptions  = BarInAnyContentEnabler.prototype._getContextOptions;
+
+	/**
+	 * Sets accessibility role of the Root HTML element.
+	 *
+	 * @param {string} sRole AccessibilityRole of the root Element
+	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
+	 * @private
+	 */
+	Bar.prototype._setRootAccessibilityRole = BarInAnyContentEnabler.prototype._setRootAccessibilityRole;
+
+	/**
+	 * Gets accessibility role of the Root HTML element.
+	 *
+	 * @returns {string} Accessibility role
+	 * @private
+	 */
+	Bar.prototype._getRootAccessibilityRole = BarInAnyContentEnabler.prototype._getRootAccessibilityRole;
 
 
-	return Bar;
+		return Bar;
 
 }, /* bExport= */ true);

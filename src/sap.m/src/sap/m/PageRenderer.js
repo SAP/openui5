@@ -23,7 +23,8 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 		var oHeader = null,
 			oFooter = null,
 			oSubHeader = null,
-			bLightHeader  = this._isLightHeader(oPage);
+			bLightHeader  = this._isLightHeader(oPage),
+			oLandmarkInfo = oPage.getLandmarkInfo();
 
 		if (oPage.getShowHeader()) {
 			oHeader = oPage._getAnyHeader();
@@ -72,24 +73,45 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
-		PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, oPage, "root");
+		oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Root"));
 
 		oRm.write(">");
 
-		//render headers
-		this.renderBarControl(oRm, oPage, oHeader, {
-			context: "header",
-			styleClass: "sapMPageHeader" + (bLightHeader ? "" : " sapContrastPlus")
-		});
+		if (oHeader) {
+			var sHeaderTag = oPage._getHeaderTag(oLandmarkInfo);
+			// Header
+			oRm.write("<" + sHeaderTag);
+			oRm.addClass("sapMPageHeader");
+			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Header"));
+			oRm.writeClasses();
+			oRm.write(">");
+			//render headers
+			this.renderBarControl(oRm, oPage, oHeader, {
+				context: "header",
+				styleClass: bLightHeader ? "" : "sapContrastPlus"
+			});
+			oRm.write("</" + sHeaderTag + ">");
+		}
 
-		this.renderBarControl(oRm, oPage, oSubHeader, {
-			context: "subHeader",
-			styleClass: "sapMPageSubHeader" + (bLightHeader ? "" : " sapContrastPlus")
-		});
+		if (oSubHeader) {
+			var sSubHeaderTag = oPage._getSubHeaderTag(oLandmarkInfo);
+			// SubHeader
+			oRm.write("<" + sSubHeaderTag);
+			oRm.addClass("sapMPageSubHeader");
+			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "SubHeader"));
+			oRm.writeClasses();
+			oRm.write(">");
+			this.renderBarControl(oRm, oPage, oSubHeader, {
+				context: "subHeader",
+				styleClass: bLightHeader ? "" : "sapContrastPlus"
+			});
+			oRm.write("</" + sSubHeaderTag + ">");
+		}
 
 		// render child controls
 		oRm.write('<section id="' + oPage.getId() + '-cont"');
-		PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, oPage, "content");
+
+		oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Content"));
 
 		// The vertical scroll bar should be immediately available to avoid flickering
 		// and reduce size recalculations of embedded responsive controls that rely on
@@ -111,10 +133,22 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 		oRm.write("</section>");
 
 		// render footer Element
-		this.renderBarControl(oRm, oPage, oFooter, {
-			context : "footer",
-			styleClass : "sapMPageFooter"
-		});
+		if (oFooter) {
+			var sFooterTag = oPage._getFooterTag(oLandmarkInfo);
+
+			oRm.write("<" + sFooterTag);
+			oRm.addClass("sapMPageFooter");
+			if (!oPage.getShowFooter()) {
+				oRm.addClass("sapUiHidden");
+			}
+			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Footer"));
+			oRm.writeClasses();
+			oRm.write(">");
+			this.renderBarControl(oRm, oPage, oFooter, {
+				context : "footer"
+			});
+			oRm.write("</" + sFooterTag + ">");
+		}
 
 		oRm.write("</div>");
 	};
@@ -131,11 +165,9 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			return;
 		}
 
-		oBarControl.applyTagAndContextClassFor(oOptions.context.toLowerCase());
+		oBarControl._applyContextClassFor(oOptions.context.toLowerCase());
 
-		oBarControl._setLandmarkInfo(oPage.getLandmarkInfo(), oOptions.context);
-
-		oBarControl.addStyleClass(oOptions.styleClass);
+		oBarControl.addStyleClass(oOptions.styleClass || "");
 
 		oRm.renderControl(oBarControl);
 	};

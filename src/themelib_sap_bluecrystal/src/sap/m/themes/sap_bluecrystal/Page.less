@@ -56,7 +56,7 @@
 /* sap.m.Shell + Tiles Page specific style */
 
 @media (min-height: @sapMShellMinHeightForHeader) {
-	.sap-desktop .sapMShell .sapMPage.sapMPageHideHeaderWhenShellHeader header.sapMIBar {
+	.sap-desktop .sapMShell .sapMPage.sapMPageHideHeaderWhenShellHeader .sapMIBar {
 		display: none;
 	}
 }
@@ -73,8 +73,8 @@ html.sap-desktop .sapUiFioriObjectPage > section {
 		top: 2.5rem;
 	}
 
-	.sapMPageHeader.sapMIBar,
-	.sapMPageFooter.sapMIBar {
+	.sapMPageHeader .sapMIBar,
+	.sapMPageFooter .sapMIBar {
 		height : 2.5rem;
 
 		.sapMBarLeft,
@@ -108,7 +108,7 @@ html.sap-desktop .sapUiFioriObjectPage > section {
 
 /* Fiori 2.0 adaptation */
 
-.sapMPage.sapF2Adapted > .sapMIBar.sapMPageHeader,
+.sapMPage.sapF2Adapted > .sapMPageHeader .sapMIBar,
 .sapMPage.sapF2Adapted > .sapMIBar.sapMSubHeader-CTX {
   background: transparent;
   box-shadow: none;

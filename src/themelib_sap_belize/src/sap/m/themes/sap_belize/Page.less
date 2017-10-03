@@ -11,10 +11,10 @@
 
 .sapMPageWithSubHeader {
 	.sapMPageHeader,
-	.sapContrastPlus.sapMPageHeader,
+	.sapMPageHeader .sapContrastPlus,
 	.sapContrastPlus .sapMPageHeader,
-	.sapContrastPlus.sapMPageHeader.sapMBar,
-	.sapContrastPlus .sapMPageHeader.sapMBar {
+	.sapContrastPlus.sapMPageHeader .sapMBar,
+	.sapContrastPlus .sapMPageHeader .sapMBar {
 		border-bottom: none;
 		box-shadow: none;
 	}
@@ -52,7 +52,7 @@
 /* sap.m.Shell + Tiles Page specific style */
 
 @media (min-height: @sapMShellMinHeightForHeader) {
-	.sap-desktop .sapMShell .sapMPage.sapMPageHideHeaderWhenShellHeader header.sapMIBar {
+	.sap-desktop .sapMShell .sapMPage.sapMPageHideHeaderWhenShellHeader .sapMIBar {
 		display: none;
 	}
 }
@@ -69,8 +69,8 @@ html.sap-desktop .sapUiFioriObjectPage > section {
 		top: 2.5rem;
 	}
 
-	.sapMPageHeader.sapMIBar,
-	.sapMPageFooter.sapMIBar {
+	.sapMPageHeader .sapMIBar,
+	.sapMPageFooter .sapMIBar {
 		height : 2.5rem;
 
 		.sapMBarLeft,
@@ -102,7 +102,6 @@ html.sap-desktop .sapUiFioriObjectPage > section {
 	}
 }
 
-.sapMPage .sapContrast.sapMPageFooter,
-.sapMPage .sapContrast .sapMPageFooter {
+.sapMPage .sapMPageFooter.sapContrast {
 	position: absolute;
 }
