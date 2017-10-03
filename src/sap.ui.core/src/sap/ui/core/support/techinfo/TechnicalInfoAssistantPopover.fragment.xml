@@ -12,7 +12,7 @@
 				<Label design="Bold" text="{i18n>TechInfo.SupportAssistantConfigPopup.Locations}"></Label>
 				<RadioButton id="standard" select="onSelectBootstrapOption" groupName="Bootstrap" text="{i18n>TechInfo.SupportAssistantConfigPopup.StandardLocation}"/>
 				<Select
-					items="{path:'view>/SupportAssistantPopoverURLs'}"
+					items="{view>/SupportAssistantPopoverURLs}"
 					id="standardBootstrapURL"
 					class="sapUiMediumMarginBegin"
 					width="85%"
