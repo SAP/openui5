@@ -27,21 +27,23 @@
 			data-sap-ui-cover-only="sap/ui/model/odata/AnnotationParser"></script>
 
 		<!-- @see ../testsuites/testsuite.databinding.qunit.html -->
+		<script src="../ODataAnnotationsFakeService.js"></script>
+		<script src="../ODataAnnotationsTest.qunit.js"></script>
+		<script>
+			runODataAnnotationTests();
+		</script>
+		<script src="../ODataAnnotationsV2Test.qunit.js"></script>
+		<script>
+			runODataAnnotationsV2Tests();
+		</script>
+
+		<!-- Note: these tests MUST run last because their afterEach() cleans up the global XHR
+			created by ODataAnnotationsFakeService.js -->
 		<script src="../odata/AnnotationHelper.qunit.js"></script>
 		<script src="../odata/_AnnotationHelperBasics.qunit.js"></script>
 		<script src="../odata/_AnnotationHelperExpression.qunit.js"></script>
 		<script src="../odata/ODataMetaModel.qunit.js"></script>
 		<script src="../odata/_ODataMetaModelUtils.qunit.js"></script>
-
-		<script src="../ODataAnnotationsFakeService.js"></script>
-		<script src="../ODataAnnotationsTest.qunit.js"></script>
-		<script src="../ODataAnnotationsV2Test.qunit.js"></script>
-		<script>
-			sap.ui.getCore().attachInit(function () {
-				runODataAnnotationTests();
-				runODataAnnotationsV2Tests();
-			});
-		</script>
 	</head>
 	<body>
 		<div id="qunit"></div>
