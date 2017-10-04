@@ -117,6 +117,8 @@ sap.ui.define([
 
 		assert.expect(2);
 		return TestDtComp.getMetadata().loadDesignTime().then(function(_oDesignTime) {
+			//module was added
+			oDesignTime.designtimeModule = "test/dtcomp/Component.designtime";
 			assert.deepEqual(_oDesignTime, oDesignTime, "DesignTime was loaded properly");
 			sinon.assert.callCount(oRequireStub, 1);
 			oRequireStub.restore();
@@ -699,7 +701,7 @@ sap.ui.define([
 			manifest: "/anylocation/manifest.json",
 			async: false
 		});
-		
+
 		assert.ok(oComponent instanceof sap.ui.core.UIComponent, "Component is loaded properly!");
 		assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.button", "The proper component has been loaded!");
 

@@ -12,6 +12,14 @@ sap.ui.require([
 		beforeEach: function() {
 			var oMetadata = {
 				designTime: true
+			},
+			oMetadataLocal = {
+				designTime: {
+					local: "local"
+				}
+			},
+			oMetadataModule = {
+				designTime: "sap/test/DTManagedObjectChild4.designtime"
 			};
 
 			// build the inheritance chain of DesignTimeManagedObjects, one without DesignTime in between
@@ -21,9 +29,19 @@ sap.ui.require([
 			DTManagedObject.extend("DTManagedObjectChild", {
 				metadata: oMetadata
 			});
+
 			DTManagedObjectChild.extend("NoDTManagedObjectChild2");
+
 			NoDTManagedObjectChild2.extend("DTManagedObjectChild3", {
 				metadata: oMetadata
+			});
+
+			DTManagedObjectChild.extend("DTManagedObjectLocal", {
+				metadata: oMetadataLocal
+			});
+
+			DTManagedObjectChild.extend("DTManagedObjectModule", {
+				metadata: oMetadataModule
 			});
 
 			// DesignTime metadata
@@ -59,11 +77,30 @@ sap.ui.require([
 				metaPropDeep2: undefined
 			};
 
+			this.oDTForManagedObjectLocal = {
+				local: "local",
+				metaProp2: "2-overwritten",
+				metaProp3: "3",
+				metaProp4: "4",
+				metaPropDeep: {
+					metaPropDeep2 : "deep2",
+					metaPropDeep3 : "deep3"
+				},
+				metaPropDeep2: {
+					metaPropDeep21 : "deep21-overwritten"
+				}
+			};
+
+			this.oDTForManagedObjectModule = {
+				module : "module"
+			};
+
 			// stub the DesignTime require calls (make sure the sap.ui.require callback is called asynchronously)
 			this.oRequireStub = sinon.stub(sap.ui, "require");
 			this.oRequireStub.withArgs(["DTManagedObject.designtime"]).callsArgWithAsync(1, this.oDTForManagedObject);
 			this.oRequireStub.withArgs(["DTManagedObjectChild.designtime"]).callsArgWithAsync(1, this.oDTForManagedObjectChild);
 			this.oRequireStub.withArgs(["DTManagedObjectChild3.designtime"]).callsArgWithAsync(1, this.oDTForManagedObjectChild3);
+			this.oRequireStub.withArgs(["sap/test/DTManagedObjectChild4.designtime"]).callsArgWithAsync(1, this.oDTForManagedObjectModule);
 		},
 
 		afterEach: function() {
@@ -79,6 +116,12 @@ sap.ui.require([
 
 			DTManagedObjectChild3.getMetadata()._oDesignTime = null;
 			DTManagedObjectChild3.getMetadata()._oDesignTimePromise = null;
+
+			DTManagedObjectLocal.getMetadata()._oDesignTime = null;
+			DTManagedObjectLocal.getMetadata()._oDesignTimePromise = null;
+
+			DTManagedObjectLocal.getMetadata()._oDesignTime = null;
+			DTManagedObjectLocal.getMetadata()._oDesignTimePromise = null;
 
 			this.oRequireStub.restore();
 		}
@@ -104,6 +147,7 @@ sap.ui.require([
 			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
 			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was passed");
 			assert.strictEqual(oDesignTime.metaPropDeep2.metaPropDeep21, "deep21-overwritten", "DesignTime data was overwritten");
+			assert.strictEqual(oDesignTime.designtimeModule, "DTManagedObjectChild.designtime", "DesignTime module path defined");
 		}.bind(this));
 	});
 
@@ -117,6 +161,7 @@ sap.ui.require([
 			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
 			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was passed");
 			assert.strictEqual(oDesignTime.metaPropDeep2.metaPropDeep21, "deep21-overwritten", "DesignTime data was overwritten");
+			assert.strictEqual(oDesignTime.designtimeModule, undefined, "DesignTime module path not defined");
 		}.bind(this));
 	});
 
@@ -130,8 +175,38 @@ sap.ui.require([
 			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
 			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, undefined, "DesignTime data was removed");
 			assert.strictEqual(oDesignTime.metaPropDeep2, undefined, "DesignTime data was removed");
+			assert.strictEqual(oDesignTime.designtimeModule, "DTManagedObjectChild3.designtime", "DesignTime module path defined");
 		}.bind(this));
 	});
+
+	QUnit.test("loadDesignTime - with inheritance and local", function(assert) {
+		return DTManagedObjectLocal.getMetadata().loadDesignTime().then(function(oDesignTime) {
+			assert.strictEqual(oDesignTime.local, "local", "DesignTime data was local");
+			assert.strictEqual(oDesignTime.metaProp1, "1", "DesignTime data was inherited");
+			assert.strictEqual(oDesignTime.metaProp2, "2-overwritten", "DesignTime data was inherited");
+			assert.strictEqual(oDesignTime.metaProp3, "3", "DesignTime data was overwritten");
+			assert.strictEqual(oDesignTime.metaProp4, "4", "DesignTime data was removed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.designtimeModule, undefined, "DesignTime module path not defined");
+		}.bind(this));
+	});
+
+	QUnit.test("loadDesignTime - with inheritance and module", function(assert) {
+		return DTManagedObjectModule.getMetadata().loadDesignTime().then(function(oDesignTime) {
+			assert.strictEqual(oDesignTime.module, "module", "DesignTime data was local");
+			assert.strictEqual(oDesignTime.metaProp1, "1", "DesignTime data was inherited");
+			assert.strictEqual(oDesignTime.metaProp2, "2-overwritten", "DesignTime data was inherited");
+			assert.strictEqual(oDesignTime.metaProp3, "3", "DesignTime data was overwritten");
+			assert.strictEqual(oDesignTime.metaProp4, "4", "DesignTime data was removed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was overwritten");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was passed");
+			assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was removed");
+			assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
+		}.bind(this));
+	});
+
 
 	QUnit.test("loadDesignTime - all in parallel", function(assert) {
 		return Promise.all([
