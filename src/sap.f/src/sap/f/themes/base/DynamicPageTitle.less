@@ -24,7 +24,6 @@
 	position: relative;
 	padding: 0.5rem 2rem 0.5rem 3rem;
 	display: flex;
-	display: -ms-flexbox;
 	display: -webkit-flex;
 	flex-direction: column;
 	-webkit-flex-direction: column;
@@ -37,11 +36,40 @@
 	}
 
 	.sapFDynamicPageTitleTop {
-		min-height: 1rem;
-		padding-bottom: 0.125rem;
+		display: flex;
+		display: -webkit-flex;
+		align-items: center;
+		-webkit-align-items: center;
 
-		&> :first-child {
-			margin: 0;
+		justify-content: space-between;
+		-webkit-justify-content: space-between;
+
+		&> .sapFDynamicPageTitleTopLeft {
+			min-height: 1rem;
+			padding-bottom: 0.125rem;
+			width: 75%;
+
+			&> :first-child {
+				margin: 0;
+			}
+		}
+
+		&> .sapFDynamicPageTitleTopRight {
+			width: 25%;
+			dispaly: flex;
+			display: -webkit-flex;
+			align-items: center;
+			-webkit-align-items: center;
+			justify-content: flex-end;
+			-webkit-justify-content: flex-end;
+		}
+
+		&.sapFDynamicPageTitleTopBreadCrumbsOnly > .sapFDynamicPageTitleTopLeft {
+			width: 100%;
+		}
+
+		&.sapFDynamicPageTitleTopNavActionsOnly > .sapFDynamicPageTitleTopRight{
+			width: 100%;
 		}
 	}
 
@@ -49,13 +77,34 @@
 		min-height: 3rem;
 		position: relative;
 		display: flex;
-		display: -ms-flexbox;
 		display: -webkit-flex;
 		align-items: flex-start;
 		-webkit-align-items: flex-start;
 		flex-direction: row;
 		-webkit-flex-direction: row;
 		box-sizing: border-box;
+
+		&> .sapFDynamicPageTitleMainLeft {
+			width: 75%;
+		}
+
+		&> .sapFDynamicPageTitleMainRight {
+			width: 25%;
+		}
+
+		&> .sapFDynamicPageTitleMainNavigationArea,
+		&> .sapFDynamicPageTitleMainNavigationArea > .sapFDynamicPageTitleMainNavigationAreaInner{
+			display: flex;
+			display: -webkit-flex;
+			align-items: center;
+			-webkit-align-items: center;
+		}
+	}
+
+	.sapFDynamicPageTitleActionsBar.sapMTB {
+		border-bottom: none;
+		justify-content: flex-end;
+		-webkit-justify-content: flex-end;
 	}
 }
 
@@ -113,17 +162,14 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 /* Main Left area */
 .sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainLeft {
 	display: flex;
-	display: -ms-flexbox;
 	display: -webkit-flex;
 	justify-content: space-between;
 	-webkit-justify-content: space-between;
 	align-items: flex-start;
 	-webkit-align-items: flex-start;
-	width: 75%;
 
 	.sapFDynamicPageTitleMainLeftInner {
 		display: flex;
-		display: -ms-flexbox;
 		display: -webkit-flex;
 		align-items: flex-start;
 		-webkit-align-items: flex-start;
@@ -188,22 +234,6 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 }
 
-
-/* Main Right area */
-.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainRight {
-	width: 25%;
-	.sapFDynamicPageTitleMainRightActions {
-		.sapFDynamicPageTitleMainRightActionsBar {
-			justify-content: flex-end;
-			-webkit-justify-content: flex-end;
-		}
-
-		.sapMTB {
-			border-bottom: none;
-		}
-	}
-}
-
 .sapFDynamicPageTitleMain.sapFDynamicPageTitleMainNoContent > .sapFDynamicPageTitleMainLeft {
 	width: 60%;
 }
@@ -222,6 +252,22 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		}
 		.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainLeft {
 			width: 83%;
+		}
+
+		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopLeft {
+			width: 65%;
+		}
+
+		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopRight {
+			width: 35%;
+		}
+
+		.sapFDynamicPageTitleTop.sapFDynamicPageTitleTopBreadCrumbsOnly > .sapFDynamicPageTitleTopLeft {
+			width: 100%;
+		}
+
+		.sapFDynamicPageTitleTop.sapFDynamicPageTitleTopNavActionsOnly > .sapFDynamicPageTitleTopRight {
+			width: 100%;
 		}
 	}
 }
@@ -255,6 +301,22 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 				flex-shrink: 1.5;
 				-webkit-flex-shrink: 1.5;
 			}
+		}
+
+		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopLeft {
+			width: 60%;
+		}
+
+		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopRight {
+			width: 40%;
+		}
+
+		.sapFDynamicPageTitleTop.sapFDynamicPageTitleTopBreadCrumbsOnly > .sapFDynamicPageTitleTopLeft {
+			width: 100%;
+		}
+
+		.sapFDynamicPageTitleTop.sapFDynamicPageTitleTopNavActionsOnly > .sapFDynamicPageTitleTopRight {
+			width: 100%;
 		}
 	}
 }

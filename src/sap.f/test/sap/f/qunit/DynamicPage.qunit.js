@@ -74,6 +74,14 @@
 					footer: this.getFooter()
 				});
 			},
+			getDynamicPageWithNavigationActions: function () {
+				return new DynamicPage({
+					title: this.getDynamicPageTitleWithNavigationActions(),
+					header: this.getDynamicPageHeader(),
+					content: this.getContent(200),
+					footer: this.getFooter()
+				});
+			},
 			getDynamicPageNoTitleAndHeader: function () {
 				return new DynamicPage({
 					content: this.getContent(20)
@@ -81,16 +89,12 @@
 			},
 			getDynamicPageTitle: function () {
 				return new DynamicPageTitle({
-					heading: new sap.m.Title({
-						text: "Anna Maria Luisa"
-					})
+					heading:  this.getTitle()
 				});
 			},
 			getDynamicPageTitleWithBreadCrumbs: function () {
 				return new DynamicPageTitle({
-					heading: new sap.m.Title({
-						text: "Anna Maria Luisa"
-					}),
+					heading: this.getTitle(),
 					breadcrumbs: new sap.m.Breadcrumbs({
 						links: [
 							new sap.m.Link({text: "link1"}),
@@ -101,11 +105,19 @@
 					})
 				});
 			},
+			getDynamicPageTitleWithNavigationActions:  function () {
+				return new DynamicPageTitle({
+					heading:  this.getTitle(),
+					navigationActions: [
+						this.getAction(),
+						this.getAction(),
+						this.getAction()
+					]
+				});
+			},
 			getDynamicPageTitleWithExpandSnapContent: function () {
 				return new DynamicPageTitle({
-					heading: new sap.m.Title({
-						text: "Anna Maria Luisa"
-					}),
+					heading: this.getTitle(),
 					snappedContent: [
 						this.getLabel("Snapped Content")
 					],
@@ -163,6 +175,11 @@
 			getLabel: function (sText) {
 				return new sap.m.Label({
 					text: sText
+				});
+			},
+			getTitle: function () {
+				return new sap.m.Title({
+					text: "Anna Maria Luisa"
 				});
 			},
 			getOverflowToolbar: function () {
@@ -308,55 +325,183 @@
 		assert.equal(iActualExpandedContentNumber, iExpectedExpandedContentNumber, "Expanded Content removed successfully");
 	});
 
-	QUnit.test("Add/Remove dynamically Actions", function (assert) {
+	QUnit.test("Add/Remove dynamically actions", function (assert) {
 		var oAction = oFactory.getAction(),
+			oAction1 = oFactory.getAction(),
+			oAction2 = oFactory.getAction(),
 			iExpectedActionsNumber = 0,
-			iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
+			iActualActionsNumber = this.oDynamicPageTitle.getActions().length,
+			vResult = null;
 
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "No Actions");
+		// Assert default state
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "There are no actions.");
 
-		// Add Action
+		// Act: add Action
 		iExpectedActionsNumber++;
-		this.oDynamicPageTitle.addAction(oAction);
+		vResult = this.oDynamicPageTitle.addAction(oAction);
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
 
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "Action added successfully");
-		assert.equal(this.oDynamicPageTitle.getActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation");
-		assert.equal(oAction.getParent().getId(), this.oDynamicPageTitle.getId(), "Action returns the correct parent");
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is added successfully.");
+		assert.equal(this.oDynamicPageTitle.getActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(oAction.getParent().getId(), this.oDynamicPageTitle.getId(), "The action returns the correct parent.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
-		// insert action at the end
+		// Act: insert action at the end
 		iExpectedActionsNumber++;
-		this.oDynamicPageTitle.insertAction(oAction, 1);
+		vResult = this.oDynamicPageTitle.insertAction(oAction, 1);
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "Action inserted successfully");
+
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
 		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
-		// insert action at the beginning
+		// Act: insert action at the beginning
 		iExpectedActionsNumber++;
-		this.oDynamicPageTitle.insertAction(oAction, 0);
+		vResult = this.oDynamicPageTitle.insertAction(oAction, 0);
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "Action inserted successfully");
-		assert.equal(this.oDynamicPageTitle.getActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation");
 
-		// insert action in the middle
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
+		assert.equal(this.oDynamicPageTitle.getActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+
+		// Act: insert action in the middle
 		iExpectedActionsNumber++;
-		this.oDynamicPageTitle.insertAction(oAction, 1);
+		vResult = this.oDynamicPageTitle.insertAction(oAction, 1);
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "Action inserted successfully");
-		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation");
 
-		// Remove Action
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
+		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+
+		// Act: remove Action
+		vResult = this.oDynamicPageTitle.removeAction(oAction);
 		iExpectedActionsNumber--;
-		this.oDynamicPageTitle.removeAction(oAction);
-		assert.equal(oAction.getParent(), null, "The action returns no parent after removed from the Title");
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
 
-		// Remove All actions
-		iExpectedActionsNumber = 0;
+		// Assert
+		assert.equal(oAction.getParent(), null, "The action returns no parent after removed from the DynamicPageTitle.");
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is removed successfully.");
+		assert.equal(vResult, oAction, "The action is returned after removal.");
+
+		// Act: add actions and remove All actions
+		this.oDynamicPageTitle.addAction(oAction1);
+		this.oDynamicPageTitle.addAction(oAction2);
 		this.oDynamicPageTitle.removeAllActions();
+		iExpectedActionsNumber = 0;
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
 
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "Action removed successfully");
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "All Actions are removed successfully.");
+
+		// Act: add two actions and then destroy all actions
+		this.oDynamicPageTitle.addAction(oAction1);
+		this.oDynamicPageTitle.addAction(oAction2);
+		vResult = this.oDynamicPageTitle.destroyActions();
+		iExpectedActionsNumber = 0;
+		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
+
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "All actions are destroyed successfully.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+		assert.equal(oAction1.bIsDestroyed, true, "The action is destroyed successfully.");
+		assert.equal(oAction1.bIsDestroyed, true, "The action is destroyed successfully.");
+
+		// clean
+		vResult = null;
+	});
+
+	QUnit.test("Add/Remove dynamically navigationActions", function (assert) {
+		var oAction = oFactory.getAction(),
+			oAction1 = oFactory.getAction(),
+			oAction2 = oFactory.getAction(),
+			iExpectedActionsNumber = 0,
+			iExpectedIndex = 0,
+			iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length,
+			vResult = null;
+
+		// Assert default state
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "There are no navActions.");
+
+		// Act: add Action
+		iExpectedActionsNumber++;
+		vResult = this.oDynamicPageTitle.addNavigationAction(oAction);
+		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
+
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action added successfully.");
+		assert.equal(this.oDynamicPageTitle.indexOfNavigationAction(oAction), iExpectedIndex, "The action is correctly positioned in the aggregation");
+		assert.equal(oAction.getParent().getId(), this.oDynamicPageTitle.getId(), "The action returns the correct parent");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+
+		// Act: insert action at the end
+		iExpectedActionsNumber++;
+		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 1);
+		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
+
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
+		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+
+		// Act: insert action at the beginning
+		iExpectedActionsNumber++;
+		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 0);
+		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
+
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
+		assert.equal(this.oDynamicPageTitle.getNavigationActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+
+		// Act: insert action in the middle
+		iExpectedActionsNumber++;
+		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 1);
+		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
+
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action inserted successfully.");
+		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+
+		// Act: remove Action
+		iExpectedActionsNumber--;
+		vResult = this.oDynamicPageTitle.removeNavigationAction(oAction);
+		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
+
+		// Assert
+		assert.equal(oAction.getParent(), null, "The action returns no parent after removed from the DynamicPageTitle.");
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "One action removed successfully.");
+		assert.equal(vResult, oAction, "The action is returned after removal.");
+
+		// Act: add actions and remove All actions
+		this.oDynamicPageTitle.addNavigationAction(oAction1);
+		this.oDynamicPageTitle.addNavigationAction(oAction2);
+		this.oDynamicPageTitle.removeAllNavigationActions();
+		iExpectedActionsNumber = 0;
+		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
+
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "All actions removed successfully.");
+
+		// Act: add two actions and then destroy all actions
+		this.oDynamicPageTitle.addNavigationAction(oAction1);
+		this.oDynamicPageTitle.addNavigationAction(oAction2);
+		vResult = this.oDynamicPageTitle.destroyNavigationActions();
+		iExpectedActionsNumber = 0;
+		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
+
+		// Assert
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "All Actions are destroyed successfully.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+		assert.equal(oAction1.bIsDestroyed, true, "The action is destroyed successfully.");
+		assert.equal(oAction1.bIsDestroyed, true, "The action is destroyed successfully.");
+
+		// clean
+		vResult = null;
 	});
 
 	QUnit.test("test primaryArea", function (assert) {
@@ -727,7 +872,6 @@
 			this.oDynamicPage = null;
 		}
 	});
-
 	QUnit.test("DynamicPage Title - Expanded/Snapped Content initial visibility", function (assert) {
 		var $titleSnap = this.oDynamicPage.getTitle().$("snapped-wrapper"),
 			$titleExpand = this.oDynamicPage.getTitle().$("expand-wrapper");
@@ -765,21 +909,175 @@
 
 	QUnit.test("DynamicPage - Rendering - Title with Breadcrumbs", function (assert) {
 		var oTitle = this.oDynamicPage.getTitle(),
-			oBreadcrumbs = oTitle.getAggregation("breadcrumbs");
+			oBreadcrumbs = oTitle.getAggregation("breadcrumbs"),
+			$oTitleTopDOM = oTitle.$("top");
 
 		// Assert: DynamicPageTitle content aggregation is not empty
-		assert.equal(oTitle.$("top").hasClass("sapFDynamicPageTitleTop"), true, "Title top DOM element is rendered");
+		assert.equal($oTitleTopDOM.length > 0, true, "sapFDynamicPageTitleTop element is rendered");
+		assert.equal($oTitleTopDOM.hasClass("sapFDynamicPageTitleTop"), true, "sapFDynamicPageTitleTop class is added");
 		assert.equal(oBreadcrumbs.$().length > 0, true, "Title Breadcrumbs DOM is rendered");
+		assert.equal($oTitleTopDOM.hasClass("sapFDynamicPageTitleTopBreadCrumbsOnly"), true, "sapFDynamicPageTitleNavActionsOnly class is added");
 
 		// Act: remove breadCrumbs aggregation
 		oTitle.setBreadcrumbs(null);
 		core.applyChanges();
 
 		// Assert: DynamicPageTitle content aggregation is empty
-		assert.equal(oTitle.$("top").length > 0, false,
-			"Title top DOM element is not rendered");
+		assert.equal(oTitle.$("top").length > 0, false, "Title top DOM element is not rendered");
 	});
 
+	QUnit.module("DynamicPage - Rendering - Title with navigationActions", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageWithNavigationActions();
+			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+			this.oDynamicPageTitle = null;
+		}
+	});
+
+	QUnit.test("DOM elements and classes", function (assert) {
+		var oTitle = this.oDynamicPageTitle,
+			$oTitleTopDOM = oTitle.$("top"),
+			$oTitleTopNavigationAreaDOM = oTitle.$("topNavigationArea"),
+			$oTitleMainNavigationAreaDOM = oTitle.$("mainNavigationArea");
+
+		assert.equal($oTitleTopDOM.length > 0, true,
+			"sapFDynamicPageTitleTop element is rendered.");
+		assert.equal($oTitleTopDOM.hasClass("sapFDynamicPageTitleTop"), true,
+			"sapFDynamicPageTitleTop class is added.");
+		assert.equal($oTitleTopNavigationAreaDOM.length > 0, true,
+			"top navigation area element is rendered.");
+		assert.equal($oTitleMainNavigationAreaDOM.length > 0, true,
+			"main navigation area element is rendered.");
+		assert.equal($oTitleTopNavigationAreaDOM.hasClass("sapFDynamicPageTitleTopRight"), true,
+			"sapFDynamicPageTitleTopRight class is add.");
+		assert.equal($oTitleMainNavigationAreaDOM.hasClass("sapFDynamicPageTitleMainNavigationAreaInner"), true,
+			"sapFDynamicPageTitleMainNavigationAreaInner class is added.");
+		assert.equal($oTitleTopDOM.hasClass("sapFDynamicPageTitleTopNavActionsOnly"), true,
+			"sapFDynamicPageTitleNavActionsOnly class is added.");
+	});
+
+	QUnit.test("Separator visibility on resize", function (assert) {
+		var oTitle = this.oDynamicPageTitle,
+			oTitlePressSpy = this.spy(sap.f.DynamicPageTitle.prototype, "_toggleNavigationActionsPlacement"),
+			iTitleLargeWidth = 1400,
+			iTitleSmallWidth = 900,
+			oSeparator = oTitle.getAggregation("_navActionsToolbarSeparator"),
+			$oSeparator = oSeparator.$();
+
+		// Arrange
+		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
+		oTitle._onResize(1400);
+
+		// Assert
+		// Separator should be rendered.
+		// Separator should not be visible as there are no actions added.
+		assert.equal($oSeparator.length > 0, true, "Toolbar Separator element is rendered.");
+		assert.equal($oSeparator.hasClass("sapUiHidden"), true, "Toolbar Separator element is not visible.");
+
+		// Act: Add an action.
+		oTitle.addAction(oFactory.getAction());
+
+		// Assert: Separator should be visible as there are both actions and navigationActions
+		assert.ok(oTitlePressSpy.calledOnce, "Actions layout is toggled.");
+		assert.equal(oTitle._shouldShowSeparator(), true,
+			"Toolbar Separator should be visible, there are actions and navigationActions.");
+		assert.equal($oSeparator.hasClass("sapUiHidden"), false, "Toolbar Separator element is visible.");
+
+		// Act: Simulate shrinking of the Page`s width to less than 1280px.
+		oTitlePressSpy.reset();
+		oTitle._onResize(iTitleSmallWidth);
+
+		// Assert
+		// Title`s width is less than 1280px,
+		// the navigationActions are in the Title`s top area and the separator should not be visible.
+		assert.ok(oTitlePressSpy.calledOnce, "Actions layout is toggled.");
+		assert.equal(oTitle._shouldShowSeparator(), false, "Toolbar Separator should not be visible.");
+		assert.equal($oSeparator.hasClass("sapUiHidden"), true,
+			"Toolbar Separator element is not visible, when the navigationActions are in top area.");
+
+		// Act: Remove all actions.
+		oTitlePressSpy.reset();
+		oTitle.removeAllNavigationActions();
+		oTitle._onResize(iTitleLargeWidth);
+
+		// Assert: if there are no navigation actions -> no toggling
+		assert.ok(!oTitlePressSpy.calledOnce, "Actions layout is not toggled.");
+	});
+
+	QUnit.test("Separator visibility upon actions and navigation actions change", function (assert) {
+		var oTitle = this.oDynamicPageTitle,
+			oAction1 = oFactory.getAction(),
+			oAction2 = oFactory.getAction(),
+			oAction3 = oFactory.getAction(),
+			oSeparator = oTitle.getAggregation("_navActionsToolbarSeparator"),
+			$oSeparator = oSeparator.$();
+
+		// Arrange:
+		// stub _bNavigationActionsInTopArea in order to be independent of the actual Title width.
+		// this way we assume the size is over 1280px;
+		oTitle.addAction(oAction1);
+		oTitle.addAction(oAction2);
+		oTitle._bNavigationActionsInTopArea = false;
+
+		// Assert
+		assert.equal(oTitle._shouldShowSeparator(), true,
+			"Toolbar Separator should be visible, there are both actions and navigationActions.");
+
+		// Act: hide both actions (oAction1 and oAction2)
+		oAction1.setVisible(false);
+		oAction2.setVisible(false);
+
+		// Assert
+		assert.equal(oTitle._shouldShowSeparator(), false,
+			"Toolbar Separator should not be visible, there are no visible actions.");
+		assert.equal($oSeparator.hasClass("sapUiHidden"), true, "Toolbar Separator element is not visible.");
+
+
+		// Act: show one of the action (oAction1)
+		oAction1.setVisible(true);
+
+		// Assert
+		assert.equal(oTitle._shouldShowSeparator(), true,
+			"Toolbar Separator should be visible, there are both actions (although 1) and navigationActions.");
+		assert.equal($oSeparator.hasClass("sapUiHidden"), false, "Toolbar Separator element is visible.");
+
+
+		// Act: remove all navigationActions
+		oTitle.removeAllNavigationActions();
+
+		// Assert
+		assert.equal(oTitle._shouldShowSeparator(), false,
+			"Toolbar Separator should not be visible, there are actions, but no navigationActions.");
+		assert.equal($oSeparator.hasClass("sapUiHidden"), true, "Toolbar Separator element is not visible.");
+
+
+		// Act: add a navigationAction (oAction3)
+		oTitle.addNavigationAction(oAction3);
+
+		// Assert
+		assert.equal(oTitle._shouldShowSeparator(), true,
+			"Toolbar Separator should be visible, there are one action and one navigationAction.");
+		assert.equal($oSeparator.hasClass("sapUiHidden"), false, "Toolbar Separator element is visible.");
+
+
+		// Act: hide the navigationAction (oAction3)
+		oAction3.setVisible(false);
+
+		// Assert
+		assert.equal(oTitle._shouldShowSeparator(), false,
+			"Toolbar Separator should be visible, there are one visible action, but no visible navigationAction.");
+		assert.equal($oSeparator.hasClass("sapUiHidden"), true, "Toolbar Separator element is not visible.");
+
+		// Clean
+		oAction1.destroy();
+		oAction2.destroy();
+		oAction3.destroy();
+	});
 
 	QUnit.module("DynamicPage - Rendering - Footer Visibility", {
 		beforeEach: function () {
@@ -862,6 +1160,7 @@
 
 		assert.ok(!oDynamicPage._shouldOverridePreserveHeaderStateOnScroll(), "preserveHeaderStateOnScroll should NOT be overridden with less than 60% height");
 	});
+
 	/* --------------------------- DynamicPage Tablet Rendering ---------------------------------- */
 
 	QUnit.module("DynamicPage - Rendering - Tablet", {

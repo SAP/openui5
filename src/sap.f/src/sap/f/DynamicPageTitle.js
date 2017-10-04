@@ -6,14 +6,17 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSeparator",
 	"sap/m/OverflowToolbar",
-	"sap/m/Button",
-	"sap/ui/base/ManagedObjectObserver"
-], function (library, Control, OverflowToolbar, Button, ManagedObjectObserver) {
+	"sap/m/Button"
+], function (library, Control, ManagedObjectObserver, Toolbar, ToolbarSeparator, OverflowToolbar, Button) {
 	"use strict";
 
 	// shortcut for sap.f.DynamicPageTitleArea
 	var DynamicPageTitleArea = library.DynamicPageTitleArea;
+	var oCore = sap.ui.getCore();
 
 	/**
 	 * Constructor for a new <code>DynamicPageTitle</code>.
@@ -91,6 +94,18 @@ sap.ui.define([
 				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"},
 
 				/**
+				 * The <code>DynamicPageTitle</code> navigation actions.
+				 *
+				 * <b>Note:</b> The <code>navigationActions</code> position depends on the control size.
+				 * If the control size is 1280px or bigger, they are rendered right next to the <code>actions</code>.
+				 * Otherwise, they are rendered in the top-right area, above the <code>actions</code>.
+				 * If a large number of elements(buttons) are used, there could be visual degradations
+				 * as the space for the <code>navigationActions</code> is limited.
+				 * @since 1.52
+				 */
+				navigationActions: {type: "sap.m.Button", multiple: true, singularName: "navigationAction"},
+
+				/**
 				* The content is positioned in the <code>DynamicPageTitle</code> middle area
 				* and displayed in both expanded and collapsed (snapped) states.
 				* @since 1.50
@@ -116,10 +131,23 @@ sap.ui.define([
 				/**
 				 * Internal <code>OverflowToolbar</code> for the <code>DynamicPageTitle</code> actions.
 				 */
-				_overflowToolbar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
+				_actionsToolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"},
+
+				/**
+				 * Internal <code>Toolbar</code> for the <code>DynamicPageTitle</code> navigation actions.
+				 * @since 1.52
+				 */
+				_navActionsToolbar: {type: "sap.m.Toolbar", multiple: false, visibility: "hidden"},
+
+				/**
+				 * Internal <code>ToolbarSeparator</code> to separate the <code>actions</code> and <code>navigationActions</code>.
+				 * @since 1.52
+				 */
+				_navActionsToolbarSeparator: {type: "sap.m.ToolbarSeparator", multiple: false, visibility: "hidden"},
 
 				/**
 				 * Visual indication for expanding.
+				 * @since 1.52
 				 */
 				_expandButton: {type: "sap.m.Button", multiple: false,  visibility: "hidden"}
 			},
@@ -127,9 +155,35 @@ sap.ui.define([
 		}
 	});
 
+	/* ========== STATIC MEMBERS  ========== */
+
+	DynamicPageTitle.NAV_ACTIONS_PLACEMENT_BREAK_POINT = 1280; // px.
+
+	/**
+	 * Flushes the given control into the given container.
+	 * @param {Element} oContainerDOM
+	 * @param {sap.ui.core.Control} oControlToRender
+	 * @private
+	 */
+	DynamicPageTitle._renderControl = function (oContainerDOM, oControlToRender) {
+		var oRenderManager;
+
+		if (!oControlToRender || !oContainerDOM) {
+			return;
+		}
+
+		oRenderManager = oCore.createRenderManager();
+		oRenderManager.renderControl(oControlToRender);
+		oRenderManager.flush(oContainerDOM);
+		oRenderManager.destroy();
+	};
+
+
 	function isFunction(oObject) {
 		return typeof oObject === "function";
 	}
+
+	/* ========== LIFECYCLE METHODS  ========== */
 
 	DynamicPageTitle.prototype.init = function () {
 		this._bShowSnappedContent = false;
@@ -139,9 +193,11 @@ sap.ui.define([
 			return this;
 		}.bind(this);
 
-		// Observe the "content" aggregation for overflow-enabled containers
-		this._oContentObserver = new ManagedObjectObserver(DynamicPageTitle.prototype._observeContentChanges.bind(this));
-		this._oContentObserver.observe(this, {
+		this._bNavigationActionsInTopArea = false;
+		this._oRB = oCore.getLibraryResourceBundle("sap.f");
+
+		this._oObserver = new ManagedObjectObserver(DynamicPageTitle.prototype._observeChanges.bind(this));
+		this._oObserver.observe(this, {
 			aggregations: [
 				"content"
 			]
@@ -150,26 +206,29 @@ sap.ui.define([
 		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.f");
 	};
 
-	DynamicPageTitle.prototype.exit = function () {
-		if (this._oContentObserver) {
-			this._oContentObserver.disconnect();
-			this._oContentObserver = null;
-		}
-	};
-
 	DynamicPageTitle.prototype.onBeforeRendering = function () {
-		this._getOverflowToolbar();
+		this._getActionsToolbar();
 	};
 
 	DynamicPageTitle.prototype.onAfterRendering = function () {
 		this._cacheDomElements();
 		this._setShowSnapContent(this._getShowSnapContent());
 		this._setShowExpandContent(this._getShowExpandContent());
+		this._doNavigationActionsLayout();
 	};
+
+	DynamicPageTitle.prototype.exit = function () {
+		if (this._oObserver) {
+			this._oObserver.disconnect();
+			this._oObserver = null;
+		}
+	};
+
+	/* ========== PUBLIC METHODS  ========== */
 
 	DynamicPageTitle.prototype.setPrimaryArea = function (sArea) {
 		if (this.getDomRef()) {
-			this._toggleAreaPriorityClasses(sArea === library.DynamicPageTitleArea.Begin);
+			this._toggleAreaPriorityClasses(sArea === DynamicPageTitleArea.Begin);
 		}
 		return this.setProperty("primaryArea", sArea, true);
 	};
@@ -183,7 +242,7 @@ sap.ui.define([
 		var oSrcControl = oEvent.srcControl;
 
 		if (oSrcControl === this
-			|| oSrcControl === this.getAggregation("_overflowToolbar")
+			|| oSrcControl === this.getAggregation("_actionsToolbar")
 			|| oSrcControl === this.getAggregation("breadcrumbs")) {
 			this.fireEvent("_titlePress");
 		}
@@ -215,11 +274,90 @@ sap.ui.define([
 		}
 	};
 
+	/* ========== DynamicPageTitle actions aggregation methods ========== */
+
+	["addAction", "insertAction", "removeAction", "indexOfAction", "removeAllActions", "destroyActions", "getActions"]
+		.forEach(function (sMethod) {
+			DynamicPageTitle.prototype[sMethod] = function (oControl) {
+				var oToolbar = this._getActionsToolbar(),
+					sToolbarMethod = sMethod.replace(/Actions?/, "Content"),
+					bSeparatorVisibilityUpdateNeeded = true,
+					vResult;
+
+				if (sMethod === "addAction" || sMethod === "insertAction") {
+					oToolbar[sToolbarMethod].apply(oToolbar, arguments);
+					this._preProcessAction(oControl, "actions");
+					vResult = this;
+				} else if (sMethod === "removeAction") {
+					this._postProcessAction(oControl);
+				} else if (sMethod === "removeAllActions") {
+					this.getActions().forEach(this._postProcessAction, this);
+				} else if (sMethod === "destroyActions") {
+					this.getActions().forEach(this._postProcessAction, this);
+					oToolbar[sToolbarMethod].apply(oToolbar, arguments);
+					vResult = this;
+				} else if (sMethod === "getActions") {
+					bSeparatorVisibilityUpdateNeeded = false;
+				}
+
+				vResult = vResult || oToolbar[sToolbarMethod].apply(oToolbar, arguments);
+
+				bSeparatorVisibilityUpdateNeeded && this._updateSeparatorVisibility();
+
+				return vResult;
+			};
+		});
+
+	/* ========== DynamicPageTitle navigationActions aggregation methods ========== */
+
+	[
+		"addNavigationAction",
+		"insertNavigationAction",
+		"removeNavigationAction",
+		"indexOfNavigationAction",
+		"removeAllNavigationActions",
+		"destroyNavigationActions",
+		"getNavigationActions"
+	].forEach(function (sMethod) {
+			DynamicPageTitle.prototype[sMethod] = function (oControl) {
+				var oToolbar = this._getNavigationActionsToolbar(),
+					sToolbarMethod = sMethod.replace(/NavigationActions?/, "Content"),
+					bSeparatorVisibilityUpdateNeeded = true,
+					vResult;
+
+				if (sMethod === "addNavigationAction" || sMethod === "insertNavigationAction") {
+					oToolbar[sToolbarMethod].apply(oToolbar, arguments);
+					this._preProcessAction(oControl, "navigationActions");
+					vResult = this;
+				} else if (sMethod === "removeNavigationAction") {
+					this._postProcessAction(oControl);
+				} else if (sMethod === "removeAllNavigationActions") {
+					this.getNavigationActions().forEach(this._postProcessAction, this);
+				} else if (sMethod === "destroyNavigationActions") {
+					this.getNavigationActions().forEach(this._postProcessAction, this);
+					oToolbar[sToolbarMethod].apply(oToolbar, arguments);
+					vResult = this;
+				} else if (sMethod === "getNavigationActions") {
+					bSeparatorVisibilityUpdateNeeded = false;
+				}
+
+				vResult = vResult || oToolbar[sToolbarMethod].apply(oToolbar, arguments);
+
+				bSeparatorVisibilityUpdateNeeded && this._updateSeparatorVisibility();
+
+				return vResult;
+			};
+		});
+
+	/* ========== PRIVATE METHODS  ========== */
+
 	/**
 	 * Caches the DOM elements in a jQuery wrapper for later reuse.
 	 * @private
 	 */
 	DynamicPageTitle.prototype._cacheDomElements = function () {
+		this.$topNavigationActionsArea = this.$("topNavigationArea");
+		this.$mainNavigationActionsArea = this.$("mainNavigationArea");
 		this.$beginArea = this.$("left-inner");
 		this.$middleArea = this.$("content");
 		this.$snappedWrapper = this.$("snapped-wrapper");
@@ -227,49 +365,98 @@ sap.ui.define([
 	};
 
 	/**
-	 * Lazily retrieves the internal <code>OverflowToolbar</code> aggregation.
+	 * Updates the priority classes of the <code>DynamicPageTitle</code> areas.
+	 * @param {boolean} isPrimaryAreaBegin
+	 * @private
+	 */
+	DynamicPageTitle.prototype._toggleAreaPriorityClasses = function (isPrimaryAreaBegin) {
+		this.$beginArea.toggleClass("sapFDynamicPageTitleAreaHighPriority", isPrimaryAreaBegin);
+		this.$beginArea.toggleClass("sapFDynamicPageTitleAreaLowPriority", !isPrimaryAreaBegin);
+		this.$middleArea.toggleClass("sapFDynamicPageTitleAreaHighPriority", !isPrimaryAreaBegin);
+		this.$middleArea.toggleClass("sapFDynamicPageTitleAreaLowPriority", isPrimaryAreaBegin);
+	};
+
+	/**
+	 * Lazily retrieves the internal <code>_actionsToolbar</code> aggregation.
 	 * @returns {sap.m.OverflowToolbar}
 	 * @private
 	 */
-	DynamicPageTitle.prototype._getOverflowToolbar = function () {
-		if (!this.getAggregation("_overflowToolbar")) {
-			this.setAggregation("_overflowToolbar", new OverflowToolbar({
-				id: this.getId() + "-overflowToolbar"
-			}).addStyleClass("sapFDynamicPageTitleMainRightActionsBar"), true); // suppress invalidate, as this is always called onBeforeRendering
+	DynamicPageTitle.prototype._getActionsToolbar = function () {
+		if (!this.getAggregation("_actionsToolbar")) {
+			this.setAggregation("_actionsToolbar", new OverflowToolbar({
+				id: this.getId() + "-_actionsToolbar"
+			}).addStyleClass("sapFDynamicPageTitleActionsBar"), true); // suppress invalidate, as this is always called onBeforeRendering
 		}
 
-		return this.getAggregation("_overflowToolbar");
+		return this.getAggregation("_actionsToolbar");
 	};
+
+	/**
+	 * Lazily retrieves the internal <code>_navActionsToolbar</code> aggregation.
+	 * @returns {sap.m.Toolbar}
+	 * @private
+	 */
+	DynamicPageTitle.prototype._getNavigationActionsToolbar = function () {
+		if (!this.getAggregation("_navActionsToolbar")) {
+			this.setAggregation("_navActionsToolbar", new Toolbar({
+				id: this.getId() + "-navActionsToolbar"
+			}).addStyleClass("sapFDynamicPageTitleActionsBar"), true);
+		}
+
+		return this.getAggregation("_navActionsToolbar");
+	};
+
+	/**
+	 * Lazily retrieves the internal <code>_navActionsToolbarSeparator</code> aggregation.
+	 * @returns {sap.m.Toolbar}
+	 * @private
+	 */
+	DynamicPageTitle.prototype._getToolbarSeparator = function () {
+		if (!this.getAggregation("_navActionsToolbarSeparator")) {
+			this.setAggregation("_navActionsToolbarSeparator", new ToolbarSeparator({
+				id: this.getId() + "-separator"
+			}), true);
+		}
+
+		return this.getAggregation("_navActionsToolbarSeparator");
+	};
+
+	/* ========== DynamicPageTitle actions and navigationActions processing ========== */
 
 	/**
 	 * Pre-processes a <code>DynamicPageTitle</code> action before inserting it in the aggregation.
 	 * The action would returns the <code>DynamicPageTitle</code> as its parent, rather than its real parent (the <code>OverflowToolbar</code>).
 	 * This way, it looks like the <code>DynamicPageTitle</code> aggregates the actions.
-	 * @param oAction
+	 * @param {sap.ui.core.Control} oAction
+	 * @param {string} sParentAggregationName
 	 * @private
 	 */
-	DynamicPageTitle.prototype._preProcessAction = function (oAction) {
+	DynamicPageTitle.prototype._preProcessAction = function (oAction, sParentAggregationName) {
 		if (isFunction(oAction._fnOriginalGetParent)) {
 			return;
 		}
+
+		this._observeAction(oAction);
 
 		oAction._fnOriginalGetParent = oAction.getParent;
 		oAction.getParent = this._fnActionSubstituteParentFunction;
 
 		oAction._sOriginalParentAggregationName = oAction.sParentAggregationName;
-		oAction.sParentAggregationName = "actions";
+		oAction.sParentAggregationName = sParentAggregationName;
 	};
 
 	/**
 	 * Post-processes a <code>DynamicPageTitle</code> action before removing it from the aggregation, so it returns its real parent (the <code>OverflowToolbar</code>),
 	 * thus allowing proper processing by the framework.
-	 * @param oAction
+	 * @param {sap.ui.core.Control} oAction
 	 * @private
 	 */
 	DynamicPageTitle.prototype._postProcessAction = function (oAction) {
 		if (!isFunction(oAction._fnOriginalGetParent)) {
 			return;
 		}
+
+		this._unobserveAction(oAction);
 
 		// The runtime adaptation tipically removes and then adds aggregations multiple times.
 		// That is why we need to make sure that the controls are in their previous state
@@ -282,29 +469,190 @@ sap.ui.define([
 	};
 
 	/**
-	 * Proxies the <code>DynamicPageTitle</code> action aggregation's methods to the <code>OverflowToolbar</code> content aggregation.
-	 * @override
+	 * Starts observing the <code>visible</code> property.
+	 * @param {sap.ui.core.Control} oControl
 	 * @private
 	 */
-	["addAction", "insertAction", "removeAction", "indexOfAction", "removeAllActions", "destroyActions", "getActions"]
-		.forEach(function (sMethod) {
-			DynamicPageTitle.prototype[sMethod] = function (oControl) {
-				var oToolbar = this._getOverflowToolbar(),
-					sToolbarMethod = sMethod.replace(/Actions?/, "Content");
-
-				if (sMethod === "addAction" || sMethod === "insertAction") {
-					oToolbar[sToolbarMethod].apply(oToolbar, arguments);
-					this._preProcessAction(oControl);
-					return this;
-				} else if (sMethod === "removeAction") {
-					this._postProcessAction(oControl);
-				} else if (sMethod === "removeAllActions" || sMethod === "destroyActions") {
-					this.getActions().forEach(this._postProcessAction, this);
-				}
-
-				return oToolbar[sToolbarMethod].apply(oToolbar, arguments);
-			};
+	DynamicPageTitle.prototype._observeAction = function(oControl) {
+		this._oObserver.observe(oControl, {
+			properties: ["visible"]
 		});
+	};
+
+	/**
+	 * Stops observing the <code>visible</code> property.
+	 * @param {sap.ui.core.Control} oControl
+	 * @private
+	 */
+	DynamicPageTitle.prototype._unobserveAction = function(oControl) {
+		this._oObserver.unobserve(oControl, {
+			properties: ["visible"]
+		});
+	};
+
+	/* ========== DynamicPageTitle navigationActions placement methods ========== */
+
+	/**
+	 * Renders the <code>navigationActions</code>, depending on the <code>DynamicPageTitle</code> width.
+	 * <b>Note</b> The controls are rendered either in the <code>DynamicPageTitle</code> top-right area
+	 * or <code>DynamicPageTitle</code> main area.
+	 * The method is called <code>onAfterRendering</code>.
+	 * @private
+	 */
+	DynamicPageTitle.prototype._doNavigationActionsLayout = function () {
+		var bRenderNavigationActionsInTopArea,
+			oNavigationActionsContainerDOM,
+			oNavigationActionsBar;
+
+		if (this.getNavigationActions().length === 0) {
+			return;
+		}
+
+		oNavigationActionsBar = this._getNavigationActionsToolbar();
+		bRenderNavigationActionsInTopArea = this._shouldRenderActionsInTopArea();
+
+		if (bRenderNavigationActionsInTopArea) {
+			oNavigationActionsContainerDOM = this.$topNavigationActionsArea[0]; // Element should be rendered and cached already.
+		} else {
+			oNavigationActionsContainerDOM = this.$mainNavigationActionsArea[0]; // Element should be rendered and cached already.
+		}
+
+		this._bNavigationActionsInTopArea = bRenderNavigationActionsInTopArea;
+
+		DynamicPageTitle._renderControl(oNavigationActionsContainerDOM, oNavigationActionsBar);
+		this._updateSeparatorVisibility();
+	};
+
+	/**
+	 * Handles control re-sizing.
+	 * <b>Note:</b> The method is called by the parent <code>DynamicPage</code>.
+	 * @param {Number} iCurrentWidth
+	 * @private
+	 */
+	DynamicPageTitle.prototype._onResize = function (iCurrentWidth) {
+		var bNavigationActionsShouldBeInTopArea,
+			bNavigationActionsAreInTopArea,
+			bShouldChangeNavigationActionsPlacement;
+
+		if (this.getNavigationActions().length === 0) {
+			return;
+		}
+
+		bNavigationActionsShouldBeInTopArea = iCurrentWidth < DynamicPageTitle.NAV_ACTIONS_PLACEMENT_BREAK_POINT;
+		bNavigationActionsAreInTopArea = this._areNavigationActionsInTopArea();
+		// expression evaluates to true, when we have 'false' and 'true' or 'true' and 'false'.
+		bShouldChangeNavigationActionsPlacement = bNavigationActionsShouldBeInTopArea ^ bNavigationActionsAreInTopArea;
+
+		if (bShouldChangeNavigationActionsPlacement) {
+			this._toggleNavigationActionsPlacement(bNavigationActionsShouldBeInTopArea);
+		}
+	};
+
+	/**
+	 * Updates the <code>navigationActions</code> position.
+	 * The action will be either placed in the <code>DynamicPageTitle</code> top-right area or in the main-right area.
+	 * @param {boolean} bShowActionsInTopArea
+	 * @private
+	 */
+	DynamicPageTitle.prototype._toggleNavigationActionsPlacement = function (bShowActionsInTopArea) {
+		this["_showNavigationActionsIn" + (bShowActionsInTopArea ? "Top" : "Main") +  "Area"]();
+		this._updateSeparatorVisibility();
+	};
+
+	/**
+	 * Shows the <code>navigationActions</code> in the <code>DynamicPageTitle</code> top-right area.
+	 * @private
+	 */
+	DynamicPageTitle.prototype._showNavigationActionsInTopArea = function () {
+		var oNavigationBar = this._getNavigationActionsToolbar();
+
+		if (this.$topNavigationActionsArea && this.$topNavigationActionsArea.length > 0) {
+			this.$topNavigationActionsArea.html(oNavigationBar.$());
+		}
+
+		this._bNavigationActionsInTopArea = true;
+	};
+
+	/**
+	 * Shows the <code>navigationActions</code> in the <code>DynamicPageTitle</code> main right area.
+	 * @private
+	 */
+	DynamicPageTitle.prototype._showNavigationActionsInMainArea = function () {
+		var oNavigationBar = this._getNavigationActionsToolbar();
+
+		if (this.$mainNavigationActionsArea && this.$mainNavigationActionsArea.length > 0) {
+			this.$mainNavigationActionsArea.html(oNavigationBar.$());
+		}
+
+		this._bNavigationActionsInTopArea = false;
+	};
+
+	DynamicPageTitle.prototype._areNavigationActionsInTopArea = function () {
+		return this._bNavigationActionsInTopArea;
+	};
+
+	/**
+	 * Updates the <code>ToolbarSeparator</code> visibility.
+	 * The <code>ToolbarSeparator</code> separates the <code>actions</code> and the <code>navigationActions</code>.
+	 * @private
+	 */
+	DynamicPageTitle.prototype._updateSeparatorVisibility = function() {
+		if (this.getDomRef()) {
+			this._getToolbarSeparator().toggleStyleClass("sapUiHidden", !this._shouldShowSeparator());
+		}
+	};
+
+	/**
+	 * Determines if the <code>ToolbarSeparator</code> should be displayed.
+	 * @returns {Boolean}
+	 * @private
+	 */
+	DynamicPageTitle.prototype._shouldShowSeparator = function() {
+		var bHasVisibleActions,
+			bHasVisibleNavigationActions;
+
+		if (this._bNavigationActionsInTopArea) {
+			return false;
+		}
+
+		bHasVisibleActions = this._getVisibleActions().length > 0;
+		bHasVisibleNavigationActions = this._getVisibleNavigationActions().length > 0;
+
+		return bHasVisibleActions && bHasVisibleNavigationActions;
+	};
+
+	/**
+	 * Returns an array of the visible <code>actions</code>.
+	 * @returns {Array}
+	 * @private
+	 */
+	DynamicPageTitle.prototype._getVisibleActions = function() {
+		return this.getActions().filter(function(oAction){
+			return oAction.getVisible();
+		});
+	};
+
+	/**
+	 * Returns an array of the visible <code>navigationActions</code>.
+	 * @returns {Array}
+	 * @private
+	 */
+	DynamicPageTitle.prototype._getVisibleNavigationActions = function() {
+		return this.getNavigationActions().filter(function(oAction){
+			return oAction.getVisible();
+		});
+	};
+
+	/**
+	 * Determines if the <code>navigationActions</code> should be rendered in the top area.
+	 * @returns {Boolean}
+	 * @private
+	 */
+	DynamicPageTitle.prototype._shouldRenderActionsInTopArea = function () {
+		return this._getWidth() < DynamicPageTitle.NAV_ACTIONS_PLACEMENT_BREAK_POINT;
+	};
+
+	/* ========== DynamicPageTitle expand and snapped content ========== */
 
 	/**
 	 * Shows/hides the <code>DynamicPageTitle</code> snapped content without re-rendering.
@@ -346,18 +694,7 @@ sap.ui.define([
 		return this._bShowExpandContent;
 	};
 
-	/**
-	 * Updates the priority classes of the <code>DynamicPageTitle</code> areas.
-	 * @param {boolean} isPrimaryAreaBegin
-	 * @private
-	 * @since 1.50
-	 */
-	DynamicPageTitle.prototype._toggleAreaPriorityClasses = function (isPrimaryAreaBegin) {
-		this.$beginArea.toggleClass("sapFDynamicPageTitleAreaHighPriority", isPrimaryAreaBegin);
-		this.$beginArea.toggleClass("sapFDynamicPageTitleAreaLowPriority", !isPrimaryAreaBegin);
-		this.$middleArea.toggleClass("sapFDynamicPageTitleAreaHighPriority", !isPrimaryAreaBegin);
-		this.$middleArea.toggleClass("sapFDynamicPageTitleAreaLowPriority", isPrimaryAreaBegin);
-	};
+	/* ========== DynamicPageTitle expand indicator ========== */
 
 	/**
 	 * Lazily retrieves the <code>expandButton</code> aggregation.
@@ -423,56 +760,90 @@ sap.ui.define([
 	};
 
 	/**
-	* Determines the <code>DynamicPageHeader</code> state.
+	 * Returns the <code>DynamicPageTitle</code> width
+	 * @returns {number}
+	 * @private
+	 */
+	DynamicPageTitle.prototype._getWidth = function () {
+		return this.$().outerWidth();
+	};
+
+	/**
+	* Determines the <code>DynamicPageTitle</code> state.
 	* @returns {Object}
 	* @private
 	*/
 	DynamicPageTitle.prototype._getState = function () {
-		var oActionsBar = this._getOverflowToolbar(),
-			sID = this.getId(),
-			aActions = oActionsBar.getContent(),
+		var bHasActions = this.getActions().length > 0,
+			bHasNavigationActions = this.getNavigationActions().length > 0,
 			aContent = this.getContent(),
-			oHeading = this.getHeading(),
 			aSnapContent = this.getSnappedContent(),
 			aExpandContent = this.getExpandedContent(),
 			bHasExpandedContent = aExpandContent.length > 0,
 			bHasSnappedContent = aSnapContent.length > 0,
-			bShowSnapContent = this._getShowSnapContent(),
-			sAriaText = this._oRB.getText("TOGGLE_HEADER"),
-			sPrimaryArea = this.getPrimaryArea(),
-			oBreadCrumbs = this.getBreadcrumbs(),
-			oExpandButton = this._getExpandButton();
+			bisPrimaryAreaBegin = this.getPrimaryArea() === DynamicPageTitleArea.Begin,
+			oExpandButton = this._getExpandButton(),
+			oBreadcrumbs = this.getBreadcrumbs(),
+			bHasTopContent = oBreadcrumbs || bHasNavigationActions,
+			bHasOnlyBreadcrumbs = !!(oBreadcrumbs && !bHasNavigationActions),
+			bHasOnlyNavigationActions = bHasNavigationActions && !oBreadcrumbs;
 
 			oExpandButton.toggleStyleClass("sapUiHidden", !this._getShowExpandButton());
 
 			return {
-				id: sID,
-				actionBar: oActionsBar,
-				hasActions: aActions.length > 0,
+				id: this.getId(),
+				actionBar: this._getActionsToolbar(),
+				navigationBar: this._getNavigationActionsToolbar(),
+				hasActions: bHasActions,
+				hasNavigationActions: bHasNavigationActions,
 				content: aContent,
 				hasContent: aContent.length > 0,
-				heading: oHeading,
+				heading: this.getHeading(),
 				expandButton: oExpandButton,
 				snappedContent: aSnapContent,
 				expandedContent: aExpandContent,
-				hasSnappedContent: bHasSnappedContent,
+				hasSnappedContent:bHasSnappedContent,
 				hasExpandedContent: bHasExpandedContent,
 				hasAdditionalContent: bHasExpandedContent || bHasSnappedContent,
-				showSnapContent: bShowSnapContent,
-				isPrimaryAreaBegin: sPrimaryArea === "Begin",
-				ariaText: sAriaText,
-				breadcrumbs: oBreadCrumbs
+				showSnapContent: this._getShowSnapContent(),
+				isPrimaryAreaBegin: bisPrimaryAreaBegin,
+				ariaText: this._oRB.getText("TOGGLE_HEADER"),
+				breadcrumbs: this.getBreadcrumbs(),
+				separator: this._getToolbarSeparator(),
+				hasTopContent: bHasTopContent,
+				hasOnlyBreadcrumbs: bHasOnlyBreadcrumbs,
+				hasOnlyNavigationActions: bHasOnlyNavigationActions
 			};
 	};
 
 	/**
-	 * Called whenever the content aggregation is mutated
+	 * Called whenever the content, actions or navigationActions aggregation are mutated.
 	 * @param oChanges
 	 * @private
 	 */
+	DynamicPageTitle.prototype._observeChanges = function (oChanges) {
+		var oObject = oChanges.object,
+			sChangeName = oChanges.name;
+
+		if (oObject === this) {// changes on DynamicPageTitle level
+
+			if (sChangeName === "content") { // change of the content aggregation
+				this._observeContentChanges(oChanges);
+			}
+
+		} else if (sChangeName === "visible") { // change of the actions or navigationActions elements` visibility
+				this._updateSeparatorVisibility();
+		}
+	};
+
+	/**
+	* Called whenever the content aggregation is mutated
+	* @param {Object} oChanges
+	* @private
+	*/
 	DynamicPageTitle.prototype._observeContentChanges = function (oChanges) {
-		var oControl = oChanges.child,
-			sMutation = oChanges.mutation;
+			var oControl = oChanges.child,
+				sMutation = oChanges.mutation;
 
 		// Only overflow toolbar is supported as of now
 		if (!(oControl instanceof OverflowToolbar)) {
