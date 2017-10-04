@@ -52,17 +52,22 @@
 
 	/**
 	 * Helper function to create a fake file object, which has the same properties
-	 * as a real native File-Object
+	 * as a real native File-Object.
+	 * If the browser is Firefox we need to wrap the file object in a Blob.
+	 * @param {Object} mProps
+	 * @param {Boolean} bIsFirefox
 	 */
-	var createFakeFile = function (mProps) {
-		mProps = mProps || {};
-		return {
-			"webkitRelativePath": mProps.webkitRelativePath || "",
-			"lastModifiedDate": mProps.lastModifiedDate || "2014-08-14T09:42:09.000Z",
-			"name": mProps.name || "FileUploader.js",
-			"type": mProps.type || "application/javascript",
-			"size": mProps.size || 401599
+	var createFakeFile = function (mProps, bIsFirefox) {
+		var mProps = mProps || {},
+			oFileObject = {
+				"webkitRelativePath": mProps.webkitRelativePath || "",
+				"lastModifiedDate": mProps.lastModifiedDate || "2014-08-14T09:42:09.000Z",
+				"name": mProps.name || "FileUploader.js",
+				"type": mProps.type || "application/javascript",
+				"size": mProps.size || 401599
 		};
+
+		return bIsFirefox ? new Blob([oFileObject]) : oFileObject;
 	};
 
 	/**
@@ -411,17 +416,18 @@
 	QUnit.module("private functions");
 	QUnit.test("Testing sending passed files with XHR", function (assert) {
 		var oFileUploader = createFileUploader(),
+			bIsExecutedInFireFox = sap.ui.Device.browser.firefox;
 			aFiles = {
-				"0": new Blob([createFakeFile({
+				"0": createFakeFile({
 					name:"FileUploader.qunit.html",
 					type:"text/html",
 					size:404450
-				})]),
-				"1": new Blob([createFakeFile({
+				}, bIsExecutedInFireFox),
+				"1": createFakeFile({
 					name:"FileUploader2.qunit.html",
 					type:"text/html",
 					size:404450
-				})]),
+				}, bIsExecutedInFireFox),
 				"length" : 2
 			},
 			oSpy = this.spy(window.XMLHttpRequest.prototype, "send");
