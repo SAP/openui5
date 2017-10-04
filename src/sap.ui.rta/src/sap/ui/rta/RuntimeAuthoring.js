@@ -32,7 +32,6 @@ sap.ui.define([
 		"sap/ui/dt/plugin/ContextMenu",
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
-		"sap/ui/rta/ui/SettingsDialog",
 		"sap/ui/rta/Utils",
 		"sap/ui/fl/transport/Transports",
 		"sap/ui/fl/transport/TransportSelection",
@@ -76,7 +75,6 @@ sap.ui.define([
 		ContextMenuPlugin,
 		TabHandlingPlugin,
 		FlexControllerFactory,
-		SettingsDialog,
 		Utils,
 		Transports,
 		TransportSelection,
@@ -136,14 +134,6 @@ sap.ui.define([
 				"triggeredFromDialog" : {
 					type : "boolean",
 					defaultValue : false
-				},
-
-				/** Temporary property : whether to show a dialog for changing control's properties#
-				 * should be removed after DTA will fully switch to a property panel
-				 */
-				"showSettingsDialog" : {
-					type : "boolean",
-					defaultValue : true
 				},
 
 				/** Whether the window unload dialog should be shown */
@@ -1216,24 +1206,6 @@ sap.ui.define([
 		} else {
 			this.iEditableOverlaysCount -= 1;
 		}
-	};
-
-	/**
-	 * Open the settings dialog.
-	 * @param  {sap.ui.base.Event|Object} oEventOrOverlays Event or map containing list of selected overlays
-	 */
-
-	//TODO: ask Mayank if we can remove
-	RuntimeAuthoring.prototype._openSettingsDialog = function(oEventOrOverlays) {
-		var aSelectedOverlays = (oEventOrOverlays.mParameters) ? oEventOrOverlays.getParameter("selectedOverlays") : oEventOrOverlays;
-		var oElement = aSelectedOverlays[0].getElementInstance();
-		this._handleStopCutPaste();
-
-		if (!this._oSettingsDialog) {
-			this._oSettingsDialog = new SettingsDialog();
-		}
-		this._oSettingsDialog.setCommandStack(this.getCommandStack());
-		this._oSettingsDialog.open(oElement);
 	};
 
 	/**
