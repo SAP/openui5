@@ -307,36 +307,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			};
 		}
 
-		var fnPropagateOwner = function(fn) {
+		var fnPropagateOwner = function(fn, bAsync) {
 			jQuery.sap.assert(typeof fn === "function", "fn must be a function");
 
 			var Component = sap.ui.require("sap/ui/core/Component");
 			var oOwnerComponent = Component && Component.getOwnerComponentFor(that);
 			if (oOwnerComponent) {
-				return oOwnerComponent.runAsOwner(fn);
+				if (!bAsync) {
+					return oOwnerComponent.runAsOwner(fn);
+				}
+
+				// create a function, which scopes the instance creation of a class with the corresponding owner ID
+				// XMLView special logic for asynchronous template parsing,
+				// when component loading is async but instance creation is sync.
+				that.fnScopedRunWithOwner = that.fnScopedRunWithOwner || function(fnCallbackToBeScoped) {
+					return oOwnerComponent.runAsOwner(fnCallbackToBeScoped);
+				};
+
+				//for non-XMLViews wrap the existing behaviour with a promise
+				return Promise.resolve(oOwnerComponent.runAsOwner(fn));
 			} else {
-				return fn.call();
+				if (!bAsync) {
+					return fn.call();
+				}
+				return Promise.resolve(fn.call());
 			}
 		};
 
-		var fnInitController = function() {
-			var oPromise = createAndConnectController(that, mSettings);
-			if (oPromise instanceof Promise) {
-				return oPromise.then(function() {
-					// the controller is connected now => notify the view implementations
-					if (that.onControllerConnected) {
-						// make sure that in case of async callback for controller
-						// creation the owner is propagated properly
-						fnPropagateOwner(function() {
-							that.onControllerConnected(that.oController);
-						});
-					}
-				});
-			} else {
-				// the controller is connected now => notify the view implementations
-				if (that.onControllerConnected) {
-					that.onControllerConnected(that.oController);
-				}
+		var fnAttachControllerToViewEvents = function(oView) {
+			if (oView.oController && oView.oController.connectToView) {
+				// Controller#connectToView does not only connect View and Controller,
+				// it also attaches the Controller to the View's lifecycle events
+				return oView.oController.connectToView(oView);
+			}
+		};
+
+		var fnFireOnControllerConnected = function () {
+			if (that.onControllerConnected) {
+				return that.onControllerConnected(that.oController);
 			}
 		};
 
@@ -345,13 +353,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				// async processing starts here
 				this.oAsyncState.promise = this.initViewSettings(mSettings)
 					.then(function() {
-						return fnPropagateOwner(fnInitController);
+						return fnPropagateOwner(createAndConnectController.bind(null, that, mSettings), true);
+					})
+					.then(function() {
+						return fnPropagateOwner(fnFireOnControllerConnected, true);
+					})
+					.then(function() {
+						// attach after controller and control tree are fully initialized
+						return fnAttachControllerToViewEvents(that);
 					})
 					.then(function() {
 						return that.runPreprocessor("controls", that);
 					})
 					.then(function() {
-						return fnPropagateOwner(that.fireAfterInit.bind(that));
+						return fnPropagateOwner(that.fireAfterInit.bind(that), true);
 					})
 					.then(function() {
 						// async processing ends by resolving with the view
@@ -359,7 +374,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 					});
 			} else {
 				this.initViewSettings(mSettings);
-				fnInitController();
+				// connect controller to view after controller and control tree are fully initialized
+				var pCreateAndConnectController = createAndConnectController(that, mSettings);
+				if (pCreateAndConnectController instanceof Promise) {
+					pCreateAndConnectController
+					.then(function() {
+						return fnPropagateOwner(fnFireOnControllerConnected);
+					})
+					.then(function() {
+						fnAttachControllerToViewEvents(that);
+					});
+				} else {
+					fnFireOnControllerConnected();
+					fnAttachControllerToViewEvents(that);
+				}
 				this.runPreprocessor("controls", this, true);
 				this.fireAfterInit();
 			}
@@ -432,9 +460,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * Creates and connects the controller if the controller is not given in the
 	 * mSettings
 	 *
-	 * @param {sap.ui.core.mvc.XMLView} the instance of the view that should be processed
-	 * @param {object} [mSettings]
-	 * @param {object.controller} [mSettings.controller] the controller of the view instance
+	 * @param {sap.ui.core.mvc.XMLView} oThis the instance of the view that should be processed
+	 * @param {object} [mSettings] Settings
+	 * @returns {Promise|undefined} A promise for asynchronous or undefined for synchronous controllers
 	 * @private
 	 */
 	var createAndConnectController = function(oThis, mSettings) {
@@ -462,19 +490,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 			if ( oController ) {
 				oController = Controller.extendIfRequired(oController, sName, !!oThis.oAsyncState);
+
+				var connectToView = function(oController) {
+					oThis.oController = oController;
+					oController.oView = oThis;
+				};
+
 				if (oController instanceof Promise) {
 					if (!oThis.oAsyncState) {
 						throw new Error("The view " + oThis.sViewName + " runs in sync mode and therefore cannot use async controller extensions!");
 					}
-					return oController.then(function(oController) {
-						oThis.oController = oController;
-						// connect controller
-						oController.connectToView(oThis);
-					});
+					return oController.then(connectToView);
 				} else {
-					oThis.oController = oController;
-					// connect controller
-					oController.connectToView(oThis);
+					connectToView(oController);
 				}
 			}
 
@@ -874,11 +902,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	* @return {Promise} resolves with the complete view instance, reject with any thrown error
 	*/
 	View.prototype.loaded = function() {
-		if (!this.oAsyncState || !this.oAsyncState.promise) {
+		if (this.oAsyncState && this.oAsyncState.promise) {
+			return this.oAsyncState.promise;
+		} else {
 			// resolve immediately with this view instance
 			return Promise.resolve(this);
-		} else {
-			return this.oAsyncState.promise;
 		}
 	};
 

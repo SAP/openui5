@@ -131,6 +131,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
+					"xx-xml-processing"    : { type : "string",  defaultValue : "" },
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -713,6 +714,32 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getSAPParam : function (sName) {
 			return this.sapparams && this.sapparams[sName];
+		},
+
+		/**
+		 * The mode for async XMLView processing.
+		 * Potential values are: <code>sequential</code>
+		 * Turned OFF by default
+		 * @since 1.52.1
+		 * @experimental
+		 * @return {string} Asynchronous XML Processing mode
+		 * @public
+		 */
+		getXMLProcessingMode : function () {
+			return this["xx-xml-processing"];
+		},
+
+		/**
+		 * Determines the mode for async XMLView processing.
+		 * @experimental
+		 * @since 1.52.1
+		 * @param {string} sMode Asynchronous XML Processing mode, activated if set to <code>sequential</code>
+		 * @returns {sap.ui.core.Configuration}
+		 * @private
+		 */
+		setXMLProcessingMode : function (sMode) {
+			this["xx-xml-processing"] = sMode;
+			return this;
 		},
 
 		/**
