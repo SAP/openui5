@@ -66,11 +66,11 @@ sap.ui.define([
 					bIsDevVersion = oVersionModel.getProperty('/isDevVersion'),
 					bIsOpenUI5 = oVersionModel.getProperty('/isOpenUI5');
 
-				if (bIsDevVersion) {
-					return 'https://help.sap.com/DRAFT/SAPUI5_Internal_PDF/SAPUI5_Internal.pdf';
+				if (bIsOpenUI5) {
+					return 'https://help.sap.com/OpenUI5_PDF/OpenUI5.pdf';
 				}
 
-				return bIsOpenUI5 ? 'https://help.sap.com/OpenUI5_PDF/OpenUI5.pdf' : 'https://help.sap.com/SAPUI5_PDF/SAPUI5.pdf';
+				return bIsDevVersion ? 'https://help.sap.com/DRAFT/SAPUI5_Internal_PDF/SAPUI5_Internal.pdf' : 'https://help.sap.com/SAPUI5_PDF/SAPUI5.pdf';
 			}
 		});
 	}
