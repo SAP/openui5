@@ -595,7 +595,7 @@
 		};
 	})();
 
-	/**
+	/*
 	 * Determine whether sap-bootstrap-debug is set, run debugger statement and allow
 	 * to restart the core from a new URL
 	 */
@@ -648,9 +648,9 @@
 		}
 	})();
 
-	/**
-	 * Determine whether to use debug sources depending on URL parameter and local storage
-	 * and load debug library if necessary
+	/*
+	 * Determine from configuration (URL parameter, local storage or bootstrap tag) whether
+	 * to use debug sources and restart with debug version of the bootstrap script if necessary.
 	 */
 	(function() {
 		// check URI param
@@ -663,6 +663,7 @@
 		} catch (e) {
 			// happens in FF when cookies are deactivated
 		}
+		vDebugInfo = vDebugInfo || (_oBootstrap.tag && _oBootstrap.tag.getAttribute("data-sap-ui-debug"));
 
 		// normalize
 		if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
