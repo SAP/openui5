@@ -135,6 +135,8 @@ sap.ui.define([
 			key: "new",
 			text: this._oRb.getText("MULTI_EDIT_NEW_TEXT")
 		}));
+		// This enables FormElements to correctly write aria attributes to the internal Select control
+		this.byId("select").getParent = this.getParent.bind(this);
 	};
 
 	MultiEditField.prototype.onBeforeRendering = function() {

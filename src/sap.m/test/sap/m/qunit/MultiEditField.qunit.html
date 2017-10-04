@@ -55,6 +55,10 @@
 			assert.equal(this.oMultiEditField.getProperty("required"), false, "Default value is 'false'");
 		});
 
+		QUnit.test("Get parent of Select control", function(assert) {
+			assert.equal(this.oMultiEditField.byId("select").getParent(), this.oMultiEditField.getParent(), "The parent of select control is same as MultiEditField");
+		});
+
 		QUnit.module("Basic methods", {
 			beforeEach: function() {
 				this.oMultiEditField = new sap.m.MultiEditField({
