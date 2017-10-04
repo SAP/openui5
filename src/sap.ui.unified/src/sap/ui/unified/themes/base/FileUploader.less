@@ -49,9 +49,6 @@
 	bottom: 0;
 	right: 0;
 	overflow: hidden;
-	cursor: pointer;
-	height: 2.5rem;
-	margin-top: 0.25rem;
 }
 
 .sapUiFup.sapUiFupDisabled .sapUiFupInputMask {
@@ -69,7 +66,14 @@
 }
 
 .sapUiFupInputMask > input { /* the real, but hidden file input */
-	display: none;
+	position: absolute;
+	opacity: 0;
+	top: 0px;
+	bottom: 0px;
+	cursor: pointer;
+	left: -4em;       /* avoid the input field behind the file chooser */
+	font-size: 500px; /* to make the field high enough for most themes; for themes with very large fonts this needs to be increased further */
+	width: 5000px;
 }
 
 .sapUiFupInputMask > input[disabled],
