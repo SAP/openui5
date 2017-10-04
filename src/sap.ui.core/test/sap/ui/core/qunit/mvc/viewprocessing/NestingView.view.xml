@@ -1,0 +1,19 @@
+<mvc:View
+        xmlns:core="sap.ui.core"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns="sap.m">
+    <Panel id="Panel">
+        <VBox>
+            <HBox>
+                <Button text="Hello"/>
+                <Button text="World"/>
+            </HBox>
+
+            <mvc:XMLView id="nestedView" viewName="sap.ui.core.qunit.mvc.viewprocessing.NestedView"></mvc:XMLView>
+
+            <mvc:XMLView id="nestedViewAsync" viewName="sap.ui.core.qunit.mvc.viewprocessing.NestedView" async="true"></mvc:XMLView>
+
+            <core:Icon src="sap-icon://lateness" size="7em"/>
+        </VBox>
+    </Panel>
+</mvc:View>
