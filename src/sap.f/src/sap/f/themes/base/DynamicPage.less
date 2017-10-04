@@ -14,8 +14,15 @@
 .sapFDynamicPageContent {
 	flex-grow: 1;
 	-webkit-flex-grow: 1;
+	z-index: 0;
 
 	background: @sapUiGroupContentBackground;
+}
+
+html[data-sap-ui-browser^="ie"] {
+	.sapFDynamicPageContent {
+		flex-shrink: 0;
+	}
 }
 
 .sapFDynamicPageContentWrapper {

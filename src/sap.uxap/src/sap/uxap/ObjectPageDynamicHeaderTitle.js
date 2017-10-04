@@ -117,16 +117,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/uxap/ObjectPageDynamicHead
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
-		 * @param fnHandler
-		 * @param oContext
-		 * @private
-		 */
-		ObjectPageDynamicHeaderTitle.prototype._handleExpandButtonPressEventLifeCycle = function (bAttach, fnHandler, oContext) {
-			// to be implemented
-		};
-
-		/**
-		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 * @param {object} jQuery reference to the header dom element
 		 * @param {object} change event of child-element that brought the need to adapt the headerTitle layout
 		 * @private

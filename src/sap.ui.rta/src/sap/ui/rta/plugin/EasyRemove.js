@@ -46,7 +46,7 @@ sap.ui.define([
 		this._oDelegate = {
 			"onAfterRendering" : function() {
 				var onDeletePressed = function(oOverlay) {
-					this._handleRemove([oOverlay]);
+					this.handler([oOverlay]);
 				}.bind(this);
 
 				if (oOverlay.$().hasClass("sapUiRtaPersDelete") && oOverlay.$().children(".sapUiRtaPersDeleteClick").length <= 0) {

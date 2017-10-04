@@ -198,6 +198,22 @@ jQuery.sap.require("sap.m.Button");
 		getUriParametersStub.restore();
 	});
 
+	QUnit.test("isLayerAboveCurrentLayer shall return a layer comparision between current (CUSTOMER) and passed layers", function (assert) {
+		var oUriParams = {
+			mParams: {
+				"sap-ui-layer": [
+					"CUSTOMER"
+				]
+			}
+		};
+		var getUriParametersStub = this.stub(Utils, "_getUriParameters").returns(oUriParams);
+		assert.equal(Utils.isLayerAboveCurrentLayer("VENDOR"), -1, "then with VENDOR layer -1 is returned");
+		assert.equal(Utils.isLayerAboveCurrentLayer("CUSTOMER"), 0, "then with CUSTOMER layer 0 is returned");
+		assert.equal(Utils.isLayerAboveCurrentLayer("USER"), 1, "then with USER layer 1 is returned");
+
+		getUriParametersStub.restore();
+	});
+
 	QUnit.test("doesSharedVariantRequirePackageCustomer", function (assert) {
 		var bDoesSharedVariantRequirePackage;
 		this.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
@@ -1096,7 +1112,7 @@ jQuery.sap.require("sap.m.Button");
 			};
 
 			//Resolved promises
-			this.fnPromise1 = sandbox.stub().returns(fnResolve());
+			this.fnPromise1 = sandbox.stub().returns(new Utils.FakePromise());
 			this.fnPromise2 = sandbox.stub().returns(fnResolve());
 			this.fnPromise3 = sandbox.stub().returns(fnResolve());
 
@@ -1117,6 +1133,29 @@ jQuery.sap.require("sap.m.Button");
 		}
 	});
 
+	QUnit.test("when called with a empty array and async 'false' as parameters", function(assert) {
+		var vResult = Utils.execPromiseQueueSequentially([], false);
+		assert.ok(vResult instanceof Utils.FakePromise, "then synchronous FakePromise is retured");
+	});
+
+	QUnit.test("when called with a empty array and async 'true' as parameters", function(assert) {
+		var vResult = Utils.execPromiseQueueSequentially([], true);
+		assert.ok(vResult instanceof Promise, "then asynchronous Promise is retured");
+		return vResult;
+	});
+
+	QUnit.test("when called with 'async and sync' promises array as parameter", function(assert) {
+		var vResult = Utils.execPromiseQueueSequentially([this.fnPromise2, this.fnPromise1]);
+		assert.ok(vResult instanceof Promise, "then asynchronous Promise is retured");
+		return vResult;
+	});
+
+	QUnit.test("when called with 'sync and async' promises array as parameter", function(assert) {
+		var vResult = Utils.execPromiseQueueSequentially([this.fnPromise1, this.fnPromise2]);
+		assert.ok(vResult instanceof Promise, "then asynchronous Promise is retured");
+		return vResult;
+	});
+
 	QUnit.test("when called with a resolved promises array as parameter", function(assert) {
 		var done = assert.async();
 		Utils.execPromiseQueueSequentially(this.aPromisesWithoutReject).then( function() {
@@ -1128,32 +1167,26 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 	QUnit.test("when called with an array containing resolved, rejected and rejected without return promises", function(assert) {
-		var done = assert.async();
-		Utils.execPromiseQueueSequentially(this.aPromisesWithReject).then( function() {
+		return Utils.execPromiseQueueSequentially(this.aPromisesWithReject).then( function() {
 			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
 			sinon.assert.callOrder(this.fnPromise1, this.fnPromise4);
 			assert.strictEqual(this.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
-			done();
 		}.bind(this));
 	});
 
 	QUnit.test("when called with an array containing an object and a promise", function(assert) {
-		var done = assert.async();
-		Utils.execPromiseQueueSequentially(this.aPromisesWithObj).then( function() {
+		return Utils.execPromiseQueueSequentially(this.aPromisesWithObj).then( function() {
 			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
 			sinon.assert.callOrder(this.fnPromise1);
 			assert.strictEqual(this.spyLog.callCount, 1, "then error log called once, as one element (object) was not a function");
-			done();
 		}.bind(this));
 	});
 
 	QUnit.test("when called with an array containing a rejected followed by a resolved promise", function(assert) {
-		var done = assert.async();
-		Utils.execPromiseQueueSequentially(this.aPromisesResolveAfterReject).then( function() {
+		return Utils.execPromiseQueueSequentially(this.aPromisesResolveAfterReject).then( function() {
 			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
 			sinon.assert.callOrder(this.fnPromise4, this.fnPromise1);
 			assert.strictEqual(this.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
-			done();
 		}.bind(this));
 	});
 
@@ -1165,7 +1198,7 @@ jQuery.sap.require("sap.m.Button");
 		}
 	});
 
-	[42, undefined, {then : 42}, {then : function () {}}, Promise.resolve(42)]
+	[42, undefined, {then : 42}, {then : function () {}}]
 	.forEach(function (vResult) {
 		QUnit.test("when instanciated with " + vResult + " value as parameter", function(assert) {
 			var oFakePromise = new Utils.FakePromise(vResult)
@@ -1186,6 +1219,11 @@ jQuery.sap.require("sap.m.Button");
 			});
 			assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
 		});
+	});
+
+	QUnit.test("when instanciated with Promise.resolved() value as parameter", function(assert) {
+		var oFakePromise = new Utils.FakePromise(Promise.resolve(42));
+		assert.ok(oFakePromise instanceof Promise, "then the FakePromise returns Promise");
 	});
 
 	QUnit.test("when 'then' method returns Promise", function(assert) {

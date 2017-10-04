@@ -85,6 +85,15 @@ function(
 	};
 
 	/**
+	 * @override
+	 * @param  {sap.ui.dt.Overlay}  oOverlay Selected overlay
+	 * @return {boolean}        Returns true if the plugin is available
+	 */
+	CutPaste.prototype.isAvailable = function(oOverlay) {
+		return oOverlay.getMovable();
+	};
+
+	/**
 	 * Register an overlay
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
@@ -116,6 +125,44 @@ function(
 		});
 
 		this.stopCutAndPaste();
+	};
+
+	/**
+	 * Retrieve the context menu item for the actions.
+	 * Two items are returned here: one for "cut" and one for "paste".
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
+	 * @return {object[]}          Returns array containing the items with required data
+	 */
+	CutPaste.prototype.getMenuItems = function(oOverlay){
+		var aMenuItems = [];
+
+		if (this.isAvailable(oOverlay)){
+			aMenuItems.push({
+				id: 'CTX_CUT',
+				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_CUT'),
+				handler: function(aOverlays){
+					return this.cut(aOverlays[0]);
+				}.bind(this),
+				enabled: function (){
+					return this.getDesignTime().getSelection().length === 1;
+				}.bind(this),
+				rank: 70
+			});
+
+			aMenuItems.push({
+				id: 'CTX_PASTE',
+				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_PASTE'),
+				handler: function(aOverlays){
+					return this.paste(aOverlays[0]);
+				}.bind(this),
+				enabled: function(oOverlay) {
+					return this.isElementPasteable(oOverlay);
+				}.bind(this),
+				rank: 80
+			});
+		}
+
+		return aMenuItems;
 	};
 
 	return CutPaste;

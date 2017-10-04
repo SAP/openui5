@@ -1,49 +1,41 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Test Page for Rename Plugin</title>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>Test Page for Rename Plugin</title>
 
-<style>
-html, body, #qunit-tests {
-	height: 100%;
-}
+		<style>
+			html, body, #qunit-tests {
+				height: 100%;
+			}
 
-.sapUiView {
-	height: 100%;
-}
+			.sapUiView {
+				height: 100%;
+			}
+		</style>
 
-</style>
+		<script src="../../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].libs = 'sap.ui.rta, sap.ui.dt';
 
-<script id="sap-ui-bootstrap"
-	type="text/javascript"
-	data-sap-ui-theme="sap_belize"
-	data-sap-ui-noConflict="true"
-	data-sap-ui-xx-designMode="true"
-	data-sap-ui-xx-suppressDeactivationOfControllerCode="true"
-	data-sap-ui-xx-bindingSyntax="complex"
-	src="../../../../../../resources/sap-ui-core.js">
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
-<link rel="stylesheet"
-	href="../../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit-2') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-<script type="text/javascript" src="Rename.qunit.js"></script>
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta,sap/ui/dt]');
 
-</head>
-<body>
-	<h1 id="qunit-header">QUnit page for Rename Plugin</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<div id="content"></div>
-	<ol id="qunit-tests"></ol>
-</body>
-
+			jQuery.sap.includeScript('./Rename.qunit.js');
+		</script>
+	</head>
+	<body>
+		<h2 id='qunit-banner'></h2>
+		<div id='qunit-testrunner-toolbar'></div>
+		<div id="content"></div>
+		<ol id='qunit-tests'></ol>
+	</body>
 </html>

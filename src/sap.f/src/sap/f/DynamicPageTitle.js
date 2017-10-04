@@ -7,8 +7,9 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
 	"sap/m/OverflowToolbar",
-	"sap/m/Button"
-], function (library, Control, OverflowToolbar, Button) {
+	"sap/m/Button",
+	"sap/ui/base/ManagedObjectObserver"
+], function (library, Control, OverflowToolbar, Button, ManagedObjectObserver) {
 	"use strict";
 
 	// shortcut for sap.f.DynamicPageTitleArea
@@ -138,7 +139,22 @@ sap.ui.define([
 			return this;
 		}.bind(this);
 
+		// Observe the "content" aggregation for overflow-enabled containers
+		this._oContentObserver = new ManagedObjectObserver(DynamicPageTitle.prototype._observeContentChanges.bind(this));
+		this._oContentObserver.observe(this, {
+			aggregations: [
+				"content"
+			]
+		});
+
 		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.f");
+	};
+
+	DynamicPageTitle.prototype.exit = function () {
+		if (this._oContentObserver) {
+			this._oContentObserver.disconnect();
+			this._oContentObserver = null;
+		}
 	};
 
 	DynamicPageTitle.prototype.onBeforeRendering = function () {
@@ -353,7 +369,8 @@ sap.ui.define([
 			var oExpandButton = new Button({
 				id: this.getId() + "-expandBtn",
 				icon: "sap-icon://slim-arrow-down",
-				press: this._onExpandButtonPress.bind(this)
+				press: this._onExpandButtonPress.bind(this),
+				tooltip: this._oRB.getText("EXPAND_HEADER_BUTTON_TOOLTIP")
 			}).addStyleClass("sapFDynamicPageToggleHeaderIndicator sapUiHidden");
 			this.setAggregation("_expandButton", oExpandButton, true);
 		}
@@ -448,6 +465,55 @@ sap.ui.define([
 			};
 	};
 
+	/**
+	 * Called whenever the content aggregation is mutated
+	 * @param oChanges
+	 * @private
+	 */
+	DynamicPageTitle.prototype._observeContentChanges = function (oChanges) {
+		var oControl = oChanges.child,
+			sMutation = oChanges.mutation;
+
+		// Only overflow toolbar is supported as of now
+		if (!(oControl instanceof OverflowToolbar)) {
+			return;
+		}
+
+		if (sMutation === "insert") {
+			oControl.attachEvent("_contentSizeChange", this._onContentSizeChange, this);
+		} else if (sMutation === "remove") {
+			oControl.detachEvent("_contentSizeChange", this._onContentSizeChange, this);
+			this._setContentAreaFlexBasis(0);
+		}
+	};
+
+	/**
+	 * Called whenever the content size of an overflow toolbar, used in the content aggregation, changes.
+	 * Content size is defined as the total width of the toolbar's overflow-enabled content, not the toolbar's own width.
+	 * @param oEvent
+	 * @private
+	 */
+	DynamicPageTitle.prototype._onContentSizeChange = function (oEvent) {
+		var iContentSize = oEvent.getParameter("contentSize");
+		this._setContentAreaFlexBasis(iContentSize);
+	};
+
+	/**
+	 * Sets (if iContentSize is non-zero) or resets (otherwise) the flex-basis of the HTML element where the
+	 * content aggregation is rendered.
+	 * @param iContentSize - the total width of the overflow toolbar's overflow-enabled content (items that can overflow)
+	 * @private
+	 */
+	DynamicPageTitle.prototype._setContentAreaFlexBasis = function (iContentSize) {
+		var sFlexBasis;
+
+		iContentSize = parseInt(iContentSize, 10);
+		sFlexBasis = iContentSize ? iContentSize + "px" : "auto";
+		this.$("content").css({
+			"flex-basis": sFlexBasis,
+			"-webkit-flex-basis": sFlexBasis
+		});
+	};
 
 	return DynamicPageTitle;
 });

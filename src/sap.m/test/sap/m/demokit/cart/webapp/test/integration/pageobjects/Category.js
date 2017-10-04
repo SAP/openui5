@@ -150,6 +150,13 @@ sap.ui.define([
 						errorMessage: "The back button was not found and could not be pressed"
 					});
 				},
+				iPressTheBackButtonInProduct: function () {
+					return this.waitFor({
+						id: "page",
+						actions: new Press(),
+						errorMessage: "The nav back button was not displayed"
+					});
+				},
 				//Back Button in filter dialog
 				iPressTheBackButtonInDialog: function () {
 					this.waitFor({

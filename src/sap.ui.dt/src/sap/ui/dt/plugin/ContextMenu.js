@@ -4,8 +4,14 @@
 
 // Provides class sap.ui.rta.plugin.ContextMenu.
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/dt/Plugin', 'sap/ui/dt/ContextMenuControl'
-], function(jQuery, Plugin, ContextMenuControl) {
+	'jquery.sap.global',
+	'sap/ui/dt/Plugin',
+	'sap/ui/dt/ContextMenuControl'
+], function(
+	jQuery,
+	Plugin,
+	ContextMenuControl
+) {
 	"use strict";
 
 	/**
@@ -82,7 +88,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Add menu items in the following format
+	 * Add menu items in the following format.
 	 *
 	 * @param {object} mMenuItem json object with the menu item settings
 	 * @param {string} mMenuItem.id id, which corresponds to the text key
@@ -94,21 +100,73 @@ sap.ui.define([
 	 *        is passed, default true
 	 * @param {function} mMenuItem.enabled? function to determine if the menu entry should be enabled, the element for which the menu should be opened
 	 *        is passed, default true
+	 * @param {boolean} bRetrievedFromPlugin flag to mark if a menu item was retrieved from a plugin (in runtime)
 	 */
-	ContextMenu.prototype.addMenuItem = function(mMenuItem) {
-		this._aMenuItems.push(mMenuItem);
+	ContextMenu.prototype.addMenuItem = function(mMenuItem, bRetrievedFromPlugin) {
+		var mMenuItemEntry = {
+			menuItem : mMenuItem,
+			fromPlugin : !!bRetrievedFromPlugin
+		};
+		this._aMenuItems.push(mMenuItemEntry);
 	};
 
+	/**
+	 * Open the context menu with the items that have been added before or
+	 * will be returned by the plugins.
+	 * @param  {sap.ui.base.Event} oOriginalEvent Event that triggered the menu to open
+	 * @param  {sap.ui.dt.ElementOverlay} oTargetOverlay Overlay where the menu was triggered
+	 */
 	ContextMenu.prototype.open = function(oOriginalEvent, oTargetOverlay) {
 		this.setContextElement(oTargetOverlay.getElementInstance());
 
+		//Remove all previous entries retrieved by plugins (the list should always be rebuilt)
+		this._aMenuItems = this._aMenuItems.filter(function(mMenuItemEntry){
+			return !mMenuItemEntry.fromPlugin;
+		});
+
+		var aPlugins = this.getDesignTime().getPlugins();
+		aPlugins.forEach(function(oPlugin){
+			var aPluginMenuItems = oPlugin.getMenuItems(oTargetOverlay) || [];
+			aPluginMenuItems.forEach(function(mMenuItem){
+				this.addMenuItem(mMenuItem, true);
+			}.bind(this));
+		}.bind(this));
+
+		var aMenuItems = this._aMenuItems.map(function(mMenuItemEntry){
+			return mMenuItemEntry.menuItem;
+		});
+
+		aMenuItems = this._sortMenuItems(aMenuItems);
+
 		this._oContextMenuControl = new ContextMenuControl();
 		this._oContextMenuControl.addStyleClass(this.getStyleClass());
-		this._oContextMenuControl.setMenuItems(this._aMenuItems, oTargetOverlay);
+		this._oContextMenuControl.setMenuItems(aMenuItems, oTargetOverlay);
 		this._oContextMenuControl.setOverlayDomRef(oTargetOverlay);
 		this._oContextMenuControl.attachItemSelect(this._onItemSelected, this);
 		this._oContextMenuControl.openMenu(oOriginalEvent, oTargetOverlay);
 		this.fireOpenedContextMenu();
+	};
+
+	/**
+	 * Collect menu items sorted by rank (entries without rank come first)
+	 * @param  {object[]} aMenuItems List of menu items
+	 * @return {object[]}            Returned a sorted list of menu items; higher rank come later
+	 */
+	ContextMenu.prototype._sortMenuItems = function(aMenuItems){
+		return aMenuItems.sort(function(mFirstEntry, mSecondEntry){
+			// Both entries do not have rank, do not change the order
+			if (!mFirstEntry.rank && !mSecondEntry.rank){
+				return 0;
+			}
+			// One entry does not have rank, push it to the front
+			if (!mFirstEntry.rank && mSecondEntry.rank){
+				return -1;
+			}
+			if (mFirstEntry.rank && !mSecondEntry.rank){
+				return 1;
+			}
+			return mFirstEntry.rank - mSecondEntry.rank;
+		});
 	};
 
 	/**
@@ -122,7 +180,12 @@ sap.ui.define([
 		var aSelection = [],
 			oEventItem = oEvent.getParameter("item"),
 			sId = oEventItem.data("id");
-		this._aMenuItems.some(function(oItem) {
+
+		var aMenuItems = this._aMenuItems.map(function(mMenuItemEntry){
+			return mMenuItemEntry.menuItem;
+		});
+
+		aMenuItems.some(function(oItem) {
 			if (sId === oItem.id) {
 				var oDesignTime = this.getDesignTime();
 				aSelection = oDesignTime.getSelection();

@@ -122,18 +122,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			i++;
 		}
 
-		if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9) {
-			// As IE9 is buggy with colspan and layout fixed if not all columns are defined least once
-			rm.write("<tr style=\"visibility:hidden;\">");
-			for ( i = 0; i < iColumns; i++) {
-				rm.write("<td style=\"visibility:hidden; padding:0; height: 0;\"></td>");
-			}
-			if (bSeparatorColumn) {
-				rm.write("<td style=\"visibility:hidden; padding:0; height: 0;\"></td>");
-			}
-			rm.write("</tr>");
-		}
-
 		rm.write("</tbody></table>");
 
 	};

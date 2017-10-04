@@ -1289,57 +1289,59 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 /* ==========================================================================
    Documentation Page Header styles
   ========================================================================== */
-.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderText {
+
+.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading {
 	position: absolute;
 	padding-left: 2rem;
-	left: 0rem;
+	left: 0;
+	top: 2.5rem;
+	margin-left: -0.2rem;
+}
+
+.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMText {
 	font-family: Arial;
+	font-size: 3rem;
 	color: #fff;
 	text-shadow: 0 0 0.125rem #000;
 }
 
-.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
-	top: 2.5rem;
-	font-size: 3rem;
-	margin-left: -0.2rem;
-}
-
-.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderSubText {
-	top: 6.25rem;
-	font-size: 1.25rem;
-	font-weight: normal;
+.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMBtn {
+	margin-top: 1rem;
 }
 
 /*SMALL*/
 @media (max-width: 64rem) {
-	.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading {
 		top: 1.25rem;
-		font-size: 1.625rem;
 		padding-left: 1rem;
 		margin-left: -0.0625rem;
 	}
 
-	.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderSubText {
-		top: 3.125rem;
-		font-size: 0.875rem;
-		padding-left: 1rem;
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMText {
+		font-size: 1.625rem;
+	}
+
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMBtn {
+		margin-top: 0.5rem;
 	}
 }
 
 /*XTRA LARGE*/
 @media (min-width: 90rem) {
-	.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading {
 		top: 2.5rem;
-		font-size: 4rem;
 		padding-left: 3rem;
 	}
 
-	.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderSubText {
-		top: 6.875rem;
-		font-size: 2rem;
-		padding-left: 3rem;
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMText {
+		font-size: 4rem;
+	}
+
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMBtn {
+		margin-top: 1rem;
 	}
 }
+
 /* ==========================================================================
    Explored Page Header styles
   ========================================================================== */
@@ -1446,6 +1448,40 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 	.sapUiDemokit .sapMText.sapUiDocumentationApiHeaderSubText {
 		top: 6.875rem;
 		font-size: 2rem;
+		padding-left: 3rem;
+	}
+}
+
+/* ==========================================================================
+   Tools Page Header styles
+  ========================================================================== */
+.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
+	top: 2.5rem;
+	left: 0;
+	font-size: 3rem;
+	margin-left: -0.2rem;
+	position: absolute;
+	padding-left: 2rem;
+	font-family: Arial;
+	color: #ffffff;
+	text-shadow: 0 0 0.125rem #000000;
+}
+
+/*SMALL*/
+@media (max-width: 64rem) {
+	.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
+		top: 1.25rem;
+		font-size: 1.625rem;
+		padding-left: 1rem;
+		margin-left: -0.0625rem;
+	}
+}
+
+/*XTRA LARGE*/
+@media (min-width: 90rem) {
+	.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
+		top: 2.5rem;
+		font-size: 4rem;
 		padding-left: 3rem;
 	}
 }

@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 	var oEventProvider = new EventProvider(),
 		oInfoToMerge,
-		aCurrentViewPath;
+		sCurrentlyAdaptedTopNavigableViewId;
 
 
 	/**
@@ -240,12 +240,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			aViewBackButtons: {},
 			aChangeListeners: {}
 		};
-		aCurrentViewPath = [];
+		sCurrentlyAdaptedTopNavigableViewId = null;
 
 		this._doBFS([{
 			oNode: oComponentRoot,
 			oAdaptOptions: oAdaptOptions
 		}]);
+
+		if (this._getCurrentTopViewId()) {
+			this._fireViewChange(this._getCurrentTopViewId(), oAdaptOptions);
+		}
 	};
 
 	/**
@@ -268,9 +272,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			return;
 		}
 
-		var bIsNavigableView = oNode.getParent() && isInstanceOf(oNode.getParent(), "sap/m/NavContainer");
-		if (bIsNavigableView) {
-			aCurrentViewPath.push(oNode.getId());
+		var bIsTopNavigableView = this._isTopNavigableView(oNode);
+		if (bIsTopNavigableView) {
+			this._setAsCurrentTopViewId(oNode.getId());
 		}
 
 		var oNodeAdaptationResult = this._processNode(oNode, oAdaptOptions);
@@ -299,14 +303,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			}
 		});
 
-		this._doBFS(aQueue);
-
-		if (bIsNavigableView) {
-			aCurrentViewPath.pop();
-			if (aCurrentViewPath.length === 0) {
-				this._fireViewChange(oNode.getId(), oAdaptOptions);
-			}
-		}
+		this._doBFS(aQueue); // synchronous
 	};
 
 	Fiori20Adapter._processNode = function(oControl, oAdaptOptions) {
@@ -351,6 +348,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 							oNode: oControl.getComponentInstance(),
 							oAdaptOptions: oAdaptOptions
 						}]);
+						if (that._getCurrentTopViewId()) {
+							that._fireViewChange(that._getCurrentTopViewId(), oAdaptOptions);
+						}
 					}
 				};
 				oControl.addEventDelegate(oDelegate, this);
@@ -381,21 +381,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		var oOwnerViewId = this._getCurrentTopViewId();
 		var fnOnAdaptableContentChange = function(oEvent) {
 			var oChangedContent = oEvent.getParameter("adaptableContent");
-			var bIsPostAdaptation = (this._getCurrentTopViewId() === undefined);
-			if (bIsPostAdaptation) {
-				aCurrentViewPath.push(oOwnerViewId);
-				this._doBFS([{ // scan [for adaptable content] the newly added subtree
-					oNode: oChangedContent,
-					oAdaptOptions: oAdaptOptions
-				}]);
-				aCurrentViewPath.pop();
-				this._fireViewChange(oOwnerViewId, oAdaptOptions);
+			this._setAsCurrentTopViewId(oOwnerViewId); // restore the view context (so that any findings are saved as belonging to that view)
+			this._doBFS([{ // scan [for adaptable content] the newly added subtree
+				oNode: oChangedContent,
+				oAdaptOptions: oAdaptOptions
+			}]);
+			if (this._getCurrentTopViewId()) {
+				this._fireViewChange(this._getCurrentTopViewId(), oAdaptOptions);
 			}
 		}.bind(this);
 
 		oControl.attachEvent("_adaptableContentChange", fnOnAdaptableContentChange);
 
-		this._setHasListener(sKey);
+		this._setHasListener(sKey, fnOnAdaptableContentChange);
 	};
 
 	// attaches listener for changes in the nav container current page
@@ -410,14 +408,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			return;
 		}
 
-		oControl.attachNavigate(function(oEvent){
+		var fnOnNavigate = function(oEvent){
 			this._doBFS([{ // scan [for adaptable content] the newly added subtree
 				oNode: oEvent.getParameter("to"),
 				oAdaptOptions: oAdaptOptions
 			}]);
-		}.bind(this));
+			if (this._getCurrentTopViewId()) {
+				this._fireViewChange(this._getCurrentTopViewId(), oAdaptOptions);
+			}
+		}.bind(this);
 
-		this._setHasListener(sKey);
+		oControl.attachNavigate(fnOnNavigate);
+
+		this._setHasListener(sKey, fnOnNavigate);
 	};
 
 	Fiori20Adapter._attachModifyAggregation = function(oControl, sAggregationName, oAdaptOptions, oControlToRescan) {
@@ -435,16 +438,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 				if ((sMutation === "add") || (sMutation === "insert")) {
 
-					var bIsPostAdaptation = (this._getCurrentTopViewId() === undefined);
-					if (bIsPostAdaptation) {
-						aCurrentViewPath.push(oOwnerViewId);
+						this._setAsCurrentTopViewId(oOwnerViewId); // restore the view context (so that any findings are saved as belonging to that view)
 						this._doBFS([{ // scan [for adaptable content] the newly added subtree
 							oNode: oControlToRescan ? oControlToRescan : oChild,
 							oAdaptOptions: oAdaptOptions
 						}]);
-						aCurrentViewPath.pop();
-						this._fireViewChange(oOwnerViewId, oAdaptOptions);
-					}
+						if (this._getCurrentTopViewId()) {
+							this._fireViewChange(oOwnerViewId, oAdaptOptions);
+						}
 				}
 			}.bind(this),
 			oObserver = new ManagedObjectObserver(fnOnModifyAggregation);
@@ -453,7 +454,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			aggregations: [sAggregationName]
 		});
 
-		this._setHasListener(sKey, fnOnModifyAggregation);
+		this._setHasListener(sKey, oObserver);
 	};
 
 	Fiori20Adapter._getNodeChildren = function(oControl) {
@@ -565,10 +566,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	};
 
 	Fiori20Adapter._getCurrentTopViewId = function() {
+		return sCurrentlyAdaptedTopNavigableViewId;
+	};
 
-		if (aCurrentViewPath && (aCurrentViewPath.length > 0)) {
-			return aCurrentViewPath[0];
+	Fiori20Adapter._setAsCurrentTopViewId = function(sViewId) {
+		sCurrentlyAdaptedTopNavigableViewId = sViewId;
+	};
+
+	Fiori20Adapter._isTopNavigableView = function(oNode) {
+		var oParent = oNode.getParent();
+		return oParent && this._isTopmostNavContainer(oParent);
+	};
+
+	Fiori20Adapter._isTopmostNavContainer = function(oControl) {
+
+		var oCurrentTopNavContainer,
+			oNext = oControl;
+
+		while (oNext) {
+			if (isInstanceOf(oNext, "sap/m/NavContainer")) {
+				oCurrentTopNavContainer = oNext;
+			}
+			oNext = oNext.getParent();
 		}
+
+		return oCurrentTopNavContainer && (oCurrentTopNavContainer.getId() === oControl.getId());
 	};
 
 	Fiori20Adapter._adaptHeader = function(oHeader, oAdaptOptions) {

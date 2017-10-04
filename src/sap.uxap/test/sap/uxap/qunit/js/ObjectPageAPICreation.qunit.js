@@ -655,6 +655,28 @@
 		oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 	});
 
+	QUnit.test("_isClosestScrolledSection", function (assert) {
+
+		var oPage = this.oObjectPage,
+			oFirstSection = oPage.getSections()[0],
+			oThirdSection = oPage.getSections()[2],
+			done = assert.async(),
+			fnOnDomReady = function() {
+
+				//check
+				assert.strictEqual(oPage._isClosestScrolledSection(oFirstSection.getId()), true, "first section is currently scrolled");
+
+				oPage.setSelectedSection(oThirdSection.getId());
+
+				//check
+				setTimeout(function() {
+					assert.strictEqual(oPage._isClosestScrolledSection(oThirdSection.getId()), true, "third section is currently scrolled");
+					done();
+				}, 0);
+			};
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+	});
+
 	QUnit.module("ObjectPage API: sectionTitleLevel");
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is TitleLevel.Auto", function (assert) {
@@ -1010,6 +1032,60 @@
 		});
 	});
 
+
+	QUnit.module("ObjectPage API: sections removal", {
+		beforeEach: function () {
+			this.iDelay = 500;
+			this.oSelectedSection = oFactory.getSection(2, null, [
+				oFactory.getSubSection(2, [oFactory.getBlocks(), oFactory.getBlocks()], null)
+			]);
+
+			this.oOP = oFactory.getObjectPage();
+			this.oOP.addSection(oFactory.getSection(1, null, [
+					oFactory.getSubSection(1, [oFactory.getBlocks(), oFactory.getBlocks()], null)
+			])).addSection(this.oSelectedSection)
+				.setSelectedSection(this.oSelectedSection.getId());
+
+			this.oOP.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oOP.destroy();
+			this.oOP = null;
+			this.oSelectedSection.destroy();
+			this.oSelectedSection = null;
+		}
+	});
+
+	QUnit.test("test removeAllSections should reset selectedSection", function (assert) {
+		var oObjectPage = this.oOP,
+			done = assert.async();
+
+		// Act
+		oObjectPage.removeAllSections();
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			assert.equal(oObjectPage.getSections().length, 0, "There are no sections.");
+			assert.equal(oObjectPage.getSelectedSection(), null, "Selected section is null as there are no sections.");
+			done();
+		},  this.iDelay);
+	});
+
+	QUnit.test("test destroySections should reset selectedSection", function (assert) {
+		var oObjectPage = this.oOP,
+			done = assert.async();
+
+		// Act
+		oObjectPage.destroySections();
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			assert.equal(oObjectPage.getSections().length, 0, "There are no sections.");
+			assert.equal(oObjectPage.getSelectedSection(), null, "Selected section is null as there are no sections.");
+			done();
+		}, this.iDelay);
+	});
+
 	QUnit.module("ObjectPage API: invalidate");
 
 	QUnit.test("inactive section does not invalidate the objectPage", function (assert) {
@@ -1057,6 +1133,68 @@
 				"OP is not rerendered");
 			done();
 		}, 0);
+	});
+
+	QUnit.module("ObjectPage with ObjectPageDynamicHeaderTitle", {
+		beforeEach: function () {
+			this.NUMBER_OF_SECTIONS = 1;
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
+			this.oObjectPage.setHeaderTitle(new sap.uxap.ObjectPageDynamicHeaderTitle());
+			this.oObjectPage.addHeaderContent(new sap.m.Text({text: "test"}));
+			helpers.renderObject(this.oObjectPage);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("ObjectPage Header pinnable and not pinnable", function (assert) {
+
+		var oHeader = this.oObjectPage._getHeaderContent(),
+			oPinButton = oHeader.getAggregation("_pinButton");
+
+		this.oObjectPage.setHeaderContentPinnable(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oPinButton.$()[0],
+			"The ObjectPage Header Pin Button not rendered");
+
+		this.oObjectPage.setHeaderContentPinnable(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oPinButton.$()[0],
+			"The ObjectPage Header Pin Button rendered");
+
+		assert.equal(oPinButton.$().hasClass("sapUiHidden"), false,
+			"The ObjectPage Header Pin Button is visible");
+	});
+
+	QUnit.test("ObjectPage Header - expanding/collapsing by clicking the title", function (assert) {
+
+		var oObjectPage = this.oObjectPage,
+			oObjectPageTitle = oObjectPage.getHeaderTitle(),
+			oFakeEvent = {
+				srcControl: oObjectPageTitle
+			};
+
+		this.oObjectPage._bHeaderInTitleArea = true;
+
+		assert.equal(oObjectPage._bHeaderExpanded, true, "Initially the header is expanded");
+		assert.equal(oObjectPage.getToggleHeaderOnTitleClick(), true, "Initially toggleHeaderOnTitleClick = true");
+
+		oObjectPageTitle.ontap(oFakeEvent);
+
+		assert.equal(oObjectPage._bHeaderExpanded, false, "After one click, the header is collapsed");
+
+		oObjectPage.setToggleHeaderOnTitleClick(false);
+
+		oObjectPageTitle.ontap(oFakeEvent);
+		assert.equal(oObjectPage._bHeaderExpanded, false, "The header is still collapsed, because toggleHeaderOnTitleClick = false");
+
+		oObjectPage.setToggleHeaderOnTitleClick(true);
+
+		oObjectPageTitle.ontap(oFakeEvent);
+		assert.equal(oObjectPage._bHeaderExpanded, true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
 	});
 
 	function checkObjectExists(sSelector) {

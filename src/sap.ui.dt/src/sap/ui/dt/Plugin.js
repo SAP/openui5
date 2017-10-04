@@ -194,5 +194,112 @@ function(ManagedObject) {
 		this.callElementOverlayRegistrationMethods(oOverlay);
 	};
 
+	/**
+	 * Called to retrieve a context menu item for the plugin
+	 * @protected
+	 */
+	Plugin.prototype.getMenuItems = function(){};
+
+	/**
+	 * Retrieve the action name related to the plugin
+	 * Method to be overwritten by the different plugins
+	 *
+	 * @override
+	 * @public
+	 */
+	Plugin.prototype.getActionName = function(){
+	};
+
+	/**
+	 * Retrieve the action data from the Designtime Metadata
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay containing the Designtime Metadata
+	 * @return {object}          Returns an object with the action data from the Designtime Metadata
+	 */
+	Plugin.prototype.getAction = function(oOverlay){
+		return oOverlay.getDesignTimeMetadata() ?
+				oOverlay.getDesignTimeMetadata().getAction(this.getActionName(), oOverlay.getElementInstance())
+				: null;
+	};
+
+	/**
+	 * Asks the Design Time if multiple overlays are selected
+	 * Used by plugins which do not support multiple selection
+	 * @return {Boolean} Returns true if there is no multiple selection active
+	 */
+	Plugin.prototype.isMultiSelectionInactive = function() {
+		return this.getDesignTime().getSelection().length < 2;
+	};
+
+	/**
+	 * Retrieve the action text (for context menu item) from the Designtime Metadata
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay containing the Designtime Metadata
+	 * @param  {object} mAction The action data from the Designtime Metadata
+	 * @param  {string} sPluginId The ID of the plugin
+	 * @return {string}         Returns the text for the menu item
+	 */
+	Plugin.prototype.getActionText = function(oOverlay, mAction, sPluginId){
+		var vName = mAction.name;
+		if (vName){
+			if (typeof vName === "function") {
+				return vName.call(null, oOverlay.getElementInstance());
+			} else {
+				return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getLibraryText(vName) : "";
+			}
+		} else {
+			return sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText(sPluginId);
+		}
+	};
+
+	/**
+	 * Checks if the plugin is available for an overlay
+	 * @param  {sap.ui.dt.ElementOverlay}  oOverlay Overlay to be checked
+	 * @return {Boolean}          Returns true if the plugin is available
+	 */
+	Plugin.prototype.isAvailable = function(oOverlay){
+		return this._isEditableByPlugin(oOverlay);
+	};
+
+	/**
+	 * Executes the plugin action
+	 * Method to be overwritten by the different plugins
+	 * @param  {sap.ui.dt.ElementOverlay[]} aOverlays Target overlays for the action
+	 *
+	 * @override
+	 * @public
+	 */
+	Plugin.prototype.handler = function(aOverlays){};
+
+	/**
+	 * Checks if the plugin is enabled for an overlay
+	 * Method to be overwritten by the different plugins
+	 * @param  {sap.ui.dt.ElementOverlay}  oOverlay Overlay to be checked
+	 */
+	Plugin.prototype.isEnabled = function(oOverlay){};
+
+	/**
+	 * Generic function to return the menu items for a context menu.
+	 * The text for the item can be defined in the control Designtime Metadata;
+	 * otherwise the default text is used.
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay  The selected overlay
+	 * @param  {object} mPropertyBag Additional properties for the menu item
+	 * @param  {string} mPropertyBag.pluginId The ID of the plugin
+	 * @param  {number} mPropertyBag.rank The rank deciding the position of the action in the context menu
+	 * @return {object[]} Returns an array with the object containing the required data for a context menu item
+	 */
+	Plugin.prototype._getMenuItems = function(oOverlay, mPropertyBag){
+		var mAction = this.getAction(oOverlay);
+		if (!mAction || !this.isAvailable(oOverlay)){
+			return [];
+		}
+
+		return [{
+			id: mPropertyBag.pluginId,
+			text: this.getActionText(oOverlay, mAction, mPropertyBag.pluginId),
+			handler: this.handler.bind(this),
+			enabled: this.isEnabled.bind(this),
+			rank: mPropertyBag.rank
+		}];
+	};
+
 	return Plugin;
 }, /* bExport= */ true);

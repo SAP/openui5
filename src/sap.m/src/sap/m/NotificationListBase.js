@@ -331,6 +331,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
          * @public
          * @param {string} aggregationName The name of the aggregation.
          * @param {object} defaultObjectToBeCreated Default objects to be created.
+         * @returns {Array|NotificationListBase|null} Either the aggregation array in case of 0 through n-aggregations or in case of 0 to 1-aggregations <code>this</code> pointer or null.
          */
         NotificationListBase.prototype.getAggregation = function (aggregationName, defaultObjectToBeCreated) {
             if (aggregationName == 'buttons') {
@@ -371,6 +372,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
          * @param {object} object The object with the aggregation.
          * @param {int} index The index of the aggregation.
          * @param {boolean} suppressInvalidate Indicator for suppressing invalidation.
+         * @returns {sap.m.NotificationListBase} <code>this</code> NotificationListBase reference for chaining.
          */
         NotificationListBase.prototype.insertAggregation = function (aggregationName, object, index, suppressInvalidate) {
             if (aggregationName == 'buttons') {
@@ -390,7 +392,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
          * @param {string} aggregationName The name of the aggregation.
          * @param {object} object The object containing the aggregation.
          * @param {boolean} suppressInvalidate Indicator for suppressing invalidation.
-         * @returns {any} The added aggregation.
+         * @returns {sap.m.NotificationListBase} <code>this</code> NotificationListBase reference for chaining.
          */
         NotificationListBase.prototype.addAggregation = function (aggregationName, object, suppressInvalidate) {
             if (aggregationName == 'buttons') {
@@ -447,7 +449,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
          * @public
          * @param {string} aggregationName The name of the aggregation.
          * @param {boolean} suppressInvalidate Indicator for suppressing invalidation.
-         * @returns {any} The destroyed aggregations.
+         * @returns {sap.m.NotificationListBase} <code>this</code> NotificationListBase reference for chaining.
          */
         NotificationListBase.prototype.destroyAggregation = function (aggregationName, suppressInvalidate) {
             if (aggregationName == 'buttons') {

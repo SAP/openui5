@@ -849,7 +849,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// timeout regarding active state when scrolling
 		this._timeoutIdStart = jQuery.sap.delayedCall(100, this, function() {
 			this.setActive(true);
-			oEvent.setMarked();
 		});
 	};
 

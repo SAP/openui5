@@ -46,7 +46,7 @@ sap.ui.define([
 	 * @override
 	 */
 	Remove.prototype.registerElementOverlay = function(oOverlay) {
-		if (this.isRemoveEnabled(oOverlay)) {
+		if (this.isEnabled(oOverlay)) {
 			oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
 		}
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
@@ -66,7 +66,7 @@ sap.ui.define([
 			return false;
 		}
 
-		var oRemoveAction = this._getRemoveAction(oOverlay);
+		var oRemoveAction = this.getAction(oOverlay);
 		if (oRemoveAction && oRemoveAction.changeType) {
 			if (oRemoveAction.changeOnRelevantContainer) {
 				oElement = oOverlay.getRelevantContainer();
@@ -82,34 +82,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param	{sap.ui.dt.Overlay} oOverlay overlay object
-	 * @return {sap.ui.dt.DesignTimeMetadata} oDesignTimeMetadata
-	 * @private
-	 */
-	Remove.prototype._getRemoveAction = function(oOverlay) {
-		return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getAction("remove", oOverlay.getElementInstance()) : null;
-	};
-
-	/**
-	 * Checks if remove is available for oOverlay
-	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
-	 * @return {boolean} true if available
-	 * @public
-	 */
-	Remove.prototype.isRemoveAvailable = function(oOverlay) {
-		return this._isEditableByPlugin(oOverlay);
-	};
-
-	/**
 	 * Checks if remove is enabled for oOverlay
 	 *
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @return {boolean} true if enabled
 	 * @public
 	 */
-	Remove.prototype.isRemoveEnabled = function(oOverlay) {
-		var oAction = this._getRemoveAction(oOverlay);
+	Remove.prototype.isEnabled = function(oOverlay) {
+		var oAction = this.getAction(oOverlay);
 		if (!oAction) {
 			return false;
 		}
@@ -130,7 +110,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Remove.prototype._getConfirmationText = function(oOverlay) {
-		var oAction = this._getRemoveAction(oOverlay);
+		var oAction = this.getAction(oOverlay);
 		if (oAction && oAction.getConfirmationText) {
 			return oAction.getConfirmationText(oOverlay.getElementInstance());
 		}
@@ -143,7 +123,7 @@ sap.ui.define([
 	 * @override
 	 */
 	Remove.prototype.deregisterElementOverlay = function(oOverlay) {
-		if (this.isRemoveEnabled(oOverlay)) {
+		if (this.isEnabled(oOverlay)) {
 			oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
 		}
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
@@ -176,10 +156,10 @@ sap.ui.define([
 			aSelection = oDesignTime.getSelection();
 		}
 
-		aSelection = aSelection.filter(this.isRemoveEnabled, this);
+		aSelection = aSelection.filter(this.isEnabled, this);
 
 		if (aSelection.length > 0) {
-			this._handleRemove(aSelection);
+			this.handler(aSelection);
 		}
 	};
 
@@ -197,7 +177,7 @@ sap.ui.define([
 		}
 	};
 
-	Remove.prototype._handleRemove = function(aSelectedOverlays) {
+	Remove.prototype.handler = function(aSelectedOverlays) {
 		var aPromises = [];
 		var oCompositeCommand = new CompositeCommand();
 		var fnSetFocus = function (oOverlay) {
@@ -214,7 +194,7 @@ sap.ui.define([
 				var oCommand;
 				var oRemovedElement = oOverlay.getElementInstance();
 				var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-				var oRemoveAction = this._getRemoveAction(oOverlay);
+				var oRemoveAction = this.getAction(oOverlay);
 				var sVariantManagementReference = this.getVariantManagementReference(oOverlay, oRemoveAction);
 				var sConfirmationText = this._getConfirmationText(oOverlay);
 
@@ -271,6 +251,23 @@ sap.ui.define([
 			oNextOverlaySelection = OverlayRegistry.getOverlay(aSelectedOverlays[0].getRelevantContainer());
 		}
 		return oNextOverlaySelection;
+	};
+
+	/**
+	 * Retrieve the context menu item for the action.
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
+	 * @return {object[]}          Returns array containing the items with required data
+	 */
+	Remove.prototype.getMenuItems = function(oOverlay){
+		return this._getMenuItems(oOverlay, {pluginId : "CTX_REMOVE", rank : 60});
+	};
+
+	/**
+	 * Get the name of the action related to this plugin.
+	 * @return {string} Returns the action name
+	 */
+	Remove.prototype.getActionName = function(){
+		return "remove";
 	};
 
 	return Remove;

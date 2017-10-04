@@ -1393,6 +1393,8 @@
 
 	//*************************
 
+	jQuery.sap.require("sap.ui.model.json.JSONModel");
+
 	var oColumnSettingsModel = new sap.ui.model.json.JSONModel();
 
 	function createAndOpenColumnDialog(oTable, mConfig) {

@@ -7,14 +7,23 @@ jQuery.sap.require("sap.ui.thirdparty.sinon");
 jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-sap.ui.define([ "sap/ui/rta/command/CommandFactory",
-				"sap/ui/rta/command/Remove",
-				"sap/ui/dt/DesignTimeMetadata",
-				"sap/ui/core/Popup",
-				"sap/ui/fl/Utils",
-				"sap/m/Link",
-				"sap/ui/fl/registry/ChangeRegistry"],
-	function (CommandFactory, Remove, DesignTimeMetadata, Popup, Utils, Link, ChangeRegistry) {
+sap.ui.define([
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/Remove",
+	"sap/ui/dt/DesignTimeMetadata",
+	"sap/ui/core/Popup",
+	"sap/ui/fl/Utils",
+	"sap/m/Link",
+	"sap/ui/fl/registry/ChangeRegistry"
+], function (
+	CommandFactory,
+	Remove,
+	DesignTimeMetadata,
+	Popup,
+	Utils,
+	Link,
+	ChangeRegistry
+) {
 		"use strict";
 
 		QUnit.start();

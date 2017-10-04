@@ -396,6 +396,15 @@
 		return oMockServer;
 	};
 
+	var fnToMobileMode = function () {
+		jQuery("html").removeClass("sapUiMedia-Std-Desktop")
+			.removeClass("sapUiMedia-Std-Tablet")
+			.addClass("sapUiMedia-Std-Phone");
+		sap.ui.Device.system.desktop = false;
+		sap.ui.Device.system.tablet = false;
+		sap.ui.Device.system.phone = true;
+	};
+
 	QUnit.test("default values", function (assert) {
 
 		// system under test
@@ -5911,6 +5920,8 @@
 
 		var aSelects = [oSelect1, oSelect2, oSelect3, oSelect4, oSelect5, oSelect6, oSelect7, oSelect8];
 
+		var SelectType = sap.m.SelectType;
+
 		// arrange
 		oSelect1.placeAt("content");
 		oSelect2.placeAt("content");
@@ -5930,7 +5941,7 @@
 				return;
 			}
 
-			if (oSelect.getType() === sap.m.SelectType.Default) {
+			if (oSelect.getType() === SelectType.Default) {
 				assert.ok(oSelect.$().length, "The HTML div container html element exists");
 				assert.ok(oSelect.$("label").length, "The HTML label first-child element exists");
 				assert.ok(oSelect.$("arrow").length, "The HTML span element for the arrow exists");
@@ -5946,17 +5957,19 @@
 				assert.strictEqual(oShadowListDomRef.firstElementChild.id, "", "it should not render the IDs of the items in the shadow list");
 			}
 
-			if (oSelect.getType() === sap.m.SelectType.Default) {
+			if (oSelect.getType() === SelectType.Default) {
 				assert.ok(oSelect.$().hasClass(CSS_CLASS), 'The select container html element "must have" the CSS class "' + CSS_CLASS + '"');
 				assert.ok(oSelect.$("label").hasClass(CSS_CLASS + "Label"), 'The select first-child html label element "must have" the CSS class "' + CSS_CLASS + 'Label"');
 				assert.ok(oSelect.$("arrow").hasClass(CSS_CLASS + "Arrow"), 'The select html span element "must have" the CSS class "' + CSS_CLASS + 'Arrow"');
-			} else if (oSelect.getType() === sap.m.SelectType.IconOnly) {
+
+			} else if (oSelect.getType() === SelectType.IconOnly) {
+				assert.equal(oSelect.$().hasClass(CSS_CLASS + "MinWidth"), false, 'The select has not min-width when it`s of IconOnly type');
 				assert.ok(oSelect.$("icon").hasClass(CSS_CLASS + "Icon"), 'The select html span element must have the CSS class "' + CSS_CLASS + 'Icon"');
 			}
 
-			if (oSelect.getType() === sap.m.SelectType.Default) {
+			if (oSelect.getType() === SelectType.Default) {
 				assert.strictEqual(oSelect.getDomRef().getAttribute("role"), "combobox");
-			} else if (oSelect.getType() === sap.m.SelectType.IconOnly) {
+			} else if (oSelect.getType() === SelectType.IconOnly) {
 				assert.strictEqual(oSelect.getDomRef().getAttribute("role"), "button");
 			}
 
@@ -5966,6 +5979,57 @@
 			// cleanup
 			oSelect.destroy();
 		});
+	});
+
+	QUnit.module("Rendering - min width");
+
+	QUnit.test("min-width added/removed", function (assert) {
+		var oSel1 = new sap.m.Select({
+			width: "10%"
+		}),
+		oSel2 = new sap.m.Select({
+			width: "auto"
+		}),
+		oSel3 = new sap.m.Select({
+			autoAdjustWidth: true
+		}),
+		oSel4 = new sap.m.Select({
+				width: "10rem"
+		}),
+		oSel5 = new sap.m.Select({
+			width: "2px"
+		}),
+		oSel6 = new sap.m.Select({
+			width: "4rem",
+			autoAdjustWidth: true
+		});
+
+		// Arrange
+		oSel1.placeAt("content");
+		oSel2.placeAt("content");
+		oSel3.placeAt("content");
+		oSel4.placeAt("content");
+		oSel5.placeAt("content");
+		oSel6.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oSel1.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+		assert.equal(oSel2.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+		assert.equal(oSel3.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+
+		assert.equal(oSel4.$().hasClass("sapMSltMinWidth"), false, 'The select has no min-width');
+		assert.equal(oSel5.$().hasClass("sapMSltMinWidth"), false, 'The select has no min-width');
+		assert.equal(oSel6.$().hasClass("sapMSltMinWidth"), true,
+			'The select has min-width, the width is ignored if autoAdjustWidth is enabled');
+
+		// Clean up
+		oSel1.destroy();
+		oSel2.destroy();
+		oSel3.destroy();
+		oSel4.destroy();
+		oSel5.destroy();
+		oSel6.destroy();
 	});
 
 	QUnit.module("touchstart");
@@ -8495,5 +8559,60 @@
 
 		// cleanup
 		oSelect.destroy();
+	});
+
+	QUnit.module("Picker's header", {
+		beforeEach: function () {
+			fnToMobileMode(); // Enter mobile mode
+
+			this.oLabel = new sap.m.Label({
+				text: "Label's text",
+				labelFor: "theSelect"
+			}).placeAt("content");
+
+			this.oSelect = new sap.m.Select("theSelect", {
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				]
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSelect.destroy();
+			this.oLabel.destroy();
+		}
+	});
+
+	QUnit.test("Text of the picker's title", 2, function(assert) {
+
+		var fnDone = assert.async(),
+			oDialog = this.oSelect.getAggregation("picker");
+
+		oDialog.attachBeforeOpen(function () {
+			// Checks the picker title after opening the dialog, since the title is updated in beforeOpen
+			assert.strictEqual(this.oSelect._getPickerTitle().getText(), this.oLabel.getText(), "The title of the picker is the same as the label referencing the Select");
+
+			fnDone();
+		}.bind(this));
+
+		// Checks the picker title before opening (the default one)
+		assert.strictEqual(this.oSelect._getPickerTitle().getText(), 'Select', "The default value of the picker's title");
+
+		// Open the Select, in order for the title to be updated.
+		this.oSelect.open();
 	});
 }());

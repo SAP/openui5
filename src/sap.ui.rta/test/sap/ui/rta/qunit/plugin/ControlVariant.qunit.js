@@ -342,4 +342,112 @@ sap.ui.require([
 				done();
 			});
 		});
+
+		QUnit.test("when retrieving the context menu items", function(assert){
+			var bDuplicateAvailable = true;
+
+			// Rename
+			sandbox.stub(this.oControlVariantPlugin, "isVariantRenameAvailable", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'available' function calls isVariantRenameAvailable with the correct overlay");
+				return true;
+			}.bind(this));
+			sandbox.stub(this.oControlVariantPlugin, "renameVariant", function(){
+				assert.ok(true, "the 'handler' function calls the renameVariant method");
+			});
+			sandbox.stub(this.oControlVariantPlugin, "isVariantRenameEnabled", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isVariantRenameEnabled with the correct overlay");
+			}.bind(this));
+
+			// Duplicate
+			sandbox.stub(this.oControlVariantPlugin, "isVariantDuplicateAvailable", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'available' function calls isVariantDuplicateAvailable with the correct overlay");
+				return bDuplicateAvailable;
+			}.bind(this));
+			sandbox.stub(this.oControlVariantPlugin, "duplicateVariant", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'handler' function calls duplicateVariant with the correct overlay");
+			}.bind(this));
+			sandbox.stub(this.oControlVariantPlugin, "isVariantDuplicateEnabled", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isVariantDuplicateEnabled with the correct overlay");
+			}.bind(this));
+
+			// Configure
+			sandbox.stub(this.oControlVariantPlugin, "isVariantConfigureAvailable", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'available' function calls isVariantConfigureAvailable with the correct overlay");
+				return true;
+			}.bind(this));
+			sandbox.stub(this.oControlVariantPlugin, "configureVariants", function(){
+				assert.ok(true, "the 'handler' function calls the configureVariants method");
+			});
+			sandbox.stub(this.oControlVariantPlugin, "isVariantConfigureEnabled", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isVariantConfigureEnabled with the correct overlay");
+			}.bind(this));
+
+			// Switch SubMenu
+			var oItem = {
+				data : function(){
+					return {
+						targetOverlay : "dummyOverlay",
+						key : "dummyKey",
+						current : "dummyCurrent"
+					};
+				}
+			};
+			var sVariantModelName = '$FlexVariants';
+			this.oButtonOverlay.getVariantManagement = function(){
+				return "dummyManagementReferenceId";
+			};
+			var oModel = {
+				getData : function() {
+					return {
+						dummyManagementReferenceId : {
+							currentVariant : "dummyCurrentVariant",
+							variants : "dummyVariants"
+						}
+					};
+				}
+			};
+			sandbox.stub(this.oControlVariantPlugin, "isVariantSwitchAvailable", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'available' function calls isVariantSwitchAvailable with the correct overlay");
+				return true;
+			}.bind(this));
+			sandbox.stub(this.oControlVariantPlugin, "switchVariant", function(oTargetOverlay, sNewVariantKey, sCurrentVariantKey){
+				assert.equal(oTargetOverlay, "dummyOverlay", "the 'handler' function calls the switchVariant method with the correct oTargetOverlay");
+				assert.equal(sNewVariantKey, "dummyKey", "the 'handler' function calls the switchVariant method with the correct sNewVariantKey");
+				assert.equal(sCurrentVariantKey, "dummyCurrent", "the 'handler' function calls the switchVariant method with the correct sCurrentVariantKey");
+			});
+			sandbox.stub(this.oControlVariantPlugin, "isVariantSwitchEnabled", function(oOverlay){
+				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isVariantSwitchEnabled with the correct overlay");
+			}.bind(this));
+
+			var aMenuItems = this.oControlVariantPlugin.getMenuItems(this.oButtonOverlay);
+
+			assert.equal(aMenuItems[0].id, "CTX_VARIANT_RENAME", "there is an entry for rename variant");
+			assert.equal(aMenuItems[0].rank, 210, "and the entry has the correct rank");
+			aMenuItems[0].handler([this.oButtonOverlay]);
+			aMenuItems[0].enabled(this.oButtonOverlay);
+			assert.equal(aMenuItems[1].id, "CTX_VARIANT_DUPLICATE", "there is an entry for duplicate variant");
+			assert.equal(aMenuItems[1].rank, 220, "and the entry has the correct rank");
+			aMenuItems[1].handler([this.oButtonOverlay]);
+			aMenuItems[1].enabled(this.oButtonOverlay);
+			assert.equal(aMenuItems[2].id, "CTX_VARIANT_CONFIGURE", "there is an entry for configure variant");
+			assert.equal(aMenuItems[2].rank, 230, "and the entry has the correct rank");
+			aMenuItems[2].handler([this.oButtonOverlay]);
+			aMenuItems[2].enabled(this.oButtonOverlay);
+			assert.equal(aMenuItems[2].startSection, true, "the configure variant starts a new section on the menu");
+
+			assert.equal(aMenuItems[3].id, "CTX_VARIANT_SWITCH_SUBMENU", "there is a submenu for switch variant");
+			assert.equal(aMenuItems[3].rank, 240, "and the entry has the correct rank");
+			assert.equal(aMenuItems[3].submenu.id, "{" + sVariantModelName + ">key}", "the submenu id is correct");
+			assert.equal(aMenuItems[3].submenu.text, "{" + sVariantModelName + ">title}", "the submenu text is correct");
+			assert.equal(aMenuItems[3].submenu.model, sVariantModelName, "the submenu model is correct");
+			assert.equal(aMenuItems[3].submenu.current(this.oButtonOverlay, oModel), "dummyCurrentVariant", "the 'current' function returns the correct variant");
+			assert.equal(aMenuItems[3].submenu.items(this.oButtonOverlay, oModel), "dummyVariants", "the 'items' function returns the correct variants");
+			aMenuItems[3].handler([this.oButtonOverlay], oItem);
+			aMenuItems[3].enabled(this.oButtonOverlay);
+
+			bDuplicateAvailable = false;
+			assert.equal(this.oControlVariantPlugin.getMenuItems(this.oButtonOverlay).length,
+				3,
+				"then if e.g. duplicate variant is not available, its menu item is not returned");
+		});
 	});

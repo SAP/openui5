@@ -119,7 +119,10 @@ sap.ui.define([
 	});
 
 	MultiEditField.prototype.init = function() {
-		MultiEditField.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		if (!MultiEditField.prototype._oRb) {
+			MultiEditField.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		}
+
 		this._getKeepAll = jQuery.sap.getter(new Item({
 			key: "keep",
 			text: this._oRb.getText("MULTI_EDIT_KEEP_TEXT")
@@ -146,6 +149,11 @@ sap.ui.define([
 		} else {
 			this.removeAggregation("items", this._getValueHelp(), true);
 		}
+
+		var oSelectedItem = this.getSelectedItem();
+		if (oSelectedItem) {
+			this.byId("select").setSelectedKey(oSelectedItem.getKey());
+		}
 	};
 
 	MultiEditField.prototype.setSelectedItem = function(oSelectedItem) {
@@ -162,7 +170,11 @@ sap.ui.define([
 		this._getKeepAll().destroy();
 		this._getBlank().destroy();
 		this._getValueHelp().destroy();
-		this.byId("itemTemplate").destroy();
+
+		var oItemTemplate = this.byId("itemTemplate");
+		if (oItemTemplate) {
+			oItemTemplate.destroy();
+		}
 	};
 
 	/**
@@ -224,6 +236,7 @@ sap.ui.define([
 		} else if (oItem === this._getValueHelp()) {
 			this.fireEvent("_valueHelpRequest");
 		}
+		this.setProperty("selectedItem", oItem, true);
 	};
 
 	/**
@@ -246,7 +259,17 @@ sap.ui.define([
 	 * @private
 	 */
 	MultiEditField.prototype._getInternalDomRef = function() {
-		return this.byId("select").getDomRef();
+		var oSelect = this.byId("select");
+		return oSelect && oSelect.getDomRef();
+	};
+
+	/**
+	 * Gets the UI area of the internal Select control.
+	 * @returns {sap.ui.core.UIArea} The UI area of the internal Select control.
+	 * @private
+	 */
+	MultiEditField.prototype._getInternalUIArea = function() {
+		return this.byId("select").getUIArea();
 	};
 
 	return MultiEditField;

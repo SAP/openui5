@@ -66,7 +66,7 @@
 							<Label text="m.DatePicker"/>
 						</table:label>
 						<table:template>
-							<DatePicker value="{birthdayDate}"/>
+							<DatePicker dateValue="{birthdayDate}"/>
 						</table:template>
 					</table:Column>
 					<table:Column width="150px">
@@ -151,7 +151,7 @@
 							<Label text="m.RatingIndicator"/>
 						</table:label>
 						<table:template>
-							<RatingIndicator percentValue="{path: 'lastName', formatter: '.getRating'}"/>
+							<RatingIndicator value="{path: 'lastName', formatter: '.getRating'}"/>
 						</table:template>
 					</table:Column>
 				</table:columns>
@@ -175,7 +175,7 @@
 							targetElement="treetable"/>
 				</table:dragDropConfig>
 			</table:Table>
-			<ToolBarSpacer width="1rem"/>
+			<ToolbarSpacer width="1rem"/>
 			<table:TreeTable
 					id="treetable"
 					title="TreeTable - Reorder rows and drag to Table"

@@ -93,6 +93,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.ui.layout.Splitter": {
+					"moveControls": "default",
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.ui.layout.VerticalLayout": {
 					"moveControls": "default",
 					"hideControl": "default",

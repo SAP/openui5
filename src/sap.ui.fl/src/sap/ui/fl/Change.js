@@ -49,13 +49,6 @@ sap.ui.define([
 				state : {
 					type: "string"
 				}
-			},
-			events : {
-				changeApplied : {
-					parameters: {
-						error : {type: "object"}
-					}
-				}
 			}
 		}
 	});

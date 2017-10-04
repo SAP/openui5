@@ -113,7 +113,8 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 			 * @since 1.15.0
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
-		}
+		},
+		designTime: true
 	}});
 
 	/**

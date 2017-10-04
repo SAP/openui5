@@ -138,7 +138,16 @@ sap.ui.define([
 							var aContexts = oBinding.getContexts();
 							for (var i = 0; i < aContexts.length; i++) {
 								var oObject = aContexts[i].getProperty();
-								registerForwardedElement(this, oObject);
+								if (!oObject.hasBeenForwardedTo) {
+									oObject.hasBeenForwardedTo = {};
+								}
+								// notice that we allow for forwarding of a child to several parents
+								// - we assume that the control oObject was last forwarded to is the
+								// 'final' parent
+								if (!oObject.hasBeenForwardedTo[this.getId()]) {
+									registerForwardedElement(this, oObject);
+									oObject.hasBeenForwardedTo[this.getId()] = true;
+								}
 								aResult.push(oObject);
 							}
 

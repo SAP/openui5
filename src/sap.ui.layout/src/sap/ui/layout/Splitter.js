@@ -90,7 +90,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 					newSizes : {type : "int[]"}
 				}
 			}
-		}
+		},
+		designTime : true
 	}});
 
 	// "Hidden" resource bundle instance

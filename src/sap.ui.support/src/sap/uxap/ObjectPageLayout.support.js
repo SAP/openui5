@@ -4,8 +4,8 @@
 /**
  * Defines support rules of the ObjectPageHeader control of sap.uxap library.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
-	function(jQuery, SupportLib) {
+sap.ui.define(["sap/ui/support/library"],
+	function(SupportLib) {
 		"use strict";
 
 		// shortcuts
@@ -14,20 +14,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 			Audiences = SupportLib.Audiences; // Control, Internal, Application
 
 
-		var aRules = [];
-
-		function createRule(oRuleDef) {
-			aRules.push(oRuleDef);
-		}
-
-
 		//**********************************************************
 		// Rule Definitions
 		//**********************************************************
 
 		// Rule checks if objectPage componentContainer height is set
-		createRule({
-			id : "objectPageComponentContainerHeight",
+		var oContainerHeightRule = {
+			id: "objectPageComponentContainerHeight",
 			audiences: [Audiences.Control],
 			categories: [Categories.Usability],
 			enabled: true,
@@ -45,30 +38,30 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 					aPages = oScope.getElementsByClassName("sap.uxap.ObjectPageLayout"),
 					aPageOwnerComponentIds = [],
 
-				getOwnerComponent = function (oControl) {
+					getOwnerComponent = function (oControl) {
 
-					var parent = oControl.getParent();
-					while (parent) {
-						if (parent instanceof sap.ui.core.Component) {
-							return parent;
-						} else {
-							parent = parent.getParent();
+						var parent = oControl.getParent();
+						while (parent) {
+							if (parent instanceof sap.ui.core.Component) {
+								return parent;
+							} else {
+								parent = parent.getParent();
+							}
 						}
-					}
-				},
-				isPageContainer = function(oComponentContainer) {
-					return (aPageOwnerComponentIds.indexOf(oComponentContainer.getComponent()) > -1);
-				},
-				getPageOwnerComponentId = function(oPage) {
-					var oComponent = getOwnerComponent(oPage);
-					return oComponent && oComponent.getId();
-				};
+					},
+					isPageContainer = function (oComponentContainer) {
+						return (aPageOwnerComponentIds.indexOf(oComponentContainer.getComponent()) > -1);
+					},
+					getPageOwnerComponentId = function (oPage) {
+						var oComponent = getOwnerComponent(oPage);
+						return oComponent && oComponent.getId();
+					};
 
 
 				aPageOwnerComponentIds = aPages.map(getPageOwnerComponentId);
 
 				aComponentContainers
-					.forEach(function(oComponentContainer) {
+					.forEach(function (oComponentContainer) {
 
 						if (isPageContainer(oComponentContainer) && (oComponentContainer.getHeight() !== "100%")) {
 							var sElementId = oComponentContainer.getId(),
@@ -84,14 +77,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 						}
 					});
 			}
-		});
-
-		return {
-			addRulesToRuleset: function(oRuleset) {
-				jQuery.each(aRules, function(idx, oRuleDef){
-					oRuleset.addRule(oRuleDef);
-				});
-			}
 		};
+
+		return oContainerHeightRule;
 
 	}, true);

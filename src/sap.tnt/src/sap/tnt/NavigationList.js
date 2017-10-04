@@ -199,6 +199,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 
 		/**
 		 * Gets the currently selected <code>NavigationListItem</code>.
+		 * @public
 		 * @return {sap.tnt.NavigationListItem|null} The selected item or null if nothing is selected
 		 */
 		NavigationList.prototype.getSelectedItem = function() {
@@ -213,6 +214,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 
 		/**
 		 * Sets the association for selectedItem. Set <code>null</code> to deselect.
+		 * @public
 		 * @param {string|sap.tnt.NavigationListItem} selectedItem The control to be set as selected
 		 * @param {boolean} suppressInvalidate If true, the managed object's invalidate method is not called
 		 * @return {sap.tnt.NavigationList|null} The <code>selectedItem</code> association
@@ -269,7 +271,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 				verticalScrolling: true,
 				initialFocus: selectedItem,
 				afterClose: function () {
-					that._popover = null;
+					if (that._popover) {
+						that._popover.destroy();
+						that._popover = null;
+					}
 				},
 				content: list,
 				ariaLabelledBy: [NavigationList._sAriaPopupLabelId]

@@ -331,7 +331,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
 				that._bInteractiveExpand = true;
 				that.setExpanded(!that.getExpanded());
 			}
-		}).addStyleClass("sapMPanelExpandableIcon sapUiIconNoOutline");
+		}).addStyleClass("sapMPanelExpandableIcon");
 	};
 
 	Panel.prototype._getIcon = function () {

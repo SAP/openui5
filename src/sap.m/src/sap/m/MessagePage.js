@@ -83,6 +83,12 @@ sap.ui.define([
 				 */
 				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : "sap-icon://documents" },
 				/**
+				 * Defines the alt attribute of the icon displayed on the <code>MessagePage</code>.
+				 *
+				 * @since 1.52
+				 */
+				iconAlt : {type : "string", group : "Misc", defaultValue : null },
+				/**
 				 * Determines the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 */
 				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
@@ -228,6 +234,14 @@ sap.ui.define([
 			return this;
 		};
 
+		MessagePage.prototype.setIconAlt = function(sIconAlt) {
+			this.setProperty("iconAlt", sIconAlt, true); // no re-rendering
+			if (this._oIconControl) {
+				this._oIconControl.setAlt(sIconAlt);
+			}
+			return this;
+		};
+
 		MessagePage.prototype._addPageContent = function() {
 			this.getAggregation("_page").addContent(this._getMessagePageContent());
 		};
@@ -259,7 +273,8 @@ sap.ui.define([
 				src: this.getIcon(),
 				height: "8rem",
 				useIconTooltip: true,
-				decorative: false
+				decorative: false,
+				alt: this.getIconAlt()
 			}, Image).addStyleClass("sapMMessagePageIcon");
 
 			return this._oIconControl;

@@ -28,6 +28,7 @@ sap.ui.define([
 				this.router.getRoute("code").attachPatternMatched(this.onRouteMatched, this);
 				this.router.getRoute("code_file").attachPatternMatched(this.onRouteMatched, this);
 				this._codeCache = {};
+				this._aFilesAvailable = [];
 
 				this._bFirstLoad = true;
 			},
@@ -55,7 +56,7 @@ sap.ui.define([
 				// retrieve sample object
 				var oSample = oData.samples[this._sId];
 				if (!oSample) {
-					this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false, { path: this._sId });
+					this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 					return;
 				}
 
@@ -100,6 +101,7 @@ sap.ui.define([
 								raw : sContent,
 								code : this._convertCodeToHtml(sContent)
 							});
+							this._aFilesAvailable.push(sFile);
 						}
 					}
 				} else {
@@ -111,6 +113,11 @@ sap.ui.define([
 
 				if (sFileName === "undefined") {
 					sFileName = this._getInitialFileName();
+				}
+
+				if (this._aFilesAvailable.indexOf(sFileName) === -1) {
+					this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+					return;
 				}
 
 				// update <code>CodeEditor</code> content and the selected tab

@@ -327,7 +327,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 
 		var oNextItem = this._getNextFocusItem(sPosition);
 		oNextItem.focus();
-		if (bSelect && !oNextItem.getSelected()) {
+		if (bSelect && !oNextItem.getSelected() && oNextItem.getEditable() && oNextItem.getEnabled()) {
 			oNextItem.setSelected(true);
 
 			setTimeout(function() {

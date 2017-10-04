@@ -118,14 +118,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 		this.setProperty("expandable", bExpandable);
 
 		if (bExpandable) {
-			var that = this;
 			if (!this._oExpandButton) {
 				if (!this._bExpandButtonRequired) {
 					this._bExpandButtonRequired = true;
 					sap.ui.layout.form.FormHelper.createButton.call(this, this.getId() + "--Exp", _handleExpButtonPress, _expandButtonCreated);
 				}
 			} else {
-				_setExpanderIcon(that);
+				_setExpanderIcon.call(this);
 			}
 		}
 
@@ -138,7 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 		if (!this._bIsBeingDestroyed) {
 			this._oExpandButton = oButton;
 			this.setAggregation("_expandButton", this._oExpandButton); // invalidate because this could happen after Form is already rendered
-			_setExpanderIcon(this);
+			_setExpanderIcon.call(this);
 		}
 
 	}
@@ -147,12 +146,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 
 		this.setProperty("expanded", bExpanded, true); // no automatic rerendering
 
-		var that = this;
-		_setExpanderIcon(that);
+		_setExpanderIcon.call(this);
 
 		var oForm = this.getParent();
 		if (oForm && oForm.toggleContainerExpanded) {
-			oForm.toggleContainerExpanded(that);
+			oForm.toggleContainerExpanded(this);
 		}
 
 		return this;
@@ -287,31 +285,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 
 	};
 
-	function _setExpanderIcon(oContainer){
+	function _setExpanderIcon(){
 
-		if (!oContainer._oExpandButton) {
+		if (!this._oExpandButton) {
 			return;
 		}
 
 		var sIcon, sIconHovered, sText, sTooltip;
 
-		if (oContainer.getExpanded()) {
+		if (this.getExpanded()) {
 			sIcon = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerColImageURL');
 			sIconHovered = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerColImageDownURL');
 			sText = "-";
-			sTooltip = oContainer._rb.getText("FORM_COLLAPSE");
+			sTooltip = this._rb.getText("FORM_COLLAPSE");
 		} else {
 			sIcon = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerExpImageURL');
 			sIconHovered = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerExpImageDownURL');
 			sText = "+";
-			sTooltip = oContainer._rb.getText("FORM_EXPAND");
+			sTooltip = this._rb.getText("FORM_EXPAND");
 		}
 
 		if (sIcon) {
 			sText = "";
 		}
 
-		sap.ui.layout.form.FormHelper.setButtonContent(oContainer._oExpandButton, sText, sTooltip, sIcon, sIconHovered);
+		sap.ui.layout.form.FormHelper.setButtonContent(this._oExpandButton, sText, sTooltip, sIcon, sIconHovered);
 
 	}
 

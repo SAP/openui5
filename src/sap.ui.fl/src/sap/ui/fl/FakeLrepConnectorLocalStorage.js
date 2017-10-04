@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
-	"sap/ui/fl/ChangePersistenceFactory"
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Utils"
 	], function(
-	FakeLrepLocalStorage, FakeLrepConnector, LrepConnector, Cache, ChangePersistenceFactory) {
+	FakeLrepLocalStorage, FakeLrepConnector, LrepConnector, Cache, ChangePersistenceFactory, Utils) {
 	"use strict";
 
 	FakeLrepConnectorLocalStorage._oBackendInstances = {};
@@ -147,6 +148,7 @@ sap.ui.define([
 
 			mResult = this._createChangesMap(mResult, aVariants);
 			mResult = this._sortChanges(mResult, aFilteredChanges);
+			mResult = this._assignVariantReferenceChanges(mResult);
 
 			mResult.changes.contexts = [];
 			mResult.changes.settings = this.mSettings;
@@ -177,6 +179,7 @@ sap.ui.define([
 		var oVariantManagementSection = {};
 		aVariants.forEach(function(oVariant) {
 			oVariantManagementSection = mResult.changes.variantSection[oVariant.variantManagementReference];
+			//if VariantManagement doesn't exist
 			if (!oVariantManagementSection) {
 				oVariantManagementSection = {
 					variants : [{
@@ -187,6 +190,7 @@ sap.ui.define([
 				};
 				mResult.changes.variantSection[oVariant.variantManagementReference] = oVariantManagementSection;
 			} else {
+				//if not a duplicate variant
 				if (!fnCheckForDuplicates(oVariantManagementSection.variants, oVariant)) {
 					oVariantManagementSection.variants.push({
 						content: oVariant,
@@ -197,6 +201,38 @@ sap.ui.define([
 		});
 
 		return mResult;
+	};
+
+	FakeLrepConnectorLocalStorage.prototype._assignVariantReferenceChanges = function(mResult) {
+		Object.keys(mResult.changes.variantSection).forEach( function (sVariantManagementReference) {
+			var aVariants = mResult.changes.variantSection[sVariantManagementReference].variants;
+			aVariants.forEach(function (oVariant) {
+				var sVariantReference = oVariant.content.variantReference;
+				var aExistingChanges = oVariant.changes;
+				if (sVariantReference) {
+					//Referenced changes should be applied first
+					aExistingChanges = this._getReferencedChanges(mResult, oVariant).concat(aExistingChanges);
+				}
+				oVariant.changes = aExistingChanges;
+			}.bind(this));
+		}.bind(this));
+		return mResult;
+	};
+
+	FakeLrepConnectorLocalStorage.prototype._getReferencedChanges = function(mResult, oCurrentVariant) {
+		var aReferencedChanges = [];
+		mResult.changes.variantSection[oCurrentVariant.content.variantManagementReference].variants.some( function (oVariant) {
+			if (oCurrentVariant.content.variantReference === oVariant.content.fileName) {
+				aReferencedChanges = oVariant.changes.filter( function (oReferencedChange) {
+					return Utils.isLayerAboveCurrentLayer(oReferencedChange.layer) === -1;
+				});
+				if (oVariant.content.variantReference) {
+					aReferencedChanges = aReferencedChanges.concat(this._getReferencedChanges(mResult, oVariant));
+				}
+				return true;
+			}
+		}.bind(this));
+		return aReferencedChanges;
 	};
 
 	FakeLrepConnectorLocalStorage.prototype._sortChanges = function(mResult, aChanges) {

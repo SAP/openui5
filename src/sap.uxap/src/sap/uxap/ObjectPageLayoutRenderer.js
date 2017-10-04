@@ -19,6 +19,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 				bIsHeaderContentVisible = oControl.getHeaderContent() && oControl.getHeaderContent().length > 0 && oControl.getShowHeaderContent(),
 				bIsTitleInHeaderContent = oControl.getShowTitleInHeaderContent() && oControl.getShowHeaderContent(),
 				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent,
+				bTitleClickable = oControl.getToggleHeaderOnTitleClick(),
 				sTitleText;
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
@@ -32,12 +33,15 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 				oRm.writeAttributeEscaped("aria-label", sTitleText);
 			}
 			oRm.addClass("sapUxAPObjectPageLayout");
+			if (bTitleClickable) {
+				oRm.addClass("sapUxAPObjectPageLayoutTitleClickEnabled");
+			}
 			oRm.writeClasses();
 			oRm.addStyle("height", oControl.getHeight());
 			oRm.writeStyles();
 			oRm.write(">");
 
-            // custom scrollbar
+			// custom scrollbar
 			if (sap.ui.Device.system.desktop) {
 				oRm.renderControl(oControl._getCustomScrollBar().addStyleClass("sapUxAPObjectPageCustomScroller"));
 			}
@@ -55,7 +59,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			}
 
 			// Sticky Header Content
-			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && oControl._bPersistHeaderInTitleArea, "-stickyHeaderContent");
+			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && oControl._bHeaderInTitleArea, "-stickyHeaderContent");
 
 			// Sticky anchorBar placeholder
 			oRm.write("<div ");
@@ -66,7 +70,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write(">");
 
 			// if the content is expanded render bars outside the scrolling div
-			this._renderAnchorBar(oRm, oControl, oAnchorBar, oControl._bPersistHeaderInTitleArea);
+			this._renderAnchorBar(oRm, oControl, oAnchorBar, oControl._bHeaderInTitleArea);
 
 			oRm.write("</div>");
 			oRm.write("</header>");
@@ -89,7 +93,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write(">");
 
 			// Header Content
-			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && !oControl._bPersistHeaderInTitleArea, "-headerContent",  true);
+			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && !oControl._bHeaderInTitleArea, "-headerContent",  true);
 
 			// Anchor Bar
 			oRm.write("<section ");
@@ -101,7 +105,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.writeClasses();
 			oRm.write(">");
 
-			this._renderAnchorBar(oRm, oControl, oAnchorBar, !oControl._bPersistHeaderInTitleArea);
+			this._renderAnchorBar(oRm, oControl, oAnchorBar, !oControl._bHeaderInTitleArea);
 
 			oRm.write("</section>");
 
@@ -248,7 +252,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer._rerenderHeaderContentArea = function (oRm, oControl) {
-			var sHeaderContentDOMId = oControl._bPersistHeaderInTitleArea ? "stickyHeaderContent" : "headerContent",
+			var sHeaderContentDOMId = oControl._bHeaderInTitleArea ? "stickyHeaderContent" : "headerContent",
 			$headerContent;
 
 			this.renderHeaderContent(oRm, oControl);

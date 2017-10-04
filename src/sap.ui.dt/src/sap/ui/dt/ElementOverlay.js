@@ -45,9 +45,9 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 			// ---- control specific ----
 			library : "sap.ui.dt",
-			associations: {
+			associations : {
 				/**
-				 * Array of plugins, that set editable to true
+				 * Array of plugins that set editable to true
 				 */
 				editableByPlugins : {
 					type : "any[]",
@@ -85,7 +85,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 					defaultValue : false
 				},
 				/**
-				 * all overlays inside the relevant container within the same aggregations
+				 * All overlays inside the relevant container within the same aggregations
 				 */
 				relevantOverlays: {
 					type: "any[]",

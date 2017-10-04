@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button', './delegate/ValueStateMessage', 'sap/ui/core/message/MessageMixin', 'sap/ui/core/library', 'sap/ui/core/Item', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button, ValueStateMessage, MessageMixin, coreLibrary, Item, Device) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button', './Bar', './Title', './delegate/ValueStateMessage', 'sap/ui/core/message/MessageMixin', 'sap/ui/core/library', 'sap/ui/core/Item', 'sap/ui/Device', 'jquery.sap.keycodes'],
+	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button, Bar, Title, ValueStateMessage, MessageMixin, coreLibrary, Item, Device) {
 		"use strict";
 
 		// shortcut for sap.m.SelectListKeyboardNavigationMode
@@ -233,6 +233,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 					 */
 					picker: {
 						type: "sap.ui.core.PopupInterface",
+						multiple: false,
+						visibility: "hidden"
+					},
+
+					/**
+					 * Internal aggregation to hold the picker's header
+					 * @since 1.52
+					 */
+					_pickerHeader: {
+						type: "sap.m.Bar",
 						multiple: false,
 						visibility: "hidden"
 					}
@@ -738,25 +748,56 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			var that = this;
 			return new Dialog({
 				stretch: true,
-				showHeader: false,
-				buttons: [
-					this.createPickerCloseButton()
-				],
+				customHeader: this._getPickerHeader(),
 				beforeOpen: function() {
 					that.updatePickerHeaderTitle();
 				}
 			});
 		};
 
-		Select.prototype.createPickerCloseButton = function() {
-			var that = this;
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			return new Button({
-				text: oResourceBundle.getText("SELECT_CANCEL_BUTTON"),
-				press: function() {
-					that.close();
-				}
-			});
+		/**
+		 * Gets the picker header title.
+		 *
+		 * @returns {sap.m.Title | null} The title instance of the Picker
+		 * @private
+		 * @since 1.52
+		 */
+		Select.prototype._getPickerTitle = function() {
+			var oPicker = this.getPicker(),
+				oHeader = oPicker && oPicker.getCustomHeader();
+
+			if (oHeader) {
+				return oHeader.getContentMiddle()[0];
+			}
+
+			return null;
+		};
+
+		/**
+		 * Get's the Picker's header.
+		 *
+		 * @returns {sap.m.Bar} Picker's header
+		 * @private
+		 * @since 1.52
+		 */
+		Select.prototype._getPickerHeader = function() {
+			var sIconURI = IconPool.getIconURI("decline"),
+				oResourceBundle;
+
+			if (!this.getAggregation("_pickerHeader")) {
+				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				this.setAggregation("_pickerHeader", new Bar({
+					contentMiddle: new Title({
+						text: oResourceBundle.getText("SELECT_PICKER_TITLE_TEXT")
+					}),
+					contentRight: new Button({
+						icon: sIconURI,
+						press: this.close.bind(this)
+					})
+				}));
+			}
+
+			return this.getAggregation("_pickerHeader");
 		};
 
 		Select.prototype.updatePickerHeaderTitle = function() {
@@ -769,14 +810,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			var aLabels = this.getLabels();
 
 			if (aLabels.length) {
-				var oLabel = aLabels[0];
+				var oLabel = aLabels[0],
+					oPickerTitle = this._getPickerTitle();
 
 				if (oLabel && (typeof oLabel.getText === "function")) {
-					oPicker.setShowHeader(true);
-					oPicker.setTitle(oLabel.getText());
+					oPickerTitle && oPickerTitle.setText(oLabel.getText());
 				}
-			} else {
-				oPicker.setShowHeader(false);
 			}
 		};
 

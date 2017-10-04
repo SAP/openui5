@@ -104,4 +104,30 @@ sap.ui.define([
 		return sap.ui.view({viewName:"example.mvc.test",type:ViewType.JS, viewData:{test:"testdata"}});
 	}, true);
 
+	QUnit.test("Check for Controller and View Connection in createContent() before onInit() is called", function () {
+
+		// View definition
+		sap.ui.jsview("example.mvc.test_connection", {
+
+			getControllerName: function() {
+				return "example.mvc.test_connection";
+			},
+
+			createContent: function(oController) {
+				assert.ok(this.getController(), "Controller is connected.");
+				assert.ok(oController.getView(), "View is connected.");
+				return [];
+			}
+		});
+
+		// controller definition
+		sap.ui.controller("example.mvc.test_connection", {
+			onInit: function() {
+				assert.ok(true, "onInit is called.");
+			}
+		});
+
+		sap.ui.jsview("example.mvc.test_connection");
+	});
+
 });

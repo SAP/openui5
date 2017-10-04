@@ -699,14 +699,18 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.onSelectionChange = function(oControlEvent) {
 			var oItem = oControlEvent.getParameter("selectedItem"),
-				mParam = this.getChangeEventParams();
+				mParam = this.getChangeEventParams(),
+				bSelectedItemChanged = (oItem !== this.getSelectedItem());
 
 			this.setSelection(oItem);
 			this.fireSelectionChange({
 				selectedItem: this.getSelectedItem()
 			});
-			mParam.itemPressed = true;
-			this.onChange(null, mParam);
+
+			if (bSelectedItemChanged) {
+				mParam.itemPressed = true;
+				this.onChange(null, mParam);
+			}
 		};
 
 		/**
@@ -716,10 +720,18 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 * @since 1.32.4
 		 */
 		ComboBox.prototype.onItemPress = function(oControlEvent) {
-			var oItem = oControlEvent.getParameter("item");
-			var sText = oItem.getText();
+			var oItem = oControlEvent.getParameter("item"),
+				sText = oItem.getText(),
+				mParam = this.getChangeEventParams(),
+				bSelectedItemChanged = (oItem !== this.getSelectedItem());
 
 			this.updateDomValue(sText);
+
+			// if a highlighted item is pressed fire change event
+			if (this.getPickerType() === "Dropdown" && !bSelectedItemChanged) {
+				mParam.itemPressed = true;
+				this.onChange(null, mParam);
+			}
 
 			this.close();
 

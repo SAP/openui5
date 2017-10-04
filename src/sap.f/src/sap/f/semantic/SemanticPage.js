@@ -95,6 +95,7 @@ sap.ui.define([
 	* @public
 	* @since 1.46.0
 	* @alias sap.f.semantic.SemanticPage
+	* @see topic:47dc86847f7a426a8e557167cf523bda
 	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var SemanticPage = Control.extend("sap.f.semantic.SemanticPage", /** @lends sap.f.semantic.SemanticPage.prototype */ {

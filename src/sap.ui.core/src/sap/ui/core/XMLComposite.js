@@ -125,8 +125,10 @@ sap.ui.define([
 		};
 
 		oAttributesModel._navInMetadataContexts = function (sPath) {
-			var sRemainPath = sPath.replace("metadataContexts/", "");
+			var sRemainPath = sPath.replace("metadataContexts", "");
 			var sInnerPath, aPath = sRemainPath.split("/");
+
+			aPath.shift();
 
 			var oResult, vNode = mContexts["metadataContexts"].getObject();
 
@@ -153,6 +155,10 @@ sap.ui.define([
 			return sName;
 		};
 		mContexts[sName] = oAttributesModel.getContext("/");
+		if (mContexts["metadataContexts"]) {
+			//make attributes model available via metadataContexts
+			mContexts["metadataContexts"].oModel.setProperty("/" + sName,mContexts[sName]);
+		}
 	}
 
 	function addSingleContext(mContexts, oVisitor, oCtx, oMetadataContexts, sDefaultMetaModel) {

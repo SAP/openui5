@@ -29,7 +29,7 @@
 						visible="{=!${device>/system/phone}}"/>
 					<Text id="landingImageHeadline"
 						visible="false"
-						class="sapUiDocumentationDocumentationHeaderText sapUiDocumentationDocumentationHeaderTitleText"
+						class="sapUiDocumentationToolsHeaderText"
 						text="Tools"
 						width="100%"
 						textAlign="Left"/>

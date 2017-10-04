@@ -1429,7 +1429,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// store & init touch state
 		this._iActiveTouch = oTargetTouch.identifier;
 		this._iTouchStartPageX = oTargetTouch.pageX;
+		this._iTouchStartPageY = oTargetTouch.pageY;
 		this._iTouchDragX = 0;
+		this._iTouchDragY = 0;
 
 		var $target = jQuery(oEvent.target);
 
@@ -1467,7 +1469,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// sum up movement to determine in touchend event if selection should be executed
 		this._iTouchDragX += Math.abs(this._iTouchStartPageX - oTouch.pageX);
+		this._iTouchDragY += Math.abs(this._iTouchStartPageY - oTouch.pageY);
 		this._iTouchStartPageX = oTouch.pageX;
+		this._iTouchStartPageY = oTouch.pageY;
 	};
 
 	/**
@@ -1483,7 +1487,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		// suppress selection if there ware a drag (moved more than 5px on desktop or 20px on others)
-		if (this._scrollable && this._iTouchDragX > (Device.system.desktop ? 5 : 15)) {
+		var iMaxMove = Device.system.desktop ? 5 : 15;
+
+
+		if ((this._scrollable && this._iTouchDragX > iMaxMove) ||
+			this._iTouchDragY > iMaxMove) {
 			return;
 		}
 

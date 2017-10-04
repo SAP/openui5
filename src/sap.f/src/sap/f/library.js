@@ -112,6 +112,8 @@ sap.ui.define(["jquery.sap.global",
 	 * For all two-column layouts, this column is the <code>Mid</code> column, and for all three-column layouts - the <code>End</code> column,
 	 * even though the respective column may be hidden on desktop and tablet for that particular layout.
 	 *
+	 * For more information, see {@link topic:3b9f760da5b64adf8db7f95247879086 Types of Layout} in the documentation.
+	 *
 	 * @enum {string}
 	 * @public
 	 * @since 1.46

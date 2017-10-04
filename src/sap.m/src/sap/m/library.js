@@ -346,6 +346,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default",
 					"moveControls": "default"
 				},
+				"sap.m.IconTabBar": {
+					"moveControls": "default"
+				},
+				"sap.m.IconTabFilter": "sap/m/flexibility/IconTabFilter",
 				"sap.m.Image": {
 					"hideControl": "default",
 					"unhideControl": "default"

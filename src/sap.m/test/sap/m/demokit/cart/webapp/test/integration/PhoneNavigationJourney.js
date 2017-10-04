@@ -19,7 +19,7 @@ sap.ui.define([
 
 	opaTest("Should press back button and navigate to welcome view", function (Given, When, Then) {
 		// Actions
-		When.onTheProduct.iPressTheBackButton();
+		When.onTheCategory.iPressTheBackButtonInProduct();
 		// Assertions
 		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
 	});

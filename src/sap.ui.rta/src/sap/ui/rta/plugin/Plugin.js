@@ -99,16 +99,16 @@ function(
 		aOverlays.forEach(function(oOverlay) {
 			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 			// this means that getElementInstance is undefined when we get here via removeAggregation mutation
-			var isEditable = oOverlay.getElementInstance() && this._isEditable(oOverlay, mPropertyBag);
+			var vEditable = oOverlay.getElementInstance() && this._isEditable(oOverlay, mPropertyBag);
 
 			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
 			// for every other plugin isEditable should be a boolean.
-			if (isEditable !== undefined) {
-				if (typeof isEditable === "boolean") {
-					this._modifyPluginList(oOverlay, isEditable);
+			if (vEditable !== undefined) {
+				if (typeof vEditable === "boolean") {
+					this._modifyPluginList(oOverlay, vEditable);
 				} else {
-					this._modifyPluginList(oOverlay, isEditable["asChild"], false);
-					this._modifyPluginList(oOverlay, isEditable["asSibling"], true);
+					this._modifyPluginList(oOverlay, vEditable["asChild"], false);
+					this._modifyPluginList(oOverlay, vEditable["asSibling"], true);
 				}
 			}
 		}.bind(this));
@@ -272,4 +272,5 @@ function(
 	};
 
 	return BasePlugin;
+
 }, /* bExport= */ true);

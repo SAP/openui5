@@ -75,6 +75,13 @@ function () {
 		ON_ANALYZE_FINISH:          "ON_ANALYZE_FINISH",
 
 		/**
+		 * Posts information about the UI and it's iframe.
+		 * @type {string}
+		 * @const
+		 */
+		POST_UI_INFORMATION:  "POST_UI_INFORMATION",
+
+		/**
 		 * Verifies rule creation.
 		 * @type {string}
 		 * @const

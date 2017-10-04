@@ -6,115 +6,145 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/rta/appVariant/manageApps/webapp/model/models",
 	"sap/ui/rta/appVariant/Utils",
-	"sap/m/MessageBox"
-], function(jQuery, Controller, Model, ManageAppsUtils, MessageBox) {
+	"sap/m/MessageBox",
+	"sap/ui/rta/Utils",
+	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/rta/RuntimeAuthoring"
+], function(jQuery, Controller, Model, AppVariantOverviewUtils, MessageBox, RtaUtils, RtaAppVariantFeature, BusyIndicator, RuntimeAuthoring) {
 	"use strict";
 
-	var _oAdaptedAppProperties, sModulePath, oI18n;
+	var _sIdRunningApp, _oRootControlRunningApp, sModulePath, oI18n;
 	return Controller.extend("sap.ui.rta.appVariant.manageApps.webapp.controller.ManageApps", {
 		onInit: function() {
-			_oAdaptedAppProperties = this.getOwnerComponent().getAdaptedAppProperties();
-			var sOriginalAppId = _oAdaptedAppProperties.componentName;
+			_sIdRunningApp = this.getOwnerComponent().getIdRunningApp();
+			_oRootControlRunningApp = this.getOwnerComponent().getRootControlRunningApp();
 
 			sModulePath = jQuery.sap.getModulePath( "sap.ui.rta.appVariant.manageApps.webapp" );
 			oI18n = jQuery.sap.resources({
 				url : sModulePath + "/i18n/i18n.properties"
 			});
 
-			var sAppVariantType = oI18n.getText("MAA_APP_VARIANT_TYPE");
-
-			return ManageAppsUtils.getAppVariants(sOriginalAppId, sAppVariantType).then(function(aAppVariantsProperties) {
-				return this._addAppVariantsProperties(aAppVariantsProperties).then(function() {
-					return this._paintCurrentlyAdaptedApp();
+			BusyIndicator.show();
+			return AppVariantOverviewUtils.getAppVariantOverview(_sIdRunningApp).then(function(aAppVariantOverviewAttributes) {
+				BusyIndicator.hide();
+				return this._arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes).then(function() {
+					return this._highlightNewCreatedAppVariant(aAppVariantOverviewAttributes);
 				}.bind(this));
 			}.bind(this))["catch"](function(oError) {
-				return this._showMessage(MessageBox.Icon.ERROR, "HEADER_MANAGE_APPS_FAILED", "MSG_MANAGE_APPS_FAILED", oError).then(function() {
-					return this._closeManageAppsDialog();
-				}.bind(this));
+				return this._showMessage("HEADER_MANAGE_APPS_FAILED", "MSG_MANAGE_APPS_FAILED", oError);
 			}.bind(this));
 		},
-		_showMessage: function(oMessageType, sTitleKey, sMessageKey, oError) {
+		_highlightNewCreatedAppVariant: function(aAppVariantOverviewAttributes) {
+			var oTable = this.getView().byId("Table1");
+			jQuery('.maaCurrentStatus,.maaSubTitle').css("font-size", '12px');
+
+			aAppVariantOverviewAttributes.forEach(function(oAppVariantDescriptor, index) {
+				if (oAppVariantDescriptor.rowStatus === "Information") {
+					oTable.setFirstVisibleRow(index);
+				}
+			});
+
+			return Promise.resolve();
+		},
+		_showMessage: function(sTitleKey, sMessageKey, oError) {
+			sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
 			var _oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var sMessage = _oTextResources.getText(sMessageKey, oError ? [oError.message || oError] : undefined);
 			var sTitle = _oTextResources.getText(sTitleKey);
 
 			return new Promise(function(resolve) {
-				MessageBox.show(sMessage, {
-					icon: oMessageType,
+				MessageBox.error(sMessage, {
 					title: sTitle,
-					onClose: resolve
+					onClose: resolve,
+					styleClass: RtaUtils.getRtaStyleClassName()
 				});
 			});
 		},
-		_addAppVariantsProperties: function(aAppVariantsProperties) {
-			var oAdaptedAppProperties = {
-				title: _oAdaptedAppProperties.title,
-				subTitle: _oAdaptedAppProperties.subTitle,
-				description: _oAdaptedAppProperties.description,
-				icon: _oAdaptedAppProperties.icon,
-				id: _oAdaptedAppProperties.idAppAdapted,
-				componentName: _oAdaptedAppProperties.componentName,
-				currentStatus: oI18n.getText("MAA_CURRENTLY_ADAPTING")
-			};
+		_arrangeOverviewDataAndBindToModel: function(aAppVariantOverviewAttributes) {
+			var aAdaptingAppAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty){
+				return oAppVariantProperty.appId === _sIdRunningApp;
+			});
 
-			if (_oAdaptedAppProperties.idAppAdapted === _oAdaptedAppProperties.componentName) {
-				oAdaptedAppProperties.type = oI18n.getText("MAA_ORIGINAL_TYPE");
-				aAppVariantsProperties.unshift(oAdaptedAppProperties);
-				return this._bindModelData(aAppVariantsProperties);
-			} else {
-				var aFilteredAppVariantsProperties = aAppVariantsProperties.filter(function(oAppVariantProperty) {
-					return oAppVariantProperty.id !== oAdaptedAppProperties.id;
-				});
-
-				oAdaptedAppProperties.type = oI18n.getText("MAA_APP_VARIANT_TYPE");
-				aFilteredAppVariantsProperties.unshift(oAdaptedAppProperties);
-				return ManageAppsUtils.getOriginalAppProperties(_oAdaptedAppProperties.componentName, oI18n.getText("MAA_ORIGINAL_TYPE")).then(function(aOriginalAppProperties) {
-					// Original app properties must be on the top of the overview list
-					aFilteredAppVariantsProperties.unshift(aOriginalAppProperties[0]);
-					return this._bindModelData(aFilteredAppVariantsProperties);
-				}.bind(this));
+			var oAdaptingAppAttributes = aAdaptingAppAttributes[0];
+			if (oAdaptingAppAttributes) {
+				oAdaptingAppAttributes.currentStatus = oI18n.getText("MAA_CURRENTLY_ADAPTING");
+				oAdaptingAppAttributes.rowStatus = "Success";
 			}
-		},
-		_bindModelData: function(aAppVariantsProperties) {
+
+			aAppVariantOverviewAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty) {
+				return oAppVariantProperty.appId !== _sIdRunningApp;
+			});
+
+			aAppVariantOverviewAttributes.unshift(oAdaptingAppAttributes);
+
+			var aReferenceAppAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty){
+				return oAppVariantProperty.isReference;
+			});
+
+			var oReferenceAppAttributes = aReferenceAppAttributes[0];
+
+			aAppVariantOverviewAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty) {
+				return !oAppVariantProperty.isReference;
+			});
+
+			aAppVariantOverviewAttributes.unshift(oReferenceAppAttributes);
+
+			// Bind the app variant overview to JSON model
+
 			var oModelData = {
-				appVariants: aAppVariantsProperties
+				appVariants: aAppVariantOverviewAttributes
 			};
 			var oModel = Model.createModel(oModelData);
 			this.getView().setModel(oModel);
+
 			return Promise.resolve(true);
-
 		},
-		_closeManageAppsDialog: function() {
-			var oManageAppsDialog = sap.ui.getCore().byId("manageAppsDialog");
-
-			oManageAppsDialog.oPopup.attachClosed(function (){
-				oManageAppsDialog.destroy();
-				return Promise.resolve(true);
-			});
-			oManageAppsDialog.close();
+		getModelProperty : function(sModelPropName, sBindingContext) {
+			return this.getView().getModel().getProperty(sModelPropName, sBindingContext);
 		},
-		_paintCurrentlyAdaptedApp: function() {
-			var oTable = this.getView().byId("Table1");
-			jQuery('.maaCurrentStatus,.maaSubTitle').css("font-size", '12px');
+		handleUiAdaptation: function(oEvent) {
+			var oNavigationService = sap.ushell.Container.getService( "CrossApplicationNavigation" );
 
-			function colorRows() {
-				var rowCount = oTable.getVisibleRowCount();
-	            var rowStart = oTable.getFirstVisibleRow();
-	            var currentRowContext;
+			var sSemanticObject = this.getModelProperty("semanticObject", oEvent.getSource().getBindingContext());
+			var sAction = this.getModelProperty("action", oEvent.getSource().getBindingContext());
+			var oParams = this.getModelProperty("params", oEvent.getSource().getBindingContext());
 
-	            for (var i = 0; i < rowCount; i++) {
-					currentRowContext = oTable.getContextByIndex(rowStart + i);
-					if (currentRowContext && currentRowContext.getProperty("currentStatus") === oI18n.getText("MAA_CURRENTLY_ADAPTING")) {
-						var sColor = sap.ui.core.theming.Parameters.get("sapUiHighlight");
-						oTable.getRows()[i].$().find("span").css({color: sColor});
-						break;
-					}
-	            }
+			var oNavigationParams = {
+				target: {
+	                semanticObject : sSemanticObject,
+	                action : sAction
+				},
+				params: oParams
+			};
 
-	            return Promise.resolve(true);
-			}
+			RuntimeAuthoring.enableRestart( "CUSTOMER" );
 
-			return colorRows();
+			oNavigationService.toExternal(oNavigationParams);
+
+			sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+		},
+		saveAsAppVariant: function(oEvent) {
+			sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+
+			var sDescriptorUrl = this.getModelProperty("descriptorUrl", oEvent.getSource().getBindingContext());
+
+			return AppVariantOverviewUtils.getDescriptor(sDescriptorUrl).then(function(oAppVariantDescriptor) {
+				return RtaAppVariantFeature.onSaveAs(_oRootControlRunningApp, oAppVariantDescriptor);
+			})["catch"](function(oError) {
+				return this._showMessage("HEADER_MANAGE_APPS_FAILED", "MSG_MANAGE_APPS_FAILED", oError);
+			}.bind(this));
+		},
+		copyId: function(oEvent) {
+			var sCopiedId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
+
+			var textArea = document.createElement("textarea");
+			textArea.value = sCopiedId;
+			document.body.appendChild(textArea);
+			textArea.select();
+
+			document.execCommand('copy');
+			document.body.removeChild(textArea);
 		}
 	});
 });

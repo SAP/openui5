@@ -343,14 +343,6 @@
 			"viewLevel": 2,
 			"controlAggregation": "detailPages"
 		  },
-		  "detailObjectNotFound": {
-			"viewName": "DetailObjectNotFound",
-			"viewId": "detailObjectNotFound"
-		  },
-		  "detailNoObjectsAvailable": {
-			"viewName": "DetailNoObjectsAvailable",
-			"viewId": "detailNoObjectsAvailable"
-		  },
 		  "notFound": {
 			"viewName": "NotFound",
 			"viewId": "notFound"

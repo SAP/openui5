@@ -31,13 +31,21 @@
 						load="handleLandingImageLoad"
 						visible="{=!${device>/system/phone}}"/>
 
-					<Text
+					<l:VerticalLayout
 						id="landingImageHeadline"
+						class="sapUiDocumentationDocumentationHeading"
 						visible="false"
-						class="sapUiDocumentationDocumentationHeaderText sapUiDocumentationDocumentationHeaderTitleText"
-						text="Documentation"
-						width="100%"
-						textAlign="Left"/>
+						width="100%">
+						<Text
+							text="Documentation"
+							width="100%"
+							textAlign="Left"/>
+						<Button
+							class="actionButton"
+							text="Download"
+							type="Emphasized"
+							press="onDownloadButtonPress"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
@@ -195,7 +203,6 @@
 			<l:BlockLayoutRow>
 				<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
 			</l:BlockLayoutRow>
-
 		</l:BlockLayout>
 	</Page>
 </mvc:View>
