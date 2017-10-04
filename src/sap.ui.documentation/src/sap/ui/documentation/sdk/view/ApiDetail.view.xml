@@ -21,7 +21,7 @@
 							  upperCaseAnchorBar="false"
 							  busyIndicatorDelay="0">
 				<headerTitle>
-					<ObjectPageHeader id="title" objectTitle="{topics>/kind} {topics>/name}"
+					<ObjectPageHeader id="title" objectTitle="{=${topics>/abstract} ? 'abstract' : ''} {topics>/kind} {topics>/name}"
 									  objectSubtitle="{parts : [{path: 'topics>/deprecated'}],
 									                   formatter: '.formatSubtitle'}">
 						<actions>
