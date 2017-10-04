@@ -287,40 +287,30 @@ sap.ui.require([
 			});
 		},
 		afterEach : function(assert) {
-			this.oRta.exit();
+			this.oRta.destroy();
 			FakeLrepLocalStorage.deleteChanges();
 			sandbox.restore();
 		}
 	});
 
 	QUnit.test("when RTA is started in the customer layer", function(assert) {
-		var done = assert.async();
-
 		var oFlexController = this.oRta._getFlexController();
 		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
 
-		this.oRta.attachStart(function() {
+		return this.oRta.start().then(function () {
 			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'Manage Information' Icon Button is not visible");
-			done();
 		}.bind(this));
-
-		this.oRta.start();
 	});
 
 	QUnit.test("when RTA is started in the user layer", function(assert) {
-		var done = assert.async();
-
 		var oFlexController = this.oRta._getFlexController();
 		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([this.oUserChange]));
 
-		this.oRta.attachStart(function() {
-			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), true, "then the Restore Button is enabled");
-			done();
-		}.bind(this));
-
 		this.oRta.setFlexSettings({layer: "USER"});
-		this.oRta.start();
+		return this.oRta.start().then(function () {
+			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), true, "then the Restore Button is enabled");
+		}.bind(this));
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started without toolbar...", {
@@ -340,7 +330,7 @@ sap.ui.require([
 			]);
 		},
 		afterEach : function(assert) {
-			this.oRta.exit();
+			this.oRta.destroy();
 			FakeLrepLocalStorage.deleteChanges();
 			sandbox.restore();
 		}

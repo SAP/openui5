@@ -536,7 +536,6 @@ sap.ui.define([
 			}.bind(this))
 			.then(function () {
 				this.fnKeyDown = this._onKeyDown.bind(this);
-				this.fnKeyDown = this._onKeyDown.bind(this);
 				jQuery(document).on("keydown", this.fnKeyDown);
 			}.bind(this))
 			.then(function() {
@@ -1224,7 +1223,7 @@ sap.ui.define([
 	 * @param  {sap.ui.base.Event|Object} oEventOrOverlays Event or map containing list of selected overlays
 	 */
 
-	//TODO: ask mayanak to remove
+	//TODO: ask Mayank if we can remove
 	RuntimeAuthoring.prototype._openSettingsDialog = function(oEventOrOverlays) {
 		var aSelectedOverlays = (oEventOrOverlays.mParameters) ? oEventOrOverlays.getParameter("selectedOverlays") : oEventOrOverlays;
 		var oElement = aSelectedOverlays[0].getElementInstance();
@@ -1243,7 +1242,9 @@ sap.ui.define([
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleStopCutPaste = function() {
-		this.getPlugins()["cutPaste"].stopCutAndPaste();
+		if (this.getPlugins()["cutPaste"]){
+			this.getPlugins()["cutPaste"].stopCutAndPaste();
+		}
 	};
 
 	/**
