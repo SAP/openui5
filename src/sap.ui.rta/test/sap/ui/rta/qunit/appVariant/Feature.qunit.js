@@ -1,21 +1,19 @@
 /* global QUnit  */
 
-jQuery.sap.require("sap.ui.thirdparty.sinon");
-
 QUnit.config.autostart = false;
 
 sap.ui.require([
+	"sap/ui/thirdparty/sinon",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/ui/rta/appVariant/AppVariantManager",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/rta/appVariant/AppVariantManager"
 ], function(
+	sinon,
 	RtaAppVariantFeature,
 	AppVariantOverviewUtils,
 	AppVariantUtils,
-	AppVariantManager,
-	sinon) {
+	AppVariantManager) {
 	"use strict";
 
 	QUnit.start();

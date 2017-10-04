@@ -145,7 +145,7 @@ sap.ui.define([
 	AppVariantManager.prototype.saveDescriptorAndFlexChangesToLREP = function(oAppVariantDescriptor, oRootControlRunningApp, bCloseRunningApp) {
 		var fnShowCreateAppVariantError = function(vError) {
 			var sErrorMessage = "";
-			if (vError.messages) {
+			if (vError.messages && vError.messages.length) {
 				if (vError.messages.length > 1) {
 					vError.messages.forEach(function(oError) {
 						sErrorMessage += oError.text + "\n";
