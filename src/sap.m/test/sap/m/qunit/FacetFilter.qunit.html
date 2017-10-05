@@ -3727,6 +3727,56 @@
 			destroyFF(oFF);
 		});
 
+		asyncTest("Update FacetFilterList selectedKeys cache when text of bound item is changed.", function (assert) {
+			var oModel = new sap.ui.model.json.JSONModel({
+					values: [{
+						text : "Val1",
+						key : "1"
+					}, {
+						text : "Val2",
+						key : "2"
+					}]
+				}),
+				oFF = new sap.m.FacetFilter(),
+				oFFL = new sap.m.FacetFilterList({
+					title : "List"
+				});
+
+			oFF.addList(oFFL);
+			oFF.placeAt("content");
+			oFFL.setModel(oModel);
+
+			oFFL.bindAggregation("items", {
+				path : "/values",
+				template : new sap.m.FacetFilterItem({
+					text : "{text}",
+					key : "{key}"
+				})
+			});
+
+			oFFL.getItems()[0].setSelected(true);
+
+			assert.equal(oFF._getSelectedItemsText(oFFL).length, 1, "Only one item is selected");
+			assert.equal(oFF._getSelectedItemsText(oFFL)[0], "Val1"), "Text of the selected item is Val1";
+
+			oModel.setProperty("/values", [{
+				text : "NewVal1",
+				key : "1"
+			}, {
+				text : "Val2",
+				key : "2"
+			}]);
+
+			oFFL.getItems()[0].setSelected(true);
+
+			oFFL.attachUpdateFinished(function () {
+				assert.equal(oFF._getSelectedItemsText(oFFL).length, 1, "Only one item is selected");
+				assert.equal(oFF._getSelectedItemsText(oFFL)[0], "NewVal1", "Text of the selected item is NewVal1");
+				destroyFF(oFF);
+				start();
+			});
+		});
+
 		asyncTest("'All' checkbox to be unchecked when items are preselected and model is assigned later", function() {
 			var oFF = oSCHelper.createFFWithBinding();
 			var oFFL = oFF.getLists()[0];
