@@ -418,5 +418,24 @@ sap.ui.require([
 				assert.strictEqual(oRemoveAllInboundsExceptOneInlineChange.getMap().changeType, "appdescr_app_removeAllInboundsExceptOne", "then the change type is correct");
 			});
 		});
+
+		QUnit.test("When getTransportInput() method is called", function (assert) {
+			var oTransportInput = AppVariantUtils.getTransportInput("", "TestNamespace", "TestId", "appdescr_variant");
+
+			assert.strictEqual(oTransportInput.getPackage(), "", "then the package is correct");
+			assert.strictEqual(oTransportInput.getNamespace(), "TestNamespace", "then the namespace is correct");
+			assert.strictEqual(oTransportInput.getId(), "TestId", "then the id is correct");
+			assert.strictEqual(oTransportInput.getDefinition().fileType, "appdescr_variant", "then the file type is correct");
+		});
+
+		QUnit.test("When isS4HanaCloud() method is called", function (assert) {
+			return AppVariantUtils.createDescriptorVariant({id: "testId", reference: "testReference"}).then(function(oDescriptorVariant) {
+				assert.equal(AppVariantUtils.isS4HanaCloud(oDescriptorVariant._oSettings), false, "then the platform is not S4 Hana Cloud");
+			});
+		});
+
+		QUnit.test("When isStandAloneApp() method is called", function (assert) {
+			assert.equal(AppVariantUtils.isStandAloneApp(), true, "then the app is a stand alone application");
+		});
 	});
 });

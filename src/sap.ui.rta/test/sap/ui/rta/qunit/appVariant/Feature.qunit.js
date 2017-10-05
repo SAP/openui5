@@ -7,13 +7,15 @@ sap.ui.require([
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/ui/rta/appVariant/AppVariantManager"
+	"sap/ui/rta/appVariant/AppVariantManager",
+	"sap/ui/fl/registry/Settings"
 ], function(
 	sinon,
 	RtaAppVariantFeature,
 	AppVariantOverviewUtils,
 	AppVariantUtils,
-	AppVariantManager) {
+	AppVariantManager,
+	Settings) {
 	"use strict";
 
 	QUnit.start();
@@ -27,6 +29,7 @@ sap.ui.require([
 	}, function() {
 
 		QUnit.test("when onGetOverview() is called,", function(assert) {
+			var done = assert.async();
 			var oMockedDescriptorData = {
 				"sap.app": {
 					id: "id1"
@@ -41,9 +44,9 @@ sap.ui.require([
 					subTitle : "subTitle1",
 					description : "description1",
 					icon : "sap-icon://history",
-					referenceId : "referenceId1",
-					isReference : true,
-					typeOfApp : "Reference",
+					originalId : "id1",
+					isOriginal : true,
+					typeOfApp : "Original App",
 					descriptorUrl : "url1"
 				},
 				{
@@ -52,8 +55,8 @@ sap.ui.require([
 					subTitle : "subTitle2",
 					description : "description2",
 					icon : "sap-icon://history",
-					referenceId : "referenceId2",
-					isReference : false,
+					originalId : "id1",
+					isOriginal : false,
 					typeOfApp : "App Variant",
 					descriptorUrl : "url2"
 				},
@@ -63,8 +66,8 @@ sap.ui.require([
 					subTitle : "subTitle3",
 					description : "description3",
 					icon : "sap-icon://history",
-					referenceId : "referenceId3",
-					isReference : false,
+					originalId : "id1",
+					isOriginal : false,
 					typeOfApp : "App Variant",
 					descriptorUrl : "url3"
 				}
@@ -73,9 +76,11 @@ sap.ui.require([
 			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
 
 			var oRootControl = new sap.ui.core.Control();
+
 			return RtaAppVariantFeature.onGetOverview(oRootControl).then(function(oManageAppsDialog) {
 				assert.ok(true, "the the promise got resolved and manageAppsDialog is opened");
 				oManageAppsDialog.fireCancel();
+				done();
 			});
 		});
 
@@ -116,6 +121,8 @@ sap.ui.require([
 
 			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
 
+			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
+
 			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
 				assert.equal(bResult, true, "then the 'i' button is visible");
 			});
@@ -133,6 +140,8 @@ sap.ui.require([
 			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(false);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: true}));
 
+			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
+
 			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
 			});
@@ -148,6 +157,8 @@ sap.ui.require([
 
 			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: false}));
+
+			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
 			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
@@ -190,6 +201,8 @@ sap.ui.require([
 			sandbox.stub(AppVariantUtils, "getInboundInfo").returns({currentRunningInbound: "testInboundId", addNewInboundRequired: true});
 			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
 
+			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
+
 			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
 			});
@@ -228,6 +241,8 @@ sap.ui.require([
 			sandbox.stub(AppVariantUtils, "getInboundInfo").returns({currentRunningInbound: "testInboundId", addNewInboundRequired: true});
 			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
 
+			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
+
 			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
 			});
@@ -260,6 +275,8 @@ sap.ui.require([
 			sandbox.stub(AppVariantUtils, "getInboundInfo").returns({currentRunningInbound: "testInboundId", addNewInboundRequired: true});
 			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
 
+			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
+
 			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
 			});
@@ -276,6 +293,8 @@ sap.ui.require([
 			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: true}));
 
+			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
+
 			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", false).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
 			});
@@ -285,18 +304,6 @@ sap.ui.require([
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
 		beforeEach : function(assert) {
 			this.oServer = sinon.fakeServer.create();
-
-			this.oServer.respondWith([
-				200,
-				{
-					"Content-Type": "application/json",
-					"Content-Length": 13,
-					"X-CSRF-Token": "0987654321"
-				},
-				"{ \"changes\":[], \"contexts\":[], \"settings\":{\"isAtoAvailable\":\"true\",\"isKeyUser\":\"true\",\"isProductiveSystem\":\"false\",\"localonly\":false} }"
-			]);
-
-			this.oServer.autoRespond = true;
 
 			window.bUShellNavigationTriggered = false;
 			this.originalUShell = sap.ushell;
@@ -359,7 +366,7 @@ sap.ui.require([
 				inbounds: {}
 			};
 
-			sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").returns(Promise.resolve(oAppVariantData));
+			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").returns(Promise.resolve(oAppVariantData));
 
 			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
 
@@ -372,26 +379,210 @@ sap.ui.require([
 				}
 			};
 
+			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns({
+				"sap.app": {
+					id: "TestId"
+				}
+			});
+
 			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
 
 			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
 
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			var oResponse = {
+				"transports": [{
+					"transportId": "4711",
+					"owner": "TESTUSER",
+					"description": "test transport1",
+					"locked" : true
+				}]
+			};
+
+			this.oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			this.oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
+				200,
+				{
+					"X-CSRF-Token": "0987654321"
+				},
+				""
+			]);
+
+			oResponse = {
+				"id": "AppVariantId",
+				"reference":"ReferenceAppId",
+				"content": []
+			};
+
+			this.oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
+				200,
+				{
+					"Content-Type": "application/json",
+					"X-CSRF-Token": "0987654321"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oResponse = {
+				"VariantId" : "customer.TestId",
+				"IAMId" : "IAMId",
+				"CatalogIds" : ["TEST_CATALOG"]
+			};
+
+			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
+
+			sandbox.stub(AppVariantManager.prototype, "_showSaveSuccessMessage").returns(Promise.resolve());
+
+			this.oServer.autoRespond = true;
+
+			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
+			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
+			var fnCopyUnsavedChangesToLREP = sandbox.spy(AppVariantManager.prototype, "copyUnsavedChangesToLREP");
+			var fnShowSuccessMessageAndTriggerActionFlow = sandbox.spy(AppVariantManager.prototype, "showSuccessMessageAndTriggerActionFlow");
+
 			return RtaAppVariantFeature.onSaveAs(oRootControl, oDescriptor).then(function() {
 				assert.ok(onGetOverviewSpy.calledOnce, "then the App variant dialog gets opened only once after the new app variant has been saved to LREP");
+				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
+				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
+				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
+				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
+				assert.ok(fnTriggerCatalogAssignment.calledOnce, "then the triggerCatalogAssignment method is called once");
+				assert.ok(fnShowSuccessMessageAndTriggerActionFlow.calledOnce, "then the showSuccessMessageAndTriggerActionFlow method is called once");
 			});
 		});
 
-		QUnit.test("when onSaveAs() is triggered from RTA toolbar and user passed no information on 'Save As' dialog", function(assert) {
+		QUnit.test("when onSaveAs() is triggered from RTA toolbar", function(assert) {
 			var oRootControl = new sap.ui.core.Control();
 
-			sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").returns(Promise.resolve(false));
+			var oDescriptor = {
+				"sap.app" : {
+					id : "TestId",
+					crossNavigation: {
+						inbounds: {}
+					}
+				},
+				"sap.ui5" : {
+					componentName: "TestIdBaseApp"
+				}
+			};
+
+			var oAppVariantData = {
+				idBaseApp: "BaseAppId",
+				idRunningApp: "RunningAppId",
+				title: "Title",
+				subTitle: "Subtitle",
+				description: "Description",
+				icon: "sap-icon://history",
+				inbounds: {}
+			};
+
+			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").returns(Promise.resolve(oAppVariantData));
 
 			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
 
-			var createDescriptorSpy = sandbox.stub(AppVariantManager.prototype, "createDescriptor");
+			var oManifest = new sap.ui.core.Manifest(oDescriptor);
+			var oComponent = {
+				name: "testComponent",
+				appVersion: "1.2.3",
+				getManifest : function() {
+					return oManifest;
+				}
+			};
+
+			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oDescriptor);
+
+			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			var oResponse = {
+				"transports": [{
+					"transportId": "4711",
+					"owner": "TESTUSER",
+					"description": "test transport1",
+					"locked" : true
+				}]
+			};
+
+			this.oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			this.oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
+				200,
+				{
+					"X-CSRF-Token": "0987654321"
+				},
+				""
+			]);
+
+			oResponse = {
+				"id": "AppVariantId",
+				"reference":"ReferenceAppId",
+				"content": []
+			};
+
+			this.oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
+				200,
+				{
+					"Content-Type": "application/json",
+					"X-CSRF-Token": "0987654321"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oResponse = {
+				"VariantId" : "customer.TestId",
+				"IAMId" : "IAMId",
+				"CatalogIds" : ["TEST_CATALOG"]
+			};
+
+			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
+
+			sandbox.stub(AppVariantManager.prototype, "_showSaveSuccessMessage").returns(Promise.resolve());
+
+			this.oServer.autoRespond = true;
+
+			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
+			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
+			var fnCopyUnsavedChangesToLREP = sandbox.spy(AppVariantManager.prototype, "copyUnsavedChangesToLREP");
+			var fnShowSuccessMessageAndTriggerActionFlow = sandbox.spy(AppVariantManager.prototype, "showSuccessMessageAndTriggerActionFlow");
+			var fnNavigateToFLPHomepage = sandbox.spy(AppVariantManager.prototype, "_navigateToFLPHomepage");
 
 			return RtaAppVariantFeature.onSaveAs(oRootControl).then(function() {
-				assert.ok(createDescriptorSpy.notCalled, "then the app variant was never created");
+				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
+				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
+				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
+				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
+				assert.ok(fnTriggerCatalogAssignment.calledOnce, "then the triggerCatalogAssignment method is called once");
+				assert.ok(fnShowSuccessMessageAndTriggerActionFlow.calledOnce, "then the showSuccessMessageAndTriggerActionFlow method is called once");
+				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the _navigateToFLPHomepage method is called once");
 			});
 		});
 	});
