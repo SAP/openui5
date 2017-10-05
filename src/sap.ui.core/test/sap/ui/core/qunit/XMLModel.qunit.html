@@ -370,7 +370,7 @@
 		testModel.destroy();
 		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests should be still 1");
-		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
+		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort"); // Note: statusText 'abort' is set by the model itself
 
 	});
 
@@ -396,14 +396,14 @@
 		testModel.destroy();
 		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests");
-		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
+		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort"); // Note: statusText 'abort' is set by the model itself
 
 		// call loaddata again
 		testModel.loadData("testdata.xml", null, true);
 
 		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests should be still 1");
-		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
+		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort"); // Note: statusText 'abort' is set by the model itself
 
 	});
 

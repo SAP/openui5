@@ -2957,12 +2957,11 @@
 				var oResponse = oEvent.getParameter('response');
 				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
-				assert.equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
 				assert.equal(aRequests[0].response.statusCode, "200", "internal response, Param Check: statusCode");
-				assert.equal(aRequests[0].response.statusText, "OK", "internal response, Param Check: statusText");
+				assert.equal(aRequests[0].response.statusText, "OK", "internal response, Param Check: statusText"); // TODO clarify: is reason phrase mandatory in batch response?
 
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
@@ -3026,7 +3025,6 @@
 				var oResponse = oEvent.getParameter('response');
 				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
-				assert.equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
@@ -3035,7 +3033,7 @@
 				assert.equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 				assert.equal(aRequests[0].response.statusCode, "404", "internal response, Param Check: statusCode");
-				assert.equal(aRequests[0].response.statusText, "Not Found", "internal response, Param Check: statusText");
+				assert.equal(aRequests[0].response.statusText, "Not Found", "internal response, Param Check: statusText"); // TODO clarify: is reason phrase mandatory in batch response?
 
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
@@ -3181,7 +3179,6 @@
 				var oResponse = oEvent.getParameter('response');
 				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
-				assert.equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
 
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
@@ -3212,7 +3209,6 @@
 				var oResponse = oEvent.getParameter('response');
 				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
-				assert.equal(oResponse.statusText, "Not Found", "oResponse Param check: statusCode");
 
 				done();
 			}
@@ -3247,7 +3243,6 @@
 				var oResponse = oEvent.getParameter('response');
 				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
-				assert.equal(oResponse.statusText, "Not Found", "oResponse Param check: statusCode");
 
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
@@ -3369,17 +3364,16 @@
 				var oResponse = oEvent.getParameter('response');
 				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
-				assert.equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
 
 				// check internal responses
 				assert.equal(aRequests[0].response.statusCode, "204", "internal response, Param Check: statusCode");
-				assert.equal(aRequests[0].response.statusText, "No Content", "internal response, Param Check: statusText");
+				assert.equal(aRequests[0].response.statusText, "No Content", "internal response, Param Check: statusText"); // TODO clarify: is reason phrase mandatory in batch response?
 
 				assert.equal(aRequests[1].response.statusCode, "200", "internal response, Param Check: statusCode");
-				assert.equal(aRequests[1].response.statusText, "OK", "internal response, Param Check: statusText");
+				assert.equal(aRequests[1].response.statusText, "OK", "internal response, Param Check: statusText"); // TODO clarify: is reason phrase mandatory in batch response?
 
 				assert.equal(aRequests[2].response.statusCode, "200", "internal response, Param Check: statusCode");
-				assert.equal(aRequests[2].response.statusText, "OK", "internal response, Param Check: statusText");
+				assert.equal(aRequests[2].response.statusText, "OK", "internal response, Param Check: statusText"); // TODO clarify: is reason phrase mandatory in batch response?
 
 
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
@@ -3473,7 +3467,6 @@
 				var oResponse = oEvent.getParameter('response');
 				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
-				assert.equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId1, "Check Request ID");
 				iCount2 ++;
@@ -3485,7 +3478,6 @@
 				var oResponse = oEvent.getParameter('response');
 				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
-				assert.equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId2, "Check Request ID");
 				iCount2 ++;
@@ -3497,7 +3489,6 @@
 				var oResponse = oEvent.getParameter('response');
 				assert.ok(oResponse.headers !== undefined, "oResponse Param check: headers");
 				assert.equal(oResponse.statusCode, 204, "oResponse Param check: statusCode");
-				assert.equal(oResponse.statusText, "No Content", "oResponse Param check: statusCode");
 				assert.ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				assert.equal(oEvent.getParameter('ID'), sReqId3, "Check Request ID");
 				iCount2 ++;

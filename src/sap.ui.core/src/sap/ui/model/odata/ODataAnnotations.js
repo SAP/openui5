@@ -504,7 +504,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 					type:			"fail",
 					url:			sUrl,
 					message:		sStatusText,
-					statusCode:		oJQXHR.statusCode,
+					statusCode:		oJQXHR.status,
 					statusText:		oJQXHR.statusText,
 					responseText:	oJQXHR.responseText
 				};
@@ -526,7 +526,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 							type:			"success",
 							url: 			sUrl,
 							message:		sStatusText,
-							statusCode:		oJQXHR.statusCode,
+							statusCode:		oJQXHR.status,
 							statusText:		oJQXHR.statusText,
 							responseText:		oJQXHR.responseText
 						});
