@@ -11,7 +11,9 @@ sap.ui.require([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",
-	"sap/ui/test/TestUtils"
+	"sap/ui/test/TestUtils",
+	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
+	"sap/ui/table/Table"
 ], function (jQuery, ColumnListItem, Text, Controller, Filter, FilterOperator, OperationMode,
 		ODataModel, Sorter, TestUtils) {
 	/*global QUnit, sinon */
@@ -44,12 +46,21 @@ sap.ui.require([
 	/**
 	 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
 	 *
-	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 * @param {object} mModelParameters Map of parameters for model construction to enhance and
 	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
 	 *   synchronizationMode which are set by default
+	 * @param {object} oLogMock The log mock
 	 * @returns {ODataModel} The model
 	 */
-	function createModelForV2SalesOrderService(mModelParameters) {
+	function createModelForV2SalesOrderService(mModelParameters, oLogMock) {
+		// The following warnings are logged when the GWSAMPLE_BASIC metamodel is loaded
+		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+			oLogMock.expects("warning")
+				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
+					+ "', removing this FunctionImport", undefined,
+					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+		});
+
 		mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
 		return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
 	}
@@ -377,9 +388,10 @@ sap.ui.require([
 			this.oView = sap.ui.xmlview({
 				controller : oController
 					&& new (Controller.extend(jQuery.sap.uid(), oController))(),
-				viewContent : '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">'
-					+ sViewXML
-					+ '</mvc:View>'
+				viewContent :
+					'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
+						+ sViewXML
+						+ '</mvc:View>'
 			});
 			Object.keys(this.mChanges).forEach(function (sControlId) {
 				var oControl = that.oView.byId(sControlId);
@@ -538,9 +550,9 @@ sap.ui.require([
 
 			return new Promise(function (resolve) {
 				that.resolve = resolve;
-				// After one second everything should have run through
+				// After three seconds everything should have run through
 				// Resolve to have the missing requests and changes reported
-				window.setTimeout(resolve, 1000);
+				window.setTimeout(resolve, 3000);
 				that.checkFinish();
 			}).then(function () {
 				var sControlId, i, j;
@@ -2764,8 +2776,7 @@ sap.ui.require([
 </FlexBox>',
 			oModel = createModelForV2SalesOrderService({
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
-			}),
-			that = this;
+			}, this.oLogMock);
 
 		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
 				"&$select=ToLineItems/ItemPosition,SalesOrderID",
@@ -2778,14 +2789,8 @@ sap.ui.require([
 				]
 			})
 			.expectChange("id", "0500000001")
+			.expectChange("id", "0500000001") // TODO duplicate change event
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
-
-		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
-			that.oLogMock.expects("warning")
-				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
-						+ "', removing this FunctionImport", undefined,
-					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
-		});
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
@@ -2816,8 +2821,7 @@ sap.ui.require([
 </Table>',
 			oModel = createModelForV2SalesOrderService({
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
-			}),
-			that = this;
+			}, this.oLogMock);
 
 		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID" +
 				"&$skip=0&$top=100",
@@ -2830,15 +2834,42 @@ sap.ui.require([
 			})
 			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
 
-		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
-			that.oLogMock.expects("warning")
-				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
-						+ "', removing this FunctionImport", undefined,
-					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
-		});
-
 		// code under test
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: test conversion of $filter for V2 Adapter
+	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.test("V2 Adapter: $filter", function (assert) {
+		var sView = '\
+<Table id="table" items="{path :\'/SalesOrderSet\',\
+		parameters : {\
+			$select : \'SalesOrderID\',\
+			$filter : \'Note eq \\\'foo\\\'\'\
+		}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="id" text="{SalesOrderID}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>';
+
+		this.expectRequest("SalesOrderSet?$filter=Note%20eq%20'foo'&$select=SalesOrderID" +
+			"&$skip=0&$top=100",
+			{
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		// code under test
+		return this.createView(assert, sView, createModelForV2SalesOrderService({}, this.oLogMock));
 	});
 
 	//*********************************************************************************************
@@ -2867,6 +2898,46 @@ sap.ui.require([
 				}
 			})
 		);
+	});
+
+	//*********************************************************************************************
+	// Scenario: sap.ui.table.Table with VisibleRowCountMode="Auto" only calls ODLB.getContexts()
+	// after rendering (via setTimeout). This must not lead to separate requests for each table
+	// cell resp. console errors due to data access via virtual context.
+	// BCP 1770367083
+	QUnit.test("sap.ui.table.Table with VisibleRowCountMode='Auto'", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{/EMPLOYEES}" visibleRowCountMode="Auto">\
+	<t:columns>\
+		<t:Column>\
+			<t:label>\
+				<Label text="Name"/>\
+			</t:label>\
+			<t:template>\
+				<Text id="text" text="{Name}" />\
+			</t:template>\
+		</t:Column>\
+	</t:columns>\
+</t:Table>',
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			that = this;
+
+		this.expectChange("text", false); // test listens to changes on table template control
+		return this.createView(assert, sView, oModel).then(function () {
+			// table.Table must render to call getContexts on its row aggregation's list binding
+			that.oView.placeAt("qunit-fixture");
+			that.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=105", {
+					"value" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Jonathan Smith"}
+					]
+				})
+				//TODO The below null's are: Text has binding context null and its initial value is
+				// undefined (formatted to null by String type). (How) can we get rid of this?
+				.expectChange("text", null, null)
+				.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+			return that.waitForChanges(assert);
+		});
 	});
 });
 //TODO test bound action

@@ -72,7 +72,7 @@ sap.ui.require([
 				{"$expand" : oFixture.parsed});
 			// verify that the parsed result is consumable
 			assert.deepEqual(_Requestor.create("/~/")
-					.convertQueryOptions({"$expand" : oFixture.parsed}),
+					.convertQueryOptions("Foo", {"$expand" : oFixture.parsed}),
 				{"$expand" : oFixture.string});
 		});
 	});
@@ -111,7 +111,7 @@ sap.ui.require([
 					{"$select" : oFixture.parsed});
 			// verify that the parsed result is consumable
 			assert.deepEqual(_Requestor.create("/~/")
-					.convertQueryOptions({"$select" : oFixture.parsed}),
+					.convertQueryOptions("Foo", {"$select" : oFixture.parsed}),
 				{"$select" : oFixture.string});
 		});
 	});
@@ -204,7 +204,7 @@ sap.ui.require([
 					"as only/last option in an expand, terminated by ')'");
 				// verify that the parsed result is consumable
 				assert.deepEqual(
-					oRequestor.convertQueryOptions({
+					oRequestor.convertQueryOptions("Foo", {
 						"$expand" : {
 							"foo" : oResult
 						}
@@ -221,7 +221,7 @@ sap.ui.require([
 					"as first/inner option in an expand, terminated by ';'");
 				// verify that the parsed result is consumable
 				assert.deepEqual(
-					oRequestor.convertQueryOptions({
+					oRequestor.convertQueryOptions("Foo", {
 						"$expand" : {
 							"foo" : oExpand
 						}
@@ -284,6 +284,21 @@ sap.ui.require([
 	}, {
 		string : "$filter=a eq 'foo",
 		error : "Unterminated string at 14"
+	}, {
+		string : "$select=a, b",
+		error : "Expected PATH but instead saw ' ' at 11"
+	}, {
+		string : "$expand=foo  eq 'bar'",
+		error : "Expected end of input but instead saw 'eq' at 14"
+	}, {
+		string : "$expand=foo\teq%09'bar'",
+		error : "Expected end of input but instead saw 'eq' at 13"
+	}, {
+		string : "$expand=foo%09eq\t'bar'",
+		error : "Expected end of input but instead saw 'eq' at 15"
+	}, {
+		string : "$expand=foo%20eq%20'bar'",
+		error : "Expected end of input but instead saw 'eq' at 15"
 	}].forEach(function (oFixture) {
 		QUnit.test("_Parser: " + oFixture.string, function (assert) {
 			assert.throws(function () {
@@ -389,8 +404,61 @@ sap.ui.require([
 			assert.deepEqual(_Parser.parseSystemQueryOption(oFixture.string), oFixture.parsed,
 				oFixture.string);
 			// verify that the parsed result is consumable
-			assert.deepEqual(_Requestor.create("/~/").convertQueryOptions(oFixture.parsed),
+			assert.deepEqual(_Requestor.create("/~/").convertQueryOptions("Foo", oFixture.parsed),
 				oFixture.converted, JSON.stringify(oFixture.converted));
+		});
+	});
+
+	//*********************************************************************************************
+	['eq', 'ge', 'gt', 'le', 'lt', 'ne'].forEach(function (sOperator) {
+		QUnit.test("_Parser#parseFilter, operator=" + sOperator, function (assert) {
+			var sFilter = "foo " + sOperator + " 'bar'",
+				oSyntaxTree = _Parser.parseFilter(sFilter);
+
+			assert.deepEqual(oSyntaxTree, {
+				id : sOperator,
+				value : " " + sOperator + " ",
+				at : 5,
+				left : {
+					id : "PATH",
+					value : "foo",
+					at : 1
+				},
+				right : {
+					id : "VALUE",
+					value : "'bar'",
+					at : 8
+				}
+			});
+
+			assert.strictEqual(_Parser.buildFilterString(oSyntaxTree), sFilter);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		string : ";",
+		error : "Expected PATH but instead saw ';' at 1"
+	}, {
+		string : "foo='bar'",
+		error : "Expected operator but instead saw '=' at 4"
+	}, {
+		string : "foo",
+		error : "Expected operator but instead saw end of input"
+	}, {
+		string : "foo eq",
+		error : "Expected VALUE but instead saw end of input"
+	}, {
+		string : "foo eq ",
+		error : "Expected VALUE but instead saw end of input"
+	}, {
+		string : "foo eq  ",
+		error : "Expected VALUE but instead saw end of input"
+	}].forEach(function (oFixture) {
+		QUnit.test('_Parser#parseFilter: "' + oFixture.string + '"', function (assert) {
+			assert.throws(function () {
+				_Parser.parseFilter(oFixture.string);
+			}, new SyntaxError(oFixture.error + ": " + oFixture.string));
 		});
 	});
 });

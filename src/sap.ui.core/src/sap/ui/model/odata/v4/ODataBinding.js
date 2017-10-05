@@ -26,7 +26,9 @@ sap.ui.define([
 	 */
 	ODataBinding.prototype.fetchCache = function (oContext) {
 		var oCachePromise,
+			oCallToken = {},
 			oCurrentCache,
+			aPromises,
 			that = this;
 
 		if (!this.bRelative) {
@@ -38,8 +40,10 @@ sap.ui.define([
 				oCurrentCache.setActive(false);
 			}
 		}
-		oCachePromise = this.fetchQueryOptionsForOwnCache(oContext).then(function (mQueryOptions) {
-			var vCanonicalPath;
+		aPromises = [this.fetchQueryOptionsForOwnCache(oContext), this.oModel.oRequestor.ready()];
+		oCachePromise = _SyncPromise.all(aPromises).then(function (aResult) {
+			var vCanonicalPath,
+				mQueryOptions = aResult[0];
 
 			// Note: do not create a cache for a virtual context
 			if (mQueryOptions && !(oContext && oContext.getIndex && oContext.getIndex() === -2)) {
@@ -50,8 +54,8 @@ sap.ui.define([
 						mCacheQueryOptions,
 						oError;
 
-					// create cache only if oCachePromise has not been changed in the meantime
-					if (!oCachePromise || that.oCachePromise === oCachePromise) {
+					// create cache only for the latest call to fetchCache
+					if (!oCachePromise || that.oFetchCacheCallToken === oCallToken) {
 						mCacheQueryOptions = jQuery.extend(true, {}, that.oModel.mUriParameters,
 							mQueryOptions);
 						if (sCanonicalPath) { // quasi-absolute or relative binding
@@ -87,6 +91,7 @@ sap.ui.define([
 				"sap.ui.model.odata.v4.ODataBinding", oError);
 		});
 		this.oCachePromise = oCachePromise;
+		this.oFetchCacheCallToken = oCallToken;
 	};
 
 	/**

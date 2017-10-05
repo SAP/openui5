@@ -179,7 +179,8 @@ sap.ui.require([
 
 			this.mock(_Requestor).expects("create")
 				.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, sinon.match.object,
-					sinon.match.func, sinon.match.func, sODataVersion)
+					sinon.match.func, sinon.match.func, sinon.match.func, sinon.match.func,
+					sODataVersion)
 				.returns({});
 
 			this.mock(_MetadataRequestor).expects("create")
@@ -249,8 +250,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Model construction with groupProperties ", function (assert) {
-		var oGroupProperties = {
+	QUnit.test("Model construction with groupProperties, getGroupProperty", function (assert) {
+		var oDefaultGroupProperties = {
+				"$auto" : {submit : SubmitMode.Auto},
+				"$direct" : {submit : SubmitMode.Direct}
+			},
+			oGroupProperties = {
 				"myGroup0" : {submit : SubmitMode.API},
 				"myGroup1" : {submit : SubmitMode.Auto},
 				"myGroup2" : {submit : SubmitMode.Direct}
@@ -259,12 +264,25 @@ sap.ui.require([
 
 		// code under test
 		oModel = createModel("");
-		assert.deepEqual(oModel.mGroupProperties, {});
+		assert.deepEqual(oModel.mGroupProperties, oDefaultGroupProperties);
 
 		// code under test
 		oModel = createModel("", {groupProperties : oGroupProperties});
-		assert.notStrictEqual(oModel.mGroupProperties, oGroupProperties, "cloned");
-		assert.deepEqual(oModel.mGroupProperties, oGroupProperties);
+		assert.deepEqual(oModel.mGroupProperties,
+			jQuery.extend(oDefaultGroupProperties, oGroupProperties));
+
+		// code under test
+		assert.strictEqual(oModel.getGroupProperty("$auto", "submit"), SubmitMode.Auto);
+		assert.strictEqual(oModel.getGroupProperty("$direct", "submit"), SubmitMode.Direct);
+		assert.strictEqual(oModel.getGroupProperty("myGroup0", "submit"), SubmitMode.API);
+		assert.strictEqual(oModel.getGroupProperty("myGroup1", "submit"), SubmitMode.Auto);
+		assert.strictEqual(oModel.getGroupProperty("myGroup2", "submit"), SubmitMode.Direct);
+		assert.strictEqual(oModel.getGroupProperty("unknown", "submit"), SubmitMode.API);
+
+		assert.throws(function () {
+			// code under test
+			oModel.getGroupProperty("myGroup0", "unknown");
+		}, new Error("Unsupported group property: 'unknown'"));
 	});
 
 	//*********************************************************************************************
@@ -354,7 +372,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Model creates _Requestor", function (assert) {
-		var oExpectedBind,
+		var oEntitySetMetaDataPromise = {},
+			oExpectedBind0,
+			oExpectedBind1,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
 			fnFetchEntityContainer = function () {},
 			oModel,
@@ -363,17 +383,21 @@ sap.ui.require([
 
 		oExpectedCreate
 			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"},
-				sinon.match.same(fnFetchEntityContainer), sinon.match.func, "4.0")
+				sinon.match.same(fnFetchEntityContainer), sinon.match.func,
+				sinon.match.same(ODataModel.prototype.getGroupProperty), sinon.match.func, "4.0")
 			.returns(oRequestor);
-		oExpectedBind = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
+		oExpectedBind0 = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
 			.returns(fnFetchEntityContainer);
+		oExpectedBind1 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
+			.returns(ODataModel.prototype.getGroupProperty);
 
 		// code under test
 		oModel = createModel("?sap-client=123");
 
 		assert.ok(oModel instanceof Model);
 		assert.strictEqual(oModel.oRequestor, oRequestor);
-		assert.strictEqual(oExpectedBind.firstCall.args[0], oModel.oMetaModel);
+		assert.strictEqual(oExpectedBind0.firstCall.args[0], oModel.oMetaModel);
+		assert.strictEqual(oExpectedBind1.firstCall.args[0], oModel);
 
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto")
@@ -382,8 +406,18 @@ sap.ui.require([
 			.withExactArgs(fnSubmitAuto);
 
 		// code under test - call fnOnCreateGroup
-		oExpectedCreate.args[0][4]("$auto");
-		oExpectedCreate.args[0][4]("foo");
+		oExpectedCreate.args[0][6]("$auto");
+		oExpectedCreate.args[0][6]("foo");
+
+		this.mock(ODataMetaModel.prototype).expects("getMetaPath")
+			.withExactArgs("/EntitySet(42)")
+			.returns("/EntitySet");
+		this.mock(ODataMetaModel.prototype).expects("fetchObject")
+			.withExactArgs("/EntitySet")
+			.returns(oEntitySetMetaDataPromise);
+
+		// code under test
+		assert.strictEqual(oExpectedCreate.args[0][4]("/EntitySet(42)"), oEntitySetMetaDataPromise);
 	});
 
 	//*********************************************************************************************
@@ -1341,6 +1375,11 @@ sap.ui.require([
 			oModel.resolve(0, new BaseContext(oModel, "/")),
 			Model.prototype.resolve(0, new BaseContext(oModel, "/")),
 			"/");
+		assert.strictEqual(
+			oModel.resolve(undefined, new BaseContext(oModel, "/")),
+			"/");
+		// Note: we do not go this far; JsDoc of @return wins: (string|undefined), nothing else!
+		assert.strictEqual(Model.prototype.resolve(null), null);
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

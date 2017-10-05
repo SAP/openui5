@@ -89,10 +89,11 @@ sap.ui.define([
 	 *   The function is called when the back end requests have been sent.
 	 */
 	function requestElements(oCache, iStart, iEnd, sGroupId, fnDataRequested) {
-		var iExpectedLength = iEnd - iStart,
+		var sDelimiter = oCache.sQueryString ? "&" : "?",
+			iExpectedLength = iEnd - iStart,
 			oPromise,
-			sResourcePath = oCache.sResourcePath + oCache.sQueryString + "$skip=" + iStart
-				+ "&$top=" + iExpectedLength;
+			sResourcePath = oCache.sResourcePath + oCache.sQueryString + sDelimiter
+				+ "$skip=" + iStart + "&$top=" + iExpectedLength;
 
 		oPromise = Promise.all([
 			oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
@@ -115,7 +116,8 @@ sap.ui.define([
 				setCount(oCache.mChangeListeners, "", oCache.aElements, oCache.iLimit);
 			}
 			for (i = 0; i < iResultLength; i++) {
-				oElement = oResult.value[i];	oCache.aElements[iStart + i] = oElement;
+				oElement = oResult.value[i];
+				oCache.aElements[iStart + i] = oElement;
 				oCache.calculateKeyPredicates(oElement, aResult[1]);
 				sPredicate = oElement["@$ui5.predicate"];
 				if (sPredicate) {
@@ -139,6 +141,7 @@ sap.ui.define([
 			throw oError;
 		});
 
+		oCache.bSentReadRequest = true;
 		fill(oCache.aElements, oPromise, iStart, iEnd);
 	}
 
@@ -188,12 +191,12 @@ sap.ui.define([
 		this.fnFetchType = fnFetchType;
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
-		this.mQueryOptions = mQueryOptions;
-		this.sQueryString = oRequestor.buildQueryString(mQueryOptions, false, bSortExpandSelect);
 		this.oRequestor = oRequestor;
-		this.sResourcePath = sResourcePath;
 		this.bSortExpandSelect = bSortExpandSelect;
+		this.sResourcePath = sResourcePath;
+		this.bSentReadRequest = false;
 		this.oTypePromise = undefined;
+		this.setQueryOptions(mQueryOptions);
 	}
 
 	/**
@@ -237,7 +240,8 @@ sap.ui.define([
 			}
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
-			sEditUrl += that.oRequestor.buildQueryString(that.mQueryOptions, true);
+			sEditUrl += that.oRequestor.buildQueryString(that.sResourcePath, that.mQueryOptions,
+				true);
 			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
 				["catch"](function (oError) {
 					if (oError.status !== 404) {
@@ -408,7 +412,8 @@ sap.ui.define([
 		function request(sPostGroupId) {
 			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
 			return _SyncPromise.resolve(vPostPath).then(function (sPostPath) {
-				sPostPath += that.oRequestor.buildQueryString(that.mQueryOptions, true);
+				sPostPath += that.oRequestor.buildQueryString(that.sResourcePath,
+					that.mQueryOptions, true);
 				that.addByPath(that.mPostRequests, sPath, oEntityData);
 				return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
 						setCreatePending, cleanUp)
@@ -434,8 +439,8 @@ sap.ui.define([
 						if (fnErrorCallback) {
 							fnErrorCallback(oError);
 						}
-						return request(sPostGroupId === "$auto" || sPostGroupId === "$direct"
-							? "$parked." + sPostGroupId : sPostGroupId);
+						return request(that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
+							sPostGroupId : "$parked." + sPostGroupId);
 				});
 			});
 		}
@@ -730,6 +735,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Updates query options of the cache which has not yet sent a read request with the given
+	 * options.
+	 *
+	 * @param {object} mQueryOptions
+	 *   The new query options
+	 * @throws {Error} If the cache has already sent a read request
+	 */
+	Cache.prototype.setQueryOptions = function (mQueryOptions) {
+		if (this.bSentReadRequest) {
+			throw new Error("Cannot set query options: Cache has already sent a read request");
+		}
+
+		this.mQueryOptions = mQueryOptions;
+		// sResourcePath is only used for metadata access, it does not contribute to the result
+		this.sQueryString = this.oRequestor.buildQueryString(this.sResourcePath, mQueryOptions,
+			false, this.bSortExpandSelect);
+	};
+
+	/**
 	 * Returns the cache's URL.
 	 *
 	 * @returns {string} The URL
@@ -805,7 +829,7 @@ sap.ui.define([
 					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 					if (!oError.canceled) {
 						fnErrorCallback(oError);
-						if (sGroupId !== "$auto" && sGroupId !== "$direct") {
+						if (that.oRequestor.getGroupSubmitMode(sGroupId) === "API") {
 							return patch();
 						}
 					}
@@ -859,7 +883,8 @@ sap.ui.define([
 				return Promise.resolve({});
 			}
 			// send and register the PATCH request
-			sEditUrl += that.oRequestor.buildQueryString(that.mQueryOptions, true);
+			sEditUrl += that.oRequestor.buildQueryString(that.sResourcePath, that.mQueryOptions,
+				true);
 			return patch();
 		});
 	};
@@ -895,7 +920,6 @@ sap.ui.define([
 		this.aElements.$count = undefined; // see setCount
 		this.iLimit = Infinity;            // the upper limit for the count (for the case that the
 									       // exact value is unknown)
-		this.sQueryString = this.sQueryString ? this.sQueryString + "&" : "?";
 	}
 
 	// make CollectionCache a Cache
@@ -1091,6 +1115,7 @@ sap.ui.define([
 			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET",
 				this.sResourcePath + this.sQueryString, sGroupId, undefined, undefined,
 				fnDataRequested));
+			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -1186,6 +1211,7 @@ sap.ui.define([
 				Cache.computeCount(aResult[0]);
 				return aResult[0];
 			});
+			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();

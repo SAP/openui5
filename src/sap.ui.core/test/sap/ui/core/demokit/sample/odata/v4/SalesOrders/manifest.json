@@ -60,7 +60,11 @@
 				"dataSource" : "default",
 				"settings" : {
 					"autoExpandSelect" : true,
-					"groupProperties" : {"FavoriteProductGroup" : {"submit" : "Auto"}},
+					"groupProperties" : {
+						"FavoriteProductGroup" : {"submit" : "Auto"},
+						"myAutoGroup" : {"submit" : "Auto"},
+						"myDirectGroup" : {"submit" : "Direct"}
+					},
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",
 					"updateGroupId" : "UpdateGroup"
