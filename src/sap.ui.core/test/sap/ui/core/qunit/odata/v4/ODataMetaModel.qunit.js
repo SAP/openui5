@@ -2976,11 +2976,12 @@ sap.ui.require([
 			},
 			mNewScope = {
 				"$Version" : "4.0",
-				"$LastModified" : "Tue, 18 Apr 2017 14:40:29 GMT"
+				"$Date" : "Tue, 18 Apr 2017 14:40:29 GMT"
 			},
 			iNow = Date.now(),
 			mOldScope = {
 				"$Version" : "4.0",
+				"$Date" : "Tue, 18 Apr 2017 14:40:29 GMT", // $LastModified wins!
 				"$LastModified" : "Fri, 07 Apr 2017 11:21:50 GMT"
 			},
 			mOldScopeClone = clone(mOldScope),
@@ -3000,29 +3001,27 @@ sap.ui.require([
 		assert.strictEqual(this.oMetaModel.validate(sUrl, mNewScope), mNewScope);
 
 		assert.strictEqual(this.oMetaModel.getLastModified().toISOString(),
-			"2017-04-18T14:40:29.000Z", "new $LastModified is used");
-		assert.notOk("$LastModified" in mNewScope);
+			"2017-04-18T14:40:29.000Z", "new $Date is used");
+		assert.notOk("$Date" in mNewScope);
 
 		// code under test
 		assert.strictEqual(this.oMetaModel.validate(sUrl, mOldScopeClone), mOldScopeClone);
 
 		assert.strictEqual(this.oMetaModel.getLastModified().toISOString(),
-			"2017-04-18T14:40:29.000Z", "new date wins, old $LastModified is ignored");
+			"2017-04-18T14:40:29.000Z", "new $Date wins, old $LastModified is ignored");
 		assert.notOk("$LastModified" in mOldScopeClone);
 
 		// code under test
 		assert.strictEqual(this.oMetaModel.validate(sUrl, mEmptyScope), mEmptyScope);
 
 		assert.ok(this.oMetaModel.getLastModified().getTime() >= iNow,
-			"missing $LastModified is like 'now': " + this.oMetaModel.getLastModified());
+			"missing $Date/$LastModified is like 'now': " + this.oMetaModel.getLastModified());
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getETags", function (assert) {
-		var oDate,
-			sETag = 'W/"..."',
+		var sETag = 'W/"..."',
 			mETags,
-			iNow = Date.now(),
 			that = this;
 
 		function codeUnderTest(sUrl, mScope) {
@@ -3055,20 +3054,12 @@ sap.ui.require([
 		// code under test
 		mETags = this.oMetaModel.getETags();
 
-		oDate = mETags["/~/C"];
 		assert.deepEqual(mETags, {
 			"/~/A" : new Date(Date.UTC(2017, 3, 7, 11, 21, 50)),
 			"/~/B" : new Date(Date.UTC(2017, 3, 18, 14, 40, 29)),
-			"/~/C" : oDate,
-			"/~/D" : sETag // wins over 'now'!
+			"/~/C" : null,
+			"/~/D" : sETag // wins over null!
 		});
-		assert.ok(oDate.getTime() >= iNow, "missing $LastModified is like 'now': " + oDate);
-
-		delete mETags["/~/C"];
-		assert.strictEqual(JSON.stringify(mETags),
-			'{"/~/A":"2017-04-07T11:21:50.000Z","/~/B":"2017-04-18T14:40:29.000Z","/~/D":'
-				+ JSON.stringify(sETag) + '}',
-			"map can easily be serialized into a useful short string (--> cache key)");
 	});
 
 	//*********************************************************************************************
