@@ -1239,9 +1239,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				this._mainGrid._onParentResizeOrig = this._mainGrid._onParentResize;
 				this._mainGrid._onParentResize = function() {
 					this._onParentResizeOrig();
+					var oLayout = this.getParent();
 
-					for ( var sContainerId in this.mContainers) {
-						this.mContainers[sContainerId][1]._onParentResize();
+					for ( var sContainerId in oLayout.mContainers) {
+						oLayout.mContainers[sContainerId][1]._onParentResize();
 					}
 
 				};
