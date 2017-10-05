@@ -1570,8 +1570,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 						that._switchToPage(2);
 					} else {
 						for (i = 0; i < iCustomTabsLength; i++) {
-							var oCustomTab = aCustomTabs[i];
-							if (!that._isEmptyTab(oCustomTab) && selectedId === oCustomTab.getTabButton().getId()) {
+							var oCustomTab = aCustomTabs[i],
+								sCustomTabId = this.getId() + this._sCustomTabsButtonsIdPrefix + oCustomTab.getId();
+							if (!that._isEmptyTab(oCustomTab) && selectedId === sCustomTabId) {
 								that._switchToPage(oCustomTab.getId());
 								break;
 							}
@@ -2056,6 +2057,28 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	};
 
 	/**
+	 * Gets or creates the sap.m.Button which is used inside the SegmentedButton for representation of the custom tab.
+	 * @private
+	 * @param {Object} oCustomTab with options for the button
+	 * @param {String} sButtonIdPrefix preffix for the button id
+	 * @returns {sap.m.Button} The created button
+	 */
+	ViewSettingsDialog.prototype._getTabButton = function (oCustomTab, sButtonIdPrefix) {
+		var sButtonId = sButtonIdPrefix + oCustomTab.getId(),
+			oButton = sap.ui.getCore().byId(sButtonId);
+
+		if (oButton) {
+			return oButton;
+		} else {
+			return new sap.m.Button({
+				id      : sButtonId,
+				icon    : oCustomTab.getIcon(),
+				tooltip : oCustomTab.getTooltip()
+			});
+		}
+	};
+
+	/**
 	 * Sets the state of the dialog when it is opened.
 	 * If content for only one tab is defined, then tabs are not displayed, otherwise,
 	 * a SegmentedButton is displayed and the button for the initially displayed page is focused.
@@ -2107,9 +2130,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		if (bCustomTabs) {
 			this.getCustomTabs().forEach(function (oCustomTab) {
 				if (!this._isEmptyTab(oCustomTab)) {
-					var oButton = oCustomTab.getTabButton({
-						'idPrefix': this.getId() + this._sCustomTabsButtonsIdPrefix
-					});
+					var sCustomTabButtonIdPrefix = this.getId() + this._sCustomTabsButtonsIdPrefix,
+						oButton = this._getTabButton(oCustomTab, sCustomTabButtonIdPrefix);
 					// add custom tab to segmented button
 					oSegmentedButton.addButton(oButton);
 				}
