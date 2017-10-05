@@ -152,6 +152,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the file type
+	 *
+	 * @returns {String} fileType of the file
+	 * @public
+	 */
+	Change.prototype.getFileType = function () {
+		if (this._oDefinition) {
+			return this._oDefinition.fileType;
+		}
+	};
+
+	/**
 	 * Returns the original language in ISO 639-1 format
 	 *
 	 * @returns {String} Original language

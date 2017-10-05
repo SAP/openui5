@@ -83,6 +83,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oInstance.getChangeType(), "filterVariant");
 	});
 
+	QUnit.test("Change.getFileType", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getFileType(), "variant");
+	});
+
 	QUnit.test("Change.getPackage", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		assert.equal(oInstance.getPackage(), "$TMP");

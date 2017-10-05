@@ -163,7 +163,9 @@ sap.ui.require([
 					this.oLayoutOuterOverlay = OverlayRegistry.getOverlay(this.oLayoutOuter);
 					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
-					this.oControlVariantPlugin = new ControlVariantPlugin({ commandFactory: CommandFactory });
+					this.oControlVariantPlugin = new ControlVariantPlugin({
+						commandFactory: new CommandFactory()
+					});
 					done();
 				}.bind(this));
 

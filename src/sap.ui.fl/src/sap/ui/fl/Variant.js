@@ -155,6 +155,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the file type
+	 *
+	 * @returns {String} fileType of the variant
+	 * @public
+	 */
+	Variant.prototype.getFileType = function () {
+		if (this._oDefinition) {
+			return this._oDefinition.content.fileType;
+		}
+	};
+
+	/**
 	 * Returns variant changes
 	 *
 	 * @returns {array} Array of changes belonging to Variant
@@ -250,16 +262,6 @@ sap.ui.define([
 	 */
 	Variant.prototype.getVariantReference = function () {
 		return this._oDefinition.content.variantReference;
-	};
-
-	/**
-	 * Returns the selector from the file content
-	 * @returns {object} selector in format selectorPropertyName:selectorPropertyValue
-	 *
-	 * @public
-	 */
-	Variant.prototype.getSelector = function () {
-		return this._oDefinition.selector;
 	};
 
 	/**
@@ -552,12 +554,10 @@ sap.ui.define([
 	 * @param {Object}  [oPropertyBag.content] content of the new change
 	 * @param {Boolean} [oPropertyBag.isVariant] ctrl_variant?
 	 * @param {String}  [oPropertyBag.packageName] ABAP package name
-	 * @param {Object}  [oPropertyBag.selector] name value pair of the attribute and value
 	 * @param {String}  [oPropertyBag.id] name/id of the file. if not set implicitly created
 	 * @param {Boolean} [oPropertyBag.isVariant] name of the component
 	 * @param {Boolean} [oPropertyBag.isUserDependent] true for enduser changes
 	 * @param {String}  !!!![oPropertyBag.context] ID of the context
-	 * @param {Object}  [oPropertyBag.dependentSelector] List of selectors saved under an alias for creating the dependencies between changes
 	 * @param {Object}  [oPropertyBag.validAppVersions] Application versions where the change is active
 	 * @param {String}  [oPropertyBag.reference] Application component name
 	 * @param {String}  [oPropertyBag.namespace] The namespace of the change file
@@ -584,8 +584,6 @@ sap.ui.define([
 			packageName: oPropertyBag.packageName || "",
 			self: sNamespace + sFileName + "." + "ctrl_variant",
 			content: oPropertyBag.content || {},
-			// TODO: Is an empty selector allowed?
-			selector: oPropertyBag.selector || {},
 			layer: oPropertyBag.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
 			texts: oPropertyBag.texts || {},
 			namespace: sNamespace, //TODO: we need to think of a better way to create namespaces from Adaptation projects.
@@ -598,7 +596,6 @@ sap.ui.define([
 				user: "",
 				sapui5Version: sap.ui.version
 			},
-			dependentSelector: oPropertyBag.dependentSelector || {},
 			validAppVersions: oPropertyBag.validAppVersions || {}
 		};
 

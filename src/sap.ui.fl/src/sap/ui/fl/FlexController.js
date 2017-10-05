@@ -199,16 +199,9 @@ sap.ui.define([
 			throw new Error("More than one DesignTime Context is currently active.");
 		}
 
-		if (!oVariantSpecificData.selector) {
-			oVariantSpecificData.selector = {};
-		}
-
 		if (!oAppComponent) {
 			throw new Error("No Application Component found - to offer flexibility the variant has to have a valid relation to its owning application component.");
 		}
-
-//		oVariantSpecificData.selector.id = sLocalId;
-//		oVariantSpecificData.selector.idIsLocal = true;
 
 		oVariantSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
 		oVariantSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable

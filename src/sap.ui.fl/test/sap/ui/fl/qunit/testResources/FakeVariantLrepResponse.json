@@ -84,9 +84,6 @@
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
-						"selector":{
-							"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-						},
 						"layer":"CUSTOMER",
 						"texts":{},
 						"namespace":"sap.ui.rta.test.Demo.md.Component",
@@ -158,9 +155,6 @@
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
-						"selector":{
-							"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-						},
 						"layer":"VENDOR",
 						"texts":{},
 						"namespace":"sap.ui.rta.test.Demo.md.Component",
@@ -232,9 +226,6 @@
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
-						"selector":{
-							"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-						},
 						"layer":"VENDOR",
 						"texts":{},
 						"namespace":"sap.ui.rta.test.Demo.md.Component",
