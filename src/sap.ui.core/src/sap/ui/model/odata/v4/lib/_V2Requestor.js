@@ -432,6 +432,10 @@ sap.ui.define([
 			}
 
 			switch (sName) {
+				case "$count":
+					sName = "$inlinecount";
+					vValue = vValue ? "allpages" : "none";
+					break;
 				case "$expand":
 					vValue = convertExpand([], vValue, "");
 					vValue = (bSortExpandSelect ? vValue.sort() : vValue).join(",");
