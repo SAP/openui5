@@ -9,9 +9,9 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/Feature",
-	"sap/ui/core/BusyIndicator",
-	"sap/ui/rta/RuntimeAuthoring"
-], function(jQuery, Controller, Model, AppVariantOverviewUtils, MessageBox, RtaUtils, RtaAppVariantFeature, BusyIndicator, RuntimeAuthoring) {
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/core/BusyIndicator"
+], function(jQuery, Controller, Model, AppVariantOverviewUtils, MessageBox, RtaUtils, RtaAppVariantFeature, RuntimeAuthoring, BusyIndicator) {
 	"use strict";
 
 	var _sIdRunningApp, _oRootControlRunningApp, sModulePath, oI18n;
