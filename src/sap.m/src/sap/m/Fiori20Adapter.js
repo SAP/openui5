@@ -315,7 +315,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			return this._adaptHeader(oControl, oAdaptOptions);
 		}
 		if (oControl.getParent() && isInstanceOf(oControl.getParent(), "sap/m/NavContainer")) {
-			return this._getCachedInfoToMerge(oControl.getId()); //if already adapted in earlier navigation
+			return this._getCachedViewInfoToMerge(oControl.getId()); //if already adapted in earlier navigation
 		}
 	};
 
@@ -409,8 +409,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		}
 
 		var fnOnNavigate = function(oEvent){
+			var oNode = oEvent.getParameter("to");
+			oAdaptOptions = this._applyRules(oAdaptOptions, oNode); //update the context-specific options
+
 			this._doBFS([{ // scan [for adaptable content] the newly added subtree
-				oNode: oEvent.getParameter("to"),
+				oNode: oNode,
 				oAdaptOptions: oAdaptOptions
 			}]);
 			if (this._getCurrentTopViewId()) {
@@ -497,8 +500,64 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		return iSearchDepth - 1;
 	};
 
+	Fiori20Adapter._getTotalCachedInfoToMerge = function(sViewId) {
+		var oView = sap.ui.getCore().byId(sViewId),
+			oCachedViewInfo = this._getCachedViewInfoToMerge(sViewId),
+			isMasterView,
+			isDetailView,
+			sSiblingView,
+			sSiblingViewId,
+			oSplitContainer,
+			oParentNavContainer,
+			oCachedSiblingViewInfo;
 
-	Fiori20Adapter._getCachedInfoToMerge = function(sViewId) {
+		// if this view is part of top-level split-view => merge with info for the sibling view
+		if (!Device.system.phone && this._isTopSplitContainerSubView(oView)) {
+			oParentNavContainer = oView.getParent();
+			oSplitContainer = oParentNavContainer && oParentNavContainer.getParent();
+
+			if (oSplitContainer) {
+				// find which part (master or detail) the view belongs to:
+				// => check if its a child of the master or detail navContainer
+				// (we cannot determine it by checking if it is part of the <code>masterPages</code> or <code>detailPages</code> aggregations of the <code>splitContainer</code>,
+				// because at this [early] stage the view may not be internally registered there yet, but only in its immediate parent aggregation)
+				isMasterView = oSplitContainer._oMasterNav && (oSplitContainer._oMasterNav.getId() === oParentNavContainer.getId());
+				isDetailView = oSplitContainer._oDetailNav && (oSplitContainer._oDetailNav.getId() === oParentNavContainer.getId());
+			}
+		}
+
+		if (isMasterView) { // merge with detail-part info
+			sSiblingView = oSplitContainer.getCurrentDetailPage();
+			sSiblingViewId = sSiblingView && sSiblingView.getId();
+			oCachedSiblingViewInfo = this._getCachedViewInfoToMerge(sSiblingViewId);
+			oCachedViewInfo = this._mergeSplitViewInfos(oCachedViewInfo, oCachedSiblingViewInfo);
+		}
+		if (isDetailView) { // merge with master-part info
+			sSiblingView = oSplitContainer.getCurrentMasterPage();
+			sSiblingViewId = sSiblingView && sSiblingView.getId();
+			oCachedSiblingViewInfo = this._getCachedViewInfoToMerge(sSiblingViewId);
+			oCachedViewInfo = this._mergeSplitViewInfos(oCachedSiblingViewInfo, oCachedViewInfo);
+		}
+
+		oCachedViewInfo.sViewId = (isMasterView || isDetailView) ? oSplitContainer.getId() : sViewId;
+
+		return oCachedViewInfo;
+	};
+
+	Fiori20Adapter._isTopSplitContainerSubView = function(oControl) {
+		var oParent = oControl && oControl.getParent();
+
+		return this._isTopmostNavContainer(oParent) && isInstanceOf(oParent.getParent(), "sap/m/SplitContainer");
+	};
+
+	Fiori20Adapter._mergeSplitViewInfos = function(oMasterViewInfo, oDetailViewInfo) {
+		jQuery.each(oMasterViewInfo, function(sKey, sValue) {
+			oMasterViewInfo[sKey] = sValue || oDetailViewInfo[sKey]; // detail info complements master info where master info is absent
+		});
+		return oMasterViewInfo;
+	};
+
+	Fiori20Adapter._getCachedViewInfoToMerge = function(sViewId) {
 
 		var oBackButton = (oInfoToMerge.aViewBackButtons[sViewId]) //skip currently invisible buttons as the app has currently excluded them from the app logic
 			? oInfoToMerge.aViewBackButtons[sViewId].oControl
@@ -674,8 +733,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	};
 
 	Fiori20Adapter._fireViewChange = function(sViewId, oAdaptOptions) {
-		var oToMerge = this._getCachedInfoToMerge(sViewId);
-		oToMerge.sViewId = sViewId;
+		var oToMerge = this._getTotalCachedInfoToMerge(sViewId);
 		oToMerge.oAdaptOptions = oAdaptOptions;
 		oEventProvider.fireEvent("adaptedViewChange", oToMerge);
 	};
