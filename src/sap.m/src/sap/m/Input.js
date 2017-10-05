@@ -1845,7 +1845,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 			if (!oInput._hasTabularSuggestions() && !bTabular) {
 				oInput._oList = new List(oInput.getId() + "-popup-list", {
-					width : "100%",
 					showNoData : false,
 					mode : ListMode.SingleSelectMaster,
 					rememberSelections : false,
