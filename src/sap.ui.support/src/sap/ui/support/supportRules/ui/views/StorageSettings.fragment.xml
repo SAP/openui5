@@ -27,7 +27,7 @@
 							<Button text="Delete Persisted Data" press="deletePersistedData"></Button>
 
 							<l:HorizontalLayout class="customSettingsInfo">
-							<Text text="Support Assistant Origin : \t" renderWhitespace="true"></Text>
+							<Text text="Support Assistant Location : \t" renderWhitespace="true"></Text>
 							<Link text="Copy" href="#" press="copySupportAssistantOriginToClipboard"></Link>
 							</l:HorizontalLayout>
 
