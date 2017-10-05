@@ -2210,6 +2210,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._getClosestScrolledSectionId = function (iScrollTop, iPageHeight, bSubSectionsOnly) {
+		bSubSectionsOnly = !!bSubSectionsOnly;
 
 		if (this.getUseIconTabBar() && this._oCurrentTabSection) {
 			return this._oCurrentTabSection.getId();
@@ -2228,10 +2229,15 @@ sap.ui.define([
 			if (oInfo.isSection || (bTraverseSubSections && !isParentHiddenSection)) {
 				//we need to set the sClosest to the first section for handling the scrollTop = 0
 				if (!sClosestId && (oInfo.sectionReference._getInternalVisible() === true)) {
-					sClosestId = sId;
+					if (oInfo.isSection && bSubSectionsOnly) {
+						//initialize to the first visible subsection if need only subsections to be returned
+						sClosestId = this._getFirstVisibleSubSection(oInfo.sectionReference).getId();
+					} else {
+						sClosestId = sId;
+					}
 				}
 
-				if (oInfo.isSection && !!bSubSectionsOnly) {
+				if (oInfo.isSection && bSubSectionsOnly) {
 					return true;
 				}
 
