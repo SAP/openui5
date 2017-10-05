@@ -29,14 +29,6 @@ sap.ui.define([
 			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.m",
 			properties: {
-				/**
-				 * Select control can be rendered according to the type.
-				 */
-				type: {
-					type: "sap.m.MultiEditFieldType",
-					group: "Appearance",
-					defaultValue: "Select"
-				},
 
 				/**
 				 * The selected item from items aggregation. This can be <code>null</code> if no valid item or special item is selected.
