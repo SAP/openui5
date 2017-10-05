@@ -53,6 +53,19 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				}
 			};
 
+			/**
+			 * When a user requests to drag some controls that can be dragged, a drag session is started.
+			 * The drag session can be used to transfer data between applications or between dragged and dropped controls.
+			 * Please see provided APIs for more details.
+			 *
+			 * <b>Note:</b> This object can only be exists during drag-drop operation.
+			 *
+			 * @name sap.ui.core.dnd.DragSession
+			 * @static
+			 * @abstract
+			 * @public
+			 */
+			/** @lends sap.ui.core.dnd.DragSession */
 			return {
 				/**
 				 * Sets string data with any MIME type.
@@ -132,24 +145,28 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				/**
 				 * Returns the drop indicator.
 				 *
-				 * @returns {jQuery} Indicator DOM reference
-				 * @public
+				 * @returns {HTMLElement} Indicator DOM reference
+				 * @protected
 				 */
 				getIndicator: function() {
-					return $Indicator;
+					return $Indicator && $Indicator[0];
 				},
 
 				/**
 				 * The dragged control, if available within the same UI5 application frame.
 				 *
+				 * @name sap.ui.core.dnd.DragSession.draggedControl
 				 * @protected
+				 * @type sap.ui.core.Element
 				 */
 				draggedControl: oDragControl,
 
 				/**
 				 * The valid drop target underneath the dragged control.
 				 *
+				 * @name sap.ui.core.dnd.DragSession.dropControl
 				 * @protected
+				 * @type sap.ui.core.Element
 				 */
 				dropControl: oValidDropControl
 			};
