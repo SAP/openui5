@@ -44,6 +44,19 @@ sap.ui.require([
 		return _SyncPromise.resolve({});
 	}
 
+	/*
+	 * Simulation of {@link sap.ui.model.odata.v4.ODataModel#getGroupProperty}
+	 */
+	function defaultGetGroupProperty(sGroupId, sPropertyName) {
+		if (sGroupId === "$direct") {
+			return "Direct";
+		}
+		if (sGroupId === "$auto") {
+			return "Auto";
+		}
+		return "API";
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
 		beforeEach : function () {
@@ -53,6 +66,9 @@ sap.ui.require([
 
 			this.oRequestor = {
 				buildQueryString : function () {return "";},
+				getGroupSubmitMode : function (sGroupId) {
+					return defaultGetGroupProperty(sGroupId);
+				},
 				getKeyPredicate : function (t, o) {return "('" + o.key + "')"; },
 				getServiceUrl : function () {return "/~/";},
 				relocate : function () {},
@@ -124,9 +140,8 @@ sap.ui.require([
 			sResourcePath = "~",
 			oCache;
 
-		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mQueryOptions), false, "bSortExpandSelect")
-			.returns("?foo=bar");
+		this.mock(_Cache.prototype).expects("setQueryOptions")
+			.withExactArgs(sinon.match.same(mQueryOptions));
 
 		// code under test
 		oCache = new _Cache(this.oRequestor, sResourcePath, defaultFetchType, mQueryOptions,
@@ -136,12 +151,45 @@ sap.ui.require([
 		assert.deepEqual(oCache.mChangeListeners, {});
 		assert.deepEqual(oCache.mPatchRequests, {});
 		assert.deepEqual(oCache.mPostRequests, {});
-		assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.sResourcePath, "~");
-		assert.strictEqual(oCache.sQueryString, "?foo=bar");
 		assert.strictEqual(oCache.fnFetchType, defaultFetchType);
+		assert.strictEqual(oCache.bSentReadRequest, false);
 		assert.strictEqual(oCache.oTypePromise, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#setQueryOptions", function (assert) {
+		var mNewQueryOptions = {},
+			mQueryOptions = {},
+			sResourcePath = "~",
+			oCache;
+
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(sinon.match.same(sResourcePath), sinon.match.same(mQueryOptions), false,
+				"bSortExpandSelect")
+			.returns("?foo=bar");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(sinon.match.same(sResourcePath), sinon.match.same(mNewQueryOptions),
+				false, "bSortExpandSelect")
+			.returns("?baz=boo");
+
+		oCache = new _Cache(this.oRequestor, sResourcePath, defaultFetchType, mQueryOptions,
+			"bSortExpandSelect");
+		assert.strictEqual(oCache.sQueryString, "?foo=bar");
+
+		// code under test
+		oCache.setQueryOptions(mNewQueryOptions);
+
+		assert.strictEqual(oCache.mQueryOptions, mNewQueryOptions);
+		assert.strictEqual(oCache.sQueryString, "?baz=boo");
+
+		oCache.bSentReadRequest = true;
+
+		// code under test
+		assert.throws(function () {
+			oCache.setQueryOptions(mQueryOptions);
+		}, new Error("Cannot set query options: Cache has already sent a read request"));
 	});
 
 	//*********************************************************************************************
@@ -671,7 +719,7 @@ sap.ui.require([
 			oHelperMock.expects("buildPath").withExactArgs("path/to/entity", "Address/City")
 				.returns(sFullPath);
 			this.oRequestorMock.expects("buildQueryString")
-				.withExactArgs(sinon.match.same(mQueryOptions), true)
+				.withExactArgs("/BusinessPartnerList", sinon.match.same(mQueryOptions), true)
 				.returns("?foo=bar");
 			oStaticCacheMock.expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf")
@@ -828,7 +876,8 @@ sap.ui.require([
 			oHelperMock.expects("buildPath").withExactArgs("path/to/entity", "Address/City")
 				.returns(sFullPath);
 			this.oRequestorMock.expects("buildQueryString")
-				.withExactArgs(sinon.match.same(mQueryOptions), true).returns("?foo=bar");
+				.withExactArgs("/BusinessPartnerList", sinon.match.same(mQueryOptions), true)
+				.returns("?foo=bar");
 			oStaticCacheMock.expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf")
 				.returns(oUpdateData);
@@ -894,7 +943,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["$direct", "$auto"].forEach(function (sGroupId) {
+	["$direct", "$auto", "myDirect", "myAuto"].forEach(function (sGroupId) {
 		QUnit.test("_Cache#update: failure, group " + sGroupId, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "/BusinessPartnerList", defaultFetchType, {}),
 				oCacheMock = this.mock(oCache),
@@ -907,6 +956,12 @@ sap.ui.require([
 				},
 				fnError = sinon.spy(),
 				oError = new Error(),
+				mGroups = {
+					"$direct" : "Direct",
+					"$auto" : "Auto",
+					"myAuto" : "Auto",
+					"myDirect" : "Direct"
+				},
 				oPatchPromise = Promise.reject(oError),
 				oUpdateData = {
 					"Address" : {
@@ -922,6 +977,8 @@ sap.ui.require([
 						"If-Match" : sETag
 					}, oUpdateData, undefined, sinon.match.func)
 				.returns(oPatchPromise);
+			this.oRequestorMock.expects("getGroupSubmitMode")
+				.withExactArgs(sGroupId).returns(mGroups[sGroupId]);
 
 			// code under test
 			return oCache.update(sGroupId, "Address/City", "Walldorf", fnError,
@@ -1210,6 +1267,7 @@ sap.ui.require([
 
 			assert.ok(!oPromise.isFulfilled());
 			assert.ok(!oPromise.isRejected());
+			assert.ok(oCache.bSentReadRequest);
 			return oPromise.then(function (oResult) {
 				var oExpectedResult = {
 						"@odata.context" : "$metadata#TEAMS",
@@ -1661,7 +1719,8 @@ sap.ui.require([
 	QUnit.test("_Cache#create: with given sPath and delete before submit", function (assert) {
 		var oBody,
 			// real requestor to avoid reimplementing callback handling of _Requestor.request
-			oRequestor = _Requestor.create("/~/"),
+			oRequestor = _Requestor.create("/~/", undefined, undefined, undefined, undefined,
+				defaultGetGroupProperty),
 			oCache = new _Cache(oRequestor),
 			oCacheMock = this.mock(oCache),
 			aCollection = [],
@@ -1734,7 +1793,7 @@ sap.ui.require([
 			sResourcePath = "Employees";
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mQueryParams), false, false)
+			.withExactArgs(sResourcePath, sinon.match.same(mQueryParams), false, false)
 			.returns(sQueryParams);
 
 		oCache = this.createCache(sResourcePath, mQueryParams, false);
@@ -1792,7 +1851,7 @@ sap.ui.require([
 		}
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mQueryOptions), true)
+			.withExactArgs("Employees", sinon.match.same(mQueryOptions), true)
 			.returns("?foo=bar");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees?foo=bar", "updateGroup", null,
@@ -1942,12 +2001,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["$direct", "$auto"].forEach(function (sUpdateGroupId) {
+	["$direct", "$auto", "myAuto", "myDirect"].forEach(function (sUpdateGroupId) {
 		QUnit.test("CollectionCache#create: relocate on failed POST for " + sUpdateGroupId,
 				function (assert) {
 			var oCache = this.createCache("Employees"),
 				oFailedPostPromise = Promise.reject(new Error()),
+				mGroups = {
+					"$direct" : "Direct",
+					"$auto" : "Auto",
+					"myAuto" : "Auto",
+					"myDirect" : "Direct"
+				},
 				that = this;
+
+			this.oRequestorMock.expects("getGroupSubmitMode")
+				.withExactArgs(sUpdateGroupId).returns(mGroups[sUpdateGroupId]);
 
 			this.oRequestorMock.expects("request")
 				.withExactArgs("POST", "Employees", sUpdateGroupId, null, sinon.match.object,
@@ -2067,7 +2135,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: create and delete transient entry", function (assert) {
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
-		var oRequestor = _Requestor.create("/~/"),
+		var oRequestor = _Requestor.create("/~/", undefined, undefined, undefined, undefined,
+				defaultGetGroupProperty),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCancelCallback = sinon.spy(),
 			oDeletePromise,
@@ -2107,7 +2176,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: delete created entity", function (assert) {
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
-		var oRequestor = _Requestor.create("/~/"),
+		var oRequestor = _Requestor.create("/~/", undefined, undefined, undefined, undefined,
+				defaultGetGroupProperty),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCallback = sinon.spy(),
 			oCreatedPromise,
@@ -2153,6 +2223,7 @@ sap.ui.require([
 			fnDataRequested1 = {},
 			fnDataRequested2 = {},
 			oExpectedResult = {},
+			aFetchValuePromises,
 			oListener1 = {},
 			oListener2 = {},
 			mQueryParams = {},
@@ -2161,7 +2232,8 @@ sap.ui.require([
 			that = this;
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mQueryParams), false, true).returns("?~");
+			.withExactArgs(sResourcePath, sinon.match.same(mQueryParams), false, true)
+			.returns("?~");
 		this.mock(_Cache.prototype).expects("fetchTypes")
 			.returns(Promise.resolve(mTypeForPath));
 
@@ -2190,16 +2262,24 @@ sap.ui.require([
 				}));
 
 		// code under test
-		return Promise.all([
+		aFetchValuePromises = [
 			oCache.fetchValue("group", undefined, fnDataRequested1, oListener1)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
-				}),
+			})
+		];
+
+		assert.ok(oCache.bSentReadRequest);
+
+		// code under test
+		aFetchValuePromises.push(
 			oCache.fetchValue("group", "foo", fnDataRequested2, oListener2)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, "bar");
 				})
-		]);
+		);
+
+		return Promise.all(aFetchValuePromises);
 	});
 
 	//*********************************************************************************************
@@ -2233,6 +2313,8 @@ sap.ui.require([
 		assert.throws(function () {
 			oCache.fetchValue();
 		}, new Error("Cannot fetch a value before the POST request"));
+
+		assert.notOk(oCache.bSentReadRequest);
 		oPromise = oCache.post(sGroupId, oPostData, "etag").then(function (oPostResult1) {
 			assert.strictEqual(oPostResult1, oResult1);
 			return Promise.all([
@@ -2480,13 +2562,15 @@ sap.ui.require([
 			fnDataRequested1 = {},
 			fnDataRequested2 = {},
 			oExpectedResult = {},
+			aFetchValuePromises,
 			oListener1 = {},
 			oListener2 = {},
 			mQueryParams = {},
 			sResourcePath = "Employees('1')";
 
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(sinon.match.same(mQueryParams), false, undefined).returns("?~");
+			.withExactArgs(sResourcePath, sinon.match.same(mQueryParams), false, undefined)
+			.returns("?~");
 
 		oCache = _Cache.createProperty(this.oRequestor, sResourcePath, mQueryParams);
 		oCacheMock = this.mock(oCache);
@@ -2503,18 +2587,26 @@ sap.ui.require([
 					return {value : oExpectedResult};
 				}));
 
-		return Promise.all([
+		// code under test
+		aFetchValuePromises = [
 			oCache.fetchValue("group", "", fnDataRequested1, oListener1)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
-
 					assert.strictEqual(oCache.fetchValue("group", "").getResult(), oExpectedResult);
-				}),
+				})
+		];
+
+		assert.ok(oCache.bSentReadRequest);
+
+		// code under test
+		aFetchValuePromises.push(
 			oCache.fetchValue("group", "", fnDataRequested2, oListener2)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
 				})
-		]);
+		);
+
+		return Promise.all(aFetchValuePromises);
 	});
 
 	//*********************************************************************************************
@@ -2627,7 +2719,8 @@ sap.ui.require([
 					Budget : "555.55"
 				},
 				oRequestor = _Requestor.create(TestUtils.proxy(
-					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/")),
+					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"), undefined, undefined,
+					undefined, undefined, defaultGetGroupProperty),
 				sResourcePath = "TEAMS('TEAM_01')",
 				oCache = _Cache.createSingle(oRequestor, sResourcePath, defaultFetchType);
 

@@ -43,14 +43,16 @@ sap.ui.define([
 				sQuery,
 				bRealOData = TestUtils.isRealOData(),
 				sServiceUrl = fnProxy(oModel.sServiceUrl),
-				sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId");
+				sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId")
+					|| this.getComponentData() && this.getComponentData().updateGroupId;
 
 			if (oModel.sServiceUrl !== sServiceUrl || sGroupId || sUpdateGroupId) {
 				//replace model from manifest in case of proxy
 				sQuery = URI.buildQuery(oModel.mUriParameters);
 				sQuery = sQuery ? "?" + sQuery : "";
 				sUpdateGroupId = sUpdateGroupId || oModel.getUpdateGroupId();
-				oGroupProperties = oModel.mGroupProperties;
+				oGroupProperties = this.getManifestEntry(
+					"/sap.ui5/models//settings/groupProperties");
 				oModel.destroy();
 				oModel = new ODataModel({
 					autoExpandSelect : true,

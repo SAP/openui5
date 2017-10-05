@@ -935,6 +935,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resolve: undefined", function (assert) {
+		assert.strictEqual(
+			this.oMetaModel.resolve(undefined, this.oMetaModel.getContext("/")),
+			"/");
+	});
+
+	//*********************************************************************************************
 	//TODO better map meta model path to pure JSON path (look up inside JsonModel)?
 	// what about @sapui.name then, which requires a literal as expected result?
 	// --> we could distinguish "/<path>" from "<literal>"

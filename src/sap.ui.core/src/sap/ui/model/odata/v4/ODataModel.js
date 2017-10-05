@@ -210,7 +210,10 @@ sap.ui.define([
 								+ oGroupProperties + "'");
 						}
 					}
-					this.mGroupProperties = jQuery.extend({}, mParameters.groupProperties);
+					this.mGroupProperties = jQuery.extend({
+							"$auto" : {submit : SubmitMode.Auto},
+							"$direct" : {submit : SubmitMode.Direct}
+						}, mParameters.groupProperties);
 					if (mParameters.autoExpandSelect !== undefined
 							&& typeof mParameters.autoExpandSelect !== "boolean") {
 						throw new Error("Value for autoExpandSelect must be true or false");
@@ -224,6 +227,10 @@ sap.ui.define([
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters,
 						this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
+						function (sPath) {
+							return that.oMetaModel.fetchObject(that.oMetaModel.getMetaPath(sPath));
+						},
+						this.getGroupProperty.bind(this),
 						function (sGroupId) {
 							if (that.isAutoGroup(sGroupId)) {
 								sap.ui.getCore().addPrerenderingTask(
@@ -827,6 +834,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a group property value.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sPropertyName
+	 *   The group property in question
+	 * @returns {string}
+	 *   The group property value
+	 * @throws {Error} If the name of the group property is not 'submit'
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.v4.ODataModel#constructor
+	 */
+	ODataModel.prototype.getGroupProperty = function (sGroupId, sPropertyName) {
+		switch (sPropertyName) {
+			case "submit":
+				return this.mGroupProperties[sGroupId]
+					? this.mGroupProperties[sGroupId].submit
+					: SubmitMode.API;
+			default:
+				throw new Error("Unsupported group property: '" + sPropertyName + "'");
+		}
+	};
+
+	/**
 	 * Returns the meta model for this ODataModel.
 	 *
 	 * @returns {sap.ui.model.odata.v4.ODataMetaModel}
@@ -947,9 +979,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.isAutoGroup = function (sGroupId) {
-		return sGroupId === "$auto"
-			|| this.mGroupProperties[sGroupId]
-				&& this.mGroupProperties[sGroupId].submit === SubmitMode.Auto;
+		return this.mGroupProperties[sGroupId]
+			&& this.mGroupProperties[sGroupId].submit === SubmitMode.Auto;
 	};
 
 	/**
@@ -963,9 +994,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.isDirectGroup = function (sGroupId) {
-		return sGroupId === "$direct"
-			|| this.mGroupProperties[sGroupId]
-				&& this.mGroupProperties[sGroupId].submit === SubmitMode.Direct;
+		return this.mGroupProperties[sGroupId]
+			&& this.mGroupProperties[sGroupId].submit === SubmitMode.Direct;
 	};
 
 	/**
@@ -1114,7 +1144,7 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the effect of a trailing
 	 * slash.
 	 *
-	 * @param {string} sPath
+	 * @param {string} [sPath=""]
 	 *   A relative or absolute path within the data model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
@@ -1128,7 +1158,7 @@ sap.ui.define([
 	ODataModel.prototype.resolve = function (sPath, oContext) {
 		var sResolvedPath;
 
-		if (sPath[0] === "/") {
+		if (sPath && sPath[0] === "/") {
 			sResolvedPath = sPath;
 		} else if (oContext) {
 			if (sPath) {

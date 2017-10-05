@@ -2017,7 +2017,7 @@ sap.ui.define([
 	 * "{property>./@com.sap.vocabularies.Common.v1.Text}"
 	 * </pre>
 	 *
-	 * @param {string} sPath
+	 * @param {string} [sPath=""]
 	 *   A relative or absolute path within the metadata model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
