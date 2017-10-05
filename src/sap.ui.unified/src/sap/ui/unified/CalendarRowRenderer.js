@@ -2,9 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppointment', 'sap/ui/unified/CalendarRow', 'sap/ui/Device', 'sap/ui/unified/library'],
-	function(jQuery, UniversalDate, CalendarAppointment, CalendarRow, Device, library) {
-	"use strict";
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppointment',
+		'sap/ui/unified/CalendarRow', 'sap/ui/unified/CalendarLegend', 'sap/ui/Device', 'sap/ui/unified/library'],
+	function (jQuery, UniversalDate, CalendarAppointment, CalendarRow, CalendarLegend, Device, library) {
+		"use strict";
 
 
 	// shortcut for sap.ui.unified.CalendarDayType
@@ -33,17 +34,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 	CalendarRowRenderer.render = function(oRm, oRow){
 		var sTooltip = oRow.getTooltip_AsString();
 		var sVisualisation = oRow.getAppointmentsVisualization();
-		var sLegendId = oRow.getLegend();
-		var aTypes = [];
 
-		if (sLegendId) {
-			var oLegend = sap.ui.getCore().byId(sLegendId);
-			if (oLegend) {
-				aTypes = oLegend.getItems();
-			} else {
-				jQuery.sap.log.warning("CalendarLegend " + sLegendId + " does not exist!", oRow);
-			}
-		}
+		var aTypes = this.getLegendItems(oRow);
 
 		oRm.write("<div");
 		oRm.writeControlData(oRow);
@@ -595,14 +587,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		}
 
 		if (sType && sType != CalendarDayType.None) {
-			// as legend must not be rendered add text of type
-			for (var i = 0; i < aTypes.length; i++) {
-				var oType = aTypes[i];
-				if (oType.getType() == sType) {
-					sAriaText = sAriaText + "; " + oType.getText();
-					break;
-				}
-			}
+
+			sAriaText = sAriaText + "; " + this.getAriaTextForType(sType, aTypes);
 		}
 
 		oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" + sAriaText + "</span>");
@@ -751,6 +737,61 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		oRm.write("</div>");
 	};
 
+	/**
+	 * Retrieves the legend items if such are associated with the given CalendarRow.
+	 * Could be overridden by subclasses.
+	 * @param {sap.ui.unified.CalendarRow} oCalRow the row to take the legend for
+	 * @returns {Array} a list of legend items is such is associated to the CalendarRow, or empty array.
+	 * @protected
+	 */
+	CalendarRowRenderer.getLegendItems = function (oCalRow) {
+		var aResult = [],
+			oLegend,
+			sLegendId = oCalRow.getLegend();
+
+		if (sLegendId) {
+			oLegend = sap.ui.getCore().byId(sLegendId);
+			if (oLegend) {
+				aResult = oLegend.getItems();
+			} else {
+				jQuery.sap.log.error("CalendarLegend with id '" + sLegendId + "' does not exist!", oCalRow);
+			}
+		}
+		return aResult;
+	};
+
+	/**
+	 * Retrieves text for given CalendarDayType based on given type and legend items.
+	 * @param {sap.ui.unified.CalendarDayType} sType the type to obtain information about
+	 * @param {sap.ui.unified.CalendarLegendItem[]} aLegendItems ot be used.
+	 * @returns {string} The matching legend item's text or the default text for this type.
+	 * @private
+	 */
+	CalendarRowRenderer.getAriaTextForType = function(sType, aLegendItems) {
+		// as legend must not be rendered add text of type
+		var sTypeLabelText,
+			oStaticLabel,
+			oItem, i;
+
+		if (aLegendItems && aLegendItems.length) {
+			for (var i = 0; i < aLegendItems.length; i++) {
+				oItem = aLegendItems[i];
+				if (oItem.getType() === sType) {
+					sTypeLabelText = oItem.getText();
+					break;
+				}
+			}
+		}
+
+		if (!sTypeLabelText) {
+			//use static invisible labels - "Type 1", "Type 2"
+			oStaticLabel = CalendarLegend.getTypeAriaText(sType);
+			if (oStaticLabel) {
+				sTypeLabelText = oStaticLabel.getText();
+			}
+		}
+		return sTypeLabelText;
+	};
 	return CalendarRowRenderer;
 
 }, /* bExport= */ true);

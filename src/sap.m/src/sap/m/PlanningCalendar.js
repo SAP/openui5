@@ -3,11 +3,11 @@
  */
 
 //Provides control sap.m.PlanningCalendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './PlanningCalendarRow',
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedObjectObserver', './PlanningCalendarRow',
 		'./library', 'sap/ui/unified/library', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate',
 		'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarWeekInterval',
 		'sap/ui/unified/CalendarOneMonthInterval', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item', 'jquery.sap.events'],
-	function (jQuery, Control, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils, CalendarDate,
+	function (jQuery, Control, ManagedObjectObserver, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils, CalendarDate,
 			  DateRange, CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval, Device, ResizeHandler, Item) {
 		"use strict";
 
@@ -915,7 +915,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './PlanningCalendarRo
 					this._oTimeInterval = new sap.ui.unified.CalendarTimeInterval(this.getId() + "-TimeInt", {
 						startDate: new Date(oStartDate.getTime()), // use new date object
 						items: iIntervals,
-						pickerPopup: true
+						pickerPopup: true,
+						legend: this.getLegend()
 					});
 					this._oTimeInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
 					this._oTimeInterval.attachEvent("select", this._handleCalendarSelect, this);
@@ -947,7 +948,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './PlanningCalendarRo
 						startDate: new Date(oStartDate.getTime()), // use new date object
 						days: iIntervals,
 						showDayNamesLine: this.getShowDayNamesLine(),
-						pickerPopup: true
+						pickerPopup: true,
+						legend: this.getLegend()
 					});
 
 					oInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
@@ -979,7 +981,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './PlanningCalendarRo
 					this._oMonthInterval = new sap.ui.unified.CalendarMonthInterval(this.getId() + "-MonthInt", {
 						startDate: new Date(oStartDate.getTime()), // use new date object
 						months: iIntervals,
-						pickerPopup: true
+						pickerPopup: true,
+						legend: this.getLegend()
 					});
 					this._oMonthInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
 					this._oMonthInterval.attachEvent("select", this._handleCalendarSelect, this);
@@ -1377,18 +1380,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './PlanningCalendarRo
 
 	};
 
-	PlanningCalendar.prototype.setLegend = function(sLegendId){
+	PlanningCalendar.prototype.setLegend = function(vLegend){
 
-		this.setAssociation("legend", sLegendId, true);
+		this.setAssociation("legend", vLegend, true);
 
-		var aRows = this.getRows();
+		var aRows = this.getRows(),
+			oLegend = this.getLegend() && sap.ui.getCore().byId(this.getLegend()),
+			oLegendDestroyObserver;
+
 		for (var i = 0; i < aRows.length; i++) {
 			var oRow = aRows[i];
-			oRow.getCalendarRow().setLegend(sLegendId);
+			oRow.getCalendarRow().setLegend(vLegend);
+		}
+
+		INTERVAL_CTR_REFERENCES.forEach(function (sControlRef) {
+			if (this[sControlRef]) {
+				this[sControlRef].setLegend(vLegend);
+			}
+		}, this);
+
+		if (oLegend) { //destroy of the associated legend should rerender the PlanningCalendar
+			oLegendDestroyObserver = new ManagedObjectObserver(function(oChanges) {
+				this.invalidate();
+			}.bind(this));
+			oLegendDestroyObserver.observe(oLegend, {
+				destroy: true
+			});
 		}
 
 		return this;
-
 	};
 
 	PlanningCalendar.prototype.addAriaLabelledBy = function(sId) {
