@@ -37,9 +37,6 @@ sap.ui.define([
 			 */
 			init : function () {
 
-				// This promise will be resolved when the api-based models (libsData, treeData) have been loaded
-				this._modelsPromise = null;
-
 				this._oErrorHandler = new ErrorHandler(this);
 
 				// set the device model
@@ -59,11 +56,6 @@ sap.ui.define([
 
 				// create the views based on the url/hash
 				this.getRouter().initialize();
-
-				if (Device.system.desktop) {
-					// Preload API Info on desktop for faster startup
-					this.loadVersionInfo().then(this.fetchAPIInfoAndBindModels.bind(this));
-				}
 
 				// Prevents inappropriate focus change which causes ObjectPage to scroll,
 				// thus text can be selected and copied
@@ -120,42 +112,20 @@ sap.ui.define([
 				return this._oVersionInfoPromise;
 			},
 
-			fetchAPIInfoAndBindModels: function () {
-				var oVersionModel = this.getModel("versionData"),
-					bIsInternalVersion = oVersionModel.getProperty("/isInternal"),
-					aLibraries = oVersionModel.getProperty("/libraries");
-
-				if (this._modelsPromise) {
-					return this._modelsPromise;
+			fetchAPIIndex: function () {
+				if (this._indexPromise) {
+					return this._indexPromise;
 				}
 
-				this._modelsPromise = new Promise(function (resolve) {
-					APIInfo.getAllLibrariesElementsJSONPromise(aLibraries).then(function(aLibsData) {
-						aLibsData.forEach(this._parseLibraryElements, this);
-
-						if (aTreeContent.length > 0) {
-							aTreeContent.push({
-								isSelected: false,
-								name : "experimental",
-								ref: "#/api/experimental",
-								text: "Experimental APIs"
-							}, {
-								isSelected: false,
-								name : "deprecated",
-								ref: "#/api/deprecated",
-								text: "Deprecated APIs"
-							});
-						}
-
-						this._addDeprecatedAndExperimentalData(oLibsData, bIsInternalVersion);
-
-						this._bindAllLibsModel(oLibsData);
+				this._indexPromise = new Promise(function (resolve, reject) {
+					APIInfo.getIndexJsonPromise().then(function (aData) {
+						this._parseLibraryElements(aData);
 						this._bindTreeModel(aTreeContent);
-						resolve();
+						resolve(aData);
 					}.bind(this));
 				}.bind(this));
 
-				return this._modelsPromise;
+				return this._indexPromise;
 			},
 
 
@@ -176,20 +146,23 @@ sap.ui.define([
 
 			_addElementToTreeData : function (oJSONElement) {
 				var oNewNodeNamespace,
-					aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
+					aAllowedMembers = this.aAllowedMembers;
 
 				if (aAllowedMembers.indexOf(oJSONElement.visibility) !== -1) {
 					if (oJSONElement.kind !== "namespace") {
-						var oTreeNode = this._createTreeNode(oJSONElement.basename, oJSONElement.name, oJSONElement.name === this._topicId);
-						var sNodeNamespace = oJSONElement.name.substring(0, (oJSONElement.name.indexOf(oJSONElement.basename) - 1));
-						var oExistingNodeNamespace = this._findNodeNamespaceInTreeStructure(sNodeNamespace);
+						var aNameParts = oJSONElement.name.split("."),
+							sBaseName = aNameParts.pop(),
+							sNodeNamespace = aNameParts.join("."), // Note: Array.pop() on the previous line modifies the array itself
+							oTreeNode = this._createTreeNode(sBaseName, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib),
+							oExistingNodeNamespace = this._findNodeNamespaceInTreeStructure(sNodeNamespace);
+
 						if (oExistingNodeNamespace) {
 							if (!oExistingNodeNamespace.nodes) {
 								oExistingNodeNamespace.nodes = [];
 							}
 							oExistingNodeNamespace.nodes.push(oTreeNode);
 						} else if (sNodeNamespace) {
-							oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId);
+							oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId, oJSONElement.lib);
 							oNewNodeNamespace.nodes = [];
 							oNewNodeNamespace.nodes.push(oTreeNode);
 							aTreeContent.push(oNewNodeNamespace);
@@ -197,22 +170,23 @@ sap.ui.define([
 							this._removeDuplicatedNodeFromTree(sNodeNamespace);
 						} else {
 							// Entities for which we can't resolve namespace we are shown in the root level
-							oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId);
+							oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib);
 							aTreeContent.push(oNewNodeNamespace);
 						}
 					} else {
-						oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId );
+						oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib);
 						aTreeContent.push(oNewNodeNamespace);
 					}
 				}
 			},
 
-			_createTreeNode : function (text, name, isSelected) {
+			_createTreeNode : function (text, name, isSelected, sLib) {
 				var oTreeNode = {};
 				oTreeNode.text = text;
 				oTreeNode.name = name;
 				oTreeNode.ref = "#/api/" + name;
 				oTreeNode.isSelected = isSelected;
+				oTreeNode.lib = sLib;
 				return oTreeNode;
 			},
 
@@ -250,24 +224,34 @@ sap.ui.define([
 				}
 			},
 
-
-			_bindAllLibsModel : function (oAllLibsData) {
-				var oLibsModel = this.getModel("libsData");
-				oLibsModel.setSizeLimit(iTreeModelLimit);
-				oLibsModel.setData(oAllLibsData, false /* mo merge with previous data */);
-			},
-
 			_bindTreeModel : function (aTreeContent) {
 				var treeModel = this.getModel("treeData");
 				treeModel.setSizeLimit(iTreeModelLimit);
+
+				// Inject Deprecated and Experimental links
+				if (aTreeContent.length > 0) {
+					aTreeContent.push({
+						isSelected: false,
+						name : "experimental",
+						ref: "#/api/experimental",
+						text: "Experimental APIs"
+					}, {
+						isSelected: false,
+						name : "deprecated",
+						ref: "#/api/deprecated",
+						text: "Deprecated APIs"
+					});
+				}
+
 				treeModel.setData(aTreeContent, false);
 			},
 
 			_bindVersionModel : function (oVersionInfo) {
 				var sVersion,
 					oVersionInfoData,
-					bIsInternal = false,
-					aAllowedMembers = ["public", "protected"];
+					bIsInternal = false;
+
+				this.aAllowedMembers = ["public", "protected"];
 
 				if (!oVersionInfo) {
 					return;
@@ -276,7 +260,7 @@ sap.ui.define([
 				sVersion = oVersionInfo.version;
 				if (/internal/i.test(oVersionInfo.name)) {
 					bIsInternal = true;
-					aAllowedMembers.push("restricted");
+					this.aAllowedMembers.push("restricted");
 				}
 				oVersionInfoData = {
 					versionGav: oVersionInfo.gav,
@@ -287,99 +271,10 @@ sap.ui.define([
 					isDevVersion: sVersion.indexOf("SNAPSHOT") > -1 || (sVersion.split(".").length > 1 && parseInt(sVersion.split(".")[1], 10) % 2 === 1),
 					isInternal: bIsInternal,
 					libraries: oVersionInfo.libraries,
-					allowedMembers: aAllowedMembers
+					allowedMembers: this.aAllowedMembers
 				};
 
 				this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
-			},
-
-			_addDeprecatedAndExperimentalData : function(oLibsData, bIsInternalVersion) {
-				var sWithoutVersion = "Without Version";
-
-				oLibsData.deprecated = {
-					noVersion : {
-						name : sWithoutVersion,
-						apis : []
-					}
-				};
-
-				oLibsData.experimental = {
-					noVersion : {
-						name : sWithoutVersion,
-						apis : []
-					}
-				};
-
-				/**
-				 * @param {String} oDataType - "deprecated" or "experimental"
-				 * @param {Object} oEntityObject - the object which contains the data
-				 * @param {String} sObjectType - "method" or "event"
-				 * @param {String} sSymbolName - the name of the class or namespace to which the data is relevant
-				 */
-				function addData(oDataType, oEntityObject, sObjectType, sSymbolName) {
-					var oData = {
-						control : sSymbolName,
-						entityName : oEntityObject.name,
-						text : oEntityObject[oDataType].text || oEntityObject.description,
-						type : sObjectType,
-						"static" : !!oEntityObject.static,
-						visibility: oEntityObject.visibility
-					};
-
-					if (oEntityObject[oDataType].since) {
-						var aSince = oEntityObject[oDataType].since.split(".");
-						var sVersion = aSince[0] + "." + aSince[1]; // take only major and minor versions
-
-						oData.since = oEntityObject[oDataType].since;
-
-						if (!oLibsData[oDataType][sVersion]) {
-							oLibsData[oDataType][sVersion] = {
-								name : sVersion,
-								apis : []
-							};
-						}
-
-						oLibsData[oDataType][sVersion].apis.push(oData);
-					} else {
-						oLibsData[oDataType].noVersion.apis.push(oData);
-					}
-				}
-
-				function isMethodRestricted(oMethod) {
-					return oMethod.visibility === "restricted";
-				}
-
-				/* Iterate over the oLibsData object, gather information about all deprecated and experimental
-				entities and aggregate it in new properties in oLibsData.
-				 */
-				Object.keys(oLibsData).forEach(function(sLibName) {
-					var sLib = oLibsData[sLibName];
-
-					sLib.methods && sLib.methods.forEach(function(oMethod) {
-						var bIsMethodRestricted = isMethodRestricted(oMethod);
-
-						if (bIsMethodRestricted && !bIsInternalVersion) {
-							return; /* exclude restricted methods from non-internal version */
-						}
-						if (oMethod.deprecated) {
-							addData("deprecated", oMethod, "methods", sLib.name);
-						}
-
-						if (oMethod.experimental) {
-							addData("experimental", oMethod, "methods", sLib.name);
-						}
-					});
-
-					sLib.events && sLib.events.forEach(function(oEvent) {
-						if (oEvent.deprecated) {
-							addData("deprecated", oEvent, "events", sLib.name);
-						}
-
-						if (oEvent.experimental) {
-							addData("experimental", oEvent, "events", sLib.name);
-						}
-					});
-				});
 			}
 		});
 	}
