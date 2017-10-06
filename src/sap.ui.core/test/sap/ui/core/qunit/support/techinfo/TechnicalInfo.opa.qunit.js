@@ -16,8 +16,9 @@ sap.ui.require([
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
-	"sap/ui/test/matchers/I18NText"
-], function (Device, Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText) {
+	"sap/ui/test/matchers/I18NText",
+	"sap/ui/model/resource/ResourceModel"
+], function (Device, Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText, ResourceModel) {
 	"use strict";
 
 	var sTestPageURL = "TechnicalInfoTestbench.html",
@@ -449,13 +450,26 @@ sap.ui.require([
 						}
 					});
 				},
+				theErrorMessageIsCorrect: function () {
+					return this.waitFor({
+						id: "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						autoWait: false,
+						matchers: new I18NText({
+							propertyName : "valueStateText",
+							key: "TechInfo.SupportAssistantConfigPopup.URLValidationMessage"
+						}),
+						success: function () {
+							Opa5.assert.ok(true, "The bootstrap option has correct value state message");
+						}
+					});
+				},
 				theMessageIs: function (sMessage) {
 					return this.waitFor({
 						id: "technicalInfoDialogAssistantPopover--customBootstrapURL",
 						autoWait: false,
-						matchers: new PropertyStrictEquals({name: "ValueStateText", value: sMessage}),
+						matchers: new PropertyStrictEquals({name: "valueStateText", value: sMessage}),
 						success: function () {
-							Opa5.assert.ok(true, "The bootstrap option has message value sate message: " + sMessage);
+							Opa5.assert.ok(true, "The message is correct");
 						}
 					});
 				}
@@ -728,7 +742,6 @@ sap.ui.require([
 	});
 
 	opaTest("Should open the support assistant setting when a invalid custom url is entered.", function(Given, When, Then) {
-		var sErrorMessageForValidation = "Incorrect syntax of the location address. Correct syntax should be http://" + "<" + "Valid custom URI>/resources/sap/ui/support.";
 		// Arrange
 		When.iStartMyAppInAFrame(sTestPageURL);
 		When.anywhere.iPressCtrlAltShiftP();
@@ -736,10 +749,10 @@ sap.ui.require([
 		When.onTheDialog.iOpenSupportAssistantSettings();
 		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
 		When.onTheConfigDialog.iSelectBootstrapOption("custom").
-		and.iEnterCustomBootstrapUrl("ivalidCustomUrl");
+		and.iEnterCustomBootstrapUrl("invalidCustomUrl");
 		// Assert
 		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("Error").
-		and.theMessageIs(sErrorMessageForValidation);
+		and.theErrorMessageIsCorrect();
 		When.onTheDialog.iPressTheCloseButton();
 		When.anywhere.iPressCtrlAltShiftP();
 		Then.anywhere.iShouldSeeTheTechnicalInformationDialog();
@@ -750,7 +763,7 @@ sap.ui.require([
 		// Assert
 		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
 		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("Error").
-		and.theMessageIs(sErrorMessageForValidation);
+		and.theErrorMessageIsCorrect();
 	});
 
 	opaTest("Should show error when a valid syntax's is provided", function(Given, When, Then) {
@@ -762,7 +775,12 @@ sap.ui.require([
 	});
 
 	opaTest("Should show error when trying to start support assistant with empty custom bootstrap URL", function(Given, When, Then) {
-		var sErrorForResourceNotFound = "Support Assistant is not available in this location:Not Found [404]";
+		var oI18nModel = new ResourceModel({
+			bundleName: "sap.ui.core.messagebundle"
+		});
+		var sErrorForResourceNotFound = oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.SupportAssistantNotFound") +
+			oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.ErrorNotFound");
+
 		// Arrange
 		When.onTheConfigDialog.iEnterCustomBootstrapUrl("").iCloseThePopup();
 		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("None");
