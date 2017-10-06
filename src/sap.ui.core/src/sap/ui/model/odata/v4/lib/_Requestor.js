@@ -413,11 +413,31 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponsePayload
 	 *   The OData response payload
-	 * @returns {_SyncPromise}
-	 *   A promise resolving with the OData V4 response payload
+	 * @returns {object}
+	 *   The OData V4 response payload
 	 */
-	Requestor.prototype.doFetchV4Response = function (oResponsePayload) {
-		return _SyncPromise.resolve(oResponsePayload);
+	Requestor.prototype.doConvertResponse = function (oResponsePayload) {
+		return oResponsePayload;
+	};
+
+	/**
+	 * Fetches the type of the given model path from the metadata.
+	 *
+	 * @param {string} sPath
+	 *   The resource path, e.g. SalesOrderList('4711')/SO_2_BP
+	 * @param {boolean} [bAsName]
+	 *   If <code>true</code>, the name of the type is delivered instead of the type itself. This
+	 *   must be used when asking for a property type to avoid that the function logs an error
+	 *   because there are no objects for primitive types like "Edm.Stream".
+	 * @returns {SyncPromise}
+	 *   A promise that is resolved with the type of the object at the given path or its name.
+	 */
+	Requestor.prototype.fetchTypeForPath = function (sPath, bAsName) {
+		sPath = "/" + sPath + "/";
+		if (bAsName) {
+			sPath += "$Type";
+		}
+		return this.fnFetchMetadata(sPath);
 	};
 
 	/**
@@ -715,7 +735,11 @@ sap.ui.define([
 					fnResolve(_Batch.deserializeBatchResponse(
 						jqXHR.getResponseHeader("Content-Type"), oPayload));
 				} else {
-					that.doFetchV4Response(oPayload).then(fnResolve, fnReject);
+					try {
+						fnResolve(that.doConvertResponse(oPayload));
+					} catch (oError) {
+						fnReject(oError);
+					}
 				}
 			}, function (jqXHR, sTextStatus, sErrorMessage) {
 				var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
@@ -840,7 +864,11 @@ sap.ui.define([
 					reject(oCause, vRequest);
 				} else if (vResponse.responseText) {
 					oResponse = JSON.parse(vResponse.responseText);
-					that.doFetchV4Response(oResponse).then(vRequest.$resolve, vRequest.$reject);
+					try {
+						vRequest.$resolve(that.doConvertResponse(oResponse));
+					} catch (oErr) {
+						vRequest.$reject(oErr);
+					}
 				} else {
 					vRequest.$resolve();
 				}

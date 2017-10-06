@@ -216,14 +216,12 @@ sap.ui.define([
 	 *
 	 * @param {object} oObject
 	 *   The object to be converted
-	 * @param {object} mTypeByName
-	 *   A map of type metadata by qualified name
 	 * @returns {object}
 	 *   The converted payload
 	 * @throws {Error}
 	 *   If oObject does not contain inline metadata with type information
 	 */
-	_V2Requestor.prototype.convertNonPrimitive = function (oObject, mTypeByName) {
+	_V2Requestor.prototype.convertNonPrimitive = function (oObject) {
 		var sPropertyName,
 			sPropertyType,
 			oType,
@@ -235,7 +233,7 @@ sap.ui.define([
 		if (oObject.results && !oObject.__metadata) {
 			// collection of complex values, coll. of primitive values only supported since OData V3
 			oObject.results.forEach(function (oItem) {
-				that.convertNonPrimitive(oItem, mTypeByName);
+				that.convertNonPrimitive(oItem);
 			});
 			return oObject.results;
 		}
@@ -247,7 +245,7 @@ sap.ui.define([
 		}
 
 		sTypeName = oObject.__metadata.type;
-		oType = mTypeByName[sTypeName]; // can be entity type or complex type
+		oType = that.getTypeForName(sTypeName); // can be entity type or complex type
 		delete oObject.__metadata;
 		for (sPropertyName in oObject) {
 			vValue = oObject[sPropertyName];
@@ -258,7 +256,7 @@ sap.ui.define([
 				if (vValue.__deferred) {
 					delete oObject[sPropertyName];
 				} else {
-					oObject[sPropertyName] = this.convertNonPrimitive(vValue, mTypeByName);
+					oObject[sPropertyName] = this.convertNonPrimitive(vValue);
 				}
 				continue;
 			}
@@ -326,25 +324,21 @@ sap.ui.define([
 	 *   A promise which resolves with the OData V4 response payload or rejects with an error if
 	 *   the V2 response cannot be converted
 	 */
-	_V2Requestor.prototype.doFetchV4Response = function (oResponsePayload) {
-		var that = this;
+	_V2Requestor.prototype.doConvertResponse = function (oResponsePayload) {
+		var oPayload = this.convertNonPrimitive(oResponsePayload.d);
 
-		return this.fnFetchEntityContainer().then(function (mScope) {
-			var oPayload = that.convertNonPrimitive(oResponsePayload.d, mScope);
-
-			// d.results may be an array of entities in case of a collection request or the property
-			// 'results' of a single request.
-			if (oResponsePayload.d.results && !oResponsePayload.d.__metadata) {
-				oPayload = {value : oPayload};
-				if (oResponsePayload.d.__count) {
-					oPayload["@odata.count"] = oResponsePayload.d.__count;
-				}
-				if (oResponsePayload.d.__next) {
-					oPayload["@odata.nextLink"] = oResponsePayload.d.__next;
-				}
+		// d.results may be an array of entities in case of a collection request or the property
+		// 'results' of a single request.
+		if (oResponsePayload.d.results && !oResponsePayload.d.__metadata) {
+			oPayload = {value : oPayload};
+			if (oResponsePayload.d.__count) {
+				oPayload["@odata.count"] = oResponsePayload.d.__count;
 			}
-			return oPayload;
-		});
+			if (oResponsePayload.d.__next) {
+				oPayload["@odata.nextLink"] = oResponsePayload.d.__next;
+			}
+		}
+		return oPayload;
 	};
 
 	/**
@@ -491,6 +485,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the type with the given qualified name.
+	 *
+	 * @param {string} sName The qualified type name
+	 * @returns {object} The type
+	 */
+	_V2Requestor.prototype.getTypeForName = function (sName) {
+		var oType;
+
+		this.mTypesByName = this.mTypesByName || {};
+		oType = this.mTypesByName[sName];
+		if (!oType) {
+			oType = this.mTypesByName[sName] = this.fnFetchMetadata("/" + sName).getResult();
+		}
+		return oType;
+	};
+
+		/**
 	 * Returns a sync promise that is resolved when the requestor is ready to be used. Waits for the
 	 * metadata to be available.
 	 *

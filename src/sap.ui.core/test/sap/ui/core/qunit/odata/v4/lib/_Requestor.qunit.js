@@ -292,9 +292,9 @@ sap.ui.require([
 					headers : sinon.match(oFixture.mExpectedRequestHeaders),
 					method : "GET"
 				}).returns(createMock(assert, oResponsePayload, "OK"));
-			this.mock(oRequestor).expects("doFetchV4Response")
+			this.mock(oRequestor).expects("doConvertResponse")
 				.withExactArgs(oResponsePayload)
-				.returns(_SyncPromise.resolve(oConvertedResponse));
+				.returns(oConvertedResponse);
 
 			// code under test
 			return oRequestor.request("GET", "Employees", "$direct")
@@ -314,9 +314,9 @@ sap.ui.require([
 		this.mock(jQuery).expects("ajax")
 			.withArgs(sServiceUrl + "Employees")
 			.returns(createMock(assert, oResponsePayload, "OK"));
-		this.mock(oRequestor).expects("doFetchV4Response")
+		this.mock(oRequestor).expects("doConvertResponse")
 			.withExactArgs(oResponsePayload)
-			.returns(_SyncPromise.resolve(Promise.reject(oError)));
+			.throws(oError);
 
 		// code under test
 		return oRequestor.request("GET", "Employees", "$direct")
@@ -359,7 +359,7 @@ sap.ui.require([
 			this.mock(_Batch).expects("deserializeBatchResponse")
 				.withExactArgs("application/json", oAjaxResponse)
 				.returns(oDeserializeBatchResponse);
-			this.mock(oRequestor).expects("doFetchV4Response").never();
+			this.mock(oRequestor).expects("doConvertResponse").never();
 
 			// code under test
 			return oRequestor
@@ -408,9 +408,9 @@ sap.ui.require([
 					undefined, fnGetGroupProperty, undefined, oFixture.sODataVersion),
 				oRequestorMock = this.mock(oRequestor);
 
-			oRequestorMock.expects("doFetchV4Response")
+			oRequestorMock.expects("doConvertResponse")
 				.withExactArgs(oFixture.mProductsResponse) // not same; it is stringified and parsed
-				.returns(_SyncPromise.resolve(Promise.resolve(oConvertedPayload)));
+				.returns(oConvertedPayload);
 			oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
 				.then(function (oResponse) {
 					assert.strictEqual(oResponse, oConvertedPayload);
@@ -436,9 +436,9 @@ sap.ui.require([
 			oRequestorMock = this.mock(oRequestor),
 			oResponse = {d : {foo : "bar"}};
 
-		oRequestorMock.expects("doFetchV4Response")
+		oRequestorMock.expects("doConvertResponse")
 			.withExactArgs(oResponse)
-			.returns(_SyncPromise.resolve(Promise.reject(oError)));
+			.throws(oError);
 		oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
 			.then(function () {
 				assert.notOk("Unexpected success");
@@ -1816,15 +1816,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doFetchV4Response (V4)", function (assert) {
+	QUnit.test("doConvertResponse (V4)", function (assert) {
 		var oPayload = {},
 			oRequestor = _Requestor.create("/", undefined, undefined, undefined,
 				undefined, defaultGetGroupProperty);
 
 		// code under test
-		return oRequestor.doFetchV4Response(oPayload).then(function (oConvertedPayload) {
-			assert.strictEqual(oConvertedPayload, oPayload);
-		});
+		assert.strictEqual(oRequestor.doConvertResponse(oPayload), oPayload);
 	});
 
 	//*********************************************************************************************
@@ -2144,6 +2142,31 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/");
 
 		assert.strictEqual(oRequestor.ready().getResult(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchTypeForPath", function (assert) {
+		var oPromise = {},
+			fnFetchMetadata = sinon.stub().returns(oPromise),
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, fnFetchMetadata);
+
+		// code under test
+		assert.strictEqual(oRequestor.fetchTypeForPath("EMPLOYEES('1')/EMPLOYEE_2_TEAM"), oPromise);
+
+		sinon.assert.calledWithExactly(fnFetchMetadata, "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchTypeForPath, bAsName=true", function (assert) {
+		var oPromise = {},
+			fnFetchMetadata = sinon.stub().returns(oPromise),
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, fnFetchMetadata);
+
+		// code under test
+		assert.strictEqual(oRequestor.fetchTypeForPath("EMPLOYEES('1')/EMPLOYEE_2_TEAM", true),
+			oPromise);
+
+		sinon.assert.calledWithExactly(fnFetchMetadata, "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/$Type");
 	});
 
 	//*********************************************************************************************
