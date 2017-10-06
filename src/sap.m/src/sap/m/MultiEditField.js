@@ -12,7 +12,7 @@ sap.ui.define([
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class  This control allows you to add items to a sap.m.Select instance. In addition, based on the property set, a set of prefilled entries is added.
+	 * @class  This control allows you to add items to a sap.m.Select instance. In addition, based on the property set, a set of pre-filled entries is added.
 	 * @extends sap.ui.core.XMLComposite
 	 * @implements sap.ui.core.IFormContent
 	 *
@@ -31,7 +31,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * The selected item from items aggregation. This can be <code>null</code> if no valid item or special item is selected.
+				 * The selected item from <code>items</code> aggregation. This can be <code>null</code> if no valid item or special item is selected.
 				 */
 				selectedItem: {
 					type: "sap.ui.core.Item",
@@ -42,6 +42,8 @@ sap.ui.define([
 
 				/**
 				 * Defines whether the 'Select new value' item should be available in the selection field.
+				 * Please note that upon selecting this item, the previously selected item is restored.
+				 * As a consequence, the <code>selectedItem</code> property never contains this item.
 				 */
 				showValueHelp: {
 					type: "boolean",
@@ -128,8 +130,10 @@ sap.ui.define([
 			key: "new",
 			text: this._oRb.getText("MULTI_EDIT_NEW_TEXT")
 		}));
+
 		// This enables FormElements to correctly write aria attributes to the internal Select control
 		this.byId("select").getParent = this.getParent.bind(this);
+		this._oLastSelectedItem = this._getKeepAll();
 	};
 
 	MultiEditField.prototype.onBeforeRendering = function() {
@@ -147,18 +151,24 @@ sap.ui.define([
 
 		var oSelectedItem = this.getSelectedItem();
 		if (oSelectedItem) {
-			this.byId("select").setSelectedKey(oSelectedItem.getKey());
+			oSelectedItem = this._getInternalItem(oSelectedItem);
+			this.byId("select").setSelectedItem(oSelectedItem);
 		}
 	};
 
 	MultiEditField.prototype.setSelectedItem = function(oSelectedItem) {
 		var oSelect = this.byId("select");
-		if (!oSelectedItem || this.indexOfItem(oSelectedItem) < 0 || this._isSpecialValueItem(oSelectedItem)) {
-			return this;
-		} else {
-			oSelect.setSelectedItemId(oSelectedItem.getId());
-			return this.setProperty("selectedItem", oSelectedItem);
+		var oItem = this._getExternalItem(oSelectedItem);
+		var oInternalItem = this._getInternalItem(oSelectedItem);
+
+		if (oItem && this.indexOfItem(oItem) >= 0 && !this._isSpecialValueItem(oItem)) {
+			if (oInternalItem) {
+				oSelect.setSelectedItem(oInternalItem);
+			}
+			this._oLastSelectedItem = oItem;
+			return this.setProperty("selectedItem", oItem);
 		}
+		return this;
 	};
 
 	MultiEditField.prototype.exit = function() {
@@ -219,11 +229,14 @@ sap.ui.define([
 
 	/**
 	 * Handles the change event of internal Select control and triggers the MultiEditField change event.
+	 * If the selected item is the Value Help item, an internal event is triggered and the item is reset.
+	 *
 	 * @param {sap.ui.base.Event} event The Event object.
 	 * @private
 	 */
 	MultiEditField.prototype._handleSelectionChange = function(event) {
 		var oItem = this._getExternalItem(event.getParameter("selectedItem"));
+
 		if (oItem && !this._isSpecialValueItem(oItem)) {
 			this.fireChange({
 				selectedItem: oItem
@@ -231,19 +244,60 @@ sap.ui.define([
 		} else if (oItem === this._getValueHelp()) {
 			this.fireEvent("_valueHelpRequest");
 		}
-		this.setProperty("selectedItem", oItem, true);
+
+		if (oItem !== this._getValueHelp()) {
+			this._oLastSelectedItem = oItem;
+			this.setProperty("selectedItem", oItem, true);
+		}
+	};
+
+	/**
+	 * Sets the previously selected item as the currently selected item of the internal select control.
+	 * @protected
+	 */
+	MultiEditField.prototype.resetSelection = function() {
+		this.byId("select").setSelectedItem(this._getInternalItem(this._oLastSelectedItem));
 	};
 
 	/**
 	 * Gets the MultiEditField item that corresponds to the internal Select control item.
+	 * If the provided item already exists in the MultiEditField control, it is simply returned.
+	 *
 	 * @param {sap.ui.core.Item} item The item from the items aggregation of the internal Select control.
-	 * @private
 	 * @returns {sap.ui.core.Item | null} The MultiEditField item that corresponds to the item from the internal Select control.
+	 * @private
 	 */
 	MultiEditField.prototype._getExternalItem = function(item) {
 		var iIndex = this.byId("select").indexOfItem(item);
 		if (iIndex >= 0) {
 			return this.getItems()[iIndex];
+		}
+
+		iIndex = this.indexOfItem(item);
+		if (iIndex >= 0) {
+			return item;
+		}
+		return null;
+	};
+
+	/**
+	 * Gets the internal Select item that corresponds to the MultiEditField item.
+	 * If the provided item already exists in the Select control, it is simply returned.
+	 *
+	 * @param {sap.ui.core.Item} item The item from the items aggregation of the MultiEditField control.
+	 * @returns {sap.ui.core.Item | null} The internal Select item that corresponds to the item from the MultiEditField control.
+	 * @private
+	 */
+	MultiEditField.prototype._getInternalItem = function(item) {
+		var oSelect = this.byId("select");
+		var iIndex = this.indexOfItem(item);
+		if (iIndex >= 0) {
+			return oSelect.getItems()[iIndex];
+		}
+
+		iIndex = oSelect.indexOfItem(item);
+		if (iIndex >= 0) {
+			return item;
 		}
 		return null;
 	};

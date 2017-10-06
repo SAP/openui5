@@ -19,7 +19,6 @@
 		jQuery.sap.require("sap.ui.model.json.JSONModel");
 
 		var oModel = new sap.ui.model.json.JSONModel({
-			"type": sap.m.MultiEditFieldType.Select,
 			"selectedItem": null,
 			"showValueHelp": true,
 			"nullable": false,
@@ -40,7 +39,6 @@
 		};
 
 		var oMultiEditField = new sap.m.MultiEditField({
-			type: "{/type}",
 			selectedItem: "{/selectedItem}",
 			showValueHelp: "{/showValueHelp}",
 			nullable: "{/nullable}",
