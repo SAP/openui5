@@ -387,6 +387,17 @@
 			}
 		});
 
+		var oButtonShowWeekNumbers = new sap.m.ToggleButton("B_ShowWeekNumbers", {
+			type: sap.m.ButtonType.Transparent,
+			text: "Weeks",
+			tooltip: "Toggle week numbers",
+			press: function(oEvent) {
+				var oPC = sap.ui.getCore().byId("PC1");
+				var bPressed = oEvent.getParameter("pressed");
+				oPC.setShowWeekNumbers(bPressed);
+			}
+		});
+
 		var oButtonLegend = new sap.m.Button("B_Legend", {
 			icon: "sap-icon://legend",
 			type: sap.m.ButtonType.Transparent,
@@ -1051,6 +1062,7 @@
 							 oButtonAddRow,
 							 oButtonShowIntervalHeaders,
 							 oButtonShowRowHeaders,
+							 oButtonShowWeekNumbers,
 							 oButtonLegend,
 							 oLegendLabel,
 							 oButtonSwitchLegendAssociation,

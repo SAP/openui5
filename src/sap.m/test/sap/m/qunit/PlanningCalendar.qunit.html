@@ -3586,6 +3586,70 @@
 			oControlInvalidateSpy.restore();
 			this.oPC._bIsBeingDestroyed = false;
 		});
+
+		QUnit.module("WeekNumbers");
+
+		QUnit.test("setViewKey -> Days - propagates showWeekNumbers property", function(assert) {
+			//arrange
+			var oPC = new sap.m.PlanningCalendar({
+					showWeekNumbers: false
+				}),
+				oSetShowWeekNumbersSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "setShowWeekNumbers");
+
+			//act
+			oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
+
+			//assert
+			assert.ok(oSetShowWeekNumbersSpy.calledOnce, "Planning Calendar propagated the showWeekNumbers property");
+			assert.ok(oSetShowWeekNumbersSpy.calledWith(false), "setter called with the right arguments");
+
+			//clean
+			oPC.destroy();
+		});
+
+		QUnit.test("_viewAllowsWeekNumbers", function(assert) {
+			//arrange
+			var oPC = new sap.m.PlanningCalendar();
+
+			//act, assert
+			assert.equal(oPC._viewAllowsWeekNumbers(sap.ui.unified.CalendarIntervalType.Hour), false, "is not supported for Hour view");
+			assert.equal(oPC._viewAllowsWeekNumbers(sap.ui.unified.CalendarIntervalType.Day), true, "is supported for Day view");
+			assert.equal(oPC._viewAllowsWeekNumbers(sap.ui.unified.CalendarIntervalType.Week), true, "is supported for Week view");
+			assert.equal(oPC._viewAllowsWeekNumbers(sap.ui.unified.CalendarIntervalType.Month), false, "is not supported for Month view");
+			assert.equal(oPC._viewAllowsWeekNumbers(sap.ui.unified.CalendarIntervalType.OneMonth), true, "is supported for OneMonth view");
+
+			//clean
+			oPC.destroy();
+		});
+
+		QUnit.test("_getIntervalInstanceByViewKey", function(assert) {
+			//arrange
+			var oPC = new sap.m.PlanningCalendar();
+
+			//act, assert
+			assert.ok(!oPC._getIntervalInstanceByViewKey(sap.ui.unified.CalendarIntervalType.Hour), "never returns an instance for Hours view");
+			assert.ok(!oPC._getIntervalInstanceByViewKey(sap.ui.unified.CalendarIntervalType.Day), "returns no instance for Day view, it was not created yet");
+			assert.ok(!oPC._getIntervalInstanceByViewKey(sap.ui.unified.CalendarIntervalType.Week), "returns no instance for Week view, it was not created yet");
+			assert.ok(!oPC._getIntervalInstanceByViewKey(sap.ui.unified.CalendarIntervalType.Month), "never returns an instance for Month view");
+			assert.ok(!oPC._getIntervalInstanceByViewKey(sap.ui.unified.CalendarIntervalType.OneMonth), "returns no instance for OneMonth view, it was not created yet");
+
+			//act
+			oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
+			oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
+			oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Week);
+			oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Month);
+			oPC.setViewKey(sap.ui.unified.CalendarIntervalType.OneMonth);
+
+			//assert
+			assert.ok(!oPC._getIntervalInstanceByViewKey(sap.ui.unified.CalendarIntervalType.Hour), "never returns an instance for Hours view");
+			assert.ok(oPC._getIntervalInstanceByViewKey(sap.ui.unified.CalendarIntervalType.Day), "returns an instance for Day view");
+			assert.ok(oPC._getIntervalInstanceByViewKey(sap.ui.unified.CalendarIntervalType.Week), "returns an instance for Week view");
+			assert.ok(!oPC._getIntervalInstanceByViewKey(sap.ui.unified.CalendarIntervalType.Month), "never returns an instance for Month view");
+			assert.ok(oPC._getIntervalInstanceByViewKey(sap.ui.unified.CalendarIntervalType.OneMonth), "returns an instance for OneMonth view");
+
+			//clean
+			oPC.destroy();
+		});
 	</script>
 
 </head>
