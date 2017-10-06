@@ -36,7 +36,8 @@ sap.ui.define([
 				selectedItem: {
 					type: "sap.ui.core.Item",
 					group: "Data",
-					defaultValue: null
+					defaultValue: null,
+					invalidate: true
 				},
 
 				/**
