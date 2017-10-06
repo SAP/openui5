@@ -8,6 +8,7 @@ sap.ui.define([
 	'jquery.sap.global',
 	"sap/ui/core/Control",
 	'sap/ui/codeeditor/js/ace/ace',
+	'sap/ui/codeeditor/js/ace/ext-language_tools',
 	'sap/ui/codeeditor/js/ace/mode-javascript',
 	'sap/ui/codeeditor/js/ace/mode-json'
 ], function(jQuery, Control) {
@@ -161,6 +162,9 @@ sap.ui.define([
 	var sPath = jQuery.sap.getModulePath("sap.ui.codeeditor.js.ace");
 	ace.config.set("basePath", sPath);
 
+	// require language tools
+	var oLangTools = ace.require("ace/ext/language_tools");
+
 	/**
 	 * @private
 	 */
@@ -175,6 +179,13 @@ sap.ui.define([
 		this._oEditor.getSession().setUseWrapMode(true);
 		this._oEditor.getSession().setMode("ace/mode/javascript");
 		this._oEditor.setTheme("ace/theme/tomorrow");
+
+		this._oEditor.setOptions({
+			enableBasicAutocompletion: true,
+			enableSnippets: true,
+			enableLiveAutocompletion: true
+		});
+
 		this._oEditor.renderer.setShowGutter(true);
 
 		// Do not scroll to end of input when setting value
@@ -358,6 +369,25 @@ sap.ui.define([
 	CodeEditor.prototype.setMaxLines = function (iMaxLines) {
 		this._oEditor.setOption("maxLines", iMaxLines);
 		return this.setProperty("maxLines", iMaxLines, true);
+	};
+
+	/**
+	 * Defines custom completer - object implementing a getCompletions method.
+	 * The method has two parameters - fnCallback method and context object.
+	 * Context object provides details about oPos and sPrefix as provided by ACE.
+	 * @param {object} oCustomCompleter Object with getCompletions method
+	 * @public
+	 * @since 1.52
+	 */
+	CodeEditor.prototype.addCustomCompleter = function (oCustomCompleter) {
+		oLangTools.addCompleter({
+			getCompletions: function (oEditor, oSession, oPos, sPrefix, fnCallback) {
+				oCustomCompleter.getCompletions(fnCallback, {
+					oPos: oPos,
+					sPrefix: sPrefix
+				});
+			}
+		});
 	};
 
 	/**
