@@ -10,7 +10,11 @@ sap.ui.require([
 	'sap/ui/fl/FakeLrepLocalStorage',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/qunit/RtaQunitUtils',
-	"sap/ui/fl/ChangePersistenceFactory"
+	"sap/ui/fl/ChangePersistenceFactory",
+	'sap/ui/thirdparty/sinon',
+	'sap/ui/thirdparty/sinon-ie',
+	'sap/ui/thirdparty/sinon-qunit'
+
 ], function(
 	RuntimeAuthoring,
 	FakeLrepConnector,
@@ -18,9 +22,12 @@ sap.ui.require([
 	FakeLrepLocalStorage,
 	OverlayRegistry,
 	RtaQunitUtils,
-	ChangePersistenceFactory
+	ChangePersistenceFactory,
+	sinon
 ) {
 	"use strict";
+
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.start();
 
@@ -55,6 +62,7 @@ sap.ui.require([
 			this.oRta.destroy();
 			this._oCompCont.destroy();
 			FakeLrepLocalStorage.deleteChanges();
+			sandbox.restore();
 		}
 	});
 
@@ -243,6 +251,7 @@ sap.ui.require([
 	QUnit.test("when adding a group element (via context menu) - reveal", function(assert) {
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
 		var done = assert.async();
+		var oFieldToRemove;
 
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oField);
 		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
@@ -286,8 +295,9 @@ sap.ui.require([
 		}.bind(this));
 
 		// to reveal we have to remove the field first (otherwise it would be addODataProperty)
-		var oFieldToRemove = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
+		oFieldToRemove = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
 		var oFieldToHideOverlay = OverlayRegistry.getOverlay(oFieldToRemove);
+		sandbox.stub(oFieldToHideOverlay, "isVisibleInDom").returns(false);
 		oFieldToHideOverlay.focus();
 		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		oFieldToHideOverlay.focus();

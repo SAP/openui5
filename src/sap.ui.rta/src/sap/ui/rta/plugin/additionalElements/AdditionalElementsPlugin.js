@@ -43,15 +43,17 @@ sap.ui.define([
 		return oChild.sParentAggregationName;
 	}
 
-	function _getInvisibleElements (oElement, sAggregationName){
-		var aInvisibleElements = ElementUtil.getAggregation(oElement, sAggregationName).filter(function(oControl){
+	function _getInvisibleElements (oParentElement, sAggregationName){
+		var oParentOverlay = OverlayRegistry.getOverlay(oParentElement);
+		var aInvisibleElements = ElementUtil.getAggregation(oParentElement, sAggregationName).filter(function(oControl){
 			var oOverlay = OverlayRegistry.getOverlay(oControl);
-			if (oElement.getVisible && !oElement.getVisible()) {
-				return oControl.getVisible && sap.ui.rta.plugin.Plugin.prototype.hasStableId(oOverlay);
+			if (!oParentOverlay.isVisibleInDom()) {
+				return oControl.getVisible && this.hasStableId(oOverlay);
 			}
-			return oControl.getVisible && !oControl.getVisible() && sap.ui.rta.plugin.Plugin.prototype.hasStableId(oOverlay);
-		});
-		var aStashedControls = StashedControlSupport.getStashedControls(oElement.getId());
+			var bVisible = oOverlay ? oOverlay.isVisibleInDom() : false;
+			return bVisible === false && this.hasStableId(oOverlay);
+		}, this);
+		var aStashedControls = StashedControlSupport.getStashedControls(oParentElement.getId());
 		return aInvisibleElements.concat(aStashedControls);
 	}
 
@@ -224,8 +226,8 @@ sap.ui.define([
 
 		_getRevealActionFromAggregations: function(aParents, _mReveal, sAggregationName){
 			var aInvisibleElements = aParents.reduce(function(aInvisibleChilden, oParentOverlay){
-				return oParentOverlay ? aInvisibleChilden.concat(_getInvisibleElements(oParentOverlay.getElementInstance(), sAggregationName)) : aInvisibleChilden;
-			}, []);
+				return oParentOverlay ? aInvisibleChilden.concat(_getInvisibleElements.call(this, oParentOverlay.getElementInstance(), sAggregationName)) : aInvisibleChilden;
+			}.bind(this), []);
 
 			var fnCallback = function(mTypes, oElement){
 				var sType = oElement.getMetadata().getName();
