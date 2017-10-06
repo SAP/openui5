@@ -750,13 +750,16 @@ sap.ui.require([
 	QUnit.test("convertFilter: success", function (assert) {
 		var sFilter = "foo/bar eq 'baz'",
 			oRequestor = {
-				fnFetchMetadata : function () {}
+				oModelInterface : {
+					fnFetchMetadata : function () {
+					}
+				}
 			},
 			sResourcePath = "MyEntitySet";
 
 		asV2Requestor(oRequestor);
 
-		this.mock(oRequestor).expects("fnFetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
 			.withExactArgs("/" + sResourcePath + "/foo/bar/$Type")
 			.returns(_SyncPromise.resolve("Edm.String"));
 
@@ -780,13 +783,16 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("convertFilter: " + oFixture.error, function (assert) {
 			var oRequestor = {
-					fnFetchMetadata : function () {}
+					oModelInterface : {
+						fnFetchMetadata : function () {
+						}
+					}
 				},
 				sResourcePath = "MyEntitySet";
 
 			asV2Requestor(oRequestor);
 
-			this.mock(oRequestor).expects("fnFetchMetadata")
+			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
 				.withExactArgs("/" + sResourcePath + "/foo/bar/$Type")
 				.returns(_SyncPromise.resolve(oFixture.type));
 
@@ -800,13 +806,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("ready()", function (assert) {
 		var oRequestor = {
-				fnFetchEntityContainer : function () {}
+				oModelInterface : {
+					fnFetchEntityContainer : function () {}
+				}
 			},
 			oSyncPromise;
 
 		asV2Requestor(oRequestor);
 
-		this.mock(oRequestor).expects("fnFetchEntityContainer")
+		this.mock(oRequestor.oModelInterface).expects("fnFetchEntityContainer")
 			.returns(_SyncPromise.resolve(Promise.resolve({})));
 
 		// code under test
@@ -821,13 +829,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getTypeForName", function (assert) {
 		var oRequestor = {
-				fnFetchMetadata : function () {}
+				oModelInterface : {
+					fnFetchMetadata : function () {}
+				}
 			},
 			oType = {};
 
 		asV2Requestor(oRequestor);
 
-		this.mock(oRequestor).expects("fnFetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
 			.withExactArgs("/my.Type").returns(_SyncPromise.resolve(oType));
 
 		// code under test
