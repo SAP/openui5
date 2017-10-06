@@ -210,21 +210,20 @@ sap.ui.define([
 					if (!aMatches) {
 						sResponse = notFound(sRequestLine);
 					} else if (aMatches[1] === "DELETE") {
-						sResponse = "204 No Data\r\n\r\n\r\n";
+						sResponse = "204\r\n\r\n\r\n";
 					} else if (aMatches[1] === "POST" || aMatches[1] === "PATCH") {
-						sResponse = "200 OK\r\nContent-Type: " + sJson + "\r\n\r\n"
+						sResponse = "200\r\nContent-Type: " + sJson + "\r\n\r\n"
 							+ message(sRequestPart);
 					} else {
 						aResponse = mUrls[sServiceBase + aMatches[2]];
 						if (aResponse) {
 							try {
-								sResponse = "200 OK\r\nContent-Type: " + sJson + "\r\n\r\n"
+								sResponse = "200\r\nContent-Type: " + sJson + "\r\n\r\n"
 									+ JSON.stringify(JSON.parse(aResponse[2]))
 									+ "\r\n";
 								jQuery.sap.log.info(sRequestLine, null, "sap.ui.test.TestUtils");
 							} catch (e) {
-								sResponse = error(sRequestLine, 500, "Internal Error",
-									"Invalid JSON");
+								sResponse = error(sRequestLine, 500, "Invalid JSON");
 							}
 						} else {
 							sResponse = notFound(sRequestLine);
@@ -238,10 +237,9 @@ sap.ui.define([
 				}, aResponseParts.join(sBoundary));
 			}
 
-			function error(sRequestLine, iCode, sStatus, sMessage) {
+			function error(sRequestLine, iCode, sMessage) {
 				jQuery.sap.log.error(sRequestLine, sMessage, "sap.ui.test.TestUtils");
-				return iCode + " " + sStatus + "\r\nContent-Type: text/plain\r\n\r\n"
-					+ sMessage + "\r\n";
+				return iCode + "\r\nContent-Type: text/plain\r\n\r\n" + sMessage + "\r\n";
 			}
 
 			/*
@@ -302,7 +300,7 @@ sap.ui.define([
 			}
 
 			function notFound(sRequestLine) {
-				return error(sRequestLine, 404, "Not Found", "No mock data found");
+				return error(sRequestLine, 404, "No mock data found");
 			}
 
 			/*
