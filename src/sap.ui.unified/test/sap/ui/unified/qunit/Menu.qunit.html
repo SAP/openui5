@@ -853,6 +853,31 @@
 			}, 100);
 		});
 
+		QUnit.test("Keyboard - keyup sets correctly focus depending on the focused item", function(assert) {
+			var done = assert.async();
+			lastSelectedItemId = null;
+			var sTfId = "item12-tf";
+			setTimeout(function(){
+				openMenu(oSpecialMenu);
+				checkHoveredItem("item11", oSpecialMenu, assert); // we are on item11
+				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN"); // press arrow down to go on item12 which contains a text field
+				qutils.triggerKeyEvent("keyup", sTfId, "ARROW_DOWN"); //key up happens on the text field
+				checkHoveredItem("item12", oSpecialMenu, assert); // item 12 is hovered
+				assert.ok(jQuery.sap.byId(sTfId).is(":focus"), 'Text field should be focused'); // text field inside item12 is focused
+
+				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
+					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -1");
+				}
+
+				qutils.triggerKeyboardEvent(sTfId, "ARROW_UP"); // arrow up on the text field inside item12
+				qutils.triggerKeyEvent("keyup", "item11", "ARROW_UP"); // key up happens on item 11
+				assert.ok(jQuery.sap.byId('item11').is(":focus"), 'Item11 should be focused'); // item11 should be focused (to have a focus outline)
+				checkHoveredItem("item11", oSpecialMenu, assert); // item11 should be hovered
+
+				done();
+			}, 100);
+		});
+
 		QUnit.test("Keyboard - Home, End, Enter", function(assert) {
 			var done = assert.async();
 			lastSelectedItemId = null;

@@ -50,16 +50,16 @@
 	position: relative;
 }
 
-[role="menuitem"]:focus {
+.sapUiMnuItm:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -3px;
 }
 
 html[data-sap-ui-browser*='ie'] {
-	[role="menuitem"]:focus {
+	.sapUiMnuItm:focus {
 		outline: none;
 	}
-	[role="menuitem"]:focus::before {
+	.sapUiMnuItm:focus::before {
 		content: "";
 		border: 0;
 		position: absolute;
