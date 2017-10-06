@@ -3,10 +3,11 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/lib/_V2Requestor",
 	"sap/ui/model/odata/ODataUtils"
-], function (jQuery, _SyncPromise, asV2Requestor, ODataUtils) {
+], function (jQuery, DateFormat, _SyncPromise, asV2Requestor, ODataUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -706,11 +707,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bWithV2Type) {
-		QUnit.test("formatPropertyAsLiteral, bWithV2Type=" + bWithV2Type, function (assert) {
+	[
+		"Boolean", "Byte", "Decimal", "Double", "Guid", "Int16", "Int32", "Int64", "SByte",
+		"Single", "String"
+	].forEach(function (sType) {
+		sType = "Edm." + sType;
+
+		QUnit.test("formatPropertyAsLiteral: " + sType, function (assert) {
 			var sKeyPredicate = "(~)",
 				oProperty = {
-					"$Type" : "Edm.Bar"
+					"$kind" : "Property",
+					"$Type" : sType
 				},
 				oRequestor = {},
 				sResult,
@@ -718,15 +725,167 @@ sap.ui.require([
 
 			asV2Requestor(oRequestor);
 
-			oProperty[bWithV2Type ? "$v2Type" : "$Type"] = "Edm.Foo";
 			this.mock(ODataUtils).expects("formatValue")
-				.withExactArgs(sinon.match.same(vValue), "Edm.Foo")
+				.withExactArgs(sinon.match.same(vValue), sType)
 				.returns(sKeyPredicate);
 
 			// code under test
 			sResult = oRequestor.formatPropertyAsLiteral(vValue, oProperty);
 
 			assert.strictEqual(sResult, sKeyPredicate);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("formatPropertyAsLiteral: Edm.Date", function (assert) {
+		var oExpectation,
+			oFormatOptions,
+			sKeyPredicate = "(~)",
+			oProperty = {
+				"$kind" : "Property",
+				"$Type" : "Edm.Date",
+				"$v2Type" : "Edm.DateTime"
+			},
+			oRequestor = {},
+			sResult,
+			vV2Value = {},
+			vV4Value = {};
+
+		asV2Requestor(oRequestor);
+
+		oExpectation = this.mock(DateFormat.prototype).expects("parse")
+			.withExactArgs(sinon.match.same(vV4Value)).returns(vV2Value);
+		this.mock(ODataUtils).expects("formatValue")
+			.withExactArgs(sinon.match.same(vV2Value), "Edm.DateTime")
+			.returns(sKeyPredicate);
+
+		// code under test
+		sResult = oRequestor.formatPropertyAsLiteral(vV4Value, oProperty);
+
+		assert.strictEqual(sResult, sKeyPredicate);
+		oFormatOptions = oExpectation.firstCall.thisValue.oFormatOptions;
+		assert.deepEqual(oFormatOptions.pattern, "yyyy-MM-dd");
+		assert.strictEqual(oFormatOptions.UTC, true);
+	});
+
+	//*********************************************************************************************
+	[undefined, "Edm.DateTime"].forEach(function (sV2Type) {
+		var sTitle = "formatPropertyAsLiteral: Edm.DateTimeOffset, v2Type=" + sV2Type;
+
+		QUnit.test(sTitle, function (assert) {
+			var oExpectation,
+				oFormatOptions,
+				sKeyPredicate = "(~)",
+				oProperty = {
+					"$kind" : "Property",
+					"$Type" : "Edm.DateTimeOffset",
+					"$v2Type" : sV2Type
+				},
+				oRequestor = {},
+				sResult,
+				vV2Value = {},
+				vV4Value = {};
+
+			asV2Requestor(oRequestor);
+
+			oExpectation = this.mock(DateFormat.prototype).expects("parse")
+				.withExactArgs(sinon.match.same(vV4Value)).returns(vV2Value);
+			this.mock(ODataUtils).expects("formatValue")
+				.withExactArgs(sinon.match.same(vV2Value), sV2Type || "Edm.DateTimeOffset")
+				.returns(sKeyPredicate);
+
+			// code under test
+			sResult = oRequestor.formatPropertyAsLiteral(vV4Value, oProperty);
+
+			assert.strictEqual(sResult, sKeyPredicate);
+			oFormatOptions = oExpectation.firstCall.thisValue.oFormatOptions;
+			assert.deepEqual(oFormatOptions.pattern, "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+			assert.strictEqual(oFormatOptions.UTC, undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("formatPropertyAsLiteral: Edm.TimeOfDay", function (assert) {
+		var oDate = {
+				getTime : function () {}
+			},
+			oExpectation,
+			oFormatOptions,
+			sKeyPredicate = "(~)",
+			oProperty = {
+				"$kind" : "Property",
+				"$Type" : "Edm.TimeOfDay",
+				"$v2Type" : "Edm.Time"
+			},
+			oRequestor = {},
+			sResult,
+			iTicks = 42,
+			vV4Value = {};
+
+		asV2Requestor(oRequestor);
+
+		oExpectation = this.mock(DateFormat.prototype).expects("parse")
+			.withExactArgs(sinon.match.same(vV4Value)).returns(oDate);
+		this.mock(oDate).expects("getTime").withExactArgs().returns(iTicks);
+		this.mock(ODataUtils).expects("formatValue")
+			.withExactArgs({__edmType : "Edm.Time", ms : iTicks}, "Edm.Time")
+			.returns(sKeyPredicate);
+
+		// code under test
+		sResult = oRequestor.formatPropertyAsLiteral(vV4Value, oProperty);
+
+		assert.strictEqual(sResult, sKeyPredicate);
+		oFormatOptions = oExpectation.firstCall.thisValue.oFormatOptions;
+		assert.deepEqual(oFormatOptions.pattern, "HH:mm:ss");
+		assert.strictEqual(oFormatOptions.UTC, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("formatPropertyAsLiteral: examples", function (assert) {
+		var oRequestor = {};
+
+		asV2Requestor(oRequestor);
+
+		[
+			{value : 3.14, type : "Edm.Single", result : "3.14f"},
+			{value : 3.14, type : "Edm.Double", result : "3.14d"},
+			{value : "3.14", type : "Edm.Decimal", result : "3.14m"},
+			{value : "3.14", type : "Edm.Int64", result : "3.14l"},
+			{value : "2015-05-23", type : "Edm.Date", v2type : "Edm.DateTime",
+				result : "datetime'2015-05-23T00:00:00'"},
+			{value : "2015-05-23T13:47:26Z", type : "Edm.DateTimeOffset",
+				result : "datetimeoffset'2015-05-23T13:47:26Z'"},
+			// The value is intermediately converted to a Date (V2 model format) resulting in a loss
+			// of timezone information
+			{value : "2015-05-23T18:47:26+0500", type : "Edm.DateTimeOffset",
+				result : "datetimeoffset'2015-05-23T13:47:26Z'"},
+			{value : "2015-05-23T13:47:26Z", type : "Edm.DateTimeOffset",
+				v2type: "Edm.DateTime", result : "datetime'2015-05-23T13:47:26'"},
+			{value : "13:47:26", type : "Edm.TimeOfDay", v2type: "Edm.Time",
+				result : "time'PT13H47M26S'"}
+			// TODO V2 literal formatting does not support milliseconds
+			// {value : "13:47:26.123", type : "Edm.TimeOfDay", v2type: "Edm.Time",
+			// 	result : "time'PT13H47M26.123S'"},
+		].forEach(function (oFixture) {
+			assert.strictEqual(oRequestor.formatPropertyAsLiteral(oFixture.value, {
+					$Type : oFixture.type,
+					$v2Type : oFixture.v2type
+				}),
+				oFixture.result,
+				(oFixture.v2type || oFixture.type) + " " + oFixture.value);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("formatPropertyAsLiteral: invalid date/time values", function (assert) {
+		var oRequestor = {};
+
+		asV2Requestor(oRequestor);
+
+		["Edm.Date", "Edm.DateTimeOffset", "Edm.TimeOfDay"].forEach(function (sType) {
+			assert.throws(function () {
+				oRequestor.formatPropertyAsLiteral("foo", {$Type : sType});
+			}, new Error("Not a valid " + sType + " value: foo"));
 		});
 	});
 
@@ -738,11 +897,11 @@ sap.ui.require([
 
 		asV2Requestor(oRequestor);
 
-		["Binary", "DateTime", "DateTimeOffset", "Time"].forEach(function (sType) {
-			oProperty.$v2Type = "Edm." + sType;
+		["Edm.Binary", "Edm.Stream", "Foo"].forEach(function (sType) {
+			oProperty.$Type = sType;
 			assert.throws(function () {
 				oRequestor.formatPropertyAsLiteral(vValue, oProperty);
-			}, new Error("Type 'Edm." + sType + "' in the key is not supported"));
+			}, new Error("Type '" + sType + "' in the key predicate is not supported"));
 		});
 	});
 
