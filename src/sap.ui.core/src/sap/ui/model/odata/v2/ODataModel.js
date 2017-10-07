@@ -3809,6 +3809,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
 	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
 	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
+	 * @param {boolean} [mParameters.merge] Depricated. Used for backwards compatibility. true = <code>MERGE</code>. false = <code>PUT</code>. 
 	 *
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
