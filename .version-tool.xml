@@ -19,12 +19,12 @@
           "src/sap.ui.suite/pom.xml": "1",
           "pom.xml": "2",
           "src/testsuite/pom.xml": "1",
-          "src/themelib_sap_goldreflection/pom.xml": "1",
           "src/sap.ui.commons/pom.xml": "1",
+          "src/themelib_sap_goldreflection/pom.xml": "1",
           "src/testsuite-utils/pom.xml": "1"
         }
       },
-      "lastCommitId": "c642017c1dbb66e2335e0c6d3e258ec659882db1"
+      "lastCommitId": "9c6195a99b80f2b00e186f73bd3000b7e67206a9"
     }
   }
 }
