@@ -450,6 +450,9 @@ sap.ui.define([
 					sId = "VALUE";
 				} else if (aMatches[4]) {
 					sId = "PATH";
+					if (sValue === "false" || sValue === "true" || sValue === "null") {
+						sId = "VALUE";
+					}
 				} else if (aMatches[3]) { // a %-escaped delimiter
 					sId = unescape(aMatches[3]);
 				} else if (aMatches[2]) { // an operator

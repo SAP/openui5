@@ -165,28 +165,30 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path (allows metadata access, but does not become part of the result)
 	 * @returns {string} The filter string ready for a V2 query
-	 * @throws {Error} If a type is unsupported or a literal is invalid for the type.
+	 * @throws {Error} If the filter path is invalid
 	 */
 	_V2Requestor.prototype.convertFilter = function (sFilter, sResourcePath) {
 		var oFilterTree = _Parser.parseFilter(sFilter),
+			vModelValue,
 			sPath = oFilterTree.left.value,
+			oProperty,
 			sType,
 			sValue = oFilterTree.right.value;
 
-		sType = this.oModelInterface.fnFetchMetadata("/" + sResourcePath + "/" + sPath + "/$Type")
+		oProperty = this.oModelInterface.fnFetchMetadata("/" + sResourcePath + "/" + sPath)
 			.getResult();
 
-		if (!sType) {
+		if (!oProperty) {
 			throw new Error("Invalid filter path: " + sPath);
 		}
-		if (sType !== "Edm.String") {
-			 throw new Error("Unsupported type " + sType + ": " + sPath);
-		}
-		if (!/^'.*'$/.test(sValue)) {
-			throw new Error("Not a literal of type Edm.String: " + sValue);
+		sType = oProperty.$Type;
+		if (sType === "Edm.String") {
+			return sFilter;
 		}
 
-		return sFilter;
+		vModelValue = _Helper.parseLiteral(sValue, sType, sPath);
+		oFilterTree.right.value = this.formatPropertyAsLiteral(vModelValue, oProperty);
+		return _Parser.buildFilterString(oFilterTree);
 	};
 
 	/**
@@ -488,6 +490,10 @@ sap.ui.define([
 			return oDate;
 		}
 
+		if (vValue === null) {
+			return "null";
+		}
+
 		// Convert the value to V2 model format
 		switch (oProperty.$Type) {
 			case "Edm.Boolean":
@@ -540,7 +546,7 @@ sap.ui.define([
 		return oType;
 	};
 
-		/**
+	/**
 	 * Returns a sync promise that is resolved when the requestor is ready to be used. Waits for the
 	 * metadata to be available.
 	 *

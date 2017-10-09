@@ -923,37 +923,59 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("convertFilter: success", function (assert) {
-		var sFilter = "foo/bar eq 'baz'",
+	[
+		{literal : "false", type : "Edm.Boolean"},
+		{literal : "true", type : "Edm.Boolean"},
+		{literal : "42", type : "Edm.Byte"},
+		{literal : "2017-05-25", type : "Edm.Date", v2type : "Edm.DateTime",
+			result : "foo/bar eq datetime'2017-05-25T00:00:00'"},
+		{literal : "null", type : "Edm.Date", v2type : "Edm.DateTime",
+			result : "foo/bar eq null"},
+		{literal : "2017-05-25T17:42:43Z", type : "Edm.DateTimeOffset",
+			result : "foo/bar eq datetimeoffset'2017-05-25T17:42:43Z'"},
+		{literal : "null", type : "Edm.DateTimeOffset", result : "foo/bar eq null"},
+		{literal : "3.14", type : "Edm.Decimal", result : "foo/bar eq 3.14m"},
+		{literal : "3.14", type : "Edm.Double", result : "foo/bar eq 3.14d"},
+		{literal : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8", type : "Edm.Guid",
+			result : "foo/bar eq guid'936DA01F-9ABD-4D9D-80C7-02AF85C822A8'"},
+		{literal : "42", type : "Edm.Int16"},
+		{literal : "42", type : "Edm.Int32"},
+		{literal : "42", type : "Edm.Int64", result : "foo/bar eq 42l"},
+		{literal : "42", type : "Edm.SByte"},
+		{literal : "3.14", type : "Edm.Single", result : "foo/bar eq 3.14f"},
+		{literal : "'baz'", type : "Edm.String"},
+		{literal : "18:59:59", type : "Edm.TimeOfDay", v2type : "Edm.Time",
+			result : "foo/bar eq time'PT18H59M59S'"},
+		{literal : "null", type : "Edm.TimeOfDay", v2type : "Edm.Time",
+			result : "foo/bar eq null"}
+	].forEach(function (oFixture) {QUnit.test("convertFilter: success", function (assert) {
+		var sFilter = "foo/bar eq " + oFixture.literal,
+				oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
 			oRequestor = {
-				oModelInterface : {
-					fnFetchMetadata : function () {
-					}
-				}
+				oModelInterface : {fnFetchMetadata : function () {}}
 			},
 			sResourcePath = "MyEntitySet";
 
-		asV2Requestor(oRequestor);
+			asV2Requestor(oRequestor);
 
-		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
-			.withExactArgs("/" + sResourcePath + "/foo/bar/$Type")
-			.returns(_SyncPromise.resolve("Edm.String"));
+			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+				.withExactArgs("/" + sResourcePath + "/foo/bar")
+				.returns(_SyncPromise.resolve(oProperty));
 
-		// code under test
-		assert.strictEqual(oRequestor.convertFilter(sFilter, sResourcePath), sFilter);
+			// code under test
+			assert.strictEqual(oRequestor.convertFilter(sFilter, sResourcePath),
+				oFixture.result || sFilter);
 		});
+	});
+	// TODO milliseconds in DateTimeOffset and TimeOfDay
 
 	//*********************************************************************************************
 	[{
-		type : "Edm.Int32",
-		literal : "'baz'",
-		error : "Unsupported type Edm.Int32: foo/bar"
+		property : {$Type : "Edm.Binary"},
+		literal : "'1qkYNh/P5uvZ0zA+siScD='",
+		error : "foo/bar: Unsupported type: Edm.Binary"
 	}, {
-		type : "Edm.String",
-		literal : 1,
-		error : "Not a literal of type Edm.String: 1"
-	}, {
-		type : undefined,
+		property : undefined,
 		literal : 1,
 		error : "Invalid filter path: foo/bar"
 	}].forEach(function (oFixture) {
@@ -969,8 +991,8 @@ sap.ui.require([
 			asV2Requestor(oRequestor);
 
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
-				.withExactArgs("/" + sResourcePath + "/foo/bar/$Type")
-				.returns(_SyncPromise.resolve(oFixture.type));
+				.withExactArgs("/" + sResourcePath + "/foo/bar")
+				.returns(_SyncPromise.resolve(oFixture.property));
 
 			// code under test
 			assert.throws(function () {

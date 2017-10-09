@@ -436,6 +436,32 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	["false", "true", "null"].forEach(function (sLiteral) {
+		QUnit.test("parseFilter: literal=" + sLiteral, function (assert) {
+			var sFilter = "foo eq " + sLiteral,
+				oSyntaxTree = _Parser.parseFilter(sFilter);
+
+			assert.deepEqual(oSyntaxTree, {
+				id : "eq",
+				value : " eq ",
+				at : 5,
+				left : {
+					id : "PATH",
+					value : "foo",
+					at : 1
+				},
+				right : {
+					id : "VALUE",
+					value : sLiteral,
+					at : 8
+				}
+			});
+
+			assert.strictEqual(_Parser.buildFilterString(oSyntaxTree), sFilter);
+		});
+	});
+
+	//*********************************************************************************************
 	[{
 		string : ";",
 		error : "Expected PATH but instead saw ';' at 1"

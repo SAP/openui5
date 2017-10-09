@@ -380,6 +380,55 @@ sap.ui.define([
 		},
 
 		/**
+		 * Parses a literal to the model value. The types "Edm.Binary" and "Edm.String" are
+		 * unsupported.
+		 *
+		 * @param {string} sLiteral The literal value
+		 * @param {string} sType The type
+		 * @param {string} sPath The path for this literal (for error messages)
+		 * @returns {*} The model value
+		 * @throws {Error} If the type is invalid or unsupported; the function only validates when a
+		 *   conversion is required
+		 */
+		parseLiteral : function (sLiteral, sType, sPath) {
+
+			function checkNaN(nValue) {
+				if (!isFinite(nValue)) { // this rejects NaN, Infinity, -Infinity
+					throw new Error(sPath + ": Not a valid " + sType + " literal: " + sLiteral);
+				}
+				return nValue;
+			}
+
+			if (sLiteral === "null") {
+				return null;
+			}
+
+			switch (sType) {
+			case "Edm.Boolean":
+				return sLiteral === "true";
+			case "Edm.Byte":
+			case "Edm.Int16":
+			case "Edm.Int32":
+			case "Edm.SByte":
+				return checkNaN(parseInt(sLiteral, 10));
+			case "Edm.Date":
+			case "Edm.DateTimeOffset":
+			case "Edm.Decimal":
+			case "Edm.Guid":
+			case "Edm.Int64":
+			case "Edm.TimeOfDay":
+				return sLiteral;
+			case "Edm.Double":
+			case "Edm.Single":
+				return sLiteral === "INF" || sLiteral === "-INF" || sLiteral === "NaN"
+					? sLiteral
+					: checkNaN(parseFloat(sLiteral));
+			default:
+				throw new Error(sPath + ": Unsupported type: " + sType);
+			}
+		},
+
+		/**
 		 * Converts given value to an array.
 		 * <code>null</code> and <code>undefined</code> are converted to the empty array, a
 		 * non-array value is wrapped with an array and an array is returned as it is.
