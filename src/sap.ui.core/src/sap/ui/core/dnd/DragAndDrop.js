@@ -60,13 +60,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			 *
 			 * <b>Note:</b> This object can only be exists during drag-drop operation.
 			 *
+			 * @namespace
 			 * @name sap.ui.core.dnd.DragSession
 			 * @static
 			 * @abstract
 			 * @public
 			 */
-			/** @lends sap.ui.core.dnd.DragSession */
-			return {
+			return /** @lends sap.ui.core.dnd.DragSession */ {
 				/**
 				 * Sets string data with any MIME type.
 				 * <b>Note:</b> This works in all browsers, apart from Internet Explorer and Microsoft Edge. It also works if you navigate between
@@ -145,7 +145,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				/**
 				 * Returns the drop indicator.
 				 *
-				 * @returns {HTMLElement} Indicator DOM reference
+				 * @returns {HTMLElement} Indicator's DOM reference
 				 * @protected
 				 */
 				getIndicator: function() {
@@ -155,7 +155,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				/**
 				 * The dragged control, if available within the same UI5 application frame.
 				 *
-				 * @name sap.ui.core.dnd.DragSession.draggedControl
 				 * @protected
 				 * @type sap.ui.core.Element
 				 */
@@ -164,7 +163,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				/**
 				 * The valid drop target underneath the dragged control.
 				 *
-				 * @name sap.ui.core.dnd.DragSession.dropControl
 				 * @protected
 				 * @type sap.ui.core.Element
 				 */
