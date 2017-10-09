@@ -136,4 +136,17 @@
 		assert.equal($pinButtonDom, null, "The Dynamic Header Pin Button not rendered");
 	});
 
+	QUnit.module("Header content initialization");
+
+	QUnit.test("setShowHeaderContent before rendering", function (assert) {
+
+		var oObjectPage = new sap.uxap.ObjectPageLayout({
+			showHeaderContent: false
+		});
+
+		assert.equal(oObjectPage.getShowHeaderContent(), false, "The value is applied");
+
+		oObjectPage.destroy();
+	});
+
 }(jQuery, QUnit));
