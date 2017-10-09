@@ -118,6 +118,9 @@
 							new sap.ui.layout.Grid()
 						]
 					});
+					oLayout.placeAt('content');
+					sap.ui.getCore().applyChanges();
+
 					assert.ok(!!oLayout.getAccessibilityInfo, "Grid has a getAccessibilityInfo function");
 					var oInfo = oLayout.getAccessibilityInfo();
 					assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
