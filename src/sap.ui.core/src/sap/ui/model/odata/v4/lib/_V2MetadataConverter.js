@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"jquery.sap.global",
+	"./_Helper",
 	"./_MetadataConverter"
-], function (jQuery, _MetadataConverter) {
+], function (jQuery, _Helper, _MetadataConverter) {
 	"use strict";
 
 	var V2MetadataConverter,
@@ -552,6 +553,31 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function postProcessSchema(oElement, aResult, oAggregate) {
+		var mAnnotations,
+			oEntityContainer,
+			sEntityContainerName,
+			oEntitySet,
+			sEntitySetName,
+			sTarget;
+
+		for (sEntityContainerName in oAggregate.mEntityContainersOfSchema) {
+			oEntityContainer = oAggregate.mEntityContainersOfSchema[sEntityContainerName];
+
+			for (sEntitySetName in oEntityContainer) {
+				oEntitySet = oEntityContainer[sEntitySetName];
+				if (oEntitySet.$kind !== "EntitySet") {
+					continue;
+				}
+				sTarget = sEntityContainerName + "/" + sEntitySetName;
+				mAnnotations = jQuery.extend(true,
+					oAggregate.convertedV2Annotations[sTarget] || {},
+					oAggregate.mEntityType2EntitySetAnnotation[oEntitySet.$Type]);
+				if (Object.keys(mAnnotations).length) {
+					oAggregate.convertedV2Annotations[sTarget] = mAnnotations;
+				}
+			}
+		}
+
 		if (oAggregate.schema.$Annotations) {
 			V2MetadataConverter.mergeAnnotations(oAggregate.convertedV2Annotations,
 				oAggregate.schema.$Annotations);
@@ -560,6 +586,7 @@ sap.ui.define([
 		}
 
 		oAggregate.convertedV2Annotations = {}; // reset schema annotations for next schema
+		oAggregate.mEntityContainersOfSchema = {};
 	}
 
 	/**
@@ -660,7 +687,8 @@ sap.ui.define([
 	function processEntityContainer(oElement, oAggregate) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
 
-		oAggregate.result[sQualifiedName] = oAggregate.entityContainer = {
+		oAggregate.mEntityContainersOfSchema[sQualifiedName]
+			= oAggregate.result[sQualifiedName] = oAggregate.entityContainer = {
 			"$kind" : "EntityContainer"
 		};
 		if (oElement.getAttributeNS(sMicrosoftNamespace, "IsDefaultEntityContainer") === "true") {
@@ -819,6 +847,7 @@ sap.ui.define([
 	function processType(oElement, oAggregate, oType) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
 
+		oAggregate.sTypeName = sQualifiedName;
 		oAggregate.result[sQualifiedName] = oAggregate.type = oType;
 		V2MetadataConverter.annotatable(oAggregate, sQualifiedName);
 	}
@@ -872,7 +901,10 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypeNavigationProperty(oElement, oAggregate) {
-		var sName = oElement.getAttribute("Name"),
+		var sCreatable = oElement.getAttributeNS(sSapNamespace, "creatable"),
+			sCreatablePath = oElement.getAttributeNS(sSapNamespace, "creatable-path"),
+			sName = oElement.getAttribute("Name"),
+			oNavigationPropertyPath,
 			oProperty = {
 				$kind : "NavigationProperty"
 			};
@@ -886,6 +918,38 @@ sap.ui.define([
 			propertyName : sName,
 			toRoleName : oElement.getAttribute("ToRole")
 		});
+
+		if (sCreatable) {
+			oNavigationPropertyPath = {"$NavigationPropertyPath" : sName};
+			if (sCreatablePath) {
+				jQuery.sap.log.warning("Inconsistent metadata in '" + oAggregate.url + "'",
+					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property '"
+					+ oAggregate.annotatable.path + "/" + sName + "'", sModuleName);
+			} else if (sCreatable === "true") {
+				oNavigationPropertyPath = null;
+			}
+		} else if (sCreatablePath) {
+			oNavigationPropertyPath = {
+				"$If" : [{
+					"$Not" : {"$Path" : sCreatablePath}
+				}, {
+					"$NavigationPropertyPath" : sName
+				}]
+			};
+		}
+		if (oNavigationPropertyPath) {
+			if (oAggregate.mEntityType2EntitySetAnnotation[oAggregate.sTypeName]) {
+				oAggregate.mEntityType2EntitySetAnnotation[oAggregate.sTypeName]
+					["@Org.OData.Capabilities.V1.InsertRestrictions"]
+					.NonInsertableNavigationProperties.push(oNavigationPropertyPath);
+			} else {
+				oAggregate.mEntityType2EntitySetAnnotation[oAggregate.sTypeName] = {
+					"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+						"NonInsertableNavigationProperties" : [oNavigationPropertyPath]
+					}
+				};
+			}
+		}
 	}
 
 	/**
@@ -1041,7 +1105,10 @@ sap.ui.define([
 				"convertedV2Annotations" : {},
 				"defaultEntityContainer" : null, // the name of the default EntityContainer
 				"entityContainer" : null, // the current EntityContainer
+				mEntityContainersOfSchema : {}, // all EntityContainers of current Schema by name
 				"entitySet" : null, // the current EntitySet
+				// converted V2 annotations for EntitySets, identified by EntityType's name
+				mEntityType2EntitySetAnnotation : {},
 				"function" : null, // the current function
 				"namespace" : null, // the namespace of the current Schema
 				"navigationProperties" : [], // a list of navigation property data
@@ -1049,6 +1116,7 @@ sap.ui.define([
 				"processTypedCollection" : processTypedCollection,
 				"schema" : null, // the current Schema
 				"type" : null, // the current EntityType/ComplexType
+				sTypeName : null, // the name of the current EntityType/ComplexType
 				"result" : {
 					"$Version" : "4.0" // The result of the conversion is a V4 streamlined JSON
 				},
