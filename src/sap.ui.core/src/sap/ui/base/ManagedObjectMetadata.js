@@ -501,12 +501,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this._mEvents = normalize(oStaticInfo.events, this.metaFactoryEvent);
 
 		// as oClassInfo is volatile, we need to store the info
-		if (typeof oClassInfo.metadata["designTime"] === "boolean") {
-			this._bHasDesignTime = oClassInfo.metadata["designTime"];
-		} else if (oClassInfo.metadata["designTime"]) {
-			this._bHasDesignTime = true;
-			this._oDesignTime = oClassInfo.metadata["designTime"];
-		}
+		this._oDesignTime = oClassInfo.metadata["designTime"];
 
 		if ( oClassInfo.metadata.__version > 1.0 ) {
 			this.generateAccessors();
@@ -1183,15 +1178,24 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @private
 	 */
 	function loadOwnDesignTime(oMetadata) {
-		if (oMetadata._oDesignTime || !oMetadata._bHasDesignTime) {
+		if (typeof oMetadata._oDesignTime === "object" || !oMetadata._oDesignTime) {
 			return Promise.resolve(oMetadata._oDesignTime || null);
 		}
 		return new Promise(function(fnResolve) {
-			var sModule = jQuery.sap.getResourceName(oMetadata.getName(), ".designtime");
+			var sModule;
+			if (typeof oMetadata._oDesignTime === "string") {
+				//oMetadata._oDesignTime points to resource path to another file, for example: "sap/ui/core/designtime/<control>.designtime"
+				sModule = oMetadata._oDesignTime;
+			} else {
+				sModule = jQuery.sap.getResourceName(oMetadata.getName(), ".designtime");
+			}
+
 			sap.ui.require([sModule], function(oDesignTime) {
+				oDesignTime.designtimeModule = sModule;
 				oMetadata._oDesignTime = oDesignTime;
 				fnResolve(oDesignTime);
 			});
+
 		});
 	}
 
@@ -1226,6 +1230,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 				return oWhenParentLoaded.then(function(oParentDesignTime) {
 					// we use jQuery.sap.extend to be able to also overwrite properties with null or undefined
 					// using deep extend to inherit full parent designtime, unwanted inherited properties have to be overwritten with undefined
+					if (oParentDesignTime) {
+						delete oParentDesignTime["designtimeModule"];
+					}
 					return jQuery.sap.extend(true, {}, oParentDesignTime, oOwnDesignTime);
 				});
 			});
