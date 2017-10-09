@@ -1345,56 +1345,15 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		return item;
 	};
 
-	MultiInput.prototype.addToken = function (oToken) {
-		this._tokenizer.addToken(oToken);
-		return this;
-	};
-
-	MultiInput.prototype.removeToken = function (oToken) {
-		return this._tokenizer.removeToken(oToken);
-	};
-
-	MultiInput.prototype.removeAllTokens = function () {
-		return this._tokenizer.removeAllTokens();
-	};
-
-	MultiInput.prototype.getTokens = function () {
-		return this._tokenizer.getTokens();
-	};
-
-	MultiInput.prototype.insertToken = function (oToken, iIndex) {
-		this._tokenizer.insertToken(oToken, iIndex);
-		return this;
-	};
-
-	MultiInput.prototype.indexOfToken = function (oToken) {
-		return this._tokenizer.indexOfToken(oToken);
-	};
-
-	MultiInput.prototype.destroyTokens = function () {
-		this._tokenizer.destroyTokens();
-		return this;
-	};
-
-	MultiInput.prototype.updateTokens = function () {
-		this.destroyTokens();
-		this.updateAggregation("tokens");
-	};
-
-	MultiInput.prototype.getAggregation = function (sAggregationName, oDefaultForCreation) {
-		var aTokens;
-		if (sAggregationName === "tokens") {
-			aTokens = this.getTokens();
-
-			if (aTokens.length === 0) {
-				aTokens = oDefaultForCreation || null;
-			}
-
-			return aTokens;
-		} else {
-			return Input.prototype.getAggregation.apply(this, arguments);
+	MultiInput.getMetadata().forwardAggregation(
+		"tokens",
+		function(){ return this._tokenizer; },
+		"tokens",
+		{
+			forwardBinding: true
 		}
-	};
+	);
+
 
 	/**
 	 * Function overwrites clone function to add tokens to MultiInput

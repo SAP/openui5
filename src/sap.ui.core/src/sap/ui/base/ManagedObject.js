@@ -664,12 +664,28 @@ sap.ui.define([
 	 *     Methods affecting multiple objects in an aggregation will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
 	 *     the singular name (e.g. addItem). The framework knows a set of common rules for building plural form of English nouns and uses these rules to determine
 	 *     a singular name on its own. if that name is wrong, a singluarName can be specified with this property. </li>
-	 * <li>[visibility]: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Aggregations that belong to the API of a class must be 'public' whereas
+	 * <li><code>[visibility]: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Aggregations that belong to the API of a class must be 'public' whereas
 	 *     'hidden' aggregations typically are used for the implementation of composite classes (e.g. composite controls) </li>
 	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable')
 	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
 	 *     Despite its name, setting this flag is not mandatory to make the managed aggregation bindable. The generic methods {@link #bindAggregation} and
 	 *     {@link #unbindAggregation} can always be used. </li>
+	 * <li><code>forwarding: <i>object</i></code>
+	 *     If set, this defines a forwarding of objects added to this aggregation into an aggregation of another ManagedObject - typically to an inner control
+	 *     within a composite control. See {@link sap.ui.base.ManagedObjectMetadata.forwardAggregation} for more details on aggregation forwarding.
+	 *     The forwarding configuration object defines the target of the forwarding. The available settings are:
+	 *     <li><code>idSuffix: <i>string</i></code>A string which is appended to the ID of <i>this</i> ManagedObject to construct the ID of the target ManagedObject. This is
+	 *         one of the two options to specify the target. This option requires the target instance to be created in the init() method of this ManagedObject and to be
+	 *         always available.</li>
+	 *     <li><code>getterName: <i>string</i></code>The name of the function on instances of this ManagedObject which returns the target instance. This second option
+	 *         to specify the target can be used for lazy instantiation of the target. Note that either idSuffix or getterName must be given. Also note that the target
+	 *         instance returned by the getter must remain the same over the entire lifetime of this ManagedObject and the implementation assumes that all instances return
+	 *         the same type of object (at least the target aggregation must always be defined in the same class).</li>
+	 *     <li><code>aggregation: <i>string</i></code>The name of the aggregation on the target into which the objects shall be forwarded. The multiplicity of the target
+	 *         aggregation must be the same as the one of the source aggregation for which forwarding is defined.</li>
+	 *     <li><code>[forwardBinding]: <i>boolean</i></code>Whether any binding should happen on the forwarding target or not. Default if omitted is <code>false</code>,
+	 *         which means any bindings happen on the outer ManagedObject.</li>
+	 *     </li>
 	 * <li><code>selector: <i>string</i></code> either can be omitted or set to a valid selector string as defined by the
 	 *     {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector Element.prototype.querySelector}
 	 *     method. The selector should locate the DOM element that surrounds the aggregation's content. It should only be
@@ -710,8 +726,9 @@ sap.ui.define([
 	 * <li>getItems() - returns an array with the objects contained in aggregation 'items'. Internally calls {@link #getAggregation} with a default value of <code>[]</code></li>
 	 * <li>addItem(o) - adds an object as last element in the aggregation 'items'. Internally calls {@link #addAggregation}</li>
 	 * <li>insertItem(o,p) - inserts an object into the aggregation 'items'. Internally calls {@link #insertAggregation}</li>
+	 * <li>indexOfItem(o) - returns the position of the given object within the aggregation 'items'. Internally calls {@link #indexOfAggregation}</li>
 	 * <li>removeItem(v) - removes an object from the aggregation 'items'. Internally calls {@link #removeAggregation}</li>
-	 * <li>removeItems() - removes all object from the aggregation 'items'. Internally calls {@link #removeAllAggregation}</li>
+	 * <li>removeItems() - removes all objects from the aggregation 'items'. Internally calls {@link #removeAllAggregation}</li>
 	 * <li>destroyItems() - destroy all currently aggregated objects in aggregation 'items' and clears the aggregation. Internally calls {@link #destroyAggregation}</li>
 	 * <li>bindItems(c) - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #bindAggregation}</li>
 	 * <li>unbindItems() - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #unbindAggregation}</li>
@@ -1685,7 +1702,7 @@ sap.ui.define([
 	 * @throws Error if no aggregation with the given name is found or the given value does not fit to the aggregation type
 	 * @protected
 	 */
-	ManagedObject.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
+	ManagedObject.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple, bOmitForwarding /* private */) {
 		var oMetadata = this.getMetadata(),
 			oAggregation = oMetadata.getManagedAggregation(sAggregationName), // public or private
 			aAltTypes,
@@ -1697,8 +1714,13 @@ sap.ui.define([
 			throw new Error("Aggregation \"" + sAggregationName + "\" does not exist in " + this);
 		}
 
-		if (oAggregation.multiple !== bMultiple ) {
+		if (oAggregation.multiple !== bMultiple) {
 			throw new Error("Aggregation '" + sAggregationName + "' of " + this + " used with wrong cardinality (declared as " + (oAggregation.multiple ? "0..n" : "0..1") + ")");
+		}
+
+		var oForwarder = oMetadata.getAggregationForwarder(sAggregationName);
+		if (oForwarder && !bOmitForwarding) {
+			oForwarder.getTarget(this).validateAggregation(oForwarder.targetAggregationName, oObject, bMultiple);
 		}
 
 		//Null is a valid value for 0..1 aggregations
@@ -1783,6 +1805,12 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObject.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+		var oForwarder = this.getMetadata().getAggregationForwarder(sAggregationName);
+		if (oForwarder) {
+			oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ false, /* omit forwarding */ true); // because validate below is done AFTER accessing this.mAggregations
+			return oForwarder.set(this, oObject);
+		}
+
 		var oOldChild = this.mAggregations[sAggregationName];
 		if (oOldChild === oObject) {
 			return this;
@@ -1848,6 +1876,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObject.prototype.getAggregation = function(sAggregationName, oDefaultForCreation) {
+		var oForwarder = this.getMetadata().getAggregationForwarder(sAggregationName);
+		if (oForwarder) {
+			return oForwarder.get(this);
+		}
+
 		var aChildren = this.mAggregations[sAggregationName];
 		if (!aChildren) {
 			aChildren = this.mAggregations[sAggregationName] = oDefaultForCreation || null;
@@ -1881,6 +1914,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObject.prototype.indexOfAggregation = function(sAggregationName, oObject) {
+		var oForwarder = this.getMetadata().getAggregationForwarder(sAggregationName);
+		if (oForwarder) {
+			return oForwarder.indexOf(this, oObject);
+		}
+
 		var aChildren = this.mAggregations[sAggregationName];
 		if (aChildren) {
 			if (aChildren.length == undefined) {
@@ -1934,7 +1972,12 @@ sap.ui.define([
 		if (!oObject) {
 			return this;
 		}
-		oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ true);
+		oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ true, /* omit forwarding */ true);
+
+		var oForwarder = this.getMetadata().getAggregationForwarder(sAggregationName);
+		if (oForwarder) {
+			return oForwarder.insert(this, oObject, iIndex);
+		}
 
 		var aChildren = this.mAggregations[sAggregationName] || (this.mAggregations[sAggregationName] = []);
 		// force index into valid range
@@ -1982,7 +2025,12 @@ sap.ui.define([
 		if (!oObject) {
 			return this;
 		}
-		oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ true);
+		oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ true, /* omit forwarding */ true);
+
+		var oForwarder = this.getMetadata().getAggregationForwarder(sAggregationName);
+		if (oForwarder) {
+			return oForwarder.add(this, oObject);
+		}
 
 		var aChildren = this.mAggregations[sAggregationName];
 		if (!aChildren) {
@@ -2022,6 +2070,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObject.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
+		var oForwarder = this.getMetadata().getAggregationForwarder(sAggregationName);
+		if (oForwarder) {
+			return oForwarder.remove(this, vObject);
+		}
+
 		var aChildren = this.mAggregations[sAggregationName],
 			oChild = null,
 			i;
@@ -2100,6 +2153,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObject.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate){
+		var oForwarder = this.getMetadata().getAggregationForwarder(sAggregationName);
+		if (oForwarder) {
+			return oForwarder.removeAll(this);
+		}
+
 		var aChildren = this.mAggregations[sAggregationName];
 		if (!aChildren)	{
 			return [];
@@ -2142,6 +2200,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObject.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate){
+		var oForwarder = this.getMetadata().getAggregationForwarder(sAggregationName);
+		if (oForwarder) {
+			return oForwarder.destroy(this);
+		}
+
 		var aChildren = this.mAggregations[sAggregationName],
 			i, aChild;
 
@@ -2715,7 +2778,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the binding infos for the given property or aggregation. The binding info contains information about path, binding object, format options,
+	 * Returns the binding info for the given property or aggregation. The binding info contains information about path, binding object, format options,
 	 * sorter, filter etc. for the property or aggregation. As the binding object is only created when the model becomes available, the binding property may be
 	 * undefined.
 	 *
@@ -2727,6 +2790,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObject.prototype.getBindingInfo = function(sName) {
+		var oForwarder = this.getMetadata().getAggregationForwarder(sName);
+		if (oForwarder && oForwarder.forwardBinding) {
+			return oForwarder.getTarget(this).getBindingInfo(oForwarder.targetAggregationName);
+		}
+
 		return this.mBindingInfos[sName];
 	};
 
@@ -3385,6 +3453,12 @@ sap.ui.define([
 			}
 		}
 
+		var oForwarder = oMetadata.getAggregationForwarder(sName);
+		if (oForwarder && oForwarder.forwardBinding) {
+			return oForwarder.getTarget(this).bindAggregation(oForwarder.targetAggregationName, oBindingInfo);
+		}
+
+
 		// if aggregation is already bound, unbind it first
 		if (this.isBound(sName)) {
 			this.unbindAggregation(sName);
@@ -3508,6 +3582,11 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.unbindAggregation = function(sName, bSuppressReset){
+		var oForwarder = this.getMetadata().getAggregationForwarder(sName);
+		if (oForwarder && oForwarder.forwardBinding) {
+			return oForwarder.getTarget(this).unbindAggregation(oForwarder.targetAggregationName, bSuppressReset);
+		}
+
 		var oBindingInfo = this.mBindingInfos[sName],
 			oAggregationInfo = this.getMetadata().getAggregation(sName);
 		if (oBindingInfo) {
@@ -3718,7 +3797,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Generic method which is called, whenever messages for this object exists.
+	* Generic method which is called, whenever messages for this object exist.
 	*
 	* @param {string} sName The property name
 	* @param {array} aMessages The messages
@@ -3887,7 +3966,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.isBound = function(sName){
-		return (sName in this.mBindingInfos);
+		return !!this.getBindingInfo(sName);
 	};
 
 	/**
@@ -3929,7 +4008,8 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.getBinding = function(sName){
-		return this.mBindingInfos[sName] && this.mBindingInfos[sName].binding;
+		var oInfo = this.getBindingInfo(sName);
+		return oInfo && oInfo.binding;
 	};
 
 	/**
@@ -3940,7 +4020,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	ManagedObject.prototype.getBindingPath = function(sName){
-		var oInfo = this.mBindingInfos[sName];
+		var oInfo = this.getBindingInfo(sName);
 		return oInfo && (oInfo.path || (oInfo.parts && oInfo.parts[0] && oInfo.parts[0].path));
 	};
 
@@ -4389,13 +4469,13 @@ sap.ui.define([
 	 * Omitting the model name (or using the value <code>undefined</code>) is explicitly allowed and
 	 * refers to the default model.
 	 *
-	 * @param {string|undefined} [sName] name of the model to be retrieved
+	 * @param {string|undefined} [sModelName] name of the model to be retrieved
 	 * @return {sap.ui.model.Model} oModel
 	 * @public
 	 */
-	ManagedObject.prototype.getModel = function(sName) {
-		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
-		return this.oModels[sName] || this.oPropagatedProperties.oModels[sName];
+	ManagedObject.prototype.getModel = function(sModelName) {
+		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
+		return this.oModels[sModelName] || this.oPropagatedProperties.oModels[sModelName];
 	};
 
 	/**
