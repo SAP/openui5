@@ -791,7 +791,7 @@
 			QUnit.test("Action aggregation and hidden aggregations", function(assert) {
 				assert.equal(this.oFieldListItem.getActions().length, 2, "There are two actions in the aggregation.");
 				assert.ok(this.oFieldListItem.getAggregation("_actionButton") instanceof sap.m.Button, "Hidden aggregation _actionButton is added");
-				assert.ok(this.oFieldListItem.getAggregation("_actionSheet") instanceof sap.m.ActionSheet, "Hidden aggregation _actionSheet is added");
+				assert.notOk(this.oFieldListItem.getAggregation("_actionSheet") instanceof sap.m.ActionSheet, "Hidden aggregation _actionSheet not added");
 			});
 
 			QUnit.test("Shows action button", function(assert) {
