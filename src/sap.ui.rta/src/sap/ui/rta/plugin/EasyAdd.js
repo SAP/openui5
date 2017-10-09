@@ -63,7 +63,7 @@ sap.ui.define([
 						oEvent.cancelBubble();
 					};
 					var sControlName = typeof vControlName === "function" ? vControlName() : vControlName;
-					this._addButton(oOverlay, fnCallback, oOverlayDom, sControlName);
+					this._addButton(oOverlay, fnCallback, oOverlayDom, sControlName, bSibling);
 				}.bind(this);
 
 				if (oOverlay.$().hasClass("sapUiRtaPersAdd")) {
@@ -123,6 +123,15 @@ sap.ui.define([
 		}
 	};
 
+	EasyAdd.prototype._isEditable = function(oOverlay) {
+		var bIsEditable = AdditionalElementsPlugin.prototype._isEditable.apply(this, arguments);
+		if (oOverlay._oAddButton) {
+			var sOverlayIsSibling = oOverlay.hasStyleClass("sapUiRtaPersAddTop") ? "asChild" : "asSibling";
+			oOverlay._oAddButton.setEnabled(bIsEditable[sOverlayIsSibling]);
+		}
+		return bIsEditable;
+	};
+
 	/**
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - overlay object
 	 * @param {function} fnCallback - callback function will be passed to the new button as on press event function
@@ -130,13 +139,16 @@ sap.ui.define([
 	 * @param {string} sControlName - name of the control. This name will be displayed on the Add-Button
 	 * @private
 	 */
-	EasyAdd.prototype._addButton = function(oOverlay, fnCallback, oOverlayDom, sControlName) {
+	EasyAdd.prototype._addButton = function(oOverlay, fnCallback, oOverlayDom, sControlName, bOverlayIsSibling) {
+		var bIsEditable = oOverlay.getEditableByPlugins().indexOf(this._retrievePluginName(bOverlayIsSibling)) > -1;
+
 		var sId = oOverlay.getId() + "-AddButton";
 		var oHtmlButtonOuter = jQuery("<div class='sapUiRtaPersAddIconOuter' draggable='true'> </div>");
 		oOverlay._oAddButton = new sap.m.Button(sId, {
 			text: "Add " + sControlName,
 			icon: "sap-icon://add",
-			press: fnCallback
+			press: fnCallback,
+			enabled: bIsEditable
 		}).placeAt(oHtmlButtonOuter.get(0));
 		oOverlayDom.append(oHtmlButtonOuter);
 
