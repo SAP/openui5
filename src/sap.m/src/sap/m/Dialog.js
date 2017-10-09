@@ -1654,6 +1654,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					}
 				};
 
+				function mouseUpHandler() {
+					var $dialog = that.$(),
+						$dialogContent = that.$('cont');
+
+					$w.off("mouseup.sapMDialog, mousemove.sapMDialog");
+
+					if (bResize) {
+						that._$dialog.removeClass('sapMDialogResizing');
+						$dialogContent.height(parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10));
+					}
+				}
+
 				if ((isHeaderClicked(e.target) && this.getDraggable()) || bResize) {
 					that._bDisableRepositioning = true;
 
@@ -1676,6 +1688,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 				if (isHeaderClicked(e.target) && this.getDraggable()) {
 					$w.on("mousemove.sapMDialog", function (e) {
+
+						if (e.buttons === 0) {
+							mouseUpHandler();
+							return;
+						}
+
 						fnMouseMoveHandler(function () {
 							that._bDisableRepositioning = true;
 
@@ -1728,17 +1746,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					return;
 				}
 
-				$w.on("mouseup.sapMDialog", function () {
-					var $dialog = that.$(),
-						$dialogContent = that.$('cont');
-
-					$w.off("mouseup.sapMDialog, mousemove.sapMDialog");
-
-					if (bResize) {
-						that._$dialog.removeClass('sapMDialogResizing');
-						$dialogContent.height(parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10));
-					}
-				});
+				$w.on("mouseup.sapMDialog", mouseUpHandler);
 
 				e.preventDefault();
 				e.stopPropagation();
