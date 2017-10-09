@@ -24,15 +24,6 @@ sap.ui.define([
 		link: oLink
 	});
 
-	var oMessageView = new MessageView({
-		items: {
-			path: '/',
-			template: oMessageTemplate
-		},
-		groupItems: true
-	});
-
-
 	var CController = Controller.extend("sap.m.sample.MessageViewWithGrouping.C", {
 		onInit: function () {
 			// create any data and a model and set it to the view
@@ -110,23 +101,50 @@ sap.ui.define([
 
 			this.getView().setModel(viewModel);
 
-			oMessageView.setModel(oModel);
-		},
+			var oMessageView = new MessageView({
+					showDetailsPageHeader: false,
+					itemSelect: function () {
+						oBackButton.setVisible(true);
+					},
+					items: {
+						path: '/',
+						template: oMessageTemplate
+					},
+					groupItems: true
+				}),
+				oBackButton = new sap.m.Button({
+					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
+					visible: false,
+					press: function () {
+						oMessageView.navigateBack();
+						this.setVisible(false);
+					}
+				});
 
-		handleMessageViewPress: function (oEvent) {
-			var oDialog = new Dialog({
+			oMessageView.setModel(oModel);
+
+			this.oDialog = new Dialog({
 				content: oMessageView,
-				title: "Publish order",
 				contentHeight: "440px",
 				contentWidth: "640px",
 				endButton: new sap.m.Button({
 					text: "Close",
 					press: function() {
-						oDialog.close();
+						this.getParent().close();
 					}
 				}),
+				customHeader: new sap.m.Bar({
+					contentMiddle: [
+						new sap.m.Text({ text: "Publish order"})
+					],
+					contentLeft: [oBackButton]
+				}),
 				verticalScrolling: false
-			}).open();
+			});
+		},
+
+		handleMessageViewPress: function (oEvent) {
+			this.oDialog.open();
 		}
 	});
 
