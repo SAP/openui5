@@ -905,42 +905,49 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{
-		dataPath : "/BusinessPartnerList('42')",
-		metaPath : ""
-	}, {
-		dataPath : "/BusinessPartnerList('42')",
-		metaPath : "@com.sap.vocabularies.UI.v1.LineItem"
-	}, {
-		dataPath : "/",
-		metaPath : "BusinessPartnerList/@com.sap.vocabularies.UI.v1.LineItem"
-	}, {
-		dataPath : "/BusinessPartnerList",
-		metaPath : "/",
-		relativeMetaPath : "./" // meta path is always treated as a relative path
-	}, {
-		dataPath : "/BusinessPartnerList",
-		metaPath : "/Name",
-		relativeMetaPath : "./Name" // meta path is always treated as a relative path
-	}].forEach(function (oFixture){
-		var sPath = (oFixture.dataPath + "#" + oFixture.metaPath);
+	[false, true].forEach(function (bDoubleHash) {
+		[{
+			dataPath : "/BusinessPartnerList('42')",
+			metaPath : ""
+		}, {
+			dataPath : "/BusinessPartnerList('42')",
+			metaPath : "@com.sap.vocabularies.UI.v1.LineItem"
+		}, {
+			dataPath : "/",
+			metaPath : "BusinessPartnerList/@com.sap.vocabularies.UI.v1.LineItem"
+		}, {
+			dataPath : "/",
+			metaPath : "BusinessPartnerList/@com.sap.vocabularies.UI.v1.LineItem"
+		}, {
+			dataPath : "/BusinessPartnerList",
+			metaPath : "/",
+			relativeMetaPath : "./" // meta path is always treated as a relative path
+		}, {
+			dataPath : "/BusinessPartnerList",
+			metaPath : "/Name",
+			relativeMetaPath : "./Name" // meta path is always treated as a relative path
+		}].forEach(function (oFixture) {
+			var sPath = (oFixture.dataPath
+					+ (bDoubleHash ? "##" : "#")
+					+ oFixture.metaPath);
 
-		QUnit.test("createBindingContext - go to metadata " + sPath, function (assert) {
-			var oContext = {},
-				oModel = createModel(),
-				oMetaContext = {},
-				oMetaModel = oModel.getMetaModel(),
-				oMetaModelMock = this.mock(oMetaModel),
-				sMetaPath = oFixture.relativeMetaPath || oFixture.metaPath;
+			QUnit.test("createBindingContext - go to metadata " + sPath, function (assert) {
+				var oContext = {},
+					oModel = createModel(),
+					oMetaContext = {},
+					oMetaModel = oModel.getMetaModel(),
+					oMetaModelMock = this.mock(oMetaModel),
+					sMetaPath = oFixture.relativeMetaPath || oFixture.metaPath;
 
-			oMetaModelMock.expects("getMetaContext").withExactArgs(oFixture.dataPath)
-				.returns(oMetaContext);
-			oMetaModelMock.expects("createBindingContext")
-				.withExactArgs(sMetaPath, sinon.match.same(oMetaContext))
-				.returns(oContext);
+				oMetaModelMock.expects("getMetaContext").withExactArgs(oFixture.dataPath)
+					.returns(oMetaContext);
+				oMetaModelMock.expects("createBindingContext")
+					.withExactArgs(sMetaPath, sinon.match.same(oMetaContext))
+					.returns(oContext);
 
-			// code under test
-			assert.strictEqual(oModel.createBindingContext(sPath), oContext);
+				// code under test
+				assert.strictEqual(oModel.createBindingContext(sPath), oContext);
+			});
 		});
 	});
 
