@@ -186,13 +186,13 @@ sap.ui.define([
 	 */
 	VariantController.prototype.getChangesForVariantSwitch = function(sVariantManagementReference, sCurrentVariant, sNewVariant, mChanges) {
 		var aCurrentChangeKeys = this.getVariantChanges(sVariantManagementReference, sCurrentVariant).map(function(oChangeContent) {
-			return new Change(oChangeContent).getKey();
+			return new Change(oChangeContent).getId();
 		});
 
 		var aCurrentVariantChanges = Object.keys(mChanges).reduce(function(aChanges, sControlId) {
 			var aCurrentFilteredChanges = [];
 			mChanges[sControlId].forEach(function(oChange) {
-				var iChangeIndex = aCurrentChangeKeys.indexOf(oChange.getKey());
+				var iChangeIndex = aCurrentChangeKeys.indexOf(oChange.getId());
 				if (iChangeIndex !== -1) {
 					aCurrentFilteredChanges.push(oChange);
 				}
@@ -208,7 +208,7 @@ sap.ui.define([
 		if (aNewChanges.length > 0) {
 			aRevertChanges = aCurrentVariantChanges.slice();
 			aCurrentVariantChanges.some(function (oChange) {
-				if (aNewChanges[0] && oChange.getKey() === aNewChanges[0].getKey()) {
+				if (aNewChanges[0] && oChange.getId() === aNewChanges[0].getId()) {
 					aNewChanges.shift();
 					aRevertChanges.shift();
 				} else {
@@ -273,8 +273,8 @@ sap.ui.define([
 
 		aNewChanges.forEach(function (oCurrentChangeContent, iIndex) {
 			var oCurrentChange = new Change(oCurrentChangeContent);
-			if (oCurrentChange.getKey
-				&& (oCurrentChange.getKey() === oChange.getKey())) {
+			if (oCurrentChange.getId
+				&& (oCurrentChange.getId() === oChange.getId())) {
 				aNewChanges.splice(iIndex, 1);
 			}
 		});
@@ -310,7 +310,7 @@ sap.ui.define([
 		var iIndex;
 		var bFound = this._mVariantManagement[sVariantManagementReference].variants.some(function(oCurrentVariantContent, index) {
 			var oCurrentVariant = new Variant(oCurrentVariantContent);
-			if (oCurrentVariant.getKey() === oVariant.getKey()) {
+			if (oCurrentVariant.getId() === oVariant.getId()) {
 				iIndex = index;
 				return true;
 			}
