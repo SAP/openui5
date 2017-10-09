@@ -690,7 +690,7 @@ Content-Type: application/http\r\n\
 Content-Length: 4711\r\n\
 content-transfer-encoding: binary\r\n\
 \r\n\
-HTTP/1.1 200 OK\r\n\
+HTTP/1.1 200\r\n\
 Content-Type: application/json;odata.metadata=minimal\r\n\
 Content-Length: 9\r\n\
 odata-version: 4.0\r\n\
@@ -713,7 +713,7 @@ header-with-space-before-colon : Headername with space before colon\r\n\
 this is a batch request epilogue",
 		expectedResponses : [{
 			status : 200,
-			statusText : "OK",
+			statusText : "", // optional!
 			headers : {
 				"Content-Type" : "application/json;odata.metadata=minimal",
 				"Content-Length" : "9",
@@ -1804,7 +1804,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						oResponse = aResponses[0];
 
 						assert.strictEqual(oResponse.status, 404);
-						assert.strictEqual(oResponse.statusText, "Not Found");
 						assert.ok(oResponse.headers["content-language"]);
 						done();
 					});

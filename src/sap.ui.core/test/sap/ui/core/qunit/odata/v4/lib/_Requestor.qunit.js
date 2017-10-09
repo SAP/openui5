@@ -1123,8 +1123,7 @@ sap.ui.require([
 			aBatchResult = [{
 				headers : {},
 				responseText : "{}",
-				status : 200,
-				statusText : "ok"
+				status : 200
 			}, {
 				getResponseHeader : function () {
 					return "application/json";
@@ -2226,7 +2225,6 @@ sap.ui.require([
 				assert.strictEqual(typeof oError.error, "object");
 				assert.strictEqual(typeof oError.message, "string");
 				assert.strictEqual(oError.status, 404);
-				assert.strictEqual(oError.statusText, "Not Found");
 			});
 
 			return oRequestor.submitBatch("group").then(function (oResult) {

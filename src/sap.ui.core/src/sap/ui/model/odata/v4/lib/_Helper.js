@@ -122,7 +122,7 @@ sap.ui.define([
 		 *     concurrent modification detected via ETags (i.e. HTTP status code 412)
 		 *     <li><code>message</code>: Error message
 		 *     <li><code>status</code>: HTTP status code
-		 *     <li><code>statusText</code>: HTTP status text
+		 *     <li><code>statusText</code>: (optional) HTTP status text
 		 *   </ul>
 		 * @see <a href=
 		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html"
