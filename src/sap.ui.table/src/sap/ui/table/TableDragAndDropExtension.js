@@ -196,7 +196,7 @@ sap.ui.define([
 			var iScrollDistance = 32;
 			var iThreshold = 50;
 			var oDropControl = oDragSession.dropControl;
-			var oIndicator = oDragSession.getIndicator();
+			var oIndicator = jQuery(oDragSession.getIndicator());
 			var oScrollExtension = this._getScrollExtension();
 			var oVerticalScrollbar = oScrollExtension.getVerticalScrollbar();
 			var oHorizontalScrollbar = oScrollExtension.getHorizontalScrollbar();
