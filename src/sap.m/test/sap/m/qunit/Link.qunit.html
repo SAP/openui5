@@ -130,7 +130,7 @@
 		});
 
 		QUnit.test("Disabled link should not have the preseted href", function(assert) {
-			assert.equal(oLink2.$().attr("href"), "#", "oLink2 href should be '#'");
+			assert.equal(oLink2.$().attr("href"), undefined, "oLink2 href should not exist");
 			oLink2.setEnabled(true);
 			sap.ui.getCore().applyChanges();
 			assert.equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");
