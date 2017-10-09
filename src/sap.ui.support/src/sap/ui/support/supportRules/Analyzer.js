@@ -21,7 +21,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 		 * <h3>Usage</h3>
 		 * With the start, restart, stop and pause methods the analyzer can be controlled.
 		 * While running it asynchronously, it selects objects from the list of each task and completes them.
-		 * @public
+		 * @private
 		 * @class sap.ui.support.Analyzer
 		 */
 		var Analyzer = function () {
