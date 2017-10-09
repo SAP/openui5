@@ -85,6 +85,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.ui.layout.FixFlex": {
+					"moveControls": "default",
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.ui.layout.form.Form": "sap/ui/layout/flexibility/Form",
 				"sap.ui.layout.form.FormContainer": "sap/ui/layout/flexibility/FormContainer",
 				"sap.ui.layout.form.FormElement": "sap/ui/layout/flexibility/FormElement",
