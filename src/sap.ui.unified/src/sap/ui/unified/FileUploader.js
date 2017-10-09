@@ -837,12 +837,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		return this.setValue("", false, true);
 	};
 
-	FileUploader.prototype.ontap = function () {
-		if (this.getEnabled() && this.getVisible()) {
-			this.FUEl.click();
-		}
-	};
-
 	FileUploader.prototype.onmousedown = function(oEvent) {
 		if (!this.bMobileLib) {
 			this.oBrowse.onmousedown(oEvent);
