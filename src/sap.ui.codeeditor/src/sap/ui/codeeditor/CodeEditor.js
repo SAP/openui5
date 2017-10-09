@@ -23,6 +23,9 @@ sap.ui.define([
 	 * @class
 	 * Allows to visualize source code of various types with syntax highlighting, line numbers in editable and read only mode.
 	 * Use this controls in scenarios where the user should be able to inspect and edit source code.
+	 * NOTE: There is a known limitation where CodeEditor won't work within IconTabBar on Internet Explorer. There
+	 * is a way to achieve the same functionality - an example of IconTabHeader and a CodeEditor can be found
+	 * in the CodeEditor's samples.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
