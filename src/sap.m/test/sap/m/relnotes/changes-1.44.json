@@ -2510,5 +2510,40 @@
         "references": []
       }
     ]
+  },
+  "1.44.21": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "31d215e383916b93597cb8f1a53198ba6d17ee26",
+        "type": "FIX",
+        "text": " sap.m.MenuItem - setting key does not throw an error anymore.",
+        "references": []
+      },
+      {
+        "id": "f3b5c9c43c71e3129a6a149bf9304d517583dba1",
+        "type": "FIX",
+        "text": " sap.m.Panel: avoid showing duplicate icon focus outlines",
+        "references": []
+      },
+      {
+        "id": "4abdee3a5fce15a950af7f8541a59e510936b7a9",
+        "type": "FIX",
+        "text": " sap.m.TextArea: _adjustHeight before control is rendered",
+        "references": []
+      },
+      {
+        "id": "fd519b8025a2c8ec90bbdf226f5dc2dfa048a484",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Runtime error after item deletion in pending mode corrected",
+        "references": []
+      },
+      {
+        "id": "e9ca9e8d8a1a5916a63628978defb544f555c08d",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: onCancel now do not modify filter selection",
+        "references": []
+      }
+    ]
   }
 }
