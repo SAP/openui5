@@ -49,31 +49,46 @@ sap.ui.define([
 	};
 
 	/**
-	 * @public Template Method to implement execute logic, with ensure precondition Element is available
+	 * @override
+	 */
+	ControlVariantDuplicate.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
+		this.sLayer = mFlexSettings.layer;
+	};
+
+	/**
+	 * @public Triggers the duplication of a variant
 	 * @returns {promise} Returns resolve after execution
 	 */
 	ControlVariantDuplicate.prototype.execute = function() {
-		var oElement = this.getElement(),
-			oAppComponent = this._getAppComponent(oElement),
+		var oVariantManagementControl = this.getElement(),
+			oAppComponent = this._getAppComponent(oVariantManagementControl),
 			sSourceVariantReference = this.getSourceVariantReference(),
-			sNewVariantFileReference = this.getNewVariantReference();
+			sNewVariantReference = this.getNewVariantReference();
 
-		if (!sNewVariantFileReference) {
-			sNewVariantFileReference = flUtils.createDefaultFileName(sSourceVariantReference + "_Copy");
-			this.setNewVariantReference(sNewVariantFileReference);
+		if (!sNewVariantReference) {
+			sNewVariantReference = flUtils.createDefaultFileName(sSourceVariantReference + "_Copy");
+			this.setNewVariantReference(sNewVariantReference);
 		}
 
-		this.sVariantManagementReference = BaseTreeModifier.getSelector(oElement, oAppComponent).id;
+		this.sVariantManagementReference = BaseTreeModifier.getSelector(oVariantManagementControl, oAppComponent).id;
 		this.oModel = oAppComponent.getModel(this.MODEL_NAME);
 
-		return Promise.resolve(this.oModel._copyVariant(oElement, oAppComponent, sNewVariantFileReference, sSourceVariantReference))
+		var mPropertyBag = {
+				variantManagementControl : oVariantManagementControl,
+				appComponent : oAppComponent,
+				layer : this.sLayer,
+				newVariantReference : sNewVariantReference,
+				sourceVariantReference : sSourceVariantReference
+		};
+
+		return Promise.resolve(this.oModel._copyVariant(mPropertyBag))
 			.then(function(oVariant){
 				this.setDuplicateVariant(oVariant);
 			}.bind(this));
 	};
 
 	/**
-	 * @public Template Method to implement undo logic
+	 * @public Undo logic for the execution
 	 * @returns {promise} Returns resolve after undo
 	 */
 	ControlVariantDuplicate.prototype.undo = function() {

@@ -126,10 +126,11 @@ function(
 		sinon.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
 
 		var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
+		var mFlexSettings = {layer: "CUSTOMER"};
 
 		var oControlVariantDuplicateCommand = CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
 			sourceVariantReference : oVariant.content.variantReference
-		}, oDesignTimeMetadata);
+		}, oDesignTimeMetadata, mFlexSettings);
 
 		assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
 		oControlVariantDuplicateCommand.execute().then( function() {

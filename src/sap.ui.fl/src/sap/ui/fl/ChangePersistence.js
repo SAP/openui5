@@ -406,7 +406,10 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.addChange = function(vChange, oComponent) {
 		var oChange = this.addDirtyChange(vChange);
-		this._addChangeIntoMap(oComponent, oChange);
+		//control variants are not needed in map
+		if (oChange.getFileType() !== "ctrl_variant") {
+			this._addChangeIntoMap(oComponent, oChange);
+		}
 		this._addPropagationListener(oComponent);
 		return oChange;
 	};
