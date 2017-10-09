@@ -108,20 +108,19 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 			_byId: function (sId, oView) {
 
 				// If function defined and operational use getElementById(sId) of document or view to access control
-				// ... Note: oView.ownerDocument.getElementById(sId) may fail under IE 11.420 indicating "permission denied"
+				// ... Note: oView.ownerDocument.getElementById(sId) may fail under IE 11 indicating "permission denied"
 				if (oView) {
 					if (oView.ownerDocument && oView.ownerDocument.getElementById && oView.ownerDocument.getElementById(sId)) {
-						// oView.ownerDocument.getElementById(sId) fails under IE 11.420 indicating "permission denied"
 						return oView.ownerDocument.getElementById(sId);
-					} else if (oView.getElementById && oView.getElementById(sId)) {
-						return oView.getElementById(sId);
+					} else {
+						return oView.querySelector("[id='" + sId + "']");
 					}
-				}
 
-				// Use jQuery.find function to access control if getElementById(..) failed
-				var oNodes = jQuery(oView).find("#" + sId);
-				if (oNodes.length === 1) {
-					return oNodes[0];
+					// Use jQuery.find function to access control if getElementById(..) failed
+					var oNodes = jQuery.sap.byId(sId, oView);
+					if (oNodes.length === 1) {
+						return oNodes[0];
+					}
 				}
 			},
 
