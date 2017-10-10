@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			if (bSeparatorColumn) {
 				iTitleCells++;
 			}
-			rm.write("<tr class=\"sapUiGridConteinerFirstRow\"><td colspan=" + iTitleCells);
+			rm.write("<tr class=\"sapUiGridConteinerFirstRow sapUiGridConteinerHeaderRow\"><td colspan=" + iTitleCells);
 			rm.addClass("sapUiGridHeader");
 			if (sTooltip) {
 				rm.writeAttributeEscaped('title', sTooltip);
@@ -253,7 +253,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 		if (oTitle1 || oTitle2 || oToolbar1 || oToolbar2) {
 			// render title row (if one container has a title, the other has none leave the cells empty)
-			rm.write("<tr class=\"sapUiGridConteinerFirstRow\"><td colspan=" + iContainerColumns);
+			rm.write("<tr class=\"sapUiGridConteinerFirstRow sapUiGridConteinerHeaderRow\"><td colspan=" + iContainerColumns);
 			rm.addClass("sapUiGridHeader");
 			if (sTooltip1) {
 				rm.writeAttributeEscaped('title', sTooltip1);
