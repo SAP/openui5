@@ -10,8 +10,10 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/uxap/ObjectPageSubSection",
-		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
-	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, JSDocUtil) {
+		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
+	"sap/ui/documentation/sdk/controller/util/APIInfo"
+	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection,
+				 JSDocUtil, APIInfo) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -20,6 +22,7 @@ sap.ui.define([
 			EVENT: 'event',
 			PARAM: 'param',
 			NOT_AVAILABLE: 'N/A',
+			NOT_FOUND: 'Not found',
 			ANNOTATIONS_LINK: 'http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html',
 			ANNOTATIONS_NAMESPACE_LINK: 'http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/vocabularies/',
 			ANNOTATION_DESCRIPTION_STRIP_REGEX: /<i>XML[\s\S].*Example/,
@@ -67,6 +70,9 @@ sap.ui.define([
 			onInit: function () {
 				this._objectPage = this.byId("apiDetailObjectPage");
 				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
+
+				this._oLibsModel = new JSONModel();
+				this._oLibsModel.setSizeLimit(1000000);
 
 				this.setModel(new JSONModel(), "topics");
 				this.setModel(new JSONModel(), "constructorParams");
@@ -152,33 +158,34 @@ sap.ui.define([
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
-				oComponent.loadVersionInfo()
-					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
-					.then(function () {
-						var oLibsData = this.getModel("libsData").getData(),
+				oComponent.loadVersionInfo().then(oComponent.fetchAPIIndex.bind(oComponent))
+					.then(function (oData) {
+						var oEntityData,
 							bFound = false,
-							sEntity;
+							iLen,
+							i;
 
-						// Try to discover if entity exist
-						if (!oLibsData[this._sTopicid]) {
-							// Not an exact match - try to resolve partial namespace
-							for (sEntity in oLibsData) {
-								if (oLibsData.hasOwnProperty(sEntity) && sEntity.indexOf(this._sTopicid) === 0) {
-									bFound = true;
-									break;
-								}
+						// Find entity in api-index
+						for (i = 0, iLen = oData.length; i < iLen; i++) {
+							if (oData[i].name === this._sTopicid || oData[i].name.indexOf(this._sTopicid) === 0) {
+								oEntityData = oData[i];
+								bFound = true;
+								break;
 							}
-						} else {
-							bFound = true;
 						}
 
-						// If the entity does not exist in the available libs we redirect to the not found page and
-						// stop the immediate execution of this method.
-						if (!bFound) {
-							this._objectPage.setBusy(false);
-							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
-							return;
+						if (bFound) {
+							// Load API.json only for selected lib
+							return APIInfo.getLibraryElementsJSONPromise(oEntityData.lib).then(function (oData) {
+								this._aLibsData = oData; // Cache received data
+								return Promise.resolve(); // We have found the symbol and loaded the corresponding api.json
+							}.bind(this));
 						}
+
+						// If we are here - the object does not exist so we reject the promise.
+						return Promise.reject(this.NOT_FOUND);
+					}.bind(this))
+					.then(function () {
 						// Cache allowed members
 						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
@@ -209,6 +216,13 @@ sap.ui.define([
 						});
 
 						this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
+					}.bind(this))
+					.catch(function (sReason) {
+						// If the object does not exist in the available libs we redirect to the not found page and
+						if (sReason === this.NOT_FOUND) {
+							this._objectPage.setBusy(false);
+							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+						}
 					}.bind(this));
 
 			},
@@ -358,8 +372,8 @@ sap.ui.define([
 			},
 
 			_bindData: function (sTopicId) {
-				var aLibsData = this.getOwnerComponent().getModel("libsData").getData(),
-					oControlData = aLibsData[sTopicId],
+				var aLibsData = this._aLibsData,
+					oControlData,
 					aTreeData = this.getOwnerComponent().getModel("treeData").getData(),
 					aControlChildren = this._getControlChildren(aTreeData, sTopicId),
 					oModel,
@@ -369,7 +383,16 @@ sap.ui.define([
 					oMethodsModel,
 					oEventsModel = {events: []},
 					oUi5Metadata,
+					iLen,
 					i;
+
+				// Find entity in loaded libs data
+				for (i = 0, iLen = aLibsData.length; i < iLen; i++) {
+					if (aLibsData[i].name === this._sTopicid) {
+						oControlData = aLibsData[i];
+						break;
+					}
+				}
 
 				if (aControlChildren) {
 					if (!oControlData) {
@@ -555,8 +578,19 @@ sap.ui.define([
 			},
 
 			_addChildrenDescription: function (aLibsData, aControlChildren) {
+				function getDataByName (sName) {
+					var iLen,
+						i;
+
+					for (i = 0, iLen = aLibsData.length; i < iLen; i++) {
+						if (aLibsData[i].name === sName) {
+							return aLibsData[i];
+						}
+					}
+					return false;
+				}
 				for (var i = 0; i < aControlChildren.length; i++) {
-					aControlChildren[i].description = aLibsData[aControlChildren[i].name].description;
+					aControlChildren[i].description = getDataByName(aControlChildren[i].name).description;
 					aControlChildren[i].link = "{@link " + aControlChildren[i].name + "}";
 				}
 			},
