@@ -663,6 +663,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var rm = sap.ui.getCore().createRenderManager();
 				rm.render(oPage, this.getDomRef().firstChild);
 				rm.destroy();
+				oPage = null;
 			}
 		});
 
