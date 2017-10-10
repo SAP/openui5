@@ -560,7 +560,6 @@ function(
 						settings : function(){
 							return [{
 								name : "CTX_ACTION1",
-								id : "CTX_ACTION1",
 								handler: function(oElement, mPropertyBag) {
 									return new Promise(function(resolve){
 										resolve([mAction1Change]);
@@ -571,7 +570,6 @@ function(
 								name : function(){
 									return "Action 2 Name";
 								},
-								id : "CTX_ACTION2",
 								handler: function(oElement, mPropertyBag) {
 									return new Promise(function(resolve){
 										resolve([mAction2Change]);
@@ -609,10 +607,10 @@ function(
 		});
 
 		var aMenuItems = this.oSettingsPlugin.getMenuItems(oButtonOverlay);
-		assert.equal(aMenuItems[0].id, "CTX_ACTION1", "'getMenuItems' returns the context menu item for action 1");
+		assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
 		assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
 		aMenuItems[0].handler([oButtonOverlay]);
-		assert.equal(aMenuItems[1].id, "CTX_ACTION2", "'getMenuItems' returns the context menu item for action 2");
+		assert.equal(aMenuItems[1].id, "CTX_SETTINGS1", "'getMenuItems' returns the context menu item for action 2");
 		assert.equal(aMenuItems[1].text, "Action 2 Name", "'getMenuItems' returns the correct item text for action 2");
 		assert.equal(aMenuItems[1].rank, 111, "'getMenuItems' returns the correct item rank for action 2");
 		aMenuItems[1].handler([oButtonOverlay]);
@@ -638,7 +636,6 @@ function(
 						settings : function(){
 							return [{
 								name : "CTX_ACTION1",
-								id : "CTX_ACTION1",
 								handler: function(oElement, mPropertyBag) {
 									return new Promise(function(resolve){
 										resolve([mAction1Change]);
@@ -646,8 +643,7 @@ function(
 								}
 							},
 							{
-								name : "CTX_ACTION2",
-								id : "CTX_ACTION2"
+								name : "CTX_ACTION2"
 							}];
 						}
 					}
@@ -666,7 +662,7 @@ function(
 		var spyLog = sinon.spy(jQuery.sap.log, "warning");
 
 		var aMenuItems = this.oSettingsPlugin.getMenuItems(oButtonOverlay);
-		assert.equal(aMenuItems[0].id, "CTX_ACTION1", "'getMenuItems' returns the context menu item for action 1");
+		assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
 		assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
 		aMenuItems[0].handler([oButtonOverlay]);
 		assert.equal(aMenuItems.length, 1, "'getMenuItems' only returns menu item for actions with handlers");
@@ -683,8 +679,7 @@ function(
 				data : {
 					actions : {
 						settings : [{
-							name : "CTX_ACTION1",
-							id : "CTX_ACTION1",
+							name : function(){ return "CTX_ACTION1"; },
 							handler: function(oElement, mPropertyBag) {
 								return new Promise(function(resolve){
 									resolve([]);
@@ -692,8 +687,7 @@ function(
 							}
 						},
 						{
-							name : "CTX_ACTION2",
-							id : "CTX_ACTION2",
+							name : function(){ return "CTX_ACTION2"; },
 							handler: function(oElement, mPropertyBag) {
 								return new Promise(function(resolve){
 									resolve([]);
@@ -712,9 +706,9 @@ function(
 		sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
 
 		var aMenuItems = this.oSettingsPlugin.getMenuItems(oButtonOverlay);
-		assert.equal(aMenuItems[0].id, "CTX_ACTION1", "'getMenuItems' returns the context menu item for action 1");
+		assert.equal(aMenuItems[0].text, "CTX_ACTION1", "'getMenuItems' returns the context menu item for action 1");
 		assert.equal(aMenuItems[0].enabled, undefined, "'getMenuItems' item for action 1 is undefined (hence default true will be used)");
-		assert.equal(aMenuItems[1].id, "CTX_ACTION2", "'getMenuItems' returns the context menu item for action 2");
+		assert.equal(aMenuItems[1].text, "CTX_ACTION2", "'getMenuItems' returns the context menu item for action 2");
 		assert.equal(aMenuItems[1].enabled(), false, "'getMenuItems' item for action 2 will be disabled");
 	});
 
