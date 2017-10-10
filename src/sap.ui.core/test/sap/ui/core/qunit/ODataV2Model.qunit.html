@@ -1538,7 +1538,7 @@
 		oLabel.getElementBinding().attachDataReceived(fnRecievedHandler);
 	});
 
-	QUnit.test("test refresh(true) - dependant bindings should reload data", function(assert){
+	QUnit.test("test refresh(true) - dependent Listbindings should reload data", function(assert){
 		assert.expect(3);
 		var done = assert.async();
 		cleanServiceDataCache();
@@ -1555,7 +1555,7 @@
 		}
 
 		var oHandler2 = function() {
-			assert.equal(spy.callCount, 4, "dependant bindings should not refresh");
+			assert.equal(spy.callCount, 4, "dependent bindings should not refresh");
 			oPanel2.getElementBinding().detachDataReceived(oHandler2);
 			oTable.getBinding("rows").attachDataReceived(oHandler3);
 			oPanel2.getElementBinding().refresh(true);
@@ -1563,6 +1563,43 @@
 
 		var oHandler3 = function() {
 			assert.equal(spy.callCount, 7, "element binding as well as Table should refetch data");
+			OData.defaultHttpClient.request.restore();
+			done();
+		}
+
+		oTable.getBinding("rows").attachDataReceived(oHandler);
+	});
+	
+	QUnit.test("test refresh(true) - dependent Objectbindings should reload data", function(assert){
+		assert.expect(3);
+		var done = assert.async();
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		oPanel.bindElement("/Products(2)");
+		oPanel.addContent(oPanel2);
+		oPanel2.bindElement("Category");
+		
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+
+		var oHandler = function() {
+			assert.equal(spy.callCount, 4, "both element bindings as well as Table should load data");
+			oTable.getBinding("rows").detachDataReceived(oHandler);
+			oPanel.getElementBinding().attachDataReceived(oHandler2);
+			oPanel.getElementBinding().refresh();
+		}
+
+		var oHandler2 = function() {
+			assert.equal(spy.callCount, 5, "dependent bindings should not refresh");
+			oPanel.getElementBinding().detachDataReceived(oHandler2);
+			oTable.getBinding("rows").attachDataReceived(oHandler3);
+			oPanel.getElementBinding().refresh(true);
+		}
+
+		var oHandler3 = function() {
+			assert.equal(spy.callCount, 9, "element binding as well as Table should refetch data");
+			oPanel.removeContent(oPanel2);
+			oTable.getBinding("rows").detachDataReceived(oHandler3);
 			OData.defaultHttpClient.request.restore();
 			done();
 		}
