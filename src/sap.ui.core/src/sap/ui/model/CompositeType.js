@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['./FormatException', './ParseException', './SimpleType', './ValidateException'],
-	function(FormatException, ParseException, SimpleType, ValidateException) {
+sap.ui.define(['./SimpleType'],
+	function(SimpleType) {
 	"use strict";
 
 	/**

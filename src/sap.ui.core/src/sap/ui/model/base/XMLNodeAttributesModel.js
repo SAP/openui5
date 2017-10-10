@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global', '../json/JSONModel', 'sap/ui/base/ManagedObject', './XMLNodeUtils'
-], function(jQuery, JSONModel, ManagedObject, Utils) {
+	'../json/JSONModel', 'sap/ui/base/ManagedObject', './XMLNodeUtils'
+], function(JSONModel, ManagedObject, Utils) {
 	"use strict";
 
 	/**

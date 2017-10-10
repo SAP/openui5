@@ -4,8 +4,8 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
-	function(jQuery, Binding, Filter, Sorter) {
+sap.ui.define(['./Binding', './Filter', './Sorter'],
+	function(Binding, Filter, Sorter) {
 	"use strict";
 
 
