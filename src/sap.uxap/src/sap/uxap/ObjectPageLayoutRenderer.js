@@ -36,6 +36,9 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			if (bTitleClickable) {
 				oRm.addClass("sapUxAPObjectPageLayoutTitleClickEnabled");
 			}
+			if (oAnchorBar) {
+				oRm.addClass("sapUxAPObjectPageLayoutWithNavigation");
+			}
 			oRm.writeClasses();
 			oRm.addStyle("height", oControl.getHeight());
 			oRm.writeStyles();

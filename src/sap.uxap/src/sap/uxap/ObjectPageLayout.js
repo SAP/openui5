@@ -318,7 +318,13 @@ sap.ui.define([
 
 	ObjectPageLayout.EVENTS = {
 		TITLE_PRESS: "_titlePress",
-		PIN_UNPIN_PRESS: "_pinUnpinPress"
+		TITLE_MOUSE_OVER: "_titleMouseOver",
+		TITLE_MOUSE_OUT: "_titleMouseOut",
+		PIN_UNPIN_PRESS: "_pinUnpinPress",
+		VISUAL_INDICATOR_MOUSE_OVER: "_visualIndicatorMouseOver",
+		VISUAL_INDICATOR_MOUSE_OUT: "_visualIndicatorMouseOut",
+		HEADER_VISUAL_INDICATOR_PRESS: "_headerVisualIndicatorPress",
+		TITLE_VISUAL_INDICATOR_PRESS: "_titleVisualIndicatorPress"
 	};
 
 	/**
@@ -451,12 +457,18 @@ sap.ui.define([
 				this._attachPinPressHandler();
 			}
 		}
+
+		this._attachVisualIndicatorsPressHandlers(this._handleDynamicTitlePress, this);
+		this._attachVisualIndicatorMouseOverHandlers(this._addHoverClass, this._removeHoverClass, this);
+		this._attachTitleMouseOverHandlers(this._addHoverClass, this._removeHoverClass, this);
+
 	};
 
 	ObjectPageLayout.prototype.setToggleHeaderOnTitleClick = function (bToggleHeaderOnTitleClick) {
 		var vResult = this.setProperty("toggleHeaderOnTitleClick", bToggleHeaderOnTitleClick, true);
 
 		this.$().toggleClass("sapUxAPObjectPageLayoutTitleClickEnabled", bToggleHeaderOnTitleClick);
+		this._updateToggleHeaderVisualIndicators();
 
 		return vResult;
 	};
@@ -495,6 +507,8 @@ sap.ui.define([
 			this._moveHeaderToContentArea();
 			this._bHeaderExpanded = false;
 
+			this._updateToggleHeaderVisualIndicators();
+
 			// recalculate layout of the content area
 			this._adjustHeaderHeights();
 			this._requestAdjustLayout(null, true);
@@ -508,6 +522,8 @@ sap.ui.define([
 
 		this._toggleHeaderVisibility(false);
 		this._bHeaderExpanded = false;
+
+		this._updateToggleHeaderVisualIndicators();
 
 		//recalculate layout of the content area
 		this._adjustHeaderHeights();
@@ -524,6 +540,8 @@ sap.ui.define([
 			this._moveHeaderToTitleArea(false);
 			this._bHeaderExpanded = true;
 
+			this._updateToggleHeaderVisualIndicators();
+
 			//recalculate layout of the content area
 			this._adjustHeaderHeights();
 			this._requestAdjustLayout();
@@ -534,6 +552,7 @@ sap.ui.define([
 		this._moveHeaderToContentArea();
 		this._scrollTo(0, 0, 0);
 		this._bHeaderExpanded = true;
+		this._updateToggleHeaderVisualIndicators();
 	};
 
 	ObjectPageLayout.prototype._handleDynamicTitlePress = function () {
@@ -748,6 +767,8 @@ sap.ui.define([
 		this._restoreScrollPosition();
 
 		this.oCore.getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
+
+		this._updateToggleHeaderVisualIndicators();
 
 		this.fireEvent("onAfterRenderingDOMReady");
 	};
@@ -2162,7 +2183,9 @@ sap.ui.define([
 		if (this._bHeaderInTitleArea && !bShouldPreserveHeaderInTitleArea) {
 			this._moveHeaderToContentArea();
 			this._toggleHeaderTitle(false /* snap */);
+			this._bHeaderExpanded = false;
 			if (!this._shouldPreserveHeaderPlaceholderHeightInContentArea()) { // height of content area changed => need to recalculate the layout
+				this._updateToggleHeaderVisualIndicators();
 				this._requestAdjustLayout();
 			}
 		}
@@ -2313,11 +2336,13 @@ sap.ui.define([
 			oHeaderTitle && oHeaderTitle.snap();
 			this._bHeaderExpanded = false;
 			this._adjustHeaderHeights();
+			this._updateToggleHeaderVisualIndicators();
 		} else if (this._bStickyAnchorBar && !bStick) {
 			this._restoreFocusAfter(this._moveAnchorBarToContentArea);
 			oHeaderTitle && oHeaderTitle.unSnap();
 			this._bHeaderExpanded = true;
 			this._adjustHeaderHeights();
+			this._updateToggleHeaderVisualIndicators();
 		}
 	};
 
@@ -3021,6 +3046,7 @@ sap.ui.define([
 		this._adjustHeaderHeights();
 		this._requestAdjustLayout();
 		this._togglePinButtonARIAState(this._bPinned);
+		this._updateToggleHeaderVisualIndicators();
 
 		if (exists($oObjectPage)) {
 			$oObjectPage.addClass("sapUxAPObjectPageLayoutHeaderPinned");
@@ -3035,6 +3061,7 @@ sap.ui.define([
 		}
 
 		this._bPinned = false;
+		this._updateToggleHeaderVisualIndicators();
 
 		this._togglePinButtonARIAState(this._bPinned);
 
@@ -3093,6 +3120,166 @@ sap.ui.define([
 	ObjectPageLayout.prototype._hasDynamicTitle = function() {
 		var oTitle = this.getHeaderTitle();
 		return oTitle && oTitle.isDynamic();
+	};
+
+	/**
+	 * Attaches handlers to <code>DynamicPageTitle</code> and <code>DynamicPageHeader</code> visual indicators` <code>press</code> events.
+	 * @param {function} fnPress The handler function to call when the event occurs.
+	 * @param {object} oContext The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function).
+	 * @private
+	 */
+	ObjectPageLayout.prototype._attachVisualIndicatorsPressHandlers = function (fnPress, oContext) {
+		var oTitle = this.getHeaderTitle(),
+			oHeader = this._getHeaderContent();
+
+		if (exists(oTitle) && !this._bAlreadyAttachedTitleIndicatorPressHandler) {
+			oTitle.attachEvent(ObjectPageLayout.EVENTS.TITLE_VISUAL_INDICATOR_PRESS, function () {
+				fnPress.call(oContext);
+				this._focusCollapseVisualIndicator();
+			}, this);
+			this._bAlreadyAttachedTitleIndicatorPressHandler = true;
+		}
+
+		if (exists(oHeader) && !this._bAlreadyAttachedHeaderIndicatorPressHandler) {
+			oHeader.attachEvent(ObjectPageLayout.EVENTS.HEADER_VISUAL_INDICATOR_PRESS, function () {
+				fnPress.call(oContext);
+				this._focusExpandVisualIndicator();
+			}, this);
+			this._bAlreadyAttachedHeaderIndicatorPressHandler = true;
+		}
+	};
+
+
+	/**
+	 * Updates the visibility of the <code>expandButton</code> and <code>collapseButton</code>.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._updateToggleHeaderVisualIndicators = function () {
+		var bHeaderExpanded,
+			bCollapseVisualIndicatorVisible,
+			bExpandVisualIndicatorVisible;
+
+		if (!this.getToggleHeaderOnTitleClick() || this._bPinned) {
+			bCollapseVisualIndicatorVisible = false;
+			bExpandVisualIndicatorVisible = false;
+		} else {
+			bHeaderExpanded = this._bHeaderExpanded;
+			bCollapseVisualIndicatorVisible = bHeaderExpanded;
+			bExpandVisualIndicatorVisible = !bHeaderExpanded;
+		}
+
+		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
+		this._toggleExpandVisualIndicator(bExpandVisualIndicatorVisible);
+	};
+
+	/**
+	 * Focuses the <code>DynamicPageTitle</code> <code>collapseButton</code> aggregation.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._focusCollapseVisualIndicator = function () {
+		var oDynamicPageHeader = this._getHeaderContent();
+
+		if (exists(oDynamicPageHeader)) {
+			oDynamicPageHeader._focusCollapseButton();
+		}
+	};
+
+
+	/**
+	 * Focuses the <code>DynamicPageTitle</code> <code>expandButton</code> aggregation.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._focusExpandVisualIndicator = function () {
+		var oDynamicPageTitle = this.getHeaderTitle();
+
+		if (exists(oDynamicPageTitle)) {
+			oDynamicPageTitle._focusExpandButton();
+		}
+	};
+
+
+	/**
+	 * Toggles the <code>DynamicPageTitle</code> <code>expandButton</code> aggregation.
+	 * @param {boolean} bToggle
+	 * @private
+	 */
+	ObjectPageLayout.prototype._toggleExpandVisualIndicator = function (bToggle) {
+		var oDynamicPageTitle = this.getHeaderTitle();
+
+		if (exists(oDynamicPageTitle)) {
+			oDynamicPageTitle._toggleExpandButton(bToggle);
+		}
+	};
+
+
+	/**
+	 * Toggles the <code>DynamicPageTitle</code> <code>collapseButton</code> aggregation.
+	 * @param {boolean} bToggle
+	 * @private
+	 */
+	ObjectPageLayout.prototype._toggleCollapseVisualIndicator = function (bToggle) {
+		var oDynamicPageHeader = this._getHeaderContent();
+
+		if (exists(oDynamicPageHeader)) {
+			oDynamicPageHeader._toggleCollapseButton(bToggle);
+		}
+	};
+
+	/**
+	 * Attaches handlers to  <code>DynamicPageHeader</code> visual indicators` <code>mouseover</code> and <code>mouseout</code> events.
+	 *
+	 * <b>Note:</b> No need to attach for <code>DynamicPageTitle</code> visual indicator <code>mouseover</code> and <code>mouseout</code> events,
+	 * as being part of the <code>DynamicPageTitle</code>,
+	 * the visual indicator produces <code>mouseover</code> and <code>mouseout</code> events on the <code>DynamicPageTitle</code> by default.
+	 * @param {function} fnOver The handler function to call when the <code>mouseover</code> event occurs
+	 * @param {function} fnOut The handler function to call when the <code>mouseout</code> event occurs
+	 * @param {object} oContext The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function).
+	 * @private
+	 */
+	ObjectPageLayout.prototype._attachVisualIndicatorMouseOverHandlers = function (fnOver, fnOut, oContext) {
+		var oHeader = this._getHeaderContent();
+
+		if (exists(oHeader) && !this._bAlreadyAttachedVisualIndicatorMouseOverOutHandler) {
+			oHeader.attachEvent(ObjectPageLayout.EVENTS.VISUAL_INDICATOR_MOUSE_OVER, fnOver, oContext);
+			oHeader.attachEvent(ObjectPageLayout.EVENTS.VISUAL_INDICATOR_MOUSE_OUT, fnOut, oContext);
+			this._bAlreadyAttachedVisualIndicatorMouseOverOutHandler = true;
+		}
+	};
+
+	/**
+	 * Attaches handlers to <code>DynamicPageTitle</code> <code>mouseover</code> and <code>mouseout</code> events.
+	 * @param {function} fnOver The handler function to call when the <code>mouseover</code> event occurs
+	 * @param {function} fnOut The handler function to call when the <code>mouseout</code> event occurs
+	 * @param {object} oContext The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function).
+	 * @private
+	 */
+	ObjectPageLayout.prototype._attachTitleMouseOverHandlers = function (fnOver, fnOut, oContext) {
+		var oTitle = this.getHeaderTitle();
+
+		if (exists(oTitle) && !this._bAlreadyAttachedTitleMouseOverOutHandler) {
+			oTitle.attachEvent(ObjectPageLayout.EVENTS.TITLE_MOUSE_OVER, fnOver, oContext);
+			oTitle.attachEvent(ObjectPageLayout.EVENTS.TITLE_MOUSE_OUT, fnOut, oContext);
+			this._bAlreadyAttachedTitleMouseOverOutHandler = true;
+		}
+	};
+
+	ObjectPageLayout.prototype._addHoverClass = function() {
+		var $oObjectPage = this.$();
+
+		if ($oObjectPage) {
+			$oObjectPage.addClass("sapUxAPObjectPageLayoutTitleForceHovered");
+		}
+	};
+
+	ObjectPageLayout.prototype._removeHoverClass = function () {
+		var $oObjectPage = this.$();
+
+		if ($oObjectPage) {
+			$oObjectPage.removeClass("sapUxAPObjectPageLayoutTitleForceHovered");
+		}
 	};
 
 	ObjectPageLayout.prototype._getHeight = function (oControl) {
