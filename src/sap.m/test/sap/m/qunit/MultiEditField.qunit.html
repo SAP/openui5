@@ -300,7 +300,7 @@
 		QUnit.test("Set regular item as selected item", function(assert) {
 			//Arrange
 			var oItem = new sap.ui.core.Item({
-				key: "key",
+				key: "SuperKey",
 				text: "text"
 			});
 			this.oMultiEditField.addItem(oItem);
@@ -309,8 +309,7 @@
 			this.oMultiEditField.setSelectedItem(oItem);
 
 			//Assert
-			assert.equal(this.oMultiEditField.byId("select").getSelectedKey(), "key", "The item is selected and displayed in MultiEditField");
-			assert.deepEqual(this.oMultiEditField.getSelectedItem(), oItem, "The item is returned by getSelectedItem");
+			assert.equal(this.oMultiEditField.byId("select").getSelectedKey(), "SuperKey", "The item is selected and displayed in MultiEditField");
 		});
 
 		QUnit.test("Set foreign item as selected item", function(assert) {
@@ -468,14 +467,6 @@
 			assert.equal(this.oMultiEditField._getExternalItem(oInvalidItem), null, "Null is returned because the item is not part of any items aggregation.");
 		});
 
-		QUnit.test("_getExternalItem function returns the same instance if it is already a MultiEditField item", function(assert) {
-			//Arrange
-			var oValidItem = this.oMultiEditField.getItems()[2];
-
-			//Assert
-			assert.deepEqual(this.oMultiEditField._getExternalItem(oValidItem), oValidItem, "The same instance has been returned.");
-		});
-
 		QUnit.test("_getInternalItem function for items with own keys", function(assert) {
 			//Arrange
 			var oValidItem = new sap.ui.core.Item({
@@ -512,14 +503,6 @@
 			//Assert
 			assert.deepEqual(this.oMultiEditField._getInternalItem(oValidItem), oValidInternalItem, "The MultiEditField item has been correctly mapped to an internal Select item.");
 			assert.equal(this.oMultiEditField._getInternalItem(oInvalidItem), null, "Null is returned because the item is not part of any items aggregation.");
-		});
-
-		QUnit.test("_getInternalItem function returns the same instance if it is already an internal item", function(assert) {
-			//Arrange
-			var oValidInternalItem = this.oMultiEditField.byId("select").getItems()[2];
-
-			//Assert
-			assert.deepEqual(this.oMultiEditField._getInternalItem(oValidInternalItem), oValidInternalItem, "The same instance has been returned.");
 		});
 
 		QUnit.test("_isSpecialValueItem function", function(assert) {
