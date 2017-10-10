@@ -18,6 +18,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	 * @class
 	 * An abstract container for object page sections and subSections
 	 * @extends sap.ui.core.Control
+	 * @abstract
 	 *
 	 * @constructor
 	 * @public
