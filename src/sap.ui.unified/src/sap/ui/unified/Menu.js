@@ -590,7 +590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 
 	Menu.prototype.onkeyup = function(oEvent){
 		// focus menuItems
-		if (this.oHoveredItem) {
+		if (this.oHoveredItem && (jQuery(oEvent.target).prop("tagName") != "INPUT")) {
 			var oDomRef = this.oHoveredItem.getDomRef();
 			jQuery(oDomRef).attr("tabIndex", 0).focus();
 		}
