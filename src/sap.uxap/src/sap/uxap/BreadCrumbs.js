@@ -6,15 +6,15 @@
 sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Select",
-	"sap/m/Text",
 	"sap/ui/core/Control",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/Item",
 	"sap/ui/core/Icon",
 	"sap/ui/Device",
-	"./library"
-], function (Link, Select, Text, Control, ResizeHandler, ItemNavigation, Item, Icon, Device, library) {
+	"./library",
+	"sap/ui/core/InvisibleText"
+], function (Link, Select, Control, ResizeHandler, ItemNavigation, Item, Icon, Device, library, InvisibleText) {
 	"use strict";
 
 	/**
@@ -374,7 +374,7 @@ sap.ui.define([
 	 */
 	BreadCrumbs.prototype._getAriaLabelledBy = function () {
 		if (!this._oAriaLabelledBy) {
-			BreadCrumbs.prototype._oAriaLabelledBy = new sap.ui.core.InvisibleText({
+			BreadCrumbs.prototype._oAriaLabelledBy = new InvisibleText({
 				text: library.i18nModel.getResourceBundle().getText("BREADCRUMB_TRAIL_LABEL")
 			}).toStatic();
 		}

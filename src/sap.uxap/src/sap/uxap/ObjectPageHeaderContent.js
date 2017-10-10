@@ -7,6 +7,9 @@ sap.ui.define(["sap/ui/core/Control", "./library", "sap/m/Button", "./ObjectImag
 	function (Control, library, Button, ObjectImageHelper) {
 		"use strict";
 
+		// shortcut for sap.uxap.ObjectPageHeaderDesign
+		var ObjectPageHeaderDesign = library.ObjectPageHeaderDesign;
+
 		/**
 		 * Constructor for a new ObjectPageHeaderContent.
 		 *
@@ -44,7 +47,7 @@ sap.ui.define(["sap/ui/core/Control", "./library", "sap/m/Button", "./ObjectImag
 					contentDesign: {
 						type: "sap.uxap.ObjectPageHeaderDesign",
 						group: "Misc",
-						defaultValue: sap.uxap.ObjectPageHeaderDesign.Light
+						defaultValue: ObjectPageHeaderDesign.Light
 					}
 				},
 				aggregations: {

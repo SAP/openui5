@@ -4,17 +4,24 @@
 
 // Provides control sap.uxap.BlockBase.
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"sap/ui/core/CustomData",
 	"./BlockBaseMetadata",
-	"./ModelMapping",
 	"sap/ui/model/Context",
 	"sap/ui/Device",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"./library",
-	"sap/ui/core/Component"
-], function (Control, CustomData, BlockBaseMetadata, ModelMapping, Context, Device, ResponsiveGridLayout, library, Component) {
+	"sap/ui/core/Component",
+	"sap/ui/layout/library"
+], function (jQuery, Control, CustomData, BlockBaseMetadata, Context, Device, ResponsiveGridLayout, library, Component, layoutLibrary) {
 		"use strict";
+
+		// shortcut for sap.ui.layout.form.SimpleFormLayout
+		var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
+
+		// shortcut for sap.uxap.BlockBaseFormAdjustment
+		var BlockBaseFormAdjustment = library.BlockBaseFormAdjustment;
 
 		/**
 		 * Constructor for a new BlockBase.
@@ -78,7 +85,7 @@ sap.ui.define([
 					"formAdjustment": {
 						type: "sap.uxap.BlockBaseFormAdjustment",
 						group: "Behavior",
-						defaultValue: sap.uxap.BlockBaseFormAdjustment.BlockColumns
+						defaultValue: BlockBaseFormAdjustment.BlockColumns
 					},
 
 					/**
@@ -541,7 +548,7 @@ sap.ui.define([
 
 			var oColumns = jQuery.extend({}, BlockBase._FORM_ADJUSTMENT_CONST.columns);
 
-			if (sFormAdjustment === sap.uxap.BlockBaseFormAdjustment.BlockColumns) {
+			if (sFormAdjustment === BlockBaseFormAdjustment.BlockColumns) {
 
 				var iColumnSpanXL = BlockBase._PARENT_GRID_SIZE / oParentColumns.XL,
 					iColumnSpanL = BlockBase._PARENT_GRID_SIZE / oParentColumns.L,
@@ -559,7 +566,7 @@ sap.ui.define([
 
 			var oBreakpoints = jQuery.extend({}, BlockBase._FORM_ADJUSTMENT_CONST.breakpoints);
 
-			if (sFormAdjustment === sap.uxap.BlockBaseFormAdjustment.BlockColumns) {
+			if (sFormAdjustment === BlockBaseFormAdjustment.BlockColumns) {
 				oBreakpoints.XL = Math.round(oBreakpoints.XL * oLayoutData.getSpanXL() / BlockBase._PARENT_GRID_SIZE);
 				oBreakpoints.L = Math.round(oBreakpoints.L * oLayoutData.getSpanL() / BlockBase._PARENT_GRID_SIZE);
 				oBreakpoints.M = Math.round(oBreakpoints.M * oLayoutData.getSpanM() / BlockBase._PARENT_GRID_SIZE);
@@ -576,7 +583,7 @@ sap.ui.define([
 				oParent = this._oParentObjectPageSubSection,
 				oFormAdjustmentFields;
 
-			if (sFormAdjustment && (sFormAdjustment !== sap.uxap.BlockBaseFormAdjustment.None)
+			if (sFormAdjustment && (sFormAdjustment !== BlockBaseFormAdjustment.None)
 				&& oView && oLayoutData && oParent) {
 
 				var oParentColumns = oParent._oLayoutConfig;
@@ -584,7 +591,7 @@ sap.ui.define([
 				oView.getContent().forEach(function (oItem) {
 					if (oItem.getMetadata().getName() === "sap.ui.layout.form.SimpleForm") {
 
-						oItem.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
+						oItem.setLayout(SimpleFormLayout.ResponsiveGridLayout);
 
 						if (!oFormAdjustmentFields) {
 							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, oLayoutData, sFormAdjustment, oParentColumns);
@@ -737,5 +744,5 @@ sap.ui.define([
 			}
 		};
 
-	return BlockBase;
+		return BlockBase;
 });

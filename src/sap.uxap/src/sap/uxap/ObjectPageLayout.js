@@ -7,7 +7,6 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
-	"sap/ui/core/CustomData",
 	"sap/ui/Device",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./ObjectPageSection",
@@ -18,8 +17,9 @@ sap.ui.define([
 	"./ThrottledTaskHelper",
 	"sap/ui/core/ScrollBar",
 	"sap/ui/core/library",
-	"./library"
-], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageHeaderContent, LazyLoading, ABHelper, ThrottledTask, ScrollBar, coreLibrary, library) {
+	"./library",
+	"jquery.sap.keycodes"
+], function(jQuery, ResizeHandler, Control, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageHeaderContent, LazyLoading, ABHelper, ThrottledTask, ScrollBar, coreLibrary, library) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -108,7 +108,7 @@ sap.ui.define([
 				 * </ul>
 				 * @since 1.44.0
 				 */
-				sectionTitleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
+				sectionTitleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
 
 				/**
 				 * Use tab navigation mode instead of the default Anchor bar mode.
@@ -744,7 +744,7 @@ sap.ui.define([
 			}
 		}
 
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			this._$opWrapper.on("scroll", this.onWrapperScroll.bind(this));
 		}
 
@@ -794,7 +794,7 @@ sap.ui.define([
 			iActionsOffset = this._iOffset,
 			iScrollbarWidth;
 
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			iScrollbarWidth = jQuery.sap.scrollbarSize().width;
 			iHeaderOffset = iScrollbarWidth;
 			if (!bHasVerticalScroll) {
@@ -1808,7 +1808,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._updateCustomScrollerHeight = function(bRequiresSnap) {
 
-		if (sap.ui.Device.system.desktop && this.getAggregation("_customScrollBar")) {
+		if (Device.system.desktop && this.getAggregation("_customScrollBar")) {
 
 			// update content size
 			var iScrollableContentSize = this._computeScrollableContentSize(bRequiresSnap);
@@ -2917,8 +2917,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._toggleFooter = function (bShow) {
-        var bUseAnimations = this.oCore.getConfiguration().getAnimation(),
-            oFooter = this.getFooter();
+		var bUseAnimations = this.oCore.getConfiguration().getAnimation(),
+			oFooter = this.getFooter();
 
 		if (!exists(oFooter)) {
 			return;

@@ -3,17 +3,17 @@
  */
 
 // Provides the Design Time Metadata for the sap.uxap.ObjectPageSection control
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/uxap/library"],
+	function(library) {
 	"use strict";
 
 	return {
 		name : {
 			singular : function(){
-				return sap.uxap.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME");
+				return library.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME");
 			},
 			plural : function(){
-				return sap.uxap.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME_PLURAL");
+				return library.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME_PLURAL");
 			}
 		},
 		actions : {
