@@ -169,6 +169,17 @@ sap.ui.define([
 				titleHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
 
 				/**
+				 * The <code>SemanticPage</code> breadcrumbs.
+				 *
+				 * A typical usage is the <code>sap.m.Breadcrumbs</code> control or any other UI5 control,
+				 * that implements the <code>sap.m.IBreadcrumbs</code> interface.
+				 *
+				 * <b>Note:</b> The control will be placed in the title`s top-left area.
+				 * @since 1.52
+				 */
+				titleBreadcrumbs: {type: "sap.m.IBreadcrumbs", multiple: false, defaultValue: null},
+
+				/**
 				* The content, displayed in the title, when the header is in collapsed state.
 				*
 				* <b>Note:</b> The controls will be placed in the title`s left area,
@@ -497,9 +508,29 @@ sap.ui.define([
 		.forEach(function (sMethod) {
 			SemanticPage.prototype[sMethod] = function (oControl) {
 				var oDynamicPageTitle = this._getTitle(),
-					sTitleMethod = sMethod.replace(/TitleHeading?/, "Heading");
+					sTitleMethod = sMethod.replace(/TitleHeading?/, "Heading"),
+					vResult = oDynamicPageTitle[sTitleMethod].apply(oDynamicPageTitle, arguments);
 
-				return oDynamicPageTitle[sTitleMethod].apply(oDynamicPageTitle, arguments);
+				if (sMethod === "getTitleHeading") {
+					return vResult;
+				}
+
+				return this;
+			};
+		}, this);
+
+	["getTitleBreadcrumbs", "setTitleBreadcrumbs", "destroyTitleBreadcrumbs"]
+		.forEach(function (sMethod) {
+			SemanticPage.prototype[sMethod] = function (oControl) {
+				var oDynamicPageTitle = this._getTitle(),
+					sTitleMethod = sMethod.replace(/TitleBreadcrumbs?/, "Breadcrumbs"),
+					vResult = oDynamicPageTitle[sTitleMethod].apply(oDynamicPageTitle, arguments);
+
+				if (sMethod === "getTitleBreadcrumbs") {
+					return vResult;
+				}
+
+				return this;
 			};
 		}, this);
 

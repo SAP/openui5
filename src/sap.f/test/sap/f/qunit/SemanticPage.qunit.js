@@ -181,25 +181,57 @@
 	});
 
 	QUnit.test("test SemanticPage titleHeading aggregation methods", function (assert) {
-		var oTitle = oFactory.getTitle();
+		var oTitle = oFactory.getTitle(),
+			vResult;
 
 		// Assert default
 		assert.equal(this.oSemanticPage.getTitleHeading(), null,
 			"SemanticPage titleHeading is null by default.");
 
-		// Аct - set titleHeading
-		this.oSemanticPage.setTitleHeading(oTitle);
+		// Аct: set titleHeading
+		vResult = this.oSemanticPage.setTitleHeading(oTitle);
 
 		// Assert
 		assert.equal(this.oSemanticPage.getTitleHeading(), oTitle,
 			"SemanticPage titleHeading is set and retrieved successfully.");
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage setTitleHeading returns the SemanticPage instance.");
 
-		// Аct - destroy content
-		this.oSemanticPage.destroyTitleHeading();
+		// Аct: destroy titleHeading
+		vResult = this.oSemanticPage.destroyTitleHeading();
 
 		// Assert
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage destroyTitleHeading returns the SemanticPage instance.");
 		assert.equal(this.oSemanticPage.getTitleHeading(), null,
 			"SemanticPage content is destroyed successfully.");
+	});
+
+	QUnit.test("test SemanticPage titleBreadcrumbs aggregation methods", function (assert) {
+		var oBreadcrumbs = oFactory.getBreadcrumbs(),
+			vResult;
+
+		// Assert default
+		assert.equal(this.oSemanticPage.getTitleBreadcrumbs(), null,
+			"SemanticPage titleBreadcrumbs is null by default.");
+
+		// Аct: set titleHeading
+		vResult = this.oSemanticPage.setTitleBreadcrumbs(oBreadcrumbs);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getTitleBreadcrumbs(), oBreadcrumbs,
+			"SemanticPage titleBreadcrumbs is set and retrieved successfully.");
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage setTitleBreadcrumbs returns the SemanticPage instance.");
+
+		// Аct: destroy titleHeading
+		vResult = this.oSemanticPage.destroyTitleBreadcrumbs();
+
+		// Assert
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage destroyTitleBreadcrumbs returns the SemanticPage instance.");
+		assert.equal(this.oSemanticPage.getTitleBreadcrumbs(), null,
+			"SemanticPage titleBreadcrumbs is destroyed successfully.");
 	});
 
 	QUnit.test("test SemanticPage titleExpandedContent aggregation methods", function (assert) {
