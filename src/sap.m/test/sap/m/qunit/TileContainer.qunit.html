@@ -265,9 +265,14 @@
 				//Act
 				sut.scrollIntoView(lastTile,false);
 
+				var aRenderedTiles = sut.$().find(".sapMTCCnt").children();
+
 				//Assert
 				assert.equal(sut._oPagesInfo.getCurrentPage(), 1);
 				assert.equal(sut._iMaxTiles, sut.getPageFirstTileIndex());
+				assert.equal(aRenderedTiles.length, 2, "last tile should be rendered in the DOM");
+				assert.ok(!!lastTile.getDomRef(), "last tile should have DOM element");
+				assert.equal(aRenderedTiles.last()[0], lastTile.getDomRef(), "last tile should be rendered as last element in the DOM");
 
 				//Cleanup
 				sut.destroy();
