@@ -316,11 +316,6 @@ sap.ui.define([
 
 			// Tab Handling
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
-
-			// Control Variant
-//			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
-//				commandFactory: oCommandFactory
-//			});
 		}
 
 		return jQuery.extend({}, this._mDefaultPlugins);
