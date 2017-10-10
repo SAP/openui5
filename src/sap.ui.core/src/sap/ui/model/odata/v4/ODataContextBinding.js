@@ -367,8 +367,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions) {
-		return _Cache.createSingle(this.oModel.oRequestor, sResourcePath,
-			this.fetchType.bind(this), mQueryOptions, this.oModel.bAutoExpandSelect);
+		return _Cache.createSingle(this.oModel.oRequestor, sResourcePath, mQueryOptions,
+			this.oModel.bAutoExpandSelect);
 	};
 
 	/**
@@ -434,8 +434,8 @@ sap.ui.define([
 			if (that.oOperation.bAction) {
 				// Recreate the cache, because the query options might have changed
 				oCache = _Cache.createSingle(that.oModel.oRequestor,
-					(sPathPrefix + that.sPath).slice(1, -5), that.fetchType.bind(that),
-					mQueryOptions, that.oModel.bAutoExpandSelect, true);
+					(sPathPrefix + that.sPath).slice(1, -5), mQueryOptions,
+					that.oModel.bAutoExpandSelect, true);
 				if (that.bRelative && that.oContext.getBinding) {
 					// do not access @odata.etag directly to avoid "failed to drill-down" in cache
 					// if it is not available
@@ -470,8 +470,8 @@ sap.ui.define([
 				}
 				sOperationPath = (sPathPrefix + that.sPath.replace("...", aParameters.join(',')))
 					.slice(1);
-				oCache = _Cache.createSingle(that.oModel.oRequestor, sOperationPath,
-					that.fetchType.bind(that), mQueryOptions, that.oModel.bAutoExpandSelect);
+				oCache = _Cache.createSingle(that.oModel.oRequestor, sOperationPath, mQueryOptions,
+					that.oModel.bAutoExpandSelect);
 				oPromise = oCache.fetchValue(sGroupId);
 			}
 			that.oCachePromise = _SyncPromise.resolve(oCache);

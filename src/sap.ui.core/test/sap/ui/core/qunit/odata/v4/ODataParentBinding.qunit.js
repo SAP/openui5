@@ -1940,54 +1940,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchType", function (assert) {
-		var oMetaModel = {
-				getMetaPath : function () {},
-				fetchObject : function () {}
-			},
-			oBinding = new ODataParentBinding({
-				oModel : {
-					getMetaModel : function () { return oMetaModel; }
-				}
-			}),
-			oPromise = {},
-			oResult;
-
-		this.mock(oMetaModel).expects("getMetaPath")
-			.withExactArgs("/EMPLOYEES('1')/EMPLOYEE_2_TEAM/").returns("~");
-		this.mock(oMetaModel).expects("fetchObject").withExactArgs("~").returns(oPromise);
-
-		// code under test
-		oResult = oBinding.fetchType("EMPLOYEES('1')/EMPLOYEE_2_TEAM");
-
-		assert.strictEqual(oResult, oPromise);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchType, bAsName=true", function (assert) {
-		var oMetaModel = {
-				getMetaPath : function () {},
-				fetchObject : function () {}
-			},
-			oBinding = new ODataParentBinding({
-				oModel : {
-					getMetaModel : function () { return oMetaModel; }
-				}
-			}),
-			oPromise = {},
-			oResult;
-
-		this.mock(oMetaModel).expects("getMetaPath")
-			.withExactArgs("/EMPLOYEES('1')/EMPLOYEE_2_TEAM/Team_ID/").returns("/~/");
-		this.mock(oMetaModel).expects("fetchObject").withExactArgs("/~/$Type").returns(oPromise);
-
-		// code under test
-		oResult = oBinding.fetchType("EMPLOYEES('1')/EMPLOYEE_2_TEAM/Team_ID", true);
-
-		assert.strictEqual(oResult, oPromise);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("getRelativePath", function (assert) {
 		var oAbsoluteBinding = new ODataParentBinding({
 				oContext : {},

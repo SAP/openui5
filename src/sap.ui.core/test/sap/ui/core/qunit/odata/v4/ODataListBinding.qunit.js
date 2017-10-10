@@ -174,7 +174,11 @@ sap.ui.require([
 				synchronizationMode : "None"
 			});
 			this.oModel.setSizeLimit(3);
+			// ensure that the requestor does not trigger requests
 			this.oSandbox.mock(this.oModel.oRequestor).expects("request").never();
+			// avoid that the cache requests actual metadata for faked responses
+			sinon.stub(this.oModel.oRequestor, "fetchTypeForPath")
+				.returns(_SyncPromise.resolve({}));
 			// in case "request" is restored, this catches accidental requests
 			this.oSandbox.mock(_Helper).expects("createError").never();
 		},
@@ -571,7 +575,7 @@ sap.ui.require([
 			.returns(mQueryOptions.$orderby);
 		this.mock(_Cache).expects("create").twice()
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				sinon.match.func, {"$orderby" : "bar", "sap-client" : "111"}, false)
+				{"$orderby" : "bar", "sap-client" : "111"}, false)
 			.returns({});
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -3765,23 +3769,18 @@ sap.ui.require([
 			var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
 					$$operationMode : OperationMode.Server}),
 				oCache = {},
-				mCacheQueryOptions = {},
-				oExpectation,
-				oPromise = _SyncPromise.resolve({});
-
-			this.mock(oBinding).expects("fetchType").withExactArgs("foo").returns(oPromise);
+				mCacheQueryOptions = {};
 
 			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
 
 			this.mock(oBinding).expects("getQueryOptionsForPath").never();
-			oExpectation = this.mock(_Cache).expects("create")
+			this.mock(_Cache).expects("create")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-					sinon.match.func, sinon.match.same(mCacheQueryOptions), bAutoExpandSelect)
+					sinon.match.same(mCacheQueryOptions), bAutoExpandSelect)
 				.returns(oCache);
 
 			// code under test
 			assert.strictEqual(oBinding.doCreateCache("EMPLOYEES", mCacheQueryOptions), oCache);
-			assert.strictEqual(oExpectation.args[0][2]("foo"), oPromise);
 		});
 	});
 
@@ -3852,8 +3851,7 @@ sap.ui.require([
 				.returns(oFixture.mInheritedQueryOptions);
 			this.mock(_Cache).expects("create")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-					"/TEAMS('4711')/TEAM_2_EMPLOYEES", sinon.match.func,
-					oFixture.mExpectedQueryOptions, false)
+					"/TEAMS('4711')/TEAM_2_EMPLOYEES", oFixture.mExpectedQueryOptions, false)
 				.returns(oCache);
 
 			// code under test
@@ -3912,9 +3910,6 @@ sap.ui.require([
 			bChangeFired = false,
 			aContexts,
 			oData = createData(50);
-
-		// avoid that the cache requests actual metadata
-		this.stub(ODataListBinding.prototype, "fetchType").returns(_SyncPromise.resolve({}));
 
 		oBinding = this.oModel.bindList("/EMPLOYEES");
 
@@ -4011,8 +4006,6 @@ sap.ui.require([
 			done();
 		}
 
-		// avoid that the cache requests actual metadata
-		this.stub(ODataListBinding.prototype, "fetchType").returns(_SyncPromise.resolve({}));
 		oBinding = this.oModel.bindList("/EMPLOYEES", null, null, null, {$count : true});
 
 		oData0["@odata.count"] = "100";
@@ -4088,8 +4081,6 @@ sap.ui.require([
 			done();
 		}
 
-		// avoid that the cache requests actual metadata
-		this.stub(ODataListBinding.prototype, "fetchType").returns(_SyncPromise.resolve({}));
 		oBinding = this.oModel.bindList("/EMPLOYEES");
 
 		this.oModel.oRequestor.request.restore();
