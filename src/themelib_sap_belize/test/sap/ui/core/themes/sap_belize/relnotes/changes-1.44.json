@@ -583,5 +583,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.21": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "b46a61df8b47c453fc6114c72a739f274bb14e93",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Value help icon is now rendered correctly in compact mode",
+        "references": []
+      }
+    ]
   }
 }

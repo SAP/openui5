@@ -86,5 +86,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "2652d40969d667f1efc041c07ee30a3baac09800",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
+        "references": []
+      }
+    ]
   }
 }

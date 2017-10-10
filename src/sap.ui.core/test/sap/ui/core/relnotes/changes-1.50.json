@@ -642,5 +642,28 @@
         "references": []
       }
     ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "601f0dd5b7c677758d2682c222ffdfbe394382e8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser.enrichFromPropertyValueAttributes: do not call on string values",
+        "references": []
+      },
+      {
+        "id": "9f3d1dac2d47b46f75a77c30d11946c982bf7d33",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Clientside sorting and filtering of Edm types",
+        "references": []
+      },
+      {
+        "id": "0ccaa6574a1ca25b7466d74aa50fffce57c4b4f8",
+        "type": "FIX",
+        "text": " v4.ODataModel: auto-$expand/$select with sap.ui.table.Table and visibleRowCountMode\u003d\"Auto\" sends single requests for table cells",
+        "references": []
+      }
+    ]
   }
 }

@@ -3517,5 +3517,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.29": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "893130c0625e8e744dd13f72081e5f923e02b596",
+        "type": "FIX",
+        "text": " sap.m.Table: Wrong colspan calculation is fixed for nodata cases.",
+        "references": []
+      },
+      {
+        "id": "842e38d28a5373ef6167f85d41d577681481e337",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: onCancel now do not modify filter selection",
+        "references": []
+      }
+    ]
   }
 }

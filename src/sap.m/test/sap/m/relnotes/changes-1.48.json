@@ -2256,5 +2256,82 @@
         "references": []
       }
     ]
+  },
+  "1.48.10": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "9988efe9dc5773734fd2a3ac2a71624e6a6502b9",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
+        "references": []
+      },
+      {
+        "id": "adb0d73aa597a8063a5aaec045a137fd912bc707",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Properly update selectedKeys cache when model changes",
+        "references": []
+      },
+      {
+        "id": "6ecde62989fe5ffe3c19df0bd1dd330f1024be9d",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Focus is now clearly visible",
+        "references": []
+      },
+      {
+        "id": "d5934d6b29cef23aeb0a156391195b8f570e07ba",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Models should be forwarded to the internal MessageView",
+        "references": []
+      },
+      {
+        "id": "be7e90763238ec1bb29b1eb955ea336acb2d716e",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fixed setTokens() to remove all tokens",
+        "references": []
+      },
+      {
+        "id": "c34b2674da2d3fc3ee780b6153b1301fea512cd4",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Navigation now works correctly when the pages are destroyed during animation",
+        "references": []
+      },
+      {
+        "id": "6d3d49a9c6807fd9651728641d4f07d37ff7915b",
+        "type": "FIX",
+        "text": " sap.m.Page: properly show floatingFooter when PageAccessibleLandmark info is used",
+        "references": []
+      },
+      {
+        "id": "92198a6196ddf6ce43617c22d791a2ffb1dbf153",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Problem with the position of the dot when a browser is zoomed fixed",
+        "references": []
+      },
+      {
+        "id": "bc691a6b0660ed36ff57b0990ef2027570df0a52",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Tooltips are now properly swapped when range is reversed.",
+        "references": []
+      },
+      {
+        "id": "8e10382b12642162873fd9d43b5f15d08c98413b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Runtime error after item deletion in pending mode corrected",
+        "references": []
+      },
+      {
+        "id": "17a16a2640ef9264fd6956d2d5aa1632ac673298",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: onCancel now do not modify filter selection",
+        "references": []
+      },
+      {
+        "id": "e88d34f743d91f8f94be1312f644392be3f3bae2",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Navigation works now correctly on mobile",
+        "references": []
+      }
+    ]
   }
 }

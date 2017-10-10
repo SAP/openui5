@@ -1106,5 +1106,46 @@
         "references": []
       }
     ]
+  },
+  "1.44.21": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "3d7e7bbca6faf1048bc3fafe397b832f235769ec",
+        "type": "FIX",
+        "text": " core.Component: fix handling of hints reg. component dependencies",
+        "references": []
+      },
+      {
+        "id": "954ca8753d621f739fda4f4033d97085e43ffff8",
+        "type": "FIX",
+        "text": " core.Popup: use the \u0027deactivate\u0027 event on autoclose area in IE",
+        "references": []
+      },
+      {
+        "id": "f3b5c9c43c71e3129a6a149bf9304d517583dba1",
+        "type": "FIX",
+        "text": " sap.m.Panel: avoid showing duplicate icon focus outlines",
+        "references": []
+      },
+      {
+        "id": "e45e0685893ee683541bfba9bc892b1b436a8c67",
+        "type": "FIX",
+        "text": " sap.ui.support.TechnicalInfo: Open sap-ui-version.json in new window is now fixed.",
+        "references": []
+      },
+      {
+        "id": "bb37e9819f2a8e2e1a5441799cd055a60384e3e8",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Clientside sorting and filtering of Edm types",
+        "references": []
+      },
+      {
+        "id": "a6056f5205961ac7eff46f061b66307dc33ab410",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: isReloadNeeded not parameterized correctly",
+        "references": []
+      }
+    ]
   }
 }

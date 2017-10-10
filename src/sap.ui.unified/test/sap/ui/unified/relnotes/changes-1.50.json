@@ -198,5 +198,22 @@
         "references": []
       }
     ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "11e5e69124c5f0c7e11b39c9646a2cfe91c058ef",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: single interval selection highlights the right dates",
+        "references": []
+      },
+      {
+        "id": "90ce2268dd6e2e573d70411278c8aa5c0c11e1a7",
+        "type": "FIX",
+        "text": " unified.FileUploader: drag and drop behavior fixed",
+        "references": []
+      }
+    ]
   }
 }

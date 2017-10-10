@@ -1410,5 +1410,112 @@
         "references": []
       }
     ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "2652d40969d667f1efc041c07ee30a3baac09800",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
+        "references": []
+      },
+      {
+        "id": "b53f2ed06e9e812121ee5b2eddc2c6e9dc815ce8",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Properly update selectedKeys cache when model changes",
+        "references": []
+      },
+      {
+        "id": "c5a77bb0d5e70000dba95db7b05752bad130cc01",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Update on a model remembers selection properly",
+        "references": []
+      },
+      {
+        "id": "c8a55a457e6c0d0c06c5e1964576515d1d99807c",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Vertical alignment improved",
+        "references": []
+      },
+      {
+        "id": "4da643f2348fbc2c7b70b7d7097a8d58874475db",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar:  Actual positions and size of the tabs are now read correctly",
+        "references": []
+      },
+      {
+        "id": "544970b6327270dcbb3cd35b44952d91db7924e4",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Focus is now clearly visible",
+        "references": []
+      },
+      {
+        "id": "9d374442408ceceb154b8c441dd49d1b520878ba",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Tabs info is now read correctly by JAWS",
+        "references": []
+      },
+      {
+        "id": "88c89d00435698a765817579a6ffe8cf371359fd",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Models should be forwarded to the internal MessageView",
+        "references": []
+      },
+      {
+        "id": "eda52c754583dc840722547bb36b55b03b2bad71",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fixed setTokens() to remove all tokens",
+        "references": []
+      },
+      {
+        "id": "37266d574ccc7d841ad1cf3eb042b2748e8d4dca",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Navigation now works correctly when the pages are destroyed during animation",
+        "references": []
+      },
+      {
+        "id": "f7e1cbde4ff10418d749eb0161e48792329cf088",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Renders an invisible placeholder when it is empty",
+        "references": []
+      },
+      {
+        "id": "efb3339006d6a5a52786f98b7ce092101cd7f700",
+        "type": "FIX",
+        "text": " sap.m.Page: properly show floatingFooter when PageAccessibleLandmark info is used",
+        "references": []
+      },
+      {
+        "id": "764f879871c8491a0a452af2e50f84f3436023a5",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Problem with the position of the dot when a browser is zoomed fixed",
+        "references": []
+      },
+      {
+        "id": "9627dea15f1aab0d42e138ac48930a5922197ed9",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Tooltips are now properly swapped when range is reversed.",
+        "references": []
+      },
+      {
+        "id": "104ac57060222cb6387a8081635ccd9cb5ff5012",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Runtime error after item deletion in pending mode corrected",
+        "references": []
+      },
+      {
+        "id": "4569ef56bf1cc31fe39604b97319715f40e3e650",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: onCancel now do not modify filter selection",
+        "references": []
+      },
+      {
+        "id": "45f16053359847e81bd98710c1bd3b9c03e158a9",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Navigation works now correctly on mobile",
+        "references": []
+      }
+    ]
   }
 }

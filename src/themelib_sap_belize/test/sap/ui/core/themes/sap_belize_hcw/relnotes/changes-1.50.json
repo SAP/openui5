@@ -241,5 +241,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "efb3339006d6a5a52786f98b7ce092101cd7f700",
+        "type": "FIX",
+        "text": " sap.m.Page: properly show floatingFooter when PageAccessibleLandmark info is used",
+        "references": []
+      }
+    ]
   }
 }

@@ -444,5 +444,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.10": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "6d3d49a9c6807fd9651728641d4f07d37ff7915b",
+        "type": "FIX",
+        "text": " sap.m.Page: properly show floatingFooter when PageAccessibleLandmark info is used",
+        "references": []
+      }
+    ]
   }
 }

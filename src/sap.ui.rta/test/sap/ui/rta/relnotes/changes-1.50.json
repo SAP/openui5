@@ -102,5 +102,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "3d89e78988c4d08261f31a82ebb920ffd2805d9b",
+        "type": "FIX",
+        "text": " Reveal doesn\u0027t work in ObjectPage Header",
+        "references": []
+      }
+    ]
   }
 }
