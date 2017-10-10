@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.List.
-sap.ui.define(['jquery.sap.global', './ListBase', './library'],
-	function(jQuery, ListBase, library) {
+sap.ui.define(['./ListBase', './library'],
+	function(ListBase, library) {
 	"use strict";
 
 
@@ -69,8 +69,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		 * We are trying to extend renderer to render list as table
 		 * This is so ugly and we need to get rid of it ASAP
 		 */
-		jQuery.sap.require("sap.m.Table");
-		var proto = sap.m.Table.prototype;
+		var proto = sap.ui.requireSync("sap/m/Table").prototype;
 		Object.keys(proto).forEach(function(key) {
 			this[key] = proto[key];
 		}, this);
