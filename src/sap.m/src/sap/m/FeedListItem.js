@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([ "jquery.sap.global", "./ListItemBase", "./Link", "./library", "./FormattedText", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/ui/Device" ],
-	function(jQuery, ListItemBase, Link, library, FormattedText, Control, IconPool, Device) {
+sap.ui.define(["./ListItemBase", "./Link", "./library", "./FormattedText", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/ui/Device"],
+	function(ListItemBase, Link, library, FormattedText, Control, IconPool, Device) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
