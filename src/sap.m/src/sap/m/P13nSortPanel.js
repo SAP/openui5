@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nSortPanel.
 sap.ui.define([
-	'jquery.sap.global', './P13nConditionPanel', './P13nPanel', './library'
-], function(jQuery, P13nConditionPanel, P13nPanel, library) {
+	'./P13nConditionPanel', './P13nPanel', './library'
+], function(P13nConditionPanel, P13nPanel, library) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType
@@ -212,9 +212,6 @@ sap.ui.define([
 		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SORTPANEL_TITLE"));
 
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
-		jQuery.sap.require("sap.ui.layout.Grid");
-
-		sap.ui.layout.Grid.prototype.init.apply(this);
 
 		this._aKeyFields = [];
 		this.addStyleClass("sapMSortPanel");
