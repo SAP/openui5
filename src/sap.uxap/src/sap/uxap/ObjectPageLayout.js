@@ -2678,7 +2678,8 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype.setShowHeaderContent = function (bShow) {
-		var bOldShow = this.getShowHeaderContent();
+		var bOldShow = this.getShowHeaderContent(),
+			oHeaderContent;
 
 		if (bOldShow !== bShow) {
 			if (bOldShow && this._bHeaderInTitleArea && !this._shouldPreserveHeaderInTitleArea()) {
@@ -2686,7 +2687,10 @@ sap.ui.define([
 				this._toggleHeaderTitle(false /* snap */);
 			}
 			this.setProperty("showHeaderContent", bShow);
-			this._getHeaderContent().setProperty("visible", bShow);
+			oHeaderContent = this._getHeaderContent();
+			if (oHeaderContent) {
+				oHeaderContent.setProperty("visible", bShow);
+			}
 		}
 		return this;
 	};
