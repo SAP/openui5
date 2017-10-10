@@ -934,18 +934,22 @@ sap.ui.define([
 						// if in desktop browser or the DOM node which has the focus is input outside the popup,
 						// focus on the last blurred element
 						if (Device.system.desktop || jQuery(oEvent.target).is(":input")) {
-							// The focus should be set after the current call stack is finished
-							// because the existing timer for autoclose popup is cancelled by
-							// setting the focus here.
-							//
-							// Suppose an autoclose popup is opened within a modal popup. Clicking
-							// on the blocklayer should wait the autoclose popup to first close then
-							// set the focus back to the lasted blurred element.
-							jQuery.sap.delayedCall(0, this, function() {
-								// set the focus back to the last focused element inside the popup or at least to the popup root
-								var oDomRefToFocus = this.oLastBlurredElement ? this.oLastBlurredElement : oDomRef;
-								jQuery.sap.focus(oDomRefToFocus);
-							});
+							if (this.oLastBlurredElement) {
+								// If a DOM element inside the popup was blurred, the focus should be set
+								// after the current call stack is finished because the existing timer for
+								// autoclose popup is cancelled by setting the focus here.
+								//
+								// Suppose an autoclose popup is opened within a modal popup. Clicking
+								// on the blocklayer should wait the autoclose popup to first close then
+								// set the focus back to the lasted blurred element.
+								jQuery.sap.delayedCall(0, this, function() {
+									jQuery.sap.focus(this.oLastBlurredElement);
+								});
+							} else {
+								// If the focus is set to somewhere else without a blurred element in popup,
+								// the focus is set to the root DOM element of the popup
+								jQuery.sap.focus(oDomRef);
+							}
 						}
 					}
 				} else if (this._bAutoClose && bContains && this._sTimeoutId) { // case: autoclose popup and focus has returned into the popup immediately
