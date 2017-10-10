@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate',
-		'sap/ui/unified/CalendarLegend', 'sap/ui/unified/CalendarLegendRenderer', 'sap/ui/unified/library'],
-	function (jQuery, CalendarUtils, CalendarDate, CalendarLegend, CalendarLegendRenderer, library) {
+		'sap/ui/unified/CalendarLegendRenderer', 'sap/ui/unified/library'],
+	function (jQuery, CalendarUtils, CalendarDate, CalendarLegendRenderer, library) {
 		"use strict";
 
 

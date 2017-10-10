@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ObjectHeader.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device'],
-	function(jQuery, library, Control, IconPool, coreLibrary, Device) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device', 'sap/m/Text'],
+	function(jQuery, library, Control, IconPool, coreLibrary, Device, Text) {
 	"use strict";
 
 
@@ -434,7 +434,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 
 		this._fNumberWidth = undefined;
-		this._titleText = new sap.m.Text(this.getId() + "-titleText");
+		this._titleText = new Text(this.getId() + "-titleText");
 		this._titleText.setMaxLines(3);
 
 	};
