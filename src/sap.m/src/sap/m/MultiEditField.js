@@ -157,13 +157,13 @@ sap.ui.define([
 	};
 
 	MultiEditField.prototype.setSelectedItem = function(oSelectedItem) {
-		var oSelect = this.byId("select");
-		var oItem = this._getExternalItem(oSelectedItem);
-		var oInternalItem = this._getInternalItem(oSelectedItem);
+		var oItem = this._getExternalItem(oSelectedItem) || oSelectedItem;
+		var oInternalItem;
 
 		if (oItem && this.indexOfItem(oItem) >= 0 && !this._isSpecialValueItem(oItem)) {
+			oInternalItem = this._getInternalItem(oSelectedItem);
 			if (oInternalItem) {
-				oSelect.setSelectedItem(oInternalItem);
+				this.byId("select").setSelectedItem(oInternalItem);
 			}
 			this._oLastSelectedItem = oItem;
 			return this.setProperty("selectedItem", oItem);
@@ -272,11 +272,6 @@ sap.ui.define([
 		if (iIndex >= 0) {
 			return this.getItems()[iIndex];
 		}
-
-		iIndex = this.indexOfItem(item);
-		if (iIndex >= 0) {
-			return item;
-		}
 		return null;
 	};
 
@@ -289,15 +284,9 @@ sap.ui.define([
 	 * @private
 	 */
 	MultiEditField.prototype._getInternalItem = function(item) {
-		var oSelect = this.byId("select");
 		var iIndex = this.indexOfItem(item);
 		if (iIndex >= 0) {
-			return oSelect.getItems()[iIndex];
-		}
-
-		iIndex = oSelect.indexOfItem(item);
-		if (iIndex >= 0) {
-			return item;
+			return this.byId("select").getItems()[iIndex];
 		}
 		return null;
 	};
