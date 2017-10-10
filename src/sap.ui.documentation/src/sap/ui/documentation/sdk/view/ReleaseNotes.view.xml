@@ -23,7 +23,7 @@
 				<headerContent>
 					<layout:VerticalLayout>
 						<html:div class="sapUiCustomTitleText">
-							This log includes the library notes for the libraries listed bellow.
+							This log includes the library notes for the libraries listed below.
 							The change log for old version which are not patched anymore can be reviewed
 							<m:Link text="here" href="docs/guide/relnotes/ReleaseNotes.html"/>.
 						</html:div>
