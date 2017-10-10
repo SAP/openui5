@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', './NotificationListBase', 'sap/ui/core/InvisibleText', './ListItemBase', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, library, NotificationListBase, InvisibleText, ListItemBase, IconPool, coreLibrary, Device) {
+sap.ui.define(['jquery.sap.global', './library', './NotificationListBase', 'sap/ui/core/InvisibleText', './ListItemBase', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device', 'sap/m/Button', 'jquery.sap.keycodes'],
+	function(jQuery, library, NotificationListBase, InvisibleText, ListItemBase, IconPool, coreLibrary, Device, Button) {
 	'use strict';
 
 	// shortcut for sap.ui.core.Priority
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', './library', './NotificationListBase', 'sap/
 		 * @type {sap.m.Button}
 		 * @private
 		 */
-		var _closeButton = new sap.m.Button(this.getId() + '-closeButton', {
+		var _closeButton = new Button(this.getId() + '-closeButton', {
 			type: ButtonType.Transparent,
 			icon: IconPool.getIconURI('decline'),
 			tooltip: this._closeText,
@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global', './library', './NotificationListBase', 'sap/
 		 * @type {sap.m.Button}
 		 * @private
 		 */
-		var _collapseButton = new sap.m.Button({
+		var _collapseButton = new Button({
 			type: ButtonType.Transparent,
 			press: function () {
 				this.setCollapsed(!this.getCollapsed());
