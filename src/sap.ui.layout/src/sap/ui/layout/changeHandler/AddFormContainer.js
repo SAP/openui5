@@ -58,7 +58,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Change} oChange Change wrapper object to be completed
 		 * @param {object} oSpecificChangeInfo with attributes "groupLabel", the group label to be included in the change and "newControlId", the control ID for the control to be added
 		 * @param {object} mPropertyBag
-		 * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent Component in which the change should be applied
+		 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent Component in which the change should be applied
 		 * @public
 		 */
 		AddGroup.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {

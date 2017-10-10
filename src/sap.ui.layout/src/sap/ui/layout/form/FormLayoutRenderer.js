@@ -2,9 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library"],
+	function(library, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
+	// shortcut for sap.ui.layout.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
 
 	/**
 	 * FormLayout renderer.
@@ -71,7 +77,7 @@ sap.ui.define(['jquery.sap.global'],
 	FormLayoutRenderer.addBackgroundClass = function(rm, oLayout){
 
 		var sBackgroundDesign = oLayout.getBackgroundDesign();
-		if (sBackgroundDesign != sap.ui.layout.BackgroundDesign.Transparent) {
+		if (sBackgroundDesign != BackgroundDesign.Transparent) {
 			rm.addClass("sapUiFormBackgr" + sBackgroundDesign);
 		}
 
@@ -117,7 +123,7 @@ sap.ui.define(['jquery.sap.global'],
 		if (oToolbar) {
 			rm.renderControl(oToolbar);
 		} else {
-			this.renderTitle(rm, oTitle, oContainer._oExpandButton, bExpandable, sap.ui.core.TitleLevel.H4, oContainer.getId());
+			this.renderTitle(rm, oTitle, oContainer._oExpandButton, bExpandable, TitleLevel.H4, oContainer.getId());
 		}
 
 		if (bExpandable) {
@@ -186,7 +192,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (sLevelDefault) {
 				sLevel = sLevelDefault;
 			}
-			if (typeof oTitle !== "string" && oTitle.getLevel() != sap.ui.core.TitleLevel.Auto) {
+			if (typeof oTitle !== "string" && oTitle.getLevel() != TitleLevel.Auto) {
 				sLevel = oTitle.getLevel();
 			}
 

@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global', "sap/ui/fl/changeHandler/JsControlTreeModifier"
-], function(jQuery, JsControlTreeModifier) {
+	"sap/ui/fl/changeHandler/JsControlTreeModifier"
+], function(JsControlTreeModifier) {
 	"use strict";
 
 	/**

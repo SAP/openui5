@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library'],
+	function(jQuery, library) {
 	"use strict";
 
 
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.addClass("sapUiFormLblColon"); // to always have the ":" at the Labels
 		rm.writeAttribute("data-sap-ui-customfastnavgroup", "true");
 
-		var sClass = sap.ui.layout.form.FormHelper.addFormClass();
+		var sClass = library.form.FormHelper.addFormClass();
 		if (sClass) {
 			rm.addClass(sClass);
 		}

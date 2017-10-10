@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.form.ResponsiveGridLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridData', './FormLayout', 'sap/ui/layout/library'],
-	function(jQuery, Grid, GridData, FormLayout, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridData', './FormLayout', 'sap/ui/layout/library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler'],
+	function(jQuery, Grid, GridData, FormLayout, library, Control, ResizeHandler) {
 	"use strict";
 
 	/**
@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 *
 	*/
 
-	var Panel = sap.ui.core.Control.extend("sap.ui.layout.form.ResponsiveGridLayoutPanel", {
+	var Panel = Control.extend("sap.ui.layout.form.ResponsiveGridLayoutPanel", {
 
 		metadata : {
 			aggregations: {
@@ -332,7 +332,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		if (this._mainGrid && this._mainGrid.__bIsUsed ) {
 			for ( var sContainerId in this.mContainers) {
 				if (this.mContainers[sContainerId][1]._sContainerResizeListener) {
-					sap.ui.core.ResizeHandler.deregister(this.mContainers[sContainerId][1]._sContainerResizeListener);
+					ResizeHandler.deregister(this.mContainers[sContainerId][1]._sContainerResizeListener);
 					this.mContainers[sContainerId][1]._sContainerResizeListener = null;
 				}
 			}
@@ -501,7 +501,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			}
 		}
 
-		var iObjectLength = _objectLength(this.mContainers);
+		var iObjectLength = Object.keys(this.mContainers).length;
 		if (iVisibleContainers < iObjectLength) {
 			// delete old containers panels
 			for ( sContainerId in this.mContainers) {
@@ -1327,22 +1327,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 	}
 
-	function _objectLength(oObject){
-
-		var iLength = 0;
-
-		if (!Object.keys) {
-			jQuery.each(oObject, function(){
-				iLength++;
-			});
-		} else {
-			iLength = Object.keys(oObject).length;
-		}
-
-		return iLength;
-
-	}
-
 	return ResponsiveGridLayout;
 
-}, /* bExport= */ true);
+});
