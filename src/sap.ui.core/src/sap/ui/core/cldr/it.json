@@ -3247,6 +3247,7 @@
 		"XOF": "CFA",
 		"XPF": "CFPF"
 	},
+	"rtl": false,
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,

@@ -3265,6 +3265,7 @@
 		"USD": "$ US",
 		"WST": "WS$"
 	},
+	"rtl": false,
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
