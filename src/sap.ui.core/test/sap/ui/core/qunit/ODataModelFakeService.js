@@ -190,6 +190,10 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sProductsXML],
 			"Categories(7)/Products/$count":
 				[200, oCountHeaders, "5"],
+			"Categories(2)/Products?$skip=0&$top=100":
+					[200, oXMLHeaders, sProductsXML],
+			"Categories(2)/Products/$count":
+					[200, oCountHeaders, "5"],
 			"Categories(1)":
 				[200, oJSONHeaders, sCategory1JSON],
 			"Categories(1)?test":

@@ -33,6 +33,7 @@ sap.ui.define(['sap/ui/base/Object'],
 
 			this.oModel = oModel;
 			this.sPath = sPath;
+			this.bForceRefresh = false;
 
 		},
 
@@ -88,6 +89,25 @@ sap.ui.define(['sap/ui/base/Object'],
 			sPath = undefined;
 		}
 		return this.oModel.getObject(sPath, this, mParameters);
+	};
+
+	/**
+	 * Sets the force refresh flag of the context. If this is set, the context will force a refresh of dependent
+	 * bindings, when the context is propagated.
+	 * @private
+	 * @param {boolean} bForceRefresh the force refresh flag
+	 */
+	Context.prototype.setForceRefresh = function(bForceRefresh) {
+		this.bForceRefresh = bForceRefresh;
+	};
+
+	/**
+	 * This method returns, whether dependent bindings need to be refreshed.
+	 * @private
+	 * @return {boolean} the force refresh flag
+	 */
+	Context.prototype.isRefreshForced = function() {
+		return this.bForceRefresh;
 	};
 
 	/**

@@ -2761,11 +2761,6 @@ sap.ui.define([
 			that = this;
 
 		var fChangeHandler = function(oEvent) {
-			/* as we reuse the context objects we need to ensure an update of relative bindings. Therefore we set
-			   the context to null so relative bindings will detect a context change */
-			if (oBinding.getBoundContext() === that.getBindingContext(sModelName)) {
-				that.setElementBindingContext(null, sModelName);
-			}
 			that.setElementBindingContext(oBinding.getBoundContext(), sModelName);
 		};
 
@@ -3933,7 +3928,7 @@ sap.ui.define([
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
 		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		var oOldContext = this.oBindingContexts[sModelName];
-		if (oOldContext !== oContext) {
+		if (oOldContext !== oContext || (oContext && oContext.isRefreshForced())) {
 			this.oBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(false, sModelName);
 			this.propagateProperties(sModelName);
@@ -3949,7 +3944,7 @@ sap.ui.define([
 		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		var oOldContext = this.mElementBindingContexts[sModelName];
 
-		if (oOldContext !== oContext) {
+		if (oOldContext !== oContext || (oContext && oContext.isRefreshForced())) {
 			this.mElementBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(true, sModelName);
 			this.propagateProperties(sModelName);
@@ -3999,7 +3994,7 @@ sap.ui.define([
 						this._bindObject(oBindingInfo);
 					} else {
 						oContext = this._getBindingContext(sModelName);
-						if (oContext !== oBindingInfo.binding.getContext()) {
+						if (oContext !== oBindingInfo.binding.getContext() || (oContext && oContext.isRefreshForced())) {
 							oBindingInfo.binding.setContext(oContext);
 						}
 					}
