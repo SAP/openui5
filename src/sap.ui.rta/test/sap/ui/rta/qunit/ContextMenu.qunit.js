@@ -14,7 +14,6 @@ sap.ui.require([
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/SelectionMode',
-	'sap/ui/dt/Overlay',
 	'sap/ui/rta/plugin/Settings',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/m/Page',
@@ -33,7 +32,6 @@ function(
 	RuntimeAuthoring,
 	OverlayRegistry,
 	SelectionMode,
-	Overlay,
 	Settings,
 	ChangeRegistry,
 	Page,
@@ -72,8 +70,6 @@ function(
 			this.oMultipleFieldOneBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.BoundButton");
 			this.oMultipleBoundFieldGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.BoundButton35");
 			this.oFieldInGroupWithoutStableId = sap.ui.getCore().byId("Comp1---idMain1--FieldInGroupWithoutStableId");
-
-			sandbox.stub(Overlay.prototype, "isVisibleInDom").returns(true);
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
@@ -336,13 +332,6 @@ function(
 			oEmbeddedPage.addContent(this.oObjectPageLayout);
 			sap.ui.getCore().applyChanges();
 
-			sandbox.stub(Overlay.prototype, "isVisibleInDom", function() {
-				if (this.getElementInstance() === oObjectPageSection2) {
-					return false;
-				}
-				return true;
-			});
-
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oObjectPageLayout
 			});
@@ -357,7 +346,6 @@ function(
 		afterEach : function(assert) {
 			this.oObjectPageLayout.destroy();
 			this.oRta.destroy();
-			sandbox.restore();
 		}
 	});
 
@@ -417,13 +405,6 @@ function(
 			});
 			this.oObjectPageLayout.placeAt("test-view");
 			sap.ui.getCore().applyChanges();
-
-			sandbox.stub(Overlay.prototype, "isVisibleInDom", function() {
-				if (this.getElementInstance() === oObjectPageSection2) {
-					return false;
-				}
-				return true;
-			});
 
 			sandbox.stub(RuntimeAuthoring.prototype, '_checkChangesExist', function () {
 				return Promise.resolve(false);

@@ -229,8 +229,6 @@ sap.ui.require([
 		var sPrefix = test.sibling ? "On sibling: " : "On child: ";
 		QUnit.test(sPrefix + test.msg, function(assert) {
 			this.oOverlay = test.overlay();
-			sandbox.stub(this.oOverlay, "isVisibleInDom").returns(true);
-			sandbox.stub(this.oOverlay.getParentElementOverlay(), "isVisibleInDom").returns(true);
 			assert.notOk(oPlugin.isAvailable(test.sibling, this.oOverlay), "then the action is not available");
 			assert.notOk(oPlugin._isEditableCheck(this.oOverlay, test.sibling), "then the overlay is not editable");
 		});
