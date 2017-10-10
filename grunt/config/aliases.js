@@ -269,8 +269,8 @@ module.exports = function(grunt, config) {
 		],
 		'cldr-download': [
 		    'npm-install:cldr-core@31.0.1',
-		    'npm-install:cldr-dates-modern@31.0.1',
 		    'npm-install:cldr-numbers-modern@31.0.1',
+		    'npm-install:cldr-dates-modern@31.0.1',
 		    'npm-install:cldr-misc-modern@31.0.1',
 		    'npm-install:cldr-localenames-modern@31.0.1',
 		    'npm-install:cldr-cal-islamic-modern@31.0.1',
