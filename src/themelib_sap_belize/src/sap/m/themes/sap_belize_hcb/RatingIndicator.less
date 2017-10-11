@@ -18,8 +18,18 @@
 		color: @sapUiContentIconColor;
 	}
 	.sapMRIIconUnsel {
-		color: lighten(@sapUiContentForegroundColor, 50)
+		color: lighten(@sapUiContentForegroundColor, 50);
 	}
+}
+
+.sapMRI.sapMRIReadOnly {
+  .sapMRIIconSel {
+	color: @sapUiContentIconColor;
+  }
+
+  .sapMRIIconReadOnly {
+	color: lighten(@sapUiContentForegroundColor, 50);
+  }
 }
 
 /* Custom focus outline */
@@ -42,6 +52,6 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		position: absolute;
 		left: 0;
 		top: 0;
-		border: 0.125rem dotted @sapUiContentFocusColor;;
+		border: 0.125rem dotted @sapUiContentFocusColor;
 	}
 }
