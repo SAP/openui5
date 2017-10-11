@@ -171,7 +171,8 @@ sap.ui.define([
 			sType,
 			sValue = oFilterTree.right.value;
 
-		sType = this.fnFetchMetadata("/" + sResourcePath + "/" + sPath + "/$Type").getResult();
+		sType = this.oModelInterface.fnFetchMetadata("/" + sResourcePath + "/" + sPath + "/$Type")
+			.getResult();
 
 		if (!sType) {
 			throw new Error("Invalid filter path: " + sPath);
@@ -496,7 +497,8 @@ sap.ui.define([
 		this.mTypesByName = this.mTypesByName || {};
 		oType = this.mTypesByName[sName];
 		if (!oType) {
-			oType = this.mTypesByName[sName] = this.fnFetchMetadata("/" + sName).getResult();
+			oType = this.mTypesByName[sName] =
+				this.oModelInterface.fnFetchMetadata("/" + sName).getResult();
 		}
 		return oType;
 	};
@@ -509,7 +511,7 @@ sap.ui.define([
 	 * available
 	 */
 	_V2Requestor.prototype.ready = function () {
-		return this.fnFetchEntityContainer().then(function () {});
+		return this.oModelInterface.fnFetchEntityContainer().then(function () {});
 	};
 
 	return function (oObject) {

@@ -225,16 +225,19 @@ sap.ui.define([
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
-						this.mUriParameters,
-						this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
-						function (sPath) {
-							return that.oMetaModel.fetchObject(that.oMetaModel.getMetaPath(sPath));
-						},
-						this.getGroupProperty.bind(this),
-						function (sGroupId) {
-							if (that.isAutoGroup(sGroupId)) {
-								sap.ui.getCore().addPrerenderingTask(
-									that._submitBatch.bind(that, sGroupId));
+						this.mUriParameters, {
+							fnFetchEntityContainer :
+								this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
+							fnFetchMetadata : function (sPath) {
+								return that.oMetaModel.fetchObject(
+									that.oMetaModel.getMetaPath(sPath));
+							},
+							fnGetGroupProperty : this.getGroupProperty.bind(this),
+							fnOnCreateGroup : function (sGroupId) {
+								if (that.isAutoGroup(sGroupId)) {
+									sap.ui.getCore().addPrerenderingTask(
+										that._submitBatch.bind(that, sGroupId));
+								}
 							}
 						}, sODataVersion);
 
