@@ -81,7 +81,8 @@ sap.ui.define([
 	 *   array if there are no additional select properties needed
 	 */
 	function getAdditionalSelects(oBinding) {
-		var i,
+		var bError = false,
+			i,
 			oDimension,
 			oMeasure,
 			n,
@@ -89,26 +90,23 @@ sap.ui.define([
 			sSelect = oBinding.mParameters.select,
 			aSelect;
 
-		function isPropertyMissingInSelect(bDimension) {
+		function removeDimensionsOrMeasures(sWhat, mPropertyToDetail) {
 			var iIndex,
-				sProperty,
-				mPropertyToDetail = bDimension
-					? oBinding.oDimensionDetailsSet : oBinding.oMeasureDetailsSet;
+				sProperty;
 
 			for (sProperty in mPropertyToDetail) {
 				iIndex = aSelect.indexOf(sProperty);
 
 				if (iIndex < 0) {
-					jQuery.sap.log.warning("Ignored the 'select' binding parameter, because it"
-							+ " does not contain the " + (bDimension ? "dimension" : "measure")
-							+ " property '" + sProperty + "' which is contained in the analytical"
-							+ " info (see updateAnalyticalInfo)",
+					jQuery.sap.log.warning("Ignored the 'select' binding parameter, because it does"
+							+ " not contain the " + sWhat + " property '" + sProperty + "' which is"
+							+ " contained in the analytical info (see updateAnalyticalInfo)",
 						oBinding.sPath, sClassName);
-					return true;
+					bError = true;
+				} else {
+					aSelect.splice(iIndex, 1);
 				}
-				aSelect.splice(iIndex, 1);
 			}
-			return false;
 		}
 
 		// replace all white-spaces before and after the property names in the select
@@ -117,26 +115,25 @@ sap.ui.define([
 			aSelect[i] = aSelect[i].trim();
 		}
 
-		if (isPropertyMissingInSelect(true) || isPropertyMissingInSelect(false)) {
-			return [];
-		}
+		removeDimensionsOrMeasures("dimension", oBinding.oDimensionDetailsSet);
+		removeDimensionsOrMeasures("measure", oBinding.oMeasureDetailsSet);
 
 		for (i = 0, n = aSelect.length; i < n; i++) {
 			sPropertyName = aSelect[i];
-			oDimension = oBinding.oAnalyticalQueryResult.findDimensionByPropertyName(sPropertyName);
 
+			oDimension = oBinding.oAnalyticalQueryResult.findDimensionByPropertyName(sPropertyName);
 			if (oDimension && oBinding.oDimensionDetailsSet[oDimension.getName()] === undefined) {
 				logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oDimension);
-				return [];
+				bError = true;
 			}
-			oMeasure = oBinding.oAnalyticalQueryResult.findMeasureByPropertyName(sPropertyName);
 
+			oMeasure = oBinding.oAnalyticalQueryResult.findMeasureByPropertyName(sPropertyName);
 			if (oMeasure && oBinding.oMeasureDetailsSet[oMeasure.getName()] === undefined) {
 				logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oMeasure);
-				return [];
+				bError = true;
 			}
 		}
-		return aSelect;
+		return bError ? [] : aSelect;
 	}
 
 	/**
