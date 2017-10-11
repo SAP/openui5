@@ -112,6 +112,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		"sap.uiext.inbox.InboxToggleTextView",
 		"sap.uiext.inbox.InboxTaskDetails",
 		"sap.viz.ui5.controls.common.BaseControl",
+		"sap.viz.ui5.controls.VizRangeSlider",
 		"sap.viz.ui5.core.BaseChart",
 		"sap.viz.ui5.controls.VizTooltip"
 	];
