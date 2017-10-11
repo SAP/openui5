@@ -61,11 +61,7 @@ function(
 		if (sLayer === "USER") {
 			Utils._sRtaStyleClassName = "";
 		} else if (FlexUtils.getLayerIndex(sLayer) > -1) {
-			if (sap.ui.getCore().getConfiguration().getTheme() === "sap_belize") {
-				Utils._sRtaStyleClassName = "sapContrast";
-			} else if (sap.ui.getCore().getConfiguration().getTheme() === "sap_belize_plus") {
-				Utils._sRtaStyleClassName = "sapContrastPlus";
-			}
+			Utils._sRtaStyleClassName = "sapContrast sapContrastPlus";
 		}
 	};
 
