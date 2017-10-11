@@ -77,15 +77,19 @@
 		});
 
 		QUnit.test("Check if special value items have the correct key and text", function(assert) {
+			//Arrange
+			var sKeepLabel = this.oMultiEditField._oRb.getText("MULTI_EDIT_KEEP_TEXT");
+			var sBlankLabel = this.oMultiEditField._oRb.getText("MULTI_EDIT_BLANK_TEXT");
+			var sValueHelpLabel = this.oMultiEditField._oRb.getText("MULTI_EDIT_NEW_TEXT");
 			//Assert
 			assert.strictEqual(this.oMultiEditField._getKeepAll().getKey(), "keep", "Item key 'keep' correct.");
-			assert.strictEqual(this.oMultiEditField._getKeepAll().getText(), "Keep existing value", "Item text 'Keep existing value' correct.");
+			assert.strictEqual(this.oMultiEditField._getKeepAll().getText(), "< " + sKeepLabel + " >", "Item text 'Keep Existing Values' correct.");
 
 			assert.strictEqual(this.oMultiEditField._getBlank().getKey(), "blank", "Item key 'blank' correct.");
-			assert.strictEqual(this.oMultiEditField._getBlank().getText(), "Leave blank", "Item text 'Leave blank' correct.");
+			assert.strictEqual(this.oMultiEditField._getBlank().getText(), "< " + sBlankLabel + " >", "Item text 'Leave Blank' correct.");
 
 			assert.strictEqual(this.oMultiEditField._getValueHelp().getKey(), "new", "Item key 'new' correct.");
-			assert.strictEqual(this.oMultiEditField._getValueHelp().getText(), "Select new value", "Item text 'Select new value' correct.");
+			assert.strictEqual(this.oMultiEditField._getValueHelp().getText(), "< " + sValueHelpLabel + " >", "Item text 'Use Value Help' correct.");
 		});
 
 		QUnit.test("Check if special value items are destroyed on exit.", function(assert) {
