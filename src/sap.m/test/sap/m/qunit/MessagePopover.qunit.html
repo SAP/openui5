@@ -1061,6 +1061,13 @@
 			assert.strictEqual(this.oMessagepopover2._oMessageView._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
 		});
 
+		QUnit.test("No segmented button filter when not needed", function (assert) {
+			this.oMessagepopover2.setInitiallyExpanded(false);
+			this.oMessagepopover2.openBy(this.oButton2);
+
+			assert.strictEqual(this.oMessagepopover2._oMessageView._oSegmentedButton.getVisible(), true, "Segmented button is not needed but must be shown because message popover is set initiallyExpanded=false");
+		});
+
 		QUnit.test("Adding item to MessagePopover", function (assert) {
 			var oMessagePopover = new sap.m.MessagePopover(),
 				oMessagePopoverItem = new sap.m.MessagePopoverItem({ title: "Test" }),

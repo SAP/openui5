@@ -89,7 +89,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					placement: {type: "sap.m.VerticalPlacementType", group: "Behavior", defaultValue: "Vertical"},
 
 					/**
-					 * Sets the initial state of the control - expanded or collapsed. By default the control opens as expanded
+					 * Sets the initial state of the control - expanded or collapsed. By default the control opens as expanded.
 					 */
 					initiallyExpanded: {type: "boolean", group: "Behavior", defaultValue: true}
 				},
@@ -273,6 +273,16 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			this._oMessageView = this._initMessageView();
+
+			this._oMessageView.addEventDelegate({
+				onBeforeRendering: function () {
+					var bShowHeader = !that.getInitiallyExpanded() || that.getHeaderButton();
+
+					that._oMessageView._oSegmentedButton.setVisible(bShowHeader);
+					that._oMessageView._listPage.setShowHeader(bShowHeader);
+				}
+			});
+
 			// insert the close buttons in both list and details pages as the MessageView
 			// doesn't know it is being created in Popover
 			this._insertCloseBtn(this._oMessageView._oListHeader);
@@ -431,6 +441,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 			if (this._oPopover) {
 				this._restoreExpansionDefaults();
+
 				this._oPopover.openBy(oControl);
 			}
 
