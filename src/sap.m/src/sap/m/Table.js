@@ -18,6 +18,9 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 	// shortcut for sap.m.BackgroundDesign
 	var BackgroundDesign = library.BackgroundDesign;
 
+	// shortcut for sap.m.PopinLayout
+	var PopinLayout = library.PopinLayout;
+
 
 
 	/**
@@ -74,7 +77,14 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 			 * Alternate row coloring is not available for the High Contrast Black/White themes.
 			 * @since 1.52
 			 */
-			alternateRowColors : {type : "boolean", group : "Appearance", defaultValue : false}
+			alternateRowColors : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Defines the layout in which the table pop-in rows are rendered.
+			 * <b>Note:</b> The <code>demandPopin</code> and <code>minScreenWidth</code> properties of the <code>Column</code> control must be configured appropriately.
+			 * @since 1.52
+			 */
+			popinLayout : {type : "sap.m.PopinLayout", group : "Appearance", defaultValue : PopinLayout.Block}
 		},
 		aggregations : {
 
