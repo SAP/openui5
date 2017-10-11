@@ -118,7 +118,8 @@
 					"sap.ui.comp.sample.smartfilterbartest",
 					"sap.ui.core.sample.OpaURLParameters.iStartMyUIComponentWithURLParameters",
 					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters",
-					"sap.ui.core.sample.OpaWithSupportAssistant"
+					"sap.ui.core.sample.OpaWithSupportAssistant",
+					"sap.ui.core.sample.OpaTestLibrary"
 				]
 			},
 			{
@@ -642,6 +643,11 @@
 				"id": "sap.ui.core.sample.OpaWithSupportAssistant",
 				"name": "Running OPA tests with Support Assistant checks",
 				"description": "This sample demonstrates how to extend existing OPA test/journey by plugging calls to Support Assistant extension assertions, with different severity and check scope parameters"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaTestLibrary",
+				"name": "Creating and using OPA5 test libraries",
+				"description": "This sample demonstrates how to create and use a simple OPA5 test library"
 			}
 		]
 	}
