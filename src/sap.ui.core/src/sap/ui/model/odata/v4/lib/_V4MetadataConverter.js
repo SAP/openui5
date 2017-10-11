@@ -56,13 +56,13 @@ sap.ui.define([
 		oFullConfig = {
 			__processor : processEdmx,
 			"Reference" : {
-				__processor : processReference,
+				__processor : _MetadataConverter.processReference,
 				__include : [oAnnotationConfig],
 				"Include" : {
-					__processor : processInclude
+					__processor : _MetadataConverter.processInclude
 				},
 				"IncludeAnnotations" : {
-					__processor : processIncludeAnnotations
+					__processor : _MetadataConverter.processIncludeAnnotations
 				}
 			},
 			"DataServices" : {
@@ -310,40 +310,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Processes an Include element within a Reference.
-	 * @param {Element} oElement The element
-	 * @param {object} oAggregate The aggregate
-	 */
-	function processInclude(oElement, oAggregate) {
-		var oInclude = V4MetadataConverter.getOrCreateArray(oAggregate.reference, "$Include");
-
-		oInclude.push(oElement.getAttribute("Namespace") + ".");
-	}
-
-	/**
-	 * Processes an IncludeAnnotations element within a Reference.
-	 * @param {Element} oElement The element
-	 * @param {object} oAggregate The aggregate
-	 */
-	function processIncludeAnnotations(oElement, oAggregate) {
-		var oReference = oAggregate.reference,
-			oIncludeAnnotation = {
-				"$TermNamespace" : oElement.getAttribute("TermNamespace") + "."
-			},
-			aIncludeAnnotations =
-				V4MetadataConverter.getOrCreateArray(oReference, "$IncludeAnnotations");
-
-		 V4MetadataConverter.processAttributes(oElement, oIncludeAnnotation, {
-			"TargetNamespace" : function setValue(sValue) {
-				return sValue ? sValue + "." : sValue;
-			},
-			"Qualifier" : V4MetadataConverter.setValue
-		});
-
-		aIncludeAnnotations.push(oIncludeAnnotation);
-	}
-
-	/**
 	 * Processes a NavigationPropertyBinding element within an EntitySet or Singleton.
 	 * @param {Element} oElement The element
 	 * @param {object} oAggregate The aggregate
@@ -374,18 +340,6 @@ sap.ui.define([
 
 		V4MetadataConverter.getOrCreateArray(oActionOrFunction, "$Parameter").push(oParameter);
 		V4MetadataConverter.annotatable(oAggregate, oParameter);
-	}
-
-	/**
-	 * Processes a Reference element.
-	 * @param {Element} oElement The element
-	 * @param {object} oAggregate The aggregate
-	 */
-	function processReference(oElement, oAggregate) {
-		var oReference = V4MetadataConverter.getOrCreateObject(oAggregate.result, "$Reference");
-
-		oAggregate.reference = oReference[oElement.getAttribute("Uri")] = {};
-		V4MetadataConverter.annotatable(oAggregate, oAggregate.reference);
 	}
 
 	/**
