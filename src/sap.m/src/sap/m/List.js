@@ -23,6 +23,10 @@ sap.ui.define(['./ListBase', './library'],
 	 * @class
 	 * The List control provides a container for all types of list items.
 	 * For mobile devices, the recommended limit of list items is 100 to assure proper performance. To improve initial rendering of large lists, use the "growing" feature. Please refer to the SAPUI5 Developer Guide for more information..
+	 *
+	 * See section "{@link topic:1da158152f644ba1ad408a3e982fd3df Lists}"
+	 * in the documentation for an introduction to <code>sap.m.List</code> control.
+	 *
 	 * @extends sap.m.ListBase
 	 *
 	 * @author SAP SE
