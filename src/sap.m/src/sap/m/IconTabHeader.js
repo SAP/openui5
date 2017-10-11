@@ -1230,7 +1230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var oDomRef = this.getDomRef("head");
 		var iScrollLeft = oDomRef.scrollLeft;
-		var bIsIE = Device.browser.internet_explorer || Device.browser.edge;
+		var bIsIE = Device.browser.msie || Device.browser.edge;
 		if (!bIsIE && this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
@@ -1462,7 +1462,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		//if the browser is IE prevent click events on dom elements in the tab, because the IE will focus them, not the tab itself.
-		if (Device.browser.internet_explorer) {
+		if (Device.browser.msie) {
 			if ($target.hasClass('sapMITBFilterIcon') || $target.hasClass('sapMITBCount') || $target.hasClass('sapMITBText') || $target.hasClass('sapMITBTab') || $target.hasClass('sapMITBContentArrow') || $target.hasClass('sapMITBSep') || $target.hasClass('sapMITBSepIcon')) {
 				oEvent.preventDefault();
 			}

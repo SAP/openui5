@@ -674,4 +674,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			return RadioButtonGroup;
 
-		}, /* bExport= */ true);
+		});
