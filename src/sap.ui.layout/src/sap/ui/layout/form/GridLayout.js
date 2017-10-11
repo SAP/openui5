@@ -245,4 +245,4 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 
 	return GridLayout;
 
-}, /* bExport= */ true);
+});

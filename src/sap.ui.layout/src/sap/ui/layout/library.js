@@ -5,9 +5,10 @@
 /**
  * Initialization Code and shared classes of library sap.ui.layout.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
+sap.ui.define([
+	'sap/ui/base/DataType',
 	'sap/ui/core/library'], // library dependency
-	function(jQuery, DataType) {
+	function(DataType) {
 
 	"use strict";
 

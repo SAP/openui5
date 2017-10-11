@@ -5,10 +5,16 @@
 // Provides control sap.ui.layout.form.SimpleForm.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
                './Form', './FormContainer', './FormElement', './FormLayout',
-               'sap/ui/base/ManagedObjectObserver', 'sap/ui/layout/library'],
+               'sap/ui/base/ManagedObjectObserver', 'sap/ui/layout/library', 'sap/ui/core/ResizeHandler'],
 	function(jQuery, Control, Form, FormContainer, FormElement, FormLayout,
-	         ManagedObjectObserver, library) {
+             ManagedObjectObserver, library, ResizeHandler) {
 	"use strict";
+
+	// shortcut for sap.ui.layout.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
+
+	// shortcut for sap.ui.layout.form.SimpleFormLayout
+	var SimpleFormLayout = library.form.SimpleFormLayout;
 
 	var ResponsiveLayout;
 	var ResponsiveFlowLayoutData;
@@ -97,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 * We recommend using the <code>ResponsiveGridLayout</code> for rendering a <code>SimpleForm</code>,
 			 * as its responsiveness uses the space available in the best way possible.
 			 */
-			layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout},
+			layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : SimpleFormLayout.ResponsiveLayout},
 
 			/**
 			 * Default span for labels in extra large size.
@@ -256,7 +262,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 *
 			 * @since 1.36.0
 			 */
-			backgroundDesign : {type : "sap.ui.layout.BackgroundDesign", group : "Appearance", defaultValue : sap.ui.layout.BackgroundDesign.Translucent}
+			backgroundDesign : {type : "sap.ui.layout.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -388,7 +394,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		oForm.invalidate = oForm._origInvalidate;
 
 		if (this._sResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
 		for (var i = 0; i < this._aLayouts.length; i++) {
@@ -414,7 +420,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 		//unregister resize
 		if (this._sResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
 
@@ -435,13 +441,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 	SimpleForm.prototype.onAfterRendering = function() {
 
-		if (this.getLayout() == sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout) {
+		if (this.getLayout() == SimpleFormLayout.ResponsiveLayout) {
 			this._bChangedByMe = true;
 			this.$().css("visibility", "hidden"); //avoid that a wrong layouting is visible
 			this._applyLinebreaks();
 
 			//attach the resize handler
-			this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._resize, this));
+			this._sResizeListenerId = ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._resize, this));
 			this._bChangedByMe = false;
 		}
 
@@ -493,7 +499,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 		this.setProperty("labelMinWidth", iLabelMinWidth, true);
 
-		if (this.getLayout() == sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout) {
+		if (this.getLayout() == SimpleFormLayout.ResponsiveLayout) {
 			this._bLayoutDataChangedByMe = true;
 			var aContent = this.getContent();
 			for (var i = 0; i < aContent.length; i++) {
@@ -1037,9 +1043,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 	};
 
-/*
- * Set the FormLayout to the Form. If a FormLayout is already set, just set a new one.
- */
+	/*
+	 * Set the FormLayout to the Form. If a FormLayout is already set, just set a new one.
+	 */
 	SimpleForm.prototype.setLayout = function(sLayout) {
 
 		var sOldLayout = this.getLayout();
@@ -1109,7 +1115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			var oLayout;
 
 			switch (this.getLayout()) {
-			case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
+			case SimpleFormLayout.ResponsiveLayout:
 				if ((!ResponsiveLayout || !ResponsiveFlowLayoutData) && !this._bResponsiveLayoutRequested) {
 					ResponsiveLayout = sap.ui.require("sap/ui/layout/form/ResponsiveLayout");
 					ResponsiveFlowLayoutData = sap.ui.require("sap/ui/layout/ResponsiveFlowLayoutData");
@@ -1124,7 +1130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 					oLayout = new ResponsiveLayout(this.getId() + "--Layout");
 				}
 				break;
-			case sap.ui.layout.form.SimpleFormLayout.GridLayout:
+			case SimpleFormLayout.GridLayout:
 				if ((!GridLayout || !GridContainerData || !GridElementData) && !this._bGridLayoutRequested) {
 					GridLayout = sap.ui.require("sap/ui/layout/form/GridLayout");
 					GridContainerData = sap.ui.require("sap/ui/layout/form/GridContainerData");
@@ -1141,7 +1147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 					oLayout = new GridLayout(this.getId() + "--Layout");
 				}
 				break;
-			case sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout:
+			case SimpleFormLayout.ResponsiveGridLayout:
 				if (!ResponsiveGridLayout && !this._bResponsiveGridLayoutRequested) {
 					ResponsiveGridLayout = sap.ui.require("sap/ui/layout/form/ResponsiveGridLayout");
 					if (!ResponsiveGridLayout) {
@@ -1298,7 +1304,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		oLayout.setBackgroundDesign(this.getBackgroundDesign());
 
 		switch (sLayout) {
-		case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
+		case SimpleFormLayout.ResponsiveLayout:
 			// set the default values for linebreakes to avoid flickering for default case
 			this._applyLinebreaks();
 
@@ -1307,10 +1313,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 				_applyFieldWeight.call(this, oFormElement);
 			}
 			break;
-		case sap.ui.layout.form.SimpleFormLayout.GridLayout:
+		case SimpleFormLayout.GridLayout:
 			_applyContainerSize.call(this);
 			break;
-		case sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout:
+		case SimpleFormLayout.ResponsiveGridLayout:
 			oLayout.setLabelSpanXL(this.getLabelSpanXL());
 			oLayout.setLabelSpanL(this.getLabelSpanL());
 			oLayout.setLabelSpanM(this.getLabelSpanM());
@@ -1377,13 +1383,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		var oLayoutData;
 
 		switch (this.getLayout()) {
-		case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
+		case SimpleFormLayout.ResponsiveLayout:
 			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.ResponsiveFlowLayoutData");
 			break;
-		case sap.ui.layout.form.SimpleFormLayout.GridLayout:
+		case SimpleFormLayout.GridLayout:
 			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.form.GridElementData");
 			break;
-		case sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout:
+		case SimpleFormLayout.ResponsiveGridLayout:
 			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.GridData");
 			break;
 			// no default
@@ -1417,7 +1423,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 	function _createFieldLayoutData(oField, iWeight, bLinebreak, bLinebreakable, iMinWidth) {
 
-		if (this.getLayout() != sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout) {
+		if (this.getLayout() != SimpleFormLayout.ResponsiveLayout) {
 			return;
 		}
 
@@ -1446,7 +1452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 	function _createElementLayoutData(oElement) {
 
-		if (this.getLayout() != sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout) {
+		if (this.getLayout() != SimpleFormLayout.ResponsiveLayout) {
 			return;
 		}
 
@@ -1466,8 +1472,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 	function _createContainerLayoutData(oContainer) {
 
 		var sLayout = this.getLayout();
-		if (sLayout != sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout &&
-				sLayout != sap.ui.layout.form.SimpleFormLayout.GridLayout) {
+		if (sLayout != SimpleFormLayout.ResponsiveLayout &&
+				sLayout != SimpleFormLayout.GridLayout) {
 			return;
 		}
 
@@ -1479,10 +1485,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		this._bLayoutDataChangedByMe = true;
 
 		switch (sLayout) {
-		case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
+		case SimpleFormLayout.ResponsiveLayout:
 			oContainer.setLayoutData(new ResponsiveFlowLayoutData({minWidth:280}));
 			break;
-		case sap.ui.layout.form.SimpleFormLayout.GridLayout:
+		case SimpleFormLayout.GridLayout:
 			if (this.getMaxContainerCols() > 1) {
 				oContainer.setLayoutData(new GridContainerData({halfGrid: true}));
 			} else {
@@ -1852,7 +1858,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 		if (!this._bLayoutDataChangedByMe && !this._bIsBeingDestroyed) {
 			switch (this.getLayout()) {
-			case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
+			case SimpleFormLayout.ResponsiveLayout:
 				var oControl = oEvent.srcControl;
 				var oParent = oControl.getParent();
 				if (oParent instanceof FormElement) {
@@ -1875,4 +1881,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 	return SimpleForm;
 
-}, /* bExport= */ true);
+});
