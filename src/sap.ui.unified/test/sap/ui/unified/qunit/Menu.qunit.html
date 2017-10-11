@@ -1054,6 +1054,19 @@
 			jQuery.sap.byId("menuDockRef").toggleClass("sapUiSizeCozy", false);
 		});
 
+		QUnit.test("openAsContextMenu functionality", function(assert) {
+			var oMenu = new sap.ui.unified.Menu({tooltip: "a tooltip"});
+			var eDock = sap.ui.core.Popup.Dock;
+			var fnEventHandler = function (oEvent) {
+				oMenu.openAsContextMenu(oEvent, jQuery("#menuDockRef").get(0));
+				assert.ok(oMenu.bOpen, "Menu opened");
+			};
+			jQuery("#menuDockRef").bind("contextmenu", fnEventHandler)
+			jQuery("#menuDockRef").contextmenu();
+			jQuery("#menuDockRef").unbind("contextmenu", fnEventHandler)
+			oMenu.destroy();
+		});
+
 	</script>
 
 </head>

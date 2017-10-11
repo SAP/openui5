@@ -3,19 +3,38 @@
  */
 
 // Provides control sap.ui.unified.Menu.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/Popup', './MenuItemBase', './library', 'sap/ui/core/library', 'sap/ui/unified/MenuRenderer', 'jquery.sap.script', 'jquery.sap.keycodes', 'jquery.sap.events'],
-	function(jQuery, Control, Device, Popup, MenuItemBase, library/* , jQuerySap */, coreLibrary, MenuRenderer) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Element',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/core/Popup',
+	'./MenuItemBase',
+	'./library',
+	'sap/ui/core/library',
+	'sap/ui/unified/MenuRenderer',
+	'jquery.sap.script',
+	'jquery.sap.keycodes',
+	'jquery.sap.events'
+],
+function(
+	jQuery,
+	Element,
+	Control,
+	Device,
+	Popup,
+	MenuItemBase,
+	library,
+	coreLibrary,
+	MenuRenderer
+) {
 	"use strict";
-
-
 
 	// shortcut for sap.ui.core.Popup.Dock
 	var Dock = Popup.Dock;
 
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
-
-
 
 	/**
 	 * Constructor for a new Menu control.
@@ -350,21 +369,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 
 	/**
 	 * Opens the menu as a context menu.
+	 * @param {sap.ui.core.Element|HTMLElement} oOpenerRef - Might be UI5 Element or DOM Element
 	 */
 	Menu.prototype.openAsContextMenu = function(oEvent, oOpenerRef) {
-		var x = oEvent.pageX - jQuery(oOpenerRef.getDomRef()).offset().left,
-			y = oEvent.pageY - jQuery(oOpenerRef.getDomRef()).offset().top,
+		oOpenerRef = oOpenerRef instanceof Element ? oOpenerRef.getDomRef() : oOpenerRef;
+
+		var x = oEvent.pageX - jQuery(oOpenerRef).offset().left,
+			y = oEvent.pageY - jQuery(oOpenerRef).offset().top,
 			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
 			eDock = Dock;
 
 		if (bRTL) {
-			x = oOpenerRef.getDomRef().clientWidth - x;
+			x = oOpenerRef.clientWidth - x;
 		}
 
 		this._iX = oEvent.clientX;
 		this._iY = oEvent.clientY;
 		this._bOpenedAsContextMenu = true;
-		this.open(true, oOpenerRef, eDock.BeginTop, eDock.BeginTop, oOpenerRef,  x + " " + y, 'fit');
+		this.open(true, oOpenerRef, eDock.BeginTop, eDock.BeginTop, oOpenerRef, x + " " + y, 'fit');
 	};
 
 	Menu.prototype._handleOpened = function () {
