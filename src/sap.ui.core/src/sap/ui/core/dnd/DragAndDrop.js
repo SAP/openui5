@@ -312,14 +312,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				// create the drag session object and attach it to the event
 				oEvent.dragSession = oDragSession = createDragSession(oEvent);
 
-				// use a custom ghost if provided by the control    TODO: should the drag config also be able to provide custom ghosts?
-				var oDragGhost = (oDragControl.getDragGhost && oDragControl.getDragGhost());
-				if (oDragGhost) {
-					var oGhostContainer = getGhostContainer().append(oDragGhost);
-					window.setTimeout(function() { oGhostContainer.empty(); }, 0);
-					// TODO: Browers can style a ghost to almost complete transparency. Consider implementing an own ghost handling.
-					// TODO: set the correct position, depending on where the mouse has grabbed the element
-					oEvent.originalEvent.dataTransfer.setDragImage(oDragGhost, 0, 0);
+				// when supported by the browser, use a custom ghost if provided by the control
+				if (!Device.browser.msie) {
+					var oDragGhost = (oDragControl.getDragGhost && oDragControl.getDragGhost());
+					if (oDragGhost) {
+						var oGhostContainer = getGhostContainer().append(oDragGhost);
+						window.setTimeout(function() { oGhostContainer.empty(); }, 0);
+						// TODO: Browers can style a ghost to almost complete transparency. Consider implementing an own ghost handling.
+						// TODO: set the correct position, depending on where the mouse has grabbed the element
+						oEvent.originalEvent.dataTransfer.setDragImage(oDragGhost, 0, 0);
+					}
 				}
 
 				// Firefox needs data set to allow dragging
