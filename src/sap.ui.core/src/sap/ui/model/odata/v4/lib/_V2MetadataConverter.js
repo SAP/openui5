@@ -911,6 +911,7 @@ sap.ui.define([
 	function processTypeNavigationProperty(oElement, oAggregate) {
 		var sCreatable = oElement.getAttributeNS(sSapNamespace, "creatable"),
 			sCreatablePath = oElement.getAttributeNS(sSapNamespace, "creatable-path"),
+			vHere,
 			sName = oElement.getAttribute("Name"),
 			oNavigationPropertyPath,
 			oProperty = {
@@ -927,12 +928,13 @@ sap.ui.define([
 			toRoleName : oElement.getAttribute("ToRole")
 		});
 
+		V2MetadataConverter.annotatable(oAggregate, sName);
 		if (sCreatable) {
 			oNavigationPropertyPath = {"$NavigationPropertyPath" : sName};
 			if (sCreatablePath) {
 				jQuery.sap.log.warning("Inconsistent metadata in '" + oAggregate.url + "'",
 					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property '"
-					+ oAggregate.annotatable.path + "/" + sName + "'", sModuleName);
+					+ oAggregate.annotatable.path + "'", sModuleName);
 			} else if (sCreatable === "true") {
 				oNavigationPropertyPath = null;
 			}
@@ -946,17 +948,13 @@ sap.ui.define([
 			};
 		}
 		if (oNavigationPropertyPath) {
-			if (oAggregate.mEntityType2EntitySetAnnotation[oAggregate.sTypeName]) {
-				oAggregate.mEntityType2EntitySetAnnotation[oAggregate.sTypeName]
-					["@Org.OData.Capabilities.V1.InsertRestrictions"]
-					.NonInsertableNavigationProperties.push(oNavigationPropertyPath);
-			} else {
-				oAggregate.mEntityType2EntitySetAnnotation[oAggregate.sTypeName] = {
-					"@Org.OData.Capabilities.V1.InsertRestrictions" : {
-						"NonInsertableNavigationProperties" : [oNavigationPropertyPath]
-					}
-				};
-			}
+			vHere = V2MetadataConverter.getOrCreateObject(
+				oAggregate.mEntityType2EntitySetAnnotation, oAggregate.sTypeName);
+			vHere = V2MetadataConverter.getOrCreateObject(
+				vHere, "@Org.OData.Capabilities.V1.InsertRestrictions");
+			vHere = V2MetadataConverter.getOrCreateArray(
+				vHere, "NonInsertableNavigationProperties");
+			vHere.push(oNavigationPropertyPath);
 		}
 	}
 
@@ -966,18 +964,91 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypeProperty(oElement, oAggregate) {
-		var sName = oElement.getAttribute("Name"),
+		var sEnumMember,
+			sFilterable = oElement.getAttributeNS(sSapNamespace, "filterable"),
+			sFilterRestriction = oElement.getAttributeNS(sSapNamespace, "filter-restriction"),
+			vHere,
+			sName = oElement.getAttribute("Name"),
 			oProperty = {
 				"$kind" : "Property"
-			};
+			},
+			sRequiredInFilter = oElement.getAttributeNS(sSapNamespace, "required-in-filter"),
+			sSortable = oElement.getAttributeNS(sSapNamespace, "sortable");
 
+		/*
+		 * Assumes that the given annotation term applies to all <EntitySet>s using the current
+		 * <EntityType>. The term's value is a record that contains an array-valued property with
+		 * the given name. Pushes a <code>$PropertyPath</code> pointing to the current <Property>
+		 * element to that array.
+		 */
+		function pushPropertyPath(sTerm, sProperty, sAnnotation) {
+			if (oAggregate.type.$kind === "EntityType") {
+				vHere = V2MetadataConverter.getOrCreateObject(
+					oAggregate.mEntityType2EntitySetAnnotation, oAggregate.sTypeName);
+				vHere = V2MetadataConverter.getOrCreateObject(vHere, sTerm);
+				vHere = V2MetadataConverter.getOrCreateArray(vHere, sProperty);
+				vHere.push({"$PropertyPath" : sName});
+			} else {
+				jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
+					+ oAggregate.url + "'", "sap:" + sAnnotation + " at property '"
+					+ oAggregate.annotatable.path + "'", sModuleName);
+			}
+		}
+
+		oAggregate.type[sName] = oProperty;
 		V2MetadataConverter.processFacetAttributes(oElement, oProperty);
 		processTypedCollection(oElement.getAttribute("Type"), oProperty, oAggregate, oElement);
 
-		oAggregate.type[sName] = oProperty;
 		V2MetadataConverter.annotatable(oAggregate, sName);
-
 		convertAnnotations(oElement, oAggregate, "Property");
+		if (sFilterable === "false") {
+			pushPropertyPath("@Org.OData.Capabilities.V1.FilterRestrictions",
+				"NonFilterableProperties", "filterable");
+		}
+		if (sFilterRestriction) {
+			switch (sFilterRestriction) {
+				case "interval":
+					sEnumMember = "SingleInterval";
+					break;
+				case "multi-value":
+					sEnumMember = "MultiValue";
+					break;
+				case "single-value":
+					sEnumMember = "SingleValue";
+					break;
+				default:
+					jQuery.sap.log.warning("Inconsistent metadata in '" + oAggregate.url + "'",
+						"Unsupported sap:filter-restriction=\"" + sFilterRestriction
+						+ "\" at property '" + oAggregate.annotatable.path + "'", sModuleName);
+			}
+			if (sEnumMember) {
+				if (oAggregate.type.$kind === "EntityType") {
+					vHere = V2MetadataConverter.getOrCreateObject(
+						oAggregate.mEntityType2EntitySetAnnotation, oAggregate.sTypeName);
+					vHere = V2MetadataConverter.getOrCreateArray(
+						vHere, "@com.sap.vocabularies.Common.v1.FilterExpressionRestrictions");
+					vHere.push({
+						"AllowedExpressions" : {
+							"EnumMember"
+							: "com.sap.vocabularies.Common.v1.FilterExpressionType/" + sEnumMember
+						},
+						"Property" : {"$PropertyPath" : sName}
+					});
+				} else {
+					jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
+						+ oAggregate.url + "'", "sap:filter-restriction at property '"
+						+ oAggregate.annotatable.path + "'", sModuleName);
+				}
+			}
+		}
+		if (sRequiredInFilter === "true") {
+			pushPropertyPath("@Org.OData.Capabilities.V1.FilterRestrictions", "RequiredProperties",
+				"required-in-filter");
+		}
+		if (sSortable === "false") {
+			pushPropertyPath("@Org.OData.Capabilities.V1.SortRestrictions",
+				"NonSortableProperties", "sortable");
+		}
 	}
 
 	/**

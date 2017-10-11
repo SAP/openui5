@@ -269,6 +269,13 @@ sap.ui.require([
 						+ sName + "', removing this FunctionImport", undefined,
 						"sap.ui.model.odata.v4.lib._V2MetadataConverter");
 			});
+			["filterable", "sortable"].forEach(function (sAnnotation) {
+				oLogMock.expects("warning")
+					.withExactArgs("Unsupported SAP annotation at a complex type in"
+						+ " '/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata'",
+						"sap:" + sAnnotation + " at property 'GWSAMPLE_BASIC.CT_String/String'",
+						"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+			});
 
 			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
 			return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
