@@ -352,9 +352,9 @@
 			assert.ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible after ENTER on expander");
 			assert.equal(oContainer.getExpanded(), true, "Container3 getExpanded()")
 
-			jQuery("#CB1").focus();
-			qutils.triggerKeydown(jQuery("#CB1").get(0), jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
-			assert.ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after NumpadMinus on control");
+			jQuery("#C3--Exp").focus();
+			qutils.triggerKeydown(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
+			assert.ok(!jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible after NumpadMinus on expander");
 			assert.equal(oContainer.getExpanded(), false, "Container3 getExpanded()")
 
 			jQuery("#C3--Exp").focus();
