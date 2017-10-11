@@ -5,8 +5,8 @@
 /**
  * Initialization Code and shared classes of library sap.ui.core.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
-	function(jQuery, DataType) {
+sap.ui.define(['sap/ui/base/DataType', './Core'],
+	function(DataType) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core

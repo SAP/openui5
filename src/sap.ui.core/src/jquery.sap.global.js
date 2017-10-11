@@ -4344,11 +4344,11 @@
 		 * Sample:
 		 * <pre>
 		 *   var JSONModel = sap.ui.require("sap/ui/model/json/JSONModel");
- 		 * </pre>
- 		 *
- 		 * For modules that are known to be UI5 modules, this signature variant can be used to check whether
- 		 * the module has been loaded.
- 		 *
+		 * </pre>
+		 *
+		 * For modules that are known to be UI5 modules, this signature variant can be used to check whether
+		 * the module has been loaded.
+		 *
 		 * <b>Asynchronous Loading of Multiple Modules</b>
 		 *
 		 * If an array of strings is given and (optionally) a callback function, then the strings
@@ -4368,8 +4368,8 @@
 		 *     ...
 		 *
 		 *   });
- 		 * </pre>
- 		 *
+		 * </pre>
+		 *
 		 * This method uses the same variation of the {@link jQuery.sap.getResourcePath unified resource name}
 		 * syntax that {@link sap.ui.define} uses: module names are specified without the implicit extension '.js'.
 		 * Relative module names are not supported.

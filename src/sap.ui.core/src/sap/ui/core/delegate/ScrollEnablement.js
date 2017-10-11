@@ -9,8 +9,8 @@
  */
 
 // Provides class sap.ui.core.delegate.ScrollEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, Device, BaseObject, ResizeHandler) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ResizeHandler', 'jquery.sap.keycodes', 'jquery.sap.trace'],
+	function(jQuery, Device, BaseObject, ResizeHandler /* ,jQuerySapKeycodes, jQuerySapTrace */) {
 	"use strict";
 
 

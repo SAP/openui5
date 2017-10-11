@@ -3,8 +3,8 @@
  */
 
 //Provides the locale object sap.ui.core.LocaleData
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './Locale'],
-	function(jQuery, BaseObject, Configuration, Locale) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
+	function(jQuery, BaseObject, Locale) {
 	"use strict";
 
 	/**

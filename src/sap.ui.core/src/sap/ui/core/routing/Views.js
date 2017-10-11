@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/core/routing/async/Views', 'sap/ui/core/routing/sync/Views'],
-	function(jQuery, EventProvider, UIComponent, View, asyncViews, syncViews) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UIComponent', 'sap/ui/core/routing/async/Views', 'sap/ui/core/routing/sync/Views'],
+	function(jQuery, EventProvider, UIComponent, asyncViews, syncViews) {
 		"use strict";
 
 		/**
