@@ -1,0 +1,278 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>sap.uxap.ObjectPage</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout">
+    </script>
+    <script id="view1" type="sapui5/xmlview">
+		<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:l="sap.ui.layout" displayBlock="true" height="100%">
+
+            <ObjectPageLayout id="ObjectPageLayout"
+                              showTitleInHeaderContent="true"
+                              alwaysShowContentHeader="false"
+                              isChildPage="true">
+                <headerTitle>
+                    <ObjectPageHeader id="headerForTest"
+                                      headerDesign="Light"
+                                      objectTitle="Denise Smith"
+                                      showTitleSelector="true"
+                                      showMarkers="true"
+                                      markFavorite="true"
+                                      markFlagged="true"
+                                      markChanges="true"
+                                      markChangesPress="handleMarkChangesPress"
+                                      objectSubtitle="Senior Developer"
+                                      objectImageURI="test-resources/sap/uxap/images/imageID_273624.png"
+                                      objectImageShape="Circle"
+                                      isObjectIconAlwaysVisible="false"
+                                      isObjectTitleAlwaysVisible="false"
+                                      isObjectSubtitleAlwaysVisible="false"
+                                      isActionAreaAlwaysVisible="true"
+                                      showPlaceholder="true">
+                        <breadcrumbs>
+                            <m:Breadcrumbs currentLocationText="My Profile">
+                                <m:Link text='My Company' />
+                                <m:Link text='My Department' />
+                                <m:Link text='Employees' />
+                            </m:Breadcrumbs>
+                        </breadcrumbs>
+                        <actions>
+                            <ObjectPageHeaderActionButton icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode"></ObjectPageHeaderActionButton>
+                            <ObjectPageHeaderActionButton icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode"></ObjectPageHeaderActionButton>
+                            <ObjectPageHeaderActionButton icon="sap-icon://decline" press="handleClose" tooltip="Close column"></ObjectPageHeaderActionButton>
+                        </actions>
+                    </ObjectPageHeader>
+                </headerTitle>
+                <headerContent>
+                    <l:VerticalLayout>
+                        <m:Link text="+33 6 4512 5158"/>
+                        <m:Link text="DeniseSmith@sap.com"/>
+                    </l:VerticalLayout>
+        
+                    <l:HorizontalLayout>
+                        <m:Image src="./test-resources/sap/uxap/images/linkedin.png"></m:Image>
+                        <m:Image src="./test-resources/sap/uxap/images/Twitter.png"></m:Image>
+                    </l:HorizontalLayout>
+        
+                    <l:VerticalLayout>
+                        <m:Label text="Hello! I am Tim and I use UxAP"/>
+                        <m:VBox height="63px">
+                            <m:Label text="Achieved goals"/>
+                            <m:ProgressIndicator
+                                    percentValue="30"
+                                    displayValue="30%"
+                                    showValue="true"
+                                    state="None"/>
+                        </m:VBox>
+                    </l:VerticalLayout>
+        
+                    <l:VerticalLayout>
+                        <m:Label text="San Jose, USA"/>
+                    </l:VerticalLayout>
+                </headerContent>
+                <sections>
+                    <ObjectPageSection title="2014 Goals Plan">
+                        <subSections>
+                            <ObjectPageSubSection title=" ">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Personal">
+                        <subSections>
+                            <ObjectPageSubSection title="Connect">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+
+                            <ObjectPageSubSection id="paymentSubSection" title="Payment information">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                                <moreBlocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </moreBlocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection2">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection2">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection2">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection2">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection2">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection2">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection2">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection2">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection2">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection2">
+                                <blocks>
+                                    <m:Button text="To detail detail" press="handleDetailPress" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                </sections>
+            </ObjectPageLayout>
+        </m:View>
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<script>
+	(function (jQuery, App, Page) {
+		var oApp = new App(),
+			myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()});
+
+		oApp.addPage(new Page({
+			title: "Old Header",
+			content: [myView]
+		})).placeAt("content");
+	}(jQuery, sap.m.App, sap.m.Page))
+</script>
+<div id="content"></div>
+</body>
+</html>
