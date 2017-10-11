@@ -54,6 +54,9 @@ sap.ui.define([
 				// call the base component's init function and create the App view
 				UIComponent.prototype.init.apply(this, arguments);
 
+				// Load VersionInfo model promise
+				this.loadVersionInfo();
+
 				// create the views based on the url/hash
 				this.getRouter().initialize();
 
