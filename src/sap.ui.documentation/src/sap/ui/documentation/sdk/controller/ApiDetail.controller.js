@@ -165,6 +165,9 @@ sap.ui.define([
 							iLen,
 							i;
 
+						// Cache api-index data
+						this._aApiIndex = oData;
+
 						// Find entity in api-index
 						for (i = 0, iLen = oData.length; i < iLen; i++) {
 							if (oData[i].name === this._sTopicid || oData[i].name.indexOf(this._sTopicid) === 0) {
@@ -477,7 +480,11 @@ sap.ui.define([
 					oEventsModel.events = this.buildEventsModel(oControlData.events);
 				}
 
-				oControlData.borrowed = this.buildBorrowedModel(sTopicId, aLibsData, oControlData.methods);
+				this.buildBorrowedModel(oControlData.methods, oControlData)
+					.then(function (oData) {
+						oBorrowedMethodsModel.setData(oData.methods, false);
+						this.getModel('borrowedEvents').setData(oData.events, false);
+					}.bind(this));
 
 				if (oControlData.implements && oControlData.implements.length) {
 					oControlData.implementsParsed = oControlData.implements.map(function (item, idx, array) {
@@ -518,8 +525,6 @@ sap.ui.define([
 				oMethodsModel.setDefaultBindingMode("OneWay");
 				this.getModel('events').setData(oEventsModel, false /* no merge with previous data */);
 				this.getModel('events').setDefaultBindingMode("OneWay");
-				oBorrowedMethodsModel.setData(oControlData.borrowed.methods, false);
-				this.getModel('borrowedEvents').setData(oControlData.borrowed.events, false);
 
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
@@ -693,19 +698,22 @@ sap.ui.define([
 				return result;
 			},
 
-			buildBorrowedModel: function (sTopicId, aLibsData, aMethods) {
+			buildBorrowedModel: function (aMethods, oControlData) {
 				var aBaseClassMethods,
 					aBaseClassEvents,
 					sBaseClass,
 					aBorrowChain,
-					oBaseClass,
-					aMethodNames;
+					aMethodNames,
+					aInheritanceChain,
+					aRequiredLibs = [],
+					oItem,
+					i;
 
 				aBorrowChain = {
 					methods: [],
 					events: []
 				};
-				sBaseClass = aLibsData[sTopicId] ? aLibsData[sTopicId].extends : "";
+				sBaseClass = oControlData.extends;
 
 				var fnVisibilityFilter = function (item) {
 					return this._aAllowedMembers.indexOf(item.visibility) !== -1;
@@ -723,48 +731,90 @@ sap.ui.define([
 					return aMethodNames.indexOf(item.name) === -1;
 				};
 
-				var fnMethodsMapper = function (item) {
-					return {
-						name: item.name,
-						link: "#/api/" + sBaseClass + "/methods/" + item.name
-					};
-				};
-
-				var fnEventsMapper = function (item) {
-					return {
-						name: item.name,
-						link: "#/api/" + sBaseClass + "/events/" + item.name
-					};
-				};
-
+				// Find all libs needed to resolve the inheritance chain
+				aInheritanceChain = [sBaseClass /* We need the first base class here also */];
 				while (sBaseClass) {
-					oBaseClass = aLibsData[sBaseClass];
-					if (!oBaseClass) {
-						break;
+					i = this._aApiIndex.length;
+					while (i--) {
+						oItem = this._aApiIndex[i];
+						if (oItem.name === sBaseClass) {
+							sBaseClass = oItem.extends;
+							if (sBaseClass) {
+								aInheritanceChain.push(sBaseClass);
+							}
+							if (aRequiredLibs.indexOf(oItem.lib) === -1) {
+								aRequiredLibs.push(oItem.lib);
+							}
+							break;
+						}
 					}
-
-					aBaseClassMethods = (oBaseClass.methods || []).filter(fnVisibilityFilter)
-						.filter(fnOverrideMethodFilter).map(fnMethodsMapper);
-
-					if (aBaseClassMethods.length) {
-						aBorrowChain.methods.push({
-							name: sBaseClass,
-							methods: aBaseClassMethods
-						});
-					}
-
-					aBaseClassEvents = (oBaseClass.events || []).filter(fnVisibilityFilter).map(fnEventsMapper);
-					if (aBaseClassEvents.length) {
-						aBorrowChain.events.push({
-							name: sBaseClass,
-							events: aBaseClassEvents
-						});
-					}
-
-					sBaseClass = oBaseClass.extends;
 				}
 
-				return aBorrowChain;
+				// Generate promises for all required libraries
+				var aPromises = aRequiredLibs.map(function (sLibName) {
+					return APIInfo.getLibraryElementsJSONPromise(sLibName);
+				});
+
+				// When all required libraries
+				return Promise.all(aPromises).then(function (aResult) {
+					// Combine in one array
+					var aAllLibraryElements = [];
+					aResult.forEach(function (aSingleLibraryElements) {
+						aAllLibraryElements = aAllLibraryElements.concat(aSingleLibraryElements);
+					});
+
+					// loop chain and collect data
+					aInheritanceChain.forEach(function (sBaseClass) {
+						var oBaseClass,
+							i = aAllLibraryElements.length;
+
+						while (i--) {
+							if (aAllLibraryElements[i].name === sBaseClass) {
+								oBaseClass = aAllLibraryElements[i];
+								break;
+							}
+						}
+
+						var fnMethodsMapper = function (item) {
+							return {
+								name: item.name,
+								link: "#/api/" + sBaseClass + "/methods/" + item.name
+							};
+						};
+
+						var fnEventsMapper = function (item) {
+							return {
+								name: item.name,
+								link: "#/api/" + sBaseClass + "/events/" + item.name
+							};
+						};
+
+						if (oBaseClass) {
+
+							aBaseClassMethods = (oBaseClass.methods || []).filter(fnVisibilityFilter)
+								.filter(fnOverrideMethodFilter).map(fnMethodsMapper);
+
+							if (aBaseClassMethods.length) {
+								aBorrowChain.methods.push({
+									name: sBaseClass,
+									methods: aBaseClassMethods
+								});
+							}
+
+							aBaseClassEvents = (oBaseClass.events || []).filter(fnVisibilityFilter).map(fnEventsMapper);
+							if (aBaseClassEvents.length) {
+								aBorrowChain.events.push({
+									name: sBaseClass,
+									events: aBaseClassEvents
+								});
+							}
+						}
+					});
+
+					return aBorrowChain;
+
+				});
+
 			},
 
 			/**
