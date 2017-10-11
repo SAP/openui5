@@ -55,6 +55,9 @@ sap.ui.define([
 						developerMode: false
 					}
 				});
+				oRta.attachEvent('stop', function() {
+					oRta.destroy();
+				});
 				oRta.start();
 			});
 		}
