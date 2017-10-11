@@ -1,7 +1,19 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe('sap.m.MultiInput', function() {
 	"use strict";
+
+	var bPhone = null;
+
+	it("should load test page", function () {
+		browser.executeScript(function () {
+			return sap.ui.Device.system.phone;
+		}).then(function (response) {
+			bPhone = response;
+		});
+
+		expect(takeScreenshot()).toLookAs("initial");
+	});
 
 	//Initial Mode
 	it("should select Compact mode", function () {
@@ -45,12 +57,17 @@ describe('sap.m.MultiInput', function() {
 	//Multiple line enabled  selected
 	it("should focus on Multi input enabled tokens", function () {
 		element(by.id("mI5")).click();
-		expect(takeScreenshot(element(by.id("mI5-border")))).toLookAs("multi-input-line-selected");
+		expect(takeScreenshot()).toLookAs("multi-input-line-selected");
+		if (bPhone) {
+			element(by.id("mI5-popup-closeButton")).click();
+		}
 	});
 
 	//Multiinput warning
-	it("should show on multiInput warrning", function () {
-		expect(takeScreenshot(element(by.id("mIWarning")))).toLookAs("multi-input-warrning-not-selected");
+	it("should show on multiInput warning", function () {
+		browser.executeScript('document.getElementById("mIWarning").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id("mIWarning")))).toLookAs("multi-input-warning-not-selected");
+		});
 	});
 
 	//Multiinput error
