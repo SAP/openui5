@@ -152,6 +152,15 @@
 			"license": "Apache 2.0",
 			"type": "Tool"
 		},
+		"ui5-codecompletion": {
+			"name": "ui5-codecompletion",
+			"description": "node module (CLI) to configure WebStorm with UI5 code completion in *.js files",
+			"githubLink": "https://github.com/vobujs/ui5-codecompletion",
+			"documentationLink": "https://github.com/vobujs/ui5-codecompletion",
+			"owner": "vobu",
+			"license": "WTFPL",
+			"type": "Tool"
+		},
 		"yii2-openui5": {
 			"name": "yii2-openui5",
 			"description": "Yii2-openui5 is extension for Yii2 Framework to integrate with OpenUI5.",
