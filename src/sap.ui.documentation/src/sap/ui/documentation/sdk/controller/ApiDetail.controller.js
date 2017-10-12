@@ -10,8 +10,10 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/uxap/ObjectPageSubSection",
-		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
-	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, JSDocUtil) {
+		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
+	"sap/ui/documentation/sdk/controller/util/APIInfo"
+	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection,
+				 JSDocUtil, APIInfo) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -20,6 +22,7 @@ sap.ui.define([
 			EVENT: 'event',
 			PARAM: 'param',
 			NOT_AVAILABLE: 'N/A',
+			NOT_FOUND: 'Not found',
 			ANNOTATIONS_LINK: 'http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html',
 			ANNOTATIONS_NAMESPACE_LINK: 'http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/vocabularies/',
 			ANNOTATION_DESCRIPTION_STRIP_REGEX: /<i>XML[\s\S].*Example/,
@@ -68,6 +71,9 @@ sap.ui.define([
 				this._objectPage = this.byId("apiDetailObjectPage");
 				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
 
+				this._oLibsModel = new JSONModel();
+				this._oLibsModel.setSizeLimit(1000000);
+
 				this.setModel(new JSONModel(), "topics");
 				this.setModel(new JSONModel(), "constructorParams");
 				this.setModel(new JSONModel(), 'methods');
@@ -75,6 +81,24 @@ sap.ui.define([
 				this.setModel(new JSONModel(), "entity");
 				this.setModel(new JSONModel(), "borrowedMethods");
 				this.setModel(new JSONModel(), "borrowedEvents");
+
+				this._objectPage.attachEvent("_sectionChange", function (oEvent) {
+					var sSection = oEvent.getParameter("section").getTitle().toLowerCase(),
+						sSubSection = (oEvent.getParameter("subsection") && oEvent.getParameter("subsection").getTitle() !== 'Overview') ? oEvent.getParameter("subsection").getTitle() : '';
+					if (sSection === 'properties') {
+						sSection = 'controlProperties';
+					}
+					if (sSection === 'fields') {
+						sSection = 'properties';
+					}
+					this.getRouter().stop();
+					this.getRouter().navTo("apiId", {
+						id: this._sTopicid,
+						entityType: sSection,
+						entityId: sSubSection
+					}, true);
+					this.getRouter().initialize(true);
+				}, this);
 			},
 
 			onAfterRendering: function () {
@@ -134,33 +158,34 @@ sap.ui.define([
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
-				oComponent.loadVersionInfo()
-					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
-					.then(function () {
-						var oLibsData = this.getModel("libsData").getData(),
+				oComponent.loadVersionInfo().then(oComponent.fetchAPIIndex.bind(oComponent))
+					.then(function (oData) {
+						var oEntityData,
 							bFound = false,
-							sEntity;
+							iLen,
+							i;
 
-						// Try to discover if entity exist
-						if (!oLibsData[this._sTopicid]) {
-							// Not an exact match - try to resolve partial namespace
-							for (sEntity in oLibsData) {
-								if (oLibsData.hasOwnProperty(sEntity) && sEntity.indexOf(this._sTopicid) === 0) {
-									bFound = true;
-									break;
-								}
+						// Find entity in api-index
+						for (i = 0, iLen = oData.length; i < iLen; i++) {
+							if (oData[i].name === this._sTopicid || oData[i].name.indexOf(this._sTopicid) === 0) {
+								oEntityData = oData[i];
+								bFound = true;
+								break;
 							}
-						} else {
-							bFound = true;
 						}
 
-						// If the entity does not exist in the available libs we redirect to the not found page and
-						// stop the immediate execution of this method.
-						if (!bFound) {
-							this._objectPage.setBusy(false);
-							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
-							return;
+						if (bFound) {
+							// Load API.json only for selected lib
+							return APIInfo.getLibraryElementsJSONPromise(oEntityData.lib).then(function (oData) {
+								this._aLibsData = oData; // Cache received data
+								return Promise.resolve(); // We have found the symbol and loaded the corresponding api.json
+							}.bind(this));
 						}
+
+						// If we are here - the object does not exist so we reject the promise.
+						return Promise.reject(this.NOT_FOUND);
+					}.bind(this))
+					.then(function () {
 						// Cache allowed members
 						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
@@ -191,6 +216,13 @@ sap.ui.define([
 						});
 
 						this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
+					}.bind(this))
+					.catch(function (sReason) {
+						// If the object does not exist in the available libs we redirect to the not found page and
+						if (sReason === this.NOT_FOUND) {
+							this._objectPage.setBusy(false);
+							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+						}
 					}.bind(this));
 
 			},
@@ -335,13 +367,16 @@ sap.ui.define([
 					var oEntityData = this._getEntityData(sTopicId, oControlsData);
 
 					this.getModel("entity").setData(oEntityData, false);
+
+					// Build header matrix when all the needed data is ready
+					this._buildHeaderMatrix(this.getModel("topics").getData(), oEntityData);
 				}.bind(this));
 
 			},
 
 			_bindData: function (sTopicId) {
-				var aLibsData = this.getOwnerComponent().getModel("libsData").getData(),
-					oControlData = aLibsData[sTopicId],
+				var aLibsData = this._aLibsData,
+					oControlData,
 					aTreeData = this.getOwnerComponent().getModel("treeData").getData(),
 					aControlChildren = this._getControlChildren(aTreeData, sTopicId),
 					oModel,
@@ -351,7 +386,16 @@ sap.ui.define([
 					oMethodsModel,
 					oEventsModel = {events: []},
 					oUi5Metadata,
+					iLen,
 					i;
+
+				// Find entity in loaded libs data
+				for (i = 0, iLen = aLibsData.length; i < iLen; i++) {
+					if (aLibsData[i].name === this._sTopicid) {
+						oControlData = aLibsData[i];
+						break;
+					}
+				}
 
 				if (aControlChildren) {
 					if (!oControlData) {
@@ -528,6 +572,122 @@ sap.ui.define([
 				}
 			},
 
+			// Header blocks creator functions begin
+			_getObjectAttributeBlock: function (title, text) {
+				return new sap.m.ObjectAttribute({
+					title: title,
+					text: text
+				}).addStyleClass("sapUiTinyMarginBottom");
+			},
+			_getControlSampleBlock: function (oControlData, oEntityData) {
+				return new sap.m.HBox({
+					items: [
+				          new sap.m.Label({design: "Bold", text: "Control Sample:"}),
+				          new sap.m.Link({emphasized: true, text: oEntityData.sample, visible: oEntityData.hasSample, href: "#/entity/" + oControlData.name}),
+				          new sap.m.Text({text: oEntityData.sample, visible: !oEntityData.hasSample})
+					]
+				}).addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
+			},
+			_getDocumentationBlock: function (oControlData, oEntityData) {
+				return new sap.m.HBox({
+					items: [
+				          new sap.m.Label({design: "Bold", text:"Documentation:"}),
+				          new sap.m.Link({emphasized: true, text: oControlData.docuLinkText, href: "#/topic/" + oControlData.docuLink})
+					]
+				}).addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
+			},
+			_getExtendsBlock: function (oControlData, oEntityData) {
+				return new sap.m.HBox({
+					items: [
+				          new sap.m.Label({text: "Extends:"}),
+				          new sap.m.Link({text: oControlData.extendsText, href: "#/api/" + oControlData.extendsText, visible: oControlData.isDerived}),
+				          new sap.m.Text({text: oControlData.extendsText, visible: !oControlData.isDerived})
+					]
+				}).addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
+			},
+			_getImplementsBlock: function (oControlData, oEntityData) {
+				var aItems = [];
+				oControlData.implementsParsed.forEach(function (element, index, array) {
+					aItems.push(new sap.m.HBox({
+						items: [
+							new sap.m.Link({text: element.name, href: "#/api/" + element.href}),
+							new sap.m.Text({text: ",", visible: !element.isLast})
+						]
+					}));
+				});
+				return new sap.m.HBox({
+					items: [
+				          new sap.m.Label({text: "Implements:"}),
+				          new sap.m.HBox({items: aItems})
+					]
+				}).addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
+			},
+			_getModuleBlock: function (oControlData, oEntityData) {
+				return this._getObjectAttributeBlock("Module", oControlData.module);
+			},
+			_getVisibilityBlock: function (oControlData, oEntityData) {
+				return this._getObjectAttributeBlock("Visibility", oControlData.visibility);
+			},
+			_getAvailableSinceBlock: function (oControlData, oEntityData) {
+				return this._getObjectAttributeBlock("Available since", oControlData.sinceText);
+			},
+			_getApplicationComponentBlock: function (oControlData, oEntityData) {
+				return this._getObjectAttributeBlock("Application Component", oEntityData.appComponent);
+			},
+			// Header blocks creator functions end
+
+			/**
+			 * Builds the header data structure to display in 3x3 grid matrix
+			 * @param {object} oControlData main control data object source
+			 * @param {object} oEntityData additional data object source
+			 * @private
+			 */
+			_buildHeaderMatrix: function (oControlData, oEntityData) {
+				var aHeaderControls = [[], [], []], i, j,
+					aHeaderBlocksInfo = [
+						{creator: "_getControlSampleBlock", exists: oControlData.isClass},
+						{creator: "_getDocumentationBlock", exists: oControlData.docuLink !== undefined},
+						{creator: "_getExtendsBlock", exists: oControlData.isClass},
+						{creator: "_getImplementsBlock", exists: oControlData.hasImplementsData},
+						{creator: "_getModuleBlock", exists: true},
+						{creator: "_getVisibilityBlock", exists: oControlData.visibility},
+						{creator: "_getAvailableSinceBlock", exists: true},
+						{creator: "_getApplicationComponentBlock", exists: true}
+					],
+					fillMatrix = function() {
+						var iControlsAdded = 0,
+							iIndexToAdd,
+							getIndexToAdd = function(iControlsAdded) {
+								if (iControlsAdded <= 3) {
+									return 0;
+								} else if (iControlsAdded <= 6) {
+									return 1;
+								}
+								return 2;
+							},
+							that = this;
+						aHeaderBlocksInfo.forEach(function(oHeaderBlockInfo) {
+							var oControlBlock;
+							if (oHeaderBlockInfo.exists) {
+								oControlBlock = that[oHeaderBlockInfo.creator](oControlData, oEntityData);
+								iIndexToAdd = getIndexToAdd(++iControlsAdded);
+								aHeaderControls[iIndexToAdd].push(oControlBlock);
+							}
+						});
+					}.bind(this);
+				fillMatrix();
+				for (i = 0; i < aHeaderControls.length; i++) {
+					var oVL = this.getView().byId("headerColumn" + i);
+					oVL.removeAllContent();
+					if (aHeaderControls[i].length > 0) {
+						oVL.setVisible(true);
+						for (j = 0; j < aHeaderControls[i].length; j++) {
+							oVL.addContent(aHeaderControls[i][j]);
+						}
+					}
+				}
+			},
+
 			_getControlChildren: function (aTreeData, sTopicId) {
 				for (var i = 0; i < aTreeData.length; i++) {
 					if (aTreeData[i].name === sTopicId) {
@@ -537,8 +697,19 @@ sap.ui.define([
 			},
 
 			_addChildrenDescription: function (aLibsData, aControlChildren) {
+				function getDataByName (sName) {
+					var iLen,
+						i;
+
+					for (i = 0, iLen = aLibsData.length; i < iLen; i++) {
+						if (aLibsData[i].name === sName) {
+							return aLibsData[i];
+						}
+					}
+					return false;
+				}
 				for (var i = 0; i < aControlChildren.length; i++) {
-					aControlChildren[i].description = aLibsData[aControlChildren[i].name].description;
+					aControlChildren[i].description = getDataByName(aControlChildren[i].name).description;
 					aControlChildren[i].link = "{@link " + aControlChildren[i].name + "}";
 				}
 			},

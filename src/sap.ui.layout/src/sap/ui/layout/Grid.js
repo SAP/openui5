@@ -293,7 +293,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		 * @protected
 		 */
 		Grid.prototype.getAccessibilityInfo = function() {
-			return {children: this.getContent()};
+			return {
+				children: this.getContent().filter(function(oContent) {
+					return oContent.$().is(':visible');
+				})
+			};
 		};
 
 	}());

@@ -1609,6 +1609,10 @@ sap.ui.define([
 				oConditionGrid.oFormatter = DateFormat.getTimeInstance({strictParsing : true});
 				oControl = new sap.m.TimePicker(params);
 				break;
+			case "datetime":
+				oConditionGrid.oFormatter = DateFormat.getDateTimeInstance({strictParsing : true});
+				oControl = new sap.m.DateTimePicker(params);
+				break;
 			default:
 				oConditionGrid.oFormatter = null;
 				oControl = new sap.m.Input(params);

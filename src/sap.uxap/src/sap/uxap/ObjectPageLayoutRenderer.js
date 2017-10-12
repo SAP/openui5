@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
-	function (Renderer, ObjectPageHeaderRenderer) {
+sap.ui.define(["sap/ui/Device"],
+	function (Device) {
 		"use strict";
 
 		/**
@@ -36,13 +36,16 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			if (bTitleClickable) {
 				oRm.addClass("sapUxAPObjectPageLayoutTitleClickEnabled");
 			}
+			if (oAnchorBar) {
+				oRm.addClass("sapUxAPObjectPageLayoutWithNavigation");
+			}
 			oRm.writeClasses();
 			oRm.addStyle("height", oControl.getHeight());
 			oRm.writeStyles();
 			oRm.write(">");
 
 			// custom scrollbar
-			if (sap.ui.Device.system.desktop) {
+			if (Device.system.desktop) {
 				oRm.renderControl(oControl._getCustomScrollBar().addStyleClass("sapUxAPObjectPageCustomScroller"));
 			}
 

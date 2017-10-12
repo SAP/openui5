@@ -88,7 +88,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 					 * Control in the stretching part of the layout.
 					 */
 					flexContent: {type: "sap.ui.core.Control", multiple: false}
-				}
+				},
+				designTime: true
 			}
 		});
 

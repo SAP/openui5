@@ -10,7 +10,11 @@ sap.ui.require([
 	'sap/ui/fl/FakeLrepLocalStorage',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/qunit/RtaQunitUtils',
-	"sap/ui/fl/ChangePersistenceFactory"
+	"sap/ui/fl/ChangePersistenceFactory",
+	'sap/ui/thirdparty/sinon',
+	'sap/ui/thirdparty/sinon-ie',
+	'sap/ui/thirdparty/sinon-qunit'
+
 ], function(
 	RuntimeAuthoring,
 	FakeLrepConnector,
@@ -18,11 +22,19 @@ sap.ui.require([
 	FakeLrepLocalStorage,
 	OverlayRegistry,
 	RtaQunitUtils,
-	ChangePersistenceFactory
+	ChangePersistenceFactory,
+	sinon
 ) {
 	"use strict";
 
+	var sandbox = sinon.sandbox.create();
+
 	QUnit.start();
+
+	// FIXME: change as soon as a public method for this is available
+	var fnWaitForLrepSerialization = function() {
+		return this.oRta._oSerializer._lastPromise;
+	};
 
 	FakeLrepConnectorLocalStorage.enableFakeConnector();
 	QUnit.module("Given RTA is started...", {
@@ -55,6 +67,7 @@ sap.ui.require([
 			this.oRta.destroy();
 			this._oCompCont.destroy();
 			FakeLrepLocalStorage.deleteChanges();
+			sandbox.restore();
 		}
 	});
 
@@ -72,9 +85,11 @@ sap.ui.require([
 			var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 			if (oFirstExecutedCommand &&
 				oFirstExecutedCommand.getName() === 'remove') {
-				assert.strictEqual(oFieldToHide.getVisible(), false, " then field is not visible");
-				assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
-				this.oRta.stop();
+				fnWaitForLrepSerialization.call(this).then(function() {
+					assert.strictEqual(oFieldToHide.getVisible(), false, " then field is not visible");
+					assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+					this.oRta.stop();
+				}.bind(this));
 			}
 		}.bind(this));
 
@@ -96,10 +111,12 @@ sap.ui.require([
 			var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 			if (oFirstExecutedCommand &&
 				oFirstExecutedCommand.getName() === "move") {
-				var iIndex = this.oGroup.getGroupElements().length - 1;
-				assert.equal(this.oGroup.getGroupElements()[iIndex].getId(), this.oField.getId(), " then the field is moved");
-				assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
-				this.oRta.stop();
+				fnWaitForLrepSerialization.call(this).then(function() {
+					var iIndex = this.oGroup.getGroupElements().length - 1;
+					assert.equal(this.oGroup.getGroupElements()[iIndex].getId(), this.oField.getId(), " then the field is moved");
+					assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+					this.oRta.stop();
+				}.bind(this));
 			}
 		}.bind(this));
 
@@ -129,17 +146,19 @@ sap.ui.require([
 					var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 					if (oFirstExecutedCommand &&
 						oFirstExecutedCommand.getName() === "rename") {
-						assert.strictEqual(this.oGroup.getLabel(), "Test", "then title of the group is Test");
-						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+						fnWaitForLrepSerialization.call(this).then(function() {
+							assert.strictEqual(this.oGroup.getLabel(), "Test", "then title of the group is Test");
+							assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 
-						sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
-							if (mParams.overlay === this.oGroupOverlay) {
-								assert.strictEqual(this.oGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
-								$editableField = $groupOverlay.find(".sapUiRtaEditableField");
-								assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
-								this.oRta.stop().then(done);
-							}
-						}, this);
+							sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
+								if (mParams.overlay === this.oGroupOverlay) {
+									assert.strictEqual(this.oGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
+									$editableField = $groupOverlay.find(".sapUiRtaEditableField");
+									assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
+									this.oRta.stop().then(done);
+								}
+							}, this);
+						}.bind(this));
 					}
 				}.bind(this));
 
@@ -178,17 +197,19 @@ sap.ui.require([
 				oCommandStack.attachModified(function(oEvent) {
 					var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 					if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
-						assert.strictEqual(this.oField._getLabel().getText(), "Test", "then label of the group element is Test");
-						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+						fnWaitForLrepSerialization.call(this).then(function() {
+							assert.strictEqual(this.oField._getLabel().getText(), "Test", "then label of the group element is Test");
+							assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 
-						sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
-							if (mParams.overlay === this.oFieldOverlay) {
-								assert.strictEqual(document.activeElement, this.oFieldOverlay.getDomRef(), " and focus is on field overlay");
-								$editableField = $fieldOverlay.find(".sapUiRtaEditableField");
-								assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
-								this.oRta.stop().then(done);
-							}
-						}, this);
+							sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
+								if (mParams.overlay === this.oFieldOverlay) {
+									assert.strictEqual(document.activeElement, this.oFieldOverlay.getDomRef(), " and focus is on field overlay");
+									$editableField = $fieldOverlay.find(".sapUiRtaEditableField");
+									assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
+									this.oRta.stop().then(done);
+								}
+							}, this);
+						}.bind(this));
 					}
 				}.bind(this));
 
@@ -243,6 +264,7 @@ sap.ui.require([
 	QUnit.test("when adding a group element (via context menu) - reveal", function(assert) {
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
 		var done = assert.async();
+		var oFieldToRemove;
 
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oField);
 		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
@@ -267,14 +289,18 @@ sap.ui.require([
 						aCommands.length  === 3) {
 						sap.ui.getCore().applyChanges();
 
-						var oGroupElements = this.oGeneralGroup.getGroupElements();
-						var iIndex = oGroupElements.indexOf(this.oField) + 1;
-						assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
-						assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-						assert.equal(oFieldToRemove.fieldLabel, oFieldToAdd.label, "the new field is the one that got deleted");
-						assert.equal(oChangePersistence.getDirtyChanges().length, 3, "then there are 3 dirty change in the FL ChangePersistence");
+						fnWaitForLrepSerialization.call(this).then(function() {
+							var oGroupElements = this.oGeneralGroup.getGroupElements();
+							var iIndex = oGroupElements.indexOf(this.oField) + 1;
+							assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
+							assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
+							assert.equal(oFieldToRemove.fieldLabel, oFieldToAdd.label, "the new field is the one that got deleted");
+							assert.equal(oChangePersistence.getDirtyChanges().length, 3, "then there are 3 dirty change in the FL ChangePersistence");
+						}.bind(this))
 
-						this.oRta.stop().then(done);
+						.then(this.oRta.stop.bind(this.oRta))
+
+						.then(done);
 					}
 				}.bind(this));
 
@@ -286,8 +312,9 @@ sap.ui.require([
 		}.bind(this));
 
 		// to reveal we have to remove the field first (otherwise it would be addODataProperty)
-		var oFieldToRemove = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
+		oFieldToRemove = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
 		var oFieldToHideOverlay = OverlayRegistry.getOverlay(oFieldToRemove);
+		sandbox.stub(oFieldToHideOverlay, "isVisibleInDom").returns(false);
 		oFieldToHideOverlay.focus();
 		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		oFieldToHideOverlay.focus();

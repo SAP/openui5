@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.form.Form.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library'],
+	function(Control, library) {
 	"use strict";
 
 	/**
@@ -178,7 +178,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 	Form.prototype.setToolbar = function(oToolbar) {
 
 		// for sap.m.Toolbar Auto-design must be set to transparent
-		oToolbar = sap.ui.layout.form.FormHelper.setToolbar.call(this, oToolbar);
+		oToolbar = library.form.FormHelper.setToolbar.call(this, oToolbar);
 
 		this.setAggregation("toolbar", oToolbar);
 
@@ -239,4 +239,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 
 	return Form;
 
-}, /* bExport= */ true);
+});

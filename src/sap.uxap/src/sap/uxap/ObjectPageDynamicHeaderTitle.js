@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.uxap.ObjectPageDynamicHeaderTitle.
-sap.ui.define(['jquery.sap.global', './library', 'sap/uxap/ObjectPageDynamicHeaderContent', 'sap/m/Title'],
-	function(jQuery, library, ObjectPageDynamicHeaderContent, Title) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/uxap/ObjectPageDynamicHeaderContent'],
+	function(jQuery, library, ObjectPageDynamicHeaderContent) {
 		"use strict";
 
 		try {
@@ -41,6 +41,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/uxap/ObjectPageDynamicHead
 			interfaces : ["sap.uxap.IHeaderTitle"],
 			library : "sap.uxap"
 		}});
+
+		/**
+		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
+		 * @returns {*}
+		 */
+		ObjectPageDynamicHeaderTitle.prototype.isDynamic = function () {
+			return true;
+		};
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.

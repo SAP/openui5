@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(['sap/ui/unified/CalendarLegend'],
+	function(CalendarLegend) {
 	"use strict";
 
 	/**
@@ -151,6 +151,41 @@ sap.ui.define([],
 		oRm.write("></div>"); // close color
 	};
 
-	return CalendarLegendRenderer;
+	/**
+	 * Utility method to add accessibility info related to the CalendarDayType.
+	 * If the given legend item has a text, it is used as aria-label,
+	 * otherwise the default text for the given legend type is used as aria-describedby.
+	 * Currently used by TimesRowRenderer/MonthsRowRenderer to enrich the accessibility properties, but can be used from
+	 * other calendar controls as well.
+	 * @param {Object} mAccProps the accessibility map to add accessibility properties to
+	 * @param {string} sType The Type as per {sap.ui.unified.CalendarDayType}
+	 * @param {sap.ui.unified.CalendarLegend} [oLegend] a reference to the calendar legend. If not given, the built-in
+	 * sap.ui.unified.CalendarDayType.Type<X> text will be used and added as aria-describedby.
+	 * @private
+	 */
+	CalendarLegendRenderer.addCalendarTypeAccInfo = function (mAccProps, sType, oLegend) {
+		var sTypeLabelText,
+			oStaticLabel;
+
+		// as legend must not be rendered add text of type
+		if (oLegend) {
+			var oLegendItem = oLegend._getItemByType(sType);
+			if (oLegendItem) {
+				sTypeLabelText = oLegendItem.getText();
+			}
+		}
+
+		if (sTypeLabelText) {
+			mAccProps["label"] = mAccProps["label"] ? mAccProps["label"] + "; " + sTypeLabelText : sTypeLabelText;
+		} else {
+			//use static invisible labels - "Type 1", "Type 2"
+			oStaticLabel = CalendarLegend.getTypeAriaText(sType);
+			if (oStaticLabel) {
+				mAccProps["describedby"] = mAccProps["describedby"] ? mAccProps["describedby"] + " " + oStaticLabel.getId() : oStaticLabel.getId();
+			}
+		}
+	};
+
+		return CalendarLegendRenderer;
 
 }, /* bExport= */ true);

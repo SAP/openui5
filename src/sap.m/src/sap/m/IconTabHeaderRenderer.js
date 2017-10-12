@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/m/library'],
-	function(jQuery, library) {
+sap.ui.define(['sap/m/library'],
+	function(library) {
 	"use strict";
 
 	// shortcut for sap.m.IconTabFilterDesign
@@ -29,10 +29,15 @@ sap.ui.define(['jquery.sap.global', 'sap/m/library'],
 		}
 
 		var aItems = oControl.getItems(),
+			iItemsCount = aItems.length,
+			aVisibleTabFilters = oControl.getVisibleTabFilters(),
+			iVisibleTabFiltersCount = aVisibleTabFilters.length,
+			iVisibleTabFilterIndex = 0,
 			bTextOnly = oControl._checkTextOnly(aItems),
 			bNoText = oControl._checkNoText(aItems),
 			bInLine = oControl._checkInLine(aItems) || oControl.isInlineMode(),
 			bShowOverflowSelectList = oControl.getShowOverflowSelectList(),
+			oItem,
 			bIsHorizontalDesign,
 			bHasHorizontalDesign;
 
@@ -76,9 +81,9 @@ sap.ui.define(['jquery.sap.global', 'sap/m/library'],
 		oRM.renderControl(oControl._getScrollingArrow("left"));
 
 		// render scroll container on touch devices
-		oRM.write("<div id='" + oControl.getId() + "-scrollContainer' class='sapMITBScrollContainer'>");
+		oRM.write("<div id='" + oControl.getId() + "-scrollContainer' aria-hidden='true' class='sapMITBScrollContainer'>");
 
-		oRM.write("<div id='" + oControl.getId() + "-head'");
+		oRM.write("<div id='" + oControl.getId() + "-head' aria-hidden='true' ");
 		oRM.addClass("sapMITBHead");
 
 		if (bTextOnly) {
@@ -96,17 +101,22 @@ sap.ui.define(['jquery.sap.global', 'sap/m/library'],
 		oRM.writeClasses();
 		oRM.write(">");
 
-		jQuery.each(aItems, function(iIndex, oItem) {
+		for (var i = 0; i < iItemsCount; i++) {
+			oItem = aItems[i];
 
-			oItem.render(oRM);
+			oItem.render(oRM, iVisibleTabFilterIndex, iVisibleTabFiltersCount);
 
 			if (oItem instanceof sap.m.IconTabFilter) {
 				bIsHorizontalDesign = oItem.getDesign() === IconTabFilterDesign.Horizontal;
 				if (bIsHorizontalDesign) {
 					bHasHorizontalDesign = true;
 				}
+
+				if (oItem.getVisible()) {
+					iVisibleTabFilterIndex++;
+				}
 			}
-		});
+		}
 
 		oRM.write("</div>");
 

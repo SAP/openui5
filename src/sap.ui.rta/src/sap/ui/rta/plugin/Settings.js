@@ -51,8 +51,9 @@ sap.ui.define([
 			return false;
 		}
 
-		var oSettingsAction = this.getAction(oOverlay);
-		if (oSettingsAction && oSettingsAction.handler) {
+		var vSettingsAction = this.getAction(oOverlay);
+		// If no additional actions are defined in settings, a handler must be present to make it available
+		if (vSettingsAction && (vSettingsAction instanceof Array || vSettingsAction.handler)){
 			return this.hasStableId(oOverlay);
 		}
 
@@ -86,7 +87,7 @@ sap.ui.define([
 		var sElementId;
 
 		var aUnsavedChanges = this.getCommandStack().getAllExecutedCommands().filter(function(oCommand) {
-			sElementId = oCommand.getElementId();
+			sElementId = oCommand.getElementId && oCommand.getElementId() || oCommand.getElement && oCommand.getElement().getId();
 			if (sElementId === sId && aChangeTypes.indexOf(oCommand.getChangeType()) >= 0) {
 				return true;
 			}
@@ -100,11 +101,11 @@ sap.ui.define([
 	/**
 	 * Retrieves the available actions from the DesignTime Metadata and creates
 	 * the corresponding commands for them.
-	 * TODO: support for multiple actions
 	 * @param  {sap.ui.dt.ElementOverlay[]} aSelectedOverlays Target Overlays of the action
-	 * @return {Promise}                   Returns promise resolving with the creation of the commands
+	 * @param  {function} [fnHandler] handler function for the case of multiple settings actions
+	 * @return {Promise} Returns promise resolving with the creation of the commands
 	 */
-	Settings.prototype.handler = function(aSelectedOverlays) {
+	Settings.prototype.handler = function(aSelectedOverlays, fnHandler) {
 		var oSettingsCommand, oAppDescriptorCommand, oCompositeCommand;
 		var oElement = aSelectedOverlays[0].getElementInstance();
 		var mPropertyBag = {
@@ -112,47 +113,64 @@ sap.ui.define([
 			styleClass: Utils.getRtaStyleClassName()
 		};
 
-		return aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler(oElement, mPropertyBag).then(function(aChanges) {
-			oCompositeCommand = this.getCommandFactory().getCommandFor(oElement, "composite");
-			aChanges.forEach(function(mChange) {
-				var mChangeSpecificData = mChange.changeSpecificData;
-				// Flex Change
-				if (mChangeSpecificData.changeType){
-					var sVariantManagementReference;
-					var mSelectorControl = mChange.selectorControl;
-					var oChangeHandler = this._getChangeHandlerForControlType(mSelectorControl.controlType, mChangeSpecificData.changeType);
-					if (aSelectedOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
-						sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
-					}
-					oSettingsCommand = this.getCommandFactory().getCommandFor(
-						mSelectorControl,
-						"settings",
-						mChangeSpecificData,
-						undefined,
-						sVariantManagementReference);
-					oCompositeCommand.addCommand(oSettingsCommand);
-				// App Descriptor Change
-				} else if (mChangeSpecificData.appDescriptorChangeType){
-					var oComponent = mChange.appComponent;
-					var mManifest = oComponent.getManifest();
-					var sReference = mManifest["sap.app"].id;
-					oAppDescriptorCommand = this.getCommandFactory().getCommandFor(
-						oElement,
-						"appDescriptor",
-						{
-							reference : sReference,
-							appComponent : oComponent,
-							changeType : mChangeSpecificData.appDescriptorChangeType,
-							parameters : mChangeSpecificData.content.parameters,
-							texts : mChangeSpecificData.content.texts
+		if (!fnHandler){
+			fnHandler = aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
+			if (!fnHandler) {
+				throw new Error("Handler not found for settings action");
+			}
+		}
+
+		return fnHandler(oElement, mPropertyBag).then(function(aChanges) {
+			if (aChanges.length > 0){
+				oCompositeCommand = this.getCommandFactory().getCommandFor(oElement, "composite");
+				aChanges.forEach(function(mChange) {
+					var mChangeSpecificData = mChange.changeSpecificData;
+					// Flex Change
+					if (mChangeSpecificData.changeType){
+						var sVariantManagementReference;
+						var vSelectorControl = mChange.selectorControl;
+						var sControlType;
+						if (vSelectorControl.controlType){
+							sControlType = vSelectorControl.controlType;
+						} else {
+							sControlType = vSelectorControl.getMetadata().getName();
 						}
-					);
-					oCompositeCommand.addCommand(oAppDescriptorCommand);
+						var oChangeHandler = this._getChangeHandlerForControlType(sControlType, mChangeSpecificData.changeType);
+						if (aSelectedOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
+							sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
+						}
+						oSettingsCommand = this.getCommandFactory().getCommandFor(
+							vSelectorControl,
+							"settings",
+							mChangeSpecificData,
+							undefined,
+							sVariantManagementReference);
+						oCompositeCommand.addCommand(oSettingsCommand);
+					// App Descriptor Change
+					} else if (mChangeSpecificData.appDescriptorChangeType){
+						var oComponent = mChange.appComponent;
+						var mManifest = oComponent.getManifest();
+						var sReference = mManifest["sap.app"].id;
+						oAppDescriptorCommand = this.getCommandFactory().getCommandFor(
+							oElement,
+							"appDescriptor",
+							{
+								reference : sReference,
+								appComponent : oComponent,
+								changeType : mChangeSpecificData.appDescriptorChangeType,
+								parameters : mChangeSpecificData.content.parameters,
+								texts : mChangeSpecificData.content.texts
+							}
+						);
+						oCompositeCommand.addCommand(oAppDescriptorCommand);
+					}
+				}, this);
+				if (oCompositeCommand.getCommands().length > 0){
+					this.fireElementModified({
+						"command" : oCompositeCommand
+					});
 				}
-			}, this);
-			this.fireElementModified({
-				"command" : oCompositeCommand
-			});
+			}
 		}.bind(this))['catch'](function(oError) {
 			if (oError) {
 				throw oError;
@@ -162,17 +180,45 @@ sap.ui.define([
 
 	/**
 	 * Retrieve the context menu item for the actions.
-	 * TODO: Support for multiple items (multiple actions)
+	 * If multiple actions are defined for Settings, it returns multiple menu items.
 	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
 	 * @return {object[]}          Returns array containing the items with required data
 	 */
 	Settings.prototype.getMenuItems = function(oOverlay){
-		return this._getMenuItems(oOverlay, {pluginId : "CTX_SETTINGS", rank : 110});
+		var vSettingsActions = this.getAction(oOverlay);
+		var iRank = 110;
+		var sPluginId = "CTX_SETTINGS";
+
+		// Only one action: simply return settings entry as usual
+		if (!(vSettingsActions instanceof Array)){
+			return this._getMenuItems(oOverlay, {pluginId : sPluginId, rank : iRank});
+		// Multiple actions: return one menu item for each action
+		} else {
+			var aMenuItems = [];
+			var iActionCounter = 0;
+			vSettingsActions.forEach(function(oSettingsAction){
+				var sActionText = this.getActionText(oOverlay, oSettingsAction, oSettingsAction.name);
+				if (oSettingsAction.handler){
+					aMenuItems.push({
+						id : sPluginId + iActionCounter,
+						text : sActionText,
+						enabled : oSettingsAction.isEnabled && oSettingsAction.isEnabled.bind(this, oOverlay.getElementInstance()),
+						handler : function(fnHandler, aOverlays){
+							return this.handler(aOverlays, fnHandler);
+						}.bind(this, oSettingsAction.handler),
+						rank : iRank + iActionCounter
+					});
+					iActionCounter++;
+				} else {
+					jQuery.sap.log.warning("Handler not found for settings action '" + sActionText + "'");
+				}
+			}.bind(this));
+			return aMenuItems;
+		}
 	};
 
 	/**
 	 * Get the name of the action related to this plugin.
-	 * TODO: Support for multiple actions
 	 * @return {string} Returns the action name
 	 */
 	Settings.prototype.getActionName = function(){

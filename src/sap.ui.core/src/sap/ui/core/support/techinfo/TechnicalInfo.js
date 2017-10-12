@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/base/Object",
 	"sap/ui/core/support/techinfo/moduleTreeHelper",
 	"sap/ui/Device",
 	"sap/ui/Global",
@@ -16,10 +15,10 @@ sap.ui.define([
 	"sap/ui/core/support/Support",
 	"sap/ui/model/SimpleType",
 	"sap/ui/model/ValidateException",
-	'sap/m/library',
+	"sap/m/library",
 	"jquery.sap.global",
 	"jquery.sap.storage"
-], function (UI5Object, moduleTreeHelper, Device, Global, DateFormat, ResourceModel, JSONModel, URI, MessageBox, MessageToast, Support, SimpleType, ValidateException, mobileLibrary, jQuery) {
+], function (moduleTreeHelper, Device, Global, DateFormat, ResourceModel, JSONModel, URI, MessageBox, MessageToast, Support, SimpleType, ValidateException, mobileLibrary, jQuery) {
 	"use strict";
 
 	return {
@@ -285,7 +284,7 @@ sap.ui.define([
 
 		/**
 		 * Opens the support assistant with the given configuration
- 		 */
+		 */
 		onOpenAssistant: function () {
 			var oModel = this._oDialog.getModel("view"),
 				sSelectedLocation = oModel.getProperty("/SelectedLocation"),

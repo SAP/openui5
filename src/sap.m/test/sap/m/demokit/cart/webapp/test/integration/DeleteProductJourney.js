@@ -69,25 +69,14 @@ sap.ui.define([
 		Then.onTheCart.iShouldSeeTheEditButtonEnabled();
 	});
 
-	opaTest("Should  delete the product from the cart", function (Given, When, Then) {
+	opaTest("Should delete the product from the cart", function (Given, When, Then) {
 		// Actions
 		When.onTheCart.iPressOnTheEditButton().and.iPressOnTheDeleteButton();
 		When.onTheDialog.iPressDeleteButtonOnTheConfirmationDialog();
 
 		// Assertions
-		Then.onTheCart.iShouldNotSeeTheDeletedItemInTheCart();
-	});
-
-	opaTest("Should delete the product from the cart", function (Given, When, Then) {
-		// Actions
-		When.onTheCart.iPressOnTheSaveChangesButton().
-		and.iPressOnTheEditButton().
-		and.iPressOnTheDeleteButton();
-		When.onTheDialog.iPressDeleteButtonOnTheConfirmationDialog();
-
-		// Assertions
 		Then.onTheCart.iShouldNotSeeTheDeletedItemInTheCart().
-		and.iShouldSeeTheTotalPriceEqualToZero();
+			and.iShouldSeeTheTotalPriceEqualToZero();
 	});
 
 	opaTest("Edit button should be disabled", function (Given, When, Then) {

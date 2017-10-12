@@ -2,3 +2,31 @@
 	position: absolute;
 	right: 5px;
 }
+
+.sapUiSupportFlexibility-TreeNodeStateSuccess {
+    color:green;
+}
+
+.sapUiSupportFlexibility-TreeNode[data-notApplicable] {
+    background-color: #fef0db;
+}
+
+.sapUiSupportFlexibility-TreeNode[data-notApplicable] > .sapMLIBContent > .sapUiIcon {
+    color: #e78c07;
+}
+
+.sapUiSupportFlexibility-TreeNode[data-possibleRootCause] {
+    background-color: #ffe4e4;
+}
+
+.sapUiSupportFlexibility-TreeNode[data-possibleRootCause] > .sapMLIBContent > .sapUiIcon {
+    color: #bb0000;
+}
+
+.sapUiSupportFlexibility-TreeNode[data-applied] {
+    color:#c3c3c3;
+}
+
+.sapUiSupportFlexibility-TreeNode[data-applied] > .sapMLIBContent > .sapUiIcon {
+    color: #2b7d2b;
+}

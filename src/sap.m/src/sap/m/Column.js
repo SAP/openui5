@@ -28,6 +28,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 *
 	 * @class
 	 * The <code>sap.m.Column</code> allows to define column specific properties that will be applied when rendering the <code>sap.m.Table</code>.
+	 *
+	 * See section "{@link topic:6f778a805bc3453dbb66e246d8271839 Defining Column Width}"
+	 * in the documentation to understand how to define the <code>width</code> property of the <code>sap.m.Column</code> to render a <code>sap.m.Table</code> control properly.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE

@@ -15,6 +15,10 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/library'],
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
+	function isTable(o) {
+		var FNClass = sap.ui.require('sap/m/Table');
+		return typeof FNClass === 'function' && (o instanceof FNClass);
+	}
 
 
 	/**
@@ -81,7 +85,7 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/library'],
 	// returns responsible table control for the item
 	GroupHeaderListItem.prototype.getTable = function() {
 		var oParent = this.getParent();
-		if (oParent instanceof sap.m.Table) {
+		if (isTable(oParent)) {
 			return oParent;
 		}
 
@@ -93,7 +97,7 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/library'],
 
 	GroupHeaderListItem.prototype.onBeforeRendering = function() {
 		var oParent = this.getParent();
-		if (oParent && sap.m.Table && oParent instanceof sap.m.Table) {
+		if (isTable(oParent)) {
 			// clear column last value to reset cell merging
 			oParent.getColumns().forEach(function(oColumn) {
 				oColumn.clearLastValue();

@@ -27,14 +27,7 @@ sap.ui.define([
 
 				this._oObjectPage = this.getView().byId("ObjectPageLayout");
 
-				// click handler for @link tags in JSdoc fragments
-				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
-
 				this.getView().setModel(new JSONModel());
-			},
-
-			onExit: function () {
-				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 			},
 
 			/* =========================================================== */
@@ -71,36 +64,6 @@ sap.ui.define([
 				this.router.navTo("sample", {
 					id: oSample.id
 				});
-			},
-
-			onJSDocLinkClick: function (oEvent) {
-				var sRoute = "entity",
-					oComponent = this.getOwnerComponent(),
-					aLibsData = oComponent.getModel("libsData").getData(),
-					sTarget = oEvent.target.getAttribute("data-sap-ui-target"),
-					aNavInfo;
-
-				if (!sTarget) {
-					return;
-				}
-
-				if (sTarget.indexOf('/') >= 0) {
-					// link refers to a method or event data-sap-ui-target="<class name>/methods/<method name>" OR
-					// data-sap-ui-target="<class name>/events/<event name>
-					aNavInfo = sTarget.split('/');
-
-					if (aNavInfo[0] !== this._sTopicid) {
-						oComponent.getRouter().navTo(sRoute, {id: aNavInfo[0]}, false);
-					}
-				} else if (!aLibsData[sTarget]) {
-					sTarget = sTarget.slice(0, sTarget.lastIndexOf("."));
-
-					oComponent.getRouter().navTo(sRoute, {id: sTarget}, false);
-				} else {
-					oComponent.getRouter().navTo(sRoute, {id: sTarget}, false);
-				}
-
-				oEvent.preventDefault();
 			},
 
 			/**

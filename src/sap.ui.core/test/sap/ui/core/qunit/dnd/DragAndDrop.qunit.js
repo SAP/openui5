@@ -485,7 +485,7 @@ sap.ui.define([
 		oEvent.pageY = mTargetOffset.top + 1;
 		oEvent.pageX = mTargetOffset.left + 1;
 		oDiv2.$().trigger(oEvent);
-		$Indicator = oEvent.dragSession.getIndicator();
+		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
 		assert.strictEqual($Indicator.attr("data-drop-position"), "between", "Indicator's data-drop-position attribute is set to between");
@@ -500,7 +500,7 @@ sap.ui.define([
 		oEvent.pageX = mTargetOffset.left + 10;
 		oEvent.pageY = mTargetOffset.top + oDiv2.$().height() - 1;
 		oDiv2.$().trigger(oEvent);
-		$Indicator = oEvent.dragSession.getIndicator();
+		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
 		assert.strictEqual($Indicator.attr("data-drop-layout"), "vertical", "Indicator's data-drop-layout attribute is still vertical.");
@@ -517,7 +517,7 @@ sap.ui.define([
 		oEvent.pageY = mTargetOffset.top + 1;
 		oEvent.pageX = mTargetOffset.left + 1;
 		oDiv2.$().trigger(oEvent);
-		$Indicator = oEvent.dragSession.getIndicator();
+		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
 		assert.strictEqual($Indicator.attr("data-drop-layout"), "horizontal", "Indicator's data-drop-layout attribute is set to horizontal.");
@@ -531,7 +531,7 @@ sap.ui.define([
 		oEvent.pageY = mTargetOffset.top + 1;
 		oEvent.pageX = mTargetOffset.left + oDiv2.$().width() - 1;
 		oDiv2.$().trigger(oEvent);
-		$Indicator = oEvent.dragSession.getIndicator();
+		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
 		assert.strictEqual($Indicator.attr("data-drop-layout"), "horizontal", "Indicator's data-drop-layout attribute is still horizontal.");
@@ -589,7 +589,7 @@ sap.ui.define([
 		oEvent.pageY = mTargetOffset.top + 1;
 		oEvent.pageX = mTargetOffset.left + 1;
 		jQuery(oTargetDomRef).trigger(oEvent);
-		$Indicator = oEvent.dragSession.getIndicator();
+		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
 		assert.strictEqual($Indicator.attr("data-drop-position"), "on", "Indicator's data-drop-position attribute is set to on");

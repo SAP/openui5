@@ -53,7 +53,20 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				}
 			};
 
-			return {
+			/**
+			 * When a user requests to drag some controls that can be dragged, a drag session is started.
+			 * The drag session can be used to transfer data between applications or between dragged and dropped controls.
+			 * Please see provided APIs for more details.
+			 *
+			 * <b>Note:</b> This object can only be exists during drag-drop operation.
+			 *
+			 * @namespace
+			 * @name sap.ui.core.dnd.DragSession
+			 * @static
+			 * @abstract
+			 * @public
+			 */
+			return /** @lends sap.ui.core.dnd.DragSession */ {
 				/**
 				 * Sets string data with any MIME type.
 				 * <b>Note:</b> This works in all browsers, apart from Internet Explorer and Microsoft Edge. It also works if you navigate between
@@ -132,17 +145,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				/**
 				 * Returns the drop indicator.
 				 *
-				 * @returns {jQuery} Indicator DOM reference
-				 * @public
+				 * @returns {HTMLElement} Indicator's DOM reference
+				 * @protected
 				 */
 				getIndicator: function() {
-					return $Indicator;
+					return $Indicator && $Indicator[0];
 				},
 
 				/**
 				 * The dragged control, if available within the same UI5 application frame.
 				 *
 				 * @protected
+				 * @type sap.ui.core.Element
 				 */
 				draggedControl: oDragControl,
 
@@ -150,6 +164,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				 * The valid drop target underneath the dragged control.
 				 *
 				 * @protected
+				 * @type sap.ui.core.Element
 				 */
 				dropControl: oValidDropControl
 			};
@@ -297,14 +312,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 				// create the drag session object and attach it to the event
 				oEvent.dragSession = oDragSession = createDragSession(oEvent);
 
-				// use a custom ghost if provided by the control    TODO: should the drag config also be able to provide custom ghosts?
-				var oDragGhost = (oDragControl.getDragGhost && oDragControl.getDragGhost());
-				if (oDragGhost) {
-					var oGhostContainer = getGhostContainer().append(oDragGhost);
-					window.setTimeout(function() { oGhostContainer.empty(); }, 0);
-					// TODO: Browers can style a ghost to almost complete transparency. Consider implementing an own ghost handling.
-					// TODO: set the correct position, depending on where the mouse has grabbed the element
-					oEvent.originalEvent.dataTransfer.setDragImage(oDragGhost, 0, 0);
+				// when supported by the browser, use a custom ghost if provided by the control
+				if (!Device.browser.msie) {
+					var oDragGhost = (oDragControl.getDragGhost && oDragControl.getDragGhost());
+					if (oDragGhost) {
+						var oGhostContainer = getGhostContainer().append(oDragGhost);
+						window.setTimeout(function() { oGhostContainer.empty(); }, 0);
+						// TODO: Browers can style a ghost to almost complete transparency. Consider implementing an own ghost handling.
+						// TODO: set the correct position, depending on where the mouse has grabbed the element
+						oEvent.originalEvent.dataTransfer.setDragImage(oDragGhost, 0, 0);
+					}
 				}
 
 				// Firefox needs data set to allow dragging

@@ -122,7 +122,7 @@ function (
 			}
 		});
 
-		this.stub(this.oFlexController, "_writeCustomData");
+		this.stub(this.oFlexController, "_writeAppliedChangesCustomData");
 		this.stub(this.oFlexController, "_getChangeHandler").returns({
 			completeChangeContent: completeChangeContentStub,
 			applyChange: changeHandlerApplyChangeStub
@@ -173,7 +173,7 @@ function (
 			}
 		});
 
-		this.stub(this.oFlexController, "_writeCustomData");
+		this.stub(this.oFlexController, "_writeAppliedChangesCustomData");
 		this.stub(this.oFlexController, "_getChangeHandler").returns({
 			completeChangeContent: completeChangeContentStub,
 			applyChange: changeHandlerApplyChangeStub
@@ -1039,27 +1039,27 @@ function (
 
 	QUnit.test("_applyChangesOnControl processes only those changes that belong to the control", function (assert) {
 		var oChange0 = {
-			getKey: function () {
+			getId: function () {
 				return "";
 			}
 		};
 		var oChange1 = {
-			getKey: function () {
+			getId: function () {
 				return "";
 			}
 		};
 		var oChange2 = {
-			getKey: function () {
+			getId: function () {
 				return "";
 			}
 		};
 		var oChange3 = {
-			getKey: function () {
+			getId: function () {
 				return "";
 			}
 		};
 		var oSomeOtherChange = {
-			getKey: function () {
+			getId: function () {
 				return "";
 			}
 		};
@@ -1093,24 +1093,24 @@ function (
 		var oControlGroup1 = new sap.ui.core.Control("group1-1");
 
 		var oChange0 = {
-			getKey: function () {
-				return "fileNameChange0" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange0";
 			},
 			getDependentIdList: function () {
 				return ["group1-1"];
 			}
 		};
 		var oChange1 = {
-			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange1";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group3", "group2"];
 			}
 		};
 		var oChange2 = {
-			getKey: function () {
-				return "fileNameChange2" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange2";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group2", "group1-1"];
@@ -1123,15 +1123,15 @@ function (
 		};
 
 		var mDependencies = {
-			"fileNameChange2USERnamespace": {
+			"fileNameChange2": {
 				"changeObject": oChange2,
-				"dependencies": ["fileNameChange0USERnamespace", "fileNameChange1USERnamespace"]
+				"dependencies": ["fileNameChange0", "fileNameChange1"]
 			}
 		};
 
 		var mDependentChangesOnMe = {
-			"fileNameChange0USERnamespace": ["fileNameChange2USERnamespace"],
-			"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
+			"fileNameChange0": ["fileNameChange2"],
+			"fileNameChange1": ["fileNameChange2"]
 		};
 
 		var fnGetChangesMap = function () {
@@ -1157,24 +1157,24 @@ function (
 		var oControlGroup1 = new sap.ui.core.Control("group2-1");
 
 		var oChange1 = {
-			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange1";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group3", "group2"];
 			}
 		};
 		var oChange2 = {
-			getKey: function () {
-				return "fileNameChange2" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange2";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group2", "group2-1"];
 			}
 		};
 		var oChange3 = {
-			getKey: function () {
-				return "fileNameChange3" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange3";
 			},
 			getDependentIdList: function () {
 				return ["group2-1"];
@@ -1187,14 +1187,14 @@ function (
 		};
 
 		var mDependencies = {
-			"fileNameChange2USERnamespace": {
+			"fileNameChange2": {
 				"changeObject": oChange2,
-				"dependencies": ["fileNameChange1USERnamespace"]
+				"dependencies": ["fileNameChange1"]
 			}
 		};
 
 		var mDependentChangesOnMe = {
-			"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
+			"fileNameChange1": ["fileNameChange2"]
 		};
 
 		var fnGetChangesMap = function () {
@@ -1217,40 +1217,40 @@ function (
 
 	var fnDependencyTest3Setup = function() {
 		var oChange1 = {
-			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange1";
 			},
 			getDependentIdList: function () {
 				return ["ReversalReasonName", "Reversal", "Dates"];
 			}
 		};
 		var oChange2 = {
-			getKey: function () {
-				return "fileNameChange2" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange2";
 			},
 			getDependentIdList: function () {
 				return ["ReversalReasonName", "Dates", "GeneralLedgerDocument"];
 			}
 		};
 		var oChange3 = {
-			getKey: function () {
-				return "fileNameChange3" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange3";
 			},
 			getDependentIdList: function () {
 				return ["ReversalReasonName"];
 			}
 		};
 		var oChange4 = {
-			getKey: function () {
-				return "fileNameChange4" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange4";
 			},
 			getDependentIdList: function () {
 				return ["CompanyCode","ReversalReasonName"];
 			}
 		};
 		var oChange5 = {
-			getKey: function () {
-				return "fileNameChange5" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange5";
 			},
 			getDependentIdList: function () {
 				return ["CompanyCode"];
@@ -1264,24 +1264,24 @@ function (
 		};
 
 		var mDependencies = {
-			"fileNameChange2USERnamespace": {
+			"fileNameChange2": {
 				"changeObject": oChange2,
-				"dependencies": ["fileNameChange1USERnamespace"]
+				"dependencies": ["fileNameChange1"]
 			},
-			"fileNameChange4USERnamespace": {
+			"fileNameChange4": {
 				"changeObject": oChange4,
-				"dependencies": ["fileNameChange2USERnamespace"] //TODO: also dependency on first change?
+				"dependencies": ["fileNameChange2"] //TODO: also dependency on first change?
 			},
-			"fileNameChange5USERnamespace": {
+			"fileNameChange5": {
 				"changeObject": oChange5,
-				"dependencies": ["fileNameChange4USERnamespace"]
+				"dependencies": ["fileNameChange4"]
 			}
 		};
 
 		var mDependentChangesOnMe = {
-			"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"],
-			"fileNameChange2USERnamespace": ["fileNameChange4USERnamespace"],
-			"fileNameChange4USERnamespace": ["fileNameChange5USERnamespace"]
+			"fileNameChange1": ["fileNameChange2"],
+			"fileNameChange2": ["fileNameChange4"],
+			"fileNameChange4": ["fileNameChange5"]
 		};
 
 		return {
@@ -1405,16 +1405,16 @@ function (
 		var oControlForm1 = new sap.ui.core.Control("form4");
 
 		var oChange1 = {
-			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange1";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group1", "group2"];
 			}
 		};
 		var oChange2 = {
-			getKey: function () {
-				return "fileNameChange2" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange2";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group2", "group3"];
@@ -1426,14 +1426,14 @@ function (
 		};
 
 		var mDependencies = {
-			"fileNameChange2USERnamespace": {
+			"fileNameChange2": {
 				"changeObject": oChange2,
-				"dependencies": ["fileNameChange1USERnamespace"]
+				"dependencies": ["fileNameChange1"]
 			}
 		};
 
 		var mDependentChangesOnMe = {
-			"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
+			"fileNameChange1": ["fileNameChange2"]
 		};
 
 		var fnGetChangesMap = function () {
@@ -1458,24 +1458,24 @@ function (
 		var iStubCalls = 0;
 
 		var oChange1 = {
-			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange1";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group1", "group2"];
 			}
 		};
 		var oChange2 = {
-			getKey: function () {
-				return "fileNameChange2" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange2";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group2", "group3"];
 			}
 		};
 		var oChange3 = {
-			getKey: function () {
-				return "fileNameChange3" + "USER" + "namespace";
+			getId: function () {
+				return "fileNameChange3";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group3", "group4"];
@@ -1487,18 +1487,18 @@ function (
 		};
 
 		var mDependencies = {
-			"fileNameChange2USERnamespace": {
+			"fileNameChange2": {
 				"changeObject": oChange2,
-				"dependencies": ["fileNameChange1USERnamespace"]
+				"dependencies": ["fileNameChange1"]
 			},
-			"fileNameChange3USERnamespace": {
+			"fileNameChange3": {
 				"changeObject": oChange3,
-				"dependencies": ["fileNameChange1USERnamespace"]
+				"dependencies": ["fileNameChange1"]
 			}
 		};
 
 		var mDependentChangesOnMe = {
-			"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace", "fileNameChange3USERnamespace"]
+			"fileNameChange1": ["fileNameChange2", "fileNameChange3"]
 		};
 
 		var fnGetChangesMap = function () {
@@ -1616,17 +1616,18 @@ function (
 		}.bind(this));
 	});
 
-	QUnit.test("does not add custom data if an exception was raised during sync applyChanges", function (assert) {
+	QUnit.test("does not add appliedChanges custom data if an exception was raised during sync applyChanges", function (assert) {
 		this.oChangeHandlerApplyChangeStub.throws();
 		var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 
 		this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
-		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
-		assert.equal(this.oControl.getCustomData().length, 0, "no custom data was set");
-		assert.ok(mergeErrorStub.calledOnce, "set merge error was called");
+		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 1, "apply change functionality was called");
+		assert.equal(this.oControl.getCustomData().length, 1, "custom data was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.failedChangesCustomDataKey, "failed custom data was written");
+		assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 	});
 
-	QUnit.test("does not add custom data if an exception was raised during async applyChanges", function (assert) {
+	QUnit.test("does not add appliedChanges custom data if an exception was raised during async applyChanges", function (assert) {
 		sandbox.restore();
 		var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 		this.oChangeHandlerApplyChangeStub = sandbox.stub().returns(Promise.reject(new Error()));
@@ -1641,8 +1642,8 @@ function (
 
 		.then(function() {
 			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
-			assert.equal(this.oControl.getCustomData().length, 0, "no custom data was set");
-			assert.ok(mergeErrorStub.calledOnce, "set merge error was called");
+			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.failedChangesCustomDataKey, "failed custom data was written");
+			assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 		}.bind(this));
 	});
 
@@ -2135,14 +2136,11 @@ function (
 
 		this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
 
-		return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2, this.oChange3], this.oControl)
-
-		.then(function() {
+		return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2, this.oChange3], this.oControl).then(function() {
 			assert.strictEqual(oFirstAsyncChangeHandlerApplyChangeStub.callCount, 1, "then the first async change is applied");
 			assert.strictEqual(oFirstAsyncChangeHandlerRevertChangeStub.callCount, 0, "then the first async revert change is never called");
 			assert.strictEqual(oSetMergeErrorStub.callCount, 1, "then _setMergeError function is called");
-			assert.equal(this.oControl.getCustomData().length, 0, "the CustomData is not there");
-		}.bind(this));
+		});
 	});
 
 	QUnit.module("[XML] checkTargetAndApplyChange with one change for a label", {

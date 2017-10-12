@@ -2,6 +2,18 @@
  * ${copyright}
  */
 
+ /**
+	 * @classdesc
+	 * <h3>Overview</h3>
+	 * ExecutionScope provides access to internal UI5 objects available for inspection
+	 * <h3>Usage</h3>
+	 * Each rule is passed three parameters when executed: check: oIssueManager, oCoreFacade, oScope
+	 * An ExecutionScope instance is passed to every call of a rule's check method. Available objects
+	 * are collected depending on the settings passed to Support Assistant's entry point - the analyze
+	 * method
+	 * @public
+	 * @class sap.ui.support.ExecutionScope
+	 */
 sap.ui.define(["jquery.sap.global"],
 	function(jQuery) {
 		"use strict";
@@ -99,6 +111,13 @@ sap.ui.define(["jquery.sap.global"],
 
 					return aPublicElements;
 				},
+				/**
+				 * Gets elements by their type
+				 * @public
+				 * @function
+				 * @param {string|function} classNameSelector
+				 * @alias sap.ui.support.ExecutionScope.getElementsByClassName
+				 */
 				getElementsByClassName: function (classNameSelector) {
 					if (typeof classNameSelector === "string") {
 						return elements.filter(function (element) {
@@ -114,15 +133,17 @@ sap.ui.define(["jquery.sap.global"],
 				},
 				/**
 				 * Gets the logged objects by object type
+				 * @public
+				 * @function
+				 * @param {any} type Type of logged objects
+				 * @alias sap.ui.support.ExecutionScope.getLoggedObjects
 				 */
 				getLoggedObjects: function (type) {
 					var log = jQuery.sap.log.getLog(),
 						loggedObjects = [];
 
-					/**
-					 * Add logEntries that have support info object,
-					 * ad that have the same type as the type provided
-					 */
+					// Add logEntries that have support info object,
+					// and that have the same type as the type provided
 					log.forEach(function (logEntry) {
 						if (!logEntry.supportInfo) {
 							return;

@@ -49,7 +49,8 @@ sap.ui.define(function() {
 	Utils.prototype.checkTransportRequest = function(sTransportRequest) {
 		//corresponding data element in ABAP: TRKORR, CHAR20
 		//partial check: length le 20, alphanumeric, upper case, no space not underscore
-		if (!/^[A-Z0-9]{1,20}$/.test(sTransportRequest)) {
+		//ATO_NOTIFICATION is also allowed
+		if (!/^[A-Z0-9]{1,20}$/.test(sTransportRequest) && sTransportRequest !== 'ATO_NOTIFICATION') {
 			throw new Error("Wrong format for provided \"sTransportRequest\" parameter");
 		}
 	};

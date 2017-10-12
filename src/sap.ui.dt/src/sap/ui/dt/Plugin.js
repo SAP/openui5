@@ -217,8 +217,8 @@ function(ManagedObject) {
 	 */
 	Plugin.prototype.getAction = function(oOverlay){
 		return oOverlay.getDesignTimeMetadata() ?
-				oOverlay.getDesignTimeMetadata().getAction(this.getActionName(), oOverlay.getElementInstance())
-				: null;
+			oOverlay.getDesignTimeMetadata().getAction(this.getActionName(), oOverlay.getElementInstance())
+			: null;
 	};
 
 	/**
@@ -295,7 +295,9 @@ function(ManagedObject) {
 		return [{
 			id: mPropertyBag.pluginId,
 			text: this.getActionText(oOverlay, mAction, mPropertyBag.pluginId),
-			handler: this.handler.bind(this),
+			handler: function(aOverlays){
+				return this.handler(aOverlays);
+			}.bind(this),
 			enabled: this.isEnabled.bind(this),
 			rank: mPropertyBag.rank
 		}];

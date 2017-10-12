@@ -3140,6 +3140,20 @@
 			}
 		}
 	},
+	"currencyFormat-short": {
+		"1000-other": "0",
+		"10000-other": "¤0萬",
+		"100000-other": "¤00萬",
+		"1000000-other": "¤000萬",
+		"10000000-other": "¤0000萬",
+		"100000000-other": "¤0億",
+		"1000000000-other": "¤00億",
+		"10000000000-other": "¤000億",
+		"100000000000-other": "¤0000億",
+		"1000000000000-other": "¤0兆",
+		"10000000000000-other": "¤00兆",
+		"100000000000000-other": "¤000兆"
+	},
 	"symbols-latn-decimal": ".",
 	"symbols-latn-group": ",",
 	"symbols-latn-list": ";",
@@ -3174,6 +3188,7 @@
 		"XOF": "CFA",
 		"XPF": "CFPF"
 	},
+	"rtl": false,
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,

@@ -118,53 +118,6 @@
 		assert.equal(jQuery(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)", this.fixture).length, 3, "Three items should now be rendered");
 	});
 
-	QUnit.module("Visibility set by model", {
-		beforeEach: function() {
-			this.oItem1 = new sap.ui.core.Icon({
-				visible: "{/visible}",
-				src: "sap-icon://drill-up"
-			});
-
-			this.oItem2 = new sap.ui.core.Icon({
-				src: "sap-icon://drill-down"
-			});
-
-			this.oItem2.addEventDelegate({
-				onBeforeRendering: function(oEvent) {
-					oEvent.srcControl.getModel().setProperty('/visible', true);
-				}
-			});
-
-			this.oBox = new sap.m.FlexBox({
-				items: [
-					this.oItem1,
-					this.oItem2
-				]
-			});
-
-			var oModel = new sap.ui.model.json.JSONModel({
-				visible: false
-			});
-
-			this.oBox.setModel(oModel);
-			this.oBox.placeAt(DOM_RENDER_LOCATION);
-			this.fixture = jQuery.sap.byId(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function() {
-			this.oItem1.destroy();
-			this.oItem2.destroy();
-			this.oItem1 = null;
-			this.oItem2 = null;
-			this.oBox.destroy();
-			this.oBox = null;
-		}
-	});
-
-	QUnit.test("Items visibility set by model", function(assert) {
-		assert.equal(jQuery(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)", this.fixture).length, 2, "All items should not have sapUiHiddenPlaceholder");
-	});
-
 	QUnit.module("Render Type", {
 		beforeEach: function() {
 			this.oBoxConfig = {

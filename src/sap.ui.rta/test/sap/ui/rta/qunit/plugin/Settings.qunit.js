@@ -208,11 +208,7 @@ function(
 	QUnit.test("when the handle settings function is called and the handler returns a change object,", function(assert) {
 		var done = assert.async();
 		var oSettingsChange = {
-			selectorControl : {
-				id : "stableNavPopoverId",
-				controlType : "sap.m.Button",
-				appComponent : oMockedAppComponent
-			},
+			selectorControl : this.oButton,
 			changeSpecificData : {
 				changeType : "changeSettings",
 				content : "testchange"
@@ -250,6 +246,35 @@ function(
 			done();
 		});
 		return this.oSettingsPlugin.handler(aSelectedOverlays);
+	});
+
+	QUnit.test("when the handle settings function is called and no handler is present in Designtime Metadata,", function(assert) {
+		var oButtonOverlay = new ElementOverlay({
+			element : this.oButton,
+			designTimeMetadata : new ElementDesignTimeMetadata({
+				libraryName : "sap.m",
+				data : {
+					actions : {
+						settings : function() {
+							return {
+								isEnabled : true
+							};
+						}
+					}
+				}
+			})
+		});
+
+		var aSelectedOverlays = [oButtonOverlay];
+
+		assert.throws(
+			function(){
+				this.oSettingsPlugin.handler(aSelectedOverlays);
+			},
+			/Handler not found/,
+			"an error message is raised referring to the missing handler"
+		);
+
 	});
 
 	QUnit.test("when the handle settings function is called and the handler returns a rejected promise with error object,", function(assert) {
@@ -464,7 +489,7 @@ function(
 		return this.oSettingsPlugin.handler(aSelectedOverlays);
 	});
 
-	QUnit.test("when retrieving the context menu item", function(assert) {
+	QUnit.test("when retrieving the context menu item for single 'settings' action", function(assert) {
 		var oButtonOverlay = new ElementOverlay({
 			element : this.oButton,
 			designTimeMetadata : new ElementDesignTimeMetadata({
@@ -503,6 +528,188 @@ function(
 		assert.equal(this.oSettingsPlugin.getMenuItems(oButtonOverlay).length,
 			0,
 			"and if plugin is not available for the overlay, no menu items are returned");
+	});
+
+	QUnit.test("when retrieving the context menu items and executing two 'settings' actions", function(assert) {
+		var done1 = assert.async();
+		var done2 = assert.async();
+
+		var mAction1Change = {
+			selectorControl : this.oButton,
+			changeSpecificData : {
+				changeType : "changeSettings",
+				content : "testchange1"
+			}
+		};
+
+		var mAction2Change = {
+			selectorControl : this.oButton,
+			changeSpecificData : {
+				changeType : "changeSettings",
+				content : "testchange2"
+			}
+		};
+
+		var oButtonOverlay = new ElementOverlay({
+			element : this.oButton,
+			designTimeMetadata : new ElementDesignTimeMetadata({
+				libraryName : "sap.m",
+				data : {
+					actions :
+					{
+						settings : function(){
+							return [{
+								name : "CTX_ACTION1",
+								handler: function(oElement, mPropertyBag) {
+									return new Promise(function(resolve){
+										resolve([mAction1Change]);
+									});
+								}
+							},
+							{
+								name : function(){
+									return "Action 2 Name";
+								},
+								handler: function(oElement, mPropertyBag) {
+									return new Promise(function(resolve){
+										resolve([mAction2Change]);
+									});
+								}
+							}];
+						}
+					}
+				}
+			})
+		});
+
+		sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
+
+		var bFirstChange = true;
+
+		this.oSettingsPlugin.attachEvent("elementModified", function(oEvent) {
+			if (bFirstChange){
+				var oCompositeCommand1 = oEvent.getParameter("command");
+				var oFlexCommand1 = oCompositeCommand1.getCommands()[0];
+				assert.equal(oFlexCommand1.getSelector().appComponent, oMockedAppComponent, "with the correct app component");
+				assert.equal(oFlexCommand1.getChangeType(), mAction1Change.changeSpecificData.changeType, "with the correct change type");
+				assert.equal(oFlexCommand1.getContent(), mAction1Change.changeSpecificData.content, "with the correct parameters");
+				bFirstChange = false;
+				done1();
+			} else {
+				var oCompositeCommand2 = oEvent.getParameter("command");
+				var oFlexCommand2 = oCompositeCommand2.getCommands()[0];
+				assert.equal(oFlexCommand2.getSelector().appComponent, oMockedAppComponent, "with the correct app component");
+				assert.equal(oFlexCommand2.getChangeType(), mAction2Change.changeSpecificData.changeType, "with the correct change type");
+				assert.equal(oFlexCommand2.getContent(), mAction2Change.changeSpecificData.content, "with the correct parameters");
+				done2();
+			}
+
+		});
+
+		var aMenuItems = this.oSettingsPlugin.getMenuItems(oButtonOverlay);
+		assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
+		assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
+		aMenuItems[0].handler([oButtonOverlay]);
+		assert.equal(aMenuItems[1].id, "CTX_SETTINGS1", "'getMenuItems' returns the context menu item for action 2");
+		assert.equal(aMenuItems[1].text, "Action 2 Name", "'getMenuItems' returns the correct item text for action 2");
+		assert.equal(aMenuItems[1].rank, 111, "'getMenuItems' returns the correct item rank for action 2");
+		aMenuItems[1].handler([oButtonOverlay]);
+	});
+
+	QUnit.test("when retrieving the context menu items for two 'settings' actions, but one does not have a handler", function(assert) {
+		var done = assert.async();
+
+		var mAction1Change = {
+			selectorControl : this.oButton,
+			changeSpecificData : {
+				changeType : "changeSettings",
+				content : "testchange1"
+			}
+		};
+
+		var oButtonOverlay = new ElementOverlay({
+			element : this.oButton,
+			designTimeMetadata : new ElementDesignTimeMetadata({
+				libraryName : "sap.m",
+				data : {
+					actions : {
+						settings : function(){
+							return [{
+								name : "CTX_ACTION1",
+								handler: function(oElement, mPropertyBag) {
+									return new Promise(function(resolve){
+										resolve([mAction1Change]);
+									});
+								}
+							},
+							{
+								name : "CTX_ACTION2"
+							}];
+						}
+					}
+				}
+			})
+		});
+
+		sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
+
+		this.oSettingsPlugin.attachEvent("elementModified", function(oEvent) {
+			var oCompositeCommand = oEvent.getParameter("command");
+			assert.equal(oCompositeCommand.getCommands().length, 1, "but the action with the handler can still be executed");
+			done();
+		});
+
+		var spyLog = sinon.spy(jQuery.sap.log, "warning");
+
+		var aMenuItems = this.oSettingsPlugin.getMenuItems(oButtonOverlay);
+		assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
+		assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
+		aMenuItems[0].handler([oButtonOverlay]);
+		assert.equal(aMenuItems.length, 1, "'getMenuItems' only returns menu item for actions with handlers");
+		assert.equal(spyLog.callCount, 1, "then there is a warning in the log saying the handler was not found for action 2");
+	});
+
+	QUnit.test("when retrieving the context menu items for two 'settings' actions, but one is disabled", function(assert) {
+		var oButton = this.oButton;
+
+		var oButtonOverlay = new ElementOverlay({
+			element : this.oButton,
+			designTimeMetadata : new ElementDesignTimeMetadata({
+				libraryName : "sap.m",
+				data : {
+					actions : {
+						settings : [{
+							name : function(){ return "CTX_ACTION1"; },
+							handler: function(oElement, mPropertyBag) {
+								return new Promise(function(resolve){
+									resolve([]);
+								});
+							}
+						},
+						{
+							name : function(){ return "CTX_ACTION2"; },
+							handler: function(oElement, mPropertyBag) {
+								return new Promise(function(resolve){
+									resolve([]);
+								});
+							},
+							isEnabled : function(oElement){
+								assert.equal(oElement, oButton, "isEnabled is called with the correct element");
+								return false;
+							}
+						}]
+					}
+				}
+			})
+		});
+
+		sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
+
+		var aMenuItems = this.oSettingsPlugin.getMenuItems(oButtonOverlay);
+		assert.equal(aMenuItems[0].text, "CTX_ACTION1", "'getMenuItems' returns the context menu item for action 1");
+		assert.equal(aMenuItems[0].enabled, undefined, "'getMenuItems' item for action 1 is undefined (hence default true will be used)");
+		assert.equal(aMenuItems[1].text, "CTX_ACTION2", "'getMenuItems' returns the context menu item for action 2");
+		assert.equal(aMenuItems[1].enabled(), false, "'getMenuItems' item for action 2 will be disabled");
 	});
 
 });

@@ -338,10 +338,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.ObjectNumber
+	 * @alias sap.m.ObjectNumber
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectNumber = Control.extend("sap.m.ObjectNumber", /** @lends sap.m.ObjectNumber.prototype */ { metadata : {
@@ -393,9 +392,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	ObjectNumber.prototype._sCSSPrefixObjNumberStatus = 'sapMObjectNumberStatus';
 	
 	/**
-	 * API method to set the object number's value state
+	 * API method to set the object number's value state.
 	 *
-	 * @param {string} sState the Object Number's value state
+	 * @param {string} sState The Object Number's value state
 	 * @public
 	 */
 	ObjectNumber.prototype.setState = function(sState) {
@@ -413,7 +412,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	return ObjectNumber;
 
-}, /* bExport= */ true);
+});
 ```
 
 The ´@ui5-metamodel´ annotation relates to the "old" Maven build, which is internally still used. It means that the legacy `*.control` files should be re-generated for this control, for potential other users in upper layers. This annotation is planned to be removed.

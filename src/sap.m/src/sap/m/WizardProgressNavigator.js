@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/delegate/ItemNavigation", "sap/ui/Device", "jquery.sap.global"],
-function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
+sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/delegate/ItemNavigation", "sap/ui/Device", "jquery.sap.global", "sap/m/ActionSheet"],
+function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery, ActionSheet) {
 	"use strict";
 
 	/**
@@ -119,7 +119,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 		this._activeStep = 1;
 		this._cachedSteps = [];
 		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this._actionSheet = new sap.m.ActionSheet();
+		this._actionSheet = new ActionSheet();
 		this._createAnchorNavigation();
 	};
 

@@ -3,12 +3,16 @@
  */
 
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/uxap/library",
 	"sap/ui/core/UIComponent",
-	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/library",
 	"sap/ui/core/Component"
-], function (library, UIComponent, JSONModel /*, Component*/) {
+], function (jQuery, library, UIComponent, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	// shortcut for sap.uxap.ObjectPageConfigurationMode
 	var ObjectPageConfigurationMode = library.ObjectPageConfigurationMode;
@@ -38,12 +42,12 @@ sap.ui.define([
 					// case 1: load from an XML view + json for the object page layout configuration
 					this._oModel = new UIComponent(this.oComponentData.jsonConfigurationURL);
 					this._oViewConfig.viewName = "sap.uxap.component.ObjectPageLayoutUXDrivenFactory";
-					this._oViewConfig.type = sap.ui.core.mvc.ViewType.XML;
+					this._oViewConfig.type = ViewType.XML;
 					break;
 				case ObjectPageConfigurationMode.JsonModel:
 					// JsonModel bootstraps the ObjectPageLayout from the external model objectPageLayoutMedatadata
 					this._oViewConfig.viewName = "sap.uxap.component.ObjectPageLayoutUXDrivenFactory";
-					this._oViewConfig.type = sap.ui.core.mvc.ViewType.XML;
+					this._oViewConfig.type = ViewType.XML;
 					break;
 				default:
 					jQuery.sap.log.error("UxAPComponent :: missing bootstrap information. Expecting one of the following: JsonURL, JsonModel and FacetsAnnotation");

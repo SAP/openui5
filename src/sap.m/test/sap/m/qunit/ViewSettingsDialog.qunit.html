@@ -2546,6 +2546,38 @@
 			assert.equal(oVSD._getDialog().getModel().oData["data"], sData, "the model is propagated to the dialog");
 		});
 
+		// BCP: 1770477750
+		QUnit.test("Navigating between custom tabs works as expected", function (assert) {
+			var done = assert.async(),
+				oCustomTab1Content = new sap.m.Button("button1", { text: "Custom Tab 1" }),
+				oCustomTab2Content = new sap.m.Button("button2", { text: "Custom Tab 2" }),
+				oViewSettingsDialog = new sap.m.ViewSettingsDialog({
+					customTabs: [
+						new sap.m.ViewSettingsCustomTab({icon:"sap-icon://action-settings", content: oCustomTab1Content }),
+						new sap.m.ViewSettingsCustomTab({icon:"sap-icon://settings", content: oCustomTab2Content })
+					]
+				});
+
+			oViewSettingsDialog.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oViewSettingsDialog.open();
+
+			oViewSettingsDialog._dialog.attachAfterOpen(function () {
+				assert.equal(oViewSettingsDialog._vContentPage, "__tab0", "First Custom tab is opened");
+				assert.equal(oViewSettingsDialog._getPage1().getContent()[0].getId(), "button1", "content of the page is the same as the first tab's content");
+
+				// act: change custom tab to the second tab
+				oViewSettingsDialog._getSegmentedButton().getButtons()[1].firePress();
+
+				assert.equal(oViewSettingsDialog._vContentPage, "__tab1", "Second Custo tab is opened");
+				assert.equal(oViewSettingsDialog._getPage1().getContent()[0].getId(), "button2", "content of the page is the same as the second tab's content");
+
+				oViewSettingsDialog.destroy();
+				oViewSettingsDialog = null;
+				done();
+			});
+		});
+
 		QUnit.module("Accessibility", {
 			beforeEach : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();

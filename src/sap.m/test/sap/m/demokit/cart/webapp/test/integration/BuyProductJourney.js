@@ -48,13 +48,15 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart()
-			.and.iShouldSeeTheTotalPriceUpdated().and.iTeardownMyApp();
+			.and.iShouldSeeTheTotalPriceUpdated()
+			.and.iTeardownMyApp();
 	});
 
-
 	opaTest("Should keep the cart when reloading", function (Given, When, Then) {
+
 		// Arrangements
-		Given.iStartMyApp();
+		Given.iStartMyApp(true);
+
 		// Actions
 		When.onHome.iPressOnTheFlatScreensCategory();
 		When.onTheCategory.iGoToTheCartPage();

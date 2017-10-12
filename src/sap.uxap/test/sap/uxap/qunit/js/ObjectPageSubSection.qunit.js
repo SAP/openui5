@@ -247,4 +247,47 @@
 		oObjectPageLayout.destroy();
 	});
 
+	QUnit.test("SubSection action buttons visibility", function (assert) {
+		var oActionButton1 = new sap.m.Button({text: "Invisible", visible: false}),
+			oActionButton2 = new sap.m.Button({text: "Invisible", visible: false}),
+			oObjectPageLayout = new sap.uxap.ObjectPageLayout({
+					sections: [
+						new sap.uxap.ObjectPageSection({
+							title:"Personal",
+							subSections: [
+								new sap.uxap.ObjectPageSubSection({
+									actions: [oActionButton1],
+									blocks: new sap.m.Label({text: "Block1" })
+								}),
+								new sap.uxap.ObjectPageSubSection({
+									title: "Payment information",
+									actions: [oActionButton2],
+									blocks: new sap.m.Label({text: "Block1" })
+								})
+							]
+						})
+					]
+				}),
+				oSubSection1 = oObjectPageLayout.getSections()[0].getSubSections()[0],
+				oSubSection2 = oObjectPageLayout.getSections()[0].getSubSections()[1];
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.ok(oSubSection1.$("header").hasClass("sapUiHidden"), "SubSection header with no visisble title and actions should be invisible");
+		assert.notOk(oSubSection2.$("header").hasClass("sapUiHidden"), "SubSection header with title and no visible actions should be visible");
+
+		//act
+		oActionButton1.setVisible(true);
+		oSubSection2.setTitle("");
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.notOk(oSubSection1.$("header").hasClass("sapUiHidden"), "SubSection header with visible actions should become visible");
+		assert.ok(oSubSection2.$("header").hasClass("sapUiHidden"), "SubSection header with no visisble title and actions should become invisible");
+
+		oObjectPageLayout.destroy();
+	});
+
 }(jQuery, QUnit, sinon, window.testData));

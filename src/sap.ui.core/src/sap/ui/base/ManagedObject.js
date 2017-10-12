@@ -3588,11 +3588,6 @@ sap.ui.define([
 				return;
 			}
 
-			// If diff is empty, nothing needs to be changed
-			if (aDiff.length == 0) {
-				return;
-			}
-
 			// Loop through the diff and apply it
 			for (i = 0; i < aDiff.length; i++) {
 				oDiff = aDiff[i];

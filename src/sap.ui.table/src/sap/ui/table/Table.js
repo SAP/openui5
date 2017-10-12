@@ -316,10 +316,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			rowSettingsTemplate : {type : "sap.ui.table.RowSettings", multiple : false},
 
 			/**
-			 * Defines the drag-and-drop configuration.
+			 * Defines the drag-and-drop configuration via {@link sap.ui.core.dnd.DragDropInfo}
 			 *
 			 * The following restrictions apply:
 			 * <ul>
+			 *   <li>This feature is not supported in mobile devices.</li>
 			 *   <li>Columns cannot be configured to be draggable.</li>
 			 *   <li>The following rows are not draggable:
 			 *     <ul>

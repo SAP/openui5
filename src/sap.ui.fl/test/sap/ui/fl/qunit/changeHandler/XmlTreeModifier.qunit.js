@@ -17,6 +17,9 @@ function(
 	QUnit.module("Using the XmlTreeModifier...", {
 		beforeEach: function () {
 
+			this.HBOX_ID = "hboxId";
+			this.TEXT_ID = "textId";
+
 			jQuery.sap.registerModulePath("testComponent", "../testComponent");
 
 						this.oComponent = sap.ui.getCore().createComponent({
@@ -27,26 +30,55 @@ function(
 							}
 						});
 
-			this.oDOMParser = new DOMParser();
 			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:layout="sap.ui.layout">' +
+				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f" xmlns:layout="sap.ui.layout">' +
 					'<VBox>' +
 						'<tooltip></tooltip>' +	//empty 0..1 aggregation
 						'<Label visible="true"></Label>' + //content in default aggregation
 						'<Label visible="false" design="Bold"></Label>' + //content in default aggregation, property set that has default value
 					'</VBox>' +
-					'<HBox>' +
+					'<HBox id="' + this.HBOX_ID + '">' +
 						'<tooltip>' +	//0..1 aggregation
 							'<TooltipBase xmlns="sap.ui.core"></TooltipBase>' + //inline namespace as sap.ui.core is use case for not existing namespace
 						'</tooltip>' +
 						'<items>' +
-							'<Text></Text>' + //content in default aggregation
+							'<Text id="' + this.TEXT_ID + '"></Text>' + //content in default aggregation
 						'</items>' +
 					'</HBox>' +
 					'<Bar tooltip="barTooltip">' + //control without default aggregation, tooltip aggregation filled with altType
 					'</Bar>' +
+					'<VBox id="vbox1">' +
+						'<Button text="Button1"></Button>' +
+						'<Button text="Button2"></Button>' +
+						'<Button text="Button3"></Button>' +
+					'</VBox>' +
+					'<f:DynamicPageTitle id="title1">' +
+						'<actions>' +
+							'<Button text="Action1"></Button>' +
+							'<Button text="Action2"></Button>' +
+							'<Button text="Action3"></Button>' +
+						'</actions>' +
+					'</f:DynamicPageTitle>' +
+					'<VBox id="vbox2">' +
+						'<tooltip></tooltip>' +
+						'<Button text="Button1"></Button>' +
+						'<Button text="Button2"></Button>' +
+						'<Button text="Button3"></Button>' +
+					'</VBox>' +
+					'<f:DynamicPageTitle id="title2">' +
+						'<actions>' +
+							'<Button text="Action1"></Button>' +
+							'<Button text="Action2"></Button>' +
+							'<Button text="Action3"></Button>' +
+						'</actions>' +
+						'<snappedContent>' +
+							'<text text="text1"></text>' +
+							'<text text="text2"></text>' +
+							'<text text="text3"></text>' +
+						'</snappedContent>' +
+					'</f:DynamicPageTitle>' +
 				'</mvc:View>';
-			this.oXmlView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+			this.oXmlView = jQuery.sap.parseXML(this.oXmlString, "application/xml").documentElement;
 
 		},
 
@@ -207,5 +239,73 @@ function(
 		assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "design"), "Standard", "default value, property not in xml");
 		assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "text"), "", "default value, property not in xml");
 		assert.strictEqual(XmlTreeModifier.getProperty(oInvisibleLabel, "design"), "Bold", "property from xml");
+	});
+
+	QUnit.test("_byId finds the node specified", function (assert) {
+		var oExpectedHBox = this.oXmlView.childNodes[1];
+		oExpectedHBox.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
+		var oExpectedText = oExpectedHBox.childNodes[1].childNodes[0];
+		oExpectedText.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
+
+		var oHBox = XmlTreeModifier._byId(this.HBOX_ID, this.oXmlView);
+		assert.strictEqual(oHBox, oExpectedHBox, "HBox node found");
+		var oText = XmlTreeModifier._byId(this.TEXT_ID, this.oXmlView);
+		assert.strictEqual(oText, oExpectedText, "Text node found");
+	});
+
+	QUnit.test("findIndexInParentAggregation returns the correct value: case 1 - control in aggregation 0..1 passed as parameter", function (assert) {
+		var oHBox = this.oXmlView.childNodes[1];
+		var oTooltip = oHBox.childNodes[0].childNodes[0];
+
+		assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oTooltip), 0, "The function returned the correct index.");
+	});
+
+	QUnit.test("findIndexInParentAggregation returns the correct value: case 2 - default aggregation only in xml tree", function (assert) {
+		var oVBox = this.oXmlView.childNodes[3];
+		var oButton = oVBox.lastElementChild;
+
+		assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oButton), 2, "The function returned the correct index.");
+	});
+
+	QUnit.test("findIndexInParentAggregation returns the correct value: case 3 - named aggregation only in xml tree", function (assert) {
+		var oDynamicPageTitle = this.oXmlView.childNodes[4];
+		var oButton = oDynamicPageTitle.childNodes[0].lastElementChild;
+
+		assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oButton), 2, "The function returned the correct index.");
+	});
+
+	QUnit.test("findIndexInParentAggregation returns the correct value: case 4 - mixed node with aggregation and default aggregation", function (assert) {
+		var oVBox = this.oXmlView.childNodes[5];
+		var oButton = oVBox.lastElementChild;
+
+		assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oButton), 2, "The function returned the correct index.");
+	});
+
+	QUnit.test("findIndexInParentAggregation returns the correct value: case 5 - mixed node with aggregation and named aggregation", function (assert) {
+		var oDynamicPageTitle = this.oXmlView.childNodes[6];
+		var oButton = oDynamicPageTitle.childNodes[0].lastElementChild;
+		var oText = oDynamicPageTitle.childNodes[1].childNodes[1];
+
+		assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oButton), 2, "The function returned the correct index.");
+		assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oText), 1, "The function returned the correct index.");
+	});
+
+	QUnit.test("_getParentAggregationName returns the correct name: ", function (assert) {
+		var oVBox = this.oXmlView.childNodes[0],
+			oLabel = oVBox.childNodes[1];
+
+		var oHBox = this.oXmlView.childNodes[1],
+			oTooltip = oHBox.childNodes[0].childNodes[0],
+			oText = oHBox.childNodes[1].childNodes[0];
+
+		var oDynamicPageTitle = this.oXmlView.childNodes[6],
+			oButton = oDynamicPageTitle.childNodes[0].childNodes[0],
+			oText2 = oDynamicPageTitle.childNodes[1].childNodes[0];
+
+		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oVBox, oLabel), "items", "The function returned the correct name - 'items'.");
+		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oHBox, oTooltip), "tooltip", "The function returned the correct name - 'tooltip'.");
+		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oHBox, oText), "items", "The function returned the correct name - 'items'.");
+		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oDynamicPageTitle, oButton), "actions", "The function returned the correct name - 'actions'.");
+		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oDynamicPageTitle, oText2), "snappedContent", "The function returned the correct name - 'snappedContent'.");
 	});
 });

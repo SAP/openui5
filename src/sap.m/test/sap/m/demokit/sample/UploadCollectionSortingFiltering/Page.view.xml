@@ -25,6 +25,7 @@
 					<Button
 						type="Transparent"
 						icon="sap-icon://drop-down-list"
+						tooltip="View settings"
 						press="onViewSettingsPressed" />
 				</OverflowToolbar>
 			</toolbar>
@@ -63,17 +64,13 @@
 							text="{
 								parts: ['text', 'type'],
 								formatter: '.formatAttribute'
-							}"
-							active="{active}" />
+							}" />
 					</attributes>
 					<statuses>
 						<ObjectStatus
 							title="{title}"
 							text="{text}"
-							state="{state}"
-							icon="{icon}"
-							iconDensityAware="{iconDensityAware}"
-							textDirection="{textDirection}" />
+							state="{state}" />
 					</statuses>
 				</UploadCollectionItem>
 			</items>

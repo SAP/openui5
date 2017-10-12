@@ -32,7 +32,6 @@ sap.ui.define([
 		"sap/ui/dt/plugin/ContextMenu",
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
-		"sap/ui/rta/ui/SettingsDialog",
 		"sap/ui/rta/Utils",
 		"sap/ui/fl/transport/Transports",
 		"sap/ui/fl/transport/TransportSelection",
@@ -76,7 +75,6 @@ sap.ui.define([
 		ContextMenuPlugin,
 		TabHandlingPlugin,
 		FlexControllerFactory,
-		SettingsDialog,
 		Utils,
 		Transports,
 		TransportSelection,
@@ -136,14 +134,6 @@ sap.ui.define([
 				"triggeredFromDialog" : {
 					type : "boolean",
 					defaultValue : false
-				},
-
-				/** Temporary property : whether to show a dialog for changing control's properties#
-				 * should be removed after DTA will fully switch to a property panel
-				 */
-				"showSettingsDialog" : {
-					type : "boolean",
-					defaultValue : true
 				},
 
 				/** Whether the window unload dialog should be shown */
@@ -326,11 +316,6 @@ sap.ui.define([
 
 			// Tab Handling
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
-
-			// Control Variant
-//			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
-//				commandFactory: oCommandFactory
-//			});
 		}
 
 		return jQuery.extend({}, this._mDefaultPlugins);
@@ -536,7 +521,6 @@ sap.ui.define([
 			}.bind(this))
 			.then(function () {
 				this.fnKeyDown = this._onKeyDown.bind(this);
-				this.fnKeyDown = this._onKeyDown.bind(this);
 				jQuery(document).on("keydown", this.fnKeyDown);
 			}.bind(this))
 			.then(function() {
@@ -559,7 +543,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
-		return FlexSettings.getInstance(FlexUtils.getComponentClassName(this._oRootControl)).then(function(oSettings) {
+		return FlexSettings.getInstance().then(function(oSettings) {
 			return RtaAppVariantFeature.isPlatFormEnabled(this.getLayer(), oSettings.isAtoEnabled() && oSettings.isAtoAvailable(), this._oRootControl).then(function(bIsAppVariantSupported) {
 				return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), bIsAppVariantSupported];
 			});
@@ -1220,30 +1204,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Open the settings dialog.
-	 * @param  {sap.ui.base.Event|Object} oEventOrOverlays Event or map containing list of selected overlays
-	 */
-
-	//TODO: ask mayanak to remove
-	RuntimeAuthoring.prototype._openSettingsDialog = function(oEventOrOverlays) {
-		var aSelectedOverlays = (oEventOrOverlays.mParameters) ? oEventOrOverlays.getParameter("selectedOverlays") : oEventOrOverlays;
-		var oElement = aSelectedOverlays[0].getElementInstance();
-		this._handleStopCutPaste();
-
-		if (!this._oSettingsDialog) {
-			this._oSettingsDialog = new SettingsDialog();
-		}
-		this._oSettingsDialog.setCommandStack(this.getCommandStack());
-		this._oSettingsDialog.open(oElement);
-	};
-
-	/**
 	 * Handler function to stop cut and paste, because some other operation has started.
 	 *
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleStopCutPaste = function() {
-		this.getPlugins()["cutPaste"].stopCutAndPaste();
+		if (this.getPlugins()["cutPaste"]){
+			this.getPlugins()["cutPaste"].stopCutAndPaste();
+		}
 	};
 
 	/**
