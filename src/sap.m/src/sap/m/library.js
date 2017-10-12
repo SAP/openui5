@@ -542,6 +542,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Transparent : "Transparent",
 
 		/**
+		 * ghost type
+		 * @public
+		 */
+		Ghost : "Ghost",
+
+		/**
 		 * up type (up navigation button for header)
 		 * @public
 		 */

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>sap.m.Button and sap.m.ToggleButton Test</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+	        id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+
+	</script>
+
+	<style type="text/css">
+		.ButtonSpace {
+			display: inline;
+			position: relative;
+		}
+	</style>
+
+	<script>
+		jQuery.sap.require("sap.ui.core.HTML");
+		jQuery.sap.require("sap.ui.core.IconPool");
+
+		new sap.m.App({
+			pages: new sap.m.Page("page", {
+				title: "Ghost Buttons",
+				footer: new sap.m.Toolbar({
+					content: [
+						new sap.m.Button({
+							type: sap.m.ButtonType.Ghost,
+							icon: "sap-icon://home",
+							text: "Button Ghost",
+							enabled: true
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Ghost,
+							icon: "sap-icon://home",
+							text: "Button Ghost Dis",
+							enabled: false
+						}),
+						new sap.m.ToggleButton({
+							type: sap.m.ButtonType.Ghost,
+							icon: "sap-icon://home",
+							text: "ToggleBtn Ghost",
+							enabled: true
+						}),
+						new sap.m.ToggleButton({
+							type: sap.m.ButtonType.Ghost,
+							icon: "sap-icon://home",
+							text: "ToggleBtn Ghost Dis",
+							enabled: false
+						}),
+						new sap.m.ToggleButton({
+							type: sap.m.ButtonType.Ghost,
+							icon: "sap-icon://home",
+							text: "ToggleBtn Ghost",
+							enabled: true,
+							pressed: true
+						}),
+						new sap.m.ToggleButton({
+							type: sap.m.ButtonType.Ghost,
+							icon: "sap-icon://home",
+							text: "ToggleBtn Ghost Dis",
+							enabled: false,
+							pressed: true
+						})
+					]
+				})
+			})
+		}).placeAt("content");
+
+
+		new sap.ui.core.HTML({content: "</br></br>Transparent type Buttons</br>"}).placeAt("page");
+
+		////////////////////////// TRANSPARENT //////////////////////////////////
+		var oButton7 = new sap.m.Button({
+			type: sap.m.ButtonType.Ghost,
+			icon: "sap-icon://home",
+			enabled: true
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oButton8 = new sap.m.Button({
+			type: sap.m.ButtonType.Ghost,
+			text: "Button Type Ghost",
+			enabled: true
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oButton9 = new sap.m.Button({
+			type: sap.m.ButtonType.Ghost,
+			icon: "sap-icon://home",
+			text: "Button Type Ghost",
+			enabled: true
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oButton10 = new sap.m.Button({
+			type: sap.m.ButtonType.Ghost,
+			icon: "sap-icon://home",
+			enabled: false
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oButton11 = new sap.m.Button({
+			type: sap.m.ButtonType.Ghost,
+			text: "Button Type Ghost",
+			enabled: false
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oButton12 = new sap.m.Button({
+			type: sap.m.ButtonType.Ghost,
+			icon: "sap-icon://home",
+			text: "Button Type Ghost",
+			enabled: false
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "</br></br>Ghost type ToggleButtons</br>"}).placeAt("page");
+
+		////////////////////////// TRANSPARENT //////////////////////////////////
+		var oToggleButton7 = new sap.m.ToggleButton({
+			type: sap.m.ButtonType.Ghost,
+			icon: "sap-icon://home",
+			enabled: true
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oToggleButton8 = new sap.m.ToggleButton({
+			type: sap.m.ButtonType.Ghost,
+			text: "ToggleButton Type Ghost",
+			enabled: true
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oToggleButton9 = new sap.m.ToggleButton({
+			type: sap.m.ButtonType.Ghost,
+			icon: "sap-icon://home",
+			text: "ToggleButton Type Ghost",
+			enabled: true
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oToggleButton10 = new sap.m.ToggleButton({
+			type: sap.m.ButtonType.Ghost,
+			icon: "sap-icon://home",
+			enabled: false
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oToggleButton11 = new sap.m.ToggleButton({
+			type: sap.m.ButtonType.Ghost,
+			text: "ToggleButton Type Ghost",
+			enabled: false
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oToggleButton12 = new sap.m.ToggleButton({
+			type: sap.m.ButtonType.Ghost,
+			icon: "sap-icon://home",
+			text: "ToggleButton Type Ghost",
+			enabled: false
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oToggleButton9p = new sap.m.ToggleButton({
+			type: sap.m.ButtonType.Ghost,
+			icon: "sap-icon://home",
+			text: "ToggleButton Type Ghost",
+			enabled: true,
+			pressed: true
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("page");
+
+		var oToggleButton10p = new sap.m.ToggleButton({
+			type: sap.m.ButtonType.Ghost,
+			icon: "sap-icon://home",
+			text: "ToggleButton Type Ghost",
+			enabled: false,
+			pressed: true
+		}).placeAt("page");
+
+		new sap.ui.core.HTML({content: "</br></br>Ghost type Buttons in Bar</br>"}).placeAt("page");
+		////////////////////////// GHOST IN BAR //////////////////////////////////
+		var b2 = new sap.m.Bar({
+			contentLeft: [
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Button Ghost",
+					enabled: true
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Button Ghost Dis",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost Dis",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true,
+					pressed: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost Dis",
+					enabled: false,
+					pressed: true
+				})
+			]
+		}).placeAt('page');
+
+		new sap.ui.core.HTML({content: "</br></br>Transparent OverflowToolbar</br>"}).placeAt("page");
+
+		var b5 = new sap.m.OverflowToolbar({
+			design: "Transparent",
+			content: [
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Btn Ghost",
+					enabled: true
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Btn Ghost Dis",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost Dis",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true,
+					pressed: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost Dis",
+					enabled: false,
+					pressed: true
+				})
+			]
+		}).placeAt('page');
+
+		new sap.ui.core.HTML({content: "</br></br>OverflowToolbar</br>"}).placeAt("page");
+
+		var b5_2 = new sap.m.OverflowToolbar({
+			content: [
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Btn Ghost",
+					enabled: true
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Btn Ghost Dis",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost Dis",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true,
+					pressed: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost Dis",
+					enabled: false,
+					pressed: true
+				})
+			]
+		}).placeAt('page');
+
+		new sap.ui.core.HTML({content: "</br></br>ToolBar</br>"}).placeAt("page");
+
+		var b8 = new sap.m.Toolbar({
+			content: [
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Btn Ghost",
+					enabled: true
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Btn Ghost",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true,
+					pressed: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: false,
+					pressed: true
+				})
+			]
+		}).placeAt('page');
+
+		new sap.ui.core.HTML({content: "</br></br>Transparent ToolBar</br>"}).placeAt("page");
+
+		var b10 = new sap.m.Toolbar({
+			design: sap.m.ToolbarDesign.Transparent,
+			content: [
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Btn Ghost",
+					enabled: true
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Btn Ghost",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true,
+					pressed: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: false,
+					pressed: true
+				})
+			]
+		}).placeAt('page');
+
+		new sap.ui.core.HTML({content: "</br></br>Solid ToolBar</br>"}).placeAt("page");
+
+		var b12 = new sap.m.Toolbar({
+			design: sap.m.ToolbarDesign.Solid,
+			content: [
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Btn Ghost",
+					enabled: true
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "Btn Ghost",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: false
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: true,
+					pressed: true
+				}),
+				new sap.m.ToggleButton({
+					type: sap.m.ButtonType.Ghost,
+					icon: "sap-icon://home",
+					text: "ToggleBtn Ghost",
+					enabled: false,
+					pressed: true
+				})
+			]
+		}).placeAt('page');
+	</script>
+
+</head>
+<body id="body" class="sapUiBody sapUiSizeCompact">
+	<div id="content"></div>
+</body>
+</html>
