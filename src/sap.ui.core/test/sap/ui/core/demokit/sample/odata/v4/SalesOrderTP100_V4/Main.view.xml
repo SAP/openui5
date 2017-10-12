@@ -4,10 +4,11 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
-		<Title text="Sales Orders" titleStyle="H1"/>
+		<Title id="SalesOrdersTitle" text="{$count} Sales Orders" titleStyle="H2"/>
 		<Table growing="true" growingThreshold="5" id="SalesOrders"
 			items="{path : '/SEPM_C_SLSORDER_TP_100',
 					parameters : {
+						$count : true,
 						$expand : { _Item : {
 							$select : ['SalesOrderItemUUID', 'SalesOrderUUID', 'SalesOrder',
 								'SalesOrderItem', 'Product', 'GrossAmount']

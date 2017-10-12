@@ -50,14 +50,11 @@ sap.ui.define([
 						"/sap/opu/odata4/sap/sepm_odata_ref/sadl/sap/sepm_c_slsorderitem_tp_100/0001/$metadata" : {
 							source : "metadataV4_item.xml"
 						},
-						"SEPM_C_SLSORDER_TP_100?$expand=_Item($select=GrossAmount,Product,SalesOrder,SalesOrderItem,SalesOrderItemUUID,SalesOrderUUID)&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID&$skip=0&$top=5" : {
+						"SEPM_C_SLSORDER_TP_100?$count=true&$expand=_Item($select=GrossAmount,Product,SalesOrder,SalesOrderItem,SalesOrderItemUUID,SalesOrderUUID)&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID&$skip=0&$top=5" : {
 							source : "SEPM_C_SLSORDER_TP_100_Skip0_Top5_V4.json"
 						},
-						"SEPM_C_SLSORDER_TP_100?$expand=_Item($select=GrossAmount,Product,SalesOrder,SalesOrderItem,SalesOrderItemUUID,SalesOrderUUID)&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID&$skip=5&$top=5" : {
+						"SEPM_C_SLSORDER_TP_100?$count=true&$expand=_Item($select=GrossAmount,Product,SalesOrder,SalesOrderItem,SalesOrderItemUUID,SalesOrderUUID)&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID&$skip=5&$top=5" : {
 							source : "SEPM_C_SLSORDER_TP_100_Skip5_Top5_V4.json"
-						},
-						"SEPM_C_SLSORDER_TP_100?$expand=_Item($select=GrossAmount,Product,SalesOrder,SalesOrderItem,SalesOrderItemUUID,SalesOrderUUID)&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID&$skip=10&$top=5" : {
-							source : "noData_V4.json"
 						}
 					}, "sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/data", sServiceUrl);
 			}

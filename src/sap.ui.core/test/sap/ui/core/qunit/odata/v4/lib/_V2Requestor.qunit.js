@@ -482,6 +482,14 @@ sap.ui.require([
 			"$orderby" : "abc",
 			"foo" : "bar"
 		}
+	}, { // simple tests for $count
+		expectedResultHandlerCalls : [{key : "$inlinecount", value : "allpages"}],
+		expectedResultHandlerCallsSorted : [{key : "$inlinecount", value : "allpages"}],
+		queryOptions : {"$count" : true}
+	}, {
+		expectedResultHandlerCalls : [{key : "$inlinecount", value : "none"}],
+		expectedResultHandlerCallsSorted : [{key : "$inlinecount", value : "none"}],
+		queryOptions : {"$count" : false}
 	}, { // simple tests for $orderby
 		expectedResultHandlerCalls : [{key : "$orderby", value : "foo,bar"}],
 		expectedResultHandlerCallsSorted : [{key : "$orderby", value : "foo,bar"}],
@@ -660,6 +668,15 @@ sap.ui.require([
 			}
 		},
 		error : "Unsupported query option in $expand: $bar"
+	}, {
+		queryOptions : {
+			"$expand" : {
+				"foo" : {
+					"$count" : true
+				}
+			}
+		},
+		error : "Unsupported query option in $expand: $count"
 	}, {
 		queryOptions : {
 			"$expand" : {

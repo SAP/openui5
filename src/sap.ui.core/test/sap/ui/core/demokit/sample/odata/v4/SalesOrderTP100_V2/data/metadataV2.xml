@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
-	<edmx:Reference Uri="http://localhost:8080/testsuite/proxy/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common" />
 	</edmx:Reference>
 	<edmx:DataServices m:DataServiceVersion="2.0">
@@ -46,6 +46,14 @@
 					<PropertyRef Name="BusinessPartner" />
 				</Key>
 				<Property Name="BusinessPartner" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="CompanyName" sap:label="Geschäftspartner-ID" sap:quickinfo="EPM: Geschäftspartner-ID" sap:creatable="false" sap:updatable="false" />
+				<Property Name="BusinessPartnerRole" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:text="to_Role/BusinessPartnerRole_Text" sap:label="GeschPartnRolle" sap:quickinfo="EPM: Geschäftspartnerrolle" sap:value-list="standard" />
+				<Property Name="Currency" Type="Edm.String" MaxLength="5" sap:text="to_Currency/Currency_Text" sap:label="ISO-Währungscode" sap:quickinfo="EPM: Währungscode" sap:value-list="standard" sap:semantics="currency-code" />
+				<Property Name="CompanyName" Type="Edm.String" MaxLength="80" sap:label="Firmenname" sap:quickinfo="EPM: Firmenname" />
+				<Property Name="LegalForm" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Rechtsform" sap:quickinfo="EPM: Rechtsform des Geschäftspartners" />
+				<Property Name="EmailAddress" Type="Edm.String" MaxLength="255" sap:label="E-Mail" sap:quickinfo="EPM: E-Mail-Adresse" />
+				<Property Name="FaxNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Fax" sap:quickinfo="EPM: Faxnummer" />
+				<Property Name="PhoneNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Telefon" sap:quickinfo="EPM: Telefonnummer" />
+				<Property Name="URL" Type="Edm.String" sap:label="Web-Adresse" sap:quickinfo="EPM: Web-Adresse" />
 				<Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Angelegt um" sap:quickinfo="EPM: Angelegt um" sap:creatable="false" sap:updatable="false" />
 				<Property Name="LastChangedDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Geändert um" sap:quickinfo="EPM: Geändert um" sap:creatable="false" sap:updatable="false" />
 				<Property Name="BuPaApprovalStatus" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Genehmigungsstatus" sap:quickinfo="EPM: Genehmigungsstatus Geschäftspartner" />
@@ -56,14 +64,6 @@
 				<Property Name="StreetName" Type="Edm.String" MaxLength="60" sap:label="Straße" sap:quickinfo="EPM: Straße" />
 				<Property Name="HouseNumber" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Gebäude" sap:quickinfo="EPM: Gebäude" />
 				<Property Name="Country" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:text="to_Country/Country_Text" sap:label="Land" sap:quickinfo="EPM: Ländervorwahl" sap:value-list="standard" />
-				<Property Name="BusinessPartnerRole" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:text="to_Role/BusinessPartnerRole_Text" sap:label="GeschPartnRolle" sap:quickinfo="EPM: Geschäftspartnerrolle" sap:value-list="standard" />
-				<Property Name="Currency" Type="Edm.String" MaxLength="5" sap:text="to_Currency/Currency_Text" sap:label="ISO-Währungscode" sap:quickinfo="EPM: Währungscode" sap:value-list="standard" sap:semantics="currency-code" />
-				<Property Name="CompanyName" Type="Edm.String" MaxLength="80" sap:label="Firmenname" sap:quickinfo="EPM: Firmenname" />
-				<Property Name="LegalForm" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Rechtsform" sap:quickinfo="EPM: Rechtsform des Geschäftspartners" />
-				<Property Name="EmailAddress" Type="Edm.String" MaxLength="255" sap:label="E-Mail" sap:quickinfo="EPM: E-Mail-Adresse" />
-				<Property Name="FaxNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Fax" sap:quickinfo="EPM: Faxnummer" />
-				<Property Name="PhoneNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Telefon" sap:quickinfo="EPM: Telefonnummer" />
-				<Property Name="URL" Type="Edm.String" sap:label="Web-Adresse" sap:quickinfo="EPM: Web-Adresse" />
 				<NavigationProperty Name="to_Country" Relationship="SEPM_C_SLSORDER_TP_100_CDS.assoc_FCE4653333E2BA963E1C71F6B8C752A3" FromRole="FromRole_assoc_FCE4653333E2BA963E1C71F6B8C752A3" ToRole="ToRole_assoc_FCE4653333E2BA963E1C71F6B8C752A3" />
 				<NavigationProperty Name="to_Currency" Relationship="SEPM_C_SLSORDER_TP_100_CDS.assoc_AFD14073705A775ECD72ADA711B50612" FromRole="FromRole_assoc_AFD14073705A775ECD72ADA711B50612" ToRole="ToRole_assoc_AFD14073705A775ECD72ADA711B50612" />
 				<NavigationProperty Name="to_Role" Relationship="SEPM_C_SLSORDER_TP_100_CDS.assoc_8329469F0D6AD1C351621CF5395F8B0C" FromRole="FromRole_assoc_8329469F0D6AD1C351621CF5395F8B0C" ToRole="ToRole_assoc_8329469F0D6AD1C351621CF5395F8B0C" />
@@ -125,6 +125,14 @@
 				</Key>
 				<Property Name="ID" Type="Edm.String" Nullable="false" sap:sortable="false" sap:filterable="false" />
 				<Property Name="Product" Type="Edm.String" MaxLength="10" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:text="Product_Text" sap:label="Produkt-ID" sap:quickinfo="EPM: Produkt-ID" />
+				<Property Name="Product_Text" Type="Edm.String" MaxLength="255" sap:label="Produktname" sap:quickinfo="EPM: Produktname" sap:creatable="false" sap:updatable="false" />
+				<Property Name="ProductType" Type="Edm.String" MaxLength="2" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:text="to_ProductType/ProductType_Text" sap:label="Produkttyp-Code" sap:quickinfo="EPM: Produkttyp-Code" sap:value-list="standard" />
+				<Property Name="ProductCategory" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Produktkategorie" sap:quickinfo="EPM: Produktkategorie" sap:value-list="standard" />
+				<Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:aggregation-role="dimension" sap:label="Angelegt um" sap:quickinfo="EPM: Angelegt um" sap:creatable="false" sap:updatable="false" />
+				<Property Name="LastChangedDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:aggregation-role="dimension" sap:label="Geändert um" sap:quickinfo="EPM: Geändert um" sap:creatable="false" sap:updatable="false" />
+				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" sap:aggregation-role="measure" sap:unit="Currency" sap:label="Produktstückpreis" sap:quickinfo="EPM: Produktstückpreis" sap:filterable="false" />
+				<Property Name="CreatedBySystemUser" Type="Edm.String" MaxLength="12" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:label="Benutzername" />
+				<Property Name="LastChangedBySystemUser" Type="Edm.String" MaxLength="12" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:label="Benutzername" />
 				<Property Name="Currency" Type="Edm.String" MaxLength="5" sap:aggregation-role="dimension" sap:text="to_Currency/Currency_Text" sap:label="ISO-Währungscode" sap:quickinfo="EPM: Währungscode" sap:value-list="standard" sap:semantics="currency-code" />
 				<Property Name="Height" Type="Edm.Decimal" Precision="13" Scale="3" sap:aggregation-role="measure" sap:unit="DimensionUnit" sap:label="Produkthöhe" sap:quickinfo="EPM: Höhe" sap:filterable="false" />
 				<Property Name="Width" Type="Edm.Decimal" Precision="13" Scale="3" sap:aggregation-role="measure" sap:unit="DimensionUnit" sap:label="Produktbreite" sap:quickinfo="EPM: Breite" sap:filterable="false" />
@@ -135,15 +143,7 @@
 				<Property Name="Supplier" Type="Edm.String" MaxLength="10" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:text="to_Supplier/CompanyName" sap:label="Lieferant" sap:quickinfo="EPM: Lieferanten-ID" sap:value-list="standard" />
 				<Property Name="ProductBaseUnit" Type="Edm.String" MaxLength="3" sap:aggregation-role="dimension" sap:text="to_ProductBaseUnit/UnitOfMeasure_Text" sap:label="Maßeinheit" sap:quickinfo="EPM: Mengeneinheit" sap:value-list="standard" sap:semantics="unit-of-measure" />
 				<Property Name="Weight" Type="Edm.Decimal" Precision="13" Scale="3" sap:aggregation-role="measure" sap:unit="WeightUnit" sap:label="Gewicht" sap:quickinfo="EPM: Gewichtseinheit" sap:filterable="false" />
-				<Property Name="Product_Text" Type="Edm.String" MaxLength="255" sap:label="Produktname" sap:quickinfo="EPM: Produktname" sap:creatable="false" sap:updatable="false" />
 				<Property Name="WeightUnit" Type="Edm.String" MaxLength="3" sap:aggregation-role="dimension" sap:text="to_WeightUnit/UnitOfMeasure_Text" sap:label="Maßeinheit" sap:quickinfo="EPM: Gewichtseinheit" sap:value-list="standard" sap:semantics="unit-of-measure" />
-				<Property Name="ProductType" Type="Edm.String" MaxLength="2" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:text="to_ProductType/ProductType_Text" sap:label="Produkttyp-Code" sap:quickinfo="EPM: Produkttyp-Code" sap:value-list="standard" />
-				<Property Name="ProductCategory" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Produktkategorie" sap:quickinfo="EPM: Produktkategorie" sap:value-list="standard" />
-				<Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:aggregation-role="dimension" sap:label="Angelegt um" sap:quickinfo="EPM: Angelegt um" sap:creatable="false" sap:updatable="false" />
-				<Property Name="LastChangedDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:aggregation-role="dimension" sap:label="Geändert um" sap:quickinfo="EPM: Geändert um" sap:creatable="false" sap:updatable="false" />
-				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" sap:aggregation-role="measure" sap:unit="Currency" sap:label="Produktstückpreis" sap:quickinfo="EPM: Produktstückpreis" sap:filterable="false" />
-				<Property Name="CreatedBySystemUser" Type="Edm.String" MaxLength="12" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:label="Benutzername" />
-				<Property Name="LastChangedBySystemUser" Type="Edm.String" MaxLength="12" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:label="Benutzername" />
 				<NavigationProperty Name="to_Currency" Relationship="SEPM_C_SLSORDER_TP_100_CDS.assoc_72054525B8230155E959338F8190177D" FromRole="FromRole_assoc_72054525B8230155E959338F8190177D" ToRole="ToRole_assoc_72054525B8230155E959338F8190177D" />
 				<NavigationProperty Name="to_DimensionUnit" Relationship="SEPM_C_SLSORDER_TP_100_CDS.assoc_882C8F4431DC35A73CD88D773C1A15D3" FromRole="FromRole_assoc_882C8F4431DC35A73CD88D773C1A15D3" ToRole="ToRole_assoc_882C8F4431DC35A73CD88D773C1A15D3" />
 				<NavigationProperty Name="to_ProductBaseUnit" Relationship="SEPM_C_SLSORDER_TP_100_CDS.assoc_6C4E5D1A1A390BDEE6E5FD3DA958D173" FromRole="FromRole_assoc_6C4E5D1A1A390BDEE6E5FD3DA958D173" ToRole="ToRole_assoc_6C4E5D1A1A390BDEE6E5FD3DA958D173" />
@@ -169,6 +169,9 @@
 				<Property Name="UnitOfMeasureDimension" Type="Edm.String" MaxLength="6" sap:display-format="UpperCase" sap:label="Dimension" sap:quickinfo="Dimensionsschlüssel" />
 				<Property Name="UnitOfMeasureISOCode" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="ISO-Code" sap:quickinfo="ISO-Code Maßeinheit" />
 			</EntityType>
+			<ComplexType Name="DummyFunctionImportResult">
+				<Property Name="IsInvalid" Type="Edm.Boolean" sap:label="TRUE" />
+			</ComplexType>
 			<Association Name="assoc_FE4A1F7F3281F7F2C5F14B2C8B4741F2" sap:content-version="1">
 				<End Type="SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type" Multiplicity="1" Role="FromRole_assoc_FE4A1F7F3281F7F2C5F14B2C8B4741F2" />
 				<End Type="SEPM_C_SLSORDER_TP_100_CDS.SEPM_I_Product_EType" Multiplicity="0..1" Role="ToRole_assoc_FE4A1F7F3281F7F2C5F14B2C8B4741F2" />
@@ -447,6 +450,9 @@
 					<End EntitySet="SEPM_C_SLSORDERITEM_TP_100" Role="FromRole_assoc_FE4A1F7F3281F7F2C5F14B2C8B4741F2" />
 					<End EntitySet="SEPM_I_Product_E" Role="ToRole_assoc_FE4A1F7F3281F7F2C5F14B2C8B4741F2" />
 				</AssociationSet>
+				<FunctionImport Name="SEPM_C_SLSORDER_TP_100Set_to_delivered" ReturnType="SEPM_C_SLSORDER_TP_100_CDS.DummyFunctionImportResult" m:HttpMethod="POST" sap:action-for="SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDER_TP_100Type" sap:applicable-path="Set_to_delivered_ac">
+					<Parameter Name="SalesOrderUUID" Type="Edm.Guid" Mode="In" />
+				</FunctionImport>
 			</EntityContainer>
 			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type/Product" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 				<Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory" />
@@ -530,26 +536,6 @@
 					</Record>
 				</Annotation>
 			</Annotations>
-			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_I_BusinessPartner_EType/Country" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="Common.ValueList">
-					<Record>
-						<PropertyValue Property="Label" String="EPM Demo: Country" />
-						<PropertyValue Property="CollectionPath" String="SEPM_I_Country" />
-						<PropertyValue Property="SearchSupported" Bool="false" />
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="LocalDataProperty" PropertyPath="Country" />
-									<PropertyValue Property="ValueListProperty" String="Country" />
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="Country_Text" />
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
 			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_I_BusinessPartner_EType/BusinessPartnerRole" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 				<Annotation Term="Common.ValueList">
 					<Record>
@@ -590,6 +576,26 @@
 					</Record>
 				</Annotation>
 			</Annotations>
+			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_I_BusinessPartner_EType/Country" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="EPM Demo: Country" />
+						<PropertyValue Property="CollectionPath" String="SEPM_I_Country" />
+						<PropertyValue Property="SearchSupported" Bool="false" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="Country" />
+									<PropertyValue Property="ValueListProperty" String="Country" />
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Country_Text" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
 			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_I_CountryType/Language" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 				<Annotation Term="Common.ValueList">
 					<Record>
@@ -604,6 +610,46 @@
 								</Record>
 								<Record Type="Common.ValueListParameterDisplayOnly">
 									<PropertyValue Property="ValueListProperty" String="Language_Text" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_I_Product_EType/ProductType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="EPM Demo: Product Type" />
+						<PropertyValue Property="CollectionPath" String="SEPM_I_ProductType" />
+						<PropertyValue Property="SearchSupported" Bool="false" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="ProductType" />
+									<PropertyValue Property="ValueListProperty" String="ProductType" />
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="ProductType_Text" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_I_Product_EType/ProductCategory" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="EPM Demo: Product Category" />
+						<PropertyValue Property="CollectionPath" String="SEPM_I_ProductCategory" />
+						<PropertyValue Property="SearchSupported" Bool="false" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="ProductCategory" />
+									<PropertyValue Property="ValueListProperty" String="ProductCategory" />
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="ProductCategory" />
 								</Record>
 							</Collection>
 						</PropertyValue>
@@ -730,46 +776,6 @@
 					</Record>
 				</Annotation>
 			</Annotations>
-			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_I_Product_EType/ProductType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="Common.ValueList">
-					<Record>
-						<PropertyValue Property="Label" String="EPM Demo: Product Type" />
-						<PropertyValue Property="CollectionPath" String="SEPM_I_ProductType" />
-						<PropertyValue Property="SearchSupported" Bool="false" />
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="LocalDataProperty" PropertyPath="ProductType" />
-									<PropertyValue Property="ValueListProperty" String="ProductType" />
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="ProductType_Text" />
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_I_Product_EType/ProductCategory" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-				<Annotation Term="Common.ValueList">
-					<Record>
-						<PropertyValue Property="Label" String="EPM Demo: Product Category" />
-						<PropertyValue Property="CollectionPath" String="SEPM_I_ProductCategory" />
-						<PropertyValue Property="SearchSupported" Bool="false" />
-						<PropertyValue Property="Parameters">
-							<Collection>
-								<Record Type="Common.ValueListParameterInOut">
-									<PropertyValue Property="LocalDataProperty" PropertyPath="ProductCategory" />
-									<PropertyValue Property="ValueListProperty" String="ProductCategory" />
-								</Record>
-								<Record Type="Common.ValueListParameterDisplayOnly">
-									<PropertyValue Property="ValueListProperty" String="ProductCategory" />
-								</Record>
-							</Collection>
-						</PropertyValue>
-					</Record>
-				</Annotation>
-			</Annotations>
 			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 				<Annotation Term="Common.SemanticKey">
 					<Collection>
@@ -785,8 +791,20 @@
 					</Collection>
 				</Annotation>
 			</Annotations>
-			<atom:link rel="self" href="http://localhost:8080/testsuite/proxy/sap/opu/odata/sap/SEPM_C_SLSORDER_TP_100_CDS/$metadata" xmlns:atom="http://www.w3.org/2005/Atom" />
-			<atom:link rel="latest-version" href="http://localhost:8080/testsuite/proxy/sap/opu/odata/sap/SEPM_C_SLSORDER_TP_100_CDS/$metadata" xmlns:atom="http://www.w3.org/2005/Atom" />
+			<Annotations Target="SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDER_TP_100_CDS_Entities/SEPM_I_BusinessPartner_E" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="URL" />
+									<PropertyValue Property="AllowedExpressions" String="SearchExpression" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>
