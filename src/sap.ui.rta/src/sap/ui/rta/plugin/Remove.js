@@ -8,7 +8,12 @@ sap.ui.define([
 	'sap/ui/rta/Utils',
 	'sap/ui/rta/command/CompositeCommand',
 	'sap/ui/dt/OverlayRegistry'
-], function(Plugin, Utils, CompositeCommand, OverlayRegistry) {
+], function(
+	Plugin,
+	Utils,
+	CompositeCommand,
+	OverlayRegistry
+){
 	"use strict";
 
 	/**
@@ -90,18 +95,38 @@ sap.ui.define([
 	 */
 	Remove.prototype.isEnabled = function(oOverlay) {
 		var oAction = this.getAction(oOverlay);
+		var bIsEnabled = false;
 		if (!oAction) {
-			return false;
+			return bIsEnabled;
 		}
 
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				return oAction.isEnabled(oOverlay.getElementInstance());
+				bIsEnabled = oAction.isEnabled(oOverlay.getElementInstance());
 			} else {
-				return oAction.isEnabled;
+				bIsEnabled = oAction.isEnabled;
 			}
+		} else {
+			bIsEnabled = true;
 		}
-		return true;
+		return bIsEnabled && !this._isLastVisibleInAggregation(oOverlay);
+	};
+
+	Remove.prototype._isLastVisibleInAggregation = function(oOverlay){
+		var oElement = oOverlay.getElementInstance();
+		var oParent = oElement.getParent();
+		var aElements = oParent.getAggregation(oElement.sParentAggregationName);
+		if (!Array.isArray(aElements)){
+			return false;
+		}
+		if (aElements.length === 1){
+			return true;
+		}
+		var aInvisibleElements = aElements.filter(function(oElement){
+			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
+			return !(oElementOverlay && oElementOverlay.getElementVisibility());
+		});
+		return aInvisibleElements.length === (aElements.length - 1);
 	};
 
 	/**
