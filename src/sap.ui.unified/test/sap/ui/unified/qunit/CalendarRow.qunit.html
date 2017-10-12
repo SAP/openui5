@@ -31,6 +31,15 @@
 		<script>
 
 			jQuery.sap.require("sap.ui.model.type.Date");
+			jQuery.sap.require("sap.ui.unified.CalendarLegend");
+			jQuery.sap.require("sap.ui.unified.CalendarRowRenderer");
+			jQuery.sap.require("sap.ui.unified.CalendarLegendItem");
+
+			var CalendarLegend = sap.ui.unified.CalendarLegend,
+				CalendarLegendItem = sap.ui.unified.CalendarLegendItem,
+				CalendarDayType = sap.ui.unified.CalendarDayType,
+				CalendarRowRenderer = sap.ui.unified.CalendarRowRenderer;
+
 			var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: sap.ui.core.CalendarType.Gregorian});
 
 			var sSelectedAppointmentId = "";
@@ -1251,8 +1260,9 @@
 						sLocalizedEnd = that.sut._oRb.getText("CALENDAR_END_TIME"),
 						sFormattedEndDate = that.sut._oFormatAria.format(oAppointment.getEndDate()),
 						sTooltip = oAppointment.getTooltip() || "";
+						sType = oAppointment.getType() !== CalendarDayType.None ? "; " + CalendarLegend.getTypeAriaText(oAppointment.getType()).getText() : "";
 
-					return sLocalizedStart + ": " + sFormattedStartDate + "; " + sLocalizedEnd + ": " + sFormattedEndDate + "; " + sTooltip;
+					return sLocalizedStart + ": " + sFormattedStartDate + "; " + sLocalizedEnd + ": " + sFormattedEndDate + "; " + sTooltip + sType;
 				},
 				aAppointments = this.sut.getAppointments();
 
@@ -1264,12 +1274,39 @@
 					oAppointmentDescElement = oAppointment.$("Descr");
 
 				if (oAppointmentDescElement.length) {
-					assert.strictEqual(sExpectedDescription, oAppointmentDescElement.text(), "The text node of the appointment " + iIndex + " 'aria-describedby' element has correct value");
+					assert.strictEqual(oAppointmentDescElement.text(), sExpectedDescription, "The text node of the appointment " + iIndex + " 'aria-describedby' element has correct value");
 				} else {
 					assert.ok(true, "The appointment " + iIndex + " is not displayed in the current viewport");
 				}
 			});
 		});
+
+		QUnit.module("Pure unit testing");
+			QUnit.test("CalendarRowRender.getAriaTextForType", function () {
+				//Prepare
+				var aLegendItems1to2 =
+						[
+							new CalendarLegendItem({type: CalendarDayType.Type01, text: "Day off"}),
+							new CalendarLegendItem({type: CalendarDayType.Type02, text: "On Duty"})
+						],
+					sResult1,
+					sResult2,
+					sResult3;
+
+				//Act
+				sResult1 = CalendarRowRenderer.getAriaTextForType(CalendarDayType.Type01, aLegendItems1to2);
+				sResult2 = CalendarRowRenderer.getAriaTextForType(CalendarDayType.Type03, aLegendItems1to2);
+				sResult3 = CalendarRowRenderer.getAriaTextForType(CalendarDayType.Type03);
+
+				//Assert
+				assert.equal(sResult1, "Day off", "When the given type  matches legend item's type");
+				assert.equal(sResult2, CalendarLegend.typeARIATexts[CalendarDayType.Type03].getText(),
+					"When the given type does not match legend item's type");
+				assert.equal(sResult2, CalendarLegend.typeARIATexts[CalendarDayType.Type03].getText(),
+					"When the legendItems is not given");
+
+				//Cleanup - nothing to lean
+			});
 
 	</script>
 

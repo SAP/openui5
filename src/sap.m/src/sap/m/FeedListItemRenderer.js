@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for the sap.m.FeedListItem
-sap.ui.define([ "jquery.sap.global", "./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device" ],
-	function(jQuery, ListItemBaseRenderer, Renderer, Device) {
+sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"],
+	function(ListItemBaseRenderer, Renderer, Device) {
 	"use strict";
 
 

@@ -46,6 +46,14 @@ sap.ui.require([
 		assert.equal(this.oVariant.isVariant(), true);
 	});
 
+	QUnit.test("when getTitle is called", function(assert) {
+		assert.equal(this.oVariant.getTitle(), "variant A");
+	});
+
+	QUnit.test("when getFileType is called", function(assert) {
+		assert.equal(this.oVariant.getFileType(), "ctrl_variant");
+	});
+
 	QUnit.test("when getPackage is called", function(assert) {
 		assert.equal(this.oVariant.getPackage(), "$TMP");
 	});
@@ -165,9 +173,6 @@ sap.ui.require([
 			"packageName": "$TMP",
 			"self": "sap.ui.rta.test.Demo.md.Componentvariant0.ctrl_variant",
 			"content": {},
-			"selector": {
-				"id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-			},
 			"layer": "VENDOR",
 			"texts": {
 				"TextDemo": {
@@ -185,7 +190,6 @@ sap.ui.require([
 				"user": "",
 				"sapui5Version": "1.51.0-SNAPSHOT"
 			},
-			"dependentSelector": {},
 			"validAppVersions": {}
 		};
 

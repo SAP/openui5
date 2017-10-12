@@ -612,8 +612,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/*
-	 * if used inside Calendar get the value from the parent
-	 * To don't have sync issues...
+	 * If this instance is used inside sap.ui.unified.Calendar, the legend from the Calendar will be used.
+	 * This avoids any synchronization issues if maintaining a copy of the calendar legend items from Calendar to Month
 	 */
 	Month.prototype.getLegend = function(){
 
@@ -622,7 +622,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (oParent && oParent.getLegend) {
 			return oParent.getLegend();
 		} else {
-			return this.getAssociation("ariaLabelledBy", []);
+			return this.getAssociation("legend", []);
 		}
 
 	};

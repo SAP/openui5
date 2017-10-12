@@ -139,7 +139,7 @@ sap.ui.require([
 					return this.mData[sId];
 				},
 				getIndicator: function() {
-					return oFakeIndicator;
+					return oFakeIndicator[0];
 				}
 			}
 		};
@@ -162,7 +162,7 @@ sap.ui.require([
 		function testIndicatorSize(oEvent, iExpectedWidth, iExpectedHeight, iExpectedLeft, iExpectedRight) {
 			that.oDragAndDropExtension._ExtensionDelegate.ondragover.call(oTable, oEvent);
 
-			var oIndicator = oEvent.dragSession.getIndicator()[0];
+			var oIndicator = oEvent.dragSession.getIndicator();
 
 			assert.strictEqual(oIndicator.style.width, iExpectedWidth + "px",
 				"The style \"width\" of the indicator has the expected value");

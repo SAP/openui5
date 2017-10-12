@@ -8,22 +8,34 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Icon",
-	"sap/ui/base/Event",
 	"sap/ui/Device",
 	"sap/m/Breadcrumbs",
 	"./ObjectPageHeaderActionButton",
 	"sap/ui/core/ResizeHandler",
-	"sap/m/Text",
 	"sap/m/Button",
 	"sap/m/ActionSheet",
-	"sap/m/Image",
 	"./ObjectImageHelper",
 	"./ObjectPageHeaderContent",
-	"./library"
-], function (jQuery, Control, IconPool, CustomData, Icon, BaseEvent, Device, Breadcrumbs, ObjectPageHeaderActionButton,
-			 ResizeHandler, Text, Button, ActionSheet, Image, ObjectImageHelper, ObjectPageHeaderContent, library) {
+	"./library",
+	"sap/m/library"
+], function (jQuery, Control, IconPool, CustomData, Device, Breadcrumbs, ObjectPageHeaderActionButton,
+			 ResizeHandler, Button, ActionSheet, ObjectImageHelper, ObjectPageHeaderContent, library, mobileLibrary) {
 	"use strict";
+
+	// shortcut for sap.uxap.Importance
+	var Importance = library.Importance;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = mobileLibrary.PlacementType;
+
+	// shortcut for sap.uxap.ObjectPageHeaderDesign
+	var ObjectPageHeaderDesign = library.ObjectPageHeaderDesign;
+
+	// shortcut for sap.uxap.ObjectPageHeaderPictureShape
+	var ObjectPageHeaderPictureShape = library.ObjectPageHeaderPictureShape;
 
 	/**
 	 * Constructor for a new ObjectPageHeader.
@@ -82,7 +94,7 @@ sap.ui.define([
 				 */
 				objectImageShape: {
 					type: "sap.uxap.ObjectPageHeaderPictureShape",
-					defaultValue: sap.uxap.ObjectPageHeaderPictureShape.Square
+					defaultValue: ObjectPageHeaderPictureShape.Square
 				},
 
 				/**
@@ -113,7 +125,7 @@ sap.ui.define([
 				 */
 				headerDesign: {
 					type: "sap.uxap.ObjectPageHeaderDesign",
-					defaultValue: sap.uxap.ObjectPageHeaderDesign.Light
+					defaultValue: ObjectPageHeaderDesign.Light
 				},
 
 				/**
@@ -327,7 +339,7 @@ sap.ui.define([
 		"_objectImage": ObjectImageHelper.createObjectImage,
 		"_placeholder": ObjectImageHelper.createPlaceholder,
 		"_overflowActionSheet": function () {
-			return new ActionSheet({placement: sap.m.PlacementType.Bottom});
+			return new ActionSheet({placement: PlacementType.Bottom});
 		},
 		"_lockIconCont": function (oParent) {
 			return this._getButton(oParent, "sap-icon://private", "lock-cont", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_LOCK_MARK_VALUE"));
@@ -377,7 +389,7 @@ sap.ui.define([
 				id: this._getParentAugmentedId(oParent, sChildSignature),
 				tooltip: sTooltip,
 				icon: sIcon,
-				type: sap.m.ButtonType.Transparent
+				type: ButtonType.Transparent
 			});
 		},
 		_getParentAugmentedId: function (oParent, sChildSignature) {
@@ -580,7 +592,7 @@ sap.ui.define([
 
 				// Force the design of the button to transparent
 				if (oAction instanceof Button && (oAction.getType() === "Default" || oAction.getType() === "Unstyled")) {
-					oAction.setProperty("type", sap.m.ButtonType.Transparent, false);
+					oAction.setProperty("type", ButtonType.Transparent, false);
 				}
 
 				if (oAction instanceof Button && oAction.getVisible()) {
@@ -712,8 +724,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageHeader._sortActionsByImportance = function (oActionA, oActionB) {
-		var sImportanceA = (oActionA instanceof ObjectPageHeaderActionButton) ? oActionA.getImportance() : sap.uxap.Importance.High,
-			sImportanceB = (oActionB instanceof ObjectPageHeaderActionButton) ? oActionB.getImportance() : sap.uxap.Importance.High,
+		var sImportanceA = (oActionA instanceof ObjectPageHeaderActionButton) ? oActionA.getImportance() : Importance.High,
+			sImportanceB = (oActionB instanceof ObjectPageHeaderActionButton) ? oActionB.getImportance() : Importance.High,
 			iImportanceDifference = ObjectPageHeader._actionImportanceMap[sImportanceA] - ObjectPageHeader._actionImportanceMap[sImportanceB];
 
 		if (iImportanceDifference === 0) {
@@ -777,7 +789,7 @@ sap.ui.define([
 			oEvent.getSource()._setInternalVisible(true);
 		}
 
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			$actionButtons.css("visibility", "visible");
 		}
 
@@ -907,7 +919,7 @@ sap.ui.define([
 			if (oAction instanceof Button) {
 				oAction.$().show();
 
-				if (sap.ui.Device.system.phone) {
+				if (Device.system.phone) {
 					oAction.$().css("visibility", "hidden");
 				}
 
@@ -996,6 +1008,14 @@ sap.ui.define([
 
 	ObjectPageHeader.prototype._getAdaptableContent = function () {
 		return this.getNavigationBar();
+	};
+
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface.
+	 * @returns {*}
+	 */
+	ObjectPageHeader.prototype.isDynamic = function () {
+		return false;
 	};
 
 	/**

@@ -1,13 +1,14 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
+	"sap/m/ObjectMarker",
 	"sap/m/MessageToast",
 	"sap/m/UploadCollectionParameter",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/FileSizeFormat",
 	"sap/ui/Device"
-], function(jQuery, Controller, MessageToast, UploadCollectionParameter, MobileLibrary, JSONModel, FileSizeFormat, Device) {
+], function(jQuery, Controller, ObjectMarker, MessageToast, UploadCollectionParameter, MobileLibrary, JSONModel, FileSizeFormat, Device) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollection.Page", {
@@ -55,6 +56,18 @@ sap.ui.define([
 					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
 			});
+		},
+
+		createObjectMarker: function(sId, oContext) {
+			var mSettings = null;
+
+			if (oContext.getProperty("type")) {
+				mSettings = {
+					type: "{type}",
+					press: this.onMarkerPress
+				};
+			}
+			return new ObjectMarker(sId, mSettings);
 		},
 
 		formatAttribute: function(sValue) {
@@ -158,17 +171,32 @@ sap.ui.define([
 				"attributes": [
 					{
 						"title": "Uploaded By",
-						"text": "You"
+						"text": "You",
+						"active": false
 					},
 					{
 						"title": "Uploaded On",
-						"text": new Date(jQuery.now()).toLocaleDateString()
+						"text": new Date(jQuery.now()).toLocaleDateString(),
+						"active": false
 					},
 					{
 						"title": "File Size",
-						"text": "505000"
+						"text": "505000",
+						"active": false
 					}
-				]
+				],
+				"statuses": [
+					{
+						"title": "",
+						"text": "",
+						"state": "None"
+					}
+				],
+				"markers": [
+					{
+					}
+				],
+				"selected": false
 			});
 			this.getView().getModel().refresh();
 
@@ -183,7 +211,7 @@ sap.ui.define([
 
 		onBeforeUploadStarts: function(oEvent) {
 			// Header Slug
-			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
+			var oCustomerHeaderSlug = new UploadCollectionParameter({
 				name: "slug",
 				value: oEvent.getParameter("fileName")
 			});

@@ -113,7 +113,7 @@ sap.ui.define([
 
 		onBeforeUploadStarts: function(oEvent) {
 			// Header Slug
-			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
+			var oCustomerHeaderSlug = new UploadCollectionParameter({
 				name: "slug",
 				value: oEvent.getParameter("fileName")
 			});

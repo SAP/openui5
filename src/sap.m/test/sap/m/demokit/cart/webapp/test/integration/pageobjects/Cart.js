@@ -268,17 +268,16 @@ sap.ui.define([
 					});
 				},
 
-	            iShouldSeeTheTotalPriceEqualToZero : function () {
-		            return this.waitFor({
-			            id: "totalPriceText",
-			            matchers: new PropertyStrictEquals({name: "text", value: "Total: 0,00 EUR"}),
-			            success: function () {
-				            Opa5.assert.ok(true, "Total price is updated correctly");
-			            },
-			            errorMessage: "Total price is not updated correctly (If you have trouble running this test," +
-			            " delete your browser cache. This test will fail, if the products in the cart do not exactly match this tests expectations.)"
-		            });
-	            },
+				iShouldSeeTheTotalPriceEqualToZero : function () {
+					return this.waitFor({
+						id: "totalPriceText",
+						matchers: new PropertyStrictEquals({name: "text", value: "Total: 0,00 EUR"}),
+						success: function () {
+							Opa5.assert.ok(true, "Total price is updated correctly");
+						},
+						errorMessage: "Total price is not updated correctly"
+					});
+				},
 
 				iShouldSeeTheTotalPriceUpdated: function () {
 					return this.waitFor({
@@ -287,8 +286,7 @@ sap.ui.define([
 						success: function () {
 							Opa5.assert.ok(true, "Total price is updated correctly");
 						},
-						errorMessage: "Total price is not updated correctly (If you have trouble running this test," +
-						" delete your browser cache. This test will fail, if the products in the cart do not exactly match this tests expectations.)"
+						errorMessage: "Total price is not updated correctly"
 					});
 				}
 			}

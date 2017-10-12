@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Carousel.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/thirdparty/mobify-carousel', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool', 'jquery.sap.keycodes', 'jquery.sap.events'],
-	function(jQuery, library, Control, mobifycarousel, Device, ResizeHandler, IconPool) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/thirdparty/mobify-carousel', 'sap/ui/core/IconPool', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control,  Device, ResizeHandler /*, mobifycarousel, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */) {
 	"use strict";
 
 
@@ -202,7 +202,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Carousel._LEFTMOST_CLASS = "sapMCrslLeftmost";
 	Carousel._RIGHTMOST_CLASS = "sapMCrslRightmost";
 	Carousel._LATERAL_CLASSES = "sapMCrslLeftmost sapMCrslRightmost";
-	Carousel._bIE9 = (Device.browser.internet_explorer && Device.browser.version < 10);
 	Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING = 10; // The number 10 is by keyboard specification
 	Carousel._BULLETS_TO_NUMBERS_THRESHOLD = 9; //The number 9 is by visual specification. Less than 9 pages - bullets for page indicator. 9 or more pages - numeric page indicator.
 
@@ -491,7 +490,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				+ ", new page: " + sNewActivePageId);
 
 		// close the soft keyboard
-		if (Device.system.tablet || Device.system.phone) {
+		if (!Device.system.desktop) {
 			jQuery(document.activeElement).blur();
 		}
 
@@ -663,6 +662,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var rm = sap.ui.getCore().createRenderManager();
 				rm.render(oPage, this.getDomRef().firstChild);
 				rm.destroy();
+				oPage = null;
 			}
 		});
 

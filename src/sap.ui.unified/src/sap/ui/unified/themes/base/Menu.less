@@ -50,6 +50,28 @@
 	position: relative;
 }
 
+.sapUiMnuItm:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -3px;
+}
+
+html[data-sap-ui-browser*='ie'] {
+	.sapUiMnuItm:focus {
+		outline: none;
+	}
+	.sapUiMnuItm:focus::before {
+		content: "";
+		border: 0;
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		right: 2px;
+		bottom: 2px;
+		pointer-events: none;
+		border: 1px dashed @sapUiContentFocusColor;
+	}
+}
+
 .sapUiMnuItm.sapUiMnuItmDsbl,
 .sapUiMnuItm.sapUiMnuTfItm.sapUiMnuItmDsbl .sapUiMnuTfItemLbl,
 .sapUiMnuItm.sapUiMnuTfItm.sapUiMnuItmDsbl.sapUiMnuItmHov .sapUiMnuTfItemLbl {
@@ -290,7 +312,7 @@
 }
 
 .sapUiMnuItm.sapUiMnuItmHov:active .sapUiMnuItmIco {
-	color: @sapUiContentContrastIconColor;
+	color: @sapUiListActiveTextColor;
 }
 
 .sapUiMnuItm.sapUiMnuItmDsbl.sapUiMnuItmHov:active .sapUiMnuItmIco {
@@ -351,7 +373,7 @@
 }
 
 .sapUiMnuItm.sapUiMnuItmHov:active .sapUiMnuItmSbMnu > div:after {
- 	color: @sapUiContentContrastIconColor;
+ 	color: @sapUiListActiveTextColor;
 }
 
 .sapUiMnu.sapUiMnuScroll .sapUiMnuItmSbMnu {

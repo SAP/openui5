@@ -4,9 +4,9 @@
 
 // Provides control sap.m.SplitContainer.
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool',
-	'sap/m/semantic/SemanticPage', 'sap/ui/core/InvisibleText', 'sap/ui/Device', 'sap/ui/base/ManagedObject'],
+	'sap/m/semantic/SemanticPage', 'sap/ui/core/InvisibleText', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/m/NavContainer', 'sap/m/Popover'],
 	function(jQuery, library, Control, IconPool,
-			SemanticPage, InvisibleText, Device, ManagedObject) {
+		SemanticPage, InvisibleText, Device, ManagedObject, NavContainer, Popover) {
 	"use strict";
 
 
@@ -470,7 +470,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._aDetailPages = [];
 		if (!Device.system.phone) {
 			//initialize the master nav container
-			this._oMasterNav = new sap.m.NavContainer(this.getId() + "-Master", {
+			this._oMasterNav = new NavContainer(this.getId() + "-Master", {
 				width: "",
 				navigate: function(oEvent){
 					that._handleNavigationEvent(oEvent, false, true);
@@ -482,7 +482,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			});
 
 			//initialize the detail nav container
-			this._oDetailNav = new sap.m.NavContainer(this.getId() + "-Detail", {
+			this._oDetailNav = new NavContainer(this.getId() + "-Detail", {
 				width: "",
 				navigate: function(oEvent){
 					that._handleNavigationEvent(oEvent, false, false);
@@ -499,7 +499,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._createShowMasterButton();
 
 			//initialize the popover
-			this._oPopOver = new sap.m.Popover(this.getId() + "-Popover", {
+			this._oPopOver = new Popover(this.getId() + "-Popover", {
 				placement: PlacementType.Bottom,
 				showHeader: false,
 				contentWidth: "320px",
@@ -526,7 +526,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setAggregation("_navPopover", this._oPopOver, true);
 		} else {
 			//master nav and detail nav are the same in phone
-			this._oMasterNav = this._oDetailNav =  new sap.m.NavContainer({
+			this._oMasterNav = this._oDetailNav =  new NavContainer({
 				width: "",
 				navigate: function(oEvent){
 					that._handleNavigationEvent(oEvent, false, true);
@@ -1802,7 +1802,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					oReturn = aContent[0];
 					continue;
 				}
-			} else if (oReturn instanceof sap.m.NavContainer) {
+			} else if (oReturn instanceof NavContainer) {
 				oReturn = oReturn.getCurrentPage();
 				continue;
 			}

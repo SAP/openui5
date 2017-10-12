@@ -577,24 +577,24 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"group1": [oChange3]
 			},
 			mDependencies: {
-				"fileNameChange1USERnamespace": {
+				"fileNameChange1": {
 					"changeObject": oChange1,
 					"dependencies": [],
 					"controlsDependencies": ["group3", "group2"]
 				},
-				"fileNameChange2USERnamespace": {
+				"fileNameChange2": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"],
+					"dependencies": ["fileNameChange1"],
 					"controlsDependencies": ["group2", "group1"]
 				},
-				"fileNameChange3USERnamespace": {
+				"fileNameChange3": {
 					"changeObject": oChange3,
-					"dependencies": ["fileNameChange2USERnamespace"]
+					"dependencies": ["fileNameChange2"]
 				}
 			},
 			mDependentChangesOnMe: {
-				"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"],
-				"fileNameChange2USERnamespace": ["fileNameChange3USERnamespace"]
+				"fileNameChange1": ["fileNameChange2"],
+				"fileNameChange2": ["fileNameChange3"]
 			}
 		};
 
@@ -656,20 +656,20 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"group1": [oChange0]
 			},
 			mDependencies: {
-				"fileNameChange1USERnamespace": {
+				"fileNameChange1": {
 					"changeObject": oChange1,
 					"dependencies": [],
 					"controlsDependencies": ["group3", "group2"]
 				},
-				"fileNameChange2USERnamespace": {
+				"fileNameChange2": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace", "fileNameChange0USERnamespace"],
+					"dependencies": ["fileNameChange1", "fileNameChange0"],
 					"controlsDependencies": ["group2", "group1"]
 				}
 			},
 			mDependentChangesOnMe: {
-				"fileNameChange0USERnamespace": ["fileNameChange2USERnamespace"],
-				"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
+				"fileNameChange0": ["fileNameChange2"],
+				"fileNameChange1": ["fileNameChange2"]
 			}
 		};
 
@@ -716,18 +716,18 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"group2": [oChange2]
 			},
 			mDependencies: {
-				"fileNameChange1USERnamespace": {
+				"fileNameChange1": {
 					"changeObject": oChange1,
 					"dependencies": [],
 					"controlsDependencies": ["group3", "group2"]
 				},
-				"fileNameChange2USERnamespace": {
+				"fileNameChange2": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
+					"dependencies": ["fileNameChange1"]
 				}
 			},
 			mDependentChangesOnMe: {
-				"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
+				"fileNameChange1": ["fileNameChange2"]
 			}
 		};
 
@@ -772,14 +772,14 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"field3-2": [oChange2]
 			},
 			mDependencies: {
-				"fileNameChange2USERnamespace": {
+				"fileNameChange2": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"],
+					"dependencies": ["fileNameChange1"],
 					"controlsDependencies": ["group3", "group2"]
 				}
 			},
 			mDependentChangesOnMe: {
-				"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
+				"fileNameChange1": ["fileNameChange2"]
 			}
 		};
 
@@ -816,13 +816,13 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"group2": [oChange1, oChange2]
 			},
 			mDependencies: {
-				"fileNameChange2USERnamespace": {
+				"fileNameChange2": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
+					"dependencies": ["fileNameChange1"]
 				}
 			},
 			mDependentChangesOnMe: {
-				"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
+				"fileNameChange1": ["fileNameChange2"]
 			}
 		};
 
@@ -1596,9 +1596,9 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			this.oChange1 = new Change(oChangeContent1);
 			this.oChange2 = new Change(oChangeContent2);
 			this.oChange3 = new Change(oChangeContent3);
-			this.oChange1Key = this.oChange1.getKey();
-			this.oChange2Key = this.oChange2.getKey();
-			this.oChange3Key = this.oChange3.getKey();
+			this.oChange1Id = this.oChange1.getId();
+			this.oChange2Id = this.oChange2.getId();
+			this.oChange3Id = this.oChange3.getId();
 
 			this.mChanges = {
 				"mChanges": {
@@ -1607,8 +1607,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				"mDependencies": {},
 				"mDependentChangesOnMe": {}
 			};
-			this.mChanges["mDependencies"][this.oChange1Key] = {"dependencies": [this.oChange2Key]};
-			this.mChanges["mDependentChangesOnMe"][this.oChange2Key] = [this.oChange1Key, this.oChange3Key];
+			this.mChanges["mDependencies"][this.oChange1Id] = {"dependencies": [this.oChange2Id]};
+			this.mChanges["mDependentChangesOnMe"][this.oChange2Id] = [this.oChange1Id, this.oChange3Id];
 
 			this.oChangePersistence._mChanges = this.mChanges;
 		},
@@ -1616,9 +1616,9 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			this.oChange1.destroy();
 			this.oChange2.destroy();
 			this.oChange3.destroy();
-			delete this.oChange1Key;
-			delete this.oChange2Key;
-			delete this.oChange3Key;
+			delete this.oChange1Id;
+			delete this.oChange2Id;
+			delete this.oChange3Id;
 			delete this.mChanges;
 			sandbox.restore();
 			controls.forEach(function(control){
@@ -1630,9 +1630,9 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	QUnit.test("when '_deleteChangeInMap' is called", function (assert) {
 		this.oChangePersistence._deleteChangeInMap(this.oChange1);
 		assert.equal(this.oChangePersistence._mChanges.mChanges["control1"].length, 1, "then one change deleted from map");
-		assert.strictEqual(this.oChangePersistence._mChanges.mChanges["control1"][0].getKey(), this.oChange2.getKey(), "then only second change present");
+		assert.strictEqual(this.oChangePersistence._mChanges.mChanges["control1"][0].getId(), this.oChange2.getId(), "then only second change present");
 		assert.deepEqual(this.oChangePersistence._mChanges.mDependencies, {}, "then dependencies are cleared for change1");
-		assert.equal(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Key].length, 1, "then mDependentChangesOnMe for change2 only has one change");
-		assert.strictEqual(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Key][0], this.oChange3Key, "then mDependentChangesOnMe for change2 still has change3");
+		assert.equal(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Id].length, 1, "then mDependentChangesOnMe for change2 only has one change");
+		assert.strictEqual(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Id][0], this.oChange3Id, "then mDependentChangesOnMe for change2 still has change3");
 	});
 });

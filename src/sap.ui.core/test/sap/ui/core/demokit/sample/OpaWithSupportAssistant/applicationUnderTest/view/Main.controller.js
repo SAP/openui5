@@ -17,7 +17,8 @@ function (Controller) {
 						}
 					}),
 					content: [
-						new sap.m.Text({text: 'Hello'})
+						new sap.m.Text({text: 'Hello'}),
+						new sap.m.Button({icon: 'sap-icon://action'})
 					]
 				});
 
@@ -40,7 +41,8 @@ function (Controller) {
 						}
 					}),
 					content: [
-						dialogText
+						dialogText,
+						new sap.m.Button({icon: 'sap-icon://action', tooltip: 'Action'})
 					],
 					ariaLabelledBy: dialogText.getId()
 				});

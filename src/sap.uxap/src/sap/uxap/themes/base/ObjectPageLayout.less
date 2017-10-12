@@ -110,11 +110,103 @@ body > .sapUxAPObjectPageLayout,
 
 // title hover
 .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
-  .sapFDynamicPageTitle:hover {
+  .sapFDynamicPageTitle:hover,
+  &.sapUxAPObjectPageTitleForceHovered .sapFDynamicPageTitle {
     cursor: pointer;
   }
 }
 
+/* ============================== */
+/* Toggle Header Visual Indicator */
+/* ============================== */
+.sapFDynamicPageToggleHeaderIndicator.sapMBtn {
+  position: absolute;
+  left: 50%;
+  padding: 0;
+
+  .sapMBtnInner {
+    position: absolute !important;
+    bottom: 0;
+    border-radius: 0 0 0.1875rem 0.1875rem;
+  }
+}
+
+/* Tablet and Desktop */
+.sapUiMedia-Std-Desktop,
+.sapUiMedia-Std-Tablet,
+.sapUiContainer-Medium,
+.sapUiContainer-Wide {
+
+  .sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutWithNavigation) .sapFDynamicPageToggleHeaderIndicator {
+    bottom: -1.5rem;
+  }
+
+  .sapUxAPObjectPageLayout .sapFDynamicPageToggleHeaderIndicator {
+    width: 2.5rem;
+    height: 3rem;
+    font-size: 1.375rem;
+    bottom: -4.5rem; // -1.5 by default and -3 the height of the AnchorBar
+    margin-left: -1.25rem;// shift the button with half of its width for perfect centering
+
+    .sapMBtnInner {
+      height: 1.5rem;
+
+      .sapMBtnIcon {
+        line-height: 1.5rem;
+      }
+    }
+  }
+}
+
+/* Phone */
+.sapUiMedia-Std-Phone,
+.sapUiContainer-Narrow {
+
+  .sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutWithNavigation) .sapFDynamicPageToggleHeaderIndicator {
+    bottom: -1.25rem;
+  }
+
+  .sapUxAPObjectPageLayout .sapFDynamicPageToggleHeaderIndicator {
+    width: 2.5rem;
+    height: 2.5rem;
+    bottom: -4.25rem; // -1.25 by default and -3 the height of the AnchorBar
+    margin-left: -1.25rem;// shift the button with half of its width for perfect centering
+    font-size: 1.375rem;
+
+    .sapMBtnInner {
+      height: 1.25rem;
+
+      .sapMBtnIcon {
+        line-height: 1.25rem;
+      }
+    }
+  }
+}
+
+/* Compact */
+.sapUiSizeCompact {
+  .sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutWithNavigation) .sapFDynamicPageToggleHeaderIndicator {
+    bottom: -1rem;
+  }
+
+  .sapUxAPObjectPageLayout .sapFDynamicPageToggleHeaderIndicator {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+    bottom: -4rem; // -1 by default and -3 the height of the AnchorBar
+    margin-left: -1rem;// shift the button with half of its width for perfect centering
+
+    .sapMBtnInner {
+      height: 1rem;
+
+      .sapMBtnIcon {
+        line-height: 1rem;
+      }
+    }
+  }
+}
+
+// footer
 .sapUxAPObjectPageLayout {
 	.sapUxAPObjectPageFooter {
 		position: absolute;

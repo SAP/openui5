@@ -584,6 +584,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		 * @param {int} iMaxGroupSize the maximum group size
 		 * @param {object} oSection the information of the current section
 		 * @protected
+		 * @deprecated since version 1.52. This method is marked as 'protected' which was meant to be overwritten
+		 *  by its subclasses. It may be renamed or deleted and should only be called from this class or its subclasses.
 		 */
 		TreeBindingAdapter.prototype._calculateRequestLength = function(iMaxGroupSize, oSection) {
 			var iRequestedLength;

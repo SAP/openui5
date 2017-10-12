@@ -152,6 +152,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the file type
+	 *
+	 * @returns {String} fileType of the file
+	 * @public
+	 */
+	Change.prototype.getFileType = function () {
+		if (this._oDefinition) {
+			return this._oDefinition.fileType;
+		}
+	};
+
+	/**
 	 * Returns the original language in ISO 639-1 format
 	 *
 	 * @returns {String} Original language
@@ -700,16 +712,6 @@ sap.ui.define([
 		}
 
 		return aDependentIds;
-	};
-
-	/**
-	 * Returns the change key
-	 *
-	 * @returns {String} Change key of the file which is a unique concatenation of fileName, layer and namespace
-	 * @public
-	 */
-	Change.prototype.getKey = function () {
-		return this._oDefinition.fileName + this._oDefinition.layer + this._oDefinition.namespace;
 	};
 
 	/**

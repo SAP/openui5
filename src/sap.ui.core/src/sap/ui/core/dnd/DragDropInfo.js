@@ -22,6 +22,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 	 *
 	 * @public
 	 * @since 1.52
+	 * @alias sap.ui.core.dnd.DragDropInfo
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DragDropInfo = DragDropBase.extend("sap.ui.core.dnd.DragDropInfo", /** @lends sap.ui.core.dnd.DragDropInfo.prototype */ { metadata : {
@@ -69,80 +70,57 @@ sap.ui.define(["./DragDropBase", "../Element"],
 		},
 
 		events: {
+
 			/**
 			 * This event is fired when the user starts dragging an element.
+			 *
+			 * @name sap.ui.core.dnd.DragDropInfo#dragStart
+			 * @event
+			 * @param {sap.ui.base.Event} oControlEvent
+			 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+			 * @param {object} oControlEvent.getParameters
+			 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that will be dragged
+			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
+			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @public
 			 */
 			dragStart: {
-				allowPreventDefault : true,
-				parameters : {
-					/**
-					 * The target element that eill be dragged
-					 */
-					target: {type: "sap.ui.core.Element"},
-
-					/**
-					 * The UI5 <code>dragSession</code> object that exists only during drag and drop
-					 */
-					dragSession : {type: "object"},
-
-					/**
-					 * The underlying browser event
-					 */
-					browserEvent: {type: "object"}
-				}
+				allowPreventDefault : true
 			},
+
 			/**
 			 * This event is fired when a dragged element enters a drop target.
+			 *
+			 * @name sap.ui.core.dnd.DragDropInfo#dragEnter
+			 * @event
+			 * @param {sap.ui.base.Event} oControlEvent
+			 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+			 * @param {object} oControlEvent.getParameters
+			 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element on which the dragged element will be dropped
+			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
+			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @public
 			 */
 			dragEnter: {
-				allowPreventDefault : true,
-				parameters : {
-					/**
-					 * The target element on which the dragged element will be dropped
-					 */
-					target: {type: "sap.ui.core.Element"},
-
-					/**
-					 * The UI5 <code>dragSession</code> object that exists only during drag and drop
-					 */
-					dragSession : {type: "object"},
-
-					/**
-					 * The underlying browser event
-					 */
-					browserEvent: {type: "object"}
-				}
+				allowPreventDefault : true
 			},
+
 			/**
 			 * This event is fired when an element is dropped on a valid drop target, as specified by the drag and drop info.
+			 *
+			 * @name sap.ui.core.dnd.DragDropInfo#drop
+			 * @event
+			 * @param {sap.ui.base.Event} oControlEvent
+			 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+			 * @param {object} oControlEvent.getParameters
+			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
+			 * @param {sap.ui.core.Element} oControlEvent.getParameters.draggedControl The element being dragged
+			 * @param {sap.ui.core.Element} oControlEvent.getParameters.droppedControl The element being dropped
+			 * @param {string} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>droppedControl</code>, possible values are <code>Before</code>, <code>On</code>, <code>After</code>
+			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @public
 			 */
 			drop : {
-				parameters: {
-					/**
-					 * The UI5 <code>dragSession</code> object that exists only during drag and drop
-					 */
-					dragSession : {type: "object"},
-
-					/**
-					 * The element being dragged
-					 */
-					draggedControl: {type: "sap.ui.core.Element"},
-
-					/**
-					 * The element is being dropped
-					 */
-					droppedControl: {type: "sap.ui.core.Element"},
-
-					/**
-					 * The calculated position of the drop action relative to the <code>droppedControl</code>
-					 */
-					dropPosition: {type: "string"},
-
-					/**
-					 * The underlying browser event
-					 */
-					browserEvent: {type: "object"}
-				}
 			}
 		}
 	}});

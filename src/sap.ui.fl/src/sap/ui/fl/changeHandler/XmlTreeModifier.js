@@ -108,20 +108,19 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 			_byId: function (sId, oView) {
 
 				// If function defined and operational use getElementById(sId) of document or view to access control
-				// ... Note: oView.ownerDocument.getElementById(sId) may fail under IE 11.420 indicating "permission denied"
+				// ... Note: oView.ownerDocument.getElementById(sId) may fail under IE 11 indicating "permission denied"
 				if (oView) {
 					if (oView.ownerDocument && oView.ownerDocument.getElementById && oView.ownerDocument.getElementById(sId)) {
-						// oView.ownerDocument.getElementById(sId) fails under IE 11.420 indicating "permission denied"
 						return oView.ownerDocument.getElementById(sId);
-					} else if (oView.getElementById && oView.getElementById(sId)) {
-						return oView.getElementById(sId);
+					} else {
+						return oView.querySelector("[id='" + sId + "']");
 					}
-				}
 
-				// Use jQuery.find function to access control if getElementById(..) failed
-				var oNodes = jQuery(oView).find("#" + sId);
-				if (oNodes.length === 1) {
-					return oNodes[0];
+					// Use jQuery.find function to access control if getElementById(..) failed
+					var oNodes = jQuery.sap.byId(sId, oView);
+					if (oNodes.length === 1) {
+						return oNodes[0];
+					}
 				}
 			},
 
@@ -309,6 +308,63 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 
 			updateAggregation: function (oControl, sAggregationName) {
 				/*only needed in JS case to indicate binding (template) has changed, in XML case binding has not been created yet (see managed object)*/
+			},
+
+			findIndexInParentAggregation: function (oControl) {
+				var oParent,
+					sAggregationName,
+					aControlsInAggregation;
+
+				// find the parent
+				oParent = this.getParent(oControl);
+
+				if (!oParent) {
+					return -1;
+				}
+
+				// we need the aggregation name in order to find all control nodes in the parent
+				// which are relevant to this aggregation and skip all other possible nodes
+				sAggregationName = this._getParentAggregationName(oParent, oControl);
+
+				// get the relevant controls from the aggregation node
+				aControlsInAggregation = this.getAggregation(oParent, sAggregationName);
+
+				// if the result from the above is array:
+				if (Array.isArray(aControlsInAggregation)) {
+					// find and return the correct index
+					return aControlsInAggregation.indexOf(oControl);
+				} else {
+					// if aControlsInAggregation is not an array, then the aggregation is
+					// of type 0..1 and aControlsInAggregation is the oControl provided
+					// to the function initially, so its index is 0
+					return 0;
+				}
+			},
+
+			_getParentAggregationName: function (oParent, oControl) {
+				var bNotNamedAggregation,
+					sAggregationName;
+
+				// check if the control is in named aggregatio node
+				if (!oParent.isSameNode(oControl.parentNode)) {
+					// the control is in named aggregation
+					bNotNamedAggregation = false;
+				} else {
+					// again check just in case
+					bNotNamedAggregation = this._isNotNamedAggregationNode(oParent, oControl);
+				}
+
+				// check if the the control is in default aggregation
+				// and get the name of the aggregation
+				if (bNotNamedAggregation) {
+					// the control is in the default aggregation of the parent
+					sAggregationName = this._getControlMetadata(oParent).getDefaultAggregationName();
+				} else {
+					// the agregation name is provided and we can simply take it from the xml node
+					sAggregationName = this._getLocalName(oControl.parentNode);
+				}
+
+				return sAggregationName;
 			}
 		};
 

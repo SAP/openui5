@@ -22,6 +22,8 @@ sap.ui.require([
 
 	var sandbox = sinon.sandbox.create();
 
+	sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+
 	var oFakeLrepConnector = new FakeLrepConnector("Dummy path");
 
 	var fnGetChanges = function(aChanges, sSelectorId, iLength, assert){
@@ -34,7 +36,7 @@ sap.ui.require([
 
 			var iIndex = aVarMgmtChanges.indexOf(aChanges[i].getDefinition().fileName);
 			assert.ok(iIndex > -1, "change present in current map");
-			assert.ok(jQuery.isArray(this.oFlexController._oChangePersistence._mChanges.mDependencies[aChanges[i].getKey()].dependencies), "dependency map present for change in current map");
+			assert.ok(jQuery.isArray(this.oFlexController._oChangePersistence._mChanges.mDependencies[aChanges[i].getId()].dependencies), "dependency map present for change in current map");
 		}
 
 		assert.strictEqual(this.oFlexController._oChangePersistence._mChanges.mChanges["RTADemoAppMD---detail--GroupElementDatesShippingStatus"].length, 7, "7 changes in map");
@@ -102,16 +104,14 @@ sap.ui.require([
 		assert.deepEqual(aExpectedChanges, aChanges, "then the changes of the given variant are returned");
 	});
 
-	QUnit.test("when calling 'getVariantChanges' of the VariantController with bLoadReferencedChanges flag", function(assert) {
+	QUnit.test("when calling 'getVariantChanges' of the VariantController", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		var fnGetReferencedChangesSpy = sandbox.spy(oVariantController, "_getReferencedChanges");
 		var aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[2].changes;
 		var oRefChange = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes[0];
 		aExpectedChanges.unshift(oRefChange);
 		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2", true);
 		assert.deepEqual(aExpectedChanges, aChanges, "then two changes of variant are returned with a new referenced change");
-		assert.deepEqual(fnGetReferencedChangesSpy.returnValues[0], [oRefChange], "then the referenced change is returned from etReferencedVariant");
 	});
 
 	QUnit.test("when calling 'loadVariantChanges' of the VariantController without changes in variant", function(assert) {
@@ -392,7 +392,7 @@ sap.ui.require([
 		done();
 	});
 
-	QUnit.test("when calling 'addVariantToVariantManagement' with a new variant", function(assert) {
+	QUnit.test("when calling 'addVariantToVariantManagement' with a new variant and no variant reference", function(assert) {
 		var oChangeContent0 = {"fileName":"change0"};
 		var oChangeContent1 = {"fileName":"change1"};
 
@@ -420,8 +420,54 @@ sap.ui.require([
 
 		assert.equal(iIndex1, 1, "then index 1 received on adding variant AA");
 		assert.equal(iIndex2, aVariants.length - 1, "then last index received on adding variant ZZ");
-		assert.equal(aVariants[1].content.fileName, "newVariant1", "then the new variant with title AA added to the second position after Standard Variant");
-		assert.equal(aVariants[aVariants.length - 1].content.fileName, "newVariant2", "then the new variant with title ZZ added to the last position after Standard Variant");
+		assert.equal(aVariants[1].content.fileName, "newVariant1", "then the new variant with title AA added to the second position after Standard Variant (ascending sort)");
+		assert.equal(aVariants[aVariants.length - 1].content.fileName, "newVariant2", "then the new variant with title ZZ added to the last position after Standard Variant (ascending sort)");
+	});
+
+	QUnit.test("when calling 'addVariantToVariantManagement' on CUSTOMER layer and a variant reference from the VENDOR layer with one VENDOR and one CUSTOMER change", function(assert) {
+		var oChangeContent0 = {"fileName":"change0"};
+
+		var oFakeVariantData1 = {
+			"content" : {
+				"title": "AA",
+				"fileName": "newVariant1",
+				"variantReference": "variant0"
+			},
+			"changes" : [oChangeContent0]
+		};
+
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var iIndex1 = oVariantController.addVariantToVariantManagement(oFakeVariantData1, "idMain1--variantManagementOrdersTable");
+
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var aChangeFileNames = aVariants[1].changes.map(function (oChange) {
+			return oChange.fileName;
+		});
+
+		assert.equal(iIndex1, 1, "then index 1 received on adding variant AA");
+		assert.equal(aVariants[1].content.fileName, "newVariant1", "then the new variant with title AA added to the second position after Standard Variant (ascending sort)");
+		assert.equal(aVariants[1].changes.length, 2, "then one own change and one referenced change exists");
+		assert.equal(aChangeFileNames[0], aVariants[2].changes[0].fileName, "then referenced change exists and placed to the array start");
+		assert.equal(aChangeFileNames.indexOf(aVariants[2].changes[1].fileName), "-1", "then CUSTOMER layer change not referenced");
+	});
+	QUnit.test("when calling '_getReferencedChanges' on CUSTOMER layer with variant reference to a VENDOR layer variant with one VENDOR and one CUSTOMER change", function(assert) {
+		var oChangeContent0 = {"fileName":"change0"};
+
+		var oFakeVariantData1 = {
+			"content" : {
+				"title": "AA",
+				"fileName": "newVariant1",
+				"variantReference": "variant0"
+			},
+			"changes" : [oChangeContent0]
+		};
+
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aReferencedChanges = oVariantController._getReferencedChanges("idMain1--variantManagementOrdersTable", oFakeVariantData1);
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+
+		assert.equal(aReferencedChanges.length, 1, "then only one change returned");
+		assert.equal(aReferencedChanges[0].fileName, aVariants[2].changes[0].fileName, "then only one VENDOR level change returned");
 	});
 
 	QUnit.test("when calling 'removeVariantFromVariantManagement' with a variant", function(assert) {
@@ -473,7 +519,7 @@ sap.ui.require([
 				revertChange: sandbox.stub()
 			});
 
-			sandbox.stub(this.oFlexController, "_writeCustomData");
+			sandbox.stub(this.oFlexController, "_writeAppliedChangesCustomData");
 
 			this.mPropertyBag = {
 				viewId: "view1--view2",
@@ -530,7 +576,7 @@ sap.ui.require([
 	QUnit.test("when '_updateCurrentVariant' is triggered from the component model to carry switch and revert of changes", function(assert) {
 		assert.expect(19);
 
-		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aRevertedChanges[1].getKey()] instanceof Object);
+		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aRevertedChanges[1].getId()] instanceof Object);
 		fnGetChanges.call(this, this.aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
 		var sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
@@ -542,7 +588,7 @@ sap.ui.require([
 		/*Dependencies still not updated as control doesn't exist*/
 
 		.then(function() {
-			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getKey()] instanceof Object);
+			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getId()] instanceof Object);
 			fnGetChanges.call(this, this.aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
 			sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
@@ -553,7 +599,7 @@ sap.ui.require([
 	QUnit.test("when triggering _addChange and _removeChange on a control via the VariantModel", function(assert) {
 		var oMockControl = new Text("RTADemoAppMD---detail--GroupElementDatesShippingStatus");
 
-		var mCustomData = {appliedChanges : [this.aRevertedChanges[1].getId()]};
+		var mCustomData = {aCustomDataEntries : [this.aRevertedChanges[1].getId()]};
 		sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns(mCustomData);
 		sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
@@ -627,33 +673,6 @@ sap.ui.require([
 		var aChanges = this.oVariantController.getVariantChanges("variantManagementId", "variant0");
 		assert.equal(aChanges.length, 1, "and the number of changes in the variant is correct");
 		assert.equal(aChanges[0], this.oChangeContent0, "and the remaining change is the correct one");
-	});
-
-	QUnit.test("when calling '_addDependentVariantsToMap' of the VariantController", function(assert) {
-		var oNewVariant = {
-			"content" : {
-			"fileName": "variantNew",
-			"title": "variant New",
-			"variantReference": "variant0"
-			},
-			"changes" : []
-		};
-		this.oVariantController._mVariantManagement["variantManagementId"].variants.push(oNewVariant);
-		this.oVariantController._addDependentVariantsToMap("variantManagementId", "newVariant", "variant0");
-		var aVariantsReferenced = this.oVariantController._mVariantManagement["variantManagementId"].mDependentVariantsOnMe["variant0"];
-		var iIndex = aVariantsReferenced.indexOf("newVariant");
-		assert.ok(iIndex > -1, "then newVariant added to map");
-	});
-
-	QUnit.test("when calling '_removeDependentVariantsFromMap' of the VariantController", function(assert) {
-		var aVariantsReferenced = this.oVariantController._mVariantManagement["variantManagementId"].mDependentVariantsOnMe["variant0"];
-		var iIndex = aVariantsReferenced.indexOf("variant1");
-		assert.notEqual(iIndex, -1,  "and the remaining change is the correct one");
-
-		this.oVariantController._removeDependentVariantsFromMap("variantManagementId", "variant1");
-		aVariantsReferenced = this.oVariantController._mVariantManagement["variantManagementId"].mDependentVariantsOnMe["variant0"];
-		iIndex = aVariantsReferenced.indexOf("variant2");
-		assert.equal(iIndex, -1,  "and the remaining change is the correct one");
 	});
 
 });

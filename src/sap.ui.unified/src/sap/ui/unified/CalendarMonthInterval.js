@@ -4,9 +4,10 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/unified/calendar/CalendarUtils',
-               './calendar/Header', './calendar/MonthsRow', './calendar/YearPicker', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/Renderer', 'sap/ui/core/format/DateFormat', 'sap/ui/Device', 'sap/ui/core/Locale'],
-               function(jQuery, Control, LocaleData, CalendarUtils, Header, MonthsRow, YearPicker, CalendarDate, Renderer, DateFormat, Device, Locale) {
-	"use strict";
+		'./calendar/Header', './calendar/MonthsRow', './calendar/YearPicker', 'sap/ui/unified/calendar/CalendarDate',
+		'sap/ui/core/Renderer', 'sap/ui/core/format/DateFormat', 'sap/ui/Device', 'sap/ui/core/Locale'],
+	function (jQuery, Control, LocaleData, CalendarUtils, Header, MonthsRow, YearPicker, CalendarDate, Renderer, DateFormat, Device, Locale) {
+		"use strict";
 
 	/*
 	 * Inside the CalendarMonthInterval CalendarDate objects are used. But in the API JS dates are used.

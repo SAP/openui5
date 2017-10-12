@@ -4,7 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page id="Page" showHeader="false">
-		<VBox class="sapUiTinyMargin">
+		<VBox class="sapUiTinyMargin" renderType="Bare">
 			<MessageStrip
 				class="sapUiTinyMarginBottom"
 				visible="{=!${device>/browser/mobile}}"

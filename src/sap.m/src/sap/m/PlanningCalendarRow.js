@@ -4,9 +4,9 @@
 
 //Provides control sap.ui.unified.PlanningCalendarRow.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer',
-		'sap/ui/core/Renderer', './library', 'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarRow'],
+		'sap/ui/core/Renderer', './library', 'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarRow', 'sap/ui/unified/CalendarRowRenderer'],
 	function (jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library, DateRange,
-			  CalendarRow) {
+			  CalendarRow, CalendarRowRenderer) {
 	"use strict";
 
 	/**
@@ -161,11 +161,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 	CalenderRowHeaderRenderer.renderTabIndex = function(oRm, oLI) {
 	};
 
+	/* ToDo - Consider if the PlanningCalendarRow can extend the CalendarRow */
+	var CalendarRowInPCRenderer = Renderer.extend(CalendarRowRenderer);
+
+	/* Create internal version of CalendarRow so it's renderer returns the appointment legend items(<appointmentsItems>)
+	* instead of the generic legend <items> */
+	CalendarRowInPCRenderer.getLegendItems = function (oCalRow) {
+		var aTypes = [],
+			oLegend,
+			sLegendId = oCalRow.getLegend();
+
+		if (sLegendId) {
+			oLegend = sap.ui.getCore().byId(sLegendId);
+			if (oLegend) {
+				aTypes = oLegend.getAppointmentItems();
+			} else {
+				jQuery.sap.log.error("PlanningCalendarLegend with id '" + sLegendId + "' does not exist!", oCalRow);
+			}
+		}
+		return aTypes;
+	};
+	var CalendarRowInPlanningCalendar = CalendarRow.extend("CalendarRowInPlanningCalendar", {
+		constructor: function() {
+			CalendarRow.apply(this, arguments);
+		},
+		renderer: CalendarRowInPCRenderer
+	});
+
 	PlanningCalendarRow.prototype.init = function(){
 
 		var sId = this.getId();
 		var oCalendarRowHeader = new CalenderRowHeader(sId + "-Head", {parentRow: this});
-		var oCalendarRow = new CalendarRow(sId + "-CalRow", {
+		var oCalendarRow = new CalendarRowInPlanningCalendar(sId + "-CalRow", {
 			checkResize: false,
 			updateCurrentTime: false,
 			ariaLabelledBy: sId + "-Head"

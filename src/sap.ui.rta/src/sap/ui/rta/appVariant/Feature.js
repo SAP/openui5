@@ -7,9 +7,8 @@ sap.ui.define([
   "sap/ui/rta/Utils",
   "sap/ui/fl/Utils",
   "sap/ui/rta/appVariant/AppVariantUtils",
-  "sap/m/MessageBox",
-  "sap/ui/core/BusyIndicator"
-], function(jQuery, RtaUtils, FlexUtils, AppVariantUtils, MessageBox, BusyIndicator) {
+  "sap/m/MessageBox"
+], function(jQuery, RtaUtils, FlexUtils, AppVariantUtils, MessageBox) {
   "use strict";
 
 	var oAppVariantOverviewDialog, oAppVariantManager;
@@ -47,19 +46,38 @@ sap.ui.define([
 						var oUriParams = jQuery.sap.getUriParameters();
 						var aUriLayer = oUriParams.mParams["sap-ui-xx-rta-save-as"];
 
-						var oInboundInfo;
-						if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
-							oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
-						}
+						if (aUriLayer && aUriLayer.length > 0) {
+							var oInboundInfo;
+							if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
+								oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
+							}
 
-						if (aUriLayer && aUriLayer.length > 0 && oInboundInfo) {
-							return aUriLayer[0] === 'true' ? true : false;
+							if (oInboundInfo) {
+								return aUriLayer[0] === 'true' ? true : false;
+							}
 						}
 					}
 					return false;
 				}).catch(function(oError) {
+
+					var sErrorMessage = "";
+					if (oError.messages && oError.messages.length) {
+						if (oError.messages.length > 1) {
+							oError.messages.forEach(function(oError) {
+								sErrorMessage += oError.text + "\n";
+							});
+						} else {
+							sErrorMessage += oError.messages[0].text;
+						}
+					} else {
+						sErrorMessage += oError.stack || oError.message || oError.status || oError;
+					}
+
 					var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-					var sMsg = oTextResources.getText("MSG_CREATE_APP_VARIANT_ERROR");
+
+					var sMsg = oTextResources.getText("MSG_CREATE_APP_VARIANT_ERROR") + "\n\n"
+						+ oTextResources.getText("MSG_CREATE_APP_VARIANT_ERROR_REASON") + "\n"
+						+ sErrorMessage;
 
 					return new Promise(function(resolve) {
 						MessageBox.error(sMsg, {

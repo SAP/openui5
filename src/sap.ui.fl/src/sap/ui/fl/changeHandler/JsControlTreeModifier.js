@@ -253,6 +253,30 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 						}
 					}
 				}
+			},
+
+			findIndexInParentAggregation: function(oControl) {
+				var oParent = this.getParent(oControl),
+					aControlsInAggregation;
+
+				if (!oParent) {
+					return -1;
+				}
+
+				// we need all controls in the aggregation
+				aControlsInAggregation = this.getAggregation(oParent, oControl.sParentAggregationName);
+
+				// if aControls is an array:
+				if (Array.isArray(aControlsInAggregation)) {
+					// then the aggregtion is multiple and we can find the index of
+					// oControl in the array
+					return aControlsInAggregation.indexOf(oControl);
+				} else {
+					// if aControlsInAggregation is not an array, then the aggregation is
+					// of type 0..1 and aControlsInAggregation is the oControl provided
+					// to the function initially, so its index is 0
+					return 0;
+				}
 			}
 		};
 

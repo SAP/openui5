@@ -37,7 +37,8 @@
 					"text":"Success",
 					"state":"Success"
 				}
-			]
+			],
+			"selected": false
 		}, {
 			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
 			"visibleEdit" : true,
@@ -75,7 +76,8 @@
 					"text":"None",
 					"state":"None"
 				}
-			]
+			],
+			"selected": false
 		}, {
 			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
 			"visibleEdit" : true,
@@ -87,6 +89,7 @@
 			"status" : "Success",
 			"mimeType" : "text/plain",
 			"thumbnailUrl" : "",
+			"url" : "",
 			"attributes":[
 				{
 					"title":"Uploaded By",
@@ -112,7 +115,8 @@
 					"text":"Success",
 					"state":"Success"
 				}
-			]
+			],
+			"selected": false
 		}, {
 			"documentId" : "1700ead2-3dfb-5a94-6f5c-cf1da409e028",
 			"visibleEdit" : true,
@@ -150,7 +154,8 @@
 					"text":"Warning",
 					"state":"Warning"
 				}
-			]
+			],
+			"selected": false
 		}, {
 			"documentId" : "34e484e4-a523-6c50-685b-e5ae66069250",
 			"visibleEdit" : true,
@@ -188,7 +193,8 @@
 					"text":"Error",
 					"state":"Error"
 				}
-			]
+			],
+			"selected": false
 		}, {
 			"documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685a5",
 			"visibleEdit" : true,
@@ -226,7 +232,8 @@
 					"text":"Error",
 					"state":"Error"
 				}
-			]
+			],
+			"selected": false
 		}, {
 			"documentId" : "6b6ccd2f-e5c2-15b7-3b67-191564850063",
 			"visibleEdit" : true,
@@ -264,7 +271,8 @@
 					"text":"Warning",
 					"state":"Warning"
 				}
-			]
+			],
+			"selected": false
 		}, {
 			"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
 			"visibleEdit" : true,
@@ -302,7 +310,8 @@
 					"text":"Success",
 					"state":"Success"
 				}
-			]
+			],
+			"selected": false
 		}
 	]
 }

@@ -304,4 +304,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		};
 
 		return AlignedFlowLayout;
-}, /* bExport= */ true);
+});

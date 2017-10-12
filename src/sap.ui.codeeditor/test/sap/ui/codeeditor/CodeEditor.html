@@ -93,6 +93,32 @@
 			]
 		}).placeAt("content");
 
+		codeEditor.addCustomCompleter({
+			getCompletions: function (callback, context) {
+				callback(null, [
+					{
+						name: "foo",
+						value: "foo",
+						score: "1",
+						meta: "rhyme"
+					},
+					{
+						name: "bar",
+						value: "bar",
+						score: "1",
+						meta: "rhyme"
+					},
+					{
+						name: "baz",
+						value: "baz",
+						score: "1",
+						meta: "rhyme"
+					}
+				])
+
+			}
+		});
+
 	});
 
 </script>

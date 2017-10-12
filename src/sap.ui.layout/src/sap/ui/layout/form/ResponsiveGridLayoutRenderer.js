@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRenderer'],
-	function(jQuery, Renderer, FormLayoutRenderer) {
+sap.ui.define(['sap/ui/core/Renderer', './FormLayoutRenderer'],
+	function(Renderer, FormLayoutRenderer) {
 	"use strict";
 
 

@@ -97,6 +97,15 @@ sap.ui.require([
 			total: true,
 			visible: true
 		},
+		oActualPlannedCostsDifferenceTotal = {
+			name: "ActualPlannedCostsDifference",
+			grouped: false,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: true,
+			visible: true
+		},
 		oPlannedCostsTotal = {
 			name: "PlannedCosts",
 			grouped: false,
@@ -626,91 +635,99 @@ sap.ui.require([
 	// CostCenter is already contained
 	[{ // issues with dimensions
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
-		select : "CostCenter,CostElement,Currency,ActualCosts,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because it contains the"
-			+ " dimension property 'CostElement' which is not contained in the analytical info"
-			+ " (see updateAnalyticalInfo)"
+		select : "CostCenter,CostElement,ControllingArea,Currency,ActualCosts,CostCenterText",
+		warnings : [
+			"it contains the dimension property 'CostElement' which is not",
+			"it contains the dimension property 'ControllingArea' which is not"
+		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped,
 			oControllingArea, oActualCostsTotal],
-		select : "CostCenter,CostElement,Currency,ActualCosts,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because it does not contain the"
-			+ " dimension property 'ControllingArea' which is contained in the analytical info"
-			+ " (see updateAnalyticalInfo)"
+		select : "CostCenter,Currency,ActualCosts,CostCenterText",
+		warnings : [
+			"it does not contain the dimension property 'CostElement' which is",
+			"it does not contain the dimension property 'ControllingArea' which is"
+		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal,
 			oCostElementText], // CostElementText is text for dimension CostElement which gets
 			// automatically selected by the binding
 		select : "CostCenter,Currency,ActualCosts,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because it does not contain the"
-			+ " dimension property 'CostElement' which is contained in the analytical info"
-			+ " (see updateAnalyticalInfo)"
+		warnings : ["it does not contain the dimension property 'CostElement' which is"]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,CostElementText,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because the property 'CostElementText'"
-			+ " is associated with the dimension property 'CostElement' which is not contained in"
-			+ " the analytical info (see updateAnalyticalInfo)"
+		warnings : ["the property 'CostElementText' is associated with the dimension property"
+			+ " 'CostElement' which is not"]
 	}, { // issues with measures
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal,
-			oPlannedCostsTotal],
+			oPlannedCostsTotal, oActualPlannedCostsDifferenceTotal],
 		select : "CostCenter,Currency,ActualCosts,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because it does not contain the"
-			+ " measure property 'PlannedCosts' which is contained in the analytical info"
-			+ " (see updateAnalyticalInfo)"
+		warnings : [
+			"it does not contain the measure property 'PlannedCosts' which is",
+			"it does not contain the measure property 'ActualPlannedCostsDifference' which is"
+		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
-		select : "CostCenter,Currency,ActualCosts,PlannedCosts,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because it contains the"
-			+ " measure property 'PlannedCosts' which is not contained in the analytical info"
-			+ " (see updateAnalyticalInfo)"
+		select : "CostCenter,Currency,ActualCosts,PlannedCosts,ActualPlannedCostsDifference,"
+			+ "CostCenterText",
+		warnings : [
+			"it contains the measure property 'PlannedCosts' which is not",
+			"it contains the measure property 'ActualPlannedCostsDifference' which is not"
+		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,PlannedCostsText,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because the property 'PlannedCostsText'"
-			+ " is associated with the measure property 'PlannedCosts' which is not contained in"
-			+ " the analytical info (see updateAnalyticalInfo)"
-	}, { // after first warning, checks are skipped and no additional selects are used
+		warnings : ["the property 'PlannedCostsText' is associated with the measure property"
+			+ " 'PlannedCosts' which is not"]
+	}, { // multiple problem categories
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,CostElement,Currency,ActualCosts,PlannedCosts,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because it contains the"
-			+ " dimension property 'CostElement' which is not contained in the analytical info"
-			+ " (see updateAnalyticalInfo)"
+		warnings : [
+			"it contains the dimension property 'CostElement' which is not",
+			"it contains the measure property 'PlannedCosts' which is not"
+		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped,
 			oControllingArea, oActualCostsTotal],
 		select : "CostCenter,CostElement,Currency,ActualCosts,PlannedCosts,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because it does not contain the"
-			+ " dimension property 'ControllingArea' which is contained in the analytical info"
-			+ " (see updateAnalyticalInfo)"
+		warnings : [
+			"it does not contain the dimension property 'ControllingArea' which is",
+			"it contains the measure property 'PlannedCosts' which is not"
+		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,CostElementText,Currency,ActualCosts,PlannedCosts,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because the property 'CostElementText'"
-			+ " is associated with the dimension property 'CostElement' which is not contained in"
-			+ " the analytical info (see updateAnalyticalInfo)"
+		warnings : [
+			"the property 'CostElementText' is associated with the dimension property 'CostElement'"
+				+ " which is not",
+			"it contains the measure property 'PlannedCosts' which is not"
+		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal,
 			oPlannedCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,CostElement,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because it does not contain the"
-			+ " measure property 'PlannedCosts' which is contained in the analytical info"
-			+ " (see updateAnalyticalInfo)"
+		warnings : [
+			"it does not contain the measure property 'PlannedCosts' which is",
+			"it contains the dimension property 'CostElement' which is not"
+		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,PlannedCosts,CostElement,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because it contains the"
-			+ " measure property 'PlannedCosts' which is not contained in the analytical info"
-			+ " (see updateAnalyticalInfo)"
+		warnings : [
+			"it contains the measure property 'PlannedCosts' which is not",
+			"it contains the dimension property 'CostElement' which is not"
+		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,PlannedCostsText,CostElement,CostCenterText",
-		warning : "Ignored the 'select' binding parameter, because the property 'PlannedCostsText'"
-			+ " is associated with the measure property 'PlannedCosts' which is not contained in"
-			+ " the analytical info (see updateAnalyticalInfo)"
-	}].forEach(function (oFixture) {
-		QUnit.test("updateAnalyticalInfo: select causes warnings : " + oFixture.warning,
-				function(assert) {
+		warnings : [
+			"the property 'PlannedCostsText' is associated with the measure property 'PlannedCosts'"
+				+ " which is not",
+			"it contains the dimension property 'CostElement' which is not"
+		]
+	}].forEach(function (oFixture, i) {
+		QUnit.test("updateAnalyticalInfo: select causes warnings #" + i, function(assert) {
 			var oBinding,
 				done = assert.async(),
 				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURL, {
@@ -736,11 +753,12 @@ sap.ui.require([
 			oModel.attachMetadataLoaded(function () {
 				var oMeasure;
 
-
-
-				that.oLogMock.expects("warning")
-					.withExactArgs(oFixture.warning, sPath,
-						"sap.ui.model.analytics.AnalyticalBinding");
+				oFixture.warnings.forEach(function (sText) {
+					that.oLogMock.expects("warning")
+						.withExactArgs("Ignored the 'select' binding parameter, because " + sText
+							+ " contained in the analytical info (see updateAnalyticalInfo)", sPath,
+							"sap.ui.model.analytics.AnalyticalBinding");
+				});
 
 				// metadata does not contain associated properties for measures, so simulate it
 				if (oFixture.select.indexOf("PlannedCostsText") >= 0) {

@@ -36,7 +36,7 @@
 						},
 						{
 							libName: 'sap.m',
-							ruleId: 'dialogarialabelledby'
+							ruleId: 'onlyIconButtonNeedsTooltip'
 						}
 					],
 					executionScope: {

@@ -66,15 +66,12 @@
 								parts: [ 'text', 'type' ],
 								formatter : '.formatAttribute'
 							}"
-							active="{active}" />
+							active="false" />
 					</attributes>
 					<statuses>
 						<ObjectStatus title="{title}"
 							text="{text}"
-							state="{state}"
-							icon="{icon}"
-							iconDensityAware="{iconDensityAware}"
-							textDirection="{textDirection}" />
+							state="{state}" />
 					</statuses>
 				</UploadCollectionItem>
 			</items>

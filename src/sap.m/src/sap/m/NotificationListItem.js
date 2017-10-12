@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./library', './NotificationListBase', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/ui/core/ResizeHandler'],
-	function (library, NotificationListBase, InvisibleText, IconPool, ResizeHandler) {
+sap.ui.define(['./library', './NotificationListBase', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/ui/core/ResizeHandler', 'sap/m/Button'],
+	function (library, NotificationListBase, InvisibleText, IconPool, ResizeHandler, Button) {
 	'use strict';
 
 	// shortcut for sap.m.ButtonType
@@ -91,7 +91,7 @@ sap.ui.define(['./library', './NotificationListBase', 'sap/ui/core/InvisibleText
 		 * @type {sap.m.Button}
 		 * @private
 		 */
-		var _closeButton = new sap.m.Button(this.getId() + '-closeButton', {
+		var _closeButton = new Button(this.getId() + '-closeButton', {
 			type: ButtonType.Transparent,
 			icon: IconPool.getIconURI('decline'),
 			tooltip: this._closeText,
@@ -106,7 +106,7 @@ sap.ui.define(['./library', './NotificationListBase', 'sap/ui/core/InvisibleText
 		 * @type {sap.m.Button}
 		 * @private
 		 */
-		var _collapseButton = new sap.m.Button({
+		var _collapseButton = new Button({
 			type: ButtonType.Transparent,
 			text: this.getTruncate() ? this._expandText : this._collapseText,
 			id: this.getId() + '-expandCollapseButton',

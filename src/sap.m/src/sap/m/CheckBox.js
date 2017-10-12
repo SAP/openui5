@@ -194,9 +194,7 @@ sap.ui.define(['jquery.sap.global',
 		delete this._iTabIndex;
 	};
 
-	/**
-	 * Public Methods
-	 */
+	// Public Methods
 
 	CheckBox.prototype.setSelected = function(bSelected) {
 		bSelected = !!bSelected;

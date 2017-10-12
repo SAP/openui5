@@ -1,11 +1,12 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/m/UploadCollectionParameter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
-], function(jQuery, Controller, MessageToast, UploadCollectionParameter, JSONModel, Device) {
+], function(jQuery, Controller, MessageBox, MessageToast, UploadCollectionParameter, JSONModel, Device) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionForPendingUpload.Page", {
@@ -56,14 +57,14 @@ sap.ui.define([
 				}
 
 				MessageToast.show("Method Upload is called (" + uploadInfo + ")");
-				sap.m.MessageBox.information("Uploaded " + uploadInfo);
+				MessageBox.information("Uploaded " + uploadInfo);
 				oTextArea.setValue("");
 			}
 		},
 
 		onBeforeUploadStarts: function(oEvent) {
 			// Header Slug
-			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
+			var oCustomerHeaderSlug = new UploadCollectionParameter({
 				name: "slug",
 				value: oEvent.getParameter("fileName")
 			});

@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.uxap.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "sap/m/library", "sap/ui/layout/library"], function (jQuery, Core, library) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/base/DataType", "sap/ui/Device", "sap/m/library", "sap/ui/layout/library"], function(jQuery, Core, DataType, Device) {
 	"use strict";
 
 	/**
@@ -86,13 +86,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.uxap.BlockBaseColumnLayout = sap.ui.base.DataType.createType('sap.uxap.BlockBaseColumnLayout', {
+	sap.uxap.BlockBaseColumnLayout = DataType.createType('sap.uxap.BlockBaseColumnLayout', {
 			isValid: function (vValue) {
 				return /^(auto|[1-4]{1})$/.test(vValue);
 			}
 
 		},
-		sap.ui.base.DataType.getType('string')
+		DataType.getType('string')
 	);
 
 	/**
@@ -297,7 +297,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 			return oControl;
 		},
 		isPhoneScenario: function (oRange) {
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				return true;
 			}
 

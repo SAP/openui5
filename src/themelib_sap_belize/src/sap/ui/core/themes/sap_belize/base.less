@@ -219,6 +219,21 @@
 // [Tags "Base", "Content", "Color"]
 @sapContent_MarkerIconColor: @sapAccentColor5;
 
+// [Label "Marker Text Color"]
+// [Description "The color of Marker Texts."]
+// [Tags "Base", "Content", "Color", "Font"]
+@sapContent_MarkerTextColor: darken(@sapAccentColor7 ,8);
+
+// [Label "Image Placeholder Background Color"]
+// [Description "The background color of Image Placeholders."]
+// [Tags "Base", "Content", "Color"]
+@sapContent_ImagePlaceholderBackground: darken(@sapBaseColor, 9);
+
+// [Label "Image Placeholder Foreground Color"]
+// [Description "The foreground color of Image Placeholders."]
+// [Tags "Base", "Content", "Color"]
+@sapContent_ImagePlaceholderForegroundColor: lighten(@sapBaseColor, 5);
+
 // [Label "Content Focus Color"]
 // [Description "The color of the focus."]
 // [Tags "Base", "Content", "Color"]
@@ -844,4 +859,4 @@
 // [Label "Chart Color Sequence 'Neutral'"]
 // [Description "This color is the base chart color of the sequence 'Neutral'"]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Sequence_Neutral: #848f94;
+@sapChart_Sequence_Neutral: @sapChart_Neutral;

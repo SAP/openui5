@@ -12,7 +12,7 @@ describe('sap.m.QuickViewCard', function() {
 
 	// go to page 2
 	it('should go to page 2', function () {
-		element(by.id('__link0')).click();
+		element(by.id('__link9')).click();
 		expect(takeScreenshot(qvcPanel)).toLookAs('1_page_2');
 	});
 

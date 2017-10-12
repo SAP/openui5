@@ -134,7 +134,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/u
 	 * @static
 	 */
 	Text.hasNativeLineClamp = (function() {
-		return (typeof document.documentElement.style.webkitLineClamp != "undefined" && sap.ui.Device.browser.chrome);
+		return typeof document.documentElement.style.webkitLineClamp != "undefined" && Device.browser.chrome;
 	})();
 
 	/**
@@ -283,13 +283,12 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/u
 		}
 
 		// is text direction rtl
-		var oDirection = sap.ui.core.TextDirection;
-		if (this.getTextDirection() == oDirection.RTL) {
+		if (this.getTextDirection() == TextDirection.RTL) {
 			return false;
 		}
 
 		// is text direction inherited as rtl
-		if (this.getTextDirection() == oDirection.Inherit && sap.ui.getCore().getConfiguration().getRTL()) {
+		if (this.getTextDirection() == TextDirection.Inherit && sap.ui.getCore().getConfiguration().getRTL()) {
 			return false;
 		}
 

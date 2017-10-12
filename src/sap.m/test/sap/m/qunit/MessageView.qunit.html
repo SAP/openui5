@@ -567,8 +567,30 @@
 				this.clock.tick(500);
 				this.oDialog2.open();
 
-                assert.strictEqual(this.oMessageView2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
-            });
+				assert.strictEqual(this.oMessageView2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
+			});
+
+			QUnit.test("No segmented button filter when not needed", function (assert) {
+				this.oDialog2.open();
+
+				this.clock.tick(500);
+
+				assert.strictEqual(this.oMessageView2._oSegmentedButton.getVisible(), false, "Segmented button is not needed and should not be visible");
+
+				assert.strictEqual(this.oMessageView2._listPage.getShowHeader(), false, "Header is not visible because no segmented button is visible and no custom header button is there");
+
+				this.oDialog2.close();
+
+				this.clock.tick(500);
+
+				this.oMessageView2.setHeaderButton(new sap.m.Button({text: 'header button'}));
+
+				this.oDialog2.open();
+
+				this.clock.tick(500);
+
+				assert.strictEqual(this.oMessageView2._listPage.getShowHeader(), true, "Header should be shown when there is a custom header button even if segmente button is hidden");
+			});
 
 			QUnit.test("Removing all items", function (assert) {
 				var tempObject = {

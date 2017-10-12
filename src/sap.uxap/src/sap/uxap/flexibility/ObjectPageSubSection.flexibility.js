@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/m/changeHandler/CombineButtons",
 	"sap/m/changeHandler/SplitMenuButton",
-	'sap/ui/fl/changeHandler/BaseRename'
+	"sap/ui/fl/changeHandler/BaseRename"
 ], function (CombineButtonsHandler, SplitMenuButtonHandler, BaseRename) {
 	"use strict";
 

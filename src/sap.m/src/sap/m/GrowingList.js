@@ -65,7 +65,7 @@ sap.ui.define(['./List', './library'],
 
 	//sets growing property to true on init
 	GrowingList.prototype.init = function() {
-		sap.m.ListBase.prototype.init.call(this);
+		List.prototype.init.call(this);
 		if (!this._isIncompatible()) {
 			this.setGrowing();
 		}
@@ -73,16 +73,16 @@ sap.ui.define(['./List', './library'],
 
 	// sets growing feature always to true
 	GrowingList.prototype.setGrowing = function() {
-		return sap.m.ListBase.prototype.setGrowing.call(this, true);
+		return List.prototype.setGrowing.call(this, true);
 	};
 
 	// not to break add getters and setters for old properties
-	!(function(oGL, oLB) {
+	!(function(oGL, oL) {
 		["Threshold", "TriggerText", "ScrollToLoad"].forEach(function(property) {
-			oGL["set" + property] = oLB["setGrowing" + property];
-			oGL["get" + property] = oLB["getGrowing" + property];
+			oGL["set" + property] = oL["setGrowing" + property];
+			oGL["get" + property] = oL["getGrowing" + property];
 		});
-	}(GrowingList.prototype, sap.m.ListBase.prototype));
+	}(GrowingList.prototype, List.prototype));
 
 	return GrowingList;
 
