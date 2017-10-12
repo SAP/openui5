@@ -334,7 +334,7 @@ sap.ui.define([
 			i,
 			n = aAttributes.length;
 
-		if (sKind === "EntityType") {
+		if (sKind === "EntityType" || sKind === "FunctionImport") {
 			setAnnotation(mAnnotations, "label", oElement.getAttributeNS(sSapNamespace, "label"));
 		} else {
 			for (i = 0; i < n; i++) {
@@ -758,7 +758,9 @@ sap.ui.define([
 		// processParameter adds to this. This avoids that parameters belonging to a removed
 		// FunctionImport are added to the predecessor.
 		oAggregate.function = oFunction;
-		V2MetadataConverter.annotatable(oAggregate, oFunctionImport);
+		V2MetadataConverter.annotatable(oAggregate, sName);
+
+		convertAnnotations(oElement, oAggregate, "FunctionImport");
 	}
 
 	/**
@@ -768,6 +770,7 @@ sap.ui.define([
 	 */
 	function processParameter(oElement, oAggregate) {
 		var oFunction = oAggregate.function,
+			sLabel,
 			oParameter = {
 				$Name : oElement.getAttribute("Name")
 			};
@@ -777,6 +780,11 @@ sap.ui.define([
 
 		V2MetadataConverter.getOrCreateArray(oFunction, "$Parameter").push(oParameter);
 		V2MetadataConverter.annotatable(oAggregate, oParameter);
+
+		sLabel = oElement.getAttributeNS(sSapNamespace, "label");
+		if (sLabel) {
+			oParameter[mV2toV4["label"].term] = sLabel;
+		}
 	}
 
 	/**

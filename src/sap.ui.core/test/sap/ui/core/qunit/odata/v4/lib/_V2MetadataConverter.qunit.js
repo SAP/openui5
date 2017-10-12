@@ -1568,7 +1568,46 @@ sap.ui.require([
 					}
 				});
 	});
-	// TODO convert sap:label at FunctionImport and Parameter
+
+	//*********************************************************************************************
+	QUnit.test("convert: sap:label at FunctionImport and Parameter", function (assert) {
+		testConversion(assert, '\
+				<Schema Namespace="foo" Alias="f">\
+					<EntityContainer Name="Container">\
+						<FunctionImport Name="FunctionImport" sap:label="LabelFunctionImport">\
+							<Parameter Name="Parameter" Type="Edm.String"\
+									sap:label="LabelParameter">\
+							</Parameter>\
+						</FunctionImport>\
+					</EntityContainer>\
+				</Schema>',
+			{
+				"$EntityContainer" : "foo.Container",
+				"foo." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"foo.Container/FunctionImport" : {
+							"@com.sap.vocabularies.Common.v1.Label" : "LabelFunctionImport"
+						}
+					}
+				},
+				"foo.Container" : {
+					"$kind" : "EntityContainer",
+					"FunctionImport" : {
+						"$kind" : "FunctionImport",
+						"$Function" : "foo.FunctionImport"
+					}
+				},
+				"foo.FunctionImport" : [{
+					"$kind" : "Function",
+					"$Parameter" : [{
+						"$Name" : "Parameter",
+						"$Type" : "Edm.String",
+						"@com.sap.vocabularies.Common.v1.Label" : "LabelParameter"
+					}]
+				}]
+			});
+	});
 	// TODO InsertRestrictions, DeleteRestrictions or UpdateRestrictions define two properties
 	// Xable and NonXableNavigationProperties (e.g. Insertable and
 	// NonInsertableNavigationProperties); take care that both can contain values and do not
