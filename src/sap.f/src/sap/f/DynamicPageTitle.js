@@ -812,7 +812,8 @@ sap.ui.define([
 				separator: this._getToolbarSeparator(),
 				hasTopContent: bHasTopContent,
 				hasOnlyBreadcrumbs: bHasOnlyBreadcrumbs,
-				hasOnlyNavigationActions: bHasOnlyNavigationActions
+				hasOnlyNavigationActions: bHasOnlyNavigationActions,
+				contentAreaFlexBasis: this._sContentAreaFlexBasis
 			};
 	};
 
@@ -884,6 +885,7 @@ sap.ui.define([
 			"flex-basis": sFlexBasis,
 			"-webkit-flex-basis": sFlexBasis
 		});
+		this._sContentAreaFlexBasis = sFlexBasis !== "auto" ? sFlexBasis : undefined;
 	};
 
 	return DynamicPageTitle;
