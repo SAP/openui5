@@ -57,61 +57,55 @@ sap.ui.define([
 				counter: 1
 			}];
 
-			var oModel = new JSONModel(),
-				that = this;
+			var oModel = new JSONModel();
 
 			oModel.setData(aMockMessages);
 
-			this._oMessageView = new sap.m.MessageView({
-				showDetailsPageHeader: false,
-				itemSelect: function () {
-					that._oBackButton.setVisible(true);
-				},
-				items: {
-					path: "/",
-					template: oMessageTemplate
-				}
-			});
+			var oMessageView = new sap.m.MessageView({
+					showDetailsPageHeader: false,
+					itemSelect: function () {
+						oBackButton.setVisible(true);
+					},
+					items: {
+						path: "/",
+						template: oMessageTemplate
+					}
+				}),
+				oBackButton = new sap.m.Button({
+					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
+					visible: false,
+					press: function () {
+						oMessageView.navigateBack();
+						this.setVisible(false);
+					}
+				});
 
-			this._oBackButton = new sap.m.Button({
-				icon: sap.ui.core.IconPool.getIconURI("nav-back"),
-				visible: false,
-				press: function () {
-					that._oMessageView.navigateBack();
-					this.setVisible(false);
-				}
-			});
+			oMessageView.setModel(oModel);
 
-			this._oMessageView.setModel(oModel);
+			this.oDialog = new sap.m.Dialog({
+				resizable: true,
+				content: oMessageView,
+				state: 'Error',
+				beginButton: new sap.m.Button({
+					press: function () {
+						this.getParent().close();
+					},
+					text: "Close"
+				}),
+				customHeader: new sap.m.Bar({
+					contentMiddle: [
+						new sap.m.Text({ text: "Error"})
+					],
+					contentLeft: [oBackButton]
+				}),
+				contentHeight: "300px",
+				contentWidth: "500px",
+				verticalScrolling: false
+			});
 		},
 
 		handleDialogPress: function (oEvent) {
-			var that = this,
-				oDialog = new sap.m.Dialog({
-					title: "Messages",
-					resizable: true,
-					content: this._oMessageView,
-					state: 'Error',
-					beginButton: new sap.m.Button({
-						press: function () {
-							oDialog.close();
-						},
-						text: "Close"
-					}),
-					customHeader: new sap.m.Bar({
-						contentMiddle: [
-							new sap.m.Text({ text: "Error"})
-						],
-						contentLeft: [
-							that._oBackButton
-						]
-					}),
-					contentHeight: "300px",
-					contentWidth: "500px",
-					verticalScrolling: false
-				});
-
-			oDialog.open();
+			this.oDialog.open();
 		}
 
 	});
