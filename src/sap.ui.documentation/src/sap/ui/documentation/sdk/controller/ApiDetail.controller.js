@@ -169,6 +169,7 @@ sap.ui.define([
 						for (i = 0, iLen = oData.length; i < iLen; i++) {
 							if (oData[i].name === this._sTopicid || oData[i].name.indexOf(this._sTopicid) === 0) {
 								oEntityData = oData[i];
+								this._oEntityData = oEntityData;
 								bFound = true;
 								break;
 							}
@@ -364,12 +365,15 @@ sap.ui.define([
 			_bindEntityData: function (sTopicId) {
 
 				ControlsInfo.loadData().then(function (oControlsData) {
-					var oEntityData = this._getEntityData(sTopicId, oControlsData);
+					var oEntityData,
+						oEntitySampleData = this._getEntitySampleData(sTopicId, oControlsData);
+
+					oEntityData =  jQuery.extend({}, this._oEntityData, oEntitySampleData);
 
 					this.getModel("entity").setData(oEntityData, false);
 
-					// Build header matrix when all the needed data is ready
-					this._buildHeaderMatrix(this.getModel("topics").getData(), oEntityData);
+					// Builds the header layout, when all the needed data is ready
+					this._buildHeaderLayout(this.getModel("topics").getData(), oEntityData);
 				}.bind(this));
 
 			},
@@ -572,120 +576,220 @@ sap.ui.define([
 				}
 			},
 
-			// Header blocks creator functions begin
-			_getObjectAttributeBlock: function (title, text) {
-				return new sap.m.ObjectAttribute({
-					title: title,
-					text: text
-				}).addStyleClass("sapUiTinyMarginBottom");
+			_getHeaderLayoutUtil: function () {
+				if (!this._oHeaderLayoutUtil) {
+					var _getObjectAttributeBlock = function (sTitle, sText) {
+						return new sap.m.ObjectAttribute({
+							title: sTitle,
+							text: sText
+						}).addStyleClass("sapUiTinyMarginBottom");
+					},
+					_getLink = function(oConfig) {
+						return new sap.m.Link(oConfig || {});
+					},
+					_getText = function(oConfig) {
+						return new sap.m.Text(oConfig || {});
+					},
+					_getLabel = function(oConfig) {
+						return new sap.m.Label(oConfig || {});
+					},
+					_getHBox = function(oConfig, bAddCommonStyles) {
+						var oHBox = new sap.m.HBox(oConfig || {});
+
+						if (bAddCommonStyles) {
+							oHBox.addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
+						}
+
+						return oHBox;
+					};
+
+					this._oHeaderLayoutUtil = {
+
+						_getControlSampleBlock: function (oControlData, oEntityData) {
+							return _getHBox({
+								items: [
+									_getLabel({design: "Bold", text: "Control Sample:"}),
+									_getLink({
+										emphasized: true,
+										text: oEntityData.sample,
+										visible: oEntityData.hasSample,
+										href: "#/entity/" + oControlData.name
+									}),
+									_getText({text: oEntityData.sample, visible: !oEntityData.hasSample})
+								]
+							}, true);
+						},
+						_getDocumentationBlock: function (oControlData, oEntityData) {
+							return _getHBox({
+								items: [
+									_getLabel({design: "Bold", text:"Documentation:"}),
+									_getLink({emphasized: true, text: oControlData.docuLinkText, href: "#/topic/" + oControlData.docuLink})
+								]
+							}, true);
+						},
+						_getExtendsBlock: function (oControlData, oEntityData) {
+							return _getHBox({
+								items: [
+									_getLabel({text: "Extends:"}),
+									_getLink({text: oControlData.extendsText, href: "#/api/" + oControlData.extendsText, visible: oControlData.isDerived}),
+									_getText({text: oControlData.extendsText, visible: !oControlData.isDerived})
+								]
+							}, true);
+						},
+						_getSubclassesBlock: function (oControlData, oEntityData) {
+							var aSubClasses = oEntityData.extendedBy || oEntityData.implementedBy,
+								oSubClassesLink;
+
+							this._aSubClasses = aSubClasses;
+
+							if (aSubClasses.length === 1) {
+								oSubClassesLink = _getLink({text: aSubClasses[0], href: "#/api/" + aSubClasses[0]});
+							} else {
+								oSubClassesLink = _getLink({text: oControlData.isClass ? "View subclasses" : "View implementations", press: this._openSubclassesImplementationsPopover.bind(this)});
+							}
+
+							return _getHBox({
+								items: [
+									_getLabel({text: oControlData.isClass ? "Known direct subclasses:" : "Known direct implementations:"}),
+									oSubClassesLink
+								]
+							}, true);
+						},
+						_getImplementsBlock: function (oControlData, oEntityData) {
+							var aItems = [];
+
+							oControlData.implementsParsed.forEach(function (oElement) {
+								aItems.push(_getHBox({
+									items: [
+										_getLink({text: oElement.name, href: "#/api/" + oElement.href}),
+										_getText({text: ",", visible: !oElement.isLast})
+									]
+								}));
+							});
+
+							return _getHBox({
+								items: [
+									_getLabel({text: "Implements:"}),
+									new sap.m.HBox({items: aItems})
+								]
+							}, true);
+						},
+						_getModuleBlock: function (oControlData, oEntityData) {
+							return _getObjectAttributeBlock("Module", oControlData.module);
+						},
+						_getLibraryBlock: function (oControlData, oEntityData) {
+							return _getObjectAttributeBlock("Library", oEntityData.lib);
+						},
+						_getVisibilityBlock: function (oControlData, oEntityData) {
+							return _getObjectAttributeBlock("Visibility", oControlData.visibility);
+						},
+						_getAvailableSinceBlock: function (oControlData, oEntityData) {
+							return _getObjectAttributeBlock("Available since", oControlData.sinceText);
+						},
+						_getApplicationComponentBlock: function (oControlData, oEntityData) {
+							return _getObjectAttributeBlock("Application Component", oEntityData.appComponent);
+						}
+					};
+				}
+
+				return this._oHeaderLayoutUtil;
 			},
-			_getControlSampleBlock: function (oControlData, oEntityData) {
-				return new sap.m.HBox({
-					items: [
-				          new sap.m.Label({design: "Bold", text: "Control Sample:"}),
-				          new sap.m.Link({emphasized: true, text: oEntityData.sample, visible: oEntityData.hasSample, href: "#/entity/" + oControlData.name}),
-				          new sap.m.Text({text: oEntityData.sample, visible: !oEntityData.hasSample})
-					]
-				}).addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
-			},
-			_getDocumentationBlock: function (oControlData, oEntityData) {
-				return new sap.m.HBox({
-					items: [
-				          new sap.m.Label({design: "Bold", text:"Documentation:"}),
-				          new sap.m.Link({emphasized: true, text: oControlData.docuLinkText, href: "#/topic/" + oControlData.docuLink})
-					]
-				}).addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
-			},
-			_getExtendsBlock: function (oControlData, oEntityData) {
-				return new sap.m.HBox({
-					items: [
-				          new sap.m.Label({text: "Extends:"}),
-				          new sap.m.Link({text: oControlData.extendsText, href: "#/api/" + oControlData.extendsText, visible: oControlData.isDerived}),
-				          new sap.m.Text({text: oControlData.extendsText, visible: !oControlData.isDerived})
-					]
-				}).addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
-			},
-			_getImplementsBlock: function (oControlData, oEntityData) {
-				var aItems = [];
-				oControlData.implementsParsed.forEach(function (element, index, array) {
-					aItems.push(new sap.m.HBox({
-						items: [
-							new sap.m.Link({text: element.name, href: "#/api/" + element.href}),
-							new sap.m.Text({text: ",", visible: !element.isLast})
-						]
-					}));
-				});
-				return new sap.m.HBox({
-					items: [
-				          new sap.m.Label({text: "Implements:"}),
-				          new sap.m.HBox({items: aItems})
-					]
-				}).addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
-			},
-			_getModuleBlock: function (oControlData, oEntityData) {
-				return this._getObjectAttributeBlock("Module", oControlData.module);
-			},
-			_getVisibilityBlock: function (oControlData, oEntityData) {
-				return this._getObjectAttributeBlock("Visibility", oControlData.visibility);
-			},
-			_getAvailableSinceBlock: function (oControlData, oEntityData) {
-				return this._getObjectAttributeBlock("Available since", oControlData.sinceText);
-			},
-			_getApplicationComponentBlock: function (oControlData, oEntityData) {
-				return this._getObjectAttributeBlock("Application Component", oEntityData.appComponent);
-			},
-			// Header blocks creator functions end
 
 			/**
-			 * Builds the header data structure to display in 3x3 grid matrix
+			 * Opens the Popover, which displays the entity subclasses, if the entity is a class.
+			 * Or, it displays the direct implementations, if the entity is interface.
+			 */
+			_openSubclassesImplementationsPopover: function (oEvent) {
+				var aPopoverContent = this._aSubClasses.map(function (oElement) {
+						return new sap.m.Link({text: oElement, href: "#/api/" + oElement}).addStyleClass("sapUiTinyMarginBottom sapUiTinyMarginEnd");
+				}), oPopover = this._getSubClassesAndImplementationsPopover(aPopoverContent);
+
+				oPopover.openBy(oEvent.getSource());
+			},
+
+			_getSubClassesAndImplementationsPopover: function (aContent) {
+				var oPopover = this._getPopover();
+
+				if (oPopover.getContent().length > 0) {
+					oPopover.destroyContent(); // destroy the old content, before adding the new one
+				}
+
+				(aContent || []).forEach(oPopover.addContent, oPopover);
+
+				return oPopover;
+			},
+
+			_getPopover: function () {
+				if (!this._oPopover) {
+					this._oPopover = new sap.m.Popover({
+						placement: "Bottom",
+						showHeader: false
+					}).addStyleClass("sapUiDocumentationSubclassesPopover");
+				}
+
+				return this._oPopover;
+			},
+
+			/**
+			 * Builds the header layout structure.
+			 * The header displays the entity data in 3 columns
+			 * and each column can consist of 3 key-value pairs at most.
 			 * @param {object} oControlData main control data object source
 			 * @param {object} oEntityData additional data object source
-			 * @private
 			 */
-			_buildHeaderMatrix: function (oControlData, oEntityData) {
-				var aHeaderControls = [[], [], []], i, j,
+				_buildHeaderLayout: function (oControlData, oEntityData) {
+				var aHeaderControls = [[], [], []],
+					oHeaderLayoutUtil = this._getHeaderLayoutUtil(),
+					aSubClasses = oEntityData.extendedBy || oEntityData.implementedBy || [],
 					aHeaderBlocksInfo = [
 						{creator: "_getControlSampleBlock", exists: oControlData.isClass},
 						{creator: "_getDocumentationBlock", exists: oControlData.docuLink !== undefined},
 						{creator: "_getExtendsBlock", exists: oControlData.isClass},
+						{creator: "_getSubclassesBlock", exists: aSubClasses.length > 0},
 						{creator: "_getImplementsBlock", exists: oControlData.hasImplementsData},
 						{creator: "_getModuleBlock", exists: true},
+						{creator: "_getLibraryBlock", exists: oControlData.kind === "namespace" && oEntityData.lib},
 						{creator: "_getVisibilityBlock", exists: oControlData.visibility},
 						{creator: "_getAvailableSinceBlock", exists: true},
 						{creator: "_getApplicationComponentBlock", exists: true}
 					],
-					fillMatrix = function() {
+					fnFillHeaderControlsStructure = function() {
 						var iControlsAdded = 0,
 							iIndexToAdd,
-							getIndexToAdd = function(iControlsAdded) {
+							fnGetIndexToAdd = function(iControlsAdded) {
+								// determines the column(1st, 2nd or 3rd), the next entity data key-value should be added to.
 								if (iControlsAdded <= 3) {
 									return 0;
 								} else if (iControlsAdded <= 6) {
 									return 1;
 								}
 								return 2;
-							},
-							that = this;
+							};
+
 						aHeaderBlocksInfo.forEach(function(oHeaderBlockInfo) {
 							var oControlBlock;
 							if (oHeaderBlockInfo.exists) {
-								oControlBlock = that[oHeaderBlockInfo.creator](oControlData, oEntityData);
-								iIndexToAdd = getIndexToAdd(++iControlsAdded);
+								oControlBlock = oHeaderLayoutUtil[oHeaderBlockInfo.creator].call(this, oControlData, oEntityData);
+								iIndexToAdd = fnGetIndexToAdd(++iControlsAdded);
 								aHeaderControls[iIndexToAdd].push(oControlBlock);
 							}
-						});
+						}, this);
 					}.bind(this);
-				fillMatrix();
-				for (i = 0; i < aHeaderControls.length; i++) {
-					var oVL = this.getView().byId("headerColumn" + i);
+
+				// Creates the entity key-value controls
+				// based on the existing entity key-value data,
+				fnFillHeaderControlsStructure();
+
+				// Wraps each column in a <code>sap.ui.layout.VerticalLayout</code>.
+				aHeaderControls.forEach(function(aHeaderColumn, iIndex) {
+					var oVL = this.byId("headerColumn" + iIndex);
 					oVL.removeAllContent();
-					if (aHeaderControls[i].length > 0) {
+
+					if (aHeaderColumn.length > 0) {
 						oVL.setVisible(true);
-						for (j = 0; j < aHeaderControls[i].length; j++) {
-							oVL.addContent(aHeaderControls[i][j]);
-						}
+						aHeaderColumn.forEach(oVL.addContent, oVL);
 					}
-				}
+				}, this);
 			},
 
 			_getControlChildren: function (aTreeData, sTopicId) {
@@ -715,11 +819,12 @@ sap.ui.define([
 			},
 
 			/**
-			 * Retrieves the <code>Entity</code> model data.
-			 * @param {Object} oLibData
+			 * Retrieves the <code>Entity</code> sample and component data.
+			 * @param {Object} sEntityName
+			 * @param {Object} oControlsData
 			 * @return {Object}
 			 */
-			_getEntityData: function (sEntityName, oControlsData) {
+			_getEntitySampleData: function (sEntityName, oControlsData) {
 				var aFilteredEntities = oControlsData.entities.filter(function (entity) {
 					return entity.id === sEntityName;
 				});
