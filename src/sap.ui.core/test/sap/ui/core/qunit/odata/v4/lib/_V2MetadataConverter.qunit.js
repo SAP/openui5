@@ -328,7 +328,7 @@ sap.ui.require([
 								FromRole="ToRole_Assoc_BusinessPartner_SalesOrders"\
 								ToRole="FromRole_Assoc_BusinessPartner_SalesOrders" />\
 					</EntityType>\
-					<Association Name="Assoc_BusinessPartner_SalesOrders" content-version="1">\
+					<Association Name="Assoc_BusinessPartner_SalesOrders">\
 						<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1"\
 							Role="FromRole_Assoc_BusinessPartner_SalesOrders" />\
 						<End Type="GWSAMPLE_BASIC.SalesOrder" Multiplicity="*"\
@@ -1238,7 +1238,7 @@ sap.ui.require([
 				"RequiresFilter" : true
 			}
 		}
-	}, { // sap:searchable - different default values in V2 and V2
+	}, { // sap:searchable - different default values in V2 and V4
 		annotationsV2 : '',
 		expectedAnnotationsV4 : {
 			'@Org.OData.Capabilities.V1.SearchRestrictions' : {
@@ -1649,4 +1649,201 @@ sap.ui.require([
 				}
 			});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("sap:creatable or sap:creatable-path at NavigationProperty", function (assert) {
+		var sXML = '\
+				<Schema Namespace="GWSAMPLE_BASIC.0001" Alias="GWSAMPLE_BASIC">\
+					<EntityContainer Name="Container" m:IsDefaultEntityContainer="true">\
+						<EntitySet Name="Customers" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
+							sap:creatable="false" sap:searchable="false"/>\
+						<EntitySet Name="Suppliers" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
+							sap:searchable="true"/>\
+						<FunctionImport Name="Foo" ReturnType="Edm.String"/>\
+					</EntityContainer>\
+					<EntityContainer Name="YetAnotherContainer">\
+						<EntitySet Name="Suppliers" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
+							sap:searchable="true"/>\
+					</EntityContainer>\
+					<EntityType Name="BusinessPartner">\
+						<Property Name="IsCreatable" Type="Edm.Boolean"/>\
+						<NavigationProperty Name="CreatableA" sap:creatable="false"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="CreatablePathA"\
+							sap:creatable-path="IsCreatable"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="ConflictA" sap:creatable="true"\
+							sap:creatable-path="n/a"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="CreatableB" sap:creatable="false"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="CreatablePathB"\
+							sap:creatable-path="IsCreatable"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="ConflictB" sap:creatable="false"\
+							sap:creatable-path="n/a"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="CreatableTrue" sap:creatable="true"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+					</EntityType>\
+					<Association Name="Assoc">\
+						<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1" Role="From"/>\
+						<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="0..1" Role="To"/>\
+					</Association>\
+				</Schema>\
+				<Schema Namespace="GWSAMPLE_BASIC.0002">\
+					<EntityContainer Name="Container">\
+						<EntitySet Name="Suppliers" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
+							sap:searchable="true"/>\
+					</EntityContainer>\
+				</Schema>',
+			aNonInsertableNavigationProperties = [{
+				"$NavigationPropertyPath" : "CreatableA"
+			}, {
+				"$If" : [{
+					"$Not" : {
+						"$Path" : "IsCreatable"
+					}
+				}, {
+					"$NavigationPropertyPath" : "CreatablePathA"
+				}]
+			}, {
+				"$NavigationPropertyPath" : "ConflictA"
+			}, {
+				"$NavigationPropertyPath" : "CreatableB"
+			}, {
+				"$If" : [{
+					"$Not" : {
+						"$Path" : "IsCreatable"
+					}
+				}, {
+					"$NavigationPropertyPath" : "CreatablePathB"
+				}]
+			}, {
+				"$NavigationPropertyPath" : "ConflictB"
+			}],
+			oExpectedResult = {
+				"$EntityContainer" : "GWSAMPLE_BASIC.0001.Container",
+				"$Version" : "4.0",
+				"GWSAMPLE_BASIC.0001." : {
+					"$Annotations" : {
+						"GWSAMPLE_BASIC.0001.Container/Customers" : {
+							"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+								"Insertable" : false,
+								"NonInsertableNavigationProperties"
+									: aNonInsertableNavigationProperties
+							},
+							"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+								"Searchable" : false
+							}
+						},
+						"GWSAMPLE_BASIC.0001.Container/Suppliers" : {
+							"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+								"NonInsertableNavigationProperties"
+									: aNonInsertableNavigationProperties
+							}
+						},
+						"GWSAMPLE_BASIC.0001.YetAnotherContainer/Suppliers" : {
+							"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+								"NonInsertableNavigationProperties"
+									: aNonInsertableNavigationProperties
+							}
+						}
+					},
+					"$kind" : "Schema"
+				},
+				"GWSAMPLE_BASIC.0001.BusinessPartner" : {
+					"$kind" : "EntityType",
+					"IsCreatable" : {
+						"$Type" : "Edm.Boolean",
+						"$kind" : "Property"
+					},
+					"CreatableA" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "NavigationProperty"
+					},
+					"CreatablePathA" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "NavigationProperty"
+					},
+					"ConflictA" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "NavigationProperty"
+					},
+					"CreatableB" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "NavigationProperty"
+					},
+					"CreatablePathB" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "NavigationProperty"
+					},
+					"ConflictB" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "NavigationProperty"
+					},
+					"CreatableTrue" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "NavigationProperty"
+					}
+				},
+				"GWSAMPLE_BASIC.0001.Container" : {
+					"$kind" : "EntityContainer",
+					"Customers" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "EntitySet"
+					},
+					"Suppliers" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "EntitySet"
+					},
+					"Foo" : {
+						"$Function" : "GWSAMPLE_BASIC.0001.Foo",
+						"$kind" : "FunctionImport"
+					}
+				},
+				"GWSAMPLE_BASIC.0001.Foo" : [{
+					"$kind" : "Function",
+					"$ReturnType" : {
+						"$Type" : "Edm.String"
+					}
+				}],
+				"GWSAMPLE_BASIC.0001.YetAnotherContainer" : {
+					"$kind" : "EntityContainer",
+					"Suppliers" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "EntitySet"
+					}
+				},
+				"GWSAMPLE_BASIC.0002." : {
+					"$Annotations" : {
+						"GWSAMPLE_BASIC.0002.Container/Suppliers" : {
+							"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+								"NonInsertableNavigationProperties"
+									: aNonInsertableNavigationProperties
+							}
+						}
+					},
+					"$kind" : "Schema"
+				},
+				"GWSAMPLE_BASIC.0002.Container" : {
+					"$kind" : "EntityContainer",
+					"Suppliers" : {
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$kind" : "EntitySet"
+					}
+				}
+			};
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
+				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
+				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictA'", sModuleName);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
+				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
+				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictB'", sModuleName);
+		testConversion(assert, sXML, oExpectedResult);
+	});
+	//TODO: schema GWSAMPLE_BASIC.0000. with "forward reference" to EntityType processed later
 });
