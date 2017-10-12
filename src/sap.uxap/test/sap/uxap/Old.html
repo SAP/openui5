@@ -25,7 +25,7 @@
                                       markChanges="true"
                                       markChangesPress="handleMarkChangesPress"
                                       objectSubtitle="Senior Developer"
-                                      objectImageURI="test-resources/sap/uxap/images/imageID_273624.png"
+                                      objectImageURI="../../sap/f/images/Woman_avatar_02.png"
                                       objectImageShape="Circle"
                                       isObjectIconAlwaysVisible="false"
                                       isObjectTitleAlwaysVisible="false"
@@ -40,9 +40,12 @@
                             </m:Breadcrumbs>
                         </breadcrumbs>
                         <actions>
-                            <ObjectPageHeaderActionButton icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode"></ObjectPageHeaderActionButton>
-                            <ObjectPageHeaderActionButton icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode"></ObjectPageHeaderActionButton>
-                            <ObjectPageHeaderActionButton icon="sap-icon://decline" press="handleClose" tooltip="Close column"></ObjectPageHeaderActionButton>
+                            <ObjectPageHeaderActionButton icon="sap-icon://copy"/>
+							<ObjectPageHeaderActionButton icon="sap-icon://delete"/>
+							<ObjectPageHeaderActionButton icon="sap-icon://add"/>
+                            <ObjectPageHeaderActionButton icon="sap-icon://paste"/>
+                            <ObjectPageHeaderActionButton icon="sap-icon://full-screen" tooltip="Enter Full Screen Mode"/>
+                            <ObjectPageHeaderActionButton icon="sap-icon://decline" tooltip="Close column"/>
                         </actions>
                     </ObjectPageHeader>
                 </headerTitle>
@@ -51,12 +54,7 @@
                         <m:Link text="+33 6 4512 5158"/>
                         <m:Link text="DeniseSmith@sap.com"/>
                     </l:VerticalLayout>
-        
-                    <l:HorizontalLayout>
-                        <m:Image src="./test-resources/sap/uxap/images/linkedin.png"></m:Image>
-                        <m:Image src="./test-resources/sap/uxap/images/Twitter.png"></m:Image>
-                    </l:HorizontalLayout>
-        
+
                     <l:VerticalLayout>
                         <m:Label text="Hello! I am Tim and I use UxAP"/>
                         <m:VBox height="63px">
