@@ -85,13 +85,13 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 			/**
 			 * A reference to the currently selected button control. By default or if the association is set to false (null, undefined, "", false), the first button will be selected.
 			 * If the association is set to an invalid value (for example, an ID of a button that does not exist) the selection on the SegmentedButton will be removed.
-			 * @deprecated Since version 1.52.
-			 * Use the <code>selectedItem</code> association instead.
+			 * @deprecated As of version 1.52, use the <code>selectedItem</code> association instead.
 			 */
 			selectedButton : {deprecated: true, type : "sap.m.Button", multiple : false},
 
 			/**
 			 * A reference to the currently selected item control.
+			 * @since 1.52
 			 */
 			selectedItem : {type : "sap.m.SegmentedButtonItem", multiple : false},
 
@@ -109,8 +109,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 
 			/**
 			 * Fires when the user selects a button, which returns the ID and button object.
-			 * @deprecated Since version 1.52.
-			 * Use the <code>selectionChange</code> event instead.
+			 * @deprecated As of version 1.52, use the <code>selectionChange</code> event instead.
 			 */
 			select : {
 				deprecated: true,
@@ -729,11 +728,11 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 	/**
 	 * Setter for association <code>selectedItem</code>.
 	 *
-	 * @param {string | sap.m.SegmentedButtonItem | null | undefined} vItem New value for association <code>setSelectedItem</code>
+	 * @param {string | <code>sap.m.SegmentedButtonItem</code> | null | undefined} vItem New value for association <code>setSelectedItem</code>
 	 *    An sap.m.SegmentedButtonItem instance which becomes the new target of this <code>selectedItem</code> association.
-	 *    Alternatively, the ID of an sap.m.SegmentedButtonItem instance may be given as a string.
-	 *    If the value of null, undefined, or an empty string is provided the first item will be selected.
-	 * @returns {sap.m.SegmentedButton} <code>this</code> this pointer for chaining
+	 *    Alternatively, the ID of an <code>sap.m.SegmentedButtonItem</code> instance may be given as a string.
+	 *    If the value of null, undefined, or an empty string is provided, the first item will be selected.
+	 * @returns {sap.m.SegmentedButton} <code>this</code> pointer for chaining
 	 * @public
 	 * @override
 	 */
