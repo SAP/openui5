@@ -4,7 +4,7 @@
 /**
  * Adds support rules of the sap.ui.table library to the support infrastructure.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "./TableHelper.support", 'sap/ui/Device'],
+sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "./rules/TableHelper.support", 'sap/ui/Device'],
 	function(jQuery, SupportLib, Ruleset, SupportHelper, Device) {
 	"use strict";
 

@@ -5,11 +5,11 @@
  * Adds support rules of the sap.m library to the support infrastructure.
  */
 sap.ui.define(["jquery.sap.global", "sap/ui/support/library",
-				"./Button.support",
-				"./Dialog.support",
-				"./Input.support",
-				"./Panel.support",
-				"./SelectDialog.support"],
+			   "./rules/Button.support",
+			   "./rules/Dialog.support",
+			   "./rules/Input.support",
+			   "./rules/Panel.support",
+			   "./rules/SelectDialog.support"],
 	function(jQuery, SupportLib,
 			ButtonSupport,
 			DialogSupport,

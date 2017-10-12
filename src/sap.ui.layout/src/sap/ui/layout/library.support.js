@@ -4,7 +4,7 @@
 /**
  * Adds support rules of the sap.layout library to the support infrastructure.
  */
-sap.ui.define(["./Form.support"],
+sap.ui.define(["./rules/Form.support"],
 	function(FormSupport) {
 	"use strict";
 
