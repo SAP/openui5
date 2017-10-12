@@ -234,8 +234,8 @@ sap.ui.define([
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mParameters = mParameters;
+		this.fetchCache(this.oContext);
 		if (!this.oOperation) {
-			this.fetchCache(this.oContext);
 			this.checkUpdate();
 		}
 	};
@@ -593,9 +593,9 @@ sap.ui.define([
 				}
 			}
 			if (oCache) {
+				that.fetchCache(that.oContext);
 				if (!that.oOperation) {
 					that.sRefreshGroupId = sGroupId;
-					that.fetchCache(that.oContext);
 					that.mCacheByContext = undefined;
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events

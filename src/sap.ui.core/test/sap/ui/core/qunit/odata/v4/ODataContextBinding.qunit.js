@@ -155,19 +155,19 @@ sap.ui.require([
 			},
 			sUpdateGroupId = "update foo",
 			oOperation = {
-					bAction : undefined,
-					oMetadataPromise : undefined,
-					mParameters : {},
-					sResourcePath : undefined
-		};
+				bAction : undefined,
+				oMetadataPromise : undefined,
+				mParameters : {},
+				sResourcePath : undefined
+			};
 
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
+		oBindingMock.expects("fetchCache").withExactArgs(undefined);
 		oBindingMock.expects("checkUpdate").never();
-		oBindingMock.expects("fetchCache").never();
 
 		// code under test
 		oBinding.applyParameters(mParameters);
