@@ -11,7 +11,8 @@
 			rows="{path: '/people'}"
 			appointmentsVisualization="Filled"
 			appointmentSelect="handleAppointmentSelect"
-			showEmptyIntervalHeaders="false">
+			showEmptyIntervalHeaders="false"
+			showWeekNumbers="true">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
 			</toolbarContent>

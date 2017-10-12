@@ -517,6 +517,26 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	color: @sapUiContentContrastTextColor;
 }
 
+.sapUiCalRowWeekNumbers {
+	font-size: 0.875rem;
+	text-align: left;
+	line-height: 3rem;
+	height: 3rem;
+	margin-top: -0.25rem;
+}
+
+.sapUiCalRowWeekNumber {
+	box-sizing: border-box;
+	height: 3rem;
+	border-width: 0.0625rem;
+	border-style: solid;
+	display: inline-block;
+	text-align: center;
+	overflow: hidden;
+	user-select: none;
+	cursor: default;
+}
+
 /*** compact mode (desktop size) ***/
 
 .sapUiSizeCompact .sapUiCal,
@@ -690,6 +710,15 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	line-height: 0.75rem;
 	padding-right: 0.25rem;
 	padding-bottom: 1rem;
+}
+
+.sapUiSizeCompact .sapUiCalRowWeekNumbers {
+	line-height: 2rem;
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapUiCalRowWeekNumber {
+	height: 2rem;
 }
 
 /*** Phone ***/

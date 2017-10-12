@@ -37,6 +37,10 @@ sap.ui.define([],
 			oRm.addClass("sapMPlanCalNoHead");
 		}
 
+		if (oPC.getShowWeekNumbers() && oPC._viewAllowsWeekNumbers(oPC.getViewKey())) {
+			oRm.addClass("sapMPlanCalWithWeekNumbers");
+		}
+
 		if (sTooltip) {
 			oRm.writeAttributeEscaped('title', sTooltip);
 		}

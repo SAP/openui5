@@ -20,6 +20,11 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<!--[if IE]>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
 
 		<!-- Test functions -->
 		<script>
@@ -607,6 +612,33 @@
 				sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 				// clean
 				oCalP.destroy();
+			});
+
+			QUnit.module("WeekNumbers");
+
+			QUnit.test("DatesRow getWeekNumbers", function(assert) {
+				//arrange
+				var oDatesRow = new sap.ui.unified.calendar.DatesRow({
+					startDate: new Date(2016, 11, 26),
+					days: 14
+				});
+
+				//act
+				var aWeekNumbers = oDatesRow.getWeekNumbers();
+
+				//assert
+				assert.equal(aWeekNumbers.length, 3, "we get week info for 3 weeks");
+
+				assert.equal(aWeekNumbers[0].len, 6, "first week is with 6 displayed days");
+				assert.equal(aWeekNumbers[1].len, 7, "second week is with 7 displayed days");
+				assert.equal(aWeekNumbers[2].len, 1, "last week is with 1 displayed day");
+
+				assert.equal(aWeekNumbers[0].number, 53, "first week number is correct");
+				assert.equal(aWeekNumbers[1].number, 1, "second week number is correct");
+				assert.equal(aWeekNumbers[2].number, 2, "last week number is correct");
+
+				//clean
+				oDatesRow.destroy();
 			});
 
 		</script>
