@@ -115,7 +115,7 @@
 			"owner": "jonathanbaker7",
 			"license": "Apache 2.0",
 			"type": "JS Library"
-	  },
+		},
 		"openui5-password": {
 			"name": "OpenUI5 Password",
 			"description": "An OpenUI5 Control which checks your password strength and validates it.",
@@ -133,8 +133,8 @@
 			"owner": "mauriciolauffer",
 			"license": "MIT",
 			"type": "JS Library"
-	  },
-    "grunt-nwabap-ui5uploader": {
+		},
+		"grunt-nwabap-ui5uploader": {
 			"name": "grunt-nwabap-ui5uploader",
 			"description": "A Grunt plugin to upload UI5 sources to a SAP NetWeaver ABAP system.",
 			"githubLink": "https://github.com/pfefferf/grunt-nwabap-ui5uploader",
@@ -151,5 +151,14 @@
 			"owner": "ui5lab",
 			"license": "Apache 2.0",
 			"type": "Tool"
+		},
+		"yii2-openui5": {
+			"name": "yii2-openui5",
+			"description": "Yii2-openui5 is extension for Yii2 Framework to integrate with OpenUI5.",
+			"githubLink": "https://github.com/rockman84/yii2-openui5",
+			"documentationLink": "https://rockman84.github.io/yii2-openui5/",
+			"owner": "Wong Hansen",
+			"license": "Apache 2.0",
+			"type": "Yii2 Extension"
 		}
 	}
