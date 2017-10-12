@@ -120,15 +120,15 @@ sap.ui.define([
 
 		this._getKeepAll = jQuery.sap.getter(new Item({
 			key: "keep",
-			text: this._oRb.getText("MULTI_EDIT_KEEP_TEXT")
+			text: "< " + this._oRb.getText("MULTI_EDIT_KEEP_TEXT") + " >"
 		}));
 		this._getBlank = jQuery.sap.getter(new Item({
 			key: "blank",
-			text: this._oRb.getText("MULTI_EDIT_BLANK_TEXT")
+			text: "< " + this._oRb.getText("MULTI_EDIT_BLANK_TEXT") + " >"
 		}));
 		this._getValueHelp = jQuery.sap.getter(new Item({
 			key: "new",
-			text: this._oRb.getText("MULTI_EDIT_NEW_TEXT")
+			text: "< " + this._oRb.getText("MULTI_EDIT_NEW_TEXT") + " >"
 		}));
 
 		// This enables FormElements to correctly write aria attributes to the internal Select control
