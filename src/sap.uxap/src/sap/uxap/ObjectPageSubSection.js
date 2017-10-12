@@ -5,7 +5,6 @@
 // Provides control sap.uxap.ObjectPageSubSection.
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/core/CustomData",
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData",
 	"./ObjectPageSectionBase",
@@ -15,20 +14,25 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/base/ManagedObjectObserver",
-	"./library"
+	"./library",
+	"sap/m/library",
+	"jquery.sap.keycodes"
 ], function (jQuery,
-			 CustomData,
-			 Grid,
-			 GridData,
-			 ObjectPageSectionBase,
-			 ObjectPageLazyLoader,
-			 BlockBase,
-			 Button,
-			 Device,
-			 StashedControlSupport,
-			 ManagedObjectObserver,
-			 library) {
+			Grid,
+			GridData,
+			ObjectPageSectionBase,
+			ObjectPageLazyLoader,
+			BlockBase,
+			Button,
+			Device,
+			StashedControlSupport,
+			ManagedObjectObserver,
+			library,
+			mobileLibrary) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	// shortcut for sap.uxap.ObjectPageSubSectionMode
 	var ObjectPageSubSectionMode = library.ObjectPageSubSectionMode;
@@ -275,7 +279,7 @@ sap.ui.define([
 			}
 
 		}, this);
-		return sap.ui.core.Control.prototype.clone.apply(this, arguments);
+		return ObjectPageSectionBase.prototype.clone.apply(this, arguments);
 	};
 
 	ObjectPageSubSection.prototype._cleanProxiedAggregations = function () {
@@ -797,7 +801,7 @@ sap.ui.define([
 	ObjectPageSubSection.prototype._getSeeMoreButton = function () {
 		if (!this._oSeeMoreButton) {
 			this._oSeeMoreButton = new Button(this.getId() + "--seeMore", {
-				type: sap.m.ButtonType.Transparent,
+				type: ButtonType.Transparent,
 				iconFirst: false
 			}).addStyleClass("sapUxAPSubSectionSeeMoreButton").attachPress(this._seeMoreLessControlPressHandler, this);
 		}

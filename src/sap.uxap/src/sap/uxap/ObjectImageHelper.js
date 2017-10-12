@@ -3,11 +3,10 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Icon",
 	"sap/ui/core/IconPool",
 	"sap/m/Image"
-], function (jQuery, Icon, IconPool, Image) {
+], function (Icon, IconPool, Image) {
 	"use strict";
 
 	var ObjectImageHelper = function() {

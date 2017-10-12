@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
-	function (Renderer, ObjectPageHeaderRenderer) {
+sap.ui.define(["sap/ui/Device"],
+	function (Device) {
 		"use strict";
 
 		/**
@@ -45,7 +45,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write(">");
 
 			// custom scrollbar
-			if (sap.ui.Device.system.desktop) {
+			if (Device.system.desktop) {
 				oRm.renderControl(oControl._getCustomScrollBar().addStyleClass("sapUxAPObjectPageCustomScroller"));
 			}
 

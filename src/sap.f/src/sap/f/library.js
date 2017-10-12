@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.f.
  */
-sap.ui.define(["jquery.sap.global",
+sap.ui.define(["sap/ui/Global",
 	"sap/ui/core/library", "sap/m/library"], // library dependency
 	function() {
 

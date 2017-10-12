@@ -4,6 +4,7 @@
 
 // Provides control sap.uxap.AnchorBar.
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/m/Popover",
@@ -16,10 +17,14 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
 	"./HierarchicalSelect",
-	"./library"
-], function (Button, mobileLibrary, Popover, Toolbar, IconPool, Item, ResizeHandler,
+	"./library",
+	"jquery.sap.keycodes"
+], function (jQuery, Button, mobileLibrary, Popover, Toolbar, IconPool, Item, ResizeHandler,
 			 ScrollEnablement, HorizontalLayout, Device, CustomData, HierarchicalSelect, library) {
 	"use strict";
+
+	// shortcut for sap.m.SelectType
+	var SelectType = mobileLibrary.SelectType;
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
@@ -588,7 +593,7 @@ sap.ui.define([
 
 			this._oSelect.setWidth("auto");
 			this._oSelect.setAutoAdjustWidth(true);
-			this._oSelect.setType(sap.m.SelectType.IconOnly);
+			this._oSelect.setType(SelectType.IconOnly);
 			this._computeBarSectionsInfo();
 
 		} else {
@@ -596,7 +601,7 @@ sap.ui.define([
 
 			this._oSelect.setWidth("100%");
 			this._oSelect.setAutoAdjustWidth(false);
-			this._oSelect.setType(sap.m.SelectType.Default);
+			this._oSelect.setType(SelectType.Default);
 		}
 
 		this.$().toggleClass("sapUxAPAnchorBarOverflow", this._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon);
