@@ -2,16 +2,15 @@
  * ${copyright}
  */
 
-// Provides control sap.m.SelectionDetailsItemLine.
-sap.ui.define(['sap/ui/core/Element'],
+sap.ui.define(["sap/ui/core/Element"],
 	function(Element) {
 	"use strict";
 
 	/**
 	 * Constructor for a new SelectionDetailsItemLine.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new element
 	 *
 	 * @class
 	 * This Element provides a means to fill an {@link sap.m.SelectionDetailsItem} with content.
@@ -28,12 +27,12 @@ sap.ui.define(['sap/ui/core/Element'],
 	 * @protected
 	 * @alias sap.m.SelectionDetailsItemLine
 	 * @since 1.48.0
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectionDetailsItemLine = Element.extend("sap.m.SelectionDetailsItemLine", /** @lends sap.m.SelectionDetailsItemLine.prototype */ {
-		metadata : {
-			library : "sap.m",
-			properties : {
+		metadata: {
+			library: "sap.m",
+			properties: {
 				/**
 				 * The label that is shown as the first part of the line.
 				 * It may contain the name of the currently selected dimension or measure.
