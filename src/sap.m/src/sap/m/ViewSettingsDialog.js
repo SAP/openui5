@@ -1571,7 +1571,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 					} else {
 						for (i = 0; i < iCustomTabsLength; i++) {
 							var oCustomTab = aCustomTabs[i],
-								sCustomTabId = this.getId() + this._sCustomTabsButtonsIdPrefix + oCustomTab.getId();
+								sCustomTabId = that.getId() + that._sCustomTabsButtonsIdPrefix + oCustomTab.getId();
 							if (!that._isEmptyTab(oCustomTab) && selectedId === sCustomTabId) {
 								that._switchToPage(oCustomTab.getId());
 								break;
