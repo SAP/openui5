@@ -264,14 +264,16 @@
 <body id="body" class="sapUiBody">
 <script>
 	(function (jQuery, App, Page) {
-		var oApp = new App(),
-			myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()});
+		sap.ui.getCore().attachInit(function() {
+			var oApp = new App(),
+				myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()});
 
-		oApp.addPage(new Page({
-			title: "Old Header",
-			content: [myView]
-		})).placeAt("content");
-	}(jQuery, sap.m.App, sap.m.Page))
+			oApp.addPage(new Page({
+				title: "Old Header",
+				content: [myView]
+			})).placeAt("content");
+		});
+	}(jQuery, sap.m.App, sap.m.Page));
 </script>
 <div id="content"></div>
 </body>

@@ -2104,6 +2104,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._onUpdateScreenSize = function (oEvent) {
+		var oTitle = this.getHeaderTitle(),
+			iCurrentWidth = oEvent.size.width;
 
 		if (oEvent.size.height === 0 || oEvent.size.width === 0) {
 			jQuery.sap.log.info("ObjectPageLayout :: not triggering calculations if height or width is 0");
@@ -2125,6 +2127,10 @@ sap.ui.define([
 				this.invalidate();
 			}
 
+			// Let the dynamic header know size changed first, because this might lead to header dimensions changes
+			if (oTitle.isDynamic()) {
+				oTitle._onResize(iCurrentWidth);
+			}
 			this._adjustHeaderHeights();
 
 			this._requestAdjustLayout(null, true);
