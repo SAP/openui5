@@ -264,8 +264,12 @@ sap.ui.define([
 					sParametrizedSource = sParametrizedSource.substr(0, iCrossPosition);
 				}
 				sParametrizedSource += "#view=FitH";
+				if (!jQuery.sap.validateUrl(sParametrizedSource)) {
+					sParametrizedSource = encodeURI(sParametrizedSource);
+				}
+
 				if (jQuery.sap.validateUrl(sParametrizedSource)) {
-					oIframeElement.attr("src", encodeURI(sParametrizedSource));
+					oIframeElement.attr("src", sParametrizedSource);
 				} else {
 					this._fireErrorEvent();
 				}
