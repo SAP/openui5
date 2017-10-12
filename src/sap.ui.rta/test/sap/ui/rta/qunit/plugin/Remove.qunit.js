@@ -144,6 +144,23 @@ function(
 		this.oRemovePlugin.removeElement([this.oButtonOverlay]);
 	});
 
+	QUnit.test("when an overlay has remove action designTime metadata, but the control is the last visible element in an aggregation", function(assert) {
+		this.oButtonOverlay.setDesignTimeMetadata({
+			actions : {
+				remove : {
+					changeType: "hideControl"
+				}
+			}
+		});
+
+		this.oButton1.setVisible(false);
+
+		this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
+		this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
+
+		assert.strictEqual(this.oRemovePlugin.isEnabled(this.oButtonOverlay), false, "... then isEnabled returns false");
+	});
+
 	QUnit.test("when an overlay has remove action designTime metadata with a confirmation text defined and is selected", function(assert) {
 		var done = assert.async();
 
@@ -163,23 +180,18 @@ function(
 		this.oLayoutOverlay.setSelectable(true);
 		this.oButtonOverlay.setSelectable(true);
 		this.oButtonOverlay.setSelected(true);
-		// hide second button so that the Layout will be selected afterwards
-		this.oButton1.setVisible(false);
 
 		this.oRemovePlugin.attachEventOnce("elementModified", function(oEvent) {
 			var oCompositeCommand = oEvent.getParameter("command");
 			assert.strictEqual(oCompositeCommand.getCommands().length, 1, "... command is created for selected overlay");
 			assert.strictEqual(oCompositeCommand.getCommands()[0].getMetadata().getName(), "sap.ui.rta.command.Remove", "and command is of the correct type");
-			setTimeout(function() {
-				assert.ok(this.oLayoutOverlay.getSelected(), "and the Layout (relevant Container) is selected");
-				done();
-			}.bind(this), 0);
-		}.bind(this));
+			done();
+		});
 		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 		assert.ok(true, "... when plugin removeElement is called ...");
 
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(jQuery(".sapUiRtaConfirmationDialogText").text(), "Button", "Confirmatioan dialog is shown with a correct text");
+		assert.strictEqual(jQuery(".sapUiRtaConfirmationDialogText").text(), "Button", "Confirmation dialog is shown with a correct text");
 		sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogRemoveButton")[0].id).firePress();
 	});
 
