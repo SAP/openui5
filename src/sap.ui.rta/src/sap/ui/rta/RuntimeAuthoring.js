@@ -633,7 +633,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._closeToolbar = function() {
-		if (this.getShowToolbars()) {
+		if (this.getShowToolbars() && this.getToolbar) {
 			return this.getToolbar().hide();
 		}
 	};
