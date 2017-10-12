@@ -136,6 +136,7 @@ sap.ui.define([], function () {
 		oRm.write("<div");
 		oRm.writeAttributeEscaped("id", oDynamicPageTitleState.id + "-content");
 		oRm.addClass("sapFDynamicPageTitleMainContent");
+		oRm.addClass("sapFDynamicPageTitleContent-CTX");
 		oRm.addClass(oDynamicPageTitleState.isPrimaryAreaBegin ? "sapFDynamicPageTitleAreaLowPriority" : "sapFDynamicPageTitleAreaHighPriority");
 		oRm.writeClasses();
 		oRm.write(">");
