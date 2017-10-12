@@ -2119,6 +2119,12 @@ oPopover.setContentWidth("30%");
 
 		var that = this;
 		var fnTouchStart = function(evt) {
+			var sType = that.getType();
+
+			// If FacetFilter type is Light do nothing on touch start (we do not have header to be scrolled)
+			if (sType === sap.m.FacetFilterType.Light) {
+				return;
+			}
 
 			evt.preventDefault();
 
@@ -2134,6 +2140,12 @@ oPopover.setContentWidth("30%");
 		};
 
 		var fnTouchMove = function(evt) {
+			var sType = that.getType();
+
+			// If FacetFilter type is Light do nothing on touch move (we do not have header to be scrolled)
+			if (sType === sap.m.FacetFilterType.Light) {
+				return;
+			}
 
 			var dx = evt.touches[0].pageX - that.startTouchX;
 
@@ -2154,6 +2166,12 @@ oPopover.setContentWidth("30%");
 		};
 
 		var fnTouchEnd = function(evt) {
+			var sType = that.getType();
+
+			// If FacetFilter type is Light do nothing on touch end (we do not have header to be scrolled)
+			if (sType === sap.m.FacetFilterType.Light) {
+				return;
+			}
 
 			if (that._bTouchNotMoved === false) { // swiping ends now
 				evt.preventDefault();
