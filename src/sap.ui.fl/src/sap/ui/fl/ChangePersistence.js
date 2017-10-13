@@ -304,7 +304,7 @@ sap.ui.define([
 			};
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oComponent));
 
-			if (sap.ui.getCore().getConfiguration().getDebug()) {
+			if (Utils.isDebugEnabled()) {
 				this._mChangesInitial = jQuery.extend(true, {}, this._mChanges);
 			}
 
