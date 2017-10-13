@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([ "./ListItemBase", "./Link", "./library", "./FormattedText", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/m/Button", "sap/m/ActionSheet", "sap/ui/Device" ],
-	function(ListItemBase, Link, library, FormattedText, Control, IconPool, Button, ActionSheet, Device) {
+sap.ui.define(["./ListItemBase", "./Link", "./library", "./FormattedText", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/m/Button", "sap/ui/Device"],
+	function(ListItemBase, Link, library, FormattedText, Control, IconPool, Button, Device) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -240,7 +240,7 @@ sap.ui.define([ "./ListItemBase", "./Link", "./library", "./FormattedText", "sap
 			oActionSheet.addButton(new Button({
 				icon: oAction.getIcon(),
 				text: oAction.getText(),
-				press: [ oAction.firePress, oAction ]
+				press: oAction.firePress.bind(oAction, { "item": this })
 			}));
 		}
 
