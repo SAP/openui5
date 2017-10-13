@@ -34,24 +34,29 @@
 					height="100%" width="100%">
 					<Page>
 						<customHeader>
-							<Bar>
-								<contentLeft>
+							<Toolbar>
+								<content>
+									<Text text="TC visibility:"/>
+									<Switch id="showHideTC" state="true" change="onShowHideTC"/>
+									<ToolbarSeparator/>
 									<Button text='addTile' press="onAdd"/>
+									<ToolbarSeparator/>
 									<Input type="Numeric" value="1" id="insertPosition" width="50px"/>
 									<Button text='insertTile' press="onInsert"/>
-									<Button text='insertTile inv.' press="onInsertInvisible"/>
+									<Button text='insertTile(invisible)' press="onInsertInvisible"/>
+									<ToolbarSeparator/>
 									<Input type="Numeric" value="1" id="removePosition" width="50px"/>
 									<Button text='removeTile' press="onRemove"/>
+									<ToolbarSeparator/>
 									<Input type="Numeric" value="1" id="showHidePosition" width="50px"/>
-									<Button text='Show/Hide' press="onShowHide"/>
-								</contentLeft>
-								<contentRight>
+									<ToolbarSeparator/>
 									<Text text="model size:"/>
 									<StepInput id="modelSizeLimit" value="2000" change="onModelSizeLimitChange" step="100" min = "1" width="150px"/>
 									<Button text="set model data" press="setModelData"/>
+									<ToolbarSeparator/>
 									<Button text="delete model data" press="deleteModelData"/>
-								</contentRight>
-							</Bar>
+								</content>
+							</Toolbar>
 						</customHeader>
 						<content>
 							<TileContainer id="usersTileContainer" editable="true" allowAdd="true"
@@ -238,6 +243,9 @@
 			onUpdateStats: function () {
 				this._updateStat();
 			},
+			onShowHideTC: function(oEvent) {
+				oTC.setVisible(oEvent.getParameter("state"));
+			},
 
 			_updateStat: function () {
 				oTilesCount.setText(oTC.getTiles().length);
@@ -265,9 +273,11 @@
 		/*** THIS IS THE "APPLICATION" CODE ***/
 
 		// create some dummy JSON data
-		var data = {
-			actionName: "Say Hello"
-		};
+		var aTilesCollection = [];
+		for (var i = 0; i < 2000; i++) {
+			aTilesCollection.push({icon: "sap-icon://hint", title: "Tile #" + i});
+		}
+		oModelData.TileCollection = aTilesCollection;
 
 		// instantiate the View
 		var myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()}); // accessing the HTML inside the script tag above
@@ -285,7 +295,7 @@
 			oStatusLabel.setText("Idle");
 
 			//Act
-			oModel.loadData("../../sap/m/demokit/sample/TileContainer/data.json", null, false, null, null, false);
+			oModel.setData(oModelData);
 			oInsertTileTime.setText(window.addTile);
 			if (window.updatePager) {
 				oUpdatePager.setText(window.updatePager.time + "/" + window.updatePager.count);
