@@ -136,8 +136,12 @@ sap.ui.define([], function () {
 		oRm.write("<div");
 		oRm.writeAttributeEscaped("id", oDynamicPageTitleState.id + "-content");
 		oRm.addClass("sapFDynamicPageTitleMainContent");
+		oRm.addClass("sapFDynamicPageTitleContent-CTX");
 		oRm.addClass(oDynamicPageTitleState.isPrimaryAreaBegin ? "sapFDynamicPageTitleAreaLowPriority" : "sapFDynamicPageTitleAreaHighPriority");
 		oRm.writeClasses();
+		if (oDynamicPageTitleState.contentAreaFlexBasis) {
+			oRm.writeAttributeEscaped("style", "flex-basis: " + oDynamicPageTitleState.contentAreaFlexBasis + ";");
+		}
 		oRm.write(">");
 		oDynamicPageTitleState.content.forEach(oRm.renderControl);
 		oRm.write("</div>");

@@ -20,6 +20,14 @@ sap.ui.define(['sap/ui/core/Renderer', './MonthRenderer', './DatesRowRenderer'],
 			}
 		};
 
+		OneMonthDatesRowRenderer.renderMonth = function(oRm, oDatesRow, oDate) {
+			if (oDatesRow.iMode < 2) {
+				MonthRenderer.renderMonth.apply(this, arguments);
+			} else {
+				DatesRowRenderer.renderMonth.apply(this, arguments);
+			}
+		};
+
 		/**
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.ui.unified.calendar.DatesRow} oDatesRow The DatesRow to be rendered

@@ -778,7 +778,7 @@ sap.ui.define([
 						mAttributes["aria-selected"] = "true";
 						bSelected = true;
 					}
-					if (TableUtils.isRowSelectionAllowed(oTable)) {
+					if (TableUtils.isRowSelectionAllowed(oTable) && oTable.getContextByIndex(mParams.index)) {
 						var mTooltipTexts = oExtension.getAriaTextsForSelectionMode(true);
 						mAttributes["title"] = mTooltipTexts.mouse[bSelected ? "rowDeselect" : "rowSelect"];
 					}

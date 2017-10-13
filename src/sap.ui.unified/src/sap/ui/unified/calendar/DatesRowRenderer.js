@@ -35,6 +35,53 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 
 	};
 
+	DatesRowRenderer.renderMonth = function(oRm, oDatesRow, oDate) {
+		MonthRenderer.renderMonth.apply(this, arguments);
+		this.renderWeekNumbers(oRm, oDatesRow);
+	};
+
+	/**
+	 * Renders the week numbers in their own container.
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.DatesRow} oDatesRow The row which will be rendered
+	 * @since 1.52
+	 */
+	DatesRowRenderer.renderWeekNumbers = function (oRm, oDatesRow) {
+		var oResourceBundle,
+			iDays,
+			iDaysWidth,
+			aWeekNumbers;
+
+		if (oDatesRow.getShowWeekNumbers() && oDatesRow.getPrimaryCalendarType() === sap.ui.core.CalendarType.Gregorian) {
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+
+			oRm.write("<div id=\"" + oDatesRow.getId() + "-weeks\"");
+			oRm.addClass("sapUiCalRowWeekNumbers");
+			oRm.writeClasses();
+			oRm.write(">");
+
+			iDays = oDatesRow.getDays();
+			iDaysWidth = 100 / iDays;
+			aWeekNumbers = oDatesRow.getWeekNumbers();
+
+			aWeekNumbers.forEach(function(oWeek) {
+				oRm.write("<div");
+
+				oRm.addClass('sapUiCalRowWeekNumber');
+				oRm.writeClasses();
+
+				oRm.addStyle("width", oWeek.len * iDaysWidth + "%");
+				oRm.writeStyles();
+
+				oRm.writeAttribute("data-sap-ui-week", oWeek.number);
+
+				oRm.write(">" + oResourceBundle.getText('CALENDAR_DATES_ROW_WEEK_NUMBER', [oWeek.number]) + "</div>");
+			});
+
+			oRm.write("</div>");
+		}
+	};
+
 	/**
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.unified.calendar.DatesRow} oDatesRow The row which will be rendered

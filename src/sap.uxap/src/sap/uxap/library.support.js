@@ -4,7 +4,7 @@
 /**
  * Adds support rules of the sap.uxap library to the support infrastructure.
  */
-sap.ui.define([	"./ObjectPageLayout.support"],
+sap.ui.define([	"./rules/ObjectPageLayout.support"],
 	function(ObjectPageLayoutSupport) {
 	"use strict";
 

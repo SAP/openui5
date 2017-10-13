@@ -772,6 +772,40 @@
 			QUnit.test("Special characters in the sender property do not lead to an exception", function(assert) {
 				assert.ok(true, "No exception occurred");
 			});
+
+			QUnit.module("Actions aggregation and hidden aggregations", {
+				beforeEach: function() {
+					this.oFieldListItem = new sap.m.FeedListItem({
+						actions: [
+							new sap.m.FeedListItemAction(),
+							new sap.m.FeedListItemAction()
+						]
+					}).placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function() {
+					this.oFieldListItem.destroy();
+				}
+			});
+
+			QUnit.test("Action aggregation and hidden aggregations", function(assert) {
+				assert.equal(this.oFieldListItem.getActions().length, 2, "There are two actions in the aggregation.");
+				assert.ok(this.oFieldListItem.getAggregation("_actionButton") instanceof sap.m.Button, "Hidden aggregation _actionButton is added");
+				assert.notOk(this.oFieldListItem.getAggregation("_actionSheet") instanceof sap.m.ActionSheet, "Hidden aggregation _actionSheet not added");
+			});
+
+			QUnit.test("Shows action button", function(assert) {
+				assert.ok(this.oFieldListItem.$("actionButton").length > 0, "The action button is rendered");
+			});
+
+			QUnit.test("Hides action button", function(assert) {
+				//Arrange
+				this.oFieldListItem.destroyAggregation("actions");
+				//Act
+				sap.ui.getCore().applyChanges();
+				//Assert
+				assert.ok(this.oFieldListItem.$("actionButton").length === 0, "The action button is not rendered");
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

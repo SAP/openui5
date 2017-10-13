@@ -215,6 +215,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
+			 * Determines if the week numbers are displayed.
+			 * @since 1.52
+			 */
+			showWeekNumbers : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
 			 * Defines the list of predefined views as an array.
 			 * The views should be specified by their keys.
 			 *
@@ -949,11 +955,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 						days: iIntervals,
 						showDayNamesLine: this.getShowDayNamesLine(),
 						pickerPopup: true,
-						legend: this.getLegend()
+						legend: this.getLegend(),
+						showWeekNumbers: this.getShowWeekNumbers()
 					});
 
 					oInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
 					oInterval.attachEvent("select", this._handleCalendarSelect, this);
+
 					if (sKey === PlanningCalendarBuiltInView.OneMonth) {
 						oInterval._setRowsStartDate = this._setRowsStartDate.bind(this);
 					}
@@ -1016,8 +1024,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			}
 
 			if (this.getDomRef()) {
-				// only set timer, CalendarRow will be rerendered, so no update needed here
+				// only set timer, CalendarRow will be re-rendered, so no update needed here
 				this._updateCurrentTimeVisualization(false);
+				_adaptCalHeaderForWeekNumbers.call(this, this.getShowWeekNumbers(), this._viewAllowsWeekNumbers(sKey));
 			}
 		}
 
@@ -1040,6 +1049,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 
 		return this;
 
+	};
+
+	/**
+	 * Determines if the week numbers are visible for a given view.
+	 * @param {string} sViewKey The view key
+	 * @returns {boolean} true if the week numbers are allowed for the current view
+	 * @private
+	 */
+	PlanningCalendar.prototype._viewAllowsWeekNumbers = function(sViewKey) {
+		var sIntervalType = this._getView(sViewKey).getIntervalType(),
+			oIntervalMetadata = INTERVAL_METADATA[sIntervalType];
+
+		return !!oIntervalMetadata && !!oIntervalMetadata.oClass.prototype.setShowWeekNumbers;
+	};
+
+	/**
+	 * Returns the interval for a given view.
+	 * @param {string} sViewKey Key of a view
+	 * @returns {*} Interval instance in the passed view, if it is already created and has metadata, otherwise returns undefined.
+	 * @private
+	 */
+	PlanningCalendar.prototype._getIntervalInstanceByViewKey = function(sViewKey) {
+		var sIntervalType = this._getView(sViewKey).getIntervalType(),
+			oIntervalMetadata = INTERVAL_METADATA[sIntervalType],
+			oInterval;
+		if (oIntervalMetadata) {
+			oInterval = this[oIntervalMetadata.sInstanceName];
+		}
+
+		return oInterval;
+	};
+
+	PlanningCalendar.prototype.setShowWeekNumbers = function (bValue) {
+		this.setProperty("showWeekNumbers", bValue, true);
+
+		this._getViews().forEach(function(oView) {
+			var sViewKey = oView.getKey(),
+				bViewAllowsWeekNumbers = this._viewAllowsWeekNumbers(sViewKey),
+				oInterval = this._getIntervalInstanceByViewKey(sViewKey);
+
+			if (oInterval && bViewAllowsWeekNumbers) {
+				this._getIntervalInstanceByViewKey(sViewKey).setShowWeekNumbers(bValue);
+			}
+
+			//update the pc header classes if needed
+			if (this.getDomRef() && this.getViewKey() === sViewKey) {
+				_adaptCalHeaderForWeekNumbers.call(this, bValue, bViewAllowsWeekNumbers);
+			}
+		}, this);
+
+		return this;
 	};
 
 	PlanningCalendar.prototype.setShowIntervalHeaders = function(bShowIntervalHeaders){
@@ -1967,6 +2027,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 	PlanningCalendar.prototype._applyContextualSettings = function () {
 		return Control.prototype._applyContextualSettings.call(this, {contextualWidth: this.$().width()});
 	};
+
+	function _adaptCalHeaderForWeekNumbers(bShowWeekNumbers, bCurrentIntervalAllowsWeekNumbers) {
+		this.$().toggleClass("sapMPlanCalWithWeekNumbers", bShowWeekNumbers && bCurrentIntervalAllowsWeekNumbers);
+	}
 
 	function _handleResize(oEvent, bNoRowResize){
 

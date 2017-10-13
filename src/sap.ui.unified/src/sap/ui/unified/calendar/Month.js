@@ -1525,6 +1525,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		var oDate = this.getRenderer().getStartDate(this);
 		var $Container = this.$("days");
+		var $Weeks = this.$("weeks");
 		var aDomRefs;
 		var $DomRef;
 		var i = 0;
@@ -1546,6 +1547,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oRm = sap.ui.getCore().createRenderManager();
 			this.getRenderer().renderDays(oRm, this, oDate);
 			oRm.flush($Container[0]);
+
+			if ($Weeks.length) {
+				this.getRenderer().renderWeekNumbers(oRm, this);
+				oRm.flush($Weeks[0]);
+			}
+
 			oRm.destroy();
 		}
 

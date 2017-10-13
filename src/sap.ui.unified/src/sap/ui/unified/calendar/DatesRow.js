@@ -67,6 +67,10 @@ sap.ui.define(['jquery.sap.global',
 
 		this._iColumns = 1;
 
+		//holds objects describing the weeks of the currently displayed days
+		//example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
+		this._aWeekNumbers = [];
+
 	};
 
 	/*
@@ -301,6 +305,53 @@ sap.ui.define(['jquery.sap.global',
 
 		return this._getStartDate().getDay();
 
+	};
+
+	/**
+	 * Returns the weeks with their length and number for the displayed dates.
+	 * @returns {Array} Array with objects containing info about the weeks. Example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
+	 * @private
+	 */
+	DatesRow.prototype.getWeekNumbers = function() {
+		var iDays = this.getDays(),
+			oLocale = this._getLocale(),
+			oLocaleData = this._getLocaleData(),
+			oCalType = this.getPrimaryCalendarType(),
+			oStartDate = this._getStartDate(),
+			oDate = new CalendarDate(oStartDate, oCalType),
+			oEndDate = new CalendarDate(oStartDate, oCalType).setDate(oDate.getDate() + iDays),
+			aDisplayedDates = [];
+
+		while (oDate.isBefore(oEndDate)) {
+			aDisplayedDates.push(new CalendarDate(oDate, oCalType));
+			oDate.setDate(oDate.getDate() + 1);
+		}
+
+		this._aWeekNumbers = aDisplayedDates.reduce(function (aWeekNumbers, oDay) {
+			var iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toUTCJSDate(), oDay.getYear(), oLocale, oLocaleData);
+
+			if (!aWeekNumbers.length || aWeekNumbers[aWeekNumbers.length - 1].number !== iWeekNumber) {
+				aWeekNumbers.push({
+					len: 0,
+					number: iWeekNumber
+				});
+			}
+
+			aWeekNumbers[aWeekNumbers.length - 1].len++;
+
+			return aWeekNumbers;
+		}, []);
+
+		return this._aWeekNumbers;
+	};
+
+	/**
+	 * Returns the cached week numbers.
+	 * @returns {Array} Array with objects containing info about the weeks. Example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
+	 * @private
+	 */
+	DatesRow.prototype._getCachedWeekNumbers = function() {
+		return this._aWeekNumbers;
 	};
 
 	return DatesRow;

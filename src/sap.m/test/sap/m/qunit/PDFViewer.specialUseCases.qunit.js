@@ -180,4 +180,23 @@ sap.ui.define([
 				done();
 			});
 	});
+
+	QUnit.test("Loads pdf with non ascii name", function (assert) {
+		var done = assert.async();
+
+		oPDFViewer = TestUtils.createPdfViewer({
+			source: "./pdfviewer/sample file with spaces.pdf",
+			loaded: function fnLoadedHandler() {
+				assert.ok(true, "The pdf was loaded");
+				done();
+			},
+			error: function fnErrorHandler() {
+				assert.ok(false, "The pdf was loaded");
+				done();
+			}
+		});
+
+		TestUtils.renderPdfViewer(oPDFViewer);
+	});
+
 });

@@ -61,10 +61,9 @@
 		this.oSemanticTitle.addContent(oCopyAction, oSemanticConfiguration.getPlacement(sCopyActionType));
 
 		// Assert
-		// DynamicPageTitle actions count should be always decreased by one as ToolbarSeparator is always added.
 		assert.equal(aSemanticTextActions.length, iSemanticTextActions,
 			iSemanticTextActions + " semantic actions have been added.");
-		assert.equal(this.oDynamicPageTitle.getActions().length - 1, iSemanticTextActions,
+		assert.equal(this.oDynamicPageTitle.getActions().length, iSemanticTextActions,
 			iSemanticTextActions + " semantic actions have been added to the container.");
 		assert.equal(aSemanticTextActions.indexOf(oMainAction), iMainActionExpectedOrder,
 			"The Main Action has the correct order: " + iMainActionExpectedOrder);
@@ -94,7 +93,7 @@
 		// Assert
 		assert.equal(aSemanticTextActions.length, iSemanticTextActions - 1,
 			iSemanticTextActions - 1 + " semantic actions remained after removing one.");
-		assert.equal(this.oDynamicPageTitle.getActions().length - 1, iSemanticTextActions - 1,
+		assert.equal(this.oDynamicPageTitle.getActions().length, iSemanticTextActions - 1,
 			iSemanticTextActions - 1 + " semantic actions remained in the container.");
 		assert.equal(aSemanticTextActions.indexOf(oDeleteAction), -1,
 			"The Delete Action has been removed.");
@@ -125,7 +124,6 @@
 		this.oSemanticTitle.addContent(oFavoriteAction, oSemanticConfiguration.getPlacement(sFlagActionType));
 
 		// Assert
-		// DynamicPageTitle actions count should be always decreased by one as ToolbarSeparator is always added.
 		assert.equal(aSemanticSimpleIconActions.length, iSemanticSimpleIconActions,
 			iSemanticSimpleIconActions + " semantic actions have been added.");
 		assert.equal(aSemanticSimpleIconActions.indexOf(oFavoriteAction), iFavoriteActionExpectedOrder,
@@ -133,8 +131,8 @@
 		assert.equal(aSemanticSimpleIconActions.indexOf(oFlagAction), iFlagActionExpectedOrder,
 			"The Flag Action has the correct order: " + iFlagActionExpectedOrder);
 
-		assert.equal(this.oDynamicPageTitle.getActions().length - 1, iSemanticSimpleIconActions,
-			iSemanticSimpleIconActions - 1 + " semantic actions have been added to the container.");
+		assert.equal(this.oDynamicPageTitle.getActions().length, iSemanticSimpleIconActions,
+			iSemanticSimpleIconActions + " semantic actions have been added to the container.");
 		assert.equal(this.oDynamicPageTitle.indexOfAction(oFavoriteAction._getControl()), iFavoriteActionExpectedOrder,
 			"The Flag Action internal control has the correct order: " + iFavoriteActionExpectedOrder);
 		assert.equal(this.oDynamicPageTitle.indexOfAction(oFlagAction._getControl()), iFlagActionExpectedOrder,
@@ -149,7 +147,7 @@
 		assert.equal(aSemanticSimpleIconActions.indexOf(oFlagAction), -1,
 			"The Flag Action has been removed.");
 
-		assert.equal(this.oDynamicPageTitle.getActions().length - 1, iSemanticSimpleIconActions - 1,
+		assert.equal(this.oDynamicPageTitle.getActions().length, iSemanticSimpleIconActions - 1,
 			iSemanticSimpleIconActions - 1 + " semantic actions remained in the container.");
 		assert.equal(this.oDynamicPageTitle.indexOfAction(oFlagAction._getControl()), -1,
 			"The Flag Action internal control has been removed from the container.");
@@ -175,7 +173,7 @@
 		// Act
 		// Inserted as first, but should be ordered third.
 		this.oSemanticTitle.addContent(oCloseAction, oSemanticConfiguration.getPlacement(sCloseActionType));
-		// Inserted second, but should remain second.
+		// Inserted second, and should remain second.
 		this.oSemanticTitle.addContent(oExitFullScreenAction, oSemanticConfiguration.getPlacement(sExitFullScreenActionType));
 		// Inserted third, but should be ordered first.
 		this.oSemanticTitle.addContent(oFullScreenAction, oSemanticConfiguration.getPlacement(sFullScreenActionType));
@@ -188,18 +186,16 @@
 		assert.equal(aSemanticNavIconActions.indexOf(oExitFullScreenAction), iExistFullScreenActionExpectedOrder,
 			"The ExitFullScreen Action has the correct order: " + iExistFullScreenActionExpectedOrder);
 		assert.equal(aSemanticNavIconActions.indexOf(oCloseAction), iCloseActionExpectedOrder,
-			"The ExitFullScreen Action has the correct order: " + iCloseActionExpectedOrder);
-
-		// DynamicPageTitle actions count should be always decreased by one as ToolbarSeparator is always added and
-		// the Nav Icon Actions are shifted by 1.
-		assert.equal(this.oDynamicPageTitle.getActions().length - 1, iSemanticNavIconActions,
-			iSemanticNavIconActions - 1 + " semantic actions have been added to the container.");
-		assert.equal(this.oDynamicPageTitle.indexOfAction(oFullScreenAction._getControl()), iFullScreenActionExpectedOrder + 1,
-			"The FullScreen Action internal control has the correct order: " + iFullScreenActionExpectedOrder + 1);
-		assert.equal(this.oDynamicPageTitle.indexOfAction(oExitFullScreenAction._getControl()), iExistFullScreenActionExpectedOrder + 1,
-			"The ExitFullScreen Action internal control has the correct order: " + iExistFullScreenActionExpectedOrder + 1);
-		assert.equal(this.oDynamicPageTitle.indexOfAction(oCloseAction._getControl()), iCloseActionExpectedOrder + 1,
-			"The Close Action internal control has the correct order: " + iCloseActionExpectedOrder + 1);
+			"The Close Action has the correct order: " + iCloseActionExpectedOrder);
+		//
+		assert.equal(this.oDynamicPageTitle.getNavigationActions().length, iSemanticNavIconActions,
+			iSemanticNavIconActions + " semantic actions have been added to the container.");
+		assert.equal(this.oDynamicPageTitle.indexOfNavigationAction(oFullScreenAction._getControl()), iFullScreenActionExpectedOrder,
+			"The FullScreen Action internal control has the correct order: " + iFullScreenActionExpectedOrder);
+		assert.equal(this.oDynamicPageTitle.indexOfNavigationAction(oExitFullScreenAction._getControl()), iExistFullScreenActionExpectedOrder,
+			"The ExitFullScreen Action internal control has the correct order: " + iExistFullScreenActionExpectedOrder);
+		assert.equal(this.oDynamicPageTitle.indexOfNavigationAction(oCloseAction._getControl()), iCloseActionExpectedOrder,
+			"The Close Action internal control has the correct order: " + iCloseActionExpectedOrder);
 
 		// Act
 		this.oSemanticTitle.removeContent(oExitFullScreenAction, oSemanticConfiguration.getPlacement(sExitFullScreenActionType));
@@ -208,11 +204,11 @@
 		assert.equal(aSemanticNavIconActions.length, iSemanticNavIconActions - 1,
 			iSemanticNavIconActions - 1 + " semantic actions remained.");
 		assert.equal(aSemanticNavIconActions.indexOf(oExitFullScreenAction), -1,
-			"The Flag Action has been removed.");
-		assert.equal(this.oDynamicPageTitle.getActions().length - 1, iSemanticNavIconActions - 1,
-			iSemanticNavIconActions - 1 + " semantic actions remained in the container.");
-		assert.equal(this.oDynamicPageTitle.indexOfAction(oExitFullScreenAction._getControl()), -1,
-			"The Flag Action internal control has been removed from the container.");
+			"The ExitFullScreen Action has been removed.");
+		assert.equal(this.oDynamicPageTitle.getNavigationActions().length, iSemanticNavIconActions - 1,
+			iSemanticNavIconActions - 1 + " semantic actions remained in the container");
+		assert.equal(this.oDynamicPageTitle.indexOfNavigationAction(oExitFullScreenAction._getControl()), -1,
+			"The ExitFullScreen Action internal control has been removed from the container.");
 
 		// Clean up
 		oCloseAction.destroy();
@@ -351,9 +347,7 @@
 			iCopyActionExpectedOrder = 1,
 			iCustomIconActionExpectedOrder = 3,
 			iFlagActionExpectedOrder = 4,
-			iShareMenuActionExpectedOrder = 5,
-			iSeparatorExpectedOrder = 6,
-			iFullScreenActionExpectedOrder = 7;
+			iShareMenuActionExpectedOrder = 5;
 
 		// The order of the actions should be the following:
 		// Custom Text | Semantic Text | Custom Icon | Semantic Simple Icon | ShareMenu Icon | Nav Icon
@@ -393,10 +387,6 @@
 			"The Flag Action has the correct order: " + iFlagActionExpectedOrder);
 		assert.equal(this.oDynamicPageTitle.indexOfAction(oShareMenuBtn), iShareMenuActionExpectedOrder,
 			"The ShareMenu Action has the correct order: " + iShareMenuActionExpectedOrder);
-		assert.equal(this.oDynamicPageTitle.indexOfAction(oFullScreenAction._getControl()), iFullScreenActionExpectedOrder,
-			"The FullScreen Action has the correct order: " + iFullScreenActionExpectedOrder);
-		assert.equal(this.oSemanticTitle._getSeparatorIndex(), iSeparatorExpectedOrder,
-			"The Separator is between the Flag and FullScreen Actions " + iSeparatorExpectedOrder);
 
 		// Clean up
 		oAddAction.destroy();

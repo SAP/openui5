@@ -1603,6 +1603,11 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 .sapUiTheme-sap_belize_plus .apiDetailPage .sapMPanel.borrowedMethodsPanel .sapMPanelContent {
 	padding: 0;
 }
+
+.sapUiDocumentationSubclassesPopover {
+	padding: 0.5rem;
+	max-width: 1000px;
+}
 /*
  * End of API Detail specific CSS
  */
