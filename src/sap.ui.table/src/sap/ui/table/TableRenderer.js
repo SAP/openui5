@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			rm.addClass(iRowActionCount == 1 ? "sapUiTableRActS" : "sapUiTableRAct");
 		}
 
-		if (TableUtils.isNoDataVisible(oTable) && !TableUtils.hasPendingRequest(oTable)) {
+		if (TableUtils.isNoDataVisible(oTable) && !TableUtils.hasPendingRequests(oTable)) {
 			rm.addClass("sapUiTableEmpty"); // no data!
 		}
 

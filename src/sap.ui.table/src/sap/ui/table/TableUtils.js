@@ -296,14 +296,40 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns whether a request is currently in process by the binding.
+		 * Returns whether one or more requests are currently in process by the binding.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @return {boolean} Returns <code>true</code>, if the binding of the table is currently requesting data.
 		 * @private
 		 */
-		hasPendingRequest: function(oTable) {
-			return oTable != null && oTable._bPendingRequest === true;
+		hasPendingRequests: function(oTable) {
+			if (oTable == null) {
+				return false;
+			}
+
+			if (TableUtils.canUsePendingRequestsCounter(oTable)) {
+				return oTable._iPendingRequests > 0;
+			} else {
+				return oTable._bPendingRequest;
+			}
+		},
+
+		/**
+		 * A counter to determine whether there are pending requests can be used if exactly one dataReceived event is fired for every
+		 * dataRequested event. If this is not the case and there can be an imbalance between dataReceived and dataRequested events, a more limited
+		 * method using a boolean flag must be used.
+		 *
+		 * If the AnalyticalBinding is created with the parameter "useBatchRequest" set to false, an imbalance between dataRequested and
+		 * dataReceived events can occur. There will be one dataRequested event for every request that would otherwise be part of a batch
+		 * request. But still only one dataReceived event is fired after all responses are received. Therefore it is not always possible to correctly
+		 * determine whether there is a pending request, because the table must a flag instead of a counter.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Returns <code>true</code>, if the table can use a counter for pending request detection.
+		 */
+		canUsePendingRequestsCounter: function(oTable) {
+			var oBinding = oTable != null ? oTable.getBinding("rows") : null;
+			return !(TableUtils.isInstanceOf(oBinding, "sap/ui/model/analytics/AnalyticalBinding") && !oBinding.bUseBatchRequests);
 		},
 
 		/**
