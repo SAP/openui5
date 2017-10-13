@@ -73,6 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.PanelAccessibleRole",
 			"sap.m.PlacementType",
 			"sap.m.PopinDisplay",
+			"sap.m.PopinLayout",
 			"sap.m.QuickViewGroupElementType",
 			"sap.m.RatingIndicatorVisualMode",
 			"sap.m.ScreenSize",
@@ -2503,6 +2504,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		WithoutHeader : "WithoutHeader"
 	};
 
+	/**
+	 * Defines the layout options of the table popins.
+	 * @enum {string}
+	 * @public
+	 * @since 1.52
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.PopinLayout = {
+
+		/**
+		 * Sets block layout for rendering the table popins. The elements inside the popin container are rendered one below the other.
+		 * <b>Note:</b> This option enables the former rendering behavior of the table popins.
+		 * @public
+		 * @since 1.52
+		 */
+		Block : "Block",
+
+		/**
+		 * Sets grid layout for rendering the table popins.
+		 * The grid width for each table popin is small, hence this allows more content to be rendered in a single popin row.
+		 * This value defines small grid width for the table popins.
+		 *
+		 * <b>Note:</b> This feature is currently not supported with IE and Edge browsers.
+		 * @public
+		 * @since 1.52
+		 */
+		GridSmall: "GridSmall",
+
+		/**
+		 * Sets grid layout for rendering the table popins.
+		 * The grid width for each table popin is comparatively larger than <code>GridSmall</code>, hence this allows less content to be rendered in a single popin row.
+		 *
+		 * <b>Note:</b> This feature is currently not supported with IE and Edge browsers.
+		 * @public
+		 * @since 1.52
+		 */
+		GridLarge: "GridLarge"
+	};
 
 	/**
 	 * Possible values for the visualization of float values in the RatingIndicator control.
