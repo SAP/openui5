@@ -45,8 +45,18 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 			this._writeImageControl(oRm, oControl, sMyId);
 		}
 
-		// text (starting with sender)
+		// action button
+		if (oControl.getActions().length > 0) {
+			oRm.write("<div");
+			oRm.writeAttributeEscaped("id", sMyId + "-action-button");
+			oRm.addClass('sapMFeedListItemActionButton');
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.renderControl(oControl.getAggregation("_actionButton"));
+			oRm.write("</div>");
+		}
 
+		// text (starting with sender)
 		if (bIsPhone) {
 			oRm.write('<div class= "sapMFeedListItemHeader sapUiSelectable ');
 			if (oControl.getShowIcon()) {
@@ -89,16 +99,6 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 				oRm.write('</p>');
 			}
 		} else {
-			if (oControl.getActions().length > 0) {
-				oRm.write("<div");
-				oRm.writeAttributeEscaped("id", sMyId + "-action-button");
-				oRm.addClass('sapMFeedListItemActionButton');
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.renderControl(oControl.getAggregation("_actionButton"));
-				oRm.write("</div>");
-			}
-
 			oRm.write('<div class= "sapMFeedListItemText ');
 			if (oControl.getShowIcon()) {
 				oRm.write('sapMFeedListItemHasFigure');
