@@ -301,6 +301,9 @@
 												var oRta = new sap.ui.rta.RuntimeAuthoring({
 													rootControl: sap.ui.getCore().byId("idMain1")
 												});
+												oRta.attachStop(function() {
+													oRta.destroy();
+												})
 												oRta.start();
 											}
 										}),

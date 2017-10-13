@@ -664,7 +664,6 @@ sap.ui.define([
 			.then(this._closeToolbar.bind(this))
 			.then(bSkipCheckPersChanges ? Promise.resolve() : this._handlePersonalizationChangesOnExit.bind(this))
 			.then(function(){
-				this.exit();
 				this.fireStop();
 			}.bind(this))['catch'](fnShowTechnicalError);
 	};
