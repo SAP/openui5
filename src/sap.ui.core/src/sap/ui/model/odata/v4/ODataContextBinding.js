@@ -350,6 +350,7 @@ sap.ui.define([
 		}
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
+		this.oContext = undefined;
 		ContextBinding.prototype.destroy.apply(this);
 	};
 

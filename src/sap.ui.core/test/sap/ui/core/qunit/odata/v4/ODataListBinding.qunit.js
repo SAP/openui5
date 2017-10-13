@@ -2168,6 +2168,8 @@ sap.ui.require([
 		oBinding.destroy();
 
 		assert.strictEqual(oBinding.oCachePromise, undefined);
+		assert.strictEqual(oBinding.oContext, undefined,
+			"context removed as in ODPropertyBinding#destroy");
 
 		oBinding = this.oModel.bindList("/absolute", oContext);
 		oBinding.aContexts = [oBindingContext];
