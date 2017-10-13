@@ -204,11 +204,47 @@ sap.ui.define([ "./ListItemBase", "./Link", "./library", "./FormattedText", "sap
 		this.setAggregation("_actionButton", new Button({
 			id: this.getId() + "-actionButton",
 			type: ButtonType.Transparent,
-			icon: "sap-icon://overflow"
+			icon: "sap-icon://overflow",
+			press: [ this._onActionButtonPress, this ]
 		}), true);
-		this.setAggregation("_actionSheet", new ActionSheet({
-			id: this.getId() + "-actionSheet"
-		}), true);
+	};
+
+	/**
+	 *
+	 * @private
+	 */
+	FeedListItem.prototype._onActionButtonPress = function () {
+		sap.ui.require(["sap/m/ActionSheet"], this._openActionSheet.bind(this));
+	};
+
+	/**
+	 *
+	 * @param {function} ActionSheet The constructor function of sap.m.ActionSheet
+	 * @private
+	 */
+	FeedListItem.prototype._openActionSheet = function(ActionSheet) {
+		var oActionSheet = this.getAggregation("_actionSheet");
+		var aActions = this.getActions();
+		var oAction;
+
+		if (!(oActionSheet && oActionSheet instanceof ActionSheet)) {
+			oActionSheet = new ActionSheet({
+				id: this.getId() + "-actionSheet"
+			});
+			this.setAggregation("_actionSheet", oActionSheet, true);
+		}
+
+		oActionSheet.destroyButtons();
+		for (var i = 0; i < aActions.length; i++) {
+			oAction = aActions[i];
+			oActionSheet.addButton(new Button({
+				icon: oAction.getIcon(),
+				text: oAction.getText(),
+				press: [ oAction.firePress, oAction ]
+			}));
+		}
+
+		oActionSheet.openBy(this.getAggregation("_actionButton"));
 	};
 
 	FeedListItem.prototype.invalidate = function() {
