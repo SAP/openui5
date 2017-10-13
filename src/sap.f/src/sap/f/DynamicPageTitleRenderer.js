@@ -146,10 +146,6 @@ sap.ui.define([], function () {
 		oDynamicPageTitleState.content.forEach(oRm.renderControl);
 		oRm.write("</div>");
 
-		// Dummy invisible element just to let display:flex with justify-content: space between
-		// to allocate space between the Middle area and the Actions,
-		// otherwise the areas would be stickied together.
-		oRm.write("<span class=\"sapFDynamicPageTitleMainInvisibleEl\"></span>");
 		oRm.write("</div>");
 	};
 
