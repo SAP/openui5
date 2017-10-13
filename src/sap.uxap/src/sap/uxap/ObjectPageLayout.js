@@ -2128,7 +2128,7 @@ sap.ui.define([
 			}
 
 			// Let the dynamic header know size changed first, because this might lead to header dimensions changes
-			if (oTitle.isDynamic()) {
+			if (oTitle && oTitle.isDynamic()) {
 				oTitle._onResize(iCurrentWidth);
 			}
 			this._adjustHeaderHeights();
