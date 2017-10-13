@@ -1006,6 +1006,54 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 
+	QUnit.module("Utils.isDebugEnabled", {
+		beforeEach: function () {
+			this.sWindowSapUiDebug = window["sap-ui-debug"];
+		},
+		afterEach: function () {
+			window["sap-ui-debug"] = this.sWindowSapUiDebug;
+		}
+	});
+
+
+	QUnit.test("can determine the general debug settings", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDebug").returns(true);
+
+		assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+	});
+
+	QUnit.test("can determine the fl library debugging is set as the only library", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "sap.ui.fl";
+
+		assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+	});
+
+	QUnit.test("can determine the fl library debugging is set as part of other libraries", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "sap.ui.core,sap.m,sap.ui.fl,sap.ui.rta";
+
+		assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+	});
+
+	QUnit.test("can determine no 'sap.ui.fl'-library debugging is set", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "sap.ui.rta, sap.m";
+		assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
+	});
+
+	QUnit.test("can determine no library debugging is set", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "";
+		assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
+	});
+
+
 	QUnit.module("Utils.getFlexReference", {
 		beforeEach: function () {
 		},
@@ -1254,7 +1302,6 @@ jQuery.sap.require("sap.m.Button");
 			assert.strictEqual(vError.name, "Error", "then the error parameter is passed to the 'catch' method");
 		});
 	});
-
 
 	QUnit.module("Utils.getChangeFromChangesMap", {
 		beforeEach: function() {

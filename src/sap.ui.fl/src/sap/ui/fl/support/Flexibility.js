@@ -9,9 +9,10 @@ sap.ui.define([
 		"sap/ui/core/support/Support",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/fl/FlexController",
-		"sap/ui/fl/ChangePersistenceFactory"
+		"sap/ui/fl/ChangePersistenceFactory",
+		"sap/ui/fl/Utils"
 	],
-	function (jQuery, Plugin, Support, JSONModel, FlexController, ChangePersistenceFactory) {
+	function (jQuery, Plugin, Support, JSONModel, FlexController, ChangePersistenceFactory, Utils) {
 		"use strict";
 
 		/**
@@ -46,6 +47,7 @@ sap.ui.define([
 		});
 
 		Flexibility.prototype.sDelimiter = ";";
+		Flexibility.prototype.sNoDebug = "noDebug";
 
 		/**
 		 * Creation of the support plugin.
@@ -56,12 +58,22 @@ sap.ui.define([
 		Flexibility.prototype.init = function (oSupportStub) {
 			Plugin.prototype.init.apply(this, arguments);
 
+			var sNoDebugInfoText = "<div class='sapUiSmallMargin'>sapui5 has to be in <b>debug mode</b> or at least the " +
+				"library \'<b> sap.ui.fl</b>\' has to be debugged.</div>" +
+				"<div class='sapUiSmallMargin'>To set the debug sources use the URL parameter '<b>sap-ui-debug</b> " +
+				"with general debug setting <b>sap-ui-debug=true</b> or to debug single libraries by naming the libraries " +
+				"<b>sap-ui-debug=lib1, lib2, ...</b> (including '<b>sap.ui.fl</b>').</div>" +
+				"<div class='sapUiSmallMargin'>Another option is to enable the debugging in this 'Diagnostics' window by " +
+				"toggle the <b>Debug Sources</b> under the <b>Technical Info</b> panel.</div>";
+
 			if (oSupportStub.isToolStub()) {
 				this.addStylesheet("sap/ui/fl/support/flexibility");
 				this.oChangesModel = new JSONModel();
 				this.oAppModel = new JSONModel();
-				this.oFilterModel = new JSONModel({
-					hideDependingChanges: false
+				this.oToolSettings = new JSONModel({
+					hideDependingChanges: false,
+					flInDebug: true,
+					noDebugInfoText: sNoDebugInfoText
 				});
 				this.oChangeDetails = new JSONModel();
 				this._renderToolPlugin([]);
@@ -101,7 +113,7 @@ sap.ui.define([
 				});
 				that.oView.placeAt(that.getId() + "-FlexCacheArea");
 				that.oView.setModel(that.oAppModel, "flexApps");
-				that.oView.setModel(that.oFilterModel, "flexFilters");
+				that.oView.setModel(that.oToolSettings, "flexToolSettings");
 				that.oView.setModel(that.oChangesModel, "flexChanges");
 				that.oView.setModel(that.oChangeDetails, "flexChangeDetails");
 			};
@@ -137,22 +149,27 @@ sap.ui.define([
 		 * Collect list of apps
 		 */
 		Flexibility.prototype.onsapUiSupportFlexibilityGetApps = function () {
-			var that = this;
-			var aApps = [];
+			// only provide data in case the debug collected these
+			if (Utils.isDebugEnabled()) {
+				var that = this;
+				var aApps = [];
 
-			if (ChangePersistenceFactory._instanceCache) {
-				jQuery.each(ChangePersistenceFactory._instanceCache, function (sReference, mInstancesOfVersions) {
-					Object.keys(mInstancesOfVersions).forEach(function (sVersion) {
-						aApps.push({
-							key: sReference + that.sDelimiter + sVersion,
-							text: sReference,
-							additionalText: sVersion
+				if (ChangePersistenceFactory._instanceCache) {
+					jQuery.each(ChangePersistenceFactory._instanceCache, function (sReference, mInstancesOfVersions) {
+						Object.keys(mInstancesOfVersions).forEach(function (sVersion) {
+							aApps.push({
+								key : sReference + that.sDelimiter + sVersion,
+								text : sReference,
+								additionalText : sVersion
+							});
 						});
 					});
-				});
-			}
+				}
 
-			this._oStub.sendEvent(this.getId() + "SetApps", aApps);
+				this._oStub.sendEvent(this.getId() + "SetApps", aApps);
+			} else {
+				this._oStub.sendEvent(this.getId() + "SetApps", this.sNoDebug);
+			}
 		};
 
 		/**
@@ -176,12 +193,18 @@ sap.ui.define([
 		 */
 		Flexibility.prototype.onsapUiSupportFlexibilitySetApps = function (oEvent) {
 			var mApps = oEvent.getParameters();
-			this.oAppModel.setData(mApps);
 
-			var oAppSelection = this.oView.byId("appSelection");
-			var oFirstItem = oAppSelection.getItems()[0];
-			oAppSelection.setSelectedItem(oFirstItem);
-			oAppSelection.fireChange({selectedItem: oFirstItem});
+			var bFlInDebug = mApps !== this.sNoDebug;
+			this.oToolSettings.setProperty("/flInDebug", bFlInDebug);
+
+			if (bFlInDebug) {
+				this.oAppModel.setData(mApps);
+
+				var oAppSelection = this.oView.byId("appSelection");
+				var oFirstItem = oAppSelection.getItems()[0];
+				oAppSelection.setSelectedItem(oFirstItem);
+				oAppSelection.fireChange({selectedItem : oFirstItem});
+			}
 		};
 
 		/**

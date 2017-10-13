@@ -863,6 +863,24 @@ sap.ui.define([
 			return window.location.search.substring(1);
 		},
 
+
+		/**
+		 * Checks the SAPUI5 debug settings to determine whether all or at least the <code>sap.ui.fl</code> library is debugged.
+		 *
+		 * @returns {boolean} Returns a flag if the flexibility library is debugged
+		 * @public
+		 */
+		isDebugEnabled: function () {
+			// true if SAPUI5 is in complete debug mode
+			if (sap.ui.getCore().getConfiguration().getDebug()) {
+				return true;
+			}
+
+			var sDebugParameters = window["sap-ui-debug"] || "";
+			var aDebugParameters = sDebugParameters.split(",");
+			return aDebugParameters.indexOf("sap.ui.fl") !== -1;
+		},
+
 		/**
 		 * Returns the value of the specified url parameter of the current url
 		 *
