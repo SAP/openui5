@@ -116,6 +116,39 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("convertXMLMetadata: Reference", function (assert) {
+		testConversionForInclude(assert, '\
+				<edmx:Reference Uri="/qux/$metadata">\
+					<edmx:Include Namespace="qux.foo"/>\
+					<edmx:Include Namespace="qux.bar"/>\
+					<edmx:IncludeAnnotations TermNamespace="qux.foo"/>\
+					<edmx:IncludeAnnotations TermNamespace="qux.bar" TargetNamespace="qux.bar"\
+						Qualifier="Tablet"/>\
+				</edmx:Reference>\
+				<edmx:Reference Uri="/bla/$metadata">\
+					<edmx:Include Namespace="bla"/>\
+				</edmx:Reference>',
+			{
+				"$Reference" : {
+					"/qux/$metadata" : {
+						"$Include" : ["qux.foo.", "qux.bar."],
+						"$IncludeAnnotations" : [{
+							"$TermNamespace" : "qux.foo."
+						}, {
+							"$TermNamespace" : "qux.bar.",
+							"$TargetNamespace" : "qux.bar.",
+							"$Qualifier" : "Tablet"
+						}]
+					},
+					"/bla/$metadata" : {
+						"$Include" : ["bla."]
+					}
+				}
+			});
+	});
+	// TODO look at xml:base if the Uri in Reference is relative
+
+	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: aliases in types", function (assert) {
 		testConversion(assert, '\
 				<Schema Namespace="bar" Alias="b">\
@@ -157,6 +190,11 @@ sap.ui.require([
 				<Schema Namespace="foo" Alias="f"/>\
 			</edmx:DataServices>',
 			{
+				"$Reference": {
+					"/qux/$metadata": {
+						"$Include" : ["qux."]
+					}
+				},
 				"bar." : {
 					"$kind" : "Schema"
 				},
