@@ -705,7 +705,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// text selection for column headers?
 		this._bAllowColumnHeaderTextSelection = false;
 
-		this._bPendingRequest = false;
+		this._iPendingRequests = 0;
+		this._bPendingRequest = false; // Fallback in case a counter is not applicable.
 		this._iBindingLength = 0;
 
 		this._iTableRowContentHeight = 0;
@@ -1608,9 +1609,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	Table.prototype.bindAggregation = function(sName) {
 		if (sName === "rows") {
-			if (this.getEnableBusyIndicator()) {
-				this.setBusy(false);
-			}
 			return this.bindRows.apply(this, [].slice.call(arguments, 1));
 		}
 
@@ -1629,6 +1627,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			vTemplate = undefined;
 		}
 
+		if (this.getEnableBusyIndicator()) {
+			this.setBusy(false);
+		}
+		this._iPendingRequests = 0;
+		this._bPendingRequest = false;
+
 		return Control.prototype.bindAggregation.call(this, "rows", oBindingInfo, vTemplate, oSorter, aFilters);
 	};
 
@@ -1638,8 +1642,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
 			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
-			Table._addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequestedListener.bind(this));
-			Table._addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceivedListener.bind(this));
+			Table._addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequested.bind(this));
+			Table._addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceived.bind(this));
 		}
 
 		// Create the binding.
@@ -3918,18 +3922,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *
 	 * @private
 	 */
-	Table.prototype._onBindingDataRequestedListener = function (oEvent) {
-		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
-			this._bPendingRequest = true;
+	Table.prototype._onBindingDataRequested = function (oEvent) {
+		if (oEvent.getSource() != this.getBinding("rows") || oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
+			return;
+		}
 
-			if (this.getEnableBusyIndicator()) {
-				this.setBusy(true);
-			}
+		this._iPendingRequests++;
+		this._bPendingRequest = true;
 
-			if (this._dataReceivedHandlerId != null) {
-				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
-				delete this._dataReceivedHandlerId;
-			}
+		var bCanUsePendingRequestsCounter = TableUtils.canUsePendingRequestsCounter(this);
+
+		if (this.getEnableBusyIndicator()
+			&& (bCanUsePendingRequestsCounter && this._iPendingRequests === 1
+				|| !bCanUsePendingRequestsCounter)) {
+			this.setBusy(true);
+		}
+
+		if (this._dataReceivedHandlerId != null) {
+			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			delete this._dataReceivedHandlerId;
 		}
 	};
 
@@ -3937,20 +3948,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *
 	 * @private
 	 */
-	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
-		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
-			this._bPendingRequest = false;
+	Table.prototype._onBindingDataReceived = function (oEvent) {
+		if (oEvent.getSource() != this.getBinding("rows") || oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
+			return;
+		}
 
-			if (this._dataReceivedHandlerId != null) {
-				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
-				delete this._dataReceivedHandlerId;
-			}
+		this._iPendingRequests--;
+		this._bPendingRequest = false;
 
-			// The table will be set to busy when a request is sent, and set to not busy when a response is received.
-			// When scrolling down fast it can happen that there are multiple requests in the request queue of the binding, which will be processed
-			// sequentially. In this case the busy indicator will be shown and hidden multiple times (flickering) until all requests have been
-			// processed. With this timer we avoid the flickering, as the table will only be set to not busy after all requests have been processed.
-			// The same applied for updating the NoData area.
+		if (!TableUtils.hasPendingRequests(this)) {
+			// This timer should avoid flickering of the busy indicator and unnecessary updates of NoData in case a request will be sent
+			// (dataRequested) immediately after the last response was received (dataReceived).
 			this._dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
 				if (this.getEnableBusyIndicator()) {
 					this.setBusy(false);

@@ -677,15 +677,57 @@
 			"The tables busy indicator is not visible, but a cells busy indicator is visible: Returned false");
 	});
 
-	QUnit.test("hasPendingRequest", function(assert) {
-		assert.ok(!TableUtils.hasPendingRequest(), "No parameters passed: Returned false");
-		assert.ok(!TableUtils.hasPendingRequest(null), "Passed 'null': Returned false");
-		oTable._bPendingRequest = 0;
-		assert.ok(!TableUtils.hasPendingRequest(oTable), "The pending request flag has an invalid value: Returned false");
-		oTable._bPendingRequest = false;
-		assert.ok(!TableUtils.hasPendingRequest(oTable), "The binding of the table has no pending request: Returned false");
+	QUnit.test("hasPendingRequests", function(assert) {
+		assert.ok(!TableUtils.hasPendingRequests(), "No parameters passed: Returned false");
+		assert.ok(!TableUtils.hasPendingRequests(null), "Passed 'null': Returned false");
+
+		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
+		assert.ok(!TableUtils.hasPendingRequests(oTable), "Rows not bound: Returned false");
+		oTable.getBinding.restore();
+
+		this.stub(TableUtils, "canUsePendingRequestsCounter").returns(true);
+		oTable._iPendingRequests = -1;
 		oTable._bPendingRequest = true;
-		assert.ok(TableUtils.hasPendingRequest(oTable), "The binding of the table has a pending request: Returned true");
+		assert.ok(!TableUtils.hasPendingRequests(oTable), "(Counter) -1 pending requests: Returned false");
+		oTable._iPendingRequests = 0;
+		assert.ok(!TableUtils.hasPendingRequests(oTable), "(Counter) 0 pending requests: Returned false");
+		oTable._iPendingRequests = 1;
+		oTable._bPendingRequest = false;
+		assert.ok(TableUtils.hasPendingRequests(oTable), "(Counter) 1 pending requests: Returned true");
+		oTable._iPendingRequests = 2;
+		assert.ok(TableUtils.hasPendingRequests(oTable), "(Counter) 2 pending requests: Returned true");
+
+		TableUtils.canUsePendingRequestsCounter.returns(false);
+		oTable._iPendingRequests = 0;
+		oTable._bPendingRequest = true;
+		assert.ok(TableUtils.hasPendingRequests(oTable), "(Flag) Indicates that a request is pending: Returned true");
+		oTable._iPendingRequests = 1;
+		oTable._bPendingRequest = false;
+		assert.ok(!TableUtils.hasPendingRequests(oTable), "(Flag) Indicates that no request is pending: Returned false");
+
+		TableUtils.canUsePendingRequestsCounter.restore();
+	});
+
+	QUnit.test("canUsePendingRequestsCounter", function(assert) {
+		assert.ok(TableUtils.canUsePendingRequestsCounter(), "No parameters passed: Returned true");
+		assert.ok(TableUtils.canUsePendingRequestsCounter(null), "Passed 'null': Returned true");
+
+		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
+		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Rows not bound: Returned true");
+		oTable.getBinding.restore();
+
+		this.stub(TableUtils, "isInstanceOf").withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(false);
+		oTable.getBinding("rows").bUseBatchRequests = true;
+		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "No AnalyticalBinding: Returned true");
+
+		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(true);
+		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding using batch requests: Returned true");
+
+		oTable.getBinding("rows").bUseBatchRequests = false;
+		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding not using batch requests: Returned false");
+
+		TableUtils.isInstanceOf.restore();
+		delete oTable.getBinding("rows").bUseBatchRequests;
 	});
 
 	QUnit.test("isInstanceOf", function(assert) {
