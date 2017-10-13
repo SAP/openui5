@@ -120,9 +120,9 @@
 											 singleContainerFullSize="false">
 								<form:content>
 									<core:Title id="NavTitle1" text="Navigation Title 1" />
-									<Label id="NavProperty.Label1" text="{/#EntityType01/to_EntityType01Nav/NavProperty/@sap:label}" />
+									<Label id="NavProperty.Label1" text="{/#EntityTypeNav/NavProperty/@sap:label}" />
 									<Text id="NavProperty.Text1" text="{to_EntityType01Nav/NavProperty}" />
-									<Label id="NavProperty.Label2" text="{/#EntityType01/to_EntityType01Nav/EntityTypeNav_Property01/@sap:label}" />
+									<Label id="NavProperty.Label2" text="{/#EntityTypeNav/EntityTypeNav_Property01/@sap:label}" />
 									<Text id="NavProperty.Text2" text="{to_EntityType01Nav/EntityTypeNav_Property01}" />
 
 									<core:Title id="NavTitle2" text="Navigation Title 2" />

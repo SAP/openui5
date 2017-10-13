@@ -289,7 +289,6 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling '_fillVariantModel'", function(assert) {
-		var done = assert.async();
 		var oFakeVariantResponse = {
 			"changes" : {
 				"changes" : [
@@ -317,7 +316,10 @@ sap.ui.require([
 									{
 										"fileName":"change45"
 									}
-								]
+								],
+								"variantChanges" : {
+									"setTitle": []
+								}
 							},
 							{
 								"content": {
@@ -335,7 +337,10 @@ sap.ui.require([
 									{
 										"fileName":"change47"
 									}
-								]
+								],
+								"variantChanges" : {
+									"setTitle": []
+								}
 							},
 							{
 								"content": {
@@ -353,7 +358,10 @@ sap.ui.require([
 									{
 										"fileName":"change43"
 									}
-								]
+								],
+								"variantChanges" : {
+									"setTitle": []
+								}
 							}
 						]
 					}
@@ -387,9 +395,77 @@ sap.ui.require([
 			}
 		};
 		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
+		var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
 		var oData = oVariantController._fillVariantModel();
+		assert.equal(fnApplyChangesOnVariantSpy.callCount, 3, "_applyChangesOnVariant called thrice for 3 variants");
 		assert.propEqual(oData, oExpectedData, "then correct variant model data is returned");
-		done();
+	});
+
+	QUnit.test("when calling '_applyChangesOnVariant' is called with a variant to perform setTitle", function(assert) {
+		var oFakeVariantResponse = {
+			"changes" : {
+				"changes" : [
+					{
+						"fileName":"change1"
+					}
+				],
+				"variantSection" : {
+					"variantMgmtId1" : {
+						"defaultVariant" : "variant1",
+						"variants" : [
+							{
+								"content": {
+									"fileName":"variant0",
+									"title":"variant A",
+									"layer":"CUSTOMER",
+									"support":{
+										"user":"Me"
+									}
+								},
+								"changes" : [
+									{
+										"fileName":"change44"
+									},
+									{
+										"fileName":"change45"
+									}
+								],
+								"variantChanges" : {
+									"setTitle": [{
+										"fileName": "id_1507716136285_38_setTitle",
+										"fileType": "ctrl_variant_change",
+										"changeType": "setTitle",
+										"texts": {
+											"title": {
+												"value": "New Variant Title1",
+												"type": "XFLD"
+											}
+										},
+										"variantReference": "variant0"
+									},
+									{
+										"fileName": "id_1507716136285_39_setTitle",
+										"fileType": "ctrl_variant_change",
+										"changeType": "setTitle",
+										"texts": {
+											"title": {
+												"value": "New Variant Title2",
+												"type": "XFLD"
+											}
+										},
+										"variantReference": "variant0"
+									}]
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
+		assert.strictEqual(oFakeVariantResponse.changes.variantSection["variantMgmtId1"].variants[0].content.title, "variant A", "then title of the variant is set to the intiial value");
+		oVariantController._applyChangesOnVariant(oFakeVariantResponse.changes.variantSection["variantMgmtId1"].variants[0]);
+		assert.strictEqual(oFakeVariantResponse.changes.variantSection["variantMgmtId1"].variants[0].content.title, "New Variant Title2", "then title of the variant is set to the last change in the setTitle array");
 	});
 
 	QUnit.test("when calling 'addVariantToVariantManagement' with a new variant and no variant reference", function(assert) {
@@ -424,6 +500,32 @@ sap.ui.require([
 		assert.equal(aVariants[aVariants.length - 1].content.fileName, "newVariant2", "then the new variant with title ZZ added to the last position after Standard Variant (ascending sort)");
 	});
 
+	QUnit.test("when calling '_setVariantData' with a changed title and previous index", function(assert) {
+		var mPropertyBag = {
+			title: "ZZZ"
+		};
+
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		assert.equal(aVariants[1].content.fileName, "variant0", "then before renaming the title variant present at index 1");
+		var iSortedIndex = oVariantController._setVariantData(mPropertyBag, "idMain1--variantManagementOrdersTable", 1);
+		assert.equal(iSortedIndex, 2, "then 2 received as sorted index");
+		assert.equal(aVariants[2].content.fileName, "variant0", "then after renaming the title to ZZZ variant moved to index 2");
+	});
+
+	QUnit.test("when calling '_getIndexToSortVariant' with all variants (excluding standard variant) and the variant which needs to be re-sorted", function(assert) {
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var oVariantData = aVariants[1];
+		//removing variant from array
+		aVariants.splice(1, 1);
+		oVariantData.content.title = "ZZZ";
+
+		//slice to remove standard variant
+		var iSortedIndex = oVariantController._getIndexToSortVariant(aVariants.slice(1), aVariants[1]);
+		assert.equal(iSortedIndex, 1, "then 1 received as sorted index (excluding standard variant) which was initially 0");
+	});
+
 	QUnit.test("when calling 'addVariantToVariantManagement' on CUSTOMER layer and a variant reference from the VENDOR layer with one VENDOR and one CUSTOMER change", function(assert) {
 		var oChangeContent0 = {"fileName":"change0"};
 
@@ -450,6 +552,7 @@ sap.ui.require([
 		assert.equal(aChangeFileNames[0], aVariants[2].changes[0].fileName, "then referenced change exists and placed to the array start");
 		assert.equal(aChangeFileNames.indexOf(aVariants[2].changes[1].fileName), "-1", "then CUSTOMER layer change not referenced");
 	});
+
 	QUnit.test("when calling '_getReferencedChanges' on CUSTOMER layer with variant reference to a VENDOR layer variant with one VENDOR and one CUSTOMER change", function(assert) {
 		var oChangeContent0 = {"fileName":"change0"};
 

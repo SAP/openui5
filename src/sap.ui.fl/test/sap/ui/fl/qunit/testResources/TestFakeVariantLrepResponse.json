@@ -148,7 +148,44 @@
 								"user":""
 							}
 						}
-					]
+					],
+					"variantChanges": {
+						"setTitle": [
+							{
+								"fileName": "id_1507716136285_38_setTitle",
+								"fileType": "ctrl_variant_change",
+								"changeType": "setTitle",
+								"reference": "sap.ui.rta.test.variantManagement.Component",
+								"packageName": "$TMP",
+								"content": {},
+								"selector": {},
+								"layer": "CUSTOMER",
+								"texts": {
+									"title": {
+										"value": "New Variant Title",
+										"type": "XFLD"
+									}
+								},
+								"namespace": "apps/sap.ui.rta.test.variantManagement/changes/",
+								"creation": "2017-10-11T10:02:18.923Z",
+								"originalLanguage": "EN",
+								"conditions": {},
+								"context": "",
+								"support": {
+									"generator": "Change.createInitialFileContent",
+									"service": "",
+									"user": "",
+									"sapui5Version": "1.51.0-SNAPSHOT"
+								},
+								"dependentSelector": {},
+								"validAppVersions": {
+									"creation": "1.0.0",
+									"from": "1.0.0"
+								},
+								"variantReference": "variant0"
+							}
+						]
+					}
 				},
 				{
 					"content": {
@@ -212,7 +249,10 @@
 								"user":""
 							}
 						}
-					]
+					],
+					"variantChanges": {
+						"setTitle": []
+					}
 				},
 				{
 					"content": {
@@ -283,7 +323,10 @@
 								"user":""
 							}
 						}
-					]
+					],
+					"variantChanges": {
+						"setTitle": []
+					}
 				}
 			]
 		},
@@ -359,7 +402,10 @@
 								"user":""
 							}
 						}
-					]
+					],
+					"variantChanges": {
+						"setTitle": []
+					}
 				},
 				{
 					"content": {
@@ -430,7 +476,10 @@
 								"user":""
 							}
 						}
-					]
+					],
+					"variantChanges": {
+						"setTitle": []
+					}
 				}
 			]
 		}

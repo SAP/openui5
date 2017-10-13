@@ -17,6 +17,7 @@ sap.ui.require([
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormLayout",
 	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/core/Title",
 	"sap/m/Button",
 	"sap/m/Label"
@@ -31,6 +32,7 @@ function(
 	Form,
 	FormLayout,
 	RenamePlugin,
+	RenameHandler,
 	Title,
 	Button,
 	Label
@@ -103,7 +105,7 @@ function(
 			}
 		};
 
-		this.oRenamePlugin._onDesignTimeSelectionChange(oEvent);
+		RenameHandler._onDesignTimeSelectionChange.call(this.oRenamePlugin, oEvent);
 
 		assert.strictEqual(aSelection, this.oRenamePlugin._aSelection, "then the arrays of selection are equal");
 		assert.strictEqual(this.oRenamePlugin._aSelection.length, 1, "then the array of selection has only one selected overlay");
@@ -114,7 +116,7 @@ function(
 		sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
 			if (mParams.overlay === this.oFormContainerOverlay) {
 				assert.strictEqual(this.oFormContainerOverlay.getSelected(), true, "then the overlay is still selected");
-				this.oRenamePlugin._stopEdit(this.oFormContainerOverlay);
+				this.oRenamePlugin.stopEdit(this.oFormContainerOverlay);
 				assert.strictEqual(this.oFormContainerOverlay.getSelected(), false, "then the overlay is not selected anymore");
 				fnDone();
 			}
@@ -254,7 +256,7 @@ function(
 		sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
 			if (mParams.overlay === this.oLayoutOverlay) {
 				assert.equal(this.oLayoutOverlay.getSelected(), true, "then the overlay is still selected");
-				this.oRenamePlugin._stopEdit(this.oLayoutOverlay);
+				this.oRenamePlugin.stopEdit(this.oLayoutOverlay);
 				assert.equal(this.oLayoutOverlay.getSelected(), false, "then the overlay is not selected anymore");
 				fnDone();
 			}
@@ -317,7 +319,7 @@ function(
 					fnDone();
 				}, 50);
 
-				this.oRenamePlugin._stopEdit(this.oLayoutOverlay);
+				this.oRenamePlugin.stopEdit(this.oLayoutOverlay);
 			}
 		}, this);
 		this.oRenamePlugin.startEdit(this.oLayoutOverlay);
@@ -342,6 +344,6 @@ function(
 			}
 		};
 
-		assert.strictEqual(this.oRenamePlugin._getCurrentEditableFieldText(), "\xa0", "then the empty string is replaced by a non-breaking space");
+		assert.strictEqual(RenameHandler._getCurrentEditableFieldText.call(this.oRenamePlugin), "\xa0", "then the empty string is replaced by a non-breaking space");
 	});
 });

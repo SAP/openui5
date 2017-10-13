@@ -282,6 +282,19 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0", to: "1.0.0"});
 	});
 
+	QUnit.test("createInitialFileContent when fileType is pre-set", function(assert) {
+		var oInfo = {
+			changeType: "filterVariant",
+			content: {},
+			namespace: "apps/smartFilterBar/adapt/oil/changes/",
+			fileType: "newFileType"
+		};
+
+		var oCreatedFile = Change.createInitialFileContent(oInfo);
+
+		assert.equal(oCreatedFile.fileType, "newFileType");
+	});
+
 	QUnit.test("_isReadOnlyDueToOriginalLanguage shall compare the original language with the current language", function(assert) {
 		var oChange, bIsReadOnly;
 		oChange = new Change(this.oChangeDef);

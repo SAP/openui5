@@ -5,6 +5,7 @@
 // Provides class sap.ui.rta.plugin.ControlVariant.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
+	'sap/ui/rta/plugin/RenameHandler',
 	'sap/ui/rta/Utils',
 	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/OverlayRegistry',
@@ -13,7 +14,7 @@ sap.ui.define([
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/variants/VariantManagement',
 	'sap/ui/base/ManagedObject'
-], function(Plugin, Utils, ElementOverlay, OverlayRegistry, OverlayUtil, BaseTreeModifier, flUtils, VariantManagement, ManagedObject) {
+], function(Plugin, RenameHandler, Utils, ElementOverlay, OverlayRegistry, OverlayUtil, BaseTreeModifier, flUtils, VariantManagement, ManagedObject) {
 	"use strict";
 
 	/**
@@ -45,7 +46,9 @@ sap.ui.define([
 
 			// ---- control specific ----
 			library: "sap.ui.rta",
-			properties: {},
+			properties : {
+				oldValue : "string"
+			},
 			associations: {},
 			events: {}
 		}
@@ -80,6 +83,7 @@ sap.ui.define([
 				oOverlay.setVariantManagement(sVariantManagementReference);
 			}
 		}
+		oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
 	};
 
@@ -125,6 +129,10 @@ sap.ui.define([
 	 * @override
 	 */
 	ControlVariant.prototype.deregisterElementOverlay = function(oOverlay) {
+		oOverlay.detachEvent("editableChange", RenameHandler._manageClickEvent, this);
+		oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
+
+		this.removeFromPluginsList(oOverlay);
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
 	};
 
@@ -179,13 +187,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	ControlVariant.prototype.setDesignTime = function(oDesignTime) {
+		RenameHandler._setDesignTime.call(this, oDesignTime);
+	};
+
+	/**
 	 * Checks if variant rename is available for oOverlay
 	 *
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	ControlVariant.prototype.isVariantRenameAvailable = function(oOverlay) {
+	ControlVariant.prototype.isRenameAvailable = function(oOverlay) {
 		return this._isVariantManagementControl(oOverlay);
 	};
 
@@ -196,8 +211,8 @@ sap.ui.define([
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	ControlVariant.prototype.isVariantRenameEnabled = function(oOverlay) {
-		return false;
+	ControlVariant.prototype.isRenameEnabled = function(oOverlay) {
+		return true;
 	};
 
 	/**
@@ -223,6 +238,7 @@ sap.ui.define([
 		if (!sVariantManagementReference || !this._isVariantManagementControl(oOverlay)) {
 			return false;
 		}
+		return true;
 	};
 
 	/**
@@ -269,12 +285,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * Performs a variant rename
+	 * Performs a variant set title
 	 *
 	 * @public
 	 */
-	ControlVariant.prototype.renameVariant = function() {
-		return;
+	ControlVariant.prototype.renameVariant = function(aOverlays) {
+		this.startEdit(aOverlays[0]);
+	};
+
+	ControlVariant.prototype.startEdit = function(oOverlay) {
+		var oVariantManagementControl = oOverlay.getElementInstance(),
+			vDomRef = function () {
+				return oVariantManagementControl.getTitle().getDomRef("inner");
+			};
+		RenameHandler.startEdit.call(this, oOverlay, vDomRef, "plugin.ControlVariant.startEdit");
+	};
+
+	ControlVariant.prototype.stopEdit = function (bRestoreFocus) {
+		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.ControlVariant.stopEdit");
 	};
 
 	/**
@@ -292,10 +320,36 @@ sap.ui.define([
 
 		var oDuplicateCommand = this.getCommandFactory().getCommandFor(oElement, "duplicate", {
 			sourceVariantReference: sCurrentVariantReference
-		}, oDesignTimeMetadata);
+		}, oDesignTimeMetadata, sVariantManagementReference);
 		this.fireElementModified({
 			"command" : oDuplicateCommand
 		});
+	};
+
+	/**
+	 * @private
+	 */
+	ControlVariant.prototype._emitLabelChangeEvent = function() {
+		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
+		if (this.getOldValue() !== sText) { //check for real change before creating a command
+			this._$oEditableControlDomRef.text(sText);
+			try {
+				var oSetTitleCommand;
+				var oRenamedElement = this._oEditedOverlay.getElementInstance();
+				var oDesignTimeMetadata = this._oEditedOverlay.getDesignTimeMetadata();
+				var sVariantManagementReference = this._oEditedOverlay.getVariantManagement();
+
+				oSetTitleCommand = this.getCommandFactory().getCommandFor(oRenamedElement, "setTitle", {
+					renamedElement : oRenamedElement,
+					newText : sText
+				}, oDesignTimeMetadata, sVariantManagementReference);
+				this.fireElementModified({
+					"command" : oSetTitleCommand
+				});
+			} catch (oError) {
+				jQuery.sap.log.error("Error during rename : ", oError);
+			}
+		}
 	};
 
 	/**
@@ -316,12 +370,12 @@ sap.ui.define([
 		var VARIANT_MODEL_NAME = '$FlexVariants';
 		var aMenuItems = [];
 
-		if (this.isVariantRenameAvailable(oOverlay)){
+		if (this.isRenameAvailable(oOverlay)){
 			aMenuItems.push({
-				id: "CTX_VARIANT_RENAME",
-				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_RENAME'),
+				id: "CTX_VARIANT_SET_TITLE",
+				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_SET_TITLE'),
 				handler: this.renameVariant.bind(this),
-				enabled: this.isVariantRenameEnabled.bind(this),
+				enabled: this.isRenameEnabled.bind(this),
 				rank: 210
 			});
 		}

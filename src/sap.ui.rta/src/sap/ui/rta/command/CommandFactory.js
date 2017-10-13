@@ -131,6 +131,9 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		"duplicate" : {
 			clazz : 'sap.ui.rta.command.ControlVariantDuplicate'
 		},
+		"setTitle" : {
+			clazz : 'sap.ui.rta.command.ControlVariantSetTitle'
+		},
 		"settings" : {
 			clazz : 'sap.ui.rta.command.Settings'
 		},

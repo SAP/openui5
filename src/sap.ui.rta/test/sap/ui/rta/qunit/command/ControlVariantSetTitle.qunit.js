@@ -33,21 +33,6 @@ function(
 ) {
 	'use strict';
 
-	var oData = {
-		"variantMgmtId1": {
-			"defaultVariant": "variantMgmtId1",
-			"variants": [
-				{
-					"author": "SAP",
-					"key": "variantMgmtId1",
-					"layer": "VENDOR",
-					"readOnly": true,
-					"title": "Standard"
-				}
-			]
-		}
-	};
-
 	var oManifestObj = {
 		"sap.app": {
 			id: "MyComponent",
@@ -75,6 +60,26 @@ function(
 	sinon.stub(Utils, "getComponentClassName").returns("Dummy.Component");
 
 	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, oManifest);
+	var oData = {
+		"variantMgmtId1": {
+			"defaultVariant": "variant0",
+			"variants": [
+				{
+					"author": "SAP",
+					"key": "variantMgmtId1",
+					"layer": "VENDOR",
+					"readOnly": true,
+					"title": "Standard"
+				}, {
+					"author": "Me",
+					"key": "variant0",
+					"layer": "CUSTOMER",
+					"readOnly": false,
+					"title": "variant A"
+				}
+			]
+		}
+	};
 
 	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
 
@@ -84,10 +89,7 @@ function(
 			"title":"variant A",
 			"layer":"CUSTOMER",
 			"variantReference":"variant00",
-			"support":{
-				"user":"Me"
-			},
-			reference: "Dummy.Component"
+			"reference": "Dummy.Component"
 		},
 		"changes" : [
 			{
@@ -101,24 +103,20 @@ function(
 		]
 	};
 
-
-
 	sinon.stub(oModel, "getVariant").returns(oVariant);
-	sinon.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
-	sinon.stub(oModel.oVariantController, "getVariants").returns([oVariant]);
-	sinon.stub(oModel.oVariantController, "addVariantToVariantManagement").returns(1);
-	sinon.stub(oModel.oVariantController, "removeVariantFromVariantManagement").returns(1);
+	sinon.stub(oModel.oVariantController, "_setVariantData").returns(1);
 
 	QUnit.module("Given a variant management control ...", {
 		beforeEach : function(assert) {
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
+			this.oVariantManagement.setModel(oModel, "$FlexVariants");
 		},
 		afterEach : function(assert) {
 			this.oVariantManagement.destroy();
 		}
 	});
 
-	QUnit.test("when calling command factory for duplicate variants and undo", function(assert) {
+	QUnit.test("when calling command factory for setTitle and undo", function(assert) {
 		var done = assert.async();
 
 		var oOverlay = new ElementOverlay();
@@ -127,28 +125,32 @@ function(
 
 		var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
 		var mFlexSettings = {layer: "CUSTOMER"};
+		var sNewText = "Test";
 
-		var oControlVariantDuplicateCommand = CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
-			sourceVariantReference : oVariant.content.variantReference
+		var oControlVariantSetTitleCommand = CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
+			renamedElement : this.oVariantManagement,
+			newText : sNewText
 		}, oDesignTimeMetadata, mFlexSettings);
 
-		assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
-		oControlVariantDuplicateCommand.execute().then( function() {
-			var oDuplicateVariant = oControlVariantDuplicateCommand.getDuplicateVariant();
-			assert.notEqual(oDuplicateVariant.getId().indexOf("_Copy"), -1, "then fileName correctly duplicated");
-			assert.equal(oDuplicateVariant.getVariantReference(), oVariant.content.variantReference, "then variant reference correctly duplicated");
-			assert.equal(oDuplicateVariant.getTitle(), oVariant.content.title + " Copy", "then variant reference correctly duplicated");
-			assert.equal(oDuplicateVariant.getChanges().length, 2, "then 2 changes duplicated");
-			assert.equal(oDuplicateVariant.getChanges()[0].support.sourceChangeFileName, oVariant.changes[0].fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
-			assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes present - variant and 2 changes");
+		assert.ok(oControlVariantSetTitleCommand, "control variant duplicate command exists for element");
+		oControlVariantSetTitleCommand.execute().then(function() {
+			var oTitleChange = oControlVariantSetTitleCommand.getTitleChange();
+			assert.equal(oTitleChange.getText("title"), sNewText, "then title is correctly set in change");
+			var oData = oControlVariantSetTitleCommand.oModel.getData();
+			assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
+			assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");
+			assert.equal(oControlVariantSetTitleCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 1, "then 1 dirty change is present");
 
-			oControlVariantDuplicateCommand.undo().then( function() {
-				oDuplicateVariant = oControlVariantDuplicateCommand.getDuplicateVariant();
-				assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then all dirty changes removed");
-				assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
+			oControlVariantSetTitleCommand.undo().then( function() {
+				oTitleChange = oControlVariantSetTitleCommand.getTitleChange();
+				oData = oControlVariantSetTitleCommand.oModel.getData();
+				assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
+				assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");
+				assert.equal(oControlVariantSetTitleCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty change is removed");
+				assert.notOk(oTitleChange, "then title change from command unset");
 				done();
-			});
-		});
+			}.bind(this));
+		}.bind(this));
 
 	});
 
