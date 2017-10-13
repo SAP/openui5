@@ -91,7 +91,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			modifier : sap.ui.fl.changeHandler.XmlTreeModifier,
 			view : this.oXmlDocument
 		}), "no errors occur");
-		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is visible");
+		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.UnhideSimpleForm with new change format", {
@@ -217,7 +217,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			modifier : sap.ui.fl.changeHandler.XmlTreeModifier,
 			view : this.oXmlDocument
 		}), "no errors occur");
-		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is visible");
+		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
 	});
 
 	QUnit.test("applyChange shall raise an exception if the control does not have the required methods", function (assert) {
