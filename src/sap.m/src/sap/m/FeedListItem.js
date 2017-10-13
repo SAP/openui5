@@ -229,12 +229,13 @@ sap.ui.define(["./ListItemBase", "./Link", "./library", "./FormattedText", "sap/
 
 		if (!(oActionSheet && oActionSheet instanceof ActionSheet)) {
 			oActionSheet = new ActionSheet({
-				id: this.getId() + "-actionSheet"
+				id: this.getId() + "-actionSheet",
+				beforeOpen: [ this._onBeforeOpenActionSheet, this ]
 			});
 			this.setAggregation("_actionSheet", oActionSheet, true);
 		}
 
-		oActionSheet.destroyButtons();
+		oActionSheet.destroyAggregation("buttons", true);
 		for (var i = 0; i < aActions.length; i++) {
 			oAction = aActions[i];
 			oActionSheet.addButton(new Button({
@@ -245,6 +246,31 @@ sap.ui.define(["./ListItemBase", "./Link", "./library", "./FormattedText", "sap/
 		}
 
 		oActionSheet.openBy(this.getAggregation("_actionButton"));
+	};
+
+	/**
+	 * Sets the contrast class on the ActionSheet's Popover based on the current theme.
+	 *
+	 * @param {sap.ui.base.Event} event The 'beforeOpen' event
+	 * @private
+	 */
+	FeedListItem.prototype._onBeforeOpenActionSheet = function(event) {
+		var oActionSheetPopover, sTheme;
+
+		// On phone there is no need to overstyle the ActionSheet's Popover with a contrast class
+		if (Device.system.phone) {
+			return;
+		}
+
+		sTheme = sap.ui.getCore().getConfiguration().getTheme();
+		oActionSheetPopover = event.getSource().getParent();
+		oActionSheetPopover.removeStyleClass("sapContrast sapContrastPlus");
+
+		if (sTheme === "sap_belize") {
+			oActionSheetPopover.addStyleClass("sapContrast");
+		} else if (sTheme === "sap_belize_plus") {
+			oActionSheetPopover.addStyleClass("sapContrastPlus");
+		}
 	};
 
 	FeedListItem.prototype.invalidate = function() {
