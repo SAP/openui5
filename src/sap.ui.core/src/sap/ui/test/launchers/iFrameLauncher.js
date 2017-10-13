@@ -38,7 +38,7 @@ sap.ui.define([
 	function registerOnError () {
 		var fnFrameOnError = oFrameWindow.onerror;
 
-		oFrameWindow.onerror = function (sErrorMsg, sUrl, iLine) {
+		oFrameWindow.onerror = function (sErrorMsg, sUrl, iLine, iColumn, oError) {
 			var vReturnValue = false;
 
 			if (fnFrameOnError) {
@@ -50,7 +50,10 @@ sap.ui.define([
 			// function is wrapped in QUnits onerror function the exception needs to be thrown in a setTimeout
 			// to make sure the QUnit onerror can run to the end
 			setTimeout(function () {
-				throw new Error("OpaFrame error message: " + sErrorMsg + ",\nurl: " + sUrl + ",\nline: " + iLine);
+				// column number and error object may be missing in older browsers. Currently, Edge doesn't provide the oError object
+				var sColumn = iColumn ? "\ncolumn: " + iColumn : "";
+				var sIFrameError = oError && "\niFrame error: " + (oError.stack ? oError.message + "\n" + oError.stack : oError) || "";
+				throw new Error("Error in launched application iFrame: " + sErrorMsg + "\nurl: " + sUrl + "\nline: " + iLine + sColumn + sIFrameError);
 			}, 0);
 			return vReturnValue;
 		};

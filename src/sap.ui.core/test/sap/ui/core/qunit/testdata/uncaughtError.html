@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta charset="utf-8">
+
+		<title>Test app with uncaught error</title>
+
+		<script src="../../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-resourceroots='{
+					"sampleOpaExtension" : "../opa/",
+					"testResources" : "../../../../../../test-resources"
+				}'>
+		</script>
+
+		<script id="myXml" type="text/xmldata">
+			<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController" displayBlock="true">
+			  <App id="myApp">
+				 <Page id="page1" title="Hello">
+					<Button id="myButton" press="onPress"/>
+				 </Page>
+			  </App>
+			</mvc:View>
+		</script>
+
+		<script>
+			(function () {
+				sap.ui.controller("myController", {
+					onPress: function () {
+						throw Error("TestUncaughtError");
+					}
+				});
+
+				var oView = sap.ui.view({
+					viewContent: jQuery("#myXml").html(),
+					type: sap.ui.core.mvc.ViewType.XML
+				});
+
+				oView.setViewName("myView");
+				oView.placeAt("content");
+			})();
+		</script>
+	</head>
+	<body id="content" class="sapUiBody">
+	</body>
+</html>
