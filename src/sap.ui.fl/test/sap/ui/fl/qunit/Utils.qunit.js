@@ -1256,4 +1256,44 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 
+	QUnit.module("Utils.getChangeFromChangesMap", {
+		beforeEach: function() {
+			this.oChange1 = {
+				getId: function () {
+					return "fileNameChange1";
+				}
+			};
+			this.oChange2 = {
+				getId: function () {
+					return "fileNameChange2";
+				}
+			};
+			this.oChange3 = {
+				getId: function () {
+					return "fileNameChange3";
+				}
+			};
+			this.oChange4 = {
+				getId: function () {
+					return "fileNameChange4";
+				}
+			};
+			this.mChanges = {
+				"c1": [this.oChange1, this.oChange2, this.oChange4],
+				"c2": [this.oChange3]
+			};
+		}
+	});
+
+	QUnit.test("when called with existing Change keys", function(assert) {
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId()), this.oChange1, "then the correct change is returned");
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange2.getId()), this.oChange2, "then the correct change is returned");
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange3.getId()), this.oChange3, "then the correct change is returned");
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange4.getId()), this.oChange4, "then the correct change is returned");
+	});
+
+	QUnit.test("when called with not existing Change keys", function(assert) {
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId() + "foo"), undefined, "then no change is returned");
+	});
+
 }(sap.ui.fl.Utils, sap.ui.layout.HorizontalLayout, sap.ui.layout.VerticalLayout, sap.m.Button));

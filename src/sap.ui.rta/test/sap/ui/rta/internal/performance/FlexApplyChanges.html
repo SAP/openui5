@@ -31,12 +31,12 @@
 
 		<script>
 			sap.ui.require([
-							'sap/ui/rta/RuntimeAuthoring',
-							'sap/ui/core/mvc/JSView',
-							"sap/ui/core/ComponentContainer",
-							'sap/ui/layout/VerticalLayout',
-							'sap/ui/layout/HorizontalLayout',
-							'sap/m/Label'
+				'sap/ui/rta/RuntimeAuthoring',
+				'sap/ui/core/mvc/JSView',
+				"sap/ui/core/ComponentContainer",
+				'sap/ui/layout/VerticalLayout',
+				'sap/ui/layout/HorizontalLayout',
+				'sap/m/Label'
 			],
 			function(RuntimeAuthoring, JSView, ComponentContainer, VerticalLayout, HorizontalLayout, Label) {
 
@@ -80,10 +80,6 @@
 
 				oComponentContainer.placeAt('content');
 				sap.ui.getCore().applyChanges();
-				// var oRta = new RuntimeAuthoring({
-				// 	rootControl : oHorizontalLayout,
-				// });
-				// oRta.start();
 			});
 		</script>
 	</head>
