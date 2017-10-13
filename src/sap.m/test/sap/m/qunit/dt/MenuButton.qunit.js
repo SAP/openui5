@@ -99,6 +99,7 @@
 		};
 
 		rtaControlEnablingCheck("Checking the split action for sap.m.MenuButton", {
+			jsOnly : true,
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<Page id="page" >' +
@@ -167,6 +168,7 @@
 		};
 
 		rtaControlEnablingCheck("Checking the split action for sap.m.MenuButton with button in dependents aggregation", {
+			jsOnly : true,
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core">' +
 			'<Page id="page" >' +

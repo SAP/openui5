@@ -82,9 +82,9 @@ sap.ui.require([
 
 			var oDOMParser = new DOMParser();
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-			this.oXmlView = oXmlDocument;
+			this.oXmlView = oXmlDocument.documentElement;
 
-			this.oTable = oXmlDocument.childNodes[0].childNodes[0];
+			this.oTable = this.oXmlView.childNodes[0];
 			this.oColumn0 = this.oTable.childNodes[0].childNodes[0];
 			this.oColumn0InTemplate = this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[0];
 		},
@@ -178,9 +178,9 @@ sap.ui.require([
 
 			var oDOMParser = new DOMParser();
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-			this.oXmlView = oXmlDocument;
+			this.oXmlView = oXmlDocument.documentElement;
 
-			this.oTable = oXmlDocument.childNodes[0].childNodes[0];
+			this.oTable = this.oXmlView.childNodes[0];
 			this.oColumn0 = this.oTable.childNodes[0].childNodes[0];
 			this.oColumn2 = this.oTable.childNodes[0].childNodes[2];
 			this.oColumn0InTemplate = this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[0];

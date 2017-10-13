@@ -1533,8 +1533,8 @@ function (
 			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<Label id="' + this.sLabelId  + '" />' +
 			'</mvc:View>';
-		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
-		this.oControl = this.oView.childNodes[0].childNodes[0];
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+		this.oControl = this.oView.childNodes[0];
 
 		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
@@ -1547,13 +1547,13 @@ function (
 
 	QUnit.test("reverts add custom data on the first change applied on a control", function (assert) {
 		this.oXmlString =
-			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<Label id="' + this.sLabelId  + '" >' +
-					'<customData><sap.ui.core.CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="a"/></customData>' +
+					'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="a"/></customData>' +
 				'</Label>' +
 			'</mvc:View>';
-		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
-		this.oControl = this.oView.childNodes[0].childNodes[0];
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+		this.oControl = this.oView.childNodes[0];
 
 		this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true);
 		assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
@@ -1570,8 +1570,8 @@ function (
 				'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="' + sAlreadyAppliedChangeId + '"/></customData>' +
 				'</Label>' +
 			'</mvc:View>';
-		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
-		this.oControl = this.oView.childNodes[0].childNodes[0];
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+		this.oControl = this.oView.childNodes[0];
 
 		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
@@ -1590,8 +1590,8 @@ function (
 			'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="' + this.oChange.getId() + '"/></customData>' +
 			'</Label>' +
 			'</mvc:View>';
-		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
-		this.oControl = this.oView.childNodes[0].childNodes[0];
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+		this.oControl = this.oView.childNodes[0];
 
 		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
 		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change handler was not called again");
@@ -1608,8 +1608,8 @@ function (
 			'<Label id="' + this.sLabelId + '" >' +
 			'</Label>' +
 			'</mvc:View>';
-		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
-		this.oControl = this.oView.childNodes[0].childNodes[0];
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+		this.oControl = this.oView.childNodes[0];
 
 		this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true);
 		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changehandler wasn't called");
@@ -1721,8 +1721,8 @@ function (
 			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<Label id="' + this.sLabelId  + '" />' +
 			'</mvc:View>';
-		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
-		this.oControl = this.oView.childNodes[0].childNodes[0];
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+		this.oControl = this.oView.childNodes[0];
 
 		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");

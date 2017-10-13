@@ -76,21 +76,26 @@
 				"then the control has been renamed to the old value (Title 1)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a SubSection", {
-			xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
-			' xmlns:uxap="sap.uxap" >' +
+		var XML_VIEW = '<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+			' xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
 				'<uxap:ObjectPageLayout>' +
 					'<uxap:sections>' +
 						'<uxap:ObjectPageSection>' +
 							'<uxap:subSections>' +
-								'<uxap:ObjectPageSubSection id="subSection" title="Title 1">' +
+								'<uxap:ObjectPageSubSection id="subSection" title="Title 1" >' +
+									'<m:Button text="Subsection UI adaptation" />' +
+								'</uxap:ObjectPageSubSection>' +
+								'<uxap:ObjectPageSubSection id="invisibleSubSection" title="Title invisibleSubSection" visible="false" >' +
+									'<m:Button text="invisibleSubSection UI adaptation" />' +
 								'</uxap:ObjectPageSubSection>' +
 							'</uxap:subSections>' +
 						'</uxap:ObjectPageSection>' +
 					'</uxap:sections>' +
 				'</uxap:ObjectPageLayout>' +
-			'</mvc:View>'
-			,
+			'</mvc:View>';
+
+		rtaControlEnablingCheck("Checking the rename action for a SubSection", {
+			xmlView: XML_VIEW,
 			action: {
 				name: "rename",
 				controlId: "subSection",
@@ -107,29 +112,16 @@
 		});
 
 		// Remove and reveal actions
-		var fnConfirmSubSectionIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
-			assert.strictEqual(oViewAfterAction.byId("subSection").getVisible(), false, "then the SubSection element is invisible");
+		var fnConfirmSubSectionIsInvisible = function (sSubSectionId, oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId(sSubSectionId).getVisible(), false, "then the SubSection element is invisible");
 		};
 
-		var fnConfirmSubSectionIsVisible = function (oUiComponent, oViewAfterAction, assert) {
-			assert.strictEqual(oViewAfterAction.byId("subSection").getVisible(), true, "then the SubSection element is visible");
+		var fnConfirmSubSectionIsVisible = function (sSubSectionId, oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId(sSubSectionId).getVisible(), true, "then the SubSection element is visible");
 		};
 
 		rtaControlEnablingCheck("Checking the remove action for SubSection", {
-			xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
-			' xmlns:uxap="sap.uxap" >' +
-			'<uxap:ObjectPageLayout>' +
-			'<uxap:sections>' +
-			'<uxap:ObjectPageSection>' +
-			'<uxap:subSections>' +
-			'<uxap:ObjectPageSubSection id="subSection" title="Title 1">' +
-			'</uxap:ObjectPageSubSection>' +
-			'</uxap:subSections>' +
-			'</uxap:ObjectPageSection>' +
-			'</uxap:sections>' +
-			'</uxap:ObjectPageLayout>' +
-			'</mvc:View>'
-			,
+			xmlView: XML_VIEW,
 			action: {
 				name: "remove",
 				controlId: "subSection",
@@ -139,36 +131,23 @@
 					};
 				}
 			},
-			afterAction: fnConfirmSubSectionIsInvisible,
-			afterUndo: fnConfirmSubSectionIsVisible,
-			afterRedo: fnConfirmSubSectionIsInvisible
+			afterAction: fnConfirmSubSectionIsInvisible.bind(null, "subSection"),
+			afterUndo: fnConfirmSubSectionIsVisible.bind(null, "subSection"),
+			afterRedo: fnConfirmSubSectionIsInvisible.bind(null, "subSection")
 		});
 
 		rtaControlEnablingCheck("Checking the reveal action for a SubSection", {
-			xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
-			' xmlns:uxap="sap.uxap" >' +
-			'<uxap:ObjectPageLayout>' +
-			'<uxap:sections>' +
-			'<uxap:ObjectPageSection>' +
-			'<uxap:subSections>' +
-			'<uxap:ObjectPageSubSection id="subSection" title="Title 1" visible="false">' +
-			'</uxap:ObjectPageSubSection>' +
-			'</uxap:subSections>' +
-			'</uxap:ObjectPageSection>' +
-			'</uxap:sections>' +
-			'</uxap:ObjectPageLayout>' +
-			'</mvc:View>'
-			,
+			xmlView: XML_VIEW,
 			action: {
 				name: "reveal",
-				controlId: "subSection",
+				controlId: "invisibleSubSection",
 				parameter: function(oView){
 					return {};
 				}
 			},
-			afterAction: fnConfirmSubSectionIsVisible,
-			afterUndo: fnConfirmSubSectionIsInvisible,
-			afterRedo: fnConfirmSubSectionIsVisible
+			afterAction: fnConfirmSubSectionIsVisible.bind(null, "invisibleSubSection"),
+			afterUndo: fnConfirmSubSectionIsInvisible.bind(null, "invisibleSubSection"),
+			afterRedo: fnConfirmSubSectionIsVisible.bind(null, "invisibleSubSection")
 		});
 	});
 })();

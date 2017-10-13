@@ -33,6 +33,7 @@
 			};
 
 			rtaControlEnablingCheck("Checking the combine action for sap.m.Button", {
+				jsOnly : true,
 				xmlView :
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<Page id="page0" >' +
