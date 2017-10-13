@@ -677,6 +677,28 @@
 		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
 	});
 
+	QUnit.test("setSelectedSection to subsection", function (assert) {
+
+		var oPage = this.oObjectPage,
+			oSecondSection = oPage.getSections()[1],
+			oSecondSectionSecondSubSection = oSecondSection.getSubSections()[1],
+			done = assert.async(),
+			fnOnDomReady = function() {
+				var oExpected = {
+					oSelectedSection: oSecondSection,
+					sSelectedTitle: oSecondSection.getTitle(),
+					bSnapped: false
+				};
+
+				sectionIsSelected(oPage, assert, oExpected);
+				oPage.rerender();
+				sectionIsSelected(oPage, assert, oExpected);
+				done();
+			};
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		oPage.setSelectedSection(oSecondSectionSecondSubSection);
+	});
+
 	QUnit.module("ObjectPage API: sectionTitleLevel");
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is TitleLevel.Auto", function (assert) {
