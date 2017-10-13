@@ -1,0 +1,12 @@
+[
+	{
+		"title"	: "First Table",
+		"text"	: "Shows a list of available items that can be sorted or filtered. It is possible to drag rows to the second table and insert them there at a certain position."
+	},{
+		"title"	: "Second Table",
+		"text"	: "Shows the selected items. Sorting of the columns has been disabled. The table is sorted by a rank property. When the dragged row is dropped, the rank is changed, and the row appears at the drop position."
+	},{
+		"title"	: "Buttons",
+		"text"	: "Currently drag and drop is only a usability feature, and an accessible alternative must be provided. Therefore, buttons have been added to move rows between the tables or to reorder rows within the second table."
+	}
+]
