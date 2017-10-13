@@ -48,10 +48,13 @@ sap.ui.require([
 	 *   the XML snippet; it will be inserted below an <Edmx> element
 	 * @param {object} oExpected
 	 *   the expected JSON object
+	 * @param {boolean} bSubset
+	 *   whether the given JSON is just a subset of the real expectation, i.e. every top-level
+	 *   property that is given must exist with the exact value (deepEqual), but there may be others
 	 */
-	function testConversion(assert, sXmlSnippet, oExpected) {
+	function testConversion(assert, sXmlSnippet, oExpected, bSubset) {
 		testConversionForInclude(assert, '<edmx:DataServices m:DataServiceVersion="2.0">'
-			+ sXmlSnippet + '</edmx:DataServices>', oExpected);
+			+ sXmlSnippet + '</edmx:DataServices>', oExpected, bSubset);
 	}
 
 	/**
@@ -62,13 +65,27 @@ sap.ui.require([
 	 *   the XML snippet; it will be inserted below an <Edmx> element
 	 * @param {object} oExpected
 	 *   the expected JSON object
+	 * @param {boolean} bSubset
+	 *   whether the given JSON is just a subset of the real expectation, i.e. every top-level
+	 *   property that is given must exist with the exact value (deepEqual), but there may be others
 	 */
-	function testConversionForInclude(assert, sXmlSnippet, oExpected) {
-		var oXML = xml(assert, sEdmx + sXmlSnippet + '</edmx:Edmx>'),
+	function testConversionForInclude(assert, sXmlSnippet, oExpected, bSubset) {
+		var sProperty,
+			oXML = xml(assert, sEdmx + sXmlSnippet + '</edmx:Edmx>'),
 			oResult = _V2MetadataConverter.convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
-		oExpected.$Version = "4.0";
-		assert.deepEqual(oResult, oExpected);
+		if (bSubset) {
+			for (sProperty in oExpected) {
+				if (sProperty in oResult) {
+					assert.deepEqual(oResult[sProperty], oExpected[sProperty], sProperty);
+				} else {
+					assert.ok(false, "Missing property: " + sProperty);
+				}
+			}
+		} else {
+			oExpected.$Version = "4.0";
+			assert.deepEqual(oResult, oExpected);
+		}
 	}
 
 	/**
@@ -97,6 +114,39 @@ sap.ui.require([
 			this.oSandbox.verifyAndRestore();
 		}
 	});
+
+	//*********************************************************************************************
+	QUnit.test("convertXMLMetadata: Reference", function (assert) {
+		testConversionForInclude(assert, '\
+				<edmx:Reference Uri="/qux/$metadata">\
+					<edmx:Include Namespace="qux.foo"/>\
+					<edmx:Include Namespace="qux.bar"/>\
+					<edmx:IncludeAnnotations TermNamespace="qux.foo"/>\
+					<edmx:IncludeAnnotations TermNamespace="qux.bar" TargetNamespace="qux.bar"\
+						Qualifier="Tablet"/>\
+				</edmx:Reference>\
+				<edmx:Reference Uri="/bla/$metadata">\
+					<edmx:Include Namespace="bla"/>\
+				</edmx:Reference>',
+			{
+				"$Reference" : {
+					"/qux/$metadata" : {
+						"$Include" : ["qux.foo.", "qux.bar."],
+						"$IncludeAnnotations" : [{
+							"$TermNamespace" : "qux.foo."
+						}, {
+							"$TermNamespace" : "qux.bar.",
+							"$TargetNamespace" : "qux.bar.",
+							"$Qualifier" : "Tablet"
+						}]
+					},
+					"/bla/$metadata" : {
+						"$Include" : ["bla."]
+					}
+				}
+			});
+	});
+	// TODO look at xml:base if the Uri in Reference is relative
 
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: aliases in types", function (assert) {
@@ -140,6 +190,11 @@ sap.ui.require([
 				<Schema Namespace="foo" Alias="f"/>\
 			</edmx:DataServices>',
 			{
+				"$Reference": {
+					"/qux/$metadata": {
+						"$Include" : ["qux."]
+					}
+				},
 				"bar." : {
 					"$kind" : "Schema"
 				},
@@ -328,7 +383,7 @@ sap.ui.require([
 								FromRole="ToRole_Assoc_BusinessPartner_SalesOrders"\
 								ToRole="FromRole_Assoc_BusinessPartner_SalesOrders" />\
 					</EntityType>\
-					<Association Name="Assoc_BusinessPartner_SalesOrders" content-version="1">\
+					<Association Name="Assoc_BusinessPartner_SalesOrders">\
 						<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1"\
 							Role="FromRole_Assoc_BusinessPartner_SalesOrders" />\
 						<End Type="GWSAMPLE_BASIC.SalesOrder" Multiplicity="*"\
@@ -549,7 +604,6 @@ sap.ui.require([
 					</EntityContainer>\
 				</Schema>',
 			{
-				"$Version" : "4.0",
 				"$EntityContainer" : "foo.Container",
 				"foo." : {
 					"$kind" : "Schema"
@@ -587,7 +641,6 @@ sap.ui.require([
 					</EntityContainer>\
 				</Schema>',
 			{
-				"$Version" : "4.0",
 				"$EntityContainer" : "foo.Container",
 				"foo." : {
 					"$kind" : "Schema"
@@ -642,18 +695,25 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: test service", function (assert) {
-		var oLogMock = this.oLogMock;
+		var oLogMock = this.oLogMock,
+			sUrl = "/GWSAMPLE_BASIC/$metadata";
 
 		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
 			oLogMock.expects("warning")
 				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
 						+ "', removing this FunctionImport", undefined,
-					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+					sModuleName);
+		});
+		["filterable", "sortable"].forEach(function (sAnnotation) {
+			oLogMock.expects("warning")
+				.withExactArgs("Unsupported SAP annotation at a complex type in '" + sUrl + "'",
+					"sap:" + sAnnotation + " at property 'GWSAMPLE_BASIC.CT_String/String'",
+					sModuleName);
 		});
 
 		return Promise.all([
-			jQuery.ajax("/GWSAMPLE_BASIC/$metadata").then(function (oXML) {
-					return _V2MetadataConverter.convertXMLMetadata(oXML);
+			jQuery.ajax(sUrl).then(function (oXML) {
+					return _V2MetadataConverter.convertXMLMetadata(oXML, sUrl);
 				}),
 			jQuery.ajax("/GWSAMPLE_BASIC/metadata_v4.json")
 		]).then(function (aResults) {
@@ -1238,7 +1298,7 @@ sap.ui.require([
 				"RequiresFilter" : true
 			}
 		}
-	}, { // sap:searchable - different default values in V2 and V2
+	}, { // sap:searchable - different default values in V2 and V4
 		annotationsV2 : '',
 		expectedAnnotationsV4 : {
 			'@Org.OData.Capabilities.V1.SearchRestrictions' : {
@@ -1504,7 +1564,6 @@ sap.ui.require([
 					</Annotations>\
 				</Schema>',
 			{
-				"$Version" : "4.0",
 				"foo." : {
 					"$kind" : "Schema",
 					"$Annotations" : {
@@ -1568,7 +1627,46 @@ sap.ui.require([
 					}
 				});
 	});
-	// TODO convert sap:label at FunctionImport and Parameter
+
+	//*********************************************************************************************
+	QUnit.test("convert: sap:label at FunctionImport and Parameter", function (assert) {
+		testConversion(assert, '\
+				<Schema Namespace="foo" Alias="f">\
+					<EntityContainer Name="Container">\
+						<FunctionImport Name="FunctionImport" sap:label="LabelFunctionImport">\
+							<Parameter Name="Parameter" Type="Edm.String"\
+									sap:label="LabelParameter">\
+							</Parameter>\
+						</FunctionImport>\
+					</EntityContainer>\
+				</Schema>',
+			{
+				"$EntityContainer" : "foo.Container",
+				"foo." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"foo.Container/FunctionImport" : {
+							"@com.sap.vocabularies.Common.v1.Label" : "LabelFunctionImport"
+						}
+					}
+				},
+				"foo.Container" : {
+					"$kind" : "EntityContainer",
+					"FunctionImport" : {
+						"$kind" : "FunctionImport",
+						"$Function" : "foo.FunctionImport"
+					}
+				},
+				"foo.FunctionImport" : [{
+					"$kind" : "Function",
+					"$Parameter" : [{
+						"$Name" : "Parameter",
+						"$Type" : "Edm.String",
+						"@com.sap.vocabularies.Common.v1.Label" : "LabelParameter"
+					}]
+				}]
+			});
+	});
 	// TODO InsertRestrictions, DeleteRestrictions or UpdateRestrictions define two properties
 	// Xable and NonXableNavigationProperties (e.g. Insertable and
 	// NonInsertableNavigationProperties); take care that both can contain values and do not
@@ -1610,4 +1708,205 @@ sap.ui.require([
 				}
 			});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("sap:creatable, sap:creatable-path at NavigationProperty;"
+			+ " sap:filterable, sap:sortable at Property", function (assert) {
+		var sXML = '\
+				<Schema Namespace="GWSAMPLE_BASIC.0001" Alias="GWSAMPLE_BASIC">\
+					<ComplexType Name="Address">\
+						<Property Name="Street" Type="Edm.String" sap:filterable="false"\
+							sap:filter-restriction="interval" sap:required-in-filter="true"\
+							sap:sortable="false"/>\
+					</ComplexType>\
+					<EntityContainer Name="Container" m:IsDefaultEntityContainer="true">\
+<!-- ALL EntitySets in an EntityContainers of a Schema are handled -->\
+						<EntitySet Name="Customers" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
+							sap:creatable="false" sap:searchable="false"/>\
+						<EntitySet Name="Suppliers" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
+							sap:searchable="true"/>\
+<!-- loop over EntityContainer\'s children does not fail for non-EntitySets -->\
+						<FunctionImport Name="Foo" ReturnType="Edm.String"/>\
+					</EntityContainer>\
+<!-- EntitySets in ALL EntityContainers of a Schema are handled -->\
+					<EntityContainer Name="YetAnotherContainer">\
+						<EntitySet Name="Suppliers" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
+							sap:searchable="true"/>\
+					</EntityContainer>\
+					<EntityType Name="BusinessPartner">\
+						<Property Name="IsCreatable" Type="Edm.Boolean"/>\
+						<NavigationProperty Name="CreatableA" sap:creatable="false"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="CreatablePathA"\
+							sap:creatable-path="IsCreatable"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="ConflictA" sap:creatable="true"\
+							sap:creatable-path="n/a"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<Property Name="FilterableA" Type="Edm.String" sap:filterable="false"/>\
+						<Property Name="FilterableB" Type="Edm.String" sap:filterable="true"/>\
+						<Property Name="FilterableSortable" Type="Edm.String"\
+							sap:filterable="false" sap:sortable="false"/>\
+						<Property Name="FilterRestrictionInterval" Type="Edm.String"\
+							sap:filter-restriction="interval"/>\
+						<Property Name="FilterRestrictionMulti" Type="Edm.String"\
+							sap:filter-restriction="multi-value"/>\
+						<Property Name="FilterRestrictionSingle" Type="Edm.String"\
+							sap:filter-restriction="single-value"/>\
+						<Property Name="FilterRestrictionUnsupported" Type="Edm.String"\
+							sap:filter-restriction="unsupported"/>\
+						<Property Name="RequiredInFilterA" Type="Edm.String"\
+							sap:required-in-filter="true"/>\
+						<Property Name="RequiredInFilterB" Type="Edm.String"\
+							sap:required-in-filter="false"/>\
+						<Property Name="RequiredInFilterC" Type="Edm.String"\
+							sap:required-in-filter="true"/>\
+						<Property Name="SortableA" Type="Edm.String" sap:sortable="false"/>\
+						<Property Name="SortableB" Type="Edm.String" sap:sortable="true"/>\
+						<NavigationProperty Name="CreatableB" sap:creatable="false"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="CreatablePathB"\
+							sap:creatable-path="IsCreatable"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="ConflictB" sap:creatable="false"\
+							sap:creatable-path="n/a"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="CreatableTrue" sap:creatable="true"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+					</EntityType>\
+					<Association Name="Assoc">\
+						<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1" Role="From"/>\
+						<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="0..1" Role="To"/>\
+					</Association>\
+				</Schema>\
+<!-- EntitySets in EntityContainers of ALL Schemas are handled -->\
+				<Schema Namespace="GWSAMPLE_BASIC.0002">\
+					<EntityContainer Name="Container">\
+						<EntitySet Name="Suppliers" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
+							sap:searchable="true"/>\
+					</EntityContainer>\
+				</Schema>',
+			mAnnotations = {
+				"@com.sap.vocabularies.Common.v1.FilterExpressionRestrictions" : [{
+					"AllowedExpressions" : {
+						"EnumMember"
+							: "com.sap.vocabularies.Common.v1.FilterExpressionType/SingleInterval"
+					},
+					"Property" : {"$PropertyPath" : "FilterRestrictionInterval"}
+				}, {
+					"AllowedExpressions" : {
+						"EnumMember"
+							: "com.sap.vocabularies.Common.v1.FilterExpressionType/MultiValue"
+					},
+					"Property" : {"$PropertyPath" : "FilterRestrictionMulti"}
+				}, {
+					"AllowedExpressions" : {
+						"EnumMember"
+							: "com.sap.vocabularies.Common.v1.FilterExpressionType/SingleValue"
+					},
+					"Property" : {"$PropertyPath" : "FilterRestrictionSingle"}
+				}],
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "FilterableA"
+					}, {
+						"$PropertyPath" : "FilterableSortable"
+					}],
+					"RequiredProperties" : [{
+						"$PropertyPath" : "RequiredInFilterA"
+					}, {
+						"$PropertyPath" : "RequiredInFilterC"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"NonInsertableNavigationProperties" : [{
+						"$NavigationPropertyPath" : "CreatableA"
+					}, {
+						"$If" : [{
+							"$Not" : {
+								"$Path" : "IsCreatable"
+							}
+						}, {
+							"$NavigationPropertyPath" : "CreatablePathA"
+						}]
+					}, {
+						"$NavigationPropertyPath" : "ConflictA"
+					}, {
+						"$NavigationPropertyPath" : "CreatableB"
+					}, {
+						"$If" : [{
+							"$Not" : {
+								"$Path" : "IsCreatable"
+							}
+						}, {
+							"$NavigationPropertyPath" : "CreatablePathB"
+						}]
+					}, {
+						"$NavigationPropertyPath" : "ConflictB"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "FilterableSortable"
+					}, {
+						"$PropertyPath" : "SortableA"
+					}]
+				}
+			},
+			oExpectedResult = {
+				"GWSAMPLE_BASIC.0001." : {
+					"$Annotations" : {
+						"GWSAMPLE_BASIC.0001.Container/Customers" : jQuery.extend(true, {
+							// converted from V2 annotations at EntitySet itself
+							"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+								"Insertable" : false
+							},
+							"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+								"Searchable" : false
+							}
+						}, mAnnotations),
+						"GWSAMPLE_BASIC.0001.Container/Suppliers" : mAnnotations,
+						"GWSAMPLE_BASIC.0001.YetAnotherContainer/Suppliers" : mAnnotations
+					},
+					"$kind" : "Schema"
+				},
+				"GWSAMPLE_BASIC.0002." : {
+					"$Annotations" : {
+						"GWSAMPLE_BASIC.0002.Container/Suppliers" : mAnnotations
+					},
+					"$kind" : "Schema"
+				}
+			};
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
+				"sap:filterable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sModuleName);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
+				"sap:filter-restriction at property 'GWSAMPLE_BASIC.0001.Address/Street'",
+				sModuleName);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
+				"sap:required-in-filter at property 'GWSAMPLE_BASIC.0001.Address/Street'",
+				sModuleName);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
+				"sap:sortable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sModuleName);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
+				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
+				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictA'", sModuleName);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
+				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
+				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictB'", sModuleName);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
+				'Unsupported sap:filter-restriction="unsupported" at property'
+				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/FilterRestrictionUnsupported'",
+				sModuleName);
+		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
+	});
+	//TODO schema GWSAMPLE_BASIC.0000. with "forward reference" to EntityType processed later
+	//TODO such annotations @ (Navigation)Property @ ComplexType are not supported
 });

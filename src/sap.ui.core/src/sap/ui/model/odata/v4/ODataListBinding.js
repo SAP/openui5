@@ -525,8 +525,8 @@ sap.ui.define([
 			}
 			mQueryOptions = jQuery.extend({}, mInheritedQueryOptions, mQueryOptions);
 		}
-		return _Cache.create(this.oModel.oRequestor, sResourcePath, this.fetchType.bind(this),
-			mQueryOptions, this.oModel.bAutoExpandSelect);
+		return _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
+			this.oModel.bAutoExpandSelect);
 	};
 
 	/**

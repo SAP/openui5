@@ -44,28 +44,6 @@ sap.ui.require([
 	}
 
 	/**
-	 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
-	 *
-	 * @param {object} mModelParameters Map of parameters for model construction to enhance and
-	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
-	 *   synchronizationMode which are set by default
-	 * @param {object} oLogMock The log mock
-	 * @returns {ODataModel} The model
-	 */
-	function createModelForV2SalesOrderService(mModelParameters, oLogMock) {
-		// The following warnings are logged when the GWSAMPLE_BASIC metamodel is loaded
-		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
-			oLogMock.expects("warning")
-				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
-					+ "', removing this FunctionImport", undefined,
-					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
-		});
-
-		mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
-		return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
-	}
-
-	/**
 	 * Creates a V4 OData model for <code>TEA_BUSI</code>.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
@@ -271,6 +249,36 @@ sap.ui.require([
 					sVisibleId + ": " + JSON.stringify(sValue));
 			}
 			this.checkFinish();
+		},
+
+		/**
+		 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
+		 *
+		 * @param {object} mModelParameters Map of parameters for model construction to enhance and
+		 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+		 *   synchronizationMode which are set by default
+		 * @returns {ODataModel} The model
+		 */
+		createModelForV2SalesOrderService : function (mModelParameters) {
+			var oLogMock = this.oLogMock;
+
+			// The following warnings are logged when the GWSAMPLE_BASIC metamodel is loaded
+			["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+				oLogMock.expects("warning")
+					.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_"
+						+ sName + "', removing this FunctionImport", undefined,
+						"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+			});
+			["filterable", "sortable"].forEach(function (sAnnotation) {
+				oLogMock.expects("warning")
+					.withExactArgs("Unsupported SAP annotation at a complex type in"
+						+ " '/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata'",
+						"sap:" + sAnnotation + " at property 'GWSAMPLE_BASIC.CT_String/String'",
+						"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+			});
+
+			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+			return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
 		},
 
 		/**
@@ -2774,9 +2782,9 @@ sap.ui.require([
 		</items>\
 	</Table>\
 </FlexBox>',
-			oModel = createModelForV2SalesOrderService({
+			oModel = this.createModelForV2SalesOrderService({
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
-			}, this.oLogMock);
+			});
 
 		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
 				"&$select=ToLineItems/ItemPosition,SalesOrderID",
@@ -2819,9 +2827,9 @@ sap.ui.require([
 		</ColumnListItem>\
 	</items>\
 </Table>',
-			oModel = createModelForV2SalesOrderService({
+			oModel = this.createModelForV2SalesOrderService({
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
-			}, this.oLogMock);
+			});
 
 		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID" +
 				"&$skip=0&$top=100",
@@ -2839,14 +2847,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: test conversion of $filter for V2 Adapter
-	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
-	QUnit.test("V2 Adapter: $filter", function (assert) {
-		var sView = '\
+	[{
+		binding : "CreatedAt ge 2017-05-23T00:00:00Z",
+		request : "CreatedAt%20ge%20datetime'2017-05-23T00:00:00'"
+	}, {
+		binding : "Note eq null",
+		request : "Note%20eq%20null"
+	}].forEach(function (oFixture) {
+		// Scenario: test conversion of $filter for V2 Adapter
+		// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+		QUnit.test("V2 Adapter: $filter=" + oFixture.binding, function (assert) {
+			var sView = '\
 <Table id="table" items="{path :\'/SalesOrderSet\',\
 		parameters : {\
 			$select : \'SalesOrderID\',\
-			$filter : \'Note eq \\\'foo\\\'\'\
+			$filter : \'' + oFixture.binding + '\'\
 		}}">\
 	<items>\
 		<ColumnListItem>\
@@ -2857,19 +2872,19 @@ sap.ui.require([
 	</items>\
 </Table>';
 
-		this.expectRequest("SalesOrderSet?$filter=Note%20eq%20'foo'&$select=SalesOrderID" +
-			"&$skip=0&$top=100",
-			{
-				"value" : [
-					{"SalesOrderID" : "0500000001"},
-					{"SalesOrderID" : "0500000002"},
-					{"SalesOrderID" : "0500000003"}
-				]
-			})
-			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+			this.expectRequest("SalesOrderSet?$filter=" + oFixture.request + "&$select=SalesOrderID"
+					+ "&$skip=0&$top=100",
+				{"value" : [
+						{"SalesOrderID" : "0500000001"},
+						{"SalesOrderID" : "0500000002"},
+						{"SalesOrderID" : "0500000003"}
+					]
+				})
+				.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
 
-		// code under test
-		return this.createView(assert, sView, createModelForV2SalesOrderService({}, this.oLogMock));
+			// code under test
+			return this.createView(assert, sView, this.createModelForV2SalesOrderService());
+		});
 	});
 
 	//*********************************************************************************************

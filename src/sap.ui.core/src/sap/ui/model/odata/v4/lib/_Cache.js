@@ -176,19 +176,14 @@ sap.ui.define([
 	 *   The requestor
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL
-	 * @param {function} fnFetchType
-	 *   A function taking a path as parameter and returning a sync promise resolving with the
-	 *   related type from the metadata. The path must start with <code>sResourcePath</code> and may
-	 *   be followed by structural or navigation properties.
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 */
-	function Cache(oRequestor, sResourcePath, fnFetchType, mQueryOptions, bSortExpandSelect) {
+	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
 		this.bActive = true;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
-		this.fnFetchType = fnFetchType;
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.oRequestor = oRequestor;
@@ -504,7 +499,7 @@ sap.ui.define([
 				sPropertyPath += "/";
 			}
 			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
-			sPropertyType = that.fnFetchType(sPropertyPath, true).getResult();
+			sPropertyType = that.oRequestor.fetchTypeForPath(sPropertyPath, true).getResult();
 			if (sPropertyType === "Edm.Stream") {
 				sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
 				sServiceUrl = that.oRequestor.getServiceUrl();
@@ -608,7 +603,7 @@ sap.ui.define([
 		 *   or complex type)
 		 */
 		function fetchType(sPath) {
-			aPromises.push(that.fnFetchType(sPath).then(function (oType) {
+			aPromises.push(that.oRequestor.fetchTypeForPath(sPath).then(function (oType) {
 				if (oType.$Key) {
 					mTypeForPath[sPath] = oType;
 				}
@@ -901,17 +896,12 @@ sap.ui.define([
 	 *   The requestor
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL
-	 * @param {function} fnFetchType
-	 *   A function taking a path as parameter and returning a sync promise resolving with the
-	 *   related type from the metadata. The path must start with <code>sResourcePath</code> and may
-	 *   be followed by structural or navigation properties.
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 */
-	function CollectionCache(oRequestor, sResourcePath, fnFetchType, mQueryOptions,
-			bSortExpandSelect) {
+	function CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
 		Cache.apply(this, arguments);
 
 		this.sContext = undefined;         // the "@odata.context" from the responses
@@ -1058,7 +1048,7 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 */
 	function PropertyCache(oRequestor, sResourcePath, mQueryOptions) {
-		Cache.call(this, oRequestor, sResourcePath, undefined, mQueryOptions);
+		Cache.call(this, oRequestor, sResourcePath, mQueryOptions);
 
 		this.oPromise = null;
 	}
@@ -1144,10 +1134,6 @@ sap.ui.define([
 	 *   The requestor
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL
-	 * @param {function} fnFetchType
-	 *   A function taking a path as parameter and returning a sync promise resolving with the
-	 *   related type from the metadata. The path must start with <code>sResourcePath</code> and may
-	 *   be followed by structural or navigation properties.
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
@@ -1157,8 +1143,7 @@ sap.ui.define([
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
 	 *   error.
 	 */
-	function SingleCache(oRequestor, sResourcePath, fnFetchType, mQueryOptions, bSortExpandSelect,
-			bPost) {
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost) {
 		Cache.apply(this, arguments);
 
 		this.bPost = bPost;
@@ -1279,10 +1264,6 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL; it must not contain a query string<br>
 	 *   Example: Products
-	 * @param {function} fnFetchType
-	 *   A function taking a path as parameter and returning a sync promise resolving with the
-	 *   related type from the metadata. The path must start with <code>sResourcePath</code> and may
-	 *   be followed by structural or navigation properties.
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
@@ -1295,10 +1276,8 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.create = function (oRequestor, sResourcePath, fnFetchType, mQueryOptions,
-			bSortExpandSelect) {
-		return new CollectionCache(oRequestor, sResourcePath, fnFetchType, mQueryOptions,
-			bSortExpandSelect);
+	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
+		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
 	};
 
 	/**
@@ -1331,10 +1310,6 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL; it must not contain a query string<br>
 	 *   Example: Products
-	 * @param {function} fnFetchType
-	 *   A function taking a path as parameter and returning a sync promise resolving with the
-	 *   related type from the metadata. The path must start with <code>sResourcePath</code> and may
-	 *   be followed by structural or navigation properties.
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
@@ -1351,10 +1326,9 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.createSingle = function (oRequestor, sResourcePath, fnFetchType, mQueryOptions,
-			bSortExpandSelect, bPost) {
-		return new SingleCache(oRequestor, sResourcePath, fnFetchType, mQueryOptions,
-			bSortExpandSelect, bPost);
+	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			bPost) {
+		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost);
 	};
 
 	/**

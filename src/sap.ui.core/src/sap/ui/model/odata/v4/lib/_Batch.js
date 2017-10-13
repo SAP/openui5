@@ -304,7 +304,7 @@ sap.ui.define([
 		 *   returned responses has the following structure:
 		 *   <ul>
 		 *     <li><code>status</code>: {number} HTTP status code
-		 *     <li><code>statusText</code>: {string} HTTP status text
+		 *     <li><code>statusText</code>: {string} (optional) HTTP status text
 		 *     <li><code>headers</code>: {object} Map of the response headers
 		 *     <li><code>responseText</code>: {string} Response body
 		 *   </ul>

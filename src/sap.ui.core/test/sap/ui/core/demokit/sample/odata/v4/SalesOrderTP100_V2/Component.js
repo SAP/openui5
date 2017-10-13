@@ -49,14 +49,11 @@ sap.ui.define([
 						"$metadata" : {
 							source : "metadataV2.xml"
 						},
-						"SEPM_C_SLSORDER_TP_100?$expand=to_Item&$filter=SalesOrder%20ge%20'500000000'&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID,to_Item/GrossAmount,to_Item/Product,to_Item/SalesOrder,to_Item/SalesOrderItem,to_Item/SalesOrderItemUUID,to_Item/SalesOrderUUID&$skip=0&$top=5" : {
+						"SEPM_C_SLSORDER_TP_100?$inlinecount=allpages&$expand=to_Item&$filter=SalesOrder%20ge%20'500000000'&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID,to_Item/GrossAmount,to_Item/Product,to_Item/SalesOrder,to_Item/SalesOrderItem,to_Item/SalesOrderItemUUID,to_Item/SalesOrderUUID&$skip=0&$top=5" : {
 							source : "SEPM_C_SLSORDER_TP_100_Skip0_Top5_V2.json"
 						},
-						"SEPM_C_SLSORDER_TP_100?$expand=to_Item&$filter=SalesOrder%20ge%20'500000000'&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID,to_Item/GrossAmount,to_Item/Product,to_Item/SalesOrder,to_Item/SalesOrderItem,to_Item/SalesOrderItemUUID,to_Item/SalesOrderUUID&$skip=5&$top=5" : {
+						"SEPM_C_SLSORDER_TP_100?$inlinecount=allpages&$expand=to_Item&$filter=SalesOrder%20ge%20'500000000'&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID,to_Item/GrossAmount,to_Item/Product,to_Item/SalesOrder,to_Item/SalesOrderItem,to_Item/SalesOrderItemUUID,to_Item/SalesOrderUUID&$skip=5&$top=5" : {
 							source : "SEPM_C_SLSORDER_TP_100_Skip5_Top5_V2.json"
-						},
-						"SEPM_C_SLSORDER_TP_100?$expand=to_Item&$filter=SalesOrder%20ge%20'500000000'&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID,to_Item/GrossAmount,to_Item/Product,to_Item/SalesOrder,to_Item/SalesOrderItem,to_Item/SalesOrderItemUUID,to_Item/SalesOrderUUID&$skip=10&$top=5" : {
-							source : "noData_V2.json"
 						}
 					}, "sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/data", sServiceUrl);
 			}

@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"jquery.sap.global",
+	"./_Helper",
 	"./_MetadataConverter"
-], function (jQuery, _MetadataConverter) {
+], function (jQuery, _Helper, _MetadataConverter) {
 	"use strict";
 
 	var V2MetadataConverter,
@@ -254,6 +255,16 @@ sap.ui.define([
 			}
 		},
 		oFullConfig = {
+			"Reference" : {
+				__processor : _MetadataConverter.processReference,
+				__include : [_MetadataConverter.oAnnotationConfig],
+				"Include" : {
+					__processor : _MetadataConverter.processInclude
+				},
+				"IncludeAnnotations" : {
+					__processor : _MetadataConverter.processIncludeAnnotations
+				}
+			},
 			"DataServices" : {
 				__processor : processDataServices,
 				"Schema" : {
@@ -334,7 +345,7 @@ sap.ui.define([
 			i,
 			n = aAttributes.length;
 
-		if (sKind === "EntityType") {
+		if (sKind === "EntityType" || sKind === "FunctionImport") {
 			setAnnotation(mAnnotations, "label", oElement.getAttributeNS(sSapNamespace, "label"));
 		} else {
 			for (i = 0; i < n; i++) {
@@ -552,6 +563,31 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function postProcessSchema(oElement, aResult, oAggregate) {
+		var mAnnotations,
+			oEntityContainer,
+			sEntityContainerName,
+			oEntitySet,
+			sEntitySetName,
+			sTarget;
+
+		for (sEntityContainerName in oAggregate.mEntityContainersOfSchema) {
+			oEntityContainer = oAggregate.mEntityContainersOfSchema[sEntityContainerName];
+
+			for (sEntitySetName in oEntityContainer) {
+				oEntitySet = oEntityContainer[sEntitySetName];
+				if (oEntitySet.$kind !== "EntitySet") {
+					continue;
+				}
+				sTarget = sEntityContainerName + "/" + sEntitySetName;
+				mAnnotations = jQuery.extend(true,
+					oAggregate.convertedV2Annotations[sTarget] || {},
+					oAggregate.mEntityType2EntitySetAnnotation[oEntitySet.$Type]);
+				if (Object.keys(mAnnotations).length) {
+					oAggregate.convertedV2Annotations[sTarget] = mAnnotations;
+				}
+			}
+		}
+
 		if (oAggregate.schema.$Annotations) {
 			V2MetadataConverter.mergeAnnotations(oAggregate.convertedV2Annotations,
 				oAggregate.schema.$Annotations);
@@ -560,6 +596,7 @@ sap.ui.define([
 		}
 
 		oAggregate.convertedV2Annotations = {}; // reset schema annotations for next schema
+		oAggregate.mEntityContainersOfSchema = {};
 	}
 
 	/**
@@ -660,7 +697,8 @@ sap.ui.define([
 	function processEntityContainer(oElement, oAggregate) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
 
-		oAggregate.result[sQualifiedName] = oAggregate.entityContainer = {
+		oAggregate.mEntityContainersOfSchema[sQualifiedName]
+			= oAggregate.result[sQualifiedName] = oAggregate.entityContainer = {
 			"$kind" : "EntityContainer"
 		};
 		if (oElement.getAttributeNS(sMicrosoftNamespace, "IsDefaultEntityContainer") === "true") {
@@ -758,7 +796,9 @@ sap.ui.define([
 		// processParameter adds to this. This avoids that parameters belonging to a removed
 		// FunctionImport are added to the predecessor.
 		oAggregate.function = oFunction;
-		V2MetadataConverter.annotatable(oAggregate, oFunctionImport);
+		V2MetadataConverter.annotatable(oAggregate, sName);
+
+		convertAnnotations(oElement, oAggregate, "FunctionImport");
 	}
 
 	/**
@@ -768,6 +808,7 @@ sap.ui.define([
 	 */
 	function processParameter(oElement, oAggregate) {
 		var oFunction = oAggregate.function,
+			sLabel,
 			oParameter = {
 				$Name : oElement.getAttribute("Name")
 			};
@@ -777,6 +818,11 @@ sap.ui.define([
 
 		V2MetadataConverter.getOrCreateArray(oFunction, "$Parameter").push(oParameter);
 		V2MetadataConverter.annotatable(oAggregate, oParameter);
+
+		sLabel = oElement.getAttributeNS(sSapNamespace, "label");
+		if (sLabel) {
+			oParameter[mV2toV4["label"].term] = sLabel;
+		}
 	}
 
 	/**
@@ -819,6 +865,7 @@ sap.ui.define([
 	function processType(oElement, oAggregate, oType) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
 
+		oAggregate.sTypeName = sQualifiedName;
 		oAggregate.result[sQualifiedName] = oAggregate.type = oType;
 		V2MetadataConverter.annotatable(oAggregate, sQualifiedName);
 	}
@@ -872,7 +919,11 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypeNavigationProperty(oElement, oAggregate) {
-		var sName = oElement.getAttribute("Name"),
+		var sCreatable = oElement.getAttributeNS(sSapNamespace, "creatable"),
+			sCreatablePath = oElement.getAttributeNS(sSapNamespace, "creatable-path"),
+			vHere,
+			sName = oElement.getAttribute("Name"),
+			oNavigationPropertyPath,
 			oProperty = {
 				$kind : "NavigationProperty"
 			};
@@ -886,6 +937,35 @@ sap.ui.define([
 			propertyName : sName,
 			toRoleName : oElement.getAttribute("ToRole")
 		});
+
+		V2MetadataConverter.annotatable(oAggregate, sName);
+		if (sCreatable) {
+			oNavigationPropertyPath = {"$NavigationPropertyPath" : sName};
+			if (sCreatablePath) {
+				jQuery.sap.log.warning("Inconsistent metadata in '" + oAggregate.url + "'",
+					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property '"
+					+ oAggregate.annotatable.path + "'", sModuleName);
+			} else if (sCreatable === "true") {
+				oNavigationPropertyPath = null;
+			}
+		} else if (sCreatablePath) {
+			oNavigationPropertyPath = {
+				"$If" : [{
+					"$Not" : {"$Path" : sCreatablePath}
+				}, {
+					"$NavigationPropertyPath" : sName
+				}]
+			};
+		}
+		if (oNavigationPropertyPath) {
+			vHere = V2MetadataConverter.getOrCreateObject(
+				oAggregate.mEntityType2EntitySetAnnotation, oAggregate.sTypeName);
+			vHere = V2MetadataConverter.getOrCreateObject(
+				vHere, "@Org.OData.Capabilities.V1.InsertRestrictions");
+			vHere = V2MetadataConverter.getOrCreateArray(
+				vHere, "NonInsertableNavigationProperties");
+			vHere.push(oNavigationPropertyPath);
+		}
 	}
 
 	/**
@@ -894,18 +974,91 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypeProperty(oElement, oAggregate) {
-		var sName = oElement.getAttribute("Name"),
+		var sEnumMember,
+			sFilterable = oElement.getAttributeNS(sSapNamespace, "filterable"),
+			sFilterRestriction = oElement.getAttributeNS(sSapNamespace, "filter-restriction"),
+			vHere,
+			sName = oElement.getAttribute("Name"),
 			oProperty = {
 				"$kind" : "Property"
-			};
+			},
+			sRequiredInFilter = oElement.getAttributeNS(sSapNamespace, "required-in-filter"),
+			sSortable = oElement.getAttributeNS(sSapNamespace, "sortable");
 
+		/*
+		 * Assumes that the given annotation term applies to all <EntitySet>s using the current
+		 * <EntityType>. The term's value is a record that contains an array-valued property with
+		 * the given name. Pushes a <code>$PropertyPath</code> pointing to the current <Property>
+		 * element to that array.
+		 */
+		function pushPropertyPath(sTerm, sProperty, sAnnotation) {
+			if (oAggregate.type.$kind === "EntityType") {
+				vHere = V2MetadataConverter.getOrCreateObject(
+					oAggregate.mEntityType2EntitySetAnnotation, oAggregate.sTypeName);
+				vHere = V2MetadataConverter.getOrCreateObject(vHere, sTerm);
+				vHere = V2MetadataConverter.getOrCreateArray(vHere, sProperty);
+				vHere.push({"$PropertyPath" : sName});
+			} else {
+				jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
+					+ oAggregate.url + "'", "sap:" + sAnnotation + " at property '"
+					+ oAggregate.annotatable.path + "'", sModuleName);
+			}
+		}
+
+		oAggregate.type[sName] = oProperty;
 		V2MetadataConverter.processFacetAttributes(oElement, oProperty);
 		processTypedCollection(oElement.getAttribute("Type"), oProperty, oAggregate, oElement);
 
-		oAggregate.type[sName] = oProperty;
 		V2MetadataConverter.annotatable(oAggregate, sName);
-
 		convertAnnotations(oElement, oAggregate, "Property");
+		if (sFilterable === "false") {
+			pushPropertyPath("@Org.OData.Capabilities.V1.FilterRestrictions",
+				"NonFilterableProperties", "filterable");
+		}
+		if (sFilterRestriction) {
+			switch (sFilterRestriction) {
+				case "interval":
+					sEnumMember = "SingleInterval";
+					break;
+				case "multi-value":
+					sEnumMember = "MultiValue";
+					break;
+				case "single-value":
+					sEnumMember = "SingleValue";
+					break;
+				default:
+					jQuery.sap.log.warning("Inconsistent metadata in '" + oAggregate.url + "'",
+						"Unsupported sap:filter-restriction=\"" + sFilterRestriction
+						+ "\" at property '" + oAggregate.annotatable.path + "'", sModuleName);
+			}
+			if (sEnumMember) {
+				if (oAggregate.type.$kind === "EntityType") {
+					vHere = V2MetadataConverter.getOrCreateObject(
+						oAggregate.mEntityType2EntitySetAnnotation, oAggregate.sTypeName);
+					vHere = V2MetadataConverter.getOrCreateArray(
+						vHere, "@com.sap.vocabularies.Common.v1.FilterExpressionRestrictions");
+					vHere.push({
+						"AllowedExpressions" : {
+							"EnumMember"
+							: "com.sap.vocabularies.Common.v1.FilterExpressionType/" + sEnumMember
+						},
+						"Property" : {"$PropertyPath" : sName}
+					});
+				} else {
+					jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
+						+ oAggregate.url + "'", "sap:filter-restriction at property '"
+						+ oAggregate.annotatable.path + "'", sModuleName);
+				}
+			}
+		}
+		if (sRequiredInFilter === "true") {
+			pushPropertyPath("@Org.OData.Capabilities.V1.FilterRestrictions", "RequiredProperties",
+				"required-in-filter");
+		}
+		if (sSortable === "false") {
+			pushPropertyPath("@Org.OData.Capabilities.V1.SortRestrictions",
+				"NonSortableProperties", "sortable");
+		}
 	}
 
 	/**
@@ -1041,7 +1194,10 @@ sap.ui.define([
 				"convertedV2Annotations" : {},
 				"defaultEntityContainer" : null, // the name of the default EntityContainer
 				"entityContainer" : null, // the current EntityContainer
+				mEntityContainersOfSchema : {}, // all EntityContainers of current Schema by name
 				"entitySet" : null, // the current EntitySet
+				// converted V2 annotations for EntitySets, identified by EntityType's name
+				mEntityType2EntitySetAnnotation : {},
 				"function" : null, // the current function
 				"namespace" : null, // the namespace of the current Schema
 				"navigationProperties" : [], // a list of navigation property data
@@ -1049,6 +1205,7 @@ sap.ui.define([
 				"processTypedCollection" : processTypedCollection,
 				"schema" : null, // the current Schema
 				"type" : null, // the current EntityType/ComplexType
+				sTypeName : null, // the name of the current EntityType/ComplexType
 				"result" : {
 					"$Version" : "4.0" // The result of the conversion is a V4 streamlined JSON
 				},
