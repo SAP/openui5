@@ -402,9 +402,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * Check whether expanded list data is available and can be used
 	 *
 	 * @private
+	 * @param {boolean} bSkipReloadNeeded Don't check whether reload of expanded data is needed
 	 * @return {boolean} Whether expanded data is available and will be used
 	 */
-	ODataListBinding.prototype.checkExpandedList = function() {
+	ODataListBinding.prototype.checkExpandedList = function(bSkipReloadNeeded) {
 		// if nested list is already available and no filters or sorters are set, use the data and don't send additional requests
 		// $expand loads all associated entities, no paging parameters possible, so we can safely assume all data is available
 		var bResolves = !!this.oModel.resolve(this.sPath, this.oContext),
@@ -420,7 +421,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this.aExpandRefs = oRef;
 			if (Array.isArray(oRef)) {
 				// For performance, only check first and last entry, whether reload is needed
-				if (this.oModel._isReloadNeeded("/" + oRef[0], this.mParameters) || this.oModel._isReloadNeeded("/" + oRef[oRef.length - 1], this.mParameters)) {
+				if (!bSkipReloadNeeded && (this.oModel._isReloadNeeded("/" + oRef[0], this.mParameters) || this.oModel._isReloadNeeded("/" + oRef[oRef.length - 1], this.mParameters))) {
 					this.bUseExpandedList = false;
 					this.aExpandRefs = undefined;
 					return false;
@@ -892,11 +893,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		}
 		this.bIgnoreSuspend = false;
 
+		// Don't update while request is pending
+		if (this.bPendingRequest) {
+			return;
+		}
+
 		if (!bForceUpdate && !this.bNeedsUpdate) {
 
 			// check if expanded data has been changed
 			aOldRefs = this.aExpandRefs;
-			this.checkExpandedList();
+			this.checkExpandedList(true);
 			if (!jQuery.sap.equal(aOldRefs, this.aExpandRefs)) {
 				bChangeDetected = true;
 			} else if (mChangedEntities) {
