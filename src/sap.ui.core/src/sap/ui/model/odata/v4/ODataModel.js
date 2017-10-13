@@ -225,16 +225,19 @@ sap.ui.define([
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
-						this.mUriParameters,
-						this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
-						function (sPath) {
-							return that.oMetaModel.fetchObject(that.oMetaModel.getMetaPath(sPath));
-						},
-						this.getGroupProperty.bind(this),
-						function (sGroupId) {
-							if (that.isAutoGroup(sGroupId)) {
-								sap.ui.getCore().addPrerenderingTask(
-									that._submitBatch.bind(that, sGroupId));
+						this.mUriParameters, {
+							fnFetchEntityContainer :
+								this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
+							fnFetchMetadata : function (sPath) {
+								return that.oMetaModel.fetchObject(
+									that.oMetaModel.getMetaPath(sPath));
+							},
+							fnGetGroupProperty : this.getGroupProperty.bind(this),
+							fnOnCreateGroup : function (sGroupId) {
+								if (that.isAutoGroup(sGroupId)) {
+									sap.ui.getCore().addPrerenderingTask(
+										that._submitBatch.bind(that, sGroupId));
+								}
 							}
 						}, sODataVersion);
 
@@ -688,12 +691,14 @@ sap.ui.define([
 	 * Note: The parameters <code>mParameters</code>, <code>fnCallBack</code>, and
 	 * <code>bReload</code> from {@link sap.ui.model.Model#createBindingContext} are not supported.
 	 *
-	 * It is possible to create binding contexts pointing to metadata.  A '#' in the resolved path
-	 * splits it into two parts: The part before '#' is transformed into a metadata context (see
-	 * {@link sap.ui.model.odata.v4.ODataMetaModel#getMetaContext}). The part following '#' is then
-	 * interpreted relative to this metadata context, even if it starts with a '/'; a trailing '/'
-	 * is allowed here, see {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the
-	 * effect it has.
+	 * It is possible to create binding contexts pointing to metadata.  A '##' is recognized
+	 * as separator in the resolved path and splits it into two parts; note that '#' may also be
+	 * used as separator but is deprecated since 1.51.
+	 * The part before the separator is transformed into a metadata context (see
+	 * {@link sap.ui.model.odata.v4.ODataMetaModel#getMetaContext}). The part following the
+	 * separator is then interpreted relative to this metadata context, even if it starts with
+	 * a '/'; a trailing '/' is allowed here, see
+	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the effect it has.
 	 *
 	 * Examples:
 	 * <ul>
@@ -744,6 +749,9 @@ sap.ui.define([
 		if (iSeparator >= 0) {
 			sDataPath = sResolvedPath.slice(0, iSeparator);
 			sMetaPath = sResolvedPath.slice(iSeparator + 1);
+			if (sMetaPath[0] === "#") {
+				sMetaPath = sMetaPath.slice(1);
+			}
 			if (sMetaPath[0] === "/") {
 				sMetaPath = "." + sMetaPath;
 			}

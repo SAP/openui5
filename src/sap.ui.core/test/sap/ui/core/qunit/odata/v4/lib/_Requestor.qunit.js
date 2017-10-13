@@ -112,10 +112,12 @@ sap.ui.require([
 		groupId : "unknown", submitMode : "API"
 	}].forEach(function (oFixture) {
 		QUnit.test("getGroupSubmitMode, success" + oFixture.groupId, function (assert) {
-			var oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-					undefined, defaultGetGroupProperty);
+			var oModelInterface = {
+					fnGetGroupProperty : defaultGetGroupProperty
+				},
+				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, oModelInterface);
 
-			this.mock(oRequestor).expects("fnGetGroupProperty")
+			this.mock(oModelInterface).expects("fnGetGroupProperty")
 				.withExactArgs(oFixture.groupId, "submit")
 				.returns(oFixture.submitMode);
 
@@ -159,10 +161,8 @@ sap.ui.require([
 
 		QUnit.test(sTest, function (assert) {
 			var sBuildQueryResult = "foo",
-				fnFetchEntityContainer = function () {},
-				fnFetchMetadata = function () {},
 				mHeaders = {},
-				fnOnCreateGroup = function () {},
+				oModelInterface = {},
 				mQueryParams = {},
 				oRequestor;
 
@@ -171,19 +171,14 @@ sap.ui.require([
 				.returns(sBuildQueryResult);
 
 			// code under test
-			oRequestor = _Requestor.create(sServiceUrl, mHeaders, mQueryParams,
-				fnFetchEntityContainer, fnFetchMetadata, defaultGetGroupProperty, fnOnCreateGroup,
+			oRequestor = _Requestor.create(sServiceUrl, mHeaders, mQueryParams, oModelInterface,
 				oFixture.sODataVersion);
 
 			assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl, "parameter sServiceUrl");
 			assert.strictEqual(oRequestor.mHeaders, mHeaders, "parameter mHeaders");
 			assert.strictEqual(oRequestor.sQueryParams, sBuildQueryResult,
 				"parameter mQueryParams");
-			assert.strictEqual(oRequestor.fnFetchEntityContainer, fnFetchEntityContainer);
-			assert.strictEqual(oRequestor.fnFetchMetadata, fnFetchMetadata);
-			assert.strictEqual(oRequestor.fnGetGroupProperty, defaultGetGroupProperty);
-			assert.strictEqual(oRequestor.fnOnCreateGroup, fnOnCreateGroup,
-				"parameter fnOnCreateGroup");
+			assert.strictEqual(oRequestor.oModelInterface, oModelInterface);
 			// OData version specific header maps
 			assert.deepEqual(oRequestor.mFinalHeaders, oFixture.mFinalHeaders, "mFinalHeaders");
 			assert.deepEqual(oRequestor.mPredefinedPartHeaders, oFixture.mPredefinedPartHeaders,
@@ -229,10 +224,11 @@ sap.ui.require([
 		var oChangedPayload = {"foo" : 42},
 			oPayload = {},
 			oPromise,
-			fnOnCreateGroup = sinon.spy(),
 			oRequestor = _Requestor.create(sServiceUrl, undefined, {
 				"foo" : "URL params are ignored for normal requests"
-			}, undefined, undefined, defaultGetGroupProperty, fnOnCreateGroup),
+			}, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}),
 			oResult = {},
 			fnSubmit = sinon.spy();
 
@@ -281,9 +277,9 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oConvertedResponse = {},
-				fnGetGroupProperty = function() {return "Direct";},
-				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-					undefined, fnGetGroupProperty, undefined, oFixture.sODataVersion),
+				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
+						fnGetGroupProperty : defaultGetGroupProperty
+					}, oFixture.sODataVersion),
 				oResponsePayload = {};
 
 			this.mock(jQuery).expects("ajax")
@@ -292,9 +288,9 @@ sap.ui.require([
 					headers : sinon.match(oFixture.mExpectedRequestHeaders),
 					method : "GET"
 				}).returns(createMock(assert, oResponsePayload, "OK"));
-			this.mock(oRequestor).expects("doFetchV4Response")
+			this.mock(oRequestor).expects("doConvertResponse")
 				.withExactArgs(oResponsePayload)
-				.returns(_SyncPromise.resolve(oConvertedResponse));
+				.returns(oConvertedResponse);
 
 			// code under test
 			return oRequestor.request("GET", "Employees", "$direct")
@@ -307,16 +303,17 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request: fail to convert payload, $direct", function (assert) {
 		var oError = {},
-			oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty, undefined, "2.0"),
+			oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}, "2.0"),
 			oResponsePayload = {};
 
 		this.mock(jQuery).expects("ajax")
 			.withArgs(sServiceUrl + "Employees")
 			.returns(createMock(assert, oResponsePayload, "OK"));
-		this.mock(oRequestor).expects("doFetchV4Response")
+		this.mock(oRequestor).expects("doConvertResponse")
 			.withExactArgs(oResponsePayload)
-			.returns(_SyncPromise.resolve(Promise.reject(oError)));
+			.throws(oError);
 
 		// code under test
 		return oRequestor.request("GET", "Employees", "$direct")
@@ -339,8 +336,9 @@ sap.ui.require([
 				+ oFixture.sODataVersion;
 
 		QUnit.test(sTitle, function (assert) {
-			var oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-					undefined, defaultGetGroupProperty, undefined, oFixture.sODataVersion),
+			var oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
+					fnGetGroupProperty : defaultGetGroupProperty
+				}, oFixture.sODataVersion),
 				oAjaxResponse = {},
 				oDeserializeBatchResponse = {};
 
@@ -359,7 +357,7 @@ sap.ui.require([
 			this.mock(_Batch).expects("deserializeBatchResponse")
 				.withExactArgs("application/json", oAjaxResponse)
 				.returns(oDeserializeBatchResponse);
-			this.mock(oRequestor).expects("doFetchV4Response").never();
+			this.mock(oRequestor).expects("doConvertResponse").never();
 
 			// code under test
 			return oRequestor
@@ -403,14 +401,14 @@ sap.ui.require([
 					$submit : undefined
 				}],
 				oGetProductsPromise,
-				fnGetGroupProperty = function () {return "Auto";},
-				oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-					undefined, fnGetGroupProperty, undefined, oFixture.sODataVersion),
+				oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+					fnGetGroupProperty : defaultGetGroupProperty
+				}, oFixture.sODataVersion),
 				oRequestorMock = this.mock(oRequestor);
 
-			oRequestorMock.expects("doFetchV4Response")
+			oRequestorMock.expects("doConvertResponse")
 				.withExactArgs(oFixture.mProductsResponse) // not same; it is stringified and parsed
-				.returns(_SyncPromise.resolve(Promise.resolve(oConvertedPayload)));
+				.returns(oConvertedPayload);
 			oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
 				.then(function (oResponse) {
 					assert.strictEqual(oResponse, oConvertedPayload);
@@ -431,14 +429,15 @@ sap.ui.require([
 	QUnit.test("submitBatch: fail to convert payload", function (assert) {
 		var oError = {},
 			oGetProductsPromise,
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty, undefined, "2.0"),
+			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}, "2.0"),
 			oRequestorMock = this.mock(oRequestor),
 			oResponse = {d : {foo : "bar"}};
 
-		oRequestorMock.expects("doFetchV4Response")
+		oRequestorMock.expects("doConvertResponse")
 			.withExactArgs(oResponse)
-			.returns(_SyncPromise.resolve(Promise.reject(oError)));
+			.throws(oError);
 		oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
 			.then(function () {
 				assert.notOk("Unexpected success");
@@ -482,8 +481,9 @@ sap.ui.require([
 			var mDefaultHeaders = clone(mHeaders.defaultHeaders),
 				oPromise,
 				mRequestHeaders = clone(mHeaders.requestHeaders),
-				oRequestor = _Requestor.create(sServiceUrl, mDefaultHeaders, undefined, undefined,
-					undefined, defaultGetGroupProperty),
+				oRequestor = _Requestor.create(sServiceUrl, mDefaultHeaders, undefined, {
+					fnGetGroupProperty : defaultGetGroupProperty
+				}),
 				oResult = {},
 				// add predefined request headers for OData V4
 				mResultHeaders = jQuery.extend({}, {
@@ -522,8 +522,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request(), fnOnCreateGroup", function (assert) {
 		var fnOnCreateGroup = sinon.spy(),
-			oRequestor = _Requestor.create("/", {}, {}, undefined, undefined,
-				defaultGetGroupProperty, fnOnCreateGroup);
+			oRequestor = _Requestor.create("/", {}, {}, {
+				fnGetGroupProperty : defaultGetGroupProperty,
+				fnOnCreateGroup : fnOnCreateGroup
+			});
 
 		oRequestor.request("GET", "SalesOrders", "groupId");
 		oRequestor.request("GET", "SalesOrders", "groupId");
@@ -534,12 +536,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(), fnGetGroupProperty", function (assert) {
-		var fnGetGroupProperty = function () {},
-			oRequestor = _Requestor.create("/", {}, {}, undefined, undefined, fnGetGroupProperty);
+		var oModelInterface = {
+				fnGetGroupProperty : function () {}
+			},
+			oRequestor = _Requestor.create("/", {}, {}, oModelInterface);
 
-		assert.strictEqual(oRequestor.fnGetGroupProperty, fnGetGroupProperty);
-
-		this.mock(oRequestor).expects("fnGetGroupProperty")
+		this.mock(oModelInterface).expects("fnGetGroupProperty")
 			.withExactArgs("groupId", "submit")
 			.returns("API");
 
@@ -549,8 +551,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(), store CSRF token from server", function (assert) {
-		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, undefined,
-				defaultGetGroupProperty);
+		var oRequestor = _Requestor.create("/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		this.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
@@ -562,9 +565,10 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request(), keep old CSRF token in case no one is sent", function (assert) {
-		var oRequestor = _Requestor.create("/", {"X-CSRF-Token" : "abc123"}, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+	QUnit.test("request(), keep old CSRF token in case none is sent", function (assert) {
+		var oRequestor = _Requestor.create("/", {"X-CSRF-Token" : "abc123"}, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		this.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "abc123"}}))
@@ -576,10 +580,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request(), keep fetching CSRF token in case no one is sent", function (assert) {
+	QUnit.test("request(), keep fetching CSRF token in case none is sent", function (assert) {
 		var oMock = this.mock(jQuery),
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		oMock.expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
@@ -599,8 +604,9 @@ sap.ui.require([
 		QUnit.test("refreshSecurityToken: success = " + bSuccess, function (assert) {
 			var oError = {},
 				oPromise,
-				oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"},
-					undefined, undefined, defaultGetGroupProperty),
+				oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}, {
+					fnGetGroupProperty : defaultGetGroupProperty
+				}),
 				oTokenRequiredResponse = {};
 
 			this.mock(_Helper).expects("createError")
@@ -674,8 +680,9 @@ sap.ui.require([
 		QUnit.test("request: " + o.sTitle, function (assert) {
 			var oError = {},
 				oReadFailure = {},
-				oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-					undefined, defaultGetGroupProperty),
+				oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+					fnGetGroupProperty : defaultGetGroupProperty
+				}),
 				oRequestPayload = {},
 				oResponsePayload = {},
 				fnSubmit = sinon.spy(),
@@ -839,8 +846,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): with empty group", function (assert) {
-		var oRequestor = _Requestor.create(undefined, undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+		var oRequestor = _Requestor.create();
 
 		this.mock(oRequestor).expects("request").never();
 
@@ -904,8 +910,9 @@ sap.ui.require([
 				],
 				{responseText : JSON.stringify(aResults[0])}
 			],
-			oRequestor = _Requestor.create("/Service/", {"Accept-Language" : "ab-CD"}, undefined,
-				undefined, undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/Service/", {"Accept-Language" : "ab-CD"}, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		aPromises.push(oRequestor.request("GET", "Products", "group1", {
 			Foo : "bar",
@@ -951,8 +958,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): single GET", function (assert) {
-		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, undefined,
-				defaultGetGroupProperty);
+		var oRequestor = _Requestor.create("/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		oRequestor.request("GET", "Products", "groupId");
 		this.mock(oRequestor).expects("request")
@@ -970,8 +978,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): merge PATCH requests", function (assert) {
 		var aPromises = [],
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty),
+			oRequestor = _Requestor.create("/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}),
 			fnSubmit0 = sinon.spy(),
 			fnSubmit1 = sinon.spy(),
 			fnSubmit2 = sinon.spy(),
@@ -1084,8 +1093,9 @@ sap.ui.require([
 	QUnit.test("submitBatch(...): $batch failure", function (assert) {
 		var oBatchError = new Error("$batch request failed"),
 			aPromises = [],
-			oRequestor = _Requestor.create(undefined, undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create(undefined, undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		function unexpectedSuccess() {
 			assert.ok(false, "unexpected success");
@@ -1123,8 +1133,7 @@ sap.ui.require([
 			aBatchResult = [{
 				headers : {},
 				responseText : "{}",
-				status : 200,
-				statusText : "ok"
+				status : 200
 			}, {
 				getResponseHeader : function () {
 					return "application/json";
@@ -1135,8 +1144,9 @@ sap.ui.require([
 				statusText : "Not found"
 			}],
 			aPromises = [],
-			oRequestor = _Requestor.create(undefined, undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create(undefined, undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		function unexpected () {
 			assert.ok(false);
@@ -1191,8 +1201,9 @@ sap.ui.require([
 				statusText : "Bad Request"
 			}],
 			aPromises = [],
-			oRequestor = _Requestor.create(undefined, undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create(undefined, undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		function assertError(oResultError, sMessage) {
 			assert.ok(oResultError instanceof Error);
@@ -1232,8 +1243,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(...): batch group id", function (assert) {
-		var oRequestor = _Requestor.create(undefined, undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+		var oRequestor = _Requestor.create(undefined, undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		oRequestor.request("PATCH", "EntitySet1", "group", {"foo" : "bar"}, {"a" : "b"});
 		oRequestor.request("PATCH", "EntitySet2", "group", {"bar" : "baz"}, {"c" : "d"});
@@ -1281,8 +1293,7 @@ sap.ui.require([
 			},
 			aBatchRequests = [{}],
 			aExpectedResponses = [],
-			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"},
-				undefined, undefined, defaultGetGroupProperty),
+			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}),
 			oResult = "abc",
 			sResponseContentType = "multipart/mixed; boundary=foo",
 			oJqXHRMock = createMock(assert, oResult, "OK", "abc123", sResponseContentType);
@@ -1320,8 +1331,9 @@ sap.ui.require([
 			oJQueryMock = this.mock(jQuery),
 			aPromises = [],
 			sServiceUrl = "/Service/",
-			oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		// expects a jQuery.ajax for a batch request and returns a mock for it to be resolved later
 		function expectBatch() {
@@ -1395,8 +1407,9 @@ sap.ui.require([
 			iCount = 1,
 			oPostData = {},
 			oPromise,
-			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"},
-				undefined, undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		function unexpected () {
 			assert.ok(false);
@@ -1470,8 +1483,9 @@ sap.ui.require([
 	QUnit.test("cancelChanges: only PATCH", function (assert) {
 		var fnCancel = function () {},
 			oPromise,
-			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"},
-				 undefined, undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		function unexpected () {
 			assert.ok(false);
@@ -1504,16 +1518,18 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("cancelChanges: unused group", function (assert) {
-		_Requestor.create("/Service/", undefined, undefined, undefined, undefined,
-			defaultGetGroupProperty).cancelChanges("unusedGroupId");
+		_Requestor.create("/Service/", undefined, undefined, {
+			fnGetGroupProperty : defaultGetGroupProperty
+		}).cancelChanges("unusedGroupId");
 	});
 
 	//*****************************************************************************************
 	QUnit.test("removePatch", function (assert) {
 		var fnCancel = sinon.spy(),
 			oPromise,
-			oRequestor = _Requestor.create("/Service/",  undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty),
+			oRequestor = _Requestor.create("/Service/",  undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}),
 			oTestPromise;
 
 		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"},
@@ -1538,8 +1554,9 @@ sap.ui.require([
 		var fnCancel = sinon.spy(),
 			oPromise,
 			aPromises,
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		function unexpected () {
 			assert.ok(false);
@@ -1588,8 +1605,9 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("removePatch after submitBatch", function (assert) {
 		var oPromise,
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"});
 
@@ -1609,8 +1627,9 @@ sap.ui.require([
 		var oBody = {},
 			fnCancel1 = sinon.spy(),
 			fnCancel2 = sinon.spy(),
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty),
+			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}),
 			oTestPromise;
 
 		sinon.spy(oRequestor, "cancelChangesByFilter");
@@ -1651,8 +1670,9 @@ sap.ui.require([
 	QUnit.test("removePost with only one POST", function (assert) {
 		var oBody = {},
 			fnCancel = sinon.spy(),
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty),
+			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}),
 			oTestPromise;
 
 		oTestPromise = oRequestor.request("POST", "Products", "groupId", {}, oBody,
@@ -1676,8 +1696,9 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("removePost after submitBatch", function (assert) {
 		var oPayload = {},
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 		oRequestor.request("POST", "Products", "groupId", {}, oPayload);
 
@@ -1706,8 +1727,9 @@ sap.ui.require([
 			oCreatePromise1,
 			oCreatePromise2,
 			oError = new Error("Post failed"),
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty),
+			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}),
 			oRequestorMock = this.mock(oRequestor),
 			fnSubmit = sinon.spy();
 
@@ -1806,8 +1828,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request: $cached as groupId", function (assert) {
-		var oRequestor = _Requestor.create("/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+		var oRequestor = _Requestor.create("/");
 
 		assert.throws(function(){
 			//code under test
@@ -1816,22 +1837,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doFetchV4Response (V4)", function (assert) {
+	QUnit.test("doConvertResponse (V4)", function (assert) {
 		var oPayload = {},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/");
 
 		// code under test
-		return oRequestor.doFetchV4Response(oPayload).then(function (oConvertedPayload) {
-			assert.strictEqual(oConvertedPayload, oPayload);
-		});
+		assert.strictEqual(oRequestor.doConvertResponse(oPayload), oPayload);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("convertQueryOptions", function (assert) {
 		var oExpand = {},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/");
 
 		this.mock(oRequestor).expects("convertExpand")
 			.withExactArgs(sinon.match.same(oExpand), undefined).returns("expand");
@@ -1887,8 +1904,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertExpandOptions", function (assert) {
 		var oExpand = {},
-			oRequestor = _Requestor.create("/~/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/~/");
 
 		this.mock(oRequestor).expects("convertExpand")
 			.withExactArgs(sinon.match.same(oExpand), undefined).returns("expand");
@@ -1904,8 +1920,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertExpand", function (assert) {
 		var oOptions = {},
-			oRequestor = _Requestor.create("/~/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			oRequestor = _Requestor.create("/~/");
 
 		["Address", null].forEach(function (vValue) {
 			assert.throws(function () {
@@ -1928,8 +1943,7 @@ sap.ui.require([
 		QUnit.test("buildQueryString, " + i, function (assert) {
 			var oConvertedQueryParams = {},
 				oQueryParams = {},
-				oRequestor = _Requestor.create("/~/", undefined, undefined, undefined,
-					undefined, defaultGetGroupProperty),
+				oRequestor = _Requestor.create("/~/"),
 				oRequestorMock = this.mock(oRequestor),
 				sResourcePath = "Foo";
 
@@ -2003,8 +2017,7 @@ sap.ui.require([
 			+ "$filter=CurrencyCode%20eq%20'EUR';$select=CurrencyCode),SOITEM_2_SO)"
 			+ "&sap-client=003"
 		}].forEach(function (oFixture) {
-			var oRequestor = _Requestor.create("/~/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty);
+			var oRequestor = _Requestor.create("/~/");
 
 			assert.strictEqual(
 				oRequestor.buildQueryString("Foo", oFixture.o, undefined, true), "?" + oFixture.s,
@@ -2018,8 +2031,7 @@ sap.ui.require([
 			oProperty = {
 				$Type : "Edm.Foo"
 			},
-			oRequestor = _Requestor.create("/", undefined, undefined, undefined,
-				undefined, defaultGetGroupProperty),
+			oRequestor = _Requestor.create("/"),
 			sResult,
 			vValue = {};
 
@@ -2082,8 +2094,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
 			var sProperty,
-				oRequestor = _Requestor.create("/", undefined, undefined, undefined,
-					undefined, defaultGetGroupProperty);
+				oRequestor = _Requestor.create("/");
 
 			this.spy(oRequestor, "formatPropertyAsLiteral");
 
@@ -2130,8 +2141,7 @@ sap.ui.require([
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
-			var oRequestor = _Requestor.create("/", undefined, undefined, undefined,
-					undefined, defaultGetGroupProperty);
+			var oRequestor = _Requestor.create("/");
 
 			assert.strictEqual(
 				oRequestor.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
@@ -2147,10 +2157,40 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchTypeForPath", function (assert) {
+		var oPromise = {},
+			fnFetchMetadata = sinon.stub().returns(oPromise),
+			oRequestor = _Requestor.create("/", undefined, undefined, {
+				fnFetchMetadata : fnFetchMetadata
+			});
+
+		// code under test
+		assert.strictEqual(oRequestor.fetchTypeForPath("EMPLOYEES('1')/EMPLOYEE_2_TEAM"), oPromise);
+
+		sinon.assert.calledWithExactly(fnFetchMetadata, "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchTypeForPath, bAsName=true", function (assert) {
+		var oPromise = {},
+			fnFetchMetadata = sinon.stub().returns(oPromise),
+			oRequestor = _Requestor.create("/", undefined, undefined, {
+				fnFetchMetadata : fnFetchMetadata
+			});
+
+		// code under test
+		assert.strictEqual(oRequestor.fetchTypeForPath("EMPLOYEES('1')/EMPLOYEE_2_TEAM", true),
+			oPromise);
+
+		sinon.assert.calledWithExactly(fnFetchMetadata, "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/$Type");
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
-			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), undefined, undefined,
-					undefined, undefined, defaultGetGroupProperty),
+			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), undefined, undefined, {
+					fnGetGroupProperty : defaultGetGroupProperty
+				}),
 				sResourcePath = "TEAMS('TEAM_01')";
 
 			function assertResult(oPayload) {
@@ -2178,8 +2218,9 @@ sap.ui.require([
 
 		//*****************************************************************************************
 		QUnit.test("request(...)/submitBatch (realOData) fail", function (assert) {
-			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), undefined, undefined,
-					undefined, undefined, defaultGetGroupProperty);
+			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			});
 
 			oRequestor.request("GET", "TEAMS('TEAM_01')", "group").then(function (oResult) {
 				delete oResult["@odata.metadataEtag"];
@@ -2203,7 +2244,6 @@ sap.ui.require([
 				assert.strictEqual(typeof oError.error, "object");
 				assert.strictEqual(typeof oError.message, "string");
 				assert.strictEqual(oError.status, 404);
-				assert.strictEqual(oError.statusText, "Not Found");
 			});
 
 			return oRequestor.submitBatch("group").then(function (oResult) {
@@ -2215,7 +2255,9 @@ sap.ui.require([
 		QUnit.test("request(ProductList)/submitBatch (realOData) patch", function (assert) {
 			var oBody = {Name : "modified by QUnit test"},
 				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), undefined,
-					undefined, undefined, undefined, defaultGetGroupProperty),
+					undefined, {
+						fnGetGroupProperty : defaultGetGroupProperty
+					}),
 				sResourcePath = "ProductList('HT-1001')";
 
 			return Promise.all([
@@ -2231,7 +2273,9 @@ sap.ui.require([
 		QUnit.test("submitBatch (real OData): error in change set", function (assert) {
 			var oCommonError,
 				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), undefined,
-					undefined, undefined, undefined, defaultGetGroupProperty);
+					undefined, {
+						fnGetGroupProperty : defaultGetGroupProperty
+					});
 
 			function onError(oError) {
 				if (oCommonError) {

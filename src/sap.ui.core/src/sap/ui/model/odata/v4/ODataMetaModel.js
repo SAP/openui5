@@ -1428,10 +1428,10 @@ sap.ui.define([
 	 *   A map which contains one entry for each $metadata or annotation file loaded so far: the key
 	 *   is the file's URL as a <code>string</code> and the value is the <code>string</code> value
 	 *   of the "ETag" response header for that file. Initially, the map is empty. If no "ETag"
-	 *   response header was sent for a file, the <code>Date</code> value of the "Last-Modified" or,
-	 *   as a fallback, "Date" response header is used instead. The value <code>new Date()</code> is
-	 *   used in case no such header is sent at all. Note that this map may change due to
-	 *   load-on-demand of "cross-service references" (see parameter "supportReferences" of
+	 *   response header was sent for a file, the <code>Date</code> value of the "Last-Modified"
+	 *   response header is used instead. The value <code>null</code> is used in case no such header
+	 *   is sent at all. Note that this map may change due to load-on-demand of "cross-service
+	 *   references" (see parameter <code>supportReferences</code> of
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}).
 	 *
 	 * @public
@@ -1449,7 +1449,7 @@ sap.ui.define([
 	 *   so far when loading $metadata or annotation files. It is <code>new Date(0)</code> initially
 	 *   as long as no such files have been loaded. It becomes <code>new Date()</code> as soon as a
 	 *   file without such a header is loaded. Note that this value may change due to load-on-demand
-	 *   of "cross-service references" (see parameter "supportReferences" of
+	 *   of "cross-service references" (see parameter <code>supportReferences</code> of
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}).
 	 *
 	 * @deprecated Use {@link #getETags} instead because modifications to old files may be
@@ -2102,6 +2102,7 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.validate = function (sUrl, mScope) {
 		var i,
+			dDate,
 			dLastModified,
 			sSchema,
 			oReference,
@@ -2136,12 +2137,15 @@ sap.ui.define([
 			}
 		}
 
-		// handle & remove ETag and Last-Modified headers
-		dLastModified = mScope.$LastModified ? new Date(mScope.$LastModified) : new Date();
+		// handle & remove Date, ETag and Last-Modified headers
+		dLastModified = mScope.$LastModified ? new Date(mScope.$LastModified) : null;
+		this.mETags[sUrl] = mScope.$ETag ? mScope.$ETag : dLastModified;
+		dDate = mScope.$Date ? new Date(mScope.$Date) : new Date();
+		dLastModified = dLastModified || dDate; // @see #getLastModified
 		if (this.dLastModified < dLastModified) {
 			this.dLastModified = dLastModified;
 		}
-		this.mETags[sUrl] = mScope.$ETag ? mScope.$ETag : dLastModified;
+		delete mScope.$Date;
 		delete mScope.$ETag;
 		delete mScope.$LastModified;
 

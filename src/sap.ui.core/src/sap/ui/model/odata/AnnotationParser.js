@@ -871,13 +871,13 @@ var AnnotationParser =  {
 		var oPropertyValueNodes = xPath.selectNodes("./d:PropertyValue", oParentElement);
 
 		function getAssertText(oParentElement, sWhat, sName) {
-			var	oAnnotationTarget,
+			var oAnnotationTarget,
 				oAnnotationTerm = oParentElement;
 
-			while (oAnnotationTerm.localName !== "Annotation") {
-				oAnnotationTerm = oAnnotationTerm.parentElement;
+			while (oAnnotationTerm.nodeName !== "Annotation") {
+				oAnnotationTerm = oAnnotationTerm.parentNode;
 			}
-			oAnnotationTarget = oAnnotationTerm.parentElement;
+			oAnnotationTarget = oAnnotationTerm.parentNode;
 
 			return (sWhat + " '" + sName + "' is defined twice; "
 				+ "Source = " + AnnotationParser._parserData.url

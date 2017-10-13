@@ -260,37 +260,49 @@ sap.ui.require([
 	//*********************************************************************************************
 	// t: the tested type
 	// v: the value to format
-	// e: the expected result
+	// e: the literal (if different to v)
 	[
-		{t : "Edm.Binary", v : "1qkYNh/P5uvZ0zA+siScD=", e : "binary'1qkYNh/P5uvZ0zA+siScD='"},
-		{t : "Edm.Boolean", v : true, e : "true"},
-		{t : "Edm.Byte", v : 255, e : "255"},
-		{t : "Edm.Date", v : "2016-01-19", e : "2016-01-19"},
-		{t : "Edm.DateTimeOffset", v : "2016-01-13T14:08:31Z", e : "2016-01-13T14:08:31Z"},
-		{t : "Edm.Decimal", v : "-255.55", e : "-255.55"},
-		{t : "Edm.Double", v : 3.14, e : "3.14"},
-		{t : "Edm.Double", v : "INF", e : "INF"},
-		{t : "Edm.Duration", v : "P1DT0H0M0S", e : "duration'P1DT0H0M0S'"},
-		{t : "Edm.Guid", v : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8",
-			e : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8"},
-		{t : "Edm.Int16", v : -32768, e : "-32768"},
-		{t : "Edm.Int32", v : 2147483647, e : "2147483647"},
-		{t : "Edm.Int64", v : "12345678901234568", e : "12345678901234568"},
-		{t : "Edm.SByte", v : -128, e : "-128"},
+		{t : "Edm.Binary", v : "1qkYNh/P5uvZ0zA+siScD=", l : "binary'1qkYNh/P5uvZ0zA+siScD='"},
+		{t : "Edm.Boolean", v : true, l : "true"},
+		{t : "Edm.Byte", v : 255, l : "255"},
+		{t : "Edm.Date", v : "2016-01-19"},
+		{t : "Edm.DateTimeOffset", v : "2016-01-13T14:08:31Z"},
+		{t : "Edm.Decimal", v : "-255.55"},
+		{t : "Edm.Double", v : 3.14, l : "3.14"},
+		{t : "Edm.Double", v : "INF"},
+		{t : "Edm.Duration", v : "P1DT0H0M0S", l : "duration'P1DT0H0M0S'"},
+		{t : "Edm.Guid", v : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8"},
+		{t : "Edm.Int16", v : -32768, l : "-32768"},
+		{t : "Edm.Int32", v : 2147483647, l : "2147483647"},
+		{t : "Edm.Int64", v : "12345678901234568"},
+		{t : "Edm.SByte", v : -128, l : "-128"},
 		// Note: the internal representation of NaN/Infinity/-Infinity in the ODataModel
 		// is "NaN", "INF" and "-INF".
 		// That is how it comes from the server and it is not possible to change the model values
 		// to the JS representation Infinity,-Infinity or NaN
-		{t : "Edm.Single", v : "NaN", e : "NaN"},
-		{t : "Edm.Single", v : "-INF", e : "-INF"},
-		{t : "Edm.String", v : "foo", e : "'foo'"},
-		{t : "Edm.String", v : "string with 'quote'", e : "'string with ''quote'''"},
-		{t : "Edm.String", v : null, e : "null"},
-		{t : "Edm.TimeOfDay", v : "18:59:59.999", e : "18:59:59.999"}
+		{t : "Edm.Single", v : "NaN"},
+		{t : "Edm.Single", v : "-INF"},
+		{t : "Edm.String", v : "foo", l : "'foo'"},
+		{t : "Edm.String", v : "string with 'quote'", l : "'string with ''quote'''"},
+		{t : "Edm.String", v : null, l : "null"},
+		{t : "Edm.TimeOfDay", v : "18:59:59.999"}
 	].forEach(function (oFixture) {
-		QUnit.test("formatLiteral: " + oFixture.t + " " +  oFixture.v, function (assert) {
-			assert.strictEqual(
-				_Helper.formatLiteral(oFixture.v, oFixture.t), oFixture.e);
+		var sTitle = "formatLiteral/parseLiteral: " + oFixture.t + " " +  oFixture.v;
+		QUnit.test(sTitle, function (assert) {
+			var sLiteral = oFixture.l || oFixture.v;
+
+			assert.strictEqual(_Helper.formatLiteral(oFixture.v, oFixture.t), sLiteral);
+
+			switch (oFixture.t) {
+				case "Edm.Binary":
+				case "Edm.Duration":
+				case "Edm.String":
+					// not supported
+					break;
+				default:
+					assert.strictEqual(_Helper.parseLiteral(sLiteral, oFixture.t, "path"),
+						oFixture.v);
+			}
 		});
 	});
 
@@ -300,6 +312,41 @@ sap.ui.require([
 			function () { _Helper.formatLiteral("foo", "Edm.bar"); },
 			new Error("Unsupported type: Edm.bar")
 		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseLiteral: null", function (assert) {
+		assert.strictEqual(_Helper.parseLiteral("null", "Any.Type"), null);
+	});
+
+	//*********************************************************************************************
+	["Edm.Binary", "Edm.Duration", "Edm.String", "Edm.bar"].forEach(function (sType) {
+		QUnit.test("parseLiteral: unsupported " + sType, function (assert) {
+			assert.throws(function () {
+				_Helper.parseLiteral("foo", sType, "path/to/property");
+			}, new Error("path/to/property: Unsupported type: " + sType));
+		});
+	});
+
+	//*********************************************************************************************
+	// t: the tested type
+	// l: the literal to parse
+	[
+		{t : "Edm.Byte", l : "ten"},
+		{t : "Edm.Int16", l : "ten"},
+		{t : "Edm.Int32", l : "ten"},
+		{t : "Edm.SByte", l : "ten"},
+		{t : "Edm.Double", l : "Pi"},
+		{t : "Edm.Double", l : "Infinity"},
+		{t : "Edm.Single", l : "Pi"},
+		{t : "Edm.Single", l : "-Infinity"}
+	].forEach(function (oFixture) {
+		QUnit.test("parseLiteral: error: " + oFixture.t + " " +  oFixture.l, function (assert) {
+			assert.throws(function () {
+				_Helper.parseLiteral(oFixture.l, oFixture.t, "path/to/property");
+			}, new Error("path/to/property: Not a valid " + oFixture.t + " literal: "
+				+ oFixture.l));
+		});
 	});
 
 	//*********************************************************************************************

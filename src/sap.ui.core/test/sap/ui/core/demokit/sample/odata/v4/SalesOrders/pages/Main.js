@@ -200,6 +200,25 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 						viewName : sViewName
 					});
 				},
+				deleteSelectedSalesOrderViaGroupId : function (sGroupId) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							var oSalesOrderContext = oSalesOrderTable.getSelectedItem()
+									.getBindingContext(),
+								sOrderID = oSalesOrderContext.getProperty("SalesOrderID", true);
+							oSalesOrderContext["delete"](sGroupId).then(function () {
+									Opa5.assert.ok(true, "Deleted Sales Order: " + sOrderID);
+								}, function (oError) {
+									Opa5.assert.ok(false, "Error deleting Sales Order: " + sOrderID
+										+ " Error: " + oError);
+								}
+							);
+						},
+						viewName : sViewName
+					});
+				},
 				doubleRefresh : function () {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -306,7 +325,7 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
 									.getItems()[0].getCells()[0].getText();
 							sap.ui.test.Opa.getContext().firstSalesOrderId = sSalesOrderId;
-							Opa5.assert.ok(true, "First SalesOrderID " + sSalesOrderId);
+							Opa5.assert.ok(true, "First SalesOrderID: " + sSalesOrderId);
 
 						},
 						viewName : sViewName
@@ -321,7 +340,7 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 								=== sap.ui.test.Opa.getContext().firstSalesOrderId;
 						},
 						success : function (oSalesOrderTable) {
-							Opa5.assert.ok(true, "First SalesOrderID " +
+							Opa5.assert.ok(true, "First SalesOrderID: " +
 								oSalesOrderTable.getItems()[0].getCells()[0].getText());
 						},
 						viewName : sViewName
@@ -605,7 +624,7 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 
 							Opa5.assert.notStrictEqual(oRow.getCells()[ID_COLUMN_INDEX].getText(),
 								sExpectedID,
-								"ID of row " + iRow + " is not \"" + sExpectedID + "\"");
+								"ID of row " + iRow + " is not: " + sExpectedID);
 						},
 						viewName : sViewName
 					});
@@ -661,8 +680,7 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 									Opa5.assert.strictEqual(
 										oRow.getCells()[ID_COLUMN_INDEX].getText(),
 										sExpectedID,
-										"ID of row " + iRow + " as expected \""
-											+ sExpectedID + "\"");
+										"ID of row " + iRow + " as expected: " + sExpectedID);
 								},
 								viewName : sViewName
 							});

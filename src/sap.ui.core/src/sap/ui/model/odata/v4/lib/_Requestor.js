@@ -64,29 +64,27 @@ sap.ui.define([
 	 * @param {object} [mQueryParams={}]
 	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
-	 * @param {function} fnFetchEntityContainer
+	 * @param {object} oModelInterface
+	 *   A interface allowing to call back to the owning model
+	 * @param {function} oModelInterface.fnFetchEntityContainer
 	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
 	 *   container is fully available, or rejected with an error.
-	 * @param {function} fnFetchMetadata
+	 * @param {function} oModelInterface.fnFetchMetadata
 	 *   A function that returns a _SyncPromise which resolves with the metadata instance for a
 	 *   given absolute model path (it is automatically converted to a metapath)
-	 * @param {function} fnGetGroupProperty
+	 * @param {function} oModelInterface.fnGetGroupProperty
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 	 *   returning the property value in question. Only 'submit' is supported for <code>
 	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
-	 * @param {function (string)} [fnOnCreateGroup]
+	 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
 	 * @private
 	 */
-	function Requestor(sServiceUrl, mHeaders, mQueryParams, fnFetchEntityContainer, fnFetchMetadata,
-			fnGetGroupProperty, fnOnCreateGroup) {
+	function Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface) {
 		this.mBatchQueue = {};
-		this.fnFetchEntityContainer = fnFetchEntityContainer;
-		this.fnFetchMetadata = fnFetchMetadata;
-		this.fnGetGroupProperty = fnGetGroupProperty;
 		this.mHeaders = mHeaders || {};
-		this.fnOnCreateGroup = fnOnCreateGroup;
+		this.oModelInterface = oModelInterface;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.mRunningChangeRequests = {};
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
@@ -413,11 +411,31 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponsePayload
 	 *   The OData response payload
-	 * @returns {_SyncPromise}
-	 *   A promise resolving with the OData V4 response payload
+	 * @returns {object}
+	 *   The OData V4 response payload
 	 */
-	Requestor.prototype.doFetchV4Response = function (oResponsePayload) {
-		return _SyncPromise.resolve(oResponsePayload);
+	Requestor.prototype.doConvertResponse = function (oResponsePayload) {
+		return oResponsePayload;
+	};
+
+	/**
+	 * Fetches the type of the given model path from the metadata.
+	 *
+	 * @param {string} sPath
+	 *   The resource path, e.g. SalesOrderList('4711')/SO_2_BP
+	 * @param {boolean} [bAsName]
+	 *   If <code>true</code>, the name of the type is delivered instead of the type itself. This
+	 *   must be used when asking for a property type to avoid that the function logs an error
+	 *   because there are no objects for primitive types like "Edm.Stream".
+	 * @returns {SyncPromise}
+	 *   A promise that is resolved with the type of the object at the given path or its name.
+	 */
+	Requestor.prototype.fetchTypeForPath = function (sPath, bAsName) {
+		sPath = "/" + sPath + "/";
+		if (bAsName) {
+			sPath += "$Type";
+		}
+		return this.oModelInterface.fnFetchMetadata(sPath);
 	};
 
 	/**
@@ -447,7 +465,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.getGroupSubmitMode = function (sGroupId) {
-		return this.fnGetGroupProperty(sGroupId, "submit");
+		return this.oModelInterface.fnGetGroupProperty(sGroupId, "submit");
 	};
 
 	/**
@@ -663,8 +681,8 @@ sap.ui.define([
 
 					if (!aRequests) {
 						aRequests = that.mBatchQueue[sGroupId] = [[/*empty change set*/]];
-						if (that.fnOnCreateGroup) {
-							that.fnOnCreateGroup(sGroupId);
+						if (that.oModelInterface.fnOnCreateGroup) {
+							that.oModelInterface.fnOnCreateGroup(sGroupId);
 						}
 					}
 					oRequest = {
@@ -715,7 +733,11 @@ sap.ui.define([
 					fnResolve(_Batch.deserializeBatchResponse(
 						jqXHR.getResponseHeader("Content-Type"), oPayload));
 				} else {
-					that.doFetchV4Response(oPayload).then(fnResolve, fnReject);
+					try {
+						fnResolve(that.doConvertResponse(oPayload));
+					} catch (oError) {
+						fnReject(oError);
+					}
 				}
 			}, function (jqXHR, sTextStatus, sErrorMessage) {
 				var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
@@ -840,7 +862,11 @@ sap.ui.define([
 					reject(oCause, vRequest);
 				} else if (vResponse.responseText) {
 					oResponse = JSON.parse(vResponse.responseText);
-					that.doFetchV4Response(oResponse).then(vRequest.$resolve, vRequest.$reject);
+					try {
+						vRequest.$resolve(that.doConvertResponse(oResponse));
+					} catch (oErr) {
+						vRequest.$reject(oErr);
+					}
 				} else {
 					vRequest.$resolve();
 				}
@@ -1012,18 +1038,19 @@ sap.ui.define([
 		 * @param {object} mQueryParams
 		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 		 *   request the CSRF token
-		 * @param {function} fnFetchEntityContainer
-		 *   A function that returns a _SyncPromise which resolves with the metadata entity
-		 *   container
-		 * @param {function} fnFetchMetadata
+		 * @param {object} oModelInterface
+		 *   A interface allowing to call back to the owning model
+		 * @param {function} oModelInterface.fnFetchEntityContainer
+		 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
+		 *   container is fully available, or rejected with an error.
+		 * @param {function} oModelInterface.fnFetchMetadata
 		 *   A function that returns a _SyncPromise which resolves with the metadata instance for a
 		 *   given absolute model path (it is automatically converted to a metapath)
-		 * @param {function} fnGetGroupProperty
-		 *   A callback function called with parameters <code>sGroupId</code> and
-		 *   <code>sPropertyName</code> returning the value of the group property in question. Only
-		 *   'submit' is supported for <code>sPropertyName</code>. Supported property values are:
-		 *   'API', 'Auto' and 'Direct'.
-		 * @param {function (string)} [fnOnCreateGroup]
+		 * @param {function} oModelInterface.fnGetGroupProperty
+		 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
+		 *   returning the property value in question. Only 'submit' is supported for <code>
+		 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
+		 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
 		 * @param {string} [sODataVersion="4.0"]
@@ -1031,10 +1058,8 @@ sap.ui.define([
 		 * @returns {object}
 		 *   A new <code>_Requestor</code> instance
 		 */
-		create : function (sServiceUrl, mHeaders, mQueryParams, fnFetchEntityContainer,
-				fnFetchMetadata, fnGetGroupProperty, fnOnCreateGroup, sODataVersion) {
-			var oRequestor = new Requestor(sServiceUrl, mHeaders, mQueryParams,
-					fnFetchEntityContainer, fnFetchMetadata, fnGetGroupProperty, fnOnCreateGroup);
+		create : function (sServiceUrl, mHeaders, mQueryParams, oModelInterface, sODataVersion) {
+			var oRequestor = new Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface);
 
 			if (sODataVersion === "2.0") {
 				asV2Requestor(oRequestor);

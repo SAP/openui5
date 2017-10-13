@@ -452,30 +452,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fetches the type of the given model path from the metadata.
-	 *
-	 * @param {string} sPath
-	 *   The resource path, e.g. SalesOrderList('4711')/SO_2_BP
-     * @param {boolean} [bAsName]
-	 *   If <code>true</code>, the name of the type is delivered instead of the type itself. This
-	 *   must be used when asking for a property type to avoid that the function logs an error
-	 *   because there are no objects for primitive types like "Edm.Stream".
-	 * @returns {SyncPromise}
-	 *   A promise that is resolved with the type of the object at the given path or its name.
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.fetchType = function (sPath, bAsName) {
-		var oMetaModel = this.oModel.getMetaModel(),
-			sMetaPath = oMetaModel.getMetaPath("/" + sPath + "/");
-
-		if (bAsName) {
-			sMetaPath += "$Type";
-		}
-		return oMetaModel.fetchObject(sMetaPath);
-	};
-
-	/**
 	 * Returns the query options for the given path relative to this binding. Uses the options
 	 * resulting from the binding parameters or the options inherited from the parent binding by
 	 * using {@link Context#getQueryOptionsForPath}.
