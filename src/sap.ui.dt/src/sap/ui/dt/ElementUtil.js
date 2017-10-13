@@ -515,5 +515,31 @@ sap.ui.define(['jquery.sap.global'],
 
 			};
 
+			/**
+			 * Checks if the Element is in the dom (jQuery.is(":visible")) and if it is not hidden / opacity > 0.
+			 *
+			 * @param {jQuery} $Element jQuery object
+			 * @returns {boolean} Returns true if any of the jQuery objects is jQuery-visible, bot hidden and opacity > 0
+			 */
+			ElementUtil.isVisible = function($Element) {
+				var bVisible = false;
+				var $CurrentElement;
+				// check every jQuery object for itself
+				for (var i = 0, n = $Element.length; i < n; i++) {
+					$CurrentElement = $Element.eq(i);
+					// $().is("visible") returns true even if opacity = 0 or visibility = hidden,
+					// so we need to check it seperately
+					var bFilterOpacity = $CurrentElement.css("filter").match(/opacity\(([^)]*)\)/);
+					bVisible = $CurrentElement.is(":visible")
+						&& $CurrentElement.css("visibility") !== "hidden"
+						&& $CurrentElement.css("opacity") > 0
+						&& bFilterOpacity ? parseFloat(bFilterOpacity[1]) > 0 : true;
+					if (bVisible) {
+						break;
+					}
+				}
+				return bVisible;
+			};
+
 			return ElementUtil;
 		}, /* bExport= */true);
