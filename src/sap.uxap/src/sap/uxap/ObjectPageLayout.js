@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/Device",
 	"sap/ui/core/delegate/ScrollEnablement",
+	"./ObjectPageSectionBase",
 	"./ObjectPageSection",
 	"./ObjectPageSubSection",
 	"./ObjectPageHeaderContent",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"./library",
 	"jquery.sap.keycodes"
-], function(jQuery, ResizeHandler, Control, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageHeaderContent, LazyLoading, ABHelper, ThrottledTask, ScrollBar, coreLibrary, library) {
+], function(jQuery, ResizeHandler, Control, Device, ScrollEnablement, ObjectPageSectionBase, ObjectPageSection, ObjectPageSubSection, ObjectPageHeaderContent, LazyLoading, ABHelper, ThrottledTask, ScrollBar, coreLibrary, library) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -918,13 +919,13 @@ sap.ui.define([
 	 * @return {sap.uxap.ObjectPageLayout} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
-	ObjectPageLayout.prototype.setSelectedSection = function (vSection) {
+	ObjectPageLayout.prototype.setSelectedSection = function (vSectionBase) {
 		var sSelectedSectionId;
 
-		if (vSection instanceof ObjectPageSection) {
-			sSelectedSectionId = vSection.getId();
-		} else if (typeof vSection === "string") {
-			sSelectedSectionId = vSection;
+		if (vSectionBase instanceof ObjectPageSectionBase) {
+			sSelectedSectionId = vSectionBase.getId();
+		} else if (typeof vSectionBase === "string") {
+			sSelectedSectionId = vSectionBase;
 		}
 
 		if (!sSelectedSectionId) {
@@ -940,7 +941,7 @@ sap.ui.define([
 		//note there was no validation whether oSection was child of ObjectPage/visible/non-empty,
 		//because at the point of calling this setter, the sections setup may not be complete yet
 		//but we still need to save the selectedSection value
-		return this.setAssociation("selectedSection", sSelectedSectionId, true);
+		return this.setAssociation("selectedSection", ObjectPageSection._getClosestSection(sSelectedSectionId).getId(), true);
 	};
 
 	/**
@@ -2041,9 +2042,9 @@ sap.ui.define([
 				jQuery.sap.log.debug("ObjectPageLayout :: current section is a subSection with an empty or hidden title, selecting parent " + sSectionId);
 			}
 
-			if (this._oSectionInfo[sSectionId]) {
+			if (oSectionBase && this._oSectionInfo[sSectionId]) {
 				oAnchorBar.setSelectedButton(this._oSectionInfo[sSectionId].buttonId);
-				this.setAssociation("selectedSection", sSectionId, true);
+				this.setAssociation("selectedSection", ObjectPageSection._getClosestSection(sSectionId).getId(), true);
 				this._setSectionsFocusValues(sSectionId);
 			}
 		}
