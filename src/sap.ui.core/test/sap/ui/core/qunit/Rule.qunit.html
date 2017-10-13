@@ -14,7 +14,8 @@
 	<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m, sap.ui.support"
+			data-sap-ui-resourceroots='{"local": "./"}'>
 	</script>
 
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -28,12 +29,14 @@
 	<script src="../../../../../test-resources/sap/ui/support/TestHelper.js"></script>
 
 	<script>
-		sap.ui.getCore().loadLibraries(["sap.ui.support"], {
-			async: false
+		QUnit.config.autostart = false;
+
+		sap.ui.require([
+			"local/rules/Config/asynchronousXMLViews.qunit"
+		], function() {
+			QUnit.start();
 		});
 	</script>
-
-	<script src="./rules/Config/asynchronousXMLViews.qunit.js"></script>
 
 </head>
 <body id="body" class="sapUiBody">
