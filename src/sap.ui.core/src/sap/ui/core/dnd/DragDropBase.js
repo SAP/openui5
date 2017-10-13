@@ -15,14 +15,15 @@ sap.ui.define(["../Element", '../library', './DragAndDrop'],
 	 *
 	 * @class
 	 * Provides the base class for all drag-and-drop configurations.
-	 * This feature enables native HTML5 drag and drop API for the controls, therefore it is limited to browser support.
-	 * Here are the known limitations:
+	 * This feature enables a native HTML5 drag-and-drop API for the controls, therefore it is limited to browser support.
+	 * <h3>Limitations</h3>
 	 * <ul>
-	 *   <li>There is no mobile device that supports drag and drop.
-	 *   <li>Custom dragging ghost element is not possible for Internet Explorer.
-	 *   <li>Transparency of the ghost element depends on the browser implementation.
-	 *   <li>Internet Explorer does not support rather than plain text MIME type for the DataTransfer Object.
-	 *   <li>Constraining drag position is not possible.
+	 *   <li>There is no mobile device that supports drag-and-drop.</li>
+	 *   <li>There is not accessibility alternative for drag-and-drop.</li>
+	 *   <li>A custom dragging ghost element is not possible for Internet Explorer.</li>
+	 *   <li>Transparency of the ghost element depends on the browser implementation.</li>
+	 *   <li>Internet Explorer does not support rather than plain text MIME type for the DataTransfer Object.</li>
+	 *   <li>Constraining a drag position is not possible therefore there is no snap-to-grid, snap-to-element feature possible.</li>
 	 * </ul>
 	 *
 	 * @extends sap.ui.core.Element
