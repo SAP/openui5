@@ -1179,13 +1179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		ResponsiveFlowLayoutData = fnResponsiveFlowLayoutData;
 		this._bResponsiveLayoutRequested = false;
 
-		if (!this._bIsBeingDestroyed) {
-			_setFormLayout.call(this);
-			_addLayoutData.call(this);
-			if (this.getDomRef()) {
-				_updateLayout.call(this);
-			}
-		}
+		_updateLayoutAfterLoaded.call(this);
 
 	}
 
@@ -1196,13 +1190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		GridElementData = fnGridElementData;
 		this._bGridLayoutRequested = false;
 
-		if (!this._bIsBeingDestroyed) {
-			_setFormLayout.call(this);
-			_addLayoutData.call(this);
-			if (this.getDomRef()) {
-				_updateLayout.call(this);
-			}
-		}
+		_updateLayoutAfterLoaded.call(this);
 
 	}
 
@@ -1211,9 +1199,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		ResponsiveGridLayout = fnResponsiveGridLayout;
 		this._bResponsiveGridLayoutRequested = false;
 
+		_updateLayoutAfterLoaded.call(this);
+
+	}
+
+	function _updateLayoutAfterLoaded() {
+
 		if (!this._bIsBeingDestroyed) {
 			_setFormLayout.call(this);
 			_addLayoutData.call(this);
+			if (this.getDomRef()) {
+				_updateLayout.call(this);
+			}
 		}
 
 	}
