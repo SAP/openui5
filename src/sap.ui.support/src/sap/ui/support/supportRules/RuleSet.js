@@ -18,7 +18,7 @@ function (jQuery, storage, constants) {
 	 *
 	 * @readonly
 	 * @name sap.ui.support.RuleSet.mRuleSets
-	 * @memberof sap.ui.support.RuleSet
+	 * @memberof sap.ui.support
 	 */
 	var mRuleSets = {};
 
