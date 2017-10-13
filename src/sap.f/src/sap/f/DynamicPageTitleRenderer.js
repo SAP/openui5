@@ -110,6 +110,7 @@ sap.ui.define([], function () {
 		oRm.write(">");
 		// Left Area -> heading aggregation
 		oRm.write("<div");
+		oRm.addClass("sapFDynamicPageTitleHeading-CTX");
 		oRm.addClass("sapFDynamicPageTitleMainLeftHeading");
 		oRm.writeClasses();
 		oRm.write(">");
