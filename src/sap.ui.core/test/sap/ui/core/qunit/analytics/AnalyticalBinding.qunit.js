@@ -19,6 +19,7 @@ sap.ui.require([
 ], function (jQuery, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
 		ODataModelAdapter, ODataModelV1, ODataModelV2, o4aFakeService) {
 	/*global QUnit, sinon */
+	/*eslint max-nested-callbacks: 0 */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
@@ -104,6 +105,15 @@ sap.ui.require([
 			sortOrder: "Ascending",
 			sorted: false,
 			total: true,
+			visible: true
+		},
+		oActualPlannedCostsPercentage = {
+			name: "ActualPlannedCostsPercentage",
+			grouped: false,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
 			visible: true
 		},
 		oPlannedCostsTotal = {
@@ -572,6 +582,10 @@ sap.ui.require([
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oActualCostsTotal,
 			oPlannedCostsTotal, oCurrencyGrouped],
 		expectedSelect : "CostCenter,CostElement,ActualCosts,Currency,PlannedCosts,Currency"
+	}, { // no select binding parameter -> do add dimension for its text property
+		analyticalInfo : [oCostCenterGrouped, oCostElementText, oActualCostsTotal,
+			oCurrencyGrouped],
+		expectedSelect : "CostCenter,CostElementText,ActualCosts,Currency"
 	}, {// possible but unrealistic table in ui
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oActualCostsTotal,
 			oPlannedCostsTotal, oCostElementText, oCurrencyGrouped],
@@ -584,9 +598,14 @@ sap.ui.require([
 			+ "PlannedCosts",
 		expectedSelect : "CostElement,CostCenter,ActualCosts,Currency,PlannedCosts,Currency,"
 			+ "CostCenterText,CostElementText"
+	}, { // with additional selects: with dimensions text and measures without a unit
+		analyticalInfo : [oCostCenterGrouped, oCostElementText, oActualCostsTotal],
+		select : "ActualCosts,CostCenter,CostCenterText,CostElement,CostElementText,Currency",
+		expectedSelect : "CostCenter,CostElementText,ActualCosts,Currency,CostElement,"
+			+ "CostCenterText"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("getDownloadURL: no duplicate units / select parameter: " + i, function(assert) {
-			// analytical info represents colum order of table and is taken for column order in
+			// analytical info represents column order of table and is taken for column order in
 			// $select of excel download urls
 			var done = assert.async();
 
@@ -637,94 +656,125 @@ sap.ui.require([
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,CostElement,ControllingArea,Currency,ActualCosts,CostCenterText",
 		warnings : [
-			"it contains the dimension property 'CostElement' which is not",
-			"it contains the dimension property 'ControllingArea' which is not"
+			"it contains the dimension property 'CostElement' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)",
+			"it contains the dimension property 'ControllingArea' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)"
 		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped,
 			oControllingArea, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,CostCenterText",
 		warnings : [
-			"it does not contain the dimension property 'CostElement' which is",
-			"it does not contain the dimension property 'ControllingArea' which is"
+			"it does not contain the property 'CostElement'",
+			"it does not contain the property 'ControllingArea'"
 		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal,
 			oCostElementText], // CostElementText is text for dimension CostElement which gets
 			// automatically selected by the binding
 		select : "CostCenter,Currency,ActualCosts,CostCenterText",
-		warnings : ["it does not contain the dimension property 'CostElement' which is"]
+		warnings : [
+			"it does not contain the property 'CostElement'", // only the associated property is contained in analytical info
+			"it does not contain the property 'CostElementText'"
+		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,CostElementText,CostCenterText",
 		warnings : ["the property 'CostElementText' is associated with the dimension property"
-			+ " 'CostElement' which is not"]
+			+ " 'CostElement' which is not contained in the analytical info (see"
+			+ " updateAnalyticalInfo)"]
 	}, { // issues with measures
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal,
 			oPlannedCostsTotal, oActualPlannedCostsDifferenceTotal],
 		select : "CostCenter,Currency,ActualCosts,CostCenterText",
 		warnings : [
-			"it does not contain the measure property 'PlannedCosts' which is",
-			"it does not contain the measure property 'ActualPlannedCostsDifference' which is"
+			"it does not contain the property 'PlannedCosts'",
+			"it does not contain the property 'ActualPlannedCostsDifference'"
 		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,PlannedCosts,ActualPlannedCostsDifference,"
 			+ "CostCenterText",
 		warnings : [
-			"it contains the measure property 'PlannedCosts' which is not",
-			"it contains the measure property 'ActualPlannedCostsDifference' which is not"
+			"it contains the measure property 'PlannedCosts' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)",
+			"it contains the measure property 'ActualPlannedCostsDifference' which is not contained"
+				+ " in the analytical info (see updateAnalyticalInfo)"
 		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,PlannedCostsText,CostCenterText",
 		warnings : ["the property 'PlannedCostsText' is associated with the measure property"
-			+ " 'PlannedCosts' which is not"]
+			+ " 'PlannedCosts' which is not contained in the analytical info (see"
+			+ " updateAnalyticalInfo)"]
 	}, { // multiple problem categories
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,CostElement,Currency,ActualCosts,PlannedCosts,CostCenterText",
 		warnings : [
-			"it contains the dimension property 'CostElement' which is not",
-			"it contains the measure property 'PlannedCosts' which is not"
+			"it contains the dimension property 'CostElement' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)",
+			"it contains the measure property 'PlannedCosts' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)"
 		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped,
 			oControllingArea, oActualCostsTotal],
 		select : "CostCenter,CostElement,Currency,ActualCosts,PlannedCosts,CostCenterText",
 		warnings : [
-			"it does not contain the dimension property 'ControllingArea' which is",
-			"it contains the measure property 'PlannedCosts' which is not"
+			"it does not contain the property 'ControllingArea'",
+			"it contains the measure property 'PlannedCosts' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)"
 		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,CostElementText,Currency,ActualCosts,PlannedCosts,CostCenterText",
 		warnings : [
 			"the property 'CostElementText' is associated with the dimension property 'CostElement'"
-				+ " which is not",
-			"it contains the measure property 'PlannedCosts' which is not"
+				+ " which is not contained in the analytical info (see updateAnalyticalInfo)",
+			"it contains the measure property 'PlannedCosts' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)"
 		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal,
 			oPlannedCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,CostElement,CostCenterText",
 		warnings : [
-			"it does not contain the measure property 'PlannedCosts' which is",
-			"it contains the dimension property 'CostElement' which is not"
+			"it does not contain the property 'PlannedCosts'",
+			"it contains the dimension property 'CostElement' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)"
 		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,PlannedCosts,CostElement,CostCenterText",
 		warnings : [
-			"it contains the measure property 'PlannedCosts' which is not",
-			"it contains the dimension property 'CostElement' which is not"
+			"it contains the measure property 'PlannedCosts' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)",
+			"it contains the dimension property 'CostElement' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)"
 		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,PlannedCostsText,CostElement,CostCenterText",
 		warnings : [
 			"the property 'PlannedCostsText' is associated with the measure property 'PlannedCosts'"
-				+ " which is not",
-			"it contains the dimension property 'CostElement' which is not"
+				+ " which is not contained in the analytical info (see updateAnalyticalInfo)",
+			"it contains the dimension property 'CostElement' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)"
+		]
+	}, {
+		analyticalInfo : [oCostCenterGrouped, oActualCostsTotal],
+		select : "CostCenter,ActualCosts,CostCenterText",
+		warnings : ["it does not contain the property 'Currency'"]
+	}, { // duplicate entries in select binding parameter
+		analyticalInfo : [oCostCenterGrouped, oActualCostsTotal, oPlannedCostsTotal],
+		select : "CostCenter,ActualCosts,Currency,CostCenterText,PlannedCosts,Currency,"
+			+ "CostCenterText,CostElement",
+		warnings : [
+			"it contains the property 'Currency' multiple times",
+			"it contains the property 'CostCenterText' multiple times",
+			"it contains the dimension property 'CostElement' which is not contained in the"
+				+ " analytical info (see updateAnalyticalInfo)"
 		]
 	}].forEach(function (oFixture, i) {
 		QUnit.test("updateAnalyticalInfo: select causes warnings #" + i, function(assert) {
@@ -755,8 +805,8 @@ sap.ui.require([
 
 				oFixture.warnings.forEach(function (sText) {
 					that.oLogMock.expects("warning")
-						.withExactArgs("Ignored the 'select' binding parameter, because " + sText
-							+ " contained in the analytical info (see updateAnalyticalInfo)", sPath,
+						.withExactArgs("Ignored the 'select' binding parameter, because " + sText,
+							sPath,
 							"sap.ui.model.analytics.AnalyticalBinding");
 				});
 
@@ -797,12 +847,12 @@ sap.ui.require([
 	// we ensured that no additional dimension or measure is contained; redundant entries need to
 	// removed in _getQueryODataRequestOptions
 	{
-		additionalSelects : ["CostElementText", "CostCenterText"],
+		additionalSelects : ["CostCenterText"],
 		analyticalInfo : [oCostCenterGrouped, oCostElementText, oCurrencyGrouped,
 			oActualCostsTotal],
 		select : "CostCenter,CostElement,CostElementText,Currency,ActualCosts,CostCenterText"
 	}, { // selects with whitespace characters
-		additionalSelects : ["CostElementText", "CostCenterText"],
+		additionalSelects : ["CostCenterText"],
 		analyticalInfo : [oCostCenterGrouped, oCostElementText, oCurrencyGrouped,
 			oActualCostsTotal],
 		select : "CostCenter ,\tCostElement, CostElementText ,Currency,ActualCosts \
@@ -846,6 +896,7 @@ sap.ui.require([
 		analyticalInfo : [oCostCenterUngrouped, oCostElementUngrouped, oCurrencyUngrouped,
 			oActualCostsTotal],
 		numberOfExpandedLevels : 0,
+		select : "CostCenter,CostElement,Currency,ActualCosts,CostElementText",
 		useBatchRequests : true,
 		expectedSelects : [
 			"ActualCosts,Currency", // sum request
@@ -855,6 +906,7 @@ sap.ui.require([
 		analyticalInfo : [oCostCenterGrouped, oCostElementUngrouped, oCurrencyUngrouped,
 			oActualCostsTotal],
 		numberOfExpandedLevels : 1,
+		select : "CostCenter,CostElement,Currency,ActualCosts,CostElementText",
 		useBatchRequests : true,
 		expectedSelects : [
 			"ActualCosts,Currency", // sum request,
@@ -866,11 +918,22 @@ sap.ui.require([
 		analyticalInfo : [oCostCenterUngrouped, oCostElementUngrouped, oCurrencyUngrouped,
 			oActualCostsTotal],
 		numberOfExpandedLevels : 0,
+		select : "CostCenter,CostElement,Currency,ActualCosts,CostElementText",
 		useBatchRequests : false,
 		expectedSelects : [
 			"ActualCosts,Currency", // sum request
 			"CostCenter,CostElement,Currency", // count
 			"CostCenter,CostElement,Currency,ActualCosts,CostElementText" // data request
+		]
+	}, { // don't have the unit column in analytical info
+		analyticalInfo : [oCostElementUngrouped, oActualCostsTotal, oActualPlannedCostsPercentage],
+		numberOfExpandedLevels : 0,
+		select : "CostElement,ActualCosts,ActualPlannedCostsPercentage,Currency,CostElementText",
+		useBatchRequests : true,
+		expectedSelects : [
+			"ActualCosts,Currency", // sum request
+			// data request
+			"CostElement,ActualCosts,Currency,ActualPlannedCostsPercentage,CostElementText"
 		]
 	}].forEach(function (oFixture, i) {
 		QUnit.test("_getQueryODataRequestOptions is called as expected - " + i, function(assert) {
@@ -884,7 +947,7 @@ sap.ui.require([
 
 			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
 
-			// mock read to check whether $select is propertly computed
+			// mock read to check whether $select is properly computed
 			oModel.read = function () {
 				// TODO check why arguments[0] (sPath) contains a different $select
 				var sExpectedSelect = aExpectedSelects.shift(),
@@ -909,7 +972,7 @@ sap.ui.require([
 				useBatchRequests : oFixture.useBatchRequests,
 				numberOfExpandedLevels : oFixture.numberOfExpandedLevels,
 				noPaging : false,
-				select : "CostCenter,CostElement,Currency,ActualCosts,CostElementText"
+				select : oFixture.select
 			});
 			sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
 
@@ -924,8 +987,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_getQueryODataRequestOptions: enhance $select", function(assert) {
-		var aAdditionalSelects,
-			done = assert.async(),
+		var done = assert.async(),
 			sSelects = "FiscalPeriod,ControllingArea,CostCenter,CostCenterText,CostElement,"
 				+ "ActualCosts,Currency",
 			sExpectedSelect = "$select=" + sSelects;
@@ -971,20 +1033,7 @@ sap.ui.require([
 				oBinding._getQueryODataRequestOptions(oAnalyticalQueryRequest, false),
 				[sExpectedSelect]);
 
-			// simulate additional selects
-			oBinding.aAdditionalSelects = ["CostElementText", "CostCenterText",
-				"ControllingAreaText"];
-			aAdditionalSelects = oBinding.aAdditionalSelects.slice();
-
-			// Code under test - CostCenterText is already contained in $select
-			assert.deepEqual(
-				oBinding._getQueryODataRequestOptions(oAnalyticalQueryRequest, true),
-				[sExpectedSelect + ",CostElementText,ControllingAreaText"]);
-			assert.deepEqual(oBinding.aAdditionalSelects, aAdditionalSelects,
-				"array content not modified");
-
 			done();
 		});
 	});
-	// TODO what about getDownloadUrl do we need the additional selects too?
 });
