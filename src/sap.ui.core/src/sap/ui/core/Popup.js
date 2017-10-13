@@ -967,8 +967,9 @@ sap.ui.define([
 			if (this._bModal) {
 				this.oLastBlurredElement = oEvent.target;
 			} else if (this._bAutoClose) {
+				// focus/blur for handling autoclose is disabled for desktop browsers which are not in the touch simulation mode
 				// create timeout for closing the popup if there is no focus immediately returning to the popup
-				if (!this._sTimeoutId) {
+				if (!this.touchEnabled && !this._sTimeoutId) {
 					// If Popup has focus and we click outside of the browser, in Chrome the blur event is fired, but the focused element is still in the Popup and is the same as the focused that triggers the blur event.
 					// if the dom element that fires the blur event is the same as the currently focused element, just return
 					// because in Chrome when the browser looses focus, it fires the blur event of the
@@ -979,13 +980,7 @@ sap.ui.define([
 
 					var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
 					// provide some additional event-parameters: closingDuration, where this delayed call comes from
-					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function() {
-						// if the popup is being closed or closed already, it's not necessary to call the close again
-						if (this.eOpenState === sap.ui.core.OpenState.CLOSING || this.eOpenState === sap.ui.core.OpenState.CLOSED) {
-							this._sTimeoutId = null;
-							return;
-						}
-
+					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function(){
 						this.close(iDuration, "autocloseBlur");
 						var oOf = this._oLastPosition && this._oLastPosition.of;
 						if (oOf) {
