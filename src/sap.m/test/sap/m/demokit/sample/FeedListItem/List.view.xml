@@ -21,7 +21,7 @@
 					text="{Text}"
 					convertLinksToAnchorTags="All"
 					actions="{path: 'Actions', templateShareable: false}">
-					<FeedListItemAction text="{Text}" icon="{Icon}" press="onActionPressed" />
+					<FeedListItemAction text="{Text}" icon="{Icon}" key="{Key}" press="onActionPressed" />
 				</FeedListItem>
 			</List>
 		</l:content>

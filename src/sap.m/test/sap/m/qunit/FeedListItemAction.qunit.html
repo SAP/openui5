@@ -44,13 +44,17 @@
 		assert.equal(this.oAction.getProperty("text"), "", "Default value is correct");
 	});
 
+	QUnit.test("Default value of property key", function(assert) {
+		assert.equal(this.oAction.getProperty("key"), "", "Default value is correct");
+	});
+
 	QUnit.start();
 })();
 
 </script>
 </head>
 <body id="body" class="sapUiBody">
-<div id="qunit"></div>
-<div id="qunit-fixture"></div>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

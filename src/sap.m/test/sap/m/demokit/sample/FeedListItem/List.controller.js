@@ -20,9 +20,9 @@ sap.ui.define([
 		},
 
 		onActionPressed: function(oEvent) {
-			var sAction = oEvent.getSource().getText();
+			var sAction = oEvent.getSource().getKey();
 
-			if (sAction === "Delete") {
+			if (sAction === "delete") {
 				this.removeItem(oEvent.getParameter("item"));
 				MessageToast.show("Item deleted");
 			} else {
