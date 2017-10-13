@@ -417,7 +417,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var that = this;
 
 		fnStubDebug.call(this, false); // debug is off
-		var oLoadResourceStub = fnStubBundle.call(this, false); // bundle is not loaded neither existing
+		var oLoadResourceStub = fnStubBundle.call(this, false); // bundle is neither loaded nor existing
 		fnStubBackend.call(this, true, [that.oChangeFromBackend]); // backend call is successful and returns a change
 
 		var mPropertyBag = {
