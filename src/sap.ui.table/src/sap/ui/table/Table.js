@@ -320,7 +320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 *
 			 * The following restrictions apply:
 			 * <ul>
-			 *   <li>This feature is not supported in mobile devices.</li>
+			 *   <li>Drag-and-drop is not supported on mobile devices and there is no accessibility alternative.</li>
 			 *   <li>Columns cannot be configured to be draggable.</li>
 			 *   <li>The following rows are not draggable:
 			 *     <ul>
