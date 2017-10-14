@@ -394,9 +394,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 					return newDescriptor;
 				};
 
-				// setup the property descriptor interceptors
-				Object.defineProperty(HTMLScriptElement.prototype, "src", fnCreateInterceptorDescriptor(descScriptSrc));
-				Object.defineProperty(HTMLLinkElement.prototype, "href", fnCreateInterceptorDescriptor(descLinkHref));
+				// try to setup the property descriptor interceptors (not supported on all browsers, e.g. iOS9)
+				var bError = false;
+				try {
+					Object.defineProperty(HTMLScriptElement.prototype, "src", fnCreateInterceptorDescriptor(descScriptSrc));
+				} catch (ex) {
+					jQuery.sap.log.error("Your browser doesn't support redefining the src property of the script tag. Disabling AppCacheBuster as it is not supported on your browser!\nError: " + ex);
+					bError = true;
+				}
+				try {
+					Object.defineProperty(HTMLLinkElement.prototype, "href", fnCreateInterceptorDescriptor(descLinkHref));
+				} catch (ex) {
+					jQuery.sap.log.error("Your browser doesn't support redefining the href property of the link tag. Disabling AppCacheBuster as it is not supported on your browser!\nError: " + ex);
+					bError = true;
+				}
+
+				// in case of setup issues we stop the AppCacheBuster support
+				if (bError) {
+					this.exit();
+				}
 
 			},
 
