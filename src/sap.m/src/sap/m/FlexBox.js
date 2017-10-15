@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 			 */
 			items : {type : "sap.ui.core.Control", multiple : true, singularName : "item"}
 		},
-		designTime : true
+		designtime: "sap/m/designtime/FlexBox.designtime"
 	}});
 
 	/**

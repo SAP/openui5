@@ -183,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 				}
 			}
 		},
-		designTime : true
+		designtime: "sap/m/designtime/DatePicker.designtime"
 	}});
 
 

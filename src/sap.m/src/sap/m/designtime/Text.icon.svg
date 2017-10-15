@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
+	 height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g id="Icons">
+	<g>
+		<defs>
+			<rect id="SVGID_97_" width="24" height="24"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_97_"  overflow="visible"/>
+		</clipPath>
+		<g clip-path="url(#SVGID_2_)">
+			<path fill="#4A4A4A" d="M23.5,4h-23C0.224,4,0,4.224,0,4.5S0.224,5,0.5,5h23C23.776,5,24,4.776,24,4.5S23.776,4,23.5,4z"/>
+			<path fill="#4A4A4A" d="M19.5,9h-19C0.224,9,0,9.224,0,9.5C0,9.776,0.224,10,0.5,10h19c0.276,0,0.5-0.224,0.5-0.5
+				C20,9.224,19.776,9,19.5,9z"/>
+			<path fill="#4A4A4A" d="M0.5,15h15.014c0.276,0,0.5-0.224,0.5-0.5c0-0.276-0.224-0.5-0.5-0.5H0.5C0.224,14,0,14.224,0,14.5
+				C0,14.776,0.224,15,0.5,15z"/>
+			<path fill="#4A4A4A" d="M16.5,19h-16C0.224,19,0,19.224,0,19.5C0,19.776,0.224,20,0.5,20h16c0.276,0,0.5-0.224,0.5-0.5
+				C17,19.224,16.776,19,16.5,19z"/>
+		</g>
+	</g>
+</g>
+<g id="LABELS">
+</g>
+</svg>

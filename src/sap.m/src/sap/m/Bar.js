@@ -106,7 +106,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Bar.designtime"
 	}});
 
 	Bar.prototype.onBeforeRendering = function() {

@@ -331,7 +331,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
-		designTime: true
+		designtime: "sap/ui/layout/designtime/form/SimpleForm.designtime"
 	}});
 
 	SimpleForm.prototype.init = function() {

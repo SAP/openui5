@@ -501,7 +501,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this._mEvents = normalize(oStaticInfo.events, this.metaFactoryEvent);
 
 		// as oClassInfo is volatile, we need to store the info
-		this._oDesignTime = oClassInfo.metadata["designTime"];
+		this._oDesignTime = oClassInfo.metadata["designtime"] || oClassInfo.metadata["designTime"];
 
 		if ( oClassInfo.metadata.__version > 1.0 ) {
 			this.generateAccessors();

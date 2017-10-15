@@ -147,7 +147,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 			 */
 			press : {allowPreventDefault : true}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Link.designtime"
 	}});
 
 

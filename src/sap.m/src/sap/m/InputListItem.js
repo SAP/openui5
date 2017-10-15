@@ -56,7 +56,7 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/library'],
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/InputListItem.designtime"
 	}});
 
 	InputListItem.prototype.getContentAnnouncement = function() {

@@ -181,7 +181,7 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/Obj
 				 */
 				_objectNumber: {type: "sap.m.ObjectNumber", multiple: false, visibility: "hidden"}
 			},
-			designTime: true
+			designtime: "sap/m/designtime/ObjectListItem.designtime"
 		}});
 
 		/**

@@ -186,7 +186,7 @@ sap.ui.define([
 				 */
 				_expandButton: {type: "sap.m.Button", multiple: false,  visibility: "hidden"}
 			},
-			designTime: true
+			designtime: "sap/f/designtime/DynamicPageTitle.designtime"
 		}
 	});
 

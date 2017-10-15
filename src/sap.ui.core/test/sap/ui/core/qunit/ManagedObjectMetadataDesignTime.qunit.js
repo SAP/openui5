@@ -11,15 +11,15 @@ sap.ui.require([
 	QUnit.module("Design Time Metadata", {
 		beforeEach: function() {
 			var oMetadata = {
-				designTime: true
+				designtime: true
 			},
 			oMetadataLocal = {
-				designTime: {
+				designtime: {
 					local: "local"
 				}
 			},
 			oMetadataModule = {
-				designTime: "sap/test/DTManagedObjectChild4.designtime"
+				designtime: "sap/test/DTManagedObjectChild4.designtime"
 			};
 
 			// build the inheritance chain of DesignTimeManagedObjects, one without DesignTime in between

@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 
 		metadata: {
 
-			designTime: {
+			designtime: {
 				css: "TextField.designtime.css",
 				icon: "TextField.png",
 				name: "{name}",

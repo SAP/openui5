@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 
 		metadata: {
 
-			designTime: true
+			designtime: true
 
 		}
 

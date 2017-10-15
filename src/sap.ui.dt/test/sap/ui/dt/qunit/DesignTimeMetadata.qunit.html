@@ -61,7 +61,8 @@
 
 			QUnit.test("when getLibraryText is called", function(assert) {
 				var oFakeLibBundle = {
-					getText : this.stub().returns("translated text")
+					getText : this.stub().returns("translated text"),
+					hasText : this.stub().returns(false)
 				};
 				this.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
 				assert.equal(this.oDesignTimeMetadata.getLibraryText("I18N_KEY"), "translated text", "then you get the text from the resource bundle of the corresponding library");

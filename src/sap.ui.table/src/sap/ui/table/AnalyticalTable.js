@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			 */
 			dirty : {type : "boolean", group : "Appearance", defaultValue : null, deprecated: true}
 		},
-		designTime : true
+		designtime: "sap/ui/table/designtime/AnalyticalTable.designtime"
 	}, renderer: "sap.ui.table.TableRenderer"});
 
 	/**

@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 			 */
 			error : {}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Image.designtime"
 	}});
 
 	Image._currentDevicePixelRatio = (function() {

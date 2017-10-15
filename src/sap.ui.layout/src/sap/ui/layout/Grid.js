@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
-		designTime: true
+		designtime: "sap/ui/layout/designtime/Grid.designtime"
 	}});
 
 	/**

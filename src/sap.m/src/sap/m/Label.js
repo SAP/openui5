@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			labelFor : {type : "sap.ui.core.Control", multiple : false}
 		},
-		designTime : true
+		designtime: "sap/m/designtime/Label.designtime"
 	}});
 
 	Label.prototype.setText = function(sText) {

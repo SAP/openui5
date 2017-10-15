@@ -31,14 +31,15 @@
         suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageWithLazyLoadingTabs.qunit.html");
         suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageModelMapping.qunit.html");
 
+        // --------------------------
         // Design Time & RTA Enabling
-        try {
-             sap.ui.getCore().loadLibrary("sap.ui.rta");
-             suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/dt/ObjectPageHeader.qunit.html");
-             suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/dt/ObjectPageSubSection.qunit.html");
-        } catch (e) {
-             jQuery.sap.log.info("sap.ui.rta not available", "enabling tests are skipped, ensure sap.ui.rta from sapui5.runtime is loaded to execute them");
-        }
+        // --------------------------
+        //complete libraries dt files general json data
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/dt/Library.qunit.html");
+        //individual controls
+        sap.ui.getCore().loadLibrary("sap.ui.rta");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/dt/ObjectPageHeader.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/dt/ObjectPageSubSection.qunit.html");
 
         return suite;
     }

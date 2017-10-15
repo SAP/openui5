@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			press : {}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Button.designtime"
 	}});
 
 

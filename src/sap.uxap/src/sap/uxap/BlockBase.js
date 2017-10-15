@@ -54,7 +54,7 @@ sap.ui.define([
 
 		var BlockBase = Control.extend("sap.uxap.BlockBase", {
 			metadata: {
-				designTime: true,
+				designtime: "sap/uxap/designtime/BlockBase.designtime",
 				library: "sap.uxap",
 				properties: {
 					/**
