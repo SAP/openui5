@@ -1620,10 +1620,10 @@
 		oTable._onBindingChange = function() {
 			aEventListenerSequence.push("change_table");
 		};
-		oTable._onBindingDataRequestedListener = function() {
+		oTable._onBindingDataRequested = function() {
 			aEventListenerSequence.push("dataRequested_table");
 		};
-		oTable._onBindingDataReceivedListener = function() {
+		oTable._onBindingDataReceived = function() {
 			aEventListenerSequence.push("dataReceived_table");
 		};
 
@@ -2535,104 +2535,86 @@
 		oTable.attachEvent("busyStateChanged", onBusyStateChangedEventHandler);
 		oTable.setBusyIndicatorDelay(0);
 
-		function localTest(bBusyIndicatorVisibleBefore, bBusyIndicatorVisibleAfter, bDataRequestedListener, bPendingRequest) {
-			// Prepare for next test iteration.
-			oTable.setBusy(bBusyIndicatorVisibleBefore);
-			sap.ui.getCore().applyChanges();
+		function test(bDataRequested, vExpectedPendingRequests, bExpectedBusyIndicatorVisible) {
+			var bBusyStateBefore = oTable.getBusy();
+
 			onBusyStateChangedEventHandler.reset();
 
-			assert.strictEqual(oTable.getBusy(), bBusyIndicatorVisibleBefore, "Initial: The busy state of the table is: " + bBusyIndicatorVisibleBefore);
-			assert.strictEqual(oTable.getDomRef(sBusyIndicatorParent).querySelector("." + sBusyIndicatorClass) != null, bBusyIndicatorVisibleBefore,
-				"Initial: The busy indicator element exists in the DOM: " + bBusyIndicatorVisibleBefore);
-
-			// Perform next test iteration.
-			oTable._bPendingRequest = !bDataRequestedListener;
-			if (bDataRequestedListener) {
-				oTable._onBindingDataRequestedListener.call(oTable, oEvent);
+			if (bDataRequested) {
+				oTable._onBindingDataRequested.call(oTable, oEvent);
 			} else {
-				oTable._onBindingDataReceivedListener.call(oTable, oEvent);
+				oTable._onBindingDataReceived.call(oTable, oEvent);
 				clock.tick(1);
 			}
 			sap.ui.getCore().applyChanges();
 
-			assert.strictEqual(oTable.getBusy(), bBusyIndicatorVisibleAfter, "Test: The busy state of the table is: " + bBusyIndicatorVisibleAfter);
+			assert.strictEqual(oTable.getBusy(), bExpectedBusyIndicatorVisible, "The busy state of the table is: " + bExpectedBusyIndicatorVisible);
 
-			if (bBusyIndicatorVisibleBefore === bBusyIndicatorVisibleAfter) {
-				assert.ok(onBusyStateChangedEventHandler.callCount === 0, "Test: BusyStateChanged event has not been fired");
+			if (bBusyStateBefore === bExpectedBusyIndicatorVisible) {
+				assert.strictEqual(onBusyStateChangedEventHandler.callCount, 0, "BusyStateChanged event has not been fired");
 			} else {
-				assert.ok(onBusyStateChangedEventHandler.callCount === 1, "Test: BusyStateChanged event has been fired");
+				assert.strictEqual(onBusyStateChangedEventHandler.callCount, 1, "BusyStateChanged event has been fired once");
 
 				if (onBusyStateChangedEventHandler.callCount === 1) {
-					assert.deepEqual(onBusyStateChangedEventHandler.parameters, { busy: bBusyIndicatorVisibleAfter, id: oTable.getId() },
-						"Test: BusyStateChanged event has been fired with the correct arguments");
+					assert.deepEqual(onBusyStateChangedEventHandler.parameters, {busy: bExpectedBusyIndicatorVisible, id: oTable.getId()},
+							"BusyStateChanged event has been fired with the correct arguments");
 				}
 			}
 
-			assert.strictEqual(oTable.getDomRef(sBusyIndicatorParent).querySelector("." + sBusyIndicatorClass) != null, bBusyIndicatorVisibleAfter,
-				"Test: The busy indicator element exists in the DOM: " + bBusyIndicatorVisibleAfter);
+			assert.strictEqual(oTable.getDomRef(sBusyIndicatorParent).querySelector("." + sBusyIndicatorClass) != null, bExpectedBusyIndicatorVisible,
+					"The busy indicator element exists in the DOM: " + bExpectedBusyIndicatorVisible);
 
-			assert.strictEqual(oTable._bPendingRequest, bPendingRequest, "Test: The pending request flag is correctly set");
+			if (typeof vExpectedPendingRequests === "boolean") {
+				assert.strictEqual(oTable._bPendingRequest, vExpectedPendingRequests, "The pending requests flag is correct");
+			} else {
+				assert.strictEqual(oTable._iPendingRequests, vExpectedPendingRequests, "The pending requests counter is correct");
+			}
 		}
 
-		/* Data requested */
-
 		// Busy indicator handling disabled: No busy state change.
 		oTable.setEnableBusyIndicator(false);
-		localTest(false, false, true, true);
-		localTest(true, true, true, true);
+		test(true, 1, false);
+		test(true, 2, false);
+		test(false, 1, false);
+		test(false, 0, false);
+		oTable.setEnableBusyIndicator(true);
 
 		// No binding: No busy state change.
-		oTable.setEnableBusyIndicator(true);
 		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
-		localTest(false, false, true, false);
-		localTest(true, true, true, false);
+		test(true, 0, false);
+		test(true, 0, false);
+		test(false, 0, false);
+		test(false, 0, false);
+		oTable.getBinding.restore();
 
 		// Simulated asynchronous analytical binding request: No busy state change.
-		oTable.getBinding.restore();
 		oEvent.getParameter = function() {
 			return true;
 		};
-		localTest(false, false, true, false);
-		localTest(true, true, true, false);
-
-		// Data requested: Set busy state to true.
+		test(true, 0, false);
+		test(true, 0, false);
+		test(false, 0, false);
+		test(false, 0, false);
 		oEvent.getParameter = function() {
 			return false;
 		};
-		localTest(false, true, true, true);
-		localTest(true, true, true, true);
 
-		/* Data received */
+		this.stub(sap.ui.table.TableUtils, "canUsePendingRequestsCounter").returns(true);
+		test(true, 1, true); // Data requested: Set busy state to true.
+		test(true, 2, true); // // Data requested: Keep busy state.
+		test(false, 1, true); // Data received: Keep busy state.
+		test(false, 0, false); // // Data received: Set busy state to false.
 
-		// Busy indicator handling disabled: No busy state change.
-		oTable.setEnableBusyIndicator(false);
-		localTest(false, false, false, false);
-		localTest(true, true, false, false);
-
-		// No binding: No busy state change.
-		oTable.setEnableBusyIndicator(true);
-		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
-		localTest(false, false, false, true);
-		localTest(true, true, false, true);
-
-		// Simulated asynchronous analytical binding request: No busy state change.
-		oTable.getBinding.restore();
-		oEvent.getParameter = function() {
-			return true;
-		};
-		localTest(false, false, false, true);
-		localTest(true, true, false, true);
-
-		// Data received: Set busy state to false.
-		oEvent.getParameter = function() {
-			return false;
-		};
-		localTest(false, false, false, false);
-		localTest(true, false, false, false);
+		sap.ui.table.TableUtils.canUsePendingRequestsCounter.returns(false);
+		test(true, true, true); // Data requested: Set busy state to true.
+		test(true, true, true); // // Data requested: Keep busy state.
+		test(false, false, false); // Data received: Set busy state to false.
+		test(false, false, false); // // Data requested: Keep busy state.
 
 		// Cleanup
 		oTable.detachEvent("busyStateChanged", onBusyStateChangedEventHandler);
 		clock.restore();
+		sap.ui.table.TableUtils.canUsePendingRequestsCounter.restore();
 	});
 
 	QUnit.test("NoData handling", function(assert) {
@@ -2652,7 +2634,7 @@
 		};
 
 		function testDataReceivedListener(bNoDataVisible) {
-			oTable._onBindingDataReceivedListener.call(oTable, oEvent);
+			oTable._onBindingDataReceived.call(oTable, oEvent);
 			oClock.tick(1);
 			sap.ui.getCore().applyChanges();
 
