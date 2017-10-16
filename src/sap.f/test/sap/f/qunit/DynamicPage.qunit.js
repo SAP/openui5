@@ -1079,6 +1079,127 @@
 		oAction3.destroy();
 	});
 
+	QUnit.module("DynamicPage - Rendering - Title heading, snappedHeading and expandedHeading");
+
+	QUnit.test("No heading at all", function (assert) {
+		var oDynamicPageTitle = new DynamicPageTitle({}),
+			oDynamicPage = new DynamicPage({
+				title: oDynamicPageTitle,
+				header: oFactory.getDynamicPageHeader(),
+				content: oFactory.getContent(100),
+				footer: oFactory.getFooter()
+			});
+		oUtil.renderObject(oDynamicPage);
+
+		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainLeftHeading");
+		assert.ok($heading.length === 1, "Heading area is rendered");
+		assert.ok($heading.children().length === 0, "Heading area is empty");
+
+		oDynamicPage.destroy();
+	});
+
+	QUnit.test("Only heading given", function (assert) {
+		var oTitle = oFactory.getTitle(),
+			oDynamicPageTitle = new DynamicPageTitle({
+				heading: oTitle
+			}),
+			oDynamicPage = new DynamicPage({
+				title: oDynamicPageTitle,
+				header: oFactory.getDynamicPageHeader(),
+				content: oFactory.getContent(100),
+				footer: oFactory.getFooter()
+			});
+		oUtil.renderObject(oDynamicPage);
+
+		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainLeftHeading");
+		assert.ok($heading.length === 1, "Heading area is rendered");
+		assert.ok($heading.children().length === 1, "Heading area has one child rendered");
+		assert.ok($heading.children()[0] === oTitle.getDomRef(), "This child is the title");
+
+		oDynamicPage.destroy();
+	});
+
+	QUnit.test("heading in combination with snappedHeading/expandedHeading given", function (assert) {
+		var oTitle = oFactory.getTitle(),
+			oDynamicPageTitle = new DynamicPageTitle({
+				heading: oTitle,
+				expandedHeading: oFactory.getTitle(),
+				snappedHeading: oFactory.getTitle()
+			}),
+			oDynamicPage = new DynamicPage({
+				title: oDynamicPageTitle,
+				header: oFactory.getDynamicPageHeader(),
+				content: oFactory.getContent(100),
+				footer: oFactory.getFooter()
+			});
+		oUtil.renderObject(oDynamicPage);
+
+		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainLeftHeading");
+		assert.ok($heading.length === 1, "Heading area is rendered");
+		assert.ok($heading.children().length === 1, "Heading area has one child rendered");
+		assert.ok($heading.children()[0] === oTitle.getDomRef(), "This child is the title");
+
+		oDynamicPage.destroy();
+	});
+
+	QUnit.test("Only snappedHeading given", function (assert) {
+		var oDynamicPageTitle = new DynamicPageTitle({
+				snappedHeading: oFactory.getTitle()
+			}),
+			oDynamicPage = new DynamicPage({
+				title: oDynamicPageTitle,
+				header: oFactory.getDynamicPageHeader(),
+				content: oFactory.getContent(100),
+				footer: oFactory.getFooter()
+			});
+		oUtil.renderObject(oDynamicPage);
+
+		assert.ok(oDynamicPageTitle.$("snapped-heading-wrapper").length === 1, "Snapped heading wrapper is rendered");
+		assert.ok(oDynamicPageTitle.$("snapped-heading-wrapper").hasClass("sapUiHidden"), "Snapped heading wrapper is hidden");
+
+		oDynamicPage.destroy();
+	});
+
+	QUnit.test("Only expandedHeading given", function (assert) {
+		var oDynamicPageTitle = new DynamicPageTitle({
+				expandedHeading: oFactory.getTitle()
+			}),
+			oDynamicPage = new DynamicPage({
+				title: oDynamicPageTitle,
+				header: oFactory.getDynamicPageHeader(),
+				content: oFactory.getContent(100),
+				footer: oFactory.getFooter()
+			});
+		oUtil.renderObject(oDynamicPage);
+
+		assert.ok(oDynamicPageTitle.$("expand-heading-wrapper").length === 1, "Expanded heading wrapper is rendered");
+		assert.ok(!oDynamicPageTitle.$("expand-heading-wrapper").hasClass("sapUiHidden"), "Expanded heading wrapper is visible");
+
+		oDynamicPage.destroy();
+	});
+
+	QUnit.test("Both snappedHeading and expandedHeading given", function (assert) {
+		var oDynamicPageTitle = new DynamicPageTitle({
+				snappedHeading: oFactory.getTitle(),
+				expandedHeading: oFactory.getTitle()
+			}),
+			oDynamicPage = new DynamicPage({
+				title: oDynamicPageTitle,
+				header: oFactory.getDynamicPageHeader(),
+				content: oFactory.getContent(100),
+				footer: oFactory.getFooter()
+			});
+		oUtil.renderObject(oDynamicPage);
+
+		assert.ok(oDynamicPageTitle.$("snapped-heading-wrapper").length === 1, "Snapped heading wrapper is rendered");
+		assert.ok(oDynamicPageTitle.$("snapped-heading-wrapper").hasClass("sapUiHidden"), "Snapped heading wrapper is hidden");
+
+		assert.ok(oDynamicPageTitle.$("expand-heading-wrapper").length === 1, "Expanded heading wrapper is rendered");
+		assert.ok(!oDynamicPageTitle.$("expand-heading-wrapper").hasClass("sapUiHidden"), "Expanded heading wrapper is visible");
+
+		oDynamicPage.destroy();
+	});
+
 	QUnit.module("DynamicPage - Rendering - Footer Visibility", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = true;
