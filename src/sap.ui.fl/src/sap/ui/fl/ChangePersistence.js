@@ -499,7 +499,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns a resolved promise after all dirty changes were saved
 	 */
 	ChangePersistence.prototype.saveAsDirtyChanges = function(sReferenceForChange) {
-		return Settings.getInstance(this._mComponent.name, this._mComponent.appVersion).then(function(oSettings) {
+		return Settings.getInstance().then(function(oSettings) {
 
 			var oPropertyBag = {
 				reference: sReferenceForChange

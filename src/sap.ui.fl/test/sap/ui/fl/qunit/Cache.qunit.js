@@ -28,6 +28,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			Cache._switches = {};
 			Cache.setActive(true);
 			this.oLrepConnector = LrepConnector.createConnector();
+			Cache._oFlexDataPromise = undefined;
 		},
 		afterEach: function() {
 			Cache._entries = {};
@@ -48,23 +49,28 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		});
 	});
 
-	QUnit.test('isActive should ensure, that calls for same component are done only once', function(assert) {
+	QUnit.test('isActive should ensure, that calls for same component are done only once and promise of last /flex/data call is cached', function(assert) {
 		var that = this;
 		var oChangesFromFirstCall;
 		var sComponentName = "test";
+		var oPromise1, oPromise2;
 
 		sinon.stub(this.oLrepConnector, 'loadChanges', createLoadChangesResponse);
 
 		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function(firstChanges) {
 			oChangesFromFirstCall = firstChanges;
+			oPromise1 = Cache.getFlexDataPromise();
+			assert.notEqual(oPromise1, undefined);
 			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
 		}).then(function(secondChanges) {
+			oPromise2 = Cache.getFlexDataPromise();
+			assert.strictEqual(oPromise1, oPromise2);
 			assert.strictEqual(oChangesFromFirstCall, secondChanges);
 			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
 		});
 	});
 
-	QUnit.test('if NOT isActive, all calls for same component have their own call', function(assert) {
+	QUnit.test('if NOT isActive, all calls for same component have their own call and no promise of /flex/data call is cached', function(assert) {
 		var that = this;
 		var oChangesFromFirstCall;
 		var sComponentName = "test";
@@ -75,8 +81,10 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 		return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function(firstChanges) {
 			oChangesFromFirstCall = firstChanges;
+			assert.equal(Cache.getFlexDataPromise(), undefined);
 			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
 		}).then(function(secondChanges) {
+			assert.equal(Cache.getFlexDataPromise(), undefined);
 			assert.notStrictEqual(oChangesFromFirstCall, secondChanges);
 			sinon.assert.calledTwice(that.oLrepConnector.loadChanges);
 		});
