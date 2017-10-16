@@ -52,7 +52,7 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 .sapMRIUnsel {
 	position: relative;
 	float: right;
-	color: darken(@sapUiContentForegroundColor, 30);
+	color: darken(@sapUiContentForegroundColor, 25);
 	word-wrap: normal;
 	white-space: nowrap;
 }
@@ -73,6 +73,10 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 
 .sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov, .sapMRIIconReadOnly {
     font-family: SAP-icons;
+}
+
+.sapMListTblCell > .sapMRI {
+  margin: 0;
 }
 
 .sapUiSizeCondensed .sapUiTableCell > .sapMRI {
@@ -203,9 +207,5 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 .sapMRI.sapMRIDisplayOnly {
 	.sapMRIIconSel {
 		color: @sapUiBaseText;
-	}
-
-	.sapMRIIconUnsel {
-		color: darken(@sapUiContentForegroundColor, 30);
 	}
 }
