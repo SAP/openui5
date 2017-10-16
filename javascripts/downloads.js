@@ -3,15 +3,19 @@ function onLoad() {
     var sVersionTemplate = $("#versionTemplate").html();
     var sStableVersionTemplate = $("#stableVersionTemplate").html();
     var sUnstableVersionTemplate = $("#unstableVersionTemplate").html();
+    var sNoUnstableVersionTemplate = $("#noUnstableVersion").html();
     var oAvailableVersionsElement = $("#availableVersions");
     var oStableVersionElement = $("#stableVersion");
     var oUnstableVersionElement = $("#unstableVersion");
+    var oNoUnstableVersionElement = $("#noUnstableVersion");
     //last stable release object
     var oStableVersion = null;
     //unstable development build object
     var oUnstableVersion = null;
 
     jQuery.getJSON("./OpenUI5Downloads.json", function (oResult) {
+        var bBeta = false;
+
         $.each(oResult, function (sIndex, oEntry) {
             //shorten version number from X.XX.XX to X.XX
             var sShortVersion = oEntry.version;
@@ -25,6 +29,7 @@ function onLoad() {
                 else if (oEntry.version > oUnstableVersion.version) {
                     oUnstableVersion = oEntry;
                 }
+				bBeta = true;
                 return;
             }
 
@@ -40,7 +45,7 @@ function onLoad() {
             if (oStableVersion === null) {
                 oStableVersion = oEntry;
             }
-            else if (oEntry.version > oStableVersion) {
+            else if (oEntry.version > oStableVersion.version) {
                 oStableVersion = oEntry;
             }
         });
@@ -55,9 +60,23 @@ function onLoad() {
         oStableVersionElement.append(sStableRelease);
 
         //replace spaceholder with values from JSON
-        var sUnstableRelease = sUnstableVersionTemplate
-            .replace(/{{versionFull}}/g, oUnstableVersion.version)
-            .replace(/{{date}}/g, oUnstableVersion.date)
-        oUnstableVersionElement.append(sUnstableRelease);
-    })
+		if (bBeta === true) {
+			var sUnstableRelease = sUnstableVersionTemplate
+				.replace(/{{versionFull}}/g, oUnstableVersion.version)
+				.replace(/{{date}}/g, oUnstableVersion.date);
+			oUnstableVersionElement.append(sUnstableRelease);
+
+			//toggle beta section if a beta release is available
+			oNoUnstableVersionElement.css("display", "none");
+			oUnstableVersionElement.css("display", "block");
+        } else {
+			var aTemp = oStableVersion.version.split("\.");
+			var sNextVersion = aTemp[0] + "." + (parseInt(aTemp[1]) + 2);
+			var sNoUnstableVersion = sNoUnstableVersionTemplate.replace(/{{versionNext}}/g, sNextVersion);
+
+			oNoUnstableVersionElement.replaceWith(sNoUnstableVersion);
+			oNoUnstableVersionElement.css("display", "block");
+			oUnstableVersionElement.css("display", "none");
+		}
+	})
 }
