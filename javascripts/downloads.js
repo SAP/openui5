@@ -14,6 +14,8 @@ function onLoad() {
     var oUnstableVersion = null;
 
     jQuery.getJSON("./OpenUI5Downloads.json", function (oResult) {
+	var bBeta = false;
+	    
         $.each(oResult, function (sIndex, oEntry) {
             //shorten version number from X.XX.XX to X.XX
             var sShortVersion = oEntry.version;
@@ -27,7 +29,8 @@ function onLoad() {
                 else if (oEntry.version > oUnstableVersion.version) {
                     oUnstableVersion = oEntry;
                 }
-                return;
+                bBeta = true;
+		return;
             }
 
             //publish available version
@@ -57,20 +60,13 @@ function onLoad() {
         oStableVersionElement.append(sStableRelease);
 
         //replace spaceholder with values from JSON
+	if (bBeta === true) {    
         var sUnstableRelease = sUnstableVersionTemplate
             .replace(/{{versionFull}}/g, oUnstableVersion.version)
             .replace(/{{date}}/g, oUnstableVersion.date)
         oUnstableVersionElement.append(sUnstableRelease);
-    })
-    
-        //replace spaceholder with values from JSON
-		if (bBeta === true) {
-		    var sUnstableRelease = sUnstableVersionTemplate
-			.replace(/{{versionFull}}/g, oUnstableVersion.version)
-			.replace(/{{date}}/g, oUnstableVersion.date);
-		    oUnstableVersionElement.append(sUnstableRelease);
-		}
-
+	}
+	    
         //toggle beta section if a beta release is available
         if (bBeta === true) {
 	    oNoUnstableVersionElement.css("display", "none");
