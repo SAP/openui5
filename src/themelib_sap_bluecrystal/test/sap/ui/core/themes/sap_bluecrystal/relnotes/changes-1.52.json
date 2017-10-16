@@ -1,0 +1,37 @@
+{
+  "1.52.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "a5022f7d99b978d2a9dc9be4e3a4724195f04a1c",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
+        "references": []
+      },
+      {
+        "id": "265aa8f4a0ec76bd2656934425e316a4771a2427",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      },
+      {
+        "id": "e7c4f05faf84b4f0644e44364aaf515b443c560d",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton - when used inside sap.m.Bar spacing is preserved.",
+        "references": []
+      },
+      {
+        "id": "92b3c6ed83cd76526f71174a32bb172247355402",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Moving of tiles fixed",
+        "references": []
+      },
+      {
+        "id": "bade948550820800db627620e0ef20ba840d58f7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: minor visual fix in the header",
+        "references": []
+      }
+    ]
+  }
+}
