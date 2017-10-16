@@ -202,6 +202,52 @@ sap.ui.define([
 	}
 
 	/**
+	 * Processes an Include element within a Reference.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processInclude(oElement, oAggregate) {
+		var oInclude = MetadataConverter.getOrCreateArray(oAggregate.reference, "$Include");
+
+		oInclude.push(oElement.getAttribute("Namespace") + ".");
+	}
+
+	/**
+	 * Processes an IncludeAnnotations element within a Reference.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processIncludeAnnotations(oElement, oAggregate) {
+		var oReference = oAggregate.reference,
+			oIncludeAnnotation = {
+				"$TermNamespace" : oElement.getAttribute("TermNamespace") + "."
+			},
+			aIncludeAnnotations =
+				MetadataConverter.getOrCreateArray(oReference, "$IncludeAnnotations");
+
+		MetadataConverter.processAttributes(oElement, oIncludeAnnotation, {
+			"TargetNamespace" : function setValue(sValue) {
+				return sValue ? sValue + "." : sValue;
+			},
+			"Qualifier" : MetadataConverter.setValue
+		});
+
+		aIncludeAnnotations.push(oIncludeAnnotation);
+	}
+
+	/**
+	 * Processes a Reference element.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processReference(oElement, oAggregate) {
+		var oReference = MetadataConverter.getOrCreateObject(oAggregate.result, "$Reference");
+
+		oAggregate.reference = oReference[oElement.getAttribute("Uri")] = {};
+		MetadataConverter.annotatable(oAggregate, oAggregate.reference);
+	}
+
+	/**
 	 * Post-processing of an Annotation element. Sets the result of the single child element at
 	 * the annotation if there was a child.
 	 *
@@ -478,6 +524,21 @@ sap.ui.define([
 		 * The configuration for an <Annotations> element to be included into other configurations
 		 */
 		oAnnotationsConfig : oAnnotationsConfig,
+		/**
+		 * The configuration for a <Reference> element to be included into other configurations
+ 		 */
+		oReferenceInclude : {
+			"Reference" : {
+				__processor : processReference,
+				__include : [oAnnotationConfig],
+				"Include" : {
+					__processor : processInclude
+				},
+				"IncludeAnnotations" : {
+					__processor : processIncludeAnnotations
+				}
+			}
+		},
 
 		/**
 		 * A pattern for "Collection(QualifiedType)"
@@ -590,52 +651,6 @@ sap.ui.define([
 					oTarget["$" + sProperty] = sValue;
 				}
 			}
-		},
-
-		/**
-		 * Processes an Include element within a Reference.
-		 * @param {Element} oElement The element
-		 * @param {object} oAggregate The aggregate
-		 */
-		processInclude : function (oElement, oAggregate) {
-			var oInclude = MetadataConverter.getOrCreateArray(oAggregate.reference, "$Include");
-
-			oInclude.push(oElement.getAttribute("Namespace") + ".");
-		},
-
-		/**
-		 * Processes an IncludeAnnotations element within a Reference.
-		 * @param {Element} oElement The element
-		 * @param {object} oAggregate The aggregate
-		 */
-		processIncludeAnnotations : function (oElement, oAggregate) {
-			var oReference = oAggregate.reference,
-				oIncludeAnnotation = {
-					"$TermNamespace" : oElement.getAttribute("TermNamespace") + "."
-				},
-				aIncludeAnnotations =
-					MetadataConverter.getOrCreateArray(oReference, "$IncludeAnnotations");
-
-			MetadataConverter.processAttributes(oElement, oIncludeAnnotation, {
-				"TargetNamespace" : function setValue(sValue) {
-					return sValue ? sValue + "." : sValue;
-				},
-				"Qualifier" : MetadataConverter.setValue
-			});
-
-			aIncludeAnnotations.push(oIncludeAnnotation);
-		},
-
-		/**
-		 * Processes a Reference element.
-		 * @param {Element} oElement The element
-		 * @param {object} oAggregate The aggregate
-		 */
-		processReference : function (oElement, oAggregate) {
-			var oReference = MetadataConverter.getOrCreateObject(oAggregate.result, "$Reference");
-
-			oAggregate.reference = oReference[oElement.getAttribute("Uri")] = {};
-			MetadataConverter.annotatable(oAggregate, oAggregate.reference);
 		},
 
 		/**
