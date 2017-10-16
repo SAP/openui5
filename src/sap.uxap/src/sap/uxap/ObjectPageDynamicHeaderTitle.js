@@ -101,26 +101,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/uxap/ObjectPageDynamicHead
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.snap = function () {
-			if (this.getExpandedContent()) {
-				this._setShowExpandContent(false);
-			}
-
-			if (this.getSnappedContent()) {
-				this._setShowSnapContent(true);
-			}
+			this._toggleState(false);
 		};
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.unSnap = function () {
-			if (this.getExpandedContent()) {
-				this._setShowExpandContent(true);
-			}
-
-			if (this.getSnappedContent()) {
-				this._setShowSnapContent(false);
-			}
+			this._toggleState(true);
 		};
 
 		/**
