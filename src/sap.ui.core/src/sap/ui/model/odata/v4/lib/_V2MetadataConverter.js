@@ -333,6 +333,7 @@ sap.ui.define([
 			aAttributes = oElement.attributes,
 			sParentPath = oAggregate.annotatable.parent.path,
 			mParentAnnotations = oAggregate.convertedV2Annotations[sParentPath] || {},
+			sSemanticValue,
 			i,
 			n = aAttributes.length;
 
@@ -347,9 +348,17 @@ sap.ui.define([
 				if (sKind === "EntitySet") {
 					convertEntitySetAnnotation(oElement, oAttribute, mAnnotations, oAggregate);
 				} else if (sKind === "Property" && oAttribute.localName === "semantics") {
+					sSemanticValue = oAttribute.value;
+					if (sSemanticValue === "unit-of-measure"
+							|| sSemanticValue === "currency-code") {
+						oAggregate.mProperty2Semantics[sElementPath] = sSemanticValue;
+					}
 					convertPropertySemanticAnnotations(oAttribute, mParentAnnotations,
 						mAnnotations);
 				} else if (sKind === "Property") {
+					if (oAttribute.localName === "unit") {
+						oAggregate.mProperty2Unit[sElementPath] = oAttribute.value;
+					}
 					convertPropertyAnnotations(oAttribute, mAnnotations);
 				}
 			}
@@ -968,6 +977,61 @@ sap.ui.define([
 	}
 
 	/**
+	 * For each property with a "sap:unit" annotation a corresponding V4 annotation is created.
+	 * The annotation is "Org.OData.Measures.V1.Unit" if the unit has
+	 * sap:semantics="unit-of-measure" or "Org.OData.Measures.V1.ISOCurrency" if the unit has
+	 * sap:semantics="currency-code". The unit property can be in a different type thus the
+	 * conversion can only happen in pass 3.
+	 *
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processUnitConversion(oAggregate) {
+		Object.keys(oAggregate.mProperty2Unit).forEach(function (sPropertyPath) {
+			var vHere,
+				oType,
+				sTypeName = sPropertyPath.split("/")[0],
+				sUnitAnnotation,
+				sUnitPath = oAggregate.mProperty2Unit[sPropertyPath],
+				aUnitPathSegments = sUnitPath.split("/"),
+				oUnitProperty,
+				sUnitSemantics,
+				i,
+				n = aUnitPathSegments.length;
+
+			for (i = 0; i < n; i++) {
+				oType = oAggregate.result[sTypeName];
+				oUnitProperty = oType[aUnitPathSegments[i]];
+				if (!oUnitProperty) {
+					jQuery.sap.log.warning("Path '" + sUnitPath
+						+ "' for sap:unit cannot be resolved", sPropertyPath, sModuleName);
+					return;
+				}
+				if (i < n - 1) {
+					sTypeName = oUnitProperty.$Type;
+				}
+			}
+			sUnitSemantics = oAggregate.mProperty2Semantics[
+				sTypeName + "/" + aUnitPathSegments[n - 1]];
+			if (!sUnitSemantics) {
+				jQuery.sap.log.warning("Unsupported sap:semantics at sap:unit='" + sUnitPath
+					+ "'; expected 'currency-code' or 'unit-of-measure'", sPropertyPath,
+					sModuleName);
+				return;
+			}
+
+			sUnitAnnotation = sUnitSemantics === "currency-code" ? "ISOCurrency" : "Unit";
+			sUnitAnnotation = "@Org.OData.Measures.V1." + sUnitAnnotation;
+
+			vHere = V2MetadataConverter.getOrCreateObject(
+				oAggregate.result[_Helper.namespace(sPropertyPath) + "."], "$Annotations");
+			vHere = V2MetadataConverter.getOrCreateObject(vHere, sPropertyPath);
+			if (!(sUnitAnnotation in vHere)) { // existing V4 annotations won't be overridden
+				vHere[sUnitAnnotation] = {"$Path" : sUnitPath};
+			}
+		});
+	}
+
+	/**
 	 * Processes a Property element of a structured type.
 	 * @param {Element} oElement The element
 	 * @param {object} oAggregate The aggregate
@@ -1199,12 +1263,14 @@ sap.ui.define([
 				mEntityType2EntitySetAnnotation : {},
 				"function" : null, // the current function
 				"namespace" : null, // the namespace of the current Schema
+				mProperty2Semantics : {}, // maps a property's path to its sap:semantics value
 				"navigationProperties" : [], // a list of navigation property data
 				"processFacetAttributes" : V2MetadataConverter.processFacetAttributes,
 				"processTypedCollection" : processTypedCollection,
 				"schema" : null, // the current Schema
 				"type" : null, // the current EntityType/ComplexType
 				sTypeName : null, // the name of the current EntityType/ComplexType
+				mProperty2Unit : {}, // maps a property's path to its sap:unit value
 				"result" : {
 					"$Version" : "4.0" // The result of the conversion is a V4 streamlined JSON
 				},
@@ -1218,6 +1284,7 @@ sap.ui.define([
 			// pass 3
 			setDefaultEntityContainer(oAggregate);
 			updateNavigationPropertiesAndCreateBindings(oAggregate);
+			processUnitConversion(oAggregate);
 
 			jQuery.sap.measure.end("convertXMLMetadata");
 			return oAggregate.result;

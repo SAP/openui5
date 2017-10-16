@@ -1951,6 +1951,140 @@ sap.ui.require([
 					"$kind" : "Schema"
 				}
 			};
+		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sap:unit", function (assert) {
+		var sXML = '\
+				<Schema Namespace="GWSAMPLE_BASIC.0001" Alias="GWSAMPLE_BASIC">\
+					<ComplexType Name="CT_Parts">\
+						<Property Name="Weight" Type="Edm.Decimal"\
+							sap:unit="WeightUnit"/>\
+						<Property Name="WeightUnit" Type="Edm.String"\
+							sap:semantics="unit-of-measure"/>\
+					</ComplexType>\
+					<EntityType Name="Product">\
+						<Property Name="Parts" Type="GWSAMPLE_BASIC.CT_Parts"/>\
+						<Property Name="GrossWeight" Type="Edm.Decimal"\
+							sap:unit="Parts/WeightUnit"/>\
+						<Property Name="Depth" Type="Edm.Decimal" sap:unit="DepthUnit"\
+							sap:label="Depth"/>\
+						<Property Name="DepthUnit" Type="Edm.String"\
+							sap:semantics="unit-of-measure"/>\
+						<Property Name="Price" Type="Edm.Decimal" sap:unit="PriceCurrency"/>\
+						<Property Name="NetPrice" Type="Edm.Decimal" sap:unit="PriceCurrency"/>\
+						<Property Name="PriceCurrency" Type="Edm.String"\
+							sap:semantics="currency-code"/>\
+						<Property Name="NetWeight" Type="Edm.Decimal"\
+							sap:unit="toMeasure/WeightUnit" sap:label="Net Weight"/>\
+						<Property Name="PackagingWeight" Type="Edm.Decimal"\
+							sap:unit="toMeasure/Parts/WeightUnit" sap:label="Packaging Weight"/>\
+						<NavigationProperty Name="toMeasure"\
+							Relationship="GWSAMPLE_BASIC.Assoc_Product_Measure"\
+							FromRole="FromRole_Assoc_Product_Measure"\
+							ToRole="ToRole_Assoc_Product_Measure" />\
+<!-- invalid sap:unit -->\
+						<Property Name="WeightMissingUnit0" Type="Edm.Decimal"\
+							sap:unit="Parts/MissingUnit/Foo"/>\
+						<Property Name="Width" Type="Edm.Decimal" sap:unit="InvalidUnit"/>\
+						<Property Name="InvalidUnit" Type="Edm.String"\
+							sap:semantics="invalid"/>\
+						<Property Name="WeightMissingUnit1" Type="Edm.Decimal"\
+							sap:unit="MissingUnit/Foo" sap:label="Weight Missing Unit"/>\
+					</EntityType>\
+					<EntityType Name="Measure">\
+						<Property Name="Parts" Type="GWSAMPLE_BASIC.CT_Parts"/>\
+						<Property Name="WeightUnit" Type="Edm.String"\
+							sap:semantics="unit-of-measure"/>\
+					</EntityType>\
+					<Association Name="Assoc_Product_Measure">\
+						<End Type="GWSAMPLE_BASIC.0001.Product" Multiplicity="1"\
+							Role="FromRole_Assoc_Products_Measure" />\
+						<End Type="GWSAMPLE_BASIC.0001.Measure" Multiplicity="*"\
+							Role="ToRole_Assoc_Product_Measure" />\
+					</Association>\
+					<Annotations Target="GWSAMPLE_BASIC.Product/NetPrice">\
+						<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="Foo/Bar"/>\
+					</Annotations>\
+				</Schema>\
+<!-- Test for empty $Annotation map -->\
+				<Schema Namespace="GWSAMPLE_BASIC.0002">\
+					<EntityType Name="Product">\
+						<Property Name="Depth" Type="Edm.Decimal" sap:unit="DepthUnit"/>\
+						<Property Name="DepthUnit" Type="Edm.String"\
+							sap:semantics="unit-of-measure"/>\
+					</EntityType>\
+				</Schema>',
+			oExpectedResult = {
+				"GWSAMPLE_BASIC.0001.": {
+					"$Annotations": {
+						"GWSAMPLE_BASIC.0001.Product/Depth": {
+							"@Org.OData.Measures.V1.Unit": {
+								"$Path": "DepthUnit"
+							},
+							"@com.sap.vocabularies.Common.v1.Label": "Depth"
+						},
+						"GWSAMPLE_BASIC.0001.Product/GrossWeight": {
+							"@Org.OData.Measures.V1.Unit": {
+								"$Path": "Parts/WeightUnit"
+							}
+						},
+						"GWSAMPLE_BASIC.0001.Product/PackagingWeight": {
+							"@Org.OData.Measures.V1.Unit": {
+								"$Path": "toMeasure/Parts/WeightUnit"
+							},
+							"@com.sap.vocabularies.Common.v1.Label": "Packaging Weight"
+						},
+						"GWSAMPLE_BASIC.0001.Product/Price": {
+							"@Org.OData.Measures.V1.ISOCurrency": {
+								"$Path": "PriceCurrency"
+							}
+						},
+						"GWSAMPLE_BASIC.0001.Product/NetPrice": {
+							"@Org.OData.Measures.V1.ISOCurrency": {
+								"$Path": "Foo/Bar"
+							}
+						},
+						"GWSAMPLE_BASIC.0001.CT_Parts/Weight": {
+							"@Org.OData.Measures.V1.Unit": {
+								"$Path": "WeightUnit"
+							}
+						},
+						"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1": {
+							"@com.sap.vocabularies.Common.v1.Label": "Weight Missing Unit"
+						},
+						"GWSAMPLE_BASIC.0001.Product/NetWeight": {
+							"@Org.OData.Measures.V1.Unit": {
+								"$Path": "toMeasure/WeightUnit"
+							},
+							"@com.sap.vocabularies.Common.v1.Label": "Net Weight"
+						}
+					},
+					"$kind": "Schema"
+				},
+				"GWSAMPLE_BASIC.0002.": {
+					"$Annotations": {
+						"GWSAMPLE_BASIC.0002.Product/Depth": {
+							"@Org.OData.Measures.V1.Unit": {
+								"$Path": "DepthUnit"
+							}
+						}
+					},
+					"$kind": "Schema"
+				}
+			};
+
+		this.oLogMock.expects("warning").withExactArgs(
+			"Unsupported sap:semantics at sap:unit='InvalidUnit';"
+			+ " expected 'currency-code' or 'unit-of-measure'",
+			"GWSAMPLE_BASIC.0001.Product/Width", sModuleName);
+		this.oLogMock.expects("warning").withExactArgs(
+			"Path 'MissingUnit/Foo' for sap:unit cannot be resolved",
+			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1" , sModuleName);
+		this.oLogMock.expects("warning").withExactArgs(
+			"Path 'Parts/MissingUnit/Foo' for sap:unit cannot be resolved",
+			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0" , sModuleName);
 
 		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
 	});
