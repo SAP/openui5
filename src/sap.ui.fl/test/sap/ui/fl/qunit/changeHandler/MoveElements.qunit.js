@@ -63,8 +63,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 				'</layout:VerticalLayout></mvc:View>';
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 
-			this.oXmlView = oXmlDocument;
-			this.oXmlLayout = oXmlDocument.childNodes[0].childNodes[0];
+			this.oXmlView = oXmlDocument.documentElement;
+			this.oXmlLayout = this.oXmlView.childNodes[0];
 			this.oXmlObjectHeader = this.oXmlLayout.childNodes[0].childNodes[0];
 			this.oXmlButton = this.oXmlLayout.childNodes[0].childNodes[1];
 

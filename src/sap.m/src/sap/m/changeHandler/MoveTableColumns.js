@@ -80,7 +80,7 @@ sap.ui.define([
 			}
 
 			oModifier.removeAggregation(oTable, sColumnsAggregationName, oMovedElement);
-			oModifier.insertAggregation(oTable, sColumnsAggregationName, oMovedElement, iTargetIndex);
+			oModifier.insertAggregation(oTable, sColumnsAggregationName, oMovedElement, iTargetIndex, oView);
 
 			oModifier.getAggregation(oTable, sItemsAggregationName).forEach(function (oItem) {
 				var aCells = oModifier.getAggregation(oItem, sCellsAggregationName),

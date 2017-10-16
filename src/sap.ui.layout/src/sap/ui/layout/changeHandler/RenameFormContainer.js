@@ -47,7 +47,7 @@ sap.ui.define([
 			var sValue = oChangeDefinition.texts.formText.value;
 
 			if (typeof oTitle === "string") {
-				oModifier.insertAggregation(oRenamedElement, "title", sValue);
+				oModifier.setProperty(oRenamedElement, "title", sValue);
 			} else {
 				oModifier.setProperty(oTitle, "text", sValue);
 			}

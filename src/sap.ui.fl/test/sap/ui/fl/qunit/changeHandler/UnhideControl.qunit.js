@@ -43,12 +43,12 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 	QUnit.test('applyChange on a xml tree', function(assert) {
 		var oDOMParser = new DOMParser();
-		var oXmlDocument = oDOMParser.parseFromString("<Button text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
+		var oXmlDocument = oDOMParser.parseFromString("<Button xmlns='sap.m' text='foo' visible='false' />", "application/xml");
 		this.oXmlButton = oXmlDocument.childNodes[0];
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}));
 
-		assert.equal(this.oXmlButton.getAttribute("visible"), "true", "xml button node has the visible attribute added and set to false");
+		assert.strictEqual(this.oXmlButton.getAttribute("visible"), null, "xml button node has the visible attribute removed");
 	});
 
 	QUnit.test('applyChange throws an error if the change is not applyable', function(assert) {

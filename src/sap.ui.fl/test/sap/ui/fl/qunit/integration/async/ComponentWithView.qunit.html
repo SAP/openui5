@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>QUnit - sap.ui.fl integration tests with an async view in a component</title>
+		<script src="../../../shared-config.js"></script>
+
+		<script
+			src="../../../../../../../resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.m, sap.ui.fl"
+				data-sap-ui-bindingSyntax="complex"
+				data-sap-ui-resourceroots='{"sap.ui.rta.test.additionalElements": "testdata/additionalElements/"}'
+				data-sap-ui-theme="sap_belize"></script>
+		<script>
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+			jQuery.sap.require('sap.ui.thirdparty.sinon');
+			jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
+
+			// code coverage report only for sap.ui.fl namespace
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/fl]');
+
+			jQuery.sap.includeScript('./ComponentWithView.qunit.js');
+		</script>
+	</head>
+	<body>
+		<h2 id='qunit-banner'></h2>
+		<div id='qunit-testrunner-toolbar'></div>
+		<ol id='qunit-tests'></ol>
+	</body>
+</html>
