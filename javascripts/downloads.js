@@ -45,7 +45,7 @@ function onLoad() {
             if (oStableVersion === null) {
                 oStableVersion = oEntry;
             }
-            else if (oEntry.version > oStableVersion) {
+            else if (oEntry.version > oStableVersion.version) {
                 oStableVersion = oEntry;
             }
         });
