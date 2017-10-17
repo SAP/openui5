@@ -179,6 +179,7 @@ sap.ui.define([
 	ContextMenu.prototype._onItemSelected = function(oEvent) {
 		var aSelection = [],
 			oEventItem = oEvent.getParameter("item"),
+			oContextElement = this.getContextElement(),
 			sId = oEventItem.data("id");
 
 		var aMenuItems = this._aMenuItems.map(function(mMenuItemEntry){
@@ -193,7 +194,7 @@ sap.ui.define([
 				jQuery.sap.assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
 
 				if (!oEventItem.getSubmenu()) {
-					oItem.handler(aSelection, oEventItem);
+					oItem.handler(aSelection, oEventItem, oContextElement);
 				}
 				return true;
 			}

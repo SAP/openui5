@@ -295,8 +295,8 @@ function(ManagedObject) {
 		return [{
 			id: mPropertyBag.pluginId,
 			text: this.getActionText(oOverlay, mAction, mPropertyBag.pluginId),
-			handler: function(aOverlays){
-				return this.handler(aOverlays);
+			handler: function(aOverlays, oEventItem, oContextElement){
+				return this.handler(aOverlays, oEventItem, oContextElement);
 			}.bind(this),
 			enabled: this.isEnabled.bind(this),
 			rank: mPropertyBag.rank
