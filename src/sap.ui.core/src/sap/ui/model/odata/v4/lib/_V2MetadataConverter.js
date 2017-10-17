@@ -255,16 +255,7 @@ sap.ui.define([
 			}
 		},
 		oFullConfig = {
-			"Reference" : {
-				__processor : _MetadataConverter.processReference,
-				__include : [_MetadataConverter.oAnnotationConfig],
-				"Include" : {
-					__processor : _MetadataConverter.processInclude
-				},
-				"IncludeAnnotations" : {
-					__processor : _MetadataConverter.processIncludeAnnotations
-				}
-			},
+			__include : [_MetadataConverter.oReferenceInclude],
 			"DataServices" : {
 				__processor : processDataServices,
 				"Schema" : {

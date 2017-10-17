@@ -1608,6 +1608,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("inline annotations: Reference", function (assert) {
+		testConversionForInclude(assert, '\
+				<edmx:Reference Uri="qux/$metadata">\
+					<Annotation Term="foo.Term" String="Reference"/>\
+				</edmx:Reference>',
+			{
+				"$Reference" : {
+					"qux/$metadata" : {
+						"@foo.Term" : "Reference"
+					}
+				}
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convert: sap:label at EntityType", function (assert) {
 		testConversion(assert, '\
 				<Schema Namespace="foo">\
