@@ -367,6 +367,14 @@ sap.ui.define([
 				// default for sap:searchable is false --> add v4 annotation, if value of
 				// v2 annotation is not true
 				setAnnotation(mAnnotations, "searchable", false);
+			} else if (sKind === "Property") {
+				if (oElement.getAttributeNS(sSapNamespace, "updatable") === "false") {
+					if (oElement.getAttributeNS(sSapNamespace, "creatable") === "false") {
+						mAnnotations["@Org.OData.Core.V1.Computed"] = true;
+					} else {
+						mAnnotations["@Org.OData.Core.V1.Immutable"] = true;
+					}
+				}
 			}
 		}
 
