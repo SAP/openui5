@@ -9,12 +9,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library",
 			   "./rules/Dialog.support",
 			   "./rules/Input.support",
 			   "./rules/Panel.support",
+			   "./rules/Select.support",
 			   "./rules/SelectDialog.support"],
 	function(jQuery, SupportLib,
 			ButtonSupport,
 			DialogSupport,
 			InputSupport,
 			PanelSupport,
+			SelectSupport,
 			SelectDialogSupport) {
 	"use strict";
 
@@ -26,6 +28,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library",
 			DialogSupport,
 			InputSupport,
 			PanelSupport,
+			SelectSupport,
 			SelectDialogSupport
 		]
 	};
