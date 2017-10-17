@@ -289,6 +289,33 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.test("loadDesignTime - cache the results implicitly (child  with parent + other child with same parent)", function(assert) {
+
+		return DTManagedObjectChild.getMetadata().loadDesignTime().then(function(oTestOuter) {
+			sinon.assert.callCount(this.oRequireStub, 2);
+			this.oRequireStub.reset();
+			//previously the issue was that a derived control deleted the parents designtimeModule.
+			//any other child did not set the correct designtimeModule path
+
+			//load derived metadata DTManagedObjectChild3 that inherits DTManagedObject
+			DTManagedObjectChild3.getMetadata().loadDesignTime().then(function(oTestOuter3) {
+				sinon.assert.callCount(this.oRequireStub, 1);
+				this.oRequireStub.reset();
+				return DTManagedObject.getMetadata().loadDesignTime().then(function(oTestInner) {
+					assert.strictEqual(oTestInner.designtimeModule, "DTManagedObject.designtime", "DesignTime module path defined DTManagedObjectChild");
+				}.bind(this));
+				assert.strictEqual(oTestOuter3.designtimeModule, "DTManagedObjectChild3.designtime", "DesignTime module path defined DTManagedObjectChild3");
+			}.bind(this))
+			//load derived metadata DTManagedObjectChild3 that inherits DTManagedObjectChild
+			DTManagedObjectChild.getMetadata().loadDesignTime().then(function(oTestInner) {
+				return DTManagedObject.getMetadata().loadDesignTime().then(function(oTestInner2) {
+					assert.strictEqual(oTestInner2.designtimeModule, "DTManagedObject.designtime", "DesignTime module path defined DTManagedObjectChild");
+				}.bind(this));
+				assert.strictEqual(oTestInner.designtimeModule, "DTManagedObjectChild.designtime", "DesignTime module path defined DTManagedObjectChild, parent still valid");
+			}.bind(this));
+		}.bind(this));
+	});
+
 	QUnit.test("loadDesignTime - cache the results with designtime only via inheritance", function(assert) {
 		var oDTManagedObjectMetadataChild = NoDTManagedObjectChild2.getMetadata();
 		return oDTManagedObjectMetadataChild.loadDesignTime().then(function(oDesignTime) {
