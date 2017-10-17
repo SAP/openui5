@@ -73,6 +73,26 @@ sap.ui.define([
 				},
 
 				/**
+				 * A JSON object containing the formatSettings which will be used to pass additional type/format settings for the entered value.
+				 * if type==time or date or datetime the object will be used for the DateFormatter, TimeFormatter or DateTimeFormatter
+				 *
+				 *<i>Below you can find a brief example</i>
+				 *
+				 * <pre><code>
+				 * {
+				 *		UTC: false,
+				 * 		style: "medium" //"short" or "long"
+				 * }
+				 * </code></pre>
+				 */
+				formatSettings: {
+					type: "object",
+					group: "Misc",
+					defaultValue: null,
+					since: "1.52"
+				},
+
+				/**
 				 * if type==numeric the scale will be used to format the entered value (maxFractionDigits of the used Formatter)
 				 */
 				scale: {
