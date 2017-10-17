@@ -60,15 +60,13 @@ function onLoad() {
         oStableVersionElement.append(sStableRelease);
 
         //replace spaceholder with values from JSON
-	if (bBeta === true) {    
-        var sUnstableRelease = sUnstableVersionTemplate
-            .replace(/{{versionFull}}/g, oUnstableVersion.version)
-            .replace(/{{date}}/g, oUnstableVersion.date)
-        oUnstableVersionElement.append(sUnstableRelease);
-	}
-	    
-        //toggle beta section if a beta release is available
-        if (bBeta === true) {
+	if (bBeta === true) {
+	    var sUnstableRelease = sUnstableVersionTemplate
+	    .replace(/{{versionFull}}/g, oUnstableVersion.version)
+	    .replace(/{{date}}/g, oUnstableVersion.date);
+            oUnstableVersionElement.append(sUnstableRelease);
+			
+	    //toggle beta section if a beta release is available
 	    oNoUnstableVersionElement.css("display", "none");
 	    oUnstableVersionElement.css("display", "block");
         } else {
@@ -79,6 +77,6 @@ function onLoad() {
 	    oNoUnstableVersionElement.replaceWith(sNoUnstableVersion);
 	    oNoUnstableVersionElement.css("display", "block");
 	    oUnstableVersionElement.css("display", "none");
-        }
-    })
+	    }
+	})
 }
