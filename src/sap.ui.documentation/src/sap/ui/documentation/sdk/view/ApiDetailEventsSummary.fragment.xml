@@ -8,7 +8,8 @@
 
 		<m:Table items="{ path : 'events>/events'}"
 				 showSeparators="Inner"
-				 fixedLayout="false">
+				 fixedLayout="false"
+				 visible="{topics>/hasOwnEvents}">
 			<m:columns>
 				<m:Column vAlign="Top"><m:Label text="Event"/></m:Column>
 				<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
