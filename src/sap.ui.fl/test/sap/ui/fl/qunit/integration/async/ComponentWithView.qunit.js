@@ -285,7 +285,7 @@ function(
 					"the new title with the right id is cached");
 				assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].localName, "CustomData",
 					"the custom data marker that the change is applied is cached");
-				assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("key"), "sap.ui.fl:AppliedChanges",
+				assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("key"), "sap.ui.fl.appliedChanges",
 					"the custom data marker that the change is applied is cached");
 				assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes[4].childNodes[0].getAttribute("value"), "id_1504610195273_78_addSimpleFormGroup",
 					"the custom data marker that the change is applied is cached");
