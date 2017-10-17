@@ -1602,15 +1602,24 @@ sap.ui.define([
 				oControl = new sap.m.Input(params);
 				break;
 			case "date":
-				oConditionGrid.oFormatter = DateFormat.getDateInstance({strictParsing : true});
+				oConditionGrid.oFormatter = DateFormat.getDateInstance(jQuery.extend({}, oCurrentKeyField.formatSettings, {strictParsing: true}));
+				if (oCurrentKeyField.formatSettings && oCurrentKeyField.formatSettings.style) {
+					params.displayFormat = oCurrentKeyField.formatSettings.style;
+				}
 				oControl = new sap.m.DatePicker(params);
 				break;
 			case "time":
-				oConditionGrid.oFormatter = DateFormat.getTimeInstance({strictParsing : true});
+				oConditionGrid.oFormatter = DateFormat.getTimeInstance(jQuery.extend({}, oCurrentKeyField.formatSettings, {strictParsing: true}));
+//				if (oCurrentKeyField.formatSettings && oCurrentKeyField.formatSettings.style) {
+//					params.displayFormat = oCurrentKeyField.formatSettings.style;
+//				}
 				oControl = new sap.m.TimePicker(params);
 				break;
 			case "datetime":
-				oConditionGrid.oFormatter = DateFormat.getDateTimeInstance({strictParsing : true});
+				oConditionGrid.oFormatter = DateFormat.getDateTimeInstance(jQuery.extend({}, oCurrentKeyField.formatSettings, {strictParsing: true}));
+				if (oCurrentKeyField.formatSettings && oCurrentKeyField.formatSettings.style) {
+					params.displayFormat = oCurrentKeyField.formatSettings.style;
+				}
 				oControl = new sap.m.DateTimePicker(params);
 				break;
 			default:
@@ -1715,7 +1724,7 @@ sap.ui.define([
 			// ignore the "String" Type when accessing the resource text
 			sType = "";
 		}
-		if (sType === "_TIME_") {
+		if (sType === "_TIME_" || sType === "_DATETIME_") {
 			sType = "_DATE_";
 		}
 		if (sType === "_BOOLEAN_") {
