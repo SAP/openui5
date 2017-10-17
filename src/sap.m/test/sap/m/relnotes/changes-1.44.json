@@ -2545,5 +2545,64 @@
         "references": []
       }
     ]
+  },
+  "1.44.22": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "82f25b9def2f7877a34e0122ec7608c0668c597c",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
+        "references": []
+      },
+      {
+        "id": "55443d662055e158043b495c269b135dcea13210",
+        "type": "FIX",
+        "text": " sap.m.Dialog: IE11 mousemove dragging issue corrected",
+        "references": []
+      },
+      {
+        "id": "49692c5535811fae2f0470b3262f6e1169bd3119",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Does not log error on combi device and type Light",
+        "references": []
+      },
+      {
+        "id": "89d3372b39bd6c0007ad08c83cb739d476d7607c",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Properly update selectedKeys cache when model changes",
+        "references": []
+      },
+      {
+        "id": "0e9a702caf021deac6d18057f4a29bc4b506fd08",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fixed setTokens() to remove all tokens",
+        "references": []
+      },
+      {
+        "id": "25665d1615933c5a1e1ec8045b42ce7c3c3eccba",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Navigation now works correctly when the pages are destroyed during animation",
+        "references": []
+      },
+      {
+        "id": "a93a858b70596671d7512895b1a1cb170857a179",
+        "type": "FIX",
+        "text": " sap.m.Page: properly show floatingFooter when PageAccessibleLandmark info is used",
+        "references": []
+      },
+      {
+        "id": "3c8e4a48293e92df6c6b8ada8e16150290105f94",
+        "type": "FIX",
+        "text": " sap.m.Panel: fix focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "48f0be07b0218d576d7bd35e389e5f243a02e61b",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Tooltips are now properly swapped when range is reversed.",
+        "references": []
+      }
+    ]
   }
 }
