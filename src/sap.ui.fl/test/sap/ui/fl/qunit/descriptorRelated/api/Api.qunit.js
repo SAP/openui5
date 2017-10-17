@@ -1210,7 +1210,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"fileType":	"appdescr_variant",
 					"isAppVariantRoot":	false,
 					"layer": "CUSTOMER",
-					"namespace": "apps/a.reference/changes/a.id/",
+					"namespace": "apps/a.reference/appVariants/a.id/",
 					"packageName": "$TMP",
 					"content": []
 			};
@@ -1229,7 +1229,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"fileType":	"appdescr_variant",
 					"isAppVariantRoot":	false,
 					"layer": "CUSTOMER",
-					"namespace": "apps/a.reference/changes/a.id/",
+					"namespace": "apps/a.reference/appVariants/a.id/",
 					"packageName": "$TMP",
 					"content": [{
 						"changeType": "changeType",
@@ -1259,7 +1259,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"fileType":	"appdescr_variant",
 					"isAppVariantRoot":	false,
 					"layer": "CUSTOMER",
-					"namespace": "apps/a.reference/changes/a.id/",
+					"namespace": "apps/a.reference/appVariants/a.id/",
 					"packageName": "$TMP",
 					"content": [],
 					"referenceVersion": "1.1"
