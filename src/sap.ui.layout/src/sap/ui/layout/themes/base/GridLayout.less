@@ -3,8 +3,8 @@
 /* Base theme                                */
 /* ========================================= */
 
-.sapUiGrid {
-	font-size: 1px; /* as browser adds some px to text to meet font-size*/
+.sapUiForm:not(.sapUiFormM) > .sapUiGrid {
+	font-size: @sapUiDesktopFontSize;
 }
 
 .sapUiGrid td {
@@ -200,6 +200,15 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact {
 .sapUiFormM:not(.sapUiFormEdit) > .sapUiGrid tr:not(.sapUiGridConteinerHeaderRow) > td{
 	padding-top: 0.25rem;
 	padding-bottom: 0.25rem;
+}
+
+.sapUiFormM:not(.sapUiFormEdit) > .sapUiGrid {
+	font-size: 1px; /* as browser adds some px to text to meet font-size*/
+}
+
+.sapUiFormM:not(.sapUiFormEdit) > .sapUiGrid tr:not(.sapUiGridConteinerHeaderRow) > td .sapUiIcon:not(.sapMBtnIcon),
+.sapUiFormM:not(.sapUiFormEdit) > .sapUiGrid tr:not(.sapUiGridConteinerHeaderRow) > td .sapMCbBg{
+	font-size: @sapUiFontSize; /* to set default font size on icons */
 }
 
 .sapUiFormM:not(.sapUiFormEdit) > .sapUiGrid .sapUiGridConteinerFirstRow:not(.sapUiGridConteinerHeaderRow) > td,
