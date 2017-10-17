@@ -59,7 +59,10 @@ sap.ui.define(["sap/ui/Global",
 					"unhideControl": "default",
 					"moveControls": "default"
 				},
-				"sap.f.DynamicPageTitle" : "sap/f/flexibility/DynamicPageTitle"
+				"sap.f.DynamicPageTitle" : "sap/f/flexibility/DynamicPageTitle",
+				"sap.f.semantic.SemanticPage" : {
+					"moveControls": "default"
+				}
 			}
 		}
 	});
