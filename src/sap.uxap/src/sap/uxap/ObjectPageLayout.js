@@ -1491,6 +1491,14 @@ sap.ui.define([
 
 		var iScrollTo = this._computeScrollPosition(oSection);
 
+		// the default <code>iScrollTo</code> position assumes that the anchorBar is not part of the scrollable content (i.e. is already sticked)
+		// (because by the time the <code>iScrollTo</code> is reached, the onScroll handler will remove the the anchorBar as soon as the snap position is reached)
+		// However, if the scroll duration is 0 => the onScroll handler will not remove the the anchorBar in advance, but will remove it only *after* the <code>iScrollTo</code> position is reached
+		// => therefore in this case <code>iScrollTo</code> should include the <code>this.iAnchorBarHeight</code>
+		if (!iDuration && !this._bStickyAnchorBar && !this._isFirstVisibleSectionBase(oSection)) {
+			iScrollTo += this.iAnchorBarHeight;
+		}
+
 		//avoid triggering twice the scrolling onto the same target section
 		if (this._sCurrentScrollId != sId) {
 			this._sCurrentScrollId = sId;
@@ -1629,10 +1637,6 @@ sap.ui.define([
 	ObjectPageLayout.prototype._scrollTo = function (y, time) {
 		if (this._oScroller && this._bDomReady) {
 			jQuery.sap.log.debug("ObjectPageLayout :: scrolling to " + y);
-
-			if ((time === 0) && this._shouldSnapHeaderOnScroll(y)) {
-				this._toggleHeader(true);
-			}
 
 			this._oScroller.scrollTo(0, y, time);
 		}
