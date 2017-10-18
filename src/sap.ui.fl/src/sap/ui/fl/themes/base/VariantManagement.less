@@ -5,68 +5,60 @@
 
 .sapUiFlVarMngmt {
 	display: inline;
-	text-align: center;	
+	text-align: center;
+}
+
+.sapMTitle {
+   margin-top: 0.4rem;
+}
+
+.sapUiFlVarMngmtModified {
+	color: @sapUiGroupTitleTextColor;
+	font-weight: bold;
+	padding-left: 0.125rem;
+	padding-right: 0.125rem;		
+}
+
+.sapUiFlVarMngmtTriggerBtnHover>span {
+	background-image: none;
+	border-color: @sapUiButtonLiteHoverBorderColor;
+	background-color: @sapUiButtonLiteHoverBackground;
+    border-radius: 0.2rem;	
 }
 
 .sapUiFlVarMngmtErrorPopover>div {
-	padding-top: 1rem;
+	padding-top: 1rem;	
 }
 
-.sapUiFlVarMngmt .sapMLabelMaxWidth {
-	max-width:25rem;
+.sapUiFlVarMngmtErrorPopover>div:last-child {
+	padding-left: 4rem;
+	padding-right: 4rem;
 }
 
-.sapUiFlVarMngmt .sapUiFlVarMngmtTextMaxWidth {
+.sapUiFlVarMngmt .sapUiFlVarMngmtTextPhoneMaxWidth {
 	max-width: 5em;
 }
 
-.sapUiFlVarMngmt .sapUiFlVarMngmtTitle {	
-	padding-left: 0.5rem;
-	max-width: 25rem;		
-}
-
-.sapUiFlVarMngmt .sapUiFlVarMngmtLayout .sapUiFlVarMngmtModified {
-	margin-left: 0.2rem;
-	color: @sapUiContentMarkerIconColor;	
-}
-
-.sapFDynamicPageTitle .sapUiFlVarMngmt .sapUiFlVarMngmtLayout .sapUiFlVarMngmtTriggerBtn {
-	padding-top: 0.2rem;	
-}
-
-.sapUxAPObjectPageHeaderTitle .sapUiFlVarMngmt .sapUiFlVarMngmtLayout .sapUiFlVarMngmtTriggerBtn {
-	padding-top: 0rem;	
-}
-
-.sapUiFlVarMngmt .sapUiFlVarMngmtLayout .sapUiFlVarMngmtTriggerBtn {
-	cursor: pointer;
-	margin-left: 0.5rem;
-	color: @sapUiButtonTextColor;
-	text-shadow: @sapUiShadowText;
-	padding-right: 0.5rem;
-	padding-top: 0.15rem;	
+.sapUiFlVarMngmt .sapUiFlVarMngmtTextMaxWidth {
+	max-width: 25rem;
 }
 
 .sapUiFlVarMngmt .sapUiFlVarMngmtClickable {
 	cursor: pointer;
-	color: @sapUiButtonTextColor;
+	color: @sapUiButtonTextColor;	
 	text-shadow: @sapUiShadowText;
+}
+
+.sapUiFlVarMngmt .sapUiFlVarMngmtClickable:hover {
+	color: @sapUiHighlight;	
 }
 
 .sapUiFlVarMngmt .sapUiFlVarMngmtDisabled {
 	opacity: 0.5;
 }
 
-.sapUiFlVarMngmt .sapUiFlVarMngmtLayout:hover {
-	background-image: none;
-	background-color: @sapUiButtonLiteHoverBackground;
-	border-color:     @sapUiButtonLiteHoverBorderColor;	
-    border-radius: 0.2rem;	
-}
-
-html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiFlVarMngmt:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -2px;
+.sapUiFlVarMngmt .sapUiFlVarMngmtTriggerBtn>span>span {
+	font-size: 1.375rem;
 }
 
 .sapUiFlVarMngmtPopover .sapMSelectList {
@@ -75,4 +67,17 @@ html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiFlV
 
 .sapUiFlVarMngmtFavColor {
 	color: @sapUiButtonIconColor;
+}
+
+
+.sapUxAPObjectPageHeaderTitle .sapMTitle {
+	padding-top: 0rem;	
+	margin-top: 0rem;
+}
+
+.sapUxAPObjectPageHeaderTitle .sapMIBar-CTX .sapUiFlVarMngmtTriggerBtnHover>span {
+	background-image: none;
+	border-color: @sapUiButtonLiteHoverBorderColor;
+	background-color: @sapUiButtonLiteHoverBackground;
+    border-radius: 0.2rem;	
 }

@@ -242,9 +242,10 @@ sap.ui.define([
 
 			oRm.writeAccessibilityState(oControl, mAccProps);
 
-			var sTooltip = oControl._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT");
-			oRm.write(" title='" + sTooltip + "'");
-			oRm.write(" tabindex='0'>");
+// var sTooltip = oControl._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT");
+// oRm.write(" title='" + sTooltip + "'");
+// oRm.write(" tabindex='0'>");
+			oRm.write(">");
 
 			oRm.renderControl(oControl.oVariantLayout);
 			oRm.write("</div>");
@@ -308,6 +309,8 @@ sap.ui.define([
 		this.oVariantText.addStyleClass("sapMTitleStyleH4");
 		this.oVariantText.addStyleClass("sapUiFlVarMngmtTitle");
 		if (Device.system.phone) {
+			this.oVariantText.addStyleClass("sapUiFlVarMngmtTextPhoneMaxWidth");
+		} else {
 			this.oVariantText.addStyleClass("sapUiFlVarMngmtTextMaxWidth");
 		}
 
@@ -324,19 +327,26 @@ sap.ui.define([
 		oVariantModifiedText.setVisible(false);
 		oVariantModifiedText.addStyleClass("sapUiFlVarMngmtModified");
 		oVariantModifiedText.addStyleClass("sapUiFlVarMngmtClickable");
-		oVariantModifiedText.addStyleClass("sapUiFlVarMngmtClickableHover");
+		oVariantModifiedText.addStyleClass("sapMTitleStyleH4");
 
-		var oVariantPopoverTrigger = new Icon(this.getId() + "-trigger", {
-			src: "sap-icon://slim-arrow-down"
+		this.oVariantPopoverTrigger = new Button(this.getId() + "-trigger", {
+			icon: "sap-icon://slim-arrow-down",
+			type: ButtonType.Transparent
 		});
-		oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtn");
+
+		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
+		this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtn");
+		this.oVariantPopoverTrigger.addStyleClass("sapMTitleStyleH4");
+
+		// this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtnHover");
 
 		this.oVariantLayout = new HorizontalLayout({
 			content: [
-				this.oVariantText, oVariantModifiedText, oVariantPopoverTrigger, this.oVariantInvisibleText
+				this.oVariantText, oVariantModifiedText, this.oVariantPopoverTrigger, this.oVariantInvisibleText
 			]
 		});
 		this.oVariantLayout.addStyleClass("sapUiFlVarMngmtLayout");
+
 		this.addDependent(this.oVariantLayout);
 	};
 
@@ -553,7 +563,17 @@ sap.ui.define([
 			this.oErrorVariantPopOver.close();
 		}
 	};
+
+	VariantManagement.prototype.getFocusDomRef = function() {
+		if (this.oVariantPopoverTrigger) {
+			return this.oVariantPopoverTrigger.getFocusDomRef();
+		}
+	};
+
 	VariantManagement.prototype.onclick = function(oEvent) {
+		if (this.oVariantPopoverTrigger && !this.bPopoverOpen) {
+			this.oVariantPopoverTrigger.focus();
+		}
 		this.handleOpenCloseVariantPopover();
 	};
 
@@ -563,16 +583,21 @@ sap.ui.define([
 		}
 	};
 
+	VariantManagement.prototype.onAfterRendering = function() {
+
+		this.oVariantText.$().off("mouseover").on("mouseover", function() {
+			this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtnHover");
+		}.bind(this));
+		this.oVariantText.$().off("mouseout").on("mouseout", function() {
+			this.oVariantPopoverTrigger.removeStyleClass("sapUiFlVarMngmtTriggerBtnHover");
+		}.bind(this));
+	};
+
 	// ERROR LIST
 	VariantManagement.prototype._openInErrorState = function() {
 		var oVBox;
 
 		if (!this.oErrorVariantPopOver) {
-
-			if (this.oErrorVariantPopOver && this.oErrorVariantPopOver.isOpen()) {
-				this.oErrorVariantPopOver.close();
-				return;
-			}
 
 			oVBox = new VBox({
 				fitContainer: true,
@@ -612,19 +637,25 @@ sap.ui.define([
 					this.bPopoverOpen = true;
 				}.bind(this),
 				afterClose: function() {
-					setTimeout(function() {
-						this.bPopoverOpen = false;
-					}.bind(this), 100);
+					if (this.bPopoverOpen) {
+						setTimeout(function() {
+							this.bPopoverOpen = false;
+						}.bind(this), 200);
+					}
 				}.bind(this),
 				contentHeight: "300px"
 			});
-			this.oErrorVariantPopOver.addStyleClass("sapUiFlVarMngmtPopover");
+
+			this.oErrorVariantPopOver.attachBrowserEvent("keyup", function(e) {
+				if (e.which === 32) { // UP
+					this.oErrorVariantPopOver.close();
+				}
+			}.bind(this));
 		}
 
 		if (this.bPopoverOpen) {
 			return;
 		}
-		this.bPopoverOpen = true;
 
 		this.oErrorVariantPopOver.openBy(this.oVariantLayout);
 	};
@@ -766,9 +797,11 @@ sap.ui.define([
 				this.bPopoverOpen = true;
 			}.bind(this),
 			afterClose: function() {
-				setTimeout(function() {
-					this.bPopoverOpen = false;
-				}.bind(this), 100);
+				if (this.bPopoverOpen) {
+					setTimeout(function() {
+						this.bPopoverOpen = false;
+					}.bind(this), 200);
+				}
 			}.bind(this),
 			contentHeight: "300px"
 		});
@@ -794,12 +827,6 @@ sap.ui.define([
 			return;
 		}
 
-		if (this.oVariantPopOver && this.oVariantPopOver.isOpen()) {
-			this.oVariantPopOver.close();
-			return;
-		}
-		this.bPopoverOpen = true;
-
 		this._createVariantList();
 		this._oSearchField.setValue("");
 
@@ -823,7 +850,6 @@ sap.ui.define([
 		}
 
 		this.oVariantPopOver.openBy(this.oVariantLayout);
-
 	};
 
 	VariantManagement.prototype._triggerSearch = function(oEvent, oVariantList) {
@@ -1829,6 +1855,7 @@ sap.ui.define([
 		this.oVariantSelectionPage = undefined;
 		this.oVariantLayout = undefined;
 		this.oVariantText = undefined;
+		this.oVariantPopoverTrigger = undefined;
 		this.oVariantInvisibleText = undefined;
 		this._oSearchField = undefined;
 		this._oSearchFieldOnMgmtDialog = undefined;
