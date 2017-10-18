@@ -418,7 +418,9 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 						this._addSelectedKey(item.getKey(), item.getText());
 					}
 				}, this);
-			} else if (sUpdateReason === "growing") {
+			}
+
+			if (sUpdateReason !== sap.ui.model.ChangeReason.Filter.toLowerCase()) {
 				this._selectItemsByKeys();
 			}
 
