@@ -108,7 +108,6 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 			if (oControl.getSender()) {
 				oRm.write('<span id="' + sMyId + '-name" class="sapMFeedListItemTextName sapUiSelectable">');
 				oRm.renderControl(oControl._getLinkSender(true));
-				oRm.write(' ');
 				oRm.write('</span>');
 			}
 			oRm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemTextString sapUiSelectable">');
