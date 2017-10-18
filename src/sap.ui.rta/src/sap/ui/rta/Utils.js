@@ -228,6 +228,7 @@ function(
 					oFragmentDialog = sap.ui.xmlfragment("sap.ui.rta.view.RemoveElementDialog", oFragmentController);
 					oFragmentDialog.setModel(oModel);
 				}
+				oFragmentDialog.addStyleClass(Utils.getRtaStyleClassName());
 				oFragmentDialog.open();
 			}
 		);
