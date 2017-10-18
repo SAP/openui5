@@ -182,11 +182,12 @@ sap.ui.define([
 	/**
 	 * Trigger the plugin execution.
 	 * @param  {sap.ui.dt.ElementOverlay[]} aOverlays Selected overlays; targets of the action
+	 * @param  {any} oEventItem ContextMenu item which triggers the event
+	 * @param  {any} oContextElement Element where the action is triggered
 	 */
-	Combine.prototype.handler = function(aOverlays){
+	Combine.prototype.handler = function(aOverlays, oEventItem, oContextElement){
 		//TODO: Handle "Stop Cut & Paste" depending on alignment with Dietrich!
-		var oSelectedElement = aOverlays[0].getElementInstance();
-		this.handleCombine(oSelectedElement);
+		this.handleCombine(oContextElement);
 	};
 
 	return Combine;
