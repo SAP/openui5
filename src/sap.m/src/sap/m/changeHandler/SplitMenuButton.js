@@ -17,36 +17,6 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 
 		var SOURCE_CONTROL = "sourceControl";
 
-		SplitMenuButton.ADD_HELPER_FUNCTIONS = {
-			_fnFindIndexInAggregation : function(oParent, oSourceControl, sParentAggregation) {
-				var oParentAggregation,
-					bMultipleAggregation = false,
-					sParentAggregationSingularName,
-					sAggregationNameToUpper;
-
-				// We need to check the aggregation name and if it is multiple or not.
-				// There are cases when the control's parent method is overwritten and
-				// this leads to differences in the result given by oParent.indexOfAggregation
-				// method. Having this in mind:
-				// 1. We get the aggregation from the Parent's metadata
-				oParentAggregation = oParent.getMetadata().getAllAggregations()[sParentAggregation];
-
-				// 2. Then we check if it is multiple
-				bMultipleAggregation = oParentAggregation.multiple;
-
-				// 3. We get the its name or its singular name if it is multiple
-				sParentAggregationSingularName = bMultipleAggregation ? oParentAggregation.singularName : oParentAggregation.name;
-
-				// 4. We change it to upper case in order to be able to create the method
-				// which is potentially overwritten and/or has additional logic to it
-				sAggregationNameToUpper = jQuery.sap.charToUpperCase(sParentAggregationSingularName);
-
-				// 5. We return the correct index of the control in its Parent aggregation
-				return oParent["indexOf" + sAggregationNameToUpper](oSourceControl);
-			}
-		};
-
-
 		/**
 		 * Split a MenuButton into separate Buttons
 		 *
@@ -72,7 +42,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 				aMenuItems = oModifier.getAggregation(oMenu, "items"),
 				sParentAggregation = oSourceControl.sParentAggregationName,
 				oParent = oModifier.getParent(oSourceControl),
-				iAggregationIndex = this.ADD_HELPER_FUNCTIONS._fnFindIndexInAggregation(oParent, oSourceControl, sParentAggregation),
+				iAggregationIndex = oModifier.findIndexInParentAggregation(oSourceControl),
 				aNewElementIds = oChangeDefinition.content.newElementIds.slice();
 
 			aMenuItems.forEach(function (oMenuItem, index) {
