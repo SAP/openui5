@@ -38,8 +38,10 @@
 			"sap/m/Page",
 			"sap/m/ListType",
 			"sap/m/LinkConversion",
-			"sap/m/PlacementType"
-		], function(FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, ButtonType, App, Page, ListType, LinkConversion, PlacementType) {
+			"sap/m/PlacementType",
+			"sap/ui/Device",
+			"sap/m/FormattedText"
+		], function(FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, ButtonType, App, Page, ListType, LinkConversion, PlacementType, Device, FormattedText) {
 			var oList2 = new List({
 				inset: true
 			});
@@ -459,7 +461,7 @@
 				var sOriginal = "sample text: www.sap.com to be surrounded by tags",
 					sTransformed = "sample text: <a href=\"//www.sap.com\" target=\"_self\" class=\"sapMLnk\">www.sap.com</a> to be surrounded by tags",
 					sLinkTarget = "_self",
-					oSpy = sinon.spy(sap.m.FormattedText.prototype, "onAfterRendering");
+					oSpy = sinon.spy(FormattedText.prototype, "onAfterRendering");
 
 				this.oFeedListItem.setText(sOriginal);
 				this.oFeedListItem.setConvertLinksToAnchorTags(LinkConversion.All);
@@ -980,12 +982,101 @@
 				oOpenByStub.restore();
 			});
 
+			QUnit.module("Method '_onBeforeOpenActionSheet'", {
+				beforeEach: function() {
+					this.oFeedListItem = new FeedListItem();
+				},
+				afterEach: function() {
+					this.oFeedListItem.destroy();
+				}
+			});
+
+			QUnit.test("When the theme is 'sap_belize' and the device is not a phone, the CSS contrast class 'sapContrast' is set on the ActionSheet's popover .", function(assert) {
+				// Arrange
+				var oPopover = new Popover();
+				var oEvent = {
+					getSource: function() {
+						return {
+							getParent: function() {
+								return oPopover;
+							}
+						}
+					}
+				};
+				var oThemeStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize");
+				var bOriginSystemPhone = Device.system.phone;
+				Device.system.phone = false;
+
+				// Act
+				this.oFeedListItem._onBeforeOpenActionSheet(oEvent);
+
+				// Assert
+				assert.ok(oPopover.hasStyleClass("sapContrast"), "The correct CSS contrast class has been added.");
+
+				// Cleanup
+				oThemeStub.restore();
+				Device.system.phone = bOriginSystemPhone;
+			});
+
+			QUnit.test("When the theme is 'sap_belize_plus' and the device is not a phone, the CSS contrast class 'sapContrastPlus' is set on the ActionSheet's popover.", function(assert) {
+				// Arrange
+				var oPopover = new Popover();
+				var oEvent = {
+					getSource: function() {
+						return {
+							getParent: function() {
+								return oPopover;
+							}
+						}
+					}
+				};
+				var oThemeStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize_plus");
+				var bOriginSystemPhone = Device.system.phone;
+				Device.system.phone = false;
+
+				// Act
+				this.oFeedListItem._onBeforeOpenActionSheet(oEvent);
+
+				// Assert
+				assert.ok(oPopover.hasStyleClass("sapContrastPlus"), "The correct CSS contrast class has been added.");
+
+				// Cleanup
+				oThemeStub.restore();
+				Device.system.phone = bOriginSystemPhone;
+			});
+
+			QUnit.test("When the device is a phone, no CSS contrast class is set on the ActionSheet's popover.", function(assert) {
+				// Arrange
+				var oPopover = new Popover();
+				var oEvent = {
+					getSource: function() {
+						return {
+							getParent: function() {
+								return oPopover;
+							}
+						}
+					}
+				};
+				var bOriginSystemPhone = Device.system.phone;
+				Device.system.phone = true;
+
+				// Act
+				this.oFeedListItem._onBeforeOpenActionSheet(oEvent);
+
+				// Assert
+				assert.notOk(oPopover.hasStyleClass("sapContrastPlus"), "Popover does not have the CSS contrast class 'sapContrastPlus'.");
+				assert.notOk(oPopover.hasStyleClass("sapContrast"), "Popover does not have the CSS contrast class 'sapContrast'.");
+
+				// Cleanup
+				Device.system.phone = bOriginSystemPhone;
+			});
+
 			QUnit.start();
 		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
-<div id="qunit"></div>
-<div id="qunit-fixture"></div>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>
