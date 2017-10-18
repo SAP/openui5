@@ -950,6 +950,8 @@ sap.ui.define([
 		var aUnsavedChanges = this.getCommandStack().getAllExecutedCommands().reduce(function(aChanges, oCommand) {
 			if (oCommand.getPreparedChange) {
 				aChanges.push(oCommand.getPreparedChange());
+			} else if (oCommand.getVariantChange && oCommand.getVariantChange()) {
+				aChanges.push(oCommand.getVariantChange());
 			}
 			return aChanges;
 		}, []);
