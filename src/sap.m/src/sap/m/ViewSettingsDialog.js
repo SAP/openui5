@@ -1064,6 +1064,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			contentItem : this._oContentItem ? this._oContentItem.clone() : null
 		};
 
+		this.addDependent(this._oPreviousState.contentItem);
+
 		//focus the first focusable item in current page's content
 		if (Device.system.desktop) {
 			this._getDialog().attachEventOnce("afterOpen", function () {

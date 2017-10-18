@@ -2132,6 +2132,52 @@
 			}
 		});
 
+		QUnit.test("_oPreviousState.contentItem is properly cloned when it is bound to a model", function (assert) {
+			var that = this,
+				done = assert.async(),
+				modelData = this.getFirstModelData(),
+				oModel = new sap.ui.model.json.JSONModel();
+
+			oModel.setData(modelData);
+			this.oVSD.setModel(oModel);
+			this.bindAggregations(this.oVSD);
+
+			// Step 1
+			// Open ViewSettingsDialog
+			this.oVSD.open();
+			this.oVSD._dialog.attachAfterOpen(afterFirstOpen);
+
+			function afterFirstOpen() {
+				// Step 2
+				// Simulate navigation to filter details page of STATUS filter item
+				var vsdFilterItem = that.oVSD.getFilterItems()[0];
+				that.oVSD._switchToPage(3, vsdFilterItem);
+
+				// Assert items text
+				var aFilterItems = that.oVSD._filterDetailList.getItems();
+				assert.strictEqual(aFilterItems[0].getTitle(), "item2", "Text of the item is properly set");
+
+				// Simulate confirm button click
+				that.oVSD._onConfirm();
+				that.oVSD._dialog.detachAfterOpen(afterFirstOpen);
+
+				// Open ViewSettingsDialog
+				that.oVSD.open();
+				that.oVSD._dialog.attachAfterOpen(afterSecondOpen);
+			}
+
+			function afterSecondOpen() {
+				// Step 3
+				// Assert
+				var aFilterItems = that.oVSD._oPreviousState.contentItem.getItems();
+				assert.strictEqual(aFilterItems[0].getText(), "item2", "Text of the previous state content item is properly set");
+
+				that.oVSD._dialog.detachAfterOpen(afterSecondOpen);
+
+				done();
+			}
+		});
+
 		QUnit.test("Reset Button is available on second open of the ViewSettinsDialog", function (assert) {
 			var modelData = this.getFirstModelData();
 			var modelData2 = this.getSecondModelData();
