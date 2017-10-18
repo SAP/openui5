@@ -10,23 +10,24 @@ sap.ui.define([],
 		return {
 			aggregations: {
 				heading: {
-					domRef: ":sap-domref .sapFDynamicPageTitleLeftHeading"
+					domRef: ":sap-domref .sapFDynamicPageTitleMainLeftHeading"
 				},
 				actions: {
-					domRef: function (oElement) {
-						return oElement.$("overflowToolbar").get(0);
-					},
+					domRef: ":sap-domref .sapFDynamicPageTitleActionsBar",
 					actions: {
 						split: {
 							changeType: "splitMenuButton"
 						},
 						combine: {
 							changeType: "combineButtons"
+						},
+						move: {
+							changeType: "moveActions"
 						}
 					}
 				},
 				content: {
-					domRef: ":sap-domref .sapFDynamicPageTitleContent",
+					domRef: ":sap-domref .sapFDynamicPageTitleMainContent",
 					actions: {
 						move: {
 							changeType: "moveControls"
@@ -52,6 +53,12 @@ sap.ui.define([],
 							changeType: "moveControls"
 						}
 					}
+				},
+				navigationActions: {
+					domRef: ":sap-domref .sapFDynamicPageTitleActionsBar"
+				},
+				breadcrumbs: {
+					ignore: true
 				}
 			},
 			actions: {

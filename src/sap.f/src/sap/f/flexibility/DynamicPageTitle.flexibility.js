@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/m/changeHandler/CombineButtons",
-	"sap/m/changeHandler/SplitMenuButton"
-], function (CombineButtonsHandler, SplitMenuButtonHandler) {
+	"sap/m/changeHandler/SplitMenuButton",
+	"sap/f/changeHandler/MoveDynamicPageTitleActions"
+], function (CombineButtonsHandler, SplitMenuButtonHandler, MoveDynamicPageTitleActions) {
 	"use strict";
 
 	return {
@@ -22,6 +23,9 @@ sap.ui.define([
 			"layers": {
 				"CUSTOMER": false
 			}
+		},
+		"moveActions": {
+			"changeHandler": MoveDynamicPageTitleActions
 		},
 		"moveControls": "default"
 	};
