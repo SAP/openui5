@@ -2144,8 +2144,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * <li>When the entry is <code>true</code>, a bundle with the default name "messagebundle.properties"
 	 * will be loaded</li>
 	 * <li>If it is a string, then that string will be used as name of the bundle</li>
-	 * <li>If it is <code>false</code>, no bundle will be loaded and the result will be <code>undefined</code>
-	 * <ul>
+	 * <li>If it is <code>false</code>, no bundle will be loaded and the result will be
+	 *     <code>undefined</code></li>
+	 * </ul>
 	 *
 	 * <h3>Caching</h3>
 	 * Once a resource bundle for a library has been loaded, it will be cached by this method.
