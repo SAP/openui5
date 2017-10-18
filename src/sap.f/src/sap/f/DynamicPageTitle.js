@@ -82,9 +82,44 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * The title or any other UI5 control that serves as a heading for the object.
+				 * The <code>heading</code> is positioned in the <code>DynamicPageTitle</code> left area
+				 * and is displayed in both expanded and collapsed (snapped) states of the header.
+				 * Use this aggregation to display a title (or any other UI5 control that serves
+				 * as a heading) that has to be present in both expanded and collapsed states of the header.
+				 *
+				 * <b>Note:</b> <code>heading</code> is mutually exclusive with <code>snappedHeading</code>
+				 * and <code>expandedHeading</code>. If <code>heading</code> is provided, both
+				 * <code>snappedHeading</code> and <code>expandedHeading</code> are ignored.
+				 * <code>heading</code> is useful when the content of <code>snappedHeading</code> and
+				 * <code>expandedHeading</code> needs to be the same as it replaces them both.
 				 */
 				heading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
+
+				/**
+				 * The <code>snappedHeading</code> is positioned in the <code>DynamicPageTitle</code> left area
+				 * and is displayed when the header is in collapsed (snapped) state only.
+				 * Use this aggregation to display a title (or any other UI5 control that serves
+				 * as a heading) that has to be present in collapsed state only.
+				 *
+				 * <b>Note:</b> In order for <code>snappedHeading</code> to be taken into account,
+				 * <code>heading</code> has to be empty. Combine <code>snappedHeading</code> with
+				 * <code>expandedHeading</code> to switch content when the header switches state.
+				 * @since 1.52
+				 */
+				snappedHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
+
+				/**
+				 * The <code>expandedHeading</code> is positioned in the <code>DynamicPageTitle</code> left area
+				 * and is displayed when the header is in expanded state only.
+				 * Use this aggregation to display a title (or any other UI5 control that serves
+				 * as a heading) that has to be present in expanded state only.
+				 *
+				 * <b>Note:</b> In order for <code>expandedHeading</code> to be taken into account,
+				 * <code>heading</code> has to be empty. Combine <code>expandedHeading</code> with
+				 * <code>snappedHeading</code> to switch content when the header switches state.
+				 * @since 1.52
+				 */
+				expandedHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
 
 				/**
 				 * The <code>DynamicPageTitle</code> actions.
@@ -155,6 +190,20 @@ sap.ui.define([
 		}
 	});
 
+	function exists(vObject) {
+		if (arguments.length === 1) {
+			// Check if vObject is an Array or jQuery empty object,
+			// by looking for the inherited property "length" via the "in" operator.
+			// If yes - check if the "length" is positive.
+			// If not - cast the vObject to Boolean.
+			return vObject && ("length" in vObject) ? vObject.length > 0 : !!vObject;
+		}
+
+		return Array.prototype.slice.call(arguments).every(function (oObject) {
+			return exists(oObject);
+		});
+	}
+
 	/* ========== STATIC MEMBERS  ========== */
 
 	DynamicPageTitle.NAV_ACTIONS_PLACEMENT_BREAK_POINT = 1280; // px.
@@ -186,8 +235,7 @@ sap.ui.define([
 	/* ========== LIFECYCLE METHODS  ========== */
 
 	DynamicPageTitle.prototype.init = function () {
-		this._bShowSnappedContent = false;
-		this._bShowExpandContent = true;
+		this._bExpandedState = true;
 		this._bShowExpandButton = false;
 		this._fnActionSubstituteParentFunction = function () {
 			return this;
@@ -212,8 +260,7 @@ sap.ui.define([
 
 	DynamicPageTitle.prototype.onAfterRendering = function () {
 		this._cacheDomElements();
-		this._setShowSnapContent(this._getShowSnapContent());
-		this._setShowExpandContent(this._getShowExpandContent());
+		this._toggleState(this._bExpandedState);
 		this._doNavigationActionsLayout();
 	};
 
@@ -360,6 +407,8 @@ sap.ui.define([
 		this.$mainNavigationActionsArea = this.$("mainNavigationArea");
 		this.$beginArea = this.$("left-inner");
 		this.$middleArea = this.$("content");
+		this.$snappedHeadingWrapper = this.$("snapped-heading-wrapper");
+		this.$expandHeadingWrapper = this.$("expand-heading-wrapper");
 		this.$snappedWrapper = this.$("snapped-wrapper");
 		this.$expandWrapper = this.$("expand-wrapper");
 	};
@@ -655,43 +704,34 @@ sap.ui.define([
 	/* ========== DynamicPageTitle expand and snapped content ========== */
 
 	/**
-	 * Shows/hides the <code>DynamicPageTitle</code> snapped content without re-rendering.
-	 * @param {boolean} bValue - to show or to hide the content
+	 * Toggles the title state to expanded (if bExpanded=true) or to snapped otherwise
+	 * @param bExpanded
 	 * @private
 	 */
-	DynamicPageTitle.prototype._setShowSnapContent = function (bValue) {
-		this._bShowSnappedContent = bValue;
-		this.$snappedWrapper.toggleClass("sapUiHidden", !bValue);
-		this.$snappedWrapper.parent().toggleClass("sapFDynamicPageTitleMainSnapContentVisible", bValue);
-	};
+	DynamicPageTitle.prototype._toggleState = function (bExpanded) {
+		this._bExpandedState = bExpanded;
 
-	/**
-	 * Determines if the <code>DynamicPageTitle</code> snapped content is currently displayed.
-	 * @returns {boolean}
-	 * @private
-	 */
-	DynamicPageTitle.prototype._getShowSnapContent = function () {
-		return this._bShowSnappedContent;
-	};
+		// Snapped content
+		if (exists(this.getSnappedContent())) {
+			this.$snappedWrapper.toggleClass("sapUiHidden", bExpanded);
+			this.$snappedWrapper.parent().toggleClass("sapFDynamicPageTitleMainSnapContentVisible", !bExpanded);
+		}
 
-	/**
-	 * Shows/hides the <code>DynamicPageTitle</code> expanded content without re-rendering.
-	 * @param {boolean} bValue - to show or to hide the content
-	 * @private
-	 */
-	DynamicPageTitle.prototype._setShowExpandContent = function (bValue) {
-		this._bShowExpandContent = bValue;
-		this.$expandWrapper.toggleClass("sapUiHidden", !bValue);
-		this.$snappedWrapper.parent().toggleClass("sapFDynamicPageTitleMainExpandContentVisible", bValue);
-	};
+		// Snapped heading
+		if (exists(this.getSnappedHeading())) {
+			this.$snappedHeadingWrapper.toggleClass("sapUiHidden", bExpanded);
+		}
 
-	/**
-	 * Determines if the <code>DynamicPageTitle</code> expanded content is currently displayed.
-	 * @returns {boolean}
-	 * @private
-	 */
-	DynamicPageTitle.prototype._getShowExpandContent = function () {
-		return this._bShowExpandContent;
+		// Expanded content
+		if (exists(this.getExpandedContent())) {
+			this.$expandWrapper.toggleClass("sapUiHidden", !bExpanded);
+			this.$expandWrapper.parent().toggleClass("sapFDynamicPageTitleMainExpandContentVisible", bExpanded);
+		}
+
+		// Expanded heading
+		if (exists(this.getExpandedHeading())) {
+			this.$expandHeadingWrapper.toggleClass("sapUiHidden", !bExpanded);
+		}
 	};
 
 	/* ========== DynamicPageTitle expand indicator ========== */
@@ -799,13 +839,15 @@ sap.ui.define([
 				content: aContent,
 				hasContent: aContent.length > 0,
 				heading: this.getHeading(),
+				snappedHeading: this.getSnappedHeading(),
+				expandedHeading: this.getExpandedHeading(),
 				expandButton: oExpandButton,
 				snappedContent: aSnapContent,
 				expandedContent: aExpandContent,
 				hasSnappedContent:bHasSnappedContent,
 				hasExpandedContent: bHasExpandedContent,
 				hasAdditionalContent: bHasExpandedContent || bHasSnappedContent,
-				showSnapContent: this._getShowSnapContent(),
+				isSnapped: !this._bExpandedState,
 				isPrimaryAreaBegin: bisPrimaryAreaBegin,
 				ariaText: this._oRB.getText("TOGGLE_HEADER"),
 				breadcrumbs: this.getBreadcrumbs(),
