@@ -179,6 +179,11 @@ function(
 			return false;
 		}
 
+		// without DesignTimeMetadata the Overlay was not registered yet.
+		if (!oOverlay.getDesignTimeMetadata()) {
+			return false;
+		}
+
 		if (oOverlay.getElementHasStableId() === undefined){
 			var bStable = false;
 			var oElement = oOverlay.getElementInstance();

@@ -12,6 +12,7 @@ sap.ui.require([
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/m/Button',
 	'sap/ui/layout/VerticalLayout',
+	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/OverlayUtil',
 	'sap/m/Label',
@@ -36,6 +37,7 @@ function(
 	ChangeRegistry,
 	Button,
 	VerticalLayout,
+	ElementOverlay,
 	OverlayRegistry,
 	OverlayUtil,
 	Label,
@@ -195,6 +197,16 @@ function(
 		assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), true, "and the 'getElementHasStableId' property of the Overlay is set to true");
 		assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then if hasStableId is called again it also returns true");
 		assert.equal(this.oCheckControlIdSpy.callCount, 1, "but then the utility method to check the control id is not called a second time");
+	});
+
+	QUnit.test("when the overlay is not registered yet (has no DTMD) or is undefined and hasStableId is called", function(assert) {
+		sandbox.stub(this.oButtonOverlay, "getDesignTimeMetadata").returns(null);
+		var oSetStableIdSpy = sandbox.spy(ElementOverlay.prototype, "setElementHasStableId");
+		assert.notOk(this.oPlugin.hasStableId(this.oButtonOverlay), "then the button has no stable ID");
+		assert.equal(oSetStableIdSpy.callCount, 0, "and the result is not saved on the overlay");
+
+		assert.notOk(this.oPlugin.hasStableId(this.oButtonOverlay2), "then the button has no stable ID");
+		assert.equal(oSetStableIdSpy.callCount, 0, "and the result is not saved on the overlay");
 	});
 
 	QUnit.test("when the event elementModified is thrown with visibility change", function(assert) {
