@@ -1,6 +1,6 @@
 /*global QUnit testRule*/
 
-sap.ui.require(["jquery.sap.global"], function (jQuery) {
+sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	"use strict";
 
 	QUnit.module("Button rule tests", {
