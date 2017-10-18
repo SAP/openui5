@@ -193,13 +193,11 @@ sap.ui.define([
 						// Cache allowed members
 						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-						this._objectPage._suppressLayoutCalculations();
 						this._bindData(this._sTopicid);
 						this._bindEntityData(this._sTopicid);
 						this._createMethodsSummary();
 						this._createEventsSummary();
 						this._createAnnotationsSummary();
-						this._objectPage._resumeLayoutCalculations();
 
 						if (this._sEntityType) {
 							this._scrollToEntity(this._sEntityType, this._sEntityId);
