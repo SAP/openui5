@@ -64,6 +64,10 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 		return Promise.resolve();
 	};
 
+	BaseCommand.prototype.getVariantChange = function() {
+		return this._oVariantChange;
+	};
+
 	/**
 	 * @public Template method to implement undo logic.
 	 * @return {Promise} Returns a resolving Promise
