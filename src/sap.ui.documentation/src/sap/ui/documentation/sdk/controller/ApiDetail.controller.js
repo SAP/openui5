@@ -972,6 +972,11 @@ sap.ui.define([
 							break;
 						}
 					}
+					if (i === -1) {
+						// There is a symbol without documentation in the inheritance chain and we can
+						// not continue. BCP: 1770492427
+						break;
+					}
 				}
 
 				// Generate promises for all required libraries
