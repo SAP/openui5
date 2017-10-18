@@ -121,6 +121,10 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 				return Utils.getControlType(oControl);
 			},
 
+			getAllAggregations: function (oParent) {
+				return oParent.getMetadata().getAllAggregations();
+			},
+
 			/**
 			 * Adds an additional item of the aggregation or changes it in case it is not a multiple one
 			 *

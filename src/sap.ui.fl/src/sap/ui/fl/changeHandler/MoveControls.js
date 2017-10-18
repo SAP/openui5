@@ -162,7 +162,19 @@ sap.ui.define([
 					FlexUtils.log.warning("Element to move not found");
 					return;
 				}
-
+				// adjust the current sourceAggregation
+				var iIndex;
+				var mAllAggregations = oModifier.getAllAggregations(oSourceParent);
+				Object.keys(mAllAggregations).some(function(sKey) {
+					var aAggregation = oModifier.getAggregation(oSourceParent, sKey);
+					if (Array.isArray(aAggregation)) {
+						iIndex = aAggregation.indexOf(oMovedElement);
+						if (iIndex > -1) {
+							sSourceAggregation = sKey;
+							return true;
+						}
+					}
+				});
 				oModifier.removeAggregation(oSourceParent, sSourceAggregation, oMovedElement, oView);
 				oModifier.insertAggregation(oTargetParent, sTargetAggregation, oMovedElement, mMovedElement.targetIndex, oView);
 			}, this);
