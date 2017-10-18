@@ -253,7 +253,7 @@
 			var oDefaultAggregation = oParent.getMetadata().getAggregation();
 
 			if (oDefaultAggregation) {
-				var iPositionOfInvisibleElement = oParent.getAggregation(sAggregationName).indexOf(oInvisibleElement);
+				var iPositionOfInvisibleElement = ElementUtil.getAggregation(oParent, sAggregationName).indexOf(oInvisibleElement);
 				var sParentDefaultAggregationName = oDefaultAggregation.name;
 				var oBinding = oParent.getBindingInfo(sParentDefaultAggregationName);
 				var oTemplate = oBinding && oBinding.template;
@@ -263,7 +263,7 @@
 
 					if (oTemplateDefaultAggregation) {
 						var sTemplateDefaultAggregationName = oTemplateDefaultAggregation.name;
-						var oTemplateElement = oTemplate.getAggregation(sTemplateDefaultAggregationName)[iPositionOfInvisibleElement];
+						var oTemplateElement = ElementUtil.getAggregation(oTemplate, sTemplateDefaultAggregationName)[iPositionOfInvisibleElement];
 						aBindings = aBindings.concat(BindingsExtractor.getBindings(oTemplateElement, null, true));
 					}
 				}
