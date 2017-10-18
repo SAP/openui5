@@ -1195,7 +1195,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// to be executed before timeouts may be executed.
 			Promise.resolve().then(this._updateTableSizes.bind(this, TableUtils.RowsUpdateReason.Render, true));
 		} else {
-			this._updateTableSizes(TableUtils.RowsUpdateReason.Render, null, bEventIsMarked);
+			this._updateTableSizes(TableUtils.RowsUpdateReason.Render, null, bEventIsMarked,
+				bEventIsMarked && TableUtils.isVariableRowHeightEnabled(this));
 		}
 
 		if (!bEventIsMarked) {
@@ -1229,7 +1230,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * First collects all table sizes, then synchronizes row/column heights, updates scrollbars and selection.
 	 * @private
 	 */
-	Table.prototype._updateTableSizes = function(sReason, bForceUpdateTableSizes, bSkipHandleRowCountMode) {
+	Table.prototype._updateTableSizes = function(sReason, bForceUpdateTableSizes, bSkipHandleRowCountMode, bForceSetRowContentHeight) {
 		var oDomRef = this.getDomRef();
 		var that = this;
 
@@ -1348,7 +1349,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._updateRowHeights(aColumnHeaderRowHeights, true);
 
 		this._determineVisibleCols(oTableSizes);
-		if (!bSkipHandleRowCountMode) {
+		if (!bSkipHandleRowCountMode || bForceSetRowContentHeight) {
 			this._setRowContentHeight(iRowContentSpace);
 		}
 
