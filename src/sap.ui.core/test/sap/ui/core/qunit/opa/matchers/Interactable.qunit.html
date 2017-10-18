@@ -114,7 +114,7 @@
 
 							// Assert
 							assert.ok(!bResult, "Control isn't matching");
-							sinon.assert.calledWith(this.oSpy,  sinon.match(/is busy/));
+							sinon.assert.calledWith(this.oSpy,  sinon.match(/Control 'Element sap.m.Button#__button[0-9]*' is busy/));
 						});
 
 						QUnit.test("Should not match a Button while one of its parents is busy", function (assert) {
@@ -126,7 +126,7 @@
 
 							// Assert
 							assert.ok(!bResult, "Control isn't matching");
-							sinon.assert.calledWith(this.oSpy,  sinon.match(/parent that is busy/));
+							sinon.assert.calledWith(this.oSpy, sinon.match(/has a parent 'Element sap.m.*' that is busy/));
 						});
 
 						QUnit.test("Should not match a Button while its navContainer is navigating", function (assert) {
@@ -191,7 +191,7 @@
 							// Assert
 							assert.ok(bResultBeforeOpening, "Control is matching");
 							assert.ok(!bResultAfterOpening, "Control isn't matching after a dialog is opened");
-							sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking layer of a Popup/));
+							sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking popup layer/));
 
 							fnStart();
 						}, this);
@@ -220,7 +220,7 @@
 							assert.ok(!bResultAfterOpenFunctionCall, "Control isn't matching after a dialog open function is called");
 							assert.ok(!bResultAfterOpenEvent, "Control isn't matching after a dialog is opened - Event afterOpen has fired");
 							assert.ok(!bResultAfterClosingImmediately, "Control isn't matching after a dialog is opened and closed immediately");
-							sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking layer of a Popup/));
+							sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking popup layer/));
 							assert.ok(this.oInteractable.isMatching(this.oButtonInPage), "Control is matching");
 							fnStart();
 						}, this);
@@ -363,7 +363,7 @@
 
 						// Assert
 						assert.ok(!bResult, "Does not match because the button is disabled");
-						sinon.assert.calledWith(this.oSpy, "The control 'Element sap.m.Button#myButton' is not enabled");
+						sinon.assert.calledWith(this.oSpy, "Control 'Element sap.m.Button#myButton' is not enabled");
 					});
 
 					QUnit.test("Should not match a button when the Toolbar is disabled", function (assert) {
@@ -375,7 +375,7 @@
 
 						// Assert
 						assert.ok(!bResult, "Does not match because the toolbar is disabled");
-						sinon.assert.calledWith(this.oSpy, "The control 'Element sap.m.Button#myButton' is not enabled");
+						sinon.assert.calledWith(this.oSpy, "Control 'Element sap.m.Button#myButton' is not enabled");
 					});
 
 
@@ -388,7 +388,7 @@
 
 						// Assert
 						assert.ok(!bResult, "Does not match because the page because the toolbar is disabled");
-						sinon.assert.calledWith(this.oSpy, "The control 'Element sap.m.Page#myPage' has a parent 'Element sap.m.Toolbar#myToolbar' that is not enabled");
+						sinon.assert.calledWith(this.oSpy, "Control 'Element sap.m.Page#myPage' has a parent 'Element sap.m.Toolbar#myToolbar' that is not enabled");
 					});
 
 					QUnit.module("Fake XHRs", {

@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 
 			var bFilled = !!fnAggregation.call(oControl).length;
 			if (!bFilled) {
-				this._oLogger.debug("Control '" + oControl + "' has an empty aggregation '" + sAggregationName + "'");
+				this._oLogger.debug("Control '" + oControl + "' aggregation '" + sAggregationName + "' is empty");
 			}
 
 			return bFilled;

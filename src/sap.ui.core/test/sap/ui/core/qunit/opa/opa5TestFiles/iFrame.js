@@ -590,8 +590,9 @@ sap.ui.define([
 					var sOpaMessage = $Messages.eq(1).text();
 					QUnit.assert.contains(sOpaMessage, /QUnit timeout/);
 					QUnit.assert.contains(sOpaMessage, /This is what Opa logged/);
-					QUnit.assert.contains(sOpaMessage, /Opa is executing the check:/);
-					QUnit.assert.contains(sOpaMessage, /Opa check was false/);
+					QUnit.assert.contains(sOpaMessage, /Executing OPA check function on controls null/);
+					QUnit.assert.contains(sOpaMessage, /Check function is:/);
+					QUnit.assert.contains(sOpaMessage, /Result of check function is: false/);
 					QUnit.assert.contains(sOpaMessage, /Callstack:/);
 					if (browser.supportsStacktraces()) {
 						QUnit.assert.contains(sOpaMessage, /failingOpaTest/);
@@ -625,7 +626,7 @@ sap.ui.define([
 					QUnit.assert.strictEqual($Messages.eq(0).text(), "Test timed out");
 					var sOpaMessage = $Messages.eq(1).text();
 					QUnit.assert.contains(sOpaMessage, "QUnit timeout");
-					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
+					QUnit.assert.contains(sOpaMessage, "global ID 'myGlobalId'");
 					QUnit.assert.doesNotContain(sOpaMessage, "Log message that should not appear in the error");
 				}
 			});
@@ -638,7 +639,7 @@ sap.ui.define([
 					var sOpaMessage = $Messages.eq(0).text();
 					QUnit.assert.contains(sOpaMessage, "Opa timeout");
 					QUnit.assert.contains(sOpaMessage, "This is what Opa logged");
-					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
+					QUnit.assert.contains(sOpaMessage, "global ID 'myGlobalId'");
 					QUnit.assert.contains(sOpaMessage, "Callstack:");
 					QUnit.assert.doesNotContain(sOpaMessage, "Log message that should not appear in the error");
 				}
@@ -653,7 +654,7 @@ sap.ui.define([
 					QUnit.assert.contains(sOpaMessage, "Opa timeout");
 					QUnit.assert.contains(sOpaMessage, "bad luck no button was found");
 					QUnit.assert.contains(sOpaMessage, "This is what Opa logged");
-					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
+					QUnit.assert.contains(sOpaMessage, "global ID 'myGlobalId'");
 					QUnit.assert.contains(sOpaMessage, "Callstack:");
 					QUnit.assert.doesNotContain(sOpaMessage, "Log message that should not appear in the error");
 				}
@@ -747,7 +748,8 @@ sap.ui.define([
 				success: function (aMessages) {
 					var sOpaMessage = aMessages.eq(0).text();
 					QUnit.assert.contains(sOpaMessage, "Opa timeout");
-					QUnit.assert.contains(sOpaMessage, "all results were filtered out by the matchers - skipping the check -  sap.ui.test.pipelines.MatcherPipeline");
+					QUnit.assert.contains(sOpaMessage, "0 out of 1 controls met the matchers pipeline requirements -  sap.ui.test.pipelines.MatcherPipeline");
+					QUnit.assert.contains(sOpaMessage, "Matchers found no controls so check function will be skipped -  sap.ui.test.Opa5");
 				}
 			});
 
@@ -770,8 +772,9 @@ sap.ui.define([
 				success: function (aMessages) {
 					var sOpaMessage = aMessages.eq(0).text();
 					QUnit.assert.contains(sOpaMessage, "Opa timeout");
-					QUnit.assert.contains(sOpaMessage, "The control Element sap.m.Button#__xmlview0--myButton is busy so it is filtered out -  sap.ui.test.matchers.Interactable");
-					QUnit.assert.contains(sOpaMessage, "all results were filtered out by the matchers - skipping the check -  sap.ui.test.pipelines.MatcherPipeline");
+					QUnit.assert.contains(sOpaMessage, "Control 'Element sap.m.Button#__xmlview0--myButton' is busy -  sap.ui.test.matchers.Interactable");
+					QUnit.assert.contains(sOpaMessage, "0 out of 1 controls met the matchers pipeline requirements -  sap.ui.test.pipelines.MatcherPipeline");
+					QUnit.assert.contains(sOpaMessage, "Matchers found no controls so check function will be skipped -  sap.ui.test.Opa5");
 					QUnit.assert.doesNotContain(sOpaMessage, "Should not happen");
 				}
 			});
