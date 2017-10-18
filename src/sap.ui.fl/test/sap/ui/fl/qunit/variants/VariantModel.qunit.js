@@ -106,6 +106,7 @@ sap.ui.require([
 
 	QUnit.test("when calling '_setVariantProperties' to add a change", function(assert) {
 		var fnSetVariantDataStub = sandbox.stub(this.oModel.oVariantController, "_setVariantData").returns(1);
+		var fnUpdateVariantChangeInMapStub = sandbox.stub(this.oModel.oVariantController, "_updateVariantChangeInMap").returns(1);
 		var fnAddDirtyChangeStub = sandbox.stub(this.oFlexController._oChangePersistence, "addDirtyChange");
 		var mPropertyBag = {
 			"title" : "New Title",
@@ -122,17 +123,18 @@ sap.ui.require([
 		assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].title, mPropertyBag.title, "then the new title updated in the VariantModel");
 		assert.ok(fnSetVariantDataStub.calledOnce, "then '_setVariantData' of VariantController called");
+		assert.ok(fnUpdateVariantChangeInMapStub.calledOnce, "then '_updateVariantChangeInMapStub' of VariantController called");
 	});
 
 	QUnit.test("when calling '_setVariantProperties' to delete a change", function(assert) {
 		var fnSetVariantDataStub = sandbox.stub(this.oModel.oVariantController, "_setVariantData").returns(1);
+		var fnUpdateVariantChangeInMapStub = sandbox.stub(this.oModel.oVariantController, "_updateVariantChangeInMap").returns(1);
+		var fnChangeStub = sandbox.stub().returns({ getDefinition : function() {} });
 		var fnDeleteChangeStub = sandbox.stub(this.oFlexController._oChangePersistence, "deleteChange");
 		var mPropertyBag = {
 			"title" : "Old Title",
 			"variantReference" : "variant1",
-			"change" : {
-				"info" : "Dummy Change"
-			}
+			"change" : fnChangeStub()
 		};
 
 		var oChange = this.oModel._setVariantProperties("variantMgmtId1", mPropertyBag, false);
@@ -140,6 +142,7 @@ sap.ui.require([
 		assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then 'FlexController.deleteChange' called with the passed change");
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].title, mPropertyBag.title, "then the new title updated in the VariantModel");
 		assert.ok(fnSetVariantDataStub.callCount, 0, "then '_setVariantData' of VariantController not called");
+		assert.ok(fnUpdateVariantChangeInMapStub.calledOnce, "then '_updateVariantChangeInMapStub' of VariantController called");
 	});
 
 	QUnit.test("when calling 'switchToVariant'", function(assert) {
