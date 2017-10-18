@@ -1027,6 +1027,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 				// only set timer, CalendarRow will be re-rendered, so no update needed here
 				this._updateCurrentTimeVisualization(false);
 				_adaptCalHeaderForWeekNumbers.call(this, this.getShowWeekNumbers(), this._viewAllowsWeekNumbers(sKey));
+				_adaptCalHeaderForDayNamesLine.call(this, this.getShowDayNamesLine(), !!oInterval);
 			}
 		}
 
@@ -1062,6 +1063,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			oIntervalMetadata = INTERVAL_METADATA[sIntervalType];
 
 		return !!oIntervalMetadata && !!oIntervalMetadata.oClass.prototype.setShowWeekNumbers;
+	};
+
+	/**
+	 * Determines if the day names line is allowed for a given view.
+	 * @param {string} sViewKey The view key
+	 * @returns {boolean} true if the day names line is allowed for the current view
+	 * @private
+	 */
+	PlanningCalendar.prototype._viewAllowsDayNamesLine = function(sViewKey) {
+		var sIntervalType = this._getView(sViewKey).getIntervalType(),
+			oIntervalMetadata = INTERVAL_METADATA[sIntervalType];
+
+		return !!oIntervalMetadata && !!oIntervalMetadata.oClass.prototype.setShowDayNamesLine;
 	};
 
 	/**
@@ -1195,13 +1209,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 
 		var intervalMetadata,
 			sInstanceName,
-			oCalDateInterval;
+			oCalDateInterval,
+			bRendered = !!this.getDomRef(),
+			sCurrentViewKey = this.getViewKey();
 
 		for (intervalMetadata in  INTERVAL_METADATA) {
 			sInstanceName = INTERVAL_METADATA[intervalMetadata].sInstanceName;
 			if (this[sInstanceName]) {
 				oCalDateInterval = this[sInstanceName];
 				oCalDateInterval.setShowDayNamesLine(bShowDayNamesLine);
+
+				if (bRendered && intervalMetadata === sCurrentViewKey) {
+					_adaptCalHeaderForDayNamesLine.call(this, bShowDayNamesLine, true);
+				}
 			}
 		}
 
@@ -2030,6 +2050,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 
 	function _adaptCalHeaderForWeekNumbers(bShowWeekNumbers, bCurrentIntervalAllowsWeekNumbers) {
 		this.$().toggleClass("sapMPlanCalWithWeekNumbers", bShowWeekNumbers && bCurrentIntervalAllowsWeekNumbers);
+	}
+
+	function _adaptCalHeaderForDayNamesLine(bShowDayNamesLine, bCurrentIntervalAllowsDayNamesLine) {
+		this.$().toggleClass("sapMPlanCalWithDayNamesLine", bShowDayNamesLine && bCurrentIntervalAllowsDayNamesLine);
 	}
 
 	function _handleResize(oEvent, bNoRowResize){

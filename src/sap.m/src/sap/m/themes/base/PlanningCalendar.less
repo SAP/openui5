@@ -24,16 +24,31 @@
 	height: 9.25rem;
 }
 
+.sapMPlanCalWithDayNamesLine .sapMPlanCalHead{
+	height: 8.25rem;
+}
+
+.sapMPlanCalWithWeekNumbers.sapMPlanCalWithDayNamesLine .sapMPlanCalHead{
+	height: 11.25rem;
+}
+
 .sapMPlanCalHead > .sapMTB.sapMIBar{
 	padding-left: 0.875rem;
 }
 
-.sapUiSizeCompact .sapMPlanCalHead{
-	height: 4.25rem;
-}
+.sapUiSizeCompact {
+	.sapMPlanCalHead {
+		height: 4.25rem;
+	}
 
-.sapUiSizeCompact .sapMPlanCalWithWeekNumbers .sapMPlanCalHead{
-	height: 6.25rem;
+	.sapMPlanCalWithWeekNumbers .sapMPlanCalHead,
+	.sapMPlanCalWithDayNamesLine .sapMPlanCalHead {
+		height: 6.25rem;
+	}
+
+	.sapMPlanCalWithWeekNumbers.sapMPlanCalWithDayNamesLine .sapMPlanCalHead {
+		height: 8.25rem;
+	}
 }
 
 .sapMPlanCal > .sapMList .sapMPlanCalRowHead > .sapMLIB,
