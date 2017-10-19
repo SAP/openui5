@@ -1479,6 +1479,8 @@ sap.ui.define([
 		if (this._bHeaderInTitleArea && !this._shouldPreserveHeaderInTitleArea()) {
 			this._moveHeaderToContentArea();
 			this._toggleHeaderTitle(false /* snap */);
+			this._bHeaderExpanded = false;
+			this._updateToggleHeaderVisualIndicators();
 		}
 
 		iOffset = iOffset || 0;
