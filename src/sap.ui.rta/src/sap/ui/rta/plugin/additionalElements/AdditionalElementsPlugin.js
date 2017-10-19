@@ -599,12 +599,10 @@ sap.ui.define([
 						targetIndex : iRevealTargetIndex
 					}],
 					source : {
-						publicParent : mParents.relevantContainer,
 						parent : oSourceParent,
 						aggregation : sParentAggregationName
 					},
 					target : {
-						publicParent : mParents.relevantContainer,
 						parent : oTargetParent,
 						aggregation : sParentAggregationName
 					}
