@@ -27,12 +27,13 @@
 					layoutData: oLayoutData
 				});
 			},
-			getButton: function (sId, oLayoutData) {
+			getButton: function (sId, bVisible, oLayoutData) {
 				oLayoutData = oLayoutData && oFactory.getLayoutData(oLayoutData);
 
 				return new sap.m.Button(sId, {
 					text: "Button's text",
 					width: "100%",
+					visible: bVisible,
 					layoutData: oLayoutData
 				});
 			},
@@ -55,6 +56,8 @@
 					vSpacing: 1,
 					defaultSpan: 'L2',
 					content: [
+						oFactory.getButton('hiddenButton', false, {}),
+						oFactory.getButton('visibleButton', true, {}),
 						oFactory.getLabel('defaultGridData'),
 						oFactory.getLabel('moveBackwards', {
 							moveBackwards: 'l1 m2' // Test if still works correctly with lower case
@@ -62,10 +65,10 @@
 						oFactory.getLabel('moveForward', {
 							moveForward: 'L1 M2 S1'
 						}),
-						oFactory.getButton('span', {
+						oFactory.getLabel('span', {
 							span: 'L4 S10'
 						}),
-						oFactory.getButton('indent', {
+						oFactory.getLabel('indent', {
 							indent: 'L1 M7 S3'
 						}),
 						oFactory.getInput(VISIBLE_PREFIX + 'M_S', {
@@ -160,6 +163,21 @@
 
 		assert.ok(bHasMoveBackwardsClasses, CLASSES_FOR_PREFIX + 'moveBackwards parameters');
 		assert.ok(bHasMoveForwardClasses, CLASSES_FOR_PREFIX + 'moveForward parameters');
+	});
+
+	QUnit.test('Hidden controls inside', function (assert) {
+		var $oInvisibleButtonContainer = jQuery(this.oGrid.getDomRef().children[0]),
+			$oVisibleButtonContainer = jQuery(this.oGrid.getDomRef().children[1]);
+
+		assert.ok($oInvisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Invisible element has the appropriate class");
+		assert.ok(!$oVisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Visible element doesn't have the class for hidden elements");
+
+		// Swap visibility
+		sap.ui.getCore().byId('hiddenButton').setVisible(true);
+		sap.ui.getCore().byId('visibleButton').setVisible(false);
+
+		assert.ok(!$oInvisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Class is removed after element's visibility is changed to visible");
+		assert.ok($oVisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Class is added when element's visibility changed to hidden");
 	});
 
 	QUnit.test('Visibility', function(assert) {
@@ -275,6 +293,6 @@
 		assert.ok(oInfo.focusable === undefined || oInfo.editable === null, 'Focusable');
 		assert.ok(oInfo.enabled === undefined || oInfo.editable === null, 'Enabled');
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, 'Editable');
-		assert.ok(oInfo.children && oInfo.children.length === 8, 'Children'); // Only 8 children are visible, because 3 of them are hidden on L devices
+		assert.ok(oInfo.children && oInfo.children.length === 9, 'Children'); // Only 9 children are visible, because 3 of them are hidden on L devices
 	});
 })();
