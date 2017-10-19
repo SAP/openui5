@@ -49,22 +49,19 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/
 
 			/**
 			 * Indicates whether or not the notes icon is displayed.
-			 * @deprecated Since version 1.24.0.
-			 * Will be replaced in the future by a more generic mechanism.
+			 * @deprecated as of version 1.24.0. There is no replacement for the moment.
 			 */
 			badgeNotes : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
 
 			/**
 			 * Indicates whether or not the address book icon is displayed.
-			 * @deprecated Since version 1.24.0.
-			 * Will be replaced in the future by a more generic mechanism.
+			 * @deprecated as of version 1.24.0. There is no replacement for the moment.
 			 */
 			badgePeople : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
 
 			/**
 			 * Indicates whether or not the attachments icon is displayed.
-			 * @deprecated Since version 1.24.0.
-			 * Will be replaced in the future by a more generic mechanism.
+			 * @deprecated as of version 1.24.0. There is no replacement for the moment.
 			 */
 			badgeAttachments : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
 

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './ActionBar', './Overlay', './ThingViewer',
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated as of version 1.38. There is not an exact replacement.
 	 * @alias sap.ui.ux3.ThingInspector
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
