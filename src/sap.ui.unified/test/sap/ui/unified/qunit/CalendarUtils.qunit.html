@@ -45,8 +45,8 @@
 		});
 
 		QUnit.test("getFirstDateOfWeek() for US border case where the first day of week is in the previous year", function(assert) {
-			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 27, 0)).toString(),
-					"1 Jan 2016->27 Dec 2015");
+			assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2016, 0, 1, 0)).toString(),
+					"1 Jan 2016->1 Jan 2016");
 		});
 
 		QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function (assert) {
@@ -239,8 +239,8 @@
 		});
 
 		QUnit.test("getFirstDateOfWeek() for US border case where the first day of week is in the previous year", function(assert) {
-			assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 0, 1)).toString(), CalendarUtils._getFirstDateOfWeek(new CalendarDate(2015, 11, 27)).toString(),
-				"1 Jan 2016->27 Dec 2015");
+			assert.equal(CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 0, 1)).toString(), CalendarUtils._getFirstDateOfWeek(new CalendarDate(2016, 0, 1)).toString(),
+				"1 Jan 2016->1 Jan 2016");
 		});
 
 		QUnit.test("getFirstDateOfWeek() for date at the middle of the month", function(assert) {
