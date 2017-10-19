@@ -214,6 +214,72 @@ function(
 				done();
 			});
 		});
+
+		QUnit.test("When createDescriptor() method is called on S4/Hana on premise with no transport info", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			var oResponse = {
+				"transports": [{
+					"locked" : true
+				}]
+			};
+
+			oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oServer.autoRespond = true;
+
+			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).then(function(oAppVariantDescriptor) {
+				assert.ok(true, "then the promise has been resolved with an app variant descriptor");
+				done();
+			});
+		});
+
+		QUnit.test("When createDescriptor() method is failed", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				404,
+				{
+					"Content-Type": "application/json"
+				},
+				"Backend error"
+			]);
+
+			oServer.autoRespond = true;
+
+			sandbox.stub(this.oAppVariantManager, "_showErrorMessage").returns(Promise.reject(false));
+
+			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).catch(
+				function(bSuccess) {
+					assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
+					done();
+				}
+			);
+		});
 	});
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
@@ -299,7 +365,7 @@ function(
 
 			oServer.autoRespond = true;
 
-			sandbox.stub(this.oAppVariantManager, "_showTechnicalError").returns(Promise.reject(false));
+			sandbox.stub(this.oAppVariantManager, "_showErrorMessage").returns(Promise.reject(false));
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -402,6 +468,29 @@ function(
 			}.bind(this));
 		});
 
+		QUnit.test("When triggerCatalogAssignment() method is called on S4/Hana on premise", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).then(function(oResult) {
+					assert.ok(true, "then the promise is resolved");
+					done();
+				});
+			}.bind(this));
+		});
+
 		QUnit.test("When triggerCatalogAssignment() method is called and response is failed", function (assert) {
 			var done = assert.async();
 
@@ -425,7 +514,7 @@ function(
 
 			oServer.autoRespond = true;
 
-			sandbox.stub(this.oAppVariantManager, "_showTechnicalError").returns(Promise.reject(false));
+			sandbox.stub(this.oAppVariantManager, "_showErrorMessage").returns(Promise.reject(false));
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
