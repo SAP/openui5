@@ -108,7 +108,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		};
 
 		/**
-		 * Changes dynamically row's color set
+		 * Changes dynamically row color set
 		 * Note: this might invalidate cells inside and also change color sets of the other BlockLayoutRow-s below it.
 		 * @public
 		 * @method

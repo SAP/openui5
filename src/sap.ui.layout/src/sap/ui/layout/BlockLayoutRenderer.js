@@ -25,6 +25,9 @@ sap.ui.define(['./library'],
 			oRm.write("<div");
 			oRm.writeControlData(oBlockLayout);
 			oRm.addClass("sapUiBlockLayout");
+			if (oBlockLayout.getKeepFontSize()) {
+				oRm.addClass("sapUiBlockLayoutKeepFontSize");
+			}
 			oRm.writeStyles();
 			oRm.writeClasses();
 			oRm.write(">");
