@@ -202,7 +202,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.setProperty("href", sUri, true);
 		if (this.getEnabled()) {
 			sUri = this.getProperty("href");
-			this.$().attr("href", sUri);
+			if (!sUri) {
+				this.$().removeAttr("href");
+			} else {
+				this.$().attr("href", sUri);
+			}
 		}
 		return this;
 	};
@@ -275,7 +279,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				$this.attr("disabled", true);
 				$this.attr("tabindex", "-1");
 				$this.attr("aria-disabled", true);
-				$this.attr("href", "#");
+				$this.removeAttr("href");
 			}
 		}
 		return this;
