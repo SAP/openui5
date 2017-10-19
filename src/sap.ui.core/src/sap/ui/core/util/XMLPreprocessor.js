@@ -1161,7 +1161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						}
 					} catch (ex) {
 						// just don't replace XML attribute value
-						debug(oElement, 'Error in formatter:', ex);
+						debug(oElement, "Error in formatter of attribute", oAttribute.name, ex);
 					}
 				}
 

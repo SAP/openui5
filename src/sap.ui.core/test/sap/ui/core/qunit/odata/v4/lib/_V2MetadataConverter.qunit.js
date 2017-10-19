@@ -1608,6 +1608,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("inline annotations: Reference", function (assert) {
+		testConversionForInclude(assert, '\
+				<edmx:Reference Uri="qux/$metadata">\
+					<Annotation Term="foo.Term" String="Reference"/>\
+				</edmx:Reference>',
+			{
+				"$Reference" : {
+					"qux/$metadata" : {
+						"@foo.Term" : "Reference"
+					}
+				}
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convert: sap:label at EntityType", function (assert) {
 		testConversion(assert, '\
 				<Schema Namespace="foo">\
@@ -1909,4 +1924,34 @@ sap.ui.require([
 	});
 	//TODO schema GWSAMPLE_BASIC.0000. with "forward reference" to EntityType processed later
 	//TODO such annotations @ (Navigation)Property @ ComplexType are not supported
+
+	//*********************************************************************************************
+	QUnit.test("sap:updatable and sap:creatable at Property", function (assert) {
+		var sXML = '\
+				<Schema Namespace="GWSAMPLE_BASIC.0001" Alias="GWSAMPLE_BASIC">\
+					<EntityType Name="BusinessPartner">\
+						<Property Name="Computed" Type="Edm.String" sap:creatable="false"\
+							sap:label="Computed" sap:updatable="false"/>\
+						<Property Name="Immutable" Type="Edm.String" sap:creatable="true"\
+							sap:label="Immutable" sap:updatable="false"/>\
+					</EntityType>\
+				</Schema>',
+			oExpectedResult = {
+				"GWSAMPLE_BASIC.0001." : {
+					"$Annotations" : {
+						"GWSAMPLE_BASIC.0001.BusinessPartner/Computed" : {
+							"@com.sap.vocabularies.Common.v1.Label": "Computed",
+							"@Org.OData.Core.V1.Computed" : true
+						},
+						"GWSAMPLE_BASIC.0001.BusinessPartner/Immutable" : {
+							"@com.sap.vocabularies.Common.v1.Label": "Immutable",
+							"@Org.OData.Core.V1.Immutable" : true
+						}
+					},
+					"$kind" : "Schema"
+				}
+			};
+
+		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
+	});
 });
