@@ -9,10 +9,10 @@ sap.ui.define(function() {
 	var Utils = function() {};
 
 	Utils.prototype.getNameAndNameSpace = function(sId,sReference) {
-		//namespace and file name according to namespace concept: apps/<Descriptor ID>/changes/<Descriptor Variant ID>/manifest.appdescr_variant
+		//namespace and file name according to namespace concept: apps/<Descriptor ID>/appVariants/<Descriptor Variant ID>/manifest.appdescr_variant
 		return {
 			"fileName": "manifest", //appdescr_variant" is the file type
-			"namespace": "apps/" + sReference + "/changes/" + sId + "/"
+			"namespace": "apps/" + sReference + "/appVariants/" + sId + "/"
 		};
 	};
 
