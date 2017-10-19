@@ -141,7 +141,7 @@ sap.ui.define([
 									.then(function() {
 										if (oResult && oResult.response && oResult.response.IAMId) {
 											// In case of S4 Hana Cloud, notify the key user to refresh the FLP Homepage manually
-											oAppVariantManager.notifyKeyUserWhenTileIsReady(oResult.response.IAMId);
+											return oAppVariantManager.notifyKeyUserWhenTileIsReady(oResult.response.IAMId, oAppVariantDescriptorClosure._id);
 										} else {
 											resolve();
 										}
@@ -151,7 +151,6 @@ sap.ui.define([
 							}
 						})
 						["catch"](function() {
-							BusyIndicator.hide();
 							resolve(false);
 						});
 				});
