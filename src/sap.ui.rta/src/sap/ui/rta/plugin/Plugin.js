@@ -79,14 +79,35 @@ function(
 	BasePlugin.prototype._attachReevaluationEditable = function(oOverlay) {
 		oOverlay.attachElementModified(function(oEvent) {
 			var oParams = oEvent.getParameters();
-			if ((oParams.type === "propertyChanged" && oParams.name === "visible") || oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
-				if (oOverlay.getRelevantOverlays().length === 0) {
-					var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay);
-					oOverlay.setRelevantOverlays(aRelevantOverlays);
-				}
-				this.evaluateEditable(oOverlay.getRelevantOverlays(), {onRegistration: false});
+			var aRelevantOverlays;
+			if ((oParams.type === "propertyChanged" && oParams.name === "visible")) {
+				aRelevantOverlays = this._getRelevantOverlays(oOverlay);
+				this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
+			} else if (oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
+				aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
+				this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 			}
 		}.bind(this));
+	};
+
+	BasePlugin.prototype._getRelevantOverlays = function(oOverlay, sAggregationName) {
+		var aAlreadyDefinedRelevantOverlays = oOverlay.getRelevantOverlays();
+		if (aAlreadyDefinedRelevantOverlays.length === 0) {
+			var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay);
+
+			// if an aggregation name is given, those overlays are added without checking the relevant container
+			if (sAggregationName) {
+				var aAggregationChildren = oOverlay.getAggregationOverlay(sAggregationName).getChildren();
+				aAggregationChildren = aAggregationChildren.filter(function(oChildOverlay) {
+					return aRelevantOverlays.indexOf(oChildOverlay) === -1;
+				});
+				aRelevantOverlays = aRelevantOverlays.concat(aAggregationChildren);
+			}
+
+			oOverlay.setRelevantOverlays(aRelevantOverlays);
+			return aRelevantOverlays;
+		}
+		return aAlreadyDefinedRelevantOverlays;
 	};
 
 	/**
@@ -245,8 +266,11 @@ function(
 
 	BasePlugin.prototype.addToPluginsList = function(oOverlay, bSibling) {
 		var sName = this._retrievePluginName(bSibling);
-		oOverlay.addEditableByPlugin(sName);
-		oOverlay.setEditable(true);
+		var aPluginList = oOverlay.getEditableByPlugins();
+		if (aPluginList.indexOf(sName) === -1) {
+			oOverlay.addEditableByPlugin(sName);
+			oOverlay.setEditable(true);
+		}
 	};
 
 	BasePlugin.prototype.hasChangeHandler = function(sChangeType, oElement) {
