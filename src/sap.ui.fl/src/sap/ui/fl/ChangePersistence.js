@@ -488,7 +488,7 @@ sap.ui.define([
 				saveAction.then(this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange, bSkipUpdateCache));
 
 				return saveAction;
-			}.bind(this), Promise.resolve());
+			}.bind(this), Promise.resolve(true));
 		}
 	};
 

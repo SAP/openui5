@@ -82,11 +82,40 @@ sap.ui.define([
 
 		// Confirm an array has been retrieved
 		if (!Array.isArray(aMessages)) {
-			throw ( "/sap/opu/odata/sap/APS_IAM_APP_SRV/checkAppIntegrity() returned unexpected result");
+			throw (
+				"Error: /sap/opu/odata/sap/APS_IAM_APP_SRV/checkAppIntegrity() returned unexpected result"
+				+ "for IAM app ID " + oAppIntegrityEstimation.AppID
+			);
 		}
 
-		// Customizing is "ready" if there are no error messages.
-		return ( aMessages.length == 0 && !oAppIntegrityEstimation.AppStatus );
+		// Check if publishing is in progress (Warning CM_APS_IAM_APP/057)
+		var bCatalogPublishingInProgress =
+			aMessages.filter( function(oMessage) {
+				return (oMessage.TYPE == 'W' && oMessage.ID == "CM_APS_IAM_APP" && oMessage.NUMBER == "057");
+			}).length >= 1;
+
+		// Check if publishing failed (Error CM_APS_IAM_APP/058)
+		var bCatalogPublishingFailed =
+			aMessages.filter( function(oMessage) {
+				return (oMessage.TYPE == 'E' && oMessage.ID == "CM_APS_IAM_APP" && oMessage.NUMBER == "058");
+			}).length >= 1;
+
+		// Check if errors have been reported
+		var bErrorsReported =
+			aMessages.filter( function(oMessage) {
+				return ( oMessage.TYPE == 'E' );
+			}).length >= 1;
+
+		// Raise exception if pulishing catalog failed
+		if ((bErrorsReported && !bCatalogPublishingInProgress) || bCatalogPublishingFailed) {
+			throw (
+				"Error: Tile generation for app variant with IAM app ID "
+				+ oAppIntegrityEstimation.AppID + " failed"
+			);
+		}
+
+		// Customizing is "ready" if publishing is finished, there are no error messages and AppStatus is empty
+		return ( !bCatalogPublishingInProgress && !bErrorsReported && !oAppIntegrityEstimation.AppStatus );
 
 	};
 
