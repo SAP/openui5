@@ -474,10 +474,12 @@ sap.ui.define([
 		var oAssocationEnd,
 			oEntitySet,
 			oEntityType,
+			oFunctionImport,
 			sMetaPath,
 			sNavigationPropertyName,
+			sPart,
 			aParts,
-			sQualifiedName; // qualified name of current entity type across navigations
+			sQualifiedName; // qualified name of current (entity) type across navigations
 
 		/*
 		 * Strips the OData key predicate from a resource path segment.
@@ -503,21 +505,38 @@ sap.ui.define([
 		aParts.shift();
 
 		// from entity set to entity type
-		oEntitySet = this.getODataEntitySet(stripKeyPredicate(aParts[0]));
-		if (!oEntitySet) {
-			throw new Error("Entity set not found: " + aParts[0]);
+		sPart = stripKeyPredicate(aParts[0]);
+		oEntitySet = this.getODataEntitySet(sPart);
+		if (oEntitySet) {
+			sQualifiedName = oEntitySet.entityType;
+		} else {
+			oFunctionImport = this.getODataFunctionImport(sPart);
+			if (oFunctionImport) {
+				if (aParts.length === 1) {
+					sMetaPath = this.getODataFunctionImport(sPart, true);
+				}
+				sQualifiedName = oFunctionImport.returnType;
+				if (sQualifiedName.lastIndexOf("Collection(", 0) === 0) {
+					sQualifiedName = sQualifiedName.slice(11, -1);
+				}
+			} else {
+				throw new Error("Entity set or function import not found: " + sPart);
+			}
 		}
 		aParts.shift();
-		sQualifiedName = oEntitySet.entityType;
 
 		// follow (navigation) properties
 		while (aParts.length) {
 			oEntityType = this.getODataEntityType(sQualifiedName);
-			sNavigationPropertyName = stripKeyPredicate(aParts[0]);
-			oAssocationEnd = this.getODataAssociationEnd(oEntityType, sNavigationPropertyName);
+			if (oEntityType) {
+				sNavigationPropertyName = stripKeyPredicate(aParts[0]);
+				oAssocationEnd = this.getODataAssociationEnd(oEntityType, sNavigationPropertyName);
+			} else { // function import's return type may be a complex type
+				oEntityType = this.getODataComplexType(sQualifiedName);
+			}
 
 			if (oAssocationEnd) {
-				// navigation property
+				// navigation property (Note: can appear in entity types, but not complex types)
 				sQualifiedName = oAssocationEnd.type;
 				if (oAssocationEnd.multiplicity === "1" && sNavigationPropertyName !== aParts[0]) {
 					// key predicate not allowed here
