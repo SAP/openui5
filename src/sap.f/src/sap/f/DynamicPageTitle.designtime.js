@@ -12,6 +12,22 @@ sap.ui.define([],
 				heading: {
 					domRef: ":sap-domref .sapFDynamicPageTitleMainLeftHeading"
 				},
+				expandedHeading: {
+					domRef: function (oElement) {
+						return oElement.$("expand-heading-wrapper").get(0);
+					},
+					ignore: function () {
+						return true;
+					}
+				},
+				snappedHeading: {
+					domRef: function (oElement) {
+						return oElement.$("snapped-heading-wrapper").get(0);
+					},
+					ignore: function () {
+						return true;
+					}
+				},
 				actions: {
 					domRef: ":sap-domref .sapFDynamicPageTitleActionsBar",
 					actions: {
