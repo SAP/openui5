@@ -1427,6 +1427,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 						var oList = that._restoreListFromDisplayContainer(oFilterItemsPage);
 						oList._updateActiveState();
 						oList._fireListCloseEvent();
+						oList._search("");
 					}
 
 					// Destroy the nav container and all it contains so that the dialog content is initialized new each
@@ -1663,6 +1664,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 		oList._updateActiveState();
 		oList._fireListCloseEvent();
+		oList._search("");
 		this._selectedFacetItem.setCounter(oList.getAllCount());
 		oNavContainer.backToTop();
 	};
