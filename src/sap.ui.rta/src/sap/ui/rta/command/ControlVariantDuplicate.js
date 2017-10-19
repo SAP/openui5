@@ -46,6 +46,7 @@ sap.ui.define([
 	 */
 	ControlVariantDuplicate.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
 		this.sLayer = mFlexSettings.layer;
+		return true;
 	};
 
 	/**

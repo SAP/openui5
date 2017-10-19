@@ -49,6 +49,7 @@ sap.ui.define([
 	 */
 	ControlVariantSetTitle.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
 		this.sLayer = mFlexSettings.layer;
+		return true;
 	};
 
 	/**
