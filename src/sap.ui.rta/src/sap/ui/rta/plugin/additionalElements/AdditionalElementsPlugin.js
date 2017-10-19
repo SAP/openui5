@@ -43,16 +43,40 @@ sap.ui.define([
 		return oChild.sParentAggregationName;
 	}
 
-	function _getInvisibleElements (oParentElement, sAggregationName){
-		var oParentOverlay = OverlayRegistry.getOverlay(oParentElement);
+
+	function _getInvisibleElements (oParentOverlay, sAggregationName){
+		var oParentElement = oParentOverlay.getElementInstance();
 		var aInvisibleElements = ElementUtil.getAggregation(oParentElement, sAggregationName).filter(function(oControl){
 			var oOverlay = OverlayRegistry.getOverlay(oControl);
-			if (!oParentOverlay.isVisibleInDom()) {
-				return oControl.getVisible && this.hasStableId(oOverlay);
+
+			if (!this.hasStableId(oOverlay)) {
+				return false;
 			}
-			var bVisible = oOverlay ? oOverlay.isVisibleInDom() : false;
-			return bVisible === false && this.hasStableId(oOverlay);
+
+			var oRelevantContainer = oParentOverlay.getRelevantContainer(true);
+			var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+			var oOverlayToCheck = oParentOverlay;
+			var bAnyParentInvisible = false;
+			// check all the parents until the relevantContainerOverlay for invisibility.
+			do {
+				bAnyParentInvisible = !oOverlayToCheck.getElementVisibility();
+				if (bAnyParentInvisible) {
+					break;
+				}
+				if (oOverlayToCheck === oRelevantContainerOverlay) {
+					break;
+				} else {
+					oOverlayToCheck = oOverlayToCheck.getParentElementOverlay();
+				}
+			} while (oOverlayToCheck);
+
+			if (bAnyParentInvisible) {
+				return true;
+			}
+
+			return oOverlay.getElementVisibility() === false;
 		}, this);
+
 		var aStashedControls = StashedControlSupport.getStashedControls(oParentElement.getId());
 		return aInvisibleElements.concat(aStashedControls);
 	}
@@ -226,7 +250,7 @@ sap.ui.define([
 
 		_getRevealActionFromAggregations: function(aParents, _mReveal, sAggregationName){
 			var aInvisibleElements = aParents.reduce(function(aInvisibleChilden, oParentOverlay){
-				return oParentOverlay ? aInvisibleChilden.concat(_getInvisibleElements.call(this, oParentOverlay.getElementInstance(), sAggregationName)) : aInvisibleChilden;
+				return oParentOverlay ? aInvisibleChilden.concat(_getInvisibleElements.call(this, oParentOverlay, sAggregationName)) : aInvisibleChilden;
 			}.bind(this), []);
 
 			var fnCallback = function(mTypes, oElement){

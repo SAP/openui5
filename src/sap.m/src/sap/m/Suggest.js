@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './SuggestionsList', '.
 		}
 
 		function createPopover() {
-			var popover = new (sap.ui.require('sap/m/Popover'))({
+			var popover = self._oPopover =  new (sap.ui.require('sap/m/Popover'))({
 				showArrow: false,
 				showHeader: false,
 				horizontalScrolling: false,
@@ -159,13 +159,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './SuggestionsList', '.
 				return this.openBy(parent);
 			};
 
-			function setMinWidth() {
-				var w = (oInput.$().outerWidth() / parseFloat(library.BaseFontSize)) + "rem";
-				popover.getDomRef().style.minWidth = w;
-			}
-
 			popover.addEventDelegate({
-					onAfterRendering: setMinWidth,
+					onAfterRendering: self.setPopoverMinWidth.bind(self),
 					ontap: ontap
 				}, oInput);
 
@@ -189,6 +184,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './SuggestionsList', '.
 		/* =========================================================== */
 		/* API functions                                               */
 		/* =========================================================== */
+
+		this.setPopoverMinWidth = function() {
+			if (self._oPopover.isOpen()) {
+				var w = (oInput.$().outerWidth() / parseFloat(library.BaseFontSize)) + "rem";
+				self._oPopover.getDomRef().style.minWidth = w;
+			}
+		};
 
 		this.destroy = function() {
 			if (picker) {

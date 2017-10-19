@@ -143,7 +143,10 @@
 								"user":""
 							}
 						}
-					]
+					],
+					"variantChanges": {
+						"setTitle": []
+					}
 				},
 				{
 					"content": {
@@ -214,7 +217,10 @@
 								"user":""
 							}
 						}
-					]
+					],
+					"variantChanges": {
+						"setTitle": []
+					}
 				},
 				{
 					"content": {
@@ -350,7 +356,10 @@
 								"from": "1.0.0"
 							}
 						}
-					]
+					],
+					"variantChanges": {
+						"setTitle": []
+					}
 				}
 			]
 		}

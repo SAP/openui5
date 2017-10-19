@@ -1230,9 +1230,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 				return oWhenParentLoaded.then(function(oParentDesignTime) {
 					// we use jQuery.sap.extend to be able to also overwrite properties with null or undefined
 					// using deep extend to inherit full parent designtime, unwanted inherited properties have to be overwritten with undefined
-					if (oParentDesignTime) {
-						delete oParentDesignTime["designtimeModule"];
+					if (!oOwnDesignTime) {
+						oOwnDesignTime = {};
 					}
+					oOwnDesignTime.designtimeModule = oOwnDesignTime.designtimeModule || undefined;
 					return jQuery.sap.extend(true, {}, oParentDesignTime, oOwnDesignTime);
 				});
 			});

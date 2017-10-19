@@ -37,7 +37,12 @@ sap.ui.define(["sap/ui/core/Element"],
 				/**
 				 * The text of the item. It is used as a tooltip and for accessibility reasons.
 				 */
-				text: { type: "string", group: "Misc", defaultValue: "" }
+				text: { type: "string", group: "Misc", defaultValue: "" },
+
+				/**
+				 * The key of the item.
+				 */
+				key: { type: "string", group: "Misc", defaultValue: "" }
 			},
 			events: {
 				/**

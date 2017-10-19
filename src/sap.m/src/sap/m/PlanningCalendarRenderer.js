@@ -41,6 +41,10 @@ sap.ui.define([],
 			oRm.addClass("sapMPlanCalWithWeekNumbers");
 		}
 
+		if (oPC.getShowDayNamesLine() && oPC._viewAllowsDayNamesLine(oPC.getViewKey())) {
+			oRm.addClass("sapMPlanCalWithDayNamesLine");
+		}
+
 		if (sTooltip) {
 			oRm.writeAttributeEscaped('title', sTooltip);
 		}

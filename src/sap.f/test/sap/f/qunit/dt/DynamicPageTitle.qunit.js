@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 (function () {
     "use strict";
 
@@ -9,7 +11,11 @@
         "sap/m/Text",
         "sap/m/Title",
         "sap/m/Button",
-        "sap/m/MenuButton"
+		"sap/f/changeHandler/MoveDynamicPageTitleActions",
+		"sap/ui/fl/changeHandler/JsControlTreeModifier",
+		"sap/ui/fl/Change",
+		"sap/ui/core/UIComponent",
+		"sap/ui/core/ComponentContainer"
     ], function (
         QUnitReport,
         ElementEnablementTest,
@@ -17,14 +23,19 @@
         DynamicPageTitle,
         Text,
         Title,
-        Button
+        Button,
+		MoveDynamicPageTitleActions,
+		JSControlTreeModifier,
+		Change,
+		UIComponent,
+		ComponentContainer
     ) {
 
         var oElementEnablementTest = new ElementEnablementTest({
             type: "sap.f.DynamicPageTitle",
             create: function () {
                 return new DynamicPageTitle({
-                    heading : new Title({text: "This is title"}),
+                    heading : [new Title({text: "This is title"})],
                     content : [
                         new Text({text: "Title content 1"}),
                         new Text({text: "Title content 2"}),
@@ -35,8 +46,8 @@
                         new Button({text: "Action2"})
                     ],
                     snappedContent : [
-                        new Text({text: "Scnapped content 1"}),
-                        new Text({text: "Scnapped content 2"})
+                        new Text({text: "Snapped content 1"}),
+                        new Text({text: "Snapped content 2"})
                     ],
                     expandedContent : [
                         new Text({text: "Expanded content 1"}),
@@ -338,6 +349,7 @@
 
         // Use rtaControlEnablingCheck to check if your control is ready for the remove action of UI adaptation
         rtaControlEnablingCheck("Checking the combine action for group elements", {
+			jsOnly : true,
             xmlView :
                 '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f">' +
                     '<DynamicPageTitle id="title">' +
@@ -398,6 +410,7 @@
         };
 
         rtaControlEnablingCheck("Checking the split action for group elements", {
+			jsOnly : true,
             xmlView :
                  '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns="sap.m">' +
                     '<f:DynamicPageTitle id="title">' +
@@ -441,5 +454,138 @@
             afterRedo : fnConfirmActionElementsAreSplit
         });
 
+		 // --------- MOVING THE CONTROL'S ACTIONS CONTENT ---------
+		 // Check if the move action is working properly
+		 var fnConfirmActionsElement1IsOn3rdPosition = function(oAppComponent, oViewAfterAction, assert) {
+
+		 assert.strictEqual( oViewAfterAction.byId("action1").getId(),                   // Id of element at first position in original view
+		 oViewAfterAction.byId("title").getActions()[2].getId(),   // Id of third element in group after change has been applied
+		 "then the control has been moved to the right position");
+		 };
+		 var fnConfirmActionsElement1IsOn1stPosition = function(oAppComponent, oViewAfterAction, assert) {
+		 assert.strictEqual( oViewAfterAction.byId("action1").getId(),                   // Id of element at first position in original view
+		 oViewAfterAction.byId("title").getActions()[0].getId(),   // Id of first element in group after change has been undone
+		 "then the control has been moved to the previous position");
+		 };
+		 // Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
+		 rtaControlEnablingCheck("Checking the move action for a simple control in DynamicPageTitle's action aggregation", {
+		 xmlView : '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f">' +
+			 '<DynamicPageTitle id="title">' +
+				 '<actions>' +
+				 '<m:Button id="action1" text="Action 1" />' +
+				 '<m:Button id="action2" text="Action 2" />' +
+				 '<m:Button id="action3" text="Action 3" />' +
+				 '</actions>' +
+			 '</DynamicPageTitle>' +
+		 '</mvc:View>'
+		 ,
+		 action : {
+		 name : "move",
+		 controlId : "title",
+		 parameter : function(oView){
+			 return {
+				 movedElements : [{
+					 element : oView.byId("action1"),
+					 sourceIndex : 0,
+					 targetIndex : 2
+				 }],
+				 source : {
+					 aggregation: "actions",
+					 parent: oView.byId("title")
+				 },
+				 target : {
+					 aggregation: "actions",
+					 parent: oView.byId("title")
+				 }
+			 };
+		 }
+		 },
+		 afterAction : fnConfirmActionsElement1IsOn3rdPosition,
+		 afterUndo : fnConfirmActionsElement1IsOn1stPosition,
+		 afterRedo : fnConfirmActionsElement1IsOn3rdPosition
+		 });
+
+		// --------- REVERT THE CHANGES ON CONTROL'S ACTIONS CONTENT ---------
+		// Check if the revert for actions' move is working properly
+		function createChangeDefinition() {
+			return jQuery.extend(true, {}, {
+				"changeType": "moveActions"
+			});
+		}
+
+		QUnit.module("Revert Actions on DynamicPageTitle's actions aggregation", {
+			beforeEach: function() {
+
+				var oXmlString = [
+					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.f" xmlns:m="sap.m">',
+					'<DynamicPageTitle id="title">',
+					'<actions>',
+					'<m:Button id="action1" text="Action 1" />',
+					'<m:Button id="action2" text="Action 2" />',
+					'<m:Button id="action3" text="Action 3" />',
+					'</actions>' +
+					'</DynamicPageTitle>' +
+					'</mvc:View>'
+				].join('');
+
+				var Comp = UIComponent.extend("test", {
+					metadata: {
+						manifest : {
+							"sap.app": {
+								"id": "test",
+								"type": "application"
+							}
+						}
+					},
+					createContent : function() {
+						return sap.ui.xmlview({
+							id : this.createId("view"),
+							viewContent : oXmlString
+						});
+					}
+				});
+
+				this.oUiComponent = new Comp("comp");
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
+
+				this.oUiComponentContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+
+			afterEach: function() {
+				this.oUiComponentContainer.destroy();
+			}
+		});
+
+		QUnit.test("Revert move actions", function(assert) {
+
+			var oChange = new Change(createChangeDefinition()),
+				oChangeHandler = MoveDynamicPageTitleActions,
+				oView = this.oUiComponent.getRootControl();
+
+			var oDynamicPageTitle = oView.getContent()[0],
+				oPropertyBag = {
+					modifier: JSControlTreeModifier,
+					appComponent: this.oUiComponent,
+					view: oView
+				};
+
+			oChangeHandler.completeChangeContent(oChange, {
+				movedElements: [{
+					"id": "comp---view--action1",
+					"sourceIndex": 0,
+					"targetIndex": 2
+				}]
+			}, oPropertyBag);
+
+			oChangeHandler.applyChange(oChange, oDynamicPageTitle, oPropertyBag);
+			assert.strictEqual(oView.byId("action1").getId(), oDynamicPageTitle.getActions()[2].getId(), "The change was successfully executed.");
+
+			oChangeHandler.revertChange(oChange, oDynamicPageTitle, oPropertyBag);
+			assert.strictEqual(oView.byId("action1").getId(), oDynamicPageTitle.getActions()[0].getId(), "The change was successfully reverted.");
+		});
     });
+
 })();

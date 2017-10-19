@@ -971,6 +971,21 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * Checks if the associated Element is visible or not. For controls it returns the result of .getVisible,
+	 * otherwise it gets the domRef from DesigntimeMetadata and checks $().is(":visible").
+	 *
+	 * @returns {boolean|undefined} Returns the visibility of the associated Element or undefined, if it is not a control and has no domRef
+	 */
+	ElementOverlay.prototype.getElementVisibility = function() {
+		var oElement = this.getElementInstance();
+		if (oElement instanceof sap.ui.core.Control) {
+			return oElement.getVisible();
+		}
+		var oElementDomRef = this.getAssociatedDomRef();
+		return oElementDomRef ? ElementUtil.isVisible(oElementDomRef) : undefined;
+	};
+
+	/**
 	 * Returns the relevant container element for this overlay. As default the overlay parent element is returned
 	 * @param {boolean} bForParent if true, the relevant container overlay is the overlay itself, if no relevant container is propagated in the designtime
 	 * @return {sap.ui.core.Element} Relevant container element

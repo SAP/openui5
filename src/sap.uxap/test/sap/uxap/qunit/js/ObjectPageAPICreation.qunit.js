@@ -239,18 +239,17 @@
 	QUnit.test("test selected section when hiding another one", function (assert) {
 		/* Arrange */
 		var oObjectPage = this.oObjectPage,
-			oThirdSection = this.oThirdSection,
 			oExpected = {
 				oSelectedSection: this.oSecondSection,
 				sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle()
 			},
 			done = assert.async();
 
-		setTimeout(function () {
-			/* Act: Hide the third section.
-			 /* which used to cause a failure, see BCP: 1770148914 */
-			oThirdSection.setVisible(false);
+		/* Act: Hide the third section.
+		 /* which used to cause a failure, see BCP: 1770148914 */
+		this.oThirdSection.setVisible(false);
 
+		setTimeout(function () {
 			/* Assert:
 			 /* The ObjectPage adjusts its layout, */
 			/* but the selected section should remain the same. */
@@ -513,8 +512,10 @@
 					bSnapped: false
 				};
 
-				sectionIsSelected(oPage, assert, oExpected);
-				done();
+				setTimeout(function() {
+					sectionIsSelected(oPage, assert, oExpected);
+					done();
+				}, 1000);
 			};
 		oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 	});
@@ -544,8 +545,10 @@
 					bSnapped: false
 				};
 
-				sectionIsSelected(oPage, assert, oExpected);
-				done();
+				setTimeout(function() {
+					sectionIsSelected(oPage, assert, oExpected);
+					done();
+				}, 1000);
 			};
 		oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 	});
@@ -578,8 +581,10 @@
 					bSnapped: false
 				};
 
-				sectionIsSelected(oPage, assert, oExpected);
-				done();
+				setTimeout(function() {
+					sectionIsSelected(oPage, assert, oExpected);
+					done();
+				}, 1000);
 			};
 		oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 	});
@@ -675,6 +680,28 @@
 				}, 0);
 			};
 		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+	});
+
+	QUnit.test("setSelectedSection to subsection", function (assert) {
+
+		var oPage = this.oObjectPage,
+			oSecondSection = oPage.getSections()[1],
+			oSecondSectionSecondSubSection = oSecondSection.getSubSections()[1],
+			done = assert.async(),
+			fnOnDomReady = function() {
+				var oExpected = {
+					oSelectedSection: oSecondSection,
+					sSelectedTitle: oSecondSection.getTitle(),
+					bSnapped: false
+				};
+
+				sectionIsSelected(oPage, assert, oExpected);
+				oPage.rerender();
+				sectionIsSelected(oPage, assert, oExpected);
+				done();
+			};
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		oPage.setSelectedSection(oSecondSectionSecondSubSection);
 	});
 
 	QUnit.module("ObjectPage API: sectionTitleLevel");

@@ -773,9 +773,16 @@ sap.ui.define([
 			oPropertyBag = {};
 		}
 
+		var sFileType;
+		if (oPropertyBag.fileType) {
+			sFileType = oPropertyBag.fileType;
+		} else {
+			sFileType = oPropertyBag.isVariant ? "variant" : "change";
+		}
+
 		var oNewFile = {
 			fileName: oPropertyBag.id || Utils.createDefaultFileName(oPropertyBag.changeType),
-			fileType: (oPropertyBag.isVariant) ? "variant" : "change",
+			fileType: sFileType,
 			changeType: oPropertyBag.changeType || "",
 			reference: oPropertyBag.reference || "",
 			packageName: oPropertyBag.packageName || "",

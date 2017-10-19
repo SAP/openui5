@@ -109,7 +109,7 @@ function(
 	sinon.stub(oModel.oVariantController, "addVariantToVariantManagement").returns(1);
 	sinon.stub(oModel.oVariantController, "removeVariantFromVariantManagement").returns(1);
 
-	QUnit.module("Given two controls with designtime metadata for combine ...", {
+	QUnit.module("Given a variant management control ...", {
 		beforeEach : function(assert) {
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
 		},

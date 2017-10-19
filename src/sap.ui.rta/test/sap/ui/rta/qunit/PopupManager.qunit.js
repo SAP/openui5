@@ -494,6 +494,7 @@ function(
 		var fnOpenDone = assert.async();
 		this.oDialog.attachAfterOpen(function() {
 			this.oRta.stop().then(function() {
+				this.oRta.destroy();
 				assert.notOk(this.oRta._oDesignTime, "then DesignTime for the current RTA instance was destroyed");
 				fnOpenDone();
 				this.oDialog.close();

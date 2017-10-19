@@ -318,6 +318,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._active = document.activeElement;
 			}.bind(this));
 		}
+
+		var oCore = sap.ui.getCore();
+
+		if (!oCore.isThemeApplied()) {
+			oCore.attachThemeChanged(this._handleThemeLoad, this);
+		}
+	};
+
+	SearchField.prototype._handleThemeLoad = function() {
+		if (this._oSuggest) {
+			this._oSuggest.setPopoverMinWidth();
+		}
+		var oCore = sap.ui.getCore();
+		oCore.detachThemeChanged(this._handleThemeLoad, this);
 	};
 
 	SearchField.prototype.clear = function(oOptions) {

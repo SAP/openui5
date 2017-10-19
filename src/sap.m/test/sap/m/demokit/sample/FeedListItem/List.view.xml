@@ -19,7 +19,10 @@
 					info="{Type}"
 					timestamp="{Date}"
 					text="{Text}"
-					convertLinksToAnchorTags="All" />
+					convertLinksToAnchorTags="All"
+					actions="{path: 'Actions', templateShareable: false}">
+					<FeedListItemAction text="{Text}" icon="{Icon}" key="{Key}" press="onActionPressed" />
+				</FeedListItem>
 			</List>
 		</l:content>
 	</l:VerticalLayout>

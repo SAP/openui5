@@ -193,13 +193,11 @@ sap.ui.define([
 						// Cache allowed members
 						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-						this._objectPage._suppressLayoutCalculations();
 						this._bindData(this._sTopicid);
 						this._bindEntityData(this._sTopicid);
 						this._createMethodsSummary();
 						this._createEventsSummary();
 						this._createAnnotationsSummary();
-						this._objectPage._resumeLayoutCalculations();
 
 						if (this._sEntityType) {
 							this._scrollToEntity(this._sEntityType, this._sEntityId);
@@ -971,6 +969,11 @@ sap.ui.define([
 							}
 							break;
 						}
+					}
+					if (i === -1) {
+						// There is a symbol without documentation in the inheritance chain and we can
+						// not continue. BCP: 1770492427
+						break;
 					}
 				}
 

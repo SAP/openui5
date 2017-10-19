@@ -179,10 +179,21 @@ sap.ui.require([
 	});
 
 	QUnit.test("when RTA is stopped ...", function(assert) {
-		return this.oRta.stop().then(function() {
-			assert.ok(true, "then the promise got resolved");
-			assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 0, "... and Toolbar is destroyed.");
+		var done = assert.async();
+		this.oRta.attachStop(function() {
+			assert.ok(true, "the 'stop' event was fired");
+			done();
 		});
+		this.oRta.stop().then(function() {
+			assert.ok(true, "then the promise got resolved");
+		});
+	});
+
+	QUnit.test("when RTA is destroyed", function (assert) {
+		return this.oRta.stop().then(function() {
+			this.oRta.destroy();
+			assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 0, "... and Toolbar is destroyed.");
+		}.bind(this));
 	});
 
 	QUnit.test("when transporting local changes", function(assert) {
@@ -767,6 +778,7 @@ sap.ui.require([
 		assert.equal(this.fnDestroy.callCount, 1, " and _destroyDefaultPlugins have been called 1 time after oRta.start()");
 
 		return this.oRta.stop(false).then(function() {
+			this.oRta.destroy();
 			assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
 			done();
 		}.bind(this));
@@ -822,6 +834,7 @@ sap.ui.require([
 		assert.notOk(this.oRta.getPlugins()['tabHandling'].bIsDestroyed, " and the default TabHandlingPlugin is not destroyed");
 
 		this.oRta.stop(false).then(function(){
+			this.oRta.destroy();
 			assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
 			done();
 		}.bind(this));
@@ -870,6 +883,7 @@ sap.ui.require([
 		var done = assert.async();
 
 		this.oRta.attachStop(function(oEvent) {
+			this.oRta.destroy();
 			assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
 			done();
 		}.bind(this));

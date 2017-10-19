@@ -4,7 +4,7 @@
 /* ========================================= */
 
 .sapUiGrid {
-	font-size: @sapUiDesktopFontSize;
+	font-size: 1px; /* as browser adds some px to text to meet font-size*/
 }
 
 .sapUiGrid td {
@@ -194,4 +194,19 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact {
 
 .sapUiGrid > tbody > tr > .sapUiFormContainerToolbar > div {
 	margin-bottom: 0.5rem;
+}
+
+/* for display mode add padding to elements to have spacing between */
+.sapUiFormM:not(.sapUiFormEdit) > .sapUiGrid tr:not(.sapUiGridConteinerHeaderRow) > td{
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
+}
+
+.sapUiFormM:not(.sapUiFormEdit) > .sapUiGrid .sapUiGridConteinerFirstRow:not(.sapUiGridConteinerHeaderRow) > td,
+.sapUiFormM:not(.sapUiFormEdit) > .sapUiGrid .sapUiGridConteinerHeaderRow + tr:not(.sapUiGridConteinerHeaderRow) > td{
+	padding-top: 0;
+}
+
+.sapUiFormM:not(.sapUiFormEdit) > .sapUiGrid > tbody > tr:last-child > td {
+	padding-bottom: 1rem;
 }

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Renderer', './ColumnHeader', './Label', 'sap/ui/core/library', 'sap/m/library'],
-	function(jQuery, ListItemBaseRenderer, Renderer, ColumnHeader, Label, coreLibrary, library) {
+sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Renderer', './ColumnHeader', './Label', 'sap/ui/core/library', 'sap/ui/Device', 'sap/m/library'],
+	function(jQuery, ListItemBaseRenderer, Renderer, ColumnHeader, Label, coreLibrary, Device, library) {
 	"use strict";
 
 	// shortcut for sap.m.PopinDisplay
@@ -11,6 +11,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 	// shortcut for sap.ui.core.VerticalAlign
 	var VerticalAlign = coreLibrary.VerticalAlign;
+
+	// shortcut for sap.m.PopinLayout
+	var PopinLayout = library.PopinLayout;
 
 	/**
 	 * ColumnListItem renderer.
@@ -241,7 +244,17 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		rm.write("<td");
 		rm.writeAttribute("id", oLI.getId() + "-subcell");
 		rm.writeAttribute("colspan", oTable.getColSpan());
-		rm.write("><div class='sapMListTblSubCnt'>");
+
+		var sPopinLayout = oTable.getPopinLayout();
+		// overwrite sPopinLayout=Block to avoid additional margin-top in IE and Edge
+		if (Device.browser.msie || Device.browser.edge) {
+			sPopinLayout = PopinLayout.Block;
+		}
+		rm.write("><div");
+		rm.addClass("sapMListTblSubCnt");
+		rm.addClass("sapMListTblSubCnt" + sPopinLayout);
+		rm.writeClasses();
+		rm.write(">");
 
 		var aCells = oLI.getCells(),
 			aColumns = oTable.getColumns(true);

@@ -163,8 +163,8 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 .sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainLeft {
 	display: flex;
 	display: -webkit-flex;
-	justify-content: space-between;
-	-webkit-justify-content: space-between;
+	justify-content: flex-start;
+	-webkit-justify-content: flex-start;
 	align-items: flex-start;
 	-webkit-align-items: flex-start;
 
@@ -193,10 +193,6 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 			max-width: 100%;
 			color: @sapUiGroupTitleTextColor;
 			font-size: @sapMFontHeader3Size;
-
-			.sapMTitle {
-				margin-top: 0.25rem;
-			}
 		}
 
 		.sapFDynamicPageTitleMainLeftSnappedExpandContent {
@@ -248,10 +244,10 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		padding: 0.5rem 1rem 0.5rem 2rem;
 
 		.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainRight {
-			width: 17%;
+			width: 20%;
 		}
 		.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainLeft {
-			width: 83%;
+			width: 80%;
 		}
 
 		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopLeft {
@@ -292,10 +288,10 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		padding: 0 0 0 1rem;
 
 		.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainRight {
-			width: 17%;
+			width: 20%;
 		}
 		.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainLeft {
-			width: 83%;
+			width: 80%;
 
 			.sapFDynamicPageTitleAreaLowPriority {
 				flex-shrink: 1.5;

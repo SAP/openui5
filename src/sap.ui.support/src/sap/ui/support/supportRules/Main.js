@@ -36,7 +36,6 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		 * <h3>Overview</h3>
 		 * Controller for the support tools.
 		 * Provides integration with respective data services.
-		 * @public
 		 * @class sap.ui.support.Main
 		 */
 		constructor: function () {
@@ -61,6 +60,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					/**
 					 * Analyzes all rules in the given execution scope.
 					 *
+					 * @memberof sap.ui.support
 					 * @public
 					 * @param {Object} oExecutionScope The execution scope of the analysis with the type of the scope
 					 * @param {Object[]} aRuleDescriptors An array with rules against which the analysis will be run
@@ -77,6 +77,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					},
 					/**
 					 * Gets last analysis history.
+					 * @memberof sap.ui.support
 					 * @public
 					 * @returns {Object} Last analysis history.
 					 */
@@ -92,6 +93,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					/**
 					 * Gets history.
 					 *
+					 * @memberof sap.ui.support
 					 * @public
 					 * @returns {Object[]} Current history.
 					 */
@@ -105,6 +107,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					/**
 					 * Gets formatted history.
 					 *
+					 * @memberof sap.ui.support
 					 * @public
 					 * @method
 					 * @name sap.ui.support.Main.getFormattedAnalysisHistory
@@ -141,6 +144,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * Checks if the current page is inside an iFrame.
 	 *
 	 * @private
+	 * @return {boolean}
 	 */
 	Main.prototype._isInIframe = function () {
 		try {

@@ -32,6 +32,9 @@ sap.ui.controller("sap.ui.comp.sample.smarttable.SmartTable", {
 				developerMode: false
 			}
 		});
+		oRta.attachEvent('stop', function() {
+			oRta.destroy();
+		});
 		oRta.start();
 	}
 });

@@ -6,9 +6,11 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedObjectObserver', './PlanningCalendarRow',
 		'./library', 'sap/ui/unified/library', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate',
 		'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarWeekInterval',
-		'sap/ui/unified/CalendarOneMonthInterval', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item', 'jquery.sap.events'],
+		'sap/ui/unified/CalendarOneMonthInterval', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item',
+		'sap/m/Select', 'sap/m/Button', 'sap/m/Toolbar', 'sap/m/Table', 'sap/m/Column', 'jquery.sap.events'],
 	function (jQuery, Control, ManagedObjectObserver, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils, CalendarDate,
-			  DateRange, CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval, Device, ResizeHandler, Item) {
+			  DateRange, CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval, Device, ResizeHandler, Item,
+			  Select, Button, Toolbar, Table, Column) {
 		"use strict";
 
 	// shortcut for sap.ui.unified.CalendarDayType
@@ -470,16 +472,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		var sId = this.getId();
-		this._oIntervalTypeSelect = new sap.m.Select(sId + "-IntType", {maxWidth: "15rem", ariaLabelledBy: sId + "-SelDescr"});
+		this._oIntervalTypeSelect = new Select(sId + "-IntType", {maxWidth: "15rem", ariaLabelledBy: sId + "-SelDescr"});
 		this._oIntervalTypeSelect.attachEvent("change", _changeIntervalType, this);
 
-		this._oTodayButton = new sap.m.Button(sId + "-Today", {
+		this._oTodayButton = new Button(sId + "-Today", {
 			text: this._oRB.getText("PLANNINGCALENDAR_TODAY"),
 			type: ButtonType.Transparent
 		});
 		this._oTodayButton.attachEvent("press", this._handleTodayPress, this);
 
-		this._oHeaderToolbar = new sap.m.Toolbar(sId + "-HeaderToolbar", {
+		this._oHeaderToolbar = new Toolbar(sId + "-HeaderToolbar", {
 			design: ToolbarDesign.Transparent,
 			content: [this._oIntervalTypeSelect, this._oTodayButton]
 		});
@@ -488,19 +490,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			toolbar: this._oHeaderToolbar
 		});
 
-		this._oInfoToolbar = new sap.m.Toolbar(sId + "-InfoToolbar", {
+		this._oInfoToolbar = new Toolbar(sId + "-InfoToolbar", {
 			height: "auto",
 			design: ToolbarDesign.Transparent,
 			content: [this._oCalendarHeader, this._oTimeInterval]
 		});
 
-		var oTable = new sap.m.Table(sId + "-Table", {
+		var oTable = new Table(sId + "-Table", {
 			infoToolbar: this._oInfoToolbar,
 			mode: ListMode.SingleSelectMaster,
-			columns: [ new sap.m.Column({
+			columns: [ new Column({
 					styleClass: "sapMPlanCalRowHead"
 				}),
-				new sap.m.Column({
+				new Column({
 					width: "80%",
 					styleClass: "sapMPlanCalAppRow",
 					minScreenWidth: APP_COLUMN_MIN_SCREEN_WIDTH,
@@ -1027,6 +1029,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 				// only set timer, CalendarRow will be re-rendered, so no update needed here
 				this._updateCurrentTimeVisualization(false);
 				_adaptCalHeaderForWeekNumbers.call(this, this.getShowWeekNumbers(), this._viewAllowsWeekNumbers(sKey));
+				_adaptCalHeaderForDayNamesLine.call(this, this.getShowDayNamesLine(), !!oInterval);
 			}
 		}
 
@@ -1062,6 +1065,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			oIntervalMetadata = INTERVAL_METADATA[sIntervalType];
 
 		return !!oIntervalMetadata && !!oIntervalMetadata.oClass.prototype.setShowWeekNumbers;
+	};
+
+	/**
+	 * Determines if the day names line is allowed for a given view.
+	 * @param {string} sViewKey The view key
+	 * @returns {boolean} true if the day names line is allowed for the current view
+	 * @private
+	 */
+	PlanningCalendar.prototype._viewAllowsDayNamesLine = function(sViewKey) {
+		var sIntervalType = this._getView(sViewKey).getIntervalType(),
+			oIntervalMetadata = INTERVAL_METADATA[sIntervalType];
+
+		return !!oIntervalMetadata && !!oIntervalMetadata.oClass.prototype.setShowDayNamesLine;
 	};
 
 	/**
@@ -1195,13 +1211,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 
 		var intervalMetadata,
 			sInstanceName,
-			oCalDateInterval;
+			oCalDateInterval,
+			bRendered = !!this.getDomRef(),
+			sCurrentViewKey = this.getViewKey();
 
 		for (intervalMetadata in  INTERVAL_METADATA) {
 			sInstanceName = INTERVAL_METADATA[intervalMetadata].sInstanceName;
 			if (this[sInstanceName]) {
 				oCalDateInterval = this[sInstanceName];
 				oCalDateInterval.setShowDayNamesLine(bShowDayNamesLine);
+
+				if (bRendered && intervalMetadata === sCurrentViewKey) {
+					_adaptCalHeaderForDayNamesLine.call(this, bShowDayNamesLine, true);
+				}
 			}
 		}
 
@@ -2030,6 +2052,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 
 	function _adaptCalHeaderForWeekNumbers(bShowWeekNumbers, bCurrentIntervalAllowsWeekNumbers) {
 		this.$().toggleClass("sapMPlanCalWithWeekNumbers", bShowWeekNumbers && bCurrentIntervalAllowsWeekNumbers);
+	}
+
+	function _adaptCalHeaderForDayNamesLine(bShowDayNamesLine, bCurrentIntervalAllowsDayNamesLine) {
+		this.$().toggleClass("sapMPlanCalWithDayNamesLine", bShowDayNamesLine && bCurrentIntervalAllowsDayNamesLine);
 	}
 
 	function _handleResize(oEvent, bNoRowResize){

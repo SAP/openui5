@@ -188,7 +188,7 @@ sap.ui.require([
 				"generator": "Variant.createInitialFileContent",
 				"service": "",
 				"user": "",
-				"sapui5Version": "1.51.0-SNAPSHOT"
+				"sapui5Version": sap.ui.version
 			},
 			"validAppVersions": {}
 		};

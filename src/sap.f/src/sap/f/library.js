@@ -110,7 +110,8 @@ sap.ui.define(["sap/ui/Global",
 	 *
 	 * <b>Note:</b> Please note that on a phone device, due to the limited screen size, only one column can be displayed at a time.
 	 * For all two-column layouts, this column is the <code>Mid</code> column, and for all three-column layouts - the <code>End</code> column,
-	 * even though the respective column may be hidden on desktop and tablet for that particular layout.
+	 * even though the respective column may be hidden on desktop and tablet for that particular layout. Therefore some of the names
+	 * (such as <code>ThreeColumnsMidExpandedEndHidden</code> for example) are representative of the desktop scenario only.
 	 *
 	 * For more information, see {@link topic:3b9f760da5b64adf8db7f95247879086 Types of Layout} in the documentation.
 	 *

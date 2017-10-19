@@ -16,35 +16,6 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.global"],
 		 */
 		var CombineButtons = { };
 
-		CombineButtons.ADD_HELPER_FUNCTIONS = {
-			_fnFindIndexInAggregation : function(oParent, oSourceControl, sParentAggregation) {
-				var oParentAggregation,
-					bMultipleAggregation = false,
-					sParentAggregationSingularName,
-					sAggregationNameToUpper;
-
-				// We need to check the aggregation name and if it is multiple or not.
-				// There are cases when the control's parent method is overwritten and
-				// this leads to differences in the result given by oParent.indexOfAggregation
-				// method. Having this in mind:
-				// 1. We get the aggregation from the Parent's metadata
-				oParentAggregation = oParent.getMetadata().getAllAggregations()[sParentAggregation];
-
-				// 2. Then we check if it is multiple
-				bMultipleAggregation = oParentAggregation.multiple;
-
-				// 3. We get the its name or its singular name if it is multiple
-				sParentAggregationSingularName = bMultipleAggregation ? oParentAggregation.singularName : oParentAggregation.name;
-
-				// 4. We change it to upper case in order to be able to create the method
-				// which is potentially overwritten and/or has additional logic to it
-				sAggregationNameToUpper = jQuery.sap.charToUpperCase(sParentAggregationSingularName);
-
-				// 5. We return the correct index of the control in its Parent aggregation
-				return oParent["indexOf" + sAggregationNameToUpper](oSourceControl);
-			}
-		};
-
 		/**
 		 * Combines sap.m.Button(s) in a sap.m.MenuButton
 		 *
@@ -77,7 +48,7 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.global"],
 			});
 
 			sParentAggregation = aButtons[0].sParentAggregationName;
-			iAggregationIndex = this.ADD_HELPER_FUNCTIONS._fnFindIndexInAggregation(oParent, oSourceControl, sParentAggregation);
+			iAggregationIndex = oModifier.findIndexInParentAggregation(oSourceControl);
 
 			oMenu = oModifier.createControl("sap.m.Menu", mPropertyBag.appComponent, oView);
 

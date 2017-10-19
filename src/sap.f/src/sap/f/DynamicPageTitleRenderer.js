@@ -110,10 +110,22 @@ sap.ui.define([], function () {
 		oRm.write(">");
 		// Left Area -> heading aggregation
 		oRm.write("<div");
+		oRm.addClass("sapFDynamicPageTitleHeading-CTX");
 		oRm.addClass("sapFDynamicPageTitleMainLeftHeading");
 		oRm.writeClasses();
 		oRm.write(">");
-		oRm.renderControl(oDynamicPageTitleState.heading);
+		if (oDynamicPageTitleState.heading) {
+			// If heading is given, it should be used
+			oRm.renderControl(oDynamicPageTitleState.heading);
+		} else {
+			// Otherwise, snapped and expanded heading should be used
+			if (oDynamicPageTitleState.snappedHeading) {
+				DynamicPageTitleRenderer._renderSnappedHeading(oRm, oDynamicPageTitleState);
+			}
+			if (oDynamicPageTitleState.expandedHeading) {
+				DynamicPageTitleRenderer._renderExpandHeading(oRm, oDynamicPageTitleState);
+			}
+		}
 		oRm.write("</div>");
 
 		// Left Area -> snappedContent/expandContent aggregation
@@ -146,10 +158,6 @@ sap.ui.define([], function () {
 		oDynamicPageTitleState.content.forEach(oRm.renderControl);
 		oRm.write("</div>");
 
-		// Dummy invisible element just to let display:flex with justify-content: space between
-		// to allocate space between the Middle area and the Actions,
-		// otherwise the areas would be stickied together.
-		oRm.write("<span class=\"sapFDynamicPageTitleMainInvisibleEl\"></span>");
 		oRm.write("</div>");
 	};
 
@@ -190,6 +198,27 @@ sap.ui.define([], function () {
 		}
 	};
 
+	DynamicPageTitleRenderer._renderExpandHeading = function (oRm, oDynamicPageTitleState) {
+		oRm.write("<div");
+		oRm.writeAttribute("id", oDynamicPageTitleState.id + "-expand-heading-wrapper");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.renderControl(oDynamicPageTitleState.expandedHeading);
+		oRm.write("</div>");
+	};
+
+	DynamicPageTitleRenderer._renderSnappedHeading = function (oRm, oDynamicPageTitleState) {
+		oRm.write("<div");
+		oRm.writeAttribute("id", oDynamicPageTitleState.id + "-snapped-heading-wrapper");
+		if (!oDynamicPageTitleState.isSnapped) {
+			oRm.addClass("sapUiHidden");
+		}
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.renderControl(oDynamicPageTitleState.snappedHeading);
+		oRm.write("</div>");
+	};
+
 	DynamicPageTitleRenderer._renderExpandContent = function (oRm, oDynamicPageTitleState) {
 		oRm.write("<div");
 		oRm.writeAttributeEscaped("id", oDynamicPageTitleState.id + "-expand-wrapper");
@@ -202,7 +231,7 @@ sap.ui.define([], function () {
 	DynamicPageTitleRenderer._renderSnappedContent = function (oRm, oDynamicPageTitleState) {
 		oRm.write("<div");
 		oRm.writeAttributeEscaped("id", oDynamicPageTitleState.id + "-snapped-wrapper");
-		if (!oDynamicPageTitleState.showSnapContent) {
+		if (!oDynamicPageTitleState.isSnapped) {
 			oRm.addClass("sapUiHidden");
 		}
 		oRm.addClass("sapFDynamicPageTitleSnapped");

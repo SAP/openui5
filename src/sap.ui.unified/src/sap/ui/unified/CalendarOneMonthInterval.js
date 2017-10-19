@@ -4,8 +4,8 @@
 
 //Provides control sap.ui.unified.CalendarOneMonthInterval.
 sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', './library',
-		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarDateIntervalRenderer', 'sap/ui/unified/calendar/OneMonthDatesRow', 'sap/ui/core/Renderer'],
-	function (jQuery, CalendarUtils, CalendarDate, library, CalendarDateInterval, CalendarDateIntervalRenderer, OneMonthDatesRow, Renderer) {
+		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarDateIntervalRenderer', 'sap/ui/unified/calendar/OneMonthDatesRow', 'sap/ui/core/Renderer', 'sap/ui/unified/Calendar', 'sap/ui/unified/CalendarRenderer'],
+	function (jQuery, CalendarUtils, CalendarDate, library, CalendarDateInterval, CalendarDateIntervalRenderer, OneMonthDatesRow, Renderer, Calendar, CalendarRenderer) {
 		"use strict";
 
 		/*
@@ -254,8 +254,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		/****************************************** CUSTOM MONTH PICKER CONTROL ****************************************/
 
-		var CustomMonthPicker = sap.ui.unified.Calendar.extend("CustomMonthPicker", {
-			renderer: Renderer.extend(sap.ui.unified.CalendarRenderer)
+		var CustomMonthPicker = Calendar.extend("CustomMonthPicker", {
+			renderer: Renderer.extend(CalendarRenderer)
 		});
 
 		CustomMonthPicker.prototype._initializeHeader = function() {

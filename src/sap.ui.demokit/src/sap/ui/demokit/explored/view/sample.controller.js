@@ -240,6 +240,9 @@ function(jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Histo
 						developerMode: false
 					}});
 					this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+					this._oRTA.attachStop(function() {
+						this._oRTA.destroy();
+					}.bind(this));
 					this._oRTA.start();
 				}
 			}.bind(this));

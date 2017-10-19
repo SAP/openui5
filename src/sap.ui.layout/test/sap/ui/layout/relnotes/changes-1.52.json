@@ -1,0 +1,79 @@
+{
+  "1.52.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "73aa89d49207de585613f3195974640b60f7edf9",
+        "type": "FEATURE",
+        "text": " Form: add paddings between rows in display mode",
+        "references": []
+      },
+      {
+        "id": "ab0b958a3b3ebfe573bf393a7c691b152f7dfc62",
+        "type": "FEATURE",
+        "text": " Form: visualize disply mode for Labels",
+        "references": []
+      },
+      {
+        "id": "4851b625eba0098e5c44869d1be15226673a70d1",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.BlockLayout - Added BlockLayoutCellData class",
+        "references": []
+      },
+      {
+        "id": "6e50fcc0bab687b3d2676e2dcb08acb7bdf4358e",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.Horizontal/VerticalLayout inner padding for standard CSS classes",
+        "references": []
+      },
+      {
+        "id": "a4274d35eb749eb57ddb303f392b4fef6c80cfa9",
+        "type": "FIX",
+        "text": " Form: don\u0027t close FormContainer if focus on Input field",
+        "references": []
+      },
+      {
+        "id": "248a51aa9ea83f771f5ba242a9e518e6e5e77196",
+        "type": "FIX",
+        "text": " FormContainer: render role\u003d\"form\" only if title exist",
+        "references": []
+      },
+      {
+        "id": "94935713437c6960c6c8da30b67bd2937d6e4a3a",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly mark change as being applied changeHandler for xml views",
+        "references": []
+      },
+      {
+        "id": "8febe2d62ac3ece8491aa26d3dba856222a0ddc0",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: BlockLayout is now rendered correctly.",
+        "references": []
+      },
+      {
+        "id": "85019cf039565292c30fb7b7356b7e85b52e606a",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayoutCellData: JSDoc is now fixed.",
+        "references": []
+      },
+      {
+        "id": "372a176aa7f1e8267572cec35045bc63e2652021",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: sideContentVisibility works correct with containerQuery now",
+        "references": []
+      },
+      {
+        "id": "734f90472386dc57ee08e6f54353678f0027c0a4",
+        "type": "FIX",
+        "text": " sap.ui.layout.Grid: Filter for DOM visibility added",
+        "references": []
+      },
+      {
+        "id": "5f91d86eb1f476132add1711eae3646e818a834b",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
+        "references": []
+      }
+    ]
+  }
+}

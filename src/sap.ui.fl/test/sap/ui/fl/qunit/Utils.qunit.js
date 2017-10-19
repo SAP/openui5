@@ -1006,6 +1006,54 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 
+	QUnit.module("Utils.isDebugEnabled", {
+		beforeEach: function () {
+			this.sWindowSapUiDebug = window["sap-ui-debug"];
+		},
+		afterEach: function () {
+			window["sap-ui-debug"] = this.sWindowSapUiDebug;
+		}
+	});
+
+
+	QUnit.test("can determine the general debug settings", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDebug").returns(true);
+
+		assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+	});
+
+	QUnit.test("can determine the fl library debugging is set as the only library", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "sap.ui.fl";
+
+		assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+	});
+
+	QUnit.test("can determine the fl library debugging is set as part of other libraries", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "sap.ui.core,sap.m,sap.ui.fl,sap.ui.rta";
+
+		assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+	});
+
+	QUnit.test("can determine no 'sap.ui.fl'-library debugging is set", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "sap.ui.rta, sap.m";
+		assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
+	});
+
+	QUnit.test("can determine no library debugging is set", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "";
+		assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
+	});
+
+
 	QUnit.module("Utils.getFlexReference", {
 		beforeEach: function () {
 		},
@@ -1255,5 +1303,44 @@ jQuery.sap.require("sap.m.Button");
 		});
 	});
 
+	QUnit.module("Utils.getChangeFromChangesMap", {
+		beforeEach: function() {
+			this.oChange1 = {
+				getId: function () {
+					return "fileNameChange1";
+				}
+			};
+			this.oChange2 = {
+				getId: function () {
+					return "fileNameChange2";
+				}
+			};
+			this.oChange3 = {
+				getId: function () {
+					return "fileNameChange3";
+				}
+			};
+			this.oChange4 = {
+				getId: function () {
+					return "fileNameChange4";
+				}
+			};
+			this.mChanges = {
+				"c1": [this.oChange1, this.oChange2, this.oChange4],
+				"c2": [this.oChange3]
+			};
+		}
+	});
+
+	QUnit.test("when called with existing Change keys", function(assert) {
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId()), this.oChange1, "then the correct change is returned");
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange2.getId()), this.oChange2, "then the correct change is returned");
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange3.getId()), this.oChange3, "then the correct change is returned");
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange4.getId()), this.oChange4, "then the correct change is returned");
+	});
+
+	QUnit.test("when called with not existing Change keys", function(assert) {
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId() + "foo"), undefined, "then no change is returned");
+	});
 
 }(sap.ui.fl.Utils, sap.ui.layout.HorizontalLayout, sap.ui.layout.VerticalLayout, sap.m.Button));

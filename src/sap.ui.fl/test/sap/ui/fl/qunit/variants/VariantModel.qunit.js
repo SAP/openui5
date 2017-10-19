@@ -51,7 +51,7 @@ sap.ui.require([
 				}
 			};
 			var oManifest = new sap.ui.core.Manifest(oManifestObj);
-			var oComponent = {
+			this.oComponent = {
 				name: "MyComponent",
 				appVersion: "1.2.3",
 				getId: function() {
@@ -63,13 +63,12 @@ sap.ui.require([
 			};
 			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
 
-			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
+			this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
 			this.fnLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
 			this.fnRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl");
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
 
-
-			this.oModel = new VariantModel(this.oData, this.oFlexController, oComponent);
+			this.oModel = new VariantModel(this.oData, this.oFlexController, this.oComponent);
 		},
 		afterEach: function(assert) {
 			sandbox.restore();
@@ -85,8 +84,62 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
-		var sVariantManagementReference = this.oModel.getVariantManagementReference("variant1");
-		assert.equal(sVariantManagementReference, "variantMgmtId1", "then the correct variant management reference is returned");
+		var mVariantManagementReference = this.oModel.getVariantManagementReference("variant1");
+		assert.deepEqual(mVariantManagementReference, {
+			"variantIndex": 2,
+			"variantManagementReference": "variantMgmtId1"
+		}, "then the correct variant management reference is returned");
+	});
+
+	QUnit.test("when calling 'getVariantProperty' with title as property", function(assert) {
+		sandbox.stub(this.oModel.oVariantController, "getVariant").returns(
+			{
+				content:
+					{
+						title: this.oData["variantMgmtId1"].variants[2].title
+					}
+			}
+		);
+		var sPropertyValue = this.oModel.getVariantProperty("variant1", "title");
+		assert.equal(sPropertyValue, this.oData["variantMgmtId1"].variants[2].title, "then the correct title value is returned");
+	});
+
+	QUnit.test("when calling '_setVariantProperties' to add a change", function(assert) {
+		var fnSetVariantDataStub = sandbox.stub(this.oModel.oVariantController, "_setVariantData").returns(1);
+		var fnAddDirtyChangeStub = sandbox.stub(this.oFlexController._oChangePersistence, "addDirtyChange");
+		var mPropertyBag = {
+			"title" : "New Title",
+			"layer" : "CUSTOMER",
+			"variantReference" : "variant1",
+			"appComponent" : this.oComponent
+		};
+
+		var oChange = this.oModel._setVariantProperties("variantMgmtId1", mPropertyBag, true);
+		assert.ok(this.oModel.getData()["variantMgmtId1"].variants[1].modified, "then modified property set as true in VariantModel");
+		assert.equal(oChange.getText("title"), mPropertyBag.title, "then the new change created with the new title");
+		assert.equal(oChange.getChangeType(), "setTitle", "then the new change created with 'setTitle' as changeType");
+		assert.equal(oChange.getFileType(), "ctrl_variant_change", "then the new change created with 'ctrl_variant_change' as fileType");
+		assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
+		assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].title, mPropertyBag.title, "then the new title updated in the VariantModel");
+		assert.ok(fnSetVariantDataStub.calledOnce, "then '_setVariantData' of VariantController called");
+	});
+
+	QUnit.test("when calling '_setVariantProperties' to delete a change", function(assert) {
+		var fnSetVariantDataStub = sandbox.stub(this.oModel.oVariantController, "_setVariantData").returns(1);
+		var fnDeleteChangeStub = sandbox.stub(this.oFlexController._oChangePersistence, "deleteChange");
+		var mPropertyBag = {
+			"title" : "Old Title",
+			"variantReference" : "variant1",
+			"change" : {
+				"info" : "Dummy Change"
+			}
+		};
+
+		var oChange = this.oModel._setVariantProperties("variantMgmtId1", mPropertyBag, false);
+		assert.notOk(oChange, "then no change returned");
+		assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then 'FlexController.deleteChange' called with the passed change");
+		assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].title, mPropertyBag.title, "then the new title updated in the VariantModel");
+		assert.ok(fnSetVariantDataStub.callCount, 0, "then '_setVariantData' of VariantController not called");
 	});
 
 	QUnit.test("when calling 'switchToVariant'", function(assert) {

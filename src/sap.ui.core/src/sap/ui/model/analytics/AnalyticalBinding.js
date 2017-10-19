@@ -26,6 +26,100 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.analytics.AnalyticalBinding";
 
 	/**
+	 * Checks whether the select binding parameter fits to the current analytical info and returns
+	 * an array of properties that need to be added to leaf requests. If the select binding
+	 * parameter does not fit to the current analytical info a warning is logged and the select
+	 * binding parameter is ignored.
+	 * Select binding parameter does not fit to the analytical info,
+	 * <ul>
+	 * <li>if an additional dimension is contained in the select binding parameter
+	 * <li>if an associated property (e.g. text property or attribute) of an additional dimension
+	 * is contained in the select binding parameter
+	 * <li>if an additional measure is contained in the select binding parameter
+	 * <li>if an associated property (e.g. text property) of an additional measure is contained in
+	 * the select binding parameter
+	 * <li>if a dimension or a measure of the current analytical info is not contained in the select
+	 * binding parameter
+	 * </ul>
+	 *
+	 * @param {sap.ui.model.analytics.AnalyticalBinding} oBinding
+	 *   The analytical binding instance
+	 * @returns {string[]} An array of additional properties that need to be selected or an empty
+	 *   array if there are no additional select properties needed
+	 */
+	function getAdditionalSelects(oBinding) {
+		var oAnalyticalQueryRequest
+				= new odata4analytics.QueryResultRequest(oBinding.oAnalyticalQueryResult),
+			aComputedSelect,
+			oDimension,
+			i,
+			j,
+			oMeasure,
+			n,
+			sPropertyName,
+			aSelect = oBinding.mParameters.select.split(","),
+			bError = trimAndCheckForDuplicates(aSelect, oBinding.sPath);
+
+		// prepare oAnalyticalQueryRequest to be able to call getURIQueryOptionValue("$select")
+		oAnalyticalQueryRequest.setAggregationLevel(oBinding.aMaxAggregationLevel);
+		oAnalyticalQueryRequest.setMeasures(oBinding.aMeasureName);
+
+		// update dimension's key, text and attributes as done in relevant _prepare... functions
+		Object.keys(oBinding.oDimensionDetailsSet).forEach(function (sDimensionKey) {
+			oDimension = oBinding.oDimensionDetailsSet[sDimensionKey];
+
+			oAnalyticalQueryRequest.includeDimensionKeyTextAttributes(sDimensionKey,
+				true, oDimension.textPropertyName !== undefined, oDimension.aAttributeName);
+		});
+
+		// update measure's raw value, formatted value and unit property as done in relevant
+		// _prepare... functions
+		Object.keys(oBinding.oMeasureDetailsSet).forEach(function (sMeasureKey) {
+			oMeasure = oBinding.oMeasureDetailsSet[sMeasureKey];
+
+			oAnalyticalQueryRequest.includeMeasureRawFormattedValueUnit(sMeasureKey,
+				oMeasure.rawValuePropertyName !== undefined,
+				oMeasure.formattedValuePropertyName !== undefined,
+				oMeasure.unitPropertyName !== undefined);
+		});
+
+		// at least all selected properties, computed by the binding, are contained in select
+		// binding parameter
+		aComputedSelect = oAnalyticalQueryRequest.getURIQueryOptionValue("$select").split(",");
+		for (i = 0, n = aComputedSelect.length; i < n; i++) {
+			sPropertyName = aComputedSelect[i];
+			j = aSelect.indexOf(sPropertyName);
+			if (j < 0) {
+				jQuery.sap.log.warning("Ignored the 'select' binding parameter, because"
+						+ " it does not contain the property '" + sPropertyName + "'",
+					oBinding.sPath, sClassName);
+				bError = true;
+			} else {
+				aSelect.splice(j, 1);
+			}
+		}
+
+		// check additionally selected properties, no new dimensions and new measures or
+		// associated properties for new dimensions or measures are allowed
+		for (i = 0, n = aSelect.length; i < n; i++) {
+			sPropertyName = aSelect[i];
+
+			oDimension = oBinding.oAnalyticalQueryResult.findDimensionByPropertyName(sPropertyName);
+			if (oDimension && oBinding.oDimensionDetailsSet[oDimension.getName()] === undefined) {
+				logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oDimension);
+				bError = true;
+			}
+
+			oMeasure = oBinding.oAnalyticalQueryResult.findMeasureByPropertyName(sPropertyName);
+			if (oMeasure && oBinding.oMeasureDetailsSet[oMeasure.getName()] === undefined) {
+				logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oMeasure);
+				bError = true;
+			}
+		}
+		return bError ? [] : aSelect;
+	}
+
+	/**
 	 * Logs a warning that the given select property is not supported. Either it is a dimension or
 	 * a measure or it is associated with a dimension or a measure which is not part of the
 	 * analytical info.
@@ -59,81 +153,37 @@ sap.ui.define([
 	}
 
 	/**
-	 * Checks whether the select binding parameter fits to the current analytical info and returns
-	 * an array of properties that need to be added to leaf requests. If the select binding
-	 * parameter does not fit to the current analytical info a warning is logged and the select
-	 * binding parameter is ignored.
-	 * Select binding parameter does not fit to the analytical info,
-	 * <ul>
-	 * <li>if an additional dimension is contained in the select binding parameter
-	 * <li>if an associated property (e.g. text property or attribute) of an additional dimension
-	 * is contained in the select binding parameter
-	 * <li>if an additional measure is contained in the select binding parameter
-	 * <li>if an associated property (e.g. text property) of an additional measure is contained in
-	 * the select binding parameter
-	 * <li>if a dimension or a measure of the current analytical info is not contained in the select
-	 * binding parameter
-	 * </ul>
+	 * Iterate over the given array, trim each value and check whether there are duplicate entries
+	 * in the array. If there are duplicate entries a warning is logged and the duplicate is removed
+	 * from the array.
 	 *
-	 * @param {sap.ui.model.analytics.AnalyticalBinding} oBinding
-	 *   The analytical binding instance
-	 * @returns {string[]} An array of additional properties that need to be selected or an empty
-	 *   array if there are no additional select properties needed
+	 * @param {string[]} aSelect An array of strings
+	 * @param {string} sPath The binding path
+	 * @returns {boolean} <code>true</code> if there is at least one duplicate entry in the array.
 	 */
-	function getAdditionalSelects(oBinding) {
-		var bError = false,
+	function trimAndCheckForDuplicates(aSelect, sPath) {
+		var sCurrentProperty,
+			bError = false,
 			i,
-			oDimension,
-			oMeasure,
-			n,
-			sPropertyName,
-			sSelect = oBinding.mParameters.select,
-			aSelect;
+			n;
 
-		function removeDimensionsOrMeasures(sWhat, mPropertyToDetail) {
-			var iIndex,
-				sProperty;
-
-			for (sProperty in mPropertyToDetail) {
-				iIndex = aSelect.indexOf(sProperty);
-
-				if (iIndex < 0) {
-					jQuery.sap.log.warning("Ignored the 'select' binding parameter, because it does"
-							+ " not contain the " + sWhat + " property '" + sProperty + "' which is"
-							+ " contained in the analytical info (see updateAnalyticalInfo)",
-						oBinding.sPath, sClassName);
-					bError = true;
-				} else {
-					aSelect.splice(iIndex, 1);
-				}
-			}
-		}
-
-		// replace all white-spaces before and after the property names in the select
-		aSelect = sSelect.split(",");
+		// replace all white-spaces before and after the value
 		for (i = 0, n = aSelect.length; i < n; i++) {
 			aSelect[i] = aSelect[i].trim();
 		}
-
-		removeDimensionsOrMeasures("dimension", oBinding.oDimensionDetailsSet);
-		removeDimensionsOrMeasures("measure", oBinding.oMeasureDetailsSet);
-
-		for (i = 0, n = aSelect.length; i < n; i++) {
-			sPropertyName = aSelect[i];
-
-			oDimension = oBinding.oAnalyticalQueryResult.findDimensionByPropertyName(sPropertyName);
-			if (oDimension && oBinding.oDimensionDetailsSet[oDimension.getName()] === undefined) {
-				logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oDimension);
-				bError = true;
-			}
-
-			oMeasure = oBinding.oAnalyticalQueryResult.findMeasureByPropertyName(sPropertyName);
-			if (oMeasure && oBinding.oMeasureDetailsSet[oMeasure.getName()] === undefined) {
-				logUnsupportedPropertyInSelect(oBinding.sPath, sPropertyName, oMeasure);
+		// check for duplicate entries and remove from list
+		for (i = aSelect.length - 1; i >= 0; i--) {
+			sCurrentProperty = aSelect[i];
+			if (aSelect.indexOf(sCurrentProperty) !== i) {
+				// found duplicate
+				jQuery.sap.log.warning("Ignored the 'select' binding parameter, because it"
+						+ " contains the property '" + sCurrentProperty + "' multiple times",
+					sPath, sClassName);
+				aSelect.splice(i, 1);
 				bError = true;
 			}
 		}
-		return bError ? [] : aSelect;
+		return bError;
 	}
 
 	/**
@@ -2155,7 +2205,7 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype._getQueryODataRequestOptions = function(oAnalyticalQueryRequest,
 			bAddAdditionalSelects, mParameters) {
-		var i, aSelect;
+		var i;
 
 		mParameters = mParameters || {};
 
@@ -2174,14 +2224,7 @@ sap.ui.define([
 		var sInlineCount = oAnalyticalQueryRequest.getURIQueryOptionValue("$inlinecount");
 
 		if (bAddAdditionalSelects && this.aAdditionalSelects.length > 0) {
-			aSelect = sSelect.split(",");
-
-			this.aAdditionalSelects.forEach(function (sProperty) {
-				if (aSelect.indexOf(sProperty) === -1) {
-					aSelect.push(sProperty);
-				}
-			});
-			sSelect = aSelect.join(",");
+			sSelect = (sSelect.split(",").concat(this.aAdditionalSelects)).join(",");
 		}
 
 		if (this.mParameters && this.mParameters["filter"]) {
@@ -4510,11 +4553,15 @@ sap.ui.define([
 		// search and replace the $select
 		for (var j = 0, l = aParam.length; j < l; j++) {
 			if (/^\$select/i.test(aParam[j])) {
-				aSelectProperties = aParam[j].slice(8).split(",");
-				for (z = 0; z < aSelectProperties.length; z++) {
-					sProperty = aSelectProperties[z];
-					if (aExportCols.indexOf(sProperty) === -1) {
-						aExportCols.push(sProperty);
+				if (this.mParameters.select) {
+					// merge export columns with the computed $select only if select binding
+					// parameter is given
+					aSelectProperties = aParam[j].slice(8).split(",");
+					for (z = 0; z < aSelectProperties.length; z++) {
+						sProperty = aSelectProperties[z];
+						if (aExportCols.indexOf(sProperty) === -1) {
+							aExportCols.push(sProperty);
+						}
 					}
 				}
 				aParam[j] = "$select=" + aExportCols.join(",");
