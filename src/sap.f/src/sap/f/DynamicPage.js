@@ -889,6 +889,15 @@ sap.ui.define([
 		return this._getEntireHeaderHeight() > DynamicPage.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE * iControlHeight;
 	};
 
+	/*
+	 * Determines if the header is larger than allowed to show in the title area on toggle.
+	 * @returns {boolean}
+	 * @private
+	 */
+	DynamicPage.prototype._headerBiggerThanAllowedToBeExpandedInTitleArea = function () {
+		return this._getEntireHeaderHeight() >= this._getOwnHeight();
+	};
+
 	/**
 	 * Determines the height that is needed to correctly offset the <code>ScrollBar</code>,
 	 * when <code>preserveHeaderStateOnScroll</code> is set to <code>false</code>.
@@ -1459,6 +1468,8 @@ sap.ui.define([
 		if (this._bPinned) { // operation not allowed
 			return this;
 		}
+		var bAllowAppendHeaderToTitle;
+
 		// Header scrolling is not allowed or there is no enough content scroll bar to appear
 		if (this._preserveHeaderStateOnScroll() || !this._canSnapHeaderOnScroll() || !this.getHeader()) {
 			if (!this.getHeaderExpanded()) {
@@ -1473,8 +1484,12 @@ sap.ui.define([
 
 		} else if (!this.getHeaderExpanded()) {
 			// Header is already snapped, then expand
+			bAllowAppendHeaderToTitle = !this._headerBiggerThanAllowedToBeExpandedInTitleArea();
 			this._bExpandingWithAClick = true;
-			this._expandHeader(true);
+			this._expandHeader(bAllowAppendHeaderToTitle);
+			if (!bAllowAppendHeaderToTitle) {
+				this._setScrollPosition(0);
+			}
 			this._bExpandingWithAClick = false;
 
 		} else { //should snap

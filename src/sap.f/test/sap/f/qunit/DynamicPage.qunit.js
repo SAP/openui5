@@ -31,6 +31,14 @@
 					footer: this.getFooter()
 				});
 			},
+			getDynamicPageWithBigHeaderContent: function () {
+				var oBigHeaderContent = [ new sap.m.Panel({ height: "900px"}) ];
+				return new DynamicPage({
+					title: this.getDynamicPageTitle(),
+					header: this.getDynamicPageHeader(oBigHeaderContent),
+					content: this.getContent(900)
+				});
+			},
 			getDynamicPageWithPreserveHeaderOnScroll: function () {
 				return new DynamicPage({
 					preserveHeaderStateOnScroll: true,
@@ -1483,6 +1491,36 @@
 
 		oTitle.fireEvent("_titlePress");
 		assert.ok(!oHeader.$().hasClass("sapFDynamicPageHeaderHidden"), "Header expanded and visible again");
+	});
+
+	QUnit.module("DynamicPage On Title Press when Header height bigger than page height", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageWithBigHeaderContent();
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage On Title Press", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oTitle = oDynamicPage.getTitle();
+
+		oDynamicPage.setHeaderExpanded(false);
+		oUtil.renderObject(oDynamicPage);
+
+		oDynamicPage.$().outerHeight("800px"); // set page height smaller than header height
+
+		oDynamicPage._setScrollPosition(100);
+
+		assert.equal(oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
+
+		//act
+		oTitle.fireEvent("_titlePress");
+		assert.equal(oDynamicPage._bHeaderInTitleArea, false, "Header is not added to the title");
+		assert.equal(oDynamicPage.getHeaderExpanded(), true, "Header is expanded");
+		assert.equal(oDynamicPage._getScrollPosition(), 0, "scroll position is correct");
 	});
 
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
