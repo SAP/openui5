@@ -90,15 +90,17 @@
 			</div>
 		</script>
 	</div>
-    
+	
 		<p>
 			The <span class="strong">Runtime</span> package contains everything needed to run a UI5 application.<br>
 			The <span class="strong">SDK</span> package also contains the complete documentation and samples as a web page to deploy on your own server. It is a copy of our <a href="https://openui5.hana.ondemand.com">public online SDK</a>.<br>
 		</p>
 		Other packages and versions are available <a href="#versionList">below</a>. For an overview of the current maintenance state of the different OpenUI5 versions, please check the <a href="https://openui5.hana.ondemand.com/versionoverview.html">version overview page</a>.
 
-		<!--<h3>Latest unstable development build:</h3>
-		Currently there is no newer preview release available. It will be added, as 1.50 development progresses.-->
+		<div id="noUnstableVersion" style="display: none">
+			<h3>Latest unstable development build:</h3>
+			Currently there is no newer preview release available. It will be added, as {{versionNext}} development progresses.
+		</div>
 
 		<div id="unstableVersion">
 			<script type="text/template" id="unstableVersionTemplate">
@@ -122,7 +124,7 @@
 					</a><br>
 					The online SDK of this preview release can be accessed <a href="https://openui5.hana.ondemand.com/1.50.3/#/topic/99ac68a5b1c3416ab5c84c99fefa250d">here</a>.
 				</div>
-            </script>
+			</script>
 		</div>
 		<a name="cdn"></a><h3>Content Delivery Network (use OpenUI5 without downloading)</h3>
 		There is a network of distributed servers that automatically provides OpenUI5 from the closest location to the user. In your app you can simply load UI5 by referring to:
