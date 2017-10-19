@@ -1,18 +1,21 @@
 <mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout"
 		  controllerName="sap.ui.fl.support.diagnostics.Flexibility">
-	<Toolbar>
+	<!-- layout wrapping the html element because the visibility does not hide inner html coding correct -->
+	<l:VerticalLayout
+			visible="{= !${flexToolSettings>/flInDebug}}">
+		<core:HTML
+				content="{flexToolSettings>/noDebugInfoText}"
+				class="sapUISupportLabel" />
+	</l:VerticalLayout>
+	<Toolbar visible="{flexToolSettings>/flInDebug}" >
 		<Select id="appSelection" showSecondaryValues="true"
 				items="{flexApps>/}" change="onAppSelect">
 			<core:ListItem key="{flexApps>key}" text="{flexApps>text}" additionalText="{flexApps>additionalText}"/>
 		</Select>
-		<!-- TODO: enrich the data so the filter can work on any level -->
-		<!--CheckBox id="hideDependingChangesBox" text="hide depending changes" selected="{flexFilters>/hideDependingChanges}"/-->
 		<ToolbarSpacer/>
 		<Button icon="sap-icon://synchronize" tooltip="Synchronize Apps" press="refreshApps"/>
 	</Toolbar>
-
-
-	<l:Splitter>
+	<l:Splitter visible="{flexToolSettings>/flInDebug}" >
 		<Tree
 				id="Tree"
 				items="{flexChanges>/tree}"
@@ -22,7 +25,7 @@
 			<StandardTreeItem
 					title="{flexChanges>text}"
 					visible="{
-							parts: ['flexChanges>', 'flexChanges>/changes', 'flexFilters>/hideDependingChanges'],
+							parts: ['flexChanges>', 'flexChanges>/changes', 'flexToolSettings>/hideDependingChanges'],
 							formatter: '.formatChangeVisibility'
 						}"
 					class="sapUiSupportFlexibility-TreeNode"
