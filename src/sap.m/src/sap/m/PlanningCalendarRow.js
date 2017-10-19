@@ -4,9 +4,9 @@
 
 //Provides control sap.ui.unified.PlanningCalendarRow.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer',
-		'sap/ui/core/Renderer', './library', 'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarRow', 'sap/ui/unified/CalendarRowRenderer'],
+		'sap/ui/core/Renderer', './library', 'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarRow', 'sap/ui/unified/CalendarRowRenderer', 'sap/m/ColumnListItem'],
 	function (jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library, DateRange,
-			  CalendarRow, CalendarRowRenderer) {
+			  CalendarRow, CalendarRowRenderer, ColumnListItem) {
 	"use strict";
 
 	/**
@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		this._oColumnListItem = new sap.m.ColumnListItem(this.getId() + "-CLI", {
+		this._oColumnListItem = new ColumnListItem(this.getId() + "-CLI", {
 			cells: [ oCalendarRowHeader,
 					 oCalendarRow]
 		});

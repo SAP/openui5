@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.m.ObjectMarker.
-sap.ui.define(["sap/ui/core/Control", 'sap/ui/core/Renderer', "sap/ui/Device", "sap/m/library", "sap/ui/core/library", "sap/ui/core/Icon"], function(Control, Renderer, Device, library, coreLibrary, Icon) {
+sap.ui.define(["sap/ui/core/Control", "sap/ui/core/Renderer", "sap/ui/Device", "sap/m/library", "sap/ui/core/library", "sap/ui/core/Icon", "sap/m/TextRenderer", "sap/m/Text", "sap/m/LinkRenderer", "sap/m/Link"], function(Control, Renderer, Device, library, coreLibrary, Icon, TextRenderer, Text, LinkRenderer, Link) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -512,14 +512,14 @@ sap.ui.define(["sap/ui/core/Control", 'sap/ui/core/Renderer', "sap/ui/Device", "
 
 	/****************************************** CUSTOM TEXT CONTROL ****************************************************/
 
-	var CustomTextRenderer = Renderer.extend(sap.m.TextRenderer);
+	var CustomTextRenderer = Renderer.extend(TextRenderer);
 
 	CustomTextRenderer.renderText = function(oRm, oControl) {
 		oRm.renderControl(oControl._getIconAggregation());
-		sap.m.TextRenderer.renderText(oRm, oControl);
+		TextRenderer.renderText(oRm, oControl);
 	};
 
-	var CustomText = sap.m.Text.extend("CustomText", {
+	var CustomText = Text.extend("CustomText", {
 		metadata: {
 			properties: {
 				icon: {type : "sap.ui.core.URI", group : "Data", defaultValue : null}
@@ -555,14 +555,14 @@ sap.ui.define(["sap/ui/core/Control", 'sap/ui/core/Renderer', "sap/ui/Device", "
 
 	/****************************************** CUSTOM LINK CONTROL ****************************************************/
 
-	var CustomLinkRenderer = Renderer.extend(sap.m.LinkRenderer);
+	var CustomLinkRenderer = Renderer.extend(LinkRenderer);
 
 	CustomLinkRenderer.renderText = function(oRm, oControl) {
 		oRm.renderControl(oControl._getIconAggregation());
-		sap.m.LinkRenderer.renderText(oRm, oControl);
+		LinkRenderer.renderText(oRm, oControl);
 	};
 
-	var CustomLink = sap.m.Link.extend("CustomLink", {
+	var CustomLink = Link.extend("CustomLink", {
 		metadata: {
 			properties: {
 				icon: {type : "sap.ui.core.URI", group : "Data", defaultValue : null}

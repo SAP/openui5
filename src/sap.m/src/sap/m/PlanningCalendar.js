@@ -6,9 +6,11 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedObjectObserver', './PlanningCalendarRow',
 		'./library', 'sap/ui/unified/library', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate',
 		'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarWeekInterval',
-		'sap/ui/unified/CalendarOneMonthInterval', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item', 'jquery.sap.events'],
+		'sap/ui/unified/CalendarOneMonthInterval', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item',
+		'sap/m/Select', 'sap/m/Button', 'sap/m/Toolbar', 'sap/m/Table', 'sap/m/Column', 'jquery.sap.events'],
 	function (jQuery, Control, ManagedObjectObserver, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils, CalendarDate,
-			  DateRange, CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval, Device, ResizeHandler, Item) {
+			  DateRange, CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval, Device, ResizeHandler, Item,
+			  Select, Button, Toolbar, Table, Column) {
 		"use strict";
 
 	// shortcut for sap.ui.unified.CalendarDayType
@@ -470,16 +472,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		var sId = this.getId();
-		this._oIntervalTypeSelect = new sap.m.Select(sId + "-IntType", {maxWidth: "15rem", ariaLabelledBy: sId + "-SelDescr"});
+		this._oIntervalTypeSelect = new Select(sId + "-IntType", {maxWidth: "15rem", ariaLabelledBy: sId + "-SelDescr"});
 		this._oIntervalTypeSelect.attachEvent("change", _changeIntervalType, this);
 
-		this._oTodayButton = new sap.m.Button(sId + "-Today", {
+		this._oTodayButton = new Button(sId + "-Today", {
 			text: this._oRB.getText("PLANNINGCALENDAR_TODAY"),
 			type: ButtonType.Transparent
 		});
 		this._oTodayButton.attachEvent("press", this._handleTodayPress, this);
 
-		this._oHeaderToolbar = new sap.m.Toolbar(sId + "-HeaderToolbar", {
+		this._oHeaderToolbar = new Toolbar(sId + "-HeaderToolbar", {
 			design: ToolbarDesign.Transparent,
 			content: [this._oIntervalTypeSelect, this._oTodayButton]
 		});
@@ -488,19 +490,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			toolbar: this._oHeaderToolbar
 		});
 
-		this._oInfoToolbar = new sap.m.Toolbar(sId + "-InfoToolbar", {
+		this._oInfoToolbar = new Toolbar(sId + "-InfoToolbar", {
 			height: "auto",
 			design: ToolbarDesign.Transparent,
 			content: [this._oCalendarHeader, this._oTimeInterval]
 		});
 
-		var oTable = new sap.m.Table(sId + "-Table", {
+		var oTable = new Table(sId + "-Table", {
 			infoToolbar: this._oInfoToolbar,
 			mode: ListMode.SingleSelectMaster,
-			columns: [ new sap.m.Column({
+			columns: [ new Column({
 					styleClass: "sapMPlanCalRowHead"
 				}),
-				new sap.m.Column({
+				new Column({
 					width: "80%",
 					styleClass: "sapMPlanCalAppRow",
 					minScreenWidth: APP_COLUMN_MIN_SCREEN_WIDTH,

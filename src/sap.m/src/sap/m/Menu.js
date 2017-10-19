@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Menu.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', './Dialog', './NavContainer', './List', './Page', './MenuListItem', 'sap/ui/unified/Menu', 'sap/ui/Device', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, library, Control, Button, Dialog, NavContainer, List, Page, MenuListItem, UfdMenu, Device, EnabledPropagator) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', './Dialog', './NavContainer', './List', './Page', './MenuListItem', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/Device', 'sap/ui/core/EnabledPropagator'],
+	function(jQuery, library, Control, Button, Dialog, NavContainer, List, Page, MenuListItem, UfdMenu, UfdMenuItem, Device, EnabledPropagator) {
 		"use strict";
 
 		// shortcut for sap.m.ListType
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		 * @type {map}
 		 * @private
 		 */
-		Menu.UNFIFIED_MENU_ITEMS_PROPS = sap.ui.unified.MenuItem.getMetadata().getAllProperties();
+		Menu.UNFIFIED_MENU_ITEMS_PROPS = UfdMenuItem.getMetadata().getAllProperties();
 
 		/**
 		 * List items ID prefix.
@@ -392,7 +392,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		};
 
 		Menu.prototype._createVisualMenuItemFromItem = function(oItem) {
-			return new sap.ui.unified.MenuItem({
+			return new UfdMenuItem({
 				id  : this._generateUnifiedMenuItemId(oItem.getId()),
 				icon: oItem.getIcon(),
 				text: oItem.getText(),
@@ -523,7 +523,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 			do {
 				aUnfdMenuItemStack.push(oCurrentUnfdMenuItem.getId());
 				oCurrentUnfdMenuItem = oCurrentUnfdMenuItem.getParent().getParent();
-			} while (oCurrentUnfdMenuItem instanceof sap.ui.unified.MenuItem);
+			} while (oCurrentUnfdMenuItem instanceof UfdMenuItem);
 
 			aItems = this.getItems();
 			do {

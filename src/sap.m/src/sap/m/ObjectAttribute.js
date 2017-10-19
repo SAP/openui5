@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ObjectAttribute.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/library'],
-	function(jQuery, library, Control, coreLibrary) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/m/Text'],
+	function(jQuery, library, Control, coreLibrary, Text) {
 	"use strict";
 
 
@@ -105,7 +105,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ObjectAttribute.prototype.init = function() {
-		this.setAggregation('_textControl', new sap.m.Text());
+		this.setAggregation('_textControl', new Text());
 	};
 
 	/**
@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (oAttrAggregation instanceof sap.m.Link) {
 			oAttrAggregation.setProperty('wrapping', bWrap, true);
 		}
-		if (oAttrAggregation instanceof sap.m.Text) {
+		if (oAttrAggregation instanceof Text) {
 			oAttrAggregation.setProperty('maxLines', iMaxLines, true);
 		}
 	};
@@ -204,7 +204,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns {boolean} true if ObjectAttribute's text is empty or only consists of whitespaces
 	 */
 	ObjectAttribute.prototype._isEmpty = function() {
-		if (this.getAggregation('customContent') && !(this.getAggregation('customContent') instanceof sap.m.Link || this.getAggregation('customContent') instanceof sap.m.Text)) {
+		if (this.getAggregation('customContent') && !(this.getAggregation('customContent') instanceof sap.m.Link || this.getAggregation('customContent') instanceof Text)) {
 			jQuery.sap.log.warning("Only sap.m.Link or sap.m.Text are allowed in \"sap.m.ObjectAttribute.customContent\" aggregation");
 			return true;
 		}

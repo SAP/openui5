@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ItemNavigation',
-	'sap/ui/base/ManagedObject', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/InvisibleText', './AccButton', './TabStripItem', 'sap/m/Select', 'sap/m/SelectList', 'sap/ui/Device', 'sap/ui/core/Renderer', 'sap/ui/core/ResizeHandler', 'sap/m/library', 'sap/ui/core/Icon'],
-	function(jQuery, Control, IconPool, ItemNavigation, ManagedObject, ScrollEnablement, InvisibleText, AccButton, TabStripItem, Select, SelectList, Device, Renderer, ResizeHandler, library, Icon) {
+	'sap/ui/base/ManagedObject', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/InvisibleText', './AccButton', './TabStripItem', 'sap/m/Select', 'sap/m/SelectList', 'sap/ui/Device', 'sap/ui/core/Renderer', 'sap/ui/core/ResizeHandler', 'sap/m/library', 'sap/ui/core/Icon', 'sap/m/SelectRenderer', 'sap/m/SelectListRenderer'],
+	function(jQuery, Control, IconPool, ItemNavigation, ManagedObject, ScrollEnablement, InvisibleText, AccButton, TabStripItem, Select, SelectList, Device, Renderer, ResizeHandler, library, Icon, SelectRenderer, SelectListRenderer) {
 		"use strict";
 
 		// shortcut for sap.m.SelectType
@@ -1224,7 +1224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		/****************************************** CUSTOM SELECT CONTROL **********************************************/
 
-		var CustomSelectRenderer = Renderer.extend(sap.m.SelectRenderer);
+		var CustomSelectRenderer = Renderer.extend(SelectRenderer);
 
 		var CustomSelect = Select.extend("CustomSelect", {
 			renderer: CustomSelectRenderer
@@ -1281,22 +1281,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		/****************************************** CUSTOM SELECT LIST CONTROL *****************************************/
 
-		var CustomSelectListRenderer = Renderer.extend(sap.m.SelectListRenderer);
+		var CustomSelectListRenderer = Renderer.extend(SelectListRenderer);
 
 		CustomSelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
 			oRm.write("<li");
 			oRm.writeElementData(oItem);
-			oRm.addClass(sap.m.SelectListRenderer.CSS_CLASS + "ItemBase");
-			oRm.addClass(sap.m.SelectListRenderer.CSS_CLASS + "Item");
+			oRm.addClass(SelectListRenderer.CSS_CLASS + "ItemBase");
+			oRm.addClass(SelectListRenderer.CSS_CLASS + "Item");
 			oRm.addClass("sapMTSOverflowSelectListItem");
 			if (oItem.getProperty("modified")) {
 				oRm.addClass("sapMTSOverflowSelectListItemModified");
 			}
 			if (Device.system.desktop) {
-				oRm.addClass(sap.m.SelectListRenderer.CSS_CLASS + "ItemBaseHoverable");
+				oRm.addClass(SelectListRenderer.CSS_CLASS + "ItemBaseHoverable");
 			}
 			if (oItem === oList.getSelectedItem()) {
-				oRm.addClass(sap.m.SelectListRenderer.CSS_CLASS + "ItemBaseSelected");
+				oRm.addClass(SelectListRenderer.CSS_CLASS + "ItemBaseSelected");
 			}
 			oRm.writeClasses();
 			this.writeItemAccessibilityState.apply(this, arguments);
