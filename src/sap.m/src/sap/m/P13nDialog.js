@@ -156,7 +156,7 @@ sap.ui.define([
 	};
 
 	P13nDialog.prototype.setShowResetEnabled = function(bEnabled) {
-		this.setProperty("showResetEnabled", bEnabled);
+		this.setProperty("showResetEnabled", bEnabled, true);
 		if (this.getButtons() && this.getButtons()[2]) {
 			this.getButtons()[2].setEnabled(bEnabled);
 		}
