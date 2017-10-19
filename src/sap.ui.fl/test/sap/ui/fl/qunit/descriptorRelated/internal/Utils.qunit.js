@@ -14,7 +14,7 @@ jQuery.sap.require("sap.ui.fl.descriptorRelated.internal.Utils");
 	QUnit.test("getNameAndNameSpace", function(assert) {
 		assert.deepEqual(Utils.getNameAndNameSpace("id", "reference"), {
 			"fileName": "manifest",
-			"namespace": "apps/reference/changes/id/"
+			"namespace": "apps/reference/appVariants/id/"
 			});
 	});
 
