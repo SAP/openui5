@@ -53,8 +53,17 @@ sap.ui.define([
 
 		var vSettingsAction = this.getAction(oOverlay);
 		// If no additional actions are defined in settings, a handler must be present to make it available
-		if (vSettingsAction && (vSettingsAction instanceof Array || vSettingsAction.handler)){
-			return this.hasStableId(oOverlay);
+		if (vSettingsAction) {
+			if (vSettingsAction.handler) {
+				return this.hasStableId(oOverlay);
+			} else {
+				var bHandlerFound = Object.keys(vSettingsAction).some(function(sSettingsAction) {
+					return vSettingsAction[sSettingsAction].handler;
+				});
+				if (bHandlerFound) {
+					return this.hasStableId(oOverlay);
+				}
+			}
 		}
 
 		return false;
@@ -189,31 +198,35 @@ sap.ui.define([
 		var iRank = 110;
 		var sPluginId = "CTX_SETTINGS";
 
-		// Only one action: simply return settings entry as usual
-		if (!(vSettingsActions instanceof Array)){
-			return this._getMenuItems(oOverlay, {pluginId : sPluginId, rank : iRank});
-		// Multiple actions: return one menu item for each action
-		} else {
-			var aMenuItems = [];
-			var iActionCounter = 0;
-			vSettingsActions.forEach(function(oSettingsAction){
-				var sActionText = this.getActionText(oOverlay, oSettingsAction, oSettingsAction.name);
-				if (oSettingsAction.handler){
-					aMenuItems.push({
-						id : sPluginId + iActionCounter,
-						text : sActionText,
-						enabled : oSettingsAction.isEnabled && oSettingsAction.isEnabled.bind(this, oOverlay.getElementInstance()),
-						handler : function(fnHandler, aOverlays){
-							return this.handler(aOverlays, fnHandler);
-						}.bind(this, oSettingsAction.handler),
-						rank : iRank + iActionCounter
-					});
-					iActionCounter++;
-				} else {
-					jQuery.sap.log.warning("Handler not found for settings action '" + sActionText + "'");
-				}
-			}.bind(this));
-			return aMenuItems;
+		if (vSettingsActions) {
+			// Only one action: simply return settings entry as usual
+			if (vSettingsActions.handler) {
+				return this._getMenuItems(oOverlay, {pluginId : sPluginId, rank : iRank});
+			// Multiple actions: return one menu item for each action
+			} else {
+				var aMenuItems = [];
+				var aSettingsActions = Object.keys(vSettingsActions);
+				var iActionCounter = 0;
+				aSettingsActions.forEach(function(sSettingsAction){
+					var oSettingsAction = vSettingsActions[sSettingsAction],
+						sActionText = this.getActionText(oOverlay, oSettingsAction, oSettingsAction.name);
+					if (oSettingsAction.handler){
+						aMenuItems.push({
+							id : sPluginId + iActionCounter,
+							text : sActionText,
+							enabled : oSettingsAction.isEnabled && oSettingsAction.isEnabled.bind(this, oOverlay.getElementInstance()),
+							handler : function(fnHandler, aOverlays){
+								return this.handler(aOverlays, fnHandler);
+							}.bind(this, oSettingsAction.handler),
+							rank : iRank + iActionCounter
+						});
+						iActionCounter++;
+					} else {
+						jQuery.sap.log.warning("Handler not found for settings action '" + sActionText + "'");
+					}
+				}.bind(this));
+				return aMenuItems;
+			}
 		}
 	};
 
