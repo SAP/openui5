@@ -333,4 +333,4 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 
 	return sap.uxap;
 
-}, /* bExport= */ true);
+});
