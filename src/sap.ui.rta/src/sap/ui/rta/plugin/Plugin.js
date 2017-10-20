@@ -76,18 +76,25 @@ function(
 	 */
 	BasePlugin.prototype._isEditable = function() {};
 
+	var _onElementModified = function(oEvent) {
+		var oParams = oEvent.getParameters();
+		var aRelevantOverlays;
+		var oOverlay = sap.ui.getCore().byId(oParams.id);
+		if ((oParams.type === "propertyChanged" && oParams.name === "visible")) {
+			aRelevantOverlays = this._getRelevantOverlays(oOverlay);
+			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
+		} else if (oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
+			aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
+			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
+		}
+	};
+
+	BasePlugin.prototype._detachReevaluationEditable = function(oOverlay) {
+		oOverlay.detachElementModified(_onElementModified, this);
+	};
+
 	BasePlugin.prototype._attachReevaluationEditable = function(oOverlay) {
-		oOverlay.attachElementModified(function(oEvent) {
-			var oParams = oEvent.getParameters();
-			var aRelevantOverlays;
-			if ((oParams.type === "propertyChanged" && oParams.name === "visible")) {
-				aRelevantOverlays = this._getRelevantOverlays(oOverlay);
-				this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
-			} else if (oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
-				aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
-				this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
-			}
-		}.bind(this));
+		oOverlay.attachElementModified(_onElementModified, this);
 	};
 
 	BasePlugin.prototype._getRelevantOverlays = function(oOverlay, sAggregationName) {
@@ -166,6 +173,7 @@ function(
 		this.removeFromPluginsList(oOverlay);
 		this.removeFromPluginsList(oOverlay, true);
 		this.removeFromPluginsList(oOverlay, false);
+		this._detachReevaluationEditable(oOverlay);
 	};
 
 	/**
