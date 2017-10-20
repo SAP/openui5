@@ -633,18 +633,20 @@ function(
 				libraryName : "sap.m",
 				data : {
 					actions : {
-						settings : function(){
-							return [{
-								name : "CTX_ACTION1",
-								handler: function(oElement, mPropertyBag) {
-									return new Promise(function(resolve){
-										resolve([mAction1Change]);
-									});
+						settings : function() {
+							return {
+								"CTX_ACTION1" : {
+									name : "CTX_ACTION1",
+									handler: function(oElement, mPropertyBag) {
+										return new Promise(function(resolve){
+											resolve([mAction1Change]);
+										});
+									}
+								},
+								"AnotherId" : {
+									name : "CTX_ACTION2"
 								}
-							},
-							{
-								name : "CTX_ACTION2"
-							}];
+							};
 						}
 					}
 				}
@@ -678,26 +680,28 @@ function(
 				libraryName : "sap.m",
 				data : {
 					actions : {
-						settings : [{
-							name : function(){ return "CTX_ACTION1"; },
-							handler: function(oElement, mPropertyBag) {
-								return new Promise(function(resolve){
-									resolve([]);
-								});
-							}
-						},
-						{
-							name : function(){ return "CTX_ACTION2"; },
-							handler: function(oElement, mPropertyBag) {
-								return new Promise(function(resolve){
-									resolve([]);
-								});
+						settings : {
+							"Button Settings 1" : {
+								name : function(){ return "CTX_ACTION1"; },
+								handler: function(oElement, mPropertyBag) {
+									return new Promise(function(resolve){
+										resolve([]);
+									});
+								}
 							},
-							isEnabled : function(oElement){
-								assert.equal(oElement, oButton, "isEnabled is called with the correct element");
-								return false;
+							"Another Button Settings Action" : {
+								name : function(){ return "CTX_ACTION2"; },
+								handler: function(oElement, mPropertyBag) {
+									return new Promise(function(resolve){
+										resolve([]);
+									});
+								},
+								isEnabled : function(oElement){
+									assert.equal(oElement, oButton, "isEnabled is called with the correct element");
+									return false;
+								}
 							}
-						}]
+						}
 					}
 				}
 			})
