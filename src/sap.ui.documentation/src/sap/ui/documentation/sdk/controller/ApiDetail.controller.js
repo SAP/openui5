@@ -568,11 +568,18 @@ sap.ui.define([
 			 */
 			_modifyReferences: function (oControlData) {
 				var bHeaderDocuLinkFound = false,
-					aReferences = oControlData.constructor.references;
+					aReferences = oControlData.constructor.references,
+					sReference,
+					aParts,
+					iLen,
+					i;
 
-				if (aReferences && aReferences.length > 0) {
-					oControlData.references = aReferences.map(function (sReference) {
-						var aParts;
+				oControlData.references = [];
+
+				if (aReferences) {
+
+					for (i = 0, iLen = aReferences.length; i < iLen; i++) {
+						sReference = aReferences[i];
 
 						// For the header we take into account only the first link that matches one of the patterns
 						if (!bHeaderDocuLinkFound) {
@@ -593,14 +600,13 @@ sap.ui.define([
 								}
 								bHeaderDocuLinkFound = true;
 							} else {
-								return sReference;
+								oControlData.references.push(sReference);
 							}
 						} else {
-							return sReference;
+							oControlData.references.push(sReference);
 						}
-					});
-				} else {
-					oControlData.references = [];
+					}
+
 				}
 			},
 
@@ -1370,7 +1376,7 @@ sap.ui.define([
 
 				// format references
 				if (aReferences && aReferences.length > 0) {
-					sDescription += "<br/><br/><span>References:</span><ul>";
+					sDescription += "<br/><br/><span>Documentation links:</span><ul>";
 
 					iLen = aReferences.length;
 					for (i = 0; i < iLen; i++) {
