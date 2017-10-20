@@ -52,3 +52,14 @@
     }
   }
 }
+
+.sapUshellShell {
+  .sapUxAPObjectPageLayout {
+    &.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
+      .sapFDynamicPageTitle:hover,
+      &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
+        background-color: fade(@sapUiObjectHeaderBackground, 75%);
+      }
+    }
+  }
+}
