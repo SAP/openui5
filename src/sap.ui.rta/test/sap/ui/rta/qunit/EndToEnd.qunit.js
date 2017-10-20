@@ -380,5 +380,42 @@ sap.ui.require([
 		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 	});
 
+	QUnit.test("when splitting a combined SmartForm GroupElement (via context menu) - split", function(assert) {
+		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
+		var done = assert.async();
+
+		var oCombinedElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.BoundButton35");
+		var oCombinedElementOverlay = OverlayRegistry.getOverlay(oCombinedElement);
+
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oCombinedElement);
+		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+
+		var oCommandStack = this.oRta.getCommandStack();
+
+		oCommandStack.attachModified(function(oEvent) {
+			var aCommands = oCommandStack.getAllExecutedCommands();
+			if (aCommands &&
+				aCommands.length  === 1) {
+				fnWaitForLrepSerialization.call(this).then(function() {
+					sap.ui.getCore().applyChanges();
+					assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there ia a dirty change in the FL ChangePersistence");
+				})
+				.then(this.oRta.stop.bind(this.oRta))
+
+				.then(done);
+			}
+		}.bind(this));
+
+		// open context menu on fucused overlay
+		oCombinedElementOverlay.focus();
+		sap.ui.test.qunit.triggerKeydown(oCombinedElementOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
+
+		// trigger split event
+		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[5];
+		oContextMenuItem.getDomRef().click();
+		sap.ui.getCore().applyChanges();
+
+	});
+
 	RtaQunitUtils.removeTestViewAfterTestsWhenCoverageIsRequested();
 });
