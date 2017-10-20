@@ -264,10 +264,12 @@ sap.ui.define([
 			oVariant.modified = true;
 
 			oChange = this.oFlexController.createBaseChange(mNewChangeData, mPropertyBag.appComponent);
-			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
+			this.oVariantController._updateVariantChangeInMap(oChange.getDefinition(), sVariantManagementReference, true); /*VariantController map*/
+			this.oFlexController._oChangePersistence.addDirtyChange(oChange); /*FlexController*/
 
 		} else {
-			this.oFlexController._oChangePersistence.deleteChange(mPropertyBag.change);
+			this.oVariantController._updateVariantChangeInMap(mPropertyBag.change.getDefinition(), sVariantManagementReference, false); /*VariantController map*/
+			this.oFlexController._oChangePersistence.deleteChange(mPropertyBag.change); /*FlexController*/
 		}
 		this.setData(oData);
 

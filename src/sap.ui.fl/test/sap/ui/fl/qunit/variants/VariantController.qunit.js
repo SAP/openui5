@@ -586,6 +586,39 @@ sap.ui.require([
 		assert.notEqual(bPresent, "then the variant was removed");
 	});
 
+	QUnit.test("when calling '_updateVariantChangeInMap' of the VariantController to add a variantChange", function(assert) {
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+
+		var oSetTitleChangeContent = {
+			"fileName": "new_setTitle",
+			"fileType": "ctrl_variant_change",
+			"changeType": "setTitle",
+			"texts": {
+				"title": {
+					"value": "New Variant Title1",
+					"type": "XFLD"
+				}
+			},
+			"variantReference": "variant0"
+		};
+
+		oVariantController._updateVariantChangeInMap(oSetTitleChangeContent, "idMain1--variantManagementOrdersTable", true);
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var oLastVariantChange = aVariants[1].variantChanges[oSetTitleChangeContent.changeType].pop();
+		assert.equal(oLastVariantChange.fileName , "new_setTitle", "then new setTitle change updated in map");
+	});
+
+	QUnit.test("when calling '_updateVariantChangeInMap' of the VariantController to delete a variantChange", function(assert) {
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var sChangeType = "setTitle";
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var oLastVariantChange = aVariants[1].variantChanges[sChangeType].pop();
+		oVariantController._updateVariantChangeInMap(oLastVariantChange, "idMain1--variantManagementOrdersTable", false);
+		assert.equal(aVariants[1].variantChanges[sChangeType].indexOf(oLastVariantChange) , -1, "then an already existing setTitle was removed from the map");
+	});
+
 	//Integration tests
 
 	QUnit.module("Given an instance of FakeLrepConnector and a mock application", {

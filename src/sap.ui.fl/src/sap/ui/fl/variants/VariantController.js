@@ -175,6 +175,24 @@ sap.ui.define([
 		return iSortedIndex + 1;
 	};
 
+	VariantController.prototype._updateVariantChangeInMap = function(oVariantChangeContent, sVariantManagementReference, bAdd) {
+		this._mVariantManagement[sVariantManagementReference].variants.some( function(oVariant) {
+			if (oVariant.content.fileName === oVariantChangeContent.variantReference) {
+				if (bAdd) {
+					oVariant.variantChanges[oVariantChangeContent.changeType].push(oVariantChangeContent);
+				} else {
+					oVariant.variantChanges[oVariantChangeContent.changeType].some( function (oExistingVariantChangeContent, iIndex) {
+						if (oExistingVariantChangeContent.fileName === oVariantChangeContent.fileName) {
+							oVariant.variantChanges[oVariantChangeContent.changeType].splice(iIndex, 1);
+							return true; /*inner some*/
+						}
+					});
+				}
+				return true; /*outer some*/
+			}
+		});
+	};
+
 	/**
 	 * Loads the default changes of all variants
 	 *

@@ -105,6 +105,7 @@ function(
 
 	sinon.stub(oModel, "getVariant").returns(oVariant);
 	sinon.stub(oModel.oVariantController, "_setVariantData").returns(1);
+	sinon.stub(oModel.oVariantController, "_updateVariantChangeInMap");
 
 	QUnit.module("Given a variant management control ...", {
 		beforeEach : function(assert) {
