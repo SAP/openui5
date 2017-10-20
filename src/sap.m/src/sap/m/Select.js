@@ -1344,6 +1344,35 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		};
 
 		/**
+		 * Handles the <code>tabnext</code> pseudo event when keyboard TAB key is pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 */
+		Select.prototype.onsaptabnext = function (oEvent) {
+			// prevents actions from occurring when the control is disabled,
+			// IE11 browser focus non-focusable elements
+			if (!this.getEnabled()) {
+				return;
+			}
+
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
+
+			if (this.isOpen()) {
+				this.close();
+			}
+		};
+
+		/**
+		 * Handles the <code>tabprevious</code> pseudo event when keyboard SHIFT+TAB keys are pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 */
+		Select.prototype.onsaptabprevious = Select.prototype.onsaptabnext;
+
+		/**
 		 * Handles the <code>focusin</code> event.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
