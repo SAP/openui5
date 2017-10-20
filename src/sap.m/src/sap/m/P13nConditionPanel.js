@@ -4,7 +4,7 @@
 
 // Provides control sap.m.P13nConditionPanel.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat', 'sap/ui/core/IconPool', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item'
+		'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat', 'sap/ui/core/IconPool', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item'
 ], function(jQuery, library, Control, DateFormat, NumberFormat, IconPool, Device, InvisibleText, coreLibrary, ResizeHandler, Item) {
 	"use strict";
 
@@ -22,6 +22,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = library.OverflowToolbarPriority;
+
+	// lazy dependency to sap.ui.layout.Grid
+	var Grid;
 
 	/**
 	 * Constructor for a new P13nConditionPanel.
@@ -580,9 +583,7 @@ sap.ui.define([
 	P13nConditionPanel.prototype.init = function() {
 		// load the required layout lib
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
-		jQuery.sap.require("sap.ui.layout.Grid");
-
-		sap.ui.layout.Grid.prototype.init.apply(this);
+		Grid = Grid || sap.ui.requireSync("sap/ui/layout/Grid");
 
 		this.addStyleClass("sapMConditionPanel");
 
@@ -614,7 +615,7 @@ sap.ui.define([
 		this._iBreakPointDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD].points[1];
 
 		// create the main grid and add it into the hidden content aggregation
-		this._oConditionsGrid = new sap.ui.layout.Grid({
+		this._oConditionsGrid = new Grid({
 			width: "100%",
 			defaultSpan: "L12 M12 S12",
 			hSpacing: 0,
@@ -1108,7 +1109,7 @@ sap.ui.define([
 			iPos = oTargetGrid.getContent().length;
 		}
 
-		var oConditionGrid = new sap.ui.layout.Grid({
+		var oConditionGrid = new Grid({
 			width: "100%",
 			defaultSpan: "L12 M12 S12",
 			hSpacing: 1,
