@@ -454,7 +454,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	DataSetSimpleView.prototype.calculateItemCounts = function(){
-		if (this.getDomRef()) {
+		if (this.getDomRef() && sap.ui.getCore().isThemeApplied()) {
 			var $itemArea = this.$(),
 				$firstItem = $itemArea.children().first();
 
