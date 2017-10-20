@@ -328,6 +328,17 @@ sap.ui.define([
 		TITLE_VISUAL_INDICATOR_PRESS: "_titleVisualIndicatorPress"
 	};
 
+	ObjectPageLayout.BREAK_POINTS = {
+		TABLET: 1024,
+		PHONE: 600
+	};
+
+	ObjectPageLayout.DYNAMIC_HEADERS_MEDIA = {
+		PHONE: "sapFDynamicPage-Std-Phone",
+		TABLET: "sapFDynamicPage-Std-Tablet",
+		DESKTOP: "sapFDynamicPage-Std-Desktop"
+	};
+
 	/**
 	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
 	 * <br><b>Note:</b>
@@ -768,6 +779,10 @@ sap.ui.define([
 		this._restoreScrollPosition();
 
 		this.oCore.getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
+
+		if (this._hasDynamicTitle()) {
+			this._updateMedia(this._getWidth(this));
+		}
 
 		this._updateToggleHeaderVisualIndicators();
 
@@ -1656,6 +1671,39 @@ sap.ui.define([
 	};
 
 	/**
+	* Updates the media style class of the control, based on its own width, not on the entire screen size (which media query does).
+	* This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout</code>),
+	* thus it will not be using all of the screen width, but despite that the paddings need to be appropriate.
+	* <b>Note:</b>
+	* The method is called, when the <code>ObjectPageDynamicPageHeaderTitle</code> is being used.
+	* @param {Number} iWidth - the actual width of the control
+	* @private
+	*/
+	ObjectPageLayout.prototype._updateMedia = function (iWidth) {
+		// Applies the provided CSS Media (DYNAMIC_HEADERS_MEDIA) class and removes the rest.
+		// Example: If the <code>sapFDynamicPage-Std-Phone</code> class should be applied,
+		// the <code>sapFDynamicPage-Std-Tablet</code> and <code>sapFDynamicPage-Std-Desktop</code> classes will be removed.
+		var fnUpdateMediaStyleClass = function (sMediaClass) {
+			Object.keys(ObjectPageLayout.DYNAMIC_HEADERS_MEDIA).forEach(function (sMedia) {
+				var sCurrentMediaClass = ObjectPageLayout.DYNAMIC_HEADERS_MEDIA[sMedia],
+					bEnable = sMediaClass === sCurrentMediaClass;
+
+				this.toggleStyleClass(sCurrentMediaClass, bEnable);
+			}, this);
+		}.bind(this),
+		mMedia = ObjectPageLayout.DYNAMIC_HEADERS_MEDIA,
+		mBreakpoints = ObjectPageLayout.BREAK_POINTS;
+
+		if (iWidth <= mBreakpoints.PHONE) {
+			fnUpdateMediaStyleClass(mMedia.PHONE);
+		} else if (iWidth <= mBreakpoints.TABLET) {
+			fnUpdateMediaStyleClass(mMedia.TABLET);
+		} else {
+			fnUpdateMediaStyleClass(mMedia.DESKTOP);
+		}
+	};
+
+	/**
 	 * update the section dom reference
 	 * @private
 	 */
@@ -2131,7 +2179,9 @@ sap.ui.define([
 			// Let the dynamic header know size changed first, because this might lead to header dimensions changes
 			if (oTitle && oTitle.isDynamic()) {
 				oTitle._onResize(iCurrentWidth);
+				this._updateMedia(iCurrentWidth); // Update media classes when ObjectPageDynamicHeaderTitle is used.
 			}
+
 			this._adjustHeaderHeights();
 
 			this._requestAdjustLayout(null, true);
@@ -3295,6 +3345,16 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._getHeight = function (oControl) {
 		return !(oControl instanceof Control) ? 0 : oControl.$().outerHeight() || 0;
+	};
+
+	/**
+	 * Determines the width of a control safely. If the control doesn't exist, it returns 0.
+	 * If it exists, it returns the DOM element width.
+	 * @param  {sap.ui.core.Control} oControl
+	 * @return {Number} the width of the control
+	 */
+	ObjectPageLayout.prototype._getWidth = function (oControl) {
+		return !(oControl instanceof Control) ? 0 : oControl.$().outerWidth() || 0;
 	};
 
 	function exists(vObject) {
