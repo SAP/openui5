@@ -25,8 +25,7 @@ sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unifi
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.21.0.
-	 * Please use the element <code>sap.ui.unified.MenuItem</code> of the library <code>sap.ui.unified</code> instead.
+	 * @deprecated as of version 1.21.0, replaced by {@link sap.ui.unified.MenuItem}
 	 * @alias sap.ui.commons.MenuItem
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */

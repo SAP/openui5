@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Fired when the user taps the control.
-			 * @deprecated As of version 1.20, use the press event instead
+			 * @deprecated as of version 1.20, replaced by <code>press</code> event
 			 */
 			tap : {deprecated: true},
 

@@ -50,9 +50,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/Renderer', 'sap/
 
 			/**
 			 * Defines the number units qualifier.
-			 * @deprecated Since version 1.16.1.
-			 *
-			 * Replaced by unit property due to the number before unit is redundant.
+			 * @deprecated as of version 1.16.1, replaced by <code>unit</code> property
 			 */
 			numberUnit : {type : "string", group : "Misc", defaultValue : null, deprecated: true},
 
