@@ -1112,9 +1112,11 @@
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
                         oTitleInfo,
                         oBackButton,
+                        sViewId,
                         fnTitleListener = function(oEvent) {
                             oTitleInfo = oEvent.getParameter("oTitleInfo");
                             oBackButton = oEvent.getParameter("oBackButton");
+                            sViewId = oEvent.getParameter("sViewId");
                         },
                         oSpy = sinon.spy(fnTitleListener);
 
@@ -1132,8 +1134,9 @@
                 assert.ok(!jQuery.sap.byId("detailPage1-title").hasClass("sapF2AdaptedTitle"), "detail title is not adapted");
 
                 assert.ok(oSpy.calledOnce, "title callback executed");
+                assert.equal(sViewId, "mySc",  "viewId is correct");
                 assert.ok(oTitleInfo === undefined, "default title is reset");
-                assert.ok(oBackButton instanceof sap.m.Button, "back button is returned");
+                assert.equal(oBackButton.getId(), "detailPage1-navButton",  "back button is returned");
 
                 //cleanup
                 Fiori20Adapter.detachViewChange(oSpy);
@@ -1142,8 +1145,10 @@
             QUnit.test("Master back button is correctly returned", function(assert) {
                 var oAdaptOptions = {bHideBackButton: true},
                         oBackButton,
+                        sViewId,
                         fnTitleListener = function(oEvent) {
                             oBackButton = oEvent.getParameter("oBackButton");
+                            sViewId = oEvent.getParameter("sViewId");
                         },
                         oSpy = sinon.spy(fnTitleListener);
 
@@ -1157,8 +1162,9 @@
                 //assert
                 assert.ok(jQuery.sap.byId("masterPage1-navButton").hasClass("sapF2AdaptedNavigation"), "master back button is adapted");
                 assert.ok(oSpy.calledOnce, "title callback executed");
+                assert.equal(sViewId, "mySc",  "viewId is correct");
                 assert.ok(oBackButton instanceof sap.m.Button, "back button is returned");
-                assert.ok(oBackButton.getId() === "masterPage1-navButton", "master back button is returned");
+                assert.equal(oBackButton.getId(), "masterPage1-navButton", "master back button is returned");
 
                 //cleanup
                 Fiori20Adapter.detachViewChange(oSpy);
@@ -1167,8 +1173,10 @@
             QUnit.test("Detail back button is correctly returned", function(assert) {
                 var oAdaptOptions = {bHideBackButton: true},
                         oBackButton,
+                        sViewId,
                         fnTitleListener = function(oEvent) {
                             oBackButton = oEvent.getParameter("oBackButton");
+                            sViewId = oEvent.getParameter("sViewId");
                         },
                         oSpy = sinon.spy(fnTitleListener);
 
@@ -1182,8 +1190,9 @@
                 //assert
                 assert.ok(jQuery.sap.byId("detailPage1-navButton").hasClass("sapF2AdaptedNavigation"), "detail back button is adapted");
                 assert.ok(oSpy.calledOnce, "title callback executed");
+                assert.equal(sViewId, "mySc",  "viewId is correct");
                 assert.ok(oBackButton instanceof sap.m.Button, "back button is returned");
-                assert.ok(oBackButton.getId() === "detailPage1-navButton", "detail back button is returned");
+                assert.equal(oBackButton.getId(), "detailPage1-navButton", "detail back button is returned");
 
                 //cleanup
                 Fiori20Adapter.detachViewChange(oSpy);
@@ -1192,8 +1201,10 @@
             QUnit.test("SplitContainer back button is correctly returned", function(assert) {
                 var oAdaptOptions = {bHideBackButton: true},
                         oBackButton,
+                        sViewId,
                         fnTitleListener = function(oEvent) {
                             oBackButton = oEvent.getParameter("oBackButton");
+                            sViewId = oEvent.getParameter("sViewId");
                         },
                         oSpy = sinon.spy(fnTitleListener);
 
@@ -1207,7 +1218,8 @@
                 assert.ok(jQuery.sap.byId("detailPage1-navButton").hasClass("sapF2AdaptedNavigation"), "detail back button is adapted"); //if oth master and details back present, detail wins
                 assert.ok(oSpy.calledOnce, "title callback executed");
                 assert.ok(oBackButton instanceof sap.m.Button, "back button is returned");
-                assert.ok(oBackButton.getId() === "detailPage1-navButton", "detail back button is returned");
+                assert.equal(oBackButton.getId(), "detailPage1-navButton", "detail back button is returned");
+                assert.equal(sViewId, "mySc",  "viewId is correct");
 
                 //cleanup
                 Fiori20Adapter.detachViewChange(oSpy);
@@ -1217,9 +1229,13 @@
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bStylePage: true},
                         oTitleInfo,
                         oBackButton,
+                        sViewId,
+                        bHideBackButton,
                         fnTitleListener = function(oEvent) {
                             oTitleInfo = oEvent.getParameter("oTitleInfo");
                             oBackButton = oEvent.getParameter("oBackButton");
+                            sViewId = oEvent.getParameter("sViewId");
+                            bHideBackButton = oEvent.getParameter("oAdaptOptions").bHideBackButton;
                         },
                         oSpy = sinon.spy(fnTitleListener);
 
@@ -1234,19 +1250,25 @@
                 //assert
                 assert.ok(oSpy.calledTwice, "title callback executed twice");
                 assert.ok(!jQuery.sap.byId("masterPage2-navButton").hasClass("sapF2AdaptedNavigation"), "master2 back button is not adapted");
-                assert.ok(oBackButton === undefined, "master2 back button is not returned");
+                assert.equal(oBackButton.getId(), "detailPage1-navButton",  "master2 back button is not returned");
+                assert.equal(bHideBackButton, false,  "the bHideBackButton option for master-master is correct");
                 assert.ok(!jQuery.sap.byId("masterPage2-title").hasClass("sapF2AdaptedTitle"), "master2 title is not adapted");
                 assert.ok(oTitleInfo === undefined, "master2 title is not returned");
                 assert.ok(jQuery.sap.byId("masterPage2").hasClass("sapF2Adapted"), "master2 page style is adapted");
+                assert.equal(sViewId, "mySc",  "viewId is correct");
             });
 
             QUnit.test("detail-detail page of splitContainer is correctly adapted", function(assert) {
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bStylePage: true},
                         oTitleInfo,
                         oBackButton,
+                        sViewId,
+                        bHideBackButton,
                         fnTitleListener = function(oEvent) {
                             oTitleInfo = oEvent.getParameter("oTitleInfo");
                             oBackButton = oEvent.getParameter("oBackButton");
+                            sViewId = oEvent.getParameter("sViewId");
+                            bHideBackButton = oEvent.getParameter("oAdaptOptions").bHideBackButton;
                         },
                         oSpy = sinon.spy(fnTitleListener);
 
@@ -1262,9 +1284,11 @@
                 assert.ok(oSpy.calledTwice, "title callback executed twice");
                 assert.ok(!jQuery.sap.byId("detailPage2-navButton").hasClass("sapF2AdaptedNavigation"), "detail2 back button is not adapted");
                 assert.ok(oBackButton === undefined, "detail2 back button is not returned");
+                assert.equal(bHideBackButton, false,  "the bHideBackButton option for detail-detail is correct");
                 assert.ok(!jQuery.sap.byId("detailPage2-title").hasClass("sapF2AdaptedTitle"), "detail2 title is not adapted");
                 assert.ok(oTitleInfo === undefined, "detail2 title is not returned");
                 assert.ok(jQuery.sap.byId("detailPage2").hasClass("sapF2Adapted"), "detail2 page style is adapted");
+                assert.equal(sViewId, "mySc",  "viewId is correct");
             });
 
             QUnit.test("page of splitContainer is correctly adapted on secondary adaptation", function(assert) {
@@ -1292,6 +1316,14 @@
             });
 
 
+            QUnit.test("master navContainer of splitContainer can be accessed", function(assert) {
+                // test because we are accessing private api of the SplitContainer
+                var aChildren = this.oSplitContainer.findAggregatedObjects();
+                assert.ok(aChildren.length > 1, "split container has children");
+                assert.equal(aChildren[0].getId(), this.oSplitContainer._oMasterNav.getId(), "master container can be accessed");
+            });
+
+
             QUnit.module("Fiori2 adaptation of split container on phone", {
                 beforeEach: function () {
                     sap.ui.Device.system.phone = true;
@@ -1311,9 +1343,11 @@
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
                         oTitleInfo,
                         oBackButton,
+                        sViewId,
                         fnTitleListener = function(oEvent) {
                             oTitleInfo = oEvent.getParameter("oTitleInfo");
                             oBackButton = oEvent.getParameter("oBackButton");
+                            sViewId = oEvent.getParameter("sViewId");
                         },
                         oSpy = sinon.spy(fnTitleListener);
 
@@ -1334,6 +1368,7 @@
                 assert.ok(oSpy.calledOnce, "title callback executed");
                 assert.ok(oTitleInfo.text === "Master1", "detail title is  adapted");
                 assert.ok(oBackButton.getId() === "masterPage1-navButton", "back button is returned");
+                assert.equal(sViewId, "masterPage1",  "viewId is correct");
 
                 //cleanup
                 Fiori20Adapter.detachViewChange(oSpy);
@@ -1344,9 +1379,11 @@
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bStylePage: true},
                         oTitleInfo,
                         oBackButton,
+                        bHideBackButton,
                         fnTitleListener = function(oEvent) {
                             oTitleInfo = oEvent.getParameter("oTitleInfo");
                             oBackButton = oEvent.getParameter("oBackButton");
+                            bHideBackButton = oEvent.getParameter("oAdaptOptions").bHideBackButton;
                         },
                         oSpy = sinon.spy(fnTitleListener);
 
@@ -1361,9 +1398,10 @@
                 //assert
                 assert.ok(oSpy.calledTwice, "title callback executed twice");
                 assert.ok(jQuery.sap.byId("masterPage2-navButton").hasClass("sapF2AdaptedNavigation"), "master2 back button is adapted");
-                assert.ok(oBackButton.getId() === "masterPage2-navButton", "master2 back button is returned");
+                assert.equal(oBackButton.getId(), "masterPage2-navButton", "master2 back button is returned");
                 assert.ok(jQuery.sap.byId("masterPage2-title").hasClass("sapF2AdaptedTitle"), "master2 title is adapted");
                 assert.ok(oTitleInfo.text === "Master2", "master2 title is not returned");
+                assert.ok(bHideBackButton, true, "master2 bHideBackButton on phone is correct");
                 assert.ok(jQuery.sap.byId("masterPage2").hasClass("sapF2Adapted"), "master2 page style is adapted");
             });
 
@@ -1392,6 +1430,58 @@
                 assert.ok(jQuery.sap.byId("detailPage2-title").hasClass("sapF2AdaptedTitle"), "detail2 title is adapted");
                 assert.ok(oTitleInfo.text === "Detail2", "detail2 title is not returned");
                 assert.ok(jQuery.sap.byId("detailPage2").hasClass("sapF2Adapted"), "detail2 page style is adapted");
+            });
+
+            QUnit.module("Post adaptation of split container", {
+                beforeEach: function () {
+                    this.oSplitContainer = new sap.m.SplitContainer("mySc");
+                    this.oSplitContainer.placeAt("content");
+                    sap.ui.getCore().applyChanges();
+                },
+                afterEach: function () {
+                    this.oSplitContainer.destroy();
+                }
+            });
+
+            QUnit.test("Initial pages of splitContainer are correctly adapted", function(assert) {
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                        oTitleInfo,
+                        oBackButton,
+                        fnTitleListener = function(oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                            oBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
+
+                //setup
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                //act
+                Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
+
+                //assert
+                assert.equal(oSpy.callCount, 0, "callback not executed");
+
+                //act
+                this.oSplitContainer.addMasterPage(new sap.m.Page("masterPage1", {title: "Master1", showNavButton: true}));
+
+                //assert
+                assert.equal(oSpy.callCount, 1, "callback executed");
+                assert.ok(jQuery.sap.byId("masterPage1-navButton").hasClass("sapF2AdaptedNavigation"), "master back button is adapted");
+                assert.ok(!jQuery.sap.byId("masterPage1-title").hasClass("sapF2AdaptedTitle"), "master title is not adapted");
+
+                //act
+                oSpy.reset();
+                this.oSplitContainer.addDetailPage(new sap.m.Page("detailPage1", {title: "Detail1", showNavButton: false}));
+
+                //assert
+                assert.equal(oSpy.callCount, 1, "callback executed");
+                assert.ok(!jQuery.sap.byId("detailPage1-title").hasClass("sapF2AdaptedTitle"), "detail title is not adapted");
+                assert.ok(oTitleInfo === undefined, "default title is reset");
+                assert.equal(oBackButton.getId(), "masterPage1-navButton", "back button is returned");
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
             });
 
 
