@@ -306,7 +306,6 @@ sap.ui.define([
 		});
 
 		this.oVariantText.addStyleClass("sapUiFlVarMngmtClickable");
-		this.oVariantText.addStyleClass("sapMTitleStyleH4");
 		this.oVariantText.addStyleClass("sapUiFlVarMngmtTitle");
 		if (Device.system.phone) {
 			this.oVariantText.addStyleClass("sapUiFlVarMngmtTextPhoneMaxWidth");
