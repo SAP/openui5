@@ -23,7 +23,9 @@ sap.ui.define([
 		rRequestLine = /^(GET|DELETE|PATCH|POST) (\S+) HTTP\/1\.1$/,
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
 		bRealOData = bProxy || sRealOData === "direct",
-		TestUtils;
+		TestUtils,
+		sV2VersionKey = "DataServiceVersion",
+		sV4VersionKey = "OData-Version";
 
 	if (bRealOData) {
 		document.title = document.title + " (real OData)";
@@ -278,11 +280,23 @@ sap.ui.define([
 			}
 
 			function echo(oRequest) {
-				oRequest.respond(200, {"Content-Type" : sJson}, oRequest.requestBody);
+				respond([200, {"Content-Type" : sJson}, oRequest.requestBody], oRequest);
 			}
 
 			function firstLine(sText) {
 				return sText.slice(0, sText.indexOf("\r\n"));
+			}
+
+			function getHeaderValue(oHeaders, sKey) {
+				var sHeaderKey;
+
+				sKey = sKey.toLowerCase();
+
+				for (sHeaderKey in oHeaders) {
+					if (sHeaderKey.toLowerCase() === sKey) {
+						return oHeaders[sHeaderKey];
+					}
+				}
 			}
 
 			function message(sText) {
@@ -323,6 +337,38 @@ sap.ui.define([
 				return sMessage;
 			}
 
+			/*
+			 * Responds to the given request with the given response data. If the response headers
+			 * do not contain a response header for the OData service version (either V2 or V4) the
+			 * OData service version from the request is taken into the response headers.
+			 *
+			 * @param {object[]} aResponseData
+			 *   An array containing the status code as number, the response headers as object and
+			 *   the response body as string
+			 * @param {object} oRequest The request object
+			 */
+			function respond(aResponseData, oRequest) {
+				var sValue,
+					oResponseHeaders = aResponseData[1];
+
+				// if no OData version is set in the response headers, take it from the request
+				if (!getHeaderValue(oResponseHeaders, sV4VersionKey)
+						&& !getHeaderValue(oResponseHeaders, sV2VersionKey)) {
+					// do not modify fixture of response headers
+					oResponseHeaders = jQuery.extend({}, oResponseHeaders);
+					sValue = getHeaderValue(oRequest.requestHeaders, sV4VersionKey);
+					if (sValue) {
+						oResponseHeaders[sV4VersionKey] = sValue;
+					} else {
+						sValue = getHeaderValue(oRequest.requestHeaders, sV2VersionKey);
+						if (sValue) {
+							oResponseHeaders[sV2VersionKey] = sValue;
+						}
+					}
+				}
+				oRequest.respond(aResponseData[0], oResponseHeaders, aResponseData[2]);
+			}
+
 			function setupServer() {
 				var fnRestore,
 					oServer,
@@ -334,9 +380,9 @@ sap.ui.define([
 				oServer.autoRespond = true;
 
 				for (sUrl in mUrls) {
-					oServer.respondWith("GET", sUrl, mUrls[sUrl]);
+					oServer.respondWith("GET", sUrl, respond.bind(null, mUrls[sUrl]));
 				}
-				oServer.respondWith("DELETE", /.*/, [204, {}, ""]);
+				oServer.respondWith("DELETE", /.*/, respond.bind(null, [204, {}, ""]));
 				// for PATCH/POST we simply echo the body, in real scenarios the server would
 				// respond with different data (generated keys, side-effects, ETag)
 				oServer.respondWith("PATCH", /.*/, echo);
