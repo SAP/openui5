@@ -59,7 +59,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 	display: none;
 	font-size: @_sap_ui_table_Grouping_GroupIconFontSize;
 	cursor: pointer;
-	line-height: @_sap_ui_table_Grouping_GroupIconHeightDefault - 2 * @_sap_ui_table_Grouping_GroupIconBorderWidth - @_sap_ui_table_Grouping_GroupOutlineWidth;
 	position: absolute;
 	left: 0px;
 	top: @_sap_ui_table_Grouping_GroupOutlineWidth;
@@ -77,14 +76,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 	box-sizing: border-box;
 	border: @_sap_ui_table_Grouping_GroupIconBorderWidth solid transparent;
 	background-clip: content-box;
-}
-
-.sapUiSizeCondensed .sapUiTableGroupIcon {
-	line-height: @_sap_ui_table_Grouping_GroupIconHeightCondensed - 2 * @_sap_ui_table_Grouping_GroupIconBorderWidth - @_sap_ui_table_Grouping_GroupOutlineWidth;
-}
-
-.sapUiSizeCozy .sapUiTableGroupIcon {
-	line-height: @_sap_ui_table_Grouping_GroupIconHeightCozy - 2 * @_sap_ui_table_Grouping_GroupIconBorderWidth - @_sap_ui_table_Grouping_GroupOutlineWidth;
 }
 
 .sapUiTableGroupIcon::before,
@@ -156,10 +147,20 @@ html[dir=rtl] {
 	border-bottom-color: @sapUiListTableFixedBorder;
 }
 
-.sapUiTableGroupMode .sapUiTableRowHdr.sapUiTableGroupHeader > .sapUiTableGroupIcon,
-.sapUiTableGroupMode .sapUiTableRowHdr.sapUiTableGroupHeader > .sapUiTableGroupIcon::before,
-.sapUiTableGroupMode .sapUiTableRowHdr.sapUiTableGroupHeader > .sapUiTableGroupIcon:after {
-	display: inline-block;
+.sapUiTableGroupMode .sapUiTableRowHdr.sapUiTableGroupHeader {
+	> .sapUiTableGroupIcon {
+		display: flex;
+		align-items: center;
+
+		&::before {
+			display: flex;
+			justify-content: center;
+		}
+
+		&::after {
+			display: block;
+		}
+	}
 }
 
 .sapUiTableGroupMode .sapUiTableGroupHeader td {
