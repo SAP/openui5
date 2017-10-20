@@ -2604,5 +2604,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.23": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "d5f8dca2e6c5ece67d4fd468758b176ccff70aad",
+        "type": "FIX",
+        "text": " sap.m.Link: removed href attribute if property href is not set",
+        "references": []
+      }
+    ]
   }
 }

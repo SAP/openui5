@@ -263,5 +263,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.23": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "9ea6159fe1ec4b4558a614bd802ac37affb1df19",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
+        "references": []
+      }
+    ]
   }
 }
