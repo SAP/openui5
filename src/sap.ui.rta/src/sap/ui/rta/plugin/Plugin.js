@@ -120,11 +120,12 @@ function(
 		aOverlays.forEach(function(oOverlay) {
 			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 			// this means that getElementInstance is undefined when we get here via removeAggregation mutation
-			var vEditable = oOverlay.getElementInstance() && this._isEditable(oOverlay, mPropertyBag);
+			// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
+			var vEditable = oOverlay.getElementInstance() && oOverlay.getDesignTimeMetadata() && this._isEditable(oOverlay, mPropertyBag);
 
 			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
 			// for every other plugin isEditable should be a boolean.
-			if (vEditable !== undefined) {
+			if (vEditable !== undefined && vEditable !== null) {
 				if (typeof vEditable === "boolean") {
 					this._modifyPluginList(oOverlay, vEditable);
 				} else {
