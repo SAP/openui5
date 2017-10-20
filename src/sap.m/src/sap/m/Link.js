@@ -156,6 +156,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Link.prototype._handlePress = function(oEvent) {
+
 		if (this.getEnabled()) {
 			// mark the event for components that needs to know if the event was handled by the link
 			oEvent.setMarked();
@@ -210,7 +211,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.setProperty("href", sUri, true);
 		if (this.getEnabled()) {
 			sUri = this.getProperty("href");
-			this.$().attr("href", sUri);
+			if (!sUri) {
+				this.$().removeAttr("href");
+			} else {
+				this.$().attr("href", sUri);
+			}
 		}
 		return this;
 	};
@@ -283,7 +288,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				$this.attr("disabled", true);
 				$this.attr("tabindex", "-1");
 				$this.attr("aria-disabled", true);
-				$this.attr("href", "#");
+				$this.removeAttr("href");
 			}
 		}
 		return this;
