@@ -337,7 +337,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/
 		//if text is empty or not
 		var oTitleControl = this._getTitleControl();
 		oTitleControl.setProperty("text", sTitle, false);
-		oTitleControl.setVisible(!!sTitle);
+		oTitleControl.setVisible(!!oTitleControl.getText());
 		this.setProperty("title", sTitle, true);
 		this.$("text").toggleClass("sapMObjectIdentifierTextBellow",
 				!!this.getProperty("text") && !!this.getProperty("title"));
