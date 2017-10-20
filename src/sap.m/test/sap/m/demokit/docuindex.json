@@ -1451,7 +1451,7 @@
 		{
 		  "id": "sap.m.sample.Table",
 		  "name": "Table - Columns",
-		  "description": "The Table shares many features with the List and, in addition, introduces columns. The table is fully responsive and can hide columns or shown them in-place if the screen space is not sufficient."
+		  "description": "The table shares many features with the list and, in addition, introduces columns. The table is fully responsive and can hide columns or shown them in-place if the screen space is not sufficient. This example also demonstrates the different table pop-in layout options that can be used for the table pop-in rendering."
 		},
 		{
 		  "id": "sap.m.sample.ActionSheet",
