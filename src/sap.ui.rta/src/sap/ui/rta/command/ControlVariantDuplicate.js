@@ -29,9 +29,6 @@ sap.ui.define([
 				},
 				newVariantReference : {
 					type : "string"
-				},
-				duplicateVariant : {
-					type : "any"
 				}
 			},
 			associations : {},
@@ -76,7 +73,7 @@ sap.ui.define([
 
 		return Promise.resolve(this.oModel._copyVariant(mPropertyBag))
 			.then(function(oVariant){
-				this.setDuplicateVariant(oVariant);
+				this._oVariantChange = oVariant;
 			}.bind(this));
 	};
 
@@ -85,10 +82,10 @@ sap.ui.define([
 	 * @returns {promise} Returns resolve after undo
 	 */
 	ControlVariantDuplicate.prototype.undo = function() {
-		if (this.getDuplicateVariant()) {
-			return Promise.resolve(this.oModel._removeVariant(this.getDuplicateVariant(), this.getSourceVariantReference(), this.sVariantManagementReference))
+		if (this._oVariantChange) {
+			return Promise.resolve(this.oModel._removeVariant(this._oVariantChange, this.getSourceVariantReference(), this.sVariantManagementReference))
 				.then(function() {
-					this.setDuplicateVariant(null);
+					this._oVariantChange = null;
 				}.bind(this));
 		}
 	};
