@@ -107,6 +107,20 @@ function(
 		assert.strictEqual(this.oPlugin.hasChangeHandler("moveControls", this.oLayout), true, "then the function returns true");
 	});
 
+	QUnit.test("when an overlay gets deregistered and registered again and visible change event gets fired", function(assert) {
+		var oGetRelevantOverlays = sandbox.spy(this.oRemovePlugin, "_getRelevantOverlays");
+
+		this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
+		this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
+		this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
+
+		this.oButtonOverlay.fireElementModified({
+			type: "propertyChanged",
+			name: "visible"
+		});
+		assert.equal(oGetRelevantOverlays.callCount, 1, "then _getRelevantOverlays is only called once");
+	});
+
 	QUnit.test("when Overlays are registered/deregistered and _isEditableByPlugin method is called", function(assert) {
 
 		assert.notOk(this.oButtonOverlay.getEditable(), "then the Overlay is not editable");
