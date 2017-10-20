@@ -222,15 +222,19 @@ sap.ui.define([
 	 *            entries with multi-unit occurrences, if some measure properties have a unique unit
 	 *            and will trigger separate OData requests to fetch them
 	 * @param {string} [mParameters.select] a comma separated list of property names that need to be
-	 *            selected. If the <code>select</code> parameter is given, it has to contain all
-	 *            dimensions and measures that are contained in the analytical information (see
-	 *            {@link sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo}). It must
-	 *            not contain additional dimensions or measures but it might contain additional
-	 *            properties like a dimension's text property that should be requested additionally.
+	 *            selected.<br/>
+	 *            If the <code>select</code> parameter is given, it has to contain all properties
+	 *            that are contained in the analytical information (see
+	 *            {@link sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo}) and their
+	 *            associated dimensions and measures. It must not contain additional dimensions or
+	 *            measures or associated properties for additional dimensions or measures. But it
+	 *            may contain additional properties like a text property of a dimension that is also
+	 *            selected.<br/>
 	 *            All properties of the <code>select</code> parameter are also considered in
 	 *            {@link sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl}.<br/>
-	 *            If the <code>select</code> parameter does not contain exactly all dimensions and
-	 *            measures as given in the analytical information, a warning is logged and the
+	 *            The <code>select</code> parameter must not contain any duplicate entry.<br/>
+	 *            If the <code>select</code> parameter does not fit to the analytical information or
+	 *            if the <code>select</code> parameter contains duplicates, a warning is logged and
 	 *            the <code>select</code> parameter is ignored.
 	 *
 	 * @throws Will throw an error if no analytic query result object could be determined from the bound OData entity set, either from an explicitly
