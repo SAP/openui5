@@ -1403,7 +1403,9 @@ sap.ui.require([
 	[false, true].forEach(function (bDebug) {
 		QUnit.test("binding resolution, exception in formatter, debug = " + bDebug,
 			function (assert) {
-				var oError = new Error("deliberate failure");
+				var oError = new Error("deliberate failure"),
+					rMessage = new RegExp("\\[ 0\\] Error in formatter of attribute text "
+						+ oError);
 
 				window.foo = {
 						Helper : {
@@ -1415,9 +1417,9 @@ sap.ui.require([
 
 				this.checkTracing(assert, bDebug, [
 					{m : "[ 0] Start processing qux"},
-					{m : sinon.match(/\[ 0\] Error in formatter: Error: deliberate failure/),
+					{m : sinon.match(rMessage),
 						d : 1},
-					{m : sinon.match(/\[ 0\] Error in formatter: Error: deliberate failure/),
+					{m : sinon.match(rMessage),
 						d : 2},
 					{m : "[ 0] Finished processing qux"}
 				], [
