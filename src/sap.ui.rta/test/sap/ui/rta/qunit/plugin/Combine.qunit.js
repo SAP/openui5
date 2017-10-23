@@ -400,7 +400,7 @@ function(
 		var aMenuItems = this.oCombinePlugin.getMenuItems(this.oButton6Overlay);
 		assert.equal(aMenuItems[0].id, "CTX_GROUP_FIELDS", "'getMenuItems' returns the context menu item for the plugin");
 
-		aMenuItems[0].handler([this.oButton6Overlay], null, this.oButton6);
+		aMenuItems[0].handler([this.oButton6Overlay], { contextElement: this.oButton6 });
 		aMenuItems[0].enabled(this.oButton6Overlay);
 
 		bIsAvailable = false;

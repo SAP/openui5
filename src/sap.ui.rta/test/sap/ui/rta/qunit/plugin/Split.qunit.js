@@ -308,7 +308,7 @@ function(
 		var aMenuItems = this.oSplitPlugin.getMenuItems(this.oButton1Overlay);
 		assert.equal(aMenuItems[0].id, "CTX_UNGROUP_FIELDS", "'getMenuItems' returns the context menu item for the plugin");
 
-		aMenuItems[0].handler([this.oButton1Overlay], null, this.oButton1);
+		aMenuItems[0].handler([this.oButton1Overlay], { contextElement: this.oButton1 });
 		aMenuItems[0].enabled(this.oButton1Overlay);
 
 		bIsAvailable = false;
