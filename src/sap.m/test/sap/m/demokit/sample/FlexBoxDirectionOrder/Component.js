@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.FlexBoxDirectionOrder.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.FlexBoxDirectionOrder.V",
+			rootView : {
+				"viewName": "sap.m.sample.FlexBoxDirectionOrder.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

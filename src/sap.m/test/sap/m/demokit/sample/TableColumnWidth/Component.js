@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TableColumnWidth.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TableColumnWidth.Table",
+			rootView : {
+				"viewName": "sap.m.sample.TableColumnWidth.Table",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

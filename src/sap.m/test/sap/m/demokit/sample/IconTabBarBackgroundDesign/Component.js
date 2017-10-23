@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.IconTabBarBackgroundDesign.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.IconTabBarBackgroundDesign.IconTabBarBackgroundDesign",
+			rootView : {
+				"viewName": "sap.m.sample.IconTabBarBackgroundDesign.IconTabBarBackgroundDesign",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

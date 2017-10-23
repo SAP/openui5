@@ -4,7 +4,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageSubSection.Component", {
 
 		metadata: {
-			rootView: "sap.uxap.sample.ObjectPageSubSection.ObjectPageSubSection",
+			rootView: {
+				"viewName": "sap.uxap.sample.ObjectPageSubSection.ObjectPageSubSection",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m"

@@ -3,7 +3,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	var Component = UIComponent.extend("sap.uxap.sample.BlockBaseEventing.Component", {
 
 		metadata: {
-			rootView: "sap.uxap.sample.BlockBaseEventing.Eventing",
+			rootView: {
+				"viewName": "sap.uxap.sample.BlockBaseEventing.Eventing",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m"

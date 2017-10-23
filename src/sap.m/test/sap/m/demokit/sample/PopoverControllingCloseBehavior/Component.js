@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.PopoverControllingCloseBehavior.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.PopoverControllingCloseBehavior.V",
+			rootView : {
+				"viewName": "sap.m.sample.PopoverControllingCloseBehavior.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

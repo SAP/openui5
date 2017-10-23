@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.Carousel.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.Carousel.Carousel",
+			rootView : {
+				"viewName": "sap.m.sample.Carousel.Carousel",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

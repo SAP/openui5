@@ -3,7 +3,11 @@ sap.ui.define( ["sap/ui/core/UIComponent", "sap/ui/model/json/JSONModel", "sap/u
 	return UIComponent.extend("sap.ui.core.sample.RoutingMasterDetail.routingApp", {
 
 		metadata: {
-			rootView: "sap.ui.core.sample.RoutingMasterDetail.routingApp.view.App",
+			rootView: {
+				"viewName": "sap.ui.core.sample.RoutingMasterDetail.routingApp.view.App",
+				"type": "XML",
+				"async": true
+			},
 			routing: {
 				config: {
 					routerClass: "sap.m.routing.Router",

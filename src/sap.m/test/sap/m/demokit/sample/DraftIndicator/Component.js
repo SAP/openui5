@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.DraftIndicator.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.DraftIndicator.V",
+			rootView : {
+				"viewName": "sap.m.sample.DraftIndicator.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

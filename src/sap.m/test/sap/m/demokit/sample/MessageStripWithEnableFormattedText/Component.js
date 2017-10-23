@@ -3,7 +3,11 @@ jQuery.sap.declare("sap.m.sample.MessageStripWithEnableFormattedText.Component")
 sap.ui.core.UIComponent.extend("sap.m.sample.MessageStripWithEnableFormattedText.Component", {
 
 	metadata : {
-		rootView : "sap.m.sample.MessageStripWithEnableFormattedText.V",
+		rootView : {
+			"viewName": "sap.m.sample.MessageStripWithEnableFormattedText.V",
+			"type": "XML",
+			"async": true
+		},
 		dependencies : {
 			libs : [
 				"sap.m",

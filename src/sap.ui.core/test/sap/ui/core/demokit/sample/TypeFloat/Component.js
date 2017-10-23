@@ -5,7 +5,11 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	return UIComponent.extend("sap.ui.core.sample.TypeFloat.Component", {
 
 		metadata: {
-			rootView: "sap.ui.core.sample.TypeFloat.V",
+			rootView: {
+				"viewName": "sap.ui.core.sample.TypeFloat.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m",

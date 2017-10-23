@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.Button.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.Button.Page",
+			rootView : {
+				"viewName": "sap.m.sample.Button.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m"

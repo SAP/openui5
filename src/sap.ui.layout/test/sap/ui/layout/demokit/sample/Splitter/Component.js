@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.layout.sample.Splitter.Component", {
 
 		metadata : {
-			rootView : "sap.ui.layout.sample.Splitter.Splitter",
+			rootView : {
+				"viewName": "sap.ui.layout.sample.Splitter.Splitter",
+				"type": "XML",
+				"async": true
+			},
 			includes : [
 				"css/splitter.css", // This is how it should be...
 				"Splitter/css/splitter.css"  // This is what works right now

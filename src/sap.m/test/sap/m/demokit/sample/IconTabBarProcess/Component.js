@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.IconTabBarProcess.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.IconTabBarProcess.IconTabBar",
+			rootView : {
+				"viewName": "sap.m.sample.IconTabBarProcess.IconTabBar",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

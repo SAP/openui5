@@ -3,7 +3,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 
 	return UIComponent.extend("sap.uxap.sample.BoundModelMapping.Component", {
 		metadata: {
-			rootView: "sap.uxap.sample.BoundModelMapping.BoundModelMapping",
+			rootView: {
+				"viewName": "sap.uxap.sample.BoundModelMapping.BoundModelMapping",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m"

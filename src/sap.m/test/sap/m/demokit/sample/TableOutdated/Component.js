@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TableOutdated.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TableOutdated.Table",
+			rootView : {
+				"viewName": "sap.m.sample.TableOutdated.Table",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

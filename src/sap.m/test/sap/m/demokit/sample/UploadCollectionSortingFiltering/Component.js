@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.UploadCollectionSortingFiltering.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.UploadCollectionSortingFiltering.Page",
+			rootView : {
+				"viewName": "sap.m.sample.UploadCollectionSortingFiltering.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [ "sap.m", "sap.ui.unified" ]
 			},

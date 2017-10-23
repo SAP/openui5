@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.InputAssistedTwoValues.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.InputAssistedTwoValues.V",
+			rootView : {
+				"viewName": "sap.m.sample.InputAssistedTwoValues.V",
+				"type": "XML",
+				"async": true
+			},
 			config : {
 				sample : {
 					files : [

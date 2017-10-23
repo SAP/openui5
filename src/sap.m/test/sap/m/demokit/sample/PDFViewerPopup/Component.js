@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 		var Component = UIComponent.extend("sap.m.sample.PDFViewerPopup.Component", {
 
 			metadata : {
-				rootView : "sap.m.sample.PDFViewerPopup.Page",
+				rootView : {
+					"viewName": "sap.m.sample.PDFViewerPopup.Page",
+					"type": "XML",
+					"async": true
+				},
 				dependencies : {
 					libs : [
 						"sap.m",

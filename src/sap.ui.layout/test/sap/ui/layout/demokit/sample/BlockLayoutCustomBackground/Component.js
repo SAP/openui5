@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.layout.sample.BlockLayoutCustomBackground.Component", {
 
 		metadata : {
-			rootView : "sap.ui.layout.sample.BlockLayoutCustomBackground.Block",
+			rootView : {
+				"viewName": "sap.ui.layout.sample.BlockLayoutCustomBackground.Block",
+				"type": "XML",
+				"async": true
+			},
 			includes : [ "resources/sample.css" ],
 			dependencies : {
 				libs : [

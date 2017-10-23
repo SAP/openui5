@@ -2,7 +2,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	"use strict";
 	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageTitleOnLeft.Component", {
 		metadata: {
-			rootView: "sap.uxap.sample.ObjectPageTitleOnLeft.ObjectPageTitleOnLeft",
+			rootView: {
+				"viewName": "sap.uxap.sample.ObjectPageTitleOnLeft.ObjectPageTitleOnLeft",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: ["sap.m"]
 			},
