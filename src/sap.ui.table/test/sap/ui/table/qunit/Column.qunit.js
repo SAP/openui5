@@ -165,7 +165,7 @@ sap.ui.require([
 		// check column without parent
 		this._oTable.setEnableGrouping(true);
 		this._oColumn.setSortProperty("mySortPropertyName");
-		assert.ok(!this._oColumn.isGroupableByMenu(),
+		assert.ok(!this._oColumn.isGroupable(),
 			"Not groupable by menu:"
 			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
 			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
@@ -176,28 +176,28 @@ sap.ui.require([
 
 		this._oTable.setEnableGrouping(true);
 		this._oColumn.setSortProperty("");
-		assert.ok(!this._oColumn.isGroupableByMenu(),
+		assert.ok(!this._oColumn.isGroupable(),
 			"Not groupable by menu:"
 			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
 			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
 			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
 
 		this._oTable.setEnableGrouping(false);
-		assert.ok(!this._oColumn.isGroupableByMenu(),
+		assert.ok(!this._oColumn.isGroupable(),
 			"Not groupable by menu:"
 			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
 			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
 			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
 
 		this._oColumn.setSortProperty("mySortPropertyName");
-		assert.ok(!this._oColumn.isGroupableByMenu(),
+		assert.ok(!this._oColumn.isGroupable(),
 			"Not groupable by menu:"
 			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
 			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
 			+ ", enableGrouping: " + this._oTable.getEnableGrouping());
 
 		this._oTable.setEnableGrouping(true);
-		assert.ok(this._oColumn.isGroupableByMenu(),
+		assert.ok(this._oColumn.isGroupable(),
 			"Not groupable by menu:"
 			+ " parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "'"
 			+ ", sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "'"
