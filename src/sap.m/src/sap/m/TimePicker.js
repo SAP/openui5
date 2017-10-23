@@ -1000,6 +1000,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			this._closePicker();
 		};
 
+		TimePicker.prototype._getPlaceholderPattern = function (oLocaleData, sPlaceholder) {
+			return oLocaleData.getTimePattern(sPlaceholder);
+		};
+
 		/**
 		 * Parses a given string to a date object, based on either the <code>displayFormat</code>
 		 * or the <code>valueFormat</code>.
@@ -1137,12 +1141,18 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 
 		var TimeSemanticMaskHelper = function(oTimePicker) {
 			var sDisplayFormat = oTimePicker._getDisplayFormatPattern(),
-				sMask = sDisplayFormat,
+				sMask,
 				sAllowedHourChars,
 				//Respect browser locale if no locale is explicitly set (BCP: 1670060658)
 				sLocaleId = oTimePicker.getLocaleId() || sap.ui.getCore().getConfiguration().getFormatLocale(),
 				oLocale  = new Locale(sLocaleId),
 				i;
+
+			if (oTimePicker._checkStyle(sDisplayFormat)) {
+				sMask = LocaleData.getInstance(oLocale).getTimePattern(sDisplayFormat);
+			} else {
+				sMask = sDisplayFormat;
+			}
 
 			// Set the localeId and prevent infinite loop by suppressing rendering
 			oTimePicker.setProperty("localeId", sLocaleId, true);
