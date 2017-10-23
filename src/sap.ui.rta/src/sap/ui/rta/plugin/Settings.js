@@ -114,13 +114,11 @@ sap.ui.define([
 	 * @param  {function} [fnHandler] handler function for the case of multiple settings actions
 	 * @return {Promise} Returns promise resolving with the creation of the commands
 	 */
-	Settings.prototype.handler = function(aSelectedOverlays, fnHandler) {
+	Settings.prototype.handler = function(aSelectedOverlays, mPropertyBag) {
+		mPropertyBag = mPropertyBag || {};
 		var oSettingsCommand, oAppDescriptorCommand, oCompositeCommand;
 		var oElement = aSelectedOverlays[0].getElementInstance();
-		var mPropertyBag = {
-			getUnsavedChanges: this._getUnsavedChanges.bind(this),
-			styleClass: Utils.getRtaStyleClassName()
-		};
+		var fnHandler = mPropertyBag.fnHandler;
 
 		if (!fnHandler){
 			fnHandler = aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
@@ -128,6 +126,8 @@ sap.ui.define([
 				throw new Error("Handler not found for settings action");
 			}
 		}
+		mPropertyBag.getUnsavedChanges = this._getUnsavedChanges.bind(this);
+		mPropertyBag.styleClass = Utils.getRtaStyleClassName();
 
 		return fnHandler(oElement, mPropertyBag).then(function(aChanges) {
 			if (aChanges.length > 0){
@@ -215,8 +215,10 @@ sap.ui.define([
 							id : sPluginId + iActionCounter,
 							text : sActionText,
 							enabled : oSettingsAction.isEnabled && oSettingsAction.isEnabled.bind(this, oOverlay.getElementInstance()),
-							handler : function(fnHandler, aOverlays){
-								return this.handler(aOverlays, fnHandler);
+							handler : function(fnHandler, aOverlays, mPropertyBag){
+								mPropertyBag = mPropertyBag || {};
+								mPropertyBag.fnHandler = fnHandler;
+								return this.handler(aOverlays, mPropertyBag);
 							}.bind(this, oSettingsAction.handler),
 							rank : iRank + iActionCounter
 						});

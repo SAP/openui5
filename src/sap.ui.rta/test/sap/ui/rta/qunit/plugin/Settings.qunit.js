@@ -245,7 +245,7 @@ function(
 			assert.ok(oSettingsCommand, "... which contains a settings command");
 			done();
 		});
-		return this.oSettingsPlugin.handler(aSelectedOverlays);
+		return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton });
 	});
 
 	QUnit.test("when the handle settings function is called and no handler is present in Designtime Metadata,", function(assert) {
@@ -269,7 +269,7 @@ function(
 
 		assert.throws(
 			function(){
-				this.oSettingsPlugin.handler(aSelectedOverlays);
+				this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton });
 			},
 			/Handler not found/,
 			"an error message is raised referring to the missing handler"
@@ -303,7 +303,7 @@ function(
 
 		var aSelectedOverlays = [oButtonOverlay];
 
-		return this.oSettingsPlugin.handler(aSelectedOverlays).catch(function() {
+		return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton }).catch(function() {
 			assert.notOk(that.oSettingsCommand, "... command is not created");
 		});
 	});
@@ -415,7 +415,7 @@ function(
 
 			done();
 		});
-		return this.oSettingsPlugin.handler(aSelectedOverlays);
+		return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton });
 	});
 
 	QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change and a flex change,", function(assert) {
@@ -486,7 +486,7 @@ function(
 			assert.equal(oFlexCommand.getContent(), mSettingsChange.changeSpecificData.content, "with the correct parameters");
 			done();
 		});
-		return this.oSettingsPlugin.handler(aSelectedOverlays);
+		return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton });
 	});
 
 	QUnit.test("when retrieving the context menu item for single 'settings' action", function(assert) {
