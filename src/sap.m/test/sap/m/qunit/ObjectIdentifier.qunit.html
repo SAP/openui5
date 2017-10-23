@@ -362,6 +362,27 @@
 		oObjectIdentifier.destroy();
 	});
 
+	// BCP: 1770511853
+	QUnit.test("The title control should be visible if the title is changed from non-empty value to 0", function(assert) {
+		//Arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title: "not empty"
+		});
+
+		//System under test
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oObjectIdentifier.setTitle(0);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The text control is visible");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
 	QUnit.test("The text control should be invisible if the text is empty", function(assert) {
 
 		//Arrange
