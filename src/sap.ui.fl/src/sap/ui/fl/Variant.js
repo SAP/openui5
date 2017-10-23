@@ -506,16 +506,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the variant key
-	 *
-	 * @returns {String} Variant key of the file which is a unique concatenation of fileName, layer and namespace
-	 * @public
-	 */
-	Variant.prototype.getKey = function () {
-		return this._oDefinition.content.fileName + this._oDefinition.content.layer + this._oDefinition.content.namespace;
-	};
-
-	/**
 	 * Returns the revert specific data
 	 *
 	 * @returns {*} revert specific data
