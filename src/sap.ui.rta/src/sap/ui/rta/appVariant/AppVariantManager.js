@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/fl/transport/TransportSelection",
-	"sap/ui/rta/appVariant/S4HanaCloudBackend"
-], function(AppVariantDialog, AppVariantUtils, MessageToast, FlexControllerFactory, MessageBox, RtaUtils, RtaAppVariantFeature, TransportSelection, S4HanaCloudBackend) {
+	"sap/ui/rta/appVariant/S4HanaCloudBackend",
+	"sap/ui/core/BusyIndicator"
+], function(AppVariantDialog, AppVariantUtils, MessageToast, FlexControllerFactory, MessageBox, RtaUtils, RtaAppVariantFeature, TransportSelection, S4HanaCloudBackend, BusyIndicator) {
 	"use strict";
 
 	var AppVariantManager = function() {};
@@ -120,7 +121,8 @@ sap.ui.define([
 		}.bind(this)).then(function(oTransportInfo) {
 			return this._onTransportInDialogSelected(oAppVariantDescriptor, oTransportInfo);
 		}.bind(this))["catch"](function(oError) {
-			return this._showTechnicalError(MessageBox.Icon.ERROR, "HEADER_CREATE_DESCRIPTOR_FAILED", "MSG_CREATE_DESCRIPTOR_FAILED", oError);
+			var oErrorInfo = this._buildErrorMessageText("MSG_CREATE_DESCRIPTOR_FAILED", oAppVariantDescriptor._id, oError);
+			return this._showErrorMessage(oErrorInfo);
 		}.bind(this));
 	};
 
@@ -130,10 +132,6 @@ sap.ui.define([
 			if (oTransportInfo.transport && oTransportInfo.packageName !== "$TMP") {
 
 				var aPromises = [];
-				if (oTransportInfo.packageName){
-					//Only set package for new appdescr_variant
-					aPromises.push(oAppVariantDescriptor.setPackage(oTransportInfo.packageName));
-				}
 
 				if (oTransportInfo.transport) {
 					aPromises.push(oAppVariantDescriptor.setTransportRequest(oTransportInfo.transport));
@@ -169,39 +167,76 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	AppVariantManager.prototype._showTechnicalError = function(oMessageType, sTitleKey, sMessageKey, vError) {
+	AppVariantManager.prototype._showErrorMessage = function(oErrorInfo, sAppVariantId) {
 		var oTextResources = AppVariantUtils.getTextResources();
-		var sErrorMessage = "";
-		if (vError.messages && vError.messages.length) {
-			if (vError.messages.length > 1) {
-				vError.messages.forEach(function(oError) {
-					sErrorMessage += oError.text + "\n";
-				});
-			} else {
-				sErrorMessage += vError.messages[0].text;
-			}
-		} else {
-			sErrorMessage += vError.stack || vError.message || vError.status || vError;
+		var sTitle = oTextResources.getText("HEADER_SAVE_APP_VARIANT_FAILED");
+
+		BusyIndicator.hide();
+
+		var sCopyIdButtonText;
+		var sCloseButtonText = oTextResources.getText("SAVE_APP_VARIANT_CLOSE_TEXT");
+
+		var aActions = [];
+
+		if (oErrorInfo.copyId) {
+			sCopyIdButtonText = oTextResources.getText("SAVE_APP_VARIANT_COPY_ID_TEXT");
+			aActions.push(sCopyIdButtonText);
 		}
 
-		jQuery.sap.log.error("Failed to save an App Variant", sErrorMessage);
-
-		var sTitle = oTextResources.getText(sTitleKey);
-		var sMessage = oTextResources.getText(sMessageKey, sErrorMessage);
+		aActions.push(sCloseButtonText);
 
 		return new Promise(function(resolve, reject) {
-			MessageBox.error(sMessage, {
-				icon: oMessageType,
+			var fnCallback = function (sAction) {
+				if (sAction === sCloseButtonText) {
+					reject();
+				} else if (sAction === sCopyIdButtonText) {
+					AppVariantUtils.copyId(sAppVariantId);
+					reject();
+				}
+			};
+
+			MessageBox.error(oErrorInfo.text, {
+				icon: MessageBox.Icon.ERROR,
 				title: sTitle,
-				onClose: reject,
+				onClose: fnCallback,
+				actions: aActions,
 				styleClass: RtaUtils.getRtaStyleClassName()
 			});
 		});
 	};
 
+	AppVariantManager.prototype._buildErrorMessageText = function(sMessageKey, sAppVariantId, oError, bCopyId) {
+		var oTextResources = AppVariantUtils.getTextResources();
+
+		var sErrorMessage = "";
+		if (oError.messages && oError.messages.length) {
+			if (oError.messages.length > 1) {
+				oError.messages.forEach(function(oError) {
+					sErrorMessage += oError.text + "\n";
+				});
+			} else {
+				sErrorMessage += oError.messages[0].text;
+			}
+		} else if (oError.iamAppId) {
+			//TODO: Need to remove this check later (20.10.2017)
+			sErrorMessage += "IAM App Id: " + oError.iamAppId;
+		} else {
+			sErrorMessage += oError.stack || oError.message || oError.status || oError;
+		}
+
+		var sMessage = oTextResources.getText(sMessageKey) + "\n\n" +
+						oTextResources.getText("MSG_APP_VARIANT_ID", sAppVariantId) + "\n" +
+						oTextResources.getText("MSG_TECHNICAL_ERROR", sErrorMessage);
+		return {
+			text: sMessage,
+			copyId: bCopyId
+		};
+	};
+
 	AppVariantManager.prototype.saveAppVariantToLREP = function(oAppVariantDescriptor) {
 		return oAppVariantDescriptor.submit()["catch"](function(oError) {
-			return this._showTechnicalError(MessageBox.Icon.ERROR, "HEADER_SAVE_APP_VARIANT_FAILED", "MSG_SAVE_APP_VARIANT_FAILED", oError);
+			var oErrorInfo = this._buildErrorMessageText("MSG_SAVE_APP_VARIANT_FAILED", oAppVariantDescriptor._id, oError);
+			return this._showErrorMessage(oErrorInfo);
 		}.bind(this));
 	};
 
@@ -214,7 +249,8 @@ sap.ui.define([
 	AppVariantManager.prototype.copyUnsavedChangesToLREP = function(sAppVariantId, oRootControlRunningApp, bCopyUnsavedChanges) {
 		if (bCopyUnsavedChanges) {
 			return this._copyDirtyChangesToAppVariant(sAppVariantId, oRootControlRunningApp)["catch"](function(oError) {
-				return this._showTechnicalError(MessageBox.Icon.ERROR, "HEADER_COPY_UNSAVED_CHANGES_FAILED", "MSG_COPY_UNSAVED_CHANGES_FAILED", oError);
+				var oErrorInfo = this._buildErrorMessageText("MSG_COPY_UNSAVED_CHANGES_FAILED", sAppVariantId, oError);
+				return this._showErrorMessage(oErrorInfo);
 			}.bind(this));
 		} else {
 			return Promise.resolve(true);
@@ -224,27 +260,33 @@ sap.ui.define([
 	AppVariantManager.prototype.triggerCatalogAssignment = function(oAppVariantDescriptor) {
 		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor._oSettings)) {
 			return AppVariantUtils.triggerCatalogAssignment(oAppVariantDescriptor._id, oAppVariantDescriptor._reference)["catch"](function(oError) {
-				return this._showTechnicalError(MessageBox.Icon.ERROR, "HEADER_CATALOG_ASSIGNMENT_FAILED", "MSG_CATALOG_ASSIGNMENT_FAILED", oError);
+				var oErrorInfo = this._buildErrorMessageText("MSG_CATALOG_ASSIGNMENT_FAILED", oAppVariantDescriptor._id, oError);
+				return this._showErrorMessage(oErrorInfo);
 			}.bind(this));
 		} else {
 			return Promise.resolve(true);
 		}
 	};
 
-	AppVariantManager.prototype.notifyKeyUserWhenTileIsReady = function(sIamId) {
+	AppVariantManager.prototype.notifyKeyUserWhenTileIsReady = function(sIamId, sAppVariantId) {
 		var oS4HanaCloudBackend = new S4HanaCloudBackend();
 
 		return oS4HanaCloudBackend.notifyFlpCustomizingIsReady(sIamId, function(sId) {
 			var oTextResources = AppVariantUtils.getTextResources();
-			var sMessage = oTextResources.getText("SAVE_APP_VARIANT_NEW_TILE_AVAILABLE");
+			var sMessage = oTextResources.getText("MSG_SAVE_APP_VARIANT_NEW_TILE_AVAILABLE");
 			var sTitle = oTextResources.getText("SAVE_APP_VARIANT_NEW_TILE_AVAILABLE_TITLE");
-			MessageBox.show(sMessage, {
-				icon: MessageBox.Icon.INFORMATION,
-				title: sTitle,
-				styleClass: RtaUtils.getRtaStyleClassName()
+
+			return new Promise(function(resolve) {
+				MessageBox.show(sMessage, {
+					icon: MessageBox.Icon.INFORMATION,
+					title: sTitle,
+					onClose: resolve,
+					styleClass: RtaUtils.getRtaStyleClassName()
+				});
 			});
 		})["catch"](function(oError) {
-			return this._showTechnicalError(MessageBox.Icon.ERROR, "HEADER_TILE_CREATION_FAILED", "MSG_TILE_CREATION_FAILED", oError);
+			var oErrorInfo = this._buildErrorMessageText("MSG_TILE_CREATION_FAILED", sAppVariantId, oError, true);
+			return this._showErrorMessage(oErrorInfo, sAppVariantId);
 		}.bind(this));
 	};
 
