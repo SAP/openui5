@@ -35,9 +35,9 @@ sap.ui.define([
 			this.getView().setModel(this.model);
 			this.clearFilters();
 			this._initElementTree();
-			this.treeTable = this.getView().byId("issuesList");
-			this.issueTable = this.getView().byId("issueTable");
-			this.toolHeader = this.getView().byId('toolHeader');
+			this.treeTable = this.byId("issuesList");
+			this.issueTable = this.byId("issueTable");
+			this.toolHeader = this.byId('toolHeader');
 			this.toolHeader.removeStyleClass('sapTntToolHeader sapContrast sapContrastPlus');
 
 			var toolHeaderPopover = this.toolHeader._getPopover();
@@ -106,7 +106,7 @@ sap.ui.define([
 			});
 		},
 		onAfterRendering: function () {
-			this.elementTree.setContainerId(this.getView().byId("elementTreeContainer").getId());
+			this.elementTree.setContainerId(this.byId("elementTreeContainer").getId());
 		},
 		clearFilters: function () {
 			this.model.setProperty("/severityFilter", "All");

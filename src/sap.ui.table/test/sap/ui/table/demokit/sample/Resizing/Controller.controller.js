@@ -91,7 +91,7 @@ sap.ui.define([
 		onColumnResize : function(oEvent) {
 			var oColumn = oEvent.getParameter("column");
 
-			if (this.getView().byId("deliverydate") == oColumn) {
+			if (this.byId("deliverydate") == oColumn) {
 				oEvent.preventDefault();
 			} else {
 				this._messageBuffer.push("Column '" + oColumn.getLabel().getText() + "' was resized to " + oEvent.getParameter("width") + ".");

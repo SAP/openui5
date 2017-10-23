@@ -30,7 +30,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 		},
 
 		handleRemoveSelection: function(oEvent) {
-			this.getView().byId("calendar").removeAllSelectedDates();
+			this.byId("calendar").removeAllSelectedDates();
 			this._clearModel();
 		},
 

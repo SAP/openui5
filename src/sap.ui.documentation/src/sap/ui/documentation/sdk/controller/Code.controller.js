@@ -125,7 +125,7 @@ sap.ui.define([
 				this._getTabHeader().setSelectedKey(sFileName);
 
 				// scroll to the top of the page
-				var page = this.getView().byId("page");
+				var page = this.byId("page");
 				page.scrollTo(0);
 			},
 
@@ -341,7 +341,7 @@ sap.ui.define([
 
 			_getCodeEditor : function() {
 				if (!this.oCodeEditor) {
-					this.oCodeEditor = this.getView().byId("codeEditor");
+					this.oCodeEditor = this.byId("codeEditor");
 				}
 
 				return this.oCodeEditor;
@@ -349,7 +349,7 @@ sap.ui.define([
 
 			_getTabHeader : function() {
 				if (!this.oTabHeader) {
-					this.oTabHeader = this.getView().byId("tabHeader");
+					this.oTabHeader = this.byId("tabHeader");
 				}
 
 				return this.oTabHeader;

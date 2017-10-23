@@ -31,7 +31,7 @@ sap.ui.define([
 		},
 
 		onCloseDialog : function () {
-			this.getView().byId("helloDialog").close();
+			this.byId("helloDialog").close();
 		}
 	});
 

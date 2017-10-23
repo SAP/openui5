@@ -45,7 +45,7 @@ sap.ui.define([
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
 			this.getView().setModel(this.oObjectPageStateModel, "ObjectPageState");
 
-			this.oObjectPage = this.getView().byId("ObjectPageLayout");
+			this.oObjectPage = this.byId("ObjectPageLayout");
 		},
 		onActionPress: function (oEvent) {
 			MessageToast.show("action pressed !");

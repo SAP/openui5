@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
 
 		handleSelectChange: function (oEvent) {
 			var mode = oEvent.getParameter("selectedItem").getKey();
-			this.getView().byId("Tree").setMode(mode);
+			this.byId("Tree").setMode(mode);
 		}
 	});
 

@@ -13,8 +13,8 @@ sap.ui.define([
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
 
 			//navigate to a specific subsection on open
-			this.oObjectPageLayout = this.getView().byId("ObjectPageLayout");
-			this.oTargetSubSection = this.getView().byId("paymentSubSection");
+			this.oObjectPageLayout = this.byId("ObjectPageLayout");
+			this.oTargetSubSection = this.byId("paymentSubSection");
 			this.oTargetSubSection.setMode("Expanded");
 
 			this.oObjectPageLayout.addEventDelegate({

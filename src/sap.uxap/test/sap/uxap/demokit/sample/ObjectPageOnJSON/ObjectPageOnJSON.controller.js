@@ -47,7 +47,7 @@ sap.ui.define([
 			msgToast.show(msg);
 		},
 		toggleFooter: function (oEvent) {
-			var oObjectPageLayout = this.getView().byId("ObjectPageLayout");
+			var oObjectPageLayout = this.byId("ObjectPageLayout");
 			oObjectPageLayout.setShowFooter(!oObjectPageLayout.getShowFooter());
 		}
 	});

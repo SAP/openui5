@@ -30,7 +30,7 @@ sap.ui.define([
 
 		handleItemSelect: function (oEvent) {
 			var oItem = oEvent.getParameter("listItem");
-			var oObjectHeader = this.getView().byId("idObjectHeader");
+			var oObjectHeader = this.byId("idObjectHeader");
 			oObjectHeader.setTitle(oItem.getTitle());
 			oObjectHeader.setBindingContext(oItem.getBindingContext());
 			this._oPopover.close();

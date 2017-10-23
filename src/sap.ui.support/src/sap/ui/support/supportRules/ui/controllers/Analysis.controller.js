@@ -38,7 +38,7 @@ sap.ui.define([
 			this.tempRulesLoaded = false;
 
 			this.getView().setModel(this.model);
-			this.treeTable = this.getView().byId("ruleList");
+			this.treeTable = this.byId("ruleList");
 			this.cookie = storage.readPersistenceCookie(constants.COOKIE_NAME);
 			this.persistingSettings = this.model.getProperty("/persistingSettings");
 		},
@@ -411,8 +411,8 @@ sap.ui.define([
 			this.goToCreateRule();
 		},
 		goToRuleProperties: function () {
-			var navCont = this.getView().byId("rulesNavContainer");
-			navCont.to(this.getView().byId("rulesDisplayPage"), "show");
+			var navCont = this.byId("rulesNavContainer");
+			navCont.to(this.byId("rulesDisplayPage"), "show");
 		},
 		createRuleString: function (rule) {
 			// FIXME
@@ -553,8 +553,8 @@ sap.ui.define([
 			this.model.checkUpdate(true, true);
 		},
 		goToCreateRule: function () {
-			var navCont = this.getView().byId("rulesNavContainer");
-			navCont.to(this.getView().byId("rulesCreatePage"), "show");
+			var navCont = this.byId("rulesNavContainer");
+			navCont.to(this.byId("rulesCreatePage"), "show");
 		},
 		checkFunctionString: function (functionString) {
 			try {
@@ -589,7 +589,7 @@ sap.ui.define([
 			}
 		},
 		loadMarkedSupportLibraries: function () {
-			var list = this.getView().byId("availableLibrariesSet"),
+			var list = this.byId("availableLibrariesSet"),
 				libNames = list.getSelectedItems().map(function (item) {
 					return item.getTitle();
 				});
@@ -656,8 +656,8 @@ sap.ui.define([
 		this.model.setProperty("/editRuleSource", selectedRule);
 		this.model.setProperty("/editRule", jQuery.extend(true, {}, selectedRule));
 		this.model.checkUpdate(true, true);
-		var navCont = this.getView().byId("rulesNavContainer");
-		navCont.to(this.getView().byId("ruleUpdatePage"), "show");
+		var navCont = this.byId("rulesNavContainer");
+		navCont.to(this.byId("ruleUpdatePage"), "show");
 	},
 	deleteTemporaryRule: function(event) {
 		var sourceObject = this.getObjectOnTreeRow(event),

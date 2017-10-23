@@ -6,8 +6,8 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], fun
 		onInit: function () {
 			var oJsonModel = new JSONModel("./test-resources/sap/uxap/demokit/sample/ObjectPageDynamicSideContentBtn/employee.json");
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
-			oDynamicSideView = this.getView().byId("DynamicSideContent");
-			oOPSideContentBtn = this.getView().byId("headerForTest").getSideContentButton();
+			oDynamicSideView = this.byId("DynamicSideContent");
+			oOPSideContentBtn = this.byId("headerForTest").getSideContentButton();
 		},
 		onAfterRendering: function() {
 			sCurrentBreakpoint = oDynamicSideView.getCurrentBreakpoint();

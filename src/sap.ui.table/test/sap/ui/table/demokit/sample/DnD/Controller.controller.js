@@ -51,7 +51,7 @@ sap.ui.define([
 		},
 
 		getSelectedRowContext: function(sTableId, fnCallback) {
-			var oTable = this.getView().byId(sTableId);
+			var oTable = this.byId(sTableId);
 			var iSelectedIndex = oTable.getSelectedIndex();
 
 			if (iSelectedIndex === -1) {
@@ -139,7 +139,7 @@ sap.ui.define([
 
 		moveToTable2: function() {
 			this.getSelectedRowContext("table1", function(oSelectedRowContext) {
-				var oTable2 = this.getView().byId("table2");
+				var oTable2 = this.byId("table2");
 				var oFirstRowContext = oTable2.getContextByIndex(0);
 
 				// insert always as a first row

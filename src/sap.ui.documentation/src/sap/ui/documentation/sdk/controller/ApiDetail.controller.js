@@ -236,7 +236,7 @@ sap.ui.define([
 								});
 							});
 
-							this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
+							this.searchResultsButtonVisibilitySwitch(this.byId("apiDetailBackToSearch"));
 						}.bind(this));
 					}.bind(this))
 					.catch(function (sReason) {
@@ -258,7 +258,7 @@ sap.ui.define([
 
 			_createMethodsSummary: function () {
 				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-methodsSummary", "sap.ui.documentation.sdk.view.ApiDetailMethodsSummary", this),
-					oSection = this.getView().byId("methods"),
+					oSection = this.byId("methods"),
 					aSubSections = oSection.getSubSections(),
 					oControlData = this.getModel("topics").getData(),
 					bBorrowedOnly = oControlData.hasMethods && !oControlData.hasOwnMethods;
@@ -279,7 +279,7 @@ sap.ui.define([
 
 			_createEventsSummary: function () {
 				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-eventsSummary", "sap.ui.documentation.sdk.view.ApiDetailEventsSummary", this),
-					oSection = this.getView().byId("events"),
+					oSection = this.byId("events"),
 					aSubSections = oSection.getSubSections(),
 					oControlData = this.getModel("topics").getData(),
 					bBorrowedOnly = oControlData.hasEvents && !oControlData.hasOwnEvents;
@@ -300,7 +300,7 @@ sap.ui.define([
 
 			_createAnnotationsSummary: function () {
 				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-annotationsSummary", "sap.ui.documentation.sdk.view.ApiDetailAnnotationsSummary", this);
-				var oSection = this.getView().byId("annotations");
+				var oSection = this.byId("annotations");
 
 				var aSubSections = oSection.getSubSections();
 				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
@@ -340,7 +340,7 @@ sap.ui.define([
 				// LowerCase every input from URL
 				sSectionId = sSectionId.toLowerCase();
 
-				oSection = this.getView().byId(sSectionId);
+				oSection = this.byId(sSectionId);
 				if (!oSection) {
 					return;
 				}
@@ -367,11 +367,11 @@ sap.ui.define([
 						});
 
 						// We scroll to the first sub-section found
-						this.getView().byId("apiDetailObjectPage").scrollToSection(aFilteredSubSections[0].getId(), 250);
+						this.byId("apiDetailObjectPage").scrollToSection(aFilteredSubSections[0].getId(), 250);
 					}
 				} else {
 					// We scroll to section
-					this.getView().byId("apiDetailObjectPage").scrollToSection(oSection.getId(), 250);
+					this.byId("apiDetailObjectPage").scrollToSection(oSection.getId(), 250);
 				}
 
 			},

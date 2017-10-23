@@ -22,7 +22,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.ViewTemplate.types.Types", {
 		showErrorPopover : function (sButtonID) {
-			this.messagePopover.openBy(this.getView().byId(sButtonID));
+			this.messagePopover.openBy(this.byId(sButtonID));
 		},
 
 		onInit : function () {

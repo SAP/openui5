@@ -88,8 +88,8 @@
 		},
 
 		toggleUpdateMode: function() {
-			var oSmartFilterbar = this.getView().byId("smartFilterBar");
-			var oButton = this.getView().byId("toggleUpdateMode");
+			var oSmartFilterbar = this.byId("smartFilterBar");
+			var oButton = this.byId("toggleUpdateMode");
 
 			if (!oSmartFilterbar || !oButton) {
 				return;
@@ -107,8 +107,8 @@
 
 		_setButtonText: function() {
 
-			var oSmartFilterbar = this.getView().byId("smartFilterBar");
-			var oButton = this.getView().byId("toggleUpdateMode");
+			var oSmartFilterbar = this.byId("smartFilterBar");
+			var oButton = this.byId("toggleUpdateMode");
 
 			if (!oSmartFilterbar || !oButton) {
 				return;

@@ -28,13 +28,11 @@ sap.ui.define([
 					return {
 						setData : function (oData){}
 					};
-				},
-				byId: function(search){
-					return {
-						setValue : function(){}
-					};
 				}
 			});
+		this.stub(oController, "byId").returns({
+			setValue : function(){}
+		});
 
 		oController._onContentReceived(oPage, oData);
 

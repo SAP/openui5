@@ -59,7 +59,7 @@ sap.ui.define([
 		},
 
 		getTable : function(){
-			return this.getView().byId("table");
+			return this.byId("table");
 		},
 
 		onModelRefresh : function() {

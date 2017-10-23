@@ -74,7 +74,7 @@ sap.ui.define([
 			oContentModel.setData(oData);
 			oPage.setBusy(false);
 			this.filterListByQuery("");
-			this.getView().byId("search").setValue("");
+			this.byId("search").setValue("");
 		},
 
 		/**
@@ -107,7 +107,7 @@ sap.ui.define([
 			}
 
 			// update list binding
-			var oList = this.getView().byId("masterComponentsList");
+			var oList = this.byId("masterComponentsList");
 			var oBinding = oList.getBinding("items");
 			oBinding.filter(aFilters, "content");
 		},

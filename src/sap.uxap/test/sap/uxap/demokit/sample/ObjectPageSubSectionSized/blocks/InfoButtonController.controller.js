@@ -5,7 +5,7 @@ sap.ui.define(["sap/m/MessageToast", "sap/ui/core/mvc/Controller"], function (Me
 		onInit: function () {
 		},
 		onAfterRendering: function () {
-			var button = this.getView().byId("infoButton");
+			var button = this.byId("infoButton");
 			var layout = this.getView().getParent().getColumnLayout();
 			button.setText("Layout : " + layout);
 		},

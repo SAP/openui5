@@ -20,7 +20,7 @@ sap.ui.define([
 			});
 			oComp.setModel(this.getView().getModel());
 			this._oTable = oComp.getTable();
-			this.getView().byId("idIconTabBar").insertContent(this._oTable);
+			this.byId("idIconTabBar").insertContent(this._oTable);
 
 			// update table
 			this._oTable.setHeaderText(null);
@@ -46,13 +46,13 @@ sap.ui.define([
 		},
 
 		onBackgroundDesignSelect: function (oEvent) {
-			var oIconTabBar = this.getView().byId("idIconTabBar");
+			var oIconTabBar = this.byId("idIconTabBar");
 			var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
 			oIconTabBar.setBackgroundDesign(sSelectedValue);
 		},
 
 		onHeaderBackgroundDesignSelect: function (oEvent) {
-			var oIconTabBar = this.getView().byId("idIconTabBar");
+			var oIconTabBar = this.byId("idIconTabBar");
 			var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
 			oIconTabBar.setHeaderBackgroundDesign(sSelectedValue);
 		}

@@ -15,7 +15,7 @@ sap.ui.define([
 
 		onSliderMoved: function (event) {
 			var value = event.getParameter("value");
-			this.getView().byId("containerLayout").setWidth(value + "%");
+			this.byId("containerLayout").setWidth(value + "%");
 		}
 	});
 
