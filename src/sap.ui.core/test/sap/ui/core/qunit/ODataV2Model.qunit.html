@@ -818,6 +818,161 @@
 		});
 	});
 
+	QUnit.test("test isreloadneeded - invalidate", function(assert){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Category"});
+		oBinding.attachChange(function(oContext) {
+			assert.equal(spy.callCount, 1, "get request should be send");
+
+			oModel.invalidate();
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {});
+			assert.ok(!oContext, "Reload needed for full entity");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
+			assert.ok(!oContext, "Reload needed for all properties");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
+			assert.ok(!oContext, "Reload needed for property select");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
+			assert.ok(!oContext, "Reload needed for category expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
+			assert.ok(!oContext, "Reload needed for property select and category expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
+			assert.ok(!oContext, "Reload needed for property, expand property select and category expand");
+
+			OData.defaultHttpClient.request.restore();
+			done();
+		});
+	});
+
+	QUnit.test("test isreloadneeded - invalidateEntry", function(assert){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Category"});
+		oBinding.attachChange(function(oContext) {
+			assert.equal(spy.callCount, 1, "get request should be send");
+
+			oModel.invalidateEntry("Categories(2)");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {});
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
+			assert.ok(!oContext, "Reload needed for category expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
+			assert.ok(!oContext, "Reload needed for property select and category expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
+			assert.ok(!oContext, "Reload needed for property, expand property select and category expand");
+
+			OData.defaultHttpClient.request.restore();
+			done();
+		});
+	});
+
+	QUnit.test("test invalidate", function(assert){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Category"});
+		oBinding.attachChange(function(oContext) {
+			var oProduct = oModel.getProperty("/Products(3)"),
+				oCategory = oModel.getProperty("/Categories(2)");
+			assert.equal(spy.callCount, 1, "get request should be send");
+			oContext = oBinding.getBoundContext();
+
+			oModel.invalidate();
+			assert.ok(oProduct.__metadata.invalid, "Invalid flag set on Product");
+			assert.ok(oCategory.__metadata.invalid, "Invalid flag set on Category");
+			delete oProduct.__metadata.invalid;
+			delete oCategory.__metadata.invalid;
+
+			oModel.invalidate(function() { return true });
+			assert.ok(oProduct.__metadata.invalid, "Invalid flag set on Product");
+			assert.ok(oCategory.__metadata.invalid, "Invalid flag set on Category");
+			delete oProduct.__metadata.invalid;
+			delete oCategory.__metadata.invalid;
+
+			oModel.invalidate(function() { return false });
+			assert.ok(!oProduct.__metadata.invalid, "No invalid flag set on Product");
+			assert.ok(!oCategory.__metadata.invalid, "No invalid flag set on Category");
+			delete oProduct.__metadata.invalid;
+			delete oCategory.__metadata.invalid;
+
+			oModel.invalidate(function(sKey) {
+				return sKey.indexOf("Products") === 0;
+			});
+			assert.ok(oProduct.__metadata.invalid, "Invalid flag set on Product");
+			assert.ok(!oCategory.__metadata.invalid, "No invalid flag set on Category");
+			delete oProduct.__metadata.invalid;
+			delete oCategory.__metadata.invalid;
+
+			oModel.invalidate(function(sKey, oEntry) {
+				return oEntry.__metadata.type === "NorthwindModel.Category";
+			});
+			assert.ok(!oProduct.__metadata.invalid, "No invalid flag set on Product");
+			assert.ok(oCategory.__metadata.invalid, "Invalid flag set on Category");
+			delete oProduct.__metadata.invalid;
+			delete oCategory.__metadata.invalid;
+
+			OData.defaultHttpClient.request.restore();
+			done();
+		});
+	});
+
+	QUnit.test("test invalidateEntry", function(assert){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {});
+		oBinding.attachChange(function(oContext) {
+			var oEntry = oModel.getProperty("/Products(3)");
+			assert.equal(spy.callCount, 1, "get request should be send");
+			oContext = oBinding.getBoundContext();
+
+			oModel.invalidateEntry("Products(3)");
+			assert.ok(oEntry.__metadata.invalid, "Invalid flag set by key");
+			delete oEntry.__metadata.invalid;
+
+			oModel.invalidateEntry("/Products(3)");
+			assert.ok(oEntry.__metadata.invalid, "Invalid flag set by path");
+			delete oEntry.__metadata.invalid;
+
+			oModel.invalidateEntry(oContext);
+			assert.ok(oEntry.__metadata.invalid, "Invalid flag set by context");
+			delete oEntry.__metadata.invalid;
+
+			OData.defaultHttpClient.request.restore();
+			done();
+		});
+	});
+
 	QUnit.test("test getProperty on label", function(assert){
 		var done = assert.async();
 		oLabel.setText("testText");
