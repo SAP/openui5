@@ -368,5 +368,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "4c01d7427e85e497d017c7165f91bc9d8bfdff97",
+        "type": "FIX",
+        "text": " Table: Correct height adjustment when used inside a splitter",
+        "references": []
+      },
+      {
+        "id": "fc4e18e4ef9a77e979988f5792d3f8e6bc4e2f89",
+        "type": "FIX",
+        "text": " Table: Improved busy handling in case of parallel requests",
+        "references": []
+      }
+    ]
   }
 }

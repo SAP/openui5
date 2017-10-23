@@ -766,5 +766,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.23": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "c954c35d27d051b340c238b65ec0682f8b4f11e8",
+        "type": "FIX",
+        "text": " Table: Correct height adjustment when used inside a splitter",
+        "references": []
+      }
+    ]
   }
 }

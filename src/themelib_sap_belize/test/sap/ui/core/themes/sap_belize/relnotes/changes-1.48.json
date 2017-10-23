@@ -455,5 +455,28 @@
         "references": []
       }
     ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "cc3a58bcd56350dddc5706c80ba1d53351316297",
+        "type": "FIX",
+        "text": " sap.m.Input: Value state icon is now correctly shown",
+        "references": []
+      },
+      {
+        "id": "2818e51ba47a52c71b138cb2ef3df5d1e0c153cd",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
+        "references": []
+      },
+      {
+        "id": "b332cfde344e88283354e3a2a637594473e75cb2",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: minor visual fix in the header",
+        "references": []
+      }
+    ]
   }
 }
