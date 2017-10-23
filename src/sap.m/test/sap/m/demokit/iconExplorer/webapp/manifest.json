@@ -33,6 +33,7 @@
 	"rootView": {
 			"viewName": "sap.ui.demo.iconexplorer.view.App",
 			"type": "XML",
+			"async": true,
 			"id": "app"
 		},
 

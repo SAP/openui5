@@ -46,6 +46,7 @@
 		"rootView": {
 			"viewName": "sap.ui.rta.test.Demo.ObjectPage.view.App",
 			"type": "XML",
+			"async": true,
 			"id": "rtaDemoApp"
 		},
 

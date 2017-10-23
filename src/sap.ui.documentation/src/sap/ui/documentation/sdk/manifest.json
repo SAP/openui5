@@ -31,6 +31,7 @@
 		"rootView": {
 			"viewName": "sap.ui.documentation.sdk.view.App",
 			"type": "XML",
+			"async": true,
 			"id": "app"
 		},
 
