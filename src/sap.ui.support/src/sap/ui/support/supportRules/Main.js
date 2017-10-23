@@ -656,22 +656,21 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			return;
 		}
 
-		// Validations
-		if (oExecutionScope && ExecutionScope.possibleScopes.indexOf(oExecutionScope.type) === -1) {
-			jQuery.sap.log.error("Invalid execution scope type. Type must be one of the following: "
-				+ ExecutionScope.possibleScopes.join(", "));
+		// Set default scope
+		oExecutionScope = oExecutionScope || {type: "global"};
+
+		if (!this._isExecutionScopeValid(oExecutionScope)) {
 			return;
 		}
+
+		CommunicationBus.publish(channelNames.ON_ANALYZE_STARTED);
 
 		// When analyze is called as an API function there is a selectors property
 		// which is used to reduce complexity of the API function
 		// selectors is mapped to parentId and components.
-		if (oExecutionScope && oExecutionScope.selectors) {
+		if (oExecutionScope.selectors) {
 			this._mapExecutionScope(oExecutionScope);
 		}
-
-		// Set default scope
-		oExecutionScope = oExecutionScope || {type: "global"};
 
 		this._oAnalyzer.reset();
 
@@ -684,7 +683,55 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		return this._oAnalyzer.start(this._aSelectedRules, this._oCoreFacade, this._oExecutionScope).then(function() {
 			that._done();
 		});
+	};
 
+	/**
+	 * Checks if the execution scope is valid.
+	 *
+	 * @private
+	 * @param {object} oExecutionScope Contains the execution scope
+	 * @return {boolean} true if the scope is valid
+	 */
+	Main.prototype._isExecutionScopeValid = function (oExecutionScope) {
+
+		var oCore = sap.ui.getCore(),
+			aSelectors = [],
+			bHasValidSelector = false,
+			i;
+
+		if (ExecutionScope.possibleScopes.indexOf(oExecutionScope.type) === -1) {
+			jQuery.sap.log.error("Invalid execution scope type. Type must be one of the following: "
+				+ ExecutionScope.possibleScopes.join(", "));
+			return false;
+		}
+
+		if (oExecutionScope.type == "subtree") {
+
+			if (oExecutionScope.parentId) {
+				aSelectors.push(oExecutionScope.parentId);
+			} else if (jQuery.isArray(oExecutionScope.selectors)) {
+				jQuery.merge(aSelectors, oExecutionScope.selectors);
+			} else if (oExecutionScope.selectors) {
+				aSelectors.push(oExecutionScope.selectors);
+			}
+
+			for (i = 0; i < aSelectors.length; i++) {
+				if (oCore.byId(aSelectors[i])) {
+					bHasValidSelector = true;
+					break;
+				}
+			}
+
+			if (!bHasValidSelector) {
+				CommunicationBus.publish(channelNames.POST_MESSAGE, {
+					message: "Set a valid element ID."
+				});
+
+				return false;
+			}
+		}
+
+		return true;
 	};
 
 	/**

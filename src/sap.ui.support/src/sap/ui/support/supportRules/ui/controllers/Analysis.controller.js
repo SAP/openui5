@@ -197,6 +197,14 @@ sap.ui.define([
 			CommunicationBus.subscribe(channelNames.GET_RULES_MODEL, function (treeViewModelRules) {
 				this.model.setProperty("/treeViewModel", treeViewModelRules);
 			}, this);
+
+			CommunicationBus.subscribe(channelNames.POST_MESSAGE, function (data) {
+				MessageToast.show(data.message);
+			}, this);
+
+			CommunicationBus.subscribe(channelNames.ON_ANALYZE_STARTED, function (data) {
+				this.model.setProperty("/showProgressIndicator", true);
+			}, this);
 		},
 		/**
 		 * Checks if given execution scope component is selected comparing against an array of settings
@@ -230,7 +238,6 @@ sap.ui.define([
 				selectedRules: aSelectedRules,
 				executionContext: oExecutionContext
 			});
-			this.model.setProperty("/showProgressIndicator", true);
 		},
 
 		initSettingsPopover: function () {
