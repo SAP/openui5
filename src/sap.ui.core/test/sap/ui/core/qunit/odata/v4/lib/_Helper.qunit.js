@@ -750,4 +750,61 @@ sap.ui.require([
 		assert.strictEqual(_Helper.makeAbsolute("Foo('1')/Bar(baz='2',qux=3)", "/service/"),
 			"/service/Foo('1')/Bar(baz='2',qux=3)");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("drillDown", function (assert) {
+		var oObject = {
+				"foo" : "bar",
+				"bar" : {
+					"baz" : "qux"
+				},
+				"null" : null
+			};
+
+		assert.strictEqual(_Helper.drillDown(oObject, []), oObject);
+		assert.strictEqual(_Helper.drillDown(oObject, ["foo"]), "bar");
+		assert.strictEqual(_Helper.drillDown(oObject, ["bar", "baz"]), "qux");
+		assert.strictEqual(_Helper.drillDown(oObject, ["unknown"]), undefined);
+		assert.strictEqual(_Helper.drillDown(oObject, ["unknown", "value"]), undefined);
+		assert.strictEqual(_Helper.drillDown(oObject, ["null"]), null);
+		assert.strictEqual(_Helper.drillDown(oObject, ["null", "value"]), undefined);
+	});
+
+	//*********************************************************************************************
+	[{
+		dataPath : "/Foo",
+		metaPath : "/Foo"
+	}, { // e.g. function call plus key predicate
+		dataPath : "/Foo/name.space.bar_42(key='value')(key='value')",
+		metaPath : "/Foo/name.space.bar_42"
+	}, {
+		dataPath : "/Foo(key='value')(key='value')/bar",
+		metaPath : "/Foo/bar"
+	}, { // any segment with digits only
+		dataPath : "/Foo/" + Date.now(),
+		metaPath : "/Foo"
+	}, {
+		dataPath : "/Foo/" + Date.now() + "/bar",
+		metaPath : "/Foo/bar"
+	}, { // global removal needed
+		dataPath : "/Foo(key='value')/" + Date.now() + "/bar(key='value')/"  + Date.now(),
+		metaPath : "/Foo/bar"
+	}, { // transient entity
+		dataPath : "/Foo/-1/bar",
+		metaPath : "/Foo/bar"
+	}].forEach(function (oFixture) {
+		QUnit.test("getMetaPath: " + oFixture.dataPath, function (assert) {
+			var sMetaPath = _Helper.getMetaPath(oFixture.dataPath);
+
+			assert.strictEqual(sMetaPath, oFixture.metaPath);
+		});
+	});
+	//TODO $all, $count, $crossjoin, $ref, $value
+	// Q: Do we need to keep signatures to resolve overloads?
+	// A: Most probably not. The spec says "All bound functions with the same function name and
+	//    binding parameter type within a namespace MUST specify the same return type."
+	//    "All unbound functions with the same function name within a namespace MUST specify the
+	//    same return type." --> We can find the return type (from the binding parameter type).
+	//    If it comes to annotations, the signature might make a difference, but then "unordered
+	//    set of (non-binding) parameter names" is unique.
 });

@@ -63,7 +63,9 @@ sap.ui.require([
 				getGroupSubmitMode : function (sGroupId) {
 					return defaultGetGroupProperty(sGroupId);
 				},
-				getKeyPredicate : function (t, o) {return "('" + o.key + "')"; },
+				getKeyPredicate : function (oInstance, sMetaPath, mTypeForMetaPath) {
+					return "('" + oInstance.key + "')";
+				},
 				getServiceUrl : function () {return "/~/";},
 				relocate : function () {},
 				removePatch : function () {},
@@ -1003,12 +1005,12 @@ sap.ui.require([
 	[{
 		options : undefined,
 		types : {
-			"TEAMS('42')" : {$Key : ["TeamId"]}
+			"TEAMS" : {$Key : ["TeamId"]}
 		}
 	}, {
 		options : {$select : ["foo"]},
 		types : {
-			"TEAMS('42')" : {$Key : ["TeamId"]}
+			"TEAMS" : {$Key : ["TeamId"]}
 		}
 	}, {
 		options : {
@@ -1019,31 +1021,34 @@ sap.ui.require([
 						"EMPLOYEE_2_EQUIPMENT/EQUIPMENT_2_PRODUCT" : null,
 						"Address/Country" : null
 					}
-				}
+				},
+				"EntityWithComplexKey" : null
 			}
 		},
 		types : {
-			"TEAMS('42')" : {$Key : ["TeamId"]},
-			"TEAMS('42')/MANAGER" : {$Key : ["ManagerId"]},
-			"TEAMS('42')/TEAM_2_EMPLOYEES" : {$Key : ["EmployeeId"]},
-			"TEAMS('42')/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENT" : {$Key : ["EquipmentId"]},
-			"TEAMS('42')/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENT/EQUIPMENT_2_PRODUCT" :
+			"TEAMS" : {$Key : ["TeamId"]},
+			"TEAMS/MANAGER" : {$Key : ["ManagerId"]},
+			"TEAMS/TEAM_2_EMPLOYEES" : {$Key : ["EmployeeId"]},
+			"TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENT" : {$Key : ["EquipmentId"]},
+			"TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENT/EQUIPMENT_2_PRODUCT" :
 				{$Key : ["ProductId"]},
-			"TEAMS('42')/TEAM_2_EMPLOYEES/Address" : {$kind : "ComplexType"},
-			"TEAMS('42')/TEAM_2_EMPLOYEES/Address/Country" : {$Key : ["CountryId"]}
+			"TEAMS/TEAM_2_EMPLOYEES/Address" : {$kind : "ComplexType"},
+			"TEAMS/TEAM_2_EMPLOYEES/Address/Country" : {$Key : ["CountryId"]},
+			"TEAMS/EntityWithComplexKey" :
+				{$Key : [{"key1" : "a/b/id"}, {"key2" : "c/id"}, {"key3" : "key"}]},
+			"TEAMS/EntityWithComplexKey/a/b" : {$kind : "ComplexType"},
+			"TEAMS/EntityWithComplexKey/c" : {$kind : "ComplexType"}
 		}
-	}].forEach(function (oFixture) {
-		QUnit.test("Cache#fetchTypes", function (assert) {
+	}].forEach(function (oFixture, i) {
+		QUnit.test("Cache#fetchTypes #" + i, function (assert) {
 			var oCache,
 				oPromise,
 				that = this;
 
+			this.mock(_Helper).expects("getMetaPath").withExactArgs("TEAMS('42')").returns("TEAMS");
 			Object.keys(oFixture.types).forEach(function (sPath) {
 				that.oRequestorMock.expects("fetchTypeForPath").withExactArgs(sPath)
 					.returns(Promise.resolve(oFixture.types[sPath]));
-				if (!oFixture.types[sPath].$Key) {// expect it in the result only if it has a $Key
-					delete oFixture.types[sPath];
-				}
 			});
 			// create after the mocks have been set up, otherwise they won't be called
 			oCache = new _Cache(this.oRequestor, "TEAMS('42')", oFixture.options);
@@ -1051,50 +1056,10 @@ sap.ui.require([
 			// code under test
 			oPromise = oCache.fetchTypes();
 			assert.strictEqual(oCache.fetchTypes(), oPromise, "second call returns same promise");
-			return oPromise.then(function (mTypeForPath) {
-				assert.deepEqual(mTypeForPath, oFixture.types);
+			return oPromise.then(function (mTypeForMetaPath) {
+				assert.deepEqual(mTypeForMetaPath, oFixture.types);
 			});
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Cache#fetchTypeFor", function (assert) {
-		var sResourcePath = "~foo~",
-			oCache = new _Cache(this.oRequestor, sResourcePath),
-			oCacheMock = this.mock(oCache),
-			mTypeForPath = {
-				"~foo~" : {},
-				"~foo~/bar" : {},
-				"~foo~/bar/baz" : {}
-			};
-
-		[
-			{path : "", type : "~foo~"},
-			{path : "('42')/bar", type : "~foo~/bar"},
-			{path : "bar", type : "~foo~/bar"},
-			{path : "bar('42')", type : "~foo~/bar"},
-			{path : "bar('42')/baz", type : "~foo~/bar/baz"},
-			{path : "bar/0/baz", type : "~foo~/bar/baz"},
-			{path : "bar/-1/baz", type : "~foo~/bar/baz"},
-			{path : "baz", type : undefined}
-		].forEach(function (oFixture) {
-			oCacheMock.expects("fetchTypes")
-				.withExactArgs().returns(_SyncPromise.resolve(mTypeForPath));
-			assert.strictEqual(oCache.fetchTypeFor(oFixture.path).getResult(),
-				oFixture.type && mTypeForPath[oFixture.type], oFixture.path);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Cache#calculateKeyPredicates: no entity", function (assert) {
-		var sResourcePath = "~foo~",
-			oCache = new _Cache(this.oRequestor, sResourcePath),
-			oEntity = {};
-
-		// code under test
-		oCache.calculateKeyPredicates(oEntity, {});
-
-		assert.strictEqual(oEntity["@$ui5.predicate"], undefined);
 	});
 
 	//*********************************************************************************************
@@ -1103,20 +1068,21 @@ sap.ui.require([
 			oCache = new _Cache(this.oRequestor, sResourcePath),
 			oEntity = {},
 			sPredicate = "(predicate='4711')",
-			mTypeForPath = {"~foo~" : {}};
+			mTypeForMetaPath = {"~metafoo~" : {$Key : []}};
 
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("~foo~").returns("~metafoo~");
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~"]), sinon.match.same(oEntity))
+			.withExactArgs(sinon.match.same(oEntity), "~metafoo~", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate);
 
 		// code under test
-		oCache.calculateKeyPredicates(oEntity, mTypeForPath);
+		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
 		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#calculateKeyPredicates: nested entities", function (assert) {
+	QUnit.test("Cache#calculateKeyPredicates: nested", function (assert) {
 		var sResourcePath = "~foo~",
 			oCache = new _Cache(this.oRequestor, sResourcePath),
 			oEntity = {
@@ -1127,43 +1093,47 @@ sap.ui.require([
 					navigation : {} // an navigation property within a complex type
 				},
 				no : 4,
+				noType : {},
 				qux : null
 			},
 			sPredicate1 = "(foo='4711')",
 			sPredicate2 = "(bar='42')",
 			sPredicate3 = "(baz='67')",
 			sPredicate4 = "(entity='23')",
-			mTypeForPath = {
-				"~foo~" : {},
-				"~foo~/bar" : {},
-				"~foo~/bar/baz" : {},
-				"~foo~/property/navigation" : {},
-				"~foo~/qux" : {}
+			mTypeForMetaPath = {
+				"~foo~" : {$Key : []},
+				"~foo~/bar" : {$Key : []},
+				"~foo~/bar/baz" : {$Key : []},
+				"~foo~/property" : {},
+				"~foo~/property/navigation" : {$Key : []},
+				"~foo~/qux" : {$Key : []}
 			};
 
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~"]), sinon.match.same(oEntity))
+			.withExactArgs(sinon.match.same(oEntity), "~foo~", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate1);
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/bar"]),
-				sinon.match.same(oEntity.bar))
+			.withExactArgs(sinon.match.same(oEntity.bar), "~foo~/bar",
+				sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate2);
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/bar/baz"]),
-				sinon.match.same(oEntity.bar.baz))
+			.withExactArgs(sinon.match.same(oEntity.bar.baz), "~foo~/bar/baz",
+				sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate3);
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/property/navigation"]),
-				sinon.match.same(oEntity.property.navigation))
+			.withExactArgs(sinon.match.same(oEntity.property.navigation),
+				"~foo~/property/navigation", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate4);
 
 		// code under test
-		oCache.calculateKeyPredicates(oEntity, mTypeForPath);
+		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
 		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate1);
 		assert.strictEqual(oEntity.bar["@$ui5.predicate"], sPredicate2);
 		assert.strictEqual(oEntity.bar.baz["@$ui5.predicate"], sPredicate3);
+		assert.strictEqual(oEntity.property["@$ui5.predicate"], undefined);
 		assert.strictEqual(oEntity.property.navigation["@$ui5.predicate"], sPredicate4);
+		assert.strictEqual(oEntity.noType["@$ui5.predicate"], undefined);
 	});
 
 	//*********************************************************************************************
@@ -1175,25 +1145,25 @@ sap.ui.require([
 			},
 			sPredicate1 = "(foo='4711')",
 			sPredicate2 = "(bar='42')",
-			mTypeForPath = {
-				"~foo~" : {},
-				"~foo~/bar" : {}
+			mTypeForMetaPath = {
+				"~foo~" : {$Key : []},
+				"~foo~/bar" : {$Key : []}
 			};
 
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~"]), sinon.match.same(oEntity))
+			.withExactArgs(sinon.match.same(oEntity), "~foo~", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate1);
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/bar"]),
-				sinon.match.same(oEntity.bar[0]))
+			.withExactArgs(sinon.match.same(oEntity.bar[0]), "~foo~/bar",
+				sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate2);
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/bar"]),
-				sinon.match.same(oEntity.bar[1]))
+			.withExactArgs(sinon.match.same(oEntity.bar[1]), "~foo~/bar",
+				sinon.match.same(mTypeForMetaPath))
 			.returns(undefined);
 
 		// code under test
-		oCache.calculateKeyPredicates(oEntity, mTypeForPath);
+		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
 		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate1);
 		assert.strictEqual(oEntity.bar[0]["@$ui5.predicate"], sPredicate2);
@@ -1222,7 +1192,7 @@ sap.ui.require([
 				},
 				oPromise,
 				mQueryParams = {},
-				mTypeForPath = oFixture.types ? {
+				mTypeForMetaPath = oFixture.types ? {
 					"Employees" : {
 						$Key : ["key"],
 						key : {$Type : "Edm.String"}
@@ -1244,7 +1214,7 @@ sap.ui.require([
 			oCache = this.createCache(sResourcePath, mQueryParams);
 			oCacheMock = this.mock(oCache);
 			oCacheMock.expects("fetchTypes").withExactArgs()
-				.returns(Promise.resolve(mTypeForPath));
+				.returns(Promise.resolve(mTypeForMetaPath));
 
 			// code under test
 			oPromise = oCache.read(oFixture.index, oFixture.length, "group");
@@ -1612,9 +1582,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#create: Promise as vPostPath", function (assert) {
-		var oCache = new _Cache(this.oRequestor),
+		var oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oPostPathPromise = _SyncPromise.resolve("TEAMS"),
-			oType = {};
+			mTypeForMetaPath = {};
 
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
@@ -1624,10 +1594,10 @@ sap.ui.require([
 			.withExactArgs("POST", "TEAMS", "updateGroup", null, /*oPayload*/sinon.match.object,
 				/*fnSubmit*/sinon.match.func, /*fnCancel*/sinon.match.func)
 			.returns(_SyncPromise.resolve({}));
-		this.mock(oCache).expects("fetchTypeFor").withExactArgs("")
-			.returns(_SyncPromise.resolve(oType));
+		this.mock(oCache).expects("fetchTypes").withExactArgs()
+			.returns(_SyncPromise.resolve(mTypeForMetaPath));
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(oType), sinon.match.object)
+			.withExactArgs(sinon.match.object, "TEAMS", sinon.match.same(mTypeForMetaPath))
 			.returns("(~)");
 
 		// code under test
@@ -1637,7 +1607,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("_Cache#create: with given sPath", function (assert) {
 		var oBody,
-			oCache = new _Cache(this.oRequestor),
+			oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oCacheMock = this.mock(oCache),
 			aCollection = [],
 			oCountChangeListener = {onChange : sinon.spy()},
@@ -1645,7 +1615,7 @@ sap.ui.require([
 			oIdChangeListener = {onChange : sinon.spy()},
 			sPathInCache = "0/TEAM_2_EMPLOYEES",
 			oPostPathPromise = _SyncPromise.resolve("TEAMS('0')/TEAM_2_EMPLOYEES"),
-			oType = {};
+			mTypeForMetaPath = {};
 
 		oCache.fetchValue = function () {};
 		aCollection.$count = 0;
@@ -1664,10 +1634,11 @@ sap.ui.require([
 				ID : "7",
 				Name : "John Doe"
 			})));
-		oCacheMock.expects("fetchTypeFor").withExactArgs(sPathInCache)
-			.returns(_SyncPromise.resolve(oType));
+		this.mock(oCache).expects("fetchTypes").withExactArgs()
+			.returns(_SyncPromise.resolve(mTypeForMetaPath));
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(oType), sinon.match.object)
+			.withExactArgs(sinon.match.object, "TEAMS/TEAM_2_EMPLOYEES",
+				sinon.match.same(mTypeForMetaPath))
 			.returns("(~)");
 
 		// code under test
@@ -2170,13 +2141,13 @@ sap.ui.require([
 			oCreatedPromise,
 			oEntity = {EmployeeId: "4711", "@odata.etag" : "anyEtag"},
 			sGroupId = "updateGroup",
-			oType = {},
+			mTypeForMetaPath = {},
 			that = this;
 
-		this.mock(oCache).expects("fetchTypeFor").withExactArgs("")
-			.returns(_SyncPromise.resolve(oType));
+		this.mock(oCache).expects("fetchTypes").withExactArgs()
+			.returns(_SyncPromise.resolve(mTypeForMetaPath));
 		this.mock(oRequestor).expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(oType), sinon.match.object)
+			.withExactArgs(sinon.match.object, "Employees", sinon.match.same(mTypeForMetaPath))
 			.returns("(~)");
 
 		oCreatedPromise = oCache.create(sGroupId, "Employees", "", {}, function () {
@@ -2215,14 +2186,14 @@ sap.ui.require([
 			oListener2 = {},
 			mQueryParams = {},
 			sResourcePath = "Employees('1')",
-			mTypeForPath = {},
+			mTypeForMetaPath = {},
 			that = this;
 
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(sResourcePath, sinon.match.same(mQueryParams), false, true)
 			.returns("?~");
 		this.mock(_Cache.prototype).expects("fetchTypes")
-			.returns(Promise.resolve(mTypeForPath));
+			.returns(Promise.resolve(mTypeForMetaPath));
 
 		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams,
 			true);
@@ -2235,7 +2206,7 @@ sap.ui.require([
 				sinon.match.same(fnDataRequested1))
 			.returns(Promise.resolve(oExpectedResult).then(function () {
 					that.mock(oCache).expects("calculateKeyPredicates")
-						.withExactArgs(oExpectedResult, mTypeForPath);
+						.withExactArgs(oExpectedResult, mTypeForMetaPath);
 					that.mock(_Cache).expects("computeCount")
 						.withExactArgs(sinon.match.same(oExpectedResult));
 					oCacheMock.expects("checkActive").twice();

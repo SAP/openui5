@@ -2093,29 +2093,60 @@ sap.ui.require([
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
-			var sProperty,
-				oRequestor = _Requestor.create("/");
+			var oRequestor = _Requestor.create("/");
 
 			this.spy(oRequestor, "formatPropertyAsLiteral");
 
 			assert.strictEqual(
-				oRequestor.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
+				oRequestor.getKeyPredicate(oFixture.oEntityInstance, "~path~", {
+					"~path~" : oFixture.oEntityType
+				}),
 				oFixture.sKeyPredicate);
 
-			// check that formatPropertyAsLiteral() is called for each property
-			for (sProperty in oFixture.oEntityType) {
-				if (sProperty[0] !== "$") {
-					assert.ok(
-						oRequestor.formatPropertyAsLiteral.calledWithExactly(
-							sinon.match.same(oFixture.oEntityInstance[sProperty]),
-							sinon.match.same(oFixture.oEntityType[sProperty])),
-						oRequestor.formatPropertyAsLiteral.printf(
-							"_Helper.formatLiteral('" + sProperty + "',...) %C"));
-				}
-			}
+			// check that formatPropertyAsLiteral() is called for each key property
+			oFixture.oEntityType.$Key.forEach(function (sProperty) {
+				sinon.assert.calledWithExactly(oRequestor.formatPropertyAsLiteral,
+					sinon.match.same(oFixture.oEntityInstance[sProperty]),
+					sinon.match.same(oFixture.oEntityType[sProperty]));
+			});
 		});
 	});
-	//TODO handle keys with aliases!
+
+	//*********************************************************************************************
+	QUnit.test("getKeyPredicate: key with alias", function (assert) {
+		var oComplexType = {
+				"baz" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
+				}
+			},
+			oEntityInstance = {},
+			oEntityType = {
+				"$Key" : ["qux", {"foo" : "bar/baz"}],
+				"qux" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
+				}
+			},
+			oHelperMock = this.mock(_Helper),
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor);
+
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oEntityInstance, ["qux"]).returns("v1");
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oEntityInstance, ["bar", "baz"]).returns("v2");
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs("v1", sinon.match.same(oEntityType.qux)).returns("~1");
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs("v2", sinon.match.same(oComplexType.baz)).returns("~2");
+
+		assert.strictEqual(oRequestor.getKeyPredicate(oEntityInstance, "~path~", {
+				"~path~" : oEntityType,
+				"~path~/bar" : oComplexType
+			}),
+			"(qux=~1,foo=~2)");
+	});
 
 	//*********************************************************************************************
 	[{
@@ -2144,7 +2175,9 @@ sap.ui.require([
 			var oRequestor = _Requestor.create("/");
 
 			assert.strictEqual(
-				oRequestor.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
+				oRequestor.getKeyPredicate(oFixture.oEntityInstance, "~path~", {
+					"~path~" : oFixture.oEntityType
+				}),
 				undefined);
 		});
 	});

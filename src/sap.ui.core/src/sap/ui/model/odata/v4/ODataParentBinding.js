@@ -669,7 +669,12 @@ sap.ui.define([
 		var oType = this.oModel.getMetaModel().getObject(sMetaPath + "/");
 
 		if (oType.$Key) {
-			this.addToSelect(mQueryOptions, oType.$Key);
+			this.addToSelect(mQueryOptions, oType.$Key.map(function (vKey) {
+				if (typeof vKey === "object") {
+					return vKey[Object.keys(vKey)[0]];
+				}
+				return vKey;
+			}));
 		}
 	};
 
