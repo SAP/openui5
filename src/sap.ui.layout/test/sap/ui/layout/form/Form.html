@@ -63,6 +63,7 @@
 			title: new sap.ui.core.Title({text: "Form Title", icon: "../../commons/images/ui5_small.png", tooltip: "Title tooltip"}),
 			tooltip: "Form tooltip",
 			editable: true,
+			defaultAction: (e) => sap.m.MessageToast.show('Default Action Triggered'),
 			layout: oLayout1,
 			formContainers: [
 				new sap.ui.layout.form.FormContainer("C1",{
