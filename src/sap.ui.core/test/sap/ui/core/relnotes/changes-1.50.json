@@ -665,5 +665,40 @@
         "references": []
       }
     ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "2c979fcd600a801a9b4d17393f10d4b142e7aafb",
+        "type": "FIX",
+        "text": " core.Popup: autoclose should only work with touch/mouse event when touch is supported",
+        "references": []
+      },
+      {
+        "id": "3335356d620e0f49bc15eff1275db2dfeac936ba",
+        "type": "FIX",
+        "text": " sap.core.Scrollbar - fix for vertical scrollbar in RTL mode in Safari om Mac OS.",
+        "references": []
+      },
+      {
+        "id": "8a2a5b58b6fa2fad3ee223bd28c3a5b4959b7286",
+        "type": "FIX",
+        "text": " sap.m.Panel: fix focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "ce78966621c27b03af7207e7c3b3c2b253cf39e5",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataPropertyBinding: setValue(null)",
+        "references": []
+      },
+      {
+        "id": "97fa146f1f1da3f94b3df029c3d6ec93d1e110e7",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Better handling of incomplete list data",
+        "references": []
+      }
+    ]
   }
 }

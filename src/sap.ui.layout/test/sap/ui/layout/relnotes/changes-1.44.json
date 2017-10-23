@@ -252,5 +252,27 @@
         "references": []
       }
     ]
+  },
+  "1.44.22": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "48cce714f35140c78b126b766413f81c32088fd4",
+        "type": "FIX",
+        "text": " Form: don\u0027t close FormContainer if focus on Input field",
+        "references": []
+      }
+    ]
+  },
+  "1.44.23": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "9ea6159fe1ec4b4558a614bd802ac37affb1df19",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
+        "references": []
+      }
+    ]
   }
 }

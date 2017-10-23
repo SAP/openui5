@@ -180,5 +180,28 @@
         "references": []
       }
     ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "5cd55c01e6e9dc1012bb0bcb38c8f6104cf828fa",
+        "type": "FIX",
+        "text": " Form: don\u0027t close FormContainer if focus on Input field",
+        "references": []
+      },
+      {
+        "id": "e50d7be395529a3de6f879e09bf8c47bb9b75b51",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly apply changes on xml views",
+        "references": []
+      },
+      {
+        "id": "65f7e7d56d41e7c15adb60d017d0b3cf49490a4e",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
+        "references": []
+      }
+    ]
   }
 }

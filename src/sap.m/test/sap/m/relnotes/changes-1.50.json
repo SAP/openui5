@@ -1517,5 +1517,52 @@
         "references": []
       }
     ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "f5a9dc3b11064ca9ea01e4892d94615b1a798fa3",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Does not log error on combi device and type Light",
+        "references": []
+      },
+      {
+        "id": "d840372208a49002424bddf6ab95b0f9073f81f7",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Update button text properly when SingleSelectMaster mode is used",
+        "references": []
+      },
+      {
+        "id": "18c8b209336ade44304ae8c5e3fbf01becfef354",
+        "type": "FIX",
+        "text": " sap.m.Link: removed href attribute if property href is not set",
+        "references": []
+      },
+      {
+        "id": "b0079eb4d778dc223cc8390250b9918bcc47f66b",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: AriaLabelledBy correctly set on the active title",
+        "references": []
+      },
+      {
+        "id": "8a2a5b58b6fa2fad3ee223bd28c3a5b4959b7286",
+        "type": "FIX",
+        "text": " sap.m.Panel: fix focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "37b7a4bafd035597a74e082168ed16a11076d1d9",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Cloned item now works with binding",
+        "references": []
+      },
+      {
+        "id": "e50d7be395529a3de6f879e09bf8c47bb9b75b51",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly apply changes on xml views",
+        "references": []
+      }
+    ]
   }
 }

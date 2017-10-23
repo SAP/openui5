@@ -97,5 +97,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "1a3ed654e0c5118015e33dffb80874f2e362ae46",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: minor visual fix in the header",
+        "references": []
+      }
+    ]
   }
 }

@@ -113,5 +113,22 @@
         "references": []
       }
     ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "e50d7be395529a3de6f879e09bf8c47bb9b75b51",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly apply changes on xml views",
+        "references": []
+      },
+      {
+        "id": "37e1422df64b1a5aafa3409fbd5bcae4978ad112",
+        "type": "FIX",
+        "text": " sap.ui.rta: RTA StyleClass for mandatory field popup",
+        "references": []
+      }
+    ]
   }
 }
