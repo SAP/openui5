@@ -305,8 +305,9 @@ sap.ui.define([
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
 	 * @throws {Error}
-	 *   If this binding is a deferred operation binding, if the group ID is neither '$auto'
-	 *   nor '$direct' or if the cache promise for this binding is not yet fulfilled
+	 *   If this binding is a deferred operation binding, if the group ID has
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.Auto} or if the cache promise for this binding is
+	 *   not yet fulfilled
 	 *
 	 * @private
 	 */

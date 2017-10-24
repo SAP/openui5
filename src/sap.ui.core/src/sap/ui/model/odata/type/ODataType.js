@@ -101,6 +101,7 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
+	 * @abstract
 	 * @alias sap.ui.model.odata.type.ODataType
 	 * @param {object} [oFormatOptions]
 	 *   type-specific format options; see subtypes

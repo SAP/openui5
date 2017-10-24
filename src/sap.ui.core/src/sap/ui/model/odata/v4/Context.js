@@ -132,22 +132,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deletes the OData entity this context points to. The context must be part of a context
-	 * binding with an empty path or be part of a list binding.
+	 * Deletes the OData entity this context points to.
 	 *
 	 * The context must not be used anymore after successful deletion.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
 	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindContext}
-	 *   and {@link sap.ui.model.odata.v4.ODataModel#bindList}; the resulting group ID must be
-	 *   '$auto' or '$direct'
+	 *   and {@link sap.ui.model.odata.v4.ODataModel#bindList}; the resulting group ID must not have
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.API}.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not point
 	 *   to an entity, if it is not part of a list binding, if there are pending changes for the
-	 *   context's binding, if the resulting group ID is neither '$auto' nor '$direct', or if the
-	 *   deletion on the server fails.
+	 *   context's binding, if the resulting group ID has SubmitMode.API, or if the deletion on the
+	 *   server fails.
 	 *   <p>
 	 *   The error instance is flagged with <code>isConcurrentModification</code> in case a
 	 *   concurrent modification (e.g. by another user) of the entity between loading and deletion

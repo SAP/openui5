@@ -290,10 +290,11 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} with the update group ID as parameter
 	 * also delete the created context together with other changes.
 	 *
-	 * If the creation of the entity on the server failed, the creation is repeated for application
-	 * group IDs with the next call of {@link sap.ui.model.odata.v4.ODataModel#submitBatch}. For
-	 * '$auto' or '$direct', the creation is repeated automatically with the next update for the
-	 * entity.
+	 * If the creation of the entity on the server failed, the creation is repeated
+	 * automatically. If the binding's update group ID has
+	 * {@link sap.ui.model.odata.v4.SubmitMode.API}, it is repeated with the next call of
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch}. Otherwise it is repeated with the next
+	 * update for the entity.
 	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -921,7 +922,7 @@ sap.ui.define([
 		this.sChangeReason = undefined;
 
 		if (sChangeReason === "AddVirtualContext") {
-			// Note: this task is queued _before_ any $auto submit task!
+			// Note: this task is queued _before_ any SubmitMode.Auto task!
 			sap.ui.getCore().addPrerenderingTask(function () {
 				// Note: first result of getContexts after refresh is ignored
 				that.sChangeReason = "RemoveVirtualContext";
