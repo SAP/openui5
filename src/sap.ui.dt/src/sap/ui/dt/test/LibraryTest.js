@@ -1,41 +1,53 @@
 /*!
  * ${copyright}
  */
-
 // Provides class sap.ui.dt.test.LibraryTest.
 sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONModel', 'jquery.sap.global'
 ], function(ResourceModel, JSONModel, jQuery) {
 	"use strict";
-
 	var aDesigntimeElements = [],
 		aModels = [],
 		mBundles = {};
-
 	function hasText(sKey, oBundle) {
 		return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== null;
 	}
-
 	var LibraryTest = function(sTestLibrary, QUnit) {
 		QUnit.config.autostart = false;
 		var oPromise = new Promise(function(resolve) {
 			sap.ui.getCore().loadLibraries([sTestLibrary]).then(function() {
 				var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary],
 					aElements = oLibrary.controls.concat(oLibrary.elements);
-				try {
-					var oRuntimeResourceModel = new ResourceModel({bundleUrl: sap.ui.resource(sTestLibrary, "messagebundle.properties"), bundleLocale:"en"}),
-						oDesigntimeResourceModel = new ResourceModel({bundleUrl: sap.ui.resource(sTestLibrary + ".designtime", "messagebundle.properties"), bundleLocale:"en"});
-					oLibrary.dependencies.forEach(function(sDependantLib) {
-						oRuntimeResourceModel.enhance({bundleUrl: sap.ui.resource(sDependantLib, "messagebundle.properties"), bundleLocale:"en"});
-						oDesigntimeResourceModel.enhance({bundleUrl: sap.ui.resource(sDependantLib + ".designtime", "messagebundle.properties"), bundleLocale:"en"});
-					});
-					mBundles.runtime = oRuntimeResourceModel.getResourceBundle();
-					mBundles.designtime = oDesigntimeResourceModel.getResourceBundle();
-				} catch (e) {
-					/*eslint-disable no-empty*/
-				}
 				sap.ui.require(aElements.map(function(s) {
 					return jQuery.sap.getResourceName(s,"");
 				}), function() {
+					//all controls are loaded, now all libs are loaded
+					var mLazyLibraries = sap.ui.getCore().getLoadedLibraries();
+					try {
+						var oRuntimeResourceModel = new ResourceModel({
+								bundleUrl: sap.ui.resource(sTestLibrary, "messagebundle.properties"),
+								bundleLocale:"en"
+							}),
+							oDesigntimeResourceModel = new ResourceModel({
+								bundleUrl: sap.ui.resource(sTestLibrary + ".designtime", "messagebundle.properties"),
+								bundleLocale:"en"
+							});
+						mBundles.runtime = oRuntimeResourceModel.getResourceBundle();
+						mBundles.designtime = oDesigntimeResourceModel.getResourceBundle();
+						Object.keys(mLazyLibraries).forEach(function(sLib) {
+							if (sTestLibrary !== sLib) {
+								oRuntimeResourceModel.enhance({
+									bundleUrl: sap.ui.resource(sLib, "messagebundle.properties"),
+									bundleLocale:"en"
+								});
+								oDesigntimeResourceModel.enhance({
+									bundleUrl: sap.ui.resource(sLib + ".designtime", "messagebundle.properties"),
+									bundleLocale:"en"
+								});
+							}
+						});
+					} catch (e) {
+						/*eslint-disable no-empty*/
+					}
 					var aDesigntimePromises = [],
 						aControlMetadata = [];
 					for (var i = 0; i < arguments.length; i++) {
@@ -62,7 +74,6 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 		});
 		return oPromise;
 	};
-
 	var mModelChecks = {
 		"/" : {
 			optional: false,
@@ -95,13 +106,11 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 		"/name" : {
 			optional: true,
 			check: function (assert, mEntry, sControlName) {
-
 				//name can be a string like this "{name}"
 				//TODO: be more strict here
 				if (typeof mEntry === "string" && mEntry.indexOf("{") === 0 && mEntry.indexOf("}") == mEntry.length - 1) {
 					return true;
 				}
-
 				//checking name.plural and name.singular if any
 				var aKeys = ["singular", "plural"];
 				aKeys.forEach(function (sKey) {
@@ -115,14 +124,12 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 				});
 				aKeys.forEach(function (sKey) {
 					var bDTFound = false;
-
 					//special handling for old function definitions
 					if (typeof mEntry[sKey] === "function") {
 						assert.strictEqual(typeof mEntry[sKey], "function", sControlName + " defines function for translation of entry /name/" + sKey);
 						assert.strictEqual(typeof mEntry[sKey](), "string", "Assuming that " + sKey + " with " + mEntry[sKey].toString() + " returns a translation at runtime");
 						return;
 					}
-
 					//proceed normally with a translation key
 					if (mEntry[sKey].toUpperCase() !== mEntry[sKey]) {
 						//TODO:this should be enabled before a release of the new design time data
@@ -166,7 +173,6 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 			}
 		}
 	};
-
 	function addTests(QUnit) {
 		QUnit.test("Checking loaded designtime data", function(assert) {
 			aDesigntimeElements.forEach(function(oDTData) {
