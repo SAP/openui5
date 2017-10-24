@@ -37,6 +37,11 @@ sap.ui.define([
 			this._initElementTree();
 			this.treeTable = this.getView().byId("issuesList");
 			this.issueTable = this.getView().byId("issueTable");
+			this.toolHeader = this.getView().byId('toolHeader');
+			this.toolHeader.removeStyleClass('sapTntToolHeader sapContrast sapContrastPlus');
+
+			var toolHeaderPopover = this.toolHeader._getPopover();
+			toolHeaderPopover.removeStyleClass('sapTntToolHeaderPopover sapContrast sapContrastPlus');
 		},
 		setCommunicationSubscriptions: function () {
 
