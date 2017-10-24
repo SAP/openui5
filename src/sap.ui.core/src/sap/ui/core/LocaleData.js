@@ -1227,6 +1227,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
+		 * Returns the short currency formats (like 1K USD, 1M USD....).
+		 *
+		 * @param {string} sStyle short
+		 * @param {string} sNumber 1000, 10000 ...
+		 * @param {string} sPlural one or other (if not exists other is used)
+		 * @returns {string} decimal format
+		 * @public
+		 * @since 1.50.5
+		 */
+		getCurrencyFormat: function(sStyle, sNumber, sPlural) {
+
+			var sFormat;
+			var oFormats;
+
+			switch (sStyle) {
+			default: //short
+				oFormats = this._get("currencyFormat-short");
+				break;
+			}
+
+			if (oFormats) {
+				var sName = sNumber + "-" + sPlural;
+				sFormat = oFormats[sName];
+				if (!sFormat) {
+					sName = sNumber + "-other";
+					sFormat = oFormats[sName];
+				}
+			}
+
+			return sFormat;
+
+		},
+
+		/**
 		 * Returns array of eras.
 		 *
 		 * @param {string} sWidth the style of the era name. It can be 'wide', 'abbreviated' or 'narrow'
