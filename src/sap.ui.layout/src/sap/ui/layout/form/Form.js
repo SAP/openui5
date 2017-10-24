@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.form.Form.
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library'],
-	function(Control, library) {
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', 'jquery.sap.global'],
+	function(Control, library, jQuery) {
 	"use strict";
 
 	/**
@@ -103,8 +103,30 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library'],
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
+		events: {
+
+			/**
+			 * Fired when the user hits enter within the form.
+			 */
+			 defaultAction: {}
+		},
 		designTime : true
 	}});
+
+	/**
+	 * Handle the key up event for ENTER.
+	 * @param {jQuery.Event} oEvent - the keyboard event.
+	 * @private
+	 */
+
+	Form.prototype.onkeyup = function(oEvent) {
+
+		if (oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+			// mark the event for components that needs to know if the event was handled by the form
+			oEvent.setMarked();
+			this.fireDefaultAction();
+		}
+	};
 
 	Form.prototype.toggleContainerExpanded = function(oContainer){
 
