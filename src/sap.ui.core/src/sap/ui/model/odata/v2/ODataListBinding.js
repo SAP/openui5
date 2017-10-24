@@ -363,9 +363,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 */
 	ODataListBinding.prototype.setContext = function(oContext) {
 		var sResolvedPath,
-			bCreated = oContext && oContext.bCreated;
+			bCreated = oContext && oContext.bCreated,
+			bForceUpdate = oContext && oContext.isRefreshForced();
 
-		if (this.oContext !== oContext) {
+		if (this.oContext !== oContext || bForceUpdate) {
 			this.oContext = oContext;
 
 			// If binding is initial or not a relative binding, nothing to do here
@@ -390,7 +391,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			// get new entity type with new context and init filters now correctly
 			this._initSortersFilters();
 
-			if (this.checkExpandedList()) {
+			if (this.checkExpandedList() && !bForceUpdate) {
 				this._fireChange({ reason: ChangeReason.Context });
 			} else {
 				this._refresh();
@@ -888,7 +889,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				that = this,
 				aOldRefs;
 
-		if (this.bSuspended && !this.bIgnoreSuspend && !bForceUpdate) {
+		if ((this.bSuspended && !this.bIgnoreSuspend && !bForceUpdate) || this.bPendingRequest) {
 			return false;
 		}
 		this.bIgnoreSuspend = false;

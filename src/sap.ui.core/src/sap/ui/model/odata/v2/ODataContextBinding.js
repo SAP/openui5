@@ -31,6 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 		constructor : function(oModel, sPath, oContext, mParameters, oEvents){
 			ContextBinding.call(this, oModel, sPath, oContext, mParameters, oEvents);
 			this.bRefreshGroupId = undefined;
+			this.bPendingRequest = false;
 		}
 	});
 
@@ -64,11 +65,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 		bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
 		if (bReloadNeeded) {
 			this.fireDataRequested();
+			this.bPendingRequest = true;
 		}
 		this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 			var oData;
-			that.oElementContext = oContext;
-			that._fireChange({ reason: ChangeReason.Context });
+			if (!oContext || oContext !== that.oElementContext) {
+				that.oElementContext = oContext;
+				that._fireChange({ reason: ChangeReason.Context });
+			}
 			if (bReloadNeeded) {
 				if (that.oElementContext) {
 					oData = that.oElementContext.getObject(that.mParameters);
@@ -77,6 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 				that.oModel.callAfterUpdate(function() {
 					that.fireDataReceived({data: oData});
 				});
+				that.bPendingRequest = false;
 			}
 		}, bReloadNeeded);
 	};
@@ -88,7 +93,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 	 */
 	ODataContextBinding.prototype.checkUpdate = function(bForceUpdate) {
 		var oContext;
-		if (this.bInitial) {
+		if (this.bInitial || this.bPendingRequest) {
 			return;
 		}
 		oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters);
@@ -149,19 +154,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 			//recreate Context: force update
 			if (sResolvedPath) {
 				this.fireDataRequested();
+				this.bPendingRequest = true;
 			}
 			if (this.sRefreshGroup) {
 				mParameters = jQuery.extend({},this.mParameters);
 				mParameters.groupId = this.sRefreshGroup;
 			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
-				if (that.oElementContext === oContext) {
-					if (bForceUpdate) {
-						that._fireChange({ reason: ChangeReason.Context });
-					}
-				} else {
+				if (that.oElementContext !== oContext || bForceUpdate) {
 					that.oElementContext = oContext;
-					that._fireChange({ reason: ChangeReason.Context });
+					that._fireChange({ reason: ChangeReason.Context }, bForceUpdate);
 				}
 				if (that.oElementContext) {
 					oData = that.oElementContext.getObject(that.mParameters);
@@ -171,6 +173,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 					that.oModel.callAfterUpdate(function() {
 						that.fireDataReceived({data: oData});
 					});
+					that.bPendingRequest = false;
 				}
 			}, true);
 		}
@@ -188,9 +191,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 			sResolvedPath,
 			oData,
 			bCreated = oContext && oContext.bCreated,
+			bForceUpdate = oContext && oContext.isRefreshForced(),
 			bReloadNeeded;
 
-		if (this.oContext !== oContext) {
+		if (this.oContext !== oContext || bForceUpdate) {
 			this.oContext = oContext;
 
 			// If binding is initial or not a relative binding, nothing to do here
@@ -211,14 +215,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 
 			// Create new binding context and fire change
 			oData = this.oModel._getObject(this.sPath, this.oContext);
-			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
+			bReloadNeeded =  bForceUpdate || this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
 
-			if (bReloadNeeded) {
+			if (sResolvedPath && bReloadNeeded) {
 				this.fireDataRequested();
+				this.bPendingRequest = true;
 			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 				that.oElementContext = oContext;
-				that._fireChange({ reason: ChangeReason.Context });
+				that._fireChange({ reason: ChangeReason.Context }, bForceUpdate);
 				if (sResolvedPath && bReloadNeeded) {
 					if (that.oElementContext) {
 						oData = that.oElementContext.getObject(that.mParameters);
@@ -227,8 +232,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 					that.oModel.callAfterUpdate(function() {
 						that.fireDataReceived({data: oData});
 					});
+					that.bPendingRequest = false;
 				}
 			}, bReloadNeeded);
+		}
+	};
+
+	ODataContextBinding.prototype._fireChange = function(mParameters, bForceUpdate) {
+		if (this.oElementContext) {
+			this.oElementContext.setForceRefresh(bForceUpdate);
+		}
+		ContextBinding.prototype._fireChange.call(this, mParameters);
+		if (this.oElementContext) {
+			this.oElementContext.setForceRefresh(false);
 		}
 	};
 
