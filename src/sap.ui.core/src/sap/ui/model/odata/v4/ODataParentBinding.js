@@ -455,7 +455,7 @@ sap.ui.define([
 	/**
 	 * Returns the query options for the given path relative to this binding. Uses the options
 	 * resulting from the binding parameters or the options inherited from the parent binding by
-	 * using {@link Context#getQueryOptionsForPath}.
+	 * using {@link sap.ui.model.odata.v4.Context#getQueryOptionsForPath}.
 	 *
 	 * @param {string} sPath
 	 *   The relative path for which the query options are requested
