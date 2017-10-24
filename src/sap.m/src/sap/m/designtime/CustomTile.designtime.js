@@ -8,6 +8,12 @@ sap.ui.define([],
 	"use strict";
 
 	return {
+		palette: {
+			group: "TILE",
+			icons: {
+				svg: "sap/m/designtime/CustomTile.icon.svg"
+			}
+		},
 		aggregations : {
 			content : {
 				domRef : ":sap-domref"

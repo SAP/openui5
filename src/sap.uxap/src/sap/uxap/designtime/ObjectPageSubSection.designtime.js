@@ -8,6 +8,12 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			palette: {
+				group: "CONTAINER",
+				icons: {
+					svg: "sap/uxap/designtime/ObjectPageSubSection.icon.svg"
+				}
+			},
 			actions: {
 				remove: {
 					changeType: "hideControl"

@@ -80,6 +80,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 				interfaces: ["sap.ui.core.IFormContent"],
 				library: "sap.m",
+				designtime: "sap/m/designtime/StepInput.designtime",
 				properties: {
 
 					/**

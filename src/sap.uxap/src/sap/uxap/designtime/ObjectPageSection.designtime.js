@@ -16,6 +16,12 @@ sap.ui.define(["sap/uxap/library"],
 				return library.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME_PLURAL");
 			}
 		},
+		palette: {
+			group: "CONTAINER",
+			icons: {
+				svg: "sap/uxap/designtime/ObjectPageSection.icon.svg"
+			}
+		},
 		actions : {
 			remove : {
 				changeType : "stashControl"

@@ -7,6 +7,12 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			palette: {
+				group: "INPUT",
+				icons: {
+					svg: "sap/m/designtime/Slider.icon.svg"
+				}
+			},
 			actions: {
 				remove: {
 					changeType: "hideControl"

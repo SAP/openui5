@@ -8,6 +8,12 @@ sap.ui.define(['sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 's
 	"use strict";
 
 	return {
+		palette: {
+			group: "LAYOUT",
+			icons: {
+				svg: "sap/ui/layout/designtime/form/FormElement.icon.svg"
+			}
+		},
 		domRef : function(oFormElement) {
 			var oParent = oFormElement.getParent();
 			if (oParent instanceof FormContainer) {

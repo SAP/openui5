@@ -8,6 +8,12 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			palette: {
+				group: "CONTAINER",
+				icons: {
+					svg: "sap/m/designtime/IconTabBar.icon.svg"
+				}
+			},
 			aggregations: {
 				items: {
 					domRef: ":sap-domref > .sapMITH > .sapMITBScrollContainer > .sapMITBHead",

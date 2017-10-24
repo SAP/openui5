@@ -8,7 +8,12 @@ sap.ui.define([],
 		"use strict";
 
 		return {
-
+			palette: {
+				group: "ACTION",
+				icons: {
+					svg: "sap/m/designtime/MenuButton.icon.svg"
+				}
+			},
 			aggregations: {
 				menu: {
 					ignore: true

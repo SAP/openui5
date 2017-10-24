@@ -37,6 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 		interfaces : ["sap.ui.core.IFormContent", "sap.ui.unified.IProcessableBlobs"],
 		library : "sap.ui.unified",
+		designtime: "sap/ui/unified/designtime/FileUploader.designtime",
 		properties : {
 
 			/**

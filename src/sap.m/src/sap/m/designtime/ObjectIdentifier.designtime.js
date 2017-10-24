@@ -10,6 +10,12 @@ sap.ui.define([
 	"use strict";
 	var oWrapper;
 	return {
+		palette: {
+			group: "DISPLAY",
+			icons: {
+				svg: "sap/m/designtime/ObjectIdentifier.icon.svg"
+			}
+		},
 		// There is a dependency to 'sap.ui.comp' library because the so called 'settings' handler is implemented for SmartLink. So we register
 		// the 'settings' handler in 'sap.ui.comp' library which basically do the same stuff as for SmartLink. The registration mechanism has been
 		// chosen in order to be on the save site if 'sap.ui.comp' library is not used at all (e.g. OpenUI5).

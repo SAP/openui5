@@ -8,6 +8,12 @@ sap.ui.define([],
 	"use strict";
 
 	return {
+		palette: {
+			group: "LAYOUT",
+			icons: {
+				svg: "sap/ui/layout/designtime/form/Form.icon.svg"
+			}
+		},
 		aggregations : {
 			title : {
 				ignore : true

@@ -33,6 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	var Calendar = Control.extend("sap.ui.unified.Calendar", /** @lends sap.ui.unified.Calendar.prototype */ { metadata : {
 
 		library : "sap.ui.unified",
+		designtime: "sap/ui/unified/designtime/Calendar.designtime",
 		properties : {
 
 			/**

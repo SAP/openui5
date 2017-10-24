@@ -8,6 +8,16 @@ sap.ui.define([],
 	"use strict";
 
 	return {
+		name: {
+			singular: "PANEL_NAME",
+			plural: "PANEL_NAME_PLURAL"
+		},
+		palette: {
+			group: "CONTAINER",
+			icons: {
+				svg: "sap/m/designtime/Panel.icon.svg"
+			}
+		},
 		actions: {
 			remove: {
 				changeType: "hideControl"
@@ -44,10 +54,6 @@ sap.ui.define([],
 					move: "moveControls"
 				}
 			}
-		},
-		name: {
-			singular: "PANEL_NAME",
-			plural: "PANEL_NAME_PLURAL"
 		}
 	};
 

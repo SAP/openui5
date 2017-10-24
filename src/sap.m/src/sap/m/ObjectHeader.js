@@ -54,6 +54,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	var ObjectHeader = Control.extend("sap.m.ObjectHeader", /** @lends sap.m.ObjectHeader.prototype */ { metadata : {
 
 		library : "sap.m",
+		designtime: "sap/m/designtime/ObjectHeader.designtime",
 		properties : {
 
 			/**

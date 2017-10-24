@@ -8,6 +8,16 @@ sap.ui.define([],
 			"use strict";
 
 			return {
+				name: {
+					singular: "LINK_NAME",
+					plural: "LINK_NAME_PLURAL"
+				},
+				palette: {
+					group: "ACTION",
+					icons: {
+						svg: "sap/m/designtime/Link.icon.svg"
+					}
+				},
 				actions: {
 					remove: {
 						changeType: "hideControl"
@@ -15,10 +25,6 @@ sap.ui.define([],
 					reveal: {
 						changeType: "unhideControl"
 					}
-				},
-				name: {
-					singular: "LINK_NAME",
-					plural: "LINK_NAME_PLURAL"
 				}
 			};
 		}, /* bExport= */ false);

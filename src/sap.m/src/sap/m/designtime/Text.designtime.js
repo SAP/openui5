@@ -8,6 +8,16 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			name: {
+				singular: "TEXT_NAME",
+				plural: "TEXT_NAME_PLURAL"
+			},
+			palette: {
+				group: "DISPLAY",
+				icons: {
+					svg: "sap/m/designtime/Text.icon.svg"
+				}
+			},
 			actions: {
 				remove: {
 					changeType: "hideControl"
@@ -21,10 +31,6 @@ sap.ui.define([],
 				reveal: {
 					changeType: "unhideControl"
 				}
-			},
-			name: {
-				singular: "TEXT_NAME",
-				plural: "TEXT_NAME_PLURAL"
 			}
 		};
 	}, /* bExport= */ false);

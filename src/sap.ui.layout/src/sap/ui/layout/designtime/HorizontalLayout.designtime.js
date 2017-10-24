@@ -8,6 +8,16 @@ sap.ui.define([],
 	"use strict";
 
 	return {
+		name: {
+			singular: "HORIZONTAL_LAYOUT_CONTROL_NAME",
+			plural: "HORIZONTAL_LAYOUT_CONTROL_NAME_PLURAL"
+		},
+		palette: {
+			group: "LAYOUT",
+			icons: {
+				svg: "sap/ui/layout/designtime/HorizontalLayout.icon.svg"
+			}
+		},
 		aggregations: {
 			content: {
 				domRef: ":sap-domref",
@@ -23,10 +33,6 @@ sap.ui.define([],
 			reveal: {
 				changeType: "unhideControl"
 			}
-		},
-		name: {
-			singular: "HORIZONTAL_LAYOUT_CONTROL_NAME",
-			plural: "HORIZONTAL_LAYOUT_CONTROL_NAME_PLURAL"
 		}
 	};
 

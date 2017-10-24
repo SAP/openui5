@@ -8,6 +8,12 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			palette: {
+				group: "CONTAINER",
+				icons: {
+					svg: "sap/m/designtime/IconTabFilter.icon.svg"
+				}
+			},
 			actions: {
 				rename: function (oPage) {
 					return {

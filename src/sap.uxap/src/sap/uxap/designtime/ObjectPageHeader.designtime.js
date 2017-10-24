@@ -8,6 +8,12 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			palette: {
+				group: "DISPLAY",
+				icons: {
+					svg: "sap/uxap/designtime/ObjectPageHeader.icon.svg"
+				}
+			},
 			aggregations: {
 				actions: {
 					domRef : ":sap-domref .sapUxAPObjectPageHeaderIdentifierActions",

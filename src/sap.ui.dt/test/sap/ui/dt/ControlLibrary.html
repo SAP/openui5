@@ -1,0 +1,721 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>Designtime</title>
+
+		<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+		</script>
+		<script>
+			//gather all control that have designtime
+			var sTestLibrary = "sap.ui.layout";
+			window.document.title = "Designtime Test for " + sTestLibrary;
+			var mBundles = {};
+			var oDTElementModel;
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require(["sap/ui/model/json/JSONModel","sap/ui/model/resource/ResourceModel"], function (JSONModel, ResourceModel) {
+					sap.ui.getCore().loadLibraries([sTestLibrary, "sap.m", "sap.ui.codeeditor"]).then(
+						function() {
+							var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary],
+							aElements = [].concat(oLibrary.controls.concat(oLibrary.elements));
+							oDTElementModel = new JSONModel();
+							oDTElementModel.iSizeLimit = 10000;
+							createUI();
+							try {
+								var oRuntimeResourceModel = new ResourceModel({bundleUrl: sap.ui.resource(sTestLibrary, "messagebundle.properties"), bundleLocale:"en"}),
+									oDesigntimeResourceModel = new ResourceModel({bundleUrl: sap.ui.resource(sTestLibrary + ".designtime", "messagebundle.properties"), bundleLocale:"en"});
+								oLibrary.dependencies.forEach(function(sDependantLib) {
+									oRuntimeResourceModel.enhance({bundleUrl: sap.ui.resource(sDependantLib, "messagebundle.properties"), bundleLocale:"en"});
+									oDesigntimeResourceModel.enhance({bundleUrl: sap.ui.resource(sDependantLib + ".designtime", "messagebundle.properties"), bundleLocale:"en"});
+								});
+								mBundles.runtime = oRuntimeResourceModel.getResourceBundle();
+								mBundles.designtime = oDesigntimeResourceModel.getResourceBundle();
+							} catch (e) {
+								/*eslint-disable no-empty*/
+							}
+							sap.ui.require(aElements.map(function(s) {
+								return jQuery.sap.getResourceName(s,"");
+							}), function() {
+								var aDesigntimePromises = [],
+									aControlMetadata = [];
+								for (var i = 0; i < arguments.length; i++) {
+									aDesigntimePromises.push(arguments[i].getMetadata().loadDesignTime());
+									aControlMetadata.push(arguments[i].getMetadata());
+								}
+								Promise.all(aDesigntimePromises).then(function (aDTElements) {
+									aDTElements.forEach(function(oDTElement, i) {
+										oDTElement._members = aControlMetadata[i].getJSONKeys();
+										oDTElement._metadata = aControlMetadata[i];
+										oDTElement._name = aControlMetadata[i].getName();
+										
+									});
+									var oData = {
+										elements: aDTElements
+									};
+									oDTElementModel.setData(oData);
+								});
+							});
+						}
+					)
+				});
+			});
+			
+			function createUI() {
+				var oTable = new sap.m.Table();
+				oTable.addColumn(new sap.m.Column({width: "30px", header: new sap.m.Label({text: "Icon"})}));
+				oTable.addColumn(new sap.m.Column({header: new sap.m.Label({text: "Element Name"})}));
+				oTable.addColumn(new sap.m.Column({width: "30px", header: new sap.m.Label({text: "File"})}));
+				oTable.setMode("SingleSelectLeft");
+				oTable.bindItems({
+					path : "/elements",
+					sorter: [new sap.ui.model.Sorter("_name", false)],
+					factory: function(sId, oBindingContext) {
+						return new sap.m.ColumnListItem({
+							cells: [
+								new sap.m.Image({src: {path:"palette/icons/svg", formatter: function(sIcon) {
+									if (sIcon) {
+										return jQuery.sap.getResourcePath(sIcon,"");
+									}
+									return "";
+								}}}),
+								new sap.m.Text({text: {path:"_name"}, wrapping: false, tooltip: {path:"_name"}}),
+								new sap.ui.core.Icon({src: {path:"designtimeModule", formatter: function(sModule) {
+									return sModule ? "sap-icon://accept" : "";
+								}}})
+								
+							]
+						})
+					}
+				});
+				oTable.setModel(oDTElementModel);
+				oTable.placeAt("list");
+				oTable.attachSelectionChange(function(oEvent) {
+					var oContext = oEvent.mParameters.listItem.getBindingContext();
+					var sDesigntimeFile = oContext.getProperty("designtimeModule");
+					if (sDesigntimeFile) {
+						jQuery.ajax({
+							url: jQuery.sap.getResourcePath(sDesigntimeFile, ".js"),
+							dataType: "text",
+							complete: function(oData) {
+								oCodeEditor.setValue(oData.responseText);
+								oCodeEditor.setVisible(true);
+								oCodeEditor.rerender();
+							}
+						});
+						var oFlattenedModel = new sap.ui.model.json.JSONModel();
+						oFlattenedModel.iSizeLimit = 10000;
+						oFlattenedModel.setData({entries: flattenData(oContext.getProperty(""))});
+						oPanel.setModel(oFlattenedModel, "entries");
+						oPanel.setModel(oDTElementModel);
+						oPanel.setBindingContext(oContext);
+						oPanel.setVisible(true);
+					} else {
+						oCodeEditor.setVisible(false);
+						oCodeEditor.rerender();
+						oPanel.setVisible(false);
+					}
+				});
+				
+				var oCodeEditor = new sap.ui.codeeditor.CodeEditor();
+				oCodeEditor.setHeight("100%");
+				oCodeEditor.setWidth("100%");
+				oCodeEditor.setVisible(false);
+				oCodeEditor.placeAt("code");
+				
+				var DTValueDisplay = sap.ui.core.Control.extend("DTValueDisplay", {
+					metadata:{
+						properties: {
+							value: {
+								type: "any"
+							},
+							path: {
+								type: "string"
+							}
+						},
+						aggregation: {
+							content: {
+								type: "sap.ui.core.Control",
+								multiple: false,
+								visiblity: "hidden"
+							}
+						}
+					},
+					renderer: function(oRm, oControl) {
+						oRm.renderControl(oControl.getContent());
+						if (oControl.sValid) {
+							oRm.write("<span class=\"" + oControl.sValid +"\">(" + oControl.sValid + ")</span>");
+						}
+					},
+					getContent : function() {
+						var oContext = this.getBindingContext();
+						var oContextData = oContext.getProperty("");
+						this.sValid = "unchecked";
+						var sPath = this.getPath(),
+							vValue = this.getValue(),
+							sCheckPath = sPath;
+						if (sPath.indexOf("aggregations/") === 0) {
+							sCheckPath = "aggregations/";
+						}
+						if (sPath.indexOf("properties/") === 0) {
+							sCheckPath = "properties/";
+						}
+						if (sPath.indexOf("associations/") === 0) {
+							sCheckPath = "associations/";
+						}
+						if (sCheckPath in mPathChecks) {
+							if (vValue) {
+								if (mPathChecks[sCheckPath].validate) {
+									this.sValid = mPathChecks[sCheckPath].validate(vValue, sPath, oContextData);
+								}
+								if (mPathChecks[sCheckPath].value) {
+									vValue = mPathChecks[sCheckPath].value(vValue, sPath, oContextData);
+								}
+								if (mPathChecks[sCheckPath].display) {
+									var oControl = mPathChecks[sCheckPath].display(vValue, sPath, oContextData);
+									return oControl;
+								}
+								return new sap.m.Text({ text: vValue});
+							}
+						}
+						return new sap.m.Text({ text: vValue});
+					}
+				});
+			
+				var oPanel = new sap.m.Panel({
+					headerText: {path: "_name"},
+					width: "100%",
+					height: "100%",
+					content: [
+						new sap.m.Table({
+							mode:"SingleSelectLeft",
+							columns: [
+								new sap.m.Column({header: new sap.m.Label({text: "Entry"}), width:"300px"}),
+								new sap.m.Column({header: new sap.m.Label({text: "Value"}), width:"400px"}),
+								new sap.m.Column({header: new sap.m.Label({text: "Validity"}), width:"400px"})
+							],
+							items: {
+								path: "entries>/entries",
+								template: new sap.m.ColumnListItem({ 
+									cells : [
+										new sap.m.Label({text: {path: "entries>path"}}),
+										new sap.m.Label({text: {path: "entries>value"}}),
+										new DTValueDisplay({value: {path: "entries>value"}, path: {path: "entries>path"}})
+									]
+								})
+							},
+							selectionChange: function (oEvent){
+								var oDataContext = oEvent.mParameters.listItem.getBindingContext("entries").getProperty("");
+								if (oDataContext.path.endsWith("/domRef")) {
+									var sValue = oDataContext.value;
+									var sCode = sDomRefCode.replace(/\{value\}/g, sValue.replace(":sap-domref", "#{id}"));
+									sCode = sCode.replace("{member}", oDataContext.path.replace("/domRef", ""));
+									oCodeEditor.setValue(sCode);
+								}
+							}
+						})
+					]
+				});
+				new sap.m.Label({text: {path: "entries>value"}})
+				
+				
+				
+				oPanel.setVisible(false);
+				oPanel.placeAt("details");
+			}
+			sDomRefCode = [
+				"//add this line to the elements metadata of {member}",
+				"...",
+				"\t\tselector:\"{value}\""
+			].join("\n")
+			
+			function flattenData (oObject) {
+				var aData = [];
+				function flatten(oObject, vMember, sPath) {
+					if (vMember.indexOf("_") === 0) {
+						return;
+					}
+					var vValue = oObject[vMember];
+					if (typeof vValue === "object") {
+						for (var n in vValue) {
+							flatten(vValue, n, sPath + "/" + n);
+						}
+					} else {
+						aData.push({path:sPath, value: vValue});
+					}
+				}
+				for (var n in oObject) {
+					flatten(oObject, n, n);
+				}
+				return aData;
+			}
+			var mPathChecks = {
+				"designtimeModule" : {
+					mandatory: true,
+					type: "string",
+					validate: function(vValue) {
+						//mandatory
+						if (!vValue || typeof vValue !== "string") {
+							return "invalid";
+						}
+						var sValid = "invalid";
+						jQuery.ajax({
+							url: jQuery.sap.getResourcePath(vValue, ".js"),
+							async: false,
+							dataType: "text",
+							complete: function(oData) {
+								sValid = "valid";
+							}
+						});
+						return sValid;
+					}
+				},
+				"name/singular" : {
+					validate: function(vValue) {
+						return validateText(vValue);
+					},
+					value: function(vValue) {
+						return getText(vValue);
+					}
+				},
+				"name/plural" : {
+					validate: function(vValue) {
+						return validateText(vValue);
+					},
+					value: function(vValue) {
+						return getText(vValue);
+					}
+				},
+				"palette/group" : {
+					mandatory: false,
+					values: ["ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE"],
+					validate: function(vValue) {
+						return mPathChecks["palette/group"].values.indexOf(vValue) === -1 ? "invalid" : "valid";
+					}
+				},
+				"palette/icons/svg" : {
+					mandatory: false,
+					validate: function(vValue) {
+						return typeof vValue === "string" ? "valid": "invalid"
+					},
+					display: function(vValue) {
+						if (vValue) {
+							return new sap.m.Image({src: jQuery.sap.getResourcePath(vValue,"")});
+						} 
+						return null;
+					}
+				},
+				"aggregations/" : {
+					mandatory: false,
+					validate: function(vValue, sPath, oDataContext) {
+						var aParts = sPath.split("/"),
+							sAggregationName = aParts[1],
+							sEntry = aParts[2];
+						if (oDataContext._members[sAggregationName]._iKind === 2 || 
+								oDataContext._members[sAggregationName]._iKind === 1) {
+							//validateAggregationSettings(vValue, sPath, oDataContext);
+							if (sEntry === "domRef") {
+								return "invalid move to control metadata";
+							}
+							if (sEntry === "actions") {
+								if (aParts[3] === "move") {
+									return "valid";
+								}
+							}
+							return "valid"
+						}
+						debugger
+						return "invalid"
+					}
+				},
+				"actions/combine/changeType" : {
+					validate: function(vValue) {
+						return validateChangeType("combine", vValue);
+					}
+				},
+				"actions/combine/changeOnRelevantContainer" : {
+					mandatory: false,
+					validate: function(vValue) {
+						return typeof vValue === "boolean" ? "valid": "invalid"
+					}
+				},
+				"actions/combine/isEnabled" : {
+					mandatory: false,
+					validate: function(vValue) {
+						return typeof vValue === "boolean" ? "valid": "invalid"
+					}
+				},
+				"actions/remove" : {
+					validate: function(vValue) {
+						return validateChangeType("hideControl", vValue);
+					}
+				},
+				"actions/remove/changeType" : {
+					validate: function(vValue) {
+						return validateChangeType("hideControl", vValue);
+					}
+				},
+				"actions/rename" : {
+					validate: function(vValue) {
+						return validateChangeType("rename", vValue);
+					}
+				},
+				"actions/rename/changeType" : {
+					validate: function(vValue) {
+						return validateChangeType("rename", vValue);
+					}
+				},
+				"actions/rename/domRef" : {
+					validate: function(vValue) {
+						return "invalid move to control metadata";
+					}
+				},
+				"actions/reveal" : {
+					validate: function(vValue) {
+						return validateChangeType("unhideControl", vValue);
+					}
+				},
+				"actions/reveal/changeType" : {
+					validate: function(vValue) {
+						return validateChangeType("unhideControl", vValue);
+					}
+				}
+				
+				
+				
+			};
+			
+			function getText(sKey) {
+				return mBundles.designtime.getText(sKey);
+			}
+			function validateText(vValue) {
+				var bDTFound = false;
+
+				//special handling for old function definitions
+				if (typeof vValue === "function") {
+					return "unchecked"
+				}
+
+				//proceed normally with a translation key
+				if (vValue.toUpperCase() !== vValue) {
+					//TODO:this should be enabled before a release of the new design time data
+					return "unchecked"
+				}
+				//name/singular
+				if (mBundles.designtime) {
+					bDTFound = hasText(vValue, mBundles.designtime);
+					return "valid"
+				}
+				if (mBundles.runtime) {
+					if (bDTFound) {
+						return "invalid"
+					} else {
+						return "valid (consider to move to designtime)"
+					}
+				}
+			}
+			function validateChangeType(sType, vValue) {
+				if (typeof vValue === "string" && vValue === sType) {
+					return "valid";
+				}
+				if (typeof vValue === "function") {
+					return "valid";
+				}
+				return "invalid";
+
+			}
+			function hasText(sKey, oBundle) {
+				return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== null;
+			}
+// 			var oDesigntimeSample = {
+// 				name: {
+// 					singular: "<CONTROL>_NAME_SINGULAR",
+// 					plural: "<CONTROL>_NAME_PLURAL"
+// 				},
+// 				displayNames: {
+// 					singular: "<CONTROL>_NAME_SINGULAR",
+// 					plural: "<CONTROL>_NAME_PLURAL"
+// 				    },
+// 				    palette: {
+// 				        group: "ACTION", //"ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE"
+// 				        icons: {
+// 				            small:  "sap/lib/namespace/designtime/<control>.icon.small.png",
+// 				            medium: "sap/lib/namespace/designtime/<control>.icon.medium.png",
+// 				            large:  "sap/lib/namespace/designtime/<control>.icon.large.png",
+// 				            svg:    "sap/lib/namespace/designtime/<control>.icon.large.png" //preferable as this icon scales
+// 				        },
+// 				    },                 
+// 				    links: {
+// 				        developer: ["absoluteURL"],     
+// 				        guidelines: ["absoluteURL"]          //default can be maintained in the @see
+// 				    },
+// 				    descriptions: {
+// 				        short: "<CONTROL>_DESC_SHORT",     //default from api.json of the control
+// 				        long: "<CONTROL>_DESC_LONG"
+// 				    },
+// 				    preview: {
+// 				        image: {
+// 				            belize: "sap/lib/namespace/designtime/<control>.preview.medium.png,
+// 				        }
+// 				    },
+// 				    defaultProperty : <propertyName>,     //would contain usually the label/text
+// 				    defaultDataProperty : <propertyName>, //to be bound, maybe array for DataRange?
+// 				    properties: {
+// 				        <propertyName>: {
+				             
+// 				            //runtime metadata
+// 				            type: <runtime type>
+// 				            defaultValue: <runtimedefault>
+// 				            final:                           
+// 				            readonly:
+// 				            invalidate:
+// 				            mandatory
+// 				            group: "Data"|"Misc"|"Appearance"|...,
+// 				            bindable:
+// 				            deprecated: true|false
+				         
+// 				            //designtime metadata
+// 				            ignore: true|false,
+// 				            proposedValue: "DTValue",
+// 				            categories:["Data"|"Misc"|"Appearance",...,...],  //technical?
+// 				            displayName: "<CONTROL>_<PROPERTY>_NAME"
+// 				            possibleValues: {                            //for enumerations
+// 				                "VAL1" : {
+// 				                    displayName: "KEY"
+// 				                },
+// 				                "VAL2" : {
+// 				                    displayName: "KEY2"
+// 				                }
+// 				            } 
+// 				            manifestPath : "..." //mapping to app descriptor setting
+// 				        }
+				             
+// 				    },
+// 				    defaultAggregation : <aggregation>, //is it also the default aggregation for listBindings?
+// 				    aggregations: {
+// 				        <AGGREGATION> : {
+// 				            //runtime metadata
+// 				            type:
+// 				            authorizedTypes: []
+// 				            unauthorizedTypes: []
+// 				            multiple:
+// 				            deprecated:
+// 				            group: "Data"|"Misc"|"Appearance"|...,
+// 				            bindable,
+// 				            //designtime metadata
+// 				            ignore:
+// 				            domRef:                                     //for drag and drop to be moved to runtime metadata
+				             
+// 				            proposedTemplate:
+// 				            displayNames: {
+// 				                singular: "<CONTROL>_<AGGREGATION>_SINGULAR",
+// 				                plural: "<CONTROL>_<AGGREGATION>_PLURAL"
+// 				            }
+// 				            actions: {
+// 				                move: <func> | <obj>
+// 				                addODataProperty: <func> | <obj>
+// 				            },
+				 
+				             
+// 				        }  
+// 				    },
+// 				    actions: {
+// 				        rename: <func>
+// 				        reveal: <func>
+// 				        remove: <func>
+// 				        combine: <func>
+// 				        split: <func>
+// 				    },
+// 				    associations: {
+// 				        <associationName> : {
+// 				            aggregationLike : <boolean> //  can be used to tell the design time that it should follow the association hierarchy. This is used by controls like e.g. the componentContainer that should allow to follow the association component, which defines the control hierarchy but is not a real aggregation (more isolation, regarding model propagation/rendering/eventing/...).
+// 				        }
+// 				    },
+				    
+// 				    annotations: {
+// 				        <ANNODECR> : {
+// 				            namespace: "Org.OData.Core.V1",
+// 				            annotation: "Immutable",
+// 				            target: [
+// 				                "Property"
+// 				            ],
+// 				            defaultValue: true,
+// 				            appliesTo: [
+// 				                "fieldItem/#/editable" //should be control model paths beginning from current control
+// 				            ],
+// 				            group: [
+// 				                "Behavior"
+// 				            ],
+// 				            since: "1.28.1"
+// 				        }
+// 				    },
+// 				    customData: {
+// 				    }
+// 				    templates: {
+// 				        create: "sap/lib/namespace/designtime/<Control>.create.fragment.xml"
+// 				    },
+// 				    scrollContainers : [    //some aggregations are scrolled together so aggregation overlays have to scroll together (e.g. ObjectPageLayout: Header + Sections)
+// 				        {
+// 				            domRef : "",
+// 				            aggregations : [<aggregationName>]
+// 				        }
+// 				    ],
+				 
+				 
+// 				    //created while loading the file
+// 				    propertiesList: [],  // Array of properties to allow easier list access to the properties map
+// 				    aggregationList: [], // Array of aggregations to allow easier list access to the aggregation map
+// 				    associationList: [], // Array of associations to allow easier list access to the associations map
+// 				    eventsList: [],      // Array of events to allow easier list access to the events map
+				 
+				 
+// 				}
+			
+// 			var mModelChecks {
+// 				"/" : {
+// 					optional: false,
+// 					validate: function (oObject, sControlName) {
+// 						assert.strictEqual(typeof oObject, "object", sControlName + " is an oject");
+// 					}
+// 				},
+// 				"/designtimeModule" : {
+// 					optional: false,
+// 					check: function (assert, sString, sControlName) {
+// 						assert.strictEqual(typeof sString, "string", sControlName + " defines /designtimeModule : " + sString);
+// 					}
+// 				},
+// 				"/actions" : {
+// 					optional: true,
+// 					check: function (assert, mActions, sControlName) {
+// 						Object.keys(mActions).forEach(function(sAction) {
+// 							if (mActions[sAction].changeType) {
+// 								assert.strictEqual(typeof mActions[sAction].changeType, "string", sControlName + " defines " + sAction + " with changetype:" + mActions[sAction].changeType);
+// 							} else {
+// 								if (typeof mActions[sAction] === "string") {
+// 									assert.strictEqual(typeof mActions[sAction], "string", sControlName + " defines " + sAction + " as string");
+// 								} else {
+// 									assert.strictEqual(typeof mActions[sAction], "function", sControlName + " defines " + sAction + " as function");
+// 								}
+// 							}
+// 						});
+// 					}
+// 				},
+// 				"/name" : {
+// 					optional: true,
+// 					check: function (assert, mEntry, sControlName) {
+
+// 						//name can be a string like this "{name}"
+// 						//TODO: be more strict here
+// 						if (typeof mEntry === "string" && mEntry.indexOf("{") === 0 && mEntry.indexOf("}") == mEntry.length - 1) {
+// 							return true;
+// 						}
+
+// 						//checking name.plural and name.singular if any
+// 						var aKeys = ["singular", "plural"];
+// 						aKeys.forEach(function (sKey) {
+// 							if (typeof mEntry[sKey] === "function") {
+// 								//special handling for old function definitions
+// 								assert.strictEqual(typeof mEntry[sKey], "function", sControlName + " defines mandatory entry /name/" + sKey);
+// 							} else {
+// 								//normally it is defined as string
+// 								assert.strictEqual(typeof mEntry[sKey], "string", sControlName + " defines mandatory entry /name/" + sKey);
+// 							}
+// 						});
+// 						aKeys.forEach(function (sKey) {
+// 							var bDTFound = false;
+
+// 							//special handling for old function definitions
+// 							if (typeof mEntry[sKey] === "function") {
+// 								assert.strictEqual(typeof mEntry[sKey], "function", sControlName + " defines function for translation of entry /name/" + sKey);
+// 								assert.strictEqual(typeof mEntry[sKey](), "string", "Assuming that " + sKey + " with " + mEntry[sKey].toString() + " returns a translation at runtime");
+// 								return;
+// 							}
+
+// 							//proceed normally with a translation key
+// 							if (mEntry[sKey].toUpperCase() !== mEntry[sKey]) {
+// 								//TODO:this should be enabled before a release of the new design time data
+// 								assert.ok(true, "Assuming that " + sKey + " with " + mEntry[sKey] + " needs currently no translation");
+// 								return;
+// 							}
+// 							//name/singular
+// 							if (mBundles.designtime) {
+// 								bDTFound = hasText(mEntry[sKey], mBundles.designtime);
+// 								assert.strictEqual(bDTFound, true, mEntry[sKey] + " found in designtime message bundle");
+// 							}
+// 							if (mBundles.runtime) {
+// 								if (bDTFound) {
+// 									assert.strictEqual(hasText(mEntry[sKey], mBundles.runtime), false, mEntry[sKey] + " found in runtime message bundle and designtime message bundle, please delete the entry from the runtime message bundle (messagebundle.properties + messagebundle_en.properties)");
+// 								} else {
+// 									assert.strictEqual(hasText(mEntry[sKey], mBundles.runtime), true, mEntry[sKey] + " found in runtime message bundle only, consider to move this text to the designtime message bundle");
+// 								}
+// 							}
+// 						});
+// 					}
+// 				},
+// 				"/palette" : {
+// 					optional: true,
+// 					check: function (assert, mEntry, sControlName) {
+// 						var aValidGroups = ["ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE"];
+// 						assert.strictEqual(typeof mEntry, "object", sControlName + " defines optional entry /palette/");
+// 						assert.strictEqual(aValidGroups.indexOf(mEntry.group) > -1, true, "palette entry defines valid group " + mEntry.group);
+// 						if (mEntry.icons) { //icons in palette optional
+// 							Object.keys(mEntry.icons).forEach(function(sKey) {
+// 								var sIcon = mEntry.icons[sKey];
+// 								assert.strictEqual(typeof sIcon, "string", "palette/icons/" + sKey + " entry defines icon path " + sIcon);
+// 								var oResult = jQuery.sap.sjax({
+// 									url: jQuery.sap.getResourcePath(sIcon, "")
+// 								});
+// 								assert.ok(oResult.status === "success", "File " + sIcon + " does exist. Check entry palette/icons/" + sKey);
+// 								if (sIcon.indexOf(".svg") === sIcon.length - 4) {
+// 									assert.ok(oResult.data.documentElement && oResult.data.documentElement.tagName === "svg", "File " + sIcon + " starts with a svg node");
+// 								}
+// 							});
+// 						}
+// 					}
+// 				}
+			
+		</script>
+		<style>
+			html,body{
+				height:100%;
+			}
+			
+			body{
+				margin:0;
+				padding:0;
+			}
+			.valid {
+				float: right;
+				color: green;
+			}
+			.invalid {
+				float: right;
+				color: red;
+			}
+			.unchecked {
+				float: right;
+				color: #f3af0a;
+			}
+			
+		</style>
+	</head>
+	<body id="body" class="sapUiBody sapUiSizeCompact">
+		<table style="height:100%; width: 100%">
+			<tr>
+				<td style="width:350px; vertical-align:top;padding:0px;">
+					<div id="list" style="width:100%; height:100%; overflow:auto;border:1px solid #e5e5e5">
+					</div>
+				</td>
+				<td>
+					<div id="details" style="width:100%; height:50%; overflow:auto;border:1px solid #e5e5e5">
+					</div>
+					<div id="code" style="width:100%; height:50%; border:1px solid #e5e5e5">
+					</div>
+				</td>
+			</tr>	
+		</table>
+	</body>
+</html>

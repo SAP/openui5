@@ -78,7 +78,7 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 		"/" : {
 			optional: false,
 			check: function (assert, oObject, sControlName) {
-				assert.strictEqual(typeof oObject, "object", sControlName + " is an oject");
+				assert.strictEqual(typeof oObject, "object", sControlName + " is an object");
 			}
 		},
 		"/designtimeModule" : {

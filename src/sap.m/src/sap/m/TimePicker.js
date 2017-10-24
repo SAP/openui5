@@ -90,6 +90,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		var TimePicker = DateTimeField.extend("sap.m.TimePicker", /** @lends sap.m.TimePicker.prototype */ {
 			metadata : {
 				library : "sap.m",
+				designtime: "sap/m/designtime/TimePicker.designtime",
 				properties : {
 					/**
 					 * Defines the locale used to parse string values representing time.

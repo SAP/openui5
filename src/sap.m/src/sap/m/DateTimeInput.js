@@ -45,6 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	var DateTimeInput = Control.extend("sap.m.DateTimeInput", /** @lends sap.m.DateTimeInput.prototype */ { metadata : {
 
 		library : "sap.m",
+		designtime: "sap/m/designtime/DateTimeInput.designtime",
 		properties : {
 
 			/**

@@ -8,6 +8,16 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			name: {
+				singular: "INPUT_BASE_NAME",
+				plural: "INPUT_BASE_NAME_PLURAL"
+			},
+			palette: {
+				group: "INPUT",
+				icons: {
+					svg: "sap/m/designtime/InputBase.icon.svg"
+				}
+			},
 			actions: {
 				remove: {
 					changeType: "hideControl"
@@ -15,10 +25,6 @@ sap.ui.define([],
 				reveal: {
 					changeType: "unhideControl"
 				}
-			},
-			name: {
-				singular: "INPUT_BASE_NAME",
-				plural: "INPUT_BASE_NAME_PLURAL"
 			}
 		};
 	}, /* bExport= */ false);

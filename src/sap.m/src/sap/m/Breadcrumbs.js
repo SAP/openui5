@@ -46,6 +46,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.m",
 			interfaces: ["sap.m.IBreadcrumbs"],
+			designtime: "sap/m/designtime/Breadcrumbs.designtime",
 			properties: {
 
 				/**

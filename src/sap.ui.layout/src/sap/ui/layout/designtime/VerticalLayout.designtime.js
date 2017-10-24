@@ -8,6 +8,16 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			name: {
+				singular: "VERTICAL_LAYOUT_CONTROL_NAME",
+				plural: "VERTICAL_LAYOUT_NAME_PLURAL"
+			},
+			palette: {
+				group: "LAYOUT",
+				icons: {
+					svg: "sap/ui/layout/designtime/VerticalLayout.icon.svg"
+				}
+			},
 			actions: {
 				remove: {
 					changeType: "hideControl"
@@ -23,10 +33,6 @@ sap.ui.define([],
 						move: "moveControls"
 					}
 				}
-			},
-			name: {
-				singular: "VERTICAL_LAYOUT_CONTROL_NAME",
-				plural: "VERTICAL_LAYOUT_NAME_PLURAL"
 			}
 		};
 

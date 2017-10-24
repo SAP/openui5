@@ -15,6 +15,12 @@ sap.ui.define(['sap/ui/fl/changeHandler/ChangeHandlerMediator'],
 	}
 
 	return {
+		palette: {
+			group: "LAYOUT",
+			icons: {
+				svg: "sap/ui/layout/designtime/form/FormContainer.icon.svg"
+			}
+		},
 		actions: {
 			remove: {
 				changeType: "hideControl"

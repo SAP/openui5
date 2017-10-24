@@ -11,6 +11,16 @@ sap.ui.define([
 	"use strict";
 
 	return {
+		name: {
+			singular: "TABLE_NAME",
+			plural: "TABLE_NAME_PLURAL"
+		},
+		palette: {
+			group: "LIST",
+			icons: {
+				svg: "sap/m/designtime/Table.icon.svg"
+			}
+		},
 		aggregations: {
 			columns: {
 				childNames : {
@@ -32,10 +42,6 @@ sap.ui.define([
 					}
 				}
 			}
-		},
-		name: {
-			singular: "TABLE_NAME",
-			plural: "TABLE_NAME_PLURAL"
 		}
 	};
 

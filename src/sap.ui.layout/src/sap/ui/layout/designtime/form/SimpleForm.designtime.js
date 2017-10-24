@@ -244,6 +244,12 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 	};
 
 	return {
+		palette: {
+			group: "LAYOUT",
+			icons: {
+				svg: "sap/ui/layout/designtime/form/SimpleForm.icon.svg"
+			}
+		},
 		aggregations : {
 			content : {
 				ignore : true

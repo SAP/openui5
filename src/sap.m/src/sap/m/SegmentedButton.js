@@ -39,6 +39,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 
 		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
+		designtime: "sap/m/designtime/SegmentedButton.designtime",
 		publicMethods : ["createButton"],
 		properties : {
 

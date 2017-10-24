@@ -8,6 +8,16 @@ sap.ui.define([],
 			"use strict";
 
 			return {
+				name: {
+					singular: "IMAGE_NAME",
+					plural: "IMAGE_NAME_PLURAL"
+				},
+				palette: {
+					group: "DISPLAY",
+					icons: {
+						svg: "sap/m/designtime/Image.icon.svg"
+					}
+				},
 				aggregations: {
 					detailBox: {
 						ignore: true
@@ -20,10 +30,6 @@ sap.ui.define([],
 					reveal: {
 						changeType: "unhideControl"
 					}
-				},
-				name: {
-					singular: "IMAGE_NAME",
-					plural: "IMAGE_NAME_PLURAL"
 				}
 			};
 		}, /* bExport= */ false);

@@ -8,6 +8,16 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			name: {
+				singular: "LIST_BASE_NAME",
+				plural: "LIST_BASE_NAME_PLURAL"
+			},
+			palette: {
+				group: "LIST",
+				icons: {
+					svg: "sap/m/designtime/ListBase.icon.svg"
+				}
+			},
 			aggregations: {
 				items: {
 					domRef: ":sap-domref > .sapMListUl:not(.sapMGrowingList)",
@@ -33,10 +43,6 @@ sap.ui.define([],
 				reveal: {
 					changeType: "unhideControl"
 				}
-			},
-			name: {
-				singular: "LIST_BASE_NAME",
-				plural: "LIST_BASE_NAME_PLURAL"
 			}
 		};
 
