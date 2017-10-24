@@ -164,7 +164,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 	/**
 	 * Triggers link activation when space key is pressed on the focused control.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The SPACE keyboard key event object
 	 */
 	Link.prototype.onsapspace = function(oEvent) {
 		this._handlePress(oEvent); // this calls any JS event handlers
@@ -186,9 +186,9 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 
 
 	/**
-	 * Handler for the "press" event of the link.
+	 * Handler for the <code>press</code> event of the link.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The <code>press</code> event object
 	 * @private
 	 */
 	Link.prototype._handlePress = function(oEvent) {
@@ -222,7 +222,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 	/**
 	 * Handles the touch event on mobile devices.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The <code>touchstart</code> event object
 	 */
 	Link.prototype.ontouchstart = function(oEvent) {
 		if (this.getEnabled()) {
@@ -419,8 +419,11 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 	};
 
 	/**
+	 * Returns the <code>sap.m.Link</code>  accessibility information.
+	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
+	 * @returns {Object} The <code>sap.m.Link</code>  accessibility information
 	 */
 	Link.prototype.getAccessibilityInfo = function() {
 		return {

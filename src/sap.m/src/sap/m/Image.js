@@ -401,12 +401,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 		}
 	};
 
-	/**
-	 * This overrides the default setter of the src property and update the dom node.
-	 *
-	 * @param {sap.ui.core.URI} sSrc
-	 * @public
-	 */
 	Image.prototype.setSrc = function(sSrc) {
 		if (sSrc === this.getSrc()) {
 			return this;
@@ -422,13 +416,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 		return this;
 	};
 
-	/**
-	 * This overrides the default setter of the activeSrc property in order to avoid the rerendering.
-	 *
-	 * @param {sap.ui.core.URI} sActiveSrc
-	 * @returns {sap.m.Image} <code>this</code> pointer for chaining
-	 * @public
-	 */
 	Image.prototype.setActiveSrc = function(sActiveSrc) {
 		if (!sActiveSrc) {
 			sActiveSrc = "";
@@ -627,8 +614,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 	};
 
 	/**
+	 * Returns the <code>sap.m.Image</code>  accessibility information.
+	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
+	 * @returns {Object} The <code>sap.m.Image</code> accessibility information
 	 */
 	Image.prototype.getAccessibilityInfo = function() {
 		var bHasPressListeners = this.hasListeners("press");

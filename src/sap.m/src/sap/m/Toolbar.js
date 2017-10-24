@@ -488,8 +488,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	/**
 	 * Returns the currently applied design property of the Toolbar.
 	 *
-	 * @returns {sap.m.ToolbarDesign}
-	 * @protected
+	 * @returns {sap.m.ToolbarDesign} The <code>sap.m.ToolbarDesign</code> instance
 	 */
 	Toolbar.prototype.getActiveDesign = function() {
 		var sDesign = this.getDesign();
@@ -503,7 +502,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	/**
 	 * Returns the first sap.m.Title control instance inside the toolbar for the accessibility
 	 *
-	 * @returns {sap.m.Title|undefined}
+	 * @returns {sap.m.Title|undefined} The <code>sap.m.Title</code> instance or undefined
 	 * @since 1.44
 	 * @protected
 	 */
@@ -524,7 +523,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	/**
 	 * Returns the first sap.m.Title control id inside the toolbar for the accessibility
 	 *
-	 * @returns {String}
+	 * @returns {String} The <code>sap.m.Title</code> ID
 	 * @since 1.28
 	 * @protected
 	 */

@@ -410,8 +410,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Stores the sizes and other info of controls so they don't need to be recalculated again until they change
+	 * Stores the sizes and other info of controls so they don't need to be recalculated again until they change.
 	 * @private
+	 * @returns {Object} The <code>Breadcrumbs</code> control information
 	 */
 	Breadcrumbs.prototype._getControlsInfo = function () {
 		if (!this._bControlsInfoCached) {

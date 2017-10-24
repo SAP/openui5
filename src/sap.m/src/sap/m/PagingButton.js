@@ -203,6 +203,7 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 
 		/**
 		 * Validates the position property to ensure that it's not set higher than the total count.
+		 * @private
 		 * @param {number} iPosition
 		 * @returns {sap.m.PagingButton} Reference to the control instance for chaining
 		 */

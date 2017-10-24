@@ -24,37 +24,37 @@ sap.ui.define(['./BarInPageEnabler', 'sap/m/Toolbar'],
 	/**
 	 * Add classes attributes and styles to the root tag
 	 *
-	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oToolbar an object representation of the control that should be rendered
 	 */
-	ToolbarRenderer.decorateRootElement = function (rm, oToolbar) {
-		rm.addClass("sapMTB");
+	ToolbarRenderer.decorateRootElement = function (oRm, oToolbar) {
+		oRm.addClass("sapMTB");
 
 		// ARIA
-		rm.writeAccessibilityState(oToolbar, {
+		oRm.writeAccessibilityState(oToolbar, {
 			role: oToolbar._getAccessibilityRole()
 		});
 
 
 		if (!Toolbar.hasNewFlexBoxSupport) {
-			rm.addClass("sapMTBOldFlex");
+			oRm.addClass("sapMTBOldFlex");
 		} else {
-			rm.addClass("sapMTBNewFlex");
+			oRm.addClass("sapMTBNewFlex");
 		}
 
 		if (oToolbar.getActive()) {
-			rm.addClass("sapMTBActive");
-			rm.writeAttribute("tabindex", "0");
+			oRm.addClass("sapMTBActive");
+			oRm.writeAttribute("tabindex", "0");
 		} else {
-			rm.addClass("sapMTBInactive");
+			oRm.addClass("sapMTBInactive");
 		}
 
-		rm.addClass("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
+		oRm.addClass("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
 
 		var sWidth = oToolbar.getWidth();
 		var sHeight = oToolbar.getHeight();
-		sWidth && rm.addStyle("width", sWidth);
-		sHeight && rm.addStyle("height", sHeight);
+		sWidth && oRm.addStyle("width", sWidth);
+		sHeight && oRm.addStyle("height", sHeight);
 	};
 
 	ToolbarRenderer.renderBarContent = function(rm, oToolbar) {

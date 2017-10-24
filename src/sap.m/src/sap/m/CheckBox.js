@@ -275,7 +275,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * Event handler called when the CheckBox is touched.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The <code>touchstart</code> event object
 	 */
 	CheckBox.prototype.ontouchstart = function(oEvent) {
 		//for control who need to know if they should handle events from the CheckBox control
@@ -285,7 +285,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * Event handler called when the CheckBox is tapped.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The <code>tap</code> event object
 	 */
 	CheckBox.prototype.ontap = function(oEvent) {
 		if (this.getEnabled() && this.getEditable()) {
@@ -302,7 +302,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * Event handler called when the space key is pressed onto the Checkbox.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The SPACE keyboard key event object
 	 */
 	CheckBox.prototype.onsapspace = function(oEvent) {
 		this.ontap(oEvent);
@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * Event handler called when the enter key is pressed onto the Checkbox.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The ENTER keyboard key event object
 	 */
 	CheckBox.prototype.onsapenter = function(oEvent) {
 		this.ontap(oEvent);
@@ -326,7 +326,7 @@ sap.ui.define(['jquery.sap.global',
 	 * Sets the tab index of the control
 	 *
 	 * @param {int} iTabIndex The tab index should be greater than or equal -1
-	 * @return {sap.m.CheckBox}
+	 * @returns {sap.m.CheckBox} The <code>sap.m.CheckBox</code> instance
 	 * @since 1.16
 	 * @protected
 	 */
@@ -390,6 +390,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
+	 * @returns {Object} The <code>sap.m.CheckBox</code> accessibility information
 	 */
 	CheckBox.prototype.getAccessibilityInfo = function() {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");

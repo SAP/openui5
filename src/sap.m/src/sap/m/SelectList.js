@@ -210,10 +210,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		};
 
-		/**
-		 * Called, whenever the binding of the aggregation items is changed.
-		 *
-		 */
 		SelectList.prototype.updateItems = function(sReason) {
 			this.bItemsUpdated = false;
 
@@ -879,7 +875,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * <b>Note: </b> If duplicate keys exists, the first item matching the key is returned.
 		 *
 		 * @param {string} sKey An item key that specifies the item to retrieve.
-		 * @returns {sap.ui.core.Item | null}
+		 * @returns {sap.ui.core.Item | null} The matched item or null
 		 * @public
 		 */
 		SelectList.prototype.getItemByKey = function(sKey) {

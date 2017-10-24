@@ -208,8 +208,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Returns the <code>sap.m.ProgressIndicator</code>  accessibility information.
+	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
+	 * @returns {object} The <code>sap.m.ProgressIndicator</code> accessibility information
 	 */
 	ProgressIndicator.prototype.getAccessibilityInfo = function() {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
