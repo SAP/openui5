@@ -1257,6 +1257,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._setRowContentHeight(iRowContentSpace);
 		}
 
+		if (this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
+			//if visibleRowCountMode is auto change the visibleRowCount according to the parents container height
+			var iRows = this._calculateRowsToDisplay(iRowContentSpace);
+			// if minAutoRowCount has reached, table should use block this height.
+			// In case row > minAutoRowCount, the table height is 0, because ResizeTrigger must detect any changes of the table parent.
+			if (iRows == this._determineMinAutoRowCount()) {
+				this.$().height("auto");
+			} else {
+				this.$().height("0px");
+			}
+		}
+
 		this._updateHSb(oTableSizes);
 		this._updateVSbTop();
 
@@ -2556,9 +2568,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	Table.prototype._handleRowCountModeAuto = function(iTableAvailableSpace) {
+		iTableAvailableSpace = iTableAvailableSpace || this._determineAvailableSpace();
+
 		var oBinding = this.getBinding("rows");
+		var iRows = this._calculateRowsToDisplay(iTableAvailableSpace);
+
 		if (oBinding && this.getRows().length > 0) {
-			return this._executeAdjustRows(iTableAvailableSpace);
+			return this._adjustRows(iRows);
 		} else {
 			var that = this;
 			var bReturn = !this._mTimeouts.handleRowCountModeAutoAdjustRows;
@@ -2574,7 +2590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 
 			this._mTimeouts.handleRowCountModeAutoAdjustRows = this._mTimeouts.handleRowCountModeAutoAdjustRows || window.setTimeout(function() {
-					if (!that._executeAdjustRows()) {
+					if (!that._adjustRows(iRows)) {
 						// table sizes were not updated by AdjustRows
 						that._updateTableSizes(false, true);
 					}
@@ -2586,22 +2602,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				}, 0);
 			return bReturn;
 		}
-	};
-
-	Table.prototype._executeAdjustRows = function(iTableAvailableSpace) {
-		iTableAvailableSpace = iTableAvailableSpace || this._determineAvailableSpace();
-
-		//if visibleRowCountMode is auto change the visibleRowCount according to the parents container height
-		var iRows = this._calculateRowsToDisplay(iTableAvailableSpace);
-		// if minAutoRowCount has reached, table should use block this height.
-		// In case row > minAutoRowCount, the table height is 0, because ResizeTrigger must detect any changes of the table parent.
-		if (iRows == this._determineMinAutoRowCount()) {
-			this.$().height("auto");
-		} else {
-			this.$().height("0px");
-		}
-
-		return this._adjustRows(iRows);
 	};
 
 	/**
