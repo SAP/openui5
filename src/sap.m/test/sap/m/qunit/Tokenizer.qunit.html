@@ -428,6 +428,30 @@
 		}
 	});
 
+	test("removing sapMTokenTruncate if not needed", function() {
+		var token = new sap.m.Token({text: "Looooooong text"});
+			multiInput = new sap.m.MultiInput();
+
+		multiInput.addToken(token);
+		multiInput.setWidth("30rem");
+
+		multiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		equals(token.hasStyleClass("sapMTokenTruncate"), false, "token is not truncated");
+
+		multiInput.setWidth("10rem");
+		sap.ui.getCore().applyChanges();
+
+		equals(token.hasStyleClass("sapMTokenTruncate"), true, "token is truncated");
+
+		multiInput.setWidth("30rem");
+		sap.ui.getCore().applyChanges();
+
+		equals(token.hasStyleClass("sapMTokenTruncate"), false, "token is not truncated");
+
+	});
+
 </script>
 
 </head>
