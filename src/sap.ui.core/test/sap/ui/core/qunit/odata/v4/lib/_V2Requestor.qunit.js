@@ -948,13 +948,14 @@ sap.ui.require([
 			result : "foo/bar eq time'PT18H59M59S'"},
 		{literal : "null", type : "Edm.TimeOfDay", v2type : "Edm.Time",
 			result : "foo/bar eq null"}
-	].forEach(function (oFixture) {QUnit.test("convertFilter: success", function (assert) {
-		var sFilter = "foo/bar eq " + oFixture.literal,
-				oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
-			oRequestor = {
-				oModelInterface : {fnFetchMetadata : function () {}}
-			},
-			sResourcePath = "MyEntitySet";
+	].forEach(function (oFixture) {
+		QUnit.test("convertFilter: success", function (assert) {
+			var sFilter = "foo/bar eq " + oFixture.literal,
+					oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
+				oRequestor = {
+					oModelInterface : {fnFetchMetadata : function () {}}
+				},
+				sResourcePath = "MyEntitySet";
 
 			asV2Requestor(oRequestor);
 
