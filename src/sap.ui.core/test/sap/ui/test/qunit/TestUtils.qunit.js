@@ -6,7 +6,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (jQuery, TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	//*********************************************************************************************
@@ -74,22 +74,78 @@ sap.ui.require([
 		expectedODataVersion : null,
 		expectedDataServiceVersion : null
 	}].forEach(function (oFixture, i) {
+		var oOriginalResponseHeaders = jQuery.extend({}, oFixture.responseHeaders),
+			mUrls = {
+				"/Foo/bar" : {
+					headers : oFixture.responseHeaders,
+					message : "{\"foo\":\"bar\"}"
+				}
+			};
+
 		QUnit.test("TestUtils: GET, " + i, function (assert) {
-			var oOriginalResponseHeaders = jQuery.extend({}, oFixture.responseHeaders),
-				mUrls = {
-					"/Foo/bar" : { headers : oFixture.responseHeaders,  message : "baz" }
-				};
 			TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data", mUrls);
 			return jQuery.ajax("/Foo/bar", {
 				method : "GET",
 				headers : oFixture.requestHeaders
-			}).then(function (oData, sTextStatus, jqXHR) {
+			}).then(function (vData, sTextStatus, jqXHR) {
 				assert.strictEqual(jqXHR.getResponseHeader("odata-version"),
 					oFixture.expectedODataVersion);
 				assert.strictEqual(jqXHR.getResponseHeader("dataserviceversion"),
 					oFixture.expectedDataServiceVersion);
 				// fixture must not be modified
 				assert.deepEqual(oFixture.responseHeaders, oOriginalResponseHeaders);
+			});
+		});
+
+		QUnit.test("TestUtils: $batch with GET, " + i, function (assert) {
+			TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data", mUrls);
+			return jQuery.ajax("/$batch", {
+				data : "--batch_id-0123456789012-345\r\n"
+					+ "Content-Type:application/http\r\n"
+					+ "Content-Transfer-Encoding:binary\r\n"
+					+ "\r\n"
+					+ "GET Foo/bar HTTP/1.1\r\n"
+					+ "\r\n"
+					+ "\r\n"
+					+ "--batch_id-0123456789012-345\r\n",
+				method : "POST",
+				headers : oFixture.requestHeaders
+			}).then(function (vData, sTextStatus, jqXHR) {
+				var aBatchResponseParts,
+					bExpectedODataVersion = oFixture.expectedODataVersion !== null
+						|| oFixture.expectedDataServiceVersion !== null,
+					bFoundODataVersionHeaders,
+					sKey,
+					aResponseHeaders;
+
+				// check that $batch response header contains same OData version as in the request
+				sKey = Object.keys(oFixture.requestHeaders)[0];
+
+				assert.strictEqual(jqXHR.getResponseHeader("odata-version"),
+					sKey && sKey.toLowerCase() === "odata-version"
+						? oFixture.requestHeaders[sKey] : null);
+				assert.strictEqual(jqXHR.getResponseHeader("dataserviceversion"),
+					sKey && sKey.toLowerCase() === "dataserviceversion"
+						? oFixture.requestHeaders[sKey] : null);
+				// fixture must not be modified
+				assert.deepEqual(oFixture.responseHeaders, oOriginalResponseHeaders);
+
+				// OData service version is same as in the header of each response within the batch
+				aBatchResponseParts = vData.split("\r\n\r\n");
+				aResponseHeaders = aBatchResponseParts[1].split("\r\n");
+				bFoundODataVersionHeaders = aResponseHeaders.some(function (sHeader) {
+					var i, sHeaderKey, sHeaderValue;
+
+					i = sHeader.indexOf(":");
+					sHeaderKey = i >= 0 ? sHeader.slice(0, i) : sHeader;
+					sHeaderValue = i >= 0 ? sHeader.slice(i + 1) : "";
+					return sHeaderKey.toLowerCase() === "odata-version"
+							&& sHeaderValue.trim() === oFixture.expectedODataVersion
+						|| sHeaderKey.toLowerCase() === "dataserviceversion"
+							&& sHeaderValue.trim() === oFixture.expectedDataServiceVersion;
+				});
+				assert.strictEqual(bFoundODataVersionHeaders, bExpectedODataVersion,
+					"OData service version as expected in $batch response");
 			});
 		});
 	});
@@ -114,18 +170,70 @@ sap.ui.require([
 			expectedODataVersion : null,
 			expectedDataServiceVersion : null
 		}].forEach(function (oFixture, i) {
-			QUnit.test("TestUtils: " + sMethod + ", " + i, function (assert) {
+			var sTitle = sMethod + ", " + i;
+
+			QUnit.test("TestUtils: " + sTitle, function (assert) {
 				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data", {});
 				return jQuery.ajax("/Foo/bar", {
 					data : sMethod === "DELETE" ? "" : "{\"foo\":\"bar\"}",
 					method : sMethod,
 					headers : oFixture.requestHeaders
-				}).then(function (oData, sTextStatus, jqXHR) {
+				}).then(function (vData, sTextStatus, jqXHR) {
 					assert.strictEqual(jqXHR.getResponseHeader("odata-version"),
 						oFixture.expectedODataVersion);
 					assert.strictEqual(jqXHR.getResponseHeader("odata-maxversion"), null);
 					assert.strictEqual(jqXHR.getResponseHeader("dataserviceversion"),
 						oFixture.expectedDataServiceVersion);
+				});
+			});
+
+			QUnit.test("TestUtils: $batch with " + sTitle, function (assert) {
+				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data", {});
+				return jQuery.ajax("/$batch", {
+					data : "--batch_id-0123456789012-345\r\n"
+						+ "Content-Type:application/http\r\n"
+						+ "Content-Transfer-Encoding:binary\r\n"
+						+ "\r\n"
+						+ sMethod + " Foo/bar HTTP/1.1\r\n"
+						+ "\r\n"
+						+ "\r\n"
+						+ "--batch_id-0123456789012-345\r\n",
+					method : "POST",
+					headers : oFixture.requestHeaders
+				}).then(function (vData, sTextStatus, jqXHR) {
+					var aBatchResponseParts,
+						bExpectedODataVersion = oFixture.expectedODataVersion !== null
+							|| oFixture.expectedDataServiceVersion !== null,
+						bFoundODataVersionHeaders,
+						sKey,
+						aResponseHeaders;
+
+					// check that $batch response header contains same OData version as the request
+					sKey = Object.keys(oFixture.requestHeaders)[0];
+
+					assert.strictEqual(jqXHR.getResponseHeader("odata-version"),
+						sKey && sKey.toLowerCase() === "odata-version"
+							? oFixture.requestHeaders[sKey] : null);
+					assert.strictEqual(jqXHR.getResponseHeader("dataserviceversion"),
+						sKey && sKey.toLowerCase() === "dataserviceversion"
+							? oFixture.requestHeaders[sKey] : null);
+
+					// check OData service version in the headers of each response within the batch
+					aBatchResponseParts = vData.split("\r\n\r\n");
+					aResponseHeaders = aBatchResponseParts[1].split("\r\n");
+					bFoundODataVersionHeaders = aResponseHeaders.some(function (sHeader) {
+						var i, sHeaderKey, sHeaderValue;
+
+						i = sHeader.indexOf(":");
+						sHeaderKey = i >= 0 ? sHeader.slice(0, i) : sHeader;
+						sHeaderValue = i >= 0 ? sHeader.slice(i + 1) : "";
+						return sHeaderKey.toLowerCase() === "odata-version"
+								&& sHeaderValue.trim() === oFixture.expectedODataVersion
+							|| sHeaderKey.toLowerCase() === "dataserviceversion"
+								&& sHeaderValue.trim() === oFixture.expectedDataServiceVersion;
+					});
+					assert.strictEqual(bFoundODataVersionHeaders, bExpectedODataVersion,
+						"OData service version as expected in $batch response");
 				});
 			});
 		});
