@@ -24,8 +24,11 @@
 			], function (mockserver, Shell, ComponentContainer) {
 				mockserver.init();
 				new Shell({
-					app: new ComponentContainer({
-						name: "sap.ui.demo.wt"
+					app : new ComponentContainer({
+						name : "sap.ui.demo.wt",
+						settings : {
+							id : "wt"
+						}
 					})
 				}).placeAt("content");
 			});

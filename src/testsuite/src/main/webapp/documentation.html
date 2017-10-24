@@ -49,10 +49,13 @@
 			], function (Page, ComponentContainer) {
 				// initialize the UI component
 				new Page({
-					showHeader: false,
-					content: new ComponentContainer({
-						height: "100%",
-						name: "sap.ui.documentation.sdk"
+					showHeader : false,
+					content : new ComponentContainer({
+						height : "100%",
+						name : "sap.ui.documentation.sdk",
+						settings : {
+							id : "sdk"
+						}
 					})
 				}).placeAt("content");
 			});

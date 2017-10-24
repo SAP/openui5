@@ -4,6 +4,9 @@ src/*/target/
 /target
 /tmp
 
+# code completion .ui5
+.ui5
+
 # Ignore Eclipse project and settings files
 .classpath
 .settings
