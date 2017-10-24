@@ -114,7 +114,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/IconTabFilter.designtime"
 	}});
 
 	/**

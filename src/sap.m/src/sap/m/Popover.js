@@ -300,7 +300,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 						}
 					}
 				},
-				designTime: true
+				designtime: "sap/m/designtime/Popover.designtime"
 			}
 		});
 

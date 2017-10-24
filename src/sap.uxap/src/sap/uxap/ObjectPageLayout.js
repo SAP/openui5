@@ -303,7 +303,7 @@ sap.ui.define([
 					}
 				}
 			},
-			designTime: true
+			designtime: "sap/uxap/designtime/ObjectPageLayout.designtime"
 		}
 	});
 

@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 				content1: {type: "sap.ui.core.Control", multiple: true, singularName: "content1"},
 				content2: {type: "sap.ui.core.Control", multiple: true, singularName: "content2"}
 			},
-			designTime: {
+			designtime: {
 				aggregations: {
 					content1: {
 						domRef: function(oElement) {

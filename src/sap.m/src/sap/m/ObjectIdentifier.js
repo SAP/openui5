@@ -34,7 +34,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/
 	var ObjectIdentifier = Control.extend("sap.m.ObjectIdentifier", /** @lends sap.m.ObjectIdentifier.prototype */ { metadata : {
 
 		library : "sap.m",
-		designTime: true,
+		designtime: "sap/m/designtime/ObjectIdentifier.designtime",
 		properties : {
 
 			/**

@@ -156,7 +156,7 @@ sap.ui.define([
 				 */
 				_scrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
 			},
-			designTime : true
+			designtime: "sap/f/designtime/DynamicPage.designtime"
 		}
 	});
 

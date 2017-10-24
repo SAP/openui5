@@ -103,7 +103,7 @@ sap.ui.define([
 				 */
 				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"}
 			},
-			designTime: true
+			designtime: "sap/uxap/designtime/ObjectPageSubSection.designtime"
 		}
 	});
 

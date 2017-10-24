@@ -25,7 +25,7 @@ sap.ui.define([
 	{
 		metadata: {
 			library: "sap.ui.fl",
-			designTime: true,
+			designtime: "sap/ui/fl/designtime/variants/VariantManagement.designtime",
 			properties: {
 
 				/**

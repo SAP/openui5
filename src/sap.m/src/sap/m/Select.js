@@ -290,7 +290,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 						}
 					}
 				},
-				designTime: true
+				designtime: "sap/m/designtime/Select.designtime"
 			}
 		});
 

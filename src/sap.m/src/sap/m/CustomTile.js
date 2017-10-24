@@ -39,7 +39,7 @@ sap.ui.define(['./Tile', './library'],
 			 */
 			content : {type : "sap.ui.core.Control", multiple : false}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/CustomTile.designtime"
 	}});
 
 

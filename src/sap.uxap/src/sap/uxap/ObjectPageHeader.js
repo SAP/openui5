@@ -282,7 +282,7 @@ sap.ui.define([
 					}
 				}
 			},
-			designTime: true
+			designtime: "sap/uxap/designtime/ObjectPageHeader.designtime"
 		}
 	});
 

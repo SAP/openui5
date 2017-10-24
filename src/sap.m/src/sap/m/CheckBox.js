@@ -176,7 +176,7 @@ sap.ui.define(['jquery.sap.global',
 				}
 			}
 		},
-		designTime : true
+		designtime: "sap/m/designtime/CheckBox.designtime"
 	}});
 
 	EnabledPropagator.call(CheckBox.prototype);

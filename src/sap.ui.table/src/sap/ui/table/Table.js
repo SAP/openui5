@@ -652,7 +652,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				busy : {type : "boolean"}
 			}
 		},
-		designTime : true
+		designtime:  "sap/ui/table/designtime/Table.designtime"
 	}});
 
 

@@ -170,7 +170,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
 				}
 			}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Panel.designtime"
 	}});
 
 	Panel.prototype.init = function () {

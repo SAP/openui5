@@ -229,7 +229,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Page
 				 */
 				navButtonPress: {}
 			},
-			designTime : true
+			designtime: "sap/m/designtime/semantic/SemanticPage.designtime"
 		}
 	});
 

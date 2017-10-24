@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			 */
 			cancelButtonPress : {}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/ActionSheet.designtime"
 	}});
 
 	//Keeps the ID of the static aria text for Available Actions

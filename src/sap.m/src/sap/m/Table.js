@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 			 */
 			columns : {type : "sap.m.Column", multiple : true, singularName : "column"}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Table.designtime"
 	}});
 
 	// class name for the navigation items
