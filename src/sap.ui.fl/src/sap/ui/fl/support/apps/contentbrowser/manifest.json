@@ -51,7 +51,8 @@
 				"viewType": "XML",
 				"viewPath": "sap.ui.fl.support.apps.contentbrowser.view",
 				"controlId": "sap.ui.fl.support.apps.contentbrowser.App",
-				"controlAggregation": "masterPages"
+				"controlAggregation": "masterPages",
+				"async": true
 			},
 			"routes": [
 				{
