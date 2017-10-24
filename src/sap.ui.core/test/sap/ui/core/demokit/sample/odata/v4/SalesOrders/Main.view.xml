@@ -293,7 +293,7 @@
 					<Label text="Lifecycle Status Desc" />
 					<Text text="{LifecycleStatusDesc}" />
 					<Label labelFor="Note" text="Note" />
-					<Input id="Note" value="{Note}" />
+					<Input id="Note" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
 				</form:SimpleForm>
 				<form:SimpleForm backgroundDesign="Transparent" binding="{SO_2_BP}"
 					editable="true" id="BusinessPartner" labelSpanM="4"
@@ -427,10 +427,12 @@
 							<Text text="{SOITEM_2_PRODUCT/Name}"/>
 						</cells>
 						<cells>
-							<demo:ValueHelp value="{SOITEM_2_PRODUCT/Category}"/>
+							<demo:ValueHelp value="{SOITEM_2_PRODUCT/Category}"
+								enabled="{= %{ItemPosition} !== ''}"/>
 						</cells>
 						<cells>
-							<demo:ValueHelp value="{SOITEM_2_PRODUCT/TypeCode}"/>
+							<demo:ValueHelp value="{SOITEM_2_PRODUCT/TypeCode}"
+								enabled="{= %{ItemPosition} !== ''}"/>
 						</cells>
 						<cells>
 							<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
@@ -460,13 +462,13 @@
 					<Title text="Supplier Details" titleStyle="H2"/>
 				</content>
 			</Toolbar>
-			<form:SimpleForm binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true"
+			<form:SimpleForm binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}"
 				id="SupplierDetailsForm" layout="ResponsiveGridLayout">
 				<form:content>
 					<Label text="Supplier" />
 					<Text text="{CompanyName} {LegalForm}" />
 					<Label labelFor="PhoneNumber" text="Phone Number" />
-					<Input editable="{ui>/bRealOData}" id="PhoneNumber" value="{PhoneNumber}"/>
+					<Input id="PhoneNumber" value="{PhoneNumber}" enabled="{= !!%{CompanyName}}"/>
 				</form:content>
 			</form:SimpleForm>
 			<List headerText="Supplier Contact Information" id="SupplierContactData"
