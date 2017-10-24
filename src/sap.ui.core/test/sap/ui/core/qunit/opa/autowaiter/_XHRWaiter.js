@@ -1,8 +1,10 @@
 sap.ui.define([
 	"unitTests/utils/loggerInterceptor",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/Device"
-], function (loggerInterceptor, MockServer, Device) {
+	"sap/ui/Device",
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/Opa5"
+], function (loggerInterceptor, MockServer, Device, opaTest, Opa5) {
 
 	jQuery.sap.unloadResources("sap/ui/test/autowaiter/_XHRWaiter.js", false, true, true);
 	var aLoggers = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._XHRWaiter");
@@ -246,6 +248,54 @@ sap.ui.define([
 		return whenRequestDone(oXHR).then(function () {
 			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});
+	});
+
+	QUnit.module("XHRWaiter - fake XHR in iFrame");
+
+	opaTest("Should wait for open XHRs in an iFrame", function (oOpa) {
+		var aRequests = [];
+		var oFakeIFrameXHR;
+		var iFrameXHRWaiter;
+
+		oOpa.iStartMyAppInAFrame("../../testdata/miniUI5Site.html");
+
+		oOpa.waitFor({
+			viewName: "myView",
+			id: "myButton",
+			actions: function () {
+				var oIFrameWindow = Opa5.getWindow();
+				iFrameXHRWaiter = oIFrameWindow.sap.ui.test.autowaiter._XHRWaiter
+				Opa5.assert.ok(!iFrameXHRWaiter.hasPending(), "There are no open XHRs initially");
+
+				oFakeIFrameXHR = oIFrameWindow.sinon.useFakeXMLHttpRequest();
+				oFakeIFrameXHR.onCreate = function (xhr) {
+					aRequests.push(xhr);
+				};
+
+				Opa5.getJQuery().get({url: "foo"});
+			}
+		});
+
+		oOpa.waitFor({
+			viewName: "myView",
+			id: "myButton",
+			success: function (oButton) {
+				Opa5.assert.ok(iFrameXHRWaiter.hasPending(), "There is an open fake XHR");
+				aRequests[0].respond(200, {}, '{}');
+				Opa5.assert.ok(!iFrameXHRWaiter.hasPending(), "Fake XHR finished");
+			}
+		});
+
+		oOpa.waitFor({
+			viewName: "myView",
+			id: "myButton",
+			actions: function () {
+				Opa5.assert.ok(!iFrameXHRWaiter.hasPending(), "There are no open XHR");
+				oFakeIFrameXHR.restore();
+			}
+		});
+
+		oOpa.iTeardownMyApp();
 	});
 
 	QUnit.module("XHR Waiter - sinon fake server", {

@@ -663,31 +663,16 @@ sap.ui.require([
 
 	QUnit.test("Should invoke the interactable matcher if interactable is true", function(assert) {
 		// Arrange
-		var fnInteractableSpy = this.spy(Interactable.prototype, "isMatching"),
-			fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
+		var fnInteractableSpy = this.spy(Interactable.prototype, "isMatching");
 
 		// Act
-		this.oPlugin._getFilteredControls({
+		this.oPlugin.getMatchingControls({
 			id: "foo",
 			interactable: true
 		});
 
 		// Assert
 		sinon.assert.calledOnce(fnInteractableSpy);
-		sinon.assert.calledOnce(fnWaitSpy);
-	});
-
-	QUnit.test("Should invoke the autowaiter when autowait is true", function (assert) {
-		// Arrange
-		var fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
-
-		// Act
-		this.oPlugin._getFilteredControls({
-			autoWait: true
-		});
-
-		// Assert
-		sinon.assert.calledOnce(fnWaitSpy);
 	});
 
 	QUnit.test("Should not call the autoWaiter or interactable if visible is false", function (assert) {

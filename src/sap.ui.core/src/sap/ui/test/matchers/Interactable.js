@@ -5,9 +5,8 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'./Matcher',
-	'./Visible',
-	'sap/ui/test/launchers/iFrameLauncher'
-], function ($, Matcher, Visible, iFrameLauncher) {
+	'./Visible'
+], function ($, Matcher, Visible) {
 	"use strict";
 	var oVisibleMatcher = new Visible();
 
@@ -18,18 +17,7 @@ sap.ui.define([
 	 * A control will be filtered out by this matcher when:
 	 * <ul>
 	 *     <li>
-	 *         There are unfinished XMLHttpRequests (globally).
-	 *         That means, the Opa can wait for pending requests to finish that would probably update the UI.
-	 *         Also detects sinon.FakeXMLHttpRequests that are not responded yet.
-	 *     </li>
-	 *     <li>
 	 *         The control is invisible (using the visible matcher)
-	 *     </li>
-	 *     <li>
-	 *         The control is hidden behind a dialog
-	 *     </li>
-	 *     <li>
-	 *         The control is in a navigating nav container
 	 *     </li>
 	 *     <li>
 	 *         The control or its parents are busy
@@ -38,9 +26,15 @@ sap.ui.define([
 	 *         The control or its parents are not enabled
 	 *     </li>
 	 *     <li>
+	 *         The control is hidden behind a dialog
+	 *     </li>
+	 *		<li>
 	 *         The UIArea of the control needs new rendering
 	 *     </li>
 	 * </ul>
+	 * Since 1.53 Interactable no longer uses internal autoWait functionality.
+	 * Interactable matcher might be made private in the near future.
+	 * It is recommended to enable autoWait OPA option instead of using the Interactable matcher directly.
 	 * @public
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @name sap.ui.test.matchers.Interactable
@@ -49,11 +43,6 @@ sap.ui.define([
 	 */
 	return Matcher.extend("sap.ui.test.matchers.Interactable", {
 		isMatching:  function(oControl) {
-			// UI must have no incomplete async work before interacting with controls
-			if (iFrameLauncher._getAutoWaiter().hasToWait()) {
-				return false;
-			}
-
 			// control must be visible
 			if (!oVisibleMatcher.isMatching(oControl)) {
 				return false;
@@ -85,7 +74,7 @@ sap.ui.define([
 
 				var bParentIsUIArea = oParent.getMetadata().getName() === "sap.ui.core.UIArea";
 				if (bParentIsUIArea  && oParent.bNeedsRerendering) {
-					this._oLogger.debug("Control '" + oControl + "'' is currently in a UIArea that needs a new rendering");
+					this._oLogger.debug("Control '" + oControl + "' is currently in a UIArea that needs a new rendering");
 					return false;
 				}
 
