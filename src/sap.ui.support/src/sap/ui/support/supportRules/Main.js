@@ -27,7 +27,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 
 	var IFrameController = null;
 	var oMain = null;
-	var customSuffix = 'sprt';
+	var sCustomSuffix = 'sprt';
 
 	var Main = ManagedObject.extend("sap.ui.support.Main", {
 
@@ -454,7 +454,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			if (loadFromSupportOrigin) {
 				// In order to avoid module name collision
 				// we need to generate an internal library name
-				customizableLibName += '.' + customSuffix;
+				customizableLibName += '.' + sCustomSuffix;
 
 				jQuery.sap.registerModulePath(customizableLibName, supportModulesRoot + libName.replace(/\./g, "/"));
 			}
@@ -472,7 +472,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			aAjaxPromises.push(new Promise(function (resolve) {
 				try {
 					sap.ui.require([(internalLibName).replace(/\./g, "/") + "/library.support"], function () {
-						fnProcessFile(internalLibName);
+						fnProcessFile.call(that, internalLibName);
 						resolve();
 					});
 				} catch (ex) {
@@ -484,7 +484,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			aAjaxPromises.push(new Promise(function (resolve) {
 				try {
 					sap.ui.require([customizableLibName.replace(/\./g, "/") + "/library.support"], function () {
-						fnProcessFile(customizableLibName);
+						fnProcessFile.call(that, customizableLibName);
 						resolve();
 					});
 				} catch (ex) {
@@ -548,29 +548,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._versionInfo = versionInfo;
 				RuleSet.versionInfo = versionInfo;
 
-				var libFetchPromises = that._fetchLibraryFiles(aLibNames, function (libName) {
-					var normalizedLibName = libName.replace("." + customSuffix, "").replace(".internal", ""),
-						libSupport = jQuery.sap.getObject(libName).library.support,
-						library = that._mRuleSets[normalizedLibName],
-						tmpRuleset;
-
-					if (libSupport.ruleset instanceof RuleSet) {
-						if (library) {
-							library.ruleset._mRules = jQuery.extend(library.ruleset._mRules, libSupport.ruleset._mRules);
-						} else {
-							library = libSupport;
-						}
-					} else {
-						if (library) {
-							tmpRuleset = that._createRuleSet(libSupport);
-							library.ruleset._mRules = jQuery.extend(library.ruleset._mRules, tmpRuleset.ruleset._mRules);
-						} else {
-							library = that._createRuleSet(libSupport);
-						}
-					}
-
-					that._mRuleSets[normalizedLibName] = library;
-				});
+				var libFetchPromises = that._fetchLibraryFiles(aLibNames, that._fetchRuleSet);
 
 				Promise.all(libFetchPromises).then(function () {
 					//if (!that._rulesCreated) {
@@ -588,6 +566,34 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	};
 
 	/**
+	 * Fetches a ruleset from the library object
+	 *
+	 * @private
+	 * @param {string} sLibName Name of the library from which to fetch a ruleset
+	 */
+	Main.prototype._fetchRuleSet = function (sLibName) {
+		try {
+			var sNormalizedLibName = sLibName.replace("." + sCustomSuffix, "").replace(".internal", ""),
+				oLibSupport = jQuery.extend({}, jQuery.sap.getObject(sLibName).library.support),
+				oLibrary = this._mRuleSets[sNormalizedLibName];
+
+			if (!(oLibSupport.ruleset instanceof RuleSet)) {
+				oLibSupport = this._createRuleSet(oLibSupport);
+			}
+
+			if (oLibrary) {
+				oLibrary.ruleset._mRules = jQuery.extend(oLibrary.ruleset._mRules, oLibSupport.ruleset._mRules);
+			} else {
+				oLibrary = oLibSupport;
+			}
+
+			this._mRuleSets[sNormalizedLibName] = oLibrary;
+		} catch (e) {
+			jQuery.sap.log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Failed to load RuleSet for " + sLibName + " library", e);
+		}
+	};
+
+	/**
 	 * Gets all non loaded libraries in the SupportAssistant which aren't loaded by the user.
 	 *
 	 * @private
@@ -601,7 +607,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		});
 
 		var libFetchPromises = this._fetchLibraryFiles(aLibNames, function (sLibraryName) {
-			sLibraryName = sLibraryName.replace("." + customSuffix, "").replace(".internal", "");
+			sLibraryName = sLibraryName.replace("." + sCustomSuffix, "").replace(".internal", "");
 
 			if (data.indexOf(sLibraryName) < 0) {
 				data.push(sLibraryName);
