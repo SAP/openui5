@@ -664,7 +664,7 @@ sap.ui.define([
 				return false;
 			}.bind(this));
 		}
-		return new Utils.FakePromise();
+		return new Utils.FakePromise(true);
 	};
 
 	FlexController.prototype._removeFromAppliedChangesAndMaybeRevert = function(oChange, oControl, mPropertyBag, bRevert) {
