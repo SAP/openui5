@@ -67,7 +67,7 @@
 					<CustomListItem>
 						<l:VerticalLayout class="sapUiTinyMargin">
 							<Label text="Possible Root Cause"/>
-							<Text text="{= ${flexChangeDetails>/isApplicable} ? 'yes' : 'no'}"/>
+							<Text text="{= ${flexChangeDetails>/isPossibleRootCause} ? 'yes' : 'no'}"/>
 						</l:VerticalLayout>
 					</CustomListItem>
 					<GroupHeaderListItem title="Processing" upperCase="true"/>
