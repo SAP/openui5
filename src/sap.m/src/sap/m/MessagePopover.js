@@ -276,10 +276,11 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 			this._oMessageView.addEventDelegate({
 				onBeforeRendering: function () {
-					var bShowHeader = !that.getInitiallyExpanded() || that.getHeaderButton();
+					var bSegmentedButtonVisibleInMV = that._oMessageView._oSegmentedButton.getVisible(),
+						bShowHeader = !that.getInitiallyExpanded() || bSegmentedButtonVisibleInMV;
 
 					that._oMessageView._oSegmentedButton.setVisible(bShowHeader);
-					that._oMessageView._listPage.setShowHeader(bShowHeader);
+					that._oMessageView._listPage.setShowHeader(true);
 				}
 			});
 
