@@ -93,6 +93,7 @@
 						</subHeader>
 						<t:TreeTable
 							id="issuesList"
+							class="sapUiSupportToolIssuesTreeTable"
 							selectionMode="Single"
 							selectionBehavior="RowOnly"
 							enableColumnReordering="false"
