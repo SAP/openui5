@@ -426,7 +426,9 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 						this._addSelectedKey(item.getKey(), item.getText());
 					}
 				}, this);
-			} else if (sUpdateReason === "growing") {
+			}
+
+			if (sUpdateReason !== ChangeReason.Filter.toLowerCase()) {
 				this._selectItemsByKeys();
 			}
 
