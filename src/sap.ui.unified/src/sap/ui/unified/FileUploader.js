@@ -668,7 +668,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	};
 
 	/**
-	 * Returns the DOM element that should be focused when focus is set onto the control.
+	 * Returns the DOM element that should be focused, when the focus is set onto the control.
+	 * @returns {Element} The DOM element that should be focused
 	 */
 	FileUploader.prototype.getFocusDomRef = function() {
 		return this.$("fu").get(0);
@@ -862,12 +863,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 
 	/**
-	 * Clears the content of the FileUploader. The attached additional data however is retained.
+	 * Clears the content of the <code>FileUploader</code>.
 	 *
-	 * @type void
+	 * <b>Note:</b> The attached additional data however is retained.
+	 *
 	 * @public
 	 * @since 1.25.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @returns {sap.ui.unified.FileUploader} The <code>sap.ui.unified.FileUploader</code> instance
 	 */
 	FileUploader.prototype.clear = function () {
 		var uploadForm = this.getDomRef("fu_form");
@@ -1017,7 +1020,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 
 	/**
-	 * Starts the upload (as defined by uploadUrl)
+	 * Starts the upload (as defined by uploadUrl).
 	 *
 	 * @param {boolean} [bPreProcessFiles] Set to <code>true</code> to allow pre-processing of the files before sending the request.
 	 * As a result, the <code>upload</code> method becomes asynchronous. See {@link sap.ui.unified.IProcessableBlobs} for more information.
@@ -1054,20 +1057,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	/**
 	 * Aborts the currently running upload.
 	 *
-	 * @type void
+	 * @param {string} sHeaderParameterName
+	 *                 The name of the parameter within the <code>headerParameters</code> aggregation to be checked.
+	 *
+	 *                 <b>Note:</b> aborts the request, sent with a header parameter with the provided name.
+	 *                 The parameter is taken into account if the sHeaderParameterValue parameter is provided too.
+	 *
+	 * @param {string} sHeaderParameterValue
+	 *                 The value of the parameter within the <code>headerParameters</code> aggregation to be checked.
+	 *
+	 *                 <b>Note:</b> aborts the request, sent with a header parameter with the provided value.
+	 *                 The parameter is taken into account if the sHeaderParameterName parameter is provided too.
 	 * @public
 	 * @since 1.24.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FileUploader.prototype.abort = function(sHeaderCheck, sValueCheck) {
+	FileUploader.prototype.abort = function(sHeaderParameterName, sHeaderParameterValue) {
 		if (!this.getUseMultipart()) {
 			var iStart = this._aXhr.length - 1;
 			for (var i = iStart; i > -1 ; i--) {
-				if (sHeaderCheck && sValueCheck) {
+				if (sHeaderParameterName && sHeaderParameterValue) {
 					for (var j = 0; j < this._aXhr[i].requestHeaders.length; j++) {
 						var sHeader = this._aXhr[i].requestHeaders[j].name;
 						var sValue = this._aXhr[i].requestHeaders[j].value;
-						if (sHeader == sHeaderCheck && sValue == sValueCheck) {
+						if (sHeader == sHeaderParameterName && sValue == sHeaderParameterValue) {
 							this._aXhr[i].xhr.abort();
 							this.fireUploadAborted({
 								"fileName": this._aXhr[i].fileName,
