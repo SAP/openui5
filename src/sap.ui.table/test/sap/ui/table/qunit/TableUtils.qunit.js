@@ -793,6 +793,10 @@ QUnit.test("getCellInfo", function(assert) {
 
 		oTable.getBinding("rows").bUseBatchRequests = false;
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding not using batch requests: Returned false");
+		oTable.getBinding("rows").bUseBatchRequests = true;
+
+		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(true);
+		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "TreeBinding: Returned false");
 
 		TableUtils.isInstanceOf.restore();
 		delete oTable.getBinding("rows").bUseBatchRequests;
