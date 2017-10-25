@@ -10,8 +10,12 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 
 			targets: "xmlTree",
 
-			setVisible: function (oControl, oPropertyValue) {
-				this.setProperty(oControl, "visible", oPropertyValue);
+			setVisible: function (oControl, bVisible) {
+				if (bVisible) {
+					oControl.removeAttribute("visible");
+				} else {
+					this.setProperty(oControl, "visible", bVisible);
+				}
 			},
 
 			getVisible: function (oControl) {
