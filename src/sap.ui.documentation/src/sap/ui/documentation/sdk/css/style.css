@@ -1405,7 +1405,7 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 	text-shadow: 0 0 0.125rem #000000;
 }
 
-.sapUiDemokit .sapMText.sapUiDocumentationApiHeaderTitleText {
+.sapUiDemokit .sapUiBlockCellContent .sapMText.sapUiDocumentationApiHeaderTitleText {
 	top: 2.5rem;
 	font-size: 3rem;
 	margin-left: -0.2rem;
