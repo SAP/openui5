@@ -17,8 +17,6 @@ sap.ui.define([
 		// matches: 1 = ticks in milliseconds, 2 = offset sign, 3 = offset hours, 4 = offset minutes
 		rDateTimeOffset = /^\/Date\((\d+)(?:([-+])(\d\d)(\d\d))?\)\/$/,
 		oDateTimeOffsetFormatter =
-			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss", UTC : true}),
-		oDateTimeOffsetMSFormatter =
 			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS", UTC : true}),
 		oDateTimeOffsetParser =
 			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"}),
@@ -114,7 +112,6 @@ sap.ui.define([
 	 */
 	_V2Requestor.prototype.convertDateTimeOffset = function (sV2Value) {
 		var aMatches = rDateTimeOffset.exec(sV2Value),
-			oFormatter,
 			sOffset,
 			iOffsetHours,
 			iOffsetMinutes,
@@ -134,8 +131,7 @@ sap.ui.define([
 			iTicks += iOffsetSign * (iOffsetHours * 60 * 60 * 1000 + iOffsetMinutes * 60 * 1000);
 			sOffset = aMatches[2] + aMatches[3] + ":"  + aMatches[4];
 		}
-		oFormatter = iTicks % 1000 ? oDateTimeOffsetMSFormatter : oDateTimeOffsetFormatter;
-		return oFormatter.format(new Date(iTicks)) + sOffset;
+		return oDateTimeOffsetFormatter.format(new Date(iTicks)) + sOffset;
 	};
 
 	/**
