@@ -858,7 +858,7 @@ var AnnotationParser =  {
 	 *
 	 * @param {Document} oXmlDocument - The document to use for the node search
 	 * @param {Element} oParentElement - The parent element in which to search
-	 * @param {map} mAlias - The alias map used in {@link ODataAnnotations#replaceWithAlias}
+	 * @param {map} mAlias - The alias map used in {@link #replaceWithAlias}
 	 * @returns {map} The collection of record values and annotations as a map
 	 * @static
 	 * @private
