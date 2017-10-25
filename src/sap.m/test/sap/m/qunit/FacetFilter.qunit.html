@@ -4295,6 +4295,20 @@
 			});
 		});
 
+		QUnit.test("_updateFacetFilterButtonText is called from setSelectedKeys", function (assert) {
+			var oFFL = new sap.m.FacetFilterList({
+					items: [
+						new sap.m.FacetFilterItem({ key: "key1", text: "Text 1" }),
+						new sap.m.FacetFilterItem({ key: "key2", text: "Text 2" })
+					]
+			});
+			var oUpdateFacetFilterButtonTextSpy = this.spy(oFFL, "_updateFacetFilterButtonText");
+
+			oFFL.setSelectedKeys({ "key1": "Text 1" });
+
+			assert.equal(oUpdateFacetFilterButtonTextSpy.callCount, 1);
+		});
+
 		// Helper functions
 
 		function getButtonCtrl(oFF, iIndex) {
