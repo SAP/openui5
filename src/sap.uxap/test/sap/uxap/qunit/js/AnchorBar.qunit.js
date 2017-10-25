@@ -7,7 +7,7 @@
 
 	sinon.config.useFakeTimers = true;
 
-	var iRenderingDelay = 1000;
+	var iRenderingDelay = 2000;
 	var ANCHORBAR_CLASS_SELECTOR = ".sapUxAPAnchorBar";
 	var HIERARCHICAL_CLASS_SELECTOR = ".sapUxAPHierarchicalSelect";
 
