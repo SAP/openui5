@@ -459,6 +459,7 @@ function (
 	});
 
 	QUnit.test("createVariant shall create a variant object", function(assert) {
+		this.stub(this.oFlexController, "getComponentName").returns("Dummy.Component");
 		this.stub(Utils,"getAppDescriptor").returns({
 			"sap.app":{
 				id: "testScenarioComponent",
@@ -473,7 +474,6 @@ function (
 				fileName: "idOfVariantManagementReference",
 				title: "Standard",
 				fileType: "variant",
-				reference: "Dummy.Component",
 				variantManagementReference: "idOfVariantManagementReference"
 			}
 		};

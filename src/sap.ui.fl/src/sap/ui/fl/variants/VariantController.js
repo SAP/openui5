@@ -127,7 +127,7 @@ sap.ui.define([
 		});
 
 		return aFiltered.reduce(function(aResult, oVariant) {
-			return oVariant.changes ? aResult.concat(oVariant.changes) : aResult;
+			return oVariant.controlChanges ? aResult.concat(oVariant.controlChanges) : aResult;
 		},[]);
 	};
 
@@ -151,7 +151,7 @@ sap.ui.define([
 		return this._mVariantManagement[sVariantManagementReference].variants
 			.some(function (oVariant, iIndex) {
 				if (oVariant.content.fileName === sVariantReference) {
-					oVariant.changes = aChanges;
+					oVariant.controlChanges = aChanges;
 					return true;
 				}
 			});
@@ -306,7 +306,7 @@ sap.ui.define([
 				oVariantData[sKey].variants[index] = {
 					key : oVariant.content.fileName,
 					title : oVariant.content.title,
-					author : oVariant.content.support.user,
+//					author : oVariant.content.support.user, //TODO: get value from backend
 					layer : oVariant.content.layer,
 					readOnly : oVariant.content.fileName === sKey
 				};
@@ -351,7 +351,7 @@ sap.ui.define([
 		//Set the whole list of changes to the variant
 		if (oVariantData.content.variantReference) {
 			var aReferencedVariantChanges = this._getReferencedChanges(sVariantManagementReference, oVariantData);
-			oVariantData.changes = aReferencedVariantChanges.concat(oVariantData.changes);
+			oVariantData.controlChanges = aReferencedVariantChanges.concat(oVariantData.controlChanges);
 		}
 
 		//Skipping standard variant with iIndex + 1

@@ -1173,7 +1173,17 @@ sap.ui.define([
 		var oVariantManagementControlOverlay = this.getPlugins()["controlVariant"].getVariantManagementControlOverlay();
 		if (oVariantManagementControlOverlay) {
 			oVariantManagementControlOverlay.setSelected(true);
-			this.getPlugins()["controlVariant"].startEdit(oVariantManagementControlOverlay);
+			var oDelegate = {
+				"onAfterRendering" : function() {
+					// TODO : remove timeout
+					setTimeout(function() {
+						this.getPlugins()["controlVariant"].startEdit(oVariantManagementControlOverlay);
+					}.bind(this), 0);
+					oVariantManagementControlOverlay.removeEventDelegate(oDelegate);
+				}.bind(this)
+			};
+
+			oVariantManagementControlOverlay.addEventDelegate(oDelegate);
 		}
 	};
 

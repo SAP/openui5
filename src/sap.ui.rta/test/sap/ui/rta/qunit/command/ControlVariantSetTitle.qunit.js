@@ -91,7 +91,7 @@ function(
 			"variantReference":"variant00",
 			"reference": "Dummy.Component"
 		},
-		"changes" : [
+		"controlChanges" : [
 			{
 				"fileName":"change44",
 				"layer":"CUSTOMER"

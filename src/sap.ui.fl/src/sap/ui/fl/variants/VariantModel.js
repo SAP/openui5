@@ -140,7 +140,7 @@ sap.ui.define([
 
 		var oDuplicateVariant = {
 			content: {},
-			changes: JSON.parse(JSON.stringify(oSourceVariant.changes)),
+			controlChanges: JSON.parse(JSON.stringify(oSourceVariant.controlChanges)),
 			variantChanges: {
 				setTitle: []
 			}
@@ -166,10 +166,10 @@ sap.ui.define([
 			}
 		});
 
-		var aVariantChanges = oDuplicateVariant.changes.slice();
+		var aVariantChanges = oDuplicateVariant.controlChanges.slice();
 
 		var oDuplicateChange = {};
-		oDuplicateVariant.changes = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
+		oDuplicateVariant.controlChanges = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
 			if (Utils.isLayerAboveCurrentLayer(oChange.layer) === 0) {
 				oDuplicateChange = jQuery.extend(true, {}, oChange);
 				oDuplicateChange.fileName = Utils.createDefaultFileName(oChange.changeType);
@@ -201,7 +201,7 @@ sap.ui.define([
 		var oDuplicateVariantData = this._duplicateVariant(mPropertyBag);
 		var sVariantManagementReference = BaseTreeModifier.getSelector(mPropertyBag.variantManagementControl, mPropertyBag.appComponent).id;
 		var oVariantModelData = {
-			author: mPropertyBag.layer,
+//			author: mPropertyBag.layer,
 			key: oDuplicateVariantData.content.fileName,
 			layer: mPropertyBag.layer,
 			originalTitle: oDuplicateVariantData.content.title,
@@ -213,7 +213,7 @@ sap.ui.define([
 		//Flex Controller
 		var oVariant = this.oFlexController.createVariant(oDuplicateVariantData, this.oComponent);
 
-		[oVariant].concat(oVariant.getChanges()).forEach(function(oChange) {
+		[oVariant].concat(oVariant.getControlChanges()).forEach(function(oChange) {
 			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
 		}.bind(this));
 
@@ -311,9 +311,9 @@ sap.ui.define([
 				defaultVariant: sVariantManagementReference,
 				variants: [
 					{
-						//author: "SAP",
+//						author: "SAP",
 						key: sVariantManagementReference,
-						//layer: "VENDOR",
+						layer: "VENDOR",
 						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
 						readOnly: true,
 						title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
@@ -334,10 +334,11 @@ sap.ui.define([
 								fileName: sVariantManagementReference,
 								title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
 								fileType: "ctrl_variant",
+								layer: "VENDOR",
 								variantManagementReference: sVariantManagementReference,
 								variantReference: ""
 							},
-							changes: []
+							controlChanges: []
 						}
 					]
 				};
