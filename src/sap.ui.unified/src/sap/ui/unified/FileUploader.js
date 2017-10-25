@@ -1019,11 +1019,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	/**
 	 * Starts the upload (as defined by uploadUrl)
 	 *
+	 * @param {boolean} [bPreProcessFiles] Set to <code>true</code> to allow pre-processing of the files before sending the request.
+	 * As a result, the <code>upload</code> method becomes asynchronous. See {@link sap.ui.unified.IProcessableBlobs} for more information.
+	 * <b>Note:</b> This parameter is only taken into account when <code>sendXHR</code> is set to <code>true</code>.
+	 *
 	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FileUploader.prototype.upload = function() {
+	FileUploader.prototype.upload = function(bPreProcessFiles) {
 		//supress Upload if the FileUploader is not enabled
 		if (!this.getEnabled()) {
 			return;
@@ -1033,7 +1037,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			this._bUploading = true;
 			if (this.getSendXHR() && window.File) {
 				var aFiles = this.FUEl.files;
-				this._sendProcessedFilesWithXHR(aFiles);
+				if (bPreProcessFiles) {
+					this._sendProcessedFilesWithXHR(aFiles);
+				} else {
+					this._sendFilesWithXHR(aFiles);
+				}
 			} else if (uploadForm) {
 				uploadForm.submit();
 				this._resetValueAfterUploadStart();
@@ -1449,7 +1457,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	*/
 	FileUploader.prototype._sendFilesFromDragAndDrop = function (aFiles) {
 		if (this._areFilesAllowed(aFiles)) {
-			this._sendProcessedFilesWithXHR(aFiles);
+			this._sendFilesWithXHR(aFiles);
 		}
 		return this;
 	};
