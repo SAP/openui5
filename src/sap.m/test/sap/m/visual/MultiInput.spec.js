@@ -15,11 +15,6 @@ describe('sap.m.MultiInput', function() {
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 
-	//Initial Mode
-	it("should select Compact mode", function () {
-		expect(takeScreenshot(element(by.id("page1")))).toLookAs("initial");
-	});
-
 	//Initial Compact Mode
 	it("should select Compact mode", function () {
 		element(by.id("compactMode")).click();
