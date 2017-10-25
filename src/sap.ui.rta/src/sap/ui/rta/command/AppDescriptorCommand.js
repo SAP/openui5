@@ -59,6 +59,7 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand',
 	 */
 	AppDescriptorCommand.prototype.prepare = function(mFlexSettings){
 		this.setLayer(mFlexSettings.layer);
+		return true;
 	};
 
 	/**
