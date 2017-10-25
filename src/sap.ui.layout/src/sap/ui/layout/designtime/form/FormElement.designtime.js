@@ -14,7 +14,10 @@ sap.ui.define(['sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 's
 				svg: "sap/ui/layout/designtime/form/FormElement.icon.svg"
 			}
 		},
-		domRef : function(oFormElement) {
+		isVisible: function(oFormElement) {
+			return oFormElement.isVisible();
+		},
+		domRef: function(oFormElement) {
 			var oParent = oFormElement.getParent();
 			if (oParent instanceof FormContainer) {
 				oParent = oParent.getParent();
