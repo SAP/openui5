@@ -72,7 +72,7 @@ sap.ui.define([
 				sourceVariantReference : sSourceVariantReference
 		};
 
-		return Promise.resolve(this.oModel._copyVariant(mPropertyBag))
+		return this.oModel._copyVariant(mPropertyBag)
 			.then(function(oVariant){
 				this._oVariantChange = oVariant;
 			}.bind(this));
@@ -84,7 +84,7 @@ sap.ui.define([
 	 */
 	ControlVariantDuplicate.prototype.undo = function() {
 		if (this._oVariantChange) {
-			return Promise.resolve(this.oModel._removeVariant(this._oVariantChange, this.getSourceVariantReference(), this.sVariantManagementReference))
+			return this.oModel._removeVariant(this._oVariantChange, this.getSourceVariantReference(), this.sVariantManagementReference)
 				.then(function() {
 					this._oVariantChange = null;
 				}.bind(this));
