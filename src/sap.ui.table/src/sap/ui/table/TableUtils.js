@@ -319,17 +319,26 @@ sap.ui.define([
 		 * dataRequested event. If this is not the case and there can be an imbalance between dataReceived and dataRequested events, a more limited
 		 * method using a boolean flag must be used.
 		 *
+		 * It is not always possible to correctly determine whether there is a pending request, because the table must use a flag instead of a
+		 * counter. A flag is necessary under the following conditions:
+		 *
 		 * If the AnalyticalBinding is created with the parameter "useBatchRequest" set to false, an imbalance between dataRequested and
 		 * dataReceived events can occur. There will be one dataRequested event for every request that would otherwise be part of a batch
-		 * request. But still only one dataReceived event is fired after all responses are received. Therefore it is not always possible to correctly
-		 * determine whether there is a pending request, because the table must use a flag instead of a counter.
+		 * request. But still only one dataReceived event is fired after all responses are received.
+		 *
+		 * If the ODataTreeBindingFlat adapter is applied to the TreeBinding, the adapter fires a dataRequested event on every call of getNodes,
+		 * even if no request is sent. This can happen if the adapter ignores the request, because it finds out there is a pending request which
+		 * covers it. When a request is ignored no dataReceived event is fired.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @returns {boolean} Returns <code>true</code>, if the table can use a counter for pending request detection.
 		 */
 		canUsePendingRequestsCounter: function(oTable) {
 			var oBinding = oTable != null ? oTable.getBinding("rows") : null;
-			return !(TableUtils.isInstanceOf(oBinding, "sap/ui/model/analytics/AnalyticalBinding") && !oBinding.bUseBatchRequests);
+			var bAnalyticalBindingWithoutBatch = TableUtils.isInstanceOf(oBinding, "sap/ui/model/analytics/AnalyticalBinding")
+												 && !oBinding.bUseBatchRequests;
+			var bTreeBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/TreeBinding");
+			return !bAnalyticalBindingWithoutBatch && !bTreeBinding;
 		},
 
 		/**
