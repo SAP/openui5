@@ -2374,5 +2374,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.12": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "bbb5bdddde9361b543231d131722b825260a6a44",
+        "type": "FIX",
+        "text": "  sap.m.PlanningCalendar: showDayNamesLine in IE fixed",
+        "references": []
+      },
+      {
+        "id": "04e6274a3042b7b17bde8ad75ca759c3c42bd5d0",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Renders an invisible placeholder when it is empty",
+        "references": []
+      }
+    ]
   }
 }
