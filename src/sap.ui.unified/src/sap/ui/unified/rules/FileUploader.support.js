@@ -58,7 +58,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	 * Checks if a FileUploader with specified <code>parameters</code> has also disabled XHR requests
 	 */
 	var oFileUploaderParametersRule = {
-		id : "fileUploaderHeaderParametersRequireXHRDisabled",
+		id : "fileUploaderParametersRequireXHRDisabled",
 		audiences: [Audiences.Control],
 		categories: [Categories.Usability],
 		enabled: true,
