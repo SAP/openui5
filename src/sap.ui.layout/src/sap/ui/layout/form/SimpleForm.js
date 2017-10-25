@@ -1587,6 +1587,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 		var oContainer = new FormContainer();
 		_createContainerLayoutData.call(this, oContainer);
+
+		oContainer.getAriaLabelledBy = function() {
+			// use aria-label of toolbar
+			var oToolbar = this.getToolbar();
+			if (oToolbar) {
+				return oToolbar.getAriaLabelledBy();
+			} else {
+				return [];
+			}
+		};
+
 		if (oTitle) {
 			if (oTitle instanceof sap.ui.core.Title) {
 				oContainer.setTitle(oTitle);
