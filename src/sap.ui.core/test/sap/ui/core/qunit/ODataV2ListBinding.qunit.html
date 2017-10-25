@@ -49,12 +49,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			useBatch: true
 		});
 	}
+	// Request security token to avoid later HEAD requests
+	initModel().refreshSecurityToken();
 
-	// FIXME: when using the GhostDriver we need to init the model once before!
-	if (sap.ui.Device.browser.phantomJS) {
-		// TODO: analyze why this is needed!
-		initModel(false);
-	}
 	QUnit.module("v2.ODataListBinding", {
 		beforeEach : function() {
 			oModel = initModel(false);
@@ -231,10 +228,6 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 		function changeHandler() {
 			if (iCount === 0) {
-				var aContexts = oBinding.getContexts();
-				assert.equal(aContexts.length, 5, "List contains entries");
-				assert.equal(aContexts[0].getProperty("ProductName"), undefined, "Product name is missing");
-			} else if (iCount === 1) {
 				var aContexts = oBinding.getContexts();
 				assert.equal(aContexts.length, 5, "List contains entries");
 				assert.equal(aContexts[0].getProperty("ProductName"), "Uncle Bob's Organic Dried Pears", "Product name is available now");
@@ -980,6 +973,68 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.getContexts();
 		});
 
+	});
+
+	QUnit.test("ListBinding on expanded data, operationmode Default, initial filter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");;
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products", null, null,  new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+			setTimeout(function() {
+				oListBinding.initialize();
+				oBinding.detachChange(handler);
+				oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+				oListBinding.attachChange(listhandler);
+				oListBinding.setContext(oBinding.getBoundContext());
+			}, 0);
+		};
+		var listhandler = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 1, "1 entry contained");
+			assert.notOk(oSpy.called, "Binding expanded list with filter must not send a request");
+			oListBinding.detachChange(listhandler);
+			done();
+		};
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding on expanded data, operationmode Default, late filter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");;
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products");
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+			setTimeout(function() {
+				oListBinding.initialize();
+				oBinding.detachChange(handler);
+				oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+				oListBinding.attachChange(listhandler1);
+				oListBinding.setContext(oBinding.getBoundContext());
+			}, 0);
+		};
+		var listhandler1 = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 12, "12 entries contained");
+			assert.notOk(oSpy.called, "Binding expanded list must not send a request");
+			oListBinding.detachChange(listhandler1);
+			oListBinding.attachChange(listhandler2);
+			oListBinding.filter(new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+		};
+		var listhandler2 = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 1, "1 entry contained");
+			assert.notOk(oSpy.called, "Filtering expanded list must not send a request");
+			oListBinding.detachChange(listhandler2);
+			done();
+		};
+		oBinding.attachChange(handler);
 	});
 
 	QUnit.test("ListBinding Diff", function(assert){
