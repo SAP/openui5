@@ -1387,6 +1387,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Invalidate all entries of the given entity type in the model data.
+	 *
+	 * Mark entries of the provided entity type in the model cache as invalid. Next time a context binding or list binding is done,
+	 * the entry will be detected as invalid and will be refreshed from the server.
+	 *
+	 * @param {string} sEntityType the qualified name of the entity type
+	 * @public
+	 */
+	ODataModel.prototype.invalidateEntityType = function(sEntityType) {
+		var oEntry;
+		for (var sKey in this.oData) {
+			oEntry = this.oData[sKey];
+			if (oEntry.__metadata.type === sEntityType) {
+				oEntry.__metadata.invalid = true;
+			}
+		}
+	};
+
+	/**
 	 * Refresh the model.
 	 *
 	 * This will check all bindings for updated data and update the controls if data has been changed.

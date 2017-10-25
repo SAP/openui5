@@ -890,6 +890,43 @@
 		});
 	});
 
+	QUnit.test("test isreloadneeded - invalidateEntityType", function(assert){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Category"});
+		oBinding.attachChange(function(oContext) {
+			assert.equal(spy.callCount, 1, "get request should be send");
+
+			oModel.invalidateEntityType("NorthwindModel.Category");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {});
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
+			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
+			assert.ok(!oContext, "Reload needed for category expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
+			assert.ok(!oContext, "Reload needed for property select and category expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
+			assert.ok(!oContext, "Reload needed for property, expand property select and category expand");
+
+			OData.defaultHttpClient.request.restore();
+			done();
+		});
+	});
+
+
 	QUnit.test("test invalidate", function(assert){
 		var done = assert.async();
 		cleanServiceDataCache();
@@ -966,6 +1003,32 @@
 
 			oModel.invalidateEntry(oContext);
 			assert.ok(oEntry.__metadata.invalid, "Invalid flag set by context");
+			delete oEntry.__metadata.invalid;
+
+			OData.defaultHttpClient.request.restore();
+			done();
+		});
+	});
+
+	QUnit.test("test invalidateEntityType", function(assert){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {});
+		oBinding.attachChange(function(oContext) {
+			var oEntry = oModel.getProperty("/Products(3)");
+			assert.equal(spy.callCount, 1, "get request should be send");
+			oContext = oBinding.getBoundContext();
+
+			oModel.invalidateEntityType("NorthwindModel.Product");
+			assert.ok(oEntry.__metadata.invalid, "Invalid flag set on entry with given entity type");
+			delete oEntry.__metadata.invalid;
+
+			oModel.invalidateEntityType("NorthwindModel.Category");
+			assert.ok(!oEntry.__metadata.invalid, "Invalid flag not set on entry with different entity type");
 			delete oEntry.__metadata.invalid;
 
 			OData.defaultHttpClient.request.restore();
@@ -1724,7 +1787,7 @@
 
 		oTable.getBinding("rows").attachDataReceived(oHandler);
 	});
-	
+
 	QUnit.test("test refresh(true) - dependent Objectbindings should reload data", function(assert){
 		assert.expect(3);
 		var done = assert.async();
@@ -1734,7 +1797,7 @@
 		oPanel.bindElement("/Products(2)");
 		oPanel.addContent(oPanel2);
 		oPanel2.bindElement("Category");
-		
+
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 
 		var oHandler = function() {
