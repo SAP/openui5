@@ -684,9 +684,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Connect Block to the UI5 model tree.
-		 * Initialize view if lazy loading is enabled.
-		 * @returns {*}
+		 * Connects the <code>sap.uxap.Block</code> to the UI5 model tree.
+		 * Initializes a view, if the lazy loading is enabled.
 		 */
 		BlockBase.prototype.connectToModels = function () {
 			if (!this._bConnected) {

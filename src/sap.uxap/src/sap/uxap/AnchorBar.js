@@ -663,7 +663,7 @@ sap.ui.define([
 	/**
 	 * Handles scrolling via the scroll buttons.
 	 *
-	 * @param boolean bScrollLeft indicates whether the left arrow button was pressed
+	 * @param {boolean} bScrollLeft Indicates whether the left arrow button was pressed
 	 * @private
 	 */
 	AnchorBar.prototype._handleScrollButtonTap = function (bScrollLeft) {
@@ -684,14 +684,14 @@ sap.ui.define([
 	 * Scroll to a specific Section.
 	 *
 	 * @param {string} sId The Section ID to scroll to
-	 * @param {int} duration Scroll duration (in ms). Default value is 0
+	 * @param {int} iDuration Scroll duration (in ms). Default value is 0.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	AnchorBar.prototype.scrollToSection = function (sId, duration) {
+	AnchorBar.prototype.scrollToSection = function (sId, iDuration) {
 
 		if (this._bHasButtonsBar) {
-			var iDuration = duration || AnchorBar.SCROLL_DURATION,
+			var iDuration = iDuration || AnchorBar.SCROLL_DURATION,
 				iScrollTo;
 
 			if (!library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange())
@@ -719,7 +719,7 @@ sap.ui.define([
 						jQuery.sap.byId(this.getId() + "-scroll").parent().stop(true, false);
 					}
 
-					this._iCurrentScrollTimeout = jQuery.sap.delayedCall(duration, this, function () {
+					this._iCurrentScrollTimeout = jQuery.sap.delayedCall(iDuration, this, function () {
 						this._sCurrentScrollId = undefined;
 						this._iCurrentScrollTimeout = undefined;
 					});
@@ -739,6 +739,7 @@ sap.ui.define([
 	 * @type object
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @returns {sap.ui.core.delegate.ScrollEnablement} The <code>sap.ui.core.delegate.ScrollEnablement</code> instance
 	 */
 	AnchorBar.prototype.getScrollDelegate = function () {
 		return this._oScroller;
