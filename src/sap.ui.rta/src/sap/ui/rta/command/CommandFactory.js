@@ -186,11 +186,12 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 			bSuccessfullConfigured = fnConfigureActionCommand(vElement, oCommand, oAction);
 		}
 
-		if (bSuccessfullConfigured){
-			oCommand.prepare(mFlexSettings, sVariantManagementKey);
+		var bPrepareStatus = bSuccessfullConfigured && oCommand.prepare(mFlexSettings, sVariantManagementKey);
+		if (bPrepareStatus) {
 			return oCommand;
 		} else {
 			oCommand.destroy();
+			return undefined;
 		}
 	};
 
