@@ -212,6 +212,9 @@ sap.ui.define([
 				"SOITEM_2_PRODUCT" : null
 			});
 
+			// select the newly created one
+			oView.byId("SalesOrderLineItems").setSelectedItem(
+				oView.byId("SalesOrderLineItems").getItems()[oContext.getIndex()]);
 			this._setSalesOrderLineItemBindingContext(oContext);
 			oView.getModel("ui").setProperty("/bCreateItemPending", true);
 

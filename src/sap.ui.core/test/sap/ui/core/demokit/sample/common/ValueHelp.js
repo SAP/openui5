@@ -23,7 +23,7 @@ sap.ui.define([
 	ValueHelp = Control.extend("sap.ui.core.sample.common.ValueHelp", {
 		metadata : {
 			properties : {
-				editable : {type: "boolean", defaultValue: true, bindable: "bindable"},
+				enabled : {type: "boolean", defaultValue: true, bindable: "bindable"},
 				value: {type: "string", group: "Data", defaultValue: null, bindable: "bindable"}
 			},
 			aggregations : {
@@ -93,7 +93,6 @@ sap.ui.define([
 						case ValueListType.Standard:
 							oField = new Input({
 								change: that.onValueChange.bind(that),
-								editable : true,
 								id : that.getId() + "-field",
 								showValueHelp : true,
 								value : that.getValue(),
@@ -102,7 +101,6 @@ sap.ui.define([
 							break;
 						case ValueListType.Fixed:
 							oField = new ComboBox({
-								editable : true,
 								id : that.getId() + "-field",
 								loadItems : that.onLoadItems.bind(that),
 								value : that.getValue()
@@ -110,7 +108,6 @@ sap.ui.define([
 							break;
 						default:
 							oField = new Input({
-								editable : that.getEditable(),
 								id : that.getId() + "-field",
 								showValueHelp : false,
 								value : that.getValue()
@@ -222,6 +219,12 @@ sap.ui.define([
 				jQuery.sap.log.error(oError, undefined,
 					"sap.ui.core.sample.common.ValueHelp");
 			});
+		},
+
+		setEnabled : function (bEnabled) {
+			if (this.getAggregation("field")) {
+				this.getAggregation("field").setEnabled(bEnabled);
+			}
 		},
 
 		setValue : function (sValue) {
