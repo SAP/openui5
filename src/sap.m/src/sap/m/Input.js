@@ -565,8 +565,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @public
 	 */
 	Input.prototype.onBeforeRendering = function() {
+		var sSelectedKey = this.getSelectedKey();
 		InputBase.prototype.onBeforeRendering.call(this);
 		this._deregisterEvents();
+		if (sSelectedKey) {
+			this.setSelectedKey(sSelectedKey);
+		}
 	};
 
 	/**
@@ -722,8 +726,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			this._oPopupInput._doSelect();
 		} else {
 			// call _getInputValue to apply the maxLength to the typed value
-			this.setDOMValue(this._getInputValue(sNewValue));
-			this.onChange();
+			sNewValue = this._getInputValue(sNewValue);
+			this.setDOMValue(sNewValue);
+			this.onChange(null, null, sNewValue);
 		}
 
 		this._iPopupListSelectedIndex = -1;
@@ -796,7 +801,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		var oItem = this.getSuggestionItemByKey(sKey);
-		this.setSelectionItem(oItem);
+
+		if (oItem) {
+			this.setSelectionItem(oItem);
+		} else {
+			this.setProperty("selectedKey", sKey, true);
+		}
 
 		return this;
 	};
@@ -895,8 +905,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			this._oPopupInput._doSelect();
 		} else {
 			// call _getInputValue to apply the maxLength to the typed value
-			this.setDOMValue(this._getInputValue(sNewValue));
-			this.onChange();
+			sNewValue = this._getInputValue(sNewValue);
+			this.setDOMValue(sNewValue);
+			this.onChange(null, null, sNewValue);
 		}
 		this._iPopupListSelectedIndex = -1;
 
