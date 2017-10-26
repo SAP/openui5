@@ -39,6 +39,88 @@ sap.ui.require([
 			sap.ushell = this.originalUShell;
 		}
 	}, function() {
+
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with no intent parameters", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				subTitle : "subTitle1",
+				description : "description1",
+				iconUrl : "sap-icon://history",
+				originalId : "id1",
+				isOriginal : true,
+				originLayer: "VENDOR",
+				isAppVariant: false,
+				descriptorUrl : "url1",
+				hasStartableIntent: true,
+				startWith: {
+					"semanticObject": "SemObj",
+					"action": "Action"
+				}
+			};
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.params, undefined, "then the params property does not exist");
+			});
+		});
+
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as an object", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				subTitle : "subTitle1",
+				description : "description1",
+				iconUrl : "sap-icon://history",
+				originalId : "id1",
+				isOriginal : true,
+				originLayer: "VENDOR",
+				isAppVariant: false,
+				descriptorUrl : "url1",
+				hasStartableIntent: true,
+				startWith: {
+					"semanticObject": "SemObj",
+					"action": "Action",
+					"parameters": {
+						"sap-appvar-id" : {
+							value: "id1",
+							required: true
+						}
+					}
+				}
+			};
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.params["sap-appvar-id"], "id1", "then the intent property's value is correct");
+			});
+		});
+
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as a string", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				subTitle : "subTitle1",
+				description : "description1",
+				iconUrl : "sap-icon://history",
+				originalId : "id1",
+				isOriginal : true,
+				originLayer: "VENDOR",
+				isAppVariant: false,
+				descriptorUrl : "url1",
+				hasStartableIntent: true,
+				startWith: {
+					"semanticObject": "SemObj",
+					"action": "Action",
+					"parameters": {
+						"sap-appvar-id" : "id1"
+					}
+				}
+			};
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.params["sap-appvar-id"], "id1", "then the intent property's value is correct");
+			});
+		});
+
 		QUnit.test("When getAppVariantOverview() method is called on a reference app (currently adapting) which also has intent information present", function (assert) {
 			var oResult = {
 				response: {
@@ -59,7 +141,7 @@ sap.ui.require([
 								"semanticObject": "SemObj",
 								"action": "Action",
 								"parameters": {
-									saveAs : {
+									"sap-appvar-id" : {
 										value: "id1"
 									}
 								}
@@ -120,7 +202,7 @@ sap.ui.require([
 								"semanticObject": "SemObj",
 								"action": "Action",
 								"parameters": {
-									saveAs : "id2"
+									"sap-appvar-id" : "id2"
 								}
 							}
 						}
@@ -152,7 +234,6 @@ sap.ui.require([
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
 		beforeEach: function () {
-			window.bUShellNavigationTriggered = false;
 			this.originalUShell = sap.ushell;
 			// this overrides the ushell globally => we need to restore it!
 
@@ -193,7 +274,7 @@ sap.ui.require([
 								"semanticObject": "SemObj",
 								"action": "Action",
 								"parameters": {
-									saveAs : "id1"
+									"sap-appvar-id" : "id1"
 								}
 							}
 						}
