@@ -403,6 +403,22 @@ sap.ui.define([
 		return this._oEditor;
 	};
 
+	/**
+	 * Sets <code>visible</code> property.
+	 * @param {boolean} bVisible Whether the code editor is visible.
+	 * @override
+	 * @public
+	 * @since 1.54.1
+	 */
+	CodeEditor.prototype.setVisible = function(bVisible) {
+		if (this.getVisible() !== bVisible) {
+			this.setProperty("visible", bVisible);
+			//trigger re-rendering as the usual invalidation is turned off by default.
+			this.rerender();
+		}
+		return this;
+	};
+
 	CodeEditor.prototype.destroy = function (bSuppressInvalidate) {
 		this._oEditor.destroy(bSuppressInvalidate);
 		Control.prototype.destroy.call(this, bSuppressInvalidate);
