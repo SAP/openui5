@@ -1340,7 +1340,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				var formData = new window.FormData();
 				var name = this.FUEl.name;
 				for (var l = 0; l < aFiles.length; l++) {
-					formData.append(name, aFiles[l], aFiles[l].name);
+					this._appendFileToFormData(formData, name, aFiles[l]);
 				}
 				formData.append("_charset_", "UTF-8");
 				var data = this.FUDataEl.name;
@@ -1368,6 +1368,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		}
 
 		return this;
+	};
+
+	/**
+	 * Append a file to passed FormData object handling special case where there is a Blob or window.File with a name
+	 * parameter passed.
+	 * @param {object} oFormData receiving FormData object
+	 * @param {string} sFieldName name of the form field
+	 * @param {object} oFile object to be appended
+	 * @private
+	 */
+	FileUploader.prototype._appendFileToFormData = function (oFormData, sFieldName, oFile) {
+		// BCP: 1770523801 We pass third parameter 'name' only for instance of 'Blob' that has a 'name'
+		// parameter to prevent the append method failing on Safari browser.
+		if (oFile instanceof window.Blob && oFile.name) {
+			oFormData.append(sFieldName, oFile, oFile.name);
+		} else {
+			oFormData.append(sFieldName, oFile);
+		}
 	};
 
 	/*

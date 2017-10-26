@@ -471,7 +471,7 @@
 	QUnit.module("private functions");
 	QUnit.test("Testing sending passed files with XHR", function (assert) {
 		var oFileUploader = createFileUploader(),
-			bIsExecutedInFireFox = sap.ui.Device.browser.firefox;
+			bIsExecutedInFireFox = sap.ui.Device.browser.firefox,
 			aFiles = {
 				"0": createFakeFile({
 					name:"FileUploader.qunit.html",
@@ -495,6 +495,59 @@
 		assert.ok(oSpy.called, "XHR request is made");
 
 		//cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("BCP: 1770523801 - FormData.append called with third argument fails under Safari browser if passed file " +
+			"is not a Blob", function (assert) {
+
+		// Arrange
+		var oFileUploader = createFileUploader(),
+			sExpectedFileName = "FileUploader.qunit.html",
+			oFormData = new window.FormData(),
+			oBlob = new Blob([createFakeFile({
+				name: sExpectedFileName,
+				type: "text/html",
+				size: 404450
+			}, false /* In this test we always pass a Blob object */)]),
+			aFiles = { // Mock array like object with file as a Blob
+				"0": oBlob,
+				"length" : 1
+			},
+			oAppendFileSpy = this.spy(oFileUploader, "_appendFileToFormData"),
+			oAppendSpy = this.spy(oFormData, "append");
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act - send files to make sure _appendFileToFormData method is used
+		oFileUploader._sendFilesWithXHR(aFiles);
+
+		// Assert
+		assert.strictEqual(oAppendFileSpy.callCount, 1, "_sendFilesWithXHR calls internally _appendFileToFormData.");
+
+		// Act - Send a Blob object without a name
+		oFileUploader._appendFileToFormData(oFormData, 'test', oBlob);
+
+		// Assert
+		assert.strictEqual(oAppendSpy.getCall(0).args.length, 2,
+				"FormData.append method is called with only two parameters when the Blob object has no 'name' property");
+
+		// Act - add name property to the oBlob object
+		oAppendSpy.reset();
+		oBlob.name = sExpectedFileName;
+		oFileUploader._appendFileToFormData(oFormData, 'test', oBlob);
+
+		// Assert
+		assert.strictEqual(oAppendSpy.getCall(0).args.length, 3,
+				"FormData.append method is called with three parameters");
+
+		assert.strictEqual(oAppendSpy.getCall(0).args[2], sExpectedFileName,
+				"The third parameter passed to FormData.append equals the expected file name.");
+
+		// Cleanup
+		oAppendFileSpy.restore();
+		oAppendSpy.restore();
 		oFileUploader.destroy();
 	});
 

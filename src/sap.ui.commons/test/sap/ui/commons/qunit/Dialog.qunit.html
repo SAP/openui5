@@ -113,29 +113,6 @@
 			assert.ok(this.initialPopupFocusSpy.calledWithExactly(undefined), 'setInitialFocusId should be called with the proper sId');
 		});
 
-		QUnit.test('Get minimal reasonable size', function(assert) {
-			var done = assert.async(),
-				that = this;
-
-			var fnOpened = function() {
-				var textField = new sap.ui.commons.TextField({
-					value: 'Hola!'
-				});
-				var oMinSize = that.oDialog.getMinSize();
-				that.oDialog.addContent(textField);
-				Core.applyChanges();
-
-				var oNewMinSize = that.oDialog.getMinSize();
-//				|0  is used to truncate decimal places
-				assert.equal(oMinSize.width|0, oNewMinSize.width|0, 'Width should not change when changing the content')
-				assert.equal(oMinSize.height|0, oNewMinSize.height|0, 'Height should not change when changing the content')
-				done();
-			};
-
-			this.oDialog.oPopup.attachOpened(fnOpened);
-			this.oDialog.open();
-		});
-
 		QUnit.test('Open Dialog and changing its dimensions', function(assert) {
 			var done = assert.async();
 			var oSpyInvalidate = sinon.spy(sap.ui.core.UIArea.prototype, 'rerender');
