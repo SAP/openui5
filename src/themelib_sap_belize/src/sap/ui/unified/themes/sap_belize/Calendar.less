@@ -140,7 +140,7 @@ html.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus {
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	// do this only for the Planing Calendar
-	.sapMPlanCal .sapUiCalItem:focus {
+	.sapMPlanCal :not(.sapUiCalFirstWDay).sapUiCalItem:focus {
 		overflow: hidden;
 	}
 
