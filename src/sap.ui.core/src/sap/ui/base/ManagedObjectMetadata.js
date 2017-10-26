@@ -154,6 +154,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this.bindable = !!info.bindable;
 		this.deprecated = !!info.deprecated || false;
 		this.visibility = 'public';
+		this.selector = typeof info.selector === "string" ? info.selector : null;
 		this.appData = remainder(this, info);
 		this._oParent = oClass;
 		this._sUID = name;
@@ -229,6 +230,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this.bindable = !!info.bindable;
 		this.deprecated = info.deprecated || false;
 		this.visibility = info.visibility || 'public';
+		this.selector = info.selector || null;
 		this._doesNotRequireFactory = !!info._doesNotRequireFactory; // TODO clarify if public
 		this.appData = remainder(this, info);
 		this._oParent = oClass;
