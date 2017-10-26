@@ -48,8 +48,10 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 
 	/**
 	 * @public Template Method will be called by the command factory when all data is provided to the change
+	 * @return {boolean} Returns true if the preparation was successful
 	 */
 	BaseCommand.prototype.prepare = function() {
+		return true;
 	};
 
 	/**

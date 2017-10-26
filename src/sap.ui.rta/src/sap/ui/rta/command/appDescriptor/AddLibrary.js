@@ -49,6 +49,7 @@ sap.ui.define([
 	 */
 	AddLibrary.prototype.prepare = function(mFlexSettings){
 		this.setLayer(mFlexSettings.layer);
+		return true;
 	};
 
 	/**
