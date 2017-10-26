@@ -1,0 +1,19 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "569e5989980029c24980665cd9b0f78297f5cc16",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Add Ghost Button type",
+        "references": []
+      },
+      {
+        "id": "3839cc2d07d1e5d26df58658cdd361afc4d7b0f9",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now the week number in 1 Month view is not missing in IE when 1st week day is selected",
+        "references": []
+      }
+    ]
+  }
+}
