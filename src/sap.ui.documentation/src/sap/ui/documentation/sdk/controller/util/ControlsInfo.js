@@ -194,6 +194,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 							oFilterSets[sProp][oEnt[sProp]] = true;
 						});
 
+						oEnt.library = oDoc.library;
+
 						// add entity
 						data.entities.push(oEnt);
 					});
