@@ -24,7 +24,9 @@ describe("sap.m.RatingIndicator", function() {
 	});
 
 	it('Should show large inactive RatingIndicator', function() {
-		expect(takeScreenshot(element(by.id('largeInactiveRI')))).toLookAs('large-inactive-RI');
+		browser.executeScript('document.getElementById("largeInactiveRI").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id("largeInactiveRI")))).toLookAs("large-inactive-RI");
+		});
 	});
 
 	it('Should show large active RatingIndicator', function() {
