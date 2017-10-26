@@ -249,6 +249,21 @@ function(
 		assert.equal(this.oLayoutOverlay.getRelevantOverlays().length, 2, "then two overlays are relevant");
 	});
 
+	QUnit.test("when the event elementModified is thrown with overlayRendered", function(assert) {
+		var oSetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "setRelevantOverlays");
+		var oGetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "getRelevantOverlays");
+		var oEvaluateSpy = sandbox.spy(this.oRenamePlugin, "evaluateEditable");
+		sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+		this.oLayoutOverlay.fireElementModified({
+			type: "overlayRendered",
+			id: this.oLayoutOverlay.getId()
+		});
+		assert.equal(oSetRelevantSpy.callCount, 0, "then findAllOverlaysInContainer is not called");
+		assert.equal(oGetRelevantSpy.callCount, 0, "then getRelevantOverlays is not called");
+		assert.equal(oEvaluateSpy.callCount, 1, "then only evaluateEditable is called");
+		assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: false}], "then evaluateEditable is called with the correct parameters");
+	});
+
 	QUnit.test("when _modifyPluginList is called multiple times", function(assert) {
 		assert.equal(this.oButtonOverlay.getEditableByPlugins(), "sap.ui.rta.plugin.Rename", "then initially the rename plugin is in the list");
 
