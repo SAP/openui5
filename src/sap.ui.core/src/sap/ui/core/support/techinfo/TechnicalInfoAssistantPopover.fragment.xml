@@ -31,11 +31,7 @@
 					id="customBootstrapURL"
 					width="85%"
 					class="sapUiMediumMarginBegin"
-					value="{
-							path : 'view>/CustomBootstrapURL',
-							type : '.CustomTypeURL'
-						}"
-					change="onChangeCustomBootstrapURL"
+					value="{view>/CustomBootstrapURL}"
 					liveChange="onLiveChangeCustomBootstrapURL"
 					valueLiveUpdate="true"
 					valueStateText="{i18n>TechInfo.SupportAssistantConfigPopup.URLValidationMessage}"

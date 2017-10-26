@@ -31,6 +31,7 @@
 		<f:SimpleForm
 			id="Form"
 			adjustLabelSpan="false"
+			ariaLabelledBy="title"
 			layout="ResponsiveGridLayout"
 			editable="true">
 			<f:content>
@@ -44,19 +45,7 @@
 							tooltip="{i18n>TechInfo.VersionLink.Tooltip}"/>
 						<Text
 							id="versionBuiltAt"
-							text="{
-								parts: [
-									'i18n>TechInfo.VersionBuildTime.Text',
-									{
-										path:'view>/ProductTimestamp',
-										type:'sap.ui.model.type.DateTime',
-										formatOptions: {
-											style: 'medium'
-										}
-									}
-								],
-								formatter: 'jQuery.sap.formatMessage'
-							}"
+							text="{view>/ProductTimestamp}"
 							class="sapUiTinyMarginBegin"
 							/>
 					</l:HorizontalLayout>
@@ -72,19 +61,7 @@
 						<Text text="{view>/OpenUI5ProductVersion}"/>
 						<Text
 							id="versionOpenUI5BuiltAt"
-							text="{
-								parts: [
-									'i18n>TechInfo.VersionBuildTime.Text',
-									{
-										path:'view>/OpenUI5ProductTimestamp',
-										type:'sap.ui.model.type.DateTime',
-										formatOptions: {
-											style: 'medium'
-										}
-									}
-								],
-								formatter: 'jQuery.sap.formatMessage'
-							}"
+							text="{view>/OpenUI5ProductTimestamp}"
 							class="sapUiTinyMarginBegin"/>
 					</l:HorizontalLayout>
 				</l:VerticalLayout>
