@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.Tokenizer.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.Tokenizer.Page",
+			rootView : {
+				"viewName": "sap.m.sample.Tokenizer.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

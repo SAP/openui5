@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.PanelExpanded.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.PanelExpanded.PanelExpanded",
+			rootView : {
+				"viewName": "sap.m.sample.PanelExpanded.PanelExpanded",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

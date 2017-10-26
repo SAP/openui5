@@ -5,7 +5,11 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	return UIComponent.extend("sap.ui.core.sample.TypeDateAsDate.Component", {
 
 		metadata: {
-			rootView: "sap.ui.core.sample.TypeDateAsDate.V",
+			rootView: {
+				"viewName": "sap.ui.core.sample.TypeDateAsDate.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m",

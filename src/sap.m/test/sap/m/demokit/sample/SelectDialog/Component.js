@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.SelectDialog.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.SelectDialog.V",
+			rootView : {
+				"viewName": "sap.m.sample.SelectDialog.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

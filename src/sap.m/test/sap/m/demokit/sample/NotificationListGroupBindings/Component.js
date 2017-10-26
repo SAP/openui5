@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.NotificationListGroupBindings.Component", {
 
 		metadata: {
-			rootView: "sap.m.sample.NotificationListGroupBindings.V",
+			rootView: {
+				"viewName": "sap.m.sample.NotificationListGroupBindings.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m",

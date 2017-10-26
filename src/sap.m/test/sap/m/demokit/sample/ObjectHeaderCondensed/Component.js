@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.ObjectHeaderCondensed.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.ObjectHeaderCondensed.V",
+			rootView : {
+				"viewName": "sap.m.sample.ObjectHeaderCondensed.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

@@ -3,7 +3,11 @@ sap.ui.define(['sap/ui/core/UIComponent'], function(UIComponent) {
 
 	var Component = UIComponent.extend("sap.m.sample.GenericTileLineMode.Component", {
 		metadata: {
-			rootView: "sap.m.sample.GenericTileLineMode.Page",
+			rootView: {
+				"viewName": "sap.m.sample.GenericTileLineMode.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [ "sap.m" ]
 			},
