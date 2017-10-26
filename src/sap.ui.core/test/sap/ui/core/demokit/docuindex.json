@@ -119,7 +119,8 @@
 					"sap.ui.core.sample.OpaURLParameters.iStartMyUIComponentWithURLParameters",
 					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters",
 					"sap.ui.core.sample.OpaWithSupportAssistant",
-					"sap.ui.core.sample.OpaTestLibrary"
+					"sap.ui.core.sample.OpaTestLibrary",
+					"sap.ui.core.sample.OpaMessageToast"
 				]
 			},
 			{
@@ -648,6 +649,11 @@
 				"id": "sap.ui.core.sample.OpaTestLibrary",
 				"name": "Creating and using OPA5 test libraries",
 				"description": "This sample demonstrates how to create and use a simple OPA5 test library"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaMessageToast",
+				"name": "Retrieving message toast elements with OPA5",
+				"description": "This sample demonstrates how to locate message toast elements with OPA5"
 			}
 		]
 	}
