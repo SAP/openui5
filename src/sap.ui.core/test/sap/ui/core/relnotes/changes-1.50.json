@@ -663,6 +663,18 @@
         "type": "FIX",
         "text": " v4.ODataModel: auto-$expand/$select with sap.ui.table.Table and visibleRowCountMode\u003d\"Auto\" sends single requests for table cells",
         "references": []
+      },
+      {
+        "id": "7489c9ac4c0679765d1de1424f4ed400577d8016",
+        "type": "FIX",
+        "text": " core.Popup: autoclose should only work with touch/mouse event when touch is supported",
+        "references": []
+      },
+      {
+        "id": "205cb443a3f4c7b235f2d9cc7885be3ef2bc45c8",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Better handling of incomplete list data",
+        "references": []
       }
     ]
   },
