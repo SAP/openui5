@@ -520,8 +520,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	Input.prototype.onBeforeRendering = function() {
+		var sSelectedKey = this.getSelectedKey();
 		InputBase.prototype.onBeforeRendering.call(this);
 		this._deregisterEvents();
+		if (sSelectedKey) {
+			this.setSelectedKey(sSelectedKey);
+		}
 	};
 
 	Input.prototype.onAfterRendering = function() {
@@ -668,8 +672,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			this._oPopupInput._doSelect();
 		} else {
 			// call _getInputValue to apply the maxLength to the typed value
-			this._$input.val(this._getInputValue(sNewValue));
-			this.onChange();
+			sNewValue = this._getInputValue(sNewValue);
+			this.setDOMValue(sNewValue);
+			this.onChange(null, null, sNewValue);
 		}
 
 		this._iPopupListSelectedIndex = -1;
@@ -742,7 +747,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		var oItem = this.getSuggestionItemByKey(sKey);
-		this.setSelectionItem(oItem);
+
+		if (oItem) {
+			this.setSelectionItem(oItem);
+		} else {
+			this.setProperty("selectedKey", sKey, true);
+		}
 
 		return this;
 	};
@@ -842,8 +852,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			this._oPopupInput._doSelect();
 		} else {
 			// call _getInputValue to apply the maxLength to the typed value
-			this._$input.val(this._getInputValue(sNewValue));
-			this.onChange();
+			sNewValue = this._getInputValue(sNewValue);
+			this.setDOMValue(sNewValue);
+			this.onChange(null, null, sNewValue);
 		}
 		this._iPopupListSelectedIndex = -1;
 
@@ -2375,6 +2386,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		InputBase.prototype.setValue.call(this, sValue);
 		this._onValueUpdated(sValue);
 		return this;
+	};
+
+	/**
+	 * Sets the inner input DOM value.
+	 *
+	 * @protected
+	 * @param {string} value Dom value which will be set.
+	 */
+	Input.prototype.setDOMValue = function(value) {
+		this._$input.val(value);
 	};
 
 	/**

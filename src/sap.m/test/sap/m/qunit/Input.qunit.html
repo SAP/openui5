@@ -2398,6 +2398,53 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Set selection before suggestionItems", function(assert) {
+
+		var aSuggestionItems = [
+			new sap.ui.core.ListItem({
+				key: '1',
+				text: '1 Item 1',
+				additionalText: 'Desc 1'
+			}),
+			new sap.ui.core.ListItem({
+				key: '2',
+				text: 'Item 2',
+				additionalText: 'Desc 2'
+			}),
+			new sap.ui.core.ListItem({
+				key: '3',
+				text: 'Item 3',
+				additionalText: 'Desc 3'
+			}),
+			new sap.ui.core.ListItem({
+				key: '4',
+				text: 'Item 4',
+				additionalText: 'Desc 4'
+			}),
+			new sap.ui.core.ListItem({
+				key: '5',
+				text: 'Item 5',
+				additionalText: 'Desc 5'
+			})
+		],
+		oInput = new sap.m.Input({
+			showSuggestion: true,
+			selectedKey: "5",
+			suggestionItems: aSuggestionItems
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		this.clock.tick(50);
+
+		assert.equal(oInput.getSelectedKey(), "5", "selected key is correct");
+
+		assert.equal(oInput.getValue(), "Item 5", "selected key is correct in dom");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Display text formatting", function(assert) {
 		var oInput = createInputWithSuggestions();
 

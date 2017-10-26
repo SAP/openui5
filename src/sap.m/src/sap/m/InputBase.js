@@ -405,9 +405,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {object} oEvent
 	 * @param {object} [mParameters] Additional event parameters to be passed in to the change event handler if the
 	 * value has changed
+	 * @param {string} sNewValue Passed value on change
 	 * @returns {true|undefined} true when change event is fired
 	 */
-	InputBase.prototype.onChange = function(oEvent, mParameters) {
+	InputBase.prototype.onChange = function(oEvent, mParameters, sNewValue) {
+
 		mParameters = mParameters || this.getChangeEventParams();
 
 		// check the control is editable or not
@@ -415,8 +417,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
-		// get the dom value respect to max length
-		var sValue = this._getInputValue();
+		// get the dom value respect to max length if there is no passed value onChange
+		var sValue = this._getInputValue(sNewValue);
 
 		// compare with the old known value
 		if (sValue !== this._lastValue) {
