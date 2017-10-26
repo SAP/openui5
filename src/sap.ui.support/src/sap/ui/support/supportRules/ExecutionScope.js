@@ -139,7 +139,7 @@ sap.ui.define(["jquery.sap.global"],
 				 * @alias sap.ui.support.ExecutionScope.getLoggedObjects
 				 */
 				getLoggedObjects: function (type) {
-					var log = jQuery.sap.log.getLog(),
+					var log = jQuery.sap.log.getLogEntries(),
 						loggedObjects = [];
 
 					// Add logEntries that have support info object,
