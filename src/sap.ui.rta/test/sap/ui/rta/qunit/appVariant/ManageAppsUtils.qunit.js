@@ -81,7 +81,7 @@ sap.ui.require([
 					"semanticObject": "SemObj",
 					"action": "Action",
 					"parameters": {
-						saveAs : {
+						"sap-appvar-id" : {
 							value: "id1",
 							required: true
 						}
@@ -90,7 +90,7 @@ sap.ui.require([
 			};
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo).then(function(oAppVariantAttributes) {
-				assert.strictEqual(oAppVariantAttributes.params["saveAs"], "id1", "then the intent property's value is correct");
+				assert.strictEqual(oAppVariantAttributes.params["sap-appvar-id"], "id1", "then the intent property's value is correct");
 			});
 		});
 
@@ -111,13 +111,13 @@ sap.ui.require([
 					"semanticObject": "SemObj",
 					"action": "Action",
 					"parameters": {
-						saveAs : "id1"
+						"sap-appvar-id" : "id1"
 					}
 				}
 			};
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo).then(function(oAppVariantAttributes) {
-				assert.strictEqual(oAppVariantAttributes.params["saveAs"], "id1", "then the intent property's value is correct");
+				assert.strictEqual(oAppVariantAttributes.params["sap-appvar-id"], "id1", "then the intent property's value is correct");
 			});
 		});
 
@@ -141,7 +141,7 @@ sap.ui.require([
 								"semanticObject": "SemObj",
 								"action": "Action",
 								"parameters": {
-									saveAs : {
+									"sap-appvar-id" : {
 										value: "id1"
 									}
 								}
@@ -202,7 +202,7 @@ sap.ui.require([
 								"semanticObject": "SemObj",
 								"action": "Action",
 								"parameters": {
-									saveAs : "id2"
+									"sap-appvar-id" : "id2"
 								}
 							}
 						}
@@ -274,7 +274,7 @@ sap.ui.require([
 								"semanticObject": "SemObj",
 								"action": "Action",
 								"parameters": {
-									saveAs : "id1"
+									"sap-appvar-id" : "id1"
 								}
 							}
 						}

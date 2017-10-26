@@ -180,7 +180,7 @@ sap.ui.define([
 			return {
 				"inboundId": sCurrentRunningInboundId,
 				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/saveAs",
+					"propertyPath": "signature/parameters/sap-appvar-id",
 					"operation": "UPSERT",
 					"propertyValue": {
 						"required": true,

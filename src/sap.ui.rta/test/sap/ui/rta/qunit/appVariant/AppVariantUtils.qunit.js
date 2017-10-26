@@ -203,7 +203,7 @@ sap.ui.require([
 			var oInboundPropertyChange = {
 				"inboundId": "testInbound",
 				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/saveAs",
+					"propertyPath": "signature/parameters/sap-appvar-id",
 					"operation": "UPSERT",
 					"propertyValue": {
 						"required": true,
@@ -302,7 +302,7 @@ sap.ui.require([
 			var oPropertyChange = {
 				"inboundId": "testInbound",
 				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/saveAs",
+					"propertyPath": "signature/parameters/sap-appvar-id",
 					"operation": "UPSERT",
 					"propertyValue": {
 						"required": true,
