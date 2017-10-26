@@ -378,9 +378,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	};
 
-	DateTimePicker.prototype._getPlaceholderPattern = function(oLocaleData, sPlaceholder) {
+	DateTimePicker.prototype._getLocaleBasedPattern = function(sPlaceholder) {
+		var oLocaleData = LocaleData.getInstance(
+				sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+			),
+			iSlashIndex = sPlaceholder.indexOf("/");
 
-		var iSlashIndex = sPlaceholder.indexOf("/");
 		if (iSlashIndex > 0) {
 			return oLocaleData.getCombinedDateTimePattern(sPlaceholder.substr(0, iSlashIndex), sPlaceholder.substr(iSlashIndex + 1));
 		} else {

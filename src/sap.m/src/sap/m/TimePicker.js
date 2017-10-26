@@ -1001,8 +1001,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			this._closePicker();
 		};
 
-		TimePicker.prototype._getPlaceholderPattern = function (oLocaleData, sPlaceholder) {
-			return oLocaleData.getTimePattern(sPlaceholder);
+		TimePicker.prototype._getLocaleBasedPattern = function (sPlaceholder) {
+			return LocaleData.getInstance(
+				sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+			).getTimePattern(sPlaceholder);
 		};
 
 		/**
