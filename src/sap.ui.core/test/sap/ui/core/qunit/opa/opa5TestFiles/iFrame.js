@@ -1,8 +1,9 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
 		"sap/ui/test/opaQunit",
-		"unitTests/utils/browser"
-	], function (Opa5, opaTest, browser) {
+		"unitTests/utils/browser",
+		"sap/ui/test/actions/Press"
+	], function (Opa5, opaTest, browser, Press) {
 
 		QUnit.module("IFrame utils");
 
@@ -162,39 +163,47 @@ sap.ui.define([
 			oOpa5.emptyQueue().done(done);
 		});
 
-		QUnit.test("Should throw error if the IFrame throws an error", function (assert) {
+		QUnit.test("Should throw error if the iFrame throws an error", function (assert) {
 			var done = assert.async();
 
-			// Arrange
-			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
-			var $Frame = jQuery("#OpaFrame").on("load", function () {
-				var fnSpy = sinon.spy();
-				$Frame[0].contentWindow.onerror = fnSpy;
+			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/uncaughtError.html"></iframe>');
 
-				// System under Test
+			// browsers don't have a standard way of forming error message => ignore the prefix in error name (eg: IE: "TestUncaughtError"; Chrome: "Uncaught Error: TestUncaughtError")
+			var $Frame = jQuery("#OpaFrame").on("load", function () {
+				var fnOnErrorSpy = sinon.spy();
+				$Frame[0].contentWindow.onerror = fnOnErrorSpy;
+
+				var fnOriginalOnError = window.onerror;
+				window.onerror = function (sErrorMsg, sUrl, iLine, iColumn, oError) {
+					assert.ok(sErrorMsg.match(/Error in launched application iFrame:.* TestUncaughtError/));
+					assert.ok(sErrorMsg.match("uncaughtError.html\nline: 33\ncolumn: [0-9]*"));
+					if (oError) {
+						assert.ok(sErrorMsg.match("\niFrame error:.* TestUncaughtError"), "Should include error object if browser supports it");
+						assert.ok(sErrorMsg.match("onPress"), "Should contain iFrame stack trace");
+					}
+				};
+
 				var oOpa5 = new Opa5();
 
-				oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
-					// Act + Assert
-					var clock = sinon.useFakeTimers();
+				oOpa5.iStartMyAppInAFrame("../testdata/uncaughtError.html");
 
-					assert.throws(function () {
-						Opa5.getWindow().onerror("Errormessage", "Url", 31);
-						// throws the actual exception in a delay
-						clock.tick(0);
-					},"OpaFrame error message: Errormessage,\nurl: Url line: 31,\nDid throw an error");
-
-					clock.restore();
-					assert.strictEqual(fnSpy.callCount, 1, "Did call the app onerror");
+				oOpa5.waitFor({
+					viewName: "myView",
+					id: "myButton",
+					// pressing the button will cause an uncaught error inside the iframe
+					actions: new Press()
 				});
 
 				oOpa5.iTeardownMyAppFrame();
 
 				oOpa5.emptyQueue().done(function () {
+					sinon.assert.calledOnce(fnOnErrorSpy, "Should call iFrame onerror once");
+					sinon.assert.calledWithMatch(fnOnErrorSpy, "TestUncaughtError");
+					// restore window objects before test end
+					window.onerror = fnOriginalOnError;
 					done();
 				});
 			});
-
 		});
 
 		QUnit.module("IFrame navigation", {
