@@ -21,18 +21,19 @@
 			columnsXL="2"
 			columnsL="1"
 			columnsM="1"
-			singleContainerFullSize="false" >
+			singleContainerFullSize="false"
+			ariaLabelledBy="Title1" >
 			<f:toolbar>
 				<Toolbar id="TB1">
-					<Title text="Address" level="H4" titleStyle="H4"/>
+					<Title id="Title1" text="Address" level="H4" titleStyle="H4"/>
 					<ToolbarSpacer />
 					<Button icon="sap-icon://settings"/>
 					<Button icon="sap-icon://drop-down-list" />
 				</Toolbar>
 			</f:toolbar>
 			<f:content>
-				<Toolbar>
-					<Title text="Office" level="H5" titleStyle="H5"/>
+				<Toolbar ariaLabelledBy="Title2">
+					<Title id="Title2" text="Office" level="H5" titleStyle="H5"/>
 					<ToolbarSpacer />
 					<Button icon="sap-icon://settings"/>
 				</Toolbar>
@@ -61,8 +62,8 @@
 						<core:Item text="USA" key="USA"/>
 					</items>
 				</Select>
-				<Toolbar>
-					<Title text="Online" level="H5" titleStyle="H5"/>
+				<Toolbar ariaLabelledBy="Title3">
+					<Title id="Title3" text="Online" level="H5" titleStyle="H5"/>
 					<ToolbarSpacer />
 					<Button icon="sap-icon://settings"/>
 				</Toolbar>
