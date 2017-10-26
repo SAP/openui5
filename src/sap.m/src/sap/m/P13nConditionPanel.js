@@ -1764,6 +1764,7 @@ sap.ui.define([
 				tooltip: oItem.tooltip ? oItem.tooltip : oItem.text
 			}));
 		}
+		oCtrl.setEditable( oCtrl.getItems().length > 1);
 	};
 
 	/**
@@ -1982,6 +1983,7 @@ sap.ui.define([
 						}));
 					}
 				}
+				oKeyField.setEditable( oKeyField.getItems().length > 1);
 			}
 
 			if (sOldKey) {
