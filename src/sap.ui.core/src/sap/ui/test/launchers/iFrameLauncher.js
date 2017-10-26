@@ -268,7 +268,7 @@ sap.ui.define([
 
 	function destroyFrame () {
 		if (!oFrameWindow) {
-			throw new Error("sap.ui.test.launchers.iFrameLauncher: Teardown has been called but there was no start");
+			throw new Error("sap.ui.test.launchers.iFrameLauncher: Teardown was called before launch. No iFrame was loaded.");
 		}
 		// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
 		oFrameWindow.onerror = $.noop;
@@ -300,8 +300,7 @@ sap.ui.define([
 	return {
 		launch: function (options) {
 			if (oFrameWindow) {
-				$.sap.log.error("sap.ui.test.launchers.iFrameLauncher: Only one IFrame may be loaded at a time.");
-				return;
+				throw new Error("sap.ui.test.launchers.iFrameLauncher: Launch was called twice without teardown. Only one iFrame may be loaded at a time.");
 			}
 
 			//invalidate the cache
