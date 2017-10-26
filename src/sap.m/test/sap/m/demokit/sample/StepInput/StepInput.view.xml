@@ -28,6 +28,8 @@
                             valueState="{valueState}"
                             enabled="{enabled}"
                             editable="{editable}"
+                            description="{description}"
+                            fieldWidth="{fieldWidth}"
                             change="onChange"/>
 
                 </cells>

@@ -152,7 +152,22 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					 * In case the value is not valid it will be set to the default value.
 					 * @since 1.46
 					 */
-					displayValuePrecision: {type: "int", group: "Data", defaultValue: 0}
+					displayValuePrecision: {type: "int", group: "Data", defaultValue: 0},
+					/**
+					 * Determines the description text after the input field, for example units of measurement, currencies.
+					 * @since 1.54
+					 */
+					description : {type : "string", group : "Misc", defaultValue : null},
+					/**
+					 * Determines the distribution of space between the input field
+					 * and the description text . Default value is 50% (leaving the other
+					 * 50% for the description).
+					 *
+					 * <b>Note:</b> This property takes effect only if the
+					 * <code>description</code> property is also set.
+					 * @since 1.54
+					 */
+					fieldWidth : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '50%'}
 				},
 				aggregations: {
 					/**
@@ -232,19 +247,61 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * Property names which when set are directly forwarded to inner input <code>setProperty</code> method
 		 * @type {Array.<string>}
 		 */
-		var aForwardableProps = ["enabled", "editable", "name", "placeholder", "required", "valueStateText"];
+		var aForwardableProps = ["enabled", "editable", "name", "placeholder", "required", "valueStateText", "description", "fieldWidth"];
 
-		//Accessibility behaviour of the Input needs to be extended
+
+		/****************************************** NUMERIC INPUT CONTROL ****************************************************/
+
 		var NumericInputRenderer = Renderer.extend(InputRenderer);
 
+		// use the InputBaseRenderer hook which opens the input tag to render before it decrement button
+		NumericInputRenderer.openInputTag = function (oRm, oNumericInput) {
+			var oStepInput = oNumericInput.getParent(),
+				oDecrementButton = oStepInput._getDecrementButton(),
+				bEditable = oStepInput.getEditable();
+
+			if (bEditable && oDecrementButton) {
+				this.renderButton(oRm, oNumericInput, oDecrementButton, ["sapMStepInputBtnDecrease"]);
+			}
+
+			InputRenderer.openInputTag.apply(this, arguments);
+		};
+
+		// use the InputBaseRenderer hook which opens the input tag to render after it increase button
+		NumericInputRenderer.closeInputTag = function(oRm, oNumericInput) {
+			var oStepInput = oNumericInput.getParent(),
+				oIncrementButton = oStepInput._getIncrementButton(),
+				bEditable = oStepInput.getEditable();
+
+			InputRenderer.closeInputTag.apply(this, arguments);
+
+			if (bEditable && oIncrementButton) {
+				this.renderButton(oRm, oNumericInput, oIncrementButton, ["sapMStepInputBtnIncrease"]);
+			}
+		};
+
+		NumericInputRenderer.renderButton = function (oRm, oNumericInput, oButton, aWrapperClasses) {
+			var bDisableButton = oNumericInput.getParent()._getIsDisabledButton(aWrapperClasses[0]);
+
+			oButton.addStyleClass("sapMStepInputBtn");
+
+			aWrapperClasses.forEach(function (sClass) {
+				oButton.addStyleClass(sClass);
+			});
+
+			bDisableButton ? oButton.addStyleClass("sapMStepInputIconDisabled") : oButton.removeStyleClass("sapMStepInputIconDisabled");
+			oRm.renderControl(oButton);
+		};
+
+		//Accessibility behavior of the Input needs to be extended
 		/**
-		 * Overwrites the accessibility state using the getAccessibilityState method of the InputBaseRenderer.
+		 * Overwrites the accessibility state using the <code>getAccessibilityState</code> method of the <code>InputBaseRenderer</code>.
 		 *
 		 * @param {NumericInput} oNumericInput
 		 * @returns {Array} mAccAttributes
 		 */
 		NumericInputRenderer.getAccessibilityState = function(oNumericInput) {
-			var mAccAttributes = sap.m.InputBaseRenderer.getAccessibilityState(oNumericInput),
+			var mAccAttributes = InputRenderer.getAccessibilityState(oNumericInput),
 				oStepInput = oNumericInput.getParent(),
 				fMin = oStepInput.getMin(),
 				fMax = oStepInput.getMax(),
@@ -275,7 +332,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		};
 
 		/**
-		 * Write the id of the inner input
+		 * Writes the ID of the inner input.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
@@ -285,11 +342,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		};
 
 		/**
-		 * Define own inner ID suffix.
+		 * Defines own inner ID suffix.
 		 * @returns {string} The own inner ID suffix
 		 */
 		NumericInputRenderer.getInnerSuffix = function() {
 			return "inner";
+		};
+
+		NumericInputRenderer._getDescriptionSuffix = function () {
+			// this is the suffix used inside the Input
+			// in case it is changed there it should be changed also here
+			// it's used currently only inside qunit tests to get the description dom elelemnt
+			return "-Descr";
 		};
 
 		var NumericInput = Input.extend("NumericInput", {
@@ -489,6 +553,24 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			return this.getAggregation("_decrementButton");
 		};
 
+		StepInput.prototype._getIsDisabledButton = function (sType) {
+			var bEnabled = this.getEnabled(),
+				fMin = this.getMin(),
+				fMax = this.getMax(),
+				fValue = this.getValue(),
+				bDisableButton = false;
+
+			switch (sType) {
+				case "sapMStepInputBtnIncrease":
+					bDisableButton = !bEnabled || (fValue >= fMax);
+					break;
+				case "sapMStepInputBtnDecrease":
+					bDisableButton = !bEnabled || (fValue <= fMin);
+					break;
+			}
+			return bDisableButton;
+		};
+
 		/**
 		 * Lazily retrieves the <code>Input</code>.
 		 *
@@ -503,6 +585,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					type: InputType.Number,
 					editable: this.getEditable(),
 					enabled: this.getEnabled(),
+					description: this.getDescription(),
+					fieldWidth: this.getFieldWidth(),
 					liveChange: this._inputLiveChangeHandler
 				});
 				this.setAggregation("_input", oNumericInput);
@@ -510,6 +594,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 			return this.getAggregation("_input");
 		};
+
 
 		/**
 		 * Handles the button press.

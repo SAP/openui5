@@ -107,11 +107,69 @@
 			oSI.destroy();
 		});
 
+		QUnit.test("openInputTag is called", function() {
+			//Prepare and Act
+			var oRenderSpy,
+				oSI = new sap.m.StepInput();
+
+			oSI.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			oRenderSpy = this.spy(oSI._getInput().getRenderer(), "openInputTag");
+			//act
+			oSI.setDescription("EUR");
+			oCore.applyChanges();
+
+			assert.strictEqual(oRenderSpy.callCount, 1, "openInputTag is called");
+
+			//destroy
+			oSI.destroy();
+		});
+
+		QUnit.test("closeInputTag is called", function() {
+			//Prepare and Act
+			var oRenderSpy,
+				oSI = new sap.m.StepInput();
+
+			oSI.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			oRenderSpy = this.spy(oSI._getInput().getRenderer(), "closeInputTag");
+			//act
+			oSI.setDescription("EUR");
+			oCore.applyChanges();
+
+			//Assert
+			assert.strictEqual(oRenderSpy.callCount, 1, "closeInputTag is called");
+
+			//destroy
+			oSI.destroy();
+		});
+
+		QUnit.test("renderButton is called", function() {
+			//Prepare and Act
+			var oRenderSpy,
+				oSI = new sap.m.StepInput();
+
+			oSI.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			oRenderSpy = this.spy(oSI._getInput().getRenderer(), "renderButton");
+			//act
+			oSI.setDescription("EUR");
+			oCore.applyChanges();
+
+			//Assert
+			assert.strictEqual(oRenderSpy.callCount, 2, "renderButton is called");
+
+			//destroy
+			oSI.destroy();
+		});
 
 		QUnit.test("input", function (assert) {
 			//assert
 			strictEqual(this.stepInput._getInput().getMetadata().getName(), "NumericInput",
-					"the picker aggregation holds an instance of a numeric input");
+					"the input aggregation holds an instance of a numeric input");
 			strictEqual(this.stepInput.getValue(), 0, "The default value is correctly set in the input");
 
 			//act
@@ -248,6 +306,34 @@
 			if (oStepInput) {
 				oStepInput.destroy();
 			}
+		});
+
+		QUnit.test("description", function (assert) {
+			var sNumericDescSuffix = this.stepInput._getInput().getRenderer()._getDescriptionSuffix();
+			// arrange
+			this.stepInput.setDescription("EUR");
+			assert.strictEqual(this.stepInput.$("input" + sNumericDescSuffix).length, 0, "Description element is not yet rendered");
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(this.stepInput._getInput().getDescription(), this.stepInput.getDescription(), "the description is passed to the inner input aggregation");
+			assert.strictEqual(this.stepInput.$("input" + sNumericDescSuffix).length, 1, "Description element is inside the DOM");
+		});
+
+		QUnit.test("fieldWidth", function (assert) {
+			assert.strictEqual(this.stepInput.$().find(".sapMInputDivWrapper")[0].style.width, "", "field width is not set if the description is not set");
+
+			// arrange
+			this.stepInput.setDescription("EUR");
+			sap.ui.getCore().applyChanges();
+			//assert
+			assert.strictEqual(this.stepInput.$().find(".sapMInputDivWrapper")[0].style.width, "50%", "field width by default is 50%");
+			// arrange
+			this.stepInput.setFieldWidth("70%");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(this.stepInput._getInput().getFieldWidth(), this.stepInput.getFieldWidth(), "the fieldWidth is passed to the inner input aggregation");
+			assert.strictEqual(this.stepInput.$().find(".sapMInputDivWrapper")[0].style.width, "70%", "field width of 70% is correctly set to the Input wraper");
 		});
 
 		QUnit.module("Operations", {
@@ -1233,6 +1319,59 @@
 					"setProperty is called and it's third parameter is 'true'");
 		});
 
+		module("Misc");
+
+		QUnit.test("Description suffix", function (assert) {
+			var oStepInput = new sap.m.StepInput({
+				value: 5,
+				description: "EUR"
+			}),
+			sNumericDescSuffix = oStepInput._getInput().getRenderer()._getDescriptionSuffix();
+
+			assert.strictEqual(sNumericDescSuffix, "-Descr", "Description suffix is correct");
+
+			oStepInput.destroy();
+		});
+
+		QUnit.test("_getIsDisabledButton", function (assert) {
+			// arrange
+			var oStepInput = new sap.m.StepInput({
+				value: 5,
+				min: 6,
+				max:8
+			});
+			oStepInput.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			// assert
+			assert.ok(oStepInput._getIsDisabledButton("sapMStepInputBtnDecrease"), "Decrease button is disabled when the value is less then the min value");
+			// act
+			oStepInput.setValue(7);
+			// assert
+			assert.ok(!oStepInput._getIsDisabledButton("sapMStepInputBtnDecrease"), "Decrease button is not disabled when the value is bigger then the min value and the control is enabled");
+			//act
+			oStepInput.setValue(6);
+			oStepInput.setEnabled(false);
+			// assert
+			assert.ok(oStepInput._getIsDisabledButton("sapMStepInputBtnDecrease"), "Decrease button is disabled when the control is disabled");
+
+			//act
+			oStepInput.setEnabled(true);
+			// assert
+			assert.ok(!oStepInput._getIsDisabledButton("sapMStepInputBtnIncrease"), "Increase button is not disabled when the value is less then the max value and the control is enabled");
+			// act
+			oStepInput.setValue(9);
+			// assert
+			assert.ok(oStepInput._getIsDisabledButton("sapMStepInputBtnIncrease"), "Increase button is disabled when the value is bigger then the max value");
+			//act
+			oStepInput.setValue(7);
+			oStepInput.setEnabled(false);
+			// assert
+			assert.ok(oStepInput._getIsDisabledButton("sapMStepInputBtnIncrease"), "Increase button is disabled when the control is disabled");
+
+			// clean up
+			oStepInput.destroy();
+		});
 	</script>
 
 </head>
