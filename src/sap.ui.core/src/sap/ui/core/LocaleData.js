@@ -1667,7 +1667,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				}
 			},
 			"decimalFormat": { "standard": "#,##0.###" },
-			"currencyFormat": { "standard": "¤#,##0.00"},
+			"currencyFormat": {
+				"standard": "¤#,##0.00",
+				"currencySpacing": {
+					"beforeCurrency": {
+						"currencyMatch": "[:^S:]",
+						"surroundingMatch": "[:digit:]",
+						"insertBetween": " "
+					},
+					"afterCurrency": {
+						"currencyMatch": "[:^S:]",
+						"surroundingMatch": "[:digit:]",
+						"insertBetween": " "
+					}
+				}
+			},
 			"percentFormat": { "standard": "#,##0%"},
 			"symbols-latn-decimal":".",
 			"symbols-latn-group":",",

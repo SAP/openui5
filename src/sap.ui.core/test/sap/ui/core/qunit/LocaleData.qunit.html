@@ -190,6 +190,8 @@
 		assert.equal(typeof oLocaleData.getNumberSymbol("group"), "string", "getNumberSymbol(\"group\")");
 		assert.equal(typeof oLocaleData.getNumberSymbol("plusSign"), "string", "getNumberSymbol(\"plusSign\")");
 		assert.equal(typeof oLocaleData.getNumberSymbol("minusSign"), "string", "getNumberSymbol(\"minusSign\")");
+		assert.equal(typeof oLocaleData.getCurrencySpacing(), "object", "getCurrencySpacing()");
+		assert.equal(typeof oLocaleData.getCurrencySpacing("after"), "object", "getCurrencySpacing(\"after\")");
 		assert.equal(typeof oLocaleData.getFirstDayOfWeek(), "number", "getFirstDayOfWeek()");
 		assert.ok(oLocaleData.getFirstDayOfWeek() >= 0 && oLocaleData.getFirstDayOfWeek() <7, "getFirstDayOfWeek()");
 		assert.equal(typeof oLocaleData.getWeekendStart(), "number", "getWeekendStart()");
