@@ -275,11 +275,25 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oCreatedFile.fileType, "variant");
 		assert.equal(oCreatedFile.namespace, "apps/smartFilterBar/adapt/oil/changes/");
 		assert.equal(oCreatedFile.packageName, "/UIF/LREP");
+		assert.equal(oCreatedFile.support.generator, "Change.createInitialFileContent");
 		assert.deepEqual(oCreatedFile.content, {something: "createNewVariant"});
 		assert.deepEqual(oCreatedFile.texts, {variantName: {value: "myVariantName", type: "myTextType"}});
 		assert.deepEqual(oCreatedFile.selector, {"id": "control1"});
 		assert.deepEqual(oCreatedFile.dependentSelector, {source: {id: "controlSource1", idIsLocal: true}, target: {id: "controlTarget1", idIsLocal: true}});
 		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0", to: "1.0.0"});
+	});
+
+	QUnit.test("createInitialFileContent when generator is pre-set", function(assert) {
+		var oInfo = {
+			changeType: "filterVariant",
+			content: {},
+			namespace: "apps/smartFilterBar/adapt/oil/changes/",
+			generator: "RTA"
+		};
+
+		var oCreatedFile = Change.createInitialFileContent(oInfo);
+
+		assert.equal(oCreatedFile.support.generator, "RTA");
 	});
 
 	QUnit.test("createInitialFileContent when fileType is pre-set", function(assert) {

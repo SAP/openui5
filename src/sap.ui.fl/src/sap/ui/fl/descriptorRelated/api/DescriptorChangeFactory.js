@@ -190,13 +190,14 @@ sap.ui.define([
 	 * @param {object} oInlineChange the inline change instance
 	 * @param {string} sLayer layer of the descriptor change
 	 * @param {object} oAppComponent application component to get the version from
+	 * @param {string} sTool tool which creates the descriptor change (e.g. RTA, DTA, FCC ...)
 	 *
 	 * @return {Promise} resolving the new Change instance
 	 *
 	 * @private
 	 * @sap-restricted
 	 */
-	DescriptorChangeFactory.prototype.createNew = function(sReference, oInlineChange, sLayer, oAppComponent) {
+	DescriptorChangeFactory.prototype.createNew = function(sReference, oInlineChange, sLayer, oAppComponent, sTool) {
 		var fSetHostingIdForTextKey = function(_oDescriptorInlineChange, sId){
 			//providing "hosting id" for appdescr_app_setTitle and similar
 			//"hosting id" is descriptor variant id
@@ -220,6 +221,7 @@ sap.ui.define([
 			"creation": sAppVersion,
 			"from": sAppVersion
 		} : {};
+		mPropertyBag.generator = sTool;
 
 		if (!sLayer){
 			//default to 'CUSTOMER'

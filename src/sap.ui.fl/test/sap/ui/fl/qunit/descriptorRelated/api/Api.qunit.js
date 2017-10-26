@@ -1702,8 +1702,18 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 				assert.notEqual(oDescriptorChange, null);
 				assert.equal(oDescriptorChange._mChangeFile.reference, "a.reference");
 				assert.equal(oDescriptorChange._mChangeFile.changeType, "changeType");
+				assert.equal(oDescriptorChange._mChangeFile.layer, "CUSTOMER");
 				assert.equal(oDescriptorChange._oInlineChange, oDescriptorInlineChange);
 			});
+		});
+	});
+
+	QUnit.test("createNew - with tool", function(assert) {
+		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, 'VENDOR', undefined, 'RTA');
+		}).then(function(oDescriptorChange) {
+			assert.equal(oDescriptorChange._mChangeFile.layer, "VENDOR");
+			assert.equal(oDescriptorChange._mChangeFile.support.generator, 'RTA');
 		});
 	});
 
@@ -1912,6 +1922,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 		}).then(function(oDescriptorChange) {
 			_oDescriptorChange = oDescriptorChange;
+			assert.equal(_oDescriptorChange._mChangeFile.layer, 'CUSTOMER');
 			assert.equal(_oDescriptorChange._getChangeToSubmit( ).getRequest(),'ATO_NOTIFICATION');
 		});
 	});
@@ -1919,13 +1930,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	QUnit.test("create new - CUSTOMER_BASE layer", function(assert) {
 		var _oDescriptorChange;
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, 'CUSTOMER_BASE');
 		}).then(function(oDescriptorChange) {
 			_oDescriptorChange = oDescriptorChange;
+			assert.equal(_oDescriptorChange._mChangeFile.layer, 'CUSTOMER_BASE');
 			assert.equal(_oDescriptorChange._getChangeToSubmit( ).getRequest(),'ATO_NOTIFICATION');
 		});
 	});
-
 
 }(sap.ui.fl.descriptorRelated.api.DescriptorInlineChangeFactory,
 		sap.ui.fl.descriptorRelated.api.DescriptorVariantFactory,

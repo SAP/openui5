@@ -214,6 +214,52 @@ sap.ui.require([
 		assert.deepEqual(oVariantFileContent, oExpectedInfo, "then correct initial file content set");
 	});
 
+	QUnit.test("when createInitialFileContent is called with generator", function(assert) {
+		var sGenerator = "RTA";
+		var oExpectedInfo = {
+			"content": {
+				"fileName": "variant0",
+				"title": "variant A",
+				"fileType": "ctrl_variant",
+				"reference": "sap.ui.rta.test.Demo.md.Component",
+				"variantManagementReference": "idMain1--variantManagementOrdersTable",
+				"variantReference": "",
+				"packageName": "$TMP",
+				"self": "sap.ui.rta.test.Demo.md.Componentvariant0.ctrl_variant",
+				"content": {},
+				"layer": "VENDOR",
+				"texts": {
+					"TextDemo": {
+						"value": "Text for TextDemo",
+						"type": "myTextType"
+					}
+				},
+				"namespace": "sap.ui.rta.test.Demo.md.Component",
+				"creation": "",
+				"originalLanguage": Utils.getCurrentLanguage(),
+				"conditions": {},
+				"support": {
+					"generator": sGenerator,
+					"service": "",
+					"user": "",
+					"sapui5Version": sap.ui.version
+				},
+				"validAppVersions": {}
+			},
+			"controlChanges": [],
+			"variantChanges": []
+		};
+
+		var oVariantSpecificData = {
+				content: this.oVariantDef.content
+		};
+		oVariantSpecificData.isVariant = true;
+		oVariantSpecificData.generator = sGenerator;
+		var oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
+
+		assert.deepEqual(oVariantFileContent, oExpectedInfo, "then correct initial file content set with generator");
+	});
+
 	QUnit.test("when _isReadOnlyDueToOriginalLanguage ", function(assert) {
 		sandbox.stub(Utils, "getCurrentLanguage").returns("EN");
 		var bIsReadOnly = this.oVariant._isReadOnlyDueToOriginalLanguage();
