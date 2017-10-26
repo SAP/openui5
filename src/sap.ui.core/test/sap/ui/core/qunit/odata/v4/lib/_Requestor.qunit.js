@@ -635,10 +635,12 @@ sap.ui.require([
 			assert.strictEqual("X-CSRF-Token" in oRequestor.mHeaders, false);
 
 			// code under test
-			oPromise = oRequestor.refreshSecurityToken();
+			oPromise = oRequestor.refreshSecurityToken(undefined);
 
-			assert.strictEqual(oRequestor.refreshSecurityToken(), oPromise, "promise reused");
-			assert.ok(jQuery.ajax.calledOnce, "only one HEAD request underway at any time");
+			assert.strictEqual(oRequestor.refreshSecurityToken(undefined), oPromise,
+				"promise reused");
+			assert.strictEqual(jQuery.ajax.callCount, 1,
+				"only one HEAD request underway at any time");
 
 			return oPromise.then(function () {
 				assert.ok(bSuccess, "success possible");
@@ -648,12 +650,22 @@ sap.ui.require([
 				assert.strictEqual(oError0, oError);
 				assert.strictEqual("X-CSRF-Token" in oRequestor.mHeaders, false);
 			}).then(function () {
-				var oNewPromise = oRequestor.refreshSecurityToken();
+				// code under test
+				return oRequestor.refreshSecurityToken("some_old_token").then(function () {
+					var oNewPromise;
 
-				assert.notStrictEqual(oNewPromise, oPromise, "new promise");
-				// avoid "Uncaught (in promise)"
-				return oNewPromise.catch(function (oError1) {
-					assert.strictEqual(oError1, oError);
+					assert.strictEqual(jQuery.ajax.callCount, 1, "no new HEAD request");
+
+					// code under test
+					oNewPromise = oRequestor.refreshSecurityToken(
+						oRequestor.mHeaders["X-CSRF-Token"]);
+
+					assert.notStrictEqual(oNewPromise, oPromise, "new promise");
+					assert.strictEqual(jQuery.ajax.callCount, 2, "new HEAD request");
+					// avoid "Uncaught (in promise)"
+					return oNewPromise.catch(function () {
+						assert.ok(!bSuccess, "certain failure");
+					});
 				});
 			});
 		});
@@ -680,7 +692,7 @@ sap.ui.require([
 		QUnit.test("request: " + o.sTitle, function (assert) {
 			var oError = {},
 				oReadFailure = {},
-				oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+				oRequestor = _Requestor.create("/Service/", {"X-CSRF-Token" : "Fetch"}, undefined, {
 					fnGetGroupProperty : defaultGetGroupProperty
 				}),
 				oRequestPayload = {},
@@ -730,7 +742,8 @@ sap.ui.require([
 			if (o.bRequestSucceeds !== undefined) {
 				this.mock(oRequestor).expects("refreshSecurityToken").never();
 			} else {
-				this.stub(oRequestor, "refreshSecurityToken", function () {
+				this.stub(oRequestor, "refreshSecurityToken", function (sOldSecurityToken) {
+					assert.strictEqual(sOldSecurityToken, "Fetch");
 					return new Promise(function (fnResolve, fnReject) {
 						setTimeout(function () {
 							if (o.bReadFails) { // reading of CSRF token fails
@@ -770,8 +783,7 @@ sap.ui.require([
 				}
 			},
 			oCleanedPayload = {},
-			oRequestor = _Requestor.create("/Service/", {"_foo" : "_bar"}, {"sap-client" : "111"},
-				undefined, undefined, defaultGetGroupProperty),
+			oRequestor = _Requestor.create("/Service/", {"_foo" : "_bar"}, {"sap-client" : "111"}),
 			oRequestPayload = {},
 			sResponseContentType = "multipart/mixed; boundary=foo",
 			oResponsePayload = {},
@@ -842,6 +854,57 @@ sap.ui.require([
 			}, function (oError0) {
 				assert.ok(false);
 			});
+	});
+
+	//*********************************************************************************************
+	// Integrative test simulating parallel POST requests: Both got a 403 token "required",
+	// but the second not until the first already has completed fetching a new token,
+	// here the second can simply reuse the already fetched token
+	QUnit.test("parallel POST requests, fetch HEAD only once", function (assert) {
+		var bFirstRequest = true,
+			jqFirstTokenXHR = createMock(assert, {}, "OK", "abc123"),
+			iHeadRequestCount = 0,
+			oRequestor = _Requestor.create("/Service/", undefined, undefined, {fnGetGroupProperty :
+				defaultGetGroupProperty});
+
+		this.stub(jQuery, "ajax", function (sUrl0, oSettings) {
+			var jqXHR,
+				oTokenRequiredResponse = {
+					getResponseHeader : function (sName) {
+						return "required";
+					},
+					"status" : 403
+				};
+
+			if (oSettings.method === "HEAD") {
+				jqXHR = jqFirstTokenXHR;
+				iHeadRequestCount += 1;
+			} else if (oSettings.headers["X-CSRF-Token"] === "abc123") {
+				jqXHR = createMock(assert, {}, "OK");
+			} else {
+				jqXHR = new jQuery.Deferred();
+				if (bFirstRequest) {
+					jqXHR.reject(oTokenRequiredResponse);
+					bFirstRequest = false;
+				} else {
+					// Ensure that the second POST request is rejected after the first one already
+					// has requested and received a token
+					jqFirstTokenXHR.then(setTimeout(function () {
+						// setTimeout needed here because .then comes first
+						jqXHR.reject(oTokenRequiredResponse);
+					}, 0));
+				}
+			}
+			return jqXHR;
+		});
+
+		// code under test
+		return Promise.all([
+			oRequestor.request("POST", "$direct"),
+			oRequestor.request("POST", "$direct")
+		]).then(function () {
+			assert.strictEqual(iHeadRequestCount, 1, "fetch HEAD only once");
+		});
 	});
 
 	//*********************************************************************************************

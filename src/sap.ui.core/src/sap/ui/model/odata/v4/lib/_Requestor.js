@@ -545,15 +545,23 @@ sap.ui.define([
 	 * if that fails. Makes sure that only one HEAD request is underway at any given time and
 	 * shares the promise accordingly.
 	 *
+	 * @param {string} [sOldSecurityToken]
+	 *   Security token that caused a 403. A new token is only fetched if the old one is still
+	 *   current.
 	 * @returns {Promise}
 	 *   A promise that will be resolved (with no result) once the CSRF token has been refreshed.
 	 *
 	 * @private
 	 */
-	Requestor.prototype.refreshSecurityToken = function () {
+	Requestor.prototype.refreshSecurityToken = function (sOldSecurityToken) {
 		var that = this;
 
 		if (!this.oSecurityTokenPromise) {
+			// do not refresh security token again if a new token is already available in between
+			if (sOldSecurityToken !== this.mHeaders["X-CSRF-Token"]) {
+				return Promise.resolve();
+			}
+
 			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
 				jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
 					method : "HEAD",
@@ -716,6 +724,7 @@ sap.ui.define([
 		}
 
 		return new Promise(function (fnResolve, fnReject) {
+			var sCurrentCSRFToken = that.mHeaders["X-CSRF-Token"];
 			// Adding query parameters could have been the responsibility of submitBatch, but doing
 			// it here makes the $batch recognition easier.
 			jQuery.ajax(that.sServiceUrl + sResourcePath + (bIsBatch ? that.sQueryParams : ""), {
@@ -744,7 +753,7 @@ sap.ui.define([
 				if (!bIsFreshToken && jqXHR.status === 403
 						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
 					// refresh CSRF token and repeat original request
-					that.refreshSecurityToken().then(function () {
+					that.refreshSecurityToken(sCurrentCSRFToken).then(function () {
 						// no fnSubmit, it has been called already
 						// no fnCancel, it is only relevant while the request is in the queue
 						fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
