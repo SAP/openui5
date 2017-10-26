@@ -98,19 +98,24 @@ sap.ui.define([
 			var sAction = this.getModelProperty("action", oEvent.getSource().getBindingContext());
 			var oParams = this.getModelProperty("params", oEvent.getSource().getBindingContext());
 
-			var oNavigationParams = {
-				target: {
-	                semanticObject : sSemanticObject,
-	                action : sAction
-				},
-				params: oParams
-			};
+			var oNavigationParams;
+			if (sSemanticObject && sAction && oParams) {
+				oNavigationParams = {
+					target: {
+		                semanticObject : sSemanticObject,
+		                action : sAction
+					},
+					params: oParams
+				};
 
-			RuntimeAuthoring.enableRestart( "CUSTOMER" );
+				RuntimeAuthoring.enableRestart( "CUSTOMER" );
 
-			oNavigationService.toExternal(oNavigationParams);
+				oNavigationService.toExternal(oNavigationParams);
 
-			sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+				sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+			} else {
+				return false;
+			}
 		},
 		saveAsAppVariant: function(oEvent) {
 			sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");

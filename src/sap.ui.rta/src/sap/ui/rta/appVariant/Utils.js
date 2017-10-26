@@ -58,11 +58,15 @@ sap.ui.define([
 						oAppVariantAttributes.semanticObject = sSemanticObject;
 						oAppVariantAttributes.action = sAction;
 
-						Object.keys(oParams).forEach(function(sParamValue) {
-							oParams[sParamValue] = oParams[sParamValue].value;
-						});
+						if (oParams) {
+							Object.keys(oParams).forEach(function(sParamValue) {
+								if (oParams[sParamValue].value) {
+									oParams[sParamValue] = oParams[sParamValue].value;
+								}
+							});
 
-						oAppVariantAttributes.params = oParams;
+							oAppVariantAttributes.params = oParams;
+						}
 						return Promise.resolve(oAppVariantAttributes);
 					});
 				} else {

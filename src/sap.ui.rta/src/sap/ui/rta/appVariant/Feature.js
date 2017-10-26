@@ -74,8 +74,6 @@ sap.ui.define([
 			return Promise.resolve(false);
 		},
 		onSaveAs: function(oRootControlRunningApp, oAppVariantDescriptor) {
-
-			// resolve(oAppVariantManager.saveDescriptorAndFlexChangesToLREP(oAppVariantDescriptor, oRootControlRunningApp, oEvaluateSaveAsFlow));
 			var oDescriptor, oRunningAppDescriptor, oAppVariantDescriptorClosure;
 
 			var oEvaluateSaveAsFlow = {
