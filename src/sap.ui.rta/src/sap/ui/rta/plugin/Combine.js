@@ -49,9 +49,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Combine.prototype._isEditable = function(oOverlay) {
-		if (!Utils.getRelevantContainerDesigntimeMetadata(oOverlay)) {
-			return false;
-		}
 		var oCombineAction = this.getAction(oOverlay);
 		if (oCombineAction && oCombineAction.changeType && oCombineAction.changeOnRelevantContainer) {
 			return this.hasChangeHandler(oCombineAction.changeType, oOverlay.getRelevantContainer()) && this.hasStableId(oOverlay);

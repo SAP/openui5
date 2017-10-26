@@ -47,10 +47,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Settings.prototype._isEditable = function(oOverlay) {
-		if (!Utils.getRelevantContainerDesigntimeMetadata(oOverlay)) {
-			return false;
-		}
-
 		var vSettingsAction = this.getAction(oOverlay);
 		// If no additional actions are defined in settings, a handler must be present to make it available
 		if (vSettingsAction) {

@@ -206,11 +206,11 @@ function(
 		}
 	});
 
-	QUnit.test("when the control has a stable id and at least one plugin has been initialized", function(assert) {
-		assert.equal(this.oCheckControlIdSpy.callCount, 1, "then the utility method to check the control id has been already called for this Overlay");
+	QUnit.test("when the controls are checked for a stable id and at least one plugin has been initialized", function(assert) {
+		assert.equal(this.oCheckControlIdSpy.callCount, 2, "then the utility method to check the control id has been already called element overlays");
 		assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), true, "and the 'getElementHasStableId' property of the Overlay is set to true");
 		assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then if hasStableId is called again it also returns true");
-		assert.equal(this.oCheckControlIdSpy.callCount, 1, "but then the utility method to check the control id is not called a second time");
+		assert.equal(this.oCheckControlIdSpy.callCount, 2, "but then the utility method to check the control ids is not called a another time");
 	});
 
 	QUnit.test("when the overlay is not registered yet (has no DTMD) or is undefined and hasStableId is called", function(assert) {

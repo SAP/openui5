@@ -110,8 +110,8 @@ function(
 		}
 
 		var oRelevantContainer = oOverlay.getRelevantContainer();
-		var oRelevantContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oRelevantContainer);
-		if (!Utils.getRelevantContainerDesigntimeMetadata(oOverlay)) {
+		var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+		if (!oRelevantContainerOverlay) {
 			return false;
 		}
 

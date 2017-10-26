@@ -627,8 +627,9 @@ sap.ui.define([
 		_isEditableCheck: function(oOverlay, bOverlayIsSibling) {
 			var bEditable = false;
 
-			var oRelevantContainerDesigntimeMetadata = Utils.getRelevantContainerDesigntimeMetadata(oOverlay);
-			if (!oRelevantContainerDesigntimeMetadata) {
+			var oRelevantContainer = oOverlay.getRelevantContainer();
+			var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+			if (!oRelevantContainerOverlay) {
 				return false;
 			}
 
