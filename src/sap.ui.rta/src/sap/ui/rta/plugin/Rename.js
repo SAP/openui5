@@ -163,10 +163,6 @@ sap.ui.define([
 		var bEditable = false;
 		var oElement = oOverlay.getElementInstance();
 
-		if (!Utils.getRelevantContainerDesigntimeMetadata(oOverlay)) {
-			return false;
-		}
-
 		var oRenameAction = this.getAction(oOverlay);
 		if (oRenameAction && oRenameAction.changeType) {
 			if (oRenameAction.changeOnRelevantContainer) {

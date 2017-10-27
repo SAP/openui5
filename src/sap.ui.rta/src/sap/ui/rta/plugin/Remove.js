@@ -66,11 +66,6 @@ sap.ui.define([
 		var bEditable = false;
 		var oElement = oOverlay.getElementInstance();
 
-		var oParentDesignTimeMetadata = Utils.getRelevantContainerDesigntimeMetadata(oOverlay);
-		if (!oParentDesignTimeMetadata) {
-			return false;
-		}
-
 		var oRemoveAction = this.getAction(oOverlay);
 		if (oRemoveAction && oRemoveAction.changeType) {
 			if (oRemoveAction.changeOnRelevantContainer) {
