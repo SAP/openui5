@@ -366,7 +366,7 @@ sap.ui.require([
 		output : "2015-01-06T01:55:21.547-05:30"
 	}, {
 		input : "/Date(1395752399000)/", // DateTime in V2
-		output : "2014-03-25T12:59:59Z"  // must be interpreted as UTC
+		output : "2014-03-25T12:59:59.000Z"  // must be interpreted as UTC
 	}].forEach(function (oFixture, i) {
 		QUnit.test("convertDateTimeOffset, success " + i, function (assert) {
 			var oRequestor = {};
