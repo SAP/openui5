@@ -5,10 +5,15 @@ sap.ui.define([
 ], function (UIComponent, JSONModel, ResourceModel) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.demo.wt.Component", {
+	return UIComponent.extend("sap.ui.demo.walkthrough.Component", {
 
 		metadata : {
-			rootView: "sap.ui.demo.wt.view.App"
+			"rootView": {
+				"viewName": "sap.ui.demo.walkthrough.view.App",
+				"type": "XML",
+				"async": true,
+				"id": "app"
+			}
 		},
 
 		init : function () {
@@ -26,7 +31,7 @@ sap.ui.define([
 
 			// set i18n model
 			var i18nModel = new ResourceModel({
-				bundleName : "sap.ui.demo.wt.i18n.i18n"
+				bundleName : "sap.ui.demo.walkthrough.i18n.i18n"
 			});
 			this.setModel(i18nModel, "i18n");
 		}
