@@ -34,7 +34,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 			var count = 0,
 				message = "";
 
-			var log = jQuery.sap.log.getLog();
+			var log = jQuery.sap.log.getLogEntries();
 			log.forEach(function(logEntry) {
 				if (logEntry.level === jQuery.sap.log.Level.ERROR) {
 					count++;
