@@ -431,13 +431,11 @@
 		var sInputType;
 		var mInputTypes = {
 			text: {supportsTextSelection: true, value: "text", columnIndex: null},
-			password: {supportsTextSelection: true, value: "password", columnIndex: null},
 			search: {supportsTextSelection: true, value: "search", columnIndex: null},
 			tel: {supportsTextSelection: true, value: "123 456", columnIndex: null},
 			url: {supportsTextSelection: true, value: "http://www.test.com", columnIndex: null},
 			email: {supportsTextSelection: false, value: "test@test.com", columnIndex: null},
-			number: {supportsTextSelection: false, value: "123456", columnIndex: null},
-			range: {supportsTextSelection: false, value: "123", columnIndex: null}
+			number: {supportsTextSelection: false, value: "123456", columnIndex: null}
 		};
 
 		function getInputElement(iColumnIndex) {
@@ -455,7 +453,7 @@
 				assert.ok(true, "This test makes no sense in PhantomJS");
 			} else if (bSelectText && mInputType.supportsTextSelection) {
 				assert.ok(isTextSelected(oElement), "Input type: " + oElement.type + " - The text is selected [arguments: " + JSON.stringify([].splice.call(arguments, 1)));
-			} else {
+			} else if (!sap.ui.Device.browser.safari) {
 				assert.ok(!isTextSelected(oElement), "Input type: " + oElement.type + " - The text is not selected");
 			}
 
@@ -470,7 +468,7 @@
 				if (oPreviousElement != null) {
 					if (sap.ui.Device.browser.phantomJS) {
 						assert.ok(true, "This test makes no sense in PhantomJS");
-					} else {
+					} else if (!sap.ui.Device.browser.safari) {
 						assert.ok(!isTextSelected(oPreviousElement), "The text of the previously focused input element is not selected");
 					}
 				}
@@ -5702,7 +5700,7 @@
 		assert.strictEqual(document.activeElement, oElement, "Tabbable input element in the cell is focused");
 		if (sap.ui.Device.browser.phantomJS) {
 			assert.ok(true, "This test makes no sense in PhantomJS");
-		} else {
+		} else if (!sap.ui.Device.browser.safari) {
 			assert.ok(!isTextSelected(oElement), "The text in the input element is not selected");
 		}
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -5719,7 +5717,7 @@
 		assert.strictEqual(document.activeElement, oElement, "Non-Tabbable input element in the cell is focused");
 		if (sap.ui.Device.browser.phantomJS) {
 			assert.ok(true, "This test makes no sense in PhantomJS");
-		} else {
+		} else if (!sap.ui.Device.browser.safari) {
 			assert.ok(!isTextSelected(oElement), "The text in the input element is not selected");
 		}
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
