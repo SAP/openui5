@@ -68,6 +68,8 @@ sap.ui.define([
 	 *            Sets the default binding mode for the model
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.defaultCountMode=Request]
 	 *            Sets the default count mode for the model
+	 * @param {string} [mParameters.preliminaryContext=false]
+	 *            Wether a preliminary Context will be created/used by a binding
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.defaultOperationMode=Default]
 	 *            Sets the default operation mode for the model
 	 * @param {sap.ui.model.odata.UpdateMethod} [mParameters.defaultUpdateMethod=Merge]
@@ -116,14 +118,33 @@ sap.ui.define([
 		constructor : function(sServiceUrl, mParameters) {
 			Model.apply(this, arguments);
 
-			var sUser, sPassword,
-			mHeaders, bTokenHandling,
-			bWithCredentials, sMaxDataServiceVersion,
-			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
-			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
-			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, oMessageParser,
-			bSkipMetadataAnnotationParsing, sDefaultUpdateMethod, bDisableHeadRequestForToken,
-			bSequentializeRequests, bDisableSoftStateHeader, aBindableResponseHeaders, that = this;
+			var sUser,
+				sPassword,
+				mHeaders,
+				bTokenHandling,
+				bWithCredentials,
+				sMaxDataServiceVersion,
+				bUseBatch,
+				bRefreshAfterChange,
+				sAnnotationURI,
+				bLoadAnnotationsJoined,
+				sDefaultCountMode,
+				bPreliminaryContext,
+				sDefaultBindingMode,
+				sDefaultOperationMode,
+				mMetadataNamespaces,
+				mServiceUrlParams,
+				mMetadataUrlParams,
+				aMetadataUrlParams,
+				bJSON,
+				oMessageParser,
+				bSkipMetadataAnnotationParsing,
+				sDefaultUpdateMethod,
+				bDisableHeadRequestForToken,
+				bSequentializeRequests,
+				bDisableSoftStateHeader,
+				aBindableResponseHeaders,
+				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
 				mParameters = sServiceUrl;
@@ -143,6 +164,7 @@ sap.ui.define([
 				bLoadAnnotationsJoined = mParameters.loadAnnotationsJoined;
 				sDefaultBindingMode = mParameters.defaultBindingMode;
 				sDefaultCountMode = mParameters.defaultCountMode;
+				bPreliminaryContext = mParameters.preliminaryContext;
 				sDefaultOperationMode = mParameters.defaultOperationMode;
 				mMetadataNamespaces = mParameters.metadataNamespaces;
 				mServiceUrlParams = mParameters.serviceUrlParams;
@@ -189,6 +211,8 @@ sap.ui.define([
 			this.bSequentializeRequests = !!bSequentializeRequests;
 			this.bDisableSoftStateHeader = !!bDisableSoftStateHeader;
 			this.aBindableResponseHeaders = aBindableResponseHeaders ? aBindableResponseHeaders : null;
+			this.bPreliminaryContext = bPreliminaryContext || false;
+
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -286,11 +310,13 @@ sap.ui.define([
 				that.fireMetadataFailed(oEvent.getParameters());
 			};
 
-			this.oMetadata.loaded().then(this._initializeMetadata.bind(this));
 			if (!this.oMetadata.isLoaded()) {
 				this.oMetadata.attachFailed(this.onMetadataFailed);
 			}
 
+			this.oMetadata.loaded().then(function() {
+				that._initializeMetadata();
+			});
 
 			// set the header for the accepted content types
 			if (this.bJSON) {
@@ -749,6 +775,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._initializeMetadata = function() {
+
 		if (this.bDestroyed) {
 			// Don't fire any events for resolving promises on Models that have already been destroyed
 			return;
@@ -761,8 +788,8 @@ sap.ui.define([
 			jQuery.sap.log.debug(this + " - metadataloaded fired");
 		}.bind(this);
 
-
 		this.initialize();
+
 		if (this.bLoadAnnotationsJoined) {
 			this.oAnnotations.loaded().then(fnFire, this.fireMetadataFailed.bind(this));
 		} else {
@@ -1604,6 +1631,7 @@ sap.ui.define([
 	 * @param {map} [mParameters] Map which contains additional parameters for the binding
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
+	 * @param {boolean} [mParameters.preliminaryContext] Wether a preliminary Context will be created
 	 * @param {map} [mParameters.custom] Optional map of custom query parameters, names of custom parameters must not start with <code>$</code>.
 	 * @param {function} [fnCallBack] Function to be called when context has been created. The parameter of the callback function is the newly created binding context.
 	 * @param {boolean} [bReload] Whether to reload data
@@ -1713,6 +1741,28 @@ sap.ui.define([
 				fnCallBack(null); // error - notify to recreate contexts
 			}
 		}
+
+		if (mParameters && mParameters.createPreliminaryContext) {
+			sResolvedPath = this.resolve(sPath, oContext);
+			oNewContext = this.getContext(sResolvedPath);
+			return oNewContext;
+		}
+
+	};
+
+	/**
+	 * Updates an existing context with a new path. This is useful for contexts with a temporary, non-canonical path, which should
+	 * be replaced once the canonical path is known, without creating a new context instance.
+	 *
+	 * @param {sap.ui.model.Context} oContext the context
+	 * @param {string} sPath the path
+	 */
+	ODataModel.prototype._updateContext = function(oContext, sPath) {
+		if (!jQuery.sap.startsWith(sPath, "/")) {
+			throw new Error("Path " + sPath + " must start with a / ");
+		}
+		oContext.sPath = sPath;
+		this.mContexts[sPath] = oContext;
 	};
 
 	/**
@@ -3243,7 +3293,11 @@ sap.ui.define([
 	ODataModel.prototype._processRequestQueueAsync = function(mRequestQueue) {
 		var that = this;
 		if (!this.pCallAsnyc) {
-			this.pCallAsnyc = Promise.resolve();
+			this.pCallAsnyc = new Promise(function(resolve, reject) {
+				that.oMetadata.loaded().then(function() {
+					resolve();
+				});
+			});
 			this.pCallAsnyc.then(function() {
 				that._processRequestQueue(mRequestQueue);
 				that.pCallAsnyc = undefined;
