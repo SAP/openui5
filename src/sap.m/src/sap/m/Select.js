@@ -577,8 +577,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 				}
 			}
 
-			// remove the active state of the Select's field
-			this.removeStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
+			// remove the expanded state of the Select's field
 			this.removeStyleClass(this.getRenderer().CSS_CLASS + "Expanded");
 		};
 
@@ -587,11 +586,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 *
 		 */
 		Select.prototype.onAfterClose = function(oControlEvent) {
-			var oDomRef = this.getFocusDomRef();
+			var oDomRef = this.getFocusDomRef(),
+				CSS_CLASS = this.getRenderer().CSS_CLASS,
+				sPressedCSSClass = CSS_CLASS + "Pressed";
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
 			}
+
+			// Remove the active state
+			this.removeStyleClass(sPressedCSSClass);
 		};
 
 		/**
