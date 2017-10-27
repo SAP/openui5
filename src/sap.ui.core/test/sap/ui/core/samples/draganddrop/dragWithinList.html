@@ -15,54 +15,52 @@
 		<script>
 			jQuery.sap.registerModulePath("my", "./");
 
-			sap.ui.require(["my/DraggableList"], function(DraggableList) {
-				"use strict";
+			"use strict";
 
-				var data = {
-					names: [
-						{firstName: "Peter", lastName: "Mueller"},
-						{firstName: "Petra", lastName: "Maier"},
-						{firstName: "Thomas", lastName: "Smith"},
-						{firstName: "John", lastName: "Williams"},
-						{firstName: "Maria", lastName: "Jones"}
-					]
-				};
-				var oModel = new sap.ui.model.json.JSONModel();
-				oModel.setData(data);
+			var data = {
+				names: [
+					{firstName: "Peter", lastName: "Mueller"},
+					{firstName: "Petra", lastName: "Maier"},
+					{firstName: "Thomas", lastName: "Smith"},
+					{firstName: "John", lastName: "Williams"},
+					{firstName: "Maria", lastName: "Jones"}
+				]
+			};
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(data);
 
-				// create the UI
-				var list = new DraggableList({
-					headerText:"Names - re-sort by dragging between"
-				}).bindItems({
-					path : "/names",
-					template : new sap.m.StandardListItem({
-						title: "{lastName}",
-						description: "{firstName}"
-					})
-				}).setModel(oModel);
+			// create the UI
+			var oList = new sap.m.List({
+				headerText:"Names - re-sort by dragging between",
+				dragDropConfig: new sap.ui.core.dnd.DragDropInfo({
+					sourceAggregation: "items",
+					targetAggregation: "items",
+					drop: function(oEvent) {
+						var iSourceIndex = oList.indexOfItem(oEvent.getParameter("draggedControl"));
+						var iTargetIndex = oList.indexOfItem(oEvent.getParameter("droppedControl"));
+						var aData = oModel.getObject("/names");
+						var oMovedData = aData.splice(iSourceIndex, 1)[0];
+						aData.splice(iTargetIndex, 0, oMovedData);
+						oModel.refresh();
+					}
+				})
+			}).bindItems({
+				path : "/names",
+				template : new sap.m.StandardListItem({
+					title: "{lastName}",
+					description: "{firstName}"
+				})
+			}).setModel(oModel);
 
-
-				// application code reacting to the drag/drop event (move event, actually) fired by the re-orderable List
-				list.attachItemMove(function(oEvent){
-					var iSourceIndex = oEvent.getParameter("sourceIndex");
-					var iTargetIndex = oEvent.getParameter("targetIndex"); // index AFTER removal of the element from original position!
-
-					var aData = oModel.getObject("/names");
-					var oMovedData = aData.splice(iSourceIndex, 1)[0];
-					aData.splice(iTargetIndex, 0, oMovedData);
-					oModel.refresh();
-				});
-
-
-				var page = new sap.m.Page({
-					title: "Drag And Drop Within List (between items)",
-					content : list
-				});
-
-				var app = new sap.m.App({
-					pages: [page]
-				}).placeAt("content");
+			var page = new sap.m.Page({
+				title: "Drag And Drop Within List (between items)",
+				content : oList
 			});
+
+			var app = new sap.m.App({
+				pages: [page]
+			}).placeAt("content");
+				
 		</script>
 
 
