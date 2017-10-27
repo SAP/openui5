@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.Grid.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/Device', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, Control, library, Device, ResizeHandler) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/base/ManagedObjectObserver'],
+	function(jQuery, Control, library, Device, ResizeHandler, ManagedObjectObserver) {
 	"use strict";
 
 
@@ -100,6 +100,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			// Backward compatibility - if no any settings for XL - the settings for L are used
 			this._indentXLChanged = false;
 			this._spanXLChanged = false;
+
+			this._oObserver = new ManagedObjectObserver(Grid.prototype._observeChanges.bind(this));
+			this._oObserver.observe(this, {
+				aggregations: ["content"]
+			});
 		};
 
 		/**
@@ -124,6 +129,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		Grid.prototype.exit = function() {
 			// Cleanup resize event registration on exit
 			this._cleanup();
+
+			if (this._oObserver) {
+				this._oObserver.disconnect();
+				this._oObserver = null;
+			}
 		};
 
 		/**
@@ -140,6 +150,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 			// Device Media Change handler
 			this._detachMediaContainerWidthChange(this._handleMediaChange, this, Device.media.RANGESETS.SAP_STANDARD_EXTENDED);
+		};
+
+		Grid.prototype._observeVisibility = function (oControl) {
+			this._oObserver.observe(oControl, {
+				properties: ["visible"]
+			});
+		};
+
+		Grid.prototype._unobserveVisibility = function (oControl) {
+			this._oObserver.unobserve(oControl, {
+				properties: ["visible"]
+			});
+		};
+
+		Grid.prototype._observeChanges = function (oChanges) {
+			var oObject = oChanges.object,
+				sChangeName = oChanges.name,
+				sMutationName = oChanges.mutation,
+				oChild = oChanges.child;
+
+			if (oObject === this) {
+				if (sMutationName === "insert") {
+					this._observeVisibility(oChild);
+				} else if (sMutationName === "remove") {
+					this._unobserveVisibility(oChild);
+				}
+			} else if (sChangeName === "visible") {
+				// We need to get the grid's internal spans, because they are responsible for the margin
+				// indexOf is used, because when an element is hidden, a placeholder is rendered rather than that specific element.
+				// Because we do not have that element in the DOM, we access it's container through the grid.
+				// Children array consists of DOM refs, not jQuery objects, so we need to convert them.
+				var iElementIndex = this.getContent().indexOf(oObject);
+				jQuery(this.$().children()[iElementIndex]).toggleClass("sapUiRespGridSpanInvisible", !oChanges.current);
+			}
 		};
 
 		Grid.prototype._handleMediaChange  = function(oParams) {
