@@ -330,6 +330,12 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 			}, this);
 		};
 
+		MessagePopover.prototype.onBeforeRendering = function () {
+			if (this.getDependents().indexOf(this._oPopover) === -1) {
+				this.addDependent(this._oPopover);
+			}
+		};
+
 		/**
 		 * Required adaptations before rendering MessagePopover
 		 *
