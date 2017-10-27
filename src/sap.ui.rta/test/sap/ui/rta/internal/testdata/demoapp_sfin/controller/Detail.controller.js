@@ -21,7 +21,7 @@ sap.ui.define([
 					noteToPayeeFieldID: "fin.ar.payment.post.noteToPayee"
 				};
 
-			this.getView().byId("fin.ar.payment.post.header").bindElement("/FinsPostingPaymentHeaders(TmpId='4HNF052050',TmpIdType='T')");
+			this.byId("fin.ar.payment.post.header").bindElement("/FinsPostingPaymentHeaders(TmpId='4HNF052050',TmpIdType='T')");
 
 			if (sap.ui.Device.system.desktop === true) { // apply compact mode for desktop
 				this.getView().addStyleClass("sapUiSizeCompact");

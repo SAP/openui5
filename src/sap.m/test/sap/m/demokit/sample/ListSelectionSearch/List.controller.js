@@ -25,7 +25,7 @@ sap.ui.define([
 			}
 
 			// update list binding
-			var list = this.getView().byId("idList");
+			var list = this.byId("idList");
 			var binding = list.getBinding("items");
 			binding.filter(aFilters, "Application");
 		},
@@ -33,8 +33,8 @@ sap.ui.define([
 		onSelectionChange : function (oEvt) {
 
 			var oList = oEvt.getSource();
-			var oLabel = this.getView().byId("idFilterLabel");
-			var oInfoToolbar = this.getView().byId("idInfoToolbar");
+			var oLabel = this.byId("idFilterLabel");
+			var oInfoToolbar = this.byId("idInfoToolbar");
 
 			// With the 'getSelectedContexts' function you can access the context paths
 			// of all list items that have been selected, regardless of any current

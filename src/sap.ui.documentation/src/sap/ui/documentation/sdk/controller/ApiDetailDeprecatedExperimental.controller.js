@@ -250,8 +250,8 @@ sap.ui.define([
 				oMedia = oMedia || oView._getCurrentMediaContainerRange();
 
 				var sName = oMedia.name,
-					oMessageStripContainer = this.getView().byId("deprecatedAPIStripContainer")
-						|| this.getView().byId("experimentalAPIStripContainer");
+					oMessageStripContainer = this.byId("deprecatedAPIStripContainer")
+						|| this.byId("experimentalAPIStripContainer");
 
 				if (!oMessageStripContainer) {
 					return;

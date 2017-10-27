@@ -7,7 +7,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], fun
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
 		},
 		handlePress: function (oEvent) {
-			var oObjectHeaderCont = this.getView().byId("ObjectPageLayout");
+			var oObjectHeaderCont = this.byId("ObjectPageLayout");
 			oObjectHeaderCont.setShowHeaderContent(!oObjectHeaderCont.getShowHeaderContent());
 		},
 		_getResponsivePopoverUnsavedChanges: function () {

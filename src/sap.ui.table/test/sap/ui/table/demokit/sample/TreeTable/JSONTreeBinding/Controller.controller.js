@@ -13,12 +13,12 @@ sap.ui.define([
         },
 
         onCollapseAll: function () {
-            var oTreeTable = this.getView().byId("TreeTableBasic");
+            var oTreeTable = this.byId("TreeTableBasic");
             oTreeTable.collapseAll();
         },
 
         onExpandFirstLevel: function () {
-            var oTreeTable = this.getView().byId("TreeTableBasic");
+            var oTreeTable = this.byId("TreeTableBasic");
             oTreeTable.expandToLevel(1);
         }
     });

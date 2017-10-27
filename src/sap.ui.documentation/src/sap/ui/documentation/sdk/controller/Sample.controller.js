@@ -51,7 +51,7 @@ sap.ui.define([
 			/* =========================================================== */
 
 			_onSampleMatched: function (event) {
-				var oPage = this.getView().byId("page");
+				var oPage = this.byId("page");
 
 				oPage.setBusy(true);
 
@@ -63,7 +63,7 @@ sap.ui.define([
 			},
 
 			_loadSample: function(oData) {
-				var oPage = this.getView().byId("page"),
+				var oPage = this.byId("page"),
 					oHistory = History.getInstance(),
 					oPrevHash = oHistory.getPreviousHash(),
 					oModelData = this._viewModel.getData(),
@@ -277,7 +277,7 @@ sap.ui.define([
 					FakeLrepConnectorLocalStorage.enableFakeConnector({
 						"isProductiveSystem": true
 					});
-					this.getView().byId("toggleRTA").setVisible(true);
+					this.byId("toggleRTA").setVisible(true);
 
 					this.getRouter().attachRouteMatched(function () {
 						if (this._oRTA) {
@@ -299,7 +299,7 @@ sap.ui.define([
 						this._oRTA = new RuntimeAuthoring({flexSettings: {
 							developerMode: false
 						}});
-						this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+						this._oRTA.setRootControl(this.byId("page").getContent()[0]);
 						this._oRTA.attachStop(function () {
 							this._oRTA.destroy();
 							delete this._oRTA;

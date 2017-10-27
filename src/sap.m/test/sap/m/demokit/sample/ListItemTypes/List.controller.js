@@ -16,7 +16,7 @@ sap.ui.define([
 
 		handleSelectChange : function(oEvent) {
 			var type = oEvent.getParameter("selectedItem").getKey();
-			this.getView().byId("ProductList").getItems().forEach(function(item) {
+			this.byId("ProductList").getItems().forEach(function(item) {
 				item.setType(type);
 			});
 		},

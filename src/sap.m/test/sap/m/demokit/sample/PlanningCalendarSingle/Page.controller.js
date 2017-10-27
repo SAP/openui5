@@ -237,7 +237,7 @@ sap.ui.define([
 			},
 
 			toggleDayNamesLine: function (oEvent) {
-				var oPC = this.getView().byId("PC1");
+				var oPC = this.byId("PC1");
 				oPC.setShowDayNamesLine(!oPC.getShowDayNamesLine());
 			}
 

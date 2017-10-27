@@ -38,7 +38,7 @@ sap.ui.define([
 			} else {
 				sFragment = "sap.ui.demo.theming.view.Tablet";
 			}
-			this.getView().byId("idPanel").addContent(sap.ui.xmlfragment(sFragment, this));
+			this.byId("idPanel").addContent(sap.ui.xmlfragment(sFragment, this));
 
 			//Keeps the filter and search state
 			this._oTableFilterState = {
@@ -601,7 +601,7 @@ sap.ui.define([
 
 		//Sets the app to busy, when selecting a new theme
 		onAction : function (oEvt) {
-			var oPanel = this.getView().byId("page");
+			var oPanel = this.byId("page");
 			oPanel.setBusy(true);
 
 			// simulate delayed end of operation

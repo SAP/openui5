@@ -37,7 +37,7 @@ sap.ui.define([
 		// simulate a refresh of the date that lasts 2 secs
 		handleRefresh : function (evt) {
 			setTimeout(function () {
-				this.getView().byId("pullToRefresh").hide();
+				this.byId("pullToRefresh").hide();
 				this._pushNewProduct();
 			}.bind(this), 1000);
 		}

@@ -21,8 +21,8 @@ sap.ui.define([
 
 		onSliderMoved: function (oEvent) {
 			var iValue = oEvent.getParameter("value");
-			this.getView().byId("otbSubheader").setWidth(iValue + "%");
-			this.getView().byId("otbFooter").setWidth(iValue + "%");
+			this.byId("otbSubheader").setWidth(iValue + "%");
+			this.byId("otbFooter").setWidth(iValue + "%");
 		},
 
 		_fnGroup : function (oContext){

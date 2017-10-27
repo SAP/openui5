@@ -21,11 +21,11 @@ sap.ui.define([
 
 	var MainController = Controller.extend("sap.ui.core.sample.odata.v4.ListBinding.Main", {
 		cancelChangeTeamBudget : function (oEvent) {
-			this.getView().byId("ChangeTeamBudgetDialog").close();
+			this.byId("ChangeTeamBudgetDialog").close();
 		},
 
 		cancelChangeManagerOfTeam : function (oEvent) {
-			this.getView().byId("ChangeManagerOfTeamDialog").close();
+			this.byId("ChangeManagerOfTeamDialog").close();
 		},
 
 		changeTeamBudget : function (oEvent) {
@@ -71,7 +71,7 @@ sap.ui.define([
 		},
 
 		getEmployeeByID : function (oEvent) {
-			var oOperation = this.getView().byId("GetEmployeeByID").getObjectBinding();
+			var oOperation = this.byId("GetEmployeeByID").getObjectBinding();
 
 			oOperation.setParameter("EmployeeID",
 					this.getView().getModel("search").getProperty("/EmployeeID"))
@@ -84,7 +84,7 @@ sap.ui.define([
 		},
 
 		getEmployeeMaxAge : function (oEvent) {
-			this.getView().byId("GetEmployeeMaxAge").getObjectBinding().execute();
+			this.byId("GetEmployeeMaxAge").getObjectBinding().execute();
 		},
 
 		onBeforeRendering : function () {
@@ -135,7 +135,7 @@ sap.ui.define([
 
 		onEmployeeSelect : function (oEvent) {
 			var oContext = oEvent.getParameters().listItem.getBindingContext();
-			this.getView().byId("EmployeeEquipments").setBindingContext(oContext);
+			this.byId("EmployeeEquipments").setBindingContext(oContext);
 		},
 
 		onEquipmentsChanged : function (oEvent) {
@@ -146,7 +146,7 @@ sap.ui.define([
 		},
 
 		onEquipmentsRefresh : function (oEvent) {
-			this.getView().byId("Equipments").getBinding("items").refresh();
+			this.byId("Equipments").getBinding("items").refresh();
 		},
 
 		onInit : function () {
@@ -223,7 +223,7 @@ sap.ui.define([
 
 		onUpdateEmployee : function (oEvent) {
 //			var oEmployeeContext = oEvent.getSource().getBindingContext(),
-//				aItems = this.getView().byId("Employees").getItems();
+//				aItems = this.byId("Employees").getItems();
 //
 //			oEmployeeContext.getModel().read(oEmployeeContext.getPath(), true)
 //				.then(function (oEntityInstance) {

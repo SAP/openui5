@@ -8,10 +8,10 @@ sap.ui.define([
 	var CalendarSpecialDaysLegendController = Controller.extend("sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend", {
 
 		handleShowSpecialDays: function(oEvent) {
-			var oCal1 = this.getView().byId("calendar1");
-			var oLeg1 = this.getView().byId("legend1");
-			var oCal2 = this.getView().byId("calendar2");
-			var oLeg2 = this.getView().byId("legend2");
+			var oCal1 = this.byId("calendar1");
+			var oLeg1 = this.byId("legend1");
+			var oCal2 = this.byId("calendar2");
+			var oLeg2 = this.byId("legend2");
 			var bPressed = oEvent.getParameter("pressed");
 
 			if (bPressed) {

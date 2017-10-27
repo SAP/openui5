@@ -22,7 +22,7 @@ sap.ui.define([
 		onFilterList: function (oEvent) {
 			var sQuery = oEvent.getParameter("query");
 			var aFilter = sQuery ? [new Filter("name", FilterOperator.Contains, sQuery)] : [];
-			var oList = this.getView().byId("itemList");
+			var oList = this.byId("itemList");
 			var oListBinding = oList.getBinding("items");
 
 			oListBinding.filter(aFilter);
@@ -33,7 +33,7 @@ sap.ui.define([
 			var oItemsModel = this.getView().getModel("items");
 
 			oItemsModel.setProperty("selected", sItemName);
-			this.getView().byId("app").to(this.getView().byId(sItemName));
+			this.byId("app").to(this.getView().byId(sItemName));
 		}
 	});
 

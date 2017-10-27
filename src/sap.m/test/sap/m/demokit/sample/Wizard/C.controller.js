@@ -9,9 +9,9 @@ sap.ui.define([
 
 	var WizardController = Controller.extend("sap.m.sample.Wizard.C", {
 		onInit: function () {
-			this._wizard = this.getView().byId("CreateProductWizard");
-			this._oNavContainer = this.getView().byId("wizardNavContainer");
-			this._oWizardContentPage = this.getView().byId("wizardContentPage");
+			this._wizard = this.byId("CreateProductWizard");
+			this._oNavContainer = this.byId("wizardNavContainer");
+			this._oWizardContentPage = this.byId("wizardContentPage");
 			this._oWizardReviewPage = sap.ui.xmlfragment("sap.m.sample.Wizard.ReviewPage", this);
 
 			this._oNavContainer.addPage(this._oWizardReviewPage);
@@ -31,17 +31,17 @@ sap.ui.define([
 		setProductType: function (evt) {
 			var productType = evt.getSource().getTitle();
 			this.model.setProperty("/productType", productType);
-			this.getView().byId("ProductStepChosenType").setText("Chosen product type: " + productType);
-			this._wizard.validateStep(this.getView().byId("ProductTypeStep"));
+			this.byId("ProductStepChosenType").setText("Chosen product type: " + productType);
+			this._wizard.validateStep(this.byId("ProductTypeStep"));
 		},
 		setProductTypeFromSegmented: function (evt) {
 			var productType = evt.mParameters.button.getText();
 			this.model.setProperty("/productType", productType);
-			this._wizard.validateStep(this.getView().byId("ProductTypeStep"));
+			this._wizard.validateStep(this.byId("ProductTypeStep"));
 		},
 		additionalInfoValidation : function () {
-			var name = this.getView().byId("ProductName").getValue();
-			var weight = parseInt(this.getView().byId("ProductWeight").getValue(), 10);
+			var name = this.byId("ProductName").getValue();
+			var weight = parseInt(this.byId("ProductWeight").getValue(), 10);
 
 			if (isNaN(weight)) {
 				this.model.setProperty("/productWeightState", "Error");
@@ -55,9 +55,9 @@ sap.ui.define([
 			}
 
 			if (name.length < 6 || isNaN(weight)) {
-				this._wizard.invalidateStep(this.getView().byId("ProductInfoStep"));
+				this._wizard.invalidateStep(this.byId("ProductInfoStep"));
 			} else {
-				this._wizard.validateStep(this.getView().byId("ProductInfoStep"));
+				this._wizard.validateStep(this.byId("ProductInfoStep"));
 			}
 		},
 		optionalStepActivation: function () {
@@ -77,15 +77,15 @@ sap.ui.define([
 			this.model.setProperty("/navApiEnabled", false);
 		},
 		scrollFrom4to2 : function () {
-			this._wizard.goToStep(this.getView().byId("ProductInfoStep"));
+			this._wizard.goToStep(this.byId("ProductInfoStep"));
 		},
 		goFrom4to3 : function () {
-			if (this._wizard.getProgressStep() === this.getView().byId("PricingStep")) {
+			if (this._wizard.getProgressStep() === this.byId("PricingStep")) {
 				this._wizard.previousStep();
 			}
 		},
 		goFrom4to5 : function () {
-			if (this._wizard.getProgressStep() === this.getView().byId("PricingStep")) {
+			if (this._wizard.getProgressStep() === this.byId("PricingStep")) {
 				this._wizard.nextStep();
 			}
 		},
@@ -140,7 +140,7 @@ sap.ui.define([
 			return isNaN(val) ? "Error" : "None";
 		},
 		discardProgress: function () {
-			this._wizard.discardProgress(this.getView().byId("ProductTypeStep"));
+			this._wizard.discardProgress(this.byId("ProductTypeStep"));
 
 			var clearContent = function (content) {
 				for (var i = 0; i < content.length; i++) {

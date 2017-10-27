@@ -15,7 +15,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/UIComponent'],
 
 			this.getRouter().attachRouteMatched(function(oEvent) {
 				if (oEvent.getParameter("name") === "detail") {
-					var text = this.getView().byId("text");
+					var text = this.byId("text");
 					text.setText("detail master coming from " + oEvent.getParameter("arguments").from);
 				}
 			}, this);

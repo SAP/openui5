@@ -7,7 +7,7 @@ sap.ui.define([
 	{
 		handlePress: function(oEvent)
 		{
-			var oField = this.getView().byId("field");
+			var oField = this.byId("field");
 			if (oField.getTextFirst() === "x")
 			{
 				oField.setTextFirst("y");

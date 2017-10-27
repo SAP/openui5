@@ -38,7 +38,7 @@ sap.ui.define([
 			});
 		},
 		_highlightNewCreatedAppVariant: function(aAppVariantOverviewAttributes) {
-			var oTable = this.getView().byId("Table1");
+			var oTable = this.byId("Table1");
 			jQuery('.maaCurrentStatus,.maaSubTitle').css("font-size", '12px');
 
 			aAppVariantOverviewAttributes.forEach(function(oAppVariantDescriptor, index) {
@@ -102,8 +102,8 @@ sap.ui.define([
 			if (sSemanticObject && sAction && oParams) {
 				oNavigationParams = {
 					target: {
-		                semanticObject : sSemanticObject,
-		                action : sAction
+						semanticObject : sSemanticObject,
+						action : sAction
 					},
 					params: oParams
 				};
@@ -113,6 +113,7 @@ sap.ui.define([
 				oNavigationService.toExternal(oNavigationParams);
 
 				sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+				return true;
 			} else {
 				return false;
 			}

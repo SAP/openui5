@@ -109,12 +109,12 @@ sap.ui.define([
 		},
 
 		onCloseSalesOrderSchedules : function (oEvent) {
-			this.getView().byId("SalesOrderSchedulesDialog").close();
+			this.byId("SalesOrderSchedulesDialog").close();
 		},
 
 		onConfirmSalesOrder : function () {
 			var oModel = this.getView().getModel(),
-				oTable = this.getView().byId("SalesOrders"),
+				oTable = this.byId("SalesOrders"),
 				oSalesOrderContext = oTable.getSelectedItem().getBindingContext(),
 				oAction = oModel.bindContext(sServiceNamespace + "SalesOrder_Confirm(...)",
 					oSalesOrderContext),
@@ -124,7 +124,7 @@ sap.ui.define([
 				function () {
 					MessageToast.show("Sales order "
 						+ oSalesOrderContext.getProperty("SalesOrderID") + " confirmed");
-					that.refresh(that.getView().byId("SalesOrders").getBinding("items"),
+					that.refresh(that.byId("SalesOrders").getBinding("items"),
 						"all sales orders");
 				},
 				function (oError) {
@@ -256,7 +256,7 @@ sap.ui.define([
 		},
 
 		onDeleteBusinessPartner: function () {
-			var oContext = this.getView().byId("BusinessPartner").getBindingContext();
+			var oContext = this.byId("BusinessPartner").getBindingContext();
 
 			oContext["delete"](oContext.getModel().getGroupId()).then(function () {
 				MessageBox.success("Deleted Business Partner");
@@ -268,7 +268,7 @@ sap.ui.define([
 		onDeleteSalesOrder : function () {
 			var sMessage,
 				sOrderID,
-				oTable = this.getView().byId("SalesOrders"),
+				oTable = this.byId("SalesOrders"),
 				oSalesOrderContext = oTable.getSelectedItem().getBindingContext();
 
 			function onConfirm(sCode) {
@@ -295,7 +295,7 @@ sap.ui.define([
 		onDeleteSalesOrderLineItem : function () {
 			var sMessage,
 				sSalesOrderLineItem,
-				oTable = this.getView().byId("SalesOrderLineItems"),
+				oTable = this.byId("SalesOrderLineItems"),
 				oSOLineItemContext = oTable.getSelectedItem().getBindingContext();
 
 			function onConfirm(sCode) {
@@ -414,17 +414,17 @@ sap.ui.define([
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
-			this.refresh(this.getView().byId("FavoriteProduct").getBinding("value"),
+			this.refresh(this.byId("FavoriteProduct").getBinding("value"),
 				"the favorite product");
 		},
 
 //		onRefreshSalesOrderDetails : function (oEvent) {
-//			this.refresh(this.getView().byId("ObjectPage").getElementBinding(),
+//			this.refresh(this.byId("ObjectPage").getElementBinding(),
 //				"the sales order");
 //		},
 
 		onRefreshSalesOrdersList : function (oEvent) {
-			this.refresh(this.getView().byId("SalesOrders").getBinding("items"),
+			this.refresh(this.byId("SalesOrders").getBinding("items"),
 				"all sales orders");
 		},
 
@@ -534,13 +534,13 @@ sap.ui.define([
 		 * frequently, but not too many backend requests.
 		 */
 		onUpdateFavoriteProduct : function (/*oEvent*/) {
-			var oBinding = this.getView().byId("FavoriteProduct").getBinding("value");
+			var oBinding = this.byId("FavoriteProduct").getBinding("value");
 
 			oBinding.setValue(oDateFormat.format(new Date()));
 		},
 
 		produceTechnicalError : function () {
-			var oViewElement = this.getView().byId("FavoriteProduct");
+			var oViewElement = this.byId("FavoriteProduct");
 
 			oViewElement.bindProperty("value", {path : "/ProductList('HT-1000')/Unknown"});
 		},

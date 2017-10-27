@@ -16,8 +16,8 @@ sap.ui.define([
 
 			this.oModel = new JSONModel();
 			this.oModel.loadData(jQuery.sap.getModulePath("sap.f.sample.SemanticPage", "/model.json"), null, false);
-			this.oSemanticPage = this.getView().byId("mySemanticPage");
-			this.oEditAction = this.getView().byId("editAction");
+			this.oSemanticPage = this.byId("mySemanticPage");
+			this.oEditAction = this.byId("editAction");
 			this.oSemanticPage.setModel(this.oModel);
 
 			oMessageManager.registerMessageProcessor(oMessageProcessor);

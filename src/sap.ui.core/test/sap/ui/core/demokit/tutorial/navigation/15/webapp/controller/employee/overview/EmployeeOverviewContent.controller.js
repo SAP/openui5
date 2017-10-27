@@ -11,7 +11,7 @@ sap.ui.define([
 		onInit: function () {
 			var oRouter = this.getRouter();
 
-			this._oTable = this.getView().byId("employeesTable");
+			this._oTable = this.byId("employeesTable");
 			this._oVSD = null;
 			this._sSortField = null;
 			this._bSortDescending = false;

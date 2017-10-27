@@ -48,7 +48,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 					modified: false
 				});
 
-				var tabContainer = this.getView().byId("myTabContainer");
+				var tabContainer = this.byId("myTabContainer");
 
 				tabContainer.addItem(
 					newEmployee
@@ -62,7 +62,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 				// prevent the tab being closed by default
 				oEvent.preventDefault();
 
-				var oTabContainer = this.getView().byId("myTabContainer");
+				var oTabContainer = this.byId("myTabContainer");
 				var oItemToClose = oEvent.getParameter('item');
 
 				MessageBox.confirm("Do you want to close the tab '" + oItemToClose.getName() + "'?", {

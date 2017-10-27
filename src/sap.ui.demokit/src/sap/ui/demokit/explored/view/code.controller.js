@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global',
 			oJSONModel.refresh(true);
 
 			// scroll to top of page
-			var page = this.getView().byId("page");
+			var page = this.byId("page");
 			page.scrollTo(0);
 		},
 

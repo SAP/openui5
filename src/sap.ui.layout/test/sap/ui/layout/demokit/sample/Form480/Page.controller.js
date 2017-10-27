@@ -86,7 +86,7 @@ sap.ui.define([
 		},
 
 		_showFormFragment : function (sFragmentName) {
-			var oPage = this.getView().byId("page");
+			var oPage = this.byId("page");
 
 			oPage.removeAllContent();
 			oPage.insertContent(this._getFormFragment(sFragmentName));

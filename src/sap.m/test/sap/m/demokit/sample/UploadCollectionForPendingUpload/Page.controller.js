@@ -42,8 +42,8 @@ sap.ui.define([
 		},
 
 		onStartUpload: function(oEvent) {
-			var oUploadCollection = this.getView().byId("UploadCollection");
-			var oTextArea = this.getView().byId("TextArea");
+			var oUploadCollection = this.byId("UploadCollection");
+			var oTextArea = this.byId("TextArea");
 			var cFiles = oUploadCollection.getItems().length;
 			var uploadInfo = cFiles + " file(s)";
 
@@ -77,7 +77,7 @@ sap.ui.define([
 		onUploadComplete: function(oEvent) {
 			var sUploadedFileName = oEvent.getParameter("files")[0].fileName;
 			setTimeout(function() {
-				var oUploadCollection = this.getView().byId("UploadCollection");
+				var oUploadCollection = this.byId("UploadCollection");
 
 				for (var i = 0; i < oUploadCollection.getItems().length; i++) {
 					if (oUploadCollection.getItems()[i].getFileName() === sUploadedFileName) {
@@ -92,7 +92,7 @@ sap.ui.define([
 		},
 
 		onSelectChange: function(oEvent) {
-			var oUploadCollection = this.getView().byId("UploadCollection");
+			var oUploadCollection = this.byId("UploadCollection");
 			oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
 		}
 	});

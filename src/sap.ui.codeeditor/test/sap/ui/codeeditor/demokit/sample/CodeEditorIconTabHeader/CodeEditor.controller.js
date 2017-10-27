@@ -15,7 +15,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.codeeditor.sample.CodeEditorIconTabHeader.CodeEditor", {
 		onInit: function () {
-			oEditor = this.getView().byId("aCodeEditor");
+			oEditor = this.byId("aCodeEditor");
 			oEditor.setValue('// select tabs to see value of CodeEditor changing');
 		},
 		onSelectTab: function (oEvent) {
