@@ -62,8 +62,8 @@ sap.ui.define([
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   predefined OData V4 headers are added by default, but may be overridden
 	 * @param {object} [mQueryParams={}]
-	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
-	 *   request the CSRF token
+	 *   A map of query parameters as described in
+	 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF token
 	 * @param {object} oModelInterface
 	 *   A interface allowing to call back to the owning model
 	 * @param {function} oModelInterface.fnFetchEntityContainer
@@ -1036,8 +1036,9 @@ sap.ui.define([
 		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" for OData V4 or
 		 *   "application/json;charset=UTF-8" for OData V2.
 		 * @param {object} mQueryParams
-		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
-		 *   request the CSRF token
+		 *   A map of query parameters as described in
+		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF
+		 *   token
 		 * @param {object} oModelInterface
 		 *   A interface allowing to call back to the owning model
 		 * @param {function} oModelInterface.fnFetchEntityContainer
