@@ -1209,8 +1209,10 @@ sap.ui.define([
 			if (!sKey) {
 				return sKey;
 			}
+
+			// If entry does not exist yet or existing entry is invalid, set received data as new entry
 			oEntry = this._getEntity(sKey);
-			if (!oEntry) {
+			if (!oEntry || (oEntry.__metadata && oEntry.__metadata.invalid)) {
 				oEntry = oData;
 				this._addEntity(oEntry);
 			}
@@ -1364,6 +1366,70 @@ sap.ui.define([
 		aBindings.forEach(function(oBinding) {
 			oBinding.initialize();
 		});
+	};
+
+	/**
+	 * Invalidate the model data.
+	 *
+	 * Mark all entries in the model cache as invalid. Next time a context binding or list binding is done,
+	 * the entry will be detected as invalid and will be refreshed from the server.
+	 *
+	 * @param {function} [fnCheckEntry] A function which can be used to restrict invalidation to specific entries,
+	 *     gets the entity key and object as parameters and should return true for entities to invalidate.
+	 * @public
+	 */
+	ODataModel.prototype.invalidate = function(fnCheckEntry) {
+		var oEntry;
+		for (var sKey in this.oData) {
+			oEntry = this.oData[sKey];
+			if (!fnCheckEntry || fnCheckEntry(sKey, oEntry)) {
+				oEntry.__metadata.invalid = true;
+			}
+		}
+	};
+
+	/**
+	 * Invalidate a single entry in the model data.
+	 *
+	 * Mark the selected entry in the model cache as invalid. Next time a context binding or list binding is done,
+	 * the entry will be detected as invalid and will be refreshed from the server.
+	 *
+	 * @param {string|sap.ui.model.Context} vEntry the reference to the entry, either by key, absolute path or context object
+	 * @public
+	 */
+	ODataModel.prototype.invalidateEntry = function(vEntry) {
+		var oEntry;
+		if (typeof vEntry === "string") {
+			if (vEntry.indexOf("/") === 0) {
+				oEntry = this._getObject(vEntry);
+			} else {
+				oEntry = this.oData[vEntry];
+			}
+		} else if (vEntry instanceof Context) {
+			oEntry = this._getObject(vEntry.getPath());
+		}
+		if (oEntry && oEntry.__metadata) {
+			oEntry.__metadata.invalid = true;
+		}
+	};
+
+	/**
+	 * Invalidate all entries of the given entity type in the model data.
+	 *
+	 * Mark entries of the provided entity type in the model cache as invalid. Next time a context binding or list binding is done,
+	 * the entry will be detected as invalid and will be refreshed from the server.
+	 *
+	 * @param {string} sEntityType the qualified name of the entity type
+	 * @public
+	 */
+	ODataModel.prototype.invalidateEntityType = function(sEntityType) {
+		var oEntry;
+		for (var sKey in this.oData) {
+			oEntry = this.oData[sKey];
+			if (oEntry.__metadata.type === sEntityType) {
+				oEntry.__metadata.invalid = true;
+			}
+		}
 	};
 
 	/**
@@ -1855,6 +1921,10 @@ sap.ui.define([
 			}
 			// no data --> reload needed
 			if (!oEntity) {
+				return true;
+			}
+			// check for invalid flag
+			if (oEntity.__metadata && oEntity.__metadata.invalid) {
 				return true;
 			}
 
