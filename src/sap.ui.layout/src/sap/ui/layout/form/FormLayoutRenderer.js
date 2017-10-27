@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library"],
-	function(library, coreLibrary) {
+sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/theming/Parameters"],
+	function(library, coreLibrary, themingParameters) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -61,7 +61,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library"],
 		if (oToolbar) {
 			rm.renderControl(oToolbar);
 		} else {
-			var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
+			var sSize = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
 			this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
 		}
 
@@ -188,7 +188,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library"],
 
 		if (oTitle) {
 			//determine title level -> if not set use H4 as default
-			var sLevel = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize');
+			var sLevel = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize');
 			if (sLevelDefault) {
 				sLevel = sLevelDefault;
 			}
