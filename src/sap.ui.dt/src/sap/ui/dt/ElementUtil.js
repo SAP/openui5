@@ -465,7 +465,7 @@ sap.ui.define(['jquery.sap.global'],
 			 *
 			 */
 			ElementUtil.loadDesignTimeMetadata = function(oElement) {
-				return oElement ? oElement.getMetadata().loadDesignTime() : Promise.resolve({});
+				return oElement ? oElement.getMetadata().loadDesignTime(oElement) : Promise.resolve({});
 			};
 
 			/**
