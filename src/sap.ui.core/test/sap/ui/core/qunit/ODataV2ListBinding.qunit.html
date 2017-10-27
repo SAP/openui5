@@ -1750,8 +1750,530 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		);
 	});
 
-	</script>
 
+
+	var oSpySubmitBatchRequest;
+
+	QUnit.module("ODataModelV2 requests", {
+		beforeEach: function() {
+			this.aRegisteredControls = [];
+		},
+		afterEach: function() {
+			oModel.destroy();
+			oModel = undefined;
+			this.aRegisteredControls.forEach(function(oControl) {
+				if (oControl.destroy) {
+					oControl.destroy();
+				}
+			});
+			if (oSpySubmitBatchRequest) {
+				oSpySubmitBatchRequest.restore();
+			}
+		}
+	});
+
+
+
+	sap.ui.require(["sap/m/Panel", "sap/m/List", "sap/m/List", "sap/m/StandardListItem", 'sap/ui/model/odata/v2/ODataModel'],
+		function(Panel, List, ListRenderer, StandardListItem, ODataModel) {
+
+			/**
+			 * creates a panel with a list with the following bindings
+			 * <code>/Products(1)/Supplier/Products</code>
+			 * @param mParametersForBinding {object} parameters which get passed to the bindings
+			 * @param mParamatersForModel {object} parameters which get passed to the model
+			 * @param fnCompleted {function} gets called once the batch request is completed
+			 * @param oTestContext {object} test context
+			 * @param sFnRequestCompleted {string} request completed function name of the model
+			 */
+			function executeRequests(mParametersForBinding, mParamatersForModel, fnCompleted, oTestContext, sFnRequestCompleted) {
+
+				oModel = new ODataModel(sURI, mParamatersForModel);
+				oSpySubmitBatchRequest = sinon.spy(oModel, "_submitBatchRequest");
+
+				var oPanel = new Panel();
+				oTestContext.aRegisteredControls.push(oPanel);
+				var oList = new List();
+				oTestContext.aRegisteredControls.push(oList);
+				oPanel.setModel(oModel);
+				oPanel.addContent(oList);
+
+
+				if (!sFnRequestCompleted) {
+					sFnRequestCompleted = "attachBatchRequestCompleted";
+				}
+				oModel[sFnRequestCompleted](null, function() {
+					fnCompleted(oList, oTestContext, arguments);
+				});
+
+
+				oPanel.bindElement({path: "/Products(1)", parameters: mParametersForBinding});
+
+				oList.bindElement({path: "Supplier", parameters: mParametersForBinding});
+				oList.bindItems({path: "Products", template: new StandardListItem({title: "{ProductName}"}), parameters: mParametersForBinding});
+
+
+				return oPanel;
+			}
+
+			/**
+			 * Checks the content of the grouped batch request
+			 * @param oList
+			 * @param assert
+			 * @param iCallIndex
+			 * @param aExpectedRequests
+			 * @param sMessage
+			 */
+			var checkSingleBatchRequestContent = function(oList, assert, iCallIndex, aExpectedRequests, sMessage) {
+
+				iCallIndex = iCallIndex || 0;
+				sMessage = sMessage || ("" + (iCallIndex) + " batch requests are expected");
+
+				assert.equal(iCallIndex + 1, oSpySubmitBatchRequest.callCount, sMessage);
+
+				var aRequests = oSpySubmitBatchRequest.args[iCallIndex][1];
+				var aRequestUris = aRequests.map(function(oRequest){
+					return oRequest.request.requestUri;
+				});
+				assert.equal(aRequests.length, aExpectedRequests.length, "multiple requests within one batch should be performed." +
+					" Actual: " + JSON.stringify(aRequestUris) + " Expected: " + JSON.stringify(aExpectedRequests));
+
+
+				aExpectedRequests.forEach(function(sExpectedRequest, iIndex) {
+					assert.ok(aRequests[iIndex], "Expected: '" + sExpectedRequest + "'");
+					assert.equal(aRequests[iIndex].request.requestUri, sExpectedRequest, "request " + (iIndex + 1) + " retrieves '" + sExpectedRequest + "'");
+					assert.equal(aRequests[iIndex].response.statusCode, "200", "response should succeed");
+				});
+
+				assert.equal(oList.getItems().length, 3, "The list should contain 3 items");
+
+			};
+
+			/**
+			 * Checks the contents of each batch request
+			 * @param oList
+			 * @param assert
+			 * @param iCallIndex
+			 * @param aExpectedRequests
+			 * @param sMessage
+			 */
+			var checkMultipleBatchRequestsContent = function(oList, assert, iCallIndex, aExpectedRequests, sMessage) {
+				var iNumber = aExpectedRequests.length;
+				iCallIndex = iCallIndex || iNumber;
+				sMessage = sMessage || ("" + (iCallIndex) + " batch requests are expected");
+
+				assert.equal(iCallIndex, oSpySubmitBatchRequest.callCount, sMessage);
+
+				aExpectedRequests.forEach(function(aExpectedRequest, iIndex) {
+					if (!Array.isArray(aExpectedRequest)) {
+						aExpectedRequest = [aExpectedRequest];
+					}
+
+					var oBatchRequest1 = oSpySubmitBatchRequest.args[iCallIndex - (iNumber) + iIndex][1];
+					var aRequestUris = oBatchRequest1.map(function(oRequest){
+						return oRequest.request.requestUri;
+					});
+					assert.equal(oBatchRequest1.length, aExpectedRequest.length, "" + (iIndex + 1) + ". batch should contain " + aExpectedRequest.length + " request. " +
+						"Actual: " + JSON.stringify(aRequestUris) + " Expected: " + JSON.stringify(aExpectedRequest));
+					aExpectedRequest.forEach(function(sExpectedRequest, iIndex) {
+						assert.ok(oBatchRequest1[iIndex], "Expected: '" + sExpectedRequest + "'");
+						assert.equal(oBatchRequest1[iIndex].request.requestUri, sExpectedRequest, "request " + (iIndex + 1) + " retrieves '" + sExpectedRequest + "'");
+						assert.equal(oBatchRequest1[iIndex].response.statusCode, "200", "response should succeed");
+					});
+
+				});
+
+				assert.equal(oList.getItems().length, 3, "The list should contain 3 items");
+
+			};
+
+			/* Sync */
+
+			QUnit.test("Batch: ListBinding - create/use preliminary Context", function(assert) {
+				var done = assert.async();
+				var fnCompleted = function(oList) {
+					checkSingleBatchRequestContent(oList, assert, 0, [
+						"Products(1)",
+						"Products(1)/Supplier",
+						"Products(1)/Supplier/Products/$count",
+						"Products(1)/Supplier/Products?$skip=0&$top=100"
+					]);
+					done();
+				};
+				executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {preliminaryContext: true}, fnCompleted, this);
+
+			});
+
+			QUnit.test("Batch: ListBinding - create/use preliminary Context (parameter variant 1)", function(assert) {
+				var done = assert.async();
+				var fnCompleted = function(oList) {
+					checkSingleBatchRequestContent(oList, assert, 0, [
+						"Products(1)",
+						"Products(1)/Supplier",
+						"Products(1)/Supplier/Products/$count",
+						"Products(1)/Supplier/Products?$skip=0&$top=100"
+					]);
+					done();
+				};
+				executeRequests({}, {preliminaryContext: true}, fnCompleted, this);
+
+			});
+
+			QUnit.test("Batch: ListBinding - create/use preliminary Context with Refreshs", function(assert) {
+				var done = assert.async();
+				var oPanelBinding, oListBinding, oListItemsBinding;
+
+				var iCurrentRun = -1;
+				assert.expect(36);
+				var fnCompleted = function(oList) {
+
+					iCurrentRun++;
+					switch (iCurrentRun) {
+						case 0:
+							oPanelBinding.refresh();
+							//4 requests INITIAL
+							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+								"Products(1)",
+								"Products(1)/Supplier",
+								"Products(1)/Supplier/Products/$count",
+								"Products(1)/Supplier/Products?$skip=0&$top=100"
+							], "INITIAL");
+							break;
+						case 1:
+							oListBinding.refresh();
+							//1 request AFTER PANEL REFRESH
+							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+								"Products(1)"
+							], "AFTER PANEL REFRESH");
+							break;
+						case 2:
+							oListItemsBinding.refresh();
+							//1 request AFTER LIST REFRESH
+							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+								"Products(1)/Supplier",
+							], "AFTER LIST REFRESH");
+							break;
+						case 3:
+							//2 requests AFTER LIST ITEMS REFRESH
+							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+								"Suppliers(1)/Products/$count",
+								"Suppliers(1)/Products?$skip=0&$top=100"
+							], "AFTER LIST ITEMS REFRESH");
+							done();
+							break;
+						default:
+							break;
+					}
+				};
+				var oPanel = executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {}, fnCompleted, this);
+
+				oPanelBinding = oPanel.getObjectBinding();
+				var oList = oPanel.getContent()[0];
+				oListBinding = oList.getObjectBinding();
+				oListItemsBinding = oList.getBinding("items");
+			});
+
+
+			QUnit.test("Batch: ListBinding - create/use preliminary Context with forced Refreshs", function(assert) {
+				var done = assert.async();
+				var oPanelBinding, oListBinding, oListItemsBinding;
+
+				var iCurrentRun = -1;
+				assert.expect(51);
+				var fnCompleted = function(oList) {
+
+					iCurrentRun++;
+					switch (iCurrentRun) {
+						case 0:
+							oPanelBinding.refresh(true);
+							//4 requests INITIAL
+							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+								"Products(1)",
+								"Products(1)/Supplier",
+								"Products(1)/Supplier/Products/$count",
+								"Products(1)/Supplier/Products?$skip=0&$top=100"
+							], "INITIAL 4 requests expected after load");
+							break;
+						case 1:
+							oListBinding.refresh(true);
+							//4 requests AFTER PANEL REFRESH
+							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+								"Products(1)",
+								"Products(1)/Supplier",
+								"Products(1)/Supplier/Products/$count",
+								"Products(1)/Supplier/Products?$skip=0&$top=100"
+							], "AFTER FORCED PANEL REFRESH 4 requests expected");
+							break;
+						case 2:
+							oListItemsBinding.refresh(true);
+							//3 requests AFTER LIST REFRESH
+							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+								"Products(1)/Supplier",
+								"Products(1)/Supplier/Products/$count",
+								"Products(1)/Supplier/Products?$skip=0&$top=100"
+							], "AFTER FORCED LIST REFRESH 3 requests expected");
+							break;
+						case 3:
+							//2 requests AFTER LIST ITEMS REFRESH
+							checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
+								"Suppliers(1)/Products/$count",
+								"Suppliers(1)/Products?$skip=0&$top=100"
+							], "AFTER FORCED LIST ITEMS REFRESH 2 requests expected");
+							done();
+							break;
+						default:
+							break;
+					}
+
+				};
+				var oPanel = executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {}, fnCompleted, this);
+
+				oPanelBinding = oPanel.getObjectBinding();
+				oListBinding = oPanel.getContent()[0].getObjectBinding();
+				oListItemsBinding = oPanel.getContent()[0].getBinding("items");
+			});
+
+			/* Async */
+
+
+			QUnit.test("Batch: ListBinding - not create/use preliminary Context", function(assert) {
+				var iRequests = 0;
+				var done = assert.async();
+				var fnCompleted = function(oList) {
+					iRequests++;
+					if (iRequests === 3) {
+						checkMultipleBatchRequestsContent(oList, assert, 0, [
+							["Products(1)"],
+							["Products(1)/Supplier"],
+							["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+						]);
+						done();
+					}
+				};
+				executeRequests({createPreliminaryContext: false, usePreliminaryContext: false}, {preliminaryContext: false}, fnCompleted, this);
+
+			});
+
+			QUnit.test("Batch: ListBinding - not create/use preliminary Context (parameter variant 1)", function(assert) {
+				var iRequests = 0;
+				var done = assert.async();
+				var fnCompleted = function(oList) {
+					iRequests++;
+					if (iRequests === 3) {
+						checkMultipleBatchRequestsContent(oList, assert, 0, [
+							["Products(1)"],
+							["Products(1)/Supplier"],
+							["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+						]);
+						done();
+					}
+				};
+				executeRequests({usePreliminaryContext: true}, {preliminaryContext: false}, fnCompleted, this);
+
+			});
+
+
+			QUnit.test("Batch: ListBinding - not create/use preliminary Context with Refreshs", function(assert) {
+				var oObjectBinding, oListBinding, oListItemsBinding;
+				var done = assert.async();
+				var firstRun = 3;
+				var secondRun = firstRun + 1;
+				var thirdRun = secondRun + 1;
+				var fourthRun = thirdRun + 1;
+
+				assert.expect(38);
+
+				var iRequests = 0;
+				var fnCompleted = function(oList) {
+
+					iRequests++;
+
+					switch (iRequests) {
+						case firstRun:
+							oObjectBinding.refresh();
+							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+								["Products(1)"],
+								["Products(1)/Supplier"],
+								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+							]);
+							break;
+						case secondRun:
+							oListBinding.refresh();
+							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+								["Products(1)"]
+							]);
+							break;
+						case thirdRun:
+							oListItemsBinding.refresh();
+							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+								["Products(1)/Supplier"]
+							]);
+							break;
+						case fourthRun:
+							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+							]);
+							done();
+							break;
+						default:
+							break;
+					}
+
+
+				};
+				var oPanel = executeRequests({createPreliminaryContext: false, usePreliminaryContext: true}, {}, fnCompleted, this);
+				oObjectBinding = oPanel.getObjectBinding();
+				oListBinding = oPanel.getContent()[0].getObjectBinding();
+				oListItemsBinding = oPanel.getContent()[0].getBinding("items");
+
+			});
+
+
+			QUnit.test("Batch: ListBinding - not create/use preliminary Context with forced Refreshs", function(assert) {
+				var oPanelBinding, oListBinding, oListItemsBinding;
+				var done = assert.async();
+
+				assert.expect(56);
+
+				var firstRun = 3;
+				var secondRun = firstRun + 3;
+				var thirdRun = secondRun + 2;
+				var fourthRun = thirdRun + 1;
+
+				var iRequests = 0;
+				var fnCompleted = function(oList) {
+
+					iRequests++;
+
+					switch (iRequests) {
+						case firstRun:
+							oPanelBinding.refresh(true);
+							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+								["Products(1)"],
+								["Products(1)/Supplier"],
+								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+							], "INITIAL 4 requests expected after load");
+							break;
+						case secondRun:
+							oListBinding.refresh(true);
+							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+								["Products(1)"],
+								["Products(1)/Supplier"],
+								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+							], "AFTER FORCED PANEL REFRESH 4 requests expected");
+							break;
+						case thirdRun:
+							oListItemsBinding.refresh(true);
+							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+								["Products(1)/Supplier"],
+								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+							], "AFTER FORCED LIST REFRESH 3 requests expected");
+							break;
+						case fourthRun:
+							checkMultipleBatchRequestsContent(oList, assert, iRequests, [
+								["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+							], "AFTER FORCED LIST ITEMS REFRESH 2 requests expected");
+							done();
+							break;
+						default:
+							break;
+					}
+
+				};
+				var oPanel = executeRequests({createPreliminaryContext: false, usePreliminaryContext: true}, {}, fnCompleted, this);
+				oPanelBinding = oPanel.getObjectBinding();
+				oListBinding = oPanel.getContent()[0].getObjectBinding();
+				oListItemsBinding = oPanel.getContent()[0].getBinding("items");
+
+			});
+
+
+			QUnit.test("Batch: ListBinding default - not create/use preliminary Context", function(assert) {
+				var iRequests = 0;
+				var done = assert.async();
+				var fnCompleted = function(oList) {
+					iRequests++;
+					if (iRequests === 3) {
+						checkMultipleBatchRequestsContent(oList, assert, 0, [
+							["Products(1)"],
+							["Products(1)/Supplier"],
+							["Suppliers(1)/Products/$count", "Suppliers(1)/Products?$skip=0&$top=100"]
+						]);
+						done();
+					}
+				};
+				executeRequests({}, {}, fnCompleted, this);
+
+			});
+
+			/* Non-Batch */
+
+			QUnit.test("Non-batch: ListBinding - create/use preliminary Context", function(assert) {
+				var iRequests = 0;
+				var done = assert.async();
+
+				var mExpectedRequests = [
+					"/Products(1)",
+					"/Products(1)/Supplier",
+					"/Products(1)/Supplier/Products/$count",
+					"/Products(1)/Supplier/Products?$skip=0&$top=100"
+				];
+
+
+				var fnCompleted = function(oList, oTestContext, oArguments) {
+
+					var mParams = oArguments["0"].mParameters;
+					var url = mParams.url;
+					assert.equal(mParams.response.statusCode, 200);
+					var expectedRequest = mExpectedRequests[iRequests];
+					assert.equal(url.indexOf(expectedRequest), url.length - expectedRequest.length);
+
+					iRequests++;
+					if (iRequests === mExpectedRequests.length) {
+						done();
+					}
+				};
+				executeRequests({createPreliminaryContext: true, usePreliminaryContext: true}, {
+					useBatch: false,
+					json: false
+				}, fnCompleted, this, "attachRequestCompleted");
+
+			});
+
+			QUnit.test("Non-batch: ListBinding - not create/use preliminary Context", function(assert) {
+				var iRequests = 0;
+				var done = assert.async();
+
+				var mExpectedRequests = [
+					"/Products(1)",
+					"/Products(1)/Supplier",
+					"/Suppliers(1)/Products/$count",
+					"/Suppliers(1)/Products?$skip=0&$top=100"
+				];
+
+
+				var fnCompleted = function(oList, oTestContext, oArguments) {
+
+					var mParams = oArguments["0"].mParameters;
+					var url = mParams.url;
+					assert.equal(mParams.response.statusCode, 200, "response code for " + url + " should be OK");
+					var expectedRequest = mExpectedRequests[iRequests];
+					assert.equal(url.substring(url.length - expectedRequest.length), expectedRequest);
+
+					iRequests++;
+					if (iRequests === mExpectedRequests.length) {
+						done();
+					}
+				};
+				executeRequests({createPreliminaryContext: false, usePreliminaryContext: true}, {
+					useBatch: false,
+					json: false
+				}, fnCompleted, this, "attachRequestCompleted");
+
+			});
+		});
+
+	</script>
 </head>
 <body>
 <h1 id="qunit-header">QUnit tests: OData List Binding (V2)</h1>
