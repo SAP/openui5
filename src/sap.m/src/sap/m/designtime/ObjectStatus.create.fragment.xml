@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ObjectStatus text="Success State" state="Success" />
+</core:FragmentDefinition>

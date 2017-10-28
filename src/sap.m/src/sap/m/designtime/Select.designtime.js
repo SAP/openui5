@@ -18,6 +18,9 @@ sap.ui.define([],
 			items : {
 				domRef : ":sap-domref"
 			}
+		},
+		templates: {
+			create: "sap/m/designtime/Select.create.fragment.xml"
 		}
 	};
 

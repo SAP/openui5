@@ -13,6 +13,9 @@ sap.ui.define([],
 			icons: {
 				svg: "sap/m/designtime/MultiComboBox.icon.svg"
 			}
+		},
+		templates: {
+			create: "sap/m/designtime/MultiComboBox.create.fragment.xml"
 		}
 	};
 

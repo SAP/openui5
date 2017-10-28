@@ -54,6 +54,9 @@ sap.ui.define([],
 					move: "moveControls"
 				}
 			}
+		},
+		templates: {
+			create: "sap/m/designtime/Panel.create.fragment.xml"
 		}
 	};
 

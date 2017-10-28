@@ -33,6 +33,9 @@ sap.ui.define([],
 						return oControl.$().find('.sapMBtn > .sapMBtnInner > .sapMBtnContent')[0];
 					}
 				}
+			},
+			templates: {
+				create: "sap/m/designtime/MenuButton.create.fragment.xml"
 			}
 		};
 	}, /* bExport= */ false);

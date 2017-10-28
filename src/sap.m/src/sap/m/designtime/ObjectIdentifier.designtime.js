@@ -40,6 +40,9 @@ sap.ui.define([
 					}
 				};
 			}
+		},
+		templates: {
+			create: "sap/m/designtime/ObjectIdentifier.create.fragment.xml"
 		}
 	};
 }, /* bExport= */false);

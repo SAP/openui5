@@ -13,6 +13,9 @@ sap.ui.define([],
 				icons: {
 					svg: "sap/m/designtime/DraftIndicator.icon.svg"
 				}
+			},
+			templates: {
+				create: "sap/m/designtime/DraftIndicator.create.fragment.xml"
 			}
 		};
 	}, /* bExport= */ false);

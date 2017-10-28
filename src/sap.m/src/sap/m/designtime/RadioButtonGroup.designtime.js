@@ -13,6 +13,9 @@ sap.ui.define([],
 				icons: {
 					svg: "sap/m/designtime/RadioButtonGroup.icon.svg"
 				}
+			},
+			templates: {
+				create: "sap/m/designtime/RadioButtonGroup.create.fragment.xml"
 			}
 		};
 	}, /* bExport= */ false);
