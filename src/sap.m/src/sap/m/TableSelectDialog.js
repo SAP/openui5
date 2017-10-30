@@ -422,6 +422,8 @@ sap.ui.define(['./Button', './Dialog', './SearchField', './Table', './library', 
 		// reset internal variables
 		this._bFirstRequest = true;
 
+		this._sSearchFieldValue = "";
+
 		// set search field value
 		this._oSearchField.setValue(sSearchValue);
 
