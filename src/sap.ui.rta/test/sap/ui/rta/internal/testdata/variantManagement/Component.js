@@ -29,8 +29,8 @@ sap.ui.define([
 		},
 
 		constructor: function () {
-			this._createFakeLrep();
 			UIComponent.prototype.constructor.apply(this, arguments);
+			this._createFakeLrep();
 		},
 
 		init : function() {
