@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	'sap/ui/codeeditor/js/ace/ace',
 	'sap/ui/codeeditor/js/ace/ext-language_tools',
+	'sap/ui/codeeditor/js/ace/ext-beautify',
 	'sap/ui/codeeditor/js/ace/mode-javascript',
 	'sap/ui/codeeditor/js/ace/mode-json'
 ], function(jQuery, Control) {
@@ -417,6 +418,15 @@ sap.ui.define([
 			this.rerender();
 		}
 		return this;
+	};
+
+	/**
+	 * Pretty-prints the content of the editor
+	 * @public
+	 * @since 1.54.1
+	 */
+	CodeEditor.prototype.prettyPrint = function () {
+		ace.require("ace/ext/beautify").beautify(this._oEditor.session);
 	};
 
 	CodeEditor.prototype.destroy = function (bSuppressInvalidate) {
