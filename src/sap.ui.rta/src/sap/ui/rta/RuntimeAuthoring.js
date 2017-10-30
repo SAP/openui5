@@ -860,9 +860,9 @@ sap.ui.define([
 			BusyIndicator.hide();
 			if (oError.message !== 'createAndApply failed') {
 				FlexUtils.log.error("transport error" + oError);
-				return this._showMessage(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_ERROR", "MSG_TRANSPORT_ERROR", oError);
+				return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_ERROR", "MSG_TRANSPORT_ERROR", oError);
 			}
-		}.bind(this);
+		};
 
 		this._handleStopCutPaste();
 
@@ -938,8 +938,8 @@ sap.ui.define([
 
 		.catch(function(oError) {
 			FlexUtils.log.error("Create and apply and/or save error: " + oError);
-			return this._showMessage(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_APPLYSAVE_ERROR", "MSG_TRANSPORT_APPLYSAVE_ERROR", oError);
-		}.bind(this));
+			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_APPLYSAVE_ERROR", "MSG_TRANSPORT_APPLYSAVE_ERROR", oError);
+		});
 	};
 
 	/**
@@ -973,30 +973,7 @@ sap.ui.define([
 				return window.location.reload();
 			});
 		}.bind(this))["catch"](function(oError) {
-			return this._showMessage(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
-		}.bind(this));
-	};
-
-	/**
-	 * Shows a message box.
-	 * @param  {sap.m.MessageBox.Icon} oMessageType The type of the message box (icon to be displayed)
-	 * @param  {string} sTitleKey The text key for the title of the message box
-	 * @param  {string} sMessageKey The text key for the message of the message box
-	 * @param  {any} oError Optional - If an error is passed on, the message box text is derived from it
-	 * @return {Promise} Promise displaying the message box; resolves when it is closed
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._showMessage = function(oMessageType, sTitleKey, sMessageKey, oError) {
-		var sMessage = this._getTextResources().getText(sMessageKey, oError ? [oError.message || oError] : undefined);
-		var sTitle = this._getTextResources().getText(sTitleKey);
-
-		return new Promise(function(resolve) {
-			MessageBox.show(sMessage, {
-				icon: oMessageType,
-				title: sTitle,
-				onClose: resolve,
-				styleClass: Utils.getRtaStyleClassName()
-			});
+			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
 		});
 	};
 
@@ -1355,7 +1332,7 @@ sap.ui.define([
 	 * @return {Promise} Resolving when the user clicks on OK
 	 */
 	RuntimeAuthoring.prototype._handlePersonalizationMessageBoxOnStart = function() {
-		return this._showMessage(
+		return Utils._showMessageBox(
 			MessageBox.Icon.INFORMATION,
 			"HEADER_PERSONALIZATION_EXISTS",
 			"MSG_PERSONALIZATION_EXISTS");

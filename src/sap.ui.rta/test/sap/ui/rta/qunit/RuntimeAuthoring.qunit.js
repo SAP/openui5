@@ -18,6 +18,7 @@ sap.ui.require([
 	'sap/ui/fl/LrepConnector',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
+	'sap/ui/rta/Utils',
 	'sap/ui/fl/FakeLrepLocalStorage',
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
@@ -48,6 +49,7 @@ sap.ui.require([
 	LrepConnector,
 	Change,
 	Utils,
+	RtaUtils,
 	FakeLrepLocalStorage,
 	RuntimeAuthoring,
 	Stack,
@@ -1295,7 +1297,7 @@ sap.ui.require([
 			this.oCheckTargetAndApplyChangeStub = sandbox.stub(this.oFlexController, "createAndApplyChange");
 			this.oSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
 			this.oUtilsLogStub = sandbox.stub(Utils.log, "error");
-			this.oShowMessageStub = sandbox.stub(this.oRta, "_showMessage").returns(Promise.resolve());
+			this.oShowMessageStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
