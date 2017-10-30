@@ -448,6 +448,9 @@ sap.ui.define([
 
 				if (oControlData.hasOwnProperty('properties') && this.hasVisibleElement(oControlData.properties)) {
 					oControlData.hasProperties = true;
+					oControlData.properties = oControlData.properties.filter(function (property) {/* exclude restricted fields from none-internal versions */
+						return this._aAllowedMembers.indexOf(property.visibility) !== -1;
+					}.bind(this));
 				} else {
 					oControlData.hasProperties = false;
 				}

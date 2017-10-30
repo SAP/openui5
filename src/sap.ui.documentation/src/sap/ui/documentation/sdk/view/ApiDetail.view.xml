@@ -131,7 +131,7 @@
 											<m:Column vAlign="Top" minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
-											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
+											<m:ColumnListItem>
 												<m:cells>
 
 													<m:Text class="sapUiDocumentationParamBold" text="{parts: [
