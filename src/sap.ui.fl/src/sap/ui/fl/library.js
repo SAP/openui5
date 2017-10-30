@@ -29,7 +29,9 @@ sap.ui.define([
 			"sap.ui.support": {
 				diagnosticPlugins: [
 					"sap/ui/fl/support/Flexibility"
-				]
+				],
+				//Configuration used for rule loading of Support Assistant
+				publicRules:true
 			}
 		}
 	});

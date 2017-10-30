@@ -5,8 +5,8 @@
 /**
  * Provides methods for information retrieval from the core.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI', 'sap/ui/thirdparty/URI'],
-	function (jQuery, ToolsAPI, URI) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI', 'sap/ui/thirdparty/URI', "sap/ui/support/supportRules/util/Utils"],
+	function (jQuery, ToolsAPI, URI, Utils) {
 	"use strict";
 
 	/**
@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI', 'sap/ui/thir
 		oTechData.resourcePaths = aResults;
 
 		//add theme paths
-		var mLibraries = this._oCore.getLoadedLibraries();
+		var mLibraries = Utils.getLoadedLibraries();
 		aResults = [];
 		for (var n in mLibraries) {
 			var sPath = this._oCore._getThemePath(n, this._oCore.oConfiguration.theme);
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI', 'sap/ui/thir
 		//add SAPUI5 version object
 		try {
 			oTechData.sapUi5Version = {
-				version: sap.ui.getVersionInfo(),
+				version: Utils.getApplicationVersionInfo(),
 				path: sap.ui.resource("", "sap-ui-version.json")
 			};
 		} catch (ex) {

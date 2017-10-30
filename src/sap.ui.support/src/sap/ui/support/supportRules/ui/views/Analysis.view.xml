@@ -2,7 +2,6 @@
 		controllerName="sap.ui.support.supportRules.ui.controllers.Analysis"
 		height="100%"
 		xmlns="sap.ui.table"
-		xmlns:un="sap.ui.unified"
 		xmlns:m="sap.m"
 		xmlns:c="sap.ui.core"
 		xmlns:l="sap.ui.layout"
@@ -15,16 +14,19 @@
 		afterNavigate="onAfterNavigate">
 		<l:Splitter id="rulesDisplayPage">
 			<l:contentAreas>
-				<m:Page showHeader="true">
+				<m:Page
+						showHeader="true">
 					<m:headerContent>
 						<m:Bar>
 							<m:contentLeft>
 								<m:IconTabHeader
+										id="ruleSetsView"
+										select="onSelectedRuleSets"
 										selectedKey="{/selectedSetPreviewKey}"
 										class="customIconTabHeader">
 									<m:items>
 										<m:IconTabFilter key="availableRules" text="Available Rulesets" />
-										<m:IconTabFilter key="availableLibraries" text="Additional Rulesets" />
+										<m:IconTabFilter key="additionalRulesets" text="Additional Rulesets" />
 									</m:items>
 								</m:IconTabHeader>
 							</m:contentLeft>
@@ -76,7 +78,7 @@
 									</t:RowAction>
 							</t:rowActionTemplate>
 						</t:TreeTable>
-					<l:VerticalLayout id="librarySetContainer" width="100%" visible="{= ${/selectedSetPreviewKey} === 'availableLibraries' }">
+					<l:VerticalLayout id="librarySetContainer" width="100%" visible="{= ${/selectedSetPreviewKey} === 'additionalRulesets' }">
 						<m:List
 							id="availableLibrariesSet"
 							mode = "MultiSelect"

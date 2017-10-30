@@ -67,6 +67,10 @@ sap.ui.define(["sap/ui/base/DataType",
 				"sap.f.semantic.SemanticPage" : {
 					"moveControls": "default"
 				}
+			},
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				internalRules:true
 			}
 		}
 	});

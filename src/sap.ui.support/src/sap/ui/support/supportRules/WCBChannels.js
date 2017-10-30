@@ -240,6 +240,13 @@ function () {
 		 * @type {string}
 		 * @const
 		 */
-		POST_MESSAGE:               "POST_MESSAGE"
+		POST_MESSAGE:               "POST_MESSAGE",
+
+		/**
+		 * Get non loaded libraries with rules names
+		 * @type {string}
+		 * @const
+		 */
+		GET_NON_LOADED_RULE_SETS: "GET_NON_LOADED_RULE_SETS"
 	};
 }, true);

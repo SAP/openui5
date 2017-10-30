@@ -156,7 +156,7 @@
 								selectionBehavior="RowOnly"
 								enableColumnReordering="false"
 								visibleRowCountMode="{/visibleRowCountMode}"
-								visibleRowCount = "{/visibleRowCount}"
+								visibleRowCount="{/visibleRowCount}"
 								rowSelectionChange="onRowSelection"
 								id="issueTable">
 								<t:columns>
@@ -195,7 +195,7 @@
 								vertical="true"
 								visible="{= ${/visibleIssuesCount} > 0 &amp;&amp; ${/selectedIssue/details} !== ''}"
 								horizontal="false"
-								heght="100%">
+								height="100%">
 								<Text text="{/selectedIssue/details}" width="100%"/>
 								<layoutData>
 									<FlexItemData growFactor="4" maxHeight="{/heightDetailsArea}"/>

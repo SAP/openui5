@@ -37,7 +37,13 @@ The library provides the Support Assistant tool. It enables application develope
 		controls: [],
 		elements: [],
 		noLibraryCSS: false,
-		version: "${version}"
+		version: "${version}",
+		extensions: {
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				internalRules:true
+			}
+		}
 	});
 
 	/**
