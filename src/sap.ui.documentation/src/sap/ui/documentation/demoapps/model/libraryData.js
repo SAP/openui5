@@ -94,7 +94,9 @@ sap.ui.define([
 						jQuery.sap.log.warning("Demo app category \"" + oDemoAppData.category + "\" not found, correcting demo app \"" + oDemoAppData.name + "\" to \"Misc\"");
 						oDemoAppData.category = "Misc";
 					}
-					oDemoAppsByCategory[oDemoAppData.category].push(oDemoAppData);
+					if (oDemo.links[j].category !== "Tool") { // Exclude Tools from showing, but preserve them in Download dialog
+						oDemoAppsByCategory[oDemoAppData.category].push(oDemoAppData);
+					}
 				}
 			}
 		}
