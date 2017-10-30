@@ -225,6 +225,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			lastToken.attachSelect(fSelectHandler);
 		} else {
 		  // last token is completely visible
+			lastToken.removeStyleClass("sapMTokenTruncate");
 			lastToken.detachSelect(fSelectHandler);
 		}
 
