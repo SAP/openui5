@@ -5,8 +5,9 @@ sap.ui.require([
 	"sap/ui/support/supportRules/Main",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
-	"sap/ui/support/supportRules/RuleSet"],
-	function (jQuery, Main, CommunicationBus, channelNames, RuleSet) {
+	"sap/ui/support/supportRules/RuleSet",
+	"sap/ui/support/supportRules/RuleSetLoader"],
+	function (jQuery, Main, CommunicationBus, channelNames, RuleSet, RuleSetLoader) {
 		"use strict";
 
 		/*eslint-disable no-unused-vars*/
@@ -193,9 +194,9 @@ sap.ui.require([
 		QUnit.module("Main.js methods", {
 			setup: function () {
 				// Store _mRuleSets
-				this._mRuleSets = jQuery.extend(true, {}, Main._mRuleSets);
+				this._mRuleSets = jQuery.extend(true, {}, RuleSetLoader._mRuleSets);
 
-				Main._mRuleSets = {
+				RuleSetLoader._mRuleSets = {
 					"temporary": {
 					   "lib": {
 						  "name": "temporary"
@@ -285,7 +286,7 @@ sap.ui.require([
 			},
 			teardown: function () {
 				// Restore _mRuleSets
-				Main._mRuleSets = jQuery.extend(true, {}, this._mRuleSets);
+				RuleSetLoader._mRuleSets = jQuery.extend(true, {}, this._mRuleSets);
 				this._mRuleSets = null;
 				RuleSet.clearAllRuleSets();
 				Main._aSelectedRules = [];
@@ -341,8 +342,8 @@ sap.ui.require([
 		QUnit.test("_setSelectedRules with no ruleDescriptors", function (assert) {
 			// Arrange
 			var iTotalRules = 0;
-			Object.keys(Main._mRuleSets).map(function (sLibName) {
-				var oRulesetRules = Main._mRuleSets[sLibName].ruleset.getRules();
+			Object.keys(RuleSetLoader._mRuleSets).map(function (sLibName) {
+				var oRulesetRules = RuleSetLoader._mRuleSets[sLibName].ruleset.getRules();
 				iTotalRules += Object.keys(oRulesetRules).length;
 			});
 
@@ -365,11 +366,11 @@ sap.ui.require([
 			});
 
 			// Act
-			Main._fetchRuleSet("sap.uxap");
+			RuleSetLoader._fetchRuleSet("sap.uxap");
 
 			//Assert
-			assert.ok(Main._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(Main._mRuleSets["sap.uxap"].ruleset._mRules).length, 1, "Should have one fetched rule");
+			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
+			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 1, "Should have one fetched rule");
 
 			jQuery.sap.getObject.restore();
 		});
@@ -385,14 +386,14 @@ sap.ui.require([
 			});
 
 			// Setup initial RuleSet
-			Main._mRuleSets["sap.uxap"] = createRuleSet("sap.uxap", "initialValidRule", 2);
+			RuleSetLoader._mRuleSets["sap.uxap"] = createRuleSet("sap.uxap", "initialValidRule", 2);
 
 			// Act
-			Main._fetchRuleSet("sap.uxap");
+			RuleSetLoader._fetchRuleSet("sap.uxap");
 
 			//Assert
-			assert.ok(Main._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(Main._mRuleSets["sap.uxap"].ruleset._mRules).length, 4, "Should have four fetched rules");
+			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
+			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 4, "Should have four fetched rules");
 
 			jQuery.sap.getObject.restore();
 		});
@@ -408,11 +409,11 @@ sap.ui.require([
 			});
 
 			// Act
-			Main._fetchRuleSet("sap.uxap");
+			RuleSetLoader._fetchRuleSet("sap.uxap");
 
 			//Assert
-			assert.ok(Main._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(Main._mRuleSets["sap.uxap"].ruleset._mRules).length, 3, "Should have three fetched rules");
+			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
+			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 3, "Should have three fetched rules");
 
 			jQuery.sap.getObject.restore();
 		});
@@ -445,14 +446,14 @@ sap.ui.require([
 			});
 
 			// Setup initial RuleSet
-			Main._mRuleSets["sap.uxap"] = createRuleSet("sap.uxap", "initialValidRule", 2);
+			RuleSetLoader._mRuleSets["sap.uxap"] = createRuleSet("sap.uxap", "initialValidRule", 2);
 
 			// Act
-			Main._fetchRuleSet("sap.uxap");
+			RuleSetLoader._fetchRuleSet("sap.uxap");
 
 			//Assert
-			assert.ok(Main._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
-			assert.equal(Object.keys(Main._mRuleSets["sap.uxap"].ruleset._mRules).length, 8, "Should have eight fetched rules");
+			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
+			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 8, "Should have eight fetched rules");
 
 			jQuery.sap.getObject.restore();
 		});
@@ -465,10 +466,10 @@ sap.ui.require([
 			sinon.spy(jQuery.sap.log, "error");
 
 			// Act
-			Main._fetchRuleSet("sap.test");
+			RuleSetLoader._fetchRuleSet("sap.test");
 
 			//Assert
-			assert.notOk(Main._mRuleSets["sap.test"], "Should be undefined");
+			assert.notOk(RuleSetLoader._mRuleSets["sap.test"], "Should be undefined");
 			assert.equal(jQuery.sap.log.error.callCount, 1, "should have logged an error");
 
 			jQuery.sap.getObject.restore();
