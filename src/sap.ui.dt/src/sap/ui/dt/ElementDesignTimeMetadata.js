@@ -123,6 +123,13 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 		return mAggregations;
 	};
 
+	ElementDesignTimeMetadata.prototype.isActionAvailableOnAggregations = function(sAction) {
+		var mAggregations = this.getAggregations();
+		return Object.keys(mAggregations).some( function (sAggregation) {
+			return mAggregations[sAggregation].actions && mAggregations[sAggregation].actions[sAction];
+		});
+	};
+
 	ElementDesignTimeMetadata.prototype.getAggregationAction = function(sAction, oElement, aArgs) {
 		var vAction;
 		var oAggregations = this.getAggregations();

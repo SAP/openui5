@@ -126,8 +126,9 @@ function(
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 1, " and 1 Menu Items are available");
+		assert.equal(oContextMenu.getItems().length, 2, " and 2 Menu Items are available");
 		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_CREATE_CHILD_CONTAINER", "we can create group");
+		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_PASTE", "we can paste a group");
 	});
 
 	QUnit.test("when context menu is opened (via mouse) for a mandatory selected GroupElement,", function(assert) {
@@ -286,9 +287,11 @@ function(
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 1, " and 1 Menu Items are available");
+		assert.equal(oContextMenu.getItems().length, 2, " and 2 Menu Items are available");
 		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_RENAME", "rename Page is available");
 		assert.equal(oContextMenu.getItems()[0].getEnabled(), false, "but rename Page is disabled");
+		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_PASTE", "paste for Page is available");
+		assert.equal(oContextMenu.getItems()[1].getEnabled(), false, "but paste for Page is disabled");
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
@@ -435,13 +438,15 @@ function(
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 3, " and 3 Menu Items are available");
+		assert.equal(oContextMenu.getItems().length, 4, " and 4 Menu Items are available");
 		assert.equal(oContextMenu.getItems()[0].data("id") , "CTX_RENAME", "rename section is available");
 		assert.equal(oContextMenu.getItems()[0].getEnabled(), true, "add section is enabled");
 		assert.equal(oContextMenu.getItems()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
 		assert.equal(oContextMenu.getItems()[1].getEnabled(), false, "add section is disabled");
 		assert.equal(oContextMenu.getItems()[2].data("id") , "CTX_REMOVE", "remove section is available");
 		assert.equal(oContextMenu.getItems()[2].getEnabled(), true, "we cannot remove a section");
+		assert.equal(oContextMenu.getItems()[3].data("id") , "CTX_PASTE", "paste section is available");
+		assert.equal(oContextMenu.getItems()[3].getEnabled(), false, "we cannot paste a section, as no cut has been triggered");
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
@@ -492,8 +497,9 @@ function(
 		this.oRta.getPlugins()["contextMenu"].open({ pageX: 0, pageY: 0 }, oOverlay);
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
-		assert.notOk(oContextMenu.bOpen, "then the context menu does not open");
-		assert.equal(oContextMenu.getItems().length, 0, " and no Menu Items are available, add section is not available");
+		assert.ok(oContextMenu.bOpen, "then the context menu opens");
+		assert.equal(oContextMenu.getItems().length, 1, " and only one Menu Item is available");
+		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_PASTE", "only paste menu item is available, no possibility to add a section");
 	});
 
 	QUnit.module("Given RTA is started...", {
@@ -550,8 +556,9 @@ function(
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 1, " and 1 Menu Items are available");
+		assert.equal(oContextMenu.getItems().length, 2, " and 2 Menu Items are available");
 		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_CREATE_CHILD_CONTAINER", "create group is available");
+		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_PASTE", "paste is available");
 	});
 
 	QUnit.test("when context menu is opened (via keyboard) for a SimpleForm with Title,", function(assert) {
