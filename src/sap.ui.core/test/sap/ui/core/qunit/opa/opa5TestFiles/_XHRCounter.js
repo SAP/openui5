@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/core/util/MockServer"
-], function (MockServer) {
+	"sap/ui/core/util/MockServer",
+	"sap/ui/Device"
+], function (MockServer, Device) {
 
 	jQuery.sap.unloadResources("sap/ui/test/_XHRCounter.js", false, true, true);
 
@@ -118,6 +119,11 @@ sap.ui.define([
 
 		var oSecondXhr = new XMLHttpRequest();
 		var fnSendAfterSinon = oSecondXhr.send;
+
+		if (Device.browser.firefox) {
+			fnSendBeforeSinon = fnSendBeforeSinon.toString();
+			fnSendAfterSinon = fnSendAfterSinon.toString();
+		}
 
 		assert.strictEqual(fnSendBeforeSinon, fnSendAfterSinon, "the xhr send function is reused");
 	});
