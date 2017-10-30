@@ -340,6 +340,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.Dialog": "sap/m/flexibility/Dialog",
 				"sap.m.FlexBox": {
 					"hideControl": "default",
 					"unhideControl": "default",
