@@ -80,6 +80,11 @@ sap.ui.define([
 					"unhideControl": "default"
 				},
 				"sap.ui.layout.BlockLayoutCell": "sap/ui/layout/flexibility/BlockLayoutCell",
+				"sap.ui.layout.DynamicSideContent": {
+					"moveControls": "default",
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.ui.layout.form.SimpleForm": "sap/ui/layout/flexibility/SimpleForm",
 				"sap.ui.layout.Grid": {
 					"moveControls": "default",
