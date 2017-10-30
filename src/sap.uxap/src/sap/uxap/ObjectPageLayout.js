@@ -925,9 +925,8 @@ sap.ui.define([
 	 * Note that <code>null</code> or <code>undefined</code> are not valid arguments and will be discarded.
 	 * This is because the <code>sap.uxap.ObjectPageLayout</code> should always have one of its sections selected (unless it has 0 sections).
 	 *
-	 * @param {string | sap.uxap.ObjectPageSection}
-	 *            sId the ID of the section that should be selected
-	 *            vSection the section that should be selected
+	 * @param {string | sap.uxap.ObjectPageSection} vSectionBase
+	 *            The ID or the section instance that should be selected
 	 *            Note that <code>null</code> or <code>undefined</code> are not valid arguments
 	 * @return {sap.uxap.ObjectPageLayout} Returns <code>this</code> to allow method chaining
 	 * @public
@@ -942,7 +941,7 @@ sap.ui.define([
 		}
 
 		if (!sSelectedSectionId) {
-			("section or sectionID expected");
+			jQuery.sap.log.warning("section or sectionID expected", this);
 			return;
 		}
 
