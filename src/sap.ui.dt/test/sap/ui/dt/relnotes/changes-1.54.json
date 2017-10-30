@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " sap.ui.rta - Settings dialog don’t open",
         "references": []
+      },
+      {
+        "id": "9154b3be81771e137fbfcc3493da332056a5f7be",
+        "type": "FEATURE",
+        "text": " sap.ui.dt Instance specific design time metadata",
+        "references": []
       }
     ]
   }

@@ -61,6 +61,12 @@
         "type": "FIX",
         "text": " sap.m.ViewSettingsDialog: Cloned item now works with binding",
         "references": []
+      },
+      {
+        "id": "5a86b6153c4868c490dcbcc01678b956380c0632",
+        "type": "FIX",
+        "text": " Opa: throw error when iFrame is launched but one already exists",
+        "references": []
       }
     ]
   }
