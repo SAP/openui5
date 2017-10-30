@@ -301,10 +301,8 @@
 		QUnit.module("Initial Check", {
 			beforeEach : function () {
 				sinon.config.useFakeTimers = true;
-				this.clock = sinon.useFakeTimers();
 			},
 			afterEach : function () {
-				this.clock.restore();
 				sinon.config.useFakeTimers = false;
 			}
 		});
@@ -727,6 +725,46 @@
 
 			oTableSelectDialog1._fireConfirmAndUpdateSelection();
 			assert.ok(!fnTableGetSelectedContexts.called, "getSelectedContexts() is no longer called by _fireConfirmAndUpdateSelection()");
+		});
+
+
+		QUnit.module("OpenClose", {
+			beforeEach : function () {
+				sinon.config.useFakeTimers = true;
+			},
+			afterEach : function () {
+				sinon.config.useFakeTimers = false;
+			}
+		});
+
+		QUnit.test("LiveSearchUpdates", function(assert) {
+			oTableSelectDialog1.open();
+
+			var searchField = oTableSelectDialog1._oSearchField;
+			searchField.setValue('m');
+			searchField.fireLiveChange({newValue: "m"});
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
+
+			assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
+
+			oTableSelectDialog1._fireConfirmAndUpdateSelection();
+			oTableSelectDialog1._oDialog.close();
+
+			oTableSelectDialog1.open();
+			searchField.fireLiveChange({newValue: ""});
+			searchField.fireLiveChange({newValue: "m"});
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
+
+			oTableSelectDialog1._oDialog.close();
+			oTableSelectDialog1._fireConfirmAndUpdateSelection();
 		});
 
 	</script>
