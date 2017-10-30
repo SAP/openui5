@@ -873,5 +873,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "887fb52992b8d221032fe0e1c922130b26dfe1c6",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Update button text properly when SingleSelectMaster mode is used",
+        "references": []
+      },
+      {
+        "id": "6240b0e9897d1a0695bcf12485bccabb2484fb46",
+        "type": "FIX",
+        "text": " sap.m.Link: removed href attribute if property href is not set",
+        "references": []
+      },
+      {
+        "id": "892b27a5dc527b812958ccb6908e648946626f31",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Cloned item now works with binding",
+        "references": []
+      }
+    ]
   }
 }

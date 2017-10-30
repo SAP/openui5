@@ -81,5 +81,56 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "da12fddc8a6da4b29e10bba52929e4e9bad00f12",
+        "type": "FIX",
+        "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
+        "references": []
+      },
+      {
+        "id": "1a3f719e840acfff5e56dcfc4aa322a8f650dc93",
+        "type": "FIX",
+        "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
+        "references": []
+      },
+      {
+        "id": "32fec09dbe194475263514c2d1e72d3914ceb671",
+        "type": "FIX",
+        "text": "sap.ui.commons.Link: Focus visualization in sap.ui.table.Table Cell",
+        "references": []
+      },
+      {
+        "id": "f4a5f3d18dbd08f5e68de8ffb01020ff5b76bb52",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "references": []
+      }
+    ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "f99dedc303bce26985c6896315fba308096fd570",
+        "type": "FIX",
+        "text": " sap.ui.commons.Slider: Setting of limit values work correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.44.21": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "299b85f34bfe864dc012c3f132d8d57c24cecead",
+        "type": "FIX",
+        "text": " sap.ui.commons.TextField - paste of text with line endings on IE works.",
+        "references": []
+      }
+    ]
   }
 }

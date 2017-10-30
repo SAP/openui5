@@ -1155,5 +1155,414 @@
         "references": []
       }
     ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "13d15b13d39660d3005daf8df40367f653899eda",
+        "type": "FIX",
+        "text": " sap.m.MenuItem: Press event is now fired",
+        "references": []
+      },
+      {
+        "id": "1a6814b0785577697a93dd15d8daf784059f43c3",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black \u0026 High Contrast White themes.",
+        "references": []
+      },
+      {
+        "id": "ca73e9c98ef4ec3c4de0a1fbfe91bf5900f00cc5",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Add missing valueStateText property",
+        "references": []
+      },
+      {
+        "id": "1700f83fbc9028e3232cf39f1d30f560323605af",
+        "type": "FIX",
+        "text": " sap.m.TimePicker - AM/PM slider values for all languages are being read by Screen Reader",
+        "references": []
+      },
+      {
+        "id": "8a87ddecec54df013fc9d66bc3f539e05b379acb",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Deletion handling corrected",
+        "references": []
+      },
+      {
+        "id": "8bf4fae32f62df7be8be1304f925b089e0ce40de",
+        "type": "FIX",
+        "text": " sap.m.Button: Press event fired twice after UI adaptation",
+        "references": []
+      },
+      {
+        "id": "55bb39f509c287e2deae5999158e9e9450ea7da1",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Hidden element that holds the placeholder value is of a correct type.",
+        "references": []
+      }
+    ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "7af28eb93c1a7b8f3991a37a6b217c8ac58b2f3c",
+        "type": "FEATURE",
+        "text": " sap.m.SemanticPage: Added backgroundDesign property.",
+        "references": []
+      },
+      {
+        "id": "921d7b39be370e034bf7b81380d6336ebb532c1d",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "ef715ad7a4c61ecad464cdde9a2e712f1435bc2e",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "6ed5f36bc9681d9667e60fd1d1846b8b44d6a7a9",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "50302d996f78c89ee33497198f5bd982992863d9",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Improved accessibillity speech output in IE",
+        "references": []
+      },
+      {
+        "id": "a9ee56b410dd3bdbf310d39ef95cae4dca458bd9",
+        "type": "FIX",
+        "text": " sap.m.FeedContent: Documentation issues solved",
+        "references": []
+      },
+      {
+        "id": "7d5aa1ed49d1597deb27e3dda92d162f2cfe5272",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Prevents announcing the control information multiple times.",
+        "references": []
+      },
+      {
+        "id": "4825c08dda479fb1c3bd7bcc6c6d614e318c7dc8",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent endless focus loop on mobile",
+        "references": []
+      },
+      {
+        "id": "f3dc87036c55be8fbc6282a3fe58be10b8d5dc97",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Do not tokenize text when ValueHelp is opened.",
+        "references": []
+      },
+      {
+        "id": "3999999294b1afbe6f8f86e141e3f35f1340652f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: SpecialDates are destroyed correctly",
+        "references": []
+      },
+      {
+        "id": "3e63d2a168ff9d0477206257cea55c0a39c51fdb",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: direct navigation to date bugs fixed",
+        "references": []
+      },
+      {
+        "id": "666ce08c9d5e7d8cb8e86bdc610bcc03b07122ec",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Unnecessary \u0027suggest\u0027 events are not fired any more",
+        "references": []
+      },
+      {
+        "id": "f3aef87a09b350ef33b2dcdf8790124dfd796c13",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsPopover - title is always propagated to dialog aria label.",
+        "references": []
+      },
+      {
+        "id": "a3d455388e351123988a19ef350a2d9aa0183bf3",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Regression in discardProgress fixed",
+        "references": []
+      },
+      {
+        "id": "a37199360fdd47d2fb812b2416b03128f4a3c15e",
+        "type": "FIX",
+        "text": " sap.m.delegate.ValueStateMessage: Value state text reading corrected",
+        "references": []
+      },
+      {
+        "id": "ae93ab8c1184c4a2520981eecf3180aff4edcda2",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: keep selection when growing occurs.",
+        "references": []
+      }
+    ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "8ed80f4ac7541e6615279f4c3f043f49b6ec547c",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Improved the removal of empty HTML tags",
+        "references": []
+      },
+      {
+        "id": "bddee1fd27e6c16ad459c7560b40a06e13a2e89d",
+        "type": "FIX",
+        "text": " sap.m.Input: Value help icon is now correct in rtl in Chrome",
+        "references": []
+      },
+      {
+        "id": "cfd1601b1628363c4cb007715a12fa15a19b4649",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is rendered as span when used decorative",
+        "references": []
+      },
+      {
+        "id": "9ab68132246aeb1adea36301347a1db6be1ebce6",
+        "type": "FIX",
+        "text": " sap.m.MaskInput-on Firefox if the cursor is at the beginning of the field, left arrow does nothing.",
+        "references": []
+      },
+      {
+        "id": "578d150d2c7642c6f8b4a53e1c9602c2a8144ff0",
+        "type": "FIX",
+        "text": " sap.m.MenuItem - setting key does not throw an error anymore.",
+        "references": []
+      },
+      {
+        "id": "8cb6120f28704c15b32491bcaab282f74bccab2f",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: suggestionItemSelected event is now fired only once",
+        "references": []
+      },
+      {
+        "id": "cf433ef64c658190ac15fbabf7bac98befd69806",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      },
+      {
+        "id": "6c6a359ab8d6b7628fcf59dcc51fbb3dff1ed420",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: even if they are no statuses set, markers are rendered.",
+        "references": []
+      },
+      {
+        "id": "4feded1a87752b9aabbf2e628ccaa75cc49ed660",
+        "type": "FIX",
+        "text": " sap.m.Panel: avoid showing duplicate icon focus outlines",
+        "references": []
+      },
+      {
+        "id": "ac7d3310ca2ac952ced9f21ebac139700d48efed",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selecting appointments fires event in OneMonth view on small screen size",
+        "references": []
+      },
+      {
+        "id": "63ab77c90a63b659069f40511c8a56342e5fabd3",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Fire select event with keyboard handling.",
+        "references": []
+      },
+      {
+        "id": "6df72e3ea4cef537c3782acb8eb042decbcf9898",
+        "type": "FIX",
+        "text": " sap.m.SelectionDetails: Rendering improved",
+        "references": []
+      },
+      {
+        "id": "4f34fc22639ca4fa2f78ed97ed5ae11c94d63012",
+        "type": "FIX",
+        "text": " sap.m.SelectionDetailsItemLine: Rendering of date and time improved",
+        "references": []
+      },
+      {
+        "id": "2e67c07acacca97ebdd7220dbdaec6ad25aee834",
+        "type": "FIX",
+        "text": " sap.m.Table: Reset padding when there is no visible header.",
+        "references": []
+      },
+      {
+        "id": "27161114374a8c90f811220d40925d0490363a93",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Adjust height on setValue()",
+        "references": []
+      },
+      {
+        "id": "0477ea78c26cdaabd2d87d8bd92b75a5da928dd1",
+        "type": "FIX",
+        "text": " sap.m.TextArea: _adjustHeight before control is rendered",
+        "references": []
+      },
+      {
+        "id": "6cc921c2a34283fe2e11c710c690b652e84ceab9",
+        "type": "FIX",
+        "text": " sap.m.Label: Label wrapping has been enabled outside of Form context",
+        "references": []
+      }
+    ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "2652d40969d667f1efc041c07ee30a3baac09800",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
+        "references": []
+      },
+      {
+        "id": "b53f2ed06e9e812121ee5b2eddc2c6e9dc815ce8",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Properly update selectedKeys cache when model changes",
+        "references": []
+      },
+      {
+        "id": "c5a77bb0d5e70000dba95db7b05752bad130cc01",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Update on a model remembers selection properly",
+        "references": []
+      },
+      {
+        "id": "c8a55a457e6c0d0c06c5e1964576515d1d99807c",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Vertical alignment improved",
+        "references": []
+      },
+      {
+        "id": "4da643f2348fbc2c7b70b7d7097a8d58874475db",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar:  Actual positions and size of the tabs are now read correctly",
+        "references": []
+      },
+      {
+        "id": "544970b6327270dcbb3cd35b44952d91db7924e4",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Focus is now clearly visible",
+        "references": []
+      },
+      {
+        "id": "9d374442408ceceb154b8c441dd49d1b520878ba",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Tabs info is now read correctly by JAWS",
+        "references": []
+      },
+      {
+        "id": "88c89d00435698a765817579a6ffe8cf371359fd",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Models should be forwarded to the internal MessageView",
+        "references": []
+      },
+      {
+        "id": "eda52c754583dc840722547bb36b55b03b2bad71",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fixed setTokens() to remove all tokens",
+        "references": []
+      },
+      {
+        "id": "37266d574ccc7d841ad1cf3eb042b2748e8d4dca",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Navigation now works correctly when the pages are destroyed during animation",
+        "references": []
+      },
+      {
+        "id": "f7e1cbde4ff10418d749eb0161e48792329cf088",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Renders an invisible placeholder when it is empty",
+        "references": []
+      },
+      {
+        "id": "efb3339006d6a5a52786f98b7ce092101cd7f700",
+        "type": "FIX",
+        "text": " sap.m.Page: properly show floatingFooter when PageAccessibleLandmark info is used",
+        "references": []
+      },
+      {
+        "id": "764f879871c8491a0a452af2e50f84f3436023a5",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Problem with the position of the dot when a browser is zoomed fixed",
+        "references": []
+      },
+      {
+        "id": "9627dea15f1aab0d42e138ac48930a5922197ed9",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Tooltips are now properly swapped when range is reversed.",
+        "references": []
+      },
+      {
+        "id": "104ac57060222cb6387a8081635ccd9cb5ff5012",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Runtime error after item deletion in pending mode corrected",
+        "references": []
+      },
+      {
+        "id": "4569ef56bf1cc31fe39604b97319715f40e3e650",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: onCancel now do not modify filter selection",
+        "references": []
+      },
+      {
+        "id": "45f16053359847e81bd98710c1bd3b9c03e158a9",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Navigation works now correctly on mobile",
+        "references": []
+      }
+    ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "f5a9dc3b11064ca9ea01e4892d94615b1a798fa3",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Does not log error on combi device and type Light",
+        "references": []
+      },
+      {
+        "id": "d840372208a49002424bddf6ab95b0f9073f81f7",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Update button text properly when SingleSelectMaster mode is used",
+        "references": []
+      },
+      {
+        "id": "18c8b209336ade44304ae8c5e3fbf01becfef354",
+        "type": "FIX",
+        "text": " sap.m.Link: removed href attribute if property href is not set",
+        "references": []
+      },
+      {
+        "id": "b0079eb4d778dc223cc8390250b9918bcc47f66b",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: AriaLabelledBy correctly set on the active title",
+        "references": []
+      },
+      {
+        "id": "8a2a5b58b6fa2fad3ee223bd28c3a5b4959b7286",
+        "type": "FIX",
+        "text": " sap.m.Panel: fix focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "37b7a4bafd035597a74e082168ed16a11076d1d9",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Cloned item now works with binding",
+        "references": []
+      },
+      {
+        "id": "e50d7be395529a3de6f879e09bf8c47bb9b75b51",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly apply changes on xml views",
+        "references": []
+      }
+    ]
   }
 }

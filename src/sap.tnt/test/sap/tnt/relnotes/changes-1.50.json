@@ -27,5 +27,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "57d59bbf1978a376c4a94e649501900791d45327",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Memory leak when closing popover is now fixed",
+        "references": []
+      }
+    ]
   }
 }

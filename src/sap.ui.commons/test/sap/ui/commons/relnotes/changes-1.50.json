@@ -15,5 +15,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "bbbde1f56043ff4eb4cd96836ffb97add40ad734",
+        "type": "FIX",
+        "text": " sap.ui.commons.TextField - paste of text with line endings on IE works.",
+        "references": []
+      }
+    ]
   }
 }

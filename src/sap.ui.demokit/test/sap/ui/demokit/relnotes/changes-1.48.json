@@ -15,5 +15,27 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "324824b1ec76ec74bdeaf5e23ce1b4ffbf436c73",
+        "type": "FIX",
+        "text": " RTA - Incorrect selectable overlays in OpenUI5 Explored",
+        "references": []
+      }
+    ]
+  },
+  "1.48.7": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "ef4ac1045905013bb64e12f87ae77962e589fc0e",
+        "type": "FIX",
+        "text": " developerMode for RTA in exploredApp",
+        "references": []
+      }
+    ]
   }
 }

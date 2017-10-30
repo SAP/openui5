@@ -123,5 +123,97 @@
         "references": []
       }
     ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "1a6814b0785577697a93dd15d8daf784059f43c3",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black \u0026 High Contrast White themes.",
+        "references": []
+      },
+      {
+        "id": "fa9668e63c921ec3b6e3c3c4f9de40a12b87b7c6",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - when theme changes, the year picker is not shown anymore.",
+        "references": []
+      }
+    ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "921d7b39be370e034bf7b81380d6336ebb532c1d",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "ef715ad7a4c61ecad464cdde9a2e712f1435bc2e",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "6ed5f36bc9681d9667e60fd1d1846b8b44d6a7a9",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "20d46dedd21193371a610dcb995326fae8371953",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "cac94fdec85c4d51a0606a67f48e9f7b5d9cfddf",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Submit empty input value while picker open now works correctly",
+        "references": []
+      },
+      {
+        "id": "3e63d2a168ff9d0477206257cea55c0a39c51fdb",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: direct navigation to date bugs fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "ac7d3310ca2ac952ced9f21ebac139700d48efed",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selecting appointments fires event in OneMonth view on small screen size",
+        "references": []
+      },
+      {
+        "id": "7315ad9c9b562216f63772a13be7b257356fc1cd",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select event now has correct event source",
+        "references": []
+      }
+    ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "11e5e69124c5f0c7e11b39c9646a2cfe91c058ef",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: single interval selection highlights the right dates",
+        "references": []
+      },
+      {
+        "id": "90ce2268dd6e2e573d70411278c8aa5c0c11e1a7",
+        "type": "FIX",
+        "text": " unified.FileUploader: drag and drop behavior fixed",
+        "references": []
+      }
+    ]
   }
 }

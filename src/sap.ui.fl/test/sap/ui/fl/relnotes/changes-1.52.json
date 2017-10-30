@@ -75,5 +75,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "dcbb25d6ea2517f9f5c592d2cad9b7e5814c4abe",
+        "type": "FIX",
+        "text": " sap.ui.fl: checkTargetAndApplyChange small fix on applied changes",
+        "references": []
+      }
+    ]
   }
 }

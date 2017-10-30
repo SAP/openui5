@@ -33,5 +33,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "bcdf069024b3a349a6fe1a9de5a00a5e2c44cfb3",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now the week number in 1 Month view is not missing in IE when 1st week day is selected",
+        "references": []
+      }
+    ]
   }
 }

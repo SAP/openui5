@@ -39,5 +39,39 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "c08f2f23d6d81733372962bebbc1c4bbd230a3b5",
+        "type": "FIX",
+        "text": " sap.ui.commons.ComboBox: hover and active state fixed for sap_hcb",
+        "references": []
+      },
+      {
+        "id": "5ba296ecd11dfa12be93374542e82cf82607048f",
+        "type": "FIX",
+        "text": " sap.ui.commons.RadioButtonGroup: Layout issue when colums are set fixed",
+        "references": []
+      },
+      {
+        "id": "af79c8dbe74212e05ef4eab4d1806478d59bd2ac",
+        "type": "FIX",
+        "text": " sap.ui.commons.ValueHelpField: hover and active state fixed for sap_hcb",
+        "references": []
+      }
+    ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "962a8b4b39538317296911f8ff906eaa061b51b9",
+        "type": "FIX",
+        "text": " sap.ui.commons.Slider: Setting of limit values work correctly",
+        "references": []
+      }
+    ]
   }
 }

@@ -75,5 +75,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "463c44bc312310cae7255663a1a84713cd762d3e",
+        "type": "FIX",
+        "text": " Form: Toolbar wrong aligned",
+        "references": []
+      },
+      {
+        "id": "d4884f766dfec221545bf65c7dd8ec2565ec8f30",
+        "type": "FIX",
+        "text": " Form: icons inside of content controls not shown",
+        "references": []
+      }
+    ]
   }
 }
