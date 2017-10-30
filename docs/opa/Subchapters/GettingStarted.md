@@ -174,7 +174,7 @@ new sap.ui.test.Opa5().iTeardownMyUIComponent();
 ```
 
 ## Starting an App in an iFrame
-You can run the app being tested in an iFrame. You can start only one iFrame at a time. An error will be logged on every subsequent attempt at starting an iFrame. An error is thrown if a teardown is attempted before the iFrame is started. If an iFrame element is already present on the page, it will be used. The iFrame and test window must be in the same domain. For example, if you have the test.html file next to the index.html file, you can start your app with the following code:
+You can run the app being tested in an iFrame. You can start only one iFrame at a time. An error will be thrown if you try to start an iFrame when one is already launched or if you try to teardown the iFrame before it is started. If an iFrame element is already present on the page, it will be used. The iFrame and test window must be in the same domain. For example, if you have the test.html file next to the index.html file, you can start your app with the following code:
 
 ```javascript
 new sap.ui.test.Opa5().iStartMyAppInAFrame("index.html?responderOn=true");
