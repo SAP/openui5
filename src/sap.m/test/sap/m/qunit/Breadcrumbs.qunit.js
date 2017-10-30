@@ -206,6 +206,21 @@
 		helpers.resetScreenSize();
 	});
 
+	QUnit.test("Select width", function (assert) {
+		// arrange
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl;
+		helpers.setSmallScreenSize();
+		helpers.renderObject(oStandardBreadCrumbsControl);
+
+		// assert
+		assert.ok(oStandardBreadCrumbsControl._getSelectWidth() > 0, "Select is rendered");
+
+		// act
+		oStandardBreadCrumbsControl.getAggregation("_select").setVisible(false);
+
+		// assert
+		assert.ok(oStandardBreadCrumbsControl._getSelectWidth() === 0, "Select is not rendered");
+	});
 
 	/*------------------------------------------------------------------------------------*/
 	QUnit.module("Breadcrumbs - Mobile cases, small screen", {
