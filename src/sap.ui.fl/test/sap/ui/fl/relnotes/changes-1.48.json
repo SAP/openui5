@@ -48,5 +48,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "94df32f91e1eacf9887954ad8887a5bde7d3ed89",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly apply changes on xml views",
+        "references": []
+      }
+    ]
   }
 }

@@ -954,5 +954,45 @@
         "references": []
       }
     ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "0abd81cc5127b6352ae03e08f19d987556547b12",
+        "type": "FIX",
+        "text": " core.Popup: autoclose should only work with touch/mouse event when touch is supported",
+        "references": []
+      },
+      {
+        "id": "8ddf21897efb1386192df1c90f095aecf24e14b4",
+        "type": "FIX",
+        "text": " sap.core.Scrollbar - vertical scrollbar in Safari in RTL mode",
+        "references": []
+      },
+      {
+        "id": "0ebe2ab0fc155ba748691f8946e66e6a16e10672",
+        "type": "FIX",
+        "text": " sap.m.Panel: fix focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "5bc6d2af33789da5f16740a385dbc8bf751be798",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataPropertyBinding: setValue(null)",
+        "references": []
+      }
+    ]
+  },
+  "1.48.12": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "6813b5a1f59226dfe459c6986d779e147ee31da3",
+        "type": "FIX",
+        "text": " FilterProcessor: Normalization issues on IE and Edge",
+        "references": []
+      }
+    ]
   }
 }
