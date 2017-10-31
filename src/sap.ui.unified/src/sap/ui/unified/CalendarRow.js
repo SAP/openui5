@@ -324,6 +324,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 
 		this._resizeProxy = jQuery.proxy(this.handleResize, this);
 
+		//array to store the selected appointments and to pass them to getSelectedAppointments method in the PlanningCalendar
+		this.aSelectedAppointments = [];
+
 	};
 
 	CalendarRow.prototype.exit = function(){
@@ -1531,9 +1534,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 			jQuery.merge(aAppointments, aGroupAppointments);
 			for (i = 0; i < aAppointments.length; i++) {
 				oOtherAppointment = aAppointments[i];
-				if (oOtherAppointment.getSelected()) {
+				if (oOtherAppointment.getId() !== oAppointment.getId() && oOtherAppointment.getSelected()) {
 					oOtherAppointment.setProperty("selected", false, true); // do not invalidate CalendarRow
 					oOtherAppointment.$().removeClass("sapUiCalendarAppSel");
+					for (var i = 0; i < this.aSelectedAppointments.length; i++) {
+						if (this.aSelectedAppointments[i] !== oOtherAppointment.getId()){
+							this.aSelectedAppointments.splice(i);
+						}
+					}
 					sAriaLabel = oOtherAppointment.$().attr("aria-labelledby");
 					sAriaLabelNotSelected = sAriaLabel ? sAriaLabel.replace(sSelectedTextId, "") : "";
 					oOtherAppointment.$().attr("aria-labelledby", sAriaLabelNotSelected);
@@ -1541,8 +1549,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 			}
 		}
 
-		oAppointment.setProperty("selected", true, true); // do not invalidate CalendarRow
-		oAppointment.$().addClass("sapUiCalendarAppSel");
+		if (oAppointment.getSelected()){
+			oAppointment.setProperty("selected", false, true); // do not invalidate CalendarRow
+			oAppointment.$().removeClass("sapUiCalendarAppSel");
+			//remove the deselected appointment from the array
+			this.aSelectedAppointments = this.aSelectedAppointments.filter(function(oApp) {
+				return oApp !== oAppointment.getId();
+			});
+			_removeAllAppointmentSelections(this, bRemoveOldSelection);
+
+		} else {
+			oAppointment.setProperty("selected", true, true); // do not invalidate CalendarRow
+			oAppointment.$().addClass("sapUiCalendarAppSel");
+			//add the selected appointment in the array
+			_removeAllAppointmentSelections(this, bRemoveOldSelection);
+
+			this.aSelectedAppointments.push(oAppointment.getId());
+		}
+
 		sAriaLabelSelected = oAppointment.$().attr("aria-labelledby") + " " + sSelectedTextId;
 		oAppointment.$().attr("aria-labelledby", sAriaLabelSelected);
 
@@ -1567,6 +1591,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 			});
 		}
 
+	}
+
+	/**
+	* Removes all previously selected appointments whenever a new one is pressed.
+	* @private
+	*/
+	function _removeAllAppointmentSelections(that, bRemoveOldSelection){
+		if (bRemoveOldSelection) { //if !oEvent.ctrlKey
+			var rows = that.getParent().getParent().getParent().getRows();
+			for (var i = 0; i < rows.length; i++) {
+				var aApps = rows[i].getCalendarRow().aSelectedAppointments;
+				for (var j = 0; j < aApps.length; j++) {
+					sap.ui.getCore().byId(aApps[j]).setProperty("selected", false, true);
+					sap.ui.getCore().byId(aApps[j]).$().removeClass("sapUiCalendarAppSel");
+				}
+				rows[i].getCalendarRow().aSelectedAppointments = [];
+			}
+		}
 	}
 
 	function _getAppointmentsSorted() {

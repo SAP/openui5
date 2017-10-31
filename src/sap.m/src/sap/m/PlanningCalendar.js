@@ -2299,6 +2299,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 		return aResultViews;
 	};
 
+
+	/**
+	 * Holds the selected appointments. If no appointments are selected, an empty array is returned.
+	 * @returns {sap.ui.unified.CalendarAppointment[]} Array of IDs of selected appointments
+	 * @since 1.54
+	 */
+	PlanningCalendar.prototype.getSelectedAppointments = function() {
+		var aSelAppointments = [];
+
+		this.getRows().filter(function(oRow){
+			aSelAppointments.push.apply(aSelAppointments, oRow.getCalendarRow().aSelectedAppointments);
+		});
+
+		return aSelAppointments;
+	};
+
 	function _handleTableSelectionChange(oEvent) {
 
 		var aChangedRows = [];
