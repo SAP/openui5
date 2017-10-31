@@ -103,6 +103,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 
 			/**
 			 * This flag controls whether the dialog clears the selection after the confirm event has been fired. If the dialog needs to be opened multiple times in the same context to allow for corrections of previous user inputs, set this flag to "true".
+			 *
+			 * <b>Note:</b> The sap.m.SelectDialog uses {@link sap.m.ListBase#rememberSelections this} property of the ListBase and therefore its limitations also apply here.
 			 * @since 1.18
 			 */
 			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : false},
