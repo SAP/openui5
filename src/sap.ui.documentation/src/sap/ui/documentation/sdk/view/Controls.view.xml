@@ -52,11 +52,16 @@
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
 						title="Featured Controls"
-						class="demokitInitialPagesColorPatternA sapUiDemokitLandingBlockHeadline"/>
+						class="sapUiDemokitLandingBlockHeadline"
+						backgroundColorSet="ColorSet9"
+						backgroundColorShade="ShadeA"/>
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://edit"
@@ -72,7 +77,10 @@
 						<Text text="User interaction"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://list"
@@ -88,7 +96,10 @@
 						<Text text="Various list structures"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternD">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://table-view"
@@ -104,7 +115,10 @@
 						<Text text="Simple or more powerful tables"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://popup-window"
@@ -122,7 +136,10 @@
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://grid"
@@ -139,7 +156,10 @@
 								text="Tiles for e.g. texts, images or charts"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternD">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeD">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://message-popup"
@@ -155,7 +175,10 @@
 						<Text text="User notification"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://header"
@@ -171,7 +194,10 @@
 						<Text text="Toolbars and headers"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://tree"
@@ -189,7 +215,10 @@
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 			<l:BlockLayoutRow visible="{= !${versionData>/isOpenUI5}}">
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeD">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://lightbulb"
@@ -205,7 +234,10 @@
 						<Text text="Metadata-driven controls"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://map-2"
@@ -222,7 +254,10 @@
 								text="Location visualization"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternD">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://filter-analytics"
@@ -239,7 +274,10 @@
 								text="Data visualization"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeD">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://process"
@@ -260,11 +298,16 @@
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
 						title="Layout &amp; Pages"
-						class="demokitInitialPagesColorPatternA sapUiDemokitLandingBlockHeadline"/>
+						class="sapUiDemokitLandingBlockHeadline"
+						backgroundColorSet="ColorSet9"
+						backgroundColorShade="ShadeA"/>
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://write-new"
@@ -281,7 +324,10 @@
 								text="Displaying, creating, or editing objects"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://chart-table-view"
@@ -299,7 +345,10 @@
 								class="sapUiTinyMarginBottom"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternD">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://screen-split-three"
@@ -316,7 +365,10 @@
 								text="Page with up to 3 columns"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeD">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://screen-split-one"
