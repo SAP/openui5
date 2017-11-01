@@ -62,6 +62,42 @@
             });
         });
 
+		var oElementEnablementTest2 = new ElementEnablementTest({
+			type: "sap.f.DynamicPageTitle (with snapped/expanded heading)",
+			create: function () {
+				return new DynamicPageTitle({
+					snappedHeading : [new Title({text: "This is title"})],
+					expandedHeading : [
+						new Title({text: "This is title"}),
+						new Title({text: "This is title 0.1"})
+					],
+					content : [
+						new Text({text: "Title content 1"}),
+						new Text({text: "Title content 2"}),
+						new Text({text: "Title content 3"})
+					],
+					actions : [
+						new Button({text: "Action1"}),
+						new Button({text: "Action2"})
+					],
+					snappedContent : [
+						new Text({text: "Snapped content 1"}),
+						new Text({text: "Snapped content 2"})
+					],
+					expandedContent : [
+						new Text({text: "Expanded content 1"}),
+						new Text({text: "Expanded content 2"})
+					]
+				});
+			}
+		});
+
+		oElementEnablementTest2.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		});
+
         // ------------ HIDING THE CONTROL --------------
         // Check if the remove action is working properly
         var fnConfirmDynamicPageTitleIsInvisible = function(oAppComponent, oViewAfterAction, assert){
