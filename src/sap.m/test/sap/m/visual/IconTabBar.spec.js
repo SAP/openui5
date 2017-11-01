@@ -95,6 +95,7 @@ describe("sap.m.IconTabBar", function() {
 		var itb9 = element(by.id('itb9'));
 		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("itb9").scrollIntoView()').then(function() {
+			itb9.click();
 			expect(takeScreenshot(itb9)).toLookAs("8_horizontal_layout");
 		});
 	});
@@ -156,6 +157,7 @@ describe("sap.m.IconTabBar", function() {
 	it("should change IconTabBar container background design to Translucent", function () {
 		element(by.id("RB1-Translucent")).click();
 		browser.executeScript('document.getElementById("backgroundDesignIconTabBar_fileter3").scrollIntoView()').then(function() {
+			element(by.id("backgroundDesignIconTabBar_fileter3")).click();
 			expect(takeScreenshot()).toLookAs("14_backgroundDesign_Translucent");
 		});
 	});
