@@ -117,6 +117,28 @@
 				},
 				"category": "Showcase",
 				"config": "test-resources/sap/m/demokit/orderbrowser/demoapp.json"
+			},
+			{
+				"icon": "widgets",
+				"text": "Icon Explorer",
+				"desc": "All our icons at your fingertips",
+				"ref": "test-resources/sap/m/demokit/iconExplorer/webapp/index.html",
+				"links": {
+					"View Documentation": "#docs/guide/21ea0ea94614480d9a910b2e93431291.html",
+					"Run Integration Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html",
+					"Run Unit Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
+				},
+				"category": "Tool",
+				"teaser": "test-resources/sap/m/demokit/iconExplorer/demoappteaser",
+				"config": "test-resources/sap/m/demokit/iconExplorer/demoapp.json"
+			},
+			{
+				"icon": "palette",
+				"text": "Theme Parameter Toolbox",
+				"desc": "Search, filter and preview semantic theme parameters",
+				"ref": "test-resources/sap/m/demokit/theming/webapp/index.html",
+				"category": "Tool",
+				"config": "test-resources/sap/m/demokit/theming/demoapp.json"
 			}
 		]
 	},
