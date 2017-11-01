@@ -27,6 +27,9 @@ sap.ui.define([],
 						move: "moveControls"
 					}
 				}
+			},
+			templates: {
+				create: "sap/m/designtime/IconTabBar.create.fragment.xml"
 			}
 		};
 

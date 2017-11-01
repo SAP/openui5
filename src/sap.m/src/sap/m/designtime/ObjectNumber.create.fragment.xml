@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ObjectNumber number="100.00" unit="$" />
+</core:FragmentDefinition>

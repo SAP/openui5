@@ -13,6 +13,9 @@ sap.ui.define([],
 			icons: {
 				svg: "sap/m/designtime/ObjectHeader.icon.svg"
 			}
+		},
+		templates: {
+			create: "sap/m/designtime/ObjectHeader.create.fragment.xml"
 		}
 	};
 

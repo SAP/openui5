@@ -13,6 +13,9 @@ sap.ui.define([],
 			icons: {
 				svg: "sap/m/designtime/MessageStrip.icon.svg"
 			}
+		},
+		templates: {
+			create: "sap/m/designtime/MessageStrip.create.fragment.xml"
 		}
 	};
 

@@ -25,6 +25,9 @@ sap.ui.define([],
 				reveal: {
 					changeType: "unhideControl"
 				}
+			},
+			templates: {
+				create: "sap/m/designtime/Input.create.fragment.xml"
 			}
 		};
 	}, /* bExport= */ false);

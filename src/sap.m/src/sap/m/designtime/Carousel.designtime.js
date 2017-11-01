@@ -13,6 +13,9 @@ sap.ui.define([],
 				icons: {
 					svg: "sap/m/designtime/Carousel.icon.svg"
 				}
+			},
+			templates: {
+				create: "sap/m/designtime/Carousel.create.fragment.xml"
 			}
 		};
 	}, /* bExport= */ false);

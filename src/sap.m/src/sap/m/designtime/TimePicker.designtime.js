@@ -13,6 +13,9 @@ sap.ui.define([],
 				icons: {
 					svg: "sap/m/designtime/TimePicker.icon.svg"
 				}
+			},
+			templates: {
+				create: "sap/m/designtime/TimePicker.create.fragment.xml"
 			}
 		};
 

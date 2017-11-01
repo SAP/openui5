@@ -7,6 +7,10 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			name: {
+				singular: "SLIDER_NAME",
+				plural: "SLIDER_NAME_PLURAL"
+			},
 			palette: {
 				group: "INPUT",
 				icons: {
@@ -26,9 +30,8 @@ sap.ui.define([],
 					domRef: ":sap-domref > .sapMSliderTickmarks"
 				}
 			},
-			name: {
-				singular: "SLIDER_NAME",
-				plural: "SLIDER_NAME_PLURAL"
+			templates: {
+				create: "sap/m/designtime/Slider.create.fragment.xml"
 			}
 		};
 	}, /* bExport= */ true);

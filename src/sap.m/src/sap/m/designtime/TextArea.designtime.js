@@ -13,6 +13,9 @@ sap.ui.define([],
 				icons: {
 					svg: "sap/m/designtime/TextArea.icon.svg"
 				}
+			},
+			templates: {
+				create: "sap/m/designtime/TextArea.create.fragment.xml"
 			}
 		};
 

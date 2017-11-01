@@ -13,6 +13,9 @@ sap.ui.define([],
 				icons: {
 					svg: "sap/m/designtime/StepInput.icon.svg"
 				}
+			},
+			templates: {
+				create: "sap/m/designtime/StepInput.create.fragment.xml"
 			}
 		};
 	}, /* bExport= */ false);

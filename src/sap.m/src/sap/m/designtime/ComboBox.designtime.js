@@ -13,6 +13,9 @@ sap.ui.define([],
 				icons: {
 					svg: "sap/m/designtime/ComboBox.icon.svg"
 				}
+			},
+			templates: {
+				create: "sap/m/designtime/ComboBox.create.fragment.xml"
 			}
 		};
 	}, /* bExport= */ false);

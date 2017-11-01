@@ -8,6 +8,10 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			name: {
+				singular: "TITLE_NAME",
+				plural: "TITLE_NAME_PLURAL"
+			},
 			actions: {
 				remove: {
 					changeType: "hideControl"
@@ -22,9 +26,8 @@ sap.ui.define([],
 					changeType: "unhideControl"
 				}
 			},
-			name: {
-				singular: "TITLE_NAME",
-				plural: "TITLE_NAME_PLURAL"
+			templates: {
+				create: "sap/m/designtime/Title.create.fragment.xml"
 			}
 		};
 	}, /* bExport= */ false);

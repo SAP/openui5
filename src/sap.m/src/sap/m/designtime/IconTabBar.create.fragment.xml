@@ -1,0 +1,20 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<IconTabBar>
+		<items>
+			<IconTabFilter showAll="true" count="100" text="Items"
+				key="All">
+				<Text text="Items content goes here ..." />
+			</IconTabFilter>
+			<IconTabSeparator />
+			<IconTabFilter icon="sap-icon://begin" iconColor="Negative"
+				count="25" text="Open" key="Open">
+				<Text text="Open content goes here ..." />
+			</IconTabFilter>
+			<IconTabFilter icon="sap-icon://accept" iconColor="Positive"
+				count="27" text="Completed" key="Completed">
+				<Text text="Completed content goes here ..." />
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+</core:FragmentDefinition>
