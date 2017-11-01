@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/Device'], function ($, A
 			}.bind(this);
 
 			var bWasFocused = $ActionDomRef.is(":focus");
-			if (!bWasFocused) {
+			if (!bWasFocused && !(Device.browser.msie && Device.browser.version < 12)) {
 				createAndDispatchFocusEvent("focusin");
 				createAndDispatchFocusEvent("focus");
 				createAndDispatchFocusEvent("activate");
