@@ -4,8 +4,8 @@ describe('sap.m.NotificationListItem', function() {
 	"use strict";
 
 	it('should load test page', function () {
-		var notification = element(by.id('lastNotification'));
-		expect(takeScreenshot(notification)).toLookAs('initial');
+		var notificationList = element(by.id('listId'));
+		expect(takeScreenshot(notificationList)).toLookAs('initial');
 	});
 
 	it('should test compact mode', function () {
@@ -31,5 +31,11 @@ describe('sap.m.NotificationListItem', function() {
 		var notification = element(by.id('firstNotification'));
 		element(by.id('firstNotification-expandCollapseButton')).click();
 		expect(takeScreenshot(notification)).toLookAs('show-less-clicked');
+	});
+
+	it('should show compact notifications', function() {
+		var compactNotificationListItems = element(by.id('listId'));
+		element(by.id('toggleCompactModeButton')).click();
+		expect(takeScreenshot(compactNotificationListItems)).toLookAs('compact-list-items');
 	});
 });
