@@ -40,7 +40,6 @@ sap.ui.define([
 			this.getView().setModel(this.model);
 			this.treeTable = this.byId("ruleList");
 			this.cookie = storage.readPersistenceCookie(constants.COOKIE_NAME);
-			this.persistingSettings = this.model.getProperty("/persistingSettings");
 		},
 
 		onAsyncSwitch: function (oEvent) {
@@ -111,10 +110,12 @@ sap.ui.define([
 					newRule = RuleSerializer.deserialize(data.newRule, true),
 					tempLib = this.getTemporaryLib(),
 					treeTable = this.model.getProperty('/treeViewModel');
+
 				if (result == "success") {
 					tempLib.rules.push(newRule);
 					this._syncTreeTableVieModelTempRulesLib(tempLib, treeTable);
-					if (this.persistingSettings) {
+
+					if (this.model.getProperty("/persistingSettings")) {
 						storage.setRules(tempLib.rules);
 						if (this.showRuleCreatedToast) {
 							MessageToast.show('Your temporary rule "' + newRule.id + '" was persisted in the local storage');
@@ -145,7 +146,8 @@ sap.ui.define([
 							lib.rules.forEach(function(rule, ruleIndex){
 								if (rule.id === ruleSource.id) {
 									lib.rules[ruleIndex] = updateRule;
-									if (that.persistingSettings) {
+
+									if (that.model.getProperty("/persistingSettings")) {
 										storage.setRules(lib.rules);
 									}
 								}
