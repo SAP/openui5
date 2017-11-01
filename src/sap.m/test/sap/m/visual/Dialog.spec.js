@@ -63,4 +63,11 @@ describe('sap.m.Dialog', function() {
 
 		element(by.id('dialogWithCustomHeadersDialogCloseButton')).click();
 	});
+
+	it('should open error state dialog', function() {
+		element(by.id('dialogWithErrorStateButton')).click();
+		var dialogErrorState = element(by.id('dialogErrorState'));
+		expect(takeScreenshot(dialogErrorState)).toLookAs('error-state-dialog');
+		element(by.id('oDialogErrorStateOKButton')).click();
+	});
 });
