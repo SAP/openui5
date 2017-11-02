@@ -6,16 +6,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheWelcomePage: {
 			viewName: "Welcome",
-			actions: {
-
-				iLookAtTheScreen : function () {
-					return this;
-				}
-
-			},
-
 			assertions: {
-
 				iShouldSeeTheWelcomePage: function () {
 					return this.waitFor({
 						success: function () {

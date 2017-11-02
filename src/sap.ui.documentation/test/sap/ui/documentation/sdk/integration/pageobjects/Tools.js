@@ -6,16 +6,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheToolsPage: {
 			viewName: "Tools",
-			actions: {
-
-				iLookAtTheScreen : function () {
-					return this;
-				}
-
-			},
-
 			assertions: {
-
 				iShouldSeeTheToolsPage: function () {
 					return this.waitFor({
 						success: function () {

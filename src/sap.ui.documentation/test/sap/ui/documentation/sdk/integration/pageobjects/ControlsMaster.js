@@ -6,16 +6,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheControlsMasterPage: {
 			viewName: "ControlsMaster",
-			actions: {
-
-				iLookAtTheScreen : function () {
-					return this;
-				}
-
-			},
-
 			assertions: {
-
 				iShouldSeeTheControlsMasterPage: function () {
 					return this.waitFor({
 						success: function () {

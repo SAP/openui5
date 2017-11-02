@@ -6,16 +6,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheTopicMasterPage: {
 			viewName: "TopicMaster",
-			actions: {
-
-				iLookAtTheScreen : function () {
-					return this;
-				}
-
-			},
-
 			assertions: {
-
 				iShouldSeeTheTopicMasterPage: function () {
 					return this.waitFor({
 						success: function () {
