@@ -1,0 +1,24 @@
+{
+    "comment": "Translation configuration for openui5",
+    "collections": [{
+        "collectionName": "SAPUI5 UI library",
+        "folders": [{
+            "startingFolderPath": "./src/",
+            "sourceFilters": [
+                "*/src/**/messagebundle.properties",
+                "*/src/**/i18n.properties"
+            ],
+            "excludedSourceFilters": [
+                "sap.ui.demokit/src/sap/ui/demokit/demoapps/i18n/i18n.properties",
+                "sap.ui.fl/src/sap/ui/fl/support/apps/contentbrowser/i18n/i18n.properties"
+            ]
+        }]
+    }],
+    "defaultConfiguration": {
+        "xlfFolderPath": "./XLF/[FullPath]",
+        "targetFolderPath": ".",
+        "pseudoLocFolderPath": ".",
+        "oneQFolderPath": ".",
+        "targetFileNamingConvention": "[filename]_[langCode].[extension]"
+    }
+}
