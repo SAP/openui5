@@ -509,7 +509,8 @@ Mobify.UI.Carousel = (function($, Utils) {
             // due to JIRA BGSOFUIRODOPI-828
             // self.$items.eq(previousSlide - 1).removeClass(self._getClass('active'));
             var bActive = self._getClass('active'),
-	            sPageIndicatorId = self.$element[0].id + '-pageIndicator',
+                sId = self.$element[0].id,
+                sPageIndicatorId = sId.replace(/(:|\.)/g,'\\$1') + '-pageIndicator',
                 oItems = self.$items, iStart, iStop;
             if (previousSlide === 1 && nextSlide === oItems.length ||
                 previousSlide === oItems.length && nextSlide === 1) {
