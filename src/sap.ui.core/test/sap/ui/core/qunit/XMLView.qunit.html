@@ -60,12 +60,12 @@ sap.ui.core.mvc.Controller</title>
 	};
 
 	// run the full testset for a view loaded from a file
-	testsuite(oConfig, "XMLView creation loading from file:", function() {
+	testsuite(oConfig, "XMLView creation loading from file", function() {
 		return sap.ui.xmlview("example.mvc.test");
 	});
 
 	// run the full testset for a view created from a string
-	testsuite(oConfig, "XMLView creation via XML string:", function() {
+	testsuite(oConfig, "XMLView creation via XML string", function() {
 		// load the XML without parsing
 		var xml = jQuery.sap.syncGetText(jQuery.sap.getModulePath("example.mvc.test", ".view.xml"), null, undefined); // '<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">	<table id="localTableId" border="5">		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>		<tr><td>Hello</td><td>Hello</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>	</table>	plain text node as direct child of view	<phx:Panel>		<phx:Button id="Button2" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>		<phx:content>			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation</div>			<phx:Button id="Button3" text="HEY named aggregation!" press="doIt"></phx:Button>			<mvc:JSONView id="MyJSONView" viewName="example.mvc.test2"></mvc:JSONView>			<mvc:JSView id="MyJSView" viewName="example.mvc.test2"></mvc:JSView>		</phx:content>	</phx:Panel></core:View>';
 		// let the XMLView parse it
@@ -73,7 +73,7 @@ sap.ui.core.mvc.Controller</title>
 	});
 
 	// run the full testset for a view created from a XML document
-	testsuite(oConfig, "XMLView creation via XML document:", function() {
+	testsuite(oConfig, "XMLView creation via XML document", function() {
 		// load the XML without parsing
 		var xml = jQuery.sap.syncGetText(jQuery.sap.getModulePath("example.mvc.test", ".view.xml"), null, undefined); // '<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">	<table id="localTableId" border="5">		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>		<tr><td>Hello</td><td>Hello</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>	</table>	plain text node as direct child of view	<phx:Panel>		<phx:Button id="Button2" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>		<phx:content>			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation</div>			<phx:Button id="Button3" text="HEY named aggregation!" press="doIt"></phx:Button>			<mvc:JSONView id="MyJSONView" viewName="example.mvc.test2"></mvc:JSONView>			<mvc:JSView id="MyJSView" viewName="example.mvc.test2"></mvc:JSView>		</phx:content>	</phx:Panel></core:View>';
 		// parse it and pass the XML document
@@ -83,7 +83,7 @@ sap.ui.core.mvc.Controller</title>
 	});
 
 	// run the full testset for a view created from a XML document
-	testsuite(oConfig, "XMLView creation via XML node:", function() {
+	testsuite(oConfig, "XMLView creation via XML node", function() {
 		// load the XML without parsing
 		var xml = jQuery.sap.syncGetText(jQuery.sap.getModulePath("example.mvc.test", ".view.xml"), null, undefined); // '<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">	<table id="localTableId" border="5">		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>		<tr><td>Hello</td><td>Hello</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>	</table>	plain text node as direct child of view	<phx:Panel>		<phx:Button id="Button2" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>		<phx:content>			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation</div>			<phx:Button id="Button3" text="HEY named aggregation!" press="doIt"></phx:Button>			<mvc:JSONView id="MyJSONView" viewName="example.mvc.test2"></mvc:JSONView>			<mvc:JSView id="MyJSView" viewName="example.mvc.test2"></mvc:JSView>		</phx:content>	</phx:Panel></core:View>';
 		// parse it and pass the XML document
@@ -93,11 +93,36 @@ sap.ui.core.mvc.Controller</title>
 	});
 
 	// run the full testset for a view created via the generic factory method
-	testsuite(oConfig, "XMLView creation using generic view factory:", function() {
+	testsuite(oConfig, "XMLView creation using generic view factory", function() {
 		return sap.ui.view({type:sap.ui.core.mvc.ViewType.XML,viewName:"example.mvc.test",viewData:{test:"testdata"}});
 	}, true);
 
 
+	QUnit.module("Apply settings");
+	// Settings can be provided at the constructor call or in the according view source. View source wins.
+
+	QUnit.test("sync loading", function() {
+		// although settings are provided here, the resulting view should have the setting stated in the view source
+		var oView = sap.ui.xmlview({
+			viewName: 'example.mvc.test',
+			displayBlock: false
+		});
+		assert.equal(oView.getDisplayBlock(), true, "DisplayBlock should be true");
+		oView.destroy();
+	});
+
+	QUnit.test("async loading", function() {
+		var oView = sap.ui.xmlview({
+			viewName: 'example.mvc.test',
+			async: true,
+			displayBlock: false
+		});
+		assert.equal(oView.getDisplayBlock(), false, "Displayblock should be false for the async-view stub");
+		return oView.loaded().then(function() {
+			assert.equal(oView.getDisplayBlock(), true, "DisplayBlock should be true for the resolved async view");
+			oView.destroy();
+		});
+	});
 
 	QUnit.module("Preserve DOM");
 

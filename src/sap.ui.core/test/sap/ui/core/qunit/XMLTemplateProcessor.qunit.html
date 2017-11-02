@@ -30,7 +30,8 @@
 	</script>
 
 	<script id="view" type="application/xml">
-		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view">
+		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view"
+			xmlns:dt="sap.ui.dt" displayBlock="true" unknownProperty="true">
 			<Panel id="panel">
 				<content>
 					<Button text="Button" id="button"></Button>
@@ -49,6 +50,18 @@
 			var sRootView = jQuery('#root').html(),
 					sView = jQuery('#view').html(),
 					viewWithFragment = jQuery('#viewWithFragment').html();
+
+			QUnit.module("parseViewAttributes");
+
+			QUnit.test("return value", function() {
+				var oView = sap.ui.xmlview({
+					viewContent: sRootView
+				});
+				var xmlNode = jQuery.sap.parseXML(sView).documentElement;
+				var mSettings = {};
+				XMLTemplateProcessor.parseViewAttributes(xmlNode, oView, mSettings);
+				assert.deepEqual(mSettings, {displayBlock: true, height: "100%"}, "displayBlock was parsed, unknown setting was ignored");
+			});
 
 			QUnit.module("enrichTemplateIds", {
 				beforeEach: function() {
