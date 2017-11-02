@@ -76,6 +76,31 @@ sap.ui.core.mvc.Controller</title>
 	}, true);
 
 
+	QUnit.module("Apply settings");
+	// Settings can be provided at the constructor call or in the according view source. View source wins.
+
+	QUnit.test("sync loading", function () {
+		// although settings are provided here, the resulting view should have the setting stated in the view source
+		var oView = sap.ui.xmlview({
+			viewName: 'example.mvc.test',
+			displayBlock: false
+		});
+		assert.equal(oView.getDisplayBlock(), true, "DisplayBlock should be true");
+		oView.destroy();
+	});
+
+	QUnit.test("async loading", function () {
+		var oView = sap.ui.xmlview({
+			viewName: 'example.mvc.test',
+			async: true,
+			displayBlock: false
+		});
+		assert.equal(oView.getDisplayBlock(), false, "Displayblock should be false for the async-view stub");
+		return oView.loaded().then(function () {
+			assert.equal(oView.getDisplayBlock(), true, "DisplayBlock should be true for the resolved async view");
+			oView.destroy();
+		});
+	});
 
 	QUnit.module("Preserve DOM");
 
@@ -290,7 +315,7 @@ sap.ui.core.mvc.Controller</title>
 		// hide the view
 		oView.setVisible(false);
 		sap.ui.getCore().applyChanges();
-		
+
 		// this should move it to the preserve area with all child controls incl. the invisible placeholder
 		assert.ok(oView.getDomRef() && isPreserved(oView.getDomRef()), "view has DOM and DOM is in preserved area");
 		assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder still should exist for panel");
@@ -309,7 +334,7 @@ sap.ui.core.mvc.Controller</title>
 		assert.notOk(dummyPlaceholder(oPanel), "panel should have no more dummy placeholder");
 		assert.notOk(invisiblePlaceholder(oPanel), "panel should have no more invisible placeholder");
 
-		// now make view and child visible in two different renderings 
+		// now make view and child visible in two different renderings
 		oView.setVisible(false);
 		oPanel.setVisible(false);
 		sap.ui.getCore().applyChanges();
