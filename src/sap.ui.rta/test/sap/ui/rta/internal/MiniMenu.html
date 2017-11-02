@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>Test Page</title>
+
+    <script src="shared-config.js"></script>
+    <script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m, sap.ui.rta" data-sap-ui-theme="sap_belize" data-sap-ui-resourceroots='{"dt.view": "qunit/testdata/designtime/"}'>
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function(){
+
+        jQuery.sap.require("sap.ui.dt.plugin.MiniMenu");
+        jQuery.sap.require("sap.ui.fl.FakeLrepConnectorLocalStorage");
+
+        sap.ui.fl.FakeLrepConnectorLocalStorage.enableFakeConnector(
+					{},
+					"sap.ui.rta.MiniMenuTest.Component",
+                    "1.0.0");
+                     
+        var Comp = sap.ui.core.UIComponent.extend("sap.ui.rta.MiniMenuTest", {
+			metadata: {
+				manifest : {
+					"sap.app": {
+						"id": "sap.ui.rta.MiniMenuTest",
+						"type": "application"
+					}
+				}
+			},
+			createContent : function() {
+				
+			       
+        
+        this.oList1 = new sap.m.List({
+            id : "List1",
+            items : [
+                new sap.m.StandardListItem({
+                    id : "ListItem1",
+                    title : "Eintrag 1"
+                }),
+                new sap.m.StandardListItem({
+                    id : "ListItem2",
+                    title : "Eintrag 2"
+                }),
+                new sap.m.StandardListItem({
+                    id : "ListItem3",
+                    title : "Eintrag 3"
+                }),
+                new sap.m.StandardListItem({
+                    id : "ListItem4",
+                    title : "Eintrag 4"
+                }),
+                new sap.m.StandardListItem({
+                    id : "ListItem5",
+                    title : "Eintrag 5"
+                })
+            ]
+
+        }).addStyleClass("sapUiTinyMargin");
+
+        this.oTile1 = new sap.m.GenericTile({
+            id : "Tile1",
+            header : "Test Tile",
+            subheader : "Subheader"
+
+        }).addStyleClass("sapUiTinyMargin");
+
+        this.oTile2 = new sap.m.GenericTile({
+            id : "Tile2",
+            header : "Test Tile",
+            subheader : "Subheader"
+
+        }).addStyleClass("sapUiTinyMargin");
+
+        var that = this;
+
+        var oButton1 = new sap.m.Button({
+            id : "Button1",
+            text : "Open menu at List",
+            press : function () {
+                that.oMiniMenu2.show(that.oList1);
+            }
+        }).addStyleClass("btn");
+
+        var oButton2 = new sap.m.Button({
+            id : "Button2",
+            text : "Open menu at Tile",
+            press : function () {
+                that.oMiniMenu2.show(that.oTile1);
+            }
+        }).addStyleClass("btn");
+
+        this.oFlexBox = new sap.m.FlexBox({
+            id : "FlexBox1",
+            direction : "Column",
+            items : [
+                this.oList1,
+                this.oTile1,
+                this.oTile2,
+                this.oButton1,
+                this.oButton2
+            ]
+        });
+        return this.oFlexBox;
+    }
+
+        }); 
+        this.oUiComponent = new Comp();
+        this.oUiComponentContainer = new sap.ui.core.ComponentContainer({
+				component : this.oUiComponent
+			});
+			this.oUiComponentContainer.placeAt("tileDiv");
+
+    jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
+
+
+            var oRta = new sap.ui.rta.RuntimeAuthoring({
+                rootControl: this.oUiComponent.getRootControl(),
+                flexSettings: {
+                    developerMode: false
+                }
+            });
+            oRta.attachEvent('stop', function() {
+                oRta.destroy();
+            });
+            var mPlugins = oRta.getDefaultPlugins();
+				mPlugins["contextMenu"] = new sap.ui.dt.plugin.MiniMenu({});
+				oRta.setPlugins(mPlugins);
+            oRta.start();
+        });
+    
+    </script>
+
+    <style>
+        #menuDiv {
+            padding: 5px;
+        }
+        .btn {
+            margin: 5px;
+        }
+    </style>
+
+</head>
+
+<body id="content" class="sapUiBody">
+    <div id="listDiv"></div>
+    <div id="tileDiv"></div>
+    <div id="menuDiv"></div>
+    <div id="miniDiv"></div>
+
+</body>
+
+</html>
