@@ -134,6 +134,11 @@ sap.ui.define([
 						.then(function(oResult) {
 							if (oResult) {
 								BusyIndicator.hide();
+								var oUshellContainer = RtaUtils.getUshellContainer();
+								if (oUshellContainer) {
+									// Tell FLP that no UI change is booked for the currently adapting app
+									oUshellContainer.setDirtyFlag(false);
+								}
 								// Shows the success message and closes the current app (if 'Save As' triggered from RTA toolbar) or opens the app variant overview list (if 'Save As' triggered from App variant overview List)
 								return oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oAppVariantDescriptorClosure, oEvaluateSaveAsFlow.closeRunningApp, oRootControlRunningApp)
 									.then(function() {
