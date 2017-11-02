@@ -736,6 +736,34 @@
 			assert.equal(jQuery.sap.getModulePath("qunit.test.path4"), ".", "Setting empty URL avoided successfully.");
 		});
 
+		QUnit.test("removing URL registration", function(assert) {
+			// remember URL without registration
+			var sUrl = jQuery.sap.getResourcePath("qunit/test/path10/module.js");
+			
+			// register and check
+			jQuery.sap.registerResourcePath("qunit/test/path10", "http://localhost/");
+			assert.strictEqual(jQuery.sap.getResourcePath("qunit/test/path10/module.js"), "http://localhost/module.js", "returned URL should use the configured prefix");
+			
+			// deregister and check again
+			jQuery.sap.registerResourcePath("qunit/test/path10", null);
+			assert.notStrictEqual(jQuery.sap.getResourcePath("qunit/test/path10/module.js"), "http://localhost/module.js", "after deregistering prefix, returned URL should no longer use the configured prefix");
+			assert.strictEqual(jQuery.sap.getResourcePath("qunit/test/path10/module.js"), sUrl, "returned URL should be the same as before");
+		});
+
+		QUnit.test("removing root registration", function(assert) {
+			// remember URL without registration
+			var sUrl = jQuery.sap.getResourcePath("x.js");
+
+			// try to deregister baseUrl
+			jQuery.sap.registerResourcePath("", null);
+			assert.notStrictEqual(jQuery.sap.getResourcePath("x.js"), sUrl, "returned URL should not be the same");
+			assert.strictEqual(jQuery.sap.getResourcePath("x.js"), "resources/x.js", "returned URL should use the default prefix");
+			
+			// restore original configuration
+			jQuery.sap.registerResourcePath("", sUrl.slice(0,-4));
+			assert.strictEqual(jQuery.sap.getResourcePath("x.js"), sUrl, "returned URL should be the same as before the test");
+		});
+
 		QUnit.test("single log entry for redundant calls", function(assert) {
 			jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
 			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "first path registration should have been logged");
