@@ -202,6 +202,7 @@ sap.ui.define([
 				sBoundary = firstLine(sBody);
 				sBody.split(sBoundary).slice(1, -1).forEach(function (sRequestPart) {
 					var aMatches,
+						oRequestHeaders = oRequest.requestHeaders,
 						sRequestLine,
 						aResponse,
 						sResponse;
@@ -212,15 +213,24 @@ sap.ui.define([
 					if (!aMatches) {
 						sResponse = notFound(sRequestLine);
 					} else if (aMatches[1] === "DELETE") {
-						sResponse = "204\r\n\r\n\r\n";
+						sResponse = "204\r\n"
+							+ "Content-Length: 0\r\n"
+							+ convertToString(getVersionHeader(oRequestHeaders))
+							+ "\r\n\r\n";
 					} else if (aMatches[1] === "POST" || aMatches[1] === "PATCH") {
-						sResponse = "200\r\nContent-Type: " + sJson + "\r\n\r\n"
+						sResponse = "200\r\nContent-Type: " + sJson + "\r\n"
+							+ convertToString(getVersionHeader(oRequestHeaders))
+							+ "\r\n"
 							+ message(sRequestPart);
 					} else {
 						aResponse = mUrls[sServiceBase + aMatches[2]];
 						if (aResponse) {
 							try {
-								sResponse = "200\r\nContent-Type: " + sJson + "\r\n\r\n"
+								sResponse = "200\r\nContent-Type: " + sJson + "\r\n"
+									// set headers for single request within $batch
+									+ convertToString(getVersionHeader(oRequestHeaders,
+										aResponse[1]))
+									+ "\r\n"
 									+ JSON.stringify(JSON.parse(aResponse[2]))
 									+ "\r\n";
 								jQuery.sap.log.info(sRequestLine, null, "sap.ui.test.TestUtils");
@@ -234,9 +244,9 @@ sap.ui.define([
 					aResponseParts.push(sMimeHeaders + sResponse);
 				});
 				aResponseParts.push("--\r\n");
-				oRequest.respond(200, {
-					"Content-Type" : "multipart/mixed;boundary=" + sBoundary.slice(2)
-				}, aResponseParts.join(sBoundary));
+				// take data service version also for complete batch from request headers
+				respond([200, { "Content-Type" : "multipart/mixed;boundary=" + sBoundary.slice(2) },
+					aResponseParts.join(sBoundary)], oRequest);
 			}
 
 			function error(sRequestLine, iCode, sMessage) {
@@ -269,6 +279,14 @@ sap.ui.define([
 				return mUrls;
 			}
 
+			/*
+			 * Converts the header array to a string and adds "\r\n" if the array was not empty.
+			 * Only works with one header-key/value pair. See getVersionHeader.
+			 */
+			function convertToString(aHeader) {
+				return aHeader && aHeader.length ? aHeader.join(": ") + "\r\n" : "";
+			}
+
 			function contentType(sName) {
 				if (/\.xml$/.test(sName)) {
 					return "application/xml";
@@ -297,6 +315,39 @@ sap.ui.define([
 						return oHeaders[sHeaderKey];
 					}
 				}
+			}
+
+			/*
+			 * Get the header for the OData service version from the given request and response
+			 * headers. First checks the given response headers and then the given request headers
+			 * if either "OData-Version" or "ODataServiceVersion" header is contained
+			 * (case-insensitive) and returns the found header key and header value as an array.
+			 *
+			 * @param {object} oRequestHeaders The request headers
+			 * @param {object} oResponseHeaders The response headers
+			 * @returns {string[]} An empty array if OData service version is neither found in
+			 *   response nor in request headers. Otherwise the array contains as first element the
+			 *   header key ("OData-Version" or "ODataServiceVersion") and as second element the
+			 *   corresponding header value.
+			 */
+			function getVersionHeader(oRequestHeaders, oResponseHeaders) {
+				var sODataVersion = getHeaderValue(oResponseHeaders, sV4VersionKey),
+					sODataServiceVersion = getHeaderValue(oResponseHeaders, sV2VersionKey),
+					aResult = [];
+
+				if (!sODataVersion && !sODataServiceVersion) {
+					//no OData service version is set for the GET, take it from request
+					sODataVersion = getHeaderValue(oRequestHeaders, sV4VersionKey);
+					sODataServiceVersion = getHeaderValue(oRequestHeaders, sV2VersionKey);
+				}
+				if (sODataVersion) {
+					aResult.push(sV4VersionKey);
+					aResult.push(sODataVersion);
+				} else if (sODataServiceVersion) {
+					aResult.push(sV2VersionKey);
+					aResult.push(sODataServiceVersion);
+				}
+				return aResult;
 			}
 
 			function message(sText) {
@@ -348,23 +399,16 @@ sap.ui.define([
 			 * @param {object} oRequest The request object
 			 */
 			function respond(aResponseData, oRequest) {
-				var sValue,
-					oResponseHeaders = aResponseData[1];
+				var oResponseHeaders = aResponseData[1],
+					aVersion = getVersionHeader({}, oResponseHeaders);
 
-				// if no OData version is set in the response headers, take it from the request
-				if (!getHeaderValue(oResponseHeaders, sV4VersionKey)
-						&& !getHeaderValue(oResponseHeaders, sV2VersionKey)) {
-					// do not modify fixture of response headers
-					oResponseHeaders = jQuery.extend({}, oResponseHeaders);
-					sValue = getHeaderValue(oRequest.requestHeaders, sV4VersionKey);
-					if (sValue) {
-						oResponseHeaders[sV4VersionKey] = sValue;
-					} else {
-						sValue = getHeaderValue(oRequest.requestHeaders, sV2VersionKey);
-						if (sValue) {
-							oResponseHeaders[sV2VersionKey] = sValue;
-						}
+				if (aVersion.length === 0) {
+					aVersion = getVersionHeader(oRequest.requestHeaders);
+					if (aVersion.length > 0) {
+						oResponseHeaders = jQuery.extend({}, oResponseHeaders);
+						oResponseHeaders[aVersion[0]] = aVersion[1];
 					}
+
 				}
 				oRequest.respond(aResponseData[0], oResponseHeaders, aResponseData[2]);
 			}
