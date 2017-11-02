@@ -332,7 +332,7 @@
 			[ "?sap-locale=fr_CH",						"fr_CH",			"fr-CH",			"FR",	"sap-locale is the accepted BCP47 tag fr_CH"],
 			[ "?sap-locale=En_gb&sap-language=6N",		"En_gb",			"en-GB",			"6N",	"valid combination of sap-locale and sap-language (En_gb, 6N)"],
 			[ "?sap-ui-language=en_GB&sap-language=6N",	"en_GB",			"en-GB",			"6N",	"valid combination of sap-ui-language and sap-language (en_GB, 6N)"],
-
+			[ "?sap-language=EN&sap-locale=en_GB",		"en_GB",			"en-GB",			"EN",	"valid combination of sap-language and sap-locale, both as BCP47 tag (EN, en_GB)"],
 		].forEach(function( data ) {
 
 			QUnit.test(data[4], function(assert) {

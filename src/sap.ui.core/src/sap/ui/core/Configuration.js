@@ -302,11 +302,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				var oUriParams = jQuery.sap.getUriParameters();
 
 				// first map SAP parameters, can be overwritten by "sap-ui-*" parameters
-
-				if ( oUriParams.mParams['sap-locale'] ) {
-					setValue("language", oUriParams.get('sap-locale'));
-				}
-
 				if ( oUriParams.mParams['sap-language'] ) {
 					// always remember as SAP Logon language
 					var sValue = config.sapLogonLanguage = oUriParams.get('sap-language');
@@ -318,6 +313,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 						// only complain about an invalid sap-language if neither sap-locale nor sap-ui-language are given
 						jQuery.sap.log.warning("sap-language '" + sValue + "' is not a valid BCP47 language tag and will only be used as SAP logon language");
 					}
+				}
+
+				// Check sap-locale after sap-language to ensure compatibility if both parameters are provided (e.g. portal iView).
+				if ( oUriParams.mParams['sap-locale'] ) {
+					setValue("language", oUriParams.get('sap-locale'));
 				}
 
 				if (oUriParams.mParams['sap-rtl']) {
