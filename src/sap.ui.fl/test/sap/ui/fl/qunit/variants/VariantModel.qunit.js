@@ -168,7 +168,7 @@ sap.ui.require([
 				"layer":"CUSTOMER",
 				"namespace":"Dummy.Component"
 			},
-			"changes": [],
+			"controlChanges": [],
 			"variantChanges": {
 				"setTitle": []
 			}
@@ -202,7 +202,7 @@ sap.ui.require([
 				"layer":"VENDOR",
 				"namespace":"Dummy.Component"
 			},
-			"changes": [],
+			"controlChanges": [],
 			"variantChanges": {
 				"setTitle": []
 			}
@@ -239,7 +239,7 @@ sap.ui.require([
 				"layer":"VENDOR",
 				"namespace":"Dummy.Component"
 			},
-			"changes": [oChangeContent0, oChangeContent1],
+			"controlChanges": [oChangeContent0, oChangeContent1],
 			"variantChanges": {
 				"setTitle": []
 			}
@@ -258,17 +258,17 @@ sap.ui.require([
 		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		oSourceVariantCopy.content.variantReference = "variant0";
-		oSourceVariantCopy.changes.splice(1, 1);
+		oSourceVariantCopy.controlChanges.splice(1, 1);
 
-		oSourceVariantCopy.changes.forEach( function (oCopiedChange, iIndex) {
+		oSourceVariantCopy.controlChanges.forEach( function (oCopiedChange, iIndex) {
 			oCopiedChange.variantReference = "newVariant";
-			oCopiedChange.support.sourceChangeFileName = oSourceVariant.changes[iIndex].fileName;
-			oSourceVariantCopy.changes[iIndex].fileName = oDuplicateVariant.changes[iIndex].fileName; /*mock*/
+			oCopiedChange.support.sourceChangeFileName = oSourceVariant.controlChanges[iIndex].fileName;
+			oSourceVariantCopy.controlChanges[iIndex].fileName = oDuplicateVariant.controlChanges[iIndex].fileName; /*mock*/
 		});
 
 		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-		assert.equal(oDuplicateVariant.changes.length, 1, "then only one change duplicated");
-		assert.equal(oDuplicateVariant.changes[0].layer, Utils.getCurrentLayer(), "then only one change duplicated");
+		assert.equal(oDuplicateVariant.controlChanges.length, 1, "then only one change duplicated");
+		assert.equal(oDuplicateVariant.controlChanges[0].layer, Utils.getCurrentLayer(), "then only one change duplicated");
 		assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
 	});
 
@@ -288,7 +288,7 @@ sap.ui.require([
 				"layer":"CUSTOMER",
 				"namespace":"Dummy.Component"
 			},
-			"changes": [oChangeContent0, oChangeContent1],
+			"controlChanges": [oChangeContent0, oChangeContent1],
 			"variantChanges": {
 				"setTitle": []
 			}
@@ -307,17 +307,17 @@ sap.ui.require([
 		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 
-		oSourceVariantCopy.changes.forEach( function (oCopiedChange, iIndex) {
+		oSourceVariantCopy.controlChanges.forEach( function (oCopiedChange, iIndex) {
 			oCopiedChange.variantReference = "newVariant";
-			oCopiedChange.support.sourceChangeFileName = oSourceVariant.changes[iIndex].fileName;
-			oSourceVariantCopy.changes[iIndex].fileName = oDuplicateVariant.changes[iIndex].fileName; /*mock*/
+			oCopiedChange.support.sourceChangeFileName = oSourceVariant.controlChanges[iIndex].fileName;
+			oSourceVariantCopy.controlChanges[iIndex].fileName = oDuplicateVariant.controlChanges[iIndex].fileName; /*mock*/
 		});
 
 		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-		assert.equal(oDuplicateVariant.changes.length, 2, "then both changes duplicated");
+		assert.equal(oDuplicateVariant.controlChanges.length, 2, "then both changes duplicated");
 		assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.variantReference, "then the duplicate variant references to the reference of the source variant");
-		assert.equal(oDuplicateVariant.changes[0].support.sourceChangeFileName , oChangeContent0.fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
-		assert.equal(oDuplicateVariant.changes[1].support.sourceChangeFileName , oChangeContent1.fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+		assert.equal(oDuplicateVariant.controlChanges[0].support.sourceChangeFileName , oChangeContent0.fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+		assert.equal(oDuplicateVariant.controlChanges[1].support.sourceChangeFileName , oChangeContent1.fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
 	});
 
 	QUnit.test("when calling '_copyVariant'", function(assert) {
@@ -350,7 +350,7 @@ sap.ui.require([
 						"user":""
 				}
 			},
-			"changes": []
+			"controlChanges": []
 		};
 		sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
 		sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
@@ -436,7 +436,6 @@ sap.ui.require([
 			delete this.oFlexController;
 		}
 	});
-
 
 	QUnit.test("when calling 'ensureStandardEntryExists'", function(assert) {
 		this.oModel.ensureStandardEntryExists("varMgmtRef1");

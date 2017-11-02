@@ -22,11 +22,11 @@ sap.ui.require([
 				.done(function(oFakeVariantResponse) {
 					this.oVariant = {};
 					this.oVariantDef = oFakeVariantResponse.variantSection["idMain1--variantManagementOrdersTable"].variants[0];
-					this.oVariant = new Variant(this.oVariantDef);
+					this.oVariantFileContent = Variant.createInitialFileContent(this.oVariantDef);
+					this.oVariant = new Variant(this.oVariantFileContent);
 					done();
 				}.bind(this));
 
-			sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
 		},
 		afterEach: function() {
 			sap.ushell = this.ushellStore;
@@ -62,11 +62,18 @@ sap.ui.require([
 		assert.strictEqual(this.oVariant.getNamespace(), "sap.ui.rta.test.Demo.md.Component", "then reference is returned as namespace");
 	});
 
+	QUnit.test("when getControlChanges is called", function(assert) {
+		assert.strictEqual(this.oVariant.getControlChanges(), this.oVariantDef.controlChanges, "then the control changes are returned");
+	});
+
 	QUnit.test("when getId is called", function(assert) {
 		assert.equal(this.oVariant.getId(), this.oVariantDef.content.fileName);
 	});
 
 	QUnit.test("when getContent is called", function(assert) {
+		this.oVariantDef.content.self = this.oVariantDef.content.namespace + this.oVariantDef.content.fileName + "." + "ctrl_variant";
+		this.oVariantDef.content.support.sapui5Version = sap.ui.version;
+		this.oVariantDef.content.validAppVersions = {};
 		assert.deepEqual(this.oVariant.getContent(), this.oVariantDef.content);
 	});
 
@@ -113,12 +120,13 @@ sap.ui.require([
 		assert.equal(this.oVariant.getState(), Variant.states.DIRTY);
 	});
 
-	QUnit.test("when _isReadOnlyDueToLayer is called", function(assert) {
-		// check for different layer
-		this.oVariantDef.content.layer = "CUSTOMER";
+	QUnit.test("when _isReadOnlyDueToLayer is called for different layer", function(assert) {
+		sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
 		assert.equal(this.oVariant._isReadOnlyDueToLayer(), true);
-		// check for same layer
-		this.oVariantDef.content.layer = "VENDOR";
+	});
+
+	QUnit.test("when _isReadOnlyDueToLayer is called for same layer", function(assert) {
+		sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
 		this.oVariant = new Variant(this.oVariantDef);
 		assert.equal(this.oVariant._isReadOnlyDueToLayer(), false);
 	});
@@ -164,38 +172,44 @@ sap.ui.require([
 
 	QUnit.test("when createInitialFileContent is called", function(assert) {
 		var oExpectedInfo = {
-			"fileName": "variant0",
-			"title": "variant A",
-			"fileType": "ctrl_variant",
-			"reference": "sap.ui.rta.test.Demo.md.Component",
-			"variantManagementReference": "idMain1--variantManagementOrdersTable",
-			"variantReference": "",
-			"packageName": "$TMP",
-			"self": "sap.ui.rta.test.Demo.md.Componentvariant0.ctrl_variant",
-			"content": {},
-			"layer": "VENDOR",
-			"texts": {
-				"TextDemo": {
-					"value": "Text for TextDemo",
-					"type": "myTextType"
-				}
+			"content": {
+				"fileName": "variant0",
+				"title": "variant A",
+				"fileType": "ctrl_variant",
+				"reference": "sap.ui.rta.test.Demo.md.Component",
+				"variantManagementReference": "idMain1--variantManagementOrdersTable",
+				"variantReference": "",
+				"packageName": "$TMP",
+				"self": "sap.ui.rta.test.Demo.md.Componentvariant0.ctrl_variant",
+				"content": {},
+				"layer": "VENDOR",
+				"texts": {
+					"TextDemo": {
+						"value": "Text for TextDemo",
+						"type": "myTextType"
+					}
+				},
+				"namespace": "sap.ui.rta.test.Demo.md.Component",
+				"creation": "",
+				"originalLanguage": Utils.getCurrentLanguage(),
+				"conditions": {},
+				"support": {
+					"generator": "Variant.createInitialFileContent",
+					"service": "",
+					"user": "",
+					"sapui5Version": sap.ui.version
+				},
+				"validAppVersions": {}
 			},
-			"namespace": "sap.ui.rta.test.Demo.md.Component",
-			"creation": "",
-			"originalLanguage": "",
-			"conditions": {},
-			"support": {
-				"generator": "Variant.createInitialFileContent",
-				"service": "",
-				"user": "",
-				"sapui5Version": sap.ui.version
-			},
-			"validAppVersions": {}
+			"controlChanges": [],
+			"variantChanges": []
 		};
 
-		oExpectedInfo.originalLanguage = Utils.getCurrentLanguage();
-
-		var oVariantFileContent = Variant.createInitialFileContent(this.oVariantDef.content);
+		var oVariantSpecificData = {
+				content: this.oVariantDef.content
+		};
+		oVariantSpecificData.isVariant = true;
+		var oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
 
 		assert.deepEqual(oVariantFileContent, oExpectedInfo, "then correct initial file content set");
 	});

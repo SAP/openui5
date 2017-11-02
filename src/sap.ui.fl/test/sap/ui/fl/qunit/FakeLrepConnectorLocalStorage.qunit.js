@@ -52,7 +52,7 @@ sap.ui.require([
 	});
 
 
-	QUnit.module("Give I want to create changes", {
+	QUnit.module("Given I want to create changes", {
 
 		beforeEach : function(assert) {
 			oFakeLrepConnectorLocalStorage.deleteChanges();
@@ -279,7 +279,7 @@ sap.ui.require([
 								content: {
 									fileName: "ExistingVariant1"
 								},
-								changes: []
+								controlChanges: []
 							}
 						]
 					},
@@ -309,7 +309,7 @@ sap.ui.require([
 								content: {
 									fileName: "ExistingVariant1"
 								},
-								changes: []
+								controlChanges: []
 							}
 						]
 					},
@@ -327,7 +327,7 @@ sap.ui.require([
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 1, "then one variant already exists");
 		var mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap(mResult, aVariants);
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 2, "then variant not added since a duplicate variant already exists");
-		assert.ok(Array.isArray(mResult.changes.variantSection["varMgmt1"].variants[1].changes), "then the newly added variant contains changes array");
+		assert.ok(Array.isArray(mResult.changes.variantSection["varMgmt1"].variants[1].controlChanges), "then the newly added variant contains changes array");
 		assert.ok(Array.isArray(mResult.changes.variantSection["varMgmt1"].variants[1].variantChanges["setTitle"]), "then the newly added variant contains setTitle variant changes array");
 		assert.ok(typeof mResult.changes.variantSection["varMgmt1"].variants[1].content === 'object', "then the newly added variant contains a content object");
 	});
@@ -348,7 +348,7 @@ sap.ui.require([
 								content: {
 									fileName: "ExistingVariant1"
 								},
-								changes: [
+								controlChanges: [
 									{
 										fileName: "Change2",
 										variantReference: "varMgmt1"
@@ -391,10 +391,10 @@ sap.ui.require([
 			}
 		];
 
-		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 1, "then only one change in variant ExistingVariant1");
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges.length, 1, "then only one change in variant ExistingVariant1");
 		assert.equal(mResult.changes.changes.length, 1, "then one global change exists");
 		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, aChanges, aVariantChanges);
-		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 2, "then two changes exist for variant ExistingVariant1");
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges.length, 2, "then two changes exist for variant ExistingVariant1");
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"].length, 2, "then two variant changes exist for variant ExistingVariant1");
 		assert.ok( mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"][0].fileName === "Change5" &&
 						mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"][1].fileName === "Change6", "then both variant changes passed as a parameter exist in order" );
@@ -420,7 +420,7 @@ sap.ui.require([
 									variantReference: "ExistingVariant2",
 									variantManagementReference: "varMgmt1"
 								},
-								changes: [
+								controlChanges: [
 									{
 										fileName: "Change2",
 										variantReference: "ExistingVariant1"
@@ -431,7 +431,7 @@ sap.ui.require([
 								content: {
 									fileName: "ExistingVariant2"
 								},
-								changes: [
+								controlChanges: [
 									{
 										fileName: "Change3",
 										variantReference: "ExistingVariant2",
@@ -450,12 +450,12 @@ sap.ui.require([
 			}
 		};
 		var fnGetReferencedChangesSpy = sandbox.spy(this.oFakeLrepConnectorLocalStorage, "_getReferencedChanges")  ;
-		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 1, "then initially one change available in ExistingVariant1");
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges.length, 1, "then initially one change available in ExistingVariant1");
 		var mResult = this.oFakeLrepConnectorLocalStorage._assignVariantReferenceChanges(mResult);
-		assert.strictEqual(fnGetReferencedChangesSpy.returnValues[0][0], mResult.changes.variantSection["varMgmt1"].variants[1].changes[0], "then _getReferencedChanges returned the VENDOR layer referenced change");
-		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes.length, 2, "then two changes available in ExistingVariant1");
-		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].changes[0].fileName, "Change3", "then referenced change from ExistingVariant1 in the VENDOR layer is inserted before actual variant changes");
-		assert.notOk(mResult.changes.variantSection["varMgmt1"].variants[0].changes.some( function (oChange) {
+		assert.strictEqual(fnGetReferencedChangesSpy.returnValues[0][0], mResult.changes.variantSection["varMgmt1"].variants[1].controlChanges[0], "then _getReferencedChanges returned the VENDOR layer referenced change");
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges.length, 2, "then two changes available in ExistingVariant1");
+		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges[0].fileName, "Change3", "then referenced change from ExistingVariant1 in the VENDOR layer is inserted before actual variant changes");
+		assert.notOk(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges.some( function (oChange) {
 			return oChange.fileName === "Change4";
 		}), "then referenced change from ExistingVariant1 in the CUSTOMER layer is not references");
 	});
