@@ -57,6 +57,7 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @returns {object} The accessibility state of the control
 		 */
 		ComboBoxTextFieldRenderer.getAccessibilityState = function(oControl) {
 			var mAccessibilityState = InputBaseRenderer.getAccessibilityState.call(this, oControl);

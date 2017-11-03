@@ -126,7 +126,8 @@ sap.ui.define(["./library", "sap/ui/core/Control", "jquery.sap.global"],
 	/**
 	 * setVisible shouldn't be used on wizard steps.
 	 * If you need to show/hide steps based on some condition - use the branching property instead
-	 * @returns {WizardStep}
+	 * @param {boolean} visible Whether the step should be visible
+	 * @returns {sap.m.WizardStep} this instance for method chaining
 	 */
 	WizardStep.prototype.setVisible = function (visible) {
 		this.setProperty("visible", visible, true);

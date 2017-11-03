@@ -159,7 +159,7 @@ sap.ui.define([],
 	 * Renders the bar control if it is defined. Also adds classes to it.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.m.Page} oPage
+	 * @param {sap.m.Page} oPage The Page containing the bar
 	 * @param {sap.m.IBar} oBarControl the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {object} oOptions object containing the tag, contextClass and styleClass added to the bar
 	 */
@@ -179,7 +179,7 @@ sap.ui.define([],
 	 *	Check whether THIS page is used in scenario where its header should be light
 	 *	Important for Belize styling
 	 *
-	 * @param {sap.m.Page} oPage
+	 * @param {sap.m.Page} oPage The Page containing the bar
 	 * @returns {boolean}
 	 * @private
 	 */
