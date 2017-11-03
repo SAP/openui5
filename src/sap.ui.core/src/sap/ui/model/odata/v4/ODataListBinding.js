@@ -241,16 +241,21 @@ sap.ui.define([
 	 * registered 'change' event listeners have been notified.
 	 * It is to be used by applications for example to switch off a busy indicator or to process an
 	 * error.
-	 * If back-end requests are successful, the event has no parameters. Use the binding's contexts
-	 * via {@link #getCurrentContexts oEvent.getSource().getCurrentContexts()} to access the
-	 * response data. Note that controls bound to this data may not yet have been updated, meaning
-	 * it is not safe for registered event handlers to access data via control APIs.
+	 * If back-end requests are successful, the event has almost no parameters. For compatibility
+	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
+	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
+	 * is not. Use the binding's contexts via
+	 * {@link #getCurrentContexts oEvent.getSource().getCurrentContexts()} to access the response
+	 * data. Note that controls bound to this data may not yet have been updated, meaning it is not
+	 * safe for registered event handlers to access data via control APIs.
 	 *
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
+	 * @param {object} [oEvent.getParameters.data]
+	 *   An empty data object if a back-end request succeeds
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
@@ -1003,12 +1008,12 @@ sap.ui.define([
 					}
 				}
 				if (bDataRequested) {
-					that.fireDataReceived();
+					that.fireDataReceived({data : {}});
 				}
 			}, function (oError) {
 				// cache shares promises for concurrent read
 				if (bDataRequested) {
-					that.fireDataReceived(oError.canceled ? undefined : {error : oError});
+					that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError});
 				}
 				throw oError;
 			})["catch"](function (oError) {

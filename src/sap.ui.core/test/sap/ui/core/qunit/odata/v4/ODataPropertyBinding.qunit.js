@@ -733,6 +733,7 @@ sap.ui.require([
 
 						assert.strictEqual(oEvent.getSource(), oControl.getBinding("text"),
 							"dataReceived - correct source");
+						assert.deepEqual(oEvent.getParameter("data"), {});
 						assert.strictEqual(iDataRequestedCount, 1);
 						assert.strictEqual(oBinding.getType(), oType);
 						assert.strictEqual(oBinding.getValue(), oValue);
@@ -783,6 +784,7 @@ sap.ui.require([
 					var oBinding = oControl.getBinding("text");
 					assert.strictEqual(oBinding.getType(), undefined);
 					assert.strictEqual(oBinding.getValue(), undefined);
+					assert.deepEqual(oEvent.getParameter("data"), {});
 					assert.strictEqual(oEvent.getParameter("error"), undefined, "no read error");
 					done();
 				}

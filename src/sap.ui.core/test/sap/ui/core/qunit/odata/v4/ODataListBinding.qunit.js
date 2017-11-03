@@ -1588,7 +1588,8 @@ sap.ui.require([
 				});
 			});
 
-			oBinding.attachDataReceived(function () {
+			oBinding.attachDataReceived(function (oEvent) {
+				assert.deepEqual(oEvent.getParameter("data"), {});
 				assert.strictEqual(oBinding.aContexts.length, 10, "data already processed");
 				finishTest();
 			});
@@ -1613,7 +1614,7 @@ sap.ui.require([
 			this.mock(oBinding.oCachePromise.getResult()).expects("read").callsArg(4)
 				.returns(oReadPromise);
 			this.mock(oBinding).expects("fireDataReceived")
-				.withExactArgs(bCanceled ? undefined : {error : oError});
+				.withExactArgs(bCanceled ? {data : {}} : {error : oError});
 
 			oBinding.getContexts(0, 3);
 			return oReadPromise.catch(function () {
@@ -2193,7 +2194,7 @@ sap.ui.require([
 		//TODO: this.mock(oBinding).expects("createContexts").never();
 		oBindingMock.expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change}).never();
-		oBindingMock.expects("fireDataReceived").withExactArgs();
+		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
 
 		//code under test
 		oBinding.getContexts(0, 5);
@@ -2259,7 +2260,7 @@ sap.ui.require([
 		// this.mock(oBinding).expects("createContexts").withExactArgs(sinon.match.same(oResult));
 		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
-		this.mock(oBinding).expects("fireDataReceived").withExactArgs();
+		this.mock(oBinding).expects("fireDataReceived").withExactArgs({data : {}});
 
 		//code under test
 		oBinding.getContexts(0, 5);
