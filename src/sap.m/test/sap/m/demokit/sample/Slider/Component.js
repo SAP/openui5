@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.Slider.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.Slider.V",
+			rootView : {
+				"viewName": "sap.m.sample.Slider.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

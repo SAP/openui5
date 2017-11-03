@@ -131,7 +131,7 @@
 											<m:Column vAlign="Top" minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
-											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
+											<m:ColumnListItem>
 												<m:cells>
 
 													<m:Text class="sapUiDocumentationParamBold" text="{parts: [
@@ -291,7 +291,8 @@
 
 														<m:MessageStrip
 															visible="{=${topics>deprecated} !== undefined}"
-															text="Deprecated since version {topics>deprecated/since}. {topics>deprecated/text}"
+															text="{parts: [{path: 'topics>deprecated/since'}, {path: 'topics>deprecated/text'}],
+												formatter: '.formatDeprecated'}"
 															type="Error"
 															showIcon="true"
 															showCloseButton="false"

@@ -236,12 +236,12 @@ sap.ui.define([
 		{
 			name: "component",
 			func: "iTeardownMyUIComponent",
-			error: "sap.ui.test.launchers.componentLauncher: Teardown has been called but there was no start"
+			error: "sap.ui.test.launchers.componentLauncher: Teardown was called before start. No component was started."
 		},
 		{
 			name: "iFrame",
 			func: "iTeardownMyAppFrame",
-			error: "sap.ui.test.launchers.iFrameLauncher: Teardown has been called but there was no start"
+			error: "sap.ui.test.launchers.iFrameLauncher: Teardown was called before launch. No iFrame was loaded."
 		}
 	];
 

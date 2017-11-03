@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.core.sample.InvisibleText.Component", {
 
 		metadata : {
-			rootView : "sap.ui.core.sample.InvisibleText.V",
+			rootView : {
+				"viewName": "sap.ui.core.sample.InvisibleText.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m"

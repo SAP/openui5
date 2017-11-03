@@ -564,12 +564,14 @@ sap.ui.define([
 	 *     properties : {
 	 *       value: 'string',
 	 *       width: 'sap.ui.core.CSSSize',
-	 *       height: { type: 'sap.ui.core.CSSSize', defaultValue: '100%' }
+	 *       height: { type: 'sap.ui.core.CSSSize', defaultValue: '100%'}
+	 *       description: { type: 'string', defaultValue: '', selector: '#{id}-desc'}
 	 *     },
 	 *     defaultProperty : 'value',
 	 *     aggregations : {
 	 *       header : { type: 'sap.mylib.FancyHeader', multiple : false }
-	 *       items : 'sap.ui.core.Control'
+	 *       items : 'sap.ui.core.Control',
+	 *       buttons: { type: 'sap.mylib.Button', multiple : true, selector: '#{id} > .sapMLButtonsSection'}
 	 *     },
 	 *     defaultAggregation : 'items',
 	 *     associations : {
@@ -614,6 +616,23 @@ sap.ui.define([
 	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
 	 *     Despite its name, setting this flag is not mandatory to make the managed property bindable. The generic methods {@link #bindProperty} and
 	 *     {@link #unbindProperty} can always be used. </li>
+	 * <li><code>selector: <i>string</i></code> either can be omitted or set to a valid selector string as defined by the
+	 *     {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector Element.prototype.querySelector}
+	 *     method should locate the DOM element that rendered this property's value. It should only be set
+	 *     for properties that have a visual text representation in the DOM.
+	 *
+	 *     In addition to the CSS selector syntax, the selector string can contain the placeholder <code>{id}</code>
+	 *     (multiple times). Before evaluating the selector in the context of an Element or Control, all occurrences of the
+	 *     placeholder have to be replaced by the (potentially escaped) ID of that Element or Control.
+	 *     In fact, any selector should start with <code>#{id}<code> to ensure that the query result is limited to the
+	 *     desired Element or Control.
+	 *
+	 *     <b>Note</b>: there is a convenience method {@link sap.ui.core.Element#getDomRefForSetting} that evaluates the
+	 *     selector in the context of a concrete Element or Control instance. It also handles the placeholder <code>{id}</code>.
+	 *     Only selected framework features may use that private method, it is not yet a public API and might be changed
+	 *     or removed in future versions of UI5. However, instead of maintaining the <code>selector</code> in the metadata,
+	 *     Element and Control classes can overwrite <code>getDomRefForSetting</code> and determine the DOM Element
+	 *     dynamically.</li>
 	 * </ul>
 	 * Property names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
 	 * If an aggregation in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
@@ -651,6 +670,26 @@ sap.ui.define([
 	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
 	 *     Despite its name, setting this flag is not mandatory to make the managed aggregation bindable. The generic methods {@link #bindAggregation} and
 	 *     {@link #unbindAggregation} can always be used. </li>
+	 * <li><code>selector: <i>string</i></code> either can be omitted or set to a valid selector string as defined by the
+	 *     {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector Element.prototype.querySelector}
+	 *     method. The selector should locate the DOM element that surrounds the aggregation's content. It should only be
+	 *     set for aggregations that have a visual representation in the DOM. A DOM element surrounding the aggregation's
+	 *     rendered content should be available in the DOM, even if the aggregation is empty or not rendered for some reason.
+	 *     In cases where this is not possible or not intended, <code>getDomRefForSetting</code> can be overridden, see below.
+	 *
+	 *     In addition to the CSS selector syntax, the selector string can contain the magic token <code>{id}</code>
+	 *     (multiple times). Before evaluating the selector in the context of an Element or Control, all occurrences of the
+	 *     token have to be replaced by the (potentially escaped) ID of that Element or Control.
+	 *     In fact, any selector should start with <code>#{id}<code> to ensure that the query result is limited to the
+	 *     desired Element or Control.
+	 *
+	 *     <b>Note</b>: there is a convenience method {@link sap.ui.core.Element#getDomRefForSetting} that evaluates the
+	 *     selector in the context of a concrete Element or Control instance. It also handles the placeholder <code>{id}</code>.
+	 *     Only selected framework features may use that private method, it is not yet a public API and might be changed
+	 *     or removed in future versions of UI5. However, instead of maintaining the <code>selector</code> in the metadata,
+	 *     Element and Control classes can overwrite <code>getDomRefForSetting</code> to calculate or add the appropriate
+	 *     DOM Element dynamically.</li>
+	 *     </li>
 	 * </ul>
 	 * Aggregation names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
 	 * The name for a hidden aggregations might start with an underscore.
@@ -2761,11 +2800,6 @@ sap.ui.define([
 			that = this;
 
 		var fChangeHandler = function(oEvent) {
-			/* as we reuse the context objects we need to ensure an update of relative bindings. Therefore we set
-			   the context to null so relative bindings will detect a context change */
-			if (oBinding.getBoundContext() === that.getBindingContext(sModelName)) {
-				that.setElementBindingContext(null, sModelName);
-			}
 			that.setElementBindingContext(oBinding.getBoundContext(), sModelName);
 		};
 
@@ -3933,7 +3967,7 @@ sap.ui.define([
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
 		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		var oOldContext = this.oBindingContexts[sModelName];
-		if (oOldContext !== oContext) {
+		if (Context.hasChanged(oOldContext, oContext)) {
 			this.oBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(false, sModelName);
 			this.propagateProperties(sModelName);
@@ -3949,7 +3983,7 @@ sap.ui.define([
 		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		var oOldContext = this.mElementBindingContexts[sModelName];
 
-		if (oOldContext !== oContext) {
+		if (Context.hasChanged(oOldContext, oContext)) {
 			this.mElementBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(true, sModelName);
 			this.propagateProperties(sModelName);
@@ -3999,7 +4033,7 @@ sap.ui.define([
 						this._bindObject(oBindingInfo);
 					} else {
 						oContext = this._getBindingContext(sModelName);
-						if (oContext !== oBindingInfo.binding.getContext()) {
+						if (Context.hasChanged(oBindingInfo.binding.getContext(), oContext)) {
 							oBindingInfo.binding.setContext(oContext);
 						}
 					}

@@ -459,6 +459,7 @@ function (
 	});
 
 	QUnit.test("createVariant shall create a variant object", function(assert) {
+		this.stub(this.oFlexController, "getComponentName").returns("Dummy.Component");
 		this.stub(Utils,"getAppDescriptor").returns({
 			"sap.app":{
 				id: "testScenarioComponent",
@@ -473,7 +474,6 @@ function (
 				fileName: "idOfVariantManagementReference",
 				title: "Standard",
 				fileType: "variant",
-				reference: "Dummy.Component",
 				variantManagementReference: "idOfVariantManagementReference"
 			}
 		};
@@ -1557,6 +1557,23 @@ function (
 			this.oControl.destroy();
 			sandbox.restore();
 		}
+	});
+
+	QUnit.test("returns true promise value when change is already applied", function (assert) {
+		sandbox.restore();
+		var mAppliedCustomData = {
+			customDataEntries : [this.oChange.getId()]
+		};
+		sandbox.stub(this.oFlexController, "_getChangeHandler").returns({});
+		sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns(mAppliedCustomData);
+
+		return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {
+			modifier: JsControlTreeModifier,
+			appComponent: {}
+		})
+		.then(function (bValue) {
+			assert.ok(bValue, "the promise returns a true value");
+		});
 	});
 
 	QUnit.test("adds custom data on the first sync change applied on a control", function (assert) {

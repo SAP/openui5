@@ -84,26 +84,6 @@ sap.ui.define([
 
 		/**
 		 * Copies the technical information shown in the dialog to the clipboard
-		 * @param {string} sString The string to be copied
-		 * @param {string} sConfirmTextPrefix The prefix for the i18n texts to be displayed on success/error
-		 * @private
-		 */
-		_CopyToClipboard: function (sString, sConfirmTextPrefix) {
-			var $temp = jQuery("<textarea>");
-
-			try {
-				jQuery("body").append($temp);
-				$temp.val(sString).select();
-				document.execCommand("copy");
-				$temp.remove();
-				MessageToast.show(this._getText(sConfirmTextPrefix + ".Success"));
-			} catch (oException) {
-				MessageToast.show(this._getText(sConfirmTextPrefix + ".Error"));
-			}
-		},
-
-		/**
-		 * Copies the technical information shown in the dialog to the clipboard
 		 */
 		onCopyTechnicalInfoToClipboard: function () {
 			var oModel = this._oDialog.getModel("view"),
@@ -118,7 +98,7 @@ sap.ui.define([
 					this._getText("TechInfo.UserAgent.Label") + ": " + oModel.getProperty("/UserAgent") + "\r\n" +
 					this._getText("TechInfo.AppUrl.Label") + ": " + oModel.getProperty("/ApplicationURL") + "\r\n";
 
-			this._CopyToClipboard(sString, "TechInfo.CopyToClipboard");
+			this._copyToClipboard(sString, "TechInfo.CopyToClipboard");
 		},
 
 		/**
@@ -129,7 +109,7 @@ sap.ui.define([
 				oTree = oModel.getProperty("/DebugModules")[0],
 				sString = "sap-ui-debug=" + this._treeHelper.toDebugInfo(oTree);
 
-			this._CopyToClipboard(sString, "TechInfo.DebugModulesCopyToClipboard");
+			this._copyToClipboard(sString, "TechInfo.DebugModulesCopyToClipboard");
 		},
 
 		/**
@@ -168,15 +148,12 @@ sap.ui.define([
 				this._oDebugPopover = sap.ui.xmlfragment("TechnicalInfoDialogDebugModules", "sap.ui.core.support.techinfo.TechnicalInfoDebugDialog", this);
 				this._oDialog.addDependent(this._oDebugPopover);
 				jQuery.sap.syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oDebugPopover);
-
-				// register message validation and trigger it once to validate the value coming from local storage
-				var oCustomDebugValue = sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--customDebugValue");
-				sap.ui.getCore().getMessageManager().registerObject(oCustomDebugValue, true);
-				var oBinding = oCustomDebugValue.getBinding("value");
+				var oControl = sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--customDebugValue");
 				try {
-					oBinding.getType().validateValue(oCustomDebugValue.getValue());
-				} catch (oException) {
-					oCustomDebugValue.setValueState("Error");
+					this._validateCustomDebugValue(oControl.getValue());
+				} catch (oException)  {
+					this._showError(oControl, oException.message);
+					return;
 				}
 			}
 
@@ -207,18 +184,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Updates the debug mode input field and the number of selected debug modules
-		 * @private
-		 */
-		_updateTreeInfos: function () {
-			var oModel = this._oDialog.getModel("view"),
-				oTreeData = oModel.getProperty("/DebugModules")[0];
-
-			oModel.setProperty("/CustomDebugMode", this._treeHelper.toDebugInfo(oTreeData));
-			oModel.setProperty("/DebugModuleSelectionCount", this._treeHelper.getSelectionCount(oTreeData));
-		},
-
-		/**
 		 * Selects/Deselects a node including its tree branch
 		 * @param {sap.ui.base.Event} oEvent The tree select event
 		 */
@@ -227,8 +192,10 @@ sap.ui.define([
 				oListItem = oEvent.getParameter("listItem"),
 				oContext = oListItem.getItemNodeContext(),
 				oNodePath = oContext.context.getPath(),
-				oSubTreeData = oModel.getProperty(oNodePath);
+				oSubTreeData = oModel.getProperty(oNodePath),
+				oControl = sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--customDebugValue");
 
+			this._resetValueState(oControl);
 			this._treeHelper.recursiveSelect(oSubTreeData, oListItem.getSelected());
 			this._updateTreeInfos();
 		},
@@ -238,7 +205,15 @@ sap.ui.define([
 		 */
 		onChangeCustomDebugMode: function () {
 			var oModel = this._oDialog.getModel("view"),
+				oControl = sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--customDebugValue"),
 				oTreeResults;
+
+			try {
+				this._validateCustomDebugValue(oControl.getValue());
+			} catch (oException)  {
+				this._showError(oControl, oException.message);
+				return;
+			}
 
 			// convert boolean string to boolean value
 			if (oModel.getProperty("/CustomDebugMode") === "true") {
@@ -327,28 +302,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * Writes the custom bootstrap URL to local storage
-		 * @param {sap.ui.base.Event} oEvent The input change event
-		 */
-		onChangeCustomBootstrapURL: function (oEvent) {
-			var sValue = oEvent.getParameter("value"),
-				oControl = oEvent.getSource();
-			this._storage.put("sap-ui-custom-bootstrap-URL", sValue);
-			var oBinding = oControl.getBinding("value");
-			try {
-				oBinding.getType().validateValue.call(this, oControl.getValue());
-				oControl.setValueState("None");
-			} catch (oException) {
-				this._showError(oControl, oException.message);
-			}
-		},
-		/**
 		 *  Handler for liveChange event fired by custom bootstrap URL.
 		 * @param oEvent
 		 */
 		onLiveChangeCustomBootstrapURL:function (oEvent) {
-			var sValue = oEvent.getParameter("value");
+			var sValue = oEvent.getParameter("value"),
+				oControl = oEvent.getSource();
 			this._storage.put("sap-ui-custom-bootstrap-URL", sValue);
+			try {
+				this._validateValue(oControl.getValue());
+				this._resetValueState(oControl);
+			} catch (oException) {
+				this._showError(oControl, oException.message);
+			}
 		},
 
 		/**
@@ -402,56 +368,6 @@ sap.ui.define([
 			this._oAssistantPopover.openBy(oSupportAssistantSettingsButton);
 		},
 
-		/**
-		 * This is a custom model type for validating a URL ending with sap/ui/support/
-		 */
-		CustomTypeURL : SimpleType.extend("sap.ui.core.support.techinfo.CustomTypeURL", {
-			formatValue: function (oValue) {
-				return oValue;
-			},
-			parseValue: function (oValue) {
-				return oValue;
-			},
-			validateValue: function (oValue) {
-				var oRegexpCoreURL = /^https?:\/\/(www\.)?([-a-zA-Z0-9.%_+~#=]{2,})([-a-zA-Z0-9@:%_+.~#?&/=]*)\/sap\/ui\/support\/?$/,
-					sApplicationProtocol = window.location.protocol,
-					oI18nModel = new ResourceModel({
-						bundleName: "sap.ui.core.messagebundle"
-					});
-
-				if (oValue && !oValue.match(oRegexpCoreURL)) {
-					throw new ValidateException(oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.URLValidationMessage"));
-				}
-				if (oValue && sApplicationProtocol === "https:" && !oValue.match(sApplicationProtocol)) {
-					throw new ValidateException(oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.ProtocolError"));
-				}
-				return true;
-			}
-		}),
-
-		/**
-		 * This is a custom model type for validating a sap-ui-debug string.
-		 * the sap-ui-debug value can be a
-		 *  - boolean (x,X is also interpreted as true)
-		 *  - list of modules separated with commas
-		 * Each module can contain wildcards with * or ** and regular expression characters
-		 */
-		CustomTypeMode : SimpleType.extend("sap.ui.core.support.techinfo.CustomTypeMode", {
-			formatValue: function (oValue) {
-				return oValue;
-			},
-			parseValue: function (oValue) {
-				return oValue;
-			},
-			validateValue: function (oValue) {
-				var oRegexpMode = /^(true|false|x|X)$|^(([a-zA-Z*[\]{}()+?.\\^$|]+\/?)+(,([a-zA-Z*[\]{}()+?.\\^$|]+\/?)+)*)$/;
-				if (oValue && !oValue.match(oRegexpMode)) {
-					throw new ValidateException("'" + oValue + "' is not a valid sap-ui-debug value");
-				}
-				return true;
-			}
-		}),
-
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
@@ -466,6 +382,38 @@ sap.ui.define([
 		 */
 		_getText: function (sKey, aParameters) {
 			return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParameters);
+		},
+
+		/**
+		 * This is a custom model type for validating a URL ending with sap/ui/support/
+		 */
+		_validateValue: function (sValue) {
+			var oRegexpCoreURL = /^https?:\/\/(www\.)?([-a-zA-Z0-9.%_+~#=]{2,})([-a-zA-Z0-9@:%_+.~#?&/=]*)\/sap\/ui\/support\/?$/,
+				sApplicationProtocol = window.location.protocol;
+
+			if (sValue && !sValue.match(oRegexpCoreURL)) {
+				throw new ValidateException(this._getText("TechInfo.SupportAssistantConfigPopup.URLValidationMessage"));
+			}
+			if (sValue && sApplicationProtocol === "https:" && !sValue.match(sApplicationProtocol)) {
+				throw new ValidateException(this._getText("TechInfo.SupportAssistantConfigPopup.ProtocolError"));
+			}
+			return true;
+		},
+
+		/**
+		 * This is a custom validating a sap-ui-debug string.
+		 * the sap-ui-debug value can be a
+		 *  - boolean (x,X is also interpreted as true)
+		 *  - list of modules separated with commas
+		 * Each module can contain wildcards with * or ** and regular expression characters
+		 */
+		_validateCustomDebugValue: function (sValue) {
+			var oRegexpMode = /^(true|false|x|X)$|^(([a-zA-Z*[\]{}()+?.\\^$|]+\/?)+(,([a-zA-Z*[\]{}()+?.\\^$|]+\/?)+)*)$/;
+
+			if (sValue && !sValue.match(oRegexpMode)) {
+				throw new ValidateException(this._getText("TechInfo.DebugModulesConfigPopup.ModeValidationMessage"));
+			}
+			return true;
 		},
 
 		/**
@@ -536,21 +484,21 @@ sap.ui.define([
 					oBootstrap.initSupportRules(aSettings);
 				},
 				error: function (jqXHR, exception) {
-					var msg = this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.SupportAssistantNotFound");
+					var msg = this._getText("TechInfo.SupportAssistantConfigPopup.SupportAssistantNotFound");
 					if (jqXHR.status === 0) {
-						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.ErrorTryingToGetRecourse");
+						msg += this._getText("TechInfo.SupportAssistantConfigPopup.ErrorTryingToGetRecourse");
 					} else if (jqXHR.status === 404) {
-						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.ErrorNotFound");
+						msg += this._getText("TechInfo.SupportAssistantConfigPopup.ErrorNotFound");
 					} else if (jqXHR.status === 500) {
-						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.InternalServerError");
+						msg += this._getText("TechInfo.SupportAssistantConfigPopup.InternalServerError");
 					} else if (exception === 'parsererror') {
-						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.ErrorOnJsonParse");
+						msg += this._getText("TechInfo.SupportAssistantConfigPopup.ErrorOnJsonParse");
 					} else if (exception === 'timeout') {
-						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.ErrorOnTimeout");
+						msg += this._getText("TechInfo.SupportAssistantConfigPopup.ErrorOnTimeout");
 					} else if (exception === 'abort') {
-						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.ErrorWhenAborted");
+						msg += this._getText("TechInfo.SupportAssistantConfigPopup.ErrorWhenAborted");
 					} else {
-						msg += this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.UncaughtError") + jqXHR.responseText;
+						msg += this._getText("TechInfo.SupportAssistantConfigPopup.UncaughtError") + jqXHR.responseText;
 					}
 					this._sErrorMessage = msg;
 					this.onConfigureAssistantBootstrap();
@@ -611,9 +559,8 @@ sap.ui.define([
 				jQuery.sap.log.error("failed to load global version info");
 			}
 
-			// convert build timestamp
 			try {
-				oViewModel.setProperty("/ProductTimestamp", this._convertBuildDate(oVersionInfo.buildTimestamp));
+				oViewModel.setProperty("/ProductTimestamp", this._generateLocalizedBuildDate(oVersionInfo.buildTimestamp));
 			} catch (oException) {
 				jQuery.sap.log.error("failed to parse build timestamp from global version info");
 			}
@@ -622,7 +569,7 @@ sap.ui.define([
 				oViewModel.setProperty("/OpenUI5ProductVersion", Global.version);
 				// convert build timestamp
 				try {
-					oViewModel.setProperty("/OpenUI5ProductTimestamp", this._convertBuildDate(Global.buildinfo.buildtime));
+					oViewModel.setProperty("/OpenUI5ProductTimestamp", this._generateLocalizedBuildDate(Global.buildinfo.buildtime));
 				} catch (oException) {
 					jQuery.sap.log.error("failed to parse OpenUI5 build timestamp from global version info");
 				}
@@ -657,7 +604,8 @@ sap.ui.define([
 					"Value": "https://sapui5.hana.ondemand.com/resources/sap/ui/support/"
 				}
 			];
-
+			var sDebugModulesTitle = this._getText("TechInfo.DebugModulesConfigPopup.SelectionCounter", oViewModel.DebugModuleSelectionCount);
+			oViewModel.setProperty("/DebugModulesTitle", sDebugModulesTitle);
 			oViewModel.setProperty("/SupportAssistantPopoverURLs", aSupportedUrls);
 			oViewModel.setProperty("/ApplicationURL", document.location.href);
 			oViewModel.setProperty("/UserAgent", navigator.userAgent);
@@ -679,6 +627,18 @@ sap.ui.define([
 		},
 
 		/**
+		 * Generates formatted and localized text from passed timestamp
+		 * @param {string} sBuildTimestamp Timestamp as string
+		 * @private
+		 */
+		_generateLocalizedBuildDate: function (sBuildTimestamp) {
+			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.yyyy HH:mm:ss"}),
+				sBuildDate = oDateFormat.format(this._convertBuildDate(sBuildTimestamp));
+
+			return this._getText("TechInfo.VersionBuildTime.Text", sBuildDate);
+		},
+
+		/**
 		 * Sets active location and toggle between "standard" and "custom" locations.
 		 * Saves last active location.
 		 * @param {string} sValue Possible values "standard" or "custom"
@@ -692,10 +652,8 @@ sap.ui.define([
 				oStandard = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standardBootstrapURL"),
 				bStandardLocationEnabled;
 
-				oCustom.setValueState("None");
-				oStandard.setValueState("None");
-				oStandard.closeValueStateMessage();
-				oCustom.closeValueStateMessage();
+				this._resetValueState(oCustom);
+				this._resetValueState(oStandard);
 
 			if (sValue === "standard") {
 				bStandardLocationEnabled = true;
@@ -759,10 +717,9 @@ sap.ui.define([
 
 			if (sSelectedLocation === "custom") {
 				oControl = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--customBootstrapURL");
-				var oBinding = oControl.getBinding("value"),
-					sValue = oControl.getValue();
+				var sValue = oControl.getValue();
 				try {
-					oBinding.getType().validateValue.call(this, sValue);
+					this._validateValue(sValue);
 				} catch (oException) {
 					this._showError(oControl, oException.message);
 					if (this._sErrorMessage) {
@@ -792,6 +749,15 @@ sap.ui.define([
 			oControl.openValueStateMessage();
 		},
 		/**
+		 * Resets the valueState to "None" and close value State message if its opened.
+		 * @param oControl Control that should display the message.
+		 * @private
+		 */
+		_resetValueState : function (oControl) {
+			oControl.setValueState("None");
+			oControl.closeValueStateMessage();
+		},
+		/**
 		 * Pings specific Url to get the status.
 		 * @param sUrl {string} URL that needs to be ping
 		 * @param oControl {Object} Control that will display the status.
@@ -807,7 +773,7 @@ sap.ui.define([
 					oControl.setValueState("Success");
 				},
 				error: function () {
-					var sMessage = this._oDialog.getModel("i18n").getProperty("TechInfo.SupportAssistantConfigPopup.NotAvailableAtTheMoment");
+					var sMessage = this._getText("TechInfo.SupportAssistantConfigPopup.NotAvailableAtTheMoment");
 					this._showError(oControl, sMessage);
 					jQuery.sap.log.error("Support Assistant could not be loaded from the URL you entered");
 				}
@@ -839,6 +805,41 @@ sap.ui.define([
 
 			// reload the page by setting the new parameters
 			window.location.search = sSearch;
+		},
+
+		/**
+		 * Copies the technical information shown in the dialog to the clipboard
+		 * @param {string} sString The string to be copied
+		 * @param {string} sConfirmTextPrefix The prefix for the i18n texts to be displayed on success/error
+		 * @private
+		 */
+		_copyToClipboard: function (sString, sConfirmTextPrefix) {
+			var $temp = jQuery("<textarea>");
+
+			try {
+				jQuery("body").append($temp);
+				$temp.val(sString).select();
+				document.execCommand("copy");
+				$temp.remove();
+				MessageToast.show(this._getText(sConfirmTextPrefix + ".Success"));
+			} catch (oException) {
+				MessageToast.show(this._getText(sConfirmTextPrefix + ".Error"));
+			}
+		},
+
+		/**
+		 * Updates the debug mode input field and the number of selected debug modules
+		 * @private
+		 */
+		_updateTreeInfos: function () {
+			var oModel = this._oDialog.getModel("view"),
+				oTreeData = oModel.getProperty("/DebugModules")[0],
+				sDisplayCount;
+
+			oModel.setProperty("/CustomDebugMode", this._treeHelper.toDebugInfo(oTreeData));
+			oModel.setProperty("/DebugModuleSelectionCount", this._treeHelper.getSelectionCount(oTreeData));
+			sDisplayCount = oModel.getProperty("/DebugModuleSelectionCount").toString();
+			oModel.setProperty("/DebugModulesTitle", this._getText("TechInfo.DebugModulesConfigPopup.SelectionCounter", sDisplayCount));
 		}
 	};
 });

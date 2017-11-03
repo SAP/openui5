@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.SegmentedButtonVSD.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.SegmentedButtonVSD.V",
+			rootView : {
+				"viewName": "sap.m.sample.SegmentedButtonVSD.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

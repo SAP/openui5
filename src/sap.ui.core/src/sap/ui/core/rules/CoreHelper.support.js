@@ -42,7 +42,7 @@ sap.ui.define(["jquery.sap.global"],
 				return Array.from(document.styleSheets).filter(function (styleSheet) {
 					var themeName = sap.ui.getCore().getConfiguration().getTheme(),
 						styleSheetEnding = "/themes/" + themeName + "/library.css",
-						hasHref = !styleSheet.href || !styleSheet.href.endsWith(styleSheetEnding),
+						hasHref = !styleSheet.href || !(styleSheet.href.indexOf(styleSheetEnding) !== -1),
 						hasRules = !!styleSheet.rules;
 
 					return hasHref && hasRules;

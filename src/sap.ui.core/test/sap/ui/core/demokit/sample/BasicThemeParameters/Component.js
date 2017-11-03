@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.core.sample.BasicThemeParameters.Component", {
 
 		metadata : {
-			rootView : "sap.ui.core.sample.BasicThemeParameters.BasicThemeParameters",
+			rootView : {
+				"viewName": "sap.ui.core.sample.BasicThemeParameters.BasicThemeParameters",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.ui.core"

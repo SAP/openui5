@@ -40,6 +40,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', 'sap/ui/core/Item'],
 			"sap.m.IconTab"
 		],
 		library : "sap.m",
+		designtime: "sap/m/designtime/IconTabSeparator.designtime",
 		properties : {
 
 			/**

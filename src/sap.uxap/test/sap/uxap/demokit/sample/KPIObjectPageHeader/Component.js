@@ -4,7 +4,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	var Component = UIComponent.extend("sap.uxap.sample.KPIObjectPageHeader.Component", {
 
 		metadata: {
-			rootView: "sap.uxap.sample.KPIObjectPageHeader.KPIObjectPageHeader",
+			rootView: {
+				"viewName": "sap.uxap.sample.KPIObjectPageHeader.KPIObjectPageHeader",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m"

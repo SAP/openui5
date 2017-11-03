@@ -56,7 +56,8 @@
 				"viewPath": "sap.ui.demo.nav.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
-				"transition": "slide"
+				"transition": "slide",
+				"async": true
 			},
 			"routes": [{
 				"pattern": "",

@@ -29,8 +29,8 @@ sap.ui.define([
 		},
 
 		constructor: function () {
-			this._createFakeLrep();
 			UIComponent.prototype.constructor.apply(this, arguments);
+			this._createFakeLrep();
 		},
 
 		init : function() {
@@ -88,7 +88,7 @@ sap.ui.define([
 			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
 				var mAppManifest = this.getManifestEntry("sap.app");
 				var mSettings = {};
-				mSettings.sInitialComponentJsonPath = jQuery.sap.getModulePath("sap.ui.fl.qunit.testResources").replace('resources', 'test-resources') + "/FakeVariantLrepResponse.json";
+//				mSettings.sInitialComponentJsonPath = jQuery.sap.getModulePath("sap.ui.fl.qunit.testResources").replace('resources', 'test-resources') + "/FakeVariantLrepResponse.json";
 				FakeLrepConnectorLocalStorage.enableFakeConnector(
 					mSettings,
 					mAppManifest.id + '.Component',

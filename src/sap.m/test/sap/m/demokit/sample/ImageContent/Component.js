@@ -2,7 +2,11 @@ sap.ui.define([ 'sap/ui/core/UIComponent' ], function(UIComponent) {
 	"use strict";
 	var Component = UIComponent.extend("sap.m.sample.ImageContent.Component", {
 		metadata : {
-			rootView : "sap.m.sample.ImageContent.Page",
+			rootView : {
+				"viewName": "sap.m.sample.ImageContent.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [ "sap.m" ]
 			},

@@ -47,6 +47,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/core/Renderer", "sap/ui/Device", "
 	var ObjectMarker = Control.extend("sap.m.ObjectMarker", /** @lends sap.m.ObjectMarker.prototype */ {
 		metadata: {
 			library: "sap.m",
+			designtime: "sap/m/designtime/ObjectMarker.designtime",
 			properties: {
 
 				/**

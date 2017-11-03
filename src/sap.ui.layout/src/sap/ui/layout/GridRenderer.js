@@ -124,6 +124,10 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 			var oLay = oControl._getLayoutDataForControl(aItems[i]);
 			var bCellSpanXLChanged = false;
 
+			if (!aItems[i].getVisible()) {
+				oRm.addClass("sapUiRespGridSpanInvisible");
+			}
+
 			if (oLay) {
 
 				//************************************************************************

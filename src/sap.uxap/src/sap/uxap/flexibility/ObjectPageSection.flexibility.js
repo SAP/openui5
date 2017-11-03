@@ -3,15 +3,12 @@
  */
 
 sap.ui.define([
-	'sap/ui/fl/changeHandler/BaseRename'
-], function (BaseRename) {
+	'sap/uxap/changeHandler/RenameObjectPageSection'
+], function (RenameObjectPageSection) {
 	"use strict";
 
 	return {
-		"rename": BaseRename.createRenameChangeHandler({
-			propertyName: "title",
-			translationTextType: "XGRP"
-		}),
+		"rename": RenameObjectPageSection,
 		"moveControls": "default",
 		"hideControl": {
 			"changeHandler": "default",

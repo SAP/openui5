@@ -3,6 +3,7 @@
 		controllerName="sap.ui.support.supportRules.ui.controllers.Issues"
 		height="100%"
 		xmlns:l="sap.ui.layout"
+		xmlns:tnt="sap.tnt"
 		xmlns:c="sap.ui.core"
 		xmlns:f="sap.ui.layout.form"
 		xmlns:t="sap.ui.table"
@@ -12,68 +13,71 @@
 					<Page class="sapUiSupportToolIssuesPage">
 						<customHeader>
 							<Toolbar id="filtersBar" height="{/filterBarHeight}">
-								<FlexBox alignContent="Center"
-										direction="Column"
-										justifyContent="Center"
-										width="100%">
-									<items>
-										<HBox alignItems="Start"
-											  justifyContent="Start"
-											  height="100%">
-											<l:VerticalLayout>
-												<Label text="Severity:" class="customMargin" />
-												<Select id='severityFilter'
-														change="updateIssuesVisibility"
-														selectedKey="{/severityFilter}"
-														items="{/severitiesFilter}"
-														class="customMargin" >
+								<l:VerticalLayout width="100%">
+									<tnt:ToolHeader id="toolHeader" class="sapUiSupportToolIssueHeader" height="4rem">
+										<l:VerticalLayout>
+											<l:layoutData>
+												<OverflowToolbarLayoutData priority="Low" />
+											</l:layoutData>
+											<Label text="Severity:" class="customMargin" />
+											<Select id='severityFilter'
+													change="updateIssuesVisibility"
+													selectedKey="{/severityFilter}"
+													items="{/severitiesFilter}"
+													class="customMargin" >
 												<c:ListItem key="{}" text="{}" />
-												</Select>
-											</l:VerticalLayout>
-											<ToolbarSpacer></ToolbarSpacer>
-											<l:VerticalLayout>
-												<Label text="Category:" class="customMargin" />
+											</Select>
+										</l:VerticalLayout>
+										<l:VerticalLayout>
+											<l:layoutData>
+												<OverflowToolbarLayoutData priority="Low" />
+											</l:layoutData>
+											<Label text="Category:" class="customMargin" />
 											<Select id='categoryFilter'
 													change="updateIssuesVisibility"
 													selectedKey="{/categoryFilter}"
 													items="{/categoriesFilter}"
 													class="customMargin">
 												<c:ListItem key="{}" text="{}" />
-												</Select>
-											</l:VerticalLayout>
-											<ToolbarSpacer></ToolbarSpacer>
-											<l:VerticalLayout>
-												<Label text="Audiences:" class="customMargin" />
-												<Select id='audiencesFilter'
-												change="updateIssuesVisibility"
-												selectedKey="{/audienceFilter}"
-												items="{/audiencesFilter}"
-												class="customMargin" >
-													<c:ListItem key="{}" text="{}" />
-												</Select>
-											</l:VerticalLayout>
-											<HBox alignItems="End"
-													justifyContent="End"
-													height="100%">
-												<Button icon="sap-icon://clear-filter"  press="clearFiltersAndElementSelection"></Button>
-											</HBox>
-											<HBox alignItems="End"
-												  justifyContent="End"
-												  height="100%">
-												<MenuButton text="Report" icon="sap-icon://order-status" visible="{= ${/analyzePressed}}">
-													<menu>
-														<Menu itemSelected="onReportPress">
-															<items>
-																<MenuItem text="View" press="onViewReport"/>
-																<MenuItem text="Download" press="onDownloadReport"/>
-															</items>
-														</Menu>
-													</menu>
-												</MenuButton>
-											</HBox>
-										</HBox>
-									</items>
-								</FlexBox>
+											</Select>
+										</l:VerticalLayout>
+										<l:VerticalLayout>
+											<l:layoutData>
+												<OverflowToolbarLayoutData priority="Low" />
+											</l:layoutData>
+											<Label text="Audiences:" class="customMargin" />
+											<Select id='audiencesFilter'
+													change="updateIssuesVisibility"
+													selectedKey="{/audienceFilter}"
+													items="{/audiencesFilter}"
+													class="customMargin" >
+												<c:ListItem key="{}" text="{}" />
+											</Select>
+										</l:VerticalLayout>
+										<l:VerticalLayout>
+											<l:layoutData>
+												<OverflowToolbarLayoutData priority="Low" />
+											</l:layoutData>
+											<Label text="" class="customMargin" />
+											<Button icon="sap-icon://clear-filter"  press="clearFiltersAndElementSelection"></Button>
+										</l:VerticalLayout>
+										<ToolbarSpacer />
+										<tnt:ToolHeaderUtilitySeparator />
+										<l:VerticalLayout>
+											<Label text="" class="customMargin" />
+											<MenuButton text="Report" icon="sap-icon://order-status" visible="{= ${/analyzePressed}}">
+												<menu>
+													<Menu itemSelected="onReportPress">
+														<items>
+															<MenuItem text="View" press="onViewReport"/>
+															<MenuItem text="Download" press="onDownloadReport"/>
+														</items>
+													</Menu>
+												</menu>
+											</MenuButton>
+										</l:VerticalLayout>
+									</tnt:ToolHeader>
+								</l:VerticalLayout>
 							</Toolbar>
 						</customHeader>
 						<subHeader>
@@ -93,6 +97,7 @@
 						</subHeader>
 						<t:TreeTable
 							id="issuesList"
+							class="sapUiSupportToolIssuesTreeTable"
 							selectionMode="Single"
 							selectionBehavior="RowOnly"
 							enableColumnReordering="false"

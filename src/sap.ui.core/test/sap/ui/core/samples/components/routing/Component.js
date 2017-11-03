@@ -13,7 +13,8 @@ sap.ui.define(['jquery.sap.global', './RouterExtension', 'sap/ui/commons/Button'
 		metadata : {
 			routing : {
 				config : {
-					routerClass : RouterExtension
+					routerClass : RouterExtension,
+					async: true
 				},
 				routes : [
 					{

@@ -16,7 +16,7 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 
 			// add buttons with javaScript (yet not possible with XML views)
-			var oHeaderSelect = this.getView().byId("select");
+			var oHeaderSelect = this.byId("select");
 			var fnOnPress = function (oEvt) {
 				MessageToast.show("Executed " + oEvt.getSource().getText());
 				oHeaderSelect.close();

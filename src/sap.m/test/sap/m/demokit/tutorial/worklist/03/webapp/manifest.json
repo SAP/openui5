@@ -83,7 +83,8 @@
 				"controlAggregation": "pages",
 				"bypassed": {
 					"target": "notFound"
-				}
+				},
+				"async": true
 			},
 			"routes": [
 				{

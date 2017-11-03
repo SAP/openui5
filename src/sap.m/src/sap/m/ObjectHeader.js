@@ -54,6 +54,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	var ObjectHeader = Control.extend("sap.m.ObjectHeader", /** @lends sap.m.ObjectHeader.prototype */ { metadata : {
 
 		library : "sap.m",
+		designtime: "sap/m/designtime/ObjectHeader.designtime",
 		properties : {
 
 			/**
@@ -126,11 +127,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Sets the favorite state for the <code>ObjectHeader</code>. The <code>showMarkers</code>
 			 * property must be set to <code>true</code> for this property to take effect.
 			 *
-			 * <b>Note:</b> As this property is deprecated, we recommend that you use the <code>markers</code>
-			 * aggregation - add <code>sap.m.ObjectMarker</code> with type <code>sap.m.ObjectMarkerType.Favorite</code>.
-			 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.
 			 * @since 1.16.0
-			 * @deprecated Since version 1.42.0.
+			 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
+			 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Favorite</code>.
+			 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.
 			 */
 			markFavorite : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
@@ -138,21 +138,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Sets the flagged state for the <code>ObjectHeader</code>. The <code>showMarkers</code> property
 			 * must be set to <code>true</code> for this property to take effect.
 			 *
-			 * <b>Note:</b> As this property is deprecated, we recommend that you use the <code>markers</code>
-			 * aggregation - add <code>sap.m.ObjectMarker</code> with type <code>sap.m.ObjectMarkerType.Flagged</code>.
-			 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.
 			 * @since 1.16.0
-			 * @deprecated Since version 1.42.0.
+			 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
+			 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Flagged</code>.
+			 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.
 			 */
 			markFlagged : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
 			/**
 			 * If set to <code>true</code>, the <code>ObjectHeader</code> can be marked with icons such as favorite and flag.
 			 *
-			 * <b>Note:</b> This property is valid only if you are using the already deprecated properties - <code>markFlagged</code> and <code>markFavorite</code>.
-			 * If you are using the <code>markers</code> aggregation, the visibility of the markers depends on what is set in the aggregation itself.
 			 * @since 1.16.0
-			 * @deprecated Since version 1.42.0.
+			 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregationv.
+			 * This property is valid only if you are using the already deprecated properties - <code>markFlagged</code> and <code>markFavorite</code>.
+			 * If you are using <code>markers</code>, the visibility of the markers depends on what is set in the aggregation itself.
 			 */
 			showMarkers : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
@@ -303,16 +302,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * First status shown on the right side of the attributes above the second status.
 			 * If it is not set the first attribute will expand to take the entire row.
-			 * @deprecated Since version 1.16.0.
-			 * Use the statuses aggregation instead.
+			 * @deprecated as of version 1.16.0, replaced by <code>statuses</code> aggregation
 			 */
 			firstStatus : {type : "sap.m.ObjectStatus", multiple : false, deprecated: true},
 
 			/**
 			 * Second status shown on the right side of the attributes below the first status.
 			 * If it is not set the second attribute will expand to take the entire row.
-			 * @deprecated Since version 1.16.0.
-			 * Use the statuses aggregation instead.
+			 * @deprecated as of version 1.16.0, replaced by <code>statuses</code> aggregation
 			 */
 			secondStatus : {type : "sap.m.ObjectStatus", multiple : false, deprecated: true},
 

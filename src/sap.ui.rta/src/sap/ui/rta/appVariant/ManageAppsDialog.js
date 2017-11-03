@@ -36,7 +36,6 @@ sap.ui.define([
 			Dialog.prototype.constructor.apply(this, arguments);
 			this._oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
-			// this._oDialog = new Dialog("manageAppsDialog");
 			var oRootControl = this.getRootControl();
 			var oAdaptedAppDescriptor = FlexUtils.getAppDescriptor(oRootControl);
 

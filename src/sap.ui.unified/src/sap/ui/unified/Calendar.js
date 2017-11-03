@@ -33,6 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	var Calendar = Control.extend("sap.ui.unified.Calendar", /** @lends sap.ui.unified.Calendar.prototype */ { metadata : {
 
 		library : "sap.ui.unified",
+		designtime: "sap/ui/unified/designtime/Calendar.designtime",
 		properties : {
 
 			/**
@@ -1925,10 +1926,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
-
-		if (this._oFocusedDate && this._oFocusedDate.isSame(oCalDate)) {
-			return;
-		}
 
 		var iYear = oCalDate.getYear();
 		CalendarUtils._checkYearInValidRange(iYear);

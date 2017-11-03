@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	var NewsContent = Control.extend("sap.m.NewsContent", /** @lends sap.m.NewsContent.prototype */ {
 		metadata : {
 			library : "sap.m",
+			designtime: "sap/m/designtime/NewsContent.designtime",
 			properties : {
 				/**
 				 * Updates the size of the chart. If not set then the default size is applied based on the device tile.

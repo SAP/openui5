@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 					 */
 					accentCells: {type: "sap.ui.layout.BlockLayoutCell", multiple: true, singularName: "accentCell"}
 				},
-				designTime: true
+				designtime: "sap/ui/layout/designtime/BlockLayoutRow.designtime"
 			}
 		});
 

@@ -5,7 +5,7 @@ sap.ui.define(['sap/m/Tokenizer','sap/ui/core/mvc/Controller', "sap/m/MessageToa
 	return Controller.extend("sap.m.sample.MultiInputTokenUpdate.Page", {
 
 		onInit: function() {
-			var oMultiInput = this.getView().byId('tokenUpdateMI');
+			var oMultiInput = this.byId('tokenUpdateMI');
 
 			oMultiInput.addValidator(this._multiInputValidator);
 		},

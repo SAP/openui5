@@ -7,7 +7,7 @@ describe("sap.m.Select", function() {
 		//gets the CSS selector for the element to be clicked in order to close the select dropdown
 		_getClosingElement = function() {
 			return bPhone ?
-				'.sapMSltPicker .sapMIBar.sapMFooter-CTX .sapMBtnInner' : // the 'cancel' footer button will close the select dropdown
+				'.sapMSltPicker .sapMIBar.sapMHeader-CTX .sapMBtnInner' : // the 'cancel' footer button will close the select dropdown
 				'#select_page'; // the background page can be clicked to close the select dropdown
 		},
 		//gets the CSS selector of the element that represents the opened select

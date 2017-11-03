@@ -40,6 +40,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './Com
 	var MultiComboBox = ComboBoxBase.extend("sap.m.MultiComboBox", /** @lends sap.m.MultiComboBox.prototype */ { metadata: {
 
 		library: "sap.m",
+		designtime: "sap/m/designtime/MultiComboBox.designtime",
 		properties: {
 
 			/**

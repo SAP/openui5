@@ -116,7 +116,8 @@
 
 	QUnit.test("when getAggregationText is called", function(assert) {
 		var oFakeLibBundle = {
-			getText : this.stub().returnsArg(0) //just return i18n keys
+			getText : this.stub().returnsArg(0), //just return i18n keys
+			hasText : this.stub().returns(false)
 		};
 		this.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
 
@@ -133,7 +134,8 @@
 
 	QUnit.test("when getText is called", function(assert) {
 		var oFakeLibBundle = {
-			getText : this.stub().returnsArg(0) //just return i18n keys
+			getText : this.stub().returnsArg(0), //just return i18n keys
+			hasText : this.stub().returns(false)
 		};
 		this.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
 

@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.ObjectHeaderMarkers.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.ObjectHeaderMarkers.Page",
+			rootView : {
+				"viewName": "sap.m.sample.ObjectHeaderMarkers.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

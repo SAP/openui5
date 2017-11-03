@@ -525,8 +525,8 @@ sap.ui.define([
 			},
 
 			changeStandardItemsPerView: function() {
-				var sViewKey = this.getView().byId('PC1').getViewKey(),
-					oLegend = this.getView().byId("PlanningCalendarLegend");
+				var sViewKey = this.byId('PC1').getViewKey(),
+					oLegend = this.byId("PlanningCalendarLegend");
 
 				if (sViewKey !== sap.m.PlanningCalendarBuiltInView.OneMonth) {
 					oLegend.setStandardItems([

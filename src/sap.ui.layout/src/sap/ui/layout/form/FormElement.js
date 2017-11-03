@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 			 */
 			fields : {type : "sap.ui.core.Control", multiple : true, singularName : "field"}
 		},
-		designTime : true
+		designtime: "sap/ui/layout/designtime/form/FormElement.designtime"
 	}});
 
 	FormElement.prototype.init = function(){

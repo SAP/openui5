@@ -2,7 +2,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	"use strict";
 	var Component = UIComponent.extend("sap.uxap.sample.AlternativeProfileObjectPageHeader.Component", {
 		metadata: {
-			rootView: "sap.uxap.sample.AlternativeProfileObjectPageHeader.AlternativeProfileObjectPageHeader",
+			rootView: {
+				"viewName": "sap.uxap.sample.AlternativeProfileObjectPageHeader.AlternativeProfileObjectPageHeader",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m"

@@ -1,0 +1,37 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "17d6cf1ec475a2690bea79096a17e3cc649130eb",
+        "type": "FIX",
+        "text": " Combine on the wrong element",
+        "references": []
+      },
+      {
+        "id": "8af2e0de0482b5dea85dcff6db03c5d982096b40",
+        "type": "FIX",
+        "text": " sap.ui.dt: added missing parentheses for ElementUtil.isVisible",
+        "references": []
+      },
+      {
+        "id": "d121eb64e1e4326218fb5fd89e0f4c5d2b3278cb",
+        "type": "FIX",
+        "text": " sap.ui.dt: fixed Plugin test failing on firefox",
+        "references": []
+      },
+      {
+        "id": "42fa4bd1e74d0e01302fc53e846feafe88da014c",
+        "type": "FIX",
+        "text": " sap.ui.rta - Settings dialog don’t open",
+        "references": []
+      },
+      {
+        "id": "9154b3be81771e137fbfcc3493da332056a5f7be",
+        "type": "FEATURE",
+        "text": " sap.ui.dt Instance specific design time metadata",
+        "references": []
+      }
+    ]
+  }
+}

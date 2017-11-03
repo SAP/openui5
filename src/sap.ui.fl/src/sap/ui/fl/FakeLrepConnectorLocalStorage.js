@@ -186,8 +186,8 @@ sap.ui.define([
 			if (!oVariantManagementSection) {
 				oVariantManagementSection = {
 					variants : [{
-						content: oVariant,
-						changes: [],
+						content : oVariant,
+						controlChanges : [],
 						variantChanges : {
 							setTitle : []
 						}
@@ -199,8 +199,8 @@ sap.ui.define([
 				//if not a duplicate variant
 				if (!fnCheckForDuplicates(oVariantManagementSection.variants, oVariant)) {
 					oVariantManagementSection.variants.push({
-						content: oVariant,
-						changes: [],
+						content : oVariant,
+						controlChanges : [],
 						variantChanges : {
 							setTitle : []
 						}
@@ -217,12 +217,12 @@ sap.ui.define([
 			var aVariants = mResult.changes.variantSection[sVariantManagementReference].variants;
 			aVariants.forEach(function (oVariant) {
 				var sVariantReference = oVariant.content.variantReference;
-				var aExistingChanges = oVariant.changes;
+				var aExistingChanges = oVariant.controlChanges;
 				if (sVariantReference) {
 					//Referenced changes should be applied first
 					aExistingChanges = this._getReferencedChanges(mResult, oVariant).concat(aExistingChanges);
 				}
-				oVariant.changes = aExistingChanges;
+				oVariant.controlChanges = aExistingChanges;
 			}.bind(this));
 		}.bind(this));
 		return mResult;
@@ -232,7 +232,7 @@ sap.ui.define([
 		var aReferencedChanges = [];
 		mResult.changes.variantSection[oCurrentVariant.content.variantManagementReference].variants.some( function (oVariant) {
 			if (oCurrentVariant.content.variantReference === oVariant.content.fileName) {
-				aReferencedChanges = oVariant.changes.filter( function (oReferencedChange) {
+				aReferencedChanges = oVariant.controlChanges.filter( function (oReferencedChange) {
 					return Utils.isLayerAboveCurrentLayer(oReferencedChange.layer) === -1;
 				});
 				if (oVariant.content.variantReference) {
@@ -249,7 +249,7 @@ sap.ui.define([
 		var fnAddChangeToVariant = function(mResult, sVariantManagementReference, oChange) {
 			mResult.changes.variantSection[sVariantManagementReference].variants.some(function(oVariant) {
 				if (oVariant.content.fileName === oChange.variantReference) {
-					oVariant.changes.push(oChange);
+					oVariant.controlChanges.push(oChange);
 					return true;
 				}
 			});

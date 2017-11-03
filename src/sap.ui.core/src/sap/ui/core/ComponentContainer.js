@@ -127,7 +127,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 				}
 			}
 		},
-		designTime : true
+		designtime: "sap/ui/core/designtime/ComponentContainer.designtime"
 	}});
 
 

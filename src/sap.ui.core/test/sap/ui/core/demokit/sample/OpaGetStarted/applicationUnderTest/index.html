@@ -31,7 +31,10 @@
 					// start app
 					new Shell({
 						app: new ComponentContainer({
-							name : 'appUnderTest'
+							name : 'appUnderTest',
+							settings : {
+								id : "appUnderTest"
+							}
 						})
 					}).placeAt("content");
 				});

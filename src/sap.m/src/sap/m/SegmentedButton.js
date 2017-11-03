@@ -39,6 +39,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 
 		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
+		designtime: "sap/m/designtime/SegmentedButton.designtime",
 		publicMethods : ["createButton"],
 		properties : {
 
@@ -64,7 +65,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 
 			/**
 			 * The buttons of the SegmentedButton control. The items set in this aggregation are used as an interface for the buttons displayed by the control. Only the properties ID, icon, text, enabled and textDirections of the Button control are evaluated. Setting other properties of the button will have no effect. Alternatively, you can use the createButton method to add buttons.
-			 * @deprecated Since 1.28.0 Instead use the "items" aggregation.
+			 * @deprecated as of 1.28.0, replaced by <code>items</code> aggregation
 			 */
 			buttons : {type : "sap.m.Button", multiple : true, singularName : "button"},
 
@@ -85,7 +86,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 			/**
 			 * A reference to the currently selected button control. By default or if the association is set to false (null, undefined, "", false), the first button will be selected.
 			 * If the association is set to an invalid value (for example, an ID of a button that does not exist) the selection on the SegmentedButton will be removed.
-			 * @deprecated As of version 1.52, use the <code>selectedItem</code> association instead.
+			 * @deprecated as of version 1.52, replaced by <code>selectedItem</code> association
 			 */
 			selectedButton : {deprecated: true, type : "sap.m.Button", multiple : false},
 
@@ -109,7 +110,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 
 			/**
 			 * Fires when the user selects a button, which returns the ID and button object.
-			 * @deprecated As of version 1.52, use the <code>selectionChange</code> event instead.
+			 * @deprecated as of version 1.52, replaced by <code>selectionChange</code> event
 			 */
 			select : {
 				deprecated: true,

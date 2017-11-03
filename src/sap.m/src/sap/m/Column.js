@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			 */
 			footer : {type : "sap.ui.core.Control", multiple : false}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Column.designtime"
 	}});
 
 

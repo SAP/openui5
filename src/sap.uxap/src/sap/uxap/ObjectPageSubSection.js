@@ -103,7 +103,7 @@ sap.ui.define([
 				 */
 				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"}
 			},
-			designTime: true
+			designtime: "sap/uxap/designtime/ObjectPageSubSection.designtime"
 		}
 	});
 
@@ -688,14 +688,14 @@ sap.ui.define([
 	};
 
 	/**
-	* Adds a <code>BlockBase</code> instance to the <code>blocks</code> aggregation.
+	* Adds an <code>sap.uxap.BlockBase</code> instance to the <code>blocks</code> aggregation.
 	*
 	* <b>Note:</b> The <code>insertBlock</code> method is not supported by design.
 	* If used, it works as an <code>addBlock</code>,
 	* adding a single block to the end of the <code>blocks</code> aggregation.
-	* @param {sap.uxap.BlockBase} oObject
-	* @param {int} iIndex
-	* @returns {sap.uxap.ObjectPageSubSection} this
+	* @param {sap.uxap.BlockBase} oObject The <code>sap.uxap.BlockBase</code> instance
+	* @param {int} iIndex The insertion index
+	* @returns {sap.uxap.ObjectPageSubSection} The <code>sap.uxap.ObjectPageSubSection</code> instance
 	* @public
 	*/
 	ObjectPageSubSection.prototype.insertBlock = function (oObject, iIndex) {
@@ -704,14 +704,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds a <code>BlockBase</code> instance to the <code>moreBlocks</code> aggregation.
+	 * Adds an <code>sap.uxap.BlockBase</code> instance to the <code>moreBlocks</code> aggregation.
 	 *
 	 * <b>Note:</b> The <code>insertMoreBlock</code> method is not supported by design.
 	 * If used, it works as an <code>addMoreBlock</code>,
 	 * adding a single block to the end of the <code>moreBlocks</code> aggregation.
-	 * @param {sap.uxap.BlockBase} oObject
-	 * @param {int} iIndex
-	 * @returns {sap.uxap.ObjectPageSubSection} this
+	 * @param {sap.uxap.BlockBase} oObject The <code>sap.uxap.BlockBase</code> instance
+	 * @param {int} iIndex The insertion index
+	 * @returns {sap.uxap.ObjectPageSubSection} The <code>sap.uxap.ObjectPageSubSection</code> instance
 	 * @public
 	 */
 	ObjectPageSubSection.prototype.insertMoreBlock = function (oObject, iIndex) {

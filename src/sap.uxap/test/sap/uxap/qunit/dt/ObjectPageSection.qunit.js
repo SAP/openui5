@@ -90,9 +90,12 @@
 					'<uxap:sections>' +
 						'<uxap:ObjectPageSection id="section" title="Title 1">' +
 							'<uxap:subSections>' +
-								'<uxap:ObjectPageSubSection id="subSection">' +
+								'<uxap:ObjectPageSubSection id="subSection1">' +
 									'<m:Button text="Subsection UI adaptation" />' +
 								'</uxap:ObjectPageSubSection>' +
+									'<uxap:ObjectPageSubSection id="subSection2">' +
+										'<m:Button text="Subsection UI adaptation" />' +
+									'</uxap:ObjectPageSubSection>' +
 							'</uxap:subSections>' +
 						'</uxap:ObjectPageSection>' +
 					'</uxap:sections>' +
@@ -112,6 +115,126 @@
 			afterAction: fnConfirmSectionRenamedWithNewValue,
 			afterUndo: fnConfirmSectionIsRenamedWithOldValue,
 			afterRedo: fnConfirmSectionRenamedWithNewValue
+		});
+
+			// Rename action of section with one subsection with NO title
+			rtaControlEnablingCheck("Checking the rename action for a Section, with one SubSection, without title ", {
+				xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+				'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+					'<uxap:ObjectPageLayout>' +
+						'<uxap:sections>' +
+							'<uxap:ObjectPageSection id="section" title="Title 1">' +
+								'<uxap:subSections>' +
+									'<uxap:ObjectPageSubSection id="subSection1">' +
+										'<m:Button text="Subsection UI adaptation" />' +
+									'</uxap:ObjectPageSubSection>' +
+								'</uxap:subSections>' +
+							'</uxap:ObjectPageSection>' +
+						'</uxap:sections>' +
+					'</uxap:ObjectPageLayout>' +
+				'</mvc:View>'
+				,
+				action: {
+					name: "rename",
+					controlId: "section",
+					parameter: function (oView) {
+						return {
+							newValue: 'Title 2',
+							renamedElement: oView.byId("section")
+						};
+					}
+				},
+				afterAction: fnConfirmSectionRenamedWithNewValue,
+				afterUndo: fnConfirmSectionIsRenamedWithOldValue,
+				afterRedo: fnConfirmSectionRenamedWithNewValue
+			});
+
+		// Rename section with one subsection with title
+		var fnConfirmSubSectionRenamedWithOneSectionNewValue = function (oSection, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("subSection").getTitle(),
+				"SubSectionTitle 2",
+				"then the SubSection control has been renamed to the new value (SubSectionTitle 2)");
+		};
+
+		var fnConfirmSubSectionRenamedWithOneSectionOldValue = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("subSection").getTitle(),
+				"SubSectionTitle 1",
+				"then the SubSection control has been renamed to the old value (SubSectionTitle 1)");
+		};
+
+		rtaControlEnablingCheck("Checking the rename action for a Section with one SubSection with title", {
+			xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+			'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+				'<uxap:ObjectPageLayout>' +
+					'<uxap:sections>' +
+						'<uxap:ObjectPageSection id="section" title="Title 1">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection" title="SubSectionTitle 1">' +
+									'<m:Button text="Subsection UI adaptation" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+					'</uxap:sections>' +
+				'</uxap:ObjectPageLayout>' +
+			'</mvc:View>'
+			,
+			action: {
+				name: "rename",
+				controlId: "section",
+				parameter: function (oView) {
+					return {
+						newValue: 'SubSectionTitle 2',
+						renamedElement: oView.byId("section")
+					};
+				}
+			},
+			afterAction: fnConfirmSubSectionRenamedWithOneSectionNewValue,
+			afterUndo: fnConfirmSubSectionRenamedWithOneSectionOldValue,
+			afterRedo: fnConfirmSubSectionRenamedWithOneSectionNewValue
+		});
+
+		// Rename action of section with one subsection with title and layout parameter subSectionLayout="TitleOnLeft"
+		var fnConfirmSubSectionRenamedLayoutParameterNewValue = function (oSection, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("section").getTitle(),
+				"Title 2",
+				"then the Section control has been renamed to the new value (Title 2)");
+		};
+
+		var fnConfirmSubSectionIsRenamedLayoutParameterOldValue = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("section").getTitle(),
+				"Title 1",
+				"then the Section control has been renamed to the old value (Title 1)");
+		};
+
+		rtaControlEnablingCheck("Checking the rename action for a Section with one SubSection with title, when subSectionLayout='TitleOnLeft' ", {
+			xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+			'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+				'<uxap:ObjectPageLayout subSectionLayout="TitleOnLeft">' +
+					'<uxap:sections>' +
+						'<uxap:ObjectPageSection id="section" title="Title 1">' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection" title="SubSectionTitle 1">' +
+									'<m:Button text="Subsection UI adaptation" />' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+					'</uxap:sections>' +
+				'</uxap:ObjectPageLayout>' +
+			'</mvc:View>'
+			,
+			action: {
+				name: "rename",
+				controlId: "section",
+				parameter: function (oView) {
+					return {
+						newValue: 'Title 2',
+						renamedElement: oView.byId("section")
+					};
+				}
+			},
+			afterAction: fnConfirmSubSectionRenamedLayoutParameterNewValue,
+			afterUndo: fnConfirmSubSectionIsRenamedLayoutParameterOldValue,
+			afterRedo: fnConfirmSubSectionRenamedLayoutParameterNewValue
 		});
 	});
 })();

@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ObjectAttribute text="10 units" />
+</core:FragmentDefinition>

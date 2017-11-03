@@ -1,0 +1,67 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "8661562d2171aacf2446a0d20ae0744dfcd69c50",
+        "type": "FEATURE",
+        "text": " v2.ODataModel: Add invalideEntityType method",
+        "references": []
+      },
+      {
+        "id": "9d8d32c161351ab3d888732e123eb0d8fde401da",
+        "type": "FEATURE",
+        "text": " v2.ODataModel: Allow invalidation of model cache entries",
+        "references": []
+      },
+      {
+        "id": "4b9419b8e15b6aa492db9b021e82bafc96fce2aa",
+        "type": "FIX",
+        "text": " FilterProcessor: Normalization issues on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "ddaa97f82044a7bbe083fcd9f8d15a62318e4cdc",
+        "type": "FIX",
+        "text": " ManagedObject: Remove null context propagation",
+        "references": []
+      },
+      {
+        "id": "626dba9c0ce7e0e54655db74ce69f03725ea830d",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: JSDoc for select binding parameter adjusted",
+        "references": []
+      },
+      {
+        "id": "fc74f4c932ee67ac2c6e2dc97d50a4e7b0ffa2e2",
+        "type": "FEATURE",
+        "text": " Synchronous context creation",
+        "references": []
+      },
+      {
+        "id": "9154b3be81771e137fbfcc3493da332056a5f7be",
+        "type": "FEATURE",
+        "text": " sap.ui.dt Instance specific design time metadata",
+        "references": []
+      },
+      {
+        "id": "5a86b6153c4868c490dcbcc01678b956380c0632",
+        "type": "FIX",
+        "text": " Opa: throw error when iFrame is launched but one already exists",
+        "references": []
+      },
+      {
+        "id": "51bb9c7bad1b1bff509e89d6fbe44dc4453501df",
+        "type": "FIX",
+        "text": " base.DataType: make it public, add documentation, mark enum types",
+        "references": []
+      },
+      {
+        "id": "abde575161bed679cc8f3cfa514dc191847e9ecb",
+        "type": "FIX",
+        "text": " jQuery.sap.events: Fixed QUnit test",
+        "references": []
+      }
+    ]
+  }
+}

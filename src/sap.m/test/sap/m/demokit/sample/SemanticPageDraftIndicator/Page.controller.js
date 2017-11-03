@@ -28,7 +28,7 @@ sap.ui.define([
 		);
 	},
 	handleLiveChange: function(oEvent) {
-		var oDraftIndi = this.getView().byId("draftIndi");
+		var oDraftIndi = this.byId("draftIndi");
 		oDraftIndi.showDraftSaving();
 		oDraftIndi.showDraftSaved();
 		oDraftIndi.clearDraftState();

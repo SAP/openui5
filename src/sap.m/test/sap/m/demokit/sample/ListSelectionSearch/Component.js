@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.ListSelectionSearch.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.ListSelectionSearch.List",
+			rootView : {
+				"viewName": "sap.m.sample.ListSelectionSearch.List",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

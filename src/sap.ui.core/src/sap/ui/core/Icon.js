@@ -35,6 +35,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 
 		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.ui.core",
+		designtime: "sap/ui/core/designtime/Icon.designtime",
 		properties : {
 
 			/**

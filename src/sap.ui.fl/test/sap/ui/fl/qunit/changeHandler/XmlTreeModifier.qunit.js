@@ -232,6 +232,20 @@ function(
 		assert.strictEqual(XmlTreeModifier.getVisible(oInvisibleLabel), false, "invisible in xml");
 	});
 
+	QUnit.test("setVisible", function (assert) {
+		var oVBox = this.oXmlView.childNodes[0];
+		XmlTreeModifier.setVisible(oVBox, false);
+		assert.strictEqual(oVBox.getAttribute("visible"), "false", "visible attribute can be added");
+
+		var oVisibleLabel = oVBox.childNodes[1];
+		XmlTreeModifier.setVisible(oVisibleLabel, false);
+		assert.strictEqual(oVisibleLabel.getAttribute("visible"), "false", "visible attribute can be changed");
+
+		var oInvisibleLabel = oVBox.childNodes[2];
+		XmlTreeModifier.setVisible(oInvisibleLabel, true);
+		assert.strictEqual(oInvisibleLabel.getAttribute("visible"), null, "visible=true means not having it in xml as some controls behave differently if visible property is provided");
+	});
+
 	QUnit.test("getProperty returns default value if not in xml", function (assert) {
 		var oVBox = this.oXmlView.childNodes[0];
 		var oVisibleLabel = oVBox.childNodes[1];

@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *
 		 * @constructor
 		 * @public
-		 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Toolbar</code> control.
+		 * @deprecated as of version 1.38, replaced by {@link sap.m.Toolbar}
 		 * @alias sap.ui.commons.Toolbar
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */

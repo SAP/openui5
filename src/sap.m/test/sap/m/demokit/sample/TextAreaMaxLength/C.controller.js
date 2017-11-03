@@ -26,23 +26,23 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 					oEvent.getParameter("exceeded") ? oTA.setValueState("Error") : oTA.setValueState("Success");
 				},
 				buttonSetShortValuePress: function (){
-					//this.getView().byId("textAreaWithBinding").setValue("Small Text");
-					this.getView().byId("textAreaWithBinding2").setValue("Small Text");
-					this.getView().byId("textAreaWithoutBinding").setValue("Small Text");
+					//this.byId("textAreaWithBinding").setValue("Small Text");
+					this.byId("textAreaWithBinding2").setValue("Small Text");
+					this.byId("textAreaWithoutBinding").setValue("Small Text");
 
 				},
 				buttonSetLongValuePress: function (){
 					var sText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-					//this.getView().byId("textAreaWithoutBinding").setValue(sText);
-					this.getView().byId("textAreaWithBinding").setValue(sText);
-					this.getView().byId("textAreaWithBinding2").setValue(sText);
+					//this.byId("textAreaWithoutBinding").setValue(sText);
+					this.byId("textAreaWithBinding").setValue(sText);
+					this.byId("textAreaWithBinding2").setValue(sText);
 				},
 				buttonToggleShowExceededTextPress: function (){
-					//var oTA = this.getView().byId("textAreaWithBinding")
+					//var oTA = this.byId("textAreaWithBinding")
 					//oTA.setShowExceededText(!oTA.getShowExceededText());
-					var oTA = this.getView().byId("textAreaWithBinding2");
+					var oTA = this.byId("textAreaWithBinding2");
 					oTA.setShowExceededText(!oTA.getShowExceededText());
-					var oTA = this.getView().byId("textAreaWithoutBinding");
+					var oTA = this.byId("textAreaWithoutBinding");
 					oTA.setShowExceededText(!oTA.getShowExceededText());
 				}
 			});

@@ -133,12 +133,17 @@ sap.ui.define([
 		return this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
-	VariantModel.prototype._duplicateVariant = function(sNewVariantReference, sSourceVariantReference) {
-		var oSourceVariant = this.getVariant(sSourceVariantReference);
+	VariantModel.prototype._duplicateVariant = function(mPropertyBag) {
+		var sNewVariantReference = mPropertyBag.newVariantReference,
+			sSourceVariantReference = mPropertyBag.sourceVariantReference,
+			oSourceVariant = this.getVariant(sSourceVariantReference);
 
 		var oDuplicateVariant = {
 			content: {},
-			changes: JSON.parse(JSON.stringify(oSourceVariant.changes))
+			controlChanges: JSON.parse(JSON.stringify(oSourceVariant.controlChanges)),
+			variantChanges: {
+				setTitle: []
+			}
 		};
 
 		var iCurrentLayerComp = Utils.isLayerAboveCurrentLayer(oSourceVariant.content.layer);
@@ -152,6 +157,8 @@ sap.ui.define([
 				} else if (iCurrentLayerComp === -1)  {
 					oDuplicateVariant.content[sKey] = sSourceVariantReference;
 				}
+			} else if (sKey === "layer") {
+				oDuplicateVariant.content[sKey] = mPropertyBag.layer;
 			} else if (sKey === "title") {
 				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey] + " Copy";
 			} else {
@@ -159,10 +166,10 @@ sap.ui.define([
 			}
 		});
 
-		var aVariantChanges = oDuplicateVariant.changes.slice();
+		var aVariantChanges = oDuplicateVariant.controlChanges.slice();
 
 		var oDuplicateChange = {};
-		oDuplicateVariant.changes = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
+		oDuplicateVariant.controlChanges = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
 			if (Utils.isLayerAboveCurrentLayer(oChange.layer) === 0) {
 				oDuplicateChange = jQuery.extend(true, {}, oChange);
 				oDuplicateChange.fileName = Utils.createDefaultFileName(oChange.changeType);
@@ -191,10 +198,10 @@ sap.ui.define([
 	 * @private
 	 */
 	VariantModel.prototype._copyVariant = function(mPropertyBag) {
-		var oDuplicateVariantData = this._duplicateVariant(mPropertyBag.newVariantReference, mPropertyBag.sourceVariantReference);
+		var oDuplicateVariantData = this._duplicateVariant(mPropertyBag);
 		var sVariantManagementReference = BaseTreeModifier.getSelector(mPropertyBag.variantManagementControl, mPropertyBag.appComponent).id;
 		var oVariantModelData = {
-			author: mPropertyBag.layer,
+//			author: mPropertyBag.layer,
 			key: oDuplicateVariantData.content.fileName,
 			layer: mPropertyBag.layer,
 			originalTitle: oDuplicateVariantData.content.title,
@@ -206,7 +213,7 @@ sap.ui.define([
 		//Flex Controller
 		var oVariant = this.oFlexController.createVariant(oDuplicateVariantData, this.oComponent);
 
-		[oVariant].concat(oVariant.getChanges()).forEach(function(oChange) {
+		[oVariant].concat(oVariant.getControlChanges()).forEach(function(oChange) {
 			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
 		}.bind(this));
 
@@ -215,17 +222,16 @@ sap.ui.define([
 
 		//Variant Model
 		this.oData[sVariantManagementReference].variants.splice(iIndex, 0, oVariantModelData);
-		this.updateCurrentVariant(sVariantManagementReference, oVariant.getId());
-
-		this.checkUpdate(); /*For VariantManagement Control update*/
-
-		return oVariant;
+		return this.updateCurrentVariant(sVariantManagementReference, oVariant.getId()).then( function () {
+			this.checkUpdate(); /*For VariantManagement Control update*/
+			return oVariant;
+		}.bind(this));
 	};
 
 	VariantModel.prototype._removeVariant = function(oVariant, sSourceVariantFileName, sVariantManagementReference) {
 		var aChangesToBeDeleted = this.oFlexController._oChangePersistence.getDirtyChanges().filter(function(oChange) {
 			return (oChange.getVariantReference && oChange.getVariantReference() === oVariant.getId()) ||
-					oChange.getKey() === oVariant.getKey();
+					oChange.getId() === oVariant.getId();
 		});
 		aChangesToBeDeleted.forEach( function(oChange) {
 			this.oFlexController._oChangePersistence.deleteChange(oChange);
@@ -233,9 +239,9 @@ sap.ui.define([
 		var iIndex =  this.oVariantController.removeVariantFromVariantManagement(oVariant, sVariantManagementReference);
 
 		this.oData[sVariantManagementReference].variants.splice(iIndex, 1);
-		this.updateCurrentVariant(sVariantManagementReference, sSourceVariantFileName);
-
-		this.checkUpdate(); /*For VariantManagement Control update*/
+		return this.updateCurrentVariant(sVariantManagementReference, sSourceVariantFileName).then( function () {
+			this.checkUpdate(); /*For VariantManagement Control update*/
+		}.bind(this));
 	};
 
 	VariantModel.prototype._setVariantProperties = function(sVariantManagementReference, mPropertyBag, bAddChange) {
@@ -264,10 +270,12 @@ sap.ui.define([
 			oVariant.modified = true;
 
 			oChange = this.oFlexController.createBaseChange(mNewChangeData, mPropertyBag.appComponent);
-			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
+			this.oVariantController._updateVariantChangeInMap(oChange.getDefinition(), sVariantManagementReference, true); /*VariantController map*/
+			this.oFlexController._oChangePersistence.addDirtyChange(oChange); /*FlexController*/
 
 		} else {
-			this.oFlexController._oChangePersistence.deleteChange(mPropertyBag.change);
+			this.oVariantController._updateVariantChangeInMap(mPropertyBag.change.getDefinition(), sVariantManagementReference, false); /*VariantController map*/
+			this.oFlexController._oChangePersistence.deleteChange(mPropertyBag.change); /*FlexController*/
 		}
 		this.setData(oData);
 
@@ -303,9 +311,9 @@ sap.ui.define([
 				defaultVariant: sVariantManagementReference,
 				variants: [
 					{
-						//author: "SAP",
+//						author: "SAP",
 						key: sVariantManagementReference,
-						//layer: "VENDOR",
+						layer: "VENDOR",
 						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
 						readOnly: true,
 						title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
@@ -326,10 +334,11 @@ sap.ui.define([
 								fileName: sVariantManagementReference,
 								title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
 								fileType: "ctrl_variant",
+								layer: "VENDOR",
 								variantManagementReference: sVariantManagementReference,
 								variantReference: ""
 							},
-							changes: []
+							controlChanges: []
 						}
 					]
 				};

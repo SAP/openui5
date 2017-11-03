@@ -72,7 +72,7 @@ function(
 
 			/**
 			 * Accessible label / description of the menu for assistive technologies like screenreaders.
-			 * @deprecated Since version 1.27.0 Please use association <code>ariaLabelledBy</code> instead.
+			 * @deprecated as of version 1.27.0, replaced by <code>ariaLabelledBy</code> association
 			 */
 			ariaDescription : {type : "string", group : "Accessibility", defaultValue : null},
 

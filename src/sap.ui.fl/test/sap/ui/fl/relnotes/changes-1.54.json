@@ -1,0 +1,13 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "73f1bee881fadbe9694272c004b8496f276f7189",
+        "type": "FIX",
+        "text": " sap.ui.fl: checkTargetAndApplyChange small fix on applied changes",
+        "references": []
+      }
+    ]
+  }
+}

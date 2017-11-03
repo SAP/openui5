@@ -38,7 +38,7 @@ sap.ui.define([
 	function registerOnError () {
 		var fnFrameOnError = oFrameWindow.onerror;
 
-		oFrameWindow.onerror = function (sErrorMsg, sUrl, iLine) {
+		oFrameWindow.onerror = function (sErrorMsg, sUrl, iLine, iColumn, oError) {
 			var vReturnValue = false;
 
 			if (fnFrameOnError) {
@@ -50,7 +50,10 @@ sap.ui.define([
 			// function is wrapped in QUnits onerror function the exception needs to be thrown in a setTimeout
 			// to make sure the QUnit onerror can run to the end
 			setTimeout(function () {
-				throw new Error("OpaFrame error message: " + sErrorMsg + ",\nurl: " + sUrl + ",\nline: " + iLine);
+				// column number and error object may be missing in older browsers. Currently, Edge doesn't provide the oError object
+				var sColumn = iColumn ? "\ncolumn: " + iColumn : "";
+				var sIFrameError = oError && "\niFrame error: " + (oError.stack ? oError.message + "\n" + oError.stack : oError) || "";
+				throw new Error("Error in launched application iFrame: " + sErrorMsg + "\nurl: " + sUrl + "\nline: " + iLine + sColumn + sIFrameError);
 			}, 0);
 			return vReturnValue;
 		};
@@ -265,7 +268,7 @@ sap.ui.define([
 
 	function destroyFrame () {
 		if (!oFrameWindow) {
-			throw new Error("sap.ui.test.launchers.iFrameLauncher: Teardown has been called but there was no start");
+			throw new Error("sap.ui.test.launchers.iFrameLauncher: Teardown was called before launch. No iFrame was loaded.");
 		}
 		// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
 		oFrameWindow.onerror = $.noop;
@@ -297,8 +300,7 @@ sap.ui.define([
 	return {
 		launch: function (options) {
 			if (oFrameWindow) {
-				$.sap.log.error("sap.ui.test.launchers.iFrameLauncher: Only one IFrame may be loaded at a time.");
-				return;
+				throw new Error("sap.ui.test.launchers.iFrameLauncher: Launch was called twice without teardown. Only one iFrame may be loaded at a time.");
 			}
 
 			//invalidate the cache

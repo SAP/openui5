@@ -414,7 +414,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 			return (
 				this.isSortableByMenu() || // Sorter
 				this.isFilterableByMenu() || // Filter
-				this.isGroupableByMenu() || // Grouping
+				this.isGroupable() || // Grouping
 				(oTable && oTable.getEnableColumnFreeze()) || // Column Freeze
 				(oTable && oTable.getShowColumnVisibilityMenu()) // Column Visibility Menu
 			);
@@ -463,7 +463,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	 *
 	 * @returns {boolean}
 	 */
-	Column.prototype.isGroupableByMenu = function() {
+	Column.prototype.isGroupable = function() {
 		var oTable = this.getParent();
 		return !!(oTable && oTable.getEnableGrouping && oTable.getEnableGrouping() && this.getSortProperty());
 	};

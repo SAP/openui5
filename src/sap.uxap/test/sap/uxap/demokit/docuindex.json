@@ -34,6 +34,16 @@
 		]
 	  },
 	  {
+		"id": "sap.uxap.ObjectPageDynamicHeader",
+		"name": "Object Page Dynamic Header",
+		"category": "Display",
+		"since": "1.52",
+		"formFactors": "-",
+			"samples": [
+			  "sap.uxap.sample.ObjectPageWithDynamicHeader"
+			]
+	  },
+	  {
 		"id": "sap.uxap.ObjectPageLayout",
 		"name": "Object Page Layout",
 		"category": "Layout",
@@ -41,6 +51,7 @@
 		"since": "1.26",
 		"samples": [
 		  "sap.uxap.sample.ObjectPageOnJSON",
+		  "sap.uxap.sample.ObjectPageDynamicHeader",
 		  "sap.uxap.sample.ObjectPageTabNavigationMode",
 		  "sap.uxap.sample.ObjectPageSelectedSection",
 		  "sap.uxap.sample.ObjectPageTitleOnLeft",
@@ -101,6 +112,16 @@
 	  }
 	],
 	"samples": [
+	  {
+		"id": "sap.uxap.sample.ObjectPageWithDynamicHeader",
+		"name": "Object Page With Dynamic Header",
+		"description": "This example demonstrates ObjectPage with dynamic header achieved by using ObjectPageDynamicHeaderTitle for the headerContent aggregation."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageDynamicHeader",
+		"name": "Object Page with Dynamic Header",
+		"description": "This example demonstrates the classic ObjectPageLayout achieved by using ObjectPageDynamicHeaderTitle for the headerContent aggregation."
+	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageSubSection",
 		"name": "Subsection with Expand/Collapse",

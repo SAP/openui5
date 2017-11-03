@@ -69,6 +69,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', 'sap/ui/core/Resize
 	var TextArea = InputBase.extend("sap.m.TextArea", /** @lends sap.m.TextArea.prototype */ { metadata : {
 
 		library : "sap.m",
+		designtime: "sap/m/designtime/TextArea.designtime",
 		properties : {
 
 			/**

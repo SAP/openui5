@@ -85,21 +85,6 @@ function(
 	};
 
 	/**
-	 * Utility function for retrieving designtime metadata from the relevant container for a specified overlay object
-	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay object
-	 * @returns {Object|undefined} Metadata object or false if there is no aggregation
-	 */
-	Utils.getRelevantContainerDesigntimeMetadata = function(oOverlay) {
-		var oRelevantContainer = oOverlay.getRelevantContainer();
-		if (!oRelevantContainer || !oOverlay.getParent()) {
-			return undefined;
-		}
-		var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
-		return oRelevantContainerOverlay ? oRelevantContainerOverlay.getDesignTimeMetadata() : undefined;
-	};
-
-	/**
 	 * Utility function to check if the OData service is updated in the meantime
 	 *
 	 * @param {sap.ui.core.Control} oControl - Control to be checked
@@ -224,6 +209,7 @@ function(
 					oFragmentDialog = sap.ui.xmlfragment("sap.ui.rta.view.RemoveElementDialog", oFragmentController);
 					oFragmentDialog.setModel(oModel);
 				}
+				oFragmentDialog.addStyleClass(Utils.getRtaStyleClassName());
 				oFragmentDialog.open();
 			}
 		);

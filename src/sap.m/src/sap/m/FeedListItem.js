@@ -43,6 +43,7 @@ sap.ui.define(["./ListItemBase", "./Link", "./library", "./FormattedText", "sap/
 		metadata: {
 
 			library: "sap.m",
+			designtime: "sap/m/designtime/FeedListItem.designtime",
 			properties: {
 
 				/**

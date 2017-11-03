@@ -1,0 +1,25 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "788127d8f124f9426fb76a522a0f3e4768cb9cc1",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Keyboard handling fixed",
+        "references": []
+      },
+      {
+        "id": "7e5a7585c4c3a5f65f8043c003445b07fafe319a",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Selected item in HCB and HCW in colored correctly",
+        "references": []
+      },
+      {
+        "id": "395ce8dc5b928aa329d7570c78c70347df380601",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Size M has correct width now",
+        "references": []
+      }
+    ]
+  }
+}

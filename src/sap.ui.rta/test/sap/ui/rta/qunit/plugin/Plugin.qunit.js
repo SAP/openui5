@@ -12,6 +12,7 @@ sap.ui.require([
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/m/Button',
 	'sap/ui/layout/VerticalLayout',
+	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/OverlayUtil',
 	'sap/m/Label',
@@ -36,6 +37,7 @@ function(
 	ChangeRegistry,
 	Button,
 	VerticalLayout,
+	ElementOverlay,
 	OverlayRegistry,
 	OverlayUtil,
 	Label,
@@ -105,7 +107,21 @@ function(
 		assert.strictEqual(this.oPlugin.hasChangeHandler("moveControls", this.oLayout), true, "then the function returns true");
 	});
 
-	QUnit.test("when the addToPluginsList, removeFromPluginsList and _isEditableByPlugin methods are called", function(assert) {
+	QUnit.test("when an overlay gets deregistered and registered again and visible change event gets fired", function(assert) {
+		var oGetRelevantOverlays = sandbox.spy(this.oRemovePlugin, "_getRelevantOverlays");
+
+		this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
+		this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
+		this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
+
+		this.oButtonOverlay.fireElementModified({
+			type: "propertyChanged",
+			name: "visible"
+		});
+		assert.equal(oGetRelevantOverlays.callCount, 1, "then _getRelevantOverlays is only called once");
+	});
+
+	QUnit.test("when Overlays are registered/deregistered and _isEditableByPlugin method is called", function(assert) {
 
 		assert.notOk(this.oButtonOverlay.getEditable(), "then the Overlay is not editable");
 		assert.notOk(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
@@ -148,7 +164,7 @@ function(
 		assert.strictEqual(this.oPlugin.hasStableId(), false, "then it returns false");
 	});
 
-	QUnit.module("Given this the Plugin is initialized with 2 Plugins", {
+	QUnit.module("Given the Designtime is initialized with 2 Plugins", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 
@@ -178,6 +194,7 @@ function(
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
 				done();
 			}.bind(this));
 
@@ -189,14 +206,24 @@ function(
 		}
 	});
 
-	QUnit.test("when the control has a stable id and at least one plugin has been initialized", function(assert) {
-		assert.equal(this.oCheckControlIdSpy.callCount, 1, "then the utility method to check the control id has been already called for this Overlay");
+	QUnit.test("when the controls are checked for a stable id and at least one plugin has been initialized", function(assert) {
+		assert.equal(this.oCheckControlIdSpy.callCount, 2, "then the utility method to check the control id has been already called element overlays");
 		assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), true, "and the 'getElementHasStableId' property of the Overlay is set to true");
 		assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then if hasStableId is called again it also returns true");
-		assert.equal(this.oCheckControlIdSpy.callCount, 1, "but then the utility method to check the control id is not called a second time");
+		assert.equal(this.oCheckControlIdSpy.callCount, 2, "but then the utility method to check the control ids is not called a another time");
 	});
 
-	QUnit.test("when the event elementModified is thrown", function(assert) {
+	QUnit.test("when the overlay is not registered yet (has no DTMD) or is undefined and hasStableId is called", function(assert) {
+		sandbox.stub(this.oButtonOverlay, "getDesignTimeMetadata").returns(null);
+		var oSetStableIdSpy = sandbox.spy(ElementOverlay.prototype, "setElementHasStableId");
+		assert.notOk(this.oPlugin.hasStableId(this.oButtonOverlay), "then the button has no stable ID");
+		assert.equal(oSetStableIdSpy.callCount, 0, "and the result is not saved on the overlay");
+
+		assert.notOk(this.oPlugin.hasStableId(this.oButtonOverlay2), "then the button has no stable ID");
+		assert.equal(oSetStableIdSpy.callCount, 0, "and the result is not saved on the overlay");
+	});
+
+	QUnit.test("when the event elementModified is thrown with visibility change", function(assert) {
 		var oSetRelevantSpy = sandbox.spy(this.oButtonOverlay, "setRelevantOverlays");
 		var oGetRelevantSpy = sandbox.spy(this.oButtonOverlay, "getRelevantOverlays");
 		sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oButtonOverlay]);
@@ -205,7 +232,36 @@ function(
 			name: "visible"
 		});
 		assert.equal(oSetRelevantSpy.callCount, 1, "then findAllOverlaysInContainer is only called once");
-		assert.equal(oGetRelevantSpy.callCount, 4, "then getRelevantOverlays is called 4 times");
+		assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
+		assert.equal(this.oButtonOverlay.getRelevantOverlays().length, 1, "then only one overlay is relevant");
+	});
+
+	QUnit.test("when the event elementModified is thrown with aggregation change", function(assert) {
+		var oSetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "setRelevantOverlays");
+		var oGetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "getRelevantOverlays");
+		sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+		this.oLayoutOverlay.fireElementModified({
+			type: "removeAggregation",
+			name: "content"
+		});
+		assert.equal(oSetRelevantSpy.callCount, 1, "then findAllOverlaysInContainer is only called once");
+		assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
+		assert.equal(this.oLayoutOverlay.getRelevantOverlays().length, 2, "then two overlays are relevant");
+	});
+
+	QUnit.test("when _modifyPluginList is called multiple times", function(assert) {
+		assert.equal(this.oButtonOverlay.getEditableByPlugins(), "sap.ui.rta.plugin.Rename", "then initially the rename plugin is in the list");
+
+		this.oRemovePlugin._modifyPluginList(this.oButtonOverlay, true);
+		this.oRemovePlugin._modifyPluginList(this.oButtonOverlay, true);
+		this.oRenamePlugin._modifyPluginList(this.oButtonOverlay, true);
+		assert.deepEqual(this.oButtonOverlay.getEditableByPlugins(), ["sap.ui.rta.plugin.Rename", "sap.ui.rta.plugin.Remove"], "then both plugins are in the list once");
+
+		this.oRemovePlugin._modifyPluginList(this.oButtonOverlay, false);
+		this.oRemovePlugin._modifyPluginList(this.oButtonOverlay, false);
+		this.oRenamePlugin._modifyPluginList(this.oButtonOverlay, false);
+		this.oRenamePlugin._modifyPluginList(this.oButtonOverlay, false);
+		assert.deepEqual(this.oButtonOverlay.getEditableByPlugins(), [], "then both plugins got deleted");
 	});
 
 

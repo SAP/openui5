@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global',
 	 * <h3>Usage</h3>
 	 *
 	 * You can set the width of the element containing the box and the label manually with the use
-	 * of the <code>width<code> property. If the text exceeds the available width, it is truncated.
+	 * of the <code>width</code> property. If the text exceeds the available width, it is truncated.
 	 *
 	 * <b>Note:</b> When <code>useEntireWidth</code> property is set to <code>true</code>, the value of the
 	 * <code>width</code> property is applied to the control as a whole (box and label). If
@@ -54,9 +54,9 @@ sap.ui.define(['jquery.sap.global',
 	 * The touchable area for toggling the <code>CheckBox</code> ends where the text ends.
 	 *
 	 * If the width allows more space than the text requires, white space is added.
-	 * The text can be positioned manually in this space using the <code>textAlign<code> property.
+	 * The text can be positioned manually in this space using the <code>textAlign</code> property.
 	 *
-	 * <b>Note:</b> Keep in mind that setting the <code>textAlign<code> property to <code>Right</code>
+	 * <b>Note:</b> Keep in mind that setting the <code>textAlign</code> property to <code>Right</code>
 	 * can result in a large amount of white space between the box and the text.
 	 *
 	 * You can disable the <code>CheckBox</code> by setting the <code>enabled</code> property to <code>false</code>,
@@ -176,7 +176,7 @@ sap.ui.define(['jquery.sap.global',
 				}
 			}
 		},
-		designTime : true
+		designtime: "sap/m/designtime/CheckBox.designtime"
 	}});
 
 	EnabledPropagator.call(CheckBox.prototype);

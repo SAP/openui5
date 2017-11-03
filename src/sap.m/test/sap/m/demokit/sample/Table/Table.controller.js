@@ -15,8 +15,8 @@ sap.ui.define([
 		},
 
 		onPopinLayoutChanged: function() {
-			var oTable = this.getView().byId("idProductsTable");
-			var oComboBox = this.getView().byId("idPopinLayout");
+			var oTable = this.byId("idProductsTable");
+			var oComboBox = this.byId("idPopinLayout");
 			var sPopinLayout = oComboBox.getSelectedKey();
 			switch (sPopinLayout) {
 				case "Block":

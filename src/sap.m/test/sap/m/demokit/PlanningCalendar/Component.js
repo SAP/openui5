@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
         var Component = UIComponent.extend("sap.m.sample.PlanningCalendar.Component", {
 
             metadata: {
-                rootView: "sap.m.sample.PlanningCalendar.Page",
+                rootView: {
+                    "viewName": "sap.m.sample.PlanningCalendar.Page",
+                    "type": "XML",
+                    "async": true
+                },
                 dependencies: {
                     libs: [
                         "sap.m",

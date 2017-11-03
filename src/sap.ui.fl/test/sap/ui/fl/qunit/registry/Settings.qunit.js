@@ -3,9 +3,8 @@
 sinon.config.useFakeTimers = false;
 jQuery.sap.require("sap.ui.fl.registry.Settings");
 jQuery.sap.require("sap.ui.fl.Cache");
-jQuery.sap.require("sap.ui.fl.Utils");
 
-(function(Settings, Cache, Utils) {
+(function(Settings, Cache) {
 	"use strict";
 
 	var bPresetFlexChangeMode, bFlexibilityAdaptationButtonAllowed;
@@ -64,7 +63,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		assert.equal(bIsAtoEnabled, false);
 	});
 
-	QUnit.test("get instance from flex settings request", function(assert) {
+	QUnit.test("get instance from flex settings request when flex data promise is not available", function(assert) {
 		var done = assert.async();
 
 		var oSetting = {
@@ -76,11 +75,13 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				return Promise.resolve(oSetting);
 			}
 		});
+		var oStubGetFlexDataPromise = this.stub(Cache, "getFlexDataPromise").returns(undefined);
 		Settings.getInstance().then(function(oSettings) {
+			assert.equal(oStubGetFlexDataPromise.callCount, 1);
 			assert.equal(oStubCreateConnector.callCount, 1);
 			assert.equal(oSettings.isKeyUser(), true);
 			assert.equal(oSettings.isModelS(), true);
-			Settings.getInstance('anotherComponent').then(function(oSettings2) {
+			Settings.getInstance().then(function(oSettings2) {
 				assert.equal(oStubCreateConnector.callCount, 1);
 				assert.equal(oSettings, oSettings2);
 				done();
@@ -88,32 +89,34 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		});
 	});
 
-	QUnit.test("get instance from cache without app version", function(assert) {
+	QUnit.test("get instance from flex settings request when flex data promise is rejected", function(assert) {
 		var done = assert.async();
 
-		var oFileContent = {
-			changes: {
-				settings: {
-					isKeyUser: true,
-					isAtoAvailable: true
-				}
+		var oSetting = {
+			isKeyUser: true,
+			isAtoAvailable: true
+		};
+		var oStubCreateConnector = sinon.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
+			loadSettings : function(){
+				return Promise.resolve(oSetting);
 			}
-		};
-		Cache._entries['testcomponent'] = {};
-		Cache._entries['testcomponent'][Utils.DEFAULT_APP_VERSION] = {
-			promise: Promise.resolve(oFileContent)
-		};
-		Settings.getInstance('testcomponent').then(function(oSettings) {
+		});
+		var oStubGetFlexDataPromise = this.stub(Cache, "getFlexDataPromise").returns(Promise.reject());
+		Settings.getInstance().then(function(oSettings) {
+			assert.equal(oStubGetFlexDataPromise.callCount, 1);
+			assert.equal(oStubCreateConnector.callCount, 1);
 			assert.equal(oSettings.isKeyUser(), true);
 			assert.equal(oSettings.isModelS(), true);
-			Settings.getInstance('anotherComponent').then(function(oSettings2) {
+			Settings.getInstance().then(function(oSettings2) {
+				assert.equal(oStubCreateConnector.callCount, 1);
 				assert.equal(oSettings, oSettings2);
+				oStubCreateConnector.restore();
 				done();
 			});
 		});
 	});
 
-	QUnit.test("get instance from cache with app version", function(assert) {
+	QUnit.test("get instance from cache when flex data promise is resolved", function(assert) {
 		var done = assert.async();
 
 		var oFileContent = {
@@ -124,14 +127,12 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				}
 			}
 		};
-		Cache._entries['testcomponent'] = {};
-		Cache._entries['testcomponent']["1.2.3"] = {
-			promise: Promise.resolve(oFileContent)
-		};
-		Settings.getInstance('testcomponent', '1.2.3').then(function(oSettings) {
+		var oStubGetFlexDataPromise = this.stub(Cache, "getFlexDataPromise").returns(Promise.resolve(oFileContent));
+		Settings.getInstance().then(function(oSettings) {
+			assert.equal(oStubGetFlexDataPromise.callCount, 1);
 			assert.equal(oSettings.isKeyUser(), true);
 			assert.equal(oSettings.isModelS(), true);
-			Settings.getInstance('anotherComponent').then(function(oSettings2) {
+			Settings.getInstance().then(function(oSettings2) {
 				assert.equal(oSettings, oSettings2);
 				done();
 			});
@@ -280,4 +281,4 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		sap.ui.fl.registry.Settings.setFlexibilityAdaptationButtonAllowed(false);
 	});
 
-}(sap.ui.fl.registry.Settings, sap.ui.fl.Cache, sap.ui.fl.Utils));
+}(sap.ui.fl.registry.Settings, sap.ui.fl.Cache));

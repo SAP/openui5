@@ -91,7 +91,7 @@ function(
 			"variantReference":"variant00",
 			"reference": "Dummy.Component"
 		},
-		"changes" : [
+		"controlChanges" : [
 			{
 				"fileName":"change44",
 				"layer":"CUSTOMER"
@@ -105,6 +105,7 @@ function(
 
 	sinon.stub(oModel, "getVariant").returns(oVariant);
 	sinon.stub(oModel.oVariantController, "_setVariantData").returns(1);
+	sinon.stub(oModel.oVariantController, "_updateVariantChangeInMap");
 
 	QUnit.module("Given a variant management control ...", {
 		beforeEach : function(assert) {
@@ -134,7 +135,7 @@ function(
 
 		assert.ok(oControlVariantSetTitleCommand, "control variant duplicate command exists for element");
 		oControlVariantSetTitleCommand.execute().then(function() {
-			var oTitleChange = oControlVariantSetTitleCommand.getTitleChange();
+			var oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
 			assert.equal(oTitleChange.getText("title"), sNewText, "then title is correctly set in change");
 			var oData = oControlVariantSetTitleCommand.oModel.getData();
 			assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
@@ -142,7 +143,7 @@ function(
 			assert.equal(oControlVariantSetTitleCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 1, "then 1 dirty change is present");
 
 			oControlVariantSetTitleCommand.undo().then( function() {
-				oTitleChange = oControlVariantSetTitleCommand.getTitleChange();
+				oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
 				oData = oControlVariantSetTitleCommand.oModel.getData();
 				assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
 				assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");

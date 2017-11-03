@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.StandardMarginsCollapse.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.StandardMarginsCollapse.Page",
+			rootView : {
+				"viewName": "sap.m.sample.StandardMarginsCollapse.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m"

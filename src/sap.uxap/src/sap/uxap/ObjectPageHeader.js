@@ -282,7 +282,7 @@ sap.ui.define([
 					}
 				}
 			},
-			designTime: true
+			designtime: "sap/uxap/designtime/ObjectPageHeader.designtime"
 		}
 	});
 
@@ -767,8 +767,8 @@ sap.ui.define([
 	/**
 	 * Adapts the layout of the tiven headerTitle domElement
 	 *
-	 * @param {object} jQuery reference to the header dom element
-	 * @param {object} change event of child-element that brought the need to adapt the headerTitle layout
+	 * @param {object} $headerDomRef The reference to the header dom element
+	 * @param {object} oEvent The event of child-element that brought the need to adapt the headerTitle layout
 	 *
 	 * @private
 	 */
@@ -970,9 +970,8 @@ sap.ui.define([
 	/*************************************************************************************/
 
 	/**
-	 * Notifies the parent control, when <code>ObjectPageHeader> changes.
-	 * @param {boolean}
-	 *            bIsObjectImageChange - flag if an image-related property was changed
+	 * Notifies the parent control, when <code>sap.uxap.ObjectPageHeader</code> changes.
+	 * @param {boolean} bIsObjectImageChange Whether the image-related property was changed
 	 * @private
 	 */
 	ObjectPageHeader.prototype._notifyParentOfChanges = function (bIsObjectImageChange) {

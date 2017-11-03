@@ -48,3 +48,15 @@
 		}
 	}
 }
+
+.sapUshellShell {
+	.sapFDynamicPage {
+		// DynamicPageTitle and Toggle Header Visual Indicator hover state
+		&.sapFDynamicPageTitleClickEnabled:not(.sapFDynamicPageHeaderPinned) {
+			.sapFDynamicPageTitle:hover,
+			&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+				background-color: fade(@sapUiObjectHeaderBackground, 75%);
+			}
+		}
+	}
+}

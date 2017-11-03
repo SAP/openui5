@@ -43,7 +43,7 @@ sap.ui.define([
 		_handleValueHelpClose : function (evt) {
 			var oSelectedItem = evt.getParameter("selectedItem");
 			if (oSelectedItem) {
-				var productInput = this.getView().byId(this.inputId);
+				var productInput = this.byId(this.inputId);
 				productInput.setValue(oSelectedItem.getTitle());
 			}
 			evt.getSource().getBinding("items").filter([]);

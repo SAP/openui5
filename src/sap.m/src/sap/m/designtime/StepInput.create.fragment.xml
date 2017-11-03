@@ -1,0 +1,5 @@
+<core:FragmentDefinition 
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+		<StepInput value="5" min="0" max="10" />
+</core:FragmentDefinition>

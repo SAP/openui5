@@ -15,9 +15,7 @@ sap.ui.require([
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
 		beforeEach: function () {
-			window.bUShellNavigationTriggered = false;
 			this.originalUShell = sap.ushell;
-			// this overrides the ushell globally => we need to restore it!
 
 			sap.ushell = jQuery.extend({}, sap.ushell, {
 				Container : {
@@ -41,6 +39,88 @@ sap.ui.require([
 			sap.ushell = this.originalUShell;
 		}
 	}, function() {
+
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with no intent parameters", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				subTitle : "subTitle1",
+				description : "description1",
+				iconUrl : "sap-icon://history",
+				originalId : "id1",
+				isOriginal : true,
+				originLayer: "VENDOR",
+				isAppVariant: false,
+				descriptorUrl : "url1",
+				hasStartableIntent: true,
+				startWith: {
+					"semanticObject": "SemObj",
+					"action": "Action"
+				}
+			};
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.params, undefined, "then the params property does not exist");
+			});
+		});
+
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as an object", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				subTitle : "subTitle1",
+				description : "description1",
+				iconUrl : "sap-icon://history",
+				originalId : "id1",
+				isOriginal : true,
+				originLayer: "VENDOR",
+				isAppVariant: false,
+				descriptorUrl : "url1",
+				hasStartableIntent: true,
+				startWith: {
+					"semanticObject": "SemObj",
+					"action": "Action",
+					"parameters": {
+						"sap-appvar-id" : {
+							value: "id1",
+							required: true
+						}
+					}
+				}
+			};
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.params["sap-appvar-id"], "id1", "then the intent property's value is correct");
+			});
+		});
+
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as a string", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				subTitle : "subTitle1",
+				description : "description1",
+				iconUrl : "sap-icon://history",
+				originalId : "id1",
+				isOriginal : true,
+				originLayer: "VENDOR",
+				isAppVariant: false,
+				descriptorUrl : "url1",
+				hasStartableIntent: true,
+				startWith: {
+					"semanticObject": "SemObj",
+					"action": "Action",
+					"parameters": {
+						"sap-appvar-id" : "id1"
+					}
+				}
+			};
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.params["sap-appvar-id"], "id1", "then the intent property's value is correct");
+			});
+		});
+
 		QUnit.test("When getAppVariantOverview() method is called on a reference app (currently adapting) which also has intent information present", function (assert) {
 			var oResult = {
 				response: {
@@ -51,8 +131,8 @@ sap.ui.require([
 							subTitle : "subTitle1",
 							description : "description1",
 							iconUrl : "sap-icon://history",
-							referenceId : "id1",
-							isReference : true,
+							originalId : "id1",
+							isOriginal : true,
 							originLayer: "VENDOR",
 							isAppVariant: false,
 							descriptorUrl : "url1",
@@ -61,7 +141,9 @@ sap.ui.require([
 								"semanticObject": "SemObj",
 								"action": "Action",
 								"parameters": {
-									saveAs : "id1"
+									"sap-appvar-id" : {
+										value: "id1"
+									}
 								}
 							}
 						}
@@ -75,7 +157,7 @@ sap.ui.require([
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[0].typeOfApp, "Reference App", "then the type of app is correct");
+				assert.strictEqual(aAppVariantOverviewAttributes[0].typeOfApp, "Original App", "then the type of app is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, "SemObj", "then the semantic object is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].action, "Action", "then the action is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, true, "then the app is adaptable");
@@ -92,9 +174,9 @@ sap.ui.require([
 							subTitle : "subTitle1",
 							description : "description1",
 							iconUrl : "sap-icon://history",
-							referenceId : "id2",
+							originalId : "id2",
 							originLayer: "VENDOR",
-							isReference : false,
+							isOriginal : false,
 							isAppVariant: true,
 							descriptorUrl : "url1",
 							hasStartableIntent: false,
@@ -110,8 +192,8 @@ sap.ui.require([
 							subTitle : "subTitle2",
 							description : "description2",
 							iconUrl : "sap-icon://account",
-							referenceId : "id2",
-							isReference : true,
+							originalId : "id2",
+							isOriginal : true,
 							originLayer: "VENDOR",
 							isAppVariant: false,
 							descriptorUrl : "url2",
@@ -120,7 +202,7 @@ sap.ui.require([
 								"semanticObject": "SemObj",
 								"action": "Action",
 								"parameters": {
-									saveAs : "id2"
+									"sap-appvar-id" : "id2"
 								}
 							}
 						}
@@ -135,7 +217,7 @@ sap.ui.require([
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 
 				assert.strictEqual(aAppVariantOverviewAttributes[0].typeOfApp, "App Variant", "then the type of first app(variant) is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[1].typeOfApp, "Reference App", "then the type of second app is correct");
+				assert.strictEqual(aAppVariantOverviewAttributes[1].typeOfApp, "Original App", "then the type of second app is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of first app(variant) is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[1].icon, "sap-icon://account", "then the icon of second app is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, undefined, "then the semantic object of first app(variant) is correct");
@@ -152,7 +234,6 @@ sap.ui.require([
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
 		beforeEach: function () {
-			window.bUShellNavigationTriggered = false;
 			this.originalUShell = sap.ushell;
 			// this overrides the ushell globally => we need to restore it!
 
@@ -183,8 +264,8 @@ sap.ui.require([
 							subTitle : "subTitle1",
 							description : "description1",
 							iconUrl : "sap-icon://history",
-							referenceId : "id1",
-							isReference : true,
+							originalId : "id1",
+							isOriginal : true,
 							originLayer: "VENDOR",
 							isAppVariant: true,
 							descriptorUrl : "url1",
@@ -193,7 +274,7 @@ sap.ui.require([
 								"semanticObject": "SemObj",
 								"action": "Action",
 								"parameters": {
-									saveAs : "id1"
+									"sap-appvar-id" : "id1"
 								}
 							}
 						}
@@ -207,7 +288,7 @@ sap.ui.require([
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[0].typeOfApp, "Reference App", "then the type of app is correct");
+				assert.strictEqual(aAppVariantOverviewAttributes[0].typeOfApp, "Original App", "then the type of app is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, "SemObj", "then the semantic object is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].action, "Action", "then the action is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, false, "then the app is not adaptable");
@@ -221,7 +302,7 @@ sap.ui.require([
 						id : "testId"
 					},
 					"sap.ui5" : {
-						componentName : "referenceId"
+						componentName : "originalId"
 					}
 				}
 			};
@@ -232,7 +313,7 @@ sap.ui.require([
 				assert.ok(oDescriptor, "then the descriptor of the app is returned");
 
 				assert.strictEqual(oDescriptor["sap.app"].id, "testId", "then the id of the descriptor is right");
-				assert.strictEqual(oDescriptor["sap.ui5"].componentName, "referenceId", "then the componentName of the descriptor is right");
+				assert.strictEqual(oDescriptor["sap.ui5"].componentName, "originalId", "then the componentName of the descriptor is right");
 			});
 		});
 	});

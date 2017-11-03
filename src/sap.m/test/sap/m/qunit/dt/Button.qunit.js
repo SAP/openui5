@@ -1,11 +1,19 @@
+/*global QUnit*/
+
 (function () {
 	'use strict';
 
 	sap.ui.require([
 			"sap/ui/rta/test/controlEnablingCheck",
-			'sap/ui/dt/test/report/QUnit',
-			'sap/ui/dt/test/ElementEnablementTest'],
-		function (rtaControlEnablingCheck, QUnitReport, ElementEnablementTest) {
+			"sap/ui/dt/test/report/QUnit",
+			"sap/ui/dt/test/ElementEnablementTest",
+			"sap/m/changeHandler/CombineButtons",
+			"sap/ui/fl/changeHandler/JsControlTreeModifier",
+			"sap/ui/fl/Change",
+			"sap/ui/core/UIComponent",
+			"sap/ui/core/ComponentContainer"],
+		function (rtaControlEnablingCheck, QUnitReport, ElementEnablementTest, CombineButtons,
+				  JsControlTreeModifier, Change, UIComponent, ComponentContainer) {
 
 			var oElementEnablementTest = new ElementEnablementTest({
 				type: "sap.m.Button"
@@ -146,6 +154,85 @@
 				afterAction: fnConfirmButtonIsVisible,
 				afterUndo: fnConfirmButtonIsInvisible,
 				afterRedo: fnConfirmButtonIsVisible
+			});
+
+			function createChangeDefinition() {
+				return jQuery.extend(true, {}, {
+					"changeType": "combineButtons",
+					"content": {
+						"newFieldIndex": 1
+					},
+					"selector": {
+						"id": "view--idToolbar",
+						"idIsLocal": true
+					}
+				});
+			}
+
+			QUnit.module("Revert Actions on Button", {
+				beforeEach: function() {
+					var oXmlString = [
+						'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
+							'<Toolbar id="idToolbar">',
+								'<content>',
+									'<Button id="btn1" text="Btn1"/>',
+									'<Button id="btn2" text="Btn2"/>',
+								'</content>',
+							'</Toolbar>',
+						'</mvc:View>'
+					].join('');
+
+					var Comp = UIComponent.extend("test", {
+						metadata: {
+							manifest : {
+								"sap.app": {
+									"id": "test",
+									"type": "application"
+								}
+							}
+						},
+						createContent : function() {
+							return sap.ui.xmlview({
+								id : this.createId("view"),
+								viewContent : oXmlString
+							});
+						}
+					});
+
+					this.oUiComponent = new Comp("comp");
+					this.oUiComponentContainer = new ComponentContainer({
+						component : this.oUiComponent
+					});
+
+					this.oUiComponentContainer.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+
+				afterEach: function() {
+					this.oUiComponentContainer.destroy();
+				}
+			});
+
+			QUnit.test("Revert combine action", function(assert) {
+
+				var oChange = new Change(createChangeDefinition()),
+					oChangeHandler = CombineButtons;
+
+				var oToolbar = this.oUiComponent.getRootControl().getContent()[0],
+					oPropertyBag = {
+						modifier: JsControlTreeModifier,
+						appComponent: this.oUiComponent
+					};
+
+				oChangeHandler.completeChangeContent(oChange, {
+					combineFieldIds: ["comp---view--btn1", "comp---view--btn2"]
+				}, oPropertyBag);
+
+				oChangeHandler.applyChange(oChange, oToolbar, oPropertyBag);
+				assert.strictEqual(oToolbar.getContent().length, 1, "The change was successfully executed.");
+
+				oChangeHandler.revertChange(oChange, oToolbar, oPropertyBag);
+				assert.strictEqual(oToolbar.getContent().length, 2, "The change was successfully reverted.");
 			});
 		});
 })();

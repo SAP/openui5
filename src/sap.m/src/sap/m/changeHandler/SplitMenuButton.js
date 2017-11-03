@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQu
 		 * Split a MenuButton into separate Buttons
 		 *
 		 * @param {sap.ui.fl.Change} oChange Change wrapper object with instructions to be applied on the control map
-		 * @param {sap.m.MenuButton} oControl Menubutton control that matches the change selector for applying the change
+		 * @param {sap.m.IBar} oControl Bar control that matches the change selector for applying the change
 		 * @param {object} mPropertyBag Map of properties
 		 * @param {object} mPropertyBag.modifier Modifier for the controls
 		 * @return {boolean} true if change could be applied
@@ -43,7 +43,12 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQu
 				sParentAggregation = oSourceControl.sParentAggregationName,
 				oParent = oModifier.getParent(oSourceControl),
 				iAggregationIndex = oModifier.findIndexInParentAggregation(oSourceControl),
-				aNewElementIds = oChangeDefinition.content.newElementIds.slice();
+				aNewElementIds = oChangeDefinition.content.newElementIds.slice(),
+				oRevertData = {
+					sParentAggregation : sParentAggregation,
+					insertIndex: iAggregationIndex,
+					insertedButtonsIds: []
+				};
 
 			aMenuItems.forEach(function (oMenuItem, index) {
 				var aMenuItemCustomData = oModifier.getAggregation(oMenuItem, "customData"),
@@ -69,6 +74,8 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQu
 					aMenuItemDependents.some(function(oControl) {
 						if (sSavedId === oModifier.getId(oControl)) {
 							oButton = oControl;
+							oRevertData.insertedButtonsIds.push(oModifier.getId(oButton));
+
 							return true;
 						}
 					});
@@ -83,6 +90,7 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQu
 					var sId = aNewElementIds[index];
 
 					oButton = oModifier.createControl("sap.m.Button", mPropertyBag.appComponent, oView, sId);
+					oRevertData.insertedButtonsIds.push(oModifier.getId(oButton));
 
 					oModifier.setProperty(oButton, "text", oModifier.getProperty(oMenuItem, "text"));
 					oModifier.setProperty(oButton, "icon",  oModifier.getProperty(oMenuItem, "icon"));
@@ -97,8 +105,46 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQu
 			oModifier.removeAggregation(oParent, sParentAggregation, oSourceControl);
 			oModifier.insertAggregation(oControl, "dependents", oSourceControl);
 
+			oChange.setRevertData(oRevertData);
+
 			return true;
 
+		};
+
+		/**
+		 * Reverts applied change
+		 *
+		 * @param {sap.ui.fl.Change} oChange Change wrapper object with instructions to be applied on the control map
+		 * @param {sap.m.IBar} oControl Bar control that matches the change selector for applying the change
+		 * @param {object} mPropertyBag Map of properties
+		 * @param {object} mPropertyBag.modifier Modifier for the controls
+		 * @return {boolean} true if change could be applied
+		 *
+		 * @public
+		 */
+		SplitMenuButton.revertChange = function(oChange, oControl, mPropertyBag) {
+
+			var oModifier = mPropertyBag.modifier,
+				oRevertData =  oChange.getRevertData(),
+				oSourceControl = oChange.getDependentControl(SOURCE_CONTROL, mPropertyBag),
+				oAppComponent = mPropertyBag.appComponent,
+				oParent = oModifier.getParent(oSourceControl),
+				sParentAggregation = oRevertData.sParentAggregation,
+				iAggregationIndex = oRevertData.insertIndex,
+				aButtonsIds = oRevertData.insertedButtonsIds,
+				aButtons = aButtonsIds.map(function(sId){
+					return oModifier.bySelector(sId, oAppComponent);
+				});
+
+			aButtons.forEach(function(oButton){
+				oModifier.removeAggregation(oParent, sParentAggregation, oButton);
+			});
+
+			oModifier.insertAggregation(oParent, sParentAggregation, oSourceControl, iAggregationIndex);
+
+			oChange.resetRevertData();
+
+			return true;
 		};
 
 		/**

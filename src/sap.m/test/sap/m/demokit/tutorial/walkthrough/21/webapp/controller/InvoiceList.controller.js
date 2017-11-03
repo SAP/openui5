@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.wt.controller.InvoiceList", {
+	return Controller.extend("sap.ui.demo.walkthrough.controller.InvoiceList", {
 
 
 		onInit: function () {

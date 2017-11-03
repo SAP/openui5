@@ -190,34 +190,54 @@ sap.ui.define([
 						return Promise.reject(this.NOT_FOUND);
 					}.bind(this))
 					.then(function () {
+						var aLibsData = this._aLibsData,
+						oControlData,
+						iLen,
+						i;
+
+						// Find entity in loaded libs data
+						for (i = 0, iLen = aLibsData.length; i < iLen; i++) {
+							if (aLibsData[i].name === this._sTopicid) {
+								oControlData = aLibsData[i];
+								break;
+							}
+						}
+
 						// Cache allowed members
 						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-						this._bindData(this._sTopicid);
-						this._bindEntityData(this._sTopicid);
-						this._createMethodsSummary();
-						this._createEventsSummary();
-						this._createAnnotationsSummary();
+						this.buildBorrowedModel(oControlData)
+						.then(function (oData) {
+							this.getModel('borrowedMethods').setData(oData.methods, false);
+							this.getModel('borrowedEvents').setData(oData.events, false);
+						}.bind(this))
+						.then(function () {
+							this._bindData(this._sTopicid);
+							this._bindEntityData(this._sTopicid);
+							this._createMethodsSummary();
+							this._createEventsSummary();
+							this._createAnnotationsSummary();
 
-						if (this._sEntityType) {
-							this._scrollToEntity(this._sEntityType, this._sEntityId);
-						} else {
-							this._scrollContentToTop();
-						}
+							if (this._sEntityType) {
+								this._scrollToEntity(this._sEntityType, this._sEntityId);
+							} else {
+								this._scrollContentToTop();
+							}
 
-						jQuery.sap.delayedCall(0, this, function () {
-							this._prettify();
-							this._objectPage.setBusy(false);
-
-							// Init scrolling right after busy indicator is cleared and prettify is ready
 							jQuery.sap.delayedCall(0, this, function () {
-								if (this._sEntityType) {
-									this._scrollToEntity(this._sEntityType, this._sEntityId);
-								}
-							});
-						});
+								this._prettify();
+								this._objectPage.setBusy(false);
 
-						this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
+								// Init scrolling right after busy indicator is cleared and prettify is ready
+								jQuery.sap.delayedCall(0, this, function () {
+									if (this._sEntityType) {
+										this._scrollToEntity(this._sEntityType, this._sEntityId);
+									}
+								});
+							});
+
+							this.searchResultsButtonVisibilitySwitch(this.byId("apiDetailBackToSearch"));
+						}.bind(this));
 					}.bind(this))
 					.catch(function (sReason) {
 						// If the object does not exist in the available libs we redirect to the not found page and
@@ -237,16 +257,20 @@ sap.ui.define([
 			},
 
 			_createMethodsSummary: function () {
-				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-methodsSummary", "sap.ui.documentation.sdk.view.ApiDetailMethodsSummary", this);
-				var oSection = this.getView().byId("methods");
+				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-methodsSummary", "sap.ui.documentation.sdk.view.ApiDetailMethodsSummary", this),
+					oSection = this.byId("methods"),
+					aSubSections = oSection.getSubSections(),
+					oControlData = this.getModel("topics").getData(),
+					bBorrowedOnly = oControlData.hasMethods && !oControlData.hasOwnMethods;
 
-				var aSubSections = oSection.getSubSections();
-				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
+				if (aSubSections.length > 0 && (aSubSections[0].getTitle() === "Summary" || aSubSections[0].getTitle() === "Methods" || bBorrowedOnly)) {
+					aSubSections[0].setTitle(bBorrowedOnly ? "Methods" : "Summary");
+
 					return;
 				}
 
 				oSection.insertSubSection(new ObjectPageSubSection({
-					title: "Summary",
+					title: bBorrowedOnly ? "Methods" : "Summary",
 					blocks: [
 						oSummaryTable
 					]
@@ -254,16 +278,20 @@ sap.ui.define([
 			},
 
 			_createEventsSummary: function () {
-				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-eventsSummary", "sap.ui.documentation.sdk.view.ApiDetailEventsSummary", this);
-				var oSection = this.getView().byId("events");
+				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-eventsSummary", "sap.ui.documentation.sdk.view.ApiDetailEventsSummary", this),
+					oSection = this.byId("events"),
+					aSubSections = oSection.getSubSections(),
+					oControlData = this.getModel("topics").getData(),
+					bBorrowedOnly = oControlData.hasEvents && !oControlData.hasOwnEvents;
 
-				var aSubSections = oSection.getSubSections();
-				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
+				if (aSubSections.length > 0 && (aSubSections[0].getTitle() === "Summary" || aSubSections[0].getTitle() === "Events" || bBorrowedOnly)) {
+					aSubSections[0].setTitle(bBorrowedOnly ? "Events" : "Summary");
+
 					return;
 				}
 
 				oSection.insertSubSection(new ObjectPageSubSection({
-					title: "Summary",
+					title: bBorrowedOnly ? "Events" : "Summary",
 					blocks: [
 						oSummaryTable
 					]
@@ -272,7 +300,7 @@ sap.ui.define([
 
 			_createAnnotationsSummary: function () {
 				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-annotationsSummary", "sap.ui.documentation.sdk.view.ApiDetailAnnotationsSummary", this);
-				var oSection = this.getView().byId("annotations");
+				var oSection = this.byId("annotations");
 
 				var aSubSections = oSection.getSubSections();
 				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
@@ -312,7 +340,7 @@ sap.ui.define([
 				// LowerCase every input from URL
 				sSectionId = sSectionId.toLowerCase();
 
-				oSection = this.getView().byId(sSectionId);
+				oSection = this.byId(sSectionId);
 				if (!oSection) {
 					return;
 				}
@@ -339,11 +367,11 @@ sap.ui.define([
 						});
 
 						// We scroll to the first sub-section found
-						this.getView().byId("apiDetailObjectPage").scrollToSection(aFilteredSubSections[0].getId(), 250);
+						this.byId("apiDetailObjectPage").scrollToSection(aFilteredSubSections[0].getId(), 250);
 					}
 				} else {
 					// We scroll to section
-					this.getView().byId("apiDetailObjectPage").scrollToSection(oSection.getId(), 250);
+					this.byId("apiDetailObjectPage").scrollToSection(oSection.getId(), 250);
 				}
 
 			},
@@ -420,6 +448,9 @@ sap.ui.define([
 
 				if (oControlData.hasOwnProperty('properties') && this.hasVisibleElement(oControlData.properties)) {
 					oControlData.hasProperties = true;
+					oControlData.properties = oControlData.properties.filter(function (property) {/* exclude restricted fields from none-internal versions */
+						return this._aAllowedMembers.indexOf(property.visibility) !== -1;
+					}.bind(this));
 				} else {
 					oControlData.hasProperties = false;
 				}
@@ -433,13 +464,16 @@ sap.ui.define([
 				}
 
 				if (oControlData && oControlData.events) {
-					oControlData.hasEvents = true;
+					oControlData.hasOwnEvents = true;
 				} else {
-					oControlData.hasEvents = false;
+					oControlData.hasOwnEvents = false;
 				}
 
-				oControlData.hasMethods = oControlData.hasOwnProperty('methods') &&
+				oControlData.hasOwnMethods = oControlData.hasOwnProperty('methods') &&
 					this.hasVisibleElement(oControlData.methods);
+
+				oControlData.hasEvents = oControlData.hasOwnEvents || this.getModel("borrowedEvents").getData().length > 0;
+				oControlData.hasMethods = oControlData.hasOwnMethods || this.getModel("borrowedMethods").getData().length > 0;
 
 				if (oUi5Metadata && oUi5Metadata.associations && this.hasVisibleElement(oUi5Metadata.associations)) {
 					oControlData.hasAssociations = true;
@@ -477,19 +511,13 @@ sap.ui.define([
 					this.subParamPhoneName = '';
 				}
 
-				if (oControlData.hasMethods) {
+				if (oControlData.hasOwnMethods) {
 					oMethodsModelData.methods = this.buildMethodsModel(oControlData.methods);
 				}
 
-				if (oControlData.hasEvents) {
+				if (oControlData.hasOwnEvents) {
 					oEventsModel.events = this.buildEventsModel(oControlData.events);
 				}
-
-				this.buildBorrowedModel(oControlData.methods, oControlData)
-					.then(function (oData) {
-						oBorrowedMethodsModel.setData(oData.methods, false);
-						this.getModel('borrowedEvents').setData(oData.events, false);
-					}.bind(this));
 
 				if (oControlData.implements && oControlData.implements.length) {
 					oControlData.implementsParsed = oControlData.implements.map(function (item, idx, array) {
@@ -543,11 +571,18 @@ sap.ui.define([
 			 */
 			_modifyReferences: function (oControlData) {
 				var bHeaderDocuLinkFound = false,
-					aReferences = oControlData.constructor.references;
+					aReferences = oControlData.constructor.references,
+					sReference,
+					aParts,
+					iLen,
+					i;
 
-				if (aReferences && aReferences.length > 0) {
-					oControlData.references = aReferences.map(function (sReference) {
-						var aParts;
+				oControlData.references = [];
+
+				if (aReferences) {
+
+					for (i = 0, iLen = aReferences.length; i < iLen; i++) {
+						sReference = aReferences[i];
 
 						// For the header we take into account only the first link that matches one of the patterns
 						if (!bHeaderDocuLinkFound) {
@@ -568,14 +603,13 @@ sap.ui.define([
 								}
 								bHeaderDocuLinkFound = true;
 							} else {
-								return sReference;
+								oControlData.references.push(sReference);
 							}
 						} else {
-							return sReference;
+							oControlData.references.push(sReference);
 						}
-					});
-				} else {
-					oControlData.references = [];
+					}
+
 				}
 			},
 
@@ -920,16 +954,21 @@ sap.ui.define([
 				return result;
 			},
 
-			buildBorrowedModel: function (aMethods, oControlData) {
+			buildBorrowedModel: function (oControlData) {
 				var aBaseClassMethods,
 					aBaseClassEvents,
 					sBaseClass,
 					aBorrowChain,
+					aMethods,
 					aMethodNames,
 					aInheritanceChain,
 					aRequiredLibs = [],
 					oItem,
 					i;
+
+				if (!oControlData) {
+					return Promise.resolve({events: [], methods: []});
+				}
 
 				aBorrowChain = {
 					methods: [],
@@ -942,7 +981,7 @@ sap.ui.define([
 				}.bind(this);
 
 				// Get all method names
-				aMethods = aMethods || [];
+				aMethods = oControlData.methods || [];
 				aMethodNames = aMethods.map(function (oMethod) {
 					return oMethod.name;
 				});
@@ -1340,7 +1379,7 @@ sap.ui.define([
 
 				// format references
 				if (aReferences && aReferences.length > 0) {
-					sDescription += "<br/><br/><span>References:</span><ul>";
+					sDescription += "<br/><br/><span>Documentation links:</span><ul>";
 
 					iLen = aReferences.length;
 					for (i = 0; i < iLen; i++) {

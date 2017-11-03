@@ -15,8 +15,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 		},
 
 		_updateText: function(oCalendar) {
-			var oSelectedDateFrom = this.getView().byId("selectedDateFrom");
-			var oSelectedDateTo = this.getView().byId("selectedDateTo");
+			var oSelectedDateFrom = this.byId("selectedDateFrom");
+			var oSelectedDateTo = this.byId("selectedDateTo");
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
 			if (aSelectedDates.length > 0 ) {
@@ -53,7 +53,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 			var oMonday = new Date(oCurrent.setDate(iWeekstart));
 			var oSunday = new Date(oCurrent.setDate(iWeekend));
 
-			var oCalendar = this.getView().byId("calendar");
+			var oCalendar = this.byId("calendar");
 
 			oCalendar.removeAllSelectedDates();
 			oCalendar.addSelectedDate(new DateRange({startDate: oMonday, endDate: oSunday}));

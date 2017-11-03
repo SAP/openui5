@@ -40,7 +40,7 @@ sap.ui.define(['./ListItemBase', './library'],
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/CustomListItem.designtime"
 	}});
 
 	CustomListItem.prototype.getContentAnnouncement = function() {

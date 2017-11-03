@@ -154,6 +154,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this.bindable = !!info.bindable;
 		this.deprecated = !!info.deprecated || false;
 		this.visibility = 'public';
+		this.selector = typeof info.selector === "string" ? info.selector : null;
 		this.appData = remainder(this, info);
 		this._oParent = oClass;
 		this._sUID = name;
@@ -229,6 +230,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this.bindable = !!info.bindable;
 		this.deprecated = info.deprecated || false;
 		this.visibility = info.visibility || 'public';
+		this.selector = info.selector || null;
 		this._doesNotRequireFactory = !!info._doesNotRequireFactory; // TODO clarify if public
 		this.appData = remainder(this, info);
 		this._oParent = oClass;
@@ -501,7 +503,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this._mEvents = normalize(oStaticInfo.events, this.metaFactoryEvent);
 
 		// as oClassInfo is volatile, we need to store the info
-		this._oDesignTime = oClassInfo.metadata["designTime"];
+		this._oDesignTime = oClassInfo.metadata["designtime"] || oClassInfo.metadata["designTime"];
 
 		if ( oClassInfo.metadata.__version > 1.0 ) {
 			this.generateAccessors();
@@ -1200,18 +1202,47 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	}
 
 	/**
-	 * Load and returns the design time metadata asynchronously.
+	 * Returns a promise that resolves with the instance specific, unmerged designtime data.
+	 * If no instance is provided, the promise will resolve with {}.
+	 *
+	 * @private
+	 */
+	function loadInstanceDesignTime(oInstance) {
+		var sInstanceSpecificModule =
+			typeof oInstance === "object" &&
+			typeof oInstance.data === "function" &&
+			oInstance.data("sap-ui-custom-settings")
+			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"]
+			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"].designtime;
+
+		if (typeof sInstanceSpecificModule === "string"){
+			return new Promise(function(fnResolve) {
+				sap.ui.require([sInstanceSpecificModule], function(oDesignTime) {
+					fnResolve(oDesignTime);
+				});
+			});
+		} else {
+			return Promise.resolve({});
+		}
+	}
+	/**
+	 * Load and returns the design time metadata asynchronously. It inherits/merges parent
+	 * design time metadata and if provided merges also instance specific design time
+	 * metadata that was provided via the dt namespace.
 	 *
 	 * Be aware that ManagedObjects do not ensure to have unique IDs. This may lead to
 	 * issues if you would like to persist DesignTime based information. In that case
 	 * you need to take care of identification yourself.
 	 *
+	 * @param {ManageObject} [oManagedObject] instance that could have instance specific design time metadata
 	 * @return {Promise} A promise which will return the loaded design time metadata
 	 * @private
 	 * @sap-restricted sap.ui.fl com.sap.webide
 	 * @since 1.48.0
 	 */
-	ManagedObjectMetadata.prototype.loadDesignTime = function() {
+	ManagedObjectMetadata.prototype.loadDesignTime = function(oManagedObject) {
+		var oInstanceDesigntimeLoaded = loadInstanceDesignTime(oManagedObject);
+
 		if (!this._oDesignTimePromise) {
 
 			// Note: parent takes care of merging its ancestors
@@ -1239,7 +1270,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			});
 		}
 
-		return this._oDesignTimePromise;
+		return Promise.all([oInstanceDesigntimeLoaded, this._oDesignTimePromise])
+			.then(function(aData){
+				var oInstanceDesigntime = aData[0],
+					oDesignTime = aData[1];
+				return jQuery.sap.extend(true, {}, oDesignTime, oInstanceDesigntime);
+			});
 	};
 
 	// ---- autoid creation -------------------------------------------------------------

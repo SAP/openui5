@@ -141,7 +141,7 @@ sap.ui.define([
 			},
 
 			_trimOldDocSuffix: function(sLink) {
-				if (sLink && sLink.endsWith(this.OLD_DOC_LINK_SUFFIX)) {
+				if (sLink && jQuery.sap.endsWith(sLink, this.OLD_DOC_LINK_SUFFIX)) {
 					sLink = sLink.slice(0, -this.OLD_DOC_LINK_SUFFIX.length);
 				}
 				return sLink;
@@ -188,7 +188,7 @@ sap.ui.define([
 				}
 
 				// hide master on route change
-				this.getView().byId("splitApp").hideMaster();
+				this.byId("splitApp").hideMaster();
 				oViewModel.setProperty("/bIsShownMaster", false);
 			},
 
@@ -200,7 +200,7 @@ sap.ui.define([
 			toggleMaster: function(oEvent) {
 				var bPressed = oEvent.getParameter("pressed"),
 					bPhone = Device.system.phone,
-					oSplitApp = this.getView().byId("splitApp"),
+					oSplitApp = this.byId("splitApp"),
 					isShowHideMode = oSplitApp.getMode() === SplitAppMode.ShowHideMode,
 					isHideMode = oSplitApp.getMode() === SplitAppMode.HideMode,
 					sMasterViewId = this.getModel("appView").getProperty("/sMasterViewId"),
@@ -672,7 +672,7 @@ sap.ui.define([
 			},
 
 			_toggleTabHeaderClass: function() {
-				var th = this.getView().byId("tabHeader");
+				var th = this.byId("tabHeader");
 				if (this._isToggleButtonVisible()) {
 					th.addStyleClass("tabHeaderNoLeftMargin");
 				} else {

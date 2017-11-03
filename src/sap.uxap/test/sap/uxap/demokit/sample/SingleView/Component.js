@@ -4,7 +4,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	var Component = UIComponent.extend("sap.uxap.sample.SingleView.Component", {
 
 		metadata: {
-			rootView: "sap.uxap.sample.SingleView.SingleView",
+			rootView: {
+				"viewName": "sap.uxap.sample.SingleView.SingleView",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m"

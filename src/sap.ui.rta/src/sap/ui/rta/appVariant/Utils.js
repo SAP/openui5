@@ -23,12 +23,12 @@ sap.ui.define([
 		Utils.getAppVariantOverviewAttributes = function(oAppVariantInfo) {
 			var oAppVariantAttributes;
 			var fnCheckAppType = function() {
-				if (oAppVariantInfo.isReference && oAppVariantInfo.isAppVariant) {
-					return oI18n.getText("MAA_REFERENCE_TYPE");
+				if (oAppVariantInfo.isOriginal && oAppVariantInfo.isAppVariant) {
+					return oI18n.getText("MAA_ORIGINAL_TYPE");
 				} else if (oAppVariantInfo.isAppVariant) {
 					return oI18n.getText("MAA_APP_VARIANT_TYPE");
-				} else if (oAppVariantInfo.isReference) {
-					return oI18n.getText("MAA_REFERENCE_TYPE");
+				} else if (oAppVariantInfo.isOriginal) {
+					return oI18n.getText("MAA_ORIGINAL_TYPE");
 				}
 			};
 
@@ -46,8 +46,7 @@ sap.ui.define([
 					var oNavigationParams = {
 						semanticObject : sSemanticObject,
 						action : sAction,
-						params: oParams,
-						withAtLeastOneUsedParam: true
+						params: oParams
 					};
 
 					return fncheckNavigationSupported(oNavigationParams).then(function(aResult) {
@@ -58,7 +57,16 @@ sap.ui.define([
 						}
 						oAppVariantAttributes.semanticObject = sSemanticObject;
 						oAppVariantAttributes.action = sAction;
-						oAppVariantAttributes.params = oParams;
+
+						if (oParams) {
+							Object.keys(oParams).forEach(function(sParamValue) {
+								if (oParams[sParamValue].value) {
+									oParams[sParamValue] = oParams[sParamValue].value;
+								}
+							});
+
+							oAppVariantAttributes.params = oParams;
+						}
 						return Promise.resolve(oAppVariantAttributes);
 					});
 				} else {
@@ -73,8 +81,8 @@ sap.ui.define([
 				subTitle : oAppVariantInfo.subTitle,
 				description : oAppVariantInfo.description,
 				icon : oAppVariantInfo.iconUrl,
-				referenceId : oAppVariantInfo.referenceId,
-				isReference : oAppVariantInfo.isReference,
+				originalId : oAppVariantInfo.originalId,
+				isOriginal : oAppVariantInfo.isOriginal,
 				typeOfApp : fnCheckAppType(),
 				descriptorUrl : oAppVariantInfo.descriptorUrl
 			};

@@ -51,9 +51,9 @@ sap.ui.define([
 			}), "fileTypes");
 
 			// Sets the text to the label
-			this.getView().byId("UploadCollection").addEventDelegate({
+			this.byId("UploadCollection").addEventDelegate({
 				onBeforeRendering: function() {
-					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+					this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
 			});
 		},
@@ -98,21 +98,21 @@ sap.ui.define([
 		},
 
 		deleteItemById: function(sItemToDeleteId) {
-			var oData = this.getView().byId("UploadCollection").getModel().getData();
+			var oData = this.byId("UploadCollection").getModel().getData();
 			var aItems = jQuery.extend(true, {}, oData).items;
 			jQuery.each(aItems, function(index) {
 				if (aItems[index] && aItems[index].documentId === sItemToDeleteId) {
 					aItems.splice(index, 1);
 				}
 			});
-			this.getView().byId("UploadCollection").getModel().setData({
+			this.byId("UploadCollection").getModel().setData({
 				"items": aItems
 			});
-			this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+			this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 		},
 
 		deleteMultipleItems: function(aItemsToDelete) {
-			var oData = this.getView().byId("UploadCollection").getModel().getData();
+			var oData = this.byId("UploadCollection").getModel().getData();
 			var nItemsToDelete = aItemsToDelete.length;
 			var aItems = jQuery.extend(true, {}, oData).items;
 			var i = 0;
@@ -125,10 +125,10 @@ sap.ui.define([
 					}
 				}
 			});
-			this.getView().byId("UploadCollection").getModel().setData({
+			this.byId("UploadCollection").getModel().setData({
 				"items": aItems
 			});
-			this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+			this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 		},
 
 		onFilenameLengthExceed: function() {
@@ -136,7 +136,7 @@ sap.ui.define([
 		},
 
 		onFileRenamed: function(oEvent) {
-			var oData = this.getView().byId("UploadCollection").getModel().getData();
+			var oData = this.byId("UploadCollection").getModel().getData();
 			var aItems = jQuery.extend(true, {}, oData).items;
 			var sDocumentId = oEvent.getParameter("documentId");
 			jQuery.each(aItems, function(index) {
@@ -144,7 +144,7 @@ sap.ui.define([
 					aItems[index].fileName = oEvent.getParameter("item").getFileName();
 				}
 			});
-			this.getView().byId("UploadCollection").getModel().setData({
+			this.byId("UploadCollection").getModel().setData({
 				"items": aItems
 			});
 			MessageToast.show("FileRenamed event triggered.");
@@ -159,7 +159,7 @@ sap.ui.define([
 		},
 
 		onUploadComplete: function(oEvent) {
-			var oUploadCollection = this.getView().byId("UploadCollection");
+			var oUploadCollection = this.byId("UploadCollection");
 			var oData = oUploadCollection.getModel().getData();
 
 			oData.items.unshift({
@@ -201,7 +201,7 @@ sap.ui.define([
 			this.getView().getModel().refresh();
 
 			// Sets the text to the label
-			this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+			this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 
 			// delay the success message for to notice onChange message
 			setTimeout(function() {
@@ -229,11 +229,11 @@ sap.ui.define([
 		},
 
 		onFileTypeChange: function(oEvent) {
-			this.getView().byId("UploadCollection").setFileType(oEvent.getSource().getSelectedKeys());
+			this.byId("UploadCollection").setFileType(oEvent.getSource().getSelectedKeys());
 		},
 
 		onSelectAllPress: function(oEvent) {
-			var oUploadCollection = this.getView().byId("UploadCollection");
+			var oUploadCollection = this.byId("UploadCollection");
 			if (!oEvent.getSource().getPressed()) {
 				this.deselectAllItems(oUploadCollection);
 				oEvent.getSource().setPressed(false);
@@ -255,7 +255,7 @@ sap.ui.define([
 		},
 
 		getAttachmentTitleText: function() {
-			var aItems = this.getView().byId("UploadCollection").getItems();
+			var aItems = this.byId("UploadCollection").getItems();
 			return "Uploaded (" + aItems.length + ")";
 		},
 
@@ -273,21 +273,21 @@ sap.ui.define([
 		},
 
 		enableToolbarItems: function(status) {
-			this.getView().byId("selectAllButton").setVisible(status);
-			this.getView().byId("deleteSelectedButton").setVisible(status);
-			this.getView().byId("selectAllButton").setEnabled(status);
+			this.byId("selectAllButton").setVisible(status);
+			this.byId("deleteSelectedButton").setVisible(status);
+			this.byId("selectAllButton").setEnabled(status);
 			// This is only enabled if there is a selected item in multi-selection mode
-			if (this.getView().byId("UploadCollection").getSelectedItems().length > 0) {
-				this.getView().byId("deleteSelectedButton").setEnabled(true);
+			if (this.byId("UploadCollection").getSelectedItems().length > 0) {
+				this.byId("deleteSelectedButton").setEnabled(true);
 			}
 		},
 
 		onDeleteSelectedItems: function() {
-			var aSelectedItems = this.getView().byId("UploadCollection").getSelectedItems();
+			var aSelectedItems = this.byId("UploadCollection").getSelectedItems();
 			this.deleteMultipleItems(aSelectedItems);
-			if (this.getView().byId("UploadCollection").getSelectedItems().length < 1) {
-				this.getView().byId("selectAllButton").setPressed(false);
-				this.getView().byId("selectAllButton").setText("Select all");
+			if (this.byId("UploadCollection").getSelectedItems().length < 1) {
+				this.byId("selectAllButton").setPressed(false);
+				this.byId("selectAllButton").setText("Select all");
 			}
 			MessageToast.show("Delete selected items button press.");
 		},
@@ -297,13 +297,13 @@ sap.ui.define([
 		},
 
 		onSelectionChange: function() {
-			var oUploadCollection = this.getView().byId("UploadCollection");
+			var oUploadCollection = this.byId("UploadCollection");
 			// Only it is enabled if there is a selected item in multi-selection mode
 			if (oUploadCollection.getMode() === MobileLibrary.ListMode.MultiSelect) {
 				if (oUploadCollection.getSelectedItems().length > 0) {
-					this.getView().byId("deleteSelectedButton").setEnabled(true);
+					this.byId("deleteSelectedButton").setEnabled(true);
 				} else {
-					this.getView().byId("deleteSelectedButton").setEnabled(false);
+					this.byId("deleteSelectedButton").setEnabled(false);
 				}
 			}
 		},

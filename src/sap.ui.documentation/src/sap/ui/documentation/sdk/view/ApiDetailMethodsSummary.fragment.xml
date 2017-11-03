@@ -8,7 +8,8 @@
 
 		<m:Table items="{ path : 'methods>/methods'}"
 				 showSeparators="Inner"
-				 fixedLayout="false">
+				 fixedLayout="false"
+				 visible="{topics>/hasOwnMethods}">
 			<m:columns>
 				<m:Column vAlign="Top" width="25%"><m:Label text="Method"/></m:Column>
 				<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="75%"><m:Label text="Description"/></m:Column>

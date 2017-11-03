@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.DateRangeSelection.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.DateRangeSelection.V",
+			rootView : {
+				"viewName": "sap.m.sample.DateRangeSelection.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

@@ -30,7 +30,8 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label", "sap/m/library", "jquery.sa
 
 	var DraftIndicator = Control.extend("sap.m.DraftIndicator", /** @lends sap.m.DraftIndicator.prototype */ {
 		metadata : {
-
+			library: "sap.m",
+			designtime: "sap/m/designtime/DraftIndicator.designtime",
 			properties : {
 				/**
 				 * State of the indicator. Could be "Saving", "Saved" and "Clear".

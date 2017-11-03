@@ -6,7 +6,7 @@
 	sap.ui.require([
 		"sap/ui/dt/test/report/QUnit",
 		"sap/ui/rta/test/controlEnablingCheck",
-		"sap/ui/layout/form/FormElement.designtime",
+		"sap/ui/layout/designtime/form/FormElement.designtime",
 		"sap/ui/dt/test/ElementEnablementTest",
 		"sap/ui/layout/form/FormElement",
 		"sap/ui/layout/form/ResponsiveGridLayout",

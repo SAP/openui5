@@ -3,13 +3,18 @@ sap.ui.define( ["sap/ui/core/UIComponent", "sap/ui/model/json/JSONModel", "sap/u
 	return UIComponent.extend("sap.ui.core.sample.RoutingMasterDetail.routingApp", {
 
 		metadata: {
-			rootView: "sap.ui.core.sample.RoutingMasterDetail.routingApp.view.App",
+			rootView: {
+				"viewName": "sap.ui.core.sample.RoutingMasterDetail.routingApp.view.App",
+				"type": "XML",
+				"async": true
+			},
 			routing: {
 				config: {
 					routerClass: "sap.m.routing.Router",
 					viewPath: "sap.ui.core.sample.RoutingMasterDetail.routingApp.view",
 					controlId: "rootControl",
-					viewType: "XML"
+					viewType: "XML",
+					async: true
 				},
 				routes: [
 					{
@@ -20,7 +25,7 @@ sap.ui.define( ["sap/ui/core/UIComponent", "sap/ui/model/json/JSONModel", "sap/u
 					},
 					{
 						name: "orderDetails",
-						/* 
+						/*
 						* display details for a specific order,
 						* For example, route order/0 will display the order with orderId=0
 						*/
@@ -29,9 +34,9 @@ sap.ui.define( ["sap/ui/core/UIComponent", "sap/ui/model/json/JSONModel", "sap/u
 					},
 					{
 						name: "productDetails",
-						/* 
+						/*
 						* display details for a specific product in a specific order
-						* For example, order/0/product/1 will display the 
+						* For example, order/0/product/1 will display the
 						*    product details with productId=1 in order with orderId=0
 						*/
 						pattern: "orders/:orderId:/products/:productId:",

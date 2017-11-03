@@ -80,7 +80,7 @@ sap.ui.define([
 
 				setTimeout(window.prettyPrint, 0);
 
-				this.searchResultsButtonVisibilitySwitch(this.getView().byId("topicDetailBackToSearch"));
+				this.searchResultsButtonVisibilitySwitch(this.byId("topicDetailBackToSearch"));
 
 				if (this.extHookonTopicMatched) {
 					this.extHookonTopicMatched(topicId);
@@ -98,7 +98,7 @@ sap.ui.define([
 			},
 
 			_onOrientationChange: function(e) {
-				var page = this.getView().byId("topicDetailPage");
+				var page = this.byId("topicDetailPage");
 
 				if (e.landscape) {
 					page.setShowHeader(false);

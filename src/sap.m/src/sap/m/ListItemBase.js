@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			detailPress : {}
 		},
-		designTime : true
+		designtime: "sap/m/designtime/ListItemBase.designtime"
 	}});
 
 	ListItemBase.getAccessibilityText = function(oControl, bDetectEmpty) {

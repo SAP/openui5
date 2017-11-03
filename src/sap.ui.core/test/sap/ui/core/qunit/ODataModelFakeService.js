@@ -114,6 +114,16 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sCategoriesXML],
 			"Products(2)/Category":
 				[200, oXMLHeaders, sCategories2XML],
+			"Products(1)/Supplier":
+				[200, oXMLHeaders, sProducts1SupplierXML],
+			"Suppliers(1)/Products/$count":
+				[200, oCountHeaders, "3"],
+			"Products(1)/Supplier/Products/$count":
+				[200, oCountHeaders, "3"],
+			"Products(1)/Supplier/Products?$skip=0&$top=100":
+				[200, oXMLHeaders, sProducts1SupplierProductsXML],
+			"Suppliers(1)/Products?$skip=0&$top=100":
+				[200, oXMLHeaders, sProducts1SupplierProductsXML],
 			"Categories?$skip=0&$top=100&$inlinecount=allpages":
 				[200, oXMLHeaders, sCategoriesXML],
 			"Categories?$skip=0&$top=8&$orderby=CategoryName%20desc":
@@ -190,6 +200,10 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sProductsXML],
 			"Categories(7)/Products/$count":
 				[200, oCountHeaders, "5"],
+			"Categories(2)/Products?$skip=0&$top=100":
+					[200, oXMLHeaders, sProductsXML],
+			"Categories(2)/Products/$count":
+					[200, oCountHeaders, "5"],
 			"Categories(1)":
 				[200, oJSONHeaders, sCategory1JSON],
 			"Categories(1)?test":
@@ -295,6 +309,8 @@ xhr.onCreate = function(request) {
 				[500, oJSONHeaders, ""],
 			"Products?Fail500=false":
 				[201, oJSONHeaders, sProduct2JSON],
+			"$batch":
+				[202, oJSONHeaders, sProduct2JSON],
 			"Categories(1)": function(url, headers) {
 				if (headers) {
 					if (headers["If-Match"] === "testETag") {
@@ -357,7 +373,7 @@ xhr.onCreate = function(request) {
 
 	request.onSend = function() {
 		if (window.fakeRequested) window.fakeRequested();
-
+		console.log(">> "+request.url);
 		function respond(code, headers, data) {
 			if (request.async) {
 				_setTimeout(function() {
@@ -1859,6 +1875,12 @@ var sProducts3SelProductAndCategoryNameExpCategoryXML = '\
   </content>\
 </entry>\
 	';
+
+var sProducts1SupplierProductsXML = '<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://services.odata.org/V2/northwind/Northwind.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://services.odata.org/V2/northwind/Northwind.svc/Products(1)/Supplier/Products</id><title type="text">Products</title><updated>2017-07-17T13:15:44Z</updated><link rel="self" title="Products" href="Products" /><entry><id>http://services.odata.org/V2/northwind/Northwind.svc/Products(1)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(1)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(1)/Order_Details" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1)/Supplier" /><title /><updated>2017-07-17T13:15:44Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">1</d:ProductID><d:ProductName>Chai</d:ProductName><d:SupplierID m:type="Edm.Int32">1</d:SupplierID><d:CategoryID m:type="Edm.Int32">1</d:CategoryID><d:QuantityPerUnit>10 boxes x 20 bags</d:QuantityPerUnit><d:UnitPrice m:type="Edm.Decimal">18.0000</d:UnitPrice><d:UnitsInStock m:type="Edm.Int16">39</d:UnitsInStock><d:UnitsOnOrder m:type="Edm.Int16">0</d:UnitsOnOrder><d:ReorderLevel m:type="Edm.Int16">10</d:ReorderLevel><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry><entry><id>http://services.odata.org/V2/northwind/Northwind.svc/Products(2)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(2)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(2)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(2)/Order_Details" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(2)/Supplier" /><title /><updated>2017-07-17T13:15:44Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">2</d:ProductID><d:ProductName>Chang</d:ProductName><d:SupplierID m:type="Edm.Int32">1</d:SupplierID><d:CategoryID m:type="Edm.Int32">1</d:CategoryID><d:QuantityPerUnit>24 - 12 oz bottles</d:QuantityPerUnit><d:UnitPrice m:type="Edm.Decimal">19.0000</d:UnitPrice><d:UnitsInStock m:type="Edm.Int16">17</d:UnitsInStock><d:UnitsOnOrder m:type="Edm.Int16">40</d:UnitsOnOrder><d:ReorderLevel m:type="Edm.Int16">25</d:ReorderLevel><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry><entry><id>http://services.odata.org/V2/northwind/Northwind.svc/Products(3)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(3)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier" /><title /><updated>2017-07-17T13:15:44Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">3</d:ProductID><d:ProductName>Aniseed Syrup</d:ProductName><d:SupplierID m:type="Edm.Int32">1</d:SupplierID><d:CategoryID m:type="Edm.Int32">2</d:CategoryID><d:QuantityPerUnit>12 - 550 ml bottles</d:QuantityPerUnit><d:UnitPrice m:type="Edm.Decimal">10.0000</d:UnitPrice><d:UnitsInStock m:type="Edm.Int16">13</d:UnitsInStock><d:UnitsOnOrder m:type="Edm.Int16">70</d:UnitsOnOrder><d:ReorderLevel m:type="Edm.Int16">25</d:ReorderLevel><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry></feed>';
+
+var sProducts1SupplierXML = '<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://services.odata.org/V2/northwind/Northwind.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://services.odata.org/V2/northwind/Northwind.svc/Suppliers(1)</id><category term="NorthwindModel.Supplier" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Supplier" href="Suppliers(1)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="Suppliers(1)/Products" /><title /><updated>2017-07-17T12:29:11Z</updated><author><name /></author><content type="application/xml"><m:properties><d:SupplierID m:type="Edm.Int32">1</d:SupplierID><d:CompanyName>Exotic Liquids</d:CompanyName><d:ContactName>Charlotte Cooper</d:ContactName><d:ContactTitle>Purchasing Manager</d:ContactTitle><d:Address>49 Gilbert St.</d:Address><d:City>London</d:City><d:Region m:null="true" /><d:PostalCode>EC1 4SD</d:PostalCode><d:Country>UK</d:Country><d:Phone>(171) 555-2222</d:Phone><d:Fax m:null="true" /><d:HomePage m:null="true" /></m:properties></content></entry>';
+
+
 
 var sProducts3ExpSupplierXML = '\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>\

@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.wt.controller.InvoiceList"
+	controllerName="sap.ui.demo.walkthrough.controller.InvoiceList"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<List
@@ -17,7 +17,7 @@
 			<Toolbar>
 				<Title text="{i18n>invoiceListTitle}"/>
 				<ToolbarSpacer/>
-				<SearchField width="50%" search="onFilterInvoices" selectOnFocus="false"/>
+				<SearchField width="50%" search="onFilterInvoices"/>
 			</Toolbar>
 		</headerToolbar>
 		<items>

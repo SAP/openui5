@@ -23,7 +23,10 @@
 				new sap.m.Shell({
 					app: new sap.ui.core.ComponentContainer({
 						height : "100%",
-						name : "sap.ui.demo.basicTemplate"
+						name : "sap.ui.demo.basicTemplate",
+						settings : {
+							id : "basicTemplate"
+						}
 					})
 				}).placeAt("content");
 			});

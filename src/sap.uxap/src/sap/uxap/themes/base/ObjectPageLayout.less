@@ -193,7 +193,7 @@ body > .sapUxAPObjectPageLayout,
     width: 2rem;
     height: 2rem;
     font-size: 1rem;
-    bottom: -4rem; // -1 by default and -3 the height of the AnchorBar
+    bottom: -3rem; // -1 by default and -2 the height of the AnchorBar
     margin-left: -1rem;// shift the button with half of its width for perfect centering
 
     .sapMBtnInner {
@@ -254,7 +254,6 @@ html[data-sap-ui-animation='on'] .sapUxAPObjectPageLayout {
 	}
 	@keyframes bounceShow {
 		0% {
-			-webkit-transform: translateY(100%);
 			transform: translateY(100%);
 			opacity: 0;
 		}
@@ -276,12 +275,10 @@ html[data-sap-ui-animation='on'] .sapUxAPObjectPageLayout {
 	}
 	@keyframes bounceHide {
 		0% {
-			-webkit-transform: translateY(-5%);
 			transform: translateY(-5%);
 			opacity: 1;
 		}
 		100% {
-			-webkit-transform: translateY(100%);
 			transform: translateY(100%);
 			opacity: 0;
 		}

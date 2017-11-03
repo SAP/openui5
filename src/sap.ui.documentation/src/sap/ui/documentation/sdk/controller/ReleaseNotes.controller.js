@@ -175,10 +175,10 @@ sap.ui.define([
 					this._processLibInfo.bind(this));
 			},
 			_showBusyIndicator: function () {
-				this.getView().byId("releaseNotesObjectPage").setBusy(true);
+				this.byId("releaseNotesObjectPage").setBusy(true);
 			},
 			_hideBusyIndicator: function () {
-				this.getView().byId("releaseNotesObjectPage").setBusy(false);
+				this.byId("releaseNotesObjectPage").setBusy(false);
 			}
 		});
 

@@ -6,9 +6,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 		onSliderLiveChange: function (oEvent) {
 			var sWidth = oEvent.getParameter("value") + "%";
 
-			this.getView().byId("toolbar1").setWidth(sWidth);
-			this.getView().byId("toolbar2").setWidth(sWidth);
-			this.getView().byId("toolbar3").setWidth(sWidth);
+			this.byId("toolbar1").setWidth(sWidth);
+			this.byId("toolbar2").setWidth(sWidth);
+			this.byId("toolbar3").setWidth(sWidth);
 		}
 	});
 

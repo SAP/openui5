@@ -7,7 +7,7 @@ sap.ui.define([
 	"use strict";
 	var Table = XMLComposite.extend("sap.ui.mdc.sample.templates.Table", /* @lends sap.ui.mdc.sample.templates.Table.prototype */ {
 		metadata: {
-			designTime: true,
+			designtime: true,
 			properties: {
 				header: {
 					type: "string",

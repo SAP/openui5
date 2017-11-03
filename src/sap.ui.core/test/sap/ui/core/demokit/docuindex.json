@@ -119,7 +119,8 @@
 					"sap.ui.core.sample.OpaURLParameters.iStartMyUIComponentWithURLParameters",
 					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters",
 					"sap.ui.core.sample.OpaWithSupportAssistant",
-					"sap.ui.core.sample.OpaTestLibrary"
+					"sap.ui.core.sample.OpaTestLibrary",
+					"sap.ui.core.sample.OpaMessageToast"
 				]
 			},
 			{
@@ -313,7 +314,7 @@
 				"id": "sap.ui.core.tutorial.troubleshooting",
 				"name": "Troubleshooting",
 				"category": "Tutorial",
-				"since": "1.50",
+				"since": "1.48",
 				"formFactors": "-",
 				"description": "In this tutorial, we will show you some tools that will help you when you run into problems with your SAPUI5 app.",
 				"docuLink": "#docs/guide/5661952e72df471b932eddc10350c081.html",
@@ -648,6 +649,11 @@
 				"id": "sap.ui.core.sample.OpaTestLibrary",
 				"name": "Creating and using OPA5 test libraries",
 				"description": "This sample demonstrates how to create and use a simple OPA5 test library"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaMessageToast",
+				"name": "Retrieving message toast elements with OPA5",
+				"description": "This sample demonstrates how to locate message toast elements with OPA5"
 			}
 		]
 	}

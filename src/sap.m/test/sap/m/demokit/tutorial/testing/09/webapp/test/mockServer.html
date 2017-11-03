@@ -33,9 +33,12 @@
 
 				// initialize the shell
 				new Shell({
-					app: new ComponentContainer({
-						height: "100%",
-						name: "sap.ui.demo.bulletinboard"
+					app : new ComponentContainer({
+						height : "100%",
+						name : "sap.ui.demo.bulletinboard",
+						settings : {
+							id : "bulletinboard"
+						}
 					})
 				}).placeAt("content");
 			});

@@ -248,6 +248,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ViewSettingsDialog",
 			"sap.m.ViewSettingsPopover",
 			"sap.m.semantic.DetailPage",
+			"sap.m.semantic.SemanticPage",
+			"sap.m.semantic.ShareMenuPage",
 			"sap.m.semantic.FullscreenPage",
 			"sap.m.semantic.MasterPage",
 			"sap.m.Wizard",
@@ -540,6 +542,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		Transparent : "Transparent",
+
+		/**
+		 * ghost type
+		 * @public
+		 */
+		Ghost : "Ghost",
 
 		/**
 		 * up type (up navigation button for header)

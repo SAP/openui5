@@ -32,7 +32,8 @@ sap.ui.define(['./FlexBox', './library'],
 	 */
 	var VBox = FlexBox.extend("sap.m.VBox", /** @lends sap.m.VBox.prototype */ { metadata : {
 
-		library : "sap.m"
+		library : "sap.m",
+		designtime: "sap/m/designtime/VBox.designtime"
 	}});
 
 

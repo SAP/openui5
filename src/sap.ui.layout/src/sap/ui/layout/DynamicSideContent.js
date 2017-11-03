@@ -153,7 +153,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				 * Side content controls.
 				 */
 				sideContent : {type: "sap.ui.core.Control", multiple:  true}
-			}
+			},
+			designTime: "sap/ui/layout/designtime/DynamicSideContent.designtime"
 		}});
 
 		var	S = "S",
