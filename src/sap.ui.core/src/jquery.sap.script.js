@@ -292,7 +292,7 @@ sap.ui.define(['jquery.sap.global'],
 				return false;
 			}
 			if (a.nodeName && b.nodeName && a.namespaceURI && b.namespaceURI) {
-				return jQuery.sap.isEqualNode(a,b);
+				return a.isEqualNode(b);
 			}
 			if (a instanceof Date) {
 				return a.valueOf() == b.valueOf();

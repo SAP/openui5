@@ -3,7 +3,7 @@
  */
 
 // Provides functionality related to eventing.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap/ui/thirdparty/jquery-mobile-custom"],
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', 'jquery.sap.dom', 'jquery.sap.script', "sap/ui/thirdparty/jquery-mobile-custom"],
 	function(jQuery, Device/* , jQuerySap1, jQuerySap2 */ ) {
 	"use strict";
 
@@ -1803,7 +1803,126 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 
 	/* ************************************************ */
 
+	var mTriggerEventInfo = {};
+	var fnTriggerHook;
+
+	/**
+	 * Creates the trigger hook if it does not yet exist.
+	 */
+	function getTriggerHook() {
+		if (!fnTriggerHook) {
+			fnTriggerHook = function(oEvent) {
+				var bIsLoggable = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG);
+				var mEventInfo = mTriggerEventInfo[oEvent.type];
+				var fnOriginalTriggerHook = mEventInfo.originalTriggerHook;
+				var t0 = window.performance.now();
+				var t1;
+				if (!oEvent.isPropagationStopped() && !oEvent.isSimulated) {
+					for (var sId in mEventInfo.domRefs) {
+						var oDomInfo = mEventInfo.domRefs[sId];
+						if (oDomInfo.excludedDomRefs.indexOf(oEvent.target) === -1 && jQuery.sap.containsOrEquals(oDomInfo.domRef, oEvent.target)) {
+							oEvent.preventDefault();
+							oEvent.stopImmediatePropagation();
+							t1 = window.performance.now();
+							if (bIsLoggable) {
+								jQuery.sap.log.debug("Perf: jQuery trigger supression event handler " + oEvent.type + " took " + (t1 - t0) + " milliseconds.");
+							}
+							return false; //prevent further jQuery processing.
+						}
+					}
+				}
+				if (fnOriginalTriggerHook && fnOriginalTriggerHook.call(this, oEvent) === false) {
+					//prevent further jQuery procesing.
+					return false;
+				}
+			};
+		}
+		return fnTriggerHook;
+	}
+
+	/**
+	 * Register special jQuery.trigger event hook
+	 */
+	function _applyTriggerHook(sEventType) {
+		if (!jQuery.event.special[sEventType]) {
+			jQuery.event.special[sEventType] = {};
+		}
+		var oSpecialEvent = jQuery.event.special[sEventType],
+			originalTriggerHook = oSpecialEvent.trigger;
+
+		oSpecialEvent.trigger = getTriggerHook();
+
+		return originalTriggerHook;
+	}
+
+	/**
+	 * Suppress jQuery.trigger events for a given DOM element
+	 *
+	 * mTriggerEventHandler example:
+	 *
+	 * mTriggerEventInfo: {
+	 * 		'EventType': {
+	 * 			domRefs: {
+	 * 				'DomRefId': {
+	 * 					domRef: 'DomRef',
+	 * 					excludedDomRefs: aDomRefs
+	 * 				}
+	 * 			},
+	 * 			hookApplied: 'boolean'
+	 * 			originalTriggerHook: 'fnHook'
+	 * 		}
+	 * }
+	 *
+	 * @param {String} sEventType Event type to suppress jQuery.trigger for
+	 * @param {Element} oDomRef DOM element to suppress events from jQuery.trigger
+	 * @param {Element|Array} [aExcludedDomRefs] DomRefs excluded from suppress events from jQuery.trigger
+	 * @returns {Object} oHandler The supression handler. Needed for releasing the supression
+	 * @private
+	 */
+	jQuery.sap._suppressTriggerEvent = function(sEventType, oDomRef, aExcludedDomRefs) {
+		var mEventInfo = mTriggerEventInfo[sEventType];
+		var sId = jQuery.sap.uid();
+
+		if (!mEventInfo) {
+			mEventInfo = mTriggerEventInfo[sEventType] = {
+				domRefs: {},
+				originalTriggerHook: _applyTriggerHook(sEventType)
+			};
+		}
+
+		mEventInfo.domRefs[sId] = {
+			domRef: oDomRef,
+			excludedDomRefs: [].concat(aExcludedDomRefs)
+		};
+
+		return {
+			id: sId,
+			type: sEventType
+		};
+	};
+
+	/**
+	 * Stop suppressing jQuery.trigger events for a given DOM element
+	 *
+	 * @param {Object} oHandler The supression handler
+	 * @private
+	 */
+	jQuery.sap._releaseTriggerEvent = function(oHandler) {
+		if (!oHandler) {
+			return;
+		}
+
+		var mEventInfo = mTriggerEventInfo[oHandler.type];
+
+		if (!mEventInfo) {
+			return;
+		} else if (!mEventInfo.domRefs[oHandler.id] || !mEventInfo.domRefs[oHandler.id].domRef) {
+			jQuery.sap.log.warning("Release trigger event for event type " + oHandler.type + "on Control " + oHandler.id + ": DomRef does not exists");
+			return;
+		}
+
+		delete mEventInfo.domRefs[oHandler.id];
+	};
 
 	return jQuery;
-
 });
