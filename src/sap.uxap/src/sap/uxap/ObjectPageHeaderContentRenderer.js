@@ -160,7 +160,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oHeader an object representation of the titleHeader that should be rendered
 	 */
 	ObjectPageHeaderContentRenderer._renderTitleImage = function (oRm, oHeader) {
-		var oObjectImage = oHeader._getInternalAggregation("_objectImage");
+		var oObjectImage = oHeader._lazyLoadInternalAggregation("_objectImage", true);
 
 		if (oHeader.getObjectImageURI() || oHeader.getShowPlaceholder()) {
 			oRm.write("<span");

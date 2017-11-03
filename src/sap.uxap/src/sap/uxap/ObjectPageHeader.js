@@ -268,18 +268,18 @@ sap.ui.define([
 		}
 
 		// Overflow button
-		this._oOverflowActionSheet = this._getInternalAggregation("_overflowActionSheet");
-		this._oOverflowButton = this._getInternalAggregation("_overflowButton").attachPress(this._handleOverflowButtonPress, this);
-		this._oExpandButton = this._getInternalAggregation("_expandButton");
+		this._oOverflowActionSheet = this._lazyLoadInternalAggregation("_overflowActionSheet", true);
+		this._oOverflowButton = this._lazyLoadInternalAggregation("_overflowButton", true).attachPress(this._handleOverflowButtonPress, this);
+		this._oExpandButton = this._lazyLoadInternalAggregation("_expandButton", true);
 		this._oActionSheetButtonMap = {};
-		this._oFlagIcon = this._getInternalAggregation("_flagIcon");
-		this._oFavIcon = this._getInternalAggregation("_favIcon");
-		this._oTitleArrowIcon = this._getInternalAggregation("_titleArrowIcon").attachPress(this._handleArrowPress, this);
-		this._oTitleArrowIconCont = this._getInternalAggregation("_titleArrowIconCont").attachPress(this._handleArrowPress, this);
-		this._oLockIcon = this._getInternalAggregation("_lockIcon").attachPress(this._handleLockPress, this);
-		this._oLockIconCont = this._getInternalAggregation("_lockIconCont").attachPress(this._handleLockPress, this);
-		this._oChangesIcon = this._getInternalAggregation("_changesIcon").attachPress(this._handleChangesPress, this);
-		this._oChangesIconCont = this._getInternalAggregation("_changesIconCont").attachPress(this._handleChangesPress, this);
+		this._oFlagIcon = this._lazyLoadInternalAggregation("_flagIcon", true);
+		this._oFavIcon = this._lazyLoadInternalAggregation("_favIcon", true);
+		this._oTitleArrowIcon = this._lazyLoadInternalAggregation("_titleArrowIcon", true).attachPress(this._handleArrowPress, this);
+		this._oTitleArrowIconCont = this._lazyLoadInternalAggregation("_titleArrowIconCont", true).attachPress(this._handleArrowPress, this);
+		this._oLockIcon = this._lazyLoadInternalAggregation("_lockIcon", true).attachPress(this._handleLockPress, this);
+		this._oLockIconCont = this._lazyLoadInternalAggregation("_lockIconCont", true).attachPress(this._handleLockPress, this);
+		this._oChangesIcon = this._lazyLoadInternalAggregation("_changesIcon", true).attachPress(this._handleChangesPress, this);
+		this._oChangesIconCont = this._lazyLoadInternalAggregation("_changesIconCont", true).attachPress(this._handleChangesPress, this);
 	};
 
 	ObjectPageHeader.prototype._handleOverflowButtonPress = function (oEvent) {
@@ -389,9 +389,9 @@ sap.ui.define([
 	};
 
 
-	ObjectPageHeader.prototype._getInternalAggregation = function (sAggregationName) {
+	ObjectPageHeader.prototype._lazyLoadInternalAggregation = function (sAggregationName, bSuppressInvalidate) {
 		if (!this.getAggregation(sAggregationName)) {
-			this.setAggregation(sAggregationName, ObjectPageHeader._internalAggregationFactory[sAggregationName](this));
+			this.setAggregation(sAggregationName, ObjectPageHeader._internalAggregationFactory[sAggregationName](this), bSuppressInvalidate);
 		}
 		return this.getAggregation(sAggregationName);
 	};
@@ -422,7 +422,7 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype._proxyMethodToBreadCrumbControl = function (sFuncName, aArguments) {
-		var oBreadCrumbs = this._getInternalAggregation("_breadCrumbs"),
+		var oBreadCrumbs = this._lazyLoadInternalAggregation("_breadCrumbs"),
 			vResult = oBreadCrumbs[sFuncName].apply(oBreadCrumbs, aArguments);
 		this.invalidate();
 		return vResult;
@@ -520,7 +520,7 @@ sap.ui.define([
 	aObjectImageProperties.forEach(fnGenerateSetterForObjectImageProperties);
 
 	ObjectPageHeader.prototype.getBreadCrumbsLinks = function () {
-		return this._getInternalAggregation("_breadCrumbs").getLinks();
+		return this._lazyLoadInternalAggregation("_breadCrumbs").getLinks();
 	};
 
 	ObjectPageHeader.prototype.addBreadCrumbLink = function () {
@@ -644,7 +644,7 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype._handleImageNotFoundError = function () {
-		var oObjectImage = this._getInternalAggregation("_objectImage"),
+		var oObjectImage = this._lazyLoadInternalAggregation("_objectImage"),
 			oParent = this.getParent(),
 			$context = oParent ? oParent.$() : this.$();
 
@@ -658,11 +658,11 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype._clearImageNotFoundHandler = function (){
-		this._getInternalAggregation("_objectImage").$().off("error");
+		this._lazyLoadInternalAggregation("_objectImage").$().off("error");
 	};
 
 	ObjectPageHeader.prototype.onAfterRendering = function () {
-		var $objectImage = this._getInternalAggregation("_objectImage").$();
+		var $objectImage = this._lazyLoadInternalAggregation("_objectImage").$();
 		this._adaptLayout();
 
 		this._clearImageNotFoundHandler();
