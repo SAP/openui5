@@ -34,8 +34,8 @@
 		]
 	  },
 	  {
-		"id": "sap.uxap.ObjectPageDynamicHeader",
-		"name": "Object Page Dynamic Header",
+		"id": "sap.uxap.ObjectPageDynamicHeaderTitle",
+		"name": "Object Page Dynamic Header Title",
 		"category": "Display",
 		"since": "1.52",
 		"formFactors": "-",
@@ -114,7 +114,7 @@
 	"samples": [
 	  {
 		"id": "sap.uxap.sample.ObjectPageWithDynamicHeader",
-		"name": "Object Page With Dynamic Header",
+		"name": "Object Page with Dynamic Header",
 		"description": "This example demonstrates ObjectPage with dynamic header achieved by using ObjectPageDynamicHeaderTitle for the headerContent aggregation."
 	  },
 	  {
