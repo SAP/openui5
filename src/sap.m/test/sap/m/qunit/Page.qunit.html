@@ -232,10 +232,22 @@
 				assert.equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "96px", "top of Page content with subHeader shown should be 96px (6rem)");
 			});
 
-			QUnit.test("showFooter", function(assert) {
-				oPage.setShowFooter(false);
+			QUnit.test("showFooter when floatingFooter=true and showFooter=false initially", function(assert) {
+				var oPage = new sap.m.Page({
+					id: "idPage",
+					floatingFooter: true,
+					showFooter: false,
+					footer: [ new sap.m.OverflowToolbar({id: "idFooter", content: [new sap.m.Button()]}) ]
+				});
+
+				oPage.placeAt("content");
+
 				sap.ui.getCore().applyChanges();
-				assert.equal(jQuery.sap.domById("myFooter"), undefined, "footer should not be rendered");
+
+				assert.equal(!!jQuery.sap.domById("myFooter"), true, "footer should be rendered");
+				assert.equal(oPage.getFooter().getDomRef().parentNode.classList.contains("sapUiHidden"), true, "footer is hidden");
+
+				oPage.destroy();
 			});
 
 			if (sap.ui.Device.browser.chrome) {
