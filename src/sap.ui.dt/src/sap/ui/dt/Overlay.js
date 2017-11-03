@@ -762,8 +762,12 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			if (!this.getLazyRendering()) {
 				return true;
 			}
+			var oElement = this.getElementInstance();
+			if (!oElement){
+				return false;
+			}
 			var oDesignTimeMetadata = this.getDesignTimeMetadata();
-			return oDesignTimeMetadata ? !oDesignTimeMetadata.isIgnored(this.getElementInstance()) : false;
+			return oDesignTimeMetadata ? !oDesignTimeMetadata.isIgnored(oElement) : false;
 		} else {
 			return this.getProperty("visible");
 		}
