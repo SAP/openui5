@@ -1597,6 +1597,89 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
+	 * Returns two maps of model configurations to be used for the model "preload" feature.
+	 * Used within sap.ui.component.load to create models during component load.
+	 *
+	 * "afterManifest"
+	 * Models that are activated for preload via "preload=true" or URI parameter.
+	 * They will be created after the manifest is available.
+	 *
+	 * "afterPreload"
+	 * Currently only for ResourceModels with async=false (default) to prevent sync requests
+	 * by loading the corresponding ResourceBundle in advance.
+	 * They will be created after the Component-preload has been loaded, as most apps package
+	 * their ResourceBundles within the Component-preload.
+	 *
+	 * @param {sap.ui.core.Manifest} oManifest Manifest instance
+	 * @param {object} [oComponentData] optional component data object
+	 * @param {object} [mCacheTokens] optional cache tokens for OData models
+	 * @returns {object} object with two maps, see above
+	 */
+	function getPreloadModelConfigsFromManifest(oManifest, oComponentData, mCacheTokens) {
+		var mModelConfigs = {
+			afterManifest: {},
+			afterPreload: {}
+		};
+
+		// deep clone is needed as the mainfest only returns a read-only copy (freezed object)
+		var oManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
+		var oManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
+
+		var mAllModelConfigurations = Component._createManifestModelConfigurations({
+			models: oManifestModels,
+			dataSources: oManifestDataSources,
+			manifest: oManifest,
+			componentData: oComponentData,
+			cacheTokens: mCacheTokens
+		});
+
+		// Read internal URI parameter to enable model preload for testing purposes
+		// Specify comma separated list of model names. Use an empty segment for the "default" model
+		// Examples:
+		//   sap-ui-xx-preload-component-models-<componentName>=, => prelaod default model (empty string key)
+		//   sap-ui-xx-preload-component-models-<componentName>=foo, => prelaod "foo" + default model (empty string key)
+		//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => prelaod "foo" + "bar" models
+		var sPreloadModels = jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
+		var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
+
+		for (var sModelName in mAllModelConfigurations) {
+			var mModelConfig = mAllModelConfigurations[sModelName];
+
+			// activate "preload" flag in case URI parameter for testing is used (see code above)
+			if (!mModelConfig.preload && aPreloadModels && aPreloadModels.indexOf(sModelName) > -1 ) {
+				mModelConfig.preload = true;
+				jQuery.sap.log.warning("FOR TESTING ONLY!!! Activating preload for model \"" + sModelName + "\" (" + mModelConfig.type + ")",
+					oManifest.getComponentName(), "sap.ui.core.Component");
+			}
+
+			// ResourceModels with async=false should be always loaded beforehand to get rid of sync requests under the hood (regardless of the "preload" flag)
+			if (mModelConfig.type === "sap.ui.model.resource.ResourceModel" &&
+				Array.isArray(mModelConfig.settings) &&
+				mModelConfig.settings.length > 0 &&
+				mModelConfig.settings[0].async !== true
+			) {
+				// Use separate config object for ResourceModels as the resourceBundle might be
+				// part of the Component-preload which isn't available when the regular "preloaded"-models are created
+				mModelConfigs.afterPreload[sModelName] = mModelConfig;
+			} else if (mModelConfig.preload) {
+				// Only create models:
+				//   - which are flagged for preload (mModelConfig.preload) or activated via internal URI param (see above)
+				//   - in case the model class is already loaded (otherwise log a warning)
+				if (jQuery.sap.isDeclared(mModelConfig.type, true)) {
+					mModelConfigs.afterManifest[sModelName] = mModelConfig;
+				} else {
+					jQuery.sap.log.warning("Can not preload model \"" + sModelName + "\" as required class has not been loaded: \"" + mModelConfig.type + "\"",
+						oManifest.getComponentName(), "sap.ui.core.Component");
+				}
+			}
+
+		}
+
+		return mModelConfigs;
+	}
+
+
+	/**
 	 * Callback handler which will be executed once the component is loaded. A copy of the
 	 * configuration object together with a copy of the manifest object will be passed into
 	 * the registered function.
@@ -1884,6 +1967,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			sManifestUrl,
 			oManifest,
 			mModels,
+			mModelConfigs,
 			fnCallLoadComponentCallback;
 
 		function createSanitizedManifest( oRawManifestJSON ) {
@@ -2061,6 +2145,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				} catch (e) {
 					jQuery.sap.log.warning("couldn't preload component from " + sPreloadName + ": " + ((e && e.message) || e));
 				}
+			} else if (bAsync) {
+				return Promise.resolve();
 			}
 		}
 
@@ -2118,9 +2204,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// trigger loading of libraries and component preloads and collect the given promises
 			var hints = oConfig.asyncHints || {},
 				promises = [],
+				reflect = function(oPromise) {
+					// In order to make the error handling of the Promise.all() happen after all Promises finish, we catch all rejected Promises and make them resolve with an marked object.
+					oPromise = oPromise.then(
+						function(v) {
+							return {
+								result: v,
+								rejected: false
+							};
+						},
+						function(v) {
+							return {
+								result: v,
+								rejected: true
+							};
+						}
+					);
+					return oPromise;
+				},
 				collect = function(oPromise) {
 					if ( oPromise ) {
-						promises.push(oPromise);
+						promises.push(reflect(oPromise));
 					}
 				},
 				identity = function($) { return $; },
@@ -2129,57 +2233,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 			if (oManifest && mOptions.createModels) {
 				collect(oManifest.then(function(oManifest) {
+					// Calculate configurations of preloaded models once the manifest is available
+					mModelConfigs = getPreloadModelConfigsFromManifest(oManifest, oConfig.componentData, hints.cacheTokens);
 
-					// deep clone is needed as the mainfest only returns a read-only copy (freezed object)
-					var oManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
-					var oManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
-
-					var mAllModelConfigurations = Component._createManifestModelConfigurations({
-						models: oManifestModels,
-						dataSources: oManifestDataSources,
-						manifest: oManifest,
-						componentData: oConfig.componentData,
-						cacheTokens: hints.cacheTokens
-					});
-
-					if (mAllModelConfigurations) {
-
-						// Read internal URI parameter to enable model preload for testing purposes
-						// Specify comma separated list of model names. Use an empty segment for the "default" model
-						// Examples:
-						//   sap-ui-xx-preload-component-models-<componentName>=, => prelaod default model (empty string key)
-						//   sap-ui-xx-preload-component-models-<componentName>=foo, => prelaod "foo" + default model (empty string key)
-						//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => prelaod "foo" + "bar" models
-						var sPreloadModels = jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
-						var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
-
-						var mModelConfigurations = {};
-						for (var sModelName in mAllModelConfigurations) {
-							var mModelConfig = mAllModelConfigurations[sModelName];
-
-							// activate "preload" flag in case URI parameter for testing is used (see code above)
-							if (!mModelConfig.preload && aPreloadModels && aPreloadModels.indexOf(sModelName) > -1 ) {
-								mModelConfig.preload = true;
-								jQuery.sap.log.warning("FOR TESTING ONLY!!! Activating preload for model \"" + sModelName + "\" (" + mModelConfig.type + ")",
-									oManifest.getComponentName(), "sap.ui.core.Component");
-							}
-
-							// Only create models:
-							//   - which are flagged for preload (mModelConfig.preload) or activated via internal URI param (see above)
-							//   - in case the model class is already loaded (otherwise log a warning)
-							if (mModelConfig.preload) {
-								if (jQuery.sap.isDeclared(mModelConfig.type, true)) {
-									mModelConfigurations[sModelName] = mModelConfig;
-								} else {
-									jQuery.sap.log.warning("Can not preload model \"" + sModelName + "\" as required class has not been loaded: \"" + mModelConfig.type + "\"",
-										oManifest.getComponentName(), "sap.ui.core.Component");
-								}
-							}
-
-						}
-						if (Object.keys(mModelConfigurations).length > 0) {
-							mModels = Component._createManifestModels(mModelConfigurations, oManifest.getComponentName());
-						}
+					return oManifest;
+				}).then(function(oManifest) {
+					// Create preloaded models directly after the manifest has been loaded
+					if (Object.keys(mModelConfigs.afterManifest).length > 0) {
+						mModels = Component._createManifestModels(mModelConfigs.afterManifest, oManifest.getComponentName());
 					}
 
 					return oManifest;
@@ -2231,7 +2292,67 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					}
 
 					// preload the component
-					return preload(sComponentName, true);
+					return preload(sComponentName, true).then(function() {
+						// after preload is finished, the resource models from the manifest are loaded
+
+						if (!mOptions.createModels) {
+							return null;
+						}
+
+						var aResourceModelNames = Object.keys(mModelConfigs.afterPreload);
+
+						if (aResourceModelNames.length === 0) {
+							return null;
+						}
+
+						// if there are resource models to be loaded, load the resource bundle async first.
+						// a promise is returned which resolves after all resource models are loaded
+						return new Promise(function(resolve /*, reject*/) {
+							// load the sap.ui.model/resource/ResourceModel class async if it's not loaded yet
+							sap.ui.require(["sap/ui/model/resource/ResourceModel"], function(ResourceModel) {
+								// Directly resolve as otherwise uncaught exceptions can't be handled
+								resolve(ResourceModel);
+							});
+						}).then(function(ResourceModel) {
+							function loadResourceBundle(sModelName) {
+								var mModelConfig = mModelConfigs.afterPreload[sModelName];
+								if (Array.isArray(mModelConfig.settings) && mModelConfig.settings.length > 0) {
+									var mModelSettings = mModelConfig.settings[0]; // first argument is the config map
+									return ResourceModel.loadResourceBundle(mModelSettings, true).then(function(oResourceBundle) {
+										// Extend the model settings with the preloaded bundle so that no sync request
+										// is triggered once the model gets created
+										mModelSettings.bundle = oResourceBundle;
+									}, function(err) {
+										jQuery.sap.log.error("Component Manifest: Could not preload ResourceBundle for ResourceModel. " +
+											"The model will be skipped here and tried to be created on Component initialization.",
+											"[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sComponentName);
+										jQuery.sap.log.error(err);
+
+										// If the resource bundle can't be loaded, the resource model will be skipped.
+										// But once the component instance gets created, the model will be tried to created again.
+										delete mModelConfigs.afterPreload[sModelName];
+									});
+								} else {
+									// Can't load bundle as no settings are defined.
+									// Should not happen as those models won't be part of "mModelConfigs.afterPreload"
+									return Promise.resolve();
+								}
+							}
+
+							// Load all ResourceBundles for all models in parallel
+							return Promise.all(aResourceModelNames.map(loadResourceBundle)).then(function() {
+								if (Object.keys(mModelConfigs.afterPreload).length > 0) {
+									var mResourceModels = Component._createManifestModels(mModelConfigs.afterPreload, oManifest.getComponentName());
+									if (!mModels) {
+										mModels = {};
+									}
+									for (var sKey in mResourceModels) {
+										mModels[sKey] = mResourceModels[sKey];
+									}
+								}
+							});
+						});
+					});
 				}));
 
 				fnCallLoadComponentCallback = function(oLoadedManifest) {
@@ -2261,7 +2382,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			}
 
 			// combine given promises
-			return Promise.all(promises).then(function (v) {
+			return Promise.all(promises).then(function(v) {
+				// If any promise is rejected, a new rejected Promise is forwarded on the chain which leads to the catch clause
+				var aResults = [],
+					bErrorFound = false,
+					vError;
+
+				bErrorFound = v.some(function(oResult) {
+					if (oResult && oResult.rejected) {
+						vError = oResult.result;
+						return true;
+					}
+					aResults.push(oResult.result);
+				});
+
+				if (bErrorFound) {
+					return Promise.reject(vError);
+				}
+
+				return aResults;
+			}).then(function (v) {
 				// after all promises including the loading of dependent libs have been resolved
 				// pass the manifest to the callback function in case the manifest is present and a callback was set
 				if (oManifest && fnCallLoadComponentCallback) {
