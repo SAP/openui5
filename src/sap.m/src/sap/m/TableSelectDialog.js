@@ -417,6 +417,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		// reset internal variables
 		this._bFirstRequest = true;
 
+		this._sSearchFieldValue = "";
+
 		// set search field value
 		this._oSearchField.setValue(sSearchValue);
 
