@@ -19,8 +19,7 @@ sap.ui.define(["jquery.sap.global",
 		ListBinding,
 		JSONModel,
 		ODataMetadata,
-		CompositeBinding,
-		PropertyBinding) {
+		CompositeBinding) {
 	"use strict";
 
 	// shortcuts
@@ -44,62 +43,6 @@ sap.ui.define(["jquery.sap.global",
 	//**********************************************************
 	// Rule Definitions
 	//**********************************************************
-	/**
-	 * Checks whether there are property bindings for models where the model is undefined
-	 */
-	var oUnresolvedPropertyBindings = {
-		id: "unresolvedPropertyBindings",
-		audiences: [Audiences.Control, Audiences.Application],
-		categories: [Categories.Bindings],
-		enabled: true,
-		minversion: "1.32",
-		title: "Unresolved Property Bindings",
-		description: "Unresolved bindings might be caused by typos in their path",
-		resolution: "Check the binding path for typos",
-		resolutionurls: [
-			{
-				href: "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.model.Context.html",
-				text: "Context class"
-			},
-			{
-				href: "https://sapui5.hana.ondemand.com/#docs/guide/e5310932a71f42daa41f3a6143efca9c.html",
-				text: "Data binding"
-			},
-			{
-				href: "https://sapui5.hana.ondemand.com/#docs/guide/97830de2d7314e93b5c1ee3878a17be9.html",
-				text: "Aggregation binding with templates"
-			},
-			{
-				href: "https://sapui5.hana.ondemand.com/#docs/guide/6c7c5c266b534e7ea9a28f861dc515f5.html",
-				text: "Element binding"
-			}
-		],
-		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mElements = oScope.getElements();
-			for (var n in mElements) {
-				var oElement = mElements[n],
-					mBindingInfos = oElement.mBindingInfos;
-				for (var m in mBindingInfos) {
-					var oBinding = mBindingInfos[m].binding;
-					if (oBinding) {
-						if (!(oBinding instanceof CompositeBinding) && oBinding instanceof PropertyBinding && oBinding.getModel()) {
-							if (oBinding.getValue() === undefined) {
-								oIssueManager.addIssue({
-									severity: Severity.Low,
-									details: "Element " + oElement.getId() + " has unresolved bindings.",
-									context: {
-										id: oElement.getId()
-									}
-								});
-							}
-						}
-					}
-				}
-			}
-		}
-	};
-
-
 	/**
 	 * Checks whether there are bindings for models where the model is available but a binding has no result
 	 * It checks the path structure and checks for typos
@@ -143,6 +86,8 @@ sap.ui.define(["jquery.sap.global",
 					var oBinding = mBindingInfos[sBindingInfo].binding;
 					if (oBinding && !(oBinding instanceof CompositeBinding) && oBinding.getModel && oBinding.getModel()) {
 						var oModel = oBinding.getModel();
+
+						//find elements with unresolved PropertyBindings
 						if ((oBinding.getValue && oBinding.getValue() === undefined)
 							|| (oBinding instanceof ListBinding && oBinding.getLength() === 0)) {
 							var sJsonModelBestMatch = false;
@@ -179,8 +124,8 @@ sap.ui.define(["jquery.sap.global",
 
 							if (sJsonModelBestMatch) {
 								oIssueManager.addIssue({
-									severity: Severity.High,
-									details: "Element " + oElement.getId() + " " + oBinding.getPath() + " has unresolved bindings." +
+									severity: Severity.Medium,
+									details: "Element " + oElement.getId() + " with binding path '" + oBinding.getPath() + "' has unresolved bindings." +
 									" You could try '" + sJsonModelBestMatch + "' instead",
 									context: {
 										id: oElement.getId()
@@ -191,7 +136,7 @@ sap.ui.define(["jquery.sap.global",
 						} else if (oBinding.getValue && oBinding.getValue() === oBinding.getPath()) {
 							oIssueManager.addIssue({
 								severity: Severity.Low,
-								details: "Element " + oElement.getId() + " " + oBinding.getPath() + " has the same value as the path. Potential Error.",
+								details: "Element " + oElement.getId() + " with binding path '" + oBinding.getPath() + "' has the same value as the path. Potential Error.",
 								context: {
 									id: oElement.getId()
 								}
@@ -204,7 +149,6 @@ sap.ui.define(["jquery.sap.global",
 	};
 
 	return [
-		oUnresolvedPropertyBindings,
 		oBindingPathSyntaxValidation
 	];
 }, true);
