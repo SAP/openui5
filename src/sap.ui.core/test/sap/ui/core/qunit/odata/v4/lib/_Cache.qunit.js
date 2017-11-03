@@ -1247,7 +1247,7 @@ sap.ui.require([
 				.returns(Promise.resolve(mTypeForPath));
 
 			// code under test
-			oPromise = oCache.read(oFixture.index, oFixture.length, "group");
+			oPromise = oCache.read(oFixture.index, oFixture.length, 0, "group");
 
 			assert.ok(!oPromise.isFulfilled());
 			assert.ok(!oPromise.isRejected());
@@ -1281,11 +1281,99 @@ sap.ui.require([
 				}
 
 				// ensure that the same read does not trigger another request
-				return oCache.read(oFixture.index, oFixture.length).then(function (oResult) {
+				return oCache.read(oFixture.index, oFixture.length, 0).then(function (oResult) {
 					assert.deepEqual(oResult, oExpectedResult);
 					assert.strictEqual(oResult.value.$count, oFixture.count);
 				});
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	[{ // no prefetch
+		range : [0, 10, 0],
+		expected : {start : 0, length : 10}
+	}, {
+		range : [40, 10, 0],
+		expected : {start : 40, length : 10}
+	}, {
+		current : [[40, 50]],
+		range : [40, 10, 0],
+		expected : {start : 40, length : 10}
+	}, {
+		current : [[50, 110]],
+		range : [100, 20, 0],
+		expected : {start : 100, length : 20}
+	}, { // initial read with prefetch
+		range : [0, 10, 100],
+		expected : {start : 0, length : 110}
+	}, { // iPrefetchLength / 2 available on both sides
+		current : [[0, 110]],
+		range : [50, 10, 100],
+		expected : {start : 50, length : 10}
+	}, { // missing a row at the end
+		current : [[0, 110]],
+		range : [51, 10, 100],
+		expected : {start : 51, length : 110}
+	}, { // missing a row before the start
+		current : [[100, 260]],
+		range : [149, 10, 100],
+		expected : {start : 49, length : 110}
+	}, { // missing a row before the start, do not read beyond 0
+		current : [[40, 200]],
+		range : [89, 10, 100],
+		expected : {start : 0, length : 99}
+	}, { // missing data on both sides, do not read beyond 0
+		range : [430, 10, 100],
+		expected : {start : 330, length : 210}
+	}, { // missing data on both sides, do not read beyond 0
+		current : [[40, 100]],
+		range : [89, 10, 100],
+		expected : {start : 0, length : 199}
+	}, { // transient context
+		range : [-1, 10, 100],
+		bTransient : true,
+		expected : {start : -1, length : 110}
+	}].forEach(function (oFixture) {
+		QUnit.test("CollectionCache#getReadRange: " + oFixture.range, function (assert) {
+			var oCache = _Cache.create(this.oRequestor),
+				aElements = [],
+				oResult;
+
+			// prepare elements array
+			if (oFixture.current) {
+				oFixture.current.forEach(function (aRange) {
+					var i, n;
+
+					for (i = aRange[0], n = aRange[1]; i < n; i++) {
+						aElements[i] = i;
+					}
+				});
+			}
+			if (oFixture.bTransient) {
+				aElements[-1] = -1;
+			}
+			oCache.aElements = aElements;
+
+			oResult = oCache.getReadRange(oFixture.range[0], oFixture.range[1], oFixture.range[2]);
+
+			assert.deepEqual(oResult, oFixture.expected);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: prefetch", function (assert) {
+		var sResourcePath = "Employees",
+			oCache = this.createCache(sResourcePath),
+			oCacheMock = this.mock(oCache);
+
+		oCacheMock.expects("getReadRange")
+			.withExactArgs(20, 6, 10).returns({start : 15, length : 16});
+		this.mockRequest(sResourcePath, 15, 16);
+
+		// code under test
+		oCache.read(20, 6, 10).then(function (oResult) {
+			assert.deepEqual(oResult, createResult(20, 6));
 		});
 	});
 
@@ -1331,14 +1419,14 @@ sap.ui.require([
 
 		// code under test
 		assert.throws(function () {
-			oCache.read(-1, 1);
+			oCache.read(-1, 1, 0);
 		}, new Error("Illegal index -1, must be >= 0"));
 
 		oCache.aElements[-1] = {}; // mock a transient entity
 
 		// code under test
 		assert.throws(function () {
-			oCache.read(-2, 1);
+			oCache.read(-2, 1, 0);
 		}, new Error("Illegal index -2, must be >= -1"));
 	});
 
@@ -1351,7 +1439,7 @@ sap.ui.require([
 
 		// code under test
 		assert.throws(function () {
-			oCache.read(1, -1);
+			oCache.read(1, -1, 0);
 		}, new Error("Illegal length -1, must be >= 0"));
 	});
 
@@ -1414,7 +1502,7 @@ sap.ui.require([
 
 			oFixture.reads.forEach(function (oRead) {
 				oPromise = oPromise.then(function () {
-					return oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
+					return oCache.read(oRead.index, oRead.length, 0, undefined, fnDataRequested)
 						.then(function (oResult) {
 							assert.deepEqual(oResult.value,
 								createResult(oRead.index, oRead.length).value);
@@ -1441,7 +1529,7 @@ sap.ui.require([
 			});
 
 			oFixture.reads.forEach(function (oRead) {
-				aPromises.push(oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
+				aPromises.push(oCache.read(oRead.index, oRead.length, 0, undefined, fnDataRequested)
 					.then(function (oResult) {
 						assert.deepEqual(oResult.value,
 							createResult(oRead.index, oRead.length).value);
@@ -1463,14 +1551,14 @@ sap.ui.require([
 		this.mockRequest(sResourcePath, 30, 1);
 
 		return Promise.all([
-			oCache.read(0, 30).then(function (oResult) {
+			oCache.read(0, 30, 0).then(function (oResult) {
 				var oExpectedResult = createResult(0, 26);
 
 				oExpectedResult.value.$count = 26;
 				assert.deepEqual(oResult, oExpectedResult);
 				assert.strictEqual(oCache.aElements.$count, 26);
 			}),
-			oCache.read(30, 1).then(function (oResult) {
+			oCache.read(30, 1, 0).then(function (oResult) {
 				var oExpectedResult = createResult(0, 0);
 
 				oExpectedResult.value.$count = 26;
@@ -1494,13 +1582,13 @@ sap.ui.require([
 					undefined, undefined)
 				.returns(Promise.resolve(createResult(5, 0)));
 
-			return oCache.read(10, bCount ? 30 : 10).then(function (oResult) {
+			return oCache.read(10, bCount ? 30 : 10, 0).then(function (oResult) {
 				var oExpectedResult = createResult(10, bCount ? 16 : 10);
 
 				assert.deepEqual(oResult, oExpectedResult);
 				assert.strictEqual(oCache.aElements.$count, bCount ? 26 : undefined);
 
-				return oCache.read(5, 3).then(function (oResult) {
+				return oCache.read(5, 3, 0).then(function (oResult) {
 					var oExpectedResult = createResult(5, 0);
 
 					assert.deepEqual(oResult, oExpectedResult);
@@ -1518,7 +1606,7 @@ sap.ui.require([
 
 		this.mockRequest(sResourcePath,0, 10, undefined, "26");
 
-		return oCache.read(0, 10).then(function (oResult) {
+		return oCache.read(0, 10, 0).then(function (oResult) {
 			assert.strictEqual(oCache.aElements.$count, 26);
 			assert.strictEqual(oResult.value.$count, 26);
 
@@ -1527,7 +1615,7 @@ sap.ui.require([
 					sinon.match.func, sinon.match.func)
 				.returns(Promise.resolve({}));
 			return oCache.create("$direct", "Employees", "").then(function () {
-				assert.strictEqual(oCache.read(0, 10).getResult().value.$count, 27,
+				assert.strictEqual(oCache.read(0, 10, 0).getResult().value.$count, 27,
 					"now including the created element");
 			});
 		});
@@ -1545,12 +1633,12 @@ sap.ui.require([
 				"value" : [{}, {}, {}, {}, {}]
 			}));
 
-		return oCache.read(0, 5).then(function (oResult) {
+		return oCache.read(0, 5, 0).then(function (oResult) {
 			that.oRequestorMock.expects("request").withArgs("DELETE").returns(Promise.resolve());
 			that.spy(_Helper, "updateCache");
 			return oCache._delete("group", "Employees('42')", "3", function () {})
 				.then(function () {
-					assert.strictEqual(oCache.read(0, 4).getResult().value.$count, 25);
+					assert.strictEqual(oCache.read(0, 4, 0).getResult().value.$count, 25);
 					sinon.assert.calledWithExactly(_Helper.updateCache,
 						sinon.match.same(oCache.mChangeListeners), "",
 						sinon.match.same(oCache.aElements), {$count : 25});
@@ -1573,7 +1661,7 @@ sap.ui.require([
 				}]
 			}));
 
-		return oCache.read(0, 5).then(function (oResult) {
+		return oCache.read(0, 5, 0).then(function (oResult) {
 			that.oRequestorMock.expects("request").withArgs("DELETE").returns(Promise.resolve());
 			that.spy(_Helper, "updateCache");
 			return oCache._delete("group", "Employees('42')", "0/list/1", function () {})
@@ -1599,7 +1687,7 @@ sap.ui.require([
 
 		this.mockRequest(sResourcePath, 0, 10, undefined, "26");
 
-		oCache.read(0, 10);
+		oCache.read(0, 10, 0);
 
 		// code under test: wait until request is finished, do not fire to listener
 		return oCache.fetchValue("group", "$count", undefined, oListener).then(function (iCount) {
@@ -1790,7 +1878,7 @@ sap.ui.require([
 
 		// code under test
 		mQueryParams.$select = "foo"; // modification must not affect cache
-		return oCache.read(0, 5);
+		return oCache.read(0, 5, 0);
 	});
 
 	//*********************************************************************************************
@@ -1810,9 +1898,9 @@ sap.ui.require([
 			.returns(Promise.resolve(oSuccess));
 
 		// code under test
-		return oCache.read(0, 5).catch(function (oResult1) {
+		return oCache.read(0, 5, 0).catch(function (oResult1) {
 			assert.strictEqual(oResult1, oError);
-			return oCache.read(0, 5).then(function (oResult2) {
+			return oCache.read(0, 5, 0).then(function (oResult2) {
 				assert.deepEqual(oResult2, oSuccess);
 			});
 		});
@@ -1871,7 +1959,7 @@ sap.ui.require([
 		// code under test
 		oPatchPromise1 = oCache.update("updateGroup", "bar", "baz", sinon.spy(), "n/a", "-1");
 		oPatchPromise2 = oCache.update("anotherGroup", "bar", "qux", sinon.spy(), "n/a", "-1");
-		oReadPromise = oCache.read(-1, 1);
+		oReadPromise = oCache.read(-1, 1, 0);
 
 		return Promise.all([
 			oPatchPromise1.then(), // check that update returned a promise
@@ -2100,14 +2188,14 @@ sap.ui.require([
 		oCache.create("updateGroup", "Employees", "", oEntityData);
 
 		// code under test
-		return oCache.read(-1, 3, "$direct").then(function (oResult) {
+		return oCache.read(-1, 3, 0, "$direct").then(function (oResult) {
 			assert.strictEqual(oResult.value.length, 3);
 			assert.ok(oResult.value[0]["@$ui5.transient"]);
 			assert.strictEqual(oResult.value[1], oReadResult.value[0]);
 			assert.strictEqual(oResult.value[2], oReadResult.value[1]);
 
 			// code under test
-			oResult = oCache.read(-1, 1, "$direct").getResult();
+			oResult = oCache.read(-1, 1, 0, "$direct").getResult();
 			assert.strictEqual(oResult.value.length, 1);
 			assert.strictEqual(oResult.value[0].name, "John Doe");
 
@@ -2680,7 +2768,7 @@ sap.ui.require([
 		this.mock(_Cache).expects("computeCount").withExactArgs(sinon.match.same(oData));
 
 		// code under test
-		return oCache.read(0, 3, "group").then(function () {
+		return oCache.read(0, 3, 0, "group").then(function () {
 			assert.strictEqual(oCache.aElements[0], oValue0);
 			assert.strictEqual(oCache.aElements[1], oValue1);
 		});

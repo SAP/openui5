@@ -960,12 +960,61 @@ sap.ui.define([
 	};
 
 	/**
+	 * Calculates the index range to be read for the given start, length and prefetch length.
+	 * Checks if <code>aElements</code> entries are available for half the prefetch length left and
+	 * right to it. If not, the full prefetch length is added to this side.
+	 *
+	 * @param {number} iStart
+	 *   The start index for the data request in model coordinates (starting with 0 or -1)
+	 * @param {number} iLength
+	 *   The number of requested entries
+	 * @param {number} iPrefetchLength
+	 *   The number of entries to prefetch before and after the given range
+	 * @returns {object}
+	 *   Returns an object with a member <code>start</code> for the start index for the next
+	 *   read and <code>length</code> for the number of entries to be read.
+	 */
+	CollectionCache.prototype.getReadRange = function (iStart, iLength, iPrefetchLength) {
+		var aElements = this.aElements;
+
+		// Checks whether aElements contains at least one <code>undefined</code> entry within the
+		// given start (inclusive) and end (exclusive).
+		function isDataMissing(iStart, iEnd) {
+			var i;
+			for (i = iStart; i < iEnd; i += 1) {
+				if (aElements[i] === undefined) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		if (isDataMissing(iStart + iLength, iStart + iLength + iPrefetchLength / 2)) {
+			iLength += iPrefetchLength;
+		}
+		if (isDataMissing(Math.max(iStart - iPrefetchLength / 2, 0), iStart)) {
+			iLength += iPrefetchLength;
+			iStart -= iPrefetchLength;
+			if (iStart < 0) {
+				iLength += iStart;
+				iStart = 0;
+			}
+		}
+		return {length : iLength, start : iStart};
+	};
+
+	/**
 	 * Returns a promise to be resolved with an OData object for a range of the requested data.
 	 *
 	 * @param {number} iIndex
 	 *   The start index of the range in model coordinates; the first row has index -1 or 0!
 	 * @param {number} iLength
 	 *   The length of the range
+	 * @param {number} iPrefetchLength
+	 *   The number of rows to read before and after the given range; with this it is possible to
+	 *   prefetch data for a paged access. The cache ensures that at least half the prefetch length
+	 *   is available left and right of the requested range without a further request. If data is
+	 *   missing on one side, the full prefetch length is added at this side.
 	 * @param {string} [sGroupId]
 	 *   ID of the group to associate the requests with
 	 * @param {function} [fnDataRequested]
@@ -984,11 +1033,13 @@ sap.ui.define([
 	 * @throws {Error} If given index or length is less than 0
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
-	CollectionCache.prototype.read = function (iIndex, iLength, sGroupId, fnDataRequested) {
+	CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, sGroupId,
+			fnDataRequested) {
 		var i,
-			iEnd = iIndex + iLength,
+			iEnd,
 			iGapStart = -1,
 			iLowerBound = this.aElements[-1] ? -1 : 0,
+			oRange,
 			iStart = Math.max(iIndex, 0), // for Array#slice()
 			that = this;
 
@@ -999,9 +1050,10 @@ sap.ui.define([
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
 		}
 
-		iEnd = Math.min(iEnd, this.iLimit);
+		oRange = this.getReadRange(iIndex, iLength, iPrefetchLength);
+		iEnd = Math.min(oRange.start + oRange.length, this.iLimit);
 
-		for (i = iIndex; i < iEnd; i++) {
+		for (i = oRange.start; i < iEnd; i++) {
 			if (this.aElements[i] !== undefined) {
 				if (iGapStart >= 0) {
 					requestElements(this, iGapStart, i, sGroupId, fnDataRequested);
