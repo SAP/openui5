@@ -67,6 +67,42 @@
         "type": "FIX",
         "text": " Opa: throw error when iFrame is launched but one already exists",
         "references": []
+      },
+      {
+        "id": "869b937b5f052594f7b3d6c37784497ed97222c6",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: set max possible hour to the default maxDate",
+        "references": []
+      },
+      {
+        "id": "78c57a6377351d978de238fab64a86ad5d89c505",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Correct selection when growing is used.",
+        "references": []
+      },
+      {
+        "id": "180f1df9898f33a0251795a3af630b070e579762",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: The headerButton is now being bound correctly",
+        "references": []
+      },
+      {
+        "id": "2e3a8f04de12f247f04c4f69bc0553abd1a21c36",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Search is now working correctly",
+        "references": []
+      },
+      {
+        "id": "a623fac0314921292a35949b4228485f441ef2ba",
+        "type": "FIX",
+        "text": " sap.m.Text: Ellipsis is now shown when the label is required",
+        "references": []
+      },
+      {
+        "id": "b4a69fac56c8e2a30abf154400bd5b90765e5d3d",
+        "type": "FIX",
+        "text": " sap.m.Timepicker: position selection frame properly in DateTimepicker on small screens",
+        "references": []
       }
     ]
   }

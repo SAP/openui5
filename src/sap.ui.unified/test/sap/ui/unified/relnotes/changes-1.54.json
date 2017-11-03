@@ -1,0 +1,13 @@
+{
+  "1.54.0": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "d3b5ca780a2bfdcdb9c488e6bdd10c4d3de8af92",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: XHR Upload on Safari restored",
+        "references": []
+      }
+    ]
+  }
+}

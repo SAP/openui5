@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " Table: Improved busy handling in case of parallel requests",
         "references": []
+      },
+      {
+        "id": "10e3a315496ef76b5e063315ce8bc7280d51c412",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Table renders even if column was destroyed",
+        "references": []
       }
     ]
   }

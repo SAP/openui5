@@ -7,6 +7,18 @@
         "type": "FIX",
         "text": " sap.ui.fl: checkTargetAndApplyChange small fix on applied changes",
         "references": []
+      },
+      {
+        "id": "bbd4ecb2110dd6f137a110e98ff56e0fd169afa8",
+        "type": "FIX",
+        "text": " Fix several issues in Variant Management Control",
+        "references": []
+      },
+      {
+        "id": "9559d164e0066ec333a55c8d774b49e5102a528f",
+        "type": "FIX",
+        "text": " Opening file in LREP browser lasts long",
+        "references": []
       }
     ]
   }

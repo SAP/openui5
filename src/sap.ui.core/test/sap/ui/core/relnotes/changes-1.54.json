@@ -61,6 +61,30 @@
         "type": "FIX",
         "text": " jQuery.sap.events: Fixed QUnit test",
         "references": []
+      },
+      {
+        "id": "8d6dfaeda6a6ffbe6824666fc1a4a0322a9aaeac",
+        "type": "FEATURE",
+        "text": " Element: support \u0027selector\u0027 for properties and aggregations",
+        "references": []
+      },
+      {
+        "id": "7e81ba94f43fe33da5aee2d1528c0fe17d05562a",
+        "type": "FEATURE",
+        "text": " core.Component: async loading of component resource bundles",
+        "references": []
+      },
+      {
+        "id": "96e850cbf24f3432ee2912f9b21fe4233883712a",
+        "type": "FEATURE",
+        "text": " resource.ResourceModel: Forward ResourceBundle to ResourceModel",
+        "references": []
+      },
+      {
+        "id": "a4e0d6c3f3cf06e39db51b7a5898d3be0d0a0e83",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Rendering in Fiori app is now correct",
+        "references": []
       }
     ]
   }

@@ -31,6 +31,12 @@
         "type": "FEATURE",
         "text": " sap.ui.dt Instance specific design time metadata",
         "references": []
+      },
+      {
+        "id": "d25e53c559708b3bd83b1010482c9f0a598bd0da",
+        "type": "FIX",
+        "text": " Deactivate instanceof check in dt LibraryTest",
+        "references": []
       }
     ]
   }
