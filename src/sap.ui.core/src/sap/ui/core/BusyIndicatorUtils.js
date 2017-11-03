@@ -38,6 +38,10 @@ sap.ui.define(['jquery.sap.global'],
 		oContainer.setAttribute("alt", "");
 		oContainer.setAttribute("tabIndex", "0");
 
+		var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+		var sTitle = oResBundle.getText("BUSY_TEXT");
+		oContainer.setAttribute("title", sTitle);
+
 		var oAnimation = document.createElement("div");
 		oAnimation.className = "sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimStandard";
 		oAnimation.appendChild(document.createElement("div"));
