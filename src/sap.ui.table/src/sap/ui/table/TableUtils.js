@@ -335,10 +335,14 @@ sap.ui.define([
 		 */
 		canUsePendingRequestsCounter: function(oTable) {
 			var oBinding = oTable != null ? oTable.getBinding("rows") : null;
-			var bAnalyticalBindingWithoutBatch = TableUtils.isInstanceOf(oBinding, "sap/ui/model/analytics/AnalyticalBinding")
-												 && !oBinding.bUseBatchRequests;
-			var bTreeBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/TreeBinding");
-			return !bAnalyticalBindingWithoutBatch && !bTreeBinding;
+
+			if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/analytics/AnalyticalBinding")) {
+				return oBinding.bUseBatchRequests;
+			} else if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/TreeBinding")) {
+				return false;
+			}
+
+			return true;
 		},
 
 		/**
