@@ -234,14 +234,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 
 		this._bIntervalSelection = false;
 		this._bOnlyCalendar = true;
-		//We need to know is the current instance subclass of the DatePicker(DateTimePicker) or not.
-		this._bDatePickerInstance = this.getMetadata().getName() === "sap.m.DatePicker";
 
 		this._bValid = true;
 
-		this._oMinDate = new Date(1, 0, 1);
+		this._oMinDate = new Date(1, 0, 1); // set the date to minimum possible for that day
 		this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
-		this._oMaxDate = this._bDatePickerInstance ? new Date(9999, 11, 31) : new Date(9999, 11, 31, 23, 59, 59, 99);
+		this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999); // set the date for the maximum possible for that day
 
 	};
 
@@ -271,8 +269,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 		this._sUsedValuePattern = undefined;
 		this._sUsedValueCalendarType = undefined;
 		this._oValueFormat = undefined;
-		this._bDatePickerInstance = undefined;
-
 	};
 
 	DatePicker.prototype.invalidate = function(oOrigin) {
@@ -495,9 +491,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 			this._oCalendar.setMinDate(oDate);
 		}
 
-		if (this._bDatePickerInstance) {
-			this._oMinDate.setHours(0, 0, 0, 0);//clear the time part
-		}
+		this._oMinDate.setHours(0, 0, 0, 0);//clear the time part
 
 		return this;
 
@@ -526,7 +520,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 				this.setDateValue(new Date(oDate.getTime()));
 			}
 		} else {
-			this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 99);
+			this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
 		}
 
 		// re-render because order of parameter changes not clear -> check onBeforeRendering
@@ -536,9 +530,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 			this._oCalendar.setMaxDate(oDate);
 		}
 
-		if (this._bDatePickerInstance) {
-			this._oMaxDate.setHours(0, 0, 0, 0);//clear the time part
-		}
+		this._oMaxDate.setHours(23, 59, 59, 999);//set to max possible hours for this day
 
 		return this;
 
