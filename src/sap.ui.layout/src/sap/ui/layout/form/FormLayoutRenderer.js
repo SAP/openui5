@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/theming/Parameters"],
-	function(library, coreLibrary, themingParameters) {
+sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/theming/Parameters", "sap/ui/layout/form/Form"],
+	function(library, coreLibrary, themingParameters, Form) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 		var rm = oRenderManager;
 
 		var oForm = oLayout.getParent();
-		if (oForm && oForm instanceof sap.ui.layout.form.Form) {
+		if (oForm && oForm instanceof Form) {
 			this.renderForm(rm, oLayout, oForm);
 		}
 
