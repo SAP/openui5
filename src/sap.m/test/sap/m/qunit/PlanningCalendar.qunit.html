@@ -1588,6 +1588,37 @@
 			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		});
 
+		QUnit.test("legend works with sap.ui.unified.CalendarLegend", function () {
+			// arrange
+			var oLegendItem = new CalendarLegendItem({
+					type: "Type01",
+					text: "Text 2"
+				}),
+				oPC = createPlanningCalendar(
+					"invalidationExample",
+					new sap.m.SearchField(),
+					new sap.m.Button(),
+					new Date(Date.UTC(2015, 0, 7)),
+					CalendarIntervalType.Week,
+					new CalendarLegend({
+						items: [oLegendItem]
+					})
+				);
+
+			// act
+			oPC.placeAt("uiArea2");
+			sap.ui.getCore().applyChanges();
+
+			var aRows = oPC.getRows();
+			var oCalendarRow = aRows[0].getCalendarRow();
+
+			// assert
+			assert.equal(oCalendarRow.getRenderer().getLegendItems(oCalendarRow).length, 1,  "Legend items should be returned");
+
+			// cleanup
+			oPC.destroy();
+		});
+
 		QUnit.module("NonWorking Special Dates", {
 			beforeEach: function() {
 				this.oPC = createPlanningCalendar("PCNonWorking", new sap.m.SearchField(), new sap.m.Button()),
