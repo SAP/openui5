@@ -70,6 +70,18 @@ sap.ui.require([
 	}
 
 	/**
+	 * Creates a V4 OData model for special cases (not backed by Gateway).
+	 *
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
+	 * @returns {ODataModel} The model
+	 */
+	function createSpecialCasesModel(mModelParameters) {
+		return createModel("/special/cases/", mModelParameters);
+	}
+
+	/**
 	 *  Create a view with a relative ODataListBinding which is ready to create a new entity.
 	 *
 	 * @param {object} oTest The QUnit test object
@@ -125,7 +137,9 @@ sap.ui.require([
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
-					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"}
+					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+				"/special/cases/$metadata"
+					: {source : "odata/v4/data/metadata_special_cases.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
@@ -1400,6 +1414,55 @@ sap.ui.require([
 			// code under test
 			that.oView.byId("text").getBinding("text").setValue("Jonathan Schmidt");
 
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Read and modify an entity with key aliases
+	QUnit.test("Entity with key aliases", function (assert) {
+		var sView = '\
+<Table id="table" items="{/EntitiesWithComplexKey}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="item" text="{Value}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			that = this;
+
+		this.expectRequest("EntitiesWithComplexKey?$select=Key/P1,Key/P2,Value&$skip=0&$top=100", {
+				"value" : [{
+					"Key" : {
+						"P1" : "foo",
+						"P2" : 42
+					},
+					"Value" : "Old",
+					"@odata.etag" : "etag"
+				}]
+			})
+			.expectChange("item", ["Old"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "EntitiesWithComplexKey(Key1='foo',Key2=42)",
+					headers : {
+						"If-Match" : "etag"
+					},
+					payload : {
+						"Value" : "New"
+					}
+				}, {
+					"Value" : "New"
+				})
+				.expectChange("item", "New", 0);
+
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
+				.setValue("New");
 			return that.waitForChanges(assert);
 		});
 	});

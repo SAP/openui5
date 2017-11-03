@@ -10,11 +10,10 @@ sap.ui.define([
 ], function (jQuery, _Helper, _SyncPromise) {
 	"use strict";
 
-	var rPropertyNameOfSegment = /^[^-\d(][^(]*/, // Matches the property name of a segment
 		// Matches two cases:  segment with predicate or simply predicate:
 		//   EMPLOYEE(ID='42') -> aMatches[1] === "EMPLOYEE", aMatches[2] === "(ID='42')"
 		//   (ID='42') ->  aMatches[1] === "",  aMatches[2] === "(ID='42')"
-		rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
+	var rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
 
 	/**
 	 * Adds the given delta to the collection's $count if there is one.
@@ -297,10 +296,10 @@ sap.ui.define([
 	 * Recursively calculates the key predicates for all entities in the result.
 	 *
 	 * @param {object} oRootInstance A single top-level instance
-	 * @param {object} mTypeForPath A map from path to the entity type (as delivered by
+	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
 	 */
-	Cache.prototype.calculateKeyPredicates = function (oRootInstance, mTypeForPath) {
+	Cache.prototype.calculateKeyPredicates = function (oRootInstance, mTypeForMetaPath) {
 		var oRequestor = this.oRequestor;
 
 		/**
@@ -308,15 +307,15 @@ sap.ui.define([
 		 * from predicate to entity.
 		 *
 		 * @param {object[]} aInstances The collection
-		 * @param {string} sPath The path of the collection in mTypeForPath
+		 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
 		 */
-		function visitArray(aInstances, sPath) {
+		function visitArray(aInstances, sMetaPath) {
 			var i, oInstance, sPredicate;
 
 			aInstances.$byPredicate = {};
 			for (i = 0; i < aInstances.length; i++) {
 				oInstance = aInstances[i];
-				visitInstance(oInstance, sPath);
+				visitInstance(oInstance, sMetaPath);
 				sPredicate = oInstance["@$ui5.predicate"];
 				if (sPredicate) {
 					aInstances.$byPredicate[sPredicate] = oInstance;
@@ -328,18 +327,19 @@ sap.ui.define([
 		 * Adds a predicate to the given instance if it is an entity.
 		 *
 		 * @param {object} oInstance The instance
-		 * @param {string} sPath The path of the instance in mTypeForPath
+		 * @param {string} sMetaPath The meta path of the instance in mTypeForMetaPath
 		 */
-		function visitInstance(oInstance, sPath) {
-			var oType = mTypeForPath[sPath];
+		function visitInstance(oInstance, sMetaPath) {
+			var oType = mTypeForMetaPath[sMetaPath];
 
-			if (oType) { // oType is only defined when at an entity
-				oInstance["@$ui5.predicate"] = oRequestor.getKeyPredicate(oType, oInstance);
+			if (oType && oType.$Key) {
+				oInstance["@$ui5.predicate"] =
+					oRequestor.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath);
 			}
 
 			Object.keys(oInstance).forEach(function (sProperty) {
 				var vPropertyValue = oInstance[sProperty],
-					sPropertyPath = sPath + "/" + sProperty;
+					sPropertyPath = sMetaPath + "/" + sProperty;
 
 				if (Array.isArray(vPropertyValue)) {
 					visitArray(vPropertyValue, sPropertyPath);
@@ -349,7 +349,7 @@ sap.ui.define([
 			});
 		}
 
-		visitInstance(oRootInstance, this.sResourcePath);
+		visitInstance(oRootInstance, _Helper.getMetaPath(this.sResourcePath));
 	};
 
 	/**
@@ -422,9 +422,11 @@ sap.ui.define([
 							_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
 							_Helper.getSelectForPath(that.mQueryOptions, sPath));
 						// determine and save the key predicate
-						that.fetchTypeFor(sPath).then(function (oType) {
-							oEntityData["@$ui5.predicate"]
-								= that.oRequestor.getKeyPredicate(oType, oEntityData);
+						that.fetchTypes().then(function (mTypeForMetaPath) {
+							oEntityData["@$ui5.predicate"] = that.oRequestor.getKeyPredicate(
+								oEntityData,
+								_Helper.getMetaPath(_Helper.buildPath(that.sResourcePath, sPath)),
+								mTypeForMetaPath);
 						});
 					}, function (oError) {
 						if (oError.canceled) {
@@ -545,78 +547,69 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fetches the type of the expanded entity matching the given path.
-	 * @param {string} sPath
-	 *   A relative path within the cache, which may contain key predicates and/or indexes.
-	 * @returns {SyncPromise}
-	 *   A promise that is resolved with the entity type for that path if it points to an expanded
-	 *   entity and <code>undefined</code> otherwise
-	 */
-	Cache.prototype.fetchTypeFor = function (sPath) {
-		var aSegments = [this.sResourcePath];
-
-		return this.fetchTypes().then(function (mTypeForPath) {
-			sPath.split("/").forEach(function (sSegment) {
-				var aMatches = rPropertyNameOfSegment.exec(sSegment);
-				if (aMatches) {
-					aSegments.push(aMatches[0]);
-				}
-			});
-			return mTypeForPath[aSegments.join("/")];
-		});
-	};
-
-	/**
 	 * Fetches the type from the metadata for the root entity plus all types for $expand and puts
-	 * them into a map from type to path. Only (entity) types having a list of key properties
-	 * are remembered.
+	 * them into a map from type to meta path. Checks the types' key properties and puts their types
+	 * into the map, too, if they are complex.
 	 *
 	 * @returns {SyncPromise}
 	 *   A promise that is resolved with a map from resource path + entity path to the type
 	 */
 	Cache.prototype.fetchTypes = function () {
-		var aPromises, mTypeForPath, that = this;
+		var sMetaPath, aPromises, mTypeForMetaPath, that = this;
 
 		/*
 		 * Recursively calls fetchType for all (sub)paths in $expand.
-		 * @param {string} sBasePath The resource path + entity path
+		 * @param {string} sBaseMetaPath The resource meta path + entity path
 		 * @param {object} mQueryOptions The corresponding query options
 		 */
-		function fetchExpandedTypes(sBasePath, mQueryOptions) {
+		function fetchExpandedTypes(sBaseMetaPath, mQueryOptions) {
 			if (mQueryOptions && mQueryOptions.$expand) {
 				Object.keys(mQueryOptions.$expand).forEach(function (sNavigationPath) {
-					var sPath = sBasePath;
+					var sMetaPath = sBaseMetaPath;
 
 					sNavigationPath.split("/").forEach(function (sSegment) {
-						sPath += "/" + sSegment;
-						fetchType(sPath);
+						sMetaPath += "/" + sSegment;
+						fetchType(sMetaPath);
 					});
-					fetchExpandedTypes(sPath, mQueryOptions.$expand[sNavigationPath]);
+					fetchExpandedTypes(sMetaPath, mQueryOptions.$expand[sNavigationPath]);
 				});
 			}
 		}
 
 		/*
-		 * Fetches the type for the given path, adds the promise to aPromises and puts the type
-		 * into mTypeForPath if it has a list of key properties.
-		 * @param {string} sPath The resource path + navigation path (which may lead to an entity
-		 *   or complex type)
+		 * Adds a promise to aPromises to fetch the type for the given path, put it into
+		 * mTypeForMetaPath and recursively add the key properties' types if they are complex.
+		 * @param {string} sMetaPath The meta path of the resource + navigation or key path (which
+		 *   may lead to an entity or complex type)
 		 */
-		function fetchType(sPath) {
-			aPromises.push(that.oRequestor.fetchTypeForPath(sPath).then(function (oType) {
+		function fetchType(sMetaPath) {
+			aPromises.push(that.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
+				mTypeForMetaPath[sMetaPath] = oType;
 				if (oType.$Key) {
-					mTypeForPath[sPath] = oType;
+					oType.$Key.forEach(function (vKey) {
+						var iIndexOfSlash, sKeyPath;
+
+						if (typeof vKey !== "string") {
+							sKeyPath = vKey[Object.keys(vKey)[0]];
+							iIndexOfSlash = sKeyPath.lastIndexOf("/");
+							if (iIndexOfSlash >= 0) {
+								// drop the property name and fetch the type containing it
+								fetchType(sMetaPath + "/" + sKeyPath.slice(0, iIndexOfSlash));
+							}
+						}
+					});
 				}
 			}));
 		}
 
 		if (!this.oTypePromise) {
+			sMetaPath = _Helper.getMetaPath(this.sResourcePath);
 			aPromises = [];
-			mTypeForPath = {};
-			fetchType(this.sResourcePath);
-			fetchExpandedTypes(this.sResourcePath, this.mQueryOptions);
-			this.oTypePromise = Promise.all(aPromises).then(function () {
-				return mTypeForPath;
+			mTypeForMetaPath = {};
+			fetchType(sMetaPath);
+			fetchExpandedTypes(sMetaPath, this.mQueryOptions);
+			this.oTypePromise = _SyncPromise.all(aPromises).then(function () {
+				return mTypeForMetaPath;
 			});
 		}
 		return this.oTypePromise;
@@ -794,12 +787,6 @@ sap.ui.define([
 				vUnitOrCurrencyValue,
 				oUpdateData = Cache.makeUpdateData(aPropertyPath, vValue);
 
-			function cacheValue(aPath) {
-				return aPath.reduce(function (oValue, sSegment) {
-					return oValue && oValue[sSegment];
-				}, oEntity);
-			}
-
 			/*
 			 * Synchronous callback to cancel the PATCH request so that it is really gone when
 			 * resetChangesForPath has been called on the binding or model.
@@ -851,12 +838,12 @@ sap.ui.define([
 				}
 			}
 			// remember the old value
-			vOldValue = cacheValue(aPropertyPath);
+			vOldValue = _Helper.drillDown(oEntity, aPropertyPath);
 			// write the changed value into the cache
 			_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
 			if (sUnitOrCurrencyPath) {
 				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
-				vUnitOrCurrencyValue = cacheValue(aUnitOrCurrencyPath);
+				vUnitOrCurrencyValue = _Helper.drillDown(oEntity, aUnitOrCurrencyPath);
 				if (vUnitOrCurrencyValue === undefined) {
 					jQuery.sap.log.debug("Missing value for unit of measure "
 							+ _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath)

@@ -15,6 +15,8 @@ sap.ui.define([
 		rEscapedOpenBracket = /%28/g,
 		rEscapedTick = /%27/g,
 		rHash = /#/g,
+		// matches the rest of a segment after '(' and any segment that consists only of a number
+		rNotMetaContext = /\([^/]*|\/-?\d+/g,
 		rNumber = /^-?\d+$/,
 		rPlus = /\+/g,
 		rSingleQuote = /'/g,
@@ -168,6 +170,23 @@ sap.ui.define([
 		},
 
 		/**
+		 * Drills down into the given object according to <code>aPath</code>.
+		 *
+		 * @param {object} oData
+		 *   The object to start at
+		 * @param {string[]} aPath
+		 *   Relative path to drill-down into, as array of segments
+		 * @returns {*}
+		 *   The result matching to <code>aPath</code> or <code>undefined</code> if the path leads
+		 *   into void
+		 */
+		drillDown : function (oData, aPath) {
+			return aPath.reduce(function (oData, sSegment) {
+				return (oData && sSegment in oData) ? oData[sSegment] : undefined;
+			}, oData);
+		},
+
+		/**
 		 * Encodes a query part, either a key or a value.
 		 *
 		 * @param {string} sPart
@@ -295,6 +314,22 @@ sap.ui.define([
 			default:
 				throw new Error("Unsupported type: " + sType);
 			}
+		},
+
+		/**
+		 * Returns the OData metadata model path corresponding to the given OData data model path.
+		 *
+		 * @param {string} sPath
+		 *   An absolute data path within the OData data model, for example
+		 *   "/EMPLOYEES/0/ENTRYDATE" or "/EMPLOYEES('42')/ENTRYDATE
+		 * @returns {string}
+		 *   The corresponding metadata path within the OData metadata model, for example
+		 *   "/EMPLOYEES/ENTRYDATE"
+		 *
+		 * @private
+		 */
+		getMetaPath : function (sPath) {
+			return sPath.replace(rNotMetaContext, "");
 		},
 
 		/**

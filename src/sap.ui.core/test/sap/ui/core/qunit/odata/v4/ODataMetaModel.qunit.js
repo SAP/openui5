@@ -847,42 +847,15 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{
-		dataPath : "/Foo",
-		metaPath : "/Foo"
-	}, { // e.g. function call plus key predicate
-		dataPath : "/Foo/name.space.bar_42(key='value')(key='value')",
-		metaPath : "/Foo/name.space.bar_42"
-	}, {
-		dataPath : "/Foo(key='value')(key='value')/bar",
-		metaPath : "/Foo/bar"
-	}, { // any segment with digits only
-		dataPath : "/Foo/" + Date.now(),
-		metaPath : "/Foo"
-	}, {
-		dataPath : "/Foo/" + Date.now() + "/bar",
-		metaPath : "/Foo/bar"
-	}, { // global removal needed
-		dataPath : "/Foo(key='value')/" + Date.now() + "/bar(key='value')/"  + Date.now(),
-		metaPath : "/Foo/bar"
-	}, { // transient entity
-		dataPath : "/Foo/-1/bar",
-		metaPath : "/Foo/bar"
-	}].forEach(function (oFixture) {
-		QUnit.test("getMetaPath: " + oFixture.dataPath, function (assert) {
-			var sMetaPath = this.oMetaModel.getMetaPath(oFixture.dataPath);
+	QUnit.test("getMetaPath", function (assert) {
+		var sMetaPath = {},
+			sPath = {};
 
-			assert.strictEqual(sMetaPath, oFixture.metaPath);
-		});
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs(sinon.match.same(sPath)).returns(sMetaPath);
+
+		assert.strictEqual(this.oMetaModel.getMetaPath(sPath), sMetaPath);
 	});
-	//TODO $all, $count, $crossjoin, $ref, $value
-	// Q: Do we need to keep signatures to resolve overloads?
-	// A: Most probably not. The spec says "All bound functions with the same function name and
-	//    binding parameter type within a namespace MUST specify the same return type."
-	//    "All unbound functions with the same function name within a namespace MUST specify the
-	//    same return type." --> We can find the return type (from the binding parameter type).
-	//    If it comes to annotations, the signature might make a difference, but then "unordered
-	//    set of (non-binding) parameter names" is unique.
 
 	//*********************************************************************************************
 	forEach({
