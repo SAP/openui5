@@ -3885,6 +3885,9 @@
 		 *
 		 * @public
 		 * @static
+		 * @deprecated As of 1.52, UI5 modules and their dependencies should be defined using {@link sap.ui.define}.
+		 *    For more details see {@link topic:91f23a736f4d1014b6dd926db0e91070 Modules and Dependencies} in the
+		 *    documentation.
 		 */
 		jQuery.sap.declare = function(sModuleName, bCreateNamespace) {
 
@@ -3932,6 +3935,10 @@
 		 * @static
 		 * @function
 		 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+		 * @deprecated As of 1.52, UI5 modules and their dependencies should be defined using {@link sap.ui.define}.
+		 *    When additional modules have to be loaded dynamically at a later point in time, the asynchronous API
+		 *    {@link sap.ui.require} should be used. For more details, see {@link topic:91f23a736f4d1014b6dd926db0e91070
+		 *    Modules and Dependencies} in the documentation.
 		 */
 		jQuery.sap.require = function(vModuleName) {
 
