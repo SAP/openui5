@@ -732,6 +732,8 @@ sap.ui.define([
 		if (exists(this.getExpandedHeading())) {
 			this.$expandHeadingWrapper.toggleClass("sapUiHidden", !bExpanded);
 		}
+
+		this.fireEvent("_stateChange", {isExpanded: bExpanded});
 	};
 
 	/* ========== DynamicPageTitle expand indicator ========== */
