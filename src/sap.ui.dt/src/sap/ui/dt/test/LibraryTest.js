@@ -180,10 +180,12 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 					assert.strictEqual(typeof sCreateTemplate, "string", "templates/create entry defines fragment path to " + sCreateTemplate);
 					var oData = jQuery.sap.sjax({url: jQuery.sap.getResourcePath(sCreateTemplate,"")});
 					assert.ok(oData.data.documentElement && oData.data.documentElement.localName === "FragmentDefinition", "File " + sCreateTemplate + " exists and starts with a FragmentDefinition node");
+					/*
 					var oControl = sap.ui.xmlfragment({
 						fragmentContent: oData.data.documentElement,
 						oController: this
 					});
+					*/
 					//check the controls type
 					//assert.strictEqual((oControl instanceof jQuery.sap.getObject(sControlName)) ||  , true, sCreateTemplate + " created a control with the right type " + sControlName + "/" + oControl.getMetadata().getName());
 				}
