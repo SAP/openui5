@@ -38,7 +38,7 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class ="largeCell"
+						class="largeCell"
 						backgroundColorSet="ColorSet6"
 						backgroundColorShade="ShadeB">
 					<l:VerticalLayout
@@ -75,7 +75,9 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class ="largeCell demokitInitialPagesColorPatternB">
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
 					<l:VerticalLayout
 							width="100%">
 						<core:Icon
@@ -104,7 +106,9 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class ="largeCell demokitInitialPagesColorPatternC" >
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
 					<l:Grid width="100%"
 								vSpacing="1"
 								hSpacing="0"
@@ -169,7 +173,7 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class ="largeCell"
+						class="largeCell"
 						backgroundColorSet="ColorSet6"
 						backgroundColorShade="ShadeC">
 						<l:Grid width="100%"
@@ -211,7 +215,7 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class ="largeCell"
+						class="largeCell"
 						backgroundColorSet="ColorSet6"
 						backgroundColorShade="ShadeD" >
 					<l:Grid width="100%"
@@ -252,7 +256,9 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class ="largeCell demokitInitialPagesColorPatternD">
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
 					<l:VerticalLayout
 							width="100%">
 						<core:Icon
