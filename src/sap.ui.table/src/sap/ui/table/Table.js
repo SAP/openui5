@@ -1036,6 +1036,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			sVisibleRowCountMode == VisibleRowCountMode.Fixed ||
 			(sVisibleRowCountMode == VisibleRowCountMode.Auto && this._iTableRowContentHeight && aRows.length == 0)) {
 
+			// Necessary due to the fact that getBinding initializes the grouping functionality
+			this.getBinding("rows");
+
 			this._adjustRows(this._calculateRowsToDisplay());
 		} else if (this._bRowAggregationInvalid && aRows.length > 0) {
 			// Rows got invalidated, recreate rows with new template
