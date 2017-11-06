@@ -100,6 +100,10 @@ sap.ui.require([
 					EntitySet="ProductSet" m:HttpMethod="POST" \
 					sap:action-for="GWSAMPLE_BASIC.Product">\
 				</FunctionImport>\
+				<FunctionImport Name="ReturnsCollection" \
+					ReturnType="Collection(GWSAMPLE_BASIC.Product)" \
+					EntitySet="ProductSet">\
+				</FunctionImport>\
 			</EntityContainer>\
 			<ComplexType Name="CT_Address">\
 				<Property Name="City" Type="Edm.String" MaxLength="40" sap:label="City"\
@@ -610,6 +614,32 @@ sap.ui.require([
 			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"}
 		},
 		oGlobalSandbox; // global sandbox for async tests
+
+	/**
+	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
+	 * "/fake/service" and the given (array of) annotation URLs.
+	 *
+	 * @param {object} assert the assertions
+	 * @param {object} oLogMock the log mock
+	 * @param {string|string[]} vAnnotationUrl
+	 *   the (array of) annotation URLs
+	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
+	 *   the given code under test
+	 * @returns {any|Promise}
+	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
+	 */
+	function withFakeService(assert, oLogMock, vAnnotationUrl, fnCodeUnderTest) {
+		oLogMock.expects("warning")
+			.withExactArgs("Inconsistent service",
+				"Use either 'sap:deletable' or 'sap:deletable-path' at entity set 'ProductSet'",
+				sComponent);
+		oLogMock.expects("warning")
+			.withExactArgs("Inconsistent service",
+				"Use either 'sap:updatable' or 'sap:updatable-path' at entity set 'ProductSet'",
+				sComponent);
+
+		return withGivenService(assert, "/fake/service", vAnnotationUrl, fnCodeUnderTest);
+	}
 
 	/**
 	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
@@ -1352,17 +1382,8 @@ sap.ui.require([
 		title : "multiple annotation files"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("ODataMetaModel loaded: " + oFixture.title, function (assert) {
-			this.oLogMock.expects("warning")
-				.withExactArgs("Inconsistent service",
-					"Use either 'sap:deletable' or 'sap:deletable-path' at entity set 'ProductSet'",
-					sComponent);
-			this.oLogMock.expects("warning")
-				.withExactArgs("Inconsistent service",
-					"Use either 'sap:updatable' or 'sap:updatable-path' at entity set 'ProductSet'",
-					sComponent);
-
-			return withGivenService(assert,
-					"/fake/service", oFixture.annotationURI, function (oMetaModel, oModel) {
+			return withFakeService(assert, this.oLogMock, oFixture.annotationURI,
+					function (oMetaModel, oModel) {
 				var oMetadata = oModel.getServiceMetadata(),
 					oMetaModelData = oMetaModel.getObject("/"),
 					oGWSampleBasic = oMetaModelData.dataServices.schema[0],
@@ -2260,16 +2281,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getODataAssociation*Set*End: set not found", function (assert) {
-		this.oLogMock.expects("warning")
-			.withExactArgs("Inconsistent service",
-				"Use either 'sap:deletable' or 'sap:deletable-path' at entity set 'ProductSet'",
-				sComponent);
-		this.oLogMock.expects("warning")
-			.withExactArgs("Inconsistent service",
-				"Use either 'sap:updatable' or 'sap:updatable-path' at entity set 'ProductSet'",
-				sComponent);
-
-		return withGivenService(assert, "/fake/service", "", function (oMetaModel, oModel) {
+		return withFakeService(assert, this.oLogMock, "", function (oMetaModel, oModel) {
 				var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner");
 
 				assert.strictEqual(
@@ -2392,10 +2404,10 @@ sap.ui.require([
 			}, /Not an absolute path: foo\/bar/);
 			assert.throws(function () {
 				oMetaModel.getMetaContext("/FooSet('123')");
-			}, /Entity set not found: FooSet\('123'\)/);
+			}, /Entity set or function import not found: FooSet/);
 			assert.throws(function () {
 				oMetaModel.getMetaContext("/('123')");
-			}, /Entity set not found: \('123'\)/);
+			}, /Entity set or function import not found: /);
 		});
 	});
 
@@ -2446,7 +2458,7 @@ sap.ui.require([
 
 			assert.throws(function () {
 				oMetaModel.getMetaContext("/FooSet('123')/Bar");
-			}, /Entity set not found: FooSet/);
+			}, /Entity set or function import not found: FooSet/);
 		});
 	});
 
@@ -2490,6 +2502,93 @@ sap.ui.require([
 			assert.throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Address/Street/AndSoOn");
 			}, /Property not found: AndSoOn/);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaContext: function import only", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			var sPath = "/SalesOrder_Confirm",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/entityContainer/0/functionImport/1");
+
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaContext: function import returning collection", function (assert) {
+		return withFakeService(assert, this.oLogMock, "", function (oMetaModel) {
+			var sPath = "/ReturnsCollection(0)/Price",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/entityType/2/property/0");
+
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaContext: function import & navigation property", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			var sPath = "/SalesOrder_Confirm/ToBusinessPartner",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/entityType/0");
+
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+
+			assert.throws(function () {
+				oMetaModel.getMetaContext("/SalesOrder_Confirm/ToBusinessPartner/Foo");
+			}, /Property not found: Foo/);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaContext: function import, navigation & complex property", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			var sPath = "/SalesOrder_Confirm/ToBusinessPartner/Address/Street",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/complexType/0/property/2");
+
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+
+			assert.throws(function () {
+				oMetaModel.getMetaContext("/SalesOrder_Confirm/ToBusinessPartner/Address/Foo");
+			}, /Property not found: Foo/);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaContext: function import & complex type", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			var sPath = "/RegenerateAllData/String",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/complexType/1/property/0");
+
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+
+			assert.throws(function () {
+				oMetaModel.getMetaContext("/RegenerateAllData/Foo");
+			}, /Property not found: Foo/);
 		});
 	});
 

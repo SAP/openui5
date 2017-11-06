@@ -366,7 +366,7 @@ sap.ui.require([
 		output : "2015-01-06T01:55:21.547-05:30"
 	}, {
 		input : "/Date(1395752399000)/", // DateTime in V2
-		output : "2014-03-25T12:59:59Z"  // must be interpreted as UTC
+		output : "2014-03-25T12:59:59.000Z"  // must be interpreted as UTC
 	}].forEach(function (oFixture, i) {
 		QUnit.test("convertDateTimeOffset, success " + i, function (assert) {
 			var oRequestor = {};
@@ -948,13 +948,14 @@ sap.ui.require([
 			result : "foo/bar eq time'PT18H59M59S'"},
 		{literal : "null", type : "Edm.TimeOfDay", v2type : "Edm.Time",
 			result : "foo/bar eq null"}
-	].forEach(function (oFixture) {QUnit.test("convertFilter: success", function (assert) {
-		var sFilter = "foo/bar eq " + oFixture.literal,
-				oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
-			oRequestor = {
-				oModelInterface : {fnFetchMetadata : function () {}}
-			},
-			sResourcePath = "MyEntitySet";
+	].forEach(function (oFixture) {
+		QUnit.test("convertFilter: success", function (assert) {
+			var sFilter = "foo/bar eq " + oFixture.literal,
+					oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
+				oRequestor = {
+					oModelInterface : {fnFetchMetadata : function () {}}
+				},
+				sResourcePath = "MyEntitySet";
 
 			asV2Requestor(oRequestor);
 

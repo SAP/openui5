@@ -351,8 +351,10 @@ sap.ui.define([
 	 * Fires change and dataReceived events. Destroys contexts that became
 	 * obsolete and shrinks the array by removing trailing <code>undefined</code>.
 	 *
-	 * @param {object} oRange
-	 *   The range as returned by {@link #getReadRange}
+	 * @param {number} iStart
+	 *   The start index of the range
+	 * @param {number} iLength
+	 *   The number of contexts in the range
 	 * @param {object[]} aResults
 	 *   The OData entities read from the cache for the given range
 	 * @returns {boolean}
@@ -361,7 +363,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.createContexts = function (oRange, aResults) {
+	ODataListBinding.prototype.createContexts = function (iStart, iLength, aResults) {
 		var bChanged = false,
 			oContext = this.oContext,
 			sContextPath,
@@ -392,10 +394,10 @@ sap.ui.define([
 			bChanged = true;
 		}
 
-		for (i = oRange.start; i < oRange.start + aResults.length; i += 1) {
+		for (i = iStart; i < iStart + aResults.length; i += 1) {
 			if (this.aContexts[i] === undefined) {
 				bChanged = true;
-				sPredicate = aResults[i - oRange.start]["@$ui5.predicate"];
+				sPredicate = aResults[i - iStart]["@$ui5.predicate"];
 				sContextPath = sPath + (sPredicate || "/" + i);
 				if (sContextPath in this.mPreviousContextsByPath) {
 					this.aContexts[i] = this.mPreviousContextsByPath[sContextPath];
@@ -426,15 +428,15 @@ sap.ui.define([
 			if (this.aContexts.length > this.iMaxLength) { // upper boundary obsolete: reset it
 				this.iMaxLength = Infinity;
 			}
-			if (aResults.length < oRange.length) {
-				this.iMaxLength = oRange.start + aResults.length;
+			if (aResults.length < iLength) {
+				this.iMaxLength = iStart + aResults.length;
 				if (this.aContexts.length > this.iMaxLength) {
 					shrinkContexts(this.iMaxLength);
 				}
 			}
 			// If we started to read beyond the range that we read before and the result is
 			// empty, we cannot say anything about the length
-			if (!(oRange.start > iInitialLength && aResults.length === 0)) {
+			if (!(iStart > iInitialLength && aResults.length === 0)) {
 				this.bLengthFinal = this.aContexts.length === this.iMaxLength;
 			}
 		}
@@ -492,12 +494,13 @@ sap.ui.define([
 		}
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
+		this.oContext = undefined;
 		ListBinding.prototype.destroy.apply(this);
 	};
 
 	/**
-	 * Hook method for {@link ODataBinding#fetchCache} to create a cache for this binding with the
-	 * given resource path and query options.
+	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
+	 * this binding with the given resource path and query options.
 	 *
 	 * @param {string} sResourcePath
 	 *   The resource path, for example "EMPLOYEES"
@@ -531,8 +534,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link ODataBinding#fetchUseOwnCache} to determine the query options for
-	 * this binding.
+	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache} to
+	 * determine the query options for this binding.
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context instance to be used
@@ -893,7 +896,6 @@ sap.ui.define([
 			bFireChange = false,
 			sGroupId,
 			oPromise,
-			oRange,
 			bRefreshEvent = !!this.sChangeReason,
 			iStartInModel, // in model coordinates
 			oVirtualContext,
@@ -946,15 +948,15 @@ sap.ui.define([
 		iStartInModel = this.aContexts[-1] ? iStart - 1 : iStart;
 
 		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
-			oRange = this.getReadRange(iStartInModel, iLength, iMaximumPrefetchSize);
 			oPromise = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					sGroupId = that.sRefreshGroupId || that.getGroupId();
 					that.sRefreshGroupId = undefined;
-					return oCache.read(oRange.start, oRange.length, sGroupId, function () {
-						bDataRequested = true;
-						that.fireDataRequested();
-					});
+					return oCache.read(iStartInModel, iLength, iMaximumPrefetchSize, sGroupId,
+						function () {
+							bDataRequested = true;
+							that.fireDataRequested();
+						});
 				} else {
 					return oContext.fetchValue(that.sPath).then(function (aResult) {
 						var iCount;
@@ -963,7 +965,11 @@ sap.ui.define([
 						// parent binding
 						aResult = aResult || [];
 						iCount = aResult.$count;
-						aResult = aResult.slice(oRange.start, oRange.start + oRange.length);
+						if (iStartInModel < 0) {
+							aResult = [aResult[-1]].concat(aResult.slice(0, iLength - 1));
+						} else {
+							aResult = aResult.slice(iStartInModel, iStartInModel + iLength);
+						}
 						aResult.$count = iCount;
 						return {
 							value : aResult
@@ -980,7 +986,7 @@ sap.ui.define([
 
 				// ensure that the result is still relevant
 				if (!that.bRelative || that.oContext === oContext) {
-					bChanged = that.createContexts(oRange, oResult.value);
+					bChanged = that.createContexts(iStartInModel, iLength, oResult.value);
 					if (that.bUseExtendedChangeDetection) {
 						that.oDiff = {
 							// aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.
@@ -1192,51 +1198,6 @@ sap.ui.define([
 			aOrderbyOptions.push(sOrderbyQueryOption);
 		}
 		return aOrderbyOptions.join(',');
-	};
-
-	/**
-	 * Calculates the index range to be read for the given start, length and threshold.
-	 * Checks if <code>aContexts</code> entries are available for the given index range plus
-	 * half the threshold left and right to it.
-	 *
-	 * @param {number} iStart
-	 *   The start index for the data request in model coordinates (starting with 0 or -1)
-	 * @param {number} iLength
-	 *   The number of requested entries
-	 * @param {number} iMaximumPrefetchSize
-	 *   The number of entries to prefetch before and after the given range
-	 * @returns {object}
-	 *   Returns an object with a member <code>start</code> for the start index for the next
-	 *   read and <code>length</code> for the number of entries to be read. The output is in
-	 *   model coordinates (starting with 0 or -1).
-	 */
-	ODataListBinding.prototype.getReadRange = function (iStart, iLength, iMaximumPrefetchSize) {
-		var aContexts = this.aContexts;
-
-		// Checks whether aContexts contains at least one <code>undefined</code> entry within the
-		// given start (inclusive) and end (exclusive).
-		function isDataMissing(iStart, iEnd) {
-			var i;
-			for (i = iStart; i < iEnd; i += 1) {
-				if (aContexts[i] === undefined) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		if (isDataMissing(iStart + iLength, iStart + iLength + iMaximumPrefetchSize / 2)) {
-			iLength += iMaximumPrefetchSize;
-		}
-		if (isDataMissing(Math.max(iStart - iMaximumPrefetchSize / 2, 0), iStart)) {
-			iLength += iMaximumPrefetchSize;
-			iStart -= iMaximumPrefetchSize;
-			if (iStart < 0) {
-				iLength += iStart;
-				iStart = 0;
-			}
-		}
-		return {length : iLength, start : iStart};
 	};
 
 	/**

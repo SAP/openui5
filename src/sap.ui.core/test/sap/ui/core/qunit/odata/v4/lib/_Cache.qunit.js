@@ -63,7 +63,9 @@ sap.ui.require([
 				getGroupSubmitMode : function (sGroupId) {
 					return defaultGetGroupProperty(sGroupId);
 				},
-				getKeyPredicate : function (t, o) {return "('" + o.key + "')"; },
+				getKeyPredicate : function (oInstance, sMetaPath, mTypeForMetaPath) {
+					return "('" + oInstance.key + "')";
+				},
 				getServiceUrl : function () {return "/~/";},
 				relocate : function () {},
 				removePatch : function () {},
@@ -1003,12 +1005,12 @@ sap.ui.require([
 	[{
 		options : undefined,
 		types : {
-			"TEAMS('42')" : {$Key : ["TeamId"]}
+			"TEAMS" : {$Key : ["TeamId"]}
 		}
 	}, {
 		options : {$select : ["foo"]},
 		types : {
-			"TEAMS('42')" : {$Key : ["TeamId"]}
+			"TEAMS" : {$Key : ["TeamId"]}
 		}
 	}, {
 		options : {
@@ -1019,31 +1021,34 @@ sap.ui.require([
 						"EMPLOYEE_2_EQUIPMENT/EQUIPMENT_2_PRODUCT" : null,
 						"Address/Country" : null
 					}
-				}
+				},
+				"EntityWithComplexKey" : null
 			}
 		},
 		types : {
-			"TEAMS('42')" : {$Key : ["TeamId"]},
-			"TEAMS('42')/MANAGER" : {$Key : ["ManagerId"]},
-			"TEAMS('42')/TEAM_2_EMPLOYEES" : {$Key : ["EmployeeId"]},
-			"TEAMS('42')/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENT" : {$Key : ["EquipmentId"]},
-			"TEAMS('42')/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENT/EQUIPMENT_2_PRODUCT" :
+			"TEAMS" : {$Key : ["TeamId"]},
+			"TEAMS/MANAGER" : {$Key : ["ManagerId"]},
+			"TEAMS/TEAM_2_EMPLOYEES" : {$Key : ["EmployeeId"]},
+			"TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENT" : {$Key : ["EquipmentId"]},
+			"TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENT/EQUIPMENT_2_PRODUCT" :
 				{$Key : ["ProductId"]},
-			"TEAMS('42')/TEAM_2_EMPLOYEES/Address" : {$kind : "ComplexType"},
-			"TEAMS('42')/TEAM_2_EMPLOYEES/Address/Country" : {$Key : ["CountryId"]}
+			"TEAMS/TEAM_2_EMPLOYEES/Address" : {$kind : "ComplexType"},
+			"TEAMS/TEAM_2_EMPLOYEES/Address/Country" : {$Key : ["CountryId"]},
+			"TEAMS/EntityWithComplexKey" :
+				{$Key : [{"key1" : "a/b/id"}, {"key2" : "c/id"}, {"key3" : "key"}]},
+			"TEAMS/EntityWithComplexKey/a/b" : {$kind : "ComplexType"},
+			"TEAMS/EntityWithComplexKey/c" : {$kind : "ComplexType"}
 		}
-	}].forEach(function (oFixture) {
-		QUnit.test("Cache#fetchTypes", function (assert) {
+	}].forEach(function (oFixture, i) {
+		QUnit.test("Cache#fetchTypes #" + i, function (assert) {
 			var oCache,
 				oPromise,
 				that = this;
 
+			this.mock(_Helper).expects("getMetaPath").withExactArgs("TEAMS('42')").returns("TEAMS");
 			Object.keys(oFixture.types).forEach(function (sPath) {
 				that.oRequestorMock.expects("fetchTypeForPath").withExactArgs(sPath)
 					.returns(Promise.resolve(oFixture.types[sPath]));
-				if (!oFixture.types[sPath].$Key) {// expect it in the result only if it has a $Key
-					delete oFixture.types[sPath];
-				}
 			});
 			// create after the mocks have been set up, otherwise they won't be called
 			oCache = new _Cache(this.oRequestor, "TEAMS('42')", oFixture.options);
@@ -1051,50 +1056,10 @@ sap.ui.require([
 			// code under test
 			oPromise = oCache.fetchTypes();
 			assert.strictEqual(oCache.fetchTypes(), oPromise, "second call returns same promise");
-			return oPromise.then(function (mTypeForPath) {
-				assert.deepEqual(mTypeForPath, oFixture.types);
+			return oPromise.then(function (mTypeForMetaPath) {
+				assert.deepEqual(mTypeForMetaPath, oFixture.types);
 			});
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Cache#fetchTypeFor", function (assert) {
-		var sResourcePath = "~foo~",
-			oCache = new _Cache(this.oRequestor, sResourcePath),
-			oCacheMock = this.mock(oCache),
-			mTypeForPath = {
-				"~foo~" : {},
-				"~foo~/bar" : {},
-				"~foo~/bar/baz" : {}
-			};
-
-		[
-			{path : "", type : "~foo~"},
-			{path : "('42')/bar", type : "~foo~/bar"},
-			{path : "bar", type : "~foo~/bar"},
-			{path : "bar('42')", type : "~foo~/bar"},
-			{path : "bar('42')/baz", type : "~foo~/bar/baz"},
-			{path : "bar/0/baz", type : "~foo~/bar/baz"},
-			{path : "bar/-1/baz", type : "~foo~/bar/baz"},
-			{path : "baz", type : undefined}
-		].forEach(function (oFixture) {
-			oCacheMock.expects("fetchTypes")
-				.withExactArgs().returns(_SyncPromise.resolve(mTypeForPath));
-			assert.strictEqual(oCache.fetchTypeFor(oFixture.path).getResult(),
-				oFixture.type && mTypeForPath[oFixture.type], oFixture.path);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Cache#calculateKeyPredicates: no entity", function (assert) {
-		var sResourcePath = "~foo~",
-			oCache = new _Cache(this.oRequestor, sResourcePath),
-			oEntity = {};
-
-		// code under test
-		oCache.calculateKeyPredicates(oEntity, {});
-
-		assert.strictEqual(oEntity["@$ui5.predicate"], undefined);
 	});
 
 	//*********************************************************************************************
@@ -1103,20 +1068,21 @@ sap.ui.require([
 			oCache = new _Cache(this.oRequestor, sResourcePath),
 			oEntity = {},
 			sPredicate = "(predicate='4711')",
-			mTypeForPath = {"~foo~" : {}};
+			mTypeForMetaPath = {"~metafoo~" : {$Key : []}};
 
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("~foo~").returns("~metafoo~");
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~"]), sinon.match.same(oEntity))
+			.withExactArgs(sinon.match.same(oEntity), "~metafoo~", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate);
 
 		// code under test
-		oCache.calculateKeyPredicates(oEntity, mTypeForPath);
+		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
 		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#calculateKeyPredicates: nested entities", function (assert) {
+	QUnit.test("Cache#calculateKeyPredicates: nested", function (assert) {
 		var sResourcePath = "~foo~",
 			oCache = new _Cache(this.oRequestor, sResourcePath),
 			oEntity = {
@@ -1127,43 +1093,47 @@ sap.ui.require([
 					navigation : {} // an navigation property within a complex type
 				},
 				no : 4,
+				noType : {},
 				qux : null
 			},
 			sPredicate1 = "(foo='4711')",
 			sPredicate2 = "(bar='42')",
 			sPredicate3 = "(baz='67')",
 			sPredicate4 = "(entity='23')",
-			mTypeForPath = {
-				"~foo~" : {},
-				"~foo~/bar" : {},
-				"~foo~/bar/baz" : {},
-				"~foo~/property/navigation" : {},
-				"~foo~/qux" : {}
+			mTypeForMetaPath = {
+				"~foo~" : {$Key : []},
+				"~foo~/bar" : {$Key : []},
+				"~foo~/bar/baz" : {$Key : []},
+				"~foo~/property" : {},
+				"~foo~/property/navigation" : {$Key : []},
+				"~foo~/qux" : {$Key : []}
 			};
 
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~"]), sinon.match.same(oEntity))
+			.withExactArgs(sinon.match.same(oEntity), "~foo~", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate1);
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/bar"]),
-				sinon.match.same(oEntity.bar))
+			.withExactArgs(sinon.match.same(oEntity.bar), "~foo~/bar",
+				sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate2);
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/bar/baz"]),
-				sinon.match.same(oEntity.bar.baz))
+			.withExactArgs(sinon.match.same(oEntity.bar.baz), "~foo~/bar/baz",
+				sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate3);
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/property/navigation"]),
-				sinon.match.same(oEntity.property.navigation))
+			.withExactArgs(sinon.match.same(oEntity.property.navigation),
+				"~foo~/property/navigation", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate4);
 
 		// code under test
-		oCache.calculateKeyPredicates(oEntity, mTypeForPath);
+		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
 		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate1);
 		assert.strictEqual(oEntity.bar["@$ui5.predicate"], sPredicate2);
 		assert.strictEqual(oEntity.bar.baz["@$ui5.predicate"], sPredicate3);
+		assert.strictEqual(oEntity.property["@$ui5.predicate"], undefined);
 		assert.strictEqual(oEntity.property.navigation["@$ui5.predicate"], sPredicate4);
+		assert.strictEqual(oEntity.noType["@$ui5.predicate"], undefined);
 	});
 
 	//*********************************************************************************************
@@ -1175,25 +1145,25 @@ sap.ui.require([
 			},
 			sPredicate1 = "(foo='4711')",
 			sPredicate2 = "(bar='42')",
-			mTypeForPath = {
-				"~foo~" : {},
-				"~foo~/bar" : {}
+			mTypeForMetaPath = {
+				"~foo~" : {$Key : []},
+				"~foo~/bar" : {$Key : []}
 			};
 
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~"]), sinon.match.same(oEntity))
+			.withExactArgs(sinon.match.same(oEntity), "~foo~", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate1);
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/bar"]),
-				sinon.match.same(oEntity.bar[0]))
+			.withExactArgs(sinon.match.same(oEntity.bar[0]), "~foo~/bar",
+				sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate2);
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(mTypeForPath["~foo~/bar"]),
-				sinon.match.same(oEntity.bar[1]))
+			.withExactArgs(sinon.match.same(oEntity.bar[1]), "~foo~/bar",
+				sinon.match.same(mTypeForMetaPath))
 			.returns(undefined);
 
 		// code under test
-		oCache.calculateKeyPredicates(oEntity, mTypeForPath);
+		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
 		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate1);
 		assert.strictEqual(oEntity.bar[0]["@$ui5.predicate"], sPredicate2);
@@ -1222,7 +1192,7 @@ sap.ui.require([
 				},
 				oPromise,
 				mQueryParams = {},
-				mTypeForPath = oFixture.types ? {
+				mTypeForMetaPath = oFixture.types ? {
 					"Employees" : {
 						$Key : ["key"],
 						key : {$Type : "Edm.String"}
@@ -1244,10 +1214,10 @@ sap.ui.require([
 			oCache = this.createCache(sResourcePath, mQueryParams);
 			oCacheMock = this.mock(oCache);
 			oCacheMock.expects("fetchTypes").withExactArgs()
-				.returns(Promise.resolve(mTypeForPath));
+				.returns(Promise.resolve(mTypeForMetaPath));
 
 			// code under test
-			oPromise = oCache.read(oFixture.index, oFixture.length, "group");
+			oPromise = oCache.read(oFixture.index, oFixture.length, 0, "group");
 
 			assert.ok(!oPromise.isFulfilled());
 			assert.ok(!oPromise.isRejected());
@@ -1281,11 +1251,99 @@ sap.ui.require([
 				}
 
 				// ensure that the same read does not trigger another request
-				return oCache.read(oFixture.index, oFixture.length).then(function (oResult) {
+				return oCache.read(oFixture.index, oFixture.length, 0).then(function (oResult) {
 					assert.deepEqual(oResult, oExpectedResult);
 					assert.strictEqual(oResult.value.$count, oFixture.count);
 				});
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	[{ // no prefetch
+		range : [0, 10, 0],
+		expected : {start : 0, length : 10}
+	}, {
+		range : [40, 10, 0],
+		expected : {start : 40, length : 10}
+	}, {
+		current : [[40, 50]],
+		range : [40, 10, 0],
+		expected : {start : 40, length : 10}
+	}, {
+		current : [[50, 110]],
+		range : [100, 20, 0],
+		expected : {start : 100, length : 20}
+	}, { // initial read with prefetch
+		range : [0, 10, 100],
+		expected : {start : 0, length : 110}
+	}, { // iPrefetchLength / 2 available on both sides
+		current : [[0, 110]],
+		range : [50, 10, 100],
+		expected : {start : 50, length : 10}
+	}, { // missing a row at the end
+		current : [[0, 110]],
+		range : [51, 10, 100],
+		expected : {start : 51, length : 110}
+	}, { // missing a row before the start
+		current : [[100, 260]],
+		range : [149, 10, 100],
+		expected : {start : 49, length : 110}
+	}, { // missing a row before the start, do not read beyond 0
+		current : [[40, 200]],
+		range : [89, 10, 100],
+		expected : {start : 0, length : 99}
+	}, { // missing data on both sides, do not read beyond 0
+		range : [430, 10, 100],
+		expected : {start : 330, length : 210}
+	}, { // missing data on both sides, do not read beyond 0
+		current : [[40, 100]],
+		range : [89, 10, 100],
+		expected : {start : 0, length : 199}
+	}, { // transient context
+		range : [-1, 10, 100],
+		bTransient : true,
+		expected : {start : -1, length : 110}
+	}].forEach(function (oFixture) {
+		QUnit.test("CollectionCache#getReadRange: " + oFixture.range, function (assert) {
+			var oCache = _Cache.create(this.oRequestor),
+				aElements = [],
+				oResult;
+
+			// prepare elements array
+			if (oFixture.current) {
+				oFixture.current.forEach(function (aRange) {
+					var i, n;
+
+					for (i = aRange[0], n = aRange[1]; i < n; i++) {
+						aElements[i] = i;
+					}
+				});
+			}
+			if (oFixture.bTransient) {
+				aElements[-1] = -1;
+			}
+			oCache.aElements = aElements;
+
+			oResult = oCache.getReadRange(oFixture.range[0], oFixture.range[1], oFixture.range[2]);
+
+			assert.deepEqual(oResult, oFixture.expected);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: prefetch", function (assert) {
+		var sResourcePath = "Employees",
+			oCache = this.createCache(sResourcePath),
+			oCacheMock = this.mock(oCache);
+
+		oCacheMock.expects("getReadRange")
+			.withExactArgs(20, 6, 10).returns({start : 15, length : 16});
+		this.mockRequest(sResourcePath, 15, 16);
+
+		// code under test
+		oCache.read(20, 6, 10).then(function (oResult) {
+			assert.deepEqual(oResult, createResult(20, 6));
 		});
 	});
 
@@ -1331,14 +1389,14 @@ sap.ui.require([
 
 		// code under test
 		assert.throws(function () {
-			oCache.read(-1, 1);
+			oCache.read(-1, 1, 0);
 		}, new Error("Illegal index -1, must be >= 0"));
 
 		oCache.aElements[-1] = {}; // mock a transient entity
 
 		// code under test
 		assert.throws(function () {
-			oCache.read(-2, 1);
+			oCache.read(-2, 1, 0);
 		}, new Error("Illegal index -2, must be >= -1"));
 	});
 
@@ -1351,7 +1409,7 @@ sap.ui.require([
 
 		// code under test
 		assert.throws(function () {
-			oCache.read(1, -1);
+			oCache.read(1, -1, 0);
 		}, new Error("Illegal length -1, must be >= 0"));
 	});
 
@@ -1414,7 +1472,7 @@ sap.ui.require([
 
 			oFixture.reads.forEach(function (oRead) {
 				oPromise = oPromise.then(function () {
-					return oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
+					return oCache.read(oRead.index, oRead.length, 0, undefined, fnDataRequested)
 						.then(function (oResult) {
 							assert.deepEqual(oResult.value,
 								createResult(oRead.index, oRead.length).value);
@@ -1441,7 +1499,7 @@ sap.ui.require([
 			});
 
 			oFixture.reads.forEach(function (oRead) {
-				aPromises.push(oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
+				aPromises.push(oCache.read(oRead.index, oRead.length, 0, undefined, fnDataRequested)
 					.then(function (oResult) {
 						assert.deepEqual(oResult.value,
 							createResult(oRead.index, oRead.length).value);
@@ -1463,14 +1521,14 @@ sap.ui.require([
 		this.mockRequest(sResourcePath, 30, 1);
 
 		return Promise.all([
-			oCache.read(0, 30).then(function (oResult) {
+			oCache.read(0, 30, 0).then(function (oResult) {
 				var oExpectedResult = createResult(0, 26);
 
 				oExpectedResult.value.$count = 26;
 				assert.deepEqual(oResult, oExpectedResult);
 				assert.strictEqual(oCache.aElements.$count, 26);
 			}),
-			oCache.read(30, 1).then(function (oResult) {
+			oCache.read(30, 1, 0).then(function (oResult) {
 				var oExpectedResult = createResult(0, 0);
 
 				oExpectedResult.value.$count = 26;
@@ -1494,13 +1552,13 @@ sap.ui.require([
 					undefined, undefined)
 				.returns(Promise.resolve(createResult(5, 0)));
 
-			return oCache.read(10, bCount ? 30 : 10).then(function (oResult) {
+			return oCache.read(10, bCount ? 30 : 10, 0).then(function (oResult) {
 				var oExpectedResult = createResult(10, bCount ? 16 : 10);
 
 				assert.deepEqual(oResult, oExpectedResult);
 				assert.strictEqual(oCache.aElements.$count, bCount ? 26 : undefined);
 
-				return oCache.read(5, 3).then(function (oResult) {
+				return oCache.read(5, 3, 0).then(function (oResult) {
 					var oExpectedResult = createResult(5, 0);
 
 					assert.deepEqual(oResult, oExpectedResult);
@@ -1518,7 +1576,7 @@ sap.ui.require([
 
 		this.mockRequest(sResourcePath,0, 10, undefined, "26");
 
-		return oCache.read(0, 10).then(function (oResult) {
+		return oCache.read(0, 10, 0).then(function (oResult) {
 			assert.strictEqual(oCache.aElements.$count, 26);
 			assert.strictEqual(oResult.value.$count, 26);
 
@@ -1527,7 +1585,7 @@ sap.ui.require([
 					sinon.match.func, sinon.match.func)
 				.returns(Promise.resolve({}));
 			return oCache.create("$direct", "Employees", "").then(function () {
-				assert.strictEqual(oCache.read(0, 10).getResult().value.$count, 27,
+				assert.strictEqual(oCache.read(0, 10, 0).getResult().value.$count, 27,
 					"now including the created element");
 			});
 		});
@@ -1545,12 +1603,12 @@ sap.ui.require([
 				"value" : [{}, {}, {}, {}, {}]
 			}));
 
-		return oCache.read(0, 5).then(function (oResult) {
+		return oCache.read(0, 5, 0).then(function (oResult) {
 			that.oRequestorMock.expects("request").withArgs("DELETE").returns(Promise.resolve());
 			that.spy(_Helper, "updateCache");
 			return oCache._delete("group", "Employees('42')", "3", function () {})
 				.then(function () {
-					assert.strictEqual(oCache.read(0, 4).getResult().value.$count, 25);
+					assert.strictEqual(oCache.read(0, 4, 0).getResult().value.$count, 25);
 					sinon.assert.calledWithExactly(_Helper.updateCache,
 						sinon.match.same(oCache.mChangeListeners), "",
 						sinon.match.same(oCache.aElements), {$count : 25});
@@ -1573,7 +1631,7 @@ sap.ui.require([
 				}]
 			}));
 
-		return oCache.read(0, 5).then(function (oResult) {
+		return oCache.read(0, 5, 0).then(function (oResult) {
 			that.oRequestorMock.expects("request").withArgs("DELETE").returns(Promise.resolve());
 			that.spy(_Helper, "updateCache");
 			return oCache._delete("group", "Employees('42')", "0/list/1", function () {})
@@ -1599,7 +1657,7 @@ sap.ui.require([
 
 		this.mockRequest(sResourcePath, 0, 10, undefined, "26");
 
-		oCache.read(0, 10);
+		oCache.read(0, 10, 0);
 
 		// code under test: wait until request is finished, do not fire to listener
 		return oCache.fetchValue("group", "$count", undefined, oListener).then(function (iCount) {
@@ -1612,9 +1670,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#create: Promise as vPostPath", function (assert) {
-		var oCache = new _Cache(this.oRequestor),
+		var oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oPostPathPromise = _SyncPromise.resolve("TEAMS"),
-			oType = {};
+			mTypeForMetaPath = {};
 
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
@@ -1624,10 +1682,10 @@ sap.ui.require([
 			.withExactArgs("POST", "TEAMS", "updateGroup", null, /*oPayload*/sinon.match.object,
 				/*fnSubmit*/sinon.match.func, /*fnCancel*/sinon.match.func)
 			.returns(_SyncPromise.resolve({}));
-		this.mock(oCache).expects("fetchTypeFor").withExactArgs("")
-			.returns(_SyncPromise.resolve(oType));
+		this.mock(oCache).expects("fetchTypes").withExactArgs()
+			.returns(_SyncPromise.resolve(mTypeForMetaPath));
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(oType), sinon.match.object)
+			.withExactArgs(sinon.match.object, "TEAMS", sinon.match.same(mTypeForMetaPath))
 			.returns("(~)");
 
 		// code under test
@@ -1637,7 +1695,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("_Cache#create: with given sPath", function (assert) {
 		var oBody,
-			oCache = new _Cache(this.oRequestor),
+			oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oCacheMock = this.mock(oCache),
 			aCollection = [],
 			oCountChangeListener = {onChange : sinon.spy()},
@@ -1645,7 +1703,7 @@ sap.ui.require([
 			oIdChangeListener = {onChange : sinon.spy()},
 			sPathInCache = "0/TEAM_2_EMPLOYEES",
 			oPostPathPromise = _SyncPromise.resolve("TEAMS('0')/TEAM_2_EMPLOYEES"),
-			oType = {};
+			mTypeForMetaPath = {};
 
 		oCache.fetchValue = function () {};
 		aCollection.$count = 0;
@@ -1664,10 +1722,11 @@ sap.ui.require([
 				ID : "7",
 				Name : "John Doe"
 			})));
-		oCacheMock.expects("fetchTypeFor").withExactArgs(sPathInCache)
-			.returns(_SyncPromise.resolve(oType));
+		this.mock(oCache).expects("fetchTypes").withExactArgs()
+			.returns(_SyncPromise.resolve(mTypeForMetaPath));
 		this.oRequestorMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(oType), sinon.match.object)
+			.withExactArgs(sinon.match.object, "TEAMS/TEAM_2_EMPLOYEES",
+				sinon.match.same(mTypeForMetaPath))
 			.returns("(~)");
 
 		// code under test
@@ -1790,7 +1849,7 @@ sap.ui.require([
 
 		// code under test
 		mQueryParams.$select = "foo"; // modification must not affect cache
-		return oCache.read(0, 5);
+		return oCache.read(0, 5, 0);
 	});
 
 	//*********************************************************************************************
@@ -1810,9 +1869,9 @@ sap.ui.require([
 			.returns(Promise.resolve(oSuccess));
 
 		// code under test
-		return oCache.read(0, 5).catch(function (oResult1) {
+		return oCache.read(0, 5, 0).catch(function (oResult1) {
 			assert.strictEqual(oResult1, oError);
-			return oCache.read(0, 5).then(function (oResult2) {
+			return oCache.read(0, 5, 0).then(function (oResult2) {
 				assert.deepEqual(oResult2, oSuccess);
 			});
 		});
@@ -1871,7 +1930,7 @@ sap.ui.require([
 		// code under test
 		oPatchPromise1 = oCache.update("updateGroup", "bar", "baz", sinon.spy(), "n/a", "-1");
 		oPatchPromise2 = oCache.update("anotherGroup", "bar", "qux", sinon.spy(), "n/a", "-1");
-		oReadPromise = oCache.read(-1, 1);
+		oReadPromise = oCache.read(-1, 1, 0);
 
 		return Promise.all([
 			oPatchPromise1.then(), // check that update returned a promise
@@ -2100,14 +2159,14 @@ sap.ui.require([
 		oCache.create("updateGroup", "Employees", "", oEntityData);
 
 		// code under test
-		return oCache.read(-1, 3, "$direct").then(function (oResult) {
+		return oCache.read(-1, 3, 0, "$direct").then(function (oResult) {
 			assert.strictEqual(oResult.value.length, 3);
 			assert.ok(oResult.value[0]["@$ui5.transient"]);
 			assert.strictEqual(oResult.value[1], oReadResult.value[0]);
 			assert.strictEqual(oResult.value[2], oReadResult.value[1]);
 
 			// code under test
-			oResult = oCache.read(-1, 1, "$direct").getResult();
+			oResult = oCache.read(-1, 1, 0, "$direct").getResult();
 			assert.strictEqual(oResult.value.length, 1);
 			assert.strictEqual(oResult.value[0].name, "John Doe");
 
@@ -2170,13 +2229,13 @@ sap.ui.require([
 			oCreatedPromise,
 			oEntity = {EmployeeId: "4711", "@odata.etag" : "anyEtag"},
 			sGroupId = "updateGroup",
-			oType = {},
+			mTypeForMetaPath = {},
 			that = this;
 
-		this.mock(oCache).expects("fetchTypeFor").withExactArgs("")
-			.returns(_SyncPromise.resolve(oType));
+		this.mock(oCache).expects("fetchTypes").withExactArgs()
+			.returns(_SyncPromise.resolve(mTypeForMetaPath));
 		this.mock(oRequestor).expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(oType), sinon.match.object)
+			.withExactArgs(sinon.match.object, "Employees", sinon.match.same(mTypeForMetaPath))
 			.returns("(~)");
 
 		oCreatedPromise = oCache.create(sGroupId, "Employees", "", {}, function () {
@@ -2215,14 +2274,14 @@ sap.ui.require([
 			oListener2 = {},
 			mQueryParams = {},
 			sResourcePath = "Employees('1')",
-			mTypeForPath = {},
+			mTypeForMetaPath = {},
 			that = this;
 
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(sResourcePath, sinon.match.same(mQueryParams), false, true)
 			.returns("?~");
 		this.mock(_Cache.prototype).expects("fetchTypes")
-			.returns(Promise.resolve(mTypeForPath));
+			.returns(Promise.resolve(mTypeForMetaPath));
 
 		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams,
 			true);
@@ -2235,7 +2294,7 @@ sap.ui.require([
 				sinon.match.same(fnDataRequested1))
 			.returns(Promise.resolve(oExpectedResult).then(function () {
 					that.mock(oCache).expects("calculateKeyPredicates")
-						.withExactArgs(oExpectedResult, mTypeForPath);
+						.withExactArgs(oExpectedResult, mTypeForMetaPath);
 					that.mock(_Cache).expects("computeCount")
 						.withExactArgs(sinon.match.same(oExpectedResult));
 					oCacheMock.expects("checkActive").twice();
@@ -2680,7 +2739,7 @@ sap.ui.require([
 		this.mock(_Cache).expects("computeCount").withExactArgs(sinon.match.same(oData));
 
 		// code under test
-		return oCache.read(0, 3, "group").then(function () {
+		return oCache.read(0, 3, 0, "group").then(function () {
 			assert.strictEqual(oCache.aElements[0], oValue0);
 			assert.strictEqual(oCache.aElements[1], oValue1);
 		});

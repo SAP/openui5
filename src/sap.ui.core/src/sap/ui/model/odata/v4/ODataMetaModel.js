@@ -30,8 +30,6 @@ sap.ui.define([
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
-		// rest of segment after opening ( and segments that consist only of digits
-		rNotMetaContext = /\([^/]*|\/-?\d+/g,
 		rNumber = /^-?\d+$/,
 		mSupportedEvents = {
 			messageChange : true
@@ -1483,7 +1481,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   An absolute data path within the OData data model, for example
-	 *   "/EMPLOYEES/0/ENTRYDATE"
+	 *   "/EMPLOYEES/0/ENTRYDATE" or "/EMPLOYEES('42')/ENTRYDATE
 	 * @returns {string}
 	 *   The corresponding metadata path within the OData metadata model, for example
 	 *    "/EMPLOYEES/ENTRYDATE"
@@ -1491,7 +1489,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.getMetaPath = function (sPath) {
-		return sPath.replace(rNotMetaContext, "");
+		return _Helper.getMetaPath(sPath);
 	};
 
 	/**

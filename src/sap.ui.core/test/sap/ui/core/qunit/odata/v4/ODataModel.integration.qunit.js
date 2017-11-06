@@ -70,6 +70,18 @@ sap.ui.require([
 	}
 
 	/**
+	 * Creates a V4 OData model for special cases (not backed by Gateway).
+	 *
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
+	 * @returns {ODataModel} The model
+	 */
+	function createSpecialCasesModel(mModelParameters) {
+		return createModel("/special/cases/", mModelParameters);
+	}
+
+	/**
 	 *  Create a view with a relative ODataListBinding which is ready to create a new entity.
 	 *
 	 * @param {object} oTest The QUnit test object
@@ -125,7 +137,9 @@ sap.ui.require([
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
-					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"}
+					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+				"/special/cases/$metadata"
+					: {source : "odata/v4/data/metadata_special_cases.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
@@ -1400,6 +1414,55 @@ sap.ui.require([
 			// code under test
 			that.oView.byId("text").getBinding("text").setValue("Jonathan Schmidt");
 
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Read and modify an entity with key aliases
+	QUnit.test("Entity with key aliases", function (assert) {
+		var sView = '\
+<Table id="table" items="{/EntitiesWithComplexKey}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="item" text="{Value}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			that = this;
+
+		this.expectRequest("EntitiesWithComplexKey?$select=Key/P1,Key/P2,Value&$skip=0&$top=100", {
+				"value" : [{
+					"Key" : {
+						"P1" : "foo",
+						"P2" : 42
+					},
+					"Value" : "Old",
+					"@odata.etag" : "etag"
+				}]
+			})
+			.expectChange("item", ["Old"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "EntitiesWithComplexKey(Key1='foo',Key2=42)",
+					headers : {
+						"If-Match" : "etag"
+					},
+					payload : {
+						"Value" : "New"
+					}
+				}, {
+					"Value" : "New"
+				})
+				.expectChange("item", "New", 0);
+
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
+				.setValue("New");
 			return that.waitForChanges(assert);
 		});
 	});
@@ -2953,6 +3016,218 @@ sap.ui.require([
 				.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: a ManagedObject instance with a relative object binding (using
+	// cross-service navigation) and a property binding (maybe even at the same time)
+	// Note: ID will not fail, it is also present on EQUIPMENT! SupplierIdentifier is "unique"
+	QUnit.test("Relative object binding & property binding: separate control", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oText = new Text(),
+			sView = '\
+<FlexBox binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
+	<FlexBox binding="{EQUIPMENT_2_PRODUCT}">\
+		<Text id="text" text="{SupplierIdentifier}" />\
+	</FlexBox>\
+</FlexBox>';
+
+		this.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID"
+			+ "&$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)", {
+			"Category" : "Electronics",
+			"ID" : 1,
+			"EQUIPMENT_2_PRODUCT" : {
+				"ID" : 2, // Edm.Int32
+				"SupplierIdentifier" : 42 // Edm.Int32
+			}
+		})
+			// Note: sap.m.Text#text turns value into string!
+			.expectChange("text", oText.validateProperty("text", 42))
+			.expectChange("text", oText.validateProperty("text", 42)); // TODO unexpected change
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Relative object binding & property binding: same control", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oText = new Text(),
+			sView = '\
+<FlexBox binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
+	<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}" />\
+</FlexBox>';
+
+		this.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID"
+			+ "&$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)", {
+			"Category" : "Electronics",
+			"ID" : 1,
+			"EQUIPMENT_2_PRODUCT" : {
+				"ID" : 2, // Edm.Int32
+				"SupplierIdentifier" : 42 // Edm.Int32
+			}
+		})
+		// Note: sap.m.Text#text turns value into string!
+			.expectChange("text", oText.validateProperty("text", 42));
+		// ManagedObject#_bindProperty calls ODataPropertyBinding#checkUpdate with wrong path
+		this.oLogMock.expects("warning")
+			.withExactArgs(
+				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
+				"/Equipments(Category='Electronics',ID=1)/SupplierIdentifier",
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to enhance query options for auto-$expand/$select as the path "
+					+ "'/Equipments/SupplierIdentifier' does not point to a property",
+				undefined, "sap.ui.model.odata.v4.ODataParentBinding");
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: a ManagedObject instance with a relative object binding
+	// *using cross-service navigation*
+	// and a property binding at the same time, inside a list binding
+	// Note: ID will not fail, it is also present on EQUIPMENT! SupplierIdentifier is "unique"
+	QUnit.test("Relative object binding & property binding within a list (1)", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oText = new Text(),
+			sView = '\
+<Table items="{/Equipments}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>';
+
+		this.expectRequest("Equipments?$select=Category,ID&"
+			+ "$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)"
+			+ "&$skip=0&$top=100", {value : [{
+			"Category" : "Electronics",
+			"ID" : 1,
+			"EQUIPMENT_2_PRODUCT" : {
+				"ID" : 2, // Edm.Int32
+				"SupplierIdentifier" : 42 // Edm.Int32
+			}
+		}]})
+			//TODO unwanted request due to wrong path set by ManagedObject
+			.expectRequest("Equipments(Category='Electronics',ID=1)/SupplierIdentifier",
+				{/*should be 404*/})
+			.expectChange("text", oText.validateProperty("text", 42));
+
+		this.oLogMock.expects("warning")
+			.withExactArgs(
+				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
+				"/Equipments/-2/SupplierIdentifier",
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.oLogMock.expects("error").twice()
+			.withExactArgs("Failed to enhance query options for auto-$expand/$select as the path "
+					+ "'/Equipments/SupplierIdentifier' does not point to a property",
+				undefined,
+				"sap.ui.model.odata.v4.ODataParentBinding");
+		this.oLogMock.expects("warning")
+			.withExactArgs(
+				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
+				"/Equipments(Category='Electronics',ID=1)/SupplierIdentifier",
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: a ManagedObject instance with a relative object binding
+	// *w/o cross-service navigation*
+	// and a property binding at the same time, inside a list binding
+	// Note: ID will not fail, it is also present on EQUIPMENT! AGE is "unique"
+	QUnit.test("Relative object binding & property binding within a list (2)", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oText = new Text(),
+			sView = '\
+<Table items="{/Equipments}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>';
+
+		this.expectRequest("Equipments?$select=Category,ID&"
+			+ "$expand=EQUIPMENT_2_EMPLOYEE($select=AGE,ID)"
+			+ "&$skip=0&$top=100", {value : [{
+			"Category" : "Electronics",
+			"ID" : 1,
+			"EQUIPMENT_2_EMPLOYEE" : {
+				"ID" : "0815", // Edm.String
+				"AGE" : 42 // Edm.Int16
+			}
+		}]})
+			//TODO unwanted request due to wrong path set by ManagedObject
+			.expectRequest("Equipments(Category='Electronics',ID=1)/AGE", {/*should be 404*/})
+		// Note: change does not appear inside a list binding, it's inside the context binding!
+			.expectChange("text", oText.validateProperty("text", 42));
+
+		this.oLogMock.expects("warning")
+			.withExactArgs(
+				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
+				"/Equipments/-2/AGE",
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.oLogMock.expects("error").twice()
+			.withExactArgs("Failed to enhance query options for auto-$expand/$select as the path "
+					+ "'/Equipments/AGE' does not point to a property",
+				undefined,
+				"sap.ui.model.odata.v4.ODataParentBinding");
+		this.oLogMock.expects("warning")
+			.withExactArgs(
+				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
+				"/Equipments(Category='Electronics',ID=1)/AGE",
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: a ManagedObject instance with a relative object binding (w/o
+	// cross-service navigation) and a property binding at the same time, inside a list binding
+	// Note: ID will not fail, it is also present on EQUIPMENT! AGE is "unique"
+	QUnit.test("Relative object binding & property binding within a list (3)", function (assert) {
+		var oText = new Text(),
+			sView = '\
+<Table items="{/Equipments}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>';
+
+		this.expectRequest("Equipments?$skip=0&$top=100", {value : [{
+			"Category" : "Electronics",
+			"ID" : 1,
+			"EQUIPMENT_2_EMPLOYEE" : {
+				"ID" : "0815", // Edm.String
+				"AGE" : 42 // Edm.Int16
+			}
+		}]})
+		// Note: change does not appear inside a list binding, it's inside the context binding!
+			.expectChange("text", oText.validateProperty("text", 42))
+			.expectChange("text", oText.validateProperty("text", 42));
+
+		this.oLogMock.expects("warning")
+			.withExactArgs(
+				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
+				"/Equipments(Category='Electronics',ID=1)/AGE",
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to drill-down into (Category='Electronics',ID=1)/AGE"
+					+ ", invalid segment: AGE",
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Equipments",
+				"sap.ui.model.odata.v4.lib._Cache");
+		return this.createView(assert, sView);
 	});
 });
 //TODO test bound action
