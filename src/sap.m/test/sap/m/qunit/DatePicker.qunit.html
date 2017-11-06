@@ -270,46 +270,23 @@
 				oDPMaxDate.destroy();
 			});
 
-			QUnit.test("setMinDate/setMaxDate cuts the time part for internal oMinDate/oMaxDate properties " +
-					"depending on the type of the system under test(DatePicker or subclass of DatePicker)", function (assert) {
+			QUnit.test("default maxDate has maximum possible hour of the day", function (assert) {
 				//Prepare
-				var oDateTime1 = new Date(2017, 0, 1, 13, 12, 3),
-						oDateTime2 = new Date(2017, 0, 10, 13, 3, 12),
-						oDate1 = new Date(oDateTime1.getFullYear(), oDateTime1.getMonth(), oDateTime1.getDate()),
-						oDate2 = new Date(oDateTime2.getFullYear(), oDateTime2.getMonth(), oDateTime2.getDate()),
-						oDP, oDPSubclass;
-				//Act
-				oDP = new sap.m.DatePicker({
-					minDate: oDateTime1,
-					maxDate: oDateTime2
+				var oDP = new sap.m.DatePicker({
+					dateValue: new Date(10000, 11, 31, 23, 59, 59)
 				});
+				oDP.placeAt("qunit-fixture");
+
 				//Assert
-				assert.equal(oDP._oMinDate.toString(), oDate1.toString(), "Time part of _oMinDate should be cut when SUT is of type DatePicker");
-				assert.equal(oDP._oMaxDate.toString(), oDate2.toString(), "Time part of _oMaxDate should be cut when SUT is of type DatePicker");
+				assert.ok(oDP.getValue() === "", "Given date which exceeds the default maxDate is not set");
+
+				//Act
+				oDP.setDateValue(new Date(9999, 11, 31, 23, 59, 59));
+				//Assert
+				assert.ok(oDP.getValue() !== "", "Given date which is equal to the default maxDate is set correctly");
 
 				//Cleanup
 				oDP.destroy();
-
-				//Prepare
-				jQuery.sap.require("sap.m.DatePickerRenderer");
-				var DatePickerSubclass = sap.m.DatePicker.extend("DatePickerSubclass", {
-					constructor: function(sId, mSettings) {
-						return sap.m.DatePicker.apply(this, arguments);
-					},
-					renderer: sap.m.DatePickerRenderer
-				});
-				//Act
-				oDPSubclass = new DatePickerSubclass({
-					minDate: oDateTime1,
-					maxDate: oDateTime2
-				});
-
-				//Assert
-				assert.equal(oDPSubclass._oMinDate.toString(), oDateTime1.toString(), "Time part of _oMinDate should NOT be cut when SUT is of type subclass of DatePicker");
-				assert.equal(oDPSubclass._oMaxDate.toString(), oDateTime2.toString(), "Time part of _oMaxDate should NOT be cut when SUT is of type subclass DatePicker");
-
-				//Cleanup
-				oDPSubclass.destroy();
 			});
 
 			QUnit.module("interaction");
@@ -568,14 +545,14 @@
 			QUnit.test("min/max", function(assert) {
 				var oMinDate = new Date(1,0,1);
 				oMinDate.setFullYear("0001");
-				var oMaxDate = new Date(9999, 11, 31);
+				var oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
 				assert.ok(!oDP3.getMinDate(), "DP3: no min date set");
 				assert.ok(!oDP3.getMaxDate(), "DP3: no max date set");
 				assert.ok(jQuery.sap.equal(oDP3._oMinDate, oMinDate), "DP3: default min date");
 				assert.ok(jQuery.sap.equal(oDP3._oMaxDate, oMaxDate), "DP3: default max date");
 
 				var oNewMinDate = new Date(2014,0,1);
-				var oNewMaxDate = new Date(2014,11,31);
+				var oNewMaxDate = new Date(2014,11, 31, 23, 59, 59, 999);
 				oDP3.setMinDate(oNewMinDate);
 				oDP3.setMaxDate(oNewMaxDate);
 				sap.ui.getCore().applyChanges();
