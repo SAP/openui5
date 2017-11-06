@@ -1,0 +1,14 @@
+<core:FragmentDefinition 
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Carousel>
+		<pages>
+			<VBox>
+				<Text text="Page 1"/>
+			</VBox>
+			<VBox>
+				<Text text="Page 2"/>
+			</VBox>
+		</pages>
+	</Carousel>
+</core:FragmentDefinition>

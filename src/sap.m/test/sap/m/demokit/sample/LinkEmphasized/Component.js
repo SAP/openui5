@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.LinkEmphasized.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.LinkEmphasized.Link",
+			rootView : {
+				"viewName": "sap.m.sample.LinkEmphasized.Link",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m"

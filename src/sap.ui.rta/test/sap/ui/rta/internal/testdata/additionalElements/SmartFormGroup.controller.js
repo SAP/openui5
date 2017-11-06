@@ -43,8 +43,8 @@
 			oStateModel.setData(data);
 			oView.setModel(oStateModel, "state");
 
-			this.getView().byId("obheader0").bindElement("/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')");
-			this.getView().byId("MainForm").bindElement("/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')");
+			this.byId("obheader0").bindElement("/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')");
+			this.byId("MainForm").bindElement("/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')");
 		},
 
 		_getUrlParameter : function(sParam){

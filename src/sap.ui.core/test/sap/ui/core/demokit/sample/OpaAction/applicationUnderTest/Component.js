@@ -5,7 +5,11 @@ function(UIComponent) {
 	return UIComponent.extend("appUnderTest.Component", {
 
 		metadata: {
-			"rootView": "appUnderTest.view.Main",
+			"rootView": {
+				"viewName": "appUnderTest.view.Main",
+				"type": "XML",
+				"async": true
+			},
 			"dependencies": {
 				"libs": {
 					"sap.ui.core": {},

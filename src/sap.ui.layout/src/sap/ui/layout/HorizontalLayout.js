@@ -46,7 +46,7 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
 		},
-		designTime: true
+		designtime: "sap/ui/layout/designtime/HorizontalLayout.designtime"
 	}});
 
 	/**

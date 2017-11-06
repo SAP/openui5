@@ -35,7 +35,7 @@ sap.ui.define([
 
 		_loadCategories: function(oEvent) {
 			this._loadSuppliers();
-			var oProductList = this.getView().byId("productList");
+			var oProductList = this.byId("productList");
 			this._changeNoDataTextToIndicateLoading(oProductList);
 			var oBinding = oProductList.getBinding("items");
 			oBinding.attachDataReceived(this.fnDataReceived, this);
@@ -85,7 +85,7 @@ sap.ui.define([
 		},
 
 		fnDataReceived: function() {
-			var oList = this.getView().byId("productList");
+			var oList = this.byId("productList");
 			var aListItems = oList.getItems();
 			aListItems.some(function(oItem) {
 				if (oItem.getBindingContext().sPath === "/Products('" + this._sProductId + "')") {
@@ -143,7 +143,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_applyFilter : function (oEvent) {
-			var oList = this.getView().byId("productList"),
+			var oList = this.byId("productList"),
 				oBinding = oList.getBinding("items"),
 				aSelectedFilterItems = oEvent.getParameter("filterItems"),
 				oCustomFilter =  this._oDialog.getFilterItems()[1],

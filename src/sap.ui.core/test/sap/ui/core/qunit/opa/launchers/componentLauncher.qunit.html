@@ -62,7 +62,8 @@
 								});
 							},
 							function(oError) {
-								return oError instanceof Error && oError.message === "sap.ui.test.launchers.componentLauncher: Start was called twice without teardown";
+								return oError instanceof Error && oError.message === "sap.ui.test.launchers.componentLauncher: " +
+									"Start was called twice without teardown. Only one component can be started at a time.";
 							},
 							"Exception was thrown"
 						);
@@ -82,7 +83,8 @@
 								componentLauncher.teardown();
 							},
 							function(oError) {
-								return oError instanceof Error && oError.message === "sap.ui.test.launchers.componentLauncher: Teardown has been called but there was no start";
+								return oError instanceof Error && oError.message === "sap.ui.test.launchers.componentLauncher: " +
+									"Teardown was called before start. No component was started.";
 							},
 							"Exception was thrown"
 						);

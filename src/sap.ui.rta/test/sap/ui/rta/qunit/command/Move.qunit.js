@@ -14,6 +14,7 @@ if (window.blanket){
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/Move",
+	"sap/ui/rta/command/FlexCommand",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
@@ -26,6 +27,7 @@ sap.ui.define([
 ], function (
 	CommandFactory,
 	Move,
+	FlexCommand,
 	ElementDesignTimeMetadata,
 	Utils,
 	VerticalLayout,
@@ -103,6 +105,9 @@ sap.ui.define([
 		},
 		afterEach : function(assert) {
 			this.oButton.destroy();
+			this.oSourceLayout.destroy();
+			this.oTargetLayout.destroy();
+			sandbox.restore();
 		}
 	});
 
@@ -125,6 +130,20 @@ sap.ui.define([
 			done();
 		}.bind(this));
 	});
+
+	QUnit.test("when getting a move command with _createChange returning an error", function(assert) {
+		sandbox.stub(FlexCommand.prototype, "_createChange").throws("MyError");
+		var oErrorLogSpy = sandbox.spy(jQuery.sap.log, "error");
+
+		var oCommand = CommandFactory.getCommandFor(this.oButton, "move", {
+			movedElements : [this.oButton],
+			source : this.oSourceLayout,
+			target : this.oTargetLayout
+		}, this.oButtonDesignTimeMetadata);
+		assert.notOk(oCommand, "then no command is created");
+		assert.equal(oErrorLogSpy.callCount, 1, "and one error is thrown");
+	});
+
 
 	QUnit.module("Given a regular move command ", {
 		beforeEach : function(assert) {

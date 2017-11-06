@@ -10,7 +10,7 @@
 }
 
 .sapMRIIconUnsel {
-	color: @sapUiHcReducedAltForeground;
+	color: @sapUiContentIconColor;
 }
 
 .sapMRI.sapMRIDisplayOnly {
@@ -29,6 +29,16 @@
 
   .sapMRIIconReadOnly {
 	color: lighten(@sapUiContentForegroundColor, 50);
+  }
+}
+
+.sapMRIDisabled {
+  .sapMRIIconSel {
+	color: @sapUiHcReducedForeground;
+  }
+
+  .sapMRIIconUnsel {
+	color: @sapUiContentDisabledTextColor;
   }
 }
 

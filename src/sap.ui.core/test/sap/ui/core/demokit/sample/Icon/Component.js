@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.core.sample.Icon.Component", {
 
 		metadata : {
-			rootView : "sap.ui.core.sample.Icon.IconGroup",
+			rootView : {
+				"viewName": "sap.ui.core.sample.Icon.IconGroup",
+				"type": "XML",
+				"async": true
+			},
 			includes : [ "Icon/style.css" ],
 			dependencies : {
 				libs : [

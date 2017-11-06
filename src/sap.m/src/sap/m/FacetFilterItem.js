@@ -42,7 +42,7 @@ sap.ui.define(['./ListItemBase', './library'],
 
 			/**
 			 * Defines the number of objects that match this item in the target data set.
-			 * @deprecated Since version 1.18.11. Use setCounter instead.
+			 * @deprecated as of version 1.18.11, replaced by <code>setCounter</code> method
 			 */
 			count : {type : "int", group : "Misc", defaultValue : null, deprecated: true}
 		}

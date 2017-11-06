@@ -24,6 +24,7 @@
 					visible="{=!${appView>/bPhoneSize}}"
 					densityAware="false"
 					height="2rem"
+				   	alt="UI5 logo"
 					class="sapLogo"
 					decorative="false"
 					press="navigateToSection" />

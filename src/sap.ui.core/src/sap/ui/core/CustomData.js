@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 			 */
 			writeToDom : {type : "boolean", group : "Data", defaultValue : false}
 		},
-		designTime: true
+		designtime: "sap/ui/core/designtime/CustomData.designtime"
 	}});
 
 	CustomData.prototype.setValue = function(oValue) {

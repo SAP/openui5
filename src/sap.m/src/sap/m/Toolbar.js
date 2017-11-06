@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 				}
 			}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Toolbar.designtime"
 	}});
 
 	EnabledPropagator.call(Toolbar.prototype);

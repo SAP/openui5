@@ -55,6 +55,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		var ComboBox = ComboBoxBase.extend("sap.m.ComboBox", /** @lends sap.m.ComboBox.prototype */ {
 			metadata: {
 				library: "sap.m",
+				designtime: "sap/m/designtime/ComboBox.designtime",
 				properties: {
 
 					/**

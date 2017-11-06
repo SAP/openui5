@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.ViewSettingsDialogCustom.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.ViewSettingsDialogCustom.V",
+			rootView : {
+				"viewName": "sap.m.sample.ViewSettingsDialogCustom.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

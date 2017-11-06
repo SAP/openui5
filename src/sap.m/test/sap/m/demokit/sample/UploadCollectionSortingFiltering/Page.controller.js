@@ -21,9 +21,9 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel(sPath));
 
 			// Sets the text to the label
-			this.getView().byId("UploadCollection").addEventDelegate({
+			this.byId("UploadCollection").addEventDelegate({
 				onBeforeRendering: function() {
-					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+					this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
 			});
 
@@ -66,7 +66,7 @@ sap.ui.define([
 		},
 
 		onInfoToolbarPressed: function(oEvent) {
-			if (oEvent.getParameters().srcControl === this.getView().byId("icClearFilters")) {
+			if (oEvent.getParameters().srcControl === this.byId("icClearFilters")) {
 				this.onViewSettingsClearFilters(oEvent);
 			} else {
 				this.onViewSettingsPressed(oEvent);
@@ -83,7 +83,7 @@ sap.ui.define([
 		},
 
 		onViewSettingsConfirm: function(oEvent) {
-			var oUploadCollection = this.getView().byId("UploadCollection");
+			var oUploadCollection = this.byId("UploadCollection");
 			var oInfoToolbar = oUploadCollection.getInfoToolbar();
 			var oBindingItems = oUploadCollection.getBinding("items");
 			var mParams = oEvent.getParameters();
@@ -127,7 +127,7 @@ sap.ui.define([
 		},
 
 		getAttachmentTitleText: function() {
-			var aItems = this.getView().byId("UploadCollection").getItems();
+			var aItems = this.byId("UploadCollection").getItems();
 			return "Uploaded (" + aItems.length + ")";
 		},
 

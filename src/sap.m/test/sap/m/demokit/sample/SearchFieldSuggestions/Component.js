@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.SearchFieldSuggestions.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.SearchFieldSuggestions.Page",
+			rootView : {
+				"viewName": "sap.m.sample.SearchFieldSuggestions.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

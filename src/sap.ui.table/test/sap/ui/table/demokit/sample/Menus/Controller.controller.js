@@ -67,7 +67,7 @@ sap.ui.define([
 
 		onColumnSelect : function (oEvent) {
 			var oCurrentColumn = oEvent.getParameter("column");
-			var oImageColumn = this.getView().byId("image");
+			var oImageColumn = this.byId("image");
 			if (oCurrentColumn === oImageColumn) {
 				MessageToast.show("Column header " + oCurrentColumn.getLabel().getText() + " pressed.");
 			}
@@ -75,7 +75,7 @@ sap.ui.define([
 
 		onColumnMenuOpen: function (oEvent) {
 			var oCurrentColumn = oEvent.getSource();
-			var oImageColumn = this.getView().byId("image");
+			var oImageColumn = this.byId("image");
 			if (oCurrentColumn != oImageColumn) {
 				return;
 			}
@@ -122,10 +122,10 @@ sap.ui.define([
 
 		onQuantitySort : function(oEvent) {
 			var bAdd = oEvent.getParameter("ctrlKey") === true;
-			var oColumn = this.getView().byId("quantity");
+			var oColumn = this.byId("quantity");
 			var sOrder = oColumn.getSortOrder() == "Ascending" ? "Descending" : "Ascending";
 
-			this.getView().byId("table").sort(oColumn, sOrder, bAdd);
+			this.byId("table").sort(oColumn, sOrder, bAdd);
 		},
 
 		showInfo : function(oEvent) {

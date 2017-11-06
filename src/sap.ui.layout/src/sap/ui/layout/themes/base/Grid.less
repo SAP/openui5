@@ -18,6 +18,7 @@
 div[class*="sapUiRespGrid"] > div[class*="sapUiRespGridSpan"] {
     float: left;
     overflow: hidden;
+	min-height: 1px; // BCP: 1770523047
 }
 
 /* CLEAR FIX */
@@ -77,6 +78,13 @@ div[class*="sapUiRespGrid"]:after {
 
 .sapUiRespGrid.sapUiRespGridVSpace2 > div {
     margin-bottom: 2rem;
+}
+
+.sapUiRespGrid[class*="sapUiRespGridVSpace0"] > .sapUiRespGridSpanInvisible,
+.sapUiRespGrid[class*="sapUiRespGridVSpace05"] > .sapUiRespGridSpanInvisible,
+.sapUiRespGrid[class*="sapUiRespGridVSpace1"] > .sapUiRespGridSpanInvisible,
+.sapUiRespGrid[class*="sapUiRespGridVSpace2"] > .sapUiRespGridSpanInvisible {
+	margin-bottom: 0;
 }
 
 /* GENERAL BREAK */

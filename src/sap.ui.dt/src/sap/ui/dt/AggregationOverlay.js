@@ -147,7 +147,7 @@ function(jQuery, Overlay) {
 	/**
 	 * @inheritDoc
 	 */
-	Overlay.prototype._getScrollContainerIndex = function(oOverlayParent, oOverlay) {
+	AggregationOverlay.prototype._getScrollContainerIndex = function(oOverlayParent, oOverlay) {
 		var iScrollContainerIndex;
 		oOverlay = oOverlay || this;
 		if (oOverlayParent._aScrollContainers) {

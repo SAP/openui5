@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TextRenderWhitespace.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TextRenderWhitespace.V",
+			rootView : {
+				"viewName": "sap.m.sample.TextRenderWhitespace.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

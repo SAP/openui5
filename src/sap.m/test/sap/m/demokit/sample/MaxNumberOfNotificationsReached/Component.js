@@ -5,7 +5,11 @@ function(UIComponent) {
 	var Component = UIComponent.extend("sap.m.sample.MaxNumberOfNotificationsReached.Component", {
 
 		metadata: {
-			rootView: "sap.m.sample.MaxNumberOfNotificationsReached.V",
+			rootView: {
+				"viewName": "sap.m.sample.MaxNumberOfNotificationsReached.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m",

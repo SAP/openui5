@@ -196,8 +196,17 @@ function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.getLibraryText = function(sKey, aArgs) {
-		var oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(this.getLibraryName());
-		return oLibResourceBundle.getText(sKey, aArgs);
+		var oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(this.getLibraryName() + ".designtime"),
+			sResult = oLibResourceBundle.getText(sKey, aArgs);
+
+		//Fallback to old logic that tries to get the text from the libraries resource bundle
+		//TODO: remove the fallback after all libraries have introduced a library.designtime.js that will provide the resource bundle and texts
+		if (!oLibResourceBundle.hasText(sKey)) {
+			oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(this.getLibraryName());
+			sResult = oLibResourceBundle.getText(sKey, aArgs);
+		}
+
+		return sResult;
 	};
 
 	/**

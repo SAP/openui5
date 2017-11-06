@@ -135,7 +135,7 @@ sap.ui.define([
 			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
 			var bShowNavButton = Device.system.phone || (!bEntityIsInIndex && !!oPrevHash);
-			this.getView().byId("page").setShowNavButton(bShowNavButton);
+			this.byId("page").setShowNavButton(bShowNavButton);
 
 			// set data model
 			var oModel,
@@ -179,7 +179,7 @@ sap.ui.define([
 			if (!oData.show[sNewTab]) {
 				sNewTab = "samples";
 			}
-			var oTab = this.getView().byId("tabBar");
+			var oTab = this.byId("tabBar");
 			if (sNewTab !== oTab.getSelectedKey() && oTab.getExpanded()) {
 				oTab.setSelectedKey(sNewTab);
 			}

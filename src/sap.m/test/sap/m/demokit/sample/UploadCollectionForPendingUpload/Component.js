@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.UploadCollectionForPendingUpload.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.UploadCollectionForPendingUpload.Page",
+			rootView : {
+				"viewName": "sap.m.sample.UploadCollectionForPendingUpload.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : ["sap.m", "sap.ui.unified"]
 			},

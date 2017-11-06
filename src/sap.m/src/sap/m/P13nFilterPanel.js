@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nFilterPanel.
 sap.ui.define([
-	'jquery.sap.global', './P13nConditionPanel', './P13nPanel', './library'
-], function(jQuery, P13nConditionPanel, P13nPanel, library) {
+	'./P13nConditionPanel', './P13nPanel', './library', 'sap/m/Panel'
+], function(P13nConditionPanel, P13nPanel, library, Panel) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType
@@ -371,9 +371,6 @@ sap.ui.define([
 		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FILTERPANEL_TITLE"));
 
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
-		jQuery.sap.require("sap.ui.layout.Grid");
-
-		sap.ui.layout.Grid.prototype.init.apply(this);
 
 		this._aKeyFields = [];
 		this.addStyleClass("sapMFilterPanel");
@@ -385,7 +382,7 @@ sap.ui.define([
 
 		if (!this._aIncludeOperations["default"]) {
 			this.setIncludeOperations([
-				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE, sap.m.P13nConditionOperation.Empty
+				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
 			]);
 		}
 
@@ -428,7 +425,7 @@ sap.ui.define([
 			]);
 		}
 
-		this._oIncludePanel = new sap.m.Panel({
+		this._oIncludePanel = new Panel({
 			expanded: true,
 			expandable: true,
 			headerText: this._oRb.getText("FILTERPANEL_INCLUDES"),
@@ -451,7 +448,7 @@ sap.ui.define([
 
 		this.addAggregation("content", this._oIncludePanel);
 
-		this._oExcludePanel = new sap.m.Panel({
+		this._oExcludePanel = new Panel({
 			expanded: false,
 			expandable: true,
 			headerText: this._oRb.getText("FILTERPANEL_EXCLUDES"),
@@ -521,6 +518,7 @@ sap.ui.define([
 					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_),
 					maxLength: fGetValueOfProperty("maxLength", oContext, oItem_),
 					type: fGetValueOfProperty("type", oContext, oItem_),
+					formatSettings: fGetValueOfProperty("formatSettings", oContext, oItem_),
 					precision: fGetValueOfProperty("precision", oContext, oItem_),
 					scale: fGetValueOfProperty("scale", oContext, oItem_),
 					isDefault: fGetValueOfProperty("isDefault", oContext, oItem_),

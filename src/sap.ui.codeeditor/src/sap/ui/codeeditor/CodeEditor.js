@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	'sap/ui/codeeditor/js/ace/ace',
 	'sap/ui/codeeditor/js/ace/ext-language_tools',
+	'sap/ui/codeeditor/js/ace/ext-beautify',
 	'sap/ui/codeeditor/js/ace/mode-javascript',
 	'sap/ui/codeeditor/js/ace/mode-json'
 ], function(jQuery, Control) {
@@ -401,6 +402,31 @@ sap.ui.define([
 	 */
 	CodeEditor.prototype._getEditorInstance = function() {
 		return this._oEditor;
+	};
+
+	/**
+	 * Sets <code>visible</code> property.
+	 * @param {boolean} bVisible Whether the code editor is visible.
+	 * @override
+	 * @public
+	 * @since 1.54.1
+	 */
+	CodeEditor.prototype.setVisible = function(bVisible) {
+		if (this.getVisible() !== bVisible) {
+			this.setProperty("visible", bVisible);
+			//trigger re-rendering as the usual invalidation is turned off by default.
+			this.rerender();
+		}
+		return this;
+	};
+
+	/**
+	 * Pretty-prints the content of the editor
+	 * @public
+	 * @since 1.54.1
+	 */
+	CodeEditor.prototype.prettyPrint = function () {
+		ace.require("ace/ext/beautify").beautify(this._oEditor.session);
 	};
 
 	CodeEditor.prototype.destroy = function (bSuppressInvalidate) {

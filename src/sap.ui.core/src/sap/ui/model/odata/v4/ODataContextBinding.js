@@ -509,6 +509,9 @@ sap.ui.define([
 			return createCacheAndRequest(oOperationMetaData, "");
 		}).then(function (oResult) {
 			that._fireChange({reason : ChangeReason.Change});
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				oDependentBinding.refreshInternal(sGroupId, true);
+			});
 			// do not return anything
 		})["catch"](function (oError) {
 			that.oModel.reportError("Failed to execute " + that.sPath, sClassName, oError);

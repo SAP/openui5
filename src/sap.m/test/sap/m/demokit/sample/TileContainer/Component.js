@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TileContainer.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TileContainer.Page",
+			rootView : {
+				"viewName": "sap.m.sample.TileContainer.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m"

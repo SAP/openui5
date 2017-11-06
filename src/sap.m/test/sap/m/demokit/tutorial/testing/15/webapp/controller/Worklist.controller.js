@@ -97,7 +97,7 @@ sap.ui.define([
 			}
 
 			// filter binding
-			var oTable = this.getView().byId("table");
+			var oTable = this.byId("table");
 			var oBinding = oTable.getBinding("items");
 			oBinding.filter(aFilter);
 		},

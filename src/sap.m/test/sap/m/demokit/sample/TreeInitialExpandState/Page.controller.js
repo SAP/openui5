@@ -7,7 +7,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel("test-resources/sap/m/demokit/sample/TreeInitialExpandState/Tree.json");
 			this.getView().setModel(oModel);
-			this.getView().byId("Tree").expandToLevel(3);
+			this.byId("Tree").expandToLevel(3);
 		}
 	});
 

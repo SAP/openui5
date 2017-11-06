@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.InputAssisted.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.InputAssisted.V",
+			rootView : {
+				"viewName": "sap.m.sample.InputAssisted.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

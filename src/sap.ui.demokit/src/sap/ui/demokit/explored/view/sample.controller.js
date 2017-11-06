@@ -61,7 +61,7 @@ function(jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Histo
 			}
 
 			// set nav button visibility
-			var oPage = this.getView().byId("page");
+			var oPage = this.byId("page");
 			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
 			oModelData.showNavButton = Device.system.phone || !!oPrevHash;
@@ -221,7 +221,7 @@ function(jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Histo
 		_loadRuntimeAuthoring : function() {
 			try {
 				sap.ui.require(["sap/ui/rta/RuntimeAuthoring"], function (RuntimeAuthoring) {
-					this.getView().byId("toggleRTA").setVisible(true);
+					this.byId("toggleRTA").setVisible(true);
 				}.bind(this));
 			} catch (oException) {
 				jQuery.sap.log.info("sap.ui.rta.RuntimeAuthoring could not be loaded, UI adaptation mode is disabled");
@@ -239,7 +239,7 @@ function(jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Histo
 					this._oRTA = new RuntimeAuthoring({flexSettings: {
 						developerMode: false
 					}});
-					this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+					this._oRTA.setRootControl(this.byId("page").getContent()[0]);
 					this._oRTA.attachStop(function() {
 						this._oRTA.destroy();
 					}.bind(this));

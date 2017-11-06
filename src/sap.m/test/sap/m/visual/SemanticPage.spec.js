@@ -122,10 +122,10 @@ describe("sap.m.SemanticPage", function() {
 	fnClickThenCompare("clearDraftStateBtn", _PAGE_TYPE.DETAIL, "semantic-draft-cleared", "should not show a draft label");
 
 	//footer show/hide
-	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.DETAIL, "semantic-no-footer", "should not show a page footer");
-	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.DETAIL, "semantic-with-footer", "should show a page footer");
-	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.MASTER, "semantic-no-footer", "should not show a page footer");
-	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.MASTER, "semantic-with-footer", "should show a page footer");
+	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.DETAIL, "semantic-detail-no-footer", "should not show a page footer");
+	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.DETAIL, "semantic-detail-with-footer", "should show a page footer");
+	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.MASTER, "semantic-master-no-footer", "should not show a page footer");
+	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.MASTER, "semantic-master-with-footer", "should show a page footer");
 
 	//multiselect on/off databinding
 	fnClickThenCompare("toggleMultiselectPressedBtn", _PAGE_TYPE.MASTER, "semantic-multiselect-by-databinding-on", "should show a multiselect-cancel button");
@@ -138,6 +138,8 @@ describe("sap.m.SemanticPage", function() {
 	//multiselect on/off
 	fnClickThenCompare("multiselectAction-toggleButton", _PAGE_TYPE.MASTER, "semantic-multiselect-on", "should show a multiselect-cancel button");
 	fnClickThenCompare("multiselectAction-toggleButton", _PAGE_TYPE.MASTER, "semantic-multiselect-off", "should show a multiselect button");
+
+	fnEnsureOverflowVisible();
 
 	//favorite on/off
 	fnClickThenCompare("favoriteAction-toggleButton", _PAGE_TYPE.DETAIL, "semantic-favorite-on", "should show a favorite emphasized button", true);

@@ -51,11 +51,6 @@
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
-			"control": "sap.m.ColumnHeader",
-			"url": "../ColumnHeaderResponsiveTable.html",
-			"appComponent": "CA-UI5-TBL"
-		},
-		{
 			"control": "sap.m.ComboBox",
 			"url": "ComboBox.html",
 			"appComponent": "CA-UI5-CTR-RIL"
@@ -485,7 +480,7 @@
 		{
 			"control": "sap.m.Title",
 			"url": "Title.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR"
 		},
 		{
 			"control": "sap.m.ToggleButton",

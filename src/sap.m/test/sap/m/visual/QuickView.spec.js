@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,document*/
 
 describe('sap.m.QuickView', function() {
 	"use strict";
@@ -12,10 +12,14 @@ describe('sap.m.QuickView', function() {
 
 		return bPhone ? mDesktopToPhoneIds[sId] : sId;
 	};
-	var _closeQuickView = function (sCloseId) {
-		var sId = bPhone ? sCloseId : "quickViewPage-title";
+	var _closeQuickView = function (sCloseName) {
+		var sName = bPhone ? sCloseName : "quickViewPage-title";
+		if (bPhone) {
+			document.getElementsByClassName(sName);
+		} else {
+			element(by.id(sName)).click();
+		}
 
-		element(by.id(sId)).click();
 	};
 	// initial loading
 	it('should load test page', function () {
@@ -39,14 +43,14 @@ describe('sap.m.QuickView', function() {
 		element(by.id('__link2')).click();
 		var qv1 = element(by.id(_resolveQuickView('QV1-quickView-popover')));
 		expect(takeScreenshot(qv1)).toLookAs('2_go_to_page_2');
-		_closeQuickView("QV1-quickView-closeButton");
+		_closeQuickView("sapMBtn sapMBtnBase");
 	});
 
 	// return to page 1
 	it('should return to page 1', function () {
 		var qv1 = element(by.id(_resolveQuickView('QV1-quickView-popover')));
 		expect(takeScreenshot(qv1)).toLookAs('3_return_to_page_1');
-		_closeQuickView("QV1-quickView-closeButton");
+		_closeQuickView("sapMBtn sapMBtnBase");
 	 });
 
 	// single page
@@ -54,7 +58,7 @@ describe('sap.m.QuickView', function() {
 		element(by.id('SinglePageQVButton')).click();
 		var qv2 = element(by.id(_resolveQuickView('QV2-quickView-popover')));
 		expect(takeScreenshot(qv2)).toLookAs('5_single_page_QuickView');
-		_closeQuickView("QV2-quickView-closeButton");
+		_closeQuickView("sapMBtn sapMBtnBase");
 	});
 
 });

@@ -53,6 +53,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				interfaces : ["sap.ui.core.IFormContent"],
 				library : "sap.m",
+				designtime: "sap/m/designtime/RadioButtonGroup.designtime",
 				properties : {
 
 					/**

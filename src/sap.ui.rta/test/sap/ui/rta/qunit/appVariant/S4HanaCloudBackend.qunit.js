@@ -135,7 +135,7 @@ sap.ui.require([
 
 		});
 
-		QUnit.test("When checking a backend response for an existing IAM app with valid FLP custmizing,", function(assert) {
+		QUnit.test("When checking a backend response for an IAM app with valid FLP customizing after catalog publishing succeeded,", function(assert) {
 
 			// Response of ODATA service
 			var responseFlpCustomizingIsThere =
@@ -158,11 +158,33 @@ sap.ui.require([
 			);
 		});
 
-
-		QUnit.test("When checking a backend response for an IAM app without valid FLP custmizing,", function(assert) {
+		QUnit.test("When checking a backend response for an IAM app returning errors when publishing is still ongoing,", function(assert) {
 
 			// Response of ODATA service
-			var responseFlpCustomizingIsNotThere =
+			var responseFlpCustomizingNotYetReady =
+			{
+			  "__metadata": {
+			    "id": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('ZZ1_ABIFNNXL4UPNPLHCHLLGGFBFQ4_FLAV')",
+			    "uri": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('ZZ1_ABIFNNXL4UPNPLHCHLLGGFBFQ4_FLAV')",
+			    "type": "APS_IAM_APP_SRV.AppStatusCheck"
+			  },
+			  "AppStatusTable": "{\"ITAB\":[{\"TYPE\":\"W\",\"ID\":\"CM_APS_IAM_APP\",\"NUMBER\":\"057\",\"MESSAGE\":\"WARNING: Still publishing\",\"LOG_NO\":\"\",\"LOG_MSG_NO\":\"000000\",\"MESSAGE_V1\":\"\",\"MESSAGE_V2\":\"\",\"MESSAGE_V3\":\"\",\"MESSAGE_V4\":\"\",\"PARAMETER\":\"\",\"ROW\":0,\"FIELD\":\"\",\"SYSTEM\":\"\"},{\"TYPE\":\"E\",\"ID\":\"CM_APS_IAM_APP\",\"NUMBER\":\"040\",\"MESSAGE\":\"App not exist\",\"LOG_NO\":\"\",\"LOG_MSG_NO\":\"000000\",\"MESSAGE_V1\":\"\",\"MESSAGE_V2\":\"\",\"MESSAGE_V3\":\"\",\"MESSAGE_V4\":\"\",\"PARAMETER\":\"\",\"ROW\":0,\"FIELD\":\"\",\"SYSTEM\":\"\"}]}",
+			  "AppID": "ZZ1_ABIFNNXL4UPNPLHCHLLGGFBFQ4_FLAV",
+			  "AppStatus": "App ZZ1_ABIFNNXL4UPNPLHCHLLGGFBFQ4_FLAV not found in Apps-List for catalog SAP_CORE_BC_IAM\n"
+			};
+
+			// Check evaluatio of ODATA service response
+			assert.equal(
+				S4HanaCloudBackend._evaluateAppIntegrityEstimation( responseFlpCustomizingNotYetReady ),
+				false,
+				"then _evaluateAppIntegratityEstimation(response) returns false"
+			);
+		});
+
+		QUnit.test("When checking a backend response for an IAM app returning errors after publishing failed,", function(assert) {
+
+			// Response of ODATA service
+			var responseFlpCustomizingFailed =
 			{
 			  "__metadata": {
 			    "id": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('INVALID_IAM_ID')",
@@ -175,10 +197,11 @@ sap.ui.require([
 			};
 
 			// Check evaluatio of ODATA service response
-			assert.equal(
-				S4HanaCloudBackend._evaluateAppIntegrityEstimation( responseFlpCustomizingIsNotThere ),
-				false,
-				"then _evaluateAppIntegratityEstimation(response) returns false"
+			assert.throws(
+				function() {
+					S4HanaCloudBackend._evaluateAppIntegrityEstimation( responseFlpCustomizingFailed );
+				},
+				"then an exception gets raised"
 			);
 		});
 

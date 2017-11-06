@@ -17,7 +17,7 @@ sap.ui.define([
 
 		handlePressConfiguration: function(oEvent) {
 			var oItem = oEvent.getSource();
-			var oShell = this.getView().byId("myShell");
+			var oShell = this.byId("myShell");
 			var bState = oShell.getShowPane();
 			oShell.setShowPane(!bState);
 			oItem.setShowMarker(!bState);
@@ -72,7 +72,7 @@ sap.ui.define([
 			this._overlay.setModel(oModel);
 
 			// set reference to shell and open overlay
-			this._overlay.setShell(this.getView().byId("myShell"));
+			this._overlay.setShell(this.byId("myShell"));
 			this._overlay.open();
 		}
 	});

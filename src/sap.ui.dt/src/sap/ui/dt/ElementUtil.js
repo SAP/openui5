@@ -465,7 +465,7 @@ sap.ui.define(['jquery.sap.global'],
 			 *
 			 */
 			ElementUtil.loadDesignTimeMetadata = function(oElement) {
-				return oElement ? oElement.getMetadata().loadDesignTime() : Promise.resolve({});
+				return oElement ? oElement.getMetadata().loadDesignTime(oElement) : Promise.resolve({});
 			};
 
 			/**
@@ -533,7 +533,7 @@ sap.ui.define(['jquery.sap.global'],
 					bVisible = $CurrentElement.is(":visible")
 						&& $CurrentElement.css("visibility") !== "hidden"
 						&& $CurrentElement.css("opacity") > 0
-						&& bFilterOpacity ? parseFloat(bFilterOpacity[1]) > 0 : true;
+						&& (bFilterOpacity ? parseFloat(bFilterOpacity[1]) > 0 : true);
 					if (bVisible) {
 						break;
 					}

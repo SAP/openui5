@@ -196,7 +196,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 					/**
 					 * The selected filter items in an object notation format: { key: boolean }. If a custom control filter was displayed (for example, the user clicked on the filter item), the value for its key is set to true to indicate that there has been an interaction with the control.
-					 * @deprecated As of version 1.42, replaced by filterCompoundKeys
+					 * @deprecated as of version 1.42, replaced by <code>filterCompoundKeys</code> event
 					 */
 					filterKeys : {type : "object", deprecated: true},
 
@@ -1064,6 +1064,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			contentItem : this._oContentItem ? this._oContentItem.clone() : null
 		};
 
+		this.addDependent(this._oPreviousState.contentItem);
+
 		//focus the first focusable item in current page's content
 		if (Device.system.desktop) {
 			this._getDialog().attachEventOnce("afterOpen", function () {
@@ -1201,7 +1203,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 * @public
 	 * @return {object} An object with item and sub-item keys
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @deprecated As of version 1.42, replaced by getSelectedFilterCompoundKeys
+	 * @deprecated as of version 1.42, replaced by <code>getSelectedFilterCompoundKeys</code> method
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterKeys = function() {
 		var oSelectedFilterKeys = {}, aSelectedFilterItems = this
@@ -1261,7 +1263,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 *         It can be used to set the dialog state based on presets.
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @deprecated As of version 1.42, replaced by setSelectedFilterCompoundKeys
+	 * @deprecated as of version 1.42, replaced by <code>setSelectedFilterCompoundKeys</code> method
 	 */
 	ViewSettingsDialog.prototype.setSelectedFilterKeys = function(oSelectedFilterKeys) {
 		var aFilterItems    = this.getFilterItems(),

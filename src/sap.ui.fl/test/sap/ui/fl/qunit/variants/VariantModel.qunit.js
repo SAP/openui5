@@ -106,6 +106,7 @@ sap.ui.require([
 
 	QUnit.test("when calling '_setVariantProperties' to add a change", function(assert) {
 		var fnSetVariantDataStub = sandbox.stub(this.oModel.oVariantController, "_setVariantData").returns(1);
+		var fnUpdateVariantChangeInMapStub = sandbox.stub(this.oModel.oVariantController, "_updateVariantChangeInMap").returns(1);
 		var fnAddDirtyChangeStub = sandbox.stub(this.oFlexController._oChangePersistence, "addDirtyChange");
 		var mPropertyBag = {
 			"title" : "New Title",
@@ -122,17 +123,18 @@ sap.ui.require([
 		assert.ok(fnAddDirtyChangeStub.calledWith(oChange), "then 'FlexController.addDirtyChange called with the newly created change");
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].title, mPropertyBag.title, "then the new title updated in the VariantModel");
 		assert.ok(fnSetVariantDataStub.calledOnce, "then '_setVariantData' of VariantController called");
+		assert.ok(fnUpdateVariantChangeInMapStub.calledOnce, "then '_updateVariantChangeInMapStub' of VariantController called");
 	});
 
 	QUnit.test("when calling '_setVariantProperties' to delete a change", function(assert) {
 		var fnSetVariantDataStub = sandbox.stub(this.oModel.oVariantController, "_setVariantData").returns(1);
+		var fnUpdateVariantChangeInMapStub = sandbox.stub(this.oModel.oVariantController, "_updateVariantChangeInMap").returns(1);
+		var fnChangeStub = sandbox.stub().returns({ getDefinition : function() {} });
 		var fnDeleteChangeStub = sandbox.stub(this.oFlexController._oChangePersistence, "deleteChange");
 		var mPropertyBag = {
 			"title" : "Old Title",
 			"variantReference" : "variant1",
-			"change" : {
-				"info" : "Dummy Change"
-			}
+			"change" : fnChangeStub()
 		};
 
 		var oChange = this.oModel._setVariantProperties("variantMgmtId1", mPropertyBag, false);
@@ -140,6 +142,7 @@ sap.ui.require([
 		assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then 'FlexController.deleteChange' called with the passed change");
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variants[1].title, mPropertyBag.title, "then the new title updated in the VariantModel");
 		assert.ok(fnSetVariantDataStub.callCount, 0, "then '_setVariantData' of VariantController not called");
+		assert.ok(fnUpdateVariantChangeInMapStub.calledOnce, "then '_updateVariantChangeInMapStub' of VariantController called");
 	});
 
 	QUnit.test("when calling 'switchToVariant'", function(assert) {
@@ -165,14 +168,24 @@ sap.ui.require([
 				"layer":"CUSTOMER",
 				"namespace":"Dummy.Component"
 			},
-			"changes": []
+			"controlChanges": [],
+			"variantChanges": {
+				"setTitle": []
+			}
 		};
+
+		var mPropertyBag = {
+			newVariantReference: "newVariant",
+			sourceVariantReference: "variant0",
+			layer: "CUSTOMER"
+		};
+
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		sandbox.stub(Utils, "isLayerAboveCurrentLayer").returns(0);
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-		var oDuplicateVariant = this.oModel._duplicateVariant("newVariant", "variant0");
+		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy);
 	});
 
@@ -189,14 +202,24 @@ sap.ui.require([
 				"layer":"VENDOR",
 				"namespace":"Dummy.Component"
 			},
-			"changes": []
+			"controlChanges": [],
+			"variantChanges": {
+				"setTitle": []
+			}
 		};
+
+		var mPropertyBag = {
+			newVariantReference: "newVariant",
+			sourceVariantReference: "variant0",
+			layer: "VENDOR"
+		};
+
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		oSourceVariantCopy.content.variantReference = "variant0";
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-		var oDuplicateVariant = this.oModel._duplicateVariant("newVariant", "variant0");
+		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
 	});
 
@@ -216,27 +239,36 @@ sap.ui.require([
 				"layer":"VENDOR",
 				"namespace":"Dummy.Component"
 			},
-			"changes": [oChangeContent0, oChangeContent1]
+			"controlChanges": [oChangeContent0, oChangeContent1],
+			"variantChanges": {
+				"setTitle": []
+			}
+		};
+
+		var mPropertyBag = {
+			newVariantReference: "newVariant",
+			sourceVariantReference: "variant0",
+			layer: "VENDOR"
 		};
 
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		var oDuplicateVariant = this.oModel._duplicateVariant("newVariant", "variant0");
+		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		oSourceVariantCopy.content.variantReference = "variant0";
-		oSourceVariantCopy.changes.splice(1, 1);
+		oSourceVariantCopy.controlChanges.splice(1, 1);
 
-		oSourceVariantCopy.changes.forEach( function (oCopiedChange, iIndex) {
+		oSourceVariantCopy.controlChanges.forEach( function (oCopiedChange, iIndex) {
 			oCopiedChange.variantReference = "newVariant";
-			oCopiedChange.support.sourceChangeFileName = oSourceVariant.changes[iIndex].fileName;
-			oSourceVariantCopy.changes[iIndex].fileName = oDuplicateVariant.changes[iIndex].fileName; /*mock*/
+			oCopiedChange.support.sourceChangeFileName = oSourceVariant.controlChanges[iIndex].fileName;
+			oSourceVariantCopy.controlChanges[iIndex].fileName = oDuplicateVariant.controlChanges[iIndex].fileName; /*mock*/
 		});
 
 		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-		assert.equal(oDuplicateVariant.changes.length, 1, "then only one change duplicated");
-		assert.equal(oDuplicateVariant.changes[0].layer, Utils.getCurrentLayer(), "then only one change duplicated");
+		assert.equal(oDuplicateVariant.controlChanges.length, 1, "then only one change duplicated");
+		assert.equal(oDuplicateVariant.controlChanges[0].layer, Utils.getCurrentLayer(), "then only one change duplicated");
 		assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
 	});
 
@@ -256,27 +288,36 @@ sap.ui.require([
 				"layer":"CUSTOMER",
 				"namespace":"Dummy.Component"
 			},
-			"changes": [oChangeContent0, oChangeContent1]
+			"controlChanges": [oChangeContent0, oChangeContent1],
+			"variantChanges": {
+				"setTitle": []
+			}
+		};
+
+		var mPropertyBag = {
+			newVariantReference: "newVariant",
+			sourceVariantReference: "variant0",
+			layer: "CUSTOMER"
 		};
 
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 
-		var oDuplicateVariant = this.oModel._duplicateVariant("newVariant", "variant0");
+		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 
-		oSourceVariantCopy.changes.forEach( function (oCopiedChange, iIndex) {
+		oSourceVariantCopy.controlChanges.forEach( function (oCopiedChange, iIndex) {
 			oCopiedChange.variantReference = "newVariant";
-			oCopiedChange.support.sourceChangeFileName = oSourceVariant.changes[iIndex].fileName;
-			oSourceVariantCopy.changes[iIndex].fileName = oDuplicateVariant.changes[iIndex].fileName; /*mock*/
+			oCopiedChange.support.sourceChangeFileName = oSourceVariant.controlChanges[iIndex].fileName;
+			oSourceVariantCopy.controlChanges[iIndex].fileName = oDuplicateVariant.controlChanges[iIndex].fileName; /*mock*/
 		});
 
 		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-		assert.equal(oDuplicateVariant.changes.length, 2, "then both changes duplicated");
+		assert.equal(oDuplicateVariant.controlChanges.length, 2, "then both changes duplicated");
 		assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.variantReference, "then the duplicate variant references to the reference of the source variant");
-		assert.equal(oDuplicateVariant.changes[0].support.sourceChangeFileName , oChangeContent0.fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
-		assert.equal(oDuplicateVariant.changes[1].support.sourceChangeFileName , oChangeContent1.fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+		assert.equal(oDuplicateVariant.controlChanges[0].support.sourceChangeFileName , oChangeContent0.fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+		assert.equal(oDuplicateVariant.controlChanges[1].support.sourceChangeFileName , oChangeContent1.fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
 	});
 
 	QUnit.test("when calling '_copyVariant'", function(assert) {
@@ -309,26 +350,52 @@ sap.ui.require([
 						"user":""
 				}
 			},
-			"changes": []
+			"controlChanges": []
 		};
 		sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
 		sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
 		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "addDirtyChange");
 
 		var mPropertyBag = {};
-		this.oModel._copyVariant(mPropertyBag);
-
-		assert.ok(fnAddVariantToControllerStub.calledOnce, "then function to add variant to VariantController called");
-		assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.content.fileName, "then variant added to VariantModel");
+		return this.oModel._copyVariant(mPropertyBag).then( function (oVariant) {
+			assert.ok(fnAddVariantToControllerStub.calledOnce, "then function to add variant to VariantController called");
+			assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.content.fileName, "then variant added to VariantModel");
+			assert.equal(oVariant.getId(), oVariantData.content.fileName, "then the returned variant is the duplicate variant");
+		}.bind(this));
 	});
 
 	QUnit.test("when calling '_removeVariant'", function(assert) {
-		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "deleteChange");
+		var fnDeleteChangeStub = sandbox.stub(this.oModel.oFlexController._oChangePersistence, "deleteChange");
+		var oChangeInVariant = {
+			"fileName": "change0",
+			"variantReference": "variant0",
+			"layer": "VENDOR",
+			getId: function () {
+				return this.fileName;
+			},
+			getVariantReference: function() {
+				return this.variantReference;
+			}
+		};
+		var oVariant = {
+			"fileName": "variant0",
+			getId: function() {
+				return this.fileName;
+			}
+		};
+		var aDummyDirtyChanges = [oVariant].concat(oChangeInVariant);
+		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "getDirtyChanges").returns(aDummyDirtyChanges);
 		var fnRemoveVariantToControllerStub = sandbox.stub(this.oModel.oVariantController, "removeVariantFromVariantManagement").returns(2);
+
 		assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 3, "then initial length is 3");
-		this.oModel._removeVariant({}, "", "variantMgmtId1");
-		assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 2, "then one variant removed from VariantModel");
-		assert.ok(fnRemoveVariantToControllerStub.calledOnce, "then function to remove variant from VariantController called");
+
+		return this.oModel._removeVariant(oVariant, "", "variantMgmtId1").then( function () {
+			assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 2, "then one variant removed from VariantModel");
+			assert.ok(fnRemoveVariantToControllerStub.calledOnce, "then function to remove variant from VariantController called");
+			assert.ok(fnDeleteChangeStub.calledTwice, "then ChangePersistence.deleteChange called twice");
+			assert.ok(fnDeleteChangeStub.calledWith(oChangeInVariant), "then ChangePersistence.deleteChange called for change in variant");
+			assert.ok(fnDeleteChangeStub.calledWith(oVariant), "then ChangePersistence.deleteChange called for variant");
+		}.bind(this));
 	});
 
 
@@ -369,7 +436,6 @@ sap.ui.require([
 			delete this.oFlexController;
 		}
 	});
-
 
 	QUnit.test("when calling 'ensureStandardEntryExists'", function(assert) {
 		this.oModel.ensureStandardEntryExists("varMgmtRef1");

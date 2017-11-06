@@ -76,6 +76,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	var Carousel = Control.extend("sap.m.Carousel", /** @lends sap.m.Carousel.prototype */ { metadata : {
 
 		library : "sap.m",
+		designtime: "sap/m/designtime/Carousel.designtime",
 		properties : {
 
 			/**

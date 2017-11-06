@@ -95,7 +95,13 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 			};
 			this.setSelector(oSelector);
 		}
-		this._oPreparedChange = this._createChange(mFlexSettings, sVariantManagementReference);
+		try {
+			this._oPreparedChange = this._createChange(mFlexSettings, sVariantManagementReference);
+		} catch (oError) {
+			jQuery.sap.log.error(oError.message || oError.name);
+			return false;
+		}
+		return true;
 	};
 
 	/**

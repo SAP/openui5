@@ -4,17 +4,17 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 
 	var ControllerController = Controller.extend("sap.ui.unified.sample.SplitContainer.Controller", {
 		handleSwitchOrientation: function(oEvent) {
-			var sOrientation = this.getView().byId("mySplitContainer").getOrientation();
+			var sOrientation = this.byId("mySplitContainer").getOrientation();
 			if (sOrientation == "Vertical") {
 				sOrientation = "Horizontal";
 			} else {
 				sOrientation = "Vertical";
 			}
-			this.getView().byId("mySplitContainer").setOrientation(sOrientation);
+			this.byId("mySplitContainer").setOrientation(sOrientation);
 		},
 
 		handleToggleSecondaryContent: function(oEvent) {
-			var oSplitContainer = this.getView().byId("mySplitContainer");
+			var oSplitContainer = this.byId("mySplitContainer");
 			oSplitContainer.setShowSecondaryContent(!oSplitContainer.getShowSecondaryContent());
 		}
 	});

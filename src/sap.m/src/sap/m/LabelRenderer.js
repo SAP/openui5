@@ -109,6 +109,11 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library'],
 			rm.writeEscaped(sLabelText);
 		}
 		rm.write("</" + htmlTagToRender + ">");
+
+		// add invisible ":" span in "display only" mode
+		if (!labelForRendering && oLabel.isDisplayOnly && oLabel.isDisplayOnly()) {
+			rm.write('<span id="' + oLabel.getId() + '-colon" class="sapUiPseudoInvisibleText">:</span>');
+		}
 	};
 
 	/**

@@ -30,7 +30,10 @@
 				new Shell({
 					app: new ComponentContainer({
 						height : "100%",
-						name : "mycompany.myapp"
+						name : "mycompany.myapp",
+						settings : {
+							id : "myapp"
+						}
 					})
 				}).placeAt("content");
 			});

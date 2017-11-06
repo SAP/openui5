@@ -83,7 +83,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'jquery.sap.global', 'sap/ui/
 				 */
 				content: { type: "sap.ui.layout.BlockLayoutRow", multiple: true }
 			},
-			designTime : true
+			designtime: "sap/ui/layout/designtime/BlockLayout.designtime"
 		}});
 
 		/**

@@ -159,7 +159,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
-		designTime : true
+		designtime: "sap/m/designtime/RadioButton.designtime"
 	}});
 
 

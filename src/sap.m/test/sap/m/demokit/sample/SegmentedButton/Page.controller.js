@@ -9,8 +9,8 @@ sap.ui.define([
 			//the selected item could be found via the "item" parameter of "selectionChange" event
 			sap.m.MessageToast.show("oEvent.getParameter('item').getText(): " + oEvent.getParameter("item").getText() + " selected");
 			//the selected item could also be found via the "selectItem" association not only when "selectionChange" but when needed
-			this.getView().byId('selectedItem').setText("getSelectedItem(): " +
-			sap.ui.getCore().byId(this.getView().byId('item').getSelectedItem()).getText());
+			this.byId('selectedItem').setText("getSelectedItem(): " +
+			sap.ui.getCore().byId(this.byId('item').getSelectedItem()).getText());
 		}
 	});
 

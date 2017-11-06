@@ -155,7 +155,7 @@
 						<Text text="User notification"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://header"
@@ -171,7 +171,7 @@
 						<Text text="Toolbars and headers"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://tree"
@@ -239,7 +239,7 @@
 								text="Data visualization"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
 					<l:VerticalLayout>
 						<core:Icon
 								src="sap-icon://process"

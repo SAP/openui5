@@ -125,6 +125,9 @@
 
 	if (sap.ui.Device.support.touch && bEmulationNeeded) {
 		aMobileBrowserEvents.push("sapmousedown", "sapmousemove", "sapmouseup");
+		if (sap.ui.Device.os.ios){
+			aMobileBrowserEvents.push("sapcontextmenu");
+		}
 	}
 
 	function keyEvent(sName, sAddText, iTrigger, sKeyCode, bShift, bAlt, bCtrl){

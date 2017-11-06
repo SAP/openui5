@@ -53,6 +53,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	var MessageStrip = Control.extend("sap.m.MessageStrip", /** @lends sap.m.MessageStrip.prototype */ {
 		metadata: {
 			library: "sap.m",
+			designtime: "sap/m/designtime/MessageStrip.designtime",
 			properties: {
 
 				/**

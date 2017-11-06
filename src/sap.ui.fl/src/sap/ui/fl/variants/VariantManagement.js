@@ -25,7 +25,7 @@ sap.ui.define([
 	{
 		metadata: {
 			library: "sap.ui.fl",
-			designTime: true,
+			designtime: "sap/ui/fl/designtime/variants/VariantManagement.designtime",
 			properties: {
 
 				/**
@@ -306,7 +306,6 @@ sap.ui.define([
 		});
 
 		this.oVariantText.addStyleClass("sapUiFlVarMngmtClickable");
-		this.oVariantText.addStyleClass("sapMTitleStyleH4");
 		this.oVariantText.addStyleClass("sapUiFlVarMngmtTitle");
 		if (Device.system.phone) {
 			this.oVariantText.addStyleClass("sapUiFlVarMngmtTextPhoneMaxWidth");

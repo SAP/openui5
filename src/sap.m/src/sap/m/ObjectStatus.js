@@ -41,6 +41,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSuppor
 
 		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
+		designtime: "sap/m/designtime/ObjectStatus.designtime",
 		properties : {
 
 			/**

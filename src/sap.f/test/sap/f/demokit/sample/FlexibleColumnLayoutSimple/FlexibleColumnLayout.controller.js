@@ -11,7 +11,7 @@ sap.ui.define([
 			this.bus.subscribe("flexible", "setDetailPage", this.setDetailPage, this);
 			this.bus.subscribe("flexible", "setDetailDetailPage", this.setDetailDetailPage, this);
 
-			this.oFlexibleColumnLayout = this.getView().byId("fcl");
+			this.oFlexibleColumnLayout = this.byId("fcl");
 		},
 
 		onExit: function () {

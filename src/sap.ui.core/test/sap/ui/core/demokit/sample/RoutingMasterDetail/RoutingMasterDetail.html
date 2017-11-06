@@ -19,7 +19,10 @@
 		sap.ui.getCore().attachInit(function() {
 			new sap.ui.core.ComponentContainer({
 				height : "100%",
-				name : "sap.ui.core.sample.RoutingMasterDetail.routingApp"
+				name : "sap.ui.core.sample.RoutingMasterDetail.routingApp",
+				settings : {
+					id : "routingApp"
+				}
 			}).placeAt("content");
 		});
 	</script>

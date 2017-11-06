@@ -72,9 +72,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(
 	};
 
 	Move.prototype.prepare = function(sLayer, bDeveloperMode) {
-		FlexCommand.prototype.prepare.apply(this, arguments);
+		var bSuccessful = FlexCommand.prototype.prepare.apply(this, arguments);
 
-		this._oPreparedUndoChange = this._createChangeFromData(this._getChangeSpecificData(true), sLayer, bDeveloperMode);
+		if (bSuccessful) {
+			this._oPreparedUndoChange = this._createChangeFromData(this._getChangeSpecificData(true), sLayer, bDeveloperMode);
+		}
+		return bSuccessful;
 	};
 
 	Move.prototype.undo = function() {

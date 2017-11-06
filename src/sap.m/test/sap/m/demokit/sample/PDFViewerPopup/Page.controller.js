@@ -21,8 +21,8 @@ sap.ui.define([
 				Preview: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample2.jpg")
 			});
 
-			this.getView().byId('image1').setModel(oSample1Model);
-			this.getView().byId('image2').setModel(oSample2Model);
+			this.byId('image1').setModel(oSample1Model);
+			this.byId('image2').setModel(oSample2Model);
 		},
 
 		onPress: function (oEvent) {

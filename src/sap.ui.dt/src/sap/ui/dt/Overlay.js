@@ -415,18 +415,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	/**
 	 * @private
 	 */
-	Overlay.prototype._deleteDummyContainer = function(oParent, $overlayDomRef) {
-		$overlayDomRef.find("> sapUiDtDummyScrollContainer").remove();
-		if (oParent && oParent.$) {
-			var $parent = oParent.$();
-			if (!$parent.find("sapUiDtDummyScrollContainer")) {
-				$parent.removeClass("sapUiDtOverlayWithScrollBar");
-				$parent.removeClass("sapUiDtOverlayWithScrollBarVertical");
-				$parent.removeClass("sapUiDtOverlayWithScrollBarHorizontal");
-			}
-		}
-	};
-
 	Overlay.prototype._deleteDummyContainer = function($overlay) {
 		if ($overlay.find("> .sapUiDtDummyScrollContainer").length > 0) {
 				$overlay.find("> .sapUiDtDummyScrollContainer").remove();

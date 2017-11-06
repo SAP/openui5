@@ -95,14 +95,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Create a change
+	 * Base function for creation of a change
 	 *
 	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
 	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created.
-	 * @param {sap.ui.core.Control | map} oControl - control for which the change will be added
-	 * @param {string} oControl.id id of the control in case a map has been used to specify the control
 	 * @param {sap.ui.base.Component} oControl.appComponent application component of the control at runtime in case a map has been used
-	 * @param {string} oControl.controlType control type of the control in case a map has been used
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
 	 */
@@ -218,7 +215,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.createVariant = function (oVariantSpecificData, oAppComponent) {
-		var oVariant;
+		var oVariant, oVariantFileContent;
 
 		var aCurrentDesignTimeContext = ContextManager._getContextIdsFromUrl();
 
@@ -230,8 +227,8 @@ sap.ui.define([
 			throw new Error("No Application Component found - to offer flexibility the variant has to have a valid relation to its owning application component.");
 		}
 
-		oVariantSpecificData.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
-		oVariantSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
+		oVariantSpecificData.content.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
+		oVariantSpecificData.content.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
 		oVariantSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
 		oVariantSpecificData.isVariant = true;
 
@@ -245,11 +242,10 @@ sap.ui.define([
 			oValidAppVersions.to = sAppVersion;
 		}
 
-		oVariantSpecificData.validAppVersions = oValidAppVersions;
+		oVariantSpecificData.content.validAppVersions = oValidAppVersions;
 
-		oVariantSpecificData.content = Variant.createInitialFileContent(oVariantSpecificData.content);
-
-		oVariant = new Variant(oVariantSpecificData);
+		oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
+		oVariant = new Variant(oVariantFileContent);
 
 		return oVariant;
 	};
@@ -664,7 +660,7 @@ sap.ui.define([
 				return false;
 			}.bind(this));
 		}
-		return new Utils.FakePromise();
+		return new Utils.FakePromise(true);
 	};
 
 	FlexController.prototype._removeFromAppliedChangesAndMaybeRevert = function(oChange, oControl, mPropertyBag, bRevert) {

@@ -20,9 +20,12 @@
 		<script>
 			sap.ui.getCore().attachInit(function() {
 				new sap.m.Shell({
-					app: new sap.ui.core.ComponentContainer({
+					app : new sap.ui.core.ComponentContainer({
 						height : "100%",
-						name : "manageApps"
+						name : "manageApps",
+						settings : {
+							id : "manageApps"
+						}
 					})
 				}).placeAt("content");
 			});

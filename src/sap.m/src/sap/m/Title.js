@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			 */
 			title : {type : "sap.ui.core.Title", multiple : false}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Title.designtime"
 
 	}});
 

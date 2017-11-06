@@ -43,7 +43,7 @@ sap.ui.define([
 
 				this._topicId = event.getParameter("arguments").id;
 
-				this._expandTreeToNode(this._topicId, this.getModel());
+				this._expandTreeToNode(this._preProcessTopicID(this._topicId), this.getModel());
 			},
 
 			_onMatched: function () {
@@ -126,6 +126,28 @@ sap.ui.define([
 				}
 
 				oRouter.navTo("topicId", {id : sTopicId}, false);
+			},
+
+			/**
+			* Processes the topic ID.
+			*
+			* The method is used in <code>_onTopicMatched</code>.
+			* The method is needed because some of the links inside the documentation topics are pointing to 'topic.html'.
+			* On the other hand the master tree searches through all the nodes and tries to match the node key with the topic ID,
+			* but all the keys in the tree model are without the '.html' extension.
+			*
+			* <b>Note:</b> If the extension parameter is not found at the end of the topic ID,
+			* the extension is not cut and the provided topic ID remains unchanged.
+			* @param {string} sTopicId
+			* @private
+			* @returns {string} The processed topic ID
+			*/
+			_preProcessTopicID: function(sTopicId) {
+				if (!sTopicId || (typeof sTopicId !== "string")) {
+					return sTopicId;
+				}
+
+				return sTopicId.replace(/\.html$/, "");
 			}
 
 		});

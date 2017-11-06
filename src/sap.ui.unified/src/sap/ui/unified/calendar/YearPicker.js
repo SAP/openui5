@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			/**
 			 * The year is initial focused and selected
 			 * The value must be between 0 and 9999
-			 * @deprecated Since version 1.34.0 Use <code>date</code> instead
+			 * @deprecated as of version 1.34.0, replaced by <code>date</code> property
 			 */
 			year : {type : "int", group : "Data", defaultValue : 2000},
 

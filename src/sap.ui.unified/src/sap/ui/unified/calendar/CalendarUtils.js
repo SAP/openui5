@@ -199,11 +199,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', './Calenda
 		/**
 		 * Retrieves the first date of the same week in which is the given date.
 		 * This function works with date values in UTC to produce timezone agnostic results.
-		 * <br><br>
-		 * The US weeks at the end of December and at the beginning of January(53th and 0th), are not considered.
-		 * If a given date is in the beginning of January (e.g. Friday, 2 Jan 2015, week 0), the function will return
-		 * week start date in the previous year(e.g. Sunday, 28 Dec 2014, week 53).
-		 *
 		 * @param {Date} oDate the input date for which we search the first week date.
 		 * This date is considered as is (no UTC conversion, time cut etc).
 		 * @returns {Date} first date of the same week as the given <code>oDate</code> in local timezone.
@@ -217,10 +212,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', './Calenda
 			oWeek = UniversalDate.getWeekByDate(oUniversalDate.getCalendarType(), oUniversalDate.getUTCFullYear(),
 				oUniversalDate.getUTCMonth(), oUniversalDate.getUTCDate());
 
-			if (oWeek.week === 0 && sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().getRegion() === "US") {
-				oWeek.year--;
-				oWeek.week = 52;
-			}
 			oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(oUniversalDate.getCalendarType(), oWeek.year, oWeek.week);
 
 			return new UniversalDate(Date.UTC(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day,

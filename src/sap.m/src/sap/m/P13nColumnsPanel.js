@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nColumnsPanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool'
-], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool) {
+	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool', 'sap/m/ScrollContainer'
+], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool, ScrollContainer) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -230,7 +230,7 @@ sap.ui.define([
 		this._createToolbar();
 
 		this.setVerticalScrolling(false);
-		var oScrollContainer = new sap.m.ScrollContainer({
+		var oScrollContainer = new ScrollContainer({
 			horizontal: false,
 			vertical: true,
 			content: [

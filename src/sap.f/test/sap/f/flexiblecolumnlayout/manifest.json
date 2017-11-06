@@ -21,7 +21,8 @@
 				"controlId": "fcl",
 				"transition": "slide",
 				"bypassed": {
-				}
+				},
+				"async": true
 			},
 			"routes": [
 				{

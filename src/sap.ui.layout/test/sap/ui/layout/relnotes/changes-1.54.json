@@ -1,0 +1,43 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "b2a0f67e56bee1409f70b41ac139d8773d68202c",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.BlockLayout - new property keepFontSize",
+        "references": []
+      },
+      {
+        "id": "653a13d20d9e59262e403382cf0836fbcd835663",
+        "type": "FIX",
+        "text": " Form: Toolbar wrong aligned",
+        "references": []
+      },
+      {
+        "id": "f3042223230a125b3ebc18d5d639b210e426be3b",
+        "type": "FIX",
+        "text": " Form: icons inside of content controls not shown",
+        "references": []
+      },
+      {
+        "id": "f555dcb8331a5ea6d9fd2f8633b6f5e5c8c6a2f7",
+        "type": "FIX",
+        "text": " sap.ui.layout - preload sap.ui.core.theming.Parameter",
+        "references": []
+      },
+      {
+        "id": "df49d919902cd253484f3d99e3e4f79f8ce3cf3d",
+        "type": "FIX",
+        "text": " sap.ui.layout.Grid: Margin for hidden elements removed",
+        "references": []
+      },
+      {
+        "id": "65858d853d7c0673ba4af4d3abf7097ba5d8afbf",
+        "type": "FIX",
+        "text": " sap.ui.layoyut.Grid: Added min-height for wrappers",
+        "references": []
+      }
+    ]
+  }
+}

@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.CustomListItem.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.CustomListItem.List",
+			rootView : {
+				"viewName": "sap.m.sample.CustomListItem.List",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

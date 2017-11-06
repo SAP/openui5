@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				defaultAction: {}
 			},
 			defaultAggregation : "menu",
-			designTime: true
+			designtime: "sap/m/designtime/MenuButton.designtime"
 		}});
 
 		EnabledPropagator.call(MenuButton.prototype);

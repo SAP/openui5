@@ -118,11 +118,8 @@ sap.ui.define(["./ObjectPageLayout", "./ObjectImageHelper", "sap/ui/Device"], fu
 	/**
 	 * Renders the SelectTitleArrow icon.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRm the RenderManager that can be used for writing to the render output buffer
-	 *
-	 * @param {sap.uxap.ObjecPageHeader}
-	 *            oControl the ObjectPageHeader
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.uxap.ObjecPageHeader} oControl The ObjectPageHeader
 	 *
 	 * @private
 	 */

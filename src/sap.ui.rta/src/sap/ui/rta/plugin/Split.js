@@ -50,9 +50,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Split.prototype._isEditable = function(oOverlay) {
-		if (!Utils.getRelevantContainerDesigntimeMetadata(oOverlay)) {
-			return false;
-		}
 		var oSplitAction = this.getAction(oOverlay);
 		if (oSplitAction && oSplitAction.changeType && oSplitAction.changeOnRelevantContainer) {
 			return this.hasStableId(oOverlay) && this.hasChangeHandler(oSplitAction.changeType, oOverlay.getRelevantContainer());
@@ -167,9 +164,9 @@ sap.ui.define([
 	 * @param  {any} oEventItem ContextMenu item which triggers the event
 	 * @param  {any} oContextElement Element where the action is triggered
 	 */
-	Split.prototype.handler = function(aOverlays, oEventItem, oContextElement){
+	Split.prototype.handler = function(aOverlays, mPropertyBag){
 		//TODO: Handle "Stop Cut & Paste" depending on alignment with Dietrich!
-		this.handleSplit(oContextElement);
+		this.handleSplit(mPropertyBag.contextElement);
 	};
 
 	return Split;

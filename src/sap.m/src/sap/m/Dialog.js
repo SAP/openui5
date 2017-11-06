@@ -310,7 +310,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 						}
 					}
 				},
-				designTime : true
+				designtime: "sap/m/designtime/Dialog.designtime"
 			}
 		});
 

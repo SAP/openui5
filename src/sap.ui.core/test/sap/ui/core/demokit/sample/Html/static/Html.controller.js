@@ -50,7 +50,7 @@ sap.ui.define([
           }.bind(this)
         });
 
-        var oLayout = this.getView().byId("staticContentLayout");
+        var oLayout = this.byId("staticContentLayout");
         oLayout.addContent(oHtml);
       }
     },

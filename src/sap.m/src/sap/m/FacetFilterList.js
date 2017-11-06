@@ -63,8 +63,9 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 
 			/**
 			 * Specifies whether multiple or single selection is used.
-			 * @deprecated Since version 1.20.0.
-			 * This property is no longer supported. Use the setMode method instead. FacetFilterList overrides the setMode method to restrict the possible modes to MultiSelect and SingleSelectMaster. All other modes are ignored and will not be set.
+			 * @deprecated as of version 1.20.0, replaced by <code>setMode</code> method.
+			 * <code>FacetFilterList</code> overrides the <code>setMode<code/> method to restrict the possible modes to
+			 * <code>MultiSelect</code> and <code>SingleSelectMaster</code>. All other modes are ignored and will not be set.
 			 */
 			multiSelect : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
 
@@ -705,6 +706,8 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 		this._getNonGroupItems().forEach(function (oItem){
 			oItem.setSelected(this._isItemSelected(oItem));
 		}, this);
+
+		this._updateFacetFilterButtonText();
 	};
 
 	/**

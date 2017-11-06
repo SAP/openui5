@@ -22,8 +22,11 @@
 <script>
 	//sap.ui.getCore().attachInit(function() {
 		new sap.ui.core.ComponentContainer({
-			name: "sap.ui.mdc.sample.fragmenttable.v2",
-			height: "100%"
+			name : "sap.ui.mdc.sample.fragmenttable.v2",
+			height : "100%",
+			settings : {
+				id : "composite"
+			}
 		}).placeAt("content");
 	//})
 

@@ -23,9 +23,12 @@
 				"sap/ui/core/ComponentContainer"
 			], function (Shell, ComponentContainer) {
 				// initialize the UI component
-				app: new ComponentContainer({
+				app : new ComponentContainer({
 					height : "100%",
-					name : "sap.ui.demo.iconexplorer"
+					name : "sap.ui.demo.iconexplorer",
+					settings : {
+						id : "iconexplorer"
+					}
 				}).placeAt("content");
 			});
 		});

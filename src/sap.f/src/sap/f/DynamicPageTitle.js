@@ -186,7 +186,7 @@ sap.ui.define([
 				 */
 				_expandButton: {type: "sap.m.Button", multiple: false,  visibility: "hidden"}
 			},
-			designTime: true
+			designtime: "sap/f/designtime/DynamicPageTitle.designtime"
 		}
 	});
 
@@ -283,7 +283,7 @@ sap.ui.define([
 
 	/**
 	 * Fires the <code>DynamicPageTitle</code> press event.
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The <code>tap</code> event object
 	 */
 	DynamicPageTitle.prototype.ontap = function (oEvent) {
 		var oSrcControl = oEvent.srcControl;
@@ -295,17 +295,17 @@ sap.ui.define([
 		}
 	};
 
-	DynamicPageTitle.prototype.onmouseover = function (oEvent) {
+	DynamicPageTitle.prototype.onmouseover = function () {
 		this.fireEvent("_titleMouseOver");
 	};
 
-	DynamicPageTitle.prototype.onmouseout = function (oEvent) {
+	DynamicPageTitle.prototype.onmouseout = function () {
 		this.fireEvent("_titleMouseOut");
 	};
 
 	/**
 	 * Fires the <code>DynamicPageTitle</code> press event.
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The SPACE keyboard key press event object
 	 */
 	DynamicPageTitle.prototype.onsapspace = function (oEvent) {
 		this.onsapenter(oEvent);
@@ -313,7 +313,7 @@ sap.ui.define([
 
 	/**
 	 * Fires the <code>DynamicPageTitle</code> press event.
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The ENTER keyboard key press event object
 	 */
 	DynamicPageTitle.prototype.onsapenter = function (oEvent) {
 		if (oEvent.srcControl === this) {

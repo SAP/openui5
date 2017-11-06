@@ -40,9 +40,9 @@ function(
 					subTitle : "subTitle1",
 					description : "description1",
 					icon : "sap-icon://history",
-					referenceId : "referenceId1",
-					isReference : true,
-					typeOfApp : "Reference",
+					originalId : "id1",
+					isOriginal : true,
+					typeOfApp : "Original App",
 					descriptorUrl : "url1"
 				},
 				{
@@ -51,8 +51,8 @@ function(
 					subTitle : "subTitle2",
 					description : "description2",
 					icon : "sap-icon://history",
-					referenceId : "referenceId2",
-					isReference : false,
+					originalId : "id1",
+					isOriginal : false,
 					typeOfApp : "App Variant",
 					descriptorUrl : "url2"
 				},
@@ -62,8 +62,8 @@ function(
 					subTitle : "subTitle3",
 					description : "description3",
 					icon : "sap-icon://history",
-					referenceId : "referenceId3",
-					isReference : false,
+					originalId : "id1",
+					isOriginal : false,
 					typeOfApp : "App Variant",
 					descriptorUrl : "url3"
 				}
@@ -102,9 +102,9 @@ function(
 					subTitle : "subTitle1",
 					description : "description1",
 					icon : "sap-icon://history",
-					referenceId : "referenceId1",
-					isReference : true,
-					typeOfApp : "Reference",
+					originalId : "id1",
+					isOriginal : true,
+					typeOfApp : "Original App",
 					descriptorUrl : "url1"
 				}
 			];
@@ -142,9 +142,9 @@ function(
 					subTitle : "subTitle1",
 					description : "description1",
 					icon : "sap-icon://history",
-					referenceId : "referenceId1",
-					isReference : true,
-					typeOfApp : "Reference",
+					originalId : "id1",
+					isOriginal : true,
+					typeOfApp : "Original App",
 					descriptorUrl : "url1"
 				},
 				{
@@ -153,8 +153,8 @@ function(
 					subTitle : "subTitle2",
 					description : "description2",
 					icon : "sap-icon://history",
-					referenceId : "referenceId2",
-					isReference : false,
+					originalId : "id1",
+					isOriginal : false,
 					typeOfApp : "App Variant",
 					descriptorUrl : "url2"
 				},
@@ -164,8 +164,8 @@ function(
 					subTitle : "subTitle3",
 					description : "description3",
 					icon : "sap-icon://history",
-					referenceId : "referenceId3",
-					isReference : false,
+					originalId : "id1",
+					isOriginal : false,
 					typeOfApp : "App Variant",
 					descriptorUrl : "url3"
 				}
@@ -203,9 +203,9 @@ function(
 					subTitle : "subTitle1",
 					description : "description1",
 					icon : "sap-icon://history",
-					referenceId : "referenceId1",
-					isReference : true,
-					typeOfApp : "Reference",
+					originalId : "id1",
+					isOriginal : true,
+					typeOfApp : "Original App",
 					descriptorUrl : "url1"
 				},
 				{
@@ -214,8 +214,8 @@ function(
 					subTitle : "subTitle2",
 					description : "description2",
 					icon : "sap-icon://history",
-					referenceId : "referenceId2",
-					isReference : false,
+					originalId : "id1",
+					isOriginal : false,
 					typeOfApp : "App Variant",
 					descriptorUrl : "url2",
 					rowStatus : "Information"

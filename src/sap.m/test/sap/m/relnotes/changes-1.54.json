@@ -1,0 +1,73 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "569e5989980029c24980665cd9b0f78297f5cc16",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Add Ghost Button type",
+        "references": []
+      },
+      {
+        "id": "0fa87ae969d7b3f0392b3691ab9b7d63fe47dfdc",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Update button text properly when SingleSelectMaster mode is used",
+        "references": []
+      },
+      {
+        "id": "225803c731e387fb8c30c9740178606507ecc350",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar sap.m.QuickView sap.m.Text: Visual Tests for Android test are now fixed",
+        "references": []
+      },
+      {
+        "id": "c7f5e794d88e25f287ef63c1fb95a76274d21a4e",
+        "type": "FIX",
+        "text": " sap.m.Link: removed href attribute if property href is not set",
+        "references": []
+      },
+      {
+        "id": "27986c5ac106507fc872a7ae47e9162e47130223",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Header\u0027s visibility adjusted",
+        "references": []
+      },
+      {
+        "id": "8a93baa8416d59a19d5eb7f18c33f8f8a594e599",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Unneeded visual test removed",
+        "references": []
+      },
+      {
+        "id": "2b816bc9ef240c9956eedb34a18c302cb1bcbfa7",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: Add possibility to set zero as a title",
+        "references": []
+      },
+      {
+        "id": "7234648e9805eb51ddfc265aca1b8a3750c58c9b",
+        "type": "FIX",
+        "text": " sap.m.Popover: Show scrollbar when overflowing and out of visible area.",
+        "references": []
+      },
+      {
+        "id": "a6f3c787d9da44e0534ab47c87e955940555059e",
+        "type": "FIX",
+        "text": " sap.m.Select: TAB handling added",
+        "references": []
+      },
+      {
+        "id": "a6fdc84577e5b99a891dcdf1975fe845362ff402",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Cloned item now works with binding",
+        "references": []
+      },
+      {
+        "id": "5a86b6153c4868c490dcbcc01678b956380c0632",
+        "type": "FIX",
+        "text": " Opa: throw error when iFrame is launched but one already exists",
+        "references": []
+      }
+    ]
+  }
+}

@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nDimMeasurePanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nDimMeasureItem', './SearchField', './Table', './library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/chart/library', 'sap/ui/core/Item', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool'
-], function(jQuery, ColumnListItem, P13nPanel, P13nDimMeasureItem, SearchField, Table, library, ChangeReason, JSONModel, BindingMode, ResizeHandler, chartLibrary, Item, InvisibleText, IconPool) {
+	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nDimMeasureItem', './SearchField', './Table', './library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/chart/library', 'sap/ui/core/Item', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/m/ScrollContainer'
+], function(jQuery, ColumnListItem, P13nPanel, P13nDimMeasureItem, SearchField, Table, library, ChangeReason, JSONModel, BindingMode, ResizeHandler, chartLibrary, Item, InvisibleText, IconPool, ScrollContainer) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -93,7 +93,7 @@ sap.ui.define([
 				// TODO
 				/**
 				 * Event raised when one or more <code>DimMeasureItems</code> has been updated.
-                 * Aggregation <code>DimMeasureItems</code> should be updated outside...
+				 * Aggregation <code>DimMeasureItems</code> should be updated outside...
 				 * @since 1.50.0
 				 */
 				changeDimMeasureItems: {},
@@ -198,7 +198,7 @@ sap.ui.define([
 		this._createToolbar();
 
 		this.setVerticalScrolling(false);
-		var oScrollContainer = new sap.m.ScrollContainer({
+		var oScrollContainer = new ScrollContainer({
 			horizontal: false,
 			vertical: true,
 			content: [
@@ -622,7 +622,7 @@ sap.ui.define([
 					text: "{text}"
 				})
 			},
-            selectionChange: jQuery.proxy(this._onChartTypeChange, this),
+			selectionChange: jQuery.proxy(this._onChartTypeChange, this),
 			layoutData: new sap.m.OverflowToolbarLayoutData({
 				moveToOverflow: false,
 				stayInOverflow: false
@@ -1183,8 +1183,8 @@ sap.ui.define([
 			}
 		}, this);
 
-        this._switchVisibilityOfUnselectedModelItems();
-        this._filterModelItemsBySearchText();
+		this._switchVisibilityOfUnselectedModelItems();
+		this._filterModelItemsBySearchText();
 
 		var aMItems = this._getInternalModel().getProperty("/items");
 		// Sort the table items only by persistentIndex

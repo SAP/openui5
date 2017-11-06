@@ -172,8 +172,8 @@ sap.ui.define([
 	 * @returns {array} Array of changes belonging to Variant
 	 * @public
 	 */
-	Variant.prototype.getChanges = function () {
-		return this._oDefinition.changes;
+	Variant.prototype.getControlChanges = function () {
+		return this._oDefinition.controlChanges;
 	};
 
 	/**
@@ -506,16 +506,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the variant key
-	 *
-	 * @returns {String} Variant key of the file which is a unique concatenation of fileName, layer and namespace
-	 * @public
-	 */
-	Variant.prototype.getKey = function () {
-		return this._oDefinition.content.fileName + this._oDefinition.content.layer + this._oDefinition.content.namespace;
-	};
-
-	/**
 	 * Returns the revert specific data
 	 *
 	 * @returns {*} revert specific data
@@ -547,20 +537,23 @@ sap.ui.define([
 	 * Creates and returns an instance of change instance
 	 *
 	 * @param {Object}  [oPropertyBag] property bag
-	 * @param {String}  [oPropertyBag.service] name of the OData service
-	 * @param {String}  !!!![oPropertyBag.changeType] type of the change
-	 * @param {Object}  [oPropertyBag.texts] map object with all referenced texts within the file
-	 *                                      these texts will be connected to the translation process
 	 * @param {Object}  [oPropertyBag.content] content of the new change
+	 * @param {String}  [oPropertyBag.content.fileName] name/id of the file. if not set implicitly created
+	 * @param {String}  [oPropertyBag.content.title] title of the variant
+	 * @param {String}  [oPropertyBag.content.fileType] file type of a variant
+	 * @param {String}  [oPropertyBag.content.variantManagementReference] Reference to the variant management control
+	 * @param {String}  [oPropertyBag.content.variantReference] Reference to another variant
+	 * @param {String}  [oPropertyBag.content.reference] Application component name
+	 * @param {String}  [oPropertyBag.content.packageName] Package name for transport
+	 * @param {String}  [oPropertyBag.content.layer] Layer of the variant
+	 * @param {Object}  [oPropertyBag.content.texts] map object with all referenced texts within the file
+	 *                                               these texts will be connected to the translation process
+	 * @param {String}  [oPropertyBag.content.namespace] The namespace of the change file
+	 * @param {String}  [oPropertyBag.service] name of the OData service
 	 * @param {Boolean} [oPropertyBag.isVariant] ctrl_variant?
-	 * @param {String}  [oPropertyBag.packageName] ABAP package name
-	 * @param {String}  [oPropertyBag.id] name/id of the file. if not set implicitly created
-	 * @param {Boolean} [oPropertyBag.isVariant] name of the component
 	 * @param {Boolean} [oPropertyBag.isUserDependent] true for enduser changes
 	 * @param {String}  !!!![oPropertyBag.context] ID of the context
-	 * @param {Object}  [oPropertyBag.validAppVersions] Application versions where the change is active
-	 * @param {String}  [oPropertyBag.reference] Application component name
-	 * @param {String}  [oPropertyBag.namespace] The namespace of the change file
+	 * @param {Object}  [oPropertyBag.content.validAppVersions] Application versions where the change is active
 	 *
 	 * @returns {Object} The content of the change file
 	 *
@@ -572,31 +565,35 @@ sap.ui.define([
 			oPropertyBag = {};
 		}
 
-		var sFileName = oPropertyBag.fileName || Utils.createDefaultFileName();
-		var sNamespace = oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "variants");
+		var sFileName = oPropertyBag.content.fileName || Utils.createDefaultFileName();
+		var sNamespace = oPropertyBag.content.namespace || Utils.createNamespace(oPropertyBag.content, "variants");
 		var oNewFile = {
-			fileName: sFileName,
-			title: oPropertyBag.title || "",
-			fileType: "ctrl_variant",
-			reference: oPropertyBag.reference || "",
-			variantManagementReference: oPropertyBag.variantManagementReference,
-			variantReference: oPropertyBag.variantReference || "",
-			packageName: oPropertyBag.packageName || "",
-			self: sNamespace + sFileName + "." + "ctrl_variant",
-			content: oPropertyBag.content || {},
-			layer: oPropertyBag.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
-			texts: oPropertyBag.texts || {},
-			namespace: sNamespace, //TODO: we need to think of a better way to create namespaces from Adaptation projects.
-			creation: "",
-			originalLanguage: Utils.getCurrentLanguage(),
-			conditions: {},
-			support: {
-				generator: "Variant.createInitialFileContent",
-				service: oPropertyBag.service || "",
-				user: "",
-				sapui5Version: sap.ui.version
+			content : {
+				fileName: sFileName,
+				title: oPropertyBag.content.title || "",
+				fileType: "ctrl_variant",
+				variantManagementReference: oPropertyBag.content.variantManagementReference,
+				variantReference: oPropertyBag.content.variantReference || "",
+				reference: oPropertyBag.content.reference || "",
+				packageName: oPropertyBag.content.packageName || "",
+				content: {},
+				self: sNamespace + sFileName + "." + "ctrl_variant",
+				layer: oPropertyBag.content.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
+				texts: oPropertyBag.content.texts || {},
+				namespace: sNamespace, //TODO: we need to think of a better way to create namespaces from Adaptation projects.
+				creation: "",
+				originalLanguage: Utils.getCurrentLanguage(),
+				conditions: {},
+				support: {
+					generator: "Variant.createInitialFileContent",
+					service: oPropertyBag.service || "",
+					user: "",
+					sapui5Version: sap.ui.version
+				},
+				validAppVersions: oPropertyBag.validAppVersions || {}
 			},
-			validAppVersions: oPropertyBag.validAppVersions || {}
+			controlChanges: oPropertyBag.controlChanges || [],
+			variantChanges: []
 		};
 
 		return oNewFile;

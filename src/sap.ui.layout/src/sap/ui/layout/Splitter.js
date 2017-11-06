@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				}
 			}
 		},
-		designTime : true
+		designtime: "sap/ui/layout/designtime/Splitter.designtime"
 	}});
 
 	// "Hidden" resource bundle instance

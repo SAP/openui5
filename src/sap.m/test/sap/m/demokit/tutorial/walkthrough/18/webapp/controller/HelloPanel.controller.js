@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Controller, MessageToast) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.wt.controller.HelloPanel", {
+	return Controller.extend("sap.ui.demo.walkthrough.controller.HelloPanel", {
 
 		onShowHello : function () {
 			// read msg from i18n model
@@ -22,7 +22,7 @@ sap.ui.define([
 			// create dialog lazily
 			if (!oDialog) {
 				// create dialog via fragment factory
-				oDialog = sap.ui.xmlfragment(oView.getId(), "sap.ui.demo.wt.view.HelloDialog", this);
+				oDialog = sap.ui.xmlfragment(oView.getId(), "sap.ui.demo.walkthrough.view.HelloDialog", this);
 				// connect dialog to view (models, lifecycle)
 				oView.addDependent(oDialog);
 			}
@@ -31,7 +31,7 @@ sap.ui.define([
 		},
 
 		onCloseDialog : function () {
-			this.getView().byId("helloDialog").close();
+			this.byId("helloDialog").close();
 		}
 	});
 

@@ -337,4 +337,4 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/base/DataType", 
 
 	return sap.uxap;
 
-}, /* bExport= */ true);
+});

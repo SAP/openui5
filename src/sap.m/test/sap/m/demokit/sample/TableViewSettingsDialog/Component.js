@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TableViewSettingsDialog.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TableViewSettingsDialog.V",
+			rootView : {
+				"viewName": "sap.m.sample.TableViewSettingsDialog.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

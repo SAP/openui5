@@ -5,7 +5,7 @@ sap.ui.controller("sap.ui.rta.test.Demo.ObjectPage.blockscolor.BlockBlueWithInfo
 
 	onAfterRendering: function() {
 		"use strict";
-		var oText = this.getView().byId("moreContentText");
+		var oText = this.byId("moreContentText");
 		var sMode = this.getView().getParent().getMode();
 		(sMode === "Expanded") ? oText.setText("...More Content") :  oText.setText("");
 	},

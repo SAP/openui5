@@ -51,8 +51,10 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 
 	/**
 	 * @public Template Method called by the command factory when all data is provided to the change.
+	 * @return {boolean} Returns true if the preparation was successful
 	 */
 	BaseCommand.prototype.prepare = function() {
+		return true;
 	};
 
 	/**
@@ -62,6 +64,10 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	 */
 	BaseCommand.prototype.execute = function() {
 		return Promise.resolve();
+	};
+
+	BaseCommand.prototype.getVariantChange = function() {
+		return this._oVariantChange;
 	};
 
 	/**

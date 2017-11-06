@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
+	 height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g id="Icons">
+	<g>
+		<defs>
+			<rect id="SVGID_123_" y="-0.001" width="24" height="24"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_123_"  overflow="visible"/>
+		</clipPath>
+		<g clip-path="url(#SVGID_2_)">
+			<rect x="12" y="18" fill="none" width="5" height="5"/>
+			<path fill="none" d="M18,23h4.5c0.276,0,0.5-0.224,0.5-0.5V18h-5V23z"/>
+			<path fill="none" d="M1,22.5C1,22.776,1.224,23,1.5,23H6v-5H1V22.5z"/>
+			<path fill="none" d="M22.5,1h-21C1.224,1,1,1.224,1,1.5V17h5.499h1h4.5h1h4.5h1H23V1.5C23,1.224,22.776,1,22.5,1z"/>
+			<path fill="#4A4A4A" d="M22.5,0h-21C0.672,0,0,0.672,0,1.5v21C0,23.328,0.672,24,1.5,24h21c0.828,0,1.5-0.672,1.5-1.5v-21
+				C24,0.672,23.328,0,22.5,0z M6,23H1.5C1.224,23,1,22.776,1,22.5V18h5V23z M17,23h-5v-5h5V23z M23,22.5c0,0.276-0.224,0.5-0.5,0.5
+				H18v-5h5V22.5z M23,17h-4.501h-1h-4.5h-1h-4.5h-1H1V1.5C1,1.224,1.224,1,1.5,1h21C22.776,1,23,1.224,23,1.5V17z"/>
+		</g>
+	</g>
+</g>
+<g id="LABELS">
+</g>
+</svg>

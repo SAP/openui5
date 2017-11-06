@@ -123,6 +123,12 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * On Editable Change the enablement of the Button has to be adapted
+	 *
+	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @override
+	 */
 	EasyAdd.prototype._isEditable = function(oOverlay) {
 		var bIsEditable = AdditionalElementsPlugin.prototype._isEditable.apply(this, arguments);
 		if (oOverlay._oAddButton) {

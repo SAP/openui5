@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.DatePicker</code> control.
+	 * @deprecated as of version 1.38, replaced by {@link sap.m.DatePicker}
 	 * @alias sap.ui.commons.DatePicker
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
-		designTime : true
+		designtime: "sap/ui/layout/designtime/form/FormContainer.designtime"
 	}});
 
 	FormContainer.prototype.init = function(){

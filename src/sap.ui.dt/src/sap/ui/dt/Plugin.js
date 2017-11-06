@@ -41,7 +41,7 @@ function(ManagedObject) {
 				/**
 				 * DesignTime where this plugin will be used
 				 */
-				designTime : { // its defined as a property because spa.ui.dt.designTime is a managed object and UI5 only allows associations for elements
+				designTime: { // its defined as a property because spa.ui.dt.designTime is a managed object and UI5 only allows associations for elements
 					type : "object",
 					multiple : false
 				}
@@ -295,8 +295,8 @@ function(ManagedObject) {
 		return [{
 			id: mPropertyBag.pluginId,
 			text: this.getActionText(oOverlay, mAction, mPropertyBag.pluginId),
-			handler: function(aOverlays, oEventItem, oContextElement){
-				return this.handler(aOverlays, oEventItem, oContextElement);
+			handler: function(aOverlays, mPropertyBag){
+				return this.handler(aOverlays, mPropertyBag);
 			}.bind(this),
 			enabled: this.isEnabled.bind(this),
 			rank: mPropertyBag.rank

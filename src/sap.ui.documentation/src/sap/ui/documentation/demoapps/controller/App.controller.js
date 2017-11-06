@@ -277,7 +277,7 @@ sap.ui.define([
 		 * when the image has loaded.
 		 */
 		handleLandingImageLoad: function () {
-			this.getView().byId("landingImageHeadline").setVisible(true);
+			this.byId("landingImageHeadline").setVisible(true);
 		}
 	});
 });

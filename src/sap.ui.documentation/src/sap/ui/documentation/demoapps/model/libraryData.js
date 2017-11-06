@@ -48,7 +48,7 @@ sap.ui.define([
 	 *		description: a short description text
 	 *		ref: a link to the demo app entry point
 	 *		links: an object of links with a key (title) and value (link) each
-	 *		category: one of the demo app categories (Showcase/Tool/Tutorial/Template/RTA/Misc)
+	 *		category: one of the demo app categories (Showcase/Tutorial/Template/RTA/Misc)
 	 *		config: the URL to the demo app configuration for downloading the app
 	 * 	}
 	 *
@@ -61,7 +61,7 @@ sap.ui.define([
 	 */
 	function createModelData (aLibs, oDocIndicies) {
 		// generate the global model structure
-		var aCategories = ["Showcase", "Tool", "Tutorial", "Template", "RTA", "Misc"];
+		var aCategories = ["Showcase", "Tutorial", "Template", "RTA", "Misc"];
 		var oDemoAppsByCategory = {};
 
 		// create a helper structure for demo apps by category
@@ -94,7 +94,9 @@ sap.ui.define([
 						jQuery.sap.log.warning("Demo app category \"" + oDemoAppData.category + "\" not found, correcting demo app \"" + oDemoAppData.name + "\" to \"Misc\"");
 						oDemoAppData.category = "Misc";
 					}
-					oDemoAppsByCategory[oDemoAppData.category].push(oDemoAppData);
+					if (oDemo.links[j].category !== "Tool") { // Exclude Tools from showing, but preserve them in Download dialog
+						oDemoAppsByCategory[oDemoAppData.category].push(oDemoAppData);
+					}
 				}
 			}
 		}

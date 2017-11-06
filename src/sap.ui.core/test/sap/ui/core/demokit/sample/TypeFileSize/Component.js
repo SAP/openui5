@@ -5,7 +5,11 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	return UIComponent.extend("sap.ui.core.sample.TypeFileSize.Component", {
 
 		metadata: {
-			rootView: "sap.ui.core.sample.TypeFileSize.V",
+			rootView: {
+				"viewName": "sap.ui.core.sample.TypeFileSize.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m",

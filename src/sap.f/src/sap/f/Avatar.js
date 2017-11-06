@@ -220,7 +220,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Avatar.prototype.ontap = function (oEvent) {
+	Avatar.prototype.ontap = function () {
 		this.firePress({/* no parameters */});
 	};
 
@@ -243,8 +243,8 @@ sap.ui.define([
 	 * Checks the validity of the <code>initials</code> parameter and returns <code>true</code> if the
 	 * initials are correct.
 	 *
-	 * @param {string} sInitials
-	 * @returns {boolean}
+	 * @param {string} sInitials The initials value
+	 * @returns {boolean} The initials are valid or not
 	 * @private
 	 */
 	Avatar.prototype._areInitialsValid = function (sInitials) {
@@ -350,6 +350,7 @@ sap.ui.define([
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
+	 * @returns {Object} The <code>sap.f.Avatar</code> accessibility information
 	 */
 	Avatar.prototype.getAccessibilityInfo = function() {
 		var bHasPressListeners = this.hasListeners("press");

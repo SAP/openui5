@@ -156,7 +156,7 @@ sap.ui.define([
 				 */
 				_scrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
 			},
-			designTime : true
+			designtime: "sap/f/designtime/DynamicPage.designtime"
 		}
 	});
 
@@ -356,7 +356,6 @@ sap.ui.define([
 	 * If the header is larger than the allowed height, the <code>preserveHeaderStateOnScroll</code> property will be ignored
 	 * and the header can be expanded or collapsed on page scroll.
 	 * @private
-	 * @returns {boolean} is rule overridden
 	 */
 	DynamicPage.prototype._overridePreserveHeaderStateOnScroll = function () {
 		if (!this._shouldOverridePreserveHeaderStateOnScroll()) {
@@ -1284,10 +1283,9 @@ sap.ui.define([
 	/**
 	 * Reacts when the aggregated child controls change their height
 	 * in order to adjust the update the <code>ScrollBar</code>.
-	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
-	DynamicPage.prototype._onChildControlsHeightChange = function (oEvent) {
+	DynamicPage.prototype._onChildControlsHeightChange = function () {
 		var bNeedsVerticalScrollBar = this._needsVerticalScrollBar();
 
 		// FitContainer needs to be updated, when height is changed and scroll bar appear, to enable calc of original height

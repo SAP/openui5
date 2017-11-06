@@ -21,7 +21,10 @@
 			new sap.m.Shell("Shell", {
 				title : "Application under test",
 				app : new sap.ui.core.ComponentContainer({
-					name : 'appUnderTest'
+					name : 'appUnderTest',
+					settings : {
+						id : "appUnderTest"
+					}
 				})
 			}).placeAt('content');
 		</script>

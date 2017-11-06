@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.unified.sample.MenuItemEventing.Component", {
 
 		metadata : {
-			rootView : "sap.ui.unified.sample.MenuItemEventing.MenuItemEventing",
+			rootView : {
+				"viewName": "sap.ui.unified.sample.MenuItemEventing.MenuItemEventing",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.ui.unified"

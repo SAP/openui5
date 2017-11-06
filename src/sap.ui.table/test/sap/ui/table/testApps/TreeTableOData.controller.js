@@ -219,7 +219,7 @@ sap.ui.define([
 			this.oODataModel.attachMessageChange(function(oEvent) {
 				var counter = oEvent.getParameter("newMessages").length;
 				if (counter > 0) {
-					this.getView().byId("btn_messagePopover").setText(counter);
+					this.byId("btn_messagePopover").setText(counter);
 				}
 			}.bind(this));
 
@@ -395,7 +395,7 @@ sap.ui.define([
 		 * Create new node
 		 */
 		onCreate: function() {
-			var oTable = this.getView().byId("tableOData");
+			var oTable = this.byId("tableOData");
 			var iSelectedIndex = oTable.getSelectedIndex();
 			var oViewModel = this.getView().getModel();
 
@@ -491,7 +491,7 @@ sap.ui.define([
 		 * Paste logic
 		 */
 		onPaste: function () {
-			var oTable = this.getView().byId("tableOData");
+			var oTable = this.byId("tableOData");
 			var iSelectedIndex = oTable.getSelectedIndex();
 			if (this._oClipboardModel && iSelectedIndex != -1) {
 				this.openClipboard();

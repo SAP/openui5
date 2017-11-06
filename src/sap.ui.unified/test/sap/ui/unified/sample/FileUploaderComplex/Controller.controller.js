@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global','sap/m/MessageToast','sap/ui/core/mvc/Control
 		},
 
 		handleUploadPress: function(oEvent) {
-			var oFileUploader = this.getView().byId("fileUploader");
+			var oFileUploader = this.byId("fileUploader");
 			if (!oFileUploader.getValue()) {
 				MessageToast.show("Choose a file first");
 				return;

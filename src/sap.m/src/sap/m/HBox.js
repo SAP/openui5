@@ -32,7 +32,8 @@ sap.ui.define(['./FlexBox', './library'],
 	 */
 	var HBox = FlexBox.extend("sap.m.HBox", /** @lends sap.m.HBox.prototype */ { metadata : {
 
-		library : "sap.m"
+		library : "sap.m",
+		designtime: "sap/m/designtime/HBox.designtime"
 	}});
 
 

@@ -989,6 +989,45 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 	};
 
+	/**
+	 * Returns a DOM Element representing the given property or aggregation of this <code>Element</code>.
+	 *
+	 * Check the documentation for the <code>selector</code> metadata setting in {@link sap.ui.base.ManagedObject.extend}
+	 * for details about its syntax or its expected result.
+	 *
+	 * The default implementation of this method will return <code>null</code> in any of the following cases:
+	 * <ul>
+	 * <li>no setting (property or aggregation) with the given name exists in the class of this <code>Element</code></li>
+	 * <li>the setting has no selector defined in its metadata</li>
+	 * <li>{@link #getDomRef this.getDomRef()} returns no DOM Element for this <code>Element</code>
+	 *     or the returned DOM Element has no parentNode</li>
+	 * <li>the selector does not match anything in the context of <code>this.getDomRef().parentNode</code></li>
+	 * </ul>
+	 * If more than one DOM Element within the element matches the selector, the first occurrence is returned.
+	 *
+	 * Subclasses can override this method to handle more complex cases which can't be described by a CSS selector.
+	 *
+	 * @param {string} sSettingsName Name of the property or aggregation
+	 * @returns {Element} The first matching DOM Element for the setting or <code>null</code>
+	 * @throws {SyntaxError} When the selector string in the metadata is not a valid CSS selector group
+	 * @private
+	 * @sap-restricted internal usage for drag and drop and sap.ui.dt
+	 */
+	Element.prototype.getDomRefForSetting = function (sSettingsName) {
+		var oSetting = this.getMetadata().getAllSettings()[sSettingsName];
+		if (oSetting && oSetting.selector) {
+			var oDomRef = this.getDomRef();
+			if (oDomRef) {
+				oDomRef = oDomRef.parentNode;
+				if (oDomRef && oDomRef.querySelector ) {
+					var sSelector = oSetting.selector.replace(/\{id\}/g, this.getId().replace(/(:|\.)/g,'\\$1'));
+					return oDomRef.querySelector(sSelector);
+				}
+			}
+		}
+		return null;
+	};
+
 	//*************** MEDIA REPLACEMENT ***********************//
 
 	/**

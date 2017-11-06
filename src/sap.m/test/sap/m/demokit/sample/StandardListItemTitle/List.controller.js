@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 			this.getView().setModel(oModel);
 
-			this.getView().byId("ShortProductList").bindElement("/ProductCollection");
+			this.byId("ShortProductList").bindElement("/ProductCollection");
 		}
 	});
 

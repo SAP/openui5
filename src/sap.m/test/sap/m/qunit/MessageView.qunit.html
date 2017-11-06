@@ -590,6 +590,14 @@
 				this.clock.tick(500);
 
 				assert.strictEqual(this.oMessageView2._listPage.getShowHeader(), true, "Header should be shown when there is a custom header button even if segmente button is hidden");
+
+				this.oDialog2.close();
+
+				this.oDialog2.open();
+
+				this.clock.tick(500);
+
+				assert.strictEqual(this.oMessageView2._listPage.getShowHeader(), true, "Header should be shown when there is a custom header button even if segmented button is hidden after closing the dialog container");
 			});
 
 			QUnit.test("Removing all items", function (assert) {

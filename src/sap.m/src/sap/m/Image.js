@@ -44,6 +44,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 
 		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
+		designtime: "sap/m/designtime/Image.designtime",
 		properties : {
 
 			/**
@@ -150,8 +151,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 			 * @since 1.36.2
 			 */
 			error : {}
-		},
-		designTime: true
+		}
 	}});
 
 	Image._currentDevicePixelRatio = (function() {

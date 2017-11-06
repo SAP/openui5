@@ -1473,7 +1473,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	/**
 	 * Marker interface for drag configuration providing information about the source of the drag operation.
 	 *
-	 * @since 1.50.0
+	 * @since 1.52.0
 	 * @name sap.ui.core.dnd.IDragInfo
 	 * @interface
 	 * @public
@@ -1483,7 +1483,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	/**
 	 * Marker interface for drop configuration providing information about the target of the drop operation.
 	 *
-	 * @since 1.50.0
+	 * @since 1.52.0
 	 * @name sap.ui.core.dnd.IDropInfo
 	 * @interface
 	 * @public
@@ -1665,7 +1665,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.50.0
+	 * @since 1.52.0
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.dnd.DropPosition = {
@@ -1717,7 +1717,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.50.0
+	 * @since 1.52.0
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.dnd.DropEffect = {

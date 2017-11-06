@@ -599,12 +599,10 @@ sap.ui.define([
 						targetIndex : iRevealTargetIndex
 					}],
 					source : {
-						publicParent : mParents.relevantContainer,
 						parent : oSourceParent,
 						aggregation : sParentAggregationName
 					},
 					target : {
-						publicParent : mParents.relevantContainer,
 						parent : oTargetParent,
 						aggregation : sParentAggregationName
 					}
@@ -629,8 +627,9 @@ sap.ui.define([
 		_isEditableCheck: function(oOverlay, bOverlayIsSibling) {
 			var bEditable = false;
 
-			var oRelevantContainerDesigntimeMetadata = Utils.getRelevantContainerDesigntimeMetadata(oOverlay);
-			if (!oRelevantContainerDesigntimeMetadata) {
+			var oRelevantContainer = oOverlay.getRelevantContainer();
+			var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+			if (!oRelevantContainerOverlay) {
 				return false;
 			}
 

@@ -65,9 +65,9 @@ describe("sap.m.IconTabBar", function() {
 	// check property applyContentPadding: false
 	it("should not have padding of the content", function() {
 		var itb4a = element(by.id('itb4a'));
-		//next line is to move the view in the window
-		element(by.id("itb4a")).click();
-		expect(takeScreenshot(itb4a)).toLookAs("5_applyContentPadding_false");
+		browser.executeScript('document.getElementById("itb4a").scrollIntoView()').then(function() {
+			expect(takeScreenshot(itb4a)).toLookAs("5_applyContentPadding_false");
+		});
 	});
 
 
@@ -94,8 +94,10 @@ describe("sap.m.IconTabBar", function() {
 	it("should be with horizontal layout", function() {
 		var itb9 = element(by.id('itb9'));
 		//next line is to move the view in the window
-		element(by.id("itb9")).click();
-		expect(takeScreenshot(itb9)).toLookAs("8_horizontal_layout");
+		browser.executeScript('document.getElementById("itb9").scrollIntoView()').then(function() {
+			itb9.click();
+			expect(takeScreenshot(itb9)).toLookAs("8_horizontal_layout");
+		});
 	});
 
 
@@ -123,8 +125,9 @@ describe("sap.m.IconTabBar", function() {
 	//  Property stretchContentHeight: true, class sapUiResponsiveContentPadding, arrows
 	it("should have images as items", function() {
 		//next line is to move the view in the window
-		element(by.id("itb12")).click();
-		expect(takeScreenshot(itb12)).toLookAs("11_stretchContentHeight_ResponsivePaddin");
+		browser.executeScript('document.getElementById("itb12").scrollIntoView()').then(function() {
+			expect(takeScreenshot(itb12)).toLookAs("11_stretchContentHeight_ResponsivePaddin");
+		});
 	});
 
 	it("should show icon tab overflow", function() {
@@ -146,38 +149,46 @@ describe("sap.m.IconTabBar", function() {
 	// backgroundDesign property tests
 	it("should change IconTabBar container background design to Transparent", function () {
 		element(by.id("RB1-Transparent")).click();
-		element(by.id("backgroundDesignIconTabBar_fileter3")).click(); // move the view in the window
-		expect(takeScreenshot()).toLookAs("14_backgroundDesign_Transparent");
+		browser.executeScript('document.getElementById("backgroundDesignIconTabBar_fileter3").scrollIntoView()').then(function() {
+			expect(takeScreenshot()).toLookAs("14_backgroundDesign_Transparent");
+		});
 	});
 
 	it("should change IconTabBar container background design to Translucent", function () {
 		element(by.id("RB1-Translucent")).click();
-		element(by.id("backgroundDesignIconTabBar_fileter3")).click(); // move the view in the window
-		expect(takeScreenshot()).toLookAs("14_backgroundDesign_Translucent");
+		browser.executeScript('document.getElementById("backgroundDesignIconTabBar_fileter3").scrollIntoView()').then(function() {
+			element(by.id("backgroundDesignIconTabBar_fileter3")).click();
+			expect(takeScreenshot()).toLookAs("14_backgroundDesign_Translucent");
+		});
 	});
 
 	it("should change IconTabBar container background design to Solid", function () {
 		element(by.id("RB1-Solid")).click();
-		element(by.id("backgroundDesignIconTabBar_fileter3")).click(); // move the view in the window
-		expect(takeScreenshot()).toLookAs("14_backgroundDesign_Solid");
+		browser.executeScript('document.getElementById("backgroundDesignIconTabBar_fileter3").scrollIntoView()').then(function() {
+			expect(takeScreenshot()).toLookAs("14_backgroundDesign_Solid");
+		});
 	});
 
 	// headerBackgroundDesign property tests
 	it("should change IconTabBar header background design to Transparent", function () {
 		element(by.id("RB2-Transparent")).click();
-		element(by.id("backgroundDesignIconTabBar_fileter3")).click(); // move the view in the window
-		expect(takeScreenshot()).toLookAs("14_headerBackgroundDesign_Transparent");
+		browser.executeScript('document.getElementById("backgroundDesignIconTabBar_fileter3").scrollIntoView()').then(function() {
+			expect(takeScreenshot()).toLookAs("14_headerBackgroundDesign_Transparent");
+		});
 	});
 
 	it("should change IconTabBar header background design to Translucent", function () {
 		element(by.id("RB2-Translucent")).click();
-		element(by.id("backgroundDesignIconTabBar_fileter3")).click(); // move the view in the window
-		expect(takeScreenshot()).toLookAs("14_headerBackgroundDesign_Translucent");
+		browser.executeScript('document.getElementById("backgroundDesignIconTabBar_fileter3").scrollIntoView()').then(function() {
+			expect(takeScreenshot()).toLookAs("14_headerBackgroundDesign_Translucent");
+		});
 	});
 
 	it("should change IconTabBar header background design to Solid", function () {
 		element(by.id("RB2-Solid")).click();
 		element(by.id("backgroundDesignIconTabBar_fileter3")).click(); // move the view in the window
-		expect(takeScreenshot()).toLookAs("14_headerBackgroundDesign_Solid");
+		browser.executeScript('document.getElementById("backgroundDesignIconTabBar_fileter3").scrollIntoView()').then(function() {
+			expect(takeScreenshot()).toLookAs("14_headerBackgroundDesign_Solid");
+		});
 	});
 });

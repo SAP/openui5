@@ -32,9 +32,6 @@ sap.ui.define([
 				},
 				newText : {
 					type : "string"
-				},
-				titleChange : {
-					type : "any"
 				}
 			},
 			associations : {},
@@ -49,6 +46,7 @@ sap.ui.define([
 	 */
 	ControlVariantSetTitle.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
 		this.sLayer = mFlexSettings.layer;
+		return true;
 	};
 
 	/**
@@ -76,7 +74,7 @@ sap.ui.define([
 
 		return Promise.resolve(this.oModel._setVariantProperties(this.sVariantManagementReference, mPropertyBag, true))
 						.then(function(oChange) {
-								this.setTitleChange(oChange);
+								this._oVariantChange = oChange;
 								oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
 						}.bind(this));
 	};
@@ -90,12 +88,12 @@ sap.ui.define([
 			mPropertyBag = {
 			variantReference : this.sCurrentVariant,
 			title : this.getOldText(),
-			change: this.getTitleChange()
+			change: this._oVariantChange
 		};
 
 		return Promise.resolve(this.oModel._setVariantProperties(this.sVariantManagementReference, mPropertyBag, false))
 						.then( function(oChange){
-								this.setTitleChange(oChange);
+								this._oVariantChange = oChange;
 								oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
 						}.bind(this));
 	};

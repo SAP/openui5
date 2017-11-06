@@ -22,7 +22,7 @@ function(Controller, Currency) {
 			var oSelectedItem = oEvent.getSource();
 			var oContext = oSelectedItem.getBindingContext("products");
 			var sPath = oContext.getPath();
-			var oProductDetailPanel = this.getView().byId("productDetailsPanel");
+			var oProductDetailPanel = this.byId("productDetailsPanel");
 			oProductDetailPanel.bindElement({path : sPath, model : "products"});
 		},
 		productListFactory : function(sId,oContext) {
@@ -45,7 +45,7 @@ function(Controller, Currency) {
 			} else {
 				// Nope, so we will create an
 				// ObjectListItem
-				
+
 				oUIControl = new sap.m.ObjectListItem(sId, {
 					title : sDescription,
 					number : {
@@ -59,7 +59,7 @@ function(Controller, Currency) {
 						path : "/currencyCode"
 					}
 				});
-				
+
 				// Is this item out of stock?
 				if (oContext.getProperty("UnitsInStock") < 1) {
 					// Nope, so this item is just temporarily out of stock

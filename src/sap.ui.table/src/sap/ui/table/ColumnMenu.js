@@ -282,7 +282,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/Menu', 'sap/ui/
 	ColumnMenu.prototype._addGroupMenuItem = function() {
 		var oColumn = this._oColumn;
 
-		if (oColumn.isGroupableByMenu()) {
+		if (oColumn.isGroupable()) {
 			var oTable = this._oTable;
 
 			this.addItem(this._createMenuItem(

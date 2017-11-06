@@ -1,0 +1,79 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "17d6cf1ec475a2690bea79096a17e3cc649130eb",
+        "type": "FIX",
+        "text": " Combine on the wrong element",
+        "references": []
+      },
+      {
+        "id": "c24ba893b5cab7757730cdba59017896bdafed19",
+        "type": "FIX",
+        "text": " Revision of Multiple Settings Action handling",
+        "references": []
+      },
+      {
+        "id": "42fa4bd1e74d0e01302fc53e846feafe88da014c",
+        "type": "FIX",
+        "text": " sap.ui.rta - Settings dialog don’t open",
+        "references": []
+      },
+      {
+        "id": "48d3d6eba62f9d49c27922c8a218b1708df7b80d",
+        "type": "FIX",
+        "text": " sap.ui.rta - fix enhanced logic for detecting relevant overlays",
+        "references": []
+      },
+      {
+        "id": "97ea1a07af3bc7ceb5af0bda2007149c264fad80",
+        "type": "FIX",
+        "text": " sap.ui.rta: RTA StyleClass for mandatory field popup",
+        "references": []
+      },
+      {
+        "id": "c7f278c41f3734d610a6e3d27393520324483de9",
+        "type": "FIX",
+        "text": " sap.ui.rta: Rename plugin correction",
+        "references": []
+      },
+      {
+        "id": "4bdad18365692031319b00023969d1506937e25a",
+        "type": "FIX",
+        "text": " sap.ui.rta: added missing detachElementModified in plugin",
+        "references": []
+      },
+      {
+        "id": "e25378342ab3af22c9cc8fedc05c6ddf75d89f15",
+        "type": "FIX",
+        "text": " sap.ui.rta: cleanup of move-command of reveal",
+        "references": []
+      },
+      {
+        "id": "52206fc60b06b6a0fbc1a28b7c14dfb43f931d10",
+        "type": "FIX",
+        "text": " sap.ui.rta: enhanced logic for detecting relevant overlays",
+        "references": []
+      },
+      {
+        "id": "b793e4c387f5d5f0d787eb026be8e02ad942d360",
+        "type": "FIX",
+        "text": " sap.ui.rta: error handling for command-creation",
+        "references": []
+      },
+      {
+        "id": "e2f8eb0888fe854ee00f338bd34d252aab806a06",
+        "type": "FIX",
+        "text": " sap.ui.rta: no stableID check without DTMetadata",
+        "references": []
+      },
+      {
+        "id": "2b7d8227672d259c001fbb896a660c0e2a297f75",
+        "type": "FIX",
+        "text": "sap.ui.rta: Prevent removal of last visible element in aggregation",
+        "references": []
+      }
+    ]
+  }
+}

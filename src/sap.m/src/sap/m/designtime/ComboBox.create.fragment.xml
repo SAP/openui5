@@ -1,0 +1,9 @@
+<core:FragmentDefinition 
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+		<ComboBox>
+			<items>
+				<core:Item key="item-key" text="Item Text" />
+			</items>
+		</ComboBox>
+</core:FragmentDefinition>

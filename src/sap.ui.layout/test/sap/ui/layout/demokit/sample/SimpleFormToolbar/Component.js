@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.layout.sample.SimpleFormToolbar.Component", {
 
 		metadata : {
-			rootView : "sap.ui.layout.sample.SimpleFormToolbar.Page",
+			rootView : {
+				"viewName": "sap.ui.layout.sample.SimpleFormToolbar.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

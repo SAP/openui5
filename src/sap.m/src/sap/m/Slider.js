@@ -207,7 +207,7 @@ sap.ui.define([
 					}
 				}
 			},
-			designTime: true
+			designtime: "sap/m/designtime/Slider.designtime"
 		}});
 
 		//Defines object which contains constants used by the control.

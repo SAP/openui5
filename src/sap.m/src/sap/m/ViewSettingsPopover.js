@@ -1436,9 +1436,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 			if (bIsAdding) {
 				// attach and detach (or only detach if not adding) event listeners for the item
-				this._attachItemEventListeners(oObject);
-			} else {
-				this._detachItemEventListeners(oObject);
+				this._handleItemEventListeners(oObject);
 			}
 
 			this._handleListItemsAggregation(aNewArgs,  bIsAdding, sFunctionName, oObject);
@@ -1555,21 +1553,21 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		};
 
 		/**
-		 * Attaches any previously added event handlers.
+		 * Attaches and detaches any previously added event handlers.
 		 *
-		 * @param {Object} oObject The <code>ViewSettingsItem</code> instance on which events will be detached/attached
+		 * @param {Object} oObject The <code>ViewSettingsItem</code> instance on which events will be attached
 		 * @private
 		 */
-		ViewSettingsPopover.prototype._attachItemEventListeners = function (oObject) {
+		ViewSettingsPopover.prototype._handleItemEventListeners = function (oObject) {
 			if (oObject instanceof ViewSettingsItem && oObject.getId().indexOf('nogrouping') === -1) {
 				// make sure we always have one listener at a time only
-				oObject.detachItemPropertyChanged(this._handleViewSettingsItemPropertyChanged.bind(this));
-				oObject.attachItemPropertyChanged(this._handleViewSettingsItemPropertyChanged.bind(this));
+				oObject.detachItemPropertyChanged(this._handleViewSettingsItemPropertyChanged, this);
+				oObject.attachItemPropertyChanged(this._handleViewSettingsItemPropertyChanged, this);
 			}
 
 			if (oObject instanceof sap.m.ViewSettingsFilterItem) {
-				oObject.detachFilterDetailItemsAggregationChange(this._handleFilterDetailItemsAggregationChange.bind(this));
-				oObject.attachFilterDetailItemsAggregationChange(this._handleFilterDetailItemsAggregationChange.bind(this));
+				oObject.detachFilterDetailItemsAggregationChange(this._handleFilterDetailItemsAggregationChange, this);
+				oObject.attachFilterDetailItemsAggregationChange(this._handleFilterDetailItemsAggregationChange, this);
 			}
 		};
 
@@ -1607,16 +1605,6 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			if (oItem && oItem.getParent && oItem.getParent() instanceof ViewSettingsItem) {
 				this._updateFilterDetailListFor(oItem.getParent());
 			}
-		};
-
-		/**
-		 * Detaches any previously added event handlers.
-		 *
-		 * @param {Object} oObject The <code>ViewSettingsItem</code> instance on which events will be detached/attached.
-		 * @private
-		 */
-		ViewSettingsPopover.prototype._detachItemEventListeners = function (oObject) {
-			//TODO: detach handlers properly
 		};
 
 		/**

@@ -25,7 +25,7 @@ sap.ui.define([
 				this.router = this.getRouter();
 				this.router.getRoute("entity").attachPatternMatched(this.onRouteMatched, this);
 
-				this._oObjectPage = this.getView().byId("ObjectPageLayout");
+				this._oObjectPage = this.byId("ObjectPageLayout");
 
 				this.getView().setModel(new JSONModel());
 			},
@@ -155,7 +155,7 @@ sap.ui.define([
 				if (this._sId !== sNewId) {
 
 					// retrieve entity docu from server
-					EntityInfo.getEntityDocuAsync(sNewId, oEntity && oEntity.namespace).then(function (oDoc) {
+					EntityInfo.getEntityDocuAsync(sNewId, oEntity && oEntity.library).then(function (oDoc) {
 
 						// route to not found page IF there is NO index entry AND NO docu from server
 						if (!oEntity && !oDoc) {
@@ -195,7 +195,7 @@ sap.ui.define([
 					this._loadSample(oData);
 				}.bind(this));
 
-				this.searchResultsButtonVisibilitySwitch(this.getView().byId("entityBackToSearch"));
+				this.searchResultsButtonVisibilitySwitch(this.byId("entityBackToSearch"));
 			},
 
 			onToggleFullScreen: function (oEvt) {
@@ -329,7 +329,7 @@ sap.ui.define([
 
 			_switchPageTab: function () {
 
-				var oSection = this.getView().byId(this._sNewTab);
+				var oSection = this.byId(this._sNewTab);
 				if (!oSection) {
 					return;
 				}

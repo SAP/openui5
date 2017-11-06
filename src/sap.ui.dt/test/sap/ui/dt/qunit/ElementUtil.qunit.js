@@ -327,4 +327,23 @@ function(
 		assert.strictEqual(oRemoveSpy.callCount, 1, "then 'removeContent' method should be called once on horizontalLayout");
 		assert.strictEqual(oInsertSpy.callCount, 1, "then 'insertContent' method should be called once on horizontalLayout");
 	});
+
+
+	QUnit.test("when calling 'isVisible'", function(assert) {
+		var oButtons = this.oVerticalLayout.getContent();
+
+		// modify first 3 buttons to be invisible;
+		oButtons[0].getDomRef().style.visibility = "hidden";
+		oButtons[1].getDomRef().style.opacity = 0;
+		oButtons[2].getDomRef().style.filter = "blur(5px) opacity(0) grayscale(100%)";
+
+		assert.notOk(ElementUtil.isVisible(jQuery(oButtons[0].getDomRef())), "the first button is not visible due to 'visibility hidden'");
+		assert.notOk(ElementUtil.isVisible(jQuery(oButtons[1].getDomRef())), "the second button is not visible due to 'opacity 0'");
+		// css property filter not supported by phantomJS!
+		if (!sap.ui.Device.browser.phantomJS) {
+			assert.notOk(ElementUtil.isVisible(jQuery(oButtons[2].getDomRef())), "the third button is not visible due to 'filter opacity(0)'");
+		}
+		assert.ok(ElementUtil.isVisible(jQuery(oButtons[3].getDomRef())), "the fourth button is visible");
+		assert.ok(ElementUtil.isVisible(jQuery('button')), "at least one of the buttons is visible");
+	});
 });

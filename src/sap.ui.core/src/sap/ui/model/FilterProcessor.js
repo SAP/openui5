@@ -97,6 +97,10 @@ sap.ui.define(['./Filter', 'jquery.sap.global', "jquery.sap.unicode"],
 	 */
 	FilterProcessor.normalizeFilterValue = function(oValue){
 		if (typeof oValue == "string") {
+			// Internet Explorer and Edge cannot uppercase properly on composed characters
+			if (String.prototype.normalize && (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
+				oValue = oValue.normalize("NFD");
+			}
 			oValue = oValue.toUpperCase();
 			// use canonical composition as recommended by W3C
 			// http://www.w3.org/TR/2012/WD-charmod-norm-20120501/#sec-ChoiceNFC

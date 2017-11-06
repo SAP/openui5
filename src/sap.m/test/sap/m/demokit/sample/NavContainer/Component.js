@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.NavContainer.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.NavContainer.V",
+			rootView : {
+				"viewName": "sap.m.sample.NavContainer.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

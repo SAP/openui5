@@ -93,6 +93,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 	 *
 	 * @extends sap.m.DatePicker
 	 * @version ${version}
+	 * @version ${version}
 	 *
 	 * @constructor
 	 * @public
@@ -120,15 +121,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 			/**
 			 * Start date of the range.
-			 * @deprecated Since version 1.22.0
-			 * Use <code>dateValue</code> instead.
+			 * @deprecated since version 1.22.0, replaced by <code>dateValue</code> property of the {@link sap.m.DateTimeField}
 			 */
 			from : {type : "object", group : "Misc", defaultValue : null, deprecated: true},
 
 			/**
 			 * End date of the range.
-			 * @deprecated Since version 1.22.0
-			 * Use <code>secondDateValue</code> instead.
+			 * @deprecated since version 1.22.0, replaced by <code>secondDateValue</code> property
 			 */
 			to : {type : "object", group : "Misc", defaultValue : null, deprecated: true}
 		}

@@ -52,7 +52,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './librar
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
 		},
-		designTime : true
+		designtime: "sap/ui/layout/designtime/VerticalLayout.designtime"
 	}});
 
 	/**

@@ -200,9 +200,7 @@ sap.ui.define([
 			}
 
 			if (this._checkStyle(sPlaceholder)) {
-				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
-				var oLocaleData = LocaleData.getInstance(oLocale);
-				sPlaceholder = this._getPlaceholderPattern(oLocaleData, sPlaceholder);
+				sPlaceholder = this._getLocaleBasedPattern(sPlaceholder);
 			}
 		}
 
@@ -210,8 +208,10 @@ sap.ui.define([
 
 	};
 
-	DateTimeField.prototype._getPlaceholderPattern = function (oLocaleData, sPlaceholder) {
-		return oLocaleData.getDatePattern(sPlaceholder);
+	DateTimeField.prototype._getLocaleBasedPattern = function (sPlaceholder) {
+		return LocaleData.getInstance(
+			sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+		).getDatePattern(sPlaceholder);
 	};
 
 
@@ -310,7 +310,19 @@ sap.ui.define([
 	};
 
 	DateTimeField.prototype._getDisplayFormatPattern = function () {
-		return this._getBoundValueTypePattern() || this.getDisplayFormat();
+		var sPattern = this._getBoundValueTypePattern();
+
+		if (sPattern) {
+			return sPattern;
+		}
+
+		sPattern = this.getDisplayFormat();
+
+		if (this._checkStyle(sPattern)) {
+			sPattern = this._getLocaleBasedPattern(sPattern);
+		}
+
+		return sPattern;
 	};
 
 	DateTimeField.prototype._getBoundValueTypePattern = function () {

@@ -74,7 +74,7 @@ sap.ui.define([
 				 */
 				selectedSubSection: {type: "sap.uxap.ObjectPageSubSection", multiple: false}
 			},
-			designTime: true
+			designtime: "sap/uxap/designtime/ObjectPageSection.designtime"
 		}
 	});
 

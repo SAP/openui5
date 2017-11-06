@@ -466,7 +466,7 @@ sap.ui.define([
 
 			handleSelectionFinish: function(oEvent) {
 				var aSelectedKeys = oEvent.getSource().getSelectedKeys();
-				this.getView().byId("PC1").setBuiltInViews(aSelectedKeys);
+				this.byId("PC1").setBuiltInViews(aSelectedKeys);
 			}
 
 		});

@@ -204,7 +204,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 					multiple: false
 				}
 			},
-			designTime : true
+			designtime: "sap/m/designtime/semantic/DetailPage.designtime"
 		},
 		renderer: SemanticPageRenderer.render
 	});

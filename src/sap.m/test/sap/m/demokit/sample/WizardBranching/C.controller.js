@@ -14,9 +14,9 @@ sap.ui.define([
 
 	var WizardController = Controller.extend("sap.m.sample.WizardBranching.C", {
 		onInit: function () {
-			this._wizard = this.getView().byId("ShoppingCartWizard");
-			this._oNavContainer = this.getView().byId("wizardNavContainer");
-			this._oWizardContentPage = this.getView().byId("wizardContentPage");
+			this._wizard = this.byId("ShoppingCartWizard");
+			this._oNavContainer = this.byId("wizardNavContainer");
+			this._oWizardContentPage = this.byId("wizardContentPage");
 			this._oWizardReviewPage = sap.ui.xmlfragment("sap.m.sample.WizardBranching.ReviewPage", this);
 
 			this._oNavContainer.addPage(this._oWizardReviewPage);
@@ -69,21 +69,21 @@ sap.ui.define([
 
 			switch (selectedKey) {
 				case "Credit Card" :
-					this.getView().byId("PaymentTypeStep").setNextStep(this.getView().byId("CreditCardStep"));
+					this.byId("PaymentTypeStep").setNextStep(this.getView().byId("CreditCardStep"));
 					break;
 				case "Bank Transfer" :
-					this.getView().byId("PaymentTypeStep").setNextStep(this.getView().byId("BankAccountStep"));
+					this.byId("PaymentTypeStep").setNextStep(this.getView().byId("BankAccountStep"));
 					break;
 				case "Cash on Delivery" :
 					default:
-					this.getView().byId("PaymentTypeStep").setNextStep(this.getView().byId("CashOnDeliveryStep"));
+					this.byId("PaymentTypeStep").setNextStep(this.getView().byId("CashOnDeliveryStep"));
 					break;
 			}
 		},
 		setPaymentMethod: function () {
 			this.setDiscardableProperty({
 				message: "Are you sure you want to change the payment type ? This will discard your progress.",
-				discardStep:this.getView().byId("PaymentTypeStep"),
+				discardStep:this.byId("PaymentTypeStep"),
 				modelPath: "/selectedPayment",
 				historyPath: "prevPaymentSelect"
 			});
@@ -91,7 +91,7 @@ sap.ui.define([
 		setDifferentDeliveryAddress: function () {
 			this.setDiscardableProperty({
 				message: "Are you sure you want to change the delivery address ? This will discard your progress",
-				discardStep:this.getView().byId("BillingStep"),
+				discardStep:this.byId("BillingStep"),
 				modelPath: "/differentDeliveryAddress",
 				historyPath: "prevDiffDeliverySelect"
 			});
@@ -115,9 +115,9 @@ sap.ui.define([
 		},
 		billingAddressComplete: function () {
 			if (this.model.getProperty("/differentDeliveryAddress")) {
-				this.getView().byId("BillingStep").setNextStep(this.getView().byId("DeliveryAddressStep"));
+				this.byId("BillingStep").setNextStep(this.getView().byId("DeliveryAddressStep"));
 			} else {
-				this.getView().byId("BillingStep").setNextStep(this.getView().byId("DeliveryTypeStep"));
+				this.byId("BillingStep").setNextStep(this.getView().byId("DeliveryTypeStep"));
 			}
 		},
 		handleWizardCancel : function () {
@@ -132,17 +132,17 @@ sap.ui.define([
 		checkCreditCardStep: function () {
 			var cardName = this.model.getProperty("/CreditCard/Name") || "";
 			if (cardName.length < 3) {
-				this._wizard.invalidateStep(this.getView().byId("CreditCardStep"));
+				this._wizard.invalidateStep(this.byId("CreditCardStep"));
 			} else {
-				this._wizard.validateStep(this.getView().byId("CreditCardStep"));
+				this._wizard.validateStep(this.byId("CreditCardStep"));
 			}
 		},
 		checkCashOnDeliveryStep: function () {
 			var firstName = this.model.getProperty("/CashOnDelivery/FirstName") || "";
 			if (firstName.length < 3) {
-				this._wizard.invalidateStep(this.getView().byId("CashOnDeliveryStep"));
+				this._wizard.invalidateStep(this.byId("CashOnDeliveryStep"));
 			} else {
-				this._wizard.validateStep(this.getView().byId("CashOnDeliveryStep"));
+				this._wizard.validateStep(this.byId("CashOnDeliveryStep"));
 			}
 		},
 		checkBillingStep: function () {
@@ -152,9 +152,9 @@ sap.ui.define([
 			var country = this.model.getProperty("/BillingAddress/Country") || "";
 
 			if (address.length < 3 || city.length < 3 || zipCode.length < 3 || country.length < 3) {
-				this._wizard.invalidateStep(this.getView().byId("BillingStep"));
+				this._wizard.invalidateStep(this.byId("BillingStep"));
 			} else {
-				this._wizard.validateStep(this.getView().byId("BillingStep"));
+				this._wizard.validateStep(this.byId("BillingStep"));
 			}
 		},
 		completedHandler: function () {
@@ -172,22 +172,22 @@ sap.ui.define([
 			});
 		},
 		_navBackToList: function () {
-			this._navBackToStep(this.getView().byId("ContentsStep"));
+			this._navBackToStep(this.byId("ContentsStep"));
 		},
 		_navBackToPaymentType: function () {
-			this._navBackToStep(this.getView().byId("PaymentTypeStep"));
+			this._navBackToStep(this.byId("PaymentTypeStep"));
 		},
 		_navBackToCreditCard: function () {
-			this._navBackToStep(this.getView().byId("CreditCardStep"));
+			this._navBackToStep(this.byId("CreditCardStep"));
 		},
 		_navBackToCashOnDelivery: function () {
-			this._navBackToStep(this.getView().byId("CashOnDeliveryStep"));
+			this._navBackToStep(this.byId("CashOnDeliveryStep"));
 		},
 		_navBackToBillingAddress: function () {
-			this._navBackToStep(this.getView().byId("BillingStep"));
+			this._navBackToStep(this.byId("BillingStep"));
 		},
 		_navBackToDeliveryType: function () {
-			this._navBackToStep(this.getView().byId("DeliveryTypeStep"));
+			this._navBackToStep(this.byId("DeliveryTypeStep"));
 		},
 		_navBackToStep: function (step) {
 			var fnAfterNavigate = function () {

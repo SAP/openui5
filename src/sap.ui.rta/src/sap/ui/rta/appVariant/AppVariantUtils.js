@@ -5,8 +5,16 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/LrepConnector",
-	"sap/ui/fl/Utils"],
-	function(DescriptorVariantFactory, DescriptorInlineChangeFactory, LrepConnector, FlexUtils) {
+	"sap/ui/fl/Utils",
+	"sap/m/MessageBox",
+	"sap/ui/rta/Utils"],
+	function(
+		DescriptorVariantFactory,
+		DescriptorInlineChangeFactory,
+		LrepConnector,
+		FlexUtils,
+		MessageBox,
+		RtaUtils) {
 
 		"use strict";
 		var AppVariantUtils = {};
@@ -20,6 +28,14 @@ sap.ui.define([
 	        var sRoute = '/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=' + sRunningAppId;
 			var oLREPConnector = LrepConnector.createConnector();
 			return oLREPConnector.send(sRoute, 'GET');
+		};
+
+		AppVariantUtils.isStandAloneApp = function() {
+			if (sap.ushell_abap) {
+				return false;
+			} else {
+				return true;
+			}
 		};
 
 		AppVariantUtils.getNewAppVariantId = function() {
@@ -164,7 +180,7 @@ sap.ui.define([
 			return {
 				"inboundId": sCurrentRunningInboundId,
 				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/saveAs",
+					"propertyPath": "signature/parameters/sap-appvar-id",
 					"operation": "UPSERT",
 					"propertyValue": {
 						"required": true,
@@ -222,6 +238,79 @@ sap.ui.define([
 			} else if (sChange === "removeInbound"){
 				return DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne(mParameters);
 			}
+		};
+
+		AppVariantUtils.getTransportInput = function(sPackageName, sNameSpace, sName, sType) {
+			return {
+				getPackage : function(){
+					return sPackageName;
+				},
+				getNamespace : function(){
+					return sNameSpace;
+				},
+				getId : function(){
+					return sName;
+				},
+				getDefinition : function(){
+					return {
+						fileType: sType
+					};
+				}
+			};
+		};
+
+		AppVariantUtils.triggerCatalogAssignment = function(sAppVariantId, sOriginalId) {
+			var sRoute = '/sap/bc/lrep/appdescr_variants/' + sAppVariantId + '?action=assignCatalogs&assignFromAppId=' + sOriginalId;
+			var oLREPConnector = LrepConnector.createConnector();
+			return oLREPConnector.send(sRoute, 'POST');
+		};
+
+		AppVariantUtils.showTechnicalError = function(oMessageType, sTitleKey, sMessageKey, vError) {
+			var oTextResources = this.getTextResources();
+			var sErrorMessage = "";
+			if (vError.messages && vError.messages.length) {
+				if (vError.messages.length > 1) {
+					vError.messages.forEach(function(oError) {
+						sErrorMessage += oError.text + "\n";
+					});
+				} else {
+					sErrorMessage += vError.messages[0].text;
+				}
+			} else {
+				sErrorMessage += vError.stack || vError.message || vError.status || vError;
+			}
+
+			var sTitle = oTextResources.getText(sTitleKey);
+			var sMessage = oTextResources.getText(sMessageKey, sErrorMessage);
+
+			return new Promise(function(resolve) {
+				MessageBox.error(sMessage, {
+					icon: oMessageType,
+					title: sTitle,
+					onClose: function() {
+						resolve(false);
+					},
+					styleClass: RtaUtils.getRtaStyleClassName()
+				});
+			});
+		};
+
+		AppVariantUtils.isS4HanaCloud = function(oSettings) {
+			return oSettings.isAtoEnabled() && oSettings.isAtoAvailable();
+		};
+
+		AppVariantUtils.copyId = function(sId) {
+			var textArea = document.createElement("textarea");
+			textArea.value = sId;
+			document.body.appendChild(textArea);
+			textArea.select();
+
+			document.execCommand('copy');
+			document.body.removeChild(textArea);
+		};
+
+		AppVariantUtils.getTextResources = function() {
+			return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		};
 
 		return AppVariantUtils;

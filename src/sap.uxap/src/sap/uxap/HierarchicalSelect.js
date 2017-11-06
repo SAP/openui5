@@ -108,7 +108,7 @@ sap.ui.define(["jquery.sap.global", "sap/m/Select", "sap/ui/Device", "./library"
 	 * We are overriding function from sap.m.Select
 	 * in order to redefine position of popover
 	 *
-	 * @param {sap.m.Popover}
+	 * @param {sap.m.Popover} oPopover The given <code>sap.m.Popover</code>
 	 * @private
 	 */
 	HierarchicalSelect.prototype._decoratePopover = function (oPopover) {

@@ -86,7 +86,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/u
 			renderWhitespace : {type : "boolean", group : "Appearance", defaultValue : false}
 
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Text.designtime"
 	}});
 
 	/**

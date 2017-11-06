@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.unified.sample.CalendarSpecialDaysLegend.Component", {
 
 		metadata : {
-			rootView : "sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend",
+			rootView : {
+				"viewName": "sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.ui.unified",

@@ -6,13 +6,17 @@ sap.ui.require([
 	"sap/ui/rta/appVariant/AppVariantManager",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/rta/appVariant/S4HanaCloudBackend"
 ],
 function(
 	AppVariantManager,
 	RtaAppVariantFeature,
 	DescriptorVariantFactory,
-	sinon) {
+	sinon,
+	Settings,
+	S4HanaCloudBackend) {
 
 	"use strict";
 
@@ -59,6 +63,7 @@ function(
 		});
 
 		QUnit.test("When processSaveAsDialog() method is called and key user provides the dialog input", function (assert) {
+			var done = assert.async();
 			var oDescriptor = {
 				"sap.app" : {
 					id : "TestId",
@@ -98,19 +103,438 @@ function(
 				assert.strictEqual(oAppVariantData.icon, "App Variant Icon", "then the icon is correct");
 				assert.strictEqual(oAppVariantData.idRunningApp, "TestId", "then the running app id is correct");
 				assert.strictEqual(oAppVariantData.idBaseApp, "TestIdBaseApp", "then the base app id is correct");
+				done();
 			});
 		});
 	});
 
-	QUnit.module("Given an AppVariantManager is instantiated", {
+	var oServer;
+
+	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
 		beforeEach: function () {
 			this.oAppVariantManager = new AppVariantManager();
+			oServer = sinon.fakeServer.create();
 
-			this.oServer = sinon.fakeServer.create();
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getInboundInfo").returns({
+				currentRunningInbound: "customer.savedAsAppVariant",
+				addNewInboundRequired: true
+			});
+
+			var oParsedHashStub = {
+				semanticObject: "testSemanticObject",
+				action: "testAction"
+			};
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getURLParsedHash").returns(oParsedHashStub);
+
+			this.oAppVariantData = {
+				description: "App Variant Description",
+				idRunningApp : "TestId",
+				idBaseApp: "TestIdBaseApp",
+				title : "App Variant Title",
+				subTitle: "App Variant Subtitle",
+				icon: "App Variant Icon"
+			};
+		},
+
+		afterEach: function () {
+			sandbox.restore();
+			oServer.restore();
+		}
+	}, function() {
+
+		QUnit.test("When createDescriptor() method is called on S4/Hana on premise", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			var oResponse = {
+				"transports": [{
+					"transportId": "4711",
+					"owner": "TESTUSER",
+					"description": "test transport1",
+					"locked" : true
+				}]
+			};
+
+			oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oServer.autoRespond = true;
+
+			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).then(function(oAppVariantDescriptor) {
+				assert.ok(true, "then the promise has been resolved with an app variant descriptor");
+				assert.strictEqual(oAppVariantDescriptor._sTransportRequest, "4711", "then the transport is correctly set");
+				done();
+			});
+		});
+
+		QUnit.test("When createDescriptor() method is called on S4/Hana Cloud", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
+
+			var oResponse = {
+				"transports": [{
+					"locked" : true
+				}]
+			};
+
+			oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oServer.autoRespond = true;
+
+			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).then(function(oAppVariantDescriptor) {
+				assert.ok(true, "then the promise has been resolved with an app variant descriptor");
+				assert.strictEqual(oAppVariantDescriptor._sTransportRequest, "ATO_NOTIFICATION", "then the transport is correctly set");
+				done();
+			});
+		});
+
+		QUnit.test("When createDescriptor() method is called on S4/Hana on premise with no transport info", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			var oResponse = {
+				"transports": [{
+					"locked" : true
+				}]
+			};
+
+			oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oServer.autoRespond = true;
+
+			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).then(function(oAppVariantDescriptor) {
+				assert.ok(true, "then the promise has been resolved with an app variant descriptor");
+				done();
+			});
+		});
+
+		QUnit.test("When createDescriptor() method is failed", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				404,
+				{
+					"Content-Type": "application/json"
+				},
+				"Backend error"
+			]);
+
+			oServer.autoRespond = true;
+
+			sandbox.stub(this.oAppVariantManager, "_showErrorMessage").returns(Promise.reject(false));
+
+			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).catch(
+				function(bSuccess) {
+					assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
+					done();
+				}
+			);
+		});
+	});
+
+	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
+		beforeEach: function () {
+			this.oAppVariantManager = new AppVariantManager();
+			oServer = sinon.fakeServer.create();
+		},
+		afterEach: function () {
+			sandbox.restore();
+			oServer.restore();
+		}
+	}, function() {
+
+		QUnit.test("When saveAppVariantToLREP() method is called and response is successful", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
+				200,
+				{
+					"X-CSRF-Token": "0987654321"
+				},
+				""
+			]);
+
+			var oResponse = {
+				"id": "AppVariantId",
+				"reference":"ReferenceAppId",
+				"content": []
+			};
+
+			oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
+				200,
+				{
+					"Content-Type": "application/json",
+					"X-CSRF-Token": "0987654321"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oServer.autoRespond = true;
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.saveAppVariantToLREP(oDescriptor).then(function(oResult) {
+					assert.strictEqual(oResult.response.id, "AppVariantId", "then the id of app variant descriptor is correct");
+					assert.strictEqual(oResult.response.reference, "ReferenceAppId", "then the id of reference app is correct");
+					done();
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("When saveAppVariantToLREP() method is called and response is failed", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
+				400,
+				{
+					"Content-Type": "application/json",
+					"X-CSRF-Token": "0987654321"
+				},
+				"Backend Error"
+			]);
+
+			oServer.autoRespond = true;
+
+			sandbox.stub(this.oAppVariantManager, "_showErrorMessage").returns(Promise.reject(false));
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.saveAppVariantToLREP(oDescriptor).catch(
+					function(bSuccess) {
+						assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
+						done();
+					}
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("When copyUnsavedChangesToLREP() method is called without any unsaved changes", function (assert) {
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			var oRootControl = new sap.ui.core.Control();
+
+			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
+
+			var oDescriptor = {
+				"sap.app" : {
+					id : "TestId",
+					applicationVersion: {
+						version: "1.2.3"
+					}
+				}
+			};
+
+			var oManifest = new sap.ui.core.Manifest(oDescriptor);
+			var oComponent = {
+				name: "testComponent",
+				getManifest : function() {
+					return oManifest;
+				}
+			};
+
+			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+
+			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", oRootControl, true).then(function(bSuccess) {
+				assert.ok(bSuccess, "then the promise is resolved");
+			});
+		});
+
+		QUnit.test("When triggerCatalogAssignment() method is called on S4/Hana Cloud", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
+
+			oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
+				200,
+				{
+					"X-CSRF-Token": "0987654321"
+				},
+				""
+			]);
+
+			var oResponse = {
+				"VariantId" : "customer.TestId",
+				"IAMId" : "IAMId",
+				"CatalogIds" : ["TEST_CATALOG"]
+			};
+
+			oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants\/customer.TestId/, [
+				200,
+				{
+					"Content-Type": "application/json",
+					"X-CSRF-Token": "0987654321"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oServer.autoRespond = true;
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).then(function(oResult) {
+					assert.strictEqual(oResult.response.IAMId, "IAMId", "then the IAM id is correct");
+					assert.strictEqual(oResult.response.VariantId, "customer.TestId", "then the variant id is correct");
+					assert.strictEqual(oResult.response.CatalogIds[0], "TEST_CATALOG", "then the new app variant has been added to a correct catalog ");
+					done();
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("When triggerCatalogAssignment() method is called on S4/Hana on premise", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).then(function(oResult) {
+					assert.ok(true, "then the promise is resolved");
+					done();
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("When triggerCatalogAssignment() method is called and response is failed", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
+
+			oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants\/customer.TestId/, [
+				400,
+				{
+					"Content-Type": "application/json",
+					"X-CSRF-Token": "0987654321"
+				},
+				"Backend Error"
+			]);
+
+			oServer.autoRespond = true;
+
+			sandbox.stub(this.oAppVariantManager, "_showErrorMessage").returns(Promise.reject(false));
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).catch(
+					function(bSuccess) {
+						assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
+						done();
+					}
+				);
+			}.bind(this));
+		});
+
+
+		QUnit.test("When showSuccessMessageAndTriggerActionFlow() method is called on S4/Hana Cloud ('Save As' is triggered from RTA Toolbar)", function (assert) {
+			var done = assert.async();
 
 			window.bUShellNavigationTriggered = false;
-			this.originalUShell = sap.ushell;
-			// this overrides the ushell globally => we need to restore it!
+			var originalUShell = sap.ushell;
 
 			sap.ushell = jQuery.extend({}, sap.ushell, {
 				Container : {
@@ -118,20 +542,8 @@ function(
 						return {
 							toExternal : function() {
 								window.bUShellNavigationTriggered = true;
-							},
-							getHash : function() {
-								return "Action-somestring";
-							},
-							parseShellHash : function() {
-								return {
-									semanticObject : "Action",
-									action : "somestring"
-								};
 							}
 						};
-					},
-					setDirtyFlag : function() {
-						return "";
 					}
 				},
 				services : {
@@ -148,243 +560,146 @@ function(
 					}
 				}
 			});
-		},
 
-		afterEach: function () {
-			this.oServer.restore();
-			sandbox.restore();
-			sap.ushell = this.originalUShell;
-			delete window.bUShellNavigationTriggered;
-		}
-	}, function() {
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
 
-		QUnit.test("When createDescriptor() method is called", function (assert) {
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getInboundInfo").returns({
-				currentRunningInbound: "customer.savedAsAppVariant",
-				addNewInboundRequired: true
+			var oRootControl = new sap.ui.core.Control();
+
+			sandbox.stub(this.oAppVariantManager, "_showSaveSuccessMessage").returns(Promise.resolve());
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true, oRootControl).then(function(bSuccess) {
+					assert.ok(bSuccess, "then the app is navigated to FLP Homepage and the promise is resolved");
+					sap.ushell = originalUShell;
+					delete window.bUShellNavigationTriggered;
+					done();
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("When showSuccessMessageAndTriggerActionFlow() method is called on S4/Hana on premise ('Save As' is triggered from RTA Toolbar)", function (assert) {
+			var done = assert.async();
+
+			window.bUShellNavigationTriggered = false;
+			var originalUShell = sap.ushell;
+
+			sap.ushell = jQuery.extend({}, sap.ushell, {
+				Container : {
+					getService : function(sServiceName) {
+						return {
+							toExternal : function() {
+								window.bUShellNavigationTriggered = true;
+							}
+						};
+					}
+				},
+				services : {
+					AppConfiguration: {
+						getCurrentApplication: function(oApplication) {
+							return {
+								componentHandle: {
+									getInstance: function() {
+										return "testInstance";
+									}
+								}
+							};
+						}
+					}
+				}
 			});
 
-			var oParsedHashStub = {
-				semanticObject: "testSemanticObject",
-				action: "testAction"
-			};
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getURLParsedHash").returns(oParsedHashStub);
-
-			var oAppVariantData = {
-				description: "App Variant Description",
-				idRunningApp : "TestId",
-				idBaseApp: "TestIdBaseApp",
-				title : "App Variant Title",
-				subTitle: "App Variant Subtitle",
-				icon: "App Variant Icon"
-			};
-
-			this.oServer.respondWith([
-				200,
-				{
-					"Content-Type": "application/json",
-					"Content-Length": 13,
-					"X-CSRF-Token": "0987654321"
-				},
-				"{ \"changes\":[], \"contexts\":[], \"settings\":{\"isAtoAvailable\":\"true\",\"isKeyUser\":\"true\",\"isProductiveSystem\":\"false\",\"localonly\":false} }"
-			]);
-
-			this.oServer.autoRespond = true;
-
-			return this.oAppVariantManager.createDescriptor(oAppVariantData).then(function(oAppVariantDescriptor) {
-				assert.ok(true, "then the promise has been resolved with an app variant descriptor");
-			});
-		});
-
-		QUnit.test("When 'SaveAs' button is pressed from RTA toolbar, saveAppVariantDescriptorAndDirtyChangesToLREP() method is called and server response is successful", function (assert) {
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
 
 			var oRootControl = new sap.ui.core.Control();
 
-			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
-
-			var oDescriptor = {
-				"sap.app" : {
-					id : "TestId"
-				}
-			};
-
-			var oManifest = new sap.ui.core.Manifest(oDescriptor);
-			var oComponent = {
-				name: "testComponent",
-				appVersion: "1.2.3",
-				getManifest : function() {
-					return oManifest;
-				}
-			};
-
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-
-			this.oServer.respondWith([
-				200,
-				{
-					"Content-Type": "application/json",
-					"Content-Length": 13,
-					"X-CSRF-Token": "0987654321"
-				},
-				"{ \"changes\":[], \"contexts\":[], \"settings\":{\"isAtoAvailable\":\"true\",\"isKeyUser\":\"true\",\"isProductiveSystem\":\"false\",\"localonly\":false} }"
-			]);
-
-			this.oServer.autoRespond = true;
+			sandbox.stub(this.oAppVariantManager, "_showSaveSuccessMessage").returns(Promise.resolve());
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.saveDescriptorAndFlexChangesToLREP(oDescriptor, oRootControl, true).then(function() {
-					assert.ok(true, "then the descriptor changes and dirty UI changes have been saved to LREP and it navigates to FLP homepage");
+				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true, oRootControl).then(function(bSuccess) {
+					assert.ok(bSuccess, "then the app is navigated to FLP Homepage and the promise is resolved");
+					sap.ushell = originalUShell;
+					delete window.bUShellNavigationTriggered;
+					done();
 				});
 			}.bind(this));
 		});
 
-		QUnit.test("When 'SaveAs' button is pressed from the app variant overview dialog, saveAppVariantDescriptorAndDirtyChangesToLREP() method is called and server response is successful", function (assert) {
+		QUnit.test("When showSuccessMessageAndTriggerActionFlow() method is called on S4/Hana Cloud ('Save As' is triggered from app variant overview list)", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
 
 			var oRootControl = new sap.ui.core.Control();
 
-			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(this.oAppVariantManager, "_showSaveSuccessMessage").returns(Promise.resolve());
 
-			var oDescriptor = {
-				"sap.app" : {
-					id : "TestId"
-				}
-			};
-
-			var oManifest = new sap.ui.core.Manifest(oDescriptor);
-			var oComponent = {
-				name: "testComponent",
-				appVersion: "1.2.3",
-				getManifest : function() {
-					return oManifest;
-				}
-			};
-
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-
-			this.oServer.respondWith([
-				200,
-				{
-					"Content-Type": "application/json",
-					"Content-Length": 13,
-					"X-CSRF-Token": "0987654321"
-				},
-				"{ \"changes\":[], \"contexts\":[], \"settings\":{\"isAtoAvailable\":\"true\",\"isKeyUser\":\"true\",\"isProductiveSystem\":\"false\",\"localonly\":false} }"
-			]);
-
-			this.oServer.autoRespond = true;
-
-			sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
+			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.saveDescriptorAndFlexChangesToLREP(oDescriptor, oRootControl, false).then(function() {
-					assert.ok(true, "then the app variant overview list opens again");
+				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, false, oRootControl).then(function(bSuccess) {
+					assert.ok(bSuccess, "then the app variant overview list gets opened");
+					assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once");
+					done();
 				});
 			}.bind(this));
 		});
 
-		QUnit.test("When saveAppVariantDescriptorAndDirtyChangesToLREP() method is called and promise is rejected with an error (string)", function (assert) {
+		QUnit.test("When showSuccessMessageAndTriggerActionFlow() method is called on S4/Hana on premise ('Save As' is triggered from app variant overview list)", function (assert) {
+			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
 
 			var oRootControl = new sap.ui.core.Control();
 
-			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(this.oAppVariantManager, "_showSaveSuccessMessage").returns(Promise.resolve());
 
-			var oDescriptor = {
-				"sap.app" : {
-					id : "TestId"
-				}
-			};
-
-			var oManifest = new sap.ui.core.Manifest(oDescriptor);
-			var oComponent = {
-				name: "testComponent",
-				appVersion: "1.2.3",
-				getManifest : function() {
-					return oManifest;
-				}
-			};
-
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-
-			this.oServer.respondWith([
-				200,
-				{
-					"Content-Type": "application/json",
-					"Content-Length": 13,
-					"X-CSRF-Token": "0987654321"
-				},
-				"{ \"changes\":[], \"contexts\":[], \"settings\":{\"isAtoAvailable\":\"true\",\"isKeyUser\":\"true\",\"isProductiveSystem\":\"false\",\"localonly\":false} }"
-			]);
-
-			this.oServer.autoRespond = true;
+			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				sandbox.stub(oDescriptor, "submit").returns(Promise.reject("Backend error"));
-
-				return this.oAppVariantManager.saveDescriptorAndFlexChangesToLREP(oDescriptor, oRootControl, false).then(function() {
-					assert.ok(true, "then the error handling is called");
-				});
-			}.bind(this));
-
-		});
-
-		QUnit.test("When saveAppVariantDescriptorAndDirtyChangesToLREP() method is called and promise is rejected with an error (object)", function (assert) {
-
-			var oRootControl = new sap.ui.core.Control();
-
-			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
-
-			var oDescriptor = {
-				"sap.app" : {
-					id : "TestId"
-				}
-			};
-
-			var oManifest = new sap.ui.core.Manifest(oDescriptor);
-			var oComponent = {
-				name: "testComponent",
-				appVersion: "1.2.3",
-				getManifest : function() {
-					return oManifest;
-				}
-			};
-
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-
-			this.oServer.respondWith([
-				200,
-				{
-					"Content-Type": "application/json",
-					"Content-Length": 13,
-					"X-CSRF-Token": "0987654321"
-				},
-				"{ \"changes\":[], \"contexts\":[], \"settings\":{\"isAtoAvailable\":\"true\",\"isKeyUser\":\"true\",\"isProductiveSystem\":\"false\",\"localonly\":false} }"
-			]);
-
-			this.oServer.autoRespond = true;
-
-			var oError = {
-				messages: [{
-					text: "Backend error"
-				}]
-			};
-
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				sandbox.stub(oDescriptor, "submit").returns(Promise.reject(oError));
-
-				return this.oAppVariantManager.saveDescriptorAndFlexChangesToLREP(oDescriptor, oRootControl, false).then(function() {
-					assert.ok(true, "then the error handling is called");
+				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, false, oRootControl).then(function(bSuccess) {
+					assert.ok(bSuccess, "then the app variant overview list gets opened");
+					assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once");
+					done();
 				});
 			}.bind(this));
 		});

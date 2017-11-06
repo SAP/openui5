@@ -444,11 +444,11 @@
 		};
 
 		var _formatDate = function(oDate) {
-			return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.YYYY"}).format(oDate);
+			return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.yyyy"}).format(oDate);
 		};
 
 		var _formatDateHour = function(oDate) {
-			return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.YYYY hh:mm"}).format(oDate);
+			return sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.yyyy hh:mm"}).format(oDate);
 		};
 
 		var _padTo10 = function(i) {
@@ -2295,6 +2295,46 @@
 						}, 0);
 					}, 0);
 				}, 0);
+			}, 0);
+		});
+
+		QUnit.test("Navigation forward in week view where next week starts at 1st January (locale en_US)", function(assert) {
+			var $Days,
+				aDays,
+				oNextTarget,
+				oSelf = this,
+				fnDone = assert.async(),
+				oOriginalFormatLocale = sap.ui.getCore().getConfiguration().getFormatLocale();
+
+			//arrange
+			sap.ui.getCore().getConfiguration().setFormatLocale('en_US');
+			this.oPC2.setStartDate(new Date(2016, 11, 31));
+			this.oPC2.setViewKey(sap.ui.unified.CalendarIntervalType.Week);
+
+			$Days = this.oPC2IntervalRow.$("days");
+			aDays = $Days.children();
+			oNextTarget = aDays[aDays.length-1];
+
+			//act
+			aDays.eq(aDays.length-1).focus();
+			sap.ui.getCore().applyChanges();
+
+			_navFocusNext.call(this, oNextTarget);
+			setTimeout(function() {
+				//assert
+				_assertDatesAreVisible.call(oSelf, [
+					new Date(2017, 0, 1),
+					new Date(2017, 0, 2),
+					new Date(2017, 0, 3),
+					new Date(2017, 0, 4),
+					new Date(2017, 0, 5),
+					new Date(2017, 0, 6),
+					new Date(2017, 0, 7)
+				], oSelf.oPC2, "Navigated to 1st of January");
+
+				//clear
+				sap.ui.getCore().getConfiguration().setFormatLocale(oOriginalFormatLocale);
+				fnDone();
 			}, 0);
 		});
 

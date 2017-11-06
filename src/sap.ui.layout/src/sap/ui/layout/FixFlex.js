@@ -89,7 +89,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 					 */
 					flexContent: {type: "sap.ui.core.Control", multiple: false}
 				},
-				designTime: true
+				designtime: "sap/ui/layout/designtime/FixFlex.designtime"
 			}
 		});
 

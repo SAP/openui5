@@ -21,8 +21,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @version ${version}
 	 * @since 1.0.0
 	 *
-	 * @deprecated Since version 1.21.0.
-	 * Please use the element <code>sap.ui.unified.MenuItemBase</code> of the library <code>sap.ui.unified</code> instead.
+	 * @deprecated as of version 1.21.0, replaced by {@link sap.ui.unified.MenuItemBase}
 	 *
 	 * @constructor
 	 * @public

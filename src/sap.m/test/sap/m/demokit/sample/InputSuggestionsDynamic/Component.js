@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.InputSuggestionsDynamic.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.InputSuggestionsDynamic.V",
+			rootView : {
+				"viewName": "sap.m.sample.InputSuggestionsDynamic.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

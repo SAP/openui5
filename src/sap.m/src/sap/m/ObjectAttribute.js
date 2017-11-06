@@ -39,6 +39,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	var ObjectAttribute = Control.extend("sap.m.ObjectAttribute", /** @lends sap.m.ObjectAttribute.prototype */ { metadata : {
 
 		library : "sap.m",
+		designtime: "sap/m/designtime/ObjectAttribute.designtime",
 		properties : {
 
 			/**

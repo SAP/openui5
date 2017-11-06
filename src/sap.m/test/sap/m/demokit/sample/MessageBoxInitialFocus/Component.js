@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.MessageBoxInitialFocus.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.MessageBoxInitialFocus.V",
+			rootView : {
+				"viewName": "sap.m.sample.MessageBoxInitialFocus.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

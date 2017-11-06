@@ -36,8 +36,8 @@
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				sap.ui.getCore().applyChanges();
-				this.oButtonDTMetadata = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton).getDesignTimeMetadata();
-				this.oLayoutDTMetadata = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout).getDesignTimeMetadata();
+				this.oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
+				this.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
 				done();
 			}.bind(this));
 
@@ -72,14 +72,16 @@
 		var iAggregationCount = 0;
 		var aLayoutAggregationNames = Object.keys(this.oLayout.getMetadata().getAllAggregations());
 		var aButtonAggregationNames = Object.keys(this.oButton.getMetadata().getAllAggregations());
+		var oButtonDTMetadata = this.oButtonOverlay.getDesignTimeMetadata();
+		var oLayoutDTMetadata = this.oLayoutOverlay.getDesignTimeMetadata();
 
 		aLayoutAggregationNames.forEach(function(sAggregationName) {
-			if (this.oLayoutDTMetadata.isAggregationIgnored(this.oLayout, sAggregationName) === false) {
+			if (oLayoutDTMetadata.isAggregationIgnored(this.oLayout, sAggregationName) === false) {
 				iAggregationCount += 1;
 			}
 		}.bind(this));
 		aButtonAggregationNames.forEach(function(sAggregationName) {
-			if (this.oButtonDTMetadata.isAggregationIgnored(this.oButton, sAggregationName) === false) {
+			if (oButtonDTMetadata.isAggregationIgnored(this.oButton, sAggregationName) === false) {
 				iAggregationCount += 1;
 			}
 		}.bind(this));

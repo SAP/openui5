@@ -3,7 +3,11 @@ sap.ui.define(['sap/ui/core/UIComponent'], function (UIComponent) {
 
 	return UIComponent.extend("sap.m.sample.Breadcrumbs.Component", {
 		metadata: {
-			rootView: "sap.m.sample.Breadcrumbs.Page",
+			rootView: {
+				"viewName": "sap.m.sample.Breadcrumbs.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: ["sap.m"]
 			},

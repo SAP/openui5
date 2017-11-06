@@ -100,7 +100,7 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/ui/co
 			 */
 			infoTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 		},
-		designTime : true
+		designtime: "sap/m/designtime/StandardListItem.designtime"
 	}});
 
 	StandardListItem.prototype.exit = function() {

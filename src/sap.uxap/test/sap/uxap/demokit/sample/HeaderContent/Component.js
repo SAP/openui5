@@ -3,7 +3,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 
 	var Component = UIComponent.extend("sap.uxap.sample.HeaderContent.Component", {
 		metadata: {
-			rootView: "sap.uxap.sample.HeaderContent.HeaderContent",
+			rootView: {
+				"viewName": "sap.uxap.sample.HeaderContent.HeaderContent",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m"

@@ -25,10 +25,10 @@ sap.ui.define([
 
 		onRefresh: function () {
 			// trigger search again and hide pullToRefresh when data ready
-			var oProductList = this.getView().byId("productList");
+			var oProductList = this.byId("productList");
 			var oBinding = oProductList.getBinding("items");
 			var fnHandler = function () {
-				this.getView().byId("pullToRefresh").hide();
+				this.byId("pullToRefresh").hide();
 				oBinding.detachDataReceived(fnHandler);
 			}.bind(this);
 			oBinding.attachDataReceived(fnHandler);

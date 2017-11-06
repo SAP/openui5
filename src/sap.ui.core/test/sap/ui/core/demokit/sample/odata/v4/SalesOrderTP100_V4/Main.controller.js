@@ -13,7 +13,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
 				oView.byId("SalesOrders").getBinding("items").getHeaderContext());
 		},
 		onSalesOrdersSelect : function (oEvent) {
-			this.getView().byId("SalesOrderItems").setBindingContext(
+			this.byId("SalesOrderItems").setBindingContext(
 				oEvent.getParameters().listItem.getBindingContext());
 		}
 	});

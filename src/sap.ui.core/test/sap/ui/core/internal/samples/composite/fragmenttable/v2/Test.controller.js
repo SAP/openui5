@@ -11,7 +11,7 @@ sap.ui.define([
 				this.getView().setModel(new sap.ui.model.json.JSONModel({header: "Test",type:"ResponsiveTable"}),"json");
 			}
 
-			this.getView().byId("myTemplateTableLazy").bindAggregation("list", {
+			this.byId("myTemplateTableLazy").bindAggregation("list", {
 				path: '/ProductCollection'
 			});
 
@@ -41,7 +41,7 @@ sap.ui.define([
 		},
 		model: null,
 		unbindList: function() {
-			this.getView().byId("myTemplateTableLazy").unbindAggregation("list");
+			this.byId("myTemplateTableLazy").unbindAggregation("list");
 		}
 	});
 }, true);

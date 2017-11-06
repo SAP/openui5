@@ -36,7 +36,7 @@ sap.ui.define(['./Tile', './library', 'sap/ui/core/IconPool', 'sap/ui/core/libra
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @deprecated As of version 1.50, use {@link sap.m.GenericTile} instead
+	 * @deprecated as of version 1.50, replaced by {@link sap.m.GenericTile}
 	 * @alias sap.m.StandardTile
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

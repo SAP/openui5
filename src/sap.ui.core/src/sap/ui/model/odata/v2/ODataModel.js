@@ -68,6 +68,8 @@ sap.ui.define([
 	 *            Sets the default binding mode for the model
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.defaultCountMode=Request]
 	 *            Sets the default count mode for the model
+	 * @param {string} [mParameters.preliminaryContext=false]
+	 *            Wether a preliminary Context will be created/used by a binding
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.defaultOperationMode=Default]
 	 *            Sets the default operation mode for the model
 	 * @param {sap.ui.model.odata.UpdateMethod} [mParameters.defaultUpdateMethod=Merge]
@@ -116,14 +118,33 @@ sap.ui.define([
 		constructor : function(sServiceUrl, mParameters) {
 			Model.apply(this, arguments);
 
-			var sUser, sPassword,
-			mHeaders, bTokenHandling,
-			bWithCredentials, sMaxDataServiceVersion,
-			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
-			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
-			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, oMessageParser,
-			bSkipMetadataAnnotationParsing, sDefaultUpdateMethod, bDisableHeadRequestForToken,
-			bSequentializeRequests, bDisableSoftStateHeader, aBindableResponseHeaders, that = this;
+			var sUser,
+				sPassword,
+				mHeaders,
+				bTokenHandling,
+				bWithCredentials,
+				sMaxDataServiceVersion,
+				bUseBatch,
+				bRefreshAfterChange,
+				sAnnotationURI,
+				bLoadAnnotationsJoined,
+				sDefaultCountMode,
+				bPreliminaryContext,
+				sDefaultBindingMode,
+				sDefaultOperationMode,
+				mMetadataNamespaces,
+				mServiceUrlParams,
+				mMetadataUrlParams,
+				aMetadataUrlParams,
+				bJSON,
+				oMessageParser,
+				bSkipMetadataAnnotationParsing,
+				sDefaultUpdateMethod,
+				bDisableHeadRequestForToken,
+				bSequentializeRequests,
+				bDisableSoftStateHeader,
+				aBindableResponseHeaders,
+				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
 				mParameters = sServiceUrl;
@@ -143,6 +164,7 @@ sap.ui.define([
 				bLoadAnnotationsJoined = mParameters.loadAnnotationsJoined;
 				sDefaultBindingMode = mParameters.defaultBindingMode;
 				sDefaultCountMode = mParameters.defaultCountMode;
+				bPreliminaryContext = mParameters.preliminaryContext;
 				sDefaultOperationMode = mParameters.defaultOperationMode;
 				mMetadataNamespaces = mParameters.metadataNamespaces;
 				mServiceUrlParams = mParameters.serviceUrlParams;
@@ -189,6 +211,8 @@ sap.ui.define([
 			this.bSequentializeRequests = !!bSequentializeRequests;
 			this.bDisableSoftStateHeader = !!bDisableSoftStateHeader;
 			this.aBindableResponseHeaders = aBindableResponseHeaders ? aBindableResponseHeaders : null;
+			this.bPreliminaryContext = bPreliminaryContext || false;
+
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -286,11 +310,13 @@ sap.ui.define([
 				that.fireMetadataFailed(oEvent.getParameters());
 			};
 
-			this.oMetadata.loaded().then(this._initializeMetadata.bind(this));
 			if (!this.oMetadata.isLoaded()) {
 				this.oMetadata.attachFailed(this.onMetadataFailed);
 			}
 
+			this.oMetadata.loaded().then(function() {
+				that._initializeMetadata();
+			});
 
 			// set the header for the accepted content types
 			if (this.bJSON) {
@@ -749,6 +775,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._initializeMetadata = function() {
+
 		if (this.bDestroyed) {
 			// Don't fire any events for resolving promises on Models that have already been destroyed
 			return;
@@ -761,8 +788,8 @@ sap.ui.define([
 			jQuery.sap.log.debug(this + " - metadataloaded fired");
 		}.bind(this);
 
-
 		this.initialize();
+
 		if (this.bLoadAnnotationsJoined) {
 			this.oAnnotations.loaded().then(fnFire, this.fireMetadataFailed.bind(this));
 		} else {
@@ -1182,8 +1209,10 @@ sap.ui.define([
 			if (!sKey) {
 				return sKey;
 			}
+
+			// If entry does not exist yet or existing entry is invalid, set received data as new entry
 			oEntry = this._getEntity(sKey);
-			if (!oEntry) {
+			if (!oEntry || (oEntry.__metadata && oEntry.__metadata.invalid)) {
 				oEntry = oData;
 				this._addEntity(oEntry);
 			}
@@ -1337,6 +1366,70 @@ sap.ui.define([
 		aBindings.forEach(function(oBinding) {
 			oBinding.initialize();
 		});
+	};
+
+	/**
+	 * Invalidate the model data.
+	 *
+	 * Mark all entries in the model cache as invalid. Next time a context binding or list binding is done,
+	 * the entry will be detected as invalid and will be refreshed from the server.
+	 *
+	 * @param {function} [fnCheckEntry] A function which can be used to restrict invalidation to specific entries,
+	 *     gets the entity key and object as parameters and should return true for entities to invalidate.
+	 * @public
+	 */
+	ODataModel.prototype.invalidate = function(fnCheckEntry) {
+		var oEntry;
+		for (var sKey in this.oData) {
+			oEntry = this.oData[sKey];
+			if (!fnCheckEntry || fnCheckEntry(sKey, oEntry)) {
+				oEntry.__metadata.invalid = true;
+			}
+		}
+	};
+
+	/**
+	 * Invalidate a single entry in the model data.
+	 *
+	 * Mark the selected entry in the model cache as invalid. Next time a context binding or list binding is done,
+	 * the entry will be detected as invalid and will be refreshed from the server.
+	 *
+	 * @param {string|sap.ui.model.Context} vEntry the reference to the entry, either by key, absolute path or context object
+	 * @public
+	 */
+	ODataModel.prototype.invalidateEntry = function(vEntry) {
+		var oEntry;
+		if (typeof vEntry === "string") {
+			if (vEntry.indexOf("/") === 0) {
+				oEntry = this._getObject(vEntry);
+			} else {
+				oEntry = this.oData[vEntry];
+			}
+		} else if (vEntry instanceof Context) {
+			oEntry = this._getObject(vEntry.getPath());
+		}
+		if (oEntry && oEntry.__metadata) {
+			oEntry.__metadata.invalid = true;
+		}
+	};
+
+	/**
+	 * Invalidate all entries of the given entity type in the model data.
+	 *
+	 * Mark entries of the provided entity type in the model cache as invalid. Next time a context binding or list binding is done,
+	 * the entry will be detected as invalid and will be refreshed from the server.
+	 *
+	 * @param {string} sEntityType the qualified name of the entity type
+	 * @public
+	 */
+	ODataModel.prototype.invalidateEntityType = function(sEntityType) {
+		var oEntry;
+		for (var sKey in this.oData) {
+			oEntry = this.oData[sKey];
+			if (oEntry.__metadata.type === sEntityType) {
+				oEntry.__metadata.invalid = true;
+			}
+		}
 	};
 
 	/**
@@ -1538,6 +1631,7 @@ sap.ui.define([
 	 * @param {map} [mParameters] Map which contains additional parameters for the binding
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
+	 * @param {boolean} [mParameters.preliminaryContext] Wether a preliminary Context will be created
 	 * @param {map} [mParameters.custom] Optional map of custom query parameters, names of custom parameters must not start with <code>$</code>.
 	 * @param {function} [fnCallBack] Function to be called when context has been created. The parameter of the callback function is the newly created binding context.
 	 * @param {boolean} [bReload] Whether to reload data
@@ -1647,6 +1741,28 @@ sap.ui.define([
 				fnCallBack(null); // error - notify to recreate contexts
 			}
 		}
+
+		if (mParameters && mParameters.createPreliminaryContext) {
+			sResolvedPath = this.resolve(sPath, oContext);
+			oNewContext = this.getContext(sResolvedPath);
+			return oNewContext;
+		}
+
+	};
+
+	/**
+	 * Updates an existing context with a new path. This is useful for contexts with a temporary, non-canonical path, which should
+	 * be replaced once the canonical path is known, without creating a new context instance.
+	 *
+	 * @param {sap.ui.model.Context} oContext the context
+	 * @param {string} sPath the path
+	 */
+	ODataModel.prototype._updateContext = function(oContext, sPath) {
+		if (!jQuery.sap.startsWith(sPath, "/")) {
+			throw new Error("Path " + sPath + " must start with a / ");
+		}
+		oContext.sPath = sPath;
+		this.mContexts[sPath] = oContext;
 	};
 
 	/**
@@ -1805,6 +1921,10 @@ sap.ui.define([
 			}
 			// no data --> reload needed
 			if (!oEntity) {
+				return true;
+			}
+			// check for invalid flag
+			if (oEntity.__metadata && oEntity.__metadata.invalid) {
 				return true;
 			}
 
@@ -3173,7 +3293,11 @@ sap.ui.define([
 	ODataModel.prototype._processRequestQueueAsync = function(mRequestQueue) {
 		var that = this;
 		if (!this.pCallAsnyc) {
-			this.pCallAsnyc = Promise.resolve();
+			this.pCallAsnyc = new Promise(function(resolve, reject) {
+				that.oMetadata.loaded().then(function() {
+					resolve();
+				});
+			});
 			this.pCallAsnyc.then(function() {
 				that._processRequestQueue(mRequestQueue);
 				that.pCallAsnyc = undefined;

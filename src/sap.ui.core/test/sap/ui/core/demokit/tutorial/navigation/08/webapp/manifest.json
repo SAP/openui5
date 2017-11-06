@@ -59,7 +59,8 @@
 				"transition": "slide",
 				"bypassed": {
 					"target": "notFound"
-				}
+				},
+				"async": true
 			},
 			"routes": [{
 				"pattern": "",

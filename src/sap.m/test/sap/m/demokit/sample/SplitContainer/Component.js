@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.SplitContainer.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.SplitContainer.V",
+			rootView : {
+				"viewName": "sap.m.sample.SplitContainer.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m"

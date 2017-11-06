@@ -5,7 +5,11 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	return UIComponent.extend("sap.ui.core.sample.DataStateOData.Component", {
 
 		metadata: {
-			rootView: "sap.ui.core.sample.DataStateOData.Page",
+			rootView: {
+				"viewName": "sap.ui.core.sample.DataStateOData.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m",

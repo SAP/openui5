@@ -3,9 +3,8 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "./Base", "sap/ui/fl/Utils"
+	"./Base", "sap/ui/fl/Utils"
 ], function(
-	jQuery,
 	Base,
 	Utils
 ) {

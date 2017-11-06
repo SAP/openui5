@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}
 		},
-		designTime : true
+		designtime: "sap/m/designtime/InputBase.designtime"
 	}});
 
 	EnabledPropagator.call(InputBase.prototype);

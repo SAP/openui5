@@ -344,6 +344,116 @@
 			assert.ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = true 'Editable' = false)");
 		});
 
+		QUnit.module("Placeholder", {
+			beforeEach: function () {
+				// SUT
+				this.oTimePicker = new sap.m.TimePicker();
+				this.oTimePicker.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				// Cleanup
+				this.oTimePicker.destroy();
+				this.oTimePicker = null;
+			}
+		});
+
+		QUnit.test("Default", function (assert) {
+			// Assert
+			assert.equal(this.oTimePicker.getPlaceholder(), "", "The placeholder is empty string");
+		});
+
+		QUnit.test("Empty", function (assert) {
+			// Act
+			this.oTimePicker.setPlaceholder();
+			// Assert
+			assert.equal(this.oTimePicker.getPlaceholder(), "", "The placeholder is empty string");
+		});
+
+		QUnit.test("Custom", function (assert) {
+			// Act
+			this.oTimePicker.setPlaceholder("My Placeholder");
+			// Assert
+			assert.equal(this.oTimePicker.getPlaceholder(), "My Placeholder", "The placeholder is 'My Placeholder'");
+		});
+
+		QUnit.test("Set displayFormat to 'HH:mm'", function (assert) {
+			// Act
+			this.oTimePicker.setDisplayFormat("HH:mm");
+			// Assert
+			assert.equal(this.oTimePicker._getPlaceholder(), "HH:mm", "The placeholder is 'HH:mm'");
+		});
+
+		QUnit.test("Set displayFormat to 'short'", function (assert) {
+			// Act
+			this.oTimePicker.setDisplayFormat("short");
+			// Assert
+			assert.equal(this.oTimePicker._getPlaceholder(), "h:mm a", "The placeholder is 'h:mm a'");
+		});
+
+		QUnit.module("Display format", {
+			beforeEach: function () {
+				// SUT
+				this.oTimePicker = new sap.m.TimePicker({
+					dateValue: new Date(2016, 1, 17, 10, 11, 12)
+				});
+				this.oTimePicker.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				// Cleanup
+				this.oTimePicker.destroy();
+				this.oTimePicker = null;
+			}
+		});
+
+		QUnit.test("Default", function (assert) {
+			// Assert
+			assert.equal(this.oTimePicker._$input.val(), "10:11:12 AM", "Display format is correct");
+		});
+
+		QUnit.test("Empty", function (assert) {
+			// Act
+			this.oTimePicker.setDisplayFormat();
+			// Assert
+			assert.equal(this.oTimePicker._$input.val(), "10:11:12 AM", "Display format is correct");
+		});
+
+		QUnit.test("Custom", function (assert) {
+			// Act
+			this.oTimePicker.setDisplayFormat("HH+mm");
+			// Assert
+			assert.equal(this.oTimePicker._$input.val(), "10+11", "Display format is correct");
+		});
+
+		QUnit.test("Wrong", function (assert) {
+			// Act
+			this.oTimePicker.setDisplayFormat("jj:ll:TT");
+			// Assert
+			assert.equal(this.oTimePicker._$input.val(), "jj:ll:TT", "Display format is wrong");
+		});
+
+		QUnit.test("HH:mm", function (assert) {
+			// Act
+			this.oTimePicker.setDisplayFormat("HH:mm");
+			// Assert
+			assert.equal(this.oTimePicker._$input.val(), "10:11", "Display format is correct");
+		});
+
+		QUnit.test("short", function (assert) {
+			// Act
+			this.oTimePicker.setDisplayFormat("short");
+			// Assert
+			assert.equal(this.oTimePicker._$input.val(), "10:11 AM", "Display format is correct");
+		});
+
+		QUnit.test("medium", function (assert) {
+			// Act
+			this.oTimePicker.setDisplayFormat("medium");
+			// Assert
+			assert.equal(this.oTimePicker._$input.val(), "10:11:12 AM", "Display format is correct");
+		});
+
 		QUnit.module("Input formats, display formats and values", {
 			beforeEach: function() {
 				this._defaultFormatter = sap.ui.core.format.DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
@@ -2047,6 +2157,14 @@
 
 		QUnit.test("allows input of valid time string - hh format, hours === 12", function(assert) {
 			this.typeAndCheckValueForDisplayFormat("hh:mm", "1215", "12:15");
+		});
+
+		QUnit.test("allows input of valid time string - style short", function(assert) {
+			this.typeAndCheckValueForDisplayFormat("short", "1215a", "12:15 AM");
+		});
+
+		QUnit.test("allows input of valid time string - style medium", function(assert) {
+			this.typeAndCheckValueForDisplayFormat("medium", "12159a", "12:15:09 AM");
 		});
 
 

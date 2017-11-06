@@ -66,6 +66,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 			"sap.ui.core.IFormContent"
 		],
 		library : "sap.m",
+		designtime: "sap/m/designtime/Link.designtime",
 		properties : {
 
 			/**
@@ -146,8 +147,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 			 * Event is fired when the user triggers the link control.
 			 */
 			press : {allowPreventDefault : true}
-		},
-		designTime: true
+		}
 	}});
 
 

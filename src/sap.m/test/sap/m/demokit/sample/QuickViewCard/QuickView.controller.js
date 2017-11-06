@@ -125,16 +125,16 @@ sap.ui.define([
 		},
 
 		onBeforeRendering: function() {
-			var oButton = this.getView().byId('buttonBack');
+			var oButton = this.byId('buttonBack');
 			oButton.setEnabled(false);
 		},
 
 		onAfterRendering: function() {
-			this.getView().byId("quickViewCardContainer").$().css("maxWidth", "320px");
+			this.byId("quickViewCardContainer").$().css("maxWidth", "320px");
 		},
 
 		onButtonBackClick : function() {
-			var oQuickViewCard = this.getView().byId('quickViewCard');
+			var oQuickViewCard = this.byId('quickViewCard');
 			oQuickViewCard.navigateBack();
 		},
 
@@ -149,7 +149,7 @@ sap.ui.define([
 		},
 
 		onAfterNavigate : function(oEvent) {
-			var oButton = this.getView().byId('buttonBack');
+			var oButton = this.byId('buttonBack');
 			oButton.setEnabled(!oEvent.getParameter('isTopPage'));
 		}
 	});

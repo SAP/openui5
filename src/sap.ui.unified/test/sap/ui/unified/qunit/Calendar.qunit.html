@@ -251,6 +251,14 @@
 				}
 
 				oCal2.focusDate(new Date(2011, 0, 10));
+
+				// Act - move the focus out of Cal2 (to Cal1) and set focus date to the same date on Cal2
+				oCal1.focus();
+				oCal2.focusDate(new Date(2011, 0, 10));
+
+				// Assert
+				assert.strictEqual(jQuery(document.activeElement).attr("id"), "Cal2--Month0-20110110",
+							"Focus should NOT remain on Cal1 but on Cal2 focused date");
 			});
 
 			QUnit.test("week number calculation", function(assert) {

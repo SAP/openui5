@@ -76,17 +76,45 @@ function(
 	 */
 	BasePlugin.prototype._isEditable = function() {};
 
+	var _onElementModified = function(oEvent) {
+		var oParams = oEvent.getParameters();
+		var aRelevantOverlays;
+		var oOverlay = sap.ui.getCore().byId(oParams.id);
+		if ((oParams.type === "propertyChanged" && oParams.name === "visible")) {
+			aRelevantOverlays = this._getRelevantOverlays(oOverlay);
+			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
+		} else if (oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
+			aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
+			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
+		}
+	};
+
+	BasePlugin.prototype._detachReevaluationEditable = function(oOverlay) {
+		oOverlay.detachElementModified(_onElementModified, this);
+	};
+
 	BasePlugin.prototype._attachReevaluationEditable = function(oOverlay) {
-		oOverlay.attachElementModified(function(oEvent) {
-			var oParams = oEvent.getParameters();
-			if ((oParams.type === "propertyChanged" && oParams.name === "visible") || oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
-				if (oOverlay.getRelevantOverlays().length === 0) {
-					var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay);
-					oOverlay.setRelevantOverlays(aRelevantOverlays);
-				}
-				this.evaluateEditable(oOverlay.getRelevantOverlays(), {onRegistration: false});
+		oOverlay.attachElementModified(_onElementModified, this);
+	};
+
+	BasePlugin.prototype._getRelevantOverlays = function(oOverlay, sAggregationName) {
+		var aAlreadyDefinedRelevantOverlays = oOverlay.getRelevantOverlays();
+		if (aAlreadyDefinedRelevantOverlays.length === 0) {
+			var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay);
+
+			// if an aggregation name is given, those overlays are added without checking the relevant container
+			if (sAggregationName) {
+				var aAggregationChildren = oOverlay.getAggregationOverlay(sAggregationName).getChildren();
+				aAggregationChildren = aAggregationChildren.filter(function(oChildOverlay) {
+					return aRelevantOverlays.indexOf(oChildOverlay) === -1;
+				});
+				aRelevantOverlays = aRelevantOverlays.concat(aAggregationChildren);
 			}
-		}.bind(this));
+
+			oOverlay.setRelevantOverlays(aRelevantOverlays);
+			return aRelevantOverlays;
+		}
+		return aAlreadyDefinedRelevantOverlays;
 	};
 
 	/**
@@ -99,11 +127,12 @@ function(
 		aOverlays.forEach(function(oOverlay) {
 			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 			// this means that getElementInstance is undefined when we get here via removeAggregation mutation
-			var vEditable = oOverlay.getElementInstance() && this._isEditable(oOverlay, mPropertyBag);
+			// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
+			var vEditable = oOverlay.getElementInstance() && oOverlay.getDesignTimeMetadata() && this._isEditable(oOverlay, mPropertyBag);
 
 			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
 			// for every other plugin isEditable should be a boolean.
-			if (vEditable !== undefined) {
+			if (vEditable !== undefined && vEditable !== null) {
 				if (typeof vEditable === "boolean") {
 					this._modifyPluginList(oOverlay, vEditable);
 				} else {
@@ -145,6 +174,7 @@ function(
 		this.removeFromPluginsList(oOverlay);
 		this.removeFromPluginsList(oOverlay, true);
 		this.removeFromPluginsList(oOverlay, false);
+		this._detachReevaluationEditable(oOverlay);
 	};
 
 	/**
@@ -155,6 +185,11 @@ function(
 	 */
 	BasePlugin.prototype.hasStableId = function(oOverlay) {
 		if (!oOverlay) {
+			return false;
+		}
+
+		// without DesignTimeMetadata the Overlay was not registered yet.
+		if (!oOverlay.getDesignTimeMetadata()) {
 			return false;
 		}
 
@@ -245,8 +280,11 @@ function(
 
 	BasePlugin.prototype.addToPluginsList = function(oOverlay, bSibling) {
 		var sName = this._retrievePluginName(bSibling);
-		oOverlay.addEditableByPlugin(sName);
-		oOverlay.setEditable(true);
+		var aPluginList = oOverlay.getEditableByPlugins();
+		if (aPluginList.indexOf(sName) === -1) {
+			oOverlay.addEditableByPlugin(sName);
+			oOverlay.setEditable(true);
+		}
 	};
 
 	BasePlugin.prototype.hasChangeHandler = function(sChangeType, oElement) {

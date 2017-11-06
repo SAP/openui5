@@ -1648,7 +1648,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			typeof vUrl === 'boolean' ||
 			typeof vUrl === 'string' ||
 			typeof vUrl === 'object' && (vUrl.url == null || vUrl.url === 'string') && (vUrl.async == null || typeof vUrl.async === 'boolean'),
-			"sUrl must be empty or a string or an object with an optional property 'url' of type string and an optional boolean property 'async'");
+			"vUrl must be empty or a string or an object with an optional property 'url' of type string and an optional boolean property 'async'");
 
 		if ( typeof vUrl === 'boolean' ) {
 			vUrl = { async: vUrl };

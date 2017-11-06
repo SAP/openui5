@@ -1,0 +1,16 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ObjectHeader
+		title="Header Text"
+		number="100.00"
+		numberUnit="$" >
+		<statuses>
+			<ObjectStatus
+				text="Success"
+				state="Success" />
+		</statuses>
+		<attributes>
+			<ObjectAttribute text="10 units" />
+		</attributes>
+	</ObjectHeader>
+</core:FragmentDefinition>

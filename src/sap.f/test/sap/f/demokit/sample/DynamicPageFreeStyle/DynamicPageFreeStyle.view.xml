@@ -15,7 +15,7 @@
 						<Title text="Header Title"/>
 					</f:heading>
 					<f:breadcrumbs>
-						<Breadcrumbs currentLocationText="Page 6">
+						<Breadcrumbs>
 							<Link text="Home" />
 							<Link text="Page 1" />
 							<Link text="Page 2" />
@@ -30,6 +30,9 @@
 					<f:snappedContent>
 						<Text text="This is a subheading"/>
 					</f:snappedContent>
+					<f:content>
+						<Image src="./test-resources/sap/f/images/KPI.png" tooltip="This is just a placeholder, not a real KPI control."/>
+					</f:content>
 					<f:actions>
 						<Button
 								text="Edit"

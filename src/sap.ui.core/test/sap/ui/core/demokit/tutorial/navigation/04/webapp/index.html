@@ -27,9 +27,11 @@
 				], function (mockserver, Shell, ComponentContainer) {
 					mockserver.init();
 					new Shell({
-						app: new ComponentContainer({
-							name: "sap.ui.demo.nav",
-							height: "100%"
+						app : new ComponentContainer({
+							name : "sap.ui.demo.nav",
+							settings : {
+								id : "nav"
+							}
 						})
 					}).placeAt("content");
 				});

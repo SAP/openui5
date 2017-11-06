@@ -91,12 +91,12 @@
 						"originalLanguage":"EN",
 						"conditions":{},
 						"support":{
-							"generator":"Change.createInitialFileContent",
+							"generator":"Variant.createInitialFileContent",
 							"service":"",
 							"user":""
 						}
 					},
-					"changes" : [
+					"controlChanges" : [
 						{
 							"variantReference":"variant0",
 							"fileName":"id_1445501120486_41",
@@ -165,12 +165,12 @@
 						"originalLanguage":"EN",
 						"conditions":{},
 						"support":{
-							"generator":"Change.createInitialFileContent",
+							"generator":"Variant.createInitialFileContent",
 							"service":"",
 							"user":"SAP"
 						}
 					},
-					"changes" : [
+					"controlChanges" : [
 						{
 							"variantReference":"idMain1--variantManagementOrdersTable",
 							"fileName":"id_1445501120486_41",
@@ -239,12 +239,12 @@
 						"originalLanguage":"EN",
 						"conditions":{},
 						"support":{
-							"generator":"Change.createInitialFileContent",
+							"generator":"Variant.createInitialFileContent",
 							"service":"",
 							"user":""
 						}
 					},
-					"changes" : [
+					"controlChanges" : [
 						{
 							"variantReference":"variant2",
 							"fileName": "id_1500543015867_80_moveControls",

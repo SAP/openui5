@@ -62,7 +62,7 @@ sap.ui.define([
 		},
 
 		clearAllSortings : function(oEvent) {
-			var oTable = this.getView().byId("table");
+			var oTable = this.byId("table");
 			oTable.getBinding("rows").sort(null);
 			this._resetSortingState();
 		},
@@ -85,7 +85,7 @@ sap.ui.define([
 
 		sortDeliveryDate : function(oEvent) {
 			var oCurrentColumn = oEvent.getParameter("column");
-			var oDeliveryDateColumn = this.getView().byId("deliverydate");
+			var oDeliveryDateColumn = this.byId("deliverydate");
 			if (oCurrentColumn != oDeliveryDateColumn) {
 				oDeliveryDateColumn.setSorted(false); //No multi-column sorting
 				return;
@@ -122,11 +122,11 @@ sap.ui.define([
 				return 0;
 			};
 
-			this.getView().byId("table").getBinding("rows").sort(oSorter);
+			this.byId("table").getBinding("rows").sort(oSorter);
 		},
 
 		_resetSortingState : function() {
-			var oTable = this.getView().byId("table");
+			var oTable = this.byId("table");
 			var aColumns = oTable.getColumns();
 			for (var i = 0; i < aColumns.length; i++) {
 				aColumns[i].setSorted(false);

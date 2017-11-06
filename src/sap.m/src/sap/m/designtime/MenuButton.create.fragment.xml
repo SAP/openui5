@@ -1,0 +1,13 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<MenuButton text="Menu Button">
+		<menu>
+			<Menu>
+				<items>
+					<MenuItem text="Menu Item One" />
+					<MenuItem text="Menu Item Two" />
+				</items>
+			</Menu>
+		</menu>
+	</MenuButton>
+</core:FragmentDefinition>

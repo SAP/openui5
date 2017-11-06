@@ -17,9 +17,9 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel(sPath));
 
 			// Sets the text to the label
-			this.getView().byId("UploadCollection").addEventDelegate({
+			this.byId("UploadCollection").addEventDelegate({
 				onBeforeRendering: function() {
-					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+					this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
 			});
 
@@ -63,7 +63,7 @@ sap.ui.define([
 			if (this.bIsUploadVersion) {
 				this.updateFile(oEvent.getParameters());
 			} else {
-				var oData = this.getView().byId("UploadCollection").getModel().getData();
+				var oData = this.byId("UploadCollection").getModel().getData();
 				var aItems = jQuery.extend(true, {}, oData).items;
 				var oItem = {};
 				var sUploadedFile = oEvent.getParameter("files")[0].fileName;
@@ -98,11 +98,11 @@ sap.ui.define([
 					]
 				};
 				aItems.unshift(oItem);
-				this.getView().byId("UploadCollection").getModel().setData({
+				this.byId("UploadCollection").getModel().setData({
 					"items": aItems
 				});
 				// Sets the text to the label
-				this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+				this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 			}
 
 			// delay the success message for to notice onChange message
@@ -122,12 +122,12 @@ sap.ui.define([
 		},
 
 		getAttachmentTitleText: function() {
-			var aItems = this.getView().byId("UploadCollection").getItems();
+			var aItems = this.byId("UploadCollection").getItems();
 			return "Uploaded (" + aItems.length + ")";
 		},
 
 		onDownloadItem: function() {
-			var oUploadCollection = this.getView().byId("UploadCollection");
+			var oUploadCollection = this.byId("UploadCollection");
 			var aSelectedItems = oUploadCollection.getSelectedItems();
 			if (aSelectedItems) {
 				for (var i = 0; i < aSelectedItems.length; i++) {
@@ -139,30 +139,30 @@ sap.ui.define([
 		},
 
 		onVersion: function() {
-			var oUploadCollection = this.getView().byId("UploadCollection");
+			var oUploadCollection = this.byId("UploadCollection");
 			this.bIsUploadVersion = true;
 			this.oItemToUpdate = oUploadCollection.getSelectedItem();
 			oUploadCollection.openFileDialog(this.oItemToUpdate);
 		},
 
 		onSelectionChange: function() {
-			var oUploadCollection = this.getView().byId("UploadCollection");
+			var oUploadCollection = this.byId("UploadCollection");
 			// If there's any item selected, sets download button enabled
 			if (oUploadCollection.getSelectedItems().length > 0) {
-				this.getView().byId("downloadButton").setEnabled(true);
+				this.byId("downloadButton").setEnabled(true);
 				if (oUploadCollection.getSelectedItems().length === 1) {
-					this.getView().byId("versionButton").setEnabled(true);
+					this.byId("versionButton").setEnabled(true);
 				} else {
-					this.getView().byId("versionButton").setEnabled(false);
+					this.byId("versionButton").setEnabled(false);
 				}
 			} else {
-				this.getView().byId("downloadButton").setEnabled(false);
-				this.getView().byId("versionButton").setEnabled(false);
+				this.byId("downloadButton").setEnabled(false);
+				this.byId("versionButton").setEnabled(false);
 			}
 		},
 
 		updateFile: function() {
-			var oData = this.getView().byId("UploadCollection").getModel().getData();
+			var oData = this.byId("UploadCollection").getModel().getData();
 			var aItems = jQuery.extend(true, {}, oData).items;
 			// Adds the new metadata to the file which was updated.
 			for (var i = 0; i < aItems.length; i++) {
@@ -178,7 +178,7 @@ sap.ui.define([
 				}
 			}
 			// Updates the model.
-			this.getView().byId("UploadCollection").getModel().setData({
+			this.byId("UploadCollection").getModel().setData({
 				"items": aItems
 			});
 			// Sets the flag back to false.

@@ -12,8 +12,8 @@ sap.ui.define([
 		},
 
 		onDisplayOnlyChange: function (evt) {
-			var label = this.getView().byId('label'),
-				labelInForm = this.getView().byId('labelInForm'),
+			var label = this.byId('label'),
+				labelInForm = this.byId('labelInForm'),
 				state = evt.getParameter('state');
 
 			label.setDisplayOnly(state);
@@ -21,8 +21,8 @@ sap.ui.define([
 		},
 
 		onWrappingChange: function (evt) {
-			var label = this.getView().byId('label'),
-				labelInForm = this.getView().byId('labelInForm'),
+			var label = this.byId('label'),
+				labelInForm = this.byId('labelInForm'),
 				state = evt.getParameter('state');
 
 			label.setWrapping(state);
@@ -31,8 +31,8 @@ sap.ui.define([
 
 		onSliderMoved: function (evt) {
 			var value = evt.getParameter("value") + "%";
-			this.getView().byId("containerForm").setWidth(value);
-			this.getView().byId("containerLayout").setWidth(value);
+			this.byId("containerForm").setWidth(value);
+			this.byId("containerLayout").setWidth(value);
 		}
 	});
 

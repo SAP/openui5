@@ -33,6 +33,7 @@ sap.ui.define(['sap/ui/base/Object'],
 
 			this.oModel = oModel;
 			this.sPath = sPath;
+			this.bForceRefresh = false;
 
 		},
 
@@ -91,12 +92,92 @@ sap.ui.define(['sap/ui/base/Object'],
 	};
 
 	/**
+	 * Sets the force refresh flag of the context. If this is set, the context will force a refresh of dependent
+	 * bindings, when the context is propagated.
+	 * @private
+	 * @param {boolean} bForceRefresh the force refresh flag
+	 */
+	Context.prototype.setForceRefresh = function(bForceRefresh) {
+		this.bForceRefresh = bForceRefresh;
+	};
+
+	/**
+	 * This method returns, whether dependent bindings need to be refreshed.
+	 * @private
+	 * @return {boolean} the force refresh flag
+	 */
+	Context.prototype.isRefreshForced = function() {
+		return this.bForceRefresh;
+	};
+
+	/**
+	 * Sets the preliminary flag of the context. If this is set, the context is not yet linked to actual model
+	 * data, but does just contain path information. This can be used by dependent bindings to send their request
+	 * in parallel to the request of the context binding.
+	 * @private
+	 * @param {boolean} bPreliminary the preliminary flag
+	 */
+	Context.prototype.setPreliminary = function(bPreliminary) {
+		this.bPreliminary = bPreliminary;
+	};
+
+	/**
+	 * This method returns, whether the context is preliminary.
+	 * @private
+	 * @return {boolean} the preliminary flag
+	 */
+	Context.prototype.isPreliminary = function() {
+		return this.bPreliminary;
+	};
+
+	/**
+	 * Sets the updated flag of the context. If this is set, the context was updated. E.g. the path changed from
+	 * a preliminary path to the canonical one.
+	 * @private
+	 * @param {boolean} bUpdated the preliminary flag
+	 */
+	Context.prototype.setUpdated = function(bUpdated) {
+		this.bUpdated = bUpdated;
+	};
+
+	/**
+	 * This method returns, whether the context is updated.
+	 * @private
+	 * @return {boolean} the updated flag
+	 */
+	Context.prototype.isUpdated = function() {
+		return this.bUpdated;
+	};
+
+	/**
+	 * Compares the two given Contexts. Returns true if the context instances are not equal,
+	 * if the new context is updated or if the new context is refreshed.
+	 *
+	 * @param {sap.ui.model.Context} oOldContext The old Context
+	 * @param {sap.ui.model.Context} oNewContext The new Context
+	 * @return {boolean} Wether oNewContext has changed
+	 * @private
+	 */
+	Context.hasChanged = function(oOldContext, oNewContext) {
+		var bChanged = false;
+
+		if (oOldContext !== oNewContext) {
+			bChanged = true;
+		} else if (oNewContext && oNewContext.isUpdated()) {
+			bChanged = true;
+		} else if (oNewContext && oNewContext.isRefreshForced()) {
+			bChanged = true;
+		}
+
+		return bChanged;
+	};
+
+	/**
 	 * toString method returns path for compatibility
 	 */
 	Context.prototype.toString = function() {
 		return this.sPath;
 	};
-
 
 	return Context;
 

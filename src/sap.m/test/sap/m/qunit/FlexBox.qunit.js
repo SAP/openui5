@@ -689,8 +689,8 @@
 		this.oItem1DomRef.style.width = "100%";
 		this.oItem2DomRef.style.width = "100%";
 		this.oItem3DomRef.style.width = "100%";
-		if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.phantomJS || sap.ui.Device.browser.safari) {
-			// IE 10-11, PhantomJS and Safari miscalculate the width of the flex items when box-sizing: border-box
+		if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.phantomJS) {
+			// IE 10-11, PhantomJS miscalculate the width of the flex items when box-sizing: border-box
 			assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 247) <= 1, "Width of Item 1 should be 247 (is " + this.oItem1DomRef.offsetWidth + ")");
 			assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 107) <= 1, "Width of Item 2 should be 107 (is " + this.oItem2DomRef.offsetWidth + ")");
 			assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 34) <= 1, "Width of Item 3 should be 34 (is " + this.oItem3DomRef.offsetWidth + ")");

@@ -219,12 +219,11 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/Device'],
         }
     };
 
-	RatingIndicatorRenderer.getIconURI = function (sState, oControl) {
-		var aHighContrastStyles = ["sap_hcb", "sap_belize_hcb", "sap_belize_hcw"];
-		if (aHighContrastStyles.indexOf(sap.ui.getCore().getConfiguration().getTheme()) > -1) {
-			if (sState == "UNSELECTED" && (oControl.getEnabled() && !oControl.getDisplayOnly())) {
-				return IconPool.getIconURI("unfavorite");
-			}
+    RatingIndicatorRenderer.getIconURI = function (sState, oControl) {
+	    if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
+		    if (sState === "UNSELECTED" && (oControl.getEnabled() && !oControl.getDisplayOnly())) {
+			    return IconPool.getIconURI("unfavorite");
+		    }
 
 			return IconPool.getIconURI('favorite');
 		}
@@ -233,7 +232,7 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/Device'],
 		    case "SELECTED":
 			    return oControl.getIconSelected() || IconPool.getIconURI("favorite");
 		    case "UNSELECTED":
-				if (oControl.getEditable()) {
+				if (oControl.getEditable() && !oControl.getDisplayOnly()) {
 				    return oControl.getIconUnselected() || IconPool.getIconURI("unfavorite");
 			    } else {
 				    return oControl.getIconUnselected() || IconPool.getIconURI("favorite");

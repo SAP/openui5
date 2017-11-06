@@ -49,9 +49,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Combine.prototype._isEditable = function(oOverlay) {
-		if (!Utils.getRelevantContainerDesigntimeMetadata(oOverlay)) {
-			return false;
-		}
 		var oCombineAction = this.getAction(oOverlay);
 		if (oCombineAction && oCombineAction.changeType && oCombineAction.changeOnRelevantContainer) {
 			return this.hasChangeHandler(oCombineAction.changeType, oOverlay.getRelevantContainer()) && this.hasStableId(oOverlay);
@@ -185,9 +182,9 @@ sap.ui.define([
 	 * @param  {any} oEventItem ContextMenu item which triggers the event
 	 * @param  {any} oContextElement Element where the action is triggered
 	 */
-	Combine.prototype.handler = function(aOverlays, oEventItem, oContextElement){
+	Combine.prototype.handler = function(aOverlays, mPropertyBag){
 		//TODO: Handle "Stop Cut & Paste" depending on alignment with Dietrich!
-		this.handleCombine(oContextElement);
+		this.handleCombine(mPropertyBag.contextElement);
 	};
 
 	return Combine;

@@ -3,7 +3,11 @@ sap.ui.define(['sap/ui/core/UIComponent'], function(UIComponent) {
 
 	var Component = UIComponent.extend("sap.m.sample.GenericTileAsKPITile.Component", {
 		metadata : {
-			rootView : "sap.m.sample.GenericTileAsKPITile.Page",
+			rootView : {
+				"viewName": "sap.m.sample.GenericTileAsKPITile.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : ["sap.m"]
 			},

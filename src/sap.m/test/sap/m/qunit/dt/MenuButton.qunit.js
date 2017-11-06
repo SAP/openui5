@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 (function () {
 	'use strict';
 
@@ -7,14 +9,26 @@
 		"sap/m/MenuButton",
 		"sap/m/Menu",
 		"sap/m/MenuItem",
-		"sap/ui/rta/test/controlEnablingCheck"
+		"sap/ui/rta/test/controlEnablingCheck",
+		"sap/m/changeHandler/SplitMenuButton",
+		"sap/f/DynamicPageTitle",
+		"sap/ui/fl/changeHandler/JsControlTreeModifier",
+		"sap/ui/fl/Change",
+		"sap/ui/core/UIComponent",
+		"sap/ui/core/ComponentContainer"
 	], function (
 		QUnitReport,
 		ElementEnablementTest,
 		MenuButton,
 		Menu,
 		MenuItem,
-		rtaControlEnablingCheck) {
+		rtaControlEnablingCheck,
+		SplitMenuButton,
+		DynamicPageTitle,
+		JsControlTreeModifier,
+		Change,
+		UIComponent,
+		ComponentContainer) {
 
 		var oElementEnablementTest = new ElementEnablementTest({
 			type: "sap.m.MenuButton",
@@ -210,5 +224,92 @@
 			afterRedo : fnConfirmButtonIsTakenOutSuccessfully
 		});
 
+		function createChangeDefinition() {
+			return jQuery.extend(true, {}, {
+				"changeType": "splitMenuButton",
+				"content": {
+					"newFieldIndex": 1
+				},
+				"selector": {
+					"id": "view--idToolbar",
+					"idIsLocal": true
+				}
+			});
+		}
+
+		QUnit.module("Reverts Action on MenuButton", {
+			beforeEach: function() {
+				var oXmlString = [
+					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
+						'<Toolbar id="idToolbar">',
+							'<content>',
+								'<MenuButton id="menubtn">',
+									'<menu>',
+										'<Menu>',
+											'<items>',
+												'<MenuItem/>',
+												'<MenuItem/>',
+											'</items>',
+										'</Menu>',
+									'</menu>',
+								'</MenuButton>',
+							'</content>',
+						'</Toolbar>',
+					'</mvc:View>'
+				].join('');
+
+				var Comp = UIComponent.extend("test", {
+					metadata: {
+						manifest : {
+							"sap.app": {
+								"id": "test",
+								"type": "application"
+							}
+						}
+					},
+					createContent : function() {
+						return sap.ui.xmlview({
+							id : this.createId("view"),
+							viewContent : oXmlString
+						});
+					}
+				});
+
+				this.oUiComponent = new Comp("comp");
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
+
+				this.oUiComponentContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+
+			afterEach: function() {
+				this.oUiComponentContainer.destroy();
+			}
+		});
+
+		QUnit.test("Revert split action ", function(assert) {
+
+			var oChange = new Change(createChangeDefinition()),
+				oChangeHandler = SplitMenuButton;
+
+			var oToolbar = this.oUiComponent.getRootControl().getContent()[0],
+				oPropertyBag = {
+					modifier: JsControlTreeModifier,
+					appComponent: this.oUiComponent
+				};
+
+			oChangeHandler.completeChangeContent(oChange, {
+				newElementIds: ["idNew"],
+				sourceControlId: "comp---view--menubtn"
+			}, oPropertyBag);
+
+			oChangeHandler.applyChange(oChange, oToolbar, oPropertyBag);
+			assert.strictEqual(oToolbar.getContent().length, 2, "The change was successfully executed.");
+
+			oChangeHandler.revertChange(oChange, oToolbar, oPropertyBag);
+			assert.strictEqual(oToolbar.getContent().length, 1, "The change was successfully reverted.");
+		});
 	});
 })();

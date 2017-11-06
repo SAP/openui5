@@ -326,8 +326,8 @@ sap.ui.define([
 				aSorters = [],
 				bFilterChanged = false,
 				bGroupChanged = false,
-				oSearchField = this.getView().byId("searchField"),
-				oList = this.getView().byId("list"),
+				oSearchField = this.byId("searchField"),
+				oList = this.byId("list"),
 				oBinding = oList.getBinding("items");
 
 			// add filter for search

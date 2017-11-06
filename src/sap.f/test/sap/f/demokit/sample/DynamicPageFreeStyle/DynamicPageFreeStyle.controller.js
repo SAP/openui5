@@ -13,7 +13,7 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 		getPage : function() {
-			return this.getView().byId("dynamicPageId");
+			return this.byId("dynamicPageId");
 		},
 		onToggleFooter: function () {
 			this.getPage().setShowFooter(!this.getPage().getShowFooter());

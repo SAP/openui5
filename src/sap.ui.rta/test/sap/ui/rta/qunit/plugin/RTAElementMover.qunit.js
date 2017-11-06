@@ -356,6 +356,11 @@ sap.ui.require([
 		assert.notOk(this.oElementMover.checkMovable(this.oMovedButton1Overlay), "then the movedButton is no longer movable");
 	});
 
+	QUnit.test("when Button2 is destroyed, leaving movedButton as the only element left in the Layout...", function(assert){
+		this.oButton2.destroy();
+		assert.notOk(this.oElementMover.checkMovable(this.oMovedButton1Overlay), "then the movedButton is no longer movable");
+	});
+
 	QUnit.module("Given verticalLayout with Button and another verticalLayout inside (second scenario) without relevantContainer propagation", {
 		beforeEach : function(assert) {
 

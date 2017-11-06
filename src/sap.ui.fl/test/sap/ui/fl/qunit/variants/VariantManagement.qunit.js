@@ -630,4 +630,47 @@
 
 	});
 
+	QUnit.test("Checking _openInErrorState", function(assert) {
+
+		assert.ok(!this.oVariantManagement.oErrorVariantPopOver);
+		this.oVariantManagement._openInErrorState();
+		assert.ok(this.oVariantManagement.oErrorVariantPopOver);
+
+		this.oVariantManagement.oErrorVariantPopOver.destroy();
+		this.oVariantManagement.oErrorVariantPopOver = null;
+	});
+
+	QUnit.test("Checking _triggerSearchInManageDialog", function(assert) {
+
+		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+
+		assert.ok(!this.oVariantManagement._bDeleteOccured);
+
+		this.oVariantManagement._createManagementDialog();
+		this.oVariantManagement._triggerSearchInManageDialog(null, this.oVariantManagement.oManagementTable);
+		assert.ok(!this.oVariantManagement._bDeleteOccured);
+
+		var oEvent = {
+			getParameters: function() {
+				return null;
+			}
+		};
+		this.oVariantManagement._triggerSearchInManageDialog(oEvent, this.oVariantManagement.oManagementTable);
+		assert.ok(!this.oVariantManagement._bDeleteOccured);
+
+		sinon.stub(oEvent, "getParameters").returns({});
+
+		this.oVariantManagement._triggerSearchInManageDialog(oEvent, this.oVariantManagement.oManagementTable);
+		assert.ok(this.oVariantManagement._bDeleteOccured);
+
+	});
+
+	QUnit.test("Checking _handleManageExecuteOnSelectionChanged ", function(assert) {
+		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+		this.oVariantManagement._createManagementDialog();
+
+		this.oVariantManagement._handleManageExecuteOnSelectionChanged({});
+		assert.ok(this.oVariantManagement.oManagementSave.getEnabled());
+	});
+
 }(QUnit, sinon));

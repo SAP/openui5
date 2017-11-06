@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<RatingIndicator maxValue="5" value="3" />
+</core:FragmentDefinition>

@@ -12,7 +12,7 @@ sap.ui.define([
 		onInit: function () {
 			this.oModel = new JSONModel();
 			this.oModel.loadData(jQuery.sap.getModulePath("sap.f.sample.SemanticPageFreeStyle", "/model.json"), null, false);
-			this.oSemanticPage = this.getView().byId("mySemanticPage");
+			this.oSemanticPage = this.byId("mySemanticPage");
 			this.oSemanticPage.setModel(this.oModel);
 
 			var oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();

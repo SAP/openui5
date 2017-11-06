@@ -15,7 +15,7 @@ sap.ui.define([
 			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 			this.getView().setModel(oModel);
 
-			var oInput = this.getView().byId('productInput');
+			var oInput = this.byId('productInput');
 			oInput.setSuggestionRowValidator(this.suggestionRowValidator);
 		},
 
@@ -46,7 +46,7 @@ sap.ui.define([
 		_handleValueHelpClose : function (evt) {
 			var oSelectedItem = evt.getParameter("selectedItem");
 			if (oSelectedItem) {
-				var productInput = this.getView().byId(this.inputId);
+				var productInput = this.byId(this.inputId);
 				productInput.setValue(oSelectedItem.getTitle());
 			}
 			evt.getSource().getBinding("items").filter([]);
@@ -63,8 +63,8 @@ sap.ui.define([
 
 		suggestionItemSelected: function (evt) {
 
-			var oInput = this.getView().byId('productInput'),
-				oText = this.getView().byId('selectedKey'),
+			var oInput = this.byId('productInput'),
+				oText = this.byId('selectedKey'),
 				sKey = oInput.getSelectedKey();
 
 			oText.setText(sKey);

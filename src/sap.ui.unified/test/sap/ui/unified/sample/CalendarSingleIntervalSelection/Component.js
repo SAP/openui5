@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.unified.sample.CalendarSingleIntervalSelection.Component", {
 
 		metadata : {
-			rootView : "sap.ui.unified.sample.CalendarSingleIntervalSelection.CalendarSingleIntervalSelection",
+			rootView : {
+				"viewName": "sap.ui.unified.sample.CalendarSingleIntervalSelection.CalendarSingleIntervalSelection",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.ui.unified"

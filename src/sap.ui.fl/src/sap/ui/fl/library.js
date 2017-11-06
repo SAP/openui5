@@ -20,6 +20,7 @@ sap.ui.define([
 	sap.ui.getCore().initLibrary({
 		name: "sap.ui.fl",
 		version: "${version}",
+		controls: ["sap.ui.fl.variants.VariantManagement"],
 		dependencies: [
 			"sap.ui.core", "sap.m"
 		],

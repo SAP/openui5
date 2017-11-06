@@ -4,7 +4,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageHeaderContentPriorities.Component", {
 
 		metadata: {
-			rootView: "sap.uxap.sample.ObjectPageHeaderContentPriorities.ObjectPageHeaderContentPriorities",
+			rootView: {
+				"viewName": "sap.uxap.sample.ObjectPageHeaderContentPriorities.ObjectPageHeaderContentPriorities",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: ["sap.m"]
 			},

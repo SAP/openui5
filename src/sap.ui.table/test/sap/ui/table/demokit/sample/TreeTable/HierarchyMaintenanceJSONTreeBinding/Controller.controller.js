@@ -14,17 +14,17 @@ sap.ui.define([
 		},
 
 		onCollapseAll: function() {
-			var oTreeTable = this.getView().byId("TreeTable");
+			var oTreeTable = this.byId("TreeTable");
 			oTreeTable.collapseAll();
 		},
 
 		onExpandFirstLevel: function() {
-			var oTreeTable = this.getView().byId("TreeTable");
+			var oTreeTable = this.byId("TreeTable");
 			oTreeTable.expandToLevel(1);
 		},
 
 		onDragStart: function(oEvent) {
-			var oTreeTable = this.getView().byId("TreeTable");
+			var oTreeTable = this.byId("TreeTable");
 			var oDragSession = oEvent.getParameter("dragSession");
 			var oDraggedRow = oEvent.getParameter("target");
 			var iDraggedRowIndex = oDraggedRow.getIndex();
@@ -50,7 +50,7 @@ sap.ui.define([
 		},
 
 		onDrop: function(oEvent) {
-			var oTreeTable = this.getView().byId("TreeTable");
+			var oTreeTable = this.byId("TreeTable");
 			var oDragSession = oEvent.getParameter("dragSession");
 			var oDroppedRow = oEvent.getParameter("droppedControl");
 			var aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
@@ -83,7 +83,7 @@ sap.ui.define([
 		},
 
 		onCut: function(oEvent) {
-			var oTreeTable = this.getView().byId("TreeTable");
+			var oTreeTable = this.byId("TreeTable");
 			var aSelectedIndices = oTreeTable.getSelectedIndices();
 			var oModel = oTreeTable.getBinding("rows").getModel();
 
@@ -106,12 +106,12 @@ sap.ui.define([
 			}
 
 			if (this._aClipboardData.length > 0) {
-				this.getView().byId("paste").setEnabled(true);
+				this.byId("paste").setEnabled(true);
 			}
 		},
 
 		onPaste: function(oEvent) {
-			var oTreeTable = this.getView().byId("TreeTable");
+			var oTreeTable = this.byId("TreeTable");
 			var aSelectedIndices = oTreeTable.getSelectedIndices();
 			var oModel = oTreeTable.getBinding("rows").getModel();
 
@@ -132,7 +132,7 @@ sap.ui.define([
 			oNewParent.categories = oNewParent.categories.concat(this._aClipboardData);
 
 			this._aClipboardData = [];
-			this.getView().byId("paste").setEnabled(false);
+			this.byId("paste").setEnabled(false);
 			oModel.refresh();
 		}
 	});

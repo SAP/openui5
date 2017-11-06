@@ -80,7 +80,7 @@ sap.ui.define([
 
 			CommunicationBus.subscribe(channelNames.ON_PROGRESS_UPDATE, function (data) {
 				var currentProgress = data.currentProgress,
-					pi = this.getView().byId("progressIndicator");
+					pi = this.byId("progressIndicator");
 
 				pi.setDisplayValue(currentProgress + "/" + 100);
 				this.model.setProperty("/progress", currentProgress);
@@ -129,13 +129,13 @@ sap.ui.define([
 			}, 0);
 		},
 		goToAnalysis: function (evt) {
-			var navCon = this.getView().byId("navCon");
-			navCon.to(this.getView().byId("analysis"), "show");
+			var navCon = this.byId("navCon");
+			navCon.to(this.byId("analysis"), "show");
 			this.ensureOpened();
 		},
 		goToIssues: function () {
-			var navCon = this.getView().byId("navCon");
-			navCon.to(this.getView().byId("issues"), "show");
+			var navCon = this.byId("navCon");
+			navCon.to(this.byId("issues"), "show");
 			this.ensureOpened();
 		},
 
@@ -170,7 +170,7 @@ sap.ui.define([
 
 		updateShowButton: function () {
 			// When hidden is true - the frame is minimized and we show the "show" button
-			this.getView().byId("sapSTShowButtonBar").setVisible(this.hidden);
+			this.byId("sapSTShowButtonBar").setVisible(this.hidden);
 		},
 
 		toggleHide: function () {
@@ -198,7 +198,7 @@ sap.ui.define([
 		},
 
 		_clearProcessIndicator: function() {
-			var pi = this.getView().byId("progressIndicator");
+			var pi = this.byId("progressIndicator");
 			pi.setDisplayValue("None");
 			this.model.setProperty("/progress", 0.1);
 		},

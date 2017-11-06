@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			cache : 'Object'
 		},
 
-		designTime: true
+		designtime: "sap/ui/core/designtime/mvc/XMLView.designtime"
 	}});
 
 		/**

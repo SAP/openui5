@@ -9,8 +9,8 @@ sap.ui.define([
 
 	var WizardController = Controller.extend("sap.m.sample.WizardCurrentStep.Branching", {
 		onInit: function () {
-			this.branchingWizard = this.getView().byId("BranchingWizard");
-			this.radioBtnGroup = this.getView().byId("PathSelection");
+			this.branchingWizard = this.byId("BranchingWizard");
+			this.radioBtnGroup = this.byId("PathSelection");
 		},
 		onAfterRendering: function () {
 			this.applyPath(0);
@@ -30,12 +30,12 @@ sap.ui.define([
 			this._lastPathApplied = index;
 			var pathIds = this.radioBtnGroup.getButtons()[index].getText().split("->");
 			for (var i = 0; i < pathIds.length - 1; i++) {
-				var step = this.getView().byId(pathIds[i]);
-				var nextStep = this.getView().byId(pathIds[i + 1]);
+				var step = this.byId(pathIds[i]);
+				var nextStep = this.byId(pathIds[i + 1]);
 				step.setNextStep(nextStep);
 			}
 
-			this.getView().byId(pathIds[pathIds.length - 1]).setNextStep(null);
+			this.byId(pathIds[pathIds.length - 1]).setNextStep(null);
 		},
 		reapplyLastPath: function () {
 			this.applyPath(this._lastPathApplied);

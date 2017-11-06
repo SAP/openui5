@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 			oRouter.attachRouteMatched(function(oEvent) {
 				if (oEvent.getParameter("name") == "_testapp_detail") {
 					var oArguments = oEvent.getParameter("arguments"),
-						oItem = that.getView().byId("masterList").getItems()[parseInt(oArguments.selectedIndex,10)];
+						oItem = that.byId("masterList").getItems()[parseInt(oArguments.selectedIndex,10)];
 
 					if (oItem) {
 						oItem.setSelected(true);

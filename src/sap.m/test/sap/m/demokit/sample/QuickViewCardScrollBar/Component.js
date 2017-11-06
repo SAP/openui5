@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.QuickViewCardScrollBar.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.QuickViewCardScrollBar.QuickView",
+			rootView : {
+				"viewName": "sap.m.sample.QuickViewCardScrollBar.QuickView",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

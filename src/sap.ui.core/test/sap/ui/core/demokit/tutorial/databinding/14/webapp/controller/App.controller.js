@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller","sap/ui/model/type/Currency"],
 			var oSelectedItem = oEvent.getSource();
 			var oContext = oSelectedItem.getBindingContext("products");
 			var sPath = oContext.getPath();
-			var oProductDetailPanel = this.getView().byId("productDetailsPanel");
+			var oProductDetailPanel = this.byId("productDetailsPanel");
 			oProductDetailPanel.bindElement({ path: sPath, model: "products" });
 		}
 	});

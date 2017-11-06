@@ -47,14 +47,19 @@ sap.ui.define([
 	 * @private
 	 */
 	Settings.prototype._isEditable = function(oOverlay) {
-		if (!Utils.getRelevantContainerDesigntimeMetadata(oOverlay)) {
-			return false;
-		}
-
 		var vSettingsAction = this.getAction(oOverlay);
 		// If no additional actions are defined in settings, a handler must be present to make it available
-		if (vSettingsAction && (vSettingsAction instanceof Array || vSettingsAction.handler)){
-			return this.hasStableId(oOverlay);
+		if (vSettingsAction) {
+			if (vSettingsAction.handler) {
+				return this.hasStableId(oOverlay);
+			} else {
+				var bHandlerFound = Object.keys(vSettingsAction).some(function(sSettingsAction) {
+					return vSettingsAction[sSettingsAction].handler;
+				});
+				if (bHandlerFound) {
+					return this.hasStableId(oOverlay);
+				}
+			}
 		}
 
 		return false;
@@ -105,13 +110,11 @@ sap.ui.define([
 	 * @param  {function} [fnHandler] handler function for the case of multiple settings actions
 	 * @return {Promise} Returns promise resolving with the creation of the commands
 	 */
-	Settings.prototype.handler = function(aSelectedOverlays, fnHandler) {
+	Settings.prototype.handler = function(aSelectedOverlays, mPropertyBag) {
+		mPropertyBag = mPropertyBag || {};
 		var oSettingsCommand, oAppDescriptorCommand, oCompositeCommand;
 		var oElement = aSelectedOverlays[0].getElementInstance();
-		var mPropertyBag = {
-			getUnsavedChanges: this._getUnsavedChanges.bind(this),
-			styleClass: Utils.getRtaStyleClassName()
-		};
+		var fnHandler = mPropertyBag.fnHandler;
 
 		if (!fnHandler){
 			fnHandler = aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
@@ -119,6 +122,8 @@ sap.ui.define([
 				throw new Error("Handler not found for settings action");
 			}
 		}
+		mPropertyBag.getUnsavedChanges = this._getUnsavedChanges.bind(this);
+		mPropertyBag.styleClass = Utils.getRtaStyleClassName();
 
 		return fnHandler(oElement, mPropertyBag).then(function(aChanges) {
 			if (aChanges.length > 0){
@@ -189,31 +194,37 @@ sap.ui.define([
 		var iRank = 110;
 		var sPluginId = "CTX_SETTINGS";
 
-		// Only one action: simply return settings entry as usual
-		if (!(vSettingsActions instanceof Array)){
-			return this._getMenuItems(oOverlay, {pluginId : sPluginId, rank : iRank});
-		// Multiple actions: return one menu item for each action
-		} else {
-			var aMenuItems = [];
-			var iActionCounter = 0;
-			vSettingsActions.forEach(function(oSettingsAction){
-				var sActionText = this.getActionText(oOverlay, oSettingsAction, oSettingsAction.name);
-				if (oSettingsAction.handler){
-					aMenuItems.push({
-						id : sPluginId + iActionCounter,
-						text : sActionText,
-						enabled : oSettingsAction.isEnabled && oSettingsAction.isEnabled.bind(this, oOverlay.getElementInstance()),
-						handler : function(fnHandler, aOverlays){
-							return this.handler(aOverlays, fnHandler);
-						}.bind(this, oSettingsAction.handler),
-						rank : iRank + iActionCounter
-					});
-					iActionCounter++;
-				} else {
-					jQuery.sap.log.warning("Handler not found for settings action '" + sActionText + "'");
-				}
-			}.bind(this));
-			return aMenuItems;
+		if (vSettingsActions) {
+			// Only one action: simply return settings entry as usual
+			if (vSettingsActions.handler) {
+				return this._getMenuItems(oOverlay, {pluginId : sPluginId, rank : iRank});
+			// Multiple actions: return one menu item for each action
+			} else {
+				var aMenuItems = [];
+				var aSettingsActions = Object.keys(vSettingsActions);
+				var iActionCounter = 0;
+				aSettingsActions.forEach(function(sSettingsAction){
+					var oSettingsAction = vSettingsActions[sSettingsAction],
+						sActionText = this.getActionText(oOverlay, oSettingsAction, oSettingsAction.name);
+					if (oSettingsAction.handler){
+						aMenuItems.push({
+							id : sPluginId + iActionCounter,
+							text : sActionText,
+							enabled : oSettingsAction.isEnabled && oSettingsAction.isEnabled.bind(this, oOverlay.getElementInstance()),
+							handler : function(fnHandler, aOverlays, mPropertyBag){
+								mPropertyBag = mPropertyBag || {};
+								mPropertyBag.fnHandler = fnHandler;
+								return this.handler(aOverlays, mPropertyBag);
+							}.bind(this, oSettingsAction.handler),
+							rank : iRank + iActionCounter
+						});
+						iActionCounter++;
+					} else {
+						jQuery.sap.log.warning("Handler not found for settings action '" + sActionText + "'");
+					}
+				}.bind(this));
+				return aMenuItems;
+			}
 		}
 	};
 

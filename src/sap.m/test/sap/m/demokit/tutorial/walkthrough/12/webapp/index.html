@@ -18,8 +18,11 @@
 	<script>
 		sap.ui.getCore().attachInit(function () {
 			new sap.m.Shell({
-				app: new sap.ui.core.ComponentContainer({
-					name: "sap.ui.demo.wt"
+				app  new sap.ui.core.ComponentContainer({
+					name : "sap.ui.demo.wt",
+					settings : {
+						id : "wt"
+					}
 				})
 			}).placeAt("content");
 		});

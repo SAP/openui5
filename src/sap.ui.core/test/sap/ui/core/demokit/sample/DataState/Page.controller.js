@@ -31,11 +31,11 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 			this.getView().setModel(this.oDataStateModel,"EmailDataState");
 			this.getView().bindElement("/");
 			//override experimental refreshDataState method on Email Input
-			this.addRefreshDataStateMethod(this.getView().byId("Email"));
+			this.addRefreshDataStateMethod(this.byId("Email"));
 
 			var oEmailType = new sap.ui.model.type.String();
 			oEmailType.setConstraints({contains:"@"});
-			this.getView().byId("Email").bindProperty("value",{path:"SampleData>/Email",type:oEmailType});
+			this.byId("Email").bindProperty("value",{path:"SampleData>/Email",type:oEmailType});
 			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
 
 			this.onReset();
@@ -153,7 +153,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 			}
 		},
 		applyStateMessage : function(sState) {
-			var oMessage = this.getView().byId("StateMessage");
+			var oMessage = this.byId("StateMessage");
 			if (!this.oSampleDataModel.getDelay()) {
 				oMessage.setText("Currently Simulating a Client Model (no laundering handling, limited dirty handling)");
 				oMessage.setTooltip("Client Models have no laundering or dirty state handling as they apply changed data directly to the model and do not wait for server responses.");
@@ -166,7 +166,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 			var that = this;
 			setTimeout(function(){
 				for (var i=0;i<aDataStates.length;i++) {
-					var oPropText = that.getView().byId("property_" + aDataStates[i] + "_new");
+					var oPropText = that.byId("property_" + aDataStates[i] + "_new");
 					if (oPropText) {
 						oPropText.addStyleClass("highlight").removeStyleClass("diminished");
 					}
@@ -176,7 +176,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 		removePropertyHighlight: function() {
 			var aDataStates = ["invalidValue", "value","internalValue","originalValue","originalInternalValue","laundering","dirty"];
 			for (var i=0;i<aDataStates.length;i++) {
-				this.getView().byId("property_" + aDataStates[i] + "_new").removeStyleClass("highlight").addStyleClass("diminished");
+				this.byId("property_" + aDataStates[i] + "_new").removeStyleClass("highlight").addStyleClass("diminished");
 			}
 		},
 		applyDataStateChanged: function(oDataState) {

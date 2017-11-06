@@ -118,7 +118,7 @@
 				]
 			});
 			this.page.placeAt("qunit-fixture");
-			sinon.stub(jQuery.sap.log, 'getLog',function fakeGetLog() {
+			sinon.stub(jQuery.sap.log, 'getLogEntries',function fakeGetLog() {
 				return [
 					{supportInfo: {type: "panel", elementId: "innerPanel"}},
 					{supportInfo: {}},
@@ -155,7 +155,7 @@
 			this.es = null;
 			this.filteringFunction = null;
 			this.page.destroy();
-			jQuery.sap.log.getLog.restore();
+			jQuery.sap.log.getLogEntries.restore();
 		}
 	});
 
@@ -197,8 +197,8 @@
 	});
 
 	QUnit.test("Containing none valid logs", function (assert) {
-		jQuery.sap.log.getLog.restore();
-		sinon.stub(jQuery.sap.log, 'getLog',function fakeGetLog() {
+		jQuery.sap.log.getLogEntries.restore();
+		sinon.stub(jQuery.sap.log, 'getLogEntries',function fakeGetLog() {
 			return [
 				{
 					component: "",

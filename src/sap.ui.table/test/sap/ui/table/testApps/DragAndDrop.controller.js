@@ -9,8 +9,8 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.testApps.DragAndDrop", {
 		onInit: function () {
-			var oTable = this.getView().byId("table");
-			var oTreeTable = this.getView().byId("treetable");
+			var oTable = this.byId("table");
+			var oTreeTable = this.byId("treetable");
 			var oModel = new JSONModel();
 
 			oModel.setData({

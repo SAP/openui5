@@ -47,7 +47,10 @@ sap.ui.define([
 			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties : {
-				oldValue : "string"
+				oldValue : "string",
+				variantManagementControlOverlay : {
+					type : "any"
+				}
 			},
 			associations: {},
 			events: {}
@@ -312,6 +315,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.duplicateVariant = function(oOverlay) {
+		this.setVariantManagementControlOverlay(oOverlay);
 		var sVariantManagementReference = oOverlay.getVariantManagement();
 		var oElement = oOverlay.getElementInstance();
 		var oModel = this._getVariantModel(oElement);
@@ -322,7 +326,8 @@ sap.ui.define([
 			sourceVariantReference: sCurrentVariantReference
 		}, oDesignTimeMetadata, sVariantManagementReference);
 		this.fireElementModified({
-			"command" : oDuplicateCommand
+			"command" : oDuplicateCommand,
+			"action" : "setTitle"
 		});
 	};
 

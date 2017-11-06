@@ -68,7 +68,8 @@
 				"viewType": "XML",
 				"viewPath": "sap.ui.demo.bulletinboard.view",
 				"controlId": "app",
-				"controlAggregation": "pages"
+				"controlAggregation": "pages",
+				"async": true
 			},
 			"routes": [
 				{

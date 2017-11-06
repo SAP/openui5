@@ -110,8 +110,8 @@ function(
 		}
 
 		var oRelevantContainer = oOverlay.getRelevantContainer();
-		var oRelevantContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oRelevantContainer);
-		if (!Utils.getRelevantContainerDesigntimeMetadata(oOverlay)) {
+		var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+		if (!oRelevantContainerOverlay) {
 			return false;
 		}
 
@@ -141,8 +141,9 @@ function(
 			} else if (aValidAggregationOverlays.length === 1) {
 				var aVisibleOverlays = aValidAggregationOverlays[0].getChildren().filter(function(oChildOverlay) {
 					var oChildElement = oChildOverlay.getElementInstance();
-					//At least one sibling has to be visible and still attached to the parent
-					return (oChildElement.getVisible() && oChildElement.getParent());
+					// At least one sibling has to be visible and still attached to the parent
+					// In some edge cases, the child element is not available anymore (element already got destroyed)
+					return (oChildElement && oChildElement.getVisible() && oChildElement.getParent());
 				});
 				bValid = aVisibleOverlays.length > 1;
 			}

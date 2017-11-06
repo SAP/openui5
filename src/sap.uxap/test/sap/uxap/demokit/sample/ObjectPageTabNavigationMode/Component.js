@@ -2,7 +2,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	"use strict";
 	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageTabNavigationMode.Component", {
 		metadata: {
-			rootView: "sap.uxap.sample.ObjectPageTabNavigationMode.ObjectPageTabNavigationMode",
+			rootView: {
+				"viewName": "sap.uxap.sample.ObjectPageTabNavigationMode.ObjectPageTabNavigationMode",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m"

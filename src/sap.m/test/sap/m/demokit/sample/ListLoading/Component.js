@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.ListLoading.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.ListLoading.List",
+			rootView : {
+				"viewName": "sap.m.sample.ListLoading.List",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

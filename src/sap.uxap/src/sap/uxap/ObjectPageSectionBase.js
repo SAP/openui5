@@ -369,7 +369,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 	/**
 	 * Handler for arrow down
-	 * @param oEvent - The event object
+	 * @param {jQuery.Event} oEvent The AROW-DOWN keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapdown = function (oEvent) {
 		this._handleFocusing(oEvent, oEvent.currentTarget.nextSibling);
@@ -389,6 +389,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 	/**
 	 * Handler for arrow right
+	 * @param {jQuery.Event} oEvent The AROW-RIGHT keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapright = function (oEvent) {
 		var sMethodName = this._bRtl ? "onsapup" : "onsapdown";
@@ -397,7 +398,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 	/**
 	 * Handler for arrow up
-	 * @param oEvent - The event object
+	 * @param {jQuery.Event} oEvent The AROW-UP keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapup = function (oEvent) {
 		this._handleFocusing(oEvent, oEvent.currentTarget.previousSibling);
@@ -405,6 +406,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 	/**
 	 * Handler for arrow left
+	 * @param {jQuery.Event} oEvent The ARROW-LEFT keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapleft = function (oEvent) {
 		var sMethodName = this._bRtl ? "onsapdown" : "onsapup";
@@ -413,7 +415,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 	/**
 	 * Handler for HOME key
-	 * @param oEvent - The event object
+	 * @param {jQuery.Event} oEvent The HOME keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsaphome = function (oEvent) {
 		this._handleFocusing(oEvent, oEvent.currentTarget.parentElement.firstChild);
@@ -421,7 +423,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 	/**
 	 * Handler for END key
-	 * @param oEvent - The event object
+	 * @param {jQuery.Event} oEvent The END keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapend = function (oEvent) {
 		this._handleFocusing(oEvent, oEvent.currentTarget.parentElement.lastChild);
@@ -429,8 +431,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 	/**
 	 * Handler for PAGE UP event.
-	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The PAGE-UP keyboard key event object
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype.onsappageup = function (oEvent) {
@@ -465,7 +466,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	/**
 	 * Handler for PAGE DOWN event.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The PAGE-DOWN keyboard key event object
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype.onsappagedown = function (oEvent) {

@@ -103,7 +103,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library'],
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
-		designTime : true
+		designtime: "sap/ui/layout/designtime/form/Form.designtime"
 	}});
 
 	Form.prototype.toggleContainerExpanded = function(oContainer){

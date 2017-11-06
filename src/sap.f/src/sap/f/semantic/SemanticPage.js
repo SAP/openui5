@@ -851,8 +851,6 @@ sap.ui.define([
 
 	/**
 	* Initializes the internal <code>sap.f.DynamicPage</code> aggregation.
-	*
-	* @returns {sap.f.semantic.SemanticPage}
 	* @private
 	*/
 	SemanticPage.prototype._initDynamicPage = function () {

@@ -33,7 +33,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller',
 						enabled: false,
 						press: function() {
 							oSelectedDate = oCalendar.getSelectedDates()[0].getStartDate();
-							oTable = this.getView().byId('selectionTable');
+							oTable = this.byId('selectionTable');
 							oProductModel = this.getView().getModel('products');
 							aSelectedItems = oTable.getSelectedItems();
 
@@ -63,9 +63,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller',
 
 
 			handleTableSelectionChange: function (oEvent) {
-				var oTable = this.getView().byId('selectionTable'),
+				var oTable = this.byId('selectionTable'),
 					iSelectedItemsCount = oTable.getSelectedItems().length,
-					oButton = this.getView().byId("changeDatesButton");
+					oButton = this.byId("changeDatesButton");
 
 				oButton.setEnabled(!!iSelectedItemsCount);
 			},

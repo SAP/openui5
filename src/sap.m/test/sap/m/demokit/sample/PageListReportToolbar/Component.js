@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.PageListReportToolbar.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.PageListReportToolbar.Page",
+			rootView : {
+				"viewName": "sap.m.sample.PageListReportToolbar.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

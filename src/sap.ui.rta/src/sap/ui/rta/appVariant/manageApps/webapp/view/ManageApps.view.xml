@@ -53,18 +53,13 @@
 									<Text text="{description}" wrapping="true" class="maaDescription"/>
 								</table:template>
 				            </table:Column>
-				            <table:Column id="appVariantId" width="5rem" hAlign="Center">
-				                <Label text="{i18n>MAA_DIALOG_ID}"/>
-			                	<table:template>
-									<Button text="{i18n>MAA_DIALOG_COPY_ID}" press="copyId"/>
-								</table:template>
-				            </table:Column>
-				            <table:Column hAlign="Center">
+				            <table:Column width="17rem" hAlign="Center">
 				                <Label text="{i18n>MAA_DIALOG_ACTIONS}"/>
 			                	<table:template>
 			                		<HBox alignItems="Center" justifyContent="SpaceAround">
-										<Button text="{i18n>MAA_DIALOG_ADAPT_UI}" wrapping="true" press="handleUiAdaptation" enabled="{adaptUIButtonVisibility}" visible="{visible}" />
-										<Button text="{i18n>MAA_DIALOG_SAVE_AS_APP}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" wrapping="true" press="saveAsAppVariant" />
+	                					<Button class="sapUiSmallMarginBegin sapUiSmallMarginEnd" text="{i18n>MAA_DIALOG_COPY_ID}" wrapping="true" press="copyId"/>
+										<Button class="sapUiSmallMarginEnd" text="{i18n>MAA_DIALOG_ADAPT_UI}" wrapping="true" press="handleUiAdaptation" enabled="{adaptUIButtonVisibility}" visible="{visible}" />
+										<Button class="sapUiSmallMarginEnd" text="{i18n>MAA_DIALOG_SAVE_AS_APP}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" wrapping="true" press="saveAsAppVariant" />
 									</HBox>
 								</table:template>
 				            </table:Column>

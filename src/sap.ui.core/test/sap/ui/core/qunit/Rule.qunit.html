@@ -32,7 +32,8 @@
 		QUnit.config.autostart = false;
 
 		sap.ui.require([
-			"local/rules/Config/asynchronousXMLViews.qunit"
+			"local/rules/Config/asynchronousXMLViews.qunit",
+			"local/rules/misc/silentEventBus.qunit"
 		], function() {
 			QUnit.start();
 		});

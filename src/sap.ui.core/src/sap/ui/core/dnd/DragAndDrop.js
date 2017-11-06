@@ -58,7 +58,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			 * The drag session can be used to transfer data between applications or between dragged and dropped controls.
 			 * Please see provided APIs for more details.
 			 *
-			 * <b>Note:</b> This object can only be exists during drag-drop operation.
+			 * <b>Note:</b> This object only exists during a drag-and-drop operation.
 			 *
 			 * @namespace
 			 * @name sap.ui.core.dnd.DragSession

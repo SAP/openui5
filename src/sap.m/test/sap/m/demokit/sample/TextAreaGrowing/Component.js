@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TextAreaGrowing.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TextAreaGrowing.V",
+			rootView : {
+				"viewName": "sap.m.sample.TextAreaGrowing.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

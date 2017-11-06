@@ -5,24 +5,25 @@
 
 	jQuery.sap.registerModulePath("view", "view");
 
-	sinon.config.useFakeTimers = true;
-
-	var iRenderingDelay = 1000;
+	var iRenderingDelay = 2000;
 	var ANCHORBAR_CLASS_SELECTOR = ".sapUxAPAnchorBar";
 	var HIERARCHICAL_CLASS_SELECTOR = ".sapUxAPHierarchicalSelect";
 
 	QUnit.module("properties", {
 		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
 			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBar", {
 				viewName: "view.UxAP-69_AnchorBar"
 			});
 			this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
 			this.anchorBarView.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(iRenderingDelay);
 		},
 		afterEach: function () {
 			this.anchorBarView.destroy();
 			this.oObjectPage = null;
+			this.clock.restore();
 		}
 	});
 
@@ -116,6 +117,7 @@
 
 	QUnit.module("simple binding", {
 		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
 			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBarBinding", {
 				viewName: "view.UxAP-69_AnchorBarBinding"
 			});
@@ -123,11 +125,13 @@
 			this.anchorBarView.setModel(oModel);
 			this.anchorBarView.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(iRenderingDelay);
 		},
 		afterEach: function () {
 			this.anchorBarView.destroy();
 			this.oObjectPage = null;
 			this.oLastSectionButton = null;
+			this.clock.restore();
 		}
 	});
 
@@ -216,6 +220,7 @@
 
 	QUnit.module("complex binding", {
 		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
 			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBarBinding", {
 				viewName: "view.UxAP-69_AnchorBarBinding"
 			});
@@ -223,11 +228,13 @@
 			this.anchorBarView.setModel(oModel);
 			this.anchorBarView.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(iRenderingDelay);
 		},
 		afterEach: function () {
 			this.anchorBarView.destroy();
 			this.oObjectPage = null;
 			this.oLastSectionButton = null;
+			this.clock.restore();
 		}
 	});
 

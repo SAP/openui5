@@ -1405,7 +1405,7 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 	text-shadow: 0 0 0.125rem #000000;
 }
 
-.sapUiDemokit .sapMText.sapUiDocumentationApiHeaderTitleText {
+.sapUiDemokit .sapUiBlockCellContent .sapMText.sapUiDocumentationApiHeaderTitleText {
 	top: 2.5rem;
 	font-size: 3rem;
 	margin-left: -0.2rem;
@@ -1454,7 +1454,7 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 .sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
 	top: 2.5rem;
 	left: 0;
-	font-size: 3rem;
+	font-size: 3rem !important;
 	margin-left: -0.2rem;
 	position: absolute;
 	padding-left: 2rem;
@@ -1467,7 +1467,7 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 @media (max-width: 64rem) {
 	.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
 		top: 1.25rem;
-		font-size: 1.625rem;
+		font-size: 1.625rem !important;
 		padding-left: 1rem;
 		margin-left: -0.0625rem;
 	}
@@ -1477,7 +1477,7 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 @media (min-width: 90rem) {
 	.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
 		top: 2.5rem;
-		font-size: 4rem;
+		font-size: 4rem !important;
 		padding-left: 3rem;
 	}
 }

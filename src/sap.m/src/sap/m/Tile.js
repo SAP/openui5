@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @deprecated As of version 1.50, use {@link sap.m.GenericTile} instead
+	 * @deprecated as of version 1.50, replaced by {@link sap.m.GenericTile}
 	 * @alias sap.m.Tile
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

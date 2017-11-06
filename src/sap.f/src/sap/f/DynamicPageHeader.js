@@ -80,7 +80,7 @@ sap.ui.define(["./library",
 					 */
 					_collapseButton: {type: "sap.m.Button", multiple: false,  visibility: "hidden"}
 				},
-				designTime: true
+				designtime: "sap/f/designtime/DynamicPageHeader.designtime"
 			}
 		});
 

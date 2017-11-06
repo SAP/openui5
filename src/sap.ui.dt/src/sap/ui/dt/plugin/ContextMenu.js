@@ -194,7 +194,10 @@ sap.ui.define([
 				jQuery.sap.assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
 
 				if (!oEventItem.getSubmenu()) {
-					oItem.handler(aSelection, oEventItem, oContextElement);
+					var mPropertiesBag = {};
+					mPropertiesBag.eventITem = oEventItem;
+					mPropertiesBag.contextElement = oContextElement;
+					oItem.handler(aSelection, mPropertiesBag);
 				}
 				return true;
 			}

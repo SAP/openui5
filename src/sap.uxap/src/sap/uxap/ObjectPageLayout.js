@@ -303,7 +303,7 @@ sap.ui.define([
 					}
 				}
 			},
-			designTime: true
+			designtime: "sap/uxap/designtime/ObjectPageLayout.designtime"
 		}
 	});
 
@@ -326,6 +326,17 @@ sap.ui.define([
 		VISUAL_INDICATOR_MOUSE_OUT: "_visualIndicatorMouseOut",
 		HEADER_VISUAL_INDICATOR_PRESS: "_headerVisualIndicatorPress",
 		TITLE_VISUAL_INDICATOR_PRESS: "_titleVisualIndicatorPress"
+	};
+
+	ObjectPageLayout.BREAK_POINTS = {
+		TABLET: 1024,
+		PHONE: 600
+	};
+
+	ObjectPageLayout.DYNAMIC_HEADERS_MEDIA = {
+		PHONE: "sapFDynamicPage-Std-Phone",
+		TABLET: "sapFDynamicPage-Std-Tablet",
+		DESKTOP: "sapFDynamicPage-Std-Desktop"
 	};
 
 	/**
@@ -767,6 +778,10 @@ sap.ui.define([
 
 		this.oCore.getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
 
+		if (this._hasDynamicTitle()) {
+			this._updateMedia(this._getWidth(this));
+		}
+
 		this._updateToggleHeaderVisualIndicators();
 
 		this.fireEvent("onAfterRenderingDOMReady");
@@ -910,9 +925,8 @@ sap.ui.define([
 	 * Note that <code>null</code> or <code>undefined</code> are not valid arguments and will be discarded.
 	 * This is because the <code>sap.uxap.ObjectPageLayout</code> should always have one of its sections selected (unless it has 0 sections).
 	 *
-	 * @param {string | sap.uxap.ObjectPageSection}
-	 *            sId the ID of the section that should be selected
-	 *            vSection the section that should be selected
+	 * @param {string | sap.uxap.ObjectPageSection} vSectionBase
+	 *            The ID or the section instance that should be selected
 	 *            Note that <code>null</code> or <code>undefined</code> are not valid arguments
 	 * @return {sap.uxap.ObjectPageLayout} Returns <code>this</code> to allow method chaining
 	 * @public
@@ -927,7 +941,7 @@ sap.ui.define([
 		}
 
 		if (!sSelectedSectionId) {
-			("section or sectionID expected");
+			jQuery.sap.log.warning("section or sectionID expected", this);
 			return;
 		}
 
@@ -1493,6 +1507,14 @@ sap.ui.define([
 
 		var iScrollTo = this._computeScrollPosition(oSection);
 
+		// the default <code>iScrollTo</code> position assumes that the anchorBar is not part of the scrollable content (i.e. is already sticked)
+		// (because by the time the <code>iScrollTo</code> is reached, the onScroll handler will remove the the anchorBar as soon as the snap position is reached)
+		// However, if the scroll duration is 0 => the onScroll handler will not remove the the anchorBar in advance, but will remove it only *after* the <code>iScrollTo</code> position is reached
+		// => therefore in this case <code>iScrollTo</code> should include the <code>this.iAnchorBarHeight</code>
+		if (!iDuration && !this._bStickyAnchorBar && !this._isFirstVisibleSectionBase(oSection)) {
+			iScrollTo += this.iAnchorBarHeight;
+		}
+
 		//avoid triggering twice the scrolling onto the same target section
 		if (this._sCurrentScrollId != sId) {
 			this._sCurrentScrollId = sId;
@@ -1632,13 +1654,42 @@ sap.ui.define([
 		if (this._oScroller && this._bDomReady) {
 			jQuery.sap.log.debug("ObjectPageLayout :: scrolling to " + y);
 
-			if ((time === 0) && this._shouldSnapHeaderOnScroll(y)) {
-				this._toggleHeader(true);
-			}
-
 			this._oScroller.scrollTo(0, y, time);
 		}
 		return this;
+	};
+
+	/**
+	* Updates the media style class of the control, based on its own width, not on the entire screen size (which media query does).
+	* This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout</code>),
+	* thus it will not be using all of the screen width, but despite that the paddings need to be appropriate.
+	* <b>Note:</b>
+	* The method is called, when the <code>ObjectPageDynamicPageHeaderTitle</code> is being used.
+	* @param {Number} iWidth - the actual width of the control
+	* @private
+	*/
+	ObjectPageLayout.prototype._updateMedia = function (iWidth) {
+		// Applies the provided CSS Media (DYNAMIC_HEADERS_MEDIA) class and removes the rest.
+		// Example: If the <code>sapFDynamicPage-Std-Phone</code> class should be applied,
+		// the <code>sapFDynamicPage-Std-Tablet</code> and <code>sapFDynamicPage-Std-Desktop</code> classes will be removed.
+		var fnUpdateMediaStyleClass = function (sMediaClass) {
+			Object.keys(ObjectPageLayout.DYNAMIC_HEADERS_MEDIA).forEach(function (sMedia) {
+				var sCurrentMediaClass = ObjectPageLayout.DYNAMIC_HEADERS_MEDIA[sMedia],
+					bEnable = sMediaClass === sCurrentMediaClass;
+
+				this.toggleStyleClass(sCurrentMediaClass, bEnable);
+			}, this);
+		}.bind(this),
+		mMedia = ObjectPageLayout.DYNAMIC_HEADERS_MEDIA,
+		mBreakpoints = ObjectPageLayout.BREAK_POINTS;
+
+		if (iWidth <= mBreakpoints.PHONE) {
+			fnUpdateMediaStyleClass(mMedia.PHONE);
+		} else if (iWidth <= mBreakpoints.TABLET) {
+			fnUpdateMediaStyleClass(mMedia.TABLET);
+		} else {
+			fnUpdateMediaStyleClass(mMedia.DESKTOP);
+		}
 	};
 
 	/**
@@ -2117,7 +2168,9 @@ sap.ui.define([
 			// Let the dynamic header know size changed first, because this might lead to header dimensions changes
 			if (oTitle && oTitle.isDynamic()) {
 				oTitle._onResize(iCurrentWidth);
+				this._updateMedia(iCurrentWidth); // Update media classes when ObjectPageDynamicHeaderTitle is used.
 			}
+
 			this._adjustHeaderHeights();
 
 			this._requestAdjustLayout(true);
@@ -3287,6 +3340,16 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._getHeight = function (oControl) {
 		return !(oControl instanceof Control) ? 0 : oControl.$().outerHeight() || 0;
+	};
+
+	/**
+	 * Determines the width of a control safely. If the control doesn't exist, it returns 0.
+	 * If it exists, it returns the DOM element width.
+	 * @param  {sap.ui.core.Control} oControl
+	 * @return {Number} the width of the control
+	 */
+	ObjectPageLayout.prototype._getWidth = function (oControl) {
+		return !(oControl instanceof Control) ? 0 : oControl.$().outerWidth() || 0;
 	};
 
 	function exists(vObject) {

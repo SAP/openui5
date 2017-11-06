@@ -22,7 +22,7 @@ function(Controller, JSONModel, MessageToast) {
 					width: "auto"
 				});
 
-			var oTree = this.getView().byId("Tree");
+			var oTree = this.byId("Tree");
 			var oModel = this.getView().getModel();
 			var sPath = oItemContext.getPath();
 			var bChildIsDummyNode = oModel.getProperty(sPath + "/nodes/0").dummy === true;
@@ -33,7 +33,7 @@ function(Controller, JSONModel, MessageToast) {
 		},
 
 		loadData: function(oModel, sPath, iLevel) {
-			var oTree = this.getView().byId("Tree");
+			var oTree = this.byId("Tree");
 
 			// In this example we are just pretending to load data from the backend.
 			oTree.setBusy(true);

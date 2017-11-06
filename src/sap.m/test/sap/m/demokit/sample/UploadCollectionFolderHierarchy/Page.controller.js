@@ -13,8 +13,8 @@ sap.ui.define([
 			this.oModel = new JSONModel(jQuery.sap.getModulePath("sap.m.sample.UploadCollectionFolderHierarchy", "/UploadCollectionData.json"));
 			this.getView().setModel(this.oModel);
 
-			this.oUploadCollection = this.getView().byId("UploadCollection");
-			this.oBreadcrumbs = this.getView().byId("breadcrumbs");
+			this.oUploadCollection = this.byId("UploadCollection");
+			this.oBreadcrumbs = this.byId("breadcrumbs");
 			this.bindUploadCollectionItems("/items");
 			this.oUploadCollection.addEventDelegate({
 				onAfterRendering: function() {

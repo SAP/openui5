@@ -126,7 +126,13 @@ sap.ui.define([
 			return ContextManager.doesContextMatch(oChangeContent, aActiveContexts);
 		}
 
-		if (_isValidFileType() && _isValidSelector() && _isValidContext()){
+		function _isControlVariantChange () {
+			if ((oChangeContent.fileType === "ctrl_variant") || (oChangeContent.fileType === "ctrl_variant_change")){
+				return oChangeContent.variantManagementReference || oChangeContent.variantReference;
+			}
+		}
+
+		if ((_isValidFileType() && _isValidSelector() && _isValidContext()) || _isControlVariantChange()){
 				return true;
 		}
 		return false;
@@ -488,7 +494,7 @@ sap.ui.define([
 				saveAction.then(this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange, bSkipUpdateCache));
 
 				return saveAction;
-			}.bind(this), Promise.resolve());
+			}.bind(this), Promise.resolve(true));
 		}
 	};
 
@@ -499,7 +505,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns a resolved promise after all dirty changes were saved
 	 */
 	ChangePersistence.prototype.saveAsDirtyChanges = function(sReferenceForChange) {
-		return Settings.getInstance(this._mComponent.name, this._mComponent.appVersion).then(function(oSettings) {
+		return Settings.getInstance().then(function(oSettings) {
 
 			var oPropertyBag = {
 				reference: sReferenceForChange
@@ -547,11 +553,9 @@ sap.ui.define([
 
 		return function() {
 			if (!bSkipUpdateCache) {
-				if (oDirtyChange.getPendingAction() === "NEW") {
+				if (oDirtyChange.getPendingAction() === "NEW" && oDirtyChange.getFileType() !== "ctrl_variant_change") {
 					Cache.addChange(that._mComponent, oDirtyChange.getDefinition());
-				}
-
-				if (oDirtyChange.getPendingAction() === "DELETE") {
+				} else if (oDirtyChange.getPendingAction() === "DELETE") {
 					Cache.deleteChange(that._mComponent, oDirtyChange.getDefinition());
 				}
 			}

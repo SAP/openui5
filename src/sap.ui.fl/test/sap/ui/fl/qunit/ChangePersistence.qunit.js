@@ -117,6 +117,35 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		}.bind(this));
 	});
 
+	QUnit.test("when getChangesForComponent is called with 'ctrl_variant' and 'ctrl_variant_change' fileTypes", function (assert) {
+		var done = assert.async();
+		var aWrappedContent = {
+			changes: {
+				changes: [
+					{
+						fileName: "variant0",
+						fileType: "ctrl_variant",
+						variantManagementReference: "varMgmt"
+					},
+					{
+						fileName: "variant0",
+						fileType: "ctrl_variant_change",
+						changeType: "setTitle",
+						variantReference: "variant0"
+					}
+				]
+			}
+		};
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(aWrappedContent));
+		return this.oChangePersistence.getChangesForComponent().then(function (aChanges) {
+			assert.equal(aChanges[0].getId(), aWrappedContent.changes.changes[0].fileName, "then change with 'ctrl_variant' fileType received");
+			assert.equal(aChanges[1].getId(), aWrappedContent.changes.changes[1].fileName, "then change with 'ctrl_variant_change' fileType received");
+			done();
+		});
+
+
+	});
+
 	QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: []}}));
 

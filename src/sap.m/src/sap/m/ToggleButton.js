@@ -34,6 +34,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 	var ToggleButton = Button.extend("sap.m.ToggleButton", /** @lends sap.m.ToggleButton.prototype */ { metadata : {
 
 		library : "sap.m",
+		designtime: "sap/m/designtime/ToggleButton.designtime",
 		properties : {
 
 			/**

@@ -96,8 +96,8 @@ sap.ui.require([
 	QUnit.test("when calling 'getVariantChanges' of the VariantController", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		var aExpectedDefChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes;
-		var aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[2].changes;
+		var aExpectedDefChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges;
+		var aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[2].controlChanges;
 		var aDefChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable");
 		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2");
 		assert.deepEqual(aExpectedDefChanges, aDefChanges, "then the changes of the default variant are returned");
@@ -107,8 +107,8 @@ sap.ui.require([
 	QUnit.test("when calling 'getVariantChanges' of the VariantController", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		var aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[2].changes;
-		var oRefChange = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes[0];
+		var aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[2].controlChanges;
+		var oRefChange = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges[0];
 		aExpectedChanges.unshift(oRefChange);
 		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2", true);
 		assert.deepEqual(aExpectedChanges, aChanges, "then two changes of variant are returned with a new referenced change");
@@ -117,8 +117,8 @@ sap.ui.require([
 	QUnit.test("when calling 'loadVariantChanges' of the VariantController without changes in variant", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		var aExpChanges1 = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes;
-		var aExpChanges2 = this.oResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].changes;
+		var aExpChanges1 = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges;
+		var aExpChanges2 = this.oResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].controlChanges;
 		var aExpectedChanges = aExpChanges1.concat(aExpChanges2);
 		var aChanges = oVariantController.loadDefaultChanges();
 		assert.deepEqual(aExpectedChanges, aChanges, "then the changes of the given variant are returned");
@@ -128,8 +128,8 @@ sap.ui.require([
 		var done = assert.async();
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var aExpectedChanges0 = this.oResponse.changes.changes;
-		var aExpectedChanges1 = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes;
-		var aExpectedChanges2 = this.oResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].changes;
+		var aExpectedChanges1 = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges;
+		var aExpectedChanges2 = this.oResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].controlChanges;
 		var aExpectedChanges = aExpectedChanges0.concat(aExpectedChanges1).concat(aExpectedChanges2).map(function(oChangeContent){
 			return new Change(oChangeContent);
 		});
@@ -164,15 +164,15 @@ sap.ui.require([
 								"fileName": "variant0",
 								"title": "variant 0"
 							},
-							"changes" : []
+							"controlChanges" : []
 						},
-							{
-								"content" : {
-									"fileName": "variant1",
-									"title": "variant 1"
-								},
-								"changes" : [oChangeContent0, oChangeContent1]
-							}]
+						{
+							"content" : {
+								"fileName": "variant1",
+								"title": "variant 1"
+							},
+							"controlChanges" : [oChangeContent0, oChangeContent1]
+						}]
 					}
 				}
 			}
@@ -225,7 +225,7 @@ sap.ui.require([
 								"fileName": "variant0",
 								"title": "variant 0"
 							},
-							"changes" : [oChangeContent0, oChangeContent1, oChangeContent2]
+							"controlChanges" : [oChangeContent0, oChangeContent1, oChangeContent2]
 						},
 						{
 							"content" : {
@@ -233,7 +233,7 @@ sap.ui.require([
 								"title": "variant 1",
 								"variantReference":"variant0"
 							},
-							"changes" : [oChangeContent0, oChangeContent3, oChangeContent4]
+							"controlChanges" : [oChangeContent0, oChangeContent3, oChangeContent4]
 						}]
 					}
 				}
@@ -261,10 +261,10 @@ sap.ui.require([
 
 	QUnit.test("when calling 'loadChangesMapForComponent' and afterwards 'loadSwitchChangesMapForComponent' of the ChangePersistence", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
-		var aExistingChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes.map(function (oChange) {
+		var aExistingChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges.map(function (oChange) {
 			return new Change(oChange);
 		});
-		var oNewChange = new Change(this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].changes[1]);
+		var oNewChange = new Change(this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges[1]);
 
 		var aExpectedNew = [oNewChange];
 		var aExpectedRevert = [aExistingChanges[1]];
@@ -309,7 +309,7 @@ sap.ui.require([
 										"user":"Me"
 									}
 								},
-								"changes" : [
+								"controlChanges" : [
 									{
 										"fileName":"change44"
 									},
@@ -330,7 +330,7 @@ sap.ui.require([
 										"user":"Me"
 									}
 								},
-								"changes" : [
+								"controlChanges" : [
 									{
 										"fileName":"change46"
 									},
@@ -351,7 +351,7 @@ sap.ui.require([
 										"user":"SAP"
 									}
 								},
-								"changes" : [
+								"controlChanges" : [
 									{
 										"fileName":"change42"
 									},
@@ -372,21 +372,21 @@ sap.ui.require([
 			"variantMgmtId1": {
 				"defaultVariant": "variant1",
 				"variants": [{
-					"author": "SAP",
+//					"author": "SAP",
 					"key": "variantMgmtId1",
 					"layer": "VENDOR",
 					"readOnly": true,
 					"title": "Standard"
 				},
 				{
-					"author": "Me",
+//					"author": "Me",
 					"key": "variant0",
 					"layer": "CUSTOMER",
 					"readOnly": false,
 					"title": "variant A"
 				},
 				{
-					"author": "Me",
+//					"author": "Me",
 					"key": "variant1",
 					"layer": "CUSTOMER",
 					"readOnly": false,
@@ -422,7 +422,7 @@ sap.ui.require([
 										"user":"Me"
 									}
 								},
-								"changes" : [
+								"controlChanges" : [
 									{
 										"fileName":"change44"
 									},
@@ -477,7 +477,7 @@ sap.ui.require([
 				"title": "AA",
 				"fileName": "newVariant1"
 			},
-			"changes" : [oChangeContent0]
+			"controlChanges" : [oChangeContent0]
 		};
 
 		var oFakeVariantData2 = {
@@ -485,7 +485,7 @@ sap.ui.require([
 				"title": "ZZ",
 				"fileName": "newVariant2"
 			},
-			"changes" : [oChangeContent1]
+			"controlChanges" : [oChangeContent1]
 		};
 
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
@@ -535,22 +535,22 @@ sap.ui.require([
 				"fileName": "newVariant1",
 				"variantReference": "variant0"
 			},
-			"changes" : [oChangeContent0]
+			"controlChanges" : [oChangeContent0]
 		};
 
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
 		var iIndex1 = oVariantController.addVariantToVariantManagement(oFakeVariantData1, "idMain1--variantManagementOrdersTable");
 
 		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
-		var aChangeFileNames = aVariants[1].changes.map(function (oChange) {
+		var aChangeFileNames = aVariants[1].controlChanges.map(function (oChange) {
 			return oChange.fileName;
 		});
 
 		assert.equal(iIndex1, 1, "then index 1 received on adding variant AA");
 		assert.equal(aVariants[1].content.fileName, "newVariant1", "then the new variant with title AA added to the second position after Standard Variant (ascending sort)");
-		assert.equal(aVariants[1].changes.length, 2, "then one own change and one referenced change exists");
-		assert.equal(aChangeFileNames[0], aVariants[2].changes[0].fileName, "then referenced change exists and placed to the array start");
-		assert.equal(aChangeFileNames.indexOf(aVariants[2].changes[1].fileName), "-1", "then CUSTOMER layer change not referenced");
+		assert.equal(aVariants[1].controlChanges.length, 2, "then one own change and one referenced change exists");
+		assert.equal(aChangeFileNames[0], aVariants[2].controlChanges[0].fileName, "then referenced change exists and placed to the array start");
+		assert.equal(aChangeFileNames.indexOf(aVariants[2].controlChanges[1].fileName), "-1", "then CUSTOMER layer change not referenced");
 	});
 
 	QUnit.test("when calling '_getReferencedChanges' on CUSTOMER layer with variant reference to a VENDOR layer variant with one VENDOR and one CUSTOMER change", function(assert) {
@@ -562,7 +562,7 @@ sap.ui.require([
 				"fileName": "newVariant1",
 				"variantReference": "variant0"
 			},
-			"changes" : [oChangeContent0]
+			"controlChanges" : [oChangeContent0]
 		};
 
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
@@ -570,7 +570,7 @@ sap.ui.require([
 		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
 
 		assert.equal(aReferencedChanges.length, 1, "then only one change returned");
-		assert.equal(aReferencedChanges[0].fileName, aVariants[2].changes[0].fileName, "then only one VENDOR level change returned");
+		assert.equal(aReferencedChanges[0].fileName, aVariants[2].controlChanges[0].fileName, "then only one VENDOR level change returned");
 	});
 
 	QUnit.test("when calling 'removeVariantFromVariantManagement' with a variant", function(assert) {
@@ -584,6 +584,39 @@ sap.ui.require([
 			return oVariant.content.fileName === oVariantDataToBeRemoved.content.fileName;
 		});
 		assert.notEqual(bPresent, "then the variant was removed");
+	});
+
+	QUnit.test("when calling '_updateVariantChangeInMap' of the VariantController to add a variantChange", function(assert) {
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+
+		var oSetTitleChangeContent = {
+			"fileName": "new_setTitle",
+			"fileType": "ctrl_variant_change",
+			"changeType": "setTitle",
+			"texts": {
+				"title": {
+					"value": "New Variant Title1",
+					"type": "XFLD"
+				}
+			},
+			"variantReference": "variant0"
+		};
+
+		oVariantController._updateVariantChangeInMap(oSetTitleChangeContent, "idMain1--variantManagementOrdersTable", true);
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var oLastVariantChange = aVariants[1].variantChanges[oSetTitleChangeContent.changeType].pop();
+		assert.equal(oLastVariantChange.fileName , "new_setTitle", "then new setTitle change updated in map");
+	});
+
+	QUnit.test("when calling '_updateVariantChangeInMap' of the VariantController to delete a variantChange", function(assert) {
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var sChangeType = "setTitle";
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var oLastVariantChange = aVariants[1].variantChanges[sChangeType].pop();
+		oVariantController._updateVariantChangeInMap(oLastVariantChange, "idMain1--variantManagementOrdersTable", false);
+		assert.equal(aVariants[1].variantChanges[sChangeType].indexOf(oLastVariantChange) , -1, "then an already existing setTitle was removed from the map");
 	});
 
 	//Integration tests
@@ -637,14 +670,14 @@ sap.ui.require([
 
 					sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 
-					this.aRevertedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes
+					this.aRevertedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges
 						.map(function(oChangeContent) {
 							var oChange =  new Change(oChangeContent);
 							oChange._aDependentIdList = [];
 							return oChange;
 						});
 
-					this.aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].changes
+					this.aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].controlChanges
 						.map(function(oChangeContent) {
 							var oChange = new Change(oChangeContent);
 							oChange._aDependentIdList = [];
@@ -732,7 +765,7 @@ sap.ui.require([
 									"fileName": "variant0",
 									"title": "variant 0"
 								},
-								"changes" : [this.oChangeContent0, this.oChangeContent1]
+								"controlChanges" : [this.oChangeContent0, this.oChangeContent1]
 							},
 							{
 								"content" : {
@@ -740,7 +773,7 @@ sap.ui.require([
 									"title": "variant 1",
 									"variantReference": "variant0"
 								},
-								"changes" : []
+								"controlChanges" : []
 							}]
 						}
 					}

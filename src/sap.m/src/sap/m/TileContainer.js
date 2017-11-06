@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @deprecated As of version 1.50, instead, use a container of your choice with {@link sap.m.GenericTile} instances
+	 * @deprecated as of version 1.50, replaced by a container of your choice with {@link sap.m.GenericTile} instances
 	 * @alias sap.m.TileContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

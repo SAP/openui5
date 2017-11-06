@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
   var Component = UIComponent.extend("sap.ui.core.sample.Html.preserveDOM.Component", {
 
     metadata : {
-      rootView : "sap.ui.core.sample.Html.preserveDOM.Html",
+      rootView : {
+      	"viewName": "sap.ui.core.sample.Html.preserveDOM.Html",
+      	"type": "XML",
+      	"async": true
+      },
       dependencies : {
         libs : [
           "sap.ui.layout"

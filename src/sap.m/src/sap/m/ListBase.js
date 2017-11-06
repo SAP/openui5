@@ -415,7 +415,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 				}
 			}
 		},
-		designTime : true
+		designtime: "sap/m/designtime/ListBase.designtime"
 
 	}});
 

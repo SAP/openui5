@@ -544,7 +544,7 @@ sap.ui.define([
 
 	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
 		return FlexSettings.getInstance().then(function(oSettings) {
-			return RtaAppVariantFeature.isPlatFormEnabled(this.getLayer(), oSettings.isAtoEnabled() && oSettings.isAtoAvailable(), this._oRootControl).then(function(bIsAppVariantSupported) {
+			return RtaAppVariantFeature.isPlatFormEnabled(this.getLayer(), this._oRootControl).then(function(bIsAppVariantSupported) {
 				return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), bIsAppVariantSupported];
 			});
 		}.bind(this))
@@ -950,6 +950,8 @@ sap.ui.define([
 		var aUnsavedChanges = this.getCommandStack().getAllExecutedCommands().reduce(function(aChanges, oCommand) {
 			if (oCommand.getPreparedChange) {
 				aChanges.push(oCommand.getPreparedChange());
+			} else if (oCommand.getVariantChange && oCommand.getVariantChange()) {
+				aChanges.push(oCommand.getVariantChange());
 			}
 			return aChanges;
 		}, []);
@@ -1165,6 +1167,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Function to automatically start the rename of the control variant plugin
+	 */
+	RuntimeAuthoring.prototype._setTitleOnCreatedVariant = function() {
+		var oVariantManagementControlOverlay = this.getPlugins()["controlVariant"].getVariantManagementControlOverlay();
+		if (oVariantManagementControlOverlay) {
+			oVariantManagementControlOverlay.setSelected(true);
+			var oDelegate = {
+				"onAfterRendering" : function() {
+					// TODO : remove timeout
+					setTimeout(function() {
+						this.getPlugins()["controlVariant"].startEdit(oVariantManagementControlOverlay);
+					}.bind(this), 0);
+					oVariantManagementControlOverlay.removeEventDelegate(oDelegate);
+				}.bind(this)
+			};
+
+			oVariantManagementControlOverlay.addEventDelegate(oDelegate);
+		}
+	};
+
+	/**
 	 * Function to handle modification of an element
 	 *
 	 * @param {sap.ui.base.Event} oEvent Event object
@@ -1182,6 +1205,8 @@ sap.ui.define([
 			return this.getCommandStack().pushAndExecute(oCommand).then(function(){
 				if (vAction && sNewControlID){
 					this._setRenameOnCreatedContainer(vAction, sNewControlID);
+				} else if (vAction === "setTitle"){
+					this._setTitleOnCreatedVariant(vAction);
 				}
 			}.bind(this));
 		}
