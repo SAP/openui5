@@ -110,6 +110,26 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 	color: @sapUiContentNonInteractiveIconColor;
 }
 
+/* Display only */
+.sapMCbDisplayOnly {
+	font-family: "SAP-icons";
+
+	.sapMCbBg {
+		background-color: initial;
+		border: none;
+		margin: 0.125rem;
+
+		&:before {
+			content: "\e19a";
+		}
+
+		&.sapMCbMarkChecked:before {
+			color: @sapUiBaseText;
+			content: "\e03f";
+		}
+	}
+}
+
 /* Compact size */
 .sapUiSizeCompact {
 

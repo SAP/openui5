@@ -141,7 +141,18 @@ sap.ui.define(['jquery.sap.global',
 			 * Accepts the core enumeration ValueState.type that supports 'None', 'Error', 'Warning' and 'Success'.
 			 * @since 1.38
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None}
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
+
+			/**
+			 * Determines whether the <code>CheckBox</code> is in display only state.
+			 *
+			 * When set to <code>true</code>, the <code>CheckBox</code> is not interactive, not editable, not focusable
+			 * and not in the tab chain. This setting is used for forms in review mode.
+			 *
+			 * <Note:> When the property <code>enabled</code> is set to <code>false</code> this property has no effect.
+			 * @since 1.54
+			 */
+			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		aggregations: {
 			/**
@@ -288,7 +299,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {jQuery.Event} oEvent The <code>tap</code> event object
 	 */
 	CheckBox.prototype.ontap = function(oEvent) {
-		if (this.getEnabled() && this.getEditable()) {
+		if (this.getEnabled() && this.getEditable() && !this.getDisplayOnly()) {
 			this.$().focus(); // In IE taping on the input doesn`t focus the wrapper div.
 			var bSelected = !this.getSelected();
 			this.setSelected(bSelected);
@@ -347,7 +358,7 @@ sap.ui.define(['jquery.sap.global',
 		if ( this.hasOwnProperty("_iTabIndex") ) {
 			return this._iTabIndex;
 		}
-		return this.getEnabled() ? 0 : -1 ;
+		return (this.getEnabled() && !this.getDisplayOnly()) ? 0 : -1;
 	};
 
 	/**
@@ -398,7 +409,7 @@ sap.ui.define(['jquery.sap.global',
 			role: "checkbox",
 			type: oBundle.getText("ACC_CTR_TYPE_CHECKBOX"),
 			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : ""),
-			focusable: this.getEnabled(),
+			focusable: this.getEnabled() && !this.getDisplayOnly(),
 			enabled: this.getEnabled(),
 			editable: this.getEditable()
 		};
