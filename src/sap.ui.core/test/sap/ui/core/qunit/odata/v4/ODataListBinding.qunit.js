@@ -4061,6 +4061,88 @@ sap.ui.require([
 		aResult = oBinding.getContexts(50, 50);
 		assert.strictEqual(aResult.length, 0);
 	});
+
+	//*********************************************************************************************
+	[{
+		aColumns : [{
+			"grouped" : false,
+			"inResult" : true,
+			"name" : "BillToParty",
+			"visible" : true
+		}],
+		sApply : "groupby((BillToParty))"
+	}, {
+		aColumns : [{
+			"grouped" : false,
+			"inResult" : true,
+			"name" : "BillToParty",
+			"visible" : false
+		}, {
+			"grouped" : false,
+			"inResult" : false,
+			"name" : "TransactionCurrency",
+			"visible" : true
+		}],
+		sApply : "groupby((BillToParty,TransactionCurrency))"
+	}, {
+		aColumns : [{
+			"grouped" : false,
+			"inResult" : true,
+			"name" : "BillToParty"
+		}, {
+			"name" : "GrossAmountInTransactionCurrency",
+			"total" : false
+		}, {
+			"grouped" : false,
+			"name" : "TransactionCurrency",
+			"visible" : true
+		}, {
+			"name" : "NetAmountInTransactionCurrency",
+			"total" : false
+		}, {
+			"grouped" : false,
+			"inResult" : false,
+			"name" : "IgnoreThisDimension",
+			"visible" : false
+		}],
+		sApply : "groupby((BillToParty,TransactionCurrency)"
+			+ ",aggregate(GrossAmountInTransactionCurrency,NetAmountInTransactionCurrency))"
+	}].forEach(function (oFixture) {
+		QUnit.test("updateAnalyticalInfo with " + oFixture.sApply, function (assert) {
+			var oBinding = this.oModel.bindList("/EMPLOYEES");
+
+			this.mock(oBinding).expects("changeParameters")
+				.withExactArgs({$apply : oFixture.sApply});
+
+			oBinding.updateAnalyticalInfo(oFixture.aColumns);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAnalyticalInfo: neither dimension nor measure", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			oBinding.updateAnalyticalInfo([{
+				"inResult" : true,
+				"name" : "NeitherDimensionNorMeasure"
+			}]);
+		}, new Error("Neither dimension nor measure: NeitherDimensionNorMeasure"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAnalyticalInfo: both dimension and measure", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			oBinding.updateAnalyticalInfo([{
+				"grouped" : false,
+				"inResult" : true,
+				"name" : "BothDimensionAndMeasure",
+				"total" : false
+			}]);
+		}, new Error("Both dimension and measure: BothDimensionAndMeasure"));
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select
