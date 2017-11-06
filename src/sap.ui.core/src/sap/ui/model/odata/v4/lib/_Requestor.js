@@ -62,8 +62,8 @@ sap.ui.define([
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   predefined OData V4 headers are added by default, but may be overridden
 	 * @param {object} [mQueryParams={}]
-	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
-	 *   request the CSRF token
+	 *   A map of query parameters as described in
+	 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF token
 	 * @param {object} oModelInterface
 	 *   A interface allowing to call back to the owning model
 	 * @param {function} oModelInterface.fnFetchEntityContainer
@@ -469,33 +469,51 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type metadata
-	 * and entity instance runtime data.
+	 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity using the given
+	 * meta data.
 	 *
-	 * @param {object} oEntityType
-	 *   Entity type metadata
-	 * @param {object} oEntityInstance
+	 * @param {object} oInstance
 	 *   Entity instance runtime data
+	 * @param {string} sMetaPath
+	 *   The meta path of the entity in the cache incl. the cache's resource path
+	 * @param {object} mTypeForMetaPath
+	 *   Maps meta paths to the corresponding (entity or complex) types
 	 * @returns {string}
 	 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')" or undefined if one
 	 *   key property is undefined
 	 *
 	 * @private
 	 */
-	Requestor.prototype.getKeyPredicate = function (oEntityType, oEntityInstance) {
+	Requestor.prototype.getKeyPredicate = function (oInstance, sMetaPath, mTypeForMetaPath) {
 		var bFailed,
+			aKey = mTypeForMetaPath[sMetaPath].$Key,
 			aKeyProperties = [],
-			bSingleKey = oEntityType.$Key.length === 1,
+			bSingleKey = aKey.length === 1,
 			that = this;
 
-		bFailed = oEntityType.$Key.some(function (sName) {
-			var vValue = oEntityInstance[sName];
+		bFailed = aKey.some(function (vKey) {
+			var sAlias, sKeyPath, aPath, sPropertyName, oType, vValue;
 
+			if (typeof vKey === "string") {
+				sAlias = sKeyPath = vKey;
+			} else {
+				sAlias = Object.keys(vKey)[0];
+				sKeyPath = vKey[sAlias];
+			}
+			aPath = sKeyPath.split("/");
+
+			vValue = _Helper.drillDown(oInstance, aPath);
 			if (vValue === undefined) {
 				return true;
 			}
-			vValue = encodeURIComponent(that.formatPropertyAsLiteral(vValue, oEntityType[sName]));
-			aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sName) + "=" + vValue);
+
+			// the last path segment is the name of the simple property
+			sPropertyName = aPath.pop();
+			// find the type containing the simple property
+			oType = mTypeForMetaPath[_Helper.buildPath(sMetaPath, aPath.join("/"))];
+
+			vValue = encodeURIComponent(that.formatPropertyAsLiteral(vValue, oType[sPropertyName]));
+			aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sAlias) + "=" + vValue);
 		});
 
 		return bFailed ? undefined : "(" + aKeyProperties.join(",") + ")";
@@ -545,15 +563,23 @@ sap.ui.define([
 	 * if that fails. Makes sure that only one HEAD request is underway at any given time and
 	 * shares the promise accordingly.
 	 *
+	 * @param {string} [sOldSecurityToken]
+	 *   Security token that caused a 403. A new token is only fetched if the old one is still
+	 *   current.
 	 * @returns {Promise}
 	 *   A promise that will be resolved (with no result) once the CSRF token has been refreshed.
 	 *
 	 * @private
 	 */
-	Requestor.prototype.refreshSecurityToken = function () {
+	Requestor.prototype.refreshSecurityToken = function (sOldSecurityToken) {
 		var that = this;
 
 		if (!this.oSecurityTokenPromise) {
+			// do not refresh security token again if a new token is already available in between
+			if (sOldSecurityToken !== this.mHeaders["X-CSRF-Token"]) {
+				return Promise.resolve();
+			}
+
 			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
 				jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
 					method : "HEAD",
@@ -716,6 +742,7 @@ sap.ui.define([
 		}
 
 		return new Promise(function (fnResolve, fnReject) {
+			var sCurrentCSRFToken = that.mHeaders["X-CSRF-Token"];
 			// Adding query parameters could have been the responsibility of submitBatch, but doing
 			// it here makes the $batch recognition easier.
 			jQuery.ajax(that.sServiceUrl + sResourcePath + (bIsBatch ? that.sQueryParams : ""), {
@@ -744,7 +771,7 @@ sap.ui.define([
 				if (!bIsFreshToken && jqXHR.status === 403
 						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
 					// refresh CSRF token and repeat original request
-					that.refreshSecurityToken().then(function () {
+					that.refreshSecurityToken(sCurrentCSRFToken).then(function () {
 						// no fnSubmit, it has been called already
 						// no fnCancel, it is only relevant while the request is in the queue
 						fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
@@ -1036,8 +1063,9 @@ sap.ui.define([
 		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" for OData V4 or
 		 *   "application/json;charset=UTF-8" for OData V2.
 		 * @param {object} mQueryParams
-		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
-		 *   request the CSRF token
+		 *   A map of query parameters as described in
+		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF
+		 *   token
 		 * @param {object} oModelInterface
 		 *   A interface allowing to call back to the owning model
 		 * @param {function} oModelInterface.fnFetchEntityContainer

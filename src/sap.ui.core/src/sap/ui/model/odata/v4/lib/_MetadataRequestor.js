@@ -19,7 +19,8 @@ sap.ui.define([
 		 * @param {string} sODataVersion
 		 *   The version of the OData service. Supported values are "2.0" and "4.0".
 		 * @param {object} [mQueryParams={}]
-		 *   A map of query parameters as described in {@link _Helper.buildQuery}
+		 *   A map of query parameters as described in
+		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}
 		 * @returns {object}
 		 *   A new MetadataRequestor object
 		 */

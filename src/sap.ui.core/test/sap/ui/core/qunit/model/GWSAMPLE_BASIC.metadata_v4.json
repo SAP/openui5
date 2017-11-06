@@ -94,6 +94,9 @@
 				"@com.sap.vocabularies.Common.v1.Label" : "Qty. Unit"
 			},
 			"GWSAMPLE_BASIC.Product/WeightMeasure" : {
+				"@Org.OData.Measures.V1.Unit": {
+					"$Path": "WeightUnit"
+				},
 				"@com.sap.vocabularies.Common.v1.Label" : "Wt. Measure"
 			},
 			"GWSAMPLE_BASIC.Product/WeightUnit" : {
@@ -103,15 +106,27 @@
 				"@com.sap.vocabularies.Common.v1.Label" : "Currency"
 			},
 			"GWSAMPLE_BASIC.Product/Price" : {
+				"@Org.OData.Measures.V1.ISOCurrency": {
+					"$Path": "CurrencyCode"
+				},
 				"@com.sap.vocabularies.Common.v1.Label" : "Unit Price"
 			},
 			"GWSAMPLE_BASIC.Product/Width" : {
+				"@Org.OData.Measures.V1.Unit": {
+					"$Path": "DimUnit"
+				},
 				"@com.sap.vocabularies.Common.v1.Label" : "Dimensions"
 			},
 			"GWSAMPLE_BASIC.Product/Depth" : {
+				"@Org.OData.Measures.V1.Unit": {
+					"$Path": "DimUnit"
+				},
 				"@com.sap.vocabularies.Common.v1.Label" : "Dimensions"
 			},
 			"GWSAMPLE_BASIC.Product/Height" : {
+				 "@Org.OData.Measures.V1.Unit": {
+					"$Path": "DimUnit"
+				},
 				"@com.sap.vocabularies.Common.v1.Label" : "Dimensions"
 			},
 			"GWSAMPLE_BASIC.Product/DimUnit" : {
@@ -151,15 +166,24 @@
 			},
 			"GWSAMPLE_BASIC.SalesOrder/GrossAmount" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "Gross Amt.",
-				"@Org.OData.Core.V1.Computed" : true
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency": {
+					"$Path": "CurrencyCode"
+				}
 			},
 			"GWSAMPLE_BASIC.SalesOrder/NetAmount" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "Net Amt.",
-				"@Org.OData.Core.V1.Computed" : true
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency": {
+					"$Path": "CurrencyCode"
+				}
 			},
 			"GWSAMPLE_BASIC.SalesOrder/TaxAmount" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "Tax Amt.",
-				"@Org.OData.Core.V1.Computed" : true
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency": {
+					"$Path": "CurrencyCode"
+				}
 			},
 			"GWSAMPLE_BASIC.SalesOrder/LifecycleStatus" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "PO Lifecycle",
@@ -217,20 +241,32 @@
 			},
 			"GWSAMPLE_BASIC.SalesOrderLineItem/GrossAmount" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "Gross Amt.",
-				"@Org.OData.Core.V1.Computed" : true
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency": {
+					"$Path": "CurrencyCode"
+				}
 			},
 			"GWSAMPLE_BASIC.SalesOrderLineItem/NetAmount" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "Net Amt.",
-				"@Org.OData.Core.V1.Computed" : true
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency": {
+					"$Path": "CurrencyCode"
+				}
 			},
 			"GWSAMPLE_BASIC.SalesOrderLineItem/TaxAmount" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "Tax Amt.",
-				"@Org.OData.Core.V1.Computed" : true
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency": {
+					"$Path": "CurrencyCode"
+				}
 			},
 			"GWSAMPLE_BASIC.SalesOrderLineItem/DeliveryDate" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "Time Stamp"
 			},
 			"GWSAMPLE_BASIC.SalesOrderLineItem/Quantity" : {
+				"@Org.OData.Measures.V1.Unit": {
+					"$Path": "QuantityUnit"
+				},
 				"@com.sap.vocabularies.Common.v1.Label" : "Quantity"
 			},
 			"GWSAMPLE_BASIC.SalesOrderLineItem/QuantityUnit" : {

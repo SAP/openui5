@@ -300,7 +300,7 @@ sap.ui.define([
 	 *   and "$$updateGroupId".
 	 *   Note: The binding creates its own data service request if it is absolute or if it has any
 	 *   parameters or if it is relative and has a context created via
-	 *   {@link ODataModel#createBindingContext}.
+	 *   {@link #createBindingContext}.
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
@@ -391,8 +391,8 @@ sap.ui.define([
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
 	 *   and "$$updateGroupId".
 	 *   Note: The binding creates its own data service request if it is absolute or if it has any
-	 *   parameters or if it is relative and has a context created via
-	 *   {@link ODataModel#createBindingContext} or if it has sorters or filters.
+	 *   parameters or if it is relative and has a context created via {@link #createBindingContext}
+	 *   or if it has sorters or filters.
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
@@ -446,7 +446,7 @@ sap.ui.define([
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
 	 *   Note: The binding creates its own data service request if it is absolute or if it has any
 	 *   parameters or if it is relative and has a context created via
-	 *   {@link ODataModel#createBindingContext}.
+	 *   {@link #createBindingContext}.
 	 *   All "5.2 Custom Query Options" are allowed except for those with a name starting with
 	 *   "sap-". All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.

@@ -1893,14 +1893,15 @@ sap.ui.require([
 				oBinding = new ODataParentBinding({
 					oModel : {getMetaModel : function () {return oMetaModel;}}
 				}),
+				aKeyProperties = ["foo", "path/to/key"],
 				sMetaPath = "~",
 				mQueryOptions = {},
-				oType = bKeys ? {$Key : []} : {};
+				oType = bKeys ? {$Key : ["foo", {"alias" : "path/to/key"}]} : {};
 
 			this.mock(oBinding.oModel.getMetaModel()).expects("getObject")
 				.withExactArgs(sMetaPath + "/").returns(oType);
 			this.mock(oBinding).expects("addToSelect").exactly(bKeys ? 1 : 0)
-				.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oType.$Key));
+				.withExactArgs(sinon.match.same(mQueryOptions), aKeyProperties);
 
 			// code under test
 			oBinding.selectKeyProperties(mQueryOptions, sMetaPath);

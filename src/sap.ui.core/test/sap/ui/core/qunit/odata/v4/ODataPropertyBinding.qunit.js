@@ -224,6 +224,10 @@ sap.ui.require([
 			assert.strictEqual(oBinding.oCachePromise.getResult(), bAbsolute ? oCache : undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 			assert.strictEqual(oBinding.sGroupId, undefined);
+			assert.strictEqual(oBinding.hasOwnProperty("oCheckUpdateCallToken"), true);
+			assert.strictEqual(oBinding.oCheckUpdateCallToken, undefined);
+			assert.strictEqual(oBinding.hasOwnProperty("sPathWithFetchTypeError"), true);
+			assert.strictEqual(oBinding.sPathWithFetchTypeError, undefined);
 		});
 	});
 
@@ -436,6 +440,88 @@ sap.ui.require([
 		oPromise1 = oBinding.checkUpdate(true); // second call to checkUpdate must not fail
 
 		return Promise.all([oPromise0, oPromise1]);
+	});
+
+	//*********************************************************************************************
+	// Unit test for scenario in
+	// ODataModel.integration.qunit, @Relative object binding
+	// fetchUI5Type is either sync or async for *both* the wrong and correct context, fetchValue
+	// is async for both: we hence just need to vary the test regarding metadata availability
+	[true, false].forEach(function (bMetadataAsync, i) {
+		QUnit.test("checkUpdate: two calls, first one with invalid path, " + i, function (assert) {
+			var iChange = 0,
+				oCheckUpdateSpy,
+				oCurrentType,
+				oFetchValueError = new Error("Resource not found for segment 'SupplierIdentifier'"),
+				vCurrentValue,
+				oModel = new ODataModel({
+					serviceUrl : "/service/?sap-client=111",
+					synchronizationMode : "None"
+				}),
+				oMetaModelMock = this.mock(oModel.getMetaModel()),
+				oParent = {
+					deregisterChange : function () {},
+					fetchValue : function () {}
+				},
+				oParentMock = this.mock(oParent),
+				oType = {
+					getName : function () {}
+				},
+				oTypeError = new Error("Cannot read property '$ui5.type' of undefined"),
+				oCorrectContext = Context.create(oModel, oParent,
+					"/Equipments(1)/EQUIPMENT_2_PRODUCT"),
+				oWrongContext = Context.create(oModel, oParent, "/Equipments(1)"),
+				oBinding = oModel.bindProperty("SupplierIdentifier", oWrongContext);
+
+			// ManagedObject initializes the property binding with the wrong context which
+			// does not yet contain the element binding
+			oMetaModelMock.expects("fetchUI5Type")
+				.withExactArgs("/Equipments(1)/SupplierIdentifier")
+				.returns(bMetadataAsync
+					? Promise.reject(oTypeError) : _SyncPromise.reject(oTypeError));
+			this.oLogMock.expects("warning")
+				.withExactArgs(oTypeError.message, "/Equipments(1)/SupplierIdentifier", sClassName);
+			oParentMock.expects("fetchValue")
+				.withExactArgs("/Equipments(1)/SupplierIdentifier", sinon.match.same(oBinding))
+				.returns(Promise.reject(oFetchValueError));
+			this.mock(oModel).expects("reportError")
+				.withExactArgs("Failed to read path /Equipments(1)/SupplierIdentifier", sClassName,
+					oFetchValueError);
+			// On element binding creation, ManagedObject updates the property binding with the
+			// correct context
+			oMetaModelMock.expects("fetchUI5Type")
+				.withExactArgs("/Equipments(1)/EQUIPMENT_2_PRODUCT/SupplierIdentifier")
+				.returns(bMetadataAsync ? Promise.resolve(oType) : _SyncPromise.resolve(oType));
+			oParentMock.expects("fetchValue")
+				.withExactArgs("/Equipments(1)/EQUIPMENT_2_PRODUCT/SupplierIdentifier",
+					sinon.match.same(oBinding))
+				.returns(Promise.resolve(42));
+			oBinding.attachChange(function (oEvent) {
+				var sExpectedReason = iChange ? ChangeReason.Context : ChangeReason.Change;
+
+				assert.strictEqual(oEvent.mParameters.reason, sExpectedReason, sExpectedReason);
+				oCurrentType = oBinding.oType;
+				vCurrentValue = oBinding.vValue;
+				iChange += 1;
+			});
+
+			oCheckUpdateSpy = this.spy(oBinding, "checkUpdate");
+
+			oBinding.sInternalType = "internalType"; // set in ManagedObject#_bindProperty
+
+			// code under test
+			oBinding.initialize();
+
+			// code under test
+			oBinding.setContext(oCorrectContext);
+
+			// wait for promises from all checkUpdate calls
+			return Promise.all(oCheckUpdateSpy.returnValues).then(function () {
+				assert.strictEqual(iChange, 2);
+				assert.strictEqual(oCurrentType, oType, "final type");
+				assert.strictEqual(vCurrentValue, 42, "final value");
+			});
+		});
 	});
 
 	//*********************************************************************************************
@@ -1491,6 +1577,7 @@ sap.ui.require([
 		oPropertyBinding.destroy();
 
 		assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
+		assert.strictEqual(oPropertyBinding.oContext, undefined);
 
 		return oPromise;
 	});
