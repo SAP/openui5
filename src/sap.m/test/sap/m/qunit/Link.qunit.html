@@ -332,6 +332,29 @@
 			oLink.destroy();
 		});
 
+		QUnit.test("validateUrl property behavior", function(assert) {
+			var sValidUrl = "http://sap.com",
+				sInvalidUrl = "hhtp://invalid",
+				oLink = new sap.m.Link({
+					validateUrl: true,
+					text: "Validate URL",
+					href: sInvalidUrl
+				});
+
+			oLink.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oLink.$().attr("href"), undefined, "Link href should not exist if an invalid URL is provided");
+
+			oLink.setHref(sValidUrl);
+			assert.equal(oLink.$().attr("href"), sValidUrl, "Link href should equal the valid URL");
+
+			oLink.setHref(sInvalidUrl);
+			assert.equal(oLink.$().attr("href"), undefined, "Link href should not exist if an invalid URL is set");
+
+			oLink.destroy();
+		});
+
 		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oControl = new sap.m.Link({text: "Text", href: "HRef"});
 			assert.ok(!!oControl.getAccessibilityInfo, "Link has a getAccessibilityInfo function");
