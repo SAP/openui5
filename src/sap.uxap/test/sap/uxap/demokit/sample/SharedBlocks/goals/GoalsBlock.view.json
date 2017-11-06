@@ -1,0 +1,17 @@
+{
+  "Type":"sap.ui.core.mvc.JSONView",
+  "controllerName":"sap.uxap.sample.SharedBlocks.goals.GoalsBlockController",
+  "content": [{
+    "Type":"sap.m.Image",
+    "id":"MyImage",
+    "src":"http://www.sap.com/global/ui/images/global/sap-logo.png"
+  },
+    {
+      "Type":"sap.m.Button",
+      "id":"MyButton",
+      "text":"Hello from JSON view",
+      "press": "onBtnPress"
+
+    }]
+
+}
