@@ -17,9 +17,6 @@ sap.ui.define([], function() {
 			showSetAsDefault: {
 				ignore: false
 			},
-			showFavorites: {
-				ignore: false
-			},
 			industrySolutionMode: {
 				ignore: false
 			},
@@ -27,18 +24,6 @@ sap.ui.define([], function() {
 				ignore: false
 			},
 			manualVariantKey: {
-				ignore: false
-			},
-			showSave: {
-				ignore: false
-			},
-			showSaveAs: {
-				ignore: false
-			},
-			showManage: {
-				ignore: false
-			},
-			showVariantListFooter: {
 				ignore: false
 			},
 			inErrorState: {

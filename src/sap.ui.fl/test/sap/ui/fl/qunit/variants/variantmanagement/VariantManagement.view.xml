@@ -17,14 +17,9 @@
 				<m:Button id="idToggleErrorStateBtn" text="toggle error state"
 					press="onToggleErrorState" />					
 			</m:HBox>
-			<m:HBox fitContainer="true">
-				<m:Button id="idToggleFooterBtn" text="toggle show Footer"
-					press="onToggleFooterBtn" />			
-				<m:Button id="idToggleManageBtn" text="toggle show Manage"
-					press="onToggleManageBtn" />
-				<m:Button id="idToggleSaveBtn" text="toggle Save" press="onToggleSaveBtn" />
-				<m:Button id="idToggleSaveAsBtn" text="toggle SaveAs"
-					press="onToggleSaveAsBtn" />
+			<m:HBox fitContainer="true">			
+				<m:Button id="idToggleEditableVariantsBtn" text="toggle editable Variants"
+					press="onToggleEditableVariantsBtn" />
 				<m:Button id="idToggleFavoritesBtn" text="toggle show Favorites"
 					press="onToggleFavoritesBtn" />
 				<m:Button id="idToggleShowAsDefaultBtn" text="toggle show Default"
@@ -38,6 +33,6 @@
 		<m:Label text="Variants" />
 		<VariantManagement id="idVariantManagementCtrl"
 			for="idModelChangeBtn" save="onSave" manage="onManage"
-			showExecuteOnSelection="true" showShare="true" showFavorites="true" />
+			showExecuteOnSelection="true" showShare="true" />
 	</l:VerticalLayout>
 </mvc:View>
