@@ -16,7 +16,6 @@
 	}
 
 sap.ui.define(['jquery.sap.global',
-				'sap/ui/core/routing/HashChanger',
 				'sap/ui/base/Object',
 				'sap/ui/core/mvc/View',
 				'./matchers/Ancestor',
@@ -26,7 +25,7 @@ sap.ui.define(['jquery.sap.global',
 				'./autowaiter/_autoWaiter',
 				'sap/ui/test/_opaCorePlugin',
 				'sap/ui/test/_OpaLogger'],
-	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible,
+	function ($, UI5Object, View, Ancestor, Interactable, Visible,
 			MatcherPipeline, _autoWaiter, _opaCorePlugin, _OpaLogger) {
 
 		var oMatcherPipeline = new MatcherPipeline(),
@@ -484,7 +483,7 @@ sap.ui.define(['jquery.sap.global',
 		OpaPlugin.FILTER_FOUND_NO_CONTROLS = "FILTER_FOUND_NO_CONTROL";
 
 		return OpaPlugin;
-	}, /* bExport= */ true);
+	});
 
 	if (original) {
 		global.module = original;

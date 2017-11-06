@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/Device'], function ($, Action, Device) {
+sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	"use strict";
 
 	/**
@@ -90,4 +90,4 @@ sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/Device'], function ($, A
 		}
 	});
 
-}, /* bExport= */ true);
+});

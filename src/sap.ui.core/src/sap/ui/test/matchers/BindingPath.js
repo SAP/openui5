@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
+sap.ui.define(['./Matcher'], function(Matcher) {
 	"use strict";
 
 	/**
@@ -79,4 +79,4 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 
 	});
 
-}, /* bExport= */ true);
+});
