@@ -21,6 +21,9 @@ sap.ui.define(['sap/ui/fl/changeHandler/ChangeHandlerMediator'],
 				svg: "sap/ui/layout/designtime/form/FormContainer.icon.svg"
 			}
 		},
+		isVisible: function(oFormContainer) {
+			return oFormContainer.isVisible();
+		},
 		actions: {
 			remove: {
 				changeType: "hideControl"
