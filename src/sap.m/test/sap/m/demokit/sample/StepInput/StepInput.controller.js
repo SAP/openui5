@@ -21,7 +21,8 @@ sap.ui.define([
 					{ label: "Step = 1.05; value = 1.5675, displayValuePrecision = 2, no Min and Max", value: 1.5675, step: 1.05, displayValuePrecision: 2},
 					{ label: "Step = -1 (which becomes 1), value = 20, width = 120px", value: 20, step: -1, width:"120px"},
 					{ label: "Step = 1 (default); value = 6, min = 5, max = 15, width = 240px, with added description and default fieldWidth 50%", value: 6, min:5, max:15, width:"240px", description:"EUR"},
-					{ label: "Step = 1 (default); value = 160, with added description and fieldWidth set to 70%", value: 160, fieldWidth:"70%", description:"EUR"}
+					{ label: "Step = 1 (default); value = 160, with added description and fieldWidth set to 70%", value: 160, fieldWidth:"70%", description:"EUR"},
+					{ label: "Step = 1 (default); value = 160, align:Center", value: 160, textAlign:"Center"}
 				];
 			oModel = new JSONModel({
 				modelData: aData
