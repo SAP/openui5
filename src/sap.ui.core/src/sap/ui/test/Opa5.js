@@ -577,7 +577,7 @@ sap.ui.define([
 		 * </code>
 		 * Executing multiple actions will not wait between actions for a control to become "Interactable" again.
 		 * If you need waiting between actions you need to split the actions into multiple 'waitFor' statements.
-		 * @param {boolean} [options.autoWait=false] @since 1.42 Only has an effect if set to true.
+		 * @param {boolean} [options.autoWait=false] @since 1.42 Only has an effect if set to true. Since 1.53 it can also be a plain object.
 		 * The waitFor statement will not execute success callbacks as long as there is pending asynchronous work such as for example:
 		 * open XMLHTTPRequests (requests to a server), scheduled delayed work and promises, unfinished UI navigation.
 		 * In addition, the control must be {@link sap.ui.test.matchers.Interactable}
@@ -611,6 +611,20 @@ sap.ui.define([
 		 * This is also the easiest way of migrating existing tests. First extend the config, then see which waitFors
 		 * will time out and finally disable autoWait in these Tests.
 		 *
+		 * @since 1.53 autoWait option can be a plain object used to configure what autoWait will consider pending, for example:
+		 * <ul>
+		 *     <li> maximum depth of a timeout chain. Longer chains are considered polling and are discarded as irrelevant to the application state in testing scenarios. </li>
+		 *     <li> maximum delay, in milliseconds, of tracked timeouts and promises. Long runners are discarded as they do not influence application state.</li>
+		 * </ul>
+		 * This is the default autoWait configuration:
+		 * autoWait: {
+		 *     timeoutWaiter: {
+		 *         maxDepth: 3,
+		 *         maxDelay: 1000
+		 *    }
+		 * }
+		 * If autoWait is set to true or the object doesn't contain the recognized keys, the default autoWait configuration will be used.
+		 *
 		 * @since 1.48 All config parameters could be overwritten from URL. Should be prefixed with 'opa'
 		 * and have uppercase first character. Like 'opaExecutionDelay=1000' will overwrite 'executionDelay'
 		 *
@@ -643,8 +657,10 @@ sap.ui.define([
 			oOptionsPassedToOpa = Opa._createFilteredOptions(aPropertiesThatShouldBePassedToOpaWaitFor, options);
 
 			oOptionsPassedToOpa.check = function () {
-				var oAutoWaiter = iFrameLauncher._getAutoWaiter() || _autoWaiter;
 				var bInteractable = !!options.actions || options.autoWait;
+				var oAutoWaiter = Opa5._getAutoWaiter();
+
+				oAutoWaiter.extendConfig(options.autoWait);
 
 				if (bInteractable && oAutoWaiter.hasToWait()) {
 					return false;
@@ -715,8 +731,12 @@ sap.ui.define([
 				// Delay the current waitFor after a waitFor added by the actions.
 				// So waitFors added by an action will block the current execution of success
 				var oWaitForObject = createWaitForObjectWithoutDefaults();
-				// preserve the autoWaitFlag
-				oWaitForObject.autoWait = options.autoWait;
+				// preserve the autoWait value
+				if ($.isPlainObject(options.autoWait)) {
+					oWaitForObject.autoWait = $.extend({}, options.autoWait);
+				} else {
+					oWaitForObject.autoWait = options.autoWait;
+				}
 				oWaitForObject.success = function () {
 					fnOriginalSuccess.apply(this, aArgs);
 				};
@@ -775,6 +795,13 @@ sap.ui.define([
 		 */
 		Opa5.getHashChanger = function () {
 			return iFrameLauncher.getHashChanger() || HashChanger.getInstance();
+		};
+
+		/*
+		* @private
+		*/
+		Opa5._getAutoWaiter = function () {
+			return iFrameLauncher._getAutoWaiter() || _autoWaiter;
 		};
 
 		/**
@@ -890,6 +917,7 @@ sap.ui.define([
 			Opa.extendConfig({
 				appParams: appParams
 			});
+			Opa5._getAutoWaiter().extendConfig(options.autoWait);
 		};
 
 		/**
@@ -1114,7 +1142,7 @@ sap.ui.define([
 			id: "any",
 			controlType: "any",
 			searchOpenDialogs: "bool",
-			autoWait: "bool"
+			autoWait: "any"
 		}, Opa._validationInfo);
 
 		Opa5._getEventProvider = function() {

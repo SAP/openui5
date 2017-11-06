@@ -120,7 +120,8 @@
 					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters",
 					"sap.ui.core.sample.OpaWithSupportAssistant",
 					"sap.ui.core.sample.OpaTestLibrary",
-					"sap.ui.core.sample.OpaMessageToast"
+					"sap.ui.core.sample.OpaMessageToast",
+					"sap.ui.core.sample.OpaAutoWaitParams"
 				]
 			},
 			{
@@ -654,6 +655,11 @@
 				"id": "sap.ui.core.sample.OpaMessageToast",
 				"name": "Retrieving message toast elements with OPA5",
 				"description": "This sample demonstrates how to locate message toast elements with OPA5"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaAutoWaitParams",
+				"name": "OPA5 autoWait parameters",
+				"description": "This sample demonstrates how to take advantage of OPA5 autoWait parameters"
 			}
 		]
 	}

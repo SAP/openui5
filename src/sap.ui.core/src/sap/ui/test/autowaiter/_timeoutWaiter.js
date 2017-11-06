@@ -16,9 +16,11 @@ sap.ui.define([
 		errorPrefix: "sap.ui.test.autowaiter._timeoutWaiter#extendConfig"
 	});
 	var mTimeouts = {};
+	var iDefaultMaxDepth = 3; // count
+	var iDefaultMaxDelay = 1000; // milliseconds
 	var config = {
-		maxDepth: 3, // count
-		maxDelay: 1000 // milliseconds
+		maxDepth: iDefaultMaxDepth,
+		maxDelay: iDefaultMaxDelay
 	};
 
 	var iCurrentDepth = 0;
@@ -112,6 +114,10 @@ sap.ui.define([
 			return bHasPendingTimeouts;
 		},
 		extendConfig: function (oConfig) {
+			oConfig = oConfig && oConfig.timeoutWaiter || {
+				maxDepth: iDefaultMaxDepth,
+				maxDelay: iDefaultMaxDelay
+			};
 			oConfigValidator.validate({
 				inputToValidate: oConfig,
 				validationInfo: {

@@ -1,7 +1,8 @@
 sap.ui.define([
 	"jquery.sap.global",
-	"unitTests/utils/loggerInterceptor"
-], function ($, loggerInterceptor) {
+	"unitTests/utils/loggerInterceptor",
+	"sap/ui/test/Opa5"
+], function ($, loggerInterceptor, Opa5) {
 	"use strict";
 
 	$.sap.unloadResources("sap/ui/test/autowaiter/_promiseWaiter.js", false, true, true);
@@ -96,18 +97,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should have configurable max promise delay", function (assert) {
-		promiseWaiter.extendConfig({maxDelay: 400});
+		promiseWaiter.extendConfig({timeoutWaiter: {maxDelay: 10}});
+		var fnDone = assert.async();
 		var oPromise = new Promise(function (fnResolve) {
-			setTimeout(fnResolve, 900);
+			setTimeout(fnResolve, 20);
 		});
 
 		Promise.resolve(oPromise);
-		assert.ok(promiseWaiter.hasPending(), "Has pending promise");
 		setTimeout(function () {
 			assert.ok(!promiseWaiter.hasPending(), "Has no pending promise");
 			sinon.assert.calledWithMatch(oTraceSpy, "Long-running promise is ignored:\nPromise: Function: resolve Args:");
-		}, 900);
-
-		return oPromise;
+			fnDone();
+		}, 30);
 	});
 });

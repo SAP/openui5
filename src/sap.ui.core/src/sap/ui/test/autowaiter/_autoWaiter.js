@@ -25,6 +25,13 @@ sap.ui.define([
 				}
 			});
 			return result;
+		},
+		extendConfig: function (oConfig) {
+			aWaiters.forEach(function (oWaiter) {
+				if (oWaiter.extendConfig) {
+					oWaiter.extendConfig(oConfig);
+				}
+			});
 		}
 	};
 }, true);

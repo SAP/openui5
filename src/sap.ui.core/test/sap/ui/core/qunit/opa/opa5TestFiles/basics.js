@@ -4,13 +4,9 @@ sap.ui.define([
 		"sap/ui/test/opaQunit",
 		"jquery.sap.global",
 		"sap/m/Button",
-		"sap/ui/thirdparty/URI"
-	], function (Opa, Opa5, opaTest, $, Button, URI) {
-	QUnit.module("wait for basics", {
-		beforeEach: function () {
-			this.oOpa5 = new Opa5();
-		}
-	});
+		"sap/ui/thirdparty/URI",
+		"unitTests/utils/loggerInterceptor"
+	], function (Opa, Opa5, opaTest, $, Button, URI, loggerInterceptor) {
 
 	QUnit.module("Context");
 
@@ -141,6 +137,19 @@ sap.ui.define([
 
 		assert.strictEqual(Opa5.getTestLibConfig('myAwesomeTestLib').key,"value");
 		assert.propEqual(Opa5.getTestLibConfig('notExistingTestLib'),{});
+	});
+
+	QUnit.test("Should change the max log level with OPA extendConfig", function (assert) {
+		var fnLogLevelSpy = sinon.spy(sap.ui.test._OpaLogger, "setLevel");
+		Opa5.extendConfig({logLevel: "trace"});
+		assert.strictEqual(Opa.config.logLevel, "trace");
+		sinon.assert.calledWith(fnLogLevelSpy, "trace");
+
+		fnLogLevelSpy.reset();
+		Opa.extendConfig({logLevel: "debug"});
+		assert.strictEqual(Opa.config.logLevel, "debug");
+		sinon.assert.calledWith(fnLogLevelSpy, "debug");
+		fnLogLevelSpy.restore();
 	});
 
 	function createXmlView(sViewName) {
@@ -364,6 +373,92 @@ sap.ui.define([
 			success: function (oButton) {
 				Opa5.assert.ok(oButton, "a button was found");
 			}
+		});
+	});
+
+	QUnit.module("AutoWait Config", {
+		beforeEach: function () {
+			this.oTraceSpy = sinon.spy(window.console, "trace");
+			Opa5.extendConfig({logLevel: "trace"});
+		},
+		afterEach: function () {
+			this.oTraceSpy.restore();
+			Opa5.resetConfig();
+		}
+	});
+
+	opaTest("Should change autoWait timeout delay through extendConfig", function (oOpa) {
+		var fnHasToWait = sinon.spy(sap.ui.test.autowaiter._autoWaiter, "hasToWait");
+		Opa5.extendConfig({
+			autoWait: {
+				timeoutWaiter: {
+					maxDelay: 400
+				}
+			}
+		});
+		oOpa.waitFor({
+			check: function () {
+				return setTimeout(function () {},  401);
+			},
+			success: function () {
+				sinon.assert.called(fnHasToWait, "Should call autoWait");
+				sinon.assert.calledWithMatch(this.oTraceSpy, "Timeout delay 401 reached the limit of 400. Long-running timeout is ignored");
+				fnHasToWait.reset();
+				this.oTraceSpy.reset();
+			}.bind(this)
+		});
+
+		Opa5.extendConfig({
+			autoWait: true
+		});
+		oOpa.waitFor({
+			check: function () {
+				return setTimeout(function () {},  1001);
+			},
+			success: function () {
+				sinon.assert.called(fnHasToWait, "Should call autoWait");
+				// default maxDelay 1000 is used again
+				sinon.assert.calledWithMatch(this.oTraceSpy, "Timeout delay 1001 reached the limit of 1000. Long-running timeout is ignored");
+				fnHasToWait.restore();
+			}.bind(this)
+		});
+	});
+
+	opaTest("Should change autoWait timeout delay through waitFor params", function (oOpa) {
+		var fnHasToWait = sinon.spy(sap.ui.test.autowaiter._autoWaiter, "hasToWait");
+
+		oOpa.waitFor({
+			autoWait: {
+				timeoutWaiter: {
+					maxDelay: 1001
+				}
+			},
+			success: function () {
+				setTimeout(function () {}, 1002);
+				return oOpa.waitFor({
+					success: function () {
+						sinon.assert.called(fnHasToWait, "Should call autoWait");
+						// maxDelay is 1001 for this waitFor only
+						sinon.assert.calledWithMatch(this.oTraceSpy, "Timeout delay 1002 reached the limit of 1001. Long-running timeout is ignored");
+						fnHasToWait.reset();
+						this.oTraceSpy.reset();
+					}.bind(this)
+				});
+			}.bind(this)
+		});
+
+		oOpa.waitFor({
+			success: function () {
+				setTimeout(function () {}, 1002);
+				return oOpa.waitFor({
+					success: function () {
+						sinon.assert.notCalled(fnHasToWait, "Should not call autoWait");
+						// default maxDelay 1000 is used again
+						sinon.assert.calledWithMatch(this.oTraceSpy, "Timeout delay 1002 reached the limit of 1000. Long-running timeout is ignored");
+						fnHasToWait.restore();
+					}.bind(this)
+				});
+			}.bind(this)
 		});
 	});
 });

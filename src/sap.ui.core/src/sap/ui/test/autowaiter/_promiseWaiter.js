@@ -15,8 +15,9 @@ sap.ui.define([
 	var oConfigValidator = new _ParameterValidator({
 		errorPrefix: "sap.ui.test.autowaiter._promiseCounter#extendConfig"
 	});
+	var iDefaultMaxDelay = 1000; // milliseconds; should be at least as big as _timeoutWaiter maxDelay
 	var config = {
-		maxDelay: 1000 // milliseconds; should be at least as big as _timeoutCounter maxDelay
+		maxDelay: iDefaultMaxDelay
 	};
 
 	var aPendingPromises = [];
@@ -86,6 +87,10 @@ sap.ui.define([
 			return bHasPendingPromises;
 		},
 		extendConfig: function (oConfig) {
+			var iConfigMaxDelay = oConfig && oConfig.timeoutWaiter && oConfig.timeoutWaiter.maxDelay;
+			oConfig = {
+				maxDelay: iConfigMaxDelay || iDefaultMaxDelay
+			};
 			oConfigValidator.validate({
 				inputToValidate: oConfig,
 				validationInfo: {
