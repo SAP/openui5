@@ -378,6 +378,54 @@
 			assert.ok(this.oActionSelect.getSelectedItem().$().hasClass("sapMActionSelectItemWithoutFocus"), "Item should not be focused");
 		});
 
+		QUnit.module("Accessibility", {
+			beforeEach: function() {
+				this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				this.oActionSelect = new sap.m.ActionSelect({
+					items: [
+						new sap.ui.core.Item()
+					],
+					buttons: [
+						new sap.m.Button()
+					]
+				});
+				this.oActionSelect.placeAt("actionselect-content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oActionSelect.destroy();
+			}
+		});
+
+		QUnit.test("A tutor message should be added if the control has buttons", function(assert) {
+			this.oActionSelect.open();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			var sInvisibleText = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[0]).getText();
+			assert.strictEqual(sInvisibleText, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"),  "The tutor message is set correctly");
+		});
+
+		QUnit.test("A tutor message should be added and removed accordingly if buttons are programmatically added/removed", function(assert) {
+			this.oActionSelect.removeAllButtons();
+			this.oActionSelect.open();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			var sInvisibleText = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[0]);
+			assert.strictEqual(sInvisibleText, undefined,  "The tutor message is not added, when there are no buttons");
+
+			this.oActionSelect.close();
+
+			this.oActionSelect.addButton(new sap.m.Button({text: "text"}));
+			this.oActionSelect.open();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			var sInvisibleTextMessage = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[0]).getText();
+			assert.strictEqual(sInvisibleTextMessage, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"),  "The tutor message is set correctly when adding buttons");
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
