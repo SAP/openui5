@@ -641,6 +641,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			this.getMetadata().exit();
 		} else {
 			this._oManifest.exit(this);
+			delete this._oManifest;
 		}
 
 	};
@@ -1678,6 +1679,72 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		return mModelConfigs;
 	}
 
+	function loadManifests(oRootMetadata, oRootManifest) {
+		var aManifestsToLoad = [];
+		var aMetadataObjects = [];
+
+		/**
+		 * Collects the promises to load the manifest content and all of its parents manifest files.
+		 *
+		 * Gathers promises within aManifestsToLoad.
+		 * Gathers associates meta data objects within aMetadataObjects.
+		 * @param {object} oMetadata The metadata object
+		 * @param {sap.ui.core.Manifest} [oManifest] root manifest, which is possibly already loaded
+		 */
+		function collectLoadManifestPromises(oMetadata, oManifest) {
+			// ComponentMetadata classes with a static manifest or with legacy metadata
+			// do already have a manifest, so no action required
+			if (!oMetadata._oManifest) {
+				// TODO: If the "manifest" property is set, the code to load the manifest.json could be moved up to run in
+				// parallel with the ResourceModels that are created (after the Component-preload has finished) to trigger
+				// a potential request a bit earlier. Right now the whole component loading would be delayed by the async request.
+
+				var sName = oMetadata.getComponentName();
+				var sDefaultManifestUrl = jQuery.sap.getModulePath(sName, "/manifest.json");
+
+				var pLoadManifest;
+				if (oManifest) {
+					// Apply a copy of the already loaded manifest to be used by the static metadata class
+					pLoadManifest = Promise.resolve(JSON.parse(JSON.stringify(oManifest.getRawJson())));
+				} else {
+					// We need to load the manifest.json for the metadata class as
+					// it might differ from the one already loaded
+					// If the manifest.json is part of the Component-preload it will be taken from there
+					pLoadManifest = jQuery.sap.loadResource({
+						url: sDefaultManifestUrl,
+						dataType: "json",
+						async: true
+					}).catch(function(oError) {
+						jQuery.sap.log.error(
+							"Failed to load component manifest from \"" + sDefaultManifestUrl + "\" (component " + sName
+							+ ")! Reason: " + oError
+						);
+
+						// If the request fails, ignoring the error would end up in a sync call, which would fail, too.
+						return {};
+					});
+				}
+				aManifestsToLoad.push(pLoadManifest);
+				aMetadataObjects.push(oMetadata);
+			}
+
+			var oParentMetadata = oMetadata.getParent();
+			if (oParentMetadata && (oParentMetadata instanceof ComponentMetadata) && !oParentMetadata.isBaseClass()) {
+				collectLoadManifestPromises(oParentMetadata);
+			}
+		}
+
+		collectLoadManifestPromises(oRootMetadata, oRootManifest);
+
+		return Promise.all(aManifestsToLoad).then(function(aManifestJson) {
+			// Inject the manifest into the metadata class
+			for (var i = 0; i < aManifestJson.length; i++) {
+				if (aManifestJson[i]) {
+					aMetadataObjects[i]._applyManifest(aManifestJson[i]);
+				}
+			}
+		});
+	}
 
 	/**
 	 * Callback handler which will be executed once the component is loaded. A copy of the
@@ -2037,7 +2104,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// the Components' modules namespace
 		if (bManifestFirst && !oManifest) {
 			oManifest = Manifest.load({
-				manifestUrl: jQuery.sap.getModulePath(sName) + "/manifest.json",
+				manifestUrl: jQuery.sap.getModulePath(sName, "/manifest.json"),
 				componentName: sName,
 				async: oConfig.async,
 				failOnError: false
@@ -2431,11 +2498,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				return new Promise(function(resolve, reject) {
 					// asynchronously require component controller class
 					sap.ui.require( [ getControllerModuleName() ], function(oClass) {
+						// Directly resolve as otherwise uncaught exceptions can't be handled
+						resolve(oClass);
+					});
+				}).then(function(oClass) {
+					var oMetadata = oClass.getMetadata();
+					var sName = oMetadata.getComponentName();
+					var sDefaultManifestUrl = jQuery.sap.getModulePath(sName, "/manifest.json");
+					var pLoaded;
+
+					// Check if we loaded the manifest.json from the default location
+					// In this case it can be directly passed to its metadata class to prevent an additional request
+					if (oManifest && typeof vManifest !== "object" && (typeof sManifestUrl === "undefined" || sManifestUrl === sDefaultManifestUrl)) {
+						pLoaded = loadManifests(oMetadata, oManifest);
+					} else {
+						pLoaded = loadManifests(oMetadata);
+					}
+
+					return pLoaded.then(function() {
 						// prepare the loaded class and resolve with it
-						resolve( prepareControllerClass(oClass) );
+						return prepareControllerClass(oClass);
 					});
 				});
-
 			}).then(function(oControllerClass) {
 				var waitFor = mOptions.waitFor;
 				if (waitFor) {

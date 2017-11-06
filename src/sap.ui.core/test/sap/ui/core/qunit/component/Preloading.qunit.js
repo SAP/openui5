@@ -335,6 +335,7 @@ sap.ui.define([
 		this.loadScript.withArgs("scenario1/comp/Component-preload.js").returns( Promise.resolve(true) );
 		this.loadScript.withArgs("scenario1/lib1/library-preload.js").returns( Promise.resolve(true) );
 		this.loadScript.withArgs("scenario1/lib2/library-preload.js").returns( Promise.resolve(true) );
+		this.requireSpy.withArgs( ["scenario1/comp/Component"] ).callsArgWith(1, Component);
 
 		// first load with preloadOnly: true and check that none of the relvant modules have been required
 		return sap.ui.component.load({
@@ -436,6 +437,8 @@ sap.ui.define([
 
 	QUnit.module("Async (Pre-)Loading (Manifest First)", {
 		beforeEach: function() {
+			this.oldCfgPreload = oRealCore.oConfiguration.preload;
+
 			// Register test module path
 			jQuery.sap.registerModulePath("sap.test", "./testdata/async");
 
@@ -444,6 +447,7 @@ sap.ui.define([
 			this.oRegisterPreloadedModulesSpy = sinon.spy(jQuery.sap, "registerPreloadedModules");
 		},
 		afterEach: function() {
+			oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			unloadResources();
 
 			// Restore spies
@@ -456,6 +460,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("dependencies with manifest component", function(assert) {
+		oRealCore.oConfiguration.preload = 'async'; // sync or async both activate the preload
+
 		var done = assert.async();
 
 		// start test
