@@ -46,15 +46,17 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternA sapUiDemokitLandingBlockHeadline"
+						class="sapUiDemokitLandingBlockHeadline"
+						backgroundColorSet="ColorSet9"
+						backgroundColorShade="ShadeA"
 						title="Key Features"
 						titleAlignment="Center"/>
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-					backgroundColorSet="ColorSet5"
-					backgroundColorShade="ShadeD">
+						backgroundColorSet="ColorSet5"
+						backgroundColorShade="ShadeD">
 					<l:Grid
 							defaultSpan="L6 M12 S12"
 							hSpacing="0"
@@ -82,7 +84,8 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternC">
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeD">
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
@@ -132,7 +135,8 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternB">
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
@@ -172,7 +176,8 @@
 
 
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternE">
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
 					<l:Grid
 							defaultSpan="L6 M12 S12"
 							hSpacing="0"
@@ -206,14 +211,17 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternA sapUiDemokitLandingBlockHeadline"
+						backgroundColorSet="ColorSet9"
+						backgroundColorShade="ShadeA"
+						class="sapUiDemokitLandingBlockHeadline"
 						title="Choose Your Scenario"
 						titleAlignment="Center"/>
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternD">
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeD">
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
@@ -245,7 +253,8 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternC">
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
@@ -278,7 +287,8 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternB">
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
@@ -312,7 +322,8 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternC">
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
@@ -348,14 +359,18 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternA sapUiDemokitLandingBlockHeadline"
+						class="sapUiDemokitLandingBlockHeadline"
+						backgroundColorSet="ColorSet9"
+						backgroundColorShade="ShadeA"
 						title="Join the Community"
 						titleAlignment="Center"/>
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="sapUiBlockCenteredCell demokitInitialPagesColorPatternB communityLinkCell">
+						class="sapUiBlockCenteredCell communityLinkCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
 					<l:HorizontalLayout>
 						<core:Icon
 								src="sap-icon://collaborate"
@@ -372,7 +387,9 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="sapUiBlockCenteredCell demokitInitialPagesColorPatternC communityLinkCell">
+						class="sapUiBlockCenteredCell communityLinkCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
 					<l:HorizontalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_stackoverflow.png"
@@ -390,7 +407,9 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="sapUiBlockCenteredCell demokitInitialPagesColorPatternD communityLinkCell">
+						class="sapUiBlockCenteredCell communityLinkCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
 					<l:HorizontalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_youtube.png"
@@ -408,7 +427,9 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="sapUiBlockCenteredCell demokitInitialPagesColorPatternE communityLinkCell">
+						class="sapUiBlockCenteredCell communityLinkCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeD">
 					<l:HorizontalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_twitter.png"
