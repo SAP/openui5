@@ -53,14 +53,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Horizontal alignment of the column content. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
+			 * Defines the horizontal alignment of the column content.
 			 *
-			 * NOTE: Control with a "textAlign" property inherits the horizontal alignment.
+			 * NOTE: Text controls with a <code>textAlign</code> property inherits the horizontal alignment.
 			 */
 			hAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
 			/**
-			 * Vertical alignment of the cells in a column. Possible values are "Inherit", "Top", "Middle", "Bottom"
+			 * Defines the vertical alignment of the cells in a column.
 			 * This property does not affect the vertical alignment of header and footer.
 			 */
 			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : VerticalAlign.Inherit},
@@ -246,12 +246,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	};
 
 	/**
-	 * Apply text alignment of the Column to Text/Label/Link...
-	 *
-	 * TODO: This is so ugly to check content functions
-	 * instead we should document how to use our controls
-	 * to inherit text-alignment and we should add a new
-	 * sap.ui.core.TextAlign type called "Inherit"
+	 * Apply text alignment of the Column to the Text controls
 	 *
 	 * @param {sap.ui.core.Control} oControl List control
 	 * @param {String} [sAlign] TextAlign enumeration
@@ -259,9 +254,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 * @protected
 	 */
 	Column.prototype.applyAlignTo = function(oControl, sAlign) {
+		// TODO: This is so ugly to check content functions
+		// instead we should document how to use our controls
+		// to inherit text-alignment and we should add a new
+		// sap.ui.core.TextAlign type called "Inherit"
 		sAlign = sAlign || this.getHAlign();
-		if (sAlign === TextAlign.Initial ||
-			!oControl.getMetadata().getProperties().textAlign ||
+		if (!oControl.getText ||
+			!oControl.getTextAlign ||
+			sAlign === TextAlign.Initial ||
 			oControl.getTextAlign() === sAlign) {
 			return oControl;
 		}
