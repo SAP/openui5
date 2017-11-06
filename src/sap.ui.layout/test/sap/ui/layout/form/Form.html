@@ -20,10 +20,11 @@
 			         new sap.m.SegmentedButtonItem({key: "L3", text: "GridLayout"}),
 			         new sap.m.SegmentedButtonItem({key: "L4", text: "ResponsiveGridLayout"})
 			        ],
-			select: function(oEvent) {
+			selectionChange: function(oEvent) {
 				var oForm1 = sap.ui.getCore().byId("F1");
 				var oForm2 = sap.ui.getCore().byId("F2");
-				switch (oEvent.getParameter("key")) {
+				var oItem = oEvent.getParameter("item");
+				switch (oItem.getKey()) {
 				case "L1":
 					oForm1.setLayout(sap.ui.getCore().byId("L1"));
 					oForm2.setLayout(sap.ui.getCore().byId("L_A"));
@@ -95,7 +96,7 @@
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "Image",
-							fields: [new sap.m.Image({src:"../../commons/images/SAPLogo.gif"})]
+							fields: [new sap.m.Image({src:"../../commons/images/SAPLogo.gif", densityAware: false})]
 						})
 						]
 				}),
@@ -232,8 +233,9 @@
 								         new sap.m.SegmentedButtonItem("Back2", {key: sap.ui.layout.BackgroundDesign.Solid, text: "Solid"}),
 								         new sap.m.SegmentedButtonItem("Back3", {key: sap.ui.layout.BackgroundDesign.Translucent, text: "Translucent"})
 								        ],
-								select: function(oEvent) {
-									var sBackground = oEvent.getParameter("key");
+								selectionChange: function(oEvent) {
+									var oItem = oEvent.getParameter("item");
+									var sBackground = oItem.getKey();
 									oLayout1.setBackgroundDesign(sBackground);
 									oLayout2.setBackgroundDesign(sBackground);
 									oLayout3.setBackgroundDesign(sBackground);
@@ -257,12 +259,12 @@
 
 		var oForm2 = new sap.ui.layout.form.Form("F2",{
 			toolbar: new sap.m.Toolbar("TB1", {
-									content: [new sap.m.Image({src: "../../commons/images/ui5_small.png"}),
+									content: [new sap.m.Image({src: "../../commons/images/ui5_small.png", densityAware: false}),
 									          new sap.m.Title("F2-Title", {text: "Car", level: sap.ui.core.TitleLevel.H4, titleStyle: sap.ui.core.TitleLevel.H4, tooltip: "Title tooltip"}),
 									          new sap.m.ToolbarSpacer(),
 									          new sap.m.Link({text: "Link", href: "http://www.sap.com"}),
 									          new sap.m.Button({text: "Text"}),
-									          new sap.m.Button({icon: "sap-icon://sap-ui5"})
+									          new sap.m.Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
 									          ]
 								}),
 			ariaLabelledBy: "F2-Title",
@@ -276,7 +278,7 @@
 							          new sap.m.ToolbarSpacer(),
 							          new sap.m.Link({text: "Link", href: "http://www.sap.com"}),
 							          new sap.m.Button({text: "Text"}),
-							          new sap.m.Button({icon: "sap-icon://sap-ui5"})
+							          new sap.m.Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
 							          ]
 						}),
 					ariaLabelledBy: "F2C1-Title",
