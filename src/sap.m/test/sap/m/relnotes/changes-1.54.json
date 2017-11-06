@@ -103,6 +103,18 @@
         "type": "FIX",
         "text": " sap.m.Timepicker: position selection frame properly in DateTimepicker on small screens",
         "references": []
+      },
+      {
+        "id": "971a45aa34f4f57b3d6b67b7d2b1e41124e9aac2",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed overflow calculations",
+        "references": []
+      },
+      {
+        "id": "7db204449fdacc3d3e91f97ac2ce04a1d6dd3278",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Precision of milliseconds set to the third digit",
+        "references": []
       }
     ]
   }
