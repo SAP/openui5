@@ -161,6 +161,16 @@ sap.ui.define(['./library', 'sap/ui/core/Item'],
 			return Item.prototype.destroyAggregation.apply(this, arguments);
 		};
 
+		MenuItem.prototype.destroy = function() {
+			var oVisualControl = sap.ui.getCore().byId(this._getVisualControl());
+
+			if (oVisualControl) {
+				oVisualControl.destroy();
+			}
+
+			return Item.prototype.destroy.apply(this, arguments);
+		};
+
 		//Internal methods used to identify the item in the Menu's hierarchy.
 
 		/**
