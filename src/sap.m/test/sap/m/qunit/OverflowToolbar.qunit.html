@@ -918,6 +918,47 @@
 			oOverflowTB.destroy();
 		});
 
+		QUnit.test("The order of grouped controls should be preserved in the overflow", function (assert) {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+				oGroupedButton2 = getButton('3', sap.m.OverflowToolbarPriority.Low, 1),
+
+					aDefaultContent = [
+						getButton('1'),
+						oGroupedButton1,
+						oGroupedButton2,
+						getButton('4'),
+						getButton('5')
+					],
+
+					oOverflowTB = createOverflowToolbar({
+						width: "500px"
+					}, aDefaultContent),
+
+					aElementsInOverflowIds,
+					iGroupedButton1Index,
+					iGroupedButton2Index;
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Click the overflow button
+			oOverflowTB._getOverflowButton().firePress();
+			this.clock.tick(1000);
+
+			aElementsInOverflowIds = oOverflowTB._getPopover().getAssociatedContent();
+			iGroupedButton1Index = aElementsInOverflowIds.indexOf(oGroupedButton1.getId());
+			iGroupedButton2Index = aElementsInOverflowIds.indexOf(oGroupedButton2.getId());
+
+			// Check if the order of the grouped items is correct
+			assert.strictEqual(iGroupedButton1Index < iGroupedButton2Index, true,
+					"The button 1 from group number 1 is ordered before button 2 from the same group");
+
+			oOverflowTB.destroy();
+		});
+
 		QUnit.test("Changing the group of a button should move it in the overflow", function (assert) {
 			// Create a toolbar 500px and 5 buttons x 100px
 			// Two of the buttons belongs to group number 1
