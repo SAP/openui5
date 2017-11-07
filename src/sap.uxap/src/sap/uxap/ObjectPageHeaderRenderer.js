@@ -17,7 +17,7 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 			bTitleVisible = (oControl.getIsObjectIconAlwaysVisible() || oControl.getIsObjectTitleAlwaysVisible() || oControl.getIsObjectSubtitleAlwaysVisible() || oControl.getIsActionAreaAlwaysVisible()),
 			oParent = oControl.getParent(),
 			oExpandButton = oControl.getAggregation("_expandButton"),
-			oObjectImage = oControl._getInternalAggregation("_objectImage"),
+			oObjectImage = oControl._lazyLoadInternalAggregation("_objectImage", true),
 			bIsDesktop = sap.ui.Device.system.desktop,
 			bIsHeaderContentVisible = oParent && oParent instanceof ObjectPageLayout && ((oParent.getHeaderContent()
 				&& oParent.getHeaderContent().length > 0 && oParent.getShowHeaderContent()) ||
@@ -177,7 +177,7 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 	ObjectPageHeaderRenderer._renderObjectPageTitle = function (oRm, oControl, bTitleInContent) {
 		var sOHTitle = oControl.getObjectTitle(),
 			bMarkers = (oControl.getShowMarkers() && (oControl.getMarkFavorite() || oControl.getMarkFlagged())),
-			oBreadCrumbs = oControl._getInternalAggregation('_breadCrumbs');
+			oBreadCrumbs = oControl._lazyLoadInternalAggregation('_breadCrumbs', true);
 
 		if (!bTitleInContent && oBreadCrumbs && oBreadCrumbs.getLinks().length) {
 			oRm.renderControl(oBreadCrumbs);
