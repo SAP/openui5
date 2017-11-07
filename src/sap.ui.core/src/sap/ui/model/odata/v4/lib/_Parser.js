@@ -40,7 +40,49 @@ sap.ui.define([
 		rToken = new RegExp("^(?:" + sOperators +  "|" + sDelimiters + "|(" + sPath + ")|("
 			+ sValue + ")|(" + sSystemQueryOption + "))"),
 		// The two hex digits of a %-escape
-		rEscapeDigits = /^[0-9a-f]{2}$/i;
+		rEscapeDigits = /^[0-9a-f]{2}$/i,
+		// The symbol table for the filter parser
+		mFilterParserSymbols = {};
+
+	/**
+	 * Adds an infix operator to mFilterParserSymbols.
+	 *
+	 * @param {string} sId The token ID
+	 * @param {number} iLbp The "left binding power"
+	 */
+	function addInfixOperator(sId, iLbp) {
+		mFilterParserSymbols[sId] = {
+			lbp : iLbp,
+			led : function (oToken, oLeft) {
+				oToken.left = oLeft;
+				oToken.right = this.expression(iLbp);
+				return oToken;
+			}
+		};
+	}
+
+	/**
+	 * Adds a leaf symbol to mFilterParserSymbols.
+	 *
+	 * @param {string} sId The token ID
+	 */
+	function addLeafSymbol(sId) {
+		mFilterParserSymbols[sId] = {
+			lbp : 0,
+			nud : function (oToken) {
+				return oToken;
+			}
+		};
+	}
+
+	addLeafSymbol("PATH");
+	addLeafSymbol("VALUE");
+	addInfixOperator("eq", 1);
+	addInfixOperator("ge", 1);
+	addInfixOperator("gt", 1);
+	addInfixOperator("le", 1);
+	addInfixOperator("lt", 1);
+	addInfixOperator("ne", 1);
 
 	/**
 	 * The base class for the system query option parser and the filter parser. Takes care of token
@@ -58,7 +100,7 @@ sap.ui.define([
 	 * @throws {SyntaxError} If the next token's ID is not as expected
 	 */
 	Parser.prototype.advance = function (sExpectedTokenId) {
-		var oToken = this.aTokens[this.iCurrentToken];
+		var oToken = this.current();
 
 		if (sExpectedTokenId && (!oToken || oToken.id !== sExpectedTokenId)) {
 			if (sExpectedTokenId === "OPTION") {
@@ -79,7 +121,7 @@ sap.ui.define([
 	 * @returns {boolean} True if the token is as expected and the parser has advanced
 	 */
 	Parser.prototype.advanceIf = function (sExpectedTokenId) {
-		var oToken = this.aTokens[this.iCurrentToken];
+		var oToken = this.current();
 
 		if (oToken && oToken.id === sExpectedTokenId) {
 			this.iCurrentToken += 1;
@@ -97,15 +139,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Throws an error that the token was not as expected.
+	 * Throws an error.
 	 *
-	 * @param {string} sWhat A description what was expected
-	 * @param {object} [oToken] The unexpected token or undefined to indicate end of input
-	 * @throws {SyntaxError} An error that the token was not as expected
+	 * @param {string} sMessage The error message
+	 * @param {object} [oToken] The token to report the error for or undefined to indicate end of
+	 *   input
+	 * @throws {SyntaxError} With this error message
 	 */
-	Parser.prototype.expected = function (sWhat, oToken) {
-		var sMessage = "Expected " + sWhat + " but instead saw ",
-			sValue;
+	Parser.prototype.error = function (sMessage, oToken) {
+		var sValue;
 
 		if (oToken) {
 			sValue = oToken.value;
@@ -115,6 +157,17 @@ sap.ui.define([
 			sMessage += "end of input";
 		}
 		throw new SyntaxError(sMessage + ": " + this.sText);
+	};
+
+	/**
+	 * Throws an error that the token was not as expected.
+	 *
+	 * @param {string} sWhat A description what was expected
+	 * @param {object} [oToken] The unexpected token or undefined to indicate end of input
+	 * @throws {SyntaxError} An error that the token was not as expected
+	 */
+	Parser.prototype.expected = function (sWhat, oToken) {
+		this.error("Expected " + sWhat + " but instead saw ", oToken);
 	};
 
 	/**
@@ -152,6 +205,43 @@ sap.ui.define([
 	FilterParser.prototype = Object.create(Parser.prototype);
 
 	/**
+	 * Parses a filter expression starting at the current token.
+	 *
+	 * @returns {object} The syntax tree for that expression
+	 */
+	FilterParser.prototype.expression = function () {
+		var oLeft, oToken;
+
+		oToken = this.advance();
+		if (!oToken) {
+			this.expected("expression");
+		}
+		oLeft = this.getSymbolValue(oToken, "nud").call(this, oToken);
+		oToken = this.current();
+		if (oToken) {
+			oLeft = this.getSymbolValue(oToken, "led").call(this, this.advance(), oLeft);
+		}
+		return oLeft;
+	};
+
+	/**
+	 * Returns a value from the symbol table entry for the token.
+	 *
+	 * @param {object} oToken The token
+	 * @param {string} sWhat The key in the symbol table entry
+	 * @returns {any} The value
+	 * @throws {SyntaxError} An error that the token was unexpected when there is no such value
+	 */
+	FilterParser.prototype.getSymbolValue = function (oToken, sWhat) {
+		var oSymbol = mFilterParserSymbols[oToken.id];
+
+		if (!oSymbol || !(sWhat in oSymbol)) {
+			this.error("Unexpected ", oToken);
+		}
+		return oSymbol[sWhat];
+	};
+
+	/**
 	 * Parses a filter string.
 	 *
 	 * @param {string} sFilter The filter string
@@ -159,30 +249,8 @@ sap.ui.define([
 	 * @throws {SyntaxError} If there is a syntax error
 	 */
 	FilterParser.prototype.parse = function (sFilter) {
-		var oOperatorToken,
-			oPathToken,
-			oValueToken;
-
 		this.init(sFilter);
-		oPathToken = this.advance("PATH");
-		oOperatorToken = this.advance();
-		switch (oOperatorToken && oOperatorToken.id) {
-			case "eq":
-			case "ge":
-			case "gt":
-			case "le":
-			case "lt":
-			case "ne":
-				break;
-			default:
-				this.expected("operator", oOperatorToken);
-		}
-		oValueToken = this.advance("VALUE");
-
-		oOperatorToken.left = oPathToken;
-		oOperatorToken.right = oValueToken;
-
-		return oOperatorToken;
+		return this.finish(this.expression());
 	};
 
 	/**
@@ -503,7 +571,7 @@ sap.ui.define([
 		 * <li> literals are leafs with <code>id="VALUE"</code> and the literal (as parsed) in
 		 *   <code>value</code>
 		 * <li> binary operations are nodes with the operator in <code>id</code>, the operator incl.
-		 *   the surrounding space in <code>value</code> and <code>left</code> and
+		 *   the surrounding required space in <code>value</code> and <code>left</code> and
 		 *   <code>right</code> containing syntax trees for the operands.
 		 * </ul>
 		 * <code>at</code> always contains the position where this token started (starting with 1).
