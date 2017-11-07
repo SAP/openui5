@@ -19,8 +19,7 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": ["sap_belize"]
+		}
 	},
 	"sap.ui5": {
 		"rootView": "sap.ui.fl.qunit.integration.testComponentReuse.View",
