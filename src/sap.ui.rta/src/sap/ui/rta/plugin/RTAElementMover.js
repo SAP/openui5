@@ -233,7 +233,7 @@ function(
 		if (oMovedOverlay.getParent().getElementInstance() !== oTargetElement) {
 			// check if binding context is the same
 			var aBindings = BindingsExtractor.getBindings(oMovedElement, oMovedElement.getModel());
-			if (Object.keys(aBindings).length > 0 && oTargetElement.getBindingContext()) {
+			if (Object.keys(aBindings).length > 0 && oMovedElement.getBindingContext() && oTargetElement.getBindingContext()) {
 				var sMovedElementBindingContext = Utils.getEntityTypeByPath(
 					oMovedElement.getModel(),
 					oMovedElement.getBindingContext().getPath()
