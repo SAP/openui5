@@ -220,4 +220,63 @@ function(
 		assert.equal(window.getComputedStyle(oSrcDomElement)["visibility"], "visible",
 			"then after restoring visibility the original domRef is visible again");
 	});
+
+
+	QUnit.module("Given another SimpleScrollControl with Overlays and one scroll container aggregation is ignored", {
+		beforeEach : function(assert) {
+			var ScrollControl = SimpleScrollControl.extend('sap.ui.dt.test.controls.ScrollControl', {
+				metadata: {
+					designtime: {
+						aggregations: {
+							content1: {
+								ignore: true
+							}
+						}
+					}
+				},
+				renderer: SimpleScrollControl.getMetadata().getRenderer().render
+			});
+			this.sandbox = sinon.sandbox.create();
+
+			var done = assert.async();
+
+			this.oScrollControl = new ScrollControl({
+				id: "scrollControl",
+				content1: [new TextArea({
+					value: "foo"
+				})],
+				content2: [new TextArea({
+					value: "bar"
+				})],
+				footer: [new TextArea({
+					value: "footer"
+				})]
+			});
+
+			this.oVBox = new sap.m.VBox({
+				items : [this.oScrollControl]
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new sap.ui.dt.DesignTime({
+				rootElements : [this.oVBox]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oScrollControlOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oScrollControl);
+				sap.ui.getCore().applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach : function() {
+			this.sandbox.restore();
+			this.oVBox.destroy();
+			this.oDesignTime.destroy();
+		}
+	});
+	QUnit.test("when the overlay is rendered, also aggregation overlays are rendered", function(assert) {
+		assert.ok(this.oScrollControlOverlay.getDomRef(), "overlay has domRef");
+		assert.ok(this.oScrollControlOverlay.getAggregationOverlay("content2").getDomRef(), "aggregation overlay in scroll container has domRef");
+		assert.ok(this.oScrollControlOverlay.getAggregationOverlay("footer").getDomRef(), "aggregation overlay outside scroll container has domRef");
+	});
 });

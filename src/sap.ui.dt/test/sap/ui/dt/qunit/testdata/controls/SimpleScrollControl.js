@@ -29,7 +29,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 
 			aggregations: {
 				content1: {type: "sap.ui.core.Control", multiple: true, singularName: "content1"},
-				content2: {type: "sap.ui.core.Control", multiple: true, singularName: "content2"}
+				content2: {type: "sap.ui.core.Control", multiple: true, singularName: "content2"},
+				footer: {type: "sap.ui.core.Control", multiple: true, singularName: "footer"}
 			},
 			designtime: {
 				aggregations: {
@@ -41,6 +42,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 					content2: {
 						domRef: function(oElement) {
 							return oElement.$("content2").get(0);
+						}
+					},
+					footer: {
+						domRef: function(oElement) {
+							return oElement.$("footer").get(0);
 						}
 					}
 				},
@@ -67,22 +73,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 			oRm.writeClasses();
 			oRm.write(">");
 
-			var aContent = oCtrl.getAggregation("content1", []);
-
 			var sId = oCtrl.getId() + "-content1";
 			oRm.write("<div id='" + sId + "'>");
-			for (var i = 0; i < aContent.length; i++) {
-				oRm.renderControl(aContent[i]);
-			}
+			var aContent = oCtrl.getAggregation("content1", []);
+			aContent.forEach(function(oCtrl){
+				oRm.renderControl(oCtrl);
+			});
 			oRm.write("</div>");
 
 			sId = oCtrl.getId() + "-content2";
 			oRm.write("<div id='" + sId + "'>");
 			aContent = oCtrl.getAggregation("content2", []);
-			for (var j = 0; j < aContent.length; j++) {
-				oRm.renderControl(aContent[j]);
-			}
+			aContent.forEach(function(oCtrl){
+				oRm.renderControl(oCtrl);
+			});
 			oRm.write("</div>");
+
+			//end scrollcontainer
+			oRm.write("</div>");
+
+			sId = oCtrl.getId() + "-footer";
+			oRm.write("<div id='" + sId + "'>");
+			aContent = oCtrl.getAggregation("footer", []);
+			aContent.forEach(function(oCtrl){
+				oRm.renderControl(oCtrl);
+			});
 			oRm.write("</div>");
 			oRm.write("</div>");
 		}
