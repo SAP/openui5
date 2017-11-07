@@ -501,6 +501,7 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 		assert.equal(oPayLoad.title, sTitle, "the title was passed");
 		assert.equal(oPayLoad.description, sDescription, "the description was passed");
 		assert.equal(oPayLoad.parameters, aParameters, "the parameter were passed");
+		assert.equal(oPayLoad.support.generator, "", "the creation generator default was used");
 
 	});
 
@@ -526,6 +527,26 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 		var oPayLoad = oLrepConnectorSendStub.getCall(0).args[2];
 		assert.equal(oPayLoad.validAppVersions.creation, sCreation, "the creation app version was passed");
 		assert.equal(oPayLoad.validAppVersions.from, sFrom, "the from app version was passed");
+
+	});
+
+	QUnit.test("createOrUpdateContextObject writes down the provided generator information", function (assert) {
+
+		var sGenerator = "RTA";
+
+		var oPropertyBag = {
+			reference: "sReference",
+			namespace: "apps/myAppReference/contexts/",
+			generator: sGenerator
+		};
+
+		var oLrepConnectorSendStub = this.stub(ContextManager._oLrepConnector, "send");
+
+		ContextManager.createOrUpdateContextObject(oPropertyBag);
+
+		assert.ok(oLrepConnectorSendStub.calledOnce, "sending was initiated");
+		var oPayLoad = oLrepConnectorSendStub.getCall(0).args[2];
+		assert.equal(oPayLoad.support.generator, sGenerator, "the creation generator was passed");
 
 	});
 });

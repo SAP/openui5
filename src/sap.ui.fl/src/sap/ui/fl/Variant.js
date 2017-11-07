@@ -554,6 +554,7 @@ sap.ui.define([
 	 * @param {Boolean} [oPropertyBag.isUserDependent] true for enduser changes
 	 * @param {String}  !!!![oPropertyBag.context] ID of the context
 	 * @param {Object}  [oPropertyBag.content.validAppVersions] Application versions where the change is active
+	 * @param {String}  [oPropertyBag.generator] Tool which is used to generate the variant change file
 	 *
 	 * @returns {Object} The content of the change file
 	 *
@@ -585,7 +586,7 @@ sap.ui.define([
 				originalLanguage: Utils.getCurrentLanguage(),
 				conditions: {},
 				support: {
-					generator: "Variant.createInitialFileContent",
+					generator: oPropertyBag.generator || "Variant.createInitialFileContent",
 					service: oPropertyBag.service || "",
 					user: "",
 					sapui5Version: sap.ui.version
