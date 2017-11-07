@@ -69,6 +69,7 @@ sap.ui.define([
 	 * <li>{@link sap.m.DateTimeInput}</li>
 	 * <li>{@link sap.m.DateTimePicker}</li>
 	 * <li>{@link sap.m.Input}</li>
+	 * <li>{@link sap.m.Label}</li>
 	 * <li>{@link sap.m.OverflowToolbarButton}</li>
 	 * <li>{@link sap.m.SearchField}</li>
 	 * <li>{@link sap.m.SegmentedButton}</li>

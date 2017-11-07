@@ -374,6 +374,52 @@
 			assert.equal(this.form.$().find('.sapUiFormElement.sapUiFormElementLbl').text(), 'Test1:Display Value', '":" span is added.');
 		});
 
+		QUnit.module("Label in Overflow Toolbar", {
+			beforeEach: function () {
+				this.clock = sinon.useFakeTimers();
+			},
+
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
+		QUnit.test("Grouped labels are identified", function (assert) {
+			var oSingleLabel = new sap.m.Label({ text: "Single label"}),
+				oGroupedLabel = new sap.m.Label({
+				text: "Label For Control",
+					layoutData: new sap.m.OverflowToolbarLayoutData({group: 1}),
+					labelFor: "labelledControlId"
+				}),
+				oLabelledControl = new sap.m.Input("labelledControlId", {layoutData: new sap.m.OverflowToolbarLayoutData({group: 1})}),
+
+				aToolbarContent = [
+					new sap.m.ToolbarSpacer(),
+					oSingleLabel,
+					oGroupedLabel,
+					oLabelledControl
+				],
+				oOverflowTB = new sap.m.OverflowToolbar({width: 'auto', content: aToolbarContent});
+
+			oOverflowTB.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oOverflowTB.setWidth('10px'); // set small width that causes all content to move to the overflow
+			this.clock.tick(1000);
+
+			assert.strictEqual(oGroupedLabel.hasStyleClass("sapMLabelMediumMarginTop"), true, "grouped label is correctly marked in the overflow");
+			assert.strictEqual(oSingleLabel.hasStyleClass("sapMLabelMediumMarginTop"), false, "non-grouped label is correctly marked in the overflow");
+
+			// remove the labelled control
+			oOverflowTB.removeContent(oLabelledControl);
+			this.clock.tick(1000);
+
+			assert.strictEqual(oGroupedLabel.hasStyleClass("sapMLabelMediumMarginTop"), false, "grouped label is correctly marked in the overflow");
+
+			oOverflowTB.destroy();
+			oLabelledControl.destroy();
+		});
+
 		</script>
 
 	</head>

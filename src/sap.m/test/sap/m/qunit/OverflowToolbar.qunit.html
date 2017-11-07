@@ -1501,8 +1501,8 @@
 		QUnit.test("[_cacheControlsInfo] Control caching works properly", function (assert) {
 			var spyCache = this.spy(sap.m.OverflowToolbar.prototype, "_cacheControlsInfo"),
 					aDefaultContent = [
-						new sap.m.Label({text: "Label1", width: "100px"}),
-						new sap.m.Label({text: "Label2", width: "100px"}),
+						new sap.m.Text({text: "Label1", width: "100px"}),
+						new sap.m.Text({text: "Label2", width: "100px"}),
 						new sap.m.Button({text: "1", width: "100px"}),
 						new sap.m.Button({text: "2", width: "100px"}),
 						new sap.m.Button({text: "3", width: "100px", layoutData: new sap.m.OverflowToolbarLayoutData({stayInOverflow: true})}),
@@ -1517,7 +1517,7 @@
 			assert.strictEqual(spyCache.callCount, 1, "After a toolbar is created, _cacheControlsInfo is called once and _bControlsInfoCached is set to true");
 			assert.strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
 			assert.strictEqual(oOverflowTB._aMovableControls.length, 4, "4 of the buttons are properly marked as movable to the popover");
-			assert.strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 labels are properly marked as toolbar only");
+			assert.strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 texts are properly marked as toolbar only");
 			assert.strictEqual(oOverflowTB._aActionSheetOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
 
 			// Note: control sizes and total content size are not checked here because they depend on margins and calculations are not always predictable
@@ -1616,7 +1616,7 @@
 		QUnit.test("Items must first overflow and then shrink", function (assert) {
 
 			var aDefaultContent = [
-						new sap.m.Label({text: "This is a very very very long label"}),
+						new sap.m.Text({text: "This is a very very very long text"}),
 						new sap.m.Button({text: "2", width: "100px"})
 					],
 					oOverflowTB = createOverflowToolbar({

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Label
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library'],
-	function(jQuery, library, Control, LabelEnablement, coreLibrary) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/LabelEnablement', "sap/m/OverflowToolbar", "sap/m/OverflowToolbarLayoutData", 'sap/ui/core/library'],
+	function(jQuery, library, Control, LabelEnablement, OverflowToolbar, OverflowToolbarLayoutData, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -56,7 +56,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		interfaces : [
 			"sap.ui.core.Label",
-			"sap.ui.core.IShrinkable"
+			"sap.ui.core.IShrinkable",
+			"sap.m.IOverflowToolbarContent"
 		],
 		library : "sap.m",
 		properties : {
@@ -166,6 +167,58 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Label.prototype.getAccessibilityInfo = function() {
 		return {description: this.getText()};
+	};
+
+	/**
+	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+	 */
+	Label.prototype.getOverflowToolbarConfig = function() {
+		var oConfig = {
+			canOverflow: true,
+			propsUnrelatedToSize: ["design", "required", "displayOnly"]
+		};
+
+		function getOwnGroup(oControl) {
+			var oLayoutData = oControl && oControl.getLayoutData();
+
+			if (oLayoutData && oLayoutData instanceof OverflowToolbarLayoutData) {
+				return oLayoutData.getGroup();
+			}
+		}
+
+		oConfig.onBeforeEnterOverflow = function(oLabel) {
+			var bIsLabelFor = false,
+				oToolbar,
+				sLabelledControlId,
+				oLabelledControl,
+				sLabelGroupId,
+				sLabelledControlGroupId;
+
+			oToolbar = oLabel.getParent();
+			if (!oToolbar || !(oToolbar instanceof OverflowToolbar)) {
+				return;
+			}
+
+			// check that the label is for a control from the same toolbar
+			sLabelledControlId = oLabel.getLabelFor();
+			oLabelledControl = sLabelledControlId && sap.ui.getCore().byId(sLabelledControlId);
+			if (!oLabelledControl || (oToolbar.indexOfContent(oLabelledControl) < 0)) {
+				return;
+			}
+
+			// check that the label and the labeled control are grouped in the toolbar
+			sLabelGroupId = getOwnGroup(oLabel);
+			sLabelledControlGroupId = getOwnGroup(oLabelledControl);
+			bIsLabelFor = sLabelGroupId && (sLabelGroupId === sLabelledControlGroupId);
+
+			oLabel.toggleStyleClass("sapMLabelMediumMarginTop", bIsLabelFor, true /* suppress invalidate */);
+		};
+
+		oConfig.onAfterExitOverflow = function(oLabel) {
+			oLabel.toggleStyleClass("sapMLabelMediumMarginTop", false, true /* suppress invalidate */);
+		};
+
+		return oConfig;
 	};
 
 	// enrich Label functionality
