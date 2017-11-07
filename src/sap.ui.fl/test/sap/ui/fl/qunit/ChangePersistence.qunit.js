@@ -84,6 +84,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 					"variantManagementId" : {
 						"variants" : [{
 							"content" : {
+								"content" : {},
 								"fileName": "variant0",
 								"title": "variant 0"
 							},
@@ -91,6 +92,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 						},
 							{
 								"content" : {
+									"content" : {},
 									"fileName": "variant1",
 									"title": "variant 1"
 								},

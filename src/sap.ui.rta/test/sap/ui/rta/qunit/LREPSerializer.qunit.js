@@ -473,7 +473,7 @@ sap.ui.require([
 
 	QUnit.test("when the LREPSerializer.handleCommandExecuted gets called after 2 remove commands created via CommandFactory and afterwards saveCommands gets called", function(assert) {
 		// then two changes are expected to be written in LREP -> the remove which was not undone + the variant
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save");
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");
 
 		// Create commands
 		this.oRemoveCommand1 = CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -499,8 +499,7 @@ sap.ui.require([
 						variantManagementReference: "idOfVariantManagementReference"
 					}
 				};
-			},
-			bStandardVariantExists: false
+			}
 		});
 		var oAddChangeSpy = sandbox.spy(oMockedAppComponent.getModel(), "_addChange");
 		var oRemoveChangeSpy = sandbox.spy(oMockedAppComponent.getModel(), "_removeChange");

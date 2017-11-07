@@ -68,9 +68,10 @@ sap.ui.define([
 	 */
 	ControlVariant.prototype.registerElementOverlay = function(oOverlay) {
 		var oControl = oOverlay.getElementInstance(),
+			oModel = this._getVariantModel(oControl);
 			sVariantManagementReference;
 
-		if (oControl.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement") {
+		if (oControl instanceof VariantManagement) {
 			var oControl = oOverlay.getElementInstance(),
 				vAssociationElement = oControl.getAssociation("for"),
 				aVariantManagementTargetElements;
@@ -81,6 +82,9 @@ sap.ui.define([
 				oOverlay.setVariantManagement(sVariantManagementReference);
 				return;
 			}
+
+			oModel.getData()[sVariantManagementReference].variantsEditable = false;
+			oModel.checkUpdate(true);
 
 			aVariantManagementTargetElements = !jQuery.isArray(vAssociationElement) ? [vAssociationElement] : vAssociationElement;
 
@@ -143,6 +147,16 @@ sap.ui.define([
 	ControlVariant.prototype.deregisterElementOverlay = function(oOverlay) {
 		oOverlay.detachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
+
+		var oModel;
+		var sVariantManagementReference;
+		var oControl = oOverlay.getElementInstance();
+		if (oControl instanceof VariantManagement) {
+			oModel = this._getVariantModel(oControl);
+			sVariantManagementReference = oOverlay.getVariantManagement();
+			oModel.getData()[sVariantManagementReference].variantsEditable = true;
+			oModel.checkUpdate(true);
+		}
 
 		this.removeFromPluginsList(oOverlay);
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
@@ -272,7 +286,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantConfigureEnabled = function(oOverlay) {
-		return false;
+		return this._isVariantManagementControl(oOverlay);
 	};
 
 	/**
@@ -430,8 +444,23 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ControlVariant.prototype.configureVariants = function() {
-		return;
+	ControlVariant.prototype.configureVariants = function(aOverlays) {
+		var oVariantManagementControl = aOverlays[0].getElementInstance();
+		var sVariantManagementReference = aOverlays[0].getVariantManagement();
+		var oModel = this._getVariantModel(oVariantManagementControl);
+		var oDesignTimeMetadata = aOverlays[0].getDesignTimeMetadata();
+
+		oModel.manageVariants(oVariantManagementControl, sVariantManagementReference, this.getCommandFactory().getFlexSettings().layer).then(function(aConfiguredChanges) {
+			var oConfigureCommand = this.getCommandFactory().getCommandFor(oVariantManagementControl, "configure", {
+				control: oVariantManagementControl,
+				changes: aConfiguredChanges
+			}, oDesignTimeMetadata, sVariantManagementReference);
+			this.fireElementModified({
+				"command": oConfigureCommand
+			});
+		}.bind(this));
+
+//		return true;
 	};
 
 	/**

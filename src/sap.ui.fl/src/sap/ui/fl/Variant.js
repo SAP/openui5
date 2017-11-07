@@ -594,7 +594,7 @@ sap.ui.define([
 				validAppVersions: oPropertyBag.validAppVersions || {}
 			},
 			controlChanges: oPropertyBag.controlChanges || [],
-			variantChanges: []
+			variantChanges: {}
 		};
 
 		return oNewFile;

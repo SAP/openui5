@@ -280,12 +280,6 @@ sap.ui.define([
 	FlexController.prototype.addPreparedChange = function (oChange, oAppComponent) {
 		if (oChange.getVariantReference()) {
 			var oModel = oAppComponent.getModel("$FlexVariants");
-			if (!oModel.bStandardVariantExists) {
-				var oVariantData = oModel.getVariant(oChange.getVariantReference());
-				var oVariant = this.createVariant(oVariantData, oAppComponent);
-				oModel.bStandardVariantExists = true;
-				this._oChangePersistence.addChange(oVariant, oAppComponent);
-			}
 			oModel._addChange(oChange);
 		}
 
