@@ -195,7 +195,7 @@ sap.ui.define([
 
 				if (!oEventItem.getSubmenu()) {
 					var mPropertiesBag = {};
-					mPropertiesBag.eventITem = oEventItem;
+					mPropertiesBag.eventItem = oEventItem;
 					mPropertiesBag.contextElement = oContextElement;
 					oItem.handler(aSelection, mPropertiesBag);
 				}

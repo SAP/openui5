@@ -92,7 +92,7 @@ sap.ui.define([
 
 		var aMenuItems = aSubmenuItems.map(function(oSubmenuItem) {
 			var bCurrentItem = (sCurrentItemKey === oSubmenuItem.key),
-				sIcon = bCurrentItem ? "sap-icon://journey-depart" : "";
+				sIcon = bCurrentItem ? "sap-icon://accept" : "";
 			var oMenuItemTemplate = new MenuItem({
 				text: oSubmenuItem.title,
 				icon: sIcon,

@@ -8,14 +8,16 @@ sap.ui.define([
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/fl/registry/Settings'
+	'sap/ui/fl/registry/Settings',
+	'sap/m/MessageBox'
 ],
 function(
 	jQuery,
 	FlexUtils,
 	OverlayUtil,
 	OverlayRegistry,
-	Settings
+	Settings,
+	MessageBox
 ) {
 	"use strict";
 
@@ -576,6 +578,30 @@ function(
 			mRect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
 			mRect.right <= (window.innerWidth || document.documentElement.clientWidth)
 		);
+	};
+
+	/**
+	 * Shows a message box.
+	 * @param  {sap.m.MessageBox.Icon|string} oMessageType The type of the message box (icon to be displayed)
+	 * @param  {string} sTitleKey The text key for the title of the message box
+	 * @param  {string} sMessageKey The text key for the message of the message box
+	 * @param  {any} oError Optional - If an error is passed on, the message box text is derived from it
+	 * @return {Promise} Promise displaying the message box; resolves when it is closed
+	 * @private
+	 */
+	Utils._showMessageBox = function(oMessageType, sTitleKey, sMessageKey, oError) {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var sMessage = oResourceBundle.getText(sMessageKey, oError ? [oError.message || oError] : undefined);
+		var sTitle = oResourceBundle.getText(sTitleKey);
+
+		return new Promise(function(resolve) {
+			MessageBox.show(sMessage, {
+				icon: oMessageType,
+				title: sTitle,
+				onClose: resolve,
+				styleClass: Utils.getRtaStyleClassName()
+			});
+		});
 	};
 
 	return Utils;

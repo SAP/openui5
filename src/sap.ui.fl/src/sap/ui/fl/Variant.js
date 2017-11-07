@@ -40,7 +40,7 @@ sap.ui.define([
 			this._oDefinition = oFile;
 			this._oOriginDefinition = jQuery.extend(true, {}, oFile);
 			this._sRequest = '';
-			this._bUserDependent = (oFile.layer === "USER");
+			this._bUserDependent = (oFile.content.layer === "USER");
 			this._vRevertData = null;
 			this.setState(Variant.states.NEW);
 		},

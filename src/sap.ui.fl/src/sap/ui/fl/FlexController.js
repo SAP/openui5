@@ -242,7 +242,7 @@ sap.ui.define([
 			oValidAppVersions.to = sAppVersion;
 		}
 
-		oVariantSpecificData.content.validAppVersions = oValidAppVersions;
+		oVariantSpecificData.validAppVersions = oValidAppVersions;
 
 		oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
 		oVariant = new Variant(oVariantFileContent);
