@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.rta.appVariant.ManageAppsDialog.
+// Provides control sap.ui.rta.appVariant.AppVariantOverviewDialog.
 sap.ui.define([
 		'sap/ui/core/ComponentContainer',
 		'sap/m/Dialog',
@@ -20,7 +20,7 @@ sap.ui.define([
 
 	"use strict";
 
-	var ManageAppsDialog = Dialog.extend("sap.ui.rta.appVariant.ManageAppsDialog", {
+	var AppVariantOverviewDialog = Dialog.extend("sap.ui.rta.appVariant.AppVariantOverviewDialog", {
 		metadata : {
 			properties: {
 				rootControl: {
@@ -49,9 +49,11 @@ sap.ui.define([
 
 			this.addContent(this.oManageAppsComponentContainer);
 			this._createButton();
-			this.setContentWidth("1000px");
-			this.setContentHeight("300px");
-			this.setShowHeader(false);
+
+			this.setContentWidth("1250px");
+			this.setContentHeight("450px");
+
+			this.setTitle(this._oTextResources.getText("APP_VARIANT_OVERVIEW_DIALOG_TITLE"));
 
 			this.addStyleClass(RtaUtils.getRtaStyleClassName());
 		},
@@ -65,7 +67,7 @@ sap.ui.define([
 		renderer: DialogRenderer.render
 	});
 
-	ManageAppsDialog.prototype._createButton = function() {
+	AppVariantOverviewDialog.prototype._createButton = function() {
 		this.addButton(new sap.m.Button({
 			text: this._oTextResources.getText("APP_VARIANT_DIALOG_CLOSE"),
 			press: function() {
@@ -75,6 +77,6 @@ sap.ui.define([
 		}));
 	};
 
-	return ManageAppsDialog;
+	return AppVariantOverviewDialog;
 
 }, /* bExport= */ true);

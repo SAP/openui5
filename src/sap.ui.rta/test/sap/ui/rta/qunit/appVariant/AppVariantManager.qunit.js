@@ -70,9 +70,6 @@ function(
 					crossNavigation: {
 						inbounds: {}
 					}
-				},
-				"sap.ui5" : {
-					componentName: "TestIdBaseApp"
 				}
 			};
 
@@ -102,7 +99,6 @@ function(
 				assert.strictEqual(oAppVariantData.description, "App Variant Description", "then the description is correct");
 				assert.strictEqual(oAppVariantData.icon, "App Variant Icon", "then the icon is correct");
 				assert.strictEqual(oAppVariantData.idRunningApp, "TestId", "then the running app id is correct");
-				assert.strictEqual(oAppVariantData.idBaseApp, "TestIdBaseApp", "then the base app id is correct");
 				done();
 			});
 		});

@@ -30,11 +30,13 @@ sap.ui.require([
 
 		QUnit.test("when onGetOverview() is called,", function(assert) {
 			var done = assert.async();
+
 			var oMockedDescriptorData = {
 				"sap.app": {
 					id: "id1"
 				}
 			};
+
 			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
 
 			var aAppVariantOverviewAttributes = [
@@ -44,7 +46,6 @@ sap.ui.require([
 					subTitle : "subTitle1",
 					description : "description1",
 					icon : "sap-icon://history",
-					originalId : "id1",
 					isOriginal : true,
 					typeOfApp : "Original App",
 					descriptorUrl : "url1"
@@ -55,7 +56,6 @@ sap.ui.require([
 					subTitle : "subTitle2",
 					description : "description2",
 					icon : "sap-icon://history",
-					originalId : "id1",
 					isOriginal : false,
 					typeOfApp : "App Variant",
 					descriptorUrl : "url2"
@@ -66,7 +66,6 @@ sap.ui.require([
 					subTitle : "subTitle3",
 					description : "description3",
 					icon : "sap-icon://history",
-					originalId : "id1",
 					isOriginal : false,
 					typeOfApp : "App Variant",
 					descriptorUrl : "url3"
@@ -77,9 +76,9 @@ sap.ui.require([
 
 			var oRootControl = new sap.ui.core.Control();
 
-			return RtaAppVariantFeature.onGetOverview(oRootControl).then(function(oManageAppsDialog) {
-				assert.ok(true, "the the promise got resolved and manageAppsDialog is opened");
-				oManageAppsDialog.fireCancel();
+			return RtaAppVariantFeature.onGetOverview(oRootControl).then(function(oAppVariantOverviewDialog) {
+				assert.ok(true, "the the promise got resolved and AppVariant Overview Dialog is opened");
+				oAppVariantOverviewDialog.fireCancel();
 				done();
 			});
 		});
@@ -244,7 +243,7 @@ sap.ui.require([
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
 			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
-				assert.equal(bResult, false, "then the 'i' button is not visible");
+				assert.equal(bResult, true, "then the 'i' button is visible");
 			});
 		});
 
