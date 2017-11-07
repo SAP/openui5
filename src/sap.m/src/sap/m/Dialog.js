@@ -129,7 +129,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					stretch: {type: "boolean", group: "Appearance", defaultValue: false},
 
 					/**
-					 * Preferred width of content in Dialog. This property affects the width of dialog on phone in landscape mode, tablet or desktop, because the dialog has a fixed width on phone in portrait mode. If the preferred width is less than the minimum width of dilaog or more than the available width of the screen, it will be overwritten by the min or max value. The current mininum value of dialog width on tablet is 400px.
+					 * Preferred width of content in Dialog. This property affects the width of dialog on phone in landscape mode, tablet or desktop, because the dialog has a fixed width on phone in portrait mode. If the preferred width is less than the minimum width of the dialog or more than the available width of the screen, it will be overwritten by the min or max value. The current mininum value of dialog width on tablet is 400px.
 					 * @since 1.12.1
 					 */
 					contentWidth: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null},
