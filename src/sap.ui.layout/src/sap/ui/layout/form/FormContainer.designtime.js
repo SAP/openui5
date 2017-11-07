@@ -15,6 +15,9 @@ sap.ui.define(['sap/ui/fl/changeHandler/ChangeHandlerMediator'],
 	}
 
 	return {
+		isVisible: function(oFormContainer) {
+			return oFormContainer.isVisible();
+		},
 		actions: {
 			remove: {
 				changeType: "hideControl"

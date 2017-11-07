@@ -981,8 +981,12 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		if (oElement instanceof sap.ui.core.Control) {
 			return oElement.getVisible();
 		}
-		var oElementDomRef = this.getAssociatedDomRef();
-		return oElementDomRef ? ElementUtil.isVisible(oElementDomRef) : undefined;
+		var oDesignTimeMetadata = this.getDesignTimeMetadata();
+		var fnisVisible = oDesignTimeMetadata && oDesignTimeMetadata.getData().isVisible;
+		if (!fnisVisible) {
+			return undefined;
+		}
+		return fnisVisible(this.getElementInstance());
 	};
 
 	/**
