@@ -161,6 +161,23 @@ function(
 		assert.strictEqual(this.oRemovePlugin.isEnabled(this.oButtonOverlay), false, "... then isEnabled returns false");
 	});
 
+	QUnit.test("when an overlay has remove action designTime metadata, but the control has no parent", function(assert) {
+		this.oButtonOverlay.setDesignTimeMetadata({
+			actions : {
+				remove : {
+					changeType: "hideControl"
+				}
+			}
+		});
+
+		this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
+		this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
+
+		this.oButton.setParent(undefined);
+
+		assert.strictEqual(this.oRemovePlugin.isEnabled(this.oButtonOverlay), false, "... then isEnabled returns false");
+	});
+
 	QUnit.test("when an overlay has remove action designTime metadata with a confirmation text defined and is selected", function(assert) {
 		var done = assert.async();
 
