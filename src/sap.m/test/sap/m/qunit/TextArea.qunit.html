@@ -445,6 +445,37 @@
 		oTA.destroy();
 	});
 
+	test("Grow and shrink properly", function() {
+		var sLongText = new Array(1000).join("text ");
+		var shortText = "Lorem ipsulum";
+		var oTA = new sap.m.TextArea({
+			value: sLongText,
+			growing: true,
+			growingMaxLines: 5,
+			width: "100%"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oDOMRef = oTA.getDomRef();
+		var initialHeight = oDOMRef.clientHeight;
+
+		//Act
+		oTA.setValue(shortText);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		ok(initialHeight > oDOMRef.clientHeight, "TextArea height should have been shrinked properly.");
+
+		//Act
+		oTA.setValue(sLongText);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		ok(initialHeight === oDOMRef.clientHeight, "TextArea height should have been extended properly.");
+
+		oTA.destroy();
+	});
+
 	module("Input and Live change events in IE10+ when textarea html element is used");
 	test("iE10+ Input event should not be fired on focus for textarea html element with a native placeholder", function() {
 		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
