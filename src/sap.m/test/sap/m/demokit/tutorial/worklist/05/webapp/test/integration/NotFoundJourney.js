@@ -46,7 +46,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeResourceNotFound().
-		and.iTeardownMyAppFrame();
+			and.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see the 'Object not found' page if an invalid object ID has been called", function(Given, When, Then) {
@@ -69,7 +69,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheWorklistPage.iShouldSeeTheTable().
-		and.iTeardownMyAppFrame();
+			and.iTeardownMyAppFrame();
 	});
 
 });

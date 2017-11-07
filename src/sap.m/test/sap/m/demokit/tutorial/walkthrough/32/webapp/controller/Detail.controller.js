@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (Controller) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.wt.controller.Detail", {
+	return Controller.extend("sap.ui.demo.walkthrough.controller.Detail", {
 
 		onInit: function () {
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
