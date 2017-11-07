@@ -84,7 +84,7 @@ function(
 			aRelevantOverlays = this._getRelevantOverlays(oOverlay);
 			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 		} else if (oParams.type === "overlayRendered") {
-			this.evaluateEditable([oOverlay], {onRegistration: false});
+			this.evaluateEditable([oOverlay], {onRegistration: true});
 		} else if (oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
 			aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
