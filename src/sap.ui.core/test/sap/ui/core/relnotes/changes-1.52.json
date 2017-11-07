@@ -444,6 +444,24 @@
         "type": "FIX",
         "text": " v2.ODataModel: Allow invalidation of model cache entries",
         "references": []
+      },
+      {
+        "id": "15d21abe662bbd44254cadc759447223649233d1",
+        "type": "FEATURE",
+        "text": " core.Component: async loading of component resource bundles",
+        "references": []
+      },
+      {
+        "id": "008fce051d84cd6aefc3955ce0e7e5e2beb591d5",
+        "type": "FIX",
+        "text": " jquery.sap.global: deprecate synchronous module loading APIs",
+        "references": []
+      },
+      {
+        "id": "f251f9376b7ee38ad3b2ca036fa383ca1d46af5a",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Rendering in Fiori app is now correct",
+        "references": []
       }
     ]
   }
