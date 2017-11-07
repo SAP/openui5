@@ -994,5 +994,40 @@
         "references": []
       }
     ]
+  },
+  "1.48.13": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "7666e6828e606ba2aecd7f350576c31a42e342cb",
+        "type": "FIX",
+        "text": " AppCacheBuster: disable when no browser support for defineProperty",
+        "references": []
+      },
+      {
+        "id": "849f2532f4767c68a437397782ecb8af21bd9f31",
+        "type": "FIX",
+        "text": " Configuration: Consider sap-locale over sap-language",
+        "references": []
+      },
+      {
+        "id": "1bf0e08bade280636ce52936dd1dbb6d34837813",
+        "type": "FIX",
+        "text": " core.LocaleData: provide currency spacing for unknown locale",
+        "references": []
+      },
+      {
+        "id": "bbf190cc0c2df84387909d4436511721bb157e53",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Rendering in Fiori app is now correct",
+        "references": []
+      },
+      {
+        "id": "5e9253aee855a469d3952835a04bc1065ff4689a",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Check for expanded data in checkUpdate",
+        "references": []
+      }
+    ]
   }
 }
