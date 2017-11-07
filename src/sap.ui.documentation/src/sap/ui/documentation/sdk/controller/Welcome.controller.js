@@ -4,10 +4,11 @@
 
 /*global history */
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/m/library",
 		"sap/ui/Device"
-	], function (BaseController, mobileLibrary, Device) {
+	], function (jQuery, BaseController, mobileLibrary, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Welcome", {

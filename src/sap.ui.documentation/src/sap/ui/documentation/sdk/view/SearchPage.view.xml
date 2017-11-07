@@ -25,6 +25,7 @@
 								<Title text="ALL (1 - {/visibleAllLength} of {/AllLength})"/>
 							</OverflowToolbar>
 							<List
+								id="allList"
 								width="100%"
 								growing="true"
 								growingThreshold="25"
@@ -40,10 +41,8 @@
 								}">
 								<FeedListItem
 									sender="{title}"
-									senderPress="openSearchResult"
 									text="{summary}"
 									showIcon="false"
-									info="{path}"
 									app:path="{path}"/>
 							</List>
 						</VBox>
@@ -60,6 +59,7 @@
 									<Title text="API Reference (1 - {/visibleAPILength} of {/APILength})"/>
 								</OverflowToolbar>
 								<List
+									id="apiList"
 									growing="true"
 									growingThreshold="25"
 									updateFinished="onAPILoadMore"
@@ -73,10 +73,8 @@
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryAPIFormatter'}"
 										sender="{title}"
-										senderPress="openSearchResult"
 										text="{summary}"
 										showIcon="false"
-										info="{path}"
 										app:path="{path}"/>
 								</List>
 							</VBox>
@@ -93,6 +91,7 @@
 									<Title text="Documentation (1 - {/visibleDocLength} of {/DocLength})"/>
 								</OverflowToolbar>
 								<List
+									id="documentationList"
 									growing="true"
 									growingThreshold="25"
 									updateFinished="onDocLoadMore"
@@ -106,10 +105,8 @@
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryDocFormatter'}"
 										sender="{title}"
-										senderPress="openSearchResult"
 										text="{summary}"
 										showIcon="false"
-										info="{path}"
 										app:path="{path}"/>
 								</List>
 							</VBox>
@@ -126,6 +123,7 @@
 									<Title text="Samples (1 - {/visibleExploredLength} of {/ExploredLength})"/>
 								</OverflowToolbar>
 								<List
+									id="samplesList"
 									growing="true"
 									growingThreshold="25"
 									updateFinished="onExploredLoadMore"
@@ -139,10 +137,8 @@
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryExploredFormatter'}"
 										sender="{title}"
-										senderPress="openSearchResult"
 										text="{summary}"
 										showIcon="false"
-										info="{path}"
 										app:path="{path}"/>
 								</List>
 							</VBox>

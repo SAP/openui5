@@ -7,8 +7,9 @@ sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
-	], function (jQuery, BaseController, JSONModel, JSDocUtil) {
+		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
+		"sap/ui/documentation/sdk/controller/util/APIInfo"
+	], function (jQuery, BaseController, JSONModel, JSDocUtil, APIInfo) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetailDeprecatedExperimental", {
@@ -21,8 +22,8 @@ sap.ui.define([
 				this.setModel(new JSONModel(), "deprecatedAPIs");
 				this.setModel(new JSONModel(), "experimentalAPIs");
 
-				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicMatched, this);
-				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
+				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicDeprecatedMatched, this);
+				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicExperimentalMatched, this);
 
 				// click handler for @link tags in JSdoc fragments
 				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
@@ -46,25 +47,30 @@ sap.ui.define([
 				this.getView()._detachMediaContainerWidthChange(this._resizeMessageStrip, this);
 			},
 
-			_onTopicMatched: function (oEvent) {
-				var oComponent = this.getOwnerComponent();
-
+			_onTopicDeprecatedMatched: function (oEvent) {
 				if (this._hasMatched) {
 					return;
 				}
 
 				this._hasMatched = true;
 
-				oComponent.loadVersionInfo()
-					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
-					.then(function () {
-						var aLibsData = oComponent.getModel("libsData").getData();
+				APIInfo.getDeprecatedPromise().then(function (oData) {
+					this.getModel("deprecatedAPIs").setData(oData);
+					jQuery.sap.delayedCall(0, this, this._prettify);
+				}.bind(this));
+			},
 
-						this.getModel("deprecatedAPIs").setData(aLibsData.deprecated);
-						this.getModel("experimentalAPIs").setData(aLibsData.experimental);
+			_onTopicExperimentalMatched: function (oEvent) {
+				if (this._hasMatched) {
+					return;
+				}
 
-						setTimeout(this._prettify, 0);
-					}.bind(this));
+				this._hasMatched = true;
+
+				APIInfo.getExperimentalPromise().then(function (oData) {
+					this.getModel("experimentalAPIs").setData(oData);
+					jQuery.sap.delayedCall(0, this, this._prettify);
+				}.bind(this));
 			},
 
 			_prettify: function () {
@@ -76,11 +82,11 @@ sap.ui.define([
 
 			compareVersions: function (version1, version2) {
 				var sWithoutVersion = "WITHOUT VERSION";
-				if (version1 === sWithoutVersion) {
+				if (version1 === sWithoutVersion || !version1) {
 					return -1;
 				}
 
-				if (version2 === sWithoutVersion) {
+				if (version2 === sWithoutVersion || !version2) {
 					return 1;
 				}
 
@@ -133,6 +139,10 @@ sap.ui.define([
 					return sControlName + "#events:" + sEntityName;
 				}
 
+				if (sEntityType === "class") {
+					return sControlName;
+				}
+
 				return "";
 			},
 
@@ -160,9 +170,7 @@ sap.ui.define([
 			 * @private
 			 */
 			formatLinks: function (sText) {
-				var aLibsData = this.getOwnerComponent().getModel('libsData').getData();
-
-				var sFormattedTextBlock = JSDocUtil.formatTextBlock(sText, {
+				return JSDocUtil.formatTextBlock(sText, {
 					linkFormatter: function (target, text) {
 
 						var iHashIndex;
@@ -177,15 +185,11 @@ sap.ui.define([
 
 						text = text || target; // keep the full target in the fallback text
 
-						if (iHashIndex < 0 && !aLibsData[target]) {
+						if (iHashIndex < 0) {
 							var iLastDotIndex = target.lastIndexOf("."),
 								sClassName = target.substring(0, iLastDotIndex),
 								sMethodName = target.substring(iLastDotIndex + 1),
-								targetMethod = aLibsData[sClassName].methods.filter(function(oMethod) {
-									if (oMethod.name === sMethodName) {
-										return oMethod;
-									}
-								})[0];
+								targetMethod = sMethodName;
 
 							if (targetMethod) {
 								if (targetMethod.static === true) {
@@ -209,8 +213,6 @@ sap.ui.define([
 
 					}
 				});
-
-				return sFormattedTextBlock;
 			},
 
 			onJSDocLinkClick: function (oEvent) {

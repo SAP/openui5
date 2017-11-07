@@ -4,8 +4,9 @@
 
 /*global history */
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController"
-	], function (BaseController) {
+	], function(jQuery, BaseController) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.DemoApps", {

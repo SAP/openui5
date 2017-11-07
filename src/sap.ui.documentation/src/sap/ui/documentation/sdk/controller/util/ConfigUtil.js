@@ -4,8 +4,9 @@
 
 /* Utility class that facilitates route configuration handling */
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/base/Object"
-], function (BaseObject) {
+], function (jQuery, BaseObject) {
 	"use strict";
 
 	return BaseObject.extend("sap.ui.documentation.sdk.controller.util.ConfigUtil", {

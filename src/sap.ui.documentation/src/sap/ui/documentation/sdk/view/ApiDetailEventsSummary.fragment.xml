@@ -8,7 +8,8 @@
 
 		<m:Table items="{ path : 'events>/events'}"
 				 showSeparators="Inner"
-				 fixedLayout="false">
+				 fixedLayout="false"
+				 visible="{topics>/hasOwnEvents}">
 			<m:columns>
 				<m:Column vAlign="Top"><m:Label text="Event"/></m:Column>
 				<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
@@ -17,7 +18,7 @@
 				<m:ColumnListItem visible="{= !!${events>name} }">
 					<m:cells>
 						<layout:VerticalLayout>
-							<m:Link text="{events>name}" press="scrollToEvent" wrapping="false" />
+							<m:Link text="{events>name}" href="#/api/{topics>/name}/events/{events>name}" press="scrollToEvent" wrapping="false" />
 							<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated" visible="{= ${events>deprecated} !== undefined }"/>
 						</layout:VerticalLayout>
 						<core:HTML content="{parts: [{path: 'events>description'}], formatter: '.formatDescription'}"/>

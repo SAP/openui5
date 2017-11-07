@@ -20,6 +20,77 @@ sap.ui.define(['jquery.sap.global'],
 		// Libraries that start with these prefixes should be ommitted from the tree
 		var LIBRARY_PREFIXES_BLACK_LIST = ["themelib_"];
 
+		function getIndexJsonPromise() {
+
+			if (oLibraryDataCache["index"]) {
+				return oLibraryDataCache["index"];
+			}
+
+			return new Promise(function (resolve, reject) {
+				jQuery.ajax({
+					async: true,
+					url : "./docs/api/api-index.json",
+					dataType : 'json',
+					success : function(vResponse) {
+						var aResult = vResponse.symbols || [];
+						oLibraryDataCache["index"] = aResult;
+						resolve(aResult);
+					},
+					error : function () {
+						jQuery.sap.log.error("failed to load api-index.json");
+						oLibraryDataCache["index"] = [];
+						resolve([]);
+					}
+				});
+			});
+		}
+
+		function getDeprecatedPromise() {
+
+			if (oLibraryDataCache["deprecated"]) {
+				return oLibraryDataCache["deprecated"];
+			}
+
+			return new Promise(function (resolve, reject) {
+				jQuery.ajax({
+					async: true,
+					url : "./docs/api/api-index-deprecated.json",
+					dataType : 'json',
+					success : function(vResponse) {
+						oLibraryDataCache["deprecated"] = vResponse;
+						resolve(vResponse);
+					},
+					error : function () {
+						reject();
+					}
+				});
+			});
+
+		}
+
+		function getExperimentalPromise() {
+
+			if (oLibraryDataCache["experimental"]) {
+				return oLibraryDataCache["experimental"];
+			}
+
+			return new Promise(function (resolve, reject) {
+				jQuery.ajax({
+					async: true,
+					url : "./docs/api/api-index-experimental.json",
+					dataType : 'json',
+					success : function(vResponse) {
+						oLibraryDataCache["experimental"] = vResponse;
+						resolve(vResponse);
+					},
+					error : function () {
+						reject();
+					}
+				});
+			});
+
+		}
+
 		function getLibraryElementsJSONSync(sLibraryName) {
 			var oResponse = [];
 
@@ -120,6 +191,9 @@ sap.ui.define(['jquery.sap.global'],
 
 		return {
 			_setRoot : setRoot,
+			getIndexJsonPromise: getIndexJsonPromise,
+			getDeprecatedPromise: getDeprecatedPromise,
+			getExperimentalPromise: getExperimentalPromise,
 			getLibraryElementsJSONSync : getLibraryElementsJSONSync,
 			getLibraryElementsJSONPromise: getLibraryElementsJSONPromise,
 			getAllLibrariesElementsJSONPromise: getAllLibrariesElementsJSONPromise

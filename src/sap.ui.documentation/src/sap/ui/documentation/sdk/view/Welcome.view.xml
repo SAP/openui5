@@ -72,6 +72,7 @@
 						</l:VerticalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/Fiori_guidelines_image.png"
+								densityAware="false"
 								width="100%">
 							<layoutData>
 								<l:GridData span="L6 M12 S12"/>
@@ -191,6 +192,7 @@
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/Fiori_design_examples.png"
 								class="sapUiSmallmarginBeginEnd"
+								densityAware="false"
 								width="100%">
 							<layoutData>
 								<l:GridData span="L6 M12 S12"/>
@@ -360,7 +362,7 @@
 								size="2.5rem"
 								color="Default"/>
 						<custom:TitleLink
-								href="https://www.sap.com/community/tag.html?id=sapui5"
+								href="https://www.sap.com/community/topic/ui5.html?"
 								target="_blank"
 								text="SAP Community"
 								titleStyle="H2"
@@ -375,6 +377,7 @@
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_stackoverflow.png"
 								width="2.5rem"
+								densityAware="false"
 								class="sapUiTinyMarginTop"/>
 						<custom:TitleLink
 								href="http://stackoverflow.com/search?q=sapui5"
@@ -392,6 +395,7 @@
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_youtube.png"
 								width="2.5rem"
+								densityAware="false"
 								class="sapUiTinyMarginTop"/>
 						<custom:TitleLink
 								href="https://youtube.com/openui5videos"
@@ -409,6 +413,7 @@
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_twitter.png"
 								width="2.5rem"
+								densityAware="false"
 								class="sapUiTinyMarginTop"/>
 						<custom:TitleLink
 								href="https://twitter.com/@openui5"
