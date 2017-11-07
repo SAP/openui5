@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon*/
 /*!
  * ${copyright}
  */
@@ -18,7 +18,6 @@ sap.ui.define(["sap/ui/core/UIComponent",
 	'sap/ui/rta/ControlTreeModifier',
 	"sap/ui/fl/library", //we have to ensure to load fl, so that change handler gets registered,
 	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
 	'sap/ui/thirdparty/sinon-qunit'
 ],
 function(
@@ -60,7 +59,7 @@ function(
 	 * @param {string}   sMsg - name of QUnit test - e.g. Checking the move action for a VerticalLayout control
 	 * @param {object}   mOptions - configuration for this controlEnablingCheck
 	 * @param {string}   [mOptions.layer] - (optional) flex layer used during testing, use it in case actions are enabled for other layers then CUSTOMER
-	 * @param {string}   mOptions.xmlView - XML view to adapt
+	 * @param {string|object}   mOptions.xmlView - XML view content or all settings available to sap.ui.xmlView, to have a view to apply the action
 	 * @param {sap.ui.model.Model}   [mOptions.model] - any model to be assigned on the view
 	 * @param {string}   [mOptions.placeAt="content"] - Id of tag to place view at runtime
 	 * @param {boolean}   [mOptions.jsOnly] - set to true, if change handler cannot work on xml view
@@ -77,6 +76,12 @@ function(
 		// Return if controlEnablingCheck.only() has been used to exclude this call
 		if (controlEnablingCheck._only && (sMsg.indexOf(controlEnablingCheck._only) < 0)) { return; }
 
+		if (typeof mOptions.xmlView === "string"){
+			mOptions.xmlView = {
+				viewContent : mOptions.xmlView
+			};
+		}
+
 		// Do QUnit tests
 		QUnit.module(sMsg, {});
 
@@ -86,7 +91,7 @@ function(
 			assert.ok(mOptions.afterRedo, "then you implement a function to check if the redo has been successful: See the afterRedo parameter.");
 			assert.ok(mOptions.xmlView, "then you provide an XML view to test on: See the.xmlView parameter.");
 
-			var oXmlView = new DOMParser().parseFromString(mOptions.xmlView, "application/xml").documentElement;
+			var oXmlView = new DOMParser().parseFromString(mOptions.xmlView.viewContent, "application/xml").documentElement;
 			assert.ok(oXmlView.tagName.match( "View$"),"then you use the sap.ui.core.mvc View tag as the first tag in your view");
 
 			assert.ok(mOptions.action, "then you provide an action: See the action parameter.");
@@ -107,13 +112,14 @@ function(
 				}
 			},
 			createContent : function() {
-				// store it in outer scope
-				var oView = sap.ui.xmlview({
-					id : this.createId("view"),
-					viewContent : mOptions.xmlView,
-					// async = true should trigger the xml preprocessors on the xml view
-					async : this.getComponentData().async || false
-				});
+				var mViewSettings = jQuery.extend({}, mOptions.xmlView);
+				mViewSettings.id = this.createId("view");
+
+				if (mViewSettings.async === undefined){
+					// async = true will trigger the xml preprocessors on the xml view, but if defined preprocessors need async, we will always trigger async
+					mViewSettings.async = this.getComponentData().async;
+				}
+				var oView = sap.ui.xmlview(mViewSettings);
 				return oView;
 			}
 
@@ -141,6 +147,7 @@ function(
 			}
 
 			sap.ui.getCore().applyChanges();
+			return this.oView.loaded();
 		}
 
 		function buildCommand(assert){
@@ -212,16 +219,15 @@ function(
 				this.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve(aChanges));
 				this.stub(ChangePersistence.prototype, "getCacheKey").returns(Promise.resolve("etag-123"));
 
-				createViewInComponent.call(this, SYNC);
-				return buildCommand.call(this, assert).then(function(){
+				return createViewInComponent.call(this, SYNC).then(function(){
+					return buildCommand.call(this, assert);
+				}.bind(this)).then(function(){
 					var oChange = this.oCommand.getPreparedChange();
 					aChanges.push(oChange);
 
 					//destroy and recreate component and view to get the changes applied
 					this.oUiComponentContainer.destroy();
-					createViewInComponent.call(this, ASYNC);
-				}.bind(this)).then(function(){
-					return this.oView.loaded();
+					return createViewInComponent.call(this, ASYNC);
 				}.bind(this)).then(function(oView){
 					// Verify that UI change has been applied on XML view
 					mOptions.afterAction(this.oUiComponent, oView, assert);
@@ -233,11 +239,18 @@ function(
 		QUnit.module(sMsg, {
 
 			beforeEach : function(assert){
-				createViewInComponent.call(this, SYNC);
-				return buildCommand.call(this,assert);
+				//no LREP response needed
+				this.sandbox = sinon.sandbox.create();
+				this.sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve([]));
+				this.sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(ChangePersistence.NOTAG); //no cache key => no xml view processing
+
+				return createViewInComponent.call(this, SYNC).then(function(){
+					return buildCommand.call(this, assert);
+				}.bind(this));
 			},
 
 			afterEach : function(){
+				this.sandbox.restore();
 				this.oUiComponentContainer.destroy();
 				this.oDesignTime.destroy();
 				this.oCommand.destroy();
