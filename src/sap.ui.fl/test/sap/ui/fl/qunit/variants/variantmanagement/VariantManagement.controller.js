@@ -11,6 +11,8 @@ sap.ui.define([
 					currentVariant: "2",
 					defaultVariant: "2",
 					modified: false,
+					variantsEditable: true,
+					showFavorites: true,
 					variants: [
 						{
 							key: "Standard",
@@ -105,6 +107,8 @@ sap.ui.define([
 					defaultVariant: "3",
 					currentVariant: "3",
 					modified: false,
+					variantsEditable: false,
+					showFavorites: false,
 					variants: [
 						{
 							key: "Standard",
@@ -215,8 +219,6 @@ sap.ui.define([
 
 			oParent.removeContent(this.oVM);
 			var sVMId = this.oVM.getId();
-			var bShowFav = this.oVM.getShowFavorites();
-			var bShowShare = this.oVM.getShowShare();
 			var bShowExe = this.oVM.getShowExecuteOnSelection();
 			// var bShowDef = this.oVM.getShowAsDefault();
 
@@ -228,8 +230,6 @@ sap.ui.define([
 			oParent.addContent(oVM);
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
-			this.oVM.setShowFavorites(!bShowFav);
-			this.oVM.setShowShare(bShowShare);
 			this.oVM.setShowExecuteOnSelection(bShowExe);
 			// this.oVM.setShowAsDefault(bShowDef);
 
@@ -245,9 +245,6 @@ sap.ui.define([
 		onToggleErrorState: function(oEvent) {
 			this.oVM.setInErrorState(!this.oVM.getInErrorState());
 		},
-		onToggleFooterBtn: function(oEvent) {
-			this.oVM.setShowVariantListFooter(!this.oVM.getShowVariantListFooter());
-		},
 		onToggleShowShareBtn: function(oEvent) {
 			this.oVM.setShowShare(!this.oVM.getShowShare());
 		},
@@ -258,21 +255,26 @@ sap.ui.define([
 			this.oVM.setShowSetAsDefault(!this.oVM.getShowSetAsDefault());
 		},
 		onToggleFavoritesBtn: function(oEvent) {
-			this.oVM.setShowFavorites(!this.oVM.getShowFavorites());
+			var oModel = this.oVM.getModel("$FlexVariants");
+			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
+
+			oData.showFavorites = !oData.showFavorites;
+
+			oModel.checkUpdate(true);
 		},
 
 		onOpenMamageDialogBtn: function(oEvent) {
 			this.oVM.openManagementDialog(true);
 		},
 
-		onToggleManageBtn: function(oEvent) {
-			this.oVM.setShowManage(!this.oVM.getShowManage());
-		},
-		onToggleSaveBtn: function(oEvent) {
-			this.oVM.setShowSave(!this.oVM.getShowSave());
-		},
-		onToggleSaveAsBtn: function(oEvent) {
-			this.oVM.setShowSaveAs(!this.oVM.getShowSaveAs());
+		onToggleEditableVariantsBtn: function(oEvent) {
+
+			var oModel = this.oVM.getModel("$FlexVariants");
+			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
+
+			oData.variantsEditable = !oData.variantsEditable;
+
+			oModel.checkUpdate(true);
 		},
 
 		onMarkAsChanged: function(oEvent) {
