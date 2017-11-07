@@ -769,7 +769,7 @@
 			assert.equal(oSpyCoreItemSetProperty.getCall(0).args[0], sPropertyKey, "...and with correct parameter 'propertyName'");
 		});
 
-		QUnit.test("addAggregation", function(assert) {
+		QUnit.test("addAggregation 'items'", function(assert) {
 			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
 				oNewMenuItem = new sap.m.MenuItem({ text: "new item " }),
 				sNewItemId = oNewMenuItem.getId();
@@ -786,7 +786,7 @@
 			assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
 		});
 
-		QUnit.test("insertAggregation", function(assert) {
+		QUnit.test("insertAggregation 'items'", function(assert) {
 			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
 				oNewMenuItem = new sap.m.MenuItem({ text: "new item " }),
 				sNewItemId = oNewMenuItem.getId();
@@ -800,9 +800,10 @@
 			assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
 		});
 
-		QUnit.test("removeAggregation", function(assert) {
+		QUnit.test("removeAggregation 'items'", function(assert) {
 			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
-				sSecondItemId = this.sut.getItems()[1].getId();
+				sSecondItemId = this.sut.getItems()[1].getId(),
+				sFirstUnfItemId = this.sut.getItems()[0]._getVisualControl();
 
 			//Act
 			this.sut.removeAggregation("items", 0, true);
@@ -811,11 +812,13 @@
 			assert.strictEqual(this.sut.getItems().length, 1, "less items");
 			assert.strictEqual(this.sut.getItems()[0].getId(), sSecondItemId, "item removed");
 			assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+			assert.ok(sap.ui.getCore().byId(sFirstUnfItemId), "should not destroy the connected sap.ui.unified.MenuItem");
 		});
 
-		QUnit.test("removeAllAggregation", function(assert) {
+		QUnit.test("removeAllAggregation 'items'", function(assert) {
 			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
 				aItems = this.sut.getItems(),
+				sFirstUnfItemId = aItems[0]._getVisualControl(),
 				aResult;
 
 			//Act
@@ -825,11 +828,13 @@
 			assert.strictEqual(aResult[0].getId(), aItems[0].getId(), "the items are not destroyed and are returned");
 			assert.strictEqual(this.sut.getItems().length, 0, "no items");
 			assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+			assert.ok(sap.ui.getCore().byId(sFirstUnfItemId), "should not destroy the connected sap.ui.unified.MenuItem");
 		});
 
-		QUnit.test("destroyAggregation", function(assert) {
+		QUnit.test("destroyAggregation 'items'", function(assert) {
 			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
-				oFirstItem = this.sut.getItems()[0];
+				oFirstItem = this.sut.getItems()[0],
+				sFirstUnfItemId = oFirstItem._getVisualControl();
 
 			//Act
 			this.sut.destroyAggregation("items", true);
@@ -838,6 +843,24 @@
 			assert.ok(!sap.ui.getCore().byId(oFirstItem.getId()), "the items are destroyed");
 			assert.strictEqual(this.sut.getItems().length, 0, "no items");
 			assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+			assert.equal(sap.ui.getCore().byId(sFirstUnfItemId), null, "should destroy the connected sap.ui.unified.MenuItem");
+		});
+
+		QUnit.test("removeItem and add it later", function() {
+			//Prepare
+			var aItems = this.sut.getItems(),
+				oRemoveItem = aItems[0],
+				sRemoveUnfItemId = oRemoveItem._getVisualControl();
+
+			//Act
+			this.sut.removeItem(oRemoveItem);
+			this.sut.addItem(oRemoveItem);
+
+			//Assert
+			assert.equal(oRemoveItem._getVisualControl(), sRemoveUnfItemId,
+					"should keep sap.m.MenuItem & sap.ui.unified.MenuItem connected");
+			assert.ok(sap.ui.getCore().byId(sRemoveUnfItemId), "should reuse the existing sap.ui.unified.MenuItem connected" +
+				" to the given sap.m.MenuItem");
 		});
 
 		QUnit.module('MenuListItem', {
