@@ -8,7 +8,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		"use strict";
 
 		// shortcut for sap.m.PlacementType
-		var PlacementType = library.PlacementType;
+		var PlacementType = library.PlacementType,
+			DEFAULT_STEP = 1;
 
 		/**
 		 * Constructor for a new <code>TimePicker</code>.
@@ -112,18 +113,18 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 					title: {type: "string", group: "Misc", defaultValue: null},
 
 					/**
-					 * Sets the minutes slider step.
+					 * Sets the minutes slider step. If step is less than 1, it will be automatically converted back to 1.
 					 * The minutes slider is populated only by multiples of the step.
 					 * @since 1.40
 					 */
-					minutesStep: {type: "int", group: "Misc", defaultValue: 1},
+					minutesStep: {type: "int", group: "Misc", defaultValue: DEFAULT_STEP},
 
 					/**
-					 * Sets the seconds slider step.
+					 * Sets the seconds slider step. If step is less than 1, it will be automatically converted back to 1.
 					 * The seconds slider is populated only by multiples of the step.
 					 * @since 1.40
 					 */
-					secondsStep: {type: "int", group: "Misc", defaultValue: 1},
+					secondsStep: {type: "int", group: "Misc", defaultValue: DEFAULT_STEP},
 
 					/**
 					 * Defines a placeholder symbol. Shown at the position where there is no user input yet.
@@ -430,6 +431,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		TimePicker.prototype.setMinutesStep = function(step) {
 			var oSliders = this._getSliders();
 
+			step = Math.max(DEFAULT_STEP, step || DEFAULT_STEP);
+
 			if (oSliders) {
 				oSliders.setMinutesStep(step);
 			}
@@ -444,6 +447,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		 */
 		TimePicker.prototype.setSecondsStep = function(step) {
 			var oSliders = this._getSliders();
+
+			step = Math.max(DEFAULT_STEP, step || DEFAULT_STEP);
 
 			if (oSliders) {
 				oSliders.setSecondsStep(step);
