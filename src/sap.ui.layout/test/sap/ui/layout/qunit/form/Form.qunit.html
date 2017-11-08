@@ -527,7 +527,7 @@
 
 			assert.notOk(oForm.getEditable(), "editable not set per default");
 			assert.notOk(jQuery("#F1").hasClass("sapUiFormEdit"), "Form not editable rendered");
-			assert.ok(jQuery("#F1").attr("aria-readonly"), "aria-readonly set");
+			assert.notOk(jQuery("#F1").attr("aria-readonly"), "aria-readonly not set");
 
 			sinon.spy(oFormContainer1, "invalidateLabels");
 			sinon.spy(oFormContainer2, "invalidateLabels");
