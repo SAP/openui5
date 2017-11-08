@@ -1069,8 +1069,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 */
 	ODataListBinding.prototype.addComparators = function(aEntries) {
 		var oPropertyMetadata, sType,
-			oEntityType = this.oEntityType,
-			that = this;
+			oEntityType = this.oEntityType;
 
 		if (!oEntityType) {
 			jQuery.sap.log.warning("Cannot determine sort/filter comparators, as entitytype of the collection is unkown!");
@@ -1079,15 +1078,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		aEntries.forEach(function(oEntry) {
 			// Recurse to nested filters
 			if (oEntry.aFilters) {
-				that.addComparators(oEntry.aFilters);
+				this.addComparators(oEntry.aFilters);
 			} else if (!oEntry.fnCompare) {
 				oPropertyMetadata = this.oModel.oMetadata._getPropertyMetadata(oEntityType, oEntry.sPath);
 				sType = oPropertyMetadata && oPropertyMetadata.type;
 				jQuery.sap.assert(oPropertyMetadata, "PropertyType for property " + oEntry.sPath + " of EntityType " + oEntityType.name + " not found!");
-				oEntry.fnCompare = ODataUtils.getComparator(sType);
+				oEntry.fnCompare = getCompatibleComparator(sType, oEntry);
 			}
 		}.bind(this));
 	};
+
+	/**
+	 * Creates a comparator for the according Edm type of the filter value. For compatibility
+	 * reasons it is also possible to pass a number to the comparator.
+	 * @private
+	 */
+	function getCompatibleComparator(sType, oFilter) {
+		var fnCompare = ODataUtils.getComparator(sType);
+		if (sType == "Edm.Decimal" &&  (typeof oFilter.oValue1 == "number" || typeof oFilter.oValue2 == "number")) {
+			var fnODataUtilsCompare = fnCompare;
+			// as the ODataUtils comparator expects only Edm types (internally handled as strings) the
+			// second value, which comes from the filter, needs to be converted if it is a number
+			fnCompare = function(vValue1, vValue2) {
+				return fnODataUtilsCompare.call(null, vValue1, vValue2.toString());
+			};
+		}
+		return fnCompare;
+	}
 
 	ODataListBinding.prototype.applySort = function() {
 		var that = this,
