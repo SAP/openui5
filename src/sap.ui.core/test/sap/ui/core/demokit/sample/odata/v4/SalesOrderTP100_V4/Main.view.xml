@@ -4,7 +4,6 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
-		<Title id="SalesOrdersTitle" text="{$count} Sales Orders" titleStyle="H2"/>
 		<Table growing="true" growingThreshold="5" id="SalesOrders"
 			items="{path : '/SEPM_C_SLSORDER_TP_100',
 					parameters : {
@@ -17,6 +16,13 @@
 				}}"
 			mode="SingleSelectMaster"
 			selectionChange="onSalesOrdersSelect">
+			<headerToolbar>
+				<Toolbar>
+					<content>
+						<Title id="SalesOrdersTitle" text="{$count} Sales Orders" titleStyle="H2"/>
+					</content>
+				</Toolbar>
+			</headerToolbar>
 			<columns>
 				<Column>
 					<Text text="SalesOrder ID"/>
@@ -42,10 +48,16 @@
 				</ColumnListItem>
 			</items>
 		</Table>
-		<Title text="Sales Order Items" titleStyle="H1"/>
 		<Table growing="true" growingThreshold="5" id="SalesOrderItems"
 			items="{_Item}"
 			mode="SingleSelectMaster">
+			<headerToolbar>
+				<Toolbar>
+					<content>
+						<Title text="Sales Order Items" titleStyle="H2"/>
+					</content>
+				</Toolbar>
+			</headerToolbar>
 			<columns>
 				<Column>
 					<Text text="SalesOrder"/>
