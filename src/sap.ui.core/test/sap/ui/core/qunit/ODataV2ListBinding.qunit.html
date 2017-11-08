@@ -936,6 +936,101 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding unfiltered");
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding unfiltered");
 
+			// GT
+			oFilter = new sap.ui.model.Filter("UnitPrice", "BT", "35.0000", "82.000");
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 5);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "38.0000", "ListBinding after BT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "39.0000", "ListBinding after BT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "40.0000", "ListBinding after BT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "62.5000", "ListBinding after BT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "81.0000", "ListBinding after BT filter");
+
+			oBinding.filter([], sap.ui.model.FilterType.Application);
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "9.2000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding unfiltered");
+
+			done();
+		};
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding clientside filter on Edm.Decimal by decimal number", function(assert){
+		var done = assert.async();
+		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("UnitPrice"), [new sap.ui.model.Filter("UnitPrice", "EQ", "10.0000")], {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 1);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "10.0000", "ListBinding after initial filter");
+
+			oBinding.detachChange(handler);
+			// LT
+			var oFilter = new sap.ui.model.Filter("UnitPrice", "LT", 17.4500);
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length,4);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding after LT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "9.2000", "ListBinding after LT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding after LT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding after LT filter");
+
+			// GE
+			oFilter = new sap.ui.model.Filter("UnitPrice", "GE", 39.0000);
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 5);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "39.0000", "ListBinding after GE filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "40.0000", "ListBinding after GE filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "62.5000", "ListBinding after GE filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "81.0000", "ListBinding after GE filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "97.0000", "ListBinding after GE filter");
+
+			oBinding.filter([], sap.ui.model.FilterType.Application);
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "9.2000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding unfiltered");
+
+			// GT
+			oFilter = new sap.ui.model.Filter("UnitPrice", "BT", 35.0000, 82.000);
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 5);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "38.0000", "ListBinding after BT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "39.0000", "ListBinding after BT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "40.0000", "ListBinding after BT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "62.5000", "ListBinding after BT filter");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "81.0000", "ListBinding after BT filter");
+
+			oBinding.filter([], sap.ui.model.FilterType.Application);
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "6.0000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[1]), "9.2000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding unfiltered");
+
 			done();
 		};
 		oBinding.attachRefresh(function() {
