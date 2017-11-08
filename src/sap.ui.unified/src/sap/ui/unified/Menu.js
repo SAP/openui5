@@ -13,6 +13,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/library',
 	'sap/ui/unified/MenuRenderer',
+	'sap/ui/core/delegate/ScrollEnablement',
 	'jquery.sap.script',
 	'jquery.sap.keycodes',
 	'jquery.sap.events'
@@ -26,7 +27,8 @@ function(
 	MenuItemBase,
 	library,
 	coreLibrary,
-	MenuRenderer
+	MenuRenderer,
+	ScrollEnablement
 ) {
 	"use strict";
 
@@ -171,6 +173,11 @@ function(
 			delete this.oPopup;
 		}
 
+		if (this._oScroller) {
+			this._oScroller.destroy();
+			this._oScroller = null;
+		}
+
 		jQuery.sap.unbindAnyEvent(this.fAnyEventHandlerProxy);
 		if (this._bOrientationChangeBound) {
 			jQuery(window).unbind("orientationchange", this.fOrientationChangeHandler);
@@ -199,6 +206,23 @@ function(
 	 */
 	Menu.prototype.onBeforeRendering = function() {
 		this._resetDelayedRerenderItems();
+
+		if (!this._oScroller) {
+			this._oScroller = new ScrollEnablement(this, null, {
+				scrollContainerId: this.getId(),
+				horizontal: false,
+				vertical: true
+			});
+		}
+	};
+
+	/**
+	 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
+	 * @returns {sap.ui.core.ScrollEnablement} The scroll enablement delegate
+	 * @private
+	 */
+	Menu.prototype.getScrollDelegate = function () {
+		return this._oScroller;
 	};
 
 	/**
