@@ -261,7 +261,7 @@ function(
 		assert.equal(oSetRelevantSpy.callCount, 0, "then findAllOverlaysInContainer is not called");
 		assert.equal(oGetRelevantSpy.callCount, 0, "then getRelevantOverlays is not called");
 		assert.equal(oEvaluateSpy.callCount, 1, "then only evaluateEditable is called");
-		assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: false}], "then evaluateEditable is called with the correct parameters");
+		assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: true}], "then evaluateEditable is called with the correct parameters");
 	});
 
 	QUnit.test("when _modifyPluginList is called multiple times", function(assert) {
