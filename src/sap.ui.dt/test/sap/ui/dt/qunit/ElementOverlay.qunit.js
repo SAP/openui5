@@ -86,6 +86,27 @@ function(
 		assert.deepEqual(this.oOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as a control");
 	});
 
+	QUnit.test("when an overlay is newly created and placed", function(assert) {
+		var oEventSpy = sandbox.spy(ElementOverlay.prototype, "fireElementModified");
+		var oButton1 = new Button({
+			text : "Button1"
+		});
+		var oOverlay = new ElementOverlay({
+			element: oButton1,
+			designTimeMetadata: {}
+		});
+		oOverlay.placeInOverlayContainer();
+		oButton1.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oEventSpy.callCount, 2, "after rendering the elementModified event is fired twice");
+		assert.deepEqual(oEventSpy.args[1][0], {id: oOverlay.getId(), type: "overlayRendered"}, "and the after rendering event is properly used");
+
+		oOverlay.onAfterRendering();
+		assert.equal(oEventSpy.callCount, 2, "when calling onAfterRendering again, no additional event is fired");
+		oOverlay.destroy();
+	});
+
 	QUnit.test("when overlay is enabled/disabled", function(assert) {
 		var sWidth;
 		var fnGetWidth = function (oOverlay) {
