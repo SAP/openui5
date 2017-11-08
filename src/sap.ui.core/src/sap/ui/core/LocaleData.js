@@ -1888,6 +1888,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} years ago"
 					}
 				},
+				"year-short": {
+					"displayName": "yr.",
+					"relative-type--1": "last yr.",
+					"relative-type-0": "this yr.",
+					"relative-type-1": "next yr.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} yr.",
+						"relativeTimePattern-count-other": "in {0} yr."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} yr. ago",
+						"relativeTimePattern-count-other": "{0} yr. ago"
+					}
+				},
+				"year-narrow": {
+					"displayName": "yr.",
+					"relative-type--1": "last yr.",
+					"relative-type-0": "this yr.",
+					"relative-type-1": "next yr.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} yr.",
+						"relativeTimePattern-count-other": "in {0} yr."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} yr. ago",
+						"relativeTimePattern-count-other": "{0} yr. ago"
+					}
+				},
 				"quarter-wide": {
 					"displayName": "quarter",
 					"relative-type--1": "last quarter",
@@ -1900,6 +1928,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					"relativeTime-type-past": {
 						"relativeTimePattern-count-one": "{0} quarter ago",
 						"relativeTimePattern-count-other": "{0} quarters ago"
+					}
+				},
+				"quarter-short": {
+					"displayName": "qtr.",
+					"relative-type--1": "last qtr.",
+					"relative-type-0": "this qtr.",
+					"relative-type-1": "next qtr.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} qtr.",
+						"relativeTimePattern-count-other": "in {0} qtrs."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} qtr. ago",
+						"relativeTimePattern-count-other": "{0} qtrs. ago"
+					}
+				},
+				"quarter-narrow": {
+					"displayName": "qtr.",
+					"relative-type--1": "last qtr.",
+					"relative-type-0": "this qtr.",
+					"relative-type-1": "next qtr.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} qtr.",
+						"relativeTimePattern-count-other": "in {0} qtrs."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} qtr. ago",
+						"relativeTimePattern-count-other": "{0} qtrs. ago"
 					}
 				},
 				"month-wide": {
@@ -1916,6 +1972,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} months ago"
 					}
 				},
+				"month-short": {
+					"displayName": "mo.",
+					"relative-type--1": "last mo.",
+					"relative-type-0": "this mo.",
+					"relative-type-1": "next mo.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} mo.",
+						"relativeTimePattern-count-other": "in {0} mo."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} mo. ago",
+						"relativeTimePattern-count-other": "{0} mo. ago"
+					}
+				},
+				"month-narrow": {
+					"displayName": "mo.",
+					"relative-type--1": "last mo.",
+					"relative-type-0": "this mo.",
+					"relative-type-1": "next mo.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} mo.",
+						"relativeTimePattern-count-other": "in {0} mo."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} mo. ago",
+						"relativeTimePattern-count-other": "{0} mo. ago"
+					}
+				},
 				"week-wide": {
 					"displayName": "week",
 					"relative-type--1": "last week",
@@ -1928,9 +2012,68 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					"relativeTime-type-past": {
 						"relativeTimePattern-count-one": "{0} week ago",
 						"relativeTimePattern-count-other": "{0} weeks ago"
-					}
+					},
+					"relativePeriod": "the week of {0}"
+				},
+				"week-short": {
+					"displayName": "wk.",
+					"relative-type--1": "last wk.",
+					"relative-type-0": "this wk.",
+					"relative-type-1": "next wk.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} wk.",
+						"relativeTimePattern-count-other": "in {0} wk."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} wk. ago",
+						"relativeTimePattern-count-other": "{0} wk. ago"
+					},
+					"relativePeriod": "the week of {0}"
+				},
+				"week-narrow": {
+					"displayName": "wk.",
+					"relative-type--1": "last wk.",
+					"relative-type-0": "this wk.",
+					"relative-type-1": "next wk.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} wk.",
+						"relativeTimePattern-count-other": "in {0} wk."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} wk. ago",
+						"relativeTimePattern-count-other": "{0} wk. ago"
+					},
+					"relativePeriod": "the week of {0}"
 				},
 				"day-wide": {
+					"displayName": "day",
+					"relative-type--1": "yesterday",
+					"relative-type-0": "today",
+					"relative-type-1": "tomorrow",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} day",
+						"relativeTimePattern-count-other": "in {0} days"
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} day ago",
+						"relativeTimePattern-count-other": "{0} days ago"
+					}
+				},
+				"day-short": {
+					"displayName": "day",
+					"relative-type--1": "yesterday",
+					"relative-type-0": "today",
+					"relative-type-1": "tomorrow",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} day",
+						"relativeTimePattern-count-other": "in {0} days"
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} day ago",
+						"relativeTimePattern-count-other": "{0} days ago"
+					}
+				},
+				"day-narrow": {
 					"displayName": "day",
 					"relative-type--1": "yesterday",
 					"relative-type-0": "today",
@@ -1949,6 +2092,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				},
 				"hour-wide": {
 					"displayName": "hour",
+					"relative-type-0": "this hour",
 					"relativeTime-type-future": {
 						"relativeTimePattern-count-one": "in {0} hour",
 						"relativeTimePattern-count-other": "in {0} hours"
@@ -1958,8 +2102,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} hours ago"
 					}
 				},
+				"hour-short": {
+					"displayName": "hr.",
+					"relative-type-0": "this hour",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} hr.",
+						"relativeTimePattern-count-other": "in {0} hr."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} hr. ago",
+						"relativeTimePattern-count-other": "{0} hr. ago"
+					}
+				},
+				"hour-narrow": {
+					"displayName": "hr.",
+					"relative-type-0": "this hour",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} hr.",
+						"relativeTimePattern-count-other": "in {0} hr."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} hr. ago",
+						"relativeTimePattern-count-other": "{0} hr. ago"
+					}
+				},
 				"minute-wide": {
 					"displayName": "minute",
+					"relative-type-0": "this minute",
 					"relativeTime-type-future": {
 						"relativeTimePattern-count-one": "in {0} minute",
 						"relativeTimePattern-count-other": "in {0} minutes"
@@ -1967,6 +2136,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					"relativeTime-type-past": {
 						"relativeTimePattern-count-one": "{0} minute ago",
 						"relativeTimePattern-count-other": "{0} minutes ago"
+					}
+				},
+				"minute-short": {
+					"displayName": "min.",
+					"relative-type-0": "this minute",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} min.",
+						"relativeTimePattern-count-other": "in {0} min."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} min. ago",
+						"relativeTimePattern-count-other": "{0} min. ago"
+					}
+				},
+				"minute-narrow": {
+					"displayName": "min.",
+					"relative-type-0": "this minute",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} min.",
+						"relativeTimePattern-count-other": "in {0} min."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} min. ago",
+						"relativeTimePattern-count-other": "{0} min. ago"
 					}
 				},
 				"second-wide": {
@@ -1979,6 +2172,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					"relativeTime-type-past": {
 						"relativeTimePattern-count-one": "{0} second ago",
 						"relativeTimePattern-count-other": "{0} seconds ago"
+					}
+				},
+				"second-short": {
+					"displayName": "sec.",
+					"relative-type-0": "now",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} sec.",
+						"relativeTimePattern-count-other": "in {0} sec."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} sec. ago",
+						"relativeTimePattern-count-other": "{0} sec. ago"
+					}
+				},
+				"second-narrow": {
+					"displayName": "sec.",
+					"relative-type-0": "now",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} sec.",
+						"relativeTimePattern-count-other": "in {0} sec."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} sec. ago",
+						"relativeTimePattern-count-other": "{0} sec. ago"
 					}
 				},
 				"zone": {
