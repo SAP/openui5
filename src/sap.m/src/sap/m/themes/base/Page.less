@@ -32,6 +32,11 @@
 	overflow-y: auto;
 }
 
+// If there are subpages with disabled scrolling, then its content should overflow. I.e. reset overflow-y to defaults.
+.sapMPage > section.sapMPageEnableScrolling .sapMPage > section {
+	overflow-y: visible;
+}
+
 html[data-sap-ui-os^="bb"],
 html[data-sap-ui-os^="iOS"] {
   .sapMPage > section.sapMPageEnableScrolling {
