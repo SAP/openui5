@@ -87,7 +87,9 @@ function(
 	CutPaste.prototype._isPasteEditable = function (oOverlay) {
 		var	oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 
-		return oDesignTimeMetadata.isActionAvailableOnAggregations("move");
+		return this.hasStableId(oOverlay) &&
+			this.getElementMover()._isMoveAvailableOnRelevantContainer(oOverlay) &&
+			oDesignTimeMetadata.isActionAvailableOnAggregations("move");
 	};
 
 	/**
