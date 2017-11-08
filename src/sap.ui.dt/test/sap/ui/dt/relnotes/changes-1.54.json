@@ -37,6 +37,12 @@
         "type": "FIX",
         "text": " Deactivate instanceof check in dt LibraryTest",
         "references": []
+      },
+      {
+        "id": "4c991ef2f08a8f78d692efb3b1064e346d86eae1",
+        "type": "FIX",
+        "text": " sap.ui.dt: TablesInDesignTime Qunit firefox fix",
+        "references": []
       }
     ]
   }

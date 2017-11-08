@@ -85,6 +85,18 @@
         "type": "FIX",
         "text": " sap.m.Carousel: Rendering in Fiori app is now correct",
         "references": []
+      },
+      {
+        "id": "7af85a55854fa7ec7ff0fabbc575175a7e4b3b80",
+        "type": "FIX",
+        "text": " jquery.sap.global: deprecate synchronous module loading APIs",
+        "references": []
+      },
+      {
+        "id": "0a0f9accd53778838d800c10e751cf4abf1e64b7",
+        "type": "FIX",
+        "text": " jquery.sap.global: fix resource roots handling",
+        "references": []
       }
     ]
   }
