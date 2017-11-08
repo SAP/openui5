@@ -2,7 +2,6 @@
 		controllerName="sap.ui.support.supportRules.ui.controllers.Analysis"
 		height="100%"
 		xmlns="sap.ui.table"
-		xmlns:un="sap.ui.unified"
 		xmlns:m="sap.m"
 		xmlns:c="sap.ui.core"
 		xmlns:l="sap.ui.layout"

@@ -32,14 +32,16 @@ sap.ui.define([
 		onInit: function () {
 			this.model = SharedModel;
 			this.setCommunicationSubscriptions();
-			this.initSettingsPopover();
 
-			CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
 			this.tempRulesLoaded = false;
 
 			this.getView().setModel(this.model);
 			this.treeTable = this.byId("ruleList");
 			this.cookie = storage.readPersistenceCookie(constants.COOKIE_NAME);
+		},
+
+		onAfterRendering: function () {
+			CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
 		},
 
 		onAsyncSwitch: function (oEvent) {
@@ -242,12 +244,6 @@ sap.ui.define([
 			});
 		},
 
-		initSettingsPopover: function () {
-			this._settingsPopover = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.AnalyzeSettings", this);
-			this._settingsPopover.setModel(SharedModel);
-			this.getView().addDependent(this._oPopover);
-		},
-
 		_getExecutionContext: function () {
 			var ctx = {
 				type: this.model.getProperty("/analyzeContext/key")
@@ -356,6 +352,12 @@ sap.ui.define([
 
 		onAnalyzeSettings: function (oEvent) {
 			CommunicationBus.publish(channelNames.GET_AVAILABLE_COMPONENTS);
+
+			if (!this._settingsPopover) {
+				this._settingsPopover = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.AnalyzeSettings", this);
+				this.getView().addDependent(this._settingsPopover);
+			}
+
 			this._settingsPopover.openBy(oEvent.getSource());
 		},
 
