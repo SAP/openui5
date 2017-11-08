@@ -64,6 +64,10 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 			oRm.addClass("sapMCbHasLabel");
 		}
 
+		if (oCheckBox.getWrapping()) {
+			oRm.addClass("sapMCbWrapped");
+		}
+
 		oRm.writeControlData(oCheckBox);
 		oRm.writeClasses();
 
