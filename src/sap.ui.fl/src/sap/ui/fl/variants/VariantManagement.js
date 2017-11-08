@@ -328,12 +328,12 @@ sap.ui.define([
 		});
 	};
 
-	VariantManagement.prototype.setInitialDefaultVariantKey = function(sKey) {
-		this._sInitialDefaultVariantKey = sKey;
-	};
-
-	VariantManagement.prototype.getInitialDefaultVariantKey = function() {
-		return this._sInitialDefaultVariantKey;
+	VariantManagement.prototype.getOriginalDefaultVariantKey = function() {
+		var oModel = this.getModel(VariantManagement.MODEL_NAME);
+		if (oModel && this.oContext) {
+			return oModel.getProperty(this.oContext + "/originalDefaultVariant");
+		}
+		return null;
 	};
 
 	VariantManagement.prototype.setDefaultVariantKey = function(sKey) {
@@ -925,7 +925,7 @@ sap.ui.define([
 
 		// set variant name to Standard
 		if (this._isIndustrySolutionModeAndVendorLayer() && this.getManualVariantKey()) {
-			this.oInputName.setValue(this._oRb.getText("VARIANT_MANAGEMENT_STANDARD"));
+			// this.oInputName.setValue(this._oRb.getText("VARIANT_MANAGEMENT_STANDARD"));
 			this.oInputName.setEnabled(false);
 		}
 
@@ -1093,7 +1093,7 @@ sap.ui.define([
 		var sValue = parameters.newValue ? parameters.newValue : "";
 
 		var aFilters = [
-			this._getFilterNotDeleted(), new Filter({
+			this._getVisibleFilter(), new Filter({
 				filters: [
 					new Filter({
 						path: "title",
@@ -1166,7 +1166,7 @@ sap.ui.define([
 						header: new Text({
 							text: this._oRb.getText("VARIANT_MANAGEMENT_EXECUTEONSELECT")
 						}),
-						width: "5rem",
+						width: "6rem",
 						hAlign: TextAlign.Center,
 						demandPopin: true,
 						popinDisplay: PopinDisplay.Inline,
@@ -1209,6 +1209,8 @@ sap.ui.define([
 			});
 
 			this.oManagementDialog = new Dialog(this.getId() + "-managementdialog", {
+				resizable: true,
+				draggable: true,
 				customHeader: new Bar(this.getId() + "-managementHeader", {
 					contentMiddle: [
 						new Text(this.getId() + "-managementHeaderText", {
@@ -1247,7 +1249,7 @@ sap.ui.define([
 				factory: this._templateFactoryManagementDialog.bind(this)
 			});
 
-			this.oManagementTable.getBinding("items").filter(this._getFilterNotDeleted());
+			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
 
 			this._bDeleteOccured = false;
 		}
@@ -1390,8 +1392,6 @@ sap.ui.define([
 
 		this._createManagementDialog();
 
-		this.setInitialDefaultVariantKey(this.getDefaultVariantKey());
-
 		if (this.oVariantPopOver) {
 			this.oVariantPopOver.close();
 		}
@@ -1400,7 +1400,7 @@ sap.ui.define([
 		this._oSearchFieldOnMgmtDialog.setValue("");
 
 		// Idealy this should be done only once in _createtManagementDialog. But the binding does not recognize a change, when filtering is involved.
-		// After delete on the ui we filter the item out .toBeDeleted=true. The real deletion will occure only when OK is pressed.
+		// After delete on the ui we filter the item out .visible=false. The real deletion will occure only when OK is pressed.
 		// But the filterd items and the result after real deletion is identical, so no change is detected; based on this the context on the table is
 		// not invalidated....
 		// WA: do the binding always, while opening the dialog.
@@ -1413,7 +1413,7 @@ sap.ui.define([
 				factory: this._templateFactoryManagementDialog.bind(this)
 			});
 
-			this.oManagementTable.getBinding("items").filter(this._getFilterNotDeleted());
+			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
 		}
 
 		this.oManagementDialog.open();
@@ -1456,14 +1456,14 @@ sap.ui.define([
 	VariantManagement.prototype._handleManageCancelPressed = function() {
 		var sDefaultVariantKey, aItems = this._getItems(), oModel;
 		aItems.forEach(function(oItem) {
-			oItem.toBeDeleted = false;
+			oItem.visible = true;
 			// oItem.deletedTransport = null;
 			oItem.title = oItem.originalTitle;
 			oItem.favorite = oItem.originalFavorite;
 			oItem.executeOnSelection = oItem.originalExecuteOnSelection;
 		});
 
-		sDefaultVariantKey = this.getInitialDefaultVariantKey();
+		sDefaultVariantKey = this.getOriginalDefaultVariantKey();
 		if (sDefaultVariantKey !== this.getDefaultVariantKey()) {
 			this.setDefaultVariantKey(sDefaultVariantKey);
 		}
@@ -1505,11 +1505,16 @@ sap.ui.define([
 
 		var oModel, sKey = oItem.key;
 
+		// do not allow the deletion of the last entry
+		if (this.oManagementTable.getItems().length === 1) {
+			return;
+		}
+
 		if (!this._anyInErrorState(this.oManagementTable)) {
 			this.oManagementSave.setEnabled(true);
 		}
 
-		oItem.toBeDeleted = true;
+		oItem.visible = false;
 
 		if ((sKey === this.getDefaultVariantKey())) {
 			this.setDefaultVariantKey(this.getStandardVariantKey());
@@ -1522,7 +1527,7 @@ sap.ui.define([
 			};
 
 			var fError = function(oResult) {
-				oItem.toBeDeleted = false;
+				oItem.visible = true;
 			};
 
 			this._assignTransport(oItem, fOkay, fError);
@@ -1583,7 +1588,7 @@ sap.ui.define([
 		var aItems = this._getItems();
 
 		aItems.some(function(oItem) {
-			if (oItem.toBeDeleted) {
+			if (!oItem.visible) {
 				this._bDeleteOccured = true;
 				if (oItem.key === this.getSelectedVariantKey()) {
 					this.setModified(false);
@@ -1628,7 +1633,7 @@ sap.ui.define([
 			aFilters.push(oFilter);
 		}
 
-		aFilters.push(this._getFilterNotDeleted());
+		aFilters.push(this._getVisibleFilter());
 
 		if (this.getShowFavorites()) {
 			aFilters.push(this._getFilterFavorites());
@@ -1637,10 +1642,10 @@ sap.ui.define([
 		return aFilters;
 	};
 
-	VariantManagement.prototype._getFilterNotDeleted = function() {
+	VariantManagement.prototype._getVisibleFilter = function() {
 		return new Filter({
-			path: "toBeDeleted",
-			operator: sap.ui.model.FilterOperator.NE,
+			path: "visible",
+			operator: sap.ui.model.FilterOperator.EQ,
 			value1: true
 		});
 	};

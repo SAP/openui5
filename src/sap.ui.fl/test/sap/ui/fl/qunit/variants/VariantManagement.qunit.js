@@ -43,35 +43,40 @@
 							author: "A",
 							readOnly: true,
 							favorite: true,
-							originalFavorite: true
+							originalFavorite: true,
+							visible: true
 						}, {
 							key: "1",
 							title: "One",
 							author: "A",
 							readOnly: true,
 							favorite: true,
-							originalFavorite: true
+							originalFavorite: true,
+							visible: true
 						}, {
 							key: "2",
 							title: "Two",
 							author: "V",
 							readOnly: true,
 							favorite: true,
-							originalFavorite: true
+							originalFavorite: true,
+							visible: true
 						}, {
 							key: "3",
 							title: "Three",
 							author: "U",
 							readOnly: true,
 							favorite: true,
-							originalFavorite: true
+							originalFavorite: true,
+							visible: true
 						}, {
 							key: "4",
 							title: "Four",
 							author: "Z",
 							readOnly: true,
 							favorite: true,
-							originalFavorite: true
+							originalFavorite: true,
+							visible: true
 						}
 					]
 				}
@@ -170,7 +175,7 @@
 		assert.equal(aItems.length, 5);
 		assert.equal(aItems[0].key, this.oVariantManagement.getStandardVariantKey());
 		assert.equal(aItems[1].key, "1");
-		assert.equal(aItems[1].toBeDeleted, false);
+		assert.equal(aItems[1].visible, true);
 		assert.equal(aItems[1].originalTitle, aItems[1].title);
 		assert.equal(aItems[2].key, "2");
 
@@ -295,6 +300,15 @@
 		assert.ok(oGridContent);
 		assert.equal(oGridContent.length, 3);
 
+		assert.ok(!this.oVariantManagement.getManualVariantKey());
+		assert.ok(!this.oVariantManagement.oInputManualKey.getVisible());
+		assert.ok(!this.oVariantManagement.oLabelKey.getVisible());
+
+		this.oVariantManagement.setManualVariantKey(true);
+		this.oVariantManagement._openSaveAsDialog();
+
+		assert.ok(this.oVariantManagement.oInputManualKey.getVisible());
+		assert.ok(this.oVariantManagement.oLabelKey.getVisible());
 	});
 
 	QUnit.test("Checking _handleVariantSaveAs", function(assert) {
@@ -428,7 +442,7 @@
 		assert.ok(aItems);
 		assert.equal(aItems.length, 5);
 
-		oItemDel.toBeDeleted = true;
+		oItemDel.visible = false;
 		oItemRen.title = "Not Three";
 
 		this.oVariantManagement._createManagementDialog();
@@ -463,7 +477,7 @@
 			var oData = this.oVariantManagement.getBindingContext("$FlexVariants").getObject();
 
 			oData["variants"].forEach(function(oItem) {
-				if (oItem.toBeDeleted) {
+				if (!oItem.visible) {
 					aDelItems.push(oItem.key);
 				} else if (oItem.title !== oItem.originalTitle) {
 					aRenamedItems.push(oItem.key);
@@ -516,7 +530,7 @@
 			var oData = this.oVariantManagement.getBindingContext("$FlexVariants").getObject();
 
 			oData["variants"].forEach(function(oItem) {
-				if (oItem.toBeDeleted) {
+				if (!oItem.visible) {
 					aDelItems.push(oItem.key);
 				} else {
 					if (oItem.title !== oItem.originalTitle) {
