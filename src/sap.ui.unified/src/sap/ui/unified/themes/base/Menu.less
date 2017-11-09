@@ -28,6 +28,12 @@
 	border-radius: 0.25rem;
 }
 
+html[data-sap-ui-browser*='ie'] {
+	.sapUiMnu {
+		overflow: hidden !important;
+	}
+}
+
 .sapUiMnu:focus {
 	outline: none;
 }
@@ -280,6 +286,12 @@ html[data-sap-ui-browser*='ie'] {
 .sapUiMnu.sapUiMnuScroll {
 	overflow-x: none;
 	overflow-y: auto;
+}
+
+html[data-sap-ui-browser*='ie'] {
+	.sapUiMnu {
+		overflow-y: auto !important;
+	}
 }
 
 .sapUiMnu.sapUiMnuScroll .sapUiMnuItmR {
