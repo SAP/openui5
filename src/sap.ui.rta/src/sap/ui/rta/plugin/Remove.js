@@ -109,24 +109,33 @@ sap.ui.define([
 		} else {
 			bIsEnabled = true;
 		}
-		return bIsEnabled && !this._isLastVisibleInAggregation(oOverlay);
+		return bIsEnabled && this._canBeRemovedFromAggregation(oOverlay);
 	};
 
-	Remove.prototype._isLastVisibleInAggregation = function(oOverlay){
+	/**
+	 * Checks if Overlay control has a valid parent and if it is
+	 * not the last visible control in the aggregation
+	 * @param  {sap.ui.dt.Overlay} oOverlay Overlay for the control
+	 * @return {boolean} Returns true if the control can be removed
+	 */
+	Remove.prototype._canBeRemovedFromAggregation = function(oOverlay){
 		var oElement = oOverlay.getElementInstance();
 		var oParent = oElement.getParent();
-		var aElements = oParent.getAggregation(oElement.sParentAggregationName);
-		if (!Array.isArray(aElements)){
+		if (!oParent){
 			return false;
 		}
-		if (aElements.length === 1){
+		var aElements = oParent.getAggregation(oElement.sParentAggregationName);
+		if (!Array.isArray(aElements)){
 			return true;
+		}
+		if (aElements.length === 1){
+			return false;
 		}
 		var aInvisibleElements = aElements.filter(function(oElement){
 			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 			return !(oElementOverlay && oElementOverlay.getElementVisibility());
 		});
-		return aInvisibleElements.length === (aElements.length - 1);
+		return !(aInvisibleElements.length === (aElements.length - 1));
 	};
 
 	/**
