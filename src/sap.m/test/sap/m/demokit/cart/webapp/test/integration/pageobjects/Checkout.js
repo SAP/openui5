@@ -357,6 +357,17 @@ sap.ui.define([
 					});
 				},
 
+				iShouldGetErrorMessageTextDoesNotMatchTypeForEmailField: function (sEmailFieldValue) {
+					return this.waitFor({
+						id: "cashOnDeliveryEmail",
+						matchers: new PropertyStrictEquals({
+							name: "valueStateText",
+							value: '"' + sEmailFieldValue + '" is not a valid email address'
+						}),
+						errorMessage: "The Email field error message text does not match to the type of error (value has wrong format)."
+					});
+				},
+
 				iShouldNotSeeTheStep4Button: function (sStepId) {
 					return this.waitFor({
 						id: sStepId,

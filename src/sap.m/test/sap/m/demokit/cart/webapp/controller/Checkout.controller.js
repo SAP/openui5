@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/ui/core/ValueState',
 	'sap/m/Link',
 	'sap/m/MessagePopover',
-	'sap/m/MessagePopoverItem'
+	'sap/m/MessagePopoverItem',
+	'sap/ui/demo/cart/model/EmailType'
 ], function (BaseController, cart, JSONModel, Device, formatter, MessageBox, ValueState, Link, MessagePopover, MessagePopoverItem) {
 	"use strict";
 
