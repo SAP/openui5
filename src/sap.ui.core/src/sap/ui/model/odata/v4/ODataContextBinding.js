@@ -397,8 +397,8 @@ sap.ui.define([
 	 *
 	 * The value of this binding is the result of the operation. To access a result of primitive
 	 * type, bind a control to the path "value", for example
-	 * <code>&lt;Text text="{value}"/&gt;</code>. If the result has a complex or entity type, you
-	 * can bind properties as usual, for example <code>&lt;Text text="{street}"/&gt;</code>.
+	 * <code>&lt;Text text="{value}"/></code>. If the result has a complex or entity type, you
+	 * can bind properties as usual, for example <code>&lt;Text text="{street}"/></code>.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
