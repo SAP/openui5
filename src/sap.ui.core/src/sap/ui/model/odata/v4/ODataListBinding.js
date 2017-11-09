@@ -1421,5 +1421,61 @@ sap.ui.define([
 		return sClassName + ": " + (this.bRelative ? this.oContext + "|" : "") + this.sPath;
 	};
 
+	/**
+	 * Updates the binding's "$apply" parameter based on the given analytical information as
+	 * "groupby((&lt;dimension_1,...,dimension_N>),aggregate(&lt;measure_1,...,measure_M>))" where
+	 * the "aggregate" part is only present if measures are given.
+	 *
+	 * Analytical information is the mapping of UI columns to properties in the bound OData entity
+	 * set. Every column object contains at least the <code>name</code> of the bound property.
+	 * <ol>
+	 *   <li>A column bound to a dimension property has further boolean properties:
+	 *     <ul>
+	 *       <li><code>grouped</code>: its presence is used to detect a dimension</li>
+	 *       <li><code>inResult</code> and <code>visible</code>: the dimension is ignored unless at
+	 *         least one of these is <code>true</code></li>
+	 *     </ul>
+	 *   </li>
+	 *   <li>A column bound to a measure property has further boolean properties:
+	 *     <ul>
+	 *       <li><code>total</code>: its presence is used to detect a measure</li>
+	 *     </ul>
+	 *   </li>
+	 * </ol>
+	 *
+	 * @param {object[]} aColumns
+	 *   An array with objects holding the analytical information for every column, from left to
+	 *   right
+	 * @throws {Error} In case a column is neither a dimension nor a measure, or both a dimension
+	 *   and a measure
+	 *
+	 * @protected
+	 * @see sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo
+	 * @see #changeParameters
+	 * @since 1.53.0
+	 */
+	ODataListBinding.prototype.updateAnalyticalInfo = function (aColumns) {
+		var aAggregate = [],
+			aGroupBy = [];
+
+		aColumns.forEach(function (oColumn) {
+			if ("total" in oColumn) { // measure
+				if ("grouped" in oColumn) {
+					throw new Error("Both dimension and measure: " + oColumn.name);
+				}
+				aAggregate.push(oColumn.name);
+			} else if ("grouped" in oColumn) { // dimension
+				if (oColumn.inResult || oColumn.visible) {
+					aGroupBy.push(oColumn.name);
+				}
+			} else {
+				throw new Error("Neither dimension nor measure: " + oColumn.name);
+			}
+		});
+
+		this.changeParameters({$apply : "groupby((" + aGroupBy.join(",")
+			+ (aAggregate.length ? "),aggregate(" + aAggregate.join(",") + "))" : "))")});
+	};
+
 	return ODataListBinding;
 });
