@@ -324,6 +324,12 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.onBeforeRendering = function () {
+		var oObjectPageLayout = this._getObjectPageLayout();
+
+		if (!oObjectPageLayout) {
+			return;
+		}
+
 		if (ObjectPageSectionBase.prototype.onBeforeRendering) {
 			ObjectPageSectionBase.prototype.onBeforeRendering.call(this);
 		}
@@ -332,7 +338,7 @@ sap.ui.define([
 
 		this._setAggregationProxy();
 		this._getGrid().removeAllContent();
-		this._applyLayout(this._getObjectPageLayout());
+		this._applyLayout(oObjectPageLayout);
 		this.refreshSeeMoreVisibility();
 	};
 
