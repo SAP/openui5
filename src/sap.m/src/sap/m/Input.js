@@ -1594,13 +1594,26 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @return {sap.m.Input} this Input instance for chaining.
 	 */
 	Input.prototype.updateSuggestionItems = function() {
+		this._bSuspendInvalidate = true;
 		this.updateAggregation("suggestionItems");
 		this._bShouldRefreshListItems = true;
 		this._refreshItemsDelayed();
+		this._bSuspendInvalidate = false;
 		return this;
 	};
 
 	/**
+	 * Invalidates the control.
+	 * @override
+	 * @protected
+	 */
+	Input.prototype.invalidate = function() {
+		if (!this._bSuspendInvalidate) {
+			Control.prototype.invalidate.apply(this, arguments);
+		}
+	};
+
+		/**
 	 * Cancels any pending suggestions.
 	 *
 	 * @name sap.m.Input.cancelPendingSuggest
@@ -2745,7 +2758,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 	};
 
-	/* =========================================================== */
+		/* =========================================================== */
 	/*           begin: forward aggregation methods to table       */
 	/* =========================================================== */
 
