@@ -61,7 +61,7 @@ sap.ui.define([
 		this.check();
 
 		// Assert
-		sinon.assert.calledWith(this.debugSpy, "Found no control with the id: 'notExistingId' in the view: 'bar'");
+		sinon.assert.calledWith(this.debugSpy, "Found no control with ID 'notExistingId' in view 'bar'");
 	});
 
 	QUnit.test("Should log if a view is not found", function(assert) {

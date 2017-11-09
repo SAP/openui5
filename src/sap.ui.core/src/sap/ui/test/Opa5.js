@@ -619,7 +619,7 @@ sap.ui.define([
 				var oPlugin = Opa5.getPlugin();
 
 				// even if we have no control the matchers may provide a value for vControl
-				vResult = oPlugin.getFilterdControls(options, vControl);
+				vResult = oPlugin._getFilteredControls(options, vControl);
 
 				if (iFrameLauncher.hasLaunched() && $.isArray(vResult)) {
 					// People are using instanceof Array in their check so i need to make sure the Array
@@ -633,6 +633,7 @@ sap.ui.define([
 				}
 
 				if (vResult === OpaPlugin.FILTER_FOUND_NO_CONTROLS) {
+					oLogger.debug("Matchers found no controls so check function will be skipped");
 					return false;
 				}
 
@@ -1017,10 +1018,11 @@ sap.ui.define([
 		Opa5.prototype._executeCheck = function (fnCheck, vControl) {
 			var aArgs = [];
 			vControl && aArgs.push(vControl);
-			oLogger.debug("Opa is executing the check: " + fnCheck);
+			oLogger.debug("Executing OPA check function on controls " + vControl);
+			oLogger.debug("Check function is:\n" + fnCheck);
 
 			var bResult = fnCheck.apply(this, aArgs);
-			oLogger.debug("Opa check was " + bResult);
+			oLogger.debug("Result of check function is: " + bResult || "not defined or null");
 
 			return bResult;
 		};
