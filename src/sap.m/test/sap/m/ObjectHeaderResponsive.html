@@ -43,7 +43,7 @@
 			sap.ui.getCore().setModel(model);
 
 			// create and add app
-			var app = new sap.m.App("myApp");
+			var app = new sap.m.SplitApp("myApp");
 			app.placeAt("body");
 
 			var label1 = new sap.m.Label({
@@ -1353,10 +1353,38 @@
 				numberState: sap.ui.core.ValueState.Success
 			});
 
+			var oLongTitleOH = new sap.m.ObjectHeader({
+				title : "TitleThatDoesNotHaveAnySpaceAsItIsOneVeryLongWordWithoutNarrowClassSet",
+				showTitleSelector: true,
+				titleActive: true,
+				responsive:true
+			});
+
+			var oLongTitleOH1 = new sap.m.ObjectHeader({
+				title : "TitleThatDoesNotHaveAnySpaceAsItIsOneVeryLongWordWithNarrowClassSet",
+				showTitleSelector: true,
+				responsive:true
+			}).addStyleClass("sapUiContainer-Narrow");
+
+			var oLongTitleOH2 = new sap.m.ObjectHeader({
+				title : "TitleThatDoesNotHaveAnySpaceAsItIsOneVeryLongWordWithNarrowClassSet",
+				showTitleSelector: true,
+				titleActive: true,
+				responsive:true
+			}).addStyleClass("sapUiContainer-Narrow");
+
+			var page1 = new sap.m.Page("page1", {
+				title:"ObjectHeader (Responsive)",
+				content : [
+					oLongTitleOH2
+					]
+			});
 			// create and add a page with icon tab bar
 			var page = new sap.m.Page("page", {
 				title:"ObjectHeader (Responsive)",
 				content : [
+					oLongTitleOH,
+					oLongTitleOH1,
 					label1,
 					oh1,
 					label1Small,
@@ -1390,9 +1418,11 @@
 					new sap.m.Label({text: "THE END!"}) // placeholder to see content below
 				]
 			});
-			app.addPage(page);
+			app.addMasterPage(page1);
+			app.addDetailPage(page);
 
 		</script>
+
 	</head>
 	<body id="body" class="sapUiBody" role="application">
 	</body>
