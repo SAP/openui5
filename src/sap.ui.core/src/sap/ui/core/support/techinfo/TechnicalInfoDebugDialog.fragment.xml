@@ -7,18 +7,14 @@
 		id="Dialog"
 		resizable="true"
 		contentWidth="600px"
-		class="sapUiNoContentPadding">
+		class="sapUiNoContentPadding"
+		ariaLabelledBy="title">
 		<customHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Title
-					text="{
-						parts: [
-							'i18n>TechInfo.DebugModulesConfigPopup.SelectionCounter',
-							'view>/DebugModuleSelectionCount'
-						],
-						formatter: 'jQuery.sap.formatMessage'
-					}"
+					id="title"
+					text="{view>/DebugModulesTitle}"
 					class="sapUiTinyMarginLeft"/>
 				<ToolbarSpacer/>
 			</Toolbar>
@@ -29,16 +25,13 @@
 					design="Bold"
 					width="6.5rem"
 					class="sapUiTinyMargin"
+					labelFor="customDebugValue"
 					text="sap-ui-debug ="/>
 				<Input
 					id="customDebugValue"
 					width="100%"
-					value="{
-						path : 'view>/CustomDebugMode',
-						type : '.CustomTypeMode'
-					}"
-					change="onChangeCustomDebugMode"
-					valueStateText="{i18n>TechInfo.DebugModulesConfigPopup.ModeValidationMessage}"/>
+					value="{view>/CustomDebugMode}"
+					change="onChangeCustomDebugMode"/>
 				<ToolbarSpacer/>
 				<Button
 					icon="sap-icon://copy"
