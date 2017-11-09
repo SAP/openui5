@@ -2094,7 +2094,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("collectSapAttributes/warnUnusedSapAttributes", function (assert) {
+	QUnit.test("collectSapAnnotations/warnUnusedSapAnnotations", function (assert) {
 		var oLogMock = this.oLogMock;
 
 		function warn(rElement, sName, sValue) {

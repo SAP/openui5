@@ -15,6 +15,9 @@ sap.ui.define([
 		// namespaces
 		sEdmxNamespace = "http://schemas.microsoft.com/ado/2007/06/edmx",
 		sMicrosoftNamespace = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
+		sSapNamespace = "http://www.sap.com/Protocols/SAPData",
+
+		// conversion tables
 		mV2toV4 = {
 			"creatable" : {
 				"property" : "Insertable",
@@ -53,6 +56,9 @@ sap.ui.define([
 			},
 			"text" : {
 				"term" : "@com.sap.vocabularies.Common.v1.Text"
+			},
+			"topable" : {
+				"term" : "@Org.OData.Capabilities.V1.TopSupported"
 			},
 			"updatable" : {
 				"property" : "Updatable",
@@ -231,7 +237,6 @@ sap.ui.define([
 				TermName : "Task"
 			}
 		},
-		sSapNamespace = "http://www.sap.com/Protocols/SAPData",
 
 		// the configurations for traverse
 		oAliasConfig = {
@@ -319,6 +324,110 @@ sap.ui.define([
 		};
 
 	/**
+	 * Creates an annotatable that is able to consume V2 annotations and set V4 annotations for the
+	 * correct target. It ensures that the target for the annotations is only created when needed.
+	 *
+	 * @param {object} oAggregate The aggregate
+	 * @param {string} sTarget
+	 *   The target name to which the V4 annotations shall be added. The target path is constructed
+	 *   from the path of the top annotatable of the stack in oAggregate (if there is one yet) and
+	 *   the given name.
+	 * @constructor
+	 */
+	function Annotatable(oAggregate, sTarget) {
+		var oParent = oAggregate.annotatable;
+
+		if (oParent) {
+			sTarget = _Helper.buildPath(oParent.sPath, sTarget);
+		}
+		this.oAggregate = oAggregate;
+		this.sPath = sTarget;
+		this.oParent = oParent;
+		this.mSapAttributes = oAggregate.mSapAttributes;
+		this.mAnnotationsForTarget = null;
+	}
+
+	/**
+	 * Adds a V4 annotation for the annotatable's target.
+	 *
+	 * @param {string} sTerm The term
+	 * @param {any} vValue The value
+	 */
+	Annotatable.prototype.annotate = function (sTerm, vValue) {
+		this.getTarget()[sTerm] = vValue;
+	};
+
+	/**
+	 * Consumes the SAP annotation of the given name and returns its value. No warning will be
+	 * logged for this name afterwards.
+	 *
+	 * @param {string} sName The name
+	 * @returns {string} The value or <code>undefined</code>
+	 */
+	Annotatable.prototype.consume = function (sName) {
+		return consumeSapAnnotation(this.oAggregate, sName);
+	};
+
+	/**
+	 * Converts the given V2 annotation. The conversion table <code>mV2ToV4</code> defines the V4
+	 * term to take the value given in <code>vValue</code>. The conversion table may also give a
+	 * property; in this case the resulting term is an &lt;edm:Record> and this call adds a property
+	 * to the record.
+	 *
+	 * Does nothing if <code>vValue</code> is <code>undefined</code> or <code>""</code>
+	 *
+	 * @param {string} sV2Name The name of the V2 annotation
+	 * @param {any} vValue The new value
+	 */
+	Annotatable.prototype.convert = function (sV2Name, vValue) {
+		var oAnnotation, mAnnotationInfo;
+
+		if (vValue === undefined || vValue === "") {
+			return;
+		}
+		mAnnotationInfo = mV2toV4[sV2Name];
+		if (mAnnotationInfo.property) {
+			oAnnotation = this.getOrCreateAnnotationRecord(mAnnotationInfo.term);
+			oAnnotation[mAnnotationInfo.property] = vValue;
+		} else {
+			this.annotate(mAnnotationInfo.term, vValue);
+		}
+	};
+
+	/**
+	 * Returns the value of the SAP annotation for the given name.
+	 *
+	 * @param {string} sName The name
+	 * @returns {string} The value or <code>undefined</code>
+	 */
+	Annotatable.prototype.peek = function (sName) {
+		return this.oAggregate.mSapAnnotations[sName];
+	};
+
+	/**
+	 * Gets the converted V2 annotation for the given term. Assumes an &lt;edm:Record> and ensures
+	 * that there is one.
+	 *
+	 * @param {string} sTerm The term
+	 * @returns {object} The V4 annotation value, an &lt;edm:Record>
+	 */
+	Annotatable.prototype.getOrCreateAnnotationRecord = function (sTerm) {
+		return V2MetadataConverter.getOrCreateObject(this.getTarget(), sTerm);
+	};
+
+	/**
+	 * Gets the target for the converted V2 annotations of this annotatable. Ensures that it exists.
+	 *
+	 * @returns {object} The target for the annotations
+	 */
+	Annotatable.prototype.getTarget = function () {
+		if (!this.mAnnotationsForTarget) {
+			this.mAnnotationsForTarget = this.oAggregate.convertedV2Annotations[this.sPath] = {};
+		}
+		return this.mAnnotationsForTarget;
+	};
+
+	/**
 	 * Collects the element's SAP annotations in the aggregate.
 	 *
 	 * @param {Element} oElement The element
@@ -355,131 +464,61 @@ sap.ui.define([
 	}
 
 	/**
-	 * Iterates over all V2 annotations and converts them to corresponding V4 annotations based on
-	 * the given kind.
+	 * Converts the given V2 annotation of an EntitySet to corresponding V4 annotation.
 	 *
-	 * @param {object} oAggregate The aggregate
-	 * @param {string} sKind The kind of the element, e.g. "EntitySet" or "Property"
-	 */
-	function convertAnnotations(oAggregate, sKind) {
-		var sElementPath = oAggregate.annotatable.path,
-			mAnnotations = oAggregate.convertedV2Annotations[sElementPath] || {},
-			sParentPath = oAggregate.annotatable.parent.path,
-			mParentAnnotations = oAggregate.convertedV2Annotations[sParentPath] || {},
-			sSemanticValue;
-
-		if (sKind === "EntityType" || sKind === "FunctionImport") {
-			setAnnotation(mAnnotations, "label", consumeSapAnnotation(oAggregate, "label"));
-		} else {
-			Object.keys(oAggregate.mSapAnnotations).forEach(function (sName) {
-				if (sKind === "EntitySet") {
-					convertEntitySetAnnotation(sName, mAnnotations, oAggregate);
-				} else if (sKind === "Property" && sName === "semantics") {
-					sSemanticValue = oAggregate.mSapAnnotations["semantics"];
-					if (sSemanticValue === "unit-of-measure"
-							|| sSemanticValue === "currency-code") {
-						oAggregate.mProperty2Semantics[sElementPath] =
-							consumeSapAnnotation(oAggregate, "semantics");
-					} else {
-						convertPropertySemanticsAnnotation(oAggregate, mParentAnnotations,
-							mAnnotations);
-					}
-				} else if (sKind === "Property") {
-					if (sName === "unit") {
-						oAggregate.mProperty2Unit[sElementPath] =
-							consumeSapAnnotation(oAggregate, "unit");
-					}
-					convertPropertyAnnotation(oAggregate, sName, mAnnotations);
-				}
-			});
-			if (sKind === "EntitySet") {
-				// These annotations had to be retained until the loop is finished
-				consumeSapAnnotation(oAggregate, "creatable");
-				consumeSapAnnotation(oAggregate, "deletable");
-				consumeSapAnnotation(oAggregate, "updatable");
-
-				if (consumeSapAnnotation(oAggregate, "searchable") !== "true") {
-					// default for sap:searchable is false --> add v4 annotation, if value of
-					// v2 annotation is not true
-					setAnnotation(mAnnotations, "searchable", false);
-				}
-			} else if (sKind === "Property") {
-				if (consumeSapAnnotation(oAggregate, "updatable") === "false") {
-					if (consumeSapAnnotation(oAggregate, "creatable") === "false") {
-						mAnnotations["@Org.OData.Core.V1.Computed"] = true;
-					} else {
-						mAnnotations["@Org.OData.Core.V1.Immutable"] = true;
-					}
-				}
-			}
-		}
-
-		if (Object.keys(mAnnotations).length > 0) {
-			oAggregate.convertedV2Annotations[sElementPath] = mAnnotations;
-		}
-		if (Object.keys(mParentAnnotations).length > 0) {
-			oAggregate.convertedV2Annotations[sParentPath] = mParentAnnotations;
-		}
-	}
-
-	/**
-	 * Converts a V2 annotation of an EntitySet to the corresponding V4 annotation and puts
-	 * the annotation into the given map of V4 annotations.
-	 *
+	 * @param {Annotatable} oAnnotatable The annotatable
 	 * @param {string} sName The name of the V2 annotation
-	 * @param {object} mAnnotations Map of V4 annotations
-	 * @param {object} oAggregate The aggregate (for error handling)
 	 */
-	function convertEntitySetAnnotation(sName, mAnnotations, oAggregate) {
-		var sConflictingV2Annotation,
-			sValue;
+	function convertEntitySetAnnotation(oAnnotatable, sName) {
+		var sConflictingV2Annotation, sValue;
 
 		switch (sName) {
 			case "creatable":
 			case "deletable":
 			case "updatable":
 				// do not consume it here, it might be needed for xxx-path
-				if (oAggregate.mSapAnnotations[sName] === "false") {
-					setAnnotation(mAnnotations, sName, false);
+				if (oAnnotatable.peek(sName) === "false") {
+					oAnnotatable.convert(sName, false);
 				}
 				break;
 			case "deletable-path":
 			case "updatable-path":
 				sConflictingV2Annotation = sName.slice(0, 9);
-				sValue = consumeSapAnnotation(oAggregate, sName);
-				if (oAggregate.mSapAnnotations[sConflictingV2Annotation]) {
-					setAnnotation(mAnnotations, sName, false);
-					jQuery.sap.log.warning("Inconsistent metadata in '" + oAggregate.url + "'",
+				sValue = oAnnotatable.consume(sName);
+				if (oAnnotatable.peek(sConflictingV2Annotation)) {
+					oAnnotatable.convert(sName, false);
+					jQuery.sap.log.warning(
+						"Inconsistent metadata in '" + oAnnotatable.oAggregate.url + "'",
 						"Use either 'sap:" + sConflictingV2Annotation + "' or 'sap:"
 							+ sConflictingV2Annotation + "-path'"
-							+ " at entity set '" + oAggregate.annotatable.path + "'", sModuleName);
+							+ " at entity set '" + oAnnotatable.sPath + "'",
+						sModuleName);
 				} else {
-					setAnnotation(mAnnotations, sName, {
+					oAnnotatable.convert(sName, {
 						$Path : sValue
 					});
 				}
 				break;
 			case "label":
-				mAnnotations["@com.sap.vocabularies.Common.v1.Label"] =
-					consumeSapAnnotation(oAggregate, sName);
+				convertLabel(oAnnotatable);
 				break;
 			case "pageable":
-				sValue = consumeSapAnnotation(oAggregate, sName);
+				sValue = oAnnotatable.consume(sName);
 				if (sValue === "false") {
-					mAnnotations["@Org.OData.Capabilities.V1.SkipSupported"] = false;
-					mAnnotations["@Org.OData.Capabilities.V1.TopSupported"] = false;
+					oAnnotatable.annotate("@Org.OData.Capabilities.V1.SkipSupported", false);
+					oAnnotatable.annotate("@Org.OData.Capabilities.V1.TopSupported", false);
 				}
 				break;
 			case "requires-filter":
-				sValue = consumeSapAnnotation(oAggregate, sName);
+				sValue = oAnnotatable.consume(sName);
 				if (sValue === "true") {
-					setAnnotation(mAnnotations, sName, true);
+					oAnnotatable.convert(sName, true);
 				}
 				break;
 			case "topable":
-				sValue = consumeSapAnnotation(oAggregate, sName);
+				sValue = oAnnotatable.consume(sName);
 				if (sValue === "false") {
-					mAnnotations["@Org.OData.Capabilities.V1.TopSupported"] = false;
+					oAnnotatable.convert(sName, false);
 				}
 				break;
 			default: //no conversion yet
@@ -487,14 +526,21 @@ sap.ui.define([
 	}
 
 	/**
-	 * Converts a V2 annotation of an EntitySet to the corresponding V4 annotation and puts
-	 * the annotation into the given map of V4 annotations.
+	 * Converts the V2 annotation "label".
 	 *
-	 * @param {object} oAggregate The aggregate
-	 * @param {string} sName the name of the V2 annotation
-	 * @param {object} mAnnotations Map of V4 annotations
+	 * @param {Annotatable} oAnnotatable The annotatable
 	 */
-	function convertPropertyAnnotation(oAggregate, sName, mAnnotations) {
+	function convertLabel(oAnnotatable) {
+		oAnnotatable.convert("label", oAnnotatable.consume("label"));
+	}
+
+	/**
+	 * Converts the given V2 annotation of a Property to corresponding V4 annotation.
+	 *
+	 * @param {Annotatable} oAnnotatable The annotatable
+	 * @param {string} sName The name of the V2 annotation
+	 */
+	function convertPropertyAnnotation(oAnnotatable, sName) {
 		var sValue;
 
 		switch (sName) {
@@ -502,78 +548,89 @@ sap.ui.define([
 			case "heading":
 			case "label":
 			case "quickinfo":
-				setAnnotation(mAnnotations, sName, consumeSapAnnotation(oAggregate, sName));
+				oAnnotatable.convert(sName, oAnnotatable.consume(sName));
 				break;
 			case "field-control":
 			case "precision":
 			case "text":
-				setAnnotation(mAnnotations, sName, {
-					$Path : consumeSapAnnotation(oAggregate, sName)
+				oAnnotatable.convert(sName, {
+					$Path : oAnnotatable.consume(sName)
 				});
 				break;
 			// more complex cases
 			case "aggregation-role":
-				sValue = consumeSapAnnotation(oAggregate, sName);
+				sValue = oAnnotatable.consume(sName);
 				if (sValue === "dimension") {
-					mAnnotations["@com.sap.vocabularies.Analytics.v1.Dimension"] = true;
+					oAnnotatable.annotate("@com.sap.vocabularies.Analytics.v1.Dimension", true);
 				} else if (sValue === "measure") {
-					mAnnotations["@com.sap.vocabularies.Analytics.v1.Measure"] = true;
+					oAnnotatable.annotate("@com.sap.vocabularies.Analytics.v1.Measure", true);
 				}
 				break;
 			case "display-format":
-				sValue = consumeSapAnnotation(oAggregate, sName);
+				sValue = oAnnotatable.consume(sName);
 				if (sValue === "NonNegative") {
-					mAnnotations["@com.sap.vocabularies.Common.v1.IsDigitSequence"] = true;
+					oAnnotatable.annotate("@com.sap.vocabularies.Common.v1.IsDigitSequence",
+						true);
 				} else if (sValue === "UpperCase") {
-					mAnnotations["@com.sap.vocabularies.Common.v1.IsUpperCase"] = true;
+					oAnnotatable.annotate("@com.sap.vocabularies.Common.v1.IsUpperCase", true);
 				}
 				break;
+			case "semantics":
+				convertPropertySemanticsAnnotation(oAnnotatable);
+				break;
+			case "unit":
+				oAnnotatable.oAggregate.mProperty2Unit[oAnnotatable.sPath]
+					= oAnnotatable.consume("unit");
+				break;
 			case "visible":
-				sValue = consumeSapAnnotation(oAggregate, sName);
+				sValue = oAnnotatable.consume(sName);
 				if (sValue === "false") {
-					mAnnotations["@com.sap.vocabularies.UI.v1.Hidden"] = true;
-					mAnnotations["@com.sap.vocabularies.Common.v1.FieldControl"] = {
+					oAnnotatable.annotate("@com.sap.vocabularies.UI.v1.Hidden", true);
+					oAnnotatable.annotate("@com.sap.vocabularies.Common.v1.FieldControl", {
 						$EnumMember :
 							"com.sap.vocabularies.Common.v1.FieldControlType/Hidden"
-					};
+					});
 				}
 				break;
 			default:
-				//no conversion supported
+			//no conversion supported
 		}
 	}
 
 	/**
-	 * Converts a sap:semantics V2 annotation of a property to the corresponding V4 annotation at
-	 * an EntityType and puts the annotation into the given map of V4 annotations.
+	 * Converts a sap:semantics V2 annotation of a property to the corresponding V4 annotation.
 	 *
-	 * @param {object} oAggregate The aggregate
-	 * @param {object} mTypeAnnotations Map of V4 annotations at EntityType/ComplexType level
-	 * @param {object} mPropertyAnnotations Map of V4 annotations at Property level
+	 * @param {Annotatable} oAnnotatable The annotatable
 	 */
-	function convertPropertySemanticsAnnotation(oAggregate, mTypeAnnotations,
-			mPropertyAnnotations) {
+	function convertPropertySemanticsAnnotation(oAnnotatable) {
 		var oAnnotations,
 			sEnum,
 			oPath,
 			aResult,
 			oSemantics,
-			aValue = oAggregate.mSapAnnotations["semantics"].split(";"),
+			aValue = oAnnotatable.peek("semantics").split(";"),
 			sValue = aValue[0],
 			oV2toV4Semantic;
 
-		if (sValue === "url") {
-			mPropertyAnnotations["@Org.OData.Core.V1.IsURL"] = true;
-			consumeSapAnnotation(oAggregate, "semantics");
-			return;
+		switch (sValue) {
+			case "unit-of-measure":
+			case "currency-code":
+				oAnnotatable.oAggregate.mProperty2Semantics[oAnnotatable.sPath] =
+					oAnnotatable.consume("semantics");
+				break;
+			case "url":
+				oAnnotatable.annotate("@Org.OData.Core.V1.IsURL", true);
+				oAnnotatable.consume("semantics");
+				break;
+			default:
 		}
 
 		oV2toV4Semantic = mV2toV4Semantics[sValue];
 		if (oV2toV4Semantic) {
 			oPath = {
-				"$Path" : oAggregate.sPropertyName
+				"$Path" : oAnnotatable.oAggregate.sPropertyName
 			};
-			oAnnotations = V2MetadataConverter.getOrCreateObject(mTypeAnnotations,
+			oAnnotations = oAnnotatable.oParent.getOrCreateAnnotationRecord(
 				"@com.sap.vocabularies.Communication.v1." + oV2toV4Semantic.TermName);
 			if (oV2toV4Semantic.Path) {
 				oSemantics = V2MetadataConverter.getOrCreateObject(oAnnotations,
@@ -581,8 +638,7 @@ sap.ui.define([
 				oSemantics[oV2toV4Semantic.V4Attribute || sValue] = oPath;
 
 				if (oV2toV4Semantic.v4PropertyAnnotation) {
-					mPropertyAnnotations[oV2toV4Semantic.v4PropertyAnnotation]
-						= true;
+					oAnnotatable.annotate(oV2toV4Semantic.v4PropertyAnnotation, true);
 
 					//Determination of space separated list of V4 annotations enumeration value for
 					//given sap:semantics "tel" and "email"
@@ -609,7 +665,7 @@ sap.ui.define([
 			} else {
 				oAnnotations[oV2toV4Semantic.V4Attribute || sValue] = oPath;
 			}
-			consumeSapAnnotation(oAggregate, "semantics");
+			oAnnotatable.consume("semantics");
 		}
 	}
 
@@ -783,8 +839,7 @@ sap.ui.define([
 		if (oElement.getAttributeNS(sMicrosoftNamespace, "IsDefaultEntityContainer") === "true") {
 			oAggregate.defaultEntityContainer = sQualifiedName;
 		}
-
-		V2MetadataConverter.annotatable(oAggregate, sQualifiedName);
+		v2annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -793,7 +848,8 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processEntitySet(oElement, oAggregate) {
-		var sName = oElement.getAttribute("Name");
+		var oAnnotatable,
+			sName = oElement.getAttribute("Name");
 
 		oAggregate.entityContainer[sName] = oAggregate.entitySet = {
 			$kind : "EntitySet",
@@ -801,8 +857,17 @@ sap.ui.define([
 				V2MetadataConverter.resolveAlias(oElement.getAttribute("EntityType"), oAggregate)
 		};
 
-		V2MetadataConverter.annotatable(oAggregate, sName);
-		convertAnnotations(oAggregate, "EntitySet");
+		oAnnotatable = v2annotatable(oAggregate, sName, convertEntitySetAnnotation);
+		// These annotations have to be retained until all v2 annotations have been visited
+		oAnnotatable.consume("creatable");
+		oAnnotatable.consume("deletable");
+		oAnnotatable.consume("updatable");
+
+		if (oAnnotatable.consume("searchable") !== "true") {
+			// default for sap:searchable is false --> add v4 annotation, if value of v2 annotation
+			// is not true
+			oAnnotatable.convert("searchable", false);
+		}
 	}
 
 	/**
@@ -823,7 +888,7 @@ sap.ui.define([
 			}
 		});
 
-		convertAnnotations(oAggregate, "EntityType");
+		convertLabel(oAggregate.annotatable);
 	}
 
 	/**
@@ -878,8 +943,8 @@ sap.ui.define([
 		// FunctionImport are added to the predecessor.
 		oAggregate.function = oFunction;
 
-		V2MetadataConverter.annotatable(oAggregate, sName);
-		convertAnnotations(oAggregate, "FunctionImport");
+		v2annotatable(oAggregate, sName);
+		convertLabel(oAggregate.annotatable);
 	}
 
 	/**
@@ -899,7 +964,6 @@ sap.ui.define([
 
 		V2MetadataConverter.getOrCreateArray(oFunction, "$Parameter").push(oParameter);
 
-		V2MetadataConverter.annotatable(oAggregate, oParameter);
 		sLabel = consumeSapAnnotation(oAggregate, "label");
 		if (sLabel) {
 			oParameter[mV2toV4["label"].term] = sLabel;
@@ -949,8 +1013,6 @@ sap.ui.define([
 		oAggregate.result[oAggregate.namespace] = oAggregate.schema = {
 			"$kind" : "Schema"
 		};
-
-		V2MetadataConverter.annotatable(oAggregate, oAggregate.schema);
 		if (sSchemaVersion) {
 			oAggregate.schema["@Org.Odata.Core.V1.SchemaVersion"] = sSchemaVersion;
 		}
@@ -967,8 +1029,7 @@ sap.ui.define([
 
 		oAggregate.sTypeName = sQualifiedName;
 		oAggregate.result[sQualifiedName] = oAggregate.type = oType;
-
-		V2MetadataConverter.annotatable(oAggregate, sQualifiedName);
+		v2annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -1038,14 +1099,14 @@ sap.ui.define([
 			toRoleName : oElement.getAttribute("ToRole")
 		});
 
-		V2MetadataConverter.annotatable(oAggregate, sName);
+		v2annotatable(oAggregate, sName);
 
 		if (sCreatable) {
 			oNavigationPropertyPath = {"$NavigationPropertyPath" : sName};
 			if (sCreatablePath) {
 				jQuery.sap.log.warning("Inconsistent metadata in '" + oAggregate.url + "'",
 					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property '"
-					+ oAggregate.annotatable.path + "'", sModuleName);
+					+ oAggregate.annotatable.sPath + "'", sModuleName);
 			} else if (sCreatable === "true") {
 				oNavigationPropertyPath = null;
 			}
@@ -1130,17 +1191,14 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypeProperty(oElement, oAggregate) {
-		var sEnumMember,
-			sFilterable = consumeSapAnnotation(oAggregate, "filterable"),
-			sFilterRestriction = consumeSapAnnotation(oAggregate, "filter-restriction"),
+		var oAnnotatable,
+			sEnumMember,
+			sFilterRestriction,
 			vHere,
 			sName = oElement.getAttribute("Name"),
 			oProperty = {
 				"$kind" : "Property"
-			},
-			sRequiredInFilter = consumeSapAnnotation(oAggregate, "required-in-filter"),
-			sSortable = consumeSapAnnotation(oAggregate, "sortable");
-
+			};
 		/*
 		 * Assumes that the given annotation term applies to all <EntitySet>s using the current
 		 * <EntityType>. The term's value is a record that contains an array-valued property with
@@ -1157,7 +1215,7 @@ sap.ui.define([
 			} else {
 				jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
 					+ oAggregate.url + "'", "sap:" + sAnnotation + " at property '"
-					+ oAggregate.annotatable.path + "'", sModuleName);
+					+ oAggregate.annotatable.sPath + "'", sModuleName);
 			}
 		}
 
@@ -1166,13 +1224,20 @@ sap.ui.define([
 		V2MetadataConverter.processFacetAttributes(oElement, oProperty);
 		processTypedCollection(oElement.getAttribute("Type"), oProperty, oAggregate);
 
-		V2MetadataConverter.annotatable(oAggregate, sName);
+		oAnnotatable = v2annotatable(oAggregate, sName, convertPropertyAnnotation);
+		if (oAnnotatable.consume("updatable") === "false") {
+			if (oAnnotatable.consume("creatable") === "false") {
+				oAnnotatable.annotate("@Org.OData.Core.V1.Computed", true);
+			} else {
+				oAnnotatable.annotate("@Org.OData.Core.V1.Immutable", true);
+			}
+		}
 
-		convertAnnotations(oAggregate, "Property");
-		if (sFilterable === "false") {
+		if (oAnnotatable.consume("filterable") === "false") {
 			pushPropertyPath("@Org.OData.Capabilities.V1.FilterRestrictions",
 				"NonFilterableProperties", "filterable");
 		}
+		sFilterRestriction = oAnnotatable.consume("filter-restriction");
 		if (sFilterRestriction) {
 			switch (sFilterRestriction) {
 				case "interval":
@@ -1187,7 +1252,7 @@ sap.ui.define([
 				default:
 					jQuery.sap.log.warning("Inconsistent metadata in '" + oAggregate.url + "'",
 						"Unsupported sap:filter-restriction=\"" + sFilterRestriction
-						+ "\" at property '" + oAggregate.annotatable.path + "'", sModuleName);
+						+ "\" at property '" + oAnnotatable.sPath + "'", sModuleName);
 			}
 			if (sEnumMember) {
 				if (oAggregate.type.$kind === "EntityType") {
@@ -1205,15 +1270,15 @@ sap.ui.define([
 				} else {
 					jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
 						+ oAggregate.url + "'", "sap:filter-restriction at property '"
-						+ oAggregate.annotatable.path + "'", sModuleName);
+						+ oAnnotatable.sPath + "'", sModuleName);
 				}
 			}
 		}
-		if (sRequiredInFilter === "true") {
+		if (oAnnotatable.consume("required-in-filter") === "true") {
 			pushPropertyPath("@Org.OData.Capabilities.V1.FilterRestrictions", "RequiredProperties",
 				"required-in-filter");
 		}
-		if (sSortable === "false") {
+		if (oAnnotatable.consume("sortable") === "false") {
 			pushPropertyPath("@Org.OData.Capabilities.V1.SortRestrictions",
 				"NonSortableProperties", "sortable");
 		}
@@ -1238,29 +1303,6 @@ sap.ui.define([
 			sText += " " + oAttribute.name + '="' + oAttribute.value + '"';
 		}
 		return sText + (oElement.childNodes.length ? ">" : "/>");
-	}
-
-	/**
-	 * Sets an annotation for the given V2 name in the given annotations map.
-	 * Does nothing if vValue is <code>undefined</code> or <code>""</code>
-	 *
-	 * @param {object} mAnnotations Map of annotations to be updated
-	 * @param {string} sV2Name The name of the V2 annotation
-	 * @param {object|boolean} vValue The new value
-	 */
-	function setAnnotation(mAnnotations, sV2Name, vValue) {
-		var mAnnotationInfo = mV2toV4[sV2Name],
-			oAnnotation;
-		if (vValue === undefined || vValue === "") {
-			return;
-		}
-		if (mAnnotationInfo.property) {
-			oAnnotation = mAnnotations[mAnnotationInfo.term] || {};
-			oAnnotation[mAnnotationInfo.property] = vValue;
-		} else {
-			oAnnotation = vValue;
-		}
-		mAnnotations[mAnnotationInfo.term] = oAnnotation;
 	}
 
 	/**
@@ -1339,6 +1381,36 @@ sap.ui.define([
 			createNavigationPropertyBinding(oAssociationSet.ends[0], oAssociationSet.ends[1]);
 			createNavigationPropertyBinding(oAssociationSet.ends[1], oAssociationSet.ends[0]);
 		});
+	}
+
+	/**
+	 * This function is called by each v2 item for which V4 target annotations can be created. It
+	 * defines the target path for the annotations. The V4 annotations will be placed to
+	 * <code>oAggregate.convertedV2Annotations</code>. The annotatables form a stack (via 'parent'),
+	 * this functions pushes a new annotatable on the stack. It will be removed automatically by
+	 * traverse().
+	 *
+	 * @param {object} oAggregate
+	 *   The aggregate
+	 * @param {string} sName
+	 *   The target name to which the V4 annotations shall be added. The target path is constructed
+	 *   from the path of the top annotatable of the stack (if there is one yet) and the given name.
+	 * @param {function} [fnProcessV2Annotatable]
+	 *   An optional function which is called for each V2 annotation of the current element with the
+	 *   created annotatable and the annotation name as parameters.
+	 * @returns {Annotatable}
+	 *   The created annotatable
+	 */
+	function v2annotatable(oAggregate, sName, fnProcessV2Annotatable) {
+		var oAnnotatable = new Annotatable(oAggregate, sName);
+
+		oAggregate.annotatable = oAnnotatable;
+		if (fnProcessV2Annotatable) {
+			Object.keys(oAggregate.mSapAnnotations).forEach(function (sName) {
+				fnProcessV2Annotatable(oAnnotatable, sName);
+			});
+		}
+		return oAnnotatable;
 	}
 
 	/**
