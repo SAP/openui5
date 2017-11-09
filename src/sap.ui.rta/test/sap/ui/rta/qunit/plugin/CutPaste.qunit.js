@@ -113,12 +113,16 @@ function(
 
 			this.oVerticalLayout = new VerticalLayout("VerticalLayout", {
 				content : [oObjectStatus1, oObjectStatus2]
+			});
+
+			this.oPage = new sap.m.Page("page", {
+				content: [this.oVerticalLayout]
 			}).placeAt("content");
 
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout]
+				rootElements : [this.oPage]
 			});
 
 			this.CutPastePlugin.setDesignTime(this.oDesignTime);
@@ -132,19 +136,22 @@ function(
 
 		afterEach: function() {
 			this.oDesignTime.destroy();
-			this.oVerticalLayout.destroy();
+			this.oPage.destroy();
 			sandbox.restore();
 		}
 	});
 
 	QUnit.test('when retrieving the context menu items and checking if paste is available', function(assert) {
+		var fnMoveAvailableOnRelevantContainerSpy = sandbox.spy(this.CutPastePlugin.getElementMover(), "_isMoveAvailableOnRelevantContainer"),
+			aMenuItemsForLayout = this.CutPastePlugin.getMenuItems(this.oVericalLayoutOverlay);
 
-		var aMenuItemsForLayout = this.CutPastePlugin.getMenuItems(this.oVericalLayoutOverlay);
 		sandbox.stub(this.oVericalLayoutOverlay, "getMovable").returns(false);
 		sandbox.stub(this.oObjectStatusOverlay1, "getMovable").returns(true);
 		assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then 'Object Status 1' initially at the first position in the layout");
 		assert.equal(aMenuItemsForLayout[0].id, "CTX_PASTE", "'getMenuItems' for formContainer returns a context menu item for 'paste'");
 		assert.notOk(aMenuItemsForLayout[0].enabled(this.oVericalLayoutOverlay), "'paste' is disabled for the formContainer");
+		assert.ok(fnMoveAvailableOnRelevantContainerSpy.calledOnce, "then RTAElementMover._isMoveAvailableOnRelevantContainer called once, when retrieving menu items for vertical layout");
+		fnMoveAvailableOnRelevantContainerSpy.restore();
 
 		var aMenuItemsForObjectStatus = this.CutPastePlugin.getMenuItems(this.oObjectStatusOverlay1);
 		assert.equal(aMenuItemsForObjectStatus[0].id, "CTX_CUT", "'getMenuItems' for formElement returns a context menu item for 'cut'");
@@ -154,6 +161,55 @@ function(
 		assert.ok(aMenuItemsForLayout[0].enabled(this.oVericalLayoutOverlay), "'paste' is now enabled for the formContainer");
 		aMenuItemsForLayout[0].handler([this.oVericalLayoutOverlay]);
 		assert.equal(this.oVerticalLayout.getContent()[1].getId(), "objectStatus1", "then object status now pasted at the second position");
+	});
+
+	QUnit.module('Given a single layout without stable id', {
+		beforeEach: function(assert) {
+			var done = assert.async();
+
+			this.CutPastePlugin = new CutPastePlugin({
+				commandFactory : oCommandFactory
+			});
+
+			sandbox.stub(Plugin.prototype, "hasChangeHandler").returns(true);
+
+			var oObjectStatus3 = new ObjectStatus({
+				text: "Text 3",
+				title: "Title 3"
+			});
+
+			this.oVerticalLayoutWoStableId = new VerticalLayout({
+				content : [oObjectStatus3]
+			});
+
+			this.oPage = new sap.m.Page("page", {
+				content: [this.oVerticalLayoutWoStableId]
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oPage]
+			});
+
+			this.CutPastePlugin.setDesignTime(this.oDesignTime);
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oVericalLayoutOverlayWoStableId = OverlayRegistry.getOverlay(this.oVerticalLayoutWoStableId);
+				done();
+			}.bind(this));
+		},
+
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oPage.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test('when retrieving the context menu items and checking if paste is available', function(assert) {
+		var aMenuItemsForLayout = this.CutPastePlugin.getMenuItems(this.oVericalLayoutOverlayWoStableId);
+		assert.equal(aMenuItemsForLayout.length, 0, "'getMenuItems' for formContainer returns no menu item for layout without stableid");
 	});
 
 });

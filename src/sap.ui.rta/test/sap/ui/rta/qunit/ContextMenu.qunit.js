@@ -287,11 +287,9 @@ function(
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 2, " and 2 Menu Items are available");
+		assert.equal(oContextMenu.getItems().length, 1, " and 1 Menu Item is available");
 		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_RENAME", "rename Page is available");
 		assert.equal(oContextMenu.getItems()[0].getEnabled(), false, "but rename Page is disabled");
-		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_PASTE", "paste for Page is available");
-		assert.equal(oContextMenu.getItems()[1].getEnabled(), false, "but paste for Page is disabled");
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
@@ -556,9 +554,8 @@ function(
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 2, " and 2 Menu Items are available");
+		assert.equal(oContextMenu.getItems().length, 1, " and 1 Menu Item is available");
 		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_CREATE_CHILD_CONTAINER", "create group is available");
-		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_PASTE", "paste is available");
 	});
 
 	QUnit.test("when context menu is opened (via keyboard) for a SimpleForm with Title,", function(assert) {
