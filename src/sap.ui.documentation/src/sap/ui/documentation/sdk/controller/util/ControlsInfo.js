@@ -209,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 						fnPrependZero;
 
 					// define search tags
-					oEnt.searchTags = oEnt.name + " " + oEnt.name.replace(" ", "") + " " + oEnt.category;
+					oEnt.searchTags = oEnt.name + " " + oEnt.name.replace(/\s/g, "") + " " + oEnt.category;
 
 					// check samples property
 					if (oEnt.samples && !(oEnt.samples instanceof Array)) {
