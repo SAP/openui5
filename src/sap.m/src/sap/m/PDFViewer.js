@@ -33,8 +33,10 @@ sap.ui.define([
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
-		 * This control enables you to display PDF documents within your app.
-		 * It can be embedded in your user interface layout, or you can set it to open in a popup dialog.
+		 * <p>This control enables you to display PDF documents within your app.
+		 * It can be embedded in your user interface layout, or you can set it to open in a popup dialog.</p>
+		 * <p>Please note that the PDF Viewer control can be fully displayed on desktop devices only. On mobile
+		 * devices, only the toolbar with a download button is visible.</p>
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
