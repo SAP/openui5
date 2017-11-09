@@ -90,41 +90,41 @@
 			});
 			oLabelWidth.placeAt("Width");
 
-			var oHeader1 = new sap.m.Label({
+			var oLabel1 = new sap.m.Label({
 				text: "Label with text set:",
 				design: "Bold"
 			});
-			oHeader1.placeAt("Header1");
+			oLabel1.placeAt("Header1");
 
-			var oHeader2 = new sap.m.Label({
+			var oLabel2 = new sap.m.Label({
 				text: "Label with design property set: ",
 				design: "Bold"
 			});
-			oHeader2.placeAt("Header2");
+			oLabel2.placeAt("Header2");
 
-			var oHeader3 = new sap.m.Label({
+			var oLabel3 = new sap.m.Label({
 				text: "Label with textDirection property set:",
 				design: "Bold"
 			});
-			oHeader3.placeAt("Header3");
+			oLabel3.placeAt("Header3");
 
-			var oHeader4 = new sap.m.Label({
+			var oLabel4 = new sap.m.Label({
 				text: "Label with textAlign property set:",
 				design: "Bold"
 			});
-			oHeader4.placeAt("Header4");
+			oLabel4.placeAt("Header4");
 
-			var oHeader5 = new sap.m.Label({
+			var oLabel5 = new sap.m.Label({
 				text: "Label with no text:",
 				design: "Bold"
 			});
-			oHeader5.placeAt("Header5");
+			oLabel5.placeAt("Header5");
 
-			var oHeader6 = new sap.m.Label({
+			var oLabel6 = new sap.m.Label({
 				text: "Label with width property set:",
 				design: "Bold"
 			});
-			oHeader6.placeAt("Header6");
+			oLabel6.placeAt("Header6");
 
 			var oVL = new sap.ui.layout.VerticalLayout({
 				content:[
@@ -161,9 +161,29 @@
 						textAlign: 'Right',
 						width: '100%'
 					}),
+					new sap.m.Label("truncatedRequiredLabel", {
+						text: "Simple Label Simple LabelSimple LabelSimple LabelSimple",
+						width: "200px",
+						required: true
+					})
 				]
 			});
 			oVL.placeAt("RTLTesting");
+			var sf = new sap.ui.layout.form.SimpleForm("simpleForm", {
+				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
+				editable: true,
+				title: "Simple Form",
+				content:[
+					new sap.m.Label("requiredTruncated", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple Label"}).addStyleClass("sapMLabelRequired"),
+					new sap.m.Input,
+					new sap.m.Label("truncated", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple Label"}),
+					new sap.m.Input,
+					new sap.m.Label("requiredOnly",  {text:"Simple Label"}).addStyleClass("sapMLabelRequired"),
+					new sap.m.Input
+				]
+			});
+			sf.placeAt("SimpleForm");
+
 
 		</script>
 		<style type="text/css">
@@ -201,5 +221,6 @@
 		<div class="labelHeader" id="Header6"></div>
 		<div id="Width"></div>
 		<div id="RTLTesting"></div>
+		<div id="SimpleForm"></div>
 	</body>
 </html>
