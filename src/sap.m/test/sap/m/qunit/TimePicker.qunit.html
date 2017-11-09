@@ -1703,6 +1703,69 @@
 			tp.destroy();
 		});
 
+		QUnit.test("Drag completed: After animation is completed, _animateScroll method does not call _scrollerSnapped " +
+			"if slider is not visible", function(assert) {
+
+			//sut
+			var tp = new sap.m.TimePicker(),
+				sliderHours,
+				oScrollerSnappedSpy;
+
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+			this.clock.tick(100);
+
+			sliderHours = tp._getSliders().getAggregation("_columns")[0];
+			oScrollerSnappedSpy = this.spy(sliderHours, "_scrollerSnapped");
+
+			//act
+			sliderHours._animateScroll(0.04); //0.04 to make sure snapping logic inside _animateScroll will take place.
+			this.clock.tick(30); //to bypass frameFrequencyMs inside _animateScroll
+			sliderHours.$().find(".sapMTimePickerSlider").css('visibility', 'hidden');
+			this.clock.tick(250);//to make sure the animation in _animateScroll is completed(check SCROLL_ANIMATION_DURATION)
+
+			//assert
+			assert.equal(oScrollerSnappedSpy.callCount, 0, "_scrollerSnapped is not called");
+
+			//cleanup
+			oScrollerSnappedSpy.restore();
+			tp.destroy();
+		});
+
+		QUnit.test("Arrow Up' button pressed: After animation is completed, _offsetValue method does not call " +
+			"_scrollerSnapped if slider is not visible", function(assert) {
+
+			//sut
+			var tp = new sap.m.TimePicker(),
+				sliderHours,
+				oScrollerSnappedSpy;
+
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+			this.clock.tick(100);
+
+			sliderHours = tp._getSliders().getAggregation("_columns")[0];
+			oScrollerSnappedSpy = this.spy(sliderHours, "_scrollerSnapped");
+
+			//act
+			sliderHours.getAggregation("_arrowUp").firePress();
+			sliderHours.$().find(".sapMTimePickerSlider").css('visibility', 'hidden');
+			this.clock.tick(250);//to make sure the animation is completed(check SCROLL_ANIMATION_DURATION)
+
+			//assert
+			assert.equal(oScrollerSnappedSpy.callCount, 0, "_scrollerSnapped is not called");
+
+			//cleanup
+			oScrollerSnappedSpy.restore();
+			tp.destroy();
+		});
+
 		QUnit.test("tap on the input icon open/closes the picker", function(assert) {
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
