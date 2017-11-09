@@ -84,8 +84,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 * Applies a device-specific and theme-specific line-height to the form rows if the form has editable content.
 			 * If set, all (not only the editable) rows of the form will get the line height of editable fields.
 			 *
-			 * The accessibility <code>aria-readonly</code> attribute is set according to this property.
-			 *
 			 * <b>Note:</b> The setting of the property has no influence on the editable functionality of the form's content.
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : null},
