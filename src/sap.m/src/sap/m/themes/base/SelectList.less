@@ -96,13 +96,13 @@ html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 
 	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected:not(.sapMSelectListRow),
-	.sapMSelectListItemBase:focus {
+	.sapMSelectListItemBase:not(.sapMSelectListRow):focus {
 		outline: none;
 		position: relative;
 	}
 
 	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before,
-	.sapMSelectListItemBase:focus::before {
+	.sapMSelectListItemBase:not(.sapMSelectListRow):focus::before {
 		content: " ";
 		position: absolute;
 		top: 1px;
