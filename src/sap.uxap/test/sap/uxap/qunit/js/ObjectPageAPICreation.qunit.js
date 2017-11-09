@@ -1098,6 +1098,25 @@
 		},  this.iDelay);
 	});
 
+	QUnit.test("applyLayout is not called on invalidated SubSection without parent ObjectPage", function (assert) {
+		var oObjectPage = this.oOP,
+			sNewTitle = "New SubSection Title",
+			oSectionToRemove = this.oSelectedSection,
+			oSubSectionToSpy = this.oSelectedSection.getSubSections()[0],
+			oSubSectionMethodSpy = this.spy(oSubSectionToSpy, "_applyLayout");
+
+		// Act: invalidate the SubSection and remove its parent Section
+		oSubSectionToSpy.setTitle(sNewTitle); // invalidate the SubSection
+		oObjectPage.removeSection(oSectionToRemove); // remove the Section
+
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oSubSectionMethodSpy.callCount, 0,
+			"applyLayout is called: " + oSubSectionMethodSpy.callCount + " times.");
+	});
+
+
 	QUnit.test("test destroySections should reset selectedSection", function (assert) {
 		var oObjectPage = this.oOP,
 			done = assert.async();
