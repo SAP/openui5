@@ -192,10 +192,180 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		}
 	};
 
+	/**
+	 * Checks for deprecated properties
+	 */
+	var oDeprecatedPropertyRule = {
+		id: "deprecatedProperty",
+		audiences: [Audiences.Application],
+		categories: [Categories.Functionality],
+		enabled: true,
+		minversion: "1.38",
+		title: "Control is using deprecated property",
+		description: "Using deprecated properties should be avoided, because they are not maintained anymore",
+		resolution: "Refer to the API of the element which property should be used instead.",
+		resolutionurls: [{
+			text: "API Reference",
+			href: "https://sapui5.hana.ondemand.com/#docs/api/deprecation.html"
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			oScope.getElementsByClassName(sap.ui.core.Element)
+				.forEach(function(oElement) {
+
+					var oMetadata = oElement.getMetadata(),
+						mProperties = oMetadata.getAllProperties();
+
+					for (var sProperty in mProperties) {
+						// if property is deprecated and it is set to a different from the default value
+						// Checks only the deprecated properties with defaultValue property is not null
+						if (mProperties[sProperty].deprecated
+							&& mProperties[sProperty].defaultValue != oElement.getProperty(sProperty)
+							&& mProperties[sProperty].defaultValue !== null) {
+
+							oIssueManager.addIssue({
+								severity: Severity.Medium,
+								details: "Deprecated property '" + sProperty + "' is used for element '" + oElement.getId() + "'.",
+								context: {
+									id: oElement.getId()
+								}
+							});
+						}
+					}
+				});
+		}
+	};
+
+	/**
+	 * Checks for deprecated aggregations
+	 */
+	var oDeprecatedAggregationRule = {
+		id: "deprecatedAggregation",
+		audiences: [Audiences.Application],
+		categories: [Categories.Functionality],
+		enabled: true,
+		minversion: "1.38",
+		title: "Control is using deprecated aggregation",
+		description: "Using deprecated aggregation should be avoided, because they are not maintained anymore",
+		resolution: "Refer to the API of the element which aggregation should be used instead.",
+		resolutionurls: [{
+			text: "API Reference",
+			href: "https://sapui5.hana.ondemand.com/#docs/api/deprecation.html"
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			oScope.getElementsByClassName(sap.ui.core.Element)
+				.forEach(function(oElement) {
+
+					var oMetadata = oElement.getMetadata(),
+						mAggregations = oMetadata.getAllAggregations();
+
+					for (var sAggregation in mAggregations) {
+						// if aggregation is deprecated and contains elements
+						if (mAggregations[sAggregation].deprecated
+							&& !jQuery.isEmptyObject(oElement.getAggregation(sAggregation))) {
+
+							oIssueManager.addIssue({
+								severity: Severity.Medium,
+								details: "Deprecated aggregation '" + sAggregation + "' is used for element '" + oElement.getId() + "'.",
+								context: {
+									id: oElement.getId()
+								}
+							});
+						}
+					}
+				});
+		}
+	};
+
+	/**
+	 * Checks for deprecated associations
+	 */
+	var oDeprecatedAssociationRule = {
+		id: "deprecatedAssociation",
+		audiences: [Audiences.Application],
+		categories: [Categories.Functionality],
+		enabled: true,
+		minversion: "1.38",
+		title: "Control is using deprecated association",
+		description: "Using deprecated association should be avoided, because they are not maintained anymore",
+		resolution: "Refer to the API of the element which association should be used instead.",
+		resolutionurls: [{
+			text: "API Reference",
+			href: "https://sapui5.hana.ondemand.com/#docs/api/deprecation.html"
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			oScope.getElementsByClassName(sap.ui.core.Element)
+				.forEach(function(oElement) {
+
+					var oMetadata = oElement.getMetadata(),
+						mAssociations = oMetadata.getAllAssociations();
+
+					for (var sAssociation in mAssociations) {
+						// if association is deprecated and set by developer
+						if (mAssociations[sAssociation].deprecated
+							&& !jQuery.isEmptyObject(oElement.getAssociation(sAssociation))) {
+
+							oIssueManager.addIssue({
+								severity: Severity.Medium,
+								details: "Deprecated association '" + sAssociation + "' is used for element '" + oElement.getId() + "'.",
+								context: {
+									id: oElement.getId()
+								}
+							});
+						}
+					}
+				});
+		}
+	};
+
+	/**
+	 * Checks for deprecated events
+	 */
+	var oDeprecatedEventRule = {
+		id: "deprecatedEvent",
+		audiences: [Audiences.Application],
+		categories: [Categories.Functionality],
+		enabled: true,
+		minversion: "1.38",
+		title: "Control is using deprecated event",
+		description: "Using deprecated event should be avoided, because they are not maintained anymore",
+		resolution: "Refer to the API of the element which event should be used instead.",
+		resolutionurls: [{
+			text: "API Reference",
+			href: "https://sapui5.hana.ondemand.com/#docs/api/deprecation.html"
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			oScope.getElementsByClassName(sap.ui.core.Element)
+				.forEach(function(oElement) {
+
+					var oMetadata = oElement.getMetadata(),
+						mEvents = oMetadata.getAllEvents();
+
+					for (var sEvent in mEvents) {
+						// if event is deprecated and developer added event handler
+						if (mEvents[sEvent].deprecated
+							&& oElement.mEventRegistry[sEvent] && oElement.mEventRegistry[sEvent].length > 0) {
+
+							oIssueManager.addIssue({
+								severity: Severity.Medium,
+								details: "Deprecated event '" + sEvent + "' is used for element '" + oElement.getId() + "'.",
+								context: {
+									id: oElement.getId()
+								}
+							});
+						}
+					}
+				});
+		}
+	};
+
 	return [
 		oXMLViewWrongNamespace,
 		oXMLViewDefaultNamespace,
 		oXMLViewLowerCaseControl,
-		oXMLViewUnusedNamespaces
+		oXMLViewUnusedNamespaces,
+		oDeprecatedPropertyRule,
+		oDeprecatedAggregationRule,
+		oDeprecatedAssociationRule,
+		oDeprecatedEventRule
 	];
 }, true);
