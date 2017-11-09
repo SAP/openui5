@@ -16,7 +16,7 @@ sap.ui.define([],
 					}
 				},
 				sideContent: {
-					domRef: ":sap-domref > aside",
+					domRef: ":sap-domref > [id$='SCGridCell']",
 					actions: {
 						move: "moveControls"
 					}
