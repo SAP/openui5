@@ -13,13 +13,7 @@
 				<ToolbarSpacer/>
 				<Title
 					id="title"
-					text="{
-						parts: [
-							'i18n>TechInfo.DebugModulesConfigPopup.SelectionCounter',
-							'view>/DebugModuleSelectionCount'
-						],
-						formatter: 'jQuery.sap.formatMessage'
-					}"
+					text="{view>/DebugModulesTitle}"
 					class="sapUiTinyMarginLeft"/>
 				<ToolbarSpacer/>
 			</Toolbar>
@@ -35,12 +29,8 @@
 				<Input
 					id="customDebugValue"
 					width="100%"
-					value="{
-						path : 'view>/CustomDebugMode',
-						type : '.CustomTypeMode'
-					}"
-					change="onChangeCustomDebugMode"
-					valueStateText="{i18n>TechInfo.DebugModulesConfigPopup.ModeValidationMessage}"/>
+					value="{view>/CustomDebugMode}"
+					change="onChangeCustomDebugMode"/>
 				<ToolbarSpacer/>
 				<Button
 					icon="sap-icon://copy"
