@@ -759,7 +759,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {string} sPickerType The picker type
-		 * @returns {sap.m.Popover | sap.m.Dialog} The picker popup to be used.
 		 * @protected
 		 */
 		ComboBoxBase.prototype.createPicker = function(sPickerType) {};
@@ -1063,7 +1062,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 
 		/**
 		 * Scrolls an item into the visual viewport.
-		 * @param {object} The item to be scrolled
+		 * @param {object} oItem The item to be scrolled
 		 *
 		 */
 		ComboBoxBase.prototype.scrollToItem = function(oItem) {

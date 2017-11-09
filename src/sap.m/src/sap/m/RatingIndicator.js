@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Sets the icon size value. The method automatically updates the UI components if the control has been rendered before.
 	 *
-	 * @param {sap.ui.core.CSSSize} sIconSize
+	 * @param {sap.ui.core.CSSSize} sIconSize The size of the icon
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
 	 * @override
 	 * @public
@@ -313,7 +313,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * get the form factor (Cozy/Compact/Condensed)
-	 *
+	 * @returns {string} The form factor
 	 * @private
 	 */
 	RatingIndicator.prototype._getDensityMode = function () {
@@ -334,7 +334,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Get icon size label
-	 *
+	 * @param {number} iPxIconSize The size of the icon in pixels
+	 * @returns {string} The icon size
 	 * @private
 	 */
 	RatingIndicator.prototype._getIconSizeLabel = function (iPxIconSize) {
@@ -421,7 +422,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Updates the ARIA values.
-	 *
+	 * @param {string} newValue The new ARIA value
 	 * @private
 	 */
 	RatingIndicator.prototype._updateAriaValues = function (newValue) {
@@ -735,7 +736,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Keyboard navigation event when the user presses Home.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent oEvent The event object.
 	 * @private
 	 */
 	RatingIndicator.prototype.onsaphome = function (oEvent) {
@@ -746,7 +747,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Keyboard navigation event when the user presses End.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent oEvent The event object.
 	 * @private
 	 */
 	RatingIndicator.prototype.onsapend = function (oEvent) {
@@ -775,7 +776,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Keyboard handling event when the user presses number keys.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent oEvent The event object.
+	 * @returns {boolean} False, if the control is in read-only mode
 	 * @private
 	 */
 	RatingIndicator.prototype.onkeyup = function (oEvent) {
@@ -859,6 +861,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* =========================================================== */
 
 	/**
+ 	 * @returns {sap.m.RatingIndicatior} this instance for method chaining
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */

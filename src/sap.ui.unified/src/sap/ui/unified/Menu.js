@@ -190,6 +190,7 @@ function(
 
 	/**
 	 * Called when the control or its children are changed.
+	 * @param {sap.ui.core.Control} The originating control
 	 * @private
 	 */
 	Menu.prototype.invalidate = function(oOrigin){
@@ -393,6 +394,7 @@ function(
 
 	/**
 	 * Opens the menu as a context menu.
+	 * @param {jQuery.Event} oEvent The event object
 	 * @param {sap.ui.core.Element|HTMLElement} oOpenerRef - Might be UI5 Element or DOM Element
 	 */
 	Menu.prototype.openAsContextMenu = function(oEvent, oOpenerRef) {

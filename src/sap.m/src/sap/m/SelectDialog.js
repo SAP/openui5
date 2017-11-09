@@ -985,6 +985,7 @@ sap.ui.define(['./Button', './Dialog', './List', './SearchField', './library', '
 
 	/**
 	 * Internal event handler for the cancel button and ESC key
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	SelectDialog.prototype._onCancel = function (oEvent) {

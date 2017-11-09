@@ -886,7 +886,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './Com
 	/**
 	 * Create an instance type of <code>sap.m.List</code>.
 	 *
-	 * @returns {sap.m.List} The List instance
 	 * @protected
 	 */
 	MultiComboBox.prototype.createList = function() {
@@ -913,6 +912,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './Com
 	/**
 	 * Update and synchronize "selectedItems" association and the "selectedItems" in the List.
 	 *
+	 * @param {object} mOptions Options object
 	 * @param {sap.ui.core.Item | null} mOptions.item The item instance
 	 * @param {string} mOptions.id The item ID
 	 * @param {string} mOptions.key The item key
@@ -975,6 +975,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './Com
 	/**
 	 * Remove an item from "selectedItems" association and the "selectedItems" in the List.
 	 *
+	 * @param {object} mOptions Options object
 	 * @param {sap.ui.core.Item | null} mOptions.item The item instance
 	 * @param {string} mOptions.id The item ID
 	 * @param {string} mOptions.key The item key
@@ -2375,6 +2376,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './Com
 	 * Fill the list of items.
 	 *
 	 * @param {array} aItems An array with items type of sap.ui.core.Item.
+	 * @returns {null} Null if array is empty
 	 * @private
 	 */
 	MultiComboBox.prototype._fillList = function(aItems) {
@@ -2590,7 +2592,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './Com
 	 * <b>Note:</b> If duplicate keys exist, the first item matching the key is returned.
 	 *
 	 * @param {string} sKey An item key that specifies the item to retrieve.
-	 * @returns {sap.ui.core.Item}
+	 * @returns {sap.ui.core.Item} The matching item
 	 * @public
 	 */
 	MultiComboBox.prototype.getItemByKey = function(sKey) {
@@ -2765,7 +2767,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './Com
 	 * Getter for the control's ListItem.
 	 *
 	 * @param {sap.ui.core.Item} oItem The item
-	 * @returns {sap.m.StandardListItem | null}
+	 * @returns {sap.m.StandardListItem | null} The ListItem
 	 * @private
 	 * @since 1.24.0
 	 */

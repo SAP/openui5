@@ -55,7 +55,7 @@ sap.ui.define(['./Select', './library'],
 		/**
 		 * Determines whether the ActionSelect has content or not.
 		 *
-		 * @return {boolean}
+		 * @return {boolean} Whether the ActionSelect has content
 		 * @override
 		 * @private
 		 */
@@ -147,7 +147,7 @@ sap.ui.define(['./Select', './library'],
 		/**
 		 * Handler for SHIFT-TAB key  - 'tab previous' key event.
 		 *
-		 * @param oEvent - key event
+		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 *
 		 */
@@ -178,7 +178,7 @@ sap.ui.define(['./Select', './library'],
 		/**
 		 * Handler for TAB key - sap 'tab next' key event.
 		 *
-		 * @param oEvent - key event
+		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 *
 		 */
@@ -229,7 +229,7 @@ sap.ui.define(['./Select', './library'],
 		/**
 		 * Handler for focus in event on The Selection List.
 		 *
-		 * @param oEvent - key event
+		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
 		ActionSelect.prototype.onfocusinList = function(oEvent) {
