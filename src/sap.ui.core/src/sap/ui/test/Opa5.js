@@ -128,13 +128,18 @@ sap.ui.define([
 			)
 		);
 
-		function iStartMyAppInAFrame (sSource, iTimeout) {
+		function iStartMyAppInAFrame () {
 			var that = this;
+			// allow separate arguments for backwards compatibility
+			var oOptions = arguments.length === 1 && $.isPlainObject(arguments[0])
+				? arguments[0]
+				: {source: arguments[0], timeout: arguments[1], autoWait: arguments[2]};
+
 			// merge appParams over sSource search params
-			if (sSource && typeof sSource !== "string") {
-				sSource = sSource.toString();
+			if (oOptions.source && typeof oOptions.source !== "string") {
+				oOptions.source = oOptions.source.toString();
 			}
-			var uri = new URI(sSource);
+			var uri = new URI(oOptions.source);
 			uri.search($.extend(
 				uri.search(true),Opa.config.appParams));
 
@@ -148,8 +153,8 @@ sap.ui.define([
 			// wait till the frame is started
 			var oFrameCreatedOptions = createWaitForObjectWithoutDefaults();
 			oFrameCreatedOptions.check = iFrameLauncher.hasLaunched;
-			oFrameCreatedOptions.timeout = iTimeout || 80;
-			oFrameCreatedOptions.errorMessage = "unable to load the IFrame with the url: " + sSource;
+			oFrameCreatedOptions.timeout = oOptions.timeout || 80;
+			oFrameCreatedOptions.errorMessage = "unable to load the IFrame with the url: " + oOptions.source;
 			that.waitFor(oFrameCreatedOptions);
 
 			// load extensions
@@ -157,7 +162,13 @@ sap.ui.define([
 			oLoadExtensionOptions.success = function() {
 				that._loadExtensions(iFrameLauncher.getWindow());
 			};
-			return this.waitFor(oLoadExtensionOptions);
+			this.waitFor(oLoadExtensionOptions);
+
+			// wait for the app to load
+			var oWaitApplicationLoadOptions = createWaitForObjectWithoutDefaults();
+			oWaitApplicationLoadOptions.autoWait = oOptions.autoWait || false;
+			oWaitApplicationLoadOptions.timeout = oOptions.timeout || 80;
+			return this.waitFor(oWaitApplicationLoadOptions);
 		}
 
 		/**
@@ -167,6 +178,9 @@ sap.ui.define([
 		 * @param {string} [oOptions.hash] Sets the hash {@link sap.ui.core.routing.HashChanger#setHash} to the given value.
 		 * If this parameter is omitted, the hash will always be reset to the empty hash - "".
 		 * @param {number} [oOptions.timeout=15] The timeout for loading the UIComponent in seconds - {@link sap.ui.test.Opa5#waitFor}.
+		 * @param {boolean} [oOptions.autoWait=false] Since 1.53, activates autoWait while the application is starting up.
+		 * This allows more time for application startup and stabilizes tests for slow-loading applications.
+		 * This parameter is false by default, regardless of the global autoWait value, to prevent issues in existing tests.
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
 		 *
 		 * @since 1.48 If appParams are provided in {@link sap.ui.test.Opa.config}, they are
@@ -221,7 +235,13 @@ sap.ui.define([
 			oLoadExtensionOptions.success = function() {
 				that._loadExtensions(window);
 			};
-			return this.waitFor(oLoadExtensionOptions);
+			this.waitFor(oLoadExtensionOptions);
+
+			// wait for the entire app to load
+			var oWaitApplicationLoadOptions = createWaitForObjectWithoutDefaults();
+			oWaitApplicationLoadOptions.autoWait = oOptions.autoWait || false;
+			oWaitApplicationLoadOptions.timeout = oOptions.timeout || 80;
+			return this.waitFor(oWaitApplicationLoadOptions);
 		};
 
 
@@ -300,8 +320,13 @@ sap.ui.define([
 		 * @since 1.48 If appParams are provided in {@link sap.ui.test.Opa.config}, they are
 		 * merged in the query params of app URL
 		 *
-		 * @param {string} sSource The source of the IFrame
-		 * @param {number} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
+		 * @param {string} sSource The source of the IFrame.
+		 * @param {number} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80.
+		 * @param {boolean} [autoWait=false] Since 1.53, activates autoWait while the application is starting up.
+		 * This allows more time for application startup and stabilizes tests for slow-loading applications.
+		 * This parameter is false by default, regardless of the global autoWait value, to prevent issues in existing tests.
+		 * @param {object} [oOptions] Since 1.53, you can provide a startup configuration object as an only parameter.
+		 * oOptions is expected to have the keys: source, timeout and autoWait.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 * @function
@@ -315,7 +340,12 @@ sap.ui.define([
 		 * merged in the query params of app URL
 		 *
 		 * @param {string} sSource The source of the IFrame
-		 * @param {int} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
+		 * @param {number} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
+		 * @param {boolean} [autoWait=false] Since 1.53, activates autoWait while the application is starting up.
+		 * This allows more time for application startup and stabilizes tests for slow-loading applications.
+		 * This parameter is false by default, regardless of the global autoWait value, to prevent issues in existing tests.
+		 * @param {object} [oOptions] Since 1.53, you can provide a startup configuration object as an only parameter.
+		 * oOptions is expected to have the keys: source, timeout and autoWait.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 * @function
