@@ -58,6 +58,24 @@
 				]
 			});
 
+			var oDialogErrorState = new sap.m.Dialog("dialogErrorState", {
+				title: "Error",
+				ariaDescribedBy: "p1",
+				state: sap.ui.core.ValueState.Error,
+				content: [
+					new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">Cannot start!</p>'})
+				],
+				buttons: [
+					new sap.m.Button({
+						id: 'oDialogErrorStateOKButton',
+						text: "OK",
+						press: function () {
+							oDialogErrorState.close();
+						}
+					})
+				]
+			});
+
 			var oCustomHeader = new sap.m.Bar("customHeader", {
 				contentLeft: [new sap.ui.core.Icon("myAppIcon", {src: "manager"}),
 					new sap.m.Label("IconHeader", {text: "Icon Header"})],
@@ -1436,6 +1454,13 @@
 						width: _buttonWidth,
 						press: function () {
 							oDialog1.open();
+						}
+					}),
+					new sap.m.Button('dialogWithErrorStateButton', {
+						text: "With Error State",
+						width: _buttonWidth,
+						press: function () {
+							oDialogErrorState.open();
 						}
 					}),
 
