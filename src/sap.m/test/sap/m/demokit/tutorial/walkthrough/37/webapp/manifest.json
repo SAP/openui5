@@ -89,9 +89,11 @@
 			],
 			"targets": {
 				"overview": {
+					"viewId": "overview",
 					"viewName": "Overview"
 				},
 				"detail": {
+					"viewId": "detail",
 					"viewName": "Detail"
 				}
 			}
