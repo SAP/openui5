@@ -1655,42 +1655,42 @@ sap.ui.define([
 				var oConditionGrid = oEvent.srcControl.getParent();
 				var aSeparatedText = sOriginalText.split(/\r\n|\r|\n/g);
 
-				if (aSeparatedText) {
+				var oOperation = oConditionGrid.operation;
+				var op = oOperation.getSelectedKey();
+
+				if (aSeparatedText && aSeparatedText.length > 1 && op !== "BT") {
 					setTimeout(function() {
 						var iLength = aSeparatedText ? aSeparatedText.length : 0;
-						if (iLength > 1) {
+						var oKeyField = that._getCurrentKeyFieldItem(oConditionGrid.keyField);
+						var oOperation = oConditionGrid.operation;
 
-							var oKeyField = that._getCurrentKeyFieldItem(oConditionGrid.keyField);
-							var oOperation = oConditionGrid.operation;
-
-							for (var i = 0; i < iLength; i++) {
-								if (that._aConditionKeys.length >= that._getMaxConditionsAsNumber()) {
-									break;
-								}
-
-								if (aSeparatedText[i]) {
-									var oCondition = {
-										"key": that._createConditionKey(),
-										"exclude": that.getExclude(),
-										"operation": oOperation.getSelectedKey(),
-										"keyField": oKeyField.key,
-										"value1": aSeparatedText[i],
-										"value2": null
-									};
-									that._addCondition2Map(oCondition);
-
-									that.fireDataChange({
-										key: oCondition.key,
-										index: oCondition.index,
-										operation: "add",
-										newData: oCondition
-									});
-								}
+						for (var i = 0; i < iLength; i++) {
+							if (that._aConditionKeys.length >= that._getMaxConditionsAsNumber()) {
+								break;
 							}
 
-							that._clearConditions();
-							that._fillConditions();
+							if (aSeparatedText[i]) {
+								var oCondition = {
+									"key": that._createConditionKey(),
+									"exclude": that.getExclude(),
+									"operation": oOperation.getSelectedKey(),
+									"keyField": oKeyField.key,
+									"value1": aSeparatedText[i],
+									"value2": null
+								};
+								that._addCondition2Map(oCondition);
+
+								that.fireDataChange({
+									key: oCondition.key,
+									index: oCondition.index,
+									operation: "add",
+									newData: oCondition
+								});
+							}
 						}
+
+						that._clearConditions();
+						that._fillConditions();
 					}, 0);
 				}
 			};
