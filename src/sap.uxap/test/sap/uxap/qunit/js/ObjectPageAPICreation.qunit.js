@@ -1179,10 +1179,15 @@
 			fnBrowserEventHandler = this.spy(),
 			fnOnDomReady = function() {
 				oObjectPage.rerender();
-				var event = new Event("click"),
-					$buttonDeomRef = sap.ui.getCore().byId("btn1").getDomRef();
-
-				$buttonDeomRef.dispatchEvent(event);
+				var event,
+					$buttonDomRef = sap.ui.getCore().byId("btn1").getDomRef();
+				if (typeof Event === 'function') {
+					event = new Event("click");
+				} else {
+					event = document.createEvent('Event');
+					event.initEvent("click", true, true);
+				}
+				$buttonDomRef.dispatchEvent(event);
 				assert.equal(fnBrowserEventHandler.callCount, 1, "browser event listener called only once");
 				oObjectPage.destroy();
 				done();
