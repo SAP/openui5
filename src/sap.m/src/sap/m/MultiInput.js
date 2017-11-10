@@ -1413,6 +1413,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 		oClone = Input.prototype.clone.apply(this, arguments);
 
+		oClone.destroyAggregation("tokenizer");
+		oClone._tokenizer = null;
+
 		oTokenizerClone = this._tokenizer.clone();
 		oClone._tokenizer = oTokenizerClone;
 		oClone.setAggregation("tokenizer", oTokenizerClone, true);
