@@ -1688,17 +1688,45 @@ sap.ui.require([
 	// overwrite the others
 
 	//*********************************************************************************************
-	QUnit.test("convert sap:semantics=url to IsURL", function (assert) {
+	QUnit.test("convert sap:semantics=* from mV2toV4SimpleSemantics", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
-					<Property Name="P01" Type="Edm.String" sap:semantics="url"/>\
+					<Property Name="P01" Type="Edm.String" sap:semantics="fiscalyear"/>\
+					<Property Name="P02" Type="Edm.String" sap:semantics="fiscalyearperiod"/>\
+					<Property Name="P03" Type="Edm.String" sap:semantics="url"/>\
+					<Property Name="P04" Type="Edm.String" sap:semantics="year"/>\
+					<Property Name="P05" Type="Edm.String" sap:semantics="yearmonth"/>\
+					<Property Name="P06" Type="Edm.String" sap:semantics="yearmonthday"/>\
+					<Property Name="P07" Type="Edm.String" sap:semantics="yearquarter"/>\
+					<Property Name="P08" Type="Edm.String" sap:semantics="yearweek"/>\
 				</EntityType>',
 			{
 				"GWSAMPLE_BASIC.Foo/P01" : {
+					"@com.sap.vocabularies.Common.v1.IsFiscalYear" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P02" : {
+					"@com.sap.vocabularies.Common.v1.IsFiscalYearPeriod" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P03" : {
 					"@Org.OData.Core.V1.IsURL" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P04" : {
+					"@com.sap.vocabularies.Common.v1.IsCalendarYear" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P05" : {
+					"@com.sap.vocabularies.Common.v1.IsCalendarYearMonth" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P06" : {
+					"@com.sap.vocabularies.Common.v1.IsCalendarDate" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P07" : {
+					"@com.sap.vocabularies.Common.v1.IsCalendarYearQuarter" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P08" : {
+					"@com.sap.vocabularies.Common.v1.IsCalendarYearWeek" : true
 				}
 			});
 	});

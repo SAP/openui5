@@ -69,7 +69,7 @@ sap.ui.define([
 				"term" : "@Org.OData.Capabilities.V1.UpdateRestrictions"
 			}
 		},
-		mV2toV4Semantics = {
+		mV2toV4ComplexSemantics = {
 			"bday" : {
 				TermName : "Contact"
 			},
@@ -236,6 +236,18 @@ sap.ui.define([
 			"priority" : {
 				TermName : "Task"
 			}
+		},
+		mV2toV4SimpleSemantics = {
+			// calendar annotations
+			"fiscalyear" : "@com.sap.vocabularies.Common.v1.IsFiscalYear",
+			"fiscalyearperiod" : "@com.sap.vocabularies.Common.v1.IsFiscalYearPeriod",
+			"year" : "@com.sap.vocabularies.Common.v1.IsCalendarYear",
+			"yearmonth" : "@com.sap.vocabularies.Common.v1.IsCalendarYearMonth",
+			"yearmonthday" : "@com.sap.vocabularies.Common.v1.IsCalendarDate",
+			"yearquarter" : "@com.sap.vocabularies.Common.v1.IsCalendarYearQuarter",
+			"yearweek" : "@com.sap.vocabularies.Common.v1.IsCalendarYearWeek",
+			// OData core annotations
+			"url" : "@Org.OData.Core.V1.IsURL"
 		},
 
 		// the configurations for traverse
@@ -610,60 +622,52 @@ sap.ui.define([
 			oSemantics,
 			aValue = oAnnotatable.peek("semantics").split(";"),
 			sValue = aValue[0],
-			oV2toV4Semantic;
+			oV2toV4ComplexSemantic = mV2toV4ComplexSemantics[sValue];
 
-		switch (sValue) {
-			case "unit-of-measure":
-			case "currency-code":
-				oAnnotatable.oAggregate.mProperty2Semantics[oAnnotatable.sPath] =
-					oAnnotatable.consume("semantics");
-				break;
-			case "url":
-				oAnnotatable.annotate("@Org.OData.Core.V1.IsURL", true);
+		if (sValue === "unit-of-measure" || sValue === "currency-code") {
+			oAnnotatable.oAggregate.mProperty2Semantics[oAnnotatable.sPath] =
 				oAnnotatable.consume("semantics");
-				break;
-			default:
-		}
-
-		oV2toV4Semantic = mV2toV4Semantics[sValue];
-		if (oV2toV4Semantic) {
+		} else if (mV2toV4SimpleSemantics[sValue]) {
+			oAnnotatable.annotate(mV2toV4SimpleSemantics[sValue], true);
+			oAnnotatable.consume("semantics");
+		} else if (oV2toV4ComplexSemantic) {
 			oPath = {
 				"$Path" : oAnnotatable.oAggregate.sPropertyName
 			};
 			oAnnotations = oAnnotatable.oParent.getOrCreateAnnotationRecord(
-				"@com.sap.vocabularies.Communication.v1." + oV2toV4Semantic.TermName);
-			if (oV2toV4Semantic.Path) {
+				"@com.sap.vocabularies.Communication.v1." + oV2toV4ComplexSemantic.TermName);
+			if (oV2toV4ComplexSemantic.Path) {
 				oSemantics = V2MetadataConverter.getOrCreateObject(oAnnotations,
-					oV2toV4Semantic.Path);
-				oSemantics[oV2toV4Semantic.V4Attribute || sValue] = oPath;
+					oV2toV4ComplexSemantic.Path);
+				oSemantics[oV2toV4ComplexSemantic.V4Attribute || sValue] = oPath;
 
-				if (oV2toV4Semantic.v4PropertyAnnotation) {
-					oAnnotatable.annotate(oV2toV4Semantic.v4PropertyAnnotation, true);
+				if (oV2toV4ComplexSemantic.v4PropertyAnnotation) {
+					oAnnotatable.annotate(oV2toV4ComplexSemantic.v4PropertyAnnotation, true);
 
-					//Determination of space separated list of V4 annotations enumeration value for
-					//given sap:semantics "tel" and "email"
+					// Determination of space separated list of V4 annotations enumeration value for
+					// given sap:semantics "tel" and "email"
 					if (aValue[1]) {
 						aResult = [];
 						sEnum = aValue[1].split("=")[1];
 						sEnum.split(",").forEach(function (sType) {
-							var sTargetType = oV2toV4Semantic.typeMapping[sType];
+							var sTargetType = oV2toV4ComplexSemantic.typeMapping[sType];
 							if (sTargetType) {
-								aResult.push(oV2toV4Semantic.v4EnumType + "/" + sTargetType);
+								aResult.push(oV2toV4ComplexSemantic.v4EnumType + "/" + sTargetType);
 							} else {
-								jQuery.sap.log.warning("Unsupported semantic type: "
-										+ sType, undefined, sModuleName);
+								jQuery.sap.log.warning("Unsupported semantic type: " + sType,
+									undefined, sModuleName);
 							}
 						});
 						if (aResult.length > 0) {
 							oSemantics.type = {"EnumMember" : aResult.join(" ")};
 						}
 					}
-					oAnnotations[oV2toV4Semantic.Path] = [oSemantics];
+					oAnnotations[oV2toV4ComplexSemantic.Path] = [oSemantics];
 				} else {
-					oAnnotations[oV2toV4Semantic.Path] = oSemantics;
+					oAnnotations[oV2toV4ComplexSemantic.Path] = oSemantics;
 				}
 			} else {
-				oAnnotations[oV2toV4Semantic.V4Attribute || sValue] = oPath;
+				oAnnotations[oV2toV4ComplexSemantic.V4Attribute || sValue] = oPath;
 			}
 			oAnnotatable.consume("semantics");
 		}
