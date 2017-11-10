@@ -237,13 +237,16 @@ sap.ui.define([
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mParameters = mParameters;
-		this.fetchCache(this.oContext);
 		if (!this.oOperation) {
+			this.fetchCache(this.oContext);
 			if (sChangeReason) {
 				this.refreshInternal(undefined, true);
 			} else {
 				this.checkUpdate();
 			}
+		} else if (this.oOperation.bAction === false) {
+			// Note: sChangeReason ignored here, "filter"/"sort" not suitable for ContextBinding
+			this.execute();
 		}
 	};
 
@@ -603,21 +606,21 @@ sap.ui.define([
 					that._fireChange({reason : ChangeReason.Refresh});
 				}
 			}
-			if (oCache) {
-				that.fetchCache(that.oContext);
-				if (!that.oOperation) {
+			if (!that.oOperation) {
+				if (oCache) {
+					that.fetchCache(that.oContext);
 					that.sRefreshGroupId = sGroupId;
 					that.mCacheByContext = undefined;
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events
-				} else if (!that.oOperation.bAction) {
-					// ignore returned promise, error handling takes place in execute
-					that.execute(sGroupId);
 				}
+				that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+					oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
+				});
+			} else if (that.oOperation.bAction === false) {
+				// ignore returned promise, error handling takes place in execute
+				that.execute(sGroupId);
 			}
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
-			});
 		});
 	};
 
@@ -676,6 +679,7 @@ sap.ui.define([
 			throw new Error("Missing value for parameter: " + sParameterName);
 		}
 		this.oOperation.mParameters[sParameterName] = vValue;
+		this.oOperation.bAction = undefined; // "not yet executed"
 		return this;
 	};
 
