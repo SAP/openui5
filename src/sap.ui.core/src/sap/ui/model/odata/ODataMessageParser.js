@@ -448,7 +448,27 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 	if (sTarget.substr(0, 1) !== "/") {
 		var sRequestTarget = "";
 
-		var mUrlData = this._parseUrl(mRequestInfo.url);
+		// special case for 201 POST requests which create a resource
+		// The target is a relative resource path segment that can be appended to the Location response header (for POST requests that create a new entity)
+		var sMethod = (mRequestInfo.request && mRequestInfo.request.method) ? mRequestInfo.request.method : "GET";
+		var bRequestCreatePost = (sMethod === "POST"
+			&& mRequestInfo.response
+			&& (mRequestInfo.response.statusCode === "201" || mRequestInfo.response.statusCode === 201)
+			&& mRequestInfo.response.headers
+			&& mRequestInfo.response.headers["location"]);
+
+		var sUrlForTargetCalculation;
+
+		if (bRequestCreatePost) {
+			sUrlForTargetCalculation = mRequestInfo.response.headers["location"];
+		} else if (mRequestInfo.request && mRequestInfo.request.created && mRequestInfo.response && mRequestInfo.response.statusCode >= 400) {
+			// If a create request returns an error the target should be set to the internal entity key
+			sUrlForTargetCalculation = mRequestInfo.request.key;
+		} else {
+			sUrlForTargetCalculation = mRequestInfo.url;
+		}
+
+		var mUrlData = this._parseUrl(sUrlForTargetCalculation);
 		var sUrl = mUrlData.url;
 
 		var iPos = sUrl.lastIndexOf(this._serviceUrl);
