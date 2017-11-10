@@ -559,7 +559,6 @@ sap.ui.require([
 		});
 	});
 
-
 	QUnit.module("Given an instance of FakeLrepConnector with no Variants in the LREP response", {
 		beforeEach : function(assert) {
 			this.oData = {};
