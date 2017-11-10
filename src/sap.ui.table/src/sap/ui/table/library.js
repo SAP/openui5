@@ -17,6 +17,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		name : "sap.ui.table",
 		version: "${version}",
 		dependencies : ["sap.ui.core","sap.ui.unified"],
+		designtime: "sap/ui/table/designtime/library.designtime",
 		types: [
 			"sap.ui.table.NavigationMode",
 			"sap.ui.table.RowActionType",

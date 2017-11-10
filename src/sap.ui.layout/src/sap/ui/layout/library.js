@@ -26,7 +26,8 @@ sap.ui.define([
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.layout",
 		version: "${version}",
-		dependencies : ["sap.ui.core"],
+		dependencies: ["sap.ui.core"],
+		designtime: "sap/ui/layout/designtime/library.designtime",
 		types: [
 			"sap.ui.layout.BackgroundDesign",
 			"sap.ui.layout.GridIndent",

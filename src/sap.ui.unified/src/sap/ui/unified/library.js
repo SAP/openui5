@@ -20,6 +20,7 @@ sap.ui.define([
 		name : "sap.ui.unified",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
+		designtime: "sap/ui/unified/designtime/library.designtime",
 		types: [
 			"sap.ui.unified.CalendarDayType",
 			"sap.ui.unified.GroupAppointmentsMode",

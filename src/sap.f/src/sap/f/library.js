@@ -16,6 +16,7 @@ sap.ui.define(["sap/ui/Global",
 		name : "sap.f",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
+		designtime: "sap/f/designtime/library.designtime",
 		types: [
 			"sap.f.LayoutType",
 			"sap.f.DynamicPageTitleArea"
