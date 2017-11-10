@@ -775,6 +775,30 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+
+	QUnit.test("create_app_setAch", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_setAch({
+			"ach": "CA-UI5-ABA"
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setAch");
+		});
+	});
+
+	QUnit.test("create_app_Ach failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setAch({
+				"AchH" : {}
+			});
+		});
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setAch({
+				"Ach" : "a.id"
+			});
+		});
+	});
+
+
 	QUnit.test("create_app_setKeywords", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_setKeywords({
 			"keywords": ["{{customer.newid_sap.app.tags.keywords.0}}", "{{customer.newid_sap.app.tags.keywords.1}}"]
