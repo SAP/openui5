@@ -746,6 +746,44 @@
 		assert.equal(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
 	});
 
+	QUnit.test("Change event is properly fired on different interactions", function (assert) {
+		//Setup
+		var oChangeFireSpy = this.spy(this.multiInput1, "fireChange"),
+			oValidatorSpy = this.spy(function (oParams) {
+				return new sap.m.Token({
+					key: oParams.text,
+					text: oParams.text
+				});
+			});
+		this.multiInput1.addValidator(oValidatorSpy);
+
+
+		//Act
+		//Emulate use input
+		// Modify DOM's value as we don't want to go trough MultiInput's API.
+		this.multiInput1.$("inner").val("Test token");
+		this.multiInput1.onsapenter({});
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oChangeFireSpy.calledOnce, "Change is fired");
+		assert.ok(oValidatorSpy.calledOnce, "Validator is fired");
+		assert.ok(oChangeFireSpy.calledBefore(oValidatorSpy), "fireChange is fired before Validator");
+
+		//Act
+		//Emulate use input
+		// Modify DOM's value as we don't want to go trough MultiInput's API.
+		this.multiInput1.bFocusoutDueRendering = false;
+		this.multiInput1.$("inner").val("Test token 2");
+		this.multiInput1.onsapfocusleave({});
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oChangeFireSpy.calledTwice, "Change is fired");
+		assert.ok(oValidatorSpy.calledTwice, "Validator is fired");
+		assert.ok(oChangeFireSpy.calledBefore(oValidatorSpy), "fireChange is fired before Validator");
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach : function() {
 			this.multiInput1 = new sap.m.MultiInput({
