@@ -58,7 +58,7 @@ sap.ui.define([
 			__include : [_MetadataConverter.oReferenceInclude],
 			"DataServices" : {
 				"Schema" : {
-					__processor : _MetadataConverter.processSchema,
+					__processor : processSchema,
 					__include : [_MetadataConverter.oAnnotationsConfig, oAnnotationConfig],
 					"Action" : {
 						__processor : processActionOrFunction,
@@ -350,6 +350,19 @@ sap.ui.define([
 
 		oActionOrFunction.$ReturnType = oReturnType;
 		V4MetadataConverter.annotatable(oAggregate, oReturnType);
+	}
+
+	/**
+	 * Processes a Schema element.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processSchema(oElement, oAggregate) {
+		oAggregate.namespace = oElement.getAttribute("Namespace") + ".";
+		oAggregate.result[oAggregate.namespace] = oAggregate.schema = {
+			"$kind" : "Schema"
+		};
+		V4MetadataConverter.annotatable(oAggregate, oAggregate.schema);
 	}
 
 	/**
