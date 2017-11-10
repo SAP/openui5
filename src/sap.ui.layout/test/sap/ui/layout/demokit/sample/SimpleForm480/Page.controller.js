@@ -11,6 +11,9 @@ sap.ui.define([
 		onInit: function () {
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/supplier.json"));
+			oModel.attachRequestCompleted(function() {
+				this.byId('edit').setEnabled(true);
+			}.bind(this));
 			this.getView().setModel(oModel);
 
 			this.getView().bindElement("/SupplierCollection/0");
