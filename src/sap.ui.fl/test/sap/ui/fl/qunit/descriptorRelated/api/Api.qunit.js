@@ -1107,6 +1107,22 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("create_url_setUri", function(assert) {
+		return DescriptorInlineChangeFactory.create_url_setUri({
+			"uri" : "uri.com"
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_url_setUri failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_url_setUri({
+				"uri" : { }
+			});
+		});
+	});
+
 	QUnit.module("DescriptorVariant", {
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
