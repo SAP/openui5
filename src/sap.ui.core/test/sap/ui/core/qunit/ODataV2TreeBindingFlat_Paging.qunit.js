@@ -732,3 +732,29 @@ QUnit.test("Application Filters are sent", function(assert){
 		oBinding.getContexts(0, 20, 10);
 	});
 });
+
+QUnit.test("getContexts: length falls back to model size limit", function(assert){
+
+	var done = assert.async();
+	oModel.setSizeLimit(9);
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 0,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(0);
+			assert.equal(aContexts.length, 9, "initially loaded context length equals model size limit");
+			done();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0);
+	});
+});
