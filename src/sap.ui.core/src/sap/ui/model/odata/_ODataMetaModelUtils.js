@@ -917,11 +917,19 @@ sap.ui.define([
 				return;
 			}
 			aSchemas.forEach(function (oSchema, i) {
+				var sSchemaVersion;
+
 				// remove datajs artefact for inline annotations in $metadata
 				delete oSchema.annotations;
 
 				Utils.liftSAPData(oSchema);
 				oSchema.$path = "/dataServices/schema/" + i;
+				sSchemaVersion = oSchema["sap:schema-version"];
+				if (sSchemaVersion) {
+					oSchema["Org.Odata.Core.V1.SchemaVersion"] = {
+						String : sSchemaVersion
+					};
+				}
 				jQuery.extend(oSchema, oAnnotations[oSchema.namespace]);
 
 				Utils.visitParents(oSchema, oAnnotations, "association",
