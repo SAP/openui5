@@ -972,6 +972,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onsapenter = function (oEvent) {
+		if (Input.prototype.onsapenter) {
+			Input.prototype.onsapenter.apply(this, arguments);
+		}
 
 		var bValidateFreeText = true;
 
@@ -985,10 +988,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 		if (bValidateFreeText) {
 			this._validateCurrentText();
-		}
-
-		if (Input.prototype.onsapenter) {
-			Input.prototype.onsapenter.apply(this, arguments);
 		}
 
 		this.focus();
