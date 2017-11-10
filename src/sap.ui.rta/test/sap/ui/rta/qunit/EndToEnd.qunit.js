@@ -216,12 +216,13 @@ sap.ui.require([
 
 		oDialog.attachOpened(function() {
 			var oFieldToAdd = oDialog._oList.getItems()[1];
+			var sFieldToAddText = oFieldToAdd.getContent()[0].getItems()[0].getText();
 
 			// observer gets called when the Group changes. Then the new field is on the UI.
 			var oObserver = new MutationObserver(function(mutations) {
 				var oGroupElements = this.oGeneralGroup.getGroupElements();
 				var iIndex = oGroupElements.indexOf(this.oField) + 1;
-				assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.getContent()[0].getItems()[0].getText(), "the added element is at the correct position");
+				assert.equal(oGroupElements[iIndex].getLabelText(), sFieldToAddText, "the added element is at the correct position");
 				assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
 				assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 
