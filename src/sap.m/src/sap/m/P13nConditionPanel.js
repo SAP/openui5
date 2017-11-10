@@ -1624,8 +1624,26 @@ sap.ui.define([
 				oControl = new sap.m.DateTimePicker(params);
 				break;
 			default:
-				oConditionGrid.oFormatter = null;
-				oControl = new sap.m.Input(params);
+				if (sCtrlType == "numc") {
+					oConditionGrid.oFormatter = {
+						format: function(oValue) {
+							return this.oType.formatValue(oValue, "string");
+						},
+						parse: function(sValue) {
+							try {
+								this.oType.validateValue(sValue, "string");
+							} catch (err) {
+								return NaN;
+							}
+							return this.oType.parseValue(sValue, "string");
+						},
+						oType: new sap.ui.model.odata.type.String({}, oCurrentKeyField.formatSettings)
+					};
+				} else {
+					oConditionGrid.oFormatter = null;
+				}
+
+			oControl = new sap.m.Input(params);
 
 				if (this._fSuggestCallback) {
 					var oCurrentKeyField = this._getCurrentKeyFieldItem(oConditionGrid.keyField);
