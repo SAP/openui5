@@ -884,6 +884,49 @@
 					"The input's value is decreasing with 5 after arrow up");
 		});
 
+		QUnit.test("if the value is out of min/max range, pressing increase/decrease button the value will be set to min/max", function(assert) {
+			//prepare
+			var oIncrementBtn = this.stepInput.getAggregation("_incrementButton"),
+					oDecrementBtn = this.stepInput.getAggregation("_decrementButton");
+
+			//act
+			jQuery(this.stepInput).focus();
+			this.stepInput._getInput().setValue(-7);
+			oIncrementBtn.firePress();
+
+			//assert
+			equal(this.stepInput.getValue(), -4,
+					"The input's value is restored to the min value -4 after it was set to -7 and increment button was pressed");
+
+			//act
+			this.stepInput._getInput().setValue(13);
+			oDecrementBtn.firePress();
+
+			//assert
+			equal(this.stepInput.getValue(), 10,
+					"The input's value is restored to max value 10 after it was set to 13 and decrement button was pressed");
+		});
+
+		QUnit.test("if the value is out of min/max range, pressing up/down arrow the value will be set to min/max", function (assert) {
+			//act
+			this.stepInput.setValue(-7);
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+			this.clock.tick(1000);
+
+			//assert
+			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), -4,
+					"The input's value is restored to the min value -4 after it was set to -7 and arrow up was pressed");
+
+			//act
+			this.stepInput.setValue(13);
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+			this.clock.tick(1000);
+
+			//assert
+			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
+					"The input's value is restored to max value 10 after it was set to 13 and arrow down was pressed");
+		});
+
 		QUnit.test("pageup and pagedown increases/decreases the value with a larger step", function (assert) {
 			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);

@@ -989,18 +989,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 			vValuePlusStep = (parseInt((vRealValue * iCalcReal), 10) + (iSign * parseInt((vMultipliedStep * iCalcReal), 10))) / iCalcReal;
 
-			if (isIncreasing && this._isNumericLike(fMax)){
-				if (nResult >= fMax) { //calculated value is bigger than max
-					vValuePlusStep = fMax;
-					vDisplayValuePlusStep = fMax;
-				}
+			// if there is a maxValue set, check if the calculated value is bigger
+			// and if so set the calculated value to the max one
+			if (this._isNumericLike(fMax) && nResult >= fMax){
+				vValuePlusStep = fMax;
+				vDisplayValuePlusStep = fMax;
 			}
 
-			if (!isIncreasing && this._isNumericLike(fMin)){
-				if (nResult <= fMin) { //calculated value is less than min
-					vValuePlusStep = fMin;
-					vDisplayValuePlusStep = fMin;
-				}
+			// if there is a minValue set, check if the calculated value is less
+			// and if so set the calculated value to the min one
+			if (this._isNumericLike(fMin) && nResult <= fMin){
+				vValuePlusStep = fMin;
+				vDisplayValuePlusStep = fMin;
 			}
 
 			return {value: vValuePlusStep, displayValue: vDisplayValuePlusStep};
