@@ -1094,6 +1094,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("ignore foreign namespaces", function (assert) {
+		testConversion(assert, '\
+				<edmx:DataServices>\
+					<Schema Namespace="foo" Alias="f" xmlns:foo="http://foo.bar">\
+						<ComplexType Name="Worker" foo:OpenType="true"/>\
+						<foo:ComplexType Name="Ignore"/>\
+					</Schema>\
+				</edmx:DataServices>',
+			{
+				"foo." : {
+					"$kind" : "Schema"
+				},
+				"foo.Worker" : {
+					"$kind" : "ComplexType"
+					// no $OpenType
+				}
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: test service", function (assert) {
 		return Promise.all([
 			Promise.resolve(

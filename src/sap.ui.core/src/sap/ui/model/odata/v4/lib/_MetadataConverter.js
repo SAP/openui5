@@ -8,6 +8,8 @@ sap.ui.define([
 	"use strict";
 
 	var MetadataConverter,
+		sEdmNamespace = "http://docs.oasis-open.org/odata/ns/edm",
+		sEdmxNamespace = "http://docs.oasis-open.org/odata/ns/edmx",
 
 		// The configuation for <Annotations> and <Annotation>
 		// All Annotations elements that don't have expressions as child (leaf, non-recursive)
@@ -35,6 +37,7 @@ sap.ui.define([
 		// The configuration for an <Annotation> element to be included into other configurations
 		oAnnotationConfig = {
 			"Annotation" : {
+				__xmlns :  sEdmNamespace,
 				__processor : processAnnotation,
 				__postProcessor : postProcessAnnotation,
 				__include : aExpressionInclude
@@ -515,6 +518,10 @@ sap.ui.define([
 	}
 
 	MetadataConverter = {
+		// namespaces
+		sEdmNamespace : sEdmNamespace,
+		sEdmxNamespace : sEdmxNamespace,
+
 		/**
 		 * The configuration for an <Annotation> element to be included into other configurations
 		 */
@@ -529,6 +536,7 @@ sap.ui.define([
  		 */
 		oReferenceInclude : {
 			"Reference" : {
+				__xmlns : sEdmxNamespace,
 				__processor : processReference,
 				__include : [oAnnotationConfig],
 				"Include" : {
@@ -793,9 +801,17 @@ sap.ui.define([
 				aIncludes,
 				j,
 				sName,
+				sPreviousNamespace = oAggregate.xmlns,
 				vResult,
-				aResult = [];
+				aResult = [],
+				sXmlNamespace = oConfig.__xmlns || oAggregate.xmlns;
 
+			if (sXmlNamespace && sXmlNamespace !== oElement.namespaceURI) {
+				// Ignore this element because the namespace is not as expected
+				return undefined;
+			}
+
+			oAggregate.xmlns = sXmlNamespace;
 			if (bUseProcessElementHook) {
 				oAggregate.processElement(oElement, oAggregate, oConfig.__processor);
 			} else if (oConfig.__processor) {
@@ -833,6 +849,7 @@ sap.ui.define([
 				vResult = oConfig.__postProcessor(oElement, aResult, oAggregate);
 			}
 			oAggregate.annotatable = oAnnotatable; // "pop" annotatable from the recursion stack
+			oAggregate.xmlns = sPreviousNamespace;
 			return vResult;
 		}
 	};

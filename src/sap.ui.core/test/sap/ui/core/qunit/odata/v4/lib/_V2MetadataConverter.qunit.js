@@ -20,7 +20,9 @@ sap.ui.require([
 			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"},
 			"/GWSAMPLE_BASIC/metadata_v4.json" : {source : "GWSAMPLE_BASIC.metadata_v4.json"}
 		},
-		sModuleName = "sap.ui.model.odata.v4.lib._V2MetadataConverter";
+		sModuleName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+		sXmlnsEdm4 = "http://docs.oasis-open.org/odata/ns/edm",
+		sXmlnsEdmx4 = "http://docs.oasis-open.org/odata/ns/edmx";
 
 	/**
 	 * Tests that the given XML snippet produces the expected annotations.
@@ -118,14 +120,14 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: Reference", function (assert) {
 		testConversionForInclude(assert, '\
-				<edmx:Reference Uri="/qux/$metadata">\
+				<edmx:Reference xmlns:edmx="' + sXmlnsEdmx4 + '" Uri="/qux/$metadata">\
 					<edmx:Include Namespace="qux.foo"/>\
 					<edmx:Include Namespace="qux.bar"/>\
 					<edmx:IncludeAnnotations TermNamespace="qux.foo"/>\
 					<edmx:IncludeAnnotations TermNamespace="qux.bar" TargetNamespace="qux.bar"\
 						Qualifier="Tablet"/>\
 				</edmx:Reference>\
-				<edmx:Reference Uri="/bla/$metadata">\
+				<edmx:Reference xmlns:edmx="' + sXmlnsEdmx4 + '" Uri="/bla/$metadata">\
 					<edmx:Include Namespace="bla"/>\
 				</edmx:Reference>',
 			{
@@ -177,7 +179,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: aliases in include", function (assert) {
 		testConversionForInclude(assert, '\
-			<edmx:Reference Uri="/qux/$metadata">\
+			<edmx:Reference xmlns:edmx="' + sXmlnsEdmx4 + '" Uri="/qux/$metadata">\
 				<edmx:Include Namespace="qux" Alias="q"/>\
 			</edmx:Reference>\
 			<edmx:DataServices m:DataServiceVersion="2.0">\
@@ -1528,7 +1530,7 @@ sap.ui.require([
 	QUnit.test("convert: V4 Annotations", function (assert) {
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
-					<Annotations Target="f.Bar/f.Baz">\
+					<Annotations xmlns="' + sXmlnsEdm4 + '" Target="f.Bar/f.Baz">\
 						<Annotation Term="f.Binary" Binary="T0RhdGE"/>\
 						<Annotation Term="f.Bool" Bool="false"/>\
 						<Annotation Term="f.Date" Date="2015-01-01" />\
@@ -1559,7 +1561,8 @@ sap.ui.require([
 						<Annotation Term="f.Invalid" Invalid="foo" />\
 						<Annotation Term="f.Baz" Qualifier="Employee"/>\
 					</Annotations>\
-					<Annotations Target="f.Bar/Abc" Qualifier="Employee">\
+					<Annotations xmlns="' + sXmlnsEdm4 + '"  Target="f.Bar/Abc" \
+							Qualifier="Employee">\
 						<Annotation Term="f.Baz"/>\
 					</Annotations>\
 				</Schema>',
@@ -1610,8 +1613,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("inline annotations: Reference", function (assert) {
 		testConversionForInclude(assert, '\
-				<edmx:Reference Uri="qux/$metadata">\
-					<Annotation Term="foo.Term" String="Reference"/>\
+				<edmx:Reference xmlns:edmx="' + sXmlnsEdmx4 + '" Uri="qux/$metadata">\
+					<Annotation xmlns="' + sXmlnsEdm4 + '" Term="foo.Term" String="Reference"/>\
 				</edmx:Reference>',
 			{
 				"$Reference" : {
@@ -1714,7 +1717,7 @@ sap.ui.require([
 				<EntityType Name="Foo">\
 					<Property Name="P01" Type="Edm.String" sap:semantics="url"/>\
 				</EntityType>\
-				<Annotations Target="GWSAMPLE_BASIC.Foo/P01">\
+				<Annotations xmlns="' + sXmlnsEdm4 + '" Target="GWSAMPLE_BASIC.Foo/P01">\
 					<Annotation Term="Org.OData.Core.V1.IsURL" Bool="false"/>\
 				</Annotations>',
 			{
@@ -2004,7 +2007,8 @@ sap.ui.require([
 						<End Type="GWSAMPLE_BASIC.0001.Measure" Multiplicity="*"\
 							Role="ToRole_Assoc_Product_Measure" />\
 					</Association>\
-					<Annotations Target="GWSAMPLE_BASIC.Product/NetPrice">\
+					<Annotations xmlns="' + sXmlnsEdm4
+							+ '" Target="GWSAMPLE_BASIC.Product/NetPrice">\
 						<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="Foo/Bar"/>\
 					</Annotations>\
 				</Schema>\
