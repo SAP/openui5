@@ -14,9 +14,13 @@ sap.ui.define([
 		// maps V2 sap:semantics value for a date part to corresponding V4 term relative to
 		// com.sap.vocabularies.Common.v1.
 		mDatePartSemantics2CommonTerm = {
+			"fiscalyear" : "IsFiscalYear",
+			"fiscalyearperiod" : "IsFiscalYearPeriod",
 			"year" : "IsCalendarYear",
 			"yearmonth" : "IsCalendarYearMonth",
-			"yearmonthday" : "IsCalendarDate"
+			"yearmonthday" : "IsCalendarDate",
+			"yearquarter" : "IsCalendarYearQuarter",
+			"yearweek" : "IsCalendarYearWeek"
 		},
 		// maps V2 filter-restriction value to corresponding V4 FilterExpressionType enum value
 		mFilterRestrictions = {
