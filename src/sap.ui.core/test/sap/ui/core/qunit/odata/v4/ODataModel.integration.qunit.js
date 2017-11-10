@@ -3078,6 +3078,46 @@ sap.ui.require([
 				"sap.ui.model.odata.v4.lib._Cache");
 		return this.createView(assert, sView);
 	});
+
+	//*********************************************************************************************
+	// Scenario: Object binding provides access to some collection and you then want to filter on
+	//   that collection; inspired by https://github.com/SAP/openui5/issues/1763
+	QUnit.test("Filter collection provided via object binding", function (assert) {
+		var sView = '\
+<VBox id="vbox" binding="{parameters : {$expand : \'TEAM_2_EMPLOYEES\'},\
+		path : \'/TEAMS(\\\'42\\\')\'}">\
+	<Table items="{TEAM_2_EMPLOYEES}">\
+		<ColumnListItem>\
+			<Text id="id" text="{ID}" />\
+		</ColumnListItem>\
+	</Table>\
+</VBox>',
+			that = this;
+
+		// Note: for simplicity, autoExpandSelect : false but still most properties are omitted
+		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES", {
+				"TEAM_2_EMPLOYEES" : [{
+					"ID" : "1"
+				}, {
+					"ID" : "2"
+				}, {
+					"ID" : "3"
+				}]
+			})
+			.expectChange("id", ["1", "2", "3"])
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($filter=ID%20eq%20'2')", {
+					"TEAM_2_EMPLOYEES" : [{
+						"ID" : "2"
+					}]
+				})
+				.expectChange("id", ["2"])
+
+			that.oView.byId("vbox").getObjectBinding()
+				.changeParameters({$expand : "TEAM_2_EMPLOYEES($filter=ID eq '2')"});
+		});
+	});
 });
 //TODO test bound action
 //TODO test delete
