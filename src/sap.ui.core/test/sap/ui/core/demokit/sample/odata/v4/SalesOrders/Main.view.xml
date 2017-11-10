@@ -182,23 +182,11 @@
 				<ColumnListItem>
 					<cells>
 						<Text id="SalesOrders_ID" text="{SalesOrderID}"/>
-					</cells>
-					<cells>
 						<Text text="{SO_2_BP/CompanyName}"/>
-					</cells>
-					<cells>
 						<Text text="{GrossAmount}"/>
-					</cells>
-					<cells>
 						<Text text="{CurrencyCode}"/>
-					</cells>
-					<cells>
 						<Input enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
-					</cells>
-					<cells>
 						<Text text="{LifecycleStatusDesc}"/>
-					</cells>
-					<cells>
 						<Text text="{ChangedAt}"/>
 					</cells>
 				</ColumnListItem>
@@ -267,8 +255,6 @@
 									<ColumnListItem>
 										<cells>
 											<Text text="{ScheduleKey}"/>
-										</cells>
-										<cells>
 											<Text text="{DeliveryDate}"/>
 										</cells>
 									</ColumnListItem>
@@ -416,40 +402,18 @@
 					<ColumnListItem>
 						<cells>
 							<Text text="{SalesOrderID}"/>
-						</cells>
-						<cells>
 							<Text text="{ItemPosition}"/>
-						</cells>
-						<cells>
 							<Text text="{ProductID}"/>
-						</cells>
-						<cells>
 							<Text text="{SOITEM_2_PRODUCT/Name}"/>
-						</cells>
-						<cells>
 							<demo:ValueHelp value="{SOITEM_2_PRODUCT/Category}"
 								enabled="{= %{ItemPosition} !== ''}"/>
-						</cells>
-						<cells>
 							<demo:ValueHelp value="{SOITEM_2_PRODUCT/TypeCode}"
 								enabled="{= %{ItemPosition} !== ''}"/>
-						</cells>
-						<cells>
 							<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
-						</cells>
-						<cells>
 							<Input value="{Quantity}" textAlign="Right"/>
-						</cells>
-						<cells>
 							<Input value="{QuantityUnit}"/>
-						</cells>
-						<cells>
 							<Text text="{GrossAmount}"/>
-						</cells>
-						<cells>
 							<Text text="{DeliveryDate}"/>
-						</cells>
-						<cells>
 							<Input value="{Note}"/>
 						</cells>
 					</ColumnListItem>

@@ -85,26 +85,12 @@
 				<ColumnListItem>
 					<cells>
 						<Text text="{ID}"/>
-					</cells>
-					<cells>
 						<Text text="{Boolean}"/>
-					</cells>
-					<cells>
 						<Text text="{Byte}"/>
-					</cells>
-					<cells>
 						<Text text="{GlobalUID}"/>
-					</cells>
-					<cells>
 						<Text text="{Int16}"/>
-					</cells>
-					<cells>
 						<Text text="{Int32}"/>
-					</cells>
-					<cells>
 						<Text text="{SByte}"/>
-					</cells>
-					<cells>
 						<Text text="{String}"/>
 					</cells>
 				</ColumnListItem>
