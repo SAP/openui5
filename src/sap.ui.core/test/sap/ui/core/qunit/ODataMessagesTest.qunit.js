@@ -514,6 +514,75 @@ function runODataMessagesTests() {
 		});
 	});
 
+	QUnit.test("ODataMessageParser: target key for created entities", function(assert) {
+		var done = assert.async();
+		var sServiceURI = "fakeservice://testdata/odata/northwind";
+
+		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		oMetadata.loaded().then(function() {
+
+
+			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+			// Use processor to get new messages
+			var aNewMessages = [];
+			oParser.setProcessor({
+				fireMessageChange: function(oObj) {
+					aNewMessages = oObj.newMessages;
+				}
+			});
+
+			//SETUP
+			var oRequest = {
+				method: "POST",
+				key: "Products(1)",
+				created: true
+			};
+
+			var oResponse = {
+				statusCode: "400", //CREATED
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;"
+				}
+			};
+
+			var oResponseHeaderSapMessageObject = {
+				"odata.error": {
+					"details": []
+				},
+				"code":		"999",
+				"message":	"resource created but error occurred",
+				"severity":	"error",
+				"details": []
+			};
+
+			// location header set in response (Products)
+
+
+			//request uri:          fakeservice://testdata/odata/northwind/Products
+			oRequest.requestUri = sServiceURI + "/Products";
+			oResponse.body = JSON.stringify(oResponseHeaderSapMessageObject);
+
+			oParser.parse(oResponse, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products(1)/", "target is read from the provided key");
+
+
+			//request uri:          fakeservice://testdata/odata/northwind/Products
+			oRequest.created = false;
+
+			oParser.parse(oResponse, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products", "target is parsed from the requestUri");
+
+
+			done();
+		});
+	});
+
 
 	QUnit.test("ODataMessageParser: error for newly created resource with relative target", function(assert) {
 		var done = assert.async();
