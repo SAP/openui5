@@ -986,6 +986,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			if (oCCnt) {
 				var iUsedHeight = oDomRef.scrollHeight - oCCnt.clientHeight;
+
 				// take into account controls above the table in the container
 				var iTableTop = 0;
 				if (oDomRef.parentNode.firstChild !== oDomRef) {
@@ -997,7 +998,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				}
 
 				// For simplicity always add the default height of the horizontal scrollbar to the used height, even if it will not be visible.
-				iUsedHeight += 18;
+				var oScrollExtension = this._getScrollExtension();
+				var oHSb = oScrollExtension.getHorizontalScrollbar();
+
+				if (oHSb != null && oScrollExtension.isHorizontalScrollbarVisible()) {
+					iUsedHeight += oHSb.offsetHeight;
+				} else {
+					var mDefaultScrollbarHeight = {};
+					mDefaultScrollbarHeight[Device.browser.BROWSER.CHROME] = 16;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.FIREFOX] = 16;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.INTERNET_EXPLORER] = 18;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.EDGE] = 12;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.SAFARI] = 16;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.ANDROID] = 8;
+					iUsedHeight += mDefaultScrollbarHeight[Device.browser.name];
+				}
 
 				return Math.floor(jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop);
 			}
