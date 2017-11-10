@@ -1375,8 +1375,6 @@ sap.ui.require([
 		// code under test
 		oBinding.destroy();
 
-		assert.strictEqual(oBinding.oCachePromise, undefined);
-
 		oBinding = this.oModel.bindContext("relative");
 		oBinding.setContext(oContext);
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
@@ -1385,6 +1383,10 @@ sap.ui.require([
 
 		// code under test
 		oBinding.destroy();
+
+		assert.strictEqual(oBinding.oCachePromise, undefined);
+		assert.strictEqual(oBinding.oContext, undefined,
+			"context removed as in ODPropertyBinding#destroy");
 
 		oBinding = this.oModel.bindContext("/absolute", oContext);
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
