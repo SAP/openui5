@@ -409,11 +409,11 @@
 					{
 						createModel: function () {
 							var sServerUrl = "/myODataService/";
-							var oMockServer = new MockServer({ rootUri : sServerUrl});
+							oMockServer = new MockServer({ rootUri : sServerUrl});
 
 							MockServer.config({
 								autoRespond : true,
-								autoRespondAfter : 200
+								autoRespondAfter : 0
 							});
 
 							oMockServer.simulate("../../../testdata/annotations/metadata.xml", {
@@ -427,6 +427,8 @@
 						name: "List should load more items with ODATA"
 					}
 				].forEach(function (oTest) {
+					Opa5.extendConfig({autoWait: true});
+
 					opaTest(oTest.name, function(oOpa) {
 						var done = Opa5.assert.async();
 
@@ -435,18 +437,27 @@
 
 						oOpa.waitFor({
 							id: oList.getId(),
+							matchers: new AggregationLengthEquals({name: "items", length: 1}),
+							success: function () {
+								Opa5.assert.ok(true, "Table items loaded");
+							},
+							errorMessage: "Table items not loaded"
+						});
+
+						oOpa.waitFor({
+							id: oList.getId(),
 							actions: new Press(),
-							errorMessage: "Can't find ComboBox"
+							errorMessage: "Can't find More button"
 						});
 
 						oOpa.waitFor({
 							id: oList.getId(),
 							matchers: new AggregationLengthEquals({name: "items", length: 2}),
 							success: function () {
-								Opa5.assert.equal(oList.getItems().length, 2, "Triggered growing");
+								Opa5.assert.ok(true, "Table growth triggered");
 								done();
 							},
-							errorMessage: "Growth not triggered"
+							errorMessage: "Table growth not triggered"
 						});
 					});
 				});
