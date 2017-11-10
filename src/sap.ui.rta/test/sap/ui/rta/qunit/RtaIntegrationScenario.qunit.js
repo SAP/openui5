@@ -203,7 +203,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("with focus on the toolbar", function(assert) {
-		this.oRta.getToolbar().getDomRef().focus();
+		this.oRta.getToolbar().getControl('exit').focus();
 
 		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Z, false, false, true);
 		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
