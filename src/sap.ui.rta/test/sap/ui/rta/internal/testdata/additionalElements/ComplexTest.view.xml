@@ -118,6 +118,39 @@
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 
+					<uxap:ObjectPageSection id="ObjectPageSectionAbsoluteBinding" title="Object Page Section Absolute Binding">
+						<uxap:ObjectPageSubSection id="ObjectPageSubSectionAbsoluteBinding" >
+							<List id="listWithAbsoluteBinding" items="{/EntityTypes2}">
+								<items>
+									<StandardListItem title="{path: 'EntityType02_Property01'}" description="{path: 'EntityType02_Property02'}" />
+								</items>
+							</List>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSectionAbsoluteBinding2" title="Object Page Section Absolute Binding2">
+						<uxap:ObjectPageSubSection id="ObjectPageSubSectionAbsoluteBinding2" >
+							<Table id="TableWithAbsoluteBinding2" items="{/EntityTypes2}">
+								<columns>
+									<Column id="Column00">
+										<Text text="{/#EntityTypes2/EntityType02_Property01/@sap:label}" />
+									</Column>
+									<Column id="Column01">
+										<Text text="{/#EntityTypes2/EntityType02_Property02/@sap:label}" />
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{EntityType02_Property01}" />
+											<Text text="{EntityType02_Property02}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
 					<uxap:ObjectPageSection id="ObjectPageSectionForNavigation" title="Object Page Section NavProperty">
 						<uxap:ObjectPageSubSection id="ObjectPageSubSectionForNavigation" blocks="{ path: 'to_EntityType01Nav', length: 1, templateShareable: false }">
 							<!-- This form is bound to EntityTypeNav through navigation in the controller -->
