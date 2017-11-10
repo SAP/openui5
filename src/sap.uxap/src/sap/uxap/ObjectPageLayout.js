@@ -583,6 +583,7 @@ sap.ui.define([
 		// some late callbacks may still have access to the page
 		// (and try to process the page) after the page is being destroyed
 		this._oFirstVisibleSection = null;
+		this._oFirstVisibleSubSection = null;
 	};
 
 	ObjectPageLayout.prototype._getCustomScrollBar = function () {
@@ -892,6 +893,7 @@ sap.ui.define([
 
 		this._setInternalAnchorBarVisible(bVisibleAnchorBar, bInvalidate);
 		this._oFirstVisibleSection = oFirstVisibleSection;
+		this._oFirstVisibleSubSection = this._getFirstVisibleSubSection(oFirstVisibleSection);
 	};
 
 	/*************************************************************************************
@@ -1365,6 +1367,10 @@ sap.ui.define([
 				this._toggleHeader(true);
 			}
 
+			if ((time === 0) && this._shouldSnapHeaderOnScroll(y)) {
+				this._toggleHeader(true);
+			}
+
 			this._oScroller.scrollTo(0, y, time);
 		}
 		return this;
@@ -1678,12 +1684,15 @@ sap.ui.define([
 		return iSpacerHeight;
 	};
 
-	ObjectPageLayout.prototype._isFirstVisibleSectionBase = function (oSection) {
+	ObjectPageLayout.prototype._isFirstVisibleSectionBase = function (oSectionBase) {
 
-		var oSectionInfo = this._oSectionInfo[oSection.getId()];
-		if (oSectionInfo) {
-			return Math.abs(oSectionInfo.positionTop - this.iHeaderContentHeight) <= 1;
+		var sSectionBaseId;
+
+		if (oSectionBase && (this._oFirstVisibleSubSection || this._oFirstVisibleSection)) {
+			sSectionBaseId = oSectionBase.getId();
+			return sSectionBaseId === this._oFirstVisibleSection.getId() || sSectionBaseId === this._oFirstVisibleSubSection.getId();
 		}
+
 		return false;
 	};
 
