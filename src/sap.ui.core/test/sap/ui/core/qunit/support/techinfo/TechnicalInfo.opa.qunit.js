@@ -20,10 +20,9 @@ sap.ui.require([
 	"sap/ui/model/resource/ResourceModel"
 ], function (Device, Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText, ResourceModel) {
 	"use strict";
-
-	var sTestPageURL = "TechnicalInfoTestbench.html",
-		sOpenUI5BetaKey = "https://openui5beta.hana.ondemand.com/resources/sap/ui/support/";
-
+	// The window sap-ui-debug is added to the test page URL because its not passed from qUnite page Url to iframe where the app loaded
+	var sTestPageURL = "TechnicalInfoTestbench.html" + "?sap-ui-debug=" + !!window['sap-ui-debug'],
+		sOpenUI5BetaKey = "https://openui5nightly.hana.ondemand.com/resources/sap/ui/support/";
 	Opa5.extendConfig({
 		autoWait : true
 	});
@@ -613,9 +612,16 @@ sap.ui.require([
 				theCustomDebugValueShouldBe: function (sValue) {
 					return this.waitFor({
 						id : "TechnicalInfoDialogDebugModules--customDebugValue",
-						matchers: new PropertyStrictEquals({name: "value", value: sValue}),
-						success : function () {
-							Opa5.assert.ok(true, "The custom debug value is: " + sValue);
+						success : function (sCustomDebugValue) {
+							if (sCustomDebugValue) {
+								var modules = sValue.split(",");
+								for (var i = 0; i < modules.length; i++) {
+									var bFound = sCustomDebugValue.getValue().indexOf(modules[i]) !== -1;
+									Opa5.assert.ok(bFound, "The custom debug value contains: " + modules[i]);
+								}
+							} else {
+								Opa5.assert.ok(false, "customDebugValue is empty");
+							}
 						}
 					});
 				},
@@ -776,11 +782,11 @@ sap.ui.require([
 
 	opaTest("Should show error when trying to start support assistant with empty custom bootstrap URL", function(Given, When, Then) {
 		var oI18nModel = new ResourceModel({
-			bundleName: "sap.ui.core.messagebundle"
+			bundleName: "sap.ui.core.messagebundle",
+			bundleLocale: "en"
 		});
 		var sErrorForResourceNotFound = oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.SupportAssistantNotFound") +
 			oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.ErrorNotFound");
-
 		// Arrange
 		When.onTheConfigDialog.iEnterCustomBootstrapUrl("").iCloseThePopup();
 		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("None");
