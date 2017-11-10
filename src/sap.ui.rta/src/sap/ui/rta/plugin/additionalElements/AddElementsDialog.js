@@ -193,8 +193,8 @@ sap.ui.define([
 				{
 					mode : "MultiSelect",
 					includeItemInSelection : true,
-					growing : false,
-					growingScrollToLoad : false
+					growing : true,
+					growingScrollToLoad : true
 				}).setNoDataText(this._oTextResources.getText("MSG_NO_FIELDS", this._oTextResources.getText("MULTIPLE_CONTROL_NAME").toLowerCase()));
 
 		var oListItem = new ListItem({
