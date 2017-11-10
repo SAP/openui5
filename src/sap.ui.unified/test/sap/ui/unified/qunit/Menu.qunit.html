@@ -731,7 +731,9 @@
 			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
 			checkHoveredItem("item8", oSubMenu, assert);
-			if (sap.ui.Device.system.desktop) {
+			// if the device supports touches the programmatic focus is not working correctly
+			// so use touch events
+			if (!sap.ui.Device.support.touch) {
 				jQuery("#input").get(0).focus();
 			} else {
 				qutils.triggerEvent("touchstart", "input", {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
@@ -743,7 +745,9 @@
 			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
 			checkHoveredItem("item8", oSubMenu, assert);
-			if (sap.ui.Device.system.desktop) {
+			// if the device supports touches the programmatic focus is not working correctly
+			// so use touch events
+			if (!sap.ui.Device.support.touch) {
 				oButton.focus();
 			} else {
 				qutils.triggerEvent("touchstart", oButton.getId(), {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
