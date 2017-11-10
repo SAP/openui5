@@ -298,6 +298,7 @@ sap.ui.define([
 		onChangeStandardBootstrapURL: function (oEvent) {
 			var sValue = oEvent.getParameter("selectedItem").getKey();
 			this._storage.put("sap-ui-standard-bootstrap-URL", sValue);
+			this._resetValueState(oEvent.getSource());
 			this._pingUrl(sValue, oEvent.getSource());
 		},
 
@@ -350,7 +351,7 @@ sap.ui.define([
 
 			// enable or disable default option for version >= 1.48
 			var oCurrentItem = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standardBootstrapURL").getItems()[0];
-			if (sap.ui.getCore().getConfiguration().getVersion().compareTo(this._MIN_UI5VERSION_SUPPORT_ASSISTANT) >= 0) {
+			if (this._isVersionBiggerThanMinSupported()) {
 				var sAppVersion = sap.ui.getCore().getConfiguration().getVersion().toString();
 				oCurrentItem.setText(oCurrentItem.getText().replace("[[version]]", sAppVersion));
 				oCurrentItem.setEnabled(true);
@@ -610,6 +611,13 @@ sap.ui.define([
 			oViewModel.setProperty("/ApplicationURL", document.location.href);
 			oViewModel.setProperty("/UserAgent", navigator.userAgent);
 			oViewModel.setProperty("/DebugMode", sap.ui.getCore().getConfiguration().getDebug());
+
+			// If ui version is smaller than 1.48 this sets the default location from where the SA will be loaded
+			// to OpenUI5 (Nightly) because the SA is not available in 1.44 or lower version
+			if (!this._isVersionBiggerThanMinSupported()) {
+				oViewModel.setProperty("/StandardBootstrapURL",aSupportedUrls[2].Value);
+				this._storage.put("sap-ui-standard-bootstrap-URL",aSupportedUrls[2].Value);
+			}
 			return oViewModel;
 		},
 
@@ -624,6 +632,20 @@ sap.ui.define([
 			if (!this._storage.get(sParameter)) {
 				this._storage.put(sParameter, sDefault);
 			}
+		},
+
+		/**
+		 * Checks if current version of UI5 is equal or higher than minimum UI5 version
+		 * that Support Assistant is available at.
+		 * @returns {boolean}
+		 * @private
+		 */
+		_isVersionBiggerThanMinSupported: function () {
+			var oVersion = sap.ui.getCore().getConfiguration().getVersion();
+			if (oVersion && oVersion.compareTo(this._MIN_UI5VERSION_SUPPORT_ASSISTANT) >= 0) {
+				return true;
+			}
+			return false;
 		},
 
 		/**
