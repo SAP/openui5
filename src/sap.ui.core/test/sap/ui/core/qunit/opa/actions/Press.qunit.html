@@ -45,7 +45,8 @@
 			"sap/m/semantic/DetailPage",
 			"sap/m/CheckBox",
 			"sap/ui/test/opaQunit",
-			"sap/ui/test/Opa5"
+			"sap/ui/test/Opa5",
+			"sap/ui/test/matchers/AggregationLengthEquals"
 		],
 		function(Press,
 				 Button,
@@ -69,7 +70,8 @@
 				 DetailPage,
 				 CheckBox,
 				 opaTest,
-				 Opa5){
+				 Opa5,
+				 AggregationLengthEquals){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
@@ -359,11 +361,11 @@
 					{
 						createModel: function () {
 							var sServerUrl = "/myODataService/";
-							var oMockServer = new MockServer({ rootUri : sServerUrl});
+							oMockServer = new MockServer({ rootUri : sServerUrl});
 
 							MockServer.config({
 								autoRespond : true,
-								autoRespondAfter : 2000
+								autoRespondAfter : 0
 							});
 
 							oMockServer.simulate("../../../testdata/annotations/metadata.xml", {
@@ -377,20 +379,37 @@
 						name: "List should load more items with ODATA"
 					}
 				].forEach(function (oTest) {
+					Opa5.extendConfig({autoWait: true});
+
 					opaTest(oTest.name, function(oOpa) {
+						var done = Opa5.assert.async();
+
 						oTest.createModel();
 						oList.setModel(oModel);
 
 						oOpa.waitFor({
 							id: oList.getId(),
-							actions: new Press()
+							matchers: new AggregationLengthEquals({name: "items", length: 1}),
+							success: function () {
+								Opa5.assert.ok(true, "Table items loaded");
+							},
+							errorMessage: "Table items not loaded"
 						});
 
 						oOpa.waitFor({
 							id: oList.getId(),
-							actions: function () {
-								assert.equal(oList.getItems().length, 2, "Triggered growing");
-							}
+							actions: new Press(),
+							errorMessage: "Can't find More button"
+						});
+
+						oOpa.waitFor({
+							id: oList.getId(),
+							matchers: new AggregationLengthEquals({name: "items", length: 2}),
+							success: function () {
+								Opa5.assert.ok(true, "Table growth triggered");
+								done();
+							},
+							errorMessage: "Table growth not triggered"
 						});
 					});
 				});
