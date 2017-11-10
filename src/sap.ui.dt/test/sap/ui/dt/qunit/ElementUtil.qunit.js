@@ -339,8 +339,8 @@ function(
 
 		assert.notOk(ElementUtil.isVisible(jQuery(oButtons[0].getDomRef())), "the first button is not visible due to 'visibility hidden'");
 		assert.notOk(ElementUtil.isVisible(jQuery(oButtons[1].getDomRef())), "the second button is not visible due to 'opacity 0'");
-		// css property filter not supported by phantomJS!
-		if (!sap.ui.Device.browser.phantomJS) {
+		// css property filter not supported by phantomJS & Internet Explorer!
+		if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.msie) {
 			assert.notOk(ElementUtil.isVisible(jQuery(oButtons[2].getDomRef())), "the third button is not visible due to 'filter opacity(0)'");
 		}
 		assert.ok(ElementUtil.isVisible(jQuery(oButtons[3].getDomRef())), "the fourth button is visible");
