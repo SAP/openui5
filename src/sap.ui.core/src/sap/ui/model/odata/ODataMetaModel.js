@@ -99,6 +99,7 @@ sap.ui.define([
 	 * are added, if they are not yet defined in the V4 annotations:
 	 * <ul>
 	 * <li><code>label</code>;</li>
+	 * <li><code>schema-version</code> (since 1.53.0) on schemas;</li>
 	 * <li><code>creatable</code>, <code>deletable</code>, <code>deletable-path</code>,
 	 * <code>pageable</code>, <code>requires-filter</code>, <code>searchable</code>,
 	 * <code>topable</code>, <code>updatable</code> and <code>updatable-path</code> on entity sets;
