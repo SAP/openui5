@@ -39,11 +39,7 @@
 				<ColumnListItem>
 					<cells>
 						<Text text="{SalesOrder}"/>
-					</cells>
-					<cells>
 						<Text text="{Customer}"/>
-					</cells>
-					<cells>
 						<Text text="{OverallStatus}"/>
 					</cells>
 				</ColumnListItem>
@@ -77,14 +73,8 @@
 				<ColumnListItem>
 					<cells>
 						<Text text="{SalesOrder}"/>
-					</cells>
-					<cells>
 						<Text text="{SalesOrderItem}"/>
-					</cells>
-					<cells>
 						<Text text="{Product}"/>
-					</cells>
-					<cells>
 						<Text text="{GrossAmount}"/>
 					</cells>
 				</ColumnListItem>

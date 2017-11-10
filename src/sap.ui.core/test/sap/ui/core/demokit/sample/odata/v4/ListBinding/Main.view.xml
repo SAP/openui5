@@ -154,31 +154,15 @@
 			<ColumnListItem>
 				<cells>
 					<Input value="{Name}"/>
-				</cells>
-				<cells>
 					<Text id="Employee_ID" text="{ID}"/>
-				</cells>
-				<cells>
 					<CheckBox selected="{Is_Manager}"/>
-				</cells>
-				<cells>
 					<Input value="{AGE}"/>
-				</cells>
-				<cells>
 					<Text text="{LOCATION/City/CITYNAME}"/>
-				</cells>
-				<cells>
 					<Input value="{ENTRYDATE}"/>
-				</cells>
-				<cells>
 					<!-- Note: automatic type determination cannot work here and triggers a warning
 					  -->
 					<Text text="{path : '@odata.etag', type : 'sap.ui.model.odata.type.String'}"/>
-				</cells>
-				<cells>
 					<Button icon="sap-icon://delete" text="Delete" press="onDeleteEmployee"/>
-				</cells>
-				<cells>
 					<Button enabled="false" icon="sap-icon://edit" text="Update"
 						press="onUpdateEmployee" tooltip="Make ETag look outdated"/>
 				</cells>
@@ -208,22 +192,14 @@
 			<ColumnListItem>
 				<cells>
 					<Text text="{ID}"/>
-				</cells>
-				<cells>
 					<Image src="{EQUIPMENT_2_PRODUCT/ProductPicture/Picture}"/>
-				</cells>
-				<cells>
 					<Input value="{EQUIPMENT_2_PRODUCT/Name}"/>
-				</cells>
-				<cells>
 					<HBox>
 						<Text text="{Category} -&#160;"/>
 						<List items="{path : 'EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY', templateShareable : false}">
 							<StandardListItem title="{CategoryName}"/>
 						</List>
 					</HBox>
-				</cells>
-				<cells>
 					<Input value="{EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name}"/>
 				</cells>
 			</ColumnListItem>
@@ -322,14 +298,8 @@
 				<ColumnListItem>
 					<cells>
 						<Text text="{Category}"/>
-					</cells>
-					<cells>
 						<Text text="{ID}"/>
-					</cells>
-					<cells>
 						<Text text="{Name}"/>
-					</cells>
-					<cells>
 						<Text text="{EmployeeId}"/>
 					</cells>
 				</ColumnListItem>
