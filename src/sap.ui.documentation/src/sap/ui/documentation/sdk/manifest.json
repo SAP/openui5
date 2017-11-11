@@ -1,9 +1,8 @@
 {
-	"_version": "1.3.0",
+	"_version": "1.8.0",
 
 	"sap.app": {
-		"_version": "1.3.0",
-		"id": "sap.ui.documentation.sdk",
+	"id": "sap.ui.documentation.sdk",
 		"type": "application",
 		"title": "OpenUI5 SDK - Demo Kit v2.0",
 		"applicationVersion": {
@@ -12,8 +11,7 @@
 	},
 
 	"sap.ui": {
-		"_version": "1.3.0",
-		"technology": "UI5",
+	"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://detail-view",
 			"favIcon": "",
@@ -36,8 +34,7 @@
 	},
 
 	"sap.ui5": {
-		"_version": "1.2.0",
-		"rootView": {
+	"rootView": {
 			"viewName": "sap.ui.documentation.sdk.view.App",
 			"type": "XML",
 			"id": "app"
@@ -109,7 +106,14 @@
 		  {
 			"pattern": "controls",
 			"name": "controls",
-			"target": ["controlsMaster", "controls"]
+			"target": ["controlsMaster", "controls"],
+			  "subroutes": [
+				  {
+					  "pattern": "controls/filter/{value}",
+					  "name": "listFilter",
+					  "target": ["controlsMaster", "controls"]
+				  }
+			  ]
 		  },
 		  {
 			"pattern": "group/{id}",
@@ -205,6 +209,11 @@
 			"target": ["demoApps"]
 		  },
 		  {
+			"pattern": "tools",
+			"name": "tools",
+			"target": ["tools"]
+		  },
+		  {
 			"pattern": "search/{searchParam}",
 			"name": "search",
 			"target": ["searchPage"]
@@ -287,6 +296,11 @@
 				"viewLevel": 2,
 				"viewId": "demoApps"
 		  },
+		  "tools": {
+				"viewName": "Tools",
+				"viewLevel": 2,
+				"viewId": "tools"
+		  },
 		  "apiDetailInitial": {
 			"viewName": "ApiDetailInitial",
 			"viewId": "apiDetailInitial",
@@ -328,14 +342,6 @@
 			"viewId": "searchPage",
 			"viewLevel": 2,
 			"controlAggregation": "detailPages"
-		  },
-		  "detailObjectNotFound": {
-			"viewName": "DetailObjectNotFound",
-			"viewId": "detailObjectNotFound"
-		  },
-		  "detailNoObjectsAvailable": {
-			"viewName": "DetailNoObjectsAvailable",
-			"viewId": "detailNoObjectsAvailable"
 		  },
 		  "notFound": {
 			"viewName": "NotFound",

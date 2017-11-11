@@ -29,6 +29,7 @@
 	font-size: 0.875rem;
 }
 
+pre.sapUiDocumentationAPICode,
 .sapUiDocumentationJsDoc pre {
 	white-space: pre-wrap;
 }
@@ -75,10 +76,6 @@
 
 .docuPage section {
 	background-color: #fff;
-}
-
-.sapMPage .sapMOHR.sapMOHRBgTranslucent {
-	background: #f2f8fc;
 }
 
 /************************************************* Custom control styles *********************************************/
@@ -481,20 +478,6 @@ code, kbd, pre, samp {
 /* Replaces the search icon with a filter icon */
 .sapUiDocumentationFilterField .sapMSFS:after {
 	content: "\e076";
-}
-
-/* Fix for sap.m.Tree selection TODO: remove this after sap.m.Tree selection is corrected */
-.sapUiTheme-sap_belize .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
-	background: #496b8a;
-}
-.sapUiTheme-sap_belize_plus .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
-	background: #496b8a;
-}
-.sapUiTheme-sap_belize_hcb .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
-	background: #0f5d94;
-}
-.sapUiTheme-sap_belize_hcw .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
-	background: #8fb5ff;
 }
 
 /* sap.m.List does not always take up 100% height (the containing page's background is modified instead) */
@@ -1080,7 +1063,7 @@ html[data-sap-ui-browser="ie9"] .titlesHeader p {
 /* remove white shadow for header bars */
 .sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX,
 .sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMHeader-CTX {
-	box-shadow: inherit;
+	box-shadow: none;
 }
 
 /* correct split container right border */
@@ -1302,57 +1285,59 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 /* ==========================================================================
    Documentation Page Header styles
   ========================================================================== */
-.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderText {
+
+.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading {
 	position: absolute;
 	padding-left: 2rem;
-	left: 0rem;
+	left: 0;
+	top: 2.5rem;
+	margin-left: -0.2rem;
+}
+
+.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMText {
 	font-family: Arial;
+	font-size: 3rem;
 	color: #fff;
 	text-shadow: 0 0 0.125rem #000;
 }
 
-.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
-	top: 2.5rem;
-	font-size: 3rem;
-	margin-left: -0.2rem;
-}
-
-.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderSubText {
-	top: 6.25rem;
-	font-size: 1.25rem;
-	font-weight: normal;
+.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMBtn {
+	margin-top: 1rem;
 }
 
 /*SMALL*/
 @media (max-width: 64rem) {
-	.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading {
 		top: 1.25rem;
-		font-size: 1.625rem;
 		padding-left: 1rem;
 		margin-left: -0.0625rem;
 	}
 
-	.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderSubText {
-		top: 3.125rem;
-		font-size: 0.875rem;
-		padding-left: 1rem;
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMText {
+		font-size: 1.625rem;
+	}
+
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMBtn {
+		margin-top: 0.5rem;
 	}
 }
 
 /*XTRA LARGE*/
 @media (min-width: 90rem) {
-	.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading {
 		top: 2.5rem;
-		font-size: 4rem;
 		padding-left: 3rem;
 	}
 
-	.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderSubText {
-		top: 6.875rem;
-		font-size: 2rem;
-		padding-left: 3rem;
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMText {
+		font-size: 4rem;
+	}
+
+	.sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMBtn {
+		margin-top: 1rem;
 	}
 }
+
 /* ==========================================================================
    Explored Page Header styles
   ========================================================================== */
@@ -1463,9 +1448,46 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 	}
 }
 
+/* ==========================================================================
+   Tools Page Header styles
+  ========================================================================== */
+.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
+	top: 2.5rem;
+	left: 0;
+	font-size: 3rem;
+	margin-left: -0.2rem;
+	position: absolute;
+	padding-left: 2rem;
+	font-family: Arial;
+	color: #ffffff;
+	text-shadow: 0 0 0.125rem #000000;
+}
+
+/*SMALL*/
+@media (max-width: 64rem) {
+	.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
+		top: 1.25rem;
+		font-size: 1.625rem;
+		padding-left: 1rem;
+		margin-left: -0.0625rem;
+	}
+}
+
+/*XTRA LARGE*/
+@media (min-width: 90rem) {
+	.sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
+		top: 2.5rem;
+		font-size: 4rem;
+		padding-left: 3rem;
+	}
+}
+
 /* Landing pages aspect ratio */
 html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .sapUiDemokitLandingImageCell:not(.welcomeImageCell) {
 	padding-bottom: 24.6%;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .sapUiDemokitLandingImageCell.toolsImageCell {
+	padding-bottom: 19.5%;
 }
 html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
 	position: absolute;
@@ -1577,6 +1599,11 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 .sapUiTheme-sap_belize_plus .apiDetailPage .sapMPanel.borrowedMethodsPanel .sapMPanelContent {
 	padding: 0;
 }
+
+.sapUiDocumentationSubclassesPopover {
+	padding: 0.5rem;
+	max-width: 1000px;
+}
 /*
  * End of API Detail specific CSS
  */
@@ -1584,4 +1611,12 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 /* Global search specific CSS to allow full entry title to be visible on phone */
 .sap-phone .sapMList .sapMFeedListItemTextName .sapMLnk {
 	white-space: pre-line;
+}
+
+/* Release notes */
+.sapUiCustomTitleText {
+	font-size: 0.875rem;
+}
+.sapUiCustomTitleText .sapMLnk {
+	display: inline;
 }

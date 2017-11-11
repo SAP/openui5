@@ -3,18 +3,22 @@
  */
 
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/Device",
-		"sap/ui/core/Component",
 		"sap/ui/core/Fragment",
 		"sap/ui/documentation/library",
 		"sap/ui/core/IconPool",
 		"sap/m/SplitAppMode",
-		"sap/m/MessageBox"
-	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, IconPool, SplitAppMode, MessageBox) {
+		"sap/m/MessageBox",
+		"sap/m/library"
+	], function (jQuery, BaseController, JSONModel, ResizeHandler, Device, Fragment, library, IconPool, SplitAppMode, MessageBox, mobileLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.URLHelper
+		var URLHelper = mobileLibrary.URLHelper;
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			onInit : function () {
@@ -26,15 +30,27 @@ sap.ui.define([
 					bPhoneSize: false,
 					bLandscape: Device.orientation.landscape,
 					bHasMaster: false,
-					bSearchMode: false
+					bSearchMode: false,
+					bHideEmptySections: window['sap-ui-documentation-hideEmptySections'],
+					sAboutInfoSAPUI5: "Looking for the Demo Kit for a specific SAPUI5 version? " +
+					"Check at <a href = 'https://sapui5.hana.ondemand.com/versionoverview.html'>https://sapui5.hana.ondemand.com/versionoverview.html</a> " +
+					"which versions are available. " +
+					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
+					"<a href='https://sapui5.hana.ondemand.com/1.44.16/'>https://sapui5.hana.ondemand.com/1.44.16/</a>",
+					sAboutInfoOpenUI5: "Looking for the Demo Kit for a specific OpenUI5 version? " +
+					"Check at <a href = 'https://openui5.hana.ondemand.com/versionoverview.html'>https://openui5.hana.ondemand.com/versionoverview.html</a> " +
+					"which versions are available. " +
+					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
+					"<a href='https://openui5.hana.ondemand.com/1.44.16/'>https://openui5.hana.ondemand.com/1.44.16/</a>"
 				});
+
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
 					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
 					"Terms of Use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
 					"Copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
 					"Trademark": "https://www.sap.com/corporate/en/legal/copyright.html#trademark",
-					"Disclaimer": "http://help-legacy.sap.com/disclaimer-full"
+					"Disclaimer": "https://help.sap.com/viewer/disclaimer"
 				};
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
 				this.OLD_DOC_LINK_SUFFIX = ".html";
@@ -50,6 +66,7 @@ sap.ui.define([
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
+				this.oRouter.attachBypassed(this.onRouteNotFound.bind(this));
 
 				this.getRouter().getRoute("topicIdLegacyRoute").attachPatternMatched(this._onTopicOldRouteMatched, this);
 				this.getRouter().getRoute("apiIdLegacyRoute").attachPatternMatched(this._onApiOldRouteMatched, this);
@@ -62,9 +79,6 @@ sap.ui.define([
 				this.oRouter.getRoute("entityEventsLegacyRoute").attachPatternMatched({entityType:"events"}, this._forwardToAPIRef, this);
 				this.oRouter.getRoute("entityMethodsLegacyRoute").attachPatternMatched({entityType:"methods"}, this._forwardToAPIRef, this);
 
-				// apply content density mode to root view
-				this._oView.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
 			},
@@ -74,6 +88,11 @@ sap.ui.define([
 			},
 
 			onAfterRendering: function() {
+				// apply content density mode to the body tag
+				// in order to get the controls in the static area styled correctly,
+				// such as Dialog and Popover.
+				jQuery(document.body).addClass(this.getOwnerComponent().getContentDensityClass());
+
 				Device.orientation.attachHandler(this._onOrientationChange, this);
 			},
 
@@ -173,6 +192,11 @@ sap.ui.define([
 				oViewModel.setProperty("/bIsShownMaster", false);
 			},
 
+			onRouteNotFound: function () {
+				this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+				return;
+			},
+
 			toggleMaster: function(oEvent) {
 				var bPressed = oEvent.getParameter("pressed"),
 					bPhone = Device.system.phone,
@@ -219,7 +243,7 @@ sap.ui.define([
 				} else if (sTargetText === "Feedback") {
 					this.feedbackDialogOpen();
 				} else if (sTarget) {
-					sap.m.URLHelper.redirect(sTarget, true);
+					URLHelper.redirect(sTarget, true);
 				}
 			},
 
@@ -545,14 +569,6 @@ sap.ui.define([
 				}
 			},
 
-			//onFeedbackInput : function() {
-			//	if (this._oFeedbackDialog.textInput.getValue() || this._oFeedbackDialog.ratingStatus.value) {
-			//		this._oFeedbackDialog.sendButton.setEnabled(true);
-			//	} else {
-			//		this._oFeedbackDialog.sendButton.setEnabled(false);
-			//	}
-			//},
-
 			onSearch : function (oEvent) {
 				var sQuery = oEvent.getParameter("query");
 				if (!sQuery) {
@@ -583,6 +599,12 @@ sap.ui.define([
 				oViewModel.setProperty("/bSearchMode", bSearchMode);
 
 				this._toggleTabHeaderClass();
+
+				if (bSearchMode) {
+					jQuery.sap.delayedCall(0, this, function () {
+						this._oView.byId("searchControl").getAggregation("_searchField").getFocusDomRef().focus();
+					});
+				}
 			},
 
 			/**
@@ -659,6 +681,5 @@ sap.ui.define([
 			}
 
 		});
-
 	}
 );

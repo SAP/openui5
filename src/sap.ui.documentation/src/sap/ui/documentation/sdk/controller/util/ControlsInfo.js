@@ -18,15 +18,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 						library._loadAllLibInfo(
 							"", "_getDocuIndex",
 							function (aLibs, oDocIndicies) {
-								var oData = ControlsInfo._getIndices(aLibs, oDocIndicies);
-								resolve(oData);
+								var oData = ControlsInfo._getIndices(aLibs, oDocIndicies, function () {
+									// We pass the resolve method to be called when we have all the component data loaded
+									resolve(oData);
+								});
 							});
 					});
 				}
 				return oPromise;
 			},
 
-			_getIndices: function (aLibs, oDocIndicies) {
+			_getIndices: function (aLibs, oDocIndicies, fnComponentLoadCallback) {
 
 				var aCategoryWhiteList = [
 					"Action",
@@ -292,17 +294,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 						data.filter[setKey].push({id: key});
 					});
 				});
-
-				// call LibraryInfo API method for collecting all component info from the .library files
+				// Call LibraryInfo API method for collecting all component info from the .library files
+				// Note: _getLibraryInfo collects info with a delayed call so we need a callback to know
+				// when the last library info is collected
 
 				var oLibInfo = library._getLibraryInfoSingleton();
 				var oLibComponents = {};
-				var oLibraryComponentInfo = function (oComponent) {
-					oLibComponents[oComponent.library] = oComponent.componentInfo;
-				};
+				var aPromises = [];
+
+				// Create promises for all libraries needed
 				for (var i = 0; i < aLibs.length; i++) {
-					oLibInfo._getLibraryInfo(aLibs[i], oLibraryComponentInfo);
+					/* eslint-disable no-loop-func */
+					aPromises.push(new Promise(function (fnResolve) {
+						var oLibraryComponentInfo = function (oComponent) {
+							oLibComponents[oComponent.library] = oComponent.componentInfo;
+							fnResolve();
+						};
+						oLibInfo._getLibraryInfo(aLibs[i], oLibraryComponentInfo);
+					}));
+					/* eslint-enable no-loop-func */
 				}
+
+				// Execute promises
+				Promise.all(aPromises).then(function () {
+					// Callback so the loading of the library component data can be handled
+					fnComponentLoadCallback && fnComponentLoadCallback();
+				});
 
 				data.libComponentInfos = oLibComponents;
 

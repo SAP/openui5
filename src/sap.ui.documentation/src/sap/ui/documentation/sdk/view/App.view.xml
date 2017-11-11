@@ -41,13 +41,15 @@
 					<items>
 						<IconTabFilter id="welcomeTab" text="Home" key="home" visible="{=${appView>/bPhoneSize}}">
 						</IconTabFilter>
-						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic">
+						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic" visible="{= !${appView>/bHideEmptySections}}">
 						</IconTabFilter>
-						<IconTabFilter id="apiMasterTab" text="API Reference" key="api">
+						<IconTabFilter id="apiMasterTab" text="API Reference" key="api" visible="{= !${appView>/bHideEmptySections}}">
 						</IconTabFilter>
 						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
 						</IconTabFilter>
 						<IconTabFilter id="demoAppsTab" text="Demo Apps" key="demoapps">
+						</IconTabFilter>
+						<IconTabFilter id="toolsTab" text="Tools" key="tools">
 						</IconTabFilter>
 					</items>
 				</IconTabHeader>

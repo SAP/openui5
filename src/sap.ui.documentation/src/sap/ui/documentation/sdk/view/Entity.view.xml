@@ -9,7 +9,8 @@
 			id="ObjectPageLayout"
 			useIconTabBar="true"
 			selectedSection="samples"
-			upperCaseAnchorBar="false">
+			upperCaseAnchorBar="false"
+			busyIndicatorDelay="0">
 		<headerTitle>
 			<ObjectPageHeader
 					id="entityHeader"
@@ -31,9 +32,14 @@
 			<l:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin" hSpacing="0">
 				<l:VerticalLayout class="sapUiLargeMarginEnd" width="98%">
 
-					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
-						<m:Label text="API Reference:"/>
-						<m:Link text="{/name}" enabled="true" href="#/api/{/name}"/>
+					<m:HBox visible="{= ${/entity/category} !== 'Tutorial'}" class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
+						<m:Label design="Bold" text="API Reference:"/>
+						<m:Link emphasized="true" text="{/name}" enabled="true" href="#/api/{/name}"/>
+					</m:HBox>
+
+					<m:HBox visible="{/show/introLink}" class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
+						<m:Label design="Bold" text="Documentation:"/>
+						<m:Link emphasized="true" text="{/baseName}" enabled="true" href="{/docuLink}"/>
 					</m:HBox>
 
 					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
@@ -73,6 +79,10 @@
 
 						<l:VerticalLayout>
 							<core:HTML content="{/description}" />
+
+							<l:VerticalLayout visible="{/show/introLink}">
+								<m:Text text="{/shortDescription}"/>
+							</l:VerticalLayout>
 
 							<m:Table
 									class="myTable"

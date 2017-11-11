@@ -46,9 +46,32 @@ sap.ui.define([
 			 */
 			onExit: function() {
 				this._deregisterOrientationChange();
+			},
+
+			/**
+			 * Opens the developer's guide in a pdf format and in a new tab.
+			 * @public
+			 */
+			onDownloadButtonPress: function () {
+				window.open(this._determineFileLocation(), "_blank");
+			},
+
+			/**
+			 * Determines the downloaded PDF's file location.
+			 * @returns {string} The location of the PDF file
+			 * @private
+			 */
+			_determineFileLocation: function () {
+				var oVersionModel = this.getModel("versionData"),
+					bIsDevVersion = oVersionModel.getProperty('/isDevVersion'),
+					bIsOpenUI5 = oVersionModel.getProperty('/isOpenUI5');
+
+				if (bIsOpenUI5) {
+					return 'https://help.sap.com/OpenUI5_PDF/OpenUI5.pdf';
+				}
+
+				return bIsDevVersion ? 'https://help.sap.com/DRAFT/SAPUI5_Internal_PDF/SAPUI5_Internal.pdf' : 'https://help.sap.com/SAPUI5_PDF/SAPUI5.pdf';
 			}
-
 		});
-
 	}
 );

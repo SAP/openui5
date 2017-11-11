@@ -4,17 +4,23 @@
 
 /*global location */
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
+		"sap/ui/core/Component",
 		"sap/ui/core/ComponentContainer",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/m/Text",
 		"sap/ui/core/HTML",
 		"sap/ui/Device",
-		"sap/ui/core/routing/History"
-	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, Text, HTML, Device, History) {
+		"sap/ui/core/routing/History",
+		"sap/m/library"
+	], function (jQuery, BaseController, JSONModel, Component, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, Text, HTML, Device, History, mobileLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.URLHelper
+		var URLHelper = mobileLibrary.URLHelper;
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Sample", {
 
@@ -44,6 +50,10 @@ sap.ui.define([
 			/* =========================================================== */
 
 			_onSampleMatched: function (event) {
+				var oPage = this.getView().byId("page");
+
+				oPage.setBusy(true);
+
 				this._sId = event.getParameter("arguments").id;
 
 				ControlsInfo.loadData().then(function (oData) {
@@ -52,18 +62,22 @@ sap.ui.define([
 			},
 
 			_loadSample: function(oData) {
-				var oSample = oData.samples[this._sId],
+				var oPage = this.getView().byId("page"),
+					oHistory = History.getInstance(),
+					oPrevHash = oHistory.getPreviousHash(),
+					oModelData = this._viewModel.getData(),
+					oSample = oData.samples[this._sId],
 					oContent;
 
 				if (!oSample) {
+					jQuery.sap.delayedCall(0, this, function () {
+						oPage.setBusy(false);
+					});
+					this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 					return;
 				}
 
 				// set nav button visibility
-				var oPage = this.getView().byId("page");
-				var oHistory = History.getInstance();
-				var oPrevHash = oHistory.getPreviousHash();
-				var oModelData = this._viewModel.getData();
 				oModelData.showNavButton = Device.system.phone || !!oPrevHash;
 				oModelData.previousSampleId = oSample.previousSampleId;
 				oModelData.nextSampleId = oSample.nextSampleId;
@@ -76,6 +90,9 @@ sap.ui.define([
 				} catch (ex) {
 					oPage.removeAllContent();
 					oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
+					jQuery.sap.delayedCall(0, this, function () {
+						oPage.setBusy(false);
+					});
 					return;
 				}
 
@@ -109,11 +126,14 @@ sap.ui.define([
 				// scroll to top of page
 				oPage.scrollTo(0);
 				this._viewModel.setData(oModelData);
+
+				jQuery.sap.delayedCall(0, this, function () {
+					oPage.setBusy(false);
+				});
 			},
 
-
 			onNewTab : function () {
-				sap.m.URLHelper.redirect(this.sIFrameUrl, true);
+				URLHelper.redirect(this.sIFrameUrl, true);
 			},
 
 			onPreviousSample: function (oEvent) {
@@ -192,6 +212,7 @@ sap.ui.define([
 				// create component only once
 				var sCompId = 'sampleComp-' + this._sId;
 				var sCompName = this._sId;
+				var oMainComponent = this.getOwnerComponent();
 
 				this._oComp = sap.ui.component(sCompId);
 
@@ -199,14 +220,16 @@ sap.ui.define([
 					this._oComp.destroy();
 				}
 
-				this._oComp = sap.ui.getCore().createComponent({
-					id : sCompId,
-					name : sCompName
-				});
-				// create component container
-				return new ComponentContainer({
-					component: this._oComp
-				});
+				return oMainComponent.runAsOwner(function() {
+					this._oComp = sap.ui.getCore().createComponent({
+						id: sCompId,
+						name: sCompName
+					});
+					// create component container
+					return new ComponentContainer({
+						component: this._oComp
+					});
+				}.bind(this));
 			},
 
 			onNavBack : function (oEvt) {
@@ -265,6 +288,10 @@ sap.ui.define([
 							developerMode: false
 						}});
 						this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+						this._oRTA.attachStop(function () {
+							this._oRTA.destroy();
+							delete this._oRTA;
+						}.bind(this));
 						this._oRTA.start();
 					}
 				}.bind(this));

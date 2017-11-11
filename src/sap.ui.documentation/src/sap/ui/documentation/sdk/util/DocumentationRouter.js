@@ -4,10 +4,9 @@
 
 // Provides a customized router class for the 'documentation' app.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/m/routing/Router',
 	'sap/ui/core/routing/History'
-], function (jQuery, Router, History) {
+], function(Router, History) {
 	"use strict";
 
 	var DocumentationRouter = Router.extend("sap.ui.documentation.sdk.util.DocumentationRouter", {
@@ -54,4 +53,4 @@ sap.ui.define([
 
 	return DocumentationRouter;
 
-}, /* bExport= */ true);
+});

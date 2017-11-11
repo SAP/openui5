@@ -29,14 +29,15 @@
 					</HBox>
 					<Text text="UI5 Version {versionData>/fullVersion}" class="sapMTitleStyleH4 sapUiSmallMarginBottom"/>
 					<Text text="This software includes the folloing library versions"/>
-					<HBox class="sapUiSmallMarginBottom" allowWrapping="true">
+					<HBox class="sapUiTinyMarginBottom" allowWrapping="true">
 						<Text text="(a full change log for all libraries can be found"/>
 						<Link text="here" href="releasenotes.html" target="_blank" class="aboutLink"/>
 						<Text text=")."/>
 					</HBox>
-					<Link text="Version Details" press="onAboutVersionDetails" class="sapUiMediumMarginBottom"/>
-					<Text text="This software includes third-party open source software." class="sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
+					<Link text="Version Details" press="onAboutVersionDetails" class="sapUiSmallMarginBottom"/>
+					<Text text="This software includes third-party open source software." class="sapUiTinyMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
 					<Link text="Included Third-Party Software" press="onAboutThirdParty" class="sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
+					<MessageStrip showIcon="true" text="{= ${versionData>/isOpenUI5} ? ${appView>/sAboutInfoOpenUI5} : ${appView>/sAboutInfoSAPUI5}}" class="sapUiSmallMarginBottom" enableFormattedText="true"/>
 				</VBox>
 			</Page>
 			<Page
@@ -69,9 +70,9 @@
 										<f:fields>
 											<Link text="Open Change Log" press="onReleaseDialogOpen" class="sapUiSmallMarginBottom">
 												<customData>
-  													<core:CustomData key="library" value="{appView>library}" />
-  													<core:CustomData key="version" value="{versionData>/version}" />
-  												</customData>
+													<core:CustomData key="library" value="{appView>library}" />
+													<core:CustomData key="version" value="{versionData>/version}" />
+												</customData>
 											</Link>
 										</f:fields>
 									</f:FormElement>
