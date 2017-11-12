@@ -371,13 +371,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Returns the accessibility announcement for the content
+	 * Returns the accessibility announcement for the content.
+	 *
 	 * Hook for the subclasses.
 	 *
 	 * @returns {string}
 	 * @protected
-	 * ListItemBase.prototype.getContentAnnouncement = function() {
-	 * };
+	 * @name sap.m.ListItemBase.prototype.getContentAnnouncement
+	 * @function
 	 */
 
 	/*

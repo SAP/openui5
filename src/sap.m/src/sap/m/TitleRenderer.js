@@ -16,8 +16,8 @@ sap.ui.define(["sap/ui/core/library"],
 
 
 	/**
-	 * @class Title renderer.
-	 * @static
+	 * Title renderer.
+	 * @namespace
 	 */
 	var TitleRenderer = {};
 

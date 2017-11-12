@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define("sap/m/PDFViewerRenderManager", [
+sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/library",
 	"sap/m/Dialog",
