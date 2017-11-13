@@ -2928,17 +2928,8 @@ sap.ui.require([
 			}
 		})
 		// Note: sap.m.Text#text turns value into string!
-			.expectChange("text", oText.validateProperty("text", 42));
-		// ManagedObject#_bindProperty calls ODataPropertyBinding#checkUpdate with wrong path
-		this.oLogMock.expects("warning")
-			.withExactArgs(
-				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
-				"/Equipments(Category='Electronics',ID=1)/SupplierIdentifier",
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to enhance query options for auto-$expand/$select as the path "
-					+ "'/Equipments/SupplierIdentifier' does not point to a property",
-				undefined, "sap.ui.model.odata.v4.ODataParentBinding");
+			.expectChange("text", oText.validateProperty("text", 42))
+			.expectChange("text", oText.validateProperty("text", 42)); // TODO unexpected change
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -2968,26 +2959,7 @@ sap.ui.require([
 				"SupplierIdentifier" : 42 // Edm.Int32
 			}
 		}]})
-			//TODO unwanted request due to wrong path set by ManagedObject
-			.expectRequest("Equipments(Category='Electronics',ID=1)/SupplierIdentifier",
-				{/*should be 404*/})
 			.expectChange("text", oText.validateProperty("text", 42));
-
-		this.oLogMock.expects("warning")
-			.withExactArgs(
-				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
-				"/Equipments/-2/SupplierIdentifier",
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
-		this.oLogMock.expects("error").twice()
-			.withExactArgs("Failed to enhance query options for auto-$expand/$select as the path "
-					+ "'/Equipments/SupplierIdentifier' does not point to a property",
-				undefined,
-				"sap.ui.model.odata.v4.ODataParentBinding");
-		this.oLogMock.expects("warning")
-			.withExactArgs(
-				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
-				"/Equipments(Category='Electronics',ID=1)/SupplierIdentifier",
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -3017,26 +2989,8 @@ sap.ui.require([
 				"AGE" : 42 // Edm.Int16
 			}
 		}]})
-			//TODO unwanted request due to wrong path set by ManagedObject
-			.expectRequest("Equipments(Category='Electronics',ID=1)/AGE", {/*should be 404*/})
 		// Note: change does not appear inside a list binding, it's inside the context binding!
 			.expectChange("text", oText.validateProperty("text", 42));
-
-		this.oLogMock.expects("warning")
-			.withExactArgs(
-				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
-				"/Equipments/-2/AGE",
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
-		this.oLogMock.expects("error").twice()
-			.withExactArgs("Failed to enhance query options for auto-$expand/$select as the path "
-					+ "'/Equipments/AGE' does not point to a property",
-				undefined,
-				"sap.ui.model.odata.v4.ODataParentBinding");
-		this.oLogMock.expects("warning")
-			.withExactArgs(
-				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
-				"/Equipments(Category='Electronics',ID=1)/AGE",
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -3063,19 +3017,8 @@ sap.ui.require([
 			}
 		}]})
 		// Note: change does not appear inside a list binding, it's inside the context binding!
-			.expectChange("text", oText.validateProperty("text", 42))
 			.expectChange("text", oText.validateProperty("text", 42));
 
-		this.oLogMock.expects("warning")
-			.withExactArgs(
-				sinon.match.string, // Browser specific message for undefined["$ui5.type"]
-				"/Equipments(Category='Electronics',ID=1)/AGE",
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to drill-down into (Category='Electronics',ID=1)/AGE"
-					+ ", invalid segment: AGE",
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Equipments",
-				"sap.ui.model.odata.v4.lib._Cache");
 		return this.createView(assert, sView);
 	});
 });
