@@ -4810,14 +4810,14 @@
 				}
 			};
 
-			// for IE we will check if the stylesheet contains any rule and then
+			// for IE / Edge we will check if the stylesheet contains any rule and then
 			// either trigger the load callback or the error callback
-			if ( Device.browser.msie ) {
+			if ( Device.browser.msie || Device.browser.edge ) {
 				var fnLoadOrg = fnLoad;
 				fnLoad = function(oEvent) {
 					var aRules;
 					try {
-						// in cross-origin scenarios the IE can still access the rules of the stylesheet
+						// in cross-origin scenarios IE / Edge can still access the rules of the stylesheet
 						// if the stylesheet has been loaded properly
 						aRules = oEvent.target && oEvent.target.sheet && oEvent.target.sheet.rules;
 						// in cross-origin scenarios now the catch block will be executed because we
