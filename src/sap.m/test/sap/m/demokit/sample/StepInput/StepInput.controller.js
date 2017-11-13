@@ -12,6 +12,7 @@ sap.ui.define([
 			var oModel,
 				aData = [
 					{ label: "Step = 1 (default); value = 6, min = 5, max = 15, width = 120px", value: 6, min:5, max:15, width:"120px"},
+					{ label: "Step = 1 (default); value = 6, min = 5, max = 15, width = 120px, with validation on LiveChange", value: 6, min:5, max:15, width:"120px", validationMode:"LiveChange"},
 					{ label: "Step = 5, no value, no min, no max, width = 120px", step:5, width:"120px"},
 					{ label: "Step = 5, no value, no min, no max, width = 120px, largerStep = 3", step:5, width:"120px", largerStep:3 },
 					{ label: "Step = 1.1, no value, displayValuePrecision = 1, min = -6, max = 23.5, width = 120px", step: 1.1, min:-6, max:23.5, width:"120px", displayValuePrecision: 1},

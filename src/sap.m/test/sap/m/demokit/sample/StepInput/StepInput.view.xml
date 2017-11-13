@@ -28,6 +28,7 @@
 						description="{description}"
 						fieldWidth="{fieldWidth}"
 						textAlign="{textAlign}"
+						validationMode="{validationMode}"
 						change="onChange"/>
 				</VBox>
 			</HBox>

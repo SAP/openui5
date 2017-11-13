@@ -16,6 +16,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		// shortcut for sap.ui.core.ValueState
 		var ValueState = coreLibrary.ValueState;
 
+		// shortcut for sap.m.StepInputValidationMode
+		var StepInputValidationMode = library.StepInputValidationMode;
+
 		/**
 		 * Constructor for a new <code>StepInput</code>.
 		 *
@@ -172,7 +175,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					 * Defines the horizontal alignment of the text that is displayed inside the input field.
 					 * @since 1.54
 					 */
-					textAlign: {type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: TextAlign.End}
+					textAlign: {type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: TextAlign.End},
+					/**
+					 * Defines when the validation of the typed value will happen. By default this happens on focus out.
+					 * @since 1.54
+					 */
+					validationMode: {type: "sap.m.StepInputValidationMode", group: "Misc", defaultValue: StepInputValidationMode.FocusOut}
 				},
 				aggregations: {
 					/**
@@ -386,7 +394,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		StepInput.prototype.init = function () {
 			this._iRealPrecision = 0;
 			this._attachChange();
-			this._attachLiveChange();
 		};
 
 		/**
@@ -408,6 +415,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				this.setValue(fMax);
 			}
 			this._disableButtons(vValue, fMax, fMin);
+
 		};
 
 		StepInput.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
@@ -419,6 +427,27 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				this._getInput().setProperty(sPropertyName, this.getProperty(sPropertyName), bSuppressInvalidate);
 			}
 
+			return this;
+		};
+
+		/*
+		 * Sets the validation mode.
+		 *
+		 * @param {sap.m.StepInputValidationMode} sValidationMode The validation mode value
+		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 */
+		StepInput.prototype.setValidationMode = function (sValidationMode) {
+			if (this.getValidationMode() !== sValidationMode) {
+				switch (sValidationMode) {
+					case sap.m.StepInputValidationMode.FocusOut:
+						this._detachLiveChange();
+						break;
+					case sap.m.StepInputValidationMode.LiveChange:
+						this._attachLiveChange();
+						break;
+				}
+				this.setProperty("validationMode", sValidationMode);
+			}
 			return this;
 		};
 
@@ -865,23 +894,30 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		StepInput.prototype.onkeydown = function (oEvent) {
+			var bVerifyValue = false;
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_UP && !oEvent.altKey && oEvent.shiftKey &&
 				(oEvent.ctrlKey || oEvent.metaKey)) { //ctrl+shift+up
 				this._applyValue(this.getMax());
+				bVerifyValue = true;
 			}
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN && !oEvent.altKey && oEvent.shiftKey &&
 				(oEvent.ctrlKey || oEvent.metaKey)) { //ctrl+shift+down
 				this._applyValue(this.getMin());
+				bVerifyValue = true;
 			}
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_UP && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+up
 				oEvent.preventDefault(); //preventing to be added both the minimum step (1) and the larger step
 				this._applyValue(this._calculateNewValue(this.getLargerStep(), true).displayValue);
+				bVerifyValue = true;
 			}
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+down
 				oEvent.preventDefault(); //preventing to be subtracted  both the minimum step (1) and the larger step
 				this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
+				bVerifyValue = true;
 			}
-			this._verifyValue();
+			if (bVerifyValue) {
+				this._verifyValue();
+			}
 		};
 
 		/**
@@ -899,6 +935,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 */
 		StepInput.prototype._attachLiveChange = function () {
 			this._getInput().attachLiveChange(this._liveChange, this);
+		};
+
+		StepInput.prototype._detachLiveChange = function () {
+			this._getInput().detachLiveChange(this._liveChange, this);
 		};
 
 		StepInput.prototype._attachChange = function () {
