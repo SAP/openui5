@@ -592,6 +592,11 @@ sap.ui.require([
 		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
 		this.assertColumnHeaderCellMenuButtonExists(assert, $Column, true);
 		this.assertColumnHeaderCellResizeButtonExists(assert, $Column, true);
+
+		// Applying the cell menu to another column header cell.
+		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 3);
+		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
+		this.assertColumnHeaderCellMenuExists(assert, oTable.getColumns()[3].$(), true);
 	});
 
 	QUnit.test("removeColumnHeaderCellMenu", function(assert) {
