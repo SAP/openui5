@@ -34,6 +34,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			this._CUSTOMID = "sap-ui-core-customcss";
 			this._customCSSAdded = false;
 			this._themeCheckedForCustom = null;
+			this._sFallbackTheme = null;
+			this._mThemeFallback = {};
 		},
 
 		getInterface : function() {
@@ -110,6 +112,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			jQuery.sap.clearDelayedCall(oThemeCheck._sThemeCheckId);
 			oThemeCheck._sThemeCheckId = null;
 			oThemeCheck._iCount = 0;
+			oThemeCheck._sFallbackTheme = null;
+			oThemeCheck._mThemeFallback = {};
 		}
 	}
 
@@ -119,6 +123,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		var sPath = oThemeCheck._oCore._getThemePath("sap.ui.core", sThemeName) + "custom.css";
 		var res = true;
 
+		var aFailedLibs = [];
+
 		if (!!oThemeCheck._customCSSAdded && oThemeCheck._themeCheckedForCustom === sThemeName) {
 			// include custom style sheet here because it has already been added using jQuery.sap.includeStyleSheet
 			// hence, needs to be checked for successful inclusion, too
@@ -126,7 +132,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		}
 
 		function checkLib(lib) {
-			res = res && ThemeCheck.checkStyle("sap-ui-theme-" + lib, true);
+			var sStyleId = "sap-ui-theme-" + lib;
+			var currentRes = ThemeCheck.checkStyle(sStyleId, true);
+			res = res && currentRes;
 			if (res) {
 
 				/* as soon as css has been loaded, look if there is a flag for custom css inclusion inside, but only
@@ -161,9 +169,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 					}
 				}
 			}
+
+			// Collect all libs that failed to load and no fallback has been applied, yet
+			if (currentRes && !oThemeCheck._mThemeFallback[lib]) {
+				var oStyle = document.getElementById(sStyleId);
+				if (oStyle && oStyle.getAttribute("data-sap-ui-ready") === "false") {
+					aFailedLibs.push(lib);
+				}
+			}
+
 		}
 
 		jQuery.each(mLibs, checkLib);
+
+		// Try to load a fallback theme for all libs that couldn't be loaded
+		if (aFailedLibs.length > 0) {
+
+			// Only retrieve the fallback theme once per ThemeCheck cycle
+			if (!oThemeCheck._sFallbackTheme) {
+				oThemeCheck._sFallbackTheme = getFallbackTheme(mLibs);
+			}
+
+			if (oThemeCheck._sFallbackTheme) {
+				aFailedLibs.forEach(function(lib) {
+					var sStyleId = "sap-ui-theme-" + lib;
+					var oStyle = document.getElementById(sStyleId);
+
+					jQuery.sap.log.warning(
+						"Custom theme '" + sThemeName + "' could not be loaded for library '" + lib + "'. " +
+						"Falling back to its base theme '" + oThemeCheck._sFallbackTheme + "'."
+					);
+
+					// Change the URL to load the fallback theme
+					oThemeCheck._oCore._updateThemeUrl(oStyle, oThemeCheck._sFallbackTheme);
+
+					// remember the lib to prevent doing the fallback multiple times
+					// (if the fallback also can't be loaded)
+					oThemeCheck._mThemeFallback[lib] = true;
+				});
+
+				// Make sure to wait for the fallback themes to be loaded
+				res = false;
+			}
+		}
 
 		if (!res) {
 			jQuery.sap.log.warning("ThemeCheck: Theme not yet applied.");
@@ -171,6 +219,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			oThemeCheck._themeCheckedForCustom = sThemeName;
 		}
 		return res;
+	}
+
+	function getFallbackTheme(mLibs) {
+		function getThemeMetaDataForLibrary(sLibraryName) {
+			var sThemeMetaDataClassName = "sapThemeMetaData-UI5-" + sLibraryName.replace(/\./g, "-");
+
+			// Applying the class to the <html> element to be able to get the "background-image"
+			var html = document.documentElement;
+			html.classList.add(sThemeMetaDataClassName);
+			var sDataUri = window.getComputedStyle(html).getPropertyValue("background-image");
+			html.classList.remove(sThemeMetaDataClassName);
+
+			var aDataUriMatch = /\(["']?data:text\/plain;utf-8,(.*?)['"]?\)/i.exec(sDataUri);
+			if (!aDataUriMatch || aDataUriMatch.length < 2) {
+				return null;
+			}
+
+			var sMetaData = aDataUriMatch[1];
+
+			// decode only if necessary
+			if (sMetaData.charAt(0) !== "{" && sMetaData.charAt(sMetaData.length - 1) !== "}") {
+				try {
+					sMetaData = decodeURI(sMetaData);
+				} catch (ex) {
+					// ignore
+				}
+			}
+
+			// Remove superfluous escaping of double quotes
+			sMetaData = sMetaData.replace(/\\"/g, '"');
+
+			// Replace encoded spaces
+			sMetaData = sMetaData.replace(/%20/g, " ");
+
+			try {
+				return JSON.parse(sMetaData);
+			} catch (ex) {
+				return null;
+			}
+		}
+
+		for (var sLibraryName in mLibs) {
+			if (mLibs.hasOwnProperty(sLibraryName)) {
+				var oThemeMetaData = getThemeMetaDataForLibrary(sLibraryName);
+				if (oThemeMetaData && oThemeMetaData.Extends && oThemeMetaData.Extends[0]) {
+					// Just return the first match as all libraries extend the same theme.
+					return oThemeMetaData.Extends[0];
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/* checks if a particular class is available
