@@ -37,6 +37,18 @@
         "type": "FIX",
         "text": " sap.ui.layoyut.Grid: Added min-height for wrappers",
         "references": []
+      },
+      {
+        "id": "d5aad968217824668d92a96fc29081cfc434aabb",
+        "type": "FIX",
+        "text": " Form* tests: fix race condition in integration tests",
+        "references": []
+      },
+      {
+        "id": "e0b6ecf78a6b7190d89cd339d6648f30d3cbc94d",
+        "type": "FIX",
+        "text": " sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": []
       }
     ]
   }

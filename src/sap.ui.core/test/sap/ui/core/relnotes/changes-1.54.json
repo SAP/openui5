@@ -97,6 +97,48 @@
         "type": "FIX",
         "text": " jquery.sap.global: fix resource roots handling",
         "references": []
+      },
+      {
+        "id": "20ac0a35bbccaf41b5e159156e821c2189418f9a",
+        "type": "FIX",
+        "text": " Configuration: Consider sap-locale over sap-language",
+        "references": []
+      },
+      {
+        "id": "bc5eeb65f8740ed4ee7999b5b692c021451df567",
+        "type": "FIX",
+        "text": " Message handling createEntry",
+        "references": []
+      },
+      {
+        "id": "e5d24a6cd2205f3a1dbc398a7af6bea992c6b0b6",
+        "type": "FIX",
+        "text": " ODataTreeBindingFlat: Use correct value for getContexts() length fallback",
+        "references": []
+      },
+      {
+        "id": "36fe180bce05b8fe17c632fc1304fa35153e6be8",
+        "type": "FIX",
+        "text": " Opa: improve matcher messages",
+        "references": []
+      },
+      {
+        "id": "8a7747668b5daf0b76e9145cfbe01243c2cab0f0",
+        "type": "FIX",
+        "text": " core.LocaleData: add default \"narrow\" and \"short\" relative patterns",
+        "references": []
+      },
+      {
+        "id": "79f62c20263efff7bb548d4339c3f7be757b8440",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Enable scrolling on iOS devices",
+        "references": []
+      },
+      {
+        "id": "a6aa088feb0c5255d3ba8dcfbbd3769118aea245",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: filter for edm types with numbers",
+        "references": []
       }
     ]
   }

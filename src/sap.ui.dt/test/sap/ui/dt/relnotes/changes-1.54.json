@@ -43,6 +43,36 @@
         "type": "FIX",
         "text": " sap.ui.dt: TablesInDesignTime Qunit firefox fix",
         "references": []
+      },
+      {
+        "id": "a02a75d0e36c66b795e3a6073c9d611492dae8c9",
+        "type": "FIX",
+        "text": " Fix control variant issues",
+        "references": []
+      },
+      {
+        "id": "e0b6ecf78a6b7190d89cd339d6648f30d3cbc94d",
+        "type": "FIX",
+        "text": " sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": []
+      },
+      {
+        "id": "e9f576ebdf6e28af067c89313a2703139b95013e",
+        "type": "FIX",
+        "text": "sap.ui.dt: Fix for Drag\u0026Drop cursor in EDGE Browser",
+        "references": []
+      },
+      {
+        "id": "d06d24845a1e4ee6ae2c2ce55dbd95f397baeaa7",
+        "type": "FIX",
+        "text": "sap.ui.dt: QUnit test fix - CSS filter not supported by IE",
+        "references": []
+      },
+      {
+        "id": "f6d2fbc4cf74df840157743e6b780ce9bf9d61df",
+        "type": "FIX",
+        "text": "sap.ui.rta: DT Metadata ignore() called for destroyed element",
+        "references": []
       }
     ]
   }

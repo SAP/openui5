@@ -91,6 +91,36 @@
         "type": "FIX",
         "text": " sap.ui.rta: fixed movable check when child is destroyed",
         "references": []
+      },
+      {
+        "id": "a02a75d0e36c66b795e3a6073c9d611492dae8c9",
+        "type": "FIX",
+        "text": " Fix control variant issues",
+        "references": []
+      },
+      {
+        "id": "ee1cc217cdd851087299be5f54cc3f4969dc32be",
+        "type": "FIX",
+        "text": " sap.ui.rta: skip start when reloading with pers. changes",
+        "references": []
+      },
+      {
+        "id": "bb9b67d20409f5934914888a4704ac890d695f9e",
+        "type": "FIX",
+        "text": "sap.ui.rta QUnit test fix - focus check on wrong element",
+        "references": []
+      },
+      {
+        "id": "ea6c58e405c553e85f987741dd31183286f1c752",
+        "type": "FIX",
+        "text": "sap.ui.rta: Dump moving an object page section in personalization",
+        "references": []
+      },
+      {
+        "id": "93d16b4148c13a46f27f05c7ec6c7efb9182e6ea",
+        "type": "FIX",
+        "text": "sap.ui.rta: Missing binding context causes exception starting RTA",
+        "references": []
       }
     ]
   }

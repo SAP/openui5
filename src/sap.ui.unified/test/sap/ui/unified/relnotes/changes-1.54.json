@@ -7,6 +7,30 @@
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: XHR Upload on Safari restored",
         "references": []
+      },
+      {
+        "id": "7c1e0145d286130c78f6e376ddeb0ba022836d0b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Appointment deselection is now possible",
+        "references": []
+      },
+      {
+        "id": "3f79920ffb69d1a429914645fac81029fd967e9e",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarUtils: getFirstDateOfWeek when end/begin of year.",
+        "references": []
+      },
+      {
+        "id": "79f62c20263efff7bb548d4339c3f7be757b8440",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Enable scrolling on iOS devices",
+        "references": []
+      },
+      {
+        "id": "dc345fcdce00f71b82d6fb5045323cd9bbbb0105",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: qunit tests fixed on combi devices",
+        "references": []
       }
     ]
   }

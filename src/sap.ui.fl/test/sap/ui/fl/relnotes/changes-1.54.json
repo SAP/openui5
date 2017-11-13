@@ -19,6 +19,18 @@
         "type": "FIX",
         "text": " Opening file in LREP browser lasts long",
         "references": []
+      },
+      {
+        "id": "dc38f0cac1a88ff67f9735d3b64c368d144aeb5a",
+        "type": "FEATURE",
+        "text": " fl.VariantManagement: prohibit the deletion of the last entry",
+        "references": []
+      },
+      {
+        "id": "a02a75d0e36c66b795e3a6073c9d611492dae8c9",
+        "type": "FIX",
+        "text": " Fix control variant issues",
+        "references": []
       }
     ]
   }
