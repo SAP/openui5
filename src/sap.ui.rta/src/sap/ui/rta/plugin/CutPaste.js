@@ -152,7 +152,8 @@ function(
 				enabled: function (){
 					return this.getDesignTime().getSelection().length === 1;
 				}.bind(this),
-				rank: 70
+				rank: 70,
+				icon: "sap-icon://scissors"
 			},
 			oPasteMenuItem = {
 				id: 'CTX_PASTE',
@@ -163,7 +164,8 @@ function(
 				enabled: function(oOverlay) {
 					return this.isElementPasteable(oOverlay);
 				}.bind(this),
-				rank: 80
+				rank: 80,
+				icon: "sap-icon://paste"
 			};
 
 		if (this.isAvailable(oOverlay)){

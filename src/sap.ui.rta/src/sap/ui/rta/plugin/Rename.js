@@ -84,6 +84,7 @@ sap.ui.define([
 	};
 
 	Rename.prototype.startEdit = function (oOverlay) {
+		this._bPreventMenu = true;
 		var oElement = oOverlay.getElementInstance(),
 			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
 			vDomRef = oDesignTimeMetadata.getAction("rename", oElement).domRef;
@@ -91,6 +92,7 @@ sap.ui.define([
 	};
 
 	Rename.prototype.stopEdit = function (bRestoreFocus) {
+		this._bPreventMenu = false;
 		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.Rename.stopEdit");
 	};
 
@@ -221,7 +223,7 @@ sap.ui.define([
 	 * @return {object[]}          Returns array containing the items with required data
 	 */
 	Rename.prototype.getMenuItems = function(oOverlay){
-		return this._getMenuItems(oOverlay, {pluginId : "CTX_RENAME", rank : 10});
+		return this._getMenuItems(oOverlay, {pluginId : "CTX_RENAME", rank : 10, icon: "sap-icon://edit", preventMenu : this._bPreventMenu});
 	};
 
 	/**

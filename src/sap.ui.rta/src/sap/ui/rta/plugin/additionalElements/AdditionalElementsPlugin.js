@@ -667,6 +667,7 @@ sap.ui.define([
 			var bOverlayIsSibling = true;
 			var sPluginId = "CTX_ADD_ELEMENTS_AS_SIBLING";
 			var iRank = 20;
+			var sIcon = "sap-icon://add";
 			var aMenuItems = [];
 			for (var i = 0; i < 2; i++){
 				if (this.isAvailable(bOverlayIsSibling, oOverlay)){
@@ -680,7 +681,9 @@ sap.ui.define([
 							return this.showAvailableElements(bOverlayIsSibling, aOverlays);
 						}.bind(this, bOverlayIsSibling),
 						enabled: this.isEnabled.bind(this, bOverlayIsSibling),
-						rank: iRank
+						rank: iRank,
+						icon: sIcon,
+						group: "Add"
 					});
 				}
 
