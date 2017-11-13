@@ -127,7 +127,7 @@ sap.ui.define([
 			},
 
 			_trimOldDocSuffix: function(sLink) {
-				if (sLink && sLink.endsWith(this.OLD_DOC_LINK_SUFFIX)) {
+				if (sLink && jQuery.sap.endsWith(sLink, this.OLD_DOC_LINK_SUFFIX)) {
 					sLink = sLink.slice(0, -this.OLD_DOC_LINK_SUFFIX.length);
 				}
 				return sLink;
