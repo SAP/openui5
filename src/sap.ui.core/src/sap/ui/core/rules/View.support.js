@@ -206,7 +206,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		resolution: "Refer to the API of the element which property should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#docs/api/deprecation.html"
+			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName(sap.ui.core.Element)
@@ -249,7 +249,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		resolution: "Refer to the API of the element which aggregation should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#docs/api/deprecation.html"
+			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName(sap.ui.core.Element)
@@ -290,7 +290,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		resolution: "Refer to the API of the element which association should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#docs/api/deprecation.html"
+			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName(sap.ui.core.Element)
@@ -331,7 +331,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		resolution: "Refer to the API of the element which event should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#docs/api/deprecation.html"
+			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName(sap.ui.core.Element)
