@@ -1403,7 +1403,6 @@ sap.ui.require([
 					oCTAddress = oGWSampleBasic.complexType[0],
 					oCTAddressCity = oCTAddress.property[0],
 					oFunctionImport = oEntityContainer.functionImport[0],
-					oNavigationProperty = oBusinessPartner.navigationProperty[0],
 					oParameter = oFunctionImport.parameter[0],
 					sPrefix,
 					oProduct = oGWSampleBasic.entityType[2],
@@ -1412,6 +1411,7 @@ sap.ui.require([
 					oProductSet = oEntityContainer.entitySet[1],
 					oProductWeightMeasure =  oProduct.property[2],
 					oProductWeightUnit =  oProduct.property[3],
+					oToFooNavigationProperty = oBusinessPartner.navigationProperty[0],
 					oValue,
 					oVHSex = oGWSampleBasic.entityType[1],
 					oVHSexSet = oEntityContainer.entitySet[2];
@@ -1529,9 +1529,6 @@ sap.ui.require([
 					"GWSAMPLE_BASIC.Product");
 				delete oEntityContainer.functionImport[1]["sap:action-for"];
 
-				assert.strictEqual(oNavigationProperty["sap:filterable"], "false");
-				delete oNavigationProperty["sap:filterable"];
-
 				assert.strictEqual(oVHSex["sap:content-version"], "1");
 				delete oVHSex["sap:content-version"];
 				assert.strictEqual(oVHSexSet["sap:content-version"], "1");
@@ -1584,10 +1581,10 @@ sap.ui.require([
 						});
 						delete oGWSampleBasic["acme.Foo.v1.Foo"];
 						// entity type: navigation property
-						assert.deepEqual(oNavigationProperty["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oToFooNavigationProperty["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.BusinessPartner/ToFoo"
 						});
-						delete oNavigationProperty["acme.Foo.v1.Foo"];
+						delete oToFooNavigationProperty["acme.Foo.v1.Foo"];
 						// complex type
 						assert.deepEqual(oCTAddress["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.CT_Address"
@@ -1801,11 +1798,36 @@ sap.ui.require([
 						[
 							{"PropertyPath" : "AnyProperty"},
 							{"PropertyPath" : "NonFilterable"},
-							{"PropertyPath" : "ToFoo"}
+							// deprecated but still converted
+							// TODO Remove Utils.addPropertyToAnnotation("sap:filterable"...) call
+							// for navigation properties from calculateEntitySetAnnotations after
+							// all annotation consumers have adjusted their code to use only
+							// Org.OData.Capabilities.V1.NavigationRestrictions instead of
+							// Org.OData.Capabilities.V1.FilterRestrictions for navigation
+							// properties.
+							{"PropertyPath" : "ToFoo"} // deprecated but still converted
 						],
 					"BusinessPartnerSet not filterable");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]
 					["NonFilterableProperties"];
+
+				assert.deepEqual(
+					oBusinessPartnerSet["Org.OData.Capabilities.V1.NavigationRestrictions"],
+					{
+						"RestrictedProperties" : [{
+							"NavigationProperty" : {
+								"NavigationPropertyPath" : "ToFoo"
+							},
+							"FilterRestrictions" : {
+								"Filterable": {"Bool" : "false"}
+							}
+						}]
+					},
+					"Non filterable navigation property");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.NavigationRestrictions"];
+
+				assert.strictEqual(oToFooNavigationProperty["sap:filterable"], "false");
+				delete oToFooNavigationProperty["sap:filterable"];
 
 				// sap:required-in-filter
 				assert.strictEqual(oBusinessPartnerId["sap:required-in-filter"], "true");

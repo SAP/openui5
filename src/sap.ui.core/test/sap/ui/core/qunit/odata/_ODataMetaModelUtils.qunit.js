@@ -1310,4 +1310,62 @@ sap.ui.require([
 		oAnnotationHelperBasicsMock.verify();
 		oMetaModelMock.verify();
 	});
+
+	//*********************************************************************************************
+	QUnit.test("addNavigationFilterRestriction", function (assert) {
+		var oEntitySet = {},
+			oNavigationProperty,
+			oNavigationRestrictions,
+			oProperty0 = {
+				"name" : "Bar"
+				// "sap:filterable" : "false"
+			},
+			oProperty1 = {
+				"name" : "Foo"
+				// "sap:filterable" : "false"
+			};
+
+		// code under test
+		Utils.addNavigationFilterRestriction(oProperty0, oEntitySet);
+		Utils.addNavigationFilterRestriction(oProperty1, oEntitySet);
+
+		oNavigationRestrictions = oEntitySet["Org.OData.Capabilities.V1.NavigationRestrictions"];
+
+		assert.deepEqual(oNavigationRestrictions, {
+			"RestrictedProperties" : [{
+				"NavigationProperty" : {
+					"NavigationPropertyPath" : "Bar"
+				},
+				"FilterRestrictions" : {
+					"Filterable": {"Bool" : "false"}
+				}
+			}, {
+				"NavigationProperty" : {
+					"NavigationPropertyPath" : "Foo"
+				},
+				"FilterRestrictions" : {
+					"Filterable": {"Bool" : "false"}
+				}
+			}]
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("calculateEntitySetAnnotations: calls addNavigationFilterRestriction",
+			function (assert) {
+		var oEntitySet = {},
+			oEntityType = {
+				navigationProperty : [
+					{"sap:filterable" : "false"},
+					{"sap:filterable" : "true"}
+				]
+			};
+
+		this.mock(Utils).expects("addNavigationFilterRestriction")
+			.withExactArgs(sinon.match.same(oEntityType.navigationProperty[0]),
+				sinon.match.same(oEntitySet));
+
+		// code under test
+		Utils.calculateEntitySetAnnotations(oEntitySet, oEntityType);
+	});
 });
