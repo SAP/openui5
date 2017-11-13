@@ -122,8 +122,6 @@
         <exclude name="jquery-ui-datepicker.js" />
         <exclude name="jquery-ui-position.js" />
         <exclude name="sap/ui/model/odata/datajs.js" />
-        <!-- exclude support rules -->
-        <exclude name="**/*.support.js" />
         <!-- Third party libs which should NOT be part of the all-in-one file -->
         <exclude name="sap/ui/thirdparty/blanket.js" />
         <!-- <exclude name="sap/ui/thirdparty/crossroads.js" /> -->
