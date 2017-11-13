@@ -509,6 +509,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 			var oLibrary = mLibraries[sLibName];
 			if (!oLibrary) { // in case removed from the map
 				resolve([0, false]);
+				return;
 			}
 
 			// we may need a concatenated array of Controls and Elements
