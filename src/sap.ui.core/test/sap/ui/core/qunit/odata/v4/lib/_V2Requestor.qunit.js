@@ -4,10 +4,11 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/lib/_V2Requestor",
 	"sap/ui/model/odata/ODataUtils"
-], function (jQuery, DateFormat, _SyncPromise, asV2Requestor, ODataUtils) {
+], function (jQuery, DateFormat, _Requestor, _SyncPromise, asV2Requestor, ODataUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1078,5 +1079,64 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oRequestor.getTypeForName("my.Type"), oType);
 		assert.strictEqual(oRequestor.getTypeForName("my.Type"), oType);
+	});
+
+	//*********************************************************************************************
+	[{
+		iCallCount : 1,
+		mHeaders : { "DataServiceVersion" : "2.0" }
+	}, {
+		iCallCount : 2,
+		mHeaders : {}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
+			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+				fnGetHeader = this.spy(function (sHeaderKey) {
+					return oFixture.mHeaders[sHeaderKey];
+				});
+
+			// code under test
+			oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar", true);
+
+			assert.strictEqual(fnGetHeader.calledWithExactly("DataServiceVersion"), true);
+			if (oFixture.iCallCount === 2) {
+				assert.strictEqual(fnGetHeader.calledWithExactly("OData-Version"), true);
+			}
+			assert.strictEqual(fnGetHeader.callCount, oFixture.iCallCount);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		iCallCount : 1,
+		sError : "value 'foo' in response for /Foo('42')/Bar",
+		mHeaders : { "DataServiceVersion" : "foo" }
+	}, {
+		iCallCount : 2,
+		sError : "value 'undefined' in response for /Foo('42')/Bar",
+		mHeaders : {}
+	}, {
+		iCallCount : 2,
+		sError : "'OData-Version' header with value 'baz' in response for /Foo('42')/Bar",
+		mHeaders : { "OData-Version" : "baz" }
+	}].forEach(function (oFixture, i) {
+		QUnit.test("doCheckVersionHeader, error cases - " + i, function (assert) {
+			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+				fnGetHeader = this.spy(function (sHeaderKey) {
+					return oFixture.mHeaders[sHeaderKey];
+				});
+
+			assert.throws(function () {
+				// code under test
+				oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar");
+			}, new Error("Expected 'DataServiceVersion' header with value '2.0' but received "
+				+ oFixture.sError));
+
+			assert.strictEqual(fnGetHeader.calledWithExactly("DataServiceVersion"), true);
+			if (oFixture.iCallCount === 2) {
+				assert.strictEqual(fnGetHeader.calledWithExactly("OData-Version"), true);
+			}
+			assert.strictEqual(fnGetHeader.callCount, oFixture.iCallCount);
+		});
 	});
 });
