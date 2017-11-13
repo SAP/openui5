@@ -130,5 +130,22 @@
         "references": []
       }
     ]
+  },
+  "1.50.6": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "a6b6cdf5120f35f23c0b92ad2170c2654eef494b",
+        "type": "FIX",
+        "text": " sap.ui.rta: error handling for command-creation",
+        "references": []
+      },
+      {
+        "id": "cd46e539c9dbb28fc2ad8b9d361912dc5d6df3e9",
+        "type": "FIX",
+        "text": "sap.ui.rta QUnit test fix - focus check on wrong element",
+        "references": []
+      }
+    ]
   }
 }

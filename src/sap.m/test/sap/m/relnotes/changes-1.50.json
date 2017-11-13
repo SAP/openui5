@@ -1564,5 +1564,64 @@
         "references": []
       }
     ]
+  },
+  "1.50.6": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "4a79e2c886395d61578ef9ff445e7e6e324e6d3f",
+        "type": "FIX",
+        "text": " TimePicker-closing before slider scrolling is complete works.",
+        "references": []
+      },
+      {
+        "id": "b7e7bae1dad6334cfc8b23ab70649eff11123136",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Fix highlighting in words with special characters",
+        "references": []
+      },
+      {
+        "id": "4738f6fbef44d942585fc2ecaa0da5b78f4565b7",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Correct selection when growing is used.",
+        "references": []
+      },
+      {
+        "id": "f357b49e9a76e87f7740c42c89099deb5a6c8039",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: The headerButton is now being bound correctly",
+        "references": []
+      },
+      {
+        "id": "6bb8bd94279d96f8db3f31b17383142e227dd9a8",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Long title wraps on Firefox and IE",
+        "references": []
+      },
+      {
+        "id": "52997e8954c7061dba4ee60b12ec396b5a2005c7",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Search is now working correctly",
+        "references": []
+      },
+      {
+        "id": "ba5fbaa72b627de95005d9592573879c143d8b2e",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Moving of tiles fixed",
+        "references": []
+      },
+      {
+        "id": "d24a03a065196642330c028a6be46ef12e56362a",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Render tiles on ScrollIntoView call",
+        "references": []
+      },
+      {
+        "id": "e4dbc1e580a0dab524b7fc6e5b56ac37630a711c",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: when model is changed, filter counter is updated.",
+        "references": []
+      }
+    ]
   }
 }
