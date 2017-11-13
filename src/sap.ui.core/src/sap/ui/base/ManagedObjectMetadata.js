@@ -1174,6 +1174,38 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	// ---- Design Time capabilities -------------------------------------------------------------
 
 	/**
+	 * Returns a promise that resolves if the designtime preload of a library is loaded for the given oMetadata
+	 * object is loaded.
+	 * If the corresponding library does not contain a designtime setting with a module path to the library.designtime file
+	 * the promise resolves immediately.
+	 *
+	 * @private
+	 */
+	function preloadDesigntimeLibrary(oMetadata) {
+		//preload the designtime data for the library
+		var sLibrary = oMetadata.getLibraryName(),
+			sPreload = sap.ui.getCore().getConfiguration().getPreload(),
+			oLibrary = sap.ui.getCore().getLoadedLibraries()[sLibrary];
+		if (oLibrary && oLibrary.designtime) {
+			var oPromise;
+			if (sPreload === "async" || sPreload === "sync") {
+				//ignore errors _loadJSResourceAsync is true here, do not break if there is no preload.
+				oPromise = jQuery.sap._loadJSResourceAsync(oLibrary.designtime.replace(/\.designtime$/, "-preload.designtime.js"), true);
+			} else {
+				oPromise = Promise.resolve();
+			}
+			return new Promise(function(fnResolve) {
+				oPromise.then(function() {
+					sap.ui.require([oLibrary.designtime], function(oLib) {
+						fnResolve(oLib);
+					});
+				});
+			});
+		}
+		return Promise.resolve(null);
+	}
+
+	/**
 	 * Returns a promise that resolves with the own, unmerged designtime data.
 	 * If the class is marked as having no designtime data, the promise will resolve with null.
 	 *
@@ -1183,6 +1215,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		if (typeof oMetadata._oDesignTime === "object" || !oMetadata._oDesignTime) {
 			return Promise.resolve(oMetadata._oDesignTime || null);
 		}
+
 		return new Promise(function(fnResolve) {
 			var sModule;
 			if (typeof oMetadata._oDesignTime === "string") {
@@ -1191,13 +1224,14 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			} else {
 				sModule = jQuery.sap.getResourceName(oMetadata.getName(), ".designtime");
 			}
-
-			sap.ui.require([sModule], function(oDesignTime) {
-				oDesignTime.designtimeModule = sModule;
-				oMetadata._oDesignTime = oDesignTime;
-				fnResolve(oDesignTime);
+			preloadDesigntimeLibrary(oMetadata).then(function(oLib) {
+				sap.ui.require([sModule], function(oDesignTime) {
+					oDesignTime.designtimeModule = sModule;
+					oMetadata._oDesignTime = oDesignTime;
+					oDesignTime._oLib = oLib;
+					fnResolve(oDesignTime);
+				});
 			});
-
 		});
 	}
 
@@ -1254,7 +1288,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			} else {
 				oWhenParentLoaded = Promise.resolve(null);
 			}
-
 			// Note that the ancestor designtimes and the own designtime will be loaded 'in parallel',
 			// only the merge is done in sequence by chaining promises
 			this._oDesignTimePromise = loadOwnDesignTime(this).then(function(oOwnDesignTime) {

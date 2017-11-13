@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		name : "sap.m",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
+		designtime: "sap/m/designtime/library.designtime",
 		types: [
 			"sap.m.BackgroundDesign",
 			"sap.m.BarDesign",

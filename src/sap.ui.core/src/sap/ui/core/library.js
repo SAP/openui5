@@ -13,6 +13,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.core",
 		version: "${version}",
+		designtime: "sap/ui/core/designtime/library.designtime",
 		types: [
 
 			// builtin types
