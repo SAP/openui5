@@ -589,7 +589,7 @@ sap.ui.define([
 	// VARIANT LIST
 	VariantManagement.prototype._createVariantList = function() {
 
-		if (!this.oContext || this.oVariantPopOver) { // create only if context is available
+		if (this.oVariantPopOver) {
 			return;
 		}
 
@@ -750,6 +750,11 @@ sap.ui.define([
 		}
 
 		if (this.bPopoverOpen) {
+			return;
+		}
+
+		// proceed only if context is available
+		if (!this.oContext) {
 			return;
 		}
 
