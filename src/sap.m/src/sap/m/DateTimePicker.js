@@ -236,9 +236,9 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			} else {
 				oCalendar.$().css("display", "none");
 				oSliders.$().css("display", "");
-				oSliders.updateSlidersValues();
+				oSliders._updateSlidersValues();
 				oSliders._onOrientationChanged();
-				oSliders._initFocus();
+				oSliders.openFirstSlider();
 			}
 
 		},
@@ -287,7 +287,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		DatePicker.prototype.setDisplayFormat.apply(this, arguments);
 
 		if (this._oSliders) {
-			this._oSliders.setFormat(_getTimePattern.call(this));
+			this._oSliders.setDisplayFormat(_getTimePattern.call(this));
 		}
 
 		return this;
@@ -463,7 +463,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		var oSliders = this._oPopup.getContent()[0] && this._oPopup.getContent()[0].getTimeSliders();
 		if (oSliders) {//Sliders values need to be updated after a popup is (especially sliders) is really visible
-			jQuery.sap.delayedCall(0, oSliders, oSliders.updateSlidersValues);
+			jQuery.sap.delayedCall(0, oSliders, oSliders._updateSlidersValues);
 		}
 	};
 
@@ -481,9 +481,9 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		if (!this._oSliders) {
 			jQuery.sap.require("sap.m.TimePickerSliders");
 			this._oSliders = new sap.m.TimePickerSliders(this.getId() + "-Sliders", {
-				format: _getTimePattern.call(this),
-				invokedBy: this.getId()
-			});
+				displayFormat: _getTimePattern.call(this),
+				localeId: this.getLocaleId()
+			})._setShouldOpenSliderAfterRendering(true);
 			this._oPopupContent.setTimeSliders(this._oSliders);
 		}
 
@@ -509,7 +509,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			this._oDateRange.setStartDate(oDate);
 		}
 
-		this._oSliders.setTimeValues(oDate);
+		this._oSliders._setTimeValues(oDate);
 
 	};
 
@@ -519,7 +519,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		if (oDate) {
 			var oDateTime = this._oSliders.getTimeValues();
-			var sPattern = this._oSliders.getFormat();
+			var sPattern = this._oSliders._getDisplayFormatPattern();
 			if (sPattern.search("h") >= 0 || sPattern.search("H") >= 0) {
 				oDate.setHours(oDateTime.getHours());
 			}

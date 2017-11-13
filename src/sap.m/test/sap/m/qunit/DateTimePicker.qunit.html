@@ -132,7 +132,7 @@
 
 				oDTP._createPopup();
 				oDTP._createPopupContent();
-				var oSpyUpdateSlidersFn = sinon.spy(oDTP._oPopup.getContent()[0].getTimeSliders(), "updateSlidersValues");
+				var oSpyUpdateSlidersFn = sinon.spy(oDTP._oPopup.getContent()[0].getTimeSliders(), "_updateSlidersValues");
 
 				//Act
 				oDTP._openPopup();

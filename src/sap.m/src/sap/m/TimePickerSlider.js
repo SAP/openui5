@@ -65,7 +65,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					/**
 					 * Fires when the slider is expanded.
 					 */
-					expanded: {}
+					expanded: {},
+					/**
+					 * Fires when the slider is collapsed.
+					 * @since 1.54
+					 */
+					collapsed: {}
 				}
 			},
 			renderer: TimePickerSliderRenderer.render
@@ -264,6 +269,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					jQuery.sap.delayedCall(0, this, this._afterExpandCollapse);
 				} else {
 					this._afterExpandCollapse();
+				}
+				if (!suppressEvent) {
+					this.fireCollapsed({ctrl: this});
 				}
 			}
 
@@ -486,8 +494,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			var $Frame,
 				iFrameTopPosition,
 				topPadding,
-				iSliderOffsetTop,
-				iItemHeight;
+				iItemHeight,
+				oSliderOffset = this.$().offset(),
+				iSliderOffsetTop = oSliderOffset ? oSliderOffset.top : 0,
+				oContainerOffset = this.$().parents(".sapMTimePickerContainer").offset(),
+				iContainerOffsetTop = oContainerOffset ? oContainerOffset.top : 0;
 
 			if (this.getDomRef()) {
 				iItemHeight = this._getItemHeightInPx();
@@ -497,13 +508,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				//its height is the same as the list items' height
 				//so the top of the middle === container.height/2 - item.height/2
 				//corrected with the top of the container
-				if (Device.system.phone) {
-					iSliderOffsetTop = this.$().offset().top;
-					iFrameTopPosition = (this.$().height() - iItemHeight) / 2 + iSliderOffsetTop;
-				} else {
-					topPadding = this.$().parents(".sapUiSizeCompact").length > 0 ? 8 : 16; //depends if we are in compact mode
-					iFrameTopPosition = (this.$().height() - iItemHeight) / 2 + topPadding;
-				}
+
+				topPadding = iSliderOffsetTop - iContainerOffsetTop;
+				iFrameTopPosition = (this.$().height() - iItemHeight) / 2 + topPadding;
 
 				$Frame.css("top", iFrameTopPosition);
 
