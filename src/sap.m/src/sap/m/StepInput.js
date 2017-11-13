@@ -157,7 +157,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					 * Determines the description text after the input field, for example units of measurement, currencies.
 					 * @since 1.54
 					 */
-					description : {type : "string", group : "Misc", defaultValue : null},
+					description: {type : "string", group : "Misc", defaultValue : null},
 					/**
 					 * Determines the distribution of space between the input field
 					 * and the description text . Default value is 50% (leaving the other
@@ -167,7 +167,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					 * <code>description</code> property is also set.
 					 * @since 1.54
 					 */
-					fieldWidth : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '50%'}
+					fieldWidth: {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '50%'},
+					/**
+					 * Defines the horizontal alignment of the text that is displayed inside the input field.
+					 * @since 1.54
+					 */
+					textAlign: {type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: TextAlign.End}
 				},
 				aggregations: {
 					/**
@@ -247,7 +252,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * Property names which when set are directly forwarded to inner input <code>setProperty</code> method
 		 * @type {Array.<string>}
 		 */
-		var aForwardableProps = ["enabled", "editable", "name", "placeholder", "required", "valueStateText", "description", "fieldWidth"];
+		var aForwardableProps = ["enabled", "editable", "name", "placeholder", "required", "valueStateText", "description", "fieldWidth", "textAlign"];
 
 
 		/****************************************** NUMERIC INPUT CONTROL ****************************************************/
@@ -291,6 +296,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 			bDisableButton ? oButton.addStyleClass("sapMStepInputIconDisabled") : oButton.removeStyleClass("sapMStepInputIconDisabled");
 			oRm.renderControl(oButton);
+		};
+
+		NumericInputRenderer.writeInnerAttributes = function(oRm, oControl) {
+			// inside the Input this function also sets explicitly textAlign to "End" if the type
+			// of the Input is Numeric (our case)
+			// so we have to overwrite it by leaving only the text direction
+			// and the textAlign will be controlled by textAlign property of the StepInput
+			oRm.writeAttribute("type", oControl.getType().toLowerCase());
+			if (sap.ui.getCore().getConfiguration().getRTL()) {
+				oRm.writeAttribute("dir", "ltr");
+			}
+
 		};
 
 		//Accessibility behavior of the Input needs to be extended
@@ -396,11 +413,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		StepInput.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
 			this._writeAccessibilityState(sPropertyName, oValue);
 
+			Control.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
+
 			if (aForwardableProps.indexOf(sPropertyName) > -1) {
-				this._getInput().setProperty(sPropertyName, oValue, bSuppressInvalidate);
+				this._getInput().setProperty(sPropertyName, this.getProperty(sPropertyName), bSuppressInvalidate);
 			}
 
-			return Control.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
+			return this;
 		};
 
 		/*
@@ -581,7 +600,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			if (!this.getAggregation("_input")) {
 				var oNumericInput = new NumericInput({
 					id: this.getId() + "-input",
-					textAlign: TextAlign.End,
+					textAlign: this.getTextAlign(),
 					type: InputType.Number,
 					editable: this.getEditable(),
 					enabled: this.getEnabled(),

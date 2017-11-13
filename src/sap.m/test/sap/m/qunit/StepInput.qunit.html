@@ -179,24 +179,68 @@
 
 		});
 
+		QUnit.test("writeInnerAttributes is called", function() {
+			//Prepare and Act
+			var oRenderSpy,
+				oSI = new sap.m.StepInput();
 
-		QUnit.test("textAlign", function () {
+			oSI.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			oRenderSpy = this.spy(oSI._getInput().getRenderer(), "writeInnerAttributes");
+			//act
+			oSI.setDescription("EUR");
+			oCore.applyChanges();
+
+			//Assert
+			assert.strictEqual(oRenderSpy.callCount, 1, "writeInnerAttributes is called");
+
+			//destroy
+			oSI.destroy();
+		});
+
+		QUnit.test("default textAlign is set to 'End'", function () {
 			//assert
-			strictEqual(this.stepInput._getInput().getTextAlign(), "End",
+			assert.strictEqual(this.stepInput._getInput().getTextAlign(), "End",
 					"Text align is 'End'");
 
 			//act
 			this.stepInput.setEditable(false);
 			//assert
-			strictEqual(this.stepInput._getInput().getTextAlign(), "End",
+			assert.strictEqual(this.stepInput._getInput().getTextAlign(), "End",
 					"Text align is 'End' also when is set to read-only");
 
 			//act
 			this.stepInput.setEditable(true);
 			this.stepInput.setEnabled(false);
 			//assert
-			strictEqual(this.stepInput._getInput().getTextAlign(), "End",
+			assert.strictEqual(this.stepInput._getInput().getTextAlign(), "End",
 					"Text align is 'End' also when the control is disabled");
+		});
+
+		QUnit.test("textAlign changed to 'Center'", function () {
+			//assert
+			this.stepInput.setTextAlign("Center");
+
+			//assert
+			assert.strictEqual(this.stepInput.getTextAlign(), "Center", "Step input's textAlign is set to 'Center'");
+			assert.strictEqual(this.stepInput._getInput().getTextAlign(), "Center", "Input's text align is 'Center'");
+
+		});
+
+		QUnit.test("textAlign set to 'Center'", function() {
+			//Prepare and Act
+			var oSI = new sap.m.StepInput({textAlign: "Center"});
+
+			oSI.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			//assert
+			assert.strictEqual(oSI.getTextAlign(), "Center", "Step input's textAlign is set to 'Center'");
+			assert.strictEqual(oSI._getInput().getTextAlign(), "Center", "Input's text align is 'Center'");
+
+			//destroy
+			oSI.destroy();
 		});
 
 		QUnit.test("setMin", function () {
@@ -1370,6 +1414,24 @@
 			assert.ok(oStepInput._getIsDisabledButton("sapMStepInputBtnIncrease"), "Increase button is disabled when the control is disabled");
 
 			// clean up
+			oStepInput.destroy();
+		});
+
+		QUnit.test("setProperty sets the default properties of StepInput to the Input, when the value of the propery is not valid", function (assert) {
+			// arrange
+			var oStepInput = new sap.m.StepInput();
+
+			oStepInput.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			// act
+			// set "undefined" alignment
+			oStepInput.setTextAlign();
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(oStepInput._getInput().getTextAlign(), oStepInput.getTextAlign(), "textAlign of the Input should be the same as the textAlign of the StepInput");
+
 			oStepInput.destroy();
 		});
 	</script>
