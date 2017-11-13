@@ -818,7 +818,8 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.exit = function() {
 		jQuery.map(this._dependents, function (oDependent) {
-			oDependent.destroy();
+			//Destroy should be called with supress invalidate = true here to prevent static UI Area invalidation
+			oDependent.destroy(true);
 		});
 
 		if (this._oDesignTime) {
