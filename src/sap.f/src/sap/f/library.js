@@ -5,9 +5,11 @@
 /**
  * Initialization Code and shared classes of library sap.f.
  */
-sap.ui.define(["sap/ui/Global",
-	"sap/ui/core/library", "sap/m/library"], // library dependency
-	function() {
+sap.ui.define(["sap/ui/base/DataType",
+	"sap/ui/Global",
+	"sap/ui/core/library",
+	"sap/m/library"], // library dependency
+	function(DataType) {
 
 	"use strict";
 
@@ -19,7 +21,8 @@ sap.ui.define(["sap/ui/Global",
 		designtime: "sap/f/designtime/library.designtime",
 		types: [
 			"sap.f.LayoutType",
-			"sap.f.DynamicPageTitleArea"
+			"sap.f.DynamicPageTitleArea",
+			"sap.f.DynamicPageTitleShrinkRatio"
 		],
 		controls: [
 			"sap.f.Avatar",
@@ -85,6 +88,7 @@ sap.ui.define(["sap/ui/Global",
 	* @enum {string}
 	* @public
 	* @since 1.50
+	* @deprecated Since version 1.54
 	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	thisLib.DynamicPageTitleArea = {
@@ -105,6 +109,20 @@ sap.ui.define(["sap/ui/Global",
 		Middle: "Middle"
 	};
 
+	/**
+	* @classdesc A string type that represents the shrink ratios of the areas within the <code>sap.f.DynamicPageTitle</code>.
+	*
+	* @namespace
+	* @public
+	* @since 1.54
+	* @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	thisLib.DynamicPageTitleShrinkRatio = DataType.createType('sap.f.DynamicPageTitleShrinkRatio', {
+		isValid : function(vValue) {
+			return /^(([1-9]\d*)(\.\d)?:([1-9]\d*)(\.\d)?:([1-9]\d*)(\.\d)?)$/.test(vValue);
+		}
+
+	}, DataType.getType('string'));
 
 	/**
 	 * Layouts, representing the number of columns to be displayed and their relative widths for a {@link sap.f.FlexibleColumnLayout} control.

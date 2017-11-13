@@ -506,35 +506,10 @@
 
 	QUnit.test("test primaryArea", function (assert) {
 		var oDynamicPageTitle = this.oDynamicPageTitle,
-			$beginArea = oDynamicPageTitle.$beginArea,
-			$middleArea = oDynamicPageTitle.$middleArea,
-			sBeginArea = sap.f.DynamicPageTitleArea.Begin,
-			sMiddleArea = sap.f.DynamicPageTitleArea.Middle;
+			sBeginArea = sap.f.DynamicPageTitleArea.Begin;
 
 		// Assert default: primary area is "Begin"
 		assert.equal(oDynamicPageTitle.getPrimaryArea(), sBeginArea, "is the default one");
-		assert.equal($beginArea.hasClass("sapFDynamicPageTitleAreaHighPriority"), true,
-			"The DynamicPageTitle" + sBeginArea + "  area is high priority");
-		assert.equal($middleArea.hasClass("sapFDynamicPageTitleAreaLowPriority"), true,
-			"The DynamicPageTitle" + sMiddleArea + "  area is low priority");
-
-		// Action: Change primary area to "Middle"
-		oDynamicPageTitle.setPrimaryArea(sMiddleArea);
-
-		// Assert
-		assert.equal($beginArea.hasClass("sapFDynamicPageTitleAreaLowPriority"), true,
-			"The DynamicPageTitle" + sBeginArea + " low priority");
-		assert.equal($middleArea.hasClass("sapFDynamicPageTitleAreaHighPriority"), true,
-			"The DynamicPageTitle" + sMiddleArea + " area has high priority");
-
-		// Action: Change primary area back to "Begin"
-		oDynamicPageTitle.setPrimaryArea(sBeginArea);
-
-		// Assert
-		assert.equal($beginArea.hasClass("sapFDynamicPageTitleAreaHighPriority"), true,
-			"The DynamicPageTitle" + sBeginArea + "  area is high priority");
-		assert.equal($middleArea.hasClass("sapFDynamicPageTitleAreaLowPriority"), true,
-			"The DynamicPageTitle" + sMiddleArea + "  area is low priority");
 	});
 
 	QUnit.test("Adding an OverflowToolbar to the content sets flex-basis and removing it resets it", function (assert) {
@@ -1091,7 +1066,7 @@
 			});
 		oUtil.renderObject(oDynamicPage);
 
-		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainLeftHeading");
+		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainHeadingInner");
 		assert.ok($heading.length === 1, "Heading area is rendered");
 		assert.ok($heading.children().length === 0, "Heading area is empty");
 
@@ -1111,7 +1086,7 @@
 			});
 		oUtil.renderObject(oDynamicPage);
 
-		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainLeftHeading");
+		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainHeadingInner");
 		assert.ok($heading.length === 1, "Heading area is rendered");
 		assert.ok($heading.children().length === 1, "Heading area has one child rendered");
 		assert.ok($heading.children()[0] === oTitle.getDomRef(), "This child is the title");
@@ -1134,7 +1109,7 @@
 			});
 		oUtil.renderObject(oDynamicPage);
 
-		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainLeftHeading");
+		var $heading = oDynamicPageTitle.$("left-inner").find(".sapFDynamicPageTitleMainHeadingInner");
 		assert.ok($heading.length === 1, "Heading area is rendered");
 		assert.ok($heading.children().length === 1, "Heading area has one child rendered");
 		assert.ok($heading.children()[0] === oTitle.getDomRef(), "This child is the title");
@@ -2317,5 +2292,273 @@
 		core.applyChanges();
 		assert.equal(oPinButton.getTooltip(), sPinTooltip,
 			"The tooltip is correct: resetted when preserveHeaderStateOnScroll is false");
+	});
+
+	QUnit.module("Title responsiveness", {
+		beforeEach: function() {
+
+			var oXmlString = [
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" displayBlock="true" height="100%">',
+					'<f:DynamicPageTitle id="DynamicPageTitle" primaryArea="Begin">',
+						'<f:expandedHeading>',
+							'<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">',
+								'<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>',
+								'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">',
+									'<m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>',
+									'<m:ObjectMarker type="Flagged"/>',
+									'<m:Button icon="sap-icon://private" type="Transparent"/>',
+									'<m:Button icon="sap-icon://arrow-down" type="Transparent"/>',
+								'</m:FlexBox>',
+							'</m:FlexBox>',
+						'</f:expandedHeading>',
+						'<f:snappedHeading>',
+							'<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">',
+								'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">',
+									'<f:Avatar src="../../sap/f/images/Woman_avatar_02.png" displaySize="S" class="sapUiTinyMarginEnd"/>',
+									'<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>',
+								'</m:FlexBox>',
+								'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">',
+									'<m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>',
+									'<m:ObjectMarker type="Flagged"/>',
+									'<m:Button icon="sap-icon://private" type="Transparent"/>',
+									'<m:Button icon="sap-icon://arrow-down" type="Transparent"/>',
+								'</m:FlexBox>',
+							'</m:FlexBox>',
+						'</f:snappedHeading>',
+						'<f:expandedContent>',
+							'<m:Text text="Senior Developer" />',
+						'</f:expandedContent>',
+						'<f:snappedContent>',
+						   '<m:Text text="Senior Developer" />',
+						'</f:snappedContent>',
+						'<f:content>',
+							'<m:OverflowToolbar>',
+								'<m:Button text="KPI 1" class="sapUiTinyMargin"/>',
+								'<m:Button text="KPI 2" class="sapUiTinyMargin"/>',
+								'<m:Button text="KPI 3" class="sapUiTinyMargin"/>',
+								'<m:Button text="KPI 4" class="sapUiTinyMargin"/>',
+								'<m:Button text="KPI 5" class="sapUiTinyMargin"/>',
+								'<m:Button text="KPI 6" class="sapUiTinyMargin"/>',
+							'</m:OverflowToolbar>',
+						'</f:content>',
+						'<f:actions>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://copy"/>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://delete"/>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://add"/>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://paste"/>',
+						'</f:actions>',
+						'<f:navigationActions>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" tooltip="Enter Full Screen Mode"/>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" tooltip="Close column"/>',
+						'</f:navigationActions>',
+					'</f:DynamicPageTitle>',
+				'</mvc:View>'
+			].join('');
+
+			var Comp = sap.ui.core.UIComponent.extend("test"	, {
+				metadata: {
+					manifest : {
+						"sap.app": {
+							"id": "test",
+							"type": "application"
+						}
+					}
+				},
+				createContent : function() {
+					return sap.ui.xmlview({
+						id : this.createId("view"),
+						viewContent : oXmlString
+					});
+				}
+			});
+
+			this.oUiComponent = new Comp("comp");
+			this.oUiComponentContainer = new sap.ui.core.ComponentContainer({
+				component : this.oUiComponent
+			});
+
+			this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
+			sap.ui.getCore().applyChanges();
+		},
+
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+		}
+	});
+
+	QUnit.test("Test flex-basis styles are set", function(assert) {
+		// arrange
+		var oTitle = sap.ui.getCore().byId("comp---view--DynamicPageTitle");
+
+		// assert
+		assert.notEqual(oTitle.$("content").css("flex-basis"), "auto", "FlexBasis must be set on 'content' div.");
+		assert.notEqual(oTitle.$("mainActions").css("flex-basis"), "auto", "FlexBasis must be set on 'mainActions' div.");
+	});
+
+	QUnit.test("Test flex-basis styles change when an action is added", function(assert) {
+		// arrange
+		var oTitle = sap.ui.getCore().byId("comp---view--DynamicPageTitle"),
+			nOldFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"), 10),
+			nNewFlexBasis;
+
+		// act
+		oTitle.addAction(new sap.m.OverflowToolbarButton({
+			type: "Transparent",
+			icon: "sap-icon://copy"
+		}));
+
+		sap.ui.getCore().applyChanges();
+
+		nNewFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"), 10);
+
+		// assert
+		assert.ok(nNewFlexBasis > nOldFlexBasis, "New flex-basis value should be greater since an action was added.");
+	});
+
+	QUnit.module("Title responsiveness shrink factors", {
+		beforeEach: function() {
+
+			var oXmlString = [
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" displayBlock="true" height="100%">',
+					'<f:DynamicPageTitle id="DynamicPageTitle">',
+						'<f:expandedHeading>',
+							'<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">',
+								'<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>',
+								'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">',
+									'<m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>',
+									'<m:ObjectMarker type="Flagged"/>',
+									'<m:Button icon="sap-icon://private" type="Transparent"/>',
+									'<m:Button icon="sap-icon://arrow-down" type="Transparent"/>',
+								'</m:FlexBox>',
+							'</m:FlexBox>',
+						'</f:expandedHeading>',
+						'<f:snappedHeading>',
+							'<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">',
+								'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">',
+									'<f:Avatar src="../../sap/f/images/Woman_avatar_02.png" displaySize="S" class="sapUiTinyMarginEnd"/>',
+									'<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>',
+								'</m:FlexBox>',
+								'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">',
+									'<m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>',
+									'<m:ObjectMarker type="Flagged"/>',
+									'<m:Button icon="sap-icon://private" type="Transparent"/>',
+									'<m:Button icon="sap-icon://arrow-down" type="Transparent"/>',
+								'</m:FlexBox>',
+							'</m:FlexBox>',
+						'</f:snappedHeading>',
+						'<f:expandedContent>',
+							'<m:Text text="Senior Developer" />',
+						'</f:expandedContent>',
+						'<f:snappedContent>',
+						   '<m:Text text="Senior Developer" />',
+						'</f:snappedContent>',
+						'<f:content>',
+							'<m:OverflowToolbar>',
+								'<m:Button text="KPI 1" class="sapUiTinyMargin"/>',
+								'<m:Button text="KPI 2" class="sapUiTinyMargin"/>',
+								'<m:Button text="KPI 3" class="sapUiTinyMargin"/>',
+								'<m:Button text="KPI 4" class="sapUiTinyMargin"/>',
+								'<m:Button text="KPI 5" class="sapUiTinyMargin"/>',
+								'<m:Button text="KPI 6" class="sapUiTinyMargin"/>',
+							'</m:OverflowToolbar>',
+						'</f:content>',
+						'<f:actions>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://copy"/>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://delete"/>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://add"/>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://paste"/>',
+						'</f:actions>',
+						'<f:navigationActions>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" tooltip="Enter Full Screen Mode"/>',
+							'<m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" tooltip="Close column"/>',
+						'</f:navigationActions>',
+					'</f:DynamicPageTitle>',
+				'</mvc:View>'
+			].join('');
+
+			var Comp = sap.ui.core.UIComponent.extend("test"	, {
+				metadata: {
+					manifest : {
+						"sap.app": {
+							"id": "test",
+							"type": "application"
+						}
+					}
+				},
+				createContent : function() {
+					return sap.ui.xmlview({
+						id : this.createId("view"),
+						viewContent : oXmlString
+					});
+				}
+			});
+
+			this.oUiComponent = new Comp("comp");
+			this.oUiComponentContainer = new sap.ui.core.ComponentContainer({
+				component : this.oUiComponent
+			});
+
+			this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
+			sap.ui.getCore().applyChanges();
+		},
+
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+		}
+	});
+
+	QUnit.test("Test flex-basis styles when primaryArea=Middle", function(assert) {
+		// arrange
+		var oTitle = sap.ui.getCore().byId("comp---view--DynamicPageTitle"),
+			oHeading = oTitle.$("left-inner"),
+			oContent = oTitle.$("content"),
+			oActions = oTitle.$("mainActions");
+
+		// act
+		oTitle.setPrimaryArea("Middle");
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(parseFloat(oHeading.css("flex-shrink")).toFixed(1), 1.6, "Heading shrink factor is correct");
+		assert.equal(parseFloat(oContent.css("flex-shrink")).toFixed(1), 1, "Content shrink factor is correct");
+		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 1.6, "Actions shrink factor is correct");
+	});
+
+	QUnit.test("Test flex-basis styles when primaryArea=Begin and areaShrinkRatio is set", function(assert) {
+		// arrange
+		var oTitle = sap.ui.getCore().byId("comp---view--DynamicPageTitle"),
+			oHeading = oTitle.$("left-inner"),
+			oContent = oTitle.$("content"),
+			oActions = oTitle.$("mainActions");
+
+		// act
+		oTitle.setAreaShrinkRatio("1:2:4");
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(parseFloat(oHeading.css("flex-shrink")).toFixed(1), 1, "Heading shrink factor is correct");
+		assert.equal(parseFloat(oContent.css("flex-shrink")).toFixed(1), 2, "Content shrink factor is correct");
+		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 4, "Actions shrink factor is correct");
+	});
+
+	QUnit.test("Test flex-basis styles when primaryArea=Middle and areaShrinkRatio is set", function(assert) {
+		// arrange
+		var oTitle = sap.ui.getCore().byId("comp---view--DynamicPageTitle"),
+			oHeading = oTitle.$("left-inner"),
+			oContent = oTitle.$("content"),
+			oActions = oTitle.$("mainActions");
+
+		// act
+		oTitle.setPrimaryArea("Middle");
+		oTitle.setAreaShrinkRatio("1:2:4");
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(parseFloat(oHeading.css("flex-shrink")).toFixed(1), 1, "Heading shrink factor is correct");
+		assert.equal(parseFloat(oContent.css("flex-shrink")).toFixed(1), 2, "Content shrink factor is correct");
+		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 4, "Actions shrink factor is correct");
 	});
 }(jQuery, QUnit, sinon, sap.f.DynamicPage, sap.f.DynamicPageTitle, sap.f.DynamicPageHeader));
