@@ -391,10 +391,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		var oForm = this.getAggregation("form");
 		oForm.invalidate = oForm._origInvalidate;
 
-		if (this._sResizeListenerId) {
-			ResizeHandler.deregister(this._sResizeListenerId);
-			this._sResizeListenerId = null;
-		}
+		_removeResize.call(this);
+
 		for (var i = 0; i < this._aLayouts.length; i++) {
 			var oLayout = sap.ui.getCore().byId(this._aLayouts[i]);
 			if (oLayout && oLayout.destroy) {
@@ -416,11 +414,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 	 */
 	SimpleForm.prototype.onBeforeRendering = function() {
 
-		//unregister resize
-		if (this._sResizeListenerId) {
-			ResizeHandler.deregister(this._sResizeListenerId);
-			this._sResizeListenerId = null;
-		}
+		_removeResize.call(this);
 
 		var oForm = this.getAggregation("form");
 		if (!this._bResponsiveLayoutRequested && !this._bGridLayoutRequested && !this._bResponsiveGridLayoutRequested) {
@@ -1107,6 +1101,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			if (oForm.getLayout()) {
 				this._bChangedByMe = true;
 				oForm.destroyLayout();
+				_removeResize.call(this);
 				this._bChangedByMe = false;
 			}
 
@@ -1745,6 +1740,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		this._bChangedByMe = false;
 
 	};
+
+	function _removeResize() {
+
+		if (this._sResizeListenerId) {
+			ResizeHandler.deregister(this._sResizeListenerId);
+			this._sResizeListenerId = null;
+		}
+
+	}
 
 	function _markFormElementForUpdate(aFormElements, oFormElement){
 
