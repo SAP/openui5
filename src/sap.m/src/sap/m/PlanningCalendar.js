@@ -227,7 +227,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			 * The views should be specified by their keys.
 			 *
 			 * The default predefined views and their keys are available at
-			 * {@link sap.m.PlanningCalendarBuiltInViews}.
+			 * {@link sap.m.PlanningCalendarBuiltInView}.
 			 *
 			 * <b>Note:</b> If set, all specified views will be displayed along
 			 * with any custom views (if available). If not set and no custom

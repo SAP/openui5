@@ -861,7 +861,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* =========================================================== */
 
 	/**
- 	 * @returns {sap.m.RatingIndicatior} this instance for method chaining
+ 	 * @returns {sap.m.RatingIndicator} this instance for method chaining
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */

@@ -7,8 +7,8 @@ sap.ui.define([],
 		"use strict";
 
 		/**
-		 * @class QuickView renderer.
-		 * @static
+		 * QuickView renderer.
+		 * @namespace
 		 */
 		var QuickViewRenderer = {};
 

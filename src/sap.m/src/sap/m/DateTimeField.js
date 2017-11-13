@@ -25,8 +25,9 @@ sap.ui.define([
 	 *
 	 * @class
 	 * The <code>sap.m.DateTimeField</code> control provides a basic functionality for date/time input controls.
-	 * @abstract
+	 *
 	 * To be extended by date and time picker controls. For internal use only.
+	 * @abstract
 	 *
 	 * @extends sap.m.InputBase
 	 *
