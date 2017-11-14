@@ -585,7 +585,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
-	ODataContextBinding.prototype.refreshInternal = function (sGroupId) {
+	ODataContextBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
 		var that = this;
 
 		this.oCachePromise.then(function (oCache) {
@@ -609,7 +609,7 @@ sap.ui.define([
 				}
 			}
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				oDependentBinding.refreshInternal(sGroupId, true);
+				oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
 			});
 		});
 	};

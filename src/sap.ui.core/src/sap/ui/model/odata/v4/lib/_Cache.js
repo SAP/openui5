@@ -937,21 +937,11 @@ sap.ui.define([
 	 *   arrives.
 	 */
 	CollectionCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
-		var iIndex,
-			oPromise,
-			aSegments,
-			that = this;
+		var that = this;
 
-		if (sPath === "$count") {
-			oPromise = _SyncPromise.all(this.aElements);
-		} else if (sPath) {
-			aSegments = sPath.split("/");
-			iIndex = parseInt(aSegments.shift(), 10);
-			oPromise = this.read(iIndex, 1, sGroupId, fnDataRequested);
-		} else {
-			oPromise = _SyncPromise.resolve();
-		}
-		return oPromise.then(function () {
+		// wait for all reads to be finished, this is essential for $count and for finding the index
+		// of a key predicate
+		return _SyncPromise.all(this.aElements).then(function () {
 			that.checkActive();
 			// register afterwards to avoid that updateCache fires updates before the first response
 			that.registerChange(sPath, oListener);
