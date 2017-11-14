@@ -4,8 +4,10 @@ sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/TableUtils",
 	"sap/ui/table/TableKeyboardDelegate2",
-	"sap/ui/Device"
-], function(qutils, TableUtils, TableKeyboardDelegate2, Device) {
+	"sap/ui/Device",
+	"sap/m/Menu",
+	"sap/m/MenuItem"
+], function(qutils, TableUtils, TableKeyboardDelegate2, Device, MenuM, MenuItemM) {
 	"use strict";
 
 	// mapping of global function calls
@@ -5152,6 +5154,44 @@ sap.ui.require([
 
 		var oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+	});
+
+	QUnit.test("On a Data cell - Custom context menu", function(assert) {
+		oTable.setContextMenu(new MenuM({
+			items: [
+				new MenuItemM({text: "ContextMenuItem"})
+			]
+		}));
+		var oMenu = oTable.getContextMenu();
+		var fnOpenAsContextMenu = this.spy(oTable.getContextMenu(), "openAsContextMenu");
+		initRowActions(oTable, 1, 1);
+		var aElem = [
+			getCell(0, 0),
+			getRowHeader(0),
+			getRowAction(0)
+		];
+
+		// Shift+F10 to open the custom context menu
+		aElem.forEach(function(oElem) {
+			oElem.focus();
+			qutils.triggerKeydown(oElem, Key.F10, true, false, false);
+			oMenu.close();
+			checkFocus(oElem, assert);
+
+			oElem.trigger("contextmenu");
+			oMenu.close();
+			checkFocus(oElem, assert);
+			assert.ok(fnOpenAsContextMenu.calledTwice, "sap.m.Menu.openAsContextMenu called using Shift+F10 keys");
+			fnOpenAsContextMenu.reset();
+		});
+
+		// selectAll checkbox test for context menu
+		fnOpenAsContextMenu.reset();
+		var oSelectAll = getSelectAll(true);
+		oSelectAll.trigger("contexmenu");
+		assert.ok(!fnOpenAsContextMenu.called, "Menu did not open");
+		qutils.triggerKeydown(oSelectAll, Key.F10, true, false, false);
+		assert.ok(!fnOpenAsContextMenu.called, "Menu did not open");
 	});
 
 	QUnit.test("On other cells", function(assert) {

@@ -499,6 +499,26 @@
 				oTable.setEnableCellFilter(bValue);
 			}
 		},
+		CONTEXTMENU: {
+			text: "Custom Context Menu",
+			value: function(oTable) {
+				return !!oTable.getContextMenu();
+			},
+			input: "boolean",
+			action: function(oTable, bValue) {
+				if (bValue) {
+					oTable.setContextMenu(
+						new sap.m.Menu({
+							items: [
+								new sap.m.MenuItem({text : "{name}"})
+							]
+						})
+					);
+				} else {
+					oTable.destroyContextMenu();
+				}
+			}
+		},
 		ALTERNATEROWCOLORS: {
 			text: "Alternate Row Colors",
 			value: function(oTable) {

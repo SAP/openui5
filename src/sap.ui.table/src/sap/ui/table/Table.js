@@ -344,7 +344,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 *
 			 * @since 1.52
 			 */
-			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
+			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"},
+
+			/**
+			 * Defines the context menu for the table.
+			 *
+			 * <b>Note:</b> The context menu will also be available for the row selectors as well as in the row actions cell of the table control.
+			 *
+			 * The custom context menu will not be shown in the group header rows and the sum row of the <code>AnalyticalTable</code> control.
+			 *
+			 * If this aggregation is set, then the <code>enableCellFilter</code> property will have no effect.
+			 *
+			 * @since 1.54
+			 */
+			contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false}
 		},
 		associations : {
 
@@ -560,6 +573,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			/**
 			 * fired when the user clicks a cell of the table.
 			 * @since 1.21.0
+			 * @deprecated As of 1.54, replaced by <code>beforeOpenContextMenu</code>.
 			 */
 			cellContextmenu : {allowPreventDefault : true,
 				parameters : {
@@ -593,6 +607,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					 * Row binding context of the selected cell.
 					 */
 					rowBindingContext : {type : "sap.ui.model.Context"}
+				}
+			},
+
+			/**
+			 * Fired when the user requests the context menu for a table cell.
+			 * @since 1.54
+			 */
+			beforeOpenContextMenu : {
+				allowPreventDefault : true,
+				parameters: {
+					/**
+					 * Row index where the context menu opens.
+					 */
+					rowIndex : {type : "int"},
+
+					/**
+					 * Column index where the context menu opens.
+					 * This is the index of the column in the <code>columns</code> aggregation.
+					 */
+					columnIndex : {type : "int"},
+
+					/**
+					 * Context menu
+					 */
+					contextMenu : {type : "sap.ui.core.IContextMenu"}
 				}
 			},
 

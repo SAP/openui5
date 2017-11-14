@@ -15,11 +15,11 @@ sap.ui.require([
 	'sap/ui/table/library',
 	"sap/ui/Device", "sap/ui/model/json/JSONModel", "sap/ui/model/Sorter", "sap/ui/model/Filter", "sap/ui/model/type/Float",
 	"sap/m/Text", "sap/m/Input", "sap/m/Label", "sap/m/CheckBox", "sap/m/Button", "sap/m/Link", "sap/m/RatingIndicator", "sap/m/Image",
-	"sap/m/Toolbar", "sap/m/ToolbarDesign", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem"
+	"sap/m/Toolbar", "sap/m/ToolbarDesign", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem"
 ], function(qutils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction, RowActionItem,
 			RowSettings, TableUtils, TableLibrary,
 			Device, JSONModel, Sorter, Filter, FloatType,
-			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, ToolbarDesign, Menu, MenuItem) {
+			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, ToolbarDesign, Menu, MenuItem, MenuM, MenuItemM) {
 	"use strict";
 
 	// Shortcuts
@@ -187,6 +187,12 @@ sap.ui.require([
 				title: "TABLEHEADER",
 				footer: "Footer",
 				selectionMode: SelectionMode.Single,
+				contextMenu: new MenuM({
+					items: [
+						new MenuItemM({text: "{lastName}"}),
+						new MenuItemM({text: "{name}"})
+					]
+				}),
 				toolbar: new Toolbar({
 					content: [
 						new Button({
@@ -202,7 +208,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Properties", function(assert) {
-		assert.expect(8);
+		assert.expect(9);
 		assert.equal(oTable.$().find(".sapUiTableHdr").text(), "TABLEHEADER", "Title of Table is correct!");
 		assert.equal(jQuery.sap.byId("__toolbar0").find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
 		assert.equal(oTable.$().find(".sapUiTableFtr").text(), "Footer", "Title of Table is correct!");
@@ -211,6 +217,7 @@ sap.ui.require([
 		assert.equal(jQuery(".sapUiTableCtrl tr.sapUiTableTr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(jQuery(".sapUiTableRowHdr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(oTable.getFirstVisibleRow(), 5, "First Visible Row correct!");
+		assert.ok(oTable.getContextMenu() instanceof MenuM, "Context menu created as specified by the application");
 	});
 
 	QUnit.test("Filter", function(assert) {
