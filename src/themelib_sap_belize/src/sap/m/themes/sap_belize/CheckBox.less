@@ -48,7 +48,7 @@ html.sap-desktop {
 		outline-color: @sapUiContentFocusColor;
 	}
 
-	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel:focus:before {
 		content: "";
 		display: block;
 		position: absolute;
@@ -74,7 +74,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
 		outline-style: dashed;
 	}
-	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel:focus:before {
 		border: 1px dashed @sapUiContentFocusColor;
 	}
 }
@@ -112,13 +112,6 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 .sapMLIBActive .sapMCbBg:active.sapMCbMarkChecked:before,
 .sapMLIBActive .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked:before{
 	color: @sapUiListActiveTextColor;
-}
-
-.sapMActive .sapMCbBg.sapMCbActiveStateOff.sapMCbMarkChecked:before,
-.sapMCbBg:active.sapMCbActiveStateOff.sapMCbMarkChecked:before,
-.sapMActive .sapMCbBg.sapMCbMarkChecked:before,
-.sapMCbBg:active.sapMCbMarkChecked:before {
-	color: @sapUiSelected;
 }
 
 .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked:before {

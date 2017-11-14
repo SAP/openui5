@@ -177,6 +177,50 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		oCheckBox.destroy();
 	});
 
+    /* ----------------------------------------------- */
+	/* Test: 'displayOnly=true'                        */
+	/* ----------------------------------------------- */
+    QUnit.test("'displayOnly=true'", function(assert) {
+
+		// system under test
+		var bDisplayOnly = true;
+		var oCheckBox = new sap.m.CheckBox({displayOnly: bDisplayOnly});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oCheckBox.getTabIndex(), -1 , "'getTabindex' should return -1");
+		assert.equal(oCheckBox.$().hasClass("sapMCbDisplayOnly"), true, ": The CheckBox should have class sapMCbDisplayOnly");
+		assert.strictEqual(oCheckBox.$().attr("aria-readonly"), "true", "Property 'aria-readonly' should be 'true'");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+    /* ----------------------------------------------- */
+	/* Test: 'displayOnly=true&enabled=false'          */
+	/* ----------------------------------------------- */
+    QUnit.test("'displayOnly=true'", function(assert) {
+
+		// system under test
+		var bDisplayOnly = true;
+		var bEnabled = false;
+		var oCheckBox = new sap.m.CheckBox({displayOnly: bDisplayOnly, enabled: bEnabled});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.equal(oCheckBox.$().hasClass("sapMCbDisplayOnly"), false, ": The CheckBox should not have class sapMCbDisplayOnly");
+		assert.strictEqual(oCheckBox.$().attr("aria-readonly"), undefined, "Property 'aria-readonly' is not set");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
 
 	/* ----------------------------------------------- */
 	/* Test: 'selected=true'                           */

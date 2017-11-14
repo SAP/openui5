@@ -71,6 +71,42 @@
 						text: "Not editable"
 					}),
 					new sap.m.CheckBox({
+						id:"cb_display_only_checked",
+						visible: true,
+						enabled: true,
+						displayOnly: true,
+						editable: false,
+						selected: true,
+						text: "Display Only Checked"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_display_only",
+						visible: true,
+						enabled: true,
+						displayOnly: true,
+						editable: false,
+						selected: false,
+						text: "Display Only"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_disabled_and_display_only",
+						visible: true,
+						enabled: false,
+						displayOnly: true,
+						editable: true,
+						selected: false,
+						text: "Disabled and Display Only"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_enabled_editable_and_display_only",
+						visible: true,
+						enabled: true,
+						displayOnly: true,
+						editable: true,
+						selected: true,
+						text: "Enabled, Display Only and Editable"
+					}),
+					new sap.m.CheckBox({
 						visible: true,
 						selected: true,
 						enabled: true,
