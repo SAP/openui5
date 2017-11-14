@@ -1101,7 +1101,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		Select.prototype.onsapescape = function(oEvent) {
 			var bSelectionChanged;
 
-			// Prevents escape, when the control is disabled or the <code>SelectList<code/> is closed.
+			// Prevents escape, when the control is disabled or the <code>SelectList</code> is closed.
 			// IE11 browser focus non-focusable elements.
 			if (!this.getEnabled() || !this.isOpen()) {
 				return;

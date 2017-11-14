@@ -256,9 +256,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	/**
 	 * A regular expression to split a URL into
 	 * <ol>
-	 * <li>a part before the file extension
-	 * <li>the file extension itself
-	 * <li>any remaining part after the file extension (query, hash - optional)
+	 * <li>a part before the file extension</li>
+	 * <li>the file extension itself</li>
+	 * <li>any remaining part after the file extension (query, hash - optional)</li>
 	 * </ol>.
 	 *
 	 * Won't match for URLs without a file extension.

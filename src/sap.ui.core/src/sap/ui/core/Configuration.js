@@ -18,13 +18,13 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 	 * The Configuration is initialized once when the {@link sap.ui.core.Core} is created.
 	 * There are different ways to set the environment configuration (in ascending priority):
 	 * <ol>
-	 * <li>System defined defaults
-	 * <li>Server wide defaults, read from /sap-ui-config.json
-	 * <li>Properties of the global configuration object window["sap-ui-config"]
-	 * <li>A configuration string in the data-sap-ui-config attribute of the bootstrap tag
-	 * <li>Individual data-sap-ui-xyz attributes of the bootstrap tag
-	 * <li>Using URL parameters
-	 * <li>Setters in this Configuration object (only for some parameters)
+	 * <li>System defined defaults</li>
+	 * <li>Server wide defaults, read from /sap-ui-config.json</li>
+	 * <li>Properties of the global configuration object window["sap-ui-config"]</li>
+	 * <li>A configuration string in the data-sap-ui-config attribute of the bootstrap tag</li>
+	 * <li>Individual data-sap-ui-<i>xyz</i> attributes of the bootstrap tag</li>
+	 * <li>Using URL parameters</li>
+	 * <li>Setters in this Configuration object (only for some parameters)</li>
 	 * </ol>
 	 *
 	 * That is, attributes of the DOM reference override the system defaults, URL parameters
@@ -34,8 +34,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 	 *
 	 * The naming convention for parameters is:
 	 * <ul>
-	 * <li>in the URL : sap-ui-<i>PARAMETER-NAME</i>="value"
-	 * <li>in the DOM : data-sap-ui-<i>PARAMETER-NAME</i>="value"
+	 * <li>in the URL : sap-ui-<i>PARAMETER-NAME</i>="value"</li>
+	 * <li>in the DOM : data-sap-ui-<i>PARAMETER-NAME</i>="value"</li>
 	 * </ul>
 	 * where <i>PARAMETER-NAME</i> is the name of the parameter in lower case.
 	 *

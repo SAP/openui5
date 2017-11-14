@@ -362,7 +362,7 @@ sap.ui.define([
 	/**
 	 * Returns whether the table is in action mode.
 	 *
-	 * @returns {boolean} Returns <code>true/code>, if the table is in action mode.
+	 * @returns {boolean} Returns <code>true</code>, if the table is in action mode.
 	 * @public
 	 */
 	TableKeyboardExtension.prototype.isInActionMode = function() {
