@@ -416,7 +416,7 @@ sap.ui.define([
 				fnCreateView;
 
 			fnCreateView = function () {
-				return sap.ui.xmlview(this.getId() + "-" + sMode, mParameter);
+				return sap.ui.view(this.getId() + "-" + sMode, mParameter);
 			}.bind(this);
 
 			oOwnerComponent = Component.getOwnerComponentFor(this);

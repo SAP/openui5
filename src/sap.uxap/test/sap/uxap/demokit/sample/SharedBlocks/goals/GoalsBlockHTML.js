@@ -8,11 +8,11 @@ sap.ui.define(["sap/ui/core/library", 'sap/uxap/BlockBase'], function (coreLibra
 			views: {
 				Collapsed: {
 					viewName: "sap.uxap.sample.SharedBlocks.goals.GoalsBlock",
-					type: ViewType.XML
+					type: ViewType.HTML
 				},
 				Expanded: {
 					viewName: "sap.uxap.sample.SharedBlocks.goals.GoalsBlock",
-					type: ViewType.XML
+					type: ViewType.HTML
 				}
 			}
 		}
