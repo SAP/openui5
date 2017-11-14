@@ -260,6 +260,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			return;
 		}
 
+		//Reset dimensions
+		oTextAreaRef.style.height = "auto";
+		// Calc dimensions of the changed content
 		fHeight = oTextAreaRef.scrollHeight + oTextAreaRef.offsetHeight - oTextAreaRef.clientHeight;
 
 		if (this.getValue() && fHeight !== 0) {
