@@ -1867,17 +1867,17 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("id", "7", 0);
+			assert.throws(function () {
+				that.oView.byId("form").bindElement("/TEAMS('43')",
+						{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
+			}, new Error("setContext on relative binding is forbidden if a transient entity exists"
+				+ ": sap.ui.model.odata.v4.ODataListBinding: /TEAMS('42')|TEAM_2_EMPLOYEES"));
 			that.oModel.submitBatch("update");
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// code under test
 			assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no more pending changes");
 			assert.notOk(oTeamBinding.hasPendingChanges(), "no more pending changes");
-			assert.throws(function () {
-				that.oView.byId("form").bindElement("/TEAMS('43')",
-					{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
-			}, new Error("setContext on relative binding is forbidden if created entity" +
-				" exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS('42')|TEAM_2_EMPLOYEES"));
 			return that.waitForChanges(assert);
 		});
 	});

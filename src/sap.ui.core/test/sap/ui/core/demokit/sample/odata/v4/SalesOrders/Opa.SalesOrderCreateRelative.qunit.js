@@ -79,6 +79,13 @@ sap.ui.require([
 			When.onTheMainPage.changeSalesOrderLineItemQuantity(0, "2.0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Note changed");
+
+			// change context should be possible after Line Items were saved
+			// Test only possible with realOData because same GET request for the Line Items with
+			// different result happen which is not possible with mockdata
+			When.onTheMainPage.selectSalesOrder(1);
+			When.onTheMainPage.selectSalesOrder(0);
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
 		}
 
 		// delete persisted sales order item
