@@ -155,7 +155,7 @@ sap.ui.define([
 				if (this._sId !== sNewId) {
 
 					// retrieve entity docu from server
-					EntityInfo.getEntityDocuAsync(sNewId, oEntity && oEntity.namespace).then(function (oDoc) {
+					EntityInfo.getEntityDocuAsync(sNewId, oEntity && oEntity.library).then(function (oDoc) {
 
 						// route to not found page IF there is NO index entry AND NO docu from server
 						if (!oEntity && !oDoc) {
