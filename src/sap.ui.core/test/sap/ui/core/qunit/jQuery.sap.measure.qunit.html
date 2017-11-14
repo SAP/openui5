@@ -440,6 +440,9 @@
 			assert.ok(oMeasurement.bytesReceived === 0, "No processing");
 		});
 
+		// do not test safari as it does not seem to work in testing environments
+		var bStablePerformanceAPI = window.performance && window.performance.getEntries && !sap.ui.Device.browser.safari;
+
 		QUnit.test("Performance API depending measures", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oReq = new XMLHttpRequest();
@@ -448,14 +451,14 @@
 			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			// ignore browsers where no Performance API is present or insufficient
-			if(window.performance && window.performance.getEntries) {
+			if(bStablePerformanceAPI) {
 				assert.equal(oMeasurement.requests.length, 1, "One requests");
 				assert.equal(oMeasurement.measurements.length, 0, "No measurements");
 				assert.ok(oMeasurement.navigation === oMeasurement.requests[0].requestStart - oMeasurement.requests[0].startTime, "Navigation correct");
 				assert.ok(oMeasurement.roundtrip === oMeasurement.requests[0].responseEnd - oMeasurement.requests[0].startTime, "Roundtrip correct");
 				assert.ok(oMeasurement.processing <= oMeasurement.end - oMeasurement.start, "Processing plausible");
 			} else {
-				assert.ok(!(window.performance && window.performance.getEntries), "Performance API not fully available");
+				assert.ok(!bStablePerformanceAPI, "Performance API not fully/stable available");
 			}
 		});
 
@@ -467,14 +470,14 @@
 			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			// ignore browsers where no Performance API is present or insufficient
-			if(window.performance && window.performance.getEntries) {
+			if(bStablePerformanceAPI) {
 				assert.equal(oMeasurement.requests.length, 1, "One requests");
 				assert.equal(oMeasurement.measurements.length, 0, "No measurements");
 				assert.ok(oMeasurement.networkTime === 0, "No sap-perf-fesrec response header");
 				assert.ok(oMeasurement.bytesSent === 0, "Nothing posted/putted");
 				assert.ok(oMeasurement.bytesReceived === 0, "No bytes received when fesr is not active"); //parseInt(oReq.getResponseHeader("content-length"), 10)
 			} else {
-				assert.ok(!(window.performance && window.performance.getEntries), "Performance API not fully available");
+				assert.ok(!bStablePerformanceAPI, "Performance API not fully/stable available");
 			}
 		});
 
