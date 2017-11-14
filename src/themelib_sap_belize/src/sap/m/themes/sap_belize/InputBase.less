@@ -38,3 +38,9 @@
 		bottom: 3px;
 	}
 }
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+  .sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner)::before {
+    border: 1px dashed @sapUiContentFocusColor;
+  }
+}
