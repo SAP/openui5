@@ -195,7 +195,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		var oChannel = getChannel(this, sChannelId);
 		if (!oChannel) {
 			// no channel
-			jQuery.sap.log.info("Failed to publish into channel '" + sChannelId + "'." + " No such channel.", sChannelId, "sap.ui.core.EventBus");
+			if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, "sap.ui.core.EventBus")) {
+				jQuery.sap.log.debug("Failed to publish into channel '" + sChannelId + "'." + " No such channel.", sChannelId, "sap.ui.core.EventBus");
+			}
 			return;
 		}
 
@@ -209,9 +211,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 				oInfo = aEventListeners[i];
 				oInfo.fFunction.call(oInfo.oListener || this, sChannelId, sEventId, oData);
 			}
-		} else {
+		} else if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, "sap.ui.core.EventBus")) {
 			// no listeners
-			jQuery.sap.log.info("Failed to publish Event '" + sEventId + "' in '" + sChannelId + "'." + " No listeners found.", sChannelId + "#" + sEventId, "sap.ui.core.EventBus");
+			jQuery.sap.log.debug("Failed to publish Event '" + sEventId + "' in '" + sChannelId + "'." + " No listeners found.", sChannelId + "#" + sEventId, "sap.ui.core.EventBus");
 		}
 	};
 
