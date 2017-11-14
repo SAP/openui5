@@ -1233,6 +1233,29 @@
 					"setProperty is called and it's third parameter is 'true'");
 		});
 
+		module("Misc");
+
+		QUnit.test("_disableButtons works accordingly when enabled: false and min & max available", function (assert) {
+			// arrange
+			var oStepInput = new sap.m.StepInput({
+				enabled: false,
+				min: 0,
+				max: 10
+			});
+			oStepInput.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			//act
+			oStepInput.setValue(5);
+
+			// assert
+			assert.strictEqual(oStepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
+					"the increment button is still disabled after setValue");
+			assert.strictEqual(oStepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
+					"the decrement button is still disabled after setValue");
+
+			oStepInput.destroy();
+		});
 	</script>
 
 </head>
