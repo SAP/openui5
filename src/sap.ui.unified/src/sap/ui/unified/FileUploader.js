@@ -522,12 +522,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	};
 
 	FileUploader.prototype.setTooltip = function(oTooltip) {
+		var sTooltip,
+			sapUiFupInputMaskDOM;
+
 		this._refreshTooltipBaseDelegate(oTooltip);
 		this.setAggregation("tooltip", oTooltip, true);
+
 		if (this.oFileUpload) {
 			if (typeof oTooltip  === "string") {
-				jQuery(this.oFileUpload).attr("title", jQuery.sap.encodeHTML(oTooltip));
-				this.$().find(".sapUiFupInputMask").attr("title", jQuery.sap.encodeHTML(oTooltip));
+				sTooltip = this.getTooltip_AsString();
+				sapUiFupInputMaskDOM = this.$().find(".sapUiFupInputMask")[0];
+
+				if (sTooltip) {
+					this.oFileUpload.setAttribute("title", sTooltip);
+					sapUiFupInputMaskDOM && sapUiFupInputMaskDOM.setAttribute("title", sTooltip);
+				} else {
+					this.oFileUpload.removeAttribute("title");
+					sapUiFupInputMaskDOM && sapUiFupInputMaskDOM.removeAttribute("title");
+				}
 			}
 		}
 		return this;
