@@ -173,7 +173,7 @@ function(
 		this.defaultValue = info.defaultValue !== null ? info.defaultValue : null;
 		this.bindable = !!info.bindable;
 		this.deprecated = !!info.deprecated || false;
-		this.visibility = 'public';
+		this.visibility = info.visibility || 'public';
 		this.selector = typeof info.selector === "string" ? info.selector : null;
 		this.appData = remainder(this, info);
 		this._oParent = oClass;
@@ -226,10 +226,16 @@ function(
 	};
 
 	Property.prototype.get = function(instance) {
+		if ( this.visibility !== 'public' ) {
+			return instance.getProperty(this.name);
+		}
 		return instance[this._sGetter]();
 	};
 
 	Property.prototype.set = function(instance, oValue) {
+		if ( this.visibility !== 'public' ) {
+			return instance.setProperty(this.name, oValue);
+		}
 		return instance[this._sMutator](oValue);
 	};
 
@@ -318,30 +324,51 @@ function(
 	};
 
 	Aggregation.prototype.get = function(instance) {
+		if ( this.visibility !== 'public' ) {
+			return instance.getAggregation(this.name, this.multiple ? [] : undefined);
+		}
 		return instance[this._sGetter]();
 	};
 
 	Aggregation.prototype.set = function(instance, oValue) {
+		if ( this.visibility !== 'public' ) {
+			return instance.setAggregation(this.name, oValue);
+		}
 		return instance[this._sMutator](oValue);
 	};
 
 	Aggregation.prototype.add = function(instance, oValue) {
+		if ( this.visibility !== 'public' ) {
+			return instance.addAggregation(this.name, oValue);
+		}
 		return instance[this._sMutator](oValue);
 	};
 
 	Aggregation.prototype.insert = function(instance, oValue, iPos) {
+		if ( this.visibility !== 'public' ) {
+			return instance.insertAggregation(this.name, oValue, iPos);
+		}
 		return instance[this._sInsertMutator](oValue, iPos);
 	};
 
 	Aggregation.prototype.remove = function(instance, vValue) {
+		if ( this.visibility !== 'public' ) {
+			return instance.removeAggregation(this.name, vValue);
+		}
 		return instance[this._sRemoveMutator](vValue);
 	};
 
 	Aggregation.prototype.removeAll = function(instance) {
+		if ( this.visibility !== 'public' ) {
+			return instance.removeAllAggregation(this.name);
+		}
 		return instance[this._sRemoveAllMutator]();
 	};
 
 	Aggregation.prototype.indexOf = function(instance, oValue) {
+		if ( this.visibility !== 'public' ) {
+			return instance.indexOfAggregation(this.name, oValue);
+		}
 		return instance[this._sIndexGetter](oValue);
 	};
 
@@ -611,7 +638,7 @@ function(
 		this.multiple = info.multiple || false;
 		this.singularName = this.multiple ? info.singularName || guessSingularName(name) : undefined;
 		this.deprecated = info.deprecated || false;
-		this.visibility = 'public';
+		this.visibility = info.visibility || 'public';
 		this.appData = remainder(this, info);
 		this._oParent = oClass;
 		this._sUID = 'association:' + name;
@@ -661,18 +688,37 @@ function(
 	};
 
 	Association.prototype.get = function(instance) {
+		if ( this.visibility !== 'public' ) {
+			return instance.getAssociation(this.name, this.multiple ? [] : undefined);
+		}
 		return instance[this._sGetter]();
 	};
 
 	Association.prototype.set = function(instance, oValue) {
+		if ( this.visibility !== 'public' ) {
+			return instance.setAssociation(this.name, oValue);
+		}
+		return instance[this._sMutator](oValue);
+	};
+
+	Association.prototype.add = function(instance, oValue) {
+		if ( this.visibility !== 'public' ) {
+			return instance.addAssociation(this.name, oValue);
+		}
 		return instance[this._sMutator](oValue);
 	};
 
 	Association.prototype.remove = function(instance, vValue) {
+		if ( this.visibility !== 'public' ) {
+			return instance.removeAssociation(this.name, vValue);
+		}
 		return instance[this._sRemoveMutator](vValue);
 	};
 
 	Association.prototype.removeAll = function(instance) {
+		if ( this.visibility !== 'public' ) {
+			return instance.removeAllAssociation(this.name);
+		}
 		return instance[this._sRemoveAllMutator]();
 	};
 
@@ -779,13 +825,17 @@ function(
 		// init basic metadata from static infos and fallback to defaults
 		this._sLibraryName = oStaticInfo.library || defaultLibName(this.getName());
 		this._mSpecialSettings = normalize(oStaticInfo.specialSettings, this.metaFactorySpecialSetting);
-		this._mProperties = normalize(oStaticInfo.properties, this.metaFactoryProperty);
+		var mAllProperties = normalize(oStaticInfo.properties, this.metaFactoryProperty);
+		this._mProperties = filter(mAllProperties, true);
+		this._mPrivateProperties = filter(mAllProperties, false);
 		var mAllAggregations = normalize(oStaticInfo.aggregations, this.metaFactoryAggregation);
 		this._mAggregations = filter(mAllAggregations, true);
 		this._mPrivateAggregations = filter(mAllAggregations, false);
 		this._sDefaultAggregation = oStaticInfo.defaultAggregation || null;
 		this._sDefaultProperty = oStaticInfo.defaultProperty || null;
-		this._mAssociations = normalize(oStaticInfo.associations, this.metaFactoryAssociation);
+		var mAllAssociations = normalize(oStaticInfo.associations, this.metaFactoryAssociation);
+		this._mAssociations = filter(mAllAssociations, true);
+		this._mPrivateAssociations = filter(mAllAssociations, false);
 		this._mEvents = normalize(oStaticInfo.events, this.metaFactoryEvent);
 
 		// as oClassInfo is volatile, we need to store the info
@@ -810,9 +860,11 @@ function(
 		var oParent = this.getParent();
 		if ( oParent instanceof ManagedObjectMetadata ) {
 			this._mAllEvents = jQuery.extend({}, oParent._mAllEvents, this._mEvents);
+			this._mAllPrivateProperties = jQuery.extend({}, oParent._mAllPrivateProperties, this._mPrivateProperties);
 			this._mAllProperties = jQuery.extend({}, oParent._mAllProperties, this._mProperties);
 			this._mAllPrivateAggregations = jQuery.extend({}, oParent._mAllPrivateAggregations, this._mPrivateAggregations);
 			this._mAllAggregations = jQuery.extend({}, oParent._mAllAggregations, this._mAggregations);
+			this._mAllPrivateAssociations = jQuery.extend({}, oParent._mAllPrivateAssociations, this._mPrivateAssociations);
 			this._mAllAssociations = jQuery.extend({}, oParent._mAllAssociations, this._mAssociations);
 			this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
 			this._sDefaultProperty = this._sDefaultProperty || oParent._sDefaultProperty;
@@ -820,9 +872,11 @@ function(
 			this._sProvider = this._sProvider || oParent._sProvider;
 		} else {
 			this._mAllEvents = this._mEvents;
+			this._mAllPrivateProperties = this._mPrivateProperties;
 			this._mAllProperties = this._mProperties;
 			this._mAllPrivateAggregations = this._mPrivateAggregations;
 			this._mAllAggregations = this._mAggregations;
+			this._mAllPrivateAssociations = this._mPrivateAssociations;
 			this._mAllAssociations = this._mAssociations;
 			this._mAllSpecialSettings = this._mSpecialSettings;
 		}
@@ -864,7 +918,7 @@ function(
 	};
 
 	/**
-	 * Checks the existence of the given property by its name
+	 * Checks the existence of the given public property by its name
 	 * @param {string} sName name of the property
 	 * @return {boolean} true, if the property exists
 	 * @public
@@ -930,10 +984,74 @@ function(
 		return this._mAllProperties;
 	};
 
+	/**
+	 * Returns a map of info objects for all private (hidden) properties of the described class,
+	 * including private properties from the ancestor classes.
+	 *
+	 * The returned map contains property info objects keyed by the property name.
+	 *
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
+	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of property infos keyed by property names
+	 * @protected
+	 */
+	ManagedObjectMetadata.prototype.getAllPrivateProperties = function() {
+		return this._mAllPrivateProperties;
+	};
+
+	/**
+	 * Returns the info object for the named public or private property declared by the
+	 * described class or by any of its ancestors.
+	 *
+	 * If the name is not given (or has a falsy value), then it is substituted by the
+	 * name of the default property of the described class (if it is defined).
+	 *
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
+	 *   in the constructor documentation of this class.
+	 *
+	 * @param {string} sName name of the property to be retrieved or empty
+	 * @return {object} property info object or undefined
+	 * @protected
+	 */
+	ManagedObjectMetadata.prototype.getManagedProperty = function(sName) {
+		sName = sName || this._sDefaultProperty;
+		var oProp = sName ? this._mAllProperties[sName] || this._mAllPrivateProperties[sName] : undefined;
+		// typeof is used as a fast (but weak) substitute for hasOwnProperty
+		return typeof oProp === 'object' ? oProp : undefined;
+	};
+
+	/**
+	 * Returns the name of the default property of the described class.
+	 *
+	 * If the class itself does not define a default property, then the default property
+	 * of the parent is returned. If no class in the hierarchy defines a default property,
+	 * <code>undefined</code> is returned.
+	 *
+	 * @return {string} Name of the default property
+	 */
+	ManagedObjectMetadata.prototype.getDefaultPropertyName = function() {
+		return this._sDefaultProperty;
+	};
+
+	/**
+	 * Returns an info object for the default property of the described class.
+	 *
+	 * If the class itself does not define a default property, then the
+	 * info object for the default property of the parent class is returned.
+	 *
+	 * @return {Object} An info object for the default property
+	 */
+	ManagedObjectMetadata.prototype.getDefaultProperty = function() {
+		return this.getProperty(this.getDefaultPropertyName());
+	};
+
 	// ---- aggregations ----------------------------------------------------------------------
 
 	/**
-	 * Checks the existence of the given aggregation by its name.
+	 * Checks the existence of the given public aggregation by its name.
 	 * @param {string} sName name of the aggregation
 	 * @return {boolean} true, if the aggregation exists
 	 * @public
@@ -1222,7 +1340,7 @@ function(
 
 	/**
 	 * Returns an info object for a public setting with the given name that either is
-	 * a managed property or a managed aggregation of cardinality 0..1 and with at least
+	 * a public property or a public aggregation of cardinality 0..1 and with at least
 	 * one simple alternative type. The setting can be defined by the class itself or
 	 * by one of its ancestor classes.
 	 *
@@ -1252,7 +1370,7 @@ function(
 	// ---- associations ----------------------------------------------------------------------
 
 	/**
-	 * Checks the existence of the given association by its name
+	 * Checks the existence of the given public association by its name
 	 * @param {string} sName name of the association
 	 * @return {boolean} true, if the association exists
 	 * @public
@@ -1318,6 +1436,42 @@ function(
 	 */
 	ManagedObjectMetadata.prototype.getAllAssociations = function() {
 		return this._mAllAssociations;
+	};
+
+	/**
+	 * Returns a map of info objects for all private (hidden) associations of the described class,
+	 * including private associations from the ancestor classes.
+	 *
+	 * The returned map contains association info objects keyed by the association name.
+	 * In case of 0..1 associations this is the singular name, otherwise it is the plural name.
+	 *
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
+	 *   in the constructor documentation of this class.
+	 *
+	 * @return {map} Map of association infos keyed by association names
+	 * @protected
+	 */
+	ManagedObjectMetadata.prototype.getAllPrivateAssociations = function() {
+		return this._mAllPrivateAssociations;
+	};
+
+	/**
+	 * Returns the info object for the named public or private association declared by the
+	 * described class or by any of its ancestors.
+	 *
+	 * <b>Warning:</b> Type, structure and behavior of the returned info objects is not documented
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
+	 *   in the constructor documentation of this class.
+	 *
+	 * @param {string} sName name of the association to be retrieved
+	 * @return {object} association info object or undefined
+	 * @protected
+	 */
+	ManagedObjectMetadata.prototype.getManagedAssociation = function(sName) {
+		var oAggr = this._mAllAssociations[sName] || this._mAllPrivateAssociations[sName];
+		// typeof is used as a fast (but weak) substitute for hasOwnProperty
+		return typeof oAggr === 'object' ? oAggr : undefined;
 	};
 
 	// ---- events ----------------------------------------------------------------------------
@@ -1437,7 +1591,7 @@ function(
 	 */
 	ManagedObjectMetadata.prototype.getPropertyDefaults = function() {
 
-		var mDefaults = this._mDefaults;
+		var mDefaults = this._mDefaults, s;
 
 		if ( mDefaults ) {
 			return mDefaults;
@@ -1449,8 +1603,12 @@ function(
 			mDefaults = {};
 		}
 
-		for (var s in this._mProperties) {
+		for (s in this._mProperties) {
 			mDefaults[s] = this._mProperties[s].getDefaultValue();
+		}
+		//Add the default values for private properties
+		for (s in this._mPrivateProperties) {
+			mDefaults[s] = this._mPrivateProperties[s].getDefaultValue();
 		}
 		this._mDefaults = mDefaults;
 		return mDefaults;

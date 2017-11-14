@@ -226,6 +226,18 @@ sap.ui.define([
 
 	});
 
+	Popup.prototype.getChildPopups = function() {
+		return this.getAssociation("childPopups", []);
+	};
+
+	Popup.prototype.addChildPopup = function(vChildPopup) {
+		return this.addAssociation("childPopups", vChildPopup);
+	};
+
+	Popup.prototype.removeChildPopup = function(vChildPopup) {
+		return this.removeAssociation("childPopups", vChildPopup);
+	};
+
 	Popup._activateBlindLayer = true;
 
 	// stack used for storing z-indices for blocklayer
