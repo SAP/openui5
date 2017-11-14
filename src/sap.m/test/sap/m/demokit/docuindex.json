@@ -252,7 +252,6 @@
 		  "since": "1.22",
 		  "samples": [
 			"sap.m.sample.ComboBox",
-			"sap.m.sample.ComboBoxValueState",
 			"sap.m.sample.ComboBox2Columns",
 			"sap.m.sample.ComboBoxLazyLoading",
 			"sap.m.sample.ComboBoxSearchBoth"
@@ -263,7 +262,10 @@
 		  "name": "Column List Item",
 		  "category": "List",
 		  "since": "1.12",
-		  "samples": ["sap.m.sample.Table"]
+		  "samples": [
+				"sap.m.sample.Table",
+				"sap.m.sample.TableTest"
+			]
 		},
 		{
 		  "id": "sap.m.CustomListItem",
@@ -1033,8 +1035,7 @@
 			"sap.m.sample.MultiInputMultiLine",
 			"sap.m.sample.MultiInputDatabinding",
 			"sap.m.sample.MultiInputMaxTokens",
-			"sap.m.sample.MultiInputTokenUpdate",
-			"sap.m.sample.MultiInputValueHelp"
+			"sap.m.sample.MultiInputTokenUpdate"
 		  ]
 		},
 		{
@@ -1427,11 +1428,6 @@
 		  "description": "The combo box control provides a list box with items and a text field allowing the user to either type a value directly into the control or choose from the list of existing items."
 		},
 		{
-		  "id": "sap.m.sample.ComboBoxValueState",
-		  "name": "Combo box with value state",
-		  "description": "The combo box can show different value states."
-		},
-		{
 		  "id": "sap.m.sample.ComboBox2Columns",
 		  "name": "Combo box - Two columns layout",
 		  "description": "Use the combo box dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
@@ -1490,6 +1486,11 @@
 		  "id": "sap.m.sample.Table",
 		  "name": "Table - Columns",
 		  "description": "The table shares many features with the list and, in addition, introduces columns. The table is fully responsive and can hide columns or shown them in-place if the screen space is not sufficient. This example also demonstrates the different table pop-in layout options that can be used for the table pop-in rendering."
+		},
+		{
+		  "id": "sap.m.sample.TableTest",
+		  "name": "Table Test with OPA",
+		  "description": "The following example simulates a click on a list item in a table."
 		},
 		{
 		  "id": "sap.m.sample.ActionSheet",
@@ -2037,11 +2038,6 @@
 			"description": "MultiInput fires several tokenUpdate events depending on when the tokens were validated"
 		},
 		{
-			"id": "sap.m.sample.MultiInputValueHelp",
-			"name": "MultiInput with Value Help",
-			"description": "MultiInput that includes a SelectDialog as a value help dialog"
-		},
-		{
 			"id": "sap.m.sample.NumericContentDifColors",
 			"name": "Numeric Content of Different Colors",
 			"description": "Shows NumericContent including numbers, units of measurement, and status arrows indicating a trend. The numbers can be colored according to their meaning."
@@ -2532,8 +2528,8 @@
 		},
 		{
 		  "id": "sap.m.sample.PopoverControllingCloseBehavior",
-		  "name": "Popover - Controlling Closing Behavior",
-		  "description": "In some cases the closing behavior of the Popover can lead to drill down navigation. This is a sample demonstrating how this can be controlled. When the popover is opened, add a style \"pointer-events: none\" to the area that should remain static and when the popover is closed, remove it."
+		  "name": "Popover - Cotrolling Closing Behavior",
+		  "description": "In some cases the closing behavior of the Popover can lead to drill down navigation. This is a sample demonstrating how this can be controlled. When the popover is opened, add a style \"pointer-events: none\" to the area that should remain static and when the popover is closed, remove it. "
 		},
 		{
 		  "id": "sap.m.sample.SelectDialog",
