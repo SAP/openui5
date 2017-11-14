@@ -82,7 +82,7 @@ sap.ui.define([],
 	};
 
 	ShellOverlayRenderer.renderContent = function(rm, oControl) {
-		rm.write("<div tabindex='-1'>");
+		rm.write("<div>");
 		var aContent = oControl.getContent();
 		for (var i = 0; i < aContent.length; i++) {
 			rm.renderControl(aContent[i]);
