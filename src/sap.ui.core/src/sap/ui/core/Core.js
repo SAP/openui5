@@ -1418,7 +1418,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		var lib = libConfig.name,
 			fileType = libConfig.fileType,
-			libPackage = lib.replace(/\./g, '/');
+			libPackage = lib.replace(/\./g, '/'),
+			http2 = this.oConfiguration.getDepCache();
 
 		if ( fileType === 'none' || jQuery.sap.isResourceLoaded(libPackage + '/library.js') ) {
 			return Promise.resolve(true);
@@ -1438,7 +1439,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// first preload code, resolves with list of dependencies (or undefined)
 		var p;
 		if ( fileType !== 'json' /* 'js' or 'both', not forced to JSON */ ) {
-			var sPreloadModule = libPackage + '/library-preload.js';
+			var sPreloadModule = libPackage + (http2 ? '/library-h2-preload.js' : '/library-preload.js');
 			p = jQuery.sap._loadJSResourceAsync(sPreloadModule).then(
 					function() {
 						return dependenciesFromManifest(lib);
