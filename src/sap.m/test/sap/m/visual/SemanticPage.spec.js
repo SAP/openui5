@@ -94,7 +94,7 @@ describe("sap.m.SemanticPage", function() {
 	},
 
 	//general help function
-	fnClickThenCompare = function (sId, sPageType, sImageName, sTestMessage, bEnsureOverflowVisible) {
+	fnClickThenCompare = function (sId, sPageType, sImageName, sTestMessage) {
 		it(sTestMessage, function () {
 
 			_showMenu();
@@ -102,9 +102,23 @@ describe("sap.m.SemanticPage", function() {
 
 			//open semanticPage to test the outcome
 			_showPageType(sPageType);
-			if (bEnsureOverflowVisible) {
-				fnEnsureOverflowVisible();
-			}
+
+			expect(takeScreenshot()).toLookAs(sImageName);
+		});
+	};
+
+	//general help function
+	var fnClickOverflowButtonThenCompare = function (sId, sPageType, sImageName, sTestMessage) {
+		it(sTestMessage, function () {
+
+			_showMenu();
+
+			//open semanticPage to test the outcome
+			_showPageType(sPageType);
+			fnEnsureOverflowVisible();
+
+			element(by.id(sId)).click();
+
 			expect(takeScreenshot()).toLookAs(sImageName);
 		});
 	};
@@ -122,10 +136,10 @@ describe("sap.m.SemanticPage", function() {
 	fnClickThenCompare("clearDraftStateBtn", _PAGE_TYPE.DETAIL, "semantic-draft-cleared", "should not show a draft label");
 
 	//footer show/hide
-	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.DETAIL, "semantic-no-footer", "should not show a page footer");
-	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.DETAIL, "semantic-with-footer", "should show a page footer");
-	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.MASTER, "semantic-no-footer", "should not show a page footer");
-	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.MASTER, "semantic-with-footer", "should show a page footer");
+	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.DETAIL, "semantic-detail-no-footer", "should not show a page footer");
+	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.DETAIL, "semantic-detail-with-footer", "should show a page footer");
+	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.MASTER, "semantic-master-no-footer", "should not show a page footer");
+	fnClickThenCompare("showHideFooterBtn", _PAGE_TYPE.MASTER, "semantic-master-with-footer", "should show a page footer");
 
 	//multiselect on/off databinding
 	fnClickThenCompare("toggleMultiselectPressedBtn", _PAGE_TYPE.MASTER, "semantic-multiselect-by-databinding-on", "should show a multiselect-cancel button");
@@ -140,12 +154,12 @@ describe("sap.m.SemanticPage", function() {
 	fnClickThenCompare("multiselectAction-toggleButton", _PAGE_TYPE.MASTER, "semantic-multiselect-off", "should show a multiselect button");
 
 	//favorite on/off
-	fnClickThenCompare("favoriteAction-toggleButton", _PAGE_TYPE.DETAIL, "semantic-favorite-on", "should show a favorite emphasized button", true);
-	fnClickThenCompare("favoriteAction-toggleButton", _PAGE_TYPE.DETAIL, "semantic-favorite-off", "should show a favorite non-emphasized button", true);
+	fnClickOverflowButtonThenCompare("favoriteAction-toggleButton", _PAGE_TYPE.DETAIL, "semantic-favorite-on", "should show a favorite emphasized button");
+	fnClickOverflowButtonThenCompare("favoriteAction-toggleButton", _PAGE_TYPE.DETAIL, "semantic-favorite-off", "should show a favorite non-emphasized button");
 
 	//flag on/off
-	fnClickThenCompare("flagAction-toggleButton", _PAGE_TYPE.DETAIL, "semantic-flag-on", "should show a flag emphasized button", true);
-	fnClickThenCompare("flagAction-toggleButton", _PAGE_TYPE.DETAIL, "semantic-flag-off", "should show a flag non-emphasized button", true);
+	fnClickOverflowButtonThenCompare("flagAction-toggleButton", _PAGE_TYPE.DETAIL, "semantic-flag-on", "should show a flag emphasized button");
+	fnClickOverflowButtonThenCompare("flagAction-toggleButton", _PAGE_TYPE.DETAIL, "semantic-flag-off", "should show a flag non-emphasized button");
 
 	//sort select on/off
 	fnClickThenCompare("sortSelect-select", _PAGE_TYPE.MASTER, "semantic-sort-select-options", "should open select options");
@@ -161,8 +175,8 @@ describe("sap.m.SemanticPage", function() {
 	fnClickThenCompare("deleteAction-button", _PAGE_TYPE.DETAIL, "semantic-delete-action", "should trigger delete action");
 	fnClickThenCompare("positiveAction-button", _PAGE_TYPE.DETAIL, "semantic-positive-action", "should trigger positive action");
 	fnClickThenCompare("negativeAction-button", _PAGE_TYPE.DETAIL, "semantic-negative-action", "should trigger negative action");
-	fnClickThenCompare("cancelAction-button", _PAGE_TYPE.DETAIL, "semantic-cancel-action", "should trigger cancel action", true);
-	fnClickThenCompare("forwardAction-button", _PAGE_TYPE.DETAIL, "semantic-forward-action", "should trigger forward action", true);
+	fnClickOverflowButtonThenCompare("cancelAction-button", _PAGE_TYPE.DETAIL, "semantic-cancel-action", "should trigger cancel action");
+	fnClickOverflowButtonThenCompare("forwardAction-button", _PAGE_TYPE.DETAIL, "semantic-forward-action", "should trigger forward action");
 
 	//share menu
 	fnClickThenCompare("detail-shareButton", _PAGE_TYPE.DETAIL, "semantic-share-menu-expanded", "should expand the share menu");
