@@ -70,3 +70,35 @@ module("Opatests", {
     }
 });
 ```
+
+## OPA tests are not stable
+For example, this might mean that the tests run fine most of the time, but they fail:
+- in automated test runs
+- when run with different OPA speeds
+- sporadically on various steps
+
+One way to stabilize your tests is to use OPA autoWait and actions.
+
+For more information, see [Cookbook for OPA5](https://github.com/SAP/openui5/blob/master/docs/opa/Subchapters/Cookbook.md)
+
+## Working with controls which set timeouts
+Examples of such controls are busy indicators, notification popups and message toasts. These controls generally set a timeout after which the control is supposed to
+disappear. In some applications it might be important to ensure that such a control is shown.
+Note that if you enable `autoWait` in your tests globally, then you will need to specifically disable `autoWait` in the `waitFor` statements related to these special
+controls. For example, if you want to test that a busy indicator is shown during the sending of a request, you don't want to wait for controls to be interactable:
+
+```javascript
+oOpa.waitFor({
+	autoWait: false,
+	id: "myBusyList", // a control that is expected be covered by a busy indicator
+	matchers: new PropertyStrictEquals({
+		name: "busy",
+		value: true
+	}),
+	success: function (oList) {
+		Opa5.assert.ok(true, "My list is busy");
+	}
+});
+```
+
+For more information, see [Cookbook for OPA5](https://github.com/SAP/openui5/blob/master/docs/opa/Subchapters/Cookbook.md)
