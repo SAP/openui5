@@ -896,5 +896,100 @@
         "references": []
       }
     ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "63f77388421ba6a0f36ce818875cb21742f01496",
+        "type": "FIX",
+        "text": " Revert \"sap.m.DatePicker: set max possible hour to the default maxDate\"",
+        "references": []
+      },
+      {
+        "id": "1b6172ec5519cfbfd0b0202e3b6d29e39d619ec7",
+        "type": "FIX",
+        "text": " TimePicker-closing before slider scrolling is complete works.",
+        "references": []
+      },
+      {
+        "id": "82fd14288dec98697c00c25e7641c03a6bbb0e9d",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Precision of milliseconds set to the third digit",
+        "references": []
+      },
+      {
+        "id": "7301d4fe978eeba216879d1ab1509aa921bae75d",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: set max possible hour to the default maxDate",
+        "references": []
+      },
+      {
+        "id": "cd3e2ceacebb4e906b1022f1f85f19d56ee47b90",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Error state icon now has correct color",
+        "references": []
+      },
+      {
+        "id": "1154734813bb05becda02e97e4399fbd1fc26aa4",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Correct selection when growing is used.",
+        "references": []
+      },
+      {
+        "id": "32e365970fad9246f10952b51a17e9f059a99a14",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Hide busy indicator on updateFinished.",
+        "references": []
+      },
+      {
+        "id": "815d466ef50acdfc2298a8979362f0329068975c",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: The headerButton is now being bound correctly",
+        "references": []
+      },
+      {
+        "id": "dd4c0f3327c01cd324a64aec3c63a641b78e24b2",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Header\u0027s visibility adjusted",
+        "references": []
+      },
+      {
+        "id": "11a49a0e93332323d6810dcc6660ba22b3e89484",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Long title wraps on Firefox and IE",
+        "references": []
+      },
+      {
+        "id": "107fba9dadde8fe93503530dd56ed4b6b42a640f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: does not throw exception when sap.ui.unified.CalendarLegend is used",
+        "references": []
+      },
+      {
+        "id": "ebf090b97341d22a09de784d6028bb14f6c45988",
+        "type": "FIX",
+        "text": " sap.m.QuickView: On first load QuickView is now in full size",
+        "references": []
+      },
+      {
+        "id": "cecebf50431dae04b9ad8cd355c04e4d54ac59bc",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Search is now working correctly",
+        "references": []
+      },
+      {
+        "id": "faabb290e586aa74499869e816435b66ecb3da2a",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: when model is changed, filter counter is updated.",
+        "references": []
+      },
+      {
+        "id": "a5fd5f7b699dc49ecdf3d2a2e91b32c490a73152",
+        "type": "FIX",
+        "text": " sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": []
+      }
+    ]
   }
 }

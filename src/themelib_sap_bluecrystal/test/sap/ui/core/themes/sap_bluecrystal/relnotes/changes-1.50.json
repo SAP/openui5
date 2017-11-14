@@ -108,5 +108,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.6": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "ba5fbaa72b627de95005d9592573879c143d8b2e",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Moving of tiles fixed",
+        "references": []
+      }
+    ]
   }
 }

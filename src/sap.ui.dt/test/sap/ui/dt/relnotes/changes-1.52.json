@@ -110,5 +110,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "a5fd5f7b699dc49ecdf3d2a2e91b32c490a73152",
+        "type": "FIX",
+        "text": " sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": []
+      },
+      {
+        "id": "dfd2844f8069985c30d6226a95f86082cec9026b",
+        "type": "FIX",
+        "text": "sap.ui.dt: QUnit test fix - CSS filter not supported by IE",
+        "references": []
+      },
+      {
+        "id": "7b09286cf02d7708c41de2bb1d1842a3ebfe8709",
+        "type": "FIX",
+        "text": "sap.ui.rta: DT Metadata ignore() called for destroyed element",
+        "references": []
+      }
+    ]
   }
 }

@@ -266,5 +266,46 @@
         "references": []
       }
     ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "23f0d1b6a009d5f2e2e38f3723779c82b1a15559",
+        "type": "FIX",
+        "text": " sap.ui.rta: fixed movable check when child is destroyed",
+        "references": []
+      },
+      {
+        "id": "82ad94f31850742eee49b380baf99db1d6784279",
+        "type": "FIX",
+        "text": " sap.ui.rta: skip start when reloading with pers. changes",
+        "references": []
+      },
+      {
+        "id": "ac84e39dbf24322741299d68bee7770e156ab962",
+        "type": "FIX",
+        "text": "sap.ui.rta QUnit test fix - focus check on wrong element",
+        "references": []
+      },
+      {
+        "id": "b1083e28568d775eacfa535666f98c4452c739f4",
+        "type": "FIX",
+        "text": "sap.ui.rta: Dump moving an object page section in personalization",
+        "references": []
+      },
+      {
+        "id": "e59cf88ecb260e7fc97a9212ff705648eca735d1",
+        "type": "FIX",
+        "text": "sap.ui.rta: Exiting RTA removes application content from Popup",
+        "references": []
+      },
+      {
+        "id": "323f5ce485f15b592ba39c9da7848ba2ac0194aa",
+        "type": "FIX",
+        "text": "sap.ui.rta: Missing binding context causes exception starting RTA",
+        "references": []
+      }
+    ]
   }
 }

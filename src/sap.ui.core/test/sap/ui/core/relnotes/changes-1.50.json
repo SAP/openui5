@@ -682,12 +682,6 @@
     "date": "October 2017",
     "notes": [
       {
-        "id": "2c979fcd600a801a9b4d17393f10d4b142e7aafb",
-        "type": "FIX",
-        "text": " core.Popup: autoclose should only work with touch/mouse event when touch is supported",
-        "references": []
-      },
-      {
         "id": "3335356d620e0f49bc15eff1275db2dfeac936ba",
         "type": "FIX",
         "text": " sap.core.Scrollbar - fix for vertical scrollbar in RTL mode in Safari om Mac OS.",
@@ -704,11 +698,58 @@
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.ODataPropertyBinding: setValue(null)",
         "references": []
+      }
+    ]
+  },
+  "1.50.6": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "a67718180236f78e090d2aa8b4aef41cd54994db",
+        "type": "FIX",
+        "text": " AppCacheBuster: disable when no browser support for defineProperty",
+        "references": []
       },
       {
-        "id": "97fa146f1f1da3f94b3df029c3d6ec93d1e110e7",
+        "id": "506b94b82af659ccd9949b19763c74d516de8904",
         "type": "FIX",
-        "text": " v2.ODataListBinding: Better handling of incomplete list data",
+        "text": " Configuration: Consider sap-locale over sap-language",
+        "references": []
+      },
+      {
+        "id": "bf89d3657ab5cf88c2fa63c9e582d2c00bdf6113",
+        "type": "FIX",
+        "text": " FilterProcessor: Normalization issues on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "20093b9042af4edc90b9498a714180eaa08087bd",
+        "type": "FIX",
+        "text": " Message handling createEntry",
+        "references": []
+      },
+      {
+        "id": "3f003b6e1305ce55a3cd0e3ddadab169113c5e6e",
+        "type": "FIX",
+        "text": " NumberFormat: currency short format under RTL locales",
+        "references": []
+      },
+      {
+        "id": "e500b6badd8d9e8208a623420b7a7c467f78238b",
+        "type": "FIX",
+        "text": " core.LocaleData: add default \"narrow\" and \"short\" relative patterns",
+        "references": []
+      },
+      {
+        "id": "97d0caa6e7047bedb7bd652f5e11630612d24e36",
+        "type": "FIX",
+        "text": " core.LocaleData: provide currency spacing for unknown locale",
+        "references": []
+      },
+      {
+        "id": "5bf36b7eb44a42840f7e176f05510044aed9f676",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Rendering in Fiori app is now correct",
         "references": []
       }
     ]

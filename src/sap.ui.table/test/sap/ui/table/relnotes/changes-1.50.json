@@ -233,5 +233,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.6": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "131cac695e377ba7ec4bcd31acaa7b8f1554b0e0",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Table renders even if column was destroyed",
+        "references": []
+      }
+    ]
   }
 }

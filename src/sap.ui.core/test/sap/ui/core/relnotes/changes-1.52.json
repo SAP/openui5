@@ -464,5 +464,46 @@
         "references": []
       }
     ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "e99d3ee3a52856d813545fab4affcec6e7a007a6",
+        "type": "FIX",
+        "text": " Configuration: Consider sap-locale over sap-language",
+        "references": []
+      },
+      {
+        "id": "d2b43075da553356ce47d57a8d5cf8769727ae93",
+        "type": "FIX",
+        "text": " Message handling createEntry",
+        "references": []
+      },
+      {
+        "id": "89d22e61a3126ff76e62f5106ae3a7379b634691",
+        "type": "FIX",
+        "text": " core.LocaleData: add default \"narrow\" and \"short\" relative patterns",
+        "references": []
+      },
+      {
+        "id": "de974e3491ac249df1c03a7ff92aa8bf8d38c930",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.sample.odata.v4.SalesOrderTP100_V*: Make table titles accessible",
+        "references": []
+      },
+      {
+        "id": "16882c5f6366e2a4a85fab0d7978eb4d256f4501",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Enable scrolling on iOS devices",
+        "references": []
+      },
+      {
+        "id": "3c66c25dfd243527111aa1f85482dc0ed07e553a",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: filter for edm types with numbers",
+        "references": []
+      }
+    ]
   }
 }

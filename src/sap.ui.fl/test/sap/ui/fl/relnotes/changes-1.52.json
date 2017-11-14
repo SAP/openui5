@@ -86,5 +86,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "4daa771f5108c563b5439dea4cc875ed59f9045d",
+        "type": "FIX",
+        "text": " Opening file in LREP browser lasts long",
+        "references": []
+      }
+    ]
   }
 }

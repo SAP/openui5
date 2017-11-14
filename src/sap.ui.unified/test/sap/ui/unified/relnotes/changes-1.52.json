@@ -147,5 +147,34 @@
         "references": []
       }
     ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "da986a51d44a2bcea2de0a9f271fa009cf86e0e7",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarUtils: getFirstDateOfWeek when end/begin of year.",
+        "references": []
+      },
+      {
+        "id": "16882c5f6366e2a4a85fab0d7978eb4d256f4501",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Enable scrolling on iOS devices",
+        "references": []
+      },
+      {
+        "id": "14af6992aeb9e585a513887c8375905e5f4abcd8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Remove scrollbar from IE when it is not needed",
+        "references": []
+      },
+      {
+        "id": "9af2193f818cfd528a529213f57eaeefda5ff128",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: qunit tests fixed on combi devices",
+        "references": []
+      }
+    ]
   }
 }
