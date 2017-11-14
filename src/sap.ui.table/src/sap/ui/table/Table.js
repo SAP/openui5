@@ -1267,6 +1267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this._updateHSb(oTableSizes);
 		this._updateVSbTop();
+		this._toggleVSb();
 
 		var $this = this.$();
 
@@ -3621,8 +3622,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", this._iTableRowContentHeight + "px");
 			}
 		}
-
-		this._toggleVSb();
 	};
 
 	/**
