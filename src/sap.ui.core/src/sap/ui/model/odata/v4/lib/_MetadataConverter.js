@@ -567,7 +567,9 @@ sap.ui.define([
 
 			if (typeof vTarget === "string") {
 				oAnnotatable = oAggregate.annotatable;
-				vTarget = _Helper.buildPath(oAnnotatable.path, vTarget);
+				if (oAnnotatable) {
+					vTarget = _Helper.buildPath(oAnnotatable.path, vTarget);
+				}
 				sPath = vTarget;
 				// try to find the target (otherwise processAnnotation will recreate it)
 				oAnnotations = oAggregate.schema.$Annotations;
