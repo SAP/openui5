@@ -201,32 +201,11 @@ function (
 		});
 	});
 
-	QUnit.test("_getChangeRegistryItem shall return the change registry item", function (assert) {
-		var sControlType, oChange, oChangeRegistryItem, oChangeRegistryItemActual, fGetRegistryItemStub;
-		sControlType = "sap.ui.core.Control";
-		oChange = new Change(labelChangeContent);
-		oChangeRegistryItem = {};
-		fGetRegistryItemStub = sinon.stub().returns(oChangeRegistryItem);
-		sinon.stub(this.oFlexController, "_getChangeRegistry").returns({getRegistryItems: fGetRegistryItemStub});
-
-		//Call CUT
-		oChangeRegistryItemActual = this.oFlexController._getChangeRegistryItem(oChange, sControlType);
-
-		assert.strictEqual(oChangeRegistryItemActual, oChangeRegistryItem);
-		sinon.assert.calledOnce(fGetRegistryItemStub);
-		assert.strictEqual(fGetRegistryItemStub.getCall(0).args[0].changeTypeName, "labelChange");
-		assert.strictEqual(fGetRegistryItemStub.getCall(0).args[0].controlType, "sap.ui.core.Control");
-		assert.strictEqual(fGetRegistryItemStub.getCall(0).args[0].layer, "USER");
-	});
-
-	QUnit.test("_getChangeHandler shall retrieve the ChangeTypeMetadata and extract the change handler", function (assert) {
-		var fChangeHandler, fChangeHandlerActual;
-
-		fChangeHandler = sinon.stub();
-		sinon.stub(this.oFlexController, "_getChangeTypeMetadata").returns({getChangeHandler: sinon.stub().returns(fChangeHandler)});
-
-		//Call CUT
-		fChangeHandlerActual = this.oFlexController._getChangeHandler(this.oChange, this.oControl);
+	QUnit.test("if no instance specific change handler exists, _getChangeHandler shall retrieve the ChangeTypeMetadata and extract the change handler", function (assert) {
+		var sControlType = "sap.ui.core.Control";
+		var fChangeHandler = "dummyChangeHandler";
+		sinon.stub(this.oFlexController, "_getChangeRegistry").returns({getChangeHandler: sinon.stub().returns(fChangeHandler)});
+		var fChangeHandlerActual = this.oFlexController._getChangeHandler(this.oChange, sControlType, this.oControl, JsControlTreeModifier);
 
 		assert.strictEqual(fChangeHandlerActual, fChangeHandler);
 	});

@@ -508,7 +508,7 @@ sap.ui.define([
 				oRefControlForId = mParents.relevantContainer; //e.g. SimpleForm
 			}
 			var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
-			var oChangeHandler = this._getChangeHandlerForControlType(mParents.parent.getMetadata().getName(), mODataPropertyActionDTMetadata.changeType);
+			var oChangeHandler = this._getChangeHandler(mODataPropertyActionDTMetadata.changeType, mParents.parent);
 			var sVariantManagementReference;
 			if (mParents.parentOverlay.getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
 				sVariantManagementReference = mParents.parentOverlay.getVariantManagement();

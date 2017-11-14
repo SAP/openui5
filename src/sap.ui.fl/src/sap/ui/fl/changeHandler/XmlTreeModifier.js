@@ -396,6 +396,13 @@ sap.ui.define([
 
 			oNewControl = this.createControl(sClassName, oAppComponent, oView, sSelector, mSettings);
 			this.insertAggregation(oControl, sAggregationName, oNewControl, iIndex, oView);
+		},
+
+		getChangeHandlerModulePath: function(oControl) {
+			if (!oControl){
+				return undefined;
+			}
+			return oControl.getAttributeNS("sap.ui.fl", "flexibility");
 		}
 	};
 

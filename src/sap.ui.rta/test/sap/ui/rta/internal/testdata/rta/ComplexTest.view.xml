@@ -6,6 +6,7 @@
 		   xmlns:html="http://www.w3.org/1999/xhtml"
 		   xmlns:sap.ui.layout="sap.ui.layout"
 		   xmlns:sap.ui.rta="sap.ui.rta"
+		   xmlns:sap.ui.fl="sap.ui.fl"
 		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 		   controllerName="sap.ui.rta.test.ComplexTest">
 
@@ -105,6 +106,9 @@
 												 	contactAnnotationPath="to_Supplier" />
 								<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout"/>
 							</sap.ui.layout:HorizontalLayout>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="With specific flexibility definition" id="Dates.SpecificFlexibility" sap.ui.fl:flexibility="sap/ui/rta/test/GroupElementTest.flexibility">
+							<Input value="My label can only be renamed to capital letters" id="InputSpecificFlexibility"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
 					<smartForm:Group label="Reversal" id="Reversal" >
@@ -379,7 +383,7 @@
 			</sap.ui.layout:VerticalLayout>
 
 			<sap.ui.layout:VerticalLayout width="100%"  class="sapUiLargeMarginTop">
-				<smartForm:SmartForm id="SmartForm01" title="Smart Form with standard layout" editable="true" entityType="Header" ignoredFields="TransactionCode">  
+				<smartForm:SmartForm id="SmartForm01" title="Smart Form with standard layout" editable="true" entityType="Header" ignoredFields="TransactionCode">
 					<smartForm:Group id="SmartFormGroup01" label="SmartForm Group 01">
 						<smartForm:GroupElement id="SmartFormGroup01.CompanyCodeName" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{CompanyCodeName}"/>
@@ -409,7 +413,7 @@
 			</sap.ui.layout:VerticalLayout>
 
 			<sap.ui.layout:VerticalLayout width="100%">
-				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">  
+				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
 					<smartForm:Group id="SmartForm02Group01" label="SmartForm Group 01" >
 						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentType" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentType}"/>
