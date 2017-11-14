@@ -1349,34 +1349,34 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#fetchValue", function (assert) {
-		var oCache = _Cache.create(this.oRequestor),
+		var sResourcePath = "Employees",
+			oCache = this.createCache(sResourcePath),
 			oCacheMock = this.mock(oCache),
-			fnDataRequested = {},
 			oListener = {},
-			oResult;
+			oReadPromise = this.mockRequest(sResourcePath, 0, 10, undefined, "26");
 
-		oCacheMock.expects("checkActive");
-		oCacheMock.expects("drillDown")
-			.withExactArgs(sinon.match.same(oCache.aElements), "").returns("elements");
+		oReadPromise.then(function () {
+			// This may only happen when the read is finished
+			oCacheMock.expects("registerChange")
+				.withExactArgs("('c')/key", sinon.match.same(oListener));
+			oCacheMock.expects("checkActive").twice(); // from read and fetchValue
+			oCacheMock.expects("drillDown")
+				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
+		});
 
-		// code under test
-		assert.strictEqual(oCache.fetchValue("group", "").getResult(), "elements");
-
-		oCacheMock.expects("registerChange")
-			.withExactArgs("42/foo/bar", sinon.match.same(oListener));
-		oCacheMock.expects("read")
-			.withExactArgs(42, 1, "group", sinon.match.same(fnDataRequested))
-			.returns(_SyncPromise.resolve(Promise.resolve([{}])));
-		oCacheMock.expects("checkActive");
-		oCacheMock.expects("drillDown")
-			.withExactArgs(sinon.match.same(oCache.aElements), "42/foo/bar").returns("baz");
+		oCache.read(0, 10, 0);
 
 		// code under test
-		oResult = oCache.fetchValue("group", "42/foo/bar", fnDataRequested, oListener);
+		return oCache.fetchValue("group", "('c')/key", {}, oListener).then(function (sResult) {
+			assert.strictEqual(sResult, "c");
 
-		assert.strictEqual(oResult.isFulfilled(), false);
-		return oResult.then(function (vValue) {
-			assert.strictEqual(vValue, "baz");
+			oCacheMock.expects("registerChange").withExactArgs("('c')/key", undefined);
+			oCacheMock.expects("checkActive");
+			oCacheMock.expects("drillDown")
+				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
+
+			// code under test: now it must be delivered synchronously
+			assert.strictEqual(oCache.fetchValue(undefined, "('c')/key").getResult(), "c");
 		});
 	});
 

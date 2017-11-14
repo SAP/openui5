@@ -1467,7 +1467,8 @@ sap.ui.require([
 			},
 			oChild1 = {
 				refreshInternal : function () {}
-			};
+			},
+			bCheckUpdate = {/*true or false*/};
 
 		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
 			this.oCachePromise = _SyncPromise.resolve(oContext0 ? oCache : undefined);
@@ -1477,11 +1478,13 @@ sap.ui.require([
 		oBinding.setContext(oContext);
 		this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
-		this.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup", true);
-		this.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup", true);
+		this.mock(oChild0).expects("refreshInternal")
+			.withExactArgs("myGroup", sinon.match.same(bCheckUpdate));
+		this.mock(oChild1).expects("refreshInternal")
+			.withExactArgs("myGroup", sinon.match.same(bCheckUpdate));
 
 		//code under test
-		oBinding.refreshInternal("myGroup");
+		oBinding.refreshInternal("myGroup", bCheckUpdate);
 
 		assert.deepEqual(oBinding.mCacheByContext, undefined);
 	});
