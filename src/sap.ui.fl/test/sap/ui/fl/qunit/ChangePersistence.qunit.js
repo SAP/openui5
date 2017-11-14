@@ -25,6 +25,9 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				appVersion: "1.2.3"
 			};
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
+			this._oComponentInstance = sap.ui.component({
+				name: "sap/ui/fl/qunit/integration/testComponentComplex"
+			});
 			Utils.setMaxLayerParameter("USER");
 		},
 		afterEach: function () {
@@ -146,6 +149,38 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 
 
+	});
+
+	QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
+			changes: { changes: [] },
+			messagebundle: {"i_123": "translatedKey"}
+		}));
+		var mPropertyBag = {};
+		mPropertyBag.oComponent = this._oComponentInstance;
+		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function(changes) {
+			var oModel = this._oComponentInstance.getModel("i18nFlexVendor");
+			assert.equal(oModel, undefined);
+		}.bind(this));
+	});
+
+	QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
+			changes: { changes: [{
+				fileType: "change",
+				selector: {
+					id: "controlId"
+				},
+				layer : "VENDOR"
+			}] },
+			messagebundle: {"i_123": "translatedKey"}
+		}));
+		var mPropertyBag = {};
+		mPropertyBag.oComponent = this._oComponentInstance;
+		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function(changes) {
+			var oModel = this._oComponentInstance.getModel("i18nFlexVendor");
+			assert.notEqual(oModel, undefined);
+		}.bind(this));
 	});
 
 	QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {
@@ -518,6 +553,86 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter : true}).then(function(oChanges) {
 			assert.strictEqual(oChanges.length, 5, "filtering is ignored, all changes are returned");
+		});
+	});
+
+	QUnit.test("getChangesForVariant does nothing if entry in variant changes map is available", function(assert) {
+		var aStubChanges = [
+			{
+				fileName:"change1",
+				fileType: "change",
+				layer: "USER",
+				selector: { id: "controlId" },
+				dependentSelector: []
+			}
+		];
+		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent");
+		this.oChangePersistence._mVariantsChanges["SmartFilterBar"] = aStubChanges;
+		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function(aChanges) {
+			assert.deepEqual(aChanges, aStubChanges);
+			sinon.assert.notCalled(oStubGetChangesForComponent);
+		});
+	});
+
+	QUnit.test("getChangesForVariant call getChangesForComponent and filter results after that if entry in variant changes map is not available", function(assert) {
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			{
+				fileName: "change1",
+				fileType: "change",
+				changeType: "defaultVariant",
+				layer: "CUSTOMER",
+				selector: { persistencyKey: "SmartFilter_Explored" },
+				originalLanguage: "EN"
+			},
+			{
+				fileName: "change2",
+				fileType: "change",
+				changeType: "defaultVariant",
+				layer: "CUSTOMER",
+				selector: {}
+			},
+			{
+				fileName: "change3",
+				fileType: "change",
+				changeType: "renameGroup",
+				layer: "CUSTOMER",
+				selector: { id: "controlId1" }
+			},
+			{
+				fileName: "variant1",
+				fileType: "variant",
+				changeType: "filterBar",
+				layer: "CUSTOMER",
+				selector: { persistencyKey: "SmartFilter_Explored" },
+				originalLanguage: "EN"
+			},
+			{
+				fileType: "variant",
+				changeType: "filterBar",
+				layer: "CUSTOMER"
+			},
+			{
+				fileType: "change",
+				changeType: "codeExt",
+				layer: "CUSTOMER",
+				selector: { id: "controlId2" }
+			},
+			{
+				fileName: "variant1",
+				fileType: "variant",
+				changeType: "filterBar",
+				layer: "CUSTOMER",
+				selector: { persistencyKey: "SmartFilter_Explored" },
+				originalLanguage: "EN"
+			},
+			{
+				fileType: "change",
+				changeType: "appdescr_changes",
+				layer: "CUSTOMER"
+			}
+		]}}));
+		return this.oChangePersistence.getChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true}).then(function(oChanges) {
+			assert.deepEqual(Object.keys(oChanges), ["change1", "variant1"]);
 		});
 	});
 
@@ -1583,6 +1698,149 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
 			assert.strictEqual(aDirtyChanges.length, 0);
 		}.bind(this));
+	});
+
+	QUnit.test("addChangeForVariant should add a new change object into variants changes mapp with pending action is NEW", function(assert) {
+		var mParameters = {
+			id: "changeId",
+			type: "filterBar",
+			ODataService: "LineItems",
+			texts: {variantName: "myVariantName"},
+			content: {
+				filterBarVariant: {},
+				filterbar: [
+					{
+						group: "CUSTOM_GROUP",
+						name: "MyOwnFilterField",
+						partOfVariant: true,
+						visibleInFilterBar: true
+					}
+				]
+			},
+			isVariant: true,
+			packageName: "",
+			isUserDependend: true
+		};
+		var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
+		assert.equal(sId, "changeId");
+		assert.deepEqual(Object.keys(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]), ["changeId"]);
+		assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
+	});
+
+	QUnit.test("saveAllChangesForVariant should use the lrep connector to create the change in the backend if pending action is NEW", function(assert) {
+		var oResponse = {};
+		var spy;
+		var mParameters = {
+			id: "changeId",
+			type: "filterBar",
+			ODataService: "LineItems",
+			texts: {variantName: "myVariantName"},
+			content: {
+				filterBarVariant: {},
+				filterbar: [
+					{
+						group: "CUSTOM_GROUP",
+						name: "MyOwnFilterField",
+						partOfVariant: true,
+						visibleInFilterBar: true
+					}
+				]
+			},
+			isVariant: true,
+			packageName: "",
+			isUserDependend: true
+		};
+		var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
+		assert.ok(sId);
+		var oNewChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
+		spy = sandbox.spy(oNewChange, "getPendingAction");
+		this.lrepConnectorMock.create = sinon.stub().returns(Promise.resolve(oResponse));
+
+		this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+			assert.ok(jQuery.isArray(aResults));
+			assert.equal(aResults.length, 1);
+			assert.strictEqual(aResults[0], oResponse);
+			assert.equal(spy.returnValues[0], "NEW");
+		});
+	});
+
+	QUnit.test("saveAllChangesForVariant should use the lrep connector to delete the change in the backend as well as in variant changes map", function(assert) {
+		var oResponse = {};
+		var mParameters = {
+			id: "changeId",
+			type: "filterBar",
+			ODataService: "LineItems",
+			texts: {variantName: "myVariantName"},
+			content: {
+				filterBarVariant: {},
+				filterbar: [
+					{
+						group: "CUSTOM_GROUP",
+						name: "MyOwnFilterField",
+						partOfVariant: true,
+						visibleInFilterBar: true
+					}
+				]
+			},
+			isVariant: true,
+			packageName: "",
+			isUserDependend: true
+		};
+		var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
+		assert.ok(sId);
+		assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
+		var oNewChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
+		oNewChange.markForDeletion();
+		this.lrepConnectorMock.deleteChange = sinon.stub().returns(Promise.resolve(oResponse));
+
+		this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+			assert.ok(jQuery.isArray(aResults));
+			assert.equal(aResults.length, 1);
+			assert.strictEqual(aResults[0], oResponse);
+			var bIsVariant = true;
+			sinon.assert.calledWith(this.lrepConnectorMock.deleteChange, {
+				sChangeName: "changeId",
+				sChangelist: "",
+				sLayer: "USER",
+				sNamespace: "localchange2"
+			}, bIsVariant);
+			assert.deepEqual(this.oChangePersistence._mVariantsChanges["SmartFilterbar"], {});
+		}.bind(this));
+	});
+
+	QUnit.test("saveAllChangesForVariant shall reject if the backend raises an error", function(assert) {
+		var mParameters = {
+			id: "changeId",
+			type: "filterBar",
+			ODataService: "LineItems",
+			texts: {variantName: "myVariantName"},
+			content: {
+				filterBarVariant: {},
+				filterbar: [
+					{
+						group: "CUSTOM_GROUP",
+						name: "MyOwnFilterField",
+						partOfVariant: true,
+						visibleInFilterBar: true
+					}
+				]
+			},
+			isVariant: true,
+			packageName: "",
+			isUserDependend: true
+		};
+		var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
+		assert.ok(sId);
+		assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
+		this.lrepConnectorMock.create = sinon.stub().returns(Promise.resolve(Promise.reject({
+			messages: [
+				{text: "Backend says: Boom"}
+			]
+		})));
+
+		this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar")['catch'](function(err) {
+			assert.equal(err.messages[0].text, "Backend says: Boom");
+		});
 	});
 
 	QUnit.module("Given map dependencies need to be updated", {

@@ -60,10 +60,6 @@ sap.ui.define([
 		DIRTY: "UPDATE"
 	};
 
-	Change.events = {
-		markForDeletion: "markForDeletion"
-	};
-
 	Change.prototype.setState = function(sState) {
 		if (this._isValidState(sState)) {
 			this.setProperty("state", sState);
