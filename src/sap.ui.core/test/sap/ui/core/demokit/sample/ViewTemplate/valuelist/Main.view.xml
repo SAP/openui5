@@ -29,24 +29,20 @@
 					<Text text="AccountingDocumentItem"/>
 				</Column>
 			</columns>
-			<items>
-				<ColumnListItem>
-					<cells>
-						<demo:ValueHelp value="{GeneratedID}"
-							showDetails="{ui>/valueHelpDetails}"/>
-						<demo:ValueHelp value="{CompanyCode}"
-							showDetails="{ui>/valueHelpDetails}"/>
-						<demo:ValueHelp value="{Customer}"
-							showDetails="{ui>/valueHelpDetails}"/>
-						<demo:ValueHelp value="{Customer}" qualifier="DEBID"
-							showDetails="{ui>/valueHelpDetails}"/>
-						<demo:ValueHelp value="{AccountingDocument}"
-							showDetails="{ui>/valueHelpDetails}"/>
-						<demo:ValueHelp value="{AccountingDocumentItem}"
-							showDetails="{ui>/valueHelpDetails}"/>
-					</cells>
-				</ColumnListItem>
-			</items>
+			<ColumnListItem>
+				<demo:ValueHelp value="{GeneratedID}"
+					showDetails="{ui>/valueHelpDetails}"/>
+				<demo:ValueHelp value="{CompanyCode}"
+					showDetails="{ui>/valueHelpDetails}"/>
+				<demo:ValueHelp value="{Customer}"
+					showDetails="{ui>/valueHelpDetails}"/>
+				<demo:ValueHelp value="{Customer}" qualifier="DEBID"
+					showDetails="{ui>/valueHelpDetails}"/>
+				<demo:ValueHelp value="{AccountingDocument}"
+					showDetails="{ui>/valueHelpDetails}"/>
+				<demo:ValueHelp value="{AccountingDocumentItem}"
+					showDetails="{ui>/valueHelpDetails}"/>
+			</ColumnListItem>
 		</Table>
 	</VBox>
 </mvc:View>

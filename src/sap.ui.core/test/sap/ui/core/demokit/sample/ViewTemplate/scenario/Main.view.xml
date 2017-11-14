@@ -29,9 +29,7 @@
 		</HBox>
 		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
 			width="inherit" class="sapUiResponsiveMargin">
-			<content>
-				<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/code}"/>
-			</content>
+			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/code}"/>
 		</Panel>
 		<layout:HorizontalLayout id="detailBox"/>
 	</layout:VerticalLayout>
