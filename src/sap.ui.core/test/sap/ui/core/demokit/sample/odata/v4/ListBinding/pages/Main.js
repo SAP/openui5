@@ -4,9 +4,10 @@
 sap.ui.require([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties"
 ],
-function (Helper, Opa5, Properties) {
+function (Helper, Opa5, Press, Properties) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.ListBinding.Main";
 
@@ -15,6 +16,14 @@ function (Helper, Opa5, Properties) {
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
+				refreshEmployees : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "refreshEmployees",
+						viewName : sViewName
+					});
+				},
 				selectFirstEmployee : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -51,7 +60,7 @@ function (Helper, Opa5, Properties) {
 						success : function (oEmployees) {
 							var oRow = oEmployees.getItems()[iRow];
 							Opa5.assert.strictEqual(
-								oRow.getCells()[0].getValue(),
+								oRow && oRow.getCells()[0].getValue(),
 								sEmployeeName,
 								"Name of row " + iRow + " as expected \""
 									+ sEmployeeName + "\"");
