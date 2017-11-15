@@ -437,10 +437,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * Resizes the popup to the input width and makes sure that the input is never bigger as the popup
 	 * @private
 	 */
-	Input.prototype._resizePopup = function() {
+	Input.prototype._resizePopup = function(bForceResize) {
 		var that = this;
 
-		if (this._oList && this._oSuggestionPopup) {
+		if (bForceResize) {
+			this._shouldResizePopup = true;
+		}
+
+		if (this._oList && this._oSuggestionPopup && this._shouldResizePopup) {
+
 			if (this.getMaxSuggestionWidth()) {
 				this._oSuggestionPopup.setContentWidth(this.getMaxSuggestionWidth());
 			} else {
@@ -467,9 +472,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		InputBase.prototype.onAfterRendering.call(this);
 
 		if (!this._bFullScreen) {
-			this._resizePopup();
+			this._resizePopup(true);
 			this._sPopupResizeHandler = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
-				that._resizePopup();
+				that._resizePopup(true);
 			});
 		}
 
@@ -478,6 +483,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			// do not open suggestion dialog by click over the value help icon
 			this.$().on("click", jQuery.proxy(function (oEvent) {
 				if (this.getShowSuggestion() && this._oSuggestionPopup && oEvent.target.id != this.getId() + "-vhi") {
+					this._resizePopup(true);
 					this._oSuggestionPopup.open();
 				}
 			}, this));
@@ -1637,6 +1643,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					} else {
 						oInput._oList.destroyItems();
 					}
+					oInput._shouldResizePopup = false;
 				}).attachBeforeOpen(function() {
 					oInput._sBeforeSuggest = oInput.getValue();
 				}))
@@ -1926,7 +1933,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 					if (!oPopup.isOpen() && !oInput._sOpenTimer && (this.getValue().length >= this.getStartSuggestion())) {
 						oInput._sOpenTimer = setTimeout(function() {
-							oInput._resizePopup();
+							oInput._resizePopup(true);
 							oInput._sOpenTimer = null;
 							oPopup.open();
 						}, 0);
