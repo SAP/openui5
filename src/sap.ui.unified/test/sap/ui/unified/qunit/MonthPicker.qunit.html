@@ -40,6 +40,18 @@
 					oAssert.ok(!bThrown, "No error should be thrown");
 				});
 
+				QUnit.test("_isValueInThreshold return true if provided value is in provided threshold", function (assert) {
+					assert.ok(this.oMP._isValueInThreshold(248, 258, 10), "value is between 238 and 258 - upper boundary"); // (reference value, actual value, threshold)
+					assert.ok(this.oMP._isValueInThreshold(248, 238, 10), "value is between 238 and 258 - lower boundary"); // (reference value, actual value, threshold)
+					assert.ok(this.oMP._isValueInThreshold(248, 240, 10), "value is between 238 and 258"); // (reference value, actual value, threshold)
+					assert.ok(this.oMP._isValueInThreshold(248, 250, 10), "value is between 238 and 258"); // (reference value, actual value, threshold)
+				});
+
+				QUnit.test("_isValueInThreshold return false if provided value is out of provided threshold", function (assert) {
+					assert.equal(this.oMP._isValueInThreshold(248, 237, 10), false, "value is lower"); // (reference value, actual value, threshold)
+					assert.equal(this.oMP._isValueInThreshold(248, 259, 10), false, "value is upper"); // (reference value, actual value, threshold)
+				});
+
 			})();
 
 		</script>
