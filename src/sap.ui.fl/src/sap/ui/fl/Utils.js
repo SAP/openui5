@@ -1070,6 +1070,34 @@ sap.ui.define([
 				});
 			});
 			return oResult;
+		},
+
+		/**
+		 * Checks if the element is an instance of the type.
+		 *
+		 * @param {object} oElement Element to be checked
+		 * @param {string} sType type That the element should be checked against
+		 * @returns {boolean} Returns true if the element is an instance of the type
+		 */
+		isInstanceOf: function(oElement, sType) {
+			var oInstance = jQuery.sap.getObject(sType);
+			if (typeof oInstance === "function") {
+				return oElement instanceof oInstance;
+			} else {
+				return false;
+			}
+		},
+
+		/**
+		 * Checks if the element has the interface.
+		 *
+		 * @param {object} oElement Element
+		 * @param {string} sInterface Interface that should be in the element
+		 * @returns {boolean} Returns true if the element has the interface
+		 */
+		hasInterface: function(oElement, sInterface) {
+			var aInterfaces = oElement.getMetadata().getInterfaces();
+			return aInterfaces.indexOf(sInterface) !== -1;
 		}
 	};
 	return Utils;
