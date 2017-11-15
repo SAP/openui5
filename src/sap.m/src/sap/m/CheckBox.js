@@ -152,7 +152,17 @@ sap.ui.define(['jquery.sap.global',
 			 * <Note:> When the property <code>enabled</code> is set to <code>false</code> this property has no effect.
 			 * @since 1.54
 			 */
-			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false}
+			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Determines whether the label's text is wrapped.
+			 *
+			 * When set to <code>false</code> (default), the label's text
+			 * is truncated with ellipsis at the end.
+			 *
+			 * @since 1.54
+			 */
+			wrapping: {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations: {
 			/**
@@ -262,6 +272,16 @@ sap.ui.define(['jquery.sap.global',
 
 		this.setProperty("textAlign", sAlign, true);
 		oLabel.setTextAlign(sAlign);
+
+		return this;
+	};
+
+	CheckBox.prototype.setWrapping = function(bWrap) {
+		var oLabel = this._getLabel();
+
+		this.setProperty("wrapping", bWrap, true);
+		oLabel.setWrapping(bWrap);
+		this.$().toggleClass("sapMCbWrapped", bWrap);
 
 		return this;
 	};
