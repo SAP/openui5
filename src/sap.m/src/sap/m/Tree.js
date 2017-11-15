@@ -304,6 +304,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 		};
 	};
 
+	Tree.prototype.onItemLongDragOver = function(oItem) {
+		var iIndex = this.indexOfItem(oItem);
+		this.getBinding("items").expand(iIndex);
+	};
+
 	return Tree;
 
 });

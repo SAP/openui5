@@ -211,7 +211,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			 * A toolbar that is placed below the header to show extra information to the user.
 			 * @since 1.16
 			 */
-			infoToolbar : {type : "sap.m.Toolbar", multiple : false}
+			infoToolbar : {type : "sap.m.Toolbar", multiple : false},
+
+			/**
+			 * Defines the drag-and-drop configuration.
+			 *
+			 * @since 1.54
+			 */
+			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
 		},
 		associations: {
 

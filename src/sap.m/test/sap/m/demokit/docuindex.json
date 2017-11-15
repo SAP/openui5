@@ -1104,7 +1104,8 @@
 			"sap.m.sample.TableExport",
 			"sap.m.sample.TableOutdated",
 			"sap.m.sample.TableEditable",
-			"sap.m.sample.TableAlternateRowColors"
+			"sap.m.sample.TableAlternateRowColors",
+			"sap.m.sample.TableDnD"
 		  ]
 		},
 		{
@@ -2303,6 +2304,11 @@
 		  "id": "sap.m.sample.TableAlternateRowColors",
 		  "name": "Table - Alternate Row Colors",
 		  "description": "Table with alternating light and dark background colors. Note: The effect of this feature is only visible in the SAP Belize and Belize Deep themes."
+		},
+		{
+		  "id": "sap.m.sample.TableDnD",
+		  "name": "Table - Drag and Drop",
+		  "description": "Shows the different kinds of drag-and-drop capabilities."
 		},
 		{
 		  "id": "sap.m.sample.TablePerso",
