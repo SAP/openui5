@@ -380,6 +380,30 @@
 			assert.strictEqual(this.stepInput.$().find(".sapMInputDivWrapper")[0].style.width, "70%", "field width of 70% is correctly set to the Input wraper");
 		});
 
+		QUnit.test("validationMode", function (assert) {
+			assert.strictEqual(this.stepInput.getValidationMode(), sap.m.StepInputValidationMode.FocusOut, "validation mode is set to 'FocusOut' by default");
+
+			// arrange
+			this.oLiveChangeSpy = sinon.spy(this.stepInput, "_attachLiveChange");
+			this.oDettachLiveChangeSpy = sinon.spy(this.stepInput, "_detachLiveChange");
+			this.stepInput.setValidationMode(sap.m.StepInputValidationMode.LiveChange);
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(this.stepInput.getValidationMode(), sap.m.StepInputValidationMode.LiveChange, "validation mode is set to 'LiveChange'");
+			assert.strictEqual(this.oLiveChangeSpy.callCount, 1, "'LiveChange' is attached to the StepInput");
+			assert.strictEqual(this.oDettachLiveChangeSpy.callCount, 0, "Detach of 'LiveChange' is not called");
+
+			// arrange
+			this.stepInput.setValidationMode(sap.m.StepInputValidationMode.FocusOut);
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(this.stepInput.getValidationMode(), sap.m.StepInputValidationMode.FocusOut, "validation mode is set to 'FocusOut'");
+			assert.strictEqual(this.oDettachLiveChangeSpy.callCount, 1, "'LiveChange' is detached (_dettachLiveChange is called once)");
+			assert.strictEqual(this.oLiveChangeSpy.callCount, 1, "'LiveChange' is not called again");
+		});
+
 		QUnit.module("Operations", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
@@ -1152,7 +1176,8 @@
 			assert.notOk(oInput.$(sInputSuffix).is('[aria-disabled]'), "'aria-disabled' attribute is not rendered in the DOM");
 			//act - simulate changing the 'value' outside the possible range with typing
 			oInput.$(sInputSuffix).val(11);
-			qutils.triggerKeydown(oInput.$(sInputSuffix)[0], jQuery.sap.KeyCodes.TAB, false, false, false);
+			// loose focus
+			oInput.$(sInputSuffix).blur();
 			oCore.applyChanges();
 			//assert - expect 'aria-invalid=true' to be rendered in the DOM
 			assert.ok(oInput.$(sInputSuffix).is('[aria-invalid]'), "'aria-invalid' is rendered in the DOM");
