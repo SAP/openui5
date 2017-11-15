@@ -890,7 +890,7 @@ sap.ui.require([
 			"NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
 	});
 
-		QUnit.module("VisibleRowCountMode Auto", {
+	QUnit.module("VisibleRowCountMode Auto", {
 		beforeEach: function() {
 			createTable({
 				visibleRowCountMode: VisibleRowCountMode.Auto
@@ -907,7 +907,8 @@ sap.ui.require([
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Render) {
-				assert.strictEqual(oTable.getVisibleRowCount(), 18, "The visible row count after initialization is correct");
+				var iExpectedVisibleRowCount = Device.browser.msie ? 18 : 19;
+				assert.strictEqual(oTable.getVisibleRowCount(), iExpectedVisibleRowCount, "The visible row count after initialization is correct");
 				done();
 			}
 		});
