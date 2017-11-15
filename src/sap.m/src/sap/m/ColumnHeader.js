@@ -195,8 +195,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Click event for opening the <code>ViewSettingsPopover<code> control.
-	 * @param {object} oEvent Triggers the opening of the <code>ViewSettingsPopover<code> control.
+	 * Click event for opening the <code>ViewSettingsPopover</code> control.
+	 * @param {object} oEvent Triggers the opening of the <code>ViewSettingsPopover</code> control.
 	 * @private
 	 */
 	ColumnHeader.prototype.onclick = function(oEvent) {

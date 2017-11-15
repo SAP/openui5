@@ -89,7 +89,7 @@ sap.ui.define(["sap/ui/Global",
 	*/
 	thisLib.DynamicPageTitleArea = {
 		/**
-		* The area includes the <code>heading<code>, <code>expandedContent<code> and <code>snappedContent<code> aggregations,
+		* The area includes the <code>heading</code>, <code>expandedContent</code> and <code>snappedContent</code> aggregations,
 		* positioned in the beginning area of the {@link sap.f.DynamicPageTitle}.
 		*
 		* @public
@@ -97,7 +97,7 @@ sap.ui.define(["sap/ui/Global",
 		Begin: "Begin",
 
 		/**
-		* The area includes the <code>content<code> aggregation,
+		* The area includes the <code>content</code> aggregation,
 		* positioned in the middle part of the {@link sap.f.DynamicPageTitle}.
 		*
 		* @public

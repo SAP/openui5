@@ -1370,9 +1370,9 @@
 			 *
 			 * Log entries are plain JavaScript objects with the following properties
 			 * <ul>
-			 * <li>timestamp {number} point in time when the entry was created
-			 * <li>level {int} LogLevel level of the entry
-			 * <li>message {string} message text of the entry
+			 * <li>timestamp {number} point in time when the entry was created</li>
+			 * <li>level {int} LogLevel level of the entry</li>
+			 * <li>message {string} message text of the entry</li>
 			 * </ul>
 			 *
 			 * @return {object[]} an array containing the recorded log entries
@@ -2694,11 +2694,11 @@
 		 *
 		 * Each module is an object that can have the following members
 		 * <ul>
-		 * <li>{int} state one of the module states defined in this function
-		 * <li>{string} url URL where the module has been loaded from
-		 * <li>{any} data temp. raw content of the module (between loaded and ready)
-		 * <li>{string} error an error description for state <code>FAILED</code>
-		 * <li>{any} content the content of the module as exported via define()
+		 * <li>{int} state one of the module states defined in this function</li>
+		 * <li>{string} url URL where the module has been loaded from</li>
+		 * <li>{any} data temp. raw content of the module (between loaded and ready)</li>
+		 * <li>{string} error an error description for state <code>FAILED</code></li>
+		 * <li>{any} content the content of the module as exported via define()</li>
 		 * </ul>
 		 * @private
 		 */
@@ -2972,12 +2972,12 @@
 		 *
 		 * Each module is an object with the following properties
 		 * <ul>
-		 * <li>{int} state one of the module states defined in this function
-		 * <li>{string} url URL where the module has been loaded from
-		 * <li>{any} data temp. raw content of the module (between loaded and ready or when preloaded)
-		 * <li>{string} group the bundle with which a resource was loaded or null
-		 * <li>{string} error an error description for state <code>FAILED</code>
-		 * <li>{any} content the content of the module as exported via define()
+		 * <li>{int} state one of the module states defined in this function</li>
+		 * <li>{string} url URL where the module has been loaded from</li>
+		 * <li>{any} data temp. raw content of the module (between loaded and ready or when preloaded)</li>
+		 * <li>{string} group the bundle with which a resource was loaded or null</li>
+		 * <li>{string} error an error description for state <code>FAILED</code></li>
+		 * <li>{any} content the content of the module as exported via define()</li>
 		 * </ul>
 		 */
 		function Module(name) {

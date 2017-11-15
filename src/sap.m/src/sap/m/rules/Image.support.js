@@ -18,7 +18,7 @@ sap.ui.define(["sap/ui/support/library"],
 	//**********************************************************
 
 	/**
-	 * Warns about the impact of the <code>densityAware</code> property of <code>sap.m.Image<code>
+	 * Warns about the impact of the <code>densityAware</code> property of <code>sap.m.Image</code>
 	 */
 	var oImageRule = {
 		id : "densityAwareImage",

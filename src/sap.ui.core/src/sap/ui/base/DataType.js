@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * </pre>
 	 * It will be called with a value for this type and should return a normalized
 	 * value (which also must be valid for the this type). There's no mean to reject a value.
-	 * The <code>this<code> context of the function will be this type.
+	 * The <code>this</code> context of the function will be this type.
 	 *
 	 * This method allows applications or application frameworks to plug-in a generic value
 	 * normalization for a type, e.g. to convert all URLs in some app-specific way before

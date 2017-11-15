@@ -42,13 +42,13 @@ sap.ui.define([
 	 *
 	 * The possible values for a setting depend on its kind:
 	 * <ul>
-	 * <li>for simple properties, the value has to match the documented type of the property (no type conversion occurs)
-	 * <li>for 0..1 aggregations, the value has to be an instance of the aggregated type
-	 * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type or a single instance
-	 * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted
-	 * <li>for 0..n associations, an array of instances of the associated type or of IDs is accepted
+	 * <li>for simple properties, the value has to match the documented type of the property (no type conversion occurs)</li>
+	 * <li>for 0..1 aggregations, the value has to be an instance of the aggregated type</li>
+	 * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type or a single instance</li>
+	 * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted</li>
+	 * <li>for 0..n associations, an array of instances of the associated type or of IDs is accepted</li>
 	 * <li>for events either a function (event handler) is accepted or an array of length 2
-	 *     where the first element is a function and the 2nd element is an object to invoke the method on.
+	 *     where the first element is a function and the 2nd element is an object to invoke the method on.</li>
 	 * </ul>
 	 *
 	 * Each subclass should document the name and type of its supported settings in its constructor documentation.
@@ -624,7 +624,7 @@ sap.ui.define([
 	 *     In addition to the CSS selector syntax, the selector string can contain the placeholder <code>{id}</code>
 	 *     (multiple times). Before evaluating the selector in the context of an Element or Control, all occurrences of the
 	 *     placeholder have to be replaced by the (potentially escaped) ID of that Element or Control.
-	 *     In fact, any selector should start with <code>#{id}<code> to ensure that the query result is limited to the
+	 *     In fact, any selector should start with <code>#{id}</code> to ensure that the query result is limited to the
 	 *     desired Element or Control.
 	 *
 	 *     <b>Note</b>: there is a convenience method {@link sap.ui.core.Element#getDomRefForSetting} that evaluates the
@@ -641,10 +641,10 @@ sap.ui.define([
 	 * For each public property 'foo', the following methods will be created by the "extend" method and will be added to the
 	 * prototype of the subclass:
 	 * <ul>
-	 * <li>getFoo() - returns the current value of property 'foo'. Internally calls {@link #getProperty}
-	 * <li>setFoo(v) - sets 'v' as the new value of property 'foo'. Internally calls {@link #setProperty}
-	 * <li>bindFoo(c) - (only if property was defined to be 'bindable'): convenience function that wraps {@link #bindProperty}
-	 * <li>unbindFoo() - (only if property was defined to be 'bindable'): convenience function that wraps {@link #unbindProperty}
+	 * <li>getFoo() - returns the current value of property 'foo'. Internally calls {@link #getProperty}</li>
+	 * <li>setFoo(v) - sets 'v' as the new value of property 'foo'. Internally calls {@link #setProperty}</li>
+	 * <li>bindFoo(c) - (only if property was defined to be 'bindable'): convenience function that wraps {@link #bindProperty}</li>
+	 * <li>unbindFoo() - (only if property was defined to be 'bindable'): convenience function that wraps {@link #unbindProperty}</li>
 	 * </ul>
 	 *
 	 *
@@ -680,7 +680,7 @@ sap.ui.define([
 	 *     In addition to the CSS selector syntax, the selector string can contain the magic token <code>{id}</code>
 	 *     (multiple times). Before evaluating the selector in the context of an Element or Control, all occurrences of the
 	 *     token have to be replaced by the (potentially escaped) ID of that Element or Control.
-	 *     In fact, any selector should start with <code>#{id}<code> to ensure that the query result is limited to the
+	 *     In fact, any selector should start with <code>#{id}</code> to ensure that the query result is limited to the
 	 *     desired Element or Control.
 	 *
 	 *     <b>Note</b>: there is a convenience method {@link sap.ui.core.Element#getDomRefForSetting} that evaluates the
@@ -4604,8 +4604,8 @@ sap.ui.define([
 	 *
 	 * To make the update work as smooth as possible, it happens in two phases:
 	 * <ol>
-	 *  <li>In phase 1 all known models are updated.
-	 *  <li>In phase 2 all bindings are updated.
+	 *  <li>In phase 1 all known models are updated.</li>
+	 *  <li>In phase 2 all bindings are updated.</li>
 	 * </ol>
 	 * This separation is necessary as the models for the bindings might be updated
 	 * in some ManagedObject or in the Core and the order in which the objects are visited

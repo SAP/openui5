@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 			/**
 			 * Specifies whether multiple or single selection is used.
 			 * @deprecated as of version 1.20.0, replaced by <code>setMode</code> method.
-			 * <code>FacetFilterList</code> overrides the <code>setMode<code/> method to restrict the possible modes to
+			 * <code>FacetFilterList</code> overrides the <code>setMode</code> method to restrict the possible modes to
 			 * <code>MultiSelect</code> and <code>SingleSelectMaster</code>. All other modes are ignored and will not be set.
 			 */
 			multiSelect : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
