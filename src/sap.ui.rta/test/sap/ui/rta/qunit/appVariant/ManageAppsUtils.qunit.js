@@ -205,7 +205,14 @@ sap.ui.require([
 			sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
 			sap.ui.rta.appVariant.AppVariantUtils.setNewAppVariantId("id1");
 
-			return AppVariantOverviewUtils.getAppVariantOverview("testId").then(function(aAppVariantOverviewAttributes){
+			var oResourceBundlePromise = jQuery.sap.resources({
+				url: jQuery.sap.getModulePath("sap.ui.rta.appVariant.manageApps.webapp.i18n", "/i18n.properties"),
+				async: true
+			});
+
+			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId"), oResourceBundlePromise]).then(function(aParams) {
+				var aAppVariantOverviewAttributes = aParams[0], oResourceBundle = aParams[1];
+
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of first app(variant) is correct");
@@ -217,7 +224,7 @@ sap.ui.require([
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, false, "then the first app(variant) is not adaptable");
 				assert.equal(aAppVariantOverviewAttributes[1].adaptUIButtonVisibility, true, "then the second app is adaptable");
 
-				assert.equal(aAppVariantOverviewAttributes[0].currentStatus, "Just created", "then the first app(variant) is highlighted blue");
+				assert.equal(aAppVariantOverviewAttributes[0].currentStatus, oResourceBundle.getText("MAA_NEW_APP_VARIANT"), "then the first app(variant) is highlighted blue");
 			});
 		});
 	});
