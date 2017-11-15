@@ -5,10 +5,10 @@
 // Provides control sap.m.Input.
 sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List', './Popover',
 		'sap/ui/core/Item', './ColumnListItem', './StandardListItem', './DisplayListItem', 'sap/ui/core/ListItem',
-		'./Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText'],
+		'./Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control'],
 	function(jQuery, Bar, Dialog, InputBase, List, Popover,
 			Item, ColumnListItem, StandardListItem, DisplayListItem, ListItem,
-			Table, Toolbar, ToolbarSpacer, library, IconPool, InvisibleText) {
+			Table, Toolbar, ToolbarSpacer, library, IconPool, InvisibleText, Control) {
 	"use strict";
 
 
@@ -1379,10 +1379,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	Input.prototype.updateSuggestionItems = function() {
+		this._bSuspendInvalidate = true;
 		this.updateAggregation("suggestionItems");
 		this._bShouldRefreshListItems = true;
 		this._refreshItemsDelayed();
+		this._bSuspendInvalidate = false;
 		return this;
+	};
+
+	/**
+	 * Invalidates the control.
+	 * @override
+	 * @protected
+	 */
+	Input.prototype.invalidate = function() {
+		if (!this._bSuspendInvalidate) {
+			Control.prototype.invalidate.apply(this, arguments);
+		}
 	};
 
 	Input.prototype.cancelPendingSuggest = function() {
