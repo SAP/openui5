@@ -59,7 +59,6 @@ describe("sap.m.Select", function() {
 		expect(takeScreenshot(element(by.id('select_disabled')))).toLookAs('select_disabled_before_click');
 		element(by.id('select_disabled')).click();
 		expect(takeScreenshot(element(by.id('select_disabled')))).toLookAs('select_disabled_before_click');
-		element(by.css(_getClosingElement())).click();
 	});
 
 });
