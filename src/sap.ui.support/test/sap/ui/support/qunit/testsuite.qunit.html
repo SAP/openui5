@@ -18,6 +18,7 @@
 				var suite = new parent.jsUnitTestSuite(),
 				    contextPath = "/" + window.location.pathname.split("/")[1];
 
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/support/qunit/rules/RuleValidation.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/support/qunit/SupportAssistant.qunit.html");
 
 				return suite;
