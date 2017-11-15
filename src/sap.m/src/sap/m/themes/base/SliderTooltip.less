@@ -1,0 +1,55 @@
+/* ============================= */
+/* CSS for control sap.m/SliderTooltip  */
+/* Base theme */
+/* ============================= */
+
+
+/* ------------------------------ */
+/* Slider Tooltip styles          */
+/* ------------------------------ */
+
+.sapMSliderTooltip {
+	position: relative;
+	display: block;
+	flex-shrink: 0;
+	height: 1.625rem;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	text-align: center;
+	visibility: visible;
+	box-shadow: @sapUiShadowLevel1;
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMSliderTooltipInput {
+	height: 100%;
+	width: 100%;
+	border: none;
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	text-align: center;
+	outline: none;
+	-moz-appearance: textfield;
+}
+
+.sapMSliderTooltipInput::-webkit-outer-spin-button,
+.sapMSliderTooltipInput::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.sapMSliderTooltipNonEditable {
+	pointer-events: none;
+}
+
+
+.sapMSliderTooltipInput:-webkit-inner-spin-button,
+.sapMSliderTooltipInput:-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.sapMSliderTooltipErrorState {
+	border: 2px solid;
+}

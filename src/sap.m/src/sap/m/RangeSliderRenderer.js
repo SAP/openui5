@@ -21,57 +21,10 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
             position: "end"
         });
 
-        // Render tooltips
-        this.renderTooltips(oRM, oControl);
-
         // Render ARIA labels
         oRM.renderControl(oControl._mHandleTooltip.start.label);
         oRM.renderControl(oControl._mHandleTooltip.end.label);
-        oRM.renderControl(oControl._oRangeLabel);
-    };
-
-    RangeSliderRenderer.renderTooltips = function (oRM, oControl) {
-        // The tooltips container
-        oRM.write("<div");
-        oRM.writeAttribute("id", oControl.getId() + "-TooltipsContainer");
-        oRM.addClass(SliderRenderer.CSS_CLASS + "TooltipContainer");
-        oRM.addStyle("left","0%");
-        oRM.addStyle("right","0%");
-        oRM.addStyle("min-width", "0%");
-
-        oRM.writeClasses();
-        oRM.writeStyles();
-        oRM.write(">");
-
-        // The first tooltip
-        this.renderTooltip(oRM, oControl, oControl.getInputsAsTooltips(), "Left");
-
-        // The second tooltip
-        this.renderTooltip(oRM, oControl, oControl.getInputsAsTooltips(), "Right");
-
-        oRM.write("</div>");
-    };
-
-    RangeSliderRenderer.renderTooltip = function(oRM, oControl, bInput, sPosition){
-
-        if (bInput) {
-            if (sPosition === "Left") {
-                oRM.renderControl(oControl._mHandleTooltip.start.tooltip);
-            } else {
-                oRM.renderControl(oControl._mHandleTooltip.end.tooltip);
-            }
-
-        } else {
-            oRM.write("<span");
-            oRM.addClass(SliderRenderer.CSS_CLASS + "HandleTooltip");
-            oRM.addStyle("width", oControl._iLongestRangeTextWidth + "px");
-            oRM.writeAttribute("id", oControl.getId() + "-" + sPosition + "Tooltip");
-
-            oRM.writeClasses();
-            oRM.writeStyles();
-            oRM.write(">");
-            oRM.write("</span>");
-        }
+        oRM.renderControl(oControl.getAggregation("_handlesLabels")[2]);
     };
 
     /**
@@ -169,7 +122,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
     RangeSliderRenderer.renderEndLabel = function (oRM, oControl) {
         oRM.write("<div");
         oRM.addClass(SliderRenderer.CSS_CLASS + "RangeLabel");
-        oRM.addStyle("width", oControl._iLongestRangeTextWidth + "px");
+        oRM.addStyle("width", oControl._getMaxTooltipWidth() + "px");
         oRM.writeClasses();
         oRM.writeStyles();
         oRM.write(">");
@@ -218,7 +171,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
             valuemax: oSlider.toFixed(oSlider.getMax()),
             valuenow: aRange.join("-"),
             valuetext: oSlider._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange),
-            labelledby: oSlider._oRangeLabel.getId()
+            labelledby: oSlider.getAggregation("_handlesLabels")[2].getId() //  range lable
         });
 
         oRm.write('></div>');
