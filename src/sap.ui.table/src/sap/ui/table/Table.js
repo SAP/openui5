@@ -1428,6 +1428,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var oScrollExtension = this._getScrollExtension();
 		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
 		oScrollExtension.updateVerticalScrollbarPosition();
+		oScrollExtension.updateVerticalScrollbarVisibility();
 
 		var $this = this.$();
 
@@ -3497,8 +3498,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", this._iTableRowContentHeight + "px");
 			}
 		}
-
-		this._getScrollExtension().updateVerticalScrollbarVisibility();
 	};
 
 	/**
