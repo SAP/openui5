@@ -722,8 +722,15 @@ var oData = [
 
 	var oLabel3 = new sap.m.Label({text:"*********************Tree*********************"});
 	var oTree = new sap.m.Tree({
-		headerText: "Data in Tree Structure"
+		headerText: "Data in Tree Structure",
+		dragDropConfig: new sap.ui.core.dnd.DragDropInfo({
+			sourceAggregation: "items",
+			targetAggregation: "items",
+			dragStart:onDragStart,
+			drop:onDrop
+		})
 	});
+	oTree.setMode("MultiSelect");
 
 	//JSON
 	var oModel = new sap.ui.model.json.JSONModel();
@@ -736,6 +743,66 @@ var oData = [
 	});
 	oTree.bindItems("/", oStandardTreeItem);
 	//oTree.expandToLevel(3);
+	var oBinding = oTree.getBinding("items");
+
+	function onDragStart(oEvent) {
+		var oDragSession = oEvent.getParameter("dragSession");
+		var oDraggedItem = oEvent.getParameter("target");
+		var iDraggedItemIndex = oTree.indexOfItem(oDraggedItem);
+		var aSelectedIndices = oTree.getBinding("items").getSelectedIndices();
+		var aSelectedItems = oTree.getSelectedItems();
+		var aDraggedItemContexts = [];
+
+ 		if (aSelectedItems.length > 0) {
+ 			if (aSelectedIndices.indexOf(iDraggedItemIndex) === -1) {
+ 				oEvent.preventDefault();
+ 			} else {
+ 				for (var i = 0; i < aSelectedItems.length; i++) {
+ 					aDraggedItemContexts.push(oBinding.getContextByIndex(aSelectedIndices[i]));
+ 				}
+ 			}
+ 		} else {
+			aDraggedItemContexts.push(oBinding.getContextByIndex(iDraggedItemIndex));
+		}
+
+		oDragSession.setComplexData("hierarchymaintenance", {
+			draggedItemContexts: aDraggedItemContexts
+		});
+	};
+
+	function onDrop(oEvent) {
+
+		var oDragSession = oEvent.getParameter("dragSession");
+		var oDroppedItem = oEvent.getParameter("droppedControl");
+		var aDraggedItemContexts = oDragSession.getComplexData("hierarchymaintenance").draggedItemContexts;
+		var iDroppedIndex = oTree.indexOfItem(oDroppedItem);
+		var oNewParentContext = oBinding.getContextByIndex(iDroppedIndex);
+
+		if (aDraggedItemContexts.length === 0 || !oNewParentContext) {
+			return;
+		}
+
+		var oModel = oTree.getBinding("items").getModel();
+		var oNewParent = oNewParentContext.getProperty();
+
+		// In the JSON data of this example the children of a node are inside an array with the name "categories".
+		if (!oNewParent.categories) {
+			oNewParent.categories = []; // Initialize the children array.
+		}
+
+		for (var i = 0; i < aDraggedItemContexts.length; i++) {
+			if (oNewParentContext.getPath().indexOf(aDraggedItemContexts[i].getPath()) === 0) {
+				// Avoid moving a node into one of its child nodes.
+				continue;
+			}
+
+			// Copy the data to the new parent.
+			oNewParent.categories.push(aDraggedItemContexts[i].getProperty());
+
+			// Remove the data. The property is simply set to undefined to preserve the tree state (expand/collapse states of nodes).
+			oModel.setProperty(aDraggedItemContexts[i].getPath(), undefined, aDraggedItemContexts[i], true);
+		}
+	};
 
 	// footer funxtions
 	function addSelectionMode(){

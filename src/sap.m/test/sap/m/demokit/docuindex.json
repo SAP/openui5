@@ -1215,7 +1215,8 @@
 			"sap.m.sample.TreeInitialExpandState",
 			"sap.m.sample.TreeCollapseAll",
 			"sap.m.sample.TreeOData",
-			"sap.m.sample.TreeJSONLazyLoading"
+			"sap.m.sample.TreeJSONLazyLoading",
+			"sap.m.sample.TreeDnD"
 		  ]
 		},
 		{
@@ -2080,6 +2081,11 @@
           "id": "sap.m.sample.TreeJSONLazyLoading",
           "name": "Tree - Lazy loading with a JSON model",
           "description": "Shows how lazy loading with a JSON model can be done using the toggleOpenState event."
+        },
+        {
+          "id": "sap.m.sample.TreeDnD",
+          "name": "Tree - Drag and Drop",
+          "description": "This example shows drag-and-drop capability."
         },
 		{
 			"id": "sap.m.sample.RangeSlider",
