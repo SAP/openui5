@@ -95,14 +95,10 @@ sap.ui.require([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<items>\
-			<ColumnListItem>\
-				<cells>\
-					<Text id="id" text="{ID}" />\
-					<Text id="text" text="{Name}" />\
-				</cells>\
-			</ColumnListItem>\
-		</items>\
+		<ColumnListItem>\
+			<Text id="id" text="{ID}" />\
+			<Text id="text" text="{Name}" />\
+		</ColumnListItem>\
 	</Table>\
 </FlexBox>';
 
@@ -660,13 +656,9 @@ sap.ui.require([
 	// * Open the suggestion list for the "Buyer ID"
 	testViewStart("Absolute ODLB w/o parameters and relative ODPB", '\
 <Table items="{/EMPLOYEES}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="text" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
 </Table>',
 		{"EMPLOYEES?$skip=0&$top=100" :
 			{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]}},
@@ -679,13 +671,9 @@ sap.ui.require([
 	// the SalesOrders application.
 	testViewStart("Absolute ODLB with parameters and relative ODPB", '\
 <Table items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="text" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
 </Table>',
 		{"EMPLOYEES?$select=Name&$skip=0&$top=100" :
 			{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]}},
@@ -709,13 +697,9 @@ sap.ui.require([
 		filters : {path: \'AGE\', operator: \'GT\', value1: 21},\
 		sorter : {path : \'AGE\'}\
 	}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="text" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
 </Table>',
 		{"EMPLOYEES?$select=Name&$filter=(AGE%20gt%2021)%20and%20(TEAM_ID%20eq%2042)&$orderby=AGE,Name%20desc&$skip=0&$top=100" :
 			{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]}},
@@ -729,13 +713,9 @@ sap.ui.require([
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$select : \'Category\'}}">\
-		<items>\
-			<ColumnListItem>\
-				<cells>\
-					<Text id="category" text="{Category}" />\
-				</cells>\
-			</ColumnListItem>\
-		</items>\
+		<ColumnListItem>\
+			<Text id="category" text="{Category}" />\
+		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 		{
@@ -774,13 +754,9 @@ sap.ui.require([
 <FlexBox binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$orderby : \'AGE\', $select : \'Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<items>\
-			<ColumnListItem>\
-				<cells>\
-					<Text id="text" text="{Name}" />\
-				</cells>\
-			</ColumnListItem>\
-		</items>\
+		<ColumnListItem>\
+			<Text id="text" text="{Name}" />\
+		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -818,13 +794,9 @@ sap.ui.require([
 	QUnit.test("Absolute ODLB with sort, relative ODCB resolved on selection", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$expand : \'EMPLOYEE_2_MANAGER\'}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="name" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
 </Table>\
 <FlexBox id="form" binding="{EMPLOYEE_2_MANAGER}">\
 	<Text id="id" text="{ID}" />\
@@ -884,13 +856,9 @@ sap.ui.require([
 	QUnit.test("Absolute ODLB refresh", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="name" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
 </Table>',
 			that = this;
 
@@ -1007,13 +975,9 @@ sap.ui.require([
 	QUnit.test("Absolute ODLB changing parameters", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="name" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
 </Table>',
 			that = this;
 
@@ -1073,13 +1037,9 @@ sap.ui.require([
 		// Note: The key property of the EMPLOYEES set is 'ID'
 		var sView = '\
 <Table growing="true" items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="name" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
 </Table>';
 
 		this.expectRequest("EMPLOYEES?$select=Name&$skip=0&$top=20", {
@@ -1103,13 +1063,9 @@ sap.ui.require([
 		var sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
 </Table>',
 			that = this;
 
@@ -1156,13 +1112,9 @@ sap.ui.require([
 		var sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
 </Table>',
 		that = this;
 
@@ -1222,13 +1174,9 @@ sap.ui.require([
 		var sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
 </Table>',
 			that = this;
 
@@ -1278,13 +1226,9 @@ sap.ui.require([
 		parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<items>\
-			<ColumnListItem>\
-				<cells>\
-					<Text id="item" text="{ItemPosition}" />\
-				</cells>\
-			</ColumnListItem>\
-		</items>\
+		<ColumnListItem>\
+			<Text id="item" text="{ItemPosition}" />\
+		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -1341,13 +1285,9 @@ sap.ui.require([
 	QUnit.test("Modify a foreign property", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="item" text="{SO_2_BP/CompanyName}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="item" text="{SO_2_BP/CompanyName}" />\
+	</ColumnListItem>\
 </Table>',
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
@@ -1423,13 +1363,9 @@ sap.ui.require([
 	QUnit.test("Entity with key aliases", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EntitiesWithComplexKey}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="item" text="{Value}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="item" text="{Value}" />\
+	</ColumnListItem>\
 </Table>',
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			that = this;
@@ -1472,13 +1408,9 @@ sap.ui.require([
 	QUnit.test("Create with user input", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="note" text="{Note}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
 </Table>',
 			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
@@ -1614,13 +1546,9 @@ sap.ui.require([
 	QUnit.test("Metadata: Manager", function (assert) {
 		var sView = '\
 <Table id="table" items="{/MANAGERS}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="item" text="{@sapui.name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="item" text="{@sapui.name}" />\
+	</ColumnListItem>\
 </Table>',
 			oModel = createTeaBusiModel().getMetaModel(),
 			that = this;
@@ -1639,13 +1567,9 @@ sap.ui.require([
 	QUnit.test("Metadata: Product", function (assert) {
 		var sView = '\
 <Table id="table" items="{/Equipments/EQUIPMENT_2_PRODUCT}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="item" text="{@sapui.name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="item" text="{@sapui.name}" />\
+	</ColumnListItem>\
 </Table>',
 			oModel = createTeaBusiModel().getMetaModel(),
 			that = this;
@@ -1715,13 +1639,9 @@ sap.ui.require([
 	QUnit.test("Metadata: Manager -> Product", function (assert) {
 		var sView = '\
 <Table id="table" items="{}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="item" text="{@sapui.name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="item" text="{@sapui.name}" />\
+	</ColumnListItem>\
 </Table>',
 			oModel = createTeaBusiModel().getMetaModel(),
 			that = this;
@@ -2079,13 +1999,9 @@ sap.ui.require([
 			filters: {path: \'AGE\', operator: \'LT\', value1: \'77\'},\
 			parameters : {$orderby : \'Name\', $select : \'AGE\'}\
 		}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="text" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
 </Table>',
 			that = this;
 
@@ -2136,13 +2052,9 @@ sap.ui.require([
 		var sView = '\
 <FlexBox binding="{/TEAMS(\'2\')}">\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
-		<items>\
-			<ColumnListItem>\
-				<cells>\
-					<Text id="text" text="{Name}" />\
-				</cells>\
-			</ColumnListItem>\
-		</items>\
+		<ColumnListItem>\
+			<Text id="text" text="{Name}" />\
+		</ColumnListItem>\
 	</Table>\
 	<Text id="name" text="{Name}" />\
 </FlexBox>',
@@ -2182,13 +2094,9 @@ sap.ui.require([
 	testViewStart("Auto-$expand/$select: no $apply inside $expand", '\
 <FlexBox binding="{/TEAMS(\'42\')}">\
 	<Table items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$apply : \'filter(AGE lt 42)\'}}">\
-		<items>\
-			<ColumnListItem>\
-				<cells>\
-					<Text id="text" text="{Name}" />\
-				</cells>\
-			</ColumnListItem>\
-		</items>\
+		<ColumnListItem>\
+			<Text id="text" text="{Name}" />\
+		</ColumnListItem>\
 	</Table>\
 </FlexBox>', {
 		"TEAMS('42')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)&$select=ID,Name&$skip=0&$top=100" : {
@@ -2206,18 +2114,14 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table items="{/TEAMS}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<List items="{path : \'TEAM_2_EMPLOYEES\',\
-					parameters : {$apply : \'filter(AGE lt 42)\'}, templateShareable : false}">\
-					<CustomListItem>\
-						<Text id="text" text="{Name}" />\
-					</CustomListItem>\
-				</List>\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<List items="{path : \'TEAM_2_EMPLOYEES\',\
+			parameters : {$apply : \'filter(AGE lt 42)\'}, templateShareable : false}">\
+			<CustomListItem>\
+				<Text id="text" text="{Name}" />\
+			</CustomListItem>\
+		</List>\
+	</ColumnListItem>\
 </Table>';
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
@@ -2243,13 +2147,9 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="master" items="{/TEAMS}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="text0" text="{Team_Id}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="text0" text="{Team_Id}" />\
+	</ColumnListItem>\
 </Table>\
 <FlexBox id="detail" binding="{}">\
 	<Text id="text1" text="{Team_Id}" />\
@@ -2282,13 +2182,9 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="master" items="{/TEAMS}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="text0" text="{Team_Id}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="text0" text="{Team_Id}" />\
+	</ColumnListItem>\
 </Table>\
 <FlexBox id="detail" binding="{}">\
 	<Text id="text1" text="{Name}" />\
@@ -2421,13 +2317,9 @@ sap.ui.require([
 					: "EMPLOYEES?",
 				sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="text" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
 </Table>',
 				that = this;
 
@@ -2471,22 +2363,14 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="teamSet" items="{/TEAMS}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="teamId" text="{Team_Id}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="teamId" text="{Team_Id}" />\
+	</ColumnListItem>\
 </Table>\
 <Table id="employeeSet" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="employeeId" text="{ID}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="employeeId" text="{ID}" />\
+	</ColumnListItem>\
 </Table>\
 <VBox id="objectPage" binding="{path: \'\', parameters : {$$updateGroupId : \'update\'}}">\
 	<Text id="employeeName" text="{Name}"/>\
@@ -2623,13 +2507,9 @@ sap.ui.require([
 		QUnit.test("filter all/any on list binding " + oFixture.request, function (assert) {
 			var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="text" text="{SalesOrderID}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="text" text="{SalesOrderID}" />\
+	</ColumnListItem>\
 </Table>',
 				that = this;
 
@@ -2665,13 +2545,9 @@ sap.ui.require([
 <Table id="table" items="{path : \'/EMPLOYEES\',\
 		parameters : {$expand : {\'LOCATION/City/EmployeesInCity\' : {$select : [\'Name\']}}, \
 		$select : [\'ID\', \'Name\']}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="text" text="{Name}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
 </Table>',
 			that = this;
 
@@ -2780,13 +2656,9 @@ sap.ui.require([
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Table id="table" items="{LOCATION/City/EmployeesInCity}">\
-		<items>\
-			<ColumnListItem>\
-				<cells>\
-					<Text id="room" text="{ROOM_ID}"/>\
-				</cells>\
-			</ColumnListItem>\
-		</items>\
+		<ColumnListItem>\
+			<Text id="room" text="{ROOM_ID}"/>\
+		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -2835,14 +2707,10 @@ sap.ui.require([
 		}}">\
 	<Text id="id" text="{path : \'SalesOrderID\', type : \'sap.ui.model.odata.type.String\'}" />\
 	<Table id="table" items="{ToLineItems}">\
-		<items>\
-			<ColumnListItem>\
-				<cells>\
-					<Text id="item" text="{path : \'ItemPosition\',\
-						type : \'sap.ui.model.odata.type.String\'}" />\
-				</cells>\
-			</ColumnListItem>\
-		</items>\
+		<ColumnListItem>\
+			<Text id="item" text="{path : \'ItemPosition\',\
+				type : \'sap.ui.model.odata.type.String\'}" />\
+		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			oModel = this.createModelForV2SalesOrderService({
@@ -2882,13 +2750,9 @@ sap.ui.require([
 			$select : \'SalesOrderID\',\
 			$orderby : \'SalesOrderID\'\
 		}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
 </Table>',
 			oModel = this.createModelForV2SalesOrderService({
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
@@ -2929,13 +2793,9 @@ sap.ui.require([
 			$select : \'SalesOrderID\',\
 			$filter : \'' + oFixture.binding + '\'\
 		}}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
 </Table>';
 
 			this.expectRequest("SalesOrderSet?$filter=" + oFixture.request + "&$select=SalesOrderID"
@@ -2989,16 +2849,14 @@ sap.ui.require([
 	QUnit.test("sap.ui.table.Table with VisibleRowCountMode='Auto'", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" visibleRowCountMode="Auto">\
-	<t:columns>\
-		<t:Column>\
-			<t:label>\
-				<Label text="Name"/>\
-			</t:label>\
-			<t:template>\
-				<Text id="text" text="{Name}" />\
-			</t:template>\
-		</t:Column>\
-	</t:columns>\
+	<t:Column>\
+		<t:label>\
+			<Label text="Name"/>\
+		</t:label>\
+		<t:template>\
+			<Text id="text" text="{Name}" />\
+		</t:template>\
+	</t:Column>\
 </t:Table>',
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			that = this;
@@ -3095,13 +2953,9 @@ sap.ui.require([
 			oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}" />\
+	</ColumnListItem>\
 </Table>';
 
 		this.expectRequest("Equipments?$select=Category,ID&"
@@ -3148,13 +3002,9 @@ sap.ui.require([
 			oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
+	</ColumnListItem>\
 </Table>';
 
 		this.expectRequest("Equipments?$select=Category,ID&"
@@ -3199,13 +3049,9 @@ sap.ui.require([
 		var oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
-	<items>\
-		<ColumnListItem>\
-			<cells>\
-				<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
-			</cells>\
-		</ColumnListItem>\
-	</items>\
+	<ColumnListItem>\
+		<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
+	</ColumnListItem>\
 </Table>';
 
 		this.expectRequest("Equipments?$skip=0&$top=100", {value : [{
