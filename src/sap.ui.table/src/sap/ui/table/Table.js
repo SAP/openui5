@@ -1297,7 +1297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._getScrollExtension().updateInnerVerticalScrollRangeCache(this._aRowHeights);
 		}
 
-		var iRowContentSpace = 0;
+		var iRowContentSpace = null;
 		if (!bSkipHandleRowCountMode && this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
 			iRowContentSpace = this._determineAvailableSpace();
 			// if no height is granted we do not need to do any further row adjustment or layout sync.
@@ -1400,7 +1400,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		if (this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
 			//if visibleRowCountMode is auto change the visibleRowCount according to the parents container height
-			var iRows = this._calculateRowsToDisplay(iRowContentSpace);
+			var iRows = this._calculateRowsToDisplay(iRowContentSpace != null ? iRowContentSpace : this._determineAvailableSpace());
 			// if minAutoRowCount has reached, table should use block this height.
 			// In case row > minAutoRowCount, the table height is 0, because ResizeTrigger must detect any changes of the table parent.
 			if (iRows == this._determineMinAutoRowCount()) {
