@@ -267,6 +267,29 @@
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Test setTooltip", function (assert) {
+		//Set up
+		var sTooltip = "this is \"the\" file uploader";
+		var oFileUploader = createFileUploader({
+			tooltip: "MyFileUploader"
+		});
+
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oFileUploader.setTooltip(sTooltip);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sTooltip, "FileUploader tooltip is correct");
+		assert.equal(oFileUploader.$().find(".sapUiFupInputMask")[0].getAttribute("title"), sTooltip, "FileUploader mask tooltip is correct");
+
+		// cleanup
+		oFileUploader.destroy();
+	});
+
 	QUnit.module("File validation");
 	QUnit.test("Test file type validation - handlechange()", function (assert){
 		//setup
