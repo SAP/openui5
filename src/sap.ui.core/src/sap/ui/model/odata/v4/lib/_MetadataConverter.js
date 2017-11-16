@@ -567,7 +567,9 @@ sap.ui.define([
 
 			if (typeof vTarget === "string") {
 				oAnnotatable = oAggregate.annotatable;
-				vTarget = _Helper.buildPath(oAnnotatable.path, vTarget);
+				if (oAnnotatable) {
+					vTarget = _Helper.buildPath(oAnnotatable.path, vTarget);
+				}
 				sPath = vTarget;
 				// try to find the target (otherwise processAnnotation will recreate it)
 				oAnnotations = oAggregate.schema.$Annotations;
@@ -651,19 +653,6 @@ sap.ui.define([
 					oTarget["$" + sProperty] = sValue;
 				}
 			}
-		},
-
-		/**
-		 * Processes a Schema element.
-		 * @param {Element} oElement The element
-		 * @param {object} oAggregate The aggregate
-		 */
-		processSchema : function (oElement, oAggregate) {
-			oAggregate.namespace = oElement.getAttribute("Namespace") + ".";
-			oAggregate.result[oAggregate.namespace] = oAggregate.schema = {
-				"$kind" : "Schema"
-			};
-			MetadataConverter.annotatable(oAggregate, oAggregate.schema);
 		},
 
 		/**
@@ -790,10 +779,13 @@ sap.ui.define([
 		 *     known children.
 		 *   * All other properties are known child elements, the value is the configuration for
 		 *     that child element.
+		 * @param {boolean} [bUseProcessElementHook=false]
+		 *   If true, the hook processElement at the aggregate is used, otherwise the processor is
+		 *   called directly
 		 * @returns {any}
 		 *   The return value from __postProcessor or undefined if there is none
 		 */
-		traverse : function (oElement, oAggregate, oConfig) {
+		traverse : function (oElement, oAggregate, oConfig, bUseProcessElementHook) {
 			var oAnnotatable = oAggregate.annotatable, // "push" oAnnotatable to the recursion stack
 				oChildConfig,
 				oChildList = oElement.childNodes,
@@ -806,9 +798,12 @@ sap.ui.define([
 				vResult,
 				aResult = [];
 
-			if (oConfig.__processor) {
+			if (bUseProcessElementHook) {
+				oAggregate.processElement(oElement, oAggregate, oConfig.__processor);
+			} else if (oConfig.__processor) {
 				oConfig.__processor(oElement, oAggregate);
 			}
+
 			for (i = 0; i < oChildList.length; i++) {
 				oChildNode = oChildList.item(i);
 				if (oChildNode.nodeType === 1) { // Node.ELEMENT_NODE
@@ -825,7 +820,8 @@ sap.ui.define([
 					}
 					if (oChildConfig) {
 						vChildResult =
-							MetadataConverter.traverse(oChildNode, oAggregate, oChildConfig);
+							MetadataConverter.traverse(oChildNode, oAggregate, oChildConfig,
+								bUseProcessElementHook);
 						if (vChildResult !== undefined && oConfig.__postProcessor) {
 							// only push if the element is interested in the results and if the
 							// child element returns anything (it might be another Annotation which

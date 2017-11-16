@@ -165,25 +165,37 @@ sap.ui.define([
 	 */
 	_V2Requestor.prototype.convertFilter = function (sFilter, sResourcePath) {
 		var oFilterTree = _Parser.parseFilter(sFilter),
-			vModelValue,
-			sPath = oFilterTree.left.value,
-			oProperty,
-			sType,
-			sValue = oFilterTree.right.value;
+			that = this;
 
-		oProperty = this.oModelInterface.fnFetchMetadata("/" + sResourcePath + "/" + sPath)
-			.getResult();
+		/*
+		 * Converts the given literal to V2 syntax.
+		 * @param {object} oLiteral The token for the literal
+		 * @param {string} sPath The path as given in the other operand
+		 */
+		function convertLiteral(oLiteral, sPath) {
+			var vModelValue,
+				oProperty = that.oModelInterface.fnFetchMetadata("/" + sResourcePath + "/" + sPath)
+					.getResult();
 
-		if (!oProperty) {
-			throw new Error("Invalid filter path: " + sPath);
+			if (!oProperty) {
+				throw new Error("Invalid filter path: " + sPath);
+			}
+			if (oProperty.$Type !== "Edm.String") {
+				vModelValue = _Helper.parseLiteral(oLiteral.value, oProperty.$Type, sPath);
+				oLiteral.value = that.formatPropertyAsLiteral(vModelValue, oProperty);
+			}
 		}
-		sType = oProperty.$Type;
-		if (sType === "Edm.String") {
-			return sFilter;
+
+		if (oFilterTree.right.id === "VALUE") {
+			if (oFilterTree.left.id === "VALUE") {
+				throw new Error("Cannot convert filter for V2, saw literals on both sides of '"
+					+ oFilterTree.id + "' at " + oFilterTree.at + ": " + sFilter);
+			}
+			convertLiteral(oFilterTree.right, oFilterTree.left.value);
+		} else if (oFilterTree.left.id === "VALUE") {
+			convertLiteral(oFilterTree.left, oFilterTree.right.value);
 		}
 
-		vModelValue = _Helper.parseLiteral(sValue, sType, sPath);
-		oFilterTree.right.value = this.formatPropertyAsLiteral(vModelValue, oProperty);
 		return _Parser.buildFilterString(oFilterTree);
 	};
 
@@ -314,6 +326,36 @@ sap.ui.define([
 				throw new Error("Type '" + sPropertyType + "' of property '" + sPropertyName
 					+ "' in type '" + sTypeName + "' is unknown; cannot convert value: " + vValue);
 		}
+	};
+
+	/**
+	 * Checks whether the "DataServiceVersion" header is set to "2.0" otherwise an error is thrown.
+	 *
+	 * @param {function} fnGetHeader
+	 *   A callback function to get a header attribute for a given header name with case-insensitive
+	 *   search by header name
+	 * @param {string} sResourcePath
+	 *   The resource path of the request
+	 * @param {boolean} [bVersionOptional=false]
+	 *   Indicates whether the OData service version is optional, which is the case for responses
+	 *   contained in a response for a $batch request
+	 * @throws {Error} If the "DataServiceVersion" header is not "2.0"
+	 */
+	_V2Requestor.prototype.doCheckVersionHeader = function (fnGetHeader, sResourcePath,
+			bVersionOptional) {
+		var sDataServiceVersion = fnGetHeader("DataServiceVersion"),
+			vODataVersion = !sDataServiceVersion && fnGetHeader("OData-Version");
+
+		if (vODataVersion) {
+			throw new Error("Expected 'DataServiceVersion' header with value '2.0' but received"
+				+ " 'OData-Version' header with value '" + vODataVersion + "' in response for "
+				+ this.sServiceUrl + sResourcePath);
+		}
+		if (sDataServiceVersion === "2.0" || !sDataServiceVersion && bVersionOptional) {
+			return;
+		}
+		throw new Error("Expected 'DataServiceVersion' header with value '2.0' but received value '"
+			+ sDataServiceVersion + "' in response for " + this.sServiceUrl + sResourcePath);
 	};
 
 	/**

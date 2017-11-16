@@ -4,7 +4,6 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
-		<Title id="SalesOrdersTitle" text="{$count} Sales Orders" titleStyle="H2"/>
 		<Table growing="true" growingThreshold="5" id="SalesOrders"
 			items="{path : '/SEPM_C_SLSORDER_TP_100',
 					parameters : {
@@ -17,6 +16,11 @@
 				}}"
 			mode="SingleSelectMaster"
 			selectionChange="onSalesOrdersSelect">
+			<headerToolbar>
+				<Toolbar>
+					<Title id="SalesOrdersTitle" text="{$count} Sales Orders" titleStyle="H2"/>
+				</Toolbar>
+			</headerToolbar>
 			<columns>
 				<Column>
 					<Text text="SalesOrder ID"/>
@@ -28,24 +32,20 @@
 					<Text text="OverallStatus"/>
 				</Column>
 			</columns>
-			<items>
-				<ColumnListItem>
-					<cells>
-						<Text text="{SalesOrder}"/>
-					</cells>
-					<cells>
-						<Text text="{Customer}"/>
-					</cells>
-					<cells>
-						<Text text="{OverallStatus}"/>
-					</cells>
-				</ColumnListItem>
-			</items>
+			<ColumnListItem>
+				<Text text="{SalesOrder}"/>
+				<Text text="{Customer}"/>
+				<Text text="{OverallStatus}"/>
+			</ColumnListItem>
 		</Table>
-		<Title text="Sales Order Items" titleStyle="H1"/>
 		<Table growing="true" growingThreshold="5" id="SalesOrderItems"
 			items="{_Item}"
 			mode="SingleSelectMaster">
+			<headerToolbar>
+				<Toolbar>
+					<Title text="Sales Order Items" titleStyle="H2"/>
+				</Toolbar>
+			</headerToolbar>
 			<columns>
 				<Column>
 					<Text text="SalesOrder"/>
@@ -60,22 +60,12 @@
 					<Text text="GrossAmount"/>
 				</Column>
 			</columns>
-			<items>
-				<ColumnListItem>
-					<cells>
-						<Text text="{SalesOrder}"/>
-					</cells>
-					<cells>
-						<Text text="{SalesOrderItem}"/>
-					</cells>
-					<cells>
-						<Text text="{Product}"/>
-					</cells>
-					<cells>
-						<Text text="{GrossAmount}"/>
-					</cells>
-				</ColumnListItem>
-			</items>
+			<ColumnListItem>
+				<Text text="{SalesOrder}"/>
+				<Text text="{SalesOrderItem}"/>
+				<Text text="{Product}"/>
+				<Text text="{GrossAmount}"/>
+			</ColumnListItem>
 		</Table>
 	</VBox>
 </mvc:View>

@@ -470,7 +470,7 @@ sap.ui.require([
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to read path /EMPLOYEES(ID='1')", sClassName, sinon.match({canceled : true}));
 		oBindingMock = this.mock(oBinding);
-		oBindingMock.expects("fireDataReceived").withExactArgs(undefined);
+		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
 
 		// trigger read before refresh
 		oPromise = oBinding.fetchValue("/EMPLOYEES(ID='1')/ID").then(function () {
@@ -492,7 +492,7 @@ sap.ui.require([
 
 		oBindingMock.expects("getRelativePath").withExactArgs("/absolute/bar").returns("bar");
 		oBindingMock.expects("fireDataRequested").withExactArgs();
-		oBindingMock.expects("fireDataReceived").withExactArgs();
+		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
 			.withExactArgs("$direct", "bar", sinon.match.func, sinon.match.same(oListener))
 			.callsArg(2)
@@ -512,7 +512,7 @@ sap.ui.require([
 			oPromise;
 
 		oBindingMock.expects("fireDataRequested").withExactArgs();
-		oBindingMock.expects("fireDataReceived").withExactArgs();
+		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
 			.withExactArgs("myGroup", "bar", sinon.match.func, undefined)
 			.callsArg(2)

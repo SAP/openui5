@@ -1468,6 +1468,10 @@ sap.ui.require([
 				delete oGWSampleBasic.$path;
 				assert.strictEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
+				assert.deepEqual(oGWSampleBasic["Org.Odata.Core.V1.SchemaVersion"], {
+					String : "0000"
+				});
+				delete oGWSampleBasic["Org.Odata.Core.V1.SchemaVersion"];
 
 				assert.strictEqual(oBusinessPartner["sap:content-version"], "1");
 				delete oBusinessPartner["sap:content-version"];

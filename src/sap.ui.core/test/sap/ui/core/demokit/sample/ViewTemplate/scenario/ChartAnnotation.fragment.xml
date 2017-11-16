@@ -22,18 +22,12 @@
 						</Column>
 					</template:repeat>
 				</columns>
-				<items>
-					<ColumnListItem>
-						<cells>
-							<Text text="{path: 'chart>Dimensions/0', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}" />
-						</cells>
-						<cells>
-							<template:repeat list="{chart>Measures}" var="column">
-								<Text text="{path: 'column>', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
-							</template:repeat>
-						</cells>
-					</ColumnListItem>
-				</items>
+				<ColumnListItem>
+					<Text text="{path: 'chart>Dimensions/0', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}" />
+					<template:repeat list="{chart>Measures}" var="column">
+						<Text text="{path: 'column>', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+					</template:repeat>
+				</ColumnListItem>
 			</Table>
 		</template:if>
 	</template:with>

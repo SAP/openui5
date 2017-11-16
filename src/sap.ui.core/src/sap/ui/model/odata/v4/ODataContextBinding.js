@@ -291,16 +291,21 @@ sap.ui.define([
 	 * The 'dataReceived' event is fired after the back-end data has been processed. It is to be
 	 * used by applications for example to switch off a busy indicator or to process an error.
 	 *
-	 * If back-end requests are successful, the event has no parameters. Use the binding's bound
-	 * context via {@link #getBoundContext oEvent.getSource().getBoundContext()} to access the
-	 * response data. Note that controls bound to this data may not yet have been updated, meaning
-	 * it is not safe for registered event handlers to access data via control APIs.
+	 * If back-end requests are successful, the event has almost no parameters. For compatibility
+	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
+	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
+	 * is not. Use the binding's bound context via
+	 * {@link #getBoundContext oEvent.getSource().getBoundContext()} to access the response data.
+	 * Note that controls bound to this data may not yet have been updated, meaning it is not safe
+	 * for registered event handlers to access data via control APIs.
 	 *
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
+	 * @param {object} [oEvent.getParameters.data]
+	 *   An empty data object if a back-end request succeeds
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
@@ -392,8 +397,8 @@ sap.ui.define([
 	 *
 	 * The value of this binding is the result of the operation. To access a result of primitive
 	 * type, bind a control to the path "value", for example
-	 * <code>&lt;Text text="{value}"/&gt;</code>. If the result has a complex or entity type, you
-	 * can bind properties as usual, for example <code>&lt;Text text="{street}"/&gt;</code>.
+	 * <code>&lt;Text text="{value}"/></code>. If the result has a complex or entity type, you
+	 * can bind properties as usual, for example <code>&lt;Text text="{street}"/></code>.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
@@ -550,14 +555,14 @@ sap.ui.define([
 						that.fireDataRequested();
 					}, oListener).then(function (vValue) {
 						if (bDataRequested) {
-							that.fireDataReceived();
+							that.fireDataReceived({data : {}});
 						}
 						return vValue;
 					}, function (oError) {
 						if (bDataRequested) {
 							that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
 								oError);
-							that.fireDataReceived(oError.canceled ? undefined : {error : oError});
+							that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError});
 						}
 						throw oError;
 					});

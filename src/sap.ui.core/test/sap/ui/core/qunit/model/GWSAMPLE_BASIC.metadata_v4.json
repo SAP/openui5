@@ -2,6 +2,7 @@
 	"$Version" : "4.0",
 	"GWSAMPLE_BASIC." : {
 		"$kind" : "Schema",
+		"@Org.Odata.Core.V1.SchemaVersion": "0000",
 		"$Annotations" : {
 			"GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "Bus. Part. ID",

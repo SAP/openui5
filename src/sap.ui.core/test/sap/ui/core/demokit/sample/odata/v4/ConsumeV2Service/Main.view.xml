@@ -81,34 +81,16 @@
 					<Text text="String"/>
 				</Column>
 			</columns>
-			<items>
-				<ColumnListItem>
-					<cells>
-						<Text text="{ID}"/>
-					</cells>
-					<cells>
-						<Text text="{Boolean}"/>
-					</cells>
-					<cells>
-						<Text text="{Byte}"/>
-					</cells>
-					<cells>
-						<Text text="{GlobalUID}"/>
-					</cells>
-					<cells>
-						<Text text="{Int16}"/>
-					</cells>
-					<cells>
-						<Text text="{Int32}"/>
-					</cells>
-					<cells>
-						<Text text="{SByte}"/>
-					</cells>
-					<cells>
-						<Text text="{String}"/>
-					</cells>
-				</ColumnListItem>
-			</items>
+			<ColumnListItem>
+				<Text text="{ID}"/>
+				<Text text="{Boolean}"/>
+				<Text text="{Byte}"/>
+				<Text text="{GlobalUID}"/>
+				<Text text="{Int16}"/>
+				<Text text="{Int32}"/>
+				<Text text="{SByte}"/>
+				<Text text="{String}"/>
+			</ColumnListItem>
 		</Table>
 	</VBox>
 </mvc:View>

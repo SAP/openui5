@@ -26,25 +26,33 @@ sap.ui.require([
 	 *   the response payload
 	 * @param {string} sTextStatus
 	 *   the XHR's status as text
-	 * @param {string} [sToken=null]
-	 *   optional CSRF token returned by server
-	 * @param {string} [sContentType=null]
-	 *   optional Content-Type returned by server
+	 * @param {object} mResponseHeaders
+	 *   the header attributes of the response; supported header attributes are "Content-Type",
+	 *   "DataServiceVersion", "OData-Version" and "X-CSRF-Token" all with default value
+	 *   <code>null</code>; if no response headers are given at all the default value for
+	 *   "OData-Version" is "4.0";
 	 * @returns {object}
 	 *   a mock for jQuery's XHR wrapper
 	 */
-	function createMock(assert, oPayload, sTextStatus, sToken, sContentType) {
+	function createMock(assert, oPayload, sTextStatus, mResponseHeaders) {
 		var jqXHR = new jQuery.Deferred();
 
 		setTimeout(function () {
 			jqXHR.resolve(oPayload, sTextStatus, { // mock jqXHR for success handler
 				getResponseHeader : function (sName) {
+					mResponseHeaders = mResponseHeaders || {
+							"OData-Version" : "4.0"
+						};
 					// Note: getResponseHeader treats sName case insensitive!
 					switch (sName) {
-					case "X-CSRF-Token":
-						return sToken || null;
 					case "Content-Type":
-						return sContentType || null;
+						return mResponseHeaders["Content-Type"] || null;
+					case "DataServiceVersion":
+						return mResponseHeaders["DataServiceVersion"] || null;
+					case "OData-Version":
+						return mResponseHeaders["OData-Version"] || null;
+					case "X-CSRF-Token":
+						return mResponseHeaders["X-CSRF-Token"] || null;
 					default:
 						assert.ok(false, "unexpected getResponseHeader(" + sName + ")");
 					}
@@ -280,6 +288,7 @@ sap.ui.require([
 				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
 						fnGetGroupProperty : defaultGetGroupProperty
 					}, oFixture.sODataVersion),
+				oRequestorMock = this.mock(oRequestor),
 				oResponsePayload = {};
 
 			this.mock(jQuery).expects("ajax")
@@ -288,7 +297,9 @@ sap.ui.require([
 					headers : sinon.match(oFixture.mExpectedRequestHeaders),
 					method : "GET"
 				}).returns(createMock(assert, oResponsePayload, "OK"));
-			this.mock(oRequestor).expects("doConvertResponse")
+			oRequestorMock.expects("doCheckVersionHeader")
+				.withExactArgs(sinon.match.func, "Employees");
+			oRequestorMock.expects("doConvertResponse")
 				.withExactArgs(oResponsePayload)
 				.returns(oConvertedResponse);
 
@@ -310,7 +321,7 @@ sap.ui.require([
 
 		this.mock(jQuery).expects("ajax")
 			.withArgs(sServiceUrl + "Employees")
-			.returns(createMock(assert, oResponsePayload, "OK"));
+			.returns(createMock(assert, oResponsePayload, "OK", {"DataServiceVersion" : "2.0"}));
 		this.mock(oRequestor).expects("doConvertResponse")
 			.withExactArgs(oResponsePayload)
 			.throws(oError);
@@ -322,6 +333,94 @@ sap.ui.require([
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request: fail, unsupported OData service version, $direct", function (assert) {
+		var oError = {},
+			oRequestor = _Requestor.create("/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}),
+			oRequestorMock = this.mock(oRequestor);
+
+		this.mock(jQuery).expects("ajax")
+			.withArgs("/Employees")
+			.returns(createMock(assert, {}, "OK"));
+		oRequestorMock.expects("doCheckVersionHeader")
+			.withExactArgs(sinon.match.func, "Employees")
+			.throws(oError);
+		oRequestorMock.expects("doConvertResponse").never();
+
+		// code under test
+		return oRequestor.request("GET", "Employees", "$direct")
+			.then(function (result) {
+				assert.notOk("Unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request: fail, unsupported OData service version, $batch", function (assert) {
+		var oError = {},
+			oRequestor = _Requestor.create("/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}),
+			oRequestorMock = this.mock(oRequestor);
+
+		this.mock(jQuery).expects("ajax")
+			.withArgs("/$batch")
+			.returns(createMock(assert, {}, "OK"));
+		oRequestorMock.expects("doCheckVersionHeader")
+			.withExactArgs(sinon.match.func, "$batch")
+			.throws(oError);
+		this.mock(_Batch).expects("deserializeBatchResponse").never();
+		oRequestorMock.expects("doConvertResponse").never();
+
+		// code under test
+		return oRequestor.request("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [])
+			.then(function (result) {
+				assert.notOk("Unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch: fail, unsupported OData service version", function (assert) {
+		var oError = {},
+			oGetProductsPromise,
+			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
+				fnGetGroupProperty : defaultGetGroupProperty
+			}),
+			oRequestorMock = this.mock(oRequestor),
+			mResponse = {
+				headers : {
+					"OData-Version" : "foo"
+				},
+				responseText : JSON.stringify({d : {foo : "bar"}})
+			};
+
+		oRequestorMock.expects("doConvertResponse").never();
+		oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
+			.then(function () {
+				assert.notOk("Unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+		oRequestorMock.expects("request")
+			.withArgs("POST", "$batch")
+			.returns(Promise.resolve([mResponse]));
+		oRequestorMock.expects("doCheckVersionHeader")
+			.withExactArgs(sinon.match(function (fnGetResponseHeader) {
+				assert.strictEqual(typeof fnGetResponseHeader, "function");
+				assert.strictEqual(fnGetResponseHeader("OData-Version"), "foo",
+					"getResponseHeader has to be called on mResponse");
+				return true;
+			}), "Products", true)
+			.throws(oError);
+
+		return Promise.all([oGetProductsPromise, oRequestor.submitBatch("group1")]);
 	});
 
 	//*********************************************************************************************
@@ -340,7 +439,14 @@ sap.ui.require([
 					fnGetGroupProperty : defaultGetGroupProperty
 				}, oFixture.sODataVersion),
 				oAjaxResponse = {},
-				oDeserializeBatchResponse = {};
+				oDeserializeBatchResponse = {},
+				mResponseHeaders = {"Content-Type" : "application/json"};
+
+			if (oFixture.sODataVersion === "2.0") {
+				mResponseHeaders["DataServiceVersion"] = "2.0";
+			} else {
+				mResponseHeaders["OData-Version"] = "4.0";
+			}
 
 			this.mock(jQuery).expects("ajax")
 				.withExactArgs(sServiceUrl + "$batch", {
@@ -353,7 +459,7 @@ sap.ui.require([
 						return true;
 					}),
 					method : "POST"
-				}).returns(createMock(assert, oAjaxResponse, "OK", undefined, "application/json"));
+				}).returns(createMock(assert, oAjaxResponse, "OK", mResponseHeaders));
 			this.mock(_Batch).expects("deserializeBatchResponse")
 				.withExactArgs("application/json", oAjaxResponse)
 				.returns(oDeserializeBatchResponse);
@@ -557,7 +663,10 @@ sap.ui.require([
 
 		this.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
-			.returns(createMock(assert, {/*oPayload*/}, "OK", "abc123"));
+			.returns(createMock(assert, {/*oPayload*/}, "OK", {
+					"OData-Version" : "4.0",
+					"X-CSRF-Token" : "abc123"
+				}));
 
 		return oRequestor.request("GET", "").then(function () {
 			assert.strictEqual(oRequestor.mHeaders["X-CSRF-Token"], "abc123");
@@ -572,7 +681,7 @@ sap.ui.require([
 
 		this.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "abc123"}}))
-			.returns(createMock(assert, {/*oPayload*/}, "OK", /*sToken*/null));
+			.returns(createMock(assert, {/*oPayload*/}, "OK"));
 
 		return oRequestor.request("GET", "").then(function () {
 			assert.strictEqual(oRequestor.mHeaders["X-CSRF-Token"], "abc123");
@@ -588,12 +697,12 @@ sap.ui.require([
 
 		oMock.expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
-			.returns(createMock(assert, {/*oPayload*/}, "OK", /*sToken*/null));
+			.returns(createMock(assert, {/*oPayload*/}, "OK"));
 
 		return oRequestor.request("GET", "").then(function () {
 			oMock.expects("ajax")
 				.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
-				.returns(createMock(assert, {/*oPayload*/}, "OK", /*sToken*/null));
+				.returns(createMock(assert, {/*oPayload*/}, "OK"));
 
 			return oRequestor.request("GET", "");
 		});
@@ -622,7 +731,10 @@ sap.ui.require([
 				assert.strictEqual(oSettings.method, "HEAD");
 
 				if (bSuccess) {
-					jqXHR = createMock(assert, undefined, "nocontent", "abc123");
+					jqXHR = createMock(assert, undefined, "nocontent", {
+						"OData-Version" : "4.0",
+						"X-CSRF-Token" : "abc123"
+					});
 				} else {
 					jqXHR = new jQuery.Deferred();
 					setTimeout(function () {
@@ -817,7 +929,10 @@ sap.ui.require([
 			assert.strictEqual(oSettings.method, "FOO");
 
 			if (oSettings.headers["X-CSRF-Token"] === "abc123") {
-				jqXHR = createMock(assert, oResponsePayload, "OK", null, sResponseContentType);
+				jqXHR = createMock(assert, oResponsePayload, "OK", {
+						"Content-Type" : sResponseContentType,
+						"OData-Version" : "4.0"
+					});
 			} else {
 				jqXHR = new jQuery.Deferred();
 				setTimeout(function () {
@@ -862,7 +977,10 @@ sap.ui.require([
 	// here the second can simply reuse the already fetched token
 	QUnit.test("parallel POST requests, fetch HEAD only once", function (assert) {
 		var bFirstRequest = true,
-			jqFirstTokenXHR = createMock(assert, {}, "OK", "abc123"),
+			jqFirstTokenXHR = createMock(assert, {}, "OK", {
+				"OData-Version" : "4.0",
+				"X-CSRF-Token" : "abc123"
+			}),
 			iHeadRequestCount = 0,
 			oRequestor = _Requestor.create("/Service/", undefined, undefined, {fnGetGroupProperty :
 				defaultGetGroupProperty});
@@ -1359,7 +1477,11 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}),
 			oResult = "abc",
 			sResponseContentType = "multipart/mixed; boundary=foo",
-			oJqXHRMock = createMock(assert, oResult, "OK", "abc123", sResponseContentType);
+			oJqXHRMock = createMock(assert, oResult, "OK", {
+				"Content-Type" : sResponseContentType,
+				"OData-Version" : "4.0",
+				"X-CSRF-Token" : "abc123"
+			});
 
 		this.mock(_Batch).expects("serializeBatchRequest")
 			.withExactArgs(sinon.match.same(aBatchRequests))
@@ -1415,7 +1537,12 @@ sap.ui.require([
 					.returns([{}]);
 
 				jqXHR.resolve("body", "OK", { // mock jqXHR for success handler
-					getResponseHeader : function () { return null; }
+					getResponseHeader : function (sHeader) {
+						if (sHeader === "OData-Version") {
+							return "4.0";
+						}
+						return null;
+					}
 				});
 			});
 		}
@@ -2279,6 +2406,65 @@ sap.ui.require([
 			oPromise);
 
 		sinon.assert.calledWithExactly(fnFetchMetadata, "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/$Type");
+	});
+
+	//*********************************************************************************************
+	[{
+		iCallCount : 1,
+		mHeaders : { "OData-Version" : "4.0" }
+	}, {
+		iCallCount : 2,
+		mHeaders : {}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
+			var oRequestor = _Requestor.create("/"),
+				fnGetHeader = this.spy(function (sHeaderKey) {
+					return oFixture.mHeaders[sHeaderKey];
+				});
+
+			// code under test
+			oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar", true);
+
+			assert.strictEqual(fnGetHeader.calledWithExactly("OData-Version"), true);
+			if (oFixture.iCallCount === 2) {
+				assert.strictEqual(fnGetHeader.calledWithExactly("DataServiceVersion"), true);
+			}
+			assert.strictEqual(fnGetHeader.callCount, oFixture.iCallCount);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		iCallCount : 1,
+		sError : "value 'foo' in response for /Foo('42')/Bar",
+		mHeaders : { "OData-Version" : "foo" }
+	}, {
+		iCallCount : 2,
+		sError : "value 'undefined' in response for /Foo('42')/Bar",
+		mHeaders : {}
+	}, {
+		iCallCount : 2,
+		sError : "'DataServiceVersion' header with value 'baz' in response for /Foo('42')/Bar",
+		mHeaders : { "DataServiceVersion" : "baz" }
+	}].forEach(function (oFixture, i) {
+		QUnit.test("doCheckVersionHeader, error cases - " + i, function (assert) {
+			var oRequestor = _Requestor.create("/"),
+				fnGetHeader = this.spy(function (sHeaderKey) {
+					return oFixture.mHeaders[sHeaderKey];
+				});
+
+			assert.throws(function () {
+				// code under test
+				oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar");
+			}, new Error("Expected 'OData-Version' header with value '4.0' but received "
+				+ oFixture.sError));
+
+			assert.strictEqual(fnGetHeader.calledWithExactly("OData-Version"), true);
+			if (oFixture.iCallCount === 2) {
+				assert.strictEqual(fnGetHeader.calledWithExactly("DataServiceVersion"), true);
+			}
+			assert.strictEqual(fnGetHeader.callCount, oFixture.iCallCount);
+		});
 	});
 
 	//*********************************************************************************************
