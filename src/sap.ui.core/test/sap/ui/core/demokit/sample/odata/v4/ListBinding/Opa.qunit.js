@@ -27,6 +27,8 @@ sap.ui.require([
 		Then.onTheMainPage.checkProductImageInRow(0, "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/"
 			+ "EMPLOYEE_2_EQUIPMENTS(Category='Electronics',ID=1)/EQUIPMENT_2_PRODUCT/"
 			+ "ProductPicture/Picture");
+		When.onTheMainPage.refreshEmployees();
+		Then.onTheMainPage.checkEmployeeNameInRow(0, "Walter\"s Win's");
 		Then.onAnyPage.checkLog();
 		Then.iTeardownMyUIComponent();
 	});
