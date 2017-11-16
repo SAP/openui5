@@ -7,20 +7,26 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/m/MessageBox",
-	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/rta/appVariant/S4HanaCloudBackend",
-	"sap/ui/core/BusyIndicator"
-], function(AppVariantDialog, AppVariantUtils, MessageToast, FlexControllerFactory, MessageBox, RtaUtils, RtaAppVariantFeature, TransportSelection, S4HanaCloudBackend, BusyIndicator) {
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/rta/Utils"
+], function(AppVariantDialog, AppVariantUtils, MessageToast, FlexControllerFactory, MessageBox, RtaAppVariantFeature, TransportSelection, S4HanaCloudBackend, BusyIndicator, RtaUtils) {
 	"use strict";
 
 	var AppVariantManager = function() {};
 
 	AppVariantManager.prototype._openDialog = function(fnCreate, fnCancel) {
+
 		var oDialog = new AppVariantDialog("appVariantDialog");
+
 		oDialog.attachCreate(fnCreate);
 		oDialog.attachCancel(fnCancel);
+
+		oDialog.attachAfterClose(function() {
+			this.destroy();
+		});
 
 		oDialog.open();
 
@@ -29,20 +35,19 @@ sap.ui.define([
 
 	AppVariantManager.prototype._prepareAppVariantData = function(oDescriptor, mParameters) {
 		return {
-			idBaseApp: oDescriptor["sap.ui5"].componentName,
 			idRunningApp: oDescriptor["sap.app"].id,
 			title: mParameters.title,
 			subTitle: mParameters.subTitle,
 			description: mParameters.description,
 			icon: mParameters.icon,
-			inbounds: oDescriptor["sap.app"].crossNavigation.inbounds
+			inbounds: oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds ? oDescriptor["sap.app"].crossNavigation.inbounds : null
 		};
 	};
 
 	AppVariantManager.prototype.createDescriptor = function(oAppVariantData) {
 		var sAppVariantId, aBackendOperations = [], oPropertyChange;
 
-		sAppVariantId = AppVariantUtils.getId(oAppVariantData.idBaseApp);
+		sAppVariantId = AppVariantUtils.getId(oAppVariantData.idRunningApp);
 		var oAppVariantDescriptor = {
 			id: sAppVariantId,
 			reference: oAppVariantData.idRunningApp
@@ -52,8 +57,10 @@ sap.ui.define([
 		aBackendOperations.push(AppVariantUtils.createDescriptorVariant(oAppVariantDescriptor));
 
 		// create a inline change using a change type 'appdescr_app_setTitle'
-		oPropertyChange = AppVariantUtils.getInlinePropertyChange("title", oAppVariantData.title);
-		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "title"));
+		if (oAppVariantData.title) {
+			oPropertyChange = AppVariantUtils.getInlinePropertyChange("title", oAppVariantData.title);
+			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "title"));
+		}
 
 		// create a inline change using a change type 'appdescr_app_setSubTitle'
 		if (oAppVariantData.subTitle) {
@@ -68,8 +75,10 @@ sap.ui.define([
 		}
 
 		// create a inline change using a change type 'appdescr_ui_setIcon'
-		oPropertyChange = AppVariantUtils.getInlineChangeInputIcon(oAppVariantData.icon);
-		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "icon"));
+		if (oAppVariantData.icon) {
+			oPropertyChange = AppVariantUtils.getInlineChangeInputIcon(oAppVariantData.icon);
+			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "icon"));
+		}
 
 		/*********************************************************************************************************************************************
 		***********************************************************Inbounds handling******************************************************************
@@ -89,16 +98,20 @@ sap.ui.define([
 		oPropertyChange = AppVariantUtils.getInlineChangeRemoveInbounds(sCurrentRunningInboundId);
 		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "removeInbound"));
 
-		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "title", oAppVariantData.title);
-		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundTitle"));
+		if (oAppVariantData.title) {
+			oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "title", oAppVariantData.title);
+			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundTitle"));
+		}
 
 		if (oAppVariantData.subTitle) {
 			oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "subTitle", oAppVariantData.subTitle);
 			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundSubtitle"));
 		}
 
-		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "icon", oAppVariantData.icon);
-		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundIcon"));
+		if (oAppVariantData.icon) {
+			oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "icon", oAppVariantData.icon);
+			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundIcon"));
+		}
 
 		var fnOpenTransportDialog = function(oTransportInput) {
 			var oTransportSelection = new TransportSelection();
@@ -163,7 +176,7 @@ sap.ui.define([
 				reject(oResult);
 			};
 			//open app variant creation dialog
-			this._openDialog(fnCreate, fnCancel);
+			return this._openDialog(fnCreate, fnCancel);
 		}.bind(this));
 	};
 
