@@ -310,7 +310,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 		}
 
 		this.bIsFiltering = true;
-		var aUnfilteredContexts = this.getNodeContexts(oParentContext);
+		var aUnfilteredContexts = this.getNodeContexts(oParentContext, 0, Number.MAX_VALUE); // For client bindings: get *all* available contexts
 		this.bIsFiltering = false;
 
 		if (aUnfilteredContexts.length > 0) {

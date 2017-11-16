@@ -605,6 +605,30 @@
 		assert.equal(oModel.getProperty("name", context), "Frank Wallace", "TreeBinding node content");
 	});
 
+	QUnit.test("TreeBinding single filter ignoring model size limit", function(assert) {
+		setup();
+		oModel.setSizeLimit(1);
+		createTreeBinding("/orgStructure");
+
+		var treeBinding = bindings[0];
+
+		// Filter for node with name containing 'in', only one expected: Gina Rush
+		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "Gina");
+		treeBinding.filter(oFilter1);
+
+		var filteredContext = treeBinding.getRootContexts();
+		assert.equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		assert.equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
+
+		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		assert.equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
+
+		// Gina is the third child of node "Peter Cliff". If the size limit is ignored correctly, Gina should be found.
+		assert.equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "Gina Rush", "TreeBinding filter value");
+	});
+
 	QUnit.test("Bind aggregation", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure2", null, [], {
@@ -793,6 +817,23 @@
 		var oContext = aChildContexts[128];
 		assert.ok(oContext, "level 1 child is available");
 		assert.equal(oBinding.getChildCount(oContext), 0, "getChildCount(oContext) returns the correct number of child nodes (0)");
+	});
+
+	QUnit.test("getChildCount without length cache", function (assert) {
+		//create a tree with 2 levels and 200 * 200 nodes
+		createData(200);
+		createTreeBinding("/root", null, [], {
+			displayRootNode: false
+		});
+
+		var oBinding = bindings[0];
+
+		assert.equal(oBinding.getChildCount(), 200, "getChildCount() returns the correct value (200)");
+
+		//check if child contexts are returned correctly
+		var oContext = oBinding.getRootContexts(0, 1)[0];
+
+		assert.equal(oBinding.getChildCount(oContext), 200, "getChildCount(oContext) returns the correct number of child nodes (200)");
 	});
 
 	QUnit.module("Unsupported Filters", {
