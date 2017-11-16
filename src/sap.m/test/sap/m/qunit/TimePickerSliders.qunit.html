@@ -1,0 +1,338 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>QUnit page for sap.m.TimePickerSliders</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
+	        data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	</script>
+
+	<link rel="stylesheet" type="text/css" media="screen"
+	      href="../../../../resources/sap/ui/thirdparty/qunit.css"/>
+
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script>
+		QUnit.module("API", {
+			beforeEach: function () {
+				this.oTPS = new sap.m.TimePickerSliders();
+
+				this.oTPS.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oTPS.destroy();
+				this.oTPS = null;
+			}
+		});
+
+		QUnit.test("Call to setLocaleId sets right AM and PM values and regenerates the lists", function (assert) {
+			var sExpectedAM = "vorm.",
+				sExpectedPM = "nachm.",
+				sLocale = "de_DE",
+				oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
+				oSetupListsSpy = this.spy(this.oTPS, "_setupLists");
+
+			this.oTPS.setLocaleId(sLocale);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(this.oTPS._sAM, sExpectedAM, "_sAM property should be set to proper locale AM");
+			assert.equal(this.oTPS._sPM, sExpectedPM, "_sPM property should be set to proper locale PM");
+			assert.equal(oSetPropertySpy.calledWithExactly("localeId", sLocale, true), true, "setProperty is called with right arguments");
+			assert.ok(oSetupListsSpy.called, "_setupLists is called to regenerate the lists");
+
+			oSetPropertySpy.restore();
+			oSetupListsSpy.restore();
+		});
+
+		QUnit.test("Call to setDisplayFormat sets displayFormat and regenerates the lists", function (assert) {
+			var sDisplayFormat = "medium",
+				oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
+				oSetupListsSpy = this.spy(this.oTPS, "_setupLists");
+
+			this.oTPS.setDisplayFormat(sDisplayFormat);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oSetPropertySpy.calledWithExactly("displayFormat", sDisplayFormat, true), true, "setProperty is called with right arguments");
+			assert.ok(oSetupListsSpy.called, "_setupLists is called to regenerate the lists");
+
+			oSetPropertySpy.restore();
+			oSetupListsSpy.restore();
+		});
+
+		QUnit.test("Call to setLabelText sets the label", function (assert) {
+			var sLabelText = "text",
+				oSetPropertySpy = this.spy(this.oTPS, "setProperty");
+
+			this.oTPS.setLabelText(sLabelText);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oSetPropertySpy.calledWithExactly("labelText", sLabelText, true), true, "setProperty is called with right arguments");
+
+			oSetPropertySpy.restore();
+		});
+
+		QUnit.test("Call to setMinutesStep sets minutesStep and regenerates the lists", function(assert) {
+			var oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
+				oSetupListsSpy = this.spy(this.oTPS, "_setupLists"),
+				iStep = 23;
+
+			this.oTPS.setMinutesStep(iStep);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSetPropertySpy.calledWithExactly("minutesStep", iStep, true), "setProperty is called with right arguments");
+			assert.ok(oSetupListsSpy.called, "_setupLists is called to regenerate the lists");
+
+			oSetPropertySpy.restore();
+			oSetupListsSpy.restore();
+		});
+
+		QUnit.test("Call to setMinutesStep corrects value 0 to 1", function(assert) {
+			var oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
+				iStep = 0,
+				iExpectedStep = 1;
+
+			this.oTPS.setMinutesStep(iStep);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSetPropertySpy.calledWithExactly("minutesStep", iExpectedStep, true), "setProperty is called with right arguments");
+			assert.equal(this.oTPS.getMinutesStep(), iExpectedStep, "minutesStep is corrected to 1");
+
+			oSetPropertySpy.restore();
+		});
+
+		QUnit.test("Call to setSecondsStep sets secondsStep and regenerates the lists", function(assert) {
+			var oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
+					oSetupListsSpy = this.spy(this.oTPS, "_setupLists"),
+					iStep = 23;
+
+			this.oTPS.setSecondsStep(iStep);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSetPropertySpy.calledWithExactly("secondsStep", iStep, true), "setProperty is called with right arguments");
+			assert.ok(oSetupListsSpy.called, "_setupLists is called to regenerate the lists");
+
+			oSetPropertySpy.restore();
+			oSetupListsSpy.restore();
+		});
+
+		QUnit.test("Call to setSecondsStep corrects value 0 to 1", function(assert) {
+			var oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
+					iStep = 0,
+					iExpectedStep = 1;
+
+			this.oTPS.setSecondsStep(iStep);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSetPropertySpy.calledWithExactly("secondsStep", iExpectedStep, true), "setProperty is called with right arguments");
+			assert.equal(this.oTPS.getSecondsStep(), iExpectedStep, "secondsStep is corrected to 1");
+
+			oSetPropertySpy.restore();
+		});
+
+		QUnit.test("Call to setWidth sets the width", function (assert) {
+			var sWidth = "500px",
+				oSetPropertySpy = this.spy(this.oTPS, "setProperty");
+
+			this.oTPS.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oSetPropertySpy.calledWithExactly("width", sWidth, true), true, "setProperty is called with right arguments");
+			assert.equal(this.oTPS.$().outerWidth() + "px", sWidth, "width is properly set");
+
+			oSetPropertySpy.restore();
+		});
+
+		QUnit.test("Call to setHeight sets the height", function (assert) {
+			var sHeight = "500px",
+				oSetPropertySpy = this.spy(this.oTPS, "setProperty");
+
+			this.oTPS.setHeight(sHeight);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oSetPropertySpy.calledWithExactly("height", sHeight, true), true, "setProperty is called with right arguments");
+			assert.equal(this.oTPS.$().outerHeight() + "px", sHeight, "height is properly set");
+
+			oSetPropertySpy.restore();
+		});
+
+		QUnit.test("Call to setValue sets the value", function (assert) {
+			var sValue = "15:16:17",
+				oSetPropertySpy = this.spy(this.oTPS, "setProperty");
+
+			this.oTPS.setValue(sValue);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
+
+			oSetPropertySpy.restore();
+		});
+
+		QUnit.test("Call to setValue calls the _setTimeValues", function (assert) {
+			var sValue = "15:16:17",
+				sExpectedDate = new Date(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
+				oSetTimeValuesSpy = this.spy(this.oTPS, "_setTimeValues"),
+				oParseValueStub = this.stub(this.oTPS, "_parseValue", function () {
+					return sExpectedDate;
+				});
+
+			this.oTPS.setValue(sValue);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate), true, "_setTimeValues is called with parsed date");
+
+			oParseValueStub.restore();
+			oSetTimeValuesSpy.restore();
+		});
+
+		QUnit.test("Call to collapseAll should close all sliders", function (assert) {
+			var aSliders = [];
+			aSliders = this.oTPS.getAggregation("_columns");
+			aSliders[0].setIsExpanded(true);
+
+			this.oTPS.collapseAll();
+			sap.ui.getCore().applyChanges();
+
+			aSliders = this.oTPS.getAggregation("_columns");
+
+			aSliders.forEach(function (oSlider, index) {
+				assert.equal(oSlider.getIsExpanded(), false, "slider " + index + " is not expanded");
+			});
+		});
+
+		QUnit.module("Events", {
+			beforeEach: function () {
+				this.oTPS = new sap.m.TimePickerSliders();
+
+				this.oTPS.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oTPS.destroy();
+				this.oTPS = null;
+			}
+		});
+
+		QUnit.test("Change event is fired when slider is collapsed", function (assert) {
+			var sEventParam,
+				sExpectedValue = "13:14:15",
+				fnChangeEventSpy = sinon.spy(function (oEvent) {
+					sEventParam = oEvent.getParameter('value');
+				}),
+				oGetValueStub = this.stub(this.oTPS, "getValue", function () { return sExpectedValue; });
+
+			this.oTPS.attachChange(fnChangeEventSpy);
+
+			this.oTPS.getAggregation("_columns")[0].setIsExpanded(false);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(fnChangeEventSpy.callCount, 1, "closing of a slider should");
+			assert.equal(sEventParam, sExpectedValue, "TimepickerSliders value should be passed as a parameter to the change event");
+
+			oGetValueStub.restore();
+			oGetValueStub.restore();
+		});
+
+		QUnit.module("Internals", {
+			beforeEach: function () {
+				this.oTPS = new sap.m.TimePickerSliders();
+
+				this.oTPS.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oTPS.destroy();
+				this.oTPS = null;
+			}
+		});
+
+		QUnit.test("_generatePickerListValues with step 1 and range 0 - 59 should have all items visible", function (assert) {
+			var iLower = 0,
+				iUpper = 59,
+				iStep = 1,
+				aItems = this.oTPS._generatePickerListValues(iLower, iUpper, iStep, true);
+
+			for(var i = iLower; i <= iUpper; i++) {
+				assert.ok(aItems[i].getVisible(), "item is visible");
+			}
+		});
+
+		QUnit.test("_generatePickerListValues with step 3 and range 0 - 59 should have every third item visible", function (assert) {
+			var iLower = 0,
+				iUpper = 59,
+				iStep = 3,
+				aItems = this.oTPS._generatePickerListValues(iLower, iUpper, iStep, true);
+
+			for(var i = iLower; i <= iUpper; i++) {
+				if (i % 3 === 0) {
+					assert.ok(aItems[i].getVisible(), "item is visible");
+				} else {
+					assert.ok(!aItems[i].getVisible(), "item is not visible");
+				}
+			}
+		});
+
+		QUnit.test("_checkStyle returns true for one of the predefined format names (short, medium, long or full)", function (assert) {
+			var aValidStyles = ["short", "medium", "long", "full"];
+
+			aValidStyles.forEach(function (sStyle) {
+				assert.ok(this.oTPS._checkStyle(sStyle));
+			}, this);
+		});
+
+		QUnit.test("_checkStyle returns false for not valid styles", function (assert) {
+			var aValidStyles = ["s", "m", "notValid", "test"];
+
+			aValidStyles.forEach(function (sStyle) {
+				assert.ok(!this.oTPS._checkStyle(sStyle));
+			}, this);
+		});
+
+		QUnit.test("_getDisplayFormatPattern should return displayFormat if not default format names (short, medium, long or full) are used ", function (assert) {
+			var aDisplayFormats = ["HH:mm:ss", "hh:mm:ss", "mm:ss", "mm", "ss"];
+
+			aDisplayFormats.forEach(function (sStyle) {
+				this.oTPS.setDisplayFormat(sStyle);
+				assert.equal(this.oTPS._getDisplayFormatPattern(sStyle), sStyle, "displayFormat is returned directly without modifications");
+			}, this);
+		});
+
+		QUnit.test("_getDisplatFormatPattern should return local based pattern if default format names are used (short, medium, long or full)", function (assert) {
+			var sExpectedResult = "HH:mm:ss a",
+				aDisplayFormats = ["short", "medium", "long", "full"],
+				oGetLocaleBasedPatternStub = this.stub(this.oTPS, "_getLocaleBasedPattern", function () { return sExpectedResult});
+
+			aDisplayFormats.forEach(function (sStyle) {
+				this.oTPS.setDisplayFormat(sStyle);
+				assert.equal(this.oTPS._getDisplayFormatPattern(sStyle), sExpectedResult, "displayFormat is returned directly without modifications");
+			}, this);
+
+			oGetLocaleBasedPatternStub.restore();
+		});
+
+		QUnit.test("_getCurrentSlider returns null if no slider is expanded", function(assert) {
+			assert.equal(this.oTPS._getCurrentSlider(), null, "no slider is selected");
+		});
+
+		QUnit.test("_getCurrentSlider returns the expanded slider", function (assert) {
+			var oSlider = this.oTPS.getAggregation("_columns")[1];
+
+			assert.equal(this.oTPS._getCurrentSlider(), null, "no slider is selected");
+
+			oSlider.setIsExpanded(true);
+
+			assert.equal(this.oTPS._getCurrentSlider(), oSlider, "expanded slider should be returned");
+		});
+	</script>
+</head>
+<body class="sapUiBody">
+<div id="qunit"></div>
+<div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>

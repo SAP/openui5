@@ -1999,11 +1999,10 @@
 				assert.ok(sAriaDescribedById.length, "TimePickerSlider " + iNonZeroIndex + " has aria-describedby association");
 				assert.strictEqual(sAriaDescribedById, $AriaDescribedTarget.attr("id"), "TimePickerSlider " + iNonZeroIndex + " aria-describedby association has a correct value " + sAriaDescribedById);
 			},
-			fnAriaSelectionChangeTest: function (oSlider, iIndex) {
+			fnAriaSelectionChangeTest: function (oTP, oSlider, iIndex) {
 				var bIsFormatType = oSlider.getLabel() === this.oRB.getText("TIMEPICKER_LBL_AMPM"),
 						iIterations = 3,
 						iNonZeroIndex = iIndex + 1,
-						oTP = sap.ui.getCore().byId(oSlider.getParent().getInvokedBy()),
 						sLocaleId = oTP.getLocaleId(),
 						oLocale = new sap.ui.core.Locale(sLocaleId),
 						sCurrentSelectionValue,
@@ -2184,7 +2183,7 @@
 					this.fnAriaLiveAndHiddenTest(oColumn, iIndex);
 					this.fnAriaLabelledByTest(oColumn, iIndex);
 					this.fnAriaDescribedByTest(oColumn, iIndex);
-					this.fnAriaSelectionChangeTest(oColumn, iIndex);
+					this.fnAriaSelectionChangeTest(this.oTP, oColumn, iIndex);
 				}, this);
 			}
 			this.clock.restore();
@@ -2207,7 +2206,7 @@
 			oAPPMColumn = oSliders.getAggregation("_columns")[3];
 
 			//assert
-			this.fnAriaSelectionChangeTest(oAPPMColumn, 3);
+			this.fnAriaSelectionChangeTest(this.oTP, oAPPMColumn, 3);
 
 			//Cleanup
 			this.clock.restore();
