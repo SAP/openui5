@@ -1778,7 +1778,8 @@ sap.ui.require([
 					</EntityContainer>\
 					<EntityType Name="BusinessPartner">\
 						<Property Name="IsCreatable" Type="Edm.Boolean"/>\
-						<NavigationProperty Name="CreatableA" sap:creatable="false"\
+						<NavigationProperty Name="CreatableA"\
+							sap:creatable="false" sap:filterable="true"\
 							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
 						<NavigationProperty Name="CreatablePathA"\
 							sap:creatable-path="IsCreatable"\
@@ -1815,6 +1816,10 @@ sap.ui.require([
 							sap:creatable-path="n/a"\
 							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
 						<NavigationProperty Name="CreatableTrue" sap:creatable="true"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="FilterableFalse" sap:filterable="false"\
+							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
+						<NavigationProperty Name="FilterableTrue" sap:filterable="true"\
 							Relationship="GWSAMPLE_BASIC.Assoc" FromRole="From" ToRole="To"/>\
 					</EntityType>\
 					<Association Name="Assoc">\
@@ -1886,6 +1891,16 @@ sap.ui.require([
 						}]
 					}, {
 						"$NavigationPropertyPath" : "ConflictB"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.NavigationRestrictions": {
+					"RestrictedProperties": [{
+						"NavigationProperty": {
+							"$NavigationPropertyPath": "FilterableFalse"
+						},
+						"FilterRestrictions": {
+							"Filterable": false
+						}
 					}]
 				},
 				"@Org.OData.Capabilities.V1.SortRestrictions" : {

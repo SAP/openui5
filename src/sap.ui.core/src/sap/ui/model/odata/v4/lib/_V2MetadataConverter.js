@@ -1086,12 +1086,30 @@ sap.ui.define([
 	function processTypeNavigationProperty(oElement, oAggregate) {
 		var sCreatable = consumeSapAnnotation(oAggregate, "creatable"),
 			sCreatablePath = consumeSapAnnotation(oAggregate, "creatable-path"),
+			sFilterable = consumeSapAnnotation(oAggregate, "filterable"),
+			oFilterablePath,
 			vHere,
 			sName = oElement.getAttribute("Name"),
 			oNavigationPropertyPath,
 			oProperty = {
 				$kind : "NavigationProperty"
 			};
+
+		/*
+		 * Assumes that the given annotation term applies to all <EntitySet>s using the current
+		 * <EntityType>. The term's value is a record that contains an array-valued property with
+		 * the given name. Pushes the annotation object to that array.
+		 * @param {string} sTerm The V4 annotation term starting with '@'
+		 * @param {string} sProperty The name of the array-valued property
+		 * @param {object} oAnnotation The V4 annotation object
+		 */
+		function pushPropertyPath(sTerm, sProperty, oAnnotation) {
+			vHere = V2MetadataConverter.getOrCreateObject(
+				oAggregate.mEntityType2EntitySetAnnotation, oAggregate.sTypeName);
+			vHere = V2MetadataConverter.getOrCreateObject(vHere, sTerm);
+			vHere = V2MetadataConverter.getOrCreateArray(vHere, sProperty);
+			vHere.push(oAnnotation);
+		}
 
 		oAggregate.type[sName] = oProperty;
 		oAggregate.navigationProperties.push({
@@ -1124,13 +1142,20 @@ sap.ui.define([
 			};
 		}
 		if (oNavigationPropertyPath) {
-			vHere = V2MetadataConverter.getOrCreateObject(
-				oAggregate.mEntityType2EntitySetAnnotation, oAggregate.sTypeName);
-			vHere = V2MetadataConverter.getOrCreateObject(
-				vHere, "@Org.OData.Capabilities.V1.InsertRestrictions");
-			vHere = V2MetadataConverter.getOrCreateArray(
-				vHere, "NonInsertableNavigationProperties");
-			vHere.push(oNavigationPropertyPath);
+			pushPropertyPath("@Org.OData.Capabilities.V1.InsertRestrictions",
+				"NonInsertableNavigationProperties", oNavigationPropertyPath);
+		}
+		if (sFilterable === "false") {
+			oFilterablePath = {
+				"NavigationProperty" : {
+					"$NavigationPropertyPath" : sName
+				},
+				"FilterRestrictions" : {
+					"Filterable" : false
+				}
+			};
+			pushPropertyPath("@Org.OData.Capabilities.V1.NavigationRestrictions",
+				"RestrictedProperties", oFilterablePath);
 		}
 	}
 
