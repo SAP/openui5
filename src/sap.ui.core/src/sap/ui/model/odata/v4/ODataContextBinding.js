@@ -221,10 +221,13 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
+	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
+	 *   A change reason, used to distinguish calls by {@link #constructor} from calls by
+	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#changeParameters}
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.applyParameters = function (mParameters) {
+	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
 		var oBindingParameters;
 
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
@@ -236,7 +239,11 @@ sap.ui.define([
 		this.mParameters = mParameters;
 		this.fetchCache(this.oContext);
 		if (!this.oOperation) {
-			this.checkUpdate();
+			if (sChangeReason) {
+				this.refreshInternal(undefined, true);
+			} else {
+				this.checkUpdate();
+			}
 		}
 	};
 
