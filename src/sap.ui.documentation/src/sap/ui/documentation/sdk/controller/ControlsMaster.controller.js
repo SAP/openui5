@@ -168,39 +168,76 @@ sap.ui.define([
 			 * Apply content configuration
 			 * @param {string} sThemeActive name of the theme
 			 * @param {boolean} bCompactOn compact mode
+			 * @param {boolean} bRTL right to left mode
 			 * @private
 			 */
 			_applyAppConfiguration: function(sThemeActive, bCompactOn, bRTL){
 				var oSampleFrameContent,
 					oSampleFrameCore,
-					$SampleFrame;
+					$SampleFrame,
+					bRTLChanged,
+					bThemeChanged,
+					bContentDensityChanged;
 
-				// Switch theme if necessary
-				this._oCore.applyTheme(sThemeActive);
+				// Handle content density change
+				if (this._oViewSettings.compactOn !== bCompactOn) {
+					jQuery(document.body).toggleClass("sapUiSizeCompact", bCompactOn)
+						.toggleClass("sapUiSizeCozy", !bCompactOn);
 
-				// Switch content density and notify Core
-				jQuery(document.body).toggleClass("sapUiSizeCompact", bCompactOn);
-				jQuery(document.body).toggleClass("sapUiSizeCozy", !bCompactOn);
-				this._oCore.notifyContentDensityChanged();
-
-				// Manage RTL mode
-				this._oCore.getConfiguration().setRTL(bRTL);
-
-				// Apply theme and compact mode also to iframe samples
-				$SampleFrame = jQuery("#sampleFrame");
-				if ($SampleFrame.length > 0) {
-					oSampleFrameContent = $SampleFrame[0].contentWindow;
-					if (oSampleFrameContent) {
-						oSampleFrameCore = oSampleFrameContent.sap.ui.getCore();
-						oSampleFrameCore.applyTheme(sThemeActive);
-						oSampleFrameCore.getConfiguration().setRTL(bRTL);
-						oSampleFrameContent.jQuery('body').toggleClass("sapUiSizeCompact", bCompactOn)
-							.toggleClass("sapUiSizeCozy", !bCompactOn);
-
-						// Notify Core for content density change
-						oSampleFrameCore.notifyContentDensityChanged();
-					}
+					this._oViewSettings.compactOn = bCompactOn;
+					bContentDensityChanged = true;
 				}
+
+				// Handle RTL mode change
+				if (this._oViewSettings.rtl !== bRTL) {
+					this._oCore.getConfiguration().setRTL(bRTL);
+
+					this._oViewSettings.rtl = bRTL;
+					bRTLChanged = true;
+				}
+
+				// Handle theme change
+				if (this._oViewSettings.themeActive !== sThemeActive) {
+					this._oCore.applyTheme(sThemeActive);
+
+					this._oViewSettings.themeActive = sThemeActive;
+					bThemeChanged = true;
+				} else if (bContentDensityChanged) {
+					// NOTE: We notify for content density change only if no theme change is applied because both
+					// methods fire the same event which may lead to unpredictable result.
+					this._oCore.notifyContentDensityChanged();
+				}
+
+				// Apply theme and compact mode also to iframe samples if there is actually a change
+				if (bRTLChanged || bContentDensityChanged || bThemeChanged) {
+
+					$SampleFrame = jQuery("#sampleFrame");
+					if ($SampleFrame.length > 0) {
+						oSampleFrameContent = $SampleFrame[0].contentWindow;
+						if (oSampleFrameContent) {
+							oSampleFrameCore = oSampleFrameContent.sap.ui.getCore();
+
+							if (bContentDensityChanged) {
+								oSampleFrameContent.jQuery('body').toggleClass("sapUiSizeCompact", bCompactOn)
+									.toggleClass("sapUiSizeCozy", !bCompactOn);
+							}
+
+							if (bRTLChanged) {
+								oSampleFrameCore.getConfiguration().setRTL(bRTL);
+							}
+
+							if (bThemeChanged) {
+								oSampleFrameCore.applyTheme(sThemeActive);
+							} else if (bContentDensityChanged) {
+								// Notify Core for content density change only if no theme change happened
+								oSampleFrameCore.notifyContentDensityChanged();
+							}
+
+						}
+					}
+
+				}
+
 			},
 
 			_onGroupMatched: function (event) {
@@ -617,10 +654,6 @@ sap.ui.define([
 				jQuery.sap.delayedCall(1000, this, function () {
 					this._oBusyDialog.close();
 				});
-
-				this._oViewSettings.compactOn = bCompact;
-				this._oViewSettings.themeActive = sTheme;
-				this._oViewSettings.rtl = bRTL;
 
 				// handle settings change
 				this._applyAppConfiguration(sTheme, bCompact, bRTL);
