@@ -79,7 +79,8 @@
 			title: "Legend",
 			content: [oLegend],
 			endButton: new sap.m.Button({
-				text: "Close", press: function (oEvent) {
+				text: "Close",
+				press: function (oEvent) {
 					oDialog.close();
 				}
 			})
@@ -369,6 +370,7 @@
 			icon: "sap-icon://header",
 			type: sap.m.ButtonType.Transparent,
 			pressed: true,
+			tooltip: "Toggle planning calendar showIntervalHeaders property",
 			press: function(oEvent) {
 				var oPC = sap.ui.getCore().byId("PC1");
 				var bPressed = oEvent.getParameter("pressed");
@@ -379,6 +381,7 @@
 		var oButtonShowRowHeaders = new sap.m.ToggleButton("B_ShowRowHead", {
 			icon: "sap-icon://person-placeholder",
 			type: sap.m.ButtonType.Transparent,
+			tooltip: "Toggle planning calendar showRowHeaders property",
 			pressed: true,
 			press: function(oEvent) {
 				var oPC = sap.ui.getCore().byId("PC1");
@@ -401,6 +404,7 @@
 		var oButtonLegend = new sap.m.Button("B_Legend", {
 			icon: "sap-icon://legend",
 			type: sap.m.ButtonType.Transparent,
+			tooltip: "Open PlanningCalendar legend",
 			press: handleLegend
 		});
 
@@ -408,6 +412,7 @@
 			icon: "sap-icon://resize-vertical",
 			type: sap.m.ButtonType.Transparent,
 			pressed: false,
+			tooltip:"Toggle appointmentsReducedHeight property",
 			press: function(oEvent) {
 				var oPC = sap.ui.getCore().byId("PC1");
 				var bPressed = oEvent.getParameter("pressed");
@@ -455,13 +460,13 @@
 			tooltip: "Toggle Day Names Line",
 			type: sap.m.ButtonType.Transparent,
 			press: function (oEvent) {
-				oPC1.setShowDayNamesLine(!oPC1.getShowDayNamesLine());
+				oPC1.setShowDayNamesLine(oEvent.getParameter("pressed"));
 			}
 		});
 
 		var oButtonToggleCustomViews = new sap.m.ToggleButton({
 			icon: "sap-icon://chart-table-view",
-			tooltip: "Add custom views",
+			tooltip: "Toggle custom predefined custom views",
 			type: sap.m.ButtonType.Transparent,
 			press: function (oEvent) {
 				if (oEvent.getParameter("pressed")) {

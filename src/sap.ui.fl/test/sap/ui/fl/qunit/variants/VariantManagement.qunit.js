@@ -34,6 +34,8 @@
 					defaultVariant: "Standard",
 					currentVariant: "Standard",
 					modified: false,
+					variantsEditable: true,
+					showFavorites: true,
 					variants: [
 						{
 							key: "Standard",
@@ -41,35 +43,40 @@
 							author: "A",
 							readOnly: true,
 							favorite: true,
-							originalFavorite: true
+							originalFavorite: true,
+							visible: true
 						}, {
 							key: "1",
 							title: "One",
 							author: "A",
 							readOnly: true,
 							favorite: true,
-							originalFavorite: true
+							originalFavorite: true,
+							visible: true
 						}, {
 							key: "2",
 							title: "Two",
 							author: "V",
 							readOnly: true,
 							favorite: true,
-							originalFavorite: true
+							originalFavorite: true,
+							visible: true
 						}, {
 							key: "3",
 							title: "Three",
 							author: "U",
 							readOnly: true,
 							favorite: true,
-							originalFavorite: true
+							originalFavorite: true,
+							visible: true
 						}, {
 							key: "4",
 							title: "Four",
 							author: "Z",
 							readOnly: true,
 							favorite: true,
-							originalFavorite: true
+							originalFavorite: true,
+							visible: true
 						}
 					]
 				}
@@ -91,23 +98,97 @@
 		assert.ok(!this.oVariantManagement._oRb);
 	});
 
-	QUnit.test("Check _getItems", function(assert) {
+	QUnit.test("Check rendering", function(assert) {
 
-		var aItems = this.oVariantManagement._getItems();
+		var sString = "";
+		var oRm = {
+			write: function(s) {
+				sString += s;
+			},
+			writeControlData: function(oCtrl) {
+			},
+			addClass: function(s) {
+				sString += ('class=\"' + s + '\"');
+			},
+			writeClasses: function() {
+			},
+			writeAccessibilityState: function(oCtrl, mMap) {
+			},
+			renderControl: function(oCtrl) {
+			}
+		};
+
+		var oRenderer = this.oVariantManagement.getMetadata().getRenderer();
+		assert.ok(oRenderer);
+		oRenderer.render(oRm, this.oVariantManagement);
+		assert.ok(sString);
+	});
+
+	QUnit.test("Check getFocusDomRef", function(assert) {
+
+		assert.ok(this.oVariantManagement.oVariantPopoverTrigger);
+		sinon.stub(this.oVariantManagement.oVariantPopoverTrigger, "getFocusDomRef");
+
+		this.oVariantManagement.getFocusDomRef();
+
+		assert.ok(this.oVariantManagement.oVariantPopoverTrigger.getFocusDomRef.called);
+	});
+
+	QUnit.test("Check onclick", function(assert) {
+
+		assert.ok(this.oVariantManagement.oVariantPopoverTrigger);
+		sinon.stub(this.oVariantManagement.oVariantPopoverTrigger, "focus");
+
+		sinon.stub(this.oVariantManagement, "handleOpenCloseVariantPopover");
+
+		this.oVariantManagement.onclick({});
+
+		assert.ok(this.oVariantManagement.oVariantPopoverTrigger.focus.called);
+		assert.ok(this.oVariantManagement.handleOpenCloseVariantPopover.called);
+	});
+
+	QUnit.test("Check onkeydown", function(assert) {
+
+		sinon.stub(this.oVariantManagement, "_openVariantList");
+
+		this.oVariantManagement.onkeydown({
+			which: 32
+		});
+
+		assert.ok(this.oVariantManagement._openVariantList.called);
+	});
+
+	QUnit.test("Check getTitle", function(assert) {
+		assert.equal(this.oVariantManagement.getTitle(), this.oVariantManagement.oVariantText);
+	});
+
+	QUnit.test("Check getVariants", function(assert) {
+
+		var aItems = this.oVariantManagement.getVariants();
 		assert.ok(aItems);
 		assert.equal(aItems.length, 0);
 
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
 
-		aItems = this.oVariantManagement._getItems();
+		aItems = this.oVariantManagement.getVariants();
 		assert.ok(aItems);
 		assert.equal(aItems.length, 5);
 		assert.equal(aItems[0].key, this.oVariantManagement.getStandardVariantKey());
 		assert.equal(aItems[1].key, "1");
-		assert.equal(aItems[1].toBeDeleted, false);
+		assert.equal(aItems[1].visible, true);
 		assert.equal(aItems[1].originalTitle, aItems[1].title);
 		assert.equal(aItems[2].key, "2");
 
+	});
+
+	QUnit.test("Check setDefaultVariantKey", function(assert) {
+		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+
+		assert.equal(this.oVariantManagement.getDefaultVariantKey(), "Standard");
+
+		this.oVariantManagement.setDefaultVariantKey("3");
+
+		assert.equal(this.oVariantManagement.getDefaultVariantKey(), "3");
 	});
 
 	QUnit.test("Check _checkVariantNameConstraints", function(assert) {
@@ -162,6 +243,26 @@
 
 	});
 
+	QUnit.test("Check 'variantsEditable'", function(assert) {
+		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+		this.oVariantManagement._openVariantList();
+
+		assert.ok(this.oVariantManagement.oVariantManageBtn.getVisible());
+		assert.ok(this.oVariantManagement.oVariantSaveBtn.getVisible());
+		assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
+		assert.ok(this.oVariantManagement.oVariantSelectionPage.getShowFooter());
+
+		var oData = this.oVariantManagement.getBindingContext(sap.ui.fl.variants.VariantManagement.MODEL_NAME).getObject();
+		oData.variantsEditable = !oData.variantsEditable;
+
+		oModel.checkUpdate(true);
+
+		assert.ok(!this.oVariantManagement.oVariantManageBtn.getVisible());
+		assert.ok(!this.oVariantManagement.oVariantSaveBtn.getVisible());
+		assert.ok(!this.oVariantManagement.oVariantSaveAsBtn.getVisible());
+		assert.ok(!this.oVariantManagement.oVariantSelectionPage.getShowFooter());
+	});
+
 	QUnit.test("Create SaveAs Dialog", function(assert) {
 
 		assert.ok(!this.oVariantManagement.oSaveAsDialog);
@@ -199,6 +300,15 @@
 		assert.ok(oGridContent);
 		assert.equal(oGridContent.length, 3);
 
+		assert.ok(!this.oVariantManagement.getManualVariantKey());
+		assert.ok(!this.oVariantManagement.oInputManualKey.getVisible());
+		assert.ok(!this.oVariantManagement.oLabelKey.getVisible());
+
+		this.oVariantManagement.setManualVariantKey(true);
+		this.oVariantManagement._openSaveAsDialog();
+
+		assert.ok(this.oVariantManagement.oInputManualKey.getVisible());
+		assert.ok(this.oVariantManagement.oLabelKey.getVisible());
 	});
 
 	QUnit.test("Checking _handleVariantSaveAs", function(assert) {
@@ -223,6 +333,15 @@
 
 		this.oVariantManagement._handleVariantSaveAs("1");
 		assert.ok(bCalled);
+		assert.equal(this.oVariantManagement.oInputName.getValueState(), "None");
+
+		this.oVariantManagement._handleVariantSaveAs(" ");
+		assert.equal(this.oVariantManagement.oInputName.getValueState(), "Error");
+
+		this.oVariantManagement.setManualVariantKey(true);
+		this.oVariantManagement._handleVariantSaveAs("1");
+		assert.equal(this.oVariantManagement.oInputManualKey.getValueState(), "Error");
+
 	});
 
 	QUnit.test("Checking _handleVariantSave", function(assert) {
@@ -323,7 +442,7 @@
 		assert.ok(aItems);
 		assert.equal(aItems.length, 5);
 
-		oItemDel.toBeDeleted = true;
+		oItemDel.visible = false;
 		oItemRen.title = "Not Three";
 
 		this.oVariantManagement._createManagementDialog();
@@ -358,7 +477,7 @@
 			var oData = this.oVariantManagement.getBindingContext("$FlexVariants").getObject();
 
 			oData["variants"].forEach(function(oItem) {
-				if (oItem.toBeDeleted) {
+				if (!oItem.visible) {
 					aDelItems.push(oItem.key);
 				} else if (oItem.title !== oItem.originalTitle) {
 					aRenamedItems.push(oItem.key);
@@ -411,7 +530,7 @@
 			var oData = this.oVariantManagement.getBindingContext("$FlexVariants").getObject();
 
 			oData["variants"].forEach(function(oItem) {
-				if (oItem.toBeDeleted) {
+				if (!oItem.visible) {
 					aDelItems.push(oItem.key);
 				} else {
 					if (oItem.title !== oItem.originalTitle) {
@@ -628,6 +747,17 @@
 		assert.ok(!bListClosed);
 		assert.ok(bErrorListClosed);
 
+	});
+
+	QUnit.test("Checking _openVariantList in errorState", function(assert) {
+
+		this.oVariantManagement.setInErrorState(true);
+		assert.ok(!this.oVariantManagement.oErrorVariantPopOver);
+		this.oVariantManagement._openVariantList();
+		assert.ok(this.oVariantManagement.oErrorVariantPopOver);
+
+		this.oVariantManagement.oErrorVariantPopOver.destroy();
+		this.oVariantManagement.oErrorVariantPopOver = null;
 	});
 
 	QUnit.test("Checking _openInErrorState", function(assert) {

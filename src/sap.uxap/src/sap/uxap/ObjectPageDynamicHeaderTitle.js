@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/uxap/ObjectPageDynamicHead
 		var DynamicPageTitle = sap.ui.requireSync("sap/f/DynamicPageTitle");
 
 		/**
-		 * Constructor for a new <code>ObjectPageDynamicHeaderTitle<code>.
+		 * Constructor for a new <code>ObjectPageDynamicHeaderTitle</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control

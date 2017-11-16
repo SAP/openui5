@@ -352,7 +352,8 @@ sap.ui.define([
 				* The aggregation holds <code>DynamicPage</code>, used internally.
 				*/
 				_dynamicPage: {type: "sap.f.DynamicPage", multiple: false, visibility: "hidden"}
-			}
+			},
+			designtime : "sap/f/designtime/SemanticPage.designtime"
 		}
 	});
 

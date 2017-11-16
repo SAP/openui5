@@ -1370,9 +1370,9 @@
 			 *
 			 * Log entries are plain JavaScript objects with the following properties
 			 * <ul>
-			 * <li>timestamp {number} point in time when the entry was created
-			 * <li>level {int} LogLevel level of the entry
-			 * <li>message {string} message text of the entry
+			 * <li>timestamp {number} point in time when the entry was created</li>
+			 * <li>level {int} LogLevel level of the entry</li>
+			 * <li>message {string} message text of the entry</li>
 			 * </ul>
 			 *
 			 * @return {object[]} an array containing the recorded log entries
@@ -2630,6 +2630,10 @@
 				(/sap-ui-xx-debug(M|-m)odule(L|-l)oading=(true|x|X)/.test(location.search) || oCfgData["xx-debugModuleLoading"]) ? jQuery.sap.log.Level.DEBUG : jQuery.sap.log.Level.INFO
 			),
 
+			DEFAULT_BASE_URL = 'resources/',
+
+			sDocumentLocation = document.location.href.replace(/\?.*|#.*/g, "");
+
 		/**
 		 * A map of URL prefixes keyed by the corresponding module name prefix.
 		 * URL prefix can either be given as string or as object with properties url and final.
@@ -2639,12 +2643,16 @@
 		 * Note that the empty prefix ('') will always match and thus serves as a fallback.
 		 * @private
 		 */
-			mUrlPrefixes = { '' : { 'url' : 'resources/' } },
+		var	mUrlPrefixes = Object.create(null);
+		mUrlPrefixes[''] = {
+			url : DEFAULT_BASE_URL,
+			absoluteUrl: new URI(DEFAULT_BASE_URL, sDocumentLocation).toString()
+		};
 
 		/**
 		 * Module neither has been required nor preloaded not declared, but someone asked for it.
 		 */
-			INITIAL = 0,
+		var INITIAL = 0,
 
 		/**
 		 * Module has been preloaded, but not required or declared
@@ -2686,11 +2694,11 @@
 		 *
 		 * Each module is an object that can have the following members
 		 * <ul>
-		 * <li>{int} state one of the module states defined in this function
-		 * <li>{string} url URL where the module has been loaded from
-		 * <li>{any} data temp. raw content of the module (between loaded and ready)
-		 * <li>{string} error an error description for state <code>FAILED</code>
-		 * <li>{any} content the content of the module as exported via define()
+		 * <li>{int} state one of the module states defined in this function</li>
+		 * <li>{string} url URL where the module has been loaded from</li>
+		 * <li>{any} data temp. raw content of the module (between loaded and ready)</li>
+		 * <li>{string} error an error description for state <code>FAILED</code></li>
+		 * <li>{any} content the content of the module as exported via define()</li>
 		 * </ul>
 		 * @private
 		 */
@@ -2887,8 +2895,6 @@
 		// max size a script should have when executing it with execScript (IE). Otherwise fallback to eval
 			MAX_EXEC_SCRIPT_LENGTH = 512 * 1024,
 
-			sDocumentLocation = document.location.href.replace(/\?.*|#.*/g, ""),
-
 			FRAGMENT = "fragment",
 			VIEW = "view",
 			mKnownSubtypes = {
@@ -2966,12 +2972,12 @@
 		 *
 		 * Each module is an object with the following properties
 		 * <ul>
-		 * <li>{int} state one of the module states defined in this function
-		 * <li>{string} url URL where the module has been loaded from
-		 * <li>{any} data temp. raw content of the module (between loaded and ready or when preloaded)
-		 * <li>{string} group the bundle with which a resource was loaded or null
-		 * <li>{string} error an error description for state <code>FAILED</code>
-		 * <li>{any} content the content of the module as exported via define()
+		 * <li>{int} state one of the module states defined in this function</li>
+		 * <li>{string} url URL where the module has been loaded from</li>
+		 * <li>{any} data temp. raw content of the module (between loaded and ready or when preloaded)</li>
+		 * <li>{string} group the bundle with which a resource was loaded or null</li>
+		 * <li>{string} error an error description for state <code>FAILED</code></li>
+		 * <li>{any} content the content of the module as exported via define()</li>
 		 * </ul>
 		 */
 		function Module(name) {
@@ -3115,25 +3121,23 @@
 			sURL = new URI(sURL, sDocumentLocation).toString();
 
 			for (sNamePrefix in mUrlPrefixes) {
-				if ( mUrlPrefixes.hasOwnProperty(sNamePrefix) ) {
 
-					// Note: configured URL prefixes are guaranteed to end with a '/'
-					// But to support the legacy scenario promoted by the application tools ( "registerModulePath('Application','Application')" )
-					// the prefix check here has to be done without the slash
-					sUrlPrefix = mUrlPrefixes[sNamePrefix].absoluteUrl.slice(0, -1);
+				// Note: configured URL prefixes are guaranteed to end with a '/'
+				// But to support the legacy scenario promoted by the application tools ( "registerModulePath('Application','Application')" )
+				// the prefix check here has to be done without the slash
+				sUrlPrefix = mUrlPrefixes[sNamePrefix].absoluteUrl.slice(0, -1);
 
-					if ( sURL.indexOf(sUrlPrefix) === 0 ) {
+				if ( sURL.indexOf(sUrlPrefix) === 0 ) {
 
-						// calc resource name
-						sResourceName = sNamePrefix + sURL.slice(sUrlPrefix.length);
-						// remove a leading '/' (occurs if name prefix is empty and if match was a full segment match
-						if ( sResourceName.charAt(0) === '/' ) {
-							sResourceName = sResourceName.slice(1);
-						}
+					// calc resource name
+					sResourceName = sNamePrefix + sURL.slice(sUrlPrefix.length);
+					// remove a leading '/' (occurs if name prefix is empty and if match was a full segment match
+					if ( sResourceName.charAt(0) === '/' ) {
+						sResourceName = sResourceName.slice(1);
+					}
 
-						if ( mModules[sResourceName] && mModules[sResourceName].data ) {
-							return sResourceName;
-						}
+					if ( mModules[sResourceName] && mModules[sResourceName].data ) {
+						return sResourceName;
 					}
 				}
 			}
@@ -3730,35 +3734,43 @@
 
 			if ( !vUrlPrefix || vUrlPrefix.url == null ) {
 
-				if ( oOldPrefix ) {
-					delete mUrlPrefixes[sResourceNamePrefix];
-					log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");
+				// remove a registered URL prefix, if it wasn't for the empty resource name prefix
+				if ( sResourceNamePrefix ) {
+					if ( oOldPrefix ) {
+						delete mUrlPrefixes[sResourceNamePrefix];
+						log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");
+					}
+					return;
 				}
 
-			} else {
+				// otherwise restore the default
+				vUrlPrefix = vUrlPrefix || {};
+				vUrlPrefix.url = DEFAULT_BASE_URL;
+				log.info("registerResourcePath ('" + sResourceNamePrefix + "') (default registration restored)");
 
-				vUrlPrefix.url = String(vUrlPrefix.url);
+			}
 
-				// remove query parameters and/or hash
-				var iQueryOrHashIndex = vUrlPrefix.url.search(/[?#]/);
-				if (iQueryOrHashIndex !== -1) {
-					vUrlPrefix.url = vUrlPrefix.url.slice(0, iQueryOrHashIndex);
-				}
+			vUrlPrefix.url = String(vUrlPrefix.url);
 
-				// ensure that the prefix ends with a '/'
-				if ( vUrlPrefix.url.slice(-1) != '/' ) {
-					vUrlPrefix.url += '/';
-				}
+			// remove query parameters and/or hash
+			var iQueryOrHashIndex = vUrlPrefix.url.search(/[?#]/);
+			if (iQueryOrHashIndex !== -1) {
+				vUrlPrefix.url = vUrlPrefix.url.slice(0, iQueryOrHashIndex);
+			}
 
-				// calculate absolute url
-				// only to be used by 'guessResourceName'
-				vUrlPrefix.absoluteUrl = new URI(vUrlPrefix.url, sDocumentLocation).toString();
+			// ensure that the prefix ends with a '/'
+			if ( vUrlPrefix.url.slice(-1) != '/' ) {
+				vUrlPrefix.url += '/';
+			}
 
-				mUrlPrefixes[sResourceNamePrefix] = vUrlPrefix;
+			// calculate absolute url
+			// only to be used by 'guessResourceName'
+			vUrlPrefix.absoluteUrl = new URI(vUrlPrefix.url, sDocumentLocation).toString();
 
-				if ( !oOldPrefix || !same(oOldPrefix, vUrlPrefix) ) {
-					log.info("registerResourcePath ('" + sResourceNamePrefix + "', '" + vUrlPrefix.url + "')" + (vUrlPrefix['final'] ? " (final)" : ""));
-				}
+			mUrlPrefixes[sResourceNamePrefix] = vUrlPrefix;
+
+			if ( !oOldPrefix || !same(oOldPrefix, vUrlPrefix) ) {
+				log.info("registerResourcePath ('" + sResourceNamePrefix + "', '" + vUrlPrefix.url + "')" + (vUrlPrefix['final'] ? " (final)" : ""));
 			}
 		};
 
@@ -3885,6 +3897,9 @@
 		 *
 		 * @public
 		 * @static
+		 * @deprecated As of 1.52, UI5 modules and their dependencies should be defined using {@link sap.ui.define}.
+		 *    For more details see {@link topic:91f23a736f4d1014b6dd926db0e91070 Modules and Dependencies} in the
+		 *    documentation.
 		 */
 		jQuery.sap.declare = function(sModuleName, bCreateNamespace) {
 
@@ -3932,6 +3947,10 @@
 		 * @static
 		 * @function
 		 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+		 * @deprecated As of 1.52, UI5 modules and their dependencies should be defined using {@link sap.ui.define}.
+		 *    When additional modules have to be loaded dynamically at a later point in time, the asynchronous API
+		 *    {@link sap.ui.require} should be used. For more details, see {@link topic:91f23a736f4d1014b6dd926db0e91070
+		 *    Modules and Dependencies} in the documentation.
 		 */
 		jQuery.sap.require = function(vModuleName) {
 

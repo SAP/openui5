@@ -534,10 +534,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @name sap.m.Input._resizePopup
 	 * @private
 	 */
-	Input.prototype._resizePopup = function() {
+	Input.prototype._resizePopup = function(bForceResize) {
 		var that = this;
 
-		if (this._oList && this._oSuggestionPopup) {
+		if (bForceResize) {
+			this._shouldResizePopup = true;
+		}
+
+		if (this._oList && this._oSuggestionPopup && this._shouldResizePopup) {
+
 			if (this.getMaxSuggestionWidth()) {
 				this._oSuggestionPopup.setContentWidth(this.getMaxSuggestionWidth());
 			} else {
@@ -576,7 +581,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		InputBase.prototype.onAfterRendering.call(this);
 
 		if (!this._bFullScreen) {
-			this._resizePopup();
 			this._sPopupResizeHandler = ResizeHandler.register(this.getDomRef(), function() {
 				that._resizePopup();
 			});
@@ -591,6 +595,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				}
 
 				if (this.getShowSuggestion() && this._oSuggestionPopup && oEvent.target.id != this.getId() + "-vhi") {
+					this._resizePopup(true);
 					this._oSuggestionPopup.open();
 				}
 			}, this));
@@ -1594,13 +1599,26 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @return {sap.m.Input} this Input instance for chaining.
 	 */
 	Input.prototype.updateSuggestionItems = function() {
+		this._bSuspendInvalidate = true;
 		this.updateAggregation("suggestionItems");
 		this._bShouldRefreshListItems = true;
 		this._refreshItemsDelayed();
+		this._bSuspendInvalidate = false;
 		return this;
 	};
 
 	/**
+	 * Invalidates the control.
+	 * @override
+	 * @protected
+	 */
+	Input.prototype.invalidate = function() {
+		if (!this._bSuspendInvalidate) {
+			Control.prototype.invalidate.apply(this, arguments);
+		}
+	};
+
+		/**
 	 * Cancels any pending suggestions.
 	 *
 	 * @name sap.m.Input.cancelPendingSuggest
@@ -2075,6 +2093,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				this._bShouldRefreshListItems = false;
 				this.cancelPendingSuggest();
 				this._oSuggestionPopup.close();
+
 				// Ensure the valueStateMessage is opened after the suggestion popup is closed.
 				// Only do this for desktop (not required for mobile) when the focus is on the input.
 				if (!this._bUseDialog && this.$().hasClass("sapMInputFocused")) {
@@ -2148,6 +2167,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					} else {
 						oInput._oList.destroyItems();
 					}
+					oInput._shouldResizePopup = false;
 				}).attachBeforeOpen(function() {
 					oInput._sBeforeSuggest = oInput.getValue();
 				}))
@@ -2476,7 +2496,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 					if (!oPopup.isOpen() && !oInput._sOpenTimer && (this.getValue().length >= this.getStartSuggestion())) {
 						oInput._sOpenTimer = setTimeout(function() {
-							oInput._resizePopup();
+							oInput._resizePopup(true);
 							oInput._sOpenTimer = null;
 							oPopup.open();
 						}, 0);
@@ -2745,7 +2765,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 	};
 
-	/* =========================================================== */
+		/* =========================================================== */
 	/*           begin: forward aggregation methods to table       */
 	/* =========================================================== */
 

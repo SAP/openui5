@@ -31,13 +31,13 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * <b>Valid Values:</b>
 	 *
 	 * <ul>
-	 * <li>for normal properties, the value has to be of the correct simple type (no type conversion occurs)
-	 * <li>for 0..1 aggregations, the value has to be an instance of the aggregated control or element type
-	 * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type
-	 * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted
-	 * <li>0..n associations are not supported yet
+	 * <li>for normal properties, the value has to be of the correct simple type (no type conversion occurs)</li>
+	 * <li>for 0..1 aggregations, the value has to be an instance of the aggregated control or element type</li>
+	 * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type</li>
+	 * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted</li>
+	 * <li>0..n associations are not supported yet</li>
 	 * <li>for events either a function (event handler) is accepted or an array of length 2
-	 *     where the first element is a function and the 2nd element is an object to invoke the method on.
+	 *     where the first element is a function and the 2nd element is an object to invoke the method on.</li>
 	 * </ul>
 	 *
 	 * Special aggregation <code>dependents</code> is connected to the lifecycle management and databinding,
@@ -842,11 +842,11 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	/**
 	 * Create a clone of this Element.
 	 *
-	 * Calls <code>ManagedObject#clone</code> and additionally clones event delegates.
+	 * Calls {@link sap.ui.base.ManagedObject#clone} and additionally clones event delegates.
 	 *
 	 * @param {string} [sIdSuffix] Suffix to be appended to the cloned element ID
 	 * @param {string[]} [aLocalIds] Array of local IDs within the cloned hierarchy (internally used)
-	 * @return {sap.ui.base.ManagedObject} reference to the newly created clone
+	 * @return {sap.ui.core.Element} reference to the newly created clone
 	 * @protected
 	 */
 	Element.prototype.clone = function(sIdSuffix, aLocalIds){

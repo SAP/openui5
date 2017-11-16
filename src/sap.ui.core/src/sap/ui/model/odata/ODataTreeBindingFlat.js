@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		// make sure the input parameters are not undefined
 		iStartIndex = iStartIndex || 0;
-		iLength = iLength || this.oModel.sizeLimit;
+		iLength = iLength || this.oModel.iSizeLimit;
 		iThreshold = iThreshold || 0;
 
 		this._iPageSize = iLength;

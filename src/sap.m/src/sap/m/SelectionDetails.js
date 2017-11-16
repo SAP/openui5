@@ -84,7 +84,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 					 */
 					direction: {type: "string"},
 					/**
-					 * The content of the currently viewed page that was previously added via {@link sap.m.SelectionDetails#navTo}.
+					 * The content of the currently viewed page that was previously added via {@link sap.m.SelectionDetailsFacade#navTo}.
 					 * This contains the content of the page before the navigation was triggered.
 					 * Can be null in case of first event triggering.
 					 */

@@ -75,9 +75,6 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label", "sap/m/library", "jquery.sa
 		this._resetDraftTimer();
 	};
 
-	/**
-	 * @Overwrites
-	 */
 	DraftIndicator.prototype.setState = function(sState) {
 		this.setProperty("state", sState);
 		this._addToQueue(sState);

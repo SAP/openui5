@@ -33,8 +33,10 @@ sap.ui.define([
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
-		 * This control enables you to display PDF documents within your app.
-		 * It can be embedded in your user interface layout, or you can set it to open in a popup dialog.
+		 * <p>This control enables you to display PDF documents within your app.
+		 * It can be embedded in your user interface layout, or you can set it to open in a popup dialog.</p>
+		 * <p>Please note that the PDF Viewer control can be fully displayed on desktop devices only. On mobile
+		 * devices, only the toolbar with a download button is visible.</p>
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -69,7 +71,7 @@ sap.ui.define([
 						source: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 						/**
 						 * A custom error message that is displayed when the PDF file cannot be loaded.
-						 * @deprecated As of version 1.50.0, replaced by {@link sap.m.PDFViewer#getErrorPlaceholderMessage()}.
+						 * @deprecated As of version 1.50.0, replaced by {@link sap.m.PDFViewer#getErrorPlaceholderMessage}.
 						 */
 						errorMessage: {type: "string", group: "Misc", defaultValue: null, deprecated: true},
 						/**
@@ -80,7 +82,7 @@ sap.ui.define([
 						/**
 						 * A custom title for the PDF viewer popup dialog. Works only if the PDF viewer
 						 * is set to open in a popup dialog.
-						 * @deprecated As of version 1.50.0, replaced by {@link sap.m.PDFViewer#getTitle()}.
+						 * @deprecated As of version 1.50.0, replaced by {@link sap.m.PDFViewer#getTitle}.
 						 */
 						popupHeaderTitle: {type: "string", group: "Misc", defaultValue: null, deprecated: true},
 

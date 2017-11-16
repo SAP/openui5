@@ -218,7 +218,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 
 	/**
 	 * Handles mobile touch events
-	 * @returns void
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	MessageStrip.prototype.ontouchmove = function (oEvent) {
@@ -230,7 +230,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	 * Closes the MessageStrip.
 	 * This method sets the visible property of the MessageStrip to false.
 	 * The MessageStrip can be shown again by setting the visible property to true.
-	 * @returns void
 	 * @public
 	 */
 	MessageStrip.prototype.close = function () {

@@ -69,6 +69,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
 		"sap.ui.core.tmpl.Template",
+		"sap.ui.commons.Menu",
 		"sap.m.FacetFilterItem",
 		"sap.m.LightBox",
 		"sap.m.Menu",
@@ -88,6 +89,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		"sap.ui.richtexteditor.RichTextEditor",
 		"sap.ui.richtexteditor.ToolbarWrapper",
 		"sap.ui.suite.TaskCircle",
+		"sap.ui.table.AnalyticalColumnMenu",
 		"sap.ui.table.ColumnMenu",
 		"sap.ui.unified.Menu",
 		"sap.ui.ux3.ActionBar",
@@ -507,6 +509,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 			var oLibrary = mLibraries[sLibName];
 			if (!oLibrary) { // in case removed from the map
 				resolve([0, false]);
+				return;
 			}
 
 			// we may need a concatenated array of Controls and Elements

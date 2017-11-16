@@ -20,6 +20,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/base/DataType", 
 	sap.ui.getCore().initLibrary({
 		name: "sap.uxap",
 		dependencies: ["sap.ui.core", "sap.m", "sap.ui.layout"],
+		designtime: "sap/uxap/designtime/library.designtime",
 		types: [
 			"sap.uxap.BlockBaseColumnLayout",
 			"sap.uxap.ObjectPageConfigurationMode",

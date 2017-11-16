@@ -67,6 +67,162 @@
         "type": "FIX",
         "text": " Opa: throw error when iFrame is launched but one already exists",
         "references": []
+      },
+      {
+        "id": "869b937b5f052594f7b3d6c37784497ed97222c6",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: set max possible hour to the default maxDate",
+        "references": []
+      },
+      {
+        "id": "78c57a6377351d978de238fab64a86ad5d89c505",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Correct selection when growing is used.",
+        "references": []
+      },
+      {
+        "id": "180f1df9898f33a0251795a3af630b070e579762",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: The headerButton is now being bound correctly",
+        "references": []
+      },
+      {
+        "id": "2e3a8f04de12f247f04c4f69bc0553abd1a21c36",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Search is now working correctly",
+        "references": []
+      },
+      {
+        "id": "a623fac0314921292a35949b4228485f441ef2ba",
+        "type": "FIX",
+        "text": " sap.m.Text: Ellipsis is now shown when the label is required",
+        "references": []
+      },
+      {
+        "id": "b4a69fac56c8e2a30abf154400bd5b90765e5d3d",
+        "type": "FIX",
+        "text": " sap.m.Timepicker: position selection frame properly in DateTimepicker on small screens",
+        "references": []
+      },
+      {
+        "id": "971a45aa34f4f57b3d6b67b7d2b1e41124e9aac2",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed overflow calculations",
+        "references": []
+      },
+      {
+        "id": "7db204449fdacc3d3e91f97ac2ce04a1d6dd3278",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Precision of milliseconds set to the third digit",
+        "references": []
+      },
+      {
+        "id": "7c1e0145d286130c78f6e376ddeb0ba022836d0b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Appointment deselection is now possible",
+        "references": []
+      },
+      {
+        "id": "a3c2660f654f365722db4217a93f3a2ee63ccd3a",
+        "type": "FEATURE",
+        "text": " sap.m.StepInput: Added description text after the input field.",
+        "references": []
+      },
+      {
+        "id": "2f3846fd9b8fb0e82d00d2b7f17a71138f14415a",
+        "type": "FIX",
+        "text": " TimePicker-closing before slider scrolling is complete works.",
+        "references": []
+      },
+      {
+        "id": "f6d2823eb321a1ff89c1cd32603c452bf6366ad3",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Error state icon now has correct color",
+        "references": []
+      },
+      {
+        "id": "3a2c967900829c4f836ae66d34cb76ac46242879",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Typo in documantation is now fixed",
+        "references": []
+      },
+      {
+        "id": "d9815ba718a703fd2160c0af2ef8bc13f95f6ce0",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Reset search value when FacetFilterList is closed",
+        "references": []
+      },
+      {
+        "id": "fc7ca87491391ee107f54e3a2693ef2d5aaad657",
+        "type": "FIX",
+        "text": " sap.m.Label: Required asterix is now positioned correctly",
+        "references": []
+      },
+      {
+        "id": "29c452f281c5913e01fbb86c02c9225df0b02d78",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Hide busy indicator on updateFinished.",
+        "references": []
+      },
+      {
+        "id": "7ecdb2713d490846f8280adbb97f5cdd44286403",
+        "type": "FIX",
+        "text": " sap.m.Menu: after removal from items aggregation item is still usable.",
+        "references": []
+      },
+      {
+        "id": "a5569309fbf229e55c39c746b227c1c0fc712c1d",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Long title wraps on Firefox and IE",
+        "references": []
+      },
+      {
+        "id": "a910face389779e49d4c0cc8971cf238ea4b3a9d",
+        "type": "FIX",
+        "text": " sap.m.Page: Nested pages scrolling fixed.",
+        "references": []
+      },
+      {
+        "id": "2bbe1d1e12a626471965ddf9ee13159c5cc3dae5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: does not throw exception when sap.ui.unified.CalendarLegend is used",
+        "references": []
+      },
+      {
+        "id": "3a4900412938ff31e95b210d97be427bbdf8216e",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Fixed handling of values greater than 100",
+        "references": []
+      },
+      {
+        "id": "03c6fc8e45134ff8f5305f1a774c5fcc8f5d0714",
+        "type": "FIX",
+        "text": " sap.m.QuickView sap.m.NotificationListItem sap.m.Text sap.m.SplitApp: Visual tests fro Android are now fixed",
+        "references": []
+      },
+      {
+        "id": "6d33ce8de6b5c38d679acc1186397fb9ae8a2713",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Growing property now has a proper behavior.",
+        "references": []
+      },
+      {
+        "id": "1400e558288501cf94e9b628f56cde19ed326c06",
+        "type": "FIX",
+        "text": " sap.m.Timepicker: add validation for minutesStep and secondsStep",
+        "references": []
+      },
+      {
+        "id": "4c182588878a1e958fbaec03c1d84ed680a201a8",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: when model is changed, filter counter is updated.",
+        "references": []
+      },
+      {
+        "id": "e0b6ecf78a6b7190d89cd339d6648f30d3cbc94d",
+        "type": "FIX",
+        "text": " sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": []
       }
     ]
   }

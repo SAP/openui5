@@ -3,9 +3,9 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation',
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation',
 		'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/library', 'sap/ui/core/format/DateFormat', 'sap/ui/core/library', 'sap/ui/core/Locale', 'jquery.sap.keycodes'],
-	function(jQuery, Control, LocaleData, ItemNavigation, CalendarUtils, CalendarDate, library, DateFormat, coreLibrary, Locale) {
+	function(jQuery, Control, Device, LocaleData, ItemNavigation, CalendarUtils, CalendarDate, library, DateFormat, coreLibrary, Locale) {
 	"use strict";
 
 	// shortcut for sap.ui.core.CalendarType
@@ -904,6 +904,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	Month.prototype.onmousedown = function (oEvent) {
+		this._oMousedownPosition = {
+			clientX: oEvent.clientX,
+			clientY: oEvent.clientY
+		};
+	};
+
 	Month.prototype.onmouseup = function(oEvent){
 
 		// fire select event on mouseup to prevent closing calendar during click
@@ -937,9 +944,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				_fireSelect.call(this);
 			}
 		}
-
 		if (this._bMousedownChange) {
 			this._bMousedownChange = false;
+			_fireSelect.call(this);
+		} else if (Device.support.touch
+			&& this._isValueInThreshold(this._oMousedownPosition.clientX, oEvent.clientX, 10)
+			&& this._isValueInThreshold(this._oMousedownPosition.clientY, oEvent.clientY, 10)
+		) {
+			var oSelectedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(oEvent.target).parent().attr("data-sap-day")), this.getPrimaryCalendarType());
+			_selectDay.call(this, oSelectedDate, false, false);
 			_fireSelect.call(this);
 		}
 
@@ -1028,6 +1041,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			_updateSelection.call(this, aCalStartDates, oEndDate);
 		}
 
+	};
+
+	/**
+	 * Returns if value is in predefined threshold.
+	 *
+	 * @private
+	 */
+	Month.prototype._isValueInThreshold = function (iReference, iValue, iThreshold) {
+		var iLowerThreshold = iReference - iThreshold,
+			iUpperThreshold = iReference + iThreshold;
+
+		return iValue >= iLowerThreshold && iValue <= iUpperThreshold;
 	};
 
 	/*
@@ -1431,8 +1456,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	function _handleMousedown(oEvent, oFocusedDate, iIndex){
 
-		if (oEvent.button) {
-			// only use left mouse button
+		if (oEvent.button || Device.support.touch) {
+			// only use left mouse button or not touch
 			return;
 		}
 

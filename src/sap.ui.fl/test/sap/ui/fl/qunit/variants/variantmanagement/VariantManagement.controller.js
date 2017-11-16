@@ -10,7 +10,10 @@ sap.ui.define([
 				"__xmlview0--idVariantManagementCtrl": {
 					currentVariant: "2",
 					defaultVariant: "2",
+					originalDefaultVariant: "2",
 					modified: false,
+					variantsEditable: true,
+					showFavorites: true,
 					variants: [
 						{
 							key: "Standard",
@@ -20,7 +23,8 @@ sap.ui.define([
 							originalFavorite: true,
 							readOnly: true,
 							executeOnSelect: false,
-							originalExecuteOnSelect: false
+							originalExecuteOnSelect: false,
+							visible: true
 						}, {
 							key: "1",
 							title: "One",
@@ -29,7 +33,8 @@ sap.ui.define([
 							originalFavorite: true,
 							readOnly: false,
 							executeOnSelect: false,
-							originalExecuteOnSelect: false
+							originalExecuteOnSelect: false,
+							visible: true
 						}, {
 							key: "2",
 							title: "Two",
@@ -38,7 +43,8 @@ sap.ui.define([
 							originalFavorite: true,
 							readOnly: false,
 							executeOnSelect: false,
-							originalExecuteOnSelect: false
+							originalExecuteOnSelect: false,
+							visible: true
 						}, {
 							key: "3",
 							title: "Three",
@@ -48,7 +54,8 @@ sap.ui.define([
 							originalFavorite: true,
 							readOnly: true,
 							executeOnSelect: false,
-							originalExecuteOnSelect: false
+							originalExecuteOnSelect: false,
+							visible: true
 						}, {
 							key: "4",
 							title: "Four",
@@ -56,7 +63,8 @@ sap.ui.define([
 							originalFavorite: true,
 							readOnly: false,
 							executeOnSelect: false,
-							originalExecuteOnSelect: false
+							originalExecuteOnSelect: false,
+							visible: true
 						}, {
 							key: "5",
 							title: "Five",
@@ -64,7 +72,8 @@ sap.ui.define([
 							originalFavorite: true,
 							readOnly: false,
 							executeOnSelect: false,
-							originalExecuteOnSelect: false
+							originalExecuteOnSelect: false,
+							visible: true
 						}, {
 							key: "6",
 							title: "Six",
@@ -72,7 +81,8 @@ sap.ui.define([
 							originalFavorite: true,
 							readOnly: false,
 							executeOnSelect: false,
-							originalExecuteOnSelect: false
+							originalExecuteOnSelect: false,
+							visible: true
 						}, {
 							key: "7",
 							title: "Seven",
@@ -80,7 +90,8 @@ sap.ui.define([
 							originalFavorite: true,
 							readOnly: false,
 							executeOnSelect: false,
-							originalExecuteOnSelect: false
+							originalExecuteOnSelect: false,
+							visible: true
 						}, {
 							key: "8",
 							title: "Eight",
@@ -88,7 +99,8 @@ sap.ui.define([
 							originalFavorite: true,
 							readOnly: true,
 							executeOnSelect: false,
-							originalExecuteOnSelect: false
+							originalExecuteOnSelect: false,
+							visible: true
 						}, {
 							key: "9",
 							title: "Nine",
@@ -96,7 +108,8 @@ sap.ui.define([
 							originalFavorite: true,
 							readOnly: false,
 							executeOnSelect: false,
-							originalExecuteOnSelect: false
+							originalExecuteOnSelect: false,
+							visible: true
 						}
 					]
 				},
@@ -105,90 +118,9 @@ sap.ui.define([
 					defaultVariant: "3",
 					currentVariant: "3",
 					modified: false,
-					variants: [
-						{
-							key: "Standard",
-							title: "Standard",
-							author: "A",
-							favorite: true,
-							originalFavorite: true,
-							readOnly: true,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false
-						}, {
-							key: "1",
-							title: "ONE",
-							favorite: true,
-							originalFavorite: true,
-							readOnly: true,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false
-						}, {
-							key: "2",
-							title: "TWO",
-							favorite: true,
-							originalFavorite: true,
-							readOnly: true,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false
-						}, {
-							key: "3",
-							title: "THREE",
-							favorite: true,
-							originalFavorite: true,
-							readOnly: false,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false
-						}, {
-							key: "4",
-							title: "FOUR",
-							favorite: true,
-							originalFavorite: true,
-							readOnly: false,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false
-						}, {
-							key: "5",
-							title: "FIVE",
-							favorite: true,
-							originalFavorite: true,
-							readOnly: false,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false
-						}, {
-							key: "6",
-							title: "SIX",
-							favorite: true,
-							originalFavorite: true,
-							readOnly: false,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false
-						}, {
-							key: "7",
-							title: "SEVEN",
-							favorite: true,
-							originalFavorite: true,
-							readOnly: false,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false
-						}, {
-							key: "8",
-							title: "EIGHT",
-							favorite: true,
-							originalFavorite: true,
-							readOnly: false,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false
-						}, {
-							key: "9",
-							title: "NINE",
-							favorite: true,
-							originalFavorite: true,
-							readOnly: false,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false
-						}
-					]
+					variantsEditable: false,
+					showFavorites: false,
+					variants: []
 				}
 			});
 
@@ -215,8 +147,6 @@ sap.ui.define([
 
 			oParent.removeContent(this.oVM);
 			var sVMId = this.oVM.getId();
-			var bShowFav = this.oVM.getShowFavorites();
-			var bShowShare = this.oVM.getShowShare();
 			var bShowExe = this.oVM.getShowExecuteOnSelection();
 			// var bShowDef = this.oVM.getShowAsDefault();
 
@@ -228,8 +158,6 @@ sap.ui.define([
 			oParent.addContent(oVM);
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
-			this.oVM.setShowFavorites(!bShowFav);
-			this.oVM.setShowShare(bShowShare);
 			this.oVM.setShowExecuteOnSelection(bShowExe);
 			// this.oVM.setShowAsDefault(bShowDef);
 
@@ -245,9 +173,6 @@ sap.ui.define([
 		onToggleErrorState: function(oEvent) {
 			this.oVM.setInErrorState(!this.oVM.getInErrorState());
 		},
-		onToggleFooterBtn: function(oEvent) {
-			this.oVM.setShowVariantListFooter(!this.oVM.getShowVariantListFooter());
-		},
 		onToggleShowShareBtn: function(oEvent) {
 			this.oVM.setShowShare(!this.oVM.getShowShare());
 		},
@@ -258,21 +183,26 @@ sap.ui.define([
 			this.oVM.setShowSetAsDefault(!this.oVM.getShowSetAsDefault());
 		},
 		onToggleFavoritesBtn: function(oEvent) {
-			this.oVM.setShowFavorites(!this.oVM.getShowFavorites());
+			var oModel = this.oVM.getModel("$FlexVariants");
+			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
+
+			oData.showFavorites = !oData.showFavorites;
+
+			oModel.checkUpdate(true);
 		},
 
 		onOpenMamageDialogBtn: function(oEvent) {
 			this.oVM.openManagementDialog(true);
 		},
 
-		onToggleManageBtn: function(oEvent) {
-			this.oVM.setShowManage(!this.oVM.getShowManage());
-		},
-		onToggleSaveBtn: function(oEvent) {
-			this.oVM.setShowSave(!this.oVM.getShowSave());
-		},
-		onToggleSaveAsBtn: function(oEvent) {
-			this.oVM.setShowSaveAs(!this.oVM.getShowSaveAs());
+		onToggleEditableVariantsBtn: function(oEvent) {
+
+			var oModel = this.oVM.getModel("$FlexVariants");
+			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
+
+			oData.variantsEditable = !oData.variantsEditable;
+
+			oModel.checkUpdate(true);
 		},
 
 		onMarkAsChanged: function(oEvent) {
@@ -294,8 +224,10 @@ sap.ui.define([
 			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
 
 			oData["variants"] = oData["variants"].filter(function(oItem) {
-				return oItem.toBeDeleted === false;
+				return oItem.visible;
 			});
+
+			oData.originalDefaultVariant = oData.defaultVariant;
 
 			oData["variants"].forEach(function(oItem) {
 				if (oItem.title !== oItem.originalTitle) {

@@ -10,14 +10,15 @@ sap.ui.define([
 				'./Page', './Button', './Bar',
 				'./Title', './Image', './Link', './Text',
 				'./Label', './HBox', 'sap/ui/core/Icon', 'sap/ui/core/Title',
-				'sap/ui/core/CustomData', 'sap/ui/core/library', 'sap/ui/layout/library', 'sap/ui/Device'],
+				'sap/ui/core/CustomData', 'sap/ui/core/library', 'sap/ui/layout/library', 'sap/ui/Device',  'sap/ui/layout/form/ResponsiveGridLayout'],
 		function(jQuery, library, Control,
 					IconPool, SimpleForm,
 					VerticalLayout, HorizontalLayout,
 					Page, Button, Bar,
 					Title, Image, Link, Text,
 					Label, HBox, Icon, CoreTitle,
-					CustomData, coreLibrary, layoutLibrary, Device) {
+				 //SimpleForm is loading ResponsiveGridLayout too late, only need as a dependency
+					CustomData, coreLibrary, layoutLibrary, Device, ResponsiveGridLayout) {
 			"use strict";
 
 			// shortcut for sap.m.URLHelper

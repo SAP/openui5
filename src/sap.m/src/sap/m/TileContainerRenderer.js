@@ -69,7 +69,7 @@ sap.ui.define([],
 	 * @param {sap.m.TileContainer} oTC the tile container
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @private
-	 * returns {void}
+	 * @returns {void}
 	 */
 	TileContainerRenderer.renderTiles = function(oTC, oRm){
 		var aTiles = oTC.getTiles(),

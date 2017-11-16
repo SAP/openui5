@@ -57,15 +57,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Indicates if favorites can be created.
-				 */
-				showFavorites: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: false
-				},
-
-				/**
 				 * If set to<code>true</code>, the scenario is an industry-specific solution.<br>
 				 * <b>Node:</b>This flag is only used internally in the app variant scenarios.
 				 */
@@ -94,43 +85,6 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: false
 				},
-
-				/**
-				 * Determine the visibility of the 'Save' button in the variant list control.
-				 */
-				showSave: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: true
-				},
-
-				/**
-				 * Determine the visibility of the 'Save As' button in the variant list control.
-				 */
-				showSaveAs: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: true
-				},
-
-				/**
-				 * Determine the visibility of the 'Manage' button in the variant list control.
-				 */
-				showManage: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: true
-				},
-
-				/**
-				 * Determine the visibility of the footer of the variant list.
-				 */
-				showVariantListFooter: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: true
-				},
-
 				/**
 				 * Indicates that the control is in error state. If set to <code>true</code> error message will be displayed whenever the variant is
 				 * opened.
@@ -241,10 +195,6 @@ sap.ui.define([
 			};
 
 			oRm.writeAccessibilityState(oControl, mAccProps);
-
-// var sTooltip = oControl._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT");
-// oRm.write(" title='" + sTooltip + "'");
-// oRm.write(" tabindex='0'>");
 			oRm.write(">");
 
 			oRm.renderControl(oControl.oVariantLayout);
@@ -337,8 +287,6 @@ sap.ui.define([
 		this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtn");
 		this.oVariantPopoverTrigger.addStyleClass("sapMTitleStyleH4");
 
-		// this.oVariantPopoverTrigger.addStyleClass("sapUiFlVarMngmtTriggerBtnHover");
-
 		this.oVariantLayout = new HorizontalLayout({
 			content: [
 				this.oVariantText, oVariantModifiedText, this.oVariantPopoverTrigger, this.oVariantInvisibleText
@@ -356,13 +304,9 @@ sap.ui.define([
 	VariantManagement.prototype._createInnerModel = function() {
 
 		var oModel = new JSONModel({
-			showManage: true,
-			showSave: true,
-			showSaveAs: true,
 			showExecuteOnSelection: false,
 			showShare: false,
-			showSetAsDefault: true,
-			showFavorites: false
+			showSetAsDefault: true
 		});
 		this.setModel(oModel, VariantManagement.INNER_MODEL_NAME);
 
@@ -370,18 +314,6 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._bindProperties = function() {
-		this.bindProperty("showManage", {
-			path: "/showManage",
-			model: VariantManagement.INNER_MODEL_NAME
-		});
-		this.bindProperty("showSave", {
-			path: "/showSave",
-			model: VariantManagement.INNER_MODEL_NAME
-		});
-		this.bindProperty("showSaveAs", {
-			path: "/showSaveAs",
-			model: VariantManagement.INNER_MODEL_NAME
-		});
 		this.bindProperty("showShare", {
 			path: "/showShare",
 			model: VariantManagement.INNER_MODEL_NAME
@@ -390,31 +322,18 @@ sap.ui.define([
 			path: "/showExecuteOnSelection",
 			model: VariantManagement.INNER_MODEL_NAME
 		});
-		this.bindProperty("showShare", {
-			path: "/showShare",
-			model: VariantManagement.INNER_MODEL_NAME
-		});
 		this.bindProperty("showSetAsDefault", {
 			path: "/showSetAsDefault",
 			model: VariantManagement.INNER_MODEL_NAME
 		});
-		this.bindProperty("showFavorites", {
-			path: "/showFavorites",
-			model: VariantManagement.INNER_MODEL_NAME
-		});
-		this.bindProperty("showVariantListFooter", {
-			path: "/showVariantListFooter",
-			model: VariantManagement.INNER_MODEL_NAME
-		});
-
 	};
 
-	VariantManagement.prototype.setInitialDefaultVariantKey = function(sKey) {
-		this._sInitialDefaultVariantKey = sKey;
-	};
-
-	VariantManagement.prototype.getInitialDefaultVariantKey = function() {
-		return this._sInitialDefaultVariantKey;
+	VariantManagement.prototype.getOriginalDefaultVariantKey = function() {
+		var oModel = this.getModel(VariantManagement.MODEL_NAME);
+		if (oModel && this.oContext) {
+			return oModel.getProperty(this.oContext + "/originalDefaultVariant");
+		}
+		return null;
 	};
 
 	VariantManagement.prototype.setDefaultVariantKey = function(sKey) {
@@ -436,7 +355,7 @@ sap.ui.define([
 	 * Sets the new selected variant.
 	 * @public
 	 * @param {String} sKey the variant key whic should be selected.
-	 * @returns {Object} the current instance of {@link sap.fl.variants.VariantManagement}.
+	 * @returns {sap.ui.fl.variants.VariantManagement} the current instance of {@link sap.ui.fl.variants.VariantManagement}.
 	 */
 	VariantManagement.prototype.setSelectedVariantKey = function(sKey) {
 		var sLocalId, oModel = this.getModel(VariantManagement.MODEL_NAME);
@@ -502,6 +421,14 @@ sap.ui.define([
 		}
 
 		return null;
+	};
+
+	VariantManagement.prototype.getShowFavorites = function() {
+		var oModel = this.getModel(VariantManagement.MODEL_NAME);
+		if (oModel && this.oContext) {
+			return oModel.getProperty(this.oContext + "/showFavorites");
+		}
+		return false;
 	};
 
 	VariantManagement.prototype._getItems = function() {
@@ -662,11 +589,11 @@ sap.ui.define([
 	// VARIANT LIST
 	VariantManagement.prototype._createVariantList = function() {
 
-		if (!this.oContext || this.oVariantPopOver) { // create only if context is available
+		if (this.oVariantPopOver) {
 			return;
 		}
 
-		var oVariantManageBtn = new Button(this.getId() + "-manage", {
+		this.oVariantManageBtn = new Button(this.getId() + "-manage", {
 			text: this._oRb.getText("VARIANT_MANAGEMENT_MANAGE"),
 			enabled: true,
 			press: function() {
@@ -676,8 +603,8 @@ sap.ui.define([
 				priority: OverflowToolbarPriority.Low
 			}),
 			visible: {
-				path: "/showManage",
-				model: VariantManagement.INNER_MODEL_NAME
+				path: "variantsEditable",
+				model: VariantManagement.MODEL_NAME
 			}
 		});
 
@@ -697,8 +624,8 @@ sap.ui.define([
 				priority: OverflowToolbarPriority.Low
 			}),
 			visible: {
-				path: "/showSave",
-				model: VariantManagement.INNER_MODEL_NAME
+				path: "variantsEditable",
+				model: VariantManagement.MODEL_NAME
 			}
 		});
 
@@ -711,8 +638,8 @@ sap.ui.define([
 				priority: OverflowToolbarPriority.Low
 			}),
 			visible: {
-				path: "/showSaveAs",
-				model: VariantManagement.INNER_MODEL_NAME
+				path: "variantsEditable",
+				model: VariantManagement.MODEL_NAME
 			}
 		});
 
@@ -774,14 +701,14 @@ sap.ui.define([
 			],
 			footer: new OverflowToolbar({
 				content: [
-					new ToolbarSpacer(this.getId() + "-spacer"), this.oVariantSaveBtn, this.oVariantSaveAsBtn, oVariantManageBtn
+					new ToolbarSpacer(this.getId() + "-spacer"), this.oVariantSaveBtn, this.oVariantSaveAsBtn, this.oVariantManageBtn
 				]
 			}),
 			showNavButton: false,
 			showHeader: false,
 			showFooter: {
-				path: "/showVariantListFooter",
-				model: VariantManagement.INNER_MODEL_NAME
+				path: "variantsEditable",
+				model: VariantManagement.MODEL_NAME
 			}
 		});
 
@@ -823,6 +750,11 @@ sap.ui.define([
 		}
 
 		if (this.bPopoverOpen) {
+			return;
+		}
+
+		// proceed only if context is available
+		if (!this.oContext) {
 			return;
 		}
 
@@ -998,7 +930,7 @@ sap.ui.define([
 
 		// set variant name to Standard
 		if (this._isIndustrySolutionModeAndVendorLayer() && this.getManualVariantKey()) {
-			this.oInputName.setValue(this._oRb.getText("VARIANT_MANAGEMENT_STANDARD"));
+			// this.oInputName.setValue(this._oRb.getText("VARIANT_MANAGEMENT_STANDARD"));
 			this.oInputName.setEnabled(false);
 		}
 
@@ -1166,7 +1098,7 @@ sap.ui.define([
 		var sValue = parameters.newValue ? parameters.newValue : "";
 
 		var aFilters = [
-			this._getFilterNotDeleted(), new Filter({
+			this._getVisibleFilter(), new Filter({
 				filters: [
 					new Filter({
 						path: "title",
@@ -1203,8 +1135,8 @@ sap.ui.define([
 					new Column({
 						width: "3rem",
 						visible: {
-							path: "/showFavorites",
-							model: VariantManagement.INNER_MODEL_NAME
+							path: "showFavorites",
+							model: VariantManagement.MODEL_NAME
 						}
 					}), new Column({
 						header: new Text({
@@ -1239,7 +1171,7 @@ sap.ui.define([
 						header: new Text({
 							text: this._oRb.getText("VARIANT_MANAGEMENT_EXECUTEONSELECT")
 						}),
-						width: "5rem",
+						width: "6rem",
 						hAlign: TextAlign.Center,
 						demandPopin: true,
 						popinDisplay: PopinDisplay.Inline,
@@ -1282,6 +1214,8 @@ sap.ui.define([
 			});
 
 			this.oManagementDialog = new Dialog(this.getId() + "-managementdialog", {
+				resizable: true,
+				draggable: true,
 				customHeader: new Bar(this.getId() + "-managementHeader", {
 					contentMiddle: [
 						new Text(this.getId() + "-managementHeaderText", {
@@ -1320,7 +1254,7 @@ sap.ui.define([
 				factory: this._templateFactoryManagementDialog.bind(this)
 			});
 
-			this.oManagementTable.getBinding("items").filter(this._getFilterNotDeleted());
+			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
 
 			this._bDeleteOccured = false;
 		}
@@ -1463,8 +1397,6 @@ sap.ui.define([
 
 		this._createManagementDialog();
 
-		this.setInitialDefaultVariantKey(this.getDefaultVariantKey());
-
 		if (this.oVariantPopOver) {
 			this.oVariantPopOver.close();
 		}
@@ -1473,7 +1405,7 @@ sap.ui.define([
 		this._oSearchFieldOnMgmtDialog.setValue("");
 
 		// Idealy this should be done only once in _createtManagementDialog. But the binding does not recognize a change, when filtering is involved.
-		// After delete on the ui we filter the item out .toBeDeleted=true. The real deletion will occure only when OK is pressed.
+		// After delete on the ui we filter the item out .visible=false. The real deletion will occure only when OK is pressed.
 		// But the filterd items and the result after real deletion is identical, so no change is detected; based on this the context on the table is
 		// not invalidated....
 		// WA: do the binding always, while opening the dialog.
@@ -1486,7 +1418,7 @@ sap.ui.define([
 				factory: this._templateFactoryManagementDialog.bind(this)
 			});
 
-			this.oManagementTable.getBinding("items").filter(this._getFilterNotDeleted());
+			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
 		}
 
 		this.oManagementDialog.open();
@@ -1515,7 +1447,7 @@ sap.ui.define([
 			this.oManagementSave.setEnabled(true);
 		}
 
-		if (!oItem.favorite && oRadioButton) {
+		if (this.getShowFavorites() && !oItem.favorite && oRadioButton) {
 			oItem.favorite = !oItem.favorite;
 			this._setFavoriteIcon(oRadioButton.getParent().getCells()[VariantManagement.COLUMN_FAV_IDX], oItem.favorite);
 		}
@@ -1529,14 +1461,14 @@ sap.ui.define([
 	VariantManagement.prototype._handleManageCancelPressed = function() {
 		var sDefaultVariantKey, aItems = this._getItems(), oModel;
 		aItems.forEach(function(oItem) {
-			oItem.toBeDeleted = false;
+			oItem.visible = true;
 			// oItem.deletedTransport = null;
 			oItem.title = oItem.originalTitle;
 			oItem.favorite = oItem.originalFavorite;
 			oItem.executeOnSelection = oItem.originalExecuteOnSelection;
 		});
 
-		sDefaultVariantKey = this.getInitialDefaultVariantKey();
+		sDefaultVariantKey = this.getOriginalDefaultVariantKey();
 		if (sDefaultVariantKey !== this.getDefaultVariantKey()) {
 			this.setDefaultVariantKey(sDefaultVariantKey);
 		}
@@ -1578,11 +1510,16 @@ sap.ui.define([
 
 		var oModel, sKey = oItem.key;
 
+		// do not allow the deletion of the last entry
+		if (this.oManagementTable.getItems().length === 1) {
+			return;
+		}
+
 		if (!this._anyInErrorState(this.oManagementTable)) {
 			this.oManagementSave.setEnabled(true);
 		}
 
-		oItem.toBeDeleted = true;
+		oItem.visible = false;
 
 		if ((sKey === this.getDefaultVariantKey())) {
 			this.setDefaultVariantKey(this.getStandardVariantKey());
@@ -1595,7 +1532,7 @@ sap.ui.define([
 			};
 
 			var fError = function(oResult) {
-				oItem.toBeDeleted = false;
+				oItem.visible = true;
 			};
 
 			this._assignTransport(oItem, fOkay, fError);
@@ -1655,12 +1592,8 @@ sap.ui.define([
 	VariantManagement.prototype._handleManageSavePressed = function() {
 		var aItems = this._getItems();
 
-		this.fireManage();
-
-		this.oManagementDialog.close();
-
 		aItems.some(function(oItem) {
-			if (oItem.toBeDeleted) {
+			if (!oItem.visible) {
 				this._bDeleteOccured = true;
 				if (oItem.key === this.getSelectedVariantKey()) {
 					this.setModified(false);
@@ -1671,6 +1604,10 @@ sap.ui.define([
 
 			return false;
 		}.bind(this));
+
+		this.fireManage();
+
+		this.oManagementDialog.close();
 
 	};
 
@@ -1701,7 +1638,7 @@ sap.ui.define([
 			aFilters.push(oFilter);
 		}
 
-		aFilters.push(this._getFilterNotDeleted());
+		aFilters.push(this._getVisibleFilter());
 
 		if (this.getShowFavorites()) {
 			aFilters.push(this._getFilterFavorites());
@@ -1710,10 +1647,10 @@ sap.ui.define([
 		return aFilters;
 	};
 
-	VariantManagement.prototype._getFilterNotDeleted = function() {
+	VariantManagement.prototype._getVisibleFilter = function() {
 		return new Filter({
-			path: "toBeDeleted",
-			operator: sap.ui.model.FilterOperator.NE,
+			path: "visible",
+			operator: sap.ui.model.FilterOperator.EQ,
 			value1: true
 		});
 	};

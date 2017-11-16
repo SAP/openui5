@@ -412,7 +412,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	/**
 	 * Setter for property <code>enableMultiLineMode</code>.
 	 * @param {boolean} bMultiLineMode Property value
-	 * @returns Pointer to the control instance for chaining
+	 * @returns {sap.m.MultiInput} Pointer to the control instance for chaining
 	 * @since 1.28
 	 * @public
 	 */
@@ -597,7 +597,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 	/**
 	 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
-	 * @returns The scroll delegate
+	 * @returns {sap.ui.core.ScrollEnablement} The scroll delegate
 	 * @private
 	 */
 	MultiInput.prototype.getScrollDelegate = function () {
@@ -972,6 +972,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onsapenter = function (oEvent) {
+		if (Input.prototype.onsapenter) {
+			Input.prototype.onsapenter.apply(this, arguments);
+		}
 
 		var bValidateFreeText = true;
 
@@ -985,10 +988,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 		if (bValidateFreeText) {
 			this._validateCurrentText();
-		}
-
-		if (Input.prototype.onsapenter) {
-			Input.prototype.onsapenter.apply(this, arguments);
 		}
 
 		this.focus();
@@ -1486,6 +1485,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {object} The accessibility object
 	 * @protected
 	 */
 	MultiInput.prototype.getAccessibilityInfo = function () {

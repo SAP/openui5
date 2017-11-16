@@ -139,8 +139,8 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 *
 	 * The static info can at least contain the following entries:
 	 * <ul>
-	 * <li>baseType: {string} fully qualified name of a base class or empty
-	 * <li>publicMethods: {string} an array of method names that will be visible in the interface proxy returned by {@link #getInterface}
+	 * <li>baseType: {string} fully qualified name of a base class or empty</li>
+	 * <li>publicMethods: {string} an array of method names that will be visible in the interface proxy returned by {@link #getInterface}</li>
 	 * </ul>
 	 *
 	 * @param {string} sClassName name of an (already declared) constructor function

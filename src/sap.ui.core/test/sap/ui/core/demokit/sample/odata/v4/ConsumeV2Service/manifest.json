@@ -26,10 +26,6 @@
 			"phone" : true,
 			"tablet" : true
 		},
-		"supportedThemes" : [
-			"sap_belize",
-			"sap_hcb"
-		],
 		"technology" : "UI5"
 	},
 	"sap.ui5" : {

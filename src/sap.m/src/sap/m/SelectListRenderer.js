@@ -160,6 +160,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 				oRm.addClass(CSS_CLASS + "Cell");
 				oRm.addClass(CSS_CLASS + "FirstCell");
 				oRm.writeClasses();
+				oRm.writeAttribute("disabled", "disabled"); // fixes span obtaining focus in IE
 				oRm.write(">");
 				oRm.writeEscaped(oItem.getText());
 				oRm.write("</span>");
@@ -168,6 +169,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 				oRm.addClass(CSS_CLASS + "Cell");
 				oRm.addClass(CSS_CLASS + "LastCell");
 				oRm.writeClasses();
+				oRm.writeAttribute("disabled", "disabled"); // fixes span obtaining focus in IE
 				oRm.write(">");
 
 				if (typeof oItem.getAdditionalText === "function") {

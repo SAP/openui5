@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button"
-], function (
+], function(
 	jQuery,
 	Component,
 	ComponentContainer,
@@ -18,21 +18,21 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("sap.ui.core asynchronousXMLViews rule tests", {
-		beforeEach: function () {
+		beforeEach: function() {
 			var sViewContent =
-			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
-			'<m:Button text="Button 1" id="button1" />' +
-			'</mvc:View>';
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
+				'<m:Button text="Button 1" id="button1" />' +
+				'</mvc:View>';
 			this.oRootControl = new VerticalLayout({
 				content: [
 					new XMLView({
 						id: "asyncView",
 						async: true,
-						viewContent : sViewContent
+						viewContent: sViewContent
 					}),
 					new XMLView({
 						id: "syncView",
-						viewContent : sViewContent
+						viewContent: sViewContent
 					})
 				]
 			});
@@ -42,16 +42,17 @@ sap.ui.define([
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "samples.components.routing"
 			});
+			this.oComponent.getRouter()._oConfig._async = false;
 
 			this.oComponentAsyncConfig = sap.ui.getCore().createComponent({
 				name: "samples.components.routing"
 			});
-			this.oComponentAsyncConfig.getRouter()._oConfig._async = true;
+
 
 			this.oComponentWithoutRouter = new Component();
 
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oRootControl.destroy();
 			this.oComponent.destroy();
 			this.oComponentAsyncConfig.destroy();

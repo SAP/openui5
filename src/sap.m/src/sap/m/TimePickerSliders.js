@@ -6,6 +6,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 	function (jQuery, Control, SlidersRenderer, TimePickerSlider, VisibleItem, LocaleData, Device, Locale) {
 		"use strict";
 
+		var DEFAULT_STEP = 1;
+
 		/**
 		 * Constructor for a new <code>TimePickerSliders</code>.
 		 *
@@ -44,18 +46,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 					labelText: {name: "labelText", type: "string"},
 
 					/**
-					 * Sets the minutes slider step.
+					 * Sets the minutes slider step. If step is less than 1, it will be automatically converted back to 1.
 					 * The minutes slider is populated only by multiples of the step.
 					 * @since 1.40
 					 */
-					minutesStep: {type: "int", group: "Misc", defaultValue: 1},
+					minutesStep: {type: "int", group: "Misc", defaultValue: DEFAULT_STEP},
 
 					/**
-					 * Sets the seconds slider step.
+					 * Sets the seconds slider step. If step is less than 1, it will be automatically converted back to 1.
 					 * The seconds slider is populated only by multiples of the step.
 					 * @since 1.40
 					 */
-					secondsStep: {type: "int", group: "Misc", defaultValue: 1}
+					secondsStep: {type: "int", group: "Misc", defaultValue: DEFAULT_STEP}
 				},
 				aggregations: {
 
@@ -192,6 +194,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 * @public
 		 */
 		TimePickerSliders.prototype.setMinutesStep = function(value) {
+			value = Math.max(DEFAULT_STEP, value || DEFAULT_STEP);
 			this.setProperty("minutesStep", value, true);
 			var aColumns = this.getAggregation("_columns");
 
@@ -211,6 +214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 * @public
 		 */
 		TimePickerSliders.prototype.setSecondsStep = function(value) {
+			value = Math.max(DEFAULT_STEP, value || DEFAULT_STEP);
 			this.setProperty("secondsStep", value, true);
 			var aColumns = this.getAggregation("_columns");
 

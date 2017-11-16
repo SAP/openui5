@@ -24,13 +24,7 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_belize",
-			"sap_belize_plus",
-			"sap_belize_hcb",
-			"sap_belize_hcw"
-		]
+		}
 	},
 
 	"sap.ui5": {

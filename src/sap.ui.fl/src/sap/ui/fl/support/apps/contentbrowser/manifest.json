@@ -18,10 +18,7 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_bluecrystal"
-		]
+		}
 	},
 	"sap.ui5": {
 		"rootView": "sap.ui.fl.support.apps.contentbrowser.view.MainView",

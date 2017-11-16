@@ -986,6 +986,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			if (oCCnt) {
 				var iUsedHeight = oDomRef.scrollHeight - oCCnt.clientHeight;
+
 				// take into account controls above the table in the container
 				var iTableTop = 0;
 				if (oDomRef.parentNode.firstChild !== oDomRef) {
@@ -997,7 +998,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				}
 
 				// For simplicity always add the default height of the horizontal scrollbar to the used height, even if it will not be visible.
-				iUsedHeight += 18;
+				var oScrollExtension = this._getScrollExtension();
+				var oHSb = oScrollExtension.getHorizontalScrollbar();
+
+				if (oHSb != null && oScrollExtension.isHorizontalScrollbarVisible()) {
+					iUsedHeight += oHSb.offsetHeight;
+				} else {
+					var mDefaultScrollbarHeight = {};
+					mDefaultScrollbarHeight[Device.browser.BROWSER.CHROME] = 16;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.FIREFOX] = 16;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.INTERNET_EXPLORER] = 18;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.EDGE] = 12;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.SAFARI] = 16;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.ANDROID] = 8;
+					iUsedHeight += mDefaultScrollbarHeight[Device.browser.name];
+				}
 
 				return Math.floor(jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop);
 			}
@@ -1180,6 +1195,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			sVisibleRowCountMode == VisibleRowCountMode.Fixed ||
 			(sVisibleRowCountMode == VisibleRowCountMode.Auto && this._iTableRowContentHeight && aRows.length == 0)) {
 
+			// Necessary due to the fact that getBinding initializes the grouping functionality
+			this.getBinding("rows");
+
 			this._updateRows(this._calculateRowsToDisplay(), TableUtils.RowsUpdateReason.Render);
 		} else if (this._bRowAggregationInvalid && aRows.length > 0) {
 			// Rows got invalidated, recreate rows with new template
@@ -1294,7 +1312,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._getScrollExtension().updateInnerVerticalScrollRangeCache(this._aRowHeights);
 		}
 
-		var iRowContentSpace = 0;
+		var iRowContentSpace = null;
 		if (!bSkipHandleRowCountMode && this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
 			iRowContentSpace = this._determineAvailableSpace();
 			// if no height is granted we do not need to do any further row adjustment or layout sync.
@@ -1397,7 +1415,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		if (this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
 			//if visibleRowCountMode is auto change the visibleRowCount according to the parents container height
-			var iRows = this._calculateRowsToDisplay(iRowContentSpace);
+			var iRows = this._calculateRowsToDisplay(iRowContentSpace != null ? iRowContentSpace : this._determineAvailableSpace());
 			// if minAutoRowCount has reached, table should use block this height.
 			// In case row > minAutoRowCount, the table height is 0, because ResizeTrigger must detect any changes of the table parent.
 			if (iRows == this._determineMinAutoRowCount()) {
@@ -1410,6 +1428,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var oScrollExtension = this._getScrollExtension();
 		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
 		oScrollExtension.updateVerticalScrollbarPosition();
+		oScrollExtension.updateVerticalScrollbarVisibility();
 
 		var $this = this.$();
 
@@ -3479,8 +3498,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", this._iTableRowContentHeight + "px");
 			}
 		}
-
-		this._getScrollExtension().updateVerticalScrollbarVisibility();
 	};
 
 	/**

@@ -16,6 +16,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		// shortcut for sap.ui.core.ValueState
 		var ValueState = coreLibrary.ValueState;
 
+		// shortcut for sap.m.StepInputValidationMode
+		var StepInputValidationMode = library.StepInputValidationMode;
+
 		/**
 		 * Constructor for a new <code>StepInput</code>.
 		 *
@@ -152,7 +155,32 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					 * In case the value is not valid it will be set to the default value.
 					 * @since 1.46
 					 */
-					displayValuePrecision: {type: "int", group: "Data", defaultValue: 0}
+					displayValuePrecision: {type: "int", group: "Data", defaultValue: 0},
+					/**
+					 * Determines the description text after the input field, for example units of measurement, currencies.
+					 * @since 1.54
+					 */
+					description: {type : "string", group : "Misc", defaultValue : null},
+					/**
+					 * Determines the distribution of space between the input field
+					 * and the description text . Default value is 50% (leaving the other
+					 * 50% for the description).
+					 *
+					 * <b>Note:</b> This property takes effect only if the
+					 * <code>description</code> property is also set.
+					 * @since 1.54
+					 */
+					fieldWidth: {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '50%'},
+					/**
+					 * Defines the horizontal alignment of the text that is displayed inside the input field.
+					 * @since 1.54
+					 */
+					textAlign: {type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: TextAlign.End},
+					/**
+					 * Defines when the validation of the typed value will happen. By default this happens on focus out.
+					 * @since 1.54
+					 */
+					validationMode: {type: "sap.m.StepInputValidationMode", group: "Misc", defaultValue: StepInputValidationMode.FocusOut}
 				},
 				aggregations: {
 					/**
@@ -232,19 +260,73 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * Property names which when set are directly forwarded to inner input <code>setProperty</code> method
 		 * @type {Array.<string>}
 		 */
-		var aForwardableProps = ["enabled", "editable", "name", "placeholder", "required", "valueStateText"];
+		var aForwardableProps = ["enabled", "editable", "name", "placeholder", "required", "valueStateText", "description", "fieldWidth", "textAlign"];
 
-		//Accessibility behaviour of the Input needs to be extended
+
+		/****************************************** NUMERIC INPUT CONTROL ****************************************************/
+
 		var NumericInputRenderer = Renderer.extend(InputRenderer);
 
+		// use the InputBaseRenderer hook which opens the input tag to render before it decrement button
+		NumericInputRenderer.openInputTag = function (oRm, oNumericInput) {
+			var oStepInput = oNumericInput.getParent(),
+				oDecrementButton = oStepInput._getDecrementButton(),
+				bEditable = oStepInput.getEditable();
+
+			if (bEditable && oDecrementButton) {
+				this.renderButton(oRm, oNumericInput, oDecrementButton, ["sapMStepInputBtnDecrease"]);
+			}
+
+			InputRenderer.openInputTag.apply(this, arguments);
+		};
+
+		// use the InputBaseRenderer hook which opens the input tag to render after it increase button
+		NumericInputRenderer.closeInputTag = function(oRm, oNumericInput) {
+			var oStepInput = oNumericInput.getParent(),
+				oIncrementButton = oStepInput._getIncrementButton(),
+				bEditable = oStepInput.getEditable();
+
+			InputRenderer.closeInputTag.apply(this, arguments);
+
+			if (bEditable && oIncrementButton) {
+				this.renderButton(oRm, oNumericInput, oIncrementButton, ["sapMStepInputBtnIncrease"]);
+			}
+		};
+
+		NumericInputRenderer.renderButton = function (oRm, oNumericInput, oButton, aWrapperClasses) {
+			var bDisableButton = oNumericInput.getParent()._getIsDisabledButton(aWrapperClasses[0]);
+
+			oButton.addStyleClass("sapMStepInputBtn");
+
+			aWrapperClasses.forEach(function (sClass) {
+				oButton.addStyleClass(sClass);
+			});
+
+			bDisableButton ? oButton.addStyleClass("sapMStepInputIconDisabled") : oButton.removeStyleClass("sapMStepInputIconDisabled");
+			oRm.renderControl(oButton);
+		};
+
+		NumericInputRenderer.writeInnerAttributes = function(oRm, oControl) {
+			// inside the Input this function also sets explicitly textAlign to "End" if the type
+			// of the Input is Numeric (our case)
+			// so we have to overwrite it by leaving only the text direction
+			// and the textAlign will be controlled by textAlign property of the StepInput
+			oRm.writeAttribute("type", oControl.getType().toLowerCase());
+			if (sap.ui.getCore().getConfiguration().getRTL()) {
+				oRm.writeAttribute("dir", "ltr");
+			}
+
+		};
+
+		//Accessibility behavior of the Input needs to be extended
 		/**
-		 * Overwrites the accessibility state using the getAccessibilityState method of the InputBaseRenderer.
+		 * Overwrites the accessibility state using the <code>getAccessibilityState</code> method of the <code>InputBaseRenderer</code>.
 		 *
 		 * @param {NumericInput} oNumericInput
 		 * @returns {Array} mAccAttributes
 		 */
 		NumericInputRenderer.getAccessibilityState = function(oNumericInput) {
-			var mAccAttributes = sap.m.InputBaseRenderer.getAccessibilityState(oNumericInput),
+			var mAccAttributes = InputRenderer.getAccessibilityState(oNumericInput),
 				oStepInput = oNumericInput.getParent(),
 				fMin = oStepInput.getMin(),
 				fMax = oStepInput.getMax(),
@@ -275,7 +357,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		};
 
 		/**
-		 * Write the id of the inner input
+		 * Writes the ID of the inner input.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
@@ -285,11 +367,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		};
 
 		/**
-		 * Define own inner ID suffix.
+		 * Defines own inner ID suffix.
 		 * @returns {string} The own inner ID suffix
 		 */
 		NumericInputRenderer.getInnerSuffix = function() {
 			return "inner";
+		};
+
+		NumericInputRenderer._getDescriptionSuffix = function () {
+			// this is the suffix used inside the Input
+			// in case it is changed there it should be changed also here
+			// it's used currently only inside qunit tests to get the description dom elelemnt
+			return "-Descr";
 		};
 
 		var NumericInput = Input.extend("NumericInput", {
@@ -305,7 +394,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		StepInput.prototype.init = function () {
 			this._iRealPrecision = 0;
 			this._attachChange();
-			this._attachLiveChange();
 		};
 
 		/**
@@ -327,16 +415,40 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				this.setValue(fMax);
 			}
 			this._disableButtons(vValue, fMax, fMin);
+
 		};
 
 		StepInput.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
 			this._writeAccessibilityState(sPropertyName, oValue);
 
+			Control.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
+
 			if (aForwardableProps.indexOf(sPropertyName) > -1) {
-				this._getInput().setProperty(sPropertyName, oValue, bSuppressInvalidate);
+				this._getInput().setProperty(sPropertyName, this.getProperty(sPropertyName), bSuppressInvalidate);
 			}
 
-			return Control.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
+			return this;
+		};
+
+		/*
+		 * Sets the validation mode.
+		 *
+		 * @param {sap.m.StepInputValidationMode} sValidationMode The validation mode value
+		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 */
+		StepInput.prototype.setValidationMode = function (sValidationMode) {
+			if (this.getValidationMode() !== sValidationMode) {
+				switch (sValidationMode) {
+					case sap.m.StepInputValidationMode.FocusOut:
+						this._detachLiveChange();
+						break;
+					case sap.m.StepInputValidationMode.LiveChange:
+						this._attachLiveChange();
+						break;
+				}
+				this.setProperty("validationMode", sValidationMode);
+			}
+			return this;
 		};
 
 		/*
@@ -489,6 +601,24 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			return this.getAggregation("_decrementButton");
 		};
 
+		StepInput.prototype._getIsDisabledButton = function (sType) {
+			var bEnabled = this.getEnabled(),
+				fMin = this.getMin(),
+				fMax = this.getMax(),
+				fValue = this.getValue(),
+				bDisableButton = false;
+
+			switch (sType) {
+				case "sapMStepInputBtnIncrease":
+					bDisableButton = !bEnabled || (fValue >= fMax);
+					break;
+				case "sapMStepInputBtnDecrease":
+					bDisableButton = !bEnabled || (fValue <= fMin);
+					break;
+			}
+			return bDisableButton;
+		};
+
 		/**
 		 * Lazily retrieves the <code>Input</code>.
 		 *
@@ -499,10 +629,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			if (!this.getAggregation("_input")) {
 				var oNumericInput = new NumericInput({
 					id: this.getId() + "-input",
-					textAlign: TextAlign.End,
+					textAlign: this.getTextAlign(),
 					type: InputType.Number,
 					editable: this.getEditable(),
 					enabled: this.getEnabled(),
+					description: this.getDescription(),
+					fieldWidth: this.getFieldWidth(),
 					liveChange: this._inputLiveChangeHandler
 				});
 				this.setAggregation("_input", oNumericInput);
@@ -510,6 +642,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 			return this.getAggregation("_input");
 		};
+
 
 		/**
 		 * Handles the button press.
@@ -558,7 +691,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				bMinIsNumber = this._isNumericLike(min);
 
 			if (this._getDecrementButton()) {
-				if (bMinIsNumber && min < value) {
+				if (bMinIsNumber && min < value && this.getEnabled()) {
 					this._getDecrementButton().$().removeClass("sapMStepInputIconDisabled");
 				}
 				if (bMinIsNumber && value <= min) {
@@ -566,7 +699,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				}
 			}
 			if (this._getIncrementButton()) {
-				if (bMaxIsNumber && value < max) {
+				if (bMaxIsNumber && value < max && this.getEnabled()) {
 					this._getIncrementButton().$().removeClass("sapMStepInputIconDisabled");
 				}
 				if (bMaxIsNumber && value >= max) {
@@ -761,23 +894,30 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		StepInput.prototype.onkeydown = function (oEvent) {
+			var bVerifyValue = false;
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_UP && !oEvent.altKey && oEvent.shiftKey &&
 				(oEvent.ctrlKey || oEvent.metaKey)) { //ctrl+shift+up
 				this._applyValue(this.getMax());
+				bVerifyValue = true;
 			}
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN && !oEvent.altKey && oEvent.shiftKey &&
 				(oEvent.ctrlKey || oEvent.metaKey)) { //ctrl+shift+down
 				this._applyValue(this.getMin());
+				bVerifyValue = true;
 			}
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_UP && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+up
 				oEvent.preventDefault(); //preventing to be added both the minimum step (1) and the larger step
 				this._applyValue(this._calculateNewValue(this.getLargerStep(), true).displayValue);
+				bVerifyValue = true;
 			}
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+down
 				oEvent.preventDefault(); //preventing to be subtracted  both the minimum step (1) and the larger step
 				this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
+				bVerifyValue = true;
 			}
-			this._verifyValue();
+			if (bVerifyValue) {
+				this._verifyValue();
+			}
 		};
 
 		/**
@@ -795,6 +935,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 */
 		StepInput.prototype._attachLiveChange = function () {
 			this._getInput().attachLiveChange(this._liveChange, this);
+		};
+
+		StepInput.prototype._detachLiveChange = function () {
+			this._getInput().detachLiveChange(this._liveChange, this);
 		};
 
 		StepInput.prototype._attachChange = function () {
@@ -885,18 +1029,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 			vValuePlusStep = (parseInt((vRealValue * iCalcReal), 10) + (iSign * parseInt((vMultipliedStep * iCalcReal), 10))) / iCalcReal;
 
-			if (isIncreasing && this._isNumericLike(fMax)){
-				if (nResult >= fMax) { //calculated value is bigger than max
-					vValuePlusStep = fMax;
-					vDisplayValuePlusStep = fMax;
-				}
+			// if there is a maxValue set, check if the calculated value is bigger
+			// and if so set the calculated value to the max one
+			if (this._isNumericLike(fMax) && nResult >= fMax){
+				vValuePlusStep = fMax;
+				vDisplayValuePlusStep = fMax;
 			}
 
-			if (!isIncreasing && this._isNumericLike(fMin)){
-				if (nResult <= fMin) { //calculated value is less than min
-					vValuePlusStep = fMin;
-					vDisplayValuePlusStep = fMin;
-				}
+			// if there is a minValue set, check if the calculated value is less
+			// and if so set the calculated value to the min one
+			if (this._isNumericLike(fMin) && nResult <= fMin){
+				vValuePlusStep = fMin;
+				vDisplayValuePlusStep = fMin;
 			}
 
 			return {value: vValuePlusStep, displayValue: vDisplayValuePlusStep};

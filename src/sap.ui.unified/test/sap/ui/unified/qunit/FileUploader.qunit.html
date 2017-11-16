@@ -267,6 +267,29 @@
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Test setTooltip", function (assert) {
+		//Set up
+		var sTooltip = "this is \"the\" file uploader";
+		var oFileUploader = createFileUploader({
+			tooltip: "MyFileUploader"
+		});
+
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oFileUploader.setTooltip(sTooltip);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sTooltip, "FileUploader tooltip is correct");
+		assert.equal(oFileUploader.$().find(".sapUiFupInputMask")[0].getAttribute("title"), sTooltip, "FileUploader mask tooltip is correct");
+
+		// cleanup
+		oFileUploader.destroy();
+	});
+
 	QUnit.module("File validation");
 	QUnit.test("Test file type validation - handlechange()", function (assert){
 		//setup
@@ -445,22 +468,36 @@
 
 	QUnit.test("BCP: 1770523801 - FormData.append called with third argument fails under Safari browser if passed file " +
 			"is not a Blob", function (assert) {
-
 		// Arrange
 		var oFileUploader = createFileUploader(),
 			sExpectedFileName = "FileUploader.qunit.html",
 			oFormData = new window.FormData(),
-			oBlob = new Blob([createFakeFile({
-				name: sExpectedFileName,
+			oBlob,
+			oMSBlobBuilder,
+			aFiles,
+			oFile = createFakeFile({
+				name: "FileUploader.qunit.html",
 				type: "text/html",
 				size: 404450
-			}, false /* In this test we always pass a Blob object */)]),
-			aFiles = { // Mock array like object with file as a Blob
-				"0": oBlob,
-				"length" : 1
-			},
+			}, false /* In this test we always pass a Blob object */),
 			oAppendFileSpy = this.spy(oFileUploader, "_appendFileToFormData"),
 			oAppendSpy = this.spy(oFormData, "append");
+
+		// NOTE: To create a Blob in Internet Explorer we have to use MSBlobBuilder when available because
+		// normal window.Blob constructor will fail.
+		if (window.MSBlobBuilder) {
+			oMSBlobBuilder = new window.MSBlobBuilder();
+			oMSBlobBuilder.append(oFile);
+			oBlob = oMSBlobBuilder.getBlob();
+		} else {
+			oBlob = new window.Blob([oFile]);
+		}
+
+		// Mock array like object with file as a Blob
+		aFiles = {
+			"0": oBlob,
+			"length" : 1
+		};
 
 		oFileUploader.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();

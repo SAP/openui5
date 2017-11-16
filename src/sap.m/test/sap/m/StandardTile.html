@@ -99,19 +99,18 @@
 		});
 		tiles.push(numericallyLargeNum);
 
-
-		var tc = new sap.m.TileContainer("tc",{
-			tiles : tiles
-		});
 		var app = new sap.m.App();
-		var page = new sap.m.Page({});
+		var page = new sap.m.Page({
+			enableScrolling : false,
+			showHeader: true,
+			title: "Some Standard Tiles",
+			content: [
+				tiles
+			]
+		});
 
 		app.setInitialPage(page.getId());
-		page.setEnableScrolling(false);
-		page.setShowHeader(true);
-		page.setTitle("Some Standard Tiles");
 		app.addPage(page);
-		page.addContent(tc);
 		app.placeAt('body');
 </script>
 

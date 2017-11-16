@@ -502,7 +502,7 @@ html[data-sap-ui-animation='off'] {
 }
 
 .sapMDialogWarning > header {
-	&.sapMDialogTitle .sapUiIcon {
+	&.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
 		color: @sapUiCriticalElement;
 	}
 
@@ -512,13 +512,18 @@ html[data-sap-ui-animation='off'] {
 }
 
 .sapMDialogError > header {
+
+	&.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
+		color: @sapUiNegativeElement;
+	}
+
 	&.sapMBar:last-of-type {
 		box-shadow: inset 0 -0.125rem @sapUiErrorBorder;
 	}
 }
 
 .sapMDialogSuccess > header {
-	&.sapMDialogTitle .sapUiIcon {
+	&.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
 		color: @sapUiPositiveElement;
 	}
 

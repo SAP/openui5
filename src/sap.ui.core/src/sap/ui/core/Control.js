@@ -142,9 +142,9 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 *
 	 * The additionally cloned information contains:
 	 * <ul>
-	 * <li>browser event handlers attached with {@link #attachBrowserEvent}
-	 * <li>text selection behavior
-	 * <li>style classes added with {@link #addStyleClass}
+	 * <li>browser event handlers attached with {@link #attachBrowserEvent}</li>
+	 * <li>text selection behavior</li>
+	 * <li>style classes added with {@link #addStyleClass}</li>
 	 * </ul>
 	 *
 	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned element id

@@ -433,22 +433,27 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 * @protected
 	 */
 	DragDrop.prototype.showGhost = function(oOverlay, oEvent) {
-		// IE and Edge do no support dataTransfer.setDragImage on D&D event
-		if (!sap.ui.Device.browser.internet_explorer && !sap.ui.Device.browser.edge && !sap.ui.Device.browser.msie &&
-			oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer && oEvent.originalEvent.dataTransfer.setDragImage) {
-			this._$ghost = this.createGhost(oOverlay, oEvent);
+		if (oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer){
+			// Edge has default effect "copy", so we set it here to "move"
+			oEvent.originalEvent.dataTransfer.effectAllowed = "move";
+			oEvent.originalEvent.dataTransfer.dropEffect = "move";
+			// IE and Edge do no support dataTransfer.setDragImage on D&D event
+			if (!sap.ui.Device.browser.internet_explorer && !sap.ui.Device.browser.edge
+				&& !sap.ui.Device.browser.msie && oEvent.originalEvent.dataTransfer.setDragImage) {
+				this._$ghost = this.createGhost(oOverlay, oEvent);
 
-			// ghost should be visible to set it as dragImage
-			this._$ghost.appendTo("#overlay-container");
-			// if ghost will be removed without timeout, setDragImage won't work
-			setTimeout(function() {
-				this._removeGhost();
-			}.bind(this), 0);
-			oEvent.originalEvent.dataTransfer.setDragImage(
-				this._$ghost.get(0),
-				oEvent.originalEvent.pageX - oOverlay.$().offset().left,
-				oEvent.originalEvent.pageY - oOverlay.$().offset().top
-			);
+				// ghost should be visible to set it as dragImage
+				this._$ghost.appendTo("#overlay-container");
+				// if ghost will be removed without timeout, setDragImage won't work
+				setTimeout(function() {
+					this._removeGhost();
+				}.bind(this), 0);
+				oEvent.originalEvent.dataTransfer.setDragImage(
+					this._$ghost.get(0),
+					oEvent.originalEvent.pageX - oOverlay.$().offset().left,
+					oEvent.originalEvent.pageY - oOverlay.$().offset().top
+				);
+			}
 		}
 	};
 

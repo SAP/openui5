@@ -230,7 +230,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 *
 	 * @param {object} oControl The control to which the ActionSheet is opened
 	 *
-	 * @returns void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -372,8 +371,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Calling this method will make the ActionSheet disappear from the screen.
-	 *
-	 * @returns void
+	 * @param {object} oControl The control to close
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -385,8 +383,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * The method checks if the ActionSheet is open. It returns true when the ActionSheet is currently open (this includes opening and closing animations), otherwise it returns false.
-	 *
-	 * @returns boolean Whether the ActionSheet is open.
+	 * @param {object} oControl The control in question
+	 * @returns {boolean} Whether the ActionSheet is open.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

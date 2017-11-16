@@ -40,7 +40,7 @@ sap.ui.define([
 			this._oDefinition = oFile;
 			this._oOriginDefinition = jQuery.extend(true, {}, oFile);
 			this._sRequest = '';
-			this._bUserDependent = (oFile.layer === "USER");
+			this._bUserDependent = (oFile.content.layer === "USER");
 			this._vRevertData = null;
 			this.setState(Variant.states.NEW);
 		},
@@ -73,8 +73,8 @@ sap.ui.define([
 
 	/**
 	 * Validates if the new state of variant has a valid value
-	 * The new state value has to be in the <code>Variant.states<code> list
-	 * Moving of state directly from <code>Variant.states.NEW<code> to <code>Variant.states.DIRTY<code> is not allowed.
+	 * The new state value has to be in the <code>Variant.states</code> list
+	 * Moving of state directly from <code>Variant.states.NEW</code> to <code>Variant.states.DIRTY</code> is not allowed.
 	 * @param {string} sState - value of target state
 	 * @returns {boolean} - new state is valid
 	 * @private
@@ -554,6 +554,7 @@ sap.ui.define([
 	 * @param {Boolean} [oPropertyBag.isUserDependent] true for enduser changes
 	 * @param {String}  !!!![oPropertyBag.context] ID of the context
 	 * @param {Object}  [oPropertyBag.content.validAppVersions] Application versions where the change is active
+	 * @param {String}  [oPropertyBag.generator] Tool which is used to generate the variant change file
 	 *
 	 * @returns {Object} The content of the change file
 	 *
@@ -585,7 +586,7 @@ sap.ui.define([
 				originalLanguage: Utils.getCurrentLanguage(),
 				conditions: {},
 				support: {
-					generator: "Variant.createInitialFileContent",
+					generator: oPropertyBag.generator || "Variant.createInitialFileContent",
 					service: oPropertyBag.service || "",
 					user: "",
 					sapui5Version: sap.ui.version

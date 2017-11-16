@@ -272,7 +272,7 @@ sap.ui.define([
 		 * whether the step is bigger than slider range.
 		 *
 		 * @private
-		 * @returns {boolean}
+		 * @returns {boolean} Whether the properties are correctly set
 		 */
 		Slider.prototype._validateProperties = function() {
 			var fMin = this.getMin(),
@@ -305,9 +305,9 @@ sap.ui.define([
 		/**
 		 * Calculate percentage.
 		 *
-		 * @param {float} fValue
+		 * @param {float} fValue The value
 		 * @private
-		 * @returns {float} percent
+		 * @returns {float} percent The corresponding percentage
 		 */
 		Slider.prototype._getPercentOfValue = function(fValue) {
 			var fMin = this.getMin(),
@@ -319,8 +319,8 @@ sap.ui.define([
 		/**
 		 * Get the value on certain position
 		 *
-		 * @param {float} fPercent
-		 * @returns {number}
+		 * @param {float} fPercent The percent value
+		 * @returns {number} The position value
 		 * @private
 		 */
 		Slider.prototype._getValueOfPercent = function(fPercent) {
@@ -334,9 +334,9 @@ sap.ui.define([
 		/**
 		 * Checks whether the given step is of the proper type.
 		 *
-		 * @param {int} iStep
+		 * @param {int} iStep The step size
 		 * @private
-		 * @returns {int}
+		 * @returns {int} The validated step size
 		 */
 		Slider.prototype._validateStep = function(iStep) {
 			if (typeof iStep === "undefined") {
@@ -537,7 +537,7 @@ sap.ui.define([
 		/**
 		 * Increase the value of the slider by the given <code>fIncrement</code>.
 		 *
-		 * @param {int} [fIncrement=1]
+		 * @param {int} fIncrement The increment size
 		 * @private
 		 */
 		Slider.prototype._increaseValueBy = function(fIncrement) {
@@ -558,7 +558,7 @@ sap.ui.define([
 		/**
 		 * Decrease the value of the slider by the given <code>fDecrement</code>.
 		 *
-		 * @param {int} [fDecrement=1]
+		 * @param {int} fDecrement The decrement size
 		 * @private
 		 */
 		Slider.prototype._decreaseValueBy = function(fDecrement) {
@@ -1235,7 +1235,7 @@ sap.ui.define([
 		 *
 		 * @param {int} [iStep=1] The number of steps the slider goes up.
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
-		 * @type sap.m.Slider
+		 * @type {sap.m.Slider}
 		 * @public
 		 */
 		Slider.prototype.stepUp = function(iStep) {
@@ -1247,7 +1247,7 @@ sap.ui.define([
 		 *
 		 * @param {int} [iStep=1] The number of steps the slider goes down.
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
-		 * @type sap.m.Slider
+		 * @type {sap.m.Slider}
 		 * @public
 		 */
 		Slider.prototype.stepDown = function(iStep) {
@@ -1260,7 +1260,7 @@ sap.ui.define([
 		 * Default value is <code>0</code>.
 		 *
 		 * @param {float} fNewValue new value for property <code>value</code>.
-		 * @param {object} mOptions
+		 * @param {object} mOptions The options object
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @public
 		 */

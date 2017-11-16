@@ -508,10 +508,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			return this._oList;
 		};
 
-		/**
-		 * Called whenever the binding of the aggregation items is changed.
-		 *
-		 */
 		Select.prototype.updateItems = function(sReason) {
 			SelectList.prototype.updateItems.apply(this, arguments);
 
@@ -1003,7 +999,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * (4) updating the label value
 		 *
 		 * The method is used in <code>onSelectionChange</code> and <code>onSelectItemPress</code>.
-		 * @param {sap.ui.base.Event} oControlEvent
+		 * @param {sap.ui.core.Item} oItem The item that will  be selected
 		 * @private
 		 */
 		Select.prototype._changeSelection = function(oItem) {
@@ -1105,7 +1101,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		Select.prototype.onsapescape = function(oEvent) {
 			var bSelectionChanged;
 
-			// Prevents escape, when the control is disabled or the <code>SelectList<code/> is closed.
+			// Prevents escape, when the control is disabled or the <code>SelectList</code> is closed.
 			// IE11 browser focus non-focusable elements.
 			if (!this.getEnabled() || !this.isOpen()) {
 				return;
@@ -1505,8 +1501,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		/**
 		 * Creates a picker popup container where the selection should take place.
 		 *
-		 * @param {string} sPickerType
-		 * @returns {sap.m.Popover | sap.m.Dialog}
+		 * @param {string} sPickerType The picker type
+		 * @returns {sap.ui.core.Control} The <code>sap.m.Popover</code> or  <code>sap.m.Dialog</code> instance
 		 * @protected
 		 */
 		Select.prototype.createPicker = function(sPickerType) {
@@ -2079,7 +2075,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * Gets aggregation <code>items</code>.
 		 *
 		 * <b>Note</b>: This is the default aggregation.
-		 * @return {sap.ui.core.Item[]}
+		 * @returns {sap.ui.core.Item[]} The controls in the <code>items</code> aggregation
 		 * @public
 		 */
 		Select.prototype.getItems = function() {
@@ -2291,7 +2287,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * <b>Note: </b> If duplicate keys exist, the first item matching the key is returned.
 		 *
 		 * @param {string} sKey An item key that specifies the item to be retrieved.
-		 * @returns {sap.ui.core.Item | null}
+		 * @returns {sap.ui.core.Item} The <code>sap.ui.core.Item</code> instance or <code>null</code> if thre is no such item
 		 * @public
 		 * @since 1.16
 		 */
@@ -2418,8 +2414,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		};
 
 		/**
+		 * Returns the <code>sap.m.Select</code>  accessibility information.
+		 *
 		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 * @protected
+		 * @returns {Object} The <code>sap.m.Select</code> accessibility information
 		 */
 		Select.prototype.getAccessibilityInfo = function() {
 			var oInfo = {

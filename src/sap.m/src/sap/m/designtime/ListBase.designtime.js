@@ -34,6 +34,9 @@ sap.ui.define([],
 				},
 				infoToolbar: {
 					domRef: ":sap-domref > .sapMListInfoTBar"
+				},
+				dragDropConfig: {
+					ignore: true
 				}
 			},
 			actions: {

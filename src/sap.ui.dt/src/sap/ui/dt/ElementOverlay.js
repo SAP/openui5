@@ -179,6 +179,23 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
+	 * @override
+	 */
+	ElementOverlay.prototype.onAfterRendering = function() {
+		var bOldDomInvisible = !this._oDomRef;
+		Overlay.prototype.onAfterRendering.apply(this, arguments);
+
+		// fire ElementModified, when the overlay had no domRef before, but has one now
+		if (bOldDomInvisible && this._oDomRef) {
+			var oParams = {
+				id: this.getId(),
+				type: "overlayRendered"
+			};
+			this.fireElementModified(oParams);
+		}
+	};
+
+	/**
 	 * Called when the ElementOverlay is destroyed
 	 * @protected
 	 */
@@ -981,8 +998,12 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		if (oElement instanceof sap.ui.core.Control) {
 			return oElement.getVisible();
 		}
-		var oElementDomRef = this.getAssociatedDomRef();
-		return oElementDomRef ? ElementUtil.isVisible(oElementDomRef) : undefined;
+		var oDesignTimeMetadata = this.getDesignTimeMetadata();
+		var fnisVisible = oDesignTimeMetadata && oDesignTimeMetadata.getData().isVisible;
+		if (!fnisVisible) {
+			return undefined;
+		}
+		return fnisVisible(this.getElementInstance());
 	};
 
 	/**

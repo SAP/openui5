@@ -61,6 +61,84 @@
         "type": "FIX",
         "text": " jQuery.sap.events: Fixed QUnit test",
         "references": []
+      },
+      {
+        "id": "8d6dfaeda6a6ffbe6824666fc1a4a0322a9aaeac",
+        "type": "FEATURE",
+        "text": " Element: support \u0027selector\u0027 for properties and aggregations",
+        "references": []
+      },
+      {
+        "id": "7e81ba94f43fe33da5aee2d1528c0fe17d05562a",
+        "type": "FEATURE",
+        "text": " core.Component: async loading of component resource bundles",
+        "references": []
+      },
+      {
+        "id": "96e850cbf24f3432ee2912f9b21fe4233883712a",
+        "type": "FEATURE",
+        "text": " resource.ResourceModel: Forward ResourceBundle to ResourceModel",
+        "references": []
+      },
+      {
+        "id": "a4e0d6c3f3cf06e39db51b7a5898d3be0d0a0e83",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Rendering in Fiori app is now correct",
+        "references": []
+      },
+      {
+        "id": "7af85a55854fa7ec7ff0fabbc575175a7e4b3b80",
+        "type": "FIX",
+        "text": " jquery.sap.global: deprecate synchronous module loading APIs",
+        "references": []
+      },
+      {
+        "id": "0a0f9accd53778838d800c10e751cf4abf1e64b7",
+        "type": "FIX",
+        "text": " jquery.sap.global: fix resource roots handling",
+        "references": []
+      },
+      {
+        "id": "20ac0a35bbccaf41b5e159156e821c2189418f9a",
+        "type": "FIX",
+        "text": " Configuration: Consider sap-locale over sap-language",
+        "references": []
+      },
+      {
+        "id": "bc5eeb65f8740ed4ee7999b5b692c021451df567",
+        "type": "FIX",
+        "text": " Message handling createEntry",
+        "references": []
+      },
+      {
+        "id": "e5d24a6cd2205f3a1dbc398a7af6bea992c6b0b6",
+        "type": "FIX",
+        "text": " ODataTreeBindingFlat: Use correct value for getContexts() length fallback",
+        "references": []
+      },
+      {
+        "id": "36fe180bce05b8fe17c632fc1304fa35153e6be8",
+        "type": "FIX",
+        "text": " Opa: improve matcher messages",
+        "references": []
+      },
+      {
+        "id": "8a7747668b5daf0b76e9145cfbe01243c2cab0f0",
+        "type": "FIX",
+        "text": " core.LocaleData: add default \"narrow\" and \"short\" relative patterns",
+        "references": []
+      },
+      {
+        "id": "79f62c20263efff7bb548d4339c3f7be757b8440",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Enable scrolling on iOS devices",
+        "references": []
+      },
+      {
+        "id": "a6aa088feb0c5255d3ba8dcfbbd3769118aea245",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: filter for edm types with numbers",
+        "references": []
       }
     ]
   }

@@ -281,7 +281,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handle the enter key event
 	 *
-	 * @param {jQuery.Event} oEvent - the keyboard event.
+	 * @param {jQuery.Event} oEvent The ENTER keyboard event object
 	 * @private
 	 */
 	PullToRefresh.prototype.onsapenter = function(oEvent) {
@@ -294,7 +294,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handle the space key event
 	 *
-	 * @param {jQuery.Event} event - the keyboard event.
+	 * @param {jQuery.Event} oEvent The SPACE keyboard event object
 	 * @private
 	 */
 	PullToRefresh.prototype.onsapspace = function(oEvent) {
@@ -311,7 +311,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Hides the control and resets it to the normal state. In non-touch environments the control is not hidden.
 	 *
-	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -322,10 +321,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-	/*
-	* Override visibility setter
-	* @private
-	*/
 	PullToRefresh.prototype.setVisible = function(bVisible){
 		if (this.getVisible() == bVisible) {
 			return this;

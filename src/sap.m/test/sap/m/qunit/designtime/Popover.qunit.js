@@ -82,5 +82,40 @@
 			afterUndo: fnConfirmElement1IsOn1stPosition,
 			afterRedo: fnConfirmElement1IsOn3rdPosition
 		});
+
+		// Rename title action module
+		var fnConfirmPopoverTextRenamedWithNewValue = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("popover").getTitle(),
+				"New Title",
+				"then the popover title has been renamed to the new value (New Title)");
+		};
+
+		var fnConfirmPopoverTextIsRenamedWithOldValue = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("popover").getTitle(),
+				"Old Title",
+				"then the popover title has been renamed to the old value (Old Title)");
+		};
+
+		rtaControlEnablingCheck("Checking the rename action for a Popover title", {
+			xmlView:
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'<Popover id="popover" title="Old Title">' +
+						'<Text text="Text 1" id="text1" />' +
+					'</Popover>' +
+				'</mvc:View>',
+			action: {
+				name: "rename",
+				controlId: "popover",
+				parameter: function (oView) {
+					return {
+						newValue: "New Title",
+						renamedElement: oView.byId("popover")
+					};
+				}
+			},
+			afterAction: fnConfirmPopoverTextRenamedWithNewValue,
+			afterUndo: fnConfirmPopoverTextIsRenamedWithOldValue,
+			afterRedo: fnConfirmPopoverTextRenamedWithNewValue
+		});
 	});
 })();

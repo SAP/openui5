@@ -331,7 +331,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 * @param {RegExp} oRegex A regEx to split the item
 		 * @param {string} iInitialValueLength The characters length of the value of the item
 		 *
-		 * @returns {string}
+		 * @returns {string} The HTML string
 		 * @private
 		 * @since 1.48
 		 */
@@ -360,6 +360,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 * Sets the selected item by its index.
 		 *
 		 * @param {int} iIndex The item index
+		 * @param {sap.ui.core.Item[]} _aItems The item array
 		 * @private
 		 */
 		ComboBox.prototype.setSelectedIndex = function(iIndex, _aItems /* only for internal usage */) {
@@ -1422,7 +1423,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		/**
 		 * Gets the default selected item from the aggregation named <code>items</code>.
 		 *
-		 * @returns {null}
+		 * @returns {null} Null, as there is no default selected item
 		 * @protected
 		 */
 		ComboBox.prototype.getDefaultSelectedItem = function() {
@@ -1435,7 +1436,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			};
 		};
 
-		/*
+		/**
 		 * Clears the selection.
 		 *
 		 * @protected
@@ -1449,7 +1450,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 *
 		 * @param {int} iSelectionStart The index of the first selected character.
 		 * @param {int} iSelectionEnd The index of the character after the last selected character.
-		 * @returns <code>this</code> to allow method chaining
+		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining
 		 * @protected
 		 * @since 1.22.1
 		 */
@@ -1723,7 +1724,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		/**
 		 * Synchronizes combobox's model update with selected key.
 		 *
-		 * @param oSelectedItem The item
+		 * @param {sap.ui.core.Item} oSelectedItem The item
 		 * @private
 		 */
 		ComboBox.prototype._syncItemsSelection = function (oSelectedItem) {

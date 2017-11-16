@@ -131,6 +131,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
      *
      * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
      * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+     * @param {string} fValue The current value for the accessibility state
      */
     RangeSliderRenderer.writeAccessibilityState = function(oRm, oSlider, fValue) {
         oRm.writeAccessibilityState(oSlider, {

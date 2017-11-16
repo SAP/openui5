@@ -234,10 +234,6 @@ sap.ui.require([
 								"id": "cacheBusterToken",
 								"libName": "sap.ui.core"
 							 },
-							 "unresolvedPropertyBindings": {
-								"id": "unresolvedPropertyBindings",
-								"libName": "sap.ui.core"
-							 },
 							 "bindingPathSyntaxValidation": {
 								"id": "bindingPathSyntaxValidation",
 								"libName": "sap.ui.core"

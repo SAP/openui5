@@ -19,8 +19,7 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": ["sap_hcb", "sap_belize", "sap_bluecrystal"]
+		}
 	},
 	"sap.ui5": {
 		"rootView": "testComponentAsync.View",

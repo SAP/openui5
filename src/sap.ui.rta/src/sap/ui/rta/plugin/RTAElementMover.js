@@ -102,8 +102,7 @@ function(
 	function fnIsValidForMove(oOverlay, bOnRegistration) {
 		var bValid = false,
 			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
-			oParentElementOverlay = oOverlay.getParentElementOverlay(),
-			oChangeHandlerRelevantElement;
+			oParentElementOverlay = oOverlay.getParentElementOverlay();
 
 		if (!oDesignTimeMetadata || !oParentElementOverlay) {
 			return false;
@@ -115,12 +114,7 @@ function(
 			return false;
 		}
 
-		var oMoveAction = this._getMoveAction(oOverlay);
-		if (oMoveAction && oMoveAction.changeType) {
-			// moveChangeHandler information is always located on the relevant container
-			oChangeHandlerRelevantElement = oOverlay.getRelevantContainer();
-			bValid = this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oChangeHandlerRelevantElement);
-		}
+		bValid = this._isMoveAvailableOnRelevantContainer(oOverlay);
 
 		if (bValid) {
 			bValid = this.oBasePlugin.hasStableId(oOverlay) &&
@@ -233,7 +227,7 @@ function(
 		if (oMovedOverlay.getParent().getElementInstance() !== oTargetElement) {
 			// check if binding context is the same
 			var aBindings = BindingsExtractor.getBindings(oMovedElement, oMovedElement.getModel());
-			if (Object.keys(aBindings).length > 0 && oTargetElement.getBindingContext()) {
+			if (Object.keys(aBindings).length > 0 && oMovedElement.getBindingContext() && oTargetElement.getBindingContext()) {
 				var sMovedElementBindingContext = Utils.getEntityTypeByPath(
 					oMovedElement.getModel(),
 					oMovedElement.getBindingContext().getPath()
@@ -250,6 +244,23 @@ function(
 
 		// check if movedOverlay is movable into the target aggregation
 		return fnHasMoveAction.call(this, oAggregationOverlay, oMovedElement, vTargetRelevantContainerAfterMove);
+	};
+
+	/**
+	 * Checks if move is available on relevantcontainer
+	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @return {boolean} true if move available on relevantContainer
+	 */
+	RTAElementMover.prototype._isMoveAvailableOnRelevantContainer = function(oOverlay) {
+		var oChangeHandlerRelevantElement,
+			oMoveAction = this._getMoveAction(oOverlay);
+
+		if (oMoveAction && oMoveAction.changeType) {
+			// moveChangeHandler information is always located on the relevant container
+			oChangeHandlerRelevantElement = oOverlay.getRelevantContainer();
+			return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oChangeHandlerRelevantElement);
+		}
+		return false;
 	};
 
 	/**

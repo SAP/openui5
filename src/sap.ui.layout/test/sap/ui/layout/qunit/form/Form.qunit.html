@@ -527,7 +527,7 @@
 
 			assert.notOk(oForm.getEditable(), "editable not set per default");
 			assert.notOk(jQuery("#F1").hasClass("sapUiFormEdit"), "Form not editable rendered");
-			assert.ok(jQuery("#F1").attr("aria-readonly"), "aria-readonly set");
+			assert.notOk(jQuery("#F1").attr("aria-readonly"), "aria-readonly not set");
 
 			sinon.spy(oFormContainer1, "invalidateLabels");
 			sinon.spy(oFormContainer2, "invalidateLabels");
@@ -592,18 +592,18 @@
 			var oRD = new sap.ui.layout.ResponsiveFlowLayoutData("RD1");
 			var oVD = new sap.ui.core.VariantLayoutData("VD1");
 
-			assert.notOk(oFormLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData"), "no LayoutData")
+			assert.notOk(oFormLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData"), "no LayoutData")
 
 			oField.setLayoutData(oRD);
-			assert.notOk(oFormLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData"), "no LayoutData")
+			assert.notOk(oFormLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData"), "no LayoutData")
 
 			oField.setLayoutData(oGD);
-			assert.equal(oFormLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData"), oGD, "LayoutData found")
+			assert.equal(oFormLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData"), oGD, "LayoutData found")
 
 			oField.setLayoutData(oVD);
 			oVD.addMultipleLayoutData(oRD);
 			oVD.addMultipleLayoutData(oGD);
-			assert.equal(oFormLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData"), oGD, "LayoutData found")
+			assert.equal(oFormLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData"), oGD, "LayoutData found")
 
 			oField.destroy();
 		});

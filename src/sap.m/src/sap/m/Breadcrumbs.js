@@ -367,11 +367,15 @@ sap.ui.define([
 		return this._oDistributedControls;
 	};
 
+	Breadcrumbs.prototype._getSelectWidth = function() {
+		return this._getSelect().getVisible() && this._iSelectWidth || 0;
+	};
+
 	Breadcrumbs.prototype._determineControlDistribution = function (iMaxContentSize) {
 		var index,
 			oControlInfo,
 			aControlInfo = this._getControlsInfo().aControlInfo,
-			iSelectWidth = this._iSelectWidth,
+			iSelectWidth = this._getSelectWidth(),
 			aControlsForSelect = [],
 			aControlsForBreadcrumbTrail = [],
 			iUsedSpace = iSelectWidth; // account for the selectWidth initially;
@@ -406,8 +410,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Stores the sizes and other info of controls so they don't need to be recalculated again until they change
+	 * Stores the sizes and other info of controls so they don't need to be recalculated again until they change.
 	 * @private
+	 * @returns {Object} The <code>Breadcrumbs</code> control information
 	 */
 	Breadcrumbs.prototype._getControlsInfo = function () {
 		if (!this._bControlsInfoCached) {

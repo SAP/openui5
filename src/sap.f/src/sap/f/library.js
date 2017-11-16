@@ -16,6 +16,7 @@ sap.ui.define(["sap/ui/Global",
 		name : "sap.f",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
+		designtime: "sap/f/designtime/library.designtime",
 		types: [
 			"sap.f.LayoutType",
 			"sap.f.DynamicPageTitleArea"
@@ -59,7 +60,10 @@ sap.ui.define(["sap/ui/Global",
 					"unhideControl": "default",
 					"moveControls": "default"
 				},
-				"sap.f.DynamicPageTitle" : "sap/f/flexibility/DynamicPageTitle"
+				"sap.f.DynamicPageTitle" : "sap/f/flexibility/DynamicPageTitle",
+				"sap.f.semantic.SemanticPage" : {
+					"moveControls": "default"
+				}
 			}
 		}
 	});
@@ -85,7 +89,7 @@ sap.ui.define(["sap/ui/Global",
 	*/
 	thisLib.DynamicPageTitleArea = {
 		/**
-		* The area includes the <code>heading<code>, <code>expandedContent<code> and <code>snappedContent<code> aggregations,
+		* The area includes the <code>heading</code>, <code>expandedContent</code> and <code>snappedContent</code> aggregations,
 		* positioned in the beginning area of the {@link sap.f.DynamicPageTitle}.
 		*
 		* @public
@@ -93,7 +97,7 @@ sap.ui.define(["sap/ui/Global",
 		Begin: "Begin",
 
 		/**
-		* The area includes the <code>content<code> aggregation,
+		* The area includes the <code>content</code> aggregation,
 		* positioned in the middle part of the {@link sap.f.DynamicPageTitle}.
 		*
 		* @public

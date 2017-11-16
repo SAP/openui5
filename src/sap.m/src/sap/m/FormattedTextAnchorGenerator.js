@@ -24,12 +24,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Metadata", "sap/m/library"], fu
 
 	/**
 	 * Generates anchors based on the provided configuration.
-	 * @param {string} sText
-	 * @param {sap.m.LinkConversion} sLinkConversionStrategy
-	 * @param {string} sTarget
+	 * @param {string} sText The text to be processed
+	 * @param {sap.m.LinkConversion} sLinkConversionStrategy The link conversion strategy
+	 * @param {string} sTarget The target attribute of the newly created anchors
 	 * @static
 	 * @public
-	 * @returns {string}
+	 * @returns {string} The resulting text after the anchor generation
 	 */
 	AnchorGenerator.generateAnchors = function (sText, sLinkConversionStrategy, sTarget) {
 		if (sLinkConversionStrategy === LinkConversion.ProtocolOnly) {

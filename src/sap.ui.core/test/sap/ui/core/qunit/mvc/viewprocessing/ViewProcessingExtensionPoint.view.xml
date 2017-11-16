@@ -1,0 +1,16 @@
+<mvc:View
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:core="sap.ui.core"
+        xmlns:mvcviewprocessing="sap.ui.core.qunit.mvc.viewprocessing"
+        xmlns="sap.m">
+
+
+    <core:ExtensionPoint id="ep">
+        <mvcviewprocessing:MyControl text="test-ext-1"></mvcviewprocessing:MyControl>
+        <mvcviewprocessing:MyControl text="test-ext-2"></mvcviewprocessing:MyControl>
+        <mvcviewprocessing:MyControl text="test-ext-3"></mvcviewprocessing:MyControl>
+        <mvcviewprocessing:MyControl text="test-ext-4"></mvcviewprocessing:MyControl>
+
+    </core:ExtensionPoint>
+    <Label text="test0"></Label>
+</mvc:View>

@@ -790,19 +790,20 @@ sap.ui.require([
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Rows not bound: Returned true");
 		oTable.getBinding.restore();
 
-		this.stub(TableUtils, "isInstanceOf").withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(false);
+		this.stub(TableUtils, "isInstanceOf").withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(true);
 		oTable.getBinding("rows").bUseBatchRequests = true;
-		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "No AnalyticalBinding: Returned true");
-
-		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(true);
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding using batch requests: Returned true");
 
 		oTable.getBinding("rows").bUseBatchRequests = false;
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding not using batch requests: Returned false");
-		oTable.getBinding("rows").bUseBatchRequests = true;
 
+		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(false);
 		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(true);
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "TreeBinding: Returned false");
+
+		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(false);
+		oTable.getBinding("rows").bUseBatchRequests = true;
+		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Other binding: Returned true");
 
 		TableUtils.isInstanceOf.restore();
 		delete oTable.getBinding("rows").bUseBatchRequests;

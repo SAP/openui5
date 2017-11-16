@@ -18,13 +18,13 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 	 * The Configuration is initialized once when the {@link sap.ui.core.Core} is created.
 	 * There are different ways to set the environment configuration (in ascending priority):
 	 * <ol>
-	 * <li>System defined defaults
-	 * <li>Server wide defaults, read from /sap-ui-config.json
-	 * <li>Properties of the global configuration object window["sap-ui-config"]
-	 * <li>A configuration string in the data-sap-ui-config attribute of the bootstrap tag
-	 * <li>Individual data-sap-ui-xyz attributes of the bootstrap tag
-	 * <li>Using URL parameters
-	 * <li>Setters in this Configuration object (only for some parameters)
+	 * <li>System defined defaults</li>
+	 * <li>Server wide defaults, read from /sap-ui-config.json</li>
+	 * <li>Properties of the global configuration object window["sap-ui-config"]</li>
+	 * <li>A configuration string in the data-sap-ui-config attribute of the bootstrap tag</li>
+	 * <li>Individual data-sap-ui-<i>xyz</i> attributes of the bootstrap tag</li>
+	 * <li>Using URL parameters</li>
+	 * <li>Setters in this Configuration object (only for some parameters)</li>
 	 * </ol>
 	 *
 	 * That is, attributes of the DOM reference override the system defaults, URL parameters
@@ -34,8 +34,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 	 *
 	 * The naming convention for parameters is:
 	 * <ul>
-	 * <li>in the URL : sap-ui-<i>PARAMETER-NAME</i>="value"
-	 * <li>in the DOM : data-sap-ui-<i>PARAMETER-NAME</i>="value"
+	 * <li>in the URL : sap-ui-<i>PARAMETER-NAME</i>="value"</li>
+	 * <li>in the DOM : data-sap-ui-<i>PARAMETER-NAME</i>="value"</li>
 	 * </ul>
 	 * where <i>PARAMETER-NAME</i> is the name of the parameter in lower case.
 	 *
@@ -131,6 +131,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
+					"xx-xml-processing"    : { type : "string",  defaultValue : "" },
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -292,11 +293,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				var oUriParams = jQuery.sap.getUriParameters();
 
 				// first map SAP parameters, can be overwritten by "sap-ui-*" parameters
-
-				if ( oUriParams.mParams['sap-locale'] ) {
-					setValue("language", oUriParams.get('sap-locale'));
-				}
-
 				if ( oUriParams.mParams['sap-language'] ) {
 					// always remember as SAP Logon language
 					var sValue = config.sapLogonLanguage = oUriParams.get('sap-language');
@@ -308,6 +304,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 						// only complain about an invalid sap-language if neither sap-locale nor sap-ui-language are given
 						jQuery.sap.log.warning("sap-language '" + sValue + "' is not a valid BCP47 language tag and will only be used as SAP logon language");
 					}
+				}
+
+				// Check sap-locale after sap-language to ensure compatibility if both parameters are provided (e.g. portal iView).
+				if ( oUriParams.mParams['sap-locale'] ) {
+					setValue("language", oUriParams.get('sap-locale'));
 				}
 
 				if (oUriParams.mParams['sap-rtl']) {
@@ -713,6 +714,32 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getSAPParam : function (sName) {
 			return this.sapparams && this.sapparams[sName];
+		},
+
+		/**
+		 * The mode for async XMLView processing.
+		 * Potential values are: <code>sequential</code>
+		 * Turned OFF by default
+		 * @since 1.52.1
+		 * @experimental
+		 * @return {string} Asynchronous XML Processing mode
+		 * @public
+		 */
+		getXMLProcessingMode : function () {
+			return this["xx-xml-processing"];
+		},
+
+		/**
+		 * Determines the mode for async XMLView processing.
+		 * @experimental
+		 * @since 1.52.1
+		 * @param {string} sMode Asynchronous XML Processing mode, activated if set to <code>sequential</code>
+		 * @returns {sap.ui.core.Configuration}
+		 * @private
+		 */
+		setXMLProcessingMode : function (sMode) {
+			this["xx-xml-processing"] = sMode;
+			return this;
 		},
 
 		/**

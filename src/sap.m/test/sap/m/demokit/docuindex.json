@@ -1104,7 +1104,8 @@
 			"sap.m.sample.TableExport",
 			"sap.m.sample.TableOutdated",
 			"sap.m.sample.TableEditable",
-			"sap.m.sample.TableAlternateRowColors"
+			"sap.m.sample.TableAlternateRowColors",
+			"sap.m.sample.TableDnD"
 		  ]
 		},
 		{
@@ -1214,7 +1215,8 @@
 			"sap.m.sample.TreeInitialExpandState",
 			"sap.m.sample.TreeCollapseAll",
 			"sap.m.sample.TreeOData",
-			"sap.m.sample.TreeJSONLazyLoading"
+			"sap.m.sample.TreeJSONLazyLoading",
+			"sap.m.sample.TreeDnD"
 		  ]
 		},
 		{
@@ -2080,6 +2082,11 @@
           "name": "Tree - Lazy loading with a JSON model",
           "description": "Shows how lazy loading with a JSON model can be done using the toggleOpenState event."
         },
+        {
+          "id": "sap.m.sample.TreeDnD",
+          "name": "Tree - Drag and Drop",
+          "description": "This example shows drag-and-drop capability."
+        },
 		{
 			"id": "sap.m.sample.RangeSlider",
 			"name": "RangeSlider",
@@ -2303,6 +2310,11 @@
 		  "id": "sap.m.sample.TableAlternateRowColors",
 		  "name": "Table - Alternate Row Colors",
 		  "description": "Table with alternating light and dark background colors. Note: The effect of this feature is only visible in the SAP Belize and Belize Deep themes."
+		},
+		{
+		  "id": "sap.m.sample.TableDnD",
+		  "name": "Table - Drag and Drop",
+		  "description": "Shows the different kinds of drag-and-drop capabilities."
 		},
 		{
 		  "id": "sap.m.sample.TablePerso",
@@ -2652,7 +2664,7 @@
 		{
 		  "id": "sap.m.sample.StepInput",
 		  "name": "StepInput",
-		  "description": "The StepInput allows the user to change stepwise a value by a predefined step."
+		  "description": "The StepInput allows the user to change stepwise a value by a predefined step and also to set additional description, such as units of measurement and currencies after the input field."
 		},
 		{
 		"id": "sap.m.sample.TimePicker",

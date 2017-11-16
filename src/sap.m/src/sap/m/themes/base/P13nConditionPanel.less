@@ -46,3 +46,8 @@
 .sapMFilterPanel .sapMTB  {
     border-bottom: 0px;
 }
+
+//WORKAROUND BCP:1770523047 : set min-height back to 0px 
+.sapMConditionPanel div[class*="sapUiRespGrid"] > div[class*="sapUiRespGridSpan"] {
+	min-height: 0px;
+}

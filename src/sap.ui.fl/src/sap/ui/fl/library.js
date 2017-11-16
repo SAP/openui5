@@ -24,6 +24,7 @@ sap.ui.define([
 		dependencies: [
 			"sap.ui.core", "sap.m"
 		],
+		designtime: "sap/ui/fl/designtime/library.designtime",
 		extensions: {
 			"sap.ui.support": {
 				diagnosticPlugins: [

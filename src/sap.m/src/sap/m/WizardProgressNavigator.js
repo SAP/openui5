@@ -682,7 +682,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery, Actio
 
 	/**
 	 * Checks whether the step is active.
-	 * @param {stepNumber} iStep The step number to be checked.
+	 * @param {number} stepNumber The step number to be checked.
 	 * @returns {boolean} True when the step number has been activated, false otherwise.
 	 * @private
 	 */

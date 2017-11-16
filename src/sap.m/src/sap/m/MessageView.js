@@ -399,7 +399,7 @@ sap.ui.define([
 	/**
 	 * Groups items in an object of keys and correspoding array of items
 	 * @param {sap.m.MessageItem[]} aItems An array of items
-	 * @returns oGroups Item object
+	 * @returns {object} Item object
 	 * @private
 	 */
 	MessageView.prototype._groupItems = function (aItems) {
@@ -964,6 +964,7 @@ sap.ui.define([
 
 	/**
 	 * Perform description sanitization based on Caja HTML sanitizer
+	 * @param {sap.m.MessageItem} oMessageItem The item to be sanitized
 	 * @private
 	 */
 	MessageView.prototype._sanitizeDescription = function (oMessageItem) {
@@ -1064,7 +1065,7 @@ sap.ui.define([
 
 	/**
 	 * Destroys the content of details page
-	 *
+	 * @param {sap.ui.core.Control} aDetailsPageContent The details page content
 	 * @private
 	 */
 	MessageView.prototype._clearDetailsPage = function (aDetailsPageContent) {

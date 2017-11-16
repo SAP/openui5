@@ -46,6 +46,9 @@
 			<Label text="Date, relative: &quot;true&quot;" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
 			<DatePicker value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
+			<Label text="DateRange, format: yMEd, UTC: true" visible="{ui>/v2}"/>
+			<Input value="{parts: [{ path: 'v2>TravelStartDate'},{ path:'v2>TravelEndDate'}], type: 'sap.ui.model.type.DateInterval', formatOptions: { format: 'yMd', UTC: true}}" visible="{ui>/v2}"/>
+			<DateRangeSelection value="{parts: [{ path: 'v2>TravelStartDate'},{ path:'v2>TravelEndDate'}], type: 'sap.ui.model.type.DateInterval', formatOptions: { format: 'yMd', UTC: true}}" visible="{ui>/v2}"/>
 
 			<Label text="DateTime" visible="{ui>/v2}"/>
 			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime'}" visible="{ui>/v2}"/>

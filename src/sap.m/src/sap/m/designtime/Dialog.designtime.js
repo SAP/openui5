@@ -24,12 +24,41 @@ sap.ui.define([],
 			},
 			aggregations: {
 				content : {
-					domRef : "> .sapMDialogSection"
+					domRef : "> .sapMDialogSection",
+					actions: {
+						move: "moveControls"
+					}
 				},
 				customHeader: {
 					domRef: function (oControl) {
 						if (oControl._getAnyHeader()) {
 							return oControl._getAnyHeader().getDomRef();
+						}
+					}
+				},
+				subHeader: {
+					domRef: ":sap-domref > .sapMDialogSubHeader"
+				},
+				beginButton: {
+					domRef: function(oControl) {
+						return oControl.getBeginButton().getDomRef();
+					},
+					ignore: function(oControl) {
+						return !oControl.getBeginButton() || !!oControl.getButtons().length;
+					}
+				},
+				endButton: {
+					domRef: function(oControl) {
+						return oControl.getEndButton().getDomRef();
+					},
+					ignore: function(oControl) {
+						return !oControl.getEndButton() || !!oControl.getButtons().length;
+					}
+				},
+				buttons: {
+					domRef: function(oControl) {
+						if (oControl.getButtons().length) {
+							return oControl._oToolbar.getDomRef();
 						}
 					}
 				}

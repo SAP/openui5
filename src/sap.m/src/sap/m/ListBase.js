@@ -211,7 +211,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			 * A toolbar that is placed below the header to show extra information to the user.
 			 * @since 1.16
 			 */
-			infoToolbar : {type : "sap.m.Toolbar", multiple : false}
+			infoToolbar : {type : "sap.m.Toolbar", multiple : false},
+
+			/**
+			 * Defines the drag-and-drop configuration.
+			 *
+			 * @since 1.54
+			 */
+			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
 		},
 		associations: {
 
@@ -1107,6 +1114,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 
 	// fire updateFinished event delayed to make sure rendering phase is done
 	ListBase.prototype._fireUpdateFinished = function(oInfo) {
+		this._hideBusyIndicator();
 		jQuery.sap.delayedCall(0, this, function() {
 			this._bItemNavigationInvalidated = true;
 			this.fireUpdateFinished({

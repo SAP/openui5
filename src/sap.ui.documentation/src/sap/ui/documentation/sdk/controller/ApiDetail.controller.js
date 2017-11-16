@@ -1293,36 +1293,6 @@ sap.ui.define([
 			 */
 			formatDeprecated: function (sSince, sDescription, sEntityType) {
 				var aResult;
-				// Evaluate links and code blocks in the deprecation description
-
-				if (sDescription) {
-					// Handle {@link ...}, {@link ... ...}, {@link #...} and <code>...</code> patterns
-					sDescription = sDescription.replace(/{@link\s+([^}\s]+)(?:\s+([^}]*))?}|<code>(\S+)<\/code>/gi,
-						function (sMatch, sEntity, sName, sCodeEntity) {
-							var sTarget;
-
-							if (sCodeEntity) {
-								// Handle code block pattern
-								return ['<em>', sCodeEntity, '</em>'].join("");
-							} else {
-								// Handle link patterns
-
-								// Build Target
-								if (sEntityType) {
-									// Handle hash pattern - used for methods and events on some occasions
-									sEntity = sEntity[0] === "#" ? sEntity.substring(1, sEntity.length) : sEntity;
-									sTarget = [this._sTopicid, "/", sEntityType, "/", sEntity].join("");
-								} else {
-									// Direct link to entity
-									sTarget = sEntity;
-								}
-
-								// link attributes should follow the pattern {href="URL" target="entity|method|event"}
-								return ['<a href="#/api/', sTarget, '">', (sName ? sName : sEntity), '</a>'].join("");
-							}
-
-						}.bind(this));
-				}
 
 				// Build deprecation message
 				// Note: there may be no since or no description text available
@@ -1331,7 +1301,8 @@ sap.ui.define([
 					aResult.push(" since " + sSince);
 				}
 				if (sDescription) {
-					aResult.push(". " + sDescription);
+					// Evaluate links and code blocks in the deprecation description
+					aResult.push(". " + this._preProcessLinksInTextBlock(sDescription));
 				}
 
 				return aResult.join("");
@@ -1654,19 +1625,18 @@ sap.ui.define([
 			},
 
 			/**
-			 * This function wraps a text in a span tag so that it can be represented in an HTML control.
-			 * @param {string} sText
-			 * @returns {string}
+			 * Pre-process links in text block
+			 * @param {string} sText text block
+			 * @returns {string} processed text block
 			 * @private
 			 */
-			_wrapInSpanTag: function (sText) {
+			_preProcessLinksInTextBlock: function (sText) {
 				var topicsData = this.getModel('topics').oData,
 					topicName = topicsData.name || "",
 					topicMethods = topicsData.methods || [];
 
-				var sFormattedTextBlock = JSDocUtil.formatTextBlock(sText, {
+				return JSDocUtil.formatTextBlock(sText, {
 					linkFormatter: function (target, text) {
-
 						var iHashIndex, // indexOf('#')
 							iHashDotIndex, // indexOf('#.')
 							iHashEventIndex, // indexOf('#event:')
@@ -1756,15 +1726,23 @@ sap.ui.define([
 						if (sScrollHandlerClass) {
 							sLink += ' ' + sScrollHandlerClass;
 						}
-						sLink += '" href="#/' + sRoute + '/' + target +
+						sLink += '" target="_self" href="#/' + sRoute + '/' + target +
 							'" data-sap-ui-target="' + sEntityName + '">' + text + '</a>';
 
 						return sLink;
 
 					}
 				});
+			},
 
-				return '<span class="sapUiDocumentationJsDoc">' + sFormattedTextBlock + '</span>';
+			/**
+			 * This function wraps a text in a span tag so that it can be represented in an HTML control.
+			 * @param {string} sText
+			 * @returns {string}
+			 * @private
+			 */
+			_wrapInSpanTag: function (sText) {
+				return '<span class="sapUiDocumentationJsDoc">' + this._preProcessLinksInTextBlock(sText) + '</span>';
 			}
 		});
 

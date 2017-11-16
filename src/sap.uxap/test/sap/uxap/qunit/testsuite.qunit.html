@@ -35,11 +35,11 @@
         // Design Time & RTA Enabling
         // --------------------------
         //complete libraries dt files general json data
-        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/dt/Library.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/designtime/Library.qunit.html");
         //individual controls
         sap.ui.getCore().loadLibrary("sap.ui.rta");
-        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/dt/ObjectPageHeader.qunit.html");
-        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/dt/ObjectPageSubSection.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/designtime/ObjectPageHeader.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/designtime/ObjectPageSubSection.qunit.html");
 
         return suite;
     }

@@ -8,17 +8,14 @@ sap.ui.define([
 		'./OpaPlugin',
 		'./PageObjectFactory',
 		'sap/ui/base/Object',
-		'sap/ui/Device',
 		'./launchers/iFrameLauncher',
 		'./launchers/componentLauncher',
 		'sap/ui/core/routing/HashChanger',
 		'./matchers/Matcher',
 		'./matchers/AggregationFilled',
 		'./matchers/PropertyStrictEquals',
-		'./pipelines/MatcherPipeline',
 		'./pipelines/ActionPipeline',
 		'./_ParameterValidator',
-		'./_LogCollector',
 		'./_OpaLogger',
 		'sap/ui/thirdparty/URI',
 		'sap/ui/base/EventProvider',
@@ -29,17 +26,14 @@ sap.ui.define([
 			 OpaPlugin,
 			 PageObjectFactory,
 			 Ui5Object,
-			 Device,
 			 iFrameLauncher,
 			 componentLauncher,
 			 HashChanger,
 			 Matcher,
 			 AggregationFilled,
 			 PropertyStrictEquals,
-			 MatcherPipeline,
 			 ActionPipeline,
 			 _ParameterValidator,
-			 _LogCollector,
 			 _OpaLogger,
 			 URI,
 			 EventProvider,
@@ -200,7 +194,7 @@ sap.ui.define([
 			var oStartComponentOptions = createWaitForObjectWithoutDefaults();
 			oStartComponentOptions.success = function () {
 				// include stylesheet
-				var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
+				var sComponentStyleLocation = $.sap.getModulePath("sap.ui.test.OpaCss",".css");
 				$.sap.includeStyleSheet(sComponentStyleLocation);
 
 				HashChanger.getInstance().setHash(oOptions.hash || "");
@@ -567,7 +561,7 @@ sap.ui.define([
 		 *         autoWait: true
 		 *     });
 		 *     </pre>
-	 	 * </code>
+		 * </code>
 		 * Why is it recommended:
 		 * When writing a huge set of tests and executing them frequently you might face tests that are sometimes successful but sometimes they are not.
 		 * Setting the autoWait to true should stabilize most of those tests.
@@ -625,7 +619,7 @@ sap.ui.define([
 				var oPlugin = Opa5.getPlugin();
 
 				// even if we have no control the matchers may provide a value for vControl
-				vResult = oPlugin.getFilterdControls(options, vControl);
+				vResult = oPlugin._getFilteredControls(options, vControl);
 
 				if (iFrameLauncher.hasLaunched() && $.isArray(vResult)) {
 					// People are using instanceof Array in their check so i need to make sure the Array
@@ -639,6 +633,7 @@ sap.ui.define([
 				}
 
 				if (vResult === OpaPlugin.FILTER_FOUND_NO_CONTROLS) {
+					oLogger.debug("Matchers found no controls so check function will be skipped");
 					return false;
 				}
 
@@ -1023,10 +1018,11 @@ sap.ui.define([
 		Opa5.prototype._executeCheck = function (fnCheck, vControl) {
 			var aArgs = [];
 			vControl && aArgs.push(vControl);
-			oLogger.debug("Opa is executing the check: " + fnCheck);
+			oLogger.debug("Executing OPA check function on controls " + vControl);
+			oLogger.debug("Check function is:\n" + fnCheck);
 
 			var bResult = fnCheck.apply(this, aArgs);
-			oLogger.debug("Opa check was " + bResult);
+			oLogger.debug("Result of check function is: " + bResult || "not defined or null");
 
 			return bResult;
 		};
@@ -1207,4 +1203,4 @@ sap.ui.define([
 
 
 		return Opa5;
-}, /* export= */ true);
+});

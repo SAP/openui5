@@ -7,6 +7,30 @@
         "type": "FIX",
         "text": " sap.ui.fl: checkTargetAndApplyChange small fix on applied changes",
         "references": []
+      },
+      {
+        "id": "bbd4ecb2110dd6f137a110e98ff56e0fd169afa8",
+        "type": "FIX",
+        "text": " Fix several issues in Variant Management Control",
+        "references": []
+      },
+      {
+        "id": "9559d164e0066ec333a55c8d774b49e5102a528f",
+        "type": "FIX",
+        "text": " Opening file in LREP browser lasts long",
+        "references": []
+      },
+      {
+        "id": "dc38f0cac1a88ff67f9735d3b64c368d144aeb5a",
+        "type": "FEATURE",
+        "text": " fl.VariantManagement: prohibit the deletion of the last entry",
+        "references": []
+      },
+      {
+        "id": "a02a75d0e36c66b795e3a6073c9d611492dae8c9",
+        "type": "FIX",
+        "text": " Fix control variant issues",
+        "references": []
       }
     ]
   }

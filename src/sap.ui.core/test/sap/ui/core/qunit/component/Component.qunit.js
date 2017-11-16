@@ -119,6 +119,7 @@ sap.ui.define([
 		return TestDtComp.getMetadata().loadDesignTime().then(function(_oDesignTime) {
 			//module was added
 			oDesignTime.designtimeModule = "test/dtcomp/Component.designtime";
+			oDesignTime._oLib = null;
 			assert.deepEqual(_oDesignTime, oDesignTime, "DesignTime was loaded properly");
 			sinon.assert.callCount(oRequireStub, 1);
 			oRequireStub.restore();

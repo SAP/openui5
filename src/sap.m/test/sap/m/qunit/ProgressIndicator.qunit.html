@@ -127,14 +127,14 @@
 		var iPercentTest = 120;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
-		assert.equal(iPercentAfter, 0, "the value should be set to the default one");
+		assert.equal(iPercentAfter, 100, "the value should be set to the mximum one");
 	});
 
 	QUnit.test("setPercentValue wrong input (int out of range, too small)", function(assert) {
 		var iPercentTest = -20;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
-		assert.equal(iPercentAfter, 0, "the value should be set to the default one");
+		assert.equal(iPercentAfter, 0, "the value should be set to the minimum one");
 	});
 
 
@@ -151,7 +151,7 @@
 			{value: 1, expectedClass: "sapMPIValueNormal"},
 			{value: 0.1, expectedClass: "sapMPIValueNormal"},
 			{value: 0.255, expectedClass: "sapMPIValueNormal"},
-			{value: 101, expectedClass: "sapMPIValueMin"},
+			{value: 101, expectedClass: "sapMPIValueMax"},
 			{value: 0, expectedClass: "sapMPIValueMin"},
 			{value: -1, expectedClass: "sapMPIValueMin"}
 		],

@@ -7,7 +7,8 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 	"use strict";
 	var aDesigntimeElements = [],
 		aModels = [],
-		mBundles = {};
+		mBundles = {},
+		sLibrary;
 	function hasText(sKey, oBundle) {
 		return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== null;
 	}
@@ -17,6 +18,7 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 			sap.ui.getCore().loadLibraries([sTestLibrary]).then(function() {
 				var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary],
 					aElements = oLibrary.controls.concat(oLibrary.elements);
+				sLibrary = sTestLibrary;
 				sap.ui.require(aElements.map(function(s) {
 					return jQuery.sap.getResourceName(s,"");
 				}), function() {
@@ -180,16 +182,31 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 					assert.strictEqual(typeof sCreateTemplate, "string", "templates/create entry defines fragment path to " + sCreateTemplate);
 					var oData = jQuery.sap.sjax({url: jQuery.sap.getResourcePath(sCreateTemplate,"")});
 					assert.ok(oData.data.documentElement && oData.data.documentElement.localName === "FragmentDefinition", "File " + sCreateTemplate + " exists and starts with a FragmentDefinition node");
+					/*
 					var oControl = sap.ui.xmlfragment({
 						fragmentContent: oData.data.documentElement,
 						oController: this
 					});
-					assert.strictEqual(oControl instanceof jQuery.sap.getObject(sControlName), true, sCreateTemplate + " created a control with the right type " + sControlName + "/" + oControl.getMetadata().getName());
+					*/
+					//check the controls type
+					//assert.strictEqual((oControl instanceof jQuery.sap.getObject(sControlName)) ||  , true, sCreateTemplate + " created a control with the right type " + sControlName + "/" + oControl.getMetadata().getName());
 				}
 			}
 		}
 	};
 	function addTests(QUnit) {
+		QUnit.asyncTest("Checking library.designtime.js", function(assert) {
+			var oLibrary = sap.ui.getCore().getLoadedLibraries()[sLibrary];
+			if (oLibrary.designtime) {
+				sap.ui.require([oLibrary.designtime], function(o) {
+					assert.ok(o !== null, oLibrary.designtime + " loaded successfully");
+					QUnit.start();
+				});
+			} else {
+				assert.ok(true, "No library.designtime.js " + sLibrary);
+				QUnit.start();
+			}
+		});
 		QUnit.test("Checking loaded designtime data", function(assert) {
 			aDesigntimeElements.forEach(function(oDTData) {
 				assert.strictEqual(oDTData != null, true, "Designtime data found and loaded successful");

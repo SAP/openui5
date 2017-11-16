@@ -116,6 +116,98 @@
 			assert.ok(oSpySetProperty.calledWith("minutesStep", STEP, true), "property is updated without re-rendering");
 		});
 
+		QUnit.test("setMinutesStep corrects value 0 to 1", function(assert) {
+			var oSpySetProperty,
+					oSpySlidersSetMinutesStep,
+					step = 0,
+					expectedStep = 1;
+
+			//arrange
+			this.oTp._createPicker(this.oTp.getDisplayFormat());
+
+			oSpySetProperty = this.spy(this.oTp, "setProperty");
+			oSpySlidersSetMinutesStep = this.spy(this.oTp._getSliders(), "setMinutesStep");
+
+			//Act
+			this.oTp.setMinutesStep(step);
+
+			//Assert
+			assert.ok(oSpySlidersSetMinutesStep.calledWith(expectedStep), "setMinutesStep is propagated to the picker part with corrected value - 0 becomes 1");
+			assert.ok(oSpySetProperty.calledWith("minutesStep", expectedStep, true), "property is updated without re-rendering. Setter is called with corrected value - 0 becomes 1");
+
+			oSpySetProperty.restore();
+			oSpySlidersSetMinutesStep.restore();
+		});
+
+		QUnit.test("setSecondsStep corrects value 0 to 1", function(assert) {
+			var oSpySetProperty,
+					oSpySlidersSetSecondsStep,
+					step = 0,
+					expectedStep = 1;
+
+			//arrange
+			this.oTp._createPicker(this.oTp.getDisplayFormat());
+
+			oSpySetProperty = this.spy(this.oTp, "setProperty");
+			oSpySlidersSetSecondsStep = this.spy(this.oTp._getSliders(), "setSecondsStep");
+
+			//Act
+			this.oTp.setSecondsStep(step);
+
+			//Assert
+			assert.ok(oSpySlidersSetSecondsStep.calledWith(expectedStep), "setSecondsStep is propagated to the picker part with corrected value - 0 becomes 1");
+			assert.ok(oSpySetProperty.calledWith("secondsStep", expectedStep, true), "property is updated without re-rendering. Setter is called with corrected value - 0 becomes 1");
+
+			oSpySetProperty.restore();
+			oSpySlidersSetSecondsStep.restore();
+		});
+
+		QUnit.test("setMinutesStep corrects negative values to 1", function(assert) {
+			var oSpySetProperty,
+					oSpySlidersSetMinutesStep,
+					step = -2,
+					expectedStep = 1;
+
+			//arrange
+			this.oTp._createPicker(this.oTp.getDisplayFormat());
+
+			oSpySetProperty = this.spy(this.oTp, "setProperty");
+			oSpySlidersSetMinutesStep = this.spy(this.oTp._getSliders(), "setMinutesStep");
+
+			//Act
+			this.oTp.setMinutesStep(step);
+
+			//Assert
+			assert.ok(oSpySlidersSetMinutesStep.calledWith(expectedStep), "setMinutesStep is propagated to the picker part with corrected value - -2 becomes 1");
+			assert.ok(oSpySetProperty.calledWith("minutesStep", expectedStep, true), "property is updated without re-rendering. Setter is called with corrected value - -2 becomes 1");
+
+			oSpySetProperty.restore();
+			oSpySlidersSetMinutesStep.restore();
+		});
+
+		QUnit.test("setSecondsStep corrects negative values to 1", function(assert) {
+			var oSpySetProperty,
+					oSpySlidersSetSecondsStep,
+					step = -2,
+					expectedStep = 1;
+
+			//arrange
+			this.oTp._createPicker(this.oTp.getDisplayFormat());
+
+			oSpySetProperty = this.spy(this.oTp, "setProperty");
+			oSpySlidersSetSecondsStep = this.spy(this.oTp._getSliders(), "setSecondsStep");
+
+			//Act
+			this.oTp.setSecondsStep(step);
+
+			//Assert
+			assert.ok(oSpySlidersSetSecondsStep.calledWith(expectedStep), "setSecondsStep is propagated to the picker part with corrected value - -2 becomes 1");
+			assert.ok(oSpySetProperty.calledWith("secondsStep", expectedStep, true), "property is updated without re-rendering. Setter is called with corrected value - -2 becomes 1");
+
+			oSpySetProperty.restore();
+			oSpySlidersSetSecondsStep.restore();
+		});
+
 		QUnit.module("step precision in sliders", {
 			beforeEach: function() {
 				this.oSliders = new sap.m.TimePickerSliders({
@@ -1608,6 +1700,69 @@
 
 			//cleanup
 			sliderHours._animateScroll.restore();
+			tp.destroy();
+		});
+
+		QUnit.test("Drag completed: After animation is completed, _animateScroll method does not call _scrollerSnapped " +
+			"if slider is not visible", function(assert) {
+
+			//sut
+			var tp = new sap.m.TimePicker(),
+				sliderHours,
+				oScrollerSnappedSpy;
+
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+			this.clock.tick(100);
+
+			sliderHours = tp._getSliders().getAggregation("_columns")[0];
+			oScrollerSnappedSpy = this.spy(sliderHours, "_scrollerSnapped");
+
+			//act
+			sliderHours._animateScroll(0.04); //0.04 to make sure snapping logic inside _animateScroll will take place.
+			this.clock.tick(30); //to bypass frameFrequencyMs inside _animateScroll
+			sliderHours.$().find(".sapMTimePickerSlider").css('visibility', 'hidden');
+			this.clock.tick(250);//to make sure the animation in _animateScroll is completed(check SCROLL_ANIMATION_DURATION)
+
+			//assert
+			assert.equal(oScrollerSnappedSpy.callCount, 0, "_scrollerSnapped is not called");
+
+			//cleanup
+			oScrollerSnappedSpy.restore();
+			tp.destroy();
+		});
+
+		QUnit.test("Arrow Up' button pressed: After animation is completed, _offsetValue method does not call " +
+			"_scrollerSnapped if slider is not visible", function(assert) {
+
+			//sut
+			var tp = new sap.m.TimePicker(),
+				sliderHours,
+				oScrollerSnappedSpy;
+
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+			this.clock.tick(100);
+
+			sliderHours = tp._getSliders().getAggregation("_columns")[0];
+			oScrollerSnappedSpy = this.spy(sliderHours, "_scrollerSnapped");
+
+			//act
+			sliderHours.getAggregation("_arrowUp").firePress();
+			sliderHours.$().find(".sapMTimePickerSlider").css('visibility', 'hidden');
+			this.clock.tick(250);//to make sure the animation is completed(check SCROLL_ANIMATION_DURATION)
+
+			//assert
+			assert.equal(oScrollerSnappedSpy.callCount, 0, "_scrollerSnapped is not called");
+
+			//cleanup
+			oScrollerSnappedSpy.restore();
 			tp.destroy();
 		});
 

@@ -343,6 +343,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		this.destroyControls(["Expander"]);
 	};
 
+	TreeItemBase.prototype.onlongdragover = function(oEvent) {
+		this.informTree("LongDragOver");
+	};
+
 	return TreeItemBase;
 
 });

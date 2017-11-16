@@ -439,9 +439,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Change the switch state between on and off.
 		 *
-		 * @param {boolean} bState
+		 * @param {boolean} bState The new state - true for 'on' and false for 'off'
 		 * @public
-		 * @return {sap.m.Switch} <code>this</code> to allow method chaining.
+		 * @returns {sap.m.Switch} <code>this</code> to allow method chaining.
 		 */
 		Switch.prototype.setState = function(bState) {
 			this.setProperty("state", bState, true);

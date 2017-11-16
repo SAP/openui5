@@ -28,7 +28,10 @@
 
 
 			//Object Number control to demonstrate state changes
-			var txt3 = new sap.m.Label({text:"ObjectNumber value state: "});
+			var txt3 = new sap.m.Label({
+				text:"ObjectNumber value state: ",
+				labelFor: "select"
+			});
 
 			var on3 = new sap.m.ObjectNumber("on3", {
 				number: "1.50",
@@ -36,67 +39,67 @@
 				emphasized: false
 			});
 
-            var txt4 = new sap.m.Label({text: "textDirection: LTR, textAlign: Begin"});
+			var txt4 = new sap.m.Label({text: "textDirection: LTR, textAlign: Begin"});
 
-            var on4 = new sap.m.ObjectNumber("on4", {
-                number: "1.50",
-                unit: "Euro",
-                emphasized: true,
-                textDirection: sap.ui.core.TextDirection.LTR,
-                textAlign: sap.ui.core.TextAlign.Begin
-            });
+			var on4 = new sap.m.ObjectNumber("on4", {
+				number: "1.50",
+				unit: "Euro",
+				emphasized: true,
+				textDirection: sap.ui.core.TextDirection.LTR,
+				textAlign: sap.ui.core.TextAlign.Begin
+			});
 
-            var txt5 = new sap.m.Label({text: "textDirection: LTR, textAlign: End"});
+			var txt5 = new sap.m.Label({text: "textDirection: LTR, textAlign: End"});
 
-            var on5 = new sap.m.ObjectNumber("on5", {
-                number: "1.50",
-                unit: "Euro",
-                emphasized: true,
-                textDirection: sap.ui.core.TextDirection.LTR,
-                textAlign: sap.ui.core.TextAlign.End
-            });
+			var on5 = new sap.m.ObjectNumber("on5", {
+				number: "1.50",
+				unit: "Euro",
+				emphasized: true,
+				textDirection: sap.ui.core.TextDirection.LTR,
+				textAlign: sap.ui.core.TextAlign.End
+			});
 
-            var txt6 = new sap.m.Label({text: "textDirection: RTL, textAlign: Begin"});
+			var txt6 = new sap.m.Label({text: "textDirection: RTL, textAlign: Begin"});
 
-            var on6 = new sap.m.ObjectNumber("on6", {
-                number: "1.50",
-                unit: "וְהָיוּ הַדְּבָרִים",
-                emphasized: true,
-                textDirection: sap.ui.core.TextDirection.RTL,
-                textAlign: sap.ui.core.TextAlign.Begin
-            });
+			var on6 = new sap.m.ObjectNumber("on6", {
+				number: "1.50",
+				unit: "וְהָיוּ הַדְּבָרִים",
+				emphasized: true,
+				textDirection: sap.ui.core.TextDirection.RTL,
+				textAlign: sap.ui.core.TextAlign.Begin
+			});
 
-            var txt7 = new sap.m.Label({text: "textDirection: RTL, textAlign: End"});
+			var txt7 = new sap.m.Label({text: "textDirection: RTL, textAlign: End"});
 
-            var on7 = new sap.m.ObjectNumber("on7", {
-                number: "1.50",
-                unit: "וְהָיוּ הַדְּבָרִים",
-                emphasized: true,
-                textDirection: sap.ui.core.TextDirection.RTL,
-                textAlign: sap.ui.core.TextAlign.End
-            });
+			var on7 = new sap.m.ObjectNumber("on7", {
+				number: "1.50",
+				unit: "וְהָיוּ הַדְּבָרִים",
+				emphasized: true,
+				textDirection: sap.ui.core.TextDirection.RTL,
+				textAlign: sap.ui.core.TextAlign.End
+			});
 
-            var txt8 = new sap.m.Label({text: "textDirection: RTL, textAlign: Left"});
+			var txt8 = new sap.m.Label({text: "textDirection: RTL, textAlign: Left"});
 
-            var on8 = new sap.m.ObjectNumber("on8", {
-                number: "1.50",
-                unit: "וְהָיוּ הַדְּבָרִים",
-                emphasized: true,
-                textDirection: sap.ui.core.TextDirection.RTL,
-                textAlign: sap.ui.core.TextAlign.Left
-            });
+			var on8 = new sap.m.ObjectNumber("on8", {
+				number: "1.50",
+				unit: "וְהָיוּ הַדְּבָרִים",
+				emphasized: true,
+				textDirection: sap.ui.core.TextDirection.RTL,
+				textAlign: sap.ui.core.TextAlign.Left
+			});
 
-            var txt9 = new sap.m.Label({text: "textDirection: RTL, textAlign: Right"});
+			var txt9 = new sap.m.Label({text: "textDirection: RTL, textAlign: Right"});
 
-            var on9 = new sap.m.ObjectNumber("on9", {
-                number: "1.50",
-                unit: "וְהָיוּ הַדְּבָרִים",
-                emphasized: true,
-                textDirection: sap.ui.core.TextDirection.RTL,
-                textAlign: sap.ui.core.TextAlign.Right
-            });
+			var on9 = new sap.m.ObjectNumber("on9", {
+				number: "1.50",
+				unit: "וְהָיוּ הַדְּבָרִים",
+				emphasized: true,
+				textDirection: sap.ui.core.TextDirection.RTL,
+				textAlign: sap.ui.core.TextAlign.Right
+			});
 
-            // items
+			// items
 			var oItemNone = new sap.ui.core.Item({
 				key: sap.ui.core.ValueState.None,
 				text: "None"
@@ -117,7 +120,7 @@
 				text: "Success"
 			}),
 
-			oStateSelect = new sap.m.Select({
+			oStateSelect = new sap.m.Select("select", {
 				name: "select-object-state",
 				title: "Object Number state",
 				items: [oItemNone, oItemWarning, oItemError, oItemSuccess],
@@ -125,8 +128,6 @@
 					on3.setState(oControlEvent.getParameter("selectedItem").getKey());
 				}
 			});
-
-
 
 			var app = new sap.m.App();
 			var page = new sap.m.Page({
@@ -140,18 +141,18 @@
 					txt3,
 					oStateSelect,
 					on3,
-                    txt4,
-                    on4,
-                    txt5,
-                    on5,
-                    txt6,
-                    on6,
-                    txt7,
-                    on7,
-                    txt8,
-                    on8,
-                    txt9,
-                    on9
+					txt4,
+					on4,
+					txt5,
+					on5,
+					txt6,
+					on6,
+					txt7,
+					on7,
+					txt8,
+					on8,
+					txt9,
+					on9
 				]
 			});
 			app.setInitialPage(page.getId());

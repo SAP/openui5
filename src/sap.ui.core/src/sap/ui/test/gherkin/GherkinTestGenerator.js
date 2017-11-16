@@ -428,4 +428,4 @@ sap.ui.define([
   });
 
   return GherkinTestGenerator;
-}, /* bExport= */ true);
+});

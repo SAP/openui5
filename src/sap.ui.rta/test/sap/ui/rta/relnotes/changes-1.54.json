@@ -73,6 +73,54 @@
         "type": "FIX",
         "text": "sap.ui.rta: Prevent removal of last visible element in aggregation",
         "references": []
+      },
+      {
+        "id": "28a9e201b6bc823426797ec98fc8273a3e99fdb7",
+        "type": "FIX",
+        "text": " Fix issue in contructor of variantManagement Component",
+        "references": []
+      },
+      {
+        "id": "bbd4ecb2110dd6f137a110e98ff56e0fd169afa8",
+        "type": "FIX",
+        "text": " Fix several issues in Variant Management Control",
+        "references": []
+      },
+      {
+        "id": "3d98d50bd7ec65aa0416694df0daa7110f27d415",
+        "type": "FIX",
+        "text": " sap.ui.rta: fixed movable check when child is destroyed",
+        "references": []
+      },
+      {
+        "id": "a02a75d0e36c66b795e3a6073c9d611492dae8c9",
+        "type": "FIX",
+        "text": " Fix control variant issues",
+        "references": []
+      },
+      {
+        "id": "ee1cc217cdd851087299be5f54cc3f4969dc32be",
+        "type": "FIX",
+        "text": " sap.ui.rta: skip start when reloading with pers. changes",
+        "references": []
+      },
+      {
+        "id": "bb9b67d20409f5934914888a4704ac890d695f9e",
+        "type": "FIX",
+        "text": "sap.ui.rta QUnit test fix - focus check on wrong element",
+        "references": []
+      },
+      {
+        "id": "ea6c58e405c553e85f987741dd31183286f1c752",
+        "type": "FIX",
+        "text": "sap.ui.rta: Dump moving an object page section in personalization",
+        "references": []
+      },
+      {
+        "id": "93d16b4148c13a46f27f05c7ec6c7efb9182e6ea",
+        "type": "FIX",
+        "text": "sap.ui.rta: Missing binding context causes exception starting RTA",
+        "references": []
       }
     ]
   }

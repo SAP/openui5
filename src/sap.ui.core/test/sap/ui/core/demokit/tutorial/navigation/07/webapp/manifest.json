@@ -27,8 +27,7 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": ["sap_belize"]
+		}
   	},
 	"sap.ui5": {
 		"rootView": "sap.ui.demo.nav.view.App",
@@ -77,19 +76,23 @@
 			}],
 			"targets": {
 				"home": {
+					"viewId": "home",
 					"viewName": "Home",
 					"viewLevel" : 1
 				},
 				"notFound": {
+					"viewId": "notFound",
 					"viewName": "NotFound",
 					"transition": "show"
 				},
 				"employees": {
+					"viewId": "employeeList",
 					"viewPath": "sap.ui.demo.nav.view.employee",
 					"viewName": "EmployeeList",
 					"viewLevel" : 2
 				},
 				"employee": {
+					"viewId": "employee",
 					"viewName": "employee.Employee",
 					"viewLevel" : 3
 				}

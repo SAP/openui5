@@ -141,12 +141,12 @@ sap.ui.require([
 			var responseFlpCustomizingIsThere =
 			{
 			  "__metadata": {
-			    "id": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('YY1_ABIFNJRSDEPNPIE6IYLRUU7IWQ_FLAV')",
-			    "uri": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('YY1_ABIFNJRSDEPNPIE6IYLRUU7IWQ_FLAV')",
+			    "id": "http://localhost:1234/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('VALID_IAM_ID')",
+			    "uri": "http://localhost:1234/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('VALID_IAM_ID')",
 			    "type": "APS_IAM_APP_SRV.AppStatusCheck"
 			  },
 			  "AppStatusTable": "{\"ITAB\":[]}",
-			  "AppID": "YY1_ABIFNJRSDEPNPIE6IYLRUU7IWQ_FLAV",
+			  "AppID": "VALID_IAM_ID",
 			  "AppStatus": ""
 			};
 
@@ -164,13 +164,13 @@ sap.ui.require([
 			var responseFlpCustomizingNotYetReady =
 			{
 			  "__metadata": {
-			    "id": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('ZZ1_ABIFNNXL4UPNPLHCHLLGGFBFQ4_FLAV')",
-			    "uri": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('ZZ1_ABIFNNXL4UPNPLHCHLLGGFBFQ4_FLAV')",
+			    "id": "http://localhost:1234/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('VALID_IAM_ID')",
+			    "uri": "http://localhost:1234/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('VALID_IAM_ID')",
 			    "type": "APS_IAM_APP_SRV.AppStatusCheck"
 			  },
 			  "AppStatusTable": "{\"ITAB\":[{\"TYPE\":\"W\",\"ID\":\"CM_APS_IAM_APP\",\"NUMBER\":\"057\",\"MESSAGE\":\"WARNING: Still publishing\",\"LOG_NO\":\"\",\"LOG_MSG_NO\":\"000000\",\"MESSAGE_V1\":\"\",\"MESSAGE_V2\":\"\",\"MESSAGE_V3\":\"\",\"MESSAGE_V4\":\"\",\"PARAMETER\":\"\",\"ROW\":0,\"FIELD\":\"\",\"SYSTEM\":\"\"},{\"TYPE\":\"E\",\"ID\":\"CM_APS_IAM_APP\",\"NUMBER\":\"040\",\"MESSAGE\":\"App not exist\",\"LOG_NO\":\"\",\"LOG_MSG_NO\":\"000000\",\"MESSAGE_V1\":\"\",\"MESSAGE_V2\":\"\",\"MESSAGE_V3\":\"\",\"MESSAGE_V4\":\"\",\"PARAMETER\":\"\",\"ROW\":0,\"FIELD\":\"\",\"SYSTEM\":\"\"}]}",
-			  "AppID": "ZZ1_ABIFNNXL4UPNPLHCHLLGGFBFQ4_FLAV",
-			  "AppStatus": "App ZZ1_ABIFNNXL4UPNPLHCHLLGGFBFQ4_FLAV not found in Apps-List for catalog SAP_CORE_BC_IAM\n"
+			  "AppID": "VALID_IAM_ID",
+			  "AppStatus": "App VALID_IAM_ID not found in Apps-List for catalog SAP_CORE_BC_IAM\n"
 			};
 
 			// Check evaluatio of ODATA service response
@@ -187,8 +187,8 @@ sap.ui.require([
 			var responseFlpCustomizingFailed =
 			{
 			  "__metadata": {
-			    "id": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('INVALID_IAM_ID')",
-			    "uri": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('INVALID_IAM_ID')",
+			    "id": "http://localhost:1234/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('INVALID_IAM_ID')",
+			    "uri": "http://localhost:1234/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('INVALID_IAM_ID')",
 			    "type": "APS_IAM_APP_SRV.AppStatusCheck"
 			  },
 			  "AppStatusTable": "{\"ITAB\":[{\"TYPE\":\"E\",\"ID\":\"CM_APS_IAM_APP\",\"NUMBER\":\"039\",\"MESSAGE\":\"FATAL ERROR: App not registered\",\"LOG_NO\":\"\",\"LOG_MSG_NO\":\"000000\",\"MESSAGE_V1\":\"\",\"MESSAGE_V2\":\"\",\"MESSAGE_V3\":\"\",\"MESSAGE_V4\":\"\",\"PARAMETER\":\"\",\"ROW\":0,\"FIELD\":\"\",\"SYSTEM\":\"\"},{\"TYPE\":\"E\",\"ID\":\"CM_APS_IAM_APP\",\"NUMBER\":\"040\",\"MESSAGE\":\"App not exist\",\"LOG_NO\":\"\",\"LOG_MSG_NO\":\"000000\",\"MESSAGE_V1\":\"\",\"MESSAGE_V2\":\"\",\"MESSAGE_V3\":\"\",\"MESSAGE_V4\":\"\",\"PARAMETER\":\"\",\"ROW\":0,\"FIELD\":\"\",\"SYSTEM\":\"\"}]}",
@@ -211,8 +211,8 @@ sap.ui.require([
 			var unexpectedBackendResponse =
 			{
 			  "__metadata": {
-			    "id": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('INVALID_IAM_ID')",
-			    "uri": "https://ldcietx.mo.sap.corp:44310/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('INVALID_IAM_ID')",
+			    "id": "http://localhost:1234/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('INVALID_IAM_ID')",
+			    "uri": "http://localhost:1234/sap/opu/odata/sap/APS_IAM_APP_SRV/AppStatusCheckSet('INVALID_IAM_ID')",
 			    "type": "APS_IAM_APP_SRV.AppStatusCheck"
 			  },
 			  "AppID": "INVALID_IAM_ID",

@@ -17,6 +17,7 @@ sap.ui.require([
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormLayout",
 	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/core/Title",
 	"sap/m/Button",
 	"sap/uxap/ObjectPageLayout",
@@ -26,6 +27,8 @@ sap.ui.require([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/changeHandler/BaseTreeModifier",
+	"sap/m/delegate/ValueStateMessage",
+	"sap/ui/rta/Utils",
 	// should be last
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -45,6 +48,7 @@ sap.ui.require([
 	Form,
 	FormLayout,
 	ControlVariantPlugin,
+	RenameHandler,
 	Title,
 	Button,
 	ObjectPageLayout,
@@ -54,6 +58,8 @@ sap.ui.require([
 	VariantManagement,
 	VariantModel,
 	BaseTreeModifier,
+	ValueStateMessage,
+	RtaUtils,
 	sinon
 ) {
 		"use strict";
@@ -302,11 +308,22 @@ sap.ui.require([
 		});
 
 		QUnit.test("when renameVariant is called", function(assert) {
+			var oModelData = {};
+			oModelData["varMgtKey"] = {
+				variants: []
+			};
+			var oModel = new VariantModel(oModelData, {}),
+				oMockedAppComponent = fnGetMockedAppComponent(oModel);
+
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
+
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			this.oVariantManagementOverlay.setSelectable(true);
+
 			var done = assert.async();
 			var fnDone = assert.async();
+
 			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.ControlVariant.startEdit', function (sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oVariantManagementOverlay) {
 					assert.strictEqual(this.oVariantManagementOverlay.getSelected(), true, "then the overlay is still selected");
@@ -319,7 +336,9 @@ sap.ui.require([
 					fnDone();
 				}
 			}, this);
+
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
+
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
 				var oCommand = oEvent.getParameter("command");
@@ -408,12 +427,14 @@ sap.ui.require([
 
 			// Switch SubMenu
 			var oItem = {
-				data : function(){
-					return {
-						targetOverlay : "dummyOverlay",
-						key : "dummyKey",
-						current : "dummyCurrent"
-					};
+				eventItem: {
+					data: function () {
+						return {
+							targetOverlay: "dummyOverlay",
+							key: "dummyKey",
+							current: "dummyCurrent"
+						};
+					}
 				}
 			};
 			var sVariantModelName = '$FlexVariants';
@@ -473,5 +494,194 @@ sap.ui.require([
 			assert.equal(this.oControlVariantPlugin.getMenuItems(this.oButtonOverlay).length,
 				3,
 				"then if e.g. duplicate variant is not available, its menu item is not returned");
+		});
+
+		QUnit.module("Given _emitLabelChangeEvent is called after renaming (blur or click events)", {
+			beforeEach: function (assert) {
+				var done = assert.async();
+
+				this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("content");
+
+				var oVariantManagementDesignTimeMetadata = {
+					"sap.ui.fl.variants.VariantManagement": {
+						actions : {}
+					}
+				};
+
+				this.oDesignTime = new DesignTime({
+					designTimeMetadata : oVariantManagementDesignTimeMetadata,
+					rootElements : [this.oVariantManagementControl]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+					this.oControlVariantPlugin = new ControlVariantPlugin({
+						commandFactory: new CommandFactory()
+					});
+					done();
+				}.bind(this));
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function (assert) {
+				sandbox.restore();
+				this.oVariantManagementControl.destroy();
+				this.oDesignTime.destroy();
+			}
+		});
+
+		QUnit.test("when variant is renamed with a new title", function(assert) {
+			var oModelData = {},
+				done = assert.async();
+			oModelData["varMgtKey"] = {
+				variants: []
+			};
+			var oModel = new VariantModel(oModelData, {}),
+				oMockedAppComponent = fnGetMockedAppComponent(oModel),
+				sOldVariantTitle = "Old Variant Title";
+
+			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("New Variant Title");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			this.oVariantManagementOverlay.setSelectable(true);
+
+			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
+			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
+			this.oControlVariantPlugin._$oEditableControlDomRef = jQuery(this.oVariantManagementControl.getTitle().getDomRef("inner"));
+			this.oControlVariantPlugin._$oEditableControlDomRef.text(sOldVariantTitle);
+
+			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+				assert.ok(oEvent.getParameter("command") instanceof ControlVariantSetTitle, "then an set title Variant event is received with a setTitle command");
+				done();
+			});
+
+			this.oControlVariantPlugin._emitLabelChangeEvent();
+		});
+
+		QUnit.test("when variant is renamed with an existing title", function(assert) {
+			var oModelData = {},
+				done = assert.async(),
+				sNewVariantTitle = "Existing Variant Title",
+				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
+				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+
+			oModelData["varMgtKey"] = {
+				variants: [
+					{
+						title: sNewVariantTitle
+					}
+				]
+			};
+			var oModel = new VariantModel(oModelData, {}),
+				oMockedAppComponent = fnGetMockedAppComponent(oModel),
+				sOldVariantTitle = "Old Variant Title";
+
+			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sNewVariantTitle);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+
+			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
+			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
+			this.oControlVariantPlugin._$oEditableControlDomRef = jQuery(this.oVariantManagementControl.getTitle().getDomRef("inner"));
+			this.oControlVariantPlugin._$oEditableControlDomRef.text(sOldVariantTitle);
+			sap.ui.getCore().applyChanges();
+
+			this.oControlVariantPlugin._emitLabelChangeEvent().then( function () {
+				assert.ok(this.oVariantManagementOverlay.$().hasClass("sapUiErrorBg"), "then error border added to VariantManagement control overlay");
+				assert.ok(this.oControlVariantPlugin._oValueStateMessage instanceof ValueStateMessage, "then value state message intitialized for plugin");
+				assert.ok(fnMessageBoxShowStub.calledOnce, "then RtaUtils._showMessageBox called once");
+				assert.ok(fnValueStateMessageOpenStub.calledOnce, "then ValueStateMessage.open called once");
+				assert.equal(typeof this.oVariantManagementOverlay.getValueState, "function", "then getValueState function set for VariantManagement control overlay");
+				assert.equal(typeof this.oVariantManagementOverlay.getValueStateText, "function", "then getValueStateText function set for VariantManagement control overlay");
+				assert.equal(typeof this.oVariantManagementOverlay.getDomRefForValueStateMessage, "function", "then getValueStateText function set for VariantManagement control overlay");
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("when variant is renamed with a blank title", function(assert) {
+			var oModelData = {},
+				done = assert.async(),
+				sExistingVariantTitle = "Existing Variant Title",
+				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
+				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+
+			oModelData["varMgtKey"] = {
+				variants: [
+					{
+						title: sExistingVariantTitle
+					}
+				]
+			};
+			var oModel = new VariantModel(oModelData, {}),
+				oMockedAppComponent = fnGetMockedAppComponent(oModel),
+				sOldVariantTitle = "Old Variant Title";
+
+			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("\xa0");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+
+			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
+			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
+			this.oControlVariantPlugin._$oEditableControlDomRef = jQuery(this.oVariantManagementControl.getTitle().getDomRef("inner"));
+			this.oControlVariantPlugin._$oEditableControlDomRef.text(sOldVariantTitle);
+			sap.ui.getCore().applyChanges();
+
+			this.oControlVariantPlugin._emitLabelChangeEvent().then( function () {
+				assert.ok(this.oVariantManagementOverlay.$().hasClass("sapUiErrorBg"), "then error border added to VariantManagement control overlay");
+				assert.ok(this.oControlVariantPlugin._oValueStateMessage instanceof ValueStateMessage, "then value state message intitialized for plugin");
+				assert.ok(fnMessageBoxShowStub.calledOnce, "then RtaUtils._showMessageBox called once");
+				assert.ok(fnValueStateMessageOpenStub.calledOnce, "then ValueStateMessage.open called once");
+				assert.equal(typeof this.oVariantManagementOverlay.getValueState, "function", "then getValueState function set for VariantManagement control overlay");
+				assert.equal(typeof this.oVariantManagementOverlay.getValueStateText, "function", "then getValueStateText function set for VariantManagement control overlay");
+				assert.equal(typeof this.oVariantManagementOverlay.getDomRefForValueStateMessage, "function", "then getValueStateText function set for VariantManagement control overlay");
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("when variant is renamed after a duplicate variant is triggered from the same source variant for the second time (both with the default title)", function(assert) {
+			var oModelData = {},
+				done = assert.async(),
+				sExistingVariantTitle = "Existing Variant Title Copy",
+				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
+				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+
+			oModelData["varMgtKey"] = {
+				variants: [
+					{
+						title: sExistingVariantTitle
+					},
+					{
+						title: sExistingVariantTitle
+					}
+				]
+			};
+			var oModel = new VariantModel(oModelData, {}),
+				oMockedAppComponent = fnGetMockedAppComponent(oModel),
+				sOldVariantTitle = "Old Variant Title";
+
+			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Existing Variant Title Copy");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+
+			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
+			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
+			this.oControlVariantPlugin._$oEditableControlDomRef = jQuery(this.oVariantManagementControl.getTitle().getDomRef("inner"));
+			this.oControlVariantPlugin._$oEditableControlDomRef.text(sOldVariantTitle);
+			sap.ui.getCore().applyChanges();
+
+			this.oControlVariantPlugin._emitLabelChangeEvent().then( function () {
+				assert.ok(this.oVariantManagementOverlay.$().hasClass("sapUiErrorBg"), "then error border added to VariantManagement control overlay");
+				assert.ok(this.oControlVariantPlugin._oValueStateMessage instanceof ValueStateMessage, "then value state message intitialized for plugin");
+				assert.ok(fnMessageBoxShowStub.calledOnce, "then RtaUtils._showMessageBox called once");
+				assert.ok(fnValueStateMessageOpenStub.calledOnce, "then ValueStateMessage.open called once");
+				assert.equal(typeof this.oVariantManagementOverlay.getValueState, "function", "then getValueState function set for VariantManagement control overlay");
+				assert.equal(typeof this.oVariantManagementOverlay.getValueStateText, "function", "then getValueStateText function set for VariantManagement control overlay");
+				assert.equal(typeof this.oVariantManagementOverlay.getDomRefForValueStateMessage, "function", "then getValueStateText function set for VariantManagement control overlay");
+				done();
+			}.bind(this));
 		});
 	});

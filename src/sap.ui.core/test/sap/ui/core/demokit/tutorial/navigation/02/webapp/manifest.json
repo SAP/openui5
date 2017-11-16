@@ -27,8 +27,7 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": ["sap_belize"]
+		}
   	},
 	"sap.ui5": {
 		"rootView": "sap.ui.demo.nav.view.App",
@@ -66,6 +65,7 @@
 			}],
 			"targets": {
 				"home": {
+					"viewId": "home",
 					"viewName": "Home",
 					"viewLevel" : 1
 				}

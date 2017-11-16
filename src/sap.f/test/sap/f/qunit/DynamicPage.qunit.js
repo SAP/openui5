@@ -1534,9 +1534,8 @@
 
 	QUnit.test("DynamicPage _moveHeaderToContentArea(true) should offset the scroll position of the content", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
-			$header = this.oDynamicPage.getHeader().$(),
-			$wrapper = oDynamicPage.$wrapper,
-			iHeaderHeight = $header.outerHeight(),
+			$HeaderDom = this.oDynamicPage.getHeader().getDomRef(),
+			iHeaderHeight = getElementHeight($HeaderDom, true /* ceil */),
 			iScrollPositionBefore = iHeaderHeight + 100, // pick position greater than snapping height
 			iExpectedScrollPositionAfter = iScrollPositionBefore + iHeaderHeight; // add iHeaderHeight as the header will be moved into the content area
 
@@ -1548,27 +1547,25 @@
 		oDynamicPage._moveHeaderToContentArea(true);
 
 		//check
-		assert.equal(Math.round($wrapper.scrollTop()), iExpectedScrollPositionAfter, "scroll position of content is offset");
+		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPositionAfter, "scroll position of content is offset");
 	});
 
 	QUnit.test("DynamicPage _moveHeaderToContentArea(true) should offset the top scroll position of the content", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			oHeader = oDynamicPage.getHeader(),
-			$header = oHeader.$(),
-			$wrapper = oDynamicPage.$wrapper,
-			iHeaderHeight = $header.outerHeight(),
+			iHeaderHeight = getElementHeight(oHeader.getDomRef(), true /* ceil */),
 			iScrollPositionBefore = 0,
 			iExpectedScrollPositionAfter = iHeaderHeight; // header height is added
 
 		// setup
 		oDynamicPage._moveHeaderToTitleArea();
-		assert.strictEqual($wrapper.scrollTop(), iScrollPositionBefore, "Scroll position is the top of the content area");
+		assert.strictEqual(oDynamicPage._getScrollPosition(), iScrollPositionBefore, "Scroll position is the top of the content area");
 
 		//act
 		oDynamicPage._moveHeaderToContentArea(true);
 
 		//assert
-		assert.equal(Math.ceil($wrapper.scrollTop()), iExpectedScrollPositionAfter, "Scroll position is correctly offset");
+		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPositionAfter, "Scroll position is correctly offset");
 	});
 
 	QUnit.test("DynamicPage _moveHeaderToTitleArea() should move the header from the content area to the title area", function (assert) {
@@ -1589,9 +1586,7 @@
 	QUnit.test("DynamicPage _moveHeaderToTitleArea(true) should offset the scroll position of the content", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			oHeader = oDynamicPage.getHeader(),
-			$header = oHeader.$(),
-			$wrapper = oDynamicPage.$wrapper,
-			iHeaderHeight = $header.outerHeight(),
+			iHeaderHeight = getElementHeight(oHeader.getDomRef(), true /* ceil */),
 			iScrollPositionBefore = iHeaderHeight + 100,
 			iExpectedScrollPositionAfter = 100; // iHeaderHeight should be substracted
 
@@ -1602,7 +1597,7 @@
 		oDynamicPage._moveHeaderToTitleArea(true);
 
 		//assert
-		assert.equal(Math.round($wrapper.scrollTop()), iExpectedScrollPositionAfter, "Scroll position of the content area is correctly offset");
+		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPositionAfter, "Scroll position of the content area is correctly offset");
 	});
 
 	QUnit.test("DynamicPage _moveHeaderToTitleArea(true) should preserve the top scroll position of the content", function (assert) {
@@ -1681,20 +1676,22 @@
 	});
 
 	QUnit.test("DynamicPage _getTitleHeight() returns the correct Title height", function (assert) {
-		assert.equal(this.oDynamicPage._getTitleHeight(), this.oDynamicPage.getTitle().$().outerHeight(),
+		assert.equal(this.oDynamicPage._getTitleHeight(), getElementHeight(this.oDynamicPage.getTitle().getDomRef()),
 			"DynamicPage Title height is correct");
 	});
 
-	QUnit.test("DynamicPage _getHeaderHeight() returns the correct Header height", function (assert) {
-		assert.equal(this.oDynamicPage._getHeaderHeight(), this.oDynamicPage.getHeader().$().outerHeight(),
-			"DynamicPage Header height is correct");
+	QUnit.test("DynamicPage _getHeaderHeight() returns the Header height", function (assert) {
+		var iActualHeaderHeight = getElementHeight(this.oDynamicPage.getHeader().getDomRef());
+
+		assert.equal(this.oDynamicPage._getHeaderHeight(), iActualHeaderHeight, "DynamicPage Header height is correct");
 	});
 
-	QUnit.test("DynamicPage _getSnappingHeight() returns the correct Snapping height", function (assert) {
-		var iSnappingHeight = this.oDynamicPage.getHeader().$().outerHeight() || this.oDynamicPage.getTitle().$().outerHeight();
+	QUnit.test("DynamicPage _getSnappingHeight() returns the correct Snapping position", function (assert) {
+		var $HeaderDom = this.oDynamicPage.getHeader().getDomRef(),
+			$TitleDom = this.oDynamicPage.getTitle().getDomRef(),
+			iSnappingPosition = getElementHeight($HeaderDom, true /* ceil */) || getElementHeight($TitleDom, true /* ceil */);
 
-		assert.equal(this.oDynamicPage._getSnappingHeight(), iSnappingHeight,
-			"DynamicPage snapping height is correct");
+		assert.equal(this.oDynamicPage._getSnappingHeight(), iSnappingPosition, "DynamicPage snapping position is correct");
 	});
 
 	QUnit.test("DynamicPage _getScrollPosition() returns the correct initial Scroll position", function (assert) {
@@ -1767,7 +1764,7 @@
 		oDynamicPage._onScrollBarScroll();
 
 		//assert
-		assert.equal(Math.ceil(oDynamicPage._getScrollPosition()), iExpectedScrollPosition, "DynamicPage Scroll position is correct");
+		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPosition, "DynamicPage Scroll position is correct");
 
 		//act
 		oDynamicPage._onWrapperScroll({target: {scrollTop: 500}});
@@ -1922,9 +1919,11 @@
 
 	QUnit.test("Scrolling from expanded header in title to position > snapping height snaps the header", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
-			$header = this.oDynamicPage.getHeader().$(),
+			oHeader = this.oDynamicPage.getHeader(),
+			$header = oHeader.$(),
+			$HeaderDom = oHeader.getDomRef(),
 			$wrapper = oDynamicPage.$wrapper,
-			iHeaderHeight = $header.outerHeight(),
+			iHeaderHeight = getElementHeight($HeaderDom, true),
 			iTestScrollPosition = iHeaderHeight + 100, // pick position greater than snapping height => will require snap
 			iExpectedScrollPosition = iTestScrollPosition + iHeaderHeight;
 
@@ -1938,7 +1937,7 @@
 		//check
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "header is snapped");
 		assert.equal($wrapper.find($header).length > 0, true, "Header is in the content area");
-		assert.equal(Math.ceil($wrapper.scrollTop()), iExpectedScrollPosition, "Scroll position is correctly offset");
+		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPosition, "Scroll position is correctly offset");
 	});
 
 	QUnit.module("DynamicPage - Header initially collapsed", {
@@ -1989,7 +1988,6 @@
 	});
 
 	function assertHeaderSnapped(assert, bExpectedHeaderInContent, oDynamicPage, iExpectedScrollPosition) {
-
 		var sSnappedClass = "sapFDynamicPageTitleSnapped",
 			oHeader = oDynamicPage.getHeader(),
 			oTitle = oDynamicPage.getTitle(),
@@ -1997,7 +1995,8 @@
 			$wrapper = oDynamicPage.$wrapper,
 			$titleWrapper = oDynamicPage.$("header"),
 			$oCollapseButton = oHeader.getAggregation("_collapseButton").$(),
-			$oExpandButton = oTitle.getAggregation("_expandButton").$();
+			$oExpandButton = oTitle.getAggregation("_expandButton").$(),
+			iActualScrollPosition = oDynamicPage._getScrollPosition();
 
 		iExpectedScrollPosition = iExpectedScrollPosition || 0;
 
@@ -2006,7 +2005,7 @@
 		assert.strictEqual(oHeader.$().hasClass("sapFDynamicPageHeaderHidden"), !bExpectedHeaderInContent, "Header visibility is correct");
 		assert.equal($titleWrapper.find($header).length > 0, !bExpectedHeaderInContent, "Header in the title value is correct");
 		assert.equal($wrapper.find($header).length > 0, bExpectedHeaderInContent, "Header in the content value is correct");
-		assert.equal($wrapper.scrollTop(), iExpectedScrollPosition, "Scroll position is correct");
+		assert.equal(iActualScrollPosition, iExpectedScrollPosition, "Scroll position is correct");
 		assert.equal($oExpandButton.hasClass("sapUiHidden"), false, "Header is collapsed, Expand button is visible");
 		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is collapsed, Collapsed button is not visible");
 	}
@@ -2020,7 +2019,8 @@
 			$wrapper = oDynamicPage.$wrapper,
 			$titleWrapper = oDynamicPage.$("header"),
 			$oCollapseButton = oHeader.getAggregation("_collapseButton").$(),
-			$oExpandButton = oTitle.getAggregation("_expandButton").$();
+			$oExpandButton = oTitle.getAggregation("_expandButton").$(),
+			iActualScrollPosition = oDynamicPage._getScrollPosition();
 
 		iExpectedScrollPosition = iExpectedScrollPosition || 0;
 
@@ -2029,9 +2029,21 @@
 		assert.strictEqual(oHeader.$().hasClass("sapFDynamicPageHeaderHidden"), false, "Header visibility is correct");
 		assert.equal($titleWrapper.find($header).length > 0, !bExpectedHeaderInContent, "Header in the title value is correct");
 		assert.equal($wrapper.find($header).length > 0, bExpectedHeaderInContent, "Header in the content value is correct");
-		assert.equal($wrapper.scrollTop(), iExpectedScrollPosition, "Scroll position is correct");
+		assert.equal(iActualScrollPosition, iExpectedScrollPosition, "Scroll position is correct");
 		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Header is expanded, Expand button is not visible");
 		assert.equal($oCollapseButton.hasClass("sapUiHidden"), false, "Header is expanded, Collapsed button is visible");
+	}
+
+	function getElementHeight($Element, bCeil) {
+		var iElementHeight;
+
+		if (!$Element) {
+			return 0;
+		}
+
+		iElementHeight = $Element.getBoundingClientRect().height;
+
+		return bCeil ? Math.ceil(iElementHeight) : iElementHeight;
 	}
 
 	QUnit.test("{headerExpanded: false; preserveHeaderStateOnScroll: false; _canSnapHeaderOnScroll: true}", function (assert) {
@@ -2196,7 +2208,7 @@
 					//act
 					oDynamicPage._setScrollPosition(iNewScrollPosition);
 					//check
-					assert.strictEqual(oDynamicPage.$wrapper.scrollTop(), iNewScrollPosition, "scroll position is correct");
+					assert.strictEqual(oDynamicPage._getScrollPosition(), iNewScrollPosition, "scroll position is correct");
 					done();
 				}, 0);
 			}

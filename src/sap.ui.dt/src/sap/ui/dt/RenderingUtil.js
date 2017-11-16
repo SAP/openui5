@@ -84,8 +84,11 @@ function(jQuery) {
 				if (oScrollContainer.aggregations) {
 					oScrollContainer.aggregations.forEach(function(sAggregationName) {
 						var oAggregationOverlay = oOverlay.getAggregationOverlay(sAggregationName);
-						oRm.renderControl(oAggregationOverlay);
-						aChildrenOverlays.splice(aChildrenOverlays.indexOf(oAggregationOverlay), 1);
+						if (oAggregationOverlay){
+							//ensure it is available, it might be ignored
+							oRm.renderControl(oAggregationOverlay);
+							aChildrenOverlays.splice(aChildrenOverlays.indexOf(oAggregationOverlay), 1);
+						}
 					});
 				}
 				oRm.write("</div>");

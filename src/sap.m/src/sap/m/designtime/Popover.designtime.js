@@ -8,6 +8,20 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			actions: {
+				rename: function (oPopover) {
+					// When a custom header is added the title is not visualized and we do not need a rename action.
+					if (oPopover.getCustomHeader()) {
+						return;
+					}
+					return {
+						changeType: "rename",
+						domRef: function (oPopover) {
+							return oPopover.getDomRef("title");
+						}
+					};
+				}
+			},
 			aggregations: {
 				content: {
 					domRef: ":sap-domref > .sapMPopoverCont > .sapMPopoverScroll",

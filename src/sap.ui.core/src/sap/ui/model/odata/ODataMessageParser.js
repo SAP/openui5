@@ -460,7 +460,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		var sUrlForTargetCalculation;
 		if (bRequestCreatePost) {
 			sUrlForTargetCalculation = mRequestInfo.response.headers["location"];
-		} else if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.response && mRequestInfo.response.statusCode >= 400) {
+		} else if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.request.created && mRequestInfo.response && mRequestInfo.response.statusCode >= 400) {
 			// If a create request returns an error the target should be set to the internal entity key
 			sUrlForTargetCalculation = mRequestInfo.request.key;
 		} else {

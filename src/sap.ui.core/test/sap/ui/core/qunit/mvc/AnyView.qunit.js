@@ -242,20 +242,6 @@ sap.ui.define([
 			oClone.destroy();
 		});
 
-
-		// QUnit.test("Async View Instantiation: loaded() method", function(assert) {
-		// 	var done = assert.async();
-		// 	// define View and place it onto the page
-		// 	window.onInitCalled = false;
-		// 	view = fnViewFactory({async: true});
-		// 	var oPromise = view.loaded()
-		// 	assert.ok(oPromise instanceof Promise, "loaded() should return a promise");
-		// 	oView.loaded().then(function(oViewLoaded) {
-		// 		assert.deepEqual(oView, oViewLoaded, "view returned and view resolved with should equal");
-		// 		start();
-		// 	});
-		// });
-
 	}
 
 	return testsuite;

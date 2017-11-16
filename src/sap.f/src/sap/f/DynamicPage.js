@@ -569,8 +569,8 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._offsetContentOnMoveHeader = function () {
 
-		var iOffset = this.getHeader().$().outerHeight(),
-			iCurrentScrollPosition = Math.ceil(this._getScrollPosition()),
+		var iOffset = Math.ceil(this._getHeaderHeight()),
+			iCurrentScrollPosition = this._getScrollPosition(),
 			iNewScrollPosition;
 
 		if (!iOffset) {
@@ -699,7 +699,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._getScrollPosition = function () {
-		return exists(this.$wrapper) ? this.$wrapper.scrollTop() : 0;
+		return exists(this.$wrapper) ? Math.ceil(this.$wrapper.scrollTop()) : 0;
 	};
 
 	/**
@@ -798,7 +798,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._getSnappingHeight = function () {
-		return this._getHeaderHeight() || this._getTitleHeight();
+			return Math.ceil(this._getHeaderHeight() || this._getTitleHeight());
 	};
 
 	/**
@@ -1094,13 +1094,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the height of a control safely. If the control doesn't exist it returns 0,
-	 * so it doesn't confuse any calculations based on it. If it exists it just returns its DOM element height.
+	 * Determines the height of a control safely.
+	 * If the control or its DOM reference don't exist, it returns 0,
+	 * so it doesn't confuse any calculations based on it.
+	 * Otherwise, it returns the DOM element height, using <code>Element.getBoundingClientRect()</code>.
 	 * @param  {sap.ui.core.Control} oControl
 	 * @return {Number} the height of the control
 	 */
 	DynamicPage.prototype._getHeight = function (oControl) {
-		return !(oControl instanceof Control) ? 0 : oControl.$().outerHeight() || 0;
+		var $ControlDom;
+
+		if (!(oControl instanceof Control)) {
+			return 0;
+		}
+
+		$ControlDom = oControl.getDomRef();
+
+		return $ControlDom ? $ControlDom.getBoundingClientRect().height : 0;
 	};
 
 	/**

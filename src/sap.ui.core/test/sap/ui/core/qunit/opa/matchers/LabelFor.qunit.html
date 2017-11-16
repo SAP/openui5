@@ -123,15 +123,17 @@
             });
 
             QUnit.test("Should fail because of combination of key and text", function(assert) {
-                assert.throws(function () {
-                    new LabelFor({key: "fooLabel", text: "label"}).isMatching(this.oInput);
-                }, new Error("Combination of text and key properties is not possible"), 'Throws error.');
+                var oMatcher = new LabelFor({key: "fooLabel", text: "label"});
+                var oErrorSpy = this.spy(oMatcher._oLogger, "error");
+                assert.ok(!oMatcher.isMatching(this.oInput));
+                sinon.assert.calledWithMatch(oErrorSpy, "Combination of text and key properties is not allowed");
             });
 
             QUnit.test("Should fail because of no key and no label text", function(assert) {
-                assert.throws(function() {
-                    new LabelFor().isMatching(this.oInput);
-                }, new Error("No label text or key found"), "Throws error");
+                var oMatcher = new LabelFor();
+                var oErrorSpy = this.spy(oMatcher._oLogger, "error");
+                assert.ok(!oMatcher.isMatching(this.oInput));
+                sinon.assert.calledWithMatch(oErrorSpy, "Text and key properties are not defined but exactly one is required");
             });
 
             QUnit.test("Should not match label with given text but no input for it", function(assert) {
@@ -154,7 +156,7 @@
                 var bResult = oMatcher.isMatching(this.oInput);
 
                 assert.ok(!bResult, "Did not match");
-                sinon.assert.calledWith(oDebugSpy, "No label with text: " + sLabelText + " for control: " + this.oInput);
+                sinon.assert.calledWith(oDebugSpy, "Control '" + this.oInput + "' does not have an associated label with text " + sLabelText);
                 sinon.assert.calledOnce(oDebugSpy);
             });
 
@@ -166,7 +168,7 @@
                 var bResult = oMatcher.isMatching(this.oInput);
 
                 assert.ok(!bResult, "Did not match");
-                sinon.assert.calledWith(oDebugSpy, "No label with key: " + sKey + " for control: " + this.oInput);
+                sinon.assert.calledWith(oDebugSpy, "Control '" + this.oInput + "' does not have an associated label with I18N text key " + sKey);
             });
 
             QUnit.test("Should match input in form by given label text", function(assert) {

@@ -444,71 +444,71 @@ sap.ui.define([
 			//Check if the application has personalized changes and reload without them
 			return this._handlePersonalizationChangesOnStart()
 			.then(function(bReloadTriggered){
-				if (!bReloadTriggered) {
-					// Take default plugins if no plugins handed over
-					if (!this.getPlugins() || !Object.keys(this.getPlugins()).length) {
-						this.setPlugins(this.getDefaultPlugins());
-					}
-
-					// Destroy default plugins instantiated but not in use
-					this._destroyDefaultPlugins(this.getPlugins());
-
-					Object.keys(this.getPlugins()).forEach(function(sPluginName) {
-						if (this.getPlugins()[sPluginName].attachElementModified) {
-							this.getPlugins()[sPluginName].attachElementModified(this._handleElementModified, this);
-						}
-					}.bind(this));
-
-					// Hand over currrent command stack to settings plugin
-					if (this.getPlugins()["settings"]) {
-						this.getPlugins()["settings"].setCommandStack(this.getCommandStack());
-					}
-
-					this._oSerializer = new LREPSerializer({commandStack : this.getCommandStack(), rootControl : this.getRootControl()});
-
-					// Create design time
-					var aKeys = Object.keys(this.getPlugins());
-					var aPlugins = aKeys.map(function(sKey) {
-						return this.getPlugins()[sKey];
-					}, this);
-
-					jQuery.sap.measure.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
-					this._oDesignTime = new DesignTime({
-						rootElements : [this._oRootControl],
-						plugins : aPlugins
-					});
-
-					jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
-					if (this.getLayer() === "USER") {
-						jQuery(Overlay.getOverlayContainer()).addClass("sapUiRtaPersonalize");
-					}
-
-					this._oRootControl.addStyleClass("sapUiRtaRoot");
-
-					this._oDesignTime.attachSelectionChange(function(oEvent) {
-						this.fireSelectionChange({selection: oEvent.getParameter("selection")});
-					}, this);
-
-					this._oDesignTime.attachEventOnce("synced", function() {
-						this.fireStart({
-							editablePluginsCount: this.iEditableOverlaysCount
-						});
-						jQuery.sap.measure.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
-					}, this);
-
-					this._oDesignTime.attachEventOnce("syncFailed", function() {
-						this.fireFailed();
-					}, this);
-
-					// Register function for checking unsaved before leaving RTA
-					this._oldUnloadHandler = window.onbeforeunload;
-					window.onbeforeunload = this._onUnload.bind(this);
+				if (bReloadTriggered) {
+					return Promise.reject(false);
 				}
 
-				return Promise.resolve(bReloadTriggered);
+				// Take default plugins if no plugins handed over
+				if (!this.getPlugins() || !Object.keys(this.getPlugins()).length) {
+					this.setPlugins(this.getDefaultPlugins());
+				}
+
+				// Destroy default plugins instantiated but not in use
+				this._destroyDefaultPlugins(this.getPlugins());
+
+				Object.keys(this.getPlugins()).forEach(function(sPluginName) {
+					if (this.getPlugins()[sPluginName].attachElementModified) {
+						this.getPlugins()[sPluginName].attachElementModified(this._handleElementModified, this);
+					}
+				}.bind(this));
+
+				// Hand over currrent command stack to settings plugin
+				if (this.getPlugins()["settings"]) {
+					this.getPlugins()["settings"].setCommandStack(this.getCommandStack());
+				}
+
+				this._oSerializer = new LREPSerializer({commandStack : this.getCommandStack(), rootControl : this.getRootControl()});
+
+				// Create design time
+				var aKeys = Object.keys(this.getPlugins());
+				var aPlugins = aKeys.map(function(sKey) {
+					return this.getPlugins()[sKey];
+				}, this);
+
+				jQuery.sap.measure.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
+				this._oDesignTime = new DesignTime({
+					rootElements : [this._oRootControl],
+					plugins : aPlugins
+				});
+
+				jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
+				if (this.getLayer() === "USER") {
+					jQuery(Overlay.getOverlayContainer()).addClass("sapUiRtaPersonalize");
+				}
+
+				this._oRootControl.addStyleClass("sapUiRtaRoot");
+
+				this._oDesignTime.attachSelectionChange(function(oEvent) {
+					this.fireSelectionChange({selection: oEvent.getParameter("selection")});
+				}, this);
+
+				this._oDesignTime.attachEventOnce("synced", function() {
+					this.fireStart({
+						editablePluginsCount: this.iEditableOverlaysCount
+					});
+					jQuery.sap.measure.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
+				}, this);
+
+				this._oDesignTime.attachEventOnce("syncFailed", function() {
+					this.fireFailed();
+				}, this);
+
+				// Register function for checking unsaved before leaving RTA
+				this._oldUnloadHandler = window.onbeforeunload;
+				window.onbeforeunload = this._onUnload.bind(this);
 			}.bind(this))
-			.then(function (bReloadTriggered) {
-				if (this.getShowToolbars() && !bReloadTriggered) {
+			.then(function () {
+				if (this.getShowToolbars()) {
 					// Create ToolsMenu
 					return this._getPublishAndAppVariantSupportVisibility()
 						.then(function (aButtonsSupport) {
@@ -538,6 +538,11 @@ sap.ui.define([
 						var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
 						DOMUtil.insertStyles(sStyles);
 					});
+			})
+			.catch(function(vError) {
+				if (vError) {
+					return Promise.reject(vError);
+				}
 			});
 		}
 	};
@@ -813,7 +818,8 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.exit = function() {
 		jQuery.map(this._dependents, function (oDependent) {
-			oDependent.destroy();
+			//Destroy should be called with supress invalidate = true here to prevent static UI Area invalidation
+			oDependent.destroy(true);
 		});
 
 		if (this._oDesignTime) {
@@ -855,9 +861,9 @@ sap.ui.define([
 			BusyIndicator.hide();
 			if (oError.message !== 'createAndApply failed') {
 				FlexUtils.log.error("transport error" + oError);
-				return this._showMessage(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_ERROR", "MSG_TRANSPORT_ERROR", oError);
+				return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_ERROR", "MSG_TRANSPORT_ERROR", oError);
 			}
-		}.bind(this);
+		};
 
 		this._handleStopCutPaste();
 
@@ -933,8 +939,8 @@ sap.ui.define([
 
 		.catch(function(oError) {
 			FlexUtils.log.error("Create and apply and/or save error: " + oError);
-			return this._showMessage(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_APPLYSAVE_ERROR", "MSG_TRANSPORT_APPLYSAVE_ERROR", oError);
-		}.bind(this));
+			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_APPLYSAVE_ERROR", "MSG_TRANSPORT_APPLYSAVE_ERROR", oError);
+		});
 	};
 
 	/**
@@ -968,30 +974,7 @@ sap.ui.define([
 				return window.location.reload();
 			});
 		}.bind(this))["catch"](function(oError) {
-			return this._showMessage(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
-		}.bind(this));
-	};
-
-	/**
-	 * Shows a message box.
-	 * @param  {sap.m.MessageBox.Icon} oMessageType The type of the message box (icon to be displayed)
-	 * @param  {string} sTitleKey The text key for the title of the message box
-	 * @param  {string} sMessageKey The text key for the message of the message box
-	 * @param  {any} oError Optional - If an error is passed on, the message box text is derived from it
-	 * @return {Promise} Promise displaying the message box; resolves when it is closed
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._showMessage = function(oMessageType, sTitleKey, sMessageKey, oError) {
-		var sMessage = this._getTextResources().getText(sMessageKey, oError ? [oError.message || oError] : undefined);
-		var sTitle = this._getTextResources().getText(sTitleKey);
-
-		return new Promise(function(resolve) {
-			MessageBox.show(sMessage, {
-				icon: oMessageType,
-				title: sTitle,
-				onClose: resolve,
-				styleClass: Utils.getRtaStyleClassName()
-			});
+			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
 		});
 	};
 
@@ -1350,7 +1333,7 @@ sap.ui.define([
 	 * @return {Promise} Resolving when the user clicks on OK
 	 */
 	RuntimeAuthoring.prototype._handlePersonalizationMessageBoxOnStart = function() {
-		return this._showMessage(
+		return Utils._showMessageBox(
 			MessageBox.Icon.INFORMATION,
 			"HEADER_PERSONALIZATION_EXISTS",
 			"MSG_PERSONALIZATION_EXISTS");

@@ -546,7 +546,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 *
 		 * @param {sap.m.PageAccessibleLandmarkInfo} oLandmarkInfo Page LandmarkInfo
 		 * @param {string} sPartName part of the page
-		 * @returns {object}
+		 * @returns {sap.m.PageAccessibleLandmarkInfo} The formatted landmark info
 		 * @private
 		 */
 		Page.prototype._formatLandmarkInfo = function (oLandmarkInfo, sPartName) {
@@ -571,7 +571,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 * Returns HTML tag of the page header.
 		 *
 		 * @param {sap.m.PageAccessibleLandmarkInfo} oLandmarkInfo Page LandmarkInfo
-		 * @returns {string}
+		 * @returns {string} The HTMLtag of the page header.
 		 * @private
 		 */
 		Page.prototype._getHeaderTag = function (oLandmarkInfo) {
@@ -586,7 +586,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 * Returns HTML tag of the page sub-header.
 		 *
 		 * @param {sap.m.PageAccessibleLandmarkInfo} oLandmarkInfo Page LandmarkInfo
-		 * @returns {string}
+		 * @returns {string} The HTML tag of the page sub-header.
 		 * @private
 		 */
 		Page.prototype._getSubHeaderTag = function (oLandmarkInfo) {
@@ -601,7 +601,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 * Returns HTML tag of the page footer.
 		 *
 		 * @param {sap.m.PageAccessibleLandmarkInfo} oLandmarkInfo Page LandmarkInfo
-		 * @returns {string}
+		 * @returns {string} The HTML tag of the page footer.
 		 * @private
 		 */
 		Page.prototype._getFooterTag = function (oLandmarkInfo) {

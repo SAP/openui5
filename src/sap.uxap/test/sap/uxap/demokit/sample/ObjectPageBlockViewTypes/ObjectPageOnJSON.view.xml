@@ -1,0 +1,114 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns="sap.uxap"
+		   xmlns:layout="sap.ui.layout"
+		   xmlns:m="sap.m"
+		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+		   height="100%">
+	<ObjectPageLayout id="ObjectPageLayout"
+					  enableLazyLoading="false"
+					  showTitleInHeaderContent="true"
+					  showEditHeaderButton="true"
+					  editHeaderButtonPress="handleEditBtnPress">
+		<headerTitle>
+			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
+							  objectTitle="Denise Smith"
+							  objectImageShape="Circle"
+							  objectImageAlt="Denise Smith"
+							  objectSubtitle="Senior UI Developer"
+
+							  isObjectIconAlwaysVisible="false"
+							  isObjectTitleAlwaysVisible="false"
+							  isObjectSubtitleAlwaysVisible="false">
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
+					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" press="toggleFooter"/>
+				</actions>
+				<breadcrumbs>
+					<m:Breadcrumbs id="breadcrumbsId" currentLocationText="Object Page Example" >
+						<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+						<m:Link text="Page 2 long link" press="handleLink2Press"/>
+					</m:Breadcrumbs>
+				</breadcrumbs>
+				<breadCrumbsLinks>
+					<m:Link id="breadCrumbLink1" text="Links in old aggregation" press="handleLink1Press"/>
+					<m:Link id="breadCrumbLink2" text="Don't appear in ObjectPageHeader" press="handleLink2Press"/>
+				</breadCrumbsLinks>
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:Link text="+33 6 4512 5158"/>
+				<m:Link text="DeniseSmith@sap.com"/>
+			</layout:VerticalLayout>
+
+			<layout:HorizontalLayout>
+				<m:Image src="./test-resources/sap/uxap/images/linkedin.png"></m:Image>
+				<m:Image src="./test-resources/sap/uxap/images/Twitter.png"></m:Image>
+			</layout:HorizontalLayout>
+
+			<layout:VerticalLayout>
+				<m:Label text="Hello! I am Tim and I use UxAP"/>
+				<m:VBox height="63px">
+					<m:Label text="Achieved goals"/>
+					<m:ProgressIndicator
+							percentValue="30"
+							displayValue="30%"
+							showValue="true"
+							state="None"/>
+				</m:VBox>
+			</layout:VerticalLayout>
+
+			<layout:VerticalLayout>
+				<m:Label text="San Jose, USA"/>
+			</layout:VerticalLayout>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection title="JS View">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<goals:GoalsBlockJS id="goalsblock2"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="JSON View">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<goals:GoalsBlockJSON id="goalsblock3"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="HTML View">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<goals:GoalsBlockHTML id="goalsblock4"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection title="XML View">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<goals:GoalsBlock id="goalsblock1"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+		<footer>
+			<m:OverflowToolbar>
+				<m:ToolbarSpacer />
+				<m:Button type="Accept" text="Accept"/>
+				<m:Button type="Reject" text="Reject"/>
+			</m:OverflowToolbar>
+		</footer>
+	</ObjectPageLayout>
+</core:View>

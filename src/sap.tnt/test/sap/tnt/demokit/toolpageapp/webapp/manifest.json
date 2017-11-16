@@ -16,12 +16,7 @@
 	  "desktop": true,
 	  "tablet": true,
 	  "phone": true
-	},
-	"supportedThemes": [
-	  "sap_hcb",
-	  "sap_bluecrystal",
-	  "sap_belize"
-	]
+	}
   },
   "sap.ui5": {
 	"rootView": "sap.ui.demo.toolpageapp.view.App",
@@ -31,7 +26,8 @@
 		"sap.ui.core": {},
 		"sap.m": {},
 		"sap.tnt": {},
-		"sap.ui.layout": {}
+		"sap.ui.layout": {},
+		"sap.uxap": {}
 	  }
 	},
 	"models": {

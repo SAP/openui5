@@ -15,7 +15,7 @@ describe('sap.m.QuickView', function() {
 	var _closeQuickView = function (sCloseName) {
 		var sName = bPhone ? sCloseName : "quickViewPage-title";
 		if (bPhone) {
-			document.getElementsByClassName(sName);
+			browser.executeScript('document.getElementsByClassName("' + sName + '").click()');
 		} else {
 			element(by.id(sName)).click();
 		}

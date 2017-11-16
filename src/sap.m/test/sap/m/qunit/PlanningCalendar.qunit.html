@@ -1588,6 +1588,37 @@
 			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		});
 
+		QUnit.test("legend works with sap.ui.unified.CalendarLegend", function () {
+			// arrange
+			var oLegendItem = new CalendarLegendItem({
+					type: "Type01",
+					text: "Text 2"
+				}),
+				oPC = createPlanningCalendar(
+					"invalidationExample",
+					new sap.m.SearchField(),
+					new sap.m.Button(),
+					new Date(Date.UTC(2015, 0, 7)),
+					CalendarIntervalType.Week,
+					new CalendarLegend({
+						items: [oLegendItem]
+					})
+				);
+
+			// act
+			oPC.placeAt("uiArea2");
+			sap.ui.getCore().applyChanges();
+
+			var aRows = oPC.getRows();
+			var oCalendarRow = aRows[0].getCalendarRow();
+
+			// assert
+			assert.equal(oCalendarRow.getRenderer().getLegendItems(oCalendarRow).length, 1,  "Legend items should be returned");
+
+			// cleanup
+			oPC.destroy();
+		});
+
 		QUnit.module("NonWorking Special Dates", {
 			beforeEach: function() {
 				this.oPC = createPlanningCalendar("PCNonWorking", new sap.m.SearchField(), new sap.m.Button()),
@@ -3000,9 +3031,33 @@
 			oSelectedAppointment = undefined;
 			qutils.triggerEvent("tap", "_oPC-R1A1");
 
-			//act
+			//act & assert
 			assert.equal(oSelectedAppointment.getId(), "_oPC-R1A1", "appointmentSelect event fired and appointment returned");
 			assert.ok(sap.ui.getCore().byId("_oPC-R1A1").getSelected(), "Appointment is selected");
+			qutils.triggerEvent("tap", "_oPC-R1A2");
+			assert.ok(!(sap.ui.getCore().byId("_oPC-R1A1").getSelected()),
+					"Appointment 1 is deselected because another one is selected");
+			assert.ok(sap.ui.getCore().byId("_oPC-R1A2").getSelected(), "Appointment 2 is selected");
+			assert.equal(this._oPC.getSelectedAppointments().length, 1, "One appointment is selected");
+			qutils.triggerEvent("tap", "_oPC-R1A2");
+			assert.ok(!(sap.ui.getCore().byId("_oPC-R1A1").getSelected()),
+					"Appointment 2 is deselected after a second click on it");
+			assert.equal(this._oPC.getSelectedAppointments().length, 0, "No appointment is selected");
+
+			//CTRL key included
+			qutils.triggerEvent("tap", "_oPC-R1A2");
+			sap.ui.test.qunit.triggerEvent("tap", sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), {target :
+					sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), ctrlKey: true});
+			assert.equal(this._oPC.getSelectedAppointments().length, 2, "Two appointments are selected");
+			sap.ui.test.qunit.triggerEvent("tap", sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), {target :
+					sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), ctrlKey: true});
+			assert.equal(this._oPC.getSelectedAppointments().length, 1,
+					"When deselecting an appointment while pressing CTRL key, only this particular appointment is deselected");
+			sap.ui.test.qunit.triggerEvent("tap", sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), {target :
+					sap.ui.getCore().byId("_oPC-R1A1").getDomRef(), ctrlKey: true});
+			qutils.triggerEvent("tap", "_oPC-R1A2");
+			assert.equal(this._oPC.getSelectedAppointments().length, 0,
+					"When deselecting an appointment without pressing CTRL key all selections are gone");
 
 			// clean
 			oSelectedAppointment = undefined;

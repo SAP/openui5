@@ -1,238 +1,233 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>sap.m.Menu Test</title>
+	<title>sap.m.Menu Test</title>
 
-    <script src="shared-config.js"></script>
-    <script src="../../../resources/sap-ui-core.js"
-            id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
-    </script>
-    <script>
-//        sap.ui.Device.system.phone = true;
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+	</script>
+	<script>
 
-        var oMenu = new sap.m.Menu({
-            title: "random",
-            itemSelected: function(oEvent) {
-                var oItem = oEvent.getParameter("item"),
-                        sItemPath = "";
-                while (oItem instanceof sap.m.MenuItem) {
-                    sItemPath = oItem.getText() + " > " + sItemPath;
-                    oItem = oItem.getParent();
-                }
+		var oMenu = new sap.m.Menu({
+			title: "random",
+			itemSelected: function(oEvent) {
+				var oItem = oEvent.getParameter("item"),
+						sItemPath = "";
+				while (oItem instanceof sap.m.MenuItem) {
+					sItemPath = oItem.getText() + " > " + sItemPath;
+					oItem = oItem.getParent();
+				}
 
-                sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+				sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
 
-                alert("itemSelected: " + sItemPath);
-            }
-        });
+				alert("itemSelected: " + sItemPath);
+			}
+		});
 
-        oMenu.addItem(new sap.m.MenuItem({
-            text: "fridge",
-            icon: "sap-icon://fridge",
-            items: [
-                new sap.m.MenuItem({
-                    text: "accidental leave accidental-leave accidental-leave accidental-leave accidental-leave accidental-leave accidental-leave",
-                    icon: "sap-icon://accidental-leave",
-                    items: [
-                        new sap.m.MenuItem({
-                            icon: "sap-icon://factory",
-                            text: "factory factory factory factory factory factory factory factory factory factory factory factory factory factory"
-                        }),
-                        new sap.m.MenuItem({
-                            icon: "sap-icon://flag",
-                            text: "flag"
-                        }),
-                        new sap.m.MenuItem({
-                            icon: "sap-icon://flight",
-                            text: "flight"
-                        })
-                    ]
-                }),
-                new sap.m.MenuItem({
-                    text: "iphone",
+		oMenu.addItem(new sap.m.MenuItem({
+			text: "fridge",
+			icon: "sap-icon://fridge",
+			items: [
+				new sap.m.MenuItem({
+					text: "accidental leave",
+					icon: "sap-icon://accidental-leave",
+					items: [
+						new sap.m.MenuItem({
+							icon: "sap-icon://factory",
+							text: "factory"
+						}),
+						new sap.m.MenuItem({
+							icon: "sap-icon://flag",
+							text: "flag"
+						}),
+						new sap.m.MenuItem({
+							icon: "sap-icon://flight",
+							text: "flight"
+						})
+					]
+				}),
+				new sap.m.MenuItem({
+					text: "iphone",
 //                    icon: "sap-icon://iphone",
-                    items: [
-                        new sap.m.MenuItem({
-                            icon: "sap-icon://video",
-                            text: "video"
-                        }),
-                        new sap.m.MenuItem({
+					items: [
+						new sap.m.MenuItem({
+							icon: "sap-icon://video",
+							text: "video"
+						}),
+						new sap.m.MenuItem({
 //                            icon: "sap-icon://loan",
-                            text: "loan"
-                        }),
-                        new sap.m.MenuItem({
-                            icon: "sap-icon://commission-check",
-                            text: "commission check",
-                            startsSection: true
-                        }),
-                        new sap.m.MenuItem({
-                            icon: "sap-icon://doctor",
-                            text: "doctor"
-                        })
-                    ]
-                })
-            ]
-        }));
+							text: "loan"
+						}),
+						new sap.m.MenuItem({
+							icon: "sap-icon://commission-check",
+							text: "commission check",
+							startsSection: true
+						}),
+						new sap.m.MenuItem({
+							icon: "sap-icon://doctor",
+							text: "doctor"
+						})
+					]
+				})
+			]
+		}));
 
-        oMenu.addItem(new sap.m.MenuItem({
-            text: "iphone",
-            icon: "sap-icon://iphone",
-            items: [
-                new sap.m.MenuItem({
-                    icon: "sap-icon://video",
-                    text: "no icons",
-                    items: [
-                        new sap.m.MenuItem({
-                            text: "new"
-                        }),
-                        new sap.m.MenuItem({
-                            text: "save and open save and open save and open save and open save and open save and open save and open",
-                            items: [
-                                new sap.m.MenuItem({
-                                    text: "save as"
-                                }),
-                                new sap.m.MenuItem({
-                                    text: "save"
-                                }),new sap.m.MenuItem({
-                                    text: "open from open fromopen fromopen fromopen fromopen fromopen fromopen fromopen fromopen from"
-                                }),
-                                new sap.m.MenuItem({
-                                    text: "open"
-                                })
-                            ]
-                        })
-                    ]
-                }),
-                new sap.m.MenuItem({
-                    icon: "sap-icon://loan",
-                    text: "loan"
-                }),
-                new sap.m.MenuItem({
-                    icon: "sap-icon://commission-check",
-                    text: "commission check"
-                }),
-                new sap.m.MenuItem({
-                    icon: "sap-icon://doctor",
-                    text: "doctor"
-                })
-            ]
-        }));
+		oMenu.addItem(new sap.m.MenuItem({
+			text: "iphone",
+			icon: "sap-icon://iphone",
+			items: [
+				new sap.m.MenuItem({
+					icon: "sap-icon://video",
+					text: "no icons",
+					items: [
+						new sap.m.MenuItem({
+							text: "new"
+						}),
+						new sap.m.MenuItem({
+							text: "save and open",
+							items: [
+								new sap.m.MenuItem({
+									text: "save as"
+								}),
+								new sap.m.MenuItem({
+									text: "save"
+								}),new sap.m.MenuItem({
+									text: "open from"
+								}),
+								new sap.m.MenuItem({
+									text: "open"
+								})
+							]
+						})
+					]
+				}),
+				new sap.m.MenuItem({
+					icon: "sap-icon://loan",
+					text: "loan"
+				}),
+				new sap.m.MenuItem({
+					icon: "sap-icon://commission-check",
+					text: "commission check"
+				}),
+				new sap.m.MenuItem({
+					icon: "sap-icon://doctor",
+					text: "doctor"
+				})
+			]
+		}));
 
-        var oButton = new sap.m.Button({
-            text: "Menu",
-            press: function() {
-                oMenu.openBy(this);
-            }
-        });
+		var oButton = new sap.m.MenuButton({
+			text: "Menu",
+			menu: oMenu
+		});
 
-        oButton.placeAt("body");
+		oButton.placeAt("body");
 
-        //////////////////////////
+		//////////////////////////
 
-        var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new sap.ui.model.json.JSONModel();
 
-        function bindAggregations(dataNumber) {
-            if (!dataNumber) {
-                var template = new sap.m.MenuItem({
-                    text: "{text}",
-                    icon: "{icon}",
-                    items: {
-                        path: 'items',
-                        template: new sap.m.MenuItem({
-                            text: "{text}",
-                            icon: "{icon}",
-                            items: {
-                                path: 'items',
-                                template: new sap.m.MenuItem({
-                                    text: "{text}",
-                                    icon: "{icon}"
-                                }),
-                                templateShareable: true
-                            }
-                        }),
-                        templateShareable: true
-                    }
-                });
+		function bindAggregations(dataNumber) {
+			if (!dataNumber) {
+				var template = new sap.m.MenuItem({
+					text: "{text}",
+					icon: "{icon}",
+					items: {
+						path: 'items',
+						template: new sap.m.MenuItem({
+							text: "{text}",
+							icon: "{icon}",
+							items: {
+								path: 'items',
+								template: new sap.m.MenuItem({
+									text: "{text}",
+									icon: "{icon}"
+								}),
+								templateShareable: true
+							}
+						}),
+						templateShareable: true
+					}
+				});
 
-                oModel.setData({
-                    items: [
-                        {
-                            text: "item1",
-                            icon: "sap-icon://accidental-leave"
-                        },
-                        {
-                            text: "item2",
-                            icon: "sap-icon://accidental-leave",
-                            items: [
-                                {
-                                    text: "sub-item1",
-                                    icon: "sap-icon://accidental-leave",
-                                    items: [
-                                        {
-                                            text: "sub-sub-item1",
-                                            icon: "sap-icon://accidental-leave"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                });
+				oModel.setData({
+					items: [
+						{
+							text: "item1",
+							icon: "sap-icon://accidental-leave"
+						},
+						{
+							text: "item2",
+							icon: "sap-icon://accidental-leave",
+							items: [
+								{
+									text: "sub-item1",
+									icon: "sap-icon://accidental-leave",
+									items: [
+										{
+											text: "sub-sub-item1",
+											icon: "sap-icon://accidental-leave"
+										}
+									]
+								}
+							]
+						}
+					]
+				});
 
-                oMenu2.setModel(oModel);
-                oMenu2.bindAggregation("items", "/items", template);
-            } else {
-                var oSecondData = {
-                    items: [
-                        {
-                            text: "second-item1",
-                            icon: "sap-icon://accidental-leave"
-                        },
-                        {
-                            text: "second-item2",
-                            icon: "sap-icon://accidental-leave",
-                            items: [
-                                {
-                                    text: "second-sub-item1",
-                                    icon: "sap-icon://accidental-leave",
-                                    items: [
-                                        {
-                                            text: "second-sub-sub-item1",
-                                            icon: "sap-icon://accidental-leave"
-                                        },
-                                        {
-                                            text: "second-sub-sub-item2",
-                                            icon: "sap-icon://accidental-leave"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                };
-                oSecondData.items.push({
-                    text: "second-item3",
-                    icon: "sap-icon://accidental-leave"
-                });
-                oMenu2.getModel().setProperty('/items', oSecondData.items);
-            }
-        }
+				oMenu2.setModel(oModel);
+				oMenu2.bindAggregation("items", "/items", template);
+			} else {
+				var oSecondData = {
+					items: [
+						{
+							text: "second-item1",
+							icon: "sap-icon://accidental-leave"
+						},
+						{
+							text: "second-item2",
+							icon: "sap-icon://accidental-leave",
+							items: [
+								{
+									text: "second-sub-item1",
+									icon: "sap-icon://accidental-leave",
+									items: [
+										{
+											text: "second-sub-sub-item1",
+											icon: "sap-icon://accidental-leave"
+										},
+										{
+											text: "second-sub-sub-item2",
+											icon: "sap-icon://accidental-leave"
+										}
+									]
+								}
+							]
+						}
+					]
+				};
+				oSecondData.items.push({
+					text: "second-item3",
+					icon: "sap-icon://accidental-leave"
+				});
+				oMenu2.getModel().setProperty('/items', oSecondData.items);
+			}
+		}
 
-        var oMenu2 = new sap.m.Menu();
-        bindAggregations();
+		var oMenu2 = new sap.m.Menu();
+		bindAggregations();
 
-        var oButton2 = new sap.m.Button({
-            text: "Test binding",
-            press: function() {
-                oMenu2.openBy(this);
-            }
-        });
+		var oButton2 = new sap.m.MenuButton({
+			text: "Test binding",
+			menu: oMenu2
+		});
 
-        oButton2.placeAt("body");
-    </script>
+		oButton2.placeAt("body");
+	</script>
 </head>
 <body id="body" class="sapUiBody" role="application">
 <!--<body id="body" class="sapUiBody sapUiSizeCozy">-->

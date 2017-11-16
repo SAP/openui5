@@ -19,13 +19,6 @@
 
   <appData>
     <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.table" />
-    <!-- excludes for the all-in-one file -->
-    <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
-        <all-in-one>
-            <!-- exclude support rules -->
-            <exclude name="**/*.support.js" />
-        </all-in-one>
-    </packaging>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
       <exclude name="sap.ui.table.js." />

@@ -17,13 +17,6 @@
   <appData>
     <!-- package name for selenium -->
     <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.layout" />
-    <!-- excludes for the all-in-one file -->
-    <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
-        <all-in-one>
-            <!-- exclude support rules -->
-            <exclude name="**/*.support.js" />
-        </all-in-one>
-    </packaging>
     <!-- excludes for the JSDoc -->
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
         <exclude name="sap.ui.layout.js." />

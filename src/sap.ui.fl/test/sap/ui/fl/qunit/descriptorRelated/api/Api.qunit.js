@@ -775,6 +775,30 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+
+	QUnit.test("create_app_setAch", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_setAch({
+			"ach": "CA-UI5-ABA"
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setAch");
+		});
+	});
+
+	QUnit.test("create_app_Ach failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setAch({
+				"AchH" : {}
+			});
+		});
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_setAch({
+				"Ach" : "a.id"
+			});
+		});
+	});
+
+
 	QUnit.test("create_app_setKeywords", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_setKeywords({
 			"keywords": ["{{customer.newid_sap.app.tags.keywords.0}}", "{{customer.newid_sap.app.tags.keywords.1}}"]
@@ -1079,6 +1103,22 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_flp_setFccApp({
 				"fccApp" : { }
+			});
+		});
+	});
+
+	QUnit.test("create_url_setUri", function(assert) {
+		return DescriptorInlineChangeFactory.create_url_setUri({
+			"uri" : "uri.com"
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_url_setUri failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_url_setUri({
+				"uri" : { }
 			});
 		});
 	});
@@ -1702,8 +1742,18 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 				assert.notEqual(oDescriptorChange, null);
 				assert.equal(oDescriptorChange._mChangeFile.reference, "a.reference");
 				assert.equal(oDescriptorChange._mChangeFile.changeType, "changeType");
+				assert.equal(oDescriptorChange._mChangeFile.layer, "CUSTOMER");
 				assert.equal(oDescriptorChange._oInlineChange, oDescriptorInlineChange);
 			});
+		});
+	});
+
+	QUnit.test("createNew - with tool", function(assert) {
+		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, 'VENDOR', undefined, 'RTA');
+		}).then(function(oDescriptorChange) {
+			assert.equal(oDescriptorChange._mChangeFile.layer, "VENDOR");
+			assert.equal(oDescriptorChange._mChangeFile.support.generator, 'RTA');
 		});
 	});
 
@@ -1912,6 +1962,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 		}).then(function(oDescriptorChange) {
 			_oDescriptorChange = oDescriptorChange;
+			assert.equal(_oDescriptorChange._mChangeFile.layer, 'CUSTOMER');
 			assert.equal(_oDescriptorChange._getChangeToSubmit( ).getRequest(),'ATO_NOTIFICATION');
 		});
 	});
@@ -1919,13 +1970,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	QUnit.test("create new - CUSTOMER_BASE layer", function(assert) {
 		var _oDescriptorChange;
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, 'CUSTOMER_BASE');
 		}).then(function(oDescriptorChange) {
 			_oDescriptorChange = oDescriptorChange;
+			assert.equal(_oDescriptorChange._mChangeFile.layer, 'CUSTOMER_BASE');
 			assert.equal(_oDescriptorChange._getChangeToSubmit( ).getRequest(),'ATO_NOTIFICATION');
 		});
 	});
-
 
 }(sap.ui.fl.descriptorRelated.api.DescriptorInlineChangeFactory,
 		sap.ui.fl.descriptorRelated.api.DescriptorVariantFactory,

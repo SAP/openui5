@@ -73,8 +73,8 @@ sap.ui.define([
 
 	/**
 	 * Validates if the new state of change has a valid value
-	 * The new state value has to be in the <code>Change.states<code> list
-	 * Moving of state directly from <code>Change.states.NEW<code> to <code>Change.states.DIRTY<code> is not allowed.
+	 * The new state value has to be in the <code>Change.states</code> list
+	 * Moving of state directly from <code>Change.states.NEW</code> to <code>Change.states.DIRTY</code> is not allowed.
 	 * @param {string} sState - value of target state
 	 * @returns {boolean} - new state is valid
 	 * @private
@@ -762,6 +762,7 @@ sap.ui.define([
 	 * @param {Object}  [oPropertyBag.validAppVersions] Application versions where the change is active
 	 * @param {String}  [oPropertyBag.reference] Application component name
 	 * @param {String}  [oPropertyBag.namespace] The namespace of the change file
+	 * @param {String}  [oPropertyBag.generator] The tool which is used to generate the change file
 	 *
 	 * @returns {Object} The content of the change file
 	 *
@@ -797,7 +798,7 @@ sap.ui.define([
 			conditions: {},
 			context: oPropertyBag.context || "",
 			support: {
-				generator: "Change.createInitialFileContent",
+				generator: oPropertyBag.generator || "Change.createInitialFileContent",
 				service: oPropertyBag.service || "",
 				user: "",
 				sapui5Version: sap.ui.version

@@ -133,6 +133,16 @@ sap.ui.define([
 		return this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
+	VariantModel.prototype._getVariantLabelCount = function(sNexText, sVariantManagementReference) {
+		var oData = this.getData();
+		return oData[sVariantManagementReference].variants.reduce( function (iCount, oVariant) {
+			if (sNexText === oVariant.title) {
+				iCount++;
+			}
+			return iCount;
+		}, 0);
+	};
+
 	VariantModel.prototype._duplicateVariant = function(mPropertyBag) {
 		var sNewVariantReference = mPropertyBag.newVariantReference,
 			sSourceVariantReference = mPropertyBag.sourceVariantReference,
@@ -209,6 +219,14 @@ sap.ui.define([
 			title: oDuplicateVariantData.content.title,
 			toBeDeleted: false
 		};
+
+		//create change for Standard variant in case it does not exist
+		if (!this.bStandardVariantExists) {
+			var oStandardVariantData = this.getVariant(sVariantManagementReference);
+			var oStandardVariant = this.oFlexController.createVariant(oStandardVariantData, this.oComponent);
+			this.oFlexController._oChangePersistence.addDirtyChange(oStandardVariant);
+			this.bStandardVariantExists = true;
+		}
 
 		//Flex Controller
 		var oVariant = this.oFlexController.createVariant(oDuplicateVariantData, this.oComponent);
