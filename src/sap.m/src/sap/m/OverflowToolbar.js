@@ -383,7 +383,7 @@ sap.ui.define([
 
 						oGroups[iControlGroup] = oGroups[iControlGroup] || [];
 						aGroup = oGroups[iControlGroup];
-						aGroup.push(oControl);
+						aGroup.unshift(oControl);
 
 						// The overall group priority is the max priority of its elements
 						if (!aGroup._priority || oPriorityOrder[aGroup._priority] < oPriorityOrder[sControlPriority]) {
