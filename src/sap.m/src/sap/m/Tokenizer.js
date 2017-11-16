@@ -485,6 +485,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onAfterRendering = function() {
+		var aTokens = this.getTokens(),
+			iTokensSize = aTokens.length;
+
 		if (!this._sResizeHandlerId) {
 			var that = this;
 			this._sResizeHandlerId = ResizeHandler.register(this.getDomRef(), function() {
@@ -493,6 +496,13 @@ sap.ui.define([
 		}
 
 		this._oIndicator = this.$().find(".sapMTokenizerIndicator");
+
+		// update ARIA information of Tokens depending on size and position in Tokenizer
+		for (var i = 0; i < iTokensSize; i++) {
+			var oTokenDomRef = aTokens[i].getDomRef();
+			oTokenDomRef.setAttribute("aria-posinset", i + 1);
+			oTokenDomRef.setAttribute("aria-setsize", iTokensSize);
+		}
 	};
 
 	/**
