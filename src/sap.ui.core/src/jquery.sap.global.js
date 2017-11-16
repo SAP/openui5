@@ -3793,6 +3793,7 @@
 		 *              The modules will be loaded first before loading the module itself.
 		 *
 		 * @private
+		 * @sap-restricted sap.ui.core sap.ui.export sap.ui.vk
 		 */
 		jQuery.sap.registerModuleShims = function(mShims) {
 			jQuery.sap.assert( typeof mShims === 'object', "mShims must be an object");
