@@ -191,8 +191,15 @@ sap.ui.define([
 
 			}).then(function(oComponent) {
 
+				var $link = jQuery("link[href$='/style2.css']");
+
 				// style2.css should be included
-				assert.equal(jQuery("link[href$='/style2.css']").length, 1, "style2.css should be available.");
+				assert.equal($link.length, 1, "style2.css should be available.");
+
+				// Adopting href of style2.css to add a URL parameter
+				// (which could happen when someone is hooking into jQuery.sap.includeStyleSheet to add cachebuster params)
+				$link.attr("href", $link.attr("href").replace("/style2.css", "/style2.css?foo"));
+
 				return oComponent;
 
 			}).then(function(oComponent) {
@@ -200,6 +207,7 @@ sap.ui.define([
 				// Destroy "test2" component and validate that style2.css has been removed
 				oComponent.destroy();
 				assert.equal(jQuery("link[href$='/style2.css']").length, 0, "style2.css should be removed.");
+				assert.equal(jQuery("link[href$='/style2.css?foo']").length, 0, "style2.css should be removed.");
 				return true;
 
 			}).then(function() {
@@ -378,9 +386,21 @@ sap.ui.define([
 
 			}).then(function(oComponent) {
 
+				var $style5 = jQuery("link[href$='/style5.css']");
+				var $style6 = jQuery("link[href$='/style6.css']");
+
 				// style5.css and style6.css should be included
-				assert.equal(jQuery("link[href$='/style5.css']").length, 1, "style5.css should be available.");
-				assert.equal(jQuery("link[href$='/style6.css']").length, 1, "style6.css should be available.");
+				assert.equal($style5.length, 1, "style5.css should be available.");
+				assert.equal($style6.length, 1, "style6.css should be available.");
+
+				// Adopting href of style5.css and style6.css to add a URL parameter
+				// (which could happen when someone is hooking into jQuery.sap.includeStyleSheet to add cachebuster params)
+				$style5.attr("href", $style5.attr("href").replace("/style5.css", "/style5.css?foo5"));
+				$style6.attr("href", $style6.attr("href").replace("/style6.css", "/style6.css?foo6"));
+
+				assert.equal(jQuery("link[href$='/style5.css?foo5']").length, 1, "style5.css url should be changed.");
+				assert.equal(jQuery("link[href$='/style6.css?foo6']").length, 1, "style6.css url should be changed.");
+
 				return oComponent;
 
 			}).then(function(oComponent) {
@@ -389,6 +409,9 @@ sap.ui.define([
 				oComponent.destroy();
 				assert.equal(jQuery("link[href$='/style5.css']").length, 0, "style5.css should be removed.");
 				assert.equal(jQuery("link[href$='/style6.css']").length, 0, "style6.css should be removed.");
+				assert.equal(jQuery("link[href$='/style5.css?foo5']").length, 0, "style5.css should be removed.");
+				assert.equal(jQuery("link[href$='/style6.css?foo6']").length, 0, "style6.css should be removed.");
+
 				return true;
 
 			}).then(function() {
