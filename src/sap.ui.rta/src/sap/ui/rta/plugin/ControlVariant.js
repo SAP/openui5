@@ -72,12 +72,13 @@ sap.ui.define([
 
 		if (oControl.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement") {
 			var oControl = oOverlay.getElementInstance(),
-				vAssociationElement = oControl.getAssociation("for"),
+				vAssociationElement = oControl.getFor(),
 				aVariantManagementTargetElements;
 
 			sVariantManagementReference = BaseTreeModifier.getSelector(oControl, flUtils.getComponentForControl(oControl)).id;
 
-			if (!vAssociationElement) {
+			if (!vAssociationElement ||
+				(Array.isArray(vAssociationElement) && vAssociationElement.length === 0)) {
 				oOverlay.setVariantManagement(sVariantManagementReference);
 				return;
 			}
@@ -347,10 +348,9 @@ sap.ui.define([
 	ControlVariant.prototype._emitLabelChangeEvent = function() {
 		var sText = RenameHandler._getCurrentEditableFieldText.call(this),
 			oOverlay = this._oEditedOverlay,
-			oRenamedElement = oOverlay.getElementInstance(),
 			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
+			oRenamedElement = oOverlay.getElementInstance(),
 			oModel = this._getVariantModel(oRenamedElement),
-			oSetTitleCommand,
 			sWarningText,
 			sVariantManagementReference = oOverlay.getVariantManagement(),
 			iDuplicateCount = oModel._getVariantLabelCount(sText, sVariantManagementReference),
@@ -374,39 +374,23 @@ sap.ui.define([
 
 		//Check for real change before creating a command and pass if warning text already set
 		if (this.getOldValue() !== sText && !sWarningText) {
-
 			if (sText === '\xa0') { //Empty string
 				sWarningText = "BLANK_WARNING_TEXT";
 			} else if (iDuplicateCount > 0) {
 				sWarningText = "DUPLICATE_WARNING_TEXT";
 			} else if (!sWarningText) {
-				this._$oEditableControlDomRef.text(sText);
-				try {
-					oSetTitleCommand = this.getCommandFactory().getCommandFor(oRenamedElement, "setTitle", {
-						renamedElement: oRenamedElement,
-						newText: sText
-					}, oDesignTimeMetadata, sVariantManagementReference);
-					this.fireElementModified({
-						"command": oSetTitleCommand
-					});
-				} catch (oError) {
-					jQuery.sap.log.error("Error during rename : ", oError);
-				}
-				return;
+				return this._createSetTitleCommand({
+					text: sText,
+					element: oRenamedElement,
+					designTimeMetadata: oDesignTimeMetadata,
+					variantManagementReference: sVariantManagementReference
+				});
 			}
 		}
 
 		if (sWarningText) {
-			//Prepare VariantManagement control overlay for valueStateMessage
-			oOverlay.getValueState = function () {
-				return "Error";
-			};
-			oOverlay.getValueStateText = function () {
-				return oResourceBundle.getText(sWarningText);
-			};
-			oOverlay.getDomRefForValueStateMessage = function () {
-				return this.$();
-			};
+			var sValueStateText = oResourceBundle.getText(sWarningText);
+			this._prepareOverlayForValueState(oOverlay, sValueStateText);
 
 			return Utils._showMessageBox("WARNING", "BLANK_DUPLICATE_TITLE_TEXT", sWarningText)
 				.then(function () {
@@ -423,6 +407,48 @@ sap.ui.define([
 					this.startEdit(oOverlay);
 				}.bind(this));
 		}
+	};
+
+	/**
+	 * sets the domref text, creates a setTitle command and fires element modified
+	 * @param {map} mPropertyBag - (required) contains required properties to create the command
+	 * @returns {object} setTitle command
+	 * @private
+	 */
+	ControlVariant.prototype._createSetTitleCommand = function (mPropertyBag) {
+		var oSetTitleCommand;
+		this._$oEditableControlDomRef.text(mPropertyBag.text);
+		try {
+			oSetTitleCommand = this.getCommandFactory().getCommandFor(mPropertyBag.element, "setTitle", {
+				renamedElement: mPropertyBag.element,
+				newText: mPropertyBag.text
+			}, mPropertyBag.designTimeMetadata, mPropertyBag.variantManagementReference);
+			this.fireElementModified({
+				"command": oSetTitleCommand
+			});
+		} catch (oError) {
+			jQuery.sap.log.error("Error during rename : ", oError);
+		}
+		return oSetTitleCommand;
+	};
+
+	/**
+	 * prepares overlay for showing a value state message
+	 * @param {object} oOverlay Overlay which needs be prepared
+	 * @param {string} sValueStateText value state text that needs to be set
+	 * @private
+	 */
+	ControlVariant.prototype._prepareOverlayForValueState = function (oOverlay, sValueStateText) {
+		//Prepare VariantManagement control overlay for valueStateMessage
+		oOverlay.getValueState = function () {
+			return "Error";
+		};
+		oOverlay.getValueStateText = function () {
+			return sValueStateText;
+		};
+		oOverlay.getDomRefForValueStateMessage = function () {
+			return this.$();
+		};
 	};
 
 	/**
