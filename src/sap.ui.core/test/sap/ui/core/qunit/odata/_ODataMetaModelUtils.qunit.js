@@ -639,6 +639,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
+		semantics : "fiscalyear",
+		term : "com.sap.vocabularies.Common.v1.IsFiscalYear"
+	}, {
+		semantics : "fiscalyearperiod",
+		term : "com.sap.vocabularies.Common.v1.IsFiscalYearPeriod"
+	}, {
 		semantics : "year",
 		term : "com.sap.vocabularies.Common.v1.IsCalendarYear"
 	}, {
@@ -647,6 +653,12 @@ sap.ui.require([
 	}, {
 		semantics : "yearmonthday",
 		term : "com.sap.vocabularies.Common.v1.IsCalendarDate"
+	}, {
+		semantics : "yearquarter",
+		term : "com.sap.vocabularies.Common.v1.IsCalendarYearQuarter"
+	}, {
+		semantics : "yearweek",
+		term : "com.sap.vocabularies.Common.v1.IsCalendarYearWeek"
 	}].forEach(function (oFixture) {
 		var sSemantics = oFixture.semantics,
 			sTerm = oFixture.term;

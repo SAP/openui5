@@ -52,17 +52,14 @@ sap.ui.require([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			Then.onTheMainPage.checkNote(0, "My Note");
 
-			//TODO: skip PATCH test for SubmitMode.Direct as long as BCP 1770444077 in not solved
-			if (sGroupId !== "myDirectGroup" && sGroupId !== "$direct") {
-				// Test: update of SalesOrder note -> error, restart after note corrected
-				When.onTheMainPage.changeNote(0, "RAISE_ERROR");
-				When.onTheErrorInfo.confirm();
-				When.onTheMainPage.changeNote(0, "My Note");
-				Then.onTheMainPage.checkNote(0, "My Note");
-				aExpectedLogs.push(oExpectedPatchLog);
-				//TODO: analyse why we got the same log for PATCH 2 times for SubmitMode.Auto
-				aExpectedLogs.push(oExpectedPatchLog);
-			}
+			// Test: update of SalesOrder note -> error, restart after note corrected
+			When.onTheMainPage.changeNote(0, "RAISE_ERROR");
+			When.onTheErrorInfo.confirm();
+			When.onTheMainPage.changeNote(0, "My Note");
+			Then.onTheMainPage.checkNote(0, "My Note");
+			aExpectedLogs.push(oExpectedPatchLog);
+			//TODO: analyse why we got the same log for PATCH 2 times for SubmitMode.Auto
+			aExpectedLogs.push(oExpectedPatchLog);
 
 			// CleanUp: delete created SalesOrder again via given group ID
 			When.onTheMainPage.selectFirstSalesOrder();

@@ -241,16 +241,21 @@ sap.ui.define([
 	 * registered 'change' event listeners have been notified.
 	 * It is to be used by applications for example to switch off a busy indicator or to process an
 	 * error.
-	 * If back-end requests are successful, the event has no parameters. Use the binding's contexts
-	 * via {@link #getCurrentContexts oEvent.getSource().getCurrentContexts()} to access the
-	 * response data. Note that controls bound to this data may not yet have been updated, meaning
-	 * it is not safe for registered event handlers to access data via control APIs.
+	 * If back-end requests are successful, the event has almost no parameters. For compatibility
+	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
+	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
+	 * is not. Use the binding's contexts via
+	 * {@link #getCurrentContexts oEvent.getSource().getCurrentContexts()} to access the response
+	 * data. Note that controls bound to this data may not yet have been updated, meaning it is not
+	 * safe for registered event handlers to access data via control APIs.
 	 *
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
+	 * @param {object} [oEvent.getParameters.data]
+	 *   An empty data object if a back-end request succeeds
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
@@ -1003,12 +1008,12 @@ sap.ui.define([
 					}
 				}
 				if (bDataRequested) {
-					that.fireDataReceived();
+					that.fireDataReceived({data : {}});
 				}
 			}, function (oError) {
 				// cache shares promises for concurrent read
 				if (bDataRequested) {
-					that.fireDataReceived(oError.canceled ? undefined : {error : oError});
+					that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError});
 				}
 				throw oError;
 			})["catch"](function (oError) {
@@ -1414,6 +1419,62 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.toString = function () {
 		return sClassName + ": " + (this.bRelative ? this.oContext + "|" : "") + this.sPath;
+	};
+
+	/**
+	 * Updates the binding's "$apply" parameter based on the given analytical information as
+	 * "groupby((&lt;dimension_1,...,dimension_N>),aggregate(&lt;measure_1,...,measure_M>))" where
+	 * the "aggregate" part is only present if measures are given.
+	 *
+	 * Analytical information is the mapping of UI columns to properties in the bound OData entity
+	 * set. Every column object contains at least the <code>name</code> of the bound property.
+	 * <ol>
+	 *   <li>A column bound to a dimension property has further boolean properties:
+	 *     <ul>
+	 *       <li><code>grouped</code>: its presence is used to detect a dimension</li>
+	 *       <li><code>inResult</code> and <code>visible</code>: the dimension is ignored unless at
+	 *         least one of these is <code>true</code></li>
+	 *     </ul>
+	 *   </li>
+	 *   <li>A column bound to a measure property has further boolean properties:
+	 *     <ul>
+	 *       <li><code>total</code>: its presence is used to detect a measure</li>
+	 *     </ul>
+	 *   </li>
+	 * </ol>
+	 *
+	 * @param {object[]} aColumns
+	 *   An array with objects holding the analytical information for every column, from left to
+	 *   right
+	 * @throws {Error} In case a column is neither a dimension nor a measure, or both a dimension
+	 *   and a measure
+	 *
+	 * @protected
+	 * @see sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo
+	 * @see #changeParameters
+	 * @since 1.53.0
+	 */
+	ODataListBinding.prototype.updateAnalyticalInfo = function (aColumns) {
+		var aAggregate = [],
+			aGroupBy = [];
+
+		aColumns.forEach(function (oColumn) {
+			if ("total" in oColumn) { // measure
+				if ("grouped" in oColumn) {
+					throw new Error("Both dimension and measure: " + oColumn.name);
+				}
+				aAggregate.push(oColumn.name);
+			} else if ("grouped" in oColumn) { // dimension
+				if (oColumn.inResult || oColumn.visible) {
+					aGroupBy.push(oColumn.name);
+				}
+			} else {
+				throw new Error("Neither dimension nor measure: " + oColumn.name);
+			}
+		});
+
+		this.changeParameters({$apply : "groupby((" + aGroupBy.join(",")
+			+ (aAggregate.length ? "),aggregate(" + aAggregate.join(",") + "))" : "))")});
 	};
 
 	return ODataListBinding;

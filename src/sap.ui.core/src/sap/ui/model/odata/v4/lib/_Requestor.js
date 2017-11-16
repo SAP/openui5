@@ -363,6 +363,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether the "OData-Version" header is set to "4.0" otherwise an error is thrown.
+	 *
+	 * @param {function} fnGetHeader
+	 *   A callback function to get a header attribute for a given header name with case-insensitive
+	 *   search by header name
+	 * @param {string} sResourcePath
+	 *   The resource path of the request
+	 * @param {boolean} [bVersionOptional=false]
+	 *   Indicates whether the OData service version is optional, which is the case for responses
+	 *   contained in a response for a $batch request
+	 * @throws {Error} If the "OData-Version" header is not "4.0"
+	 */
+	Requestor.prototype.doCheckVersionHeader = function (fnGetHeader, sResourcePath,
+			bVersionOptional) {
+		var sODataVersion = fnGetHeader("OData-Version"),
+			vDataServiceVersion = !sODataVersion && fnGetHeader("DataServiceVersion");
+
+		if (vDataServiceVersion) {
+			throw new Error("Expected 'OData-Version' header with value '4.0' but received"
+				+ " 'DataServiceVersion' header with value '" + vDataServiceVersion
+				+ "' in response for " + this.sServiceUrl + sResourcePath);
+		}
+		if (sODataVersion === "4.0" || !sODataVersion && bVersionOptional) {
+			return;
+		}
+		throw new Error("Expected 'OData-Version' header with value '4.0' but received value '"
+			+ sODataVersion + "' in response for " + this.sServiceUrl + sResourcePath);
+	};
+
+	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
 	 * May be overwritten for other OData service versions.
@@ -754,6 +784,12 @@ sap.ui.define([
 					bIsBatch ? oBatchRequest.headers : that.mFinalHeaders),
 				method : sMethod
 			}).then(function (oPayload, sTextStatus, jqXHR) {
+				try {
+					that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath);
+				} catch (oError) {
+					fnReject(oError);
+					return;
+				}
 				that.mHeaders["X-CSRF-Token"]
 					= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
 				if (bIsBatch) {
@@ -890,6 +926,8 @@ sap.ui.define([
 				} else if (vResponse.responseText) {
 					oResponse = JSON.parse(vResponse.responseText);
 					try {
+						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
+							true);
 						vRequest.$resolve(that.doConvertResponse(oResponse));
 					} catch (oErr) {
 						vRequest.$reject(oErr);

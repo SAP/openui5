@@ -412,10 +412,17 @@ sap.ui.require([
 	//*********************************************************************************************
 	['eq', 'ge', 'gt', 'le', 'lt', 'ne'].forEach(function (sOperator) {
 		QUnit.test("_Parser#parseFilter, operator=" + sOperator, function (assert) {
-			var sFilter = "foo " + sOperator + " 'bar'",
-				oSyntaxTree = _Parser.parseFilter(sFilter);
 
-			assert.deepEqual(oSyntaxTree, {
+			function parseAndRebuild(sFilter, oExpectedSyntaxTree) {
+				var oSyntaxTree = _Parser.parseFilter(sFilter);
+
+				assert.deepEqual(oSyntaxTree, oExpectedSyntaxTree, 'parse ' + sFilter);
+				assert.strictEqual(_Parser.buildFilterString(oSyntaxTree), sFilter,
+					"rebuild " + sFilter);
+			}
+
+			// Part 1: foo op 'bar'
+			parseAndRebuild("foo " + sOperator + " 'bar'", {
 				id : sOperator,
 				value : " " + sOperator + " ",
 				at : 5,
@@ -431,7 +438,22 @@ sap.ui.require([
 				}
 			});
 
-			assert.strictEqual(_Parser.buildFilterString(oSyntaxTree), sFilter);
+			// Part 2: 'bar' op foo
+			parseAndRebuild("'bar' " + sOperator + " foo", {
+				id : sOperator,
+				value : " " + sOperator + " ",
+				at : 7,
+				left : {
+					id : "VALUE",
+					value : "'bar'",
+					at : 1
+				},
+				right : {
+					id : "PATH",
+					value : "foo",
+					at : 10
+				}
+			});
 		});
 	});
 
@@ -464,22 +486,19 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		string : ";",
-		error : "Expected PATH but instead saw ';' at 1"
+		error : "Unexpected ';' at 1"
 	}, {
 		string : "foo='bar'",
-		error : "Expected operator but instead saw '=' at 4"
-	}, {
-		string : "foo",
-		error : "Expected operator but instead saw end of input"
+		error : "Unexpected '=' at 4"
 	}, {
 		string : "foo eq",
-		error : "Expected VALUE but instead saw end of input"
+		error : "Expected expression but instead saw end of input"
 	}, {
 		string : "foo eq ",
-		error : "Expected VALUE but instead saw end of input"
+		error : "Expected expression but instead saw end of input"
 	}, {
 		string : "foo eq  ",
-		error : "Expected VALUE but instead saw end of input"
+		error : "Expected expression but instead saw end of input"
 	}].forEach(function (oFixture) {
 		QUnit.test('_Parser#parseFilter: "' + oFixture.string + '"', function (assert) {
 			assert.throws(function () {

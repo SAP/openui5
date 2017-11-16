@@ -48,7 +48,7 @@ sap.ui.require([
 	 *   the XML snippet; it will be inserted below an <Edmx> element
 	 * @param {object} oExpected
 	 *   the expected JSON object
-	 * @param {boolean} bSubset
+	 * @param {boolean} [bSubset=false]
 	 *   whether the given JSON is just a subset of the real expectation, i.e. every top-level
 	 *   property that is given must exist with the exact value (deepEqual), but there may be others
 	 */
@@ -65,7 +65,7 @@ sap.ui.require([
 	 *   the XML snippet; it will be inserted below an <Edmx> element
 	 * @param {object} oExpected
 	 *   the expected JSON object
-	 * @param {boolean} bSubset
+	 * @param {boolean} [bSubset=false]
 	 *   whether the given JSON is just a subset of the real expectation, i.e. every top-level
 	 *   property that is given must exist with the exact value (deepEqual), but there may be others
 	 */
@@ -1688,17 +1688,45 @@ sap.ui.require([
 	// overwrite the others
 
 	//*********************************************************************************************
-	QUnit.test("convert sap:semantics=url to IsURL", function (assert) {
+	QUnit.test("convert sap:semantics=* from mV2toV4SimpleSemantics", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
-					<Property Name="P01" Type="Edm.String" sap:semantics="url"/>\
+					<Property Name="P01" Type="Edm.String" sap:semantics="fiscalyear"/>\
+					<Property Name="P02" Type="Edm.String" sap:semantics="fiscalyearperiod"/>\
+					<Property Name="P03" Type="Edm.String" sap:semantics="url"/>\
+					<Property Name="P04" Type="Edm.String" sap:semantics="year"/>\
+					<Property Name="P05" Type="Edm.String" sap:semantics="yearmonth"/>\
+					<Property Name="P06" Type="Edm.String" sap:semantics="yearmonthday"/>\
+					<Property Name="P07" Type="Edm.String" sap:semantics="yearquarter"/>\
+					<Property Name="P08" Type="Edm.String" sap:semantics="yearweek"/>\
 				</EntityType>',
 			{
 				"GWSAMPLE_BASIC.Foo/P01" : {
+					"@com.sap.vocabularies.Common.v1.IsFiscalYear" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P02" : {
+					"@com.sap.vocabularies.Common.v1.IsFiscalYearPeriod" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P03" : {
 					"@Org.OData.Core.V1.IsURL" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P04" : {
+					"@com.sap.vocabularies.Common.v1.IsCalendarYear" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P05" : {
+					"@com.sap.vocabularies.Common.v1.IsCalendarYearMonth" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P06" : {
+					"@com.sap.vocabularies.Common.v1.IsCalendarDate" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P07" : {
+					"@com.sap.vocabularies.Common.v1.IsCalendarYearQuarter" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P08" : {
+					"@com.sap.vocabularies.Common.v1.IsCalendarYearWeek" : true
 				}
 			});
 	});
@@ -2085,7 +2113,70 @@ sap.ui.require([
 		this.oLogMock.expects("warning").withExactArgs(
 			"Path 'Parts/MissingUnit/Foo' for sap:unit cannot be resolved",
 			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0" , sModuleName);
+		this.oLogMock.expects("warning").withExactArgs(
+			"Unsupported annotation 'sap:semantics'",
+			sinon.match(/<Property.*sap:semantics="invalid".*\/>/),
+			sModuleName);
 
 		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("collectSapAnnotations/warnUnusedSapAnnotations", function (assert) {
+		var oLogMock = this.oLogMock;
+
+		function warn(rElement, sName, sValue) {
+			oLogMock.expects("warning").withExactArgs("Unsupported annotation 'sap:" + sName + "'",
+				sinon.match(rElement), sModuleName);
+		}
+
+		warn(/<Schema.*sap:bar="baz".*>/, "bar");
+		warn(/<ComplexType.*sap:bar="baz".*\/>/, "bar");
+		warn(/<EntityType.*sap:bar="baz".*>/, "bar", "baz");
+		warn(/<Association.*sap:bar="baz".*>/, "bar", "baz");
+		warn(/<Property.*sap:bar="baz".*\/>/, "bar", "baz");
+		warn(/<NavigationProperty.*sap:bar="baz".*\/>/, "bar", "baz");
+		warn(/<EntityContainer.*sap:bar="baz".*>/, "bar", "baz");
+		warn(/<EntityContainer.*sap:foo="fuz".*>/, "foo", "fuz");
+		warn(/<EntitySet.*sap:bar="baz".*\/>/, "bar", "baz");
+		warn(/<FunctionImport.*sap:applicable-path="foo".*\/>/, "applicable-path", "foo");
+		oLogMock.expects("warning").withExactArgs("Unsupported 'sap:action-for' at FunctionImport"
+			+ " 'BoundFunction', removing this FunctionImport", undefined, sModuleName);
+
+		testConversion(assert, '\
+			<Schema Namespace="foo" sap:bar="baz">\
+				<ComplexType Name="MyComplexType" sap:bar="baz"/>\
+				<EntityType Name="MyEntityType" sap:content-version="1" sap:bar="baz">\
+					<Property Name="MyProperty" Type="Edm.String" sap:bar="baz"/>\
+					<NavigationProperty Name="ToSomewhere" Relationship="foo.Assoc" \
+						ToRole="A" sap:bar="baz"/>\
+				</EntityType>\
+				<Association Name="Assoc" sap:content-version="1" sap:bar="baz">\
+					<End Type="foo.MyEntityType" Role="A"/>\
+					<End Type="foo.MyEntityType" Role="B"/>\
+				</Association>\
+				<EntityContainer Name="Container" sap:bar="baz" sap:foo="fuz">\
+					<EntitySet Name="MyEntitySet" EntityType="foo.MyEntityType" \
+						sap:content-version="1" sap:bar="baz"/>\
+					<FunctionImport Name="MyFunction" sap:applicable-path="foo"/>\
+					<FunctionImport Name="BoundFunction" sap:action-for="MyEntitySet"\
+						sap:applicable-path="bar"/>\
+					<AssociationSet Name="MyAssociationSet" Association="foo.Assoc"\
+							sap:creatable="false" sap:deletable="false" sap:updatable="false">\
+						<End EntitySet="MyEntitySet" Role="A"/>\
+						<End EntitySet="MyEntitySet" Role="B"/>\
+					</AssociationSet>\
+				</EntityContainer>\
+			</Schema>', {}, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sap:schema-version", function (assert) {
+		testConversion(assert, '<Schema Namespace="foo" sap:schema-version="1"/>', {
+			"foo." : {
+				$kind : "Schema",
+				"@Org.Odata.Core.V1.SchemaVersion" : "1"
+			}
+		});
 	});
 });

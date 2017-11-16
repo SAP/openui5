@@ -733,6 +733,7 @@ sap.ui.require([
 
 						assert.strictEqual(oEvent.getSource(), oControl.getBinding("text"),
 							"dataReceived - correct source");
+						assert.deepEqual(oEvent.getParameter("data"), {});
 						assert.strictEqual(iDataRequestedCount, 1);
 						assert.strictEqual(oBinding.getType(), oType);
 						assert.strictEqual(oBinding.getValue(), oValue);
@@ -783,6 +784,7 @@ sap.ui.require([
 					var oBinding = oControl.getBinding("text");
 					assert.strictEqual(oBinding.getType(), undefined);
 					assert.strictEqual(oBinding.getValue(), undefined);
+					assert.deepEqual(oEvent.getParameter("data"), {});
 					assert.strictEqual(oEvent.getParameter("error"), undefined, "no read error");
 					done();
 				}
@@ -1296,9 +1298,8 @@ sap.ui.require([
 				sinon.match.func, "/BusinessPartnerList('0100000000')", "/BusinessPartnerList/0",
 				"Unit")
 			.returns(Promise.resolve());
-		oBindingMock.expects("getUnitOrCurrencyPath")
-			.withExactArgs("Address/City")
-			.returns("Unit"); // the "Unit" property associated with Address/City
+		// the "Unit" property associated with Address/City
+		oBindingMock.expects("getUnitOrCurrencyPath").withExactArgs().returns("Unit");
 
 		// code under test
 		oControl.setText("foo");
@@ -1315,9 +1316,7 @@ sap.ui.require([
 				sinon.match.func, "/BusinessPartnerList('0100000000')", "/BusinessPartnerList/0",
 				"Unit")
 			.returns(Promise.resolve());
-		oBindingMock.expects("getUnitOrCurrencyPath")
-			.withExactArgs("Address/City")
-			.returns("Unit");
+		oBindingMock.expects("getUnitOrCurrencyPath").withExactArgs().returns("Unit");
 
 		// code under test
 		oControl.getBinding("text").setValue(null, "up");
@@ -1714,8 +1713,7 @@ sap.ui.require([
 				.returns(oFixture.mAnnotations);
 
 			// code under test
-			assert.strictEqual(oBinding.getUnitOrCurrencyPath(oFixture.sPathInEntity),
-				oFixture.sExpectedPath);
+			assert.strictEqual(oBinding.getUnitOrCurrencyPath(), oFixture.sExpectedPath);
 		});
 	});
 

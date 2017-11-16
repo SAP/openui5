@@ -126,16 +126,20 @@ sap.ui.define([
 	 * registered 'change' event listeners have been notified. It is to be used by applications for
 	 * example to switch off a busy indicator or to process an error.
 	 *
-	 * If back-end requests are successful, the event has no parameters. Use
-	 * {@link #getValue() oEvent.getSource().getValue()} to access the response data. Note that
-	 * controls bound to this data may not yet have been updated, meaning it is not safe for
-	 * registered event handlers to access data via control APIs.
+	 * If back-end requests are successful, the event has almost no parameters. For compatibility
+	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
+	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
+	 * is not. Use {@link #getValue() oEvent.getSource().getValue()} to access the response data.
+	 * Note that controls bound to this data may not yet have been updated, meaning it is not safe
+	 * for registered event handlers to access data via control APIs.
 	 *
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
+	 * @param {object} [oEvent.getParameters.data]
+	 *   An empty data object if a back-end request succeeds
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
@@ -194,7 +198,7 @@ sap.ui.define([
 			bDataRequested = false,
 			bFire = false,
 			oMetaModel = this.oModel.getMetaModel(),
-			mParametersForDataReceived,
+			mParametersForDataReceived = {data : {}},
 			oPromise,
 			aPromises = [],
 			oReadPromise,
@@ -337,14 +341,12 @@ sap.ui.define([
 	/**
 	 * Returns the path for the unit or currency of the given property path.
 	 *
-	 * @param {string} sPropertyPath
-	 *   The path of this property relative to the entity
 	 * @returns {string}
 	 *   The path of the unit or currency relative to the entity
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.getUnitOrCurrencyPath = function (sPropertyPath) {
+	ODataPropertyBinding.prototype.getUnitOrCurrencyPath = function () {
 		var oMetaModel = this.oModel.getMetaModel(),
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			mAnnotations = oMetaModel.getObject("@", oMetaModel.getMetaContext(sResolvedPath)),
@@ -586,8 +588,7 @@ sap.ui.define([
 						.then(function (oResult) {
 							return that.oContext.getBinding().updateValue(sGroupId,
 								oResult.propertyPath, vValue, reportError, oResult.editUrl,
-								oResult.entityPath,
-								that.getUnitOrCurrencyPath(oResult.propertyPath));
+								oResult.entityPath, that.getUnitOrCurrencyPath());
 						})
 						["catch"](function (oError) {
 							if (!oError.canceled) {

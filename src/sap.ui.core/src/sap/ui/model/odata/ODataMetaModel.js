@@ -99,6 +99,7 @@ sap.ui.define([
 	 * are added, if they are not yet defined in the V4 annotations:
 	 * <ul>
 	 * <li><code>label</code>;</li>
+	 * <li><code>schema-version</code> (since 1.53.0) on schemas;</li>
 	 * <li><code>creatable</code>, <code>deletable</code>, <code>deletable-path</code>,
 	 * <code>pageable</code>, <code>requires-filter</code>, <code>searchable</code>,
 	 * <code>topable</code>, <code>updatable</code> and <code>updatable-path</code> on entity sets;
@@ -126,8 +127,12 @@ sap.ui.define([
 	 * <code>com.sap.vocabularies.Communication.v1.Message</code>);</li>
 	 * <li>"completed", "due", "percent-complete" and "priority" (mapped to V4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Task</code>);</li>
-	 * <li>"year", "yearmonth", "yearmonthday" (mapped to the corresponding V4 annotation
-	 * <code>com.sap.vocabularies.Common.v1.IsCalendar(Year|YearMonth|Date)</code>);</li>
+	 * <li>"fiscalyear", "fiscalyearperiod" (mapped to the corresponding V4 annotation
+	 * <code>com.sap.vocabularies.Common.v1.IsFiscal(Year|YearPeriod)</code>);</li>
+	 * <li>"year", "yearmonth", "yearmonthday", "yearquarter", "yearweek" (mapped to the
+	 * corresponding V4 annotation
+	 * <code>com.sap.vocabularies.Common.v1.IsCalendar(Year|YearMonth|Date|YearQuarter|YearWeek)</code>);
+	 * </li>
 	 * <li>"url" (mapped to V4 annotation <code>Org.OData.Core.V1.IsURL"</code>).</li>
 	 * </ul>
 	 * </ul>
