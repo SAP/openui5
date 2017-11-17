@@ -668,9 +668,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		enabled: true,
 		minversion: "1.48",
 		title: "Form: LayoutData assigned to Form content not valid for layout",
-		description: "Layout data on Form content can be used to influence the appearance of Form." +
-		             " Depending on the layout used, different LayoutData can be used. " +
-		             " \n For example, if ResponsiveGridLayout is used, GridData can be used to change the width of the fields.",
+		description: "Layout data on Form content can be used to influence the appearance of Form. Depending on the layout used, different LayoutData can be used.",
 		resolution: "Use only valid LayoutData that are suitable for the layout used",
 		resolutionurls: [{
 			text: "API Reference: ResponsiveGridLayout",
