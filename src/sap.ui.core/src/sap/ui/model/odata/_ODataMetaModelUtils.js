@@ -197,7 +197,7 @@ sap.ui.define([
 		 * @param {object} oProperty
 		 *   the property of the entity
 		 * @param {object} oEntitySet
-		 *   the entity set to which the corresponding V4 annotations needs to be added
+		 *   the entity set to which the corresponding V4 annotations need to be added
 		 */
 		addFilterRestriction : function (oProperty, oEntitySet) {
 			var aFilterRestrictions,
@@ -224,6 +224,37 @@ sap.ui.define([
 			});
 			oEntitySet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"] =
 				aFilterRestrictions;
+		},
+
+		/**
+		 * Adds a V4 navigation restriction annotation with a filter restriction to the given entity
+		 * set for the given navigation property with the V2 annotation
+		 * <code>sap:filterable="false"</code>.
+		 *
+		 * @param {object} oNavigationProperty
+		 *   the navigation property of the entity with the V2 annotation
+		 *   <code>sap:filterable="false"</code>
+		 * @param {object} oEntitySet
+		 *   the entity set to which the corresponding V4 annotation needs to be added
+		 */
+		addNavigationFilterRestriction : function (oNavigationProperty, oEntitySet) {
+			var oNavigationRestrictions =
+					oEntitySet["Org.OData.Capabilities.V1.NavigationRestrictions"] || {};
+
+			oNavigationRestrictions.RestrictedProperties =
+				oNavigationRestrictions.RestrictedProperties || [];
+
+			oNavigationRestrictions.RestrictedProperties.push({
+				"FilterRestrictions" : {
+					"Filterable": oBoolFalse
+				},
+				"NavigationProperty" : {
+					"NavigationPropertyPath" : oNavigationProperty.name
+				}
+			});
+
+			oEntitySet["Org.OData.Capabilities.V1.NavigationRestrictions"] =
+				oNavigationRestrictions;
 		},
 
 		/**
@@ -523,6 +554,8 @@ sap.ui.define([
 			if (oEntityType.navigationProperty) {
 				oEntityType.navigationProperty.forEach(function (oNavigationProperty) {
 					if (oNavigationProperty["sap:filterable"] === "false") {
+						Utils.addNavigationFilterRestriction(oNavigationProperty, oEntitySet);
+						// keep deprecated conversion for compatibility reasons
 						Utils.addPropertyToAnnotation("sap:filterable", oEntitySet,
 							oNavigationProperty);
 					}
