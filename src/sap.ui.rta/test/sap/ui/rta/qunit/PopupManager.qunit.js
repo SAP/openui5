@@ -18,6 +18,7 @@ sap.ui.require([
 	"sap/ui/layout/form/Form",
 	"sap/ui/base/Event",
 	"sap/ui/dt/Overlay",
+	"sap/ui/core/Component",
 	// should be last
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-ie",
@@ -40,6 +41,7 @@ function(
 	Form,
 	Event,
 	Overlay,
+	Component,
 	sinon
 ) {
 	"use strict";
@@ -238,6 +240,35 @@ function(
 			}.bind(this));
 			this.oNonRtaDialog.open();
 		}.bind(this));
+	});
+	//_isPopupAdaptable
+	QUnit.test("when _isPopupAdaptable is called with a dialog with a valid component", function(assert) {
+		var done = assert.async();
+		var oComp = Component.getOwnerComponentFor(this.oDialog);
+		var oPopupManager = this.oRta.getPopupManager();
+		var oDialogNotAllowed;
+
+		oPopupManager.oRtaRootAppComponent = oComp;
+
+		oComp.runAsOwner(function () {
+			oDialogNotAllowed = new Dialog({
+				id:"adaptNotAllowedDialog",
+				showHeader: false,
+				contentHeight: "800px",
+				contentWidth: "1000px"
+			});
+
+		});
+		oDialogNotAllowed.attachAfterOpen(function() {
+			assert.ok(this.oRta.getPopupManager()._isPopupAdaptable(oDialogNotAllowed), "then true returned when isPopupAdaptationAllowed function doesn't exist for dialog");
+			oDialogNotAllowed.isPopupAdaptationAllowed = function () {
+				return false;
+			};
+			assert.notOk(this.oRta.getPopupManager()._isPopupAdaptable(oDialogNotAllowed), "then false returned when isPopupAdaptationAllowed function exists for dialog");
+			oDialogNotAllowed.destroy();
+			done();
+		}.bind(this));
+		oDialogNotAllowed.open();
 	});
 	//_overrideRemovePopupInstance
 	QUnit.test("when _overrideRemovePopupInstance for dialog is called", function(assert) {
