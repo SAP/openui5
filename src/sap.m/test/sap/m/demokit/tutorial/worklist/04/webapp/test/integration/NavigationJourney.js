@@ -25,7 +25,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheObjectPage.iShouldSeeTheRememberedObject().
-		and.theViewIsNotBusyAnymore();
+			and.theViewIsNotBusyAnymore();
 	});
 
 	opaTest("Should go back to the TablePage", function(Given, When, Then) {
@@ -59,7 +59,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheObjectPage.iShouldSeeTheRememberedObject().
-		and.iTeardownMyAppFrame();
+			and.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see a busy indication while loading the metadata", function(Given, When, Then) {
@@ -73,7 +73,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp().
-		and.iTeardownMyAppFrame();
+			and.iTeardownMyAppFrame();
 	});
 
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function(Given, When, Then) {
@@ -82,8 +82,7 @@ sap.ui.define([
 
 		//Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox("metadataErrorMessageBox").
-		and.iTeardownMyAppFrame();
-
+			and.iTeardownMyAppFrame();
 	});
 
 	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function(Given, When, Then) {
@@ -92,8 +91,7 @@ sap.ui.define([
 
 		//Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox("serviceErrorMessageBox").
-		and.iTeardownMyAppFrame();
-
+			and.iTeardownMyAppFrame();
 	});
 
 });
