@@ -551,7 +551,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 		var oBinding = this.getBinding("value");
 
 		if (oBinding && oBinding.getType() instanceof sap.ui.model.type.DateInterval) {
-			return oBinding.getType().parseValue(sValue, "string");
+			aDates = oBinding.getType().parseValue(sValue, "string");
+			/** DateRangeSelection control uses local dates for its properties, so make sure returned values from
+			 * binding type formatter are restored to local dates if necessary.
+			 **/
+			if (oBinding.getType().oFormatOptions && oBinding.getType().oFormatOptions.UTC) {
+				aDates = aDates.map(function (oUTCDate) {
+					return new Date(oUTCDate.getUTCFullYear(), oUTCDate.getUTCMonth(), oUTCDate.getUTCDate(),
+						oUTCDate.getUTCHours(), oUTCDate.getUTCMinutes(), oUTCDate.getUTCSeconds());
+				});
+			}
+			return aDates;
 		}
 
 		//If we have version of control with delimiter, then sValue should consist of two dates delimited with delimiter,
@@ -611,24 +621,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 		var sValue = "",
 			sDelimiter = _getDelimiter.call(this),
 			oFormat,
-			oBinding;
+			oBinding,
+			oDate1, oDate2;
 
-		if (oDateValue) {
+		oDate1 = oDateValue;
+		oDate2 = oSecondDateValue;
+
+		if (oDate1) {
 			oBinding = this.getBinding("value");
 
 			if (oBinding && oBinding.getType() instanceof sap.ui.model.type.DateInterval) {
 				if (oBinding.getType().oFormatOptions && oBinding.getType().oFormatOptions.source && oBinding.getType().oFormatOptions.source.pattern === "timestamp") {
 					sValue = oBinding.getType().formatValue([_denormalizeDateValue(oDateValue), _denormalizeDateValue(oSecondDateValue)], "string");
 				} else {
-					sValue = oBinding.getType().formatValue([oDateValue, oSecondDateValue], "string");
+					/** DateRangeSelection control uses local dates for its properties, so make sure they are converted
+					 * to UTC dates if the binding type formatter expects them in UTC
+					 **/
+					if (oBinding.getType().oFormatOptions && oBinding.getType().oFormatOptions.UTC) {
+						oDate1 = new Date(Date.UTC(oDateValue.getFullYear(), oDateValue.getMonth(), oDateValue.getDate(),
+							oDateValue.getHours(), oDateValue.getMinutes(), oDateValue.getSeconds()));
+						if (oSecondDateValue) {
+							oDate2 = new Date(Date.UTC(oSecondDateValue.getFullYear(), oSecondDateValue.getMonth(), oSecondDateValue.getDate(),
+								oSecondDateValue.getHours(), oSecondDateValue.getMinutes(), oSecondDateValue.getSeconds()));
+						}
+					}
+					sValue = oBinding.getType().formatValue([oDate1, oDate2], "string");
 				}
 			} else {
 				oFormat = _getFormatter.call(this);
 
-				if (sDelimiter && sDelimiter !== "" && oSecondDateValue) {
-					sValue = oFormat.format(oDateValue) + " " + sDelimiter + " " + oFormat.format(oSecondDateValue);
+				if (sDelimiter && sDelimiter !== "" && oDate2) {
+					sValue = oFormat.format(oDate1) + " " + sDelimiter + " " + oFormat.format(oDate2);
 				} else {
-					sValue = oFormat.format(oDateValue);
+					sValue = oFormat.format(oDate1);
 				}
 			}
 		}
