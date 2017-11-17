@@ -50,9 +50,9 @@ sap.ui.define([
 			this.addContent(this.oManageAppsComponentContainer);
 			this._createButton();
 
-			this.setContentWidth("1250px");
 			this.setContentHeight("450px");
 
+			this.setHorizontalScrolling(false);
 			this.setTitle(this._oTextResources.getText("APP_VARIANT_OVERVIEW_DIALOG_TITLE"));
 
 			this.addStyleClass(RtaUtils.getRtaStyleClassName());
