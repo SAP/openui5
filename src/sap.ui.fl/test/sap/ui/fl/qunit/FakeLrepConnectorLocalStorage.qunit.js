@@ -233,7 +233,6 @@ sap.ui.require([
 		var aVariants = [{
 			fileType: "ctrl_variant"
 		}];
-		var sDefaultVariant = "variantDefault";
 		var mVariantManagementChanges = {
 			setDefault: [{
 				fileType: "ctrl_variant_management_change"
@@ -241,10 +240,9 @@ sap.ui.require([
 		};
 		var mExpectedStructure = {
 			variants: aVariants,
-			defaultVariant: sDefaultVariant,
 			variantManagementChanges: mVariantManagementChanges
 		};
-		var mStructure = this.oFakeLrepConnectorLocalStorage._getVariantManagementStructure(aVariants, sDefaultVariant, mVariantManagementChanges);
+		var mStructure = this.oFakeLrepConnectorLocalStorage._getVariantManagementStructure(aVariants, mVariantManagementChanges);
 		assert.deepEqual(mStructure, mExpectedStructure, "then variant management structure returned");
 	});
 
@@ -267,7 +265,6 @@ sap.ui.require([
 		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, aControlChanges, [], []);
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants.length, 1, "then standard variant added");
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aControlChanges[0].variantReference, "then standard variant created with variant reference of control change");
-		assert.equal(mResult.changes.variantSection["varMgmt"].defaultVariant, aControlChanges[0].variantReference, "then standard variant set as default variant");
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].controlChanges[0], aControlChanges[0], "then control change added to standard variant");
 	});
 
@@ -284,12 +281,11 @@ sap.ui.require([
 		var aVariantChanges = [{
 			fileType: "ctrl_variant_change",
 			changeType: "setTitle",
-			variantReference: "varMgmt"
+			selector: {id: "varMgmt"}
 		}];
 		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, [], aVariantChanges, []);
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants.length, 1, "then standard variant added");
-		assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aVariantChanges[0].variantReference, "then standard variant created with variant reference of variant change");
-		assert.equal(mResult.changes.variantSection["varMgmt"].defaultVariant, aVariantChanges[0].variantReference, "then standard variant set as default variant");
+		assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aVariantChanges[0].selector.id, "then standard variant created with variant reference of variant change");
 		assert.deepEqual(mResult.changes.variantSection["varMgmt"].variants[0].variantChanges.setTitle, aVariantChanges, "then variant change added to standard variant");
 	});
 
@@ -306,12 +302,11 @@ sap.ui.require([
 		var aVariantManagementChanges = [{
 			fileType: "ctrl_variant_management_change",
 			changeType: "setDefault",
-			selector: "varMgmt"
+			selector: {id: "varMgmt"}
 		}];
 		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, [], [], aVariantManagementChanges);
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants.length, 1, "then standard variant added");
-		assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aVariantManagementChanges[0].selector, "then standard variant created with selector of variant management change");
-		assert.equal(mResult.changes.variantSection["varMgmt"].defaultVariant, aVariantManagementChanges[0].selector, "then standard variant set as default variant");
+		assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aVariantManagementChanges[0].selector.id, "then standard variant created with selector of variant management change");
 		assert.deepEqual(mResult.changes.variantSection["varMgmt"].variantManagementChanges.setDefault, aVariantManagementChanges, "then variant management change added to standard variant");
 	});
 
@@ -355,7 +350,7 @@ sap.ui.require([
 			}, {
 				fileType: "ctrl_variant_change",
 				fileName: "Change1",
-				variantReference: "variant0",
+				selector: {id: "variant0"},
 				changeType: "setTitle"
 			}, {
 				fileType: "ctrl_variant",
@@ -402,7 +397,7 @@ sap.ui.require([
 		];
 		assert.notOk(mResult.changes.variantSection["varMgmt3"], "then no variantManagement exists");
 		var mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap({}, aVariants);
-		assert.equal(mResult.changes.variantSection["varMgmt3"].defaultVariant, aVariants[0].variantManagementReference, "then default variant set for the newly added variantManagement reference, extracted from variant change");
+		assert.ok(mResult.changes.variantSection["varMgmt3"], "then the variantManagement exists");
 	});
 
 	QUnit.test("when _createChangesMap is called with variant change already existing", function(assert) {
@@ -491,9 +486,7 @@ sap.ui.require([
 										variantReference: "varMgmt1"
 									}
 								],
-								variantChanges: {
-									setTitle: []
-								}
+								variantChanges: {}
 							}
 						]
 					},
@@ -518,12 +511,12 @@ sap.ui.require([
 		var aVariantChanges = [
 			{
 				fileName: "Change5",
-				variantReference: "ExistingVariant1",
+				selector: {id: "ExistingVariant1"},
 				changeType: "setTitle"
 			},
 			{
 				fileName: "Change6",
-				variantReference: "ExistingVariant1",
+				selector: {id: "ExistingVariant1"},
 				changeType: "setTitle"
 			}
 		];
@@ -531,7 +524,7 @@ sap.ui.require([
 		var aVariantManagementChanges = [
 			{
 				fileName: "Change7",
-				selector: "varMgmt1",
+				selector: {id: "varMgmt1"},
 				changeType: "setDefault"
 			}
 		];

@@ -217,6 +217,7 @@ sap.ui.define([
 			readOnly: false,
 			title: oDuplicateVariantData.content.title,
 			favorite: true,
+			originalFavorite: true,
 			visible: true
 		};
 
@@ -370,14 +371,13 @@ sap.ui.define([
 
 			if (mPropertyBag.changeType === "setDefault") {
 				mNewChangeData.fileType = "ctrl_variant_management_change";
-				mNewChangeData.selector = sVariantManagementReference;
+				mNewChangeData.selector = {id : sVariantManagementReference};
 			} else {
 				if (mPropertyBag.changeType === "setTitle") {
 					BaseChangeHandler.setTextInChange(mNewChangeData, "title", mPropertyBag.title, "XFLD");
 				}
 				mNewChangeData.fileType = "ctrl_variant_change";
-				mNewChangeData.selector = mPropertyBag.variantReference;
-				mNewChangeData.variantReference = mPropertyBag.variantReference;
+				mNewChangeData.selector = {id : mPropertyBag.variantReference};
 			}
 
 			oChange = this.oFlexController.createBaseChange(mNewChangeData, mPropertyBag.appComponent);
