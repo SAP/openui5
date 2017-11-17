@@ -85,7 +85,7 @@
 			"description": "OpenUI5/SAPUI5 Model implementation for mevdschee/php-crud-api and mevdschee/php-api-auth",
 			"githubLink": "https://github.com/VyseExhale/OpenUI5-SAPUI5-CRUDModel",
 			"documentationLink": "https://github.com/VyseExhale/OpenUI5-SAPUI5-CRUDModel",
-			"owner": "VyseExhale",
+			"owner": "Barry Dam",
 			"license": "MIT",
 			"type": "Model"
 		},
