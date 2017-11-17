@@ -81,11 +81,11 @@
 			"type": "Tool"
 		},
 		"ui5-CRUDModel": {
-			"name": "OpenUI5-SAPUI5-CRUDModel",
-			"description": "OpenUI5/SAPUI5 Model implementation for mevdschee/php-crud-api and mevdschee/php-api-auth",
-			"githubLink": "https://github.com/VyseExhale/OpenUI5-SAPUI5-CRUDModel",
-			"documentationLink": "https://github.com/VyseExhale/OpenUI5-SAPUI5-CRUDModel",
-			"owner": "Barry Dam",
+			"name": "UI5 CRUDModel for a php data-service",
+			"description": "UI5 Model implementation which allows you use a php webserver as a data-service",
+			"githubLink": "https://github.com/BarryDam/OpenUI5-SAPUI5-CRUDModel",
+			"documentationLink": "https://github.com/BarryDam/OpenUI5-SAPUI5-CRUDModel",
+			"owner": "BarryDam",
 			"license": "MIT",
 			"type": "Model"
 		},
