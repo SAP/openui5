@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/support/library"],
 		enabled: true,
 		minversion: "1.28",
 		title: "Image: Density awareness enabled",
-		description: "One or more requests will be sent trying to get the density perfect version of the image. These extra requests will impact performance, if the corresponding density versions of the image do not exist on the backend server",
+		description: "One or more requests will be sent trying to get the density perfect version of the image. These extra requests will impact performance, if the corresponding density versions of the image do not exist on the server",
 		resolution: "Either ensure the corresponding density versions of the image exist on the backend server or disable density awareness",
 		resolutionurls: [{
 			text: "API Refrence for sap.m.Image",
