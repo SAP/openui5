@@ -53,10 +53,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	 * Checks if a default namespaces is set in an XML view
 	 */
 	var oXMLViewDefaultNamespace = {
-		id: "XMLViewDefaultNamespace",
+		id: "xmlViewDefaultNamespace",
 		audiences: [Audiences.Control, Audiences.Application],
 		categories: [Categories.Performance],
 		enabled: true,
+		minversion: "-",
 		title: "Default namespace missing in XML view",
 		description: "If the default namespace is missing, the code is less readable and parsing performance may be slow",
 		resolution: "Set the namespace of the control library that holds most of the controls you use as default namespace (e.g. xmlns=\"sap.m\")",
