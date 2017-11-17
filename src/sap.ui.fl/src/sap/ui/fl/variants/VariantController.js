@@ -62,6 +62,12 @@ sap.ui.define([
 					if (oVariant.content.fileName === sVariantManagementReference) {
 						iIndex = index;
 					}
+					if (!oVariant.content.content.favorite) {
+						oVariant.content.content.favorite = true;
+					}
+					if (!oVariant.content.content.visible) {
+						oVariant.content.content.visible = true;
+					}
 				});
 				if (iIndex > -1) {
 					var oStandardVariant = aVariants.splice(iIndex, 1)[0];
@@ -69,6 +75,8 @@ sap.ui.define([
 				}
 				this._mVariantManagement[sVariantManagementReference].variants = aVariants;
 				this._mVariantManagement[sVariantManagementReference].defaultVariant = oVariantManagementReference.defaultVariant;
+				this._mVariantManagement[sVariantManagementReference].variantManagementChanges =
+					oChangeFileContent.changes.variantSection[sVariantManagementReference].variantManagementChanges;
 			}.bind(this));
 		}
 	};
@@ -161,7 +169,9 @@ sap.ui.define([
 		var aVariants = this._mVariantManagement[sVariantManagementReference].variants;
 		var oVariantData = aVariants[iPreviousIndex];
 		Object.keys(mChangedData).forEach(function (sProperty) {
-			oVariantData.content[sProperty] = mChangedData[sProperty];
+			if (oVariantData.content[sProperty]) {
+				oVariantData.content[sProperty] = mChangedData[sProperty];
+			}
 		});
 		//remove element
 		aVariants.splice(iPreviousIndex, 1);
@@ -175,22 +185,46 @@ sap.ui.define([
 		return iSortedIndex + 1;
 	};
 
-	VariantController.prototype._updateVariantChangeInMap = function(oVariantChangeContent, sVariantManagementReference, bAdd) {
-		this._mVariantManagement[sVariantManagementReference].variants.some( function(oVariant) {
-			if (oVariant.content.fileName === oVariantChangeContent.variantReference) {
-				if (bAdd) {
-					oVariant.variantChanges[oVariantChangeContent.changeType].push(oVariantChangeContent);
-				} else {
-					oVariant.variantChanges[oVariantChangeContent.changeType].some( function (oExistingVariantChangeContent, iIndex) {
-						if (oExistingVariantChangeContent.fileName === oVariantChangeContent.fileName) {
-							oVariant.variantChanges[oVariantChangeContent.changeType].splice(iIndex, 1);
-							return true; /*inner some*/
-						}
-					});
+	VariantController.prototype._updateChangesForVariantManagementInMap = function(oContent, sVariantManagementReference, bAdd) {
+		var oVariantManagement = this._mVariantManagement[sVariantManagementReference];
+		var sChangeType = oContent.changeType;
+		if (oContent.fileType === "ctrl_variant_change") {
+			oVariantManagement.variants.some( function(oVariant) {
+				if (oVariant.content.fileName === oContent.variantReference) {
+					if (!oVariant.variantChanges[sChangeType]) {
+						oVariant.variantChanges[sChangeType] = [];
+					}
+					if (bAdd) {
+						oVariant.variantChanges[sChangeType].push(oContent);
+					} else {
+						oVariant.variantChanges[sChangeType].some( function (oExistingContent, iIndex) {
+							if (oExistingContent.fileName === oContent.fileName) {
+								oVariant.variantChanges[sChangeType].splice(iIndex, 1);
+								return true; /*inner some*/
+							}
+						});
+					}
+					return true; /*outer some*/
 				}
-				return true; /*outer some*/
+			});
+		} else if (oContent.fileType === "ctrl_variant_management_change") {
+			if (!oVariantManagement.variantManagementChanges) {
+				oVariantManagement.variantManagementChanges = {};
 			}
-		});
+			if (!oVariantManagement.variantManagementChanges[sChangeType]) {
+				oVariantManagement.variantManagementChanges[sChangeType] = [];
+			}
+			if (bAdd) {
+				oVariantManagement.variantManagementChanges[sChangeType].push(oContent);
+			} else {
+				oVariantManagement.variantManagementChanges[sChangeType].some(function(oExistingContent, iIndex) {
+					if (oExistingContent.fileName === oContent.fileName) {
+						oVariantManagement.variantManagementChanges[sChangeType].splice(iIndex, 1);
+						return true;
+					}
+				});
+			}
+		}
 	};
 
 	/**
@@ -274,16 +308,37 @@ sap.ui.define([
 						oVariant.content.title = oActiveChange.getText("title");
 					}
 					break;
+				case "setFavorite":
+					oActiveChange = this._getActiveChange(sChangeType, mVariantChanges);
+					if (oActiveChange) {
+						oVariant.content.content.favorite = oActiveChange.getContent().favorite;
+					}
+					break;
+				case "setVisible":
+					oActiveChange = this._getActiveChange(sChangeType, mVariantChanges);
+					if (oActiveChange) {
+						oVariant.content.content.visible = oActiveChange.getContent().visible;
+					}
+					break;
 				default:
 					Utils.log.error("No valid changes on variant " + oVariant.content.title + " available");
 			}
 		}.bind(this));
 	};
 
-	VariantController.prototype._getActiveChange = function(sChangeType, mVariantChanges) {
-		var iLastIndex = mVariantChanges[sChangeType].length - 1;
+	VariantController.prototype._applyChangesOnVariantManagement = function(oVariantManagement) {
+		var mVariantManagementChanges = oVariantManagement.variantManagementChanges,
+			oActiveChange;
+		if (Object.keys(mVariantManagementChanges).length > 0) {
+			oActiveChange = this._getActiveChange("setDefault", mVariantManagementChanges);
+			oVariantManagement.defaultVariant = oActiveChange.getContent().defaultVariant;
+		}
+	};
+
+	VariantController.prototype._getActiveChange = function(sChangeType, mChanges) {
+		var iLastIndex = mChanges[sChangeType].length - 1;
 		if (iLastIndex > -1) {
-			return new Change(mVariantChanges[sChangeType][iLastIndex]);
+			return new Change(mChanges[sChangeType][iLastIndex]);
 		}
 		return false;
 	};
@@ -297,8 +352,10 @@ sap.ui.define([
 	VariantController.prototype._fillVariantModel = function() {
 		var oVariantData = {};
 		Object.keys(this._mVariantManagement).forEach(function(sKey) {
+			this._applyChangesOnVariantManagement(this._mVariantManagement[sKey]);
 			oVariantData[sKey] = {
 				defaultVariant : this._mVariantManagement[sKey].defaultVariant,
+				originalDefaultVariant : this._mVariantManagement[sKey].defaultVariant,
 				variants : []
 			};
 			this.getVariants(sKey).forEach(function(oVariant, index) {
@@ -308,7 +365,9 @@ sap.ui.define([
 					title : oVariant.content.title,
 //					author : oVariant.content.support.user, //TODO: get value from backend
 					layer : oVariant.content.layer,
-					readOnly : oVariant.content.fileName === sKey
+					favorite : oVariant.content.content.favorite,
+					readOnly : oVariant.content.fileName === sKey,
+					visible : oVariant.content.content.visible
 				};
 			}.bind(this));
 		}.bind(this));

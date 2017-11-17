@@ -200,7 +200,8 @@
 							"generator":"Variant.createInitialFileContent",
 							"service":"",
 							"user":"SAP"
-						}
+						},
+						"content": {}
 					},
 					"controlChanges" : [
 						{
@@ -328,7 +329,8 @@
 						"setTitle": []
 					}
 				}
-			]
+			],
+			"variantManagementChanges": {}
 		},
 		"variantManagementOrdersObjectPage" : {
 			"defaultVariant" : "variant00",
@@ -481,7 +483,8 @@
 						"setTitle": []
 					}
 				}
-			]
+			],
+			"variantManagementChanges": {}
 		}
 	}
 }

@@ -10,14 +10,17 @@ sap.ui.require([
 	"sap/ui/rta/command/ControlVariantSwitch",
 	"sap/ui/rta/command/ControlVariantDuplicate",
 	"sap/ui/rta/command/ControlVariantSetTitle",
+	"sap/ui/rta/command/ControlVariantConfigure",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/registry/ChangeRegistry",
+	'sap/ui/fl/FlexControllerFactory',
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormLayout",
 	"sap/ui/rta/plugin/ControlVariant",
 	"sap/ui/rta/plugin/RenameHandler",
+	'sap/ui/core/Manifest',
 	"sap/ui/core/Title",
 	"sap/m/Button",
 	"sap/uxap/ObjectPageLayout",
@@ -41,14 +44,17 @@ sap.ui.require([
 	ControlVariantSwitch,
 	ControlVariantDuplicate,
 	ControlVariantSetTitle,
+	ControlVariantConfigure,
 	OverlayRegistry,
 	ElementOverlay,
 	ChangeRegistry,
+	FlexControllerFactory,
 	FormContainer,
 	Form,
 	FormLayout,
 	ControlVariantPlugin,
 	RenameHandler,
+	Manifest,
 	Title,
 	Button,
 	ObjectPageLayout,
@@ -68,37 +74,43 @@ sap.ui.require([
 
 		var sandbox = sinon.sandbox.create();
 
-		var fnGetMockedAppComponent = function(oModel) {
-			return {
-				getLocalId: function () {
-					return undefined;
-				},
-				getManifestEntry: function () {
-					return {};
-				},
-				getMetadata: function () {
-					return {
-						getName: function () {
-							return "someName";
-						}
-					};
-				},
-				getManifest: function () {
-					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
-							}
-						}
-					};
-				},
-				getModel: function () { return oModel; }
-			};
-		};
-
 		QUnit.module("Given a designTime and ControlVariant plugin are instantiated", {
 			beforeEach: function (assert) {
 				var done = assert.async();
+
+				// create fl objects and stubs
+				var oManifestObj = {
+					"sap.app": {
+						id: "MyComponent",
+						"applicationVersion": {
+							"version": "1.2.3"
+						}
+					}
+				};
+				var oManifest = new Manifest(oManifestObj);
+
+				var oMockedAppComponent = {
+					getLocalId: function () {
+						return "varMgtKey";
+					},
+					getModel: function () {return this.oModel;}.bind(this)
+				};
+
+				var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, oManifest);
+				this.oData = {
+					"varMgtKey": {
+						defaultVariant : "variant1",
+						variantsEditable : true,
+						variants: [
+							{key: "variant1"},
+							{key: "variant2"}
+						]
+					}
+				};
+
+				sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+				sandbox.stub(Utils, "getComponentForControl").returns(oMockedAppComponent);
+				sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
 
 				//	page
 				//		verticalLayout
@@ -116,10 +128,9 @@ sap.ui.require([
 					}
 				});
 
-				this.sLocalVariantManagementId = "component0--varMgtKeyStubbed";
 				this.oButton = new Button();
 
-				this.oLayout = new VerticalLayout("verlay1",{
+				this.oLayout = new VerticalLayout("overlay1",{
 					content : [this.oButton]
 				});
 
@@ -131,7 +142,10 @@ sap.ui.require([
 					subSections: [this.oObjectPageSubSection]
 				});
 
-				this.oVariantManagementControl = new VariantManagement("varMgtKey");
+				this.sLocalVariantManagementId = "varMgtKey";
+				this.oModel = new VariantModel(this.oData, oFlexController, oMockedAppComponent);
+				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
+				this.oVariantManagementControl.setModel(this.oModel, "$FlexVariants");
 
 				this.oObjectPageLayout = new ObjectPageLayout("objPage",{
 					headerContent: [this.oVariantManagementControl],
@@ -150,15 +164,7 @@ sap.ui.require([
 				}).placeAt("content");
 
 				var oVariantManagementDesignTimeMetadata = {
-					"sap.ui.fl.variants.VariantManagement": {
-						actions : {
-							setTitle: {
-								domRef: function (oControl) {
-									return this.oVariantManagementControl.getTitle().getDomRef();
-								}.bind(this)
-							}
-						}
-					}
+					"sap.ui.fl.variants.VariantManagement": {}
 				};
 
 				this.oDesignTime = new DesignTime({
@@ -186,6 +192,8 @@ sap.ui.require([
 				this.oLayoutOuter.destroy();
 				this.oPage.destroy();
 				this.oDesignTime.destroy();
+				this.oData = null;
+				this.oModel.destroy();
 			}
 		});
 
@@ -200,20 +208,20 @@ sap.ui.require([
 		});
 
 		QUnit.test("when registerElementOverlay is called with VariantManagement control Overlay", function(assert) {
-			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			assert.strictEqual(this.oObjectPageLayoutOverlay.getVariantManagement(), "varMgtKey", "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
+			assert.strictEqual(this.oObjectPageLayoutOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
 			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
 			assert.deepEqual(this.oVariantManagementOverlay.getEditableByPlugins(), [this.oControlVariantPlugin.getMetadata().getName()],
 				"then VariantManagement is marked as editable by ControlVariant plugin");
+			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, false, "the parameter 'variantsEditable' is set to false");
 		});
 
-		QUnit.test("when registerElementOverlay is called with VariantManagement control Overlay with componentid prefix", function(assert) {
-			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: this.sLocalVariantManagementId});
+		QUnit.test("when registerElementOverlay and afterwards deregisterElementOverlay are called with VariantManagement control Overlay", function(assert) {
+			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, true, "the parameter 'variantsEditable' is true by default");
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-
-			assert.strictEqual(this.oObjectPageSectionOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageSection (first child) Overlay");
-			assert.strictEqual(this.oObjectPageSubSectionOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then Variant Management reference successfully set to ObjectPageSubSection (second child) Overlay");
+			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, false, "'variantsEditable' is set to false after registering");
+			this.oControlVariantPlugin.deregisterElementOverlay(this.oVariantManagementOverlay);
+			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, true, "'variantsEditable' is set to true after deregistering");
 		});
 
 		QUnit.test("when isVariantSwitchAvailable is called with VariantManagement overlay", function(assert) {
@@ -222,18 +230,6 @@ sap.ui.require([
 		});
 
 		QUnit.test("when isVariantSwitchEnabled is called with VariantManagement overlay", function(assert) {
-			var oModelData = {};
-			oModelData[this.sLocalVariantManagementId] = {
-				variants: [
-					{key: "variant1"},
-					{key: "variant2"}
-				]
-			};
-			var oModel = new VariantModel(oModelData, {}),
-				oMockedAppComponent = fnGetMockedAppComponent(oModel);
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: this.sLocalVariantManagementId});
-
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			var bEnabled = this.oControlVariantPlugin.isVariantSwitchEnabled(this.oVariantManagementOverlay);
 			assert.ok(bEnabled, "then variant switch is enabled for VariantManagement control");
@@ -246,7 +242,6 @@ sap.ui.require([
 		});
 
 		QUnit.test("when isVariantDuplicateEnabled is called with VariantManagement overlay", function(assert) {
-			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			var bEnabled = this.oControlVariantPlugin.isVariantDuplicateEnabled(this.oVariantManagementOverlay);
 			assert.ok(bEnabled, "then variant duplicate is enabled for VariantManagement control");
@@ -269,7 +264,7 @@ sap.ui.require([
 
 		QUnit.test("when isVariantConfigureEnabled is called with VariantManagement overlay", function(assert) {
 			var bEnabled = this.oControlVariantPlugin.isVariantConfigureEnabled(this.oVariantManagementOverlay);
-			assert.notOk(bEnabled, "then variant configure is not implemented yet");
+			assert.ok(bEnabled, "then variant configure is enabled for VariantManagement control");
 		});
 
 		QUnit.test("when switchVariant is called", function(assert) {
@@ -284,40 +279,19 @@ sap.ui.require([
 		});
 
 		QUnit.test("when duplicateVariant is called", function(assert) {
-			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
 			var done = assert.async();
-			var oModelData = {};
-			oModelData[this.sLocalVariantManagementId] = {
-				variants: [
-					{key: "variant1"},
-					{key: "variant2"}
-				]
-			};
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			var oModel = new VariantModel(oModelData, {}),
-				oMockedAppComponent = fnGetMockedAppComponent(oModel);
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(oModel, "getCurrentVariantReference").returns(oModelData[this.sLocalVariantManagementId].variants[0]);
+			sandbox.stub(this.oModel, "getCurrentVariantReference").returns(this.oData[this.sLocalVariantManagementId].variants[0]);
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
 				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand instanceof ControlVariantDuplicate, "then a duplicate Variant event is received with a switch command");
+				assert.ok(oCommand instanceof ControlVariantDuplicate, "then a duplicate Variant event is received with a duplicate command");
 				done();
 			});
 			this.oControlVariantPlugin.duplicateVariant(this.oVariantManagementOverlay);
 		});
 
 		QUnit.test("when renameVariant is called", function(assert) {
-			var oModelData = {};
-			oModelData["varMgtKey"] = {
-				variants: []
-			};
-			var oModel = new VariantModel(oModelData, {}),
-				oMockedAppComponent = fnGetMockedAppComponent(oModel);
-
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
-
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			this.oVariantManagementOverlay.setSelectable(true);
 
@@ -347,12 +321,20 @@ sap.ui.require([
 			});
 		});
 
-		QUnit.test("when duplicateVariant is called", function(assert) {
-			assert.ok(this.oControlVariantPlugin.duplicateVariant, "then duplicateVariant added to the  ElementOverlay prototype");
-		});
-
 		QUnit.test("when configureVariants is called", function(assert) {
-			assert.ok(this.oControlVariantPlugin.configureVariants, "then configureVariants added to the  ElementOverlay prototype");
+			var done = assert.async();
+			var aChanges = ["change1", "change2"];
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			sandbox.stub(this.oModel, "manageVariants").returns(Promise.resolve(aChanges));
+
+			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+				assert.ok(oEvent, "then fireElementModified is called once");
+				var oCommand = oEvent.getParameter("command");
+				assert.ok(oCommand instanceof ControlVariantConfigure, "then a configure Variant event is received with a configure command");
+				assert.equal(oCommand.getChanges(), aChanges, "and the command contains the given changes");
+				done();
+			});
+			this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay]);
 		});
 
 		QUnit.test("when _propagateVariantManagement is called with a root overlay and VariantManagement reference", function(assert) {
@@ -370,20 +352,19 @@ sap.ui.require([
 
 		//Integration Test
 		QUnit.test("when ControlVariant Plugin is added to designTime and a new overlay is rendered dynamically", function(assert) {
-			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "varMgtKey"});
 			var done = assert.async();
 			assert.notOk(this.oButtonOverlay.getVariantManagement(), "then VariantManagement Key is initially undefined");
 			this.oDesignTime.addPlugin(this.oControlVariantPlugin);
 			sap.ui.getCore().applyChanges();
-			assert.ok(this.oButtonOverlay.getVariantManagement(), "varMgtKey", "then VariantManagement reference successfully propagated from ObjectPageLayout to Button (last element)");
+			assert.ok(this.oButtonOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully propagated from ObjectPageLayout to Button (last element)");
 			var oTestButton = new Button("testButton");
 			this.oLayout.addContent(oTestButton);
 			sap.ui.getCore().applyChanges();
 			this.oDesignTime.attachEventOnce("synced", function() {
 				var oTestButtonOverlay = OverlayRegistry.getOverlay(oTestButton);
-				assert.equal(oTestButtonOverlay.getVariantManagement(), "varMgtKey", "then VariantManagement reference successfully set for newly inserted ElementOverlay from parent ElementOverlays");
+				assert.equal(oTestButtonOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set for newly inserted ElementOverlay from parent ElementOverlays");
 				done();
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("when retrieving the context menu items", function(assert){
@@ -500,6 +481,16 @@ sap.ui.require([
 			beforeEach: function (assert) {
 				var done = assert.async();
 
+				var oManifestObj = {
+					"sap.app": {
+						id: "MyComponent",
+						"applicationVersion": {
+							"version": "1.2.3"
+						}
+					}
+				};
+				this.oManifest = new Manifest(oManifestObj);
+
 				this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("content");
 
 				var oVariantManagementDesignTimeMetadata = {
@@ -531,18 +522,25 @@ sap.ui.require([
 		});
 
 		QUnit.test("when variant is renamed with a new title", function(assert) {
-			var oModelData = {},
-				done = assert.async();
+			var done = assert.async();
+			var oModelData = {};
 			oModelData["varMgtKey"] = {
 				variants: []
 			};
-			var oModel = new VariantModel(oModelData, {}),
-				oMockedAppComponent = fnGetMockedAppComponent(oModel),
-				sOldVariantTitle = "Old Variant Title";
 
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("New Variant Title");
+			var oMockedAppComponent = {
+				getModel: function () {return oModel;}
+			};
+
+			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
+			var oModel = new VariantModel(oModelData, oFlexController, oMockedAppComponent);
+
+			var sOldVariantTitle = "Old Variant Title";
+
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("New Variant Title");
 
+			this.oVariantManagementControl.setModel(oModel, "$FlexVariants");
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			this.oVariantManagementOverlay.setSelectable(true);
 
@@ -560,9 +558,9 @@ sap.ui.require([
 		});
 
 		QUnit.test("when variant is renamed with an existing title", function(assert) {
-			var oModelData = {},
-				done = assert.async(),
-				sNewVariantTitle = "Existing Variant Title",
+			var done = assert.async();
+			var oModelData = {};
+			var sNewVariantTitle = "Existing Variant Title",
 				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
 				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
@@ -573,9 +571,14 @@ sap.ui.require([
 					}
 				]
 			};
-			var oModel = new VariantModel(oModelData, {}),
-				oMockedAppComponent = fnGetMockedAppComponent(oModel),
-				sOldVariantTitle = "Old Variant Title";
+			var oMockedAppComponent = {
+				getModel: function () {return oModel;}
+			};
+
+			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
+			var oModel = new VariantModel(oModelData, oFlexController, oMockedAppComponent);
+
+			var sOldVariantTitle = "Old Variant Title";
 
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sNewVariantTitle);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
@@ -601,9 +604,9 @@ sap.ui.require([
 		});
 
 		QUnit.test("when variant is renamed with a blank title", function(assert) {
-			var oModelData = {},
-				done = assert.async(),
-				sExistingVariantTitle = "Existing Variant Title",
+			var done = assert.async();
+			var oModelData = {};
+			var sExistingVariantTitle = "Existing Variant Title",
 				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
 				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
@@ -614,9 +617,14 @@ sap.ui.require([
 					}
 				]
 			};
-			var oModel = new VariantModel(oModelData, {}),
-				oMockedAppComponent = fnGetMockedAppComponent(oModel),
-				sOldVariantTitle = "Old Variant Title";
+			var oMockedAppComponent = {
+				getModel: function () {return oModel;}
+			};
+
+			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
+			var oModel = new VariantModel(oModelData, oFlexController, oMockedAppComponent);
+
+			var sOldVariantTitle = "Old Variant Title";
 
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("\xa0");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
@@ -642,9 +650,9 @@ sap.ui.require([
 		});
 
 		QUnit.test("when variant is renamed after a duplicate variant is triggered from the same source variant for the second time (both with the default title)", function(assert) {
-			var oModelData = {},
-				done = assert.async(),
-				sExistingVariantTitle = "Existing Variant Title Copy",
+			var done = assert.async();
+			var oModelData = {};
+			var sExistingVariantTitle = "Existing Variant Title Copy",
 				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
 				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
@@ -658,9 +666,14 @@ sap.ui.require([
 					}
 				]
 			};
-			var oModel = new VariantModel(oModelData, {}),
-				oMockedAppComponent = fnGetMockedAppComponent(oModel),
-				sOldVariantTitle = "Old Variant Title";
+			var oMockedAppComponent = {
+					getModel: function () {return oModel;}
+				};
+
+			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
+			var oModel = new VariantModel(oModelData, oFlexController, oMockedAppComponent);
+
+			var sOldVariantTitle = "Old Variant Title";
 
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Existing Variant Title Copy");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
@@ -684,4 +697,134 @@ sap.ui.require([
 				done();
 			}.bind(this));
 		});
+
+		QUnit.module("Given a designTime, a ControlVariant plugin and a VariantManagement control with global id are instantiated", {
+			beforeEach: function (assert) {
+				var done = assert.async();
+
+				// create fl objects and stubs
+				var oManifestObj = {
+					"sap.app": {
+						id: "MyComponent",
+						"applicationVersion": {
+							"version": "1.2.3"
+						}
+					}
+				};
+				var oManifest = new Manifest(oManifestObj);
+
+				var oMockedAppComponent = {
+					getLocalId: function () {
+						return "varMgtKey";
+					},
+					getModel: function () {return this.oModel;}.bind(this)
+				};
+
+				var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, oManifest);
+				this.oData = {
+					"varMgtKey": {
+						defaultVariant : "variant1",
+						variantsEditable : true,
+						variants: [
+							{key: "variant1"},
+							{key: "variant2"}
+						]
+					}
+				};
+
+				sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+				sandbox.stub(Utils, "getComponentForControl").returns(oMockedAppComponent);
+				sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
+
+				//	page
+				//		verticalLayout
+				//		objectPageLayout
+				//			variantManagement (headerContent)
+				//			objectPageSection (sections)
+				//				objectPageSubSection
+				//					verticalLayout
+				//						button
+
+				var oChangeRegistry = ChangeRegistry.getInstance();
+				oChangeRegistry.registerControlsForChanges({
+					"sap.ui.layout.VerticalLayout" : {
+						"moveControls": "default"
+					}
+				});
+
+				this.oButton = new Button();
+
+				this.oLayout = new VerticalLayout("overlay1",{
+					content : [this.oButton]
+				});
+
+				this.oObjectPageSubSection = new ObjectPageSubSection("objSubSection", {
+					blocks: [this.oLayout]
+				});
+
+				this.oObjectPageSection = new ObjectPageSection("objSection",{
+					subSections: [this.oObjectPageSubSection]
+				});
+
+				this.sLocalVariantManagementId = "varMgtKey";
+				this.sGlobalVariantManagementId = "Comp1--varMgtKey";
+				this.oModel = new VariantModel(this.oData, oFlexController, oMockedAppComponent);
+				this.oVariantManagementControl = new VariantManagement(this.sGlobalVariantManagementId);
+				this.oVariantManagementControl.setModel(this.oModel, "$FlexVariants");
+
+				this.oObjectPageLayout = new ObjectPageLayout("objPage",{
+					headerContent: [this.oVariantManagementControl],
+					sections : [this.oObjectPageSection]
+				});
+
+				this.oVariantManagementControl.setAssociation("for", "objPage", true);
+
+				this.oButton2 = new Button();
+				this.oLayoutOuter = new VerticalLayout("verlayouter", {
+					content: [this.oButton2]
+				});
+
+				this.oPage = new Page("mainPage", {
+					content: [this.oLayoutOuter, this.oObjectPageLayout]
+				}).placeAt("content");
+
+				var oVariantManagementDesignTimeMetadata = {
+					"sap.ui.fl.variants.VariantManagement": {}
+				};
+
+				this.oDesignTime = new DesignTime({
+					designTimeMetadata : oVariantManagementDesignTimeMetadata,
+					rootElements : [this.oPage]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oObjectPageLayoutOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
+					this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
+					this.oObjectPageSubSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSubSection);
+					this.oLayoutOuterOverlay = OverlayRegistry.getOverlay(this.oLayoutOuter);
+					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+					this.oControlVariantPlugin = new ControlVariantPlugin({
+						commandFactory: new CommandFactory()
+					});
+					done();
+				}.bind(this));
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function (assert) {
+				sandbox.restore();
+				this.oLayoutOuter.destroy();
+				this.oPage.destroy();
+				this.oDesignTime.destroy();
+			}
+		});
+
+		QUnit.test("when registerElementOverlay is called with VariantManagement control Overlay with componentid prefix", function(assert) {
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+
+			assert.strictEqual(this.oObjectPageSectionOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then local VariantManagement reference successfully set to ObjectPageSection (first child) Overlay");
+			assert.strictEqual(this.oObjectPageSubSectionOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then local Variant Management reference successfully set to ObjectPageSubSection (second child) Overlay");
+		});
+
 	});

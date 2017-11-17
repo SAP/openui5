@@ -68,6 +68,7 @@ sap.ui.define([
 		var mPropertyBag = {
 			appComponent : this.oAppComponent,
 			variantReference : this.sCurrentVariant,
+			changeType : "setTitle",
 			title : this.getNewText(),
 			layer : this.sLayer
 		};
@@ -87,6 +88,7 @@ sap.ui.define([
 		var oVariantManagementControlBinding = this.getRenamedElement().getTitle().getBinding("text"),
 			mPropertyBag = {
 			variantReference : this.sCurrentVariant,
+			changeType : "setTitle",
 			title : this.getOldText(),
 			change: this._oVariantChange
 		};
