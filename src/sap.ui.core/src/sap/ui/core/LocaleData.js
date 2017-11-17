@@ -1261,6 +1261,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
+		 * Returns a map containing patterns for formatting lists
+		 *
+		 *@param {string='standard'} sType The type of the list pattern. Currently only 'standard' type is supported.
+		 *@param {string='wide'} sStyle The style of the list pattern. It can be 'wide' or 'short'.
+		* @return {object} Map with list patterns
+		 */
+		getListFormat: function (sType, sStyle) {
+			var oFormats = this._get("listPattern-" + (sType || "standard") + "-" + (sStyle || "wide"));
+
+			if (oFormats) {
+				return oFormats;
+			}
+
+			return {};
+		},
+
+		/**
 		 * Returns array of eras.
 		 *
 		 * @param {string} sWidth the style of the era name. It can be 'wide', 'abbreviated' or 'narrow'
