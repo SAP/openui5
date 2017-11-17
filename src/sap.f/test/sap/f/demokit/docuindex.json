@@ -28,7 +28,10 @@
         "name": "Flexible Column Layout",
         "category": "Container",
         "since": "1.46",
-        "samples": ["sap.f.sample.FlexibleColumnLayoutSimple"]
+        "samples": [
+		  "sap.f.sample.FlexibleColumnLayoutSimple",
+		  "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
+		  "sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart"]
       },
       {
         "id": "sap.f.semantic.SemanticPage",
@@ -49,9 +52,20 @@
         "name": "Dynamic Page with Analytical Table",
         "description": "Dynamic Page containing an Analytical Table in the content area and filters in the header aligned with the SAP Fiori 2 List Report floorplan."
       },
-      {  "id": "sap.f.sample.FlexibleColumnLayoutSimple",
+      {
+        "id": "sap.f.sample.FlexibleColumnLayoutSimple",
         "name": "Flexible Column Layout",
         "description": "Clicking on a link in a column opens the next column."
+      },
+      {
+        "id": "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
+        "name": "Flexible Column Layout With Routing",
+        "description": "Flexible Column Layout as an application with routing and one column start"
+      },
+	  {
+        "id": "sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
+        "name": "Flexible Column Layout With Routing",
+        "description": "Flexible Column Layout as an application with routing and two column start"
       },
       {
         "id": "sap.f.sample.Avatar",
