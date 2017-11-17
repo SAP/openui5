@@ -778,7 +778,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 
 	QUnit.test("create_app_setAch", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_setAch({
-			"ach": "CA-UI5-ABA"
+			"ach": "CA-ZZ-TEST"
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
 			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setAch");
