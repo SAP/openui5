@@ -4,7 +4,8 @@
 		xmlns:core="sap.ui.core"
 		xmlns:m="sap.m"
 		xmlns:l="sap.ui.layout"
-		xmlns="sap.uxap">
+		xmlns="sap.uxap"
+		xmlns:html="http://www.w3.org/1999/xhtml">
 	<ObjectPageLayout
 			id="ObjectPageLayout"
 			useIconTabBar="true"
@@ -131,6 +132,19 @@
 								</m:ColumnListItem>
 							</m:items>
 						</m:Table>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="apiReference" title="API Reference (moved)" visible="{= ${/entity/category} !== 'Tutorial'}">
+				<subSections>
+					<ObjectPageSubSection>
+						<html:div style="font-size: 0.875rem">
+							<html:div>The API Reference for this entity is easily accessible from the link in the header above.</html:div>
+							<m:Image src="./resources/sap/ui/documentation/sdk/images/api_reference_link.jpg" densityAware="false" height="180px" class="sapUiSmallMarginBottom sapUiSmallMarginTop"/>
+							<html:div>The former Explored app was decoupled from the Demo Kit and the API descriptions were displayed there for faster reference.</html:div>
+							<html:div>The API descriptions are no longer duplicated here since the Samples are already integrated as a section in the Demo Kit app.</html:div>
+						</html:div>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
