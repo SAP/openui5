@@ -190,7 +190,7 @@ sap.ui.define([
 		var sChangeType = oContent.changeType;
 		if (oContent.fileType === "ctrl_variant_change") {
 			oVariantManagement.variants.some( function(oVariant) {
-				if (oVariant.content.fileName === oContent.variantReference) {
+				if (oVariant.content.fileName === oContent.selector.id) {
 					if (!oVariant.variantChanges[sChangeType]) {
 						oVariant.variantChanges[sChangeType] = [];
 					}
@@ -354,8 +354,9 @@ sap.ui.define([
 		Object.keys(this._mVariantManagement).forEach(function(sKey) {
 			this._applyChangesOnVariantManagement(this._mVariantManagement[sKey]);
 			oVariantData[sKey] = {
-				defaultVariant : this._mVariantManagement[sKey].defaultVariant,
-				originalDefaultVariant : this._mVariantManagement[sKey].defaultVariant,
+				//in case of no variant management change the standard variant is set as default
+				defaultVariant : this._mVariantManagement[sKey].defaultVariant || sKey,
+				originalDefaultVariant : this._mVariantManagement[sKey].defaultVariant || sKey,
 				variants : []
 			};
 			this.getVariants(sKey).forEach(function(oVariant, index) {

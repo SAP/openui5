@@ -300,7 +300,7 @@ sap.ui.require([
 		assert.equal(fnCompareVariantsSpy.callCount, 3,  "then compare variants function called thrice for the two variant management references");
 	});
 
-	QUnit.test("when calling '_fillVariantModel'", function(assert) {
+	QUnit.test("when calling '_fillVariantModel' with a variant management change", function(assert) {
 		var oFakeVariantResponse = {
 			"changes" : {
 				"changes" : [
@@ -310,7 +310,6 @@ sap.ui.require([
 				],
 				"variantSection" : {
 					"variantMgmtId1" : {
-						"defaultVariant" : "variant1",
 						"variants" : [
 							{
 								"content": {
@@ -379,7 +378,19 @@ sap.ui.require([
 								}
 							}
 						],
-						"variantManagementChanges": {}
+						"variantManagementChanges": {
+							"setDefault" : [{
+								"fileName": "id_1510920910626_29_setDefault",
+								"fileType": "ctrl_variant_management_change",
+								"changeType": "setDefault",
+								"content": {
+									"defaultVariant":"variant1"
+								},
+								"selector": {
+									"id": "variantMgmtId1"
+								}
+							}]
+						}
 					}
 				}
 			}
@@ -419,8 +430,82 @@ sap.ui.require([
 		};
 		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
 		var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
+		var fnApplyChangesOnVariantManagementSpy = sandbox.spy(oVariantController, "_applyChangesOnVariantManagement");
 		var oData = oVariantController._fillVariantModel();
 		assert.equal(fnApplyChangesOnVariantSpy.callCount, 3, "_applyChangesOnVariant called thrice for 3 variants");
+		assert.equal(fnApplyChangesOnVariantManagementSpy.callCount, 1, "_applyChangesOnVariantManagement called once for 1 variant management control");
+		assert.propEqual(oData, oExpectedData, "then correct variant model data is returned");
+	});
+
+	QUnit.test("when calling '_fillVariantModel' without a variant management change", function(assert) {
+		var oFakeVariantResponse = {
+			"changes" : {
+				"changes" : [],
+				"variantSection" : {
+					"variantMgmtId1" : {
+						"variants" : [
+							{
+								"content": {
+									"fileName":"variant0",
+									"title":"variant A",
+									"layer":"CUSTOMER",
+									"support":{
+										"user":"Me"
+									},
+									"content": {}
+								},
+								"controlChanges" : [],
+								"variantChanges" : {}
+							},
+							{
+								"content": {
+									"fileName":"variantMgmtId1",
+									"title":"Standard",
+									"layer":"VENDOR",
+									"support":{
+										"user":"SAP"
+									},
+									"content": {}
+								},
+								"controlChanges" : [],
+								"variantChanges" : {}
+							}
+						],
+						"variantManagementChanges": {}
+					}
+				}
+			}
+		};
+		var oExpectedData = {
+			"variantMgmtId1": {
+				"defaultVariant": "variantMgmtId1",
+				"originalDefaultVariant": "variantMgmtId1",
+				"variants": [{
+//					"author": "SAP",
+					"favorite": true,
+					"visible": true,
+					"key": "variantMgmtId1",
+					"layer": "VENDOR",
+					"readOnly": true,
+					"title": "Standard"
+				},
+				{
+//					"author": "Me",
+					"favorite": true,
+					"visible": true,
+					"key": "variant0",
+					"layer": "CUSTOMER",
+					"readOnly": false,
+					"title": "variant A"
+				}]
+			}
+		};
+		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
+		var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
+		var fnApplyChangesOnVariantManagementSpy = sandbox.spy(oVariantController, "_applyChangesOnVariantManagement");
+		var oData = oVariantController._fillVariantModel();
+		assert.equal(fnApplyChangesOnVariantSpy.callCount, 2, "_applyChangesOnVariant called thrice for 2 variants");
+		assert.equal(fnApplyChangesOnVariantManagementSpy.callCount, 1, "_applyChangesOnVariantManagement called once for 1 variant management control");
 		assert.propEqual(oData, oExpectedData, "then correct variant model data is returned");
 	});
 
@@ -671,7 +756,7 @@ sap.ui.require([
 					"type": "XFLD"
 				}
 			},
-			"variantReference": "variant0"
+			"selector": {id: "variant0"}
 		};
 
 		oVariantController._updateChangesForVariantManagementInMap(oSetTitleChangeContent, "idMain1--variantManagementOrdersTable", true);

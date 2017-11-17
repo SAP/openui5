@@ -158,7 +158,7 @@
 								"reference": "sap.ui.rta.test.variantManagement.Component",
 								"packageName": "$TMP",
 								"content": {},
-								"selector": {},
+								"selector": {"id": "variant0"},
 								"layer": "CUSTOMER",
 								"texts": {
 									"title": {
@@ -182,7 +182,7 @@
 									"creation": "1.0.0",
 									"from": "1.0.0"
 								},
-								"variantReference": "variant0"
+								"variantReference": ""
 							}
 						]
 					}

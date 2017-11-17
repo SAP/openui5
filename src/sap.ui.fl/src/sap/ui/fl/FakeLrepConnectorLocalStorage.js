@@ -190,7 +190,6 @@ sap.ui.define([
 				var oStandardVariant = this._fakeStandardVariant(oVariant.variantManagementReference);
 				oVariantManagementSection = this._getVariantManagementStructure(
 					[this._getVariantStructure(oStandardVariant, [], {}), this._getVariantStructure(oVariant, [], {})],
-					oStandardVariant.fileName,
 					{}
 				);
 				mResult.changes.variantSection[oVariant.variantManagementReference] = oVariantManagementSection;
@@ -213,10 +212,9 @@ sap.ui.define([
 		};
 	};
 
-	FakeLrepConnectorLocalStorage.prototype._getVariantManagementStructure = function (aVariants, sDefaultVariant, mVariantManagementChanges) {
+	FakeLrepConnectorLocalStorage.prototype._getVariantManagementStructure = function (aVariants, mVariantManagementChanges) {
 		return {
 			variants : aVariants,
-			defaultVariant : sDefaultVariant,
 			variantManagementChanges : mVariantManagementChanges
 		};
 	};
@@ -266,7 +264,7 @@ sap.ui.define([
 
 		var fnAddVariantChangeToVariant = function(mResult, sVariantManagementReference, oVariantChange) {
 			mResult.changes.variantSection[sVariantManagementReference].variants.some(function(oVariant) {
-				if (oVariant.content.fileName === oVariantChange.variantReference) {
+				if (oVariant.content.fileName === oVariantChange.selector.id) {
 					if (!oVariant.variantChanges[oVariantChange.changeType]) {
 						oVariant.variantChanges[oVariantChange.changeType] = [];
 					}
@@ -278,11 +276,10 @@ sap.ui.define([
 
 		var mVariantManagementChanges = {};
 		aControlVariantManagementChanges.forEach(function(oVariantManagementChange) {
-			var sVariantManagementReference = oVariantManagementChange.selector;
+			var sVariantManagementReference = oVariantManagementChange.selector.id;
 			if (Object.keys(mResult.changes.variantSection).length === 0) {
 				mResult.changes.variantSection[sVariantManagementReference] = this._getVariantManagementStructure(
 					[this._getVariantStructure(this._fakeStandardVariant(sVariantManagementReference), [], {})],
-					sVariantManagementReference,
 					{}
 				);
 			}
@@ -299,7 +296,6 @@ sap.ui.define([
 			} else if (Object.keys(mResult.changes.variantSection).length === 0) {
 					mResult.changes.variantSection[oChange.variantReference] = this._getVariantManagementStructure(
 						[this._getVariantStructure(this._fakeStandardVariant(oChange.variantReference), [oChange], {})],
-						oChange.variantReference,
 						{}
 					);
 			} else {
@@ -313,9 +309,8 @@ sap.ui.define([
 			if (Object.keys(mResult.changes.variantSection).length === 0) {
 				var mVariantChanges = {};
 				mVariantChanges[oVariantChange.changeType] = [oVariantChange];
-				mResult.changes.variantSection[oVariantChange.variantReference] = this._getVariantManagementStructure(
-					[this._getVariantStructure(this._fakeStandardVariant(oVariantChange.variantReference), [], mVariantChanges)],
-					oVariantChange.variantReference,
+				mResult.changes.variantSection[oVariantChange.selector.id] = this._getVariantManagementStructure(
+					[this._getVariantStructure(this._fakeStandardVariant(oVariantChange.selector.id), [], mVariantChanges)],
 					{}
 				);
 			} else {
