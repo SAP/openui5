@@ -819,8 +819,7 @@ sap.ui.require([
 	}, {
 		path : "/EntitySet/schema.Function(...)",
 		request1 : "/schema.Function",
-		metadata1 : [{$kind : "Function"}],
-		error : "Functions without import not supported: schema.Function"
+		metadata1 : [{$kind : "Function"}]
 	}, {
 		path : "/EntitySet/schema.OverloadedAction(...)",
 		request1 : "/schema.OverloadedAction",
