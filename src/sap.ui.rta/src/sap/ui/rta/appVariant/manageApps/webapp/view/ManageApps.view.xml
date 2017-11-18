@@ -18,26 +18,51 @@
 			</Column>
 			<Column
 				width="2em"
+				minScreenWidth="tablet"
 				demandPopin="true"
+				popinDisplay="WithoutHeader"
 				hAlign="Left">
 				<core:InvisibleText text="{i18n>MAA_DIALOG_ICON}" />
 			</Column>
 			<Column
 				width="12em"
+				minScreenWidth="tablet"
 				demandPopin="true"
+				popinDisplay="WithoutHeader"
 				hAlign="Left">
 				<core:InvisibleText text="{i18n>MAA_DIALOG_TITLE_SUBTITLE}" />
 			</Column>
 			<Column
 				width="12em"
+				minScreenWidth="tablet"
 				demandPopin="true"
+				popinDisplay="WithoutHeader"
 				hAlign="Left">
 				<core:InvisibleText text="{i18n>MAA_DIALOG_DESCRIPTION}" />
 			</Column>
 			<Column
-				width="16em"
+				width="4em"
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
 				hAlign="Center">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_ACTIONS}" />
+				<core:InvisibleText text="{i18n>MAA_DIALOG_COPY_ID_ACTION}" />
+			</Column>
+			<Column
+				width="4em"
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Center">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_ADAPT_UI_ACTION}" />
+			</Column>
+			<Column
+				width="4em"
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Center">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_SAVE_AS_ACTION}" />
 			</Column>
 		</columns>
 		<items>
@@ -51,11 +76,11 @@
 						title="{title}"
 						text="{subTitle}" />
 					<Text text="{description}" />
-					<HBox>
-						<Button class="sapUiSmallMarginBegin sapUiSmallMarginEnd" text="{i18n>MAA_DIALOG_COPY_ID}" press="copyId"/>
-						<Button class="sapUiSmallMarginEnd" text="{i18n>MAA_DIALOG_ADAPT_UI}" enabled="{adaptUIButtonVisibility}" press="handleUiAdaptation" />
-						<Button class="sapUiSmallMarginEnd" text="{i18n>MAA_DIALOG_SAVE_AS_APP}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" press="saveAsAppVariant" />
-					</HBox>
+
+					<Button text="{i18n>MAA_DIALOG_COPY_ID}" press="copyId"/>
+					<Button text="{i18n>MAA_DIALOG_ADAPT_UI}" enabled="{adaptUIButtonVisibility}" press="handleUiAdaptation" />
+					<Button text="{i18n>MAA_DIALOG_SAVE_AS_APP}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" press="saveAsAppVariant" />
+
 				</cells>
 			</ColumnListItem>
 		</items>
