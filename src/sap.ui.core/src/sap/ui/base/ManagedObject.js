@@ -810,7 +810,7 @@ sap.ui.define([
 	 * in the <code>oKeyInfo</code> object. In both cases, the type can be specified by name (dot separated
 	 * name of the class) or by the constructor function of the class.
 	 *
-	 * @param {sap.ui.base.ManagedObject|object} <code>vData</code> the data to create the object from
+	 * @param {sap.ui.base.ManagedObject|object} vData the data to create the object from
 	 * @param {object} [oKeyInfo]
 	 * @param {object} [oScope] Scope object to resolve types and formatters in bindings
 	 * @public
