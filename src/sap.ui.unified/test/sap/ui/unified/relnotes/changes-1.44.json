@@ -228,5 +228,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.24": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "c0fe131b5a2a37f1978e40e6828499bb6d387564",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: qunit tests fixed on combi devices",
+        "references": []
+      }
+    ]
   }
 }

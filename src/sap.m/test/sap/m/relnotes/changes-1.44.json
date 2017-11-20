@@ -2615,5 +2615,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.24": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "13498b55eca672cf3e3e80b40939eb61152c15d0",
+        "type": "FIX",
+        "text": "  sap.m.PlanningCalendar: showDayNamesLine in IE fixed",
+        "references": []
+      },
+      {
+        "id": "f308b46e1c392e26c884a53ff74f5819314e61e5",
+        "type": "FIX",
+        "text": " sap.m.Menu: property \u0027visible\u0027 of items works on phone devices.",
+        "references": []
+      },
+      {
+        "id": "967dbbe34d80fd91059b6cdd7b89f75a013b7946",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: when model is changed, filter counter is updated.",
+        "references": []
+      }
+    ]
   }
 }

@@ -1164,5 +1164,46 @@
         "references": []
       }
     ]
+  },
+  "1.44.24": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "fe9ebb1257363bc64ce55442ff45a1cf63637c12",
+        "type": "FIX",
+        "text": " AppCacheBuster: disable when no browser support for defineProperty",
+        "references": []
+      },
+      {
+        "id": "a262e0ecf959a58db2f8f4ecc8fac764d5d907bf",
+        "type": "FIX",
+        "text": " Configuration: Consider sap-locale over sap-language",
+        "references": []
+      },
+      {
+        "id": "23ff280f463cc9c714d8b104c57cd541e998088b",
+        "type": "FIX",
+        "text": " FilterProcessor: Normalization issues on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "815c93c066773f10a0af01a90d9ca3dde3d16a64",
+        "type": "FIX",
+        "text": " Message handling createEntry",
+        "references": []
+      },
+      {
+        "id": "8eab9f0a0d387f67e80ef0c5b91391ab3fff8b2e",
+        "type": "FIX",
+        "text": " core.LocaleData: provide currency spacing for unknown locale",
+        "references": []
+      },
+      {
+        "id": "8d92ef6f52c9f056aa54ecd3cb80cdbc3f18d082",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Rendering in Fiori app is now correct",
+        "references": []
+      }
+    ]
   }
 }
