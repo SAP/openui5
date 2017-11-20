@@ -10,7 +10,7 @@ sap.ui.define([],
 		return {
 			aggregations: {
 				heading: {
-					domRef: ":sap-domref .sapFDynamicPageTitleMainLeftHeading"
+					domRef: ":sap-domref .sapFDynamicPageTitleMainHeadingInner"
 				},
 				expandedHeading: {
 					domRef: function (oElement) {

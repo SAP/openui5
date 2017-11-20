@@ -66,7 +66,7 @@ sap.ui.define([],
 					}
 				},
 				titleContent : {
-					domRef : ":sap-domref .sapFDynamicPageTitleMainLeft > .sapFDynamicPageTitleMainContent",
+					domRef : ":sap-domref .sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner > .sapFDynamicPageTitleMainContent",
 					actions: {
 						move: {
 							changeType: "moveControls"
