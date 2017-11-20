@@ -12,6 +12,11 @@ sap.ui.require([
 
 	var sandbox = sinon.sandbox.create();
 	sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+	var oDummyControl = {
+		attachManage: sandbox.stub(),
+		detachManage: sandbox.stub(),
+		openManagementDialog: sandbox.stub()
+	};
 
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function(assert) {
@@ -58,6 +63,7 @@ sap.ui.require([
 				}
 			};
 			var oManifest = new sap.ui.core.Manifest(oManifestObj);
+
 			this.oComponent = {
 				name: "MyComponent",
 				appVersion: "1.2.3",
@@ -84,17 +90,18 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'getData'", function(assert) {
-		var sExpectedJSON = "{\"variantMgmtId1\":{" + "\"modified\":false,"  + "\"variantsEditable\":true," + "\"showFavorites\":true," + "\"defaultVariant\":\"variant1\","  + "\"originalDefaultVariant\":\"variant1\"," + "\"variants\":[{" + "\"author\":\"SAP\"," + "\"key\":\"variantMgmtId1\"," + "\"layer\":\"VENDOR\"," + "\"originalFavorite\":true," + "\"originalTitle\":\"Standard\"," + "\"remove\":false," + "\"rename\":false," + "\"favorite\":true,"  + "\"title\":\"Standard\"," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant0\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":true,"  + "\"originalTitle\":\"variant A\"," + "\"remove\":true," + "\"rename\":false," + "\"favorite\":true," + "\"title\":\"variant A\"," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant1\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":false," + "\"originalTitle\":\"variant B\"," + "\"remove\":true," + "\"rename\":false," + "\"favorite\":false,"  + "\"title\":\"variant B\"," + "\"visible\":true" + "}]," + "\"currentVariant\":\"variant1\"" + "}" + "}";
+		var sExpectedJSON = "{\"variantMgmtId1\":{" + "\"defaultVariant\":\"variant1\"," + "\"originalCurrentVariant\": \"variant1\"," + "\"originalDefaultVariant\":\"variant1\"," + "\"variants\":[{" + "\"author\":\"SAP\"," + "\"key\":\"variantMgmtId1\"," + "\"layer\":\"VENDOR\"," + "\"originalFavorite\":true," + "\"originalTitle\":\"Standard\"," + "\"remove\":false," + "\"favorite\":true,"  + "\"title\":\"Standard\"," + "\"change\":true," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant0\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":true,"  + "\"originalTitle\":\"variant A\"," + "\"remove\":true," + "\"favorite\":true," + "\"title\":\"variant A\"," + "\"change\":true," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant1\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":false," + "\"originalTitle\":\"variant B\"," + "\"remove\":true," + "\"favorite\":false,"  + "\"title\":\"variant B\"," + "\"change\":true," + "\"visible\":true" + "}]," + "\"currentVariant\":\"variant1\"" + "}" + "}";
 		var sCurrentVariant = this.oModel.getCurrentVariantReference("variantMgmtId1");
 		assert.deepEqual(this.oModel.getData(), JSON.parse(sExpectedJSON));
 		assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
 	});
 
 	QUnit.test("when calling '_setModelPropertiesForControl'", function(assert) {
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is initially true");
-		this.oModel._setModelPropertiesForControl("variantMgmtId1", true);
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable is set to false for bAdaptationMode = true");
-		this.oModel._setModelPropertiesForControl("variantMgmtId1", false);
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is set to true for bAdaptationMode = false");
 	});
 
@@ -287,13 +294,16 @@ sap.ui.require([
 		assert.ok(fnUpdateChangesForVariantManagementInMap.calledOnce, "then '_updateChangesForVariantManagementInMap' of VariantController called");
 	});
 
-	QUnit.test("when calling 'switchToVariant'", function(assert) {
-		return this.oModel._switchToVariant("variantMgmtId1", "variant1")
-
+	QUnit.test("when calling 'updateCurrentVariant'", function(assert) {
+		assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
+		assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
+		return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0")
 		.then(function() {
 			assert.ok(this.fnLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
 			assert.ok(this.fnRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
 			assert.ok(this.fnApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
+			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant updated to variant0");
+			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then original current variant updated to variant0");
 		}.bind(this));
 	});
 
@@ -532,6 +542,23 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.test("when calling '_addChange'", function(assert) {
+		var fnAddChangeToVariant = sandbox.stub(this.oModel.oVariantController, "addChangeToVariant");
+		var oChange = {
+			fileName : "addedChange",
+			getVariantReference : function () {
+				return "variant1";
+			}
+		};
+		this.oModel.oData["variantMgmtId1"].modified = false;
+		this.oModel.oData["variantMgmtId1"].variantsEditable = true;
+		this.oModel._addChange(oChange);
+		assert.equal(this.oModel.oData["variantMgmtId1"].modified, this.oModel.oData["variantMgmtId1"].variantsEditable, "then modified property equals variantEditable property");
+		assert.ok(fnAddChangeToVariant.calledOnce, "then VariantController.addChangeToVariant called once");
+		assert.ok(fnAddChangeToVariant.calledWith(oChange), "then VariantController.addChangeToVariant called with the passed change");
+
+	});
+
 	QUnit.test("when calling 'collectModelChanges'", function(assert) {
 		this.oModel.getData()["variantMgmtId1"].variants[1].title = "test";
 		this.oModel.getData()["variantMgmtId1"].variants[1].favorite = false;
@@ -542,11 +569,18 @@ sap.ui.require([
 		assert.equal(aChanges.length, 4, "then 4 changes with mPropertyBags were created");
 	});
 
-	QUnit.test("when calling 'manageVariants'", function(assert) {
+	QUnit.test("when calling 'manageVariants' in RTA mode", function(assert) {
 		var done = assert.async();
 		var oVariantManagement = new VariantManagement("variantMgmtId1");
+
+		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
 		oVariantManagement.setModel(this.oModel, "$FlexVariants");
+
 		sandbox.stub(oVariantManagement, "openManagementDialog", oVariantManagement.fireManage);
+		sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "_setVariantData");
+		sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "_updateChangesForVariantManagementInMap");
+
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oVariantManagement);
 
 		this.oModel.getData()["variantMgmtId1"].variants[1].title = "test";
 		this.oModel.getData()["variantMgmtId1"].variants[1].favorite = false;
@@ -559,7 +593,15 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.module("Given an instance of FakeLrepConnector with no Variants in the LREP response", {
+	QUnit.test("when calling '_initializeManageVariantsEvents'", function(assert) {
+		assert.notOk(this.oModel.fnManageClick, "the function 'this.fnManageClick' is not available before");
+		assert.notOk(this.oModel.fnManageClickRta, "the function 'this.fnManageClickRta' is not available before");
+		this.oModel._initializeManageVariantsEvents();
+		assert.ok(this.oModel.fnManageClick, "the function 'this.fnManageClick' is available afterwards");
+		assert.ok(this.oModel.fnManageClick, "the function 'this.fnManageClick' is available afterwards");
+	});
+
+	QUnit.module("Given an empty VariantModel and a VariantManagement control", {
 		beforeEach : function(assert) {
 			this.oData = {};
 
@@ -590,16 +632,23 @@ sap.ui.require([
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
 
 			this.oModel = new VariantModel(this.oData, this.oFlexController, oComponent);
+			this.oVariantManagement = new VariantManagement("varMgmtRef1");
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
+			this.oModel.destroy();
+			this.oVariantManagement.destroy();
 			delete this.oFlexController;
 		}
 	});
 
-	QUnit.test("when calling 'ensureStandardEntryExists'", function(assert) {
-		this.oModel.ensureStandardEntryExists("varMgmtRef1");
-		assert.equal(this.oModel.getCurrentVariantReference("varMgmtRef1"), "varMgmtRef1", "then the Current Variant is set to the standard variant");
-	});
+	QUnit.test("when calling 'setModel' of VariantManagement control", function(assert) {
+		var fnRegisterToModelSpy = sandbox.spy(this.oModel, "registerToModel");
+		sandbox.stub(this.oModel, "_getLocalId").returns("varMgmtRef1");
+		this.oVariantManagement.setModel(this.oModel, "$FlexVariants");
 
+		assert.equal(this.oModel.getCurrentVariantReference("varMgmtRef1"), "varMgmtRef1", "then the Current Variant is set to the standard variant");
+		assert.ok(fnRegisterToModelSpy.calledOnce, "then registerToModel called once, when VariantManagement control setModel is called");
+		assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
+	});
 });

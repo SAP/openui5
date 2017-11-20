@@ -105,18 +105,21 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				}
 			}
 		};
-		var fnSetChangeFileContentSpy = this.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
-		var fnLoadDefaultChangesStub = this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
 
+		var fnSetChangeFileContentSpy = this.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+		var fnLoadInitialChangesStub = this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+		var fnApplyChangesOnVariantManagementStub = this.stub(this.oChangePersistence._oVariantController, "_applyChangesOnVariantManagement");
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
 		return this.oChangePersistence.getChangesForComponent().then(function () {
 			assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement called once as file content is not set");
-			assert.ok(fnLoadDefaultChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement called once as file content is not set");
+			assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement called once as file content is not set");
+			assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement called once for one variant management reference, as file content is not set");
 		}).then(function () {
 			this.oChangePersistence.getChangesForComponent().then(function () {
 				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement not called again as file content is set");
-				assert.ok(fnLoadDefaultChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement not called again as file content is set");
+				assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement not called again as file content is set");
+				assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement not called again as file content is set\"");
 				done();
 			});
 		}.bind(this));

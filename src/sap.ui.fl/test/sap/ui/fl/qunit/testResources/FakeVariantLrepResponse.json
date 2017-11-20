@@ -72,7 +72,6 @@
 	],
 	"variantSection" : {
 		"idMain1--variantManagementOrdersTable" : {
-			"defaultVariant" : "variant0",
 			"variants" : [
 				{
 					"content": {

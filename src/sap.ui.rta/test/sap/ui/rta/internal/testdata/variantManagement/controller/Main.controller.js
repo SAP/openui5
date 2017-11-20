@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/rta/RuntimeAuthoring"
-], function(Controller, MockServer, ResourceModel, ODataModel, JSONModel, RuntimeAuthoring) {
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/fl/Utils"
+], function(Controller, MockServer, ResourceModel, ODataModel, JSONModel, RuntimeAuthoring, Utils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.rta.test.variantManagement.controller.Main", {
@@ -76,6 +77,55 @@ sap.ui.define([
 				});
 				oRta.start();
 			}
+		},
+
+		createChanges: function() {
+			var oAppComponent = Utils.getAppComponentForControl(sap.ui.core.Component.getOwnerComponentFor(this.getView()));
+			var oModel = oAppComponent.getModel("$FlexVariants");
+
+			var mChangeSpecificData = {};
+
+			jQuery.extend(mChangeSpecificData, {
+				developerMode: false,
+				layer: sap.ui.fl.Utils.getCurrentLayer()
+			});
+
+			var oControl = sap.ui.getCore().byId(oAppComponent.createId("idMain1--MainForm"));
+
+			var mBaseChangeData1  = {
+				changeType: "hideSimpleFormField",
+				removedElement: {
+					id: oAppComponent.createId("idMain1--EntityType02.Label1")
+				}
+			};
+			var mBaseChangeData2  = {
+				changeType: "hideSimpleFormField",
+				removedElement: {
+					id: oAppComponent.createId("idMain1--EntityType02.Label4")
+				}
+			};
+			var mBaseChangeData3  = {
+				changeType: "renameTitle",
+				renamedElement: {
+					id: "__container2"
+				},
+				value: "Renamed Label"
+			};
+
+			var oRemoveChange1 = oModel.oFlexController.createChange(
+				jQuery.extend(mChangeSpecificData, mBaseChangeData1),
+				oControl,
+				oAppComponent);
+			var oRemoveChange2 = oModel.oFlexController.createChange(
+				jQuery.extend(mChangeSpecificData, mBaseChangeData2),
+				oControl,
+				oAppComponent);
+			var oRenameChange1 = oModel.oFlexController.createChange(
+				jQuery.extend(mChangeSpecificData, mBaseChangeData3),
+				oControl,
+				oAppComponent);
+
+			oModel.addControlChangesToVariant([oRemoveChange1, oRemoveChange2, oRenameChange1], oAppComponent.createId("idMain1--variantManagementOrdersTable"));
 		},
 
 		isDataReady: function () {

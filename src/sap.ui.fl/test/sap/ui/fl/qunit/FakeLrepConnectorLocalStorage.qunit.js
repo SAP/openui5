@@ -333,8 +333,6 @@ sap.ui.require([
 		return this.oFakeLrepConnectorLocalStorage.loadChanges("test.json.component")
 			.then(function (mResult) {
 				assert.equal(mResult.changes.changes.length, 3, "then three global changes read from the provided JSON file");
-				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].defaultVariant, "variant0", "then default variant for variantManagement reference 'variantManagementOrdersTable' set correctly");
-				assert.equal(mResult.changes.variantSection["variantManagementOrdersObjectPage"].defaultVariant, "variant00", "then default variant for variantManagement reference 'variantManagementOrdersObjectPage' set correctly");
 				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].variants.length, 3, "then three variant found for variantManagement reference 'variantManagementOrdersTable'");
 				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].variantChanges["setTitle"][0].texts.title.value, "New Variant Title", "setTitle with correct value set in the loadChanges response");
 				assert.ok(this.createChangesMapsSpy.calledOnce, "then _createChangesMaps called once");
