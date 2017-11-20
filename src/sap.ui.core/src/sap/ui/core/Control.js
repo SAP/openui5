@@ -135,6 +135,9 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 	});
 
+	// default implementations
+	sap.ui.core.Control.prototype.init = function() {};
+	sap.ui.core.Control.prototype.exit = function() {};
 
 	/**
 	 * Overrides {@link sap.ui.core.Element#clone Element.clone} to clone additional
@@ -583,7 +586,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @name sap.ui.core.Control.prototype.onBeforeRendering
 	 * @protected
 	 */
-	//sap.ui.core.Control.prototype.onBeforeRendering = function() {};
+	sap.ui.core.Control.prototype.onBeforeRendering = function() {};
 
 	/**
 	 * Function is called when the rendering of the control is completed.
@@ -596,7 +599,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @name sap.ui.core.Control.prototype.onAfterRendering
 	 * @protected
 	 */
-	//sap.ui.core.Control.prototype.onAfterRendering = function() {};
+	sap.ui.core.Control.prototype.onAfterRendering = function() {};
 
 	/**
 	 * Returns the DOMNode Id to be used for the "labelFor" attribute of the label.
