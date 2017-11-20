@@ -375,6 +375,46 @@
 					done();
 				}, 400);
 			});
+
+			QUnit.module("Private");
+
+			QUnit.test("For IE & Edge the input selection is cleared before opening the picker and restoring back when picker is closed", function(assert) {
+				var done = assert.async(),
+						oStub = this.stub(sap.ui.Device, "browser", {msie: true});
+
+				this.clock = sinon.useFakeTimers();
+				var oDTP = new sap.m.DateTimePicker("DTP6", {
+					dateValue: new Date()
+				}).placeAt("uiArea5");
+				sap.ui.getCore().applyChanges();
+
+				oDTP._$input.get(0).selectionStart = 3;
+				oDTP._$input.get(0).selectionEnd = 3;
+
+				oDTP.$().find(".sapUiIcon").click(); //simulate opening
+				this.clock.tick(100);
+
+				//Assert
+				assert.equal(oDTP._$input.get(0).selectionStart, 0, "selection start should be 0");
+				assert.equal(oDTP._$input.get(0).selectionEnd, 0, "selection end should be 0");
+
+				//Act
+				sap.ui.getCore().byId("DTP6-OK").firePress();
+
+				setTimeout(function(){
+					//Assert
+					assert.equal(oDTP._$input.get(0).selectionStart, 3, "selection start must be restored");
+					assert.equal(oDTP._$input.get(0).selectionEnd, 3, "selection end must be restored");
+
+					//Cleanup
+					oStub.restore();
+					this.clock.restore();
+					done();
+				}.bind(this), 1000);
+
+				this.clock.tick(1000);//"waits" for close popup animation to complete
+			});
+
 		</script>
 
 	</head>
