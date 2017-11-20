@@ -742,7 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 					sValue = this.getValue();
 					_fireChange.call(this, true);
-					if (!Device.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+					if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
 						this._curpos = sValue.length;
 						this._$input.cursorPos(this._curpos);
 					}

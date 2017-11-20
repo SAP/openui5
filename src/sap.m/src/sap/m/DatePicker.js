@@ -1186,7 +1186,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});
-			if (this.getDomRef() && !Device.support.touch && !jQuery.sap.simulateMobileOnDesktop) { // as control could be destroyed during update binding
+			if (this.getDomRef() && (Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) { // as control could be destroyed during update binding
 				this._curpos = this._$input.val().length;
 				this._$input.cursorPos(this._curpos);
 			}
@@ -1202,6 +1202,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 				this.setProperty("value", sValue, true); // no rerendering
 				this.fireChangeEvent(sValue, {valid: true});
 			}
+		} else if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
+			this.focus();
 		}
 
 		// close popup and focus input after change event to allow application to reset value state or similar things
@@ -1226,7 +1228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 
 		if (this._oPopup && this._oPopup.isOpen()) {
 			this._oPopup.close();
-			if (!Device.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+			if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
 				this.focus();
 			}
 		}

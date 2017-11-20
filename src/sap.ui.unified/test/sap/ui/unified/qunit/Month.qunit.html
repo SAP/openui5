@@ -289,8 +289,8 @@
 					this.oM.invalidate(new sap.ui.unified.DateRange().setParent(this.oM, "specialDates"));
 
 					// Assert
-					oAssert.strictEqual(this.oM._bNoFocus, true, "When invalidating with origin DateRange and parent " +
-						"aggregation 'specialDates' focus should not be returned");
+					oAssert.strictEqual(this.oM._bNoFocus, false, "When invalidating with origin DateRange and parent " +
+						"aggregation 'specialDates' focus should be returned");
 				});
 
 				QUnit.test("_isValueInThreshold return true if provided value is in provided threshold", function (assert) {
