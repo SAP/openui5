@@ -1,4 +1,7 @@
-<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" >
+<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	displayBlock="true">
 	<table id="localTableId" title="encoding is the A&amp;O of XML parsing &lt;and&gt; &quot;writing" border="5">
 		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>
 		<tr><td>Hello</td><td>Hello A&amp;O, what about a &lt;div&gt; in here?</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>
