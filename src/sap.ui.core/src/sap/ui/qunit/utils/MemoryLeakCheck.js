@@ -18,8 +18,9 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 
 
 	/**
-	 * @namespace
 	 * <code>sap.ui.qunit.utils.MemoryLeakCheck</code> is a utility for finding controls that leak references to other controls. See the <code>checkControl</code> method for usage instructions.
+	 *
+	 * @namespace
 	 *
 	 * @author SAP SE
 	 * @version ${version}

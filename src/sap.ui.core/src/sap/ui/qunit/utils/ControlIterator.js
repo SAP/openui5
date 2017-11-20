@@ -7,7 +7,6 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 	"use strict";
 
 	/**
-	 * @namespace
 	 * <code>sap.ui.qunit.utils.ControlIterator</code> is a utility for collecting all available controls across libraries in order to e.g. run tests on each of them.
 	 *
 	 * It is used by calling the static <code>run</code> function with a callback function as parameter. This function will be called for each control
@@ -48,6 +47,8 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 	 * </code>
 	 *
 	 * This module is independent from QUnit, so it could be used for other purposes than unit tests.
+	 *
+	 * @namespace
 	 *
 	 * @author SAP SE
 	 * @version ${version}
