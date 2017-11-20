@@ -223,6 +223,90 @@
         "type": "FIX",
         "text": " sap.ui.dt:added isVisible function to designtime and visible check",
         "references": []
+      },
+      {
+        "id": "c4cdd058286b717439ac4790f2496369028f0d04",
+        "type": "FEATURE",
+        "text": " sap.m.CheckBox: Added property displayOnly",
+        "references": []
+      },
+      {
+        "id": "175e0a829b33aa02eab9afed9115909a8ea88103",
+        "type": "FEATURE",
+        "text": " sap.m.CheckBox: wrapping property added",
+        "references": []
+      },
+      {
+        "id": "85a913571162684284853b79192e7aeba0c3d80a",
+        "type": "FEATURE",
+        "text": " sap.m.ListBase: Enable Drag-and-Drop",
+        "references": []
+      },
+      {
+        "id": "a8bdc2e97790510a9e691e0e5c45e3d6be36d06e",
+        "type": "FEATURE",
+        "text": " sap.m.StepInput: Out of range values are now set to min/max on pressing increase/decrease buttons",
+        "references": []
+      },
+      {
+        "id": "245f2b3bb898038ad87e9b2fda7149301ba7e054",
+        "type": "FEATURE",
+        "text": " sap.m.StepInput: Support of validation mode added",
+        "references": []
+      },
+      {
+        "id": "4c886857384419db7566593475216d1f3f8ded96",
+        "type": "FEATURE",
+        "text": " sap.m.StepInput: Text alignment support added",
+        "references": []
+      },
+      {
+        "id": "2482a259b10c6136bc6d59df65bdea0b7e7c3d5d",
+        "type": "FEATURE",
+        "text": " sap.m.TimePickerSliders: New control implemented",
+        "references": []
+      },
+      {
+        "id": "0248f9a0eac4fb5ea1299faa99fa705c93b7cab1",
+        "type": "FEATURE",
+        "text": " sap.m.Tree: Enable Drag-and-Drop",
+        "references": []
+      },
+      {
+        "id": "cf55baae91cd0e14a6d12380c83ae2eafbf1c1aa",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection considers UTC flag in binding options.",
+        "references": []
+      },
+      {
+        "id": "0f8a660ba97f0016fb120365b380ca938e5f798d",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker-when picker is opened for IE \u0026 Edge, input should not be focusable",
+        "references": []
+      },
+      {
+        "id": "4c9a98d4ca2c7a368f4b5bfd6ea7400c030c379f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Drag and resize are now working correctly",
+        "references": []
+      },
+      {
+        "id": "30e28240a451b0e9e86036cc094c3fc91d5fe432",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire properly change event.",
+        "references": []
+      },
+      {
+        "id": "d887d1d8d473a4cb17943f0e2cedd956d1a2d200",
+        "type": "FIX",
+        "text": " sap.m.QuickView: On first load QuickView is now in full size",
+        "references": []
+      },
+      {
+        "id": "9736d4cc0797cde845fa62071565995499579f2f",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Now the buttons are being disabled accordingly",
+        "references": []
       }
     ]
   }

@@ -31,6 +31,24 @@
         "type": "FIX",
         "text": " sap.ui.unified.Menu: qunit tests fixed on combi devices",
         "references": []
+      },
+      {
+        "id": "15cf8d4479817c35de9efa71f80deb67d90784da",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: select date on mouseup when used on touch device",
+        "references": []
+      },
+      {
+        "id": "dbeb4442dd75a2162e4f31c874a03fcd8cc7b7a1",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Remove scrollbar from IE when it is not needed",
+        "references": []
+      },
+      {
+        "id": "0a43875cb9bc5b6aea6527282bed25a0d55180f0",
+        "type": "FIX",
+        "text": " unified.ShellOverlay: Avoid ACC announcement of full content",
+        "references": []
       }
     ]
   }

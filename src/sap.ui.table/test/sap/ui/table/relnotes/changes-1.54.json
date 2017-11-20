@@ -19,6 +19,12 @@
         "type": "FIX",
         "text": " sap.ui.table.Table: Table renders even if column was destroyed",
         "references": []
+      },
+      {
+        "id": "9351c3d80a255ca500d169dacef6e673a4c4a9f1",
+        "type": "FIX",
+        "text": " Table: Vertical scrollbar becomes visible if height is decreased",
+        "references": []
       }
     ]
   }

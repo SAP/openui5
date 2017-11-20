@@ -13,6 +13,24 @@
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Now the week number in 1 Month view is not missing in IE when 1st week day is selected",
         "references": []
+      },
+      {
+        "id": "c4cdd058286b717439ac4790f2496369028f0d04",
+        "type": "FEATURE",
+        "text": " sap.m.CheckBox: Added property displayOnly",
+        "references": []
+      },
+      {
+        "id": "2482a259b10c6136bc6d59df65bdea0b7e7c3d5d",
+        "type": "FEATURE",
+        "text": " sap.m.TimePickerSliders: New control implemented",
+        "references": []
+      },
+      {
+        "id": "507f7e29118139b0bb9a57fdeb30af11274ae8b6",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Contrast ratio on focus is now correct",
+        "references": []
       }
     ]
   }

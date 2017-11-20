@@ -49,6 +49,12 @@
         "type": "FIX",
         "text": " sap.ui.dt:added isVisible function to designtime and visible check",
         "references": []
+      },
+      {
+        "id": "26b49541287511ac7e14bb5b7705eeec1fb38f06",
+        "type": "FIX",
+        "text": " SimpleForm: resize handler active after changing layout",
+        "references": []
       }
     ]
   }

@@ -1,0 +1,19 @@
+{
+  "1.54.0": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "6d621cbbbd0c1d9d374876a1ab74c416d8e855bd",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: Fixed toggle header indicator size",
+        "references": []
+      },
+      {
+        "id": "083a236ff2051322e15e089c0f94ed0c6f11ca46",
+        "type": "FIX",
+        "text": " sap.m.DynamicPageTitle: Fixed expand button outline in IE",
+        "references": []
+      }
+    ]
+  }
+}
