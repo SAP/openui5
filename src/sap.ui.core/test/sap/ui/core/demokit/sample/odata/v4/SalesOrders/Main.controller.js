@@ -159,7 +159,7 @@ sap.ui.define([
 						"GrossAmount" : "0.00",
 						"LifecycleStatus" : "N",
 						"LifecycleStatusDesc" : "New",
-						"Note" : null, // set to null to provoke server error if no note is entered
+						"Note" : "A new Sales Order: " + new Date().toLocaleString(),
 						"NoteLanguage" : "E",
 						// navigation property
 						"SO_2_BP" : null

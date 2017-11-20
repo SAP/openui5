@@ -31,7 +31,6 @@ sap.ui.require([
 		// Preparation: create a new sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
 		When.onTheMainPage.pressCreateSalesOrdersButton();
-		When.onTheCreateNewSalesOrderDialog.changeNote(new Date().toString());
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
 		When.onTheMainPage.pressSaveSalesOrdersButton();
 		When.onTheSuccessInfo.confirm();
