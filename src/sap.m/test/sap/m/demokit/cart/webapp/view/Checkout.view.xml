@@ -351,12 +351,8 @@
 									placeholder="{i18n>emailAddressText}"
 									value="{
 										path: '/CashOnDelivery/Email',
-										type: 'sap.ui.model.type.String',
-										constraints: {
-										minLength: 6,
-											search:'^\\w+[\\w-+\\.]*\\@\\w+([-\\.]\\w+)*\\.[a-zA-Z]{2,}$'
-										}
-									}"
+										type: 'sap.ui.demo.cart.model.EmailType'
+										}"
 									change="checkCashOnDeliveryStep">
 									<layoutData>
 										<layout:GridData span="XL8 L8 M8 S12"/>
