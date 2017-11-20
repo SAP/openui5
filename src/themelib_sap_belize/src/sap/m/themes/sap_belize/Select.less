@@ -14,7 +14,6 @@
 /* IconOnly Hover */
 
 .sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
-	border-color: @sapUiButtonLiteHoverBorderColor;
 	background: @sapUiButtonLiteHoverBackground;
 }
 
@@ -60,7 +59,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 }
 
-.sapMSltHoverable:not(.sapMSltState):hover {
+.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
 	border-color: @sapUiFieldHoverBorderColor;
 	background: @sapUiFieldHoverBackground;
 }
