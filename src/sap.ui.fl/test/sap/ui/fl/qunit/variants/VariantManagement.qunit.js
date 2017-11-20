@@ -31,8 +31,9 @@
 
 			oModel = new sap.ui.fl.variants.VariantModel({
 				"One": {
-					defaultVariant: "Standard",
 					currentVariant: "Standard",
+					defaultVariant: "Standard",
+					originalDefaultVariant: "Standard",
 					modified: false,
 					variantsEditable: true,
 					showFavorites: true,
@@ -41,46 +42,59 @@
 							key: "Standard",
 							title: "Standard",
 							author: "A",
-							readOnly: true,
+							remove: false,
+							rename: true,
 							favorite: true,
 							originalFavorite: true,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "1",
 							title: "One",
 							author: "A",
-							readOnly: true,
+							remove: true,
+							rename: true,
 							favorite: true,
 							originalFavorite: true,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "2",
 							title: "Two",
 							author: "V",
-							readOnly: true,
+							remove: false,
+							rename: true,
 							favorite: true,
 							originalFavorite: true,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "3",
 							title: "Three",
 							author: "U",
-							readOnly: true,
+							remove: false,
+							rename: true,
 							favorite: true,
 							originalFavorite: true,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "4",
 							title: "Four",
 							author: "Z",
-							readOnly: true,
+							share: true,
+							remove: false,
+							rename: false,
 							favorite: true,
 							originalFavorite: true,
-							visible: true
+							visible: true,
+							change: false
 						}
 					]
 				}
 			}, {});
+
+			// sinon.stub(oModel,
 		},
 		afterEach: function() {
 			this.oVariantManagement.destroy();
@@ -223,7 +237,7 @@
 		assert.ok(this.oVariantManagement.oVariantPopOver);
 		sinon.stub(this.oVariantManagement.oVariantPopOver, "openBy");
 
-		assert.equal(this.oVariantManagement.getSelectedVariantKey(), this.oVariantManagement.getStandardVariantKey());
+		assert.equal(this.oVariantManagement.getCurrentVariantKey(), this.oVariantManagement.getStandardVariantKey());
 
 		this.oVariantManagement._openVariantList();
 
@@ -238,6 +252,18 @@
 
 		this.oVariantManagement.setModified(true);
 		assert.ok(this.oVariantManagement.getModified());
+		assert.ok(this.oVariantManagement.oVariantSaveBtn.getEnabled());
+		assert.ok(this.oVariantManagement.oVariantSaveAsBtn.setEnabled());
+
+		oModel.updateCurrentVariant = undefined;
+
+		this.oVariantManagement.setCurrentVariantKey("4");
+		this.oVariantManagement._openVariantList();
+		assert.ok(!this.oVariantManagement.oVariantSaveBtn.getEnabled());
+		assert.ok(this.oVariantManagement.oVariantSaveAsBtn.setEnabled());
+
+		this.oVariantManagement.setCurrentVariantKey("1");
+		this.oVariantManagement._openVariantList();
 		assert.ok(this.oVariantManagement.oVariantSaveBtn.getEnabled());
 		assert.ok(this.oVariantManagement.oVariantSaveAsBtn.setEnabled());
 
@@ -347,6 +373,7 @@
 	QUnit.test("Checking _handleVariantSave", function(assert) {
 
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+		oModel.updateCurrentVariant = undefined;
 
 		var bCalled = false;
 		this.oVariantManagement.attachSave(function(oEvent) {
@@ -359,16 +386,45 @@
 		sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
 
 		sinon.stub(oModel, "_switchToVariant").returns(Promise.resolve());
-		this.oVariantManagement.setSelectedVariantKey("1");
+		this.oVariantManagement.setCurrentVariantKey("1");
 
 		this.oVariantManagement._openSaveAsDialog();
 
-		var aItems = this.oVariantManagement._getItems();
-		assert.ok(aItems);
-		assert.equal(aItems.length, 5);
-
-		this.oVariantManagement._handleVariantSave("1");
+		this.oVariantManagement._handleVariantSave();
 		assert.ok(bCalled);
+	});
+
+	QUnit.test("Checking _handleVariantSave on shared variant", function(assert) {
+
+		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+		oModel.updateCurrentVariant = undefined;
+
+		var bCalled = false;
+		this.oVariantManagement.attachSave(function(oEvent) {
+			bCalled = true;
+		});
+
+		this.oVariantManagement._createSaveAsDialog();
+
+		assert.ok(this.oVariantManagement.oSaveAsDialog);
+		sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
+
+		// sinon.stub(oModel, "_switchToVariant").returns(Promise.resolve());
+		this.oVariantManagement.setCurrentVariantKey("4");
+
+		this.oVariantManagement._assignTransport = function(oItem, fOK, fError) {
+			fOK("package", "transport");
+		};
+
+		assert.ok(!this.oVariantManagement.sPackage);
+		assert.ok(!this.oVariantManagement.sTransport);
+
+		this.oVariantManagement._handleVariantSave();
+		assert.ok(bCalled);
+
+		assert.equal(this.oVariantManagement.sPackage, "package");
+		assert.equal(this.oVariantManagement.sTransport, "transport");
+
 	});
 
 	QUnit.test("Checking openManagementDialog", function(assert) {
@@ -581,11 +637,11 @@
 		this.oVariantManagement._handleManageFavoriteChanged(null, oItemFav);
 
 		sinon.stub(oModel, "_switchToVariant").returns(Promise.resolve());
-		this.oVariantManagement.setSelectedVariantKey("1");
+		this.oVariantManagement.setCurrentVariantKey("1");
 
 		this.oVariantManagement._handleManageSavePressed();
 
-		assert.equal(this.oVariantManagement.getSelectedVariantKey(), this.oVariantManagement.getStandardVariantKey());
+		assert.equal(this.oVariantManagement.getCurrentVariantKey(), this.oVariantManagement.getStandardVariantKey());
 
 	});
 
@@ -605,7 +661,20 @@
 		assert.ok(aItems);
 		assert.equal(aItems.length, 5);
 
+		sinon.spy(this.oVariantManagement._oVariantList, "getBinding");
+
+		this.oVariantManagement._triggerSearch(null, this.oVariantManagement._oVariantList);
+		assert.ok(!this.oVariantManagement._oVariantList.getBinding.called);
+
+		this.oVariantManagement._triggerSearch({
+			getParameters: function() {
+				return null;
+			}
+		}, this.oVariantManagement._oVariantList);
+		assert.ok(!this.oVariantManagement._oVariantList.getBinding.called);
+
 		this.oVariantManagement._triggerSearch(oEvent, this.oVariantManagement._oVariantList);
+		assert.ok(this.oVariantManagement._oVariantList.getBinding.called);
 		aItems = this.oVariantManagement._oVariantList.getItems();
 		assert.ok(aItems);
 		assert.equal(aItems.length, 2);

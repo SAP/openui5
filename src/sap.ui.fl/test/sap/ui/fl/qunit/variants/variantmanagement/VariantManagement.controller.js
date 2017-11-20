@@ -21,95 +21,116 @@ sap.ui.define([
 							author: "A",
 							favorite: true,
 							originalFavorite: true,
-							readOnly: true,
+							remove: false,
+							rename: true,
 							executeOnSelect: false,
 							originalExecuteOnSelect: false,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "1",
 							title: "One",
 							author: "A",
+							share: false,
 							favorite: true,
 							originalFavorite: true,
-							readOnly: false,
+							remove: true,
+							rename: true,
 							executeOnSelect: false,
 							originalExecuteOnSelect: false,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "2",
 							title: "Two",
 							author: "B",
 							favorite: true,
 							originalFavorite: true,
-							readOnly: false,
+							remove: true,
+							rename: true,
 							executeOnSelect: false,
 							originalExecuteOnSelect: false,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "3",
 							title: "Three",
-							global: true,
+							share: true,
 							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
-							readOnly: true,
+							remove: false,
+							rename: false,
 							executeOnSelect: false,
 							originalExecuteOnSelect: false,
-							visible: true
+							visible: true,
+							change: false
 						}, {
 							key: "4",
 							title: "Four",
 							favorite: true,
 							originalFavorite: true,
-							readOnly: false,
+							remove: true,
+							rename: true,
 							executeOnSelect: false,
 							originalExecuteOnSelect: false,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "5",
 							title: "Five",
 							favorite: true,
 							originalFavorite: true,
-							readOnly: false,
+							remove: true,
+							rename: true,
 							executeOnSelect: false,
 							originalExecuteOnSelect: false,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "6",
 							title: "Six",
 							favorite: true,
 							originalFavorite: true,
-							readOnly: false,
+							remove: true,
+							rename: true,
 							executeOnSelect: false,
 							originalExecuteOnSelect: false,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "7",
 							title: "Seven",
 							favorite: true,
 							originalFavorite: true,
-							readOnly: false,
+							remove: false,
+							rename: false,
 							executeOnSelect: false,
 							originalExecuteOnSelect: false,
-							visible: true
+							visible: true,
+							change: false
 						}, {
 							key: "8",
 							title: "Eight",
 							favorite: true,
 							originalFavorite: true,
-							readOnly: true,
+							remove: true,
+							rename: true,
 							executeOnSelect: false,
 							originalExecuteOnSelect: false,
-							visible: true
+							visible: true,
+							change: true
 						}, {
 							key: "9",
 							title: "Nine",
 							favorite: true,
 							originalFavorite: true,
-							readOnly: false,
+							remove: false,
+							rename: false,
 							executeOnSelect: false,
 							originalExecuteOnSelect: false,
-							visible: true
+							visible: true,
+							change: false
 						}
 					]
 				},

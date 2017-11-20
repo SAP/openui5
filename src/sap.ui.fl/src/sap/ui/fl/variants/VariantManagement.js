@@ -150,7 +150,7 @@ sap.ui.define([
 						/**
 						 * The shared variant indicator
 						 */
-						global: {
+						share: {
 							type: "boolean"
 						},
 
@@ -357,11 +357,15 @@ sap.ui.define([
 	 * @param {String} sKey the variant key whic should be selected.
 	 * @returns {sap.ui.fl.variants.VariantManagement} the current instance of {@link sap.ui.fl.variants.VariantManagement}.
 	 */
-	VariantManagement.prototype.setSelectedVariantKey = function(sKey) {
+	VariantManagement.prototype.setCurrentVariantKey = function(sKey) {
 		var sLocalId, oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
 			sLocalId = this._getLocalId();
-			oModel.updateCurrentVariant(sLocalId, sKey);
+			if (oModel.updateCurrentVariant) {
+				oModel.updateCurrentVariant(sLocalId, sKey);
+			} else {
+				oModel.setProperty(this.oContext + "/currentVariant", sKey);
+			}
 		}
 		return this;
 	};
@@ -371,7 +375,7 @@ sap.ui.define([
 	 * @public
 	 * @returns {String} The currently selected variant key. In case the model is yet not set <code>null</code> will be returned.
 	 */
-	VariantManagement.prototype.getSelectedVariantKey = function() {
+	VariantManagement.prototype.getCurrentVariantKey = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
 			return oModel.getProperty(this.oContext + "/currentVariant");
@@ -462,7 +466,10 @@ sap.ui.define([
 			if (oModel) {
 				sLocalId = this._getLocalId();
 				if (sLocalId) {
-					oModel.ensureStandardEntryExists(sLocalId);
+
+					if (oModel.ensureStandardEntryExists) { // RTA relevant
+						oModel.ensureStandardEntryExists(sLocalId);
+					}
 					this.oContext = new Context(oModel, "/" + sLocalId);
 
 					this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
@@ -658,7 +665,7 @@ sap.ui.define([
 				}
 				if (sSelectionKey) {
 					// this.setModified(false);
-					this.setSelectedVariantKey(sSelectionKey);
+					this.setCurrentVariantKey(sSelectionKey);
 					this.oVariantPopOver.close();
 				}
 			}.bind(this)
@@ -675,15 +682,6 @@ sap.ui.define([
 			model: VariantManagement.MODEL_NAME,
 			template: oItemTemplate
 		});
-
-		if (this.getModified()) {
-			var oSelectedItem = this._getItemByKey(this.getSelectedVariantKey());
-			if (oSelectedItem) {
-				if (!oSelectedItem.readOnly || (this._isIndustrySolutionModeAndVendorLayer() && (this.getStandardVariantKey() === oSelectedItem.key))) {
-					this.oVariantSaveBtn.setEnabled(true);
-				}
-			}
-		}
 
 		this._oSearchField = new SearchField(this.getId() + "-search");
 		this._oSearchField.attachLiveChange(function(oEvent) {
@@ -774,8 +772,8 @@ sap.ui.define([
 		}
 
 		if (this.getModified()) {
-			oItem = this._getItemByKey(this.getSelectedVariantKey());
-			if (!oItem.readOnly || (this._isIndustrySolutionModeAndVendorLayer() && (this.getStandardVariantKey() === oItem.key))) {
+			oItem = this._getItemByKey(this.getCurrentVariantKey());
+			if (oItem.change || (this._isIndustrySolutionModeAndVendorLayer() && (this.getStandardVariantKey() === oItem.key))) {
 				this.oVariantSaveBtn.setEnabled(true);
 			}
 		}
@@ -918,7 +916,7 @@ sap.ui.define([
 
 		this._createSaveAsDialog();
 
-		this.oInputName.setValue(this.getSelectedVariantText(this.getSelectedVariantKey()));
+		this.oInputName.setValue(this.getSelectedVariantText(this.getCurrentVariantKey()));
 		this.oSaveSave.setEnabled(false);
 
 		this.oInputName.setEnabled(true);
@@ -992,7 +990,7 @@ sap.ui.define([
 			overwrite: false,
 			def: this.oDefault.getSelected(),
 			execute: this.oExecuteOnSelect.getSelected(),
-			global: this.oShare.getSelected(),
+			share: this.oShare.getSelected(),
 			lifecyclePackage: sPackage,
 			lifecycleTransportId: sTransport
 		});
@@ -1001,14 +999,14 @@ sap.ui.define([
 
 	VariantManagement.prototype._handleVariantSave = function() {
 
-		var oItem = this._getItemByKey(this.getSelectedVariantKey());
+		var oItem = this._getItemByKey(this.getCurrentVariantKey());
 
 		var bDefault = false;
 		if (this.getDefaultVariantKey() === oItem.key) {
 			bDefault = true;
 		}
 
-		if (oItem.global) {
+		if (oItem.share) {
 			var fOkay = function(sPackage, sTransport) {
 
 				if (this.oVariantPopOver) {
@@ -1022,7 +1020,7 @@ sap.ui.define([
 					overwrite: true,
 					key: oItem.key,
 					def: bDefault,
-					global: this._isIndustrySolutionModeAndVendorLayer(),
+					share: this._isIndustrySolutionModeAndVendorLayer(),
 					lifecyclePackage: this.sPackage,
 					lifecycleTransportId: this.sTransport
 				});
@@ -1113,12 +1111,6 @@ sap.ui.define([
 				and: false
 			})
 		];
-
-// oManagementTable.bindAggregation("items", {
-// path: "variants",
-// model: VariantManagement.MODEL_NAME,
-// factory: this._templateFactoryManagementDialog.bind(this)
-// });
 
 		oManagementTable.getBinding("items").filter(aFilters);
 
@@ -1251,10 +1243,9 @@ sap.ui.define([
 			this.oManagementTable.bindAggregation("items", {
 				path: "variants",
 				model: VariantManagement.MODEL_NAME,
-				factory: this._templateFactoryManagementDialog.bind(this)
+				factory: this._templateFactoryManagementDialog.bind(this),
+				filters: this._getVisibleFilter()
 			});
-
-			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
 
 			this._bDeleteOccured = false;
 		}
@@ -1270,7 +1261,7 @@ sap.ui.define([
 
 	VariantManagement.prototype._templateFactoryManagementDialog = function(sId, oContext) {
 
-		var sTooltip = null, bExeEnabled, oDeleteButton, sBindingPath, oNameControl, oItem = oContext.getObject();
+		var sTooltip = null, oDeleteButton, sBindingPath, oNameControl, oItem = oContext.getObject();
 		if (!oItem) {
 			return undefined;
 		}
@@ -1301,27 +1292,28 @@ sap.ui.define([
 			this._handleManageFavoriteChanged(oEvent.oSource, oEvent.oSource.getBindingContext(VariantManagement.MODEL_NAME).getObject());
 		}.bind(this);
 
-		if (oItem.key !== this.getStandardVariantKey()) {
-			if (oItem.readOnly) {
-				sTooltip = this._oRb.getText("VARIANT_MANAGEMENT_WRONG_LAYER");
-			} else if (oItem.textReadOnly) {
-				sTooltip = this._oRb.getText("VARIANT_MANAGEMENT_WRONG_LANGUAGE");
-			}
-		}
+// if (oItem.key !== this.getStandardVariantKey()) {
+// if (!oItem.remove) {
+// sTooltip = this._oRb.getText("VARIANT_MANAGEMENT_WRONG_LAYER");
+// } else if (oItem.textReadOnly) {
+// sTooltip = this._oRb.getText("VARIANT_MANAGEMENT_WRONG_LANGUAGE");
+// }
+// }
 
-		if ((oItem.key === this.getStandardVariantKey()) || oItem.readOnly || oItem.textReadOnly) {
+		if (oItem.rename) {
+			oNameControl = new Input({
+				liveChange: fLiveChange,
+				change: fChange,
+				value: '{' + VariantManagement.MODEL_NAME + ">title}"
+			});
+		} else {
 			oNameControl = new ObjectIdentifier({
 				title: '{' + VariantManagement.MODEL_NAME + ">title}"
 			});
 			if (sTooltip) {
 				oNameControl.setTooltip(sTooltip);
 			}
-		} else {
-			oNameControl = new Input({
-				liveChange: fLiveChange,
-				change: fChange,
-				value: '{' + VariantManagement.MODEL_NAME + ">title}"
-			});
+
 		}
 
 		oDeleteButton = new Button({
@@ -1330,13 +1322,11 @@ sap.ui.define([
 			type: ButtonType.Transparent,
 			press: fPress,
 			tooltip: this._oRb.getText("VARIANT_MANAGEMENT_DELETE"),
-			// visible: "{:= ${readOnly} ? false : true }}"
-			visible: !oItem.readOnly
+			// visible: "{:= ${remove} ? true : false }}"
+			visible: oItem.remove
 		});
 
 		this._assignColumnInfoForDeleteButton(oDeleteButton);
-
-		bExeEnabled = (oItem.readOnly === false);
 
 		sBindingPath = this.oContext.getPath();
 
@@ -1363,7 +1353,7 @@ sap.ui.define([
 		var oTemplate = new ColumnListItem({
 			cells: [
 				oFavoriteIcon, oNameControl, new Text({
-					text: this._oRb.getText(oItem.global ? "VARIANT_MANAGEMENT_SHARED" : "VARIANT_MANAGEMENT_PRIVATE"),
+					text: this._oRb.getText(oItem.share ? "VARIANT_MANAGEMENT_SHARED" : "VARIANT_MANAGEMENT_PRIVATE"),
 					wrapping: false
 				}), new RadioButton({
 					groupName: this.getId(),
@@ -1377,7 +1367,7 @@ sap.ui.define([
 						}
 					}
 				}), new CheckBox({
-					enabled: bExeEnabled,
+					// enabled: oItem.rename,
 					select: fSelectCB,
 					selected: '{' + VariantManagement.MODEL_NAME + ">executeOnSelect}"
 				}), new Text({
@@ -1415,10 +1405,10 @@ sap.ui.define([
 			this.oManagementTable.bindAggregation("items", {
 				path: "variants",
 				model: VariantManagement.MODEL_NAME,
-				factory: this._templateFactoryManagementDialog.bind(this)
+				factory: this._templateFactoryManagementDialog.bind(this),
+				filters: this._getVisibleFilter()
 			});
 
-			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
 		}
 
 		this.oManagementDialog.open();
@@ -1492,7 +1482,7 @@ sap.ui.define([
 		oItem.favorite = !oItem.favorite;
 		this._setFavoriteIcon(oIcon, oItem.favorite);
 
-		if (oItem.global) {
+		if (oItem.share) {
 			var fOkay = function(sPackage, sTransport) {
 				oItem.lifecyclePackage = sPackage;
 				oItem.lifecycleTransportId = sTransport;
@@ -1525,7 +1515,7 @@ sap.ui.define([
 			this.setDefaultVariantKey(this.getStandardVariantKey());
 		}
 
-		if (oItem.global) {
+		if (oItem.share) {
 			var fOkay = function(sPackage, sTransport) {
 				oItem.lifecyclePackage = sPackage;
 				oItem.lifecycleTransportId = sTransport;
@@ -1552,7 +1542,7 @@ sap.ui.define([
 			this.oManagementSave.setEnabled(true);
 		}
 
-		if (oItem.global) {
+		if (oItem.share) {
 			var fOkay = function(sPackage, sTransport) {
 				oItem.lifecyclePackage = sPackage;
 				oItem.lifecycleTransportId = sTransport;
@@ -1573,7 +1563,7 @@ sap.ui.define([
 
 		if (!oItem.title.localeCompare(oItem.originalTitle)) {
 
-			if (oItem.global) {
+			if (oItem.share) {
 				var fOkay = function(sPackage, sTransport) {
 					oItem.lifecyclePackage = sPackage;
 					oItem.lifecycleTransportId = sTransport;
@@ -1595,9 +1585,9 @@ sap.ui.define([
 		aItems.some(function(oItem) {
 			if (!oItem.visible) {
 				this._bDeleteOccured = true;
-				if (oItem.key === this.getSelectedVariantKey()) {
+				if (oItem.key === this.getCurrentVariantKey()) {
 					this.setModified(false);
-					this.setSelectedVariantKey(this.getStandardVariantKey());
+					this.setCurrentVariantKey(this.getStandardVariantKey());
 					return true;
 				}
 			}
