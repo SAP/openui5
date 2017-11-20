@@ -9,9 +9,9 @@
 			}">
 
 		<CustomListItem>
-			<HBox class="sapUiTinyMargin">
+			<HBox class="sapUiTinyMargin" justifyContent="SpaceBetween" alignItems="Center">
 				<VBox class="sapUiSmallMarginEnd">
-					<Label text="{label}"/>
+					<Label text="{label}" wrapping="true"/>
 				</VBox>
 				<VBox>
 					<StepInput
