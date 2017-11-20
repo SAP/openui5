@@ -34,7 +34,6 @@ sap.ui.define([
 			this.bObserve = bObserve;
 			this.oFlexController = oFlexController;
 			this.oComponent = oComponent;
-			this.bStandardVariantExists = true;
 			this.oVariantController = undefined;
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 			if (oFlexController && oFlexController._oChangePersistence) {
@@ -46,6 +45,8 @@ sap.ui.define([
 				Object.keys(oData).forEach(function(sKey) {
 					oData[sKey].modified = false;
 					oData[sKey].showFavorites = true;
+					oData[sKey].variantsEditable = true;
+
 					if (!oData[sKey].originalDefaultVariant) {
 						oData[sKey].originalDefaultVariant = oData[sKey].defaultVariant;
 					}
@@ -53,7 +54,7 @@ sap.ui.define([
 						if (!oData[sKey].currentVariant && (oVariant.key === oData[sKey].defaultVariant)) {
 							oData[sKey].currentVariant = oVariant.key;
 						}
-
+						oVariant.rename = false;
 						oVariant.originalTitle = oVariant.title;
 						oVariant.originalFavorite = oVariant.favorite;
 
@@ -213,11 +214,12 @@ sap.ui.define([
 //			author: mPropertyBag.layer,
 			key: oDuplicateVariantData.content.fileName,
 			layer: mPropertyBag.layer,
-			originalTitle: oDuplicateVariantData.content.title,
-			readOnly: false,
 			title: oDuplicateVariantData.content.title,
+			originalTitle: oDuplicateVariantData.content.title,
 			favorite: true,
 			originalFavorite: true,
+			rename: true,
+			remove: true,
 			visible: true
 		};
 
@@ -419,13 +421,29 @@ sap.ui.define([
 		.then(this.oFlexController.applyVariantChanges.bind(this.oFlexController, mChangesToBeSwitched.aNew, this.oComponent));
 	};
 
+	VariantModel.prototype._setModelPropertiesForControl = function(sVariantManagementReference, bAdaptationMode) {
+		this.oData[sVariantManagementReference].modified = false;
+		this.oData[sVariantManagementReference].showFavorites = true;
+
+		if (bAdaptationMode) {
+			this.oData[sVariantManagementReference].variantsEditable = false;
+			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
+				oVariant.rename = true;
+			});
+		} else {
+			this.oData[sVariantManagementReference].variantsEditable = true;
+			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
+				//TODO: Check for end-user variant and set to true
+				oVariant.rename = false;
+			});
+		}
+	};
+
 	VariantModel.prototype.ensureStandardEntryExists = function(sVariantManagementReference) {
 		var oData = this.getData();
 		if (!oData[sVariantManagementReference]) { /*Ensure standard variant exists*/
 			// Set Standard Data to Model
 			oData[sVariantManagementReference] = {
-				modified: false,
-				showFavorites: true,
 				currentVariant: sVariantManagementReference,
 				defaultVariant: sVariantManagementReference,
 				originalDefaultVariant: sVariantManagementReference,
@@ -434,15 +452,17 @@ sap.ui.define([
 //						author: "SAP",
 						key: sVariantManagementReference,
 						layer: "VENDOR",
-						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
-						readOnly: true,
 						title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
+						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
 						favorite: true,
 						originalFavorite: true,
+						rename: false,
+						remove: false,
 						visible: true
 					}
 				]
 			};
+			this._setModelPropertiesForControl(sVariantManagementReference, false);
 			this.setData(oData);
 
 			// Set Standard Data to VariantController
