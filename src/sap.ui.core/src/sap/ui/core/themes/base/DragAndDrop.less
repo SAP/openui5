@@ -12,8 +12,7 @@
 	&[data-drop-position=between] {
 		background: @sapUiDragAndDropActiveBorderColor;
 
-		&:before,
-		&:after {
+		&:before {
 			content: "";
 			position: absolute;
 			width: 0.5rem;
@@ -27,34 +26,24 @@
 		&[data-drop-layout=vertical] {
 			height: 0.125rem;
 
-			&:before,
-			&:after {
+			&:before {
 				top: -0.3125rem;
 			}
 
 			&:before {
 				left: 0;
 			}
-
-			&:after {
-				right: 0;
-			}
 		}
 
 		&[data-drop-layout=horizontal] {
 			width: 0.125rem;
 
-			&:before,
-			&:after {
+			&:before {
 				left: -0.3125rem;
 			}
 
 			&:before {
 				top: 0;
-			}
-
-			&:after {
-				bottom: 0;
 			}
 		}
 	}
