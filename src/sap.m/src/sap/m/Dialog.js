@@ -1754,6 +1754,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					that._$dialog.css({
 						left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - initial.width),
 						top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - initial.height),
+						width: initial.width,
+						height: initial.height,
 						transform: ""
 					});
 				}
