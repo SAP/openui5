@@ -197,11 +197,12 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * Subclasses of Element should override this hook to implement any necessary initialization.
 	 *
-	 * @function
-	 * @name sap.ui.core.Element.prototype.init
 	 * @protected
 	 */
-	//sap.ui.core.Element.prototype.init = function() {};
+	Element.prototype.init = function() {
+		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
+		// Therefore, many subclasses will not call this method at all.
+	};
 
 	/**
 	 * Cleans up the element instance before destruction.
@@ -211,11 +212,12 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * Subclasses of Element should override this hook to implement any necessary cleanup.
 	 *
-	 * @function
-	 * @name sap.ui.core.Element.prototype.exit
 	 * @protected
 	 */
-	//sap.ui.core.Element.prototype.exit = function() {};
+	Element.prototype.exit = function() {
+		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
+		// Therefore, many subclasses will not call this method at all.
+	};
 
 	/**
 	 * Creates a new Element from the given data.

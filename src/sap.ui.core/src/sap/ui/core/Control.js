@@ -589,11 +589,12 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 *
 	 * Subclasses of Control should override this hook to implement any necessary actions before the rendering.
 	 *
-	 * @function
-	 * @name sap.ui.core.Control.prototype.onBeforeRendering
 	 * @protected
 	 */
-	//sap.ui.core.Control.prototype.onBeforeRendering = function() {};
+	Control.prototype.onBeforeRendering = function() {
+		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
+		// Therefore, many subclasses will not call this method at all.
+	};
 
 	/**
 	 * Function is called when the rendering of the control is completed.
@@ -602,11 +603,12 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 *
 	 * Subclasses of Control should override this hook to implement any necessary actions after the rendering.
 	 *
-	 * @function
-	 * @name sap.ui.core.Control.prototype.onAfterRendering
 	 * @protected
 	 */
-	//sap.ui.core.Control.prototype.onAfterRendering = function() {};
+	Control.prototype.onAfterRendering = function() {
+		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
+		// Therefore, many subclasses will not call this method at all.
+	};
 
 	/**
 	 * Returns the DOMNode Id to be used for the "labelFor" attribute of the label.
