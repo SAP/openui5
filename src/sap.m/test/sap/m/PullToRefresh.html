@@ -85,6 +85,7 @@ function createSelect(oPullDown, iSelectedItem){
 		headerText : "Pull variants",
 		items: [
 			new sap.m.StandardListItem({
+				id: "standard_pull_page",
 				title: "Standard Pull Down to Refresh",
 				type: sap.m.ListType.Active,
 				press: function() {
@@ -92,6 +93,7 @@ function createSelect(oPullDown, iSelectedItem){
 				}
 			}),
 			new sap.m.StandardListItem({
+				id: "hide_pull_page",
 				title: "Hide Immediately",
 				type: sap.m.ListType.Active,
 				press: function() {
@@ -99,6 +101,7 @@ function createSelect(oPullDown, iSelectedItem){
 				}
 			}),
 			new sap.m.StandardListItem({
+				id: "busy_dialog_pull_page",
 				title: "Show Busy Dialog",
 				type: sap.m.ListType.Active,
 				press: function() {
@@ -124,6 +127,7 @@ function createSelect(oPullDown, iSelectedItem){
 	var standardList =  new sap.m.List({inset : false});
 	addItems(standardList, 5);
 	var pullToRefreshStd = new sap.m.PullToRefresh({
+		id: "standard_pull_control",
 		description: getLastUpdated(),
 		tooltip: "Standard Pull to Refresh",
 		refresh: function(){
@@ -181,6 +185,7 @@ function createSelect(oPullDown, iSelectedItem){
  */
 
 	var pullToHide = new sap.m.PullToRefresh({
+		id: "hide_pull_control",
 		customIcon: "images/SAPUI5Logo.png",
 		showIcon: true,
 		description: getLastUpdated(),
@@ -240,6 +245,7 @@ function createSelect(oPullDown, iSelectedItem){
 	var oTimeout = null;
 
 	var pullToBusy = new sap.m.PullToRefresh({
+		id: "busy_dialog_pull_control",
 		description: getLastUpdated(),
 		showIcon: false,
 		refresh: function(){
