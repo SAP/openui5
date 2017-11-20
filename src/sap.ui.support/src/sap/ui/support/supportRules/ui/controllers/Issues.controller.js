@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/ui/models/formatter",
-	"sap/ui/support/supportRules/Constants"
-], function ($, Controller, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter, constants) {
+	"sap/ui/support/supportRules/Constants",
+	"sap/m/OverflowToolbarAssociativePopoverControls"
+], function ($, Controller, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter, constants, OverflowToolbarAssociativePopoverControls) {
 	"use strict";
 
 	var mIssueSettings = {
@@ -42,6 +43,13 @@ sap.ui.define([
 
 			var toolHeaderPopover = this.toolHeader._getPopover();
 			toolHeaderPopover.removeStyleClass('sapTntToolHeaderPopover sapContrast sapContrastPlus');
+
+			// add VerticalLayout to the controls, which can overflow
+			OverflowToolbarAssociativePopoverControls._mSupportedControls["sap.ui.layout.VerticalLayout"] = {
+				canOverflow: true,
+				listenForEvents: [],
+				noInvalidationProps: []
+			};
 		},
 		setCommunicationSubscriptions: function () {
 
