@@ -988,7 +988,7 @@
 		assert.equal(sPrefix, "/sap/bc/lrep/changes/");
 	});
 
-	QUnit.test("_sendAjaxRequest - refetch XSRF Token in case of http 403 (not authorised)", function(assert) {
+	QUnit.test("_sendAjaxRequest - refetch XSRF Token in case of http 403 (not authorised) and reuse of previous XSRF token", function(assert) {
 		var requestCount = 0;
 		var bValidRequestReceived = false;
 		var bValidFetchXSRFReceived = false;
@@ -1006,7 +1006,11 @@
 				}
 				request.respond(200, {"X-CSRF-Token": "123"}); // valid token
 			} else if (request.requestHeaders["X-CSRF-Token"] === "123") {  //valid request
-				request.respond(200);
+				if (request.method === "DELETE") {
+					request.respond(204);
+				} else {
+					request.respond(200);
+				}
 				bValidRequestReceived = true;
 			} else { //XSRF Token is invalid --> 403 (not authorised)
 				request.respond(403);
@@ -1026,7 +1030,25 @@
 			assert.equal(requestCount, 3, "There shall be 3 roundtrips: 1) Failed due to missing XSFR token. 2) Fetch XSRF Token. 3) Repeat first roundtrip.");
 			assert.ok(bValidRequestReceived, "The XSRF Token shall be fetched and the origin request shall be resent");
 			assert.ok(bValidFetchXSRFReceived, "The XSRF Token shall be fetched with a dedicated GET request");
-		});
+			mSampleOptions.type = "POST";
+			bValidRequestReceived = false;
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function() {
+				assert.equal(requestCount, 4, "Next POST request will re use previous valid XSRF Token");
+				assert.ok(bValidRequestReceived, "and send the correct request");
+				mSampleOptions.type = "PUT";
+				bValidRequestReceived = false;
+				return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function() {
+					assert.equal(requestCount, 5, "Next PUT request will re use previous valid XSRF Token");
+					assert.ok(bValidRequestReceived, "and send the correct request");
+					mSampleOptions.type = "DELETE";
+					bValidRequestReceived = false;
+					return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function() {
+						assert.equal(requestCount, 6, "Next DELETE request will re use previous valid XSRF Token");
+						assert.ok(bValidRequestReceived, "and send the correct request");
+					});
+				}.bind(this));
+			}.bind(this));
+		}.bind(this));
 	});
 
 	QUnit.test("_sendAjaxRequest - shall reject Promise when backend returns error", function(assert) {
