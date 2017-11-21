@@ -173,7 +173,7 @@
 		},
 		{
 			"control": "sap.m.MessagePage",
-			"url": "../MessagePage.html",
+			"url": "MessagePage.html",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
