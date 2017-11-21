@@ -230,6 +230,7 @@
 		  "since": "1.22",
 		  "samples": [
 			"sap.m.sample.ComboBox",
+			"sap.m.sample.ComboBoxValueState",
 			"sap.m.sample.ComboBox2Columns",
 			"sap.m.sample.ComboBoxLazyLoading",
 			"sap.m.sample.ComboBoxSearchBoth"
@@ -1003,7 +1004,8 @@
 			"sap.m.sample.MultiInputMultiLine",
 			"sap.m.sample.MultiInputDatabinding",
 			"sap.m.sample.MultiInputMaxTokens",
-			"sap.m.sample.MultiInputTokenUpdate"
+			"sap.m.sample.MultiInputTokenUpdate",
+			"sap.m.sample.MultiInputValueHelp"
 		  ]
 		},
 		{
@@ -1392,6 +1394,11 @@
 		  "id": "sap.m.sample.ComboBox",
 		  "name": "Combo box",
 		  "description": "The combo box control provides a list box with items and a text field allowing the user to either type a value directly into the control or choose from the list of existing items."
+		},
+		{
+		  "id": "sap.m.sample.ComboBoxValueState",
+		  "name": "Combo box with value state",
+		  "description": "The combo box can show different value states."
 		},
 		{
 		  "id": "sap.m.sample.ComboBox2Columns",
@@ -1997,6 +2004,11 @@
 			"id": "sap.m.sample.MultiInputTokenUpdate",
 			"name": "MultiInput tokenUpdate event example",
 			"description": "MultiInput fires several tokenUpdate events depending on when the tokens were validated"
+		},
+		{
+			"id": "sap.m.sample.MultiInputValueHelp",
+			"name": "MultiInput with Value Help",
+			"description": "MultiInput that includes a SelectDialog as a value help dialog"
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifColors",
