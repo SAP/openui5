@@ -2420,5 +2420,52 @@
         "references": []
       }
     ]
+  },
+  "1.48.14": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "e4992a22b4800e830aaf26c60f07f0fc99d3feae",
+        "type": "FIX",
+        "text": " TimePicker-closing before slider scrolling is complete works.",
+        "references": []
+      },
+      {
+        "id": "46b3e81ae995088df0b8c87a726d40fb1af62218",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: The headerButton is now being bound correctly",
+        "references": []
+      },
+      {
+        "id": "eba7663e0339c1e104e40be935d86fcbe1d92746",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire properly change event.",
+        "references": []
+      },
+      {
+        "id": "c012e7fe44e0b07373b2494c13d160383b8c3775",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Long title wraps on Firefox and IE",
+        "references": []
+      },
+      {
+        "id": "08a88e6d0bc3e4fac1181871b8b2aa34b62eaaf7",
+        "type": "FIX",
+        "text": " sap.m.Page: Nested pages scrolling fixed.",
+        "references": []
+      },
+      {
+        "id": "a6cfcf2af929eb9cef4c1e74e4c03f314d0875d9",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Growing property now has a proper behavior.",
+        "references": []
+      },
+      {
+        "id": "ab7d37be792935e487b4b42a8f4e306ef661572d",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: when model is changed, filter counter is updated.",
+        "references": []
+      }
+    ]
   }
 }
