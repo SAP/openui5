@@ -503,6 +503,12 @@
         "type": "FIX",
         "text": " v2.ODataListBinding: filter for edm types with numbers",
         "references": []
+      },
+      {
+        "id": "669e09570e93a7f289bcbf657d7d8a285c11cb6a",
+        "type": "FIX",
+        "text": " ClientTreeBinding: Filter on all available entries",
+        "references": []
       }
     ]
   }
