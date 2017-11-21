@@ -989,6 +989,12 @@
         "type": "FIX",
         "text": " sap.ui.dt:added isVisible function to designtime and visible check",
         "references": []
+      },
+      {
+        "id": "242bd4b338c4eb5ba053365bf6acc41e3f4fc78b",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Now the buttons are being disabled accordingly",
+        "references": []
       }
     ]
   }
