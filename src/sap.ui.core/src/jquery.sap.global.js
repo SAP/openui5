@@ -4312,6 +4312,11 @@
 
 		};
 
+		var phantomPain;
+		if ( Device.browser.phantomjs ) {
+			phantomPain = jQuery.noop;
+		}
+
 		/**
 		 * Resolves one or more module dependencies.
 		 *
@@ -4379,6 +4384,13 @@
 					setTimeout(function() {
 						fnCallback.apply(window, aModules);
 					},0);
+
+					// PhantomJS has a very strange bug which sometimes causes the above
+					// setTimeout call to be ignored. For some unknown reason, adding some more
+					// code to the if block fixes the problem, but only when the code is not
+					// easily recognizable as NOOP (might have something to do with code optimization)
+					// TODO remove this when PhantomJS is no longer used for testing
+					phantomPain && phantomPain();
 				}
 
 			}, /* bAsync = */ true);
