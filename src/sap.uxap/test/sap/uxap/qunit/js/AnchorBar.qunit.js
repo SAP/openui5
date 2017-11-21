@@ -1,6 +1,6 @@
 /*global QUnit,sinon*/
 
-(function ($, QUnit, sinon, Importance) {
+(function ($, QUnit, sinon, Importance, library) {
 	"use strict";
 
 	jQuery.sap.registerModulePath("view", "view");
@@ -90,6 +90,29 @@
 
 		$arrowDownIcons = this.oObjectPage.$().find(".sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon");
 		assert.ok($arrowDownIcons.length === 1, "Anchorbar has 1 button with arrow-down icon");
+	});
+
+	QUnit.test("Arrow left nad arrow right buttons should have correct tooltips", function (assert) {
+		var oArrowLeft = this.anchorBarView.byId("ObjectPageLayout-anchBar-arrowScrollLeft"),
+			oArrowRight = this.anchorBarView.byId("ObjectPageLayout-anchBar-arrowScrollRight"),
+			oRB = library.i18nModel.getResourceBundle(),
+			sArrowLeftTooltip = oRB.getText("TOOLTIP_OP_SCROLL_LEFT_ARROW"),
+			sArrowRightTooltip = oRB.getText("TOOLTIP_OP_SCROLL_RIGHT_ARROW");
+
+		//assert
+		assert.ok(oArrowLeft.getTooltip() === sArrowLeftTooltip, "Arrow left button should have tooltip '" + sArrowLeftTooltip + "'");
+		assert.ok(oArrowRight.getTooltip() === sArrowRightTooltip, "Arrow left button should have tooltip '" + sArrowRightTooltip + "'");
+
+		//act
+		sap.ui.getCore().getConfiguration().setRTL(true);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.ok(oArrowLeft.getTooltip() === sArrowLeftTooltip, "Arrow left button should have tooltip '" + sArrowLeftTooltip + "' in RTL mode");
+		assert.ok(oArrowRight.getTooltip() === sArrowRightTooltip, "Arrow left button should have tooltip '" + sArrowRightTooltip + "' in RTL mode");
+
+		//cleanup
+		sap.ui.getCore().getConfiguration().setRTL(false);
 	});
 
 	QUnit.test("When using the objectPageNavigation the 'navigate' event is fired with the appropriate arguments", function (assert) {
@@ -252,4 +275,4 @@
 	});
 
 
-}(jQuery, QUnit, sinon, sap.uxap.Importance));
+}(jQuery, QUnit, sinon, sap.uxap.Importance, sap.uxap));
