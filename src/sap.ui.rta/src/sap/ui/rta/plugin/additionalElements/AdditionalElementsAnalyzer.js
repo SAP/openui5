@@ -54,12 +54,14 @@
 			var vProps = _enrichProperty(mProperty, mEntity);
 			if (_isComplexType(vProps)) {
 				var mComplexType = oMetaModel.getODataComplexType(vProps.type);
-				vProps = mComplexType.property.map(function(oComplexProperty){
-					oComplexProperty = _enrichProperty(oComplexProperty, mEntity);
-					oComplexProperty.bindingPath = vProps.name + "/" + oComplexProperty.name;
-					oComplexProperty.referencedComplexPropertyName = vProps.fieldLabel || vProps.name;
-					return oComplexProperty;
-				});
+				if (mComplexType) {
+					vProps = mComplexType.property.map(function(oComplexProperty){
+						oComplexProperty = _enrichProperty(oComplexProperty, mEntity);
+						oComplexProperty.bindingPath = vProps.name + "/" + oComplexProperty.name;
+						oComplexProperty.referencedComplexPropertyName = vProps.fieldLabel || vProps.name;
+						return oComplexProperty;
+					});
+				}
 			} else {
 				//harmonize structure
 				vProps.bindingPath = mProperty.name;
