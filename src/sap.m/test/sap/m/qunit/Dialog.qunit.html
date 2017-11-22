@@ -1205,6 +1205,55 @@
 				// cleanup
 				oDialog.destroy();
 			});
+
+			QUnit.module("Dragging");
+
+			QUnit.test("Check if dialog size remain unchanged after dragging it", function(assert) {
+				// arrange
+				var oDialog = new sap.m.Dialog({
+					draggable: true,
+					title: "Some title",
+					beginButton: new sap.m.Button({text: "button"}),
+					content: [
+						new sap.m.Text({
+							text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
+						})
+					]
+				});
+
+				// act
+				oDialog.open();
+
+				this.clock.tick(500);
+
+				var oMockEvent = {
+					pageX: 608,
+					pageY: 646,
+					offsetX: 177,
+					offsetY: 35,
+					preventDefault: function () {},
+					stopPropagation: function () {},
+					target: oDialog.getAggregation("_header").$().find(".sapMBarPH")[0]
+				};
+
+				var iInitialWidth = oDialog.$().width();
+				var iInitialHeight = oDialog.$().height();
+
+				oDialog.onmousedown(oMockEvent);
+
+				this.clock.tick(500);
+
+				var iAfterDragWidth = oDialog.$().width();
+				var iAfterDragHeight = oDialog.$().height();
+
+				// assert
+				assert.ok(iInitialWidth === iAfterDragWidth, "The width of the dialog should not change after dragging it.");
+				assert.ok(iInitialHeight === iAfterDragHeight, "The height of the dialog should not change after dragging it.");
+
+				// cleanup
+				oDialog.destroy();
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
