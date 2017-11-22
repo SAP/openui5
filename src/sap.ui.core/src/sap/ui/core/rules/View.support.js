@@ -21,10 +21,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	 * Checks for wrongly configured view namespace
 	 */
 	var oXMLViewWrongNamespace = {
-		id: "XMLViewWrongNamespace",
+		id: "xmlViewWrongNamespace",
 		audiences: [Audiences.Application],
 		categories: [Categories.Functionality],
 		enabled: true,
+		minversion: "-",
 		title: "XML View is not configured with namespace 'sap.ui.core.mvc'",
 		description: "For consistency and proper resource loading, the root node of an XML view must be configured with the namespace 'mvc'",
 		resolution: "Define the XML view as '<core:View ...>' and configure the XML namepspace as 'xmlns:mvc=\"sap.ui.core.mvc\"'",
