@@ -204,7 +204,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		//Assert
 		assert.ok(result);
 		assert.strictEqual(Object.keys(result).length, 1);
-		assert.strictEqual(Object.keys(result["sap.ui.fl.DummyControl1"]).length, 3);
+		assert.strictEqual(Object.keys(result["sap.ui.fl.DummyControl1"]).length, 4);
 		assert.deepEqual(result["sap.ui.fl.DummyControl1"]["myChangeType1"], registryItem1);
 	});
 

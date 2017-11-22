@@ -3,11 +3,36 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/registry/ChangeRegistryItem", "sap/ui/fl/registry/ChangeTypeMetadata",
-	"sap/ui/fl/registry/Settings", "sap/ui/fl/changeHandler/HideControl", "sap/ui/fl/changeHandler/MoveElements", "sap/ui/fl/changeHandler/MoveControls",
-	"sap/ui/fl/changeHandler/PropertyChange", "sap/ui/fl/changeHandler/PropertyBindingChange", "sap/ui/fl/changeHandler/UnhideControl",
-	"sap/ui/fl/changeHandler/StashControl", "sap/ui/fl/changeHandler/UnstashControl"
-], function(Utils, jQuery, ChangeRegistryItem, ChangeTypeMetadata, Settings, HideControl, MoveElements, MoveControls, PropertyChange, PropertyBindingChange, UnhideControl, StashControl, UnstashControl) {
+	"sap/ui/fl/Utils",
+	"jquery.sap.global",
+	"sap/ui/fl/registry/ChangeRegistryItem",
+	"sap/ui/fl/registry/ChangeTypeMetadata",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/changeHandler/HideControl",
+	"sap/ui/fl/changeHandler/MoveElements",
+	"sap/ui/fl/changeHandler/MoveControls",
+	"sap/ui/fl/changeHandler/PropertyChange",
+	"sap/ui/fl/changeHandler/PropertyBindingChange",
+	"sap/ui/fl/changeHandler/UnhideControl",
+	"sap/ui/fl/changeHandler/StashControl",
+	"sap/ui/fl/changeHandler/UnstashControl",
+	"sap/ui/fl/changeHandler/AddXML"
+], function(
+	Utils,
+	jQuery,
+	ChangeRegistryItem,
+	ChangeTypeMetadata,
+	Settings,
+	HideControl,
+	MoveElements,
+	MoveControls,
+	PropertyChange,
+	PropertyBindingChange,
+	UnhideControl,
+	StashControl,
+	UnstashControl,
+	AddXML
+) {
 	"use strict";
 
 	/**
@@ -44,6 +69,9 @@ sap.ui.define([
 		},
 		"propertyBindingChange": {
 			changeHandler: PropertyBindingChange
+		},
+		"addXML": {
+			changeHandler: AddXML
 		}
 	};
 
