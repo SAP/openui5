@@ -79,4 +79,24 @@ describe('sap.m.MessageView', function() {
 		element(by.id("dialogWOneHeader-close-btn")).click();
 	});
 
+	it("should open MessageView with one type of message", function () {
+		element(by.id("mViewButton3")).click();
+		expect(takeScreenshot(element(by.id("pop3")))).toLookAs("message-view-with-one-type");
+		element(by.id("mViewButton4")).click();
+		element(by.id("mViewButton3")).click();
+		expect(takeScreenshot(element(by.id("pop3")))).toLookAs("message-view-with-filtering-again");
+		element(by.id("mViewButton5")).click();
+		element(by.id("mViewButton6")).click();
+		expect(takeScreenshot(element(by.id("mPop-messageView")))).toLookAs("message-view-without-button");
+		element(by.id("mViewButton6")).click();
+	});
+
+	it("should open collapsed MessagePopover with filter buttons visible", function () {
+		element(by.id("mViewButton7")).click();
+		expect(takeScreenshot(element(by.id("mPop-messagePopover-popover")))).toLookAs("message-view-collapsed-filtering");
+		element(by.id("mPop-messageView-error")).click();
+		expect(takeScreenshot(element(by.id("mPop-messagePopover-popover")))).toLookAs("message-view-expanded-filtering");
+		element(by.id("__button12")).click();
+	});
+
 });
