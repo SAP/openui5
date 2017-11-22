@@ -1594,20 +1594,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	}
 
 	/**
-	* Removes all previously selected appointments whenever a new one is pressed.
+	* Informs the PlanningCalendar that deselections might have to be made regarding all rows
+	* @private
+	*/
+	function _informPlanningCalendar(sFuncName){
+		var oPC = _getPlannigCalendar.call(this);
+
+		if (oPC) { //it may be a PC object or undefined
+			oPC["_onRow" + sFuncName]();
+		}
+	}
+
+	/**
+	* Checks if there's a PlanningCalendar or not
+	* returns {sap.m.PlanningCalendar}
+	* @private
+	*/
+	function _getPlannigCalendar() {
+		var oParent = this;
+
+		while (oParent.getParent() !== null) {
+			if (oParent.getMetadata().getName() === "sap.m.PlanningCalendar") {
+				return oParent;
+			}
+			oParent = oParent.getParent();
+		}
+	}
+
+	/**
+	* Handles the situation when more than one appointment are selected and they must be deselected
+	* when a single one is selected afterwards
 	* @private
 	*/
 	function _removeAllAppointmentSelections(that, bRemoveOldSelection){
 		if (bRemoveOldSelection) { //if !oEvent.ctrlKey
-			var rows = that.getParent().getParent().getParent().getRows();
-			for (var i = 0; i < rows.length; i++) {
-				var aApps = rows[i].getCalendarRow().aSelectedAppointments;
-				for (var j = 0; j < aApps.length; j++) {
-					sap.ui.getCore().byId(aApps[j]).setProperty("selected", false, true);
-					sap.ui.getCore().byId(aApps[j]).$().removeClass("sapUiCalendarAppSel");
-				}
-				rows[i].getCalendarRow().aSelectedAppointments = [];
-			}
+			_informPlanningCalendar.call(that, "DeselectAppointment");
 		}
 	}
 
