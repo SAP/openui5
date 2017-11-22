@@ -171,8 +171,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 		id : "AnalyticsNoDeviatingUnits",
 		categories: [Categories.Bindings],
 		title : "Analytical Binding reports 'No deviating units found...'",
-		description : "The analytical service returns duplicate IDs. This could also lead to many requests because the analytical binding " +
-						"will request the measures without deviating units again and expects to receive just one record, but again gets several ones ...",
+		description : "The analytical service returns duplicate IDs. This could also lead to many requests, but the analytical service expects to receive just one record",
 		resolution : "Adjust the service implementation.",
 		check : function(oIssueManager, oCoreFacade, oScope) {
 			var aTables = SupportHelper.find(oScope, true, "sap/ui/table/AnalyticalTable");
