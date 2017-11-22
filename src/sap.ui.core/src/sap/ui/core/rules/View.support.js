@@ -147,10 +147,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	 * Checks for unused namespaces inside an XML view
 	 */
 	var oXMLViewUnusedNamespaces = {
-		id: "XMLViewUnusedNamespaces",
+		id: "xmlViewUnusedNamespaces",
 		audiences: [Audiences.Control, Audiences.Application],
 		categories: [Categories.Performance],
 		enabled: true,
+		minversion: "-",
 		title: "Unused namespaces in XML view",
 		description: "Namespaces that are declared but not used have a negative impact on performance (and may confuse readers of the code)",
 		resolution: "Remove the unused namespaces from the view definition",
