@@ -1014,7 +1014,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					iUsedHeight += mDefaultScrollbarHeight[Device.browser.name];
 				}
 
-				return Math.floor(jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop);
+				if (this._iLastAvailableSpace == null) {
+					this._iLastAvailableSpace = 0;
+				}
+
+				var iNewAvailableSpace = Math.floor(jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop);
+				var iAvailableSpaceDifference = Math.abs(iNewAvailableSpace - this._iLastAvailableSpace);
+
+				if (iAvailableSpaceDifference >= 5) {
+					this._iLastAvailableSpace = Math.floor(iNewAvailableSpace);
+				}
+
+				return this._iLastAvailableSpace;
 			}
 		}
 
