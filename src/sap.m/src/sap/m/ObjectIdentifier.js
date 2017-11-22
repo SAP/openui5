@@ -273,7 +273,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/
 	 */
 	ObjectIdentifier.prototype._updateTitleControl = function(bIsTitleActive) {
 		var oRm,
-			oTitleControl = this.getAggregation("_titleControl");
+			oTitleControl = this._getTitleControl();
 
 		if (bIsTitleActive && oTitleControl instanceof sap.m.Text) {
 			this.destroyAggregation("_titleControl", true);
