@@ -339,7 +339,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 						return [];
 					} else {
 						// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
-						return ExtensionPoint(oView, node.getAttribute("name"), function(){
+						// if oView is an XMLView created from an html node there is no sViewName, hence we use the _oContainingView
+						return ExtensionPoint(oView._oContainingView, node.getAttribute("name"), function(){
 							var children = node.childNodes;
 							var oDefaultContent = [];
 							for (var i = 0; i < children.length; i++) {
