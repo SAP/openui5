@@ -494,18 +494,20 @@ sap.ui.define([
 			sArrowClass,
 			sArrowTooltip,
 			oScrollButton,
-			that = this;
+			that = this,
+			sTooltipLeft = this.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SCROLL_LEFT_ARROW"),
+			sTooltipRight = this.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SCROLL_RIGHT_ARROW");
 
 		if (bLeft) {
 			sArrowId = this.getId() + "-arrowScrollLeft";
 			sIconName = "slim-arrow-left";
 			sArrowClass = "anchorBarArrowLeft";
-			sArrowTooltip = this.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SCROLL_LEFT_ARROW");
+			sArrowTooltip = this._bRtl ? sTooltipRight : sTooltipLeft;
 		} else {
 			sArrowId = this.getId() + "-arrowScrollRight";
 			sIconName = "slim-arrow-right";
 			sArrowClass = "anchorBarArrowRight";
-			sArrowTooltip = this.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SCROLL_RIGHT_ARROW");
+			sArrowTooltip = this._bRtl ? sTooltipLeft : sTooltipRight;
 		}
 
 		oScrollButton = new Button(sArrowId, {
