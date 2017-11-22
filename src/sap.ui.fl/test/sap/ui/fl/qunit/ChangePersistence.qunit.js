@@ -103,7 +103,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		};
 		var fnSetChangeFileContentSpy = this.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
-		var fnLoadDefaultChangesStub = this.stub(this.oChangePersistence._oVariantController, "loadDefaultChanges").returns([]);
+		var fnLoadDefaultChangesStub = this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 

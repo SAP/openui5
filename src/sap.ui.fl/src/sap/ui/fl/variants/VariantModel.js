@@ -3,8 +3,20 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/model/json/JSONModel", "sap/ui/fl/Utils", "sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Change", "sap/ui/fl/changeHandler/Base"
-], function(jQuery, JSONModel, Utils, BaseTreeModifier, Change, BaseChangeHandler) {
+	"jquery.sap.global",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/changeHandler/BaseTreeModifier",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/changeHandler/Base"
+], function(
+	jQuery,
+	JSONModel,
+	Utils,
+	BaseTreeModifier,
+	Change,
+	BaseChangeHandler
+) {
 	"use strict";
 
 	/**
@@ -41,7 +53,6 @@ sap.ui.define([
 			}
 
 			if (oData && typeof oData == "object") {
-
 				Object.keys(oData).forEach(function(sKey) {
 					oData[sKey].modified = false;
 					oData[sKey].showFavorites = true;
@@ -50,6 +61,7 @@ sap.ui.define([
 					if (!oData[sKey].originalDefaultVariant) {
 						oData[sKey].originalDefaultVariant = oData[sKey].defaultVariant;
 					}
+
 					oData[sKey].variants.forEach(function(oVariant) {
 						if (!oData[sKey].currentVariant && (oVariant.key === oData[sKey].defaultVariant)) {
 							oData[sKey].currentVariant = oVariant.key;

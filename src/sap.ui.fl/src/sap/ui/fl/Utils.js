@@ -863,6 +863,17 @@ sap.ui.define([
 			return window.location.search.substring(1);
 		},
 
+		/**
+		 * Returns the values of a certain technical parameter or undefined if the parameter is invalid
+		 * @param  {object} oComponent Component instance used to get the technical parameters
+		 * @param {string} sParameterName The name of the parameter (e.g. "sap-ui-fl-control-variant-id")
+		 * @return {string[]|undefined} Returns the list of variant references found in the URL or undefined if none found
+		 */
+		getTechnicalParameterValuesFromURL : function(oComponent, sParameterName){
+			var mTechnicalParameters = oComponent && oComponent.getComponentData
+				&& oComponent.getComponentData() && oComponent.getComponentData().technicalParameters;
+			return (mTechnicalParameters && mTechnicalParameters[sParameterName]) || [];
+		},
 
 		/**
 		 * Checks the SAPUI5 debug settings to determine whether all or at least the <code>sap.ui.fl</code> library is debugged.

@@ -142,6 +142,7 @@ sap.ui.define([
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
 	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
+	 * @param {object} mPropertyBag.component - Component instance used to prepare the IDs (e.g. local)
 	 * @param {object} mPropertyBag.appDescriptor - Manifest that belongs to actual component
 	 * @param {string} mPropertyBag.siteId - ID of the site belonging to actual component
 	 * @param {string} [mPropertyBag.sCurrentLayer] - Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
@@ -156,6 +157,7 @@ sap.ui.define([
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
 		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
 			this._bHasLoadedChangesFromBackEnd = true;
+			var oComponent = mPropertyBag && mPropertyBag.component;
 
 			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
 				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
@@ -168,8 +170,8 @@ sap.ui.define([
 			var aChanges = oWrappedChangeFileContent.changes.changes;
 
 			if (oWrappedChangeFileContent.changes.variantSection && Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0 && !this._oVariantController._getChangeFileContent()) {
-				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent);
-				var aVariantChanges = this._oVariantController.loadDefaultChanges();
+				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponent);
+				var aVariantChanges = this._oVariantController.loadInitialChanges();
 				aChanges = aChanges.concat(aVariantChanges);
 			}
 
@@ -298,6 +300,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
+		mPropertyBag.component = oComponent;
 
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
 
