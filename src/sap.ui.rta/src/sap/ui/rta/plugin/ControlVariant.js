@@ -84,7 +84,7 @@ sap.ui.define([
 				return;
 			}
 
-			oModel.getData()[sVariantManagementReference].variantsEditable = false;
+			oModel._setModelPropertiesForControl(sVariantManagementReference, true);
 			oModel.checkUpdate(true);
 
 			aVariantManagementTargetElements = !jQuery.isArray(vAssociationElement) ? [vAssociationElement] : vAssociationElement;
@@ -155,7 +155,7 @@ sap.ui.define([
 		if (oControl instanceof VariantManagement) {
 			oModel = this._getVariantModel(oControl);
 			sVariantManagementReference = oOverlay.getVariantManagement();
-			oModel.getData()[sVariantManagementReference].variantsEditable = true;
+			oModel._setModelPropertiesForControl(sVariantManagementReference, false);
 			oModel.checkUpdate(true);
 		}
 

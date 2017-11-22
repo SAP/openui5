@@ -24,7 +24,7 @@ sap.ui.require([
 							"author": "SAP",
 							"key": "variantMgmtId1",
 							"layer": "VENDOR",
-							"readOnly": true,
+							"remove": false,
 							"title": "Standard",
 							"favorite": true,
 							"visible": true
@@ -32,7 +32,7 @@ sap.ui.require([
 							"author": "Me",
 							"key": "variant0",
 							"layer": "CUSTOMER",
-							"readOnly": false,
+							"remove": true,
 							"title": "variant A",
 							"favorite": true,
 							"visible": true
@@ -40,7 +40,7 @@ sap.ui.require([
 							"author": "Me",
 							"key": "variant1",
 							"layer": "CUSTOMER",
-							"readOnly": false,
+							"remove": true,
 							"title": "variant B",
 							"favorite": false,
 							"visible": true
@@ -84,10 +84,18 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'getData'", function(assert) {
-		var sExpectedJSON = "{\"variantMgmtId1\":{" + "\"modified\":false,"  + "\"showFavorites\":true," + "\"defaultVariant\":\"variant1\","  + "\"originalDefaultVariant\":\"variant1\"," + "\"variants\":[{" + "\"author\":\"SAP\"," + "\"key\":\"variantMgmtId1\"," + "\"layer\":\"VENDOR\"," + "\"originalFavorite\":true," + "\"originalTitle\":\"Standard\"," + "\"readOnly\":true," + "\"favorite\":true,"  + "\"title\":\"Standard\"," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant0\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":true,"  + "\"originalTitle\":\"variant A\"," + "\"readOnly\":false," + "\"favorite\":true," + "\"title\":\"variant A\"," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant1\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":false," + "\"originalTitle\":\"variant B\"," + "\"readOnly\":false," + "\"favorite\":false,"  + "\"title\":\"variant B\"," + "\"visible\":true" + "}]," + "\"currentVariant\":\"variant1\"" + "}" + "}";
+		var sExpectedJSON = "{\"variantMgmtId1\":{" + "\"modified\":false,"  + "\"variantsEditable\":true," + "\"showFavorites\":true," + "\"defaultVariant\":\"variant1\","  + "\"originalDefaultVariant\":\"variant1\"," + "\"variants\":[{" + "\"author\":\"SAP\"," + "\"key\":\"variantMgmtId1\"," + "\"layer\":\"VENDOR\"," + "\"originalFavorite\":true," + "\"originalTitle\":\"Standard\"," + "\"remove\":false," + "\"rename\":false," + "\"favorite\":true,"  + "\"title\":\"Standard\"," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant0\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":true,"  + "\"originalTitle\":\"variant A\"," + "\"remove\":true," + "\"rename\":false," + "\"favorite\":true," + "\"title\":\"variant A\"," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant1\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":false," + "\"originalTitle\":\"variant B\"," + "\"remove\":true," + "\"rename\":false," + "\"favorite\":false,"  + "\"title\":\"variant B\"," + "\"visible\":true" + "}]," + "\"currentVariant\":\"variant1\"" + "}" + "}";
 		var sCurrentVariant = this.oModel.getCurrentVariantReference("variantMgmtId1");
 		assert.deepEqual(this.oModel.getData(), JSON.parse(sExpectedJSON));
 		assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
+	});
+
+	QUnit.test("when calling '_setModelPropertiesForControl'", function(assert) {
+		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is initially true");
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", true);
+		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable is set to false for bAdaptationMode = true");
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", false);
+		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is set to true for bAdaptationMode = false");
 	});
 
 	QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
