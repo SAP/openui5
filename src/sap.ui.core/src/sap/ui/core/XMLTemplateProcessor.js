@@ -499,7 +499,8 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 					// they are skipped as well as their potentially overwritten default content.
 					return SyncPromise.resolve([]);
 				} else {
-					return SyncPromise.resolve(ExtensionPoint(oView, node.getAttribute("name"), function() {
+					// if oView is an XMLView created from an html node there is no sViewName, hence we use the _oContainingView
+					return SyncPromise.resolve(ExtensionPoint(oView._oContainingView, node.getAttribute("name"), function() {
 						// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
 						var pChild = SyncPromise.resolve();
 						var aChildControlPromises = [];
