@@ -221,9 +221,14 @@ sap.ui.define([
 			var oModel = this.oVM.getModel("$FlexVariants");
 			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
 
-			oData.variantsEditable = !oData.variantsEditable;
+			oData.variantsEditable = !this.oVM.getEditable();
 
 			oModel.checkUpdate(true);
+		},
+
+		onToggleEditableBtn: function(oEvent) {
+
+			this.oVM.setEditable(!this.oVM.getEditable());
 		},
 
 		onMarkAsChanged: function(oEvent) {

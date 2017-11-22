@@ -18,8 +18,10 @@
 					press="onToggleErrorState" />					
 			</m:HBox>
 			<m:HBox fitContainer="true">			
-				<m:Button id="idToggleEditableVariantsBtn" text="toggle editable Variants"
+				<m:Button id="idToggleEditableVariantsBtn" text="toggle editable Variants via model"
 					press="onToggleEditableVariantsBtn" />
+				<m:Button id="idToggleEditableBtn" text="toggle editable Variants via Ctrl properties"
+					press="onToggleEditableBtn" />					
 				<m:Button id="idToggleFavoritesBtn" text="toggle show Favorites"
 					press="onToggleFavoritesBtn" />
 				<m:Button id="idToggleShowAsDefaultBtn" text="toggle show Default"
