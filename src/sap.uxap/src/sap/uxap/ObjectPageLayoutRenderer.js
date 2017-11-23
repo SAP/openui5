@@ -18,7 +18,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 				oAnchorBar = null,
 				bIsHeaderContentVisible = oControl.getHeaderContent() && oControl.getHeaderContent().length > 0 && oControl.getShowHeaderContent(),
 				bIsTitleInHeaderContent = oControl.getShowTitleInHeaderContent() && oControl.getShowHeaderContent(),
-				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent;
+				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent,
+				bUseIconTabBar = oControl.getUseIconTabBar();
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
 				oAnchorBar = oControl.getAggregation("_anchorBar");
@@ -116,6 +117,9 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			if (jQuery.isArray(aSections)) {
 				jQuery.each(aSections, function (iIndex, oSection) {
 					oRm.renderControl(oSection);
+					if (bUseIconTabBar) {
+						oControl._oCurrentTabSection = oSection;
+					}
 				});
 			}
 			oRm.write("</section>");

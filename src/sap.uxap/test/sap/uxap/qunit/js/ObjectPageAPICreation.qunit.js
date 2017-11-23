@@ -1072,6 +1072,48 @@
 		});
 	});
 
+	QUnit.module("ObjectPage API: invalidate");
+
+	QUnit.test("browser events not attached twice on rerender", function (assert) {
+
+		var oButton = new sap.m.Button("btn1", {text: "test"}),
+			oObjectPage = new sap.uxap.ObjectPageLayout({
+				useIconTabBar: true,
+				selectedSection: "section1",
+				sections: [
+					new sap.uxap.ObjectPageSection("section1", {
+						subSections: [
+							new sap.uxap.ObjectPageSubSection({
+								blocks: [
+									oButton
+								]
+							})
+						]
+					})
+				]
+			}),
+			fnBrowserEventHandler = this.spy(),
+			fnOnDomReady = function() {
+				oObjectPage.rerender();
+				var event = new Event("click"),
+					$buttonDeomRef = sap.ui.getCore().byId("btn1").getDomRef();
+
+				$buttonDeomRef.dispatchEvent(event);
+				assert.equal(fnBrowserEventHandler.callCount, 1, "browser event listener called only once");
+				oObjectPage.destroy();
+				done();
+			},
+			done = assert.async();
+
+		assert.expect(1); //number of assertions
+
+		oButton.attachBrowserEvent("click", fnBrowserEventHandler);
+
+		helpers.renderObject(oObjectPage);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+	});
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;
