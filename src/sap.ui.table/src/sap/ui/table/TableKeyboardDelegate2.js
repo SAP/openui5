@@ -946,7 +946,7 @@ sap.ui.define([
 		// Shift+F10: Open the context menu.
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.F10, ModKey.SHIFT)) {
 			oEvent.preventDefault(); // Prevent opening the default browser context menu.
-			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
+			TableUtils.Menu.openContextMenu(this, oEvent.target, true, null, oEvent);
 		}
 	};
 
@@ -997,8 +997,8 @@ sap.ui.define([
 		var $Cell = TableUtils.getCell(this, oEvent.target);
 		var oCellInfo = TableUtils.getCellInfo($Cell);
 
-		if (oCellInfo.isOfType(CellType.COLUMNHEADER | CellType.DATACELL)) {
-			TableUtils.Menu.openContextMenu(this, oEvent.target, true);
+		if (oCellInfo.isOfType(CellType.COLUMNHEADER | CellType.ANYCONTENTCELL)) {
+			TableUtils.Menu.openContextMenu(this, oEvent.target, true, null, oEvent);
 		}
 	};
 

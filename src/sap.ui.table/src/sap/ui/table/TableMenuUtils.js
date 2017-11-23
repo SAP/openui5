@@ -43,6 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 			 * @param {boolean} [bFireEvent=true] If <code>true</code>, an event will be fired.
 			 * 									  Fires the <code>ColumnSelect</code> event when a column context menu should be opened.
 			 * 									  Fires the <code>CellContextmenu</code> event when a data cell context menu should be opened.
+			 * @param {jQuery.Event} oEvent Event object.
 			 * @see	openColumnContextMenu
 			 * @see closeColumnContextMenu
 			 * @see	openDataCellContextMenu
@@ -51,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 			 * @see removeColumnHeaderCellMenu
 			 * @private
 			 */
-			openContextMenu: function(oTable, oElement, bHoverFirstMenuItem, bFireEvent) {
+			openContextMenu: function(oTable, oElement, bHoverFirstMenuItem, bFireEvent, oEvent) {
 				if (oTable == null || oElement == null) {
 					return;
 				}
@@ -91,11 +92,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 						MenuUtils.applyColumnHeaderCellMenu(oTable, iColumnIndex, $TableCell);
 					}
 
-				} else if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.DATACELL)) {
+				} else if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
 					bExecuteDefault = true;
 
 					if (bFireEvent) {
-						var oRowColCell = MenuUtils.TableUtils.getRowColCell(oTable, iRowIndex, iColumnIndex, true);
+						var oRowColCell = MenuUtils.TableUtils.getRowColCell(oTable, iRowIndex, iColumnIndex, iColumnIndex >= 0);
 						var oRow = oRowColCell.row;
 
 						var oRowBindingContext;
@@ -104,20 +105,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 							oRowBindingContext = oRow.getBindingContext(oRowBindingInfo.model);
 						}
 
-						var mParams = {
-							rowIndex: oRow.getIndex(),
-							columnIndex: iColumnIndex,
-							columnId: oRowColCell.column.getId(),
-							cellControl: oRowColCell.cell,
-							rowBindingContext: oRowBindingContext,
-							cellDomRef: $TableCell[0]
-						};
+						var oRowContextMenu = oTable.getContextMenu();
+						if (oRowContextMenu) {
+							oRowContextMenu.setBindingContext(oRowBindingContext);
+						}
 
-						bExecuteDefault = oTable.fireCellContextmenu(mParams);
+						if (iColumnIndex >= 0) {
+							bExecuteDefault = oTable.fireCellContextmenu({
+								rowIndex: oRow.getIndex(),
+								columnIndex: iColumnIndex,
+								columnId: oRowColCell.column.getId(),
+								cellControl: oRowColCell.cell,
+								rowBindingContext: oRowBindingContext,
+								cellDomRef: $TableCell[0]
+							});
+						}
+
+						// fire beforeOpenContextMenu event if the default is not prevented in the cellContextMenu event
+						if (bExecuteDefault) {
+							bExecuteDefault = oTable.fireBeforeOpenContextMenu({
+								rowIndex: oRow.getIndex(),
+								columnIndex: oRowColCell.column === null ? null : iColumnIndex,
+								contextMenu: oRowContextMenu
+							});
+						}
 					}
 
 					if (bExecuteDefault) {
-						MenuUtils.openDataCellContextMenu(oTable, iColumnIndex, iRowIndex, bHoverFirstMenuItem);
+						MenuUtils.openDataCellContextMenu(oTable, oCellInfo, bHoverFirstMenuItem, oEvent);
 					}
 				}
 			},
@@ -201,19 +216,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 			 * If a context menu of another data cell is open, it will be closed.
 			 *
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
-			 * @param {int} iColumnIndex The column index of the data cell to open the context menu on.
-			 * @param {int} iRowIndex The row index of the data cell to open the context menu on.
+			 * @param {sap.ui.table.TableUtils.CellInfo} oCellInfo An object containing information about the cell.
 			 * @param {boolean} [bHoverFirstMenuItem] If <code>true</code>, the first item in the opened menu will be hovered.
+			 * @param {jQuery.Event} oEvent event object
 			 * @see openContextMenu
 			 * @see closeDataCellContextMenu
 			 * @private
 			 */
-			openDataCellContextMenu: function(oTable, iColumnIndex, iRowIndex, bHoverFirstMenuItem) {
+			openDataCellContextMenu: function(oTable, oCellInfo, bHoverFirstMenuItem, oEvent) {
 				if (oTable == null ||
-					iColumnIndex == null || iColumnIndex < 0 ||
-					iRowIndex == null || iRowIndex < 0 || iRowIndex >= MenuUtils.TableUtils.getNonEmptyVisibleRowCount(oTable)) {
+					oCellInfo == null ||
+					oCellInfo.cell == null || oCellInfo.rowIndex >= MenuUtils.TableUtils.getNonEmptyVisibleRowCount(oTable)) {
 					return;
 				}
+
+				var iColumnIndex = oCellInfo.columnIndex;
+				var iRowIndex = oCellInfo.rowIndex;
+
 				if (bHoverFirstMenuItem == null) {
 					bHoverFirstMenuItem = false;
 				}
@@ -224,14 +243,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 				}
 
 				var oColumn = oColumns[iColumnIndex];
-				if (!oColumn.getVisible()) {
+				if (oColumn && !oColumn.getVisible()) {
 					return;
 				}
 
-				// Currently only filtering is possible in the default cell context menu.
-				if (oTable.getEnableCellFilter() && oColumn.isFilterableByMenu()) {
-					var oRow = oTable.getRows()[iRowIndex];
+				var oRow = oTable.getRows()[iRowIndex];
 
+				// Filtering or the contextMenu aggregation are possible as the cell context menu
+				if (MenuUtils.hasContextMenu(oTable)) {
+					var $row = oRow.$();
+					var bSumRow = $row.hasClass("sapUiAnalyticalTableSum");
+					var bGroupHeader = $row.hasClass("sapUiTableGroupHeader");
+					if (!bSumRow && !bGroupHeader) {
+						oTable.getContextMenu().openAsContextMenu(oEvent, oCellInfo.cell);
+					}
+				} else if (oTable.getEnableCellFilter() && oColumn && oColumn.isFilterableByMenu()) {
 					// Create the menu instance the first time it is needed.
 					if (oTable._oCellContextMenu == null) {
 
@@ -405,8 +431,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 					$ColumnCellMenu.parent().find(".sapUiTableColCell").show();
 					$ColumnCellMenu.remove();
 				}
-			}
+			},
 
+			/**
+			 * Returns true if the old filter data cell context menu is used.
+			 * @param {sap.ui.table.Table} oTable Table instance.
+			 * @returns {boolean} true/false if Table and contextMenu aggregation is available.
+			 * @see openContextMenu
+			 * @private
+			 */
+			hasContextMenu: function(oTable) {
+				return oTable && oTable.getContextMenu();
+			}
 		};
 
 		return MenuUtils;
