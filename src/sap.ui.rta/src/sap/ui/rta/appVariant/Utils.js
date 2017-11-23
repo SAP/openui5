@@ -81,7 +81,7 @@ sap.ui.define([
 				subTitle : oAppVariantInfo.subTitle || '',
 				description : oAppVariantInfo.description || '',
 				icon : oAppVariantInfo.iconUrl || '',
-				isOriginal : oAppVariantInfo.isOriginal || '',
+				isOriginal : oAppVariantInfo.isOriginal,
 				typeOfApp : fnCheckAppType(),
 				descriptorUrl : oAppVariantInfo.descriptorUrl
 			};

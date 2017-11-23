@@ -264,7 +264,7 @@ sap.ui.require([
 				}
 			};
 
-			return AppVariantUtils.createInlineChange(oPropertyChange, "subTitle").then(function(oSubtitleInlineChange) {
+			return AppVariantUtils.createInlineChange(oPropertyChange, "subtitle").then(function(oSubtitleInlineChange) {
 				assert.ok(oSubtitleInlineChange, "then the subtitle inline change is correct");
 				assert.strictEqual(oSubtitleInlineChange.getMap().changeType, "appdescr_app_setSubTitle", "then the change type is correct");
 			});
@@ -436,6 +436,37 @@ sap.ui.require([
 
 		QUnit.test("When isStandAloneApp() method is called", function (assert) {
 			assert.equal(AppVariantUtils.isStandAloneApp(), true, "then the app is a stand alone application");
+		});
+
+		QUnit.test("When getInboundInfo() is called with no inbounds passed as a parameter", function (assert) {
+			assert.deepEqual(AppVariantUtils.getInboundInfo(), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the correct inbound info is returned");
+		});
+
+		QUnit.test("When copyId() is called", function (assert) {
+			assert.equal(AppVariantUtils.copyId("CopyMe"), true, "then the the string is copied to your clipboard");
+		});
+
+		QUnit.test("When buildErrorInfo() is called for different error possibilities", function (assert) {
+			var oError = {
+				messages: [{
+					text: "Error1"
+				}]
+			};
+			var oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
+			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
+			assert.notEqual(oResult.text, undefined, "then the text is correct");
+
+			oError = {
+				iamAppId: "IamId"
+			};
+			oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
+			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
+			assert.notEqual(oResult.text, undefined, "then the text is correct");
+
+			oError = "Error2";
+			oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
+			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
+			assert.notEqual(oResult.text, undefined, "then the text is correct");
 		});
 	});
 });

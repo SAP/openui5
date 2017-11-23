@@ -31,7 +31,7 @@ sap.ui.define([
 		onGetOverview: function(oRootControl) {
 			return new Promise( function(resolve) {
 				var fnCancel = function() {
-					sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+					AppVariantUtils.publishEventBus();
 				};
 				sap.ui.require(["sap/ui/rta/appVariant/AppVariantOverviewDialog"], function(AppVariantOverviewDialog) {
 					if (!oAppVariantOverviewDialog) {
@@ -50,9 +50,9 @@ sap.ui.define([
 				});
 			});
 		},
-		// App variant functionality is only supported in S/4 Hana Cloud Platform & S/4 Hana (On Premise)  with 'sap-ui-xx-rta-save-as=true' (feature switch) as a part of url.
-		isPlatFormEnabled: function(sLayer, oRootControl) {
-			var oDescriptor = FlexUtils.getAppDescriptor(oRootControl);
+		// App variant functionality is only supported in S/4 Hana Cloud Platform & S/4 Hana (On Premise)  with 'sap-ui-xx-rta-save-as=true' (toggle feature switch) as a part of url.
+		isPlatFormEnabled: function(sLayer, oRootControlRunningApp) {
+			var oDescriptor = FlexUtils.getAppDescriptor(oRootControlRunningApp);
 
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
 				return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id).then(function(oResult) {
@@ -75,7 +75,9 @@ sap.ui.define([
 					}
 					return false;
 				}).catch(function(oError) {
-					return AppVariantUtils.showTechnicalError(MessageBox.Icon.ERROR, "HEADER_APP_VARIANT_FEATURE_FAILED", "MSG_APP_VARIANT_FEATURE_FAILED", oError);
+					var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_APP_VARIANT_FEATURE_FAILED", oError);
+					oErrorInfo.overviewDialog = true;
+					return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
 				});
 			}
 
@@ -85,7 +87,7 @@ sap.ui.define([
 			var oDescriptor, oRunningAppDescriptor, oAppVariantDescriptorClosure;
 
 			var oEvaluateSaveAsFlow = {
-				closeRunningApp : false,
+				triggeredFromRtaToolbar : false,
 				copyDirtyChanges: false
 			};
 
@@ -98,7 +100,7 @@ sap.ui.define([
 				}
 			} else {
 				oDescriptor = FlexUtils.getAppDescriptor(oRootControlRunningApp);
-				oEvaluateSaveAsFlow.closeRunningApp = true;
+				oEvaluateSaveAsFlow.triggeredFromRtaToolbar = true;
 				oEvaluateSaveAsFlow.copyDirtyChanges = true;
 			}
 
@@ -108,7 +110,7 @@ sap.ui.define([
 						oAppVariantManager = new AppVariantManager();
 					}
 					// Key user gives the input e.g title, subtitle, description, icon to create a tile on FLP
-					return oAppVariantManager.processSaveAsDialog(oDescriptor)
+					return oAppVariantManager.processSaveAsDialog(oDescriptor, oRootControlRunningApp, oEvaluateSaveAsFlow.triggeredFromRtaToolbar)
 						.then(function(oAppVariantData) {
 							// Based on the key user provided info, app variant descriptor is created
 							return oAppVariantManager.createDescriptor(oAppVariantData);
@@ -141,14 +143,13 @@ sap.ui.define([
 						})
 						.then(function(oResult) {
 							if (oResult) {
-								BusyIndicator.hide();
 								var oUshellContainer = RtaUtils.getUshellContainer();
 								if (oUshellContainer) {
 									// Tell FLP that no UI change is booked for the currently adapting app
 									oUshellContainer.setDirtyFlag(false);
 								}
 								// Shows the success message and closes the current app (if 'Save As' triggered from RTA toolbar) or opens the app variant overview list (if 'Save As' triggered from App variant overview List)
-								return oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oAppVariantDescriptorClosure, oEvaluateSaveAsFlow.closeRunningApp, oRootControlRunningApp)
+								return oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oAppVariantDescriptorClosure, oEvaluateSaveAsFlow.triggeredFromRtaToolbar, oRootControlRunningApp)
 									.then(function() {
 										if (oResult && oResult.response && oResult.response.IAMId) {
 											// In case of S4 Hana Cloud, notify the key user to refresh the FLP Homepage manually

@@ -37,9 +37,9 @@ function(
 				bPressed = true;
 			};
 			var aButtons = oAppVariantDialog.getButtons();
-			oAppVariantDialog.attachCreate(fPressed);
+			oAppVariantDialog.attachCancel(fPressed);
 			aButtons[1].firePress();
-			assert.equal(bPressed, false);
+			assert.equal(bPressed, true);
 		});
 
 		QUnit.test("When save button is pressed on AppVariant Dialog", function(assert) {
@@ -49,9 +49,10 @@ function(
 
 			oAppVariantDialog.attachCreate(function(oAppVariantData) {
 				var mParams = oAppVariantData.getParameters();
-				assert.equal(mParams.title, "", "then the title is correct");
-				assert.equal(mParams.subTitle, "", "then the subtitle is correct");
-				assert.equal(mParams.icon, "", "then the icon is correct");
+				assert.equal(mParams.title, " ", "then the title is correct");
+				assert.equal(mParams.subTitle, " ", "then the subtitle is correct");
+				assert.equal(mParams.icon, " ", "then the icon is correct");
+				assert.equal(mParams.description, " ", "then the decription is correct");
 				done();
 			});
 			aButtons[0].firePress();
