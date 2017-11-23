@@ -965,21 +965,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			this._verifyValue();
 			this.setValue(this._getDefaultValue(this._getInput().getValue(), this.getMax(), this.getMin()));
 
-			if (this._iChangeEventTimer) {
-				jQuery.sap.clearDelayedCall(this._iChangeEventTimer);
+
+			if (this._sOldValue !== this.getValue()) {
+				this.fireChange({value: this.getValue()});
 			}
-
-			/* In case the reason for change event is pressing +/- button(input loses focus),
-			 * this will lead to firing the StepInput#change event twice.
-			 * This is why we "schedule" a task for event firing, which will be executed unless the +/- button press handler
-			 * invalidates it.
-			 **/
-			this._iChangeEventTimer = jQuery.sap.delayedCall(100, this, function() {
-				if (this._sOldValue !== this.getValue()) {
-					this.fireChange({value: this.getValue()});
-				}
-			});
-
 		};
 
 		/**
