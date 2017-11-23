@@ -4,8 +4,8 @@
 
 // Provides control sap.ui.fl.variants.VariantManagement.
 sap.ui.define([
-	'jquery.sap.global', '../transport/TransportSelection', 'sap/ui/model/Context', 'sap/ui/model/json/JSONModel', 'sap/ui/model/Filter', 'sap/ui/Device', 'sap/ui/core/TextAlign', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/core/Icon', 'sap/ui/core/ValueState', 'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/Grid', 'sap/m/SearchField', 'sap/m/RadioButton', 'sap/m/ScreenSize', 'sap/m/PopinDisplay', 'sap/m/ColumnListItem', 'sap/m/Column', 'sap/m/Text', 'sap/m/Bar', 'sap/m/Table', 'sap/m/Page', 'sap/m/PlacementType', 'sap/m/ButtonType', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/CheckBox', 'sap/m/Dialog', 'sap/m/Input', 'sap/m/Label', 'sap/m/Title', 'sap/m/ResponsivePopover', 'sap/m/SelectList', 'sap/m/ObjectIdentifier', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarPriority', 'sap/m/OverflowToolbarLayoutData', 'sap/m/VBox', 'sap/ui/fl/Utils', '../changeHandler/BaseTreeModifier'
-], function(jQuery, TransportSelection, Context, JSONModel, Filter, Device, TextAlign, InvisibleText, Control, Icon, ValueState, HorizontalLayout, Grid, SearchField, RadioButton, ScreenSize, PopinDisplay, ColumnListItem, Column, Text, Bar, Table, Page, PlacementType, ButtonType, Toolbar, ToolbarSpacer, Button, CheckBox, Dialog, Input, Label, Title, ResponsivePopover, SelectList, ObjectIdentifier, OverflowToolbar, OverflowToolbarPriority, OverflowToolbarLayoutData, VBox, flUtils, BaseTreeModifier) {
+	'jquery.sap.global', '../transport/TransportSelection', 'sap/ui/model/Context', 'sap/ui/model/PropertyBinding', 'sap/ui/model/json/JSONModel', 'sap/ui/model/Filter', 'sap/ui/Device', 'sap/ui/core/TextAlign', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/core/Icon', 'sap/ui/core/ValueState', 'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/Grid', 'sap/m/SearchField', 'sap/m/RadioButton', 'sap/m/ScreenSize', 'sap/m/PopinDisplay', 'sap/m/ColumnListItem', 'sap/m/Column', 'sap/m/Text', 'sap/m/Bar', 'sap/m/Table', 'sap/m/Page', 'sap/m/PlacementType', 'sap/m/ButtonType', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/CheckBox', 'sap/m/Dialog', 'sap/m/Input', 'sap/m/Label', 'sap/m/Title', 'sap/m/ResponsivePopover', 'sap/m/SelectList', 'sap/m/ObjectIdentifier', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarPriority', 'sap/m/OverflowToolbarLayoutData', 'sap/m/VBox', 'sap/ui/fl/Utils', '../changeHandler/BaseTreeModifier'
+], function(jQuery, TransportSelection, Context, PropertyBinding, JSONModel, Filter, Device, TextAlign, InvisibleText, Control, Icon, ValueState, HorizontalLayout, Grid, SearchField, RadioButton, ScreenSize, PopinDisplay, ColumnListItem, Column, Text, Bar, Table, Page, PlacementType, ButtonType, Toolbar, ToolbarSpacer, Button, CheckBox, Dialog, Input, Label, Title, ResponsivePopover, SelectList, ObjectIdentifier, OverflowToolbar, OverflowToolbarPriority, OverflowToolbarLayoutData, VBox, flUtils, BaseTreeModifier) {
 	"use strict";
 
 	/**
@@ -85,6 +85,7 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: false
 				},
+
 				/**
 				 * Indicates that the control is in error state. If set to <code>true</code> error message will be displayed whenever the variant is
 				 * opened.
@@ -93,6 +94,15 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: false
+				},
+
+				/**
+				 * Indicates that the control is in edit state. If set to <code>false</code> the footer of the views list will be hidden.
+				 */
+				editable: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: true
 				}
 			},
 			associations: {
@@ -297,6 +307,11 @@ sap.ui.define([
 		this.addDependent(this.oVariantLayout);
 	};
 
+	/**
+	 * Returns the title control of the VariantManagement. Usage in RTA scenario.
+	 * @protected
+	 * @param {sap.m.Title} title part of the VariantManagement control.
+	 */
 	VariantManagement.prototype.getTitle = function() {
 		return this.oVariantText;
 	};
@@ -306,7 +321,8 @@ sap.ui.define([
 		var oModel = new JSONModel({
 			showExecuteOnSelection: false,
 			showShare: false,
-			showSetAsDefault: true
+			showSetAsDefault: true,
+			editable: true
 		});
 		this.setModel(oModel, VariantManagement.INNER_MODEL_NAME);
 
@@ -324,6 +340,10 @@ sap.ui.define([
 		});
 		this.bindProperty("showSetAsDefault", {
 			path: "/showSetAsDefault",
+			model: VariantManagement.INNER_MODEL_NAME
+		});
+		this.bindProperty("editable", {
+			path: "/editable",
 			model: VariantManagement.INNER_MODEL_NAME
 		});
 	};
@@ -358,14 +378,9 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.variants.VariantManagement} the current instance of {@link sap.ui.fl.variants.VariantManagement}.
 	 */
 	VariantManagement.prototype.setCurrentVariantKey = function(sKey) {
-		var sLocalId, oModel = this.getModel(VariantManagement.MODEL_NAME);
+		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
-			sLocalId = this._getLocalId();
-			if (oModel.updateCurrentVariant) {
-				oModel.updateCurrentVariant(sLocalId, sKey);
-			} else {
-				oModel.setProperty(this.oContext + "/currentVariant", sKey);
-			}
+			oModel.setProperty(this.oContext + "/currentVariant", sKey);
 		}
 		return this;
 	};
@@ -467,12 +482,14 @@ sap.ui.define([
 				sLocalId = this._getLocalId();
 				if (sLocalId) {
 
-					if (oModel.ensureStandardEntryExists) { // RTA relevant
-						oModel.ensureStandardEntryExists(sLocalId);
+					if (oModel.registerToModel) { // RTA relevant
+						oModel.registerToModel(sLocalId);
 					}
 					this.oContext = new Context(oModel, "/" + sLocalId);
 
 					this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
+
+					this._registerPropertyChanges(oModel);
 				}
 			}
 		}
@@ -484,6 +501,20 @@ sap.ui.define([
 
 	VariantManagement.prototype._setModel = function() {
 		this._setBindingContext();
+	};
+
+	VariantManagement.prototype._registerPropertyChanges = function(oModel) {
+		var oBinding = new PropertyBinding(oModel, this.oContext + "/variantsEditable");
+		oBinding.attachChange(function(oData) {
+			if (oData && oData.oSource && oData.oSource.oModel && oData.oSource.sPath) {
+				var oInnerModel, bFlag = oData.oSource.oModel.getProperty(oData.oSource.sPath);
+				oInnerModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
+				if (oInnerModel) {
+					oInnerModel.setProperty("/editable", bFlag);
+				}
+			}
+		}.bind(this));
+
 	};
 
 	// clickable area
@@ -608,11 +639,11 @@ sap.ui.define([
 			}.bind(this),
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
-			}),
-			visible: {
-				path: "variantsEditable",
-				model: VariantManagement.MODEL_NAME
-			}
+			})
+// ,visible: {
+// path: "/editable",
+// model: VariantManagement.INNER_MODEL_NAME
+// }
 		});
 
 		this.oVariantSaveBtn = new Button(this.getId() + "-mainsave", {
@@ -629,11 +660,11 @@ sap.ui.define([
 			},
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
-			}),
-			visible: {
-				path: "variantsEditable",
-				model: VariantManagement.MODEL_NAME
-			}
+			})
+// ,visible: {
+// path: "/editable",
+// model: VariantManagement.INNER_MODEL_NAME
+// }
 		});
 
 		this.oVariantSaveAsBtn = new Button(this.getId() + "-saveas", {
@@ -643,11 +674,11 @@ sap.ui.define([
 			}.bind(this),
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
-			}),
-			visible: {
-				path: "variantsEditable",
-				model: VariantManagement.MODEL_NAME
-			}
+			})
+// ,visible: {
+// path: "/editable",
+// model: VariantManagement.INNER_MODEL_NAME
+// }
 		});
 
 		this._oVariantList = new SelectList(this.getId() + "-list", {
@@ -705,8 +736,8 @@ sap.ui.define([
 			showNavButton: false,
 			showHeader: false,
 			showFooter: {
-				path: "variantsEditable",
-				model: VariantManagement.MODEL_NAME
+				path: "/editable",
+				model: VariantManagement.INNER_MODEL_NAME
 			}
 		});
 
@@ -1222,6 +1253,11 @@ sap.ui.define([
 				],
 				stretch: Device.system.phone
 			});
+
+			// add marker
+			this.oManagementDialog.isPopupAdaptationAllowed = function() {
+				return true;
+			};
 
 			this._oSearchFieldOnMgmtDialog = new SearchField();
 			this._oSearchFieldOnMgmtDialog.attachLiveChange(function(oEvent) {

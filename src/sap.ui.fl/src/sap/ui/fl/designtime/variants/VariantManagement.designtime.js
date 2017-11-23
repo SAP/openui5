@@ -28,6 +28,9 @@ sap.ui.define([], function() {
 			},
 			inErrorState: {
 				ignore: false
+			},
+			editable: {
+				ignore: false
 			}
 		},
 		customData: {}

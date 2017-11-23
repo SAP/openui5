@@ -255,8 +255,6 @@
 		assert.ok(this.oVariantManagement.oVariantSaveBtn.getEnabled());
 		assert.ok(this.oVariantManagement.oVariantSaveAsBtn.setEnabled());
 
-		oModel.updateCurrentVariant = undefined;
-
 		this.oVariantManagement.setCurrentVariantKey("4");
 		this.oVariantManagement._openVariantList();
 		assert.ok(!this.oVariantManagement.oVariantSaveBtn.getEnabled());
@@ -273,9 +271,6 @@
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
 		this.oVariantManagement._openVariantList();
 
-		assert.ok(this.oVariantManagement.oVariantManageBtn.getVisible());
-		assert.ok(this.oVariantManagement.oVariantSaveBtn.getVisible());
-		assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
 		assert.ok(this.oVariantManagement.oVariantSelectionPage.getShowFooter());
 
 		var oData = this.oVariantManagement.getBindingContext(sap.ui.fl.variants.VariantManagement.MODEL_NAME).getObject();
@@ -283,9 +278,24 @@
 
 		oModel.checkUpdate(true);
 
-		assert.ok(!this.oVariantManagement.oVariantManageBtn.getVisible());
-		assert.ok(!this.oVariantManagement.oVariantSaveBtn.getVisible());
-		assert.ok(!this.oVariantManagement.oVariantSaveAsBtn.getVisible());
+		assert.ok(!this.oVariantManagement.oVariantSelectionPage.getShowFooter());
+	});
+
+	QUnit.test("Check 'editable'", function(assert) {
+
+		assert.ok(this.oVariantManagement.getEditable());
+
+		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+		this.oVariantManagement._openVariantList();
+
+		assert.ok(this.oVariantManagement.oVariantSelectionPage.getShowFooter());
+
+		this.oVariantManagement.setEditable(false);
+		assert.ok(!this.oVariantManagement.getEditable());
+
+		var oInnerModel = this.oVariantManagement.getModel(sap.ui.fl.variants.VariantManagement.INNER_MODEL_NAME);
+		oInnerModel.checkUpdate(true);
+
 		assert.ok(!this.oVariantManagement.oVariantSelectionPage.getShowFooter());
 	});
 
@@ -373,7 +383,6 @@
 	QUnit.test("Checking _handleVariantSave", function(assert) {
 
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
-		oModel.updateCurrentVariant = undefined;
 
 		var bCalled = false;
 		this.oVariantManagement.attachSave(function(oEvent) {
@@ -397,7 +406,6 @@
 	QUnit.test("Checking _handleVariantSave on shared variant", function(assert) {
 
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
-		oModel.updateCurrentVariant = undefined;
 
 		var bCalled = false;
 		this.oVariantManagement.attachSave(function(oEvent) {
