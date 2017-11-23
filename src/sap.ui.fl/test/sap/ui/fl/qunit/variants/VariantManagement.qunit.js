@@ -195,6 +195,18 @@
 
 	});
 
+	QUnit.test("Check 'initialized' event", function(assert) {
+
+		var bInitialized = false;
+
+		this.oVariantManagement.attachInitialized(function(oEvent) {
+			bInitialized = true;
+		});
+		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+
+		assert.ok(bInitialized);
+	});
+
 	QUnit.test("Check setDefaultVariantKey", function(assert) {
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
 

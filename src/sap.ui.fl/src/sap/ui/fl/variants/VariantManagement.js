@@ -183,7 +183,12 @@ sap.ui.define([
 				/**
 				 * This event is fired when users apply changes to variants in the Manage Variants dialog.
 				 */
-				manage: {}
+				manage: {},
+
+				/**
+				 * This event is fired when the model and context are set.
+				 */
+				initialized: {}
 			}
 		},
 
@@ -310,7 +315,7 @@ sap.ui.define([
 	/**
 	 * Returns the title control of the VariantManagement. Usage in RTA scenario.
 	 * @protected
-	 * @param {sap.m.Title} title part of the VariantManagement control.
+	 * @returns {sap.m.Title} title part of the VariantManagement control.
 	 */
 	VariantManagement.prototype.getTitle = function() {
 		return this.oVariantText;
@@ -482,14 +487,16 @@ sap.ui.define([
 				sLocalId = this._getLocalId();
 				if (sLocalId) {
 
+					this.oContext = new Context(oModel, "/" + sLocalId);
+					this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
+
 					if (oModel.registerToModel) { // RTA relevant
 						oModel.registerToModel(sLocalId);
 					}
-					this.oContext = new Context(oModel, "/" + sLocalId);
-
-					this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
 
 					this._registerPropertyChanges(oModel);
+
+					this.fireInitialized();
 				}
 			}
 		}
@@ -1256,7 +1263,7 @@ sap.ui.define([
 
 			// add marker
 			this.oManagementDialog.isPopupAdaptationAllowed = function() {
-				return true;
+				return false;
 			};
 
 			this._oSearchFieldOnMgmtDialog = new SearchField();
