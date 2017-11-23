@@ -96,23 +96,33 @@ sap.ui.define(['jquery.sap.global'],
 			// header
 			if (oHeader) {
 
-				if (oHeader.applyTagAndContextClassFor) {
-					oHeader.applyTagAndContextClassFor("header");
-				}
+				rm.write("<header");
+				rm.addClass("sapMPopoverHeader");
+				rm.writeClasses();
+				rm.write(">");
 
-				oHeader.addStyleClass("sapMPopoverHeader");
+				if (oHeader._applyContextClassFor) {
+					oHeader._applyContextClassFor("header");
+
+				}
 				rm.renderControl(oHeader);
+				rm.write("</header>");
 			}
 
 			// sub header
 			if (oSubHeader) {
 
-				if (oSubHeader.applyTagAndContextClassFor) {
-					oSubHeader.applyTagAndContextClassFor("subheader");
+				rm.write("<header");
+				rm.addClass("sapMPopoverSubHeader");
+				rm.writeClasses();
+				rm.write(">");
+
+				if (oSubHeader._applyContextClassFor) {
+					oSubHeader._applyContextClassFor("subheader");
 				}
 
-				oSubHeader.addStyleClass("sapMPopoverSubHeader");
 				rm.renderControl(oSubHeader);
+				rm.write("</header>");
 			}
 
 			// content container
@@ -161,19 +171,23 @@ sap.ui.define(['jquery.sap.global'],
 
 			// footer
 			if (oFooter) {
-
-				if (oFooter.applyTagAndContextClassFor) {
-					oFooter.applyTagAndContextClassFor("footer");
-
-					// TODO: check if this should also be added to a bar instance
-					oFooter.addStyleClass("sapMTBNoBorders");
-				}
-
 				if (this.isButtonFooter(oFooter)) {
 					sFooterClass += "sapMPopoverSpecialFooter";
 				}
 
-				rm.renderControl(oFooter.addStyleClass(sFooterClass));
+				rm.write("<footer");
+				rm.addClass(sFooterClass);
+				rm.writeClasses();
+				rm.write(">");
+
+				if (oFooter._applyContextClassFor) {
+					oFooter._applyContextClassFor("footer");
+					oFooter.addStyleClass("sapMTBNoBorders");
+				}
+
+				rm.renderControl(oFooter);
+
+				rm.write("</footer>");
 			}
 
 			// arrow

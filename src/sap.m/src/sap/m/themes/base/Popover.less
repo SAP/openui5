@@ -90,7 +90,9 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 	background-color: transparent;
 }
 
-.sapMPopover > .sapMBar {
+.sapMPopoverHeader > .sapMBar,
+.sapMPopoverSubHeader > .sapMBar,
+.sapMPopoverFooter > .sapMBar {
 	position: relative;
 	width: auto;
 }
@@ -104,7 +106,9 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 	width: auto;
 }
 
-.sapMPopoverWithoutBar .sapMPage footer.sapMIBar {
+.sapMPopoverWithoutBar .sapMPage .sapMPopoverHeader,
+.sapMPopoverWithoutBar .sapMPage .sapMPopoverSubHeader,
+.sapMPopoverWithoutBar .sapMPage .sapMPopoverFooter {
 	position: absolute;
 }
 
