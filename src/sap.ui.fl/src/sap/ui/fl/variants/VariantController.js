@@ -31,7 +31,7 @@ sap.ui.define([
 	var VariantController = function (sComponentName, sAppVersion, oChangeFileContent) {
 		this._sComponentName = sComponentName || "";
 		this._sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
-		this._setChangeFileContent(oChangeFileContent);
+		this._setChangeFileContent(oChangeFileContent, {});
 	};
 
 	/**
@@ -61,7 +61,7 @@ sap.ui.define([
 				this._mVariantManagement[sVariantManagementReference] = {};
 				var oVariantManagementReference = oChangeFileContent.changes.variantSection[sVariantManagementReference];
 				var aVariants = oVariantManagementReference.variants.concat().sort(this.compareVariants);
-				var sInitialVariant = this._mVariantManagement[sVariantManagementReference].initialVariant;
+				var sInitialVariant;
 
 				var iIndex = -1;
 				aVariants.forEach(function (oVariant, index) {
@@ -75,7 +75,7 @@ sap.ui.define([
 						oVariant.content.content.visible = true;
 					}
 
-					if (oComponent && !sInitialVariant){
+					if (!sInitialVariant){
 						var aURLVariants = Utils.getTechnicalParameterValuesFromURL(oComponent, "sap-ui-fl-control-variant-id");
 						// Only the first valid reference for that variant management id passed in the parameters is used to load the changes
 						aURLVariants.some(function(sURLVariant){
@@ -405,6 +405,7 @@ sap.ui.define([
 			//if an initial variant exists, it should be set as current variant
 			if (this._mVariantManagement[sKey].initialVariant){
 				oVariantData[sKey].currentVariant = this._mVariantManagement[sKey].initialVariant;
+				oVariantData[sKey].originalCurrentVariant = this._mVariantManagement[sKey].initialVariant;
 				delete this._mVariantManagement[sKey].initialVariant;
 			}
 			this.getVariants(sKey).forEach(function(oVariant, index) {

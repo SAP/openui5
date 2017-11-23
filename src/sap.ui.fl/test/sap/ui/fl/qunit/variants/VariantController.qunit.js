@@ -480,6 +480,8 @@ sap.ui.require([
 			"variantMgmtId1": {
 				"defaultVariant": "variantMgmtId1",
 				"originalDefaultVariant": "variantMgmtId1",
+				"currentVariant": "variant0",
+				"originalCurrentVariant": "variant0",
 				"variants": [{
 //					"author": "SAP",
 					"favorite": true,
@@ -500,6 +502,8 @@ sap.ui.require([
 				}]
 			}
 		};
+
+		sandbox.stub(Utils, "getTechnicalParameterValuesFromURL").returns(["variant0"]);
 		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
 		var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
 		var fnApplyChangesOnVariantManagementSpy = sandbox.spy(oVariantController, "_applyChangesOnVariantManagement");
