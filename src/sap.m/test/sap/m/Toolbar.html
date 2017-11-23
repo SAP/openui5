@@ -32,6 +32,10 @@
 			new sap.m.Button({text : "Button"}),
 			new sap.m.ToolbarSeparator(),
 			new sap.m.Button({text : "Test"}),
+			new sap.m.Label({
+				text: "Choose:",
+				labelFor: sSelId
+			}),
 			new sap.m.Select(sSelId, {
 				autoAdjustWidth: true,
 				items : [
@@ -92,7 +96,11 @@
 			new sap.m.ToolbarSpacer(),
 			new sap.m.Label({ text : sText }),
 			new sap.m.ToolbarSpacer(),
-			new sap.m.Select({
+			new sap.m.Label({
+				text: "Choose:",
+				labelFor: sSelId + 'innerSelect'
+			}),
+			new sap.m.Select(sSelId + 'innerSelect', {
 				items : [
 					new sap.ui.core.Item({
 						key: "0",
