@@ -68,8 +68,14 @@ sap.ui.define([
 	 */
 	ControlVariant.prototype.registerElementOverlay = function(oOverlay) {
 		var oControl = oOverlay.getElementInstance(),
-			oModel = this._getVariantModel(oControl);
+			oModel = this._getVariantModel(oControl),
 			sVariantManagementReference;
+
+		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+
+		if (!oModel){
+			return;
+		}
 
 		if (oControl instanceof VariantManagement) {
 			var oControl = oOverlay.getElementInstance(),
@@ -94,14 +100,14 @@ sap.ui.define([
 					oVariantManagementTargetOverlay = OverlayRegistry.getOverlay(oVariantManagementTargetElement);
 				this._propagateVariantManagement(oVariantManagementTargetOverlay , sVariantManagementReference);
 			}.bind(this));
+			oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		} else if (!oOverlay.getVariantManagement()) {
-			var sVariantManagementReference = this._getVariantManagementFromParent(oOverlay);
+			sVariantManagementReference = this._getVariantManagementFromParent(oOverlay);
 			if (sVariantManagementReference) {
 				oOverlay.setVariantManagement(sVariantManagementReference);
+				oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 			}
 		}
-		oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
 	};
 
 	/**
@@ -165,7 +171,7 @@ sap.ui.define([
 
 	ControlVariant.prototype._getVariantModel = function(oElement) {
 		var oAppComponent = flUtils.getAppComponentForControl(oElement);
-		return oAppComponent.getModel(ControlVariant.MODEL_NAME);
+		return oAppComponent ? oAppComponent.getModel(ControlVariant.MODEL_NAME) : undefined;
 	};
 
 	/**

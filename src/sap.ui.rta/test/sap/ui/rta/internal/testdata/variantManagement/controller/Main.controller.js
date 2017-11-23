@@ -4,11 +4,8 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/rta/plugin/ControlVariant",
-	"sap/ui/rta/command/CommandFactory",
-	"sap/uxap/ObjectPageLayout"
-], function(Controller, MockServer, ResourceModel, ODataModel, JSONModel, RuntimeAuthoring, ControlVariantPlugin, CommandFactory, ObjectPageLayout) {
+	"sap/ui/rta/RuntimeAuthoring"
+], function(Controller, MockServer, ResourceModel, ODataModel, JSONModel, RuntimeAuthoring) {
 	"use strict";
 
 	return Controller.extend("sap.ui.rta.test.variantManagement.controller.Main", {
@@ -41,20 +38,6 @@ sap.ui.define([
 					});
 				})
 			);
-
-			var fnOriginalRtaStart = RuntimeAuthoring.prototype.start;
-
-			// Control Variant
-			RuntimeAuthoring.prototype.start = function () {
-				var mPlugins = this.getDefaultPlugins();
-				mPlugins["controlVariant"] = new ControlVariantPlugin({
-					commandFactory : new CommandFactory({
-						flexSettings: this.getFlexSettings()
-					})
-				});
-				this.setPlugins(mPlugins);
-				return fnOriginalRtaStart.apply(this, arguments);
-			};
 
 			//TO scroll to Vertical Layout - Causes Flicker
 			//var oView = this.getView()
