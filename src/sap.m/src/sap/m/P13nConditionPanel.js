@@ -1623,6 +1623,13 @@ sap.ui.define([
 				}
 				oControl = new sap.m.DateTimePicker(params);
 				break;
+			case "stringdate":
+				oConditionGrid.oFormatter = new sap.m.P13nConditionStringDateFormatter(jQuery.extend({}, oCurrentKeyField.formatSettings, {strictParsing: true}));
+				if (oCurrentKeyField.formatSettings && oCurrentKeyField.formatSettings.style) {
+					params.displayFormat = oCurrentKeyField.formatSettings.style;
+				}
+				oControl = new sap.m.DatePicker(params);
+				break;
 			default:
 				if (sCtrlType == "numc") {
 					oConditionGrid.oFormatter = {
@@ -2883,6 +2890,47 @@ sap.ui.define([
 		Average: "Average",
 		Minimum: "Minimum",
 		Maximum: "Maximum"
+	};
+
+	/**
+	 * @private
+	 * @expertimental since version 1.54
+	 */
+	sap.m.P13nConditionStringDateFormatter = function(oFormatOptions) {
+		oFormatOptions = jQuery.extend({}, oFormatOptions, {
+			UTC: false
+		});
+
+		this.parseFormatter = DateFormat.getDateInstance({
+			UTC: false,
+			pattern: "yyyyMMdd"
+		});
+
+		this.displayFormatter = DateFormat.getDateInstance(oFormatOptions);
+
+		this.format = function(oValue) {
+			if (oValue === null || oValue === undefined || oValue == "") {
+				return null;
+			}
+
+			if (!(oValue instanceof Date)) {
+				oValue = this.parseFormatter.parse(oValue);
+			}
+
+			return this.displayFormatter.format(oValue);
+		};
+
+		this.parse = function(vValue) {  // should return null, when parse fails
+			if (vValue != null && vValue != "") {
+				var oValueDate = this.parseFormatter.parse(vValue, true);
+				if (oValueDate) {
+					vValue = this.parseFormatter.format(oValueDate);
+					return vValue;
+				}
+			}
+			return null;
+		};
+
 	};
 
 	return P13nConditionPanel;
