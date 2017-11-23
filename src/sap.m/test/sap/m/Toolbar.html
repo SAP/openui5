@@ -258,10 +258,12 @@
 				height: "auto",
 				content : [
 					new sap.m.Label({
-						text : "Percent Width Controls"
+						text : "Percent Width Controls",
+						labelFor: "searchField",
+						width: "15%"
 					}),
 					new sap.m.ToolbarSpacer(),
-					new sap.m.SearchField({
+					new sap.m.SearchField("searchField", {
 						placeholder : "This has 100% width by default"
 					})
 				]
