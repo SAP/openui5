@@ -18,16 +18,16 @@ sap.ui.define([
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/report/DataCollector",
 	"sap/ui/support/supportRules/WCBChannels",
-	"sap/ui/support/supportRules/Constants"
+	"sap/ui/support/supportRules/Constants",
+	"sap/ui/support/supportRules/RuleSetLoader"
 ],
 function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		  ExecutionScope, Highlighter, CommunicationBus, RuleSerializer,
-		  RuleSet, IssueManager, DataCollector, channelNames, constants) {
+		  RuleSet, IssueManager, DataCollector, channelNames, constants, RuleSetLoader) {
 	"use strict";
 
 	var IFrameController = null;
 	var oMain = null;
-	var sCustomSuffix = 'sprt';
 
 	var Main = ManagedObject.extend("sap.ui.support.Main", {
 
@@ -42,8 +42,6 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			if (!oMain) {
 				var that = this;
 				this._oCore = null;
-				this._rulesCreated = false;
-				this._mRuleSets = {};
 				this._oAnalyzer = new Analyzer();
 				this._oAnalyzer.onNotifyProgress = function (iCurrentProgress) {
 					CommunicationBus.publish(channelNames.ON_PROGRESS_UPDATE, {
@@ -51,7 +49,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					});
 				};
 
-				that._initTempRulesLib();
+				RuleSetLoader._initTempRulesLib();
 
 				ManagedObject.apply(this, arguments);
 
@@ -71,11 +69,11 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					 * @returns {Promise} Notifies the finished state by starting the Analyzer
 					 */
 					analyze: function (oExecutionScope, aRuleDescriptors) {
-						if (oMain._rulesCreated) {
+						if (RuleSetLoader._rulesCreated) {
 							return oMain.analyze(oExecutionScope, aRuleDescriptors);
 						}
 
-						return oMain._oMainPromise.then(function () {
+						return RuleSetLoader._oMainPromise.then(function () {
 							return oMain.analyze(oExecutionScope, aRuleDescriptors);
 						});
 					},
@@ -116,7 +114,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					 * @method
 					 * @name sap.ui.support.Main.getFormattedAnalysisHistory
 					 * @memberof sap.ui.support.Main
-					 * @returns {Promise} Analyzed and formatted history as string
+					 * @returns {Promise|undefined} Analyzed and formatted history as string
 					 */
 					getFormattedAnalysisHistory: function () {
 						if (that._oAnalyzer.running()) {
@@ -148,7 +146,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * Checks if the current page is inside an iFrame.
 	 *
 	 * @private
-	 * @return {boolean}
+	 * @return {boolean} If the page is inside an iFrame
 	 */
 	Main.prototype._isInIframe = function () {
 		try {
@@ -189,7 +187,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._oCoreFacade = CoreFacade(oCore);
 				that._oExecutionScope = null;
 				that._createCoreSpies();
-				oCore.attachLibraryChanged(that._onLibraryChanged, that);
+				oCore.attachLibraryChanged(RuleSetLoader._onLibraryChanged);
 
 				// Make sure that we load UI frame, when no parameter supplied
 				// but tools is required to load, or when parameter is there
@@ -220,7 +218,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 						});
 					});
 				} else {
-					that._oMainPromise = that._fetchSupportRuleSets();
+					RuleSetLoader.updateRuleSets();
 				}
 			},
 			stopPlugin: function () {
@@ -230,27 +228,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._oCoreFacade = null;
 				that._oDataCollector = null;
 				that._oExecutionScope = null;
-				that._rulesCreated = false;
-				that._mRuleSets = null;
 			}
 		});
-	};
-
-	/**
-	 * Event handler used to catch when new rules are added to a library.
-	 * @private
-	 * @param {Event} oEvent Contains information about the library and newly created rules
-	 */
-	Main.prototype._onLibraryChanged = function (oEvent) {
-		if (oEvent.getParameter("stereotype") === "library" && this._rulesCreated) {
-			var that = this;
-
-			that._oMainPromise = this._fetchSupportRuleSets();
-
-			that._oMainPromise.then(function() {
-				that._fetchNonLoadedRuleSets();
-			});
-		}
 	};
 
 	/**
@@ -298,9 +277,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		if (this._supportModeConfig.indexOf("silent") < 0) {
 
 			CommunicationBus.subscribe(channelNames.VERIFY_CREATE_RULE, function (tempRuleSerialized) {
-
 				var tempRule = RuleSerializer.deserialize(tempRuleSerialized),
-					tempRuleSet = this._mRuleSets[constants.TEMP_RULESETS_NAME].ruleset,
+					tempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset,
 					result = tempRuleSet.addRule(tempRule);
 
 				CommunicationBus.publish(channelNames.VERIFY_RULE_CREATE_RESULT, {
@@ -313,7 +291,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			CommunicationBus.subscribe(channelNames.VERIFY_UPDATE_RULE, function (data) {
 
 				var tempRule = RuleSerializer.deserialize(data.updateObj),
-					tempRuleSet = this._mRuleSets[constants.TEMP_RULESETS_NAME].ruleset,
+					tempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset,
 					result = tempRuleSet.updateRule(data.oldId, tempRule);
 
 				CommunicationBus.publish(channelNames.VERIFY_RULE_UPDATE_RESULT, {
@@ -367,13 +345,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_INIT_ANALYSIS_CTRL, function () {
-			var that = this;
-
-			this._oMainPromise = this._fetchSupportRuleSets();
-
-			this._oMainPromise.then(function () {
-				that._fetchNonLoadedRuleSets();
-			});
+			RuleSetLoader.updateAllRuleSets();
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_SHOW_REPORT_REQUEST, function (reportConstants) {
@@ -384,13 +356,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.LOAD_RULESETS, function (data) {
-			var that = this;
-
-			this._oMainPromise = this._fetchSupportRuleSets(data.libNames);
-
-			this._oMainPromise.then(function () {
-				that._fetchNonLoadedRuleSets();
-			});
+			RuleSetLoader.updateAllRuleSets(data.libNames);
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.REQUEST_RULES_MODEL, function (deserializedRules) {
@@ -410,239 +376,6 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				});
 			}
 		}, this);
-	};
-
-	/**
-	 * Gets the load origin of the SupportAssistant.
-	 *
-	 * @private
-	 * @returns {boolean} bLoadFromSupportOrigin Ensures that the SupportAssistant hasn't been fired from a different origin
-	 */
-	Main.prototype._getLoadFromSupportOrigin = function () {
-		var bLoadFromSupportOrigin = false;
-
-		var coreUri = new window.URI(jQuery.sap.getModulePath("sap.ui.core"));
-		var supportUri = new window.URI(jQuery.sap.getModulePath("sap.ui.support"));
-
-		// If loading support tool from different origin,
-		// i.e. protocol or host (host name + port) different
-		if (coreUri.protocol() !== supportUri.protocol() || coreUri.host() !== supportUri.host()) {
-			bLoadFromSupportOrigin = true;
-		}
-
-		return bLoadFromSupportOrigin;
-	};
-
-	/**
-	 * Gets all libraries along with internal and external rules in them.
-	 *
-	 * @private
-	 * @param {string[]} aLibNames Contains all library names for the given state
-	 * @param {function} fnProcessFile Callback that publishes all rules within each library in the SupportAssistant
-	 * @returns {Promise[]} aAjaxPromises Promises for each library in the SupportAssistant
-	 */
-	Main.prototype._fetchLibraryFiles = function (libNames, fnProcessFile) {
-		var aAjaxPromises = [],
-			that = this;
-
-		var supportModulePath = jQuery.sap.getModulePath("sap.ui.support");
-		var supportModulesRoot = supportModulePath.replace("sap/ui/support", "");
-
-		libNames.forEach(function (libName) {
-			var libPath = libName.replace(/\./g, "/");
-
-			var customizableLibName = libName;
-			var loadFromSupportOrigin = that._getLoadFromSupportOrigin();
-
-			// Prepare modules root string
-			if (loadFromSupportOrigin) {
-				// In order to avoid module name collision
-				// we need to generate an internal library name
-				customizableLibName += '.' + sCustomSuffix;
-
-				jQuery.sap.registerModulePath(customizableLibName, supportModulesRoot + libName.replace(/\./g, "/"));
-			}
-
-			var internalLibName = customizableLibName + '.internal';
-			var libraryInternalResourceRoot = supportModulesRoot.replace('resources/', '') + 'test-resources/' + libPath + '/internal';
-
-			jQuery.sap.registerModulePath(internalLibName, libraryInternalResourceRoot);
-
-			if (that._mRuleSets[libName]) {
-				return;
-			}
-
-			// CHECK FOR INTERNAL RULES
-			aAjaxPromises.push(new Promise(function (resolve) {
-				try {
-					sap.ui.require([(internalLibName).replace(/\./g, "/") + "/library.support"], function () {
-						fnProcessFile.call(that, internalLibName);
-						resolve();
-					});
-				} catch (ex) {
-					resolve();
-				}
-			}));
-
-			// CHECK FOR PUBLIC RULES
-			aAjaxPromises.push(new Promise(function (resolve) {
-				try {
-					sap.ui.require([customizableLibName.replace(/\./g, "/") + "/library.support"], function () {
-						fnProcessFile.call(that, customizableLibName);
-						resolve();
-					});
-				} catch (ex) {
-					resolve();
-				}
-			}));
-		});
-
-		return aAjaxPromises;
-	};
-
-	/**
-	 * Factory function for creating a RuleSet. Helps reducing API complexity.
-	 *
-	 * @private
-	 * @param {object} librarySupport Object to be used for RuleSet creation
-	 * @returns {object} ruleset RuleSet added to _mRuleSets
-	 */
-	Main.prototype._createRuleSet = function (oLibrarySupport) {
-		var oLib = {
-			name: oLibrarySupport.name,
-			niceName: oLibrarySupport.niceName
-		};
-		var oRuleSet = new RuleSet(oLib);
-
-		for (var i = 0; i < oLibrarySupport.ruleset.length; i++) {
-			var ruleset = oLibrarySupport.ruleset[i];
-
-			// If the ruleset contains arrays of rules make sure we add them.
-			if (jQuery.isArray(ruleset)) {
-				for (var k = 0; k < ruleset.length; k++) {
-					oRuleSet.addRule(ruleset[k]);
-				}
-			} else {
-				oRuleSet.addRule(ruleset);
-			}
-		}
-
-		return {
-			lib: oLib,
-			ruleset: oRuleSet
-		};
-	};
-
-	/**
-	 * Gets all rulesets from the SupportAssistant
-	 *
-	 * @private
-	 * @param {string} aLibNames Contains all library names in the SupportAssistant
-	 * @returns {Promise<CommunicationBus>} mainPromise Has promises for all libraries regarding rulesets in the SupportAssistant
-	 */
-	Main.prototype._fetchSupportRuleSets = function (aLibNames) {
-		aLibNames = aLibNames || [];
-		aLibNames = aLibNames.concat(Object.keys(sap.ui.getCore().getLoadedLibraries()));
-
-		var that = this;
-
-		var mainPromise = new Promise(function (resolve) {
-			sap.ui.getVersionInfo({async: true}).then(function (versionInfo) {
-				// VersionInfo cache
-				that._versionInfo = versionInfo;
-				RuleSet.versionInfo = versionInfo;
-
-				var libFetchPromises = that._fetchLibraryFiles(aLibNames, that._fetchRuleSet);
-
-				Promise.all(libFetchPromises).then(function () {
-					//if (!that._rulesCreated) {
-					that._rulesCreated = true;
-
-					CommunicationBus.publish(channelNames.UPDATE_SUPPORT_RULES, RuleSerializer.serialize(that._mRuleSets));
-					//}
-
-					resolve();
-				});
-			});
-		});
-
-		return mainPromise;
-	};
-
-	/**
-	 * Fetches a ruleset from the library object
-	 *
-	 * @private
-	 * @param {string} sLibName Name of the library from which to fetch a ruleset
-	 */
-	Main.prototype._fetchRuleSet = function (sLibName) {
-		try {
-			var sNormalizedLibName = sLibName.replace("." + sCustomSuffix, "").replace(".internal", ""),
-				oLibSupport = jQuery.extend({}, jQuery.sap.getObject(sLibName).library.support),
-				oLibrary = this._mRuleSets[sNormalizedLibName];
-
-			if (!(oLibSupport.ruleset instanceof RuleSet)) {
-				oLibSupport = this._createRuleSet(oLibSupport);
-			}
-
-			if (oLibrary) {
-				oLibrary.ruleset._mRules = jQuery.extend(oLibrary.ruleset._mRules, oLibSupport.ruleset._mRules);
-			} else {
-				oLibrary = oLibSupport;
-			}
-
-			this._mRuleSets[sNormalizedLibName] = oLibrary;
-		} catch (e) {
-			jQuery.sap.log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Failed to load RuleSet for " + sLibName + " library", e);
-		}
-	};
-
-	/**
-	 * Gets all non loaded libraries in the SupportAssistant which aren't loaded by the user.
-	 *
-	 * @private
-	 */
-	Main.prototype._fetchNonLoadedRuleSets = function () {
-		var aLibraries = this._versionInfo.libraries,
-			data = [];
-
-		var aLibNames = aLibraries.map(function (lib) {
-			return lib.name;
-		});
-
-		var libFetchPromises = this._fetchLibraryFiles(aLibNames, function (sLibraryName) {
-			sLibraryName = sLibraryName.replace("." + sCustomSuffix, "").replace(".internal", "");
-
-			if (data.indexOf(sLibraryName) < 0) {
-				data.push(sLibraryName);
-			}
-		});
-
-		Promise.all(libFetchPromises).then(function () {
-			CommunicationBus.publish(channelNames.POST_AVAILABLE_LIBRARIES,{
-				libNames: data
-			});
-		});
-	};
-
-	/**
-	 * Creates a library for the temporary rules.
-	 * @private
-	 */
-	Main.prototype._initTempRulesLib = function () {
-		if (this._mRuleSets[constants.TEMP_RULESETS_NAME]) {
-			return;
-		}
-
-		this._mRuleSets[constants.TEMP_RULESETS_NAME] = {
-			lib: {
-				name: constants.TEMP_RULESETS_NAME
-			},
-			ruleset: new RuleSet({
-				name: constants.TEMP_RULESETS_NAME
-			})
-		};
-
 	};
 
 	/**
@@ -697,7 +430,6 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * @return {boolean} true if the scope is valid
 	 */
 	Main.prototype._isExecutionScopeValid = function (oExecutionScope) {
-
 		var oCore = sap.ui.getCore(),
 			aSelectors = [],
 			bHasValidSelector = false,
@@ -769,14 +501,14 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			that._oSelectedRulesIds[aRuleDescriptors.ruleId] = true;
 		} else if (Array.isArray(aRuleDescriptors)) {
 			aRuleDescriptors.forEach(function (oRuleDescriptor) {
-				var oLibWithRules = that._mRuleSets[oRuleDescriptor.libName],
+				var oLibWithRules = RuleSetLoader.getRuleSet(oRuleDescriptor.libName),
 					oSelectedRule = oLibWithRules.ruleset.getRules()[oRuleDescriptor.ruleId];
 				that._aSelectedRules.push(oSelectedRule);
 				that._oSelectedRulesIds[oRuleDescriptor.ruleId] = true;
 			});
 		} else {
-			Object.keys(that._mRuleSets).map(function (sLibName) {
-				var oRulesetRules = that._mRuleSets[sLibName].ruleset.getRules();
+			Object.keys(RuleSetLoader.getRuleSets()).map(function (sLibName) {
+				var oRulesetRules = RuleSetLoader.getRuleSet(sLibName).ruleset.getRules();
 
 				Object.keys(oRulesetRules).map(function (sRuleId) {
 					that._aSelectedRules.push(oRulesetRules[sRuleId]);
@@ -794,29 +526,17 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 */
 	Main.prototype._mapExecutionScope = function (oExecutionScope) {
 		if (oExecutionScope.type === "subtree") {
-
 			if (typeof oExecutionScope.selectors === "string") {
-
 				oExecutionScope.parentId = oExecutionScope.selectors;
-
 			} else if (Array.isArray(oExecutionScope.selectors)) {
-
 				oExecutionScope.parentId = oExecutionScope.selectors[0];
-
 			}
-
 		} else if (oExecutionScope.type === "components") {
-
 			if (typeof oExecutionScope.selectors === "string") {
-
 				oExecutionScope.components = [oExecutionScope.selectors];
-
 			} else if (Array.isArray(oExecutionScope.selectors)) {
-
 				oExecutionScope.components = oExecutionScope.selectors;
-
 			}
-
 		}
 
 		delete oExecutionScope.selectors;
@@ -971,7 +691,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 */
 	Main.prototype._getReportData = function (oReportConstants) {
 		var mIssues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
-			mRules = this._mRuleSets,
+			mRules = RuleSetLoader.getRuleSets(),
 			mSelectedRules = this._oSelectedRulesIds;
 
 		return {
