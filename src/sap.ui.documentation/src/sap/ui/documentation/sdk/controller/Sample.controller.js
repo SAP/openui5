@@ -15,9 +15,8 @@ sap.ui.define([
 		"sap/ui/core/HTML",
 		"sap/ui/Device",
 		"sap/ui/core/routing/History",
-		"sap/m/library",
-		"sap/ui/core/mvc/View"
-	], function (jQuery, BaseController, JSONModel, Component, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, Text, HTML, Device, History, mobileLibrary, View) {
+		"sap/m/library"
+	], function (jQuery, BaseController, JSONModel, Component, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, Text, HTML, Device, History, mobileLibrary) {
 		"use strict";
 
 		// shortcut for sap.m.URLHelper
@@ -230,12 +229,6 @@ sap.ui.define([
 						id: sCompId,
 						name: sCompName
 					});
-
-					// ensure the view has height of 100%
-					var oRootControl = this._oComp.getRootControl();
-					if (oRootControl instanceof View && oRootControl.getHeight() === "") {
-						oRootControl.setHeight("100%");
-					}
 
 					// create component container
 					return new ComponentContainer({
