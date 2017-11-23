@@ -361,9 +361,10 @@
 		}),
 		new sap.m.ToolbarSpacer(),
 		new sap.m.Label({
-			text : "Country:"
+			text : "Country:",
+			labelFor: "selectCountry"
 		}),
-		new sap.m.Select({
+		new sap.m.Select("selectCountry", {
 			name: "select-country",
 			items: [
 				new sap.ui.core.Item({
