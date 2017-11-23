@@ -88,13 +88,10 @@ sap.ui.define([
 			if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
 				this._bValid = false;
 				jQuery.sap.log.warning("Value can not be converted to a valid date", this);
-				this._oWantedDate = oDate;
 			}
 		}
-		if (this._bValid) {
-			this.setProperty("dateValue", oDate, true); // no rerendering
-			this._oWantedDate = undefined;
-		}
+
+		this.setProperty("dateValue", oDate);
 
 		// do not call InputBase.setValue because the displayed value and the output value might have different pattern
 		if (this.getDomRef()) {
@@ -134,7 +131,7 @@ sap.ui.define([
 			this._lastValue = sValue;
 		}
 		// set the property in any case but check validity on output
-		this.setProperty("value", sValue, true); // no rerendering
+		this.setProperty("value", sValue);
 
 		if (this.getDomRef()) {
 			// convert to output
@@ -178,14 +175,14 @@ sap.ui.define([
 
 	DateTimeField.prototype._dateValidation = function (oDate) {
 		this._bValid = true;
-		this.setProperty("dateValue", oDate, true); // no rerendering
+		this.setProperty("dateValue", oDate);
 
 		return oDate;
 	};
 
 	DateTimeField.prototype._handleDateValidation = function (oDate) {
 		this._bValid = true;
-		this.setProperty("dateValue", oDate, true); // no rerendering
+		this.setProperty("dateValue", oDate);
 	};
 
 	DateTimeField.prototype._getPlaceholder = function() {
