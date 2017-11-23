@@ -114,6 +114,10 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sCategoriesXML],
 			"Products(2)/Category":
 				[200, oXMLHeaders, sCategories2XML],
+      "Products(1)/Category?$select=CategoryID":
+				[200, oJSONHeaders, sCategorySelect2JSON],
+      "Products(1)/Category":
+				[200, oJSONHeaders, sCategory1JSON],
 			"Products(1)/Supplier":
 				[200, oXMLHeaders, sProducts1SupplierXML],
 			"Suppliers(1)/Products/$count":

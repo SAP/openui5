@@ -1646,9 +1646,21 @@ sap.ui.define([
 			that = this;
 
 		// optional parameter handling
+		if (oContext !== null && typeof oContext === "object" && !(oContext instanceof sap.ui.model.Context)) {
+			bReload = fnCallBack;
+			fnCallBack = mParameters;
+			mParameters = oContext;
+			oContext = undefined;
+		}
 		if (typeof oContext == "function") {
 			bReload = mParameters;
 			fnCallBack = oContext;
+			mParameters = undefined;
+			oContext = undefined;
+		}
+		if (typeof oContext == "boolean") {
+			bReload = oContext;
+			fnCallBack = undefined;
 			mParameters = undefined;
 			oContext = undefined;
 		}
@@ -1656,6 +1668,15 @@ sap.ui.define([
 			bReload = fnCallBack;
 			fnCallBack = mParameters;
 			mParameters = undefined;
+		}
+		if (typeof mParameters == "boolean") {
+			bReload = mParameters;
+			fnCallBack = undefined;
+			mParameters = undefined;
+		}
+		if (typeof fnCallBack == "boolean") {
+			bReload = fnCallBack;
+			fnCallBack = undefined;
 		}
 
 		// if path cannot be resolved, call the callback function and return null

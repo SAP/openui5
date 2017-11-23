@@ -389,6 +389,51 @@
 		oBinding.getContexts();
 	});
 
+	QUnit.test("test create binding context with optional parameters", function(assert){
+		var done = assert.async();
+		var oModel = initModel(sURI);
+		sap.ui.getCore().setModel(oModel);
+
+		oModel.metadataLoaded().then(function() {
+			// old behavior with passing null context
+			oModel.createBindingContext("/Categories(1)", null, {select : "CategoryID" }, function(oContext){
+				assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
+				assert.equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
+				assert.equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
+				oModel.removeData();
+				// no context
+				oModel.createBindingContext("/Categories(1)", {select : "CategoryID" }, function(oContext){
+					assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
+					assert.equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
+					assert.equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
+					oModel.removeData();
+					// with context
+					oModel.createBindingContext("Category", oModel.getContext("/Products(1)"), {select : "CategoryID" }, function(oContext){
+						assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
+						assert.equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
+						assert.equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
+						oModel.removeData();
+						// with context no parameters
+						oModel.createBindingContext("Category", oModel.getContext("/Products(1)"), function(oContext){
+							assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "property available");
+							assert.equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "property available");
+							assert.equal(oModel.getProperty("/Categories(1)").Picture, "", "property available");
+							oModel.removeData();
+							// only callback function
+							oModel.createBindingContext("/Categories(1)", function(oContext){
+								assert.equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "property available");
+								assert.equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "property available");
+								assert.equal(oModel.getProperty("/Categories(1)").Picture, "", "property available");
+								done(); // resume normal testing
+							}, true);
+						}, true);
+					}, true);
+				}, true);
+			});
+
+		});
+	});
+
 	QUnit.test("test expand", function(assert){
 		var done = assert.async();
 		var oModel = initModel(sURI);
