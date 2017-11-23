@@ -141,7 +141,7 @@ sap.ui.require([
 		this.oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
 		assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.MultiToggle, "SelectionMode.Multi defaulted to MultiToggle");
 		this.oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
-		assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.MultiToggle, "SelectionMode.None not supported");
+		assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.None, "SelectionMode.None");
 	});
 
 	QUnit.test("SelectionBehavior", function (assert) {
@@ -149,7 +149,7 @@ sap.ui.require([
 		this.oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
 		assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.Row, "SelectionBehavior.Row");
 		this.oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
-		assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.Row, "SelectionBehavior.RowOnly not supported");
+		assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.RowOnly, "SelectionBehavior.RowOnly");
 	});
 
 	QUnit.test("Dirty", function (assert) {
