@@ -60,6 +60,7 @@ sap.ui.define(['sap/ui/Device'],
 		oRm.writeAccessibilityState(oControl, oAccAttributes);
 
 		oRm.write(">"); // div element
+		oRm.renderControl(oControl.getAggregation("_tokensInfo"));
 
 		oControl._bCopyToClipboardSupport = false;
 
