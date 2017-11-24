@@ -217,6 +217,10 @@
 		assert.equal(jQuery.sap.byId(ohBasic._oTitleArrowIcon.getId()).css("cursor"), "pointer", "The title arrow should have pointer cursor.");
 	});
 
+	QUnit.test("Title rendered as active but it's not a link", function(assert) {
+		assert.equal(ohe.$("title").attr("href"), undefined, "Title attribute href is not a link.");
+	});
+
 	QUnit.test("NumberRendered", function(assert) {
 
 		assert.notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
