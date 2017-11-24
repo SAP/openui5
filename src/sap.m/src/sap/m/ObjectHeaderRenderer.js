@@ -487,8 +487,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					if (oOH.getTitleTarget()) {
 						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 					}
-				} else {
-					oRM.writeAttribute("href", "#");
 				}
 
 				//ARIA attributes
@@ -1322,8 +1320,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				if (oOH.getTitleTarget()) {
 					oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 				}
-			} else {
-				oRM.writeAttribute("href", "#");
 			}
 
 			oRM.writeAttribute("tabindex", "0");

@@ -314,7 +314,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
-					equal($sTitle.attr("href"), "#", "Title attribute href is not a link.");
+					equal($sTitle.attr("href"), undefined, "Title attribute href is not a link.");
 
 					// Clean up
 					oObjectHeader.destroy();
