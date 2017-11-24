@@ -147,11 +147,12 @@ sap.ui.define([
 	 */
 	EasyAdd.prototype._addButton = function(oOverlay, fnCallback, oOverlayDom, sControlName, bOverlayIsSibling) {
 		var bIsEditable = oOverlay.getEditableByPlugins().indexOf(this._retrievePluginName(bOverlayIsSibling)) > -1;
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 		var sId = oOverlay.getId() + "-AddButton";
 		var oHtmlButtonOuter = jQuery("<div class='sapUiRtaPersAddIconOuter' draggable='true'> </div>");
 		oOverlay._oAddButton = new sap.m.Button(sId, {
-			text: "Add " + sControlName,
+			text: oTextResources.getText("CTX_ADD_ELEMENTS", sControlName),
 			icon: "sap-icon://add",
 			press: fnCallback,
 			enabled: bIsEditable
