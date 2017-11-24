@@ -462,6 +462,65 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		oBinding.attachChange(handler);
 	});
 
+	QUnit.test("ListBinding clientside sort with null values", function(assert){
+		var done = assert.async();
+		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("ReorderLevel"), null, {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[0]), null, "ListBinding after initial sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[1]), 0, "ListBinding after initial sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[2]), 0, "ListBinding after initial sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[3]), 0, "ListBinding after initial sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[4]), 0, "ListBinding after initial sort");
+
+			oBinding.detachChange(handler);
+			// descending
+			var oSorter = new sap.ui.model.Sorter("ReorderLevel", true);
+			oBinding.sort(oSorter);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[0]), 30, "ListBinding after sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[1]), 25, "ListBinding after sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[2]), 25, "ListBinding after sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[3]), 10, "ListBinding after sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[4]), 10, "ListBinding after sort");
+
+			// ascending again
+			oSorter = new sap.ui.model.Sorter("ReorderLevel", false);
+			oBinding.sort(oSorter);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[0]), null, "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[1]), 0, "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[2]), 0, "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[3]), 0, "ListBinding after 2nd sort");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[4]), 0, "ListBinding after 2nd sort");
+
+			oBinding.sort(null);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[0]), 10, "ListBinding unsorted");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[1]), null, "ListBinding unsorted");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[2]), 25, "ListBinding unsorted");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[3]), 0, "ListBinding unsorted");
+			assert.equal(oModel.getProperty("ReorderLevel", aContexts[4]), 0, "ListBinding unsorted");
+
+			done();
+		};
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.attachChange(handler);
+	});
+
 	QUnit.test("ListBinding clientside sort before data is available", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories", null, null, null, {
