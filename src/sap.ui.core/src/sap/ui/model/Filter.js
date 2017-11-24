@@ -131,25 +131,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 	 *
 	 * This is the default comparator function used for clientside filtering, if no custom comparator is given in the
 	 * constructor. It does compare just by using equal/less than/greater than with automatic type casting, except
-	 * for null values, which are always last, and string values where localeCompare is used.
+	 * for null values, which are neither less or greater, and string values where localeCompare is used.
 	 *
-	 * The comparator method returns -1, 0 or 1, depending on the order of the two items and is
-	 * suitable to be used as a comparator method for Array.sort.
+	 * The comparator method returns -1, 0, 1 for comparable values and NaN for non-comparable values.
 	 *
 	 * @param {any} a the first value to compare
 	 * @param {any} b the second value to compare
-	 * @returns {int} -1, 0 or 1 depending on the compare result
+	 * @returns {int} -1, 0, 1 or NaN depending on the compare result
 	 * @public
 	 */
 	Filter.defaultComparator = function(a, b) {
 		if (a == b) {
 			return 0;
 		}
-		if (b == null) {
-			return -1;
-		}
-		if (a == null) {
-			return 1;
+		if (a == null || b == null) {
+			return NaN;
 		}
 		if (typeof a == "string" && typeof b == "string") {
 			return a.localeCompare(b);
@@ -160,7 +156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 		if (a > b) {
 			return 1;
 		}
-		return 0;
+		return NaN;
 	};
 
 

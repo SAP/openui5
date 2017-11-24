@@ -1020,7 +1020,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		}
 
 		if (!this.bInitial) {
-			this.addComparators(aSorters);
+			this.addComparators(aSorters, true);
 			if (this.useClientMode()) {
 				// apply clientside sorters only if data is available
 				if (this.aAllKeys) {
@@ -1058,10 +1058,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * Edm type of the sort/filter property.
 	 * @private
 	 */
-	ODataListBinding.prototype.addComparators = function(aEntries) {
+	ODataListBinding.prototype.addComparators = function(aEntries, bSort) {
 		var oPropertyMetadata, sType,
 			oEntityType = this.oEntityType,
-			that = this;
+			fnCompare;
 
 		if (!oEntityType) {
 			jQuery.sap.log.warning("Cannot determine sort/filter comparators, as entitytype of the collection is unkown!");
@@ -1070,15 +1070,61 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		aEntries.forEach(function(oEntry) {
 			// Recurse to nested filters
 			if (oEntry.aFilters) {
-				that.addComparators(oEntry.aFilters);
+				this.addComparators(oEntry.aFilters);
 			} else if (!oEntry.fnCompare) {
 				oPropertyMetadata = this.oModel.oMetadata._getPropertyMetadata(oEntityType, oEntry.sPath);
 				sType = oPropertyMetadata && oPropertyMetadata.type;
 				jQuery.sap.assert(oPropertyMetadata, "PropertyType for property " + oEntry.sPath + " of EntityType " + oEntityType.name + " not found!");
-				oEntry.fnCompare = ODataUtils.getComparator(sType);
+				fnCompare = ODataUtils.getComparator(sType);
+				if (bSort) {
+					oEntry.fnCompare = getSortComparator(fnCompare);
+				} else {
+					oEntry.fnCompare = getFilterComparator(fnCompare, sType, oEntry);
+				}
 			}
 		}.bind(this));
 	};
+
+	/**
+	 * Creates a comparator usable for sorting.
+	 *
+	 * The OData comparators return "NaN" for comparisons containing null values. While this is a valid result when used for filtering,
+	 * for sorting the null values need to be put in order, so the comparator must return either -1 or 1 instead, to have null sorted
+	 * at the top in ascending order and on the bottom in descending order.
+	 *
+	 * @private
+	 */
+	function getSortComparator(fnCompare) {
+		return function(vValue1, vValue2) {
+			if (vValue1 === vValue2) {
+				return 0;
+			}
+			if (vValue1 === null) {
+				return -1;
+			}
+			if (vValue2 === null) {
+				return 1;
+			}
+			return fnCompare(vValue1, vValue2);
+		};
+	}
+
+	/**
+	 * Creates a comparator for the according Edm type of the filter value. For compatibility
+	 * reasons it is also possible to pass a number to the comparator.
+	 * @private
+	 */
+	function getFilterComparator(fnCompare, sType, oFilter) {
+		if (sType == "Edm.Decimal" &&  (typeof oFilter.oValue1 == "number" || typeof oFilter.oValue2 == "number")) {
+			var fnODataUtilsCompare = fnCompare;
+			// as the ODataUtils comparator expects only Edm types (internally handled as strings) the
+			// second value, which comes from the filter, needs to be converted if it is a number
+			fnCompare = function(vValue1, vValue2) {
+				return fnODataUtilsCompare.call(null, vValue1, vValue2.toString());
+			};
+		}
+		return fnCompare;
+	}
 
 	ODataListBinding.prototype.applySort = function() {
 		var that = this,
@@ -1211,7 +1257,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			return;
 		}
 		this.oEntityType = this._getEntityType();
-		this.addComparators(this.aSorters);
+		this.addComparators(this.aSorters, true);
 		this.addComparators(this.aFilters);
 		this.addComparators(this.aApplicationFilters);
 		if (!this.useClientMode()) {

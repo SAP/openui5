@@ -442,6 +442,64 @@
 		oBinding.attachChange(handler);
 	});
 
+	asyncTest("ListBinding clientside sort with null values", function(){
+		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("ReorderLevel"), null, {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 20);
+			equal(oModel.getProperty("ReorderLevel", aContexts[0]), null, "ListBinding after initial sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[1]), 0, "ListBinding after initial sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[2]), 0, "ListBinding after initial sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[3]), 0, "ListBinding after initial sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[4]), 0, "ListBinding after initial sort");
+
+			oBinding.detachChange(handler);
+			// descending
+			var oSorter = new sap.ui.model.Sorter("ReorderLevel", true);
+			oBinding.sort(oSorter);
+
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 20);
+			equal(oModel.getProperty("ReorderLevel", aContexts[0]), 30, "ListBinding after sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[1]), 25, "ListBinding after sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[2]), 25, "ListBinding after sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[3]), 10, "ListBinding after sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[4]), 10, "ListBinding after sort");
+
+			// ascending again
+			oSorter = new sap.ui.model.Sorter("ReorderLevel", false);
+			oBinding.sort(oSorter);
+
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 20);
+			equal(oModel.getProperty("ReorderLevel", aContexts[0]), null, "ListBinding after 2nd sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[1]), 0, "ListBinding after 2nd sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[2]), 0, "ListBinding after 2nd sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[3]), 0, "ListBinding after 2nd sort");
+			equal(oModel.getProperty("ReorderLevel", aContexts[4]), 0, "ListBinding after 2nd sort");
+
+			oBinding.sort(null);
+
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 20);
+			equal(oModel.getProperty("ReorderLevel", aContexts[0]), 10, "ListBinding unsorted");
+			equal(oModel.getProperty("ReorderLevel", aContexts[1]), null, "ListBinding unsorted");
+			equal(oModel.getProperty("ReorderLevel", aContexts[2]), 25, "ListBinding unsorted");
+			equal(oModel.getProperty("ReorderLevel", aContexts[3]), 0, "ListBinding unsorted");
+			equal(oModel.getProperty("ReorderLevel", aContexts[4]), 0, "ListBinding unsorted");
+
+			start();
+		};
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.attachChange(handler);
+	});
+
 	asyncTest("ListBinding clientside sort before data is available", function(){
 		var oBinding = oModel.bindList("/Categories", null, null, null, {
 			operationMode: sap.ui.model.odata.OperationMode.Client
