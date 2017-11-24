@@ -644,6 +644,63 @@
 		QUnit.test("First visible page should be details page", function (assert) {
 			assert.strictEqual(this.oMessageView._navContainer.getCurrentPage().getId(), this.oMessageView._detailsPage.getId(), "Details page should be initially shown if item is just one");
 		});
+
+		QUnit.module("Aggregation Binding", {
+			beforeEach: function () {
+				this.oMessageView = new sap.m.MessageView();
+
+				var oTemplate = new sap.m.MessageItem({
+					title: "{title}",
+					description: "Test Description",
+					link: new sap.m.Link({
+						text: "{link}"
+					})
+				});
+
+				var oData = {
+					messages: [{
+						type: "Error",
+						groupName: "Group 1",
+						title: "Error message",
+						subtitle: "Subtitle",
+						link: "Link 1",
+						linkCustomData: "Link CustomData 1",
+						description: "First Error message description"
+					}, {
+						type: "Warning",
+						groupName: "Group 2",
+						title: "Warning without description",
+						link: "Link 2"
+					}]
+				};
+
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(oData);
+
+				this.oMessageView.setModel(oModel);
+				this.oMessageView.bindAggregation("items",{
+					path: "/messages",
+					template: oTemplate
+				});
+
+				this.oMessageView.placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oMessageView.destroy();
+			}
+		});
+
+		QUnit.test("Link in details page", function (assert) {
+			this.oMessageView._setDescription(this.oMessageView.getItems()[0]);
+			var oLink = this.oMessageView.getAggregation("_navContainer").getPages()[1].getContent()[1];
+
+			//assert
+			assert.strictEqual(oLink.getMetadata().getName(), "sap.m.Link", "A Link is added to details page");
+			assert.strictEqual(oLink.getText(), "Link 1", "The link is bound correctly");
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
