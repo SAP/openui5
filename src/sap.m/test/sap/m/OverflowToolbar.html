@@ -596,6 +596,53 @@
 		})
 	];
 
+	var toolbarContent8 = [
+		new sap.m.Label({
+			text : "Label and labelled controls"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "Single button"
+		}),
+		new sap.m.Label({
+			text : "Label for Input",
+			labelFor: "labelledInput",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1
+			})
+		}),
+		new sap.m.Input("labelledInput", {
+			value : "I am labelled",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1
+			}),
+			width: "125px"
+		}),
+		new sap.m.Label({
+			text : "This is a very long label text that exceeds the allowed overflow width limit"
+		}),
+		new sap.m.Button({
+			text : "Single button2"
+		}),
+		new sap.m.Label({
+			text : "G2 First Label",
+			labelFor: "labelledInput",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 2
+			})
+		}),
+		new sap.m.Label({
+			text : "G2 Second Label",
+			labelFor: "labelledInput",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 2
+			})
+		}),
+		new sap.m.Button({
+			text : "Single button3"
+		})
+	];
+
 	var toolbarContentFooter = [
 		new sap.m.Label({
 			text : "When the toolbar is in the footer, the action sheet opens above it."
@@ -676,6 +723,11 @@
 		new sap.m.OverflowToolbar("otb7", {
 			width: 'auto',
 			content : toolbarContent7
+		}),
+
+		new sap.m.OverflowToolbar("otb8", {
+			width: 'auto',
+			content : toolbarContent8
 		}),
 
 		new sap.m.OverflowToolbar("otbFooter", {
