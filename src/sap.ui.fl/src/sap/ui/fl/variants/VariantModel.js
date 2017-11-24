@@ -498,7 +498,7 @@ sap.ui.define([
 						}
 					]
 				};
-				this.oVariantController._setChangeFileContent(oVariantControllerData);
+				this.oVariantController._setChangeFileContent(oVariantControllerData, {});
 			}
 		}
 	};
