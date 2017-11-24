@@ -117,10 +117,10 @@ sap.ui.define(['sap/ui/base/Object'],
 		if (a == b) {
 			return 0;
 		}
-		if (b == null) {
+		if (a == null) {
 			return -1;
 		}
-		if (a == null) {
+		if (b == null) {
 			return 1;
 		}
 		if (typeof a == "string" && typeof b == "string") {
