@@ -2094,5 +2094,34 @@
         "references": []
       }
     ]
+  },
+  "1.38.31": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "77d3e358c761b65aa64601e26c0a8839d8b6b19c",
+        "type": "FIX",
+        "text": " AppCacheBuster: disable when no browser support for defineProperty",
+        "references": []
+      },
+      {
+        "id": "2a6927d7180136d7fe75897e56b119746997c5c7",
+        "type": "FIX",
+        "text": " Configuration: Consider sap-locale over sap-language",
+        "references": []
+      },
+      {
+        "id": "16fa97a14822dcf31e5f7f3f610ea54345889ad2",
+        "type": "FIX",
+        "text": " jquery.sap.interaction: dealing with incomplete requests",
+        "references": []
+      },
+      {
+        "id": "bd0ea5cd84cff7a463be436ee36abd8cf3fb306f",
+        "type": "FIX",
+        "text": " jquery.sap.trace: do not count incomplete requests",
+        "references": []
+      }
+    ]
   }
 }
