@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button', './Bar', './Title', './delegate/ValueStateMessage', 'sap/ui/core/message/MessageMixin', 'sap/ui/core/library', 'sap/ui/core/Item', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button, Bar, Title, ValueStateMessage, MessageMixin, coreLibrary, Item, Device) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button', './Bar', './Title', './delegate/ValueStateMessage', 'sap/ui/core/message/MessageMixin', 'sap/ui/core/library', 'sap/ui/core/Item', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'jquery.sap.keycodes'],
+	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button, Bar, Title, ValueStateMessage, MessageMixin, coreLibrary, Item, Device, InvisibleText) {
 		"use strict";
 
 		// shortcut for sap.m.SelectListKeyboardNavigationMode
@@ -690,7 +690,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 				offsetX: 0,
 				offsetY: 0,
 				initialFocus: this,
-				bounce: false
+				bounce: false,
+				ariaLabelledBy: this._getPickerHiddenLabelId()
 			});
 
 			// detect when the scrollbar or an item is pressed
@@ -750,6 +751,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			var that = this;
 			return new Dialog({
 				stretch: true,
+				ariaLabelledBy: this._getPickerHiddenLabelId(),
 				customHeader: this._getPickerHeader(),
 				beforeOpen: function() {
 					that.updatePickerHeaderTitle();
@@ -800,6 +802,22 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 
 			return this.getAggregation("_pickerHeader");
+		};
+
+		Select.prototype._getPickerHiddenLabelId = function() {
+			if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
+				return "";
+			}
+
+			// Load the resources
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			if (!Select._sPickerHiddenLabelId) {
+				Select._sPickerHiddenLabelId = new InvisibleText({
+					text: oResourceBundle.getText("INPUT_AVALIABLE_VALUES")
+				}).toStatic().getId();
+			}
+			return Select._sPickerHiddenLabelId;
 		};
 
 		Select.prototype.updatePickerHeaderTitle = function() {
