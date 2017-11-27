@@ -569,6 +569,7 @@ function(
 		});
 	});
 
+
 	QUnit.module("Given a test view with bound Table", {
 		beforeEach : function() {
 			this.oTable = oView.byId("table");
@@ -587,6 +588,7 @@ function(
 		});
 	});
 
+
 	QUnit.module("Given a test view with bound Empty Table", {
 		beforeEach : function(assert) {
 			this.oTable = oView.byId("emptyTable");
@@ -602,6 +604,26 @@ function(
 
 		return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
 			assert.equal(aAdditionalElements.length, 4, "then the correct amount of ODataProperties has been returned");
+		});
+	});
+
+
+	QUnit.module("Given a test view with an absolute bound List", {
+		beforeEach: function(assert) {
+			this.oList = oView.byId("listWithAbsoluteBinding");
+		}
+	});
+
+	QUnit.test("when getting unbound elements for the list", function(assert) {
+		var oActionObject = {
+			action : {
+				aggregation: "items"
+			},
+			relevantContainer: this.oList
+		};
+
+		return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oList, oActionObject).then(function(aAdditionalElements) {
+			assert.equal(aAdditionalElements.length, 16, "then the correct amount of ODataProperties has been returned");
 		});
 	});
 
