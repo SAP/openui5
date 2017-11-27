@@ -226,12 +226,10 @@ sap.ui.define([
 	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation(),
 		fnGetDelay = function (iDelay) {
 			return bUseAnimations ? iDelay : 0;
+		},
+		fnHasParent = function(oControl) {
+			return !!(oControl && oControl.getParent());
 		};
-
-	var fnIsPageParentActive = function(oPage) {
-		var oParent = oPage && oPage.getParent();
-		return oParent && oParent.isActive();
-	};
 
 	NavContainer.prototype.init = function () {
 		this._pageStack = [];
@@ -1094,11 +1092,11 @@ sap.ui.define([
 								bTransitionEndPending = false;
 
 								// update classes only of the active pages
-								if (fnIsPageParentActive(oToPage)) {
+								if (fnHasParent(oToPage)) {
 									oToPage.removeStyleClass("sapMNavItemSliding").removeStyleClass("sapMNavItemCenter");
 								}
 
-								if (fnIsPageParentActive(oFromPage)) {
+								if (fnHasParent(oFromPage)) {
 									oFromPage.removeStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemLeft");
 								}
 
@@ -1148,11 +1146,11 @@ sap.ui.define([
 							bTransitionEndPending = false;
 
 							// update classes only of the active pages
-							if (fnIsPageParentActive(oToPage)) {
+							if (fnHasParent(oToPage)) {
 								oToPage.removeStyleClass("sapMNavItemSliding").removeStyleClass("sapMNavItemCenter");
 							}
 
-							if (fnIsPageParentActive(oFromPage)) {
+							if (fnHasParent(oFromPage)) {
 								oFromPage.removeStyleClass("sapMNavItemSliding").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemRight");
 							}
 
@@ -1246,11 +1244,11 @@ sap.ui.define([
 						bTransitionEndPending = false;
 
 						// update classes only of the active pages
-						if (fnIsPageParentActive(oFromPage)) {
+						if (fnHasParent(oFromPage)) {
 							oFromPage.addStyleClass("sapMNavItemHidden");
 						}
 
-						if (fnIsPageParentActive(oToPage)) {
+						if (fnHasParent(oToPage)) {
 							oToPage.removeStyleClass("sapMNavItemFading").removeStyleClass("sapMNavItemOpaque");
 						}
 
@@ -1289,7 +1287,7 @@ sap.ui.define([
 						bTransitionEndPending = false;
 
 						// update classes only of the active pages
-						if (fnIsPageParentActive(oFromPage)) {
+						if (fnHasParent(oFromPage)) {
 							oFromPage.removeStyleClass("sapMNavItemFading").addStyleClass("sapMNavItemHidden"); // TODO: destroy HTML?
 							oFromPage.removeStyleClass("sapMNavItemTransparent");
 						}
@@ -1372,11 +1370,11 @@ sap.ui.define([
 								bTransitionEndPending = false;
 
 								// update classes only of the active pages
-								if (fnIsPageParentActive(oToPage)) {
+								if (fnHasParent(oToPage)) {
 									oToPage.removeStyleClass("sapMNavItemFlipping");
 								}
 
-								if (fnIsPageParentActive(oFromPage)) {
+								if (fnHasParent(oFromPage)) {
 									oFromPage.removeStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemFlipPrevious");
 								}
 
@@ -1430,11 +1428,11 @@ sap.ui.define([
 							bTransitionEndPending = false;
 
 							// update classes only of the active pages
-							if (fnIsPageParentActive(oToPage)) {
+							if (fnHasParent(oToPage)) {
 								oToPage.removeStyleClass("sapMNavItemFlipping");
 							}
 
-							if (fnIsPageParentActive(oFromPage)) {
+							if (fnHasParent(oFromPage)) {
 								oFromPage.removeStyleClass("sapMNavItemFlipping").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemFlipNext");
 							}
 
@@ -1499,11 +1497,11 @@ sap.ui.define([
 								bTransitionEndPending = false;
 
 								// update classes only of the active pages
-								if (fnIsPageParentActive(oToPage)) {
+								if (fnHasParent(oToPage)) {
 									oToPage.removeStyleClass("sapMNavItemDooring").removeStyleClass("sapMNavItemDoorInNext");
 								}
 
-								if (fnIsPageParentActive(oFromPage)) {
+								if (fnHasParent(oFromPage)) {
 									oFromPage.removeStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemDoorInPrevious");
 								}
 
@@ -1557,11 +1555,11 @@ sap.ui.define([
 							bTransitionEndPending = false;
 
 							// update classes only of the active pages
-							if (fnIsPageParentActive(oToPage)) {
+							if (fnHasParent(oToPage)) {
 								oToPage.removeStyleClass("sapMNavItemDooring").removeStyleClass("sapMNavItemDoorOutNext");
 							}
 
-							if (fnIsPageParentActive(oFromPage)) {
+							if (fnHasParent(oFromPage)) {
 								oFromPage.removeStyleClass("sapMNavItemDooring").addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemDoorOutPrevious");
 							}
 
