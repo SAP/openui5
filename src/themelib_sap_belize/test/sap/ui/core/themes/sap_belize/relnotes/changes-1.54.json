@@ -31,6 +31,18 @@
         "type": "FIX",
         "text": " sap.m.InputBase: Contrast ratio on focus is now correct",
         "references": []
+      },
+      {
+        "id": "23a88f99d5bfd03d62a6b6db001b93b3451e1664",
+        "type": "FEATURE",
+        "text": " Add \u002772\u0027 font and use as default in all Belize themes",
+        "references": []
+      },
+      {
+        "id": "469a2111baa7bbdd036152fe381c02a1c8a394b3",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPageTitle: Added new property areaShrinkRatio",
+        "references": []
       }
     ]
   }

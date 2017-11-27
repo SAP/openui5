@@ -181,6 +181,24 @@
         "type": "FIX",
         "text": " sap.ui.core.demokit.sample.odata.v4.SalesOrderTP100_V*: Make table titles accessible",
         "references": []
+      },
+      {
+        "id": "23a88f99d5bfd03d62a6b6db001b93b3451e1664",
+        "type": "FEATURE",
+        "text": " Add \u002772\u0027 font and use as default in all Belize themes",
+        "references": []
+      },
+      {
+        "id": "2646dd39ba0118eb150a408fe0f8a39ab0704556",
+        "type": "FIX",
+        "text": " Support $select and $expand with selection on expanded values",
+        "references": []
+      },
+      {
+        "id": "f2bf34cd159eb939a9eba8d393c36f571fe0e84a",
+        "type": "FIX",
+        "text": " qunit/utils: fixed minor jsdoc issues",
+        "references": []
       }
     ]
   }

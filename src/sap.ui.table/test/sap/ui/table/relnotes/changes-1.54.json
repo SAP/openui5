@@ -25,6 +25,36 @@
         "type": "FIX",
         "text": " Table: Vertical scrollbar becomes visible if height is decreased",
         "references": []
+      },
+      {
+        "id": "813ab53538037d1404f6ddffecf2ded9237cb42a",
+        "type": "FEATURE",
+        "text": " TreeTable: API to expand/collapse multiple rows added",
+        "references": []
+      },
+      {
+        "id": "24fc46bad1077794eca6c5a4792f2e7bdb3f0921",
+        "type": "FEATURE",
+        "text": " sap.ui.table.Table: new contextMenu aggregation added",
+        "references": []
+      },
+      {
+        "id": "7c957dba4c050b1b0bb77f521e4b8db10a522c6a",
+        "type": "FIX",
+        "text": " AnalyticalTable: Remove limitations of SelectionMode/Behavior",
+        "references": []
+      },
+      {
+        "id": "52101ab82623837a04abc218ce623777b4dd21dc",
+        "type": "FIX",
+        "text": " GridTable: Double top border removed",
+        "references": []
+      },
+      {
+        "id": "c017ffff28ab3c313a6090b95d9d80759852827e",
+        "type": "FIX",
+        "text": " Table: Correctly calculate the number of displayed rows",
+        "references": []
       }
     ]
   }

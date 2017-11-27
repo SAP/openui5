@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " sap.m.DynamicPageTitle: Fixed expand button outline in IE",
         "references": []
+      },
+      {
+        "id": "469a2111baa7bbdd036152fe381c02a1c8a394b3",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPageTitle: Added new property areaShrinkRatio",
+        "references": []
       }
     ]
   }

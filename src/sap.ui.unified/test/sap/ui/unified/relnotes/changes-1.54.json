@@ -49,6 +49,18 @@
         "type": "FIX",
         "text": " unified.ShellOverlay: Avoid ACC announcement of full content",
         "references": []
+      },
+      {
+        "id": "5e0761f7f93419b8849700b19b086481d9a4c711",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appointments deselection fix",
+        "references": []
+      },
+      {
+        "id": "389d115dfefe919c6e9d79690ab77ea46c79bb52",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: remove scrollbar in context menu",
+        "references": []
       }
     ]
   }

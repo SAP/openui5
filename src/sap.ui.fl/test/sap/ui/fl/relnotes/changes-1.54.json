@@ -31,6 +31,12 @@
         "type": "FIX",
         "text": " Fix control variant issues",
         "references": []
+      },
+      {
+        "id": "3c9e76fd873c1dd231a88ff58944abab6986c59f",
+        "type": "FEATURE",
+        "text": "sap.ui.fl: Set initial variant from URL parameter",
+        "references": []
       }
     ]
   }

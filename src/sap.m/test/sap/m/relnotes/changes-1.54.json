@@ -307,6 +307,66 @@
         "type": "FIX",
         "text": " sap.m.StepInput: Now the buttons are being disabled accordingly",
         "references": []
+      },
+      {
+        "id": "7fa42f78a49efaa53ddbf78e4533df874950d874",
+        "type": "FEATURE",
+        "text": " sap.m.OverFlowToolbar: Allowed sap.m.Label to overflow",
+        "references": []
+      },
+      {
+        "id": "1faaa1224e336a5c6da37d4576d3a4a2a915ef5f",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: move navigation arrows to the picker button",
+        "references": []
+      },
+      {
+        "id": "9f0f379033d0218571938ced01298b43cc48f1a7",
+        "type": "FIX",
+        "text": " sap.m.DatePicker - setMin/MaxDate does not change other property.",
+        "references": []
+      },
+      {
+        "id": "1d28f9bc583533cb41022197f63d1a56b80a5d0c",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Scroll of the items work with arrows",
+        "references": []
+      },
+      {
+        "id": "9350c5f48847f431b2986bab8d384545706f8cde",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Update Arial Label on Generic Tile content change on using TAB key navigation.",
+        "references": []
+      },
+      {
+        "id": "5e60073aea2f179dea1ac5be1af1d9845f6500f8",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fix memory leak on cloning",
+        "references": []
+      },
+      {
+        "id": "a30688b35ee9a1db2539caa3f4f9d73d7da1cedb",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: tokenUpdate is now fired before a token\u0027s insertion",
+        "references": []
+      },
+      {
+        "id": "8679affc62ee33187b4ddb6da37fec3a4dc22588",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: removed href attribute if property href is not set",
+        "references": []
+      },
+      {
+        "id": "182268467257c48daf27776f56b9cb06be8bac2e",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: gets title aggregation correctly now",
+        "references": []
+      },
+      {
+        "id": "5e0761f7f93419b8849700b19b086481d9a4c711",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appointments deselection fix",
+        "references": []
       }
     ]
   }

@@ -133,6 +133,18 @@
         "type": "FIX",
         "text": "sap.ui.rta: Exiting RTA removes application content from Popup",
         "references": []
+      },
+      {
+        "id": "6abc69f18b97d8f720db9c866c514cfab71c2db3",
+        "type": "FIX",
+        "text": " Check complexType binding in AdditionalElementsAnalyzer",
+        "references": []
+      },
+      {
+        "id": "de39dec35e2482f40f790a7f542f3cd2e9f19450",
+        "type": "FIX",
+        "text": " sap.ui.rta - Easy Add plugin missing i18n entry for button text",
+        "references": []
       }
     ]
   }
