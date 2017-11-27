@@ -25,10 +25,10 @@
 						</Breadcrumbs>
 					</f:breadcrumbs>
 					<f:expandedContent>
-						<Text text="This is a subheading"/>
+						<Label text="This is a subheading"/>
 					</f:expandedContent>
 					<f:snappedContent>
-						<Text text="This is a subheading"/>
+						<Label text="This is a subheading"/>
 					</f:snappedContent>
 					<f:content>
 						<Image src="./test-resources/sap/f/images/KPI.png" tooltip="This is just a placeholder, not a real KPI control."/>
@@ -75,7 +75,7 @@
 							<items>
 								<Panel
 										backgroundDesign="Transparent"
-										class="sapUiNoContentPadding sapUiSmallMarginTop">
+										class="sapUiNoContentPadding">
 									<content>
 										<layout:HorizontalLayout
 												allowWrapping="true">

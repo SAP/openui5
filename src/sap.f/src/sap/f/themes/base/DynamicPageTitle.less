@@ -14,7 +14,7 @@
 .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
 	.sapFDynamicPageTitleMain {
 		.sapFDynamicPageTitleMainContent {
-	 		padding-bottom: 1rem;
+			padding-bottom: 0;
 		}
 	}
 }
@@ -47,7 +47,6 @@
 
 		&> .sapFDynamicPageTitleTopLeft {
 			min-height: 1rem;
-			padding-bottom: 0.125rem;
 			width: 75%;
 
 			&> :first-child {
@@ -185,10 +184,10 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 			max-width: 100%;
 			color: @sapUiGroupTitleTextColor;
 			font-size: @sapMFontHeader3Size;
+			margin-top: 0.1875rem;
 		}
 
 		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
-			margin-top: 1px;
 			color: @sapUiContentLabelColor;
 			font-size: @sapMFontMediumSize;
 		}
@@ -201,8 +200,8 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 
 	.sapFDynamicPageTitleMainContent {
-		padding-left: 0.5rem;
 		min-width: 48px;
+		padding: 0 0 0.5rem 0.5rem;
 	}
 
 	.sapFDynamicPageTitleMainActions {
@@ -259,11 +258,11 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle,
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle {
-		padding: 0 0 0.5rem 1rem;
+		padding: 0.5rem 0rem 0.5rem 1rem;
 	}
 
 	.sapFDynamicPageTitle {
-		padding: 0 0 0 1rem;
+		padding: 0.5rem 0rem 0.5rem 1rem;
 
 		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopLeft {
 			width: 60%;
