@@ -55,6 +55,15 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSuppor
 			text : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
+			 * Indicates if the <code>ObjectStatus</code> text and icon can be clicked/tapped by the user.
+			 *
+			 * <b>Note:</b> If you set this property to <code>true</code>, you have to also set the <code>text</code> or <code>icon</code> property.
+			 *
+			 * @since 1.54
+			 */
+			active : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
 			 * Defines the text value state.
 			 */
 			state : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : ValueState.None},
@@ -83,6 +92,14 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSuppor
 			 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
+		},
+		events : {
+
+			/**
+			 * Fires when the user clicks/taps on active text.
+			 * @since 1.54
+			 */
+			press : {}
 		}
 	}});
 
@@ -155,6 +172,51 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSuppor
 		}
 
 		return this;
+	};
+
+	/**
+	 * @private
+	 * @param {object} oEvent The fired event
+	 */
+	ObjectStatus.prototype.ontap = function(oEvent) {
+		var sSourceId = oEvent.target.id;
+
+		//event should only be fired if the click is on the text
+		if (this._isActive() && (sSourceId === this.getId() + "-link" || sSourceId === this.getId() + "-text" || sSourceId === this.getId() + "-icon")) {
+
+			this.firePress();
+		}
+	};
+
+	/**
+	 * @private
+	 * @param {object} oEvent The fired event
+	 */
+	ObjectStatus.prototype.onsapenter = function(oEvent) {
+		if (this._isActive()) {
+			this.firePress();
+
+			// mark the event that it is handled by the control
+			oEvent.setMarked();
+		}
+	};
+
+	/**
+	 * @private
+	 * @param {object} oEvent The fired event
+	 */
+	ObjectStatus.prototype.onsapspace = function(oEvent) {
+		this.onsapenter(oEvent);
+	};
+
+	/**
+	 * Checks if the ObjectStatus should be set to active.
+	 * @private
+	 * @returns {boolean} If the ObjectStatus is active
+	 */
+	ObjectStatus.prototype._isActive = function() {
+
+		return  this.getActive() && (this.getText().trim() || this.getIcon().trim());
 	};
 
 	/**

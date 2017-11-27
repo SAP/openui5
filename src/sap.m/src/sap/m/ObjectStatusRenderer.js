@@ -51,6 +51,15 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
 
 			oRm.addClass("sapMObjStatus");
 			oRm.addClass("sapMObjStatus" + sState);
+
+			if (oObjStatus._isActive()) {
+				oRm.addClass("sapMObjStatusActive");
+				oRm.writeAttribute("tabindex", "0");
+				oRm.writeAccessibilityState(oObjStatus, {
+					role: "link"
+				});
+			}
+
 			oRm.writeClasses();
 
 			/* ARIA region adding the aria-describedby to ObjectStatus */
@@ -86,6 +95,14 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
 				oRm.write("</span>");
 			}
 
+			if (oObjStatus._isActive()) {
+				oRm.write("<span");
+				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-link");
+				oRm.addClass("sapMObjStatusLink");
+				oRm.writeClasses();
+				oRm.write(">");
+			}
+
 			if (oObjStatus.getIcon()) {
 				oRm.write("<span");
 				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-icon");
@@ -111,6 +128,9 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
 				oRm.write("</span>");
 			}
 
+			if (oObjStatus._isActive()) {
+				oRm.write("</span>");
+			}
 			/* ARIA adding hidden node in span element */
 			if (sState != ValueState.None) {
 				oRm.write("<span");
@@ -124,6 +144,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
 				oRm.writeEscaped(ValueStateSupport.getAdditionalText(sState));
 				oRm.write("</span>");
 			}
+
 		}
 
 		oRm.write("</div>");
