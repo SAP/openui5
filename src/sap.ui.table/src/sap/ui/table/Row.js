@@ -234,7 +234,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 
 		// update tooltips
 		if ($DomRefs.rowSelector) {
-			$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
+			$DomRefs.rowSelector.attr("title", !this._bHidden ? mTooltipTexts.mouse[sSelectReference] : "");
 		}
 
 		if ($DomRefs.rowSelectorText) {
@@ -250,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 			$Row = $Row.add($DomRefs.rowFixedPart);
 		}
 
-		if (bSelectOnCellsAllowed && oTable.getContextByIndex(this.getIndex())) {
+		if (bSelectOnCellsAllowed && !this._bHidden) {
 			// the row requires a tooltip for selection if the cell selection is allowed
 			$Row.attr("title", mTooltipTexts.mouse[sSelectReference]);
 		} else {
