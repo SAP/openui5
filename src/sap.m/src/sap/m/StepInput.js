@@ -574,6 +574,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * @private
 		 */
 		StepInput.prototype._createIncrementButton = function () {
+			var oIcon;
+
 			this.setAggregation("_incrementButton", new Icon({
 				src: IconPool.getIconURI("add"),
 				id: this.getId() + "-incrementBtn",
@@ -581,7 +583,17 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				press: this._handleButtonPress.bind(this, true),
 				tooltip: StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP
 			}));
-			return this.getAggregation("_incrementButton");
+
+			oIcon = this.getAggregation("_incrementButton");
+			oIcon.addEventDelegate({
+				onAfterRendering: function () {
+					// Set it to -1 so it still won't be part of the tabchain but can be document.activeElement
+					// see _change method, _isButtonFocused call
+					oIcon.$().attr("tabindex", "-1");
+				}
+			});
+
+			return oIcon;
 		};
 
 		/**
@@ -590,6 +602,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * @private
 		 */
 		StepInput.prototype._createDecrementButton = function() {
+			var oIcon;
+
 			this.setAggregation("_decrementButton", new Icon({
 				src: IconPool.getIconURI("less"),
 				id: this.getId() + "-decrementBtn",
@@ -598,7 +612,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				tooltip: StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP
 			}));
 
-			return this.getAggregation("_decrementButton");
+			oIcon = this.getAggregation("_decrementButton");
+			oIcon.addEventDelegate({
+				onAfterRendering: function () {
+					// Set it to -1 so it still won't be part of the tabchain but can be document.activeElement
+					// see _change method, _isButtonFocused call
+					oIcon.$().attr("tabindex", "-1");
+				}
+			});
+
+			return oIcon;
 		};
 
 		StepInput.prototype._getIsDisabledButton = function (sType) {
@@ -966,7 +989,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			this.setValue(this._getDefaultValue(this._getInput().getValue(), this.getMax(), this.getMin()));
 
 
-			if (this._sOldValue !== this.getValue()) {
+			if (this._sOldValue !== this.getValue() && !this._isButtonFocused()) {
 				this.fireChange({value: this.getValue()});
 			}
 		};
@@ -1182,6 +1205,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			if (sProp && mNameToAria[sProp]) {
 				$input.setAttribute(mNameToAria[sProp], sValue);
 			}
+		};
+
+		StepInput.prototype._isButtonFocused = function () {
+			return document.activeElement === this.getAggregation("_incrementButton").getDomRef() ||
+				document.activeElement === this.getAggregation("_decrementButton").getDomRef();
 		};
 
 		/*

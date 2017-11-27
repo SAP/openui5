@@ -33,6 +33,18 @@
 		justify-content: center;
 	}
 }
+
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapMStepInputBtn.sapUiIcon:focus {
+	outline: none;
+}
+
+html[data-sap-ui-browser^='ie'],
+html[data-sap-ui-browser^='ed'] {
+	.sapMStepInputBtn.sapUiIcon:focus::after {
+		display: none;
+	}
+}
+
 .sapMStepInput-CTX {
 	.sapMInput {
 		.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner) {

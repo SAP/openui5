@@ -795,6 +795,54 @@
 			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 		});
 
+		QUnit.test("Change event is fired only once when element is focused, changed and then + button is clicked", function(assert) {
+			//prepare
+			var oInput = this.stepInput._getInput(),
+					oIncrementBtn = this.stepInput.getAggregation("_incrementButton");
+
+			//assert
+			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet"); //value not changed
+			equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
+
+			//act
+			oInput.focus();
+			oInput.$("inner").val(7);
+
+			//No way to simulate real click on the “+” button, so make sure the same event handlers are called in the same order
+			// we can't focus on the IncrementButton since it doesn't have tab index therefore we call blur on the Input
+			oIncrementBtn.focus();
+			this.clock.tick(0);
+			oIncrementBtn.firePress();
+
+			//assert
+			equal(this.stepInput.getValue(), 8, "Value should be changed from 7 to 8 due to increment button pressed");
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
+		QUnit.test("Change event is fired only once when element is focused, changed and then - button is clicked", function(assert) {
+			//prepare
+			var oInput = this.stepInput._getInput(),
+					oDecrementBtn = this.stepInput.getAggregation("_decrementButton");
+
+			//assert
+			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet"); //value not changed
+			equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
+
+			//act
+			oInput.focus();
+			oInput.$("inner").val(7);
+
+			//No way to simulate real click on the “-” button, so make sure the same event handlers are called in the same order
+			// we can't focus on the IncrementButton since it doesn't have tab index therefore we call blur on the Input
+			oDecrementBtn.focus();
+			this.clock.tick(0);
+			oDecrementBtn.firePress();
+
+			//assert
+			equal(this.stepInput.getValue(), 6, "Value should be changed from 7 to 6 due to decrement button pressed");
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
 		QUnit.test("Change Event is fired when  +/- buttons are clicked", function(assert) {
 			//prepare
 			var oIncrementBtn = this.stepInput.getAggregation("_incrementButton"),
