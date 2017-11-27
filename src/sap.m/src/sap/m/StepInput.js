@@ -747,6 +747,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 *
 		 */
 		StepInput.prototype.setValue = function (oValue) {
+			var oResult;
+
 			if (oValue == undefined) {
 				oValue = 0;
 			}
@@ -761,8 +763,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 			this._disableButtons(oValue, this.getMax(), this.getMin());
 
-			return this.setProperty("value", parseFloat(oValue), true);
+			oResult = this.setProperty("value", parseFloat(oValue), true);
 
+			this._iRealPrecision = this._getRealValuePrecision();
+			return oResult;
 		};
 
 		/**
@@ -1003,47 +1007,49 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 *
 		 * @param {number} stepMultiplier Holds the step multiplier
 		 * @param {boolean} isIncreasing Holds the operation(or direction) whether addition(increasing) or subtraction(decreasing)
-		 * @returns {number} the value after calculation
+		 * @returns {{value, displayValue}} The result of the calculation where:
+		 * <ul>
+		 * <li>value is the result of the computation where the real stepInput <value> is used</li>
+		 * <li>displayValue is the result of the computation where the DOM value (also sap.m.Input.getValue()) is used</li>
+		 * </ul>
 		 * @private
 		 */
 		StepInput.prototype._calculateNewValue = function (stepMultiplier, isIncreasing) {
 			var fStep = this.getStep(),
 				fMax = this.getMax(),
 				fMin = this.getMin(),
+				fRealValue = this.getValue(),
 				fInputValue = parseFloat(this._getDefaultValue(this._getInput().getValue(), fMax, fMin)),
 				iSign = isIncreasing ? 1 : -1,
-				nResult = fInputValue + iSign * Math.abs(fStep) * Math.abs(stepMultiplier),
-				vDisplayValuePlusStep,
-				vValuePlusStep,
-				iPrecision = this.getDisplayValuePrecision(),
-				iCalc = Math.pow(10, iPrecision),
-				iCalcReal = Math.pow(10, this._iRealPrecision),
-				vMultipliedStep = Math.abs(fStep) * Math.abs(stepMultiplier),
-				vRealValue = this.getValue();
+				fMultipliedStep = Math.abs(fStep) * Math.abs(stepMultiplier),
+				fResult = fInputValue + iSign * fMultipliedStep,
+				fDisplayValueResult,
+				fValueResult,
+				iDisplayValuePrecision = this.getDisplayValuePrecision();
 
-			if (iPrecision > 0) {
-				vDisplayValuePlusStep = (parseInt((fInputValue * iCalc), 10) + (iSign * parseInt((vMultipliedStep * iCalc), 10))) / iCalc;
+			if (iDisplayValuePrecision > 0) {
+				fDisplayValueResult = this._sumValues(fInputValue, fMultipliedStep, iSign, iDisplayValuePrecision);
 			} else {
-				vDisplayValuePlusStep = fInputValue + iSign * vMultipliedStep;
+				fDisplayValueResult = fInputValue + iSign * fMultipliedStep;
 			}
 
-			vValuePlusStep = (parseInt((vRealValue * iCalcReal), 10) + (iSign * parseInt((vMultipliedStep * iCalcReal), 10))) / iCalcReal;
+			fValueResult = this._sumValues(fRealValue, fMultipliedStep, iSign, this._iRealPrecision);
 
 			// if there is a maxValue set, check if the calculated value is bigger
 			// and if so set the calculated value to the max one
-			if (this._isNumericLike(fMax) && nResult >= fMax){
-				vValuePlusStep = fMax;
-				vDisplayValuePlusStep = fMax;
+			if (this._isNumericLike(fMax) && fResult >= fMax){
+				fValueResult = fMax;
+				fDisplayValueResult = fMax;
 			}
 
 			// if there is a minValue set, check if the calculated value is less
 			// and if so set the calculated value to the min one
-			if (this._isNumericLike(fMin) && nResult <= fMin){
-				vValuePlusStep = fMin;
-				vDisplayValuePlusStep = fMin;
+			if (this._isNumericLike(fMin) && fResult <= fMin){
+				fValueResult = fMin;
+				fDisplayValueResult = fMin;
 			}
 
-			return {value: vValuePlusStep, displayValue: vDisplayValuePlusStep};
+			return {value: fValueResult, displayValue: fDisplayValueResult};
 		};
 
 		/**
@@ -1193,6 +1199,24 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			if (sProp && mNameToAria[sProp]) {
 				$input.setAttribute(mNameToAria[sProp], sValue);
 			}
+		};
+
+		/*
+		 * Sums 2 real values by converting them to integers before summing them and restoring the result back to a real value.
+		 * This avoids rounding issues.
+		 * @param {number} fValue1 the first value to sum
+		 * @param {number} fValue2 the second value to sum
+		 * @param {int} iSign +1 if the values should be summed, or -1 if the second should be extracted from the first
+		 * @param {int} iPrecision the precision the computation should be. Best would be to equal the precision of the
+		 * bigger of fValue1 and fValue2.
+		 * @returns {number}
+		 * @private
+		 */
+		StepInput.prototype._sumValues = function(fValue1, fValue2, iSign, iPrecision) {
+			var iPrecisionMultiplier = Math.pow(10, iPrecision);
+
+			return (parseInt(fValue1 * iPrecisionMultiplier, 10) +
+				(iSign * parseInt(fValue2 * iPrecisionMultiplier, 10))) / iPrecisionMultiplier;
 		};
 
 		/*
