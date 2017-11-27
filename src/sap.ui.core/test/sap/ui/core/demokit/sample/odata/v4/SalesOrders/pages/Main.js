@@ -178,6 +178,17 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				changeNoteInDetails : function (sValue) {
+					return this.waitFor({
+						actions : new EnterText({ clearTextFirst : true, text : sValue }),
+						controlType : "sap.m.Input",
+						id : "Note",
+						success : function (oInput) {
+							Opa5.assert.ok(true, "Details Note text set to " + sValue);
+						},
+						viewName : sViewName
+					});
+				},
 				changeSalesOrderLineItemNote : function (iRow, sNewNoteValue) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -201,7 +212,7 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 
 							oRow.getCells()[SOITEM_QUANTITY_COLUMN_INDEX].setValue(sNewQuantity);
 							Opa5.assert.ok(true,
-								"SO Item Note of row " + iRow + " set to " + sNewQuantity);
+								"SO Item Quantity of row " + iRow + " set to " + sNewQuantity);
 						},
 						viewName : sViewName
 					});
@@ -445,7 +456,7 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "refreshAll",
-						success : function (aControls) {
+						success : function () {
 							Opa5.assert.ok(true, "Refresh All pressed");
 						},
 						viewName : sViewName
@@ -456,17 +467,33 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "refreshSalesOrders",
-						success : function (aControls) {
+						success : function () {
 							Opa5.assert.ok(true, "Refresh Sales Orders pressed");
 						},
 						viewName : sViewName
 					});
 				},
+
+				pressRefreshSelectedSalesOrdersButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "refreshSelectedSalesOrder",
+						success : function () {
+							Opa5.assert.ok(true, "Refresh selected Sales Order pressed");
+						},
+						viewName : sViewName
+					});
+				},
+
 				pressSaveSalesOrderButton : function () {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "saveSalesOrder",
+						success : function () {
+							Opa5.assert.ok(true, "Save Sales Order pressed");
+						},
 						viewName : sViewName
 					});
 				},
@@ -475,6 +502,9 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "saveSalesOrders",
+						success : function () {
+							Opa5.assert.ok(true, "Save Sales Orders pressed");
+						},
 						viewName : sViewName
 					});
 				},

@@ -3050,6 +3050,57 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#refreshSingle", function(assert) {
+		var fnDataRequested = sinon.spy(),
+			sKeyPredicate = "('13')",
+			oElement = {"@$ui5.predicate" : sKeyPredicate},
+			aElements = [{}, oElement],
+			sResourcePath = "Employees",
+			mQueryOptionsCopy = {$filter: "foo", $count: true, $sort: "bar", $select: "Name"},
+			oCache = this.createCache(sResourcePath,
+				{$filter: "foo", $count: true, $sort: "bar", $select: "Name"}),
+			oCacheMock = this.mock(oCache),
+			oPromise,
+			sQueryString = "?$select=Name",
+			oResponse = {},
+			oTypes = {};
+
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
+			.returns(mQueryOptionsCopy);
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sResourcePath, {$select: "Name"}, false,
+				oCache.bSortExpandSelect)
+			.returns(sQueryString);
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath + sKeyPredicate + sQueryString, "group", undefined,
+				undefined, sinon.match.same(fnDataRequested))
+			.returns(Promise.resolve(oResponse));
+		oCacheMock.expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve(oTypes));
+		this.mock(_Cache).expects("computeCount")
+			.withExactArgs(sinon.match.same(oResponse));
+		oCacheMock.expects("calculateKeyPredicates")
+			.withExactArgs(sinon.match.same(oResponse), oTypes);
+
+		oCache.aElements = aElements;
+		oCache.aElements.$byPredicate = {};
+
+		// code under test
+		oPromise = oCache.refreshSingle("group", 1, fnDataRequested);
+		assert.ok(oPromise.isFulfilled, "returned a SyncPromise");
+
+		assert.strictEqual(oCache.bSentReadRequest, true);
+		assert.deepEqual(oCache.aElements, aElements);
+		assert.strictEqual(oCache.aElements[1], oElement);
+
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+			assert.strictEqual(oCache.aElements[1], oResponse);
+			assert.strictEqual(oCache.aElements.$byPredicate[sKeyPredicate], oResponse);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("makeUpdateData", function(assert) {
 		assert.deepEqual(_Cache.makeUpdateData(["Age"], 42), {"Age" : 42});
 		assert.deepEqual(_Cache.makeUpdateData(["Address", "City"], "Walldorf"),

@@ -119,6 +119,12 @@
 						id="deleteSalesOrder" press="onDeleteSalesOrder"
 						tooltip="Delete sales order"/>
 					<Button
+						enabled="{= ${ui>/bSalesOrderSelected}
+							&amp;&amp; !${ui>/bCreateItemPending}}"
+						icon="sap-icon://synchronize"
+						id="refreshSelectedSalesOrder" press="onRefreshSelectedSalesOrder"
+						tooltip="Refresh selected sales order"/>
+					<Button
 						enabled="{= ${ui>/bSalesOrderSelected} &amp;&amp; ${ui>/bRealOData}
 							&amp;&amp; !${ui>/bSelectedSalesOrderTransient} }"
 						id="confirmSalesOrder"

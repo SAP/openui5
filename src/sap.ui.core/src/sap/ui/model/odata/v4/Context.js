@@ -431,6 +431,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Refreshes the single entity in a {@link sap.ui.model.odata.v4.ODataListBinding} represented
+	 * by this context.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the refresh; if not specified, the group ID for the context's
+	 *   binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 * @throws {Error}
+	 *   If <code>refresh</code> is called on a context not created by a
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding}, if the group ID is not valid, if the
+	 *   binding is not refreshable or has pending changes.
+	 *
+	 * @public
+	 * @since 1.53.0
+	 */
+	Context.prototype.refresh = function (sGroupId) {
+		if (!this.oBinding.refreshSingle) {
+			throw new Error("Refresh is only supported for contexts of a list binding");
+		}
+		this.oBinding.refreshSingle(this, sGroupId);
+	};
+
+	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
 	 * Conventions", this is the "name of the entity set associated with the entity followed by the

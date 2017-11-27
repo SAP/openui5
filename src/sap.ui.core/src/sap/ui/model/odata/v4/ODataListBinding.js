@@ -1280,6 +1280,66 @@ sap.ui.define([
 	};
 
 	/**
+	 * Refreshes the single entity the given <code>oContext</code> is pointing to, refreshes also
+	 * dependent bindings and checks for updates once the data is received.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context object for the entity to be refreshed
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for refresh
+	 * @throws {Error}
+	 *   For invalid group IDs, if the binding is not refreshable or has pending changes.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.refreshSingle = function (oContext, sGroupId) {
+		var that = this;
+
+		this.oModel.checkGroupId(sGroupId);
+
+		if (!this.isRefreshable()) {
+			throw new Error("Binding is not refreshable; cannot refresh entity: " + oContext);
+		}
+
+		if (oContext.hasPendingChangesForPath("")) {
+			throw new Error("Cannot refresh entity due to pending changes: " + oContext);
+		}
+
+		this.oCachePromise.then(function (oCache) {
+			var bDataRequested = false;
+
+			function fireDataReceived (oData) {
+				if (bDataRequested) {
+					that.fireDataReceived(oData);
+				}
+			}
+
+			sGroupId = sGroupId || that.getGroupId();
+			oCache.refreshSingle(sGroupId, oContext.iIndex, function () {
+					bDataRequested = true;
+					that.fireDataRequested();
+				}
+			).then(function () {
+				fireDataReceived({data : {}});
+				oContext.checkUpdate();
+			}, function (oError) {
+				fireDataReceived({error : oError});
+				throw oError;
+			})["catch"](function (oError) {
+				that.oModel.reportError("Failed to refresh entity: " + oContext, sClassName,
+					oError);
+			});
+
+			// call refreshInternal on all dependent bindings to ensure that all resulting data
+			// requests are in the same batch request
+			that.oModel.getDependentBindings(oContext).forEach(function (oDependentBinding) {
+				// with bCheckUpdate = false because it is done after data is received
+				oDependentBinding.refreshInternal(sGroupId, false);
+			});
+		});
+	};
+
+	/**
 	 * Resets the binding's contexts array and its members related to current contexts and length
 	 * calculation. All bindings dependent to the header context are requested to check for updates.
 	 *

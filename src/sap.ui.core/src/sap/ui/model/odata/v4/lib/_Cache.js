@@ -1102,6 +1102,52 @@ sap.ui.define([
 		this.fill(oPromise, iStart, iEnd);
 	};
 
+	/**
+	 * Refreshes a single entity within a collection cache.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {number} iIndex
+	 *   The index of the element to be refreshed
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before the back end request is sent.
+	 *   If no back end request is needed, the function is not called.
+	 * @returns {SyncPromise}
+	 *   A promise which which resolves with <code>undefined</code> when the entity is updated in
+	 *   the cache.
+	 *
+	 * @private
+	 */
+	CollectionCache.prototype.refreshSingle = function (sGroupId, iIndex, fnDataRequested) {
+		var sPredicate = this.aElements[iIndex]["@$ui5.predicate"],
+			oPromise,
+			sReadUrl = this.sResourcePath + sPredicate,
+			mQueryOptions = jQuery.extend({}, this.mQueryOptions),
+			that = this;
+
+		// drop collection related system query options
+		delete mQueryOptions["$count"];
+		delete mQueryOptions["$filter"];
+		delete mQueryOptions["$sort"];
+		sReadUrl += this.oRequestor.buildQueryString(this.sResourcePath, mQueryOptions, false,
+			this.bSortExpandSelect);
+
+		oPromise = SyncPromise.all([
+			this.oRequestor
+				.request("GET", sReadUrl, sGroupId, undefined, undefined, fnDataRequested),
+			this.fetchTypes()
+		]).then(function (aResult) {
+			var oElement = aResult[0];
+			// _Helper.updateCache cannot be used because navigation properties cannot be handled
+			that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oElement;
+			that.calculateKeyPredicates(oElement, aResult[1]);
+			Cache.computeCount(oElement);
+		});
+
+		this.bSentReadRequest = true;
+		return oPromise;
+	};
+
 	//*********************************************************************************************
 	// PropertyCache
 	//*********************************************************************************************
