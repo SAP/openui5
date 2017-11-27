@@ -100,8 +100,29 @@ sap.ui.define([
 			},
 
 			/* =========================================================== */
-			/* begin: internal methods									 */
+			/* begin: internal methods									   */
 			/* =========================================================== */
+
+			/* jQuery.find and setBusy Override BEGIN */
+			_oldJQueryFind: jQuery.fn.find,
+			_overrideJQueryFind: function () {
+				var oldFind = jQuery.fn.find;
+				jQuery.fn.find = function (selector, context, ret, extra) {
+					if (selector === ":sapTabbable") {
+						return oldFind.call(this, "", context, ret, extra);
+					}
+					return oldFind.call(this, selector, context, ret, extra);
+				};
+			},
+			_restoreJQueryFind: function () {
+				jQuery.fn.find = this._oldJQueryFind;
+			},
+			_setBusy: function (bBusy) {
+				this._overrideJQueryFind();
+				this._objectPage.setBusy(bBusy);
+				this._restoreJQueryFind();
+			},
+			/* jQuery.find and setBusy Override END */
 
 			/**
 			 * Binds the view to the object path and expands the aggregated line items.
@@ -112,7 +133,7 @@ sap.ui.define([
 			_onTopicMatched: function (oEvent) {
 				var oComponent = this.getOwnerComponent();
 
-				this._objectPage.setBusy(true);
+				this._setBusy(true);
 
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
@@ -191,7 +212,7 @@ sap.ui.define([
 
 								jQuery.sap.delayedCall(0, this, function () {
 									this._prettify();
-									this._objectPage.setBusy(false);
+									this._setBusy(false);
 
 									// Init scrolling right after busy indicator is cleared and prettify is ready
 									jQuery.sap.delayedCall(0, this, function () {
@@ -207,7 +228,7 @@ sap.ui.define([
 					.catch(function (sReason) {
 						// If the object does not exist in the available libs we redirect to the not found page and
 						if (sReason === this.NOT_FOUND) {
-							this._objectPage.setBusy(false);
+							this._setBusy(false);
 							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 						}
 					}.bind(this));
