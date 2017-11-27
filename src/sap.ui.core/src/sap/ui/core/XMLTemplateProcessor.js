@@ -54,6 +54,46 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 	}
 
 	/**
+	 * Creates a function based on the passed mode and callback which applies a callback to each child of a node.
+	 * @param {boolean} bAsync The strategy to choose
+	 * @param {function} fnCallback The callback to apply
+	 * @returns {function} The created function
+	 * @private
+	 */
+	function getHandleChildrenStrategy(bAsync, fnCallback) {
+
+		// sync strategy ensures processing order by just being sync
+		function syncStrategy(node, oAggregation, mAggregations) {
+			var childNode,
+				vChild,
+				aChildren = [];
+
+			for (childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
+				vChild = fnCallback(node, oAggregation, mAggregations, childNode);
+				if (vChild) {
+					aChildren.push(unwrapSyncPromise(vChild));
+				}
+			}
+			return SyncPromise.resolve(aChildren);
+		}
+
+		// async strategy ensures processing order by chaining the callbacks
+		function asyncStrategy(node, oAggregation, mAggregations) {
+			var childNode,
+				pChain = Promise.resolve(),
+				aChildPromises = [];
+
+			for (childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
+				pChain = pChain.then(fnCallback.bind(null, node, oAggregation, mAggregations, childNode));
+				aChildPromises.push(pChain);
+			}
+			return Promise.all(aChildPromises);
+		}
+
+		return bAsync ? asyncStrategy : syncStrategy;
+	}
+
+	/**
 	 * The XMLTemplateProcessor class is used to load and process Control trees in XML-declarative notation.
 	 *
 	 * @namespace
@@ -385,7 +425,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 		 *
 		 * @param {string} sNamespaceURI
 		 * @param {string} sLocalName
-		 * @returns {Promise} with the loaded control
+		 * @returns {function|Promise|undefined} the loaded ControlClass plain or resolved from a Promise
 		 */
 		function findControlClass(sNamespaceURI, sLocalName) {
 			var sClassName;
@@ -413,18 +453,21 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 			}
 
 			var sResourceName = jQuery.sap.getResourceName(sClassName, "");
-			if (bAsync) {
-				return new Promise(function(resolve) {
-					sap.ui.require([sResourceName], function(oClassObject) {
-						oClassObject = getObjectFallback(oClassObject);
-						resolve(oClassObject);
+			var oClassObject = sap.ui.require(sResourceName);
+			if (!oClassObject) {
+				if (bAsync) {
+					return new Promise(function(resolve) {
+						sap.ui.require([sResourceName], function(oClassObject) {
+							oClassObject = getObjectFallback(oClassObject);
+							resolve(oClassObject);
+						});
 					});
-				});
-			} else {
-				var oClassObject = sap.ui.requireSync(sResourceName);
-				oClassObject = getObjectFallback(oClassObject);
-				return SyncPromise.resolve(oClassObject);
+				} else {
+					oClassObject = sap.ui.requireSync(sResourceName);
+					oClassObject = getObjectFallback(oClassObject);
+				}
 			}
+			return oClassObject;
 		}
 
 		/**
@@ -526,7 +569,15 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 
 			} else {
 				// a plain and simple regular UI5 control
-				return createRegularControls(node);
+				var vClass = findControlClass(node.namespaceURI, localName(node));
+				if (vClass && typeof vClass.then === 'function') {
+					return vClass.then(function (fnClass) {
+						return createRegularControls(node, fnClass);
+					});
+				} else {
+					// class has already been loaded
+					return createRegularControls(node, vClass);
+				}
 			}
 		}
 
@@ -538,360 +589,344 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 		 * @return {Promise} resolving to an array with 0..n controls created from a node
 		 * @private
 		 */
-		function createRegularControls(node) {
+		function createRegularControls(node, oClass) {
 			var ns = node.namespaceURI,
-			pClass = findControlClass(ns, localName(node)),
 			mSettings = {},
 			sStyleClasses = "",
 			aCustomData = [],
 			mCustomSettings = null,
 			sSupportData = null;
 
-			return pClass.then(function(oClass) {
+			if (!oClass) {
+				return SyncPromise.resolve([]);
+			}
+			var oMetadata = oClass.getMetadata();
+			var mKnownSettings = oMetadata.getAllSettings();
+			if (!bEnrichFullIds) {
+				for (var i = 0; i < node.attributes.length; i++) {
+					var attr = node.attributes[i],
+					sName = attr.name,
+					oInfo = mKnownSettings[sName],
+					sValue = attr.value;
 
-				if (!oClass) {
-					return [];
-				}
-				var oMetadata = oClass.getMetadata();
-				var mKnownSettings = oMetadata.getAllSettings();
-				if (!bEnrichFullIds) {
-					for (var i = 0; i < node.attributes.length; i++) {
-						var attr = node.attributes[i],
-						sName = attr.name,
-						oInfo = mKnownSettings[sName],
-						sValue = attr.value;
+					// apply the value of the attribute to a
+					//   * property,
+					//   * association (id of the control),
+					//   * event (name of the function in the controller) or
+					//   * CustomData element (namespace-prefixed attribute)
 
-						// apply the value of the attribute to a
-						//   * property,
-						//   * association (id of the control),
-						//   * event (name of the function in the controller) or
-						//   * CustomData element (namespace-prefixed attribute)
+					if (sName === "id") {
+						// special handling for ID
+						mSettings[sName] = getId(oView, node, sValue);
 
-						if (sName === "id") {
-							// special handling for ID
-							mSettings[sName] = getId(oView, node, sValue);
+					} else if (sName === "class") {
+						// special handling for CSS classes, which will be added via addStyleClass()
+						sStyleClasses += sValue;
 
-						} else if (sName === "class") {
-							// special handling for CSS classes, which will be added via addStyleClass()
-							sStyleClasses += sValue;
+					} else if (sName === "viewName") {
+						mSettings[sName] = sValue;
 
-						} else if (sName === "viewName") {
-							mSettings[sName] = sValue;
+					} else if (sName === "fragmentName") {
+						mSettings[sName] = sValue;
+						mSettings['containingView'] = oView._oContainingView;
 
-						} else if (sName === "fragmentName") {
-							mSettings[sName] = sValue;
-							mSettings['containingView'] = oView._oContainingView;
+					} else if ((sName === "binding" && !oInfo) || sName === 'objectBindings' ) {
+						var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
+						// TODO reject complex bindings, types, formatters; enable 'parameters'?
+						if (oBindingInfo) {
+							mSettings.objectBindings = mSettings.objectBindings || {};
+							mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
+						}
+					} else if (sName === 'metadataContexts') {
+						var mMetaContextsInfo = null;
 
-						} else if ((sName === "binding" && !oInfo) || sName === 'objectBindings' ) {
-							var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
-							// TODO reject complex bindings, types, formatters; enable 'parameters'?
-							if (oBindingInfo) {
-								mSettings.objectBindings = mSettings.objectBindings || {};
-								mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
-							}
-						} else if (sName === 'metadataContexts') {
-							var mMetaContextsInfo = null;
+						try {
+							mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue,oView._oContainingView.oController,true);
+						} catch (e) {
+							jQuery.sap.log.error(oView + ":" + e.message);
+						}
 
-							try {
-								mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue,oView._oContainingView.oController,true);
-							} catch (e) {
-								jQuery.sap.log.error(oView + ":" + e.message);
-							}
+						if (mMetaContextsInfo) {
+							mSettings.metadataContexts = mMetaContextsInfo;
 
-							if (mMetaContextsInfo) {
-								mSettings.metadataContexts = mMetaContextsInfo;
-
-								if (XMLTemplateProcessor._preprocessMetadataContexts) {
-									XMLTemplateProcessor._preprocessMetadataContexts(oClass.getMetadata().getName(), mSettings, oView._oContainingView.oController);
-								}
-							}
-						} else if (sName.indexOf(":") > -1) {  // namespace-prefixed attribute found
-							if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1") {  // CustomData attribute found
-								var sLocalName = localName(attr);
-								aCustomData.push(new CustomData({
-									key:sLocalName,
-									value:parseScalarType("any", sValue, sLocalName, oView._oContainingView.oController)
-								}));
-							} else if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.support.Support.info/1") {
-								sSupportData = sValue;
-							} else if (sName.indexOf("xmlns:") !== 0 ) { // other, unknown namespace and not an xml namespace alias definition
-								if (!mCustomSettings) {
-									mCustomSettings = {};
-								}
-								if (!mCustomSettings.hasOwnProperty(attr.namespaceURI)) {
-									mCustomSettings[attr.namespaceURI] = {};
-								}
-								mCustomSettings[attr.namespaceURI][localName(attr)] = attr.nodeValue;
-								jQuery.sap.log.debug(oView + ": XMLView parser encountered unknown attribute '" + sName + "' (value: '" + sValue + "') with unknown namespace, stored as sap-ui-custom-settings of customData");
-								// TODO: here XMLView could check for namespace handlers registered by the application for this namespace which could modify mSettings according to their interpretation of the attribute
-							}
-
-						} else if (oInfo && oInfo._iKind === 0 /* PROPERTY */ ) {
-							// other PROPERTY
-							mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController); // View._oContainingView.oController is null when [...]
-							// FIXME: ._oContainingView might be the original Fragment for an extension fragment or a fragment in a fragment - so it has no controller bit ITS containingView.
-
-						} else if (oInfo && oInfo._iKind === 1 /* SINGLE_AGGREGATION */ && oInfo.altTypes ) {
-							// AGGREGATION with scalar type (altType)
-							mSettings[sName] = parseScalarType(oInfo.altTypes[0], sValue, sName, oView._oContainingView.oController);
-
-						} else if (oInfo && oInfo._iKind === 2 /* MULTIPLE_AGGREGATION */ ) {
-							var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
-							if ( oBindingInfo ) {
-								mSettings[sName] = oBindingInfo;
-							} else {
-								// TODO we now in theory allow more than just a binding path. Update message?
-								jQuery.sap.log.error(oView + ": aggregations with cardinality 0..n only allow binding paths as attribute value (wrong value: " + sName + "='" + sValue + "')");
-							}
-
-						} else if (oInfo && oInfo._iKind === 3 /* SINGLE_ASSOCIATION */ ) {
-							// ASSOCIATION
-							mSettings[sName] = createId(sValue); // use the value as ID
-
-						} else if (oInfo && oInfo._iKind === 4 /* MULTIPLE_ASSOCIATION */ ) {
-							// we support "," and " " to separate IDs and filter out empty IDs
-							mSettings[sName] = sValue.split(/[\s,]+/g).filter(identity).map(createId);
-
-						} else if (oInfo && oInfo._iKind === 5 /* EVENT */ ) {
-							// EVENT
-							var vEventHandler = View._resolveEventHandler(sValue, oView._oContainingView.oController);
-							if ( vEventHandler ) {
-								mSettings[sName] = vEventHandler;
-							} else {
-								jQuery.sap.log.warning(oView + ": event handler function \"" + sValue + "\" is not a function or does not exist in the controller.");
-							}
-						} else if (oInfo && oInfo._iKind === -1) {
-							// SPECIAL SETTING - currently only allowed for View´s async setting
-							if (View.prototype.isPrototypeOf(oClass.prototype) && sName == "async") {
-								mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController);
-							} else {
-								jQuery.sap.log.warning(oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
-							}
-						} else {
-							jQuery.sap.assert(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
-							if (XMLTemplateProcessor._supportInfo) {
-								XMLTemplateProcessor._supportInfo({
-									context : node,
-									env : {
-										caller:"createRegularControls",
-										error: true,
-										info: "unknown setting '" + sName + "' for class " + oMetadata.getName()
-									}
-								});
+							if (XMLTemplateProcessor._preprocessMetadataContexts) {
+								XMLTemplateProcessor._preprocessMetadataContexts(oClass.getMetadata().getName(), mSettings, oView._oContainingView.oController);
 							}
 						}
-					}
-					//add custom settings as custom data "sap-ui-custom-settings"
-					if (mCustomSettings) {
-						aCustomData.push(new CustomData({
-							key:"sap-ui-custom-settings",
-							value: mCustomSettings
-						}));
-					}
-					if (aCustomData.length > 0) {
-						mSettings.customData = aCustomData;
+					} else if (sName.indexOf(":") > -1) {  // namespace-prefixed attribute found
+						if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1") {  // CustomData attribute found
+							var sLocalName = localName(attr);
+							aCustomData.push(new CustomData({
+								key:sLocalName,
+								value:parseScalarType("any", sValue, sLocalName, oView._oContainingView.oController)
+							}));
+						} else if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.support.Support.info/1") {
+							sSupportData = sValue;
+						} else if (sName.indexOf("xmlns:") !== 0 ) { // other, unknown namespace and not an xml namespace alias definition
+							if (!mCustomSettings) {
+								mCustomSettings = {};
+							}
+							if (!mCustomSettings.hasOwnProperty(attr.namespaceURI)) {
+								mCustomSettings[attr.namespaceURI] = {};
+							}
+							mCustomSettings[attr.namespaceURI][localName(attr)] = attr.nodeValue;
+							jQuery.sap.log.debug(oView + ": XMLView parser encountered unknown attribute '" + sName + "' (value: '" + sValue + "') with unknown namespace, stored as sap-ui-custom-settings of customData");
+							// TODO: here XMLView could check for namespace handlers registered by the application for this namespace which could modify mSettings according to their interpretation of the attribute
+						}
+
+					} else if (oInfo && oInfo._iKind === 0 /* PROPERTY */ ) {
+						// other PROPERTY
+						mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController); // View._oContainingView.oController is null when [...]
+						// FIXME: ._oContainingView might be the original Fragment for an extension fragment or a fragment in a fragment - so it has no controller bit ITS containingView.
+
+					} else if (oInfo && oInfo._iKind === 1 /* SINGLE_AGGREGATION */ && oInfo.altTypes ) {
+						// AGGREGATION with scalar type (altType)
+						mSettings[sName] = parseScalarType(oInfo.altTypes[0], sValue, sName, oView._oContainingView.oController);
+
+					} else if (oInfo && oInfo._iKind === 2 /* MULTIPLE_AGGREGATION */ ) {
+						var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
+						if ( oBindingInfo ) {
+							mSettings[sName] = oBindingInfo;
+						} else {
+							// TODO we now in theory allow more than just a binding path. Update message?
+							jQuery.sap.log.error(oView + ": aggregations with cardinality 0..n only allow binding paths as attribute value (wrong value: " + sName + "='" + sValue + "')");
+						}
+
+					} else if (oInfo && oInfo._iKind === 3 /* SINGLE_ASSOCIATION */ ) {
+						// ASSOCIATION
+						mSettings[sName] = createId(sValue); // use the value as ID
+
+					} else if (oInfo && oInfo._iKind === 4 /* MULTIPLE_ASSOCIATION */ ) {
+						// we support "," and " " to separate IDs and filter out empty IDs
+						mSettings[sName] = sValue.split(/[\s,]+/g).filter(identity).map(createId);
+
+					} else if (oInfo && oInfo._iKind === 5 /* EVENT */ ) {
+						// EVENT
+						var vEventHandler = View._resolveEventHandler(sValue, oView._oContainingView.oController);
+						if ( vEventHandler ) {
+							mSettings[sName] = vEventHandler;
+						} else {
+							jQuery.sap.log.warning(oView + ": event handler function \"" + sValue + "\" is not a function or does not exist in the controller.");
+						}
+					} else if (oInfo && oInfo._iKind === -1) {
+						// SPECIAL SETTING - currently only allowed for View´s async setting
+						if (View.prototype.isPrototypeOf(oClass.prototype) && sName == "async") {
+							mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController);
+						} else {
+							jQuery.sap.log.warning(oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
+						}
+					} else {
+						jQuery.sap.assert(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
+						if (XMLTemplateProcessor._supportInfo) {
+							XMLTemplateProcessor._supportInfo({
+								context : node,
+								env : {
+									caller:"createRegularControls",
+									error: true,
+									info: "unknown setting '" + sName + "' for class " + oMetadata.getName()
+								}
+							});
+						}
 					}
 				}
+				//add custom settings as custom data "sap-ui-custom-settings"
+				if (mCustomSettings) {
+					aCustomData.push(new CustomData({
+						key:"sap-ui-custom-settings",
+						value: mCustomSettings
+					}));
+				}
+				if (aCustomData.length > 0) {
+					mSettings.customData = aCustomData;
+				}
+			}
 
-				/**
-				 * The way how handleChildren works determines parallel or sequential processing
-				 *
-				 * @return {Promise} resolving to an array with 0..n controls created from a node
-				 * @private
-				 */
-				function handleChildren(node, oAggregation, mAggregations) {
-					var childNode,
-						pChain = SyncPromise.resolve(),
-						aChildPromises = [];
+			/**
+			 * The way how handleChildren works determines parallel or sequential processing
+			 *
+			 * @return {Promise} resolving to an array with 0..n controls created from a node
+			 * @private
+			 */
+			// the actual handleChildren function depends on the processing mode
+			var handleChildren = getHandleChildrenStrategy(bAsync, handleChild);
 
-					// loop over all nodes
-					for (childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
-						// chain the child node handling for sequential processing
-						pChain = pChain.then(handleChild.bind(this, node, oAggregation, mAggregations, childNode));
-						aChildPromises.push(pChain);
+			/**
+			 * @return {Promise} resolving to an array with 0..n controls created from a node
+			 * @private
+			 */
+			function handleChild(node, oAggregation, mAggregations, childNode, bActivate) {
+				var oNamedAggregation;
+				// inspect only element nodes
+				if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
+
+					if (childNode.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1") {
+						mSettings[localName(childNode)] = childNode.querySelector("*");
+						return;
 					}
 
-					return SyncPromise.all(aChildPromises);
-				}
+					// check for a named aggregation (must have the same namespace as the parent and an aggregation with the same name must exist)
+					oNamedAggregation = childNode.namespaceURI === ns && mAggregations && mAggregations[localName(childNode)];
+					if (oNamedAggregation) {
+						// the children of the current childNode are aggregated controls (or HTML) below the named aggregation
+						return handleChildren(childNode, oNamedAggregation);
 
-				/**
-				 * @return {Promise} resolving to an array with 0..n controls created from a node
-				 * @private
-				 */
-				function handleChild(node, oAggregation, mAggregations, childNode, bActivate) {
-					var oNamedAggregation;
-					// inspect only element nodes
-					if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
+					} else if (oAggregation) {
+						// TODO consider moving this to a place where HTML and SVG nodes can be handled properly
+						// create a StashedControl for inactive controls, which is not placed in an aggregation
+						if (!bActivate && childNode.getAttribute("stashed") === "true" && !bEnrichFullIds) {
+							StashedControlSupport.createStashedControl(getId(oView, childNode), {
+								sParentId: mSettings["id"],
+								sParentAggregationName: oAggregation.name,
+								fnCreate: function() {
+									// EVO-Todo: stashed control-support is still mandatory SYNC
+									// this means we need to switch back the view processing to synchronous too
+									// at this point everything is sync again
+									var bPrevAsync = bAsync;
+									bAsync = false;
 
-						if (childNode.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1") {
-							mSettings[localName(childNode)] = childNode.querySelector("*");
+									try {
+										return unwrapSyncPromise(handleChild(node, oAggregation, mAggregations, childNode, true));
+									} finally {
+										// EVO-Todo:revert back to the original async/sync behavior
+										// if we moved to the sync path for the stashed control, we might now go back to the async path.
+										bAsync = bPrevAsync;
+									}
+								}
+							});
 							return;
 						}
 
-						// check for a named aggregation (must have the same namespace as the parent and an aggregation with the same name must exist)
-						oNamedAggregation = childNode.namespaceURI === ns && mAggregations && mAggregations[localName(childNode)];
-						if (oNamedAggregation) {
-							// the children of the current childNode are aggregated controls (or HTML) below the named aggregation
-							return handleChildren(childNode, oNamedAggregation);
-
-						} else if (oAggregation) {
-							// TODO consider moving this to a place where HTML and SVG nodes can be handled properly
-							// create a StashedControl for inactive controls, which is not placed in an aggregation
-							if (!bActivate && childNode.getAttribute("stashed") === "true" && !bEnrichFullIds) {
-								StashedControlSupport.createStashedControl(getId(oView, childNode), {
-									sParentId: mSettings["id"],
-									sParentAggregationName: oAggregation.name,
-									fnCreate: function() {
-										// EVO-Todo: stashed control-support is still mandatory SYNC
-										// this means we need to switch back the view processing to synchronous too
-										// at this point everything is sync again
-										var bPrevAsync = bAsync;
-										bAsync = false;
-
-										try {
-											return unwrapSyncPromise(handleChild(node, oAggregation, mAggregations, childNode, true));
-										} finally {
-											// EVO-Todo:revert back to the original async/sync behavior
-											// if we moved to the sync path for the stashed control, we might now go back to the async path.
-											bAsync = bPrevAsync;
-										}
+						// child node name does not equal an aggregation name,
+						// so this child must be a control (or HTML) which is aggregated below the DEFAULT aggregation
+						return createControls(childNode).then(function(aControls) {
+							for (var j = 0; j < aControls.length; j++) {
+								var oControl = aControls[j];
+								// append the child to the aggregation
+								var name = oAggregation.name;
+								if (oAggregation.multiple) {
+									// 1..n AGGREGATION
+									if (!mSettings[name]) {
+										mSettings[name] = [];
 									}
-								});
-								return;
-							}
-
-							// child node name does not equal an aggregation name,
-							// so this child must be a control (or HTML) which is aggregated below the DEFAULT aggregation
-							return createControls(childNode).then(function(aControls) {
-								for (var j = 0; j < aControls.length; j++) {
-									var oControl = aControls[j];
-									// append the child to the aggregation
-									var name = oAggregation.name;
-									if (oAggregation.multiple) {
-										// 1..n AGGREGATION
-										if (!mSettings[name]) {
-											mSettings[name] = [];
-										}
-										if (typeof mSettings[name].path === "string") {
-											jQuery.sap.assert(!mSettings[name].template, "list bindings support only a single template object");
-											mSettings[name].template = oControl;
-										} else {
-											mSettings[name].push(oControl);
-										}
+									if (typeof mSettings[name].path === "string") {
+										jQuery.sap.assert(!mSettings[name].template, "list bindings support only a single template object");
+										mSettings[name].template = oControl;
 									} else {
-										// 1..1 AGGREGATION
-										jQuery.sap.assert(!mSettings[name], "multiple aggregates defined for aggregation with cardinality 0..1");
-										mSettings[name] = oControl;
+										mSettings[name].push(oControl);
 									}
+								} else {
+									// 1..1 AGGREGATION
+									jQuery.sap.assert(!mSettings[name], "multiple aggregates defined for aggregation with cardinality 0..1");
+									mSettings[name] = oControl;
 								}
-								return aControls;
-							});
-						} else if (localName(node) !== "FragmentDefinition" || node.namespaceURI !== "sap.ui.core") { // children of FragmentDefinitions are ok, they need no aggregation
-							throw new Error("Cannot add direct child without default aggregation defined for control " + oMetadata.getElementName());
+							}
+							return aControls;
+						});
+					} else if (localName(node) !== "FragmentDefinition" || node.namespaceURI !== "sap.ui.core") { // children of FragmentDefinitions are ok, they need no aggregation
+						throw new Error("Cannot add direct child without default aggregation defined for control " + oMetadata.getElementName());
+					}
+
+				} else if (childNode.nodeType === 3 /* TEXT_NODE */) {
+					if (jQuery.trim(childNode.textContent || childNode.text)) { // whitespace would be okay
+						throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: " + jQuery.trim(childNode.textContent || childNode.text));
+					}
+				} // other nodes types are silently ignored
+
+			}
+
+			// loop child nodes and handle all AGGREGATIONS
+			var oAggregation = oMetadata.getDefaultAggregation();
+			var mAggregations = oMetadata.getAllAggregations();
+			return handleChildren(node, oAggregation, mAggregations).then(function() {
+				// apply the settings to the control
+				var vNewControlInstance;
+
+				if (bEnrichFullIds && node.hasAttribute("id")) {
+						setId(oView, node);
+				} else if (!bEnrichFullIds) {
+
+					if (View.prototype.isPrototypeOf(oClass.prototype) && typeof oClass._sType === "string") {
+
+						var fnCreateViewInstance = function () {
+							return sap.ui.view(mSettings, undefined, oClass._sType);
+						};
+
+						// for views having a factory function defined we use the factory function!
+						if (oView.fnScopedRunWithOwner) {
+							// We need to use the already created scoped runWithOwner function from the outer view instance.
+							// This way, the nested views are receiving the correct Owner component, across asynchronous calls.
+							vNewControlInstance = oView.fnScopedRunWithOwner(fnCreateViewInstance);
+						} else {
+							vNewControlInstance = fnCreateViewInstance();
 						}
 
-					} else if (childNode.nodeType === 3 /* TEXT_NODE */) {
-						if (jQuery.trim(childNode.textContent || childNode.text)) { // whitespace would be okay
-							throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: " + jQuery.trim(childNode.textContent || childNode.text));
-						}
-					} // other nodes types are silently ignored
+					} else {
+						// call the control constructor with the according owner in scope
+						var fnCreateInstance = function() {
+							if (oView.fnScopedRunWithOwner) {
+								return oView.fnScopedRunWithOwner(function() {
+									return new oClass(mSettings);
+								});
+							} else {
+								return new oClass(mSettings);
+							}
+						};
 
+
+						if (oParseConfig && oParseConfig.fnRunWithPreprocessor) {
+							vNewControlInstance = oParseConfig.fnRunWithPreprocessor(fnCreateInstance);
+						} else {
+							vNewControlInstance = fnCreateInstance();
+						}
+
+					}
+
+					if (sStyleClasses && vNewControlInstance.addStyleClass) {
+						// Elements do not have a style class!
+						vNewControlInstance.addStyleClass(sStyleClasses);
+					}
 				}
 
-				// loop child nodes and handle all AGGREGATIONS
-				var oAggregation = oMetadata.getDefaultAggregation();
-				var mAggregations = oMetadata.getAllAggregations();
-				return handleChildren(node, oAggregation, mAggregations).then(function() {
-					// apply the settings to the control
-					var vNewControlInstance;
+				if (!vNewControlInstance) {
+					vNewControlInstance = [];
+				} else if (!Array.isArray(vNewControlInstance)) {
+					vNewControlInstance = [vNewControlInstance];
+				}
 
-					if (bEnrichFullIds && node.hasAttribute("id")) {
-							setId(oView, node);
-					} else if (!bEnrichFullIds) {
-
-						if (View.prototype.isPrototypeOf(oClass.prototype) && typeof oClass._sType === "string") {
-
-							var fnCreateViewInstance = function () {
-								return sap.ui.view(mSettings, undefined, oClass._sType);
-							};
-
-							// for views having a factory function defined we use the factory function!
-							if (oView.fnScopedRunWithOwner) {
-								// We need to use the already created scoped runWithOwner function from the outer view instance.
-								// This way, the nested views are receiving the correct Owner component, across asynchronous calls.
-								vNewControlInstance = oView.fnScopedRunWithOwner(fnCreateViewInstance);
-							} else {
-								vNewControlInstance = fnCreateViewInstance();
-							}
-
-						} else {
-							// call the control constructor with the according owner in scope
-							var fnCreateInstance = function() {
-								if (oView.fnScopedRunWithOwner) {
-									return oView.fnScopedRunWithOwner(function() {
-										return new oClass(mSettings);
-									});
-								} else {
-									return new oClass(mSettings);
-								}
-							};
-
-
-							if (oParseConfig && oParseConfig.fnRunWithPreprocessor) {
-								vNewControlInstance = oParseConfig.fnRunWithPreprocessor(fnCreateInstance);
-							} else {
-								vNewControlInstance = fnCreateInstance();
-							}
-
-						}
-
-						if (sStyleClasses && vNewControlInstance.addStyleClass) {
-							// Elements do not have a style class!
-							vNewControlInstance.addStyleClass(sStyleClasses);
+				//apply support info if needed
+				if (XMLTemplateProcessor._supportInfo && vNewControlInstance) {
+					for (var i = 0, iLength = vNewControlInstance.length; i < iLength; i++) {
+						var oInstance = vNewControlInstance[i];
+						if (oInstance && oInstance.getId()) {
+							//create a support info for id creation and add it to the support data
+							var iSupportIndex = XMLTemplateProcessor._supportInfo({context:node, env:{caller:"createRegularControls", nodeid: node.getAttribute("id"), controlid: oInstance.getId()}}),
+								sData = sSupportData ? sSupportData + "," : "";
+							sData += iSupportIndex;
+							//add the controls support data to the indexed map of support info control instance map
+							XMLTemplateProcessor._supportInfo.addSupportInfo(oInstance.getId(), sData);
 						}
 					}
+				}
 
-					if (!vNewControlInstance) {
-						vNewControlInstance = [];
-					} else if (!Array.isArray(vNewControlInstance)) {
-						vNewControlInstance = [vNewControlInstance];
-					}
-
-					//apply support info if needed
-					if (XMLTemplateProcessor._supportInfo && vNewControlInstance) {
-						for (var i = 0, iLength = vNewControlInstance.length; i < iLength; i++) {
-							var oInstance = vNewControlInstance[i];
-							if (oInstance && oInstance.getId()) {
-								//create a support info for id creation and add it to the support data
-								var iSupportIndex = XMLTemplateProcessor._supportInfo({context:node, env:{caller:"createRegularControls", nodeid: node.getAttribute("id"), controlid: oInstance.getId()}}),
-									sData = sSupportData ? sSupportData + "," : "";
-								sData += iSupportIndex;
-								//add the controls support data to the indexed map of support info control instance map
-								XMLTemplateProcessor._supportInfo.addSupportInfo(oInstance.getId(), sData);
+				if (bDesignMode) {
+					vNewControlInstance.forEach(function (oInstance) {
+						if (oMetadata.getCompositeAggregationName) {
+							var aNodes = node.getElementsByTagName(oInstance.getMetadata().getCompositeAggregationName());
+							for (var i = 0; i < aNodes.length; i++) {
+								node.removeChild(aNodes[0]);
 							}
 						}
-					}
+						oInstance._sapui_declarativeSourceInfo = {
+							xmlNode: node,
+							xmlRootNode: oView._sapui_declarativeSourceInfo.xmlRootNode,
+							fragmentName: oMetadata.getName() === 'sap.ui.core.Fragment' ? mSettings['fragmentName'] : null
+						};
+					});
+				}
 
-					if (bDesignMode) {
-						vNewControlInstance.forEach(function (oInstance) {
-							if (oMetadata.getCompositeAggregationName) {
-								var aNodes = node.getElementsByTagName(oInstance.getMetadata().getCompositeAggregationName());
-								for (var i = 0; i < aNodes.length; i++) {
-									node.removeChild(aNodes[0]);
-								}
-							}
-							oInstance._sapui_declarativeSourceInfo = {
-								xmlNode: node,
-								xmlRootNode: oView._sapui_declarativeSourceInfo.xmlRootNode,
-								fragmentName: oMetadata.getName() === 'sap.ui.core.Fragment' ? mSettings['fragmentName'] : null
-							};
-						});
-					}
-
-					return vNewControlInstance;
-				});
-
+				return vNewControlInstance;
 			});
+
 		}
 
 		function getId(oView, xmlNode, sId) {
