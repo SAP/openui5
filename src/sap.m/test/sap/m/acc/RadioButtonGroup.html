@@ -456,106 +456,12 @@
 
             oLyt.createRow(oButton, oButton2);
 
-            var oLabel = new sap.m.Label("Label1");
-            oLabel.setText("Set Selected Index");
-
-            var oText = new sap.m.Input("TF1");
-            oText.attachChange(handleTextChange);
-            oText.setWidth("5em");
-            oLabel.setLabelFor(oText);
-
-            var oLabel2 = new sap.m.Label("Label2");
-            oLabel2.setText("Selected Index");
-
-            var oText2 = new sap.m.Input("TF2");
-            oText2.setEditable(false);
-            oText2.setWidth("5em");
-            oText2.setValue(oRBGroupRBG5.getSelectedIndex());
-            oLabel2.setLabelFor(oText2);
-            oLyt.createRow(oLabel, oText, oLabel2, oText2);
-
-            oLabel = new sap.m.Label("Label3");
-            oLabel.setText("Set Selected ID");
-
-            oText = new sap.m.Input("TF3");
-            oText.attachChange(handleTextChangeID);
-            oText.setWidth("5em");
-            oLabel.setLabelFor(oText);
-
-            oLabel2 = new sap.m.Label("Label4");
-            oLabel2.setText("Selected ID");
-
-            var oText2 = new sap.m.Input("TF4");
-            oText2.setEditable(false);
-            oText2.setWidth("5em");
-            if (oRBGroupRBG5.getSelectedButton()) {
-                oText2.setValue(oRBGroupRBG5.getSelectedButton().getId());
-            } else {
-                oText2.setValue("");
-            }
-
-            oLabel2.setLabelFor(oText2);
-            oLyt.createRow(oLabel, oText, oLabel2, oText2);
-
-            oLabel = new sap.m.Label("Label5");
-            oLabel.setText("Text");
-
-            oText = new sap.m.Input("TF5");
-            oText.attachChange(handleTextChangeText);
-            oLabel.setLabelFor(oText);
-            oText.setWidth("5em");
-
-            var oCheckBox = new sap.m.CheckBox("CB1");
-            oCheckBox.setText("Enabled");
-            oCheckBox.setTooltip("Set Enabled for selected Radiobutton");
-            oCheckBox.setSelected(false);
-            oCheckBox.attachSelect(handleToggleEnabled);
-            oLyt.createRow(oLabel, oText, oCheckBox);
-
-            var oLabeloRBGroupRBG5 = new sap.m.Label({ text: "Test for interaction: ", labelFor: oRBGroupRBG5});
-
-            var flexBoxRBG5 = new sap.m.FlexBox("rbg5", {
-                alignItems: "Start",
-                direction: "Column",
-                items: [
-                    oLabeloRBGroupRBG5, oLyt
-                ]});
-
-            var oRBGroupRBG6 = new sap.m.RadioButtonGroup("RBG6", {
-                textDirection: sap.ui.core.TextDirection.RTL,
-                width: "400px",
-                columns: 2,
-                buttons: [
-                    new sap.m.RadioButton("RB6-1", {
-                        text: "Option 1, First Column"
-                    }),
-                    new sap.m.RadioButton("RB6-2", {
-                        text: "Option 2, Second Column"
-                    }),
-                    new sap.m.RadioButton("RB6-3", {
-                        text: "Option 3"
-                    }),
-                    new sap.m.RadioButton("RB6-4", {
-                        text: "Option 4"
-                    })
-                ]
-            });
-
-            var oLabeloRBGroupRBG6 = new sap.m.Label({ text: "Group with 2 colums, width 400px, RTL: ", labelFor: oRBGroupRBG6});
-
-            var flexBoxRBG6 = new sap.m.FlexBox("rbg6", {
-                alignItems: "Start",
-                direction: "Column",
-                items: [
-                    oLabeloRBGroupRBG6, oRBGroupRBG6
-                ]});
-
             var app = new sap.m.App("myApp", {initialPage:"rbg", autoFocus: false});
 
             var page = new sap.m.Page("rbg", {
                 title:"Test Page for sap.m.RadioButtonGroup",
                 content : [
-                    flexBoxRBG1,flexBoxRBG1a,flexBoxRBG2,flexBoxRBG3,flexBoxRBG3a,flexBoxRBG4,flexBoxRBG6,flexBoxRBG5
+                    flexBoxRBG1,flexBoxRBG1a,flexBoxRBG2,flexBoxRBG3,flexBoxRBG3a,flexBoxRBG4
                 ]});
 
             app.addPage(page);
