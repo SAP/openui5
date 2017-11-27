@@ -28,8 +28,13 @@ sap.ui.define([
 			return this.getProperty(oControl, "visible");
 		},
 
-		setStashed: function (oControl, oPropertyValue) {
-			this.setProperty(oControl, "stashed", oPropertyValue);
+		setStashed: function (oControl, bStashed) {
+			if (!bStashed) {
+				oControl.removeAttribute("stashed");
+			} else {
+				this.setProperty(oControl, "stashed", bStashed);
+			}
+			this.setVisible(oControl, !bStashed);
 		},
 
 		getStashed: function (oControl) {
