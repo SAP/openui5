@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global'],
 		if (CustomizingConfiguration) {
 
 			// do we have a view to check or do we need to check for configuration for a fragment?
-			if (View && oContainer instanceof View){
+			if (View && oContainer instanceof View) {
 				extensionConfig = CustomizingConfiguration.getViewExtension(oContainer.sViewName, sExtName, oContainer);
 				oView = oContainer;
 			} else if (Fragment && oContainer instanceof Fragment) {
