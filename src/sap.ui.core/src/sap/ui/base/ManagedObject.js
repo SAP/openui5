@@ -2736,28 +2736,31 @@ sap.ui.define([
 	 * relatively to the given path.
 	 * If a relative binding path is used, this will be applied whenever the parent context changes.
 	 * There is no difference between {@link sap.ui.core.Element#bindElement} and {@link sap.ui.base.ManagedObject#bindObject}.
-	 * @param {string|object} vPath the binding path or an object with more detailed binding options
-	 * @param {string} vPath.path the binding path
-	 * @param {object} [vPath.parameters] map of additional parameters for this binding
-	 * @param {string} [vPath.model] name of the model
-	 * @param {object} [vPath.events] map of event listeners for the binding events
-	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string in that case the properties described for vPath above are valid here).
-	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
+	 * @param {object} oBindingInfo the binding info object
+	 * @param {string} oBindingInfo.path the binding path
+	 * @param {object} [oBindingInfo.parameters] map of additional parameters for this binding
+	 * 		The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
+	 * @param {string} [oBindingInfo.model] name of the model
+	 * @param {boolean} [oBindingInfo.suspended] Whether the binding should be suspended
+	 * @param {object} [oBindingInfo.events] map of event listeners for the binding events
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
-	ManagedObject.prototype.bindObject = function(sPath, mParameters) {
-		var oBindingInfo = {},
-			sModelName,
+	ManagedObject.prototype.bindObject = function(oBindingInfo) {
+		var sModelName,
+			sPath,
 			iSeparatorPos;
-		// support object notation
-		if (typeof sPath == "object") {
-			oBindingInfo = sPath;
-			sPath = oBindingInfo.path;
+
+		// support legacy notation (sPath, mParameters)
+		if (typeof oBindingInfo == "string") {
+			sPath = oBindingInfo;
+			oBindingInfo = {
+				path: sPath,
+				parameters: arguments[1]
+			};
 		} else {
-			oBindingInfo.path = sPath;
-			oBindingInfo.parameters = mParameters;
+			sPath = oBindingInfo.path;
 		}
 
 		// if a model separator is found in the path, extract model name and path
@@ -2790,6 +2793,7 @@ sap.ui.define([
 	/**
 	 * Create object binding
 	 *
+	 * @param {object} oBindingInfo The bindingInfo object
 	 * @private
 	 */
 	ManagedObject.prototype._bindObject = function(oBindingInfo) {
@@ -2809,6 +2813,9 @@ sap.ui.define([
 		oContext = this.getBindingContext(sModelName);
 
 		oBinding = oModel.bindContext(oBindingInfo.path, oContext, oBindingInfo.parameters);
+		if (oBindingInfo.suspended) {
+			oBinding.suspend(true);
+		}
 		oBinding.attachChange(fChangeHandler);
 		oBindingInfo.binding = oBinding;
 		oBindingInfo.modelChangeHandler = fChangeHandler;
@@ -2928,6 +2935,8 @@ sap.ui.define([
 	 *            context for the corresponding model
 	 * @param {string} [oBindingInfo.model]
 	 *            Name of the model to bind against or <code>undefined</code> for the default model
+	 * @param {boolean} [oBindingInfo.suspended]
+	 * 			  Whether the binding should be suspended
 	 * @param {function} [oBindingInfo.formatter]
 	 *            Function to convert model data into a property value
 	 * @param {boolean} [oBindingInfo.useRawValues]
@@ -3340,6 +3349,7 @@ sap.ui.define([
 	 * @param {object} oBindingInfo the binding info
 	 * @param {string} oBindingInfo.path the binding path
 	 * @param {sap.ui.base.ManagedObject} oBindingInfo.template the template to clone for each item in the aggregation
+	 * @param {boolean} [oBindingInfo.suspended] Whether the binding should be suspended
 	 * @param {boolean} [oBindingInfo.templateShareable=true] option to enable that the template will be shared which means that it won't be destroyed or cloned automatically
 	 * @param {function} oBindingInfo.factory the factory function
 	 * @param {number} oBindingInfo.startIndex the first entry of the list to be created
@@ -3444,6 +3454,13 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Create list/tree binding
+	 *
+	 * @param {string} sName Name of the aggregation
+	 * @param {object} oBindingInfo The bindingInfo object
+	 * @private
+	 */
 	ManagedObject.prototype._bindAggregation = function(sName, oBindingInfo) {
 		var that = this,
 			oBinding,
