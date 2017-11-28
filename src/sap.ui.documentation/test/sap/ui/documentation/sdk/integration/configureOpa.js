@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/test/pageobjects/TopicMaster",
 	"sap/ui/documentation/sdk/test/pageobjects/ApiMaster",
 	"sap/ui/documentation/sdk/test/pageobjects/ControlsMaster",
-	"sap/ui/documentation/sdk/test/pageobjects/Demoapps",
+	"sap/ui/documentation/sdk/test/pageobjects/DemoApps",
 	"sap/ui/documentation/sdk/test/pageobjects/Tools",
 	"sap/ui/documentation/sdk/test/pageobjects/ApiDetail"
 ], function (Opa5, Arrangement) {
