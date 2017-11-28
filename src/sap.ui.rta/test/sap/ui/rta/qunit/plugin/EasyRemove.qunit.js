@@ -146,6 +146,15 @@ function(
 			assert.ok(oDeleteButton2, "after removing the 1st section, the 2nd Delete-Icon is still displayed");
 			assert.notOk(oDeleteButton2.getEnabled(), "but disabbled");
 		});
+
+		QUnit.test("when the overlay for the section gets deregistered", function(assert) {
+			var sControlStyleClass = "sapUiRtaPersDelete";
+			assert.ok(this.oSectionOverlay.hasStyleClass(sControlStyleClass), "initially the style class got set on the section");
+
+			this.oEasyRemovePlugin.deregisterElementOverlay(this.oSectionOverlay);
+			assert.ok(this.oSectionOverlay._oDeleteButton.bIsDestroyed, "after deregistering, the easy add button got destroyed");
+			assert.notOk(this.oSectionOverlay.hasStyleClass(sControlStyleClass), "and the style class got deleted");
+		});
 	});
 
 
