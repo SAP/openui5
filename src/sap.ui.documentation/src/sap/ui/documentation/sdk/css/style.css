@@ -1204,7 +1204,6 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumenta
 /* basic setup of the welcome page landing image, center vertically and horizontally above image */
 .sapUiDemokit .sapMText.welcomeImageTextHeadline {
 	font-size: 3rem;
-	font-family: Arial;
 	color: #fff;
 	text-shadow: 0 0 0.125rem #000;
 }
