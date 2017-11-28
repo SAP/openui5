@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/ElementOverlay'
+	'sap/ui/dt/ElementOverlay',
+	'sap/ui/fl/changeHandler/JsControlTreeModifier'
 ],
 function(
 	Plugin,
@@ -17,7 +18,8 @@ function(
 	ChangeRegistry,
 	OverlayRegistry,
 	OverlayUtil,
-	ElementOverlay
+	ElementOverlay,
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -293,22 +295,12 @@ function(
 		return !!this._getChangeHandler(sChangeType, oElement);
 	};
 
-	BasePlugin.prototype._getChangeHandler = function(sChangeType, oElement) {
-		var sControlType = oElement.getMetadata().getName();
-		return this._getChangeHandlerForControlType(sControlType, sChangeType);
-	};
-
-	BasePlugin.prototype._getChangeHandlerForControlType = function(sControlType, sChangeType) {
-		var oResult = ChangeRegistry.getInstance().getRegistryItems({
-			controlType : sControlType,
-			changeTypeName : sChangeType,
-			layer: this.getCommandFactory().getFlexSettings().layer
-		});
-		if (oResult && oResult[sControlType] && oResult[sControlType][sChangeType]) {
-			var oRegItem = oResult[sControlType][sChangeType];
-			return oRegItem.getChangeTypeMetadata().getChangeHandler();
+	BasePlugin.prototype._getChangeHandler = function(sChangeType, oElement, sControlType) {
+		if (!sControlType){
+			sControlType = oElement.getMetadata().getName();
 		}
-		return undefined;
+		var sLayer = this.getCommandFactory().getFlexSettings().layer;
+		return ChangeRegistry.getInstance().getChangeHandler(sChangeType, sControlType, oElement, JsControlTreeModifier, sLayer);
 	};
 
 	return BasePlugin;

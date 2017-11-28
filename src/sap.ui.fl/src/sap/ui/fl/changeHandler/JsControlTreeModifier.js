@@ -146,12 +146,14 @@ sap.ui.define([
 		},
 
 		/**
-		 * Adds an additional item of the aggregation or changes it in case it is not a multiple one
+		 * Returns the aggregation
 		 *
 		 * @param {sap.ui.core.Control}
-		 *          oParent - the control for which the changes should be fetched
+		 *          oParent The control which has the aggregation
 		 * @param {string}
-		 *          sName - aggregation name
+		 *          sName Aggregation name
+		 *
+		 * @return {sap.ui.core.Control[]} Returns the aggregation
 		 */
 		getAggregation: function (oParent, sName) {
 			var oAggregation = this.findAggregation(oParent, sName);
@@ -259,6 +261,15 @@ sap.ui.define([
 
 		addXML: function(oControl, sAggregationName, iIndex, oNewControl, oView, oComponent) {
 			this.insertAggregation(oControl, sAggregationName, oNewControl, iIndex);
+		},
+
+		getChangeHandlerModulePath: function(oControl) {
+			if (typeof oControl === "object" && typeof oControl.data === "function"
+					&& oControl.data("sap-ui-custom-settings") && oControl.data("sap-ui-custom-settings")["sap.ui.fl"]){
+				return oControl.data("sap-ui-custom-settings")["sap.ui.fl"].flexibility;
+			} else {
+				return undefined;
+			}
 		}
 	};
 

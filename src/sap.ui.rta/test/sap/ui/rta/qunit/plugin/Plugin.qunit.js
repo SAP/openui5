@@ -25,7 +25,8 @@ sap.ui.require([
 	'sap/ui/layout/ResponsiveFlowLayoutData',
 	'sap/uxap/ObjectPageSection',
 	'sap/ui/fl/Utils',
-	'sap/ui/dt/ElementDesignTimeMetadata'
+	'sap/ui/dt/ElementDesignTimeMetadata',
+	'sap/ui/fl/changeHandler/MoveControls'
 ],
 function(
 	DesignTime,
@@ -50,7 +51,8 @@ function(
 	ResponsiveFlowLayoutData,
 	ObjectPageSection,
 	FlexUtils,
-	ElementDesignTimeMetadata
+	ElementDesignTimeMetadata,
+	MoveControlsChangeHandler
 ) {
 	"use strict";
 	QUnit.start();
@@ -648,4 +650,53 @@ function(
 		assert.equal(sVarMgmtRefForStashedControl, "variant-test", "then for the stashed control with variant ChangeHandler variant management reference from parent is returned, as no overlay exists");
 	});
 
+	QUnit.module("Given this the Plugin is initialized", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			oChangeRegistry.registerControlsForChanges({
+				"VerticalLayout" : {
+					"moveControls": "default"
+				}
+			});
+
+			this.oButton = new Button();
+			this.oLayout = new VerticalLayout({
+				content : [
+					this.oButton
+				]
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oLayout]
+			});
+
+			this.oPlugin = new sap.ui.rta.plugin.Plugin({
+				commandFactory : new CommandFactory()
+			});
+			this.oRemovePlugin = new Remove();
+
+			sandbox.stub(this.oPlugin, "_isEditable").returns(true);
+			sandbox.stub(this.oRemovePlugin, "_isEditable").returns(true);
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				done();
+			}.bind(this));
+
+		},
+		afterEach : function() {
+			this.oLayout.destroy();
+			this.oDesignTime.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when '_getChangeHandler' is called with a control that has the default change handler registered for 'moveControls'", function(assert) {
+		assert.strictEqual(this.oPlugin._getChangeHandler("moveControls", this.oLayout), MoveControlsChangeHandler, "then the function returns the correct change handler");
+	});
 });

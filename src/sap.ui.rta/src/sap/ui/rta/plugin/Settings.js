@@ -6,7 +6,9 @@
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils'
-], function(Plugin, Utils) {
+], function(
+	Plugin,
+	Utils) {
 	"use strict";
 
 	/**
@@ -107,7 +109,8 @@ sap.ui.define([
 	 * Retrieves the available actions from the DesignTime Metadata and creates
 	 * the corresponding commands for them.
 	 * @param  {sap.ui.dt.ElementOverlay[]} aSelectedOverlays Target Overlays of the action
-	 * @param  {function} [fnHandler] handler function for the case of multiple settings actions
+	 * @param  {object} mPropertyBag Property bag
+	 * @param  {function} [mPropertyBag.fnHandler] Handler function for the case of multiple settings actions
 	 * @return {Promise} Returns promise resolving with the creation of the commands
 	 */
 	Settings.prototype.handler = function(aSelectedOverlays, mPropertyBag) {
@@ -135,12 +138,13 @@ sap.ui.define([
 						var sVariantManagementReference;
 						var vSelectorControl = mChange.selectorControl;
 						var sControlType;
+						var oControl;
 						if (vSelectorControl.controlType){
 							sControlType = vSelectorControl.controlType;
 						} else {
-							sControlType = vSelectorControl.getMetadata().getName();
+							oControl = vSelectorControl;
 						}
-						var oChangeHandler = this._getChangeHandlerForControlType(sControlType, mChangeSpecificData.changeType);
+						var oChangeHandler = this._getChangeHandler(mChangeSpecificData.changeType, oControl, sControlType);
 						if (aSelectedOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
 							sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
 						}
