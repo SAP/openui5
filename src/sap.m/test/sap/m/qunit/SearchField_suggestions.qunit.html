@@ -282,8 +282,10 @@
 		QUnit.test("Search value is bold in suggestions", function(assert) {
 
 			// set value and open suggestions
-			oSF.setValue("003");
 			oSF.suggest();
+			oSF.setValue("003");
+			oSF._oSuggest.update();
+
 			this.clock.tick(1000);
 
 			// check highlights
