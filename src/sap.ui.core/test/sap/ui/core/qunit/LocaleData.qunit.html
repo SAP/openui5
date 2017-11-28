@@ -572,6 +572,27 @@
 		assert.equal(oLocaleData.getDatePattern("medium"), "yyyy/MM/dd", "medium pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Gregorian), "M/d/yy", "short pattern for Gregorian calendar type should be fetched from locale data");
 	});
+
+	QUnit.test("Unit Display Name L10N", function(assert) {
+		var oLocale = new sap.ui.core.Locale("de_DE");
+		var oLocaleData = new sap.ui.core.LocaleData(oLocale);
+
+		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("duration-hour"), "Std.", "display name 'Std.' is correct");
+		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("mass-gram"), "Gramm", "display name 'Gramm' is correct");
+		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("light-lux"), "Lux", "display name 'Lux' is correct");
+		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("length-light-year"), "Lichtjahre", "display name 'Lichtjahre' is correct");
+		// unknown code
+		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("foobar"), "foobar", "display name 'foobar' is correct");
+
+		oLocale = new sap.ui.core.Locale("es_ES");
+		oLocaleData = new sap.ui.core.LocaleData(oLocale);
+
+		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("duration-hour"), "horas", "display name 'horas' is correct");
+		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("mass-gram"), "g", "display name 'g' is correct");
+		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("light-lux"), "lx", "display name 'lx' is correct");
+		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("length-light-year"), "a. l.", "display name 'a. l.' is correct");
+	});
+
 </script>
 
 </head>
