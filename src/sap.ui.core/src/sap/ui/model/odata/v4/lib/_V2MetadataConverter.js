@@ -253,6 +253,7 @@ sap.ui.define([
 		// the configurations for traverse
 		oAliasConfig = {
 			"Reference" : {
+				__xmlns : _MetadataConverter.sEdmxNamespace,
 				"Include" : {
 					__processor : _MetadataConverter.processAlias
 				}
