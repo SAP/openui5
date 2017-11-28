@@ -3,7 +3,7 @@
  */
 
 // Provides miscellaneous utility functions that might be useful for any script
-sap.ui.define(['jquery.sap.global'],
+sap.ui.define(['jquery.sap.global','jquery.sap.xml'],
 	function(jQuery) {
 	"use strict";
 
