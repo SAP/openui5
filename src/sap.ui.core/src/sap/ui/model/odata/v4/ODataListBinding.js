@@ -1286,12 +1286,14 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
-	 *   getContexts() fires a change event with this reason.
+	 *   getContexts() fires a change event with this reason. Change reason "change" is ignored
+	 *   as long as the binding is still empty.
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.reset = function (sChangeReason) {
-		var that = this;
+		var bEmpty = this.iCurrentEnd === 0,
+			that = this;
 
 		if (this.aContexts) {
 			this.aContexts.forEach(function (oContext) {
@@ -1308,7 +1310,7 @@ sap.ui.define([
 		// BUT: the binding's length can be one greater than this.iMaxLength due to index -1!
 		this.iMaxLength = Infinity;
 		this.bLengthFinal = false;
-		if (sChangeReason) {
+		if (sChangeReason && !(bEmpty && sChangeReason === ChangeReason.Change)) {
 			this.sChangeReason = sChangeReason;
 			this._fireRefresh({reason : sChangeReason});
 		}

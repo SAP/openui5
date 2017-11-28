@@ -457,7 +457,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reset with change reason", function (assert) {
+	QUnit.test("reset with change reason 'Sort'", function (assert) {
 		var done = assert.async(),
 			oBinding = this.oModel.bindList("/EMPLOYEES"),
 			that = this;
@@ -476,6 +476,36 @@ sap.ui.require([
 
 		// code under test
 		oBinding.reset(ChangeReason.Sort);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reset on initial binding with change reason 'Change'", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES");
+
+		this.mock(oBinding).expects("_fireRefresh").never();
+
+		// code under test
+		oBinding.reset(ChangeReason.Change);
+
+		assert.strictEqual(oBinding.sChangeReason, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reset not initial binding with change reason 'Change'", function (assert) {
+		var oBinding;
+
+		this.getCacheMock().expects("read")
+			.withExactArgs(0, 10, 0, "$auto", sinon.match.func)
+			.callsArg(4)
+			.returns(createSyncResult(10));
+		oBinding = this.oModel.bindList("/EMPLOYEES");
+		oBinding.getContexts(0, 10);
+		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.reset(ChangeReason.Change);
+
+		assert.strictEqual(oBinding.sChangeReason, ChangeReason.Change);
 	});
 
 	//*********************************************************************************************
