@@ -761,9 +761,57 @@
 	});
 
 	QUnit.test("DynamicPage Title not rendered", function (assert) {
-		assert.ok(!oUtil.exists(this.oDynamicPageNoTitle.getTitle()), "The DynamicPage Title has not successfully");
+		assert.ok(!oUtil.exists(this.oDynamicPageNoTitle.getTitle()), "The DynamicPage Title has not rendered");
+		assert.ok(this.oDynamicPageNoTitle.getHeader()._getCollapseButton().$().hasClass("sapUiHidden"), "Header collapse button is hidden");
 	});
 
+	QUnit.test("DynamicPage pin button does not toggle collapse arrow visibility", function (assert) {
+		var oPinButton = this.oDynamicPageNoTitle.getHeader()._getPinButton();
+
+		// act
+		oPinButton.firePress();
+
+		// assert
+		assert.ok(this.oDynamicPageNoTitle.getHeader()._getCollapseButton().$().hasClass("sapUiHidden"), "Header collapse button is hidden");
+	});
+
+	QUnit.module("DynamicPage - Rendering - Invisible Title", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			this.oDynamicPage.getTitle().setVisible(false);
+
+			this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage Invisible Title", function (assert) {
+		assert.ok(this.oDynamicPage.getHeader()._getCollapseButton().$().hasClass("sapUiHidden"), "Header collapse button is hidden");
+	});
+
+	QUnit.module("DynamicPage - Rendering - Invisible Header", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			this.oDynamicPage.getHeader().setVisible(false);
+
+			this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage Invisible Header", function (assert) {
+		assert.ok(this.oDynamicPage.getTitle()._getExpandButton().$().hasClass("sapUiHidden"), "Title expand button is hidden");
+	});
 
 	QUnit.module("DynamicPage - Rendering - Header State Preserved On Scroll", {
 		beforeEach: function () {
@@ -803,6 +851,7 @@
 
 	QUnit.test("DynamicPage Header not rendered", function (assert) {
 		assert.ok(!oUtil.exists(this.oDynamicPageNoHeader.getHeader()), "The DynamicPage Header does not exist.");
+		assert.ok(this.oDynamicPageNoHeader.getTitle()._getExpandButton().$().hasClass("sapUiHidden"), "Title expand button is hidden");
 	});
 
 	QUnit.module("DynamicPage - Rendering - Empty Header", {
