@@ -52,7 +52,9 @@ sap.ui.require([
 		this.oModel.attachMetadataLoaded(function () {
 			attachEventHandler(this.oTable, 1, function () {
 				doTest(this.oTable);
-				done();
+				if (done) {
+					done();
+				}
 			}, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 		}, this);
