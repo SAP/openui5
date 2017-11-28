@@ -85,10 +85,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	};
 
 	var oXMLViewLowerCaseControl = {
-		id: "XMLViewLowerCaseControl",
+		id: "xmlViewLowerCaseControl",
 		audiences: ["Control","Application"],
 		categories: ["Performance"],
 		enabled: true,
+		minversion: "-",
 		title: "Control tag in XML view starts with lower case",
 		description: "Control tags with lower case cannot be loaded in Linux-based systems",
 		resolution: "Start the Control tag with upper case",
