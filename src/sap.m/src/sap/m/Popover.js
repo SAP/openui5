@@ -1563,7 +1563,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				bExceedHorizontal = (oPosParams._fDocumentWidth - oPosParams._fMarginRight - oPosParams._fMarginLeft) < oPosParams._fWidth,
 				bExceedVertical = (oPosParams._fDocumentHeight - oPosParams._fMarginTop - oPosParams._fMarginBottom) < oPosParams._fHeight,
 				bOverLeft = oPosParams._fOffset.left < oPosParams._fMarginLeft,
-				bOverRight = iPosToRightBorder < oPosParams._fMarginRight,
+				//Include Scrollbar's width in these calculations
+				fScrollbarSize = (this.getVerticalScrolling() ? jQuery.sap.scrollbarSize().width : 0),
+				bOverRight = iPosToRightBorder < oPosParams._fMarginRight + fScrollbarSize,
 				bOverTop = oPosParams._fOffset.top < oPosParams._fMarginTop,
 				bOverBottom = iPosToBottomBorder < oPosParams._fMarginBottom,
 				bRtl = sap.ui.getCore().getConfiguration().getRTL();
