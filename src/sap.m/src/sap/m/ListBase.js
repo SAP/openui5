@@ -1783,6 +1783,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 
 		if (this.isActive()) {
 			var iTabIndex = (sKeyboardMode == ListKeyboardMode.Edit) ? -1 : 0;
+			this.$("nodata").prop("tabIndex", ~iTabIndex);
 			this.$("listUl").prop("tabIndex", iTabIndex);
 			this.$("after").prop("tabIndex", iTabIndex);
 			this._setItemNavigationTabIndex(iTabIndex);
@@ -1996,10 +1997,15 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			this._startItemNavigation();
 		}
 
+		var oTarget = oEvent.target;
+		if (oTarget.id == this.getId("nodata")) {
+			this.updateInvisibleText(this.getNoDataText(), oTarget);
+		}
+
 		// handle only for backward navigation
 		if (oEvent.isMarked() || !this._oItemNavigation ||
 			this.getKeyboardMode() == ListKeyboardMode.Edit ||
-			oEvent.target.id != this.getId("after")) {
+			oTarget.id != this.getId("after")) {
 			return;
 		}
 

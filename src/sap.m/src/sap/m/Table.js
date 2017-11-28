@@ -607,8 +607,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 			this._setHeaderAnnouncement();
 		} else if (oTarget.id === this.getId("tblFooter")) {
 			this._setFooterAnnouncement();
-		} else if (oTarget.id == this.getId("nodata")) {
-			this.updateInvisibleText(this.getNoDataText(), oTarget);
 		}
 
 		if (this._bThemeChanged) {
