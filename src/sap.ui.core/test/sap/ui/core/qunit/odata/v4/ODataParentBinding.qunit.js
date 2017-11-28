@@ -1599,7 +1599,7 @@ sap.ui.require([
 					};
 
 				this.mock(oBinding.oModel).expects("getDependentBindings")
-					.withExactArgs(sinon.match.same(oBinding), true)
+					.withExactArgs(sinon.match.same(oBinding))
 					.returns([oDependent0, oDependent1]);
 				this.mock(oDependent0).expects("checkUpdate").withExactArgs();
 				this.mock(oDependent1).expects("checkUpdate").withExactArgs();
@@ -1646,7 +1646,7 @@ sap.ui.require([
 			};
 
 		this.mock(oBinding.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding), true)
+			.withExactArgs(sinon.match.same(oBinding))
 			.returns([oDependent0, oDependent1]);
 		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
 		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
@@ -1717,7 +1717,7 @@ sap.ui.require([
 		this.mock(oBinding.oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(_SyncPromise.resolve(oPathPromise));
 		this.mock(oBinding.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding), true)
+			.withExactArgs(sinon.match.same(oBinding))
 			.returns([oDependent0, oDependent1]);
 		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
 		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
@@ -1761,26 +1761,43 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createInCache: with cache", function (assert) {
-		var oCache = {
-				create : function () {}
-			},
-			oBinding = new ODataParentBinding({
-				oCachePromise : _SyncPromise.resolve(oCache)
-			}),
-			oResult = {},
-			oCreatePromise = _SyncPromise.resolve(oResult),
-			fnCancel = function () {},
-			oInitialData = {};
+	[false, true].forEach(function (bCancel) {
+		QUnit.test("createInCache: with cache, canceled: " + bCancel, function (assert) {
+			var sCanonicalPath = "/TEAMS('1')/EMPLOYEES",
+				oCache = {
+					$canonicalPath : sCanonicalPath,
+					create : function () {}
+				},
+				oCreateError = new Error("canceled"),
+				oBinding = new ODataParentBinding({
+					mCacheByContext : {},
+					oCachePromise : _SyncPromise.resolve(oCache)
+				}),
+				oCreateResult = {},
+				oCreatePromise = bCancel ? Promise.reject(oCreateError) : Promise.resolve(
+					oCreateResult),
+				fnCancel = function () {},
+				oInitialData = {};
 
-		this.mock(oCache).expects("create")
-			.withExactArgs("updateGroupId", "EMPLOYEES", "", sinon.match.same(oInitialData),
-				sinon.match.same(fnCancel), /*fnErrorCallback*/sinon.match.func)
-			.returns(oCreatePromise);
+			oBinding.mCacheByContext[sCanonicalPath] = oCache;
 
-		// code under test
-		assert.strictEqual(oBinding.createInCache("updateGroupId", "EMPLOYEES", "", oInitialData,
-			fnCancel).getResult(), oResult);
+			this.mock(oCache).expects("create")
+				.withExactArgs("updateGroupId", "EMPLOYEES", "", sinon.match.same(oInitialData),
+					sinon.match.same(fnCancel), /*fnErrorCallback*/sinon.match.func)
+				.returns(oCreatePromise);
+
+			// code under test
+			return oBinding.createInCache("updateGroupId", "EMPLOYEES", "", oInitialData, fnCancel)
+				.then(function (oResult) {
+					assert.strictEqual(bCancel, false);
+					assert.strictEqual(oResult, oCreateResult);
+					assert.notOk(sCanonicalPath in oBinding.mCacheByContext);
+				}, function (oError) {
+					assert.strictEqual(bCancel, true);
+					assert.strictEqual(oError, oCreateError);
+					assert.strictEqual(oBinding.mCacheByContext[sCanonicalPath], oCache);
+				});
+		});
 	});
 
 	//*********************************************************************************************
