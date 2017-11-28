@@ -1301,8 +1301,14 @@ sap.ui.define([
 					aResult.push(" since " + sSince);
 				}
 				if (sDescription) {
-					// Evaluate links and code blocks in the deprecation description
-					aResult.push(". " + this._preProcessLinksInTextBlock(sDescription));
+					// Evaluate code blocks - Handle <code>...</code> pattern
+					sDescription = sDescription.replace(/<code>(\S+)<\/code>/gi, function (sMatch, sCodeEntity) {
+							return ['<em>', sCodeEntity, '</em>'].join("");
+						}
+					);
+
+					// Evaluate links in the deprecation description
+					aResult.push(". " + this._preProcessLinksInTextBlock(sDescription, true));
 				}
 
 				return aResult.join("");
@@ -1630,109 +1636,115 @@ sap.ui.define([
 			 * @returns {string} processed text block
 			 * @private
 			 */
-			_preProcessLinksInTextBlock: function (sText) {
+			_preProcessLinksInTextBlock: function (sText, bSkipParagraphs) {
 				var topicsData = this.getModel('topics').oData,
 					topicName = topicsData.name || "",
-					topicMethods = topicsData.methods || [];
+					topicMethods = topicsData.methods || [],
+					oOptions = {
+						linkFormatter: function (target, text) {
+							var iHashIndex, // indexOf('#')
+								iHashDotIndex, // indexOf('#.')
+								iHashEventIndex, // indexOf('#event:')
+								aMatched,
+								sRoute = "api",
+								sTargetBase,
+								sScrollHandlerClass = "scrollToMethod",
+								sEntityName,
+								sLink;
 
-				return JSDocUtil.formatTextBlock(sText, {
-					linkFormatter: function (target, text) {
-						var iHashIndex, // indexOf('#')
-							iHashDotIndex, // indexOf('#.')
-							iHashEventIndex, // indexOf('#event:')
-							aMatched,
-							sRoute = "api",
-							sTargetBase,
-							sScrollHandlerClass = "scrollToMethod",
-							sEntityName,
-							sLink;
+							text = text || target; // keep the full target in the fallback text
 
-						text = text || target; // keep the full target in the fallback text
+							// If the link has a protocol, do not modify, but open in a new window
+							if (target.match("://")) {
+								return '<a target="_blank" href="' + target + '">' + text + '</a>';
+							}
 
-						// If the link has a protocol, do not modify, but open in a new window
-						if (target.match("://")) {
-							return '<a target="_blank" href="' + target + '">' + text + '</a>';
-						}
+							target = target.trim().replace(/\.prototype\./g, "#");
 
-						target = target.trim().replace(/\.prototype\./g, "#");
+							iHashIndex = target.indexOf('#');
+							iHashDotIndex = target.indexOf('#.');
+							iHashEventIndex = target.indexOf('#event:');
 
-						iHashIndex = target.indexOf('#');
-						iHashDotIndex = target.indexOf('#.');
-						iHashEventIndex = target.indexOf('#event:');
+							if (iHashIndex === -1) {
+								var lastDotIndex = target.lastIndexOf('.'),
+									entityName = sEntityName = target.substring(lastDotIndex + 1),
+									targetMethod = topicMethods.filter(function (method) {
+										if (method.name === entityName) {
+											return method;
+										}
+									})[0];
 
-						if (iHashIndex === -1) {
-							var lastDotIndex = target.lastIndexOf('.'),
-								entityName = sEntityName = target.substring(lastDotIndex + 1),
-								targetMethod = topicMethods.filter(function (method) {
-									if (method.name === entityName) {
-										return method;
-									}
-								})[0];
-
-							if (targetMethod) {
-								if (targetMethod.static === true) {
-									sEntityName = target;
-									// We need to handle links to static methods in a different way if static method is
-									// a child of the current or a different entity
-									sTargetBase = target.replace("." + entityName, "");
-									if (sTargetBase.length > 0 && sTargetBase !== topicName) {
-										// Different entity
-										target = sTargetBase + "/methods/" + target;
-										// We will navigate to a different entity so no scroll is needed
-										sScrollHandlerClass = false;
+								if (targetMethod) {
+									if (targetMethod.static === true) {
+										sEntityName = target;
+										// We need to handle links to static methods in a different way if static method is
+										// a child of the current or a different entity
+										sTargetBase = target.replace("." + entityName, "");
+										if (sTargetBase.length > 0 && sTargetBase !== topicName) {
+											// Different entity
+											target = sTargetBase + "/methods/" + target;
+											// We will navigate to a different entity so no scroll is needed
+											sScrollHandlerClass = false;
+										} else {
+											// Current entity
+											target = topicName + '/methods/' + target;
+										}
 									} else {
-										// Current entity
-										target = topicName + '/methods/' + target;
+										target = topicName + '/methods/' + entityName;
 									}
 								} else {
-									target = topicName + '/methods/' + entityName;
-								}
-							} else {
-								// Handle links to documentation
-								aMatched = target.match(/^topic:(\w{32})$/);
-								if (aMatched) {
-									target = sEntityName = aMatched[1];
-									sRoute = "topic";
+									// Handle links to documentation
+									aMatched = target.match(/^topic:(\w{32})$/);
+									if (aMatched) {
+										target = sEntityName = aMatched[1];
+										sRoute = "topic";
+									}
 								}
 							}
+
+							if (iHashDotIndex === 0) {
+								// clear '#.' from target string
+								target = target.slice(2);
+
+								target = topicName + '/methods/' + topicName + '.' + target;
+							} else if (iHashEventIndex === 0) {
+								// clear '#event:' from target string
+								target = target.slice('#event:'.length);
+								sEntityName = target;
+
+								target = topicName + '/events/' + target;
+								sScrollHandlerClass = "scrollToEvent";
+							} else if (iHashIndex === 0) {
+								// clear '#' from target string
+								target = target.slice(1);
+								sEntityName = target;
+
+								target = topicName + '/methods/' + target;
+							}
+
+							if (iHashIndex > 0) {
+								target = target.replace('#', '/methods/');
+								sEntityName = target;
+							}
+
+							sLink = '<a class="jsdoclink';
+							if (sScrollHandlerClass) {
+								sLink += ' ' + sScrollHandlerClass;
+							}
+							sLink += '" target="_self" href="#/' + sRoute + '/' + target +
+								'" data-sap-ui-target="' + sEntityName + '">' + text + '</a>';
+
+							return sLink;
+
 						}
+					};
 
-						if (iHashDotIndex === 0) {
-							// clear '#.' from target string
-							target = target.slice(2);
+				if (bSkipParagraphs) {
+					oOptions.beforeParagraph = "";
+					oOptions.afterParagraph = "";
+				}
 
-							target = topicName + '/methods/' + topicName + '.' + target;
-						} else if (iHashEventIndex === 0) {
-							// clear '#event:' from target string
-							target = target.slice('#event:'.length);
-							sEntityName = target;
-
-							target = topicName + '/events/' + target;
-							sScrollHandlerClass = "scrollToEvent";
-						} else if (iHashIndex === 0) {
-							// clear '#' from target string
-							target = target.slice(1);
-							sEntityName = target;
-
-							target = topicName + '/methods/' + target;
-						}
-
-						if (iHashIndex > 0) {
-							target = target.replace('#', '/methods/');
-							sEntityName = target;
-						}
-
-						sLink = '<a class="jsdoclink';
-						if (sScrollHandlerClass) {
-							sLink += ' ' + sScrollHandlerClass;
-						}
-						sLink += '" target="_self" href="#/' + sRoute + '/' + target +
-							'" data-sap-ui-target="' + sEntityName + '">' + text + '</a>';
-
-						return sLink;
-
-					}
-				});
+				return JSDocUtil.formatTextBlock(sText, oOptions);
 			},
 
 			/**
