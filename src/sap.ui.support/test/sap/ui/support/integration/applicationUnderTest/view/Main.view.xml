@@ -1,0 +1,14 @@
+<mvc:View controllerName="appUnderTest.view.Main"
+		  xmlns="sap.m"
+		  xmlns:f="sap.ui.layout.form"
+		  xmlns:mvc="sap.ui.core.mvc">
+	<App id="myApp">
+		<Page id="mainPage">
+			<headerContent>
+				<Button id="firstButton" text="Open first dialog (with no errors)" press="onFirstDialogPress"/>
+				<Button id="secondButton" text="Open second dialog (with errors)" press="onSecondDialogPress"/>
+			</headerContent>
+			<Input id="testInput" placeholder="Test"></Input>
+		</Page>
+	</App>
+</mvc:View>
