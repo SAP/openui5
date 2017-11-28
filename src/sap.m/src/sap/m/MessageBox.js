@@ -313,9 +313,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 						var oShowLink = new Link({
 							text: that._rb.getText("MSGBOX_LINK_TITLE"),
 							press: function () {
+								oDialog.addAriaLabelledBy(oFT);
+
 								oFT.setVisible(true);
-								this.setVisible(false);
-								oDialog._setInitialFocus();
+								oShowLink.setVisible(false);
+
+								aButtons[0].focus();
+
 							}
 						});
 

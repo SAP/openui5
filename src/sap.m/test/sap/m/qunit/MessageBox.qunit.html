@@ -490,6 +490,32 @@
 			assert.ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
 		});
+
+		QUnit.test("details announcement", function (assert) {
+			var sDetails = "Lorem ipsum dolor sit amet.";
+			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
+				id: "messagedialog1",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: sDetails,
+				styleClass: sClassName,
+				initialFocus: "OK"
+			});
+
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messagedialog1"),
+				oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
+
+			assert.strictEqual(oMessageBox.getAriaLabelledBy().length, 2, "MessageBox has 2 ARIA labels before 'Show more' press");
+
+			oShowMoreLink.firePress();
+			sap.ui.getCore().applyChanges();
+
+			var oDialogAriaLabelDetails = sap.ui.getCore().byId(oMessageBox.getAriaLabelledBy()[2]).getHtmlText();
+			assert.strictEqual(oMessageBox.getAriaLabelledBy().length, 3, "MessageBox has 3 ARIA labels after 'Show more' press");
+			assert.strictEqual(oDialogAriaLabelDetails, sDetails, "MessageBox details are set as ARIA label for the dialog");
+		});
+
 		jQuery.sap.require("sap.ui.layout.VerticalLayout");
 
 		QUnit.test("add details within control content", function (assert) {
