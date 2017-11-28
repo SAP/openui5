@@ -2201,7 +2201,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._shouldSnapHeaderOnScroll = function (iScrollTop) {
-		return (iScrollTop > 0) && (iScrollTop >= this._getSnapPosition());
+		return (iScrollTop > 0) && (iScrollTop >= this._getSnapPosition()) && !this._shouldPreserveHeaderInTitleArea();
 	};
 
 	/**
@@ -2231,10 +2231,6 @@ sap.ui.define([
 		}
 		if (bShouldStick && !bShouldPreserveHeaderInTitleArea) {
 			iPageHeight -= (this.iAnchorBarHeight + this.iHeaderTitleHeightStickied);
-		} else {
-			if (bShouldStick && bShouldPreserveHeaderInTitleArea) {
-				iPageHeight = iPageHeight - (this._$stickyAnchorBar.height() + this.iHeaderTitleHeight + this.iStickyHeaderContentHeight);
-			}
 		}
 
 		if (this._bHeaderInTitleArea && !bShouldPreserveHeaderInTitleArea) {
