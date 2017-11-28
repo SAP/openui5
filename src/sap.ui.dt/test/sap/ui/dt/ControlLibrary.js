@@ -22,12 +22,27 @@ window.document.title = "Designtime Test for " + sTestLibrary;
 var mBundles = {};
 var oDTElementModel;
 var	mDTInterfaces = {};
+var oPool;
+function loadVirtualDTControls(oLibrary) {
+	return new Promise(function(fnResolve) {
+		if (oLibrary.designtime) {
+			sap.ui.require([oLibrary.designtime], function(oDTLib){
+				//process the library file and resolve
+				fnResolve(oDTLib);
+			});
+		} else {
+			fnResolve(null);
+		}
+	});
+}
+
 sap.ui.getCore().attachInit(function() {
-	sap.ui.require(["sap/ui/model/json/JSONModel","sap/ui/model/resource/ResourceModel"], function (JSONModel, ResourceModel) {
+	sap.ui.require(["sap/ui/model/json/JSONModel","sap/ui/model/resource/ResourceModel", "sap/ui/core/IconPool"], function (JSONModel, ResourceModel, IconPool) {
+		oPool = IconPool;
 		sap.ui.getCore().loadLibraries([sTestLibrary, "sap.m", "sap.ui.codeeditor"]).then(
 			function() {
 				var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary],
-				aElements = [].concat(oLibrary.controls.concat(oLibrary.elements));
+					aElements = [].concat(oLibrary.controls.concat(oLibrary.elements));
 				oDTElementModel = new JSONModel();
 				oDTElementModel.iSizeLimit = 10000;
 				createUI();
@@ -43,6 +58,7 @@ sap.ui.getCore().attachInit(function() {
 				} catch (e) {
 					/*eslint-disable no-empty*/
 				}
+
 				sap.ui.require(aElements.map(function(s) {
 					return jQuery.sap.getResourceName(s,"");
 				}), function() {
@@ -62,9 +78,12 @@ sap.ui.getCore().attachInit(function() {
 							}
 						}
 						aControlMetadata.push(oMetadata);
-
 					}
 					Promise.all(aDesigntimePromises).then(function (aDTElements) {
+						if (oLibrary.designtime) {
+							aElements.push(oLibrary.designtime);
+						}
+
 						var oFlex = {};
 						if (oLibrary.extensions && oLibrary.extensions.flChangeHandlers) {
 							oFlex = oLibrary.extensions.flChangeHandlers;
@@ -79,23 +98,47 @@ sap.ui.getCore().attachInit(function() {
 						}
 						sap.ui.require(aFlexHandlers,function() {
 							var aArgs = arguments;
-							aFlexHandlers.forEach(function(s, i) {
+							for (var i = 0; i < aFlexHandlers.length; i++) {
 								oFlex[aFlexName[i]] = aArgs[i];
 								oFlex[aFlexName[i]]._filename = aFlexHandlers[i];
-							});
-							aDTElements.forEach(function(oDTElement, i) {
+							}
+							for (var i = 0; i < aDTElements.length; i++) {
+								var oDTElement = aDTElements[i];
 								oDTElement._members = aControlMetadata[i].getJSONKeys();
 								oDTElement._metadata = aControlMetadata[i];
 								oDTElement._name = aControlMetadata[i].getName();
 								oDTElement._flexhandler = oFlex[aControlMetadata[i].getName()];
-
-							});
+							}
 							var oData = {
 								elements: aDTElements.filter(function(oElement) {
 									return true; // initially this was done for not abstract classes, but there are change handlers for those as well.
 								})
 							};
-							oDTElementModel.setData(oData);
+
+							//handle virtual dt controls here
+							loadVirtualDTControls(oLibrary).then(function (oDTLibrary) {
+								var aDTElements = oDTLibrary.controls || [],
+									oVDTElement;
+								function processBase(oBaseElement) {
+									var oMetadata = oBaseElement.getMetadata();
+									oBaseElement.getMetadata().loadDesignTime().then(function(oBaseDT){
+										var oDTElement = jQuery.extend({}, oBaseDT, oVDTElement);
+										oDTElement._members = oMetadata.getJSONKeys();
+										oDTElement._metadata = oMetadata;
+										oDTElement._name = oVDTElement.className;
+										oDTElement._flexhandler = oFlex[oMetadata.getName()];
+										oData.elements.push(oDTElement);
+										oDTElementModel.checkUpdate(true);
+									});
+								}
+								for (var i = 0; i < aDTElements.length; i++) {
+									oVDTElement = aDTElements[i];
+									if (oVDTElement.is) {
+										sap.ui.require([oVDTElement.is], processBase);
+									}
+								}
+								oDTElementModel.setData(oData);
+							});
 						});
 					});
 				});
@@ -148,14 +191,22 @@ function createUI() {
 			} else {
 				oIcon.addStyleClass("invalid");
 			}
+			var oControlIcon;
+			if (oBindingContext.getProperty("palette/icons/svg")) {
+				oControlIcon = new sap.m.Image({src: {path:"palette/icons/svg", formatter: function(sIcon) {
+					if (sIcon) {
+						return jQuery.sap.getResourcePath(sIcon,"");
+					}
+					return "";
+				}}});
+			} else if (oBindingContext.getProperty("palette/icons/font/name")) {
+				oControlIcon = oPool.createControlByURI(oPool.getIconInfo(oBindingContext.getProperty("palette/icons/font/name")).uri);
+			} else {
+				oControlIcon = new sap.m.Image();
+			}
 			return new sap.m.ColumnListItem({
 				cells: [
-					new sap.m.Image({src: {path:"palette/icons/svg", formatter: function(sIcon) {
-						if (sIcon) {
-							return jQuery.sap.getResourcePath(sIcon,"");
-						}
-						return "";
-					}}}),
+					oControlIcon,
 					new sap.m.Text({text: {path:"_name"}, wrapping: false, tooltip: {path:"_name"}}),
 					oIcon
 
@@ -174,7 +225,6 @@ function createUI() {
 				dataType: "text",
 				complete: function(oData) {
 					oCodeEditor.setValue(oData.responseText);
-					oCodeEditor.prettyPrint();
 					oCodeEditor.setVisible(true);
 					oCodeEditor.rerender();
 				}
@@ -224,8 +274,8 @@ function createUI() {
 			}
 		},
 		getContent : function() {
-			var oContext = this.getBindingContext();
-			var oContextData = oContext.getProperty("");
+			var oContext = this.getBindingContext(),
+				oContextData = oContext.getProperty("");
 			this.sValid = "unchecked";
 			var sPath = this.getPath(),
 				vValue = this.getValue(),
@@ -244,14 +294,15 @@ function createUI() {
 					if (mPathChecks[sCheckPath].validate) {
 						this.sValid = mPathChecks[sCheckPath].validate(vValue, sPath, oContextData);
 					}
+					var sDisplayValue = vValue;
 					if (mPathChecks[sCheckPath].value) {
-						vValue = mPathChecks[sCheckPath].value(vValue, sPath, oContextData);
+						sDisplayValue = mPathChecks[sCheckPath].value(vValue, sPath, oContextData);
 					}
 					if (mPathChecks[sCheckPath].display) {
 						var oControl = mPathChecks[sCheckPath].display(vValue, sPath, oContextData);
 						return oControl;
 					}
-					return new sap.m.Text({ text: vValue});
+					return new sap.m.Text({ text: sDisplayValue});
 				}
 			}
 			return new sap.m.Text({ text: vValue});
@@ -337,6 +388,14 @@ var mPathChecks = {
 			return sValid;
 		}
 	},
+	"className" : {
+		validate: function(vValue) {
+			return typeof vValue === "string" && vValue.indexOf(".designtime.") > -1 ? "valid" : "invalid";
+		},
+		value: function(vValue) {
+			return getText(vValue);
+		}
+	},
 	"name/singular" : {
 		validate: function(vValue) {
 			return validateText(vValue);
@@ -351,6 +410,34 @@ var mPathChecks = {
 		},
 		value: function(vValue) {
 			return getText(vValue);
+		}
+	},
+	"displayName/singular" : {
+		validate: function(vValue) {
+			return validateText(vValue);
+		},
+		value: function(vValue) {
+			return getText(vValue);
+		}
+	},
+	"displayName/plural" : {
+		validate: function(vValue) {
+			return validateText(vValue);
+		},
+		value: function(vValue) {
+			return getText(vValue);
+		}
+	},
+	"is" : {
+		validate: function(vValue) {
+			try {
+				return jQuery.sap.getObject(vValue.replace(/\//gi,".")).getMetadata()._oDesignTime ? "valid" : "invalid";
+			} catch (ex) {
+				return "invalid";
+			}
+		},
+		value: function(vValue) {
+			vValue;
 		}
 	},
 	"palette/group" : {
@@ -368,6 +455,42 @@ var mPathChecks = {
 		display: function(vValue) {
 			if (vValue) {
 				return new sap.m.Image({src: jQuery.sap.getResourcePath(vValue,"")});
+			}
+			return null;
+		}
+	},
+	"palette/icons/font/char" : {
+		mandatory: false,
+		validate: function(vValue, sPath, oContextData) {
+			try {
+				var sName = oContextData.palette.icons.font.name,
+					oInfo = oPool.getIconInfo(sName);
+				return typeof vValue === "number" && vValue === parseInt(oInfo.content.charCodeAt(0).toString(16), 16) ? "valid" : "invalid (char needs to match name)";
+			} catch (ex) {
+				return "invalid";
+			}
+		},
+		display: function(vValue) {
+			return new sap.m.Text({text: "0x" + vValue.toString(16)});
+		},
+		value: function(vValue) {
+			return vValue.toString(16);
+		}
+	},
+	"palette/icons/font/name" : {
+		mandatory: false,
+		validate: function(vValue, sPath, oContextData) {
+			try {
+				var iChar = oContextData.palette.icons.font.char,
+					oInfo = oPool.getIconInfo(vValue);
+				return typeof oPool.getIconInfo(vValue) === "object" && iChar === parseInt(oInfo.content.charCodeAt(0).toString(16), 16) ? "valid" : "invalid (char needs to match name)";
+			} catch (ex) {
+				return "invalid";
+			}
+		},
+		display: function(vValue) {
+			if (oPool.getIconInfo(vValue).uri) {
+				return oPool.createControlByURI(oPool.getIconInfo(vValue).uri);
 			}
 			return null;
 		}
