@@ -942,21 +942,25 @@ sap.ui.define([
 			sCurrentSectionId = oObjectPageLayout.getSelectedSection(),
 			aSections = oObjectPageLayout.getSections(),
 			aSubSections = [this.getDomRef()],
-			aCurrentSubSections;
+			aCurrentSubSections = [];
 
 		if (bUseIconTabBar) {
 			aCurrentSubSections = sap.ui.getCore().byId(sCurrentSectionId).getSubSections().map(function (oSubSection) {
 				return oSubSection.$().attr("tabindex", -1)[0];
 			});
+
+			aSubSections = aSubSections.concat(aCurrentSubSections);
 		} else {
 			//this is needed in order to be sure that next F6 group will be found in sub sections
-			aSections.forEach(function (oSection) {
+			aSections.forEach(function (oSection) { // for each section
+				// get the subsections which have tabindex=-1
 				aCurrentSubSections = oSection.getSubSections().map(function (oSubSection) {
 					return oSubSection.$().attr("tabindex", -1)[0];
 				});
+				// accumulate the result
+				aSubSections = aSubSections.concat(aCurrentSubSections);
 			});
 		}
-		aSubSections = aSubSections.concat(aCurrentSubSections);
 		oSettings.scope = aSubSections;
 
 		oEvent.preventDefault();
