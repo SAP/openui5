@@ -476,9 +476,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		enabled: true,
 		minversion: "1.48",
 		title: "Form: Editable content must match editable property",
-		description: "The editable property of the Form is used to align the Labels and add screen reader information." +
-		             "\nIf editable controls are used in Form, the editable property must be set." +
-		             "\nIf no editable controls are used in Form, the editable property must not be set.",
+		description: "The editable property of the Form is used to align the Labels and add screen reader information. If editable controls are used in Form, the property must be set, otherwise it should not be set.",
 		resolution: "Set the editable property according to the content of the Form.",
 		resolutionurls: [{
 			text: "API Reference: Form",
