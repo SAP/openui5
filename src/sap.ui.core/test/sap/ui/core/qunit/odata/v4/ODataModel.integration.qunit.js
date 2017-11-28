@@ -3118,6 +3118,32 @@ sap.ui.require([
 				.changeParameters({$expand : "TEAM_2_EMPLOYEES($filter=ID eq '2')"});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Behaviour of a deferred bound function
+	QUnit.test("Bound function", function (assert) {
+		var sView = '\
+<VBox binding="{/EMPLOYEES(\'1\')}">\
+	<VBox id="function" \
+		binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeSalaryForecast(...)}">\
+		<Text id="status" text="{STATUS}" />\
+	</VBox>\
+</VBox>',
+			that = this;
+
+		this.expectChange("status"); // no event initially
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
+					+ ".FuGetEmployeeSalaryForecast()",
+				{
+					"STATUS" : "42"
+				})
+				.expectChange("status", null) // TODO unexpected change
+				.expectChange("status", "42");
+
+			that.oView.byId("function").getObjectBinding().execute();
+			return that.waitForChanges(assert);
+		});
+	});
 });
-//TODO test bound action
 //TODO test delete
