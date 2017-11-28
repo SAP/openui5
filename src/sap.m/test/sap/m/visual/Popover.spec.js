@@ -57,4 +57,9 @@ describe("sap.m.Popover", function () {
 		expect(takeScreenshot(element(by.id("pop1")))).toLookAs("popover-no-header-footer");
 	});
 
+	it("Should open an overflowing popover which should be displayed with a visible scrollbar", function () {
+		element(by.id("overflowing-popover-arrow")).click();
+		expect(takeScreenshot(element(by.id("__popover1")))).toLookAs("overflowing-popover");
+	});
+
 });
