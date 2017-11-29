@@ -2232,7 +2232,11 @@ sap.ui.define([
 		}
 
 		if (this.mParameters && this.mParameters["filter"]) {
-			sFilter += "and (" + this.mParameters["filter"] + ")";
+			if (sFilter === null) {
+				sFilter = this.mParameters["filter"];
+			} else {
+				sFilter += "and (" + this.mParameters["filter"] + ")";
+			}
 		}
 
 		// construct OData request option parameters
