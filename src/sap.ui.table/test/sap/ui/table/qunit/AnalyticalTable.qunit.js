@@ -49,7 +49,7 @@ sap.ui.require([
 	}
 
 	function performTestAfterTableIsUpdated(doTest, done) {
-		this.oModel.attachMetadataLoaded(function () {
+		this.oModel.metadataLoaded().then(function () {
 			attachEventHandler(this.oTable, 1, function () {
 				doTest(this.oTable);
 				if (done) {
@@ -57,7 +57,7 @@ sap.ui.require([
 				}
 			}, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
-		}, this);
+		}.bind(this));
 	}
 
 
@@ -383,7 +383,7 @@ sap.ui.require([
 
 	QUnit.test("getAnalyticalInfoOfRow", function (assert) {
 		var done = assert.async();
-		this.oModel.attachMetadataLoaded(function () {
+		this.oModel.metadataLoaded().then(function () {
 			this.oTable = createTable.call(this);
 
 			var fnHandler1 = function () {
@@ -434,7 +434,7 @@ sap.ui.require([
 			attachEventHandler(this.oTable, 1, fnHandler1, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
-		}, this);
+		}.bind(this));
 	});
 
 	QUnit.test("TreeAutoExpandMode", function (assert) {
@@ -526,7 +526,7 @@ sap.ui.require([
 
 	QUnit.test("Simple expand/collapse", function (assert) {
 		var done = assert.async();
-		this.oModel.attachMetadataLoaded(function () {
+		this.oModel.metadataLoaded().then(function () {
 			this.oTable = createTable.call(this);
 
 			var fnHandler1 = function () {
@@ -561,12 +561,12 @@ sap.ui.require([
 			attachEventHandler(this.oTable, 1, fnHandler1, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
-		}, this);
+		}.bind(this));
 	});
 
 	QUnit.test("ProvideGrandTotals = false: No Sum row available", function (assert) {
 		var done = assert.async();
-		this.oModel.attachMetadataLoaded(function () {
+		this.oModel.metadataLoaded().then(function () {
 			this.oTable = createTable.call(this);
 
 			var fnHandler1 = function () {
@@ -605,7 +605,7 @@ sap.ui.require([
 				}
 			});
 
-		}, this);
+		}.bind(this));
 	});
 
 
@@ -620,7 +620,7 @@ sap.ui.require([
 
 	QUnit.test("getTooltip_AsString", function (assert) {
 		var done = assert.async();
-		this.oModel.attachMetadataLoaded(function () {
+		this.oModel.metadataLoaded().then(function () {
 			this.oTable = createTable.call(this);
 
 			var fnHandler = function () {
@@ -634,7 +634,7 @@ sap.ui.require([
 			attachEventHandler(this.oTable, 1, fnHandler, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
-		}, this);
+		}.bind(this));
 	});
 
 
