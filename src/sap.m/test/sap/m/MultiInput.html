@@ -187,7 +187,8 @@
 			placeholder: "tokens validated by custom validator",
 			valueHelpRequest: fValueHelpRequested,
 			tokenChange: fEventWriter,
-			width:"85%"
+			width:"85%",
+			ariaLabelledBy: "singleLineMode-label"
 		});
 
 		oMultiInputCustomValidator.setTokens([
@@ -223,7 +224,8 @@
 		var oMultiInputCustomAsyncValidator = new sap.m.MultiInput("multiInputCustomAsyncValidator", {
 			placeholder: "tokens get validated asynchronously after 500ms + 500ms",
 			valueHelpRequest: fValueHelpRequested,
-			tokenChange: fEventWriter
+			tokenChange: fEventWriter,
+			ariaLabelledBy: "singleLineMode-label"
 		});
 
 		var fValidator = function(args){
@@ -259,7 +261,8 @@
 			placeholder: "token text changed by validator",
 			valueHelpRequest: fValueHelpRequested,
 			tokenChange: fEventWriter,
-			width:"85%"
+			width:"85%",
+			ariaLabelledBy: "singleLineMode-label"
 		});
 		var iKeyCount = 0;
 		oChangeTextValidatorMultiInput.addValidator(function(args){
@@ -1003,6 +1006,7 @@
 
 	   //******************************************
 	   			var oSimpleForm = new sap.ui.layout.form.SimpleForm("simpoleFrom", {
+				title : "MultiInput in simple form",
 				content: [
 					new sap.m.Label({labelFor: oMultiInput7.getId(), text:"Street/ Number"}),
 					oMultiInput7
@@ -1146,7 +1150,7 @@
 			content : [
 					new sap.m.Label({labelFor: theCompactMode.getId(), text: "Compact Mode"}),
 					theCompactMode,
-					new sap.m.Label({labelFor: oMultiInputCustomAsyncValidator.getId(), text : "singleLineMode", width:"100%"}),
+					new sap.m.Label("singleLineMode-label", {labelFor: oMultiInputCustomAsyncValidator.getId(), text : "singleLineMode", width:"100%"}),
 					oMultiInputCustomValidator,
 					oCheckBoxAcceptValidation,
 					oMultiInputCustomAsyncValidator,
@@ -1179,7 +1183,7 @@
 						valueHelpRequest: fValueHelpRequested,
 						width: "33%"
 					}),
-					new sap.m.Label({labelFor: oSimpleForm.getId(), text: "MultiInput.editable = false", width:"100%"}),
+					new sap.m.Label({labelFor: oMultiInput4.getId(), text: "MultiInput.editable = false", width:"100%"}),
 					oMultiInput4,
 					new sap.m.VBox({items: [new sap.m.Button({text: "Open Popup", press: openDialog})]}),
 					new sap.m.Label({labelFor: oTable.getId(), text : "token databinding in MultiInput"}),
