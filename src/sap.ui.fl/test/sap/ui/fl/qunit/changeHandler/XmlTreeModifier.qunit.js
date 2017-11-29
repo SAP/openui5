@@ -77,6 +77,10 @@ function(
 							'<text text="text3"></text>' +
 						'</snappedContent>' +
 					'</f:DynamicPageTitle>' +
+					'<VBox id="stashedExperiments">' +
+						'<Label text="visibleLabel" stashed="false"></Label>' +
+						'<Label text="stashedInvisibleLabel" visible="false" stashed="true"></Label>' +
+					'</VBox>' +
 				'</mvc:View>';
 			this.oXmlView = jQuery.sap.parseXML(this.oXmlString, "application/xml").documentElement;
 
@@ -230,6 +234,21 @@ function(
 		assert.strictEqual(XmlTreeModifier.getVisible(oVBox), true, "not stating visible in xml means visible");
 		assert.strictEqual(XmlTreeModifier.getVisible(oVisibleLabel), true, "visible in xml");
 		assert.strictEqual(XmlTreeModifier.getVisible(oInvisibleLabel), false, "invisible in xml");
+	});
+
+	QUnit.test("setStash", function (assert) {
+		var oVBox = this.oXmlView.childNodes[7];
+		XmlTreeModifier.setStashed(oVBox, true);
+		assert.strictEqual(oVBox.getAttribute("stashed"), "true", "stashed attribute can be added");
+
+		var oVisibleLabel = oVBox.childNodes[0];
+		XmlTreeModifier.setStashed(oVisibleLabel, true);
+		assert.strictEqual(oVisibleLabel.getAttribute("stashed"), "true", "stashed attribute can be changed");
+
+		var oStashedInvisibleLabel = oVBox.childNodes[1];
+		XmlTreeModifier.setStashed(oStashedInvisibleLabel, false);
+		assert.strictEqual(oStashedInvisibleLabel.getAttribute("stashed"), null, "stashed=false means not having it in xml as some controls behave differently if visible property is provided");
+		assert.strictEqual(oStashedInvisibleLabel.getAttribute("visible"), null, "Unstash also needs to make the control visible (which is done automatically in with stash API)");
 	});
 
 	QUnit.test("getProperty returns default value if not in xml", function (assert) {
