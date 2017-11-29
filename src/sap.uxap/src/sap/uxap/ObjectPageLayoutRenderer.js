@@ -54,6 +54,7 @@ sap.ui.define(["sap/ui/Device"],
 			oRm.write("<header ");
 			oRm.writeAttribute("role", "banner");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-headerTitle");
+			oRm.writeAttribute("data-sap-ui-customfastnavgroup", true);
 			oRm.addClass("sapUxAPObjectPageHeaderTitle");
 			oRm.addClass("sapContrastPlus");
 			oRm.writeClasses();
