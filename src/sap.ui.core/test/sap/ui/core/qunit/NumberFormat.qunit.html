@@ -92,12 +92,12 @@
 		assert.equal(oFormat.format(1), "1", "1 formatted");
 		assert.equal(oFormat.format(12), "12", "12 formatted");
 		assert.equal(oFormat.format(123), "123", "123 formatted");
-		assert.equal(oFormat.format(999), "999", "999 formatted");
-		assert.equal(oFormat.format(1234), "1234", "1234 formatted");
-		assert.equal(oFormat.format(9999), "9999", "9999 formatted");
-		assert.equal(oFormat.format(12345), "12345", "12345 formatted");
-		assert.equal(oFormat.format(99999), "99999", "99999 formatted");
-		assert.equal(oFormat.format(123456), "123456", "123456 formatted");
+		assert.equal(oFormat.format(999), "1\xa0Tsd.", "999 formatted");
+		assert.equal(oFormat.format(1234), "1,2\xa0Tsd.", "1234 formatted");
+		assert.equal(oFormat.format(9999), "10\xa0Tsd.", "9999 formatted");
+		assert.equal(oFormat.format(12345), "12\xa0Tsd.", "12345 formatted");
+		assert.equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
+		assert.equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
 		assert.equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
 		assert.equal(oFormat.format(1234567), "1,2\xa0Mio.", "1234567 formatted");
 		assert.equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
@@ -115,12 +115,12 @@
 		assert.equal(oFormat.format(-1), "-1", "-1 formatted");
 		assert.equal(oFormat.format(-12), "-12", "-12 formatted");
 		assert.equal(oFormat.format(-123), "-123", "-123 formatted");
-		assert.equal(oFormat.format(-999), "-999", "-999 formatted");
-		assert.equal(oFormat.format(-1234), "-1234", "-1234 formatted");
-		assert.equal(oFormat.format(-9999), "-9999", "-9999 formatted");
-		assert.equal(oFormat.format(-12345), "-12345", "-12345 formatted");
-		assert.equal(oFormat.format(-99999), "-99999", "-99999 formatted");
-		assert.equal(oFormat.format(-123456), "-123456", "-123456 formatted");
+		assert.equal(oFormat.format(-999), "-1\xa0Tsd.", "-999 formatted");
+		assert.equal(oFormat.format(-1234), "-1,2\xa0Tsd.", "-1234 formatted");
+		assert.equal(oFormat.format(-9999), "-10\xa0Tsd.", "-9999 formatted");
+		assert.equal(oFormat.format(-12345), "-12\xa0Tsd.", "-12345 formatted");
+		assert.equal(oFormat.format(-99999), "-100\xa0Tsd.", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-123\xa0Tsd.", "-123456 formatted");
 		assert.equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
 		assert.equal(oFormat.format(-1234567), "-1,2\xa0Mio.", "-1234567 formatted");
 		assert.equal(oFormat.format(-9999999), "-10\xa0Mio.", "-9999999 formatted");
@@ -139,7 +139,7 @@
 		assert.equal(oFormat.parse("1"), 1, "\"1\" parsed");
 		assert.equal(oFormat.parse("12"), 12, "\"12\" parsed");
 		assert.equal(oFormat.parse("123"), 123, "\"123\" parsed");
-		assert.ok(isNaN(oFormat.parse("1,23 Tsd.")), "\"1,23 Tsd\" can't be parsed as a number");
+		assert.equal(oFormat.parse("1,23 Tsd."), 1230, "\"1230\" parsed");
 		assert.equal(oFormat.parse("1 Mio."), 1000000, "\"1 Mio.\" parsed");
 		assert.equal(oFormat.parse("10 Mio."), 10000000, "\"10 Mio.\" parsed");
 		assert.equal(oFormat.parse("100 Mio."), 100000000, "\"100 Mio.\" parsed");
@@ -150,7 +150,7 @@
 		assert.equal(oFormat.parse("-1"), -1, "\"-1\" parsed");
 		assert.equal(oFormat.parse("-12"), -12, "\"-12\" parsed");
 		assert.equal(oFormat.parse("-123"), -123, "\"-123\" parsed");
-		assert.ok(isNaN(oFormat.parse("-1,23 Tsd.")), "\"-1,23 Tsd\" can't be parsed as a number");
+		assert.equal(oFormat.parse("-1,23 Tsd."), -1230, "\"-1230\" parsed");
 		assert.equal(oFormat.parse("-1 Mio."), -1000000, "\"-1 Mio.\" parsed");
 		assert.equal(oFormat.parse("-10 Mio."), -10000000, "\"-10 Mio.\" parsed");
 		assert.equal(oFormat.parse("-100 Mio."), -100000000, "\"-100 Mio.\" parsed");
@@ -167,12 +167,12 @@
 		assert.equal(oFormat.format(999), "999", "999 formatted");
 		assert.equal(oFormat.format(1234), "1234", "1234 formatted");
 		assert.equal(oFormat.format(9999), "9999", "9999 formatted");
-		assert.equal(oFormat.format(12345), "12345", "12345 formatted");
-		assert.equal(oFormat.format(99900), "99900", "99900 formatted");
-		assert.equal(oFormat.format(99990), "99990", "99990 formatted");
-		assert.equal(oFormat.format(99999), "99999", "99999 formatted");
-		assert.equal(oFormat.format(123456), "123456", "123456 formatted");
-		assert.equal(oFormat.format(999000), "999000", "999000 formatted");
+		assert.equal(oFormat.format(12345), "12,3\xa0Tsd.", "12345 formatted");
+		assert.equal(oFormat.format(99900), "99,9\xa0Tsd.", "99900 formatted");
+		assert.equal(oFormat.format(99990), "100\xa0Tsd.", "99990 formatted");
+		assert.equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
+		assert.equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
+		assert.equal(oFormat.format(999000), "999\xa0Tsd.", "999000 formatted");
 		assert.equal(oFormat.format(999900), "1\xa0Mio.", "999900 formatted");
 		assert.equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
 		assert.equal(oFormat.format(1234567), "1,23\xa0Mio.", "1234567 formatted");
@@ -203,12 +203,12 @@
 		assert.equal(oFormat.format(-999), "-999", "-999 formatted");
 		assert.equal(oFormat.format(-1234), "-1234", "-1234 formatted");
 		assert.equal(oFormat.format(-9999), "-9999", "-9999 formatted");
-		assert.equal(oFormat.format(-12345), "-12345", "-12345 formatted");
-		assert.equal(oFormat.format(-99900), "-99900", "-99900 formatted");
-		assert.equal(oFormat.format(-99990), "-99990", "-99990 formatted");
-		assert.equal(oFormat.format(-99999), "-99999", "-99999 formatted");
-		assert.equal(oFormat.format(-123456), "-123456", "-123456 formatted");
-		assert.equal(oFormat.format(-999000), "-999000", "-999000 formatted");
+		assert.equal(oFormat.format(-12345), "-12,3\xa0Tsd.", "-12345 formatted");
+		assert.equal(oFormat.format(-99900), "-99,9\xa0Tsd.", "-99900 formatted");
+		assert.equal(oFormat.format(-99990), "-100\xa0Tsd.", "-99990 formatted");
+		assert.equal(oFormat.format(-99999), "-100\xa0Tsd.", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-123\xa0Tsd.", "-123456 formatted");
+		assert.equal(oFormat.format(-999000), "-999\xa0Tsd.", "-999000 formatted");
 		assert.equal(oFormat.format(-999900), "-1\xa0Mio.", "-999900 formatted");
 		assert.equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
 	});
@@ -482,7 +482,7 @@
 		var aLocales = ["de-DE", "zh_CN"];
 
 		var aScales = [
-			[undefined, undefined, undefined, undefined, undefined, undefined, "Mio.", "Mio.", "Mio.", "Mrd.", "Mrd.", "Mrd.", "Bio.", "Bio.", "Bio."],
+			[undefined, undefined, undefined, "Tsd.", "Tsd.", "Tsd.", "Mio.", "Mio.", "Mio.", "Mrd.", "Mrd.", "Mrd.", "Bio.", "Bio.", "Bio."],
 			[undefined, undefined, undefined, undefined, "万", "万", "万", "万", "亿", "亿", "亿", "亿", "兆", "兆", "兆"]
 		];
 
@@ -1503,12 +1503,12 @@
 		assert.equal(oFormat.format(1), "1", "1 formatted");
 		assert.equal(oFormat.format(12), "12", "12 formatted");
 		assert.equal(oFormat.format(123), "123", "123 formatted");
-		assert.equal(oFormat.format(999), "999", "999 formatted");
-		assert.equal(oFormat.format(1234), "1.234", "1234 formatted");
-		assert.equal(oFormat.format(9999), "9.999", "9999 formatted");
-		assert.equal(oFormat.format(12345), "12.345", "12345 formatted");
-		assert.equal(oFormat.format(99999), "99.999", "99999 formatted");
-		assert.equal(oFormat.format(123456), "123.456", "123456 formatted");
+		assert.equal(oFormat.format(999), "1\xa0Tsd.", "999 formatted");
+		assert.equal(oFormat.format(1234), "1\xa0Tsd.", "1234 formatted");
+		assert.equal(oFormat.format(9999), "10\xa0Tsd.", "9999 formatted");
+		assert.equal(oFormat.format(12345), "12\xa0Tsd.", "12345 formatted");
+		assert.equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
+		assert.equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
 		assert.equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
 		assert.equal(oFormat.format(1234567), "1\xa0Mio.", "1234567 formatted");
 		assert.equal(oFormat.format(9999999), "10\xa0Mio.", "9999999 formatted");
@@ -1527,12 +1527,12 @@
 		assert.equal(oFormat.format(-1), "-1", "-1 formatted");
 		assert.equal(oFormat.format(-12), "-12", "-12 formatted");
 		assert.equal(oFormat.format(-123), "-123", "-123 formatted");
-		assert.equal(oFormat.format(-999), "-999", "-999 formatted");
-		assert.equal(oFormat.format(-1234), "-1.234", "-1234 formatted");
-		assert.equal(oFormat.format(-9999), "-9.999", "-9999 formatted");
-		assert.equal(oFormat.format(-12345), "-12.345", "-12345 formatted");
-		assert.equal(oFormat.format(-99999), "-99.999", "-99999 formatted");
-		assert.equal(oFormat.format(-123456), "-123.456", "-123456 formatted");
+		assert.equal(oFormat.format(-999), "-1\xa0Tsd.", "-999 formatted");
+		assert.equal(oFormat.format(-1234), "-1\xa0Tsd.", "-1234 formatted");
+		assert.equal(oFormat.format(-9999), "-10\xa0Tsd.", "-9999 formatted");
+		assert.equal(oFormat.format(-12345), "-12\xa0Tsd.", "-12345 formatted");
+		assert.equal(oFormat.format(-99999), "-100\xa0Tsd.", "-99999 formatted");
+		assert.equal(oFormat.format(-123456), "-123\xa0Tsd.", "-123456 formatted");
 		assert.equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
 		assert.equal(oFormat.format(-1234567), "-1\xa0Mio.", "-1234567 formatted");
 		assert.equal(oFormat.format(-9999999), "-10\xa0Mio.", "-9999999 formatted");
@@ -1552,7 +1552,7 @@
 		assert.equal(oFormat.parse("1"), 1, "\"1\" parsed");
 		assert.equal(oFormat.parse("12"), 12, "\"12\" parsed");
 		assert.equal(oFormat.parse("123"), 123, "\"123\" parsed");
-		assert.ok(isNaN(oFormat.parse("1,23 Tsd.")), "\"1,23 Tsd\" can't be parsed as a number");
+		assert.equal(oFormat.parse("1,23 Tsd."), 1230, "\"1,23 Tsd\" parsed");
 		assert.equal(oFormat.parse("1 Mio."), 1000000, "\"1 Mio.\" parsed");
 		assert.equal(oFormat.parse("10 Mio."), 10000000, "\"10 Mio.\" parsed");
 		assert.equal(oFormat.parse("100 Mio."), 100000000, "\"100 Mio.\" parsed");
@@ -1564,7 +1564,7 @@
 		assert.equal(oFormat.parse("-1"), -1, "\"-1\" parsed");
 		assert.equal(oFormat.parse("-12"), -12, "\"-12\" parsed");
 		assert.equal(oFormat.parse("-123"), -123, "\"-123\" parsed");
-		assert.ok(isNaN(oFormat.parse("-1,23 Tsd.")), "\"-1,23 Tsd\" can't be parsed as a number");
+		assert.equal(oFormat.parse("-1,23 Tsd."), -1230, "\"-1230\" parsed");
 		assert.equal(oFormat.parse("-1 Mio."), -1000000, "\"-1 Mio.\" parsed");
 		assert.equal(oFormat.parse("-10 Mio."), -10000000, "\"-10 Mio.\" parsed");
 		assert.equal(oFormat.parse("-100 Mio."), -100000000, "\"-100 Mio.\" parsed");
@@ -1581,12 +1581,12 @@
 		assert.equal(oFormat.format(999), "999", "999 formatted");
 		assert.equal(oFormat.format(1234), "1.234", "1234 formatted");
 		assert.equal(oFormat.format(9999), "9.999", "9999 formatted");
-		assert.equal(oFormat.format(12345), "12.345", "12345 formatted");
-		assert.equal(oFormat.format(99900), "99.900", "99900 formatted");
-		assert.equal(oFormat.format(99990), "99.990", "99990 formatted");
-		assert.equal(oFormat.format(99999), "99.999", "99999 formatted");
-		assert.equal(oFormat.format(123456), "123.456", "123456 formatted");
-		assert.equal(oFormat.format(999000), "999.000", "999000 formatted");
+		assert.equal(oFormat.format(12345), "12,3\xa0Tsd.", "12345 formatted");
+		assert.equal(oFormat.format(99900), "99,9\xa0Tsd.", "99900 formatted");
+		assert.equal(oFormat.format(99990), "100\xa0Tsd.", "99990 formatted");
+		assert.equal(oFormat.format(99999), "100\xa0Tsd.", "99999 formatted");
+		assert.equal(oFormat.format(123456), "123\xa0Tsd.", "123456 formatted");
+		assert.equal(oFormat.format(999000), "999\xa0Tsd.", "999000 formatted");
 		assert.equal(oFormat.format(999900), "1\xa0Mio.", "999900 formatted");
 		assert.equal(oFormat.format(999999), "1\xa0Mio.", "999999 formatted");
 		assert.equal(oFormat.format(1234567), "1,23\xa0Mio.", "1234567 formatted");

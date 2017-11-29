@@ -321,6 +321,7 @@
 		"ln": "Lingala",
 		"lo": "Laotisch",
 		"lol": "Mongo",
+		"lou": "Kreol (Louisiana)",
 		"loz": "Lozi",
 		"lrc": "Nördliches Luri",
 		"lt": "Litauisch",
@@ -662,6 +663,7 @@
 		"Geok": "Khutsuri",
 		"Geor": "Georgisch",
 		"Glag": "Glagolitisch",
+		"Gonm": "Gonm",
 		"Goth": "Gotisch",
 		"Gran": "Grantha",
 		"Grek": "Griechisch",
@@ -762,6 +764,7 @@
 		"Sind": "Khudawadi",
 		"Sinh": "Singhalesisch",
 		"Sora": "Sora Sompeng",
+		"Soyo": "Soyo",
 		"Sund": "Sundanesisch",
 		"Sylo": "Syloti Nagri",
 		"Syrc": "Syrisch",
@@ -791,6 +794,7 @@
 		"Xpeo": "Altpersisch",
 		"Xsux": "Sumerisch-akkadische Keilschrift",
 		"Yiii": "Yi",
+		"Zanb": "Zanb",
 		"Zinh": "Geerbter Schriftwert",
 		"Zmth": "Mathematische Notation",
 		"Zsye": "Emoji",
@@ -807,6 +811,7 @@
 		"151": "Osteuropa",
 		"154": "Nordeuropa",
 		"155": "Westeuropa",
+		"202": "202",
 		"419": "Lateinamerika",
 		"001": "Welt",
 		"002": "Afrika",
@@ -908,7 +913,7 @@
 		"ES": "Spanien",
 		"ET": "Äthiopien",
 		"EU": "Europäische Union",
-		"EZ": "EZ",
+		"EZ": "Eurozone",
 		"FI": "Finnland",
 		"FJ": "Fidschi",
 		"FK": "Falklandinseln",
@@ -936,7 +941,7 @@
 		"GU": "Guam",
 		"GW": "Guinea-Bissau",
 		"GY": "Guyana",
-		"HK": "Sonderverwaltungszone Hongkong",
+		"HK": "Sonderverwaltungsregion Hongkong",
 		"HK-alt-short": "Hongkong",
 		"HM": "Heard und McDonaldinseln",
 		"HN": "Honduras",
@@ -1069,8 +1074,8 @@
 		"TH": "Thailand",
 		"TJ": "Tadschikistan",
 		"TK": "Tokelau",
-		"TL": "Osttimor",
-		"TL-alt-variant": "TL",
+		"TL": "Timor-Leste",
+		"TL-alt-variant": "Osttimor",
 		"TM": "Turkmenistan",
 		"TN": "Tunesien",
 		"TO": "Tonga",
@@ -1125,8 +1130,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
 				"EHm": "E, HH:mm",
@@ -1170,7 +1180,7 @@
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
 				"MMMMW": "'Woche' W 'im' MMM",
-				"yw": "'Woche' w 'des' 'Jahres' y"
+				"yw": "'Woche' w 'des' 'Jahres' Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1497,16 +1507,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"vorm.",
-					"nachm."
+					"AM",
+					"PM"
 				],
 				"narrow": [
 					"vm.",
 					"nm."
 				],
 				"wide": [
-					"vorm.",
-					"nachm."
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
@@ -1556,8 +1566,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1740,14 +1755,14 @@
 					"Safar",
 					"Rabiʻ I",
 					"Rabiʻ II",
-					"Jumada I",
-					"Jumada II",
-					"Rajab",
+					"Dschumada I",
+					"Dschumada II",
+					"Radschab",
 					"Shaʻban",
 					"Ramadan",
 					"Shawwal",
-					"Dhuʻl-Qiʻdah",
-					"Dhuʻl-Hijjah"
+					"Dhu l-qaʿda",
+					"Dhu l-Hiddscha"
 				]
 			},
 			"stand-alone": {
@@ -1784,14 +1799,14 @@
 					"Safar",
 					"Rabiʻ I",
 					"Rabiʻ II",
-					"Jumada I",
-					"Jumada II",
-					"Rajab",
+					"Dschumada I",
+					"Dschumada II",
+					"Radschab",
 					"Shaʻban",
 					"Ramadan",
 					"Shawwal",
-					"Dhuʻl-Qiʻdah",
-					"Dhuʻl-Hijjah"
+					"Dhu l-qaʿda",
+					"Dhu l-Hiddscha"
 				]
 			}
 		},
@@ -1918,16 +1933,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"vorm.",
-					"nachm."
+					"AM",
+					"PM"
 				],
 				"narrow": [
 					"vm.",
 					"nm."
 				],
 				"wide": [
-					"vorm.",
-					"nachm."
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
@@ -1974,8 +1989,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2336,16 +2356,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"vorm.",
-					"nachm."
+					"AM",
+					"PM"
 				],
 				"narrow": [
 					"vm.",
 					"nm."
 				],
 				"wide": [
-					"vorm.",
-					"nachm."
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
@@ -2401,8 +2421,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2553,18 +2578,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
+					"Farwardin",
+					"Ordibehescht",
+					"Chordād",
 					"Tir",
-					"Mordad",
-					"Shahrivar",
+					"Mordād",
+					"Schahriwar",
 					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
+					"Ābān",
+					"Āsar",
+					"Déi",
 					"Bahman",
-					"Esfand"
+					"Essfand"
 				],
 				"narrow": [
 					"1",
@@ -2581,34 +2606,34 @@
 					"12"
 				],
 				"wide": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
+					"Farwardin",
+					"Ordibehescht",
+					"Chordād",
 					"Tir",
-					"Mordad",
-					"Shahrivar",
+					"Mordād",
+					"Schahriwar",
 					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
+					"Ābān",
+					"Āsar",
+					"Déi",
 					"Bahman",
-					"Esfand"
+					"Essfand"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
+					"Farwardin",
+					"Ordibehescht",
+					"Chordād",
 					"Tir",
-					"Mordad",
-					"Shahrivar",
+					"Mordād",
+					"Schahriwar",
 					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
+					"Ābān",
+					"Āsar",
+					"Déi",
 					"Bahman",
-					"Esfand"
+					"Essfand"
 				],
 				"narrow": [
 					"1",
@@ -2625,18 +2650,18 @@
 					"12"
 				],
 				"wide": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
+					"Farwardin",
+					"Ordibehescht",
+					"Chordād",
 					"Tir",
-					"Mordad",
-					"Shahrivar",
+					"Mordād",
+					"Schahriwar",
 					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
+					"Ābān",
+					"Āsar",
+					"Déi",
 					"Bahman",
-					"Esfand"
+					"Essfand"
 				]
 			}
 		},
@@ -2763,16 +2788,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"vorm.",
-					"nachm."
+					"AM",
+					"PM"
 				],
 				"narrow": [
 					"vm.",
 					"nm."
 				],
 				"wide": [
-					"vorm.",
-					"nachm."
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
@@ -3168,12 +3193,12 @@
 		"100000000000000-other": "000 Billionen"
 	},
 	"decimalFormat-short": {
-		"1000-one": "0",
-		"1000-other": "0",
-		"10000-one": "0",
-		"10000-other": "0",
-		"100000-one": "0",
-		"100000-other": "0",
+		"1000-one": "0 Tsd'.'",
+		"1000-other": "0 Tsd'.'",
+		"10000-one": "00 Tsd'.'",
+		"10000-other": "00 Tsd'.'",
+		"100000-one": "000 Tsd'.'",
+		"100000-other": "000 Tsd'.'",
 		"1000000-one": "0 Mio'.'",
 		"1000000-other": "0 Mio'.'",
 		"10000000-one": "00 Mio'.'",
@@ -3288,6 +3313,18 @@
 		"middle": "{0}, {1}",
 		"end": "{0} und {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} oder {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} oder {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} oder {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} oder {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} und {1}",
 		"start": "{0}, {1}",
@@ -3312,6 +3349,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3337,11 +3375,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

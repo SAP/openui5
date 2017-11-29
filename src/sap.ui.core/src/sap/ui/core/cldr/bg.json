@@ -1,14 +1,14 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
 	"languages": {
-		"aa": "афар",
+		"aa": "афарски",
 		"ab": "абхазки",
-		"ace": "ачински",
+		"ace": "ачешки",
 		"ach": "аколи",
 		"ada": "адангме",
-		"ady": "адиге",
+		"ady": "адигейски",
 		"ae": "авестски",
-		"af": "африкаанс",
+		"af": "африканс",
 		"afh": "африхили",
 		"agq": "агем",
 		"ain": "айну",
@@ -64,7 +64,7 @@
 		"car": "карибски",
 		"cch": "атсам",
 		"ce": "чеченски",
-		"ceb": "себуано",
+		"ceb": "себуански",
 		"cgg": "чига",
 		"ch": "чаморо",
 		"chb": "чибча",
@@ -74,7 +74,7 @@
 		"chn": "жаргон чинуук",
 		"cho": "чокто",
 		"chp": "чиипувски",
-		"chr": "чероки",
+		"chr": "черокски",
 		"chy": "чейенски",
 		"ckb": "кюрдски (централен)",
 		"co": "корсикански",
@@ -100,13 +100,13 @@
 		"din": "динка",
 		"dje": "зарма",
 		"doi": "догри",
-		"dsb": "долносръбски",
+		"dsb": "долнолужишки",
 		"dua": "дуала",
 		"dum": "средновековен холандски",
 		"dv": "дивехи",
-		"dyo": "диола",
+		"dyo": "диола-фони",
 		"dyu": "диула",
-		"dz": "дзонха",
+		"dz": "дзонгкха",
 		"dzg": "дазага",
 		"ebu": "ембу",
 		"ee": "еве",
@@ -143,12 +143,13 @@
 		"fr": "френски",
 		"fr_CA": "френски (Канада)",
 		"fr_CH": "френски (Швейцария)",
+		"frc": "frc",
 		"frm": "средновековен френски",
 		"fro": "старофренски",
 		"frr": "северен фризски",
 		"frs": "източнофризийски",
 		"fur": "фриулиански",
-		"fy": "фризийски",
+		"fy": "западнофризийски",
 		"ga": "ирландски",
 		"gaa": "га",
 		"gag": "гагаузки",
@@ -172,7 +173,7 @@
 		"guz": "гусии",
 		"gv": "манкски",
 		"gwi": "гвичин",
-		"ha": "хауза",
+		"ha": "хауса",
 		"hai": "хайда",
 		"hak": "hak",
 		"haw": "хавайски",
@@ -268,16 +269,17 @@
 		"ln": "лингала",
 		"lo": "лаоски",
 		"lol": "монго",
+		"lou": "lou",
 		"loz": "лози",
 		"lrc": "северен лури",
 		"lt": "литовски",
-		"lu": "луба катанга",
+		"lu": "луба-катанга",
 		"lua": "луба-лулуа",
 		"lui": "луисеньо",
 		"lun": "лунда",
 		"luo": "луо",
 		"lus": "мизо",
-		"luy": "луя",
+		"luy": "лухя",
 		"lv": "латвийски",
 		"mad": "мадурски",
 		"mag": "магахи",
@@ -302,7 +304,7 @@
 		"ml": "малаялам",
 		"mn": "монголски",
 		"mnc": "манджурски",
-		"mni": "манипури",
+		"mni": "манипурски",
 		"moh": "мохоук",
 		"mos": "моси",
 		"mr": "марати",
@@ -345,7 +347,7 @@
 		"nwc": "класически невари",
 		"ny": "нянджа",
 		"nym": "ниамвези",
-		"nyn": "нианколе",
+		"nyn": "нянколе",
 		"nyo": "нуоро",
 		"nzi": "нзима",
 		"oc": "окситански",
@@ -461,7 +463,7 @@
 		"tli": "тлингит",
 		"tmh": "тамашек",
 		"tn": "тсвана",
-		"to": "тонга",
+		"to": "тонгански",
 		"tog": "нианса тонга",
 		"tpi": "ток писин",
 		"tr": "турски",
@@ -562,6 +564,7 @@
 		"Geok": "Грузинска хуцури",
 		"Geor": "грузинска",
 		"Glag": "Глаголическа",
+		"Gonm": "Gonm",
 		"Goth": "Готическа",
 		"Gran": "Gran",
 		"Grek": "гръцка",
@@ -627,6 +630,7 @@
 		"Nbat": "Nbat",
 		"Newa": "Newa",
 		"Nkoo": "Н’Ко",
+		"Nshu": "Nshu",
 		"Ogam": "Огамическа",
 		"Olck": "Ол Чики",
 		"Orkh": "Орхоно-енисейска",
@@ -657,6 +661,7 @@
 		"Sind": "Sind",
 		"Sinh": "синхалска",
 		"Sora": "Sora",
+		"Soyo": "Soyo",
 		"Sund": "Сунданска",
 		"Sylo": "Силоти Нагри",
 		"Syrc": "Сирийска",
@@ -684,6 +689,7 @@
 		"Xpeo": "Староперсийска",
 		"Xsux": "Шумеро-акадски клинопис",
 		"Yiii": "Йи",
+		"Zanb": "Zanb",
 		"Zinh": "Zinh",
 		"Zmth": "Математически символи",
 		"Zsye": "емотикони",
@@ -700,6 +706,7 @@
 		"151": "Източна Европа",
 		"154": "Северна Европа",
 		"155": "Западна Европа",
+		"202": "202",
 		"419": "Латинска Америка",
 		"001": "Свят",
 		"002": "Африка",
@@ -750,7 +757,7 @@
 		"BI": "Бурунди",
 		"BJ": "Бенин",
 		"BL": "Сен Бартелеми",
-		"BM": "Бермуда",
+		"BM": "Бермудски острови",
 		"BN": "Бруней Даруссалам",
 		"BO": "Боливия",
 		"BQ": "Карибска Нидерландия",
@@ -801,7 +808,7 @@
 		"ES": "Испания",
 		"ET": "Етиопия",
 		"EU": "Европейски съюз",
-		"EZ": "EZ",
+		"EZ": "Еврозона",
 		"FI": "Финландия",
 		"FJ": "Фиджи",
 		"FK": "Фолклендски острови",
@@ -831,7 +838,7 @@
 		"GY": "Гаяна",
 		"HK": "Хонконг, САР на Китай",
 		"HK-alt-short": "Хонконг",
-		"HM": "остров Хърд и острови Макдоналд",
+		"HM": "острови Хърд и Макдоналд",
 		"HN": "Хондурас",
 		"HR": "Хърватия",
 		"HT": "Хаити",
@@ -1006,10 +1013,10 @@
 			"short": "d.MM.yy 'г'."
 		},
 		"timeFormats": {
-			"full": "H:mm:ss zzzz",
-			"long": "H:mm:ss z",
-			"medium": "H:mm:ss",
-			"short": "H:mm"
+			"full": "H:mm:ss 'ч'. zzzz",
+			"long": "H:mm:ss 'ч'. z",
+			"medium": "H:mm:ss 'ч'.",
+			"short": "H:mm 'ч'."
 		},
 		"dateTimeFormats": {
 			"full": "{1}, {0}",
@@ -1017,13 +1024,18 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h 'ч'. B",
+				"Bhm": "h:mm 'ч'. B",
+				"Bhms": "h:mm:ss 'ч'. B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm 'ч'. B",
+				"EBhms": "E, h:mm:ss 'ч'. B",
 				"Ed": "E, d",
-				"Ehm": "E, h:mm a",
-				"EHm": "E, HH:mm",
-				"Ehms": "E, h:mm:ss a",
-				"EHms": "E, H:mm:ss",
+				"Ehm": "E, h:mm 'ч'. a",
+				"EHm": "E, HH:mm 'ч'.",
+				"Ehms": "E, h:mm:ss 'ч'. a",
+				"EHms": "E, H:mm:ss 'ч'.",
 				"Gy": "y 'г'. G",
 				"GyMMM": "MM.y 'г'. G",
 				"GyMMMd": "d.MM.y 'г'. G",
@@ -1031,16 +1043,16 @@
 				"GyMMMM": "MMMM y 'г'. G",
 				"GyMMMMd": "d MMMM y 'г'. G",
 				"GyMMMMEd": "E, d MMMM y 'г'. G",
-				"h": "h a",
-				"H": "H",
-				"hm": "h:mm a",
-				"Hm": "H:mm",
-				"hms": "h:mm:ss a",
-				"Hms": "H:mm:ss",
-				"hmsv": "h:mm:ss a v",
-				"Hmsv": "HH:mm:ss v",
-				"hmv": "h:mm a v",
-				"Hmv": "HH:mm v",
+				"h": "h 'ч'. a",
+				"H": "H 'ч'.",
+				"hm": "h:mm 'ч'. a",
+				"Hm": "H:mm 'ч'.",
+				"hms": "h:mm:ss 'ч'. a",
+				"Hms": "H:mm:ss 'ч'.",
+				"hmsv": "h:mm:ss 'ч'. a v",
+				"Hmsv": "HH:mm:ss 'ч'. v",
+				"hmv": "h:mm 'ч'. a v",
+				"Hmv": "HH:mm 'ч'. v",
 				"M": "L",
 				"Md": "d.MM",
 				"MEd": "E, d.MM",
@@ -1065,7 +1077,7 @@
 				"yQQQ": "QQQ y 'г'.",
 				"yQQQQ": "QQQQ y 'г'.",
 				"MMMMW": "'седмица' W 'от' MMM",
-				"yw": "'седмица' w 'от' y 'г'."
+				"yw": "'седмица' w 'от' Y 'г'."
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1086,36 +1098,36 @@
 					"d": "d – d"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h – h a"
+					"a": "h 'ч'. a – h 'ч'. a",
+					"h": "h – h 'ч'. a"
 				},
 				"H": {
-					"H": "H – H"
+					"H": "H – H 'ч'."
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
-					"h": "h:mm – h:mm a",
-					"m": "h:mm – h:mm a"
+					"a": "h:mm 'ч'. a – h:mm 'ч'. a",
+					"h": "h:mm 'ч'. – h:mm 'ч'. a",
+					"m": "h:mm 'ч'. – h:mm 'ч'. a"
 				},
 				"Hm": {
-					"H": "H:mm – H:mm",
-					"m": "H:mm – H:mm"
+					"H": "H:mm 'ч'. – H:mm 'ч'.",
+					"m": "H:mm 'ч'. – H:mm 'ч'."
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
-					"h": "h:mm a – h:mm a v",
-					"m": "h:mm a – h:mm a v"
+					"a": "h:mm 'ч'. a – h:mm 'ч'. a v",
+					"h": "h:mm 'ч'. a – h:mm 'ч'. a v",
+					"m": "h:mm 'ч'. a – h:mm 'ч'. a v"
 				},
 				"Hmv": {
-					"H": "H:mm – H:mm v",
-					"m": "H:mm – H:mm v"
+					"H": "H:mm 'ч'. – H:mm 'ч'. v",
+					"m": "H:mm 'ч'. – H:mm 'ч'. v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h – h a v"
+					"a": "h 'ч'. a – h 'ч'. a v",
+					"h": "h – h 'ч'. a v"
 				},
 				"Hv": {
-					"H": "H – H v"
+					"H": "H – H 'ч'. v"
 				},
 				"M": {
 					"M": "M – M"
@@ -1458,10 +1470,10 @@
 			"short": "d.MM.yy G"
 		},
 		"timeFormats": {
-			"full": "H:mm:ss zzzz",
-			"long": "H:mm:ss z",
-			"medium": "H:mm:ss",
-			"short": "H:mm"
+			"full": "H:mm:ss 'ч'. zzzz",
+			"long": "H:mm:ss 'ч'. z",
+			"medium": "H:mm:ss 'ч'.",
+			"short": "H:mm 'ч'."
 		},
 		"dateTimeFormats": {
 			"full": "{1}, {0}",
@@ -1469,13 +1481,18 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h 'ч' .B",
+				"Bhm": "h:mm 'ч'. B",
+				"Bhms": "h:mm:ss 'ч'. B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm 'ч'. B",
+				"EBhms": "E, h:mm:ss 'ч'. B",
 				"Ed": "E, d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm 'ч'. a",
+				"EHm": "E, HH:mm 'ч'.",
+				"Ehms": "E, h:mm:ss 'ч'. a",
+				"EHms": "E, HH:mm:ss 'ч'.",
 				"Gy": "y 'г'. G",
 				"GyMMM": "MM.y 'г'. G",
 				"GyMMMd": "d.MM.y 'г'. G",
@@ -1485,9 +1502,9 @@
 				"GyMMMMEd": "E, d MMMM y 'г'. G",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h:mm a",
+				"hm": "h:mm 'ч'. a",
 				"Hm": "HH:mm",
-				"hms": "h:mm:ss a",
+				"hms": "h:mm:ss 'ч'. a",
 				"Hms": "HH:mm:ss",
 				"M": "M",
 				"Md": "d.MM",
@@ -1901,10 +1918,10 @@
 			"short": "d.MM.yy G"
 		},
 		"timeFormats": {
-			"full": "H:mm:ss zzzz",
-			"long": "H:mm:ss z",
-			"medium": "H:mm:ss",
-			"short": "H:mm"
+			"full": "H:mm:ss 'ч'. zzzz",
+			"long": "H:mm:ss 'ч'. z",
+			"medium": "H:mm:ss 'ч'.",
+			"short": "H:mm 'ч'."
 		},
 		"dateTimeFormats": {
 			"full": "{1}, {0}",
@@ -1912,13 +1929,18 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h 'ч' .B",
+				"Bhm": "h:mm 'ч'. B",
+				"Bhms": "h:mm:ss 'ч'. B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm 'ч'. B",
+				"EBhms": "E, h:mm:ss 'ч'. B",
 				"Ed": "E, d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm 'ч'. a",
+				"EHm": "E, HH:mm 'ч'.",
+				"Ehms": "E, h:mm:ss 'ч'. a",
+				"EHms": "E, HH:mm:ss 'ч'.",
 				"Gy": "y 'г'. G",
 				"GyMMM": "MM.y 'г'. G",
 				"GyMMMd": "d.MM.y 'г'. G",
@@ -1928,9 +1950,9 @@
 				"GyMMMMEd": "E, d MMMM y 'г'. G",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h:mm a",
+				"hm": "h:mm 'ч'. a",
 				"Hm": "HH:mm",
-				"hms": "h:mm:ss a",
+				"hms": "h:mm:ss 'ч'. a",
 				"Hms": "HH:mm:ss",
 				"M": "M",
 				"Md": "d.MM",
@@ -2353,10 +2375,10 @@
 			"short": "d.MM.yy G"
 		},
 		"timeFormats": {
-			"full": "H:mm:ss zzzz",
-			"long": "H:mm:ss z",
-			"medium": "H:mm:ss",
-			"short": "H:mm"
+			"full": "H:mm:ss 'ч'. zzzz",
+			"long": "H:mm:ss 'ч'. z",
+			"medium": "H:mm:ss 'ч'.",
+			"short": "H:mm 'ч'."
 		},
 		"dateTimeFormats": {
 			"full": "{1}, {0}",
@@ -2364,13 +2386,18 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h 'ч' .B",
+				"Bhm": "h:mm 'ч'. B",
+				"Bhms": "h:mm:ss 'ч'. B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm 'ч'. B",
+				"EBhms": "E, h:mm:ss 'ч'. B",
 				"Ed": "E, d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm 'ч'. a",
+				"EHm": "E, HH:mm 'ч'.",
+				"Ehms": "E, h:mm:ss 'ч'. a",
+				"EHms": "E, HH:mm:ss 'ч'.",
 				"Gy": "y 'г'. G",
 				"GyMMM": "MM.y 'г'. G",
 				"GyMMMd": "d.MM.y 'г'. G",
@@ -2380,9 +2407,9 @@
 				"GyMMMMEd": "E, d MMMM y 'г'. G",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h:mm a",
+				"hm": "h:mm 'ч'. a",
 				"Hm": "HH:mm",
-				"hms": "h:mm:ss a",
+				"hms": "h:mm:ss 'ч'. a",
 				"Hms": "HH:mm:ss",
 				"M": "M",
 				"Md": "d.MM",
@@ -2854,12 +2881,12 @@
 			"relative-type-0": "това трим.",
 			"relative-type-1": "следв. трим.",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "сл. {0} трим.",
-				"relativeTimePattern-count-other": "сл. {0} трим."
+				"relativeTimePattern-count-one": "след {0} трим.",
+				"relativeTimePattern-count-other": "след {0} трим."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "пр. {0} трим.",
-				"relativeTimePattern-count-other": "пр. {0} трим."
+				"relativeTimePattern-count-one": "преди {0} трим.",
+				"relativeTimePattern-count-other": "преди {0} трим."
 			}
 		},
 		"quarter-narrow": {
@@ -2891,7 +2918,7 @@
 			}
 		},
 		"month-short": {
-			"displayName": "м",
+			"displayName": "мес.",
 			"relative-type--1": "мин. мес.",
 			"relative-type-0": "този мес.",
 			"relative-type-1": "следв. мес.",
@@ -2905,7 +2932,7 @@
 			}
 		},
 		"month-narrow": {
-			"displayName": "м",
+			"displayName": "мес.",
 			"relative-type--1": "мин. м.",
 			"relative-type-0": "т. м.",
 			"relative-type-1": "сл. м.",
@@ -3166,8 +3193,8 @@
 		"1000000-other": "0 млн'.'",
 		"10000000-one": "00 млн'.'",
 		"10000000-other": "00 млн'.'",
-		"100000000-one": "000 млн",
-		"100000000-other": "000 млн",
+		"100000000-one": "000 млн'.'",
+		"100000000-other": "000 млн'.'",
 		"1000000000-one": "0 млрд'.'",
 		"1000000000-other": "0 млрд'.'",
 		"10000000000-one": "00 млрд'.'",
@@ -3236,7 +3263,7 @@
 	"symbols-latn-plusSign": "+",
 	"symbols-latn-minusSign": "-",
 	"symbols-latn-exponential": "E",
-	"symbols-latn-superscriptingExponent": "·",
+	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
 	"symbols-latn-infinity": "∞",
 	"symbols-latn-nan": "NaN",
@@ -3255,6 +3282,18 @@
 		"start": "{0}, {1}",
 		"middle": "{0}, {1}",
 		"end": "{0} и {1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0} или {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} или {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} или {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} или {1}"
 	},
 	"listPattern-standard-short": {
 		"2": "{0} и{1}",
@@ -3280,6 +3319,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3305,11 +3345,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,
