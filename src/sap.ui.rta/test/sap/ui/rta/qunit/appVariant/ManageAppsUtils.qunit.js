@@ -47,7 +47,6 @@ sap.ui.require([
 				subTitle : "subTitle1",
 				description : "description1",
 				iconUrl : "sap-icon://history",
-				originalId : "id1",
 				isOriginal : true,
 				originLayer: "VENDOR",
 				isAppVariant: false,
@@ -71,7 +70,6 @@ sap.ui.require([
 				subTitle : "subTitle1",
 				description : "description1",
 				iconUrl : "sap-icon://history",
-				originalId : "id1",
 				isOriginal : true,
 				originLayer: "VENDOR",
 				isAppVariant: false,
@@ -101,7 +99,6 @@ sap.ui.require([
 				subTitle : "subTitle1",
 				description : "description1",
 				iconUrl : "sap-icon://history",
-				originalId : "id1",
 				isOriginal : true,
 				originLayer: "VENDOR",
 				isAppVariant: false,
@@ -131,7 +128,6 @@ sap.ui.require([
 							subTitle : "subTitle1",
 							description : "description1",
 							iconUrl : "sap-icon://history",
-							originalId : "id1",
 							isOriginal : true,
 							originLayer: "VENDOR",
 							isAppVariant: false,
@@ -155,9 +151,7 @@ sap.ui.require([
 
 			return AppVariantOverviewUtils.getAppVariantOverview("testId").then(function(aAppVariantOverviewAttributes){
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
-
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[0].typeOfApp, "Original App", "then the type of app is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, "SemObj", "then the semantic object is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].action, "Action", "then the action is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, true, "then the app is adaptable");
@@ -174,7 +168,6 @@ sap.ui.require([
 							subTitle : "subTitle1",
 							description : "description1",
 							iconUrl : "sap-icon://history",
-							originalId : "id2",
 							originLayer: "VENDOR",
 							isOriginal : false,
 							isAppVariant: true,
@@ -192,7 +185,6 @@ sap.ui.require([
 							subTitle : "subTitle2",
 							description : "description2",
 							iconUrl : "sap-icon://account",
-							originalId : "id2",
 							isOriginal : true,
 							originLayer: "VENDOR",
 							isAppVariant: false,
@@ -213,11 +205,16 @@ sap.ui.require([
 			sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
 			sap.ui.rta.appVariant.AppVariantUtils.setNewAppVariantId("id1");
 
-			return AppVariantOverviewUtils.getAppVariantOverview("testId").then(function(aAppVariantOverviewAttributes){
+			var oResourceBundlePromise = jQuery.sap.resources({
+				url: jQuery.sap.getModulePath("sap.ui.rta.appVariant.manageApps.webapp.i18n", "/i18n.properties"),
+				async: true
+			});
+
+			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId"), oResourceBundlePromise]).then(function(aParams) {
+				var aAppVariantOverviewAttributes = aParams[0], oResourceBundle = aParams[1];
+
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 
-				assert.strictEqual(aAppVariantOverviewAttributes[0].typeOfApp, "App Variant", "then the type of first app(variant) is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[1].typeOfApp, "Original App", "then the type of second app is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of first app(variant) is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[1].icon, "sap-icon://account", "then the icon of second app is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, undefined, "then the semantic object of first app(variant) is correct");
@@ -227,7 +224,7 @@ sap.ui.require([
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, false, "then the first app(variant) is not adaptable");
 				assert.equal(aAppVariantOverviewAttributes[1].adaptUIButtonVisibility, true, "then the second app is adaptable");
 
-				assert.equal(aAppVariantOverviewAttributes[0].rowStatus, "Information", "then the first app(variant) is highlighted blue");
+				assert.equal(aAppVariantOverviewAttributes[0].currentStatus, oResourceBundle.getText("MAA_NEW_APP_VARIANT"), "then the first app(variant) is highlighted blue");
 			});
 		});
 	});
@@ -264,7 +261,6 @@ sap.ui.require([
 							subTitle : "subTitle1",
 							description : "description1",
 							iconUrl : "sap-icon://history",
-							originalId : "id1",
 							isOriginal : true,
 							originLayer: "VENDOR",
 							isAppVariant: true,
@@ -288,7 +284,6 @@ sap.ui.require([
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[0].typeOfApp, "Original App", "then the type of app is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, "SemObj", "then the semantic object is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].action, "Action", "then the action is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, false, "then the app is not adaptable");
@@ -300,9 +295,6 @@ sap.ui.require([
 				response: {
 					"sap.app" : {
 						id : "testId"
-					},
-					"sap.ui5" : {
-						componentName : "originalId"
 					}
 				}
 			};
@@ -313,7 +305,6 @@ sap.ui.require([
 				assert.ok(oDescriptor, "then the descriptor of the app is returned");
 
 				assert.strictEqual(oDescriptor["sap.app"].id, "testId", "then the id of the descriptor is right");
-				assert.strictEqual(oDescriptor["sap.ui5"].componentName, "originalId", "then the componentName of the descriptor is right");
 			});
 		});
 	});

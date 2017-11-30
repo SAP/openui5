@@ -19,6 +19,7 @@ function(
 
 			this.HBOX_ID = "hboxId";
 			this.TEXT_ID = "textId";
+			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
 
 			jQuery.sap.registerModulePath("testComponent", "../testComponent");
 
@@ -31,7 +32,12 @@ function(
 						});
 
 			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f" xmlns:layout="sap.ui.layout">' +
+				'<mvc:View id="testComponent---myView" ' +
+					'xmlns:mvc="sap.ui.core.mvc" ' +
+					'xmlns="sap.m" ' +
+					'xmlns:f="sap.f" ' +
+					'xmlns:layout="sap.ui.layout" ' +
+					'xmlns:fl="sap.ui.fl">' +
 					'<VBox>' +
 						'<tooltip></tooltip>' +	//empty 0..1 aggregation
 						'<Label visible="true"></Label>' + //content in default aggregation
@@ -65,7 +71,7 @@ function(
 						'<Button text="Button2"></Button>' +
 						'<Button text="Button3"></Button>' +
 					'</VBox>' +
-					'<f:DynamicPageTitle id="title2">' +
+					'<f:DynamicPageTitle id="title2" fl:flexibility="' + this.CHANGE_HANDLER_PATH + '">' +
 						'<actions>' +
 							'<Button text="Action1"></Button>' +
 							'<Button text="Action2"></Button>' +
@@ -77,6 +83,10 @@ function(
 							'<text text="text3"></text>' +
 						'</snappedContent>' +
 					'</f:DynamicPageTitle>' +
+					'<VBox id="stashedExperiments">' +
+						'<Label text="visibleLabel" stashed="false"></Label>' +
+						'<Label text="stashedInvisibleLabel" visible="false" stashed="true"></Label>' +
+					'</VBox>' +
 				'</mvc:View>';
 			this.oXmlView = jQuery.sap.parseXML(this.oXmlString, "application/xml").documentElement;
 
@@ -246,6 +256,21 @@ function(
 		assert.strictEqual(oInvisibleLabel.getAttribute("visible"), null, "visible=true means not having it in xml as some controls behave differently if visible property is provided");
 	});
 
+	QUnit.test("setStash", function (assert) {
+		var oVBox = this.oXmlView.childNodes[7];
+		XmlTreeModifier.setStashed(oVBox, true);
+		assert.strictEqual(oVBox.getAttribute("stashed"), "true", "stashed attribute can be added");
+
+		var oVisibleLabel = oVBox.childNodes[0];
+		XmlTreeModifier.setStashed(oVisibleLabel, true);
+		assert.strictEqual(oVisibleLabel.getAttribute("stashed"), "true", "stashed attribute can be changed");
+
+		var oStashedInvisibleLabel = oVBox.childNodes[1];
+		XmlTreeModifier.setStashed(oStashedInvisibleLabel, false);
+		assert.strictEqual(oStashedInvisibleLabel.getAttribute("stashed"), null, "stashed=false means not having it in xml as some controls behave differently if visible property is provided");
+		assert.strictEqual(oStashedInvisibleLabel.getAttribute("visible"), null, "Unstash also needs to make the control visible (which is done automatically in with stash API)");
+	});
+
 	QUnit.test("getProperty returns default value if not in xml", function (assert) {
 		var oVBox = this.oXmlView.childNodes[0];
 		var oVisibleLabel = oVBox.childNodes[1];
@@ -321,5 +346,15 @@ function(
 		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oHBox, oText), "items", "The function returned the correct name - 'items'.");
 		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oDynamicPageTitle, oButton), "actions", "The function returned the correct name - 'actions'.");
 		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oDynamicPageTitle, oText2), "snappedContent", "The function returned the correct name - 'snappedContent'.");
+	});
+
+	QUnit.test("when getChangeHandlerModule is called for control instance on which changeHandler is defined", function (assert) {
+		var oDynamicPageTitle = this.oXmlView.childNodes[6];
+		assert.strictEqual(XmlTreeModifier.getChangeHandlerModulePath(oDynamicPageTitle), this.CHANGE_HANDLER_PATH, "then the changehandler path defined at the control instance is returned");
+	});
+
+	QUnit.test("when getChangeHandlerModule is called for control instance on which changeHandler is not defined", function (assert) {
+		var oVBox = this.oXmlView.childNodes[0];
+		assert.notOk(XmlTreeModifier.getChangeHandlerModulePath(oVBox), "then nothing is returned");
 	});
 });

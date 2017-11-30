@@ -863,6 +863,17 @@ sap.ui.define([
 			return window.location.search.substring(1);
 		},
 
+		/**
+		 * Returns the values of a certain technical parameter or undefined if the parameter is invalid
+		 * @param  {object} oComponent Component instance used to get the technical parameters
+		 * @param {string} sParameterName The name of the parameter (e.g. "sap-ui-fl-control-variant-id")
+		 * @return {string[]|undefined} Returns the list of variant references found in the URL or undefined if none found
+		 */
+		getTechnicalParameterValuesFromURL : function(oComponent, sParameterName){
+			var mTechnicalParameters = oComponent && oComponent.getComponentData
+				&& oComponent.getComponentData() && oComponent.getComponentData().technicalParameters;
+			return (mTechnicalParameters && mTechnicalParameters[sParameterName]) || [];
+		},
 
 		/**
 		 * Checks the SAPUI5 debug settings to determine whether all or at least the <code>sap.ui.fl</code> library is debugged.
@@ -1070,6 +1081,34 @@ sap.ui.define([
 				});
 			});
 			return oResult;
+		},
+
+		/**
+		 * Checks if the element is an instance of the type.
+		 *
+		 * @param {object} oElement Element to be checked
+		 * @param {string} sType type That the element should be checked against
+		 * @returns {boolean} Returns true if the element is an instance of the type
+		 */
+		isInstanceOf: function(oElement, sType) {
+			var oInstance = jQuery.sap.getObject(sType);
+			if (typeof oInstance === "function") {
+				return oElement instanceof oInstance;
+			} else {
+				return false;
+			}
+		},
+
+		/**
+		 * Checks if the element has the interface.
+		 *
+		 * @param {object} oElement Element
+		 * @param {string} sInterface Interface that should be in the element
+		 * @returns {boolean} Returns true if the element has the interface
+		 */
+		hasInterface: function(oElement, sInterface) {
+			var aInterfaces = oElement.getMetadata().getInterfaces();
+			return aInterfaces.indexOf(sInterface) !== -1;
 		}
 	};
 	return Utils;

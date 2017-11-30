@@ -10,41 +10,41 @@
 	<!--The view is is bound to EntityType01 in the controller -->
 	<Page title="{i18n>appTitleMain}" id="page" enableScrolling="false">
 		<headerContent>
-				<Button text="{= ${app>/showAdaptButton} ? ${i18n>btnAdapt} : ${i18n>btnNonAdapt} }"  press=".switchToAdaptionMode" />
+				<Button visible = "{app>/showAdaptButton}" text="{= ${app>/showAdaptButton} ? ${i18n>btnAdapt} : ${i18n>btnNonAdapt} }"  press=".switchToAdaptionMode" />
 		</headerContent>
 		<content>
-			<layout:VerticalLayout width="100%">
-				<form:SimpleForm class="sapUiSmallMargin"
-								 title="Simple Form bound to EntityType01" id="OutsideObjectPageForm"
-								 maxContainerCols="3"
-								 editable="true"
-								 adjustLabelSpan="false"
-								 layout="ResponsiveGridLayout"
-								 labelSpanXL="4"
-								 labelSpanL="4"
-								 labelSpanM="4"
-								 emptySpanXL="0"
-								 emptySpanL="0"
-								 emptySpanM="0"
-								 columnsXL="3"
-								 columnsL="2"
-								 columnsM="2"
-								 singleContainerFullSize="false">
-					<form:content>
-						<core:Title id="EntityType01.Title1" text="EntityType02 Title 1" />
-						<Label id="EntityType01.Label1" text="{/#EntityType01/Property03/@sap:label}" />
-						<Text id="EntityType01.Text1" text="{Property03}" />
-						<Label id="EntityType01.Label2" text="{/#EntityType01/Property04/@sap:label}" />
-						<Text id="EntityType01.Text2" text="{Property04}" />
+			<!--<layout:VerticalLayout width="100%">-->
+				<!--<form:SimpleForm class="sapUiSmallMargin"-->
+								 <!--title="Simple Form bound to EntityType01" id="OutsideObjectPageForm"-->
+								 <!--maxContainerCols="3"-->
+								 <!--editable="true"-->
+								 <!--adjustLabelSpan="false"-->
+								 <!--layout="ResponsiveGridLayout"-->
+								 <!--labelSpanXL="4"-->
+								 <!--labelSpanL="4"-->
+								 <!--labelSpanM="4"-->
+								 <!--emptySpanXL="0"-->
+								 <!--emptySpanL="0"-->
+								 <!--emptySpanM="0"-->
+								 <!--columnsXL="3"-->
+								 <!--columnsL="2"-->
+								 <!--columnsM="2"-->
+								 <!--singleContainerFullSize="false">-->
+					<!--<form:content>-->
+						<!--<core:Title id="EntityType01.Title1" text="EntityType02 Title 1" />-->
+						<!--<Label id="EntityType01.Label1" text="{/#EntityType01/Property03/@sap:label}" />-->
+						<!--<Text id="EntityType01.Text1" text="{Property03}" />-->
+						<!--<Label id="EntityType01.Label2" text="{/#EntityType01/Property04/@sap:label}" />-->
+						<!--<Text id="EntityType01.Text2" text="{Property04}" />-->
 
-						<core:Title id="EntityType01.Title2" text="EntityType02 Title 2 Complex" />
-						<Label id="EntityType01.Label3" text="{/#EntityType01/Property05/@sap:label}" />
-						<Text id="EntityType01.Text3" text="{Property05}" />
-						<Label id="EntityType01.Label4" text="{/#EntityType01/Property08/@sap:label}" />
-						<Text id="EntityType01.Text4" text="{Property08}" />
-					</form:content>
-				</form:SimpleForm>
-			</layout:VerticalLayout>
+						<!--<core:Title id="EntityType01.Title2" text="EntityType02 Title 2 Complex" />-->
+						<!--<Label id="EntityType01.Label3" text="{/#EntityType01/Property05/@sap:label}" />-->
+						<!--<Text id="EntityType01.Text3" text="{Property05}" />-->
+						<!--<Label id="EntityType01.Label4" text="{/#EntityType01/Property08/@sap:label}" />-->
+						<!--<Text id="EntityType01.Text4" text="{Property08}" />-->
+					<!--</form:content>-->
+				<!--</form:SimpleForm>-->
+			<!--</layout:VerticalLayout> -->
 
 
 			<uxap:ObjectPageLayout id="ObjectPageLayout">

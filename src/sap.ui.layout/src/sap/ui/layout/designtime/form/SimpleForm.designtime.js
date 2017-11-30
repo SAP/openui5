@@ -166,7 +166,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 							}
 						}
 						if (bContent) {
-							var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+							var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout.designtime");
 							return oTextResources.getText("MSG_REMOVING_TOOLBAR");
 						}
 					},

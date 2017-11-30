@@ -19,7 +19,8 @@ sap.ui.define([
 		'./_OpaLogger',
 		'sap/ui/thirdparty/URI',
 		'sap/ui/base/EventProvider',
-		'sap/ui/qunit/QUnitUtils'
+		'sap/ui/qunit/QUnitUtils',
+		'./autowaiter/_autoWaiter'
 	],
 	function($,
 			 Opa,
@@ -37,7 +38,8 @@ sap.ui.define([
 			 _OpaLogger,
 			 URI,
 			 EventProvider,
-			 QUnitUtils) {
+			 QUnitUtils,
+			 _autoWaiter) {
 		"use strict";
 
 		var oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5"),
@@ -499,22 +501,19 @@ sap.ui.define([
 		 *     };
 		 * </code>
 		 * But actions will only be executed once and only after the check function returned true.
-		 * Before actions are executed the {@link sap.ui.test.matchers.Interactable}
-		 * matcher will check if the Control is currently able to perform actions if it is not,
+		 * Before actions are executed the {@link sap.ui.test.matchers.Interactable} matcher
+		 * and the internal autoWait logic will check if the Control is currently able to perform actions if it is not,
 		 * Opa5 will try again after the 'pollingInterval'.
-		 * That means actions will only be executed if the control is not:
+		 * That means actions will only be executed if:
 		 * <ul>
 		 *     <li>
-		 *         Behind an open dialog
+		 *         Controls and their parents are visible, enabled and not busy
 		 *     </li>
 		 *     <li>
-		 *         Inside of a navigating NavContainer
+		 *         The controls are not hidden behind static elements such as dialogs
 		 *     </li>
 		 *     <li>
-		 *         Busy
-		 *     </li>
-		 *     <li>
-		 *         Inside a Parent control that is Busy
+		 *         There is no pending asynchronous work performed by the application
 		 *     </li>
 		 * </ul>
 		 * If there are multiple controls in Opa5's result set the action will be executed on all of them.
@@ -551,9 +550,10 @@ sap.ui.define([
 		 * Executing multiple actions will not wait between actions for a control to become "Interactable" again.
 		 * If you need waiting between actions you need to split the actions into multiple 'waitFor' statements.
 		 * @param {boolean} [options.autoWait=false] @since 1.42 Only has an effect if set to true.
-		 * The waitFor statement will not execute success callbacks as long as there are open XMLHTTPRequests (requests to a server).
-		 * It will only execute success if the control is {@link sap.ui.test.matchers.Interactable}
-		 * So success behaves like an action in terms of waiting.
+		 * The waitFor statement will not execute success callbacks as long as there is pending asynchronous work such as for example:
+		 * open XMLHTTPRequests (requests to a server), scheduled delayed work and promises, unfinished UI navigation.
+		 * In addition, the control must be {@link sap.ui.test.matchers.Interactable}
+		 * So when autoWait is enabled, success behaves like an action in terms of waiting.
 		 * It is recommended to set this value to true for all your waitFor statements using:
 		 * <code>
 		 *     <pre>
@@ -615,11 +615,22 @@ sap.ui.define([
 			oOptionsPassedToOpa = Opa._createFilteredOptions(aPropertiesThatShouldBePassedToOpaWaitFor, options);
 
 			oOptionsPassedToOpa.check = function () {
+				var oAutoWaiter = iFrameLauncher._getAutoWaiter() || _autoWaiter;
+				var bInteractable = !!options.actions || options.autoWait;
+
+				if (bInteractable && oAutoWaiter.hasToWait()) {
+					return false;
+				}
+
 				// Create a new options object for the plugin to keep the original one as is
 				var oPlugin = Opa5.getPlugin();
+				var oPluginOptions = $.extend({}, options, {
+					// ensure Interactable matcher is applied if autoWait is true or actions are specified
+					interactable: bInteractable
+				});
 
 				// even if we have no control the matchers may provide a value for vControl
-				vResult = oPlugin._getFilteredControls(options, vControl);
+				vResult = oPlugin._getFilteredControls(oPluginOptions, vControl);
 
 				if (iFrameLauncher.hasLaunched() && $.isArray(vResult)) {
 					// People are using instanceof Array in their check so i need to make sure the Array

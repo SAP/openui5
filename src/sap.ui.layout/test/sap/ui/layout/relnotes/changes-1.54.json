@@ -49,6 +49,24 @@
         "type": "FIX",
         "text": " sap.ui.dt:added isVisible function to designtime and visible check",
         "references": []
+      },
+      {
+        "id": "26b49541287511ac7e14bb5b7705eeec1fb38f06",
+        "type": "FIX",
+        "text": " SimpleForm: resize handler active after changing layout",
+        "references": []
+      },
+      {
+        "id": "f7c3df91f1f941db317ccf207314db1cd05b8abe",
+        "type": "FIX",
+        "text": " Form: using ResponsiveLayout text too much padding",
+        "references": []
+      },
+      {
+        "id": "c06fc10f7ad1ead80392635b3a8e7e1ca1ccedf5",
+        "type": "FIX",
+        "text": "sap.ui.layout: Wrong i18n reference in SimpleForm DT Metadata",
+        "references": []
       }
     ]
   }

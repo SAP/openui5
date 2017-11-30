@@ -139,6 +139,66 @@
         "type": "FIX",
         "text": " v2.ODataListBinding: filter for edm types with numbers",
         "references": []
+      },
+      {
+        "id": "01f317962ec01cad2b749ef042f46b51b3f456f0",
+        "type": "FEATURE",
+        "text": " format.ListFormat: create list pattern formatter",
+        "references": []
+      },
+      {
+        "id": "85a913571162684284853b79192e7aeba0c3d80a",
+        "type": "FEATURE",
+        "text": " sap.m.ListBase: Enable Drag-and-Drop",
+        "references": []
+      },
+      {
+        "id": "cd9f798f5441431cf81eb0f2ea59f858f9e6ca1f",
+        "type": "FIX",
+        "text": " ClientTreeBinding: Filter on all available entries",
+        "references": []
+      },
+      {
+        "id": "b39168c1e4e64cc513c01a0d60a7e3a3fbfdc19c",
+        "type": "FIX",
+        "text": " Fix return value documentation of Element.clone",
+        "references": []
+      },
+      {
+        "id": "969adb6a561d0ca0c6ac06f6e32f5a95d1414976",
+        "type": "FIX",
+        "text": " mvc/XMLView: apply settings correctly for async views",
+        "references": []
+      },
+      {
+        "id": "cf55baae91cd0e14a6d12380c83ae2eafbf1c1aa",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection considers UTC flag in binding options.",
+        "references": []
+      },
+      {
+        "id": "d4039acb138ba0b3d5f451d3b99f374a3a8a08f4",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.sample.odata.v4.SalesOrderTP100_V*: Make table titles accessible",
+        "references": []
+      },
+      {
+        "id": "23a88f99d5bfd03d62a6b6db001b93b3451e1664",
+        "type": "FEATURE",
+        "text": " Add \u002772\u0027 font and use as default in all Belize themes",
+        "references": []
+      },
+      {
+        "id": "2646dd39ba0118eb150a408fe0f8a39ab0704556",
+        "type": "FIX",
+        "text": " Support $select and $expand with selection on expanded values",
+        "references": []
+      },
+      {
+        "id": "f2bf34cd159eb939a9eba8d393c36f571fe0e84a",
+        "type": "FIX",
+        "text": " qunit/utils: fixed minor jsdoc issues",
+        "references": []
       }
     ]
   }

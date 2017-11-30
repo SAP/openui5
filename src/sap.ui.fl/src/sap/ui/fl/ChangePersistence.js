@@ -46,6 +46,8 @@ sap.ui.define([
 
 		this._mChangesInitial = {};
 
+		this._mVariantsChanges = {};
+
 		if (!this._mComponent || !this._mComponent.name) {
 			Utils.log.error("The Control does not belong to an SAPUI5 component. Personalization and changes for this control might not work as expected.");
 			throw new Error("Missing component name.");
@@ -54,6 +56,7 @@ sap.ui.define([
 		this._oVariantController = new VariantController(this._mComponent.name, this._mComponent.appVersion, {});
 		this._oConnector = this._createLrepConnector();
 		this._aDirtyChanges = [];
+		this._oMessagebundle = undefined;
 	};
 
 	/**
@@ -141,21 +144,22 @@ sap.ui.define([
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
-	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
-	 * @param {object} mPropertyBag.appDescriptor - Manifest that belongs to actual component
-	 * @param {string} mPropertyBag.siteId - ID of the site belonging to actual component
-	 * @param {string} [mPropertyBag.sCurrentLayer] - Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
-	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that changes shall be loaded without layer filtering
-	 * @param {boolean} [mPropertyBag.includeVariants] - Indicates that smart variants shall be included
-	 * @param {string} [mPropertyBag.cacheKey] - key to validate the client side stored cache entry
-	 * @param {string} [mPropertyBag.url] - address to which the request for change should be sent in case the data is not cached
+	 * @param {map} mPropertyBag Contains additional data needed for reading changes
+	 * @param {object} mPropertyBag.appDescriptor Manifest that belongs to the current running component
+	 * @param {string} mPropertyBag.siteId ID of the site belonging to the current running component
+	 * @param {string} [mPropertyBag.sCurrentLayer] Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
+	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] Indicates that changes shall be loaded without layer filtering
+	 * @param {boolean} [mPropertyBag.includeVariants] Indicates that smart variants shall be included
+	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
+	 * @param {string} [mPropertyBag.url] Address to which the request for change should be sent in case the data is not cached
+	 * @param {sap.ui.core.Component} [mPropertyBag.oComponent] App component instance of component
 	 * @see sap.ui.fl.Change
-	 * @returns {Promise} Resolving with an array of changes
+	 * @returns {Promise} Promise resolving with an array of changes
 	 * @public
 	 */
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
 		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
-			this._bHasLoadedChangesFromBackEnd = true;
+			var oComponent = mPropertyBag && mPropertyBag.oComponent;
 
 			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
 				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
@@ -167,9 +171,24 @@ sap.ui.define([
 
 			var aChanges = oWrappedChangeFileContent.changes.changes;
 
+			//Binds a json model of message bundle to the component the first time a change within the vendor layer was detected
+			//It enables the translation of changes
+
+			if (!this._oMessagebundle && oWrappedChangeFileContent.messagebundle && oComponent) {
+				if (!oComponent.getModel("i18nFlexVendor")) {
+					if (aChanges.some(function(oChange) {
+							return oChange.layer === "VENDOR";
+						})) {
+							this._oMessagebundle = oWrappedChangeFileContent.messagebundle;
+							var oModel = new sap.ui.model.json.JSONModel(this._oMessagebundle);
+							oComponent.setModel(oModel, "i18nFlexVendor");
+					}
+				}
+			}
+
 			if (oWrappedChangeFileContent.changes.variantSection && Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0 && !this._oVariantController._getChangeFileContent()) {
-				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent);
-				var aVariantChanges = this._oVariantController.loadDefaultChanges();
+				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponent);
+				var aVariantChanges = this._oVariantController.loadInitialChanges();
 				aChanges = aChanges.concat(aVariantChanges);
 			}
 
@@ -209,6 +228,199 @@ sap.ui.define([
 			change.setState(Change.states.PERSISTED);
 			return change;
 		}
+	};
+
+	/**
+	 * Gets all changes which belong to a specific smart variant, such as filter bar or table.
+	 * @param {string} sStableIdPropertyName Property name of variant stable ID
+	 * @param {string} sStableId Value of variant stable ID
+	 * @param {map} mPropertyBag Contains additional data needed for reading changes
+	 * @param {object} mPropertyBag.appDescriptor Manifest that belongs to the current running component
+	 * @param {string} mPropertyBag.siteId ID of the site belonging to the current running component
+	 * @param {boolean} mPropertyBag.includeVariants Indicates whether smart variants shall be included
+	 * @see sap.ui.fl.Change
+	 * @returns {Promise} Promise resolving with an array of changes
+	 * @public
+	 */
+	ChangePersistence.prototype.getChangesForVariant = function(sStableIdPropertyName, sStableId, mPropertyBag) {
+		if (this._mVariantsChanges[sStableId]) {
+			return Promise.resolve(this._mVariantsChanges[sStableId]);
+		}
+
+		var isChangeValidForVariant = function(oChange) {
+			var isValid = false;
+			var oSelector = oChange._oDefinition.selector;
+			jQuery.each(oSelector, function(id, value){
+				if (id === sStableIdPropertyName && value === sStableId) {
+					isValid = true;
+				}
+			});
+			return isValid;
+		};
+
+		var fLogError = function(key, text) {
+			Utils.log.error("key : " + key + " and text : " + text.value);
+		};
+
+		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
+			return aChanges.filter(isChangeValidForVariant);
+		}).then(function(aChanges) {
+			var sId;
+			this._mVariantsChanges[sStableId] = {};
+			aChanges.forEach(function (oChange){
+				sId = oChange.getId();
+				if (oChange.isValid()) {
+					if (this._mVariantsChanges[sStableId][sId] && oChange.isVariant()) {
+						Utils.log.error("Id collision - two or more variant files having the same id detected: " + sId);
+						jQuery.each(oChange.getDefinition().texts, fLogError);
+						Utils.log.error("already exists in variant : ");
+						jQuery.each(this._mVariantsChanges[sStableId][sId].getDefinition().texts, fLogError);
+					}
+					this._mVariantsChanges[sStableId][sId] = oChange;
+				}
+			}.bind(this));
+			return this._mVariantsChanges[sStableId];
+		}.bind(this));
+	};
+
+	/**
+	 * Adds a new change (could be variant as well) for a smart variant, such as filter bar or table, and returns the ID of the new change.
+	 * @param {string} sStableIdPropertyName Property name of variant stable ID
+	 * @param {string} sStableId Value of variant stable ID
+	 * @param {object} mParameters Map of parameters, see below
+	 * @param {string} mParameters.type Type <filterVariant, tableVariant, etc>
+	 * @param {string} mParameters.ODataService Name of the OData service --> can be null
+	 * @param {object} mParameters.texts A map object containing all translatable texts which are referenced within the file
+	 * @param {object} mParameters.content Content of the new change
+	 * @param {boolean} mParameters.isVariant Indicates if the change is a variant
+	 * @param {string} [mParameters.packageName] Package name for the new entity <default> is $tmp
+	 * @param {boolean} mParameters.isUserDependent Indicates if a change is only valid for the current user
+	 * @param {boolean} [mParameters.id] ID of the change. The ID has to be globally unique and should only be set in exceptional cases, for example
+	 *        downport of variants
+	 * @returns {string} The ID of the newly created change
+	 * @public
+	 */
+	ChangePersistence.prototype.addChangeForVariant = function( sStableIdPropertyName, sStableId, mParameters) {
+		var oFile, oInfo, mInternalTexts, oChange, sId;
+
+		if (!mParameters) {
+			return undefined;
+		}
+		if (!mParameters.type) {
+			Utils.log.error("sap.ui.fl.Persistence.addChange : type is not defined");
+		}
+		//if (!mParameters.ODataService) {
+		//	Utils.log.error("sap.ui.fl.Persistence.addChange : ODataService is not defined");
+		//}
+		var sContentType = jQuery.type(mParameters.content);
+		if (sContentType !== 'object' && sContentType !== 'array') {
+			Utils.log.error("mParameters.content is not of expected type object or array, but is: " + sContentType, "sap.ui.fl.Persistence#addChange");
+		}
+		// convert the text object to the internal structure
+		mInternalTexts = {};
+		if (typeof (mParameters.texts) === "object") {
+			jQuery.each(mParameters.texts, function(id, text) {
+				mInternalTexts[id] = {
+					value: text,
+					type: "XFLD"
+				};
+			});
+		}
+
+		var oValidAppVersions = {
+			creation: this._mComponent.appVersion,
+			from: this._mComponent.appVersion
+		};
+		if (this._mComponent.appVersion && mParameters.developerMode) {
+			oValidAppVersions.to = this._mComponent.appVersion;
+		}
+
+		oInfo = {
+			changeType: mParameters.type,
+			service: mParameters.ODataService,
+			texts: mInternalTexts,
+			content: mParameters.content,
+			reference: this._mComponent.name, //in this case the component name can also be the value of sap-app-id
+			isVariant: mParameters.isVariant,
+			packageName: mParameters.packageName,
+			isUserDependent: mParameters.isUserDependent,
+			validAppVersions: oValidAppVersions
+		};
+
+		oInfo.selector = {};
+		oInfo.selector[sStableIdPropertyName] = sStableId;
+
+		oFile = Change.createInitialFileContent(oInfo);
+
+		// If id is provided, overwrite generated id
+		if (mParameters.id) {
+			oFile.fileName = mParameters.id;
+		}
+
+		oChange = new Change(oFile);
+
+		sId = oChange.getId();
+		if (!this._mVariantsChanges[sStableId]) {
+			this._mVariantsChanges[sStableId] = {};
+		}
+		this._mVariantsChanges[sStableId][sId] = oChange;
+		return oChange.getId();
+	};
+
+	/**
+	 * Saves/flushes all current changes of a smart variant to the backend.
+	 *
+	 * @returns {Promise} Promise resolving with an array of responses or rejecting with the first error
+	 * @public
+	 */
+	ChangePersistence.prototype.saveAllChangesForVariant = function(sStableId) {
+		var aPromises = [];
+		var that = this;
+		jQuery.each(this._mVariantsChanges[sStableId], function(id, oChange) {
+			var sChangeId = oChange.getId();
+			switch (oChange.getPendingAction()) {
+				case "NEW":
+					aPromises.push(that._oConnector.create(oChange.getDefinition(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
+						oChange.setResponse(result.response);
+						if (Cache.isActive()) {
+							Cache.addChange({ name: that._mComponent.name, appVersion: that._mComponent.appVersion}, result.response);
+						}
+						return result;
+					}));
+					break;
+				case "UPDATE":
+					aPromises.push(that._oConnector.update(oChange.getDefinition(), oChange.getId(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
+						oChange.setResponse(result.response);
+						if (Cache.isActive()) {
+							Cache.updateChange({ name: that._mComponent.name, appVersion: that._mComponent.appVersion}, result.response);
+						}
+						return result;
+					}));
+					break;
+				case "DELETE":
+					aPromises.push(that._oConnector.deleteChange({
+						sChangeName: oChange.getId(),
+						sLayer: oChange.getLayer(),
+						sNamespace: oChange.getNamespace(),
+						sChangelist: oChange.getRequest()
+					}, oChange.isVariant()).then(function(result) {
+						var oChange = that._mVariantsChanges[sStableId][sChangeId];
+						if (oChange.getPendingAction() === "DELETE") {
+							delete that._mVariantsChanges[sStableId][sChangeId];
+						}
+						if (Cache.isActive()) {
+							Cache.deleteChange({ name: that._mComponent.name, appVersion: that._mComponent.appVersion}, oChange.getDefinition());
+						}
+						return result;
+					}));
+					break;
+				default:
+					break;
+			}
+		});
+
+		// TODO Consider not rejecting with first error, but wait for all promises and collect the results
+		return Promise.all(aPromises);
 	};
 
 	/**
@@ -291,14 +503,15 @@ sap.ui.define([
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
 	 * @param {object} oComponent - Component instance used to prepare the IDs (e.g. local)
 	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
-	 * @param {object} mPropertyBag.appDescriptor - Manifest belonging to actual component
-	 * @param {string} mPropertyBag.siteId - ID of the site belonging to actual component
+	 * @param {object} mPropertyBag.appDescriptor - Manifest belonging to the current running component
+	 * @param {string} mPropertyBag.siteId - ID of the site belonging to the current running component
 	 * @see sap.ui.fl.Change
-	 * @returns {Promise} Resolving with a getter for the changes map
+	 * @returns {Promise} Promise resolving with a getter for the changes map
 	 * @public
 	 */
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
 
+		mPropertyBag.oComponent = oComponent;
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {

@@ -1,9 +1,9 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/test/Opa5',
-	"sap/ui/test/launchers/iFrameLauncher",
-	'sap/ui/thirdparty/URI'
-	], function ($, Opa5, IFrameLauncher,URI) {
+	'sap/ui/thirdparty/URI',
+	'sap/ui/test/autowaiter/_autoWaiter'
+], function ($, Opa5, URI, _autoWaiter) {
 	"use strict";
 
 	QUnit.module("Launchers and teardown");
@@ -156,13 +156,6 @@ sap.ui.define([
 		});
 	});
 
-	var aAutoWaiterStubs = [];
-
-	function stubAutoWaiter () {
-		var oAutoWaiter = IFrameLauncher._getAutoWaiter();
-		aAutoWaiterStubs.push(sinon.stub(oAutoWaiter, "hasToWait").returns(false));
-	}
-
 	QUnit.module("Launchers and autoWait", {
 		beforeEach: function () {
 			Opa5.extendConfig({
@@ -170,29 +163,24 @@ sap.ui.define([
 			});
 		},
 		afterEach: function () {
-			aAutoWaiterStubs.forEach(function (oStub) {
-				oStub.restore();
-			});
-			aAutoWaiterStubs = [];
 			Opa5.resetConfig();
 		}
 	});
 
 	QUnit.test("Should ignore autosync when starting/tearing down an IFrame", function(assert) {
-		// System under Test
 		var fnDone = assert.async();
 		var oOpa5 = new Opa5();
-
-		// waiter in the outer frame
-		stubAutoWaiter();
+		var oAutoWaiterStub = sinon.stub(_autoWaiter, "hasToWait");
+		oAutoWaiterStub.returns(false);
 
 		oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
-
 		oOpa5.iTeardownMyApp();
 
 		Opa5.emptyQueue().done(function () {
 			assert.ok(!$(".opaFrame").length, "IFrame is gone again");
-			sinon.assert.notCalled(aAutoWaiterStubs[0]);
+
+			sinon.assert.notCalled(oAutoWaiterStub);
+			oAutoWaiterStub.restore();
 			fnDone();
 		});
 	});
@@ -200,8 +188,8 @@ sap.ui.define([
 	QUnit.test("Should ignore autosync when starting/tearing down a component", function (assert) {
 		var fnDone = assert.async();
 		var oOpa5 = new Opa5();
-
-		stubAutoWaiter();
+		var oAutoWaiterStub = sinon.stub(_autoWaiter, "hasToWait");
+		oAutoWaiterStub.returns(false);
 
 		oOpa5.iStartMyUIComponent({
 			componentConfig: {
@@ -213,7 +201,8 @@ sap.ui.define([
 
 		Opa5.emptyQueue().done(function () {
 			assert.ok(!$(".sapUiOpaComponent").length, "Component is gone again");
-			sinon.assert.notCalled(aAutoWaiterStubs[0]);
+			sinon.assert.notCalled(oAutoWaiterStub);
+			oAutoWaiterStub.restore();
 			fnDone();
 		});
 	});

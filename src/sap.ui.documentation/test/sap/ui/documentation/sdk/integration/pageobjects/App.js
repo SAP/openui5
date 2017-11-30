@@ -9,10 +9,6 @@ sap.ui.define([
 			viewName: "App",
 			actions: {
 
-				iLookAtTheScreen : function () {
-					return this;
-				},
-
 				iPressTheWelcomeTabButton : function() {
 					return this.waitFor({
 						id: "sap_logo",

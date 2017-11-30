@@ -814,6 +814,22 @@ jQuery.sap.require("sap.m.Button");
 		oGetComponentForControlStub.stub.restore();
 	});
 
+	QUnit.test("when calling 'getTechnicalParameterValuesFromURL' with a Component containing a valid URL parameter", function(assert){
+		var oComponentMock = {
+			getComponentData: function(){
+				return {
+					technicalParameters: {
+						"sap-ui-fl-control-variant-id" : ["variant0"]
+					}
+				};
+			}
+		};
+
+		assert.equal(Utils.getTechnicalParameterValuesFromURL(oComponentMock, "sap-ui-fl-control-variant-id").indexOf("variant0"),
+			0,
+			"then the function returns the variant reference in the URL parameter");
+	});
+
 	QUnit.module("checkControlId and hasLocalIdSuffix", {
 		beforeEach: function () {
 			this.oComponent = new sap.ui.core.UIComponent();

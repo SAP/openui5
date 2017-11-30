@@ -820,14 +820,18 @@ sap.ui.define([
 					} else {
 						oPointerExtension._bHideMenu = true;
 					}
-				} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL)) {
-					bMenuOpen = this._oCellContextMenu && this._oCellContextMenu.bOpen;
-					var bMenuOpenedAtAnotherDataCell = bMenuOpen && this._oCellContextMenu.oOpenerRef !== $Cell[0];
-
-					if (!bMenuOpen || bMenuOpenedAtAnotherDataCell) {
+				} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL)) {
+					if (TableUtils.Menu.hasContextMenu(this)) {
 						oPointerExtension._bShowMenu = true;
 					} else {
-						oPointerExtension._bHideMenu = true;
+						bMenuOpen = this._oCellContextMenu && this._oCellContextMenu.bOpen;
+						var bMenuOpenedAtAnotherDataCell = bMenuOpen && this._oCellContextMenu.oOpenerRef !== $Cell[0];
+
+						if (!bMenuOpen || bMenuOpenedAtAnotherDataCell) {
+							oPointerExtension._bShowMenu = true;
+						} else {
+							oPointerExtension._bHideMenu = true;
+						}
 					}
 				} else {
 					oPointerExtension._bShowDefaultMenu = true;
@@ -911,7 +915,7 @@ sap.ui.define([
 			} else if (oPointerExtension._bShowMenu) {
 				oEvent.setMarked("handledByPointerExtension");
 				oEvent.preventDefault(); // To prevent opening the default browser context menu.
-				TableUtils.Menu.openContextMenu(this, oEvent.target, false);
+				TableUtils.Menu.openContextMenu(this, oEvent.target, false, null, oEvent);
 				delete oPointerExtension._bShowMenu;
 
 			} else if (oPointerExtension._bHideMenu) {

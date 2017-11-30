@@ -5,6 +5,7 @@
  * Adds support rules of the sap.m library to the support infrastructure.
  */
 sap.ui.define(["jquery.sap.global", "sap/ui/support/library",
+				"./rules/Breadcrumbs.support",
 				"./rules/Button.support",
 				"./rules/CheckBox.support",
 				"./rules/Dialog.support",
@@ -15,6 +16,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library",
 				"./rules/Select.support",
 				"./rules/SelectDialog.support"],
 	function(jQuery, SupportLib,
+			BreadcrumbsSupport,
 			ButtonSupport,
 			CheckBoxSupport,
 			DialogSupport,
@@ -30,6 +32,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library",
 		name: "sap.m",
 		niceName: "UI5 Main Library",
 		ruleset: [
+			BreadcrumbsSupport,
 			ButtonSupport,
 			CheckBoxSupport,
 			DialogSupport,

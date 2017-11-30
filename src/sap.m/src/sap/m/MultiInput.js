@@ -822,7 +822,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 					this.updateDomValue(lastInvalidText);
 
 					for (i = 0; i < aValidTokens.length; i++) {
-						if (this._tokenizer._addUniqueToken(aValidTokens[i])) {
+						if (this._tokenizer._addUniqueToken(aValidTokens[i], undefined, true)) {
 							aAddedTokens.push(aValidTokens[i]);
 						}
 					}
@@ -1412,6 +1412,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		this._tokenizer.detachTokenUpdate(this._onTokenUpdate, this);
 
 		oClone = Input.prototype.clone.apply(this, arguments);
+
+		oClone.destroyAggregation("tokenizer");
+		oClone._tokenizer = null;
 
 		oTokenizerClone = this._tokenizer.clone();
 		oClone._tokenizer = oTokenizerClone;

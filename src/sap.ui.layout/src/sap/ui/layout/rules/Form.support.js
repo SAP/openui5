@@ -476,9 +476,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		enabled: true,
 		minversion: "1.48",
 		title: "Form: Editable content must match editable property",
-		description: "The editable property of the Form is used to align the Labels and add screen reader information." +
-		             "\nIf editable controls are used in Form, the editable property must be set." +
-		             "\nIf no editable controls are used in Form, the editable property must not be set.",
+		description: "The editable property of the Form is used to align the Labels and add screen reader information. If editable controls are used in Form, the property must be set, otherwise it should not be set.",
 		resolution: "Set the editable property according to the content of the Form.",
 		resolutionurls: [{
 			text: "API Reference: Form",
@@ -668,9 +666,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		enabled: true,
 		minversion: "1.48",
 		title: "Form: LayoutData assigned to Form content not valid for layout",
-		description: "Layout data on Form content can be used to influence the appearance of Form." +
-		             " Depending on the layout used, different LayoutData can be used. " +
-		             " \n For example, if ResponsiveGridLayout is used, GridData can be used to change the width of the fields.",
+		description: "Layout data on Form content can be used to influence the appearance of Form. Depending on the layout used, different LayoutData can be used.",
 		resolution: "Use only valid LayoutData that are suitable for the layout used",
 		resolutionurls: [{
 			text: "API Reference: ResponsiveGridLayout",

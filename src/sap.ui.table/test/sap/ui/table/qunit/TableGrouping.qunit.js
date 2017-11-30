@@ -38,35 +38,270 @@ sap.ui.require([
 		assert.ok(TableUtils.Grouping.TableUtils === TableUtils, "Dependency forwarding of TableUtils correct");
 	});
 
-	QUnit.test("toggleGroupHeader", function(assert) {
+	QUnit.module("Expand/Collapse", {
+		beforeEach: function() {
+			createTables();
 
-		function doToggle(sText, bForceExpand, bExpectExpanded, bExpectChange) {
-			var bRes = Grouping.toggleGroupHeader(oTreeTable, 0, bForceExpand);
-			if (bExpectChange) {
-				assert.ok(bExpectExpanded && (bRes === true) || !bExpectExpanded && (bRes === false), sText);
-			} else {
-				assert.ok((bRes !== true) && (bRes !== false), sText);
+			var oData = oTreeTable.getModel().getData();
+			oData.tree.rows[2].rows[0].rows = [{A: "ASUB3_0", B: "BSUB3_0", C: "CSUB3_0", D: "DSUB3_0", E: "ESUB3_0"}];
+			oTreeTable.getModel().setData(oData);
+
+			oTreeTable.setVisibleRowCount(5);
+			sap.ui.getCore().applyChanges();
+
+			this.oBinding = oTreeTable.getBinding("rows");
+			this.oExpandSpy = sinon.spy(this.oBinding, "expand");
+			this.oCollapseSpy = sinon.spy(this.oBinding, "collapse");
+			this.oToggleIndexSpy = sinon.spy(this.oBinding, "toggleIndex");
+			this.oChangeEventSpy = sinon.spy();
+
+			this.oBinding.attachChange(this.oChangeEventSpy);
+		},
+		afterEach: function() {
+			destroyTables();
+		},
+		test: function(sMessage, oTestConfig, assert) {
+			if (oTestConfig.prepare != null) {
+				oTestConfig.prepare();
 			}
-			var oBinding = oTreeTable.getBinding("rows");
-			if (oBinding) {
-				assert.equal(oBinding.isExpanded(0), bExpectExpanded, "First row " + (bExpectExpanded ? "" : "not ") + "expanded");
+			this.oExpandSpy.reset();
+			this.oCollapseSpy.reset();
+			this.oToggleIndexSpy.reset();
+			this.oChangeEventSpy.reset();
+
+			var bReturnValue = Grouping.toggleGroupHeader(oTreeTable, oTestConfig.indices, oTestConfig.expand);
+			var mOperations = [];
+
+			this.oExpandSpy.getCalls().forEach(function(oCall) {
+				mOperations.push({operation: "expand", index: oCall.args[0], suppressChange: oCall.args[1]});
+			});
+			this.oCollapseSpy.getCalls().forEach(function(oCall) {
+				mOperations.push({operation: "collapse", index: oCall.args[0], suppressChange: oCall.args[1]});
+			});
+			this.oToggleIndexSpy.getCalls().forEach(function(oCall) {
+				// The binding calls expand/collapse inside toggleIndex. As these methods where not called by the table they should be ignored.
+				mOperations = mOperations.filter(function(mOperation) {
+					return !(mOperation.operation !== "toggle" && mOperation.index === oCall.args[0]);
+				});
+
+				mOperations.push({operation: "toggle", index: oCall.args[0]});
+			});
+
+			assert.strictEqual(bReturnValue, oTestConfig.expectedReturnValue, sMessage + ": Return value is correct");
+
+			if (oTestConfig.expectedReturnValue != null) {
+				assert.deepEqual(mOperations, oTestConfig.expectedOperations, sMessage + ": Operations were performed correctly");
+				assert.ok(this.oChangeEventSpy.calledOnce, sMessage + ": Change event was fired once");
+			} else {
+				assert.deepEqual(mOperations, [], sMessage + ": No operations were performed");
+				assert.ok(this.oChangeEventSpy.notCalled, sMessage + ": Change event was not fired");
 			}
 		}
+	});
 
-		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "First row not expanded yet");
-		doToggle("Nothing changed when force collapse", false, false, false);
-		doToggle("Change when force expand", true, true, true);
-		doToggle("Nothing changed when force expand again", true, true, false);
-		doToggle("Changed when force collapse", false, false, true);
-		doToggle("Change when toggle", null, true, true);
-		doToggle("Change when toggle", null, false, true);
-		// make the first node a leaf
-		var oData = oTreeTable.getModel().getData();
-		delete oData.tree.rows[0].rows;
-		oTreeTable.getModel().setData(oData);
-		doToggle("Try toggle leaf", null, false, false);
+	QUnit.test("Expand", function(assert) {
+		[0, [0]].forEach(function(vIndexParameter) {
+			this.test("Expand a collapsed row", {
+				prepare: function() {
+					oTreeTable.collapse(0);
+					},
+				indices: vIndexParameter,
+				expand: true,
+				expectedReturnValue: true,
+				expectedOperations: [
+					{operation: "expand", index: 0, suppressChange: false}
+				]
+			}, assert);
+			this.test("Expand an expanded row", {
+				indices: vIndexParameter,
+				expand: true,
+				expectedReturnValue: null
+			}, assert);
+		}.bind(this));
+
+		[1, [1]].forEach(function(vIndexParameter) {
+			this.test("Expand a leaf", {
+				prepare: function() {
+					oTreeTable.expand(0);
+				},
+				indices: vIndexParameter,
+				expand: true,
+				expectedReturnValue: null
+			}, assert);
+		}.bind(this));
+
+		this.test("Expand multiple rows", {
+			prepare: function() {
+				/* Create the following state:
+				 * 0 - Collapsed
+				 * 1 - Expanded
+				 * 2 -   Leaf
+				 * 3 - Collapsed
+				 * 4 - Collapsed
+				 */
+				oTreeTable.collapseAll();
+				oTreeTable.expand(1);
+			},
+			indices: [1, 0, 3, -1, 2, 4, this.oBinding.getLength()],
+			expand: true,
+			expectedReturnValue: true,
+			expectedOperations: [
+				{operation: "expand", index: 4, suppressChange: true},
+				{operation: "expand", index: 3, suppressChange: true},
+				{operation: "expand", index: 0, suppressChange: false}
+			]
+		}, assert);
+	});
+
+	QUnit.test("Collapse", function(assert) {
+		[0, [0]].forEach(function(vIndexParameter) {
+			this.test("Collapse an expanded row", {
+				prepare: function() {
+					oTreeTable.expand(0);
+				},
+				indices: vIndexParameter,
+				expand: false,
+				expectedReturnValue: false,
+				expectedOperations: [
+					{operation: "collapse", index: 0, suppressChange: false}
+				]
+			}, assert);
+			this.test("Collapse a collapsed row", {
+				indices: vIndexParameter,
+				expand: false,
+				expectedReturnValue: null
+			}, assert);
+		}.bind(this));
+
+		[1, [1]].forEach(function(vIndexParameter) {
+			this.test("Collapse a leaf", {
+				prepare: function() {
+					oTreeTable.expand(0);
+				},
+				indices: vIndexParameter,
+				expand: false,
+				expectedReturnValue: null
+			}, assert);
+		}.bind(this));
+
+		this.test("Collapse multiple rows", {
+			prepare: function() {
+				/* Create the following state:
+				 * 0 - Collapsed
+				 * 1 - Expanded
+				 * 2 -   Leaf
+				 * 3 - Expanded
+				 * 4 -   Expanded
+				 */
+				oTreeTable.collapseAll();
+				oTreeTable.expand(2);
+				oTreeTable.expand(3);
+				oTreeTable.expand(1);
+			},
+			indices: [1, 2, -1, 3, 0, 4, this.oBinding.getLength()],
+			expand: false,
+			expectedReturnValue: false,
+			expectedOperations: [
+				{operation: "collapse", index: 4, suppressChange: true},
+				{operation: "collapse", index: 3, suppressChange: true},
+				{operation: "collapse", index: 1, suppressChange: false}
+			]
+		}, assert);
+	});
+
+	QUnit.test("Toggle", function(assert) {
+		[0, [0]].forEach(function(vIndexParameter) {
+			this.test("Toggle a collapsed row", {
+				prepare: function() {
+					oTreeTable.getBinding("rows").collapse(0);
+					},
+				indices: vIndexParameter,
+				expectedReturnValue: true,
+				expectedOperations: [
+					{operation: "toggle", index: 0}
+				]
+			}, assert);
+			this.test("Toggle an expanded row", {
+				indices: vIndexParameter,
+				expectedReturnValue: false,
+				expectedOperations: [
+					{operation: "toggle", index: 0}
+				]
+			}, assert);
+		}.bind(this));
+
+		[1, [1]].forEach(function(vIndexParameter) {
+			this.test("Toggle a leaf", {
+				prepare: function() {
+					oTreeTable.getBinding("rows").expand(0);
+				},
+				indices: vIndexParameter,
+				expectedReturnValue: null
+			}, assert);
+		}.bind(this));
+
+		this.test("Toggle multiple rows", {
+			indices: [1, 2, 3],
+			expectedReturnValue: null
+		}, assert);
+	});
+
+	QUnit.test("Invalid parameters", function(assert) {
+		[-1, [-1]].forEach(function(vIndexParameter) {
+			this.test("Expand index < 0", {
+				indices: vIndexParameter,
+				expand: true,
+				expectedReturnValue: null
+			}, assert);
+			this.test("Collapse index < 0", {
+				indices: vIndexParameter,
+				expand: false,
+				expectedReturnValue: null
+			}, assert);
+			this.test("Toggle index < 0", {
+				indices: vIndexParameter,
+				expectedReturnValue: null
+			}, assert);
+		}.bind(this));
+
+		var iTotalRowCount = this.oBinding.getLength();
+		[iTotalRowCount, [iTotalRowCount]].forEach(function(vIndexParameter) {
+			this.test("Expand index > maximum row index", {
+				indices: vIndexParameter,
+				expand: true,
+				expectedReturnValue: null
+			}, assert);
+			this.test("Collapse index > maximum row index", {
+				indices: vIndexParameter,
+				expand: false,
+				expectedReturnValue: null
+			}, assert);
+			this.test("Toggle index > maximum row index", {
+				indices: vIndexParameter,
+				expectedReturnValue: null
+			}, assert);
+		}.bind(this));
+
+		delete oTreeTable.getBinding("rows").expand;
+		this.test("The binding does not support expand/collapse", {
+			indices: 0,
+			expand: true,
+			expectedReturnValue: null
+		}, assert);
+
 		oTreeTable.unbindRows();
-		doToggle("No Binding", true, false, false);
+		this.test("The rows are not bound", {
+			indices: 0,
+			expand: true,
+			expectedReturnValue: null
+		}, assert);
+
+		window.oTreeTable = null;
+		this.test("No table instance was passed", {
+			indices: 0,
+			expand: true,
+			expectedReturnValue: null
+		}, assert);
 	});
 
 	QUnit.test("toggleGroupHeaderByRef", function(assert) {
@@ -139,6 +374,15 @@ sap.ui.require([
 		doToggle("Wrong DomRef", "", oTreeTable.$(), true, false, false);
 		doToggle("Wrong DomRef", "", oTreeTable.$(), false, false, false);
 		doToggle("Wrong DomRef", "", oTreeTable.$(), null, false, false);
+	});
+
+	QUnit.module("Determine row type", {
+		beforeEach: function() {
+			createTables();
+		},
+		afterEach: function() {
+			destroyTables();
+		}
 	});
 
 	QUnit.test("isInSumRow", function(assert) {

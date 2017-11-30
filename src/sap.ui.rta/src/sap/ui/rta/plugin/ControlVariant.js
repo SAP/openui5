@@ -68,19 +68,30 @@ sap.ui.define([
 	 */
 	ControlVariant.prototype.registerElementOverlay = function(oOverlay) {
 		var oControl = oOverlay.getElementInstance(),
+			oModel = this._getVariantModel(oControl),
 			sVariantManagementReference;
 
-		if (oControl.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement") {
+		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+
+		if (!oModel){
+			return;
+		}
+
+		if (oControl instanceof VariantManagement) {
 			var oControl = oOverlay.getElementInstance(),
-				vAssociationElement = oControl.getAssociation("for"),
+				vAssociationElement = oControl.getFor(),
 				aVariantManagementTargetElements;
 
 			sVariantManagementReference = BaseTreeModifier.getSelector(oControl, flUtils.getComponentForControl(oControl)).id;
 
-			if (!vAssociationElement) {
+			if (!vAssociationElement ||
+				(Array.isArray(vAssociationElement) && vAssociationElement.length === 0)) {
 				oOverlay.setVariantManagement(sVariantManagementReference);
 				return;
 			}
+
+			oModel._setModelPropertiesForControl(sVariantManagementReference, true);
+			oModel.checkUpdate(true);
 
 			aVariantManagementTargetElements = !jQuery.isArray(vAssociationElement) ? [vAssociationElement] : vAssociationElement;
 
@@ -89,14 +100,14 @@ sap.ui.define([
 					oVariantManagementTargetOverlay = OverlayRegistry.getOverlay(oVariantManagementTargetElement);
 				this._propagateVariantManagement(oVariantManagementTargetOverlay , sVariantManagementReference);
 			}.bind(this));
+			oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		} else if (!oOverlay.getVariantManagement()) {
-			var sVariantManagementReference = this._getVariantManagementFromParent(oOverlay);
+			sVariantManagementReference = this._getVariantManagementFromParent(oOverlay);
 			if (sVariantManagementReference) {
 				oOverlay.setVariantManagement(sVariantManagementReference);
+				oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 			}
 		}
-		oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
 	};
 
 	/**
@@ -144,13 +155,23 @@ sap.ui.define([
 		oOverlay.detachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
 
+		var oModel;
+		var sVariantManagementReference;
+		var oControl = oOverlay.getElementInstance();
+		if (oControl instanceof VariantManagement) {
+			oModel = this._getVariantModel(oControl);
+			sVariantManagementReference = oOverlay.getVariantManagement();
+			oModel._setModelPropertiesForControl(sVariantManagementReference, false);
+			oModel.checkUpdate(true);
+		}
+
 		this.removeFromPluginsList(oOverlay);
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
 	};
 
 	ControlVariant.prototype._getVariantModel = function(oElement) {
 		var oAppComponent = flUtils.getAppComponentForControl(oElement);
-		return oAppComponent.getModel(ControlVariant.MODEL_NAME);
+		return oAppComponent ? oAppComponent.getModel(ControlVariant.MODEL_NAME) : undefined;
 	};
 
 	/**
@@ -272,7 +293,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantConfigureEnabled = function(oOverlay) {
-		return false;
+		return this._isVariantManagementControl(oOverlay);
 	};
 
 	/**
@@ -347,10 +368,9 @@ sap.ui.define([
 	ControlVariant.prototype._emitLabelChangeEvent = function() {
 		var sText = RenameHandler._getCurrentEditableFieldText.call(this),
 			oOverlay = this._oEditedOverlay,
-			oRenamedElement = oOverlay.getElementInstance(),
 			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
+			oRenamedElement = oOverlay.getElementInstance(),
 			oModel = this._getVariantModel(oRenamedElement),
-			oSetTitleCommand,
 			sWarningText,
 			sVariantManagementReference = oOverlay.getVariantManagement(),
 			iDuplicateCount = oModel._getVariantLabelCount(sText, sVariantManagementReference),
@@ -374,39 +394,23 @@ sap.ui.define([
 
 		//Check for real change before creating a command and pass if warning text already set
 		if (this.getOldValue() !== sText && !sWarningText) {
-
 			if (sText === '\xa0') { //Empty string
 				sWarningText = "BLANK_WARNING_TEXT";
 			} else if (iDuplicateCount > 0) {
 				sWarningText = "DUPLICATE_WARNING_TEXT";
 			} else if (!sWarningText) {
-				this._$oEditableControlDomRef.text(sText);
-				try {
-					oSetTitleCommand = this.getCommandFactory().getCommandFor(oRenamedElement, "setTitle", {
-						renamedElement: oRenamedElement,
-						newText: sText
-					}, oDesignTimeMetadata, sVariantManagementReference);
-					this.fireElementModified({
-						"command": oSetTitleCommand
-					});
-				} catch (oError) {
-					jQuery.sap.log.error("Error during rename : ", oError);
-				}
-				return;
+				return this._createSetTitleCommand({
+					text: sText,
+					element: oRenamedElement,
+					designTimeMetadata: oDesignTimeMetadata,
+					variantManagementReference: sVariantManagementReference
+				});
 			}
 		}
 
 		if (sWarningText) {
-			//Prepare VariantManagement control overlay for valueStateMessage
-			oOverlay.getValueState = function () {
-				return "Error";
-			};
-			oOverlay.getValueStateText = function () {
-				return oResourceBundle.getText(sWarningText);
-			};
-			oOverlay.getDomRefForValueStateMessage = function () {
-				return this.$();
-			};
+			var sValueStateText = oResourceBundle.getText(sWarningText);
+			this._prepareOverlayForValueState(oOverlay, sValueStateText);
 
 			return Utils._showMessageBox("WARNING", "BLANK_DUPLICATE_TITLE_TEXT", sWarningText)
 				.then(function () {
@@ -426,12 +430,69 @@ sap.ui.define([
 	};
 
 	/**
+	 * sets the domref text, creates a setTitle command and fires element modified
+	 * @param {map} mPropertyBag - (required) contains required properties to create the command
+	 * @returns {object} setTitle command
+	 * @private
+	 */
+	ControlVariant.prototype._createSetTitleCommand = function (mPropertyBag) {
+		var oSetTitleCommand;
+		this._$oEditableControlDomRef.text(mPropertyBag.text);
+		try {
+			oSetTitleCommand = this.getCommandFactory().getCommandFor(mPropertyBag.element, "setTitle", {
+				renamedElement: mPropertyBag.element,
+				newText: mPropertyBag.text
+			}, mPropertyBag.designTimeMetadata, mPropertyBag.variantManagementReference);
+			this.fireElementModified({
+				"command": oSetTitleCommand
+			});
+		} catch (oError) {
+			jQuery.sap.log.error("Error during rename : ", oError);
+		}
+		return oSetTitleCommand;
+	};
+
+	/**
+	 * prepares overlay for showing a value state message
+	 * @param {object} oOverlay Overlay which needs be prepared
+	 * @param {string} sValueStateText value state text that needs to be set
+	 * @private
+	 */
+	ControlVariant.prototype._prepareOverlayForValueState = function (oOverlay, sValueStateText) {
+		//Prepare VariantManagement control overlay for valueStateMessage
+		oOverlay.getValueState = function () {
+			return "Error";
+		};
+		oOverlay.getValueStateText = function () {
+			return sValueStateText;
+		};
+		oOverlay.getDomRefForValueStateMessage = function () {
+			return this.$();
+		};
+	};
+
+	/**
 	 * Opens a dialog for Variant configuration
 	 *
 	 * @public
 	 */
-	ControlVariant.prototype.configureVariants = function() {
-		return;
+	ControlVariant.prototype.configureVariants = function(aOverlays) {
+		var oVariantManagementControl = aOverlays[0].getElementInstance();
+		var sVariantManagementReference = aOverlays[0].getVariantManagement();
+		var oModel = this._getVariantModel(oVariantManagementControl);
+		var oDesignTimeMetadata = aOverlays[0].getDesignTimeMetadata();
+
+		oModel.manageVariants(oVariantManagementControl, sVariantManagementReference, this.getCommandFactory().getFlexSettings().layer).then(function(aConfiguredChanges) {
+			var oConfigureCommand = this.getCommandFactory().getCommandFor(oVariantManagementControl, "configure", {
+				control: oVariantManagementControl,
+				changes: aConfiguredChanges
+			}, oDesignTimeMetadata, sVariantManagementReference);
+			this.fireElementModified({
+				"command": oConfigureCommand
+			});
+		}.bind(this));
+
+//		return true;
 	};
 
 	/**

@@ -298,4 +298,19 @@
 		oDetachPressSpy.restore();
 	});
 
+	QUnit.module("Functionality", {
+		beforeEach: function () {
+			this.oAvatar = createAvatar({ src: "/you/must/escape/single'quotes" });
+			this.oAvatar.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: teardownFunction
+	});
+
+	QUnit.test("URL escaping", function (assert) {
+		var $oAvatar = this.oAvatar.$();
+		// If src is not escaped, the css value would be invalid and jQuery would return 'none'
+		assert.notStrictEqual($oAvatar.css("background-image"), "none", "src is properly escaped");
+	});
+
 })();

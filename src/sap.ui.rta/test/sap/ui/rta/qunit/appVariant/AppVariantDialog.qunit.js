@@ -49,9 +49,9 @@ function(
 
 			oAppVariantDialog.attachCreate(function(oAppVariantData) {
 				var mParams = oAppVariantData.getParameters();
-				assert.equal(mParams.title, "Enter title", "then the title is correct");
+				assert.equal(mParams.title, "", "then the title is correct");
 				assert.equal(mParams.subTitle, "", "then the subtitle is correct");
-				assert.equal(mParams.icon, "sap-icon://history", "then the icon is correct");
+				assert.equal(mParams.icon, "", "then the icon is correct");
 				done();
 			});
 			aButtons[0].firePress();
@@ -67,11 +67,10 @@ function(
 				done();
 			});
 
-			oTitleInput.setValue("");
 			oTitleInput.fireLiveChange();
 		});
 
-		QUnit.test("When liveChange event is triggered on a title Input field with not empty value", function(assert) {
+		QUnit.test("When liveChange event is triggered on a title Input field with non empty value", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
 			var oTitleInput = sap.ui.getCore().byId("titleInput");
@@ -80,6 +79,8 @@ function(
 				assert.equal(oAppVariantDialog.getButtons()[0].getEnabled(), true, "then the save button is not enabled");
 				done();
 			});
+
+			oTitleInput.setValue("TestTitle");
 
 			oTitleInput.fireLiveChange();
 		});

@@ -2,7 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, ManagedObject) {
+sap.ui.define([
+	"sap/ui/fl/Utils",
+	"sap/ui/base/ManagedObject"
+], function(
+	Utils, ManagedObject
+) {
 
 	"use strict";
 
@@ -28,11 +33,11 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, 
 		/** Function determining the control id from selector.
 		* The function differs between local ids generated starting with 1.40 and the global ids generated in previous versions.
 		*
-		* @param {object} oSelector - Target of a flexiblity change
-		* @param {string} oSelector.id - id of the control targeted by the change
-		* @param {boolean} oSelector.isLocalId - true if the id within the selector is a local id or a global id
-		* @param {sap.ui.core.UIComponent} oAppComponent
-		* @returns {sap.ui.core.Control} - control targeted within the selector
+		* @param {object} oSelector Target of a flexiblity change
+		* @param {string} oSelector.id Id of the control targeted by the change
+		* @param {boolean} oSelector.isLocalId True if the id within the selector is a local id or a global id
+		* @param {sap.ui.core.UIComponent} oAppComponent Application Component
+		* @returns {string} Returns the ID of the control
 		* @throws {Exception} oException - in case no control could be determined an error is thrown
 		* @public
 		*/
@@ -123,6 +128,25 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, 
 			}
 
 			return oSelector;
+		},
+
+		/**
+		 * Validates if the control has the correct type for the aggregation.
+		 *
+		 * @param {sap.ui.core.Control} oControl control whose type is to be checked
+		 * @param {object} oAggregationMetadata metadata of the aggregation
+		 * @param {sap.ui.core.Control} oParent parent of the control
+		 * @returns {boolean} Returns true if the type matches
+		 */
+		validateType: function(oControl, oAggregationMetadata, oParent) {
+			var sTypeOrInterface = oAggregationMetadata.type;
+
+			// if aggregation is not multiple and already has element inside, then it is not valid for element
+			if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, oAggregationMetadata.name) &&
+					this.getAggregation(oParent, oAggregationMetadata.name).length > 0) {
+				return false;
+			}
+			return Utils.isInstanceOf(oControl, sTypeOrInterface) || Utils.hasInterface(oControl, sTypeOrInterface);
 		}
 	};
 });

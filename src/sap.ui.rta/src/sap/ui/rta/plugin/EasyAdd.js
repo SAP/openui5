@@ -143,15 +143,17 @@ sap.ui.define([
 	 * @param {function} fnCallback - callback function will be passed to the new button as on press event function
 	 * @param {object} oOverlayDom - dom object of the overlay
 	 * @param {string} sControlName - name of the control. This name will be displayed on the Add-Button
+	 * @param {boolean} bOverlayIsSibling - defines if the button is added on a sibling or not
 	 * @private
 	 */
 	EasyAdd.prototype._addButton = function(oOverlay, fnCallback, oOverlayDom, sControlName, bOverlayIsSibling) {
 		var bIsEditable = oOverlay.getEditableByPlugins().indexOf(this._retrievePluginName(bOverlayIsSibling)) > -1;
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 		var sId = oOverlay.getId() + "-AddButton";
 		var oHtmlButtonOuter = jQuery("<div class='sapUiRtaPersAddIconOuter' draggable='true'> </div>");
 		oOverlay._oAddButton = new sap.m.Button(sId, {
-			text: "Add " + sControlName,
+			text: oTextResources.getText("CTX_ADD_ELEMENTS", sControlName),
 			icon: "sap-icon://add",
 			press: fnCallback,
 			enabled: bIsEditable

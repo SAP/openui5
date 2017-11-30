@@ -121,6 +121,30 @@
         "type": "FIX",
         "text": "sap.ui.rta: Missing binding context causes exception starting RTA",
         "references": []
+      },
+      {
+        "id": "5da854c5e7f8be4129d58b9737fcb9e7dbd3664d",
+        "type": "FIX",
+        "text": " sap.ui.rta: Minor refactoring ControlVariant plugin",
+        "references": []
+      },
+      {
+        "id": "ac17c0826d9772f03fe0c4c6b73ca3018bbb9405",
+        "type": "FIX",
+        "text": "sap.ui.rta: Exiting RTA removes application content from Popup",
+        "references": []
+      },
+      {
+        "id": "6abc69f18b97d8f720db9c866c514cfab71c2db3",
+        "type": "FIX",
+        "text": " Check complexType binding in AdditionalElementsAnalyzer",
+        "references": []
+      },
+      {
+        "id": "de39dec35e2482f40f790a7f542f3cd2e9f19450",
+        "type": "FIX",
+        "text": " sap.ui.rta - Easy Add plugin missing i18n entry for button text",
+        "references": []
       }
     ]
   }

@@ -202,7 +202,7 @@ sap.ui.require([
 				"validAppVersions": {}
 			},
 			"controlChanges": [],
-			"variantChanges": []
+			"variantChanges": {}
 		};
 
 		var oVariantSpecificData = {
@@ -247,7 +247,7 @@ sap.ui.require([
 				"validAppVersions": {}
 			},
 			"controlChanges": [],
-			"variantChanges": []
+			"variantChanges": {}
 		};
 
 		var oVariantSpecificData = {

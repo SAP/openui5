@@ -253,11 +253,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 				canOverflow: true,
 				listenForEvents: [],
 				noInvalidationProps: ["enabled"]
-			},
-			"sap.ui.layout.VerticalLayout": {
-				canOverflow: true,
-				listenForEvents: [],
-				noInvalidationProps: []
 			}
 		};
 

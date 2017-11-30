@@ -464,7 +464,9 @@
 				{ "name" : "media-rewind" },
 				{ "name" : "journey-change" },
 				{ "name" : "system-exit" },
-				{ "name" : "resize-vertical" }
+				{ "name" : "resize-vertical" },
+				{ "name" : "expand-all" },
+				{ "name" : "collapse-all" }
 			]
 		},
 		{

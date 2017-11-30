@@ -236,9 +236,9 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			} else {
 				oCalendar.$().css("display", "none");
 				oSliders.$().css("display", "");
-				oSliders.updateSlidersValues();
+				oSliders._updateSlidersValues();
 				oSliders._onOrientationChanged();
-				oSliders._initFocus();
+				oSliders.openFirstSlider();
 			}
 
 		},
@@ -287,7 +287,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		DatePicker.prototype.setDisplayFormat.apply(this, arguments);
 
 		if (this._oSliders) {
-			this._oSliders.setFormat(_getTimePattern.call(this));
+			this._oSliders.setDisplayFormat(_getTimePattern.call(this));
 		}
 
 		return this;
@@ -463,7 +463,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		var oSliders = this._oPopup.getContent()[0] && this._oPopup.getContent()[0].getTimeSliders();
 		if (oSliders) {//Sliders values need to be updated after a popup is (especially sliders) is really visible
-			jQuery.sap.delayedCall(0, oSliders, oSliders.updateSlidersValues);
+			jQuery.sap.delayedCall(0, oSliders, oSliders._updateSlidersValues);
 		}
 	};
 
@@ -481,9 +481,9 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		if (!this._oSliders) {
 			jQuery.sap.require("sap.m.TimePickerSliders");
 			this._oSliders = new sap.m.TimePickerSliders(this.getId() + "-Sliders", {
-				format: _getTimePattern.call(this),
-				invokedBy: this.getId()
-			});
+				displayFormat: _getTimePattern.call(this),
+				localeId: this.getLocaleId()
+			})._setShouldOpenSliderAfterRendering(true);
 			this._oPopupContent.setTimeSliders(this._oSliders);
 		}
 
@@ -509,7 +509,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			this._oDateRange.setStartDate(oDate);
 		}
 
-		this._oSliders.setTimeValues(oDate);
+		this._oSliders._setTimeValues(oDate);
 
 	};
 
@@ -519,7 +519,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		if (oDate) {
 			var oDateTime = this._oSliders.getTimeValues();
-			var sPattern = this._oSliders.getFormat();
+			var sPattern = this._oSliders._getDisplayFormatPattern();
 			if (sPattern.search("h") >= 0 || sPattern.search("H") >= 0) {
 				oDate.setHours(oDateTime.getHours());
 			}
@@ -571,7 +571,20 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 	}
 
 	function _handleBeforeOpen(oEvent){
+		var oInput;
 
+		if (Device.browser.msie || Device.browser.edge) {
+			//For IE & Edge, any selection of the underlying input must be removed before opening the picker popup,
+			//otherwise the input will receive focus via TAB during the picker is opened. The selection is restored back
+			//when the popup is closed
+			oInput = this._$input.get(0);
+			this._oInputSelBeforePopupOpen = {
+				iStart: oInput.selectionStart,
+				iEnd: oInput.selectionEnd
+			};
+			oInput.selectionStart = 0;
+			oInput.selectionEnd = 0;
+		}
 	}
 
 	function _handleAfterOpen(oEvent){
@@ -582,7 +595,15 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 	}
 
 	function _handleAfterClose(oEvent){
+		var oInput;
 		this.$("inner").attr("aria-expanded", false);
+
+		if (Device.browser.msie || Device.browser.edge) {
+			oInput = this._$input.get(0);
+			//The selection is restored back due to issue with IE & Edge. See _handleBeforeOpen
+			oInput.selectionStart = this._oInputSelBeforePopupOpen.iStart;
+			oInput.selectionEnd = this._oInputSelBeforePopupOpen.iEnd;
+		}
 	}
 
 	function _getTimePattern(){

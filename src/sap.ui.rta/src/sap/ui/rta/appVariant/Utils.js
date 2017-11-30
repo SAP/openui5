@@ -77,12 +77,11 @@ sap.ui.define([
 
 			oAppVariantAttributes = {
 				appId : oAppVariantInfo.appId,
-				title : oAppVariantInfo.title,
-				subTitle : oAppVariantInfo.subTitle,
-				description : oAppVariantInfo.description,
-				icon : oAppVariantInfo.iconUrl,
-				originalId : oAppVariantInfo.originalId,
-				isOriginal : oAppVariantInfo.isOriginal,
+				title : oAppVariantInfo.title || '',
+				subTitle : oAppVariantInfo.subTitle || '',
+				description : oAppVariantInfo.description || '',
+				icon : oAppVariantInfo.iconUrl || '',
+				isOriginal : oAppVariantInfo.isOriginal || '',
 				typeOfApp : fnCheckAppType(),
 				descriptorUrl : oAppVariantInfo.descriptorUrl
 			};
@@ -90,7 +89,7 @@ sap.ui.define([
 			var sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
 
 			if (sNewAppVariantId === oAppVariantInfo.appId) {
-				oAppVariantAttributes.rowStatus = "Information";
+				oAppVariantAttributes.currentStatus = oI18n.getText("MAA_NEW_APP_VARIANT");
 			}
 
 			return fnGetNavigationInfo(oAppVariantAttributes);
@@ -102,18 +101,17 @@ sap.ui.define([
 			return this.sendRequest(sRoute, 'GET').then(function(oResult) {
 				var aAppVariantOverviewInfo = [];
 				var aAppVariantInfo = oResult.response.items;
-				if (aAppVariantInfo.length) {
-					var that = this;
-					aAppVariantInfo.forEach(function(oAppVariantInfo) {
-						if (!oAppVariantInfo.isDescriptorVariant) {
-							aAppVariantOverviewInfo.push(that.getAppVariantOverviewAttributes(oAppVariantInfo));
-						}
-					});
 
-					return Promise.all(aAppVariantOverviewInfo).then(function(aResponses) {
-						return aResponses;
-					});
-				}
+				aAppVariantInfo.forEach(function(oAppVariantInfo) {
+					if (!oAppVariantInfo.isDescriptorVariant) {
+						aAppVariantOverviewInfo.push(this.getAppVariantOverviewAttributes(oAppVariantInfo));
+					}
+				}, this);
+
+				return Promise.all(aAppVariantOverviewInfo).then(function(aResponses) {
+					return aResponses;
+				});
+
 			}.bind(this));
 		};
 

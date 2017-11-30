@@ -50,8 +50,8 @@ html.sap-desktop .sapMSlt:not(.sapMSltDisabled):not(.sapMSltState):focus {
 
 /* focus: in the footer all of the selects should get the outline */
 
-html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:focus,
-html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:focus,
+html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:not(.sapMSltExpanded):focus,
+html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:not(.sapMSltExpanded):focus,
 html.sap-desktop .sapMFooter-CTX .sapMSlt:focus {
 	outline: 1px dotted;
 	outline-offset: -1px;

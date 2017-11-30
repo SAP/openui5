@@ -762,16 +762,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *          {function} [optional] validationCallback - callback which gets called after validation has finished
 	 */
 	Tokenizer.prototype._addValidateToken = function(oParameters) {
-		var oToken = this._validateToken(oParameters),
-			bAddTokenSuccessful = this._addUniqueToken(oToken, oParameters.validationCallback);
+		var oToken = this._validateToken(oParameters);
 
-		if (bAddTokenSuccessful) {
-			this.fireTokenUpdate({
-				addedTokens : [oToken],
-				removedTokens : [],
-				type : Tokenizer.TokenUpdateType.Added
-			});
-		}
+		this._addUniqueToken(oToken, oParameters.validationCallback);
 	};
 
 	/**
@@ -782,7 +775,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {function} fValidateCallback [optional] A validation function callback
 	 * @returns {boolean} True if the token was added
 	 */
-	Tokenizer.prototype._addUniqueToken = function(oToken, fValidateCallback) {
+	Tokenizer.prototype._addUniqueToken = function(oToken, fValidateCallback, bSuppressTokenUpdate) {
 		if (!oToken) {
 			return false;
 		}
@@ -795,6 +788,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			return false;
+		}
+
+		if (!bSuppressTokenUpdate) {
+			this.fireTokenUpdate({
+				addedTokens : [oToken],
+				removedTokens : [],
+				type : Tokenizer.TokenUpdateType.Added
+			});
+
 		}
 
 		this.addToken(oToken);

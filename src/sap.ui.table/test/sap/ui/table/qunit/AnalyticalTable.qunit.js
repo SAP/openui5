@@ -49,13 +49,15 @@ sap.ui.require([
 	}
 
 	function performTestAfterTableIsUpdated(doTest, done) {
-		this.oModel.attachMetadataLoaded(function () {
+		this.oModel.metadataLoaded().then(function () {
 			attachEventHandler(this.oTable, 1, function () {
 				doTest(this.oTable);
-				done();
+				if (done) {
+					done();
+				}
 			}, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
-		}, this);
+		}.bind(this));
 	}
 
 
@@ -141,7 +143,7 @@ sap.ui.require([
 		this.oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
 		assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.MultiToggle, "SelectionMode.Multi defaulted to MultiToggle");
 		this.oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
-		assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.MultiToggle, "SelectionMode.None not supported");
+		assert.equal(this.oTable.getSelectionMode(), sap.ui.table.SelectionMode.None, "SelectionMode.None");
 	});
 
 	QUnit.test("SelectionBehavior", function (assert) {
@@ -149,7 +151,7 @@ sap.ui.require([
 		this.oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
 		assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.Row, "SelectionBehavior.Row");
 		this.oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
-		assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.Row, "SelectionBehavior.RowOnly not supported");
+		assert.equal(this.oTable.getSelectionBehavior(), sap.ui.table.SelectionBehavior.RowOnly, "SelectionBehavior.RowOnly");
 	});
 
 	QUnit.test("Dirty", function (assert) {
@@ -381,7 +383,7 @@ sap.ui.require([
 
 	QUnit.test("getAnalyticalInfoOfRow", function (assert) {
 		var done = assert.async();
-		this.oModel.attachMetadataLoaded(function () {
+		this.oModel.metadataLoaded().then(function () {
 			this.oTable = createTable.call(this);
 
 			var fnHandler1 = function () {
@@ -432,7 +434,7 @@ sap.ui.require([
 			attachEventHandler(this.oTable, 1, fnHandler1, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
-		}, this);
+		}.bind(this));
 	});
 
 	QUnit.test("TreeAutoExpandMode", function (assert) {
@@ -524,7 +526,7 @@ sap.ui.require([
 
 	QUnit.test("Simple expand/collapse", function (assert) {
 		var done = assert.async();
-		this.oModel.attachMetadataLoaded(function () {
+		this.oModel.metadataLoaded().then(function () {
 			this.oTable = createTable.call(this);
 
 			var fnHandler1 = function () {
@@ -559,12 +561,12 @@ sap.ui.require([
 			attachEventHandler(this.oTable, 1, fnHandler1, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
-		}, this);
+		}.bind(this));
 	});
 
 	QUnit.test("ProvideGrandTotals = false: No Sum row available", function (assert) {
 		var done = assert.async();
-		this.oModel.attachMetadataLoaded(function () {
+		this.oModel.metadataLoaded().then(function () {
 			this.oTable = createTable.call(this);
 
 			var fnHandler1 = function () {
@@ -603,7 +605,7 @@ sap.ui.require([
 				}
 			});
 
-		}, this);
+		}.bind(this));
 	});
 
 
@@ -618,7 +620,7 @@ sap.ui.require([
 
 	QUnit.test("getTooltip_AsString", function (assert) {
 		var done = assert.async();
-		this.oModel.attachMetadataLoaded(function () {
+		this.oModel.metadataLoaded().then(function () {
 			this.oTable = createTable.call(this);
 
 			var fnHandler = function () {
@@ -632,7 +634,7 @@ sap.ui.require([
 			attachEventHandler(this.oTable, 1, fnHandler, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
-		}, this);
+		}.bind(this));
 	});
 
 

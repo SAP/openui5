@@ -5,9 +5,8 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/thirdparty/URI',
 		'sap/ui/Device',
-		'sap/ui/test/_LogCollector',
-		'sap/ui/test/autowaiter/_autoWaiter'
-	], function ($, URI, Device, _LogCollector, _autoWaiter) {
+		'sap/ui/test/_LogCollector'
+	], function ($, URI, Device, _LogCollector) {
 	"use strict";
 
 	/*global CollectGarbage */
@@ -349,9 +348,8 @@ sap.ui.define([
 		getWindow: function () {
 			return oFrameWindow;
 		},
-		_getAutoWaiter:function () {
-			return  oAutoWaiter || _autoWaiter;
+		_getAutoWaiter: function () {
+			return oAutoWaiter;
 		}
 	};
 }, /* export= */ true);
-

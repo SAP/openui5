@@ -116,24 +116,6 @@ TABLESETTINGS.init(oTable, function(oButton) {
 	GROUPING: {
 		hidden: true
 	},
-	SELECTION: {
-		group: {
-			SELECTIONMODE: {
-				choice: {
-					NONE: {
-						disabled: true
-					}
-				}
-			},
-			SELECTIONBEHAVIOR: {
-				choice: {
-					ROWONLY: {
-						disabled: true
-					}
-				}
-			}
-		}
-	},
 	ANALYTICSETTINGS: {
 		text: "Analytical Settings",
 		group: {
@@ -196,6 +178,9 @@ TABLESETTINGS.init(oTable, function(oButton) {
 				}
 			}
 		}
+	},
+	CONTEXTMENU: {
+		disabled: true
 	}
 });
 

@@ -12,7 +12,18 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/rta/appVariant/AppVariantUtils"
-], function(jQuery, Controller, Model, AppVariantOverviewUtils, MessageBox, RtaUtils, RtaAppVariantFeature, RuntimeAuthoring, BusyIndicator, AppVariantUtils) {
+], function(
+	jQuery,
+	Controller,
+	Model,
+	AppVariantOverviewUtils,
+	MessageBox,
+	RtaUtils,
+	RtaAppVariantFeature,
+	RuntimeAuthoring,
+	BusyIndicator,
+	AppVariantUtils
+) {
 	"use strict";
 
 	var _sIdRunningApp, _oRootControlRunningApp, sModulePath, oI18n;
@@ -39,11 +50,12 @@ sap.ui.define([
 		},
 		_highlightNewCreatedAppVariant: function(aAppVariantOverviewAttributes) {
 			var oTable = this.byId("Table1");
-			jQuery('.maaCurrentStatus,.maaSubTitle').css("font-size", '12px');
 
 			aAppVariantOverviewAttributes.forEach(function(oAppVariantDescriptor, index) {
-				if (oAppVariantDescriptor.rowStatus === "Information") {
-					oTable.setFirstVisibleRow(index);
+				if (oAppVariantDescriptor.currentStatus) {
+					if (oTable.getItems().length >= index) {
+						oTable.getItems()[index].focus();
+					}
 				}
 			});
 
@@ -57,7 +69,6 @@ sap.ui.define([
 			var oAdaptingAppAttributes = aAdaptingAppAttributes[0];
 			if (oAdaptingAppAttributes) {
 				oAdaptingAppAttributes.currentStatus = oI18n.getText("MAA_CURRENTLY_ADAPTING");
-				oAdaptingAppAttributes.rowStatus = "Success";
 			}
 
 			aAppVariantOverviewAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty) {
@@ -83,10 +94,21 @@ sap.ui.define([
 			var oModelData = {
 				appVariants: aAppVariantOverviewAttributes
 			};
+
 			var oModel = Model.createModel(oModelData);
 			this.getView().setModel(oModel);
 
 			return Promise.resolve(aAppVariantOverviewAttributes);
+		},
+		formatRowHighlight: function(sValue) {
+			// Your logic for rowHighlight goes here
+			if (sValue === oI18n.getText("MAA_CURRENTLY_ADAPTING")) {
+				return "Success";
+			} else if (sValue === oI18n.getText("MAA_NEW_APP_VARIANT")) {
+				return "Information";
+			}
+
+			return "None";
 		},
 		getModelProperty : function(sModelPropName, sBindingContext) {
 			return this.getView().getModel().getProperty(sModelPropName, sBindingContext);

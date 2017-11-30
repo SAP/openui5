@@ -259,9 +259,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		// to inherit text-alignment and we should add a new
 		// sap.ui.core.TextAlign type called "Inherit"
 		sAlign = sAlign || this.getHAlign();
-		if (!oControl.getText ||
-			!oControl.getTextAlign ||
-			sAlign === TextAlign.Initial ||
+		if (sAlign === TextAlign.Initial ||
+			!oControl.getMetadata().getProperties().textAlign ||
 			oControl.getTextAlign() === sAlign) {
 			return oControl;
 		}

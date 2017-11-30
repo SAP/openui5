@@ -7,14 +7,16 @@ sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Utils",
 	"sap/m/MessageBox",
-	"sap/ui/rta/Utils"],
+	"sap/ui/rta/Utils"
+	],
 	function(
 		DescriptorVariantFactory,
 		DescriptorInlineChangeFactory,
 		LrepConnector,
 		FlexUtils,
 		MessageBox,
-		RtaUtils) {
+		RtaUtils
+	) {
 
 		"use strict";
 		var AppVariantUtils = {};
@@ -59,8 +61,9 @@ sap.ui.define([
 			}
 
 			var bRegFound = false;
+			var regex = /^id.*/i;
+
 			aIdStrings.forEach(function(sString, index, array) {
-				var regex = /^id.*/i;
 				if (sString.match(regex)) {
 					sString = sString.replace(regex, jQuery.sap.uid().replace(/-/g, "_"));
 					array[index] = sString;
@@ -121,17 +124,21 @@ sap.ui.define([
 
 		AppVariantUtils.getInboundInfo = function(oInbounds) {
 			var oInboundInfo = {};
+			if (!oInbounds) {
+				oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
+				oInboundInfo.addNewInboundRequired = true;
+				return oInboundInfo;
+			}
+
 			var oParsedHash = this.getURLParsedHash();
 			var aInbounds = Object.keys(oInbounds);
 			var aInboundsFound = [];
 
-			if (aInbounds.length) {
-				aInbounds.forEach(function(sInboundId) {
-					if ((oInbounds[sInboundId].action === oParsedHash.action) && (oInbounds[sInboundId].semanticObject === oParsedHash.semanticObject)) {
-						aInboundsFound.push(sInboundId);
-					}
-				});
-			}
+			aInbounds.forEach(function(sInboundId) {
+				if ((oInbounds[sInboundId].action === oParsedHash.action) && (oInbounds[sInboundId].semanticObject === oParsedHash.semanticObject)) {
+					aInboundsFound.push(sInboundId);
+				}
+			});
 
 			switch (aInboundsFound.length) {
 				case 0:

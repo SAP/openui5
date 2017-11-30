@@ -10,22 +10,22 @@ sap.ui.define([],
 		return {
 			aggregations: {
 				heading: {
-					domRef: ":sap-domref .sapFDynamicPageTitleMainLeftHeading"
+					domRef: ":sap-domref .sapFDynamicPageTitleMainHeadingInner"
 				},
 				expandedHeading: {
 					domRef: function (oElement) {
 						return oElement.$("expand-heading-wrapper").get(0);
 					},
-					ignore: function () {
-						return true;
+					ignore: function (oElement) {
+						return oElement.getHeading();
 					}
 				},
 				snappedHeading: {
 					domRef: function (oElement) {
 						return oElement.$("snapped-heading-wrapper").get(0);
 					},
-					ignore: function () {
-						return true;
+					ignore: function (oElement) {
+						return oElement.getHeading();
 					}
 				},
 				actions: {

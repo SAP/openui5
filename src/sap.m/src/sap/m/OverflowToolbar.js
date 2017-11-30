@@ -69,6 +69,7 @@ sap.ui.define([
 	 * <li>{@link sap.m.DateTimeInput}</li>
 	 * <li>{@link sap.m.DateTimePicker}</li>
 	 * <li>{@link sap.m.Input}</li>
+	 * <li>{@link sap.m.Label}</li>
 	 * <li>{@link sap.m.OverflowToolbarButton}</li>
 	 * <li>{@link sap.m.SearchField}</li>
 	 * <li>{@link sap.m.SegmentedButton}</li>
@@ -383,7 +384,7 @@ sap.ui.define([
 
 						oGroups[iControlGroup] = oGroups[iControlGroup] || [];
 						aGroup = oGroups[iControlGroup];
-						aGroup.push(oControl);
+						aGroup.unshift(oControl);
 
 						// The overall group priority is the max priority of its elements
 						if (!aGroup._priority || oPriorityOrder[aGroup._priority] < oPriorityOrder[sControlPriority]) {
@@ -658,7 +659,8 @@ sap.ui.define([
 				modal: false,
 				horizontalScrolling: Device.system.phone ? false : true,
 				contentWidth: Device.system.phone ? "100%" : "auto",
-				offsetY: this._detireminePopoverVerticalOffset()
+				offsetY: this._detireminePopoverVerticalOffset(),
+				ariaLabelledBy: this._getPopoverHiddenLabelId()
 			});
 
 			// Override popover positioning mechanism
@@ -1085,6 +1087,22 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype.closeOverflow = function () {
 		this._getPopover().close();
+	};
+
+	OverflowToolbar.prototype._getPopoverHiddenLabelId = function () {
+		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
+			return "";
+		}
+
+		// Load the resources
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		if (!OverflowToolbar._sPickerHiddenLabelId) {
+			OverflowToolbar._sPickerHiddenLabelId = new InvisibleText({
+				text: oResourceBundle.getText("INPUT_AVALIABLE_VALUES")
+			}).toStatic().getId();
+		}
+		return OverflowToolbar._sPickerHiddenLabelId;
 	};
 
 	return OverflowToolbar;

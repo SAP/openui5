@@ -595,7 +595,7 @@
 		};
 	})();
 
-	/**
+	/*
 	 * Determine whether sap-bootstrap-debug is set, run debugger statement and allow
 	 * to restart the core from a new URL
 	 */
@@ -648,9 +648,9 @@
 		}
 	})();
 
-	/**
-	 * Determine whether to use debug sources depending on URL parameter and local storage
-	 * and load debug library if necessary
+	/*
+	 * Determine from configuration (URL parameter, local storage or bootstrap tag) whether
+	 * to use debug sources and restart with debug version of the bootstrap script if necessary.
 	 */
 	(function() {
 		// check URI param
@@ -663,6 +663,7 @@
 		} catch (e) {
 			// happens in FF when cookies are deactivated
 		}
+		vDebugInfo = vDebugInfo || (_oBootstrap.tag && _oBootstrap.tag.getAttribute("data-sap-ui-debug"));
 
 		// normalize
 		if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
@@ -3793,6 +3794,7 @@
 		 *              The modules will be loaded first before loading the module itself.
 		 *
 		 * @private
+		 * @sap-restricted sap.ui.core sap.ui.export sap.ui.vk
 		 */
 		jQuery.sap.registerModuleShims = function(mShims) {
 			jQuery.sap.assert( typeof mShims === 'object', "mShims must be an object");
@@ -4311,6 +4313,11 @@
 
 		};
 
+		var phantomPain;
+		if ( Device.browser.phantomjs ) {
+			phantomPain = jQuery.noop;
+		}
+
 		/**
 		 * Resolves one or more module dependencies.
 		 *
@@ -4378,6 +4385,13 @@
 					setTimeout(function() {
 						fnCallback.apply(window, aModules);
 					},0);
+
+					// PhantomJS has a very strange bug which sometimes causes the above
+					// setTimeout call to be ignored. For some unknown reason, adding some more
+					// code to the if block fixes the problem, but only when the code is not
+					// easily recognizable as NOOP (might have something to do with code optimization)
+					// TODO remove this when PhantomJS is no longer used for testing
+					phantomPain && phantomPain();
 				}
 
 			}, /* bAsync = */ true);

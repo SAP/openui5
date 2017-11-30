@@ -22,11 +22,10 @@ sap.ui.define(['jquery.sap.global',
 				'./matchers/Interactable',
 				'./matchers/Visible',
 				'./pipelines/MatcherPipeline',
-				'./autowaiter/_autoWaiter',
 				'sap/ui/test/_opaCorePlugin',
 				'sap/ui/test/_OpaLogger'],
 	function ($, UI5Object, View, Ancestor, Interactable, Visible,
-			MatcherPipeline, _autoWaiter, _opaCorePlugin, _OpaLogger) {
+			MatcherPipeline, _opaCorePlugin, _OpaLogger) {
 
 		var oMatcherPipeline = new MatcherPipeline(),
 			oInteractableMatcher = new Interactable(),
@@ -273,20 +272,13 @@ sap.ui.define(['jquery.sap.global',
 			 * @private
 			 */
 			_getFilteredControls : function(oOptions) {
-				var oPluginOptions = $.extend({}, oOptions, {
-						// ensure Interactable matcher is applied if autoWait is true or actions are specified
-						interactable: !!oOptions.actions || oOptions.autoWait
-					}),
-					bPluginLooksForControls = this._isLookingForAControl(oPluginOptions);
-
+				var bPluginLooksForControls = this._isLookingForAControl(oOptions);
 				// found control values can be null, a single control or an array of controls
-				var vControl = null,
-					vResult = null;
+				var vControl = null;
+				var vResult = null;
 
 				if (bPluginLooksForControls) {
-					vControl = this.getMatchingControls(oPluginOptions);
-				} else if (oOptions.autoWait && _autoWaiter.hasToWait()) {
-					return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
+					vControl = this.getMatchingControls(oOptions);
 				}
 
 				// conditions in which no control was found and return value should be the special marker FILTER_FOUND_NO_CONTROLS

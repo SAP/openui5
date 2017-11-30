@@ -34,6 +34,7 @@ module.exports = [
 	"PlanningCalendar.spec.js",
 	"Popover.spec.js",
 	"ProgressIndicator.spec.js",
+	"PullToRefresh.spec.js",
 	"QuickView.spec.js",
 	"QuickViewCard.spec.js",
 	"RadioButton.spec.js",

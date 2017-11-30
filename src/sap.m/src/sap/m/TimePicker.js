@@ -98,11 +98,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 					 *
 					 * Determines the locale, used to interpret the string, supplied by the
 					 * <code>value</code> property.
+					 *
 					 * Example: AM in the string "09:04 AM" is locale (language) dependent.
 					 * The format comes from the browser language settings if not set explicitly.
-					 * Used in combination with 12 hour <code>valueFormat</code> containing 'a', which
+					 * Used in combination with 12 hour <code>displayFormat</code> containing 'a', which
 					 * stands for day period string.
-					 * Default value is taken from browser's locale setting.
 					 */
 					localeId: {type : "string", group: "Data"},
 
@@ -325,7 +325,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			/* Set the timevalues of the picker here to prevent user from seeing it */
 			var oSliders = this._getSliders();
 
-			oSliders.setTimeValues(this.getDateValue());
+			oSliders._setTimeValues(this.getDateValue());
 			oSliders.collapseAll();
 
 			/* Mark input as active */
@@ -342,7 +342,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			var oSliders = this._getSliders();
 
 			if (oSliders) {
-				oSliders._initFocus();
+				oSliders.openFirstSlider();
 
 				//WAI-ARIA region
 				this._handleAriaOnExpandCollapse();
@@ -495,10 +495,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		};
 
 		TimePicker.prototype.setDisplayFormat = function (sDisplayFormat) {
+			var oSliders = this._getSliders();
 
 			this.setProperty("displayFormat", sDisplayFormat, true); // no rerendering
 
 			this._initMask();
+
+			if (oSliders) {
+				oSliders.setDisplayFormat(sDisplayFormat);
+			}
 
 			var oDateValue = this.getDateValue();
 
@@ -525,7 +530,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		 */
 		TimePicker.prototype.setValue = function(sValue) {
 			var oDate,
-				sOutputValue;
+				sOutputValue,
+				oSliders = this._getSliders();
 
 			sValue = this.validateProperty('value', sValue);
 
@@ -553,6 +559,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 				sOutputValue = this._formatValue(oDate);
 			} else {
 				sOutputValue = sValue;
+			}
+
+			if (oSliders) {
+				oSliders.setValue(sValue);
 			}
 
 			// do not call InputBase.setValue because the displayed value and the output value might have different pattern
@@ -647,7 +657,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		 * @public
 		 */
 		TimePicker.prototype.setLocaleId = function(sLocaleId) {
-			var sCurrentValue = this.getValue();
+			var sCurrentValue = this.getValue(),
+			 oSliders = this._getSliders();
 
 			this.setProperty("localeId", sLocaleId, true);
 			this._initMask();
@@ -657,6 +668,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 
 			if (sCurrentValue) {
 				this.setValue(sCurrentValue);
+			}
+
+			if (oSliders) {
+				oSliders.setLocaleId(sLocaleId);
 			}
 
 			return this;
@@ -854,7 +869,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			oPicker.open();
 
 			oSliders = this._getSliders();
-			jQuery.sap.delayedCall(0, oSliders, oSliders.updateSlidersValues);
+			jQuery.sap.delayedCall(0, oSliders, oSliders._updateSlidersValues);
 
 			return oPicker;
 		};
@@ -893,7 +908,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 				oResourceBundle,
 				sOKButtonText,
 				sCancelButtonText,
-				sTitle;
+				sTitle,
+			sLocaleId = this.getLocaleId();
 
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
@@ -910,12 +926,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 				endButton: new sap.m.Button({ text: sCancelButtonText, press: jQuery.proxy(this._handleCancelPress, this) }),
 				content: [
 					new TimePickerSliders(this.getId() + "-sliders", {
-						format: sFormat,
+						displayFormat: sFormat,
 						labelText: sTitle ? sTitle : "",
-						invokedBy: that.getId(),
+						localeId: sLocaleId,
 						minutesStep: this.getMinutesStep(),
 						secondsStep: this.getSecondsStep()
-					})
+					})._setShouldOpenSliderAfterRendering(true)
 				],
 				contentHeight: TimePicker._PICKER_CONTENT_HEIGHT
 			});

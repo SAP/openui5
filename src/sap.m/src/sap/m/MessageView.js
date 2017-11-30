@@ -5,6 +5,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/Control",
+	"sap/ui/core/CustomData",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/HTML",
 	"sap/ui/core/Icon",
@@ -23,7 +24,7 @@ sap.ui.define([
 	"./GroupHeaderListItem",
 	"sap/ui/core/library",
 	"jquery.sap.keycodes"
-], function (jQuery, Control, IconPool, HTML, Icon, Button, Toolbar, ToolbarSpacer, List, StandardListItem,
+], function (jQuery, Control, CustomData, IconPool, HTML, Icon, Button, Toolbar, ToolbarSpacer, List, StandardListItem,
 			 library, Text, SegmentedButton, Page, NavContainer, Link, MessageItem, GroupHeaderListItem, coreLibrary) {
 	"use strict";
 
@@ -823,10 +824,38 @@ sap.ui.define([
 		}
 
 		this._detailsPage.addContent(this._oMessageDescriptionText);
+
 		if (oLink) {
-			this._detailsPage.addContent(oLink);
-			oLink.addStyleClass("sapMMsgViewDescriptionLink");
+			var oLinkClone = this._createLinkCopy(oLink);
+			this._detailsPage.addContent(oLinkClone);
+			oLinkClone.addStyleClass("sapMMsgViewDescriptionLink");
 		}
+	};
+
+	MessageView.prototype._createLinkCopy = function (oLink) {
+		var aLinkProperties,
+			oLinkClone = oLink.clone("", "", {
+				cloneChildren: false,
+				cloneBindings: false
+			}),
+			aCustomData = oLink.getCustomData() || [];
+
+		aLinkProperties = Object.keys(oLink.getMetadata().getProperties());
+		aLinkProperties.forEach(function(sProp){
+			oLinkClone.setProperty(sProp, oLink.getProperty(sProp));
+		});
+
+		oLinkClone.destroyCustomData();
+		aCustomData.forEach(function(oCustomData){
+			var oCustomDataCopy = new CustomData({
+				key: oCustomData.getKey(),
+				value: oCustomData.getValue()
+			});
+
+			oLinkClone.addCustomData(oCustomDataCopy);
+		});
+
+		return oLinkClone;
 	};
 
 	MessageView.prototype._iNextValidationTaskId = 0;
@@ -1070,13 +1099,7 @@ sap.ui.define([
 	 */
 	MessageView.prototype._clearDetailsPage = function (aDetailsPageContent) {
 		aDetailsPageContent.forEach(function (oControl) {
-			if (oControl instanceof Link) {
-				// Move the Link back to the MessageItem
-				this._oLastSelectedItem.setLink(oControl);
-				oControl.removeAllAriaLabelledBy();
-			} else {
-				oControl.destroy();
-			}
+			oControl.destroy();
 		}, this);
 	};
 

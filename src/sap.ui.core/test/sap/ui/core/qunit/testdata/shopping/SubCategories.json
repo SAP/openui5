@@ -1,0 +1,158 @@
+[
+	{
+		"Id": "Notebooks",
+		"Name": "Notebooks",
+		"MainCategoryId": "Computer Systems",
+		"MainCategoryName": "Computer Systems"
+	},
+	{
+		"Id": "PDAs & Organizers",
+		"Name": "PDAs & Organizers",
+		"MainCategoryId": "Computer Components",
+		"MainCategoryName": "Computer Components"
+	},
+	{
+		"Id": "Flat Screen Monitors",
+		"Name": "Flat Screen Monitors",
+		"MainCategoryId": "Computer Components",
+		"MainCategoryName": "Computer Components"
+	},
+	{
+		"Id": "Laser Printers",
+		"Name": "Laser Printers",
+		"MainCategoryId": "Printers & Scanners",
+		"MainCategoryName": "Printers & Scanners"
+	},
+	{
+		"Id": "Ink Jet Printers",
+		"Name": "Ink Jet Printers",
+		"MainCategoryId": "Printers & Scanners",
+		"MainCategoryName": "Printers & Scanners"
+	},
+	{
+		"Id": "Multifunction Printers",
+		"Name": "Multifunction Printers",
+		"MainCategoryId": "Printers & Scanners",
+		"MainCategoryName": "Printers & Scanners"
+	},
+	{
+		"Id": "Mice",
+		"Name": "Mice",
+		"MainCategoryId": "Computer Components",
+		"MainCategoryName": "Computer Components"
+	},
+	{
+		"Id": "Keyboards",
+		"Name": "Keyboards",
+		"MainCategoryId": "Computer Components",
+		"MainCategoryName": "Computer Components"
+	},
+	{
+		"Id": "Mousepads",
+		"Name": "Mousepads",
+		"MainCategoryId": "Computer Components",
+		"MainCategoryName": "Computer Components"
+	},
+	{
+		"Id": "Computer System Accessories",
+		"Name": "Computer System Accessories",
+		"MainCategoryId": "Computer Systems",
+		"MainCategoryName": "Computer Systems"
+	},
+	{
+		"Id": "Graphic Cards",
+		"Name": "Graphic Cards",
+		"MainCategoryId": "Computer Components",
+		"MainCategoryName": "Computer Components"
+	},
+	{
+		"Id": "Scanners",
+		"Name": "Scanners",
+		"MainCategoryId": "Printers & Scanners",
+		"MainCategoryName": "Printers & Scanners"
+	},
+	{
+		"Id": "Speakers",
+		"Name": "Speakers",
+		"MainCategoryId": "Computer Components",
+		"MainCategoryName": "Computer Components"
+	},
+	{
+		"Id": "Software",
+		"Name": "Software",
+		"MainCategoryId": "Software",
+		"MainCategoryName": "Software"
+	},
+	{
+		"Id": "Telecommunications",
+		"Name": "Telecommunications",
+		"MainCategoryId": "Computer Components",
+		"MainCategoryName": "Computer Components"
+	},
+	{
+		"Id": "PCs",
+		"Name": "PCs",
+		"MainCategoryId": "Computer Systems",
+		"MainCategoryName": "Computer Systems"
+	},
+	{
+		"Id": "Servers",
+		"Name": "Servers",
+		"MainCategoryId": "Computer Systems",
+		"MainCategoryName": "Computer Systems"
+	},
+	{
+		"Id": "Flat Screen TVs",
+		"Name": "Flat Screen TVs",
+		"MainCategoryId": "TV, Video & HiFi",
+		"MainCategoryName": "TV, Video & HiFi"
+	},
+	{
+		"Id": "Headsets",
+		"Name": "Headsets",
+		"MainCategoryId": "Computer Components",
+		"MainCategoryName": "Computer Components"
+	},
+	{
+		"Id": "MP3 Players",
+		"Name": "MP3 Players",
+		"MainCategoryId": "TV, Video & HiFi",
+		"MainCategoryName": "TV, Video & HiFi"
+	},
+	{
+		"Id": "Portable Players",
+		"Name": "Portable Players",
+		"MainCategoryId": "TV, Video & HiFi",
+		"MainCategoryName": "TV, Video & HiFi"
+	},
+	{
+		"Id": "Projectors",
+		"Name": "Projectors",
+		"MainCategoryId": "TV, Video & HiFi",
+		"MainCategoryName": "TV, Video & HiFi"
+	},
+	{
+		"Id": "Tablets",
+		"Name": "Tablets",
+		"MainCategoryId": "Smartphones & Tablets",
+		"MainCategoryName": "Smartphones & Tablets"
+	},
+	{
+		"Id": "Smartphones",
+		"Name": "Smartphones",
+		"MainCategoryId": "Smartphones & Tablets",
+		"MainCategoryName": "Smartphones & Tablets"
+	},
+	{
+		"Id": "Accessories",
+		"Name": "Accessories",
+		"MainCategoryId": "Smartphones & Tablets",
+		"MainCategoryName": "Smartphones & Tablets"
+	},
+	{
+		"Id": "Camcorders",
+		"Name": "Camcorders",
+		"MainCategoryId": "TV, Video & HiFi",
+		"MainCategoryName": "TV, Video & HiFi"
+	}
+]

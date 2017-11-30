@@ -95,12 +95,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			/**
 			 * Selection mode of the Table. This property controls whether single or multiple rows can be selected and
 			 * how the selection can be extended. It may also influence the visual appearance.
+			 * When the selection mode is changed, the current selection is removed.
+			 * <b>Note:</b> Since the group header visualization relies on the row selectors, the row selectors are always shown if the grouping
+			 * functionality (depends on table type) is enabled, even if <code>sap.ui.table.SelectionMode.None</code> is set.
 			 */
 			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle},
 
 			/**
 			 * Selection behavior of the Table. This property defines whether the row selector is displayed and whether the row, the row selector or
 			 * both can be clicked to select a row.
+			 * <b>Note:</b> Since the group header visualization relies on the row selectors, the row selectors are always shown if the grouping
+			 * functionality (depends on table type) is enabled, even if <code>sap.ui.table.SelectionBehavior.RowOnly</code> is set.
 			 */
 			selectionBehavior : {type : "sap.ui.table.SelectionBehavior", group : "Behavior", defaultValue : SelectionBehavior.RowSelector},
 
@@ -344,7 +349,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 *
 			 * @since 1.52
 			 */
-			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
+			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"},
+
+			/**
+			 * Defines the context menu for the table.
+			 *
+			 * <b>Note:</b> The context menu will also be available for the row selectors as well as in the row actions cell of the table control.
+			 *
+			 * The custom context menu will not be shown in the group header rows and the sum row of the <code>AnalyticalTable</code> control.
+			 *
+			 * If this aggregation is set, then the <code>enableCellFilter</code> property will have no effect.
+			 *
+			 * @since 1.54
+			 */
+			contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false}
 		},
 		associations : {
 
@@ -560,6 +578,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			/**
 			 * fired when the user clicks a cell of the table.
 			 * @since 1.21.0
+			 * @deprecated As of 1.54, replaced by <code>beforeOpenContextMenu</code>.
 			 */
 			cellContextmenu : {allowPreventDefault : true,
 				parameters : {
@@ -593,6 +612,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					 * Row binding context of the selected cell.
 					 */
 					rowBindingContext : {type : "sap.ui.model.Context"}
+				}
+			},
+
+			/**
+			 * Fired when the user requests the context menu for a table cell.
+			 * @since 1.54
+			 */
+			beforeOpenContextMenu : {
+				allowPreventDefault : true,
+				parameters: {
+					/**
+					 * Row index where the context menu opens.
+					 */
+					rowIndex : {type : "int"},
+
+					/**
+					 * Column index where the context menu opens.
+					 * This is the index of the column in the <code>columns</code> aggregation.
+					 */
+					columnIndex : {type : "int"},
+
+					/**
+					 * Context menu
+					 */
+					contextMenu : {type : "sap.ui.core.IContextMenu"}
 				}
 			},
 
@@ -1014,7 +1058,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					iUsedHeight += mDefaultScrollbarHeight[Device.browser.name];
 				}
 
-				return Math.floor(jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop);
+				if (this._iLastAvailableSpace == null) {
+					this._iLastAvailableSpace = 0;
+				}
+
+				var iNewAvailableSpace = Math.floor(jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop);
+				var iAvailableSpaceDifference = Math.abs(iNewAvailableSpace - this._iLastAvailableSpace);
+
+				if (iAvailableSpaceDifference >= 5) {
+					this._iLastAvailableSpace = Math.floor(iNewAvailableSpace);
+				}
+
+				return this._iLastAvailableSpace;
 			}
 		}
 

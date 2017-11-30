@@ -84,14 +84,6 @@
 		-webkit-flex-direction: row;
 		box-sizing: border-box;
 
-		&> .sapFDynamicPageTitleMainLeft {
-			width: 75%;
-		}
-
-		&> .sapFDynamicPageTitleMainRight {
-			width: 25%;
-		}
-
 		&> .sapFDynamicPageTitleMainNavigationArea,
 		&> .sapFDynamicPageTitleMainNavigationArea > .sapFDynamicPageTitleMainNavigationAreaInner{
 			display: flex;
@@ -159,16 +151,16 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 /* Title Main */
 /* ========== */
 
-/* Main Left area */
-.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainLeft {
+/* Heading area */
+.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner {
 	display: flex;
 	display: -webkit-flex;
-	justify-content: flex-start;
-	-webkit-justify-content: flex-start;
 	align-items: flex-start;
 	-webkit-align-items: flex-start;
+	flex-grow: 1;
+	width: 100%; // to make Edge work
 
-	.sapFDynamicPageTitleMainLeftInner {
+	.sapFDynamicPageTitleMainHeading {
 		display: flex;
 		display: -webkit-flex;
 		align-items: flex-start;
@@ -179,8 +171,8 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		-webkit-justify-content: space-between;
 		min-width: 1px; /* fix for: flex-shrink does not work some nested flex structures */
 
-		.sapFDynamicPageTitleMainLeftHeading,
-		.sapFDynamicPageTitleMainLeftSnappedExpandContent {
+		.sapFDynamicPageTitleMainHeadingInner,
+		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -188,21 +180,21 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 			vertical-align: middle;
 		}
 
-		.sapFDynamicPageTitleMainLeftHeading {
+		.sapFDynamicPageTitleMainHeadingInner {
 			min-width: 1px;
 			max-width: 100%;
 			color: @sapUiGroupTitleTextColor;
 			font-size: @sapMFontHeader3Size;
 		}
 
-		.sapFDynamicPageTitleMainLeftSnappedExpandContent {
+		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
 			margin-top: 1px;
 			color: @sapUiContentLabelColor;
 			font-size: @sapMFontMediumSize;
 		}
 
-		.sapFDynamicPageTitleMainLeftSnappedExpandContent.sapFDynamicPageTitleMainSnapContentVisible,
-		.sapFDynamicPageTitleMainLeftSnappedExpandContent.sapFDynamicPageTitleMainExpandContentVisible {
+		.sapFDynamicPageTitleMainHeadingSnappedExpandContent.sapFDynamicPageTitleMainSnapContentVisible,
+		.sapFDynamicPageTitleMainHeadingSnappedExpandContent.sapFDynamicPageTitleMainExpandContentVisible {
 			min-width: 4rem;
 			max-width: 100%;
 		}
@@ -213,15 +205,9 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		min-width: 1px;
 	}
 
-	/* Area Priority */
-	.sapFDynamicPageTitleAreaHighPriority {
-		flex-shrink: 1;
-		-webkit-flex-shrink: 1;
-	}
-
-	.sapFDynamicPageTitleAreaLowPriority {
-		flex-shrink: 1.6;
-		-webkit-flex-shrink: 1.6;
+	.sapFDynamicPageTitleMainActions {
+		margin-left: auto;
+		min-width: 1px;
 	}
 
 	/* Override Title and Label styles, required by VD */
@@ -230,25 +216,17 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 }
 
-.sapFDynamicPageTitleMain.sapFDynamicPageTitleMainNoContent > .sapFDynamicPageTitleMainLeft {
+.sapFDynamicPageTitleMain.sapFDynamicPageTitleMainNoContent > .sapFDynamicPageTitleMainInner {
 	width: 60%;
 }
 .sapFDynamicPageTitleMain.sapFDynamicPageTitleMainNoContent > .sapFDynamicPageTitleMainRight {
 	width: 40%;
 }
 
-
 /* Tablet Size */
 .sapFDynamicPage-Std-Tablet {
 	.sapFDynamicPageTitle {
 		padding: 0.5rem 1rem 0.5rem 2rem;
-
-		.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainRight {
-			width: 20%;
-		}
-		.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainLeft {
-			width: 80%;
-		}
 
 		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopLeft {
 			width: 65%;
@@ -286,18 +264,6 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 
 	.sapFDynamicPageTitle {
 		padding: 0 0 0 1rem;
-
-		.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainRight {
-			width: 20%;
-		}
-		.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainLeft {
-			width: 80%;
-
-			.sapFDynamicPageTitleAreaLowPriority {
-				flex-shrink: 1.5;
-				-webkit-flex-shrink: 1.5;
-			}
-		}
 
 		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopLeft {
 			width: 60%;

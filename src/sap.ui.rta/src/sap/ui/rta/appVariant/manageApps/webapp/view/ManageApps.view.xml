@@ -1,72 +1,88 @@
 <mvc:View
 	controllerName="sap.ui.rta.appVariant.manageApps.webapp.controller.ManageApps"
-	xmlns="sap.m"
-	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout"
-	xmlns:table="sap.ui.table"
-	displayBlock="true">
-	<App id="app">
-		<pages>
-			<Page id="pageTitle" enableScrolling="true" class="maaPageTitle" title="{i18n>title}">
-				<content>
-				    <table:Table
-				    	id="Table1"
-				    	rows="{/appVariants}"
-				    	selectionMode="None"
-				    	columnHeaderVisible="false"
-				    	visibleRowCountMode="Auto"
-				    	showNoData="false"
-				    	rowHeight="50px">
-				    	<table:rowSettingsTemplate>
-				    		<table:RowSettings highlight="{rowStatus}" />
-				    	</table:rowSettingsTemplate>
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
 
-				        <table:columns>
-				        	<table:Column id="appVariantType" sortProperty="id" filterProperty="id">
-				                <Label text="{i18n>MAA_DIALOG_ID}"/>
-			                	<table:template>
-			                		<l:VerticalLayout>
-				                		<Text text="{typeOfApp}" wrapping="false" class="maaType" />
-										<Text text="{currentStatus}" wrapping="false" class="maaCurrentStatus" />
-									</l:VerticalLayout>
-								</table:template>
-				            </table:Column>
-				        	<table:Column width="5rem" hAlign="Center">
-				                <Label text="{i18n>MAA_DIALOG_ICON}" />
-			                	<table:template>
-									<core:Icon src="{icon}" class="sapUiListTableIconSize" />
-								</table:template>
-				            </table:Column>
-				            <table:Column id="title">
-						        <Label text="{i18n>MAA_DIALOG_TITLE}" />
-					        	<table:template>
-					        		<l:VerticalLayout>
-										<Text text="{title}" wrapping="false" class="maaTitle" />
-										<Text text="{subTitle}" wrapping="false" class="maaSubTitle" />
-									</l:VerticalLayout>
-								</table:template>
-				            </table:Column>
-				            <table:Column>
-				                <Label text="{i18n>MAA_DIALOG_DESCRIPTION}"/>
-			                	<table:template>
-									<Text text="{description}" wrapping="true" class="maaDescription"/>
-								</table:template>
-				            </table:Column>
-				            <table:Column width="17rem" hAlign="Center">
-				                <Label text="{i18n>MAA_DIALOG_ACTIONS}"/>
-			                	<table:template>
-			                		<HBox alignItems="Center" justifyContent="SpaceAround">
-	                					<Button class="sapUiSmallMarginBegin sapUiSmallMarginEnd" text="{i18n>MAA_DIALOG_COPY_ID}" wrapping="true" press="copyId"/>
-										<Button class="sapUiSmallMarginEnd" text="{i18n>MAA_DIALOG_ADAPT_UI}" wrapping="true" press="handleUiAdaptation" enabled="{adaptUIButtonVisibility}" visible="{visible}" />
-										<Button class="sapUiSmallMarginEnd" text="{i18n>MAA_DIALOG_SAVE_AS_APP}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" wrapping="true" press="saveAsAppVariant" />
-									</HBox>
-								</table:template>
-				            </table:Column>
-				        </table:columns>
-				    </table:Table>
-				</content>
-			</Page>
-		</pages>
-	</App>
+	<Table id="Table1"
+		showNoData="false"
+		inset="false"
+		growing="true"
+		growingThreshold="500"
+		items="{/appVariants}">
+		<columns>
+			<Column
+				width="6em"
+				hAlign="Left">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_APP_TYPE}" />
+			</Column>
+			<Column
+				width="2em"
+				minScreenWidth="tablet"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Left">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_ICON}" />
+			</Column>
+			<Column
+				width="12em"
+				minScreenWidth="tablet"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Left">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_TITLE_SUBTITLE}" />
+			</Column>
+			<Column
+				width="12em"
+				minScreenWidth="tablet"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Left">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_DESCRIPTION}" />
+			</Column>
+			<Column
+				width="4em"
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Center">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_COPY_ID_ACTION}" />
+			</Column>
+			<Column
+				width="4em"
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Center">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_ADAPT_UI_ACTION}" />
+			</Column>
+			<Column
+				width="4em"
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Center">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_SAVE_AS_ACTION}" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem highlight="{path: 'currentStatus', formatter:'.formatRowHighlight'}">
+				<cells>
+					<ObjectIdentifier
+						title="{typeOfApp}"
+						text="{currentStatus}" />
+					<core:Icon src="{icon}" class="sapUiListTableIconSize" />
+					<ObjectIdentifier
+						title="{title}"
+						text="{subTitle}" />
+					<Text text="{description}" />
+
+					<Button text="{i18n>MAA_DIALOG_COPY_ID}" press="copyId"/>
+					<Button text="{i18n>MAA_DIALOG_ADAPT_UI}" enabled="{adaptUIButtonVisibility}" press="handleUiAdaptation" />
+					<Button text="{i18n>MAA_DIALOG_SAVE_AS_APP}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" press="saveAsAppVariant" />
+
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
 </mvc:View>

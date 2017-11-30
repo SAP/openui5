@@ -9,7 +9,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 	// shortcuts
 	var GroupEventType = library.GroupEventType,
-		SelectionBehavior = library.SelectionBehavior,
 		SelectionMode = library.SelectionMode,
 		SortOrder = library.SortOrder,
 		TreeAutoExpandMode = library.TreeAutoExpandMode;
@@ -281,50 +280,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return this;
 	};
 
-	/**
-	 * Sets the selection mode, the current selection is lost.
-	 * Since the AnalyticalTable relies on the RowSelector for rendering the group headers the SelectionMode "None" is
-	 * not supported and must not be used.
-	 * @param {string} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
-	 * @public
-	 * @returns {sap.ui.table.Table} a reference on the table for chaining
-	 */
-	AnalyticalTable.prototype.setSelectionMode = function (sSelectionMode) {
-		// clear selection if the mode changes
-		if (sSelectionMode === SelectionMode.None) {
-			jQuery.sap.log.fatal("SelectionMode 'None' is not supported by the AnalyticalTable.");
-			return this;
-		}
-
-		var oBinding = this.getBinding("rows");
-		if (oBinding && oBinding.clearSelection) {
-			oBinding.clearSelection();
-		}
-
-		// Check for valid selection modes (e.g. change deprecated mode "Multi" to "MultiToggle")
-		sSelectionMode = TableUtils.sanitizeSelectionMode(this, sSelectionMode);
-
-		// set selection mode independent from clearing the selection
-		this.setProperty("selectionMode", sSelectionMode);
-		return this;
-	};
-
-	/**
-	 * Sets the selection behavior.
-	 * Since the AnalyticalTable relies on the RowSelector for rendering the group headers the SelectionBehavior "RowOnly" is
-	 * not supported and must not be used.
-	 * @param {string} sBehavior the selection behavior, see sap.ui.table.SelectionBehavior
-	 * @public
-	 * @returns {sap.ui.table.Table} this for chaining
-	 */
-	AnalyticalTable.prototype.setSelectionBehavior = function (sBehavior) {
-		if (sBehavior === SelectionBehavior.RowOnly) {
-			jQuery.sap.log.fatal("SelectionBehavior 'RowOnly' is not supported by the AnalyticalTable.");
-			return this;
-		} else {
-			return Table.prototype.setSelectionBehavior.apply(this, arguments);
-		}
-	};
+	AnalyticalTable.prototype.setSelectionMode = TreeTable.prototype.setSelectionMode;
 
 	AnalyticalTable.prototype._applyAnalyticalBindingInfo = function (oBindingInfo) {
 		// extract the sorters from the columns (TODO: reconsider this!)
@@ -683,45 +639,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this._oGroupHeaderMoveUpItem = null;
 			this._oGroupHeaderMoveDownItem = null;
 		}
-	};
-
-	AnalyticalTable.prototype.expand = function(iRowIndex) {
-		var oBinding = this.getBinding("rows");
-		if (oBinding) {
-			oBinding.expand(iRowIndex);
-		}
-	};
-
-	AnalyticalTable.prototype.collapse = function(iRowIndex) {
-		var oBinding = this.getBinding("rows");
-		if (oBinding) {
-			oBinding.collapse(iRowIndex);
-		}
-	};
-
-	/**
-	 * Collapses all nodes (and lower if collapseRecursive is activated)
-	 *
-	 * @returns {sap.ui.table.AnalyticalTable} a reference on the <code>AnalyticalTable</code> control, can be used for chaining
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	AnalyticalTable.prototype.collapseAll = function () {
-		var oBinding = this.getBinding("rows");
-		if (oBinding) {
-			oBinding.collapseToLevel(0);
-			this.setFirstVisibleRow(0);
-		}
-
-		return this;
-	};
-
-	AnalyticalTable.prototype.isExpanded = function(iRowIndex) {
-		var oBinding = this.getBinding("rows");
-		if (oBinding) {
-			return oBinding.isExpanded(iRowIndex);
-		}
-		return false;
 	};
 
 	/**
@@ -1194,6 +1111,45 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @function
 	 */
 	AnalyticalTable.prototype.clearSelection = TreeTable.prototype.clearSelection;
+
+	/**
+	 * Expands one or more rows.
+	 *
+	 * @param {int|int[]} vRowIndex A single index or an array of indices of the rows to be expanded
+	 * @returns {sap.ui.table.AnalyticalTable} <code>this</code> to allow method chaining
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	AnalyticalTable.prototype.expand = TreeTable.prototype.expand;
+
+	/**
+	 * Collapses one or more rows.
+	 *
+	 * @param {int|int[]} vRowIndex A single index, or an array of indices of the rows to be collapsed
+	 * @returns {sap.ui.table.AnalyticalTable} <code>this</code> to allow method chaining
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	AnalyticalTable.prototype.collapse = TreeTable.prototype.collapse;
+
+	/**
+	 * Collapses all nodes (and their child nodes if collapseRecursive is activated).
+	 *
+	 * @returns {sap.ui.table.AnalyticalTable} <code>this</code> to allow method chaining
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	AnalyticalTable.prototype.collapseAll = TreeTable.prototype.collapseAll;
+
+	/**
+	 * Checks whether the row is expanded or collapsed.
+	 *
+	 * @param {int} iRowIndex The index of the row to be checked
+	 * @returns {boolean} <code>true</code> if the row is expanded, <code>false</code> if it is collapsed
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	AnalyticalTable.prototype.isExpanded = TreeTable.prototype.isExpanded;
 
 	AnalyticalTable.prototype._isRowSelectable = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");

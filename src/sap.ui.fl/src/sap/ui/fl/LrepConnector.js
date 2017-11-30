@@ -324,9 +324,7 @@ sap.ui.define([
 			if (mOptions && mOptions.type) {
 				if (mOptions.type === "GET" || mOptions.type === "HEAD") {
 					bRequestCSRFToken = false;
-				}
-			} else {
-				if (that._sXsrfToken && that._sXsrfToken !== "fetch") {
+				} else if (that._sXsrfToken && that._sXsrfToken !== "fetch") {
 					bRequestCSRFToken = false;
 				}
 			}
@@ -336,7 +334,9 @@ sap.ui.define([
 				jQuery.ajax(sFetchXsrfTokenUrl, mFetchXsrfTokenOptions).done(fetchTokenAndHandleRequest).fail(function(oXhr, sStatus, sErrorThrown) {
 					// Fetching XSRF Token failed
 					reject({
-						status: "error"
+						status: "error",
+						code: oXhr.statusCode().status,
+						messages: that._getMessagesFromXHR(oXhr)
 					});
 				});
 			} else {
@@ -425,6 +425,7 @@ sap.ui.define([
 			.then(function(oResponse) {
 				return {
 					changes: oResponse.response,
+					messagebundle: oResponse.response.messagebundle,
 					componentClassName: sComponentName,
 					etag: oResponse.etag
 				};

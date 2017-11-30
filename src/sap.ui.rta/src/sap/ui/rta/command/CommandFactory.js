@@ -134,6 +134,9 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		"setTitle" : {
 			clazz : 'sap.ui.rta.command.ControlVariantSetTitle'
 		},
+		"configure" : {
+			clazz : 'sap.ui.rta.command.ControlVariantConfigure'
+		},
 		"settings" : {
 			clazz : 'sap.ui.rta.command.Settings'
 		},

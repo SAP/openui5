@@ -45,6 +45,10 @@ function(
 		var sButtonText = "ButtonText";
 		this.oButton = JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton", {'text' : sButtonText});
 		assert.equal(this.oButton.getText(), sButtonText);
+
+		// clean
+		this.oButton.destroy();
+		this.oButton = null;
 	});
 
 	QUnit.test("the modifier finds the index of the control in its parent aggregation correctly, case 1 - no overwritten methods in parent control", function (assert) {
@@ -96,10 +100,60 @@ function(
 		JsControlTreeModifier.insertAggregation(this.oDynamicPageTitle, 'heading', this.oControl);
 
 		// assert
-		assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oControl), 0, "The index of the lastly created button is corrctly found");
+		assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oControl), 0, "The index of the lastly created button is correctly found");
 
 		// clean
 		this.oDynamicPageTitle.destroy();
 		this.oDynamicPageTitle = null;
+	});
+
+	QUnit.module("Given the JsControlTreeModifier...", {
+		beforeEach: function () {
+
+			jQuery.sap.registerModulePath("testComponent", "../testComponent");
+
+			this.oComponent = sap.ui.getCore().createComponent({
+				name: "testComponent",
+				id: "testComponent",
+				"metadata": {
+					"manifest": "json"
+				}
+			});
+
+		},
+
+		afterEach: function () {
+			this.oComponent.destroy();
+			this.oControl.destroy();
+		}
+	});
+
+	QUnit.test("when the modifier retrieves the change handler module for a control with instance specific change handler module", function(assert){
+		var sDummyModulePath = '/dummy/path/to/dummy/file.flexibility';
+
+		var mCustomData = {
+				'key' : 'sap-ui-custom-settings',
+				'value' : {
+					'sap.ui.fl' : {
+						'flexibility' : sDummyModulePath
+					}
+				}
+			};
+
+		this.oControl = JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton",
+				{'text' : 'ButtonInHeading', 'customData' : mCustomData});
+
+		var sChangeHandlerModulePath = JsControlTreeModifier.getChangeHandlerModulePath(this.oControl);
+
+		assert.equal(sChangeHandlerModulePath, sDummyModulePath, "then the correct module is returned");
+	});
+
+	QUnit.test("when the modifier tries to retrieve the change handler module for a control without instance specific change handler module", function(assert){
+		this.oControl = JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton",
+				{'text' : 'ButtonInHeading'});
+
+		var sChangeHandlerModulePath = JsControlTreeModifier.getChangeHandlerModulePath(this.oControl);
+
+		assert.equal(sChangeHandlerModulePath, undefined, "then 'undefined' is returned");
 	});
 });

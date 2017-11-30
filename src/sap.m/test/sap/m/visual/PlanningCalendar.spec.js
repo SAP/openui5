@@ -327,7 +327,7 @@ describe("sap.m.PlanningCalendar", function() {
 		element(by.id("PC1-IntType")).click();
 		element(by.id("PC1-3")).click();
 		element(by.id("PC1-WeekInt--Head-B1")).click();
-		expect(takeScreenshot(element(by.id("PC1-WeekInt--Cal")))).toLookAs("datepicker_1week_view");
+		expect(takeScreenshot(element(by.id("PC1-WeekInt--Cal")))).toLookAs("dayview_1week_view");
 		element(by.id("PC1-WeekInt--Cal--Head-B1")).click();
 		expect(takeScreenshot(element(by.id("PC1-WeekInt--Cal")))).toLookAs("monthview_on_1week_view");
 		element(by.id("PC1-WeekInt--Cal--Head-B2")).click();

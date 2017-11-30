@@ -34,7 +34,7 @@ sap.ui.define(["sap/f/library", "jquery.sap.global"],
 				sImageFitType = oAvatar.getImageFitType(),
 				sCustomDisplaySize = oAvatar.getCustomDisplaySize(),
 				sCustomFontSize = oAvatar.getCustomFontSize(),
-				sSrc = oAvatar.getSrc(),
+				sSrc = oAvatar._getEscapedSrc(),
 				sAvatarClass = "sapFAvatar";
 
 			oRm.write("<span");

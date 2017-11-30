@@ -12,13 +12,12 @@
 	&[data-drop-position=between] {
 		background: @sapUiDragAndDropActiveBorderColor;
 
-		&:before,
-		&:after {
+		&:before {
 			content: "";
 			position: absolute;
-			width: 0.5rem;
-			height: 0.5rem;
-			border-radius: 0.5rem;
+			width: 0.25rem;
+			height: 0.25rem;
+			border-radius: 0.25rem;
 			border: 0.125rem solid @sapUiDragAndDropActiveBorderColor;
 			background: @sapUiWhiteBG;
 			pointer-events: none;
@@ -27,34 +26,24 @@
 		&[data-drop-layout=vertical] {
 			height: 0.125rem;
 
-			&:before,
-			&:after {
-				top: -0.3125rem;
+			&:before {
+				top: -0.175rem;
 			}
 
 			&:before {
 				left: 0;
-			}
-
-			&:after {
-				right: 0;
 			}
 		}
 
 		&[data-drop-layout=horizontal] {
 			width: 0.125rem;
 
-			&:before,
-			&:after {
-				left: -0.3125rem;
+			&:before {
+				left: -0.175rem;
 			}
 
 			&:before {
 				top: 0;
-			}
-
-			&:after {
-				bottom: 0;
 			}
 		}
 	}

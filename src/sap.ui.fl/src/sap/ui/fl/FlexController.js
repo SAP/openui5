@@ -99,7 +99,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
 	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created.
-	 * @param {sap.ui.base.Component} oControl.appComponent application component of the control at runtime in case a map has been used
+	 * @param {sap.ui.base.Component} oAppComponent application component of the control at runtime in case a map has been used
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
 	 */
@@ -192,7 +192,7 @@ sap.ui.define([
 			throw new Error("No control type found - the change handler can not be retrieved.");
 		}
 
-		ChangeHandler = this._getChangeHandler(oChange, sControlType);
+		ChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier);
 		if (ChangeHandler) {
 			ChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
 				modifier: JsControlTreeModifier,
@@ -280,12 +280,6 @@ sap.ui.define([
 	FlexController.prototype.addPreparedChange = function (oChange, oAppComponent) {
 		if (oChange.getVariantReference()) {
 			var oModel = oAppComponent.getModel("$FlexVariants");
-			if (!oModel.bStandardVariantExists) {
-				var oVariantData = oModel.getVariant(oChange.getVariantReference());
-				var oVariant = this.createVariant(oVariantData, oAppComponent);
-				oModel.bStandardVariantExists = true;
-				this._oChangePersistence.addChange(oVariant, oAppComponent);
-			}
 			oModel._addChange(oChange);
 		}
 
@@ -592,7 +586,7 @@ sap.ui.define([
 	FlexController.prototype.checkTargetAndApplyChange = function (oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var sControlType = oModifier.getControlType(oControl);
-		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
+		var oChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, oModifier);
 
 		if (!oChangeHandler) {
 			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
@@ -667,7 +661,7 @@ sap.ui.define([
 		var aAppliedChanges, oAppliedChangeCustomData, iIndex;
 		var oModifier = mPropertyBag.modifier;
 		var sControlType = oModifier.getControlType(oControl);
-		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
+		var oChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, oModifier);
 		var vResult;
 
 		if (bRevert && !oChangeHandler) {
@@ -785,75 +779,15 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChange - Change instance
 	 * @param {string} sControlType name of the ui5 control type i.e. sap.m.Button
+	 * @param {sap.ui.core.Control} oControl The control for which to retrieve the change handler
+	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} oModifier The control tree modifier
 	 * @returns {sap.ui.fl.changeHandler.Base} the change handler. Undefined if not found.
 	 * @private
 	 */
-	FlexController.prototype._getChangeHandler = function (oChange, sControlType) {
-		var oChangeTypeMetadata, fChangeHandler;
-
-		oChangeTypeMetadata = this._getChangeTypeMetadata(oChange, sControlType);
-		if (!oChangeTypeMetadata) {
-			return undefined;
-		}
-
-		fChangeHandler = oChangeTypeMetadata.getChangeHandler();
-		return fChangeHandler;
-	};
-
-	/**
-	 * Retrieves the <code>sap.ui.fl.registry.ChangeRegistryItem</code> for the given change and control
-	 *
-	 * @param {sap.ui.fl.Change} oChange Change instance
-	 * @param {string} sControlType name of the ui5 control type i.e. sap.m.Button
-	 * @returns {sap.ui.fl.registry.ChangeTypeMetadata} the registry item containing the change handler. Undefined if not found.
-	 * @private
-	 */
-	FlexController.prototype._getChangeTypeMetadata = function (oChange, sControlType) {
-		var oChangeRegistryItem, oChangeTypeMetadata;
-
-		oChangeRegistryItem = this._getChangeRegistryItem(oChange, sControlType);
-		if (!oChangeRegistryItem || !oChangeRegistryItem.getChangeTypeMetadata) {
-			return undefined;
-		}
-
-		oChangeTypeMetadata = oChangeRegistryItem.getChangeTypeMetadata();
-		return oChangeTypeMetadata;
-	};
-
-	/**
-	 * Retrieves the <code>sap.ui.fl.registry.ChangeRegistryItem</code> for the given change and control
-	 *
-	 * @param {sap.ui.fl.Change} oChange Change instance
-	 * @param {string} sControlType name of the ui5 control type i.e. sap.m.Button
-	 * @returns {sap.ui.fl.registry.ChangeRegistryItem} the registry item containing the change handler. Undefined if not found.
-	 * @private
-	 */
-	FlexController.prototype._getChangeRegistryItem = function (oChange, sControlType) {
-		var sChangeType, oChangeRegistryItem, sLayer;
-		if (!oChange || !sControlType) {
-			return undefined;
-		}
-
-		sChangeType = oChange.getChangeType();
-
-		if (!sChangeType || !sControlType) {
-			return undefined;
-		}
-
-		sLayer = oChange.getLayer();
-
-		oChangeRegistryItem = this._getChangeRegistry().getRegistryItems({
-			"changeTypeName": sChangeType,
-			"controlType": sControlType,
-			"layer": sLayer
-		});
-		if (oChangeRegistryItem && oChangeRegistryItem[sControlType] && oChangeRegistryItem[sControlType][sChangeType]) {
-			return oChangeRegistryItem[sControlType][sChangeType];
-		} else if (oChangeRegistryItem && oChangeRegistryItem[sControlType]) {
-			return oChangeRegistryItem[sControlType];
-		} else {
-			return oChangeRegistryItem;
-		}
+	FlexController.prototype._getChangeHandler = function (oChange, sControlType, oControl, oModifier) {
+		var sChangeType = oChange.getChangeType();
+		var sLayer = oChange.getLayer();
+		return this._getChangeRegistry().getChangeHandler(sChangeType, sControlType, oControl, oModifier, sLayer);
 	};
 
 	/**

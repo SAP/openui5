@@ -7,7 +7,12 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant"
-], function (jQuery, Utils, Change, Variant) {
+], function (
+	jQuery,
+	Utils,
+	Change,
+	Variant
+) {
 	"use strict";
 
 	/**
@@ -26,7 +31,7 @@ sap.ui.define([
 	var VariantController = function (sComponentName, sAppVersion, oChangeFileContent) {
 		this._sComponentName = sComponentName || "";
 		this._sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
-		this._setChangeFileContent(oChangeFileContent);
+		this._setChangeFileContent(oChangeFileContent, {});
 	};
 
 	/**
@@ -49,18 +54,36 @@ sap.ui.define([
 		return this._sAppVersion;
 	};
 
-	VariantController.prototype._setChangeFileContent = function (oChangeFileContent) {
+	VariantController.prototype._setChangeFileContent = function (oChangeFileContent, oComponent) {
 		if (oChangeFileContent && oChangeFileContent.changes && oChangeFileContent.changes.variantSection) {
 			this._mVariantManagement = {};
 			Object.keys(oChangeFileContent.changes.variantSection).forEach(function (sVariantManagementReference) {
 				this._mVariantManagement[sVariantManagementReference] = {};
 				var oVariantManagementReference = oChangeFileContent.changes.variantSection[sVariantManagementReference];
 				var aVariants = oVariantManagementReference.variants.concat().sort(this.compareVariants);
+				var sInitialVariant;
 
 				var iIndex = -1;
 				aVariants.forEach(function (oVariant, index) {
 					if (oVariant.content.fileName === sVariantManagementReference) {
 						iIndex = index;
+					}
+					if (!oVariant.content.content.favorite) {
+						oVariant.content.content.favorite = true;
+					}
+					if (!oVariant.content.content.visible) {
+						oVariant.content.content.visible = true;
+					}
+
+					if (!sInitialVariant){
+						var aURLVariants = Utils.getTechnicalParameterValuesFromURL(oComponent, "sap-ui-fl-control-variant-id");
+						// Only the first valid reference for that variant management id passed in the parameters is used to load the changes
+						aURLVariants.some(function(sURLVariant){
+							if (oVariant.content.fileName === sURLVariant){
+								sInitialVariant = oVariant.content.fileName;
+								return true;
+							}
+						});
 					}
 				});
 				if (iIndex > -1) {
@@ -69,6 +92,11 @@ sap.ui.define([
 				}
 				this._mVariantManagement[sVariantManagementReference].variants = aVariants;
 				this._mVariantManagement[sVariantManagementReference].defaultVariant = oVariantManagementReference.defaultVariant;
+				if (sInitialVariant){
+					this._mVariantManagement[sVariantManagementReference].initialVariant = sInitialVariant;
+				}
+				this._mVariantManagement[sVariantManagementReference].variantManagementChanges =
+					oChangeFileContent.changes.variantSection[sVariantManagementReference].variantManagementChanges;
 			}.bind(this));
 		}
 	};
@@ -161,7 +189,9 @@ sap.ui.define([
 		var aVariants = this._mVariantManagement[sVariantManagementReference].variants;
 		var oVariantData = aVariants[iPreviousIndex];
 		Object.keys(mChangedData).forEach(function (sProperty) {
-			oVariantData.content[sProperty] = mChangedData[sProperty];
+			if (oVariantData.content[sProperty]) {
+				oVariantData.content[sProperty] = mChangedData[sProperty];
+			}
 		});
 		//remove element
 		aVariants.splice(iPreviousIndex, 1);
@@ -175,39 +205,78 @@ sap.ui.define([
 		return iSortedIndex + 1;
 	};
 
-	VariantController.prototype._updateVariantChangeInMap = function(oVariantChangeContent, sVariantManagementReference, bAdd) {
-		this._mVariantManagement[sVariantManagementReference].variants.some( function(oVariant) {
-			if (oVariant.content.fileName === oVariantChangeContent.variantReference) {
-				if (bAdd) {
-					oVariant.variantChanges[oVariantChangeContent.changeType].push(oVariantChangeContent);
-				} else {
-					oVariant.variantChanges[oVariantChangeContent.changeType].some( function (oExistingVariantChangeContent, iIndex) {
-						if (oExistingVariantChangeContent.fileName === oVariantChangeContent.fileName) {
-							oVariant.variantChanges[oVariantChangeContent.changeType].splice(iIndex, 1);
-							return true; /*inner some*/
-						}
-					});
+	VariantController.prototype._updateChangesForVariantManagementInMap = function(oContent, sVariantManagementReference, bAdd) {
+		var oVariantManagement = this._mVariantManagement[sVariantManagementReference];
+		var sChangeType = oContent.changeType;
+		if (oContent.fileType === "ctrl_variant_change") {
+			oVariantManagement.variants.some( function(oVariant) {
+				if (oVariant.content.fileName === oContent.selector.id) {
+					if (!oVariant.variantChanges[sChangeType]) {
+						oVariant.variantChanges[sChangeType] = [];
+					}
+					if (bAdd) {
+						oVariant.variantChanges[sChangeType].push(oContent);
+					} else {
+						oVariant.variantChanges[sChangeType].some( function (oExistingContent, iIndex) {
+							if (oExistingContent.fileName === oContent.fileName) {
+								oVariant.variantChanges[sChangeType].splice(iIndex, 1);
+								return true; /*inner some*/
+							}
+						});
+					}
+					return true; /*outer some*/
 				}
-				return true; /*outer some*/
+			});
+		} else if (oContent.fileType === "ctrl_variant_management_change") {
+			if (!oVariantManagement.variantManagementChanges) {
+				oVariantManagement.variantManagementChanges = {};
 			}
-		});
+			if (!oVariantManagement.variantManagementChanges[sChangeType]) {
+				oVariantManagement.variantManagementChanges[sChangeType] = [];
+			}
+			if (bAdd) {
+				oVariantManagement.variantManagementChanges[sChangeType].push(oContent);
+			} else {
+				oVariantManagement.variantManagementChanges[sChangeType].some(function(oExistingContent, iIndex) {
+					if (oExistingContent.fileName === oContent.fileName) {
+						oVariantManagement.variantManagementChanges[sChangeType].splice(iIndex, 1);
+						return true;
+					}
+				});
+			}
+		}
 	};
 
 	/**
-	 * Loads the default changes of all variants
+	 * Load the initial changes of all variants
+	 * If the application is started with valid variant references, use them
+	 * If no references or invalid references were passed, load the changes from
+	 * the default variant
 	 *
+	 * @param {object} oComponent - Component instance used to get the technical parameters
 	 * @returns {Array} The array containing all changes of the default variants
 	 * @public
 	 */
-	VariantController.prototype.loadDefaultChanges = function() {
-		var sVariantReference;
-		var aDefaultChanges = [];
+	VariantController.prototype.loadInitialChanges = function() {
+		var aInitialChanges = [];
+
 		Object.keys(this._mVariantManagement).forEach(function (sVariantManagementReference) {
-			sVariantReference = this._mVariantManagement[sVariantManagementReference].defaultVariant;
-			aDefaultChanges = aDefaultChanges.concat(this.getVariantChanges(sVariantManagementReference, sVariantReference));
+			var aInitialVMChanges = [];
+			var sVariantReference;
+
+			if (this._mVariantManagement[sVariantManagementReference].initialVariant){
+				sVariantReference = this._mVariantManagement[sVariantManagementReference].initialVariant;
+			} else {
+				sVariantReference = this._mVariantManagement[sVariantManagementReference].defaultVariant;
+			}
+
+			aInitialVMChanges = this.getVariantChanges(sVariantManagementReference, sVariantReference);
+
+			// Concatenate the changes for all valid or default variants of all variant management references
+			aInitialChanges = aInitialChanges.concat(aInitialVMChanges);
 		}.bind(this));
 
-		return aDefaultChanges;
+		return aInitialChanges;
 	};
 
 	/**
@@ -274,16 +343,37 @@ sap.ui.define([
 						oVariant.content.title = oActiveChange.getText("title");
 					}
 					break;
+				case "setFavorite":
+					oActiveChange = this._getActiveChange(sChangeType, mVariantChanges);
+					if (oActiveChange) {
+						oVariant.content.content.favorite = oActiveChange.getContent().favorite;
+					}
+					break;
+				case "setVisible":
+					oActiveChange = this._getActiveChange(sChangeType, mVariantChanges);
+					if (oActiveChange) {
+						oVariant.content.content.visible = oActiveChange.getContent().visible;
+					}
+					break;
 				default:
 					Utils.log.error("No valid changes on variant " + oVariant.content.title + " available");
 			}
 		}.bind(this));
 	};
 
-	VariantController.prototype._getActiveChange = function(sChangeType, mVariantChanges) {
-		var iLastIndex = mVariantChanges[sChangeType].length - 1;
+	VariantController.prototype._applyChangesOnVariantManagement = function(oVariantManagement) {
+		var mVariantManagementChanges = oVariantManagement.variantManagementChanges,
+			oActiveChange;
+		if (Object.keys(mVariantManagementChanges).length > 0) {
+			oActiveChange = this._getActiveChange("setDefault", mVariantManagementChanges);
+			oVariantManagement.defaultVariant = oActiveChange.getContent().defaultVariant;
+		}
+	};
+
+	VariantController.prototype._getActiveChange = function(sChangeType, mChanges) {
+		var iLastIndex = mChanges[sChangeType].length - 1;
 		if (iLastIndex > -1) {
-			return new Change(mVariantChanges[sChangeType][iLastIndex]);
+			return new Change(mChanges[sChangeType][iLastIndex]);
 		}
 		return false;
 	};
@@ -296,11 +386,28 @@ sap.ui.define([
 	 */
 	VariantController.prototype._fillVariantModel = function() {
 		var oVariantData = {};
+		var fnRemove = function(oVariant, sVariantManagementReference) {
+			if ((oVariant.content.layer === Utils.getCurrentLayer()) && (oVariant.content.fileName !== sVariantManagementReference)) {
+				return true;
+			} else {
+				return false;
+			}
+		};
+
 		Object.keys(this._mVariantManagement).forEach(function(sKey) {
+			this._applyChangesOnVariantManagement(this._mVariantManagement[sKey]);
 			oVariantData[sKey] = {
-				defaultVariant : this._mVariantManagement[sKey].defaultVariant,
+				//in case of no variant management change the standard variant is set as default
+				defaultVariant : this._mVariantManagement[sKey].defaultVariant || sKey,
+				originalDefaultVariant : this._mVariantManagement[sKey].defaultVariant || sKey,
 				variants : []
 			};
+			//if an initial variant exists, it should be set as current variant
+			if (this._mVariantManagement[sKey].initialVariant){
+				oVariantData[sKey].currentVariant = this._mVariantManagement[sKey].initialVariant;
+				oVariantData[sKey].originalCurrentVariant = this._mVariantManagement[sKey].initialVariant;
+				delete this._mVariantManagement[sKey].initialVariant;
+			}
 			this.getVariants(sKey).forEach(function(oVariant, index) {
 				this._applyChangesOnVariant(oVariant);
 				oVariantData[sKey].variants[index] = {
@@ -308,7 +415,9 @@ sap.ui.define([
 					title : oVariant.content.title,
 //					author : oVariant.content.support.user, //TODO: get value from backend
 					layer : oVariant.content.layer,
-					readOnly : oVariant.content.fileName === sKey
+					favorite : oVariant.content.content.favorite,
+					remove : fnRemove(oVariant, sKey),
+					visible : oVariant.content.content.visible
 				};
 			}.bind(this));
 		}.bind(this));

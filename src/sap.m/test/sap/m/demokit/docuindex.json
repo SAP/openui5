@@ -313,6 +313,13 @@
 		  "samples": ["sap.m.sample.DateTimePicker"]
 		},
 		{
+		  "id": "sap.m.TimePickerSliders",
+		  "name": "Time Picker Sliders",
+		  "category": "User Input",
+		  "since": "1.54",
+		  "samples": ["sap.m.sample.TimePickerSliders"]
+		},
+		{
 		  "id": "sap.m.Dialog",
 		  "name": "Dialog",
 		  "category": "Popup",
@@ -2670,6 +2677,11 @@
 		"id": "sap.m.sample.TimePicker",
 		"name": "Time Picker",
 		"description": "TimePicker examples displaying the four time formats: \nHH : mm, \nHH : mm : ss, \nHH : mm : pp, \nHH : mm : ss : pp"
+		},
+		{
+		"id": "sap.m.sample.TimePickerSliders",
+		"name": "Time Picker Sliders",
+		"description": "TimePickerSliders used in a Dialog."
 		},
 		{
 		  "id": "sap.m.sample.ContainerNoPadding",

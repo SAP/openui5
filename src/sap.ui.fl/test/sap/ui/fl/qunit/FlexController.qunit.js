@@ -201,32 +201,11 @@ function (
 		});
 	});
 
-	QUnit.test("_getChangeRegistryItem shall return the change registry item", function (assert) {
-		var sControlType, oChange, oChangeRegistryItem, oChangeRegistryItemActual, fGetRegistryItemStub;
-		sControlType = "sap.ui.core.Control";
-		oChange = new Change(labelChangeContent);
-		oChangeRegistryItem = {};
-		fGetRegistryItemStub = sinon.stub().returns(oChangeRegistryItem);
-		sinon.stub(this.oFlexController, "_getChangeRegistry").returns({getRegistryItems: fGetRegistryItemStub});
-
-		//Call CUT
-		oChangeRegistryItemActual = this.oFlexController._getChangeRegistryItem(oChange, sControlType);
-
-		assert.strictEqual(oChangeRegistryItemActual, oChangeRegistryItem);
-		sinon.assert.calledOnce(fGetRegistryItemStub);
-		assert.strictEqual(fGetRegistryItemStub.getCall(0).args[0].changeTypeName, "labelChange");
-		assert.strictEqual(fGetRegistryItemStub.getCall(0).args[0].controlType, "sap.ui.core.Control");
-		assert.strictEqual(fGetRegistryItemStub.getCall(0).args[0].layer, "USER");
-	});
-
-	QUnit.test("_getChangeHandler shall retrieve the ChangeTypeMetadata and extract the change handler", function (assert) {
-		var fChangeHandler, fChangeHandlerActual;
-
-		fChangeHandler = sinon.stub();
-		sinon.stub(this.oFlexController, "_getChangeTypeMetadata").returns({getChangeHandler: sinon.stub().returns(fChangeHandler)});
-
-		//Call CUT
-		fChangeHandlerActual = this.oFlexController._getChangeHandler(this.oChange, this.oControl);
+	QUnit.test("if no instance specific change handler exists, _getChangeHandler shall retrieve the ChangeTypeMetadata and extract the change handler", function (assert) {
+		var sControlType = "sap.ui.core.Control";
+		var fChangeHandler = "dummyChangeHandler";
+		sinon.stub(this.oFlexController, "_getChangeRegistry").returns({getChangeHandler: sinon.stub().returns(fChangeHandler)});
+		var fChangeHandlerActual = this.oFlexController._getChangeHandler(this.oChange, sControlType, this.oControl, JsControlTreeModifier);
 
 		assert.strictEqual(fChangeHandlerActual, fChangeHandler);
 	});
@@ -523,8 +502,7 @@ function (
 						variantManagementReference: "idOfVariantManagementReference"
 					}
 				};
-			},
-			bStandardVariantExists: false
+			}
 		};
 		sandbox.stub(oComponent, "getModel").returns(oModel);
 
@@ -532,16 +510,13 @@ function (
 		var oPrepChange = this.oFlexController.addPreparedChange(oChange, oComponent);
 		assert.ok(oPrepChange);
 		assert.ok(oAddChangeStub.calledOnce, "then model's _addChange is called as VariantManagement Change is detected");
-		assert.equal(oModel.bStandardVariantExists, true, "the value for bStandardVariantExists has changed");
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
 		var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
-		assert.strictEqual(aDirtyChanges.length, 2);
-		assert.strictEqual(aDirtyChanges[0].getVariantManagementReference(), "idOfVariantManagementReference");
-		assert.strictEqual(aDirtyChanges[0].isVariant(), true);
-		assert.strictEqual(aDirtyChanges[1].getSelector().id, "abc123");
-		assert.strictEqual(aDirtyChanges[1].getNamespace(), "b");
-		assert.strictEqual(aDirtyChanges[1].isVariant(), false);
+		assert.strictEqual(aDirtyChanges.length, 1);
+		assert.strictEqual(aDirtyChanges[0].getSelector().id, "abc123");
+		assert.strictEqual(aDirtyChanges[0].getNamespace(), "b");
+		assert.strictEqual(aDirtyChanges[0].isVariant(), false);
 
 		this.oFlexController.deleteChange(oPrepChange, oComponent);
 		assert.ok(oRemoveChangeStub.calledOnce, "then model's _removeChange is called as VariantManagement Change is detected and deleted");

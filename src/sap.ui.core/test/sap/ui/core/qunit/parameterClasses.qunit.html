@@ -70,6 +70,10 @@
 			return (sResult ? "rgb("+ parseInt(sResult[1], 16) + ", " + parseInt(sResult[2], 16) + ", " + parseInt(sResult[3], 16) + ")" : sHex);
 		}
 
+		function normalizeValue(sCssPropertyValue) {
+			return sCssPropertyValue.replace(/\s/g, "").replace(/\"/g, "\'");
+		}
+
 		/**
 		 * test case function that compares the CSS on the DOM node to the according less parameter
 		 * @param {object} assert the QUnit assert object
@@ -98,7 +102,8 @@
 			}
 
 			assert.ok(!!$domElement.css(sCSSProperty), "The class \"" + sClassName + "\" has a non-empty value for CSS property \"" + sCSSProperty +"\" ");
-			assert.strictEqual($domElement.css(sCSSProperty).replace(/\s/g, ""), sThemeParameterValue.replace(/\s/g, ""), "The class \"" + sClassName + "\" set CSS property \"" + sCSSProperty +"\" to \"@" + sExpectedLessParameter + "\" (" + sap.ui.core.theming.Parameters.get(sExpectedLessParameter) +")");
+			assert.strictEqual(normalizeValue($domElement.css(sCSSProperty)), normalizeValue(sThemeParameterValue), "The class \"" + sClassName + "\" set CSS property \"" + sCSSProperty +"\" to \"@" + sExpectedLessParameter
+				+ "\" (" + sap.ui.core.theming.Parameters.get(sExpectedLessParameter) +") - normalized results: " + normalizeValue($domElement.css(sCSSProperty)) + " vs " + normalizeValue(sThemeParameterValue));
 		}
 
 		/* font */

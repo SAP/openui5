@@ -20,7 +20,12 @@
 	}
 }
 
-.sapMCb.sapMCbWrapped {
+.sapUiForm .sapMCb,
+.sapUiRespGrid .sapMCb {
+	display: table-cell;
+}
+
+.sapMCb.sapMCbWrapped.sapMCbHasLabel {
 	height: auto;
 	> .sapMLabel.sapMLabelWrapped {
 		margin: 0.875rem 0;
@@ -28,7 +33,11 @@
 	}
 }
 
-.sapUiFormEdit-CTX .sapMCb.sapMCbWrapped > .sapMLabel.sapMLabelWrapped {
+.sapMCb.sapMCbDisplayOnly:not(.sapMCbBgDis) {
+	padding-left: 2.375rem;
+}
+
+.sapUiFormEdit-CTX .sapMCb.sapMCbWrapped.sapMCbHasLabel > .sapMLabel.sapMLabelWrapped {
 	margin: 0.75rem 0;
 }
 
@@ -151,14 +160,14 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 		padding-left: 2rem;
 	}
 
-	.sapMCb.sapMCbWrapped {
+	.sapMCb.sapMCbWrapped.sapMCbHasLabel {
 		height: auto;
 		> .sapMLabel.sapMLabelWrapped {
 			margin: 0.3rem 0;
 		}
 	}
 
-	.sapUiFormEdit-CTX .sapMCb.sapMCbWrapped > .sapMLabel.sapMLabelWrapped {
+	.sapUiFormEdit-CTX .sapMCb.sapMCbWrapped.sapMCbHasLabel > .sapMLabel.sapMLabelWrapped {
 		margin: 0.25rem 0;
 	}
 

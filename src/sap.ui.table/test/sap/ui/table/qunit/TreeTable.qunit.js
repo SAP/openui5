@@ -120,6 +120,43 @@ sap.ui.require([
 		assert.equal(this.table.isExpanded(0), false, "Expanded state is correct");
 	});
 
+	QUnit.test("Expand and collapse a row synchronously", function(assert) {
+		this.table.setModel(new JSONModel(getData()));
+		this.table.bindRows("/root");
+
+		this.table.expand(0);
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 5, "Expanded: Row count is correct");
+		assert.equal(this.table.isExpanded(0), true, "Expanded state is correct");
+
+		this.table.setModel(new JSONModel(getData()));
+		this.table.bindRows({
+			path: "/root",
+			parameters: {
+				numberOfExpandedLevels: 1
+			}
+		});
+
+		this.table.collapse(0);
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 4, "Collapsed: Row count is correct");
+		assert.equal(this.table.isExpanded(0), false, "Expanded state is correct");
+	});
+
+	QUnit.test("Expand and collapse multiple rows", function(assert) {
+		this.table.expand([0, 1]);
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 6, "Expanded: Row count is correct");
+		assert.equal(this.table.isExpanded(0), true, "Expanded state of the first expanded row is correct");
+		assert.equal(this.table.isExpanded(3), true, "Expanded state of the first expanded row is correct");
+
+		this.table.collapse([0, 3]);
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 3, "Collapsed: Row count is correct");
+		assert.equal(this.table.isExpanded(0), false, "Expanded state of the first collapsed row is correct");
+		assert.equal(this.table.isExpanded(1), false, "Expanded state of the first collapsed row is correct");
+	});
+
 	QUnit.test("Insert and remove a row", function(assert) {
 		var oData = this.table.getModel().getData();
 

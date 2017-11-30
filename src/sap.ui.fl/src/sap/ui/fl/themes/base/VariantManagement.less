@@ -8,8 +8,22 @@
 	text-align: center;
 }
 
-.sapUiFlVarMngmtTitle {
-   margin-top: 0.4rem;
+.sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle { 
+}
+
+.sapMFlexBox .sapUiFlVarMngmt .sapUiFlVarMngmtTitle {
+	padding-top: 0.9rem; 
+}
+.sapUiSizeCozy .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {
+	padding-top: 0.9rem;
+}
+
+.sapUiSizeCompact .sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle {		
+	padding-top: 0.4rem;
+}
+
+.sapMIBar .sapUiFlVarMngmt.sapMBarChild {
+    margin-left: 0rem;
 }
 
 .sapUiFlVarMngmtModified {
@@ -17,18 +31,18 @@
 	font-weight: bold;
 	padding-left: 0.125rem;
 	padding-right: 0.125rem;
-    margin-top: 0.4rem;	
+    margin-top: 0.4rem;
 }
 
 .sapUiFlVarMngmtTriggerBtnHover>span {
 	background-image: none;
 	border-color: @sapUiButtonLiteHoverBorderColor;
 	background-color: @sapUiButtonLiteHoverBackground;
-    border-radius: 0.2rem;	
+    border-radius: 0.2rem;
 }
 
 .sapUiFlVarMngmtErrorPopover>div {
-	padding-top: 1rem;	
+	padding-top: 1rem;
 }
 
 .sapUiFlVarMngmtErrorPopover>div:last-child {
@@ -46,12 +60,12 @@
 
 .sapUiFlVarMngmt .sapUiFlVarMngmtClickable {
 	cursor: pointer;
-	color: @sapUiButtonTextColor;	
+	color: @sapUiButtonTextColor;
 	text-shadow: @sapUiShadowText;
 }
 
 .sapUiFlVarMngmt .sapUiFlVarMngmtClickable:hover {
-	color: @sapUiHighlight;	
+	color: @sapUiHighlight;
 }
 
 .sapUiFlVarMngmt .sapUiFlVarMngmtDisabled {
@@ -68,17 +82,4 @@
 
 .sapUiFlVarMngmtFavColor {
 	color: @sapUiButtonIconColor;
-}
-
-
-.sapUxAPObjectPageHeaderTitle .sapMTitle {
-	padding-top: 0rem;	
-	margin-top: 0rem;
-}
-
-.sapUxAPObjectPageHeaderTitle .sapMIBar-CTX .sapUiFlVarMngmtTriggerBtnHover>span {
-	background-image: none;
-	border-color: @sapUiButtonLiteHoverBorderColor;
-	background-color: @sapUiButtonLiteHoverBackground;
-    border-radius: 0.2rem;	
 }

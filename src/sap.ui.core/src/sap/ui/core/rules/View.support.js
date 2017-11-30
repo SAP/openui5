@@ -21,10 +21,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	 * Checks for wrongly configured view namespace
 	 */
 	var oXMLViewWrongNamespace = {
-		id: "XMLViewWrongNamespace",
+		id: "xmlViewWrongNamespace",
 		audiences: [Audiences.Application],
 		categories: [Categories.Functionality],
 		enabled: true,
+		minversion: "-",
 		title: "XML View is not configured with namespace 'sap.ui.core.mvc'",
 		description: "For consistency and proper resource loading, the root node of an XML view must be configured with the namespace 'mvc'",
 		resolution: "Define the XML view as '<core:View ...>' and configure the XML namepspace as 'xmlns:mvc=\"sap.ui.core.mvc\"'",
@@ -53,10 +54,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	 * Checks if a default namespaces is set in an XML view
 	 */
 	var oXMLViewDefaultNamespace = {
-		id: "XMLViewDefaultNamespace",
+		id: "xmlViewDefaultNamespace",
 		audiences: [Audiences.Control, Audiences.Application],
 		categories: [Categories.Performance],
 		enabled: true,
+		minversion: "-",
 		title: "Default namespace missing in XML view",
 		description: "If the default namespace is missing, the code is less readable and parsing performance may be slow",
 		resolution: "Set the namespace of the control library that holds most of the controls you use as default namespace (e.g. xmlns=\"sap.m\")",
@@ -83,10 +85,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	};
 
 	var oXMLViewLowerCaseControl = {
-		id: "XMLViewLowerCaseControl",
+		id: "xmlViewLowerCaseControl",
 		audiences: ["Control","Application"],
 		categories: ["Performance"],
 		enabled: true,
+		minversion: "-",
 		title: "Control tag in XML view starts with lower case",
 		description: "Control tags with lower case cannot be loaded in Linux-based systems",
 		resolution: "Start the Control tag with upper case",
@@ -146,10 +149,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	 * Checks for unused namespaces inside an XML view
 	 */
 	var oXMLViewUnusedNamespaces = {
-		id: "XMLViewUnusedNamespaces",
+		id: "xmlViewUnusedNamespaces",
 		audiences: [Audiences.Control, Audiences.Application],
 		categories: [Categories.Performance],
 		enabled: true,
+		minversion: "-",
 		title: "Unused namespaces in XML view",
 		description: "Namespaces that are declared but not used have a negative impact on performance (and may confuse readers of the code)",
 		resolution: "Remove the unused namespaces from the view definition",
