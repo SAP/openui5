@@ -105,6 +105,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			fAnimationDuration,
 			fNotValidValue;
 
+		fPercentValue = this.validateProperty("percentValue", fPercentValue);
+
 		if (!isValidPercentValue(fPercentValue)) {
 			fNotValidValue = fPercentValue;
 			fPercentValue = fPercentValue > 100 ? 100 : 0;
@@ -231,7 +233,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	function isValidPercentValue(value) {
-		return (typeof (value) === 'number') && !isNaN(value) && value >= 0 && value <= 100;
+		return value >= 0 && value <= 100;
 	}
 
 	return ProgressIndicator;
