@@ -468,6 +468,10 @@ sap.ui.define([
 			aItemsToNavigate = this._getItemsToNavigate(),
 			aNavigationDomRefs = [];
 
+		if (aItemsToNavigate.length === 0) {
+			return;
+		}
+
 		aItemsToNavigate.forEach(function (oItem, iIndex) {
 			if (iIndex === 0) {
 				oItem.$().attr("tabIndex", "0");
