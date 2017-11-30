@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ActionSelect.
-sap.ui.define(['./Select', './library'],
-	function(Select, library) {
+sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library'],
+	function(Select, InvisibleText, library) {
 		"use strict";
 
 		/**
@@ -81,6 +81,11 @@ sap.ui.define(['./Select', './library'],
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
+
+		ActionSelect.prototype._onBeforeRenderingPopover = function () {
+			Select.prototype._onBeforeRenderingPopover.call(this);
+			this._updateTutorMessage();
+		};
 
 		ActionSelect.prototype.onAfterRenderingPicker = function() {
 			Select.prototype.onAfterRenderingPicker.call(this);
@@ -255,6 +260,34 @@ sap.ui.define(['./Select', './library'],
 
 			if (this.isOpen() && oSelecteditem) {
 				oSelecteditem.$().toggleClass("sapMActionSelectItemWithoutFocus", bRemove);
+			}
+		};
+
+		/**
+		 * Handles the creating and setting of a tutor message when the control has buttons.
+		 *
+		 * @private
+		 */
+		ActionSelect.prototype._updateTutorMessage = function() {
+			var oPicker = this.getPicker(),
+				aAriaLabels = oPicker.getAriaLabelledBy(),
+				bHasButtons = !!this.getButtons().length,
+				bTutorMessageNotReferenced;
+
+			if (!this._sTutorMessageId) {
+				this._sTutorMessageId = new InvisibleText(this.getId() + "-tutorMessage", {
+					text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACTION_SELECT_TUTOR_MESSAGE")
+				}).toStatic().getId();
+			}
+
+			bTutorMessageNotReferenced = (aAriaLabels.indexOf(this._sTutorMessage) === -1);
+
+			if (bTutorMessageNotReferenced && bHasButtons) {
+				oPicker.addAriaLabelledBy(this._sTutorMessageId);
+			} else {
+				if (!bHasButtons) {
+					oPicker.removeAriaLabelledBy(this._sTutorMessageId);
+				}
 			}
 		};
 
