@@ -1307,9 +1307,11 @@
 	/* --------------------------- DynamicPage Events and Handlers ---------------------------------- */
 	QUnit.module("DynamicPage Events, Handlers", {
 		beforeEach: function () {
+			sinon.config.useFakeTimers = true;
 			this.oDynamicPage = oFactory.getDynamicPageWithBigContent();
 		},
 		afterEach: function () {
+			sinon.config.useFakeTimers = false;
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
 		}
@@ -1349,6 +1351,23 @@
 		// Assert
 		assert.ok(oCollapseButtonPressSpy.calledOnce, "DPage: Collapse Header Visual Indicator Press Handler is called");
 		assert.ok(oCollapseButtonPressSpy2.calledOnce, "DPageHeader: Collapse Header Visual Indicator Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage On Collapse Button Press 2", function (assert) {
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		var oDetachScrollHandlerSpy = this.spy(sap.f.DynamicPage.prototype, "_detachScrollHandler"),
+			oAttachScrollHandlerSpy = this.spy(sap.f.DynamicPage.prototype, "_attachScrollHandler");
+
+		// Act
+		this.oDynamicPage._titleExpandCollapseWhenAllowed();
+
+		this.clock.tick(1);
+
+		// Assert
+		assert.strictEqual(oDetachScrollHandlerSpy.callCount, 1, "detachScrollHandler was called");
+		assert.strictEqual(oAttachScrollHandlerSpy.callCount, 1, "attachScrollHandler was called");
 	});
 
 	QUnit.test("DynamicPage On Collapse Button MouseOver", function (assert) {
