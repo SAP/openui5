@@ -659,7 +659,8 @@ sap.ui.define([
 				modal: false,
 				horizontalScrolling: Device.system.phone ? false : true,
 				contentWidth: Device.system.phone ? "100%" : "auto",
-				offsetY: this._detireminePopoverVerticalOffset()
+				offsetY: this._detireminePopoverVerticalOffset(),
+				ariaLabelledBy: this._getPopoverHiddenLabelId()
 			});
 
 			// Override popover positioning mechanism
@@ -1086,6 +1087,22 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype.closeOverflow = function () {
 		this._getPopover().close();
+	};
+
+	OverflowToolbar.prototype._getPopoverHiddenLabelId = function () {
+		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
+			return "";
+		}
+
+		// Load the resources
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		if (!OverflowToolbar._sPickerHiddenLabelId) {
+			OverflowToolbar._sPickerHiddenLabelId = new InvisibleText({
+				text: oResourceBundle.getText("INPUT_AVALIABLE_VALUES")
+			}).toStatic().getId();
+		}
+		return OverflowToolbar._sPickerHiddenLabelId;
 	};
 
 	return OverflowToolbar;
