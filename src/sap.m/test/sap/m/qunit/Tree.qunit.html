@@ -273,6 +273,8 @@ QUnit.test("Expand", function(assert){
 	assert.strictEqual(oTree.getItems().length, 2, "two nodes displayed before tree expanding");
 
 	oTree.focus();
+	assert.strictEqual(oTree.getItems()[0].$().attr("aria-expanded"), "false", "aria-expanded is false");
+
 	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
 	oArrowDomRef.trigger("click");
 
@@ -280,6 +282,7 @@ QUnit.test("Expand", function(assert){
 
 	assert.equal(oTree.getItems()[0].getLevel(), 0, "first level node is in level 0");
 	assert.equal(oTree.getItems()[1].getLevel(), 1, "second node is in level 1");
+	assert.strictEqual(oTree.getItems()[0].$().attr("aria-expanded"), "true", "aria-expanded is true");
 
 	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was called once");
 	assertToggleOpenStateParameters(assert, 0, true, oToggleOpenStateEventSpy._mEventParameters);
