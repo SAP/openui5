@@ -47,6 +47,13 @@
 		<script>
 			jQuery.sap.require("sap.ui.core.format.DateFormat");
 			jQuery.sap.require("sap.ui.test.TestUtils");
+			jQuery.sap.require("sap.ui.model.json.JSONModel");
+
+			var JSONModel = sap.ui.model.json.JSONModel;
+			var DateRangeSelection = sap.m.DateRangeSelection;
+
+			var oDefaultMinDate = new sap.m.DatePicker()._oMinDate;
+			var oDefaultMaxDate = new sap.m.DatePicker()._oMaxDate;
 
 			//Preparing input dates for testing purposes:
 			//From: April 1, 2014 0:00 (local time)
@@ -171,6 +178,40 @@
 				oDRS2.setMaxDate();
 				sap.ui.getCore().applyChanges();
 
+			});
+
+			QUnit.test("opening picker when current values are outside min/max range", function() {
+				//Prepare
+				var oMinDate = new Date(2014,0,1),
+					oDRS = new DateRangeSelection({
+					minDate: oMinDate,
+					maxDate: new Date(2014,11,31)
+				});
+				oDRS.setDateValue(new Date(2001, 0, 1));
+				oDRS.setSecondDateValue(new Date(2001, 0, 10));
+				oDRS.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act - user opens the picker when current input value is outside min/max range
+				oDRS.focus();
+				qutils.triggerEvent("click", oDRS.getId() + "-icon");//to load the picker and initialize the calendar
+				oDRS._fillDateRange();
+
+				//Assert
+				var oNewMinDateUTC = new Date(Date.UTC(oMinDate.getFullYear(), oMinDate.getMonth(), oMinDate.getDate()));
+				var oFocusedDate = oDRS._oCalendar._getFocusedDate().toUTCJSDate();
+				var aSelectedDates = oDRS._oCalendar.getSelectedDates();
+				assert.equal(oFocusedDate.toString(), oNewMinDateUTC.toString(), "DRS: focused date equals min date " +
+					"when current dateValue & secondDateValue  are out of min/max range");
+				assert.equal(aSelectedDates[0].getStartDate(), undefined, "DRS: has empty selection's startDate when current dateValue & secondDateValue " +
+					"are out of min/max range");
+
+				assert.equal(aSelectedDates[0].getEndDate(), undefined, "DRS: has empty selection's endDate when current dateValue & secondDateValue " +
+					"are out of min/max range");
+
+				//Cleanup
+				qutils.triggerEvent("click", oDRS.getId() + "-icon"); //closes picker
+				oDRS.destroy();
 			});
 
 			QUnit.test("focused element after picker close", function(assert) {
@@ -522,6 +563,228 @@
 					oDRS._oPopup.close();
 					done();
 				});
+			});
+
+			QUnit.module("API");
+
+			QUnit.test("setMinDate when dateValue & secondDateValue do not match the new min date", function (assert) {
+				var oDateValue = new Date(2017, 0, 1),
+					oNewMinDate = new Date(2018, 0, 1),
+					oSut = new DateRangeSelection({
+						dateValue: oDateValue,
+						secondDateValue: oDateValue,
+						displayFormat: "yyyyMMdd",
+						delimiter: "-"
+					}),
+					sExpectedErrorMsg1 = "dateValue " + oSut.getDateValue().toString() + "(value=20170101 - 20170101) does " +
+						"not match min/max date range(" + oNewMinDate.toString() + " - " + oDefaultMaxDate.toString() + "). " +
+						"App. developers should take care to maintain dateValue/value accordingly.",
+					sExpectedErrorMsg2 = "secondDateValue " + oSut.getSecondDateValue().toString() + "(value=20170101 - 20170101) " +
+						"does not match min/max date range(" + oNewMinDate.toString() + " - " + oDefaultMaxDate.toString() + "). " +
+						"App. developers should take care to maintain secondDateValue/value accordingly.",
+					oSpySetProperty = this.spy(oSut, "setProperty"),
+					oSpyLogError = this.spy(jQuery.sap.log, "error");
+
+				oSut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act
+				oSut.setMinDate(oNewMinDate);
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				assert.equal(oSpySetProperty.withArgs("dateValue").callCount, 0, ".. should not update the property <dateValue>");
+				assert.equal(oSpySetProperty.withArgs("secondDateValue").callCount, 0, ".. should not update the property <secondDateValue>");
+				assert.equal(oSpySetProperty.withArgs("value").callCount, 0, ".. should not update the property <value>");
+				assert.equal(oSpyLogError.callCount, 2, "..should log error messages in the console");
+				oSpyLogError.callCount && assert.equal(oSpyLogError.getCall(0).args[0], sExpectedErrorMsg1,
+					".. with concrete 1st message text");
+				oSpyLogError.callCount && oSpyLogError.callCount > 1 && assert.equal(oSpyLogError.getCall(1).args[0],
+					sExpectedErrorMsg2, ".. with concrete 2nd message text");
+
+				//Cleanup
+				oSpySetProperty.restore();
+				oSpyLogError.restore();
+				oSut.destroy();
+			});
+
+			QUnit.test("setMaxDate when dateValue & secondDateValue do not match the new max date", function (assert) {
+				var oDateValue = new Date(2017, 0, 1),
+					oNewMaxDate = new Date(2016, 0, 1),
+					oSut = new DateRangeSelection({
+						dateValue: oDateValue,
+						secondDateValue: oDateValue,
+						displayFormat: "yyyyMMdd",
+						delimiter: "-"
+					}),
+					sExpectedErrorMsg1 = "dateValue " + oSut.getDateValue().toString() + "(value=20170101 - 20170101) does" +
+						" not match min/max date range(" + oDefaultMinDate.toString() + " - " +
+						new Date(oNewMaxDate.setHours(23, 59, 59)).toString() + "). App. developers should take care to " +
+						"maintain dateValue/value accordingly.",
+					sExpectedErrorMsg2 = "secondDateValue " + oSut.getSecondDateValue().toString() + "(value=20170101 - 20170101) does" +
+						" not match min/max date range(" + oDefaultMinDate.toString() + " - " +
+						new Date(oNewMaxDate.setHours(23, 59, 59)).toString() + "). App. developers should take care to " +
+						"maintain secondDateValue/value accordingly.",
+					oSpySetProperty = this.spy(oSut, "setProperty"),
+					oSpyLogError = this.spy(jQuery.sap.log, "error");
+
+				oSut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act
+				oSut.setMaxDate(oNewMaxDate);
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				assert.equal(oSpySetProperty.withArgs("dateValue").callCount, 0, ".. should not update the property <dateValue>");
+				assert.equal(oSpySetProperty.withArgs("secondDateValue").callCount, 0, ".. should not update the property <secondDateValue>");
+				assert.equal(oSpySetProperty.withArgs("value").callCount, 0, ".. should not update the property <value>");
+				assert.equal(oSpyLogError.callCount, 2, "..should log error messages in the console");
+				oSpyLogError.callCount && assert.equal(oSpyLogError.getCall(0).args[0], sExpectedErrorMsg1,
+					".. with concrete 1st message text");
+				oSpyLogError.callCount && oSpyLogError.callCount > 1 && assert.equal(oSpyLogError.getCall(1).args[0],
+					sExpectedErrorMsg2, ".. with concrete 2nd message text");
+
+				//Cleanup
+				oSpySetProperty.restore();
+				oSpyLogError.restore();
+				oSut.destroy();
+			});
+
+			QUnit.test("minDate and value in databinding scenario where the order of setters is not known",
+					function (assert) {
+						/**
+						 * value in second model is intentionally 20170120-20170130, in order to examine the scenario, where value
+						 * setter is called before the minDate setter and a potentially valid value is not yet considered such,
+						 * because the corresponding valid minDate didn't arrive yet.
+						 */
+						var oModelInvalid = new JSONModel({
+									value: "20170101 - 20170120",
+									minDate: new Date(2018, 0, 1)
+								}),
+								oModelValid = new JSONModel({
+									minDate: new Date(2017, 0, 10),
+									value: "20170120 - 20170130",
+								}),
+								oDP1 = new DateRangeSelection({
+									displayFormat: "yyyyMMdd",
+									delimiter: "-",
+									value: "{/value}",
+									minDate: "{/minDate}"
+								}),
+								oDP2 = new DateRangeSelection({
+									displayFormat: "yyyyMMdd",
+									delimiter: "-",
+									minDate: "{/minDate}",
+									value: "{/value}"
+								}),
+								sErrorMsgDP11 = "dateValue " + new Date(2017, 0, 1).toString() + "(value=20170101 - 20170120)" +
+									" does not match min/max date range(" + oModelInvalid.getProperty("/minDate").toString() +
+									" - " + oDefaultMaxDate.toString() + "). App. developers should take care to maintain " +
+									"dateValue/value accordingly.",
+								sErrorMsgDP12 = "secondDateValue " + new Date(2017, 0, 20).toString() + "(value=20170101 - 20170120)" +
+									" does not match min/max date range(" + oModelInvalid.getProperty("/minDate").toString() +
+									" - " + oDefaultMaxDate.toString() + "). App. developers should take care to maintain " +
+									"secondDateValue/value accordingly.",
+								sErrorMsgDP21 = sErrorMsgDP11,
+								sErrorMsgDP22 = sErrorMsgDP12,
+						oSpyLogError = this.spy(jQuery.sap.log, "error");
+
+						oDP1.setModel(oModelInvalid);
+						oDP2.setModel(oModelInvalid);
+						oDP1.placeAt("qunit-fixture");
+						oDP2.placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+
+						//Pre-Assert
+						assert.equal(oDP1.getValue().toString(), "20170101 - 20170120",
+								"Although outside min range, DP1 property <value> should be always set");
+						assert.equal(oDP2.getValue().toString(), "20170101 - 20170120",
+								"Although outside min range, DP2 property <value> should be always set");
+
+						assert.equal(oDP1.getDateValue().toString(), new Date(2017, 0, 1).toString(),
+								"Although outside min range, DP1 property <value> should update the <dateValue> as well");
+						assert.equal(oDP1.getSecondDateValue().toString(), new Date(2017, 0, 20).toString(),
+							"Although outside min range, DP1 property <value> should update the <secondDateValue> as well");
+
+						assert.equal(oDP2.getDateValue().toString(), new Date(2017, 0, 1).toString(),
+							"Although outside min range, DP2 property <value> should update the <dateValue> as well");
+						assert.equal(oDP2.getSecondDateValue().toString(), new Date(2017, 0, 20).toString(),
+							"Although outside min range, DP2 property <value> should update the <secondDateValue> as well");
+
+						assert.equal(oSpyLogError.callCount, 4, "There should be error messages in the console");
+
+						oSpyLogError.callCount && assert.equal(oSpyLogError.getCall(0).args[0], sErrorMsgDP11,
+							"And the DP1 first message is with expected text");
+						oSpyLogError.callCount > 1 && assert.equal(oSpyLogError.getCall(1).args[0], sErrorMsgDP12,
+							"And the DP1 second message is with expected text");
+						oSpyLogError.callCount > 2 && assert.equal(oSpyLogError.getCall(2).args[0], sErrorMsgDP21,
+							"And the DP2 first message is with expected text");
+						oSpyLogError.callCount > 3 && assert.equal(oSpyLogError.getCall(3).args[0], sErrorMsgDP22,
+							"And the DP2 second message is with expected text");
+
+						oSpyLogError.reset();
+
+						//Act - set a valid model
+						oDP1.setModel(oModelValid);
+						oDP2.setModel(oModelValid);
+						sap.ui.getCore().applyChanges();
+
+						//Assert
+						assert.equal(oDP1.getValue().toString(), "20170120 - 20170130", "A valid DP1 property <value> should be always set");
+						assert.equal(oDP2.getValue().toString(), "20170120 - 20170130", "A valid DP2 property <value> should be always set");
+
+						assert.equal(oDP1.getDateValue().toString(), new Date(2017, 0, 20).toString(),
+							"A valid DP1 property <value> should update the <dateValue> as well");
+						assert.equal(oDP2.getDateValue().toString(), new Date(2017, 0, 20).toString(),
+							"A valid DP2 property <value> should update the <dateValue> as well");
+
+						assert.equal(oDP1.getSecondDateValue().toString(), new Date(2017, 0, 30).toString(),
+							"A valid DP1 property <value> should update the <secondDateValue> as well");
+						assert.equal(oDP2.getSecondDateValue().toString(), new Date(2017, 0, 30).toString(),
+							"A valid DP2 property <value> should update the <secondDateValue> as well");
+
+						assert.equal(oSpyLogError.callCount, 0, "There must be no error messages in the console");
+
+						//Cleanup
+						oSpyLogError.restore();
+						oDP1.destroy();
+						oDP2.destroy();
+					}
+			);
+
+			QUnit.test("setValue,dateValue,secondDateValue to undefined", function(assert) {
+				var oDP1 = new DateRangeSelection({
+							value: "20170101-20170120",
+							displayFormat: "yyyyMMdd"
+						}),
+						oDP2  = new DateRangeSelection({
+							value: "20170101-20170120",
+							displayFormat: "yyyyMMdd"
+						});
+
+				oDP1.placeAt("qunit-fixture");
+				oDP2.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act
+				oDP1.setDateValue();
+				oDP1.setSecondDateValue();
+				oDP2.setValue();
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				assert.strictEqual(oDP1.getDateValue(), null, "Property <dateValue> should be null as it was just set to undefined");
+				assert.strictEqual(oDP1.getSecondDateValue(), null, "Property <secondDateValue> should be null as it was just set to undefined");
+				assert.strictEqual(oDP1.getValue(), "", "Property <value> should be empty, because property <dateValue> was just set to undefined");
+
+				assert.strictEqual(oDP2.getValue(), "", "Property <value> should be empty, as it was just set to undefined");
+				assert.strictEqual(oDP2.getDateValue(), null, "Property <dateValue> should be null, because property <value> was just set to undefiend");
+				assert.strictEqual(oDP2.getSecondDateValue(), null, "Property <secondDateValue> should be null, because property <value> was just set to undefiend");
+
+				//Cleanup
+				oDP1.destroy();
+				oDP2.destroy();
 			});
 
 			QUnit.module("Misc");
