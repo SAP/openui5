@@ -1,0 +1,10 @@
+<mvc:View
+		id="versionInfo"
+		height="100%"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core">
+	<core:HTML id="testHTML"
+			   preferDOM="false"
+			   content='&lt;div style="height:100%; overflow-x:auto;"&gt;&lt;iframe style="width:100%;height:99%;" name="content" src="versioninfo.html" frameborder="0""&gt;&lt;/iframe&gt;&lt;/div&gt;'>
+	</core:HTML>
+</mvc:View>
