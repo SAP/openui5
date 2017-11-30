@@ -388,7 +388,7 @@
 						sErrorMsgDP1 = "dateValue " + new Date(2017, 0, 1).toString() + "(value=20170101) does not match" +
 							" min/max date range(" + oModelInvalid.getProperty("/minDate").toString() + " - " + oDefaultMaxDate.toString() + ")." +
 							" App. developers should take care to maintain dateValue/value accordingly.",
-						sErrorMsgDP2 = sErrorMsgDP1;
+						sErrorMsgDP2 = sErrorMsgDP1,
 						oSpyLogError = this.spy(jQuery.sap.log, "error");
 
 					oDP1.setModel(oModelInvalid);
