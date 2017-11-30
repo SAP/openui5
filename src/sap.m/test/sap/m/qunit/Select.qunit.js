@@ -8350,7 +8350,34 @@
 		oSelect.destroy();
 	});
 
-	QUnit.module("getAccessibilityInfo");
+	QUnit.module("Accessibility");
+
+	QUnit.test("Label for IconOnly Select", function (assert) {
+		var aItems = [
+			new sap.ui.core.Item({key: "Item1", text: "Item1"}),
+			new sap.ui.core.Item({key: "Item2", text: "Item2"})
+		];
+
+		var oIconOnlySelect = new sap.m.Select("iconOnlySelect", {
+			icon: "sap-icon//search",
+			type: "IconOnly",
+			items: aItems
+		});
+
+		var oStandardSelect = new sap.m.Select("standardSelect", {
+			items: aItems
+		});
+
+		oIconOnlySelect.placeAt("content");
+		oStandardSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(document.getElementById("iconOnlySelect-label").innerHTML, "", "No label text is rendered for IconOnly select");
+		assert.notStrictEqual(document.getElementById("standardSelect-label").innerHTML, "", "Label text is rendered for standard select");
+
+		oIconOnlySelect.destroy();
+		oStandardSelect.destroy();
+	});
 
 	QUnit.test("getAccessibilityInfo", function (assert) {
 		var oSelect = new sap.m.Select({
