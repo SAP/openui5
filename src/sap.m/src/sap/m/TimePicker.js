@@ -9,6 +9,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 
 		// shortcut for sap.m.PlacementType
 		var PlacementType = library.PlacementType,
+			TimePickerMaskMode = library.TimePickerMaskMode,
 			DEFAULT_STEP = 1;
 
 		/**
@@ -141,7 +142,20 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 					 * 3. You can use the special escape character '^' called "Caret" prepending a rule character to make it immutable.
 					 * Use the double escape '^^' if you want to make use of the escape character as an immutable one.
 					 */
-					mask: {type: "string", group: "Misc", defaultValue: null}
+					mask: {type: "string", group: "Misc", defaultValue: null},
+
+					/**
+					 * Defines whether the mask is enabled. When disabled, there are no restrictions and
+					 * validation for the user and no placeholders are displayed.
+					 *
+					 * <b>Note:</b> A disabled mask does not reset any validation rules that are already
+					 * set. You can update the <code>mask</code> property and add new <code>rules</code>
+					 * while it is disabled. When <code>maskMode</code> is set to <code>On</code> again,
+					 * the <code>rules</code> and the updated <code>mask</code> will be applied.
+					 *
+					 * @since 1.54
+					 */
+					maskMode: {type: "sap.m.TimePickerMaskMode", group: "Misc", defaultValue: TimePickerMaskMode.On}
 				},
 				aggregations: {
 
@@ -394,6 +408,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			}
 
 			this.setProperty("value", sValue, true); // no rerendering
+			this._lastValue = sValue;
 			if (this._bValid) {
 				this.setProperty("dateValue", oDate, true); // no rerendering
 			}
@@ -489,6 +504,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 					this.updateDomValue(sValue);
 				} else {
 					this.setProperty("value", sValue, true); // no rerendering
+					this._lastValue = sValue;
 					this._sLastChangeValue = sValue;
 				}
 			}
@@ -511,7 +527,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 				return this;
 			}
 
-			this.updateDomValue(this._formatValue(oDateValue));
+			var sOutputValue = this._formatValue(oDateValue);
+			this.updateDomValue(sOutputValue);
+			this._lastValue = sOutputValue;
 
 			return this;
 		};
@@ -538,6 +556,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			this._initMask();
 
 			MaskEnabler.setValue.call(this, sValue);
+
 			this._sLastChangeValue = sValue;
 			this._bValid = true;
 
@@ -567,6 +586,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 
 			// do not call InputBase.setValue because the displayed value and the output value might have different pattern
 			this.updateDomValue(sOutputValue);
+			this._lastValue = sOutputValue;
 
 			return this;
 
@@ -1143,6 +1163,16 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 				this._oTimeSemanticMaskHelper.destroy();
 			}
 			this._oTimeSemanticMaskHelper = new TimeSemanticMaskHelper(this);
+		};
+
+		/**
+		 * Returns if the mask is enabled.
+		 *
+		 * @returns {boolean}
+		 * @private
+		 */
+		TimePicker.prototype._isMaskEnabled = function () {
+			return this.getMaskMode() === TimePickerMaskMode.On;
 		};
 
 		/**

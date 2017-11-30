@@ -6,7 +6,10 @@
 	xmlns="sap.m">
 
 	<VBox class="sapUiSmallMargin">
-
+		<HBox alignItems="Center">
+			<Text text="MaskInput is: " />
+			<Switch change="handleChangeMaskMode" state="true"/>
+		</HBox>
 		<Label text = "HH:mm"/>
 		<TimePicker
 				id="TP1"

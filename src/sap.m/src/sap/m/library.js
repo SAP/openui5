@@ -86,6 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.StringFilterOperator",
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
+			"sap.m.TimePickerMaskMode",
 			"sap.m.ToolbarDesign",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
@@ -2971,6 +2972,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 */
 		Solid : "Solid"
 
+	};
+
+	/**
+	 * Different modes for the <code>sap.m.TimePicker</code> mask.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.54
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.TimePickerMaskMode = {
+		/**
+		 * <code>MaskInput</code> is enabled for the <code>sap.m.TimePicker</code>.
+		 * @public
+		 */
+		On: "On",
+
+		/**
+		 * <code>MaskInput</code> is disabled for the <code>sap.m.TimePicker</code>.
+		 * @public
+		 */
+		Off: "Off"
 	};
 
 	/**

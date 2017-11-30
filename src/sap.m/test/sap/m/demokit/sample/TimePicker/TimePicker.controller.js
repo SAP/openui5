@@ -1,8 +1,9 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
+sap.ui.define(['sap/m/library','sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
+	function(library, Controller, JSONModel) {
 		"use strict";
 
-		var TPController = Controller.extend("sap.m.sample.TimePicker.TimePicker", {
+		var TimePickerMaskMode = library.TimePickerMaskMode,
+			TPController = Controller.extend("sap.m.sample.TimePicker.TimePicker", {
 
 			onInit: function () {
 				// create model
@@ -49,6 +50,15 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 				} else {
 					oTP.setValueState(sap.ui.core.ValueState.Error);
 				}
+			},
+
+			handleChangeMaskMode: function (oEvent) {
+				var sMaskMode = oEvent.getParameter("state") ? TimePickerMaskMode.On : TimePickerMaskMode.Off;
+
+				this.byId("TP1").setMaskMode(sMaskMode);
+				this.byId("TP2").setMaskMode(sMaskMode);
+				this.byId("TP3").setMaskMode(sMaskMode);
+				this.byId("TP4").setMaskMode(sMaskMode);
 			}
 		});
 

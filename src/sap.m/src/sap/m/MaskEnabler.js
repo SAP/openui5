@@ -69,13 +69,16 @@ sap.ui.define([
 		 * Handles the internal event <code>onBeforeRendering</code>.
 		 */
 		this.onBeforeRendering = function () {
-			/*Check if all properties and rules are valid (although current setters validates the input,
-			 because not everything is verified - i.e. modifying an existing rule is not verified in the context of all rules*/
-			var sValidationErrorMsg = this._validateDependencies();
+			if (this._isMaskEnabled()) {
+				/*Check if all properties and rules are valid (although current setters validates the input,
+				because not everything is verified - i.e. modifying an existing rule is not verified in the context of all rules*/
+				var sValidationErrorMsg = this._validateDependencies();
 
-			if (sValidationErrorMsg) {
-				jQuery.sap.log.warning("Invalid mask input: " + sValidationErrorMsg);
+				if (sValidationErrorMsg) {
+					jQuery.sap.log.warning("Invalid mask input: " + sValidationErrorMsg);
+				}
 			}
+
 			InputBase.prototype.onBeforeRendering.apply(this, arguments);
 		};
 
@@ -94,12 +97,14 @@ sap.ui.define([
 			this._sOldInputValue = this._getInputValue();
 			InputBase.prototype.onfocusin.apply(this, arguments);
 
-			// if input does not differ from original (i.e. empty mask) OR differs from original but has invalid characters
-			if (!this._oTempValue.differsFromOriginal() || !this._isValidInput(this._sOldInputValue)) {
-				this._applyMask();
-			}
+			if (this._isMaskEnabled()) {
+				// if input does not differ from original (i.e. empty mask) OR differs from original but has invalid characters
+				if (!this._oTempValue.differsFromOriginal() || !this._isValidInput(this._sOldInputValue)) {
+					this._applyMask();
+				}
 
-			this._positionCaret(true);
+				this._positionCaret(true);
+			}
 		};
 
 		/**
@@ -107,23 +112,28 @@ sap.ui.define([
 		 * @param {object} oEvent The jQuery event
 		 */
 		this.onfocusout = function (oEvent) {
-			//The focusout should not be passed down to the InputBase as it will always generate onChange event.
-			//For the sake of MaskInput, change event is decided inside _inputCompletedHandler, the reset of the InputBase.onfocusout
-			//follows
-			this.bFocusoutDueRendering = this.bRenderingPhase;
-			this.$().toggleClass("sapMFocus", false);
-			// remove touch handler from document for mobile devices
-			jQuery(document).off('.sapMIBtouchstart');
+			if (this._isMaskEnabled()) {
+				//The focusout should not be passed down to the InputBase as it will always generate onChange event.
+				//For the sake of MaskInput, change event is decided inside _inputCompletedHandler, the reset of the InputBase.onfocusout
+				//follows
+				this.bFocusoutDueRendering = this.bRenderingPhase;
+				this.$().toggleClass("sapMFocus", false);
+				// remove touch handler from document for mobile devices
+				jQuery(document).off('.sapMIBtouchstart');
 
-			// Since the DOM is replaced during the rendering, an <code>onfocusout</code> event is fired and possibly the
-			// focus is set on the document, hence you can ignore this event during the rendering.
-			if (this.bRenderingPhase) {
-				return;
+				// Since the DOM is replaced during the rendering, an <code>onfocusout</code> event is fired and possibly the
+				// focus is set on the document, hence you can ignore this event during the rendering.
+				if (this.bRenderingPhase) {
+					return;
+				}
+
+				//close value state message popup when focus is outside the input
+				this.closeValueStateMessage();
+				this._inputCompletedHandler();
+			} else {
+				this._setValue();
+				InputBase.prototype.onfocusout.apply(this, arguments);
 			}
-
-			//close value state message popup when focus is outside the input
-			this.closeValueStateMessage();
-			this._inputCompletedHandler();
 		};
 
 		/**
@@ -132,8 +142,11 @@ sap.ui.define([
 		 */
 		this.oninput = function (oEvent) {
 			InputBase.prototype.oninput.apply(this, arguments);
-			this._applyMask();
-			this._positionCaret(false);
+
+			if (this._isMaskEnabled()) {
+				this._applyMask();
+				this._positionCaret(false);
+			}
 		};
 
 		/**
@@ -141,7 +154,9 @@ sap.ui.define([
 		 * @param {object} oEvent The jQuery event
 		 */
 		this.onkeypress = function (oEvent) {
-			this._keyPressHandler(oEvent);
+			if (this._isMaskEnabled()) {
+				this._keyPressHandler(oEvent);
+			}
 		};
 
 		/**
@@ -149,21 +164,29 @@ sap.ui.define([
 		 * @param {object} oEvent The jQuery event
 		 */
 		this.onkeydown = MaskEnabler.onkeydown = function (oEvent) {
-			var oKey = this._parseKeyBoardEvent(oEvent),
-				mBrowser = Device.browser,
-				bIE9AndBackspaceDeleteScenario;
+			if (this._isMaskEnabled()) {
+				var oKey = this._parseKeyBoardEvent(oEvent),
+					mBrowser = Device.browser,
+					bIE9AndBackspaceDeleteScenario;
 
-			/* When user types character, the flow of triggered events is keydown -> keypress -> input. The MaskInput
-			 handles user input in keydown (for special keys like Delete and Backspace) or in keypress - for any other user
-			 input and suppresses the input events. This is not true for IE9, where the input event is fired, because of
-			 the underlying InputBase takes control and fires it (see {@link sap.m.InputBase#onkeydown})
-			 */
-			bIE9AndBackspaceDeleteScenario = (oKey.bBackspace || oKey.bDelete) && mBrowser.msie && mBrowser.version < 10;
+				/* When user types character, the flow of triggered events is keydown -> keypress -> input. The MaskInput
+				 handles user input in keydown (for special keys like Delete and Backspace) or in keypress - for any other user
+				 input and suppresses the input events. This is not true for IE9, where the input event is fired, because of
+				 the underlying InputBase takes control and fires it (see {@link sap.m.InputBase#onkeydown})
+				 */
+				bIE9AndBackspaceDeleteScenario = (oKey.bBackspace || oKey.bDelete) && mBrowser.msie && mBrowser.version < 10;
 
-			if (!bIE9AndBackspaceDeleteScenario) {
+				if (!bIE9AndBackspaceDeleteScenario) {
+					InputBase.prototype.onkeydown.apply(this, arguments);
+				}
+				this._keyDownHandler(oEvent, oKey);
+			} else {
+				var oKey = this._parseKeyBoardEvent(oEvent);
+				if (oKey.bEnter) {
+					this._setValue();
+				}
 				InputBase.prototype.onkeydown.apply(this, arguments);
 			}
-			this._keyDownHandler(oEvent, oKey);
 		};
 
 		/**
@@ -195,13 +218,16 @@ sap.ui.define([
 			sValue = this.validateProperty('value', sValue);
 			InputBase.prototype.setValue.call(this, sValue);
 			this._sOldInputValue = sValue;
-			// We need this check in case when MaskInput is initialized with specific value
-			if (!this._oTempValue) {
-				this._setupMaskVariables();
-			}
-			// We don't need to validate the initial MaskInput placeholder value because this will break setting it to empty value on focusout
-			if (this._oTempValue._aInitial.join('') !== sValue) {// sValue is never null/undefined here
-				this._applyRules(sValue);
+
+			if (this._isMaskEnabled()) {
+				// We need this check in case when MaskInput is initialized with specific value
+				if (!this._oTempValue) {
+					this._setupMaskVariables();
+				}
+				// We don't need to validate the initial MaskInput placeholder value because this will break setting it to empty value on focusout
+				if (this._oTempValue._aInitial.join('') !== sValue) {// sValue is never null/undefined here
+					this._applyRules(sValue);
+				}
 			}
 
 			return this;
@@ -325,6 +351,23 @@ sap.ui.define([
 		 */
 		this._feedReplaceChar = function (sChar, iPlacePosition, sCurrentInputValue) {
 			return sChar;
+		};
+
+		/**
+		 * This method is used when maskMode is Off. It main purpose is to set the value of the input, call its setValue method
+		 * and fire change event if it is needed. This is not used for MaskMode On because this logic is handled by _inputCompletedHandler
+		 * @private
+		 */
+		this._setValue = function () {
+			var sValue = this._getInputValue();
+
+			if (this._sOldInputValue !== sValue) {
+				InputBase.prototype.setValue.call(this, sValue);
+				this._sOldInputValue = sValue;
+				if (this.onChange && !this.onChange({value: sValue})) {//if the subclass didn't fire the "change" event by itself
+					this.fireChangeEvent(sValue);
+				}
+			}
 		};
 
 		/********************************************************************************************
@@ -811,7 +854,7 @@ sap.ui.define([
 
 			InputBase.prototype.oncut(oEvent);
 
-			if (!oSelection.bHasSelection) {
+			if (!oSelection.bHasSelection || !this._isMaskEnabled()) {
 				return;
 			}
 
