@@ -776,7 +776,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 					var lastInvalidText = "";
 					for (i = 0; i < aSeparatedText.length; i++) {
 						if (aSeparatedText[i]) { // pasting from excel can produce empty strings in the array, we don't have to handle empty strings
-							var oToken = this._convertTextToToken(aSeparatedText[i]);
+							var oToken = this._convertTextToToken(aSeparatedText[i], true);
 							if (oToken) {
 								aValidTokens.push(oToken);
 							} else {
@@ -810,7 +810,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 	};
 
-	MultiInput.prototype._convertTextToToken = function (text) {
+	MultiInput.prototype._convertTextToToken = function (text, bCopiedToken) {
 		var result = null,
 			item = null,
 			token = null,
@@ -825,8 +825,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		if (!text) {
 			return null;
 		}
-
-		if ( this._getIsSuggestionPopupOpen()) { // only take item from suggestion list if popup is open
+		if ( this._getIsSuggestionPopupOpen() || bCopiedToken) {
+			// only take item from suggestion list if popup is open
+			// or token is pasted (otherwise pasting multiple tokens at once does not work)
 			if (this._hasTabularSuggestions()) {
 				//if there is suggestion table, select the correct item, to avoid selecting the wrong item but with same text.
 				item = this._oSuggestionTable._oSelectedItem;

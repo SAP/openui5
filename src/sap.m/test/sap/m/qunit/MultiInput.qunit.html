@@ -1285,6 +1285,35 @@
 		oSpy.restore();
 	});
 
+	QUnit.test("Paste (with suggestions)", function(assert) {
+
+		if (!sap.ui.Device.browser.internet_explorer) {
+			//arrange
+			var sPastedString = "a\nb";
+			this.multiInput1.addSuggestionItem(new sap.ui.core.Item({ text : "a"}));
+			this.multiInput1.addSuggestionItem(new sap.ui.core.Item({ text : "b"}));
+
+			//act
+			sap.ui.test.qunit.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+				originalEvent: {
+					clipboardData: {
+						getData: function () {
+							return sPastedString;
+						}
+					}
+				}
+			});
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(10);
+
+			//assert
+			assert.equal(this.multiInput1.getTokens().length, 2, "2 tokens should be added to MultiInput on paste");
+		} else {
+			assert.expect(0);
+		}
+	});
+
 	QUnit.test("_convertTextToToken", function(assert) {
 		this.multiInput1.addValidator(function(args){
 			return new sap.m.Token({text: args.text});
