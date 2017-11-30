@@ -608,7 +608,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 					(bHasScrollToLoad && this._getHasScrollbars())) {
 					oControl.$("triggerList").css("display", "none");
 					if (document.activeElement === oTrigger.getDomRef()) {
-						oControl.$().focus();
+						oControl.$("after").focus();
 					}
 				} else {
 					if (bLengthFinal) {
