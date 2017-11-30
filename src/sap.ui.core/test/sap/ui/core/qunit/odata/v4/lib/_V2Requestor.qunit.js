@@ -979,6 +979,27 @@ sap.ui.require([
 		v4 : "foo eq bar",
 		v2 : "foo eq bar"
 	}, {
+		v4 : "3.14 eq bar and baz",
+		v2 : "3.14d eq bar and baz"
+	}, {
+		v4 : "foo ne 3.14 or baz",
+		v2 : "foo ne 3.14d or baz"
+	}, {
+		v4 : "foo and 3.14 lt baz",
+		v2 : "foo and 3.14d lt baz"
+	}, {
+		v4 : "foo or baz lt 3.14",
+		v2 : "foo or baz lt 3.14d"
+	}, {
+		v4 : "foo and bar gt 3.14 or baz eq null",
+		v2 : "foo and bar gt 3.14d or baz eq null"
+	}, {
+		v4 : "not foo",
+		v2 : "not foo"
+	}, {
+		v4 : "not (foo gt 3.14)",
+		v2 : "not (foo gt 3.14d)"
+	}, {
 		v4 : "3.14 eq 3.14",
 		error : "Cannot convert filter for V2, saw literals on both sides of 'eq' at 6"
 	}].forEach(function (oFixture) {
