@@ -227,6 +227,14 @@
 			]
 		  },
 		  {
+			"pattern": "versioninfo.html",
+			"name": "versionInfo",
+			"target": [
+				"topicMaster",
+				"versionInfo"
+			]
+		  },
+		  {
 			"pattern": "docs/guide/{id}",
 			"name": "topicIdLegacyRoute"
 		  },
@@ -352,6 +360,12 @@
 				"viewLevel": 2,
 				"viewId": "releaseNotes",
 				"controlAggregation": "detailPages"
+		  },
+		  "versionInfo": {
+			"viewName": "VersionInfo",
+			"viewLevel": 2,
+			"viewId": "versionInfo",
+			"controlAggregation": "detailPages"
 		  }
 		}
 	  }
