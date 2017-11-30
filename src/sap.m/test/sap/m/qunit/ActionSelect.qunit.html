@@ -402,7 +402,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			var sInvisibleText = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[0]).getText();
+			var sInvisibleText = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[1]).getText();
 			assert.strictEqual(sInvisibleText, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"),  "The tutor message is set correctly");
 		});
 
@@ -412,7 +412,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			var sInvisibleText = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[0]);
+			var sInvisibleText = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[1]);
 			assert.strictEqual(sInvisibleText, undefined,  "The tutor message is not added, when there are no buttons");
 
 			this.oActionSelect.close();
@@ -422,7 +422,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			var sInvisibleTextMessage = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[0]).getText();
+			var sInvisibleTextMessage = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[1]).getText();
 			assert.strictEqual(sInvisibleTextMessage, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"),  "The tutor message is set correctly when adding buttons");
 		});
 
