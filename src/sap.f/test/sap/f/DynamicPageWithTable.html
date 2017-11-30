@@ -1824,7 +1824,7 @@
 			sap.m.MessageToast.show("Personalization Dialog");
 		}
 
-		var oSalaryFooter = getLabel("9.470.095 EUR");
+		var oSalaryFooter = oDynamicPageUtil.getLabel("9.470.095 EUR");
 
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData({modelData: aData});
@@ -1955,14 +1955,14 @@
 
 		var aColumns = [
 			new sap.m.Column({
-				header: getLabel("LastName")
+				header: oDynamicPageUtil.getLabel("LastName")
 			}),
 			new sap.m.Column({
-				header: getLabel("FirstName")
+				header: oDynamicPageUtil.getLabel("FirstName")
 			}),
 			new sap.m.Column({
 				hAlign: "Center",
-				header: getLabel("Available")
+				header: oDynamicPageUtil.getLabel("Available")
 			}),
 			new sap.m.Column({
 				header: new sap.m.Link({
@@ -1974,22 +1974,22 @@
 			}),
 			new sap.m.Column({
 				hAlign: "Center",
-				header: getLabel("Image"),
+				header: oDynamicPageUtil.getLabel("Image"),
 				minScreenWidth: "Phone"
 			}),
 			new sap.m.Column({
-				header: getLabel("Raiting"),
+				header: oDynamicPageUtil.getLabel("Raiting"),
 				minScreenWidth: "Tablet",
 				popinDisplay: "WithoutHeader",
 				demandPopin: true
 			}),
 			new sap.m.Column({
-				header: getLabel("Birthday"),
+				header: oDynamicPageUtil.getLabel("Birthday"),
 				minScreenWidth: "800px"
 			}),
 			new sap.m.Column({
 				hAlign: "End",
-				header: getLabel("Salary"),
+				header: oDynamicPageUtil.getLabel("Salary"),
 				footer: oSalaryFooter.clone(),
 				minScreenWidth: "Desktop",
 				popinDisplay: "Inline",
@@ -2099,11 +2099,11 @@
 			press: fnToggleFooter
 		});
 
-		var oTitle = getTitle(oToggleFooterButton);
-		var oHeader = getHeader();
-		var oFooter = getFooter();
+		var oTitle = oDynamicPageUtil.getTitle(oToggleFooterButton);
+		var oHeader = oDynamicPageUtil.getHeader();
+		var oFooter = oDynamicPageUtil.getFooter();
 
-		var oPage = getDynamicPage(true, oTitle, oHeader, oTable, oFooter);
+		var oPage = oDynamicPageUtil.getDynamicPage(true, oTitle, oHeader, oTable, oFooter);
 
 		var oApp = new sap.m.App;
 		oApp.addPage(oPage).placeAt("body");

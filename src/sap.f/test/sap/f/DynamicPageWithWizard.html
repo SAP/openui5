@@ -38,7 +38,7 @@
 						maxContainerCols: 2,
 						editable: true,
 						content: [
-							getLabel("User name", "nameInput"),
+							oDynamicPageUtil.getLabel("User name", "nameInput"),
 							new sap.m.Input("nameInput", {
 								liveChange: function (oEvent) {
 									var val = oEvent.getParameter("value");
@@ -48,15 +48,15 @@
 										oWizard.invalidateStep(oStep1);
 								}
 							}),
-							getLabel("E-mail"),
+							oDynamicPageUtil.getLabel("E-mail"),
 							new sap.m.Input(),
-							getLabel("Male"),
+							oDynamicPageUtil.getLabel("Male"),
 							new sap.m.CheckBox("maleIndicator"),
-							getLabel("Password"),
+							oDynamicPageUtil.getLabel("Password"),
 							new sap.m.Input({
 								type: "Password"
 							}),
-							getLabel("Repeat Password"),
+							oDynamicPageUtil.getLabel("Repeat Password"),
 							new sap.m.Input({
 								type: "Password"
 							})
@@ -84,7 +84,7 @@
 						maxContainerCols: 2,
 						editable: true,
 						content: [
-							getLabel('sap.m.Select'),
+							oDynamicPageUtil.getLabel('sap.m.Select'),
 							new sap.m.Select({
 								name: "select-name0",
 								items: [
@@ -109,13 +109,13 @@
 									})
 								]
 							}),
-							getLabel('sap.m.Link'),
+							oDynamicPageUtil.getLabel('sap.m.Link'),
 							new sap.m.Link({
 								text: 'SAP Germany',
 								href: 'http://www.sap.com',
 								target: '_blank'
 							}),
-							getLabel('sap.m.TextArea'),
+							oDynamicPageUtil.getLabel('sap.m.TextArea'),
 							new sap.m.TextArea({
 								placeholder: "Please add your comment",
 								rows: 6,
@@ -139,11 +139,11 @@
 						maxContainerCols: 2,
 						editable: true,
 						content: [
-							getLabel("CC Number"),
+							oDynamicPageUtil.getLabel("CC Number"),
 							new sap.m.Input(),
-							getLabel("Verification code"),
+							oDynamicPageUtil.getLabel("Verification code"),
 							new sap.m.Input(),
-							getLabel("Lorem ipsum"),
+							oDynamicPageUtil.getLabel("Lorem ipsum"),
 							new sap.m.CheckBox("cBox1", {
 								text: "Ilbris",
 								select: checkStep4
@@ -173,11 +173,11 @@
 				title: "Card contents",
 				icon: "sap-icon://bar-code",
 				content: [
-					getLabel("CC Number"),
+					oDynamicPageUtil.getLabel("CC Number"),
 					new sap.m.Input(),
-					getLabel("Verification code"),
+					oDynamicPageUtil.getLabel("Verification code"),
 					new sap.m.Input(),
-					getLabel("Lorem ipsum"),
+					oDynamicPageUtil.getLabel("Lorem ipsum"),
 					new sap.m.CheckBox({
 						text: "Ilbris"
 					}),
@@ -237,11 +237,11 @@
 			press: fnToggleFooter
 		});
 
-		var oTitle = getTitle(oToggleFooterButton);
-		var oHeader = getHeader();
-		var oFooter = getFooter();
+		var oTitle = oDynamicPageUtil.getTitle(oToggleFooterButton);
+		var oHeader = oDynamicPageUtil.getHeader();
+		var oFooter = oDynamicPageUtil.getFooter();
 
-		var oPage = getDynamicPage(true, oTitle, oHeader, oWizard, oFooter);
+		var oPage = oDynamicPageUtil.getDynamicPage(true, oTitle, oHeader, oWizard, oFooter);
 
 		var oApp = new sap.m.App();
 		oApp.addPage(oPage).placeAt("body");
