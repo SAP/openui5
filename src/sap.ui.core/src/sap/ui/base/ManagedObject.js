@@ -3834,6 +3834,21 @@ sap.ui.define([
 			delete oBindingInfo.modelRefreshHandler;
 		}
 
+		// create object bindings if they don't exist yet
+		for ( sName in this.mObjectBindingInfos ) {
+			oBindingInfo = this.mObjectBindingInfos[sName];
+
+			// if there is a binding and if it became invalid through the current model change, then remove it
+			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
+				removeBinding(oBindingInfo);
+			}
+
+			// if there is no binding and if all required information is available, create a binding object
+			if ( !oBindingInfo.binding && canCreate(oBindingInfo) ) {
+				this._bindObject(oBindingInfo);
+			}
+		}
+
 		// create property and aggregation bindings if they don't exist yet
 		for ( sName in this.mBindingInfos ) {
 
@@ -3858,21 +3873,6 @@ sap.ui.define([
 				}
 			}
 
-		}
-
-		// create object bindings if they don't exist yet
-		for ( sName in this.mObjectBindingInfos ) {
-			oBindingInfo = this.mObjectBindingInfos[sName];
-
-			// if there is a binding and if it became invalid through the current model change, then remove it
-			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
-				removeBinding(oBindingInfo);
-			}
-
-			// if there is no binding and if all required information is available, create a binding object
-			if ( !oBindingInfo.binding && canCreate(oBindingInfo) ) {
-				this._bindObject(oBindingInfo);
-			}
 		}
 
 

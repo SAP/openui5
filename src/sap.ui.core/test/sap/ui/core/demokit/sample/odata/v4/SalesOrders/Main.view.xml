@@ -172,7 +172,7 @@
 			</columns>
 			<ColumnListItem>
 				<Text id="SalesOrders_ID" text="{SalesOrderID}"/>
-				<Text text="{SO_2_BP/CompanyName}"/>
+				<Text binding="{SO_2_BP}" text="{CompanyName}"/>
 				<Text text="{GrossAmount}"/>
 				<Text text="{CurrencyCode}"/>
 				<Input enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
