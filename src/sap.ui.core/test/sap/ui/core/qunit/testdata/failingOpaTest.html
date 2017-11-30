@@ -25,11 +25,12 @@
 					"sap/ui/test/Opa",
 					"sap/ui/test/opaQunit",
 					"sap/ui/test/matchers/PropertyStrictEquals",
+					"sap/ui/test/_timeoutCounter",
 					"sap/ui/qunit/qunit-css",
 					"sap/ui/qunit/qunit-junit",
 					"sap/ui/qunit/qunit-coverage"
 				],
-				function (Opa5, Opa, opaTest, PropertyStrictEquals) {
+				function (Opa5, Opa, opaTest, PropertyStrictEquals, _timeoutCounter) {
 					"use strict";
 
 					QUnit.module("Timeouts");
@@ -198,8 +199,19 @@
 					});
 
 					opaTest("Should enable autoWait when searching for a control", function (oOpa) {
+						var oTimeoutCounterStub;
+
 						Opa5.extendConfig({
 							autoWait: true
+						});
+
+						oOpa.waitFor({
+							success: function () {
+								// prevent timeout detection from interfering (IE11 testrunner)
+								var oIFrameTimeoutWaiter = Opa5.getWindow().sap.ui.test._timeoutCounter;
+								oTimeoutCounterStub = sinon.stub(oIFrameTimeoutWaiter, "hasPendingTimeouts");
+								oTimeoutCounterStub.returns(false);
+							}
 						});
 
 						oOpa.waitFor({
@@ -216,6 +228,9 @@
 							id: "myButton",
 							success: function () {
 								ok(false, "Should not happen");
+							},
+							error: function () {
+								oTimeoutCounterStub.restore();
 							}
 						})
 					});
