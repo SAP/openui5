@@ -79,7 +79,7 @@ sap.ui.define([
 		}
 
 		// set the property in any case but check validity on output
-		this.setProperty("value", sValue, true); // no rerendering
+		this.setProperty("value", sValue);
 		this._bValid = true;
 
 		// convert to date object
