@@ -75,6 +75,15 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 					multiple: true,
 					singularName: "subObj"
 				},
+				destroySingleAggr: {
+					type: "sap.ui.test.TestElement",
+					multiple: false
+				},
+				destroyMultiAggr: {
+					type: "sap.ui.test.TestElement",
+					multiple: true,
+					singularName: "destroyObj"
+				},
 				label : {
 					type : "sap.ui.core.Label",
 					altTypes : ["string"],
@@ -235,6 +244,9 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 			this.obj.setAggregation("singleAggr", new sap.ui.test.TestElement());
 			this.obj.addAggregation("multiAggr", new sap.ui.test.TestElement());
 			this.obj.addAggregation("multiAggr", new sap.ui.test.TestElement());
+			this.obj.setAggregation("destroySingleAggr", new sap.ui.test.TestElement());
+			this.obj.addAggregation("destroyMultiAggr", new sap.ui.test.TestElement());
+			this.obj.addAggregation("destroyMultiAggr", new sap.ui.test.TestElement());
 
 			this.subObj = new sap.ui.test.TestElement();
 			this.template = new sap.ui.test.TestElement({
@@ -778,6 +790,68 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		this.obj.setAggregation("singleAggr", null);
 		this.checkExpected("Single aggregation removed. Observer not alled, because not registered to this aggregation");
 
+		oObserver.disconnect();
+
+	});
+	
+	QUnit.test("ManagedObjectObserver listening to aggregation changes for destroying aggegations", function(assert) {
+
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+			
+			if (oChanges.name == "destroySingleAggr") {
+				var oChild = oChanges.object.mAggregations[oChanges.name];
+				assert.equal(oChild,null,"The child is removed");
+			}
+			
+			if (oChanges.name == "destroyMultiAggr") {
+				var aChildren = oChanges.object.mAggregations[oChanges.name];
+				assert.ok(aChildren,null,"There are still children");
+				assert.equal(aChildren.length,1,"But there is only one");
+			}
+		});
+		oObserver.observe(this.obj, {
+			aggregations: ["destroySingleAggr","destroyMultiAggr"]
+		});
+		
+		assert.ok(true, "Observation of destroying aggegrations started");
+		
+		//setting the same single aggregation again
+		setExpected();
+		this.obj.setAggregation("destroySingleAggr", this.obj.getAggregation("destroySingleAggr"));
+		this.checkExpected("Nothing changed");
+
+		//removing a single aggregation
+		var oChild = this.obj.getAggregation("destroySingleAggr");
+		setExpected({
+			object: this.obj,
+			type:"aggregation",
+			name:"destroySingleAggr",
+			mutation: "remove",
+			child: oChild,
+			children: null
+		});
+
+		oChild.destroy();
+		this.checkExpected("Single aggregation removed. Observer called successfully");
+		
+		setExpected();
+
+		//removing a single aggregation
+		var oChild = this.obj.getAggregation("destroyMultiAggr")[0];
+		setExpected({
+			object: this.obj,
+			type:"aggregation",
+			name:"destroyMultiAggr",
+			mutation: "remove",
+			child: oChild,
+			children: null
+		});
+
+		oChild.destroy();
+		this.checkExpected("Multi aggregation removed. Observer called successfully");
+		
 		oObserver.disconnect();
 
 	});

@@ -1822,6 +1822,7 @@ sap.ui.define([
 			this.iSuppressInvalidate++;
 		}
 
+		this.mAggregations[sAggregationName] = null;
 		if (oOldChild instanceof ManagedObject) { // remove old child
 			oOldChild.setParent(null);
 		} else {
