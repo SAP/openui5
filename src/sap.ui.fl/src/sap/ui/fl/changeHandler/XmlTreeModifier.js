@@ -22,8 +22,13 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 				return this.getProperty(oControl, "visible");
 			},
 
-			setStashed: function (oControl, oPropertyValue) {
-				this.setProperty(oControl, "stashed", oPropertyValue);
+			setStashed: function (oControl, bStashed) {
+				if (!bStashed) {
+					oControl.removeAttribute("stashed");
+				} else {
+					this.setProperty(oControl, "stashed", bStashed);
+				}
+				this.setVisible(oControl, !bStashed);
 			},
 
 			bindProperty: function (oControl, sPropertyName, sBindingPath) {

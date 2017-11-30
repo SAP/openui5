@@ -77,7 +77,7 @@ sap.ui.require([
 
 	QUnit.test('applyChange on a xml tree', function(assert) {
 		assert.ok(this.oChangeHandler.applyChange(this.oChange, this.oXmlObjectPageSection3, {modifier: XmlTreeModifier, view: this.oXmlView}));
-		assert.equal(this.oXmlObjectPageSection3.getAttribute("stashed"), "false", "xml stashed node has the stashed attribute added and set to false");
+		assert.equal(this.oXmlObjectPageSection3.getAttribute("stashed"), null, "xml stashed node doesn't have the stashed attribute");
 		assert.deepEqual(this.oXmlLayout.childNodes[0].childNodes[0], this.oXmlObjectPageSection3, "unstashed ObjectPageSection is at first position");
 	});
 
@@ -91,7 +91,7 @@ sap.ui.require([
 
 	QUnit.test('no move - applyChange on a xml tree', function(assert) {
 		assert.ok(this.oChangeHandler.applyChange(this.oNonMoveChange, this.oXmlObjectPageSection3, {modifier: XmlTreeModifier, view: this.oXmlView}));
-		assert.equal(this.oXmlObjectPageSection3.getAttribute("stashed"), "false", "xml stashed node has the stashed attribute added and set to false");
+		assert.equal(this.oXmlObjectPageSection3.getAttribute("stashed"), null, "xml stashed node doesn't have the stashed attribute");
 		assert.deepEqual(this.oXmlLayout.childNodes[0].childNodes[2], this.oXmlObjectPageSection3, "unstashed ObjectPageSection is still at 3. position");
 	});
 });

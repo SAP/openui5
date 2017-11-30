@@ -48,6 +48,10 @@ sap.ui.define([
 					'</HBox>' +
 					'<Bar tooltip="barTooltip">' + //control without default aggregation, tooltip aggregation filled with altType
 					'</Bar>' +
+					'<VBox id="stashedExperiments">' +
+						'<Label text="visibleLabel" stashed="false"></Label>' +
+						'<Label text="stashedInvisibleLabel" visible="false" stashed="true"></Label>' +
+					'</VBox>' +
 				'</mvc:View>';
 			this.oXmlView = jQuery.sap.parseXML(this.oXmlString, "application/xml").documentElement;
 
@@ -65,6 +69,21 @@ sap.ui.define([
 		assert.equal(oButtonElement.localName, "Button");
 		assert.equal(oButtonElement.namespaceURI, "sap.m");
 		assert.equal(oButtonElement.getAttribute("id"), "testComponent---myView--MyButton");
+	});
+
+	QUnit.test("setStash", function (assert) {
+		var oVBox = this.oXmlView.childNodes[7];
+		XmlTreeModifier.setStashed(oVBox, true);
+		assert.strictEqual(oVBox.getAttribute("stashed"), "true", "stashed attribute can be added");
+
+		var oVisibleLabel = oVBox.childNodes[0];
+		XmlTreeModifier.setStashed(oVisibleLabel, true);
+		assert.strictEqual(oVisibleLabel.getAttribute("stashed"), "true", "stashed attribute can be changed");
+
+		var oStashedInvisibleLabel = oVBox.childNodes[1];
+		XmlTreeModifier.setStashed(oStashedInvisibleLabel, false);
+		assert.strictEqual(oStashedInvisibleLabel.getAttribute("stashed"), null, "stashed=false means not having it in xml as some controls behave differently if visible property is provided");
+		assert.strictEqual(oStashedInvisibleLabel.getAttribute("visible"), null, "Unstash also needs to make the control visible (which is done automatically in with stash API)");
 	});
 
 	QUnit.test(" the createControl is adding missing namespaces ", function (assert) {
