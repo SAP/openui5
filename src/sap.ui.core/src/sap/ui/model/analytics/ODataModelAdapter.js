@@ -15,6 +15,75 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBind
 	function(jQuery, AnalyticalBinding, AnalyticalTreeBindingAdapter, odata4analytics, AnalyticalVersionInfo) {
 	"use strict";
 
+	/*
+	 * Wrapper around {@link sap.ui.model.odata.v4.ODataModel#bindList} to bridge from the old
+	 * V2-like world of {@link sap.chart.Chart} into the new V4 world.
+	 *
+	 * @param {function} fnBindList
+	 *   The original {@link sap.ui.model.odata.v4.ODataModel#bindList}
+	 * @param {string} sPath
+	 *   The binding path in the model; must not end with a slash
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The parent context which is required as base for a relative path
+	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
+	 *   The dynamic sorters to be used initially; supported since 1.39.0
+	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
+	 *   The dynamic application filters to be used initially; supported since 1.39.0
+	 * @param {object} [mParameters]
+	 *   Map of binding parameters
+	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
+	 *   The list binding
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided or an unsupported operation mode is used
+	 *
+	 * @private
+	 */
+	function bindList4(fnBindList, sPath, oContext, vSorters, vFilters, mParameters) {
+		var bInfinitePrefetch,
+			oListBinding,
+			mNewParameters = {};
+
+		/*
+		 * Wrapper around {@link sap.ui.model.odata.v4.ODataListBinding#getContexts} to prefetch
+		 * all data unless told otherwise.
+		 *
+		 * @param {function} fnGetContexts
+		 *   The original {@link sap.ui.model.odata.v4.ODataListBinding#getContexts}
+		 * @param {number} [iStart=0]
+		 *   The index where to start the retrieval of contexts
+		 * @param {number} [iLength]
+		 *   The number of contexts to retrieve beginning from the start index
+		 * @param {number} [iMaximumPrefetchSize=0]
+		 *   The maximum number of contexts to read before and after the given range
+		 * @returns {sap.ui.model.odata.v4.Context[]}
+		 *   The array of already created contexts with the first entry containing the context for
+		 *   <code>iStart</code>
+		 * @throws {Error}
+		 *   If extended change detection is enabled and <code>iMaximumPrefetchSize</code> is set or
+		 *   <code>iStart</code> is not 0
+		 */
+		function getAllContexts(fnGetContexts, iStart, iLength, iMaximumPrefetchSize) {
+			return fnGetContexts(iStart, iLength,
+				iMaximumPrefetchSize === undefined ? Infinity : iMaximumPrefetchSize);
+		}
+
+		if (mParameters && mParameters.analyticalInfo) {
+			bInfinitePrefetch = mParameters.noPaging === true;
+			if (mParameters.provideTotalResultSize !== false) {
+				mNewParameters.$count = true;
+			}
+			mParameters = mNewParameters;
+		}
+
+		oListBinding = fnBindList(sPath, oContext, vSorters, vFilters, mParameters);
+
+		if (bInfinitePrefetch) {
+			oListBinding.getContexts
+				= getAllContexts.bind(oListBinding, oListBinding.getContexts.bind(oListBinding));
+		}
+
+		return oListBinding;
+	}
 
 	/**
 	 * If called on an instance of an (v1/v2) ODataModel it will enrich it with analytics capabilities.
@@ -31,7 +100,13 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBind
 		var iModelVersion = AnalyticalVersionInfo.getVersion(this);
 
 		// ensure only ODataModel are enhanced which have not been enhanced yet
-		if (this.iModelVersion === AnalyticalVersionInfo.NONE || this.getAnalyticalExtensions) {
+		if (iModelVersion === AnalyticalVersionInfo.NONE || this.getAnalyticalExtensions) {
+			return;
+		}
+
+		if (iModelVersion === AnalyticalVersionInfo.V4) {
+			// for V4, override selected methods only
+			this.bindList = bindList4.bind(this, this.bindList.bind(this));
 			return;
 		}
 
