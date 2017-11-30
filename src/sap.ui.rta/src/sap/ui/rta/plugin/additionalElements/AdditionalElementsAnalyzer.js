@@ -92,11 +92,27 @@
 		});
 	}
 
+	function _checkForAbsoluteAggregationBinding(oElement, sAggregationName) {
+		if (!oElement) {
+			return false;
+		}
+		var oBindingInfo = oElement.getBindingInfo(sAggregationName);
+		var sPath = oBindingInfo && oBindingInfo.path;
+		if (!sPath) {
+			return false;
+		}
+		if (sPath.indexOf(">") > -1) {
+			sPath = sPath.split(">").pop();
+		}
+		return sPath.indexOf("/") === 0;
+	}
+
 	var _getBindingContext = function(oElement, bAbsoluteAggregationBinding, sAggregationName) {
 		return bAbsoluteAggregationBinding ? oElement.getBindingInfo(sAggregationName) : oElement.getBindingContext();
 	};
 
-	var _getPath = function(oElement, bAbsoluteAggregationBinding, sAggregationName) {
+	var _getPath = function(oElement, sAggregationName) {
+		var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement, sAggregationName);
 		var oBindingContext = _getBindingContext(oElement, bAbsoluteAggregationBinding, sAggregationName);
 		if (oBindingContext) {
 			return bAbsoluteAggregationBinding ? oBindingContext.path : oBindingContext.getPath();
@@ -106,12 +122,11 @@
 	/**
 	 * Fetching all available properties of the Element's Model
 	 * @param {sap.ui.core.Control} oElement - Control instance
-	 * @param {boolean} bAbsoluteAggregationBinding - true if the Element has an absolute binding
 	 * @param {string} sAggregationName - aggregation name of the action
 	 * @return {Promise} - Returns Promise with results
 	 * @private
 	 */
-	function _getODataPropertiesOfModel(oElement, bAbsoluteAggregationBinding, sAggregationName) {
+	function _getODataPropertiesOfModel(oElement, sAggregationName) {
 		var oModel = oElement.getModel();
 		var mData = {
 			property: [],
@@ -124,14 +139,13 @@
 			if (sModelName === "sap.ui.model.odata.ODataModel" || sModelName === "sap.ui.model.odata.v2.ODataModel") {
 				var oMetaModel = oModel.getMetaModel();
 				return oMetaModel.loaded().then(function(){
-					var sBindingContextPath = _getPath(oElement, bAbsoluteAggregationBinding, sAggregationName);
+					var sBindingContextPath = _getPath(oElement, sAggregationName);
 					if (sBindingContextPath) {
 						var oMetaModelContext = oMetaModel.getMetaContext(sBindingContextPath);
 						var mODataEntity = oMetaModelContext.getObject();
-						var oDefaultAggregation = oElement.getMetadata().getAggregation();
 
-						// with an absolute aggregation binding we already have the entities from the aggregation, so we skip this check
-						if (!bAbsoluteAggregationBinding && oDefaultAggregation) {
+						var oDefaultAggregation = oElement.getMetadata().getAggregation();
+						if (oDefaultAggregation) {
 							var oBinding = oElement.getBindingInfo(oDefaultAggregation.name);
 							var oTemplate = oBinding && oBinding.template;
 
@@ -212,25 +226,24 @@
 	 *
 	 * @param {sap.ui.core.Control} oElement - element for which we're looking for siblings
 	 * @param {sap.ui.core.Control} oRelevantContainer - "parent" container of the oElement
-	 * @param {boolean} bAbsoluteAggregationBinding - true if the Element has an absolute binding
 	 * @param {string} sAggregationName - name of the aggregation of the action
 	 *
 	 * @return {Array.<sap.ui.core.Control>} - returns an array with found siblings elements
 	 *
 	 * @private
 	 */
-	function _getRelevantElements(oElement, oRelevantContainer, bAbsoluteAggregationBinding, sAggregationName) {
+	function _getRelevantElements(oElement, oRelevantContainer, sAggregationName) {
 		if (oRelevantContainer && oRelevantContainer !== oElement) {
 			var sEntityName = RtaUtils.getEntityTypeByPath(
 				oElement.getModel(),
-				_getPath(oElement, bAbsoluteAggregationBinding, sAggregationName)
+				_getPath(oElement, sAggregationName)
 			);
 
 			return ElementUtil
 				.findAllSiblingsInContainer(oElement, oRelevantContainer)
 				// We accept only siblings that are bound on the same model
 				.filter(function (oSiblingElement) {
-					var sPath = _getPath(oSiblingElement, _checkForAbsoluteAggregationBinding(oSiblingElement), sAggregationName);
+					var sPath = _getPath(oSiblingElement, sAggregationName);
 					if (sPath) {
 						return RtaUtils.getEntityTypeByPath(oSiblingElement.getModel(), sPath) === sEntityName;
 					}
@@ -416,21 +429,6 @@
 		);
 	}
 
-	function _checkForAbsoluteAggregationBinding(oElement, sAggregationName) {
-		if (!oElement) {
-			return false;
-		}
-		var oBindingInfo = oElement.getBindingInfo(sAggregationName);
-		var sPath = oBindingInfo && oBindingInfo.path;
-		if (!sPath) {
-			return false;
-		}
-		if (sPath.indexOf(">") > -1) {
-			sPath = sPath.split(">").pop();
-		}
-		return sPath.indexOf("/") === 0;
-	}
-
 	// API: depending on the available actions for the aggregation call one or both of these methods
 	var oAnalyzer = {
 		/**
@@ -442,7 +440,6 @@
 		 * @return {Promise} - returns a Promise which resolves with a list of hidden controls are available to display
 		 */
 		enhanceInvisibleElements : function(oElement, mActions){
-			var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement, mActions.aggregation);
 			var oModel = oElement.getModel();
 			var mRevealData = mActions.reveal;
 			var mAddODataProperty = mActions.addODataProperty;
@@ -450,9 +447,10 @@
 
 			return Promise.resolve()
 				.then(function () {
-					return _getODataPropertiesOfModel(oElement, bAbsoluteAggregationBinding, sAggregationName);
+					return _getODataPropertiesOfModel(oElement, sAggregationName);
 				})
 				.then(function(mData) {
+					var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement,sAggregationName);
 					var aODataProperties = mData.property;
 					var aODataNavigationProperties = mData.navigationProperty.map(function (mNavigation) {
 						return mNavigation.name;
@@ -486,7 +484,7 @@
 							}
 						} else if (
 							oInvisibleElement.getParent()
-							&& _getBindingContext(oInvisibleElement, bAbsoluteAggregationBinding, sAggregationName) === _getBindingContext(oInvisibleElement.getParent(), bAbsoluteAggregationBinding, sAggregationName)
+							&& _getBindingContext(oInvisibleElement, bInvisibleElementAbsoluteBinding, sAggregationName) === _getBindingContext(oInvisibleElement, _checkForAbsoluteAggregationBinding(oInvisibleElement.getParent()), sAggregationName)
 							&& BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0
 						) {
 							bIncludeElement = false;
@@ -516,16 +514,15 @@
 		 */
 		getUnboundODataProperties: function (oElement, mAction) {
 			var sAggregationName = mAction.action.aggregation;
-			var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement, sAggregationName);
 			var oModel = oElement.getModel();
 
 			return Promise.resolve()
 				.then(function () {
-					return _getODataPropertiesOfModel(oElement, bAbsoluteAggregationBinding, sAggregationName);
+					return _getODataPropertiesOfModel(oElement, sAggregationName);
 				})
 				.then(function(mData) {
 					var aODataProperties = mData.property;
-					var aRelevantElements = _getRelevantElements(oElement, mAction.relevantContainer, bAbsoluteAggregationBinding, sAggregationName);
+					var aRelevantElements = _getRelevantElements(oElement, mAction.relevantContainer, sAggregationName);
 					var aBindings = [];
 
 					aRelevantElements.forEach(function(oElement){
