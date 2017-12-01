@@ -316,6 +316,14 @@ sap.ui.define([
 		this._oChangesIconCont = this._lazyLoadInternalAggregation("_changesIconCont", true).attachPress(this._handleChangesPress, this);
 	};
 
+	ObjectPageHeader.getMetadata().forwardAggregation(
+		"breadCrumbsLinks",
+		function() { // TODO: is invalidation needed for non-getters?
+			return this._lazyLoadInternalAggregation("_breadCrumbs");
+		},
+		"links"
+	);
+
 	ObjectPageHeader.prototype._handleOverflowButtonPress = function (oEvent) {
 		this._oOverflowActionSheet.openBy(this._oOverflowButton);
 	};
@@ -439,13 +447,6 @@ sap.ui.define([
 		return this;
 	};
 
-	ObjectPageHeader.prototype._proxyMethodToBreadCrumbControl = function (sFuncName, aArguments) {
-		var oBreadCrumbs = this._lazyLoadInternalAggregation("_breadCrumbs"),
-			vResult = oBreadCrumbs[sFuncName].apply(oBreadCrumbs, aArguments);
-		this.invalidate();
-		return vResult;
-	};
-
 	ObjectPageHeader.prototype.setHeaderDesign = function (sHeaderDesign) {
 		this.setProperty("headerDesign", sHeaderDesign);
 		if (this.getParent()) {
@@ -509,34 +510,6 @@ sap.ui.define([
 
 	aPropertiesToOverride.forEach(fnGenerateSetterForAction);
 	aObjectImageProperties.forEach(fnGenerateSetterForObjectImageProperties);
-
-	ObjectPageHeader.prototype.getBreadCrumbsLinks = function () {
-		return this._lazyLoadInternalAggregation("_breadCrumbs").getLinks();
-	};
-
-	ObjectPageHeader.prototype.addBreadCrumbLink = function () {
-		return this._proxyMethodToBreadCrumbControl("addLink", arguments);
-	};
-
-	ObjectPageHeader.prototype.indexOfBreadCrumbLink = function () {
-		return this._proxyMethodToBreadCrumbControl("indexOfLink", arguments);
-	};
-
-	ObjectPageHeader.prototype.insertBreadCrumbLink = function () {
-		return this._proxyMethodToBreadCrumbControl("insertLink", arguments);
-	};
-
-	ObjectPageHeader.prototype.removeBreadCrumbLink = function () {
-		return this._proxyMethodToBreadCrumbControl("removeLink", arguments);
-	};
-
-	ObjectPageHeader.prototype.removeAllBreadCrumbsLinks = function () {
-		return this._proxyMethodToBreadCrumbControl("removeAllLinks", arguments);
-	};
-
-	ObjectPageHeader.prototype.destroyBreadCrumbsLinks = function () {
-		return this._proxyMethodToBreadCrumbControl("destroyLinks", arguments);
-	};
 
 	ObjectPageHeader.prototype._destroyObjectImage = function () {
 		var sObjectImage = "_objectImage",

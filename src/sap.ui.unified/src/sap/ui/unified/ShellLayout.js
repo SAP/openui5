@@ -58,12 +58,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 			/**
 			 * The content to appear in the main canvas.
 			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", forwarding: {idSuffix: "-container", aggregation: "content"}},
 
 			/**
 			 * The content to appear in the pane area.
 			 */
-			paneContent : {type : "sap.ui.core.Control", multiple : true, singularName : "paneContent"},
+			paneContent : {type : "sap.ui.core.Control", multiple : true, singularName : "paneContent", forwarding: {idSuffix: "-container", aggregation: "secondaryContent"}},
 
 			/**
 			 * The control to appear in the header area.
@@ -290,58 +290,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	/*Not public, deprecated*/
 	ShellLayout.prototype.getShowCurtain = function(){
 		return this._showCurtain;
-	};
-
-
-	ShellLayout.prototype.getContent = function() {
-		return this._cont.getContent();
-	};
-	ShellLayout.prototype.insertContent = function(oContent, iIndex) {
-		this._cont.insertContent(oContent, iIndex);
-		return this;
-	};
-	ShellLayout.prototype.addContent = function(oContent) {
-		this._cont.addContent(oContent);
-		return this;
-	};
-	ShellLayout.prototype.removeContent = function(vIndex) {
-		return this._cont.removeContent(vIndex);
-	};
-	ShellLayout.prototype.removeAllContent = function() {
-		return this._cont.removeAllContent();
-	};
-	ShellLayout.prototype.destroyContent = function() {
-		this._cont.destroyContent();
-		return this;
-	};
-	ShellLayout.prototype.indexOfContent = function(oContent) {
-		return this._cont.indexOfContent(oContent);
-	};
-
-
-	ShellLayout.prototype.getPaneContent = function() {
-		return this._cont.getSecondaryContent();
-	};
-	ShellLayout.prototype.insertPaneContent = function(oContent, iIndex) {
-		this._cont.insertSecondaryContent(oContent, iIndex);
-		return this;
-	};
-	ShellLayout.prototype.addPaneContent = function(oContent) {
-		this._cont.addSecondaryContent(oContent);
-		return this;
-	};
-	ShellLayout.prototype.removePaneContent = function(vIndex) {
-		return this._cont.removeSecondaryContent(vIndex);
-	};
-	ShellLayout.prototype.removeAllPaneContent = function() {
-		return this._cont.removeAllSecondaryContent();
-	};
-	ShellLayout.prototype.destroyPaneContent = function() {
-		this._cont.destroySecondaryContent();
-		return this;
-	};
-	ShellLayout.prototype.indexOfPaneContent = function(oContent) {
-		return this._cont.indexOfSecondaryContent(oContent);
 	};
 
 

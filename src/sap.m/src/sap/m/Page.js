@@ -194,7 +194,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					 * Controls to be added to the right side of the page header. Usually an application would use Button controls and limit the number to one when the application needs to run on smartphones. There is no automatic overflow handling when the space is insufficient.
 					 * When a customHeader is used, this aggregation will be ignored.
 					 */
-					headerContent: {type: "sap.ui.core.Control", multiple: true, singularName: "headerContent"},
+					headerContent: {type: "sap.ui.core.Control", multiple: true, singularName: "headerContent", forwarding: {getterName: "_getInternalHeader", aggregation: "contentRight"}},
 
 					/**
 					 * Accessible landmark settings to be applied on the containers of the <code>sap.m.Page</code> control.
@@ -655,37 +655,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			this.$().toggleClass("sapMPageBusyCoversAll", !bContentOnly);
 			return this;
 		};
-
-		//*** Methods forwarding the "headerContent" pseudo-aggregation calls ***
-
-		Page.prototype.getHeaderContent = function () {
-			return this._getInternalHeader().getContentRight();
-		};
-
-		Page.prototype.indexOfHeaderContent = function (oControl) {
-			return this._getInternalHeader().indexOfContentRight(oControl);
-		};
-
-		Page.prototype.insertHeaderContent = function (oControl, iIndex) {
-			return this._getInternalHeader().insertContentRight(oControl, iIndex);
-		};
-
-		Page.prototype.addHeaderContent = function (oControl) {
-			return this._getInternalHeader().addContentRight(oControl);
-		};
-
-		Page.prototype.removeHeaderContent = function (oControl) {
-			return this._getInternalHeader().removeContentRight(oControl);
-		};
-
-		Page.prototype.removeAllHeaderContent = function () {
-			return this._getInternalHeader().removeAllContentRight();
-		};
-
-		Page.prototype.destroyHeaderContent = function () {
-			return this._getInternalHeader().destroyContentRight();
-		};
-
 
 		Page.prototype.setCustomHeader = function(oHeader) {
 

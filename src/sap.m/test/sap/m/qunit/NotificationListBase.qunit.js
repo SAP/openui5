@@ -384,14 +384,14 @@
 		// arrange
 		var toolbar = this.NotificationListBase.getAggregation('_overflowToolbar');
 		var notificationMethodSpy = sinon.spy(this.NotificationListBase, 'getBinding');
-		var toolbarMethodSpy = sinon.spy(toolbar, 'getBinding');
+		var toolbarMethodSpy = sinon.spy(toolbar, 'getBindingInfo');
 
 		// act
 		this.NotificationListBase.getBinding('buttons');
 
 		// assert
 		assert.strictEqual(notificationMethodSpy.callCount, 1, 'The method getBinding() of the notification should be called.');
-		assert.strictEqual(toolbarMethodSpy.callCount, 1, 'The method getBinding() of the notification toolbar should be called.');
+		assert.strictEqual(toolbarMethodSpy.callCount, 1, 'The method getBindingInfo() of the notification toolbar should be called.');
 	});
 
 	QUnit.test('Check getBindingInfo method', function(assert) {
@@ -406,7 +406,7 @@
 
 		// assert
 		assert.strictEqual(notificationMethodSpy.callCount, 1, 'The method getBindingInfo() of the notification should be called.');
-		assert.strictEqual(toolbarMethodSpy.callCount, 1, 'The method getBindingInfo() of the notification toolbar should be called.');
+		assert.ok(toolbarMethodSpy.callCount > 0, 'The method getBindingInfo() of the notification toolbar should be called.');
 		assert.strictEqual(bidingInfo.template instanceof sap.m.Button, true, 'The template should be correct.');
 		assert.strictEqual(bidingInfo.path, '/buttons', 'The method biding info should be correct.');
 	});
@@ -415,16 +415,16 @@
 		// arrange
 		var toolbar = this.NotificationListBase.getAggregation('_overflowToolbar');
 		var notificationMethodSpy = sinon.spy(this.NotificationListBase, 'getBindingPath');
-		var toolbarMethodSpy = sinon.spy(toolbar, 'getBindingPath');
+		var toolbarMethodSpy = sinon.spy(toolbar, 'getBindingInfo');
 
 		// act
 		this.NotificationListBase.bindAggregation('buttons', { path : '/buttons', template : this.buttonTemplate});
-		var bidingPath = this.NotificationListBase.getBindingPath('buttons');
+		var bindingPath = this.NotificationListBase.getBindingPath('buttons');
 
 		// assert
-		assert.strictEqual(notificationMethodSpy.callCount, 1, 'The method getBindingInfo() of the notification should be called.');
-		assert.strictEqual(toolbarMethodSpy.callCount, 1, 'The method getBindingInfo() of the notification toolbar should be called.');
-		assert.strictEqual(bidingPath, '/buttons', 'The method biding info should be correct.');
+		assert.strictEqual(notificationMethodSpy.callCount, 1, 'The method getBindingPath() of the notification should be called.');
+		assert.ok(toolbarMethodSpy.callCount > 0, 'The method getBindingInfo() of the notification toolbar should be called.');
+		assert.strictEqual(bindingPath, '/buttons', 'The method binding info should be correct.');
 	});
 
 	//================================================================================

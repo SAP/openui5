@@ -225,7 +225,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			 * The suggestionColumns and suggestionRows are for tabular input suggestions. This aggregation allows for binding the table columns; for more details see the aggregation "suggestionRows".
 			 * @since 1.21.1
 			 */
-			suggestionColumns : {type : "sap.m.Column", multiple : true, singularName : "suggestionColumn", bindable : "bindable"},
+			suggestionColumns : {type : "sap.m.Column", multiple : true, singularName : "suggestionColumn", bindable : "bindable", forwarding: {getterName:"_getSuggestionsTable", aggregation: "columns"}},
 
 			/**
 			 * The suggestionColumns and suggestionRows are for tabular input suggestions. This aggregation allows for binding the table cells.
@@ -233,7 +233,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			 * Note: If this aggregation is filled, the aggregation suggestionItems will be ignored.
 			 * @since 1.21.1
 			 */
-			suggestionRows : {type : "sap.m.ColumnListItem", multiple : true, singularName : "suggestionRow", bindable : "bindable"},
+			suggestionRows : {type : "sap.m.ColumnListItem", multiple : true, singularName : "suggestionRow", bindable : "bindable", forwarding: {getterName: "_getSuggestionsTable", aggregation: "items"}},
 
 			/**
 			 * The icon on the right side of the Input
@@ -2064,28 +2064,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			return this;
 		};
 
-		/**
-		 * Forwards aggregations with the name of items or columns to the internal table.
-		 *
-		 * @overwrite
-		 * @name sap.m.Input.bindAggregation
-		 * @method
-		 * @public
-		 * @param {string} sAggregationName the name for the binding
-		 * @param {object} oBindingInfo the configuration parameters for the binding
-		 * @returns {sap.m.Input} this pointer for chaining
-		 */
 		Input.prototype.bindAggregation = function() {
-			var args = Array.prototype.slice.call(arguments);
-
-			if (args[0] === "suggestionRows" || args[0] === "suggestionColumns" || args[0] === "suggestionItems") {
-				createSuggestionPopupContent(this, args[0] === "suggestionRows" || args[0] === "suggestionColumns");
+			if (arguments[0] === "suggestionRows" || arguments[0] === "suggestionColumns" || arguments[0] === "suggestionItems") {
+				createSuggestionPopupContent(this, arguments[0] === "suggestionRows" || arguments[0] === "suggestionColumns");
 				this._bBindingUpdated = true;
 			}
-
-			// propagate the bind aggregation function to list
-			this._callMethodInManagedObject.apply(this, ["bindAggregation"].concat(args));
-			return this;
+			return InputBase.prototype.bindAggregation.apply(this, arguments);
 		};
 
 		/**
@@ -2784,211 +2768,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			}
 			this._iPopupListSelectedIndex = -1;
 		}
-	};
-
-		/* =========================================================== */
-	/*           begin: forward aggregation methods to table       */
-	/* =========================================================== */
-
-	/*
-	 * Forwards a function call to a managed object based on the aggregation name.
-	 * If the name is items, it will be forwarded to the table, otherwise called
-	 * locally
-	 * @name sap.m.Input._callMethodInManagedObject
-	 * @private
-	 * @param {string} sFunctionName the name of the function to be called.
-	 * @param {string} sAggregationName the name of the aggregation asociated.
-	 * @returns {any} the return type of the called function.
-	 */
-	Input.prototype._callMethodInManagedObject = function(sFunctionName, sAggregationName) {
-		var aArgs = Array.prototype.slice.call(arguments),
-			oSuggestionsTable;
-
-		if (sAggregationName === "suggestionColumns") {
-			// apply to the internal table (columns)
-			oSuggestionsTable = this._getSuggestionsTable();
-			return oSuggestionsTable[sFunctionName].apply(oSuggestionsTable, ["columns"].concat(aArgs.slice(2)));
-		} else if (sAggregationName === "suggestionRows") {
-			// apply to the internal table (rows = table items)
-			oSuggestionsTable = this._getSuggestionsTable();
-			return oSuggestionsTable[sFunctionName].apply(oSuggestionsTable, ["items"].concat(aArgs.slice(2)));
-		} else {
-			// apply to this control
-			return Control.prototype[sFunctionName].apply(this, aArgs .slice(1));
-		}
-	};
-
-	/**
-	 * Validates aggregation.
-	 *
-	 * @name sap.m.Input.validateAggregation
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Name of the aggregation to be validated.
-	 * @param {object} oObject Object to be validated.
-	 * @param {boolean} bMultiple Multiple objects to be validated.
-	 * @returns {any} the return type of the called function.
-	 */
-	Input.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
-		return this._callMethodInManagedObject("validateAggregation", sAggregationName, oObject, bMultiple);
-	};
-
-	/**
-	 * Sets aggregation.
-	 *
-	 * @name sap.m.Input.setAggregation
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Aggregation name.
-	 * @param {string} oObject Object that will set the aggregation to.
-	 * @param {string} bSuppressInvalidate Check for suppressing invalidate.
-	 * @returns {sap.m.Input} this Input instance for chaining.
-	 */
-	Input.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-		this._callMethodInManagedObject("setAggregation", sAggregationName,	oObject, bSuppressInvalidate);
-		return this;
-	};
-
-	/**
-	 * Gets aggregation.
-	 *
-	 * @name sap.m.Input.getAggregation
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Aggregation name.
-	 * @param {object} oDefaultForCreation Object that we will get the aggregation from.
-	 * @returns {any} The return type of the called function.
-	 */
-	Input.prototype.getAggregation = function(sAggregationName, oDefaultForCreation) {
-		return this._callMethodInManagedObject("getAggregation", sAggregationName, oDefaultForCreation);
-	};
-
-	/**
-	 * Index of given aggregation.
-	 *
-	 * @name sap.m.Input.indexOfAggregation
-	 * @param {string} sAggregationName Aggregation name.
-	 * @param {object} oObject Object
-	 * @returns {any} The return type of the called function.
-	 */
-	Input.prototype.indexOfAggregation = function(sAggregationName, oObject) {
-		return this._callMethodInManagedObject("indexOfAggregation", sAggregationName, oObject);
-	};
-
-	/**
-	 * Inserts aggregation.
-	 *
-	 * @name sap.m.Input.insertAggregation
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Aggregation name.
-	 * @param {object} oObject Object that will insert aggregation.
-	 * @param {int} iIndex Index of the aggregation.
-	 * @param {boolean} bSuppressInvalidate Suppress invalidate.
-	 * @returns {sap.m.Input} this Input instance for chaining.
-	 */
-	Input.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
-		this._callMethodInManagedObject("insertAggregation", sAggregationName, oObject, iIndex, bSuppressInvalidate);
-		return this;
-	};
-
-	/**
-	 * Adds aggregation.
-	 *
-	 * @name sap.m.Input.addAggregation
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Aggregation name.
-	 * @param {object} oObject Object which will contain the new aggregation.
-	 * @param {boolean} bSuppressInvalidate Suppress invalidate.
-	 * @returns {sap.m.Input} this Input instance for chaining.
-	 */
-	Input.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-		this._callMethodInManagedObject("addAggregation", sAggregationName,oObject, bSuppressInvalidate);
-		return this;
-	};
-
-	/**
-	 * Removes aggregation.
-	 *
-	 * @name sap.m.Input.removeAggregation
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Aggregation name.
-	 * @param {object} oObject Object from which we will remove the aggregation.
-	 * @param {boolean} bSuppressInvalidate Suppress invalidate.
-	 * @returns {any} The return type of the called function.
-	 */
-	Input.prototype.removeAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-		return this._callMethodInManagedObject("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
-	};
-
-	/**
-	 * Removes all aggregations.
-	 *
-	 * @name sap.m.Input.removeAllAggregation
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Aggregation name.
-	 * @param {boolean} bSuppressInvalidate Suppress invalidate.
-	 * @returns {any} The return type of the called function.
-	 */
-	Input.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
-		return this._callMethodInManagedObject("removeAllAggregation", sAggregationName, bSuppressInvalidate);
-	};
-
-	/**
-	 * Destroys aggregation.
-	 *
-	 * @name sap.m.Input.destroyAggregation
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Aggregation name.
-	 * @param {boolean} bSuppressInvalidate Suppress invalidate.
-	 * @returns {sap.m.Input} this Input instance for chaining.
-	 */
-	Input.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
-		this._callMethodInManagedObject("destroyAggregation", sAggregationName, bSuppressInvalidate);
-		return this;
-	};
-
-	/**
-	 * Gets binding.
-	 *
-	 * @name sap.m.Input.getBinding
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Aggregation name.
-	 * @returns {any} The binding.
-	 */
-	Input.prototype.getBinding = function(sAggregationName) {
-		return this._callMethodInManagedObject("getBinding", sAggregationName);
-	};
-
-	/**
-	 * Gets binding information.
-	 *
-	 * @name sap.m.Input.getBindingInfo
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Aggregation name.
-	 * @returns {any} The binding information.
-	 */
-	Input.prototype.getBindingInfo = function(sAggregationName) {
-		return this._callMethodInManagedObject("getBindingInfo", sAggregationName);
-	};
-
-	/**
-	 * Gets binding path.
-	 *
-	 * @name sap.m.Input.getBindingPath
-	 * @public
-	 * @method
-	 * @param {string} sAggregationName Aggregation name.
-	 * @returns {any} Binding path.
-	 */
-	Input.prototype.getBindingPath = function(sAggregationName) {
-		return this._callMethodInManagedObject("getBindingPath", sAggregationName);
 	};
 
 	/**

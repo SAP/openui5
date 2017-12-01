@@ -125,7 +125,7 @@ sap.ui.define(['./Button', './Dialog', './List', './SearchField', './library', '
 			/**
 			 * The items of the list shown in the search dialog. It is recommended to use a StandardListItem for the dialog but other combinations are also possible.
 			 */
-			items : {type : "sap.m.ListItemBase", multiple : true, singularName : "item"},
+			items : {type : "sap.m.ListItemBase", multiple : true, singularName : "item", forwarding: {idSuffix: "-list", aggregation: "items", forwardBinding: true}},
 
 			/**
 			 * The internal dialog that will be shown when method open is called
@@ -684,99 +684,6 @@ sap.ui.define(['./Button', './Dialog', './List', './SearchField', './library', '
 		this._updateSelectionIndicator();
 
 		return this;
-	};
-
-	/**
-	 * Forwards a function call to a managed object based on the aggregation name.
-	 * If the name is items, it will be forwarded to the list, otherwise called locally
-	 * @private
-	 * @param {string} sFunctionName The name of the function to be called
-	 * @param {string} sAggregationName The name of the aggregation asociated
-	 * @returns {any} The return type of the called function
-	 */
-	SelectDialog.prototype._callMethodInManagedObject = function (sFunctionName, sAggregationName) {
-		var aArgs = Array.prototype.slice.call(arguments);
-
-		if (sAggregationName === "items") {
-			// apply to the internal list
-			return this._oList[sFunctionName].apply(this._oList, aArgs.slice(1));
-		} else {
-			// apply to this control
-			return ManagedObject.prototype[sFunctionName].apply(this, aArgs.slice(1));
-		}
-	};
-
-	/**
-	 * Forwards aggregations with the name of items to the internal list.
-	 * @override
-	 * @protected
-	 * @param {string} sAggregationName The name for the binding
-	 * @param {object} oBindingInfo The configuration parameters for the binding
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
-	 */
-	SelectDialog.prototype.bindAggregation = function () {
-		var args = Array.prototype.slice.call(arguments);
-
-		// propagate the bind aggregation function to list
-		this._callMethodInManagedObject.apply(this, ["bindAggregation"].concat(args));
-		return this;
-	};
-
-	SelectDialog.prototype.validateAggregation = function (sAggregationName, oObject, bMultiple) {
-		return this._callMethodInManagedObject("validateAggregation", sAggregationName, oObject, bMultiple);
-	};
-
-	SelectDialog.prototype.setAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		this._callMethodInManagedObject("setAggregation", sAggregationName, oObject, bSuppressInvalidate);
-		return this;
-	};
-
-	SelectDialog.prototype.getAggregation = function (sAggregationName, oDefaultForCreation) {
-		return this._callMethodInManagedObject("getAggregation", sAggregationName, oDefaultForCreation);
-	};
-
-	SelectDialog.prototype.indexOfAggregation = function (sAggregationName, oObject) {
-		return this._callMethodInManagedObject("indexOfAggregation", sAggregationName, oObject);
-	};
-
-	SelectDialog.prototype.insertAggregation = function (sAggregationName, oObject, iIndex, bSuppressInvalidate) {
-		this._callMethodInManagedObject("insertAggregation", sAggregationName, oObject, iIndex, bSuppressInvalidate);
-		return this;
-	};
-
-	SelectDialog.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		this._callMethodInManagedObject("addAggregation", sAggregationName, oObject, bSuppressInvalidate);
-		return this;
-	};
-
-	SelectDialog.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		return this._callMethodInManagedObject("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
-	};
-
-	SelectDialog.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
-		return this._callMethodInManagedObject("removeAllAggregation", sAggregationName, bSuppressInvalidate);
-	};
-
-	SelectDialog.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
-		this._callMethodInManagedObject("destroyAggregation", sAggregationName, bSuppressInvalidate);
-		return this;
-	};
-
-	SelectDialog.prototype.getBinding = function (sAggregationName) {
-		return this._callMethodInManagedObject("getBinding", sAggregationName);
-	};
-
-
-	SelectDialog.prototype.getBindingInfo = function (sAggregationName) {
-		return this._callMethodInManagedObject("getBindingInfo", sAggregationName);
-	};
-
-	SelectDialog.prototype.getBindingPath = function (sAggregationName) {
-		return this._callMethodInManagedObject("getBindingPath", sAggregationName);
-	};
-
-	SelectDialog.prototype.getBindingContext = function (sModelName) {
-		return this._oList && this._oList.getBindingContext(sModelName);
 	};
 
 	/**

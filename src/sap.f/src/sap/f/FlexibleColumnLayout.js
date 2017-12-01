@@ -112,21 +112,21 @@ sap.ui.define([
 				 * These should be any control with page semantics.
 				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 				 */
-				beginColumnPages: {type: "sap.ui.core.Control", multiple: true},
+				beginColumnPages: {type: "sap.ui.core.Control", multiple: true, forwarding: {getterName: "_getBeginColumn", aggregation: "pages"}},
 				/**
 				 * The content entities between which the <code>FlexibleColumnLayout</code> navigates in the <code>Mid</code> column.
 				 *
 				 * These should be any control with page semantics.
 				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 				 */
-				midColumnPages: {type: "sap.ui.core.Control", multiple: true},
+				midColumnPages: {type: "sap.ui.core.Control", multiple: true, forwarding: {getterName: "_getMidColumn", aggregation: "pages"}},
 				/**
 				 * The content entities between which the <code>FlexibleColumnLayout</code> navigates in the <code>End</code> column.
 				 *
 				 * These should be any control with page semantics.
 				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 				 */
-				endColumnPages: {type: "sap.ui.core.Control", multiple: true},
+				endColumnPages: {type: "sap.ui.core.Control", multiple: true, forwarding: {getterName: "_getEndColumn", aggregation: "pages"}},
 
 				_beginColumnNav: {type : "sap.m.NavContainer", multiple : false, visibility : "hidden"},
 				_midColumnNav: {type : "sap.m.NavContainer", multiple : false, visibility : "hidden"},
@@ -1099,80 +1099,6 @@ sap.ui.define([
 		});
 	};
 
-	// Begin column proxies
-
-	FlexibleColumnLayout.prototype.getBeginColumnPages = function () {
-		return this._getBeginColumn().getPages();
-	};
-
-	FlexibleColumnLayout.prototype.addBeginColumnPage = function (oPage) {
-		this._getBeginColumn().addPage(oPage);
-		return this;
-	};
-
-	FlexibleColumnLayout.prototype.insertBeginColumnPage = function (oPage, iIndex) {
-		this._getBeginColumn().insertPage(oPage, iIndex);
-		return this;
-	};
-
-	FlexibleColumnLayout.prototype.removeBeginColumnPage = function(oPage) {
-		this._getBeginColumn().removePage(oPage);
-		return this;
-	};
-
-	FlexibleColumnLayout.prototype.removeAllBeginColumnPages = function() {
-		return this._getBeginColumn().removeAllPages();
-	};
-
-	// Mid column proxies
-
-	FlexibleColumnLayout.prototype.getMidColumnPages = function () {
-		return this._getMidColumn().getPages();
-	};
-
-	FlexibleColumnLayout.prototype.addMidColumnPage = function (oPage) {
-		this._getMidColumn().addPage(oPage);
-		return this;
-	};
-
-	FlexibleColumnLayout.prototype.insertMidColumnPage = function (oPage, iIndex) {
-		this._getMidColumn().insertPage(oPage, iIndex);
-		return this;
-	};
-
-	FlexibleColumnLayout.prototype.removeMidColumnPage = function(oPage) {
-		this._getMidColumn().removePage(oPage);
-		return this;
-	};
-
-	FlexibleColumnLayout.prototype.removeAllMidColumnPages = function() {
-		return this._getMidColumn().removeAllPages();
-	};
-
-	// End column proxies
-
-	FlexibleColumnLayout.prototype.getEndColumnPages = function () {
-		return this._getEndColumn().getPages();
-	};
-
-	FlexibleColumnLayout.prototype.addEndColumnPage = function (oPage) {
-		this._getEndColumn().addPage(oPage);
-		return this;
-	};
-
-	FlexibleColumnLayout.prototype.insertEndColumnPage = function (oPage, iIndex) {
-		this._getEndColumn().insertPage(oPage, iIndex);
-		return this;
-	};
-
-	FlexibleColumnLayout.prototype.removeEndColumnPage = function(oPage) {
-		this._getEndColumn().removePage(oPage);
-		return this;
-	};
-
-	FlexibleColumnLayout.prototype.removeAllEndColumnPages = function() {
-		return this._getEndColumn().removeAllPages();
-	};
 
 	// Association proxies
 

@@ -242,7 +242,7 @@ sap.ui.define([
 				 * Specifies the info toolbar for filtering information. Sorting information will not displayed.
 				 * @since 1.44.0
 				 */
-				infoToolbar: {type: "sap.m.Toolbar", multiple: false},
+				infoToolbar: {type: "sap.m.Toolbar", multiple: false, forwarding: {idSuffix: "-list", aggregation: "infoToolbar"}},
 
 				/**
 				 * Internal aggregation to hold the list in controls tree.
@@ -742,10 +742,6 @@ sap.ui.define([
 		return this._oHeaderToolbar;
 	};
 
-	UploadCollection.prototype.getInfoToolbar = function() {
-		return this._oList.getAggregation("infoToolbar");
-	};
-
 	UploadCollection.prototype.getNoDataText = function() {
 		var sNoDataText = this.getProperty("noDataText");
 		sNoDataText = sNoDataText || this._oRb.getText("UPLOADCOLLECTION_NO_DATA_TEXT");
@@ -756,12 +752,6 @@ sap.ui.define([
 		var sNoDataDescription = this.getProperty("noDataDescription");
 		sNoDataDescription = sNoDataDescription || this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
 		return sNoDataDescription;
-	};
-
-	UploadCollection.prototype.setInfoToolbar = function(infoToolbar) {
-		if (this.getInfoToolbar() !== infoToolbar) {
-			this._oList.setAggregation("infoToolbar", infoToolbar, false);
-		}
 	};
 
 	UploadCollection.prototype.setUploadButtonInvisible = function(uploadButtonInvisible) {
