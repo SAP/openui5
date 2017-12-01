@@ -183,6 +183,22 @@ sap.ui.define([
 		return oLREPConnector.send(sRoute, sMethod, mMap);
 	};
 
+	DescriptorVariant.prototype.getId = function() {
+		return this._id;
+	};
+
+	DescriptorVariant.prototype.getReference = function() {
+		return this._reference;
+	};
+
+	DescriptorVariant.prototype.getNamespace = function() {
+		return this._getMap().namespace;
+	};
+
+	DescriptorVariant.prototype.getSettings = function() {
+		return this._oSettings;
+	};
+
 	/**
 	 * Returns a copy of the JSON object of the descriptor variant
 	 *

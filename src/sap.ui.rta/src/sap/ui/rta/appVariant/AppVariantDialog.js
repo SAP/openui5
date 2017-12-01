@@ -39,6 +39,7 @@ function(
 		oDataSet  = new sap.m.GenericTile("tile", {
 			header: "{/title}",
 			subheader: "{/subtitle}",
+			ariaLabel: oResources.getText("APP_VARIANT_TILE_ARIA_LABEL"),
 			tileContent: [
 				new sap.m.TileContent({
 					content: [
@@ -111,11 +112,6 @@ function(
 				icon: sap.ui.core.IconPool.getIconInfo(sName).uri,
 				name : sName.toLowerCase()
 			});
-		});
-
-		aIcons.unshift({
-			icon: "",
-			name: ""
 		});
 
 		oSelectDialogModel.setProperty("/icons", aIcons);
@@ -256,10 +252,10 @@ function(
 			this.setContentHeight("250px");
 
 			oCustomTileModel = new sap.ui.model.json.JSONModel({
-				title: "",
-				subtitle: "",
-				icon: "",
-				iconname: ""
+				title: null,
+				subtitle: null,
+				icon: " ", // icon is a blank string because otherwise it would read undefined in ariaLabel
+				iconname: null
 			});
 
 			oSelectDialogModel = new sap.ui.model.json.JSONModel({
@@ -283,11 +279,11 @@ function(
 			document.getElementById('tile').style.float = "left";
 		},
 		_onCreate: function() {
-			var sTitle = oTitleInput.getValue();
-			var sSubTitle = oSubTitleInput.getValue();
-			var sDescription = oDescriptionText.getValue();
+			var sTitle = oTitleInput.getValue() || " ";
+			var sSubTitle = oSubTitleInput.getValue() || " ";
+			var sDescription = oDescriptionText.getValue() || " ";
 
-			var sIconValue = oIconInput.getValue() ? sap.ui.core.IconPool.getIconInfo(oIconInput.getValue()).uri : "";
+			var sIconValue = oIconInput.getValue() ? sap.ui.core.IconPool.getIconInfo(oIconInput.getValue()).uri : " ";
 
 			this.fireCreate({
 				title: sTitle,

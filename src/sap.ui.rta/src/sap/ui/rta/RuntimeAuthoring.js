@@ -557,7 +557,7 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
 		return FlexSettings.getInstance().then(function(oSettings) {
 			return RtaAppVariantFeature.isPlatFormEnabled(this.getLayer(), this._oRootControl).then(function(bIsAppVariantSupported) {
-				return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), bIsAppVariantSupported];
+				return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
 			});
 		}.bind(this))
 		.catch(function(oError) {

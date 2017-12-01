@@ -4,15 +4,24 @@
 sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantDialog",
 	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/m/MessageToast",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/m/MessageBox",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/rta/appVariant/S4HanaCloudBackend",
-	"sap/ui/core/BusyIndicator",
-	"sap/ui/rta/Utils"
-], function(AppVariantDialog, AppVariantUtils, MessageToast, FlexControllerFactory, MessageBox, RtaAppVariantFeature, TransportSelection, S4HanaCloudBackend, BusyIndicator, RtaUtils) {
+	"sap/ui/rta/Utils",
+	"sap/ui/core/BusyIndicator"
+], function(
+	AppVariantDialog,
+	AppVariantUtils,
+	FlexControllerFactory,
+	MessageBox,
+	RtaAppVariantFeature,
+	TransportSelection,
+	S4HanaCloudBackend,
+	RtaUtils,
+	BusyIndicator
+) {
 	"use strict";
 
 	var AppVariantManager = function() {};
@@ -44,10 +53,12 @@ sap.ui.define([
 		};
 	};
 
-	AppVariantManager.prototype.createDescriptor = function(oAppVariantData) {
+
+	AppVariantManager.prototype.createAllInlineChanges = function(oAppVariantData) {
 		var sAppVariantId, aBackendOperations = [], oPropertyChange;
 
 		sAppVariantId = AppVariantUtils.getId(oAppVariantData.idRunningApp);
+
 		var oAppVariantDescriptor = {
 			id: sAppVariantId,
 			reference: oAppVariantData.idRunningApp
@@ -57,28 +68,20 @@ sap.ui.define([
 		aBackendOperations.push(AppVariantUtils.createDescriptorVariant(oAppVariantDescriptor));
 
 		// create a inline change using a change type 'appdescr_app_setTitle'
-		if (oAppVariantData.title) {
-			oPropertyChange = AppVariantUtils.getInlinePropertyChange("title", oAppVariantData.title);
-			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "title"));
-		}
+		oPropertyChange = AppVariantUtils.getInlinePropertyChange("title", oAppVariantData.title);
+		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "title"));
 
 		// create a inline change using a change type 'appdescr_app_setSubTitle'
-		if (oAppVariantData.subTitle) {
-			oPropertyChange = AppVariantUtils.getInlinePropertyChange("subtitle", oAppVariantData.subTitle);
-			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "subTitle"));
-		}
+		oPropertyChange = AppVariantUtils.getInlinePropertyChange("subtitle", oAppVariantData.subTitle);
+		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "subtitle"));
 
 		// create a inline change using a change type 'create_app_setDescription'
-		if (oAppVariantData.description) {
-			oPropertyChange = AppVariantUtils.getInlinePropertyChange("description", oAppVariantData.description);
-			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "description"));
-		}
+		oPropertyChange = AppVariantUtils.getInlinePropertyChange("description", oAppVariantData.description);
+		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "description"));
 
 		// create a inline change using a change type 'appdescr_ui_setIcon'
-		if (oAppVariantData.icon) {
-			oPropertyChange = AppVariantUtils.getInlineChangeInputIcon(oAppVariantData.icon);
-			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "icon"));
-		}
+		oPropertyChange = AppVariantUtils.getInlineChangeInputIcon(oAppVariantData.icon);
+		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "icon"));
 
 		/*********************************************************************************************************************************************
 		***********************************************************Inbounds handling******************************************************************
@@ -87,56 +90,34 @@ sap.ui.define([
 		var sCurrentRunningInboundId = oInboundInfo.currentRunningInbound;
 		var bAddNewInboundRequired = oInboundInfo.addNewInboundRequired;
 
+		// If there is no inbound, create a new inbound
 		if (sCurrentRunningInboundId === "customer.savedAsAppVariant" && bAddNewInboundRequired) {
 			oPropertyChange = AppVariantUtils.getInlineChangeCreateInbound(sCurrentRunningInboundId);
+			// create a inline change using a change type 'appdescr_app_addNewInbound'
 			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "createInbound"));
 		}
 
+		// create a inline change using a change type 'appdescr_app_changeInbound'
 		oPropertyChange = AppVariantUtils.getInlineChangeForInboundPropertySaveAs(sCurrentRunningInboundId);
 		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inbound"));
 
+		// create a inline change using a change type 'appdescr_app_removeAllInboundsExceptOne'
 		oPropertyChange = AppVariantUtils.getInlineChangeRemoveInbounds(sCurrentRunningInboundId);
 		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "removeInbound"));
 
-		if (oAppVariantData.title) {
-			oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "title", oAppVariantData.title);
-			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundTitle"));
-		}
+		// create a inline change using a change type 'appdescr_app_changeInbound'
+		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "title", oAppVariantData.title);
+		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundTitle"));
 
-		if (oAppVariantData.subTitle) {
-			oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "subTitle", oAppVariantData.subTitle);
-			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundSubtitle"));
-		}
+		// create a inline change using a change type 'appdescr_app_changeInbound'
+		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "subTitle", oAppVariantData.subTitle);
+		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundSubtitle"));
 
-		if (oAppVariantData.icon) {
-			oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "icon", oAppVariantData.icon);
-			aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundIcon"));
-		}
+		// create a inline change using a change type 'appdescr_app_changeInbound'
+		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, sAppVariantId, "icon", oAppVariantData.icon);
+		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "inboundIcon"));
 
-		var fnOpenTransportDialog = function(oTransportInput) {
-			var oTransportSelection = new TransportSelection();
-			return oTransportSelection.openTransportSelection(oTransportInput, this, RtaUtils.getRtaStyleClassName());
-		};
-
-		return Promise.all(aBackendOperations).then(function(aResponses){
-			oAppVariantDescriptor = aResponses.shift();
-			aBackendOperations = [];
-
-			aResponses.forEach(function(oInlineChange) {
-				aBackendOperations.push(oAppVariantDescriptor.addDescriptorInlineChange(oInlineChange));
-			});
-
-			return Promise.all(aBackendOperations);
-		}).then(function() {
-			var sNamespace = oAppVariantDescriptor._getMap().namespace;
-			var oTransportInput = AppVariantUtils.getTransportInput("",sNamespace, "manifest", "appdescr_variant");
-			return fnOpenTransportDialog.call(this, oTransportInput);
-		}.bind(this)).then(function(oTransportInfo) {
-			return this._onTransportInDialogSelected(oAppVariantDescriptor, oTransportInfo);
-		}.bind(this))["catch"](function(oError) {
-			var oErrorInfo = this._buildErrorMessageText("MSG_CREATE_DESCRIPTOR_FAILED", oAppVariantDescriptor._id, oError);
-			return this._showErrorMessage(oErrorInfo);
-		}.bind(this));
+		return aBackendOperations;
 	};
 
 	AppVariantManager.prototype._onTransportInDialogSelected = function(oAppVariantDescriptor, oTransportInfo){
@@ -163,8 +144,39 @@ sap.ui.define([
 		return Promise.resolve(false);
 	};
 
-	AppVariantManager.prototype.processSaveAsDialog = function(oDescriptor) {
-		return new Promise(function(resolve, reject) {
+	AppVariantManager.prototype.createDescriptor = function(oAppVariantData) {
+		var aInlineChanges = this.createAllInlineChanges(oAppVariantData);
+
+		var fnOpenTransportDialog = function(oTransportInput) {
+			var oTransportSelection = new TransportSelection();
+			return oTransportSelection.openTransportSelection(oTransportInput, this, RtaUtils.getRtaStyleClassName());
+		};
+
+		var oAppVariantDescriptor;
+		return Promise.all(aInlineChanges).then(function(aResponses){
+			oAppVariantDescriptor = aResponses.shift();
+			aInlineChanges = [];
+
+			aResponses.forEach(function(oInlineChange) {
+				aInlineChanges.push(oAppVariantDescriptor.addDescriptorInlineChange(oInlineChange));
+			});
+
+			return Promise.all(aInlineChanges);
+		}).then(function() {
+			var sNamespace = oAppVariantDescriptor.getNamespace();
+			var oTransportInput = AppVariantUtils.getTransportInput("",sNamespace, "manifest", "appdescr_variant");
+			return fnOpenTransportDialog.call(this, oTransportInput);
+		}.bind(this)).then(function(oTransportInfo) {
+			return this._onTransportInDialogSelected(oAppVariantDescriptor, oTransportInfo);
+		}.bind(this))["catch"](function(oError) {
+			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_CREATE_DESCRIPTOR_FAILED", oError, oAppVariantDescriptor.getId());
+			BusyIndicator.hide();
+			return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+		});
+	};
+
+	AppVariantManager.prototype.processSaveAsDialog = function(oDescriptor, oRootControlRunningApp, bSaveAsTriggeredFromRtaToolbar) {
+		return new Promise(function(resolve) {
 			var fnCreate = function(oResult) {
 				var mParameters = oResult.getParameters();
 				var oAppVariantData = this._prepareAppVariantData(oDescriptor, mParameters);
@@ -172,85 +184,22 @@ sap.ui.define([
 				resolve(oAppVariantData);
 			}.bind(this);
 
-			var fnCancel = function(oResult) {
-				reject(oResult);
+			var fnCancel = function() {
+				if (!bSaveAsTriggeredFromRtaToolbar) {
+					return RtaAppVariantFeature.onGetOverview(oRootControlRunningApp);
+				}
 			};
 			//open app variant creation dialog
 			return this._openDialog(fnCreate, fnCancel);
 		}.bind(this));
 	};
 
-	AppVariantManager.prototype._showErrorMessage = function(oErrorInfo, sAppVariantId) {
-		var oTextResources = AppVariantUtils.getTextResources();
-		var sTitle = oTextResources.getText("HEADER_SAVE_APP_VARIANT_FAILED");
-
-		BusyIndicator.hide();
-
-		var sCopyIdButtonText;
-		var sCloseButtonText = oTextResources.getText("SAVE_APP_VARIANT_CLOSE_TEXT");
-
-		var aActions = [];
-
-		if (oErrorInfo.copyId) {
-			sCopyIdButtonText = oTextResources.getText("SAVE_APP_VARIANT_COPY_ID_TEXT");
-			aActions.push(sCopyIdButtonText);
-		}
-
-		aActions.push(sCloseButtonText);
-
-		return new Promise(function(resolve, reject) {
-			var fnCallback = function (sAction) {
-				if (sAction === sCloseButtonText) {
-					reject();
-				} else if (sAction === sCopyIdButtonText) {
-					AppVariantUtils.copyId(sAppVariantId);
-					reject();
-				}
-			};
-
-			MessageBox.error(oErrorInfo.text, {
-				icon: MessageBox.Icon.ERROR,
-				title: sTitle,
-				onClose: fnCallback,
-				actions: aActions,
-				styleClass: RtaUtils.getRtaStyleClassName()
-			});
-		});
-	};
-
-	AppVariantManager.prototype._buildErrorMessageText = function(sMessageKey, sAppVariantId, oError, bCopyId) {
-		var oTextResources = AppVariantUtils.getTextResources();
-
-		var sErrorMessage = "";
-		if (oError.messages && oError.messages.length) {
-			if (oError.messages.length > 1) {
-				oError.messages.forEach(function(oError) {
-					sErrorMessage += oError.text + "\n";
-				});
-			} else {
-				sErrorMessage += oError.messages[0].text;
-			}
-		} else if (oError.iamAppId) {
-			//TODO: Need to remove this check later (20.10.2017)
-			sErrorMessage += "IAM App Id: " + oError.iamAppId;
-		} else {
-			sErrorMessage += oError.stack || oError.message || oError.status || oError;
-		}
-
-		var sMessage = oTextResources.getText(sMessageKey) + "\n\n" +
-						oTextResources.getText("MSG_APP_VARIANT_ID", sAppVariantId) + "\n" +
-						oTextResources.getText("MSG_TECHNICAL_ERROR", sErrorMessage);
-		return {
-			text: sMessage,
-			copyId: bCopyId
-		};
-	};
-
 	AppVariantManager.prototype.saveAppVariantToLREP = function(oAppVariantDescriptor) {
 		return oAppVariantDescriptor.submit()["catch"](function(oError) {
-			var oErrorInfo = this._buildErrorMessageText("MSG_SAVE_APP_VARIANT_FAILED", oAppVariantDescriptor._id, oError);
-			return this._showErrorMessage(oErrorInfo);
-		}.bind(this));
+			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_SAVE_APP_VARIANT_FAILED", oError, oAppVariantDescriptor.getId());
+			BusyIndicator.hide();
+			return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+		});
 	};
 
 	// Unsaved changes get copied to app variant
@@ -262,20 +211,22 @@ sap.ui.define([
 	AppVariantManager.prototype.copyUnsavedChangesToLREP = function(sAppVariantId, oRootControlRunningApp, bCopyUnsavedChanges) {
 		if (bCopyUnsavedChanges) {
 			return this._copyDirtyChangesToAppVariant(sAppVariantId, oRootControlRunningApp)["catch"](function(oError) {
-				var oErrorInfo = this._buildErrorMessageText("MSG_COPY_UNSAVED_CHANGES_FAILED", sAppVariantId, oError);
-				return this._showErrorMessage(oErrorInfo);
-			}.bind(this));
+				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_COPY_UNSAVED_CHANGES_FAILED", oError, sAppVariantId);
+				BusyIndicator.hide();
+				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+			});
 		} else {
 			return Promise.resolve(true);
 		}
 	};
 
 	AppVariantManager.prototype.triggerCatalogAssignment = function(oAppVariantDescriptor) {
-		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor._oSettings)) {
-			return AppVariantUtils.triggerCatalogAssignment(oAppVariantDescriptor._id, oAppVariantDescriptor._reference)["catch"](function(oError) {
-				var oErrorInfo = this._buildErrorMessageText("MSG_CATALOG_ASSIGNMENT_FAILED", oAppVariantDescriptor._id, oError);
-				return this._showErrorMessage(oErrorInfo);
-			}.bind(this));
+		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
+			return AppVariantUtils.triggerCatalogAssignment(oAppVariantDescriptor.getId(), oAppVariantDescriptor.getReference())["catch"](function(oError) {
+				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_CATALOG_ASSIGNMENT_FAILED", oError, oAppVariantDescriptor.getId());
+				BusyIndicator.hide();
+				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+			});
 		} else {
 			return Promise.resolve(true);
 		}
@@ -285,9 +236,8 @@ sap.ui.define([
 		var oS4HanaCloudBackend = new S4HanaCloudBackend();
 
 		return oS4HanaCloudBackend.notifyFlpCustomizingIsReady(sIamId, function(sId) {
-			var oTextResources = AppVariantUtils.getTextResources();
-			var sMessage = oTextResources.getText("MSG_SAVE_APP_VARIANT_NEW_TILE_AVAILABLE");
-			var sTitle = oTextResources.getText("SAVE_APP_VARIANT_NEW_TILE_AVAILABLE_TITLE");
+			var sMessage = AppVariantUtils.getText("MSG_SAVE_APP_VARIANT_NEW_TILE_AVAILABLE");
+			var sTitle = AppVariantUtils.getText("SAVE_APP_VARIANT_NEW_TILE_AVAILABLE_TITLE");
 
 			return new Promise(function(resolve) {
 				MessageBox.show(sMessage, {
@@ -298,70 +248,36 @@ sap.ui.define([
 				});
 			});
 		})["catch"](function(oError) {
-			var oErrorInfo = this._buildErrorMessageText("MSG_TILE_CREATION_FAILED", sAppVariantId, oError, true);
-			return this._showErrorMessage(oErrorInfo, sAppVariantId);
-		}.bind(this));
+			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_TILE_CREATION_FAILED", oError, sAppVariantId);
+			oErrorInfo.copyId = true;
+			BusyIndicator.hide();
+			return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+		});
 	};
 
-	AppVariantManager.prototype._buildSuccessMessageText = function(oAppVariantDescriptor, bCloseRunningApp) {
-		var oTextResources = AppVariantUtils.getTextResources();
+	AppVariantManager.prototype._buildSuccessInfo = function(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar) {
 		var bCopyId = false;
-		var sMessage = oTextResources.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE") + "\n\n";
+		var sMessage = AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE") + "\n\n";
 
-		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor._oSettings)) {
-			if (bCloseRunningApp) {
-				sMessage += oTextResources.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_CLOUD_MESSAGE");
+		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
+			if (bSaveAsTriggeredFromRtaToolbar) {
+				sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_CLOUD_MESSAGE");
 			} else {
-				sMessage += oTextResources.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_CLOUD_MESSAGE_OVERVIEW_LIST");
+				sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_CLOUD_MESSAGE_OVERVIEW_LIST");
 			}
-		} else if (bCloseRunningApp) {
-			sMessage += oTextResources.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_ON_PREMISE_MESSAGE", oAppVariantDescriptor._id);
+		} else if (bSaveAsTriggeredFromRtaToolbar) {
+			sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_ON_PREMISE_MESSAGE", oAppVariantDescriptor.getId());
 			bCopyId = true;
 		} else {
-			sMessage += oTextResources.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_ON_PREMISE_MESSAGE_OVERVIEW_LIST", oAppVariantDescriptor._id);
+			sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_ON_PREMISE_MESSAGE_OVERVIEW_LIST", oAppVariantDescriptor.getId());
 			bCopyId = true;
 		}
 
 		return {
 			text: sMessage,
+			appVariantId: oAppVariantDescriptor.getId(),
 			copyId : bCopyId
 		};
-	};
-
-	AppVariantManager.prototype._showSaveSuccessMessage = function(oSuccessInfo, sAppVariantId) {
-		var oTextResources = AppVariantUtils.getTextResources();
-		var sTitle = oTextResources.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE_TITLE");
-
-		var sCopyIdButtonText;
-		var sOkButtonText = oTextResources.getText("SAVE_APP_VARIANT_OK_TEXT");
-
-		var aActions = [];
-
-		if (oSuccessInfo.copyId) {
-			sCopyIdButtonText = oTextResources.getText("SAVE_APP_VARIANT_COPY_ID_TEXT");
-			aActions.push(sCopyIdButtonText);
-		}
-
-		aActions.push(sOkButtonText);
-
-		return new Promise(function(resolve) {
-			var fnCallback = function (sAction) {
-				if (sAction === sOkButtonText) {
-					resolve();
-				} else if (sAction === sCopyIdButtonText) {
-					AppVariantUtils.copyId(sAppVariantId);
-					resolve();
-				}
-			};
-
-			MessageBox.show(oSuccessInfo.text, {
-				icon: MessageBox.Icon.INFORMATION,
-				onClose : fnCallback,
-				title: sTitle,
-				actions: aActions,
-				styleClass: RtaUtils.getRtaStyleClassName()
-			});
-		});
 	};
 
 	AppVariantManager.prototype._navigateToFLPHomepage = function() {
@@ -379,10 +295,11 @@ sap.ui.define([
 		return Promise.resolve(false);
 	};
 
-	AppVariantManager.prototype.showSuccessMessageAndTriggerActionFlow = function(oAppVariantDescriptor, bCloseRunningApp, oRootControlRunningApp) {
-		var oSuccessInfo = this._buildSuccessMessageText(oAppVariantDescriptor, bCloseRunningApp);
-		return this._showSaveSuccessMessage(oSuccessInfo, oAppVariantDescriptor._id).then(function() {
-			if (bCloseRunningApp) {
+	AppVariantManager.prototype.showSuccessMessageAndTriggerActionFlow = function(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar, oRootControlRunningApp) {
+		var oSuccessInfo = this._buildSuccessInfo(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar);
+		BusyIndicator.hide();
+		return AppVariantUtils.showRelevantDialog(oSuccessInfo, true).then(function() {
+			if (bSaveAsTriggeredFromRtaToolbar) {
 				return this._navigateToFLPHomepage();
 			} else {
 				return RtaAppVariantFeature.onGetOverview(oRootControlRunningApp);
