@@ -44,8 +44,11 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * ObjectPageHeader represents the static part of an Object page header.
+	 *  <code>ObjectPageHeader</code> represents the static part of an <code>ObjectPageLayout</code> header.
 	 * Typically used to display the basic information about a business object, such as title/description/picture, as well as a list of common actions.
+	 *
+	 * <b>Note:</b> The <code>ObjectPageHeader</code> is meant to be used inside the <code>ObjectPageLayout</code>
+	 * control. Any other usage is not supported and can lead to unexpected behavior.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.uxap.IHeaderTitle
 	 *
