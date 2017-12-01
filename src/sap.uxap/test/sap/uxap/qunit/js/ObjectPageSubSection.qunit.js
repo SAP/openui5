@@ -290,4 +290,70 @@
 		oObjectPageLayout.destroy();
 	});
 
+	QUnit.module("Object Page SubSection media classes", {
+		beforeEach: function () {
+			this.oObjectPageLayout = new sap.uxap.ObjectPageLayout({
+				selectedSection: "section2",
+				sections: [
+					new sap.uxap.ObjectPageSection("section1", {
+						title: "section 1",
+						subSections: [
+							new sap.uxap.ObjectPageSubSection({
+								title:"subsection 1",
+								blocks: [
+									new sap.m.Button({ text: 'notext' })
+								]
+							})
+						]
+					}),
+					new sap.uxap.ObjectPageSection("section2", {
+						title: "section 2",
+						subSections: [
+							new sap.uxap.ObjectPageSubSection({
+								id: "subsection2",
+								title:"subsection 2",
+								blocks: [
+									new sap.m.Button({ text: 'notext' })
+								]
+							})
+						]
+					})
+				]
+			});
+			this.fnOnScrollSpy = sinon.spy(this.oObjectPageLayout, "_onScroll");
+			this.oObjectPageLayout.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oObjectPageLayout.destroy();
+		}
+	});
+
+	QUnit.test("Content scrollTop is preserved on section rerendering", function(assert) {
+		// note that selected section is the last visible one
+		var oLastSubSection = this.oObjectPageLayout.getSections()[1].getSubSections()[0],
+		oObjectPageLayout = this.oObjectPageLayout,
+		fnOnScrollSpy =	this.fnOnScrollSpy,
+		done = assert.async(),
+		iScrollTop;
+
+		assert.expect(1);
+
+		this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// save the scrollTop position
+			iScrollTop = oObjectPageLayout._$opWrapper.scrollTop();
+
+			//act
+			//makes a change that causes invalidates of the subsection and anchorBar
+			oLastSubSection.setTitle("changed");
+
+			oLastSubSection.addEventDelegate({ onAfterRendering: function() {
+				setTimeout(function() {
+					assert.equal(fnOnScrollSpy.alwaysCalledWithMatch({target: {scrollTop: iScrollTop}}), true, "the correct scroll top is preserved");
+					done();
+				}, 0);
+			}});
+		});
+	});
+
 }(jQuery, QUnit, sinon, window.testData));
