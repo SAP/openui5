@@ -391,4 +391,18 @@
 		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("aria-label"), sExpectedText, "has correct 'aria-label'");
 	});
 
+	QUnit.test("Keyboard Handling", function (assert) {
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl;
+
+		helpers.renderObject(oStandardBreadCrumbsControl);
+		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("tabindex"), "0", "Default tabindex 0 should be set");
+
+		// Act - make the inside elements of the control empty
+		oStandardBreadCrumbsControl.setCurrentLocationText("");
+		oStandardBreadCrumbsControl.removeAllLinks();
+		helpers.waitForUIUpdates();
+
+		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("tabindex"), undefined, "Tabindex should not be set for empty breadcrumbs");
+	});
+
 }(jQuery, QUnit, sinon, sap.m.Breadcrumbs));
