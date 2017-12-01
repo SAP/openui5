@@ -547,7 +547,7 @@ sap.ui.define([
 
 		if (bAppendHeaderToTitle) {
 			this._moveAnchorBarToTitleArea();
-			this._moveHeaderToTitleArea(false);
+			this._moveHeaderToTitleArea();
 			this._bHeaderExpanded = true;
 
 			this._updateToggleHeaderVisualIndicators();
@@ -1023,22 +1023,15 @@ sap.ui.define([
 
 	/**
 	 * Moves the header to the title area
+	 *
 	 * @private
 	 */
 	ObjectPageLayout.prototype._moveHeaderToTitleArea = function () {
-		var bPreserveHeaderHeight = this._shouldPreserveHeaderPlaceholderHeightInContentArea();
-
-		if (bPreserveHeaderHeight) {
-			// before removing the header content, preserve the height of its placeholder, to avoid automatic repositioning of scrolled content as it gets shortened (as its topmost part is cut off)
-			this._$headerContent.css("height", this.iHeaderContentHeight);
-		}
 		this._$headerContent.children().appendTo(this._$stickyHeaderContent);
 		this._bHeaderInTitleArea = true;
 
-		if (!bPreserveHeaderHeight) {
-			// the height will change => the page will scroll => add a flag to prevent modification on scroll
-			this._bSupressModifyOnScrollOnce = true;
-		}
+		// suppress the first scroll event to prevent the header snap again immediately
+		this._bSupressModifyOnScrollOnce = true;
 	};
 
 	/**
@@ -1047,7 +1040,7 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._moveHeaderToContentArea = function () {
 		if (this._bHeaderInTitleArea) {
-			this._$headerContent.css("height", "auto").append(this._$stickyHeaderContent.children());
+			this._$headerContent.append(this._$stickyHeaderContent.children());
 			this._$stickyHeaderContent.children().remove();
 			this._bHeaderInTitleArea = false;
 		}
@@ -2227,10 +2220,8 @@ sap.ui.define([
 			this._moveHeaderToContentArea();
 			this._toggleHeaderTitle(false /* snap */);
 			this._bHeaderExpanded = false;
-			if (!this._shouldPreserveHeaderPlaceholderHeightInContentArea()) { // height of content area changed => need to recalculate the layout
-				this._updateToggleHeaderVisualIndicators();
-				this._requestAdjustLayout();
-			}
+			this._updateToggleHeaderVisualIndicators();
+			this._requestAdjustLayout();
 		}
 
 		//don't apply parallax effects if there are not enough space for it
@@ -3032,16 +3023,6 @@ sap.ui.define([
 				&& this.getAlwaysShowContentHeader();
 	};
 
-	/**
-	 * Checks if we should preserve the height of the content area upon removing the header content.
-	 * @private
-	 */
-	ObjectPageLayout.prototype._shouldPreserveHeaderPlaceholderHeightInContentArea = function () {
-		var oHeaderContent = this._getHeaderContent(),
-			bPinnable = oHeaderContent && oHeaderContent.supportsPinUnpin() && oHeaderContent.getPinnable();
-		return !bPinnable; // should not preserve the height if the header is pinnable
-	};
-
 	ObjectPageLayout.prototype._shouldOverridePreserveHeaderStateOnScroll = function () {
 		return !Device.system.desktop && this._headerBiggerThanAllowedToBeFixed();
 	};
@@ -3095,7 +3076,7 @@ sap.ui.define([
 		this._bPinned = true;
 		this._toggleHeaderTitle(true /* expand */);
 		this._moveAnchorBarToTitleArea();
-		this._moveHeaderToTitleArea(false);
+		this._moveHeaderToTitleArea();
 		this._adjustHeaderHeights();
 		this._requestAdjustLayout();
 		this._togglePinButtonARIAState(this._bPinned);

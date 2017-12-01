@@ -234,7 +234,7 @@
 				oObjectPage.scrollToSection("UxAP-objectPageContentScrolling--firstSection",0,0);
 				setTimeout(function() {
 					assert.ok(isObjectPageHeaderStickied(oObjectPage), "ObjectHeader is in stickied mode");
-					//ObjectPageContentScrollingView.destroy();
+					ObjectPageContentScrollingView.destroy();
 					done();
 				}, 1000);
 			}, 1000); //scroll delay
