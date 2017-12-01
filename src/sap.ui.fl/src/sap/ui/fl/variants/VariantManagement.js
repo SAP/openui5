@@ -491,7 +491,7 @@ sap.ui.define([
 					this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
 
 					if (oModel.registerToModel) { // RTA relevant
-						oModel.registerToModel(sLocalId);
+						oModel.registerToModel(this);
 					}
 
 					this._registerPropertyChanges(oModel);

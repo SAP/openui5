@@ -197,6 +197,12 @@ sap.ui.require([
 			}
 		});
 
+		QUnit.test("when _isPersonalizationMode is called", function(assert) {
+			assert.notOk(this.oControlVariantPlugin._isPersonalizationMode(), "then _isPersonalizationMode for CUSTOMER layer is false");
+			sandbox.stub(this.oControlVariantPlugin.getCommandFactory(), "getFlexSettings").returns({layer : "USER"});
+			assert.ok(this.oControlVariantPlugin._isPersonalizationMode(), "then _isPersonalizationMode for USER layer is true");
+		});
+
 		QUnit.test("when registerElementOverlay is called", function(assert) {
 			assert.ok(ElementOverlay.prototype.getVariantManagement, "then getVariantManagement added to the ElementOverlay prototype");
 			assert.ok(ElementOverlay.prototype.setVariantManagement, "then setVariantManagement added to the ElementOverlay prototype");
@@ -529,7 +535,12 @@ sap.ui.require([
 			};
 
 			var oMockedAppComponent = {
-				getModel: function () {return oModel;}
+				getModel: function () {
+					return oModel;
+				},
+				getLocalId: function () {
+					return "varMgtKey";
+				}
 			};
 
 			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);

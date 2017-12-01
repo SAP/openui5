@@ -186,7 +186,9 @@ sap.ui.define([
 				}
 			}
 
-			if (oWrappedChangeFileContent.changes.variantSection && Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0 && !this._oVariantController._getChangeFileContent()) {
+			if ( oWrappedChangeFileContent.changes.variantSection
+					&& Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0
+					&& Object.keys(this._oVariantController._getChangeFileContent()).length === 0 ) {
 				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponent);
 				var aVariantChanges = this._oVariantController.loadInitialChanges();
 				aChanges = aChanges.concat(aVariantChanges);
@@ -632,9 +634,9 @@ sap.ui.define([
 	ChangePersistence.prototype.addChange = function(vChange, oComponent) {
 		var oChange = this.addDirtyChange(vChange);
 		//control variants are not needed in map
-		if (oChange.getFileType() !== "ctrl_variant") {
-			this._addChangeIntoMap(oComponent, oChange);
-		}
+		//if (oChange.getFileType() !== "ctrl_variant") {
+		this._addChangeIntoMap(oComponent, oChange);
+		//}
 		this._addPropagationListener(oComponent);
 		return oChange;
 	};

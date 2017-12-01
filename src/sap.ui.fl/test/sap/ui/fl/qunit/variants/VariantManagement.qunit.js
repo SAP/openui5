@@ -32,6 +32,7 @@
 			oModel = new sap.ui.fl.variants.VariantModel({
 				"One": {
 					currentVariant: "Standard",
+					originalCurrentVariant: "Standard",
 					defaultVariant: "Standard",
 					originalDefaultVariant: "Standard",
 					modified: false,
@@ -93,6 +94,8 @@
 					]
 				}
 			}, {});
+
+			sinon.stub(oModel, "updateCurrentVariant").returns(Promise.resolve());
 
 			// sinon.stub(oModel,
 		},
@@ -406,7 +409,6 @@
 		assert.ok(this.oVariantManagement.oSaveAsDialog);
 		sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
 
-		sinon.stub(oModel, "_switchToVariant").returns(Promise.resolve());
 		this.oVariantManagement.setCurrentVariantKey("1");
 
 		this.oVariantManagement._openSaveAsDialog();
@@ -429,7 +431,6 @@
 		assert.ok(this.oVariantManagement.oSaveAsDialog);
 		sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
 
-		// sinon.stub(oModel, "_switchToVariant").returns(Promise.resolve());
 		this.oVariantManagement.setCurrentVariantKey("4");
 
 		this.oVariantManagement._assignTransport = function(oItem, fOK, fError) {
@@ -656,7 +657,6 @@
 		assert.ok(oItemFav);
 		this.oVariantManagement._handleManageFavoriteChanged(null, oItemFav);
 
-		sinon.stub(oModel, "_switchToVariant").returns(Promise.resolve());
 		this.oVariantManagement.setCurrentVariantKey("1");
 
 		this.oVariantManagement._handleManageSavePressed();
