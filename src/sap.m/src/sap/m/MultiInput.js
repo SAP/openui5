@@ -98,12 +98,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 				/**
 				 * The tokenizer which displays the tokens
 				 */
-				tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"},
-
-				/**
-				 * Hidden text used for accesibility
-				 */
-				_tokensInfo: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
+				tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"}
 			},
 			events: {
 
@@ -206,15 +201,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 			// Register the click on value help.
 			this._bValueHelpOpen = true;
 		}, this);
-
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-			// create an ARIA announcement and remember its ID for later use in the renderer:
-			var sAriaMultiInputContainToken = new InvisibleText({
-				text: oRb.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN")
-			});
-
-			this.setAggregation("_tokensInfo", sAriaMultiInputContainToken);
-		}
 	};
 
 	MultiInput.prototype._onTokenChange = function (args) {
@@ -610,30 +596,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * @private
 	 */
 	MultiInput.prototype.onBeforeRendering = function () {
-		var oTokenizer = this.getAggregation("tokenizer"),
-			iTokenCount = this.getTokens().length,
-			oInvisibleText,
-			sMultiInputAria = "";
+		var oTokenizer = this.getAggregation("tokenizer");
 
 		if (oTokenizer) {
 			oTokenizer.toggleStyleClass("sapMTokenizerEmpty", oTokenizer.getTokens().length === 0);
-		}
-
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-			oInvisibleText = this.getAggregation("_tokensInfo");
-			switch (iTokenCount) {
-				case 0:
-					sMultiInputAria = oRb.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN");
-					break;
-				case 1:
-					sMultiInputAria = oRb.getText("MULTIINPUT_ARIA_CONTAIN_ONE_TOKEN");
-					break;
-				default:
-					sMultiInputAria = oRb.getText("MULTIINPUT_ARIA_CONTAIN_SEVERAL_TOKENS", iTokenCount);
-					break;
-			}
-
-			oInvisibleText.setText(sMultiInputAria);
 		}
 
 		Input.prototype.onBeforeRendering.apply(this, arguments);
