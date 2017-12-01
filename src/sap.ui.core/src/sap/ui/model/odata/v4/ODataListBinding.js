@@ -1268,9 +1268,7 @@ sap.ui.define([
 				that.fetchCache(that.oContext);
 			}
 			that.reset(ChangeReason.Refresh);
-			// Skip bindings that have been created via ODataListBinding#create because after
-			// refresh the newly created context is gone. Avoid "Failed to drill down..." errors.
-			that.oModel.getDependentBindings(that, true).forEach(function (oDependentBinding) {
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
 				// Call refreshInternal with bCheckUpdate = false because property bindings should
 				// not check for updates yet, otherwise they will cause a "Failed to drill down..."
 				// when the row is no longer part of the collection. They get another update request
@@ -1297,6 +1295,9 @@ sap.ui.define([
 			this.aContexts.forEach(function (oContext) {
 				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 			});
+			if (this.aContexts[-1]) {
+				this.aContexts[-1].destroy();
+			}
 		}
 		this.aContexts = [];
 		// the range for getCurrentContexts
@@ -1326,7 +1327,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
 	 * @throws {Error}
-	 *   For relative bindings containing created entities
+	 *   For relative bindings containing transient entities
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#setContext
@@ -1340,10 +1341,10 @@ sap.ui.define([
 				// Keep the header context even if we lose the parent context, so that the header
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
-				if (this.aContexts && this.aContexts[-1]) {
+				if (this.aContexts && this.aContexts[-1] && this.aContexts[-1].isTransient()) {
 					// to allow switching the context for new created entities (transient or not)
 					// we first have to implement a store/restore mechanism for the -1 entry
-					throw new Error("setContext on relative binding is forbidden if created " +
+					throw new Error("setContext on relative binding is forbidden if a transient " +
 						"entity exists: " + this);
 				}
 				this.reset();

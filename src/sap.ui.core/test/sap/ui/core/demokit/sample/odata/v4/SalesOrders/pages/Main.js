@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/m/MessageBox",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils",
@@ -11,7 +12,8 @@ sap.ui.require([
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
 ],
-function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable, Properties) {
+function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable,
+		Properties) {
 	"use strict";
 	var GROSS_AMOUNT_COLUMN_INDEX = 2,
 		ID_COLUMN_INDEX = 0,
@@ -48,6 +50,26 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 				aControls[0].getButtons()[bConfirm ? 0 : 1].$().tap();
 				Opa5.assert.ok(true, sLog || (bConfirm ? 'Confirm ' : 'Cancel ') + sTitle);
 			}
+		});
+	}
+
+	function selectSalesOrder(oOpa, iIndex, bRememberGrossAmount) {
+		return oOpa.waitFor({
+			controlType : "sap.m.Table",
+			id : "SalesOrders",
+			success : function (oTable) {
+				var oItem = oTable.getItems()[iIndex],
+					oControl = oItem.getCells()[ID_COLUMN_INDEX];
+				oControl.$().tap();
+				Opa5.assert.ok(true, "Sales Order selected: " +
+					oControl.getText());
+				if (bRememberGrossAmount) {
+					sap.ui.test.Opa.getContext().GrossAmount =
+						oItem.getCells()[GROSS_AMOUNT_COLUMN_INDEX]
+							.getBinding("text").getValue();
+				}
+			},
+			viewName : sViewName
 		});
 	}
 
@@ -180,6 +202,34 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 							oRow.getCells()[SOITEM_QUANTITY_COLUMN_INDEX].setValue(sNewQuantity);
 							Opa5.assert.ok(true,
 								"SO Item Note of row " + iRow + " set to " + sNewQuantity);
+						},
+						viewName : sViewName
+					});
+				},
+				createInvalidSalesOrderViaAPI : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oTable) {
+							var oNewContext = oTable.getBinding("items").create({
+								"SalesOrderID" : "",
+								// properties
+								"BuyerID" : "0100000000",
+								"ChangedAt" : "1970-01-01T00:00:00Z",
+								"CreatedAt" : "1970-01-01T00:00:00Z",
+								"CurrencyCode" : "EUR",
+								"GrossAmount" : "0.00",
+								"LifecycleStatus" : "N",
+								"LifecycleStatusDesc" : "New",
+								"Note" : "RAISE_ERROR",
+								"NoteLanguage" : "E",
+								// navigation property
+								"SO_2_BP" : null
+							});
+						oNewContext.created().then(function() {
+							MessageBox.success("SalesOrder created: " +
+								oNewContext.getProperty("SalesOrderID"));
+							});
 						},
 						viewName : sViewName
 					});
@@ -494,24 +544,11 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 						viewName : sViewName
 					});
 				},
-				selectFirstSalesOrder : function (bRememberGrossAmount) {
-					return this.waitFor({
-						controlType : "sap.m.Table",
-						id : "SalesOrders",
-						success : function (oTable) {
-							var oFirstItem = oTable.getItems()[0],
-								oControl = oFirstItem.getCells()[ID_COLUMN_INDEX];
-							oControl.$().tap();
-							Opa5.assert.ok(true, "First Sales Order selected: " +
-								oControl.getText());
-							if (bRememberGrossAmount) {
-								sap.ui.test.Opa.getContext().GrossAmount =
-									oFirstItem.getCells()[GROSS_AMOUNT_COLUMN_INDEX]
-										.getBinding("text").getValue();
-							}
-						},
-						viewName : sViewName
-					});
+				selectFirstSalesOrder : function ( bRememberGrossAmount) {
+					return selectSalesOrder(this, 0, bRememberGrossAmount);
+				},
+				selectSalesOrder : function (iIndex) {
+					return selectSalesOrder(this, iIndex);
 				},
 				selectSalesOrderItemWithPosition : function (sPosition) {
 					return this.waitFor({

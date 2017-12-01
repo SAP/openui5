@@ -68,7 +68,7 @@ sap.ui.require([
 
 		sXmlSnippet = '\
 			<Schema Namespace="foo" Alias="f">\
-				<Annotations Target="foo.Bar">\
+				<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="foo.Bar">\
 					<Annotation Term="foo.Term">' + sXmlSnippet + '</Annotation>\
 				</Annotations>\
 			</Schema>';

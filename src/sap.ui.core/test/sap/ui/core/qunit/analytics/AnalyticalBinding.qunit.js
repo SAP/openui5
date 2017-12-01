@@ -986,6 +986,31 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_getQueryODataRequestOptions: filter parameter", function (assert) {
+		var oAnalyticalQueryRequest = {
+				getFilterExpression : function () {
+					return {
+						checkValidity : function () {}
+					};
+				},
+				getURIQueryOptionValue : function () {
+					return null;
+				}
+			},
+			oBinding = {
+				mParameters : {
+					filter : "(Country eq 'IN')"
+				}
+			},
+			aParam;
+
+		aParam = AnalyticalBinding.prototype._getQueryODataRequestOptions.call(oBinding,
+			oAnalyticalQueryRequest, false);
+
+		assert.deepEqual(aParam, ["$filter=(Country eq 'IN')"]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_getQueryODataRequestOptions: enhance $select", function(assert) {
 		var done = assert.async(),
 			sSelects = "FiscalPeriod,ControllingArea,CostCenter,CostCenterText,CostElement,"

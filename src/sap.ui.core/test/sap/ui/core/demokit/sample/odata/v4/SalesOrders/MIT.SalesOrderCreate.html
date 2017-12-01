@@ -144,8 +144,12 @@
 		With back end only:
 		<ol>
 			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Type in <code>RAISE_ERROR</code> into the <code>Note</code> input field of the
+				<code>Create New Sales Order</code> dialog.</li>
 			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
 			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b>that you got an error regarding invalid value for the <code>Note</code>
+			</li>
 			<li>Click on <code>Refresh</code> button in the <code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> You get a warning about pending changes.</li>
 			<li>Click on the <code>Cancel</code> button.</li>
@@ -153,12 +157,16 @@
 				<code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> The newly created sales order is gone.</li>
 			<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Type in <code>RAISE_ERROR</code> into the <code>Note</code> input field of the
+				<code>Create New Sales Order</code> dialog.</li>
 			<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
 			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
-			<li><b>Check:</b> A POST request for the created entity is sent to the server.</li>
+			<li><b>Check:</b> A POST request for the created entity is sent to the server and you
+			got the above error.</li>
 			<li>Click again on the <code>Save</code> button in the <code>Sales Orders</code>
 				table.</li>
-			<li><b>Check:</b> A POST request for the created entity is sent to the server.</li>
+			<li><b>Check:</b> A POST request for the created entity is sent to the server and you
+			got the above error again.</li>
 			<li>Modify the content of the <code>Note</code> in the newly created sales order.</li>
 			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> You get a success message for creating the sales order.</li>
