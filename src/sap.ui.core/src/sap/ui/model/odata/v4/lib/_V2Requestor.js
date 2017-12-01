@@ -329,7 +329,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the "DataServiceVersion" header is set to "2.0" otherwise an error is thrown.
+	 * Checks whether the "DataServiceVersion" header is not set or has the value "2.0" otherwise
+	 * an error is thrown.
 	 *
 	 * @param {function} fnGetHeader
 	 *   A callback function to get a header attribute for a given header name with case-insensitive
@@ -337,9 +338,9 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path of the request
 	 * @param {boolean} [bVersionOptional=false]
-	 *   Indicates whether the OData service version is optional, which is the case for responses
-	 *   contained in a response for a $batch request
-	 * @throws {Error} If the "DataServiceVersion" header is not "2.0"
+	 *   Indicates whether the OData service version is optional, which is the case for all OData V2
+	 *   responses. So this parameter is ignored.
+	 * @throws {Error} If the "DataServiceVersion" header is neither "2.0" nor not set at all
 	 */
 	_V2Requestor.prototype.doCheckVersionHeader = function (fnGetHeader, sResourcePath,
 			bVersionOptional) {
@@ -351,7 +352,7 @@ sap.ui.define([
 				+ " 'OData-Version' header with value '" + vODataVersion + "' in response for "
 				+ this.sServiceUrl + sResourcePath);
 		}
-		if (sDataServiceVersion === "2.0" || !sDataServiceVersion && bVersionOptional) {
+		if (sDataServiceVersion === "2.0" || !sDataServiceVersion) {
 			return;
 		}
 		throw new Error("Expected 'DataServiceVersion' header with value '2.0' but received value '"

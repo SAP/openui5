@@ -1084,10 +1084,16 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		iCallCount : 1,
-		mHeaders : { "DataServiceVersion" : "2.0" }
+		mHeaders : { "DataServiceVersion" : "2.0" },
+		bVersionOptional : true
 	}, {
 		iCallCount : 2,
-		mHeaders : {}
+		mHeaders : {},
+		bVersionOptional : true
+	}, {
+		iCallCount : 2,
+		mHeaders : {},
+		bVersionOptional : false
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
 			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
@@ -1096,7 +1102,8 @@ sap.ui.require([
 				});
 
 			// code under test
-			oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar", true);
+			oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar",
+				oFixture.bVersionOptional);
 
 			assert.strictEqual(fnGetHeader.calledWithExactly("DataServiceVersion"), true);
 			if (oFixture.iCallCount === 2) {
@@ -1111,10 +1118,6 @@ sap.ui.require([
 		iCallCount : 1,
 		sError : "value 'foo' in response for /Foo('42')/Bar",
 		mHeaders : { "DataServiceVersion" : "foo" }
-	}, {
-		iCallCount : 2,
-		sError : "value 'undefined' in response for /Foo('42')/Bar",
-		mHeaders : {}
 	}, {
 		iCallCount : 2,
 		sError : "'OData-Version' header with value 'baz' in response for /Foo('42')/Bar",
