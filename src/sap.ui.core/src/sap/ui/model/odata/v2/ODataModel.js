@@ -4785,6 +4785,8 @@ sap.ui.define([
 							that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 						});
 						delete that.mChangedEntities[sKey];
+						//cleanup Messages for created Entry
+						sap.ui.getCore().getMessageManager().removeMessages(that.getMessagesByEntity(sKey));
 					} else {
 						that.mChangedEntities[sKey].__metadata = oEntityMetadata;
 					}
@@ -4798,6 +4800,8 @@ sap.ui.define([
 					that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 				});
 				delete that.mChangedEntities[sKey];
+				//cleanup Messages for created Entry
+				sap.ui.getCore().getMessageManager().removeMessages(that.getMessagesByEntity(sKey));
 			});
 		}
 		this.checkUpdate(true);
@@ -5111,7 +5115,7 @@ sap.ui.define([
 			});
 			that._removeEntity(sKey);
 			//cleanup Messages for created Entry
-			sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByPath(oContext.getPath() + '/'));
+			sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(oContext.getPath()));
 		}
 	};
 
@@ -5888,6 +5892,31 @@ sap.ui.define([
 			return this.bRefreshAfterChange;
 		}
 		return bRefreshAfterChange;
+	};
+
+	/**
+	 * Get all messages for an entity path.
+	 *
+	 * @param {string} sEntity The entity path or key
+	 * @private
+	 */
+	ODataModel.prototype.getMessagesByEntity = function(sEntity) {
+		var sEntityPath = sEntity,
+			aMessages = [],
+			sPath;
+		//normalize Key
+		if (!jQuery.sap.startsWith(sEntityPath, '/')) {
+			sEntityPath = '/' + sEntityPath;
+		}
+		if (this.mMessages) {
+			for (sPath in this.mMessages) {
+				if (jQuery.sap.startsWith(sPath, sEntityPath)) {
+					aMessages = aMessages.concat(this.mMessages[sPath]);
+				}
+			}
+			return aMessages;
+		}
+		return null;
 	};
 
 	return ODataModel;
