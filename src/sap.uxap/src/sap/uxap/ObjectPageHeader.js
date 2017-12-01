@@ -318,10 +318,12 @@ sap.ui.define([
 
 	ObjectPageHeader.getMetadata().forwardAggregation(
 		"breadCrumbsLinks",
-		function() { // TODO: is invalidation needed for non-getters?
-			return this._lazyLoadInternalAggregation("_breadCrumbs");
-		},
-		"links"
+		{
+			getter: function() { // TODO: is invalidation needed for non-getters?
+				return this._lazyLoadInternalAggregation("_breadCrumbs");
+			},
+			aggregation: "links"
+		}
 	);
 
 	ObjectPageHeader.prototype._handleOverflowButtonPress = function (oEvent) {

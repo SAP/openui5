@@ -266,8 +266,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 		ComboBox.getMetadata().forwardAggregation(
 			"items",
-			ComboBox.prototype.getList,
-			"items"
+			{
+				getter: ComboBox.prototype.getList,
+				aggregation: "items"
+			}
 		);
 
 		ComboBox.prototype._setItemVisibility = function(oItem, bVisible) {

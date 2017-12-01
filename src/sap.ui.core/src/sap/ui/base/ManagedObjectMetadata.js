@@ -337,31 +337,29 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this.targetAggregationInfo = null; // resolve lazily
 
 		// make sure we have a way to get the target control
-		var fnTargetGetter;
-		if (oForwardTo.getterName) { // name of the function which returns the target element
-			fnTargetGetter = (function(sGetterName) {
-				return function() {
-					return this[sGetterName](); // "this" context is the ManagedObject instance
-				};
-			})(oForwardTo.getterName);
+		if (oForwardTo.getter) {
+			if (typeof oForwardTo.getter === "function") {
+				this._getTarget = oForwardTo.getter;
+
+			} else { // name of the function which returns the target element
+				this._getTarget = (function(sGetterName) {
+					return function() {
+						return this[sGetterName](); // "this" context is the ManagedObject instance
+					};
+				})(oForwardTo.getter);
+			}
 
 		} else if (oForwardTo.idSuffix) { // target given by ID
-			fnTargetGetter = (function(sIdSuffix) {
+			this._getTarget = (function(sIdSuffix) {
 				return function() {
 					return sap.ui.getCore().byId(this.getId() + sIdSuffix); // "this" context is the ManagedObject instance
 				};
 			})(oForwardTo.idSuffix);
 
 		} else {
-			fnTargetGetter = (function(sSourceAggregation, sSourceClassName, sTargetAggregation){ // maybe _getTarget is added later, create a function throwing an error for the time being
-				return function() {
-					throw new Error("Either getterName or idSuffix must be given for forwarding the aggregation " + sSourceAggregation
-							+ " to the aggregation " + sTargetAggregation + " in " + sSourceClassName);
-				};
-			})(oAggregation.name, oAggregation._oParent.getName(), oForwardTo.aggregation);
+			throw new Error("Either getter or idSuffix must be given for forwarding the aggregation " + oAggregation.name
+				+ " to the aggregation " + oForwardTo.aggregation + " in " + oAggregation._oParent.getName());
 		}
-
-		this._getTarget = fnTargetGetter;
 	}
 
 	AggregationForwarder.prototype._getTargetAggregationInfo = function(oTarget) {
@@ -917,7 +915,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 
 	/**
 	 * Defines that an aggregation <code>sForwardedSourceAggregation</code> of the ManagedObject described by this metadata
-	 * should be "forwarded" to the aggregation <code>sForwardedTargetAggregation</code> of an internal element within the composite.
+	 * should be "forwarded" to an aggregation of an internal element within the composite.
 	 *
 	 * This means that all adding, removal, or other operations happening on the source aggregation are actually called on the target instance.
 	 * All elements added to the source aggregation will be located at the target aggregation (this means the target instance is their parent).
@@ -931,8 +929,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 *   ComboBox.getMetadata().forwardAggregation(
 	 *      "items",
-	 *      "-internalList", // could also be the function returning (maybe lazily instantiating) the target
-	 *      "listItems"
+	 *      {
+	 *          idSuffix: "-internalList", // internal control with the ID <control id> + "-internalList" always exists after init() has been called
+	 *          aggregation: "listItems"
+	 *      }
 	 *   );
 	 *
 	 * @example <caption>Same as above, but the internal <code>List</code> is not always instantiated initially. It is only lazily instantiated
@@ -940,8 +940,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 *   ComboBox.getMetadata().forwardAggregation(
 	 *      "items",
-	 *      ComboBox.prototype._getInternalList, // the function returning (and instantiating if needed) the target at runtime
-	 *      "listItems"
+	 *      {
+	 *          getter: ComboBox.prototype._getInternalList, // the function returning (and instantiating if needed) the target at runtime
+	 *          aggregation: "listItems"
+	 *      }
 	 *   );
 	 *
 	 *
@@ -955,14 +957,14 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * must also be valid in the target aggregation (otherwise the target element will throw a validation error).
 	 *
 	 * If the forwarded elements use data binding, the target element must be properly aggregated by the source element
-	 * to make sure all models are available there as well (this is anyway important to avoid various issues).
+	 * to make sure all models are available there as well (this is anyway important to avoid issues).
 	 *
 	 * The aggregation target must remain the same instance across the entire lifetime of the source control.
 	 *
 	 * Aggregation forwarding must be set up before any instances of the control are created (recommended: within the class definition)
 	 * to avoid situations where forwarding is not yet set up when the first aggregated item is added.
 	 *
-	 * Aggregation forwarding will behave unexpectedly when the content in the target aggregation is modified from other sources as well
+	 * Aggregation forwarding will behave unexpectedly when the content in the target aggregation is modified by other actors
 	 * (e.g. by the target element or by another forwarding from a different source aggregation). Hence, this is not allowed.
 	 *
 	 * For any given source aggregation this method may only be called once. Calling it again overrides the previous forwarding, but leaves
@@ -970,14 +972,17 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @param {string}
 	 *            sForwardedSourceAggregation The name of the aggregation to be forwarded
-	 * @param {string|function}
-	 *            vGetTargetInstance Either the ID suffix of the target element (the full target ID is the source instance ID plus this suffix,
-	 *            the target element must always be instantiated after the init() method has been executed)
-	 *            or a function that must return the target element instance (the "this" context inside the function is the source instance)
-	 * @param {string}
-	 *            sForwardedTargetAggregation The name of the aggregation on the target instance where the forwarding should lead to
 	 * @param {object}
-	 *            [mOptions] Any additional options for the forwarding
+	 *            mOptions The forwarding target as well as additional options
+	 * @param {string|function}
+	 *            [mOptions.getter] The function that returns the target element instance (the "this" context inside the function is the source instance),
+	 *            or the name of such a function on this ManagedObject type. Either getter or idSuffix (but not both) must be defined.
+	 * @param {string}
+	 *            [mOptions.idSuffix] The ID suffix of the target element (the full target ID is the source instance ID plus this suffix,
+	 *            the target element must always be instantiated after the init() method has been executed).
+	 *            Either getter or idSuffix (but not both) must be defined.
+	 * @param {string}
+	 *            mOptions.aggregation The name of the aggregation on the target instance where the forwarding should lead to
 	 * @param {boolean}
 	 *            [mOptions.forwardBinding] Whether a binding of the source aggregation should also be forwarded to the target aggregation
 	 *            or rather handled on the source aggregation, so only the resulting aggregation method calls are forwarded
@@ -987,25 +992,21 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @protected
 	 * @experimental
 	 */
-	ManagedObjectMetadata.prototype.forwardAggregation = function(sForwardedSourceAggregation, vGetTargetInstance, sForwardedTargetAggregation, mOptions) {
+	ManagedObjectMetadata.prototype.forwardAggregation = function(sForwardedSourceAggregation, mOptions) {
 
 		var oAggregation = this.getAggregation(sForwardedSourceAggregation);
 		if (!oAggregation) {
 			throw new Error("aggregation " + sForwardedSourceAggregation + " does not exist");
 		}
 
-		var oForwardTo = {
-			aggregation: sForwardedTargetAggregation,
-			forwardBinding: mOptions ? mOptions.forwardBinding : false
-		};
-
-		if (typeof vGetTargetInstance === "string") {
-			oForwardTo.idSuffix = vGetTargetInstance;
+		if (!mOptions || !mOptions.aggregation || !(mOptions.idSuffix || mOptions.getter) || (mOptions.idSuffix && mOptions.getter)) {
+			throw new Error("an 'mOptions' object with 'aggregation' property and either 'idSuffix' or 'getter' property (but not both) must be given"
+				+ sForwardedSourceAggregation + " does not exist");
 		}
 
 		if (oAggregation._oParent === this) {
 			// store the information on the aggregation
-			oAggregation.forwarding = oForwardTo;
+			oAggregation.forwarding = mOptions;
 			oAggregation._oForwarder = new AggregationForwarder(oAggregation);
 		} else {
 			// aggregation is defined on superclass; clone&modify the aggregation info to contain the forwarding information
@@ -1018,14 +1019,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 				deprecated: oAggregation.deprecated,
 				visibility: oAggregation.visibility,
 				selector: oAggregation.selector,
-				forwarding: oForwardTo
+				forwarding: mOptions
 			});
 			this._mAggregations[sForwardedSourceAggregation] =
 			this._mAllAggregations[sForwardedSourceAggregation] = oAggregation;
-		}
-
-		if (typeof vGetTargetInstance === "function") {
-			oAggregation._oForwarder._getTarget = vGetTargetInstance;
 		}
 	};
 

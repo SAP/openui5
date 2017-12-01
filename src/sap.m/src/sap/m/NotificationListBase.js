@@ -269,11 +269,11 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
 
         NotificationListBase.getMetadata().forwardAggregation(
             "buttons",
-            function() {
-                return this.getAggregation('_overflowToolbar');
-            },
-            "content",
             {
+                getter: function() {
+                    return this.getAggregation('_overflowToolbar');
+                },
+                aggregation: "content",
                 forwardBinding: true
             }
         );

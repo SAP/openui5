@@ -701,22 +701,22 @@ sap.ui.define(['./Button', './Dialog', './SearchField', './Table', './library', 
 
 	TableSelectDialog.getMetadata().forwardAggregation(
 		"items",
-		function() {
-			return this._oTable;
-		},
-		"items",
 		{
+			getter: function() {
+				return this._oTable;
+			},
+			aggregation: "items",
 			forwardBinding: true
 		}
 	);
 
 	TableSelectDialog.getMetadata().forwardAggregation(
 		"columns",
-		function() {
-			return this._oTable;
-		},
-		"columns",
 		{
+			getter: function() {
+				return this._oTable;
+			},
+			aggregation: "columns",
 			forwardBinding: true
 		}
 	);

@@ -186,7 +186,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Page
 					multiple: true,
 					singularName: "content",
 					forwarding: {
-						getterName: "_getPage",
+						getter: "_getPage",
 						aggregation: "content"
 					}
 				},
@@ -214,7 +214,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Page
 				 *
 				 * If not set, no landmarks will be written.
 				 */
-				landmarkInfo : {type : "sap.m.PageAccessibleLandmarkInfo", multiple : false, forwarding: {getterName: "_getPage", aggregation: "landmarkInfo"}},
+				landmarkInfo : {type : "sap.m.PageAccessibleLandmarkInfo", multiple : false, forwarding: {getter: "_getPage", aggregation: "landmarkInfo"}},
 
 				/**
 				 * Wrapped instance of {@link sap.m.Page}

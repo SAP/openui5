@@ -227,7 +227,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 						singularName: "item",
 						bindable: "bindable",
 						forwarding: {
-							getterName: "getList",
+							getter: "getList",
 							aggregation: "items"
 						}
 					},
