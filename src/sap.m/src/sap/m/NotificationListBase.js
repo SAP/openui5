@@ -184,7 +184,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             if (parent && parent instanceof sap.ui.core.Element) {
                 var delegate = {
                     onAfterRendering: function() {
-                        parent.getDomRef().focus();
+                        parent.focus();
                         parent.removeEventDelegate(delegate);
                     }
                 };
