@@ -141,7 +141,7 @@
 
 	QUnit.test('Closing a notification', function(assert) {
 		// arrange
-		var parent, activeControlId, parentId;
+		var parent;
 		var list = new sap.m.List();
 		var notification = new sap.m.NotificationListItem();
 		var fnSpy = sinon.spy(notification, 'fireClose');
@@ -155,12 +155,10 @@
 		list.invalidate();
 
 		sap.ui.getCore().applyChanges();
-		activeControlId = document.activeElement.id.split('-')[0].toString().replace(' ', '');
-		parentId = parent.getId().toString().replace(' ', '');
 
 		// assert
 		assert.strictEqual(fnSpy.callCount, 1, 'firePress() should be called upon closing the notification.');
-		assert.strictEqual(activeControlId, parentId, 'Closing notification should set the focus to the parent container.');
+		assert.ok(parent.getFocusDomRef().contains(document.activeElement), 'Closing notification should set the focus to the parent container.');
 
 		// cleanup
 		list.destroy();
