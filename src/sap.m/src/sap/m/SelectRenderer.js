@@ -166,7 +166,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 			oRm.write(">");
 
 			// write the text of the selected item only if it has not been removed or destroyed
-			oRm.writeEscaped((oSelectedItem && oSelectedItem.getParent()) ? oSelectedItem.getText() : "");
+			// and when the Select isn't in IconOnly mode - BCP 1780431688
+			oRm.writeEscaped((oSelectedItem && oSelectedItem.getParent() && oSelect.getType() !== SelectType.IconOnly) ? oSelectedItem.getText() : "");
 
 			oRm.write("</label>");
 		};
