@@ -147,10 +147,7 @@ sap.ui.define([
 
 		function updateDependents() {
 			// Do not fire a change event in ListBinding, there is no change in the list of contexts
-			// Skip bindings that have been created via ODataListBinding#create: context with index
-			// -1 does not exist any more after a refresh and updates via cache directly notify the
-			// bindings
-			that.oModel.getDependentBindings(that, true).forEach(function (oDependentBinding) {
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
 				oDependentBinding.checkUpdate();
 			});
 		}
@@ -210,6 +207,13 @@ sap.ui.define([
 						that.oModel.reportError("POST on '" + vCreatePath
 								+ "' failed; will be repeated automatically",
 							"sap.ui.model.odata.v4.ODataParentBinding", oError);
+				}).then(function (oResult) {
+					if (oCache.$canonicalPath) {
+						// Ensure that a cache containing a persisted created entity is recreated
+						// when the parent binding changes to another row and back again.
+						delete that.mCacheByContext[oCache.$canonicalPath];
+					}
+					return oResult;
 				});
 			}
 			return that.oContext.getBinding().createInCache(sUpdateGroupId, vCreatePath,

@@ -43,20 +43,19 @@ sap.ui.require([
 
 			When.onTheMainPage.firstSalesOrderIsVisible();
 
-			// Test: create a new SalesOrder note -> error because initial Note property,
-			// POST restarted automatically after note filled
-			When.onTheMainPage.pressCreateSalesOrdersButton();
+			// Test: create a new SalesOrder with erroneous Note property,
+			// POST restarted automatically after note corrected
+			When.onTheMainPage.createInvalidSalesOrderViaAPI();
 			When.onTheErrorInfo.confirm();
-			When.onTheCreateNewSalesOrderDialog.changeNote("My Note");
+			When.onTheMainPage.changeNote(0, "My Note");
 			When.onTheSuccessInfo.confirm();
-			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			Then.onTheMainPage.checkNote(0, "My Note");
 
 			// Test: update of SalesOrder note -> error, restart after note corrected
 			When.onTheMainPage.changeNote(0, "RAISE_ERROR");
 			When.onTheErrorInfo.confirm();
-			When.onTheMainPage.changeNote(0, "My Note");
-			Then.onTheMainPage.checkNote(0, "My Note");
+			When.onTheMainPage.changeNote(0, "My patched Note");
+			Then.onTheMainPage.checkNote(0, "My patched Note");
 			aExpectedLogs.push(oExpectedPatchLog);
 			//TODO: analyse why we got the same log for PATCH 2 times for SubmitMode.Auto
 			aExpectedLogs.push(oExpectedPatchLog);

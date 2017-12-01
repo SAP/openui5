@@ -148,6 +148,7 @@ sap.ui.require([
 			// Create a sales order with invalid note, save, cancel
 			When.onTheMainPage.pressCreateSalesOrdersButton();
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
+			When.onTheMainPage.changeNote(0, "RAISE_ERROR");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheErrorInfo.confirm();
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
@@ -158,6 +159,7 @@ sap.ui.require([
 			// Create a sales order with invalid note, save, update note, save -> success
 			When.onTheMainPage.pressCreateSalesOrdersButton();
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
+			When.onTheMainPage.changeNote(0, "RAISE_ERROR");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheErrorInfo.confirm();
 			// Do it again to ensure that it is retried without update

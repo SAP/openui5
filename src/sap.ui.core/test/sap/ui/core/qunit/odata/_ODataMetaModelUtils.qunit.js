@@ -1326,7 +1326,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("addNavigationFilterRestriction", function (assert) {
 		var oEntitySet = {},
-			oNavigationProperty,
 			oNavigationRestrictions,
 			oProperty0 = {
 				"name" : "Bar"

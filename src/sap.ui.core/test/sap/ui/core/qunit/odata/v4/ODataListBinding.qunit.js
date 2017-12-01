@@ -427,6 +427,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("reset", function (assert) {
 		var oBinding,
+			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES/-1", -1),
 			aPreviousContexts;
 
 		// code under test: reset called from ODLB constructor
@@ -439,8 +440,10 @@ sap.ui.require([
 		oBinding.iCurrentBegin = 10; oBinding.iCurrentEnd = 19;
 		oBinding.iMaxLength = 42;
 		oBinding.bLengthFinal = true;
+		oBinding.aContexts[-1] = oCreatedContext;
 
 		this.mock(oBinding).expects("_fireRefresh").never();
+		this.mock(oCreatedContext).expects("destroy").withExactArgs();
 
 		// code under test
 		oBinding.reset();
@@ -1525,7 +1528,7 @@ sap.ui.require([
 		oCache = oCache1;
 		that.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 		that.mock(that.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding), true)
+			.withExactArgs(sinon.match.same(oBinding))
 			.returns([]);
 		oBinding.mCacheByContext = {}; // would have been set by fetchCache
 
@@ -1561,7 +1564,7 @@ sap.ui.require([
 		return oReadPromise.then(function () {
 			that.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 			that.mock(that.oModel).expects("getDependentBindings")
-				.withExactArgs(sinon.match.same(oBinding), true)
+				.withExactArgs(sinon.match.same(oBinding))
 				.returns([oChild0]);
 			that.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup", false);
 
@@ -2815,7 +2818,7 @@ sap.ui.require([
 				assert.throws(function () {
 					// code under test
 					oBinding.setContext({}/*some different context*/);
-				}, new Error("setContext on relative binding is forbidden if created entity " +
+				}, new Error("setContext on relative binding is forbidden if a transient entity " +
 				"exists: sap.ui.model.odata.v4.ODataListBinding: /|EMPLOYEES"));
 			}
 			assert.throws(function () {
@@ -2834,6 +2837,7 @@ sap.ui.require([
 	QUnit.test("create: relative binding", function (assert) {
 		var aCacheResult = [{}, {}, {"@$ui5.predicate" : "('foo')"}, {}],
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/1", 1),
+			oContext2 = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/2", 2),
 			aContexts,
 			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
 			oInitialData = {},
@@ -2850,7 +2854,7 @@ sap.ui.require([
 		oExpectation = this.mock(oBinding).expects("createInCache")
 			.withExactArgs("updateGroup", /*vPostPath*/sinon.match.object, "",
 				sinon.match.same(oInitialData), sinon.match.func)
-			.returns(_SyncPromise.resolve());
+			.returns(Promise.resolve());
 
 		// code under test
 		oContext = oBinding.create(oInitialData);
@@ -2871,14 +2875,19 @@ sap.ui.require([
 		assert.strictEqual(aContexts.length, 3);
 		assert.strictEqual(aContexts[2].getPath(), "/TEAMS/1/TEAM_2_EMPLOYEES('foo')");
 
-		return oContext.created().then(function () {
+		assert.throws(function () {
+			// code under test
+			oBinding.setContext(oContext2);
+		}, new Error("setContext on relative binding is forbidden if a transient entity " +
+			"exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS/1[1]|TEAM_2_EMPLOYEES"));
 
+		return oContext.created().then(function () {
 			assert.strictEqual(oExpectation.args[0][1].getResult(), "TEAMS('02')/TEAM_2_EMPLOYEES");
-			assert.throws(function () {
-				// code under test
-				oBinding.setContext({}/*some different context*/);
-			}, new Error("setContext on relative binding is forbidden if created entity " +
-				"exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS/1[1]|TEAM_2_EMPLOYEES"));
+
+			that.mock(oBinding).expects("reset").withExactArgs();
+			that.mock(oBinding).expects("fetchCache").withExactArgs(sinon.match.same(oContext2));
+
+			oBinding.setContext(oContext2);
 		});
 	});
 

@@ -854,29 +854,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getDependentBindings: skip created entities", function (assert) {
-		var oModel = createModel(),
-			oParentBinding = {},
-			oContextCreated = Context.create(oModel, oParentBinding, "/Foo/-1"),
-			oBindingCreated = new Binding(oModel, "bar", oContextCreated),
-			oContext0 = Context.create(oModel, oParentBinding, "/Foo/0"),
-			oBinding0 = new Binding(oModel, "bar", oContext0),
-			oBindingUnresolved = new Binding(oModel, "baz");
-
-		this.mock(oContextCreated).expects("created").withExactArgs()
-			.returns(_SyncPromise.resolve());
-
-		// to be called by V4 binding's c'tors
-		oModel.bindingCreated(oBindingCreated);
-		oModel.bindingCreated(oBinding0);
-		oModel.bindingCreated(oBindingUnresolved);
-
-		// code under test
-		assert.deepEqual(oModel.getDependentBindings(oParentBinding), [oBindingCreated, oBinding0]);
-		assert.deepEqual(oModel.getDependentBindings(oParentBinding, true), [oBinding0]);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("createBindingContext - absolute path, no context", function (assert) {
 		var oBindingContext,
 			oModel = createModel();

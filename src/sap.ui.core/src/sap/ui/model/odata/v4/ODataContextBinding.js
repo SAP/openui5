@@ -47,17 +47,17 @@ sap.ui.define([
 	 *   For other events, an error is thrown.
 	 *
 	 *   A context binding can also be used as an <i>operation binding</i> to support bound actions,
-	 *   action imports and function imports. If you want to control the execution time of an
-	 *   operation, for example a function import named "GetNumberOfAvailableItems", create a
-	 *   context binding for the path "/GetNumberOfAvailableItems(...)" (as specified here,
+	 *   action imports, bound functions and function imports. If you want to control the execution
+	 *   time of an operation, for example a function import named "GetNumberOfAvailableItems",
+	 *   create a context binding for the path "/GetNumberOfAvailableItems(...)" (as specified here,
 	 *   including the three dots). Such an operation binding is <i>deferred</i>, meaning that it
 	 *   does not request automatically, but only when you call {@link #execute}. {@link #refresh}
-	 *   is always ignored for actions and action imports. For function imports, it is ignored if
-	 *   {@link #execute} has not yet been called. Afterwards it results in another call of the
-	 *   function with the parameter values of the last execute.
+	 *   is always ignored for actions and action imports. For bound functions and function imports,
+	 *   it is ignored if {@link #execute} has not yet been called. Afterwards it results in another
+	 *   call of the function with the parameter values of the last execute.
 	 *
-	 *   The binding parameter for bound actions may be given in the binding path, for example
-	 *   "/SalesOrderList('42')/name.space.SalesOrder_Confirm". This can be
+	 *   The binding parameter for bound actions or bound functions may be given in the binding
+	 *   path, for example "/SalesOrderList('42')/name.space.SalesOrder_Confirm". This can be
 	 *   used if the exact entity for the binding parameter is known in advance. If you use a
 	 *   relative binding instead, the operation path is a concatenation of the parent context's
 	 *   canonical path and the deferred binding's path.
@@ -192,12 +192,10 @@ sap.ui.define([
 					if (!vMetadata) {
 						throw new Error("Unknown operation: " + sOperationName);
 					}
-					if (Array.isArray(vMetadata) && vMetadata[0].$kind === "Action") {
+					if (Array.isArray(vMetadata)
+							&& (vMetadata[0].$kind === "Action"
+								|| vMetadata[0].$kind === "Function")) {
 						return vMetadata;
-					}
-					if (Array.isArray(vMetadata) && vMetadata[0].$kind === "Function") {
-						throw new Error("Functions without import not supported: "
-							+ sOperationName);
 					}
 					if (vMetadata.$kind === "ActionImport") {
 						return oMetaModel.fetchObject("/" + vMetadata.$Action);
@@ -221,10 +219,13 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
+	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
+	 *   A change reason, used to distinguish calls by {@link #constructor} from calls by
+	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#changeParameters}
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.applyParameters = function (mParameters) {
+	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
 		var oBindingParameters;
 
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
@@ -234,9 +235,16 @@ sap.ui.define([
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mParameters = mParameters;
-		this.fetchCache(this.oContext);
 		if (!this.oOperation) {
-			this.checkUpdate();
+			this.fetchCache(this.oContext);
+			if (sChangeReason) {
+				this.refreshInternal(undefined, true);
+			} else {
+				this.checkUpdate();
+			}
+		} else if (this.oOperation.bAction === false) {
+			// Note: sChangeReason ignored here, "filter"/"sort" not suitable for ContextBinding
+			this.execute();
 		}
 	};
 
@@ -601,21 +609,21 @@ sap.ui.define([
 					that._fireChange({reason : ChangeReason.Refresh});
 				}
 			}
-			if (oCache) {
-				that.fetchCache(that.oContext);
-				if (!that.oOperation) {
+			if (!that.oOperation) {
+				if (oCache) {
+					that.fetchCache(that.oContext);
 					that.sRefreshGroupId = sGroupId;
 					that.mCacheByContext = undefined;
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events
-				} else if (!that.oOperation.bAction) {
-					// ignore returned promise, error handling takes place in execute
-					that.execute(sGroupId);
 				}
+				that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+					oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
+				});
+			} else if (that.oOperation.bAction === false) {
+				// ignore returned promise, error handling takes place in execute
+				that.execute(sGroupId);
 			}
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
-			});
 		});
 	};
 
@@ -674,6 +682,7 @@ sap.ui.define([
 			throw new Error("Missing value for parameter: " + sParameterName);
 		}
 		this.oOperation.mParameters[sParameterName] = vValue;
+		this.oOperation.bAction = undefined; // "not yet executed"
 		return this;
 	};
 

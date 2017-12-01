@@ -9,15 +9,18 @@ sap.ui.define([
 ], function (jQuery, _Helper, _MetadataConverter) {
 	"use strict";
 
-	var sEdmxNamespace = "http://docs.oasis-open.org/odata/ns/edmx",
-		V4MetadataConverter,
+	var V4MetadataConverter,
 		oAnnotationConfig = _MetadataConverter.oAnnotationConfig,
 		oAliasConfig = {
+			__xmlns : _MetadataConverter.sEdmxNamespace,
 			"Reference" : {
 				"Include" : {__processor : _MetadataConverter.processAlias}
 			},
 			"DataServices" : {
-				"Schema" : {__processor : _MetadataConverter.processAlias}
+				"Schema" : {
+					__xmlns :  _MetadataConverter.sEdmNamespace,
+					__processor : _MetadataConverter.processAlias
+				}
 			}
 		},
 		oStructuredTypeConfig = {
@@ -54,10 +57,12 @@ sap.ui.define([
 			}
 		},
 		oFullConfig = {
+			__xmlns : _MetadataConverter.sEdmxNamespace,
 			__processor : processEdmx,
 			__include : [_MetadataConverter.oReferenceInclude],
 			"DataServices" : {
 				"Schema" : {
+					__xmlns :  _MetadataConverter.sEdmNamespace,
 					__processor : processSchema,
 					__include : [_MetadataConverter.oAnnotationsConfig, oAnnotationConfig],
 					"Action" : {
@@ -546,7 +551,8 @@ sap.ui.define([
 				"sap.ui.model.odata.v4.lib._V4MetadataConverter");
 
 			oElement = oDocument.documentElement;
-			if (oElement.localName !== "Edmx" || oElement.namespaceURI !== sEdmxNamespace) {
+			if (oElement.localName !== "Edmx"
+					|| oElement.namespaceURI !== _MetadataConverter.sEdmxNamespace) {
 				throw new Error(sUrl + " is not a valid OData V4 metadata document");
 			}
 			oAggregate = {
@@ -564,6 +570,7 @@ sap.ui.define([
 				"reference" : null, // the current Reference
 				"schema" : null, // the current Schema
 				"type" : null, // the current EntityType/ComplexType
+				"xmlns" : null, // the expected XML namespace
 				"result" : {}
 			};
 
