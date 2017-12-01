@@ -28,15 +28,14 @@ The library provides the Support Assistant tool. It enables application develope
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.support",
-		// Loading sap.ui.codeeditor is moved to overlay.html to make sure it is loaded from the correct origin.
-		dependencies : ["sap.ui.core", "sap.ui.fl", "sap.m", "sap.ui.layout"],
+		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.support.Severity"
 		],
 		interfaces: [],
 		controls: [],
 		elements: [],
-		noLibraryCSS: false,
+		noLibraryCSS: true,
 		version: "${version}",
 		extensions: {
 			//Configuration used for rule loading of Support Assistant

@@ -480,17 +480,18 @@ sap.ui.define([
 				.then(function success() {
 					this.close();
 					var aSettings = [oSettings.support];
-					jQuery.sap.registerModulePath("sap.ui.support", sUrl);
-					sap.ui.require(["sap/ui/support/Bootstrap"], function (oBootstrap) {
-						if (oSettings.window) {
-							aSettings.push("window");
-						}
+					sap.ui.getCore().loadLibrary("sap.ui.support", { async: true, url: sUrl })
+						.then(function () {
+							if (oSettings.window) {
+								aSettings.push("window");
+							}
 
-						if (aSettings[0].toLowerCase() === "true" || aSettings[0].toLowerCase() === "silent") {
-							oBootstrap.initSupportRules(aSettings);
-						}
-					});
-
+							if (aSettings[0].toLowerCase() === "true" || aSettings[0].toLowerCase() === "silent") {
+								sap.ui.require(["sap/ui/support/Bootstrap"], function (oBootstrap) {
+									oBootstrap.initSupportRules(aSettings);
+								});
+							}
+						});
 				}, function error(jqXHR, exception) {
 					var msg = this._getText("TechInfo.SupportAssistantConfigPopup.SupportAssistantNotFound");
 					if (jqXHR.status === 0) {
