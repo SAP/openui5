@@ -247,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 			return this;
 		}
 		// Set the property in any case but check validity on output
-		this.setProperty("value", sValue, true);
+		this.setProperty("value", sValue);
 		this._bValid = true;
 
 		// Convert to date object(s)
@@ -255,20 +255,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 		if (sValue) {
 			aDates = this._parseValue(sValue);
-			this._oWantedDate = aDates[0];
-			this._oWantedSecondDate = aDates[1];
-			aDates = _dateRangeValidityCheck.call(this, aDates[0], aDates[1]);
-			if (!aDates[0]) {
+			if (!_dateRangeValidityCheck.call(this, aDates[0], aDates[1])[0]) {//aDates can be undefined if don't fit to the min/max range
 				this._bValid = false;
 				jQuery.sap.log.warning("Value can not be converted to a valid dates", this);
 			}
 		}
-		if (this._bValid) {
-			this.setProperty("dateValue", _normalizeDateValue(aDates[0]), true);
-			this.setProperty("secondDateValue", _normalizeDateValue(aDates[1]), true);
-			this._oWantedDate = undefined;
-			this._oWantedSecondDate = undefined;
-		}
+
+		this.setProperty("dateValue", _normalizeDateValue(aDates[0]));
+		this.setProperty("secondDateValue", _normalizeDateValue(aDates[1]));
 
 		// Do not call InputBase.setValue because the displayed value and the output value might have different pattern
 		if (this.getDomRef()) {
@@ -417,37 +411,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 			return this;
 		}
 
-		if (oDateValue && (oDateValue.getTime() < this._oMinDate.getTime() || oDateValue.getTime() > this._oMaxDate.getTime())) {
-			this._bValid = false;
-			jQuery.sap.assert(this._bValid, "Date must be in valid range");
-			this._oWantedDate = oDateValue;
-			oDateValue = undefined; // don't use wrong date to determine sValue
-		}else {
-			this._bValid = true;
-			this.setProperty("dateValue", oDateValue, true); // no rerendering
-			this._oWantedDate = undefined;
-		}
-
-		var oSecondDateValue = this.getSecondDateValue();
-		// Convert date object(s) to value
-		var sValue = this._formatValue(oDateValue, oSecondDateValue);
-
-		if (sValue !== this.getValue()) {
-			this._lastValue = sValue;
-		}
-		// Set the property in any case but check validity on output
-		this.setProperty("value", sValue, true);
-
-		if (this.getDomRef()) {
-			// convert to output
-			var sOutputValue = this._formatValue(oDateValue, oSecondDateValue);
-
-			if (this._$input.val() !== sOutputValue) {
-				this._$input.val(sOutputValue);
-				this._setLabelVisibility();
-				this._curpos = this._$input.cursorPos();
-			}
-		}
+		DatePicker.prototype._dateValidation.call(this, oDateValue); //will handle everything related to set a dateValue
+		this._syncDateObjectsToValue(oDateValue, this.getSecondDateValue());
 
 		return this;
 
@@ -463,40 +428,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 			return this;
 		}
 
+		this._bValid = true;
+
 		if (oSecondDateValue && (oSecondDateValue.getTime() < this._oMinDate.getTime() || oSecondDateValue.getTime() > this._oMaxDate.getTime())) {
 			this._bValid = false;
 			jQuery.sap.assert(this._bValid, "Date must be in valid range");
-			this._oWantedSecondDate = oSecondDateValue;
-			oSecondDateValue = undefined; // don't use wrong date to determine sValue
-		}else {
-			this._bValid = true;
-			this.setProperty("secondDateValue", oSecondDateValue, true); // no rerendering
-			this._oWantedSecondDate = undefined;
 		}
 
-		var oDateValue = this.getDateValue();
-		// Convert date object(s) to value
-		var sValue = this._formatValue(oDateValue, oSecondDateValue);
-
-		if (sValue !== this.getValue()) {
-			this._lastValue = sValue;
-		}
-		// Set the property in any case but check validity on output
-		this.setProperty("value", sValue, true);
-
-		if (this.getDomRef()) {
-			// convert to output
-			var sOutputValue = this._formatValue(oDateValue, oSecondDateValue);
-
-			if (this._$input.val() !== sOutputValue) {
-				this._$input.val(sOutputValue);
-				this._setLabelVisibility();
-				this._curpos = this._$input.cursorPos();
-			}
-		}
+		this.setProperty("secondDateValue", oSecondDateValue);
+		this._syncDateObjectsToValue(this.getDateValue(), oSecondDateValue);
 
 		return this;
-
 	};
 
 	DateRangeSelection.prototype.setMinDate = function(oDate) {
@@ -506,8 +448,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 		if (oDate) {
 			var oSecondDateValue = this.getSecondDateValue();
 			if (oSecondDateValue && oSecondDateValue.getTime() < this._oMinDate.getTime()) {
-				jQuery.sap.log.warning("SecondDateValue not in valid date -> changed to minDate", this);
-				this.setSecondDateValue(new Date(this._oMinDate.getTime()));
+				jQuery.sap.log.warning("SecondDateValue not in valid date range", this);
 			}
 		}
 
@@ -522,8 +463,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 		if (oDate) {
 			var oSecondDateValue = this.getSecondDateValue();
 			if (oSecondDateValue && oSecondDateValue.getTime() > this._oMaxDate.getTime()) {
-				jQuery.sap.log.warning("SecondDateValue not in valid date -> changed to maxDate", this);
-				this.setSecondDateValue(new Date(this._oMaxDate.getTime()));
+				jQuery.sap.log.warning("SecondDateValue not in valid date range", this);
 			}
 		}
 
@@ -535,9 +475,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 		DatePicker.prototype._checkMinMaxDate.apply(this, arguments);
 
-		// check if wanted date now in range
-		if (this._oWantedSecondDate && this._oWantedSecondDate.getTime() >= this._oMinDate.getTime() && this._oWantedSecondDate.getTime() <= this._oMaxDate.getTime()) {
-			this.setSecondDateValue(this._oWantedSecondDate);
+		var oSecondDate = this.getSecondDateValue();
+
+		if (oSecondDate &&
+			(oSecondDate.getTime() < this._oMinDate.getTime() || oSecondDate.getTime() > this._oMaxDate.getTime())) {
+			jQuery.sap.log.error("secondDateValue " + oSecondDate.toString() + "(value=" + this.getValue() + ") does not match " +
+				"min/max date range(" + this._oMinDate.toString() + " - " + this._oMaxDate.toString() + "). App. " +
+				"developers should take care to maintain secondDateValue/value accordingly.", this);
 		}
 
 	};
@@ -671,12 +615,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 		var sValue = this._$input.val();
 		var aDates = [undefined, undefined];
-		this._oWantedDate = undefined;
-		this._oWantedSecondDate = undefined;
+
 		this._bValid = true;
 		if (sValue != "") {
 			aDates = this._parseValue(sValue);
-			aDates = _dateRangeValidityCheck.call(this, aDates[0], aDates[1]);
+			aDates = _dateRangeValidityCheck.call(this, aDates[0], aDates[1]);//aDates can be undefined if don't fit to the min/max range
 			if (aDates[0]) {
 				sValue = this._formatValue( aDates[0], aDates[1] ); // to have the right output format if entered different
 			} else {
@@ -782,7 +725,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 		var oEndDate = this.getSecondDateValue();
 
-		if (oEndDate) {
+		if (oEndDate &&
+			oEndDate.getTime() >= this._oMinDate.getTime() &&
+			oEndDate.getTime() <= this._oMaxDate.getTime()) {
 			if (!this._oDateRange.getEndDate() || this._oDateRange.getEndDate().getTime() !== oEndDate.getTime()) {
 				this._oDateRange.setEndDate(new Date(oEndDate.getTime()));
 			}
@@ -857,6 +802,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 		}
 		oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
 		return oInfo;
+	};
+
+
+	/**
+	 * Convert date object(s) to value and sets it to property <value>, rrespectively updates the DOM
+	 */
+	DateRangeSelection.prototype._syncDateObjectsToValue = function (oDateValue, oSecondDateValue){
+		var sValue = this._formatValue(oDateValue, oSecondDateValue);
+
+		if (sValue !== this.getValue()) {
+			this._lastValue = sValue;
+		}
+		// Set the property in any case but check validity on output
+		this.setProperty("value", sValue);
+
+		if (this.getDomRef()) {
+			// convert to output
+			var sOutputValue = this._formatValue(oDateValue, oSecondDateValue);
+
+			if (this._$input.val() !== sOutputValue) {
+				this._$input.val(sOutputValue);
+				this._setLabelVisibility();
+				this._curpos = this._$input.cursorPos();
+			}
+		}
 	};
 
 	function _fireChange(bValid) {
