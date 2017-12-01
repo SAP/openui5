@@ -1162,7 +1162,7 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._setTitleOnCreatedVariant = function() {
 		var oVariantManagementControlOverlay = this.getPlugins()["controlVariant"].getVariantManagementControlOverlay();
 		if (oVariantManagementControlOverlay) {
-			oVariantManagementControlOverlay.setSelected(true);
+
 			var oDelegate = {
 				"onAfterRendering" : function() {
 					// TODO : remove timeout
@@ -1174,6 +1174,8 @@ sap.ui.define([
 			};
 
 			oVariantManagementControlOverlay.addEventDelegate(oDelegate);
+			//Important to trigger re-rendering
+			oVariantManagementControlOverlay.invalidate();
 		}
 	};
 
