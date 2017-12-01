@@ -138,7 +138,7 @@
 	});
 
 
-	QUnit.test("setPercentValue with various values", function(assert) {
+	QUnit.test("setPercentValue to various values", function(assert) {
 		var oProgressIndicator = new sap.m.ProgressIndicator({
 			percentValue: 0
 		}),
@@ -153,7 +153,9 @@
 			{value: 0.255, expectedClass: "sapMPIValueNormal"},
 			{value: 101, expectedClass: "sapMPIValueMax"},
 			{value: 0, expectedClass: "sapMPIValueMin"},
-			{value: -1, expectedClass: "sapMPIValueMin"}
+			{value: -1, expectedClass: "sapMPIValueMin"},
+			{value: null, expectedClass: "sapMPIValueMin"}, // null is normalized to 0 by the framework
+			{value: undefined, expectedClass: "sapMPIValueMin"} // null is normalized to 0 by the framework
 		],
 		fnTestForClassesToValuesMapping = function (fPercentValueToSet, sExpectedClass){
 			oProgressIndicator.setPercentValue(fPercentValueToSet);
@@ -167,6 +169,31 @@
 
 		aTestCases.forEach(function (oTestCase){
 			fnTestForClassesToValuesMapping(oTestCase.value, oTestCase.expectedClass);
+		});
+
+		oProgressIndicator.destroy();
+	});
+
+	QUnit.test("setPercentValue to not valid type of values", function(assert) {
+		var oProgressIndicator = new sap.m.ProgressIndicator({percentValue: 0}),
+				$progressIndicator,
+				aNotValidTypes = ["110", "110abc", {}, []],
+				fnTestPercentValue = function (fPercentValueToSet){
+
+					assert.throws(
+							function() {
+								oProgressIndicator.setPercentValue(fPercentValueToSet);
+							},
+							"throws error: expected type 'float' for property 'percentValue'"
+					);
+				};
+
+		oProgressIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$progressIndicator = oProgressIndicator.$();
+
+		aNotValidTypes.forEach(function (vValue){
+			fnTestPercentValue(vValue);
 		});
 
 		oProgressIndicator.destroy();
