@@ -68,16 +68,24 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.renderItems = function(oRm, oList) {
-			var iSize = oList.getItems().length,
-				oSelectedItem = oList.getSelectedItem();
+			var iSize = oList._getNonSeparatorItemsCount(),
+				aItems = oList.getItems(),
+				oSelectedItem = oList.getSelectedItem(),
+				iCurrentPosInSet = 1,
+				oItemStates;
 
-			for (var i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
-				this.renderItem(oRm, oList, aItems[i], {
+			for (var i = 0; i < aItems.length; i++) {
+				oItemStates = {
 					selected: oSelectedItem === aItems[i],
 					setsize: iSize,
-					posinset: i + 1,
 					elementData: true
-				});
+				};
+
+				if (!(aItems[i] instanceof sap.ui.core.SeparatorItem)) {
+					oItemStates.posinset = iCurrentPosInSet++;
+				}
+
+				this.renderItem(oRm, oList, aItems[i], oItemStates);
 			}
 		};
 

@@ -674,6 +674,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
+		 * Returns how many items, which are not separators, are in the SelectList
+		 *
+		 * returns {int}
+		 * @private
+		 */
+		SelectList.prototype._getNonSeparatorItemsCount = function () {
+			return this.getItems().filter(function(oItem) {
+				return !(oItem instanceof sap.ui.core.SeparatorItem);
+			}).length;
+		};
+
+		/**
 		 * Retrieves the default selected item from the aggregation named <code>items</code>.
 		 *
 		 * @param {sap.ui.core.Item[]} [aItems]
