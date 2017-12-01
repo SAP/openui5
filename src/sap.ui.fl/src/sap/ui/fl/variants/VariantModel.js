@@ -91,8 +91,18 @@ sap.ui.define([
 	 * @private
 	 */
 	VariantModel.prototype.updateCurrentVariant = function(sVariantManagementReference, sNewVariantReference) {
-		var sCurrentVariantReference = this.oData[sVariantManagementReference].originalCurrentVariant;
-		var mChangesToBeSwitched = this.oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(sVariantManagementReference, sCurrentVariantReference, sNewVariantReference);
+		var sCurrentVariantReference, mChangesToBeSwitched;
+
+		sCurrentVariantReference = this.oData[sVariantManagementReference].originalCurrentVariant;
+
+		//Delete dirty personalized changes
+		if (this.oData[sVariantManagementReference].modified) {
+			var aVariantControlChanges = this.oVariantController.getVariantChanges(sVariantManagementReference, sCurrentVariantReference);
+			this._removeDirtyChanges(aVariantControlChanges, sVariantManagementReference, sCurrentVariantReference);
+			this.oData[sVariantManagementReference].modified = false;
+		}
+
+		mChangesToBeSwitched = this.oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(sVariantManagementReference, sCurrentVariantReference, sNewVariantReference);
 
 		var oAppComponent = Utils.getAppComponentForControl(this.oComponent);
 
@@ -156,6 +166,24 @@ sap.ui.define([
 		var sVariantReference = oChange.getVariantReference();
 		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference).variantManagementReference;
 		return this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
+	};
+
+	VariantModel.prototype._removeDirtyChanges = function(aVariantControlChanges, sVariantManagementReference, sVariantReference) {
+		var oAppComponent = Utils.getAppComponentForControl(this.oComponent);
+		var aChanges = aVariantControlChanges.map(function(oChange) {
+			return oChange.fileName;
+		});
+
+		var bFiltered;
+		var aDirtyChanges = this.oFlexController._oChangePersistence.getDirtyChanges().filter(function(oChange) {
+			bFiltered = aChanges.indexOf(oChange.getDefinition().fileName) > -1;
+			if (bFiltered) {
+				this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
+			}
+			return bFiltered;
+		}.bind(this));
+
+		this.oFlexController.revertChangesOnControl(aDirtyChanges.reverse(), oAppComponent);
 	};
 
 	VariantModel.prototype._getVariantLabelCount = function(sNexText, sVariantManagementReference) {
@@ -242,6 +270,8 @@ sap.ui.define([
 			favorite: true,
 			originalFavorite: true,
 			rename: true,
+			//TODO: See line 70
+			change: true,
 			remove: true,
 			visible: true
 		};
@@ -491,7 +521,7 @@ sap.ui.define([
 
 		if (oAppComponent) {
 			sVariantManagementReference = this._getLocalId(sVariantManagementReference, oAppComponent);
-			this.oFlexController._oChangePersistence.saveDirtyChanges();
+			this.oFlexController.saveAll();
 		}
 
 		this.oData[sVariantManagementReference].modified = false;
@@ -585,6 +615,7 @@ sap.ui.define([
 			this._addChange(oChange);
 			aPromises.push(function() {
 				this.oFlexController._oChangePersistence.addDirtyChange(oChange);
+				this.oFlexController._oChangePersistence._addChangeAndUpdateDependencies(oAppComponent, oChange);
 				return this.oFlexController.checkTargetAndApplyChange(oChange, oSelectorControl, mPropertyBag);
 			}.bind(this));
 		}.bind(this));

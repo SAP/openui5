@@ -79,7 +79,9 @@ sap.ui.define([
 			}
 		},
 
-		createChanges: function() {
+		createChanges: function(oEvent) {
+			var oButton = oEvent.getSource();
+			oButton.setEnabled(false);
 			var oAppComponent = Utils.getAppComponentForControl(sap.ui.core.Component.getOwnerComponentFor(this.getView()));
 			var oModel = oAppComponent.getModel("$FlexVariants");
 
@@ -90,42 +92,40 @@ sap.ui.define([
 				layer: sap.ui.fl.Utils.getCurrentLayer()
 			});
 
-			var oControl = sap.ui.getCore().byId(oAppComponent.createId("idMain1--MainForm"));
-
 			var mBaseChangeData1  = {
-				changeType: "hideSimpleFormField",
-				removedElement: {
-					id: oAppComponent.createId("idMain1--EntityType02.Label1")
+				changeType: "moveControls",
+				movedElements: [{
+					"id": oAppComponent.createId("idMain1--ObjectPageSectionWithForm"),
+					"sourceIndex": 0,
+					"targetIndex": 1
+				}],
+				source: {
+					"id": oAppComponent.createId("idMain1--ObjectPageLayout"),
+					"aggregation": "sections"
+				},
+				target: {
+					"id": oAppComponent.createId("idMain1--ObjectPageLayout"),
+					"aggregation": "sections"
 				}
 			};
 			var mBaseChangeData2  = {
-				changeType: "hideSimpleFormField",
-				removedElement: {
-					id: oAppComponent.createId("idMain1--EntityType02.Label4")
-				}
-			};
-			var mBaseChangeData3  = {
-				changeType: "renameTitle",
+				changeType: "rename",
 				renamedElement: {
-					id: "__container2"
+					id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm")
 				},
-				value: "Renamed Label"
+				value : "Personalization Test"
 			};
 
-			var oRemoveChange1 = oModel.oFlexController.createChange(
+			var oMoveChange = oModel.oFlexController.createChange(
 				jQuery.extend(mChangeSpecificData, mBaseChangeData1),
-				oControl,
+				sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
 				oAppComponent);
-			var oRemoveChange2 = oModel.oFlexController.createChange(
+			var oRenameChange = oModel.oFlexController.createChange(
 				jQuery.extend(mChangeSpecificData, mBaseChangeData2),
-				oControl,
-				oAppComponent);
-			var oRenameChange1 = oModel.oFlexController.createChange(
-				jQuery.extend(mChangeSpecificData, mBaseChangeData3),
-				oControl,
+				sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSectionWithForm")),
 				oAppComponent);
 
-			oModel.addControlChangesToVariant([oRemoveChange1, oRemoveChange2, oRenameChange1], oAppComponent.createId("idMain1--variantManagementOrdersTable"));
+			oModel.addControlChangesToVariant([oMoveChange, oRenameChange], oAppComponent.createId("idMain1--variantManagementOrdersTable"));
 		},
 
 		isDataReady: function () {
