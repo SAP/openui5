@@ -448,6 +448,11 @@ sap.ui.define([
 		// Create DesignTime
 		if (!this._oDesignTime) {
 			this._oRootControl = sap.ui.getCore().byId(this.getRootControl());
+			if (!this._oRootControl){
+				var vError = "Could not start Runtime Adaptation: Root control not found";
+				FlexUtils.log.error(vError);
+				return Promise.reject(vError);
+			}
 			//Check if the application has personalized changes and reload without them
 			return this._handlePersonalizationChangesOnStart()
 			.then(function(bReloadTriggered){
