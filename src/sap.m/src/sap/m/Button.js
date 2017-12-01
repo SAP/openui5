@@ -255,6 +255,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// set active button state
 			this._activeButton();
 		}
+
+		if (oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+			this.firePress({/* no parameters */});
+		}
 	};
 
 	/**
@@ -272,6 +276,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// set inactive button state
 			this._inactiveButton();
+		}
+
+		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
 			this.firePress({/* no parameters */});
 		}
 	};
