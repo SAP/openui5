@@ -1,5 +1,5 @@
 /* override background color for non-accessibility themes */
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .customBackground section {
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .customBackground section {
 	background-color: #bad0e3;
 }
 
@@ -17,5 +17,5 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .customBackground section
 	padding: 1rem;
 	font-size: 1.5rem;
 	width: 100%;
-	text-shadow: 0 0 0.125rem #000000;
+	text-shadow: 0 0 0.125rem black;
 }
