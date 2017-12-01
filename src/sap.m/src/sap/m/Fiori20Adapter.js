@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			return false;
 		}
 		var oParent = oHeader.getParent();
-		return oParent && (isInstanceOf(oParent, "sap/m/Page") || isInstanceOf(oParent, "sap/uxap/ObjectPageHeader"));
+		return oParent && (isInstanceOf(oParent, "sap/m/Page") || isInstanceOf(oParent, "sap/m/MessagePage") || isInstanceOf(oParent, "sap/uxap/ObjectPageHeader"));
 	};
 
 	HeaderAdapter.prototype._detectTitle = function() {

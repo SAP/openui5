@@ -7,21 +7,24 @@ sap.ui.define([
 	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/library',
-	'sap/m/library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/m/Text',
-	'sap/m/VBox',
-	'sap/m/Page',
-	'sap/m/Image'
-], function(jQuery, library, coreLibrary, mobileLibrary, Control, IconPool, Text, VBox, Page, Image) {
+	'sap/m/Image',
+	'sap/m/Button',
+	'sap/m/Title',
+	'sap/m/FormattedText'
+], function(jQuery, library, coreLibrary, Control, IconPool, Text, Image, Button, Title, FormattedText) {
 		"use strict";
 
 		var TextAlign = coreLibrary.TextAlign;
 		var TextDirection = coreLibrary.TextDirection;
 
-		var FlexJustifyContent = mobileLibrary.FlexJustifyContent;
-		var FlexAlignItems = mobileLibrary.FlexAlignItems;
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
+
+		// shortcut for sap.m.BarDesign
+		var BarDesign = library.BarDesign;
 
 		/**
 		 * Constructor for a new MessagePage.
@@ -91,7 +94,16 @@ sap.ui.define([
 				/**
 				 * Determines the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 */
-				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+
+				/**
+				 * Defines whether the value set in the <code>description</code> property is displayed
+				 * as formatted text in HTML format.
+				 *
+				 * For details regarding supported HTML tags, see {@link sap.m.FormattedText}
+				 * @since 1.54
+				 */
+				enableFormattedText: { type: "boolean", group: "Appearance", defaultValue: false }
 			},
 			aggregations : {
 				/**
@@ -106,10 +118,35 @@ sap.ui.define([
 				 * "description" and "textDirection" setters can be used for this aggregation.
 				 */
 				customDescription : {type : "sap.m.Link", multiple : false},
+
 				/**
-				 * A Page control which is managed internally by the MessagePage control.
+				 * The buttons displayed under the description text.
+				 *
+				 * <b>Note:</b> Buttons added to this aggregation are both vertically and horizontally
+				 * centered. Depending on the available space, they may be rendered on several lines.
+				 * @since 1.54
 				 */
-				_page : {type : "sap.m.Page", multiple : false, visibility : "hidden"}
+				buttons: {type: "sap.m.Button", multiple: true},
+
+				/**
+				 * A header bar which is managed internally by the MessagePage control.
+				 */
+				_internalHeader: {type: "sap.m.Bar", multiple: false, visibility: "hidden"},
+
+				/**
+				 * The formatted text which is used when enableFormattedText is true.
+				 */
+				_formattedText: {type: "sap.m.FormattedText", multiple: false, visibility: "hidden" },
+
+				/**
+				 * The text displayed under the icon.
+				 */
+				_text: {type: "sap.m.Text", multiple: false, visibility: "hidden"},
+
+				/**
+				 * The description displayed under the text when enableFormattedText is false.
+				 */
+				_description: {type: "sap.m.Text", multiple: false, visibility: "hidden"}
 			},
 			associations : {
 
@@ -133,145 +170,134 @@ sap.ui.define([
 		}});
 
 		MessagePage.prototype.init = function() {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				oTitle = new Title(this.getId() + "-title");
 
-			this.setAggregation("_page", new Page({
-				id: this.getId() + "-page",
-				showHeader : this.getShowHeader(),
-				navButtonPress : jQuery.proxy(function() {
+			this._oNavButton = new Button(this.getId() + "-navButton", {
+				type: ButtonType.Back,
+				press: jQuery.proxy(function () {
 					this.fireNavButtonPress();
 				}, this)
+			});
+
+			this.setAggregation("_internalHeader", new sap.m.Bar(this.getId() + "-intHeader", {
+				design: BarDesign.Header,
+				contentMiddle: [ oTitle ]
 			}));
+
 			this.setProperty("text", oBundle.getText("MESSAGE_PAGE_TEXT"), true);
 			this.setProperty("description", oBundle.getText("MESSAGE_PAGE_DESCRIPTION"), true);
 		};
 
-		MessagePage.prototype.onBeforeRendering = function() {
-			// Don't want controls to be added again on re-rendering
-			if (!(this._oText && this._oDescription)) {
-				this._addPageContent();
-			}
-		};
-
 		MessagePage.prototype.exit = function() {
-			var oPage = this.getAggregation("_page");
-
-			if (oPage) {
-				oPage.destroy();
-				oPage = null;
-			}
-
-			if (this._oVBox) {
-				this._oVBox = null;
-			}
-
-			if (this._oText) {
-				this._oText = null;
-			}
-
-			if (this._oDescription) {
-				this._oDescription = null;
+			if (this._oNavButton) {
+				this._oNavButton.destroy();
+				this._oNavButton = null;
 			}
 
 			if (this._oIconControl) {
+				this._oIconControl.destroy();
 				this._oIconControl = null;
 			}
 		};
 
 		MessagePage.prototype.setTitle = function(sTitle) {
 			this.setProperty("title", sTitle, true); // no re-rendering
-			this.getAggregation("_page").setTitle(sTitle);
+
+			var oTitle = this._getInternalHeader().getContentMiddle()[0];
+			oTitle.setText(sTitle);
+
 			return this;
 		};
 
 		MessagePage.prototype.setText = function(sText) {
 			this.setProperty("text", sText, true); // no re-rendering
-			this._oText && this._oText.setText(sText);
+
+			var oText = this.getAggregation("_text");
+			oText && oText.setText(sText);
+
 			return this;
 		};
 
 		MessagePage.prototype.setDescription = function(sDescription) {
 			this.setProperty("description", sDescription, true); // no re-rendering
-			this._oDescription && this._oDescription.setText(sDescription);
-			return this;
-		};
 
-		MessagePage.prototype.setShowHeader = function(bShowHeader) {
-			this.setProperty("showHeader", bShowHeader, true); // no re-rendering
-			this.getAggregation("_page").setShowHeader(bShowHeader);
+			var oFormattedText = this.getAggregation("_formattedText"),
+				oDescription = this.getAggregation("_description");
+			oFormattedText && oFormattedText.setHtmlText(sDescription);
+			oDescription && oDescription.setText(sDescription);
+
 			return this;
 		};
 
 		MessagePage.prototype.setShowNavButton = function(bShowNavButton) {
 			this.setProperty("showNavButton", bShowNavButton, true); // no re-rendering
-			this.getAggregation("_page").setShowNavButton(bShowNavButton);
+
+			var oHeader = this._getInternalHeader();
+
+			if (bShowNavButton) {
+				oHeader.addContentLeft(this._oNavButton);
+			} else {
+				oHeader.removeAllContentLeft();
+			}
+
 			return this;
 		};
 
 		MessagePage.prototype.setTextDirection = function(sTextDirection) {
 			this.setProperty("textDirection", sTextDirection, true); // no re-rendering
-			this._oText && this._oText.setTextDirection(sTextDirection);
-			this._oDescription && this._oDescription.setTextDirection(sTextDirection);
-			return this;
-		};
 
-		MessagePage.prototype.setIcon = function(sIconUri) {
-			var sOldIconUri = this.getIcon();
-			this.setProperty("icon", sIconUri, true); // no re-rendering
+			var oDomRef = this.getDomRef();
 
-			if (this._oIconControl) {
-				// check if the value is changed and if URIs are from different type(icon or image)
-				// in order to avoid destroying and creating of icon control
-				if (sOldIconUri !== sIconUri && IconPool.isIconURI(sOldIconUri) !== IconPool.isIconURI(sIconUri)) {
-					var oPage = this.getAggregation("_page");
-
-					oPage.removeContent(this._oIconControl); // remove current the current Icon or Image control
-					oPage.insertContent(this._getIconControl(), 0); // insert new Icon or Image control
+			if (oDomRef) {
+				if (sTextDirection === TextDirection.Inherit) {
+					oDomRef.removeAttribute("dir");
 				} else {
-					this._oIconControl.setSrc(sIconUri); // just update the current Icon control
+					oDomRef.dir = sTextDirection.toLowerCase();
 				}
 			}
+
 			return this;
 		};
 
-		MessagePage.prototype.setIconAlt = function(sIconAlt) {
-			this.setProperty("iconAlt", sIconAlt, true); // no re-rendering
-			if (this._oIconControl) {
-				this._oIconControl.setAlt(sIconAlt);
+		MessagePage.prototype.setIcon = function(sIcon) {
+			var sValue = this.getIcon() || "";
+				sIcon = sIcon || "";
+
+			if (sValue !== sIcon) {
+				var bSupressRendering = !!sValue && !!sIcon && IconPool.isIconURI(sIcon) === IconPool.isIconURI(sValue);
+				this.setProperty("icon", sIcon, bSupressRendering);
+				if (bSupressRendering && this._oIconControl) {
+					this._oIconControl.setSrc(sIcon);
+				}
 			}
+
 			return this;
 		};
 
-		MessagePage.prototype._addPageContent = function() {
-			this.getAggregation("_page").addContent(this._getMessagePageContent());
-		};
+		MessagePage.prototype.setEnableFormattedText = function (bEnable) {
+			var oFormattedText;
 
-		MessagePage.prototype._getMessagePageContent = function() {
-			if (!this._oVBox) {
-				this._oVBox = new VBox(this.getId() + '-vbox', {
-					fitContainer: true,
-					justifyContent: FlexJustifyContent.Center,
-					alignItems: FlexAlignItems.Center,
-					items: [
-						this._getIconControl(),
-						this._getText(),
-						this._getDescription()
-					]
-				});
+			if (bEnable) {
+				oFormattedText = this._getFormattedText();
+				// Aways call setHtmlText - do not use a constructor property to avoid unwanted warnings for HTML elements
+				oFormattedText.setHtmlText(this.getDescription());
 			}
 
-			return this._oVBox;
+			return this.setProperty("enableFormattedText", bEnable);
 		};
 
 		MessagePage.prototype._getIconControl = function() {
 			if (this._oIconControl) {
 				this._oIconControl.destroy();
+				this._oIconControl = null;
 			}
 
 			this._oIconControl = IconPool.createControlByURI({
 				id: this.getId() + "-pageIcon",
 				src: this.getIcon(),
 				height: "8rem",
+				width: "8rem",
 				useIconTooltip: true,
 				decorative: false,
 				alt: this.getIconAlt()
@@ -280,40 +306,53 @@ sap.ui.define([
 			return this._oIconControl;
 		};
 
+		/**
+		 * @returns {sap.m.Link|sap.m.Text} the control which will display the MessagePage's text
+		 * @private
+		 */
 		MessagePage.prototype._getText = function() {
 			if (this.getAggregation("customText")) {
-				this._oText = this.getAggregation("customText");
-			} else {
-				this._oText = new Text({
+				return this.getAggregation("customText");
+			}
+
+			if (!this.getAggregation("_text")) {
+				var oText = new Text(this.getId() + "-text", {
 					id: this.getId() + "-customText",
 					text: this.getText(),
 					textAlign: TextAlign.Center,
 					textDirection: this.getTextDirection()
 				});
+				this.setAggregation("_text", oText);
 			}
 
-			this._oText.addStyleClass("sapMMessagePageMainText");
-
-			return this._oText;
+			return this.getAggregation("_text");
 		};
 
+		/**
+		 * @returns {sap.m.Link|sap.m.FormattedText|sap.m.Text} the control which will display the MessagePage's description
+		 * @private
+		 */
 		MessagePage.prototype._getDescription = function() {
 			if (this.getAggregation("customDescription")) {
-				this._oDescription = this.getAggregation("customDescription");
-			} else {
-				this._oDescription = new Text({
+				return this.getAggregation("customDescription");
+			}
+
+			if (this.getEnableFormattedText()) {
+				return this._getFormattedText();
+			}
+
+			if (!this.getAggregation("_description")) {
+				var oDescription = new Text(this.getId() + "-description", {
 					id: this.getId() + "-customDescription",
 					text: this.getDescription(),
 					textAlign: TextAlign.Center,
 					textDirection: this.getTextDirection()
 				});
+				this.setAggregation("_description", oDescription);
 			}
 
-			this._oDescription.addStyleClass("sapMMessagePageDescription");
-
-			return this._oDescription;
+			return this.getAggregation("_description");
 		};
-
 
 		/**
 		 * Returns the internal header
@@ -330,11 +369,25 @@ sap.ui.define([
 		 * @returns {sap.m.IBar} The header
 		 * @private
 		 */
-
 		MessagePage.prototype._getInternalHeader = function() {
-			return this.getAggregation("_page").getAggregation("_internalHeader");
+			return this.getAggregation("_internalHeader");
 		};
 
+		/**
+		 * Instantiates and returns the FormattedText object that is displayed when enableFormattedText is true.
+		 * @returns {sap.m.FormattedText}
+		 * @private
+		 */
+		MessagePage.prototype._getFormattedText = function() {
+			var oFormattedText = this.getAggregation("_formattedText");
+
+			if (!oFormattedText) {
+				oFormattedText = new FormattedText(this.getId() + "-formattedText");
+				this.setAggregation("_formattedText", oFormattedText);
+			}
+
+			return oFormattedText;
+		};
 
 		return MessagePage;
 	});
