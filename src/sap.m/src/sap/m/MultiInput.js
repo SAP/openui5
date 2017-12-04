@@ -205,7 +205,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 	MultiInput.prototype._onTokenChange = function (args) {
 		var aTokens = this.getTokens(),
-			iLength = aTokens.length;
+			iLength = aTokens.length,
+			bSuppressInvalidate = args.getParameter("suppressInvalidate");
 
 		this.fireTokenChange(args.getParameters());
 		this.invalidate();
@@ -222,7 +223,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		}
 
 		// if we add a token and we now have more than one token in an editable multi input in multi line mode and the multi line mode is not open
-		if (args.getParameter("type") === "added" && iLength > 1 && this.getEditable() && this._isMultiLineMode && !this.$("border").hasClass("sapMMultiInputMultiModeBorder")) {
+		if (args.getParameter("type") === "added" && iLength > 1 && this.getEditable() && this._isMultiLineMode && !this.$("border").hasClass("sapMMultiInputMultiModeBorder")
+			&& !bSuppressInvalidate) {
 			this._showIndicator(); // show the indicator
 		}
 
