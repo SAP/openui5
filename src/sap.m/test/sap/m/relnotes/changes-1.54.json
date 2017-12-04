@@ -367,6 +367,138 @@
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Appointments deselection fix",
         "references": []
+      },
+      {
+        "id": "689a818c2583b300739affd752157b52603a7117",
+        "type": "FEATURE",
+        "text": " ManagedObject(-Metadata): aggregation forwarding",
+        "references": []
+      },
+      {
+        "id": "ec66d8e2d246f807e5b259ccb75159943e184a9f",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Active state is now supported",
+        "references": []
+      },
+      {
+        "id": "19a9d2a71e5ec619622e96fc24f481c7570951bf",
+        "type": "FEATURE",
+        "text": " sap.m.RadioButton: Aria atributes added",
+        "references": []
+      },
+      {
+        "id": "8acb77a2b88ba8c3eb12df3cb50f91fb51bfe47e",
+        "type": "FIX",
+        "text": " Tree: update aria-expanded when expander changes",
+        "references": []
+      },
+      {
+        "id": "b86b8133d3f2c4585477d23c9742ca24fe38c14c",
+        "type": "FIX",
+        "text": " demokit: docuindex.json typo",
+        "references": []
+      },
+      {
+        "id": "bf930c7261e4e766e636ae485c7598c691113842",
+        "type": "FIX",
+        "text": " sap.m.ActionSelect: QUnit tests adjusted",
+        "references": []
+      },
+      {
+        "id": "9569e82d4a2067442b8d06719c87028d39901668",
+        "type": "FIX",
+        "text": " sap.m.BreadCrumbs: Fixed keyboard handling for hidden items",
+        "references": []
+      },
+      {
+        "id": "d439391fa30921cfc6859c8d7ccf1c7d2e92f930",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Focus outline fixed in grid and form",
+        "references": []
+      },
+      {
+        "id": "cb0778acae2b78efae0db9ed8c675913c466a469",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection - setMin/MaxDate does not change other property.",
+        "references": []
+      },
+      {
+        "id": "9c82b316776b09e319889288d926a640f5780f45",
+        "type": "FIX",
+        "text": " sap.m.Input: showTableSuggestionValueHelp now works correctly on IE",
+        "references": []
+      },
+      {
+        "id": "bb7482ee091227b1b72b18ce4ef122df18e2074d",
+        "type": "FIX",
+        "text": " sap.m.ListBase: No data row should be in the tab chain.",
+        "references": []
+      },
+      {
+        "id": "a8d453853d5de293e7519ea850888cf18a18c6cb",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Link\u0027s properties are now forwarded in detailsPage",
+        "references": []
+      },
+      {
+        "id": "b873619b5e00b30605de22e5c20a1b28d116fff0",
+        "type": "FIX",
+        "text": " sap.m.Panel: Blurred text in IE",
+        "references": []
+      },
+      {
+        "id": "30fcabd28df5ad1e3d4827f22320aa3356357552",
+        "type": "FIX",
+        "text": " sap.m.Popover: Updated: Show scrollbar when overflowing and out of visible area.",
+        "references": []
+      },
+      {
+        "id": "d9305c5a0b584590c2f2fe8a4146282d87e3d451",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: percentValue property correctly validated",
+        "references": []
+      },
+      {
+        "id": "277616ab6958767a3a795c2c04ffb8767627b22b",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Focus is now correctly set",
+        "references": []
+      },
+      {
+        "id": "76592a642eea511910bca19e6aa0b346161dcfcf",
+        "type": "FIX",
+        "text": " sap.m.Select: Label in IconOnly mode is now skipped",
+        "references": []
+      },
+      {
+        "id": "7f8bf2216a3fe6f30788b66a13ecc0656f2eb3b8",
+        "type": "FIX",
+        "text": " sap.m.SelectList: Only non-SeparatorItems affect setsize",
+        "references": []
+      },
+      {
+        "id": "c74434fad784e8abca35cd00ffc4199b4dfe6ddc",
+        "type": "FIX",
+        "text": " sap.m.StepInput - wrong calculation when value precision is changed.",
+        "references": []
+      },
+      {
+        "id": "6f7c998f3393f89c8b9a2686987f29823b8ef6d5",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Update demokit example",
+        "references": []
+      },
+      {
+        "id": "7bba00733d71317ca0f3088aa09536b6e6874229",
+        "type": "FIX",
+        "text": " sap.m.StepInput: fire change event only once",
+        "references": []
+      },
+      {
+        "id": "e8f3a0d98286181364f3245a4042bb502d098e40",
+        "type": "FIX",
+        "text": " sap.m.StepInput: fire change event without timeout",
+        "references": []
       }
     ]
   }

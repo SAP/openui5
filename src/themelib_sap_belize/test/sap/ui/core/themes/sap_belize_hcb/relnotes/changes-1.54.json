@@ -43,6 +43,18 @@
         "type": "FEATURE",
         "text": " sap.f.DynamicPageTitle: Added new property areaShrinkRatio",
         "references": []
+      },
+      {
+        "id": "ec66d8e2d246f807e5b259ccb75159943e184a9f",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Active state is now supported",
+        "references": []
+      },
+      {
+        "id": "d439391fa30921cfc6859c8d7ccf1c7d2e92f930",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Focus outline fixed in grid and form",
+        "references": []
       }
     ]
   }

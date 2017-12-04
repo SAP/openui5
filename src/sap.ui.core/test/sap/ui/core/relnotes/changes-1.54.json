@@ -199,6 +199,60 @@
         "type": "FIX",
         "text": " qunit/utils: fixed minor jsdoc issues",
         "references": []
+      },
+      {
+        "id": "689a818c2583b300739affd752157b52603a7117",
+        "type": "FEATURE",
+        "text": " ManagedObject(-Metadata): aggregation forwarding",
+        "references": []
+      },
+      {
+        "id": "eeab3525aebce3605bdba6098c869f70a841c53c",
+        "type": "FEATURE",
+        "text": " v2.ODataModel Messages on resetChanges",
+        "references": []
+      },
+      {
+        "id": "0bc9ac6cbb8082f7181654833c1885c72319b0a7",
+        "type": "FIX",
+        "text": " Fallback for libraries without custom theme",
+        "references": []
+      },
+      {
+        "id": "1d5b02d979a387f3658abe34f577d5aad92dbaff",
+        "type": "FIX",
+        "text": " Filter/Sorter: Get comparator methods right",
+        "references": []
+      },
+      {
+        "id": "18f5b521f7d6e32286f70c7bf7a2d7657ea762b3",
+        "type": "FIX",
+        "text": " ManagedObject: suspend object bindings",
+        "references": []
+      },
+      {
+        "id": "68c17d282bbff2a83e367fd6b7fb0d8131ae625a",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: pass correct container to ExtensionPoint",
+        "references": []
+      },
+      {
+        "id": "6d28469240ed2292cc3583e45c5909713a1d727a",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: reduced SyncPromise chaining",
+        "references": []
+      },
+      {
+        "id": "753895196393b6bc7eb71eea9da8385e734f2ab9",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#_getQueryODataRequestOptions: do not append to null filter",
+        "references": []
+      },
+      {
+        "id": "344b63a18fcb45f563dc3ce7bdcb05ccbfebd704",
+        "type": "FIX",
+        "text": " v2.ODataModel createBindingContext",
+        "references": []
       }
     ]
   }

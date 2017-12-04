@@ -37,6 +37,12 @@
         "type": "FEATURE",
         "text": "sap.ui.fl: Set initial variant from URL parameter",
         "references": []
+      },
+      {
+        "id": "72d02f24a338165ca7408495750d5c0d8430463d",
+        "type": "FEATURE",
+        "text": "sap.ui.fl: Support for instance specific change handlers",
+        "references": []
       }
     ]
   }

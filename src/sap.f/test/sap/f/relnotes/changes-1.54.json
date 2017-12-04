@@ -19,6 +19,18 @@
         "type": "FEATURE",
         "text": " sap.f.DynamicPageTitle: Added new property areaShrinkRatio",
         "references": []
+      },
+      {
+        "id": "689a818c2583b300739affd752157b52603a7117",
+        "type": "FEATURE",
+        "text": " ManagedObject(-Metadata): aggregation forwarding",
+        "references": []
+      },
+      {
+        "id": "123f231d3f11508cbf8e2383b0eee124fa9793d0",
+        "type": "FIX",
+        "text": " sap.f.Avatar: src property is now escaped",
+        "references": []
       }
     ]
   }
