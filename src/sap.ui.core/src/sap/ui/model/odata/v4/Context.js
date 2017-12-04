@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
-	"./lib/_Helper",
-	"./lib/_SyncPromise"
-], function (BaseContext, _Helper, _SyncPromise) {
+	"./lib/_Helper"
+], function (SyncPromise, BaseContext, _Helper) {
 	"use strict";
 
 	/*
@@ -35,7 +35,7 @@ sap.ui.define([
 			aPromises.push(
 				oContext.oModel.getMetaModel().fetchUI5Type(sResolvedPath));
 		}
-		return _SyncPromise.all(aPromises).then(function (aResults) {
+		return SyncPromise.all(aPromises).then(function (aResults) {
 			var oType = aResults[1],
 				vValue = aResults[0];
 
@@ -93,7 +93,7 @@ sap.ui.define([
 				this.oCreatePromise = oCreatePromise
 					// ensure to return a promise that is resolved w/o data
 					&& Promise.resolve(oCreatePromise).then(function () {});
-				this.oSyncCreatePromise = oCreatePromise && _SyncPromise.resolve(oCreatePromise);
+				this.oSyncCreatePromise = oCreatePromise && SyncPromise.resolve(oCreatePromise);
 				this.iIndex = iIndex;
 			}
 		});
@@ -233,7 +233,7 @@ sap.ui.define([
 	 */
 	Context.prototype.fetchValue = function (sPath, oListener) {
 		if (this.iIndex === -2) {
-			return _SyncPromise.resolve(); // no cache access for virtual contexts
+			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
 		// Create an absolute path based on the context's path to ensure that fetchValue uses key
 		// predicates if the context does. Then the path to register the listener in the cache is
@@ -276,7 +276,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.39.0
 	 */
-	Context.prototype.getCanonicalPath = _SyncPromise.createGetMethod("fetchCanonicalPath", true);
+	Context.prototype.getCanonicalPath = _Helper.createGetMethod("fetchCanonicalPath", true);
 
 	/**
 	 * Returns the group ID of the context's binding that is used for read requests.
@@ -449,7 +449,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.39.0
 	 */
-	Context.prototype.requestCanonicalPath = _SyncPromise.createRequestMethod("fetchCanonicalPath");
+	Context.prototype.requestCanonicalPath = _Helper.createRequestMethod("fetchCanonicalPath");
 
 	/**
 	 * Returns a promise on the value for the given path relative to this context. The function

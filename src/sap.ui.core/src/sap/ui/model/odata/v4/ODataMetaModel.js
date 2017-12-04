@@ -5,6 +5,7 @@
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ClientListBinding",
@@ -16,11 +17,10 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Int64",
 	"sap/ui/thirdparty/URI",
 	"./lib/_Helper",
-	"./lib/_SyncPromise",
 	"./ValueListType"
-], function (jQuery, BindingMode, ChangeReason, ClientListBinding, ClientPropertyBinding,
-		ContextBinding, BaseContext, MetaModel, OperationMode, Int64, URI, _Helper, _SyncPromise,
-		ValueListType) {
+], function (jQuery, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
+		ClientPropertyBinding, ContextBinding, BaseContext, MetaModel, OperationMode, Int64, URI,
+		_Helper, ValueListType) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -158,7 +158,7 @@ sap.ui.define([
 			if (!oPromise) {
 				fnLog(DEBUG, "Reading ", sUrl);
 				oPromise = oMetaModel.mMetadataUrl2Promise[sUrl]
-					= _SyncPromise.resolve(oMetaModel.oRequestor.read(sUrl))
+					= SyncPromise.resolve(oMetaModel.oRequestor.read(sUrl))
 						.then(oMetaModel.validate.bind(oMetaModel, sUrl));
 			}
 			oPromise = oPromise.then(includeSchema);
@@ -309,7 +309,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the contexts that result from iterating over the binding's path/context.
-		 * @returns {_SyncPromise} A promise that is resolved with an array of contexts
+		 * @returns {SyncPromise} A promise that is resolved with an array of contexts
 		 *
 		 * @private
 		 */
@@ -319,7 +319,7 @@ sap.ui.define([
 				that = this;
 
 			if (!sResolvedPath) {
-				return _SyncPromise.resolve([]);
+				return SyncPromise.resolve([]);
 			}
 			bIterateAnnotations = sResolvedPath.slice(-1) === "@";
 			if (!bIterateAnnotations && sResolvedPath !== "/") {
@@ -681,15 +681,15 @@ sap.ui.define([
 			that = this;
 
 		if (!this.oMetadataPromise) {
-			aPromises = [_SyncPromise.resolve(this.oRequestor.read(this.sUrl))];
+			aPromises = [SyncPromise.resolve(this.oRequestor.read(this.sUrl))];
 
 			if (this.aAnnotationUris) {
 				this.aAnnotationUris.forEach(function (sAnnotationUri) {
-					aPromises.push(_SyncPromise.resolve(that.oRequestor.read(sAnnotationUri,
+					aPromises.push(SyncPromise.resolve(that.oRequestor.read(sAnnotationUri,
 						true)));
 				});
 			}
-			this.oMetadataPromise = _SyncPromise.all(aPromises).then(function (aMetadata) {
+			this.oMetadataPromise = SyncPromise.all(aPromises).then(function (aMetadata) {
 				var mScope = aMetadata[0];
 
 				that._mergeAnnotations(mScope, aMetadata.slice(1));
@@ -717,9 +717,9 @@ sap.ui.define([
 		vModule = sap.ui.require(sModuleName);
 
 		if (vModule) {
-			return _SyncPromise.resolve(vModule);
+			return SyncPromise.resolve(vModule);
 		}
-		return _SyncPromise.resolve(new Promise(function (resolve, reject) {
+		return SyncPromise.resolve(new Promise(function (resolve, reject) {
 			sap.ui.require([sModuleName], resolve);
 		}));
 	};
@@ -745,7 +745,7 @@ sap.ui.define([
 
 		if (!sResolvedPath) {
 			jQuery.sap.log.error("Invalid relative path w/o context", sPath, sODataMetaModel);
-			return _SyncPromise.resolve(null);
+			return SyncPromise.resolve(null);
 		}
 
 		return this.fetchEntityContainer().then(function (mScope) {
@@ -1106,7 +1106,7 @@ sap.ui.define([
 
 		if (jQuery.sap.endsWith(sPath, "/$count")) {
 			oCountType = oCountType || new Int64();
-			return _SyncPromise.resolve(oCountType);
+			return SyncPromise.resolve(oCountType);
 		}
 		// Note: undefined is more efficient than "" here
 		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
@@ -1277,7 +1277,7 @@ sap.ui.define([
 				}
 			});
 			// aEditUrl may still contain key predicate requests, run them and wait for the promises
-			return _SyncPromise.all(aEditUrl.map(function (vSegment) {
+			return SyncPromise.all(aEditUrl.map(function (vSegment) {
 				if (typeof vSegment === "string") {
 					return vSegment;
 				}
@@ -1565,7 +1565,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	// @override
-	ODataMetaModel.prototype.getObject = _SyncPromise.createGetMethod("fetchObject");
+	ODataMetaModel.prototype.getObject = _Helper.createGetMethod("fetchObject");
 
 	/**
 	 * @deprecated Use {@link #getObject}.
@@ -1596,7 +1596,7 @@ sap.ui.define([
 	 * @see #requestUI5Type
 	 * @since 1.37.0
 	 */
-	ODataMetaModel.prototype.getUI5Type = _SyncPromise.createGetMethod("fetchUI5Type", true);
+	ODataMetaModel.prototype.getUI5Type = _Helper.createGetMethod("fetchUI5Type", true);
 
 	/**
 	 * Determines which type of value list exists for the given property.
@@ -1614,7 +1614,7 @@ sap.ui.define([
 	 * @since 1.45.0
 	 */
 	ODataMetaModel.prototype.getValueListType
-		= _SyncPromise.createGetMethod("fetchValueListType", true);
+		= _Helper.createGetMethod("fetchValueListType", true);
 
 	/**
 	 * Method not supported
@@ -1828,7 +1828,7 @@ sap.ui.define([
 	 * @see #getObject
 	 * @since 1.37.0
 	 */
-	ODataMetaModel.prototype.requestObject = _SyncPromise.createRequestMethod("fetchObject");
+	ODataMetaModel.prototype.requestObject = _Helper.createRequestMethod("fetchObject");
 
 	/**
 	 * Requests the UI5 type for the given property path that formats and parses corresponding to
@@ -1848,7 +1848,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.requestUI5Type
-		= _SyncPromise.createRequestMethod("fetchUI5Type");
+		= _Helper.createRequestMethod("fetchUI5Type");
 
 	/**
 	 * Determines which type of value list exists for the given property.
@@ -1866,7 +1866,7 @@ sap.ui.define([
 	 * @since 1.47.0
 	 */
 	ODataMetaModel.prototype.requestValueListType
-		= _SyncPromise.createRequestMethod("fetchValueListType");
+		= _Helper.createRequestMethod("fetchValueListType");
 
 	/**
 	 * Requests information to retrieve a value list for the property given by

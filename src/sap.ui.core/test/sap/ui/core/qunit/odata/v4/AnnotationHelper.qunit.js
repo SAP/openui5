@@ -3,16 +3,16 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Icon",
 	"sap/ui/model/Context",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/v4/_AnnotationHelperExpression",
 	"sap/ui/model/odata/v4/AnnotationHelper",
-	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataMetaModel"
-], function (jQuery, Icon, BaseContext, JSONModel, Basics, Expression, AnnotationHelper,
-		_SyncPromise, ODataMetaModel) {
+], function (jQuery, SyncPromise, Icon, BaseContext, JSONModel, Basics, Expression,
+		AnnotationHelper, ODataMetaModel) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -160,7 +160,7 @@ sap.ui.require([
 			sPath;
 
 		this.mock(oMetaModel).expects("fetchEntityContainer").atLeast(1)
-			.returns(_SyncPromise.resolve(mScope));
+			.returns(SyncPromise.resolve(mScope));
 
 		for (sPath in mFixture) {
 			assert.strictEqual(

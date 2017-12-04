@@ -5,11 +5,11 @@
 //Provides class sap.ui.model.odata.v4.lib.Requestor
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"./_Batch",
 	"./_Helper",
-	"./_SyncPromise",
 	"./_V2Requestor"
-], function (jQuery, _Batch, _Helper, _SyncPromise, asV2Requestor) {
+], function (jQuery, SyncPromise, _Batch, _Helper, asV2Requestor) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -70,7 +70,7 @@ sap.ui.define([
 	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
 	 *   container is fully available, or rejected with an error.
 	 * @param {function} oModelInterface.fnFetchMetadata
-	 *   A function that returns a _SyncPromise which resolves with the metadata instance for a
+	 *   A function that returns a SyncPromise which resolves with the metadata instance for a
 	 *   given absolute model path (it is automatically converted to a metapath)
 	 * @param {function} oModelInterface.fnGetGroupProperty
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
@@ -582,10 +582,10 @@ sap.ui.define([
 	 * Returns a sync promise that is resolved when the requestor is ready to be used. The V4
 	 * requestor is ready immediately. Subclasses may behave differently.
 	 *
-	 * @returns {_SyncPromise} A sync promise that is resolved immediately with no result
+	 * @returns {SyncPromise} A sync promise that is resolved immediately with no result
 	 */
 	Requestor.prototype.ready = function () {
-		return _SyncPromise.resolve();
+		return SyncPromise.resolve();
 	};
 
 	/**
@@ -1110,7 +1110,7 @@ sap.ui.define([
 		 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
 		 *   container is fully available, or rejected with an error.
 		 * @param {function} oModelInterface.fnFetchMetadata
-		 *   A function that returns a _SyncPromise which resolves with the metadata instance for a
+		 *   A function that returns a SyncPromise which resolves with the metadata instance for a
 		 *   given absolute model path (it is automatically converted to a metapath)
 		 * @param {function} oModelInterface.fnGetGroupProperty
 		 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
