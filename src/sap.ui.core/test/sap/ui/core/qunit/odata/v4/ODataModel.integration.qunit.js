@@ -1921,6 +1921,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Instance annotation in child path
+	QUnit.test("Auto-$expand/$select: Instance annotation in child path", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'2\')}">\
+	<Text id="ETag" text="{\
+		path : \'@odata.etag\',\
+		type : \'sap.ui.model.odata.type.String\'}" />\
+</FlexBox>';
+
+		this.expectRequest("EMPLOYEES('2')", {
+				"@odata.etag" : "ETagValue"
+			})
+			.expectChange("ETag", "ETagValue")
+			.expectChange("ETag", "ETagValue"); //TODO unexpected change
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect mode for nested ODataContextBindings. The inner
 	// ODataContextBinding *cannot* use its parent binding's cache due to conflicting query options
 	// => it creates an own cache and request.

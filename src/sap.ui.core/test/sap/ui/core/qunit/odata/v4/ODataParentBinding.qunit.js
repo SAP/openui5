@@ -1386,21 +1386,30 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchIfChildCanUseCache: $count in child path", function (assert) {
-		var oBinding = new ODataParentBinding({
-			oModel : {getMetaModel : function () {return {};}}
-		});
+	QUnit.test("fetchIfChildCanUseCache: $count or instance annotation in child path",
+		function (assert) {
+			var oBinding = new ODataParentBinding({
+				oModel : {
+					getMetaModel : function () { return {}; }
+				}
+			});
 
-		// code under test
-		assert.strictEqual(oBinding.fetchIfChildCanUseCache(null, "$count").getResult(), true);
-		assert.strictEqual(oBinding.fetchIfChildCanUseCache(null, "EMPLOYEE_2_EQUIPMENTS/$count")
-			.getResult(), true);
+			// code under test
+			assert.strictEqual(
+				oBinding.fetchIfChildCanUseCache(null, "$count").getResult(), true);
+			assert.strictEqual(
+				oBinding.fetchIfChildCanUseCache(null, "EMPLOYEE_2_EQUIPMENTS/$count").getResult(),
+				true);
+			assert.strictEqual(
+				oBinding.fetchIfChildCanUseCache(null, "@odata.etag").getResult(), true);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: operation binding", function (assert) {
 		var oBinding = new ODataParentBinding({
-			oModel : {getMetaModel : function () {return {};}},
+			oModel : {
+				getMetaModel : function () { return {}; }
+			},
 			oOperation : {}
 		});
 
