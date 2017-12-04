@@ -98,6 +98,8 @@ sap.ui.define([
 			return {
 				"newKey": "value",		// should parse unprefixed params
 				"opaSpecific": "value",	// should exclude opa params
+				"opaFrameKey": "value", // should not exclude opaFrame params
+				"opaKeyFrameKey": "value", // should exclude opa params
 				"existingKey": "value"	// uri params should override defaults
 			};
 		});
@@ -106,6 +108,8 @@ sap.ui.define([
 		sap.ui.require(["sap/ui/test/Opa5","sap/ui/test/Opa"], function (Opa5,Opa) {
 			assert.strictEqual(Opa.config.appParams.newKey, "value");
 			assert.strictEqual(Opa.config.appParams.specific, undefined);
+			assert.strictEqual(Opa.config.appParams.opaFrameKey, "value");
+			assert.strictEqual(Opa.config.appParams.opaKeyFrameKey, undefined);
 			Opa5.extendConfig({
 				appParams: {
 					existingKey: "oldValue"

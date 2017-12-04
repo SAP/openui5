@@ -64,7 +64,7 @@ sap.ui.define([
 		Opa._extractAppParams = function() {
 			// extract all uri parameters except opa* and qunit parameters
 			var aBlacklistPatterns = [
-				/opa.*/,
+				/^opa((?!(Frame)).*)$/,
 				/hidepassed/,
 				/noglobals/,
 				/notrycatch/,
@@ -74,20 +74,18 @@ sap.ui.define([
 			];
 			var oParams = {};
 			var oUriParams = new URI().search(true);
-			for (var sUriParamName in oUriParams) {
+			Object.keys(oUriParams).forEach(function (sUriParamName) {
 				var bBlacklistedPattern = false;
-				for (var iPatternIndex = 0; iPatternIndex < aBlacklistPatterns.length; iPatternIndex++) {
-					if (sUriParamName.match(aBlacklistPatterns[iPatternIndex])) {
-						oLogger.debug("Skipping uri parameter: " + sUriParamName +
-							" as blacklisted with pattern: " + aBlacklistPatterns[iPatternIndex]);
+				aBlacklistPatterns.forEach(function (oPattern) {
+					if (!bBlacklistedPattern && sUriParamName.match(oPattern)) {
+						oLogger.debug("Skipping uri parameter: " + sUriParamName + " as blacklisted with pattern: " + oPattern);
 						bBlacklistedPattern = true;
-						break;
 					}
-				}
+				});
 				if (!bBlacklistedPattern) {
 					oParams[sUriParamName] = Opa._parseParam(oUriParams[sUriParamName]);
 				}
-			}
+			});
 			return oParams;
 		};
 
