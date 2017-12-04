@@ -146,7 +146,7 @@
 		"UI5Lab": {
 			"name": "ui5lab",
 			"description": "UI5Lab is a community driven project to establish a repository for UI5 Custom Control Libraries. It is meant to enable everyone to use UI5 Custom Controls easily.",
-			"githubLink": "https://github.com/ui5lab-central",
+			"githubLink": "https://github.com/ui5lab/ui5lab-central",
 			"documentationLink": "https://ui5lab.io",
 			"owner": "ui5lab",
 			"license": "Apache 2.0",
