@@ -1362,7 +1362,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._isClosestScrolledSection = function (sSectionId) {
-		var iScrollTop = this._$opWrapper.scrollTop(),
+		var iScrollTop = this._$opWrapper.length > 0 ? this._$opWrapper.scrollTop() : 0,
 			iPageHeight = this.iScreenHeight,
 			sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
 
