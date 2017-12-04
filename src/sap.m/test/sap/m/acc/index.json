@@ -213,7 +213,7 @@
 		},
 		{
 			"control": "sap.m.MessageView",
-			"url": "../MessageView.html",
+			"url": "MessageView.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
