@@ -2467,5 +2467,52 @@
         "references": []
       }
     ]
+  },
+  "1.48.15": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "792a7bc87f5517a615b312ec1a6add491b0f36e7",
+        "type": "FIX",
+        "text": " sap.m.BreadCrumbs: Fixed keyboard handling for hidden items",
+        "references": []
+      },
+      {
+        "id": "83b3053e08b735665d7b9ecde4a09478c4840b22",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Drag and resize are now working correctly",
+        "references": []
+      },
+      {
+        "id": "898f9cbb7398cbd8b63fda0717faf643e357675c",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Scroll of the items work with arrows",
+        "references": []
+      },
+      {
+        "id": "019a0f66ead273a40eb4025a715fde8b57307c8b",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Update Arial Label on Generic Tile content change on using TAB key navigation.",
+        "references": []
+      },
+      {
+        "id": "9b05a89a305d4440e59c585253e8dac46796f320",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: removed href attribute if property href is not set",
+        "references": []
+      },
+      {
+        "id": "b3f1a2531e07bd0af63986c8908250ac7f111390",
+        "type": "FIX",
+        "text": " sap.m.Popover: Show scrollbar when overflowing and out of visible area.",
+        "references": []
+      },
+      {
+        "id": "474a44c1f0fa36c63f9bfe0a5321ced4f2881b2f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus handling corrected",
+        "references": []
+      }
+    ]
   }
 }
