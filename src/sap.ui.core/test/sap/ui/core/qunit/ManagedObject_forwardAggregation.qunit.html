@@ -91,9 +91,16 @@
 				});
 				InheritingAndForwardingComposite.getMetadata().forwardAggregation(
 					"outerAggregation",
-					"-innerElement",
-					"innerAggregation"
+					{
+						idSuffix: "-innerElement",
+						aggregation: "innerAggregation"
+					}
 				);
+
+
+				CompositeWithoutForwarding.prototype.getForwardingTarget = function() {
+					return this.getAggregation("_innerElement");
+				};
 
 				CompositeWithoutForwarding.extend("InheritingAndForwardingCompositeWithGetter", {
 					metadata: {
@@ -105,13 +112,30 @@
 						this.setAggregation("_innerElement", new SimpleElement(this.getId() + "-innerElement"));
 					}
 				});
-				CompositeWithoutForwarding.prototype.getForwardingTarget = function() {
-					return this.getAggregation("_innerElement");
-				};
 				InheritingAndForwardingCompositeWithGetter.getMetadata().forwardAggregation(
 					"outerAggregation",
-					CompositeWithoutForwarding.prototype.getForwardingTarget,
-					"innerAggregation"
+					{
+						getter: CompositeWithoutForwarding.prototype.getForwardingTarget,
+						aggregation: "innerAggregation"
+					}
+				);
+
+				CompositeWithoutForwarding.extend("InheritingAndForwardingCompositeWithGetterName", {
+					metadata: {
+						aggregations: {
+							_innerElement: {type: "sap.ui.core.Element", multiple: false, visibility: "hidden"}
+						}
+					},
+					init: function() {
+						this.setAggregation("_innerElement", new SimpleElement(this.getId() + "-innerElement"));
+					}
+				});
+				InheritingAndForwardingCompositeWithGetterName.getMetadata().forwardAggregation(
+					"outerAggregation",
+					{
+						getter: "getForwardingTarget",
+						aggregation: "innerAggregation"
+					}
 				);
 
 				Element.extend("UltraCompositeElement", {
@@ -386,10 +410,12 @@
 				QUnit.test("Defining a single-to-multi forwarding", function(assert) {
 					CompositeElement.getMetadata().forwardAggregation(
 						"otherOuterSingleAggregation",
-						function() {
-							return this.getAggregation("_innerElement");
-						},
-						"innerAggregation"
+						{
+							getter: function() {
+								return this.getAggregation("_innerElement");
+							},
+							aggregation: "innerAggregation"
+						}
 					);
 
 					assert.throws(
@@ -406,10 +432,12 @@
 				QUnit.test("Defining a multi-to-single forwarding", function(assert) {
 					CompositeElement.getMetadata().forwardAggregation(
 							"otherOuterAggregation",
-							function() {
-								return this.getAggregation("_innerElement");
-							},
-							"innerSingleAggregation"
+							{
+								getter: function() {
+									return this.getAggregation("_innerElement");
+								},
+								aggregation: "innerSingleAggregation"
+							}
 						);
 
 					assert.throws(
@@ -1010,6 +1038,55 @@
 
 
 
+				QUnit.module("Forwarding defined in different class than where aggregation is defined (version with getter name)", {
+					beforeEach: function() {
+						this.item = new SimpleElement("item");
+						this.composite = new InheritingAndForwardingCompositeWithGetterName();
+						this.composite.addOuterAggregation(this.item);
+						this.innerElement = this.composite.getAggregation("_innerElement");
+					},
+					afterEach: function() {
+						this.composite.destroy();
+					}
+				});
+
+				QUnit.test("check initial setup", function(assert) {
+					assert.ok(this.composite, "composite should be created");
+					assert.equal(this.composite.getMetadata().getClass(), InheritingAndForwardingCompositeWithGetterName, "composite should be a InheritingAndForwardingCompositeWithGetterName");
+					assert.ok(this.item, "item should be created");
+					assert.equal(this.item.getMetadata().getClass(), SimpleElement, "item should be a SimpleElement");
+					assert.ok(this.innerElement, "innerElement should be created");
+					assert.equal(this.innerElement.getMetadata().getClass(), SimpleElement, "innerElement should be a SimpleElement");
+				});
+
+				QUnit.test("check initial forwarding", function(assert) {
+					var oForwarder = this.composite.getMetadata().getAggregationForwarder("outerAggregation");
+
+					assert.ok(oForwarder, "outerAggregation should be forwarded");
+					assert.equal(oForwarder.targetAggregationName, "innerAggregation", "outerAggregation should be forwarded to innerAggregation");
+					assert.ok(!oForwarder.forwardBinding, "outerAggregation should not forward bindings");
+				});
+
+				QUnit.test("both parent getters return the item (checks getAggregation)", function(assert) {
+					assert.equal(this.composite.getOuterAggregation().length, 1, "outer control should have one item");
+					assert.equal(this.innerElement.getInnerAggregation().length, 1, "inner control should have one item");
+					assert.equal(this.composite.getOuterAggregation()[0], this.item, "item should be returned by outer aggregation getter");
+					assert.equal(this.innerElement.getInnerAggregation()[0], this.item, "item should be returned by inner aggregation getter");
+				});
+
+				QUnit.test("inner control is the item parent (checks getParent)", function(assert) {
+					assert.equal(this.item.getParent(), this.innerElement, "inner element should be the item parent");
+				});
+
+				QUnit.test("check mAggregations", function(assert) {
+					assert.equal(this.composite.mAggregations["outerAggregation"], undefined, "outer element should not have the item in mAggregations");
+					assert.equal(this.innerElement.mAggregations["innerAggregation"][0], this.item, "inner element should have the item in mAggregations");
+				});
+
+
+
+
+
 				QUnit.module("Metadata setup", {
 					beforeEach: function() {
 						this.item = new SimpleElement("item");
@@ -1037,17 +1114,17 @@
 							new FailingCompositeElement().addOuterAggregation(this.item);
 						},
 						function(err) {
-							return err.message.indexOf("getterName or idSuffix") > -1;
+							return err.message.indexOf("getter or idSuffix") > -1;
 						},
-						"Defining forwarding with no idSuffix or getterName should throw an error"
+						"Defining forwarding with no idSuffix or getter should throw an error"
 					);
 				});
 
-				QUnit.test("Using getterName with delayed inner element", function(assert) {
+				QUnit.test("Using getter with delayed inner element", function(assert) {
 					Element.extend("CompositeElementWithGetterName", {
 						metadata: {
 							aggregations: {
-								outerAggregation: {type: "sap.ui.core.Element", multiple: true, forwarding: {getterName: "_getInner", aggregation: "innerAggregation"}},
+								outerAggregation: {type: "sap.ui.core.Element", multiple: true, forwarding: {getter: "_getInner", aggregation: "innerAggregation"}},
 								_innerElement: {type: "sap.ui.core.Element", multiple: false, hidden: true}
 							}
 						},
@@ -1111,8 +1188,10 @@
 						function() {
 							this.composite.getMetadata().forwardAggregation(
 								"outerAggregation",
-								"-innerElement",
-								"nonExistingInnerAggregation"
+								{
+									idSuffix: "-innerElement",
+									aggregation: "nonExistingInnerAggregation"
+								}
 							);
 
 							this.composite.addOuterAggregation(this.item);

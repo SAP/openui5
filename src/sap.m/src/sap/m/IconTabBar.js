@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * The items displayed in the IconTabBar.
 			 */
 			items : {type : "sap.m.IconTab", multiple : true, singularName : "item", forwarding: {
-				getterName: "_getIconTabHeader",
+				getter: "_getIconTabHeader",
 				aggregation: "items",
 				forwardBinding: true
 			}},

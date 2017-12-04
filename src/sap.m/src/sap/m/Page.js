@@ -194,7 +194,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					 * Controls to be added to the right side of the page header. Usually an application would use Button controls and limit the number to one when the application needs to run on smartphones. There is no automatic overflow handling when the space is insufficient.
 					 * When a customHeader is used, this aggregation will be ignored.
 					 */
-					headerContent: {type: "sap.ui.core.Control", multiple: true, singularName: "headerContent", forwarding: {getterName: "_getInternalHeader", aggregation: "contentRight"}},
+					headerContent: {type: "sap.ui.core.Control", multiple: true, singularName: "headerContent", forwarding: {getter: "_getInternalHeader", aggregation: "contentRight"}},
 
 					/**
 					 * Accessible landmark settings to be applied on the containers of the <code>sap.m.Page</code> control.

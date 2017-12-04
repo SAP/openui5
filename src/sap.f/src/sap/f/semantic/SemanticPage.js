@@ -166,7 +166,7 @@ sap.ui.define([
 				*
 				* <b>Note:</b> The control will be placed in the title`s leftmost area.
 				*/
-				titleHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getterName: "_getTitle", aggregation: "heading"}},
+				titleHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "heading"}},
 
 				/**
 				 * The <code>SemanticPage</code> breadcrumbs.
@@ -177,7 +177,7 @@ sap.ui.define([
 				 * <b>Note:</b> The control will be placed in the title`s top-left area.
 				 * @since 1.52
 				 */
-				titleBreadcrumbs: {type: "sap.m.IBreadcrumbs", multiple: false, defaultValue: null, forwarding: {getterName: "_getTitle", aggregation: "breadcrumbs"}},
+				titleBreadcrumbs: {type: "sap.m.IBreadcrumbs", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "breadcrumbs"}},
 
 				/**
 				* The content, displayed in the title, when the header is in collapsed state.
@@ -185,7 +185,7 @@ sap.ui.define([
 				* <b>Note:</b> The controls will be placed in the title`s left area,
 				* under the <code>titleHeading</code> aggregation.
 				*/
-				titleSnappedContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getterName: "_getTitle", aggregation: "snappedContent"}},
+				titleSnappedContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getTitle", aggregation: "snappedContent"}},
 
 				/**
 				* The content,displayed in the title, when the header is in expanded state.
@@ -193,7 +193,7 @@ sap.ui.define([
 				* <b>Note:</b> The controls will be placed in the title`s left area,
 				* under the <code>titleHeading</code> aggregation.
 				*/
-				titleExpandedContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getterName: "_getTitle", aggregation: "expandedContent"}},
+				titleExpandedContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getTitle", aggregation: "expandedContent"}},
 
 				/**
 				 * The content, displayed in the title.
@@ -201,7 +201,7 @@ sap.ui.define([
 				 * <b>Note:</b> The controls will be placed in the middle area.
 				 * @since 1.52
 				 */
-				titleContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getterName: "_getTitle", aggregation: "content"}},
+				titleContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getTitle", aggregation: "content"}},
 
 				/**
 				* A semantic-specific button which is placed in the <code>SemanticPage</code> title as first action.
@@ -269,7 +269,7 @@ sap.ui.define([
 				/**
 				* The header content.
 				*/
-				headerContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getterName: "_getHeader", aggregation: "content"}},
+				headerContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getHeader", aggregation: "content"}},
 
 				/**
 				* The <code>SemanticPage</code> content.

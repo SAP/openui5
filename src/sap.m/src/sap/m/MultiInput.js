@@ -1313,9 +1313,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 	MultiInput.getMetadata().forwardAggregation(
 		"tokens",
-		function(){ return this._tokenizer; },
-		"tokens",
 		{
+			getter: function(){ return this._tokenizer; },
+			aggregation: "tokens",
 			forwardBinding: true
 		}
 	);

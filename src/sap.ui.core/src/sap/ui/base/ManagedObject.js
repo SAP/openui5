@@ -677,8 +677,8 @@ sap.ui.define([
 	 *     <li><code>idSuffix: <i>string</i></code>A string which is appended to the ID of <i>this</i> ManagedObject to construct the ID of the target ManagedObject. This is
 	 *         one of the two options to specify the target. This option requires the target instance to be created in the init() method of this ManagedObject and to be
 	 *         always available.</li>
-	 *     <li><code>getterName: <i>string</i></code>The name of the function on instances of this ManagedObject which returns the target instance. This second option
-	 *         to specify the target can be used for lazy instantiation of the target. Note that either idSuffix or getterName must be given. Also note that the target
+	 *     <li><code>getter: <i>string</i></code>The name of the function on instances of this ManagedObject which returns the target instance. This second option
+	 *         to specify the target can be used for lazy instantiation of the target. Note that either idSuffix or getter must be given. Also note that the target
 	 *         instance returned by the getter must remain the same over the entire lifetime of this ManagedObject and the implementation assumes that all instances return
 	 *         the same type of object (at least the target aggregation must always be defined in the same class).</li>
 	 *     <li><code>aggregation: <i>string</i></code>The name of the aggregation on the target into which the objects shall be forwarded. The multiplicity of the target
