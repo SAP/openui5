@@ -753,5 +753,22 @@
         "references": []
       }
     ]
+  },
+  "1.50.7": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "6cd59e7302c49439dbe2f20d7b2971aad27ab71c",
+        "type": "FIX",
+        "text": " mvc/XMLView: apply settings correctly for async views",
+        "references": []
+      },
+      {
+        "id": "5f10127ffe9ab514c7a83ba370e218ea7ad6492b",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: filter for edm types with numbers",
+        "references": []
+      }
+    ]
   }
 }

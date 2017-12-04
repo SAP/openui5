@@ -1029,5 +1029,39 @@
         "references": []
       }
     ]
+  },
+  "1.48.14": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "f5e26aa3abcb6f7ee23294ebbc0002cbbff74ece",
+        "type": "FIX",
+        "text": " Message handling createEntry",
+        "references": []
+      },
+      {
+        "id": "2ed851203074677d883710189c6f917129b9f9fd",
+        "type": "FIX",
+        "text": " Opa: fix action focus when IE11 browser is not focused",
+        "references": []
+      },
+      {
+        "id": "8393a5808c4f75cba9eab89ad218e9574720ea14",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: filter for edm types with numbers",
+        "references": []
+      }
+    ]
+  },
+  "1.48.15": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "2069c2eba3e9a7fe470ec49bb03aa78b71688d6e",
+        "type": "FIX",
+        "text": " mvc/XMLView: apply settings correctly for async views",
+        "references": []
+      }
+    ]
   }
 }

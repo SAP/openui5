@@ -226,5 +226,28 @@
         "references": []
       }
     ]
+  },
+  "1.50.7": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "e7c62ac7f2b2e4c10068414c7612acd2a4be3716",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus handling corrected",
+        "references": []
+      },
+      {
+        "id": "ef61079b6ae06a4c863ae73cdf8ef9a021f2b342",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select month and year corrected",
+        "references": []
+      },
+      {
+        "id": "f2309cbe067fdaf8baab311b6be57b1139853b1f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: select date on mouseup when used on touch device",
+        "references": []
+      }
+    ]
   }
 }
