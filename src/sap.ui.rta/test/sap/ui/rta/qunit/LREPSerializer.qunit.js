@@ -529,4 +529,40 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.test("when the LREPSerializer.saveAsCommands gets called with 2 remove commands created via CommandFactory and these are booked for a new app variant whose id is different from the id of the current running app", function(assert) {
+		// then two changes are expected to be written in LREP
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save");
+
+		// Create commands
+		this.oRemoveCommand1 = CommandFactory.getCommandFor(this.oInput1, "Remove", {
+			removedElement : this.oInput1
+		}, this.oInputDesignTimeMetadata);
+		this.oRemoveCommand2 = CommandFactory.getCommandFor(this.oInput2, "Remove", {
+			removedElement : this.oInput2
+		}, this.oInputDesignTimeMetadata);
+
+		sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns({
+			"sap.app": {
+				id: "sap.original.test"
+			}
+		});
+
+		return this.oCommandStack.pushAndExecute(this.oRemoveCommand1)
+		.then(function(){
+			return this.oCommandStack.pushAndExecute(this.oRemoveCommand2);
+		}.bind(this))
+		.then(function(){
+			return this.oSerializer.saveAsCommands("customer.sap.test");
+		}.bind(this))
+		.then(function() {
+			assert.ok(true, "then the promise for LREPSerializer.saveAsCommands() gets resolved");
+			assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
+			fnCleanUp();
+		}.bind(this))
+		.catch(function(oError) {
+			fnCleanUp();
+			return Promise.reject(oError);
+		});
+	});
+
 });

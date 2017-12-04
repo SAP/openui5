@@ -24,7 +24,7 @@ sap.ui.define([
 		// S/4Hana Cloud Platform expects an ID of 56 characters
 		var HANA_CLOUD_ID_LENGTH = 56;
 
-		AppVariantUtils.newAppVariantId = "";
+		AppVariantUtils._newAppVariantId = null;
 
 		AppVariantUtils.getManifirstSupport = function(sRunningAppId) {
 	        var sRoute = '/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=' + sRunningAppId;
@@ -41,11 +41,11 @@ sap.ui.define([
 		};
 
 		AppVariantUtils.getNewAppVariantId = function() {
-			return AppVariantUtils.newAppVariantId;
+			return AppVariantUtils._newAppVariantId;
 		};
 
 		AppVariantUtils.setNewAppVariantId = function(sNewAppVariantID) {
-			AppVariantUtils.newAppVariantId = sNewAppVariantID;
+			AppVariantUtils._newAppVariantId = sNewAppVariantID;
 		};
 
 		AppVariantUtils.trimIdIfRequired = function(sId) {

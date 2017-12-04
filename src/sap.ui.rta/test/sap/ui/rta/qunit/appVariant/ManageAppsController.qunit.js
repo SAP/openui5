@@ -120,7 +120,7 @@ sap.ui.require([
 
 			var getDescriptorSpy = sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
 
-			var onSaveAsSpy = sandbox.stub(RtaAppVariantFeature, "onSaveAs").returns(Promise.resolve());
+			var onSaveAsSpy = sandbox.stub(RtaAppVariantFeature, "onSaveAsFromOverviewDialog").returns(Promise.resolve());
 
 			return oManageAppsController.saveAsAppVariant(oEmptyEvent).then(function() {
 				assert.ok(getDescriptorSpy.calledOnce, "the getDescriptor is called once");

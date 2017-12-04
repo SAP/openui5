@@ -26,11 +26,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var _sIdRunningApp, _oRootControlRunningApp, sModulePath, oI18n;
+	var _sIdRunningApp, sModulePath, oI18n;
 	return Controller.extend("sap.ui.rta.appVariant.manageApps.webapp.controller.ManageApps", {
 		onInit: function() {
 			_sIdRunningApp = this.getOwnerComponent().getIdRunningApp();
-			_oRootControlRunningApp = this.getOwnerComponent().getRootControlRunningApp();
 
 			sModulePath = jQuery.sap.getModulePath( "sap.ui.rta.appVariant.manageApps.webapp" );
 			oI18n = jQuery.sap.resources({
@@ -151,7 +150,7 @@ sap.ui.define([
 			BusyIndicator.show();
 			return AppVariantOverviewUtils.getDescriptor(sDescriptorUrl).then(function(oAppVariantDescriptor) {
 				BusyIndicator.hide();
-				return RtaAppVariantFeature.onSaveAs(_oRootControlRunningApp, oAppVariantDescriptor);
+				return RtaAppVariantFeature.onSaveAsFromOverviewDialog(oAppVariantDescriptor, false);
 			})["catch"](function(oError) {
 				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
 				oErrorInfo.overviewDialog = true;

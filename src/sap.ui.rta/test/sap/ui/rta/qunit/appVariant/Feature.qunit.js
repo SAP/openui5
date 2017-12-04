@@ -8,14 +8,17 @@ sap.ui.require([
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/AppVariantManager",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/rta/command/Stack"
 ], function(
 	sinon,
 	RtaAppVariantFeature,
 	AppVariantOverviewUtils,
 	AppVariantUtils,
 	AppVariantManager,
-	Settings) {
+	Settings,
+	Stack
+) {
 	"use strict";
 
 	QUnit.start();
@@ -74,9 +77,7 @@ sap.ui.require([
 
 			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
 
-			var oRootControl = new sap.ui.core.Control();
-
-			return RtaAppVariantFeature.onGetOverview(oRootControl).then(function(oAppVariantOverviewDialog) {
+			return RtaAppVariantFeature.onGetOverview().then(function(oAppVariantOverviewDialog) {
 				assert.ok(true, "the the promise got resolved and AppVariant Overview Dialog is opened");
 				oAppVariantOverviewDialog.fireCancel();
 				done();
@@ -122,7 +123,10 @@ sap.ui.require([
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
-			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
+			var oRootControl = new sap.ui.core.Control();
+			var oStack = new Stack();
+
+			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
 				assert.equal(bResult, true, "then the 'i' button is visible");
 			});
 		});
@@ -141,7 +145,10 @@ sap.ui.require([
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
-			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
+			var oRootControl = new sap.ui.core.Control();
+			var oStack = new Stack();
+
+			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
 			});
 		});
@@ -159,7 +166,10 @@ sap.ui.require([
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
-			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
+			var oRootControl = new sap.ui.core.Control();
+			var oStack = new Stack();
+
+			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
 			});
 		});
@@ -202,7 +212,10 @@ sap.ui.require([
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
-			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
+			var oRootControl = new sap.ui.core.Control();
+			var oStack = new Stack();
+
+			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
 			});
 		});
@@ -242,7 +255,10 @@ sap.ui.require([
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
-			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
+			var oRootControl = new sap.ui.core.Control();
+			var oStack = new Stack();
+
+			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
 				assert.equal(bResult, true, "then the 'i' button is visible");
 			});
 		});
@@ -276,7 +292,10 @@ sap.ui.require([
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
-			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", true).then(function(bResult) {
+			var oRootControl = new sap.ui.core.Control();
+			var oStack = new Stack();
+
+			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
 			});
 		});
@@ -294,7 +313,10 @@ sap.ui.require([
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
-			return RtaAppVariantFeature.isPlatFormEnabled("CUSTOMER", false).then(function(bResult) {
+			var oRootControl = new sap.ui.core.Control();
+			var oStack = new Stack();
+
+			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
 				assert.equal(bResult, false, "then the 'i' button is not visible");
 			});
 		});
@@ -340,18 +362,14 @@ sap.ui.require([
 		}
 	}, function() {
 
-		QUnit.test("when onSaveAs() is triggered from App variant overview list", function(assert) {
-			var oRootControl = new sap.ui.core.Control();
-
+		QUnit.test("when onSaveAsFromOverviewDialog() method is called", function(assert) {
+			var done = assert.async();
 			var oDescriptor = {
 				"sap.app" : {
 					id : "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
-				},
-				"sap.ui5" : {
-					componentName: "TestIdBaseApp"
 				}
 			};
 
@@ -438,9 +456,11 @@ sap.ui.require([
 			]);
 
 			oResponse = {
-				"VariantId" : "customer.TestId",
-				"IAMId" : "IAMId",
-				"CatalogIds" : ["TEST_CATALOG"]
+				response: {
+					"VariantId" : "customer.TestId",
+					"IAMId" : "IAMId",
+					"CatalogIds" : ["TEST_CATALOG"]
+				}
 			};
 
 			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
@@ -451,10 +471,12 @@ sap.ui.require([
 
 			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
 			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
-			var fnCopyUnsavedChangesToLREP = sandbox.spy(AppVariantManager.prototype, "copyUnsavedChangesToLREP");
+			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").returns(Promise.resolve(true));
 			var fnShowSuccessMessageAndTriggerActionFlow = sandbox.spy(AppVariantManager.prototype, "showSuccessMessageAndTriggerActionFlow");
 
-			return RtaAppVariantFeature.onSaveAs(oRootControl, oDescriptor).then(function() {
+			var fnNotifyKeyUserWhenTileIsReadySpy = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenTileIsReady").returns(Promise.resolve(true));
+
+			return RtaAppVariantFeature.onSaveAsFromOverviewDialog(oDescriptor, false).then(function() {
 				assert.ok(onGetOverviewSpy.calledOnce, "then the App variant dialog gets opened only once after the new app variant has been saved to LREP");
 				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
 				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
@@ -462,12 +484,13 @@ sap.ui.require([
 				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
 				assert.ok(fnTriggerCatalogAssignment.calledOnce, "then the triggerCatalogAssignment method is called once");
 				assert.ok(fnShowSuccessMessageAndTriggerActionFlow.calledOnce, "then the showSuccessMessageAndTriggerActionFlow method is called once");
+				assert.ok(fnNotifyKeyUserWhenTileIsReadySpy.calledOnce, "then the notifyKeyUserWhenTileIsReady method is called once");
+				done();
 			});
 		});
 
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar", function(assert) {
-			var oRootControl = new sap.ui.core.Control();
-
+			var done = assert.async();
 			var oDescriptor = {
 				"sap.app" : {
 					id : "TestId",
@@ -557,9 +580,11 @@ sap.ui.require([
 			]);
 
 			oResponse = {
-				"VariantId" : "customer.TestId",
-				"IAMId" : "IAMId",
-				"CatalogIds" : ["TEST_CATALOG"]
+				response: {
+					"VariantId" : "customer.TestId",
+					"IAMId" : "IAMId",
+					"CatalogIds" : ["TEST_CATALOG"]
+				}
 			};
 
 			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
@@ -568,13 +593,14 @@ sap.ui.require([
 
 			this.oServer.autoRespond = true;
 
+
 			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
 			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
-			var fnCopyUnsavedChangesToLREP = sandbox.spy(AppVariantManager.prototype, "copyUnsavedChangesToLREP");
+			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").returns(Promise.resolve(true));
 			var fnShowSuccessMessageAndTriggerActionFlow = sandbox.spy(AppVariantManager.prototype, "showSuccessMessageAndTriggerActionFlow");
 			var fnNavigateToFLPHomepage = sandbox.spy(AppVariantManager.prototype, "_navigateToFLPHomepage");
 
-			return RtaAppVariantFeature.onSaveAs(oRootControl).then(function() {
+			return RtaAppVariantFeature.onSaveAsFromRtaToolbar(true, true).then(function() {
 				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
 				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
 				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
@@ -582,6 +608,7 @@ sap.ui.require([
 				assert.ok(fnTriggerCatalogAssignment.calledOnce, "then the triggerCatalogAssignment method is called once");
 				assert.ok(fnShowSuccessMessageAndTriggerActionFlow.calledOnce, "then the showSuccessMessageAndTriggerActionFlow method is called once");
 				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the _navigateToFLPHomepage method is called once");
+				done();
 			});
 		});
 	});
