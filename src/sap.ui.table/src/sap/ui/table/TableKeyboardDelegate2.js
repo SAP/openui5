@@ -1119,7 +1119,7 @@ sap.ui.define([
 
 			oEvent.preventDefault();
 
-		} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER)) {
+		} else if (oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
 			TableKeyboardDelegate._forwardFocusToTabDummy(this, "sapUiTableCtrlAfter");
 
 		} else if (oEvent.target === this.getDomRef("overlay")) {
@@ -1212,8 +1212,8 @@ sap.ui.define([
 				TableKeyboardDelegate._focusElement(this, $InteractiveElement[0], true);
 			}
 
-		} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER) || oEvent.target === this.getDomRef("noDataCnt")) {
-			if (this.getColumnHeaderVisible()) {
+		} else if (oCellInfo.isOfType(CellType.ANYCONTENTCELL) || oEvent.target === this.getDomRef("noDataCnt")) {
+			if (this.getColumnHeaderVisible() && !oCellInfo.isOfType(CellType.ROWACTION)) {
 				TableKeyboardDelegate._setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
 				oEvent.preventDefault();
 			} else {

@@ -906,6 +906,18 @@ sap.ui.require([
 		checkFocus(getCell(1, 2), assert);
 	});
 
+	QUnit.test("Row Actions", function(assert) {
+		initRowActions(oTable, 1, 1);
+		sap.ui.getCore().applyChanges();
+		var oElem = checkFocus(getRowAction(1, true), assert);
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(jQuery.sap.domById("Focus2"), assert);
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(getRowAction(1), assert);
+		simulateTabEvent(oElem, true);
+		checkFocus(jQuery.sap.domById("Focus1"), assert);
+	});
+
 	QUnit.test("Extension and Footer", function(assert) {
 		oTable.addExtension(new sap.ui.table.test.TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new sap.ui.table.test.TestControl("Footer", {text: "Footer", tabbable: true}));
@@ -1053,6 +1065,9 @@ sap.ui.require([
 					assert.ok(true, "[INFO] There is a column header and row actions, so we stopped at the rightmost column header cell. Navigate"
 									+ " to the top row action cell.");
 				}
+
+				qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
+				checkFocus(oElem, assert);
 
 				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
 				oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
@@ -1878,6 +1893,23 @@ sap.ui.require([
 		// *END* -> Row Action
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		checkFocus(getRowAction(0), assert);
+
+		/* Test with row actions on header */
+
+		// First Non-Fixed area - First Column Header
+		oElem = checkFocus(getColumnHeader(1, true), assert);
+
+		// *END* -> Non-Fixed area - Last Column Header
+		qutils.triggerKeydown(oElem, Key.END, false, false, false);
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		// *HOME* -> Non-Fixed area - First Column Header
+		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+		oElem = checkFocus(getColumnHeader(1), assert);
+
+		// *HOME* -> Fixed area - Single Column Header
+		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
 
 		//Cleanup
 		initRowActions(oTable, 0, 0);

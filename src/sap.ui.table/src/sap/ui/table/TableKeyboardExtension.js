@@ -190,7 +190,9 @@ sap.ui.define([
 					}
 
 					if (bHasRowActions) {
-						aHeaderDomRefs.push($Table.find(".sapUiTableRowActionHeader").get(0));
+						// Only add a dummy (inivisible inner text) to fullfill matrix for item navigation.
+						// Header should not be focuable.
+						aHeaderDomRefs.push($Table.find(".sapUiTableRowActionHeader").children().get(0));
 					}
 				}
 
