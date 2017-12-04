@@ -3664,6 +3664,39 @@
 			// cleanup
 			oSelectList.destroy();
 		});
+
+		QUnit.module("aria-setsize and aria-posinset");
+
+		QUnit.test("Behavior with SeparatorItem in the items", function (assert) {
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item("firstItem", {
+						key: "item0",
+						text: "Item 0"
+					}),
+					new sap.ui.core.SeparatorItem("separator"),
+					new sap.ui.core.Item("secondItem", {
+						key: "item1",
+						text: "Item 1"
+					})
+				]
+			});
+
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(jQuery("#firstItem").attr("aria-posinset"), "1", "First item has correct aria-posinset");
+			assert.notOk(jQuery("#separator").attr("aria-posinset"), "Separator shouldn't have attribute aria-posinset");
+			assert.strictEqual(jQuery("#secondItem").attr("aria-posinset"), "2", "aria-posinset was skipped for separator and now continues");
+
+			// Loop through each item and check the aria-setsize attribute on it's DOM reference
+			oSelectList.getItems().forEach(function (oItem) {
+				assert.strictEqual(oItem.$().attr("aria-setsize"), "2", "aria-setsize does not include separators");
+			});
+
+			oSelectList.destroy();
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
