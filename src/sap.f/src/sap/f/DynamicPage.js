@@ -441,10 +441,11 @@ sap.ui.define([
 	/**
 	 * Converts the header to collapsed (snapped) mode.
 	 * @param {boolean} bAppendHeaderToContent
+	 * @param {boolean} bUserInteraction - indicates if snapping was caused by user interaction (scroll, collapse button press, etc.)
 	 * @private
 	 */
 
-	DynamicPage.prototype._snapHeader = function (bAppendHeaderToContent) {
+	DynamicPage.prototype._snapHeader = function (bAppendHeaderToContent, bUserInteraction) {
 		var oDynamicPageTitle = this.getTitle();
 
 		if (this._bPinned) {
@@ -456,7 +457,7 @@ sap.ui.define([
 
 		if (exists(oDynamicPageTitle)) {
 
-			oDynamicPageTitle._toggleState(false);
+			oDynamicPageTitle._toggleState(false, bUserInteraction);
 
 			if (bAppendHeaderToContent && this._bHeaderInTitleArea) {
 				this._moveHeaderToContentArea(true);
@@ -478,15 +479,16 @@ sap.ui.define([
 	/**
 	 * Converts the header to expanded mode.
 	 * @param {boolean} bAppendHeaderToTitle
+	 * @param {boolean} bUserInteraction - indicates if expanding was caused by user interaction (scroll, expand button press, etc.)
 	 * @private
 	 */
-	DynamicPage.prototype._expandHeader = function (bAppendHeaderToTitle) {
+	DynamicPage.prototype._expandHeader = function (bAppendHeaderToTitle, bUserInteraction) {
 		var oDynamicPageTitle = this.getTitle();
 		jQuery.sap.log.debug("DynamicPage :: expand header", this);
 
 		if (exists(oDynamicPageTitle)) {
 
-			oDynamicPageTitle._toggleState(true);
+			oDynamicPageTitle._toggleState(true, bUserInteraction);
 
 			if (bAppendHeaderToTitle) {
 				this._moveHeaderToTitleArea(true);
@@ -1409,12 +1411,12 @@ sap.ui.define([
 		}
 
 		if (this._shouldSnap()) {
-			this._snapHeader(true);
+			this._snapHeader(true, true /* bUserInteraction */);
 			this._updateHeaderARIAState(false);
 
 		} else if (this._shouldExpand()) {
 
-			this._expandHeader();
+			this._expandHeader(false, true /* bUserInteraction */);
 			this._toggleHeaderVisibility(true);
 			this._updateHeaderARIAState(true);
 
@@ -1444,7 +1446,7 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._onTitlePress = function () {
 		if (this.getToggleHeaderOnTitleClick()) {
-			this._titleExpandCollapseWhenAllowed();
+			this._titleExpandCollapseWhenAllowed(true /* user interaction */);
 		}
 	};
 
@@ -1479,9 +1481,10 @@ sap.ui.define([
 
 	/**
 	 * Еxpands/collapses the header when allowed to do so by the internal rules of the <code>DynamicPage</code>.
+	 * @param {boolean} bUserInteraction - indicates if title expand/collapse was caused by user interaction (scroll, collapse button press, etc.)
 	 * @private
 	 */
-	DynamicPage.prototype._titleExpandCollapseWhenAllowed = function () {
+	DynamicPage.prototype._titleExpandCollapseWhenAllowed = function (bUserInteraction) {
 		if (this._bPinned) { // operation not allowed
 			return this;
 		}
@@ -1492,11 +1495,11 @@ sap.ui.define([
 		if (this._preserveHeaderStateOnScroll() || !this._canSnapHeaderOnScroll() || !this.getHeader()) {
 			if (!this.getHeaderExpanded()) {
 				// Show header, pushing the content down
-				this._expandHeader(false);
+				this._expandHeader(false, bUserInteraction);
 				this._toggleHeaderVisibility(true);
 			} else {
 				// Hide header, pulling the content up
-				this._snapHeader(false);
+				this._snapHeader(false, bUserInteraction);
 				this._toggleHeaderVisibility(false);
 			}
 
@@ -1504,7 +1507,7 @@ sap.ui.define([
 			// Header is already snapped, then expand
 			bAllowAppendHeaderToTitle = !this._headerBiggerThanAllowedToBeExpandedInTitleArea();
 			this._bExpandingWithAClick = true;
-			this._expandHeader(bAllowAppendHeaderToTitle);
+			this._expandHeader(bAllowAppendHeaderToTitle, bUserInteraction);
 			if (!bAllowAppendHeaderToTitle) {
 				this._setScrollPosition(0);
 			}
@@ -1512,7 +1515,7 @@ sap.ui.define([
 
 		} else { //should snap
 			var bMoveHeaderToContent = this._bHeaderInTitleArea;
-			this._snapHeader(bMoveHeaderToContent);
+			this._snapHeader(bMoveHeaderToContent, bUserInteraction);
 			if (!bMoveHeaderToContent) {
 				this._setScrollPosition(this._getSnappingHeight());
 			}

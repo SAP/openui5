@@ -216,6 +216,25 @@ sap.ui.define([
 				 */
 				_expandButton: {type: "sap.m.Button", multiple: false,  visibility: "hidden"}
 			},
+			events: {
+				/**
+				 * Fired when the title state (expanded/collapsed) is toggled by user interaction.
+				 * For example, scrolling, title clicking/tapping, using expand/collapse button.
+				 *
+				 * Also fired when the developer toggles the title state by programmatically
+				 * changing the scroll position of the scrollbar of <code>DynamicPage</code>.
+				 *
+				 * @since 1.54
+				 */
+				stateChange: {
+					parameters: {
+						/**
+						 * Whether the title was expanded (true) or collapsed (false).
+						 */
+						isExpanded: {type : "boolean"}
+					}
+				}
+			},
 			designtime: "sap/f/designtime/DynamicPageTitle.designtime"
 		}
 	});
@@ -795,9 +814,10 @@ sap.ui.define([
 	/**
 	 * Toggles the title state to expanded (if bExpanded=true) or to snapped otherwise
 	 * @param bExpanded
+	 * @param {boolean} bUserInteraction - indicates if toggleState was caused by user interaction (scroll, collapse button press, etc.)
 	 * @private
 	 */
-	DynamicPageTitle.prototype._toggleState = function (bExpanded) {
+	DynamicPageTitle.prototype._toggleState = function (bExpanded, bUserInteraction) {
 		this._bExpandedState = bExpanded;
 
 		// Snapped content
@@ -822,7 +842,9 @@ sap.ui.define([
 			this.$expandHeadingWrapper.toggleClass("sapUiHidden", !bExpanded);
 		}
 
-		this.fireEvent("_stateChange", {isExpanded: bExpanded});
+		if (bUserInteraction) {
+			this.fireEvent("stateChange", {isExpanded: bExpanded});
+		}
 	};
 
 	/* ========== DynamicPageTitle expand indicator ========== */
