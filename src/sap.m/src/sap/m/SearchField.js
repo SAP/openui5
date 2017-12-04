@@ -244,7 +244,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	SearchField.prototype.getFocusDomRef = function() {
-		return this._inputElement;
+		return this.getInputElement();
 	};
 
 	SearchField.prototype.getFocusInfo = function() {
@@ -276,19 +276,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return "placeholder" in document.createElement("input");
 	}());
 
+	/**
+	 * Returns the inner <input> elment.
+	 *
+	 * @private
+	 */
+	SearchField.prototype.getInputElement = function () {
+		return this.getDomRef("I");
+	};
+
 	SearchField.prototype.onBeforeRendering = function() {
-		if (this._inputElement) {
+		var inputElement = this.getInputElement();
+
+		if (inputElement) {
 			this.$().find(".sapMSFB").off();
 			this.$().off();
-			jQuery(this._inputElement).off();
-			this._inputElement = null;
+			jQuery(inputElement).off();
 		}
 	};
 
 	SearchField.prototype.onAfterRendering = function() {
 
 		// DOM element for the embedded HTML input:
-		this._inputElement = this.getDomRef("I");
+		var inputElement = this.getInputElement();
 		// DOM element for the reset button:
 		this._resetElement = this.getDomRef("reset");
 
@@ -296,7 +306,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//  search: user has pressed "Enter" button -> fire search event, do search
 		//  change: user has focused another control on the page -> do not trigger a search action
 		//  input:  key press or paste/cut -> fire liveChange event
-		jQuery(this._inputElement)
+		jQuery(inputElement)
 			.on(this._inputEvent, this.onInput.bind(this))
 			.on("search", this.onSearch.bind(this))
 			.on("focus", this.onFocus.bind(this))
@@ -339,7 +349,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// in case of escape, revert to the original value, otherwise clear with ""
 		var value = oOptions && oOptions.value || "";
 
-		if (!this._inputElement || this.getValue() === value) {
+		if (!this.getInputElement() || this.getValue() === value) {
 			return;
 		}
 
@@ -368,8 +378,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return; // no action on the right mouse button
 		}
 
+		var inputElement = this.getInputElement();
+
 		// do not remove focus from the inner input but allow it to react on clicks
-		if (document.activeElement === this._inputElement && oEvent.target !== this._inputElement) {
+		if (document.activeElement === inputElement && oEvent.target !== inputElement) {
 			oEvent.preventDefault();
 		}
 		// FF does not set :active by preventDefault, use class:
@@ -387,7 +399,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return; // no action on the right mouse button
 		}
 
-		var oSrc = oEvent.target;
+		var oSrc = oEvent.target,
+			oInputElement = this.getInputElement();
 
 		if (oSrc.id == this.getId() + "-reset") {
 
@@ -405,17 +418,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var active = document.activeElement;
 			if (((Device.system.desktop
 				|| bEmpty
-				|| /(INPUT|TEXTAREA)/i.test(active.tagName) || active ===  this._resetElement && this._active === this._inputElement) // IE Mobile
-				) && (active !== this._inputElement)) {
-				this._inputElement.focus();
+				|| /(INPUT|TEXTAREA)/i.test(active.tagName) || active ===  this._resetElement && this._active === oInputElement) // IE Mobile
+				) && (active !== oInputElement)) {
+				oInputElement.focus();
 			}
 		} else 	if (oSrc.id == this.getId() + "-search") {
 
 			closeSuggestions(this);
 
 			// focus input only if the button with the search icon is pressed
-			if (Device.system.desktop && !this.getShowRefreshButton() && (document.activeElement !== this._inputElement)) {
-				this._inputElement.focus();
+			if (Device.system.desktop && !this.getShowRefreshButton() && (document.activeElement !== oInputElement)) {
+				oInputElement.focus();
 			}
 			this.fireSearch({
 				query: this.getValue(),
@@ -432,7 +445,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// focus if mouse-clicked on the form outside of the input
 		if (this.getEnabled() && oEvent.target.tagName == "FORM") {
-			this._inputElement.focus();
+			this.getInputElement().focus();
 		}
 
 		// on phone if the input is on focus and user taps again on it
@@ -455,7 +468,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SearchField.prototype.onSearch = function(event) {
-		var value = this._inputElement.value;
+		var value = this.getInputElement().value;
 		this.setValue(value);
 		this.fireSearch({
 			query: value,
@@ -478,8 +491,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SearchField.prototype._blur = function() {
 		var that = this;
 		window.setTimeout( function(){
-			if (that._inputElement) {
-				that._inputElement.blur();
+			var inputElement = that.getInputElement();
+			if (inputElement) {
+				inputElement.blur();
 			}
 		}, 13);
 	};
@@ -490,7 +504,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SearchField.prototype.onChange = function(event) {
-		this.setValue(this._inputElement.value);
+		this.setValue(this.getInputElement().value);
 	};
 
 	/**
@@ -498,7 +512,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SearchField.prototype.onInput = function(event) {
-		var value = this._inputElement.value;
+		var value = this.getInputElement().value;
 
 		// IE fires an input event when an empty input with a placeholder is focused or loses focus.
 		// Check if the value has changed, before firing the liveChange event.
@@ -650,10 +664,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	SearchField.prototype.setValue = function(value) {
 		value = value || "";
-		if (this._inputElement) {
+		var inputElement = this.getInputElement();
+		if (inputElement) {
 
-			if (this._inputElement.value !== value) {
-				this._inputElement.value = value;
+			if (inputElement.value !== value) {
+				inputElement.value = value;
 			}
 
 			var $this = this.$();
