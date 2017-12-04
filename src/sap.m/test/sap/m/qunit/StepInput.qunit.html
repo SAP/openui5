@@ -24,6 +24,7 @@
 		sinon.config.useFakeTimers = true;
 
 		var oCore = sap.ui.getCore();
+		var bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
 
 		QUnit.module("API", {
 			beforeEach: function () {
@@ -33,7 +34,9 @@
 				oCore.applyChanges();
 			},
 			afterEach: function () {
-				this.stepInput.destroy();
+				if (!bSkipDestroy) {
+					this.stepInput.destroy();
+				}
 			}
 		});
 
@@ -217,7 +220,9 @@
 				oCore.applyChanges();
 			},
 			afterEach: function () {
-				this.stepInput.destroy();
+				if (!bSkipDestroy) {
+					this.stepInput.destroy();
+				}
 			}
 		});
 
@@ -308,7 +313,9 @@
 				oCore.applyChanges();
 			},
 			afterEach: function () {
-				this.stepInput.destroy();
+				if (!bSkipDestroy) {
+					this.stepInput.destroy();
+				}
 			}
 		});
 
@@ -571,7 +578,9 @@
 				oCore.applyChanges();
 			},
 			afterEach: function () {
-				this.stepInput.destroy();
+				if (!bSkipDestroy) {
+					this.stepInput.destroy();
+				}
 				this.oChangeSpy.reset();
 			}
 		});
@@ -813,7 +822,9 @@
 				oCore.applyChanges();
 			},
 			afterEach: function () {
-				this.stepInput.destroy();
+				if (!bSkipDestroy) {
+					this.stepInput.destroy();
+				}
 			}
 		});
 
@@ -963,7 +974,9 @@
 				oCore.applyChanges();
 			},
 			afterEach: function () {
-				this.stepInput.destroy();
+				if (!bSkipDestroy) {
+					this.stepInput.destroy();
+				}
 			}
 		});
 
@@ -1033,7 +1046,9 @@
 				oCore.applyChanges();
 			},
 			afterEach: function () {
-				this.stepInput.destroy();
+				if (!bSkipDestroy) {
+					this.stepInput.destroy();
+				}
 			}
 		});
 
@@ -1054,7 +1069,9 @@
 				oCore.applyChanges();
 			},
 			afterEach: function () {
-				this.stepInput.destroy();
+				if (!bSkipDestroy) {
+					this.stepInput.destroy();
+				}
 			}
 		});
 
@@ -1069,14 +1086,15 @@
 		module("Private API", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
-
 				});
 
 				this.stepInput.placeAt('qunit-fixture');
 				oCore.applyChanges();
 			},
 			afterEach: function () {
-				this.stepInput.destroy();
+				if (!bSkipDestroy) {
+					this.stepInput.destroy();
+				}
 			}
 		});
 
@@ -1187,6 +1205,34 @@
 					"setProperty is called and it's second parameter is 63");
 			strictEqual(oSpy.getCall(0).args[2], true,
 					"setProperty is called and it's third parameter is 'true'");
+		});
+
+		QUnit.test("_iRealPrecision is updated on each value change", function () {
+			//Prepare
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+			this.stepInput.setDisplayValuePrecision(2);
+			this.stepInput.setStep(0.05); //make sure the precision is different than the one in the value one
+			this.stepInput.setValue(1.20);
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			this.stepInput.setValue(1.567); //make sure the precision is different than the one in the step above
+			oIncrementButton.firePress();
+			this.clock.tick(100);
+
+			//Assert
+			strictEqual(this.stepInput._iRealPrecision, 3, "iRealPrecision for value 1.567 is 3");
+			strictEqual(this.stepInput.getValue(), 1.617, "Value is set correctly: 1.567 + 0.05 = 1.617. ");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.62",
+				"The input is set and formatted correctly: 1.57 + 0.05 = 1.62.");
+		});
+
+		QUnit.test("_sumValues", function() {
+			//Act && Assert
+			equal(this.stepInput._sumValues(1.1376, 0.2, 1, 4), 1.3376, "sumValues(1.1376, 0.2, 1, 4)=1.3376");
+			equal(this.stepInput._sumValues(1.1376, 0.2, -1, 4), 0.9376, "sumValues(1.1376, 0.2, -1, 4)= 0.9376");
+			equal(this.stepInput._sumValues(1.1376, 0.2, 1, 3), 1.337, "sumValues(1.137, 0,2, 1, 3)=1.337");
+			equal(this.stepInput._sumValues(1.1376, 0.2, -1, 3), 0.937, "sumValues(0.937, 0,2, -1, 3)=1.337");
 		});
 
 	</script>
