@@ -1612,6 +1612,21 @@
 		assert.equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
 		assert.equal(oFormat.format(1234567890123), "1,23\xa0Bio.", "1234567890123 formatted");
 
+
+		// this test checks Spanish million parsing "mil" ("M") is included in Spanish "milones" ("MRD")
+		var oLocaleSpanish = new sap.ui.core.Locale("es-ES");
+		var oFormatSpanish = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "short", maxFractionDigits: 0
+		}, oLocaleSpanish);
+
+
+		assert.equal(oFormatSpanish.format(123000000000), "123\xa0MRD" , "123000000000 formatted");
+		assert.equal(oFormatSpanish.format(12000000000), "12\xa0MRD", "12000000000 formatted");
+		assert.equal(oFormatSpanish.format(123000000), "123\xa0M", "123000000 formatted");
+
+		assert.equal(oFormatSpanish.parse("123 MRD"), 123000000000, "\"123 MRD\" parsed");
+		assert.equal(oFormatSpanish.parse("12 MRD"), 12000000000, "\"12 MRD\" parsed");
+		assert.equal(oFormatSpanish.parse("123 M"), 123000000, "\"123 M\" parsed");
 	});
 
 	QUnit.test("float short style", function(assert) {
@@ -1638,6 +1653,36 @@
 		assert.equal(oFormat.format(1234.5), "1,2 Tausend", "1234.5 formatted");
 		assert.equal(oFormat.parse("1 Tausend"), 1000, "\"1 Tausend\" parsed");
 		assert.equal(oFormat.parse("1,2 Tausend"), 1200, "\"1,2 Tausend\" parsed");
+
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "long", maxFractionDigits: 0
+		}, oLocale);
+
+
+		//german has "Million" and "Millionen". The first word is contained in the second.
+		assert.equal(oFormat.format(1456789), "1 Million", "1 million formatted");
+		assert.equal(oFormat.parse("1 Million"), 1000000, "1 million parsed");
+
+		assert.equal(oFormat.format(123456789), "123 Millionen", "123 Millionen formatted");
+		assert.equal(oFormat.parse("123 Millionen"), 123000000, "123 Millionen parsed");
+
+		assert.equal(oFormat.format(123456789000), "123 Milliarden", "123 Milliarden formatted");
+		assert.equal(oFormat.parse("123 Milliarden"), 123000000000, "123 Milliarden parsed");
+
+
+		//Format should work '-10 mil millones' from number: -10000000000
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "long", maxFractionDigits: 0
+		}, new sap.ui.core.Locale("es-ES"));
+
+		//spanish has "mil milliones" and "milliones". The first word ends with the second.
+		assert.equal(oFormat.format(10000000000), "10 mil millones", "10 mil millones formatted");
+		assert.equal(oFormat.parse("10 mil millones"), 10000000000, "10 mil millones parsed");
+
+		assert.equal(oFormat.format(10000000), "10 millones", "10 millones formatted");
+		assert.equal(oFormat.parse("10 millones"), 10000000, "10 millones parsed");
+
 		// other test similar to integer -> skip
 	});
 

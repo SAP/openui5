@@ -1175,7 +1175,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			iKey = 10,
 			aPluralCategories = oLocaleData.getPluralCategories(),
 			sCldrFormat,
-			fnGetFactor = function(sPlural) {
+			bestResult = {number: undefined,
+				factor: iFactor},
+			fnGetFactor = function(sPlural, iKey) {
 				sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
 
 				if (sCldrFormat) {
@@ -1198,14 +1200,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 							// parse the number part like every other number and then use the factor to get the real number
 							sNumber = sValue.replace(sUnit, "");
 							iFactor = iKey;
-							return true;
+							// spanish numbers e.g. for MRD in format for "one" is "00 MRD" therefore factor needs to be adjusted
+							// german numbers e.g. for Mrd. in format for "one" is "0 Mrd." therefore number does not need to be adjusted
+							//    "0" => magnitude = key
+							//    "00"  => magnitude = key / 10
+							//    "000" => magnitude = key / 100
+							iFactor *= Math.pow(10, 1 - sValueSubString.length);
+
+							// if best result has no number yet or the new number is smaller that the current one set the new number as best result
+							if (bestResult.number === undefined || sNumber.length < bestResult.number.length) {
+								bestResult.number = sNumber;
+								bestResult.factor = iFactor;
+							}
 						}
 					}
 				}
 			};
+		// iterate over all formats. Max:  100 000 000 000 000
+		// find best result as format can have multiple matches:
+		// * value can be contained one in another (de-DE): "Million" and "Millionen"
+		// * end with each other (es-ES): "mil millones" and "millones"
 		while (iKey < 1e14) {
-			if (aPluralCategories.some(fnGetFactor)) {
-				break;
+			for (var i = 0; i < aPluralCategories.length; i++) {
+				var sPluralCategory = aPluralCategories[i];
+				fnGetFactor(sPluralCategory, iKey);
 			}
 
 			iKey = iKey * 10;
@@ -1215,7 +1233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			return;
 		}
 
-		return {number: sNumber, factor: iFactor};
+		return bestResult;
 
 	}
 
