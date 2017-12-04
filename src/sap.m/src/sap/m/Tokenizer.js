@@ -896,7 +896,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this.fireTokenChange({
 			token : oToken,
-			type : Tokenizer.TokenChangeType.Added
+			type : Tokenizer.TokenChangeType.Added,
+			suppressInvalidate: bSuppressInvalidate
 		});
 
 		return this;
