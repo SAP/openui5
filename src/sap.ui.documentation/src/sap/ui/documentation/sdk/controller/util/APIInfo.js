@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			jQuery.ajax({
 				async: false,
-				url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/api.json',
+				url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/apiref/api.json',
 				dataType : 'json',
 				success : function(vResponse) {
 					oResponse = vResponse.symbols;
@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global'],
 				// Fetch library data, then cache it no matter the result
 				jQuery.ajax({
 					async: true,
-					url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/api.json',
+					url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/apiref/api.json',
 					dataType : 'json',
 					success : function(vResponse) {
 						var aResult = vResponse.symbols || [];

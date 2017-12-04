@@ -25,30 +25,30 @@
 	white-space: pre-line;
 }
 
-.sapUiDocumentationJsDoc {
+.sapUiJSD {
 	font-size: 0.875rem;
 }
 
 pre.sapUiDocumentationAPICode,
-.sapUiDocumentationJsDoc pre {
+.sapUiJSD pre {
 	white-space: pre-wrap;
 }
 
-.sapUiDocumentationJsDoc > p {
+.sapUiJSD > p {
 	margin-top: 0.6em;
 	margin-bottom: 0.6em;
 }
 
-.sapUiDocumentationJsDoc > p:first-child {
+.sapUiJSD > p:first-child {
 	margin-top: 0.5rem;
 }
 
-.sapUiDocumentationJsDoc > p:last-child {
+.sapUiJSD > p:last-child {
 	margin-bottom: 0.5rem;
 }
 
 /* We remove margin for p tags in JsDoc when we are in the context of a table cell */
-.sapUxAPObjectPageSection .sapMListTbl .sapUiDocumentationJsDoc p {
+.sapUxAPObjectPageSection .sapMListTbl .sapUiJSD p {
 	margin: 0;
 }
 
@@ -632,24 +632,24 @@ code {
 
 /* util */
 
-.sapUiDocumentationJsDoc {
+.sapUiJSD {
 	font-size: 0.875rem;
 }
 
-.sapUiDocumentationJsDoc pre {
+.sapUiJSD pre {
 	white-space: pre-wrap;
 }
 
-.sapUiDocumentationJsDoc > p {
+.sapUiJSD > p {
 	margin-top: 0.6em;
 	margin-bottom: 0.6em;
 }
 
-.sapUiDocumentationJsDoc > p:first-child {
+.sapUiJSD > p:first-child {
 	margin-top: 0.5rem;
 }
 
-.sapUiDocumentationJsDoc > p:last-child {
+.sapUiJSD > p:last-child {
 	margin-bottom: 0.5rem;
 }
 
@@ -1166,34 +1166,34 @@ html.sap-phone .sapMITHOverflowList.tabHeaderNoLeftMargin .sapMITBScrollContaine
 	object-fit: cover;
 }
 
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc p,
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a {
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD p,
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a {
 	color: #ffffff;
 }
 
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumentationJsDoc p,
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumentationJsDoc a {
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD p,
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a {
 	color: #000000;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a,
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumentationJsDoc a:hover,
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a:hover {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a,
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a:hover,
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a:hover {
 	text-decoration: none;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a {
 	color: #0070b1;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a:hover {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a:hover {
 	text-decoration: underline;
 }
 
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a:focus {
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a:focus {
 	outline: 0.125rem dotted #ffffff;
 }
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumentationJsDoc a:focus {
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a:focus {
 	outline: 0.125rem dotted #000000;
 }
 
