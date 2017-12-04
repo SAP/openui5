@@ -20,12 +20,14 @@ sap.ui.require([
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/FakeLrepLocalStorage',
+	'sap/ui/fl/variants/VariantManagement',
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/rta/plugin/Remove',
 	'sap/ui/rta/plugin/CreateContainer',
 	'sap/ui/rta/plugin/Rename',
+	'sap/ui/rta/plugin/ControlVariant',
 	'sap/ui/base/Event',
 	'sap/ui/base/EventProvider',
 	'sap/ui/rta/command/BaseCommand',
@@ -51,12 +53,14 @@ sap.ui.require([
 	Utils,
 	RtaUtils,
 	FakeLrepLocalStorage,
+	VariantManagement,
 	RuntimeAuthoring,
 	Stack,
 	CommandFactory,
 	Remove,
 	CreateContainerPlugin,
 	RenamePlugin,
+	ControlVariantPlugin,
 	Event,
 	EventProvider,
 	RTABaseCommand,
@@ -676,6 +680,90 @@ sap.ui.require([
 			assert.ok(this.oShowMessageStub.calledOnce, "then save error MessageToast called");
 			done();
 		}.bind(this));
+	});
+
+
+	QUnit.module("Given that RuntimeAuthoring is called and a Variant Management control is initialized", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+			FakeLrepLocalStorage.deleteChanges();
+
+			var oCommandFactory = new CommandFactory();
+
+			this.oCommandStack = new Stack();
+			this.oControlVariantPlugin = new ControlVariantPlugin({
+				id : "nonDefaultControlVariant",
+				commandFactory : oCommandFactory
+			});
+
+			this.oVariantManagementControl = new VariantManagement("variantManagementControl");
+
+			sap.ui.getCore().byId("Comp1---idMain1--layout0").addContent(this.oVariantManagementControl);
+			sap.ui.getCore().applyChanges();
+
+			var oVariantManagementDesignTimeMetadata = {
+				"sap.ui.fl.variants.VariantManagement": {
+					actions : {}
+				}
+			};
+
+			var oDuplicateCommand = oCommandFactory.getCommandFor(this.oVariantManagementControl, "duplicate", {
+				sourceVariantReference: "dummyCurrentVariant"
+			}, oVariantManagementDesignTimeMetadata, "dummyCurrentVariantReference");
+
+			this.oRta = new RuntimeAuthoring({
+				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
+				plugins : {
+					controlVariant: this.oControlVariantPlugin
+				},
+				commandStack : this.oCommandStack,
+				showToolbars : true,
+				flexSettings: {
+					developerMode: false
+				}
+			});
+
+			var iCallCount = 0;
+			var fnAfterRenderingDelegate = {
+				"onAfterRendering" : function() {
+					setTimeout(function() {
+						iCallCount === 1 ? done() : iCallCount++;
+					});
+				}
+			};
+
+			this.oRta.attachStart(function() {
+				var oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+				this.oControlVariantPlugin.setVariantManagementControlOverlay(oVariantManagementOverlay);
+
+				this.fnSetTitleOnCreatedVariantSpy = sandbox.spy(this.oRta, "_setTitleOnCreatedVariant");
+				this.fnOverlayOnAfterRenderingSpy = sandbox.spy(oVariantManagementOverlay, "onAfterRendering");
+				this.fnControlVariantStartEdit = sandbox.spy(this.oControlVariantPlugin, "startEdit");
+
+				this.oControlVariantPlugin.fireElementModified({
+					"command" : oDuplicateCommand,
+					"action" : "setTitle"
+				});
+
+				oVariantManagementOverlay.addEventDelegate(fnAfterRenderingDelegate);
+			}.bind(this));
+			sandbox.stub(this.oCommandStack, "pushAndExecute").returns(Promise.resolve());
+
+			this.oRta.start();
+		},
+		afterEach : function(assert) {
+			this.oControlVariantPlugin.destroy();
+			this.oVariantManagementControl.destroy();
+			FakeLrepLocalStorage.deleteChanges();
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when 'fireElementModified' is called on ControlVariantDuplicate command", function(assert) {
+		assert.ok(this.fnSetTitleOnCreatedVariantSpy.calledOnce, "then 'Rta._setTitleOnCreatedVariant' is called once");
+		assert.ok(this.fnOverlayOnAfterRenderingSpy.calledTwice, "then VariantManagement overlay 'onAfterRendering' is called twice");
+		assert.ok(this.fnControlVariantStartEdit.calledOnce, "then rename is triggered after duplication");
 	});
 
 	QUnit.done(function( details ) {
