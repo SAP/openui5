@@ -307,6 +307,30 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.test("when calling 'updateCurrentVariant' with dirty changes in current variant", function(assert) {
+		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges");
+		this.oModel.oData["variantMgmtId1"].modified = true;
+		assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
+		return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0")
+		.then(function() {
+			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "then '_removeDirtyChanges' called once");
+		});
+	});
+
+	QUnit.test("when calling '_removeDirtyChanges'", function(assert) {
+		sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
+		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns(
+				[{getDefinition: function() {return {fileName: "change3"};}}, {getDefinition: function() {return {fileName: "change4"};}}]
+		);
+		sandbox.stub(this.oModel.oVariantController, "removeChangeFromVariant");
+		var aChanges = [{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}];
+
+		this.oModel._removeDirtyChanges(aChanges, "variantMgmtId1", this.oModel.oData["variantMgmtId1"].currentVariant);
+		assert.ok(this.fnRevertChangesStub.calledOnce, "then 'revertChangesOnControl' called once");
+		assert.propEqual(this.fnRevertChangesStub.args[0][0][0].getDefinition(), aChanges[2], "and only with the change that is dirty and in Variant");
+		assert.equal(this.fnRevertChangesStub.args[0][0].length, 1, "and this change is the only one");
+	});
+
 	QUnit.test("when calling '_duplicateVariant' on the same layer", function(assert) {
 		var oSourceVariant = {
 			"content": {
