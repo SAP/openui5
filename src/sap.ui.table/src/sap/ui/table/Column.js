@@ -238,6 +238,9 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 			 * If a string is defined, a default text control will be created with its text property bound to the value of the string. The default
 			 * template depends on the libraries loaded.
 			 * If there is no template, the column will not be rendered in the table.
+			 * The set of supported controls is limited. See section "{@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I Choose?}"
+			 * in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to issues with regards
+			 * to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
 			 */
 			template : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
 
