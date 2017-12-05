@@ -23,7 +23,8 @@ sap.ui.define([
 					{ label: "Step = -1 (which becomes 1), value = 20, width = 120px", value: 20, step: -1, width:"120px"},
 					{ label: "Step = 1 (default); value = 6, min = 5, max = 15, width = 240px, with added description and default fieldWidth 50%", value: 6, min:5, max:15, width:"240px", description:"EUR"},
 					{ label: "Step = 1 (default); value = 160, with added description and fieldWidth set to 70%", value: 160, fieldWidth:"70%", description:"EUR"},
-					{ label: "Step = 1 (default); value = 160, align:Center", value: 160, textAlign:"Center"}
+					{ label: "Step = 1 (default); value = 160, align:Center", value: 160, textAlign:"Center"},
+					{ label: "Step = 5, stepMode = Multiple, min = -40, max = 100, value = 10,", value: 10, step: 5, max: 100, min: -40, stepMode: sap.m.StepInputStepModeType.Multiple}
 				];
 			oModel = new JSONModel({
 				modelData: aData
