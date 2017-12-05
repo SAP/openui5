@@ -567,9 +567,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	Input.prototype.onBeforeRendering = function() {
 		var sSelectedKey = this.getSelectedKey();
 		InputBase.prototype.onBeforeRendering.call(this);
+
 		this._deregisterEvents();
+
 		if (sSelectedKey) {
 			this.setSelectedKey(sSelectedKey);
+		}
+
+		if (this.getShowSuggestion()) {
+			if (this.getShowTableSuggestionValueHelp()) {
+				this._addShowMoreButton();
+			} else {
+				this._removeShowMoreButton();
+			}
 		}
 	};
 

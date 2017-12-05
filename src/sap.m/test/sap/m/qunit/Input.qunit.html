@@ -1664,6 +1664,166 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Tabular Suggestions Show More Button", function(assert) {
+		var oSuggestionData = {
+			tabularSuggestionItems: [
+				{
+					id: "1",
+					name: "Auch ein gutes Ding",
+					qty: "3 EA",
+					limit: "99.00 EUR",
+					price: "17.00 EUR"
+				}, {
+					id: "2",
+					name: "Besser ist das",
+					qty: "1 EA",
+					limit: "20.00 EUR",
+					price: "13.00 EUR"
+				}, {
+					id: "3",
+					name: "Holter-di-polter",
+					qty: "10 EA",
+					limit: "15.00 EUR",
+					price: "12.00 EUR"
+				}, {
+					id: "4",
+					name: "Ha so was",
+					qty: "10 EA",
+					limit: "5.00 EUR",
+					price: "3.00 EUR"
+				}, {
+					id: "5",
+					name: "Hurra ein Produkt",
+					qty: "8 EA",
+					limit: "60.00 EUR",
+					price: "45.00 EUR"
+				}, {
+					id: "6",
+					name: "Hallo du tolles Ding",
+					qty: "2 EA",
+					limit: "40.00 EUR",
+					price: "15.00 EUR"
+				}, {
+					id: "7",
+					name: "Hier sollte ich zuschlagen",
+					qty: "10 EA",
+					limit: "90.00 EUR",
+					price: "55.00 EUR"
+				}, {
+					id: "8",
+					name: "Hohoho",
+					qty: "18 EA",
+					limit: "29.00 EUR",
+					price: "7.00 EUR"
+				}, {
+					id: "9",
+					name: "Holla die Waldfee",
+					qty: "3 EA",
+					limit: "55.00 EUR",
+					price: "30.00 EUR"
+				}, {
+					id: "10",
+					name: "Hau Ruck",
+					qty: "5 EA",
+					limit: "2.00 EUR",
+					price: "1.00 EUR"
+				}]
+		};
+		var tableModel = new sap.ui.model.json.JSONModel();
+		tableModel.setData(oSuggestionData);
+
+		var oTableItemTemplate = new sap.m.ColumnListItem({
+			type: "Active",
+			vAlign: "Middle",
+			cells: [
+				new sap.m.Label({
+					text: "{name}"
+				}),
+				new sap.m.Label({
+					text: "{qty}"
+				}), new sap.m.Label({
+					text: "{limit}"
+				}), new sap.m.Label({
+					text: "{price}"
+				}),
+				new sap.m.Label({
+					text: "{id}"
+				})
+			]
+		});
+
+		var oInput = new sap.m.Input({
+			showSuggestion: true,
+			showTableSuggestionValueHelp: false,
+			suggestionRows: {
+				path: '/tabularSuggestionItems',
+				template: oTableItemTemplate
+			},
+			suggestionColumns: [
+				new sap.m.Column({
+					styleClass: "name",
+					hAlign: "Begin",
+					header: new sap.m.Label({
+						text: "{Name}"
+					})
+				}),
+				new sap.m.Column({
+					hAlign: "Center",
+					styleClass: "qty",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: "{Qty}"
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "Center",
+					styleClass: "limit",
+					width: "30%",
+					header: new sap.m.Label({
+						text: "{Value}"
+					}),
+					minScreenWidth: "XXSmall",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "End",
+					styleClass: "price",
+					width: "30%",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: "{Price}"
+					}),
+					minScreenWidth: "400px",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					styleClass: "name",
+					hAlign: "Begin",
+					visible: false,
+					header: new sap.m.Label({
+						text: "{id}"
+					})
+				})
+			]
+		});
+
+		oInput.setModel(tableModel);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.focus().val("Prod").trigger("input");
+
+		this.clock.tick(300);
+
+		assert.ok(!oInput._oSuggestionPopup.getFooter(), "Suggestion Popup doesn't have Toolbar footer");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Tabular Suggestion on Phone", function(assert){
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
@@ -1793,6 +1953,9 @@
 			}
 		});
 
+		// set up a spy on the dialog's renderer
+		oDialogRendererSpy = sinon.spy(sap.m.DialogRenderer, "render");
+
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(300);
@@ -1800,10 +1963,6 @@
 		oPopup = oInput._oSuggestionPopup;
 		assert.ok(oPopup instanceof sap.m.Dialog, "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
-
-
-		// set up a spy on the dialog's renderer
-		oDialogRendererSpy = sinon.spy(sap.m.DialogRenderer, "render");
 
 		oInput._oPopupInput._$input.focus().val("Product").trigger("input");
 		this.clock.tick(400);
