@@ -346,7 +346,6 @@
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
 											<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
