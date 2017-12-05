@@ -145,6 +145,12 @@
         "type": "FIX",
         "text": " sap.ui.rta - Easy Add plugin missing i18n entry for button text",
         "references": []
+      },
+      {
+        "id": "72d02f24a338165ca7408495750d5c0d8430463d",
+        "type": "FEATURE",
+        "text": "sap.ui.fl: Support for instance specific change handlers",
+        "references": []
       }
     ]
   }

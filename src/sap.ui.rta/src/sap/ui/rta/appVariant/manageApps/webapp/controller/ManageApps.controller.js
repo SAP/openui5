@@ -44,8 +44,11 @@ sap.ui.define([
 					return this._highlightNewCreatedAppVariant(aAppVariantOverviewAttributes);
 				}.bind(this));
 			}.bind(this))["catch"](function(oError) {
+				AppVariantUtils.publishEventBus();
+				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
+				oErrorInfo.overviewDialog = true;
 				BusyIndicator.hide();
-				return AppVariantUtils.showTechnicalError(MessageBox.Icon.ERROR, "HEADER_MANAGE_APPS_FAILED", "MSG_MANAGE_APPS_FAILED", oError);
+				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
 			});
 		},
 		_highlightNewCreatedAppVariant: function(aAppVariantOverviewAttributes) {
@@ -134,14 +137,14 @@ sap.ui.define([
 
 				oNavigationService.toExternal(oNavigationParams);
 
-				sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+				AppVariantUtils.publishEventBus();
 				return true;
 			} else {
 				return false;
 			}
 		},
 		saveAsAppVariant: function(oEvent) {
-			sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+			AppVariantUtils.publishEventBus();
 
 			var sDescriptorUrl = this.getModelProperty("descriptorUrl", oEvent.getSource().getBindingContext());
 
@@ -150,8 +153,10 @@ sap.ui.define([
 				BusyIndicator.hide();
 				return RtaAppVariantFeature.onSaveAs(_oRootControlRunningApp, oAppVariantDescriptor);
 			})["catch"](function(oError) {
+				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
+				oErrorInfo.overviewDialog = true;
 				BusyIndicator.hide();
-				return AppVariantUtils.showTechnicalError(MessageBox.Icon.ERROR, "HEADER_MANAGE_APPS_FAILED", "MSG_MANAGE_APPS_FAILED", oError);
+				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
 			});
 		},
 		copyId: function(oEvent) {

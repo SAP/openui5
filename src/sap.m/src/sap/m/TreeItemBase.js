@@ -224,6 +224,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				sSrc = this.getExpanded() ? this.ExpandedIconURI : this.CollapsedIconURI;
 			}
 			this._oExpanderControl.setSrc(sSrc);
+			this.$().attr("aria-expanded", this.getExpanded());
 		}
 	};
 

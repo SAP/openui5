@@ -98,12 +98,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 				/**
 				 * The tokenizer which displays the tokens
 				 */
-				tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"},
-
-				/**
-				 * Hidden text used for accesibility
-				 */
-				_tokensInfo: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
+				tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"}
 			},
 			events: {
 
@@ -206,15 +201,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 			// Register the click on value help.
 			this._bValueHelpOpen = true;
 		}, this);
-
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-			// create an ARIA announcement and remember its ID for later use in the renderer:
-			var sAriaMultiInputContainToken = new InvisibleText({
-				text: oRb.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN")
-			});
-
-			this.setAggregation("_tokensInfo", sAriaMultiInputContainToken);
-		}
 	};
 
 	MultiInput.prototype._onTokenChange = function (args) {
@@ -610,30 +596,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * @private
 	 */
 	MultiInput.prototype.onBeforeRendering = function () {
-		var oTokenizer = this.getAggregation("tokenizer"),
-			iTokenCount = this.getTokens().length,
-			oInvisibleText,
-			sMultiInputAria = "";
+		var oTokenizer = this.getAggregation("tokenizer");
 
 		if (oTokenizer) {
 			oTokenizer.toggleStyleClass("sapMTokenizerEmpty", oTokenizer.getTokens().length === 0);
-		}
-
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-			oInvisibleText = this.getAggregation("_tokensInfo");
-			switch (iTokenCount) {
-				case 0:
-					sMultiInputAria = oRb.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN");
-					break;
-				case 1:
-					sMultiInputAria = oRb.getText("MULTIINPUT_ARIA_CONTAIN_ONE_TOKEN");
-					break;
-				default:
-					sMultiInputAria = oRb.getText("MULTIINPUT_ARIA_CONTAIN_SEVERAL_TOKENS", iTokenCount);
-					break;
-			}
-
-			oInvisibleText.setText(sMultiInputAria);
 		}
 
 		Input.prototype.onBeforeRendering.apply(this, arguments);
@@ -810,7 +776,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 					var lastInvalidText = "";
 					for (i = 0; i < aSeparatedText.length; i++) {
 						if (aSeparatedText[i]) { // pasting from excel can produce empty strings in the array, we don't have to handle empty strings
-							var oToken = this._convertTextToToken(aSeparatedText[i]);
+							var oToken = this._convertTextToToken(aSeparatedText[i], true);
 							if (oToken) {
 								aValidTokens.push(oToken);
 							} else {
@@ -844,7 +810,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 	};
 
-	MultiInput.prototype._convertTextToToken = function (text) {
+	MultiInput.prototype._convertTextToToken = function (text, bCopiedToken) {
 		var result = null,
 			item = null,
 			token = null,
@@ -859,8 +825,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		if (!text) {
 			return null;
 		}
-
-		if ( this._getIsSuggestionPopupOpen()) { // only take item from suggestion list if popup is open
+		if ( this._getIsSuggestionPopupOpen() || bCopiedToken) {
+			// only take item from suggestion list if popup is open
+			// or token is pasted (otherwise pasting multiple tokens at once does not work)
 			if (this._hasTabularSuggestions()) {
 				//if there is suggestion table, select the correct item, to avoid selecting the wrong item but with same text.
 				item = this._oSuggestionTable._oSelectedItem;
@@ -1345,56 +1312,15 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		return item;
 	};
 
-	MultiInput.prototype.addToken = function (oToken) {
-		this._tokenizer.addToken(oToken);
-		return this;
-	};
-
-	MultiInput.prototype.removeToken = function (oToken) {
-		return this._tokenizer.removeToken(oToken);
-	};
-
-	MultiInput.prototype.removeAllTokens = function () {
-		return this._tokenizer.removeAllTokens();
-	};
-
-	MultiInput.prototype.getTokens = function () {
-		return this._tokenizer.getTokens();
-	};
-
-	MultiInput.prototype.insertToken = function (oToken, iIndex) {
-		this._tokenizer.insertToken(oToken, iIndex);
-		return this;
-	};
-
-	MultiInput.prototype.indexOfToken = function (oToken) {
-		return this._tokenizer.indexOfToken(oToken);
-	};
-
-	MultiInput.prototype.destroyTokens = function () {
-		this._tokenizer.destroyTokens();
-		return this;
-	};
-
-	MultiInput.prototype.updateTokens = function () {
-		this.destroyTokens();
-		this.updateAggregation("tokens");
-	};
-
-	MultiInput.prototype.getAggregation = function (sAggregationName, oDefaultForCreation) {
-		var aTokens;
-		if (sAggregationName === "tokens") {
-			aTokens = this.getTokens();
-
-			if (aTokens.length === 0) {
-				aTokens = oDefaultForCreation || null;
-			}
-
-			return aTokens;
-		} else {
-			return Input.prototype.getAggregation.apply(this, arguments);
+	MultiInput.getMetadata().forwardAggregation(
+		"tokens",
+		{
+			getter: function(){ return this._tokenizer; },
+			aggregation: "tokens",
+			forwardBinding: true
 		}
-	};
+	);
+
 
 	/**
 	 * Function overwrites clone function to add tokens to MultiInput

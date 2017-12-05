@@ -53,7 +53,13 @@ sap.ui.define(["sap/ui/core/Element"],
 				/**
 				 * The unit of the given value. If this unit is given, the line is displayed bold.
 				 */
-				unit: { type: "string", defaultValue: null, group: "Data" }
+				unit: { type: "string", defaultValue: null, group: "Data" },
+
+				/**
+				 * A string to be rendered by the control as a line marker. This string must be a valid SVG definition.
+				 * The only valid tags are: svg, path, line.
+				 */
+				lineMarker: {type: "string", defaultValue: null, group: "Data"}
 
 			}
 		}

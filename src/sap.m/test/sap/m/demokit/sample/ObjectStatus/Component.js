@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			config : {
 				sample : {
 					files : [
-						"V.view.xml"
+						"V.view.xml", "C.controller.js"
 					]
 				}
 			}

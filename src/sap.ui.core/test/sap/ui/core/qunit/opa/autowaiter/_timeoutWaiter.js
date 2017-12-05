@@ -109,7 +109,7 @@ sap.ui.define([
 			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
 			sinon.assert.calledWithMatch(oDebugSpy, "There are 1 open blocking timeouts\nTimeout: ID: " + iID + " Delay: 100 Depth: 0 " +
 				"Function: function timeoutFunction");
-			sinon.assert.calledWithMatch(oDebugSpy, "callingFunction");
+			sinon.assert.calledWithMatch(oDebugSpy, new Error().stack ? "callingFunction" : "No stack trace available");
 		});
 
 		QUnit.module("timeoutWaiter - multiple " + sFunctionUnderTest, {

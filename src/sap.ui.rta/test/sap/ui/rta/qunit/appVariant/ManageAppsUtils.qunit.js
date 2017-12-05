@@ -40,6 +40,28 @@ sap.ui.require([
 		}
 	}, function() {
 
+		QUnit.test("When getAppVariantOverviewAttributes() method is called with some missing properties", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				isOriginal : true,
+				originLayer: "VENDOR",
+				isAppVariant: false,
+				descriptorUrl : "url1",
+				hasStartableIntent: true,
+				startWith: {
+					"semanticObject": "SemObj",
+					"action": "Action"
+				}
+			};
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
+				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
+				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
+			});
+		});
+
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with no intent parameters", function (assert) {
 			var oAppVariantInfo = {
 				appId : "id1",

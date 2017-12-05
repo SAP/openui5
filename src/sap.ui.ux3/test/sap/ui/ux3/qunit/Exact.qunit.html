@@ -55,6 +55,7 @@
 		QUnit.test("Custom Values", function(assert) {
 			assert.equal(oExact2.getResultText(), "Some result text", "Custom 'resultText':");
 			assert.equal(oExact1.getSettingsMenu().getId(), "menu", "Custom 'settingsMenu':");
+			assert.equal(oExact1._browser.getOptionsMenu().getId(), "menu", "Custom 'settingsMenu':");
 			assert.equal(oExact1.getTooltip(), "Some text", "Custom 'tooltip':");
 		});
 

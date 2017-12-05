@@ -103,7 +103,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					/**
 					 * A custom header button
 					 */
-					headerButton: {type: "sap.m.Button", multiple: false}
+					headerButton: {type: "sap.m.Button", multiple: false, forwarding: {idSuffix: "-messageView", aggregation: "headerButton"}}
 				},
 				events: {
 					/**
@@ -681,22 +681,6 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			this._oMessageView.setProperty('asyncURLHandler', asyncURLHandler, true);
 
 			return this;
-		};
-
-		/*
-		 * =========================================
-		 * MessagePopover HeaderButton
-		 * proxy methods
-		 * =========================================
-		 */
-
-		MessagePopover.prototype.setHeaderButton = function (oBtn) {
-			this._oMessageView.setHeaderButton(oBtn);
-			return this;
-		};
-
-		MessagePopover.prototype.getHeaderButton = function () {
-			return this._oMessageView.getHeaderButton();
 		};
 
 		MessagePopover.prototype.setModel = function(oModel, sName) {

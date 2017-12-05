@@ -166,7 +166,7 @@ sap.ui.define([
 				*
 				* <b>Note:</b> The control will be placed in the title`s leftmost area.
 				*/
-				titleHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
+				titleHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "heading"}},
 
 				/**
 				 * The <code>SemanticPage</code> breadcrumbs.
@@ -177,7 +177,7 @@ sap.ui.define([
 				 * <b>Note:</b> The control will be placed in the title`s top-left area.
 				 * @since 1.52
 				 */
-				titleBreadcrumbs: {type: "sap.m.IBreadcrumbs", multiple: false, defaultValue: null},
+				titleBreadcrumbs: {type: "sap.m.IBreadcrumbs", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "breadcrumbs"}},
 
 				/**
 				* The content, displayed in the title, when the header is in collapsed state.
@@ -185,7 +185,7 @@ sap.ui.define([
 				* <b>Note:</b> The controls will be placed in the title`s left area,
 				* under the <code>titleHeading</code> aggregation.
 				*/
-				titleSnappedContent: {type: "sap.ui.core.Control", multiple: true},
+				titleSnappedContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getTitle", aggregation: "snappedContent"}},
 
 				/**
 				* The content,displayed in the title, when the header is in expanded state.
@@ -193,7 +193,7 @@ sap.ui.define([
 				* <b>Note:</b> The controls will be placed in the title`s left area,
 				* under the <code>titleHeading</code> aggregation.
 				*/
-				titleExpandedContent: {type: "sap.ui.core.Control", multiple: true},
+				titleExpandedContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getTitle", aggregation: "expandedContent"}},
 
 				/**
 				 * The content, displayed in the title.
@@ -201,7 +201,7 @@ sap.ui.define([
 				 * <b>Note:</b> The controls will be placed in the middle area.
 				 * @since 1.52
 				 */
-				titleContent: {type: "sap.ui.core.Control", multiple: true},
+				titleContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getTitle", aggregation: "content"}},
 
 				/**
 				* A semantic-specific button which is placed in the <code>SemanticPage</code> title as first action.
@@ -269,7 +269,7 @@ sap.ui.define([
 				/**
 				* The header content.
 				*/
-				headerContent: {type: "sap.ui.core.Control", multiple: true},
+				headerContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getHeader", aggregation: "content"}},
 
 				/**
 				* The <code>SemanticPage</code> content.
@@ -499,134 +499,6 @@ sap.ui.define([
 		return ManagedObject.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
 
-	/**
-	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleHeading</code> aggregation methods
-	* to the <code>sap.f.DynamicPageTitle</code> <code>heading</code> aggregation.
-	*
-	* @override
-	*/
-	["getTitleHeading", "setTitleHeading", "destroyTitleHeading"]
-		.forEach(function (sMethod) {
-			SemanticPage.prototype[sMethod] = function (oControl) {
-				var oDynamicPageTitle = this._getTitle(),
-					sTitleMethod = sMethod.replace(/TitleHeading?/, "Heading"),
-					vResult = oDynamicPageTitle[sTitleMethod].apply(oDynamicPageTitle, arguments);
-
-				if (sMethod === "getTitleHeading") {
-					return vResult;
-				}
-
-				return this;
-			};
-		}, this);
-
-	["getTitleBreadcrumbs", "setTitleBreadcrumbs", "destroyTitleBreadcrumbs"]
-		.forEach(function (sMethod) {
-			SemanticPage.prototype[sMethod] = function (oControl) {
-				var oDynamicPageTitle = this._getTitle(),
-					sTitleMethod = sMethod.replace(/TitleBreadcrumbs?/, "Breadcrumbs"),
-					vResult = oDynamicPageTitle[sTitleMethod].apply(oDynamicPageTitle, arguments);
-
-				if (sMethod === "getTitleBreadcrumbs") {
-					return vResult;
-				}
-
-				return this;
-			};
-		}, this);
-
-	/**
-	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleExpandedContent</code>
-	* aggregation methods to <code>sap.f.DynamicPageTitle</code> <code>expandedContent</code> aggregation.
-	*
-	* @override
-	*/
-	[
-		"addTitleExpandedContent",
-		"insertTitleExpandedContent",
-		"removeTitleExpandedContent",
-		"indexOfTitleExpandedContent",
-		"removeAllTitleExpandedContent",
-		"destroyTitleExpandedContent",
-		"getTitleExpandedContent"
-	].forEach(function (sMethod) {
-		SemanticPage.prototype[sMethod] = function (oControl) {
-			var oDynamicPageTitle = this._getTitle(),
-				sTitleMethod = sMethod.replace(/TitleExpandedContent?/, "ExpandedContent");
-
-			return oDynamicPageTitle[sTitleMethod].apply(oDynamicPageTitle, arguments);
-		};
-	});
-
-	/**
-	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleExpandedContent</code>
-	* aggregation methods to <code>sap.f.DynamicPageTitle</code> <code>snappedContent</code> aggregation.
-	*
-	* @override
-	*/
-	[
-		"addTitleSnappedContent",
-		"insertTitleSnappedContent",
-		"removeTitleSnappedContent",
-		"indexOfTitleSnappedContent",
-		"removeAllTitleSnappedContent",
-		"destroyTitleSnappedContent",
-		"getTitleSnappedContent"
-	].forEach(function (sMethod) {
-		SemanticPage.prototype[sMethod] = function (oControl) {
-			var oDynamicPageTitle = this._getTitle(),
-				sTitleMethod = sMethod.replace(/TitleSnappedContent?/, "SnappedContent");
-
-			return oDynamicPageTitle[sTitleMethod].apply(oDynamicPageTitle, arguments);
-		};
-	});
-
-	/**
-	 * Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleContent</code>
-	 * aggregation methods to <code>sap.f.DynamicPageTitle</code> <code>content</code> aggregation.
-	 *
-	 * @override
-	 */
-
-	[
-		"addTitleContent",
-		"insertTitleContent",
-		"removeTitleContent",
-		"indexOfTitleContent",
-		"removeAllTitleContent",
-		"destroyTitleContent",
-		"getTitleContent"
-	].forEach(function (sMethod) {
-		SemanticPage.prototype[sMethod] = function (oControl) {
-			var oDynamicPageTitle = this._getTitle(),
-				sTitleMethod = sMethod.replace(/TitleContent?/, "Content");
-
-			return oDynamicPageTitle[sTitleMethod].apply(oDynamicPageTitle, arguments);
-		};
-	});
-
-	/**
-	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>headerContent</code>
-	* aggregation methods to <code>sap.f.DynamicPageHeader</code> <code>content</code> aggregation.
-	*
-	* @override
-	*/
-	[
-		"addHeaderContent",
-		"insertHeaderContent",
-		"removeHeaderContent",
-		"indexOfHeaderContent",
-		"removeAllHeaderContent",
-		"destroyHeaderContent",
-		"getHeaderContent"
-	].forEach(function (sMethod) {
-		SemanticPage.prototype[sMethod] = function (oControl) {
-			var oDynamicPageHeader = this._getHeader(),
-				sHeaderMethod = sMethod.replace(/HeaderContent?/, "Content");
-
-			return oDynamicPageHeader[sHeaderMethod].apply(oDynamicPageHeader, arguments);
-		};
-	});
 
 	/**
 	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>content</code>
@@ -665,7 +537,6 @@ sap.ui.define([
 			return oSemanticTitle[sSemanticTitleMethod].apply(oSemanticTitle, arguments);
 		};
 	}, this);
-
 
 	/**
 	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>titleCustomIconActions</code>

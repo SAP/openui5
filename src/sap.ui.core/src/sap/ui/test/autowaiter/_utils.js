@@ -3,21 +3,29 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global"
-], function ($) {
+	"jquery.sap.global",
+	'sap/ui/thirdparty/URI'
+], function ($, URI) {
 	"use strict";
+
+	var oUriParams = new URI().search(true);
+	var bForceResolveStackTrace = ["false", undefined].indexOf(oUriParams.opaFrameIEStackTrace) < 0;
 
 	function resolveStackTrace() {
 		var oError = new Error();
-		var sStack;
+
+		var sStack = "No stack trace available";
 		if (oError.stack) {
 			sStack = oError.stack;
-		}
-		// in IE the stack is not yet available on error construction
-		try {
-			throw oError;
-		} catch (err) {
-			sStack = err.stack;
+		} else if (bForceResolveStackTrace) {
+			// in IE11 the stack is not yet available on error construction
+			// error throwing is too expensive in IE11 so skip it
+			// unless explicitly requested with opaFrameIEStackTrace URI parameter
+			try {
+				throw oError;
+			} catch (err) {
+				sStack = err.stack;
+			}
 		}
 		return sStack.replace(/^Error\s/, "");
 	}

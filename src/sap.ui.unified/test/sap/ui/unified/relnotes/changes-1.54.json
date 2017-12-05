@@ -61,6 +61,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.Menu: remove scrollbar in context menu",
         "references": []
+      },
+      {
+        "id": "689a818c2583b300739affd752157b52603a7117",
+        "type": "FEATURE",
+        "text": " ManagedObject(-Metadata): aggregation forwarding",
+        "references": []
+      },
+      {
+        "id": "bbd559b96e2b8fab72febad8fbf436e195b69263",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select month and year corrected",
+        "references": []
       }
     ]
   }

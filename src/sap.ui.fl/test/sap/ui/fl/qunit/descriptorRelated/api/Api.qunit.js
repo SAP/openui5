@@ -551,8 +551,44 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("getId", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference"
+		}).then(function(oDescriptorVariant){
+			assert.strictEqual(oDescriptorVariant.getId(), "a.id");
+		});
+	});
 
+	QUnit.test("getReference", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference"
+		}).then(function(oDescriptorVariant){
+			assert.strictEqual(oDescriptorVariant.getReference(), "a.reference");
+		});
+	});
 
+	QUnit.test("getSettings", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference"
+		}).then(function(oDescriptorVariant){
+			assert.equal(oDescriptorVariant.getSettings().isAtoAvailable(), false);
+			assert.equal(oDescriptorVariant.getSettings().isAtoEnabled(), false);
+			assert.equal(oDescriptorVariant.getSettings().isKeyUser(), false);
+			assert.equal(oDescriptorVariant.getSettings().isProductiveSystem(), false);
+		});
+	});
+
+	QUnit.test("getNamespace", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference"
+		}).then(function(oDescriptorVariant){
+			assert.strictEqual(oDescriptorVariant.getNamespace(), "apps/a.reference/appVariants/a.id/");
+		});
+	});
 
 	QUnit.test("create_app_setTitle", function(assert) {
 		var _oDescriptorInlineChange;

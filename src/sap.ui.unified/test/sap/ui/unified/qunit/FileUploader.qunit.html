@@ -290,6 +290,27 @@
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Test associated label interaction", function (assert) {
+		//Set up
+		var oFileUploader = createFileUploader({}),
+			oSpy,
+			FUEl;
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//act
+		FUEl = oFileUploader.getDomRef("fu");
+		oSpy = this.spy(FUEl, "click");
+		qutils.triggerEvent("click", oFileUploader.oBrowse.getId());
+
+		// assert
+		assert.strictEqual(oSpy.callCount, 1, "Clicking on browse button should trigger click on the input");
+
+		// cleanup
+		oFileUploader.destroy();
+	});
+
 	QUnit.module("File validation");
 	QUnit.test("Test file type validation - handlechange()", function (assert){
 		//setup

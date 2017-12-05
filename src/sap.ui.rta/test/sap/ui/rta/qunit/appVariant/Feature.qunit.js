@@ -445,7 +445,7 @@ sap.ui.require([
 
 			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
 
-			sandbox.stub(AppVariantManager.prototype, "_showSaveSuccessMessage").returns(Promise.resolve());
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			this.oServer.autoRespond = true;
 
@@ -564,7 +564,7 @@ sap.ui.require([
 
 			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
 
-			sandbox.stub(AppVariantManager.prototype, "_showSaveSuccessMessage").returns(Promise.resolve());
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			this.oServer.autoRespond = true;
 

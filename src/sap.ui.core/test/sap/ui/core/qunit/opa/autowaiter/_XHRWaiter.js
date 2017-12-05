@@ -109,15 +109,15 @@ sap.ui.define([
 	QUnit.test("Should log args and execution stack trace", function callingFunction (assert) {
 		createAndSendXHR("/foo");
 		sinon.assert.calledWithMatch(this.oTraceSpy, "New pending FakeXHR:\nFakeXHR: URL: '/foo' Method: 'GET'");
-		sinon.assert.calledWithMatch(this.oTraceSpy, "callingFunction");
+		sinon.assert.calledWithMatch(this.oTraceSpy, new Error().stack ? "callingFunction" : "No stack trace available");
 		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 0 open XHRs and 1 open FakeXHRs");
 		sinon.assert.calledWithMatch(this.oDebugSpy, "\nFakeXHR: URL: '/foo' Method: 'GET'");
-		sinon.assert.calledWithMatch(this.oDebugSpy, "callingFunction");
+		sinon.assert.calledWithMatch(this.oDebugSpy, new Error().stack ? "callingFunction" : "No stack trace available");
 		this.aRequests[0].respond(200, {}, '{}');
 		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		sinon.assert.calledWithMatch(this.oTraceSpy, "FakeXHR finished:\nFakeXHR: URL: '/foo' Method: 'GET'");
-		sinon.assert.calledWithMatch(this.oTraceSpy, "callingFunction");
+		sinon.assert.calledWithMatch(this.oTraceSpy, new Error().stack ? "callingFunction" : "No stack trace available");
 	});
 
 	QUnit.module("XHRWaiter - sinon cleanup");
@@ -240,11 +240,11 @@ sap.ui.define([
 	QUnit.test("Should log args and execution stack trace", function callingFunction (assert) {
 		var oXHR = createAndSendXHR("actions.js");
 		sinon.assert.calledWithMatch(this.oTraceSpy, "New pending XHR:\nXHR: URL: 'actions.js' Method: 'GET'");
-		sinon.assert.calledWithMatch(this.oTraceSpy, "callingFunction");
+		sinon.assert.calledWithMatch(this.oTraceSpy, new Error().stack ? "callingFunction" : "No stack trace available");
 		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		sinon.assert.calledWithMatch(this.oDebugSpy, "There are 1 open XHRs and 0 open FakeXHRs");
 		sinon.assert.calledWithMatch(this.oDebugSpy, "\nXHR: URL: 'actions.js' Method: 'GET'");
-		sinon.assert.calledWithMatch(this.oDebugSpy, "callingFunction");
+		sinon.assert.calledWithMatch(this.oDebugSpy, new Error().stack ? "callingFunction" : "No stack trace available");
 		return whenRequestDone(oXHR).then(function () {
 			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});

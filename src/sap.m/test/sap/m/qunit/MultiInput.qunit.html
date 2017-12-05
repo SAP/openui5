@@ -1189,12 +1189,13 @@
 		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description Token1 Token2", "Description");
 	});
 
-	QUnit.test("_tokensInfo aggregation", function(assert) {
+	QUnit.test("Tokens information should be read out", function(assert) {
 		// arrange
-		var oInvisibleText = this.multiInput1.getAggregation("_tokensInfo");
+		var sInvisibleTextId = this.multiInput1.getAggregation("tokenizer").getTokensInfoId(),
+			oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
 
 		// assert
-		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_TOKEN"), "'MultiInput may contain tokens' text is set.");
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_TOKEN"), "'MultiInput may contain tokens' text is set.");
 
 		// act
 		this.multiInput1.addToken(new sap.m.Token({text: "Token1"}));
@@ -1202,7 +1203,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_ONE_TOKEN"), "'MultiInput contains 1 token' text is set.");
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_ONE_TOKEN"), "'MultiInput contains 1 token' text is set.");
 
 		// act
 		this.multiInput1.addToken(new sap.m.Token({text: "Token2"}));
@@ -1210,7 +1211,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("MULTIINPUT_ARIA_CONTAIN_SEVERAL_TOKENS", this.multiInput1.getTokens().length), "'MultiInput contains N tokens' text is set.");
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS", this.multiInput1.getTokens().length), "'MultiInput contains N tokens' text is set.");
 	});
 
 	QUnit.test("Placeholder opacity", function(assert) {
@@ -1282,6 +1283,35 @@
 
 		// cleanup
 		oSpy.restore();
+	});
+
+	QUnit.test("Paste (with suggestions)", function(assert) {
+
+		if (!sap.ui.Device.browser.internet_explorer) {
+			//arrange
+			var sPastedString = "a\nb";
+			this.multiInput1.addSuggestionItem(new sap.ui.core.Item({ text : "a"}));
+			this.multiInput1.addSuggestionItem(new sap.ui.core.Item({ text : "b"}));
+
+			//act
+			sap.ui.test.qunit.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+				originalEvent: {
+					clipboardData: {
+						getData: function () {
+							return sPastedString;
+						}
+					}
+				}
+			});
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(10);
+
+			//assert
+			assert.equal(this.multiInput1.getTokens().length, 2, "2 tokens should be added to MultiInput on paste");
+		} else {
+			assert.expect(0);
+		}
 	});
 
 	QUnit.test("_convertTextToToken", function(assert) {

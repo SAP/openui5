@@ -225,7 +225,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 						type: "sap.ui.core.Item",
 						multiple: true,
 						singularName: "item",
-						bindable: "bindable"
+						bindable: "bindable",
+						forwarding: {
+							getter: "getList",
+							aggregation: "items"
+						}
 					},
 
 					/**
@@ -362,17 +366,19 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			return "";
 		};
 
-		Select.prototype._callMethodInControl = function(sFunctionName, aArgs) {
-			var oList = this.getList();
-
-			if (aArgs[0] === "items") {
-
-				if (oList) {
-					return SelectList.prototype[sFunctionName].apply(oList, aArgs);
-				}
-			} else {
-				return Control.prototype[sFunctionName].apply(this, aArgs);
+		/**
+		 * Gets the Select's <code>list</code>.
+		 *
+		 * @returns {sap.m.List}
+		 * @private
+		 * @since 1.22.0
+		 */
+		Select.prototype.getList = function() {
+			if (this.bIsDestroyed) {
+				return null;
 			}
+
+			return this._oList;
 		};
 
 		/**
@@ -500,21 +506,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			} else {
 				oDomRef.removeAttribute(sActivedescendant);
 			}
-		};
-
-		/**
-		 * Gets the Select's <code>list</code>.
-		 *
-		 * @returns {sap.m.List}
-		 * @private
-		 * @since 1.22.0
-		 */
-		Select.prototype.getList = function() {
-			if (this.bIsDestroyed) {
-				return null;
-			}
-
-			return this._oList;
 		};
 
 		Select.prototype.updateItems = function(sReason) {
@@ -1767,17 +1758,17 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		};
 
 		Select.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-			this._callMethodInControl("addAggregation", arguments);
-
 			if (sAggregationName === "items" && !bSuppressInvalidate && !this.isInvalidateSuppressed()) {
 				this.invalidate(oObject);
 			}
-
-			return this;
+			return Control.prototype.addAggregation.apply(this, arguments);
 		};
 
-		Select.prototype.getAggregation = function() {
-			return this._callMethodInControl("getAggregation", arguments);
+		Select.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
+			if (sAggregationName === "items" && !bSuppressInvalidate && !this.isInvalidateSuppressed()) {
+				this.invalidate();
+			}
+			return Control.prototype.destroyAggregation.apply(this, arguments);
 		};
 
 		Select.prototype.setAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
@@ -1790,33 +1781,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 
 			return Control.prototype.setAssociation.apply(this, arguments);
-		};
-
-		Select.prototype.indexOfAggregation = function() {
-			return this._callMethodInControl("indexOfAggregation", arguments);
-		};
-
-		Select.prototype.insertAggregation = function() {
-			this._callMethodInControl("insertAggregation", arguments);
-			return this;
-		};
-
-		Select.prototype.removeAggregation = function() {
-			return this._callMethodInControl("removeAggregation", arguments);
-		};
-
-		Select.prototype.removeAllAggregation = function() {
-			return this._callMethodInControl("removeAllAggregation", arguments);
-		};
-
-		Select.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
-			this._callMethodInControl("destroyAggregation", arguments);
-
-			if (!bSuppressInvalidate && !this.isInvalidateSuppressed()) {
-				this.invalidate();
-			}
-
-			return this;
 		};
 
 		Select.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {

@@ -56,7 +56,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * the currently displayed tokens
 			 */
-			tokens : {type : "sap.m.Token", multiple : true, singularName : "token"}
+			tokens : {type : "sap.m.Token", multiple : true, singularName : "token"},
+			/**
+			 * Hidden text used for accesibility
+			 */
+			_tokensInfo: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
 		},
 		associations : {
 
@@ -161,6 +165,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			vertical : false,
 			nonTouchScrolling : true
 		});
+
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			var sAriaTokenizerContainToken = new InvisibleText({
+				text: oRb.getText("TOKENIZER_ARIA_CONTAIN_TOKEN")
+			});
+
+			this.setAggregation("_tokensInfo", sAriaTokenizerContainToken);
+		}
 	};
 
 	/**
@@ -262,6 +274,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	Tokenizer.prototype.onBeforeRendering = function() {
+		this._setTokensAria();
 		this._deregisterResizeHandler();
 	};
 
@@ -1238,6 +1251,34 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Sets accessibility information about the tokens
+	 *
+	 * @private
+	 */
+	Tokenizer.prototype._setTokensAria = function() {
+		var iTokenCount = this.getTokens().length,
+		oInvisibleText,
+		sTokenizerAria = "";
+
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			oInvisibleText = this.getAggregation("_tokensInfo");
+			switch (iTokenCount) {
+				case 0:
+					sTokenizerAria = oRb.getText("TOKENIZER_ARIA_CONTAIN_TOKEN");
+					break;
+				case 1:
+					sTokenizerAria = oRb.getText("TOKENIZER_ARIA_CONTAIN_ONE_TOKEN");
+					break;
+				default:
+					sTokenizerAria = oRb.getText("TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS", iTokenCount);
+					break;
+			}
+
+			oInvisibleText.setText(sTokenizerAria);
+		}
+	};
+
+	/**
 	 * Selects the hidden clip div to enable copy to clipboad.
 	 *
 	 * @private
@@ -1274,6 +1315,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype.setReverseTokens = function(bReverseTokens) {
 		this._reverseTokens = bReverseTokens;
+	};
+
+	/**
+	 * Gets the accessibility text aggregation id
+	 * @returns {string} Returns the InvisibleText control id
+	 * @protected
+	 */
+	Tokenizer.prototype.getTokensInfoId = function() {
+		return this.getAggregation("_tokensInfo").getId();
 	};
 
 	Tokenizer.TokenChangeType = {

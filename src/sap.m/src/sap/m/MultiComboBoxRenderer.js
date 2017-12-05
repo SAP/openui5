@@ -40,6 +40,20 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer'],
 	};
 
 	/**
+	 * Add attributes to the element.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	MultiComboBoxRenderer.writeInnerAttributes = function(oRm, oControl) {
+		var oInvisibleTextId = oControl._oTokenizer && oControl._oTokenizer.getTokensInfoId();
+
+		ComboBoxBaseRenderer.writeInnerAttributes.apply(this, arguments);
+
+		oRm.writeAttribute("aria-describedby", oInvisibleTextId);
+	};
+
+	/**
 	 * Add inner classes to the MultiComboBox's input element.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.

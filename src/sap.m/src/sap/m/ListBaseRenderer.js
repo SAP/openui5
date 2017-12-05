@@ -55,7 +55,6 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/m/library', 'sap/ui/Device'],
 		rm.write("<div");
 		rm.addClass("sapMList");
 		rm.writeControlData(oControl);
-		rm.writeAttribute("tabindex", "-1");
 
 		if (oControl.getInset()) {
 			rm.addClass("sapMListInsetBG");

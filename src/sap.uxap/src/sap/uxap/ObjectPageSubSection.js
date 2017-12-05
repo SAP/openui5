@@ -129,6 +129,7 @@ sap.ui.define([
 				"actions"
 			]
 		});
+		this._attachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
 
 		//switch logic for the default mode
 		this._switchSubSectionMode(this.getMode());
@@ -317,9 +318,6 @@ sap.ui.define([
 			return;
 		}
 
-		this._synchronizeBlockLayouts();
-		this._attachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
-
 		this._$spacer = jQuery.sap.byId(oObjectPageLayout.getId() + "-spacer");
 	};
 
@@ -333,8 +331,6 @@ sap.ui.define([
 		if (ObjectPageSectionBase.prototype.onBeforeRendering) {
 			ObjectPageSectionBase.prototype.onBeforeRendering.call(this);
 		}
-
-		this._detachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
 
 		this._setAggregationProxy();
 		this._getGrid().removeAllContent();
@@ -626,6 +622,16 @@ sap.ui.define([
 		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerDesktop", this._onDesktopMediaRange(oCurrentMedia));
 		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerTablet", this._onTabletMediaRange(oCurrentMedia));
 		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerPhone", this._onPhoneMediaRange(oCurrentMedia));
+	};
+
+	ObjectPageSubSection.prototype._getMediaString = function (oCurrentMedia) {
+		if (this._onPhoneMediaRange(oCurrentMedia)) {
+			return "Phone";
+		}
+		if (this._onTabletMediaRange(oCurrentMedia)) {
+			return "Tablet";
+		}
+		return "Desktop";
 	};
 
 

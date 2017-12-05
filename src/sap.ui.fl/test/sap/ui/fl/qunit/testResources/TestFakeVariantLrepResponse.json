@@ -72,7 +72,6 @@
 	],
 	"variantSection" : {
 		"idMain1--variantManagementOrdersTable" : {
-			"defaultVariant" : "variant0",
 			"variants" : [
 				{
 					"content": {
@@ -330,10 +329,21 @@
 					}
 				}
 			],
-			"variantManagementChanges": {}
+			"variantManagementChanges": {
+				"setDefault" : [{
+					"fileName": "id_1510920910626_29_setDefault",
+					"fileType": "ctrl_variant_management_change",
+					"changeType": "setDefault",
+					"content": {
+						"defaultVariant":"variant0"
+					},
+					"selector": {
+						"id": "idMain1--variantManagementOrdersTable"
+					}
+				}]
+			}
 		},
 		"variantManagementOrdersObjectPage" : {
-			"defaultVariant" : "variant00",
 			"variants" : [
 				{
 					"content": {
@@ -484,7 +494,19 @@
 					}
 				}
 			],
-			"variantManagementChanges": {}
+			"variantManagementChanges": {
+				"setDefault" : [{
+					"fileName": "id_1510920910626_30_setDefault",
+					"fileType": "ctrl_variant_management_change",
+					"changeType": "setDefault",
+					"content": {
+						"defaultVariant":"variant00"
+					},
+					"selector": {
+						"id": "variantManagementOrdersObjectPage"
+					}
+				}]
+			}
 		}
 	}
 }

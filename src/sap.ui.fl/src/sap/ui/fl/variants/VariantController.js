@@ -31,6 +31,7 @@ sap.ui.define([
 	var VariantController = function (sComponentName, sAppVersion, oChangeFileContent) {
 		this._sComponentName = sComponentName || "";
 		this._sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
+		this._mVariantManagement = {};
 		this._setChangeFileContent(oChangeFileContent, {});
 	};
 
@@ -91,12 +92,15 @@ sap.ui.define([
 					aVariants.splice(0, 0, oStandardVariant);
 				}
 				this._mVariantManagement[sVariantManagementReference].variants = aVariants;
-				this._mVariantManagement[sVariantManagementReference].defaultVariant = oVariantManagementReference.defaultVariant;
+				this._mVariantManagement[sVariantManagementReference].defaultVariant = sVariantManagementReference;
 				if (sInitialVariant){
 					this._mVariantManagement[sVariantManagementReference].initialVariant = sInitialVariant;
 				}
 				this._mVariantManagement[sVariantManagementReference].variantManagementChanges =
 					oChangeFileContent.changes.variantSection[sVariantManagementReference].variantManagementChanges;
+
+				//to set default variant from setDefault variantManagement changes
+				this._applyChangesOnVariantManagement(this._mVariantManagement[sVariantManagementReference]);
 			}.bind(this));
 		}
 	};
@@ -395,11 +399,10 @@ sap.ui.define([
 		};
 
 		Object.keys(this._mVariantManagement).forEach(function(sKey) {
-			this._applyChangesOnVariantManagement(this._mVariantManagement[sKey]);
 			oVariantData[sKey] = {
 				//in case of no variant management change the standard variant is set as default
-				defaultVariant : this._mVariantManagement[sKey].defaultVariant || sKey,
-				originalDefaultVariant : this._mVariantManagement[sKey].defaultVariant || sKey,
+				defaultVariant : this._mVariantManagement[sKey].defaultVariant,
+				originalDefaultVariant : this._mVariantManagement[sKey].defaultVariant,
 				variants : []
 			};
 			//if an initial variant exists, it should be set as current variant
@@ -413,7 +416,7 @@ sap.ui.define([
 				oVariantData[sKey].variants[index] = {
 					key : oVariant.content.fileName,
 					title : oVariant.content.title,
-//					author : oVariant.content.support.user, //TODO: get value from backend
+					//author : oVariant.content.support.user, //TODO: get value from backend
 					layer : oVariant.content.layer,
 					favorite : oVariant.content.content.favorite,
 					remove : fnRemove(oVariant, sKey),
@@ -432,7 +435,6 @@ sap.ui.define([
 		});
 		var iIndex = aChangeFileNames.indexOf(oChange.getDefinition().fileName);
 		if (iIndex === -1) {
-			oChange.setVariantReference(sVariantReference);
 			aNewChanges.push(oChange.getDefinition());
 			return this.setVariantChanges(sVariantManagementReference, sVariantReference, aNewChanges);
 		}

@@ -89,9 +89,10 @@ sap.ui.define([
 				oOverlay.setVariantManagement(sVariantManagementReference);
 				return;
 			}
-
-			oModel._setModelPropertiesForControl(sVariantManagementReference, true);
-			oModel.checkUpdate(true);
+			if (!this._isPersonalizationMode()) {
+				oModel._setModelPropertiesForControl(sVariantManagementReference, true, oControl);
+				oModel.checkUpdate(true);
+			}
 
 			aVariantManagementTargetElements = !jQuery.isArray(vAssociationElement) ? [vAssociationElement] : vAssociationElement;
 
@@ -108,6 +109,10 @@ sap.ui.define([
 				oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 			}
 		}
+	};
+
+	ControlVariant.prototype._isPersonalizationMode = function () {
+		return this.getCommandFactory().getFlexSettings().layer === "USER";
 	};
 
 	/**
@@ -161,7 +166,7 @@ sap.ui.define([
 		if (oControl instanceof VariantManagement) {
 			oModel = this._getVariantModel(oControl);
 			sVariantManagementReference = oOverlay.getVariantManagement();
-			oModel._setModelPropertiesForControl(sVariantManagementReference, false);
+			oModel._setModelPropertiesForControl(sVariantManagementReference, false, oControl);
 			oModel.checkUpdate(true);
 		}
 
@@ -180,6 +185,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ControlVariant.prototype._isEditable = function(oOverlay) {
+		if (this._isPersonalizationMode()) {
+			return false;
+		}
 		return this._isVariantManagementControl(oOverlay);
 	};
 
@@ -491,8 +499,6 @@ sap.ui.define([
 				"command": oConfigureCommand
 			});
 		}.bind(this));
-
-//		return true;
 	};
 
 	/**

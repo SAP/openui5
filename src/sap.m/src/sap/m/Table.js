@@ -521,6 +521,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 		}
 
 		this.getColumns(true).forEach(function(oColumn, i) {
+			// only set the header announcement for visible columns
+			if (!oColumn.getVisible()) {
+				return;
+			}
+
 			var oHeader = oColumn.getHeader();
 			if (oHeader && oHeader.getVisible()) {
 				sAnnouncement += ListItemBase.getAccessibilityText(oHeader) + " ";
@@ -533,6 +538,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 	Table.prototype._setFooterAnnouncement = function() {
 		var sAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_FOOTER_ROW") + " ";
 		this.getColumns(true).forEach(function(oColumn, i) {
+			// only set the footer announcement for visible columns
+			if (!oColumn.getVisible()) {
+				return;
+			}
+
 			var oFooter = oColumn.getFooter();
 			if (oFooter && oFooter.getVisible()) {
 				// announce header as well
@@ -607,8 +617,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 			this._setHeaderAnnouncement();
 		} else if (oTarget.id === this.getId("tblFooter")) {
 			this._setFooterAnnouncement();
-		} else if (oTarget.id == this.getId("nodata")) {
-			this.updateInvisibleText(this.getNoDataText(), oTarget);
 		}
 
 		if (this._bThemeChanged) {

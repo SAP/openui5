@@ -55,6 +55,12 @@
         "type": "FIX",
         "text": " Table: Correctly calculate the number of displayed rows",
         "references": []
+      },
+      {
+        "id": "5b6057f920ca654fb9e49e8e7666c7cd539d1cee",
+        "type": "FIX",
+        "text": " GridTable: Hide Selection tooltip on empty rows",
+        "references": []
       }
     ]
   }

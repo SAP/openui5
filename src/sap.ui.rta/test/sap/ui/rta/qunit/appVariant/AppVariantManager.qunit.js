@@ -267,8 +267,7 @@ function(
 
 			oServer.autoRespond = true;
 
-			sandbox.stub(this.oAppVariantManager, "_showErrorMessage").returns(Promise.reject(false));
-
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).catch(
 				function(bSuccess) {
 					assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
@@ -361,7 +360,7 @@ function(
 
 			oServer.autoRespond = true;
 
-			sandbox.stub(this.oAppVariantManager, "_showErrorMessage").returns(Promise.reject(false));
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -510,7 +509,7 @@ function(
 
 			oServer.autoRespond = true;
 
-			sandbox.stub(this.oAppVariantManager, "_showErrorMessage").returns(Promise.reject(false));
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -568,7 +567,7 @@ function(
 
 			var oRootControl = new sap.ui.core.Control();
 
-			sandbox.stub(this.oAppVariantManager, "_showSaveSuccessMessage").returns(Promise.resolve());
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -625,7 +624,7 @@ function(
 
 			var oRootControl = new sap.ui.core.Control();
 
-			sandbox.stub(this.oAppVariantManager, "_showSaveSuccessMessage").returns(Promise.resolve());
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -654,7 +653,7 @@ function(
 
 			var oRootControl = new sap.ui.core.Control();
 
-			sandbox.stub(this.oAppVariantManager, "_showSaveSuccessMessage").returns(Promise.resolve());
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
 
@@ -684,7 +683,7 @@ function(
 
 			var oRootControl = new sap.ui.core.Control();
 
-			sandbox.stub(this.oAppVariantManager, "_showSaveSuccessMessage").returns(Promise.resolve());
+			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
 

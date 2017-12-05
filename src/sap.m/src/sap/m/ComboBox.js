@@ -264,18 +264,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			return "";
 		};
 
-		ComboBox.prototype._callMethodInControl = function(sFunctionName, aArgs) {
-			var oList = this.getList();
-
-			if (aArgs[0] === "items") {
-
-				if (oList) {
-					return SelectList.prototype[sFunctionName].apply(oList, aArgs);
-				}
-			} else {
-				return ComboBoxBase.prototype[sFunctionName].apply(this, aArgs);
+		ComboBox.getMetadata().forwardAggregation(
+			"items",
+			{
+				getter: ComboBox.prototype.getList,
+				aggregation: "items"
 			}
-		};
+		);
 
 		ComboBox.prototype._setItemVisibility = function(oItem, bVisible) {
 			var $OItem = oItem && oItem.$(),
@@ -1462,17 +1457,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		};
 
 		ComboBox.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-			this._callMethodInControl("addAggregation", arguments);
-
 			if (sAggregationName === "items" && !bSuppressInvalidate && !this.isInvalidateSuppressed()) {
 				this.invalidate(oObject);
 			}
-
-			return this;
-		};
-
-		ComboBox.prototype.getAggregation = function() {
-			return this._callMethodInControl("getAggregation", arguments);
+			return ComboBoxBase.prototype.addAggregation.apply(this, arguments);
 		};
 
 		ComboBox.prototype.setAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
@@ -1485,28 +1473,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			}
 
 			return ComboBoxBase.prototype.setAssociation.apply(this, arguments);
-		};
-
-		ComboBox.prototype.indexOfAggregation = function() {
-			return this._callMethodInControl("indexOfAggregation", arguments);
-		};
-
-		ComboBox.prototype.insertAggregation = function() {
-			this._callMethodInControl("insertAggregation", arguments);
-			return this;
-		};
-
-		ComboBox.prototype.removeAggregation = function() {
-			return this._callMethodInControl("removeAggregation", arguments);
-		};
-
-		ComboBox.prototype.removeAllAggregation = function() {
-			return this._callMethodInControl("removeAllAggregation", arguments);
-		};
-
-		ComboBox.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
-			this._callMethodInControl("destroyAggregation", arguments);
-			return this;
 		};
 
 		ComboBox.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {

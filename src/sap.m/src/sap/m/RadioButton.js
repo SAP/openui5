@@ -50,6 +50,14 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 	 * <li>When the options are mutually exclusive e.g. ON/OFF. Use a {@link sap.m.Switch switch} instead.</li>
 	 * <li>Avoid using horizontally aligned radio buttons as they will be cut off on phones.</li>
 	 * </ul>
+	 *
+	 * <b>Note:</b> The order in which the RadioButtons will be selected one after another is determined upon instantiation of the control.
+	 * This order is consistent with the ARIA attributes for position, which the same button will receive when added to specific group.
+	 *
+	 * <b>Example:</b> If three buttons are created (<code>button1, button2, button3</code>) in consecutive order, initially they will have the same positions
+	 * and TAB order. However if after that <code>button1</code> and <code>button3</code> are moved to a new group and then <code>button2</code> is added to the
+	 * same group, their TAB order and position in this group will be <code>button1, button3, button2</code>.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
 	 *
@@ -522,6 +530,11 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 		return this._changeGroupName(this.getGroupName());
 	};
 
+	RadioButton.prototype.onAfterRendering = function() {
+		var sGroupName = this.getGroupName();
+		this._setAriaPositionAttributes(sGroupName);
+	};
+
 	/**
 	 * Destroys all related objects to the RadioButton
 	 * @public
@@ -600,6 +613,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 
 		if (aOldGroup && aOldGroup.indexOf(this) !== -1) {
 			aOldGroup.splice(aOldGroup.indexOf(this), 1);
+			this._setAriaPositionAttributes(sOldGroupName);
 		}
 
 		if (!aNewGroup) {
@@ -608,8 +622,40 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 
 		if (aNewGroup.indexOf(this) === -1) {
 			aNewGroup.push(this);
+			this._setAriaPositionAttributes(sNewGroupName);
 		}
 
+	};
+
+	/**
+	 * Recalculates and sets the correct aria-posinset and aria-setsize attribute values
+	 * This is done based on the rendered in the DOM radio buttons which are in the provided group.
+	 *
+	 * @param {string} [sGroupName] The name of the group for which the ARIA attributes should be recalculated
+	 * @private
+	 */
+	RadioButton.prototype._setAriaPositionAttributes = function (sGroupName) {
+		var aGroup = this._groupNames[sGroupName],
+			iRenderedIndex = 0,
+			iRenderedInGroupCount;
+
+		if (!aGroup.length || !this.getDomRef()) {
+			return;
+		}
+
+		// Find how many buttons are rendered in the group
+		iRenderedInGroupCount = aGroup.reduce(function (iRenderedInGroupCount, oRadioButton) {
+			return oRadioButton.getDomRef() ? ++iRenderedInGroupCount : iRenderedInGroupCount;
+		}, 0);
+
+		// For every radio button in the group - recalculate its index and set its properties
+		aGroup.forEach(function(oRadioButton) {
+			var oRadioDom = oRadioButton.getDomRef();
+			if (oRadioDom) {
+				oRadioDom.setAttribute("aria-posinset", ++iRenderedIndex);
+				oRadioDom.setAttribute("aria-setsize", iRenderedInGroupCount);
+			}
+		});
 	};
 
 	return RadioButton;

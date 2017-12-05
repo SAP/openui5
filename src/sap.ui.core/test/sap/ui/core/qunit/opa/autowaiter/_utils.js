@@ -1,8 +1,9 @@
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/Device",
 	"sap/ui/test/autowaiter/_utils",
 	"sap/ui/test/opaQunit"
-], function (Device, _utils) {
+], function ($, Device, _utils) {
 	"use strict";
 
 	QUnit.module("AutoWaiter - utils");
@@ -13,8 +14,23 @@ sap.ui.define([
 
 	QUnit.test("Should resolve stack trace", function callingFunction (assert) {
 		var sTrace = _utils.resolveStackTrace();
-		QUnit.assert.contains(sTrace, "callingFunction");
+		QUnit.assert.contains(sTrace, new Error().stack ? "callingFunction" : "No stack trace available");
 		assert.ok(!sTrace.match(/^Error\n/));
+	});
+
+	["false", "true", undefined].forEach(function (paramValue, index) {
+		QUnit.test("Should handle stack trace in IE if opaFrameIEStackTrace is " + paramValue, function (assert) {
+			var fnDone = assert.async();
+			$.sap.unloadResources("sap/ui/test/autowaiter/_utils.js", false, true, true);
+			var oSearchStub = sinon.stub(URI.prototype, "search");
+			oSearchStub.returns({opaFrameIEStackTrace: paramValue});
+			sap.ui.require(["sap/ui/test/autowaiter/_utils"], function callingFunction (_utils) {
+				var sTrace = _utils.resolveStackTrace();
+				assert.contains(sTrace, new Error().stack || paramValue === "true" ? "callingFunction" : "No stack trace available");
+				oSearchStub.restore();
+				fnDone();
+			});
+		});
 	});
 
 	QUnit.test("Should get function string representation", function (assert) {
