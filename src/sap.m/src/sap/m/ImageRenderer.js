@@ -31,7 +31,9 @@ sap.ui.define(['jquery.sap.global', 'sap/m/library'],
 			tooltip = oImage.getTooltip_AsString(),
 			bHasPressHandlers = oImage.hasListeners("press"),
 			oLightBox = oImage.getDetailBox(),
-			sUseMap = oImage.getUseMap();
+			sUseMap = oImage.getUseMap(),
+			aLabelledBy = oImage.getAriaLabelledBy(),
+			aDescribedBy = oImage.getAriaDescribedBy();
 
 		// Additional element for Image with LightBox
 		if (oLightBox) {
@@ -47,6 +49,16 @@ sap.ui.define(['jquery.sap.global', 'sap/m/library'],
 
 		if (!oLightBox) {
 			oRm.writeControlData(oImage);
+		}
+
+		// aria-labelledby references
+		if (!oImage.getDecorative() && aLabelledBy && aLabelledBy.length > 0) {
+			oRm.writeAttributeEscaped("aria-labelledby", aLabelledBy.join(" "));
+		}
+
+		// aria-describedby references
+		if (!oImage.getDecorative() && aDescribedBy && aDescribedBy.length > 0) {
+			oRm.writeAttributeEscaped("aria-describedby", aDescribedBy.join(" "));
 		}
 
 		if (sMode === ImageMode.Image) {
