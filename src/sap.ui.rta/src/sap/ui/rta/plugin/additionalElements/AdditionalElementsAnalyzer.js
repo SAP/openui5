@@ -111,11 +111,11 @@
 		return bAbsoluteAggregationBinding ? oElement.getBindingInfo(sAggregationName) : oElement.getBindingContext();
 	};
 
-	var _getPath = function(oElement, sAggregationName) {
+	var _getBindingPath = function(oElement, sAggregationName) {
 		var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement, sAggregationName);
-		var oBindingContext = _getBindingContext(oElement, bAbsoluteAggregationBinding, sAggregationName);
-		if (oBindingContext) {
-			return bAbsoluteAggregationBinding ? oBindingContext.path : oBindingContext.getPath();
+		var vBinding = _getBindingContext(oElement, bAbsoluteAggregationBinding, sAggregationName);
+		if (vBinding) {
+			return bAbsoluteAggregationBinding ? vBinding.path : vBinding.getPath();
 		}
 	};
 
@@ -139,7 +139,7 @@
 			if (sModelName === "sap.ui.model.odata.ODataModel" || sModelName === "sap.ui.model.odata.v2.ODataModel") {
 				var oMetaModel = oModel.getMetaModel();
 				return oMetaModel.loaded().then(function(){
-					var sBindingContextPath = _getPath(oElement, sAggregationName);
+					var sBindingContextPath = _getBindingPath(oElement, sAggregationName);
 					if (sBindingContextPath) {
 						var oMetaModelContext = oMetaModel.getMetaContext(sBindingContextPath);
 						var mODataEntity = oMetaModelContext.getObject();
@@ -236,14 +236,14 @@
 		if (oRelevantContainer && oRelevantContainer !== oElement) {
 			var sEntityName = RtaUtils.getEntityTypeByPath(
 				oElement.getModel(),
-				_getPath(oElement, sAggregationName)
+				_getBindingPath(oElement, sAggregationName)
 			);
 
 			return ElementUtil
 				.findAllSiblingsInContainer(oElement, oRelevantContainer)
 				// We accept only siblings that are bound on the same model
 				.filter(function (oSiblingElement) {
-					var sPath = _getPath(oSiblingElement, sAggregationName);
+					var sPath = _getBindingPath(oSiblingElement, sAggregationName);
 					if (sPath) {
 						return RtaUtils.getEntityTypeByPath(oSiblingElement.getModel(), sPath) === sEntityName;
 					}
@@ -450,7 +450,6 @@
 					return _getODataPropertiesOfModel(oElement, sAggregationName);
 				})
 				.then(function(mData) {
-					var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement,sAggregationName);
 					var aODataProperties = mData.property;
 					var aODataNavigationProperties = mData.navigationProperty.map(function (mNavigation) {
 						return mNavigation.name;
@@ -463,13 +462,11 @@
 					var aInvisibleElements = mRevealData.elements || [];
 
 					aInvisibleElements.forEach(function(oInvisibleElement) {
-						var bInvisibleElementAbsoluteBinding = _checkForAbsoluteAggregationBinding(oInvisibleElement);
-
 						var sType = oInvisibleElement.getMetadata().getName();
 						var mAction = mRevealData.types[sType].action;
 						var bIncludeElement = true;
 
-						if (_getBindingContext(oElement, bAbsoluteAggregationBinding, sAggregationName) === _getBindingContext(oInvisibleElement, bInvisibleElementAbsoluteBinding, sAggregationName)) {
+						if (_getBindingPath(oElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)) {
 							//TODO fix with stashed type support
 							oInvisibleElement = _collectBindingPaths(oInvisibleElement, oModel);
 							oInvisibleElement.fieldLabel = RtaUtils.getLabelForElement(oInvisibleElement, mAction.getLabel);
@@ -484,7 +481,7 @@
 							}
 						} else if (
 							oInvisibleElement.getParent()
-							&& _getBindingContext(oInvisibleElement, bInvisibleElementAbsoluteBinding, sAggregationName) === _getBindingContext(oInvisibleElement, _checkForAbsoluteAggregationBinding(oInvisibleElement.getParent()), sAggregationName)
+							&& _getBindingPath(oInvisibleElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)
 							&& BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0
 						) {
 							bIncludeElement = false;

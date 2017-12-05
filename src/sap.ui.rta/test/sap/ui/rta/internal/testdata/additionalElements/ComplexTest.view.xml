@@ -118,7 +118,7 @@
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 
-					<uxap:ObjectPageSection id="ObjectPageSectionAbsoluteBinding" title="Object Page Section Absolute Binding">
+					<uxap:ObjectPageSection id="ObjectPageSectionAbsoluteBindingList" title="Object Page Section Absolute Binding">
 						<uxap:ObjectPageSubSection id="ObjectPageSubSectionAbsoluteBinding" >
 							<List id="listWithAbsoluteBinding" items="{/EntityTypes2}">
 								<items>
@@ -128,9 +128,9 @@
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 
-					<uxap:ObjectPageSection id="ObjectPageSectionAbsoluteBinding2" title="Object Page Section Absolute Binding2">
+					<uxap:ObjectPageSection id="ObjectPageSectionAbsoluteBindingTable" title="Object Page Section Absolute Binding2">
 						<uxap:ObjectPageSubSection id="ObjectPageSubSectionAbsoluteBinding2" >
-							<Table id="TableWithAbsoluteBinding2" items="{/EntityTypes2}">
+							<Table id="tableWithAbsoluteBinding" items="{/EntityTypes2}">
 								<columns>
 									<Column id="Column00">
 										<Text text="{/#EntityTypes2/EntityType02_Property01/@sap:label}" />
