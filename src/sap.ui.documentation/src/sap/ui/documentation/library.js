@@ -21,7 +21,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 		controls: [
 			"sap.ui.documentation.sdk.controls.Search"
 		],
-		elements: []
+		elements: [],
+		noLibraryCSS: true
 	});
 
 	/**
