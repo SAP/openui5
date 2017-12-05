@@ -219,7 +219,7 @@
 				}
 			});
 
-			var page = new sap.m.Page({
+			var page1 = new sap.m.Page({
 				content: oTC,
 				footer: new sap.m.Bar({
 					contentRight: [
@@ -238,16 +238,60 @@
 								evt.getSource().getPressed() ? evt.getSource().setText("Done") :  evt.getSource().setText("Busy state");
 								oTC.setBusy(newValue);
 							}
+						}),
+						new sap.m.Button({
+							text: 'To Page 2',
+							press: function () {
+								app.to(page2.getId());
+								setTimeout(function () {
+									page2.$("cont").height("0px");
+								}, 100);
+							}
 						})
 					]
 				})
 			});
 
+			var page2 = new sap.m.Page({
+				showHeader: true,
+				title: "Add Tiles when height is 0"
+			});
+			var tc2 = new sap.m.TileContainer({
+				height: '70%'
+			});
+			page2.addContent(tc2);
+			page2.setFooter(new sap.m.Bar({
+				contentMiddle: [
+					new sap.m.Button({
+						text: "Add Tile", press: function () {
+							tc2.addTile(new sap.m.StandardTile({
+								icon: "images/action.png",
+								number: "Busy state test1",
+								numberUnit: "Unit",
+								info: "10 day ago"
+							}));
+						}
+					}),
+					new sap.m.Button({
+						text: 'Restore height', press: function () {
+							page2.$("cont").height("100%");
+						}
+					}),
+					new sap.m.Button({
+						text: 'Back to Page 1', press: function () {
+							app.to(page1.getId())
+						}
+					})
+				]
+			}));
+
+
 			var app = new sap.m.App({
-				initialPage: page.getId()
+				initialPage: page1.getId()
 			});
 
-			app.addPage(page);
+			app.addPage(page1);
+            app.addPage(page2);
 			app.placeAt('body');
 
 		</script>
