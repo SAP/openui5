@@ -1450,14 +1450,6 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 	padding-bottom: 1.25rem;
 }
 
-/* override color for link to demo apps overview (features, controls, libraries, etc.) */
-.readMoreLink:visited:not(.sapMLnkDsbl),
-.readMoreLink:hover:not(.sapMLnkDsbl),
-.readMoreLink {
-	color: #7ed0ff;
-	line-height: 30px;
-}
-
 /* fix to align link and label in horizontal layout*/
 .sapUiDemoApps .namespaceLink {
 	vertical-align: baseline;

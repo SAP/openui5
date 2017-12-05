@@ -43,18 +43,22 @@
 									defaultSpan="L6 M6 S12">
 								<l:VerticalLayout width="100%" class="sapUiTinyMarginTop sapUiTinyMarginEnd">
 									<Text class="headerText" text="{i18n>pageTitle}" width="100%" textAlign="Left"/>
-									<Button
-											class="actionButton headerButton"
-											id="download"
-											text="{i18n>downloadButtonText}"
-											type="Emphasized"
-											press="onDownloadButtonPress">
-									</Button>
-									<Link
-											text="{i18n>linkText}"
-											target="_blank"
-											href="#docs/guide/a3ab54ecf7ac493b91904beb2095d208.html"
-											class="sapUiTinyMarginTop readMoreLink" />
+									<l:HorizontalLayout>
+										<Button
+												class="actionButton headerButton"
+												id="download"
+												text="{i18n>downloadButtonText}"
+												type="Emphasized"
+												press="onDownloadButtonPress">
+										</Button>
+										<Button
+												class="actionButton headerButton sapContrast sapContrastPlus sapUiSmallMarginBegin"
+												id="readMoreButton"
+												text="{i18n>linkText}"
+												type="Ghost"
+												press="onReadMoreButtonPress">
+										</Button>
+									</l:HorizontalLayout>
 								</l:VerticalLayout>
 								<Image
 										src="resources/sap/ui/documentation/sdk/images/demoAppsTeaser.png"
