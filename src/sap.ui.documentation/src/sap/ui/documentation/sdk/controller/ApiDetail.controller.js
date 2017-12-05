@@ -258,7 +258,7 @@ sap.ui.define([
 										path: "/methods",
 										templateShareable: false,
 										template: new ColumnListItem({
-											visible: "{= !!${name} }",
+											visible: "{= !!${path: 'name'} }",
 											cells: [
 												new VerticalLayout({
 													content: [
@@ -352,7 +352,7 @@ sap.ui.define([
 										path: "/events",
 										templateShareable: false,
 										template: new ColumnListItem({
-											visible: "{= !!${name} }",
+											visible: "{= !!${path: 'name'} }",
 											cells: [
 												new VerticalLayout({
 													content: [
