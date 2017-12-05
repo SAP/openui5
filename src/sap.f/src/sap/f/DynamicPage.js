@@ -1487,6 +1487,7 @@ sap.ui.define([
 		}
 		var bAllowAppendHeaderToTitle;
 
+		this._detachScrollHandler();
 		// Header scrolling is not allowed or there is no enough content scroll bar to appear
 		if (this._preserveHeaderStateOnScroll() || !this._canSnapHeaderOnScroll() || !this.getHeader()) {
 			if (!this.getHeaderExpanded()) {
@@ -1516,6 +1517,8 @@ sap.ui.define([
 				this._setScrollPosition(this._getSnappingHeight());
 			}
 		}
+
+		jQuery.sap.delayedCall(0, this, this._attachScrollHandler);
 	};
 
 	/**
@@ -1705,7 +1708,7 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._detachScrollHandler = function () {
 		if (this.$wrapper) {
-			this.$wrapper.unbind("scroll");
+			this.$wrapper.off("scroll");
 		}
 	};
 
