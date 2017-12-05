@@ -798,6 +798,49 @@
 			oTC.destroy();
 		});
 
+		QUnit.test("Parent container does not define width/height", function(assert) {
+			//Prepare
+			var oClock = this.sandbox.useFakeTimers(),
+				done = assert.async(),
+				aTiles = [
+					new sap.m.StandardTile({title: "first"}), new sap.m.StandardTile({title: "second"}),
+					new sap.m.StandardTile({title: "thirth"}), new sap.m.StandardTile({title: "forth"}),
+					new sap.m.StandardTile({title: "fifth"}), new sap.m.StandardTile({title: "sixth"})],
+				oSut = new sap.m.TileContainer({height: "100%"});
+
+			jQuery("#uiArea2").css("width", "0px");
+			jQuery("#uiArea2").css("height", "0px");
+
+			oSut.placeAt('uiArea2');
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function () {
+				//Pre-assert
+				assert.equal(oSut._iMaxTiles, 1, "Max Tile should remain with its default value");
+
+				//Act
+				aTiles.forEach(function (oTile) {
+					oSut.addTile(oTile);
+				});
+				jQuery("#uiArea2").width("515px"); //2 x 210px (12 rem + 2x8 margins + 2x1 borders. If changed in less, should be reflected here)
+				jQuery("#uiArea2").height("15rem"); //1 standard tile x 14 rem (if changed in less, should be reflected here)
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				setTimeout(function () {
+					assert.equal(oSut._iMaxTiles, 2, "Max Tile should be recalculated once there is a height defined");
+
+					//Cleanup
+					oClock.restore();
+					oSut.destroy();
+					done();
+				}, 150);
+				oClock.tick(200);//make sure rerendering and resize callbacks were passed
+			}, 150);
+
+			oClock.tick(200);//make sure rendering and resize callbacks were passed
+		});
+
 		QUnit.module("Performance optimizations", {
 			beforeEach: function () {
 				//Sets uiarea size so it can show 2 StandardTile per page + 90px space for navigation buttons

@@ -169,21 +169,30 @@
        		);
 
 		};
-        var app = new sap.m.App();
-		var page = new sap.m.Page({setShowHeader: true});
-		app.setInitialPage(page.getId());
-		page.setEnableScrolling(false);
-		page.setShowHeader(false);
-		app.addPage(page);
-		page.addContent(new sap.m.Button({text: 'acb'}));
-		page.addContent(new sap.m.Button({text: 'acb'}));
-		page.addContent(new sap.m.Button({text: 'acb'}));
-		page.addContent(new sap.m.Button({text: 'acb'}));
-		page.addContent(tc);
-		page.addContent(new sap.m.Button({text: 'acb'}));
-		page.addContent(new sap.m.Button({text: 'acb'}));
-		page.addContent(new sap.m.Button({text: 'acb'}));
-		page.addContent(new sap.m.Button({text: 'acb'}));
+		var app = new sap.m.App();
+		var page1 = new sap.m.Page({showHeader: true});
+		app.setInitialPage(page1.getId());
+		page1.setEnableScrolling(false);
+		page1.setShowHeader(false);
+		app.addPage(page1);
+
+		page1.addContent(new sap.m.Button({text: 'acb'}));
+		page1.addContent(new sap.m.Button({text: 'acb'}));
+		page1.addContent(new sap.m.Button({text: 'acb'}));
+		page1.addContent(new sap.m.Button({text: 'acb'}));
+		page1.addContent(tc);
+		page1.addContent(new sap.m.Button({text: 'acb'}));
+		page1.addContent(new sap.m.Button({text: 'acb'}));
+		page1.addContent(new sap.m.Button({text: 'acb'}));
+		page1.addContent(new sap.m.Button({
+			text: 'To Page 2',
+			press: function () {
+				app.to(page2.getId());
+				setTimeout(function () {
+					page2.$("cont").height("0px");
+				}, 100);
+			}
+		}));
 		app.placeAt('body');
 
 		tc.attachTileDelete(function(oEvent) {
@@ -205,7 +214,39 @@
 					}
 				);
 
-
+		var page2 = new sap.m.Page({
+			showHeader: true,
+			title: "Add Tiles when height is 0"
+		});
+		var tc2 = new sap.m.TileContainer({
+			height: '70%'
+		});
+		page2.addContent(tc2);
+		page2.setFooter(new sap.m.Bar({
+			contentMiddle: [
+				new sap.m.Button({
+					text: "Add Tile", press: function () {
+						tc2.addTile(new sap.m.StandardTile({
+							icon: "images/action.png",
+							number: "Busy state test1",
+							numberUnit: "Unit",
+							info: "10 day ago"
+						}));
+					}
+				}),
+				new sap.m.Button({
+					text: 'Restore height', press: function () {
+						page2.$("cont").height("100%");
+					}
+				}),
+				new sap.m.Button({
+					text: 'Back to Page 1', press: function () {
+						app.to(page1.getId())
+					}
+				})
+			]
+		}));
+		app.addPage(page2);
 		</script>
 
 	</head>
