@@ -1511,9 +1511,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onsapenter = function(oEvent) {
-		if (InputBase.prototype.onsapenter) {
-			InputBase.prototype.onsapenter.apply(this, arguments);
-		}
 
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
 		this.cancelPendingSuggest();
@@ -1535,6 +1532,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				}
 				this._closeSuggestionPopup();
 			}
+		}
+
+		if (InputBase.prototype.onsapenter) {
+			InputBase.prototype.onsapenter.apply(this, arguments);
 		}
 
 		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
