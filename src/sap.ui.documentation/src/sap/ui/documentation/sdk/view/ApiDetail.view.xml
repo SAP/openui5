@@ -418,7 +418,7 @@
 																								{path: 'isSubSubProperty'},
 																								{path: 'appView>/bPhoneSize'}],
 																						formatter: '.formatEventClassName'}"
-																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${phoneName} ? ${phoneName} : ${name} }"
+																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${phoneName} ? ${phoneName} : ${path: 'name'} }"
 																wrapping="false"/>
 														<m:Link text="{type}"
 																href="#/api/{type}"
@@ -497,7 +497,7 @@
 														<custom:ParamText customClass="{parts: [{path: 'isSubProperty'},
 																								{path: 'appView>/bPhoneSize'}],
 																						formatter: '.formatMethodClassName'}"
-																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${phoneName} ? ${phoneName} : ${name} }{= ${optional} ? '?' : ''}"
+																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${phoneName} ? ${phoneName} : ${path: 'name'} }{= ${optional} ? '?' : ''}"
 																		  wrapping="false"/>
 
 
@@ -505,7 +505,7 @@
 															<m:HBox>
 																<m:items>
 																	<m:Link text="{value}"
-																			href="#/api/{= ${value}.replace('[]', '') }"
+																			href="#/api/{= ${path: 'value'}.replace('[]', '') }"
 																			enabled="{= !!${linkEnabled} }"/>
 																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${isLast} === false}" wrapping="false"/>
 																</m:items>
@@ -536,7 +536,7 @@
 															<m:HBox>
 																<m:items>
 																	<m:Link text="{value}"
-																			href="#/api/{= ${value}.replace('[]', '') }"
+																			href="#/api/{= ${path: 'value'}.replace('[]', '') }"
 																			enabled="{= !!${linkEnabled} }"/>
 																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${isLast} === false}" wrapping="false"/>
 																</m:items>
