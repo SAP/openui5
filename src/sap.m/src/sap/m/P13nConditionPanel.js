@@ -1893,7 +1893,9 @@ sap.ui.define([
 					oCtrl.setValue(sValue);
 				}
 			}
-			if (!sValue) {
+			if (!sValue && !oConditionGrid.oFormatter && sOldValue) {
+				// BCP: 1780426620
+				// if type conversion fails and no formatter exist, display the old value
 				oCtrl.setValue(sOldValue);
 			}
 		};
