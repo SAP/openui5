@@ -67,7 +67,13 @@ sap.ui.define([
 			"sap.ui.unified.MenuTextFieldItem",
 			"sap.ui.unified.ShellHeadItem",
 			"sap.ui.unified.ShellHeadUserItem"
-		]
+		],
+		extensions: {
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				publicRules:true
+			}
+		}
 	});
 
 	/**

@@ -39,6 +39,8 @@ sap.ui.define([
 
 			this.getView().setModel(this.model);
 			this.treeTable = this.byId("ruleList");
+			this.ruleSetView = this.byId("ruleSetsView");
+			this.rulesViewContainer = this.byId("rulesNavContainer");
 			this.cookie = storage.readPersistenceCookie(constants.COOKIE_NAME);
 		},
 
@@ -167,11 +169,7 @@ sap.ui.define([
 
 			CommunicationBus.subscribe(channelNames.POST_AVAILABLE_LIBRARIES, function (data) {
 				this.model.setProperty("/availableLibrariesSet", data.libNames);
-
-				if (this.loadingFromLoadButton) {
-					MessageToast.show("Libraries ruleset loaded");
-					this.loadingFromLoadButton = false;
-				}
+				this.rulesViewContainer.setBusy(false);
 			}, this);
 
 			CommunicationBus.subscribe(channelNames.POST_AVAILABLE_COMPONENTS, function (data) {
@@ -272,6 +270,19 @@ sap.ui.define([
 
 			return ctx;
 		},
+
+		/**
+		 * On selecting "Additional RuleSet" tab, start loading Additional RuleSets by brute search.
+		 * @param {Event} oEvent
+		 */
+		onSelectedRuleSets: function (oEvent) {
+			if (oEvent.getParameter("selectedKey") === "additionalRulesets") {
+				this.rulesViewContainer.setBusyIndicatorDelay(0);
+				this.rulesViewContainer.setBusy(true);
+					CommunicationBus.publish(channelNames.GET_NON_LOADED_RULE_SETS);
+			}
+		},
+
 		_getSelectedRules: function () {
 			var	selectedRules = [],
 			selectedIndices = this.treeTable.getSelectedIndices(),
@@ -510,15 +521,19 @@ sap.ui.define([
 			that.model.setProperty("/libraries",  libraries);
 
 			var tempRules = storage.getRules(),
-				loadingFromAddiotnalRuleSets = that.model.getProperty("/loadingAdditionalRuleSets");
-			if (tempRules && !loadingFromAddiotnalRuleSets && !this.tempRulesLoaded) {
+				loadingFromAdditionalRuleSets = that.model.getProperty("/loadingAdditionalRuleSets");
+
+			if (loadingFromAdditionalRuleSets) {
+				MessageToast.show("Additional rule set(s) loaded!");
+				this.ruleSetView.setSelectedKey("availableRules");
+			}
+			if (tempRules && !loadingFromAdditionalRuleSets && !this.tempRulesLoaded) {
 				this.tempRulesLoaded = true;
 				tempRules.forEach(function (tempRule) {
 					CommunicationBus.publish(channelNames.VERIFY_CREATE_RULE, RuleSerializer.serialize(tempRule));
 				});
 			}
-			//*This property is needed when we are loading additional rulesets and to not retriger ".VERIFY_CREATE_RULE"*/
-			that.model.setProperty("/loadingAdditionalRuleSets", false);
+
 			if (persistingSettings) {
 				var selectedRules = storage.getSelectedRules();
 				selectedRules.forEach(function(selectedIndex){
@@ -597,9 +612,10 @@ sap.ui.define([
 				this.model.setProperty("/updateRuleStringified", stringifiedJson);
 			}
 		},
+
 		loadMarkedSupportLibraries: function () {
 			var list = this.byId("availableLibrariesSet"),
-				libNames = list.getSelectedItems().map(function (item) {
+				aLibNames = list.getSelectedItems().map(function (item) {
 					return item.getTitle();
 				});
 
@@ -608,14 +624,16 @@ sap.ui.define([
 
 			});
 
-			if (libNames.length > 0) {
-				this.loadingFromLoadButton = true;
+			if (aLibNames.length > 0) {
 				CommunicationBus.publish(channelNames.LOAD_RULESETS, {
-					libNames: libNames
+					aLibNames: {publicRules: aLibNames, customRules: aLibNames}
 				});
 				this.model.setProperty("/loadingAdditionalRuleSets", true);
+			} else {
+				MessageToast.show("Select additional RuleSet to be loaded.");
 			}
 		},
+
 		onCellClick: function(event){
 			if (event.getParameter("rowBindingContext")) {
 				var selection = event.getParameter("rowBindingContext").getObject(),

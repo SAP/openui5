@@ -84,7 +84,12 @@ sap.ui.define([],
 			/**
 			 * High severity of produced issue by Support Assistant
 			 */
-			SUPPORT_ASSISTANT_ISSUE_SEVERITY_HIGH: "High"
+			SUPPORT_ASSISTANT_ISSUE_SEVERITY_HIGH: "High",
+
+			/**
+			 * Extension added to library.js files of every library that contains support rules
+			 */
+			SUPPORT_ASSISTANT_EXTENSION: "sap.ui.support"
 
 		};
 
