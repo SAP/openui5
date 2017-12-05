@@ -272,12 +272,26 @@ sap.ui.define([
 					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav),
 					isSnapshotVersion: oVersionInfo && oVersionInfo.gav && /snapshot/i.test(oVersionInfo.gav),
 					isDevVersion: sVersion.indexOf("SNAPSHOT") > -1 || (sVersion.split(".").length > 1 && parseInt(sVersion.split(".")[1], 10) % 2 === 1),
+					isBetaVersion: false,
 					isInternal: bIsInternal,
 					libraries: oVersionInfo.libraries,
 					allowedMembers: this.aAllowedMembers
 				};
 
-				this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
+				if (!oVersionInfoData.isOpenUI5 && !oVersionInfoData.isSnapshotVersion) {
+					jQuery.ajax({
+						url: "versionoverview.json"
+					}).done(function(data) {
+						if (data.versions && data.versions[0] && data.versions[0].beta && data.versions[0].beta.indexOf(oVersionInfoData.fullVersion) > -1) {
+							oVersionInfoData.isBetaVersion = true;
+						}
+						this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
+					}.bind(this)).fail(function () {
+						this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
+					}.bind(this));
+				} else {
+					this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
+				}
 			}
 		});
 	}
