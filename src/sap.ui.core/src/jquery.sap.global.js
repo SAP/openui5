@@ -655,7 +655,7 @@
 	(function() {
 		// check URI param
 		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(location.search),
-			vDebugInfo = (mUrlMatch && mUrlMatch[1]) || '';
+			vDebugInfo = (mUrlMatch && decodeURIComponent(mUrlMatch[1])) || '';
 
 		// check local storage
 		try {
