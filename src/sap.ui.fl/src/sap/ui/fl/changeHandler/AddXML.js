@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/fl/changeHandler/Base"
+	"sap/ui/fl/changeHandler/Base",
+	"sap/ui/fl/Utils"
 ], function(
 	jQuery,
-	Base
+	Base,
+	Utils
 ) {
 	"use strict";
 
@@ -38,34 +40,34 @@ sap.ui.define([
 	AddXML.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oChangeDefinition = oChange.getDefinition();
-		var sAggregationName = oChangeDefinition.content.aggregation;
-		var oFragment = oChangeDefinition.content.fragment;
+		var sAggregationName = oChangeDefinition.content.targetAggregation;
+		var sFragment = oChangeDefinition.content.fragment;
 		var iIndex = oChangeDefinition.content.index || 0;
 		var oView = mPropertyBag.view;
 		var oComponent = mPropertyBag.appComponent;
+		var oViewInstance = Utils.getViewForControl(oControl);
+		var oController = oViewInstance && oViewInstance.getController();
 
 		var oNewControl;
 		try {
-			if (oView) {
-				oNewControl = sap.ui.xmlfragment(oModifier.getId(oView), oFragment);
-			} else {
-				oNewControl = sap.ui.xmlfragment(oFragment);
-			}
+			oNewControl = oModifier.instantiateFragment(sFragment, oView, oViewInstance, oController);
 		} catch (oError) {
 			throw new Error("The XML Fragment could not be instantiated");
 		}
 
 		var oAggregationDefinition = oModifier.findAggregation(oControl, sAggregationName);
 		if (!oAggregationDefinition) {
+			oNewControl.destroy();
 			throw new Error("The given Aggregation is not available in the given control.");
 		}
 
-		if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl)) {
-			throw new Error("The Control does not match the type of the aggregation.");
+		if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment)) {
+			oNewControl.destroy();
+			throw new Error("The Control does not match the type of the targetAggregation.");
 		}
 
 		oModifier.addXML(oControl, sAggregationName, iIndex, oNewControl, oView, oComponent);
-		oChange.setRevertData(oNewControl.getId());
+		oChange.setRevertData(oModifier.getId(oNewControl));
 	};
 
 	/**
@@ -82,11 +84,15 @@ sap.ui.define([
 	AddXML.revertChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oChangeDefinition = oChange.getDefinition();
-		var sAggregationName = oChangeDefinition.content.aggregation;
+		var sAggregationName = oChangeDefinition.content.targetAggregation;
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
+		var oControlToRemove = oModifier.bySelector(oChange.getRevertData(), oAppComponent, oView);
 
-		oModifier.removeAggregation(oControl, sAggregationName, oModifier.bySelector(oChange.getRevertData(), oAppComponent, oView));
+		oModifier.removeAggregation(oControl, sAggregationName, oControlToRemove);
+		if (oControlToRemove.destroy) {
+			oControlToRemove.destroy();
+		}
 
 		oChange.resetRevertData();
 		return true;
@@ -117,14 +123,16 @@ sap.ui.define([
 			_throwError("fragmemt");
 		}
 
-		if (oSpecificChangeInfo.aggregation) {
-			oChangeDefinition.content.aggregation = oSpecificChangeInfo.aggregation;
+		if (oSpecificChangeInfo.targetAggregation) {
+			oChangeDefinition.content.targetAggregation = oSpecificChangeInfo.targetAggregation;
 		} else {
-			_throwError("aggregation");
+			_throwError("targetAggregation");
 		}
 
-		if (oSpecificChangeInfo.index) {
+		if (oSpecificChangeInfo.index !== undefined) {
 			oChangeDefinition.content.index = oSpecificChangeInfo.index;
+		} else {
+			_throwError("index");
 		}
 	};
 

@@ -39,7 +39,7 @@ sap.ui.require([
 
 			this.oChangeSpecificContent = {
 				fragment: this.oFragmentPath,
-				aggregation: "items",
+				targetAggregation: "items",
 				index: 1
 			};
 
@@ -57,17 +57,16 @@ sap.ui.require([
 	});
 
 	QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
-		this.oChangeSpecificContent.aggregation = null;
-		assert.throws(function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);}, "without aggregation 'completeChangeContent' throws an error");
+		this.oChangeSpecificContent.targetAggregation = null;
+		assert.throws(function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);}, "without targetAggregation 'completeChangeContent' throws an error");
 
-		this.oChangeSpecificContent.aggregation = "items";
+		this.oChangeSpecificContent.targetAggregation = "items";
 		this.oChangeSpecificContent.fragment = null;
 		assert.throws(function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);}, "without fragment 'completeChangeContent' throws an error");
 
 		this.oChangeSpecificContent.fragment = this.oFragmentPath;
-		this.oChangeSpecificContent.index = null;
-		this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-		assert.deepEqual(this.oChange.getDefinition().content, {fragment: this.oFragmentPath, aggregation: "items"}, "without index the function still works");
+		this.oChangeSpecificContent.index = undefined;
+		assert.throws(function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);}, "without index 'completeChangeContent' throws an error");
 	});
 
 
@@ -93,7 +92,7 @@ sap.ui.require([
 
 			this.oChangeSpecificContent = {
 				fragment: this.oFragmentPath,
-				aggregation: "items",
+				targetAggregation: "items",
 				index: 1
 			};
 
@@ -112,8 +111,8 @@ sap.ui.require([
 		assert.equal(this.oHBox.getItems().length, 2, "after the change there are 2 items in the hbox");
 	});
 
-	QUnit.test("When applying the change on a js control tree with an invalid aggregation", function(assert) {
-		this.oChangeSpecificContent.aggregation = "invalidAggregation";
+	QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
+		this.oChangeSpecificContent.targetAggregation = "invalidAggregation";
 		this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 		assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});}, "then apply change throws an error");
 	});
@@ -157,7 +156,7 @@ sap.ui.require([
 							'<TooltipBase xmlns="sap.ui.core"></TooltipBase>' + //inline namespace as sap.ui.core is use case for not existing namespace
 						'</tooltip>' +
 						'<items>' +
-							'<Button id="button"></Button>' + //content in default aggregation
+							'<Button id="button123"></Button>' + //content in default aggregation
 						'</items>' +
 					'</HBox>' +
 				'</mvc:View>';
@@ -174,7 +173,7 @@ sap.ui.require([
 
 			this.oChangeSpecificContent = {
 				fragment: this.oFragmentPath,
-				aggregation: "items",
+				targetAggregation: "items",
 				index: 1
 			};
 
@@ -194,22 +193,22 @@ sap.ui.require([
 		assert.equal(oHBoxItems.childNodes.length, 2, "after the addXML there are two children of the HBox");
 	});
 
-	QUnit.test("When applying the change on a xml control tree with an invalid aggregation", function(assert) {
-		var oHBox = this.oXmlView.childNodes[1];
-		this.oChangeSpecificContent.aggregation = "invalidAggregation";
+	QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {
+		var oHBox = this.oXmlView.childNodes[0];
+		this.oChangeSpecificContent.targetAggregation = "invalidAggregation";
 		this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 		assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
 	});
 
 	QUnit.test("When applying the change on a xml control tree with an invalid fragment", function(assert) {
-		var oHBox = this.oXmlView.childNodes[1];
+		var oHBox = this.oXmlView.childNodes[0];
 		this.oChangeSpecificContent.fragment = "invalidFragment";
 		this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 		assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
 	});
 
 	QUnit.test("When applying the change on a xml control tree with an invalid type", function(assert) {
-		var oHBox = this.oXmlView.childNodes[1];
+		var oHBox = this.oXmlView.childNodes[0];
 		this.oChangeSpecificContent.fragment = "sap.ui.fl.test.qunit.changeHandler.AddXMLFragmentInvalid";
 		this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 		assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");

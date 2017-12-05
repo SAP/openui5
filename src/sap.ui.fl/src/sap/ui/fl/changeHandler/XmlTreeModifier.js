@@ -4,10 +4,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/changeHandler/BaseTreeModifier",
-	"sap/ui/base/DataType"
+	"sap/ui/base/DataType",
+	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/fl/Utils"
 ], function (
 	BaseTreeModifier,
-	DataType
+	DataType,
+	XMLTemplateProcessor,
+	Utils
 ) {
 
 	"use strict";
@@ -390,16 +394,34 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Validates if the control has the correct type for the aggregation.
+		 *
+		 * @param {sap.ui.core.Control} oControl control whose type is to be checked
+		 * @param {object} oAggregationMetadata metadata of the aggregation
+		 * @param {sap.ui.core.Control} oParent parent of the control
+		 * @param {string} sFragment path to the fragment that contains the control, whose type is to be checked
+		 * @returns {boolean} Returns true if the type matches
+		 */
+		validateType: function(oControl, oAggregationMetadata, oParent, sFragment) {
+			var sTypeOrInterface = oAggregationMetadata.type;
+
+			// if aggregation is not multiple and already has element inside, then it is not valid for element
+			if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, oAggregationMetadata.name) &&
+					this.getAggregation(oParent, oAggregationMetadata.name).length > 0) {
+				return false;
+			}
+			oControl = sap.ui.xmlfragment(sFragment);
+			var bReturn = Utils.isInstanceOf(oControl, sTypeOrInterface) || Utils.hasInterface(oControl, sTypeOrInterface);
+			oControl.destroy();
+			return bReturn;
+		},
+
+		instantiateFragment: function(sFragment, oView, oViewInstance, oController) {
+			return XMLTemplateProcessor.loadTemplate(sFragment, "fragment");
+		},
+
 		addXML: function(oControl, sAggregationName, iIndex, oNewControl, oView, oAppComponent) {
-			// get properties from the already created new control
-			var sClassName = oNewControl.getMetadata().getName();
-			var sSelector = oNewControl.getId();
-			var mSettings = oNewControl.mProperties;
-
-			// destroy the control, as the control will be recreated as a node which can be added in XML
-			oNewControl.destroy();
-
-			oNewControl = this.createControl(sClassName, oAppComponent, oView, sSelector, mSettings);
 			this.insertAggregation(oControl, sAggregationName, oNewControl, iIndex, oView);
 		},
 
