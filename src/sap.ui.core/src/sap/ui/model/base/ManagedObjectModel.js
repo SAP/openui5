@@ -502,6 +502,22 @@ sap.ui.define([
 	};
 
 	ManagedObjectModel.prototype.observerChanges = function(oChange) {
+		if (oChange.type == "aggregation") {
+			if (oChange.mutation == "insert") {
+				// listen to inner changes
+				this._oObserver.observe(oChange.child, {
+					properties: true,
+					aggegations: true
+				});
+			} else {
+				// stop listening inner changes
+				this._oObserver.unobserve(oChange.child, {
+					properties: true,
+					aggegations: true
+				});
+			}
+		}
+
 		this.checkUpdate();
 	};
 
