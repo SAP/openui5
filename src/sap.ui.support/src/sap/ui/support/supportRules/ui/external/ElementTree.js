@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject"],
-	function (jQuery, ManagedObject) {
+sap.ui.define(["jquery.sap.global"],
+	function (jQuery) {
 		"use strict";
 
 		function _isObject(data) {

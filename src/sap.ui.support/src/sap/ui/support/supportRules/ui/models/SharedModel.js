@@ -3,11 +3,15 @@
  */
 
 sap.ui.define([
+	"sap/ui/support/library",
 	"sap/ui/model/json/JSONModel"
-], function (JSONModel) {
+], function (library, JSONModel) {
 	"use strict";
 
-	var executionScopes = {
+	var Audiences = library.Audiences,
+		Categories = library.Categories,
+		Severity = library.Severity,
+		executionScopes = {
 			global: {
 				key: "global",
 				displayName: "Global",
@@ -43,17 +47,17 @@ sap.ui.define([
 		updateRuleStringified: "",
 		subtreeExecutionContextId: "",
 		availableComponents: [],
-		audiences: sap.ui.support.Audiences,
-		categories: sap.ui.support.Categories,
-		severities: sap.ui.support.Severity,
-		audiencesFilter : ["All"].concat(Object.keys(sap.ui.support.Audiences)),
-		categoriesFilter : ["All"].concat(Object.keys(sap.ui.support.Categories)),
-		severitiesFilter : ["All"].concat(Object.keys(sap.ui.support.Severity)),
+		audiences: Audiences,
+		categories: Categories,
+		severities: Severity,
+		audiencesFilter : ["All"].concat(Object.keys(Audiences)),
+		categoriesFilter : ["All"].concat(Object.keys(Categories)),
+		severitiesFilter : ["All"].concat(Object.keys(Severity)),
 		newEmptyRule: {
 			libName: "",
 			id: "",
-			categories: [sap.ui.support.Categories.Other],
-			audiences: [sap.ui.support.Audiences.Internal],
+			categories: [Categories.Other],
+			audiences: [Audiences.Internal],
 			title: "",
 			description: "",
 			resolution: "",
