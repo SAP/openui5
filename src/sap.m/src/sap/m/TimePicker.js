@@ -155,7 +155,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 					 *
 					 * @since 1.54
 					 */
-					maskMode: {type: "sap.m.TimePickerMaskMode", group: "Misc", defaultValue: TimePickerMaskMode.On}
+					maskMode: {type: "sap.m.TimePickerMaskMode", group: "Misc", defaultValue: TimePickerMaskMode.On},
+
+					/**
+					 * Allows to set a value of 24:00, used to indicate the end of the day.
+					 * Works only with HH or H formats. Don't use it together with am/pm.
+					 * @since 1.54
+					 */
+					support2400: {type: "boolean", group: "Misc", defaultValue: false}
 				},
 				aggregations: {
 
@@ -338,13 +345,19 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		TimePicker.prototype.onBeforeOpen = function() {
 			/* Set the timevalues of the picker here to prevent user from seeing it */
 			var oSliders = this._getSliders(),
-				oDateValue = this.getDateValue();
+				oDateValue = this.getDateValue(),
+				sInputValue = this._$input.val(),
+				sFormat = this.getValueFormat(),
+				iIndexOfHH = sFormat.indexOf("HH"),
+				iIndexOfH = sFormat.indexOf("H");
+
+			oSliders.setValue(sInputValue);
 
 			if (this._shouldSetInitialFocusedDateValue()) {
 				oDateValue = this.getInitialFocusedDateValue();
 			}
 
-			oSliders._setTimeValues(oDateValue);
+			oSliders._setTimeValues(oDateValue, TimePickerSliders._isHoursValue24(sInputValue, iIndexOfHH, iIndexOfH));
 			oSliders.collapseAll();
 
 			/* Mark input as active */
@@ -390,13 +403,22 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		 * @returns {boolean} true if <code>change</code> event was called, false otherwise.
 		 */
 		TimePicker.prototype._handleInputChange = function (sValue) {
-			var oDate;
+			var oDate,
+				sThatValue,
+				bThatValue2400,
+				sFormat = this.getValueFormat(),
+				iIndexOfHH = sFormat.indexOf("HH"),
+				iIndexOfH = sFormat.indexOf("H");
 
 			sValue = sValue || this._$input.val();
-
+			sThatValue = sValue;
+			bThatValue2400 = TimePickerSliders._isHoursValue24(sThatValue, iIndexOfHH, iIndexOfH);
 			this._bValid = true;
 			if (sValue !== "") {
-				oDate = this._parseValue(sValue, true);
+				//keep the oDate not changed by the 24 hrs
+				oDate = this._parseValue(
+					TimePickerSliders._isHoursValue24(sValue, iIndexOfHH, iIndexOfH) ?
+						TimePickerSliders._replace24HoursWithZero(sValue, iIndexOfHH, iIndexOfH) : sValue, true);
 				if (!oDate) {
 					this._bValid = false;
 				} else {
@@ -404,21 +426,22 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 					sValue = this._formatValue(oDate);
 				}
 			}
-
-			this.updateDomValue(sValue);
+			sThatValue = this.getSupport2400() && bThatValue2400 ? "24:" + sValue.replace(/[0-9]/g, "0").slice(0, -3) : sValue;
+			//instead on key stroke zeroes could be added after entering '24'
+			this.updateDomValue(sThatValue);
 
 			if (oDate) {
 				// get the value in valueFormat
 				sValue = this._formatValue(oDate, true);
 			}
 
-			this.setProperty("value", sValue, true); // no rerendering
+			this.setProperty("value", sThatValue, true); // no rerendering
 			this._lastValue = sValue;
 			if (this._bValid) {
 				this.setProperty("dateValue", oDate, true); // no rerendering
 			}
 
-			this.fireChangeEvent(sValue, {valid: this._bValid});
+			this.fireChangeEvent(sThatValue, {valid: this._bValid});
 
 			return true;
 		};
@@ -515,6 +538,29 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			}
 		};
 
+		/**
+		 * Sets <code>support2400</code> of the control.
+		 *
+		 * Allows the control to use 24-hour format.
+		 * Recommended usage is to not use it with am/pm format.
+		 *
+		 * @param {boolean} bSupport2400
+		 * @returns {sap.m.TimePicker} this instance, used for chaining
+		 * @public
+		 */
+		TimePicker.prototype.setSupport2400 = function (bSupport2400) {
+			var oSliders = this._getSliders();
+
+			this.setProperty("support2400", bSupport2400, true); // no rerendering
+
+			if (oSliders) {
+				oSliders.setSupport2400(bSupport2400);
+			}
+
+			this._initMask();
+			return this;
+		};
+
 		TimePicker.prototype.setDisplayFormat = function (sDisplayFormat) {
 			var oSliders = this._getSliders();
 
@@ -554,9 +600,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		TimePicker.prototype.setValue = function(sValue) {
 			var oDate,
 				sOutputValue,
+				sFormat = this.getValueFormat(),
+				iIndexOfHH = sFormat.indexOf("HH"),
+				iIndexOfH = sFormat.indexOf("H"),
 				oSliders = this._getSliders();
 
-			sValue = this.validateProperty('value', sValue);
+			sValue = this.validateProperty("value", sValue);
 
 			this._initMask();
 
@@ -567,7 +616,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 
 			// convert to date object
 			if (sValue) {
-				oDate = this._parseValue(sValue);
+				//date object have to be consistent, so if value is 2400, set oDate to 00
+				oDate = this._parseValue(TimePickerSliders._isHoursValue24(sValue, iIndexOfHH, iIndexOfH) ?
+					TimePickerSliders._replace24HoursWithZero(sValue, iIndexOfHH, iIndexOfH) : sValue);
 				if (!oDate) {
 					this._bValid = false;
 						jQuery.sap.log.warning("Value can not be converted to a valid date", this);
@@ -579,7 +630,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			}
 
 			// convert to output
-			if (oDate) {
+			if (oDate && !this.getSupport2400()) {
 				sOutputValue = this._formatValue(oDate);
 			} else {
 				sOutputValue = sValue;
@@ -951,7 +1002,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 				endButton: new sap.m.Button({ text: sCancelButtonText, press: jQuery.proxy(this._handleCancelPress, this) }),
 				content: [
 					new TimePickerSliders(this.getId() + "-sliders", {
+						support2400: this.getSupport2400(),
 						displayFormat: sFormat,
+						valueFormat: this.getValueFormat(),
 						labelText: sTitle ? sTitle : "",
 						localeId: sLocaleId,
 						minutesStep: this.getMinutesStep(),
@@ -1031,6 +1084,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			var oDate = this._getSliders().getTimeValues(),
 				sValue = this._formatValue(oDate);
 
+			//if 24 is selected for hours, it should also go to the input after pressing the OK button
+			if (this.getSupport2400()) {
+				sValue = this._getSliders().getValue();
+			}
 			this.updateDomValue(sValue);
 			this._handleInputChange();
 
@@ -1086,7 +1143,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		 * @private
 		 */
 		TimePicker.prototype._formatValue = function(oDate, bValueFormat) {
-			var sValue = DateTimeField.prototype._formatValue.apply(this, arguments);
+			var sValue = DateTimeField.prototype._formatValue.apply(this, arguments),
+				sFormat = this.getValueFormat(),
+				iIndexOfHH = sFormat.indexOf("HH"),
+				iIndexOfH = sFormat.indexOf("H");
 
 			if (oDate) {
 				// in display format the formatter returns strings without the leading space
@@ -1098,6 +1158,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 				if (!bValueFormat && this._oTimeSemanticMaskHelper) {
 					sValue = this._oTimeSemanticMaskHelper.formatValueWithLeadingTrailingSpaces(sValue);
 				}
+			}
+
+			//2400 scenario - be sure that the correct value will be set in all cases - when binding,
+			//setting the value by sliders or only via setValue
+			if (this.getSupport2400() && TimePickerSliders._isHoursValue24(this.getValue(), iIndexOfHH, iIndexOfH)
+				&& TimePickerSliders._replaceZeroHoursWith24(sValue, iIndexOfHH, iIndexOfH) === this.getValue()) {
+				sValue = this.getValue();
 			}
 
 			return sValue;
@@ -1348,7 +1415,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			//not too expensive to generate all values that are valid hour values
 			function genValidHourValues(b24H, sLeadingChar) {
 				var iStart = b24H ? 0 : 1,
-					iEnd = b24H ? 23 : 12;
+					b2400 = this._oTimePicker.getSupport2400() ? 24 : 23,//if getSupport2400, the user could type 24 in the input
+					iEnd = b24H ? b2400 : 12;
 
 				return genValues(iStart, iEnd, sLeadingChar);
 			}
@@ -1548,7 +1616,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 
 			return oLocaleData.getTimePattern(TimeFormatStyles.Medium);
 		}
-
 
 		/**
 		 * Fires when the input operation has finished and the value has changed.

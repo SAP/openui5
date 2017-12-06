@@ -90,7 +90,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 					/**
 					 * Determines the format of the <code>value</code> property.
 					 */
-					valueFormat: {type: "string", group: "Data", defaultValue: null}
+					valueFormat: {type: "string", group: "Data", defaultValue: null},
+
+					/**
+					 * Allows to set a value of 24:00, used to indicate the end of the day.
+					 * Works only with HH or H formats. Don't use it together with am/pm.
+					 * @since 1.54
+					 */
+					support2400: {type: "boolean", group: "Misc", defaultValue: false}
 				},
 				aggregations: {
 					/**
@@ -138,6 +145,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 
 			this.setDisplayFormat(sDefaultDisplayFormat);
 			this._setTimeValues();
+			this._iMinutes; //needed for the 2400 scenario to store the minutes when scrolling before and after 24
+			this._iSeconds; //needed for the 2400 scenario to store the seconds when scrolling before and after 24
 		};
 
 		/**
@@ -163,7 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 				 * Make sure _the browser native focus_ is not actually set on the early call (the "true" param)
 				 * because that fires events and results in unexpected behaviors */
 				if (Device.system.desktop) {
-					this.getAggregation("_columns")[0].setIsExpanded(true);
+					this._getFirstSlider().setIsExpanded(true);
 				}
 			}
 		};
@@ -200,6 +209,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 
 			return this;
 		};
+
+		/**
+		 * Sets <code>support2400</code>.
+		 *
+		 * @param {boolean} bSupport2400
+		 * @returns {sap.m.TimePickerSliders} this instance, used for chaining
+		 * @public
+		 */
+		TimePickerSliders.prototype.setSupport2400 = function (bSupport2400) {
+			this.setProperty("support2400", bSupport2400, true);
+
+			this._destroyColumns();
+			this._setupLists();
+
+			return this;
+		};
+
 
 		/**
 		 * Sets the time <code>displayFormat</code>.
@@ -306,17 +332,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		 * @public
 		 */
 		TimePickerSliders.prototype.setValue = function (sValue) {
-			sValue = this.validateProperty("value", sValue);
+			var oHoursSlider = this._getHoursSlider(),
+				sFormat = this._getValueFormatPattern(),
+				iIndexOfHH = sFormat.indexOf("HH"),
+				iIndexOfH = sFormat.indexOf("H"),
+				bHoursSliderValueIs24 = oHoursSlider && oHoursSlider.getSelectedValue() === "24",
+				bHoursValueIs24 = TimePickerSliders._isHoursValue24(sValue, iIndexOfHH, iIndexOfH);
 
+			if (bHoursSliderValueIs24 && this._isFormatSupport24() && !bHoursValueIs24) {
+				sValue = TimePickerSliders._replaceZeroHoursWith24(sValue, iIndexOfHH, iIndexOfH);
+			}
+
+			sValue = this.validateProperty("value", sValue);
 			this.setProperty("value", sValue, true); // no rerendering
 
 			// convert to date object
 			var oDate;
 			if (sValue) {
-				oDate = this._parseValue(sValue);
+				oDate = this._parseValue(bHoursValueIs24 ? TimePickerSliders._replace24HoursWithZero(sValue, iIndexOfHH, iIndexOfH) : sValue);
 			}
+
 			if (oDate) {
-				this._setTimeValues(oDate);
+				this._setTimeValues(oDate, bHoursValueIs24);
 			}
 
 			return this;
@@ -329,21 +366,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		 * @public
 		 */
 		TimePickerSliders.prototype.getTimeValues = function () {
-			var oCore = sap.ui.getCore(),
-				oListHours = oCore.byId(this.getId() + "-listHours"),
-				oListMinutes = oCore.byId(this.getId() + "-listMins"),
-				oListSeconds = oCore.byId(this.getId() + "-listSecs"),
-				oListAmPm = oCore.byId(this.getId() + "-listFormat"),
+			var oHoursSlider = this._getHoursSlider(),
+				oMinutesSlider = this._getMinutesSlider(),
+				oSecondsSlider = this._getSecondsSlider(),
+				oFormatSlider = this._getFormatSlider(),
 				iHours = null,
 				sAmpm = null,
 				oDateValue = new Date();
 
-			if (oListHours) {
-				iHours = parseInt(oListHours.getSelectedValue(), 10);
+			if (oHoursSlider) {
+				iHours = parseInt(oHoursSlider.getSelectedValue(), 10);
 			}
 
-			if (oListAmPm) {
-				sAmpm = oListAmPm.getSelectedValue();
+			if (oFormatSlider) {
+				sAmpm = oFormatSlider.getSelectedValue();
 			}
 
 			if (sAmpm === "am" && iHours === 12) {
@@ -356,12 +392,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 				oDateValue.setHours(iHours.toString());
 			}
 
-			if (oListMinutes) {
-				oDateValue.setMinutes(oListMinutes.getSelectedValue());
+			if (oMinutesSlider) {
+				oDateValue.setMinutes(oMinutesSlider.getSelectedValue());
 			}
 
-			if (oListSeconds) {
-				oDateValue.setSeconds(oListSeconds.getSelectedValue());
+			if (oSecondsSlider) {
+				oDateValue.setSeconds(oSecondsSlider.getSelectedValue());
 			}
 
 			return oDateValue;
@@ -397,7 +433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		 * @public
 		 */
 		TimePickerSliders.prototype.openFirstSlider = function() {
-			var oFirstSlider = this.getAggregation("_columns")[0];
+			var oFirstSlider = this._getFirstSlider();
 
 			oFirstSlider.setIsExpanded(true);
 			oFirstSlider.focus();
@@ -414,12 +450,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		 * @param {Object} oDate The date to use as a setting, if not provided the current date will be used
 		 * @private
 		 */
-		TimePickerSliders.prototype._setTimeValues = function (oDate) {
-			var oCore = sap.ui.getCore(),
-				oListHours = oCore.byId(this.getId() + "-listHours"),
-				oListMinutes = oCore.byId(this.getId() + "-listMins"),
-				oListSeconds = oCore.byId(this.getId() + "-listSecs"),
-				oListAmPm = oCore.byId(this.getId() + "-listFormat"),
+		TimePickerSliders.prototype._setTimeValues = function (oDate, bHoursValueIs24) {
+			var oHoursSlider = this._getHoursSlider(),
+				oMinutesSlider = this._getMinutesSlider(),
+				oSecondsSlider = this._getSecondsSlider(),
+				oFormatSlider = this._getFormatSlider(),
 				iHours,
 				sAmPm = null;
 
@@ -429,25 +464,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 				throw new Error("Date must be a JavaScript date object; " + this);
 			}
 
-			// convert date object to value
-			var sValue = this._formatValue(oDate, true);
+			if (!bHoursValueIs24) {
+				// convert date object to value
+				var sValue = this._formatValue(oDate, true);
 
-			// set the property in any case but check validity on output
-			this.setProperty("value", sValue, true); // no rerendering
+				// set the property in any case but check validity on output
+				this.setProperty("value", sValue, true); // no rerendering
+				iHours = oDate.getHours();
+			} else {
+				iHours = 24;
+			}
 
-			iHours = oDate.getHours();
-
-			if (oListAmPm) {
+			if (oFormatSlider) {
 				//ToDo: Replace this hardcoded values with their translated text in order to have UI API value consistency
 				sAmPm = iHours >= 12 ? "pm" : "am";
 				iHours = (iHours > 12) ? iHours - 12 : iHours;
 				iHours = (iHours === 0 ? 12 : iHours);
 			}
 
-			oListHours && oListHours.setSelectedValue(iHours.toString());
-			oListMinutes && oListMinutes._updateStepAndValue(oDate.getMinutes(), this.getMinutesStep());
-			oListSeconds && oListSeconds._updateStepAndValue(oDate.getSeconds(), this.getSecondsStep());
-			oListAmPm && oListAmPm.setSelectedValue(sAmPm);
+			oHoursSlider && oHoursSlider.setSelectedValue(iHours.toString());
+			oMinutesSlider && oMinutesSlider._updateStepAndValue(oDate.getMinutes(), this.getMinutesStep());
+			oSecondsSlider && oSecondsSlider._updateStepAndValue(oDate.getSeconds(), this.getSecondsStep());
+			oFormatSlider && oFormatSlider.setSelectedValue(sAmPm);
+
+			if (bHoursValueIs24) {
+				this._disableSlider(oMinutesSlider);
+				oMinutesSlider && oMinutesSlider.setSelectedValue("0");
+				this._disableSlider(oSecondsSlider);
+				oSecondsSlider && oSecondsSlider.setSelectedValue("0");
+			} else {
+				this._enableSlider(oMinutesSlider);
+				this._enableSlider(oSecondsSlider);
+			}
 		};
 
 		/**
@@ -474,10 +522,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		 * @private
 		 */
 		TimePickerSliders.prototype.onsaphome = function(oEvent) {
-			var oCurrentSlider = this._getCurrentSlider();
+			var oNextSlider = this._getFirstSlider(),
+				oCurrentSlider = this._getCurrentSlider();
 
-			if (oCurrentSlider && document.activeElement === oCurrentSlider.getDomRef()) {
-				this.getAggregation("_columns")[0].focus();
+			if (oCurrentSlider && document.activeElement === oCurrentSlider.getDomRef() && this._isSliderEnabled(oNextSlider)) {
+				oNextSlider.focus();
 			}
 		};
 
@@ -489,11 +538,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		 * @private
 		 */
 		TimePickerSliders.prototype.onsapend = function(oEvent) {
-			var oCurrentSlider = this._getCurrentSlider();
+			var oNextSlider = this._getLastSlider(),
+				oCurrentSlider = this._getCurrentSlider();
 
-			if (oCurrentSlider && document.activeElement === oCurrentSlider.getDomRef()) {
-				var aSliders = this.getAggregation("_columns");
-				aSliders[aSliders.length - 1].focus();
+			if (oCurrentSlider && document.activeElement === oCurrentSlider.getDomRef() && this._isSliderEnabled(oNextSlider)) {
+				oNextSlider.focus();
 			}
 		};
 
@@ -505,7 +554,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		 * @private
 		 */
 		TimePickerSliders.prototype.onsapleft = function(oEvent) {
-			var oCurrentSlider = this._getCurrentSlider(),
+			var oNextSlider,
+				oCurrentSlider = this._getCurrentSlider(),
 				iCurrentSliderIndex = -1,
 				iNextIndex = -1,
 				aSliders = this.getAggregation("_columns");
@@ -513,7 +563,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 			if (oCurrentSlider && document.activeElement === oCurrentSlider.getDomRef()) {
 				iCurrentSliderIndex = aSliders.indexOf(oCurrentSlider);
 				iNextIndex = iCurrentSliderIndex > 0 ? iCurrentSliderIndex - 1 : aSliders.length - 1;
-				aSliders[iNextIndex].focus();
+				oNextSlider = aSliders[iNextIndex];
+				if (this._isSliderEnabled(oNextSlider)) {
+					oNextSlider.focus();
+				}
 			}
 		};
 
@@ -525,7 +578,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		 * @private
 		 */
 		TimePickerSliders.prototype.onsapright = function(oEvent) {
-			var oCurrentSlider = this._getCurrentSlider(),
+			var oNextSlider,
+				oCurrentSlider = this._getCurrentSlider(),
 				iCurrentSliderIndex = -1,
 				iNextIndex = -1,
 				aSliders = this.getAggregation("_columns");
@@ -533,7 +587,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 			if (oCurrentSlider && document.activeElement === oCurrentSlider.getDomRef()) {
 				iCurrentSliderIndex = aSliders.indexOf(oCurrentSlider);
 				iNextIndex = iCurrentSliderIndex < aSliders.length - 1 ? iCurrentSliderIndex + 1 : 0;
-				aSliders[iNextIndex].focus();
+				oNextSlider = aSliders[iNextIndex];
+				if (this._isSliderEnabled(oNextSlider)) {
+					oNextSlider.focus();
+				}
 			}
 		};
 
@@ -629,6 +686,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		/**
 		 * @private
 		 */
+		TimePickerSliders.prototype._getValueFormatPattern = function () {
+			var sPattern = this._getBoundValueTypePattern() || this.getValueFormat() || "medium";
+
+			if (this._checkStyle(sPattern)) {
+				sPattern = this._getLocaleBasedPattern(sPattern);
+			}
+
+			return sPattern;
+		};
+
+		/**
+		 * @private
+		 */
 		TimePickerSliders.prototype._getLocaleBasedPattern = function (sPlaceholder) {
 			return LocaleData.getInstance(
 				sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
@@ -672,12 +742,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 			if (sFormat.indexOf("HH") !== -1) {
 				bHours = true;
 				iFrom = 0;
-				iTo = 23;
+				iTo = this.getSupport2400() ? 24 : 23;
 				bHoursTrailingZero = true;
 			} else if (sFormat.indexOf("H") !== -1) {
 				bHours = true;
 				iFrom = 0;
-				iTo = 23;
+				iTo = this.getSupport2400() ? 24 : 23;
 			} else if (sFormat.indexOf("hh") !== -1) {
 				bHours = true;
 				iFrom = 1;
@@ -695,7 +765,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 					expanded: this._onSliderExpanded,
 					collapsed: this._onSliderCollapsed,
 					label: sLabelHours
-				}));
+				}).attachEvent("_selectedValueChange", this._handleHoursChange, this));
 			}
 
 			if (sFormat.indexOf("m") !== -1) {
@@ -765,10 +835,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		};
 
 		/**
+		 * Returns the sliders for the hours
+		 * @returns {sap.m.TimePickerSlider|null} Hours slider
+		 * @private
+		 */
+		TimePickerSliders.prototype._getHoursSlider = function () {
+			return sap.ui.getCore().byId(this.getId() + "-listHours") || null;
+		};
+
+		/**
+		 * Returns the sliders for the minutes
+		 * @returns {sap.m.TimePickerSlider|null} Minutes slider
+		 * @private
+		 */
+		TimePickerSliders.prototype._getMinutesSlider = function () {
+			return sap.ui.getCore().byId(this.getId() + "-listMins") || null;
+		};
+
+		/**
+		 * Returns the sliders for the seconds
+		 * @returns {sap.m.TimePickerSlider|null} Seconds slider
+		 * @private
+		 */
+		TimePickerSliders.prototype._getSecondsSlider = function () {
+			return sap.ui.getCore().byId(this.getId() + "-listSecs") || null;
+		};
+
+		/**
+		 * Returns the sliders for the format
+		 * @returns {sap.m.TimePickerSlider|null} Format slider
+		 * @private
+		 */
+		TimePickerSliders.prototype._getFormatSlider = function () {
+			return sap.ui.getCore().byId(this.getId() + "-listFormat") || null;
+		};
+
+		/**
+		 * Returns the first slider
+		 * @returns {sap.m.TimePickerSlider|null} First slider
+		 * @private
+		 */
+		TimePickerSliders.prototype._getFirstSlider = function () {
+			return this.getAggregation("_columns")[0] || null;
+		};
+
+		/**
+		 * Returns the last slider
+		 * @returns {sap.m.TimePickerSlider|null} Last slider
+		 * @private
+		 */
+		TimePickerSliders.prototype._getLastSlider = function () {
+			var aSliders = this.getAggregation("_columns");
+
+			return aSliders[aSliders.length - 1] || null;
+		};
+
+		/**
 		 * @private
 		 */
 		TimePickerSliders.prototype._parseValue = function (sValue) {
 			return this._getFormatter().parse(sValue);
+		};
+
+		/**
+		 * @private
+		 */
+		TimePickerSliders.prototype._isSliderEnabled = function (oSlider) {
+			return oSlider._getEnabled();
 		};
 
 		/**
@@ -892,6 +1025,154 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 
 			return this;
 		};
+
+		/**
+		 * Returns if the displayFormatPattern is HH or H (24 hours format with or without leading zero)
+		 * @returns {boolean} Is the displayFormatPattern is HH or H (24 hours format with or without leading zero).
+		 * @private
+		 */
+		TimePickerSliders.prototype._isFormatSupport24 = function () {
+			var sFormat = this._getDisplayFormatPattern();
+			return sFormat.indexOf("HH") !== -1 || sFormat.indexOf("H") !== -1;
+		};
+
+		/**
+		 * Disables the slider and set its value to 0
+		 * @private
+		 */
+		TimePickerSliders.prototype._disableSlider = function (oSlider) {
+			if (oSlider) {
+				oSlider._setEnabled(false);
+			}
+			return this;
+		};
+
+		/**
+		 * Enables the slider and sets its value to the provided value
+		 * @private
+		 */
+		TimePickerSliders.prototype._enableSlider = function (oSlider) {
+			if (oSlider) {
+				oSlider._setEnabled(true);
+			}
+			return this;
+		};
+
+		/**
+		 * Handles minutes and seconds when hours are changed.
+		 * By spec when hours are 24, then the rest sliders must be set to 0 and look disabled.
+		 * @private
+		 */
+		TimePickerSliders.prototype._handleHoursChange = function(oEvent) {
+			var sValue = oEvent.getParameter("value"),
+				oMinutesSlider = this._getMinutesSlider(),
+				oSecondsSlider = this._getSecondsSlider();
+
+			if (this.getSupport2400()) {
+				if (sValue === "24") {
+					// Store last values
+					if (oMinutesSlider && oMinutesSlider._getEnabled()) {
+						this._iMinutes = oMinutesSlider.getSelectedValue();
+						this._disableSlider(oMinutesSlider);
+						oMinutesSlider.setSelectedValue("0");
+					}
+					if (oSecondsSlider && oSecondsSlider._getEnabled()) {
+						this._iSeconds = oSecondsSlider.getSelectedValue();
+						this._disableSlider(oSecondsSlider);
+						oSecondsSlider.setSelectedValue("0");
+					}
+
+				} else {
+					// restore last values
+					if (oMinutesSlider && !oMinutesSlider._getEnabled()) {
+						this._enableSlider(oMinutesSlider);
+						oMinutesSlider.setSelectedValue(this._iMinutes); //set again the last value before snapping the hours to 24
+					}
+					if (oSecondsSlider && !oSecondsSlider._getEnabled()) {
+						this._enableSlider(oSecondsSlider);
+						oSecondsSlider.setSelectedValue(this._iSeconds); // set again the last value before snapping the hours to 24
+					}
+				}
+			}
+		};
+
+		// Static Methods
+		/**
+		 * Returns value with replaced zeros for the Hours.
+		 *
+		 * Example:
+		 *  00:00:00 with displayFormat "HH:mm:ss" -> 24:00:00
+		 *  00:00:00 with displayFormat "mm:HH:ss" -> 00:24:00
+		 *  0:00:00 with displayFormat "H:mm:ss" -> 24:00:00
+		 *  00:0:00 with displayFormat "mm:H:ss" -> 00:24:00
+		 * @param iIndexHH index of the HH in the displayFormat
+		 * @param iIndexH index of the H in the displayFormat
+		 * @private
+		 */
+		TimePickerSliders._replaceZeroHoursWith24 = function (sValue, iIndexOfHH, iIndexOfH) {
+			var iHoursDigits = 2,
+				iSubStringIndex = iIndexOfHH;
+
+			if (iIndexOfHH === -1) {
+				iHoursDigits = 1;
+				iSubStringIndex = iIndexOfH;
+			}
+
+			return sValue.substr(0, iSubStringIndex) + "24" + sValue.substr(iSubStringIndex + iHoursDigits);
+		};
+
+		/**
+		 * Returns value with replaced zeros for the Hours.
+		 *
+		 * Example:
+		 *  24:00:00 with displayFormat "HH:mm:ss" -> 00:00:00
+		 *  00:24:00 with displayFormat "mm:HH:ss" -> 00:00:00
+		 *  24:00:00 with displayFormat "H:mm:ss" -> 0:00:00
+		 *  00:24:00 with displayFormat "mm:H:ss" -> 00:0:00
+		 * @param iIndexHH index of the HH in the displayFormat
+		 * @param iIndexH index of the H in the displayFormat
+		 * @private
+		 */
+		TimePickerSliders._replace24HoursWithZero = function (sValue, iIndexOfHH, iIndexOfH) {
+			var iHoursDigits = 2,
+				iSubStringIndex = iIndexOfHH;
+
+			if (iIndexOfHH === -1) {
+				iHoursDigits = 1;
+				iSubStringIndex = iIndexOfH;
+			}
+
+			return sValue.substr(0, iSubStringIndex) + strRepeat(0, iHoursDigits) + sValue.substr(iSubStringIndex + 2);
+		};
+
+
+		/**
+		 * Return if provided value hours is equal to 24
+		 * @private
+		 */
+		TimePickerSliders._isHoursValue24 = function (sValue, iIndexOfHH, iIndexOfH) {
+			if (iIndexOfHH === -1 && iIndexOfH === -1) {
+				return false;
+			}
+
+			var iSubStringIndex = iIndexOfHH;
+
+			if (iIndexOfHH === -1) {
+				iSubStringIndex = iIndexOfH;
+			}
+
+			return sValue.substr(iSubStringIndex, 2) === "24";
+		};
+
+		function strRepeat(sStr, iCount) {
+			var sResult = "";
+
+			for (var i = 0; i < iCount; i++) {
+				sResult += sStr;
+			}
+
+			return sResult;
+		}
 
 		return TimePickerSliders;
 	});
