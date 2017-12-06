@@ -37,6 +37,9 @@ sap.ui.define([],
 				},
 				dragDropConfig: {
 					ignore: true
+				},
+				contextMenu: {
+					ignore: true
 				}
 			},
 			actions: {

@@ -136,6 +136,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.write("<td");
 			rm.addClass("sapMListTblCell");
 			rm.writeAttribute("id", oLI.getId() + "_cell" + i);
+			rm.writeAttribute("data-sap-ui-column", oColumn.getId());
 
 			// check column properties
 			if (oColumn) {
