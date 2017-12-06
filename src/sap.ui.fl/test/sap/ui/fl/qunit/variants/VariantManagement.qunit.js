@@ -43,53 +43,42 @@
 							key: "Standard",
 							title: "Standard",
 							author: "A",
-							remove: false,
-							rename: true,
+							layer: "VENDOR",
 							favorite: true,
 							originalFavorite: true,
-							visible: true,
-							change: true
+							visible: true
 						}, {
 							key: "1",
 							title: "One",
 							author: "A",
-							remove: true,
-							rename: true,
+							layer: "USER",
 							favorite: true,
 							originalFavorite: true,
-							visible: true,
-							change: true
+							visible: true
 						}, {
 							key: "2",
 							title: "Two",
 							author: "V",
-							remove: false,
-							rename: true,
+							layer: "CUSTOMER",
 							favorite: true,
 							originalFavorite: true,
-							visible: true,
-							change: true
+							visible: true
 						}, {
 							key: "3",
 							title: "Three",
 							author: "U",
-							remove: false,
-							rename: true,
+							layer: "CUSTOMER",
 							favorite: true,
 							originalFavorite: true,
-							visible: true,
-							change: true
+							visible: true
 						}, {
 							key: "4",
 							title: "Four",
 							author: "Z",
-							share: true,
-							remove: false,
-							rename: false,
+							layer: "PARTNER",
 							favorite: true,
 							originalFavorite: true,
-							visible: true,
-							change: false
+							visible: true
 						}
 					]
 				}
@@ -362,6 +351,7 @@
 
 	QUnit.test("Checking _handleVariantSaveAs", function(assert) {
 
+		sinon.stub(oModel, "handleSave");
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
 
 		var bCalled = false;
@@ -382,6 +372,7 @@
 
 		this.oVariantManagement._handleVariantSaveAs("1");
 		assert.ok(bCalled);
+		assert.ok(oModel.handleSave.calledOnce);
 		assert.equal(this.oVariantManagement.oInputName.getValueState(), "None");
 
 		this.oVariantManagement._handleVariantSaveAs(" ");
@@ -395,6 +386,7 @@
 
 	QUnit.test("Checking _handleVariantSave", function(assert) {
 
+		sinon.stub(oModel, "handleSave");
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
 
 		var bCalled = false;
@@ -413,6 +405,7 @@
 
 		this.oVariantManagement._handleVariantSave();
 		assert.ok(bCalled);
+		assert.ok(oModel.handleSave.calledOnce);
 	});
 
 	QUnit.test("Checking openManagementDialog", function(assert) {

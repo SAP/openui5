@@ -390,13 +390,6 @@ sap.ui.define([
 	 */
 	VariantController.prototype._fillVariantModel = function() {
 		var oVariantData = {};
-		var fnRemove = function(oVariant, sVariantManagementReference) {
-			if ((oVariant.content.layer === Utils.getCurrentLayer()) && (oVariant.content.fileName !== sVariantManagementReference)) {
-				return true;
-			} else {
-				return false;
-			}
-		};
 
 		Object.keys(this._mVariantManagement).forEach(function(sKey) {
 			oVariantData[sKey] = {
@@ -419,7 +412,6 @@ sap.ui.define([
 					//author : oVariant.content.support.user, //TODO: get value from backend
 					layer : oVariant.content.layer,
 					favorite : oVariant.content.content.favorite,
-					remove : fnRemove(oVariant, sKey),
 					visible : oVariant.content.content.visible
 				};
 			}.bind(this));

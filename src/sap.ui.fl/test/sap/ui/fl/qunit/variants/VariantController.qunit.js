@@ -407,7 +407,6 @@ sap.ui.require([
 					"visible": true,
 					"key": "variantMgmtId1",
 					"layer": "VENDOR",
-					"remove": false,
 					"title": "Standard"
 				},
 				{
@@ -416,7 +415,6 @@ sap.ui.require([
 					"visible": true,
 					"key": "variant0",
 					"layer": "CUSTOMER",
-					"remove": true,
 					"title": "variant A"
 				},
 				{
@@ -425,7 +423,6 @@ sap.ui.require([
 					"visible": true,
 					"key": "variant1",
 					"layer": "CUSTOMER",
-					"remove": true,
 					"title": "variant B"
 				}]
 			}
@@ -488,7 +485,6 @@ sap.ui.require([
 					"visible": true,
 					"key": "variantMgmtId1",
 					"layer": "VENDOR",
-					"remove": false,
 					"title": "Standard"
 				},
 				{
@@ -497,7 +493,6 @@ sap.ui.require([
 					"visible": true,
 					"key": "variant0",
 					"layer": "CUSTOMER",
-					"remove": true,
 					"title": "variant A"
 				}]
 			}

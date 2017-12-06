@@ -13,6 +13,7 @@ sap.ui.define([
 		_data: [],
 
 		onInit: function () {
+			this.iCounter = 0;
 			var oView = this.getView();
 			this._data.push(
 				new Promise(function (resolve, reject) {
@@ -81,7 +82,6 @@ sap.ui.define([
 
 		createChanges: function(oEvent) {
 			var oButton = oEvent.getSource();
-			oButton.setEnabled(false);
 			var oAppComponent = Utils.getAppComponentForControl(sap.ui.core.Component.getOwnerComponentFor(this.getView()));
 			var oModel = oAppComponent.getModel("$FlexVariants");
 
@@ -92,40 +92,73 @@ sap.ui.define([
 				layer: sap.ui.fl.Utils.getCurrentLayer()
 			});
 
-			var mBaseChangeData1  = {
-				changeType: "moveControls",
-				movedElements: [{
-					"id": oAppComponent.createId("idMain1--ObjectPageSectionWithForm"),
-					"sourceIndex": 0,
-					"targetIndex": 1
-				}],
-				source: {
-					"id": oAppComponent.createId("idMain1--ObjectPageLayout"),
-					"aggregation": "sections"
-				},
-				target: {
-					"id": oAppComponent.createId("idMain1--ObjectPageLayout"),
-					"aggregation": "sections"
+			sap.m.MessageBox.show(
+				"Do you want to create personalization changes?", {
+					icon: sap.m.MessageBox.Icon.INFORMATION,
+					title: "Personalization Dialog",
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					onClose: function(oAction) {
+						if (oAction === "YES") {
+							if (this.iCounter === 0) {
+								var mBaseChangeData1  = {
+									changeType: "moveControls",
+									movedElements: [{
+										"id": oAppComponent.createId("idMain1--ObjectPageSectionWithForm"),
+										"sourceIndex": 0,
+										"targetIndex": 1
+									}],
+									source: {
+										"id": oAppComponent.createId("idMain1--ObjectPageLayout"),
+										"aggregation": "sections"
+									},
+									target: {
+										"id": oAppComponent.createId("idMain1--ObjectPageLayout"),
+										"aggregation": "sections"
+									}
+								};
+								var mBaseChangeData2  = {
+									changeType: "rename",
+									renamedElement: {
+										id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm")
+									},
+									value : "Personalization Test"
+								};
+
+								var oMoveChange = oModel.oFlexController.createChange(
+									jQuery.extend(mChangeSpecificData, mBaseChangeData1),
+									sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
+									oAppComponent);
+								var oRenameChange = oModel.oFlexController.createChange(
+									jQuery.extend(mChangeSpecificData, mBaseChangeData2),
+									sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSectionWithForm")),
+									oAppComponent);
+
+								oModel.addControlChangesToVariant([oMoveChange, oRenameChange], oAppComponent.createId("idMain1--variantManagementOrdersTable"));
+
+								this.iCounter++;
+							} else if (this.iCounter === 1) {
+								var mBaseChangeData3  = {
+									changeType: "rename",
+									renamedElement: {
+										id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm")
+									},
+									value : "Personalization Test (2. Change)"
+								};
+
+								var oRenameChange2 = oModel.oFlexController.createChange(
+									jQuery.extend(mChangeSpecificData, mBaseChangeData3),
+									sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSectionWithForm")),
+									oAppComponent);
+
+								oModel.addControlChangesToVariant([oRenameChange2], oAppComponent.createId("idMain1--variantManagementOrdersTable"));
+
+								oButton.setEnabled(false);
+								this.iCounter++;
+							}
+						}
+					}.bind(this)
 				}
-			};
-			var mBaseChangeData2  = {
-				changeType: "rename",
-				renamedElement: {
-					id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm")
-				},
-				value : "Personalization Test"
-			};
-
-			var oMoveChange = oModel.oFlexController.createChange(
-				jQuery.extend(mChangeSpecificData, mBaseChangeData1),
-				sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
-				oAppComponent);
-			var oRenameChange = oModel.oFlexController.createChange(
-				jQuery.extend(mChangeSpecificData, mBaseChangeData2),
-				sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSectionWithForm")),
-				oAppComponent);
-
-			oModel.addControlChangesToVariant([oMoveChange, oRenameChange], oAppComponent.createId("idMain1--variantManagementOrdersTable"));
+			);
 		},
 
 		isDataReady: function () {
