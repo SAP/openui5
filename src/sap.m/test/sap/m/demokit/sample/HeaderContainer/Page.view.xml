@@ -1,9 +1,23 @@
 <mvc:View
 	controllerName="sap.m.sample.HeaderContainer.Page"
 	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
-	<HeaderContainer scrollStep="200">
+	<Toolbar>
+		<Label text="Scroll options" />
+		<Select selectedKey="1" change="scrollChanged">
+			<core:Item text="1 item" key="1"/>
+			<core:Item text="2 items" key="2"/>
+			<core:Item text="3 items" key="3"/>
+			<core:Item text="200px" key="px"/>
+		</Select>
+	</Toolbar>
+
+	<HeaderContainer scrollStep="200" id="container1">
+		<FeedContent contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
+					 subheader="about 1 minute ago in Computer Market" />
+
 		<NumericContent size="S" scale="M" value="1.75" valueColor="Good" indicator="Up" press="press" />
 		<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
 		<NumericContent value="1762" icon="sap-icon://line-charts"/>
@@ -14,7 +28,7 @@
 		<NumericContent size="S" scale="M" value="0.73" valueColor="Error" indicator="Down" press="press" />
 	</HeaderContainer>
 
-	<HeaderContainer scrollStep="200">
+	<HeaderContainer id="container2" scrollStep="200">
 		<TileContent unit="EUR" footer="Current Quarter">
 			<content>
 				<NumericContent value="1.96" valueColor="Error" indicator="Down" press="press"/>
