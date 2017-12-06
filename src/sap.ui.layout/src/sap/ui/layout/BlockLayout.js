@@ -106,8 +106,8 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 */
 		BlockLayout.prototype.onAfterRendering = function () {
 			this._onParentResize();
+			this._notifySizeListeners();
 		};
-
 		/**
 		 * Changes background type
 		 *
@@ -143,23 +143,24 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 				mSizes = BlockLayout.CONSTANTS.SIZES;
 
 			this._detachResizeHandler();
-			this._removeBreakpointClasses();
-
 			// Put additional styles according to SAP_STANDARD_EXTENDED from sap.ui.Device.media.RANGESETS
 			// Not possible to use sap.ui.Device directly as it calculates window size, but here is needed parent's size
-			for (sProp in mSizes) {
-				if (mSizes.hasOwnProperty(sProp) && (mSizes[sProp] === null || mSizes[sProp] > iWidth)) {
-					if (this._currentBreakpoint != sProp) {
-						this._currentBreakpoint = sProp;
-						this._notifySizeListeners();
-					}
+			if (iWidth > 0){
+				this._removeBreakpointClasses();
+				for (sProp in mSizes) {
+					if (mSizes.hasOwnProperty(sProp) && (mSizes[sProp] === null || mSizes[sProp] > iWidth)) {
+						if (this._currentBreakpoint != sProp) {
+							this._currentBreakpoint = sProp;
+							this._notifySizeListeners();
+						}
 
-					this.addStyleClass("sapUiBlockLayoutSize" + sProp, true);
-					break;
+						this.addStyleClass("sapUiBlockLayoutSize" + sProp, true);
+						break;
+					}
 				}
 			}
 
-			jQuery.sap.delayedCall(0, this, "_attachResizeHandler");
+			this._attachResizeHandler();
 		};
 
 		BlockLayout.prototype._notifySizeListeners = function () {

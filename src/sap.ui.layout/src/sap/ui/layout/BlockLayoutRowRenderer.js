@@ -61,15 +61,14 @@ sap.ui.define(['jquery.sap.global', './library'],
 					oBlockLayoutRow._processAccentCellStyles(aAccentedCells, aContent);
 					break;
 			}
-
 			var arrangement = oBlockLayoutRow._getCellArangementForCurrentSize();
-			if (bScrollable || !arrangement) {
+			if (bScrollable) {
 				/**
 				 * The arrangement is passed from the BlockLayout to the BlockLayoutRow after the BlockLayout is rendered.
 				 * This means that we need to rerender the BlockLayoutRow after its initial rendering, because the size was previously unknown
 				 */
 				aContent.forEach(oRm.renderControl);
-			} else {
+			} else if (arrangement) {
 				for (var i = 0; i < arrangement.length; i++) {
 					var aSubRow = arrangement[i];
 					oRm.write("<div ");
