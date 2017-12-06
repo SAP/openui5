@@ -264,6 +264,15 @@
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(oButton._getInternalVisible(), true, "The button is visible");
+		assert.ok(this._oHeader._oOverflowButton.$().is(':hidden'), "There is no overflow button");
+
+		oButton.setVisible(false);
+
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oButton._getInternalVisible(), false, "The button is invisible");
+		assert.ok(this._oHeader._oOverflowButton.$().is(':hidden'), "There is no overflow button");
+
 	});
 
 	QUnit.module("Breadcrumbs rendering", {
