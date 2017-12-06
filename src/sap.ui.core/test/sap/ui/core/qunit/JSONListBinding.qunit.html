@@ -51,6 +51,13 @@
 				{form:"NFKC", string:"ṩ", representation:"\\u1E69"},
 				{form:"NFKD", string:"ṩ", representation:"\\u0073\\u0323\\u0307"},
 			],
+			dataWithNullValues:[
+				{value: 4},
+				{value: 2},
+				{value: null},
+				{value: 1},
+				{value: 3}
+			],
 			sortData:[
 				{word: "Fuß"},
 				{word: "Füssen"},
@@ -201,7 +208,7 @@
 		var listBinding = bindings[0];
 		listBinding.sort([
 			new sap.ui.model.Sorter("gender", false, true),
-			new sap.ui.model.Sorter("lastName")
+			new sap.ui.model.Sorter("firstName")
 		]);
 		listBinding.enableExtendedChangeDetection(false, "lastName");
 
@@ -211,8 +218,7 @@
 		assert.equal(contexts.length, 7, "Current contexts should contain 7 items");
 
 		// Change the gender in a way that the sort order is not affected
-		testData.teamMembers[4].gender = null;
-		testData.teamMembers[6].firstName = "Paul";
+		testData.teamMembers[2].gender = null;
 		listBinding.checkUpdate();
 
 		newContexts = listBinding.getContexts();
@@ -357,6 +363,36 @@
 		var listBinding = bindings[0];
 		listBinding.sort();
 		assert.expect(0);
+	});
+
+	QUnit.test("null values", function(assert) {
+		createListBinding("/dataWithNullValues");
+		var listBinding = bindings[0], sortedContexts, sorted;
+		listBinding.sort(new sap.ui.model.Sorter("value"));
+		sortedContexts = listBinding.getContexts();
+		sorted = [];
+		jQuery(sortedContexts).each(function(i, context){
+			sorted[i] = oModel.getProperty(context.getPath());
+		});
+		assert.equal(sorted.length, 5, "ListBinding sorted length");
+		assert.equal(sorted[0].value, null, "ListBinding sort value");
+		assert.equal(sorted[1].value, 1, "ListBinding sort value");
+		assert.equal(sorted[2].value, 2, "ListBinding sort value");
+		assert.equal(sorted[3].value, 3, "ListBinding sort value");
+		assert.equal(sorted[4].value, 4, "ListBinding sort value");
+
+		listBinding.sort(new sap.ui.model.Sorter("value", true));
+		sortedContexts = listBinding.getContexts();
+		sorted = [];
+		jQuery(sortedContexts).each(function(i, context){
+			sorted[i] = oModel.getProperty(context.getPath());
+		});
+		assert.equal(sorted.length, 5, "ListBinding sorted length");
+		assert.equal(sorted[0].value, 4, "ListBinding sort value");
+		assert.equal(sorted[1].value, 3, "ListBinding sort value");
+		assert.equal(sorted[2].value, 2, "ListBinding sort value");
+		assert.equal(sorted[3].value, 1, "ListBinding sort value");
+		assert.equal(sorted[4].value, null, "ListBinding sort value");
 	});
 
 	// should also work with other ListBinding implementations
@@ -628,6 +664,33 @@
 		});
 		assert.equal(filtered.length, 1, "ListBinding filtered length");
 		assert.equal(filtered[0].firstName, "Marc", "ListBinding filter value");
+
+	});
+
+	QUnit.test("null values", function(assert) {
+		createListBinding("/dataWithNullValues");
+		var listBinding = bindings[0], filteredContexts, filtered;
+		listBinding.sort(new sap.ui.model.Sorter("value"));
+
+		listBinding.filter([new sap.ui.model.Filter("value", "GT", 2)]);
+		filteredContexts = listBinding.getContexts();
+		filtered = [];
+		jQuery(filteredContexts).each(function(i, context){
+			filtered[i] = oModel.getProperty(context.getPath());
+		});
+		assert.equal(filtered.length, 2, "ListBinding filtered length");
+		assert.equal(filtered[0].value, 3, "ListBinding filter value");
+		assert.equal(filtered[1].value, 4, "ListBinding filter value");
+
+		listBinding.filter([new sap.ui.model.Filter("value", "LT", 3)]);
+		filteredContexts = listBinding.getContexts();
+		filtered = [];
+		jQuery(filteredContexts).each(function(i, context){
+			filtered[i] = oModel.getProperty(context.getPath());
+		});
+		assert.equal(filtered.length, 2, "ListBinding filtered length");
+		assert.equal(filtered[0].value, 1, "ListBinding filter value");
+		assert.equal(filtered[1].value, 2, "ListBinding filter value");
 
 	});
 
