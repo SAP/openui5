@@ -167,6 +167,14 @@ sap.ui.define([
 			},
 
 			/**
+			 * Opens more information about Demo Apps
+			 * @public
+			 */
+			onReadMoreButtonPress: function () {
+				window.open("#docs/guide/a3ab54ecf7ac493b91904beb2095d208.html", "_blank");
+			},
+
+			/**
 			 * Filters the download dialog
 			 * @param {sap.ui.base.Event} oEvent the SearchField liveChange event
 			 * @public
