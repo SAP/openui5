@@ -781,13 +781,13 @@
 		QUnit.test("test locale", function(assert) {
 			generateValuesTest([
 						{ key: "setValueFormat", value: "hh:mm a" },
-						{ key: "setValue", value: "11:50 nachm." },
+						{ key: "setValue", value: "11:50 PM" },
 						{ key: "setDisplayFormat", value: "hh:mm a" },
 						{ key: "setLocaleId", value: "de_DE"}
 					],
 					{
-						expInputVal: "11:50 nachm.",
-						expValue: "11:50 nachm.",
+						expInputVal: "11:50 PM",
+						expValue: "11:50 PM",
 						expDateValue: getDate(23, 50, 0)
 					});
 		});
@@ -812,8 +812,8 @@
 				{ key: "setDateValue", value: getDate(17, 23, 18) }
 			],
 			{
-				expValue: "5:23 nachm.",
-				expInputVal: "05:23:18 nachm.",
+				expValue: "5:23 PM",
+				expInputVal: "05:23:18 PM",
 				expDateValue: getDate(17, 23, 18)
 			});
 
@@ -2651,7 +2651,7 @@
 
 			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("v", 3, "12 ------");
 
-			assert.equal(sCharReplaced, "vorm. ", "replaceChar completes with spaces");
+			assert.equal(sCharReplaced, "v", "replaceChar completes with spaces");
 
 			//cleanup
 			tp.destroy();

@@ -152,6 +152,7 @@
 		"fr": "francuski",
 		"fr_CA": "kanadski francuski",
 		"fr_CH": "švicarski francuski",
+		"frc": "kajunski francuski",
 		"frm": "srednjofrancuski",
 		"fro": "starofrancuski",
 		"frr": "sjevernofrizijski",
@@ -205,7 +206,7 @@
 		"id": "indonezijski",
 		"ie": "interligua",
 		"ig": "igbo",
-		"ii": "sichuan yi",
+		"ii": "sichuan ji",
 		"ik": "inupiaq",
 		"ilo": "iloko",
 		"inh": "ingušetski",
@@ -278,6 +279,7 @@
 		"ln": "lingala",
 		"lo": "laoski",
 		"lol": "mongo",
+		"lou": "lujzijanski kreolski",
 		"loz": "lozi",
 		"lrc": "sjevernolurski",
 		"lt": "litavski",
@@ -579,6 +581,7 @@
 		"Geok": "gruzijsko khutsuri pismo",
 		"Geor": "gruzijsko pismo",
 		"Glag": "glagoljica",
+		"Gonm": "Gonm",
 		"Goth": "gotičko pismo",
 		"Gran": "grantha pismo",
 		"Grek": "grčko pismo",
@@ -679,6 +682,7 @@
 		"Sind": "khudawadi pismo",
 		"Sinh": "sinhaleško pismo",
 		"Sora": "sora sompeng pismo",
+		"Soyo": "Soyo",
 		"Sund": "sundansko pismo",
 		"Sylo": "syloti nagri pismo",
 		"Syrc": "sirijsko pismo",
@@ -708,6 +712,7 @@
 		"Xpeo": "staro perzijsko pismo",
 		"Xsux": "sumersko-akadsko cuneiform pismo",
 		"Yiii": "Yi pismo",
+		"Zanb": "Zanb",
 		"Zinh": "nasljedno pismo",
 		"Zmth": "matematičko znakovlje",
 		"Zsye": "emotikoni",
@@ -724,6 +729,7 @@
 		"151": "Istočna Europa",
 		"154": "Sjeverna Europa",
 		"155": "Zapadna Europa",
+		"202": "202",
 		"419": "Latinska Amerika",
 		"001": "Svijet",
 		"002": "Afrika",
@@ -825,7 +831,7 @@
 		"ES": "Španjolska",
 		"ET": "Etiopija",
 		"EU": "Europska unija",
-		"EZ": "EZ",
+		"EZ": "eurozona",
 		"FI": "Finska",
 		"FJ": "Fidži",
 		"FK": "Falklandski otoci",
@@ -942,7 +948,7 @@
 		"PH": "Filipini",
 		"PK": "Pakistan",
 		"PL": "Poljska",
-		"PM": "Saint-Pierre-et-Miquelon",
+		"PM": "Sveti Petar i Mikelon",
 		"PN": "Otoci Pitcairn",
 		"PR": "Portoriko",
 		"PS": "Palestinsko Područje",
@@ -1042,8 +1048,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d.",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1085,7 +1096,7 @@
 				"yQQQ": "QQQ y.",
 				"yQQQQ": "QQQQ y.",
 				"MMMMW": "W. 'tjedan' 'u' MMM",
-				"yw": "w. 'tjedan' 'u' y."
+				"yw": "w. 'tjedan' 'u' Y."
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1468,8 +1479,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d.",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1884,8 +1900,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d.",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2316,8 +2337,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d.",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2755,14 +2781,14 @@
 			"relative-type-0": "ove g.",
 			"relative-type-1": "sljedeće g.",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} g.",
-				"relativeTimePattern-count-few": "+{0} g.",
-				"relativeTimePattern-count-other": "+{0} g."
+				"relativeTimePattern-count-one": "za {0} g.",
+				"relativeTimePattern-count-few": "za {0} g.",
+				"relativeTimePattern-count-other": "za {0} g."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} g.",
-				"relativeTimePattern-count-few": "-{0} g.",
-				"relativeTimePattern-count-other": "-{0} g."
+				"relativeTimePattern-count-one": "prije {0} g.",
+				"relativeTimePattern-count-few": "prije {0} g.",
+				"relativeTimePattern-count-other": "prije {0} g."
 			}
 		},
 		"quarter-wide": {
@@ -2803,14 +2829,14 @@
 			"relative-type-0": "ovaj kv.",
 			"relative-type-1": "sljedeći kv.",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} kv.",
-				"relativeTimePattern-count-few": "+{0} kv.",
-				"relativeTimePattern-count-other": "+{0} kv."
+				"relativeTimePattern-count-one": "za {0} kv.",
+				"relativeTimePattern-count-few": "za {0} kv.",
+				"relativeTimePattern-count-other": "za {0} kv."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} kv.",
-				"relativeTimePattern-count-few": "-{0} kv.",
-				"relativeTimePattern-count-other": "-{0} kv."
+				"relativeTimePattern-count-one": "prije {0} kv.",
+				"relativeTimePattern-count-few": "prije {0} kv.",
+				"relativeTimePattern-count-other": "prije {0} kv."
 			}
 		},
 		"month-wide": {
@@ -2851,14 +2877,14 @@
 			"relative-type-0": "ovaj mj.",
 			"relative-type-1": "sljedeći mj.",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} mj.",
-				"relativeTimePattern-count-few": "+{0} mj.",
-				"relativeTimePattern-count-other": "+{0} mj."
+				"relativeTimePattern-count-one": "za {0} mj.",
+				"relativeTimePattern-count-few": "za {0} mj.",
+				"relativeTimePattern-count-other": "za {0} mj."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} mj.",
-				"relativeTimePattern-count-few": "-{0} mj.",
-				"relativeTimePattern-count-other": "-{0} mj."
+				"relativeTimePattern-count-one": "prije {0} mj.",
+				"relativeTimePattern-count-few": "prije {0} mj.",
+				"relativeTimePattern-count-other": "prije {0} mj."
 			}
 		},
 		"week-wide": {
@@ -2901,14 +2927,14 @@
 			"relative-type-0": "ovaj tj.",
 			"relative-type-1": "sljedeći tj.",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} tj.",
-				"relativeTimePattern-count-few": "+{0} tj.",
-				"relativeTimePattern-count-other": "+{0} tj."
+				"relativeTimePattern-count-one": "za {0} tj.",
+				"relativeTimePattern-count-few": "za {0} tj.",
+				"relativeTimePattern-count-other": "za {0} tj."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} tj.",
-				"relativeTimePattern-count-few": "-{0} tj.",
-				"relativeTimePattern-count-other": "-{0} tj."
+				"relativeTimePattern-count-one": "prije {0} tj.",
+				"relativeTimePattern-count-few": "prije {0} tj.",
+				"relativeTimePattern-count-other": "prije {0} tj."
 			},
 			"relativePeriod": "tjedan od {0}"
 		},
@@ -3001,14 +3027,14 @@
 			"displayName": "h",
 			"relative-type-0": "ovaj sat",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} h",
-				"relativeTimePattern-count-few": "+{0} h",
-				"relativeTimePattern-count-other": "+{0} h"
+				"relativeTimePattern-count-one": "za {0} h",
+				"relativeTimePattern-count-few": "za {0} h",
+				"relativeTimePattern-count-other": "za {0} h"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} h",
-				"relativeTimePattern-count-few": "-{0} h",
-				"relativeTimePattern-count-other": "-{0} h"
+				"relativeTimePattern-count-one": "prije {0} h",
+				"relativeTimePattern-count-few": "prije {0} h",
+				"relativeTimePattern-count-other": "prije {0} h"
 			}
 		},
 		"minute-wide": {
@@ -3043,14 +3069,14 @@
 			"displayName": "min",
 			"relative-type-0": "ova minuta",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} min",
-				"relativeTimePattern-count-few": "+{0} min",
-				"relativeTimePattern-count-other": "+{0} min"
+				"relativeTimePattern-count-one": "za {0} min",
+				"relativeTimePattern-count-few": "za {0} min",
+				"relativeTimePattern-count-other": "za {0} min"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} min",
-				"relativeTimePattern-count-few": "-{0} min",
-				"relativeTimePattern-count-other": "-{0} min"
+				"relativeTimePattern-count-one": "prije {0} min",
+				"relativeTimePattern-count-few": "prije {0} min",
+				"relativeTimePattern-count-other": "prije {0} min"
 			}
 		},
 		"second-wide": {
@@ -3085,14 +3111,14 @@
 			"displayName": "s",
 			"relative-type-0": "sad",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} s",
-				"relativeTimePattern-count-few": "+{0} s",
-				"relativeTimePattern-count-other": "+{0} s"
+				"relativeTimePattern-count-one": "za {0} s",
+				"relativeTimePattern-count-few": "za {0} s",
+				"relativeTimePattern-count-other": "za {0} s"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} s",
-				"relativeTimePattern-count-few": "-{0} s",
-				"relativeTimePattern-count-other": "-{0} s"
+				"relativeTimePattern-count-one": "prije {0} s",
+				"relativeTimePattern-count-few": "prije {0} s",
+				"relativeTimePattern-count-other": "prije {0} s"
 			}
 		},
 		"zone": {
@@ -3261,6 +3287,18 @@
 		"middle": "{0}, {1}",
 		"end": "{0} i {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} ili {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} ili {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} ili {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} ili {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} i {1}",
 		"start": "{0}, {1}",
@@ -3285,6 +3323,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3310,11 +3349,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

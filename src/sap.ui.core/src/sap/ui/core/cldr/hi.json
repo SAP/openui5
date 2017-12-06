@@ -24,7 +24,7 @@
 		"ar_001": "आधुनिक मानक अरबी",
 		"arc": "ऐरेमेक",
 		"arn": "मापूचे",
-		"arp": "अराफाओ",
+		"arp": "अरापाहो",
 		"arw": "अरावक",
 		"as": "असमिया",
 		"asa": "असु",
@@ -74,7 +74,7 @@
 		"chn": "चिनूक जारगॉन",
 		"cho": "चोक्तौ",
 		"chp": "शिपेव्यान",
-		"chr": "शेरोकी",
+		"chr": "चेरोकी",
 		"chy": "शेयेन्न",
 		"ckb": "सोरानी कुर्दिश",
 		"co": "कोर्सीकन",
@@ -119,7 +119,7 @@
 		"en_AU": "ऑस्ट्रेलियाई अंग्रेज़ी",
 		"en_CA": "कनाडाई अंग्रेज़ी",
 		"en_GB": "ब्रिटिश अंग्रेज़ी",
-		"en_GB-alt-short": "यू.के. अंग्रेज़ी",
+		"en_GB-alt-short": "यू॰के॰ अंग्रेज़ी",
 		"en_US": "अमेरिकी अंग्रेज़ी",
 		"en_US-alt-short": "अमेरिकी अंग्रेज़ी",
 		"enm": "मध्यकालीन अंग्रेज़ी",
@@ -137,12 +137,13 @@
 		"ff": "फुलाह",
 		"fi": "फ़िनिश",
 		"fil": "फ़िलिपीनो",
-		"fj": "फ़ीजी",
+		"fj": "फिजियन",
 		"fo": "फ़ैरोइज़",
 		"fon": "फॉन",
 		"fr": "फ़्रेंच",
 		"fr_CA": "कनाडाई फ़्रेंच",
 		"fr_CH": "स्विस फ़्रेंच",
+		"frc": "केजन फ़्रेंच",
 		"frm": "मध्यकालीन फ़्रांसीसी",
 		"fro": "पुरातन फ़्रांसीसी",
 		"frr": "उत्तरी फ़्रीसियाई",
@@ -171,7 +172,7 @@
 		"gu": "गुजराती",
 		"guz": "गुसी",
 		"gv": "मैंक्स",
-		"gwi": "ग्विच’इन",
+		"gwi": "ग्विचइन",
 		"ha": "हौसा",
 		"hai": "हैडा",
 		"hak": "hak",
@@ -190,7 +191,7 @@
 		"hup": "हूपा",
 		"hy": "आर्मेनियाई",
 		"hz": "हरैरो",
-		"ia": "ईन्टरलिंगुआ",
+		"ia": "इंटरलिंगुआ",
 		"iba": "इबान",
 		"ibb": "इबिबियो",
 		"id": "इंडोनेशियाई",
@@ -268,6 +269,7 @@
 		"ln": "लिंगाला",
 		"lo": "लाओ",
 		"lol": "मोंगो",
+		"lou": "लुईज़ियाना क्रियोल",
 		"loz": "लोज़ी",
 		"lrc": "उत्तरी लूरी",
 		"lt": "लिथुआनियाई",
@@ -276,7 +278,7 @@
 		"lui": "लुइसेनो",
 		"lun": "लुन्डा",
 		"luo": "ल्युओ",
-		"lus": "लुशाई",
+		"lus": "मिज़ो",
 		"luy": "ल्युईआ",
 		"lv": "लातवियाई",
 		"mad": "मादुरीस",
@@ -298,7 +300,7 @@
 		"mi": "माओरी",
 		"mic": "मिकमैक",
 		"min": "मिनांग्काबाउ",
-		"mk": "मैसिडोनियाई",
+		"mk": "मकदूनियाई",
 		"ml": "मलयालम",
 		"mn": "मंगोलियाई",
 		"mnc": "मन्चु",
@@ -396,7 +398,7 @@
 		"sam": "सामैरिटन अरैमिक",
 		"saq": "सैम्बुरु",
 		"sas": "सासाक",
-		"sat": "संताली",
+		"sat": "संथाली",
 		"sba": "न्गाम्बे",
 		"sbp": "सैंगु",
 		"sc": "सार्दिनियन",
@@ -418,7 +420,7 @@
 		"sk": "स्लोवाक",
 		"sl": "स्लोवेनियाई",
 		"sm": "सामोन",
-		"sma": "दक्षिण सामी",
+		"sma": "दक्षिणी सामी",
 		"smj": "ल्युल सामी",
 		"smn": "इनारी सामी",
 		"sms": "स्कोल्ट सामी",
@@ -432,7 +434,7 @@
 		"srr": "सेरेर",
 		"ss": "स्वाती",
 		"ssy": "साहो",
-		"st": "सेसोथो",
+		"st": "दक्षिणी सेसेथो",
 		"su": "सुंडानी",
 		"suk": "सुकुमा",
 		"sus": "सुसु",
@@ -563,6 +565,7 @@
 		"Geok": "जॉर्जियन खुतसुरी",
 		"Geor": "जॉर्जियन",
 		"Glag": "ग्लेगोलिटिक",
+		"Gonm": "Gonm",
 		"Goth": "गोथिक",
 		"Gran": "ग्रन्थ",
 		"Grek": "यूनानी",
@@ -628,6 +631,7 @@
 		"Nbat": "Nbat",
 		"Newa": "Newa",
 		"Nkoo": "एन्‘को",
+		"Nshu": "Nshu",
 		"Ogam": "ओगम",
 		"Olck": "ऑल चिकी",
 		"Orkh": "ओरखोन",
@@ -658,6 +662,7 @@
 		"Sind": "Sind",
 		"Sinh": "सिंहली",
 		"Sora": "Sora",
+		"Soyo": "Soyo",
 		"Sund": "सूडानी",
 		"Sylo": "सिलोती नागरी",
 		"Syrc": "सिरियेक",
@@ -686,6 +691,7 @@
 		"Xpeo": "पुरानी फारसी",
 		"Xsux": "सुमेरो अक्कादियन सुनिफॉर्म",
 		"Yiii": "यी",
+		"Zanb": "Zanb",
 		"Zinh": "विरासत",
 		"Zmth": "गणितीय संकेतन",
 		"Zsye": "ईमोजी",
@@ -702,6 +708,7 @@
 		"151": "पूर्वी यूरोप",
 		"154": "उत्तरी यूरोप",
 		"155": "पश्चिमी यूरोप",
+		"202": "202",
 		"419": "लैटिन अमेरिका",
 		"001": "विश्व",
 		"002": "अफ़्रीका",
@@ -724,7 +731,7 @@
 		"053": "ऑस्ट्रेलेशिया",
 		"054": "मेलानेशिया",
 		"057": "माइक्रोनेशियाई क्षेत्र",
-		"061": "पोलीनेशिया",
+		"061": "पोलिनेशिया",
 		"AC": "असेंशन द्वीप",
 		"AD": "एंडोरा",
 		"AE": "संयुक्त अरब अमीरात",
@@ -803,7 +810,7 @@
 		"ES": "स्पेन",
 		"ET": "इथियोपिया",
 		"EU": "यूरोपीय संघ",
-		"EZ": "EZ",
+		"EZ": "यूरोज़ोन",
 		"FI": "फ़िनलैंड",
 		"FJ": "फ़िजी",
 		"FK": "फ़ॉकलैंड द्वीपसमूह",
@@ -813,10 +820,10 @@
 		"FR": "फ़्रांस",
 		"GA": "गैबॉन",
 		"GB": "यूनाइटेड किंगडम",
-		"GB-alt-short": "यू.के.",
+		"GB-alt-short": "यू॰के॰",
 		"GD": "ग्रेनाडा",
 		"GE": "जॉर्जिया",
-		"GF": "फ़्रेंच गयाना",
+		"GF": "फ़्रेंच गुयाना",
 		"GG": "गर्नसी",
 		"GH": "घाना",
 		"GI": "जिब्राल्टर",
@@ -830,7 +837,7 @@
 		"GT": "ग्वाटेमाला",
 		"GU": "गुआम",
 		"GW": "गिनी-बिसाउ",
-		"GY": "गयाना",
+		"GY": "गुयाना",
 		"HK": "हाँग काँग (चीन विशेष प्रशासनिक क्षेत्र)",
 		"HK-alt-short": "हाँग काँग",
 		"HM": "हर्ड द्वीप और मैकडोनॉल्ड द्वीपसमूह",
@@ -862,7 +869,7 @@
 		"KP": "उत्तर कोरिया",
 		"KR": "दक्षिण कोरिया",
 		"KW": "कुवैत",
-		"KY": "केमैन द्वीपसमूह",
+		"KY": "कैमेन द्वीपसमूह",
 		"KZ": "कज़ाखस्तान",
 		"LA": "लाओस",
 		"LB": "लेबनान",
@@ -882,8 +889,8 @@
 		"MF": "सेंट मार्टिन",
 		"MG": "मेडागास्कर",
 		"MH": "मार्शल द्वीपसमूह",
-		"MK": "मैसिडोनिया",
-		"MK-alt-variant": "मैसिडोनिया (FYROM)",
+		"MK": "मकदूनिया",
+		"MK-alt-variant": "मकदूनिया (FYROM)",
 		"ML": "माली",
 		"MM": "म्यांमार (बर्मा)",
 		"MN": "मंगोलिया",
@@ -894,7 +901,7 @@
 		"MR": "मॉरिटानिया",
 		"MS": "मोंटसेरात",
 		"MT": "माल्टा",
-		"MU": "मॉरिशस",
+		"MU": "मॉरीशस",
 		"MV": "मालदीव",
 		"MW": "मलावी",
 		"MX": "मैक्सिको",
@@ -927,7 +934,7 @@
 		"PS-alt-short": "फ़िलिस्तीन",
 		"PT": "पुर्तगाल",
 		"PW": "पलाऊ",
-		"PY": "पेराग्वे",
+		"PY": "पराग्वे",
 		"QA": "क़तर",
 		"QO": "आउटलाइंग ओशिनिया",
 		"RE": "रियूनियन",
@@ -976,7 +983,7 @@
 		"TZ": "तंज़ानिया",
 		"UA": "यूक्रेन",
 		"UG": "युगांडा",
-		"UM": "यू.एस. आउटलाइंग द्वीपसमूह",
+		"UM": "यू॰एस॰ आउटलाइंग द्वीपसमूह",
 		"UN": "संयुक्त राष्ट्र",
 		"UN-alt-short": "संयुक्त राष्ट्र",
 		"US": "संयुक्त राज्य",
@@ -987,7 +994,7 @@
 		"VC": "सेंट विंसेंट और ग्रेनाडाइंस",
 		"VE": "वेनेज़ुएला",
 		"VG": "ब्रिटिश वर्जिन द्वीपसमूह",
-		"VI": "यू.एस. वर्जिन द्वीपसमूह",
+		"VI": "यू॰एस॰ वर्जिन द्वीपसमूह",
 		"VN": "वियतनाम",
 		"VU": "वनुआतू",
 		"WF": "वालिस और फ़्यूचूना",
@@ -1005,7 +1012,7 @@
 		"dateFormats": {
 			"full": "EEEE, d MMMM y",
 			"long": "d MMMM y",
-			"medium": "dd/MM/y",
+			"medium": "d MMM y",
 			"short": "d/M/yy"
 		},
 		"timeFormats": {
@@ -1020,8 +1027,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E B h:mm",
+				"EBhms": "E B h:mm:ss",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1064,7 +1076,7 @@
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
 				"MMMMW": "MMM का सप्ताह W",
-				"yw": "y का सप्ताह w"
+				"yw": "Y का सप्ताह w"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1447,8 +1459,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1864,8 +1881,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2290,8 +2312,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2768,12 +2795,12 @@
 			"relative-type-0": "इस तिमाही",
 			"relative-type-1": "अगली तिमाही",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} ति. में",
-				"relativeTimePattern-count-other": "{0} ति. में"
+				"relativeTimePattern-count-one": "{0} ति॰ में",
+				"relativeTimePattern-count-other": "{0} ति॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} ति. पहले",
-				"relativeTimePattern-count-other": "{0} ति. पहले"
+				"relativeTimePattern-count-one": "{0} ति॰ पहले",
+				"relativeTimePattern-count-other": "{0} ति॰ पहले"
 			}
 		},
 		"month-wide": {
@@ -2861,11 +2888,11 @@
 				"relativeTimePattern-count-one": "{0} सप्ताह पहले",
 				"relativeTimePattern-count-other": "{0} सप्ताह पहले"
 			},
-			"relativePeriod": "the week of {0}"
+			"relativePeriod": "{0} के सप्ताह"
 		},
 		"day-wide": {
 			"displayName": "दिन",
-			"relative-type--2": "बीता परसों",
+			"relative-type--2": "परसों",
 			"relative-type--1": "कल",
 			"relative-type-0": "आज",
 			"relative-type-1": "कल",
@@ -2881,7 +2908,7 @@
 		},
 		"day-short": {
 			"displayName": "दिन",
-			"relative-type--2": "बीता परसों",
+			"relative-type--2": "परसों",
 			"relative-type--1": "कल",
 			"relative-type-0": "आज",
 			"relative-type-1": "कल",
@@ -2897,7 +2924,7 @@
 		},
 		"day-narrow": {
 			"displayName": "दिन",
-			"relative-type--2": "बीता परसों",
+			"relative-type--2": "परसों",
 			"relative-type--1": "कल",
 			"relative-type-0": "आज",
 			"relative-type-1": "कल",
@@ -2927,27 +2954,27 @@
 			}
 		},
 		"hour-short": {
-			"displayName": "घं.",
+			"displayName": "घं॰",
 			"relative-type-0": "यह घंटा",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} घं. में",
-				"relativeTimePattern-count-other": "{0} घं. में"
+				"relativeTimePattern-count-one": "{0} घं॰ में",
+				"relativeTimePattern-count-other": "{0} घं॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} घं. पहले",
-				"relativeTimePattern-count-other": "{0} घं. पहले"
+				"relativeTimePattern-count-one": "{0} घं॰ पहले",
+				"relativeTimePattern-count-other": "{0} घं॰ पहले"
 			}
 		},
 		"hour-narrow": {
-			"displayName": "घं.",
+			"displayName": "घं॰",
 			"relative-type-0": "यह घंटा",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} घं. में",
-				"relativeTimePattern-count-other": "{0} घं. में"
+				"relativeTimePattern-count-one": "{0} घं॰ में",
+				"relativeTimePattern-count-other": "{0} घं॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} घं. पहले",
-				"relativeTimePattern-count-other": "{0} घं. पहले"
+				"relativeTimePattern-count-one": "{0} घं॰ पहले",
+				"relativeTimePattern-count-other": "{0} घं॰ पहले"
 			}
 		},
 		"minute-wide": {
@@ -2963,27 +2990,27 @@
 			}
 		},
 		"minute-short": {
-			"displayName": "मि.",
+			"displayName": "मि॰",
 			"relative-type-0": "यह मिनट",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} मि. में",
-				"relativeTimePattern-count-other": "{0} मि. में"
+				"relativeTimePattern-count-one": "{0} मि॰ में",
+				"relativeTimePattern-count-other": "{0} मि॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} मि. पहले",
-				"relativeTimePattern-count-other": "{0} मि. पहले"
+				"relativeTimePattern-count-one": "{0} मि॰ पहले",
+				"relativeTimePattern-count-other": "{0} मि॰ पहले"
 			}
 		},
 		"minute-narrow": {
-			"displayName": "मि.",
+			"displayName": "मि॰",
 			"relative-type-0": "यह मिनट",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} मि. में",
-				"relativeTimePattern-count-other": "{0} मि. में"
+				"relativeTimePattern-count-one": "{0} मि॰ में",
+				"relativeTimePattern-count-other": "{0} मि॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} मि. पहले",
-				"relativeTimePattern-count-other": "{0} मि. पहले"
+				"relativeTimePattern-count-one": "{0} मि॰ पहले",
+				"relativeTimePattern-count-other": "{0} मि॰ पहले"
 			}
 		},
 		"second-wide": {
@@ -2999,27 +3026,27 @@
 			}
 		},
 		"second-short": {
-			"displayName": "से.",
+			"displayName": "से॰",
 			"relative-type-0": "अब",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} से. में",
-				"relativeTimePattern-count-other": "{0} से. में"
+				"relativeTimePattern-count-one": "{0} से॰ में",
+				"relativeTimePattern-count-other": "{0} से॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} से. पहले",
-				"relativeTimePattern-count-other": "{0} से. पहले"
+				"relativeTimePattern-count-one": "{0} से॰ पहले",
+				"relativeTimePattern-count-other": "{0} से॰ पहले"
 			}
 		},
 		"second-narrow": {
-			"displayName": "से.",
+			"displayName": "से॰",
 			"relative-type-0": "अब",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} से. में",
-				"relativeTimePattern-count-other": "{0} से. में"
+				"relativeTimePattern-count-one": "{0} से॰ में",
+				"relativeTimePattern-count-other": "{0} से॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} से. पहले",
-				"relativeTimePattern-count-other": "{0} से. पहले"
+				"relativeTimePattern-count-one": "{0} से॰ पहले",
+				"relativeTimePattern-count-other": "{0} से॰ पहले"
 			}
 		},
 		"zone": {
@@ -3064,18 +3091,18 @@
 		"100000-other": "0 लाख",
 		"1000000-one": "00 लाख",
 		"1000000-other": "00 लाख",
-		"10000000-one": "0 क'.'",
-		"10000000-other": "0 क'.'",
-		"100000000-one": "00 क'.'",
-		"100000000-other": "00 क'.'",
-		"1000000000-one": "0 अ'.'",
-		"1000000000-other": "0 अ'.'",
-		"10000000000-one": "00 अ'.'",
-		"10000000000-other": "00 अ'.'",
-		"100000000000-one": "0 ख'.'",
-		"100000000000-other": "0 ख'.'",
-		"1000000000000-one": "00 ख'.'",
-		"1000000000000-other": "00 ख'.'",
+		"10000000-one": "0 क॰",
+		"10000000-other": "0 क॰",
+		"100000000-one": "00 क॰",
+		"100000000-other": "00 क॰",
+		"1000000000-one": "0 अ॰",
+		"1000000000-other": "0 अ॰",
+		"10000000000-one": "00 अ॰",
+		"10000000000-other": "00 अ॰",
+		"100000000000-one": "0 ख॰",
+		"100000000000-other": "0 ख॰",
+		"1000000000000-one": "00 ख॰",
+		"1000000000000-other": "00 ख॰",
 		"10000000000000-one": "0 नील",
 		"10000000000000-other": "0 नील",
 		"100000000000000-one": "00 नील",
@@ -3112,18 +3139,18 @@
 		"100000-other": "¤0 लाख",
 		"1000000-one": "¤00 लाख",
 		"1000000-other": "¤00 लाख",
-		"10000000-one": "¤0 क'.'",
-		"10000000-other": "¤0 क'.'",
-		"100000000-one": "¤00 क'.'",
-		"100000000-other": "¤00 क'.'",
-		"1000000000-one": "¤0 अ'.'",
-		"1000000000-other": "¤0 अ'.'",
-		"10000000000-one": "¤00 अ'.'",
-		"10000000000-other": "¤00 अ'.'",
-		"100000000000-one": "¤0 ख'.'",
-		"100000000000-other": "¤0 ख'.'",
-		"1000000000000-one": "¤00 ख'.'",
-		"1000000000000-other": "¤00 ख'.'",
+		"10000000-one": "¤0 क॰",
+		"10000000-other": "¤0 क॰",
+		"100000000-one": "¤00 क॰",
+		"100000000-other": "¤00 क॰",
+		"1000000000-one": "¤0 अ॰",
+		"1000000000-other": "¤0 अ॰",
+		"10000000000-one": "¤00 अ॰",
+		"10000000000-other": "¤00 अ॰",
+		"100000000000-one": "¤0 ख॰",
+		"100000000000-other": "¤0 ख॰",
+		"1000000000000-one": "¤00 ख॰",
+		"1000000000000-other": "¤00 ख॰",
 		"10000000000000-one": "¤0 नील",
 		"10000000000000-other": "¤0 नील",
 		"100000000000000-one": "¤00 नील",
@@ -3171,11 +3198,23 @@
 		"middle": "{0}, {1}",
 		"end": "{0}, और {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} या {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} या {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} या {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} या {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} और {1}",
 		"start": "{0}, {1}",
 		"middle": "{0}, {1}",
-		"end": "{0}, और {1}"
+		"end": "{0} और {1}"
 	},
 	"currencyDigits": {
 		"ADP": 0,
@@ -3195,6 +3234,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3220,11 +3260,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

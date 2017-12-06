@@ -125,7 +125,7 @@
 		"eo": "esperanto",
 		"es": "španščina",
 		"es_419": "latinskoameriška španščina",
-		"es_ES": "iberska španščina",
+		"es_ES": "evropska španščina",
 		"es_MX": "španščina (Mehika)",
 		"et": "estonščina",
 		"eu": "baskovščina",
@@ -142,6 +142,7 @@
 		"fr": "francoščina",
 		"fr_CA": "kanadska francoščina",
 		"fr_CH": "švicarska francoščina",
+		"frc": "cajunska francoščina",
 		"frm": "srednja francoščina",
 		"fro": "stara francoščina",
 		"frr": "severna frizijščina",
@@ -234,7 +235,7 @@
 		"kln": "kalenjinščina",
 		"km": "kmerščina",
 		"kmb": "kimbundu",
-		"kn": "kanada",
+		"kn": "kanareščina",
 		"ko": "korejščina",
 		"koi": "komi-permjaščina",
 		"kok": "konkanščina",
@@ -267,15 +268,16 @@
 		"ln": "lingala",
 		"lo": "laoščina",
 		"lol": "mongo",
+		"lou": "louisianska kreolščina",
 		"loz": "lozi",
-		"lrc": "severnolurijščina",
+		"lrc": "severna lurijščina",
 		"lt": "litovščina",
 		"lu": "luba-katanga",
 		"lua": "luba-lulua",
 		"lui": "luisenščina",
 		"lun": "lunda",
 		"luo": "luo",
-		"lus": "lushai",
+		"lus": "mizojščina",
 		"luy": "luhijščina",
 		"lv": "latvijščina",
 		"mad": "madurščina",
@@ -316,7 +318,7 @@
 		"myv": "erzjanščina",
 		"mzn": "mazanderanščina",
 		"na": "naurujščina",
-		"nan": "nan",
+		"nan": "min nan kitajščina",
 		"nap": "napolitanščina",
 		"naq": "khoekhoe",
 		"nb": "knjižna norveščina",
@@ -370,7 +372,7 @@
 		"ps": "paštunščina",
 		"pt": "portugalščina",
 		"pt_BR": "brazilska portugalščina",
-		"pt_PT": "iberska portugalščina",
+		"pt_PT": "evropska portugalščina",
 		"qu": "kečuanščina",
 		"quc": "quiche",
 		"raj": "radžastanščina",
@@ -379,7 +381,7 @@
 		"rm": "retoromanščina",
 		"rn": "rundščina",
 		"ro": "romunščina",
-		"ro_MD": "moldavščina",
+		"ro_MD": "romunščina (Moldavija)",
 		"rof": "rombo",
 		"rom": "romščina",
 		"root": "rootščina",
@@ -435,7 +437,7 @@
 		"sux": "sumerščina",
 		"sv": "švedščina",
 		"sw": "svahili",
-		"sw_CD": "kongoška svahilščina",
+		"sw_CD": "svahili (Demokratična republika Kongo)",
 		"swb": "šikomor",
 		"syc": "klasična sirščina",
 		"syr": "sirščina",
@@ -461,7 +463,7 @@
 		"tpi": "tok pisin",
 		"tr": "turščina",
 		"trv": "taroko",
-		"ts": "tsonga",
+		"ts": "congščina",
 		"tsi": "tsimščina",
 		"tt": "tatarščina",
 		"tum": "tumbukščina",
@@ -557,12 +559,13 @@
 		"Geok": "cerkvenogruzijski",
 		"Geor": "gruzijski",
 		"Glag": "glagoliški",
+		"Gonm": "Gonm",
 		"Goth": "gotski",
 		"Gran": "Gran",
 		"Grek": "grški",
 		"Gujr": "gudžaratski",
 		"Guru": "gurmuki",
-		"Hanb": "Hanb",
+		"Hanb": "Han + Bopomofo",
 		"Hang": "hangul",
 		"Hani": "kanji",
 		"Hano": "hanunski",
@@ -575,7 +578,7 @@
 		"Hira": "hiragana",
 		"Hluw": "Hluw",
 		"Hmng": "pahavhmonska zlogovna pisava",
-		"Hrkt": "katakana ali hiragana",
+		"Hrkt": "japonska zlogovnica",
 		"Hung": "staroogrski",
 		"Inds": "induški",
 		"Ital": "staroitalski",
@@ -622,6 +625,7 @@
 		"Nbat": "Nbat",
 		"Newa": "Newa",
 		"Nkoo": "Nkoo",
+		"Nshu": "Nshu",
 		"Ogam": "ogamski",
 		"Olck": "santalski",
 		"Orkh": "orkonski",
@@ -652,6 +656,7 @@
 		"Sind": "Sind",
 		"Sinh": "sinhalski",
 		"Sora": "Sora",
+		"Soyo": "Soyo",
 		"Sund": "sundanski",
 		"Sylo": "siletsko-nagarijski",
 		"Syrc": "sirijski",
@@ -680,9 +685,10 @@
 		"Xpeo": "staroperzijski",
 		"Xsux": "sumersko-akadski klinopis",
 		"Yiii": "Yiii",
+		"Zanb": "Zanb",
 		"Zinh": "podedovan",
 		"Zmth": "matematična znamenja",
-		"Zsye": "Zsye",
+		"Zsye": "čustvenček",
 		"Zsym": "simboli",
 		"Zxxx": "nenapisano",
 		"Zyyy": "splošno",
@@ -696,8 +702,9 @@
 		"151": "Vzhodna Evropa",
 		"154": "Severna Evropa",
 		"155": "Zahodna Evropa",
+		"202": "202",
 		"419": "Latinska Amerika",
-		"001": "Svet",
+		"001": "svet",
 		"002": "Afrika",
 		"003": "Severna Amerika",
 		"005": "Južna Amerika",
@@ -780,7 +787,7 @@
 		"CX": "Božični otok",
 		"CY": "Ciper",
 		"CZ": "Češka",
-		"CZ-alt-variant": "CZ",
+		"CZ-alt-variant": "Češka republika",
 		"DE": "Nemčija",
 		"DG": "Diego Garcia",
 		"DJ": "Džibuti",
@@ -797,7 +804,7 @@
 		"ES": "Španija",
 		"ET": "Etiopija",
 		"EU": "Evropska unija",
-		"EZ": "EZ",
+		"EZ": "evroobmočje",
 		"FI": "Finska",
 		"FJ": "Fidži",
 		"FK": "Falklandski otoki",
@@ -817,7 +824,7 @@
 		"GL": "Grenlandija",
 		"GM": "Gambija",
 		"GN": "Gvineja",
-		"GP": "Gvadalupe",
+		"GP": "Guadeloupe",
 		"GQ": "Ekvatorialna Gvineja",
 		"GR": "Grčija",
 		"GS": "Južna Georgia in Južni Sandwichevi otoki",
@@ -972,7 +979,7 @@
 		"UG": "Uganda",
 		"UM": "Stranski zunanji otoki Združenih držav",
 		"UN": "Združeni narodi",
-		"UN-alt-short": "Združeni narodi",
+		"UN-alt-short": "ZN",
 		"US": "Združene države Amerike",
 		"US-alt-short": "ZDA",
 		"UY": "Urugvaj",
@@ -1014,8 +1021,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d.",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E, h:mm a",
 				"EHm": "E HH:mm",
@@ -1055,7 +1067,7 @@
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
 				"MMMMW": "W. 'teden' 'v' MMM",
-				"yw": "w. 'teden' 'v' y"
+				"yw": "w. 'teden' 'v' Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1438,13 +1450,18 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
+				"EHm": "E, HH:mm",
 				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y G",
 				"GyM": "M/y G",
 				"GyMMM": "MMM y G",
@@ -1458,7 +1475,7 @@
 				"Hms": "HH:mm:ss",
 				"M": "L",
 				"Md": "d. M.",
-				"MEd": "E, d. MM.",
+				"MEd": "E, d. M.",
 				"MMM": "LLL",
 				"MMMd": "d. MMM",
 				"MMMEd": "E, d. MMM",
@@ -1530,23 +1547,23 @@
 					"M": "M.–M."
 				},
 				"Md": {
-					"d": "d. – d. M.",
-					"M": "d. M. – d. M."
+					"d": "d.–d. M.",
+					"M": "d. M.–d. M."
 				},
 				"MEd": {
-					"d": "E, d. – E, d. M.",
-					"M": "E, d. M. – E, d. M."
+					"d": "E, d.–E, d. M.",
+					"M": "E, d. M.–E, d. M."
 				},
 				"MMM": {
 					"M": "MMM–MMM"
 				},
 				"MMMd": {
 					"d": "d.–d. MMM",
-					"M": "d. MMM – d. MMM"
+					"M": "d. MMM–d. MMM"
 				},
 				"MMMEd": {
-					"d": "E, d. – E, d. MMM",
-					"M": "E, d. MMM – E, d. MMM"
+					"d": "E, d.–E, d. MMM",
+					"M": "E, d. MMM–E, d. MMM"
 				},
 				"y": {
 					"y": "y–y"
@@ -1854,13 +1871,18 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
+				"EHm": "E, HH:mm",
 				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y G",
 				"GyM": "M/y G",
 				"GyMMM": "MMM y G",
@@ -1874,7 +1896,7 @@
 				"Hms": "HH:mm:ss",
 				"M": "L",
 				"Md": "d. M.",
-				"MEd": "E, d. MM.",
+				"MEd": "E, d. M.",
 				"MMM": "LLL",
 				"MMMd": "d. MMM",
 				"MMMEd": "E, d. MMM",
@@ -1946,23 +1968,23 @@
 					"M": "M.–M."
 				},
 				"Md": {
-					"d": "d. – d. M.",
-					"M": "d. M. – d. M."
+					"d": "d.–d. M.",
+					"M": "d. M.–d. M."
 				},
 				"MEd": {
-					"d": "E, d. – E, d. M.",
-					"M": "E, d. M. – E, d. M."
+					"d": "E, d.–E, d. M.",
+					"M": "E, d. M.–E, d. M."
 				},
 				"MMM": {
 					"M": "MMM–MMM"
 				},
 				"MMMd": {
 					"d": "d.–d. MMM",
-					"M": "d. MMM – d. MMM"
+					"M": "d. MMM–d. MMM"
 				},
 				"MMMEd": {
-					"d": "E, d. – E, d. MMM",
-					"M": "E, d. MMM – E, d. MMM"
+					"d": "E, d.–E, d. MMM",
+					"M": "E, d. MMM–E, d. MMM"
 				},
 				"y": {
 					"y": "y–y"
@@ -2279,13 +2301,18 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
+				"EHm": "E, HH:mm",
 				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y G",
 				"GyM": "M/y G",
 				"GyMMM": "MMM y G",
@@ -2299,7 +2326,7 @@
 				"Hms": "HH:mm:ss",
 				"M": "L",
 				"Md": "d. M.",
-				"MEd": "E, d. MM.",
+				"MEd": "E, d. M.",
 				"MMM": "LLL",
 				"MMMd": "d. MMM",
 				"MMMEd": "E, d. MMM",
@@ -2371,23 +2398,23 @@
 					"M": "M.–M."
 				},
 				"Md": {
-					"d": "d. – d. M.",
-					"M": "d. M. – d. M."
+					"d": "d.–d. M.",
+					"M": "d. M.–d. M."
 				},
 				"MEd": {
-					"d": "E, d. – E, d. M.",
-					"M": "E, d. M. – E, d. M."
+					"d": "E, d.–E, d. M.",
+					"M": "E, d. M.–E, d. M."
 				},
 				"MMM": {
 					"M": "MMM–MMM"
 				},
 				"MMMd": {
 					"d": "d.–d. MMM",
-					"M": "d. MMM – d. MMM"
+					"M": "d. MMM–d. MMM"
 				},
 				"MMMEd": {
-					"d": "E, d. – E, d. MMM",
-					"M": "E, d. MMM – E, d. MMM"
+					"d": "E, d.–E, d. MMM",
+					"M": "E, d. MMM–E, d. MMM"
 				},
 				"y": {
 					"y": "y–y"
@@ -2814,7 +2841,7 @@
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "čez {0} mes.",
 				"relativeTimePattern-count-two": "čez {0} mes.",
-				"relativeTimePattern-count-few": "čez {0} mesece",
+				"relativeTimePattern-count-few": "čez {0} mes.",
 				"relativeTimePattern-count-other": "čez {0} mes."
 			},
 			"relativeTime-type-past": {
@@ -3298,24 +3325,16 @@
 	"symbols-latn-nan": "NaN",
 	"symbols-latn-timeSeparator": ":",
 	"currencySymbols": {
-		"AUD": "A$",
-		"BRL": "R$",
 		"CNY": "CN¥",
 		"EUR": "€",
-		"GBP": "£",
 		"HKD": "HK$",
 		"ILS": "₪",
 		"INR": "₹",
 		"JPY": "¥",
 		"KRW": "₩",
-		"MXN": "MX$",
-		"NZD": "NZ$",
-		"THB": "฿",
-		"TWD": "NT$",
 		"USD": "$",
 		"VND": "₫",
 		"XAF": "FCFA",
-		"XCD": "EC$",
 		"XOF": "CFA",
 		"XPF": "CFPF"
 	},
@@ -3325,6 +3344,18 @@
 		"start": "{0}, {1}",
 		"middle": "{0}, {1}",
 		"end": "{0} in {1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0} ali {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} ali {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} ali {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} ali {1}"
 	},
 	"listPattern-standard-short": {
 		"2": "{0} in {1}",
@@ -3350,6 +3381,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3375,11 +3407,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

@@ -321,6 +321,7 @@
 		"ln": "lingala",
 		"lo": "laotiska",
 		"lol": "mongo",
+		"lou": "louisiana-kreol",
 		"loz": "lozi",
 		"lrc": "nordluri",
 		"lt": "litauiska",
@@ -377,11 +378,11 @@
 		"mye": "myene",
 		"myv": "erjya",
 		"mzn": "mazanderani",
-		"na": "nauru",
+		"na": "nauriska",
 		"nan": "min nan",
 		"nap": "napolitanska",
 		"naq": "nama",
-		"nb": "bokmål",
+		"nb": "norskt bokmål",
 		"nd": "nordndebele",
 		"nds": "lågtyska",
 		"nds_NL": "lågsaxiska",
@@ -622,7 +623,7 @@
 		"zza": "zazaiska"
 	},
 	"scripts": {
-		"Adlm": "Adlm",
+		"Adlm": "adlamiska",
 		"Afak": "afakiska",
 		"Aghb": "kaukasiska albanska",
 		"Ahom": "ahom",
@@ -663,11 +664,12 @@
 		"Geok": "kutsuri",
 		"Geor": "georgiska",
 		"Glag": "glagolitiska",
+		"Gonm": "masaram-gondi",
 		"Goth": "gotiska",
 		"Gran": "gammaltamilska",
 		"Grek": "grekiska",
 		"Gujr": "gujarati",
-		"Guru": "gurmukhi",
+		"Guru": "gurmukhiska",
 		"Hanb": "han med bopomofo",
 		"Hang": "hangul",
 		"Hani": "han",
@@ -737,7 +739,7 @@
 		"Olck": "ol-chiki",
 		"Orkh": "orkon",
 		"Orya": "oriya",
-		"Osge": "Osge",
+		"Osge": "osage",
 		"Osma": "osmanja",
 		"Palm": "palmyreniska",
 		"Pauc": "Pau Cin Hau-skrift",
@@ -763,6 +765,7 @@
 		"Sind": "sindhiska",
 		"Sinh": "singalesiska",
 		"Sora": "sora sompeng",
+		"Soyo": "soyombo",
 		"Sund": "sundanesiska",
 		"Sylo": "syloti nagri",
 		"Syrc": "syriska",
@@ -792,6 +795,7 @@
 		"Xpeo": "fornpersiska",
 		"Xsux": "sumero-akkadisk kilskrift",
 		"Yiii": "yi",
+		"Zanb": "zanabazar kvadratisk skrift",
 		"Zinh": "ärvda",
 		"Zmth": "matematisk notation",
 		"Zsye": "emoji",
@@ -808,6 +812,7 @@
 		"151": "Östeuropa",
 		"154": "Nordeuropa",
 		"155": "Västeuropa",
+		"202": "202",
 		"419": "Latinamerika",
 		"001": "världen",
 		"002": "Afrika",
@@ -909,7 +914,7 @@
 		"ES": "Spanien",
 		"ET": "Etiopien",
 		"EU": "Europeiska unionen",
-		"EZ": "EZ",
+		"EZ": "eurozonen",
 		"FI": "Finland",
 		"FJ": "Fiji",
 		"FK": "Falklandsöarna",
@@ -937,7 +942,7 @@
 		"GU": "Guam",
 		"GW": "Guinea-Bissau",
 		"GY": "Guyana",
-		"HK": "Hongkong, S.A.R. Kina",
+		"HK": "Hongkong",
 		"HK-alt-short": "Hongkong",
 		"HM": "Heardön och McDonaldöarna",
 		"HN": "Honduras",
@@ -993,7 +998,7 @@
 		"ML": "Mali",
 		"MM": "Myanmar (Burma)",
 		"MN": "Mongoliet",
-		"MO": "Macao, S.A.R. Kina",
+		"MO": "Macao",
 		"MO-alt-short": "Macao",
 		"MP": "Nordmarianerna",
 		"MQ": "Martinique",
@@ -1130,8 +1135,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1174,7 +1184,7 @@
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
 				"MMMMW": "'vecka' W 'i' MMM",
-				"yw": "'vecka' w, y"
+				"yw": "'vecka' w, Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1561,8 +1571,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1952,7 +1967,7 @@
 			}
 		},
 		"era-wide": {
-			"0": "AH"
+			"0": "efter Hirja"
 		},
 		"era-abbreviated": {
 			"0": "AH"
@@ -1984,8 +1999,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2416,8 +2436,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2844,8 +2869,8 @@
 				"relativeTimePattern-count-other": "om {0} år"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "för {0} år sedan",
-				"relativeTimePattern-count-other": "för {0} år sedan"
+				"relativeTimePattern-count-one": "för {0} år sen",
+				"relativeTimePattern-count-other": "för {0} år sen"
 			}
 		},
 		"year-narrow": {
@@ -2886,8 +2911,8 @@
 				"relativeTimePattern-count-other": "om {0} kv."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "för {0} kv. sedan",
-				"relativeTimePattern-count-other": "för {0} kv. sedan"
+				"relativeTimePattern-count-one": "för {0} kv. sen",
+				"relativeTimePattern-count-other": "för {0} kv. sen"
 			}
 		},
 		"quarter-narrow": {
@@ -2928,8 +2953,8 @@
 				"relativeTimePattern-count-other": "om {0} mån."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "för {0} mån. sedan",
-				"relativeTimePattern-count-other": "för {0} mån. sedan"
+				"relativeTimePattern-count-one": "för {0} mån. sen",
+				"relativeTimePattern-count-other": "för {0} mån. sen"
 			}
 		},
 		"month-narrow": {
@@ -3026,9 +3051,9 @@
 		"day-narrow": {
 			"displayName": "dag",
 			"relative-type--2": "i förrgår",
-			"relative-type--1": "i går",
-			"relative-type-0": "i dag",
-			"relative-type-1": "i morgon",
+			"relative-type--1": "igår",
+			"relative-type-0": "idag",
+			"relative-type-1": "imorgon",
 			"relative-type-2": "i övermorgon",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} d",
@@ -3098,8 +3123,8 @@
 				"relativeTimePattern-count-other": "om {0} min"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "för {0} min sedan",
-				"relativeTimePattern-count-other": "för {0} min sedan"
+				"relativeTimePattern-count-one": "för {0} min sen",
+				"relativeTimePattern-count-other": "för {0} min sen"
 			}
 		},
 		"minute-narrow": {
@@ -3134,8 +3159,8 @@
 				"relativeTimePattern-count-other": "om {0} sek"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "för {0} sek sedan",
-				"relativeTimePattern-count-other": "för {0} sek sedan"
+				"relativeTimePattern-count-one": "för {0} s sen",
+				"relativeTimePattern-count-other": "för {0} s sen"
 			}
 		},
 		"second-narrow": {
@@ -3302,6 +3327,18 @@
 		"middle": "{0}, {1}",
 		"end": "{0} och {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} eller {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} eller {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} eller {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} eller {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} och {1}",
 		"start": "{0}, {1}",
@@ -3326,6 +3363,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3351,11 +3389,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

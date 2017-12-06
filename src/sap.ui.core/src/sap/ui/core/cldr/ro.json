@@ -23,7 +23,7 @@
 		"ar": "arabă",
 		"ar_001": "arabă standard modernă",
 		"arc": "aramaică",
-		"arn": "araucaniană",
+		"arn": "mapuche",
 		"arp": "arapaho",
 		"arw": "arawak",
 		"as": "asameză",
@@ -151,6 +151,7 @@
 		"fr": "franceză",
 		"fr_CA": "franceză (Canada)",
 		"fr_CH": "franceză (Elveția)",
+		"frc": "franceză cajun",
 		"frm": "franceză medie",
 		"fro": "franceză veche",
 		"frr": "frizonă nordică",
@@ -277,6 +278,7 @@
 		"ln": "lingala",
 		"lo": "laoțiană",
 		"lol": "mongo",
+		"lou": "creolă louisianeză",
 		"loz": "lozi",
 		"lrc": "luri de nord",
 		"lt": "lituaniană",
@@ -363,7 +365,7 @@
 		"oc": "occitană",
 		"oj": "ojibwa",
 		"om": "oromo",
-		"or": "oriya",
+		"or": "odia",
 		"os": "osetă",
 		"osa": "osage",
 		"ota": "turcă otomană",
@@ -394,7 +396,7 @@
 		"rm": "romanșă",
 		"rn": "kirundi",
 		"ro": "română",
-		"ro_MD": "moldovenească",
+		"ro_MD": "română (Republica Moldova)",
 		"rof": "rombo",
 		"rom": "romani",
 		"root": "root",
@@ -427,7 +429,7 @@
 		"shi": "tachelhit",
 		"shn": "shan",
 		"shu": "arabă ciadiană",
-		"si": "singaleză",
+		"si": "singhaleză",
 		"sid": "sidamo",
 		"sk": "slovacă",
 		"sl": "slovenă",
@@ -575,6 +577,7 @@
 		"Geok": "georgiană bisericească",
 		"Geor": "georgiană",
 		"Glag": "glagolitică",
+		"Gonm": "Gonm",
 		"Goth": "gotică",
 		"Gran": "Gran",
 		"Grek": "greacă",
@@ -593,7 +596,7 @@
 		"Hira": "hiragana",
 		"Hluw": "Hluw",
 		"Hmng": "Hmng",
-		"Hrkt": "katakana sau hiragana",
+		"Hrkt": "silabică japoneză",
 		"Hung": "maghiară veche",
 		"Inds": "indus",
 		"Ital": "italică veche",
@@ -639,6 +642,7 @@
 		"Nbat": "Nbat",
 		"Newa": "Newa",
 		"Nkoo": "Nkoo",
+		"Nshu": "Nshu",
 		"Ogam": "Ogam",
 		"Olck": "Olck",
 		"Orkh": "Orkh",
@@ -666,6 +670,7 @@
 		"Sind": "Sind",
 		"Sinh": "singaleză",
 		"Sora": "Sora",
+		"Soyo": "Soyo",
 		"Sund": "Sund",
 		"Sylo": "Sylo",
 		"Syrc": "siriacă",
@@ -691,6 +696,7 @@
 		"Xpeo": "persană veche",
 		"Xsux": "cuneiformă sumero-akkadiană",
 		"Yiii": "Yiii",
+		"Zanb": "Zanb",
 		"Zinh": "moștenită",
 		"Zmth": "notație matematică",
 		"Zsye": "emoji",
@@ -707,6 +713,7 @@
 		"151": "Europa Orientală",
 		"154": "Europa Septentrională",
 		"155": "Europa Occidentală",
+		"202": "202",
 		"419": "America Latină",
 		"001": "Lume",
 		"002": "Africa",
@@ -756,7 +763,7 @@
 		"BH": "Bahrain",
 		"BI": "Burundi",
 		"BJ": "Benin",
-		"BL": "Sfântul Bartolomeu",
+		"BL": "Saint-Barthélemy",
 		"BM": "Bermuda",
 		"BN": "Brunei",
 		"BO": "Bolivia",
@@ -808,7 +815,7 @@
 		"ES": "Spania",
 		"ET": "Etiopia",
 		"EU": "Uniunea Europeană",
-		"EZ": "EZ",
+		"EZ": "Zona euro",
 		"FI": "Finlanda",
 		"FJ": "Fiji",
 		"FK": "Insulele Falkland",
@@ -956,7 +963,7 @@
 		"SO": "Somalia",
 		"SR": "Suriname",
 		"SS": "Sudanul de Sud",
-		"ST": "Sao Tomé și Príncipe",
+		"ST": "Sao Tome și Principe",
 		"SV": "El Salvador",
 		"SX": "Sint-Maarten",
 		"SY": "Siria",
@@ -983,7 +990,7 @@
 		"UG": "Uganda",
 		"UM": "Insulele Îndepărtate ale S.U.A.",
 		"UN": "Națiunile Unite",
-		"UN-alt-short": "NU",
+		"UN-alt-short": "ONU",
 		"US": "Statele Unite ale Americii",
 		"US-alt-short": "S.U.A.",
 		"UY": "Uruguay",
@@ -1025,8 +1032,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1068,7 +1080,7 @@
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
 				"MMMMW": "'săptămâna' W 'din' MMM",
-				"yw": "'săptămâna' w 'din' y"
+				"yw": "'săptămâna' w 'din' Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1451,8 +1463,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1839,7 +1856,7 @@
 			}
 		},
 		"era-wide": {
-			"0": "AH"
+			"0": "A.H."
 		},
 		"era-abbreviated": {
 			"0": "AH"
@@ -1867,8 +1884,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2292,8 +2314,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2446,7 +2473,7 @@
 					"Ordibehesht",
 					"Khordad",
 					"Tir",
-					"Mordad",
+					"A-Mordad",
 					"Shahrivar",
 					"Mehr",
 					"Aban",
@@ -2474,7 +2501,7 @@
 					"Ordibehesht",
 					"Khordad",
 					"Tir",
-					"Mordad",
+					"A-Mordad",
 					"Shahrivar",
 					"Mehr",
 					"Aban",
@@ -2490,7 +2517,7 @@
 					"Ordibehesht",
 					"Khordad",
 					"Tir",
-					"Mordad",
+					"A-Mordad",
 					"Shahrivar",
 					"Mehr",
 					"Aban",
@@ -2518,7 +2545,7 @@
 					"Ordibehesht",
 					"Khordad",
 					"Tir",
-					"Mordad",
+					"A-Mordad",
 					"Shahrivar",
 					"Mehr",
 					"Aban",
@@ -2680,13 +2707,13 @@
 			}
 		},
 		"era-wide": {
-			"0": "AP"
+			"0": "Anno Persico"
 		},
 		"era-abbreviated": {
-			"0": "AP"
+			"0": "A.P."
 		},
 		"era-narrow": {
-			"0": "AP"
+			"0": "A.P."
 		}
 	},
 	"dateFields": {
@@ -2717,7 +2744,7 @@
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "peste {0} an",
 				"relativeTimePattern-count-few": "peste {0} ani",
-				"relativeTimePattern-count-other": "peste {0} ani"
+				"relativeTimePattern-count-other": "peste {0} de ani"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "acum {0} an",
@@ -2916,12 +2943,12 @@
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "peste {0} zi",
 				"relativeTimePattern-count-few": "peste {0} zile",
-				"relativeTimePattern-count-other": "peste {0} zile"
+				"relativeTimePattern-count-other": "peste {0} de zile"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "acum {0} zi",
 				"relativeTimePattern-count-few": "acum {0} zile",
-				"relativeTimePattern-count-other": "acum {0} zile"
+				"relativeTimePattern-count-other": "acum {0} de zile"
 			}
 		},
 		"day-narrow": {
@@ -2943,7 +2970,7 @@
 			}
 		},
 		"weekday": {
-			"displayName": "Zi a săptămânii"
+			"displayName": "ziua din săptămână"
 		},
 		"hour-wide": {
 			"displayName": "oră",
@@ -3238,6 +3265,18 @@
 		"middle": "{0}, {1}",
 		"end": "{0} și {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} sau {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} sau {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} sau {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} sau {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} și {1}",
 		"start": "{0}, {1}",
@@ -3262,6 +3301,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3287,11 +3327,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

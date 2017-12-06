@@ -69,7 +69,7 @@
 		"bkm": "Kom",
 		"bla": "Siksika",
 		"bm": "Bambara",
-		"bn": "Bangla",
+		"bn": "Bengali",
 		"bo": "Tibetan",
 		"bpy": "Bishnupriya",
 		"bqi": "Bakhtiari",
@@ -89,6 +89,7 @@
 		"car": "Carib",
 		"cay": "Cayuga",
 		"cch": "Atsam",
+		"ccp": "Chakma",
 		"ce": "Chechen",
 		"ceb": "Cebuano",
 		"cgg": "Chiga",
@@ -176,7 +177,7 @@
 		"fr": "French",
 		"fr_CA": "Canadian French",
 		"fr_CH": "Swiss French",
-		"frc": "Cajun French",
+		"frc": "frc",
 		"frm": "Middle French",
 		"fro": "Old French",
 		"frp": "Arpitan",
@@ -324,6 +325,7 @@
 		"ln": "Lingala",
 		"lo": "Lao",
 		"lol": "Mongo",
+		"lou": "lou",
 		"loz": "Lozi",
 		"lrc": "Northern Luri",
 		"lt": "Lithuanian",
@@ -640,7 +642,7 @@
 		"Bamu": "Bamum",
 		"Bass": "Bassa Vah",
 		"Batk": "Batak",
-		"Beng": "Bangla",
+		"Beng": "Bengali",
 		"Bhks": "Bhaiksuki",
 		"Blis": "Blissymbols",
 		"Bopo": "Bopomofo",
@@ -670,6 +672,7 @@
 		"Geok": "Georgian Khutsuri",
 		"Geor": "Georgian",
 		"Glag": "Glagolitic",
+		"Gonm": "Masaram Gondi",
 		"Goth": "Gothic",
 		"Gran": "Grantha",
 		"Grek": "Greek",
@@ -770,6 +773,7 @@
 		"Sind": "Khudawadi",
 		"Sinh": "Sinhala",
 		"Sora": "Sora Sompeng",
+		"Soyo": "Soyombo",
 		"Sund": "Sundanese",
 		"Sylo": "Syloti Nagri",
 		"Syrc": "Syriac",
@@ -800,6 +804,7 @@
 		"Xsux": "Sumero-Akkadian Cuneiform",
 		"Xsux-alt-short": "S-A Cuneiform",
 		"Yiii": "Yi",
+		"Zanb": "Zanabazar Square",
 		"Zinh": "Inherited",
 		"Zmth": "Mathematical Notation",
 		"Zsye": "Emoji",
@@ -816,6 +821,7 @@
 		"151": "Eastern Europe",
 		"154": "Northern Europe",
 		"155": "Western Europe",
+		"202": "Sub-Saharan Africa",
 		"419": "Latin America",
 		"001": "World",
 		"002": "Africa",
@@ -1136,8 +1142,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1158,8 +1169,8 @@
 				"hmv": "h:mm a v",
 				"Hmv": "HH:mm v",
 				"M": "L",
-				"Md": "dd/MM",
-				"MEd": "E, dd/MM",
+				"Md": "d/M",
+				"MEd": "E, d/M",
 				"MMdd": "dd/MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -1177,7 +1188,7 @@
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
 				"MMMMW": "'week' W 'of' MMMM",
-				"yw": "'week' w 'of' y"
+				"yw": "'week' w 'of' Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1515,8 +1526,8 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"am",
+					"pm"
 				],
 				"narrow": [
 					"am",
@@ -1560,8 +1571,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1935,8 +1951,8 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"am",
+					"pm"
 				],
 				"narrow": [
 					"am",
@@ -1977,8 +1993,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2352,8 +2373,8 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"am",
+					"pm"
 				],
 				"narrow": [
 					"am",
@@ -2403,8 +2424,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2778,8 +2804,8 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"am",
+					"pm"
 				],
 				"narrow": [
 					"am",
@@ -2826,11 +2852,11 @@
 			"relative-type-1": "next yr.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} yr",
-				"relativeTimePattern-count-other": "in {0} yr"
+				"relativeTimePattern-count-other": "in {0} yrs"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} yr ago",
-				"relativeTimePattern-count-other": "{0} yr ago"
+				"relativeTimePattern-count-other": "{0} yrs ago"
 			}
 		},
 		"year-narrow": {
@@ -2840,11 +2866,11 @@
 			"relative-type-1": "next yr.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} yr",
-				"relativeTimePattern-count-other": "in {0} yr"
+				"relativeTimePattern-count-other": "in {0} yrs"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} yr ago",
-				"relativeTimePattern-count-other": "{0} yr ago"
+				"relativeTimePattern-count-other": "{0} yrs ago"
 			}
 		},
 		"quarter-wide": {
@@ -2868,11 +2894,11 @@
 			"relative-type-1": "next qtr.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} qtr",
-				"relativeTimePattern-count-other": "in {0} qtr"
+				"relativeTimePattern-count-other": "in {0} qtrs"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} qtr ago",
-				"relativeTimePattern-count-other": "{0} qtr ago"
+				"relativeTimePattern-count-other": "{0} qtrs ago"
 			}
 		},
 		"quarter-narrow": {
@@ -2882,11 +2908,11 @@
 			"relative-type-1": "next qtr.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} qtr",
-				"relativeTimePattern-count-other": "in {0} qtr"
+				"relativeTimePattern-count-other": "in {0} qtrs"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "in {0} qtr. ago",
-				"relativeTimePattern-count-other": "{0} qtrs. ago"
+				"relativeTimePattern-count-one": "in {0} qtr ago",
+				"relativeTimePattern-count-other": "{0} qtrs ago"
 			}
 		},
 		"month-wide": {
@@ -2904,31 +2930,31 @@
 			}
 		},
 		"month-short": {
-			"displayName": "mo",
+			"displayName": "mo.",
 			"relative-type--1": "last mo.",
 			"relative-type-0": "this mo.",
 			"relative-type-1": "next mo.",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "in {0} mo",
-				"relativeTimePattern-count-other": "in {0} mo"
+				"relativeTimePattern-count-one": "in {0} mo.",
+				"relativeTimePattern-count-other": "in {0} mo."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} mo ago",
-				"relativeTimePattern-count-other": "{0} mo ago"
+				"relativeTimePattern-count-one": "{0} mo. ago",
+				"relativeTimePattern-count-other": "{0} mo. ago"
 			}
 		},
 		"month-narrow": {
-			"displayName": "mo",
+			"displayName": "mo.",
 			"relative-type--1": "last mo.",
 			"relative-type-0": "this mo.",
 			"relative-type-1": "next mo.",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "in {0} mo",
-				"relativeTimePattern-count-other": "in {0} mo"
+				"relativeTimePattern-count-one": "in {0} mo.",
+				"relativeTimePattern-count-other": "in {0} mo."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} mo ago",
-				"relativeTimePattern-count-other": "{0} mo ago"
+				"relativeTimePattern-count-one": "{0} mo. ago",
+				"relativeTimePattern-count-other": "{0} mo. ago"
 			}
 		},
 		"week-wide": {
@@ -2953,11 +2979,11 @@
 			"relative-type-1": "next wk.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} wk",
-				"relativeTimePattern-count-other": "in {0} wk"
+				"relativeTimePattern-count-other": "in {0} wks"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} wk ago",
-				"relativeTimePattern-count-other": "{0} wk ago"
+				"relativeTimePattern-count-other": "{0} wks ago"
 			},
 			"relativePeriod": "the week of {0}"
 		},
@@ -2968,11 +2994,11 @@
 			"relative-type-1": "next wk.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} wk",
-				"relativeTimePattern-count-other": "in {0} wk"
+				"relativeTimePattern-count-other": "in {0} wks"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} wk ago",
-				"relativeTimePattern-count-other": "{0} wk ago"
+				"relativeTimePattern-count-other": "{0} wks ago"
 			},
 			"relativePeriod": "the week of {0}"
 		},
@@ -3038,11 +3064,11 @@
 			"relative-type-0": "this hour",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} hr",
-				"relativeTimePattern-count-other": "in {0} hr"
+				"relativeTimePattern-count-other": "in {0} hrs"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} hr ago",
-				"relativeTimePattern-count-other": "{0} hr ago"
+				"relativeTimePattern-count-other": "{0} hrs ago"
 			}
 		},
 		"hour-narrow": {
@@ -3050,11 +3076,11 @@
 			"relative-type-0": "this hour",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} hr",
-				"relativeTimePattern-count-other": "in {0} hr"
+				"relativeTimePattern-count-other": "in {0} hrs"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} hr ago",
-				"relativeTimePattern-count-other": "{0} hr ago"
+				"relativeTimePattern-count-other": "{0} hrs ago"
 			}
 		},
 		"minute-wide": {
@@ -3070,27 +3096,27 @@
 			}
 		},
 		"minute-short": {
-			"displayName": "min",
+			"displayName": "min.",
 			"relative-type-0": "this minute",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "in {0} min",
-				"relativeTimePattern-count-other": "in {0} min"
+				"relativeTimePattern-count-one": "in {0} min.",
+				"relativeTimePattern-count-other": "in {0} mins"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} min ago",
-				"relativeTimePattern-count-other": "{0} min ago"
+				"relativeTimePattern-count-one": "{0} min. ago",
+				"relativeTimePattern-count-other": "{0} mins ago"
 			}
 		},
 		"minute-narrow": {
-			"displayName": "min",
+			"displayName": "min.",
 			"relative-type-0": "this minute",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "in {0} min",
-				"relativeTimePattern-count-other": "in {0} min"
+				"relativeTimePattern-count-one": "in {0} min.",
+				"relativeTimePattern-count-other": "in {0} mins"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} min ago",
-				"relativeTimePattern-count-other": "{0} min ago"
+				"relativeTimePattern-count-one": "{0} min. ago",
+				"relativeTimePattern-count-other": "{0} mins ago"
 			}
 		},
 		"second-wide": {
@@ -3106,27 +3132,27 @@
 			}
 		},
 		"second-short": {
-			"displayName": "sec",
+			"displayName": "sec.",
 			"relative-type-0": "now",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "in {0} sec",
-				"relativeTimePattern-count-other": "in {0} sec"
+				"relativeTimePattern-count-one": "in {0} sec.",
+				"relativeTimePattern-count-other": "in {0} secs"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} sec ago",
-				"relativeTimePattern-count-other": "{0} sec ago"
+				"relativeTimePattern-count-one": "{0} sec. ago",
+				"relativeTimePattern-count-other": "{0} secs ago"
 			}
 		},
 		"second-narrow": {
-			"displayName": "sec",
+			"displayName": "sec.",
 			"relative-type-0": "now",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "in {0} sec",
-				"relativeTimePattern-count-other": "in {0} sec"
+				"relativeTimePattern-count-one": "in {0} sec.",
+				"relativeTimePattern-count-other": "in {0} secs"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} sec ago",
-				"relativeTimePattern-count-other": "{0} sec ago"
+				"relativeTimePattern-count-one": "{0} sec. ago",
+				"relativeTimePattern-count-other": "{0} secs ago"
 			}
 		},
 		"zone": {
@@ -3247,7 +3273,7 @@
 	"symbols-latn-perMille": "‰",
 	"symbols-latn-infinity": "∞",
 	"symbols-latn-nan": "NaN",
-	"symbols-latn-timeSeparator": ":",
+	"symbols-latn-timeSeparator": ".",
 	"currencySymbols": {
 		"AUD": "$",
 		"SCR": "Rs",
@@ -3259,6 +3285,18 @@
 		"start": "{0}, {1}",
 		"middle": "{0}, {1}",
 		"end": "{0} and {1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0} or {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0}, or {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} or {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0}, or {1}"
 	},
 	"listPattern-standard-short": {
 		"2": "{0} and {1}",
@@ -3284,6 +3322,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3309,11 +3348,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

@@ -151,6 +151,7 @@
 		"fr": "francia",
 		"fr_CA": "kanadai francia",
 		"fr_CH": "svájci francia",
+		"frc": "cajun francia",
 		"frm": "közép francia",
 		"fro": "ófrancia",
 		"frr": "északi fríz",
@@ -277,6 +278,7 @@
 		"ln": "lingala",
 		"lo": "lao",
 		"lol": "mongó",
+		"lou": "louisianai kreol",
 		"loz": "lozi",
 		"lrc": "északi luri",
 		"lt": "litván",
@@ -575,6 +577,7 @@
 		"Geok": "Grúz kucsuri",
 		"Geor": "Grúz",
 		"Glag": "Glagolitikus",
+		"Gonm": "Gonm",
 		"Goth": "Gót",
 		"Gran": "Gran",
 		"Grek": "Görög",
@@ -640,6 +643,7 @@
 		"Nbat": "Nbat",
 		"Newa": "Newa",
 		"Nkoo": "N’ko",
+		"Nshu": "Nshu",
 		"Ogam": "Ogham",
 		"Olck": "Ol chiki",
 		"Orkh": "Orhon",
@@ -670,6 +674,7 @@
 		"Sind": "Sind",
 		"Sinh": "Szingaléz",
 		"Sora": "Sora",
+		"Soyo": "Soyo",
 		"Sund": "Szundanéz",
 		"Sylo": "Sylheti nagári",
 		"Syrc": "Szíriai",
@@ -698,6 +703,7 @@
 		"Xpeo": "Óperzsa",
 		"Xsux": "Ékírásos suméro-akkád",
 		"Yiii": "Ji",
+		"Zanb": "Zanb",
 		"Zinh": "Származtatott",
 		"Zmth": "Matematikai jelrendszer",
 		"Zsye": "Emoji",
@@ -714,6 +720,7 @@
 		"151": "Kelet-Európa",
 		"154": "Észak-Európa",
 		"155": "Nyugat-Európa",
+		"202": "202",
 		"419": "Latin-Amerika",
 		"001": "Világ",
 		"002": "Afrika",
@@ -798,7 +805,7 @@
 		"CX": "Karácsony-sziget",
 		"CY": "Ciprus",
 		"CZ": "Csehország",
-		"CZ-alt-variant": "CZ",
+		"CZ-alt-variant": "Cseh Köztársaság",
 		"DE": "Németország",
 		"DG": "Diego Garcia",
 		"DJ": "Dzsibuti",
@@ -815,7 +822,7 @@
 		"ES": "Spanyolország",
 		"ET": "Etiópia",
 		"EU": "Európai Unió",
-		"EZ": "EZ",
+		"EZ": "Eurózóna",
 		"FI": "Finnország",
 		"FJ": "Fidzsi",
 		"FK": "Falkland-szigetek",
@@ -963,7 +970,7 @@
 		"SO": "Szomália",
 		"SR": "Suriname",
 		"SS": "Dél-Szudán",
-		"ST": "Sao Tomé és Príncipe",
+		"ST": "São Tomé és Príncipe",
 		"SV": "Salvador",
 		"SX": "Sint Maarten",
 		"SY": "Szíria",
@@ -977,7 +984,7 @@
 		"TJ": "Tádzsikisztán",
 		"TK": "Tokelau",
 		"TL": "Kelet-Timor",
-		"TL-alt-variant": "TL",
+		"TL-alt-variant": "Timor-Leste",
 		"TM": "Türkmenisztán",
 		"TN": "Tunézia",
 		"TO": "Tonga",
@@ -988,8 +995,8 @@
 		"TZ": "Tanzánia",
 		"UA": "Ukrajna",
 		"UG": "Uganda",
-		"UM": "Az Amerikai Egyesült Államok lakatlan külbirtokai",
-		"UN": "ENSZ",
+		"UM": "Az USA lakatlan külbirtokai",
+		"UN": "Egyesült Nemzetek Szervezete",
 		"UN-alt-short": "ENSZ",
 		"US": "Egyesült Államok",
 		"US-alt-short": "USA",
@@ -1032,8 +1039,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E B h:mm",
+				"EBhms": "E B h:mm:ss",
 				"Ed": "d., E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1049,9 +1061,9 @@
 				"Hm": "H:mm",
 				"hms": "a h:mm:ss",
 				"Hms": "H:mm:ss",
-				"hmsv": "h:mm:ss a v",
+				"hmsv": "a h:mm:ss v",
 				"Hmsv": "HH:mm:ss v",
-				"hmv": "h:mm a v",
+				"hmv": "a h:mm v",
 				"Hmv": "HH:mm v",
 				"M": "L",
 				"Md": "M. d.",
@@ -1073,7 +1085,7 @@
 				"yQQQ": "y. QQQ",
 				"yQQQQ": "y. QQQQ",
 				"MMMMW": "MMM W. 'hete'",
-				"yw": "y w. 'hete'"
+				"yw": "Y w. 'hete'"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1355,16 +1367,16 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"N1",
-					"N2",
-					"N3",
-					"N4"
+					"I. n.év",
+					"II. n.év",
+					"III. n.év",
+					"IV. n.év"
 				],
 				"narrow": [
-					"1.",
-					"2.",
-					"3.",
-					"4."
+					"I.",
+					"II.",
+					"III.",
+					"IV."
 				],
 				"wide": [
 					"I. negyedév",
@@ -1375,10 +1387,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"N1",
-					"N2",
-					"N3",
-					"N4"
+					"1. n.év",
+					"2. n.év",
+					"3. n.év",
+					"4. n.év"
 				],
 				"narrow": [
 					"1.",
@@ -1425,7 +1437,7 @@
 			}
 		},
 		"era-wide": {
-			"0": "időszámításunk előtt",
+			"0": "Krisztus előtt",
 			"1": "időszámításunk szerint"
 		},
 		"era-abbreviated": {
@@ -1456,12 +1468,17 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm",
+				"EBhms": "E h:mm:ss",
 				"Ed": "d., E",
-				"Ehm": "E h:mm a",
+				"Ehm": "E h:mm",
 				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
+				"Ehms": "E h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y.",
 				"GyMMM": "G y. MMM",
@@ -1773,16 +1790,16 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"N1",
-					"N2",
-					"N3",
-					"N4"
+					"I. n.év",
+					"II. n.év",
+					"III. n.év",
+					"IV. n.év"
 				],
 				"narrow": [
-					"1.",
-					"2.",
-					"3.",
-					"4."
+					"I.",
+					"II.",
+					"III.",
+					"IV."
 				],
 				"wide": [
 					"I. negyedév",
@@ -1793,10 +1810,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"N1",
-					"N2",
-					"N3",
-					"N4"
+					"1. n.év",
+					"2. n.év",
+					"3. n.év",
+					"4. n.év"
 				],
 				"narrow": [
 					"1.",
@@ -1871,12 +1888,17 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm",
+				"EBhms": "E h:mm:ss",
 				"Ed": "d., E",
-				"Ehm": "E h:mm a",
+				"Ehm": "E h:mm",
 				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
+				"Ehms": "E h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y.",
 				"GyMMM": "G y. MMM",
@@ -2188,16 +2210,16 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"N1",
-					"N2",
-					"N3",
-					"N4"
+					"I. n.év",
+					"II. n.év",
+					"III. n.év",
+					"IV. n.év"
 				],
 				"narrow": [
-					"1.",
-					"2.",
-					"3.",
-					"4."
+					"I.",
+					"II.",
+					"III.",
+					"IV."
 				],
 				"wide": [
 					"I. negyedév",
@@ -2208,10 +2230,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"N1",
-					"N2",
-					"N3",
-					"N4"
+					"1. n.év",
+					"2. n.év",
+					"3. n.év",
+					"4. n.év"
 				],
 				"narrow": [
 					"1.",
@@ -2295,12 +2317,17 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm",
+				"EBhms": "E h:mm:ss",
 				"Ed": "d., E",
-				"Ehm": "E h:mm a",
+				"Ehm": "E h:mm",
 				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
+				"Ehms": "E h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y.",
 				"GyMMM": "G y. MMM",
@@ -2444,18 +2471,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardin",
+					"ordibehesht",
+					"khordad",
+					"tir",
+					"mordad",
+					"shahrivar",
+					"mehr",
+					"aban",
+					"azar",
+					"dey",
+					"bahman",
+					"esfand"
 				],
 				"narrow": [
 					"1",
@@ -2472,34 +2499,34 @@
 					"12"
 				],
 				"wide": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardin",
+					"ordibehesht",
+					"khordad",
+					"tir",
+					"mordad",
+					"shahrivar",
+					"mehr",
+					"aban",
+					"azar",
+					"dey",
+					"bahman",
+					"esfand"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardin",
+					"ordibehesht",
+					"khordad",
+					"tir",
+					"mordad",
+					"shahrivar",
+					"mehr",
+					"aban",
+					"azar",
+					"dey",
+					"bahman",
+					"esfand"
 				],
 				"narrow": [
 					"1",
@@ -2516,18 +2543,18 @@
 					"12"
 				],
 				"wide": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardin",
+					"ordibehesht",
+					"khordad",
+					"tir",
+					"mordad",
+					"shahrivar",
+					"mehr",
+					"aban",
+					"azar",
+					"dey",
+					"bahman",
+					"esfand"
 				]
 			}
 		},
@@ -2612,16 +2639,16 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"N1",
-					"N2",
-					"N3",
-					"N4"
+					"I. n.év",
+					"II. n.év",
+					"III. n.év",
+					"IV. n.év"
 				],
 				"narrow": [
-					"1.",
-					"2.",
-					"3.",
-					"4."
+					"I.",
+					"II.",
+					"III.",
+					"IV."
 				],
 				"wide": [
 					"I. negyedév",
@@ -2632,10 +2659,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"N1",
-					"N2",
-					"N3",
-					"N4"
+					"1. n.év",
+					"2. n.év",
+					"3. n.év",
+					"4. n.év"
 				],
 				"narrow": [
 					"1.",
@@ -2752,7 +2779,7 @@
 			}
 		},
 		"quarter-short": {
-			"displayName": "negyedév",
+			"displayName": "n.év",
 			"relative-type--1": "előző negyedév",
 			"relative-type-0": "ez a negyedév",
 			"relative-type-1": "következő negyedév",
@@ -2766,13 +2793,13 @@
 			}
 		},
 		"quarter-narrow": {
-			"displayName": "negyedév",
+			"displayName": "n.év",
 			"relative-type--1": "előző negyedév",
 			"relative-type-0": "ez a negyedév",
 			"relative-type-1": "következő negyedév",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} negyedév múlva",
-				"relativeTimePattern-count-other": "{0} negyedév múlva"
+				"relativeTimePattern-count-one": "{0} n.év múlva",
+				"relativeTimePattern-count-other": "{0} n.év múlva"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} negyedévvel ezelőtt",
@@ -3158,6 +3185,18 @@
 		"middle": "{0}, {1}",
 		"end": "{0} és {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} vagy {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} vagy {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} vagy {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} vagy {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} és {1}",
 		"start": "{0}, {1}",
@@ -3182,6 +3221,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3207,11 +3247,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

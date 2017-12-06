@@ -95,8 +95,8 @@
 	QUnit.test("format date with custom pattern for a specific locale", function (assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		assert.equal(sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd MMM yyyy"}, oLocale).format(oDateTime), "11 Sep. 2001", "date with custom pattern for given locale");
-		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "dd MMM yyyy hh:mm:ss a"}, oLocale).format(oDateTime), "11 Sep. 2001 08:46:13 vorm.", "datetime with custom pattern for given locale");
-		assert.equal(sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm:ss a"}, oLocale).format(oDateTime), "08:46:13 vorm.", "datetime with custom pattern for given locale");
+		assert.equal(sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "dd MMM yyyy hh:mm:ss a"}, oLocale).format(oDateTime), "11 Sep. 2001 08:46:13 AM", "datetime with custom pattern for given locale");
+		assert.equal(sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm:ss a"}, oLocale).format(oDateTime), "08:46:13 AM", "datetime with custom pattern for given locale");
 	});
 
 	QUnit.test("format custom date", function(assert){
@@ -519,7 +519,7 @@
 
 		oFormat = sap.ui.core.format.DateFormat.getTimeInstance({
 			pattern: "a"
-		}, new sap.ui.core.Locale("de-DE"));
+		}, new sap.ui.core.Locale("vi"));
 
 		assert.equal(oFormat.parse("a.m."), null, "the variant can only be parsed in locale where it's supported");
 	});
@@ -950,9 +950,9 @@
 	});
 
 	var aResultLocal = [
-		"12 ربيع الآخر، 1422 هـ",
-		"12 ربيع الآخر، 1422 هـ",
-		"12 ربيع الآخر، 1422 هـ",
+		"12 ربيع الآخر 1422 هـ",
+		"12 ربيع الآخر 1422 هـ",
+		"12 ربيع الآخر 1422 هـ",
 		"12 ברביע ב׳ 1422 שנת היג׳רה"
 	];
 
