@@ -8,6 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	return {
+		"moveControls": "default",
 		"rename": BaseRename.createRenameChangeHandler({
 			propertyName: "text",
 			translationTextType: "XTBS"

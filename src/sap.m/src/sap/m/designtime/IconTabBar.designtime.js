@@ -22,7 +22,15 @@ sap.ui.define([],
 					}
 				},
 				content: {
-					domRef: ":sap-domref > .sapMITBContainerContent > .sapMITBContent",
+					domRef: function(oControl) {
+						var oSelectedItem = oControl._getIconTabHeader().oSelectedItem;
+
+						if (oSelectedItem && oSelectedItem.getContent().length) {
+							return;
+						}
+
+						return oControl.getDomRef("content");
+					},
 					actions: {
 						move: "moveControls"
 					}
