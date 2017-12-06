@@ -32,6 +32,11 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 							fragmentName: "testdata.customizing.customer.CustomFrag1WithCustomerAction",
 							type: "XML"
 						},
+						"extension21": {
+							className: "sap.ui.core.Fragment",
+							fragmentName: "testdata.customizing.customer.CustomFrag21",
+							type: "XML"
+						},
 						"extension3": {
 							className: "sap.ui.core.mvc.View",
 							viewName: "testdata.customizing.customer.CustomSubSubView1",
