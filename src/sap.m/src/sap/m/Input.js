@@ -2089,6 +2089,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		};
 
 		/**
+		 * Forwards aggregations with the name of items or columns to the internal table.
+		 *
+		 * @overwrite
+		 * @name sap.m.Input.unbindAggregation
+		 * @method
+		 * @public
+		 * @param {string} sAggregationName the name for the binding
+		 * @returns {sap.m.Input} this pointer for chaining
+		 */
+		Input.prototype.unbindAggregation = function() {
+			var args = Array.prototype.slice.call(arguments);
+
+			// propagate the unbind aggregation function to list
+			this._callMethodInManagedObject.apply(this, ["unbindAggregation"].concat(args));
+			return this;
+		};
+
+		/**
 		 * Initialize suggestion popup with lazy loading.
 		 *
 		 * @name sap.m.Input._lazyInitializeSuggestionPopup
