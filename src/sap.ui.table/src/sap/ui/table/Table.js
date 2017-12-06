@@ -1779,6 +1779,7 @@ sap.ui.define([
 			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
 			Table._addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequested.bind(this));
 			Table._addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceived.bind(this));
+			this._bContextsRequested = false;
 		}
 
 		// Create the binding.
@@ -2028,6 +2029,14 @@ sap.ui.define([
 		}
 	};
 
+	Table.prototype._computeRequestLength = function(iLength) {
+		if (this.getVisibleRowCountMode() === VisibleRowCountMode.Auto && !this._bContextsRequested) {
+			var iEstimatedRowCount = Math.ceil(Device.resize.height / TableUtils.DEFAULT_ROW_HEIGHT.sapUiSizeCondensed);
+			return Math.max(iLength, iEstimatedRowCount);
+		}
+		return iLength;
+	};
+
 	/**
 	 * Requests all contexts from the binding which are required to display the data in the current viewport.
 	 *
@@ -2096,8 +2105,10 @@ sap.ui.define([
 		// if this is done before requesting fixed bottom rows, it saves some performance for the analytical table
 		// since the tree gets only build once (as result of getContexts call). If first the fixed bottom row would
 		// be requested the analytical binding would build the tree twice.
-		aTmpContexts = this._getContexts(iStartIndex, iLength, iThreshold);
+		aTmpContexts = this._getContexts(iStartIndex, this._computeRequestLength(iLength), iThreshold);
 		var iBindingLength = this._updateTotalRowCount(!bSuppressUpdate);
+
+		this._bContextsRequested = true;
 
 		// iLength is the number of rows which shall get filled. It might be more than the binding actually has data.
 		// Therefore Math.min is required to make sure to not request data again from the binding.
