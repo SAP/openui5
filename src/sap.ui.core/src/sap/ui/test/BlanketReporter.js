@@ -99,10 +99,10 @@ sap.ui.define([
 				oHtml = oView.byId("blanket-source"),
 				oModel = oView.getModel(),
 				oTable = oView.byId("Files"),
-				iSelectedIndex = oTable.getSelectedIndex();
+				iSelectedRow = oTable.getSelectedIndex() - oTable.getFirstVisibleRow();
 
-			if (iSelectedIndex >= 0) {
-				oContext = oTable.getRows()[iSelectedIndex].getBindingContext();
+			if (iSelectedRow >= 0) {
+				oContext = oTable.getRows()[iSelectedRow].getBindingContext();
 				sFile = oContext.getObject("name");
 				iLinesOfContext = oModel.getProperty("/linesOfContext");
 				aStatistics = oModel.getObject("/coverageData").files[sFile];
