@@ -54,8 +54,11 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				ManagedObject.apply(this, arguments);
 
 				/**
-				 * @public
+				 * @namespace
 				 * @alias jQuery.sap.support
+				 * @author SAP SE
+				 * @version ${version}
+				 * @public
 				 */
 				jQuery.sap.support = {
 
