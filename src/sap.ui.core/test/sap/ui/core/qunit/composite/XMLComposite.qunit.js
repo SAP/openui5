@@ -703,7 +703,9 @@ sap.ui.require([
 			}
 		});
 	});
-	QUnit.test("aggregation with pretemplating model only", function(assert) {
+	
+	//we want to use metadataContexts so we should still dicuss here
+/*	QUnit.test("aggregation with pretemplating model only", function(assert) {
 		var oComponentContainer = new sap.ui.core.ComponentContainer({
 			component: new my.composite2.Component()
 		}).placeAt("content");
@@ -733,7 +735,7 @@ sap.ui.require([
 
 		oComponentContainer.destroy();
 	});
-
+*/
 	QUnit.module("clone");
 
 	QUnit.test("simple", function(assert) {

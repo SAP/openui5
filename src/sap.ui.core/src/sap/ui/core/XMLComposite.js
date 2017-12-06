@@ -18,8 +18,8 @@
  */
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/XMLCompositeMetadata', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/core/util/XMLPreprocessor',
-	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/core/AggregationProxy'
-], function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, Proxy) {
+	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/core/AggregationProxy', 'sap/ui/model/base/XMLNodeAttributesModel'
+], function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, Proxy, XMLNodeAttributesModel) {
 	"use strict";
 
 	// private functions
@@ -56,22 +56,20 @@ sap.ui.define([
 	}
 
 	function addAttributesContext(mContexts, sName, oElement, oImpl, oVisitor) {
-		var oAttributesModel = new JSONModel(oElement),
-			oMetadata = oImpl.getMetadata(),
-			mAggregations = oMetadata.getAllAggregations(),
-			mProperties = oMetadata.getAllProperties(),
-			mSpecialSettings = oMetadata._mAllSpecialSettings;
+		var oAttributesModel = new JSONModel(oElement), oMetadata = oImpl.getMetadata(), mAggregations = oMetadata.getAllAggregations(), mProperties = oMetadata.getAllProperties(), mSpecialSettings = oMetadata._mAllSpecialSettings;
 
-		oAttributesModel.getVisitor = function () {
+		oAttributesModel.getVisitor = function() {
 			return oVisitor;
 		};
-		oAttributesModel.getProperty = function (sPath, oContext) {
+
+		oAttributesModel._getObject = function(sPath, oContext) {
 			var oResult;
 			sPath = this.resolve(sPath, oContext);
 			sPath = sPath.substring(1);
+			var aPath = sPath.split("/");
 
 			if (sPath && sPath.startsWith && sPath.startsWith("metadataContexts")) {
-				return this._navInMetadataContexts(sPath);//note as metadataContexts is an object the path can be deep
+				return this._navInMetadataContexts(sPath);// note as metadataContexts is an object the path can be deep
 			}
 
 			if (mProperties.hasOwnProperty(sPath)) {
@@ -91,17 +89,30 @@ sap.ui.define([
 				}
 				return null;
 
-			} else if (mAggregations.hasOwnProperty(sPath)) {
-				var oAggregation = mAggregations[sPath],
-					sControlName = oMetadata.getName(),
-					sNamespace = sControlName.slice(0, sControlName.lastIndexOf("."));
-				if (oAggregation.multiple === true && oAggregation.type === "TemplateMetadataContext") {
-					if (!oElement.hasAttribute(sPath)) {
-						return null;
+			} else if (mAggregations.hasOwnProperty(aPath[0])) {
+				var oAggregation = mAggregations[aPath[0]], sControlName = oMetadata.getName(), sNamespace = sControlName.slice(0, sControlName.lastIndexOf("."));
+				var oAggregationModel, oContent = oElement.getElementsByTagNameNS(sNamespace, aPath[0])[0];
+
+				if (oAggregation.multiple) {
+					// return a list of context
+					var oChild, aContexts = [];
+					for (var i = 0; i < oContent.childNodes.length; i++) {
+						oChild = oContent.childNodes[i];
+
+					if (oChild.nodeType == 1 /* Node.ELEMENT_NODE */) {
+							oAggregationModel = new XMLNodeAttributesModel(oChild, oVisitor, "");
+							aContexts.push(oAggregationModel.getContext("/"));
+						}
 					}
-					return oElement.getAttribute(sPath);
+
+					oResult = aContexts;
+				} else {
+					oAggregationModel = new XMLNodeAttributesModel(oContent, oVisitor, "");
+					oResult = oAggregationModel.getContext("/");
 				}
-				return oElement.getElementsByTagNameNS(sNamespace, sPath);
+
+				aPath.shift();
+				return this._getNode(aPath, oResult);
 			} else if (mSpecialSettings.hasOwnProperty(sPath)) {
 				var oSpecialSetting = mSpecialSettings[sPath];
 
@@ -126,18 +137,21 @@ sap.ui.define([
 			}
 		};
 
-		oAttributesModel._navInMetadataContexts = function (sPath) {
+		oAttributesModel._navInMetadataContexts = function(sPath) {
 			var sRemainPath = sPath.replace("metadataContexts", "");
-			var sInnerPath, aPath = sRemainPath.split("/");
+			var aPath = sRemainPath.split("/"), vNode = mContexts["metadataContexts"].getObject();
 
 			aPath.shift();
+			return this._getNode(aPath, vNode);
+		};
 
-			var oResult, vNode = mContexts["metadataContexts"].getObject();
+		oAttributesModel._getNode = function(aPath, vNode) {
+			var oResult = null, sInnerPath;
 
 			while (aPath.length > 0 && vNode) {
 
 				if (vNode.getObject) {
-					//try to nav deep
+					// try to nav deep
 					oResult = vNode.getObject(aPath.join("/"));
 				}
 
@@ -150,16 +164,16 @@ sap.ui.define([
 			}
 
 			return vNode;
-
 		};
 
-		oAttributesModel.getContextName = function () {
+		oAttributesModel.getContextName = function() {
 			return sName;
 		};
+
 		mContexts[sName] = oAttributesModel.getContext("/");
 		if (mContexts["metadataContexts"]) {
-			//make attributes model available via metadataContexts
-			mContexts["metadataContexts"].oModel.setProperty("/" + sName,mContexts[sName]);
+			// make attributes model available via metadataContexts
+			mContexts["metadataContexts"].oModel.setProperty("/" + sName, mContexts[sName]);
 		}
 	}
 
