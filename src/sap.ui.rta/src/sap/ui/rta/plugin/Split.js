@@ -5,13 +5,11 @@
 // Provides class sap.ui.rta.plugin.Split.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/Selection',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/Utils'
 ], function(
 	Plugin,
-	Selection,
 	OverlayRegistry,
 	Utils,
 	FlexUtils

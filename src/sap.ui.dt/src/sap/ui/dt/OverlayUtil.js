@@ -606,5 +606,19 @@ function(
 		});
 	};
 
+	/**
+	 * Returns the Overlay for an Object. If it is an Overlay, it returns the Overlay itself,
+	 * if it's an Element, it returns the overlay of this element.
+	 * @param  {object} vObject  Can be an Overlay or an Element with Overlay
+	 * @return {sap.ui.dt.Overlay} Returns an Overlay
+	 */
+	OverlayUtil.getOverlayforObject = function(vObject) {
+		if (vObject instanceof jQuery.sap.getObject("sap.ui.dt.Overlay")){
+			return vObject;
+		} else if (OverlayRegistry.getOverlay(vObject)){
+			return OverlayRegistry.getOverlay(vObject);
+		}
+	};
+
 	return OverlayUtil;
 }, /* bExport= */true);

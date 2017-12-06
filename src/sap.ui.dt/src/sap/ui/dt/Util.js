@@ -84,5 +84,24 @@ sap.ui.define([
 		return jQuery.isNumeric(vValue) && Math.ceil(vValue) === vValue;
 	};
 
+	/**
+	 * Convert the Parameter to an Array
+	 *
+	 * @param	{object}	vValue	can be a single Object or an array
+	 * @return [{object}]	Array of Objects (overlays or elements)
+	 * @private
+	 */
+	Util.castArray = function(vValue) {
+		var aResult = [];
+		if (vValue){
+			if (!Array.isArray(vValue)){
+				aResult.push(vValue);
+			} else {
+				aResult = vValue;
+			}
+		}
+		return aResult;
+	};
+
 	return Util;
 });

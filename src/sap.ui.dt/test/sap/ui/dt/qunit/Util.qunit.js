@@ -65,5 +65,19 @@ function(
 			assert.deepEqual(Util.objectValues(mObject), [sValue1, sValue2], "the correct object values were returned");
 		});
 
+		QUnit.test("castArray()", function(assert){
+			var sValue = "test1";
+			var nValue = 7;
+			var aValue = ["xyz", 1, {text: "test"}];
+			var mObject = {
+				value1: sValue,
+				value2: nValue
+			};
+
+			assert.deepEqual(Util.castArray(sValue), [sValue], "the correct string in an array is returned");
+			assert.deepEqual(Util.castArray(aValue), ["xyz", 1, {text: "test"}], "the correct array is returned");
+			assert.deepEqual(Util.castArray(mObject), [mObject], "the correct object in an array is returned");
+			assert.deepEqual(Util.castArray(), [], "the correct empty array is returned");
+		});
 	});
 });
