@@ -309,8 +309,8 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/base/DataType
 
 			getBindingTemplate: function (oControl, sAggregationName) {
 				var oAggregationNode = this._findAggregationNode(oControl, sAggregationName);
-				if (oAggregationNode && oAggregationNode.childNodes.length === 1) {
-					return oAggregationNode.childNodes[0];
+				if (oAggregationNode && this._children(oAggregationNode).length === 1) {
+					return this._children(oAggregationNode)[0];
 				}
 
 			},
