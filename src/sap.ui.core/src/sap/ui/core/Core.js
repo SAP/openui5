@@ -854,37 +854,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 	};
 
+	// this function is also used by "sap.ui.core.ThemeCheck" to load a fallback theme for a single library
+	Core.prototype._updateThemeUrl = function(oLink, sThemeName) {
+		var sLibName = oLink.id.slice(13), // length of "sap-ui-theme-"
+		    sLibFileName = oLink.href.slice(oLink.href.lastIndexOf("/") + 1),
+		    sStandardLibFilePrefix = "library",
+		    sRTL = this.oConfiguration.getRTL() ? "-RTL" : "",
+		    sHref,
+		    pos;
+
+		// handle 'variants'
+		if ((pos = sLibName.indexOf("-[")) > 0) { // assumes that "-[" does not occur as part of a library name
+			sStandardLibFilePrefix += sLibName.slice(pos + 2, -1); // 2=length of "-]"
+			sLibName = sLibName.slice(0, pos);
+		}
+
+		// try to distinguish "our" library css from custom css included with the ':' notation in includeLibraryTheme
+		if ( sLibFileName === (sStandardLibFilePrefix + ".css") || sLibFileName === (sStandardLibFilePrefix + "-RTL.css") ) {
+			sLibFileName = sStandardLibFilePrefix + sRTL + ".css";
+		}
+
+		sHref = this._getThemePath(sLibName, sThemeName) + sLibFileName;
+		if ( sHref != oLink.href ) {
+			// Replace the current <link> tag with a new one.
+			// Changing "oLink.href" would also trigger loading the new stylesheet but
+			// the load/error handlers would not get called which causes issues with the ThemeCheck
+			// as the "data-sap-ui-ready" attribute won't be set.
+			jQuery.sap.includeStyleSheet(sHref, oLink.id);
+		}
+	};
+
 	// modify style sheet URLs to point to the given theme, using the current RTL mode
 	Core.prototype._updateThemeUrls = function(sThemeName) {
-		var that = this,
-		sRTL = this.oConfiguration.getRTL() ? "-RTL" : "";
+		var that = this;
 		// select "our" stylesheets
 		jQuery("link[id^=sap-ui-theme-]").each(function() {
-			var sLibName = this.id.slice(13), // length of "sap-ui-theme-"
-				sLibFileName = this.href.slice(this.href.lastIndexOf("/") + 1),
-				sStandardLibFilePrefix = "library",
-				sHref,
-				pos;
-
-			// handle 'variants'
-			if ((pos = sLibName.indexOf("-[")) > 0) { // assumes that "-[" does not occur as part of a library name
-				sStandardLibFilePrefix += sLibName.slice(pos + 2, -1); // 2=length of "-]"
-				sLibName = sLibName.slice(0, pos);
-			}
-
-			// try to distinguish "our" library css from custom css included with the ':' notation in includeLibraryTheme
-			if ( sLibFileName === (sStandardLibFilePrefix + ".css") || sLibFileName === (sStandardLibFilePrefix + "-RTL.css") ) {
-				sLibFileName = sStandardLibFilePrefix + sRTL + ".css";
-			}
-
-			sHref = that._getThemePath(sLibName, sThemeName) + sLibFileName;
-			if ( sHref != this.href ) {
-				// Replace the current <link> tag with a new one.
-				// Changing "this.href" would also trigger loading the new stylesheet but
-				// the load/error handlers would not get called which causes issues with the ThemeCheck
-				// as the "data-sap-ui-ready" attribute won't be set.
-				jQuery.sap.includeStyleSheet(sHref, this.id);
-			}
+			that._updateThemeUrl(this, sThemeName);
 		});
 	};
 
@@ -2104,7 +2109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// if parameters have been used, update them with the new style sheet
 			var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
 			if (Parameters) {
-				Parameters._addLibraryTheme(sLibId, cssPathAndName);
+				Parameters._addLibraryTheme(sLibId);
 			}
 		}
 
