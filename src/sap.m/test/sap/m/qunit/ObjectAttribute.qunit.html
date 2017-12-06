@@ -222,6 +222,28 @@
 		//Cleanup
 		oAttr.destroy();
 	});
+
+	//BCP: 1780440634
+	QUnit.test("ObjectAttribute does not append the title multiple times when customControl aggregation and title are used and reredering of the ObjectAttribute occurs", function (assert) {
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute({
+			title: "AttributeTitle",
+			customContent: new sap.m.Link({ text: "LinkText" })
+		}),
+			sExpected = "AttributeTitle: LinkText";
+		oAttr.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// action
+		oAttr.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.equal(oAttr.getAggregation('customContent').getText(), sExpected, "Text of the ObjectAttribute should be " + sExpected);
+
+		// cleanup
+		oAttr.destroy();
+	});
 	/******************************************************************/
 
 	QUnit.module("Internal API");
