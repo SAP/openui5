@@ -145,13 +145,15 @@ sap.ui.define([
 				}
 			});
 
-			this.oModel.updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
-				this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
-			}; // overrule default
+// this.oModel.updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
+// this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
+// }; // overrule default
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
 			this.oVM._getLocalId = function() {
 				return this.getId();
+			};
+			this.oModel.registerToModel = function() {
 			};
 
 			this.oVM.setModel(this.oModel, "$FlexVariants");
@@ -193,9 +195,6 @@ sap.ui.define([
 
 		onToggleErrorState: function(oEvent) {
 			this.oVM.setInErrorState(!this.oVM.getInErrorState());
-		},
-		onToggleShowShareBtn: function(oEvent) {
-			this.oVM.setShowShare(!this.oVM.getShowShare());
 		},
 		onToggleShowExeOnSeltBtn: function(oEvent) {
 			this.oVM.setShowExecuteOnSelection(!this.oVM.getShowExecuteOnSelection());
