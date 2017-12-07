@@ -7,6 +7,20 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * Returns a SyncPromise wrapping the given promise <code>oPromise</code>, or
+	 * <code>oPromise</code> if it is already a SyncPromise, or fulfilling with the given result.
+	 * Note that "thenables" are not supported!
+	 *
+	 * @param {Promise|SyncPromise|any} [oPromise]
+	 *   The promise to wrap or the result to synchronously fulfill with
+	 * @returns {SyncPromise}
+	 *   The SyncPromise
+	 */
+	function resolve(oPromise) {
+		return oPromise instanceof SyncPromise ? oPromise : new SyncPromise(oPromise);
+	}
+
+	/**
 	 * Constructor for a SyncPromise to wrap the given promise in order to observe settlement and
 	 * provide synchronous access to the result.
 	 *
@@ -97,16 +111,6 @@ sap.ui.define([
 		}
 
 		/**
-		 * @param {function} [fnOnRejected]
-		 *   Callback function if this SyncPromise is rejected
-		 * @returns {SyncPromise}
-		 *   A new SyncPromise
-		 */
-		this.catch = function (fnOnRejected) {
-			return this.then(undefined, fnOnRejected);
-		};
-
-		/**
 		 * @returns {any}
 		 *   The result in case this SyncPromise is already fulfilled or <code>this</code> if it is
 		 *   still pending
@@ -121,14 +125,6 @@ sap.ui.define([
 		 */
 		this.isFulfilled = function () {
 			return bFulfilled;
-		};
-
-		/**
-		 * @returns {boolean}
-		 *   Whether this SyncPromise is still pending
-		 */
-		this.isPending = function () {
-			return vResult === this;
 		};
 
 		/**
@@ -157,35 +153,39 @@ sap.ui.define([
 			}
 			return new SyncPromise(oPromise.then(fnOnFulfilled, fnOnRejected));
 		};
-
-		/**
-		 * Returns a string representation of this SyncPromise.
-		 * If this SyncPromise is resolved a String representation of the result is returned,
-		 * if it is rejected a String representation of the error is returned.
-		 *
-		 * @return {string} A string description of this SyncPromise
-		 */
-		this.toString = function () {
-			if (this.isPending()) {
-				return "SyncPromise: pending";
-			}
-			return String(this.getResult());
-		};
 	}
 
 	/**
-	 * Returns a SyncPromise wrapping the given promise <code>oPromise</code>, or
-	 * <code>oPromise</code> if it is already a SyncPromise, or fulfilling with the given result.
-	 * Note that "thenables" are not supported!
-	 *
-	 * @param {Promise|SyncPromise|any} [oPromise]
-	 *   The promise to wrap or the result to synchronously fulfill with
+	 * @param {function} [fnOnRejected]
+	 *   Callback function if this SyncPromise is rejected
 	 * @returns {SyncPromise}
-	 *   The SyncPromise
+	 *   A new SyncPromise
 	 */
-	function resolve(oPromise) {
-		return oPromise instanceof SyncPromise ? oPromise : new SyncPromise(oPromise);
-	}
+	SyncPromise.prototype.catch = function (fnOnRejected) {
+		return this.then(undefined, fnOnRejected);
+	};
+
+	/**
+	 * @returns {boolean}
+	 *   Whether this SyncPromise is still pending
+	 */
+	SyncPromise.prototype.isPending = function () {
+		return this.getResult() === this;
+	};
+
+	/**
+	 * Returns a string representation of this SyncPromise.
+	 * If this SyncPromise is resolved a String representation of the result is returned,
+	 * if it is rejected a String representation of the error is returned.
+	 *
+	 * @return {string} A string description of this SyncPromise
+	 */
+	SyncPromise.prototype.toString = function () {
+		if (this.isPending()) {
+			return "SyncPromise: pending";
+		}
+		return String(this.getResult());
+	};
 
 	return {
 		/**
