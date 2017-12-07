@@ -1612,24 +1612,28 @@
 		assert.equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
 		assert.equal(oFormat.format(1234567890123), "1,23\xa0Bio.", "1234567890123 formatted");
 
+	});
 
-		// this test checks Spanish million parsing "mil" ("M") is included in Spanish "milones" ("MRD")
+	QUnit.test("float short style (non-prefix-free unit strings)", function(assert) {
+		// this test checks number parsing when one unit is a prefix of another unit
+		// (e.g Spanish 'mil' for thousands and 'mil M' for thousands of millions)
 		var oLocaleSpanish = new sap.ui.core.Locale("es-ES");
 		var oFormatSpanish = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short", maxFractionDigits: 0
 		}, oLocaleSpanish);
 
+		assert.equal(oFormatSpanish.format(123000000000), "123\xa0mil\xa0M", "123000000000 formatted");
+		assert.equal(oFormatSpanish.format( 12000000000),  "12\xa0mil\xa0M",  "12000000000 formatted");
+		assert.equal(oFormatSpanish.format(   123000000), "123\xa0M",           "123000000 formatted");
+		assert.equal(oFormatSpanish.format(      123000), "123\xa0mil",            "123000 formatted");
 
-		assert.equal(oFormatSpanish.format(123000000000), "123\xa0MRD" , "123000000000 formatted");
-		assert.equal(oFormatSpanish.format(12000000000), "12\xa0MRD", "12000000000 formatted");
-		assert.equal(oFormatSpanish.format(123000000), "123\xa0M", "123000000 formatted");
-
-		assert.equal(oFormatSpanish.parse("123 MRD"), 123000000000, "\"123 MRD\" parsed");
-		assert.equal(oFormatSpanish.parse("12 MRD"), 12000000000, "\"12 MRD\" parsed");
-		assert.equal(oFormatSpanish.parse("123 M"), 123000000, "\"123 M\" parsed");
+		assert.equal(oFormatSpanish.parse("123 mil M"), 123000000000, "\"123 mil M\" parsed");
+		assert.equal(oFormatSpanish.parse( "12 mil M"),  12000000000,  "\"12 mil M\" parsed");
+		assert.equal(oFormatSpanish.parse("123 M"),        123000000, "\"123 M\" parsed");
+		assert.equal(oFormatSpanish.parse("123 mil"),         123000, "\"123 mil\" parsed");
 	});
 
-	QUnit.test("float short style", function(assert) {
+	QUnit.test("float short style w/ decimals", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short",
 			decimals: 2,
