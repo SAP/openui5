@@ -574,7 +574,81 @@
 		assert.equal(b1.$("inner").attr("tabindex"), "-1", "Button(inner) should have negative tabindex when requested via _bExcludeFromTabChain");
 	});
 
+	QUnit.test("Enter event should fire press on keydown", function(assert) {
+		// System under Test
+		var pressSpy = this.spy();
+			oButton = new sap.m.Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
 
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("Enter event should not fire press on keyup", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oButton = new sap.m.Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("Space event should not fire press on keydown", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oButton = new sap.m.Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("Space event should fire press on keyup", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oButton = new sap.m.Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
+
+		// Cleanup
+		oButton.destroy();
+	});
 
 </script>
 
