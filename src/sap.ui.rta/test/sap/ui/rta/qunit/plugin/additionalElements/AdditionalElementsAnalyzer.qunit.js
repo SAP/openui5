@@ -641,19 +641,6 @@ function(
 		});
 	});
 
-	QUnit.test("when getting unbound elements for the table with a not absolutely bound aggregation", function(assert) {
-		var oActionObject = {
-			action : {
-				aggregation: "columns"
-			},
-			relevantContainer: this.oTable
-		};
-
-		return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
-			assert.equal(aAdditionalElements.length, 10, "then the correct amount of ODataProperties has been returned");
-		});
-	});
-
 	function assertElementsEqual(mActualAdditionalElement, mExpected, msg, assert) {
 		assert.equal(mActualAdditionalElement.selected, mExpected.selected, msg + " -selected");
 		assert.equal(mActualAdditionalElement.label, mExpected.label, msg + " -label");
