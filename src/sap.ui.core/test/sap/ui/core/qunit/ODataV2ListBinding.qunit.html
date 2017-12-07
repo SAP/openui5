@@ -111,6 +111,232 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		});
 	});
 
+	QUnit.test("Sorted ListBinding, property of previously excluded category changes => change should be detected & sorting re-applied", function(assert){
+		var done = assert.async();
+		var getContextPaths = function(oBinding) {
+			return oBinding.getContexts().map(function(oContext) {
+				return oContext.getPath();
+			});
+		};
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindList("/Categories", null, [], [], {
+				operationMode: "Client"
+			});
+
+			var filterChangeHandler = function() {
+				assert.equal(oBinding.getLength(), 8, "length of items");
+
+				var aPaths = getContextPaths(oBinding);
+				assert.deepEqual(aPaths, [
+					"/Categories(2)",
+					"/Categories(3)",
+					"/Categories(4)",
+					"/Categories(5)",
+					"/Categories(6)",
+					"/Categories(7)",
+					"/Categories(1)",
+					"/Categories(8)"], "After modification sort order is different");
+
+				oBinding.detachChange(filterChangeHandler);
+				done(); // resume normal testing
+			};
+
+			var handler = function() {
+				oBinding.detachChange(handler);
+
+				oBinding.sort([new sap.ui.model.Sorter("CategoryName", false)]);
+
+
+				var aPaths = getContextPaths(oBinding);
+				assert.deepEqual(aPaths, [
+					"/Categories(1)",
+					"/Categories(2)",
+					"/Categories(3)",
+					"/Categories(4)",
+					"/Categories(5)",
+					"/Categories(6)",
+					"/Categories(7)",
+					"/Categories(8)"], "Sorted by Name");
+				// Sorted in order
+				oBinding.attachChange(filterChangeHandler);
+				oBinding.getModel().setProperty("/Categories(1)/CategoryName", "Seafood");
+				// Now items should be ordered differently
+			};
+
+
+
+			oBinding.attachRefresh(function() {
+				oBinding.getContexts();
+			});
+			oBinding.attachChange(handler);
+			oBinding.initialize();
+			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		});
+	});
+
+	QUnit.test("Filtered ListBinding, property of previously excluded category changes => change should be detected & filter re-applied", function(assert){
+		var done = assert.async();
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindList("/Categories", null, [], [], {
+				operationMode: "Client"
+			});
+
+			var filterChangeHandler = function() {
+				assert.equal(oBinding.getLength(), 2, "length of items");
+				assert.equal(oBinding.getContexts()[0].getPath(), "/Categories(1)", "ListBinding context");
+				assert.equal(oBinding.getContexts()[1].getPath(), "/Categories(8)", "ListBinding context");
+
+				oBinding.detachChange(filterChangeHandler);
+				done(); // resume normal testing
+			};
+
+			var handler = function() {
+				oBinding.detachChange(handler);
+
+				oBinding.filter([new sap.ui.model.Filter({
+					path: "CategoryName",
+					operator: "EQ",
+					value1: "Seafood"
+				})]);
+
+				// Only Categories(8) matches
+				oBinding.attachChange(filterChangeHandler);
+				oBinding.getModel().setProperty("/Categories(1)/CategoryName", "Seafood");
+				// Now Categories(8) and Categories(0) match
+			};
+
+
+
+			oBinding.attachRefresh(function() {
+				oBinding.getContexts();
+			});
+			oBinding.attachChange(handler);
+			oBinding.initialize();
+			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		});
+	});
+
+	QUnit.test("Filtered ListBinding, property of previously included category changes => change should be detected & filter re-applied", function(assert){
+		var done = assert.async();
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindList("/Categories", null, [], [], {
+				operationMode: "Client"
+			});
+			var handler = function() {
+				oBinding.detachChange(handler);
+				oBinding.filter([new sap.ui.model.Filter({
+					path: "CategoryName",
+					operator: "EQ",
+					value1: "Seafood"
+				})]);
+				// Only Categories(8) matches
+
+				oBinding.attachChange(filterChangeHandler);
+				oBinding.getModel().setProperty("/Categories(8)/CategoryName", "Other");
+				// Now nothing matches
+			};
+
+			var filterChangeHandler = function() {
+				assert.equal(oBinding.getLength(), 0, "length of items");
+
+				oBinding.detachChange(filterChangeHandler);
+				done(); // resume normal testing
+			};
+
+			oBinding.attachRefresh(function() {
+				oBinding.getContexts();
+			});
+			oBinding.attachChange(handler);
+			oBinding.initialize();
+			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		});
+	});
+
+	QUnit.test("Filtered Expanded ListBinding, property of previously included category changes => change should be detected & filter re-applied", function(assert){
+		var done = assert.async();
+		oModel.metadataLoaded().then(function(){
+			oModel.createBindingContext("/Categories(7)", {
+				expand: "Products"
+			}, function (oContext) {
+				var oBinding = oModel.bindList("Products", oContext, [], [], {
+					operationMode: "Client"
+				});
+				var handler = function() {
+					oBinding.detachChange(handler);
+
+					oBinding.filter([new sap.ui.model.Filter({
+						path: "ProductName",
+						operator: "EQ",
+						value1: "Tofu"
+					})]);
+					// Only Products(14) matches
+
+					oBinding.attachChange(filterChangeHandler);
+
+					oBinding.getModel().setProperty("/Products(14)/ProductName", "Other");
+					// Now nothing matches
+				};
+
+				var filterChangeHandler = function() {
+					assert.equal(oBinding.getLength(), 0, "length of items");
+
+					oBinding.detachChange(filterChangeHandler);
+					done(); // resume normal testing
+				};
+
+				oBinding.attachRefresh(function() {
+					oBinding.getContexts();
+				});
+				oBinding.attachChange(handler);
+				oBinding.initialize();
+				// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+			});
+		});
+
+	});
+
+	QUnit.test("Filtered Expanded ListBinding, property of previously excluded category changes => change should be detected & filter re-applied", function(assert){
+		var done = assert.async();
+		oModel.metadataLoaded().then(function(){
+			oModel.createBindingContext("/Categories(7)", {
+				expand: "Products"
+			}, function (oContext) {
+				var oBinding = oModel.bindList("Products", oContext, [], [], {
+					operationMode: "Client"
+				});
+				var handler = function() {
+					oBinding.detachChange(handler);
+					oBinding.filter([new sap.ui.model.Filter({
+						path: "ProductName",
+						operator: "EQ",
+						value1: "Tofu"
+					})]);
+					// Only Products(14) matches
+
+					oBinding.attachChange(filterChangeHandler);
+					oBinding.getModel().setProperty("/Products(7)/ProductName", "Tofu");
+					// Now Products(14) and Products(7) match
+				}
+
+				var filterChangeHandler = function() {
+					assert.equal(oBinding.getLength(), 2, "length of items");
+					assert.equal(oBinding.getContexts()[0].getPath(), "/Products(7)", "ListBinding context");
+					assert.equal(oBinding.getContexts()[1].getPath(), "/Products(14)", "ListBinding context");
+
+					oBinding.detachChange(filterChangeHandler);
+					done(); // resume normal testing
+				}
+
+				oBinding.attachRefresh(function() {
+					oBinding.getContexts();
+				});
+				oBinding.attachChange(handler);
+				oBinding.initialize();
+				// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+			});
+		});
+	});
+
 	// TODO: Find out why this fails in PhantomJS and rewrite test
 	if (!sap.ui.Device.browser.phantomJS) {
 		QUnit.test("ListBinding getCurrentContexts", function(assert){
