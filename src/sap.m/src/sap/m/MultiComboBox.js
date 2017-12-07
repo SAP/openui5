@@ -326,7 +326,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './Com
 				this._selectItemByKey(oEvent);
 			} else {
 				this._showWrongValueVisualEffect();
-				this.setValue(null);
 			}
 		}
 	};
@@ -342,14 +341,18 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './Com
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapfocusleave = function(oEvent) {
-		var oPicker = this.getAggregation("picker");
-		var bTablet = this.isPlatformTablet();
-		var oControl = sap.ui.getCore().byId(oEvent.relatedControlId);
-		var oFocusDomRef = oControl && oControl.getFocusDomRef();
+		var oPicker = this.getAggregation("picker"),
+			bTablet = this.isPlatformTablet(),
+			oControl = sap.ui.getCore().byId(oEvent.relatedControlId),
+			oFocusDomRef = oControl && oControl.getFocusDomRef(),
+			sOldValue = this.getValue();
 
 		// If focus target is outside of picker
 		if (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef)) {
+
 			this.setValue(null);
+			this.fireChangeEvent("", { value: sOldValue });
+
 			// If focus is outside of the MultiComboBox
 			if (!(oControl instanceof sap.m.Token)) {
 				this._oTokenizer.scrollToEnd();
