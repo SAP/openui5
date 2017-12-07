@@ -519,9 +519,11 @@ function runODataMessagesTests() {
 			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
 			// Use processor to get new messages
 			var aNewMessages = [];
+			var aOldMessages = [];
 			oParser.setProcessor({
 				fireMessageChange: function(oObj) {
 					aNewMessages = oObj.newMessages;
+					aOldMessages = oObj.oldMessages;
 				}
 			});
 
@@ -543,9 +545,25 @@ function runODataMessagesTests() {
 
 			var oResponseHeaderSapMessageObject = {
 				"odata.error": {
-					"details": []
+					"details": [],
+					"code":		"999"
 				},
-				"code":		"999",
+				"message":	"resource created but error occurred",
+				"severity":	"error",
+				"details": []
+			};
+
+			var oRequest2 = {
+				method: "POST",
+				key: "Products(1)",
+				created: true
+			};
+
+			var oResponseHeaderSapMessageObject2 = {
+				"odata.error": {
+					"details": [],
+					"code":		"888"
+				},
 				"message":	"resource created but error occurred",
 				"severity":	"error",
 				"details": []
@@ -563,6 +581,25 @@ function runODataMessagesTests() {
 			assert.equal(aNewMessages.length, 1);
 			assert.equal(aNewMessages[0].target, "/Products(1)/", "target is read from the provided key");
 
+
+			//request uri:          fakeservice://testdata/odata/northwind/Products
+			oRequest.created = false;
+
+			oParser.parse(oResponse, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products", "target is parsed from the requestUri");
+
+			oRequest2.requestUri = sServiceURI + "/Products";
+			oResponse.body = JSON.stringify(oResponseHeaderSapMessageObject2);
+			oParser.parse(oResponse, oRequest2);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products(1)/", "target is read from the provided key");
+			assert.equal(aNewMessages[0].code, "888", "target is read from the provided key");
+			assert.equal(aOldMessages.length, 1);
+			assert.equal(aOldMessages[0].target, "/Products(1)/", "target is read from the provided key");
+			assert.equal(aOldMessages[0].code, "999", "target is read from the provided key");
 
 			//request uri:          fakeservice://testdata/odata/northwind/Products
 			oRequest.created = false;
