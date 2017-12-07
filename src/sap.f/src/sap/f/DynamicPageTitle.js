@@ -293,6 +293,7 @@ sap.ui.define([
 
 	DynamicPageTitle.prototype.onBeforeRendering = function () {
 		this._getActionsToolbar();
+		this._observeControl(this.getBreadcrumbs());
 	};
 
 	DynamicPageTitle.prototype.onAfterRendering = function () {
@@ -457,7 +458,7 @@ sap.ui.define([
 			DynamicPageTitle.prototype[sMethod] = function (oControl) {
 				var oToolbar = this._getNavigationActionsToolbar(),
 					sToolbarMethod = sMethod.replace(/NavigationActions?/, "Content"),
-					bSeparatorVisibilityUpdateNeeded = true,
+					bTopAreaVisibilityUpdateNeeded = true,
 					vResult;
 
 				if (sMethod === "addNavigationAction" || sMethod === "insertNavigationAction") {
@@ -473,12 +474,12 @@ sap.ui.define([
 					oToolbar[sToolbarMethod].apply(oToolbar, arguments);
 					vResult = this;
 				} else if (sMethod === "getNavigationActions") {
-					bSeparatorVisibilityUpdateNeeded = false;
+					bTopAreaVisibilityUpdateNeeded = false;
 				}
 
 				vResult = vResult || oToolbar[sToolbarMethod].apply(oToolbar, arguments);
 
-				bSeparatorVisibilityUpdateNeeded && this._updateSeparatorVisibility();
+				bTopAreaVisibilityUpdateNeeded && this._updateTopAreaVisibility();
 
 				return vResult;
 			};
@@ -561,7 +562,7 @@ sap.ui.define([
 			return;
 		}
 
-		this._observeAction(oAction);
+		this._observeControl(oAction);
 
 		oAction._fnOriginalGetParent = oAction.getParent;
 		oAction.getParent = this._fnActionSubstituteParentFunction;
@@ -581,7 +582,7 @@ sap.ui.define([
 			return;
 		}
 
-		this._unobserveAction(oAction);
+		this._unobserveControl(oAction);
 
 		// The runtime adaptation tipically removes and then adds aggregations multiple times.
 		// That is why we need to make sure that the controls are in their previous state
@@ -598,7 +599,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl
 	 * @private
 	 */
-	DynamicPageTitle.prototype._observeAction = function(oControl) {
+	DynamicPageTitle.prototype._observeControl = function(oControl) {
 		this._oObserver.observe(oControl, {
 			properties: ["visible"]
 		});
@@ -609,7 +610,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl
 	 * @private
 	 */
-	DynamicPageTitle.prototype._unobserveAction = function(oControl) {
+	DynamicPageTitle.prototype._unobserveControl = function(oControl) {
 		this._oObserver.unobserve(oControl, {
 			properties: ["visible"]
 		});
@@ -634,7 +635,7 @@ sap.ui.define([
 		}
 
 		oNavigationActionsBar = this._getNavigationActionsToolbar();
-		bRenderNavigationActionsInTopArea = this._shouldRenderActionsInTopArea();
+		bRenderNavigationActionsInTopArea = this._shouldRenderNavigationActionsInTopArea();
 
 		if (bRenderNavigationActionsInTopArea) {
 			oNavigationActionsContainerDOM = this.$topNavigationActionsArea[0]; // Element should be rendered and cached already.
@@ -649,28 +650,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Toggles navigation actions placement change if certain preconditions are met.
+	 *
+	 * @param {Number} iCurrentWidth
+	 * @private
+	 */
+	DynamicPageTitle.prototype._updateTopAreaVisibility = function (iCurrentWidth) {
+		var bNavigationActionsAreInTopArea = this._areNavigationActionsInTopArea(),
+			bNavigationActionsShouldBeInTopArea = this._shouldRenderNavigationActionsInTopArea(iCurrentWidth),
+			bHasVisibleBreadcrumbs = this.getBreadcrumbs() && this.getBreadcrumbs().getVisible(),
+			bShoudShowTopArea = bHasVisibleBreadcrumbs || bNavigationActionsShouldBeInTopArea,
+			bShouldChangeNavigationActionsPlacement = this.getNavigationActions().length > 0 && (bNavigationActionsShouldBeInTopArea ^ bNavigationActionsAreInTopArea);
+
+		this._toggleTopAreaVisibility(bShoudShowTopArea);
+
+		if (bShouldChangeNavigationActionsPlacement) {
+			this._toggleNavigationActionsPlacement(bNavigationActionsShouldBeInTopArea);
+		} else {
+			this._updateSeparatorVisibility();
+		}
+	};
+
+	/**
 	 * Handles control re-sizing.
 	 * <b>Note:</b> The method is called by the parent <code>DynamicPage</code>.
 	 * @param {Number} iCurrentWidth
 	 * @private
 	 */
 	DynamicPageTitle.prototype._onResize = function (iCurrentWidth) {
-		var bNavigationActionsShouldBeInTopArea,
-			bNavigationActionsAreInTopArea,
-			bShouldChangeNavigationActionsPlacement;
-
-		if (this.getNavigationActions().length === 0) {
-			return;
-		}
-
-		bNavigationActionsShouldBeInTopArea = iCurrentWidth < DynamicPageTitle.NAV_ACTIONS_PLACEMENT_BREAK_POINT;
-		bNavigationActionsAreInTopArea = this._areNavigationActionsInTopArea();
-		// expression evaluates to true, when we have 'false' and 'true' or 'true' and 'false'.
-		bShouldChangeNavigationActionsPlacement = bNavigationActionsShouldBeInTopArea ^ bNavigationActionsAreInTopArea;
-
-		if (bShouldChangeNavigationActionsPlacement) {
-			this._toggleNavigationActionsPlacement(bNavigationActionsShouldBeInTopArea);
-		}
+		this._updateTopAreaVisibility(iCurrentWidth);
 	};
 
 	/**
@@ -724,6 +732,18 @@ sap.ui.define([
 	DynamicPageTitle.prototype._updateSeparatorVisibility = function() {
 		if (this.getDomRef()) {
 			this._getToolbarSeparator().toggleStyleClass("sapUiHidden", !this._shouldShowSeparator());
+		}
+	};
+
+	/**
+	 * Updates the top title area visibility.
+	 *
+	 * @param {Boolean} bShoudShowTopArea
+	 * @private
+	 */
+	DynamicPageTitle.prototype._toggleTopAreaVisibility = function(bShoudShowTopArea) {
+		if (this.getDomRef()) {
+			this.$("top").toggleClass("sapUiHidden", !bShoudShowTopArea);
 		}
 	};
 
@@ -783,11 +803,24 @@ sap.ui.define([
 
 	/**
 	 * Determines if the <code>navigationActions</code> should be rendered in the top area.
+	 * @param {Number} iCurrentWidth
 	 * @returns {Boolean}
 	 * @private
 	 */
-	DynamicPageTitle.prototype._shouldRenderActionsInTopArea = function () {
-		return this._getWidth() < DynamicPageTitle.NAV_ACTIONS_PLACEMENT_BREAK_POINT;
+	DynamicPageTitle.prototype._shouldRenderNavigationActionsInTopArea = function (iCurrentWidth) {
+		var iWidth,
+			bHasVisibleActions,
+			bHasVisibleBreadcrumbs;
+
+		if (this.getNavigationActions().length === 0) {
+			return false;
+		}
+
+		iWidth = iCurrentWidth ? iCurrentWidth : this._getWidth();
+		bHasVisibleActions = this._getVisibleActions().length > 0;
+		bHasVisibleBreadcrumbs = this.getBreadcrumbs() && this.getBreadcrumbs().getVisible();
+
+		return iWidth < DynamicPageTitle.NAV_ACTIONS_PLACEMENT_BREAK_POINT && (bHasVisibleBreadcrumbs || bHasVisibleActions);
 	};
 
 	/* ========== DynamicPageTitle expand and snapped content ========== */
@@ -995,7 +1028,7 @@ sap.ui.define([
 			}
 
 		} else if (sChangeName === "visible") { // change of the actions or navigationActions elements` visibility
-			this._updateSeparatorVisibility();
+			this._updateTopAreaVisibility();
 		}
 	};
 
@@ -1005,8 +1038,8 @@ sap.ui.define([
 	* @private
 	*/
 	DynamicPageTitle.prototype._observeContentChanges = function (oChanges) {
-			var oControl = oChanges.child,
-				sMutation = oChanges.mutation;
+		var oControl = oChanges.child,
+			sMutation = oChanges.mutation;
 
 		// Only overflow toolbar is supported as of now
 		if (!(oControl instanceof OverflowToolbar)) {
