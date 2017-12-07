@@ -443,7 +443,8 @@
 			var oModel = oElement.getModel();
 			var mRevealData = mActions.reveal;
 			var mAddODataProperty = mActions.addODataProperty;
-			var sAggregationName = mActions.aggregation;
+			var oDefaultAggregation = oElement.getMetadata().getAggregation();
+			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mActions.aggregation;
 
 			return Promise.resolve()
 				.then(function () {
@@ -481,7 +482,6 @@
 							}
 						} else if (
 							oInvisibleElement.getParent()
-							&& _getBindingPath(oInvisibleElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)
 							&& BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0
 						) {
 							bIncludeElement = false;
@@ -510,7 +510,8 @@
 		 * @return {Promise} - returns a Promise which resolves with a list of available to display OData properties
 		 */
 		getUnboundODataProperties: function (oElement, mAction) {
-			var sAggregationName = mAction.action.aggregation;
+			var oDefaultAggregation = oElement.getMetadata().getAggregation();
+			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mAction.action.aggregation;
 			var oModel = oElement.getModel();
 
 			return Promise.resolve()
