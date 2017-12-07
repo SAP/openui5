@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Link.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/library', 'sap/ui/Device'],
-	function(library, Control, InvisibleText, EnabledPropagator, coreLibrary, Device) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(jQuery, library, Control, InvisibleText, EnabledPropagator, coreLibrary, Device) {
 	"use strict";
 
 
@@ -167,20 +167,30 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 	 * @param {jQuery.Event} oEvent The SPACE keyboard key event object
 	 */
 	Link.prototype.onsapspace = function(oEvent) {
-		this._handlePress(oEvent); // this calls any JS event handlers
-		// _handlePress() checks the return value of the event handler and prevents default if required or of the Link is disabled
-		if (this.getHref() && !oEvent.isDefaultPrevented()) {
-			// Normal browser link, the browser does the job. According to the keyboard spec, Space should do the same as Enter/Click.
-			// To make the browser REALLY do the same (history, referrer, frames, target,...), create a new "click" event and let the browser "do the needful".
-
-			// first disarm the Space key event
-			oEvent.preventDefault(); // prevent any scrolling which the browser might do because from its perspective the Link does not handle the "space" key
+		if (this.getEnabled() || this.getHref()) {
+			// mark the event for components that needs to know if the event was handled by the link
 			oEvent.setMarked();
+			oEvent.preventDefault();
+		}
+	};
 
-			// then create the click event
-			var oClickEvent = document.createEvent('MouseEvents');
-			oClickEvent.initEvent('click' /* event type */, false, true); // non-bubbling, cancelable
-			this.getDomRef().dispatchEvent(oClickEvent);
+	Link.prototype.onkeyup = function (oEvent) {
+		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+			this._handlePress(oEvent);
+
+			if (this.getHref() && !oEvent.isDefaultPrevented()) {
+				// Normal browser link, the browser does the job. According to the keyboard spec, space should fire press event on keyup.
+				// To make the browser REALLY do the same (history, referrer, frames, target,...), create a new "click" event and let the browser "do the needful".
+
+				// first disarm the Space key event
+				oEvent.preventDefault(); // prevent any scrolling which the browser might do because from its perspective the Link does not handle the "space" key
+				oEvent.setMarked();
+
+				// then create the click event
+				var oClickEvent = document.createEvent('MouseEvents');
+				oClickEvent.initEvent('click' /* event type */, false, true); // non-bubbling, cancelable
+				this.getDomRef().dispatchEvent(oClickEvent);
+			}
 		}
 	};
 
