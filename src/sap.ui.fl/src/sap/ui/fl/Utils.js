@@ -35,7 +35,7 @@ sap.ui.define([
 		_sTopLayer : aLayers[aLayers.length - 1],
 		_sMaxLayer : aLayers[aLayers.length - 1],
 		DEFAULT_APP_VERSION : "DEFAULT_APP_VERSION",
-		APP_ID_AT_DESIGN_TIME : "${project.artifactId}",
+		APP_ID_AT_DESIGN_TIME : "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
 		/**
 		 * log object exposes available log functions
 		 *
