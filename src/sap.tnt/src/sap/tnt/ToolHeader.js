@@ -58,8 +58,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 			OverflowToolbar.prototype.init.apply(this, arguments);
 
 			this.addStyleClass('sapTntToolHeader sapContrast sapContrastPlus');
-
-			this.setHTMLTag(sap.m.IBarHTMLTag.Header);
 		};
 
 		/**
