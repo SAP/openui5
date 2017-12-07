@@ -63,7 +63,7 @@ sap.ui.define([],
 	*/
 	validateRuleCollection: function(aEnum, oEnumComparison) {
 
-		if (aEnum || Array.isArray(aEnum) || aEnum.length) {
+		if (aEnum && Array.isArray(aEnum) && aEnum.length) {
 
 			for (var i = 0; i < aEnum.length; i++) {
 
