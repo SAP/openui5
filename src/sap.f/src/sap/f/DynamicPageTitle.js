@@ -78,7 +78,7 @@ sap.ui.define([
 				* @since 1.50
 				* @deprecated Since version 1.54. Please use the <code>areaShrinkRatio</code> property instead.
 				* The value of <code>areaShrinkRatio</code> must be set in <code>Heading:Content:Actions</code> format
-				* where Heading, Content and Actions are numbers greater than or equal to 1. The greater value a
+				* where Heading, Content and Actions are numbers greater than or equal to 0. The greater value a
 				* section has the faster it shrinks when the screen size is being reduced.
 				*
 				* <code>primaryArea=Begin</code> can be achieved by setting a low number for the Heading area to
@@ -94,13 +94,13 @@ sap.ui.define([
 				 * The greater value a section has the faster it shrinks when the screen size is being reduced.
 				 *
 				 * The value must be set in <code>Heading:Content:Actions</code> format where Title, Content and Actions
-				 * are numbers greater than or equal to 1.
+				 * are numbers greater than or equal to 0. If set to 0, the respective area will not shrink.
 				 *
 				 * For example, if <code>2:7:1</code> is set, the Content area will shrink seven times faster than
 				 * the Actions area. So, when all three areas have width of 500px and the available space is reduced by 100px
 				 * the Title area will reduced by 20px, the Content area - by 70px and the Actions area - by 10px.
 				 *
-				 * If none of the areas is assigned a number of 1, the numbers are scaled so that at least one of them
+				 * If all the areas have assigned values greater than 1, the numbers are scaled so that at least one of them
 				 * is equal to 1. For example, value of <code>2:4:8</code> is equal to <code>1:2:4</code>.
 				 *
 				 * <Note:> When this property is set the <code>primaryArea</code> property has no effect.

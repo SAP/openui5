@@ -546,6 +546,19 @@
 		assert.equal(oDynamicPageTitle.getPrimaryArea(), sBeginArea, "is the default one");
 	});
 
+	QUnit.test("test areaShrinkRatio", function (assert) {
+		var oDynamicPageTitle = this.oDynamicPageTitle;
+
+		// Assert default: Heading:Content:Actions - "1:1.6:1.6"
+		assert.equal(oDynamicPageTitle.getAreaShrinkRatio(), "1:1.6:1.6", "is the default one");
+
+		// Act
+		oDynamicPageTitle.setAreaShrinkRatio("0:0:0");
+
+		// Assert
+		assert.equal(oDynamicPageTitle.getAreaShrinkRatio(), "0:0:0", "shrink factors are correct");
+	});
+
 	QUnit.test("Adding an OverflowToolbar to the content sets flex-basis and removing it resets it", function (assert) {
 		var oToolbar = oFactory.getOverflowToolbar();
 
