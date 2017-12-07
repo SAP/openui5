@@ -630,7 +630,7 @@ sap.ui.define([
 
 			if (aLibNames.length > 0) {
 				CommunicationBus.publish(channelNames.LOAD_RULESETS, {
-					aLibNames: {publicRules: aLibNames, customRules: aLibNames}
+					aLibNames: {publicRules: aLibNames, internalRules: aLibNames}
 				});
 				this.model.setProperty("/loadingAdditionalRuleSets", true);
 			} else {

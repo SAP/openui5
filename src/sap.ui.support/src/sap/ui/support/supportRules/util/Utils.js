@@ -12,17 +12,6 @@ sap.ui.define([],
 		var Utils = {
 
 			/**
-			 * Contains Applications version information.
-			 *
-			 * @public
-			 * @returns {object} result Returns Applications version information.
-			 */
-			getApplicationVersionInfo: function() {
-
-				return sap.ui.getVersionInfo();
-			},
-
-			/**
 			 * Checks the distribution of UI5 that the  Application is using
 			 *
 			 * @public
@@ -41,18 +30,6 @@ sap.ui.define([],
 				}
 
 				return bResult;
-			},
-
-			/**
-			 * Contains all loaded libraries for the application.
-			 *
-			 * @public
-			 * @returns {object} oloadedLibraries Loaded libraries in the current state of the application
-			 */
-			getLoadedLibraries: function() {
-				var oloadedLibraries = sap.ui.getCore().getLoadedLibraries();
-
-				return oloadedLibraries;
 			}
 		};
 
