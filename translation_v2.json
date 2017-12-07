@@ -10,6 +10,7 @@
             ],
             "excludedSourceFilters": [
                 "sap.ui.demokit/src/sap/ui/demokit/demoapps/i18n/i18n.properties",
+                "sap.ui.demokit/src/sap/ui/demokit/icex/i18n/i18n.properties",
                 "sap.ui.fl/src/sap/ui/fl/support/apps/contentbrowser/i18n/i18n.properties"
             ]
         }]
