@@ -1217,6 +1217,61 @@
 		oFFL.destroy();
 	});
 
+	QUnit.test("FacetFilter searchValue of the list is reset when FacetFilter _navFromFilterItemsPage is called", function (assert) {
+		// arrange
+		var oFF = new sap.m.FacetFilter(),
+			oFFL = new sap.m.FacetFilterList(),
+			oSearchSpy = this.spy(oFFL, "_search"),
+				restoreListFromDisplayContainerStub = this.stub(oFF, "_restoreListFromDisplayContainer", function () {
+					return oFFL;
+				}),
+			oNavContainer = {
+				getPages: function () { return [new sap.m.Page()] },
+				backToTop: function () {}
+			};
+		oFF._selectedFacetItem = { setCounter: function () {} };
+
+		// act
+		oFF._navFromFilterItemsPage(oNavContainer);
+
+		// assert
+		assert.ok(oSearchSpy.calledWith(""), "_search method is called with empty string when navigation out of list is performed");
+		assert.equal(oFFL._getSearchValue(), "", "Search value should be set correctly");
+
+		// cleanup
+		oSearchSpy.restore();
+		restoreListFromDisplayContainerStub.restore();
+		oFFL.destroy();
+	});
+
+	QUnit.test("FacetFilter searchValue of the list is reset when FacetFilter dialog is closed", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oFF = new sap.m.FacetFilter(),
+			oFFL = new sap.m.FacetFilterList();
+
+		oFF.addList(oFFL);
+
+		// act
+		oFF.openFilterDialog();
+		var oDialog = oFF.getAggregation("dialog"),
+			oNavContainer = oDialog.getContent()[0];
+
+		oFF._navToFilterItemsPage(oNavContainer.getPages()[0].getContent()[0].getItems()[0]);
+		oNavContainer.attachEventOnce("afterNavigate", function () {
+			oFF._closeDialog();
+		});
+
+		oDialog.attachEventOnce("afterClose", function () {
+			// assert
+			assert.equal(oFFL._getSearchValue(), "", "Search value should be set correctly");
+
+			// cleanup
+			oFFL.destroy();
+			done();
+		})
+	});
+
 
 	QUnit.test("FacetFilterList._updateSelectAllCheckBox", function(assert) {
 		var done = assert.async();
