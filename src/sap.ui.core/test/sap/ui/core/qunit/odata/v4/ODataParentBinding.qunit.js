@@ -1048,17 +1048,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		SyncPromise.reject({}),
-		SyncPromise.resolve({ // cache sent read request
+		SyncPromise.reject.bind(SyncPromise, {}),
+		SyncPromise.resolve.bind(SyncPromise, { // cache sent read request
 			bSentReadRequest : true,
 			setQueryOptions : function () {}
 		})
-	].forEach(function (oCachePromise, i) {
+	].forEach(function (fnCachePromise, i) {
 		QUnit.test("fetchIfChildCanUseCache, immutable cache, " + i, function (assert) {
 			var oMetaModel = {
 					fetchObject : function () {},
 					getMetaPath : function () {}
 				},
+				oCachePromise = fnCachePromise(),
 				oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : {},
 					oCachePromise : oCachePromise,
@@ -1101,6 +1102,7 @@ sap.ui.require([
 					assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 					assert.strictEqual(oBinding.oCachePromise.getResult(),
 						oCachePromise.getResult());
+					oCachePromise.catch(function () {}); // avoid "Uncaught (in promise)"
 				});
 			}
 		);

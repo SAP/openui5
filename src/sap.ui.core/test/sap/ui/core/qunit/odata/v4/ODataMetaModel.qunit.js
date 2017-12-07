@@ -577,7 +577,7 @@ sap.ui.require([
 			assert.strictEqual(oMetaModel[sGetMethodName].apply(oMetaModel, aArguments), undefined,
 				"pending");
 		}
-		return oRejectedPromise.catch(function () {
+		return oSyncPromise.catch(function () {
 			// get: rejected
 			if (bThrow) {
 				assert.throws(function () {
@@ -2327,6 +2327,7 @@ sap.ui.require([
 			assert.ok(oPromise.isRejected());
 			assert.strictEqual(oPromise.getResult().message,
 				oFixture.dataPath + ": " + oFixture.message);
+			oPromise.catch(function () {}); // avoid "Uncaught (in promise)"
 		});
 	});
 
