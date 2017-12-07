@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterType",
 	"sap/ui/model/json/JSONModel"
-], function (jQuery, Controller, XMLView, Filter, JSONModel) {
+], function (jQuery, Controller, XMLView, Filter, FilterType, JSONModel) {
 	"use strict";
 
 	var sStyle = '\
@@ -77,7 +78,7 @@ sap.ui.define([
 				});
 			}
 			oBinding = oTable.getBinding("rows");
-			oBinding.filter(oFilter);
+			oBinding.filter(oFilter, FilterType.Application);
 		},
 
 		onBeforeRendering : function () {
