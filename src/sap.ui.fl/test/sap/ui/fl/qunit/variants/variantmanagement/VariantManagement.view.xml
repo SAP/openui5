@@ -27,14 +27,12 @@
 				<m:Button id="idToggleShowAsDefaultBtn" text="toggle show Default"
 					press="onToggleShowAsDefaultBtn" />
 				<m:Button id="idToggleShowExeSelBtn" text="toggle show ExeSel"
-					press="onToggleShowExeOnSeltBtn" />
-				<m:Button id="idToggleShowShareBtn" text="toggle show Share"
-					press="onToggleShowShareBtn" />					
+					press="onToggleShowExeOnSeltBtn" />				
 			</m:HBox>
 		</m:VBox>
 		<m:Label text="Variants" />
 		<VariantManagement id="idVariantManagementCtrl"
 			for="idModelChangeBtn" save="onSave" manage="onManage"
-			showExecuteOnSelection="true" showShare="true" />
+			showExecuteOnSelection="true" />
 	</l:VerticalLayout>
 </mvc:View>

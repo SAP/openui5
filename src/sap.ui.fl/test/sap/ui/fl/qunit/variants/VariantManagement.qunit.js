@@ -335,11 +335,9 @@
 
 		this.oVariantManagement.oSaveAsDialog.destroy();
 		this.oVariantManagement.oSaveAsDialog = undefined;
-		this.oVariantManagement.oShare.destroy();
 		this.oVariantManagement.oExecuteOnSelect.destroy();
 
 		this.oVariantManagement.setShowExecuteOnSelection(true);
-		this.oVariantManagement.setShowShare(true);
 		this.oVariantManagement._createSaveAsDialog();
 
 		assert.ok(this.oVariantManagement.oSaveAsDialog);
@@ -349,7 +347,7 @@
 		oGrid = fGetGrid(this.oVariantManagement.oSaveAsDialog);
 		oGridContent = oGrid.getContent();
 		assert.ok(oGridContent);
-		assert.equal(oGridContent.length, 3);
+		assert.equal(oGridContent.length, 2);
 
 		assert.ok(!this.oVariantManagement.getManualVariantKey());
 		assert.ok(!this.oVariantManagement.oInputManualKey.getVisible());
@@ -415,37 +413,6 @@
 
 		this.oVariantManagement._handleVariantSave();
 		assert.ok(bCalled);
-	});
-
-	QUnit.test("Checking _handleVariantSave on shared variant", function(assert) {
-
-		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
-
-		var bCalled = false;
-		this.oVariantManagement.attachSave(function(oEvent) {
-			bCalled = true;
-		});
-
-		this.oVariantManagement._createSaveAsDialog();
-
-		assert.ok(this.oVariantManagement.oSaveAsDialog);
-		sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
-
-		this.oVariantManagement.setCurrentVariantKey("4");
-
-		this.oVariantManagement._assignTransport = function(oItem, fOK, fError) {
-			fOK("package", "transport");
-		};
-
-		assert.ok(!this.oVariantManagement.sPackage);
-		assert.ok(!this.oVariantManagement.sTransport);
-
-		this.oVariantManagement._handleVariantSave();
-		assert.ok(bCalled);
-
-		assert.equal(this.oVariantManagement.sPackage, "package");
-		assert.equal(this.oVariantManagement.sTransport, "transport");
-
 	});
 
 	QUnit.test("Checking openManagementDialog", function(assert) {
@@ -709,74 +676,6 @@
 
 		this.oVariantManagement._setFavoriteIcon(oIcon, false);
 		assert.equal(oIcon.getSrc(), "sap-icon://unfavorite");
-
-	});
-
-	QUnit.test("Checking _assignTransport", function(assert) {
-		var oEvent = {
-			params: {
-				selectedPackage: "package",
-				selectedTransport: "transport"
-
-			},
-			getParameters: function() {
-				return this.params;
-			}
-		};
-
-		var fStub = function(obj, fOk, fError, bCompact) {
-			fOk(oEvent);
-		};
-
-		sinon.stub(this.oVariantManagement, "_selectTransport", fStub);
-
-		var sPackage, sTransport, oErrorResult = null;
-
-		var oItem = {
-			key: "1",
-			lifecyclePackage: "package0",
-			lifecycleTransportId: "transport0",
-			namespace: "ns"
-		};
-		var fOK = function(sPak, sTrans) {
-			sPackage = sPak;
-			sTransport = sTrans;
-		};
-		var fError = function(oObj) {
-			oErrorResult = oObj;
-		};
-
-		this.oVariantManagement._assignTransport(oItem, fOK, fError);
-		assert.equal(sPackage, "package0");
-		assert.equal(sTransport, "transport0");
-
-		this.oVariantManagement._assignTransport(null, fOK, fError);
-		assert.equal(sPackage, "package");
-		assert.equal(sTransport, "transport");
-		assert.ok(!oErrorResult); // not yet tested
-
-	});
-
-	QUnit.test("Checking _handleShareSelected", function(assert) {
-		var oEvent = {
-			params: {
-				selected: true,
-				selectedPackage: "package",
-				selectedTransport: "transport"
-			},
-			getParameters: function() {
-				return this.params;
-			}
-		};
-
-		var fStub = function(obj, fOk, fError) {
-			fOk(oEvent);
-		};
-
-		sinon.stub(this.oVariantManagement, "_selectTransport", fStub);
-		this.oVariantManagement._handleShareSelected(oEvent);
-		assert.equal(this.oVariantManagement.sPackage, "package");
-		assert.equal(this.oVariantManagement.sTransport, "transport");
 
 	});
 
