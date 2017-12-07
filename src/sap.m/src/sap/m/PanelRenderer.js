@@ -137,6 +137,9 @@ sap.ui.define(["sap/m/library"],
 		}
 
 		oRm.writeClasses();
+		// ensure that the content is not included in the tab chain
+		// this happens in FF, when we have a scrollable content
+		oRm.writeAttribute('tabindex', '-1');
 		oRm.write(">");
 	};
 
