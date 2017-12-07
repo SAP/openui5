@@ -5,9 +5,9 @@
 //Provides class sap.ui.model.odata.v4.lib.Cache
 sap.ui.define([
 	"jquery.sap.global",
-	"./_Helper",
-	"./_SyncPromise"
-], function (jQuery, _Helper, _SyncPromise) {
+	"sap/ui/base/SyncPromise",
+	"./_Helper"
+], function (jQuery, SyncPromise, _Helper) {
 	"use strict";
 
 		// Matches two cases:  segment with predicate or simply predicate:
@@ -406,7 +406,7 @@ sap.ui.define([
 
 		function request(sPostGroupId) {
 			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
-			return _SyncPromise.resolve(vPostPath).then(function (sPostPath) {
+			return SyncPromise.resolve(vPostPath).then(function (sPostPath) {
 				sPostPath += that.oRequestor.buildQueryString(that.sResourcePath,
 					that.mQueryOptions, true);
 				that.addByPath(that.mPostRequests, sPath, oEntityData);
@@ -608,7 +608,7 @@ sap.ui.define([
 			mTypeForMetaPath = {};
 			fetchType(sMetaPath);
 			fetchExpandedTypes(sMetaPath, this.mQueryOptions);
-			this.oTypePromise = _SyncPromise.all(aPromises).then(function () {
+			this.oTypePromise = SyncPromise.all(aPromises).then(function () {
 				return mTypeForMetaPath;
 			});
 		}
@@ -928,7 +928,7 @@ sap.ui.define([
 
 		// wait for all reads to be finished, this is essential for $count and for finding the index
 		// of a key predicate
-		return _SyncPromise.all(this.aElements).then(function () {
+		return SyncPromise.all(this.aElements).then(function () {
 			that.checkActive();
 			// register afterwards to avoid that updateCache fires updates before the first response
 			that.registerChange(sPath, oListener);
@@ -1046,7 +1046,7 @@ sap.ui.define([
 		}
 
 		// Note: this.aElements[-1] cannot be a promise...
-		return _SyncPromise.all(this.aElements.slice(iStart, iEnd)).then(function () {
+		return SyncPromise.all(this.aElements.slice(iStart, iEnd)).then(function () {
 			var oResult;
 
 			that.checkActive();
@@ -1131,7 +1131,7 @@ sap.ui.define([
 
 		that.registerChange("", oListener);
 		if (!this.oPromise) {
-			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET",
+			this.oPromise = SyncPromise.resolve(this.oRequestor.request("GET",
 				this.sResourcePath + this.sQueryString, sGroupId, undefined, undefined,
 				fnDataRequested));
 			this.bSentReadRequest = true;
@@ -1216,7 +1216,7 @@ sap.ui.define([
 			if (this.bPost) {
 				throw new Error("Cannot fetch a value before the POST request");
 			}
-			this.oPromise = _SyncPromise.all([
+			this.oPromise = SyncPromise.all([
 				this.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
 					fnDataRequested),
 				this.fetchTypes()
@@ -1264,7 +1264,7 @@ sap.ui.define([
 		if (this.bPosting) {
 			throw new Error("Parallel POST requests not allowed");
 		}
-		this.oPromise = _SyncPromise.resolve(
+		this.oPromise = SyncPromise.resolve(
 			this.oRequestor
 				.request("POST", this.sResourcePath + this.sQueryString, sGroupId,
 					{"If-Match" : sETag}, oData)

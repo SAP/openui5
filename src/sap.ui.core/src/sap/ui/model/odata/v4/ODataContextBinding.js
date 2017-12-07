@@ -5,15 +5,15 @@
 //Provides class sap.ui.model.odata.v4.ODataContextBinding
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
 	"./Context",
 	"./lib/_Cache",
 	"./lib/_Helper",
-	"./lib/_SyncPromise",
 	"./ODataParentBinding"
-], function (jQuery, Binding, ChangeReason, ContextBinding, Context, _Cache, _Helper, _SyncPromise,
+], function (jQuery, SyncPromise, Binding, ChangeReason, ContextBinding, Context, _Cache, _Helper,
 		asODataParentBinding) {
 	"use strict";
 
@@ -102,7 +102,7 @@ sap.ui.define([
 				}
 
 				this.mAggregatedQueryOptions = {};
-				this.oCachePromise = _SyncPromise.resolve();
+				this.oCachePromise = SyncPromise.resolve();
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
@@ -395,7 +395,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.doFetchQueryOptions = function () {
-		return _SyncPromise.resolve(this.mQueryOptions);
+		return SyncPromise.resolve(this.mQueryOptions);
 	};
 
 	/**
@@ -458,7 +458,7 @@ sap.ui.define([
 						.fetchValue(iIndex >= 0 ? that.sPath.slice(0, iIndex) : "")
 						.then(function (oEntity) { return oEntity["@odata.etag"]; });
 				} else {
-					oPromise = _SyncPromise.resolve(); // no parent cache -> no ETag
+					oPromise = SyncPromise.resolve(); // no parent cache -> no ETag
 				}
 				oPromise = oPromise.then(function (sETag) {
 					return oCache.post(sGroupId, that.oOperation.mParameters, sETag);
@@ -488,7 +488,7 @@ sap.ui.define([
 					that.oModel.bAutoExpandSelect);
 				oPromise = oCache.fetchValue(sGroupId);
 			}
-			that.oCachePromise = _SyncPromise.resolve(oCache);
+			that.oCachePromise = SyncPromise.resolve(oCache);
 			return oPromise;
 		}
 

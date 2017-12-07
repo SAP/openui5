@@ -3,12 +3,12 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/model/odata/v4/lib/_SyncPromise",
-	"sap/ui/model/odata/v4/lib/_V2Requestor",
-	"sap/ui/model/odata/ODataUtils"
-], function (jQuery, DateFormat, _Requestor, _SyncPromise, asV2Requestor, ODataUtils) {
+	"sap/ui/model/odata/v4/lib/_V2Requestor"
+], function (jQuery, SyncPromise, DateFormat, ODataUtils, _Requestor, asV2Requestor) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -962,7 +962,7 @@ sap.ui.require([
 
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
 				.withExactArgs("/" + sResourcePath + "/foo/bar")
-				.returns(_SyncPromise.resolve(oProperty));
+				.returns(SyncPromise.resolve(oProperty));
 
 			// code under test
 			assert.strictEqual(oRequestor.convertFilter(sFilter, sResourcePath),
@@ -993,7 +993,7 @@ sap.ui.require([
 
 			// simply declare all properties to be Edm.Double so that a conversion is necessary
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata").atLeast(0)
-				.returns(_SyncPromise.resolve(oProperty));
+				.returns(SyncPromise.resolve(oProperty));
 
 			// code under test
 			if (oFixture.error) {
@@ -1030,7 +1030,7 @@ sap.ui.require([
 
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
 				.withExactArgs("/" + sResourcePath + "/foo/bar")
-				.returns(_SyncPromise.resolve(oFixture.property));
+				.returns(SyncPromise.resolve(oFixture.property));
 
 			// code under test
 			assert.throws(function () {
@@ -1051,7 +1051,7 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 
 		this.mock(oRequestor.oModelInterface).expects("fnFetchEntityContainer")
-			.returns(_SyncPromise.resolve(Promise.resolve({})));
+			.returns(SyncPromise.resolve(Promise.resolve({})));
 
 		// code under test
 		oSyncPromise = oRequestor.ready();
@@ -1074,7 +1074,7 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 
 		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
-			.withExactArgs("/my.Type").returns(_SyncPromise.resolve(oType));
+			.withExactArgs("/my.Type").returns(SyncPromise.resolve(oType));
 
 		// code under test
 		assert.strictEqual(oRequestor.getTypeForName("my.Type"), oType);

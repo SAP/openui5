@@ -15,7 +15,6 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataMetaModel",
@@ -23,8 +22,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Message, Binding, BindingMode, BaseContext, Model, TypeString, ODataUtils,
-		OperationMode, Context, _MetadataRequestor, _Parser, _Requestor, _SyncPromise,
+], function (jQuery, Message, Binding, BindingMode, BaseContext, Model, TypeString,
+		ODataUtils, OperationMode, Context, _MetadataRequestor, _Parser, _Requestor,
 		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
 		SubmitMode, TestUtils) {
 	/*global QUnit, sinon */

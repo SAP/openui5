@@ -5,6 +5,7 @@
 //Provides class sap.ui.model.odata.v4.ODataListBinding
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/FilterOperator",
@@ -15,10 +16,9 @@ sap.ui.define([
 	"./Context",
 	"./lib/_Cache",
 	"./lib/_Helper",
-	"./lib/_SyncPromise",
 	"./ODataParentBinding"
-], function (jQuery, Binding, ChangeReason, FilterOperator, FilterType, ListBinding, Sorter,
-		OperationMode, Context, _Cache, _Helper, _SyncPromise, asODataParentBinding) {
+], function (jQuery, SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding,
+		Sorter, OperationMode, Context, _Cache, _Helper, asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -77,7 +77,7 @@ sap.ui.define([
 				}
 				this.mAggregatedQueryOptions = {};
 				this.aApplicationFilters = _Helper.toArray(vFilters);
-				this.oCachePromise = _SyncPromise.resolve();
+				this.oCachePromise = SyncPromise.resolve();
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
 				// auto-$expand/$select: promises to wait until child bindings have provided
 				// their path and query options
@@ -685,7 +685,7 @@ sap.ui.define([
 				aFilterPromises.push(fetchGroupFilter(aFiltersForPath, mLambdaVariableToPath));
 			});
 
-			return _SyncPromise.all(aFilterPromises).then(function (aFilterValues) {
+			return SyncPromise.all(aFilterPromises).then(function (aFilterValues) {
 				return aFilterValues.join(bAnd ? " and " : " or ");
 			});
 		}
@@ -747,7 +747,7 @@ sap.ui.define([
 
 				});
 
-				return _SyncPromise.all(aGroupFilterValues).then(function (aResolvedFilterValues) {
+				return SyncPromise.all(aGroupFilterValues).then(function (aResolvedFilterValues) {
 					return combineFilterValues(aResolvedFilterValues, " or ");
 				});
 			});
@@ -768,7 +768,7 @@ sap.ui.define([
 			return aSegments[0] ? aSegments.join("/") : sPath;
 		}
 
-		return _SyncPromise.all([
+		return SyncPromise.all([
 			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, {}),
 			fetchArrayFilter(this.aFilters, /*bAnd*/true, {})
 		]).then(function (aFilterValues) {

@@ -4,7 +4,7 @@
 
 /*global HTMLTemplateElement, DocumentFragment, Promise*/
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/ManagedObject', 'sap/ui/core/CustomData', './mvc/View', './ExtensionPoint', './StashedControlSupport', 'sap/ui/model/odata/v4/lib/_SyncPromise'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/ManagedObject', 'sap/ui/core/CustomData', './mvc/View', './ExtensionPoint', './StashedControlSupport', 'sap/ui/base/SyncPromise'],
 function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, StashedControlSupport, SyncPromise) {
 	"use strict";
 

@@ -31,6 +31,9 @@ sap.ui.define([
 	 *   Whether to reject the new promise with the reason <code>oPromise</code>
 	 * @returns {SyncPromise}
 	 *   The SyncPromise created
+	 *
+	 * @private
+	 * @restricted sap.ui.core,sap.ui.dt,sap.ui.model
 	 */
 	function SyncPromise(oPromise, fnCallback, aValues, bReject) {
 		var bFulfilled = false,
@@ -170,6 +173,16 @@ sap.ui.define([
 		};
 	}
 
+	/**
+	 * Returns a SyncPromise wrapping the given promise <code>oPromise</code>, or
+	 * <code>oPromise</code> if it is already a SyncPromise, or fulfilling with the given result.
+	 * Note that "thenables" are not supported!
+	 *
+	 * @param {Promise|SyncPromise|any} [oPromise]
+	 *   The promise to wrap or the result to synchronously fulfill with
+	 * @returns {SyncPromise}
+	 *   The SyncPromise
+	 */
 	function resolve(oPromise) {
 		return oPromise instanceof SyncPromise ? oPromise : new SyncPromise(oPromise);
 	}
@@ -177,55 +190,18 @@ sap.ui.define([
 	return {
 		/**
 		 * Returns a new SyncPromise for the given array of values just like
-		 * <code>Promise.all(aValues)</code>.
+		 * <code>Promise.all(aValues)</code>. Note that iterables are not supported!
 		 *
 		 * @param {any[]} aValues
 		 *   The values
 		 * @returns {SyncPromise}
 		 *   The SyncPromise
+		 *
+		 * @private
+		 * @restricted sap.ui.core,sap.ui.dt,sap.ui.model
 		 */
 		all : function (aValues) {
 			return new SyncPromise(null, null, aValues.slice());
-		},
-
-		/**
-		 * Returns a "get*" method corresponding to the given "fetch*" method.
-		 *
-		 * @param {string} sFetch
-		 *   A "fetch*" method's name
-		 * @param {boolean} [bThrow=false]
-		 *   Whether the "get*" method throws if the promise is not fulfilled
-		 * @returns {function}
-		 *   A "get*" method returning the "fetch*" method's result or
-		 *   <code>undefined</code> in case the promise is not (yet) fulfilled
-		 */
-		createGetMethod : function (sFetch, bThrow) {
-			return function () {
-				var oSyncPromise = this[sFetch].apply(this, arguments);
-
-				if (oSyncPromise.isFulfilled()) {
-					return oSyncPromise.getResult();
-				} else if (bThrow) {
-					throw oSyncPromise.isRejected()
-						? oSyncPromise.getResult()
-						: new Error("Result pending");
-				}
-			};
-		},
-
-		/**
-		 * Returns a "request*" method corresponding to the given "fetch*" method.
-		 *
-		 * @param {string} sFetch
-		 *   A "fetch*" method's name
-		 * @returns {function}
-		 *   A "request*" method returning the "fetch*" method's result wrapped via
-		 *   <code>Promise.resolve()</code>
-		 */
-		createRequestMethod : function (sFetch) {
-			return function () {
-				return Promise.resolve(this[sFetch].apply(this, arguments));
-			};
 		},
 
 		/**
@@ -235,19 +211,26 @@ sap.ui.define([
 		 *   The reason for rejection
 		 * @returns {SyncPromise}
 		 *   The SyncPromise
+		 *
+		 * @private
+		 * @restricted sap.ui.core,sap.ui.dt,sap.ui.model
 		 */
 		reject : function (vReason) {
 			return new SyncPromise(vReason, null, null, true);
 		},
 
 		/**
-		 * Returns a SyncPromise wrapping the given promise <code>oPromise</code> or
-		 * <code>oPromise</code> if it is already a SyncPromise.
+		 * Returns a SyncPromise wrapping the given promise <code>oPromise</code>, or
+		 * <code>oPromise</code> if it is already a SyncPromise, or fulfilling with the given result.
+		 * Note that thenables are not supported!
 		 *
-		 * @param {Promise|SyncPromise} oPromise
-		 *   The promise to wrap
+		 * @param {Promise|SyncPromise|any} [oPromise]
+		 *   The promise to wrap or the result to synchronously fulfill with
 		 * @returns {SyncPromise}
 		 *   The SyncPromise
+		 *
+		 * @private
+		 * @restricted sap.ui.core,sap.ui.dt,sap.ui.model
 		 */
 		resolve : resolve
 	};

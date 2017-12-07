@@ -364,7 +364,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponsePayload
 	 *   The OData V2 response payload
-	 * @returns {_SyncPromise}
+	 * @returns {SyncPromise}
 	 *   A promise which resolves with the OData V4 response payload or rejects with an error if
 	 *   the V2 response cannot be converted
 	 */
@@ -589,7 +589,7 @@ sap.ui.define([
 	 * Returns a sync promise that is resolved when the requestor is ready to be used. Waits for the
 	 * metadata to be available.
 	 *
-	 * @returns {_SyncPromise} A sync promise that is resolved with no result when the metadata is
+	 * @returns {SyncPromise} A sync promise that is resolved with no result when the metadata is
 	 * available
 	 */
 	_V2Requestor.prototype.ready = function () {
