@@ -4646,6 +4646,7 @@
 		}.bind(this))
 	});
 	QUnit.test("submit again after error", function(assert) {
+		var spy = sinon.spy(this.oModel, "_submitRequest");
 		var done = assert.async();
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
@@ -4657,6 +4658,7 @@
 				that.oModel.detachRequestCompleted(fnCompl);
 				assert.ok(!oInfo.getParameter('success'), "request should fail");
 				assert.ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+				assert.ok(spy.args[0][0].created, "request flagged as created");
 			};
 			var fnFailed = function(oInfo) {
 				that.oModel.detachRequestFailed(fnFailed);
@@ -4671,7 +4673,9 @@
 					var oProduct = that.oModel.getProperty('', oContext);
 					assert.ok(oProduct, "Product still exists");
 					assert.ok(oProduct.__metadata.created, "Product still flagged as created");
+					assert.ok(spy.args[0][0].created, "request flagged as created");
 					assert.ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+					that.oModel._submitRequest.restore();
 					done();
 				});
 				that.oModel.attachRequestCompleted(function(oInfo) {
