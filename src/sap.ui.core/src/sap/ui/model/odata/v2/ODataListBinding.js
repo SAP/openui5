@@ -902,16 +902,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 			// check if expanded data has been changed
 			aOldRefs = this.aExpandRefs;
-			this.checkExpandedList(true);
+
+
+			var aLastKeys = this.aKeys.slice();
+			var bExpandedList = this.checkExpandedList(true);
+
+			// apply sorting and filtering again, as the newly set entities may have changed in clientmode
+			if (!bExpandedList && this.useClientMode()) {
+				this.applyFilter();
+				this.applySort();
+			}
 			if (!jQuery.sap.equal(aOldRefs, this.aExpandRefs)) {
 				bChangeDetected = true;
 			} else if (mChangedEntities) {
-				jQuery.each(this.aKeys, function(i, sKey) {
-					if (sKey in mChangedEntities) {
-						bChangeDetected = true;
-						return false;
+				// Performance Optimization: if the length differs, we definitely have a change
+				if (this.aKeys.length !== aLastKeys.length) {
+					bChangeDetected = true;
+				} else {
+					//iterate over keys from before and after filtering as new keys match the filter or existing keys match not anymore
+					for (var sKey in mChangedEntities) {
+						if (this.aKeys.indexOf(sKey) > -1 || aLastKeys.indexOf(sKey) > -1) {
+							bChangeDetected = true;
+							break;
+						}
 					}
-				});
+				}
 			} else {
 				bChangeDetected = true;
 			}
