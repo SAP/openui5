@@ -16,6 +16,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	// shortcut for sap.m.LabelDesign
 	var LabelDesign = library.LabelDesign;
 
+	// shortcut for sap.ui.core.VerticalAlign
+	var VerticalAlign = coreLibrary.VerticalAlign;
+
 	/**
 	 * Constructor for a new Label.
 	 *
@@ -108,7 +111,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 *
 			 * @since 1.50
 			 */
-			wrapping: {type : "boolean", group : "Appearance", defaultValue : false}
+			wrapping: {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Specifies the vertical alignment of the <code>Label</code> related to the tallest and lowest element on the line.
+			 * @since 1.54
+			 */
+			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : VerticalAlign.Inherit}
 		},
 		associations : {
 
