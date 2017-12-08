@@ -1,4 +1,6 @@
-sap.ui.define(["sap/ui/core/format/NumberFormat"], function (NumberFormat) {
+sap.ui.define([
+	'sap/ui/core/format/NumberFormat'
+], function (NumberFormat) {
 	"use strict";
 
 	var mStatusState = {
