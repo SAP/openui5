@@ -186,16 +186,30 @@ sap.ui.define([
 			}
 		}
 
-		if (oFilterTree.right.id === "VALUE") {
-			if (oFilterTree.left.id === "VALUE") {
-				throw new Error("Cannot convert filter for V2, saw literals on both sides of '"
-					+ oFilterTree.id + "' at " + oFilterTree.at + ": " + sFilter);
+		/*
+		 * Visits a node in the syntax recursively.
+		 * @param {object} oNode A node
+		 */
+		function visitNode(oNode) {
+			if (oNode) {
+				if (oNode.left && oNode.right) {
+					if (oNode.right.id === "VALUE") {
+						if (oNode.left.id === "VALUE") {
+							throw new Error(
+								"Cannot convert filter for V2, saw literals on both sides of '"
+								+ oNode.id + "' at " + oNode.at + ": " + sFilter);
+						}
+						convertLiteral(oNode.right, oNode.left.value);
+					} else if (oNode.left.id === "VALUE") {
+						convertLiteral(oNode.left, oNode.right.value);
+					}
+				}
+				visitNode(oNode.left);
+				visitNode(oNode.right);
 			}
-			convertLiteral(oFilterTree.right, oFilterTree.left.value);
-		} else if (oFilterTree.left.id === "VALUE") {
-			convertLiteral(oFilterTree.left, oFilterTree.right.value);
 		}
 
+		visitNode(oFilterTree);
 		return _Parser.buildFilterString(oFilterTree);
 	};
 
