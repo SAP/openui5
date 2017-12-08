@@ -1021,11 +1021,11 @@ sap.ui.define([
 		this._getVisibleModelItems().forEach(function(oMItem) {
 			oMItem.visible = false;
 			// Search in item text
-			if (oMItem.text && oMItem.text.match(oRegExp)) {
+			if (typeof oMItem.text === "string" && oMItem.text.match(oRegExp)) {
 				oMItem.visible = true;
 			}
 			// Search in tooltip
-			if (oMItem.tooltip && oMItem.tooltip.match(oRegExp)) {
+			if (typeof oMItem.tooltip === "string" && oMItem.tooltip.match(oRegExp)) {
 				oMItem.visible = true;
 			}
 		});
