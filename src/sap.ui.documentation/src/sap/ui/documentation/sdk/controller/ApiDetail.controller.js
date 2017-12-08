@@ -286,7 +286,7 @@ sap.ui.define([
 														new Link({
 															text: "{name}",
 															href: "#/api/{/name}/methods/{name}",
-															press: this.scrollToMethod,
+															press: this.scrollToMethod.bind(this),
 															wrapping: false
 														}),
 														new ObjectStatus({
@@ -380,7 +380,7 @@ sap.ui.define([
 														new Link({
 															text: "{name}",
 															href: "#/api/{/name}/events/{name}",
-															press: this.scrollToEvent,
+															press: this.scrollToEvent.bind(this),
 															wrapping: false
 														}),
 														new ObjectStatus({
@@ -464,7 +464,7 @@ sap.ui.define([
 									cells: [
 										new Link({
 											text: "{= ${annotation} !== 'undefined' ? ${annotation} : '(' + ${namespace} + ')' }",
-											press: this.scrollToAnnotation,
+											press: this.scrollToAnnotation.bind(this),
 											wrapping: false
 										}),
 										new HTML({content: "{description}"})
