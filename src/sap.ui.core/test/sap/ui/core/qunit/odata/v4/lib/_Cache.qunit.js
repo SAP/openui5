@@ -50,6 +50,33 @@ sap.ui.require([
 		return "API";
 	}
 
+	/**
+	 * Replacement for Array#fill which IE does not support.
+	 *
+	 * @param {any[]} a
+	 *   Some array
+	 * @param {any} v
+	 *   Some value
+	 * @param {number} i
+	 *   Start index
+	 * @param {number} [n=a.length]
+	 *   End index (exclusive)
+	 * @returns {any[]}
+	 *   <code>a</code>
+	 */
+	function fill(a, v, i, n) {
+		if (n === undefined) {
+			n = a.length;
+		}
+
+		while (i < n) {
+			a[i] = v;
+			i += 1;
+		}
+
+		return a;
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
 		beforeEach : function () {
@@ -1304,6 +1331,12 @@ sap.ui.require([
 		range : [-1, 10, 100],
 		bTransient : true,
 		expected : {start : -1, length : 110}
+	}, { // fetch all data
+		range : [0, 0, Infinity],
+		expected : {start : 0, length : Infinity}
+	}, { // fetch all data with offset
+		range : [1, 0, Infinity],
+		expected : {start : 0, length : Infinity}
 	}].forEach(function (oFixture) {
 		QUnit.test("CollectionCache#getReadRange: " + oFixture.range, function (assert) {
 			var oCache = _Cache.create(this.oRequestor),
@@ -1334,16 +1367,251 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#read: prefetch", function (assert) {
 		var sResourcePath = "Employees",
-			oCache = this.createCache(sResourcePath),
-			oCacheMock = this.mock(oCache);
+			oCache = this.createCache(sResourcePath);
 
-		oCacheMock.expects("getReadRange")
-			.withExactArgs(20, 6, 10).returns({start : 15, length : 16});
+		this.mock(oCache).expects("getReadRange").withExactArgs(20, 6, 10)
+			.returns({start : 15, length : 16}); // Note: not necessarily a realistic example
 		this.mockRequest(sResourcePath, 15, 16);
 
 		// code under test
-		oCache.read(20, 6, 10).then(function (oResult) {
+		return oCache.read(20, 6, 10).then(function (oResult) {
 			assert.deepEqual(oResult, createResult(20, 6));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#fill", function (assert) {
+		var oCache = this.createCache("Employees"),
+			aExpected,
+			oPromise = {};
+
+		assert.deepEqual(oCache.aElements, []);
+
+		// code under test
+		oCache.fill(oPromise, 0, 3);
+
+		assert.deepEqual(oCache.aElements, [oPromise, oPromise, oPromise]);
+
+		// code under test
+		oCache.fill(oPromise, 5, 7);
+
+		aExpected = [oPromise, oPromise, oPromise, undefined, undefined, oPromise, oPromise];
+		assert.deepEqual(oCache.aElements, aExpected);
+
+		// code under test
+		oCache.fill(oPromise, 10, Infinity);
+
+		assert.deepEqual(oCache.aElements, aExpected);
+		assert.strictEqual(oCache.aElements.$tail, oPromise);
+
+		assert.throws(function () {
+			// code under test
+			oCache.fill({/*yet another promise*/}, 0, Infinity);
+		}, new Error(
+			"Cannot fill from 0 to Infinity, $tail already in use, # of elements is 7"));
+		assert.deepEqual(oCache.aElements, aExpected);
+		assert.strictEqual(oCache.aElements.$tail, oPromise);
+
+		// code under test
+		oCache.fill(undefined, 0, Infinity);
+
+		fill(aExpected, undefined, 0);
+		assert.deepEqual(oCache.aElements, aExpected);
+		assert.strictEqual(oCache.aElements.$tail, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#fill, iEnd = 1024", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oPromise = {};
+
+		assert.deepEqual(oCache.aElements, []);
+
+		// code under test
+		//TODO 20000 is too much for Chrome?!
+		oCache.fill(oPromise, 0, 1024);
+
+		assert.deepEqual(oCache.aElements, fill(new Array(1024), oPromise, 0));
+		assert.strictEqual(oCache.aElements.$tail, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#fill, iEnd = 1025, []", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oPromise = {};
+
+		assert.deepEqual(oCache.aElements, []);
+
+		// code under test
+		oCache.fill(oPromise, 0, 1025);
+
+		assert.deepEqual(oCache.aElements, []);
+		assert.strictEqual(oCache.aElements.$tail, oPromise);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#fill, iEnd = 1025, [many rows] & $tail", function (assert) {
+		var oCache = this.createCache("Employees"),
+			aExpected,
+			oPromiseNew = {},
+			oPromiseOld = {};
+
+		oCache.aElements.length = 4096;
+		fill(oCache.aElements, oPromiseOld, 2048); // many existing rows
+		oCache.aElements.$tail = oPromiseOld;
+
+		// code under test
+		oCache.fill(oPromiseNew, 0, 1025);
+
+		aExpected = new Array(4096);
+		fill(aExpected, oPromiseNew, 0, 1025);
+		// gap from 1025..2048
+		fill(aExpected, oPromiseOld, 2048, 4096);
+		assert.deepEqual(oCache.aElements, aExpected);
+		assert.strictEqual(oCache.aElements.$tail, oPromiseOld);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#fill, iEnd = Infinity, [many rows]", function (assert) {
+		var oCache = this.createCache("Employees"),
+			aExpected,
+			oPromiseNew = {},
+			oPromiseOld = {};
+
+		oCache.aElements.length = 4096;
+		fill(oCache.aElements, oPromiseOld, 2048); // many existing rows
+
+		// code under test
+		oCache.fill(oPromiseNew, 0, Infinity);
+
+		aExpected = new Array(4096);
+		fill(aExpected, oPromiseNew, 0, 4096);
+		assert.deepEqual(oCache.aElements, aExpected);
+		assert.strictEqual(oCache.aElements.$tail, oPromiseNew);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestElements: clean up $tail again", function (assert) {
+		var oCache = this.createCache("Employees"),
+			fnResolve;
+
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees", /*sGroupId*/undefined, /*mHeaders*/undefined,
+				/*oPayload*/undefined, /*fnSubmit*/undefined)
+			.returns(new Promise(function (resolve, reject) {
+				fnResolve = resolve;
+			}));
+
+		// code under test
+		oCache.requestElements(0, Infinity);
+
+		this.mockRequest("Employees", 0, 1);
+
+		// code under test
+		// MUST NOT clean up $tail
+		oCache.requestElements(0, 1);
+
+		return oCache.aElements[0].then(function () {
+			fnResolve(createResult(0, 1));
+
+			return oCache.aElements.$tail.then(function () {
+				assert.strictEqual(oCache.aElements.$tail, undefined);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: infinite prefetch, $skip=0", function (assert) {
+		var oCache = this.createCache("Employees");
+
+		// be friendly to V8
+		assert.ok(oCache instanceof _Cache);
+		assert.ok("sContext" in oCache);
+		assert.deepEqual(oCache.aElements, []);
+		assert.deepEqual(oCache.aElements.$byPredicate, {});
+		assert.ok("$count" in oCache.aElements);
+		assert.ok("$tail" in oCache.aElements);
+		assert.strictEqual(oCache.iLimit, Infinity);
+
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees", /*sGroupId*/undefined, /*mHeaders*/undefined,
+				/*oPayload*/undefined, /*fnSubmit*/undefined)
+			.returns(Promise.resolve(createResult(0, 7)));
+
+		// code under test
+		return oCache.read(1, 0, Infinity).then(function (oResult) {
+			assert.deepEqual(oResult, createResult(1, 6));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: infinite prefetch, no existing data", function (assert) {
+		var oCache = this.createCache("Employees");
+
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees?$skip=10", /*sGroupId*/undefined,
+				/*mHeaders*/undefined, /*oPayload*/undefined, /*fnSubmit*/undefined)
+			.returns(Promise.resolve(createResult(10, 7)));
+		this.stub(oCache, "fill", function (oPromise, iStart, iEnd) {
+			assert.strictEqual(iStart, 10);
+			assert.strictEqual(iEnd, Infinity);
+			oCache.aElements.$tail = oPromise;
+			// Note: do not enlarge oCache.aElements! do not fill oPromise into it!
+		});
+
+		// code under test
+		return oCache.read(10, Infinity, 0).then(function (oResult) {
+			assert.deepEqual(oResult, createResult(10, 7));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: infinite prefetch, existing data", function (assert) {
+		var oCache = this.createCache("Employees"),
+			that = this;
+
+		this.mockRequest("Employees", 0, 10);
+
+		return oCache.read(0, 10).then(function (oResult) {
+			assert.deepEqual(oResult, createResult(0, 10));
+
+			that.oRequestorMock.expects("request")
+				.withExactArgs("GET", "Employees?$skip=10", /*sGroupId*/undefined,
+					/*mHeaders*/undefined, /*oPayload*/undefined, /*fnSubmit*/undefined)
+				.returns(Promise.resolve(createResult(10, 7)));
+
+			// code under test
+			return oCache.read(1, 0, Infinity).then(function (oResult) {
+				assert.deepEqual(oResult, createResult(1, 16));
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: wait for $tail", function (assert) {
+		var oCache = this.createCache("Employees"),
+			fnDataRequested = {},
+			oNewPromise = {},
+			oPromise,
+			fnResolve;
+
+		oCache.aElements.$tail = new Promise(function (resolve, reject) {
+			fnResolve = resolve;
+		});
+		this.mock(oCache).expects("getReadRange").never(); // not yet
+		this.mock(oCache).expects("requestElements").never(); // not yet
+
+		// code under test
+		oPromise = oCache.read(0, 10, 42, "group", fnDataRequested);
+
+		// expect "back to start" in order to repeat check for $tail
+		this.mock(oCache).expects("read")
+			.withExactArgs(0, 10, 42, "group", sinon.match.same(fnDataRequested))
+			.returns(oNewPromise);
+		fnResolve();
+
+		return oPromise.then(function (oPromise0) {
+			assert.strictEqual(oPromise0, oNewPromise);
 		});
 	});
 
@@ -1364,7 +1632,7 @@ sap.ui.require([
 				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
 		});
 
-		oCache.read(0, 10, 0);
+		oCache.read(0, 10, 0); //TODO what about returning this promise to QUnit?
 
 		// code under test
 		return oCache.fetchValue("group", "('c')/key", {}, oListener).then(function (sResult) {
@@ -1377,6 +1645,42 @@ sap.ui.require([
 
 			// code under test: now it must be delivered synchronously
 			assert.strictEqual(oCache.fetchValue(undefined, "('c')/key").getResult(), "c");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#fetchValue includes $tail", function (assert) {
+		var oCache = this.createCache("Employees");
+
+		oCache.aElements.push("0");
+		oCache.aElements.push("1");
+		oCache.aElements.push("2");
+		oCache.aElements.$tail = "$";
+		this.mock(SyncPromise).expects("all")
+			.withExactArgs(["0", "1", "2", "$"])
+			.returns(SyncPromise.resolve());
+		this.mock(oCache).expects("drillDown")
+			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
+
+		// code under test
+		return oCache.fetchValue("group", "('c')/key").then(function (sResult) {
+			assert.strictEqual(sResult, "c");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#fetchValue without $tail", function (assert) {
+		var oCache = this.createCache("Employees");
+
+		this.mock(SyncPromise).expects("all")
+			.withExactArgs(sinon.match.same(oCache.aElements))
+			.returns(SyncPromise.resolve());
+		this.mock(oCache).expects("drillDown")
+			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
+
+		// code under test
+		return oCache.fetchValue("group", "('c')/key").then(function (sResult) {
+			assert.strictEqual(sResult, "c");
 		});
 	});
 
@@ -1657,7 +1961,7 @@ sap.ui.require([
 
 		this.mockRequest(sResourcePath, 0, 10, undefined, "26");
 
-		oCache.read(0, 10, 0);
+		oCache.read(0, 10, 0); //TODO what about returning this promise to QUnit?
 
 		// code under test: wait until request is finished, do not fire to listener
 		return oCache.fetchValue("group", "$count", undefined, oListener).then(function (iCount) {

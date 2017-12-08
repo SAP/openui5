@@ -30,27 +30,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Fills the given array range with the given value. If iEnd is greater than the array length,
-	 * elements are appended to the end, in contrast to Array.fill.
-	 *
-	 * @param {any[]} aArray
-	 *   The array
-	 * @param {any} vValue
-	 *   The value
-	 * @param {number} iStart
-	 *   The start index
-	 * @param {number} iEnd
-	 *   The end index (will not be filled)
-	 */
-	function fill(aArray, vValue, iStart, iEnd) {
-		var i;
-
-		for (i = iStart; i < iEnd; i++) {
-			aArray[i] = vValue;
-		}
-	}
-
-	/**
 	 * Returns the collection's $count.
 	 *
 	 * @param {array} aCollection The collection
@@ -69,79 +48,6 @@ sap.ui.define([
 	 */
 	function isSubPath(sRequestPath, sPath) {
 		return sPath === "" || sRequestPath === sPath || sRequestPath.indexOf(sPath + "/") === 0;
-	}
-
-	/**
-	 * Requests the elements in the given range and places them into the aElements list. Calculates
-	 * the key predicates for all entities in the result before the promise is resolved. While the
-	 * request is running, all indexes in this range contain the Promise.
-	 *
-	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
-	 *   The cache
-	 * @param {number} iStart
-	 *   The index of the first element to request ($skip)
-	 * @param {number} iEnd
-	 *   The position of the last element to request ($skip + $top)
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {function} [fnDataRequested]
-	 *   The function is called when the back end requests have been sent.
-	 */
-	function requestElements(oCache, iStart, iEnd, sGroupId, fnDataRequested) {
-		var sDelimiter = oCache.sQueryString ? "&" : "?",
-			iExpectedLength = iEnd - iStart,
-			oPromise,
-			sResourcePath = oCache.sResourcePath + oCache.sQueryString + sDelimiter
-				+ "$skip=" + iStart + "&$top=" + iExpectedLength;
-
-		oPromise = Promise.all([
-			oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
-				fnDataRequested),
-			oCache.fetchTypes()
-		]).then(function (aResult) {
-			var iCount,
-				sCount,
-				oElement,
-				i,
-				sPredicate,
-				oResult = aResult[0],
-				iResultLength = oResult.value.length;
-
-			Cache.computeCount(oResult);
-			oCache.sContext = oResult["@odata.context"];
-			sCount = oResult["@odata.count"];
-			if (sCount) {
-				oCache.iLimit = parseInt(sCount, 10);
-				setCount(oCache.mChangeListeners, "", oCache.aElements, oCache.iLimit);
-			}
-			for (i = 0; i < iResultLength; i++) {
-				oElement = oResult.value[i];
-				oCache.aElements[iStart + i] = oElement;
-				oCache.calculateKeyPredicates(oElement, aResult[1]);
-				sPredicate = oElement["@$ui5.predicate"];
-				if (sPredicate) {
-					oCache.aElements.$byPredicate[sPredicate] = oElement;
-				}
-			}
-			if (iResultLength < iExpectedLength) { // a short read
-					iCount = Math.min(getCount(oCache.aElements), iStart + iResultLength);
-					oCache.aElements.length = iCount;
-					// If the server did not send a count, the calculated count is greater than 0
-					// and the element before has not been read yet, we do not know the count:
-					// The element might or might not exist.
-					if (!sCount && iCount > 0 && !oCache.aElements[iCount - 1]) {
-						iCount = undefined;
-					}
-				setCount(oCache.mChangeListeners, "", oCache.aElements, iCount);
-				oCache.iLimit = iCount;
-			}
-		})["catch"](function (oError) {
-			fill(oCache.aElements, undefined, iStart, iEnd);
-			throw oError;
-		});
-
-		oCache.bSentReadRequest = true;
-		fill(oCache.aElements, oPromise, iStart, iEnd);
 	}
 
 	/**
@@ -895,6 +801,7 @@ sap.ui.define([
 		this.aElements = [];               // the available elements
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined; // see setCount
+		this.aElements.$tail = undefined;  // promise for a read w/o $top
 		this.iLimit = Infinity;            // the upper limit for the count (for the case that the
 									       // exact value is unknown)
 	}
@@ -924,16 +831,49 @@ sap.ui.define([
 	 *   arrives.
 	 */
 	CollectionCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
-		var that = this;
+		var aElements,
+			that = this;
 
 		// wait for all reads to be finished, this is essential for $count and for finding the index
 		// of a key predicate
-		return SyncPromise.all(this.aElements).then(function () {
+		aElements = this.aElements.$tail
+			? this.aElements.concat(this.aElements.$tail)
+			: this.aElements;
+		return SyncPromise.all(aElements).then(function () {
 			that.checkActive();
 			// register afterwards to avoid that updateCache fires updates before the first response
 			that.registerChange(sPath, oListener);
 			return that.drillDown(that.aElements, sPath);
 		});
+	};
+
+	/**
+	 * Fills the given range of currently available elements with the given promise. If it is not
+	 * an option to enlarge the array to accommodate <code>iEnd - 1</code>, the promise is also
+	 * stored in <code>aElements.$tail</code>.
+	 *
+	 * @param {SyncPromise} oPromise
+	 *   The promise
+	 * @param {number} iStart
+	 *   The start index
+	 * @param {number} iEnd
+	 *   The end index (will not be filled)
+	 */
+	CollectionCache.prototype.fill = function (oPromise, iStart, iEnd) {
+		var i,
+			n = Math.max(this.aElements.length, 1024);
+
+		if (iEnd > n) {
+			if (this.aElements.$tail && oPromise) {
+				throw new Error("Cannot fill from " + iStart + " to " + iEnd
+					+ ", $tail already in use, # of elements is " + this.aElements.length);
+			}
+			this.aElements.$tail = oPromise;
+			iEnd = this.aElements.length;
+		}
+		for (i = iStart; i < iEnd; i++) {
+			this.aElements[i] = oPromise;
+		}
 	};
 
 	/**
@@ -946,7 +886,8 @@ sap.ui.define([
 	 * @param {number} iLength
 	 *   The number of requested entries
 	 * @param {number} iPrefetchLength
-	 *   The number of entries to prefetch before and after the given range
+	 *   The number of entries to prefetch before and after the given range; <code>Infinity</code>
+	 *   is supported
 	 * @returns {object}
 	 *   Returns an object with a member <code>start</code> for the start index for the next
 	 *   read and <code>length</code> for the number of entries to be read.
@@ -973,7 +914,10 @@ sap.ui.define([
 			iLength += iPrefetchLength;
 			iStart -= iPrefetchLength;
 			if (iStart < 0) {
-				iLength += iStart;
+				iLength += iStart; // Note: Infinity + -Infinity === NaN
+				if (isNaN(iLength)) {
+					iLength = Infinity;
+				}
 				iStart = 0;
 			}
 		}
@@ -986,12 +930,13 @@ sap.ui.define([
 	 * @param {number} iIndex
 	 *   The start index of the range in model coordinates; the first row has index -1 or 0!
 	 * @param {number} iLength
-	 *   The length of the range
+	 *   The length of the range; <code>Infinity</code> is supported
 	 * @param {number} iPrefetchLength
 	 *   The number of rows to read before and after the given range; with this it is possible to
 	 *   prefetch data for a paged access. The cache ensures that at least half the prefetch length
 	 *   is available left and right of the requested range without a further request. If data is
 	 *   missing on one side, the full prefetch length is added at this side.
+	 *   <code>Infinity</code> is supported
 	 * @param {string} [sGroupId]
 	 *   ID of the group to associate the requests with
 	 * @param {function} [fnDataRequested]
@@ -1012,7 +957,8 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, sGroupId,
 			fnDataRequested) {
-		var i,
+		var i, n,
+			aElementsRange,
 			iEnd,
 			iGapStart = -1,
 			iLowerBound = this.aElements[-1] ? -1 : 0,
@@ -1027,13 +973,20 @@ sap.ui.define([
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
 		}
 
+		if (this.aElements.$tail) {
+			return this.aElements.$tail.then(function () {
+				return that.read(iIndex, iLength, iPrefetchLength, sGroupId, fnDataRequested);
+			});
+		}
+
 		oRange = this.getReadRange(iIndex, iLength, iPrefetchLength);
 		iEnd = Math.min(oRange.start + oRange.length, this.iLimit);
+		n = Math.min(iEnd, Math.max(oRange.start, this.aElements.length) + 1);
 
-		for (i = oRange.start; i < iEnd; i++) {
+		for (i = oRange.start; i < n; i++) {
 			if (this.aElements[i] !== undefined) {
 				if (iGapStart >= 0) {
-					requestElements(this, iGapStart, i, sGroupId, fnDataRequested);
+					this.requestElements(iGapStart, i, sGroupId, fnDataRequested);
 					fnDataRequested = undefined;
 					iGapStart = -1;
 				}
@@ -1042,11 +995,15 @@ sap.ui.define([
 			}
 		}
 		if (iGapStart >= 0) {
-			requestElements(this, iGapStart, iEnd, sGroupId, fnDataRequested);
+			this.requestElements(iGapStart, iEnd, sGroupId, fnDataRequested);
 		}
 
 		// Note: this.aElements[-1] cannot be a promise...
-		return SyncPromise.all(this.aElements.slice(iStart, iEnd)).then(function () {
+		aElementsRange = this.aElements.slice(iStart, iEnd);
+		if (this.aElements.$tail) { // Note: if available, it must be ours!
+			aElementsRange.push(this.aElements.$tail);
+		}
+		return SyncPromise.all(aElementsRange).then(function () {
 			var oResult;
 
 			that.checkActive();
@@ -1060,6 +1017,89 @@ sap.ui.define([
 			}
 			return oResult;
 		});
+	};
+
+	/**
+	 * Requests the elements in the given range and places them into the aElements list. Calculates
+	 * the key predicates for all entities in the result before the promise is resolved. While the
+	 * request is running, all indexes in this range contain the Promise.
+	 *
+	 * @param {number} iStart
+	 *   The index of the first element to request ($skip)
+	 * @param {number} iEnd
+	 *   The position of the last element to request ($skip + $top)
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {function} [fnDataRequested]
+	 *   The function is called when the back end requests have been sent.
+	 */
+	CollectionCache.prototype.requestElements = function (iStart, iEnd, sGroupId, fnDataRequested) {
+		var sDelimiter = this.sQueryString ? "&" : "?",
+			iExpectedLength = iEnd - iStart,
+			oPromise,
+			sResourcePath = this.sResourcePath + this.sQueryString,
+			that = this;
+
+		if (iStart > 0 || iExpectedLength < Infinity) {
+			sResourcePath += sDelimiter + "$skip=" + iStart;
+			sDelimiter = "&";
+		}
+		if (iExpectedLength < Infinity) {
+			sResourcePath += sDelimiter + "$top=" + iExpectedLength;
+		}
+
+		oPromise = SyncPromise.all([
+			this.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
+				fnDataRequested),
+			this.fetchTypes()
+		]).then(function (aResult) {
+			var iCount,
+				sCount,
+				oElement,
+				i,
+				sPredicate,
+				oResult = aResult[0],
+				iResultLength = oResult.value.length;
+
+			if (that.aElements.$tail === oPromise) {
+				that.aElements.$tail = undefined;
+			}
+			Cache.computeCount(oResult);
+			that.sContext = oResult["@odata.context"];
+			sCount = oResult["@odata.count"];
+			if (sCount) {
+				that.iLimit = parseInt(sCount, 10);
+				setCount(that.mChangeListeners, "", that.aElements, that.iLimit);
+			}
+			for (i = 0; i < iResultLength; i++) {
+				oElement = oResult.value[i];
+				that.aElements[iStart + i] = oElement;
+				that.calculateKeyPredicates(oElement, aResult[1]);
+				sPredicate = oElement["@$ui5.predicate"];
+				if (sPredicate) {
+					that.aElements.$byPredicate[sPredicate] = oElement;
+				}
+			}
+			if (iResultLength < iExpectedLength) { // a short read
+					iCount = Math.min(getCount(that.aElements), iStart + iResultLength);
+					that.aElements.length = iCount;
+					// If the server did not send a count, the calculated count is greater than 0
+					// and the element before has not been read yet, we do not know the count:
+					// The element might or might not exist.
+					if (!sCount && iCount > 0 && !that.aElements[iCount - 1]) {
+						iCount = undefined;
+					}
+				setCount(that.mChangeListeners, "", that.aElements, iCount);
+				that.iLimit = iCount;
+			}
+		})["catch"](function (oError) {
+			that.fill(undefined, iStart, iEnd);
+			throw oError;
+		});
+
+		this.bSentReadRequest = true;
+		// Note: oPromise MUST be a SyncPromise for performance reasons, see SyncPromise#all
+		this.fill(oPromise, iStart, iEnd);
 	};
 
 	//*********************************************************************************************

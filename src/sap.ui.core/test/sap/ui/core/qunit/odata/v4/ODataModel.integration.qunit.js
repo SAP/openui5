@@ -6,16 +6,18 @@ sap.ui.require([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/test/TestUtils",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, ColumnListItem, Text, Controller, Filter, FilterOperator, OperationMode,
-		ODataModel, Sorter, TestUtils) {
+], function (jQuery, ColumnListItem, Text, Controller, ChangeReason, Filter, FilterOperator,
+		OperationMode, ODataListBinding, ODataModel, Sorter, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -3253,6 +3255,72 @@ sap.ui.require([
 				.expectChange("id", "2");
 
 			oModel.refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: sap.chart.Chart wants to read all data w/o paging
+	QUnit.test("no paging", function (assert) {
+		var fnGetContexts = ODataListBinding.prototype.getContexts,
+			sView = '\
+<Table id="table" items="{/TEAMS}">\
+	<ColumnListItem>\
+		<Text id="id" text="{Team_Id}" />\
+	</ColumnListItem>\
+</Table>';
+
+		this.oSandbox.stub(ODataListBinding.prototype, "getContexts",
+			function (iStart, iLength, iMaximumPrefetchSize) {
+				// this is how the call by sap.chart.Chart should look like (after ODataModelAdapter
+				// has tweaked it) --> GET w/o $top!
+				return fnGetContexts.call(this, iStart, iLength, Infinity);
+			});
+		this.expectRequest("TEAMS", {
+				"value" : [{
+					"Team_Id" : "TEAM_00"
+				}, {
+					"Team_Id" : "TEAM_01"
+				}, {
+					"Team_Id" : "TEAM_02"
+				}]
+			})
+			.expectChange("id", ["TEAM_00", "TEAM_01", "TEAM_02"]);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// Scenario: some custom control wants to read all data
+	QUnit.test("read all data", function (assert) {
+		var sView = '\
+<Table id="table">\
+</Table>',
+			that = this;
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("TEAMS", {
+					"value" : [{
+						"Team_Id" : "TEAM_00"
+					}, {
+						"Team_Id" : "TEAM_01"
+					}, {
+						"Team_Id" : "TEAM_02"
+					}]
+				});
+				//TODO how to expect changes for template created below?
+//				.expectChange("id", ["TEAM_00", "TEAM_01", "TEAM_02"]);
+
+			that.oView.byId("table").bindItems({
+				length : Infinity, // code under test
+				path : "/TEAMS",
+				template : new ColumnListItem({
+//					cells : [
+//						new Text("id", {text : "{Team_Id}"})
+//					]
+				})
+			});
 
 			return that.waitForChanges(assert);
 		});

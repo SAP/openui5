@@ -875,12 +875,13 @@ sap.ui.define([
 	 *   The index where to start the retrieval of contexts
 	 * @param {number} [iLength]
 	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
-	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
+	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}; <code>Infinity</code> may be used
+	 *   since 1.53.0 to retrieve all data
 	 * @param {number} [iMaximumPrefetchSize=0]
 	 *   The maximum number of contexts to read before and after the given range; with this,
 	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
-	 *   table. Negative values will be treated as 0.
-	 *   Supported since 1.39.0
+	 *   table. Negative values will be treated as 0. Supported since 1.39.0; <code>Infinity</code>
+	 *   may be used since 1.53.0 to prefetch all data and thus disable paging.
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
