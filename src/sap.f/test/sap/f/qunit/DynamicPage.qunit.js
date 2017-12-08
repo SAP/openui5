@@ -295,6 +295,20 @@
 		assert.ok(this.oDynamicPage.getPreserveHeaderStateOnScroll(), "The DynamicPage preserveHeaderStateOnScroll is true");
 	});
 
+	QUnit.test("Using setHeaderExpanded does not make DynamicPageTitle fire stateChange event", function (assert) {
+		// arrange
+		var oTitle = this.oDynamicPage.getTitle(),
+			oStateChangeListener = sinon.spy();
+
+		oTitle.attachEvent("stateChange", oStateChangeListener);
+
+		// act
+		this.oDynamicPage.setHeaderExpanded(!this.oDynamicPage.getHeaderExpanded());
+
+		// assert
+		assert.ok(!oStateChangeListener.called, "stateChange event was not fired");
+	});
+
 	/* --------------------------- DynamicPage Title API ---------------------------------- */
 	QUnit.module("DynamicPage Title - API ", {
 		beforeEach: function () {
@@ -1484,6 +1498,19 @@
 		assert.ok(oTitlePressSpy.calledOnce, "Title Pin Press Handler is called");
 	});
 
+	QUnit.test("DynamicPage On Title Press: stateChange event is fired", function (assert) {
+		var oStateChangeListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		this.oDynamicPage.getTitle().attachEvent("stateChange", oStateChangeListenerSpy);
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle.fireEvent("_titlePress");
+
+		assert.ok(oStateChangeListenerSpy.calledOnce, "stateChange event was fired once when title was pressed");
+	});
+
 	QUnit.test("DynamicPage On Pin Button Press", function (assert) {
 		var oPinPressSpy = this.spy(sap.f.DynamicPage.prototype, "_onPinUnpinButtonPress"),
 			oPinButton = this.oDynamicPage.getHeader()._getPinButton();
@@ -1508,6 +1535,21 @@
 		// Assert
 		assert.ok(oCollapseButtonPressSpy.calledOnce, "DPage: Collapse Header Visual Indicator Press Handler is called");
 		assert.ok(oCollapseButtonPressSpy2.calledOnce, "DPageHeader: Collapse Header Visual Indicator Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage On Expand Button Press stateChange event is fired", function (assert) {
+		var oStateChangeListenerSpy = sinon.spy(),
+			oCollapseButton = this.oDynamicPage.getHeader()._getCollapseButton();
+
+		this.oDynamicPage.getTitle().attachEvent("stateChange", oStateChangeListenerSpy);
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Act
+		oCollapseButton.firePress();
+
+		assert.ok(oStateChangeListenerSpy.calledOnce, "stateChange event was fired once when expand button was pressed");
 	});
 
 	QUnit.test("DynamicPage On Collapse Button Press 2", function (assert) {
@@ -1578,6 +1620,21 @@
 
 		assert.ok(oExpandButtonPressSpy.calledOnce, "DPage: Expand Header Visual Indicator Press Handler is called");
 		assert.ok(oExpandButtonPressSpy2.calledOnce, "DPageTitle: Expand Header Visual Indicator Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage On Expand Button Press stateChange event is fired", function (assert) {
+		var oStateChangeListenerSpy = sinon.spy(),
+			oExpandButton = this.oDynamicPage.getTitle()._getExpandButton();
+
+		this.oDynamicPage.getTitle().attachEvent("stateChange", oStateChangeListenerSpy);
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Act
+		oExpandButton.firePress();
+
+		assert.ok(oStateChangeListenerSpy.calledOnce, "stateChange event was fired once when expand button was pressed");
 	});
 
 	QUnit.test("DynamicPage Title MouseOver", function (assert) {
