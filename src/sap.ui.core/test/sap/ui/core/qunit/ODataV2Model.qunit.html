@@ -241,6 +241,38 @@
 		});
 	};
 
+	QUnit.test("getMessagesByEntity", function(assert) {
+		var done = assert.async();
+
+		var oModel = initModel(sURI);
+
+		var oMessage = new sap.ui.core.message.Message({
+			message: "test1",
+			severity: "error",
+			persistent: true,
+			processor: oModel
+		});
+
+		var oMessage2 = new sap.ui.core.message.Message({
+			message: "test2",
+			severity: "error",
+			persistent: false,
+			processor: oModel
+		});
+
+		sap.ui.getCore().getMessageManager().registerMessageProcessor(oModel);
+		oModel.metadataLoaded().then(function() {
+			oContext = oModel.createEntry("/Products");
+			oMessage.setTarget(oContext.getPath());
+			oMessage2.setTarget(oContext.getPath());
+			sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2]);
+			assert.equal(oModel.getMessagesByEntity(oContext.getPath()).length, 2, "all messages returned");
+			assert.equal(oModel.getMessagesByEntity(oContext.getPath(), true).length, 1, "messages that are not persitent returned");
+			sap.ui.getCore().getMessageManager().unregisterMessageProcessor(oModel);
+			done();
+		});
+	});
+
 	asyncTest("test bindList", function(){
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);

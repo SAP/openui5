@@ -4816,7 +4816,7 @@ sap.ui.define([
 			delete this.mChangedEntities[sPath];
 			delete this.oData[sPath];
 			//cleanup Messages for created Entry
-			sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByPath(oContext.getPath() + '/'));
+			sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(oContext.getPath(), true));
 		}
 	};
 
@@ -5546,6 +5546,42 @@ sap.ui.define([
 		if (this.mLaunderingState[sPath] === 0) {
 			delete this.mLaunderingState[sPath];
 		}
+	};
+
+	/**
+	 * Get all messages for an entity path.
+	 *
+	 * @param {string} sEntity The entity path or key
+	 * @param {boolean} bExcludePersistent If set true persitent flagged messages are excluded.
+	 * @private
+	 */
+	ODataModel.prototype.getMessagesByEntity = function(sEntity, bExcludePersistent) {
+		var sEntityPath = sEntity,
+			aMessages = [],
+			sPath;
+
+		function filterMessages(aMessages) {
+			var aFilteredMessages = [];
+			for (var i = 0; i < aMessages.length; i++) {
+				if (!bExcludePersistent || (bExcludePersistent && !aMessages[i].persistent)) {
+					aFilteredMessages.push(aMessages[i]);
+				}
+			}
+			return aFilteredMessages;
+		}
+		//normalize Key
+		if (!jQuery.sap.startsWith(sEntityPath, '/')) {
+			sEntityPath = '/' + sEntityPath;
+		}
+		if (this.mMessages) {
+			for (sPath in this.mMessages) {
+				if (jQuery.sap.startsWith(sPath, sEntityPath)) {
+					aMessages = aMessages.concat(filterMessages(this.mMessages[sPath]));
+				}
+			}
+			return aMessages;
+		}
+		return null;
 	};
 
 	return ODataModel;
