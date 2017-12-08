@@ -592,25 +592,6 @@ html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
 .sapMListTbl .docuParam.sapMText  {
 	font-style: italic;
 }
-
-.sapMListTbl .sapUiDocumentationParamBold.sapMText {
-	font-weight: bold;
-}
-
-.sapMListTbl .sapUiDocumentationParamPhone.sapMText {
-	font-weight: normal;
-}
-
-.sapMListTbl .sapUiDocumentationParamSub.sapMText {
-	font-weight: normal;
-	padding-left: 2rem;
-}
-
-.sapMListTbl .sapUiDocumentationParamSubSub.sapMText {
-	font-weight: normal;
-	padding-left: 4rem;
-}
-
 /* explored code view */
 
 pre {
@@ -1712,3 +1693,55 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 .sapUiCustomTitleText .sapMLnk {
 	display: inline;
 }
+
+/*
+ * Param Text custom control related CSS - Start
+ */
+.sapMListTbl .sapUiParamText.sapUiDocumentationParamBold {
+	font-weight: bold;
+}
+
+.sapMListTbl .sapUiParamText.sapUiDocumentationParamPhone {
+	font-weight: normal;
+}
+
+.sapMListTbl .sapUiParamText.sapUiDocumentationParamSub {
+	font-weight: normal;
+	padding-left: 2rem;
+}
+
+.sapMListTbl .sapUiParamText.sapUiDocumentationParamSubSub {
+	font-weight: normal;
+	padding-left: 4rem;
+}
+
+.sapUiParamText {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+html.sapUiMedia-Std-Phone .sapUiParamText,
+.sapUiParamText.depth-0 {
+	font-weight: bold;
+}
+
+/* 5 Depths are handled - if more than 5 levels should be displayed we should think of another approach */
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-1 {
+	padding-left: 2rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-2 {
+	padding-left: 4rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-3 {
+	padding-left: 6rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-4 {
+	padding-left: 8rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
+	padding-left: 10rem;
+}
+/*
+ * Param Text custom control related CSS - End
+ */

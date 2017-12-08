@@ -181,8 +181,7 @@
 																								{path: 'isSubSubProperty'},
 																								{path: 'appView>/bPhoneSize'}],
 																								formatter: '.formatEventClassName'}"
-																		  text="{name}"
-																		  wrapping="false"/>
+																		  text="{name}"/>
 
 														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}">
 															<m:HBox>
@@ -418,8 +417,7 @@
 																								{path: 'isSubSubProperty'},
 																								{path: 'appView>/bPhoneSize'}],
 																						formatter: '.formatEventClassName'}"
-																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${phoneName} ? ${phoneName} : ${path: 'name'} }"
-																wrapping="false"/>
+																		  text="{name}" phoneText="{phoneName}"/>
 														<m:Link text="{type}"
 																href="#/api/{type}"
 																enabled="{= !!${linkEnabled} }"/>
@@ -494,12 +492,7 @@
 												<m:ColumnListItem>
 													<m:cells>
 
-														<custom:ParamText customClass="{parts: [{path: 'isSubProperty'},
-																								{path: 'appView>/bPhoneSize'}],
-																						formatter: '.formatMethodClassName'}"
-																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${phoneName} ? ${phoneName} : ${path: 'name'} }{= ${optional} ? '?' : ''}"
-																		  wrapping="false"/>
-
+														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
 
 														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}">
 															<m:HBox>
