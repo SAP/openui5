@@ -4792,7 +4792,7 @@ sap.ui.define([
 						});
 						delete that.mChangedEntities[sKey];
 						//cleanup Messages for created Entry
-						sap.ui.getCore().getMessageManager().removeMessages(that.getMessagesByEntity(sKey));
+						sap.ui.getCore().getMessageManager().removeMessages(that.getMessagesByEntity(sKey, true));
 					} else {
 						that.mChangedEntities[sKey].__metadata = oEntityMetadata;
 					}
@@ -4807,7 +4807,7 @@ sap.ui.define([
 				});
 				delete that.mChangedEntities[sKey];
 				//cleanup Messages for created Entry
-				sap.ui.getCore().getMessageManager().removeMessages(that.getMessagesByEntity(sKey));
+				sap.ui.getCore().getMessageManager().removeMessages(that.getMessagesByEntity(sKey, true));
 			});
 		}
 		this.checkUpdate(true);
@@ -5121,7 +5121,7 @@ sap.ui.define([
 			});
 			that._removeEntity(sKey);
 			//cleanup Messages for created Entry
-			sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(oContext.getPath()));
+			sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(oContext.getPath(), true));
 		}
 	};
 
@@ -5904,12 +5904,23 @@ sap.ui.define([
 	 * Get all messages for an entity path.
 	 *
 	 * @param {string} sEntity The entity path or key
+	 * @param {boolean} bExcludePersistent If set true persitent flagged messages are excluded.
 	 * @private
 	 */
-	ODataModel.prototype.getMessagesByEntity = function(sEntity) {
+	ODataModel.prototype.getMessagesByEntity = function(sEntity, bExcludePersistent) {
 		var sEntityPath = sEntity,
 			aMessages = [],
 			sPath;
+
+		function filterMessages(aMessages) {
+			var aFilteredMessages = [];
+			for (var i = 0; i < aMessages.length; i++) {
+				if (!bExcludePersistent || (bExcludePersistent && !aMessages[i].persistent)) {
+					aFilteredMessages.push(aMessages[i]);
+				}
+			}
+			return aFilteredMessages;
+		}
 		//normalize Key
 		if (!jQuery.sap.startsWith(sEntityPath, '/')) {
 			sEntityPath = '/' + sEntityPath;
@@ -5917,7 +5928,7 @@ sap.ui.define([
 		if (this.mMessages) {
 			for (sPath in this.mMessages) {
 				if (jQuery.sap.startsWith(sPath, sEntityPath)) {
-					aMessages = aMessages.concat(this.mMessages[sPath]);
+					aMessages = aMessages.concat(filterMessages(this.mMessages[sPath]));
 				}
 			}
 			return aMessages;
