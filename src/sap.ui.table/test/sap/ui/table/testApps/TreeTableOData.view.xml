@@ -122,6 +122,11 @@
 											</Select>
 										</f:fields>
 									</f:FormElement>
+									<f:FormElement label="RestoreTreeStateAfterChange">
+										<f:fields>
+											<CheckBox selected="{/restoreTreeStateAfterChange}" id="restoreTreeStateAfterChange"/>
+										</f:fields>
+									</f:FormElement>
 								</f:formElements>
 							</f:FormContainer>
 						</f:formContainers>

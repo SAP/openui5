@@ -1869,6 +1869,8 @@ sap.ui.define(['jquery.sap.global',
 	 */
 	ODataTreeBinding.prototype._applyAdapter = function () {
 		var sMagnitudeAnnotation = "hierarchy-node-descendant-count-for";
+		var sSiblingRankAnnotation = "hierarchy-sibling-rank-for";
+		var sPreorderRankAnnotation = "hierarchy-preorder-rank-for";
 
 		if (this.bHasTreeAnnotations) {
 
@@ -1888,7 +1890,7 @@ sap.ui.define(['jquery.sap.global',
 				jQuery.each(oProperty.extensions, function(iIndex, oExtension) {
 					var sName = oExtension.name;
 					if (oExtension.namespace === that.oModel.oMetadata.mNamespaces["sap"] &&
-							sName == sMagnitudeAnnotation) {
+							(sName == sMagnitudeAnnotation || sName == sSiblingRankAnnotation || sName == sPreorderRankAnnotation)) {
 						that.oTreeProperties[sName] = oProperty.name;
 					}
 				});
@@ -1902,9 +1904,44 @@ sap.ui.define(['jquery.sap.global',
 			// exception: the binding runs in operation-mode "Client"
 			// In this case there is no need for the advanced auto expand, since everything is loaded anyway.
 			if (this.oTreeProperties[sMagnitudeAnnotation] && this.sOperationMode == OperationMode.Server) {
+				var i, j, sKeyProperty;
+				// Add Flat-specific tree properties
+				this.oTreeProperties[sSiblingRankAnnotation] = this.oTreeProperties[sSiblingRankAnnotation] ||
+					(this.mParameters.treeAnnotationProperties && this.mParameters.treeAnnotationProperties.hierarchySiblingRankFor);
+				this.oTreeProperties[sPreorderRankAnnotation] = this.oTreeProperties[sPreorderRankAnnotation] ||
+					(this.mParameters.treeAnnotationProperties && this.mParameters.treeAnnotationProperties.hierarchyPreorderRankFor);
+
+				if (this.mParameters.restoreTreeStateAfterChange) {
+					if (this.oTreeProperties[sSiblingRankAnnotation] && this.oTreeProperties[sPreorderRankAnnotation]) {
+						this._bRestoreTreeStateAfterChange = true;
+						// Collect entity type key properties
+						this._aTreeKeyProperties = [];
+						for (i = oEntityType.key.propertyRef.length - 1; i >= 0; i--) {
+							this._aTreeKeyProperties.push(oEntityType.key.propertyRef[i].name);
+						}
+					} else {
+						jQuery.sap.log.warning("Tree state restoration not possible: Missing annotation \"hierarchy-sibling-rank-for\" and/or \"hierarchy-preorder-rank-for\"");
+						this._bRestoreTreeStateAfterChange = false;
+					}
+				} else {
+					this._bRestoreTreeStateAfterChange = false;
+				}
+
+
 				// make sure the magnitude is added to the $select if it was not added by the application anyway
-				if (this.mParameters && this.mParameters.select && this.mParameters.select.indexOf(this.oTreeProperties[sMagnitudeAnnotation]) == -1) {
-					this.mParameters.select += ("," + this.oTreeProperties[sMagnitudeAnnotation]);
+				if (this.mParameters && this.mParameters.select) {
+					if (this.mParameters.select.indexOf(this.oTreeProperties[sMagnitudeAnnotation]) === -1) {
+						this.mParameters.select += "," + this.oTreeProperties[sMagnitudeAnnotation];
+					}
+					if (this._bRestoreTreeStateAfterChange) {
+						// Retrieve all key properties to allow filtering on them during tree state restoration (PreorderPosition requests)
+						for (j = this._aTreeKeyProperties.length - 1; j >= 0; j--) {
+							sKeyProperty = this._aTreeKeyProperties[j];
+							if (this.mParameters.select.indexOf(sKeyProperty) === -1) {
+								this.mParameters.select += "," + sKeyProperty;
+							}
+						}
+					}
 					this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
 				}
 				// apply flat paging adapter
