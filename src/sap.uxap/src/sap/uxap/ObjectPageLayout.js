@@ -2326,10 +2326,16 @@ sap.ui.define([
 			bTraverseSubSections = bSubSectionsOnly || this._bMobileScenario;
 
 		jQuery.each(this._oSectionInfo, function (sId, oInfo) {
+			var section, sectionParent, isParentHiddenSection;
+
 			// on desktop/tablet, skip subsections
 			// BCP 1680331690. Should skip subsections that are in a section with lower importance, which makes them hidden.
-			var sectionParent = this.oCore.byId(sId).getParent(),
-				isParentHiddenSection = sectionParent instanceof ObjectPageSection && sectionParent._getIsHidden();
+			section = this.oCore.byId(sId);
+			if (!section) {
+				return;
+			}
+			sectionParent = section.getParent();
+			isParentHiddenSection = sectionParent instanceof ObjectPageSection && sectionParent._getIsHidden();
 
 			if (oInfo.isSection || (bTraverseSubSections && !isParentHiddenSection)) {
 				//we need to set the sClosest to the first section for handling the scrollTop = 0
