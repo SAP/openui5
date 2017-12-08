@@ -3,10 +3,11 @@ sap.ui.define([
 	'sap/ui/test/matchers/PropertyStrictEquals',
 	'sap/ui/test/actions/Press',
 	'sap/ui/test/matchers/Properties'
-], function (Opa5,
-			 PropertyStrictEquals,
-			 Press,
-			 Properties) {
+], function (
+	Opa5,
+	PropertyStrictEquals,
+	Press,
+	Properties) {
 	"use strict";
 
 	Opa5.createPageObjects({

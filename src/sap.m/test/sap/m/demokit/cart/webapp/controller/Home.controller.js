@@ -3,10 +3,11 @@ sap.ui.define([
 	'sap/ui/demo/cart/model/formatter',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator'
-], function (BaseController,
-			 formatter,
-			 Filter,
-			 FilterOperator) {
+], function (
+	BaseController,
+	formatter,
+	Filter,
+	FilterOperator) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Home", {

@@ -40,20 +40,17 @@
 		"rootView": {
 			"viewName": "sap.ui.demo.cart.view.App",
 			"type": "XML",
-			"id": "app",
-			"async": true
+			"async": true,
+			"id": "app"
 		},
 		"dependencies": {
 			"minUI5Version": "1.36.0",
 			"libs": {
 				"sap.ui.core": {
-					"minVersion": "1.36.0"
 				},
 				"sap.m": {
-					"minVersion": "1.36.0"
 				},
 				"sap.ui.layout": {
-					"minVersion": "1.36.0"
 				}
 			}
 		},
@@ -86,7 +83,7 @@
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
 				"viewPath": "sap.ui.demo.cart.view",
-				"controlId": "App",
+				"controlId": "app",
 				"controlAggregation": "pages",
 				"transition": "slide",
 				"bypassed": {
@@ -136,7 +133,6 @@
 					"name": "cart",
 					"target": [
 						"cart"
-
 					]
 				},
 				{

@@ -1,20 +1,21 @@
 sap.ui.define([
+	'jquery.sap.global',
 	'sap/ui/demo/cart/controller/BaseController',
 	'sap/ui/demo/cart/model/formatter',
 	'sap/ui/Device',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
 	'sap/m/MessageToast',
-	'sap/ui/model/json/JSONModel',
-	'jquery.sap.global'
-], function (BaseController,
-			 formatter,
-			 Device,
-			 Filter,
-			 FilterOperator,
-			 MessageToast,
-			 JSONModel,
-			 $) {
+	'sap/ui/model/json/JSONModel'
+], function (
+	$,
+	BaseController,
+	formatter,
+	Device,
+	Filter,
+	FilterOperator,
+	MessageToast,
+	JSONModel) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Category", {

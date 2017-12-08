@@ -1,4 +1,5 @@
 sap.ui.define([
+	'jquery.sap.global',
 	'sap/ui/demo/cart/controller/BaseController',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/Device',
@@ -6,9 +7,9 @@ sap.ui.define([
 	'sap/m/MessageBox',
 	'sap/m/Dialog',
 	'sap/m/Button',
-	'sap/ui/core/routing/History',
-	'jquery.sap.global'
+	'sap/ui/core/routing/History'
 ], function (
+	$,
 	BaseController,
 	JSONModel,
 	Device,
@@ -16,8 +17,7 @@ sap.ui.define([
 	MessageBox,
 	Dialog,
 	Button,
-	History,
-	$) {
+	History) {
 	"use strict";
 
 	var sCartModelName = "cartProducts";

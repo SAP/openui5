@@ -1,8 +1,8 @@
 sap.ui.define([
-	"sap/m/MessageBox",
-	"sap/m/MessageToast",
-	"jquery.sap.global"
-], function (MessageBox, MessageToast, $) {
+	'jquery.sap.global',
+	'sap/m/MessageBox',
+	'sap/m/MessageToast'
+], function ($, MessageBox, MessageToast) {
 	"use strict";
 
 	return {

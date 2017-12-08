@@ -1,7 +1,7 @@
-sap.ui.define(
-	["sap/ui/core/mvc/Controller",
-	"sap/m/MessageToast"],
-	function (Controller, MessageToast) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/m/MessageToast'
+], function (Controller, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.cart.controller.BaseController", {
@@ -49,7 +49,7 @@ sap.ui.define(
 		 * Handler for the Avatar button press event
 		 * @public
 		 */
-		onAvatarButtonPress: function () {
+		onAvatarPress: function () {
 			var msg = this.getResourceBundle().getText("avatarButtonMessageToastText");
 			MessageToast.show(msg);
 		}
