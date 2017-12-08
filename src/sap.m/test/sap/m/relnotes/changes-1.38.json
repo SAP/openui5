@@ -3545,5 +3545,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.31": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "bc483474e6e83c48375b8679888e9d4f4dc81423",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Properly handle multiline mode behavior.",
+        "references": []
+      },
+      {
+        "id": "044646f51c07cc70f5dc58589d271b6f50923dd7",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Last Token is truncated only if needed",
+        "references": []
+      }
+    ]
   }
 }

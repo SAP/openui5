@@ -2638,5 +2638,64 @@
         "references": []
       }
     ]
+  },
+  "1.44.25": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "4d73f9f3c27f4ab32d37492c835711f28481e1c2",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Drag and resize are now working correctly",
+        "references": []
+      },
+      {
+        "id": "17fb63d4707e6665285d49a8d1b2142da0d3a7e8",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Scroll of the items work with arrows",
+        "references": []
+      },
+      {
+        "id": "119170c652fe7f70c9afcccb9ffd219622e2804d",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire properly change event.",
+        "references": []
+      },
+      {
+        "id": "6246b349c9747956b03a4e3bb92a8bce74203214",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: removed href attribute if property href is not set",
+        "references": []
+      },
+      {
+        "id": "05b1798e5e8f5bba207c1e58f97875df4a089283",
+        "type": "FIX",
+        "text": " sap.m.StepInput - wrong calculation when value precision is changed.",
+        "references": []
+      },
+      {
+        "id": "43552c1a507b4f6d99276066307e75ddf6dd3092",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Growing property now has a proper behavior.",
+        "references": []
+      },
+      {
+        "id": "b7a3152da28129c39f488226944f1283230beb61",
+        "type": "FIX",
+        "text": " sap.m.TileContainer - works if initial width/height is 0.",
+        "references": []
+      },
+      {
+        "id": "5b1c38dbd80ff684028d3eb9d9f82f5ae6709755",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Cloned item now works with binding",
+        "references": []
+      },
+      {
+        "id": "e4155670f2f88e31db061d96f222fcc69bcf3d77",
+        "type": "FIX",
+        "text": " sap.m: Replace non-breaking spaces with normal spaces",
+        "references": []
+      }
+    ]
   }
 }
