@@ -37,9 +37,7 @@ sap.ui.define([
 							modelName: "view",
 							path: "/Promoted/0"
 						}),
-						actions: new Press({
-							idSuffix: "link"
-						}),
+						actions: new Press(),
 						errorMessage: "The product link was not displayed"
 					});
 				},
