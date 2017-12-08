@@ -51,6 +51,7 @@ sap.ui.define([
 				filterOperator: "Contains",
 				filterValue: "",
 				useLocalMetadata: true,
+				restoreTreeStateAfterChange: true,
 				hierarchyLevelFor: "LEVEL",
 				hierarchyParentNodeFor: "PARENT_NODE",
 				hierarchyNodeFor: "HIERARCHY_NODE",
@@ -170,6 +171,8 @@ sap.ui.define([
 
 			this.aVisibleRow.push(oVisibleRow);
 
+			var bRestoreTreeStateAfterChange = oView.byId("restoreTreeStateAfterChange").getSelected();
+
 			/**
 			 * Clear the Table and rebind it
 			 */
@@ -248,7 +251,7 @@ sap.ui.define([
 						hierarchyDrillStateFor: sHierarchyDrillStateFor,
 						hierarchyNodeDescendantCountFor: sHierarchyDescendantCountFor
 					} : undefined,
-					restoreTreeStateAfterChange: true
+					restoreTreeStateAfterChange: bRestoreTreeStateAfterChange
 				}
 			});
 
