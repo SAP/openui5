@@ -22,7 +22,9 @@ sap.ui.define(
 		function test(sLibraryName) {
 			QUnit.module(sLibraryName);
 
-			Object.values(oLibraries[sLibraryName]).forEach(function(oRule) {
+			Object.keys(oLibraries[sLibraryName]).forEach(function(sKey) {
+				var oRule = oLibraries[sLibraryName][sKey];
+
 				QUnit.test(oRule.id, function(assert) {
 					assert.equal(oRule.hasOwnProperty('id'), true, 'Rule should have property : id');
 					assert.equal(oRule.hasOwnProperty('title'), true, 'Rule should have property : title');
@@ -90,7 +92,9 @@ sap.ui.define(
 		}
 
 		RuleSetLoader._fetchSupportRuleSets(aLibrariesToLoad).then(function() {
-			Object.values(RuleSetLoader._mRuleSets).map(function(oLibrary) {
+			Object.keys(RuleSetLoader._mRuleSets).map(function(sKey) {
+				var oLibrary = RuleSetLoader._mRuleSets[sKey];
+
 				oLibraries[oLibrary.lib.name] = Object.values(oLibrary.ruleset._mRules);
 			});
 
