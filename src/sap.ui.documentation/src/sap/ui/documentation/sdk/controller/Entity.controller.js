@@ -8,10 +8,11 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/EntityInfo",
+		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
 	], function (JSONModel, BaseController, ControlsInfo,
-				 EntityInfo, ToggleFullScreenHandler, JSDocUtil) {
+				 EntityInfo, APIInfo, ToggleFullScreenHandler, JSDocUtil) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Entity", {
@@ -163,17 +164,25 @@ sap.ui.define([
 							return;
 						}
 
-						// get view data
-						oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
+						APIInfo.getIndexJsonPromise().then(function (result) {
+							var aFilteredResult;
 
-						// set view model
-						this.getView().getModel().setData(oData, false /* no merge with previous data */);
+							// get view data
+							oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
+							aFilteredResult = result.filter(function (element) {
+								return element.name === oData.name;
+							});
+							oData.bHasAPIReference = aFilteredResult && aFilteredResult.length > 0;
 
-						// done, we can now switch the id
-						this._sId = sNewId;
+							// set view model
+							this.getView().getModel().setData(oData, false /* no merge with previous data */);
 
-						updateTabs.call(this);
+							// done, we can now switch the id
+							this._sId = sNewId;
 
+							updateTabs.call(this);
+
+						}.bind(this));
 					}.bind(this));
 
 				} else {
