@@ -19,6 +19,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		// shortcut for sap.m.StepInputValidationMode
 		var StepInputValidationMode = library.StepInputValidationMode;
 
+		// shortcut fro sap.m.StepModes
+		var StepModeType = library.StepInputStepModeType;
+
 		/**
 		 * Constructor for a new <code>StepInput</code>.
 		 *
@@ -99,6 +102,17 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					 * <ul><b>Note:</b> <li>The value of the <code>step</code> property should not contain more digits after the decimal point than what is set to the <code>displayValuePrecision</code> property, as it may lead to an increase/decrease that is not visible for the user. For example, if the <code>value</code> is set to 1.22 and the <code>displayValuePrecision</code> is set to one digit after the decimal, the user will see 1.2. In this case, if the <code>value</code> of the <code>step</code> property is set to 1.005 and the user selects <code>increase</code>, the resulting value will increase to 1.2261 but the displayed value will remain as 1.2 as it will be rounded to the first digit after the decimal point.</li> <li>Depending on what is set for the <code>value</code> and the <code>displayValuePrecision</code> properties, it is possible the displayed value to be rounded to a higher number, for example to 3.0 when the actual value is 2.99.</li></ul>
 					 */
 					step: {type: "float", group: "Data", defaultValue: 1},
+					/**
+					 * Defines the calculation mode for the provided <code>step<code> and <code>largerStep</code>.
+					 *
+					 * If the user increases/decreases the value by <code>largerStep</code>, this calculation will consider
+					 * it as well. For example, if the current <code>value</code> is 3, <code>step</code> is 5,
+					 * <code>largerStep</code> is 5 and the user chooses PageUp, the calculation logic will consider
+					 * the value of 3x5=15 to decide what will be the next <code>value</code>.
+					 *
+					 * @since 1.54
+					 */
+					stepMode: {type: "sap.m.StepInputStepModeType", group: "Data", defaultValue: StepModeType.AdditionAndSubtraction},
 					/**
 					 * Increases/decreases the value with a larger value than the set step only when using the PageUp/PageDown keys.
 					 * Default value is 2 times larger than the set step.
@@ -756,7 +770,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				return;
 			}
 
-			if ((this._isNumericLike(max) && value > max) || (this._isNumericLike(min) && value < min)) {
+			if ((this._isNumericLike(max) && value > max) ||
+				(this._isNumericLike(min) && value < min) ||
+				(this._areFoldChangeRequirementsFulfilled() && (value % this.getStep() !== 0))) {
 				this.setValueState(ValueState.Error);
 			} else {
 				this.setValueState(ValueState.None);
@@ -1042,10 +1058,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			if (iDisplayValuePrecision > 0) {
 				fDisplayValueResult = this._sumValues(fInputValue, fMultipliedStep, iSign, iDisplayValuePrecision);
 			} else {
-				fDisplayValueResult = fInputValue + iSign * fMultipliedStep;
+				fDisplayValueResult = fResult;
 			}
 
-			fValueResult = this._sumValues(fRealValue, fMultipliedStep, iSign, this._iRealPrecision);
+			if (this._areFoldChangeRequirementsFulfilled()) {
+				fResult = fDisplayValueResult  = fValueResult = this._calculateClosestFoldValue(fInputValue, fMultipliedStep, iSign);
+			} else {
+				fValueResult = this._sumValues(fRealValue, fMultipliedStep, iSign, this._iRealPrecision);
+			}
 
 			// if there is a maxValue set, check if the calculated value is bigger
 			// and if so set the calculated value to the max one
@@ -1201,6 +1221,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			return !isNaN(val) && val !== null && val !== "";
 		};
 
+		/**
+		 * Determines if a given value is an integer
+		 * @param {string|number} val the value to check
+		 * @returns {boolean} true if the given value is integer, false otherwise
+		 * @private
+		 */
+		StepInput.prototype._isInteger = function(val) {
+			return val === parseInt(val, 10);
+		};
+
 		StepInput.prototype._writeAccessibilityState = function (sProp, sValue) {
 			var $input = this._getInput().getDomRef(NumericInputRenderer.getInnerSuffix());
 
@@ -1234,6 +1264,45 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 			return (parseInt(fValue1 * iPrecisionMultiplier, 10) +
 				(iSign * parseInt(fValue2 * iPrecisionMultiplier, 10))) / iPrecisionMultiplier;
+		};
+
+
+		/**
+		 * Determine if the stepMode of type ${@link sap.m.StepInputStepModeType.Multiple} can be applied
+		 * depending on the step, larger step, and display value precision.
+		 * @returns {boolean}
+		 * @private
+		 */
+		StepInput.prototype._areFoldChangeRequirementsFulfilled = function () {
+			return this.getStepMode() === StepModeType.Multiple &&
+				this.getDisplayValuePrecision() === 0 &&
+				this._isInteger(this.getStep()) &&
+				this._isInteger(this.getLargerStep());
+		};
+
+		/**
+		 * Calculates next/previous value that is fold by the the provided step
+		 * @param {number} fValue the base value
+		 * @param {number} step the step to increase the value to
+		 * @param {number} iSign direction, where if 1 -> increase, -1-> decrease.
+		 * @returns {number} the next/previous value.
+		 * @private
+		 */
+		StepInput.prototype._calculateClosestFoldValue = function(fValue, step, iSign) {
+			var fResult = Math.floor(fValue),
+				iLoopCount = step;
+
+			do {
+				fResult += iSign;
+				iLoopCount--;
+			} while (fResult % step !== 0 && iLoopCount);
+
+			if (fResult % step !== 0) {
+				jQuery.sap.log.error("Wrong next/previous value " + fResult + " for " + fValue + ", step: " + step +
+					" and sign: " + iSign, this);
+			}
+
+			return fResult;
 		};
 
 		/*
