@@ -70,10 +70,33 @@ sap.ui.require([
 
 	QUnit.start();
 
-
 	var sandbox = sinon.sandbox.create();
 	var oCompCont = RtaQunitUtils.renderTestAppAt("test-view");
 	var oComp = oCompCont.getComponentInstance();
+
+	QUnit.module("Given that RuntimeAuthoring is created without a root control...", {
+		beforeEach : function(assert) {
+			this.oRta = new RuntimeAuthoring({
+				rootControl : undefined
+			});
+
+		},
+		afterEach : function(assert) {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when RTA starts", function(assert) {
+		this.oUtilsLogStub = sandbox.stub(Utils.log, "error");
+		var done = assert.async();
+
+		this.oRta.start().catch(function(vError){
+			assert.ok(vError, "then the promise is rejected");
+			assert.strictEqual(this.oUtilsLogStub.callCount, 1, "and an error is logged");
+			done();
+		}.bind(this));
+	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with different plugin sets...", {
 		beforeEach : function(assert) {
