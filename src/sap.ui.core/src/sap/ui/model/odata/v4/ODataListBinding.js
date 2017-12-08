@@ -1301,7 +1301,7 @@ sap.ui.define([
 			throw new Error("Binding is not refreshable; cannot refresh entity: " + oContext);
 		}
 
-		if (oContext.hasPendingChangesForPath("")) {
+		if (this.hasPendingChangesForPath(oContext.getPath())) {
 			throw new Error("Cannot refresh entity due to pending changes: " + oContext);
 		}
 

@@ -3341,6 +3341,55 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: ODataListBinding contains ODataContextBinding contains ODataPropertyBinding;
+	//   only one cache; hasPendingChanges()
+	QUnit.test("hasPendingChanges on nested bindings", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sUrl = "SalesOrderList?$select=SalesOrderID"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100",
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<ColumnListItem>\
+		<Text binding="{SO_2_BP}" text="{CompanyName}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest(sUrl, {
+			value : [{
+				"SalesOrderID" : "42",
+				"SO_2_BP" : {
+					"BusinessPartnerID" : "1",
+					"CompanyName" : "Foo, Inc",
+					"@odata.etag" : "ETag"
+				}
+			}]
+		});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oText = that.oView.byId("table").getItems()[0].getCells()[0];
+
+			that.expectRequest({
+				method : "PATCH",
+				url : "BusinessPartnerList('1')",
+				headers : {
+					"If-Match" : "ETag"
+				},
+				payload : {
+					"CompanyName" : "Bar, Inc"
+				}
+			}, {});
+
+			oText.getBinding("text").setValue("Bar, Inc");
+
+			// code under test
+			assert.strictEqual(oText.getElementBinding().hasPendingChanges(), true);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: an analytical control like sap.chart.Chart applies ODataModelAdapter to a V4 model
 	// in order to add analytical functionality
 	QUnit.test("ODataModelAdapter", function (assert) {

@@ -402,21 +402,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if there are pending changes below the given path.
-	 *
-	 * @param {string} sPath
-	 *   The relative path of a binding; must not end with '/'
-	 * @returns {boolean}
-	 *   <code>true</code> if there are pending changes
-	 *
-	 * @private
-	 */
-	Context.prototype.hasPendingChangesForPath = function (sPath) {
-		// Note: iIndex === -2 is OK here, no changes will be found...
-		return this.oBinding.hasPendingChangesForPath(_Helper.buildPath(this.iIndex, sPath));
-	};
-
-	/**
 	 * Returns <code>true</code> if this context is transient, which means that the promise returned
 	 * by {@link #created} is not yet resolved or rejected.
 	 *
@@ -523,19 +508,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets all pending changes for a given <code>sPath</code>.
-	 *
-	 * @param {string} sPath
-	 *   The relative path of a binding; must not end with '/'
-	 *
-	 * @private
-	 */
-	Context.prototype.resetChangesForPath = function (sPath) {
-		// Note: iIndex === -2 is OK here, no changes will be found...
-		this.oBinding.resetChangesForPath(_Helper.buildPath(this.iIndex, sPath));
-	};
-
-	/**
 	 * Sets the context's index.
 	 *
 	 * @param {number} iIndex
@@ -561,6 +533,24 @@ sap.ui.define([
 			sIndex = "[" + this.iIndex + (this.isTransient() ? "|transient" : "") + "]";
 		}
 		return this.sPath + sIndex;
+	};
+
+	/**
+	 * Calls the given processor with the cache containing this context's data and the absolute
+	 * <code>sPath</code> (by prepending the context path if necessary).
+	 *
+	 * @param {function} fnProcessor The processor
+	 * @param {string} sPath The path; either relative to the context or absolute containing
+	 *   the cache's request path (it will become absolute when forwarding the request to the
+	 *   parent binding)
+	 * @returns {SyncPromise} A sync promise on the result of the processor
+	 */
+	Context.prototype.withCache = function (fnProcessor, sPath) {
+		if (this.iIndex === -2) {
+			return SyncPromise.resolve(); // no cache access for virtual contexts
+		}
+		return this.oBinding.withCache(fnProcessor,
+			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath));
 	};
 
 	return {

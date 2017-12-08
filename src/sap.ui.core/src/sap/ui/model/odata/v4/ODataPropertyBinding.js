@@ -283,6 +283,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Deregisters the binding as change listener from its cache.
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.deregisterChange = function () {
+		var that = this;
+
+		this.withCache(function (oCache, sPath) {
+			oCache.deregisterChange(sPath, that);
+		}).catch(function (oError) {
+			jQuery.sap.log.error("Error in deregisterChange", oError, sClassName);
+		});
+	};
+
+	/**
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
@@ -290,16 +305,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.destroy = function () {
-		var oContext = this.oContext,
-			that = this;
-
-		this.oCachePromise.then(function (oCache) {
-			if (oCache) {
-				oCache.deregisterChange(undefined, that);
-			} else if (oContext) {
-				oContext.deregisterChange(that.sPath, that);
-			}
-		});
+		this.deregisterChange();
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
 		// resolving functions e.g. for oReadPromise in #checkUpdate may run after destroy of this
@@ -506,8 +512,8 @@ sap.ui.define([
 	// @override
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
-			if (this.bRelative && this.oContext && this.oContext.deregisterChange) {
-				this.oContext.deregisterChange(this.sPath, this);
+			if (this.bRelative) {
+				this.deregisterChange();
 			}
 			this.oContext = oContext;
 			if (this.bRelative) {

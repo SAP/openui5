@@ -358,10 +358,7 @@ sap.ui.require([
 				this.mock(oBinding).expects("checkUpdate")
 					.withExactArgs(false, "context");
 			}
-			if (oFixture.sInit === "v4") {
-				this.mock(oInitialContext).expects("deregisterChange")
-					.withExactArgs(oBinding.getPath(), sinon.match.same(oBinding));
-			}
+			this.mock(oBinding).expects("deregisterChange").withExactArgs();
 
 			//code under test
 			oBinding.setContext(oTargetContext);
@@ -460,7 +457,6 @@ sap.ui.require([
 				}),
 				oMetaModelMock = this.mock(oModel.getMetaModel()),
 				oParent = {
-					deregisterChange : function () {},
 					fetchValue : function () {}
 				},
 				oParentMock = this.mock(oParent),
@@ -504,6 +500,8 @@ sap.ui.require([
 				vCurrentValue = oBinding.vValue;
 				iChange += 1;
 			});
+			// avoid that deregisterChange stumbles over the parent binding mock
+			sinon.stub(oBinding, "deregisterChange", function () {});
 
 			oCheckUpdateSpy = this.spy(oBinding, "checkUpdate");
 
@@ -533,8 +531,7 @@ sap.ui.require([
 			that = this;
 
 		this.createTextBinding(assert).then(function (oBinding) {
-			that.oSandbox.mock(oBinding.oContext).expects("deregisterChange")
-				.withExactArgs("property", sinon.match.same(oBinding));
+			that.oSandbox.mock(oBinding).expects("deregisterChange").withExactArgs();
 			assert.strictEqual(oBinding.getValue(), "value", "value before context reset");
 			oBinding.attachChange(fnChangeHandler);
 			oBinding.setContext(); // reset context triggers checkUpdate
@@ -1476,41 +1473,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("hasPendingChanges: absolute binding", function (assert) {
-		var oPropertyBinding = this.oModel.bindProperty("/absolute"),
-			oResult = {};
-
-		this.oSandbox.mock(oPropertyBinding.oCachePromise.getResult())
-			.expects("hasPendingChangesForPath").withExactArgs("").returns(oResult);
-
-		assert.strictEqual(oPropertyBinding.hasPendingChanges(), oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("hasPendingChanges: relative binding resolved", function (assert) {
-		var oContext = {
-				hasPendingChangesForPath : function () {}
-			},
-			oPropertyBinding,
-			oResult = {};
-
-		this.stub(ODataPropertyBinding.prototype, "fetchCache", function (oContext0) {
-			assert.strictEqual(oContext0, oContext);
-			this.oCachePromise = SyncPromise.resolve();
-		});
-		oPropertyBinding = this.oModel.bindProperty("Name", oContext);
-		this.oSandbox.mock(oContext).expects("hasPendingChangesForPath").withExactArgs("Name")
-			.returns(oResult);
-
-		assert.strictEqual(oPropertyBinding.hasPendingChanges(), oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("hasPendingChanges: relative binding unresolved", function (assert) {
-		assert.strictEqual(this.oModel.bindProperty("PRODUCT_2_BP").hasPendingChanges(), false);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("refreshInternal", function (assert) {
 		var oBinding = this.oModel.bindProperty("NAME"),
 			oBindingMock = this.mock(oBinding),
@@ -1535,24 +1497,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("destroy: absolute binding", function (assert) {
-		var oPropertyBinding = this.oModel.bindProperty("/absolute");
-
-		this.oSandbox.mock(oPropertyBinding.oCachePromise.getResult()).expects("deregisterChange")
-			.withExactArgs(undefined, sinon.match.same(oPropertyBinding));
-		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding)
-			.withExactArgs("foo", 42);
-		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
-			.withExactArgs(sinon.match.same(oPropertyBinding));
-
-		// code under test
-		oPropertyBinding.destroy("foo", 42);
-
-		assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("destroy: relative binding resolved", function (assert) {
+	QUnit.test("destroy", function (assert) {
 		var oContext = {
 				deregisterChange : function () {},
 				getPath : function () {return "Name";}
@@ -1566,8 +1511,7 @@ sap.ui.require([
 			this.oCachePromise = SyncPromise.resolve(oPromise);
 		});
 		oPropertyBinding = this.oModel.bindProperty("Name", oContext);
-		this.oSandbox.mock(oContext).expects("deregisterChange")
-			.withExactArgs("Name", sinon.match.same(oPropertyBinding));
+		this.oSandbox.mock(oPropertyBinding).expects("deregisterChange").withExactArgs();
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
 		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
 			.withExactArgs(sinon.match.same(oPropertyBinding));
@@ -1579,17 +1523,6 @@ sap.ui.require([
 		assert.strictEqual(oPropertyBinding.oContext, undefined);
 
 		return oPromise;
-	});
-
-	//*********************************************************************************************
-	QUnit.test("destroy: relative binding unresolved", function (assert) {
-		var oPropertyBinding = this.oModel.bindProperty("PRODUCT_2_BP");
-
-		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
-			.withExactArgs(sinon.match.same(oPropertyBinding));
-
-		// code under test
-		oPropertyBinding.destroy();
 	});
 
 	//*********************************************************************************************
@@ -1715,6 +1648,40 @@ sap.ui.require([
 			// code under test
 			assert.strictEqual(oBinding.getUnitOrCurrencyPath(), oFixture.sExpectedPath);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deregisterChange", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			oCache = {
+				deregisterChange : function () {}
+			},
+			oMock,
+			sPath = "foo";
+
+		oMock = this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func)
+			.returns(SyncPromise.resolve());
+
+		// code under test
+		oBinding.deregisterChange();
+
+		// check that the function passed to withCache works as expected
+		this.mock(oCache).expects("deregisterChange")
+			.withExactArgs(sPath, sinon.match.same(oBinding));
+		oMock.firstCall.args[0](oCache, sPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deregisterChange: withCache rejects sync", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			oError = new Error("fail intentionally");
+
+		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
+		this.oLogMock.expects("error").withExactArgs("Error in deregisterChange", oError,
+			sClassName);
+
+		// code under test
+		oBinding.deregisterChange();
 	});
 
 	//*********************************************************************************************

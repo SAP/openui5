@@ -4304,11 +4304,12 @@ sap.ui.require([
 		var oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oContext = {
 				iIndex : 43,
-				hasPendingChangesForPath : function () {},
+				getPath : function () { return "/EMPLOYEES('1')"; },
 				toString : function () { return "foo"; }
 			};
 
-		this.mock(oContext).expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+		this.mock(oBinding).expects("hasPendingChangesForPath")
+			.withExactArgs("/EMPLOYEES('1')").returns(true);
 
 		assert.throws(function () {
 			// code under test
@@ -4325,7 +4326,7 @@ sap.ui.require([
 				oCache = {refreshSingle : function () {}},
 				oContext = {
 					iIndex : 42,
-					hasPendingChangesForPath : function () {},
+					getPath : function () { return "/EMPLOYEES('1')"; },
 					toString : function () { return "Foo"; }
 				},
 				oError = {},
@@ -4339,9 +4340,8 @@ sap.ui.require([
 			oBindingMock.expects("fireDataReceived")
 				.exactly(bDataRequested ? 1 : 0)
 				.withExactArgs(bDataRequested ? {error : oError} : 0);
-			this.mock(oContext).expects("hasPendingChangesForPath")
-				.withExactArgs("")
-				.returns(false);
+			this.mock(oBinding).expects("hasPendingChangesForPath")
+				.withExactArgs("/EMPLOYEES('1')").returns(false);
 			oExpectation = this.mock(oCache).expects("refreshSingle")
 				.withExactArgs("groupId", 42, sinon.match.func)
 				.returns(SyncPromise.reject(oError));

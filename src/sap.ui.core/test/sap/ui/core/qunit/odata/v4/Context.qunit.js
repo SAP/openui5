@@ -186,22 +186,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("hasPendingChangesForPath", function (assert) {
-		var oBinding = {
-				hasPendingChangesForPath : function () {}
-			},
-			oContext = Context.create(null, oBinding, "/foo", 42),
-			oResult = {},
-			sPath = "bar";
-
-		this.mock(_Helper).expects("buildPath").withExactArgs(42, sPath).returns("~bar~");
-		this.mock(oBinding).expects("hasPendingChangesForPath")
-			.withExactArgs("~bar~").returns(oResult);
-
-		assert.strictEqual(oContext.hasPendingChangesForPath(sPath), oResult);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("isTransient", function (assert) {
 		var oBinding = {},
 			oContext = Context.create(null, oBinding, "/foo", 42),
@@ -223,20 +207,6 @@ sap.ui.require([
 			// code under test
 			assert.notOk(oContext.isTransient(), "resolved -> not transient");
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("resetChangesForPath", function (assert) {
-		var oBinding = {
-				resetChangesForPath : function () {}
-			},
-			oContext = Context.create(null, oBinding, "/foo", 42),
-			sPath = "bar";
-
-		this.mock(_Helper).expects("buildPath").withExactArgs(42, sPath).returns("~bar~");
-		this.mock(oBinding).expects("resetChangesForPath").withExactArgs("~bar~");
-
-		oContext.resetChangesForPath(sPath);
 	});
 
 	//*********************************************************************************************
@@ -734,5 +704,52 @@ sap.ui.require([
 			// code under test
 			Context.create({}, {}, "/EMPLOYEES/42", 42).refresh();
 		}, new Error("Refresh is only supported for contexts of a list binding"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("withCache: absolute path", function (assert) {
+		var oBinding = {
+				withCache : function () {}
+			},
+			fnCallback = {},
+			oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('42')", 42),
+			oResult = {};
+
+		this.mock(oBinding).expects("withCache")
+			.withExactArgs(sinon.match.same(fnCallback), "/foo").returns(oResult);
+
+		assert.strictEqual(oContext.withCache(fnCallback, "/foo"), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("withCache: relative path", function (assert) {
+		var oBinding = {
+				withCache : function () {}
+			},
+			fnCallback = {},
+			oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('42')", 42),
+			oResult = {};
+
+		this.mock(_Helper).expects("buildPath").withExactArgs("/EMPLOYEES('42')", "foo")
+			.returns("~");
+		this.mock(oBinding).expects("withCache")
+			.withExactArgs(sinon.match.same(fnCallback), "~").returns(oResult);
+
+		assert.strictEqual(oContext.withCache(fnCallback, "foo"), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("withCache: virtual context", function (assert) {
+		var oBinding = {},
+			oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES/-2", -2),
+			oResult;
+
+		this.mock(_Helper).expects("buildPath").never();
+
+		// code under test
+		oResult = oContext.withCache();
+
+		assert.strictEqual(oResult.isFulfilled(), true);
+		assert.strictEqual(oResult.getResult(), undefined);
 	});
 });
