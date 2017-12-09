@@ -139,6 +139,11 @@ sap.ui.define([
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
+				// Handle summary tables life cycle
+				this._oEventsSummary && this._destroySummaryTable(this._oEventsSummary);
+				this._oMethodsSummary && this._destroySummaryTable(this._oMethodsSummary);
+				this._oAnnotationSummary && this._destroySummaryTable(this._oAnnotationSummary);
+
 				oComponent.loadVersionInfo().then(oComponent.fetchAPIIndex.bind(oComponent))
 					.then(function (oData) {
 						var oEntityData,
@@ -235,6 +240,21 @@ sap.ui.define([
 
 			},
 
+			/**
+			 * Summary tables have a complex life cycle and they have to be removed from the list and destroyed before
+			 * the new binding context is applied as they are a different type of item than others in the list
+			 * and can't be reused.
+			 *
+			 * @param {object} oSummaryTableReference Reference to the summary table
+			 * @private
+			 */
+			_destroySummaryTable: function (oSummaryTableReference) {
+				var oParent = oSummaryTableReference.getParent();
+
+				oParent && oParent.removeAggregation("subSection", oSummaryTableReference, true);
+				oSummaryTableReference.destroy();
+			},
+
 			_prettify: function () {
 				// Google Prettify requires this class
 				jQuery('.sapUxAPObjectPageContainer pre', this._objectPage.$()).addClass('prettyprint');
@@ -252,7 +272,7 @@ sap.ui.define([
 					return;
 				}
 
-				oSection.insertSubSection(new ObjectPageSubSection({
+				this._oMethodsSummary = new ObjectPageSubSection({
 					title: bBorrowedOnly ? "Methods" : "Summary",
 					blocks: [
 						// Creating this segment here is better than having a fragment we have to fetch on every navigation
@@ -331,7 +351,9 @@ sap.ui.define([
 							]
 						})
 					]
-				}), 0);
+				});
+
+				oSection.insertSubSection(this._oMethodsSummary, 0);
 
 			},
 
@@ -347,7 +369,7 @@ sap.ui.define([
 					return;
 				}
 
-				oSection.insertSubSection(new ObjectPageSubSection({
+				this._oEventsSummary = new ObjectPageSubSection({
 					title: bBorrowedOnly ? "Events" : "Summary",
 					blocks: [
 						// Creating this segment here is better than having a fragment we have to fetch on every navigation
@@ -425,7 +447,9 @@ sap.ui.define([
 							]
 						})
 					]
-				}), 0);
+				});
+
+				oSection.insertSubSection(this._oEventsSummary, 0);
 
 			},
 
@@ -437,7 +461,7 @@ sap.ui.define([
 					return;
 				}
 
-				oSection.insertSubSection(new ObjectPageSubSection({
+				this._oAnnotationSummary = new ObjectPageSubSection({
 					title: "Summary",
 					blocks: [
 						new Table({
@@ -473,7 +497,9 @@ sap.ui.define([
 							}
 						})
 					]
-				}), 0);
+				});
+
+				oSection.insertSubSection(this._oAnnotationSummary, 0);
 
 			},
 
