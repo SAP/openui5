@@ -151,5 +151,40 @@
         "references": []
       }
     ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "e524ed8e04f21dc70e920f848c4942eb844718ba",
+        "type": "FIX",
+        "text": " AnalyticalTable: Remove limitations of SelectionMode/Behavior",
+        "references": []
+      },
+      {
+        "id": "cebba45aaddfead794eb2c3314a8bc106f8c1a62",
+        "type": "FIX",
+        "text": " GridTable: Hide Selection tooltip on empty rows",
+        "references": []
+      },
+      {
+        "id": "c2bc35b57a1b297d6817646f35d52530438409f8",
+        "type": "FIX",
+        "text": " Table: Correctly calculate the number of displayed rows",
+        "references": []
+      },
+      {
+        "id": "1efc2e6560520f56ff746879512cf85607fc95e2",
+        "type": "FIX",
+        "text": " Table: Vertical scrollbar becomes visible if height is decreased",
+        "references": []
+      },
+      {
+        "id": "61cdacd7e959feb15bbeee3b964db8486d7a4679",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - wrong number of displayed rows",
+        "references": []
+      }
+    ]
   }
 }

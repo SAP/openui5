@@ -1623,5 +1623,88 @@
         "references": []
       }
     ]
+  },
+  "1.50.7": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "a3ccf5a542d4458c768070952cd14cbecae3d757",
+        "type": "FIX",
+        "text": " sap.m.BreadCrumbs: Fixed keyboard handling for hidden items",
+        "references": []
+      },
+      {
+        "id": "4b9a221d3c8bb3186e044c6cf47c10bc13318469",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker-when picker is opened for IE \u0026 Edge, input should not be focusable",
+        "references": []
+      },
+      {
+        "id": "18bd1eff00e900cf0ea54f0b26d1dc4c08ff6db9",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Drag and resize are now working correctly",
+        "references": []
+      },
+      {
+        "id": "44d16b086e85406ecc31f60d5069852bfae0e8ae",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Scroll of the items work with arrows",
+        "references": []
+      },
+      {
+        "id": "8abbe0b498de311f70aad25d1b67c0fb5a66db3a",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Update Arial Label on Generic Tile content change on using TAB key navigation.",
+        "references": []
+      },
+      {
+        "id": "a86eed851d320d74a8ab96248d1faaea8c5c4724",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Hide busy indicator on updateFinished.",
+        "references": []
+      },
+      {
+        "id": "5006660f40897c90315a916b81aad84025f525c4",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire properly change event.",
+        "references": []
+      },
+      {
+        "id": "b160ef872a4f06720afd2eec50c3f589ba13187d",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: removed href attribute if property href is not set",
+        "references": []
+      },
+      {
+        "id": "37211708d2ff1d7aaca1879cb1d9815d34c716c7",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: gets title aggregation correctly now",
+        "references": []
+      },
+      {
+        "id": "04f1cb14ed10fd5b6370f8bd47cb7279965e8fd5",
+        "type": "FIX",
+        "text": " sap.m.Page: Nested pages scrolling fixed.",
+        "references": []
+      },
+      {
+        "id": "9f2b4dfbd863daed6f13d3059c77ba18c43061d3",
+        "type": "FIX",
+        "text": " sap.m.Popover: Show scrollbar when overflowing and out of visible area.",
+        "references": []
+      },
+      {
+        "id": "f3d57af402142cd0e32bf1d7685ad0c82f8e6c44",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Growing property now has a proper behavior.",
+        "references": []
+      },
+      {
+        "id": "e7c62ac7f2b2e4c10068414c7612acd2a4be3716",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus handling corrected",
+        "references": []
+      }
+    ]
   }
 }

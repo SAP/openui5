@@ -997,5 +997,160 @@
         "references": []
       }
     ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "8824caebc56bf7f49864451cee9b1e338f25fa6c",
+        "type": "FIX",
+        "text": " sap.m.BreadCrumbs: Fixed keyboard handling for hidden items",
+        "references": []
+      },
+      {
+        "id": "cc685cf308a4b979ffa530122abfb196cc4134a9",
+        "type": "FIX",
+        "text": " sap.m.DatePicker - setMin/MaxDate does not change other property.",
+        "references": []
+      },
+      {
+        "id": "bb7655db32fde6e5b8ba20979133f4fe7aa4eee0",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection - setMin/MaxDate does not change other property.",
+        "references": []
+      },
+      {
+        "id": "bb9db7b73126fb313bae9478f6fc57939d41b966",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection considers UTC flag in binding options.",
+        "references": []
+      },
+      {
+        "id": "e1d50753cd082f264c310b45d436ba3ce9bf9fd9",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker-when picker is opened for IE \u0026 Edge, input should not be focusable",
+        "references": []
+      },
+      {
+        "id": "828939e84ef98921b962d23c1af39a5f56b0cb34",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Drag and resize are now working correctly",
+        "references": []
+      },
+      {
+        "id": "8981b0f1ab6b161a279c19a35763fe4bf065e9de",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Reset search value when FacetFilterList is closed",
+        "references": []
+      },
+      {
+        "id": "5c0ba1fa89fa2f2d6bf19495bc2a413af887d2bf",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Scroll of the items work with arrows",
+        "references": []
+      },
+      {
+        "id": "2f8e992a86faac05d78d6b47326149733824546a",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Update Arial Label on Generic Tile content change on using TAB key navigation.",
+        "references": []
+      },
+      {
+        "id": "cc1d8dfef099a0ed984910fc0120b4825b397773",
+        "type": "FIX",
+        "text": " sap.m.Input: showTableSuggestionValueHelp now works correctly on IE",
+        "references": []
+      },
+      {
+        "id": "cb4a6753689406868051695f8c552c6c550dcc59",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now read by JAWS when focus sap.m.Select",
+        "references": []
+      },
+      {
+        "id": "39fabf00e052c2aa515d155e7bb91d18f1bb7c1e",
+        "type": "FIX",
+        "text": " sap.m.ListBase: No data row should be in the tab chain.",
+        "references": []
+      },
+      {
+        "id": "14a5f6d5259dbaa593111af1ab20cc36a7a24ebc",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Link\u0027s properties are now forwarded in detailsPage",
+        "references": []
+      },
+      {
+        "id": "a1ca1ddbc647da3c7e180c75f1137aeb0c4b7e20",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire properly change event.",
+        "references": []
+      },
+      {
+        "id": "0c5eb082edbeafd0c2cb0128a76cbd79d2fff9af",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correctly set text of the customControl aggregation",
+        "references": []
+      },
+      {
+        "id": "14c83717f7ea042befde1d4de05391d9e0f9dbcb",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: removed href attribute if property href is not set",
+        "references": []
+      },
+      {
+        "id": "551f5be335486966ad235c58e9d78596120dbf07",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: gets title aggregation correctly now",
+        "references": []
+      },
+      {
+        "id": "486a7f18f7ef7c198327c6cc8b1b1dee645849f9",
+        "type": "FIX",
+        "text": " sap.m.Page: Nested pages scrolling fixed.",
+        "references": []
+      },
+      {
+        "id": "7103513c015e1592f0ddac10658e6aa6debbed6a",
+        "type": "FIX",
+        "text": " sap.m.Panel: Blurred text in IE",
+        "references": []
+      },
+      {
+        "id": "7af1e256c4028b0c28e784cac7962b08ace360fc",
+        "type": "FIX",
+        "text": " sap.m.Popover: Show scrollbar when overflowing and out of visible area.",
+        "references": []
+      },
+      {
+        "id": "7c46a850a2c7542ba321060712c6d026c6930fea",
+        "type": "FIX",
+        "text": " sap.m.Popover: Updated: Show scrollbar when overflowing and out of visible area.",
+        "references": []
+      },
+      {
+        "id": "83719240bb87c964b812c27333a3714b5b1a5a52",
+        "type": "FIX",
+        "text": " sap.m.SearchField: \u0027search\u0027 event is now correctly fired",
+        "references": []
+      },
+      {
+        "id": "aa697b579f16f754628be7e1b5956b2d7d52fb3c",
+        "type": "FIX",
+        "text": " sap.m.StepInput - wrong calculation when value precision is changed.",
+        "references": []
+      },
+      {
+        "id": "25eaf3fd6c0316357593c5f1f191e45e09b1e1cd",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Growing property now has a proper behavior.",
+        "references": []
+      },
+      {
+        "id": "e092cda82154f8f7af8fb29e393408092a4d294f",
+        "type": "FIX",
+        "text": " sap.m.TileContainer - works if initial width/height is 0.",
+        "references": []
+      }
+    ]
   }
 }

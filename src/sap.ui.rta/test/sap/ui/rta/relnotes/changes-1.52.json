@@ -307,5 +307,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "c7fb0e8df06e63ab9fa17b97dcaf7fff0467b2c3",
+        "type": "FIX",
+        "text": " sap.ui.rta - Easy Add plugin missing i18n entry for button text",
+        "references": []
+      }
+    ]
   }
 }

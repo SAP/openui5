@@ -511,5 +511,64 @@
         "references": []
       }
     ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "a44453868c5dc945e2002558e25589dec595cdaa",
+        "type": "FIX",
+        "text": " Fallback for libraries without custom theme",
+        "references": []
+      },
+      {
+        "id": "5c48762e343898684fb2467fad88822fd29b312c",
+        "type": "FIX",
+        "text": " Filter/Sorter: Get comparator methods right",
+        "references": []
+      },
+      {
+        "id": "6a6ce98bb0260af9a6210a44a3b51a67b8735c11",
+        "type": "FIX",
+        "text": " Icon Font: No right-to-left mirroring of text-align icons",
+        "references": []
+      },
+      {
+        "id": "004c021090578a22cf1560b852c1a2e80ab6c180",
+        "type": "FIX",
+        "text": " Opa: fix action focus when IE11 browser is not focused",
+        "references": []
+      },
+      {
+        "id": "81aac3c02c48b4b89bcb8336cceb544a34ff0e92",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: pass correct container to ExtensionPoint",
+        "references": []
+      },
+      {
+        "id": "bea0d2c2ead4d37d0d28578eacaa6c48ca87e147",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: reduced SyncPromise chaining",
+        "references": []
+      },
+      {
+        "id": "54ae307754f593d56e5afbd5e84655fdc932fdbe",
+        "type": "FIX",
+        "text": " mvc/XMLView: apply settings correctly for async views",
+        "references": []
+      },
+      {
+        "id": "bb9db7b73126fb313bae9478f6fc57939d41b966",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection considers UTC flag in binding options.",
+        "references": []
+      },
+      {
+        "id": "cb4a6753689406868051695f8c552c6c550dcc59",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now read by JAWS when focus sap.m.Select",
+        "references": []
+      }
+    ]
   }
 }

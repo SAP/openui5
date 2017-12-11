@@ -176,5 +176,40 @@
         "references": []
       }
     ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "f759ceaaa872c4b8c9adc7f15aa5091b826d3f4d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: days aligned correctly in RTL",
+        "references": []
+      },
+      {
+        "id": "8c4a82e88dc75e4386027b0766687ff202c8cc89",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select month and year corrected",
+        "references": []
+      },
+      {
+        "id": "c199e3ab265b31925bc8e4ad6c5e4476d897a335",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: select date on mouseup when used on touch device",
+        "references": []
+      },
+      {
+        "id": "fbe09698b2822206d1d068b25f676bed8c8613ec",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: remove scrollbar in context menu",
+        "references": []
+      },
+      {
+        "id": "698fa0a8dc4256ee8875a1dc8c66c2b6cf032779",
+        "type": "FIX",
+        "text": " unified.ShellOverlay: Avoid ACC announcement of full content",
+        "references": []
+      }
+    ]
   }
 }

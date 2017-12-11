@@ -275,5 +275,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.15": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "474a44c1f0fa36c63f9bfe0a5321ced4f2881b2f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus handling corrected",
+        "references": []
+      },
+      {
+        "id": "32753ac598fd5dc11721e4a8ca3aede6a41b2c3e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select month and year corrected",
+        "references": []
+      }
+    ]
   }
 }

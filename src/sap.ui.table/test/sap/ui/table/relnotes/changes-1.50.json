@@ -244,5 +244,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.7": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "ec1b157979ddc37c478ad9324b83673e4e692d65",
+        "type": "FIX",
+        "text": " Table: Vertical scrollbar becomes visible if height is decreased",
+        "references": []
+      }
+    ]
   }
 }
