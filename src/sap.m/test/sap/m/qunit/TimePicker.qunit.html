@@ -70,7 +70,9 @@
 		jQuery.sap.require("sap.ui.test.TestUtils");
 		jQuery.sap.require("sap.m.TimePickerSliders");
 		jQuery.sap.require("sap.m.TimePickerSlider");
-		jQuery.sap.require("sap.m.VisibleItem");
+		jQuery.sap.require("sap.m.VisibleItem")
+
+		var TimePickerMaskMode = sap.m.TimePickerMaskMode;
 
 		QUnit.module("step precision in time picker", {
 			beforeEach: function() {
@@ -2841,6 +2843,443 @@
 			assert.equal(oSpyDestroy.callCount, 1, "When initMask is called, the old instance of semanticmask helper is destroyed");
 		});
 
+		QUnit.module("maskMode property", {
+			beforeEach: function () {
+				this.oTp = new sap.m.TimePicker();
+				this.oTp.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+
+			afterEach: function () {
+				this.oTp.destroy();
+				this.oTp = null;
+			}
+		});
+
+		QUnit.test("_isMaskEnabled returns true if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; });
+
+			// assert
+			assert.ok(this.oTp._isMaskEnabled(), "mask should be enabled if maskMode is 'On'");
+
+			// cleanup
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("_isMaskEnabled returns false if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; });
+
+			// assert
+			assert.ok(!this.oTp._isMaskEnabled(), "mask should be disabled if maskMode is 'Off'");
+
+			// cleanup
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onfocusin event should call MaskEnabler's onfocusin if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; }),
+					oMaskEnablerFocusInSpy = this.spy(sap.m.MaskEnabler, "onfocusin");
+
+			// act
+			this.oTp.onfocusin({ target: this.oTp.getDomRef() });
+
+			// assert
+			assert.equal(oMaskEnablerFocusInSpy.callCount, 1, "MaskEnabler.onfocusin should be called once");
+
+			// cleanup
+			oMaskEnablerFocusInSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onfocusin event should call MaskEnabler's onfocusin if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				oMaskEnablerFocusInSpy = this.spy(sap.m.MaskEnabler, "onfocusin");
+
+			// act
+			this.oTp.onfocusin({ target: this.oTp.getDomRef() });
+
+			// assert
+			assert.equal(oMaskEnablerFocusInSpy.callCount, 1, "MaskEnabler.onfocusin should be called once");
+
+			// cleanup
+			oMaskEnablerFocusInSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onfocusin event should call _applyMask and _positionCaret if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; }),
+				oApplyMaskSpy = this.spy(this.oTp, "_applyMask"),
+				oPositionCaret = this.spy(this.oTp, "_positionCaret");
+
+			// act
+			this.oTp.onfocusin({ target: this.oTp.getDomRef() });
+
+			// assert
+			assert.equal(oApplyMaskSpy.callCount, 1, "MaskEnabler._applyMask should be called once");
+			assert.equal(oPositionCaret.callCount, 1, "MaskEnabler._positionCaret should be called once");
+
+			// cleanup
+			oApplyMaskSpy.restore();
+			oPositionCaret.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onfocusin event should not call _applyMask and _positionCaret if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				oApplyMaskSpy = this.spy(this.oTp, "_applyMask"),
+				oPositionCaret = this.spy(this.oTp, "_positionCaret");
+
+			// act
+			this.oTp.onfocusin({ target: this.oTp.getDomRef() });
+
+			// assert
+			assert.equal(oApplyMaskSpy.callCount, 0, "MaskEnabler._applyMask should not be called");
+			assert.equal(oPositionCaret.callCount, 0, "MaskEnabler._positionCaret should not be called");
+
+			// cleanup
+			oApplyMaskSpy.restore();
+			oPositionCaret.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("setValue method should call MaskEnabler's setValue method if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; }),
+				oMaskEnablerSetValueSpy = this.spy(sap.m.MaskEnabler, "setValue");
+
+			// act
+			this.oTp.setValue("12:12:12");
+
+			// assert
+			assert.equal(oMaskEnablerSetValueSpy.callCount, 1, "MaskEnabler.setValue should be called once");
+
+			// cleanup
+			oMaskEnablerSetValueSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("setValue method should call MaskEnabler's setValue method if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				oMaskEnablerSetValueSpy = this.spy(sap.m.MaskEnabler, "setValue");
+
+			// act
+			this.oTp.setValue("12:12:12");
+
+			// assert
+			assert.equal(oMaskEnablerSetValueSpy.callCount, 1, "MaskEnabler.setValue should be called once");
+
+			// cleanup
+			oMaskEnablerSetValueSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("setValue method should call _applyRules if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; }),
+				oApplyRulesSpy = this.spy(this.oTp, "_applyRules");
+
+			// act
+			this.oTp.setValue("12:12:12");
+
+			// assert
+			assert.equal(oApplyRulesSpy.callCount, 1, "MaskEnabler._applyRules should be called once");
+
+			// cleanup
+			oApplyRulesSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("setValue method should not call _applyRules if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				oApplyRulesSpy = this.spy(this.oTp, "_applyRules");
+
+			// act
+			this.oTp.setValue("12:12:12");
+
+			// assert
+			assert.equal(oApplyRulesSpy.callCount, 0, "MaskEnabler._applyRules should not be called");
+
+			// cleanup
+			oApplyRulesSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onkeydown event should call MaskEnabler's onkeydown event if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; }),
+					oKeyDownSpy = this.spy(sap.m.MaskEnabler, "onkeydown");
+
+			// act
+			this.oTp.onkeydown({});
+
+			// assert
+			assert.equal(oKeyDownSpy.callCount, 1, "MaskEnabler.onkeydown should be called once");
+
+			// cleanup
+			oKeyDownSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onkeydown event should call MaskEnabler's onkeydown event if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				oKeyDownSpy = this.spy(sap.m.MaskEnabler, "onkeydown");
+
+			// act
+			this.oTp.onkeydown({});
+
+			// assert
+			assert.equal(oKeyDownSpy.callCount, 1, "MaskEnabler.onkeydown should be called once");
+
+			// cleanup
+			oKeyDownSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onkeydown event should call _keyDownHandler if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; }),
+					oKeyDownHandlerSpy = this.spy(this.oTp, "_keyDownHandler");
+
+			// act
+			this.oTp.onkeydown({});
+
+			// assert
+			assert.equal(oKeyDownHandlerSpy.callCount, 1, "MaskEnabler._keyDownHandler should be called once");
+
+			// cleanup
+			oKeyDownHandlerSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onkeydown event should not call _keyDownHandler if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				oKeyDownHandlerSpy = this.spy(this.oTp, "_keyDownHandler");
+
+			// act
+			this.oTp.onkeydown({});
+
+			// assert
+			assert.equal(oKeyDownHandlerSpy.callCount, 0, "MaskEnabler._keyDownHandler should not be called");
+
+			// cleanup
+			oKeyDownHandlerSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onfocusout event should call closeValueStateMessage and _inputCompletedHandler if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; }),
+				oCloseValueStateMessageSpy = this.spy(this.oTp, "closeValueStateMessage"),
+				oInputCompletedHandlerSpy = this.spy(this.oTp, "_inputCompletedHandler");
+
+			// act
+			this.oTp.onfocusout({});
+
+			// assert
+			assert.equal(oCloseValueStateMessageSpy.callCount, 1, "MaskEnabler.closeValueStateMessage should be called once");
+			assert.equal(oInputCompletedHandlerSpy.callCount, 1, "MaskEnabler._inputCompletedHandler should be called once");
+
+			// cleanup
+			oCloseValueStateMessageSpy.restore();
+			oInputCompletedHandlerSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onfocusout event should call InputBase.prototype.onfocusout if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				oInputBaseFocusOutSpy = this.spy(sap.m.InputBase.prototype, "onfocusout");
+
+			// act
+			this.oTp.onfocusout({});
+
+			// assert
+			assert.equal(oInputBaseFocusOutSpy.callCount, 1, "InputBase.prototype.onfocusout should be called once");
+
+			// cleanup
+			oInputBaseFocusOutSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("oninput event should call _applyMask and _positionCaret if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; }),
+				oApplyMaskSpy = this.spy(this.oTp, "_applyMask"),
+				oPositionCaretSpy = this.spy(this.oTp, "_positionCaret");
+
+			// act
+			this.oTp.oninput({});
+
+			// assert
+			assert.equal(oApplyMaskSpy.callCount, 1, "MaskEnabler._applyMask should be called once");
+			assert.equal(oPositionCaretSpy.callCount, 1, "MaskEnabler._positionCaret should be called once");
+
+			// cleanup
+			oApplyMaskSpy.restore();
+			oPositionCaretSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("oninput event should not call _applyMask and _positionCaret if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+					oApplyMaskSpy = this.spy(this.oTp, "_applyMask"),
+					oPositionCaretSpy = this.spy(this.oTp, "_positionCaret");
+
+			// act
+			this.oTp.oninput({});
+
+			// assert
+			assert.equal(oApplyMaskSpy.callCount, 0, "MaskEnabler._applyMask should not be called");
+			assert.equal(oPositionCaretSpy.callCount, 0, "MaskEnabler._positionCaret should not be called ");
+
+			// cleanup
+			oApplyMaskSpy.restore();
+			oPositionCaretSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onkeypress event should call _keyPressHandler if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; }),
+				okeyPressHandlerSpy = this.spy(this.oTp, "_keyPressHandler");
+
+			// act
+			this.oTp.onkeypress({ preventDefault: function() {}});
+
+			// assert
+			assert.equal(okeyPressHandlerSpy.callCount, 1, "MaskEnabler._keyPressHandler should be called once");
+
+			// cleanup
+			okeyPressHandlerSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onkeypress event should not call _keyPressHandler if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				okeyPressHandlerSpy = this.spy(this.oTp, "_keyPressHandler");
+
+			// act
+			this.oTp.onkeypress({ preventDefault: function() {}});
+
+			// assert
+			assert.equal(okeyPressHandlerSpy.callCount, 0, "MaskEnabler._keyPressHandler should not be called");
+
+			// cleanup
+			okeyPressHandlerSpy.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onkeydown event should call _keyDownHandler if maskMode is 'On'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.On; }),
+				oKeyDownHandler = this.spy(this.oTp, "_keyDownHandler");
+
+			// act
+			this.oTp.onkeydown({});
+
+			// assert
+			assert.equal(oKeyDownHandler.callCount, 1, "MaskEnabler._keyDownHandler should be called once");
+
+			// cleanup
+			oKeyDownHandler.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onkeydown event should not call _keyDownHandler if maskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				oKeyDownHandler = this.spy(this.oTp, "_keyDownHandler");
+
+			// act
+			this.oTp.onkeydown({});
+
+			// assert
+			assert.equal(oKeyDownHandler.callCount, 0, "MaskEnabler._keyDownHandler should not be called");
+
+			// cleanup
+			oKeyDownHandler.restore();
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onfocusin: input value should be empty if the TimePickerMaskMode is 'Off'", function (assert) {
+			// prepare
+			var sExpectedValue = "",
+				oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; });
+
+			// act
+			this.oTp.focus();
+
+			// assert
+			assert.equal(jQuery("#" + this.oTp.getId() + "-inner").val(), sExpectedValue, "mask should not be applied to the input");
+
+			// cleanup
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("input should fire change event if value is changed and TimePickerMaskMode is 'Off' and focus leaves", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				oChangeSpy = this.spy();
+			this.oTp.attachChange(oChangeSpy);
+
+			// act
+			this.oTp.focus();
+			jQuery(this.oTp.getFocusDomRef()).val("11");
+			jQuery(this.oTp.getFocusDomRef()).blur();
+
+			// assert
+			assert.equal(oChangeSpy.callCount, 1, "change event should be called once");
+
+			// cleanup
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("onsapfocusleave: input should not fire change event if value is not changed and TimePickerMaskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+					oChangeSpy = this.spy();
+			this.oTp.attachChange(oChangeSpy);
+
+			// act
+			this.oTp.focus();
+			this.oTp.onsapfocusleave();
+
+			// assert
+			assert.equal(oChangeSpy.callCount, 0, "change event should not be called");
+
+			// cleanup
+			oGetMaskModeStub.restore();
+		});
+
+		QUnit.test("on keydown enter: input should fire change event if value is changed and TimePickerMaskMode is 'Off'", function (assert) {
+			// prepare
+			var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode", function () { return TimePickerMaskMode.Off; }),
+				oChangeSpy = this.spy();
+			this.oTp.attachChange(oChangeSpy);
+			sap.ui.getCore().applyChanges();
+
+			// act
+			jQuery(this.oTp.getFocusDomRef()).val("11");
+			qutils.triggerKeydown(jQuery(this.oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+
+			// assert
+			assert.equal(oChangeSpy.callCount, 1, "change event should be called once");
+
+			// cleanup
+			oGetMaskModeStub.restore();
+		});
 
 		QUnit.module("events and event handlers", {
 			beforeEach: function () {

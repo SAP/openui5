@@ -64,6 +64,15 @@ sap.ui.define([
 
 	MaskEnabler.call(MaskInput.prototype);
 
+	/**
+	 * Returns if the mask is enabled.
+	 *
+	 * @returns {boolean}
+	 * @private
+	 */
+	MaskInput.prototype._isMaskEnabled = function () {
+		return true;
+	};
 
 	return MaskInput;
 
