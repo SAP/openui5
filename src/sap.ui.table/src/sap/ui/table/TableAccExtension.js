@@ -390,6 +390,11 @@ sap.ui.define([
 																		 && oTableInstances.row._bHasChildren)) {
 					aDescriptions.push(sTableId + "-toggleedit");
 				}
+
+				if (TableUtils.Grouping.isTreeMode(oTable) && !!$Cell.parent().attr("aria-selected")) {
+					// aria-selected on the row seems not be enough for treegrids
+					aLabels.push(sTableId + "-ariarowselected");
+				}
 			}
 
 			var sText = oInfo ? oInfo.description : " ";
