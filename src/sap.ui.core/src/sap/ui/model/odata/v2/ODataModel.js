@@ -2543,7 +2543,7 @@ sap.ui.define([
 	 *            					 been successfully retrieved.
 	 * @param {function} [fnError] Callback function which is called when the request failed. The handler can have the parameter: oError which contains
 	 *  additional error information.
-	 * @param {boolean} [bAsync=false] Whether the request should be send asynchronously
+	 * @param {boolean} [bAsync=false] Whether the request should be sent asynchronously
 	 * @returns {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
@@ -5585,7 +5585,7 @@ sap.ui.define([
 	 * <li><code>changeSetId</code>: ID of a <code>ChangeSet</code> which bundles the changes for the entity type.</li>
 	 * <li><code>single</code>: Defines if every change will get an own change set (defaults to <code>true</code>)</li>
 	 * </ul>
-	 * @deprecated Since 1.32 use {@link #setChangesGroups} instead
+	 * @deprecated Since 1.32 Use {@link #setChangeGroups} instead
 	 * @public
 	 */
 	ODataModel.prototype.setChangeBatchGroups = function(mGroups) {
@@ -5809,7 +5809,7 @@ sap.ui.define([
 	/**
 	 * Returns whether a given path relative to the given contexts is in laundering state.
 	 *
-	 * If data is send to the server the data state becomes laundering until the
+	 * If data is sent to the server, the data state becomes laundering until the
 	 * data was accepted or rejected.
 	 *
 	 * @param {string} sPath Path to resolve

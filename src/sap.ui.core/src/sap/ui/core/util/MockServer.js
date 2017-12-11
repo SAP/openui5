@@ -58,8 +58,8 @@ sap.ui
 						/**
 						 * Getter for property <code>rootUri</code>.
 						 *
-						 * Default value is empty/<code>undefined</code>
-						 *
+						 * Default value is empty/<code>undefined</code>.
+						 * Must end with a a trailing slash ("/").
 						 * @return {string} the value of property <code>rootUri</code>
 						 * @public
 						 * @name sap.ui.core.util.MockServer#getRootUri

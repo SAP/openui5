@@ -20,12 +20,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	/**
 	 * Constructor for a new View.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class A base class for Views.
 	 *
-	 * Introduces the relationship to a Controller, some basic visual appearance settings like width and height
+	 * Introduces the relationship to a Controller, some basic visual appearance settings like width and height,
 	 * and provides lifecycle events.
 	 *
 	 * @extends sap.ui.core.Control

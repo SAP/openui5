@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * @class
 	 * The ControlMessageProcessor implementation.
 	 * This MessageProcessor is able to handle Messages with the following target syntax:
-	 * 		'ControlID/PropertyName'
+	 * 		'ControlID/PropertyName'.
 	 * Creating an instance of this class using the "new" keyword always results in the same instance (Singleton).
 	 *
 	 * @extends sap.ui.core.message.MessageProcessor
