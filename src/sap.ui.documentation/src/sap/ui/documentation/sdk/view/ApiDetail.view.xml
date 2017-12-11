@@ -166,8 +166,8 @@
 
 										<m:Table items="{ path: '/constructor/parameters'}"
 												showSeparators="Inner"
-		 										fixedLayout="true"
-		 										visible="{= !!${/constructor/parameters} }">
+												fixedLayout="true"
+												visible="{= !!${/constructor/parameters} }">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
@@ -312,7 +312,7 @@
 											<m:ColumnListItem visible="{= ${visibility} === 'public'}">
 												<m:cells>
 													<m:VBox>
-														<m:Text class="sapUiDocumentationParamBold" text="{name}" wrapping="false"/>
+														<custom:ParamText text="{name}" phoneText="{name}" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
 														<m:ObjectStatus visible="{= ${deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
 													</m:VBox>
 													<m:Text text="{cardinality}" wrapping="false"/>
