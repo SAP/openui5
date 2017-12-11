@@ -43,7 +43,9 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function () {
-			CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
+			sap.ui.getCore().attachThemeChanged(function () {
+				CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
+			});
 		},
 
 		onAsyncSwitch: function (oEvent) {
