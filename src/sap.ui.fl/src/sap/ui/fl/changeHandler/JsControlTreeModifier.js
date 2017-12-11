@@ -259,6 +259,34 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Validates if the control has the correct type for the aggregation.
+		 *
+		 * @param {sap.ui.core.Control} oControl control whose type is to be checked
+		 * @param {object} oAggregationMetadata metadata of the aggregation
+		 * @param {sap.ui.core.Control} oParent parent of the control
+		 * @param {string} sFragment path to the fragment that contains the control, whose type is to be checked
+		 * @returns {boolean} Returns true if the type matches
+		 */
+		validateType: function(oControl, oAggregationMetadata, oParent, sFragment) {
+			var sTypeOrInterface = oAggregationMetadata.type;
+
+			// if aggregation is not multiple and already has element inside, then it is not valid for element
+			if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, oAggregationMetadata.name) &&
+					this.getAggregation(oParent, oAggregationMetadata.name).length > 0) {
+				return false;
+			}
+			return Utils.isInstanceOf(oControl, sTypeOrInterface) || Utils.hasInterface(oControl, sTypeOrInterface);
+		},
+
+		instantiateFragment: function(sFragment, oView, oViewInstance, oController) {
+			if (oViewInstance) {
+				return sap.ui.xmlfragment(oViewInstance.getId(), sFragment, oController);
+			} else {
+				return sap.ui.xmlfragment(sFragment);
+			}
+		},
+
 		addXML: function(oControl, sAggregationName, iIndex, oNewControl, oView, oComponent) {
 			this.insertAggregation(oControl, sAggregationName, oNewControl, iIndex);
 		},

@@ -128,25 +128,6 @@ sap.ui.define([
 			}
 
 			return oSelector;
-		},
-
-		/**
-		 * Validates if the control has the correct type for the aggregation.
-		 *
-		 * @param {sap.ui.core.Control} oControl control whose type is to be checked
-		 * @param {object} oAggregationMetadata metadata of the aggregation
-		 * @param {sap.ui.core.Control} oParent parent of the control
-		 * @returns {boolean} Returns true if the type matches
-		 */
-		validateType: function(oControl, oAggregationMetadata, oParent) {
-			var sTypeOrInterface = oAggregationMetadata.type;
-
-			// if aggregation is not multiple and already has element inside, then it is not valid for element
-			if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, oAggregationMetadata.name) &&
-					this.getAggregation(oParent, oAggregationMetadata.name).length > 0) {
-				return false;
-			}
-			return Utils.isInstanceOf(oControl, sTypeOrInterface) || Utils.hasInterface(oControl, sTypeOrInterface);
 		}
 	};
 });

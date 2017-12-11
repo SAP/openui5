@@ -91,6 +91,9 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		"bindProperty" : {
 			clazz : 'sap.ui.rta.command.BindProperty'
 		},
+		"addXML" : {
+			clazz : 'sap.ui.rta.command.AddXML'
+		},
 
 		/* NEW COMMANDS, ALIGNED WITH A SCALABILITY CONCEPT */
 		"createContainer" : {
