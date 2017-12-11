@@ -3281,6 +3281,139 @@
 			oGetMaskModeStub.restore();
 		});
 
+		QUnit.module("initialFocusedDate property", {
+			beforeEach: function () {
+				this.oTp = new sap.m.TimePicker();
+				this.oTp.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+
+			afterEach: function () {
+				this.oTp.destroy();
+				this.oTp = null;
+			}
+		});
+
+		QUnit.test("_shouldSetInitialFocusedDateValue should return false if TimePicker has value and initialFocusedDate", function (assert) {
+			// prepare
+			var oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue", function () { return new Date(2017, 10, 10, 10, 11, 12, 13) }),
+				oIsValidValue = this.stub(this.oTp, "_isValidValue", function () { return true; });
+			this.oTp.setValue("12:11:10");
+
+			// act && assert
+			assert.equal(this.oTp._shouldSetInitialFocusedDateValue(), false, "method should return false");
+
+			// cleanup
+			oGetInitialFocusedDateValueStub.restore();
+			oIsValidValue.restore();
+		});
+
+		QUnit.test("_shouldSetInitialFocusedDateValue should return false if TimePicker has value and no initialFocusedDate", function (assert) {
+			// act
+			this.oTp.setValue("12:11:10");
+
+			// assert
+			assert.equal(this.oTp._shouldSetInitialFocusedDateValue(), false, "method should return false");
+		});
+
+		QUnit.test("_shouldSetInitialFocusedDateValue should return false if TimePicker has no value and no initialFocusedDate", function (assert) {
+			// prepare
+			var oIsValidValue = this.stub(this.oTp, "_isValidValue", function () { return true; });
+
+			// assert
+			assert.equal(this.oTp._shouldSetInitialFocusedDateValue(), false, "method should return false");
+
+			// cleanup
+			oIsValidValue.restore();
+		});
+
+		QUnit.test("_shouldSetInitialFocusedDateValue should return true if TimePicker has initialFocusedDate and no value", function (assert) {
+			// prepare
+			var oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue", function () { return new Date(2017, 10, 10, 10, 11, 12, 13) }),
+					oIsValidValue = this.stub(this.oTp, "_isValidValue", function () { return true; });
+
+			// assert
+			assert.equal(this.oTp._shouldSetInitialFocusedDateValue(), true, "method should return true");
+
+			// cleanup
+			oGetInitialFocusedDateValueStub.restore();
+			oIsValidValue.restore();
+		});
+
+		QUnit.test("_shouldSetInitialFocusedDateValue should return true if TimePicker value is not valid", function (assert) {
+			// prepare
+			var oIsValidValue = this.stub(this.oTp, "_isValidValue", function () { return false; });
+
+			// assert
+			assert.equal(this.oTp._shouldSetInitialFocusedDateValue(), true, "method should return true");
+
+			// cleanup
+			oIsValidValue.restore();
+		});
+
+		QUnit.test("onBeforeOpen should call _setTimeValues with provided dateValue not initialFocusedDateValue", function (assert) {
+			// prepare
+			var oExpectedDateValue = new Date(2017, 8, 9, 10, 11, 12, 13),
+				oInitialFocusedDateValue = new Date(2017, 2, 3, 4, 5, 6, 7),
+				oTimePickerSliders = new sap.m.TimePickerSliders(this.oTp.getId() + "-sliders", {
+					displayFormat: "hh:mm",
+					labelText: "",
+					minutesStep: this.oTp.getMinutesStep(),
+					secondsStep: this.oTp.getSecondsStep()
+				}),
+				oGetDateValue = this.stub(this.oTp, "getDateValue", function () { return oExpectedDateValue }),
+				oShouldSetInitialFocusedDateValueStub = this.stub(this.oTp, "_shouldSetInitialFocusedDateValue", function () { return false; }),
+				oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue", function () { return oInitialFocusedDateValue }),
+				oGetSlidersStub = this.stub(this.oTp, "_getSliders", function () { return oTimePickerSliders; }),
+				oIsValidValue = this.stub(this.oTp, "_isValidValue", function () { return true; }),
+				oSetTimeValuesSpy = this.spy(oTimePickerSliders, "_setTimeValues");
+
+			// act
+			this.oTp.onBeforeOpen();
+
+			assert.ok(oSetTimeValuesSpy.calledWith(oExpectedDateValue), "sliders value should be set to the getDateValue");
+			assert.equal(oSetTimeValuesSpy.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "_setTimeValues should be called with " + oExpectedDateValue);
+
+			// cleanup
+			oGetDateValue.restore();
+			oShouldSetInitialFocusedDateValueStub.restore();
+			oGetInitialFocusedDateValueStub.restore();
+			oGetSlidersStub.restore();
+			oSetTimeValuesSpy.restore();
+			oIsValidValue.restore();
+			oTimePickerSliders.destroy();
+		});
+
+		QUnit.test("onBeforeOpen should call _setTimeValues with provided initialFocusedDateValue if there is no value", function (assert) {
+			// prepare
+			var oExpectedDateValue = new Date(2017, 8, 9, 10, 11, 12, 13),
+				oTimePickerSliders = new sap.m.TimePickerSliders(this.oTp.getId() + "-sliders", {
+					displayFormat: "hh:mm",
+					labelText: "",
+					minutesStep: this.oTp.getMinutesStep(),
+					secondsStep: this.oTp.getSecondsStep()
+				}),
+				oGetDateValue = this.stub(this.oTp, "getDateValue", function () { return null }),
+				oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue", function () { return oExpectedDateValue }),
+				oGetSlidersStub = this.stub(this.oTp, "_getSliders", function () { return oTimePickerSliders; }),
+				oIsValidValue = this.stub(this.oTp, "_isValidValue", function () { return true; }),
+				oSetTimeValuesSpy = this.spy(oTimePickerSliders, "_setTimeValues");
+
+			// act
+			this.oTp.onBeforeOpen();
+
+			assert.ok(oSetTimeValuesSpy.calledWith(oExpectedDateValue), "sliders value should be set to the initialFocusedDateValue");
+			assert.equal(oSetTimeValuesSpy.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "_setTimeValues should be called with " + oExpectedDateValue);
+
+			// cleanup
+			oGetDateValue.restore();
+			oGetInitialFocusedDateValueStub.restore();
+			oGetSlidersStub.restore();
+			oSetTimeValuesSpy.restore();
+			oIsValidValue.restore();
+			oTimePickerSliders.destroy();
+		});
+
 		QUnit.module("events and event handlers", {
 			beforeEach: function () {
 				this.clock = sinon.useFakeTimers();
