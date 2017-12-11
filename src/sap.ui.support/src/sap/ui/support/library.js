@@ -13,7 +13,10 @@ sap.ui.define(["sap/ui/core/library"],
 	 * UI5 library: sap.ui.support.
 	 * A library for the Support Assistant tool.
 	 * <h3>Overview</h3>
-The library provides the Support Assistant tool. It enables application developers to check whether their applications are built according to the best practices for building SAPUI5 apps. The tool uses a set of pre-defined rules to check all aspects of an application.
+	 * The library provides the Support Assistant tool. It enables application
+	 * developers to check whether their applications are built according to the
+	 * best practices for building SAPUI5 apps. The tool uses a set of pre-defined
+	 * rules to check all aspects of an application.
 	 *
 	 * @namespace
 	 * @name sap.ui.support
