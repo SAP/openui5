@@ -86,6 +86,10 @@ sap.ui.require([
 		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
 			highlight: "Success"
 		}));
+		oTreeTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+			highlight: "Success"
+		}));
+		oTreeTable.setSelectedIndex(0);
 		sap.ui.getCore().applyChanges();
 	}
 
@@ -116,6 +120,7 @@ sap.ui.require([
 		var bFirstTime = !!mParams.firstTime;
 		var bRowChange = !!mParams.rowChange;
 		var bColChange = !!mParams.colChange;
+		var oTable = !mParams.table ? window.oTable : mParams.table;
 		var bGroup = !!mParams.group;
 		var bSum = !!mParams.sum;
 
@@ -163,6 +168,10 @@ sap.ui.require([
 			}
 		}
 
+		if (oTable.isIndexSelected(iRow) && sap.ui.table.TableUtils.Grouping.isTreeMode(oTable)) {
+			aLabels.push(oTable.getId() + "-ariarowselected");
+		}
+
 		assert.strictEqual(
 			($Cell.attr("aria-labelledby") || "").trim(),
 			aLabels.join(" "),
@@ -192,6 +201,7 @@ sap.ui.require([
 	function testAriaLabelsForNonFocusedDataCell($Cell, iRow, iCol, assert, mParams) {
 		var mParams = mParams || {};
 		var aLabels = [];
+		var oTable = !mParams.table ? window.oTable : mParams.table;
 		var oColumn = oTable._getVisibleColumns()[iCol];
 		var oRow = oTable.getRows()[iRow];
 		var oCell = oRow.getCells()[iCol];
@@ -276,6 +286,25 @@ sap.ui.require([
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell($Cell, 1, aFields.length - 1, assert);
+			done();
+		}, 100);
+	});
+
+	QUnit.test("aria-labelledby with Focus (TreeTable)", function(assert) {
+		var done = assert.async();
+		var $Cell;
+		var i;
+		for (i = 0; i < aFields.length; i++) {
+			$Cell = getCell(0, i, true, assert, oTreeTable);
+			testAriaLabelsForFocusedDataCell($Cell, 0, i, assert, {firstTime: i == 0, colChange: true, table: oTreeTable});
+		}
+		for (i = 0; i < aFields.length; i++) {
+			$Cell = getCell(1, i, true, assert, oTreeTable);
+			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true, table: oTreeTable});
+		}
+		setFocusOutsideOfTable(assert);
+		setTimeout(function() {
+			testAriaLabelsForNonFocusedDataCell($Cell, 1, aFields.length - 1, assert, {table: oTreeTable});
 			done();
 		}, 100);
 	});
