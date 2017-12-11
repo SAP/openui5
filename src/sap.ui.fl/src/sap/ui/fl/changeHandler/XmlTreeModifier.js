@@ -386,6 +386,13 @@ sap.ui.define([
 			return sAggregationName;
 		},
 
+		/**
+		 * checks the metadata of the given control and returns the aggregation matching the name
+		 *
+		 * @param {sap.ui.core.Control} oControl control whose aggregation is to be found
+		 * @param {string} sAggregationName name of the aggregation
+		 * @returns {object} Returns the instance of the aggregation or undefined
+		 */
 		findAggregation: function(oControl, sAggregationName) {
 			var oMetadata = this._getControlMetadata(oControl);
 			var oAggregations = oMetadata.getAllAggregations();
@@ -403,7 +410,7 @@ sap.ui.define([
 		 * @param {string} sFragment path to the fragment that contains the control, whose type is to be checked
 		 * @returns {boolean} Returns true if the type matches
 		 */
-		validateType: function(oControl, oAggregationMetadata, oParent, sFragment) {
+		validateType: function(oControl, oAggregationMetadata, oParent, sFragment, iIndex) {
 			var sTypeOrInterface = oAggregationMetadata.type;
 
 			// if aggregation is not multiple and already has element inside, then it is not valid for element
@@ -411,18 +418,37 @@ sap.ui.define([
 					this.getAggregation(oParent, oAggregationMetadata.name).length > 0) {
 				return false;
 			}
-			oControl = sap.ui.xmlfragment(sFragment);
-			var bReturn = Utils.isInstanceOf(oControl, sTypeOrInterface) || Utils.hasInterface(oControl, sTypeOrInterface);
-			oControl.destroy();
+			var aControls = sap.ui.xmlfragment(sFragment);
+			if (!Array.isArray(aControls)) {
+				aControls = [aControls];
+			}
+			var bReturn = Utils.isInstanceOf(aControls[iIndex], sTypeOrInterface) || Utils.hasInterface(aControls[iIndex], sTypeOrInterface);
+			aControls.forEach(function(oFragmentControl) {
+				oFragmentControl.destroy();
+			});
 			return bReturn;
 		},
 
-		instantiateFragment: function(sFragment, oView, oViewInstance, oController) {
-			return XMLTemplateProcessor.loadTemplate(sFragment, "fragment");
-		},
-
-		addXML: function(oControl, sAggregationName, iIndex, oNewControl, oView, oAppComponent) {
-			this.insertAggregation(oControl, sAggregationName, oNewControl, iIndex, oView);
+		/**
+		 * Loads a fragment and turns the result into an array of nodes
+		 *
+		 * @param {string} sFragment path to the fragment
+		 * @param {string} sChangeId id of the current change
+		 * @returns {array} Returns an array with the nodes of the controls of the fragment
+		 */
+		instantiateFragment: function(sFragment, sChangeId) {
+			var oControlNodes = XMLTemplateProcessor.loadTemplate(sFragment, "fragment");
+			if (oControlNodes.localName === "FragmentDefinition") {
+				var aNodes = [];
+				for (var i = 0, n = oControlNodes.children.length; i < n; i++) {
+					oControlNodes.children[i].id = sChangeId + "--" + oControlNodes.children[i].id;
+					aNodes.push(oControlNodes.children[i]);
+				}
+				return aNodes;
+			} else {
+				oControlNodes.id = sChangeId + "--" + oControlNodes.id;
+				return [oControlNodes];
+			}
 		},
 
 		getChangeHandlerModulePath: function(oControl) {
