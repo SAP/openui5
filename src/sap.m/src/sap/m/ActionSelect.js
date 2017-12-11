@@ -280,7 +280,7 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library'],
 				}).toStatic().getId();
 			}
 
-			bTutorMessageNotReferenced = (aAriaLabels.indexOf(this._sTutorMessage) === -1);
+			bTutorMessageNotReferenced = (aAriaLabels.indexOf(this._sTutorMessageId) === -1);
 
 			if (bTutorMessageNotReferenced && bHasButtons) {
 				oPicker.addAriaLabelledBy(this._sTutorMessageId);

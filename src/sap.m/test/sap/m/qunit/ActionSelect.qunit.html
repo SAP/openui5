@@ -390,6 +390,7 @@
 					]
 				});
 				this.oActionSelect.placeAt("actionselect-content");
+				this.oPicker = this.oActionSelect.getPicker();
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function() {
@@ -398,12 +399,25 @@
 		});
 
 		QUnit.test("A tutor message should be added if the control has buttons", function(assert) {
+			var iLabelsCountAfter1stMessageUpdate = 0,
+				iLabelsCountAfter2ndMessageUpdate = 0;
+
+			// act
 			this.oActionSelect.open();
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			var sInvisibleText = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[1]).getText();
+			var sInvisibleText = sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[1]).getText();
 			assert.strictEqual(sInvisibleText, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"),  "The tutor message is set correctly");
+
+			// act
+			iLabelsCountAfter1stMessageUpdate = this.oPicker.getAriaLabelledBy().length;
+			this.oActionSelect._updateTutorMessage();
+			iLabelsCountAfter2ndMessageUpdate = this.oPicker.getAriaLabelledBy().length;
+
+			// assert
+			assert.strictEqual(iLabelsCountAfter1stMessageUpdate, iLabelsCountAfter2ndMessageUpdate,  "The tutor message is reference only only");
+
 		});
 
 		QUnit.test("A tutor message should be added and removed accordingly if buttons are programmatically added/removed", function(assert) {
@@ -412,7 +426,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			var sInvisibleText = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[1]);
+			var sInvisibleText = sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[1]);
 			assert.strictEqual(sInvisibleText, undefined,  "The tutor message is not added, when there are no buttons");
 
 			this.oActionSelect.close();
@@ -422,7 +436,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			var sInvisibleTextMessage = sap.ui.getCore().byId(this.oActionSelect.getPicker().getAriaLabelledBy()[1]).getText();
+			var sInvisibleTextMessage = sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[1]).getText();
 			assert.strictEqual(sInvisibleTextMessage, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"),  "The tutor message is set correctly when adding buttons");
 		});
 
