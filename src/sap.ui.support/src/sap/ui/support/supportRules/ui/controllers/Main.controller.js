@@ -27,6 +27,18 @@ sap.ui.define([
 			this.updateShowButton();
 			this._setContextSettings();
 
+			this.bAdditionalViewLoaded = false;
+			CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, function () {
+				if (!this.bAdditionalViewLoaded) {
+					this.bAdditionalViewLoaded = true;
+					this.loadAdditionalUI();
+				}
+			}, this);
+		},
+
+		loadAdditionalUI: function () {
+			this._issuesPage = sap.ui.xmlview(this.getView().getId() + "--issues", "sap.ui.support.supportRules.ui.views.Issues");
+			this.byId("navCon").insertPage(this._issuesPage);
 		},
 
 		onAfterRendering: function () {

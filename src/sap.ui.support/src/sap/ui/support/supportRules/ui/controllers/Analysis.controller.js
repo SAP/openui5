@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/Storage"
 ], function ($, Controller, JSONModel, Panel, List, ListItemBase, StandardListItem, InputListItem, Button, Toolbar, ToolbarSpacer,
-		Label, MessageToast, CommunicationBus, channelNames, SharedModel, RuleSerializer, constants, Ruleset, storage) {
+	Label, MessageToast, CommunicationBus, channelNames, SharedModel, RuleSerializer, constants, Ruleset, storage) {
 	"use strict";
 
 
@@ -40,6 +40,26 @@ sap.ui.define([
 			this.ruleSetView = this.byId("ruleSetsView");
 			this.rulesViewContainer = this.byId("rulesNavContainer");
 			this.cookie = storage.readPersistenceCookie(constants.COOKIE_NAME);
+
+			this.bAdditionalViewLoaded = false;
+			CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, function () {
+				if (!this.bAdditionalViewLoaded) {
+					CommunicationBus.publish(channelNames.RESIZE_FRAME, { bigger: true });
+
+					this.bAdditionalViewLoaded = true;
+					this.loadAdditionalUI();
+				}
+			}, this);
+		},
+
+		loadAdditionalUI: function () {
+			this._ruleDetails = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.RuleDetails", this);
+			this.byId("rulesDisplayPage").addContentArea(this._ruleDetails);
+
+			this._ruleCreateUpdatePages = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.RuleUpdate", this);
+			this._ruleCreateUpdatePages.forEach(function (rcuPage) {
+				this.byId("rulesNavContainer").insertPage(rcuPage);
+			}, this);
 		},
 
 		onAfterRendering: function () {
@@ -145,11 +165,11 @@ sap.ui.define([
 
 				if (result === "success") {
 					var ruleSource = this.model.getProperty("/editRuleSource"),
-					treeTable = this.model.getProperty('/treeViewModel');
+						treeTable = this.model.getProperty('/treeViewModel');
 					var libraries = this.model.getProperty('/libraries');
-					libraries.forEach(function(lib, libIndex){
+					libraries.forEach(function (lib, libIndex) {
 						if (lib.title === constants.TEMP_RULESETS_NAME) {
-							lib.rules.forEach(function(rule, ruleIndex){
+							lib.rules.forEach(function (rule, ruleIndex) {
 								if (rule.id === ruleSource.id) {
 									lib.rules[ruleIndex] = updateRule;
 
@@ -158,7 +178,7 @@ sap.ui.define([
 									}
 								}
 							});
-							that._syncTreeTableVieModelTempRule(updateRule,treeTable);
+							that._syncTreeTableVieModelTempRule(updateRule, treeTable);
 						}
 					});
 
@@ -183,7 +203,7 @@ sap.ui.define([
 					index;
 
 				for (var componentIndex = 0; componentIndex < data.length; componentIndex += 1) {
-					executionScopeComponents.push({text: data[componentIndex]});
+					executionScopeComponents.push({ text: data[componentIndex] });
 				}
 				if (modelScopeComponents && modelScopeComponents.length > 0) {
 					for (index = 0; index < executionScopeComponents.length; index++) {
@@ -229,11 +249,11 @@ sap.ui.define([
 			var aSelectedRules = this._getSelectedRules(),
 				oExecutionContext = this._getExecutionContext();
 
-			if (!aSelectedRules.length > 0 ) {
+			if (!aSelectedRules.length > 0) {
 				MessageToast.show("Select some rules to be analyzed.");
 				return;
 			}
-			if (oExecutionContext.type === "components" && oExecutionContext.components.length === 0){
+			if (oExecutionContext.type === "components" && oExecutionContext.components.length === 0) {
 				MessageToast.show("Please select some components to be analyzed.");
 				return;
 			}
@@ -277,16 +297,16 @@ sap.ui.define([
 			if (oEvent.getParameter("selectedKey") === "additionalRulesets") {
 				this.rulesViewContainer.setBusyIndicatorDelay(0);
 				this.rulesViewContainer.setBusy(true);
-					CommunicationBus.publish(channelNames.GET_NON_LOADED_RULE_SETS);
+				CommunicationBus.publish(channelNames.GET_NON_LOADED_RULE_SETS);
 			}
 		},
 
 		_getSelectedRules: function () {
-			var	selectedRules = [],
-			selectedIndices = this.treeTable.getSelectedIndices(),
-			that = this;
+			var selectedRules = [],
+				selectedIndices = this.treeTable.getSelectedIndices(),
+				that = this;
 
-			selectedIndices.forEach(function(index){
+			selectedIndices.forEach(function (index) {
 				if (that.treeTable.getContextByIndex(index).getObject().id) {
 					selectedRules.push({
 						libName: that.treeTable.getContextByIndex(index).getObject().libName,
@@ -304,26 +324,26 @@ sap.ui.define([
 		 */
 		_syncTreeTableVieModelTempRulesLib: function (tempLib, treeTable) {
 			var innerIndex = 0;
-				for (var ruleIndex in tempLib.rules) {
-					for (var i in treeTable) {
-						if (treeTable[i].name === constants.TEMP_RULESETS_NAME) {
-							treeTable[i][innerIndex] = {
-								name: tempLib.rules[ruleIndex].title,
-								description: tempLib.rules[ruleIndex].description,
-								id: tempLib.rules[ruleIndex].id,
-								audiences: tempLib.rules[ruleIndex].audiences,
-								categories: tempLib.rules[ruleIndex].categories,
-								minversion: tempLib.rules[ruleIndex].minversion,
-								resolution: tempLib.rules[ruleIndex].resolution,
-								title: tempLib.rules[ruleIndex].title,
-								libName: treeTable[i].name,
-								check: tempLib.rules[ruleIndex].check
-							};
+			for (var ruleIndex in tempLib.rules) {
+				for (var i in treeTable) {
+					if (treeTable[i].name === constants.TEMP_RULESETS_NAME) {
+						treeTable[i][innerIndex] = {
+							name: tempLib.rules[ruleIndex].title,
+							description: tempLib.rules[ruleIndex].description,
+							id: tempLib.rules[ruleIndex].id,
+							audiences: tempLib.rules[ruleIndex].audiences,
+							categories: tempLib.rules[ruleIndex].categories,
+							minversion: tempLib.rules[ruleIndex].minversion,
+							resolution: tempLib.rules[ruleIndex].resolution,
+							title: tempLib.rules[ruleIndex].title,
+							libName: treeTable[i].name,
+							check: tempLib.rules[ruleIndex].check
+						};
 
-						}
 					}
-					innerIndex++;
 				}
+				innerIndex++;
+			}
 		},
 		/**
 		 * Keeps in sync the TreeViewModel for temporary rules that we use for visualisation of sap.m.TreeTable and the model that we use in the SuppportAssistant
@@ -512,7 +532,7 @@ sap.ui.define([
 
 			// Set first rule from first library if there is no temporary rules
 			var firstSelectedRule;
-			if (libraries[0].rules[0] ){
+			if (libraries[0].rules[0]) {
 				firstSelectedRule = libraries[0].rules[0];
 			} else {
 				firstSelectedRule = libraries[1].rules[0];
@@ -522,7 +542,7 @@ sap.ui.define([
 			that.model.setProperty("/selectedRuleStringify", "");
 			that.model.setProperty("/selectedRule", firstSelectedRule);
 			that.model.setProperty("/selectedRuleStringify", that.createRuleString(firstSelectedRule));
-			that.model.setProperty("/libraries",  libraries);
+			that.model.setProperty("/libraries", libraries);
 
 			var tempRules = storage.getRules(),
 				loadingFromAdditionalRuleSets = that.model.getProperty("/loadingAdditionalRuleSets");
@@ -540,7 +560,7 @@ sap.ui.define([
 
 			if (persistingSettings) {
 				var selectedRules = storage.getSelectedRules();
-				selectedRules.forEach(function(selectedIndex){
+				selectedRules.forEach(function (selectedIndex) {
 					that.treeTable.setSelectedIndex(selectedIndex);
 				});
 
@@ -582,7 +602,7 @@ sap.ui.define([
 		},
 		goToCreateRule: function () {
 			var navCont = this.byId("rulesNavContainer");
-			navCont.to(this.byId("rulesCreatePage"), "show");
+			navCont.to(sap.ui.getCore().byId("rulesCreatePage"), "show");
 		},
 		checkFunctionString: function (functionString) {
 			try {
@@ -630,7 +650,7 @@ sap.ui.define([
 
 			if (aLibNames.length > 0) {
 				CommunicationBus.publish(channelNames.LOAD_RULESETS, {
-					aLibNames: {publicRules: aLibNames, internalRules: aLibNames}
+					aLibNames: { publicRules: aLibNames, internalRules: aLibNames }
 				});
 				this.model.setProperty("/loadingAdditionalRuleSets", true);
 			} else {
@@ -638,7 +658,7 @@ sap.ui.define([
 			}
 		},
 
-		onCellClick: function(event){
+		onCellClick: function (event) {
 			if (event.getParameter("rowBindingContext")) {
 				var selection = event.getParameter("rowBindingContext").getObject(),
 					selectedRule;
@@ -652,94 +672,94 @@ sap.ui.define([
 			}
 
 		},
-	getMainModelFromTreeViewModel: function(selectedRule) {
+		getMainModelFromTreeViewModel: function (selectedRule) {
 
-		var structeredRulesModel =  this.model.getProperty("/libraries"),
-			mainModelRule = null;
+			var structeredRulesModel = this.model.getProperty("/libraries"),
+				mainModelRule = null;
 
-		structeredRulesModel.forEach(function(lib, index){
-				structeredRulesModel[index].rules.forEach(function(element){
+			structeredRulesModel.forEach(function (lib, index) {
+				structeredRulesModel[index].rules.forEach(function (element) {
 					if (selectedRule.id === element.id) {
 						mainModelRule = element;
 					}
 				});
-		});
+			});
 
-		return mainModelRule;
-	},
+			return mainModelRule;
+		},
 
-	duplicateRule: function(event){
-		var path =  event.getSource().getBindingContext().getPath(),
-			sourceObject = this.getView().getModel().getProperty(path),
-			selectedRule = this.getMainModelFromTreeViewModel(sourceObject),
-			selectedRuleCopy = jQuery.extend(true, {}, selectedRule);
+		duplicateRule: function (event) {
+			var path = event.getSource().getBindingContext().getPath(),
+				sourceObject = this.getView().getModel().getProperty(path),
+				selectedRule = this.getMainModelFromTreeViewModel(sourceObject),
+				selectedRuleCopy = jQuery.extend(true, {}, selectedRule);
 
-		this.model.setProperty("/newRule", selectedRuleCopy);
-		this.model.checkUpdate(true, false);
-		this.goToCreateRule();
-	},
+			this.model.setProperty("/newRule", selectedRuleCopy);
+			this.model.checkUpdate(true, false);
+			this.goToCreateRule();
+		},
 
-	editRule: function(event) {
-		var path =  event.getSource().getBindingContext().getPath(),
-			sourceObject = this.getView().getModel().getProperty(path),
-			selectedRule = this.getMainModelFromTreeViewModel(sourceObject);
+		editRule: function (event) {
+			var path = event.getSource().getBindingContext().getPath(),
+				sourceObject = this.getView().getModel().getProperty(path),
+				selectedRule = this.getMainModelFromTreeViewModel(sourceObject);
 
-		this.model.setProperty("/editRuleSource", selectedRule);
-		this.model.setProperty("/editRule", jQuery.extend(true, {}, selectedRule));
-		this.model.checkUpdate(true, true);
-		var navCont = this.byId("rulesNavContainer");
-		navCont.to(this.byId("ruleUpdatePage"), "show");
-	},
-	deleteTemporaryRule: function(event) {
-		var sourceObject = this.getObjectOnTreeRow(event),
-			treeViewModel = this.model.getProperty("/treeViewModel"),
-			mainModel = this.model.getProperty("/libraries"),
-			rulesNotToBeDeleted = [];
+			this.model.setProperty("/editRuleSource", selectedRule);
+			this.model.setProperty("/editRule", jQuery.extend(true, {}, selectedRule));
+			this.model.checkUpdate(true, true);
+			var navCont = this.byId("rulesNavContainer");
+			navCont.to(sap.ui.getCore().byId("ruleUpdatePage"), "show");
+		},
+		deleteTemporaryRule: function (event) {
+			var sourceObject = this.getObjectOnTreeRow(event),
+				treeViewModel = this.model.getProperty("/treeViewModel"),
+				mainModel = this.model.getProperty("/libraries"),
+				rulesNotToBeDeleted = [];
 
 
-		mainModel.forEach(function (lib, libIndex) {
-			if (lib.title === constants.TEMP_RULESETS_NAME) {
-				lib.rules.forEach(function (rule, ruleIndex) {
-					if (rule.id === sourceObject.id) {
-						lib.rules.splice(ruleIndex, 1);
-						return;
-					} else {
-						rulesNotToBeDeleted.push(rule);
-					}
-				});
-			}
-		});
-
-		for (var i in treeViewModel) {
-			if (treeViewModel[i].name === constants.TEMP_RULESETS_NAME) {
-				for (var innerIndex in treeViewModel[i]) {
-					if (treeViewModel[i][innerIndex].id === sourceObject.id) {
-						delete treeViewModel[i][innerIndex];
-					}
-				}
-			}
-		}
-		this.model.setProperty("/treeViewModel", treeViewModel);
-		storage.removeSelectedRules(rulesNotToBeDeleted);
-	},
-	/**
-	* Gets rule from selected row
-	* @param {Object} Event
-	* @returns {Object} ISelected rule from row
-	***/
-	getObjectOnTreeRow: function(event) {
-		var path =  event.getSource().getBindingContext().getPath(),
-		 sourceObject = this.getView().getModel().getProperty(path),
-		 libs = this.model.getProperty("/libraries");
-
-		libs.forEach(function (lib, libIndex) {
-			lib.rules.forEach(function (rule) {
-				if (rule.id === sourceObject.id) {
-					sourceObject.check = rule.check;
+			mainModel.forEach(function (lib, libIndex) {
+				if (lib.title === constants.TEMP_RULESETS_NAME) {
+					lib.rules.forEach(function (rule, ruleIndex) {
+						if (rule.id === sourceObject.id) {
+							lib.rules.splice(ruleIndex, 1);
+							return;
+						} else {
+							rulesNotToBeDeleted.push(rule);
+						}
+					});
 				}
 			});
-		});
-		return sourceObject;
-	}
+
+			for (var i in treeViewModel) {
+				if (treeViewModel[i].name === constants.TEMP_RULESETS_NAME) {
+					for (var innerIndex in treeViewModel[i]) {
+						if (treeViewModel[i][innerIndex].id === sourceObject.id) {
+							delete treeViewModel[i][innerIndex];
+						}
+					}
+				}
+			}
+			this.model.setProperty("/treeViewModel", treeViewModel);
+			storage.removeSelectedRules(rulesNotToBeDeleted);
+		},
+		/**
+		* Gets rule from selected row
+		* @param {Object} Event
+		* @returns {Object} ISelected rule from row
+		***/
+		getObjectOnTreeRow: function (event) {
+			var path = event.getSource().getBindingContext().getPath(),
+				sourceObject = this.getView().getModel().getProperty(path),
+				libs = this.model.getProperty("/libraries");
+
+			libs.forEach(function (lib, libIndex) {
+				lib.rules.forEach(function (rule) {
+					if (rule.id === sourceObject.id) {
+						sourceObject.check = rule.check;
+					}
+				});
+			});
+			return sourceObject;
+		}
 	});
 });
