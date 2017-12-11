@@ -16,12 +16,15 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * The ListBinding is a specific binding for lists in the model, which can be used
 	 * to populate Tables or ItemLists.
 	 *
-	 * @param {sap.ui.model.Model} oModel
-	 * @param {string} sPath
-	 * @param {sap.ui.model.Context} oContext
-	 * @param {array} [aSorters] initial sort order (can be either a sorter or an array of sorters)
-	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
-	 * @param {object} [mParameters]
+	 * @param {sap.ui.model.Model} oModel Model instance that this binding belongs to
+	 * @param {string} sPath Binding path for this binding;
+	 *   a relative path will be resolved relative to a given context
+	 * @param {sap.ui.model.Context} oContext Context to be used to resolve a relative path
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] Initial sort order (can be either a sorter or an array of sorters)
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filter/s (can be either a filter or an array of filters)
+	 * @param {object} [mParameters] Additional, implementation-specific parameters that should be used
+	 *   by the new list binding; this base class doesn't define any parameters, check the API reference
+	 *   for the concrete model implementations to learn about their supported parameters (if any)
 	 *
 	 * @public
 	 * @alias sap.ui.model.ListBinding
