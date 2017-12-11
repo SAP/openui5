@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global'],
 		function getIndexJsonPromise() {
 
 			if (oLibraryDataCache["index"]) {
-				return oLibraryDataCache["index"];
+				return Promise.resolve(oLibraryDataCache["index"]);
 			}
 
 			return new Promise(function (resolve, reject) {
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global'],
 		function getDeprecatedPromise() {
 
 			if (oLibraryDataCache["deprecated"]) {
-				return oLibraryDataCache["deprecated"];
+				return Promise.resolve(oLibraryDataCache["deprecated"]);
 			}
 
 			return new Promise(function (resolve, reject) {
@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global'],
 		function getExperimentalPromise() {
 
 			if (oLibraryDataCache["experimental"]) {
-				return oLibraryDataCache["experimental"];
+				return Promise.resolve(oLibraryDataCache["experimental"]);
 			}
 
 			return new Promise(function (resolve, reject) {

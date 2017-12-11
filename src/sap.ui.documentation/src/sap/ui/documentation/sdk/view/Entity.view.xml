@@ -33,7 +33,7 @@
 			<l:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin" hSpacing="0">
 				<l:VerticalLayout class="sapUiLargeMarginEnd" width="98%">
 
-					<m:HBox visible="{= ${/entity/category} !== 'Tutorial'}" class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
+					<m:HBox visible="{/bHasAPIReference}" class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
 						<m:Label design="Bold" text="API Reference:"/>
 						<m:Link emphasized="true" text="{/name}" enabled="true" href="#/api/{/name}"/>
 					</m:HBox>
