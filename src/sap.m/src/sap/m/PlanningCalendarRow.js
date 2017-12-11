@@ -226,9 +226,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 					sTargetElementId = this.getTargetElement(),
 					fnAlignIndicator = function () {
 						var $Indicator = jQuery(oDragSession.getIndicator()),
-							oDropRects = oDragSession.dropControl.getDomRef().getBoundingClientRect(),
+							oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
 							oRowRects = sap.ui.getCore().byId(sTargetElementId).getDomRef().getBoundingClientRect(),
-							iAppWidth = oDragSession.draggedControl.$().outerWidth(),
+							iAppWidth = oDragSession.getDragControl().$().outerWidth(),
 							bRTL = sap.ui.getCore().getConfiguration().getRTL(),
 							iAvailWidth = bRTL ? Math.ceil(oDropRects.right) - oRowRects.left : oRowRects.right - Math.ceil(oDropRects.left);
 
@@ -256,10 +256,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 			 */
 			drop: function (oEvent) {
 				var oDragSession = oEvent.getParameter("dragSession"),
-					oAppointment = oDragSession.draggedControl,
+					oAppointment = oDragSession.getDragControl(),
 					sIntervalType = oCalendarRow.getIntervalType(),
 					oRowStartDate = oCalendarRow.getStartDate(),
-					iIndex = oCalendarRow.indexOfAggregation("_intervalPlaceholders", oDragSession.dropControl),
+					iIndex = oCalendarRow.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()),
 					newPos;
 
 				if (sIntervalType === CalendarIntervalType.Hour) {
@@ -273,12 +273,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 
 					newPos = this._calcNewMonthsAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
 				}
-
-				jQuery(oDragSession.getIndicator())
-					.css("min-width", "")
-					.css("border-right-width", "")
-					.css("border-left-width", "")
-					.css("margin-left", "");
 
 				oCalendarRow.$().find(".sapUiCalendarRowAppsOverlay").removeClass("sapUiCalendarRowAppsOverlayDragging");
 

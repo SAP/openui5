@@ -50,12 +50,12 @@
 						</Column>
 					</columns>
 					<dragDropConfig>
-						<dnd:DragDropInfo
-							sourceAggregation="items"
-							targetAggregation="items"
-							targetElement="table2"
-							dropPosition="Between"
-							drop="onDropTable2"/>
+						<dnd:DragInfo
+							groupName="moveToTable2"
+							sourceAggregation="items" />
+						<dnd:DropInfo
+							groupName="moveToTable1"
+							drop="onDropTable1" />
 					</dragDropConfig>
 					<items>
 						<ColumnListItem>
@@ -128,11 +128,14 @@
 						</Column>
 					</columns>
 					<dragDropConfig>
-						<dnd:DragDropInfo
-							sourceAggregation="items"
-							targetElement="table1"
-							dropPosition="On"
-							drop="onDropTable1"/>
+						<dnd:DragInfo 
+							groupName="moveToTable1"
+							sourceAggregation="items" />
+						<dnd:DropInfo
+							groupName="moveToTable2"
+							targetAggregation="items"
+							dropPosition="Between"
+							drop="onDropTable2" />
 						<dnd:DragDropInfo
 							sourceAggregation="items"
 							targetAggregation="items"

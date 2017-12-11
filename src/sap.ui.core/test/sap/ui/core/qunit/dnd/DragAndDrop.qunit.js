@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/dnd/DragAndDrop",
+	"sap/ui/core/dnd/DragInfo",
+	"sap/ui/core/dnd/DropInfo",
 	"sap/ui/core/dnd/DragDropInfo",
 	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIArea"
-], function(DragAndDrop, DragDropInfo, jQuery, Control, Element, UIArea) {
+], function(DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, Element, UIArea) {
 	"use strict";
 
 	/*global QUnit,sinon*/
@@ -24,6 +26,9 @@ sap.ui.define([
 			rm.addStyle("height", "50px");
 			rm.writeStyles();
 			rm.write("></" + oControl.getElementTag() + "></div>");
+		},
+		getDragGhost: function() {
+			return this.getDomRef().cloneNode(true);
 		}
 	});
 
@@ -235,7 +240,7 @@ sap.ui.define([
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.ok(oEvent.dragSession === oDragSession, "dragend: Drag session was preserved");
 
-		document.dispatchEvent(oEvent.originalEvent); // Fire global "dragend" event. Drag session should be destroyed.
+		DragAndDrop.postprocessEvent(oEvent); // Postprocessing "dragend" event. Drag session should be destroyed.
 		oEvent = createjQueryDragEventDummy("dragenter", this.oControl, false);
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.ok(oEvent.dragSession == null, "Drag session was destroyed");
@@ -601,5 +606,159 @@ sap.ui.define([
 		// clean up
 		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
 		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop");
+	});
+
+	QUnit.module("dragSession", {
+		beforeEach: function() {
+			this.oContainer = new DragAndDropControl({
+				topItems: [this.oSourceControl = new DivControl()],
+				bottomItems: [this.oTargetControl = new DivControl(), this.oLastTargetControl = new DivControl()],
+				dragDropConfig: [
+					this.oDragInfo = new DragInfo({
+						sourceAggregation: "topItems"
+					}),
+					this.oDropInfo = new DropInfo({
+						targetAggregation: "bottomItems"
+					})
+				]
+			});
+
+			this.oContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oTargetDomRef = this.oTargetControl.getDomRef();
+			this.oSourceDomRef = this.oSourceControl.getDomRef();
+			this.oLastTargetDomRef = this.oLastTargetControl.getDomRef();
+		},
+		afterEach: function() {
+			this.oContainer.destroy();
+		}
+	});
+
+	QUnit.test("dataTransfer", function(assert) {
+		var oDataTransfer = {
+			data: "dataValue",
+			textData : "textData",
+			complexData: ["complexData"]
+		};
+
+		this.oSourceDomRef.focus();
+		this.oDragInfo.attachDragStart(function(oEvent) {
+			var oSession = oEvent.getParameter("dragSession");
+			oSession.setData("data", oDataTransfer.data);
+			oSession.setTextData(oDataTransfer.textData);
+			oSession.setComplexData("complexData", oDataTransfer.complexData);
+		});
+		this.oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
+
+		this.oLastTargetDomRef.focus();
+		this.oDropInfo.attachDragEnter(function(oEvent) {
+			var oSession = oEvent.getParameter("dragSession");
+			assert.strictEqual(oSession.getData("data"), oDataTransfer.data, "data is transfered over drag session");
+			assert.strictEqual(oSession.getTextData(), oDataTransfer.textData, "text data is transfered over drag session");
+			assert.strictEqual(oSession.getComplexData("complexData"), oDataTransfer.complexData, "complex data is transfered over drag session");
+		});
+		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
+	});
+
+	QUnit.test("dragged from outside the browser", function(assert) {
+		this.oTargetDomRef.focus();
+		this.oDropInfo.attachDragEnter(function(oEvent) {
+			assert.ok(oEvent.getParameter("dragSession"), "drag session exists");
+		});
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+	});
+
+	QUnit.test("setDropControl", function(assert) {
+		this.oSourceDomRef.focus();
+		this.oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
+
+		this.oLastTargetDomRef.focus();
+		this.oDropInfo.setDropPosition("OnOrBetween");
+		this.oDropInfo.attachDragEnter(function(oEvent) {
+			var oSession = oEvent.getParameter("dragSession");
+			oSession.setDropControl(this.oTargetControl);
+		}, this);
+		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+
+		this.oDropInfo.attachDrop(function(oEvent) {
+			assert.strictEqual(oEvent.getParameter("droppedControl"), this.oTargetControl, "Drop control is changed");
+		}, this);
+		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
+	});
+
+	QUnit.module("groupName", {
+		beforeEach: function() {
+			this.oContainer = new DragAndDropControl({
+				topItems: [this.oSourceControl = new DivControl()],
+				bottomItems: [this.oTargetControl = new DivControl()],
+				dragDropConfig: [
+					this.oDragInfo = new DragInfo({
+						sourceAggregation: "topItems",
+						dragStart: this.fnDragStartSpy = sinon.spy(function() {})
+					}),
+					this.oDropInfo = new DropInfo({
+						targetAggregation: "bottomItems",
+						dragEnter: this.fnDragEnterSpy = sinon.spy(),
+						drop: this.fnDropSpy = sinon.spy()
+					})
+				]
+			});
+
+			this.oContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oTargetDomRef = this.oTargetControl.getDomRef();
+			this.oSourceDomRef = this.oSourceControl.getDomRef();
+		},
+		afterEach: function() {
+			this.oContainer.destroy();
+		}
+	});
+
+	QUnit.test("Matching groupNames", function(assert) {
+		this.oDragInfo.setGroupName("abc");
+		this.oDropInfo.setGroupName("abc");
+
+		this.oSourceDomRef.focus();
+		this.oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
+
+		this.oTargetDomRef.focus();
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		assert.ok(this.fnDragEnterSpy.calledOnce, "dragEnter event is called once.");
+
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
+		assert.ok(this.fnDropSpy.calledOnce, "drop event is called once.");
+	});
+
+	QUnit.test("Unmatching groupNames", function(assert) {
+		this.oDragInfo.setGroupName("abc");
+		this.oDropInfo.setGroupName("xxx");
+
+		this.oSourceDomRef.focus();
+		this.oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
+
+		this.oTargetDomRef.focus();
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		assert.equal(this.fnDragEnterSpy.callCount, 0, "dragEnter event is not called");
+
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
+		assert.equal(this.fnDropSpy.callCount, 0, "drop event is not called");
+	});
+
+	QUnit.test("Master groups", function(assert) {
+		this.oDragInfo.setGroupName("abc");
+		this.oDropInfo.setGroupName("");
+
+		this.oSourceDomRef.focus();
+		this.oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
+
+		this.oTargetDomRef.focus();
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		assert.ok(this.fnDragEnterSpy.calledOnce, "dragEnter event is called once.");
+
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
+		assert.ok(this.fnDropSpy.calledOnce, "drop event is called once.");
 	});
 });
