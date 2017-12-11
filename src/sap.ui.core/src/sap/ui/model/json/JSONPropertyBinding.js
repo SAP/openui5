@@ -9,16 +9,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 
 
 	/**
+	 * Creates a new JSONListBinding.
+	 *
+	 * This constructor should only be called by subclasses or model implementations, not by application or control code.
+	 * Such code should use {@link sap.ui.model.json.JSONModel#bindProperty JSONModel#bindProperty} on the corresponding model instance instead.
+	 *
+	 * @param {sap.ui.model.json.JSONModel} oModel Model instance that this binding is created for and that it belongs to
+	 * @param {string} sPath Binding path to be used for this binding
+	 * @param {sap.ui.model.Context} oContext Binding context relative to which a relative binding path will be resolved
+	 * @param {object} [mParameters] Map of optional parameters as defined by subclasses; this class does not introduce any own parameters
 	 *
 	 * @class
-	 * Property binding implementation for JSON format
+	 * Property binding implementation for JSON format.
 	 *
-	 * @param {sap.ui.model.json.JSONModel} oModel
-	 * @param {string} sPath
-	 * @param {sap.ui.model.Context} oContext
-	 * @param {object} [mParameters]
 	 * @alias sap.ui.model.json.JSONPropertyBinding
 	 * @extends sap.ui.model.ClientPropertyBinding
+	 * @protected
 	 */
 	var JSONPropertyBinding = ClientPropertyBinding.extend("sap.ui.model.json.JSONPropertyBinding");
 
