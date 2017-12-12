@@ -1203,7 +1203,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 	}
 
 	/**
-	 * This event gets fired when the input operation has finished and the value has changed.
+	 * Fired when the input operation has finished and the value has changed.
+	 *
+	 * <b>Note:</b> Fired only when a new date is selected. If you change the month or year from the picker but not
+	 * select a new date from the newly selected month/year, the value of the <code>sap.m.DatePicker</code> won't be
+	 * updated and no change event will be fired.
 	 *
 	 * @name sap.m.DatePicker#change
 	 * @event
