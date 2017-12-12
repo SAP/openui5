@@ -102,7 +102,7 @@ function(
 	};
 
 
-
+	var fnGetVariantTitleStub = sinon.stub(oModel, "getVariantTitle").returns("Variant B");
 	sinon.stub(oModel, "getVariant").returns(oVariant);
 	sinon.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
 	sinon.stub(oModel.oVariantController, "getVariants").returns([oVariant]);
@@ -135,9 +135,10 @@ function(
 		assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
 		oControlVariantDuplicateCommand.execute().then( function() {
 			var oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
+			assert.ok(fnGetVariantTitleStub.calledOnce, "'GetVariantTitle' is called");
 			assert.notEqual(oDuplicateVariant.getId().indexOf("_Copy"), -1, "then fileName correctly duplicated");
 			assert.equal(oDuplicateVariant.getVariantReference(), oVariant.content.variantReference, "then variant reference correctly duplicated");
-			assert.equal(oDuplicateVariant.getTitle(), oVariant.content.title + " Copy", "then variant reference correctly duplicated");
+			assert.equal(oDuplicateVariant.getTitle(), "Variant B" + " Copy", "then variant reference correctly duplicated");
 			assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
 			assert.equal(oDuplicateVariant.getControlChanges()[0].support.sourceChangeFileName, oVariant.controlChanges[0].fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
 			assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes present - variant and 2 changes");

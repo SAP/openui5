@@ -97,7 +97,7 @@ sap.ui.define([
 		if (this.oData[sVariantManagementReference].modified) {
 			var aVariantControlChanges = this.oVariantController.getVariantChanges(sVariantManagementReference, sCurrentVariantReference);
 			this._removeDirtyChanges(aVariantControlChanges, sVariantManagementReference, sCurrentVariantReference);
-//			this.oData[sVariantManagementReference].modified = false;
+			this.oData[sVariantManagementReference].modified = false;
 		}
 
 		mChangesToBeSwitched = this.oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(sVariantManagementReference, sCurrentVariantReference, sNewVariantReference);
@@ -149,6 +149,11 @@ sap.ui.define([
 
 	VariantModel.prototype.getVariantProperty = function(sVariantReference, sProperty) {
 		return this.getVariant(sVariantReference).content[sProperty];
+	};
+
+	VariantModel.prototype.getVariantTitle = function(sVariantReference) {
+		var oVariantManagement = this.getVariantManagementReference(sVariantReference);
+		return this.oData[oVariantManagement.variantManagementReference].variants[oVariantManagement.variantIndex].title;
 	};
 
 	VariantModel.prototype._addChange = function(oChange) {
@@ -211,6 +216,7 @@ sap.ui.define([
 
 		var iCurrentLayerComp = Utils.isLayerAboveCurrentLayer(oSourceVariant.content.layer);
 
+		var sTitle;
 		Object.keys(oSourceVariant.content).forEach(function(sKey) {
 			if (sKey === "fileName") {
 				oDuplicateVariant.content[sKey] = sNewVariantReference;
@@ -223,11 +229,12 @@ sap.ui.define([
 			} else if (sKey === "layer") {
 				oDuplicateVariant.content[sKey] = mPropertyBag.layer;
 			} else if (sKey === "title") {
-				oDuplicateVariant.content[sKey] = mPropertyBag.title || oSourceVariant.content[sKey] + " Copy";
+				sTitle = this.getVariantTitle(sSourceVariantReference);
+				oDuplicateVariant.content[sKey] = mPropertyBag.title || sTitle + " Copy";
 			} else {
 				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey];
 			}
-		});
+		}.bind(this));
 
 		var aVariantChanges = oDuplicateVariant.controlChanges.slice();
 
