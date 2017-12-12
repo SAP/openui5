@@ -25,6 +25,14 @@ sap.ui.define([
 	 */
 	var AddXML = {};
 
+	var destroyArrayOfControls = function(aControls) {
+		aControls.forEach(function(oControl) {
+			if (oControl.destroy) {
+				oControl.destroy();
+			}
+		});
+	};
+
 	/**
 	 * Adds the content of the XML fragment to the given aggregation of the control, if valid.
 	 *
@@ -42,32 +50,39 @@ sap.ui.define([
 		var oChangeDefinition = oChange.getDefinition();
 		var sAggregationName = oChangeDefinition.content.targetAggregation;
 		var sFragment = oChangeDefinition.content.fragment;
-		var iIndex = oChangeDefinition.content.index || 0;
+		var iIndex = oChangeDefinition.content.index;
 		var oView = mPropertyBag.view;
-		var oComponent = mPropertyBag.appComponent;
 		var oViewInstance = Utils.getViewForControl(oControl);
 		var oController = oViewInstance && oViewInstance.getController();
 
-		var oNewControl;
+		var aNewControls;
 		try {
-			oNewControl = oModifier.instantiateFragment(sFragment, oView, oViewInstance, oController);
+			aNewControls = oModifier.instantiateFragment(sFragment, oChange.getId(), oViewInstance, oController);
 		} catch (oError) {
 			throw new Error("The XML Fragment could not be instantiated");
 		}
 
 		var oAggregationDefinition = oModifier.findAggregation(oControl, sAggregationName);
 		if (!oAggregationDefinition) {
-			oNewControl.destroy();
+			destroyArrayOfControls(aNewControls);
 			throw new Error("The given Aggregation is not available in the given control.");
 		}
 
-		if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment)) {
-			oNewControl.destroy();
-			throw new Error("The Control does not match the type of the targetAggregation.");
-		}
+		aNewControls.forEach(function(oNewControl, iIterator) {
+			if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment, iIterator)) {
+				destroyArrayOfControls(aNewControls);
+				throw new Error("The Control does not match the type of the targetAggregation.");
+			}
+		});
 
-		oModifier.addXML(oControl, sAggregationName, iIndex, oNewControl, oView, oComponent);
-		oChange.setRevertData(oModifier.getId(oNewControl));
+		aNewControls.forEach(function(oNewControl, iIterator) {
+			oModifier.insertAggregation(oControl, sAggregationName, oNewControl, iIndex + iIterator, oView);
+		});
+
+		oChange.setRevertData(aNewControls.map(function(oAddedControl) {
+			return oModifier.getId(oAddedControl);
+		}));
+		return true;
 	};
 
 	/**
@@ -80,6 +95,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @return {boolean} Returns true if change has been reverted successfully
 	 * @public
+	 * @name sap.ui.fl.changeHandler.AddXML#revertChange
 	 */
 	AddXML.revertChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
@@ -87,13 +103,16 @@ sap.ui.define([
 		var sAggregationName = oChangeDefinition.content.targetAggregation;
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
-		var oControlToRemove = oModifier.bySelector(oChange.getRevertData(), oAppComponent, oView);
+		var aRevertData = oChange.getRevertData() || [];
+		var aControlsToRemove = aRevertData.map(function(sId) {
+			return oModifier.bySelector(sId, oAppComponent, oView);
+		});
 
-		oModifier.removeAggregation(oControl, sAggregationName, oControlToRemove);
-		if (oControlToRemove.destroy) {
-			oControlToRemove.destroy();
-		}
+		aControlsToRemove.forEach(function(oControlToRemove) {
+			oModifier.removeAggregation(oControl, sAggregationName, oControlToRemove);
+		});
 
+		destroyArrayOfControls(aControlsToRemove);
 		oChange.resetRevertData();
 		return true;
 	};

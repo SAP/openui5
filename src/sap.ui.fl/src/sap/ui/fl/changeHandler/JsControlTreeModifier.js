@@ -247,6 +247,13 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * checks the metadata of the given control and returns the aggregation matching the name
+		 *
+		 * @param {sap.ui.core.Control} oControl control whose aggregation is to be found
+		 * @param {string} sAggregationName name of the aggregation
+		 * @returns {object} Returns the instance of the aggregation or undefined
+		 */
 		findAggregation: function(oControl, sAggregationName) {
 			if (oControl) {
 				if (oControl.getMetadata) {
@@ -279,16 +286,27 @@ sap.ui.define([
 			return Utils.isInstanceOf(oControl, sTypeOrInterface) || Utils.hasInterface(oControl, sTypeOrInterface);
 		},
 
-		instantiateFragment: function(sFragment, oView, oViewInstance, oController) {
-			if (oViewInstance) {
-				return sap.ui.xmlfragment(oViewInstance.getId(), sFragment, oController);
+		/**
+		 * Instantiates a fragment and turns the result into an array of controls
+		 *
+		 * @param {string} sFragment path to the fragment
+		 * @param {string} sChangeId id of the current change
+		 * @param {sap.ui.core.mvc.View} oView view for the fragment
+		 * @param {sap.ui.core.mvc.Controller} oController controller for the fragment
+		 * @returns {array} Returns an array with the controls of the fragment
+		 */
+		instantiateFragment: function(sFragment, sChangeId, oView, oController) {
+			var aNewControls;
+			if (oView) {
+				aNewControls = sap.ui.xmlfragment(oView.getId() + "--" + sChangeId, sFragment, oController);
 			} else {
-				return sap.ui.xmlfragment(sFragment);
+				aNewControls = sap.ui.xmlfragment(sChangeId, sFragment);
 			}
-		},
 
-		addXML: function(oControl, sAggregationName, iIndex, oNewControl, oView, oComponent) {
-			this.insertAggregation(oControl, sAggregationName, oNewControl, iIndex);
+			if (!Array.isArray(aNewControls)) {
+				aNewControls = [aNewControls];
+			}
+			return aNewControls;
 		},
 
 		getChangeHandlerModulePath: function(oControl) {

@@ -50,10 +50,10 @@ sap.ui.define([
 	AddXML.prototype._getChangeSpecificData = function() {
 
 		var mSpecificInfo = {
-				changeType : this.getChangeType(),
-				fragment: this.getFragment(),
-				targetAggregation: this.getTargetAggregation(),
-				index: this.getIndex()
+			changeType : this.getChangeType(),
+			fragment: this.getFragment(),
+			targetAggregation: this.getTargetAggregation(),
+			index: this.getIndex()
 		};
 
 		return mSpecificInfo;
