@@ -77,9 +77,22 @@ function onDragStart(oEvent) {
 	var oDragSession = oEvent.getParameter("dragSession");
 	var oDraggedItem = oEvent.getParameter("target");
 	var iDraggedItemIndex = oTree.indexOfItem(oDraggedItem);
-	var aDraggedItemContexts = [];
 
-	aDraggedItemContexts.push(oBinding.getContextByIndex(iDraggedItemIndex));
+	var aSelectedIndices = oTree.getBinding("items").getSelectedIndices();
+	var aSelectedItems = oTree.getSelectedItems();
+	var aDraggedItemContexts = [];
+	
+	if (aSelectedItems.length >0) {
+		if (aSelectedIndices.indexOf(iDraggedItemIndex) === -1) {
+				oEvent.preventDefault();
+			} else {
+				for (var i = 0; i < aSelectedItems.length; i++) {
+					aDraggedItemContexts.push(oBinding.getContextByIndex(aSelectedIndices[i]));
+				}
+			}
+	} else {
+		aDraggedItemContexts.push(oBinding.getContextByIndex(iDraggedItemIndex));
+	}
 
 	oDragSession.setComplexData("hierarchymaintenance", {
 		draggedItemContexts: aDraggedItemContexts
