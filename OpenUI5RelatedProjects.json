@@ -169,5 +169,14 @@
 			"owner": "Wong Hansen",
 			"license": "Apache 2.0",
 			"type": "Yii2 Extension"
+		},
+		"openui5-parallax": {
+			"name": "OpenUI5 Parallax",
+			"description": "A library wrapping parallax.js in UI5 controls to create stunning layered effects",
+			"githubLink": "https://github.com/Michadelic/openui5-parallax",
+			"documentationLink": "http://ui5lab.io/browser/#/Samples/openui5.parallax",
+			"owner": "michadelic",
+			"license": "Apache 2.0",
+			"type": "Control"
 		}
 	}
