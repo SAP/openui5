@@ -494,15 +494,10 @@
 
 														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
 
-														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}">
-															<m:HBox>
-																<m:items>
-																	<m:Link text="{value}"
-																			href="#/api/{= ${path: 'value'}.replace('[]', '') }"
-																			enabled="{= !!${linkEnabled} }"/>
-																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${isLast} === false}" wrapping="false"/>
-																</m:items>
-															</m:HBox>
+														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}" class="sapUiDocumentationOrList">
+																<m:Link text="{value}"
+																		href="#/api/{= ${path: 'value'}.replace('[]', '') }"
+																		enabled="{= !!${linkEnabled} }"/>
 														</layout:VerticalLayout>
 
 														<m:Text text="{defaultValue}" wrapping="false"/>
@@ -525,15 +520,10 @@
 												<m:ColumnListItem>
 													<m:cells>
 
-														<layout:VerticalLayout content="{path: 'returnValue/types', templateShareable: 'false'}">
-															<m:HBox>
-																<m:items>
-																	<m:Link text="{value}"
-																			href="#/api/{= ${path: 'value'}.replace('[]', '') }"
-																			enabled="{= !!${linkEnabled} }"/>
-																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${isLast} === false}" wrapping="false"/>
-																</m:items>
-															</m:HBox>
+														<layout:VerticalLayout content="{path: 'returnValue/types', templateShareable: 'false'}" class="sapUiDocumentationOrList">
+																<m:Link text="{value}"
+																		href="#/api/{= ${path: 'value'}.replace('[]', '') }"
+																		enabled="{= !!${linkEnabled} }"/>
 														</layout:VerticalLayout>
 
 														<core:HTML content="{returnValue/description}"/>

@@ -1681,6 +1681,22 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
  * End of API Detail specific CSS
  */
 
+/* Comma list */
+.sapUiDocumentationCommaList .sapMFlexItem:not(:last-child)::after {
+	content: ",";
+	margin-right: 1px;
+	vertical-align: top;
+	line-height: 1.5rem;
+}
+
+/* Or list */
+.sapUiDocumentationOrList .sapUiVltCell:not(:last-child)::after {
+	content: "or";
+	margin-right: 5px;
+	margin-left: 5px;
+	vertical-align: top;
+}
+
 /* Global search specific CSS to allow full entry title to be visible on phone */
 .sap-phone .sapMList .sapMFeedListItemTextName .sapMLnk {
 	white-space: pre-line;

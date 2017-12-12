@@ -648,8 +648,7 @@ sap.ui.define([
 							sDisplayName = aDisplayNameArr[aDisplayNameArr.length - 1];
 						return {
 							href: item,
-							name: sDisplayName,
-							isLast: idx === array.length - 1
+							name: sDisplayName
 						};
 					});
 					oControlData.hasImplementsData = true;
@@ -754,18 +753,13 @@ sap.ui.define([
 							var aItems = [];
 
 							oControlData.implementsParsed.forEach(function (oElement) {
-								aItems.push(_getHBox({
-									items: [
-										_getLink({text: oElement.name, href: "#/api/" + oElement.href}),
-										_getText({text: ",", visible: !oElement.isLast})
-									]
-								}));
+								aItems.push(_getLink({text: oElement.name, href: "#/api/" + oElement.href}));
 							});
 
 							return _getHBox({
 								items: [
 									_getLabel({text: "Implements:"}),
-									new sap.m.HBox({items: aItems})
+									new sap.m.HBox({items: aItems}).addStyleClass("sapUiDocumentationCommaList")
 								]
 							}, true);
 						},
