@@ -49,13 +49,13 @@
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
-			<l:BlockLayoutRow visible="{versionData>/isInternal}">
+			<l:BlockLayoutRow id="disclaimerBlock" visible="false">
 				<l:BlockLayoutCell
 						backgroundColorSet="ColorSet9"
 						backgroundColorShade="ShadeA">
 					<MessageStrip
-						showIcon="true"
-						text="This is the internal version of the documentation. It contains topics that are still under construction, as well as SAP-internal information that should not be passed on to anybody outside SAP."/>
+						id="disclaimerMessage"
+						showIcon="true"/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
