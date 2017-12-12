@@ -323,20 +323,4 @@ sap.ui.require([
 			jQuery.sap.log.error.restore();
 		});
 
-		QUnit.test("_fetchLibraryNamesWithSupportRules with 3 libraries", function (assert) {
-			// Arrange
-			var oActualResult = RuleSetLoader._fetchLibraryNamesWithSupportRules(this.oLoadedLibraries),
-				aLibNameWithPublicRulesActual = oActualResult.publicRules,
-				aLibNameWithInternalRulesActual =  oActualResult.internalRules,
-				aLibNameWithPublicRulesExpected = ["testLib2"],
-				aLibNameWithInternalRulesExpected =  ["testLib1", "testLib2"];
-
-			//Assert
-			assert.equal(aLibNameWithPublicRulesActual[0], aLibNameWithPublicRulesExpected[0], "should have the 1 library name");
-			assert.equal(aLibNameWithInternalRulesActual[0], aLibNameWithInternalRulesExpected[0], "should have the 2 libraries names");
-			assert.equal(aLibNameWithPublicRulesActual.length, aLibNameWithPublicRulesExpected.length, "should have length 1");
-			assert.equal(aLibNameWithInternalRulesActual.length, aLibNameWithInternalRulesExpected.length, "should have the length 2");
-
-		});
-
 	});

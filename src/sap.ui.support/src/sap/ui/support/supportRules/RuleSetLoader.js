@@ -13,12 +13,13 @@ sap.ui.define([
 		"sap/ui/support/supportRules/WCBChannels",
 		"sap/ui/support/supportRules/RuleSerializer",
 		"sap/ui/support/supportRules/Constants",
-		"sap/ui/support/supportRules/util/Utils"
+		"sap/ui/support/supportRules/util/Utils",
+		"sap/ui/support/supportRules/library-meta"
 	],
-	function (jQuery, RuleSet, CommunicationBus, channelNames, RuleSerializer, constants, Utils) {
+	function (jQuery, RuleSet, CommunicationBus, channelNames, RuleSerializer, constants, Utils, meta) {
 		"use strict";
 
-		var sCustomSuffix = 'sprt';
+		var sCustomSuffix = "sprt";
 		var RuleSetLoader = {};
 
 		RuleSetLoader._mRuleSets = {};
@@ -43,11 +44,11 @@ sap.ui.define([
 		 */
 		RuleSetLoader._fetchSupportRuleSets = function () {
 			var that = this,
-				loadedLibraries = Utils.getLoadedLibraries(),
-				oLibNamesWithRules = this._fetchLibraryNamesWithSupportRules(loadedLibraries);
+				mLoadedLibraries = sap.ui.getCore().getLoadedLibraries(),
+				oLibNamesWithRules = this._fetchLibraryNamesWithSupportRules(mLoadedLibraries);
 
-			var mainPromise = new Promise(function (resolve) {
-					RuleSet.versionInfo = Utils.getApplicationVersionInfo();
+			var oMainPromise = new Promise(function (resolve) {
+					RuleSet.versionInfo = sap.ui.getVersionInfo();
 
 					var libFetchPromises = that._fetchLibraryFiles(oLibNamesWithRules, RuleSetLoader._fetchRuleSet);
 
@@ -59,7 +60,7 @@ sap.ui.define([
 					});
 			});
 
-			return mainPromise;
+			return oMainPromise;
 		};
 
 		/**
@@ -86,28 +87,25 @@ sap.ui.define([
 		 * @returns {object} Object Containing the names of libraries that containing support rules in them
 		 */
 		RuleSetLoader._fetchLibraryNamesWithSupportRules = function (oLoadedLibraries) {
+			var oLibNames = {
+				publicRules: [],
+				internalRules: []
+			};
 
-			var aLibNamesWithRules = [],
-				aLibNamesWithInternalRules = [],
-				oLibraryExtension = {},
-				aLibNames = [];
+			oLoadedLibraries = oLoadedLibraries || {};
 
-			aLibNames = oLoadedLibraries ? aLibNames.concat(Object.keys(oLoadedLibraries)) : [];
-
-			aLibNames.forEach(function(sLibName){
-				if (oLoadedLibraries[sLibName].hasOwnProperty("extensions")) {
-					oLibraryExtension = oLoadedLibraries[sLibName].extensions[constants.SUPPORT_ASSISTANT_EXTENSION];
-					if (oLibraryExtension) {
-						if (oLibraryExtension.publicRules) {
-							aLibNamesWithRules.push(sLibName);
-						}
-						if (oLibraryExtension.internalRules) {
-							aLibNamesWithInternalRules.push(sLibName);
-						}
+			Object.keys(oLoadedLibraries).forEach(function(sLibName){
+				if (meta[sLibName]) {
+					if (meta[sLibName].publicRules) {
+						oLibNames.publicRules.push(sLibName);
+					}
+					if (meta[sLibName].internalRules) {
+						oLibNames.internalRules.push(sLibName);
 					}
 				}
 			});
-			return {publicRules: aLibNamesWithRules, internalRules: aLibNamesWithInternalRules};
+
+			return oLibNames;
 		};
 
 		/**
@@ -123,8 +121,7 @@ sap.ui.define([
 				that = this,
 				supportModulePath = jQuery.sap.getModulePath("sap.ui.support"),
 				supportModulesRoot = supportModulePath.replace("sap/ui/support", ""),
-				oApplicationVersionInfo = Utils.getApplicationVersionInfo();
-
+				oApplicationVersionInfo = sap.ui.getVersionInfo();
 
 			if (aLibNames.publicRules.length > 0) {
 				aLibNames.publicRules.forEach(function (oLibName) {
@@ -264,7 +261,7 @@ sap.ui.define([
 		 * Publishing the names to UI
 		 */
 		RuleSetLoader.fetchNonLoadedRuleSets = function () {
-			var aLibraries = Utils.getApplicationVersionInfo().libraries,
+			var aLibraries = sap.ui.getVersionInfo().libraries,
 				data = [],
 				aLibNames = [],
 				oLibNamesSortedPublicAndInternalRules = [];
