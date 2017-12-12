@@ -406,13 +406,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 			// remove CSS files
 			var aCSSResources = mResources["css"];
 			if (aCSSResources) {
-				for (var j = 0; j < aCSSResources.length; j++) {
-					var oCSSResource = aCSSResources[j];
-					if (oCSSResource.uri) {
-						var sCssUrl = this.resolveUri(new URI(oCSSResource.uri)).toString();
-						jQuery.sap.log.info("Component \"" + sComponentName + "\" is removing CSS: \"" + sCssUrl + "\"");
-						jQuery("link[data-sap-ui-manifest-uid='" + this._uid + "'][href='" + sCssUrl + "']" + (oCSSResource.id ? "[id='" + oCSSResource.id + "']" : "")).remove();
-					}
+				// As all <link> tags have been marked with the manifest's unique id (via data-sap-ui-manifest-uid)
+				// it is not needed to check for all individual CSS files defined in the manifest.
+				// Checking for all "href"s again might also cause issues when they have been adopted (e.g. to add cachebuster url params).
+
+				var aLinks = document.querySelectorAll("link[data-sap-ui-manifest-uid='" + this._uid + "']");
+				for (var i = 0; i < aLinks.length; i++) {
+					var oLink = aLinks[i];
+					jQuery.sap.log.info("Component \"" + sComponentName + "\" is removing CSS: \"" + oLink.href + "\"");
+					oLink.parentNode.removeChild(oLink);
 				}
 			}
 
