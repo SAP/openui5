@@ -178,7 +178,8 @@ sap.ui.define([
 		var fnAutoWaiterSpy = sinon.spy();
 		var fnGetAutoWaiterStub = sinon.stub(iFrameLauncher, "_getAutoWaiter");
 		fnGetAutoWaiterStub.returns({
-			hasToWait: fnAutoWaiterSpy
+			hasToWait: fnAutoWaiterSpy,
+			extendConfig: function () {}
 		});
 
 		Opa5.extendConfig({
@@ -204,7 +205,8 @@ sap.ui.define([
 		var fnAutoWaiterSpy = sinon.spy();
 		var fnGetAutoWaiterStub = sinon.stub(iFrameLauncher, "_getAutoWaiter");
 		fnGetAutoWaiterStub.returns({
-			hasToWait: fnAutoWaiterSpy
+			hasToWait: fnAutoWaiterSpy,
+			extendConfig: function () {}
 		});
 
 		oOpa5.iStartMyAppInAFrame({source: "../testdata/busyAfterStart.html", autoWait: true}).done(function () {

@@ -787,6 +787,7 @@ sap.ui.require([
 			assert.strictEqual(Opa.config.logLevel, "trace");
 			assert.ok(fnLogLevelSpy.calledOnce, "Log level was changed");
 			sinon.assert.calledWith(fnLogLevelSpy, "trace");
+			fnLogLevelSpy.restore();
 			fnDone();
 		});
 	});

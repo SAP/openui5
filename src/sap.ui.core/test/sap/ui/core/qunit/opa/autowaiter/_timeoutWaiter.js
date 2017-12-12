@@ -67,15 +67,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("Should have configurable max timeout delay", function (assert) {
-			timeoutWaiter.extendConfig({maxDelay: 3000});
+			timeoutWaiter.extendConfig({timeoutWaiter: {maxDelay: 3000}});
 			var iID = setTimeout(function () {}, 1001);
 			var iIDIgnored = setTimeout(function () {}, 3001);
 
 			assert.ok(timeoutWaiter.hasPending(), "there is 1 pending timeout");
+			sinon.assert.calledWithMatch(oTraceSpy, "Timeout delay 3001 reached the limit of 3000.");
+			sinon.assert.neverCalledWithMatch(oTraceSpy, "Timeout delay 1001 reached the limit of [0-9]*");
 			clearTimeout(iID);
 			clearTimeout(iIDIgnored);
 			// reset to default value
-			timeoutWaiter.extendConfig({maxDelay: 1000});
+			timeoutWaiter.extendConfig({timeoutWaiter: {maxDelay: 1000}});
 		});
 
 		QUnit.module("timeoutWaiter - single " + sFunctionUnderTest);
