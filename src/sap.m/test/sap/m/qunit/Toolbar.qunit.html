@@ -173,8 +173,6 @@
 
         //Assert
         assert.equal(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
-        assert.equal(oTB.$().attr("aria-labelledby"), oTB._sInternalAriaLabelId, "Toolbar has attribute aria-labelledby to the internal label");
-        assert.equal(jQuery.find("#" + oTB._sInternalAriaLabelId).length, 1, "Toolbar dom has a label describing it.");
         assert.equal(oTB.$().attr("aria-disabled"), undefined, "Toolbar has no attribute aria-disabled");
 
         //Act
@@ -226,7 +224,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId() + " " + oTB._sInternalAriaLabelId, "Toolbar has attribute aria-labelledby for internal and external labels");
+		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId(), "Toolbar has attribute aria-labelledby for internal and external labels");
 
 		//Cleanup
 		oLabel.destroy();
