@@ -326,6 +326,25 @@
 				oSlider.destroy();
 			});
 
+			QUnit.test("_handlesLabels aggregation", function (assert) {
+				// arrange & act
+				var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+					oBoundleCalledStub = this.stub(oResourceBundle, "getText"),
+					oSlider = new sap.m.Slider(),
+					aLabels = oSlider.getAggregation("_handlesLabels");
+
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				assert.strictEqual(aLabels.length, 1, "Label for handles should be added as an aggregation");
+				assert.ok(oBoundleCalledStub.calledWith("SLIDER_HANDLE"), "Text should be regarding the handle");
+				assert.strictEqual(oSlider.getDomRef("handle").getAttribute("aria-labelledby"), aLabels[0].getId());
+
+				// cleanup
+				oSlider.destroy();
+			});
+
 			/* ------------------------------ */
 			/* getWidth()                     */
 			/* ------------------------------ */
@@ -1282,7 +1301,7 @@
 				// assert
 				assert.ok(oSlider.$("inner").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Pressed"), 'On touchstart event the slider innner div muss have the CSS class “' + sap.m.SliderRenderer.CSS_CLASS + 'Pressed”');
 				assert.ok(jQuery(oSlider.getFocusDomRef()).hasClass(sap.m.SliderRenderer.CSS_CLASS + "Handle"), "The focus should be in the slider handle");
-				assert.strictEqual(fnFocus.callCount, 1);
+				assert.ok(fnFocus.called);
 
 				// cleanup
 				oSlider.destroy();
@@ -1777,194 +1796,6 @@
 				oSlider.destroy();
 			});
 
-			/* ------------------------------ */
-			/* onsaptabnext                   */
-			/* ------------------------------ */
-
-			QUnit.test("Firing events: onsaptabnext When the slider loses the focus via tab", function(assert) {
-
-				// system under test
-				var oSlider = new sap.m.Slider();
-
-				// arrange
-				oPage.addContent(oSlider);
-				sap.ui.getCore().applyChanges();
-
-				var fnTabNextSpy = this.spy(oSlider, "onsaptabnext");
-
-				var oTouches = {
-					0: {
-						pageX: 25
-					},
-
-					length: 1
-				};
-
-				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-					targetTouches: oTouches
-				});
-
-				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
-					targetTouches: oTouches
-				}, '_on');
-
-				var fValue = oSlider.getValue();
-
-				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.TAB);
-
-				// assert
-				assert.strictEqual(fnTabNextSpy.callCount, 1);
-				assert.strictEqual(oSlider._fInitialFocusValue, fValue, "The _fInitialFocusValue property should be updated with the actual value of the slider");
-
-				// cleanup
-				oSlider.destroy();
-			});
-
-			/* ------------------------------ */
-			/* onsaptabprevious               */
-			/* ------------------------------ */
-
-			QUnit.test("Firing events: onsaptabprevious When the slider loses the focus via shift + tab", function(assert) {
-
-				// system under test
-				var oSlider = new sap.m.Slider({
-					width: "100px",
-					value: 50
-				}).addStyleClass("sapMSliderWithoutPadding");
-
-				// arrange
-				oPage.addContent(oSlider);
-				sap.ui.getCore().applyChanges();
-
-				var fnTabPreviousSpy = this.spy(oSlider, "onsaptabprevious");
-
-				var oTouches = {
-					0: {
-						pageX: 80
-					},
-
-					length: 1
-				};
-
-				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-					targetTouches: oTouches
-				});
-
-				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
-					targetTouches: oTouches
-				}, '_on');
-
-				var fValue = oSlider.getValue();
-
-				// act
-				oSlider.onsaptabprevious();
-
-				// assert
-				assert.strictEqual(fnTabPreviousSpy.callCount, 1);
-				assert.strictEqual(oSlider._fInitialFocusValue, fValue, "The _fInitialFocusValue property should be updated with the actual value of the slider");
-
-				// cleanup
-				oSlider.destroy();
-			});
-
-			/* ------------------------------ */
-			/* onsapescape                    */
-			/* ------------------------------ */
-
-			QUnit.test("Firing events: onsapescape reset the slider back to the value which it had before getting the focus", function(assert) {
-
-				// system under test
-				var oSlider = new sap.m.Slider({
-					width: "100px",
-					value: 50
-				}).addStyleClass("sapMSliderWithoutPadding");
-
-				// arrange
-				oPage.addContent(oSlider);
-				sap.ui.getCore().applyChanges();
-
-				var fnOnEscapeSpy = this.spy(oSlider, "onsapescape");
-
-				var oTouches = {
-					0: {
-						pageX: 80
-					},
-
-					length: 1
-				};
-
-				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-					targetTouches: oTouches,
-					srcControl: oSlider
-				});
-
-				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
-					targetTouches: oTouches,
-					srcControl: oSlider
-				}, '_on');
-
-				// post-assert
-				assert.strictEqual(oSlider.getValue(), 80);
-
-				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-
-				// assert
-				assert.strictEqual(fnOnEscapeSpy.callCount, 1);
-				assert.strictEqual(oSlider.getValue(), 50);
-
-				// cleanup
-				oSlider.destroy();
-			});
-
-			QUnit.test("Firing events: onsapescape reset the slider back to the value which it had before the click event", function(assert) {
-
-				// system under test
-				var oSlider = new sap.m.Slider({
-					width: "100px",
-					value: 10
-				}).addStyleClass("sapMSliderWithoutPadding");
-
-				// arrange
-				oSlider.focus();	// set the focus to the slider handle
-				oPage.addContent(oSlider);
-				sap.ui.getCore().applyChanges();
-
-				var fnOnEscapeSpy = this.spy(oSlider, "onsapescape");
-
-				var oTouches = {
-					0: {
-						pageX: 80
-					},
-
-					length: 1
-				};
-
-				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-					targetTouches: oTouches,
-					srcControl: oSlider
-				});
-
-				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
-					targetTouches: oTouches,
-					srcControl: oSlider
-				}, '_on');
-
-				// pre-assert
-				assert.strictEqual(oSlider.getValue(), 80);
-
-				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-
-				// assert
-				assert.strictEqual(fnOnEscapeSpy.callCount, 1);
-				assert.strictEqual(oSlider.getValue(), 10);
-
-				// cleanup
-				oSlider.destroy();
-			});
-
 			QUnit.test("SAP modifiers events: Global ALT + Arrow", function (assert) {
 				var oRangeSlider = new sap.m.Slider(),
 					oMockEvent = {
@@ -1992,10 +1823,10 @@
 			});
 
 			/* ------------------------------ */
-			/* oInput onsapdown               */
+			/* oInput change               */
 			/* ------------------------------ */
 
-			QUnit.test("Tooltip firing events: onsapdecrease", function(assert) {
+			QUnit.test("Tooltip firing events: fire change should fire Slider's change and livechange", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -2010,54 +1841,15 @@
 				// arrange
 				var fnFireChangeSpy = this.spy(oSlider, "fireChange");
 				var fnFireLiveChangeSpy = this.spy(oSlider, "fireLiveChange");
-				var fnArrowDownSpy = this.spy(oSlider, "onsapdecrease");
 
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef("Tooltip-inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+				oSlider.getAggregation("_tooltipContainer").show(oSlider);
+				oSlider.getAggregation("_tooltips")[0].fireChange({ value: 0.45 });
 
 				// assert
 				assert.strictEqual(oSlider.getValue(), 0.45, "The slider value must be decreased to 0.45");
-				assert.strictEqual(fnArrowDownSpy.callCount, 1);
-				assert.strictEqual(fnFireChangeSpy.callCount, 1);
-				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
-
-				// cleanup
-				oSlider.destroy();
-			});
-
-			/* ------------------------------ */
-			/* oInput onsapup               */
-			/* ------------------------------ */
-
-			QUnit.test("Tooltip firing events: onsapincrease", function(assert) {
-
-				// system under test
-				var oSlider = new sap.m.Slider({
-					step: 0.05,
-					value: 0.5,
-					min: 0,
-					max: 1,
-					showAdvancedTooltip: true,
-					inputsAsTooltips: true
-				});
-
-				// arrange
-				var fnFireChangeSpy = this.spy(oSlider, "fireChange");
-				var fnFireLiveChangeSpy = this.spy(oSlider, "fireLiveChange");
-				var fnArrowDownSpy = this.spy(oSlider, "onsapincrease");
-
-				oPage.addContent(oSlider);
-				sap.ui.getCore().applyChanges();
-
-				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef("Tooltip-inner"), jQuery.sap.KeyCodes.ARROW_UP);
-
-				// assert
-				assert.strictEqual(oSlider.getValue(), 0.55, "The slider value must be increased to 0.55");
-				assert.strictEqual(fnArrowDownSpy.callCount, 1);
 				assert.strictEqual(fnFireChangeSpy.callCount, 1);
 				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 
