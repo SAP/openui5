@@ -214,7 +214,9 @@ sap.ui.define([
 					text: sMenuItemText,
 					handler: this.handler.bind(this, bOverlayIsSibling),
 					enabled: this.isEnabled.bind(this, bOverlayIsSibling),
-					rank: iRank
+					icon: "sap-icon://add-folder",
+					rank: iRank,
+					group: "Add"
 				});
 			}
 			bOverlayIsSibling = false;
