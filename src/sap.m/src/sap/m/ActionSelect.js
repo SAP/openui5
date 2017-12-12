@@ -275,9 +275,10 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library'],
 				bTutorMessageNotReferenced;
 
 			if (!this._sTutorMessageId) {
-				this._sTutorMessageId = new InvisibleText(this.getId() + "-tutorMessage", {
+				this._sTutorMessageId = this.getId() + "-tutorMessage";
+				this._oTutorMessageText = new InvisibleText(this._sTutorMessageId, {
 					text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACTION_SELECT_TUTOR_MESSAGE")
-				}).toStatic().getId();
+				}).toStatic();
 			}
 
 			bTutorMessageNotReferenced = (aAriaLabels.indexOf(this._sTutorMessageId) === -1);
@@ -288,6 +289,18 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library'],
 				if (!bHasButtons) {
 					oPicker.removeAriaLabelledBy(this._sTutorMessageId);
 				}
+			}
+		};
+
+		/**
+		 * Called when the control is destroyed
+		 *
+		 * @private
+		 */
+		ActionSelect.prototype.exit = function () {
+			if (this._oTutorMessageText) {
+				this._oTutorMessageText.destroy();
+				this._oTutorMessageText = null;
 			}
 		};
 

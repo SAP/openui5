@@ -303,7 +303,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oSelectList = this._getSelectList(),
 			aTabFilters = this.getTabFilters();
 
-		oSelectList.removeAllItems();
+		oSelectList.destroyItems();
 
 		for (var i = 0; i < aTabFilters.length; i++) {
 			oTabFilter = aTabFilters[i];
