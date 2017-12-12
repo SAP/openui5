@@ -155,17 +155,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 					 *
 					 * @since 1.54
 					 */
-					maskMode: {type: "sap.m.TimePickerMaskMode", group: "Misc", defaultValue: TimePickerMaskMode.On},
-
-
-					/**
-					 * Holds a reference to a JavaScript Date Object but will take into account only the time part from this date.
-					 * <code>sap.m.TimePicker</code> Popup will be opened with this time initially selected. By setting
-					 * <code>initialFocusedDateValue</code> the <code>value</code> property is not set. This is used only to initially
-					 * open the picker to a specific date.
-					 * @since 1.54
-					 */
-					initialFocusedDateValue: {type: "object", group: "Data", defaultValue: null}
+					maskMode: {type: "sap.m.TimePickerMaskMode", group: "Misc", defaultValue: TimePickerMaskMode.On}
 				},
 				aggregations: {
 

@@ -502,6 +502,68 @@
 				oDP2.destroy();
 			});
 
+			QUnit.module("initialFocusedDate property", {
+				beforeEach: function () {
+					this.oDp = new sap.m.DatePicker();
+					this.oDp.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+
+				afterEach: function () {
+					this.oDp.destroy();
+					this.oDp = null;
+				}
+			});
+
+			QUnit.test("_fillDateRange should call Calendar's focusDate method with initialFocusedDateValue if no value is set", function (assert) {
+				// prepare
+				var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
+				this.oDp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+				this.oDp._oDateRange = { getStartDate: function () { return false; } };
+
+				// act
+				this.oDp.setInitialFocusedDateValue(oExpectedDateValue);
+				this.oDp._fillDateRange();
+
+				// assert
+
+				assert.ok(this.oDp._oCalendar.focusDate.calledWith(oExpectedDateValue), "focusDate should be called with initialFocusedDateValue");
+				assert.equal(this.oDp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+			});
+
+			QUnit.test("_fillDateRange should call Calendar's focusDate method with current date if initialFocusedDateValue and value are not set", function (assert) {
+				// prepare
+				var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
+				this.oDp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+				this.oDp._oDateRange = { getStartDate: function () { return false; } };
+
+				// act
+				this.oDp._fillDateRange();
+
+				// assert
+				assert.equal(this.oDp._oCalendar.focusDate.calledWith(oExpectedDateValue), false, "focusDate should not be called with initialFocusedDateValue");
+				assert.notEqual(this.oDp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+			});
+
+			QUnit.test("_fillDateRange should call Calendar's focusDate method with dateValue", function (assert) {
+				// prepare
+				var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8),
+					oGetDateValue = this.stub(this.oDp, "getDateValue", function () { return oExpectedDateValue; });
+				this.oDp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+				this.oDp._oDateRange = { setStartDate: function () {}, getStartDate: function () {} };
+
+				// act
+				this.oDp._fillDateRange();
+
+				// assert
+				assert.ok(this.oDp._oCalendar.focusDate.calledWith(oExpectedDateValue), "focusDate should be called with dateValue");
+				assert.equal(this.oDp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+
+				// cleanup
+				oGetDateValue.restore();
+			});
+
+
 			QUnit.module("interaction");
 
 			QUnit.test("change date by typing", function(assert) {
