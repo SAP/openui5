@@ -110,7 +110,7 @@ sap.ui.define([
 
             var oStatic;
             try {
-                oStatic = sap.ui.getCore().getStaticAreaRef(); //bei AdditionalElementsPlugin nachschauen
+                oStatic = sap.ui.getCore().getStaticAreaRef();
                 oStatic = sap.ui.getCore().getUIArea(oStatic);
             } catch (e) {
                 jQuery.sap.log.error(e);
@@ -146,62 +146,27 @@ sap.ui.define([
                 }
             }.bind(this);
 
+            if (this._bUseExpPop === undefined) {
+                this._bUseExpPop = !!bContextMenu;
+            }
+
+            this._isCompactMode =  jQuery(oSource.getDomRef()).attr("class").indexOf("sapUiSizeCompact") > -1;
+
             this._openAsContextMenu = bContextMenu;
             this._contextMenuPosition = contextMenuPosition;
-            this.getPopover().addStyleClass(this.getStyleClass());
+            this.getPopover(true).addStyleClass(this.getStyleClass() || "");
+            this.getPopover(false).addStyleClass(this.getStyleClass() || "");
 
             // creates buttons specified in objects in property buttons
             var aButtons = this.getButtons();
             this._oTarget = oSource;
 
             if (!this._openAsContextMenu){
-                var iButtonsEnabled = 0;
-                for (var i7 = 0; i7 < aButtons.length; i7++) {
-                    if (aButtons[i7].getEnabled()){
-                        iButtonsEnabled += 1;
-                        if (!this._firstVisibleButtonIndex){
-                            this._firstVisibleButtonIndex = i7;
-                        }
-                    }
-                }
 
-                if (iButtonsEnabled - 1 >= this.getMaxButtonsDisplayed()){ // -1 because of Overflow-Button
-                    for (var i1 = this.getMaxButtonsDisplayed(); i1 < aButtons.length; i1++) {
-                        aButtons[i1].setVisible(false);
-                    }
-                } else if (iButtonsEnabled != 0) {
-                    aButtons.forEach(function (_button) {
-                        _button.setVisible(_button.getEnabled());
-                    });
-                } else {
-                    for (var i8 = this.getMaxButtonsDisplayed(); i8 < aButtons.length; i8++) {
-                        aButtons[i8].setVisible(false);
-                    }
-                    this._firstVisibleButtonIndex = 0;
-                }
+                this._setButtonsForMiniMenu(aButtons, oSource);
 
-
-                // hides the nth button if (n > number of buttons) and creates/displays the overflow button (n = maxButtonsDisplayed)
-                if (this.getMaxButtonsDisplayed() < aButtons.length) {
-                    aButtons[this.getMaxButtonsDisplayed() - 1].setVisible(false);
-                    this.addButton(this._createOverflowButton());
-                } else if (iButtonsEnabled < aButtons.length && iButtonsEnabled != 0) {
-                    this.addButton(this._createOverflowButton());
-                }
-
-                iButtonsEnabled = null;
-
-                // sets the Tooltips
-                for (var i2 = 0; i2 < this.getMaxButtonsDisplayed() && i2 < aButtons.length; i2++) {
-                    aButtons[i2].setTooltip(this.getProperty("buttons")[i2].getText(oSource));
-                }
             } else {
-                this._firstVisibleButtonIndex = 0;
-                // makes the hidden buttons and their text visible
-                aButtons.forEach(function(_button){
-                    _button.setVisible(true);
-                    _button._bInOverflow = true;
-                });
+                this._makeAllButtonsVisible(aButtons);
             }
 
             if (this.onInit || !this.getPopover().isOpen()) { // if there was no other MiniMenu open before
@@ -215,7 +180,7 @@ sap.ui.define([
          * Finalizes the Opening of the MiniMenu. Is called by "_popupClosed" (when the old Menu is closed) or by "show" if there was no MiniMenu opened before
          * Is needed to prevent flickering (wait for old MiniMenu to close)
          */
-        finalizeOpening : function (){
+        finalizeOpening : function () {
 
             if (this._openAsContextMenu && this._contextMenuPosition.x === null && this._contextMenuPosition.y === null) {
                 this._openAsContextMenu = false;
@@ -234,6 +199,133 @@ sap.ui.define([
         },
 
         /**
+         * Sets all parameters of the buttons in the non-expanded MiniMenu
+         * @param {array} aButtons some buttons
+         * @param {Overlay} oSource the source
+         */
+        _setButtonsForMiniMenu : function (aButtons, oSource) {
+
+            var iButtonsEnabled = this._getNumberOfEnabledButtons(aButtons);
+
+            if (iButtonsEnabled !== 0) {
+
+                this._hideDisabledButtons(aButtons);
+            }
+
+            this._iButtonsVisible = this._hideButtonsInOverflow(aButtons);
+
+            if (this._iButtonsVisible === this.getMaxButtonsDisplayed() && this._iButtonsVisible !== aButtons.length) {
+
+                this._replaceLastVisibleButtonWithOverflowButton(aButtons);
+
+            } else if (iButtonsEnabled < aButtons.length && iButtonsEnabled != 0) {
+
+                this.addButton(this._createOverflowButton());
+            }
+
+            iButtonsEnabled = null;
+
+            for (var i = 0; i < aButtons.length; i++) {
+                aButtons[i].setTooltip(this.getProperty("buttons")[i].getText(oSource));
+            }
+        },
+
+        /**
+         * Makes all buttons and their text visible
+         * @param {array} aButtons some buttons
+         */
+        _makeAllButtonsVisible : function (aButtons) {
+
+            this._firstVisibleButtonIndex = 0;
+
+            aButtons.forEach(function(oButton){
+                oButton.setVisible(true);
+                oButton._bInOverflow = true;
+            });
+        },
+
+        /**
+         * Returns the number of enabled button
+         * Sets firstVisibleButtonIndex
+         * @param {array} aButtons some buttons
+         * @return {int} number of enabled buttons
+         */
+        _getNumberOfEnabledButtons : function (aButtons) {
+
+            var iButtonsEnabled = 0;
+
+            for (var i0 = 0; i0 < aButtons.length; i0++) {
+                if (aButtons[i0].getEnabled()){
+                    iButtonsEnabled++;
+                    if (!this._firstVisibleButtonIndex){
+                        this._firstVisibleButtonIndex = i0;
+                    }
+                }
+            }
+
+            return iButtonsEnabled;
+        },
+
+        /**
+         * Hiddes all disabled buttons and returns the number if visible buttons
+         * @param {array} aButtons some Buttons
+         * @return {int} the number of visible buttons
+         */
+        _hideDisabledButtons : function (aButtons) {
+
+            var iVisibleButtons = 0;
+
+            aButtons.forEach(function (oButton) {
+
+                oButton.setVisible(oButton.getEnabled());
+
+                if (oButton.getEnabled()) {
+                    iVisibleButtons++;
+                }
+            });
+
+            return iVisibleButtons;
+        },
+
+        /**
+         * Hides the buttons in overflow
+         * @param {array} aButtons some Buttons
+         * @return {int} the number of visible buttons
+         */
+        _hideButtonsInOverflow : function (aButtons) {
+
+            var iVisibleButtons = 0;
+
+            for (var i = 0; i < aButtons.length; i++) {
+
+                if (iVisibleButtons < this.getMaxButtonsDisplayed() && aButtons[i].getVisible()) {
+                    iVisibleButtons++;
+                } else {
+                    aButtons[i].setVisible(false);
+                }
+            }
+
+            return iVisibleButtons;
+        },
+
+        /**
+         * Hides the last visible button and adds an OverflowButton
+         * @param {array} aButtons some buttons
+         */
+        _replaceLastVisibleButtonWithOverflowButton : function (aButtons) {
+
+            for (var i = aButtons.length - 1; i >= 0; i--) {
+                if (aButtons[i].getVisible()) {
+
+                    aButtons[i].setVisible(false);
+                    this.addButton(this._createOverflowButton());
+
+                    return;
+                }
+                }
+        },
+
+        /**
          * Works out how the MiniMenu shall be placed
          * Sets the placement property of the popover
          * Places a "fakeDiv" in the DOM which the popover can be opened by
@@ -245,10 +337,6 @@ sap.ui.define([
          */
         _placeMiniMenu: function (oSource, bContextMenu, bExpanded) {
             this.getPopover().setShowArrow(true);
-
-            if (!bExpanded || bContextMenu || document.getElementById(this.getPopover().getId()) === null) {
-                sap.ui.getCore().getRenderManager().render(this.getPopover(), sap.ui.getCore().getStaticAreaRef());
-            }
 
             var sOverlayId = (oSource.getId && oSource.getId()) || oSource.getAttribute("overlay");
 
@@ -473,18 +561,28 @@ sap.ui.define([
 
             var oPopover = {};
 
-            oPopover.height = parseInt(jQuery(this.getFlexbox().getDomRef()).children().css("height"), 10);
+            var bCompact = this._isCompactMode;
+
+            var fButtonHeight = this._getButtonHeight(bCompact);
+
+            var fButtonWidth = this._getButtonWidth(bCompact);
+
+            var fArrowHeight = this._getArrowHeight(bCompact);
+
+            var iBaseFontsize = this._getBaseFontSize();
+
+            oPopover.height = iBaseFontsize * fButtonHeight;
             this._firstVisibleButtonIndex = null;
 
             if (bExpanded) {
-                oPopover.height *= this.getButtons().length;
-                oPopover.width = parseInt(jQuery("#" + this.getPopover().getId()).css("width"), 10);
+                oPopover.height *= this.getButtons().length - 1;
+                oPopover.width = parseInt(jQuery("#" + this.getPopover().getId()).css("width"), 10) || 80;
             } else {
-                oPopover.width = parseInt(jQuery(jQuery("#" + this.getFlexbox().getId()).children()[0]).css("width"), 10) * this.getButtons().length;
+                oPopover.width = iBaseFontsize * fButtonWidth * this._iButtonsVisible;
             }
 
             if (bWithArrow) {
-                var iArr = parseInt(jQuery("#" + this.getPopover(false).getId() + "-arrow").css("height"), 10);
+                var iArr = iBaseFontsize * fArrowHeight;
                 if (iArr){
                     oPopover.height += 2 * iArr;
                     oPopover.width += 2 * iArr;
@@ -492,6 +590,41 @@ sap.ui.define([
             }
 
             return oPopover;
+        },
+
+        /**
+         * Returns the height of a button in rem
+         * @param {boolean} bCompact wheter MiniMenu is compact
+         * @return {float} the height of a button in rem
+         */
+        _getButtonHeight : function (bCompact) {
+            return bCompact ? 2 : 3;
+        },
+
+        /**
+         * Returns the width of a button with only an icon in rem
+         * @param {boolean} bCompact wheter MiniMenu is compact
+         * @return {float} the width of a button in rem
+         */
+        _getButtonWidth : function (bCompact) {
+            return bCompact ? 2 : 2.5;
+        },
+
+        /**
+         * Returns the height of a popover arrow
+         * @param {boolean} bCompact wheter MiniMenu is compact
+         * @return {float} the height of a popover arrow
+         */
+        _getArrowHeight : function (bCompact) {
+            return bCompact ? 0.5625 : 0.5625;
+        },
+
+        /**
+         * Returns the base font size in px
+         * @return {int} the base font size in px
+         */
+        _getBaseFontSize : function () {
+            return parseInt(jQuery(document.documentElement).css("fontSize"), 10);
         },
 
         /**
@@ -557,18 +690,18 @@ sap.ui.define([
             var oButton;
 
             if (oSource){
-                    oButton = new sap.m.OverflowToolbarButton({
-                        icon: button.icon ? button.icon : "sap-icon://incident",
-                        text: button.getText(oOverlay),
-                        type: "Transparent",
-                        enabled: button.getEnabled(oOverlay),
-                        press: handler,
-                        layoutData: new sap.m.FlexItemData({})
-                    });
+                oButton = new sap.m.OverflowToolbarButton({
+                    icon: button.icon ? button.icon : "sap-icon://incident",
+                    text: button.getText(oOverlay),
+                    type: "Transparent",
+                    enabled: button.getEnabled(oOverlay),
+                    press: handler,
+                    layoutData: new sap.m.FlexItemData({})
+                });
 
-                    oButton.data({
-                        id : button.id
-                    });
+                oButton.data({
+                    id : button.id
+                });
 
             } else {
                 oButton = new sap.m.OverflowToolbarButton({
@@ -746,7 +879,7 @@ sap.ui.define([
          * @param {jQuery.Event} evt the press event
          * @private
          */
-        _onOverflowPress: function (evt) { // TODO fix Menu locking (_onoverflowPressed unlocks right away since the old popover is closed)
+        _onOverflowPress: function (evt) {
 
             this.fireOverflowButtonPressed();
 
@@ -758,10 +891,6 @@ sap.ui.define([
 
             this.removeAllButtons();
 
-            // // gets the Popover-div for animation
-            // var _popoverElement = jQuery(this.getPopover().getDomRef());
-            // var _popoverContentElement = jQuery(this.getFlexbox().getDomRef());
-
             aButtons.forEach(function (oButton) {
                 // removes all tooltips
                 // makes the hidden buttons and their text visible
@@ -771,20 +900,13 @@ sap.ui.define([
                 this.getFlexbox().addItem(oButton);
             }.bind(this));
 
-
             // makes the overflow Button invisible
             aButtons[aButtons.length - 1].setVisible(false);
-
-            // the RenderManager takes too long to rerender them which causes flickering with the animation
-            // applying all changes now makes sure the rerendering happens before the animation starts
-            sap.ui.getCore().applyChanges();
 
             // set the placement of the MiniMenu
             var fakeDiv = this._placeMiniMenu(this._oTarget, false, true);
 
-            this.getPopover().addStyleClass(this.getStyleClass());
             this.getPopover().openBy(fakeDiv);
-
         },
 
         /**
