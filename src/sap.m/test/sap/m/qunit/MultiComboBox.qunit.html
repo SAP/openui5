@@ -4677,6 +4677,19 @@
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Change event should be called on focusleave", function (assert) {
+		var oMultiComboBox = new sap.m.MultiComboBox({ value: "A" }).placeAt("MultiComboBox-content"),
+			oStub = this.stub(oMultiComboBox, "fireChangeEvent"),
+			oFakeEvent = {};
+
+		oMultiComboBox.onsapfocusleave(oFakeEvent);
+
+		assert.ok(oStub.called, "change should be called");
+		assert.ok(oStub.calledWith("", { value: "A" }), "change should be called with empty values");
+
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test('Endless focus loop should not be triggered when Dialog is opened on mobile', function(assert) {
 		// system under test
 		this.stub(sap.ui.Device, "system", {
