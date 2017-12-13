@@ -36,7 +36,11 @@ sap.ui.define([
 				/**
 				 * Defines if the parameter should be marked as optional or not
 				 */
-				optional: {type : "boolean", defaultValue: false}
+				optional: {type : "boolean", defaultValue: false},
+				/**
+				 * Defines if the parameter is default
+				 */
+				defaultFlag: {type : "boolean", defaultValue: false}
 			}
 		},
 
@@ -64,7 +68,14 @@ sap.ui.define([
 			if (oControl.getOptional()) {
 				oRm.write("?");
 			}
-
+			if (oControl.getDefaultFlag()) {
+				oRm.write("<span");
+				oRm.addClass("parameterDefault");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.write("(default)");
+				oRm.write("</span>");
+			}
 			oRm.write("</div>");
 		}
 	});
