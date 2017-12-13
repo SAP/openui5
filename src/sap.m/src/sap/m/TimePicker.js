@@ -155,7 +155,17 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 					 *
 					 * @since 1.54
 					 */
-					maskMode: {type: "sap.m.TimePickerMaskMode", group: "Misc", defaultValue: TimePickerMaskMode.On}
+					maskMode: {type: "sap.m.TimePickerMaskMode", group: "Misc", defaultValue: TimePickerMaskMode.On},
+
+
+					/**
+					 * Holds a reference to a JavaScript Date Object but will take into account only the time part from this date.
+					 * <code>sap.m.TimePicker</code> Popup will be opened with this time initially selected. By setting
+					 * <code>initialFocusedDateValue</code> the <code>value</code> property is not set. This is used only to initially
+					 * open the picker to a specific date.
+					 * @since 1.54
+					 */
+					initialFocusedDateValue: {type: "object", group: "Data", defaultValue: null}
 				},
 				aggregations: {
 
@@ -337,9 +347,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		 */
 		TimePicker.prototype.onBeforeOpen = function() {
 			/* Set the timevalues of the picker here to prevent user from seeing it */
-			var oSliders = this._getSliders();
+			var oSliders = this._getSliders(),
+				oDateValue = this.getDateValue();
 
-			oSliders._setTimeValues(this.getDateValue());
+			if (this._shouldSetInitialFocusedDateValue()) {
+				oDateValue = this.getInitialFocusedDateValue();
+			}
+
+			oSliders._setTimeValues(oDateValue);
 			oSliders.collapseAll();
 
 			/* Mark input as active */
@@ -1166,13 +1181,28 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		};
 
 		/**
-		 * Returns if the mask is enabled.
+		 * Returns if the mask is enabled. If value is not valid we should set initialFocusedDateValue
 		 *
 		 * @returns {boolean}
 		 * @private
 		 */
 		TimePicker.prototype._isMaskEnabled = function () {
 			return this.getMaskMode() === TimePickerMaskMode.On;
+		};
+
+		TimePicker.prototype._shouldSetInitialFocusedDateValue = function () {
+			if (!this._isValidValue()) {
+				return true;
+			}
+
+			return !this.getValue() && !!this.getInitialFocusedDateValue();
+		};
+
+		/**
+		 * @private
+		 */
+		TimePicker.prototype._isValidValue = function () {
+			return this._bValid;
 		};
 
 		/**
