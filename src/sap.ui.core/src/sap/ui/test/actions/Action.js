@@ -120,15 +120,28 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 		},
 
 		_tryOrSimulateFocusin: function ($DomRef, oControl) {
+			var isAlreadyFocused = $DomRef.is(":focus");
+			var bFireArtificialEvents;
 			var oDomRef = $DomRef[0];
-			$DomRef.focus();
-			var bWasFocused = $DomRef.is(":focus");
 
-			if (!bWasFocused) {
-				$.sap.log.debug("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
+			if (isAlreadyFocused || (Device.browser.msie && (Device.browser.version < 12))) {
+				// If the event is already focused, make sure onfocusin event of the control will be properly fired when executing this action,
+				// otherwise the next blur will not be able to safely remove the focus.
+				// In IE11, if the focus action fails and focusin is dispatched, onfocusin will be called twice
+				// to avoid this, directly dispatch the artificial events
+				bFireArtificialEvents = true;
+			} else {
+				$DomRef.focus();
+				// This check will only return false if you have the focus in the dev tools console,
+				// or a background tab, or the browser is not focused at all. We still want onfocusin to work
+				var bWasFocused = $DomRef.is(":focus");
+				// do not fire the artificial events in this case since we would recieve onfocusin twice
+				bFireArtificialEvents = !bWasFocused;
 			}
 
-			if (!bWasFocused) {
+			if (bFireArtificialEvents) {
+				$.sap.log.debug("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
+
 				this._createAndDispatchFocusEvent("focusin", oDomRef);
 				this._createAndDispatchFocusEvent("focus", oDomRef);
 				this._createAndDispatchFocusEvent("activate", oDomRef);
