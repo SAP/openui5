@@ -63,6 +63,7 @@
 					items="{/demoApps}"
 					title="{i18n>downloadDialogTitle}"
 					liveChange="onSearch"
+					growingThreshold="100"
 					confirm="onDownloadPress">
 					<InputListItem
 						visible="{= !!${config} }"
