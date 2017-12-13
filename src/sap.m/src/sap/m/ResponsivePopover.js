@@ -7,11 +7,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	function(jQuery, Dialog, Popover, library, Control, IconPool, ManagedObject, Device) {
 	"use strict";
 
-
-
-	// shortcut for sap.m.ButtonType
-	var ButtonType = library.ButtonType;
-
 	// shortcut for sap.m.DialogType
 	var DialogType = library.DialogType;
 
@@ -634,10 +629,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @public
 	 */
 	ResponsivePopover.prototype.setBeginButton = function(oButton){
-		if (oButton) {
-			oButton.setType(ButtonType.Transparent);
-		}
-
 		this._oControl.setBeginButton(oButton);
 		return this._setButton("begin", oButton);
 	};
@@ -649,10 +640,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @public
 	 */
 	ResponsivePopover.prototype.setEndButton = function(oButton){
-		if (oButton) {
-			oButton.setType(ButtonType.Transparent);
-		}
-
 		this._oControl.setEndButton(oButton);
 		return this._setButton("end", oButton);
 	};
