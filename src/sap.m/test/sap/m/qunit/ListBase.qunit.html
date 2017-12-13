@@ -556,6 +556,24 @@
 			oList.destroy();
 		});
 
+		QUnit.test("Toolbar has style classes sapMTBHeader-CTX and sapMListHdrTBar", function(assert) {
+			var oToolbar = new sap.m.Toolbar();
+			var oList = new sap.m.List({
+				headerToolbar: oToolbar
+			});
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oToolbar.hasStyleClass("sapMTBHeader-CTX"), "Toolbar has style class sapMTBHeader-CTX");
+			assert.ok(oToolbar.hasStyleClass("sapMListHdrTBar"), "Toolbar has style class sapMListHdrTBar");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
 		/********************************************************************************/
 		QUnit.module("Getter/Setter methods");
 		/********************************************************************************/

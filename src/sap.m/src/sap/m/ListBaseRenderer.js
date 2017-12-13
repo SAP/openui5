@@ -87,6 +87,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/m/library', 'sap/ui/Device'],
 		if (oHeaderTBar) {
 			oHeaderTBar.setDesign(ToolbarDesign.Transparent, true);
 			oHeaderTBar.addStyleClass("sapMListHdrTBar");
+			oHeaderTBar.addStyleClass("sapMTBHeader-CTX");
 			rm.renderControl(oHeaderTBar);
 		} else if (sHeaderText) {
 			rm.write("<header class='sapMListHdr'");
