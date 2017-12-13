@@ -50,6 +50,9 @@ sap.ui.define([
 			/* =========================================================== */
 
 			_onSampleMatched: function (event) {
+
+				this.getModel("headerView").setProperty("/bShowSubHeader", false);
+
 				var oPage = this.byId("page");
 
 				oPage.setBusy(true);
@@ -85,7 +88,7 @@ sap.ui.define([
 				this.entityId = oSample.entityId;
 
 				// set page title
-				oPage.setTitle("Sample: " + oSample.name);
+				oModelData.title = "Sample: " + oSample.name;
 
 				try {
 					oContent = this._createComponent();

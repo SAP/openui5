@@ -39,6 +39,7 @@ sap.ui.define([
 			 * @private
 			 */
 			onRouteMatched: function (oEvt) {
+				this.getModel("headerView").setProperty("/bShowSubHeader", false);
 				this.showMasterSide();
 				this._sId = oEvt.getParameter("arguments").id;
 				this._sFileName = decodeURIComponent(oEvt.getParameter("arguments").fileName);
