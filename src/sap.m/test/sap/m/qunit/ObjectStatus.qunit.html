@@ -505,7 +505,7 @@
 
 	QUnit.module("textDirection");
 
-	QUnit.test("Title has dir set to LTR when Inherit", function (assert) {
+	QUnit.test("Title and Text has dir set to LTR when Inherit", function (assert) {
 		//Arange
 		var oObjectStatus = new sap.m.ObjectStatus({title: "Staus", text: "Success object"});
 		oObjectStatus.placeAt("qunit-fixture");
@@ -513,12 +513,13 @@
 
 		//Act
 		assert.equal(oObjectStatus.$("title").attr("dir"), "ltr", "When the textDirection has the Inherit value, for the title is set LTR when on LTR page");
+		assert.equal(oObjectStatus.$("text").attr("dir"), "ltr", "When the textDirection has the Inherit value, for the text is set LTR when on LTR page");
 
 		//Cleanup
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Title has dir set to RTL when textDirection=RTL", function (assert) {
+	QUnit.test("Title and Text has dir set to RTL when textDirection=RTL", function (assert) {
 		//Arange
 		var oObjectStatus = new sap.m.ObjectStatus({title: "Staus", text: "Success object", textDirection: sap.ui.core.TextDirection.RTL});
 		oObjectStatus.placeAt("qunit-fixture");
@@ -526,6 +527,7 @@
 
 		//Act
 		assert.equal(oObjectStatus.$("title").attr("dir"), "rtl", "When textDirection=RTL, for the title is set also RTL");
+		assert.equal(oObjectStatus.$("text").attr("dir"), "rtl", "When textDirection=RTL, for the text is set also RTL");
 
 		//Cleanup
 		oObjectStatus.destroy();
