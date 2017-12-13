@@ -1294,6 +1294,37 @@
 				"Ridiculously long number is parsed as string");
 	});
 
+	QUnit.test("NumberFormat for 'he' locale with big number. Contains then RTL character u+200F", function(assert) {
+		//setup
+		var oLocale = new sap.ui.core.Locale("he");
+		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
+			"style": "long"
+		}, oLocale);
+
+		// input and output
+		var iExpectedNumber = 123000000;
+
+		// execution
+		var sFormatted = oFormat.format(iExpectedNumber);
+		assert.equal(sFormatted, '‏123 מיליון', "can be formatted '" + sFormatted + "'");
+
+		var sParsed = oFormat.parse(sFormatted);
+		assert.equal(sParsed, iExpectedNumber, "should match input number " + iExpectedNumber);
+	});
+
+	QUnit.test("NumberFormat for 'de' locale with big number", function(assert) {
+		var oLocale = new sap.ui.core.Locale("de");
+		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
+			"style": "long"
+		}, oLocale);
+		var expectedNumber = 123000000;
+		var sFormatted = oFormat.format(expectedNumber);
+		assert.equal(sFormatted, "123 Millionen", "can be formatted '"+sFormatted+"'");
+		debugger;
+		var sParsed = oFormat.parse(sFormatted);
+		assert.equal(sParsed, expectedNumber, "should match input number " + expectedNumber);
+	});
+
 	QUnit.test("parse default format with parameter 'parseAsString' set to true", function(assert) {
 		var oIntegerFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
 			parseAsString: true

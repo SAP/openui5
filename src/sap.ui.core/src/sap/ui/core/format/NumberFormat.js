@@ -1181,8 +1181,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 				sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
 
 				if (sCldrFormat) {
-					// Note: CLDR uses a non-breaking space in the forma tstring
-					sCldrFormat = sCldrFormat.replace(/[\s\u00a0]/g, "");
+					// Note: CLDR uses a non-breaking space in the format string
+					// remove right-to-left mark u+200f character
+					sCldrFormat = sCldrFormat.replace(/[\s\u00a0\u200F]/g, "");
 					//formatString may contain '.' (quoted to differentiate them decimal separator)
 					//which must be replaced with .
 					sCldrFormat = sCldrFormat.replace(/'.'/g, ".");
@@ -1199,6 +1200,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 						if (iIndex >= 0) {
 							// parse the number part like every other number and then use the factor to get the real number
 							sNumber = sValue.replace(sUnit, "");
+							// remove right-to-left mark u+200f character
+							sNumber = sNumber.replace(/\u200F/g, "");
 							iFactor = iKey;
 							// spanish numbers e.g. for MRD in format for "one" is "00 MRD" therefore factor needs to be adjusted
 							// german numbers e.g. for Mrd. in format for "one" is "0 Mrd." therefore number does not need to be adjusted
