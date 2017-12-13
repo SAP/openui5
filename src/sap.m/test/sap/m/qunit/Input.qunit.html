@@ -2808,6 +2808,20 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Tabular Suggestions - Set selected row filter function", function(assert) {
+		var oInput = createInputWithTabularSuggestions();
+		// Remove the SuggestionRowValidator function for the test.
+		oInput.setSuggestionRowValidator(null);
+		oInput.setSelectedRow(oInput.getSuggestionRows()[0]);
+		oInput.setRowResultFunction(function (oColumnListItem) {
+			return "You chose: " + oColumnListItem.getCells()[0].getText();
+		});
+
+		assert.equal(oInput.getValue(), "You chose: Auch ein gutes Ding", "value should be updated after setting the row result function");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Tabular Suggestions - Display text formatting", function(assert) {
 		var oInput = createInputWithTabularSuggestions();
 
