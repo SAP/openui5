@@ -903,7 +903,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			if (oItem) {
 				sNewValue = this._getDisplayText(oItem);
 			} else {
-				sNewValue = this._fnRowResultFilter(oListItem);
+				sNewValue = this._fnRowResultFilter ? this._fnRowResultFilter(oListItem) : Input._DEFAULTRESULT_TABULAR(oListItem);
 			}
 		}
 
@@ -1080,6 +1080,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Input.prototype.setRowResultFunction = function(fnFilter) {
+		var sSelectedRow;
+
 		// reset to default function when calling with null or undefined
 		if (fnFilter === null || fnFilter === undefined) {
 			this._fnRowResultFilter = Input._DEFAULTRESULT_TABULAR;
@@ -1088,6 +1090,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		// set custom function
 		jQuery.sap.assert(typeof (fnFilter) === "function", "Input.setRowResultFunction: first argument fnFilter must be a function on " + this);
 		this._fnRowResultFilter = fnFilter;
+
+		sSelectedRow = this.getSelectedRow();
+		if (sSelectedRow) {
+			this.setSelectedRow(sSelectedRow);
+		}
+
 		return this;
 	};
 
@@ -2802,6 +2810,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				oInputClone.addSuggestionRow(oRow.clone(), true);
 			});
 		}
+
+		oInputClone.setRowResultFunction(this._fnRowResultFilter);
 
 		return oInputClone;
 	};

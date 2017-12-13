@@ -2834,6 +2834,20 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Tabular Suggestions - Set selected row filter function", function(assert) {
+		var oInput = createInputWithTabularSuggestions();
+		// Remove the SuggestionRowValidator function for the test.
+		oInput.setSuggestionRowValidator(null);
+		oInput.setSelectedRow(oInput.getSuggestionRows()[0]);
+		oInput.setRowResultFunction(function (oColumnListItem) {
+			return "You chose: " + oColumnListItem.getCells()[0].getText();
+		});
+
+		assert.equal(oInput.getValue(), "You chose: Auch ein gutes Ding", "value should be updated after setting the row result function");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Tabular Suggestions - Display text formatting", function(assert) {
 		var oInput = createInputWithTabularSuggestions();
 
@@ -2923,6 +2937,59 @@
 		oInput.destroy();
 
 	});
+
+	QUnit.module("Input clone", {
+		beforeEach: function () {
+			this.oTabularInputToClone = createInputWithTabularSuggestions();
+			// Remove the SuggestionRowValidator function for the cloning tests.
+			this.oTabularInputToClone.setSuggestionRowValidator(null);
+			this.oInputToClone = new sap.m.Input("inp2", {
+				showSuggestion: true,
+				suggestionItems: [
+					new sap.ui.core.Item({ text: "Test 1" }),
+					new sap.ui.core.Item({ text: "Test 2" }),
+					new sap.ui.core.Item({ text: "Test 3" })
+				]
+			});
+		},
+		afterEach: function () {
+			this.oTabularInputToClone.destroy();
+			this.oInputToClone.destroy();
+		}
+	});
+
+	QUnit.test("List Suggestions - cloning", function (assert) {
+		var oInputClone  = this.oInputToClone.clone();
+		assert.equal(oInputClone.getSuggestionItems().length, 3, "Should have 3 suggestion items");
+	});
+
+	QUnit.test("Tabular Suggestions - cloning", function (assert) {
+		var oInputClone  = this.oTabularInputToClone.clone();
+
+		assert.equal(oInputClone.getSuggestionRows().length, 10, "Should have 3 suggestion rows");
+		assert.equal(oInputClone.getSuggestionColumns().length, 5, "Should have 4 suggestion columns");
+	});
+
+	QUnit.test("Tabular Suggestions - fnRowResultFilter cloning", function (assert) {
+		var fnCallback = sinon.spy();
+		this.oTabularInputToClone.setRowResultFunction(fnCallback);
+		var oInputClone  = this.oTabularInputToClone.clone();
+
+		assert.equal(fnCallback, oInputClone._fnRowResultFilter, "_fnRowResultFilter should be cloned");
+	});
+
+	QUnit.test("Tabular Suggestions - selectedRow cloning", function (assert) {
+		var fnRowResultFilter = function (oColumnListItem) {
+			return "The selected item: " + oColumnListItem.getCells()[0].getText();
+		};
+		this.oTabularInputToClone.setRowResultFunction(fnRowResultFilter);
+		this.oTabularInputToClone.setSelectedRow(this.oTabularInputToClone.getSuggestionRows()[0]);
+
+		var oInputClone  = this.oTabularInputToClone.clone();
+
+		assert.equal(oInputClone.getValue(), "The selected item: Auch ein gutes Ding", "The selectedRow association should be cloned");
+	});
+
 </script>
 
 </head>
