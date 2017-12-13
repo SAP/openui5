@@ -411,6 +411,11 @@ sap.ui.define([
 				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
 			], "numeric");
 		}
+		if (!this._aIncludeOperations["numc"]) {
+			this.setIncludeOperations([
+				sap.m.P13nConditionOperation.Contains, sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EndsWith, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
+			], "numc");
+		}
 		if (!this._aIncludeOperations["boolean"]) {
 			this.setIncludeOperations([
 				sap.m.P13nConditionOperation.EQ
