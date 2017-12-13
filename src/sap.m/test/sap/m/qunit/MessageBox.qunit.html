@@ -249,6 +249,33 @@
 			oMessageBox.destroy();
 		});
 
+		QUnit.test("initial focus to control with details", function (assert) {
+			var oMessageBox, oShowMoreLink,
+				oButton = new sap.m.Button({
+					text: 'Do something'
+				});
+
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, oButton],
+				details: "Lorem ipsum",
+				id: "messageboxWithDetails",
+				styleClass: sClassName,
+				initialFocus: oButton
+			});
+			sap.ui.getCore().applyChanges();
+
+			oMessageBox = sap.ui.getCore().byId("messageboxWithDetails");
+			oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
+
+			//act
+			oShowMoreLink.firePress();
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(document.activeElement.id, oMessageBox.getInitialFocus(), "Focus is set correctly after details are shown");
+			oMessageBox.destroy();
+		});
+
 		QUnit.test("initial focus with string", function (assert) {
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,

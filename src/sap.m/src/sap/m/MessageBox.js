@@ -313,13 +313,19 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 						var oShowLink = new Link({
 							text: that._rb.getText("MSGBOX_LINK_TITLE"),
 							press: function () {
+								var oInitialFocus = oDialog.getInitialFocus();
 								oDialog.addAriaLabelledBy(oFT);
 
 								oFT.setVisible(true);
 								oShowLink.setVisible(false);
 
-								aButtons[0].focus();
-
+								if (oInitialFocus && oInitialFocus !== oShowLink.getId()) {
+									oDialog._setInitialFocus();
+								} else {
+									// if the initialFocus is not set or is set to the "Show details" link
+									// focus the first action button
+									aButtons[0].focus();
+								}
 							}
 						});
 
