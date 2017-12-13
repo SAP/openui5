@@ -43,16 +43,13 @@
 				</snappedContent>
 
 				<actions>
-					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://copy"/>
-					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://delete"/>
-					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://add"/>
-					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://paste"/>
+					<ObjectPageHeaderActionButton type="Transparent" text="Delete" icon="sap-icon://delete" hideText="false" hideIcon="false" importance="Medium"></ObjectPageHeaderActionButton>
+					<ObjectPageHeaderActionButton type="Transparent" text="Add" icon="sap-icon://add" hideText="false" hideIcon="true" importance="High"></ObjectPageHeaderActionButton>
+					<ObjectPageHeaderActionButton type="Transparent" text="Copy" icon="sap-icon://copy" hideText="false" hideIcon="true" importance="Low"></ObjectPageHeaderActionButton>
 				</actions>
-
 				<navigationActions>
-					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen"
-											 tooltip="Enter Full Screen Mode"/>
-					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" tooltip="Close column"/>
+					<ObjectPageHeaderActionButton text="Edit1" type="Emphasized" hideText="false" importance="Medium"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" type="Transparent" text="Share" importance="Medium"/>
 				</navigationActions>
 
 			</ObjectPageDynamicHeaderTitle>

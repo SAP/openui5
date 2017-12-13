@@ -1,10 +1,10 @@
 sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageWithDynamicHeader.Component", {
+	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageHeaderActionButtons.Component", {
 
 		metadata: {
-			rootView: "sap.uxap.sample.ObjectPageWithDynamicHeader.ObjectPageWithDynamicHeader",
+			rootView: "sap.uxap.sample.ObjectPageHeaderActionButtons.ObjectPageHeaderActionButtons",
 			dependencies: {
 				libs: [
 					"sap.m"
@@ -14,7 +14,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 				sample: {
 					stretch: true,
 					files: [
-						"ObjectPageWithDynamicHeader.view.xml"
+						"ObjectPageHeaderActionButtons.view.xml"
 					]
 				}
 			}

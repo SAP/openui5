@@ -54,6 +54,31 @@ Expose class for rounded images
 	vertical-align: center;
 }
 
+// Action Button START
+.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnContent {
+	display: none;
+}
+
+.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnIconFirst,
+.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnBack {
+	padding-left: 0;
+}
+
+.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnIconFirst.sapMBtnText,
+.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnBack.sapMBtnText {
+	padding-left: 0.75rem;
+}
+
+.sapUxAPObjectPageHeaderActionButtonHideIcon {
+	.sapMBtnIcon {
+		display: none;
+	}
+	.sapMBtnContent {
+		padding: 0;
+	}
+}
+// Action Button END
+
 /*
 objectPageHeader Title
 */
@@ -81,29 +106,6 @@ objectPageHeader Title
 		&.sapMNoImg {
 			display: none;
 			margin-right: 0;
-		}
-	}
-
-	.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnContent {
-		display: none;
-	}
-
-	.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnIconFirst,
-	.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnBack {
-		padding-left: 0;
-	}
-
-	.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnIconFirst.sapMBtnText,
-	.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnBack.sapMBtnText {
-		padding-left: 0.75rem;
-	}
-
-	.sapUxAPObjectPageHeaderActionButtonHideIcon {
-		.sapMBtnIcon {
-			display: none;
-		}
-		.sapMBtnContent {
-			padding: 0;
 		}
 	}
 
