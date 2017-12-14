@@ -487,6 +487,9 @@ sap.ui.define([
 		});
 
 		opaTest("Should wait for lazy stubs", function () {
+			var fnVisibleStub = sinon.stub(Opa5.getWindow().sap.ui.test.matchers.Visible.prototype, "isMatching");
+			fnVisibleStub.returns(true);
+
 			this.oOpa5.waitFor({
 				success: function () {
 					setTimeout(function () {
@@ -499,6 +502,7 @@ sap.ui.define([
 				controlType: "sap.ui.commons.Button",
 				success: function (aButtons) {
 					Opa5.assert.strictEqual(aButtons.length, 1, "Did find the button after a while");
+					fnVisibleStub.restore();
 				}
 			});
 
@@ -739,7 +743,7 @@ sap.ui.define([
 
 		opaTest("Should write log messages from an iFrame startup", function (oOpa) {
 			var qunitversion = parseInt(QUnit.version, 10) || 1;
-			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunitversion=" + qunitversion + "&sap-ui-qunittimeout=8000&module=IFrame");
+			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunitversion=" + qunitversion + "&sap-ui-qunittimeout=90000&module=IFrame");
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
@@ -776,23 +780,6 @@ sap.ui.define([
 					QUnit.assert.contains(sOpaMessage, "0 out of 1 controls met the matchers pipeline requirements -  sap.ui.test.pipelines.MatcherPipeline");
 					QUnit.assert.contains(sOpaMessage, "Matchers found no controls so check function will be skipped -  sap.ui.test.Opa5");
 					QUnit.assert.doesNotContain(sOpaMessage, "Should not happen");
-				}
-			});
-
-			oOpa.iTeardownMyApp();
-		});
-
-		opaTest("Should write trace logs when max log level is trace", function (oOpa) {
-			var qunitversion = parseInt(QUnit.version, 10) || 1;
-			startApp(oOpa, "../testdata/failingOpaTest.html?opaLogLevel=TRACE&sap-ui-qunitversion=" + qunitversion + "&sap-ui-qunittimeout=8000&module=IFrame");
-
-			oOpa.waitFor({
-				matchers: createMatcherForTestMessage({
-					passed: false
-				}),
-				success: function (aMessages) {
-					var sOpaMessage = aMessages.eq(0).text();
-					QUnit.assert.contains(sOpaMessage, "TraceLog -  sap.ui.test.TestComponent");
 				}
 			});
 
