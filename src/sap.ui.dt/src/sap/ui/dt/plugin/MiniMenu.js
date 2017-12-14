@@ -385,12 +385,13 @@ sap.ui.define([
 					jQuery.error("sap.ui.dt MiniMenu iMenuHoverClosingDelay is bigger or equal to iMenuHoverOpeningDelay!");
 				}
 
-				this._closingTimeout = setTimeout(function () {
-					if (!this._touched && this.oMiniMenu) {
-						this.oMiniMenu.close();
-					}
-				}.bind(this), this.iMenuHoverClosingDelay);
-
+				if (this.oMiniMenu.getPopover().isOpen()){
+					this._closingTimeout = setTimeout(function () {
+						if (!this._touched && this.oMiniMenu.getPopover().isOpen()) {
+							this.oMiniMenu.close();
+						}
+					}.bind(this), this.iMenuHoverClosingDelay);
+				}
 
 				this.hoverTimeout = setTimeout(function () {
 					if (!this._touched) {
