@@ -85,6 +85,7 @@ sap.ui.define([
 
             oPopover.oPopup.attachClosed(this._popupClosed, this);
             this.addDependent(oPopover);
+            oPopover.addStyleClass("sapUiDtMiniMenu");
 
             var sPopExpId = this.getId() + "-popoverExp";
 
@@ -98,6 +99,7 @@ sap.ui.define([
             });
             oPopoverExpanded.oPopup.attachClosed(this._popupClosed, this);
             this.addDependent(oPopoverExpanded);
+            oPopoverExpanded.addStyleClass("sapUiDtMiniMenu");
 
             oPopover.attachBrowserEvent("contextmenu", this._onContextMenu, this);
             oPopoverExpanded.attachBrowserEvent("contextmenu", this._onContextMenu, this);
