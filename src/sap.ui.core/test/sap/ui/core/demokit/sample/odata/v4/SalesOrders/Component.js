@@ -56,6 +56,7 @@ sap.ui.define([
 				oModel.destroy();
 				oModel = new ODataModel({
 					autoExpandSelect : true,
+					earlyBird : true,
 					groupId : sGroupId,
 					groupProperties : oGroupProperties,
 					operationMode : OperationMode.Server,

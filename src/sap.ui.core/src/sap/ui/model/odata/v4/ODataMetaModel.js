@@ -670,32 +670,40 @@ sap.ui.define([
 	 * of qualified names to their corresponding metadata, with the special key "$EntityContainer"
 	 * mapped to the entity container's qualified name as a starting point.
 	 *
+	 * @param {boolean} [bPrefetch=false]
+	 *   Whether to just read the $metadata document and annotations, but not yet convert them from
+	 *   XML to JSON; this is useful at most once in an early call that precedes all other normal
+	 *   calls and ignored after the first call without this.
 	 * @returns {SyncPromise}
 	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
-	 *   container is fully available, or rejected with an error.
+	 *   container is fully available, or rejected with an error. In case of
+	 *   <code>bPrefetch</code> in an early call, <code>null</code> is returned.
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype.fetchEntityContainer = function () {
+	ODataMetaModel.prototype.fetchEntityContainer = function (bPrefetch) {
 		var aPromises,
 			that = this;
 
 		if (!this.oMetadataPromise) {
-			aPromises = [SyncPromise.resolve(this.oRequestor.read(this.sUrl))];
+			aPromises
+				= [SyncPromise.resolve(this.oRequestor.read(this.sUrl, false, bPrefetch))];
 
 			if (this.aAnnotationUris) {
 				this.aAnnotationUris.forEach(function (sAnnotationUri) {
-					aPromises.push(SyncPromise.resolve(that.oRequestor.read(sAnnotationUri,
-						true)));
+					aPromises.push(SyncPromise.resolve(
+						that.oRequestor.read(sAnnotationUri, true, bPrefetch)));
 				});
 			}
-			this.oMetadataPromise = SyncPromise.all(aPromises).then(function (aMetadata) {
-				var mScope = aMetadata[0];
+			if (!bPrefetch) {
+				this.oMetadataPromise = SyncPromise.all(aPromises).then(function (aMetadata) {
+					var mScope = aMetadata[0];
 
-				that._mergeAnnotations(mScope, aMetadata.slice(1));
+					that._mergeAnnotations(mScope, aMetadata.slice(1));
 
-				return mScope;
-			});
+					return mScope;
+				});
+			}
 		}
 		return this.oMetadataPromise;
 	};
