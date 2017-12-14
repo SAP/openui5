@@ -22,6 +22,9 @@ sap.ui.define([], function() {
 			},
 			editable: {
 				ignore: false
+			},
+			contextName: {
+				ignore: false
 			}
 		},
 		customData: {}

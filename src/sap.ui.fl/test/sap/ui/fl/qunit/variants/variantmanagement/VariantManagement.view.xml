@@ -33,6 +33,7 @@
 		<m:Label text="Variants" />
 		<VariantManagement id="idVariantManagementCtrl"
 			for="idModelChangeBtn" save="onSave" manage="onManage"
+			contextName="MyContext"
 			showExecuteOnSelection="true" />
 	</l:VerticalLayout>
 </mvc:View>
