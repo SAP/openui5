@@ -178,5 +178,14 @@
 			"owner": "michadelic",
 			"license": "Apache 2.0",
 			"type": "Control"
+		},
+		"deoplete-sap-icon": { 
+			"name": "Deoplete sap-icon",
+			"description": "Neovim deoplete sap-icon plugin", 
+			"githubLink": "https://github.com/Trulsaa/deoplete-sap-icon", 
+			"documentationLink": "https://github.com/Trulsaa/deoplete-sap-icon", 
+			"owner": "Truls Aagaard", 
+			"license": "MIT License", 
+			"type": "nvim plugin" 
 		}
 	}
