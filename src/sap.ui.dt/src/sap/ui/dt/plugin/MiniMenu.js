@@ -569,7 +569,6 @@ sap.ui.define([
 						this.addMenuItem(mMenuItem, true, true);
 					}.bind(this));
 
-
 					oEvent.clientX = null;
 					oEvent.clientY = null;
 
@@ -578,7 +577,6 @@ sap.ui.define([
 						this.open(oEvent, oOverlay, true, true);
 					}.bind(this), 0);
 					this.lockMenuOpening();
-
 				};
 
 				this._aMenuItems.push({

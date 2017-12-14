@@ -134,125 +134,26 @@ sap.ui.require([
 		}
     });
 
-    QUnit.test("default value of maxButtonsDisplayed", function (assert) {
-        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-        assert.strictEqual(oMiniMenu.getProperty("maxButtonsDisplayed"), 4, "Should return 4.");
-
-		oMiniMenu = null;
-    });
-
-    QUnit.test("setting value of maxButtonsDisplayed", function (assert) {
-        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-        oMiniMenu.setMaxButtonsDisplayed(19);
-
-		assert.strictEqual(oMiniMenu.getProperty("maxButtonsDisplayed"), 19, "Should return 19.");
-		oMiniMenu = null;
-    });
-
-
-    QUnit.test("setting value of maxButtonsDisplayed to an illegal value", function (assert) {
-        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-		assert.throws(function () {oMiniMenu.setMaxButtonsDisplayed(1);}, "Should throw an Error.");
-		oMiniMenu = null;
-    });
-
-
-    QUnit.test("adding a button", function (assert) {
-        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-        var oBtn = {
-            text: "Test",
-            icon: "",
-            handler: function () {}
-        };
-
-        assert.strictEqual(oMiniMenu.addButton(oBtn), oMiniMenu, "Should return the MiniMenu");
-
-		assert.strictEqual(oMiniMenu.getFlexbox().getItems()[oMiniMenu.getFlexbox().getItems().length - 1].getText(), oBtn.text, "should add a button");
-		oMiniMenu = null;
-    });
-
-    QUnit.test("removing a button", function (assert) {
-        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-        var oRemovedButton = oMiniMenu.removeButton(0);
-
-        var aItems = oMiniMenu.getFlexbox().getItems();
-
-        for (var i = 0; i < aItems.length; i++) {
-            if (aItems[i] === oRemovedButton) {
-                assert.ok(false, "didn't remove the button");
-            }
-        }
-
-		assert.ok(true, "should remove a button");
-		oMiniMenu = null;
-    });
-
-    QUnit.test("removing all buttons", function (assert) {
-        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-        oMiniMenu.removeAllButtons();
-
-		assert.strictEqual(oMiniMenu.getDependents()[0].getContent()[0].getItems().length, 0, "should remove all buttons");
-		oMiniMenu = null;
-    });
-
-    QUnit.test("Showing the MiniMenu", function (assert) {
-        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-        var testButton = new sap.m.Button({});
-
-        oMiniMenu.show(testButton);
-        assert.ok(true, "Should throw no error");
-
-		testButton.destroy();
-		oMiniMenu = null;
-    });
-
-    QUnit.test("Closing the MiniMenu", function (assert) {
-        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-        var testButton = new sap.m.Button({});
-
-        oMiniMenu.show(testButton);
-        oMiniMenu.close();
-        assert.ok(true, "Should throw no error");
-		testButton.destroy();
-		oMiniMenu = null;
-    });
-
     QUnit.test("Hiding then showing the MiniMenu", function (assert) {
+		this.clock = sinon.useFakeTimers();
         sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
-        var testButton = new sap.m.Button({});
+		assert.ok(oMiniMenu.getPopover().isOpen(), "MiniMenu should be open");
+		oMiniMenu.close();
+		this.clock.tick(400); //animation of the closing of the Popover
+		assert.ok(!oMiniMenu.getPopover().isOpen(), "MiniMenu should be closed");
+		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+        assert.ok(oMiniMenu.getPopover().isOpen(), "MiniMenu should be open");
 
-        oMiniMenu.show(testButton);
-        oMiniMenu.close();
-        oMiniMenu.show(testButton);
-
-        assert.ok(true, "Should throw no error");
-		testButton.destroy();
 		oMiniMenu = null;
+		this.clock.restore();
 	});
 
 	QUnit.test("Calling the _popupClosed function", function (assert){
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
-		oMiniMenu.show(this.oButton2);
 		oMiniMenu.openNew = false;
 		oMiniMenu._popupClosed();
 		assert.ok(!oMiniMenu.isOpen, "MiniMenu should be closed");
@@ -307,7 +208,7 @@ sap.ui.require([
 
 		this.oMiniMenuPlugin._addMenuItemToGroup(testButton2);
 
-		assert.strictEqual(this.oMiniMenuPlugin._aGroupedItems.length, 1, "should add a Button to grouped Items");
+		assert.strictEqual(this.oMiniMenuPlugin._aGroupedItems.length, 1, "should add a Button to grouped Items without creating a new grouped Button");
 
 		var testButton3 = {
 			id : "CTX_ENABLED_BUTTON1",
@@ -322,16 +223,13 @@ sap.ui.require([
 
 		this.oMiniMenuPlugin._addMenuItemToGroup(testButton3);
 
-		assert.strictEqual(this.oMiniMenuPlugin._aGroupedItems.length, 2, "should add a Button to grouped Items");
+		assert.strictEqual(this.oMiniMenuPlugin._aGroupedItems.length, 2, "should add a Button to grouped Items with creating a new grouped button");
 	});
 
 	QUnit.test("Calling _addItemGroupsToMenu", function (assert){
-
+		this.clock = sinon.useFakeTimers();
 		var that = this;
 
-		var done = assert.async();
-
-		setTimeout(function ()  {
 			var testButton = {
 				id : "CTX_ENABLED_BUTTON1",
 				text : "enabled for button 1",
@@ -376,123 +274,101 @@ sap.ui.require([
 			assert.strictEqual(this.oMiniMenuPlugin.isMenuOpeningLocked(), true, "Opening should be locked");
 
 			this.oMiniMenuPlugin.oMiniMenu.close();
-			done();
-		}.bind(this), 0);
+		    this.clock.restore();
 	});
 
 	QUnit.test("Pressing the Overflow Button on a MiniMenu", function(assert){
+		this.clock = sinon.useFakeTimers();
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
-		var done = assert.async();
+		this.clock.tick(this.oMiniMenuPlugin.iMenuLeftclickOpeningDelay);
 
-		setTimeout(function (){
-
-			oMiniMenu._onOverflowPress.bind(oMiniMenu)();
-			assert.ok(true, "Should throw no error");
-			oMiniMenu = null;
-			done();
-
-		}, this.oMiniMenuPlugin.iMenuLeftclickOpeningDelay + 10);
-	});
-
-
-     QUnit.test("getting all buttons", function (assert) {
-        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-        var testButton = new sap.m.Button({});
-
-        oMiniMenu.show(testButton);
-        assert.strictEqual(oMiniMenu.getButtons().length, 8, "Should return the number of buttons");
-		testButton.destroy();
+		oMiniMenu._onOverflowPress.bind(oMiniMenu)();
+		assert.ok(true, "Should throw no error");
 		oMiniMenu = null;
-    });
 
-    QUnit.test("Inserting a button", function (assert) {
-        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-        var testButton = new sap.m.Button({});
-
-        oMiniMenu.show(testButton);
-        assert.strictEqual(oMiniMenu.insertButton(new sap.m.Button({text : "abc"}), 1), oMiniMenu, "Should return the MiniMenu");
-        assert.strictEqual(oMiniMenu.getButtons()[1].getText(), "abc", "Should return the text of the inserted button");
-		testButton.destroy();
-		oMiniMenu = null;
+		this.clock.restore();
 	});
 
 	QUnit.test("Testing onHover function", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseover");
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
 		assert.ok(!oMiniMenu.isOpen , "MiniMenu should not be opened");
-		var done = assert.async();
 
-		setTimeout(function (){
-			assert.ok(oMiniMenu.isOpen, "MiniMenu should be open");
-			oMiniMenu = null;
-			done();
-		}, this.oMiniMenuPlugin.iMenuHoverOpeningDelay + 10);
+		this.clock.tick(this.oMiniMenuPlugin.iMenuHoverOpeningDelay);
+
+		assert.ok(oMiniMenu.isOpen, "MiniMenu should be open");
+		assert.strictEqual(oMiniMenu.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
+		oMiniMenu = null;
+		this.clock.restore();
 	});
 
 	QUnit.test("Testing onHover with onHoverExit function", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseover");
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
 		assert.ok(!oMiniMenu.isOpen , "MiniMenu should not be opened");
-		var done = assert.async();
+
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseout");
-		setTimeout(function (){
-			assert.ok(!oMiniMenu.isOpen, "MiniMenu should not be open");
-			oMiniMenu = null;
-			done();
-		}, this.oMiniMenuPlugin.iMenuHoverOpeningDelay + 10);
+		this.clock.tick(this.oMiniMenuPlugin.iMenuHoverOpeningDelay);
+
+		assert.ok(!oMiniMenu.isOpen, "MiniMenu should not be open");
+		oMiniMenu = null;
+
+		this.clock.restore();
 	});
 
 	QUnit.test("Testing onClick function", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
 		assert.ok(!oMiniMenu.isOpen , "MiniMenu should not be opened");
-		var done = assert.async();
 
-		setTimeout(function (){
-			assert.ok(oMiniMenu.isOpen, "MiniMenu should be open");
-			oMiniMenu = null;
-			done();
-		}, this.oMiniMenuPlugin.iMenuLeftclickOpeningDelay + 10);
+		this.clock.tick(this.oMiniMenuPlugin.iMenuLeftclickOpeningDelay);
+
+
+		assert.ok(oMiniMenu.isOpen, "MiniMenu should be open");
+		assert.strictEqual(oMiniMenu.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
+		oMiniMenu = null;
+
+		this.clock.restore();
 	});
 
 
 	QUnit.test("Testing onClick function unlocking opening of the MiniMenu", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
 		this.oMiniMenuPlugin.lockMenuOpening();
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 
 		assert.ok(!oMiniMenu.isOpen , "MiniMenu should not be opened");
-		var done = assert.async();
 
-		setTimeout(function (){
-			assert.ok(!oMiniMenu.isOpen, "MiniMenu should not be open");
-			oMiniMenu = null;
-			done();
-		}, this.oMiniMenuPlugin.iMenuLeftclickOpeningDelay + 10);
+		this.clock.tick(this.oMiniMenuPlugin.iMenuLeftclickOpeningDelay);
+
+		assert.ok(!oMiniMenu.isOpen, "MiniMenu should not be open");
+		oMiniMenu = null;
+		this.clock.restore();
 	});
 
 	QUnit.test("Testing onTouch function", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "touchstart");
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
 		assert.ok(!oMiniMenu.isOpen , "MiniMenu should not be opened");
-		var done = assert.async();
 
-		setTimeout(function (){
-			assert.ok(oMiniMenu.isOpen, "MiniMenu should be open");
-			oMiniMenu = null;
-			done();
-		}, this.oMiniMenuPlugin.iMenuTouchOpeningDelay + 10);
+		this.clock.tick(this.oMiniMenuPlugin.iMenuTouchOpeningDelay);
+
+		assert.ok(oMiniMenu.isOpen, "MiniMenu should be open");
+		assert.strictEqual(oMiniMenu.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
+		oMiniMenu = null;
+		this.clock.restore();
 	});
 
 
@@ -501,15 +377,12 @@ sap.ui.require([
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
 		assert.ok(!oMiniMenu.isOpen , "MiniMenu should not be opened");
-		var done = assert.async();
+		oMiniMenu._inTimout = true;
+		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		assert.ok(oMiniMenu.isOpen, "MiniMenu should be open");
+		assert.strictEqual(oMiniMenu.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
+		oMiniMenu = null;
 
-		setTimeout(function (){
-			oMiniMenu._inTimout = true;
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-			assert.ok(oMiniMenu.isOpen, "MiniMenu should be open");
-			oMiniMenu = null;
-			done();
-		}.bind(this), 0);
 	});
 
 	QUnit.test("Clicking on a button in the MiniMenu", function (assert) {
@@ -517,6 +390,7 @@ sap.ui.require([
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
 		assert.ok(oMiniMenu.isOpen , "MiniMenu should be open");
+		assert.strictEqual(oMiniMenu.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
 		this.oMiniMenuPlugin._currentOverlay = this.oButton2Overlay;
 		oMiniMenu.getFlexbox().getItems()[0].firePress();
 		oMiniMenu = null;
@@ -530,52 +404,195 @@ sap.ui.require([
 	});
 
 	QUnit.test("calling _getPopoverDimensions for different kinds of menus", function (assert) {
+		this.clock = sinon.useFakeTimers();
         sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
-		var done = assert.async();
+		this.clock.tick(this.oMiniMenuPlugin.iMenuLeftclickOpeningDelay);
 
-		setTimeout(function() {
-			var oPopoverContext = oMiniMenu._getPopoverDimensions(true, false);
-			var oPopover = oMiniMenu._getPopoverDimensions(false, true);
-			var oPopoverExpanded = oMiniMenu._getPopoverDimensions(true, true);
+		var oPopoverContext = oMiniMenu._getPopoverDimensions(true, false);
+		var oPopover = oMiniMenu._getPopoverDimensions(false, true);
+		var oPopoverExpanded = oMiniMenu._getPopoverDimensions(true, true);
 
-			assert.strictEqual(typeof oPopoverContext.height, "number", "the height of a context menu should be a number");
-			assert.ok(!isNaN(oPopoverContext.height), "the height of a context menu shouldn't be NaN");
+		assert.strictEqual(typeof oPopoverContext.height, "number", "the height of a context menu should be a number");
+		assert.ok(!isNaN(oPopoverContext.height), "the height of a context menu shouldn't be NaN");
 
-			assert.strictEqual(typeof oPopoverContext.width, "number", "the width of a context menu should be a number");
-			assert.ok(!isNaN(oPopoverContext.width), "the width of a context menu shouldn't be NaN");
+		assert.strictEqual(typeof oPopoverContext.width, "number", "the width of a context menu should be a number");
+		assert.ok(!isNaN(oPopoverContext.width), "the width of a context menu shouldn't be NaN");
 
-			assert.strictEqual(typeof oPopover.height, "number", "the height of a non-expanded MiniMenu should be a number");
-			assert.ok(!isNaN(oPopover.height), "the height of a non-expanded MiniMenu shouldn't be NaN");
+		assert.strictEqual(typeof oPopover.height, "number", "the height of a non-expanded MiniMenu should be a number");
+		assert.ok(!isNaN(oPopover.height), "the height of a non-expanded MiniMenu shouldn't be NaN");
 
-			assert.strictEqual(typeof oPopover.width, "number", "the width of a non-expanded MiniMenu should be a number");
-			assert.ok(!isNaN(oPopover.width), "the width of a non-expanded MiniMenu shouldn't be NaN");
+		assert.strictEqual(typeof oPopover.width, "number", "the width of a non-expanded MiniMenu should be a number");
+		assert.ok(!isNaN(oPopover.width), "the width of a non-expanded MiniMenu shouldn't be NaN");
 
-			assert.strictEqual(typeof oPopoverExpanded.height, "number", "the height of an expanded MiniMenu should be a number");
-			assert.ok(!isNaN(oPopoverExpanded.height), "the height of an expanded MiniMenu shouldn't be NaN");
+		assert.strictEqual(typeof oPopoverExpanded.height, "number", "the height of an expanded MiniMenu should be a number");
+		assert.ok(!isNaN(oPopoverExpanded.height), "the height of an expanded MiniMenu shouldn't be NaN");
 
-			assert.strictEqual(typeof oPopoverExpanded.width, "number", "the width of an expanded MiniMenu should be a number");
-			assert.ok(!isNaN(oPopoverExpanded.width), "the width of an expanded MiniMenu shouldn't be NaN");
+		assert.strictEqual(typeof oPopoverExpanded.width, "number", "the width of an expanded MiniMenu should be a number");
+		assert.ok(!isNaN(oPopoverExpanded.width), "the width of an expanded MiniMenu shouldn't be NaN");
 
-			assert.ok(oPopoverContext.height < oPopoverExpanded.height, "the height of a context menu should be less than the hight of an expanded MiniMenu (if they have the same amount of buttons)");
-			assert.ok(oPopoverContext.width < oPopoverExpanded.width, "the width of a context menu should be less than that of an expanded MiniMenu (if they have the same amount of buttons)");
-			assert.ok(oPopover.height < oPopoverExpanded.width, "an expanded MiniMenu should be higher than a non-expanded MiniMenu (if the expanded one has more than one buttons");
+		assert.ok(oPopoverContext.height < oPopoverExpanded.height, "the height of a context menu should be less than the hight of an expanded MiniMenu (if they have the same amount of buttons)");
+		assert.ok(oPopoverContext.width < oPopoverExpanded.width, "the width of a context menu should be less than that of an expanded MiniMenu (if they have the same amount of buttons)");
+		assert.ok(oPopover.height < oPopoverExpanded.width, "an expanded MiniMenu should be higher than a non-expanded MiniMenu (if the expanded one has more than one buttons");
 
-			done();
-		}, this.oMiniMenuPlugin.iMenuLeftclickOpeningDelay + 10);
-
+		this.clock.restore();
 	});
 
-	QUnit.test("calling _getOverlayDimensions", function (assert) {
+	QUnit.module("MiniMenuControl API", {
+		beforeEach: function(assert) {
+			var that = this;
+			this.oButton1 = new sap.m.Button();
+			this.oButton2 = new sap.m.Button();
+			this.oButtonUnselectable = new sap.m.Button();
+
+			this.oLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					this.oButton1, this.oButton2, this.oButtonUnselectable
+				]
+			});
+
+			this.oLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oMenuEntries = {};
+			this.oMenuEntries.available = {
+				id : "CTX_ALWAYS_THERE",
+				text : function () {return "item that is always there"; },
+				handler : sinon.spy()
+			};
+			this.oMenuEntries.alwaysStartSection = {
+				id : "CTX_START_SECTION",
+				text : "starts new section ",
+				rank : 2,
+				handler : sinon.spy(),
+				startSection : true
+			};
+			this.oMenuEntries.dynamicTextItem = {
+				id : "CTX_DYNAMIC_TEXT",
+				text : function() {
+					return "Test";
+				},
+				handler : sinon.spy()
+			};
+
+			this.oMiniMenu = new MiniMenuControl();
+			for (var key in this.oMenuEntries){
+				this.oMiniMenu.addButton(this.oMenuEntries[key]);
+			}
+
+			var done = assert.async();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [
+					this.oLayout
+				],
+				plugins: [
+				]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				sap.ui.getCore().applyChanges();
+
+				that.oButton1Overlay = OverlayRegistry.getOverlay(that.oButton1);
+				that.oButton1Overlay.setSelectable(true);
+				that.oButton2Overlay = OverlayRegistry.getOverlay(that.oButton2);
+				that.oButton2Overlay.setSelectable(true);
+				that.oUnselectableOverlay = OverlayRegistry.getOverlay(that.oButtonUnselectable);
+
+				done();
+			});
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oLayout.destroy();
+			this.oMiniMenu.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("calling getPopover", function (assert) {
+		assert.ok(this.oMiniMenu.getPopover() instanceof sap.m.Popover, "should return a Popover");
+	});
+
+	QUnit.test("calling getFlexbox", function (assert) {
+		assert.ok(this.oMiniMenu.getFlexbox() instanceof sap.m.FlexBox, "should return a FlexBox");
+	});
+
+	QUnit.test("default value of maxButtonsDisplayed", function (assert) {
+		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+
+		assert.strictEqual(this.oMiniMenu.getMaxButtonsDisplayed(), 4, "Should return 4.");
+	});
+
+	QUnit.test("setting value of maxButtonsDisplayed", function (assert) {
+		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+
+		this.oMiniMenu.setMaxButtonsDisplayed(19);
+
+		assert.strictEqual(this.oMiniMenu.getMaxButtonsDisplayed(), 19, "Should return 19.");
+	});
+
+	QUnit.test("setting value of maxButtonsDisplayed to an illegal value", function (assert) {
         sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
-		var testButton = new sap.m.Button({});
+		assert.throws(function () {this.oMiniMenu.setMaxButtonsDisplayed(1);}, "Should throw an Error.");
+    });
 
-		oMiniMenu.show(testButton);
 
-		var oOverlay = oMiniMenu._getOverlayDimensions(oMiniMenu.getPopover()._oOpenBy.getAttribute("overlay"));
+    QUnit.test("adding a button", function (assert) {
+        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+
+        var oBtn = {
+            text: "Test",
+            icon: "",
+            handler: function () {}
+        };
+
+        assert.strictEqual(this.oMiniMenu.addButton(oBtn), this.oMiniMenu, "Should return the MiniMenu");
+
+		assert.strictEqual(this.oMiniMenu.getFlexbox().getItems()[this.oMiniMenu.getFlexbox().getItems().length - 1].getText(), oBtn.text, "should add a button");
+    });
+
+    QUnit.test("removing a button", function (assert) {
+        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+
+        var oRemovedButton = this.oMiniMenu.removeButton(0);
+
+        var aItems = this.oMiniMenu.getFlexbox().getItems();
+
+        for (var i = 0; i < aItems.length; i++) {
+            if (aItems[i] === oRemovedButton) {
+                assert.ok(false, "didn't remove the button");
+            }
+        }
+
+		assert.strictEqual(aItems.length, 2,"should remove a button");
+    });
+
+    QUnit.test("removing all buttons", function (assert) {
+        sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+
+        this.oMiniMenu.removeAllButtons();
+
+		assert.strictEqual(this.oMiniMenu.getDependents()[0].getContent()[0].getItems().length, 0, "should remove all buttons");
+	});
+
+	QUnit.test("getting all buttons", function (assert) {
+		assert.strictEqual(this.oMiniMenu.getButtons().length, 3, "Should return the number of buttons");
+    });
+
+    QUnit.test("Inserting a button", function (assert) {
+        assert.strictEqual(this.oMiniMenu.insertButton(new sap.m.Button({text : "abc"}), 1), this.oMiniMenu, "Should return the MiniMenu");
+        assert.strictEqual(this.oMiniMenu.getButtons()[1].getText(), "abc", "Should return the text of the inserted button");
+	});
+
+
+	QUnit.test("calling _getOverlayDimensions", function (assert) {
+
+		jQuery("#qunit-fixture").append("<div id=\"fakeOverlay\" style=\"width:10px; height:12px; position: absolute; top:3px; left:5px;\" />");
+
+		var oOverlay = this.oMiniMenu._getOverlayDimensions("fakeOverlay");
 
 		assert.strictEqual(typeof oOverlay.top, "number", "top should be a number");
 		assert.ok(!isNaN(oOverlay.top), "top shouldn't be NaN");
@@ -599,10 +616,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("calling _getViewportDimensions", function (assert) {
-		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
-		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
-
-		var oViewport = oMiniMenu._getViewportDimensions();
+		var oViewport = this.oMiniMenu._getViewportDimensions();
 
 		assert.strictEqual(typeof oViewport.top, "number", "top should be a number");
 		assert.ok(!isNaN(oViewport.top), "top shouldn't be NaN");
@@ -617,59 +631,6 @@ sap.ui.require([
 		assert.strictEqual(typeof oViewport.height, "number", "height should be a number");
 		assert.ok(!isNaN(oViewport.height), "height shouldn't be NaN");
 	});
-
-/*	sandbox = sinon.sandbox.create();
-	QUnit.module("Place MiniMenu API", {
-		beforeEach: function(assert) {
-
-			this.doNothing = function () {
-				return undefined;
-			};
-
-			this.oMiniMenu = new sap.ui.dt.MiniMenuControl({
-				id: "miniMenu",
-				maxButtonsDisplayed: 3,
-				buttons: [
-					{
-						id : "btn1",
-						text : "button1",
-						handler : this.doNothing
-					},
-					{
-						id : "btn1",
-						text : "button1",
-						handler : this.doNothing
-					},
-					{
-						id : "btn2",
-						text : "button2",
-						handler : this.doNothing
-					},
-					{
-						id : "btn3",
-						text : "button3",
-						handler : this.doNothing
-					},
-					{
-						id : "btn4",
-						text : "button4",
-						handler : this.doNothing
-					},
-					{
-						id : "btn5",
-						text : "button5",
-						handler : this.doNothing
-					}
-				]
-			});
-		},
-		afterEach: function() {
-			this.doNothing = null;
-			// window.removeEventListener("scroll");
-			this.oMiniMenu.destroy();
-			sandbox.restore();
-		}
-	});*/
 
 	QUnit.test("calling _getMiddleOfOverlayAndViewportEdges", function (assert) {
 
@@ -950,13 +911,5 @@ sap.ui.require([
 
 		sinon.assert.calledOnce(spyMini);
 		sinon.assert.notCalled(spyContext);
-	});
-
-	QUnit.test("calling getPopover", function (assert) {
-		assert.ok(this.oMiniMenu.getPopover() instanceof sap.m.Popover, "should return a Popover");
-	});
-
-	QUnit.test("calling getFlexbox", function (assert) {
-		assert.ok(this.oMiniMenu.getFlexbox() instanceof sap.m.FlexBox, "should return a FlexBox");
 	});
 });
