@@ -40,14 +40,30 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 	/**
 	 * Execute this composite command
 	 *
-	 * @returns {promise} empty promise
+	 * @returns {promise} empty resolved promise or rejected promise
 	 */
 	CompositeCommand.prototype.execute = function() {
 		var aPromises = [];
 		this._forEachCommand(function(oCommand){
 			aPromises.push(oCommand.execute.bind(oCommand));
 		});
-		return flUtils.execPromiseQueueSequentially(aPromises);
+		return flUtils.execPromiseQueueSequentially(aPromises, true)
+
+		.catch(function(e) {
+			// if a command has a restoreState function but no state, undoing it could cause errors.
+			// this happens when such a command didn't get executed yet (a command before failed)
+			var aCommands = this.getCommands();
+			aCommands.forEach(function(oCommand) {
+				if (oCommand instanceof sap.ui.rta.command.FlexCommand) {
+					if (oCommand.getFnRestoreState() && !oCommand.getState() || !oCommand._aRecordedUndo) {
+						this.removeCommand(oCommand);
+					}
+				}
+			}.bind(this));
+
+			this.undo();
+			return Promise.reject(e);
+		}.bind(this));
 	};
 
 	CompositeCommand.prototype.undo = function() {

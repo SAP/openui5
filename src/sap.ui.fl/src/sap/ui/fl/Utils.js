@@ -984,13 +984,15 @@ sap.ui.define([
 
 		/**
 		 * Execute the passed asynchronous / synchronous (Utils.FakePromise) functions serialized - one after the other.
-		 * Errors do not break the sequentially execution of the queue. Error message will be written.
+		 * By default errors do not break the sequential execution of the queue, but this can be changed with the parameter bThrowError.
+		 * Error message will be written in any case.
 		 *
 		 * @param {array.<function>} aPromiseQueue - List of asynchronous functions that returns promises
+		 * @param {boolean} bThrowError - true: errors will be rethrown and therefore break the execution
 		 * @param {boolean} bAsync - true: asynchronous processing with Promise, false: synchronous processing with FakePromise
 		 * @returns {Promise} Returns empty resolved Promise or FakePromise when all passed promises inside functions have been executed
 		 */
-		execPromiseQueueSequentially : function(aPromiseQueue, bAsync) {
+		execPromiseQueueSequentially : function(aPromiseQueue, bThrowError, bAsync) {
 			if (aPromiseQueue.length === 0) {
 				if (bAsync) {
 					return Promise.resolve();
@@ -1008,16 +1010,22 @@ sap.ui.define([
 				})
 
 				.catch(function(e) {
-					this.log.error("Error during execPromiseQueueSequentially processing occured: " + (e && e.message));
+					var sErrorMessage = "Error during execPromiseQueueSequentially processing occured";
+					sErrorMessage += e ?  ": " + e.message : "";
+					this.log.error(sErrorMessage);
+
+					if (bThrowError) {
+						throw new Error(sErrorMessage);
+					}
 				}.bind(this))
 
 				.then(function() {
-					return this.execPromiseQueueSequentially(aPromiseQueue, bAsync);
+					return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 				}.bind(this));
 
 			} else {
 				this.log.error("Changes could not be applied, promise not wrapped inside function.");
-				return this.execPromiseQueueSequentially(aPromiseQueue, bAsync);
+				return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 			}
 		},
 

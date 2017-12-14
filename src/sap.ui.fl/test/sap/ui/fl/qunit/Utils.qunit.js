@@ -1198,12 +1198,12 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 	QUnit.test("when called with a empty array and async 'false' as parameters", function(assert) {
-		var vResult = Utils.execPromiseQueueSequentially([], false);
+		var vResult = Utils.execPromiseQueueSequentially([], false, false);
 		assert.ok(vResult instanceof Utils.FakePromise, "then synchronous FakePromise is retured");
 	});
 
 	QUnit.test("when called with a empty array and async 'true' as parameters", function(assert) {
-		var vResult = Utils.execPromiseQueueSequentially([], true);
+		var vResult = Utils.execPromiseQueueSequentially([], false, true);
 		assert.ok(vResult instanceof Promise, "then asynchronous Promise is retured");
 		return vResult;
 	});

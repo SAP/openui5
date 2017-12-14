@@ -599,12 +599,17 @@ function(
 			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
 			this.command2 = new BaseCommand();
+			this.command3 = new BaseCommand();
+			this.command4 = new FlexCommand({
+				fnRestoreState: function() {}
+			});
 			this.compositeCommand = new CompositeCommand();
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
 			this.command.destroy();
 			this.command2.destroy();
+			this.command3.destroy();
 			this.compositeCommand.destroy();
 			this.stack.destroy();
 		}
@@ -686,6 +691,53 @@ function(
 
 			.then(function() {
 				assert.ok(fnCommand2Undo.calledBefore(fnCommand1Undo), "commands are undone in the backward order");
+			});
+		});
+
+		QUnit.test("When executing a failing command", function(assert) {
+			var oCommandExecutedSpy = sinon.spy(this.stack, "fireCommandExecuted");
+			sinon.stub(this.command, "execute").returns(Promise.reject());
+
+			this.stack.push(this.command);
+			return this.stack.execute()
+
+			.catch(function() {
+				assert.ok(true, "then the command returns a failing promise");
+				assert.equal(oCommandExecutedSpy.callCount, 0, "and no command got executed");
+			});
+		});
+
+		QUnit.test("When executing a composite Command with the second command (of four) inside failing", function(assert) {
+			var oStackCommandExecutedSpy = sinon.spy(this.stack, "fireCommandExecuted");
+			var oCommand1ExecuteSpy = sinon.spy(this.command, "execute");
+			var oCommand3ExecuteSpy = sinon.spy(this.command3, "execute");
+			var oCommand4ExecuteSpy = sinon.spy(this.command4, "execute");
+			// workaround for phantomJS, as the normal spy like for command3 doesn't work..
+			var iCommand1UndoSpyCallCount = 0;
+			sinon.stub(this.command, "undo").returns(new Promise(function(fnResolve) {
+				iCommand1UndoSpyCallCount++;
+				fnResolve();
+			}));
+			var oCommand3UndoSpy = sinon.spy(this.command3, "undo");
+			var oCommand4UndoSpy = sinon.spy(this.command4, "undo");
+			this.compositeCommand.addCommand(this.command);
+			this.compositeCommand.addCommand(this.command2);
+			this.compositeCommand.addCommand(this.command3);
+			this.compositeCommand.addCommand(this.command4);
+			sinon.stub(this.command2, "execute").returns(Promise.reject());
+
+			this.stack.push(this.compositeCommand);
+			return this.stack.execute()
+
+			.catch(function() {
+				assert.ok(true, "then the command returns a failing promise");
+				assert.equal(oStackCommandExecutedSpy.callCount, 0, "and the commandExecuted event didn't get thrown");
+				assert.equal(oCommand1ExecuteSpy.callCount, 1, "and the first command got executed");
+				assert.equal(iCommand1UndoSpyCallCount, 1, "and undone");
+				assert.equal(oCommand3ExecuteSpy.callCount, 0, "and the third command didn't get executed");
+				assert.equal(oCommand3UndoSpy.callCount, 1, "but undone");
+				assert.equal(oCommand4ExecuteSpy.callCount, 0, "and the forth command didn't get executed");
+				assert.equal(oCommand4UndoSpy.callCount, 0, "and not undone");
 			});
 		});
 	});

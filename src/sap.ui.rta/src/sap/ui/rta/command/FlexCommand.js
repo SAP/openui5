@@ -224,15 +224,21 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 
 		return Promise.resolve(oFlexController.checkTargetAndApplyChange(oChange, oSelectorElement, {modifier: RtaControlTreeModifier, appComponent: oAppComponent}))
 
-		.then(function() {
-			if (bNotMarkAsAppliedChange) {
-				oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oSelectorElement);
+		.then(function(bSuccess) {
+			if (bSuccess) {
+				if (bNotMarkAsAppliedChange) {
+					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oSelectorElement);
+				}
 			}
+			return bSuccess;
 		})
 
-		.then(function() {
+		.then(function(bSuccess) {
 			if (!this.getFnGetState()){
 				this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
+			}
+			if (!bSuccess) {
+				return Promise.reject();
 			}
 		}.bind(this));
 	};
