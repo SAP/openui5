@@ -155,6 +155,22 @@
 			assert.equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 		});
 
+		QUnit.test("removeItem by index should remove item if 0 is passed", function (assert) {
+			// prepare
+			var oActualRemovedItem,
+				oExpectedRemovedItem = this.oTabContainer.getAggregation("items")[0];
+
+			// act
+			oActualRemovedItem = this.oTabContainer.removeItem(0);
+
+			// assert
+			assert.equal(oActualRemovedItem, oExpectedRemovedItem, "first item should be removed");
+
+			// cleanup
+			oActualRemovedItem = null;
+			oExpectedRemovedItem = null;
+		});
+
 		QUnit.module("Misc", {
 			beforeEach: function () {
 				this.oTabContainer = new sap.m.TabContainer({
