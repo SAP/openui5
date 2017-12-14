@@ -170,6 +170,46 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a "get*" method corresponding to the given "fetch*" method.
+		 *
+		 * @param {string} sFetch
+		 *   A "fetch*" method's name
+		 * @param {boolean} [bThrow=false]
+		 *   Whether the "get*" method throws if the promise is not fulfilled
+		 * @returns {function}
+		 *   A "get*" method returning the "fetch*" method's result or
+		 *   <code>undefined</code> in case the promise is not (yet) fulfilled
+		 */
+		createGetMethod : function (sFetch, bThrow) {
+			return function () {
+				var oSyncPromise = this[sFetch].apply(this, arguments);
+
+				if (oSyncPromise.isFulfilled()) {
+					return oSyncPromise.getResult();
+				} else if (bThrow) {
+					throw oSyncPromise.isRejected()
+						? oSyncPromise.getResult()
+						: new Error("Result pending");
+				}
+			};
+		},
+
+		/**
+		 * Returns a "request*" method corresponding to the given "fetch*" method.
+		 *
+		 * @param {string} sFetch
+		 *   A "fetch*" method's name
+		 * @returns {function}
+		 *   A "request*" method returning the "fetch*" method's result wrapped via
+		 *   <code>Promise.resolve()</code>
+		 */
+		createRequestMethod : function (sFetch) {
+			return function () {
+				return Promise.resolve(this[sFetch].apply(this, arguments));
+			};
+		},
+
+		/**
 		 * Drills down into the given object according to <code>aPath</code>.
 		 *
 		 * @param {object} oData

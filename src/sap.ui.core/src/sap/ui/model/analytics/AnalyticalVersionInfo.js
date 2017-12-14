@@ -17,6 +17,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		NONE: null,
 		V1: 1,
 		V2: 2,
+		V4: 4,
 		// find out which model is used
 		getVersion: function (oODataModelInstance) {
 			var iVersion;
@@ -30,6 +31,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			switch (sODataModelName) {
 				case "sap.ui.model.odata.ODataModel": iVersion = this.V1; break;
 				case "sap.ui.model.odata.v2.ODataModel": iVersion = this.V2; break;
+				case "sap.ui.model.odata.v4.ODataModel": iVersion = this.V4; break;
 				default: iVersion = this.NONE;
 						 jQuery.sap.log.info("AnalyticalVersionInfo.getVersion(...) - The given object is no instance of ODataModel V1 or V2!");
 						 break;

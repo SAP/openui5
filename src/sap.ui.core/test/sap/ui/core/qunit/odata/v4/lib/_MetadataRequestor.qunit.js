@@ -115,15 +115,15 @@ sap.ui.require([
 				}).returns(createMock(oExpectedXml));
 
 			if (sODataVersion === "4.0") {
-				this.mock(_V4MetadataConverter).expects("convertXMLMetadata").twice()
+				this.mock(_V4MetadataConverter.prototype).expects("convertXMLMetadata").twice()
 					.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
 					.returns(oExpectedJson);
-				this.mock(_V2MetadataConverter).expects("convertXMLMetadata").never();
+				this.mock(_V2MetadataConverter.prototype).expects("convertXMLMetadata").never();
 			} else {
-				this.mock(_V2MetadataConverter).expects("convertXMLMetadata")
+				this.mock(_V2MetadataConverter.prototype).expects("convertXMLMetadata")
 					.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
 					.returns(oExpectedJson);
-				this.mock(_V4MetadataConverter).expects("convertXMLMetadata")
+				this.mock(_V4MetadataConverter.prototype).expects("convertXMLMetadata")
 					.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
 					.returns(oExpectedJson);
 			}
@@ -172,7 +172,7 @@ sap.ui.require([
 				headers : sinon.match.same(mHeaders),
 				method : "GET"
 			}).returns(createMock(oExpectedXml, false, sDate, sLastModified, sETag));
-		this.mock(_V4MetadataConverter).expects("convertXMLMetadata")
+		this.mock(_V4MetadataConverter.prototype).expects("convertXMLMetadata")
 			.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
 			.returns(oExpectedJson);
 

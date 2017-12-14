@@ -3,12 +3,12 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/model/odata/v4/lib/_SyncPromise",
-	"sap/ui/model/odata/v4/lib/_V2Requestor",
-	"sap/ui/model/odata/ODataUtils"
-], function (jQuery, DateFormat, _Requestor, _SyncPromise, asV2Requestor, ODataUtils) {
+	"sap/ui/model/odata/v4/lib/_V2Requestor"
+], function (jQuery, SyncPromise, DateFormat, ODataUtils, _Requestor, asV2Requestor) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -962,7 +962,7 @@ sap.ui.require([
 
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
 				.withExactArgs("/" + sResourcePath + "/foo/bar")
-				.returns(_SyncPromise.resolve(oProperty));
+				.returns(SyncPromise.resolve(oProperty));
 
 			// code under test
 			assert.strictEqual(oRequestor.convertFilter(sFilter, sResourcePath),
@@ -979,6 +979,27 @@ sap.ui.require([
 		v4 : "foo eq bar",
 		v2 : "foo eq bar"
 	}, {
+		v4 : "3.14 eq bar and baz",
+		v2 : "3.14d eq bar and baz"
+	}, {
+		v4 : "foo ne 3.14 or baz",
+		v2 : "foo ne 3.14d or baz"
+	}, {
+		v4 : "foo and 3.14 lt baz",
+		v2 : "foo and 3.14d lt baz"
+	}, {
+		v4 : "foo or baz lt 3.14",
+		v2 : "foo or baz lt 3.14d"
+	}, {
+		v4 : "foo and bar gt 3.14 or baz eq null",
+		v2 : "foo and bar gt 3.14d or baz eq null"
+	}, {
+		v4 : "not foo",
+		v2 : "not foo"
+	}, {
+		v4 : "not (foo gt 3.14)",
+		v2 : "not (foo gt 3.14d)"
+	}, {
 		v4 : "3.14 eq 3.14",
 		error : "Cannot convert filter for V2, saw literals on both sides of 'eq' at 6"
 	}].forEach(function (oFixture) {
@@ -993,7 +1014,7 @@ sap.ui.require([
 
 			// simply declare all properties to be Edm.Double so that a conversion is necessary
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata").atLeast(0)
-				.returns(_SyncPromise.resolve(oProperty));
+				.returns(SyncPromise.resolve(oProperty));
 
 			// code under test
 			if (oFixture.error) {
@@ -1030,7 +1051,7 @@ sap.ui.require([
 
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
 				.withExactArgs("/" + sResourcePath + "/foo/bar")
-				.returns(_SyncPromise.resolve(oFixture.property));
+				.returns(SyncPromise.resolve(oFixture.property));
 
 			// code under test
 			assert.throws(function () {
@@ -1051,7 +1072,7 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 
 		this.mock(oRequestor.oModelInterface).expects("fnFetchEntityContainer")
-			.returns(_SyncPromise.resolve(Promise.resolve({})));
+			.returns(SyncPromise.resolve(Promise.resolve({})));
 
 		// code under test
 		oSyncPromise = oRequestor.ready();
@@ -1074,7 +1095,7 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 
 		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
-			.withExactArgs("/my.Type").returns(_SyncPromise.resolve(oType));
+			.withExactArgs("/my.Type").returns(SyncPromise.resolve(oType));
 
 		// code under test
 		assert.strictEqual(oRequestor.getTypeForName("my.Type"), oType);
@@ -1084,10 +1105,16 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		iCallCount : 1,
-		mHeaders : { "DataServiceVersion" : "2.0" }
+		mHeaders : { "DataServiceVersion" : "2.0" },
+		bVersionOptional : true
 	}, {
 		iCallCount : 2,
-		mHeaders : {}
+		mHeaders : {},
+		bVersionOptional : true
+	}, {
+		iCallCount : 2,
+		mHeaders : {},
+		bVersionOptional : false
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
 			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
@@ -1096,7 +1123,8 @@ sap.ui.require([
 				});
 
 			// code under test
-			oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar", true);
+			oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar",
+				oFixture.bVersionOptional);
 
 			assert.strictEqual(fnGetHeader.calledWithExactly("DataServiceVersion"), true);
 			if (oFixture.iCallCount === 2) {
@@ -1111,10 +1139,6 @@ sap.ui.require([
 		iCallCount : 1,
 		sError : "value 'foo' in response for /Foo('42')/Bar",
 		mHeaders : { "DataServiceVersion" : "foo" }
-	}, {
-		iCallCount : 2,
-		sError : "value 'undefined' in response for /Foo('42')/Bar",
-		mHeaders : {}
 	}, {
 		iCallCount : 2,
 		sError : "'OData-Version' header with value 'baz' in response for /Foo('42')/Bar",

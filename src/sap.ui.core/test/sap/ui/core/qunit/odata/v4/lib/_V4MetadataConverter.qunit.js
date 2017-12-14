@@ -31,7 +31,7 @@ sap.ui.require([
 	 */
 	function testConversion(assert, sXmlSnippet, oExpected) {
 		var oXML = xml(assert, sEdmx + sXmlSnippet + "</edmx:Edmx>"),
-			oResult = _V4MetadataConverter.convertXMLMetadata(oXML);
+			oResult = new _V4MetadataConverter().convertXMLMetadata(oXML);
 
 		oExpected.$Version = "4.0";
 		assert.deepEqual(oResult, oExpected);
@@ -341,7 +341,7 @@ sap.ui.require([
 			if (vExpectedValue !== undefined) {
 				oExpectedResult["$" + sProperty] = vExpectedValue;
 			}
-			_V4MetadataConverter.processFacetAttributes(oXml.documentElement, oResult);
+			new _V4MetadataConverter().processFacetAttributes(oXml.documentElement, oResult);
 			assert.deepEqual(oResult, oExpectedResult);
 		}
 
@@ -516,7 +516,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: TypeDefinition", function (assert) {
-		this.mock(_V4MetadataConverter).expects("processFacetAttributes")
+		this.mock(_V4MetadataConverter.prototype).expects("processFacetAttributes")
 			.withExactArgs(
 				sinon.match.has("localName", "TypeDefinition"),
 				{
@@ -1068,8 +1068,9 @@ sap.ui.require([
 			oXML = xml(assert, '<foo xmlns="http://docs.oasis-open.org/odata/ns/edmx"/>');
 
 		assert.throws(function () {
-			_V4MetadataConverter.convertXMLMetadata(oXML, sUrl);
-		}, new Error(sUrl + " is not a valid OData V4 metadata document"));
+			new _V4MetadataConverter().convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl
+			+ ": expected <Edmx> in namespace 'http://docs.oasis-open.org/odata/ns/edmx'"));
 	});
 
 	//*********************************************************************************************
@@ -1078,8 +1079,9 @@ sap.ui.require([
 			oXML = xml(assert, '<Edmx xmlns="http://schemas.microsoft.com/ado/2007/06/edmx"/>');
 
 		assert.throws(function () {
-			_V4MetadataConverter.convertXMLMetadata(oXML, sUrl);
-		}, new Error(sUrl + " is not a valid OData V4 metadata document"));
+			new _V4MetadataConverter().convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl
+			+ ": expected <Edmx> in namespace 'http://docs.oasis-open.org/odata/ns/edmx'"));
 	});
 
 	//*********************************************************************************************
@@ -1089,7 +1091,7 @@ sap.ui.require([
 				'<Edmx Version="4.01" xmlns="http://docs.oasis-open.org/odata/ns/edmx"/>');
 
 		assert.throws(function () {
-			_V4MetadataConverter.convertXMLMetadata(oXML, sUrl);
+			new _V4MetadataConverter().convertXMLMetadata(oXML, sUrl);
 		}, new Error(sUrl + ": Unsupported OData version 4.01"));
 	});
 
@@ -1119,7 +1121,7 @@ sap.ui.require([
 			Promise.resolve(
 					jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"))
 				.then(function (oXML) {
-					return _V4MetadataConverter.convertXMLMetadata(oXML);
+					return new _V4MetadataConverter().convertXMLMetadata(oXML);
 				}),
 			jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json")
 		]).then(function (aResults) {

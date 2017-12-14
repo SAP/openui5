@@ -37,7 +37,7 @@ sap.ui.require([
 		var oXML = xml(assert, sEdmx + '<edmx:DataServices m:DataServiceVersion="2.0">'
 				+ '<Schema Namespace="GWSAMPLE_BASIC">' + sXmlSnippet
 				+ '</Schema></edmx:DataServices></edmx:Edmx>'),
-			oResult = _V2MetadataConverter.convertXMLMetadata(oXML, "/foo/bar/$metadata");
+			oResult = new _V2MetadataConverter().convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
 		assert.deepEqual(oResult["GWSAMPLE_BASIC."].$Annotations, oExpected);
 	}
@@ -74,7 +74,7 @@ sap.ui.require([
 	function testConversionForInclude(assert, sXmlSnippet, oExpected, bSubset) {
 		var sProperty,
 			oXML = xml(assert, sEdmx + sXmlSnippet + '</edmx:Edmx>'),
-			oResult = _V2MetadataConverter.convertXMLMetadata(oXML, "/foo/bar/$metadata");
+			oResult = new _V2MetadataConverter().convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
 		if (bSubset) {
 			for (sProperty in oExpected) {
@@ -277,7 +277,7 @@ sap.ui.require([
 			} else if (vExpectedValue !== undefined) {
 				oExpectedResult["$" + sProperty] = vExpectedValue;
 			}
-			_V2MetadataConverter.processFacetAttributes(oXml.documentElement, oResult);
+			new _V2MetadataConverter().processFacetAttributes(oXml.documentElement, oResult);
 			assert.deepEqual(oResult, oExpectedResult);
 		}
 
@@ -667,8 +667,9 @@ sap.ui.require([
 			oXML = xml(assert, '<foo xmlns="http://schemas.microsoft.com/ado/2007/06/edmx"/>');
 
 		assert.throws(function () {
-			_V2MetadataConverter.convertXMLMetadata(oXML, sUrl);
-		}, new Error(sUrl + " is not a valid OData V2 metadata document"));
+			new _V2MetadataConverter().convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl
+			+ ": expected <Edmx> in namespace 'http://schemas.microsoft.com/ado/2007/06/edmx'"));
 	});
 
 	//*********************************************************************************************
@@ -681,8 +682,9 @@ sap.ui.require([
 					</Edmx>');
 
 		assert.throws(function () {
-			_V2MetadataConverter.convertXMLMetadata(oXML, sUrl);
-		}, new Error(sUrl + " is not a valid OData V2 metadata document"));
+			new _V2MetadataConverter().convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl
+			+ ': expected DataServiceVersion="2.0": <DataServices m:DataServiceVersion="3.0"/>'));
 	});
 
 	//*********************************************************************************************
@@ -691,8 +693,9 @@ sap.ui.require([
 			oXML = xml(assert, '<Edmx xmlns="http://docs.oasis-open.org/odata/ns/edmx"/>');
 
 		assert.throws(function () {
-			_V2MetadataConverter.convertXMLMetadata(oXML, sUrl);
-		}, new Error(sUrl + " is not a valid OData V2 metadata document"));
+			new _V2MetadataConverter().convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl
+			+ ": expected <Edmx> in namespace 'http://schemas.microsoft.com/ado/2007/06/edmx'"));
 	});
 
 	//*********************************************************************************************
@@ -715,7 +718,7 @@ sap.ui.require([
 
 		return Promise.all([
 			jQuery.ajax(sUrl).then(function (oXML) {
-					return _V2MetadataConverter.convertXMLMetadata(oXML, sUrl);
+					return new _V2MetadataConverter().convertXMLMetadata(oXML, sUrl);
 				}),
 			jQuery.ajax("/GWSAMPLE_BASIC/metadata_v4.json")
 		]).then(function (aResults) {
@@ -801,7 +804,7 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			// there are no $annotations yet at the schema so mergeAnnotations is not called
-			this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+			this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 			testConversion(assert, '\
 					<Schema Namespace="GWSAMPLE_BASIC.0001">\
@@ -911,7 +914,7 @@ sap.ui.require([
 		var sTitle = "convert: V2 annotation at Property: " + oFixture.v2Semantics;
 		QUnit.test("convert sap:semantics=" + sTitle, function (assert) {
 			// there are no $annotations yet at the schema so mergeAnnotations is not called
-			this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+			this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 			testAnnotationConversion(assert, '\
 						<EntityType Name="Foo">\
@@ -926,7 +929,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to contact", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -986,7 +989,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=tel, email to Contact", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1016,7 +1019,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=tel with type to Contact", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1044,7 +1047,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=email with type to Contact", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1073,7 +1076,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=email with unsupported type", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported semantic type: foo", undefined, sModuleName);
@@ -1099,7 +1102,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=email with un/supported type", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported semantic type: foo", undefined, sModuleName);
@@ -1128,7 +1131,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Event", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1162,7 +1165,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Task", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1186,7 +1189,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Message", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1212,7 +1215,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Contact, Event, Task, Message", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1519,7 +1522,7 @@ sap.ui.require([
 	}].forEach(function (oFixture, i) {
 		QUnit.test("mergeAnnotations: complex merge - " + i, function (assert) {
 			// Code under test
-			_V2MetadataConverter.mergeAnnotations(oFixture.convertedV2Annotations,
+			new _V2MetadataConverter().mergeAnnotations(oFixture.convertedV2Annotations,
 				oFixture.v4Annotations);
 
 			assert.deepEqual(oFixture.v4Annotations, oFixture.result);
@@ -1693,7 +1696,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* from mV2toV4SimpleSemantics", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1736,7 +1739,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("mergeAnnotations called", function (assert) {
-		this.mock(_V2MetadataConverter).expects("mergeAnnotations")
+		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations")
 			.withExactArgs({ "GWSAMPLE_BASIC.Foo/P01" : { "@Org.OData.Core.V1.IsURL" : true } },
 				{ "GWSAMPLE_BASIC.Foo/P01" : { "@Org.OData.Core.V1.IsURL" : false } }
 			);

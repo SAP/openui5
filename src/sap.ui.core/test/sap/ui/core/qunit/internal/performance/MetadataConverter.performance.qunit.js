@@ -63,9 +63,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{file: "v4vh/$metadata", converter: V4MetadataConverter, desc: "V4 with value help"},
-		{file: "v4/$metadata", converter: V4MetadataConverter, desc: "V4 without value help"},
-		{file: "v2/$metadata", converter: V2MetadataConverter, desc: "V4 loading V2 document"}
+		{file: "v4vh/$metadata", Converter: V4MetadataConverter, desc: "V4 with value help"},
+		{file: "v4/$metadata", Converter: V4MetadataConverter, desc: "V4 without value help"},
+		{file: "v2/$metadata", Converter: V2MetadataConverter, desc: "V4 loading V2 document"}
 	].forEach(function (oFixture) {
 		QUnit.test(oFixture.desc, function (assert) {
 			var sUrl = "/fake/" + oFixture.file;
@@ -82,7 +82,7 @@ sap.ui.require([
 							iReceived = Date.now();
 							oXML = this.responseXML;
 							iXml = Date.now();
-							oFixture.converter.convertXMLMetadata(oXML, sUrl);
+							new (oFixture.Converter)().convertXMLMetadata(oXML, sUrl);
 							fnResolve({
 								received: iReceived - iStart,
 								xml: iXml - iReceived,

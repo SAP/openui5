@@ -50,11 +50,11 @@ sap.ui.define([
 							headers : mHeaders
 						})
 						.then(function (oData, sTextStatus, jqXHR) {
-							var oConverter = sODataVersion === "4.0" || bAnnotations
+							var Converter = sODataVersion === "4.0" || bAnnotations
 									? _V4MetadataConverter : _V2MetadataConverter,
 								sDate = jqXHR.getResponseHeader("Date"),
 								sETag = jqXHR.getResponseHeader("ETag"),
-								oJSON = oConverter.convertXMLMetadata(oData, sUrl),
+								oJSON = new Converter().convertXMLMetadata(oData, sUrl),
 								sLastModified = jqXHR.getResponseHeader("Last-Modified");
 
 							if (sDate) {

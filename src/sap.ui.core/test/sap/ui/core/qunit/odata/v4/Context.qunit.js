@@ -3,11 +3,11 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/lib/_SyncPromise"
-], function (jQuery, BaseContext, Context, _Helper, _SyncPromise) {
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (jQuery, SyncPromise, BaseContext, Context, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -244,7 +244,7 @@ sap.ui.require([
 		QUnit.test("requestObject " + JSON.stringify(oData), function (assert) {
 			var oContext = Context.create(null, null, "/foo"),
 				oPromise,
-				oSyncPromise = _SyncPromise.resolve(Promise.resolve(oData));
+				oSyncPromise = SyncPromise.resolve(Promise.resolve(oData));
 
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
@@ -268,7 +268,7 @@ sap.ui.require([
 		QUnit.test("getObject: " + JSON.stringify(oData), function (assert) {
 			var oContext = Context.create(null, null, "/foo"),
 				oResult,
-				oSyncPromise = _SyncPromise.resolve(oData);
+				oSyncPromise = SyncPromise.resolve(oData);
 
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
@@ -286,7 +286,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getObject: unresolved", function (assert) {
 		var oContext = Context.create(null, null, "/foo"),
-			oSyncPromise = _SyncPromise.resolve(Promise.resolve(42));
+			oSyncPromise = SyncPromise.resolve(Promise.resolve(42));
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
@@ -299,7 +299,7 @@ sap.ui.require([
 	[42, null].forEach(function (vResult) {
 		QUnit.test("getProperty: primitive result " + vResult, function (assert) {
 			var oContext = Context.create(null, null, "/foo"),
-				oSyncPromise = _SyncPromise.resolve(vResult);
+				oSyncPromise = SyncPromise.resolve(vResult);
 
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
@@ -312,7 +312,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getProperty: structured result", function (assert) {
 		var oContext = Context.create(null, null, "/foo", 1),
-			oSyncPromise = _SyncPromise.resolve({});
+			oSyncPromise = SyncPromise.resolve({});
 
 		this.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
@@ -327,7 +327,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getProperty: unresolved", function (assert) {
 		var oContext = Context.create(null, null, "/foo"),
-			oSyncPromise = _SyncPromise.resolve(Promise.resolve(42));
+			oSyncPromise = SyncPromise.resolve(Promise.resolve(42));
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
@@ -340,7 +340,7 @@ sap.ui.require([
 	QUnit.test("getProperty: rejected", function (assert) {
 		var oContext = Context.create(null, null, "/foo"),
 			oPromise = Promise.reject("read error"),
-			oSyncPromise = _SyncPromise.resolve(oPromise);
+			oSyncPromise = SyncPromise.resolve(oPromise);
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
@@ -367,8 +367,8 @@ sap.ui.require([
 				},
 				oContext = Context.create(oModel, null, "/foo", 42),
 				oResolvedType = bTypeIsResolved ? oType : Promise.resolve(oType),
-				oSyncPromiseType = _SyncPromise.resolve(oResolvedType),
-				oSyncPromiseValue = _SyncPromise.resolve(1234);
+				oSyncPromiseType = SyncPromise.resolve(oResolvedType),
+				oSyncPromiseValue = SyncPromise.resolve(1234);
 
 			this.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
@@ -390,7 +390,7 @@ sap.ui.require([
 	[42, null].forEach(function (vResult) {
 		QUnit.test("requestProperty: primitive result " + vResult, function (assert) {
 			var oContext = Context.create(null, null, "/foo"),
-				oSyncPromise = _SyncPromise.resolve(Promise.resolve(vResult));
+				oSyncPromise = SyncPromise.resolve(Promise.resolve(vResult));
 
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
@@ -405,7 +405,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestProperty: structured result", function (assert) {
 		var oContext = Context.create(null, null, "/foo", 1),
-			oSyncPromise = _SyncPromise.resolve(Promise.resolve({}));
+			oSyncPromise = SyncPromise.resolve(Promise.resolve({}));
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
@@ -432,8 +432,8 @@ sap.ui.require([
 				formatValue : function () {}
 			},
 			oContext = Context.create(oModel, null, "/foo", 42),
-			oSyncPromiseType = _SyncPromise.resolve(Promise.resolve(oType)),
-			oSyncPromiseValue = _SyncPromise.resolve(1234);
+			oSyncPromiseType = SyncPromise.resolve(Promise.resolve(oType)),
+			oSyncPromiseValue = SyncPromise.resolve(1234);
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromiseValue);
@@ -473,7 +473,7 @@ sap.ui.require([
 	QUnit.test("requestCanonicalPath", function (assert) {
 		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
 			oPromise,
-			oSyncPromise = _SyncPromise.resolve(Promise.resolve("/EMPLOYEES('1')"));
+			oSyncPromise = SyncPromise.resolve(Promise.resolve("/EMPLOYEES('1')"));
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
@@ -490,7 +490,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getCanonicalPath: success", function (assert) {
 		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
-			oSyncPromise = _SyncPromise.resolve("/EMPLOYEES('1')");
+			oSyncPromise = SyncPromise.resolve("/EMPLOYEES('1')");
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
@@ -501,7 +501,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getCanonicalPath: unresolved", function (assert) {
 		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
-			oSyncPromise = _SyncPromise.resolve(Promise.resolve("/EMPLOYEES('1')"));
+			oSyncPromise = SyncPromise.resolve(Promise.resolve("/EMPLOYEES('1')"));
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
@@ -515,7 +515,7 @@ sap.ui.require([
 	QUnit.test("getCanonicalPath: failure", function (assert) {
 		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
 			oError = new Error("Intentionally failed"),
-			oSyncPromise = _SyncPromise.resolve().then(function () {throw oError;});
+			oSyncPromise = SyncPromise.resolve().then(function () {throw oError;});
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
@@ -577,7 +577,7 @@ sap.ui.require([
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oContext).expects("fetchCanonicalPath")
-			.withExactArgs().returns(_SyncPromise.resolve("/EMPLOYEES('1')"));
+			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs("myGroup", "EMPLOYEES('1')", sinon.match.same(oContext))
 			.returns(Promise.resolve());
@@ -621,7 +621,7 @@ sap.ui.require([
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oContext).expects("fetchCanonicalPath")
-			.withExactArgs().returns(_SyncPromise.resolve("/EMPLOYEES('1')"));
+			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs(undefined, "EMPLOYEES('1')", sinon.match.same(oContext))
 			.returns(Promise.reject(oError));
@@ -644,7 +644,7 @@ sap.ui.require([
 			oContext = Context.create(null, null, "/EMPLOYEES/42", 42);
 
 		this.mock(oContext).expects("fetchCanonicalPath")
-			.withExactArgs().returns(_SyncPromise.reject(oError));
+			.withExactArgs().returns(SyncPromise.reject(oError));
 
 		// code under test
 		return oContext.delete().then(function () {
