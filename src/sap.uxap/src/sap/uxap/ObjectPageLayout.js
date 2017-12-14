@@ -510,7 +510,7 @@ sap.ui.define([
 
 		var bIsPageTop;
 
-		this._toggleHeaderTitle(false /* not expand */);
+		this._toggleHeaderTitle(false /* not expand */, true /* user interaction */);
 		this._moveAnchorBarToTitleArea();
 
 		if (bAppendHeaderToContent) {
@@ -542,7 +542,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._expandHeader = function (bAppendHeaderToTitle) {
 
-		this._toggleHeaderTitle(true /* expand */);
+		this._toggleHeaderTitle(true /* expand */, true /* user interaction */);
 		this._toggleHeaderVisibility(true);
 
 		if (bAppendHeaderToTitle) {
@@ -1008,16 +1008,16 @@ sap.ui.define([
 	 * Toggles visual rules on manually expand or collapses the sticky header
 	 * @private
 	 */
-	ObjectPageLayout.prototype._toggleHeaderTitle = function (bExpand) {
+	ObjectPageLayout.prototype._toggleHeaderTitle = function (bExpand, bUserInteraction) {
 		var oHeaderTitle = this.getHeaderTitle();
 
 		// note that <code>this._$headerTitle</code> is the placeholder [of the sticky area] where both the header title and header content are placed
 		this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
 
 		if (bExpand) {
-			oHeaderTitle && oHeaderTitle.unSnap();
+			oHeaderTitle && oHeaderTitle.unSnap(bUserInteraction);
 		} else {
-			oHeaderTitle && oHeaderTitle.snap();
+			oHeaderTitle && oHeaderTitle.snap(bUserInteraction);
 		}
 	};
 
@@ -2226,7 +2226,7 @@ sap.ui.define([
 
 		//don't apply parallax effects if there are not enough space for it
 		if (!bShouldPreserveHeaderInTitleArea && ((oHeader && this.getShowHeaderContent()) || this.getShowAnchorBar())) {
-			this._toggleHeader(bShouldStick);
+			this._toggleHeader(bShouldStick, !!(oEvent && oEvent.type === "scroll"));
 		}
 
 		if (!bShouldPreserveHeaderInTitleArea) {
@@ -2363,12 +2363,12 @@ sap.ui.define([
 	 * @param {boolean} bStick boolean true for fixing the header, false for keeping it moving
 	 * @private
 	 */
-	ObjectPageLayout.prototype._toggleHeader = function (bStick) {
+	ObjectPageLayout.prototype._toggleHeader = function (bStick, bUserInteraction) {
 		var oHeaderTitle = this.getHeaderTitle();
 
 		//switch to stickied
 		if (!this._shouldPreserveHeaderInTitleArea() && !this._bHeaderInTitleArea) {
-			this._toggleHeaderTitle(!bStick);
+			this._toggleHeaderTitle(!bStick, bUserInteraction);
 		}
 
 		if (!this._bStickyAnchorBar && bStick) {
@@ -2626,9 +2626,9 @@ sap.ui.define([
 			iHeight = $Clone.height();
 			$Clone.remove(); //clean dom
 		} else if (oTitle && oTitle.snap) {
-			oTitle.snap();
+			oTitle.snap(false);
 			iHeight = oTitle.$().outerHeight();
-			oTitle.unSnap();
+			oTitle.unSnap(false);
 		}
 
 		return iHeight;
@@ -2645,9 +2645,9 @@ sap.ui.define([
 			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
 			$Clone.remove(); //clean dom
 		} else if (oTitle && oTitle.unSnap) {
-			oTitle.unSnap();
+			oTitle.unSnap(false);
 			iHeight = oTitle.$().outerHeight();
-			oTitle.snap();
+			oTitle.snap(false);
 		}
 
 		return iHeight;

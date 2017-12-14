@@ -851,6 +851,8 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._toggleState = function (bExpanded, bUserInteraction) {
+		var oldExpandedState = this._bExpandedState;
+
 		this._bExpandedState = bExpanded;
 
 		// Snapped content
@@ -875,7 +877,7 @@ sap.ui.define([
 			this.$expandHeadingWrapper.toggleClass("sapUiHidden", !bExpanded);
 		}
 
-		if (bUserInteraction) {
+		if (bUserInteraction && oldExpandedState !== bExpanded) {
 			this.fireEvent("stateChange", {isExpanded: bExpanded});
 		}
 	};

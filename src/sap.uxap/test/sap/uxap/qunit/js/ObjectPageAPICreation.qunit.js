@@ -1289,6 +1289,30 @@
 		assert.equal(oObjectPage._bHeaderExpanded, true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
 	});
 
+	QUnit.test("ObjectPage Header - expanding/collapsing by clicking the title", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			oObjectPageTitle = oObjectPage.getHeaderTitle(),
+			oStateChangeListener = this.spy(),
+			oFakeEvent = {
+				srcControl: oObjectPageTitle
+			};
+
+		oObjectPageTitle.attachEvent("stateChange", oStateChangeListener);
+
+		// act
+		oObjectPageTitle.ontap(oFakeEvent);
+
+		// assert
+		assert.ok(oStateChangeListener.calledOnce, "stateChange event was fired once");
+
+		// act
+		oObjectPageTitle.ontap(oFakeEvent);
+
+		// assert
+		assert.strictEqual(oStateChangeListener.callCount, 2, "stateChange event was fired twice");
+	});
+
 	QUnit.module("ObjectPage with alwaysShowContentHeader", {
 
 		beforeEach: function () {
