@@ -20,6 +20,11 @@
 						path: '/ProductCollection',
 						filters: {path: 'Rank', operator: 'EQ', value1: '0'}
 					}">
+					<contextMenu>
+						<Menu>
+							<MenuItem text="Move to Selected Products" press="moveToTable2" />
+						</Menu>
+					</contextMenu>
 					<headerToolbar>
 						<Toolbar>
 							<Title text="Available Products" />
@@ -86,6 +91,13 @@
 						sorter: {path: 'Rank', descending: true}
 					}"
 					noData="Please drag-and-drop products here.">
+					<contextMenu>
+						<Menu>
+							<MenuItem text="Move to Available Products" press="moveToTable1" />
+							<MenuItem text="Move up" press="moveUp" />
+							<MenuItem text="Move down" press="moveDown" />
+						</Menu>
+					</contextMenu>
 					<headerToolbar>
 						<Toolbar>
 							<Title text="Selected Products" />

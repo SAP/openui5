@@ -1116,6 +1116,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.informList("ArrowUpDown", oEvent);
 	};
 
+	ListItemBase.prototype.oncontextmenu = function(oEvent) {
+		// context menu is not required on the group header.
+		if (this._bGroupHeader) {
+			return;
+		}
+
+		// do not handle already handled events
+		// allow the context menu to open on the SingleSelect or MultiSelect control
+		// is(":focusable") check is required as IE sets activeElement also  to text controls
+		if (jQuery(document.activeElement).is(":focusable") &&
+			document.activeElement !== this.getDomRef() &&
+			oEvent.srcControl !== this.getModeControl()) {
+			return;
+		}
+
+		this.informList("ContextMenu", oEvent);
+	};
+
 	// inform the list for the vertical navigation
 	ListItemBase.prototype.onsapdown = ListItemBase.prototype.onsapup;
 

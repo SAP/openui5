@@ -5,8 +5,10 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
 		'sap/ui/model/Sorter',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Formatter, Fragment, Controller, Filter, Sorter, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/m/Menu',
+		'sap/m/MenuItem'
+	], function(jQuery, Formatter, Fragment, Controller, Filter, Sorter, JSONModel, Menu, MenuItem) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.TableViewSettingsDialog.C", {
@@ -105,6 +107,19 @@ sap.ui.define([
 			// update filter bar
 			oView.byId("vsdFilterBar").setVisible(aFilters.length > 0);
 			oView.byId("vsdFilterLabel").setText(mParams.filterString);
+		},
+
+		onToggleContextMenu: function(oEvent) {
+			if (oEvent.getParameter("pressed")) {
+				this.byId("idProductsTable").setContextMenu(new Menu({
+					items: [
+						new MenuItem({text: "{Name}"}),
+						new MenuItem({text: "{ProductId}"})
+					]
+				}));
+			} else {
+				this.byId("idProductsTable").destroyContextMenu();
+			}
 		}
 	});
 

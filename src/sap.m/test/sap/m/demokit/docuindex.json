@@ -2074,8 +2074,8 @@
 		},
 		{
 		  "id": "sap.m.sample.TreeIcon",
-		  "name": "Tree - Icon",
-		  "description": "Tree item with icon."
+		  "name": "Tree - Icon & Context Menu",
+		  "description": "Tree item with icon. This example also shows the context menu for the items in the Tree control."
 		},
 		{
 		  "id": "sap.m.sample.TreeInitialExpandState",
@@ -2283,8 +2283,8 @@
 		},
 		{
 		  "id": "sap.m.sample.ListGrouping",
-		  "name": "List - Grouping",
-		  "description": "Grouping your items makes it easier for the user to browse and find the desired content"
+		  "name": "List - Grouping & Context Menu",
+		  "description": "Grouping your items makes it easier for the user to browse and find the desired content. This example also shows the context menu for the items in the List control."
 		},
 		{
 		  "id": "sap.m.sample.ListUnread",
@@ -2308,8 +2308,8 @@
 		},
 		{
 		  "id": "sap.m.sample.TableViewSettingsDialog",
-		  "name": "Table - View Settings",
-		  "description": "The View Settings Dialog is standard UI pattern for specifying sorting, grouping and filtering. For a table it should be triggered by a button in the table header with the 'drop-down-list' icon. The active filter should be shown with the table's info bar."
+		  "name": "Table - View Settings & Context Menu",
+		  "description": "The View Settings Dialog is standard UI pattern for specifying sorting, grouping and filtering. For a table it should be triggered by a button in the table header with the 'drop-down-list' icon. The active filter should be shown with the table's info bar. This example also shows the context menu for the items in the Table control."
 		},
 		{
 		  "id": "sap.m.sample.TableLayout",
@@ -2329,7 +2329,7 @@
 		{
 		  "id": "sap.m.sample.TableDnD",
 		  "name": "Table - Drag and Drop",
-		  "description": "Shows the different kinds of drag-and-drop capabilities."
+		  "description": "Shows the different kinds of drag-and-drop capabilities along with custom context menu alternatives to perform these action."
 		},
 		{
 		  "id": "sap.m.sample.TablePerso",
