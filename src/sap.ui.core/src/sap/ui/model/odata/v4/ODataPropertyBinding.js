@@ -552,7 +552,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the new current value and updates the cache.
+	 * Sets the new current value and updates the cache. If the value cannot be accepted or cannot
+	 * be updated on the server, an error is logged to the console and added to the message manager
+	 * as a technical message.
 	 *
 	 * @param {any} vValue
 	 *   The new value which must be primitive
@@ -563,7 +565,7 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
 	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   If the new value is not primitive or the binding is not relative
+	 *   If the new value is not primitive or no value has been read before
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
@@ -576,35 +578,36 @@ sap.ui.define([
 			that.oModel.reportError("Failed to update path "
 				+ that.oModel.resolve(that.sPath, that.oContext),
 				sClassName, oError);
+			return oError;
 		}
 
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
-			throw new Error("Not a primitive value");
+			throw reportError(new Error("Not a primitive value"));
+		}
+		if (this.vValue === undefined) {
+			throw reportError(new Error("Must not change a property before it has been read"));
 		}
 		this.oModel.checkGroupId(sGroupId);
 
 		if (this.vValue !== vValue) {
 			this.oCachePromise.then(function (oCache) {
 				if (oCache) {
-					jQuery.sap.log.error("Cannot set value on this binding",
-						that.oModel.resolve(that.sPath, that.oContext), sClassName);
+					reportError(new Error("Cannot set value on this binding"));
 					// do not update that.vValue!
-				} else if (that.oContext) {
+				} else {
 					that.oModel.getMetaModel().fetchUpdateData(that.sPath, that.oContext)
 						.then(function (oResult) {
-							return that.oContext.getBinding().updateValue(sGroupId,
-								oResult.propertyPath, vValue, reportError, oResult.editUrl,
-								oResult.entityPath, that.getUnitOrCurrencyPath());
+							return that.withCache(function (oCache, sCachePath, oBinding) {
+								return oCache.update(sGroupId || oBinding.getUpdateGroupId(),
+									oResult.propertyPath, vValue, reportError, oResult.editUrl,
+									sCachePath, that.getUnitOrCurrencyPath());
+							}, oResult.entityPath);
 						})
 						["catch"](function (oError) {
 							if (!oError.canceled) {
 								reportError(oError);
 							}
 						});
-				} else {
-					jQuery.sap.log.warning("Cannot set value on relative binding without context",
-						that.sPath, sClassName);
-					// do not update that.vValue!
 				}
 			});
 		}

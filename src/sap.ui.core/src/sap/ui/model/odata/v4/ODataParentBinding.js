@@ -674,52 +674,6 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Updates the value for the given property path inside the entity with the given absolute path;
-	 * the value is updated in this binding's cache or in its parent context in case it has no
-	 * cache.
-	 *
-	 * @param {string} [sGroupId=getUpdateGroupId()]
-	 *   The group ID to be used for this update call.
-	 * @param {string} sPropertyPath
-	 *   The path of the property relative to the entity
-	 * @param {any} vValue
-	 *   The new value
-	 * @param {function} fnErrorCallback
-	 *   A function which is called with an Error object each time a PATCH request fails
-	 * @param {string} sEditUrl
-	 *   The edit URL corresponding to the entity to be updated
-	 * @param {string} sEntityPath
-	 *   The resolved, absolute entity path (as delivered from ODataMetaModel#fetchUpdateData)
-	 * @param {string} [sUnitOrCurrencyPath]
-	 *   The path of the unit or currency for the property, relative to the entity
-	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the cache's <code>update</code> call
-	 * @throws {Error}
-	 *   If the cache promise for this binding is not yet fulfilled
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyPath, vValue,
-		fnErrorCallback, sEditUrl, sEntityPath, sUnitOrCurrencyPath) {
-		var oCache;
-
-		if (!this.oCachePromise.isFulfilled()) {
-			throw new Error("PATCH request not allowed");
-		}
-
-		oCache = this.oCachePromise.getResult();
-		if (oCache) {
-			sGroupId = sGroupId || this.getUpdateGroupId();
-			return oCache.update(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-				this.getRelativePath(sEntityPath), sUnitOrCurrencyPath);
-		}
-
-		return this.oContext.getBinding()
-			.updateValue(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl, sEntityPath,
-				sUnitOrCurrencyPath);
-	};
-
 	return function (oPrototype) {
 		jQuery.extend(oPrototype, ODataParentBinding.prototype);
 	};

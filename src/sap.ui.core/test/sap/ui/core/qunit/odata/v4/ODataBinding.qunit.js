@@ -1309,7 +1309,8 @@ sap.ui.require([
 			oPromise = oBinding.withCache(fnCallback, "foo").then(function (oResult) {
 				assert.strictEqual(oResult, oCallbackResult);
 
-				sinon.assert.calledWithExactly(fnCallback, sinon.match.same(oCache), "~");
+				sinon.assert.calledWithExactly(fnCallback, sinon.match.same(oCache), "~",
+					sinon.match.same(oBinding));
 			});
 			if (!bAsync) {
 				assert.strictEqual(oPromise.isFulfilled(), true);
@@ -1338,7 +1339,8 @@ sap.ui.require([
 		return oBinding.withCache(fnCallback).then(function (oResult) {
 			assert.strictEqual(oResult, oCallbackResult);
 
-			sinon.assert.calledWithExactly(fnCallback, sinon.match.same(oCache), "");
+			sinon.assert.calledWithExactly(fnCallback, sinon.match.same(oCache), "",
+				sinon.match.same(oBinding));
 		});
 	});
 
