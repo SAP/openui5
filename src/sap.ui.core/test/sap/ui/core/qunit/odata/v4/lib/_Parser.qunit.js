@@ -4,11 +4,27 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Parser",
-	"sap/ui/model/odata/v4/lib/_Requestor"
-], function (jQuery, _Parser, _Requestor) {
+	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/test/TestUtils"
+], function (jQuery, _Parser, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
+
+	/*
+	 * Parses the given filter and expects the given syntax tree and vice versa
+	 * @param {object} assert The assert
+	 * @param {string} sFilter The filter string
+	 * @param {object} oExpectedSyntaxTree The expected syntax tree, tested with deepContains
+	 * @param {string} [sResultingFilter=sFilter] The resulting filter string
+	 */
+	function parseAndRebuild(assert, sFilter, oExpectedSyntaxTree, sResultingFilter) {
+		var oSyntaxTree = _Parser.parseFilter(sFilter);
+
+		TestUtils.deepContains(oSyntaxTree, oExpectedSyntaxTree, "parse " + sFilter);
+		assert.strictEqual(_Parser.buildFilterString(oSyntaxTree), sResultingFilter || sFilter,
+			"rebuild " + sFilter);
+	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Parser", {
@@ -411,18 +427,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	['eq', 'ge', 'gt', 'le', 'lt', 'ne'].forEach(function (sOperator) {
-		QUnit.test("_Parser#parseFilter, operator=" + sOperator, function (assert) {
-
-			function parseAndRebuild(sFilter, oExpectedSyntaxTree) {
-				var oSyntaxTree = _Parser.parseFilter(sFilter);
-
-				assert.deepEqual(oSyntaxTree, oExpectedSyntaxTree, 'parse ' + sFilter);
-				assert.strictEqual(_Parser.buildFilterString(oSyntaxTree), sFilter,
-					"rebuild " + sFilter);
-			}
+		QUnit.test("parseFilter: operator=" + sOperator, function (assert) {
 
 			// Part 1: foo op 'bar'
-			parseAndRebuild("foo " + sOperator + " 'bar'", {
+			parseAndRebuild(assert, "foo " + sOperator + " 'bar'", {
 				id : sOperator,
 				value : " " + sOperator + " ",
 				at : 5,
@@ -439,7 +447,7 @@ sap.ui.require([
 			});
 
 			// Part 2: 'bar' op foo
-			parseAndRebuild("'bar' " + sOperator + " foo", {
+			parseAndRebuild(assert, "'bar' " + sOperator + " foo", {
 				id : sOperator,
 				value : " " + sOperator + " ",
 				at : 7,
@@ -458,12 +466,165 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// string: the filter string
+	// parsed: the syntax tree
+	// converted: the resulting filter string after parsing and rebuilding (if different to string)
+	[{
+		string :"foo eq bar ne baz",
+		parsed :{
+			id : "ne",
+			left : {
+				id : "eq",
+				left : {value : "foo"},
+				right : {value : "bar"}
+			},
+			right : {value : "baz"}
+		}
+	}, {
+		string :"foo eq '1' and bar gt 2",
+		parsed :{
+			id : "and",
+			left : {
+				id : "eq",
+				left : {value : "foo"},
+				right : {value : "'1'"}
+			},
+			right : {
+				id : "gt",
+				left : {value : "bar"},
+				right : {value : "2"}
+			}
+		}
+	}, {
+		string :"not foo",
+		parsed :{
+			id : "not",
+			right : {value : "foo"}
+		}
+	}, {
+		string :"not foo and bar",
+		parsed :{
+			id : "and",
+			left : {
+				id : "not",
+				right : {value : "foo"}
+			},
+			right : {value : "bar"}
+		}
+	}, {
+		string :"not (foo and bar)",
+		parsed :{
+			id : "not",
+			right : {
+				id : "and",
+				left : {value : "foo"},
+				right : {value : "bar"}
+			}
+		}
+	}, {
+		string :"foo and not bar",
+		parsed :{
+			id : "and",
+			left : {value : "foo"},
+			right : {
+				id : "not",
+				right : {value : "bar"}
+			}
+		}
+	}, {
+		string :"foo and ( \t bar or baz %09%20 )",
+		parsed :{
+			id : "and",
+			left : {value : "foo"},
+			right : {
+				id : "or",
+				left : {value : "bar"},
+				right : {value : "baz"}
+			}
+		},
+		converted : "foo and (bar or baz)"
+	}].forEach(function (oFixture) {
+		QUnit.test("parseFilter: " + oFixture.string, function (assert) {
+			parseAndRebuild(assert, oFixture.string, oFixture.parsed, oFixture.converted);
+		});
+	});
+
+	//*********************************************************************************************
+	// If the operators have equal precedence, then
+	// a op1 b op2 c  -->  (a op1 b) op2 c
+	// a op2 b op1 c  -->  (a op2 b) op1 c
+	[
+		{op1 : "eq", op2 : "ne"},
+		{op1 : "ge", op2 : "gt"},
+		{op1 : "ge", op2 : "le"},
+		{op1 : "ge", op2 : "lt"}
+	].forEach(function (oFixture) {
+		var sTitle = "parseFilter: lpb(" + oFixture.op1 + ") === lpb(" + oFixture.op2 + ")";
+
+		QUnit.test(sTitle, function (assert) {
+			parseAndRebuild(assert, "a " + oFixture.op1 + " b " + oFixture.op2 + " c", {
+				id : oFixture.op2,
+				left : {
+					id : oFixture.op1,
+					left : {value : "a"},
+					right : {value : "b"}
+				},
+				right : {value : "c"}
+			});
+
+			parseAndRebuild(assert, "a " + oFixture.op2 + " b " + oFixture.op1 + " c", {
+				id : oFixture.op1,
+				left : {
+					id : oFixture.op2,
+					left : {value : "a"},
+					right : {value : "b"}
+				},
+				right : {value : "c"}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// If op1 has lower precedence than op2, then
+	// a op1 b op2 c  -->  a op1 (b op2 c)
+	// a op2 b op1 c  -->  (a op2 b) op1 c
+	[
+		{op1 : "or", op2 : "and"},
+		{op1 : "and", op2 : "eq"},
+		{op1 : "eq", op2 : "ge"}
+	].forEach(function (oFixture) {
+		var sTitle = "parseFilter: lpb(" + oFixture.op1 + ") < lpb(" + oFixture.op2 + ")";
+
+		QUnit.test(sTitle, function (assert) {
+			parseAndRebuild(assert, "a " + oFixture.op1 + " b " + oFixture.op2 + " c", {
+				id : oFixture.op1,
+				left : {value : "a"},
+				right : {
+					id : oFixture.op2,
+					left : {value : "b"},
+					right : {value : "c"}
+				}
+			});
+
+			parseAndRebuild(assert, "a " + oFixture.op2 + " b " + oFixture.op1 + " c", {
+				id : oFixture.op1,
+				left : {
+					id : oFixture.op2,
+					left : {value : "a"},
+					right : {value : "b"}
+				},
+				right : {value : "c"}
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	["false", "true", "null"].forEach(function (sLiteral) {
 		QUnit.test("parseFilter: literal=" + sLiteral, function (assert) {
 			var sFilter = "foo eq " + sLiteral,
 				oSyntaxTree = _Parser.parseFilter(sFilter);
 
-			assert.deepEqual(oSyntaxTree, {
+			TestUtils.deepContains(oSyntaxTree, {
 				id : "eq",
 				value : " eq ",
 				at : 5,
@@ -489,7 +650,7 @@ sap.ui.require([
 		error : "Unexpected ';' at 1"
 	}, {
 		string : "foo='bar'",
-		error : "Unexpected '=' at 4"
+		error : "Expected end of input but instead saw '=' at 4"
 	}, {
 		string : "foo eq",
 		error : "Expected expression but instead saw end of input"
@@ -499,6 +660,12 @@ sap.ui.require([
 	}, {
 		string : "foo eq  ",
 		error : "Expected expression but instead saw end of input"
+	}, {
+		string : "foo and not;",
+		error : "Expected ' ' after 'not'"
+	}, {
+		string : "foo and (bar or baz",
+		error : "Expected ')' but instead saw end of input"
 	}].forEach(function (oFixture) {
 		QUnit.test('_Parser#parseFilter: "' + oFixture.string + '"', function (assert) {
 			assert.throws(function () {

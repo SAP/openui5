@@ -3,9 +3,9 @@
  */
 //Provides mixin sap.ui.model.odata.v4.ODataBinding for classes extending sap.ui.model.Binding
 sap.ui.define([
-	"./lib/_Helper",
-	"./lib/_SyncPromise"
-], function (_Helper, _SyncPromise) {
+	"sap/ui/base/SyncPromise",
+	"./lib/_Helper"
+], function (SyncPromise, _Helper) {
 	"use strict";
 
 	/**
@@ -41,13 +41,13 @@ sap.ui.define([
 			}
 		}
 		aPromises = [this.fetchQueryOptionsForOwnCache(oContext), this.oModel.oRequestor.ready()];
-		oCachePromise = _SyncPromise.all(aPromises).then(function (aResult) {
+		oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var vCanonicalPath,
 				mQueryOptions = aResult[0];
 
 			// Note: do not create a cache for a virtual context
 			if (mQueryOptions && !(oContext && oContext.getIndex && oContext.getIndex() === -2)) {
-				vCanonicalPath = _SyncPromise.resolve(oContext && (oContext.fetchCanonicalPath
+				vCanonicalPath = SyncPromise.resolve(oContext && (oContext.fetchCanonicalPath
 					? oContext.fetchCanonicalPath() : oContext.getPath()));
 				return vCanonicalPath.then(function (sCanonicalPath) {
 					var oCache,
@@ -113,12 +113,12 @@ sap.ui.define([
 
 		// operation binding manages its cache on its own
 		if (this.oOperation) {
-			return _SyncPromise.resolve(undefined);
+			return SyncPromise.resolve(undefined);
 		}
 
 		// unresolved binding
 		if (this.bRelative && !oContext) {
-			return _SyncPromise.resolve(undefined);
+			return SyncPromise.resolve(undefined);
 		}
 
 		// auto-$expand/$select and binding is a parent binding, so that it needs to wait until all
@@ -131,10 +131,10 @@ sap.ui.define([
 			// query options promise to this binding via fetchIfChildCanUseCache.
 			// The aggregated query options of this binding and its dependent bindings are available
 			// in that.mAggregatedQueryOptions once all these promises are fulfilled.
-			oQueryOptionsPromise = _SyncPromise.all([
+			oQueryOptionsPromise = SyncPromise.all([
 				oQueryOptionsPromise,
 				Promise.resolve().then(function () {
-					return _SyncPromise.all(that.aChildCanUseCachePromises);
+					return SyncPromise.all(that.aChildCanUseCachePromises);
 				})
 			]).then(function (aResult) {
 				that.aChildCanUseCachePromises = [];

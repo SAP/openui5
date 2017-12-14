@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 
 <!--
-	Tested classes: sap.ui.test.TestUtils
+	Tested class: sap.ui.base.SyncPromise
 -->
 
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="UTF-8">
-		<script src="../../core/shared-config.js"></script>
+		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-compatversion="edge">
@@ -21,12 +21,13 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
-			data-cover-flags="branchTracking"></script>
+			data-cover-flags="branchTracking"
+			data-sap-ui-cover-only="sap/ui/base/SyncPromise"></script>
 		<script src="../../../../../resources/sap/ui/test/BranchTracking.js"
 			data-threshold="100"></script>
 
-		<script src="TestUtils.qunit.js"></script>
-		<title>sap.ui.test.TestUtils</title>
+		<script src="SyncPromise.qunit.js"></script>
+		<title>QUnit tests: sap.ui.base.SyncPromise</title>
 	</head>
 	<body>
 		<div id="qunit"></div>

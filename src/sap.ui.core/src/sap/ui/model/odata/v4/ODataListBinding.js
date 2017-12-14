@@ -5,6 +5,7 @@
 //Provides class sap.ui.model.odata.v4.ODataListBinding
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/FilterOperator",
@@ -15,10 +16,9 @@ sap.ui.define([
 	"./Context",
 	"./lib/_Cache",
 	"./lib/_Helper",
-	"./lib/_SyncPromise",
 	"./ODataParentBinding"
-], function (jQuery, Binding, ChangeReason, FilterOperator, FilterType, ListBinding, Sorter,
-		OperationMode, Context, _Cache, _Helper, _SyncPromise, asODataParentBinding) {
+], function (jQuery, SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding,
+		Sorter, OperationMode, Context, _Cache, _Helper, asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -77,7 +77,7 @@ sap.ui.define([
 				}
 				this.mAggregatedQueryOptions = {};
 				this.aApplicationFilters = _Helper.toArray(vFilters);
-				this.oCachePromise = _SyncPromise.resolve();
+				this.oCachePromise = SyncPromise.resolve();
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
 				// auto-$expand/$select: promises to wait until child bindings have provided
 				// their path and query options
@@ -685,7 +685,7 @@ sap.ui.define([
 				aFilterPromises.push(fetchGroupFilter(aFiltersForPath, mLambdaVariableToPath));
 			});
 
-			return _SyncPromise.all(aFilterPromises).then(function (aFilterValues) {
+			return SyncPromise.all(aFilterPromises).then(function (aFilterValues) {
 				return aFilterValues.join(bAnd ? " and " : " or ");
 			});
 		}
@@ -747,7 +747,7 @@ sap.ui.define([
 
 				});
 
-				return _SyncPromise.all(aGroupFilterValues).then(function (aResolvedFilterValues) {
+				return SyncPromise.all(aGroupFilterValues).then(function (aResolvedFilterValues) {
 					return combineFilterValues(aResolvedFilterValues, " or ");
 				});
 			});
@@ -768,7 +768,7 @@ sap.ui.define([
 			return aSegments[0] ? aSegments.join("/") : sPath;
 		}
 
-		return _SyncPromise.all([
+		return SyncPromise.all([
 			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, {}),
 			fetchArrayFilter(this.aFilters, /*bAnd*/true, {})
 		]).then(function (aFilterValues) {
@@ -875,12 +875,13 @@ sap.ui.define([
 	 *   The index where to start the retrieval of contexts
 	 * @param {number} [iLength]
 	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
-	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
+	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}; <code>Infinity</code> may be used
+	 *   since 1.53.0 to retrieve all data
 	 * @param {number} [iMaximumPrefetchSize=0]
 	 *   The maximum number of contexts to read before and after the given range; with this,
 	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
-	 *   table. Negative values will be treated as 0.
-	 *   Supported since 1.39.0
+	 *   table. Negative values will be treated as 0. Supported since 1.39.0; <code>Infinity</code>
+	 *   may be used since 1.53.0 to prefetch all data and thus disable paging.
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
@@ -1284,12 +1285,14 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
-	 *   getContexts() fires a change event with this reason.
+	 *   getContexts() fires a change event with this reason. Change reason "change" is ignored
+	 *   as long as the binding is still empty.
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.reset = function (sChangeReason) {
-		var that = this;
+		var bEmpty = this.iCurrentEnd === 0,
+			that = this;
 
 		if (this.aContexts) {
 			this.aContexts.forEach(function (oContext) {
@@ -1309,7 +1312,7 @@ sap.ui.define([
 		// BUT: the binding's length can be one greater than this.iMaxLength due to index -1!
 		this.iMaxLength = Infinity;
 		this.bLengthFinal = false;
-		if (sChangeReason) {
+		if (sChangeReason && !(bEmpty && sChangeReason === ChangeReason.Change)) {
 			this.sChangeReason = sChangeReason;
 			this._fireRefresh({reason : sChangeReason});
 		}

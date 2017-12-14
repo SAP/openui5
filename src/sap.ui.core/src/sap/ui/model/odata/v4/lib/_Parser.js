@@ -9,18 +9,20 @@ sap.ui.define([
 
 	var // The delimiters in a system query option, possibly %-encoded (their hex value listed in
 		// aMatches[3] if encoded)
-		sDelimiters = "[=(),; \"']|%(20|22|27|28|29|2c|2C|3b|3B)",
+		sDelimiters = "[=(),; \t\"']|%(09|20|22|27|28|29|2c|2C|3b|3B)",
 		// A system query option
 		sSystemQueryOption = "\\$\\w+",
 		// ABNF rule oDataIdentifier
 		sODataIdentifier = "[a-zA-Z_\\u0080-\\uFFFF][\\w\\u0080-\\uFFFF]*",
-		// "required white space" (but only one char)
-		sRws = "(?:[ \\t]|%09|%20)",
+		// a whitespace character
+		sWhitespace = "(?:[ \\t]|%09|%20)",
 		// "required white space"
-		rRws = new RegExp(sRws + "+", "g"),
+		rRws = new RegExp(sWhitespace + "+", "g"),
+		// "not" followed by "required white space"
+		rNot = new RegExp("^not" + sWhitespace + "+"),
 		// OData operators (only recognized when surrounded by spaces; aMatches[1] contains the
 		// leading spaces, aMatches[2] the operator if found)
-		sOperators = "(" + sRws + "+)(eq|ge|gt|le|lt|ne)" + sRws + "*",
+		sOperators = "(" + sWhitespace + "+)(and|eq|ge|gt|le|lt|ne|or)" + sWhitespace + "*",
 		// '*' (poss. %-encoded)
 		sStar = "(?:\\*|%2[aA])",
 		// A path consisting of simple identifiers separated by '/' or '.' optionally followed by
@@ -42,7 +44,26 @@ sap.ui.define([
 		// The two hex digits of a %-escape
 		rEscapeDigits = /^[0-9a-f]{2}$/i,
 		// The symbol table for the filter parser
-		mFilterParserSymbols = {};
+		mFilterParserSymbols = {
+			"(" : {
+				lbp : 0,
+				nud : function () {
+					this.advanceBws();
+					var oToken = this.expression(0);
+					this.advanceBws();
+					this.advance(')');
+					return oToken;
+				}
+			},
+			"not" : {
+				lbp : 7,
+				nud : function (oToken) {
+					oToken.precedence = 7;
+					oToken.right = this.expression(7);
+					return oToken;
+				}
+			}
+		};
 
 	/**
 	 * Adds an infix operator to mFilterParserSymbols.
@@ -54,6 +75,7 @@ sap.ui.define([
 		mFilterParserSymbols[sId] = {
 			lbp : iLbp,
 			led : function (oToken, oLeft) {
+				oToken.precedence = iLbp;
 				oToken.left = oLeft;
 				oToken.right = this.expression(iLbp);
 				return oToken;
@@ -70,19 +92,22 @@ sap.ui.define([
 		mFilterParserSymbols[sId] = {
 			lbp : 0,
 			nud : function (oToken) {
+				oToken.precedence = 99; // prevent it from being enclosed in brackets
 				return oToken;
 			}
 		};
 	}
 
+	addInfixOperator("and", 2);
+	addInfixOperator("eq", 3);
+	addInfixOperator("ge", 4);
+	addInfixOperator("gt", 4);
+	addInfixOperator("le", 4);
+	addInfixOperator("lt", 4);
+	addInfixOperator("ne", 3);
+	addInfixOperator("or", 1);
 	addLeafSymbol("PATH");
 	addLeafSymbol("VALUE");
-	addInfixOperator("eq", 1);
-	addInfixOperator("ge", 1);
-	addInfixOperator("gt", 1);
-	addInfixOperator("le", 1);
-	addInfixOperator("lt", 1);
-	addInfixOperator("ne", 1);
 
 	/**
 	 * The base class for the system query option parser and the filter parser. Takes care of token
@@ -205,11 +230,27 @@ sap.ui.define([
 	FilterParser.prototype = Object.create(Parser.prototype);
 
 	/**
+	 * Advances to the next token that is not a whitespace character. (Skips over "bad whitespace".)
+	 */
+	FilterParser.prototype.advanceBws = function () {
+		var oToken;
+
+		for (;;) {
+			oToken = this.current();
+			if (!oToken || (oToken.id !== " " && oToken.id !== "\t")) {
+				return;
+			}
+			this.advance();
+		}
+	};
+
+	/**
 	 * Parses a filter expression starting at the current token.
 	 *
+	 * @param {number} iRbp A "right binding power"
 	 * @returns {object} The syntax tree for that expression
 	 */
-	FilterParser.prototype.expression = function () {
+	FilterParser.prototype.expression = function (iRbp) {
 		var oLeft, oToken;
 
 		oToken = this.advance();
@@ -218,8 +259,9 @@ sap.ui.define([
 		}
 		oLeft = this.getSymbolValue(oToken, "nud").call(this, oToken);
 		oToken = this.current();
-		if (oToken) {
+		while (oToken && this.getSymbolValue(oToken, "lbp", 0) > iRbp) {
 			oLeft = this.getSymbolValue(oToken, "led").call(this, this.advance(), oLeft);
+			oToken = this.current();
 		}
 		return oLeft;
 	};
@@ -229,16 +271,20 @@ sap.ui.define([
 	 *
 	 * @param {object} oToken The token
 	 * @param {string} sWhat The key in the symbol table entry
+	 * @param {any} [vDefault] The default value if nothing is found in the symbol table entry
 	 * @returns {any} The value
-	 * @throws {SyntaxError} An error that the token was unexpected when there is no such value
+	 * @throws {SyntaxError} An error that the token was unexpected when there is no such value and
+	 *   no default
 	 */
-	FilterParser.prototype.getSymbolValue = function (oToken, sWhat) {
+	FilterParser.prototype.getSymbolValue = function (oToken, sWhat, vDefault) {
 		var oSymbol = mFilterParserSymbols[oToken.id];
 
-		if (!oSymbol || !(sWhat in oSymbol)) {
-			this.error("Unexpected ", oToken);
+		if (oSymbol && sWhat in oSymbol) {
+			return oSymbol[sWhat];
+		} else if (vDefault !== undefined) {
+			return vDefault;
 		}
-		return oSymbol[sWhat];
+		this.error("Unexpected ", oToken);
 	};
 
 	/**
@@ -250,7 +296,7 @@ sap.ui.define([
 	 */
 	FilterParser.prototype.parse = function (sFilter) {
 		this.init(sFilter);
-		return this.finish(this.expression());
+		return this.finish(this.expression(0));
 	};
 
 	/**
@@ -520,6 +566,13 @@ sap.ui.define([
 					sId = "PATH";
 					if (sValue === "false" || sValue === "true" || sValue === "null") {
 						sId = "VALUE";
+					} else if (sValue === "not") {
+						sId = "not";
+						aMatches = rNot.exec(sNext);
+						if (!aMatches) {
+							throw new SyntaxError("Expected ' ' after 'not': " + sOption);
+						}
+						sValue = aMatches[0];
 					}
 				} else if (aMatches[3]) { // a %-escaped delimiter
 					sId = unescape(aMatches[3]);
@@ -561,7 +614,22 @@ sap.ui.define([
 		 * @returns {string} The filter string
 		 */
 		buildFilterString : function (oSyntaxTree) {
-			return oSyntaxTree.left.value + oSyntaxTree.value + oSyntaxTree.right.value;
+
+			function serialize(oNode, iParentPrecedence) {
+				var sFilter;
+
+				if (!oNode) {
+					return "";
+				}
+				sFilter = serialize(oNode.left, oNode.precedence) + oNode.value
+					+ serialize(oNode.right, oNode.precedence);
+				if (oNode.precedence < iParentPrecedence) {
+					sFilter = "(" + sFilter + ")";
+				}
+				return sFilter;
+			}
+
+			return serialize(oSyntaxTree, 0);
 		},
 
 		/**

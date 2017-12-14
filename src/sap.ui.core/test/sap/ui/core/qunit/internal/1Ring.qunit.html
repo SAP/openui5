@@ -40,8 +40,10 @@
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
 		data-cover-flags="branchTracking"
 		data-sap-ui-cover-never="[.qunit.js]"
-		data-sap-ui-cover-only="[/odata/type/,/odata/v4/,AnnotationHelper,BindingParser,ExpressionParser,ODataMetaModel,XMLPreprocessor]"
+		data-sap-ui-cover-only="[/odata/type/,/odata/v4/,AnnotationHelper,BindingParser,ExpressionParser,ODataMetaModel,SyncPromise,XMLPreprocessor]"
 		></script>
+	<script src="../../../../../../resources/sap/ui/test/BranchTracking.js"
+		data-threshold="100"></script>
 	<script>
 		// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage.js" is included!
 		jQuery.sap.require("sap.ui.core.Core");
@@ -52,6 +54,7 @@
 	<script src="ODataV4.qunit.js"></script>
 	<script src="../BindingParser.qunit.js"></script>
 	<script src="../ExpressionParser.qunit.js"></script>
+	<script src="../SyncPromise.qunit.js"></script>
 	<script src="../odata/_AnnotationHelperBasics.qunit.js"></script>
 	<script src="../odata/_AnnotationHelperExpression.qunit.js"></script>
 	<script src="../odata/_ODataMetaModelUtils.qunit.js"></script>
@@ -73,6 +76,7 @@
 	<script src="../odata/type/Time.qunit.js"></script>
 	<script src="../odata/type/TimeOfDay.qunit.js"></script>
 	<script src="../util/XMLPreprocessor.qunit.js"></script>
+
 	</head>
 	<body>
 		<div id="qunit"></div>

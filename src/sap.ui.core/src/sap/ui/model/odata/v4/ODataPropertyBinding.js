@@ -5,16 +5,16 @@
 //Provides class sap.ui.model.odata.v4.ODataPropertyBinding
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/PropertyBinding",
 	"./lib/_Cache",
-	"./lib/_SyncPromise",
 	"./ODataBinding"
-], function (jQuery, ChangeReason, PropertyBinding, _Cache, _SyncPromise, asODataBinding) {
+], function (jQuery, SyncPromise, ChangeReason, PropertyBinding, _Cache, asODataBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
-		oDoFetchQueryOptionsPromise = _SyncPromise.resolve({}),
+		oDoFetchQueryOptionsPromise = SyncPromise.resolve({}),
 		mSupportedEvents = {
 			AggregatedDataStateChange : true,
 			change : true,
@@ -72,7 +72,7 @@ sap.ui.define([
 				// Note: no system query options supported at property binding
 				this.mQueryOptions = this.oModel.buildQueryOptions(mParameters,
 					/*bSystemQueryOptionsAllowed*/false);
-				this.oCachePromise = _SyncPromise.resolve();
+				this.oCachePromise = SyncPromise.resolve();
 				this.fetchCache(oContext);
 				this.oContext = oContext;
 				this.bInitial = true;

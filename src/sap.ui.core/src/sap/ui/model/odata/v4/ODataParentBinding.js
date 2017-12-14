@@ -6,11 +6,11 @@
 //with dependent bindings
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
 	"./ODataBinding",
-	"./lib/_Helper",
-	"./lib/_SyncPromise"
-], function (jQuery, ChangeReason, asODataBinding, _Helper, _SyncPromise) {
+	"./lib/_Helper"
+], function (jQuery, SyncPromise, ChangeReason, asODataBinding, _Helper) {
 	"use strict";
 
 	/**
@@ -385,12 +385,13 @@ sap.ui.define([
 			});
 		}
 
-		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count") {
-			return _SyncPromise.resolve(true);
+		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
+				|| sChildPath[0] === "@") {
+			return SyncPromise.resolve(true);
 		}
 
 		if (!oContext) {
-			return _SyncPromise.resolve(false);
+			return SyncPromise.resolve(false);
 		}
 
 		// Note: this.oCachePromise exists for all bindings except operation bindings
@@ -408,7 +409,7 @@ sap.ui.define([
 			fetchPropertyAndType(),
 			oChildQueryOptionsPromise
 		];
-		oCanUseCachePromise = _SyncPromise.all(aPromises).then(function (aResult) {
+		oCanUseCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var mChildQueryOptions = aResult[2],
 				mWrappedChildQueryOptions,
 				mLocalQueryOptions = aResult[0],
@@ -443,7 +444,7 @@ sap.ui.define([
 			return false;
 		});
 		this.aChildCanUseCachePromises.push(oCanUseCachePromise);
-		this.oCachePromise = _SyncPromise.all([this.oCachePromise, oCanUseCachePromise])
+		this.oCachePromise = SyncPromise.all([this.oCachePromise, oCanUseCachePromise])
 			.then(function (aResult) {
 				var oCache = aResult[0];
 

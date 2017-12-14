@@ -43,16 +43,16 @@ sap.ui.require([
 	 *   QUnit's assert
 	 * @param {string} sXmlSnippet
 	 *   the XML snippet; it will be inserted below an Annotation element
-	 * @param {string} sODataVersion
-	 *   the OData version to use for the test
 	 * @param {any} vExpected
 	 *   the expected value for the annotation
+	 * @param {string} sODataVersion
+	 *   the OData version to use for the test
 	 */
 	function testExpression(assert, sXmlSnippet, vExpected, sODataVersion) {
 		var aMatches, sPath;
 
-		function convert(oConverter, sXml) {
-			var oResult = oConverter.convertXMLMetadata(xml(assert, sXml));
+		function convert(Converter, sXml) {
+			var oResult = new Converter().convertXMLMetadata(xml(assert, sXml));
 			assert.deepEqual(oResult["foo."].$Annotations["foo.Bar"]["@foo.Term"], vExpected,
 				sXml);
 		}
@@ -108,55 +108,63 @@ sap.ui.require([
 		var oXML = xml(assert, "<foo><!-- a comment -->text<bar/>more text <ignore/><bar/>"
 				+ "<bar><included1/><included2/></bar>"
 				+ "\n<bar><innerBar/><innerBar/><innerBar2/></bar></foo>"),
-			oAggregate = {
-				bar : 0,
-				innerBar : 0,
-				innerBar2 : 0,
-				included1 : 0,
-				included2 : 0
-			},
 			oInclude1Config = {
 				"included1" : {
-					__processor : processor.bind(null, "included1")
+					__processor : function (oElement) {
+						this.processor("included1", oElement);
+					}
 				}
 			},
 			oInclude2Config = {
 				"included2" : {
-					__processor : processor.bind(null, "included2")
+					__processor : function (oElement) {
+						this.processor("included2", oElement);
+					}
 				}
 			},
 			oSchemaConfig = {
 				"bar" : {
-					__processor : processor.bind(null, "bar"),
+					__processor : function (oElement) {
+						this.processor("bar", oElement);
+					},
 					__include : [oInclude1Config, oInclude2Config],
 					"innerBar" : {
-						__processor : processor.bind(null, "innerBar")
+						__processor : function (oElement) {
+							this.processor("innerBar", oElement);
+						}
 					},
 					"innerBar2" : {
-						__processor : processor.bind(null, "innerBar2")
+						__processor : function (oElement) {
+							this.processor("innerBar2", oElement);
+						}
 					}
 				}
-			};
+			},
+			oMetadataConverter = new _MetadataConverter();
 
-		function processor(sExpectedName, oElement, oMyAggregate) {
+		oMetadataConverter.bar = 0;
+		oMetadataConverter.innerBar = 0;
+		oMetadataConverter.innerBar2 = 0;
+		oMetadataConverter.included1 = 0;
+		oMetadataConverter.included2 = 0;
+		oMetadataConverter.processor = function (sExpectedName, oElement) {
 			assert.strictEqual(oElement.nodeType, 1, "is an Element");
 			assert.strictEqual(oElement.localName, sExpectedName);
-			assert.strictEqual(oMyAggregate, oAggregate);
-			oMyAggregate[sExpectedName]++;
-		}
+			this[sExpectedName]++;
+		};
 
-		_MetadataConverter.traverse(oXML.documentElement, oAggregate, oSchemaConfig);
-		assert.strictEqual(oAggregate.bar, 4);
-		assert.strictEqual(oAggregate.innerBar, 2);
-		assert.strictEqual(oAggregate.innerBar2, 1);
-		assert.strictEqual(oAggregate.included1, 1);
-		assert.strictEqual(oAggregate.included2, 1);
+		oMetadataConverter.traverse(oXML.documentElement, oSchemaConfig);
+		assert.strictEqual(oMetadataConverter.bar, 4);
+		assert.strictEqual(oMetadataConverter.innerBar, 2);
+		assert.strictEqual(oMetadataConverter.innerBar2, 1);
+		assert.strictEqual(oMetadataConverter.included1, 1);
+		assert.strictEqual(oMetadataConverter.included2, 1);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("traverse: __postProcessor", function (assert) {
 		var oXML = xml(assert, "<And><Bool>true</Bool><Bool>false</Bool></And>"),
-			oResult = _MetadataConverter.traverse(oXML.documentElement, {}, {
+			oResult = new _MetadataConverter().traverse(oXML.documentElement, {
 				__postProcessor : function (oElement, aResults) {
 					return {$And : aResults};
 				},
@@ -172,28 +180,27 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("resolveAlias", function (assert) {
-		var oAggregate = {
-				aliases : {
-					"display" : "org.example.vocabularies.display."
-				}
-			};
+		var oMetadataConverter = new _MetadataConverter();
 
-		assert.strictEqual(_MetadataConverter.resolveAlias("", oAggregate), "");
-		assert.strictEqual(_MetadataConverter.resolveAlias("display.Foo", oAggregate),
+		oMetadataConverter.aliases = {
+			"display" : "org.example.vocabularies.display."
+		};
+
+		assert.strictEqual(oMetadataConverter.resolveAlias(""), "");
+		assert.strictEqual(oMetadataConverter.resolveAlias("display.Foo"),
 			"org.example.vocabularies.display.Foo");
-		assert.strictEqual(_MetadataConverter.resolveAlias("display.bar.Foo", oAggregate),
+		assert.strictEqual(oMetadataConverter.resolveAlias("display.bar.Foo"),
 			"display.bar.Foo");
-		assert.strictEqual(_MetadataConverter.resolveAlias("bar.Foo", oAggregate), "bar.Foo");
-		assert.strictEqual(_MetadataConverter.resolveAlias("Foo", oAggregate), "Foo");
+		assert.strictEqual(oMetadataConverter.resolveAlias("bar.Foo"), "bar.Foo");
+		assert.strictEqual(oMetadataConverter.resolveAlias("Foo"), "Foo");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("resolveAliasInPath", function (assert) {
-		var oAggregate = {},
-			oMock = this.mock(_MetadataConverter);
+		var oMock = this.mock(_MetadataConverter.prototype);
 
 			function localTest(sPath, sExpected) {
-				assert.strictEqual(_MetadataConverter.resolveAliasInPath(sPath, oAggregate),
+				assert.strictEqual(new _MetadataConverter().resolveAliasInPath(sPath),
 					sExpected || sPath);
 			}
 
@@ -203,25 +210,25 @@ sap.ui.require([
 			localTest("Employees/Team");
 
 			oMock.expects("resolveAlias")
-				.withExactArgs("f.Some", sinon.match.same(oAggregate)).returns("foo.Some");
+				.withExactArgs("f.Some").returns("foo.Some");
 			oMock.expects("resolveAlias")
-				.withExactArgs("f.Random", sinon.match.same(oAggregate)).returns("foo.Random");
+				.withExactArgs("f.Random").returns("foo.Random");
 			oMock.expects("resolveAlias")
-				.withExactArgs("f.Path", sinon.match.same(oAggregate)).returns("foo.Path");
+				.withExactArgs("f.Path").returns("foo.Path");
 			localTest("f.Some/f.Random/f.Path", "foo.Some/foo.Random/foo.Path");
 
 			oMock.expects("resolveAlias")
-				.withExactArgs("f.Path", sinon.match.same(oAggregate)).returns("foo.Path");
+				.withExactArgs("f.Path").returns("foo.Path");
 			oMock.expects("resolveAlias")
-				.withExactArgs("f.Term", sinon.match.same(oAggregate)).returns("foo.Term");
+				.withExactArgs("f.Term").returns("foo.Term");
 			localTest("f.Path@f.Term", "foo.Path@foo.Term");
 
 			oMock.expects("resolveAlias")
-				.withExactArgs("f.Path", sinon.match.same(oAggregate)).returns("foo.Path");
+				.withExactArgs("f.Path").returns("foo.Path");
 			oMock.expects("resolveAlias")
-				.withExactArgs("", sinon.match.same(oAggregate)).returns("");
+				.withExactArgs("").returns("");
 			oMock.expects("resolveAlias")
-				.withExactArgs("f.Term", sinon.match.same(oAggregate)).returns("foo.Term");
+				.withExactArgs("f.Term").returns("foo.Term");
 			localTest("f.Path/@f.Term", "foo.Path/@foo.Term");
 	});
 

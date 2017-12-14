@@ -6,9 +6,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/test/TestUtils"
-], function (jQuery, _Batch, _Helper, _Requestor, _SyncPromise, TestUtils) {
+], function (jQuery, _Batch, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
