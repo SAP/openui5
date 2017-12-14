@@ -46,9 +46,9 @@ sap.ui.define(['jquery.sap.global'],
 
 		oRm.write(">");
 
-		// If the attribute is active only the "text" should be clickable, so render title, colon and text in different spans
+		// If the attribute is active and there is no CustomContent only the "text" should be clickable, so render title, colon and text in different spans
 		// For the ObjectHeader the rendering of the parts of the ObjectAttribute is always in separate spans
-		if (oOA.getActive() || (oParent instanceof sap.m.ObjectHeader)) {
+		if (oOA.getActive() && !oOA.getCustomContent() || (oParent instanceof sap.m.ObjectHeader)) {
 			this.renderActiveTitle(oRm, oOA);
 			this.renderActiveText(oRm, oOA, oParent);
 		} else {
