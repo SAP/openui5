@@ -1127,16 +1127,18 @@ sap.ui.require([
 			that.oHSb.scrollLeft = 0;
 			iCurrentScrollPosition = 0;
 
-			return scrollWithMouseWheel(oTargetElement, 150, DeltaMode.PIXEL, iCurrentScrollPosition + 150, true).then(function() {
-				return scrollWithMouseWheel(oTargetElement, 3, DeltaMode.LINE, iCurrentScrollPosition + iMinColumnWidth, true);
+			return scrollWithMouseWheel(oTargetElement, 150, DeltaMode.PIXEL, true, iCurrentScrollPosition + 150, true).then(function() {
+				return scrollWithMouseWheel(oTargetElement, 3, DeltaMode.LINE, true, iCurrentScrollPosition + iMinColumnWidth, true);
 			}).then(function() {
-				return scrollWithMouseWheel(oTargetElement, 2, DeltaMode.PAGE, iCurrentScrollPosition + iMinColumnWidth, true);
+				return scrollWithMouseWheel(oTargetElement, 2, DeltaMode.PAGE, true, iCurrentScrollPosition + iMinColumnWidth, true);
 			}).then(function() {
-				return scrollWithMouseWheel(oTargetElement, -150, DeltaMode.PIXEL, iCurrentScrollPosition - 150, true);
+				return scrollWithMouseWheel(oTargetElement, -100, DeltaMode.PIXEL, true, iCurrentScrollPosition - 100, true);
 			}).then(function() {
-				return scrollWithMouseWheel(oTargetElement, -3, DeltaMode.LINE, iCurrentScrollPosition - iMinColumnWidth, true);
+				return scrollWithMouseWheel(oTargetElement, -50, DeltaMode.PIXEL, false, iCurrentScrollPosition - 50, true);
 			}).then(function() {
-				return scrollWithMouseWheel(oTargetElement, -2, DeltaMode.PAGE, iCurrentScrollPosition - iMinColumnWidth, true);
+				return scrollWithMouseWheel(oTargetElement, -3, DeltaMode.LINE, true, iCurrentScrollPosition - iMinColumnWidth, true);
+			}).then(function() {
+				return scrollWithMouseWheel(oTargetElement, -2, DeltaMode.PAGE, true, iCurrentScrollPosition - iMinColumnWidth, true);
 			});
 		}
 
@@ -1144,11 +1146,11 @@ sap.ui.require([
 			that.oHSb.scrollLeft = 0;
 			iCurrentScrollPosition = 0;
 
-			return scrollWithMouseWheel(oTargetElement, -150, DeltaMode.PIXEL, 0, true).then(function() {
+			return scrollWithMouseWheel(oTargetElement, -150, DeltaMode.PIXEL, true, 0, true).then(function() {
 				that.oHSb.scrollLeft = that.oHSb.scrollWidth - that.oHSb.getBoundingClientRect().width;
 				iCurrentScrollPosition = that.oHSb.scrollLeft;
 
-				return scrollWithMouseWheel(oTargetElement, 150, DeltaMode.PIXEL, iCurrentScrollPosition, true);
+				return scrollWithMouseWheel(oTargetElement, 150, DeltaMode.PIXEL, true, iCurrentScrollPosition, true);
 			});
 		}
 
@@ -1156,28 +1158,30 @@ sap.ui.require([
 			that.oHSb.scrollLeft = 50;
 			iCurrentScrollPosition = 50;
 
-			return scrollWithMouseWheel(oTargetElement, 150, DeltaMode.PIXEL, iCurrentScrollPosition, false).then(function() {
-				return scrollWithMouseWheel(oTargetElement, -150, DeltaMode.PIXEL, iCurrentScrollPosition, false);
+			return scrollWithMouseWheel(oTargetElement, 150, DeltaMode.PIXEL, true, iCurrentScrollPosition, false).then(function() {
+				return scrollWithMouseWheel(oTargetElement, -150, DeltaMode.PIXEL, true, iCurrentScrollPosition, false);
 			});
 		}
 
-		function scrollWithMouseWheel(oTargetElement, iScrollDelta, iDeltaMode, iExpectedScrollPosition, bValidTarget) {
+		function scrollWithMouseWheel(oTargetElement, iScrollDelta, iDeltaMode, bShift, iExpectedScrollPosition, bValidTarget) {
 			return new Promise(function(resolve) {
 				var oWheelEvent;
 
 				if (typeof Event === "function") {
 					oWheelEvent = new window.WheelEvent("wheel", {
-						deltaY: iScrollDelta,
+						deltaY: bShift ? iScrollDelta : 0,
+						deltaX: bShift ? 0 : iScrollDelta,
 						deltaMode: iDeltaMode,
-						shiftKey: true,
+						shiftKey: bShift,
 						bubbles: true,
 						cancelable: true
 					});
 				} else { // IE or PhantomJS
 					oWheelEvent = document.createEvent("Event");
-					oWheelEvent.deltaY = iScrollDelta;
+					oWheelEvent.deltaY = bShift ? iScrollDelta : 0;
+					oWheelEvent.deltaX = bShift ? 0 : iScrollDelta;
 					oWheelEvent.deltaMode = iDeltaMode;
-					oWheelEvent.shiftKey = true;
+					oWheelEvent.shiftKey = bShift;
 					oWheelEvent.initEvent("wheel", true, true);
 
 					if (Device.browser.msie) {
@@ -1574,7 +1578,7 @@ sap.ui.require([
 		}
 
 		var DummyControl = sap.ui.core.Control.extend("sap.ui.table.test.DummyControl", {
-			renderer: function (oRm, oControl) {
+			renderer: function(oRm, oControl) {
 				oRm.write("<div style=\"display: flex; flex-direction: column\">");
 				oRm.write("<span tabindex=\"0\" style=\"width: 100px; margin-top: 100px;\">really very looooooooooong text</span>");
 
