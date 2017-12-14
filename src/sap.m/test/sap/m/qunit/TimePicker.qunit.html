@@ -3118,7 +3118,7 @@
 				oPositionCaretSpy = this.spy(this.oTp, "_positionCaret");
 
 			// act
-			this.oTp.oninput({});
+			this.oTp.oninput({ setMarked: function () {}});
 
 			// assert
 			assert.equal(oApplyMaskSpy.callCount, 1, "MaskEnabler._applyMask should be called once");
@@ -3137,7 +3137,7 @@
 					oPositionCaretSpy = this.spy(this.oTp, "_positionCaret");
 
 			// act
-			this.oTp.oninput({});
+			this.oTp.oninput({ setMarked: function () {}});
 
 			// assert
 			assert.equal(oApplyMaskSpy.callCount, 0, "MaskEnabler._applyMask should not be called");
