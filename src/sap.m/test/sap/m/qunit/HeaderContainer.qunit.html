@@ -68,6 +68,19 @@
                 assert.ok(this.oHeaderContainer.getShowDividers());
             });
 
+            QUnit.test("Content changes should not break out container timer", function(assert) {
+                this.oHeaderContainer.addContent(new sap.m.Label({
+                    text: "test"
+                }));
+                sap.ui.getCore().applyChanges();
+
+                this.oHeaderContainer.removeAllContent();
+                this.oHeaderContainer.addContent(new sap.m.Label({
+                    text: "test"
+                }));
+                assert.equal(this.oHeaderContainer.getContent().length, 1);
+            });
+
             QUnit.test("Orientation should be set to Horizontal", function(assert) {
                 assert.deepEqual(this.oHeaderContainer.getOrientation(), sap.ui.core.Orientation.Horizontal);
             });
