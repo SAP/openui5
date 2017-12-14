@@ -280,6 +280,7 @@ sap.ui.define([
 							width: "100%",
 							content: [
 								new Table({
+									fixedLayout: false,
 									columns: [
 										new Column({
 											vAlign: "Top",
@@ -377,6 +378,7 @@ sap.ui.define([
 							width: "100%",
 							content: [
 								new Table({
+									fixedLayout: false,
 									visible: "{/hasOwnEvents}",
 									columns: [
 										new Column({
@@ -465,6 +467,7 @@ sap.ui.define([
 					title: "Summary",
 					blocks: [
 						new Table({
+							fixedLayout: false,
 							columns: [
 								new Column({
 									vAlign: "Top",
