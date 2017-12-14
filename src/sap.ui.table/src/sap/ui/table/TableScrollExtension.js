@@ -331,8 +331,9 @@ sap.ui.define([
 		 */
 		onMouseWheelScrolling: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
-			var bHorizontalScrolling = oEvent.shiftKey;
-			var iScrollDelta = oEvent.deltaY;
+			var bVerticalDelta = Math.abs(oEvent.deltaY) > Math.abs(oEvent.deltaX);
+			var iScrollDelta = bVerticalDelta ? oEvent.deltaY : oEvent.deltaX;
+			var bHorizontalScrolling = bVerticalDelta && oEvent.shiftKey || !bVerticalDelta;
 			var bScrollingForward = iScrollDelta > 0;
 			var bScrolledToEnd = false;
 
