@@ -10,8 +10,8 @@
 		"ae": "авестийский",
 		"af": "африкаанс",
 		"afh": "африхили",
-		"agq": "агхем",
-		"ain": "айну",
+		"agq": "агем",
+		"ain": "айнский",
 		"ak": "акан",
 		"akk": "аккадский",
 		"ale": "алеутский",
@@ -80,10 +80,10 @@
 		"chk": "чукотский",
 		"chm": "марийский",
 		"chn": "чинук жаргон",
-		"cho": "чоктав",
+		"cho": "чоктавский",
 		"chp": "чипевьян",
 		"chr": "чероки",
-		"chy": "чейенн",
+		"chy": "шайенский",
 		"ckb": "сорани",
 		"co": "корсиканский",
 		"cop": "коптский",
@@ -151,12 +151,13 @@
 		"fr": "французский",
 		"fr_CA": "канадский французский",
 		"fr_CH": "швейцарский французский",
+		"frc": "каджунский французский",
 		"frm": "среднефранцузский",
 		"fro": "старофранцузский",
 		"frr": "северный фризский",
 		"frs": "восточный фризский",
 		"fur": "фриульский",
-		"fy": "западный фризский",
+		"fy": "западнофризский",
 		"ga": "ирландский",
 		"gaa": "га",
 		"gag": "гагаузский",
@@ -277,6 +278,7 @@
 		"ln": "лингала",
 		"lo": "лаосский",
 		"lol": "монго",
+		"lou": "луизианский креольский",
 		"loz": "лози",
 		"lrc": "севернолурский",
 		"lt": "литовский",
@@ -403,7 +405,7 @@
 		"rwk": "руанда",
 		"sa": "санскрит",
 		"sad": "сандаве",
-		"sah": "якутский",
+		"sah": "саха",
 		"sam": "самаритянский арамейский",
 		"saq": "самбуру",
 		"sas": "сасакский",
@@ -578,6 +580,7 @@
 		"Geok": "грузинская хуцури",
 		"Geor": "грузинская",
 		"Glag": "глаголица",
+		"Gonm": "Gonm",
 		"Goth": "готская",
 		"Gran": "грантха",
 		"Grek": "греческая",
@@ -587,9 +590,9 @@
 		"Hang": "хангыль",
 		"Hani": "китайская",
 		"Hano": "хануну",
-		"Hans": "упрощенная китайская",
+		"Hans": "упрощенный",
 		"Hans-alt-stand-alone": "упрощенная китайская",
-		"Hant": "традиционная китайская",
+		"Hant": "традиционный",
 		"Hant-alt-stand-alone": "традиционная китайская",
 		"Hatr": "Hatr",
 		"Hebr": "еврейская",
@@ -678,6 +681,7 @@
 		"Sind": "кхудавади",
 		"Sinh": "сингальская",
 		"Sora": "сора-сонпенг",
+		"Soyo": "Soyo",
 		"Sund": "сунданская",
 		"Sylo": "силоти нагри",
 		"Syrc": "сирийская",
@@ -707,11 +711,12 @@
 		"Xpeo": "староперсидская",
 		"Xsux": "шумеро-аккадская клинопись",
 		"Yiii": "и",
+		"Zanb": "Zanb",
 		"Zinh": "унаследованная",
 		"Zmth": "математические обозначения",
 		"Zsye": "эмодзи",
 		"Zsym": "символы",
-		"Zxxx": "бесписьменный",
+		"Zxxx": "нет письменности",
 		"Zyyy": "общепринятая",
 		"Zzzz": "неизвестная письменность"
 	},
@@ -723,8 +728,9 @@
 		"151": "Восточная Европа",
 		"154": "Северная Европа",
 		"155": "Западная Европа",
+		"202": "202",
 		"419": "Латинская Америка",
-		"001": "Мир",
+		"001": "весь мир",
 		"002": "Африка",
 		"003": "Северная Америка",
 		"005": "Южная Америка",
@@ -736,7 +742,7 @@
 		"017": "Центральная Африка",
 		"018": "Южная Африка",
 		"019": "Америка",
-		"021": "Северная Америка – США и Канада",
+		"021": "Североамериканский регион",
 		"029": "Карибы",
 		"030": "Восточная Азия",
 		"034": "Южная Азия",
@@ -773,7 +779,7 @@
 		"BI": "Бурунди",
 		"BJ": "Бенин",
 		"BL": "Сен-Бартелеми",
-		"BM": "Бермуды",
+		"BM": "Бермудские о-ва",
 		"BN": "Бруней-Даруссалам",
 		"BO": "Боливия",
 		"BQ": "Бонэйр, Синт-Эстатиус и Саба",
@@ -788,12 +794,12 @@
 		"CC": "Кокосовые о-ва",
 		"CD": "Конго - Киншаса",
 		"CD-alt-variant": "Конго (ДРК)",
-		"CF": "ЦАР",
+		"CF": "Центрально-Африканская Республика",
 		"CG": "Конго - Браззавиль",
 		"CG-alt-variant": "Республика Конго",
 		"CH": "Швейцария",
 		"CI": "Кот-д’Ивуар",
-		"CI-alt-variant": "Берег Слоновой Кости",
+		"CI-alt-variant": "CI",
 		"CK": "Острова Кука",
 		"CL": "Чили",
 		"CM": "Камерун",
@@ -824,7 +830,7 @@
 		"ES": "Испания",
 		"ET": "Эфиопия",
 		"EU": "Европейский союз",
-		"EZ": "EZ",
+		"EZ": "еврозона",
 		"FI": "Финляндия",
 		"FJ": "Фиджи",
 		"FK": "Фолклендские о-ва",
@@ -852,7 +858,7 @@
 		"GU": "Гуам",
 		"GW": "Гвинея-Бисау",
 		"GY": "Гайана",
-		"HK": "Гонконг (специальный административный район)",
+		"HK": "Гонконг (САР)",
 		"HK-alt-short": "Гонконг",
 		"HM": "о-ва Херд и Макдональд",
 		"HN": "Гондурас",
@@ -908,7 +914,7 @@
 		"ML": "Мали",
 		"MM": "Мьянма (Бирма)",
 		"MN": "Монголия",
-		"MO": "Макао (специальный административный район)",
+		"MO": "Макао (САР)",
 		"MO-alt-short": "Макао",
 		"MP": "Северные Марианские о-ва",
 		"MQ": "Мартиника",
@@ -937,7 +943,7 @@
 		"PA": "Панама",
 		"PE": "Перу",
 		"PF": "Французская Полинезия",
-		"PG": "Папуа – Новая Гвинея",
+		"PG": "Папуа — Новая Гвинея",
 		"PH": "Филиппины",
 		"PK": "Пакистан",
 		"PL": "Польша",
@@ -1016,10 +1022,10 @@
 		"XK": "Косово",
 		"YE": "Йемен",
 		"YT": "Майотта",
-		"ZA": "ЮАР",
+		"ZA": "Южно-Африканская Республика",
 		"ZM": "Замбия",
 		"ZW": "Зимбабве",
-		"ZZ": "Неизвестный регион"
+		"ZZ": "неизвестный регион"
 	},
 	"orientation": "left-to-right",
 	"ca-gregorian": {
@@ -1041,8 +1047,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "ccc, h:mm B",
+				"EBhms": "ccc, h:mm:ss B",
 				"Ed": "ccc, d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1074,7 +1085,7 @@
 				"y": "y",
 				"yM": "MM.y",
 				"yMd": "dd.MM.y",
-				"yMEd": "ccc, d.MM.y 'г'.",
+				"yMEd": "ccc, dd.MM.y 'г'.",
 				"yMM": "MM.y",
 				"yMMM": "LLL y 'г'.",
 				"yMMMd": "d MMM y 'г'.",
@@ -1082,8 +1093,8 @@
 				"yMMMM": "LLLL y 'г'.",
 				"yQQQ": "QQQ y 'г'.",
 				"yQQQQ": "QQQQ y 'г'.",
-				"MMMMW": "W-'я' 'неделя' MMM",
-				"yw": "w-'я' 'неделя' y 'г'."
+				"MMMMW": "W-'я' 'неделя' MMMM",
+				"yw": "w-'я' 'неделя' Y 'г'."
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1410,30 +1421,30 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				]
 			}
 		},
@@ -1469,23 +1480,28 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "ccc, h:mm B",
+				"EBhms": "ccc, h:mm:ss B",
 				"Ed": "E, d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
-				"Gy": "y G",
-				"GyMMM": "LLL y G",
+				"Ehm": "ccc, h:mm a",
+				"EHm": "ccc HH:mm",
+				"Ehms": "ccc, h:mm:ss a",
+				"EHms": "ccc HH:mm:ss",
+				"Gy": "y 'г'. G",
+				"GyMMM": "LLL y 'г'. G",
 				"GyMMMd": "d MMM y 'г'. G",
 				"GyMMMEd": "E, d MMM y 'г'. G",
 				"h": "h a",
-				"H": "H",
+				"H": "HH",
 				"hm": "h:mm a",
-				"Hm": "H:mm",
+				"Hm": "HH:mm",
 				"hms": "h:mm:ss a",
-				"Hms": "H:mm:ss",
+				"Hms": "HH:mm:ss",
 				"M": "L",
 				"Md": "dd.MM",
 				"MEd": "E, dd.MM",
@@ -1494,16 +1510,16 @@
 				"MMMEd": "ccc, d MMM",
 				"MMMMd": "d MMMM",
 				"ms": "mm:ss",
-				"y": "y G",
-				"yyyy": "y G",
+				"y": "y 'г'. G",
+				"yyyy": "y 'г'. G",
 				"yyyyM": "MM.y G",
 				"yyyyMd": "dd.MM.y G",
 				"yyyyMEd": "E, dd.MM.y G",
-				"yyyyMMM": "LLL y G",
+				"yyyyMMM": "LLL y 'г'. G",
 				"yyyyMMMd": "d MMM y 'г'. G",
 				"yyyyMMMEd": "E, d MMM y 'г'. G",
-				"yyyyMMMM": "LLLL y G",
-				"yyyyQQQ": "QQQ y G",
+				"yyyyMMMM": "LLLL y 'г'. G",
+				"yyyyQQQ": "QQQ y 'г'. G",
 				"yyyyQQQQ": "QQQQ y 'г'. G"
 			},
 			"appendItems": {
@@ -1575,14 +1591,14 @@
 					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "ccc, d – ccc, d MMM",
+					"d": "ccc, d MMM – ccc, d MMM",
 					"M": "ccc, d MMM – ccc, d MMM"
 				},
 				"MMMM": {
 					"M": "LLLL – LLLL"
 				},
 				"y": {
-					"y": "y–y G"
+					"y": "y–y 'гг'. G"
 				},
 				"yM": {
 					"M": "MM.y – MM.y G",
@@ -1608,7 +1624,7 @@
 					"y": "d MMM y 'г'. – d MMM y 'г'. G"
 				},
 				"yMMMEd": {
-					"d": "ccc, d – ccc, d MMM y 'г'. G",
+					"d": "ccc, d MMM – ccc, d MMM y 'г'. G",
 					"M": "ccc, d MMM – ccc, d MMM y 'г'. G",
 					"y": "ccc, d MMM y 'г'. – ccc, d MMM y 'г'. G"
 				},
@@ -1621,18 +1637,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Мухаррам",
-					"Сафар",
-					"Раби-уль-авваль",
-					"Раби-уль-ахир",
-					"Джумад-уль-авваль",
-					"Джумад-уль-ахир",
-					"Раджаб",
-					"Шаабан",
-					"Рамадан",
-					"Шавваль",
-					"Зуль-Каада",
-					"Зуль-Хиджжа"
+					"мух.",
+					"саф.",
+					"раб. I",
+					"раб. II",
+					"джум. I",
+					"джум. II",
+					"радж.",
+					"шааб.",
+					"рам.",
+					"шав.",
+					"зуль-к.",
+					"зуль-х."
 				],
 				"narrow": [
 					"1",
@@ -1649,34 +1665,34 @@
 					"12"
 				],
 				"wide": [
-					"Мухаррам",
-					"Сафар",
-					"Раби-уль-авваль",
-					"Раби-уль-ахир",
-					"Джумад-уль-авваль",
-					"Джумад-уль-ахир",
-					"Раджаб",
-					"Шаабан",
-					"Рамадан",
-					"Шавваль",
-					"Зуль-Каада",
-					"Зуль-Хиджжа"
+					"мухаррам",
+					"сафар",
+					"раби-уль-авваль",
+					"раби-уль-ахир",
+					"джумад-уль-авваль",
+					"джумад-уль-ахир",
+					"раджаб",
+					"шаабан",
+					"рамадан",
+					"шавваль",
+					"зуль-каада",
+					"зуль-хиджжа"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Мухаррам",
-					"Сафар",
-					"Раби-уль-авваль",
-					"Раби-уль-ахир",
-					"Джумад-уль-авваль",
-					"Джумад-уль-ахир",
-					"Раджаб",
-					"Шаабан",
-					"Рамадан",
-					"Шавваль",
-					"Зуль-Каада",
-					"Зуль-Хиджжа"
+					"мух.",
+					"саф.",
+					"раб. I",
+					"раб. II",
+					"джум. I",
+					"джум. II",
+					"радж.",
+					"шааб.",
+					"рам.",
+					"шав.",
+					"зуль-к.",
+					"зуль-х."
 				],
 				"narrow": [
 					"1",
@@ -1693,18 +1709,18 @@
 					"12"
 				],
 				"wide": [
-					"Мухаррам",
-					"Сафар",
-					"Раби-уль-авваль",
-					"Раби-уль-ахир",
-					"Джумад-уль-авваль",
-					"Джумад-уль-ахир",
-					"Раджаб",
-					"Шаабан",
-					"Рамадан",
-					"Шавваль",
-					"Зуль-Каада",
-					"Зуль-Хиджжа"
+					"мухаррам",
+					"сафар",
+					"раби-уль-авваль",
+					"раби-уль-ахир",
+					"джумад-уль-авваль",
+					"джумад-уль-ахир",
+					"раджаб",
+					"шаабан",
+					"рамадан",
+					"шавваль",
+					"зуль-каада",
+					"зуль-хиджжа"
 				]
 			}
 		},
@@ -1831,35 +1847,35 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				]
 			}
 		},
 		"era-wide": {
-			"0": "AH"
+			"0": "после хиджры"
 		},
 		"era-abbreviated": {
 			"0": "AH"
@@ -1887,23 +1903,28 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "ccc, h:mm B",
+				"EBhms": "ccc, h:mm:ss B",
 				"Ed": "E, d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
-				"Gy": "y G",
-				"GyMMM": "LLL y G",
+				"Ehm": "ccc, h:mm a",
+				"EHm": "ccc HH:mm",
+				"Ehms": "ccc, h:mm:ss a",
+				"EHms": "ccc HH:mm:ss",
+				"Gy": "y 'г'. G",
+				"GyMMM": "LLL y 'г'. G",
 				"GyMMMd": "d MMM y 'г'. G",
 				"GyMMMEd": "E, d MMM y 'г'. G",
 				"h": "h a",
-				"H": "H",
+				"H": "HH",
 				"hm": "h:mm a",
-				"Hm": "H:mm",
+				"Hm": "HH:mm",
 				"hms": "h:mm:ss a",
-				"Hms": "H:mm:ss",
+				"Hms": "HH:mm:ss",
 				"M": "L",
 				"Md": "dd.MM",
 				"MEd": "E, dd.MM",
@@ -1912,16 +1933,16 @@
 				"MMMEd": "ccc, d MMM",
 				"MMMMd": "d MMMM",
 				"ms": "mm:ss",
-				"y": "y G",
-				"yyyy": "y G",
+				"y": "y 'г'. G",
+				"yyyy": "y 'г'. G",
 				"yyyyM": "MM.y G",
 				"yyyyMd": "dd.MM.y G",
 				"yyyyMEd": "E, dd.MM.y G",
-				"yyyyMMM": "LLL y G",
+				"yyyyMMM": "LLL y 'г'. G",
 				"yyyyMMMd": "d MMM y 'г'. G",
 				"yyyyMMMEd": "E, d MMM y 'г'. G",
-				"yyyyMMMM": "LLLL y G",
-				"yyyyQQQ": "QQQ y G",
+				"yyyyMMMM": "LLLL y 'г'. G",
+				"yyyyQQQ": "QQQ y 'г'. G",
 				"yyyyQQQQ": "QQQQ y 'г'. G"
 			},
 			"appendItems": {
@@ -1993,14 +2014,14 @@
 					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "ccc, d – ccc, d MMM",
+					"d": "ccc, d MMM – ccc, d MMM",
 					"M": "ccc, d MMM – ccc, d MMM"
 				},
 				"MMMM": {
 					"M": "LLLL – LLLL"
 				},
 				"y": {
-					"y": "y–y G"
+					"y": "y–y 'гг'. G"
 				},
 				"yM": {
 					"M": "MM.y – MM.y G",
@@ -2026,7 +2047,7 @@
 					"y": "d MMM y 'г'. – d MMM y 'г'. G"
 				},
 				"yMMMEd": {
-					"d": "ccc, d – ccc, d MMM y 'г'. G",
+					"d": "ccc, d MMM – ccc, d MMM y 'г'. G",
 					"M": "ccc, d MMM – ccc, d MMM y 'г'. G",
 					"y": "ccc, d MMM y 'г'. – ccc, d MMM y 'г'. G"
 				},
@@ -2249,30 +2270,30 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				]
 			}
 		},
@@ -2314,23 +2335,28 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "ccc, h:mm B",
+				"EBhms": "ccc, h:mm:ss B",
 				"Ed": "E, d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
-				"Gy": "y G",
-				"GyMMM": "LLL y G",
+				"Ehm": "ccc, h:mm a",
+				"EHm": "ccc HH:mm",
+				"Ehms": "ccc, h:mm:ss a",
+				"EHms": "ccc HH:mm:ss",
+				"Gy": "y 'г'. G",
+				"GyMMM": "LLL y 'г'. G",
 				"GyMMMd": "d MMM y 'г'. G",
 				"GyMMMEd": "E, d MMM y 'г'. G",
 				"h": "h a",
-				"H": "H",
+				"H": "HH",
 				"hm": "h:mm a",
-				"Hm": "H:mm",
+				"Hm": "HH:mm",
 				"hms": "h:mm:ss a",
-				"Hms": "H:mm:ss",
+				"Hms": "HH:mm:ss",
 				"M": "L",
 				"Md": "dd.MM",
 				"MEd": "E, dd.MM",
@@ -2339,16 +2365,16 @@
 				"MMMEd": "ccc, d MMM",
 				"MMMMd": "d MMMM",
 				"ms": "mm:ss",
-				"y": "y G",
-				"yyyy": "y G",
+				"y": "y 'г'. G",
+				"yyyy": "y 'г'. G",
 				"yyyyM": "MM.y G",
 				"yyyyMd": "dd.MM.y G",
 				"yyyyMEd": "E, dd.MM.y G",
-				"yyyyMMM": "LLL y G",
+				"yyyyMMM": "LLL y 'г'. G",
 				"yyyyMMMd": "d MMM y 'г'. G",
 				"yyyyMMMEd": "E, d MMM y 'г'. G",
-				"yyyyMMMM": "LLLL y G",
-				"yyyyQQQ": "QQQ y G",
+				"yyyyMMMM": "LLLL y 'г'. G",
+				"yyyyQQQ": "QQQ y 'г'. G",
 				"yyyyQQQQ": "QQQQ y 'г'. G"
 			},
 			"appendItems": {
@@ -2420,14 +2446,14 @@
 					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "ccc, d – ccc, d MMM",
+					"d": "ccc, d MMM – ccc, d MMM",
 					"M": "ccc, d MMM – ccc, d MMM"
 				},
 				"MMMM": {
 					"M": "LLLL – LLLL"
 				},
 				"y": {
-					"y": "y–y G"
+					"y": "y–y 'гг'. G"
 				},
 				"yM": {
 					"M": "MM.y – MM.y G",
@@ -2453,7 +2479,7 @@
 					"y": "d MMM y 'г'. – d MMM y 'г'. G"
 				},
 				"yMMMEd": {
-					"d": "ccc, d – ccc, d MMM y 'г'. G",
+					"d": "ccc, d MMM – ccc, d MMM y 'г'. G",
 					"M": "ccc, d MMM – ccc, d MMM y 'г'. G",
 					"y": "ccc, d MMM y 'г'. – ccc, d MMM y 'г'. G"
 				},
@@ -2466,18 +2492,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Фарвардин",
-					"Ордибехешт",
-					"Хордад",
-					"Тир",
-					"Мордад",
-					"Шахривер",
-					"Мехр",
-					"Абан",
-					"Азер",
-					"Дей",
-					"Бахман",
-					"Эсфанд"
+					"фарвардин",
+					"ордибехешт",
+					"хордад",
+					"тир",
+					"мордад",
+					"шахривер",
+					"мехр",
+					"абан",
+					"азер",
+					"дей",
+					"бахман",
+					"эсфанд"
 				],
 				"narrow": [
 					"1",
@@ -2494,34 +2520,34 @@
 					"12"
 				],
 				"wide": [
-					"Фарвардин",
-					"Ордибехешт",
-					"Хордад",
-					"Тир",
-					"Мордад",
-					"Шахривер",
-					"Мехр",
-					"Абан",
-					"Азер",
-					"Дей",
-					"Бахман",
-					"Эсфанд"
+					"фарвардин",
+					"ордибехешт",
+					"хордад",
+					"тир",
+					"мордад",
+					"шахривер",
+					"мехр",
+					"абан",
+					"азер",
+					"дей",
+					"бахман",
+					"эсфанд"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Фарвардин",
-					"Ордибехешт",
-					"Хордад",
-					"Тир",
-					"Мордад",
-					"Шахривер",
-					"Мехр",
-					"Абан",
-					"Азер",
-					"Дей",
-					"Бахман",
-					"Эсфанд"
+					"фарвардин",
+					"ордибехешт",
+					"хордад",
+					"тир",
+					"мордад",
+					"шахривер",
+					"мехр",
+					"абан",
+					"азер",
+					"дей",
+					"бахман",
+					"эсфанд"
 				],
 				"narrow": [
 					"1",
@@ -2538,18 +2564,18 @@
 					"12"
 				],
 				"wide": [
-					"Фарвардин",
-					"Ордибехешт",
-					"Хордад",
-					"Тир",
-					"Мордад",
-					"Шахривер",
-					"Мехр",
-					"Абан",
-					"Азер",
-					"Дей",
-					"Бахман",
-					"Эсфанд"
+					"фарвардин",
+					"ордибехешт",
+					"хордад",
+					"тир",
+					"мордад",
+					"шахривер",
+					"мехр",
+					"абан",
+					"азер",
+					"дей",
+					"бахман",
+					"эсфанд"
 				]
 			}
 		},
@@ -2676,41 +2702,41 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"ДП",
-					"ПП"
+					"AM",
+					"PM"
 				]
 			}
 		},
 		"era-wide": {
-			"0": "AP"
+			"0": "персидский год"
 		},
 		"era-abbreviated": {
-			"0": "AP"
+			"0": "перс. год"
 		},
 		"era-narrow": {
-			"0": "AP"
+			"0": "перс. год"
 		}
 	},
 	"dateFields": {
@@ -2737,9 +2763,9 @@
 		},
 		"year-short": {
 			"displayName": "г.",
-			"relative-type--1": "в прошлом году",
-			"relative-type-0": "в этом году",
-			"relative-type-1": "в следующем году",
+			"relative-type--1": "в прошлом г.",
+			"relative-type-0": "в этом г.",
+			"relative-type-1": "в след. г.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "через {0} г.",
 				"relativeTimePattern-count-few": "через {0} г.",
@@ -2755,9 +2781,9 @@
 		},
 		"year-narrow": {
 			"displayName": "г.",
-			"relative-type--1": "в прошлом году",
-			"relative-type-0": "в этом году",
-			"relative-type-1": "в следующем году",
+			"relative-type--1": "в пр. г.",
+			"relative-type-0": "в эт. г.",
+			"relative-type-1": "в сл. г.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} г.",
 				"relativeTimePattern-count-few": "+{0} г.",
@@ -2845,9 +2871,9 @@
 		},
 		"month-short": {
 			"displayName": "мес.",
-			"relative-type--1": "в прошлом месяце",
-			"relative-type-0": "в этом месяце",
-			"relative-type-1": "в следующем месяце",
+			"relative-type--1": "в прошлом мес.",
+			"relative-type-0": "в этом мес.",
+			"relative-type-1": "в следующем мес.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "через {0} мес.",
 				"relativeTimePattern-count-few": "через {0} мес.",
@@ -2863,9 +2889,9 @@
 		},
 		"month-narrow": {
 			"displayName": "мес.",
-			"relative-type--1": "в прошлом месяце",
-			"relative-type-0": "в этом месяце",
-			"relative-type-1": "в следующем месяце",
+			"relative-type--1": "в пр. мес.",
+			"relative-type-0": "в эт. мес.",
+			"relative-type-1": "в след. мес.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} мес.",
 				"relativeTimePattern-count-few": "+{0} мес.",
@@ -2900,9 +2926,9 @@
 		},
 		"week-short": {
 			"displayName": "нед.",
-			"relative-type--1": "на прошлой неделе",
-			"relative-type-0": "на этой неделе",
-			"relative-type-1": "на следующей неделе",
+			"relative-type--1": "на прошлой нед.",
+			"relative-type-0": "на этой нед.",
+			"relative-type-1": "на следующей нед.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "через {0} нед.",
 				"relativeTimePattern-count-few": "через {0} нед.",
@@ -2919,9 +2945,9 @@
 		},
 		"week-narrow": {
 			"displayName": "нед.",
-			"relative-type--1": "на прошлой неделе",
-			"relative-type-0": "на этой неделе",
-			"relative-type-1": "на следующей неделе",
+			"relative-type--1": "на пр. нед.",
+			"relative-type-0": "на эт. нед.",
+			"relative-type-1": "на след. неделе",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} нед.",
 				"relativeTimePattern-count-few": "+{0} нед.",
@@ -2964,13 +2990,13 @@
 			"relative-type-1": "завтра",
 			"relative-type-2": "послезавтра",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "через {0} д.",
+				"relativeTimePattern-count-one": "через {0} дн.",
 				"relativeTimePattern-count-few": "через {0} дн.",
 				"relativeTimePattern-count-many": "через {0} дн.",
 				"relativeTimePattern-count-other": "через {0} дн."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} д. назад",
+				"relativeTimePattern-count-one": "{0} дн. назад",
 				"relativeTimePattern-count-few": "{0} дн. назад",
 				"relativeTimePattern-count-many": "{0} дн. назад",
 				"relativeTimePattern-count-other": "{0} дн. назад"
@@ -2984,16 +3010,16 @@
 			"relative-type-1": "завтра",
 			"relative-type-2": "послезавтра",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} д.",
-				"relativeTimePattern-count-few": "+{0} д.",
-				"relativeTimePattern-count-many": "+{0} д.",
-				"relativeTimePattern-count-other": "+{0} д."
+				"relativeTimePattern-count-one": "+{0} дн.",
+				"relativeTimePattern-count-few": "+{0} дн.",
+				"relativeTimePattern-count-many": "+{0} дн.",
+				"relativeTimePattern-count-other": "+{0} дн."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} д.",
-				"relativeTimePattern-count-few": "-{0} д.",
-				"relativeTimePattern-count-many": "-{0} д.",
-				"relativeTimePattern-count-other": "-{0} д."
+				"relativeTimePattern-count-one": "-{0} дн.",
+				"relativeTimePattern-count-few": "-{0} дн.",
+				"relativeTimePattern-count-many": "-{0} дн.",
+				"relativeTimePattern-count-other": "-{0} дн."
 			}
 		},
 		"weekday": {
@@ -3001,7 +3027,7 @@
 		},
 		"hour-wide": {
 			"displayName": "час",
-			"relative-type-0": "в этом часе",
+			"relative-type-0": "в этот час",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "через {0} час",
 				"relativeTimePattern-count-few": "через {0} часа",
@@ -3016,8 +3042,8 @@
 			}
 		},
 		"hour-short": {
-			"displayName": "ч.",
-			"relative-type-0": "в этом часе",
+			"displayName": "ч",
+			"relative-type-0": "в этот час",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "через {0} ч.",
 				"relativeTimePattern-count-few": "через {0} ч.",
@@ -3033,7 +3059,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "ч",
-			"relative-type-0": "в этом часе",
+			"relative-type-0": "в этот час",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} ч.",
 				"relativeTimePattern-count-few": "+{0} ч.",
@@ -3131,16 +3157,16 @@
 			"displayName": "с",
 			"relative-type-0": "сейчас",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} сек.",
-				"relativeTimePattern-count-few": "+{0} сек.",
-				"relativeTimePattern-count-many": "+{0} сек.",
-				"relativeTimePattern-count-other": "+{0} сек."
+				"relativeTimePattern-count-one": "+{0} с",
+				"relativeTimePattern-count-few": "+{0} с",
+				"relativeTimePattern-count-many": "+{0} с",
+				"relativeTimePattern-count-other": "+{0} с"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} сек.",
-				"relativeTimePattern-count-few": "-{0} сек.",
-				"relativeTimePattern-count-many": "-{0} сек.",
-				"relativeTimePattern-count-other": "-{0} сек."
+				"relativeTimePattern-count-one": "-{0} с",
+				"relativeTimePattern-count-few": "-{0} с",
+				"relativeTimePattern-count-many": "-{0} с",
+				"relativeTimePattern-count-other": "-{0} с"
 			}
 		},
 		"zone": {
@@ -3369,6 +3395,18 @@
 		"middle": "{0}, {1}",
 		"end": "{0} и {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} или {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} или {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} или {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} или {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} и {1}",
 		"start": "{0}, {1}",
@@ -3393,6 +3431,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3418,11 +3457,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,
@@ -3449,7 +3490,7 @@
 		"few": "v = 0 and i % 10 = 2..4 and i % 100 != 12..14",
 		"many": "v = 0 and i % 10 = 0 or v = 0 and i % 10 = 5..9 or v = 0 and i % 100 = 11..14"
 	},
-	"weekData-minDays": 1,
+	"weekData-minDays": 4,
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,

@@ -1,0 +1,278 @@
+
+/* CONTROL TREE */
+control-tree {
+	font-family: Menlo, Consolas, "Lucida Console", monospace;
+	font-size: 12px;
+	width: 100%;
+	height: calc(100% - 2rem);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	padding-top: 2rem;
+	position: relative;
+	flex: 1 1 0;
+	flex-wrap: nowrap;
+}
+
+control-tree filter {
+	border-bottom: solid 1px #c0c0c0;
+	display: flex;
+	left: 0;
+	line-height: 1;
+	min-width: 550px;
+	padding: 5px;
+	position: absolute;
+	right: 0;
+	top: 0;
+	align-items: center;
+}
+
+control-tree filter > start,
+control-tree filter > end {
+	display: flex;
+}
+
+control-tree filter > start {
+	flex: 1 1 0;
+}
+
+control-tree filter [type="search"] {
+	border: solid 1px #a3a3a3;
+	border-radius: 2px;
+}
+
+control-tree filter [type="checkbox"] {
+	margin-right: 2px;
+}
+
+control-tree filter label {
+	display: flex;
+	line-height: 20px;
+	padding: 0 6px;
+	white-space: nowrap;
+	align-items: center;
+}
+
+control-tree tree {
+	margin: 0;
+	overflow-x: hidden;
+	padding-top: 5px;
+	transform: translateZ(0);
+	flex: 1 1 0;
+}
+
+control-tree tree > ul {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+control-tree tree > :last-child {
+	margin-bottom: 10px;
+}
+
+control-tree tree:not([show-filtered-elements]) [matching] {
+	background: #ffff70;
+}
+
+control-tree tree:not([show-filtered-elements]) [selected] {
+	background: #3879D9;
+}
+
+control-tree tree:not([show-filtered-elements]) [selected] ::selection {
+	background: #a3a3a3;
+}
+
+control-tree [show-namespaces] namespace {
+	display: inline;
+}
+
+control-tree [show-problematic-elements] [issue ],
+control-tree [show-problematic-elements] .showNumbOfIssues {
+	background-color: #fdb;
+}
+
+control-tree [show-attributes] attribute {
+	display: inline;
+}
+
+control-tree [show-filtered-elements] li {
+	display: none;
+}
+
+control-tree [show-filtered-elements] [visible],
+control-tree [show-filtered-elements] [matching] {
+	display: flex;
+}
+
+control-tree ul {
+	padding-left: 0px;
+	display: flex;
+	flex-direction: column;
+}
+
+control-tree ul > ul {
+	display: none;
+}
+
+control-tree ul[expanded] > ul {
+	display: flex;
+}
+
+control-tree li {
+	border-radius: 0px;
+	display: flex;
+	line-height: 14px;
+	padding-top: 1px;
+	position: relative;
+	word-break: break-word;
+}
+
+control-tree li[hover]:before {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+	border: 1px dashed black;
+	cursor: default;
+	content: " ";
+	pointer-events: none;
+}
+
+control-tree li[selected]:before {
+	border: 1px dashed white;
+}
+
+control-tree li offset {
+	width: 0;
+	padding-right: 12px;
+}
+
+control-tree li[selected],
+control-tree li[selected] .showNumbOfIssues {
+	background-color: #3879D9;
+	border-radius: 0;
+}
+
+
+control-tree li[selected] tag,
+control-tree li[selected] .showNumbOfIssues tag,
+control-tree li[selected] attribute,
+control-tree li[selected] .showNumbOfIssues attribute,
+control-tree li[selected] attribute-value,
+control-tree li[selected] .showNumbOfIssues attribute-value,
+control-tree li[selected] version,
+control-tree li[selected] .showNumbOfIssues version,
+control-tree li[selected] .showNumbOfIssues,
+control-tree li[selected] .showNumbOfIssues .showNumbOfIssues  {
+	color: #fff;
+}
+
+control-tree li[selected] arrow[right],
+control-tree li[selected] .showNumbOfIssues arrow[right] {
+	background-image: url("../images/arrows/arrow-right-white.png");
+}
+
+control-tree li[selected] arrow[down],
+control-tree li[selected] .showNumbOfIssues arrow[down] {
+	background-image: url("../images/arrows/arrow-down-white.png");
+}
+
+control-tree version {
+	color: #bbb;
+	padding-left: 10px;
+}
+
+control-tree namespace,
+control-tree attribute {
+	display: none;
+}
+
+control-tree arrow,
+control-tree place-holder {
+	display: block;
+	height: 14px;
+	width: 12px;
+}
+
+control-tree arrow {
+	background-repeat: no-repeat;
+	background-position: center center;
+	cursor: pointer;
+}
+
+control-tree arrow[right] {
+	background-image: url("../images/arrows/arrow-right.png");
+	background-size: 7px 8px;
+}
+
+control-tree arrow[down] {
+	background-image: url("../images/arrows/arrow-down.png");
+	background-size: 8px 7px;
+}
+
+control-tree attribute,
+control-tree string {
+	color: #994500;
+}
+
+control-tree attribute-value,
+control-tree boolean {
+	color: #1a1aa6;
+}
+
+control-tree key {
+	color: #C80000;
+}
+
+control-tree no-data {
+	color: #c0c0c0;
+	display: block;
+	padding-top: 12px;
+	text-align: center;
+}
+
+control-tree pre {
+	display: inline;
+	word-wrap: break-word;
+}
+
+control-tree section-title,
+control-tree value {
+	color: #000
+}
+
+control-tree tag {
+	color: #881280;
+}
+
+control-tree [hidden] {
+	display: none;
+}
+
+control-tree opaque {
+	color: #c0c0c0;
+}
+
+control-tree [padding] {
+	padding: 10px;
+}
+
+control-tree .showNumbOfIssues {
+	display: initial;
+	right: 0;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	position: absolute;
+	cursor: pointer;
+}
+
+control-tree .showNumbOfIssues:hover,
+control-tree .showNumbOfIssues::selection {
+	color: white;
+}
+
+control-tree .hideNumbOfIssues {
+	display: none;
+}

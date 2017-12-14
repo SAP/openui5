@@ -1753,7 +1753,7 @@ sap.ui.define([
 		if (sType === "_TIME_" || sType === "_DATETIME_") {
 			sType = "_DATE_";
 		}
-		if (sType === "_BOOLEAN_") {
+		if (sType === "_BOOLEAN_" || sType === "_NUMC_") {
 			sType = "";
 		}
 
@@ -1893,7 +1893,9 @@ sap.ui.define([
 					oCtrl.setValue(sValue);
 				}
 			}
-			if (!sValue) {
+			if (!sValue && !oConditionGrid.oFormatter && sOldValue) {
+				// BCP: 1780426620
+				// if type conversion fails and no formatter exist, display the old value
 				oCtrl.setValue(sOldValue);
 			}
 		};
@@ -2279,6 +2281,13 @@ sap.ui.define([
 			var sTrueValue = aValues[aValues.length - 1].toString();
 			oValue1 = sValue1 === sTrueValue;
 			oValue2 = null; // for boolean we only support EQ and value2 can be null
+		}
+
+		if (oCurrentKeyField && oCurrentKeyField.type === "numc") {
+			// in case of type numc and Contains or EndsWith operator the leading 0 will be removed
+			if ([sap.m.P13nConditionOperation.Contains, sap.m.P13nConditionOperation.EndsWith].indexOf(sOperation) != -1) {
+				oValue1 = oConditionGrid.oFormatter.format(oValue1);
+			}
 		}
 
 		var bShowIfGrouped = oConditionGrid.showIfGrouped.getSelected();

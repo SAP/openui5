@@ -20,7 +20,7 @@ sap.ui.define([
 			this.getView().setModel(this.model);
 			this.resizeDown();
 			this.setCommunicationSubscriptions();
-			this.initSettingsPopover();
+			this.initSettingsPopoverModel();
 			this.hidden = false;
 			this.model.setProperty("/hasNoOpener", window.opener ? false : true);
 			this.model.setProperty("/constants", constants);
@@ -36,15 +36,12 @@ sap.ui.define([
 			});
 		},
 
-		initSettingsPopover: function () {
+		initSettingsPopoverModel: function () {
 			var supportAssistantOrigin = new URI(sap.ui.resource('sap.ui.support', ''), window.location.origin + window.location.pathname)._string,
 				supportAssistantVersion = sap.ui.version;
 
 			this.model.setProperty("/supportAssistantOrigin", supportAssistantOrigin);
 			this.model.setProperty("/supportAssistantVersion", supportAssistantVersion);
-			this._settingsPopover = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.StorageSettings", this);
-			this._settingsPopover.setModel(SharedModel);
-			this.getView().addDependent(this._oPopover);
 		},
 
 		copySupportAssistantOriginToClipboard: function(oEvent) {
@@ -122,11 +119,16 @@ sap.ui.define([
 		onSettings: function (oEvent) {
 			CommunicationBus.publish(channelNames.ENSURE_FRAME_OPENED);
 
+			if (!this._settingsPopover) {
+				this._settingsPopover = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.StorageSettings", this);
+				this.getView().addDependent(this._settingsPopover);
+			}
 			var that = this,
-				source = oEvent.getSource();
-			setTimeout(function() {
-				that._settingsPopover.openBy(source);
-			}, 0);
+				oSource = oEvent.getSource();
+
+			setTimeout(function () {
+				that._settingsPopover.openBy(oSource);
+			});
 		},
 		goToAnalysis: function (evt) {
 			var navCon = this.byId("navCon");

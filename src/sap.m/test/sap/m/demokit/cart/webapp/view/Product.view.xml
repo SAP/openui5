@@ -16,7 +16,7 @@
 			<ToolbarSpacer/>
 			<Button
 				icon="sap-icon://customer"
-				press="onAvatarButtonPress"
+				press="onAvatarPress"
 				tooltip="{i18n>avatarButtonTooltip}"/>
 		</headerContent>
 		<footer>

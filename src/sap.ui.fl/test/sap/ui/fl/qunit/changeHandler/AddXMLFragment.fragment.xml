@@ -1,1 +1,1 @@
-<Button xmlns="sap.m" text="Hello World"></Button>
+<Button xmlns="sap.m" id="button" text="Hello World"></Button>

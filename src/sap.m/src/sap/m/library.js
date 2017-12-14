@@ -86,6 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.StringFilterOperator",
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
+			"sap.m.TimePickerMaskMode",
 			"sap.m.ToolbarDesign",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
@@ -95,6 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.IBreadcrumbs",
 			"sap.m.IconTab",
 			"sap.m.IScale",
+			"sap.m.ISliderTooltip",
 			"sap.m.semantic.IGroup",
 			"sap.m.semantic.IFilter",
 			"sap.m.semantic.ISort",
@@ -216,6 +218,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.SelectionDetails",
 			"sap.m.Shell",
 			"sap.m.Slider",
+			"sap.m.SliderTooltip",
+			"sap.m.SliderTooltipContainer",
 			"sap.m.SlideTile",
 			"sap.m.StepInput",
 			"sap.m.SplitApp",
@@ -434,6 +438,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default",
 					"moveControls": "default"
 				}
+			},
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				publicRules:true,
+				internalRules:true
 			}
 		}
 	});
@@ -1369,6 +1378,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *
 	 * @since 1.46
 	 * @name sap.m.IScale
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 *
+	 *   Interface for controls which are suitable as a Tooltip for the Slider/RangeSlider.
+	 *
+	 *
+	 * @since 1.54
+	 * @name sap.m.ISliderTooltip
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
@@ -2969,6 +2990,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Different modes for the <code>sap.m.TimePicker</code> mask.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.54
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.TimePickerMaskMode = {
+		/**
+		 * <code>MaskInput</code> is enabled for the <code>sap.m.TimePicker</code>.
+		 * @public
+		 */
+		On: "On",
+
+		/**
+		 * <code>MaskInput</code> is disabled for the <code>sap.m.TimePicker</code>.
+		 * @public
+		 */
+		Off: "Off"
+	};
+
+	/**
 	 * Types of string filter operators.
 	 *
 	 * @enum {string}
@@ -3062,6 +3105,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Available step modes for {@link sap.m.StepInput}.
+	 * @enum {string}
+	 * @public
+	 * @since 1.54
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.StepInputStepModeType = {
+		/**
+		 * Choosing increase/decrease button will add/subtract the <code>step</code> value
+		 * to/from the current value. For example, if <code>step</code> is 5, current
+		 * <code>value</code> is 17 and increase button is chosen, the result will be 22 (5+17).
+		 *
+		 * <b>Note:</b> Using keyboard PageUp/PageDown will add/subtract the <code>step</code>
+		 * multiplied by the <code>largerStep</code> values to/from the current
+		 * <code>value</code>. For example, if <code>step</code> is 5, <code>largerStep</code>
+		 * is 3, current <code>value</code> is 17 and PageUp is chosen, the result would be 32 (5*3+17).
+		 *
+		 * For more information, see {@link sap.m.StepInput}'s <code>step</code>,
+		 * <code>largerStep</code> and <code>stepMode</code> properties.
+		 */
+		AdditionAndSubtraction: "AdditionAndSubtraction",
+		 /**
+		 * Pressing increase/decrease button will increase/decrease the current
+		 * <code>value</code> to the closest number that is divisible by the
+		 * <code>step</code>.
+		 *
+		 * For example, if <code>step</code> is 5, current <code>value</code> is 17 and
+		 * increase button is chosen, the result will be 20 as it is the closest larger number
+		 * that is divisible by 5.
+		 *
+		 * <b>Note:</b> Using keyboard PageUp/PageDown will increase/decrease the current
+		 * <code>value</code> to the closest number that is divisible by the multiplication of
+		 * the <code>step</code> and the <code>largerStep</code> values. For example, if
+		 * <code>step</code> is 5, <code>largerStep</code> is 3, current <code>value</code> is
+		 * 17 and PageUp is chosen, the result would be 30 as it is the closest larger number
+		 * that is divisible by 15.
+		 *
+		 * The logic above will work only if both <code>step</code> and
+		 * <code>largerStep</code> are integers.
+		 *
+		 * For more information, see {@link sap.m.StepInput}'s <code>step</code>,
+		 * <code>largerStep</code> and <code>stepMode</code> properties.
+		 */
+		Multiple: "Multiple"
+	};
 
 
 	//lazy imports for MessageToast

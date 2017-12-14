@@ -313,6 +313,11 @@ sap.ui.define([
 			this._getInternalModel().destroy();
 		}
 
+		if (this.oInvisibleChartTypeText) {
+			this.oInvisibleChartTypeText.destroy();
+			this.oInvisibleChartTypeText = null;
+		}
+
 		window.clearTimeout(this._iLiveChangeTimer);
 		window.clearTimeout(this._iSearchTimer);
 	};
@@ -605,6 +610,10 @@ sap.ui.define([
 		var oInvisibleChartTypeText = new InvisibleText({
 			text: oRb.getText('COLUMNSPANEL_CHARTTYPE')
 		});
+
+		// set a reference on the instance so it can be later destroyed
+		this.oInvisibleChartTypeText = oInvisibleChartTypeText;
+
 		var oChartTypeComboBox = new sap.m.ComboBox({
 			placeholder: oInvisibleChartTypeText.getText(),
 			selectedKey: {

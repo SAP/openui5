@@ -29,7 +29,6 @@ sap.ui.require([
 							"author": "SAP",
 							"key": "variantMgmtId1",
 							"layer": "VENDOR",
-							"remove": false,
 							"title": "Standard",
 							"favorite": true,
 							"visible": true
@@ -37,7 +36,6 @@ sap.ui.require([
 							"author": "Me",
 							"key": "variant0",
 							"layer": "CUSTOMER",
-							"remove": true,
 							"title": "variant A",
 							"favorite": true,
 							"visible": true
@@ -45,7 +43,6 @@ sap.ui.require([
 							"author": "Me",
 							"key": "variant1",
 							"layer": "CUSTOMER",
-							"remove": true,
 							"title": "variant B",
 							"favorite": false,
 							"visible": true
@@ -80,17 +77,19 @@ sap.ui.require([
 			this.fnLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
 			this.fnRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl");
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
+			this.fnDeleteChangeStub = sandbox.stub(this.oFlexController, "deleteChange");
 
 			this.oModel = new VariantModel(this.oData, this.oFlexController, this.oComponent);
 		},
 		afterEach: function(assert) {
 			sandbox.restore();
+			this.oModel.destroy();
 			delete this.oFlexController;
 		}
 	});
 
 	QUnit.test("when calling 'getData'", function(assert) {
-		var sExpectedJSON = "{\"variantMgmtId1\":{" + "\"defaultVariant\":\"variant1\"," + "\"originalCurrentVariant\": \"variant1\"," + "\"originalDefaultVariant\":\"variant1\"," + "\"variants\":[{" + "\"author\":\"SAP\"," + "\"key\":\"variantMgmtId1\"," + "\"layer\":\"VENDOR\"," + "\"originalFavorite\":true," + "\"originalTitle\":\"Standard\"," + "\"remove\":false," + "\"favorite\":true,"  + "\"title\":\"Standard\"," + "\"change\":true," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant0\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":true,"  + "\"originalTitle\":\"variant A\"," + "\"remove\":true," + "\"favorite\":true," + "\"title\":\"variant A\"," + "\"change\":true," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant1\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":false," + "\"originalTitle\":\"variant B\"," + "\"remove\":true," + "\"favorite\":false,"  + "\"title\":\"variant B\"," + "\"change\":true," + "\"visible\":true" + "}]," + "\"currentVariant\":\"variant1\"" + "}" + "}";
+		var sExpectedJSON = "{\"variantMgmtId1\":{" + "\"defaultVariant\":\"variant1\"," + "\"originalCurrentVariant\": \"variant1\"," + "\"originalDefaultVariant\":\"variant1\"," + "\"variants\":[{" + "\"author\":\"SAP\"," + "\"key\":\"variantMgmtId1\"," + "\"layer\":\"VENDOR\"," + "\"originalFavorite\":true," + "\"originalTitle\":\"Standard\"," + "\"favorite\":true,"  + "\"title\":\"Standard\"," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant0\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":true,"  + "\"originalTitle\":\"variant A\"," + "\"favorite\":true," + "\"title\":\"variant A\"," + "\"visible\":true" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant1\"," + "\"layer\":\"CUSTOMER\"," + "\"originalFavorite\":false," + "\"originalTitle\":\"variant B\"," + "\"favorite\":false,"  + "\"title\":\"variant B\"," + "\"visible\":true" + "}]," + "\"currentVariant\":\"variant1\"" + "}" + "}";
 		var sCurrentVariant = this.oModel.getCurrentVariantReference("variantMgmtId1");
 		assert.deepEqual(this.oModel.getData(), JSON.parse(sExpectedJSON));
 		assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
@@ -307,6 +306,36 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.test("when calling 'updateCurrentVariant' with dirty changes in current variant", function(assert) {
+		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges");
+
+		this.oModel.oData["variantMgmtId1"].modified = true;
+		assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
+		return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0")
+		.then(function() {
+			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "then '_removeDirtyChanges' called once");
+			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then original current variant updated to variant0");
+		}.bind(this));
+	});
+
+	QUnit.test("when calling '_removeDirtyChanges'", function(assert) {
+		sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
+		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns(
+				[{getDefinition: function() {return {fileName: "change2"};}},
+				 {getDefinition: function() {return {fileName: "change3"};}},
+				 {getDefinition: function() {return {fileName: "change4"};}}]
+		);
+		sandbox.stub(this.oModel.oVariantController, "removeChangeFromVariant");
+		var aChanges = [{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}];
+
+		this.oModel._removeDirtyChanges(aChanges, "variantMgmtId1", this.oModel.oData["variantMgmtId1"].currentVariant);
+		assert.ok(this.fnRevertChangesStub.calledOnce, "then 'revertChangesOnControl' called once");
+		assert.equal(this.fnRevertChangesStub.args[0][0].length, 2, "and two changes are dirty and in Variant");
+		assert.propEqual(this.fnRevertChangesStub.args[0][0][0].getDefinition(), aChanges[2], "the first change was applied before the second change");
+		assert.propEqual(this.fnRevertChangesStub.args[0][0][1].getDefinition(), aChanges[1], "the second change was applied before the first change");
+		assert.equal(this.fnDeleteChangeStub.callCount, 2, "and 'deleteChange' called twice (due to 2 changes)");
+	});
+
 	QUnit.test("when calling '_duplicateVariant' on the same layer", function(assert) {
 		var oSourceVariant = {
 			"content": {
@@ -330,12 +359,14 @@ sap.ui.require([
 			layer: "CUSTOMER"
 		};
 
+		var fnGetVariantTitleStub = sandbox.stub(this.oModel, "getVariantTitle").returns("Variant B");
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
+		oSourceVariantCopy.content.title = "Variant B" + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		sandbox.stub(Utils, "isLayerAboveCurrentLayer").returns(0);
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
+		assert.ok(fnGetVariantTitleStub.calledOnce, "'GetVariantTitle' is called");
 		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy);
 	});
 
@@ -589,6 +620,7 @@ sap.ui.require([
 
 		this.oModel.manageVariants(oVariantManagement, "variantMgmtId1", "CUSTOMER").then(function(aChanges) {
 			assert.equal(aChanges.length, 4, "then 4 changes with mPropertyBags were created");
+			oVariantManagement.destroy();
 			done();
 		});
 	});
@@ -599,6 +631,139 @@ sap.ui.require([
 		this.oModel._initializeManageVariantsEvents();
 		assert.ok(this.oModel.fnManageClick, "the function 'this.fnManageClick' is available afterwards");
 		assert.ok(this.oModel.fnManageClick, "the function 'this.fnManageClick' is available afterwards");
+	});
+
+	QUnit.test("when calling 'handleSave' with parameter from SaveAs button and default box checked", function(assert) {
+		var done = assert.async();
+
+		var oVariantManagement = new VariantManagement("variantMgmtId1");
+		var oCopiedVariantContent = {
+			content: {
+				title: "Personalization Test Variant",
+				variantManagementReference: "variantMgmtId1",
+				variantReference: "variant1",
+				layer: "USER"
+			}
+		};
+		var oCopiedVariant = new sap.ui.fl.Variant(oCopiedVariantContent);
+		var oEvent = {
+			getParameter: function(sParameter) {
+				if (sParameter === "overwrite") {
+					return false;
+				} else if (sParameter === "name") {
+					return "Test";
+				} else if (sParameter === "def") {
+					return true;
+				}
+			},
+			getSource: function() {
+				return oVariantManagement;
+			}
+		};
+
+		this.oModel.getData()["variantMgmtId1"].modified = true;
+
+		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
+		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve(oCopiedVariant));
+		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges").returns(Promise.resolve());
+		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
+		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
+
+		return this.oModel.handleSave(oEvent).then(function() {
+			assert.ok(fnCopyVariantStub.calledOnce, "CopyVariant is called");
+			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "RemoveDirtyChanges is called");
+			assert.ok(fnSetVariantPropertiesStub.calledOnce, "SetVariantProperties is called");
+			assert.ok(fnSaveAllStub.calledOnce, "SaveAll is called");
+			assert.notOk(this.oModel.getData()["variantMgmtId1"].modified, "finally the model property 'modified' is set to false");
+			oVariantManagement.destroy();
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("when calling 'handleSave' with parameter from SaveAs button and default box unchecked", function(assert) {
+		var done = assert.async();
+
+		var oVariantManagement = new VariantManagement("variantMgmtId1");
+		var oCopiedVariantContent = {
+			content: {
+				title: "Personalization Test Variant",
+				variantManagementReference: "variantMgmtId1",
+				variantReference: "variant1",
+				layer: "USER"
+			}
+		};
+		var oCopiedVariant = new sap.ui.fl.Variant(oCopiedVariantContent);
+		var oEvent = {
+			getParameter: function(sParameter) {
+				if (sParameter === "overwrite") {
+					return false;
+				} else if (sParameter === "name") {
+					return "Test";
+				} else if (sParameter === "def") {
+					return false;
+				}
+			},
+			getSource: function() {
+				return oVariantManagement;
+			}
+		};
+
+		this.oModel.getData()["variantMgmtId1"].modified = true;
+
+		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
+		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve(oCopiedVariant));
+		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges").returns(Promise.resolve());
+		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
+		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
+
+		return this.oModel.handleSave(oEvent).then(function() {
+			assert.ok(fnCopyVariantStub.calledOnce, "CopyVariant is called");
+			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "RemoveDirtyChanges is called");
+			assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
+			assert.ok(fnSaveAllStub.calledOnce, "SaveAll is called");
+			assert.notOk(this.oModel.getData()["variantMgmtId1"].modified, "finally the model property 'modified' is set to false");
+			oVariantManagement.destroy();
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("when calling 'handleSave' with parameter from Save button", function(assert) {
+		var done = assert.async();
+
+		var oVariantManagement = new VariantManagement("variantMgmtId1");
+		var oEvent = {
+			getParameter: function(sParameter) {
+				if (sParameter === "overwrite") {
+					return true;
+				} else if (sParameter === "name") {
+					return "Test";
+				}
+			},
+			getSource: function() {
+				return oVariantManagement;
+			}
+		};
+
+		this.oModel.getData()["variantMgmtId1"].modified = true;
+
+		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
+		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
+		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant");
+		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges");
+		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
+		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
+
+		return this.oModel.handleSave(oEvent).then(function() {
+			assert.equal(fnCopyVariantStub.callCount, 0, "CopyVariant is not called");
+			assert.equal(fnRemoveDirtyChangesStub.callCount, 0, "RemoveDirtyChanges is not called");
+			assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
+			assert.ok(fnSaveAllStub.calledOnce, "SaveAll is called");
+			assert.notOk(this.oModel.getData()["variantMgmtId1"].modified, "finally the model property 'modified' is set to false");
+			oVariantManagement.destroy();
+			done();
+		}.bind(this));
 	});
 
 	QUnit.module("Given an empty VariantModel and a VariantManagement control", {

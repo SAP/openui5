@@ -26,7 +26,7 @@
 				inputsAsTooltips="true"
 				class="sapUiMediumMarginBottom" />
 		<Text text="Slider with tickmarks" class="sapUiSmallMarginBottom"/>
-		<Slider enableTickmarks="true" range="0,10" min="0" max="10" class="sapUiMediumMarginBottom" width="100%"/>
+		<Slider enableTickmarks="true" min="0" max="10" class="sapUiMediumMarginBottom" width="100%"/>
 		<Slider enableTickmarks="true" class="sapUiMediumMarginBottom" width="100%"/>
 		<Text text="Slider with tickmarks and step '5'" class="sapUiSmallMarginBottom"/>
 		<Slider enableTickmarks="true" min="-100" max="100" step="5" class="sapUiLargeMarginBottom" width="100%"/>

@@ -13,7 +13,10 @@ sap.ui.define(["sap/ui/core/library"],
 	 * UI5 library: sap.ui.support.
 	 * A library for the Support Assistant tool.
 	 * <h3>Overview</h3>
-The library provides the Support Assistant tool. It enables application developers to check whether their applications are built according to the best practices for building SAPUI5 apps. The tool uses a set of pre-defined rules to check all aspects of an application.
+	 * The library provides the Support Assistant tool. It enables application
+	 * developers to check whether their applications are built according to the
+	 * best practices for building SAPUI5 apps. The tool uses a set of pre-defined
+	 * rules to check all aspects of an application.
 	 *
 	 * @namespace
 	 * @name sap.ui.support
@@ -28,16 +31,21 @@ The library provides the Support Assistant tool. It enables application develope
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.support",
-		// Loading sap.ui.codeeditor is moved to overlay.html to make sure it is loaded from the correct origin.
-		dependencies : ["sap.ui.core", "sap.ui.fl", "sap.m", "sap.ui.layout"],
+		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.support.Severity"
 		],
 		interfaces: [],
 		controls: [],
 		elements: [],
-		noLibraryCSS: false,
-		version: "${version}"
+		noLibraryCSS: true,
+		version: "${version}",
+		extensions: {
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				internalRules:true
+			}
+		}
 	});
 
 	/**

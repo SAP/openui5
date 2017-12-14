@@ -645,15 +645,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		var oViewInfo = this.getPreprocessorInfo(bSync),
 			aPreprocessors = this.mPreprocessors && this.mPreprocessors[sType] || [],
-			mSettings,
 			fnProcess,
 			fnAppendPreprocessor,
 			pChain;
 
 		// in async case we need a promise chain
 		if (!bSync) {
-			fnAppendPreprocessor = function(vProcessedSource) {
-				return fnProcess(vProcessedSource, oViewInfo, mSettings);
+			fnAppendPreprocessor = function (fnProcess, oViewInfo, mSettings) {
+				// the Promise's success handler with bound oViewInfo and mSettings
+				return function (vProcessedSource) {
+					return fnProcess(vProcessedSource, oViewInfo, mSettings);
+				};
 			};
 			pChain = Promise.resolve(vSource);
 		}
@@ -665,8 +667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				vSource = fnProcess(vSource, oViewInfo, aPreprocessors[i]._settings);
 			} else if (!bSync) {
 				// append future preprocessor run to promise chain
-				mSettings = aPreprocessors[i]._settings;
-				pChain = pChain.then(fnAppendPreprocessor);
+				pChain = pChain.then(fnAppendPreprocessor(fnProcess, oViewInfo, aPreprocessors[i]._settings));
 			} else {
 				jQuery.sap.log.debug("Async \"" + sType + "\"-preprocessor was skipped in sync view execution for " +
 					this.getMetadata().getClass()._sType + "View", this.getId());

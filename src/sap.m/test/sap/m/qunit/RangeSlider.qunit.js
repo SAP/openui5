@@ -44,20 +44,8 @@
 	});
 
 	QUnit.test("Handles' Tooltips", function (assert) {
-		assert.strictEqual(jQuery(".sapMSliderHandleTooltip").length, 2, "There should be two tooltips.");
-
-		assert.strictEqual(jQuery("[id$='-LeftTooltip']").length, 1, "There should be only one handle tooltip rendered for handle1.");
-		assert.strictEqual(jQuery("[id$='-RightTooltip']").length, 1, "There should be only one handle tooltip rendered for handle2.");
-	});
-
-	QUnit.test("Handles' Tooltips' width percent ", function (assert) {
-		var oldPercent = this.rangeSlider._fTooltipHalfWidthPercent;
-
-		this.rangeSlider.setMin(-1000);
-		this.rangeSlider.setMax(0);
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(oldPercent < this.rangeSlider._fTooltipHalfWidthPercent, "The new calculated percent should be bigger than the old one");
+		this.rangeSlider.getAggregation("_tooltipContainer").show(this.rangeSlider);
+		assert.strictEqual(jQuery(".sapMSliderTooltip").length, 2, "There should be two tooltips.");
 	});
 
 	QUnit.test("RangeSlider's Labels", function (assert) {
@@ -71,6 +59,7 @@
 	QUnit.test("RangeSlider's Labels Width", function (assert) {
 		this.rangeSlider.setMax(10000000000000);
 		this.rangeSlider.rerender();
+
 		assert.equal(this.rangeSlider.$().find(".sapMSliderRangeLabel:eq(1)").width(), 120, "The end label should have 120px width when the value consists of 14 digits");
 
 	});
@@ -125,6 +114,27 @@
 		assert.strictEqual(aRange[1], 100, "The default high value of the range should be 100.");
 	});
 
+	QUnit.test("_handlesLabels aggregation", function (assert) {
+		// arrange & act
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oBoundleCalledStub = this.stub(oResourceBundle, "getText"),
+			oSlider = new sap.m.RangeSlider(),
+			aLabels = oSlider.getAggregation("_handlesLabels");
+
+		oSlider.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(aLabels.length, 3, "Label for handles should be added as an aggregation");
+		assert.ok(oBoundleCalledStub.calledWith("RANGE_SLIDER_LEFT_HANDLE"), "Text should be regarding the left handle");
+		assert.ok(oBoundleCalledStub.calledWith("RANGE_SLIDER_RIGHT_HANDLE"), "Text should be regarding the right handle");
+		assert.ok(oBoundleCalledStub.calledWith("RANGE_SLIDER_RANGE_HANDLE"), "Text should be regarding the range");
+		assert.strictEqual(oSlider.getDomRef("progress").getAttribute("aria-labelledby"), aLabels[2].getId());
+
+		// cleanup
+		oSlider.destroy();
+	});
+
 	QUnit.test("getRange()", function (assert) {
 		var aRange = this.rangeSlider.getRange();
 
@@ -142,11 +152,12 @@
 
 		aRange = this.rangeSlider.getRange();
 
+		this.rangeSlider.getAggregation("_tooltipContainer").show(this.rangeSlider);
+
 		assert.strictEqual(aRange[0], newRange[0], "The first value of the range should be set to " + newRange[0]);
 		assert.strictEqual(aRange[1], newRange[1], "The second value of the range should be set to " + newRange[1]);
-
-		assert.strictEqual(parseInt(this.rangeSlider.$("LeftTooltip").text(), 10), newRange[0], "The tooltip1's value should be changed to the left handle's value of " + newRange[0]);
-		assert.strictEqual(parseInt(this.rangeSlider.$("RightTooltip").text(), 10), newRange[1], "The tooltip2's value should be changed to the right handle's value of " + newRange[1]);
+		assert.strictEqual(parseInt(this.rangeSlider.getAggregation("_tooltipContainer").getAssociatedTooltipsAsControls()[0].getValue(), 10), newRange[0], "The tooltip1's value should be changed to the left handle's value of " + newRange[0]);
+		assert.strictEqual(parseInt(this.rangeSlider.getAggregation("_tooltipContainer").getAssociatedTooltipsAsControls()[1].getValue(), 10), newRange[1], "The tooltip2's value should be changed to the right handle's value of " + newRange[1]);
 	});
 
 	QUnit.test("set/getValue()", function (assert) {
@@ -501,20 +512,27 @@
 
 	QUnit.test("Swap tooltips when values are swapped.", function (assert) {
 		//Setup
-		var oRangeSlider = new sap.m.RangeSlider({
-			showAdvancedTooltip: false,
-			showHandleTooltip: false,
-			enableTickmarks: true,
-			range: [8, 2],
-			min: 2,
-			max: 10,
-			step: 1
-		}).placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		var oLeftTooltip, oRightTooltip,
+			oRangeSlider = new sap.m.RangeSlider({
+				showAdvancedTooltip: true,
+				showHandleTooltip: true,
+				enableTickmarks: false,
+				range: [8, 2],
+				min: 2,
+				max: 10,
+				step: 1,
+				width: "600px"
+			}).placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+		oRangeSlider.getAggregation("_tooltipContainer").show(oRangeSlider);
+
+		oLeftTooltip = jQuery("#" + oRangeSlider.getId() + "-" + "leftTooltip").control(0);
+		oRightTooltip = jQuery("#" + oRangeSlider.getId() + "-" + "rightTooltip").control(0);
 
 		//Assert
-		assert.strictEqual(oRangeSlider.getDomRef("LeftTooltip").innerHTML, "2");
-		assert.strictEqual(oRangeSlider.getDomRef("RightTooltip").innerHTML, "8");
+		assert.equal(oLeftTooltip.getValue(), "2");
+		assert.equal(oRightTooltip.getValue(), "8");
 
 		//Cleanup
 		oRangeSlider.destroy();

@@ -552,7 +552,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				};
 			// Loop through all available tokens, find matches and calculate distance
 			for (var sTestSkeleton in oAvailableFormats) {
-				if (sTestSkeleton === "intervalFormatFallback") {
+				// Skip patterns with symbol "B" (which is introduced from CLDR v32.0.0) which isn't supported in DateFormat yet
+				if (sTestSkeleton === "intervalFormatFallback" || sTestSkeleton.indexOf("B") > -1) {
 					continue;
 				}
 				aTestTokens = this._parseSkeletonFormat(sTestSkeleton);
@@ -1263,7 +1264,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		/**
 		 * Returns a map containing patterns for formatting lists
 		 *
-		 *@param {string='standard'} sType The type of the list pattern. Currently only 'standard' type is supported.
+		 *@param {string='standard'} sType The type of the list pattern. It can be 'standard' or 'or'.
 		 *@param {string='wide'} sStyle The style of the list pattern. It can be 'wide' or 'short'.
 		* @return {object} Map with list patterns
 		 */

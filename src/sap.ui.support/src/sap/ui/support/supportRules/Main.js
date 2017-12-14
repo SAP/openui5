@@ -54,8 +54,11 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				ManagedObject.apply(this, arguments);
 
 				/**
-				 * @public
+				 * @namespace
 				 * @alias jQuery.sap.support
+				 * @author SAP SE
+				 * @version ${version}
+				 * @public
 				 */
 				jQuery.sap.support = {
 
@@ -267,7 +270,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	};
 
 	/**
-	 * Sets subscriptions to the CommunicationBus for temporary rules.
+	 * Sets subscriptions to the CommunicationBus for Support Assistant
 	 *
 	 * @private
 	 */
@@ -345,7 +348,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_INIT_ANALYSIS_CTRL, function () {
-			RuleSetLoader.updateAllRuleSets();
+			RuleSetLoader.updateRuleSets();
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_SHOW_REPORT_REQUEST, function (reportConstants) {
@@ -356,7 +359,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.LOAD_RULESETS, function (data) {
-			RuleSetLoader.updateAllRuleSets(data.libNames);
+			RuleSetLoader.loadAdditionalRuleSets(data.aLibNames);
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.REQUEST_RULES_MODEL, function (deserializedRules) {
@@ -376,10 +379,13 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				});
 			}
 		}, this);
+		CommunicationBus.subscribe(channelNames.GET_NON_LOADED_RULE_SETS, function () {
+			RuleSetLoader.fetchNonLoadedRuleSets();
+		}, this);
 	};
 
-	/**
-	 * Analyzes all rules in the given execution scope.
+	 /**
+	 *Analyzes all rules in the given execution scope.
 	 *
 	 * @private
 	 * @param {object} oExecutionScope The scope of the analysis

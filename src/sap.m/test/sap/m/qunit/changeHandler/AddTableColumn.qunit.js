@@ -30,7 +30,7 @@ sap.ui.require([
 					'<Column id="column1"><Text text="column1" /></Column>',
 					'<Column id="column2"><Text text="column2" /></Column>',
 				'</columns>',
-				'<items>',
+				'<items>\n',
 					'<ColumnListItem>',
 						'<cells>',
 							'<Text text="{column0}" id="text0" />',
@@ -102,14 +102,14 @@ sap.ui.require([
 			"column has correct binding"
 		);
 		assert.ok(
-			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1].getAttribute('id').indexOf(this.oChange.getContent().newFieldSelector.id) !== -1,
+			this.oTable.childNodes[1].childNodes[1].childNodes[0].childNodes[1].getAttribute('id').indexOf(this.oChange.getContent().newFieldSelector.id) !== -1,
 			"template has been modified successfully"
 		);
 	});
 
 	QUnit.test('revertChange on a xml control tree', function(assert) {
 		var sColumn1Id = this.oTable.childNodes[0].childNodes[1].getAttribute('id');
-		var sTemplateForColumn1Id = this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1].getAttribute('id');
+		var sTemplateForColumn1Id = this.oTable.childNodes[1].childNodes[1].childNodes[0].childNodes[1].getAttribute('id');
 		this.oChangeHandler.applyChange(this.oChange, this.oTable, {
 			modifier: XmlTreeModifier,
 			appComponent: {
@@ -134,7 +134,7 @@ sap.ui.require([
 			"column has been restored successfully"
 		);
 		assert.strictEqual(
-			this.oTable.childNodes[1].childNodes[0].childNodes[0].childNodes[1].getAttribute('id'),
+			this.oTable.childNodes[1].childNodes[1].childNodes[0].childNodes[1].getAttribute('id'),
 			sTemplateForColumn1Id,
 			"template has been restored successfully"
 		);

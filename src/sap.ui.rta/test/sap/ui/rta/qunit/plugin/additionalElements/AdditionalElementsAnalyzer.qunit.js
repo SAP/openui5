@@ -608,9 +608,10 @@ function(
 	});
 
 
-	QUnit.module("Given a test view with an absolute bound List", {
+	QUnit.module("Given a test view with absolute bindings", {
 		beforeEach: function(assert) {
 			this.oList = oView.byId("listWithAbsoluteBinding");
+			this.oTable = oView.byId("tableWithAbsoluteBinding");
 		}
 	});
 
@@ -623,6 +624,19 @@ function(
 		};
 
 		return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oList, oActionObject).then(function(aAdditionalElements) {
+			assert.equal(aAdditionalElements.length, 16, "then the correct amount of ODataProperties has been returned");
+		});
+	});
+
+	QUnit.test("when getting unbound elements for the table", function(assert) {
+		var oActionObject = {
+			action : {
+				aggregation: "items"
+			},
+			relevantContainer: this.oTable
+		};
+
+		return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
 			assert.equal(aAdditionalElements.length, 16, "then the correct amount of ODataProperties has been returned");
 		});
 	});

@@ -286,6 +286,25 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("create_app_changeInbound multiple changes", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_changeInbound({
+			"inboundId": "a.id",
+			"entityPropertyChange": [ {
+				"propertyPath": "signature/parameters/id/required",
+				"operation": "UPSERT",
+				"propertyValue": true
+			},
+			{
+				"propertyPath": "icon",
+				"operation": "UPSERT",
+				"propertyValue": "sap-icon://contact"
+			}]
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_changeInbound");
+		});
+	});
+
 	QUnit.test("create_app_changeInbound", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_changeInbound({
 			"inboundId": "a.id",
@@ -397,6 +416,34 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("create_app_changeOutbound multiple changes", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_changeOutbound({
+			"outboundId": "a.id",
+			"entityPropertyChange": [{
+				"propertyPath" : "action",
+				"operation" : "UPDATE",
+				"propertyValue" : "newAction"
+			},
+			{
+				"propertyPath" : "parameters/newAddedParameter",
+				"operation" : "INSERT",
+				"propertyValue" : {
+						"value" : {
+								"value" : "someValue",
+								"format" : "plain"
+						}
+				}
+			},
+			{
+				"propertyPath" : "parameters/Language",
+				"operation" : "DELETE"
+			}]
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_changeOutbound");
+		});
+	});
+
 	QUnit.test("create_app_changeOutbound", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_changeOutbound({
 			"outboundId": "a.id",
@@ -481,6 +528,25 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 				"operation": "UPDATE",
 				"propertyValue": "abc"
 			}
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_changeDataSource");
+		});
+	});
+
+	QUnit.test("create_app_changeDataSource multiple changes", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_changeDataSource({
+			"dataSourceId": "a.id",
+			"entityPropertyChange": [ {
+				"propertyPath": "uri",
+				"operation": "UPDATE",
+				"propertyValue": "abc"
+			},
+			{
+				"propertyPath": "settings/maxAge",
+				"operation": "UPSERT",
+				"propertyValue": 3600
+			}]
 		}).then(function(oDescriptorInlineChange) {
 			assert.notEqual(oDescriptorInlineChange, null);
 			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_changeDataSource");

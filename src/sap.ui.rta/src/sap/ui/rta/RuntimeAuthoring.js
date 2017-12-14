@@ -31,6 +31,7 @@ sap.ui.define([
 		"sap/ui/rta/plugin/Settings",
 		"sap/ui/rta/plugin/ControlVariant",
 		"sap/ui/dt/plugin/ContextMenu",
+		"sap/ui/dt/plugin/MiniMenu",
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
 		"sap/ui/rta/Utils",
@@ -44,6 +45,7 @@ sap.ui.define([
 		"sap/ui/core/BusyIndicator",
 		"sap/ui/dt/DOMUtil",
 		"sap/ui/rta/util/StylesLoader",
+		"sap/ui/rta/util/UrlParser",
 		"sap/ui/rta/appVariant/Feature",
 		"sap/ui/Device"
 	],
@@ -75,6 +77,7 @@ sap.ui.define([
 		SettingsPlugin,
 		ControlVariantPlugin,
 		ContextMenuPlugin,
+		MiniMenuPlugin,
 		TabHandlingPlugin,
 		FlexControllerFactory,
 		Utils,
@@ -88,6 +91,7 @@ sap.ui.define([
 		BusyIndicator,
 		DOMUtil,
 		StylesLoader,
+		UrlParser,
 		RtaAppVariantFeature,
 		Device
 	) {
@@ -312,9 +316,15 @@ sap.ui.define([
 			});
 
 			// Context Menu
-			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin({
-				styleClass: Utils.getRtaStyleClassName()
-			});
+			if (UrlParser.getParam('sap-ui-rta-minimenu') === true) {
+				this._mDefaultPlugins["contextMenu"] = new MiniMenuPlugin({
+					styleClass: Utils.getRtaStyleClassName()
+				});
+			} else {
+				this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin({
+					styleClass: Utils.getRtaStyleClassName()
+				});
+			}
 
 			// Tab Handling
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
@@ -448,6 +458,11 @@ sap.ui.define([
 		// Create DesignTime
 		if (!this._oDesignTime) {
 			this._oRootControl = sap.ui.getCore().byId(this.getRootControl());
+			if (!this._oRootControl){
+				var vError = "Could not start Runtime Adaptation: Root control not found";
+				FlexUtils.log.error(vError);
+				return Promise.reject(vError);
+			}
 			//Check if the application has personalized changes and reload without them
 			return this._handlePersonalizationChangesOnStart()
 			.then(function(bReloadTriggered){

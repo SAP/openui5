@@ -23,7 +23,8 @@
 			href: "x.html",
 			target: "_blank",
 			width : "200px",
-			press:function() {
+			press:function(oEvent) {
+				oEvent.preventDefault();
 				assert.ok(true, "This should be executed when the link is triggered");
 			}
 		}).placeAt("uiArea1");
@@ -58,14 +59,24 @@
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
 
-		QUnit.test("Enter event", function (assert) {
+		QUnit.test("Enter event should fire press event on keydown", function (assert) {
 			assert.expect(1); // verifies the event handler was executed
 			qutils.triggerKeydown(oLink1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 		});
 
-		QUnit.test("Enter event handler is attached", function (assert) {
-			assert.ok(oLink1.onsapenter === oLink1._handlePress,
-				"onsapenter method is a reference to _handlePress method");
+		QUnit.test("Enter event should not fire press on keyup", function (assert) {
+			assert.expect(0); // verifies the event handler was executed
+			qutils.triggerKeyup(oLink1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		});
+
+		QUnit.test("Space event should fire press event on keyup", function (assert) {
+			assert.expect(1); // verifies the event handler was executed
+			qutils.triggerKeyup(oLink1.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		});
+
+		QUnit.test("Space event should not fire press on keydown", function (assert) {
+			assert.expect(0); // verifies the event handler was executed
+			qutils.triggerKeydown(oLink1.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 		});
 
 		QUnit.test("Disabled", function(assert) {

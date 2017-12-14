@@ -11,16 +11,7 @@ sap.ui.define([], function() {
 			showExecuteOnSelection: {
 				ignore: false
 			},
-			showShare: {
-				ignore: false
-			},
 			showSetAsDefault: {
-				ignore: false
-			},
-			industrySolutionMode: {
-				ignore: false
-			},
-			vendorLayer: {
 				ignore: false
 			},
 			manualVariantKey: {

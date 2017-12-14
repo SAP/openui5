@@ -22,6 +22,24 @@ sap.ui.define([
 				this._onOrientationChange({
 					landscape: Device.orientation.landscape
 				});
+
+				this.handleDocumentationDisclaimer();
+			},
+
+			/**
+			 * Documentation disclaimer handler. This method fetches the disclaimer json file and modify's the view
+			 * to show disclaimer message if such is available in the loaded json file.
+			 */
+			handleDocumentationDisclaimer: function () {
+				jQuery.ajax(this.getConfig().docuPath + "disclaimer.json", {dataType: "json"}).then(function (oData) {
+					var oView = this.getView();
+					if (oData.showDisclaimer && oData.message) {
+						oView.byId("disclaimerBlock").setVisible(true);
+						oView.byId("disclaimerMessage").setText(oData.message);
+					}
+				}.bind(this), function () {
+					// This functionality should fail silently
+				});
 			},
 
 			/**

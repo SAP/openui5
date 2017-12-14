@@ -373,6 +373,50 @@
 			oDetachPressSpy.restore();
 		});
 
+	QUnit.module("Associations");
+
+		QUnit.test("ariaLabelledBy", function (assert) {
+			var oSampleText = new sap.m.Text("sampleText", {
+				text: "Sample text"
+			}), oAnotherText = new sap.m.Text("anotherText", {
+				text: "Another text"
+			}), oLabelledImage = new sap.m.Image("labelledImage", {
+				decorative: false,
+				ariaLabelledBy: [oSampleText, oAnotherText]
+			});
+
+			oLabelledImage.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+			assert.notOk(oLabelledImage.$().attr("aria-describedby"), "Image with only ariaLabelledBy association shouldn't have aria-describedby attribute");
+			assert.strictEqual(oLabelledImage.$().attr("aria-labelledby"), "sampleText anotherText", "aria-labelledby association is set correctly");
+
+			oLabelledImage.destroy();
+			oSampleText.destroy();
+			oAnotherText.destroy();
+		});
+
+		QUnit.test("ariaDescribedBy", function (assert) {
+			var oSampleText = new sap.m.Text("sampleText", {
+				text: "Sample text"
+			}), oAnotherText = new sap.m.Text("anotherText", {
+				text: "Another text"
+			}), oDescribedImage = new sap.m.Image("describedImage", {
+				decorative: false,
+				ariaDescribedBy: [oSampleText, oAnotherText]
+			});
+
+			oDescribedImage.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+			assert.notOk(oDescribedImage.$().attr("aria-labelledby"), "Image with only ariaDescribedBy association shouldn't have aria-labelledby attribute");
+			assert.strictEqual(oDescribedImage.$().attr("aria-describedby"), "sampleText anotherText", "aria-describedby association is set correctly");
+
+			oDescribedImage.destroy();
+			oSampleText.destroy();
+			oAnotherText.destroy();
+		});
+
 
 	QUnit.module("Dimensions");
 

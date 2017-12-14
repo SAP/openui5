@@ -302,6 +302,7 @@ sap.ui.define([
 		// URI params overwrite default
 		// deep extend is necessary so appParams object is not overwritten but merged
 		Opa.config = $.extend(true, Opa.config, options, opaUriParams);
+		_OpaLogger.setLevel(Opa.config.logLevel);
 	};
 
 	Opa._parseParam = function(sParam) {

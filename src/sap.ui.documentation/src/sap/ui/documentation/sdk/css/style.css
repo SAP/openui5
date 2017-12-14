@@ -592,25 +592,6 @@ html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
 .sapMListTbl .docuParam.sapMText  {
 	font-style: italic;
 }
-
-.sapMListTbl .sapUiDocumentationParamBold.sapMText {
-	font-weight: bold;
-}
-
-.sapMListTbl .sapUiDocumentationParamPhone.sapMText {
-	font-weight: normal;
-}
-
-.sapMListTbl .sapUiDocumentationParamSub.sapMText {
-	font-weight: normal;
-	padding-left: 2rem;
-}
-
-.sapMListTbl .sapUiDocumentationParamSubSub.sapMText {
-	font-weight: normal;
-	padding-left: 4rem;
-}
-
 /* explored code view */
 
 pre {
@@ -1436,6 +1417,112 @@ html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a:foc
 }
 
 /* ==========================================================================
+   DemoApps Page styles
+  ========================================================================== */
+
+/* override header cell background color for non-accessibility themes */
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoApps .headlineCell {
+	background-color: white !important;
+}
+
+/* override default padding for headline cells */
+.sapUiDemoApps .headlineCell .sapUiBlockCellContent {
+	padding-top: 1.25rem;
+	padding-bottom: 1.25rem;
+}
+
+/* fix to align link and label in horizontal layout*/
+.sapUiDemoApps .namespaceLink {
+	vertical-align: baseline;
+}
+
+/* fix to remove the 5px space below title images */
+.sapUiDemokit .sapUiDemokitLandingImageCell {
+	line-height: 0;
+}
+
+.headerGrid {
+	position: absolute;
+	top: 2rem;
+	padding-left: 2rem;
+	width: calc(100% - 4rem);
+}
+
+.headerButton {
+	margin-top: 2rem;
+}
+
+/* shrink image to 200px height on landscape phone mode */
+.phoneHeaderImageLandscape {
+	object-fit: cover;
+}
+
+.phoneHeaderImageDesktop {
+	object-fit: cover;
+}
+
+.desktopImage {
+	min-height: 9.375rem;
+	object-fit: cover;
+}
+
+.headerText {
+	width: 100%;
+	padding-top: 0.5rem;
+	font-size: 3rem;
+	margin-left: -0.2rem;
+	color: #ffffff;
+	text-shadow: 0 0 0.125rem #000000;
+}
+
+.headerSubText {
+	width: 100%;
+	font-size: 1.25rem;
+	font-weight: normal;
+	color: #ffffff;
+	text-shadow: 0 0 0.125rem #000000;
+}
+
+/*SMALL*/
+
+@media (max-width: 1024px) {
+	.headerButton {
+		margin-top: 1rem;
+	}
+	.headerGrid {
+		top: 1.25rem;
+		padding-left: 1rem;
+		width: calc(100% - 2rem);
+	}
+	.headerText {
+		font-size: 1.25rem;
+		margin-left: -0.0625rem;
+	}
+	.headerSubText {
+		font-size: 0.875rem;
+	}
+}
+
+
+/*XTRA LARGE*/
+
+@media (min-width: 1440px) {
+	.headerGrid {
+		padding-left: 3rem;
+		width: calc(100% - 6rem);
+	}
+	.headerText {
+		font-size: 4rem;
+	}
+	.headerSubText {
+		font-size: 2rem;
+	}
+	.headerButton {
+		margin-top: 2rem;
+	}
+}
+
+/* ==========================================================================
    Tools Page Header styles
   ========================================================================== */
 .sapUiDemokit .sapMText.sapUiDocumentationToolsHeaderText {
@@ -1594,6 +1681,22 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
  * End of API Detail specific CSS
  */
 
+/* Comma list */
+.sapUiDocumentationCommaList .sapMFlexItem:not(:last-child)::after {
+	content: ",";
+	margin-right: 1px;
+	vertical-align: top;
+	line-height: 1.5rem;
+}
+
+/* Or list */
+.sapUiDocumentationOrList .sapUiVltCell:not(:last-child)::after {
+	content: "or";
+	margin-right: 5px;
+	margin-left: 5px;
+	vertical-align: top;
+}
+
 /* Global search specific CSS to allow full entry title to be visible on phone */
 .sap-phone .sapMList .sapMFeedListItemTextName .sapMLnk {
 	white-space: pre-line;
@@ -1606,3 +1709,60 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 .sapUiCustomTitleText .sapMLnk {
 	display: inline;
 }
+
+/*
+ * Param Text custom control related CSS - Start
+ */
+.sapMListTbl .sapUiParamText.sapUiDocumentationParamBold {
+	font-weight: bold;
+}
+
+.sapMListTbl .sapUiParamText.sapUiDocumentationParamPhone {
+	font-weight: normal;
+}
+
+.sapMListTbl .sapUiParamText.sapUiDocumentationParamSub {
+	font-weight: normal;
+	padding-left: 2rem;
+}
+
+.sapMListTbl .sapUiParamText.sapUiDocumentationParamSubSub {
+	font-weight: normal;
+	padding-left: 4rem;
+}
+
+.sapUiParamText {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sapUiParamText .parameterDefault {
+	font-weight: normal;
+	padding-left: 1rem;
+}
+
+html.sapUiMedia-Std-Phone .sapUiParamText,
+.sapUiParamText.depth-0 {
+	font-weight: bold;
+}
+
+/* 5 Depths are handled - if more than 5 levels should be displayed we should think of another approach */
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-1 {
+	padding-left: 2rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-2 {
+	padding-left: 4rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-3 {
+	padding-left: 6rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-4 {
+	padding-left: 8rem;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
+	padding-left: 10rem;
+}
+/*
+ * Param Text custom control related CSS - End
+ */

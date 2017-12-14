@@ -184,14 +184,14 @@ sap.ui.define([
 		var aHasPendingTimeoutsResults = [];
 		var fnHasPendingTimeouts = sap.ui.test.autowaiter._timeoutWaiter.hasPending;
 
-		sap.ui.test.autowaiter._timeoutWaiter.hasPendingTimeouts = function () {
+		sap.ui.test.autowaiter._timeoutWaiter.hasPending = function () {
 			var bHasPendingTimeouts = fnHasPendingTimeouts();
 			aHasPendingTimeoutsResults.push(bHasPendingTimeouts);
 			return bHasPendingTimeouts;
 		};
 
-		autoWaiterAsync.extendConfig({timeoutWaiter: {maxDelay: 1100}});
-		setTimeout(function () {},  1101);
+		autoWaiterAsync.extendConfig({timeoutWaiter: {maxDelay: 400}});
+		setTimeout(function () {},  401);
 		autoWaiterAsync.waitAsync(fnCallbackSpy);
 
 		assert.ok(!aHasPendingTimeoutsResults[0], "Should ignore long running timeout");

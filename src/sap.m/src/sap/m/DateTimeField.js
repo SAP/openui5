@@ -62,7 +62,22 @@ sap.ui.define([
 				 * the <code>dateValue</code> will be instantiated according to the parsed
 				 * <code>value</code>.
 				 */
-				dateValue: {type: "object", group: "Data", defaultValue: null}
+				dateValue: {type: "object", group: "Data", defaultValue: null},
+
+				/**
+				 * Holds a reference to a JavaScript Date Object to define the initially focused
+				 * date/time when the picker popup is opened.
+				 *
+				 * <b>Notes:</b>
+				 * <ul>
+				 * <li>Setting this property does not change the <code>value</code> property.</li>
+				 * <li>Depending on the context this property is used in ({@link sap.m.TimePicker},
+				 * {@link sap.m.DatePicker} or {@link sap.m.DateTimePicker}), it takes into account only the time part, only
+				 * the date part or both parts of the JavaScript Date Object.</li>
+				 * </ul>
+				 * @since 1.54
+				 */
+				initialFocusedDateValue: {type: "object", group: "Data", defaultValue: null}
 			}
 		}
 	});

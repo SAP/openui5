@@ -100,8 +100,29 @@ sap.ui.define([
 			},
 
 			/* =========================================================== */
-			/* begin: internal methods									 */
+			/* begin: internal methods									   */
 			/* =========================================================== */
+
+			/* jQuery.find and setBusy Override BEGIN */
+			_oldJQueryFind: jQuery.fn.find,
+			_overrideJQueryFind: function () {
+				var oldFind = jQuery.fn.find;
+				jQuery.fn.find = function (selector, context, ret, extra) {
+					if (selector === ":sapTabbable") {
+						return oldFind.call(this, "", context, ret, extra);
+					}
+					return oldFind.call(this, selector, context, ret, extra);
+				};
+			},
+			_restoreJQueryFind: function () {
+				jQuery.fn.find = this._oldJQueryFind;
+			},
+			_setBusy: function (bBusy) {
+				this._overrideJQueryFind();
+				this._objectPage.setBusy(bBusy);
+				this._restoreJQueryFind();
+			},
+			/* jQuery.find and setBusy Override END */
 
 			/**
 			 * Binds the view to the object path and expands the aggregated line items.
@@ -112,11 +133,16 @@ sap.ui.define([
 			_onTopicMatched: function (oEvent) {
 				var oComponent = this.getOwnerComponent();
 
-				this._objectPage.setBusy(true);
+				this._setBusy(true);
 
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
+
+				// Handle summary tables life cycle
+				this._oEventsSummary && this._destroySummaryTable(this._oEventsSummary);
+				this._oMethodsSummary && this._destroySummaryTable(this._oMethodsSummary);
+				this._oAnnotationSummary && this._destroySummaryTable(this._oAnnotationSummary);
 
 				oComponent.loadVersionInfo().then(oComponent.fetchAPIIndex.bind(oComponent))
 					.then(function (oData) {
@@ -191,7 +217,7 @@ sap.ui.define([
 
 								jQuery.sap.delayedCall(0, this, function () {
 									this._prettify();
-									this._objectPage.setBusy(false);
+									this._setBusy(false);
 
 									// Init scrolling right after busy indicator is cleared and prettify is ready
 									jQuery.sap.delayedCall(0, this, function () {
@@ -207,11 +233,26 @@ sap.ui.define([
 					.catch(function (sReason) {
 						// If the object does not exist in the available libs we redirect to the not found page and
 						if (sReason === this.NOT_FOUND) {
-							this._objectPage.setBusy(false);
+							this._setBusy(false);
 							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 						}
 					}.bind(this));
 
+			},
+
+			/**
+			 * Summary tables have a complex life cycle and they have to be removed from the list and destroyed before
+			 * the new binding context is applied as they are a different type of item than others in the list
+			 * and can't be reused.
+			 *
+			 * @param {object} oSummaryTableReference Reference to the summary table
+			 * @private
+			 */
+			_destroySummaryTable: function (oSummaryTableReference) {
+				var oParent = oSummaryTableReference.getParent();
+
+				oParent && oParent.removeAggregation("subSection", oSummaryTableReference, true);
+				oSummaryTableReference.destroy();
 			},
 
 			_prettify: function () {
@@ -231,7 +272,7 @@ sap.ui.define([
 					return;
 				}
 
-				oSection.insertSubSection(new ObjectPageSubSection({
+				this._oMethodsSummary = new ObjectPageSubSection({
 					title: bBorrowedOnly ? "Methods" : "Summary",
 					blocks: [
 						// Creating this segment here is better than having a fragment we have to fetch on every navigation
@@ -258,14 +299,14 @@ sap.ui.define([
 										path: "/methods",
 										templateShareable: false,
 										template: new ColumnListItem({
-											visible: "{= !!${name} }",
+											visible: "{= !!${path: 'name'} }",
 											cells: [
 												new VerticalLayout({
 													content: [
 														new Link({
 															text: "{name}",
 															href: "#/api/{/name}/methods/{name}",
-															press: this.scrollToMethod,
+															press: this.scrollToMethod.bind(this),
 															wrapping: false
 														}),
 														new ObjectStatus({
@@ -310,7 +351,9 @@ sap.ui.define([
 							]
 						})
 					]
-				}), 0);
+				});
+
+				oSection.insertSubSection(this._oMethodsSummary, 0);
 
 			},
 
@@ -326,7 +369,7 @@ sap.ui.define([
 					return;
 				}
 
-				oSection.insertSubSection(new ObjectPageSubSection({
+				this._oEventsSummary = new ObjectPageSubSection({
 					title: bBorrowedOnly ? "Events" : "Summary",
 					blocks: [
 						// Creating this segment here is better than having a fragment we have to fetch on every navigation
@@ -352,14 +395,14 @@ sap.ui.define([
 										path: "/events",
 										templateShareable: false,
 										template: new ColumnListItem({
-											visible: "{= !!${name} }",
+											visible: "{= !!${path: 'name'} }",
 											cells: [
 												new VerticalLayout({
 													content: [
 														new Link({
 															text: "{name}",
 															href: "#/api/{/name}/events/{name}",
-															press: this.scrollToEvent,
+															press: this.scrollToEvent.bind(this),
 															wrapping: false
 														}),
 														new ObjectStatus({
@@ -404,7 +447,9 @@ sap.ui.define([
 							]
 						})
 					]
-				}), 0);
+				});
+
+				oSection.insertSubSection(this._oEventsSummary, 0);
 
 			},
 
@@ -416,7 +461,7 @@ sap.ui.define([
 					return;
 				}
 
-				oSection.insertSubSection(new ObjectPageSubSection({
+				this._oAnnotationSummary = new ObjectPageSubSection({
 					title: "Summary",
 					blocks: [
 						new Table({
@@ -443,7 +488,7 @@ sap.ui.define([
 									cells: [
 										new Link({
 											text: "{= ${annotation} !== 'undefined' ? ${annotation} : '(' + ${namespace} + ')' }",
-											press: this.scrollToAnnotation,
+											press: this.scrollToAnnotation.bind(this),
 											wrapping: false
 										}),
 										new HTML({content: "{description}"})
@@ -452,7 +497,9 @@ sap.ui.define([
 							}
 						})
 					]
-				}), 0);
+				});
+
+				oSection.insertSubSection(this._oAnnotationSummary, 0);
 
 			},
 
@@ -601,8 +648,7 @@ sap.ui.define([
 							sDisplayName = aDisplayNameArr[aDisplayNameArr.length - 1];
 						return {
 							href: item,
-							name: sDisplayName,
-							isLast: idx === array.length - 1
+							name: sDisplayName
 						};
 					});
 					oControlData.hasImplementsData = true;
@@ -707,18 +753,13 @@ sap.ui.define([
 							var aItems = [];
 
 							oControlData.implementsParsed.forEach(function (oElement) {
-								aItems.push(_getHBox({
-									items: [
-										_getLink({text: oElement.name, href: "#/api/" + oElement.href}),
-										_getText({text: ",", visible: !oElement.isLast})
-									]
-								}));
+								aItems.push(_getLink({text: oElement.name, href: "#/api/" + oElement.href}));
 							});
 
 							return _getHBox({
 								items: [
 									_getLabel({text: "Implements:"}),
-									new sap.m.HBox({items: aItems})
+									new sap.m.HBox({items: aItems}).addStyleClass("sapUiDocumentationCommaList")
 								]
 							}, true);
 						},

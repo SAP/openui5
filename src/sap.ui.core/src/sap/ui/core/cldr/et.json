@@ -46,7 +46,7 @@
 		"bal": "belutši",
 		"ban": "bali",
 		"bar": "baieri",
-		"bas": "basa",
+		"bas": "basaa",
 		"bax": "bamuni",
 		"bbc": "bataki",
 		"bbj": "ghomala",
@@ -86,7 +86,7 @@
 		"cad": "kado",
 		"car": "kariibi",
 		"cay": "kajuka",
-		"cch": "atsami",
+		"cch": "aitšami",
 		"ce": "tšetšeeni",
 		"ceb": "sebu",
 		"cgg": "tšiga",
@@ -316,6 +316,7 @@
 		"ln": "lingala",
 		"lo": "lao",
 		"lol": "mongo",
+		"lou": "Louisiana kreoolkeel",
 		"loz": "lozi",
 		"lrc": "põhjaluri",
 		"lt": "leedu",
@@ -605,8 +606,8 @@
 		"zen": "zenaga",
 		"zgh": "tamasikti (Maroko)",
 		"zh": "hiina",
-		"zh_Hans": "hiina (lihtsustatud)",
-		"zh_Hant": "hiina (traditsiooniline)",
+		"zh_Hans": "lihtsustatud hiina",
+		"zh_Hant": "traditsiooniline hiina",
 		"zu": "suulu",
 		"zun": "sunji",
 		"zxx": "mittekeeleline",
@@ -655,6 +656,7 @@
 		"Geok": "hutsuri",
 		"Geor": "gruusia",
 		"Glag": "glagoolitsa",
+		"Gonm": "Masarami gondi",
 		"Goth": "gooti",
 		"Gran": "grantha",
 		"Grek": "kreeka",
@@ -721,7 +723,7 @@
 		"Mymr": "birma",
 		"Narb": "Põhja-Araabia",
 		"Nbat": "Nabatea",
-		"Newa": "Newa",
+		"Newa": "nevari",
 		"Nkgb": "nasi",
 		"Nkoo": "nkoo",
 		"Nshu": "nüšu",
@@ -729,7 +731,7 @@
 		"Olck": "santali",
 		"Orkh": "Orhoni",
 		"Orya": "oria",
-		"Osge": "Osge",
+		"Osge": "oseidži",
 		"Osma": "osmani",
 		"Palm": "Palmyra",
 		"Pauc": "Pauc",
@@ -755,6 +757,7 @@
 		"Sind": "hudavadi",
 		"Sinh": "singali",
 		"Sora": "sora",
+		"Soyo": "sojombo",
 		"Sund": "sunda",
 		"Sylo": "siloti",
 		"Syrc": "süüria",
@@ -784,6 +787,7 @@
 		"Xpeo": "vanapärsia",
 		"Xsux": "sumeri-akadi kiilkiri",
 		"Yiii": "jii",
+		"Zanb": "Dzanabadzari ruutkiri",
 		"Zinh": "päritud",
 		"Zmth": "matemaatiline tähistus",
 		"Zsye": "emoji",
@@ -800,6 +804,7 @@
 		"151": "Ida-Euroopa",
 		"154": "Põhja-Euroopa",
 		"155": "Lääne-Euroopa",
+		"202": "202",
 		"419": "Ladina-Ameerika",
 		"001": "maailm",
 		"002": "Aafrika",
@@ -849,7 +854,7 @@
 		"BH": "Bahrein",
 		"BI": "Burundi",
 		"BJ": "Benin",
-		"BL": "Saint Barthélemy",
+		"BL": "Saint-Barthélemy",
 		"BM": "Bermuda",
 		"BN": "Brunei",
 		"BO": "Boliivia",
@@ -883,8 +888,8 @@
 		"CW": "Curaçao",
 		"CX": "Jõulusaar",
 		"CY": "Küpros",
-		"CZ": "Tšehhia",
-		"CZ-alt-variant": "Tšehhi",
+		"CZ": "Tšehhi",
+		"CZ-alt-variant": "Tšehhia",
 		"DE": "Saksamaa",
 		"DG": "Diego Garcia",
 		"DJ": "Djibouti",
@@ -901,7 +906,7 @@
 		"ES": "Hispaania",
 		"ET": "Etioopia",
 		"EU": "Euroopa Liit",
-		"EZ": "EZ",
+		"EZ": "euroala",
 		"FI": "Soome",
 		"FJ": "Fidži",
 		"FK": "Falklandi saared",
@@ -1018,7 +1023,7 @@
 		"PH": "Filipiinid",
 		"PK": "Pakistan",
 		"PL": "Poola",
-		"PM": "Saint Pierre ja Miquelon",
+		"PM": "Saint-Pierre ja Miquelon",
 		"PN": "Pitcairni saared",
 		"PR": "Puerto Rico",
 		"PS": "Palestiina alad",
@@ -1118,8 +1123,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1160,7 +1170,7 @@
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
 				"MMMMW": "MMM (W. 'nädal')",
-				"yw": "y (w. 'nädal')"
+				"yw": "w. 'nädal' (Y)"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1176,7 +1186,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0}–{1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d–d"
 				},
@@ -1543,8 +1553,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1960,8 +1975,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2386,8 +2406,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2826,8 +2851,8 @@
 				"relativeTimePattern-count-other": "{0} a pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} aasta eest",
-				"relativeTimePattern-count-other": "{0} aasta eest"
+				"relativeTimePattern-count-one": "{0} a eest",
+				"relativeTimePattern-count-other": "{0} a eest"
 			}
 		},
 		"quarter-wide": {
@@ -2864,12 +2889,12 @@
 			"relative-type-0": "käesolev kv",
 			"relative-type-1": "järgmine kv",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} kv",
-				"relativeTimePattern-count-other": "+{0} kv"
+				"relativeTimePattern-count-one": "{0} kv pärast",
+				"relativeTimePattern-count-other": "{0} kv pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} kv",
-				"relativeTimePattern-count-other": "-{0} kv"
+				"relativeTimePattern-count-one": "{0} kv eest",
+				"relativeTimePattern-count-other": "{0} kv eest"
 			}
 		},
 		"month-wide": {
@@ -3134,21 +3159,21 @@
 		"100000-other": "000 tuhat",
 		"1000000-one": "0 miljon",
 		"1000000-other": "0 miljonit",
-		"10000000-one": "00 miljon",
+		"10000000-one": "00 miljonit",
 		"10000000-other": "00 miljonit",
-		"100000000-one": "000 miljon",
+		"100000000-one": "000 miljonit",
 		"100000000-other": "000 miljonit",
 		"1000000000-one": "0 miljard",
 		"1000000000-other": "0 miljardit",
-		"10000000000-one": "00 miljard",
+		"10000000000-one": "00 miljardit",
 		"10000000000-other": "00 miljardit",
-		"100000000000-one": "000 miljard",
+		"100000000000-one": "000 miljardit",
 		"100000000000-other": "000 miljardit",
 		"1000000000000-one": "0 triljon",
 		"1000000000000-other": "0 triljonit",
-		"10000000000000-one": "00 triljon",
+		"10000000000000-one": "00 triljonit",
 		"10000000000000-other": "00 triljonit",
-		"100000000000000-one": "000 triljon",
+		"100000000000000-one": "000 triljonit",
 		"100000000000000-other": "000 triljonit"
 	},
 	"decimalFormat-short": {
@@ -3268,6 +3293,18 @@
 		"middle": "{0}, {1}",
 		"end": "{0} ja {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} või {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} või {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} või {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} või {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} ja {1}",
 		"start": "{0}, {1}",
@@ -3292,6 +3329,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3317,11 +3355,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

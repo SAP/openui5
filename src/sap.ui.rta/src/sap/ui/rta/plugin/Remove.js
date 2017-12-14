@@ -288,7 +288,7 @@ sap.ui.define([
 	 * @return {object[]}          Returns array containing the items with required data
 	 */
 	Remove.prototype.getMenuItems = function(oOverlay){
-		return this._getMenuItems(oOverlay, {pluginId : "CTX_REMOVE", rank : 60});
+		return this._getMenuItems(oOverlay, {pluginId : "CTX_REMOVE", rank : 60, icon : "sap-icon://hide"});
 	};
 
 	/**

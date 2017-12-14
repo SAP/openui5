@@ -26,7 +26,7 @@
 		"ar": "arabo",
 		"ar_001": "arabo moderno standard",
 		"arc": "aramaico",
-		"arn": "mapuche",
+		"arn": "mapudungun",
 		"aro": "araona",
 		"arp": "arapaho",
 		"arq": "arabo algerino",
@@ -317,6 +317,7 @@
 		"ln": "lingala",
 		"lo": "lao",
 		"lol": "lolo bantu",
+		"lou": "creolo della Louisiana",
 		"loz": "lozi",
 		"lrc": "luri settentrionale",
 		"lt": "lituano",
@@ -568,7 +569,7 @@
 		"umb": "mbundu",
 		"und": "lingua imprecisata",
 		"ur": "urdu",
-		"uz": "usbeco",
+		"uz": "uzbeco",
 		"vai": "vai",
 		"ve": "venda",
 		"vec": "veneto",
@@ -656,6 +657,7 @@
 		"Geok": "kutsuri",
 		"Geor": "georgiano",
 		"Glag": "glagolitico",
+		"Gonm": "Gonm",
 		"Goth": "gotico",
 		"Gran": "grantha",
 		"Grek": "greco",
@@ -756,6 +758,7 @@
 		"Sind": "khudawadi",
 		"Sinh": "singalese",
 		"Sora": "sora sompeng",
+		"Soyo": "Soyo",
 		"Sund": "sundanese",
 		"Sylo": "syloti nagri",
 		"Syrc": "siriano",
@@ -785,6 +788,7 @@
 		"Xpeo": "persiano antico",
 		"Xsux": "sumero-accadiano cuneiforme",
 		"Yiii": "yi",
+		"Zanb": "Zanb",
 		"Zinh": "ereditato",
 		"Zmth": "notazione matematica",
 		"Zsye": "emoji",
@@ -801,6 +805,7 @@
 		"151": "Europa orientale",
 		"154": "Europa settentrionale",
 		"155": "Europa occidentale",
+		"202": "202",
 		"419": "America Latina",
 		"001": "Mondo",
 		"002": "Africa",
@@ -884,7 +889,7 @@
 		"CW": "Curaçao",
 		"CX": "Isola Christmas",
 		"CY": "Cipro",
-		"CZ": "Cèchia",
+		"CZ": "Cechia",
 		"CZ-alt-variant": "Repubblica Ceca",
 		"DE": "Germania",
 		"DG": "Diego Garcia",
@@ -902,7 +907,7 @@
 		"ES": "Spagna",
 		"ET": "Etiopia",
 		"EU": "Unione Europea",
-		"EZ": "EZ",
+		"EZ": "Eurozona",
 		"FI": "Finlandia",
 		"FJ": "Figi",
 		"FK": "Isole Falkland",
@@ -1019,7 +1024,7 @@
 		"PH": "Filippine",
 		"PK": "Pakistan",
 		"PL": "Polonia",
-		"PM": "Saint Pierre e Miquelon",
+		"PM": "Saint-Pierre e Miquelon",
 		"PN": "Isole Pitcairn",
 		"PR": "Portorico",
 		"PS": "Territori palestinesi",
@@ -1076,14 +1081,14 @@
 		"UA": "Ucraina",
 		"UG": "Uganda",
 		"UM": "Altre isole americane del Pacifico",
-		"UN": "nazioni unite",
-		"UN-alt-short": "nazioni unite",
+		"UN": "Nazioni Unite",
+		"UN-alt-short": "ONU",
 		"US": "Stati Uniti",
 		"US-alt-short": "USA",
 		"UY": "Uruguay",
 		"UZ": "Uzbekistan",
 		"VA": "Città del Vaticano",
-		"VC": "Saint Vincent e Grenadines",
+		"VC": "Saint Vincent e Grenadine",
 		"VE": "Venezuela",
 		"VG": "Isole Vergini Britanniche",
 		"VI": "Isole Vergini Americane",
@@ -1104,7 +1109,7 @@
 		"dateFormats": {
 			"full": "EEEE d MMMM y",
 			"long": "d MMMM y",
-			"medium": "dd MMM y",
+			"medium": "d MMM y",
 			"short": "dd/MM/yy"
 		},
 		"timeFormats": {
@@ -1119,8 +1124,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1159,7 +1169,7 @@
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
 				"MMMMW": "'settimana' W 'di' MMM",
-				"yw": "'settimana' w 'del' y"
+				"yw": "'settimana' w 'del' Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1542,8 +1552,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1957,8 +1972,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2381,8 +2401,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -3019,12 +3044,12 @@
 			"displayName": "h.",
 			"relative-type-0": "quest’ora",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "tra {0} h.",
-				"relativeTimePattern-count-other": "tra {0} h."
+				"relativeTimePattern-count-one": "tra {0} h",
+				"relativeTimePattern-count-other": "tra {0} h"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} h. fa",
-				"relativeTimePattern-count-other": "{0} h. fa"
+				"relativeTimePattern-count-one": "{0} h fa",
+				"relativeTimePattern-count-other": "{0} h fa"
 			}
 		},
 		"hour-narrow": {
@@ -3052,19 +3077,19 @@
 			}
 		},
 		"minute-short": {
-			"displayName": "min.",
+			"displayName": "min",
 			"relative-type-0": "questo minuto",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "tra {0} min.",
-				"relativeTimePattern-count-other": "tra {0} min."
+				"relativeTimePattern-count-one": "tra {0} min",
+				"relativeTimePattern-count-other": "tra {0} min"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} min. fa",
-				"relativeTimePattern-count-other": "{0} min. fa"
+				"relativeTimePattern-count-one": "{0} min fa",
+				"relativeTimePattern-count-other": "{0} min fa"
 			}
 		},
 		"minute-narrow": {
-			"displayName": "m",
+			"displayName": "min",
 			"relative-type-0": "questo minuto",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} min",
@@ -3088,14 +3113,14 @@
 			}
 		},
 		"second-short": {
-			"displayName": "sec.",
+			"displayName": "s",
 			"relative-type-0": "ora",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "tra {0} sec.",
+				"relativeTimePattern-count-one": "tra {0} s",
 				"relativeTimePattern-count-other": "tra {0} sec."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} sec. fa",
+				"relativeTimePattern-count-one": "{0} s fa",
 				"relativeTimePattern-count-other": "{0} sec. fa"
 			}
 		},
@@ -3240,7 +3265,6 @@
 		"INR": "₹",
 		"NZD": "NZ$",
 		"THB": "฿",
-		"USD": "US$",
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
@@ -3253,6 +3277,18 @@
 		"start": "{0}, {1}",
 		"middle": "{0}, {1}",
 		"end": "{0} e {1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0} o {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} o {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} o {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} o {1}"
 	},
 	"listPattern-standard-short": {
 		"2": "{0} e {1}",
@@ -3278,6 +3314,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3303,11 +3340,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

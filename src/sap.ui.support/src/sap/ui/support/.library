@@ -12,18 +12,6 @@
 		<dependency>
 			<libraryName>sap.ui.core</libraryName>
 		</dependency>
-		<dependency>
-			<libraryName>sap.ui.fl</libraryName>
-		</dependency>
-		<dependency>
-			<libraryName>sap.ui.layout</libraryName>
-		</dependency>
-		<dependency>
-			<libraryName>sap.ui.codeeditor</libraryName>
-		</dependency>
-		<dependency>
-			<libraryName>sap.m</libraryName>
-		</dependency>
 	</dependencies>
 
 	<appData>

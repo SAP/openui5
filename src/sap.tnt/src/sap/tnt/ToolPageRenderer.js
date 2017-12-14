@@ -36,9 +36,11 @@ sap.ui.define([],
 			rm.write('>');
 
 			if (header) {
+				rm.write("<header>");
 				rm.write('<div id="' + control.getId() + '-header" class="sapTntToolPageHeader">');
 				rm.renderControl(header);
 				rm.write('</div>');
+				rm.write("</header>");
 			}
 
 			this.renderContentWrapper(rm, control);

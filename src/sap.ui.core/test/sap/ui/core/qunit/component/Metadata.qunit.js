@@ -1,8 +1,9 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Manifest',
-	'sap/ui/thirdparty/URI'
-], function(jQuery, Manifest, URI) {
+	'sap/ui/thirdparty/URI',
+	"sap/ui/core/Component"
+], function(jQuery, Manifest, URI, Component) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -838,5 +839,189 @@ sap.ui.define([
 			oDone();
 		}, 200);
 	});
+
+	// Test async loading of manifest files for component metadata
+	runManifestLoadingTests("manifestFirst", function(path, name) {
+		return {
+			name: name,
+			manifestFirst: true,
+			async: true
+		};
+	});
+
+	runManifestLoadingTests("manifest", function(path) {
+		return {
+			manifest: path,
+			async: true
+		};
+	});
+	runManifestLoadingTests("manifestUrl", function(path) {
+		return {
+			manifestUrl: path,
+			async: true
+		};
+	});
+	runManifestLoadingTests("manifestUrl", function(path) {
+		return {
+			manifestUrl: path,
+			async: true
+		};
+	});
+
+	function runManifestLoadingTests(sDescription, fnCreateConfig) {
+		QUnit.module("Component Metadata async loading of manifests: " + sDescription, {
+			beforeEach: function() {
+				jQuery.sap.registerResourcePath("sap/ui/test", "./testdata");
+			},
+			afterEach: function() {
+				jQuery.sap.registerResourcePath("sap/ui/test");
+			}
+		});
+
+		QUnit.test("Async loading of manifests with component.json", function(assert) {
+			return sap.ui.component(fnCreateConfig("./testdata/inherit/manifest.json", "sap.ui.test.inherit")).then(function(oComponent) {
+				assert.ok(oComponent instanceof Component, "Component has been created.");
+
+				assert.equal(
+					oComponent.getManifest().name,
+					"sap.ui.test.inherit.Component",
+					"Check name of the the main component"
+				);
+				assert.equal(
+					oComponent.getMetadata().getParent().getManifest().name,
+					"sap.ui.test.inherit.parent.Component",
+					"Check name of the inherited parent component"
+				);
+				destroyComponent(oComponent);
+			});
+		});
+
+		QUnit.test("Async loading of manifests", function(assert) {
+			return sap.ui.component(fnCreateConfig("./testdata/inheritAsync/manifest.json", "sap.ui.test.inheritAsync")).then(function(oComponent) {
+				assert.ok(oComponent instanceof Component, "Component has been created.");
+
+				assert.equal(
+					oComponent.getManifest().name,
+					"sap.ui.test.inheritAsync.Component",
+					"Check name of the the main component"
+				);
+				assert.equal(
+					oComponent.getMetadata().getParent().getManifest().name,
+					"sap.ui.test.inheritAsync.parentB.Component",
+					"Check name of the inherited parent component B"
+				);
+				assert.equal(
+					oComponent.getMetadata().getParent().getParent().getManifest().name,
+					"sap.ui.test.inheritAsync.parentA.Component",
+					"Check name of the inherited parent component A"
+				);
+				destroyComponent(oComponent);
+			});
+		});
+
+		QUnit.test("Async loading of manifests with missing manifest of parent metadata", function(assert) {
+			return sap.ui.component(fnCreateConfig("./testdata/inheritAsyncError/manifest.json", "sap.ui.test.inheritAsyncError")).then(function(oComponent) {
+				assert.ok(oComponent instanceof Component, "Component has been created.");
+
+				var aLogEntries = jQuery.sap.log.getLog();
+				var result = aLogEntries.filter(function(oEntry){
+					return oEntry.message.indexOf(
+						"Failed to load component manifest from \"./testdata/inheritAsyncError/parentFAIL/manifest.json\""
+					) === 0;
+				});
+				assert.equal(result.length, 1, "Error: 'Failed to laod component manifest from...' was logged.");
+
+				assert.equal(
+					oComponent.getManifest().name,
+					"sap.ui.test.inheritAsyncError.Component",
+					"Check name of the the main component"
+				);
+				assert.equal(
+					oComponent.getMetadata().getParent().getManifest().name,
+					"sap.ui.test.inheritAsyncError.parentB.Component",
+					"Check name of the inherited parent component B"
+				);
+				assert.equal(
+					oComponent.getMetadata().getParent().getParent().getManifest().name,
+					"sap.ui.test.inheritAsyncError.parentFAIL.Component",
+					"Check name of the inherited parent component A"
+				);
+				destroyComponent(oComponent);
+			});
+		});
+	}
+
+	QUnit.module("Component Metadata async loading of manifests: manifest object", {
+		beforeEach: function() {
+			jQuery.sap.registerResourcePath("sap/ui/test", "./testdata");
+		},
+		afterEach: function() {
+			jQuery.sap.registerResourcePath("sap/ui/test");
+		}
+	});
+
+	QUnit.test("Async loading of manifests", function(assert) {
+		var oManifest = {
+			"name": "sap.ui.test.inheritAsync.Component",
+
+			"sap.app": {
+				"id": "sap.ui.test.inheritAsync",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+
+			"sap.ui5": {
+				"config": {
+					"any": {
+						"entry1": "test32352"
+					}
+				},
+
+				"extends": {
+					"component": "sap.ui.test.inheritAsync.parentB"
+				}
+			}
+		};
+
+		return sap.ui.component({
+			manifest: oManifest,
+			async: true
+		}).then(function(oComponent) {
+			assert.ok(oComponent instanceof Component, "Component has been created.");
+
+			assert.equal(
+				oComponent.getManifest().name,
+				"sap.ui.test.inheritAsync.Component",
+				"Check name of the the main component"
+			);
+			assert.equal(
+				oComponent.getManifestEntry("/sap.ui5/config/any/entry1"),
+				"test32352",
+				"Instance specific manifest entry should be available through component instance"
+			);
+			// the component's original manifest should also be loaded even if a manifest object is given
+			assert.equal(
+				sap.ui.test.inheritAsync.Component.getMetadata().getManifestEntry("/sap.ui5/config/any/entry1"),
+				"test",
+				"Instance specific manifest should not be reused for static manifest"
+			);
+			assert.equal(
+				oComponent.getMetadata().getParent().getManifest().name,
+				"sap.ui.test.inheritAsync.parentB.Component",
+				"Check name of the inherited parent component B"
+			);
+			assert.equal(
+				oComponent.getMetadata().getParent().getParent().getManifest().name,
+				"sap.ui.test.inheritAsync.parentA.Component",
+				"Check name of the inherited parent component A"
+			);
+			destroyComponent(oComponent);
+		});
+	});
+
+	function destroyComponent(oComponent){
+		oComponent.destroy();
+	}
 
 });

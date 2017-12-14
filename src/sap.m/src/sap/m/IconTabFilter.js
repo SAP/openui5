@@ -163,6 +163,11 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 		if (Item.prototype.exit) {
 			Item.prototype.exit.call(this, oEvent);
 		}
+
+		if (this._invisibleText) {
+			this._invisibleText.destroy();
+			this._invisibleText = null;
+		}
 	};
 
 	IconTabFilter.prototype.invalidate = function() {
@@ -415,6 +420,12 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 	IconTabFilter.prototype.renderInSelectList = function (rm, selectList, visibleIndex, visibleItemsCount) {
 		var that = this;
 
+		// destroy the invisible text if exists
+		if (this._invisibleText) {
+			this._invisibleText.destroy();
+			this._invisibleText = null;
+		}
+
 		if (!that.getVisible()) {
 			return;
 		}
@@ -463,7 +474,6 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 		rm.writeClasses();
 
 		var itemId = that.getId(),
-			invisibleText,
 			iiconColorRead = iconColor == 'Positive' || iconColor == 'Critical' || iconColor == 'Negative';
 
 		var labelledBy = ' aria-labelledby="';
@@ -478,19 +488,19 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 
 		if (iiconColorRead) {
 
-			invisibleText = new InvisibleText({
+			this._invisibleText = new InvisibleText({
 				text: resourceBundle.getText('ICONTABBAR_ICONCOLOR_' + iconColor.toUpperCase())
 			});
 
-			labelledBy += invisibleText.getId();
+			labelledBy += this._invisibleText.getId();
 		}
 
 		labelledBy += '"';
 
 		rm.write(labelledBy + '>');
 
-		if (invisibleText) {
-			rm.renderControl(invisibleText);
+		if (this._invisibleText) {
+			rm.renderControl(this._invisibleText);
 		}
 
 		if (!isTextOnly) {

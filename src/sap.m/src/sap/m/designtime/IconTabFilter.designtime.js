@@ -23,6 +23,22 @@ sap.ui.define([],
 						}
 					};
 				}
+			},
+			aggregations: {
+				content: {
+					domRef: function(oControl) {
+						var oIconTabHeader = oControl.getParent(),
+							oIconTabBar = oIconTabHeader && oIconTabHeader.getParent(),
+							aContent = oControl.getContent() || [];
+
+						if (aContent.length > 0 && oIconTabBar) {
+							return oIconTabBar.getDomRef("content");
+						}
+					},
+					actions: {
+						move: "moveControls"
+					}
+				}
 			}
 		};
 

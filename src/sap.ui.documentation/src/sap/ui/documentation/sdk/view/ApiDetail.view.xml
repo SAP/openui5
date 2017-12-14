@@ -166,8 +166,8 @@
 
 										<m:Table items="{ path: '/constructor/parameters'}"
 												showSeparators="Inner"
-		 										fixedLayout="true"
-		 										visible="{= !!${/constructor/parameters} }">
+												fixedLayout="true"
+												visible="{= !!${/constructor/parameters} }">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
@@ -181,8 +181,7 @@
 																								{path: 'isSubSubProperty'},
 																								{path: 'appView>/bPhoneSize'}],
 																								formatter: '.formatEventClassName'}"
-																		  text="{name}"
-																		  wrapping="false"/>
+																		  text="{name}"/>
 
 														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}">
 															<m:HBox>
@@ -313,7 +312,7 @@
 											<m:ColumnListItem visible="{= ${visibility} === 'public'}">
 												<m:cells>
 													<m:VBox>
-														<m:Text class="sapUiDocumentationParamBold" text="{name}" wrapping="false"/>
+														<custom:ParamText text="{name}" phoneText="{name}" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
 														<m:ObjectStatus visible="{= ${deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
 													</m:VBox>
 													<m:Text text="{cardinality}" wrapping="false"/>
@@ -418,8 +417,7 @@
 																								{path: 'isSubSubProperty'},
 																								{path: 'appView>/bPhoneSize'}],
 																						formatter: '.formatEventClassName'}"
-																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${phoneName} ? ${phoneName} : ${name} }"
-																wrapping="false"/>
+																		  text="{name}" phoneText="{phoneName}"/>
 														<m:Link text="{type}"
 																href="#/api/{type}"
 																enabled="{= !!${linkEnabled} }"/>
@@ -494,22 +492,12 @@
 												<m:ColumnListItem>
 													<m:cells>
 
-														<custom:ParamText customClass="{parts: [{path: 'isSubProperty'},
-																								{path: 'appView>/bPhoneSize'}],
-																						formatter: '.formatMethodClassName'}"
-																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${phoneName} ? ${phoneName} : ${name} }{= ${optional} ? '?' : ''}"
-																		  wrapping="false"/>
+														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
 
-
-														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}">
-															<m:HBox>
-																<m:items>
-																	<m:Link text="{value}"
-																			href="#/api/{= ${value}.replace('[]', '') }"
-																			enabled="{= !!${linkEnabled} }"/>
-																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${isLast} === false}" wrapping="false"/>
-																</m:items>
-															</m:HBox>
+														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}" class="sapUiDocumentationOrList">
+																<m:Link text="{value}"
+																		href="#/api/{= ${path: 'value'}.replace('[]', '') }"
+																		enabled="{= !!${linkEnabled} }"/>
 														</layout:VerticalLayout>
 
 														<m:Text text="{defaultValue}" wrapping="false"/>
@@ -532,15 +520,10 @@
 												<m:ColumnListItem>
 													<m:cells>
 
-														<layout:VerticalLayout content="{path: 'returnValue/types', templateShareable: 'false'}">
-															<m:HBox>
-																<m:items>
-																	<m:Link text="{value}"
-																			href="#/api/{= ${value}.replace('[]', '') }"
-																			enabled="{= !!${linkEnabled} }"/>
-																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${isLast} === false}" wrapping="false"/>
-																</m:items>
-															</m:HBox>
+														<layout:VerticalLayout content="{path: 'returnValue/types', templateShareable: 'false'}" class="sapUiDocumentationOrList">
+																<m:Link text="{value}"
+																		href="#/api/{= ${path: 'value'}.replace('[]', '') }"
+																		enabled="{= !!${linkEnabled} }"/>
 														</layout:VerticalLayout>
 
 														<core:HTML content="{returnValue/description}"/>

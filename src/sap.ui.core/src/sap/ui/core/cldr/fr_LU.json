@@ -321,6 +321,7 @@
 		"ln": "lingala",
 		"lo": "lao",
 		"lol": "mongo",
+		"lou": "créole louisianais",
 		"loz": "lozi",
 		"lrc": "lori du Nord",
 		"lt": "lituanien",
@@ -565,8 +566,8 @@
 		"tw": "twi",
 		"twq": "tasawaq",
 		"ty": "tahitien",
-		"tyv": "touva",
-		"tzm": "tamazight du Maroc central",
+		"tyv": "touvain",
+		"tzm": "amazighe de l’Atlas central",
 		"udm": "oudmourte",
 		"ug": "ouïghour",
 		"ug_alt-variant": "ouïgour",
@@ -663,12 +664,13 @@
 		"Geok": "géorgien khoutsouri",
 		"Geor": "géorgien",
 		"Glag": "glagolitique",
+		"Gonm": "Gonm",
 		"Goth": "gotique",
 		"Gran": "Gran",
 		"Grek": "grec",
 		"Gujr": "goudjarâtî",
 		"Guru": "gourmoukhî",
-		"Hanb": "Hanb",
+		"Hanb": "han avec bopomofo",
 		"Hang": "hangûl",
 		"Hani": "sinogrammes",
 		"Hano": "hanounóo",
@@ -685,7 +687,7 @@
 		"Hung": "ancien hongrois",
 		"Inds": "indus",
 		"Ital": "ancien italique",
-		"Jamo": "Jamo",
+		"Jamo": "jamo",
 		"Java": "javanais",
 		"Jpan": "japonais",
 		"Kali": "kayah li",
@@ -728,6 +730,7 @@
 		"Nbat": "Nbat",
 		"Newa": "Newa",
 		"Nkoo": "n’ko",
+		"Nshu": "Nshu",
 		"Ogam": "ogam",
 		"Olck": "ol tchiki",
 		"Orkh": "orkhon",
@@ -758,6 +761,7 @@
 		"Sind": "Sind",
 		"Sinh": "cinghalais",
 		"Sora": "Sora",
+		"Soyo": "Soyo",
 		"Sund": "sundanais",
 		"Sylo": "sylotî nâgrî",
 		"Syrc": "syriaque",
@@ -786,9 +790,10 @@
 		"Xpeo": "cunéiforme persépolitain",
 		"Xsux": "cunéiforme suméro-akkadien",
 		"Yiii": "yi",
+		"Zanb": "Zanb",
 		"Zinh": "hérité",
 		"Zmth": "notation mathématique",
-		"Zsye": "Zsye",
+		"Zsye": "emoji",
 		"Zsym": "symboles",
 		"Zxxx": "non écrit",
 		"Zyyy": "commun",
@@ -802,6 +807,7 @@
 		"151": "Europe de l’Est",
 		"154": "Europe septentrionale",
 		"155": "Europe occidentale",
+		"202": "202",
 		"419": "Amérique latine",
 		"001": "Monde",
 		"002": "Afrique",
@@ -872,7 +878,7 @@
 		"CG-alt-variant": "République du Congo",
 		"CH": "Suisse",
 		"CI": "Côte d’Ivoire",
-		"CI-alt-variant": "CI",
+		"CI-alt-variant": "​​République de Côte d’Ivoire",
 		"CK": "Îles Cook",
 		"CL": "Chili",
 		"CM": "Cameroun",
@@ -903,7 +909,7 @@
 		"ES": "Espagne",
 		"ET": "Éthiopie",
 		"EU": "Union européenne",
-		"EZ": "EZ",
+		"EZ": "zone euro",
 		"FI": "Finlande",
 		"FJ": "Fidji",
 		"FK": "Îles Malouines",
@@ -1052,7 +1058,7 @@
 		"SR": "Suriname",
 		"SS": "Soudan du Sud",
 		"ST": "Sao Tomé-et-Principe",
-		"SV": "El Salvador",
+		"SV": "Salvador",
 		"SX": "Saint-Martin (partie néerlandaise)",
 		"SY": "Syrie",
 		"SZ": "Swaziland",
@@ -1120,8 +1126,13 @@
 			"medium": "{1} 'à' {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "E",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1159,8 +1170,8 @@
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
-				"MMMMW": "'semaine' W 'de' MMM",
-				"yw": "'semaine' w 'de' y"
+				"MMMMW": "'semaine' W (MMMM)",
+				"yw": "'semaine' w 'de' Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1543,8 +1554,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1930,13 +1946,13 @@
 			}
 		},
 		"era-wide": {
-			"0": "AH"
+			"0": "ère de l’Hégire"
 		},
 		"era-abbreviated": {
 			"0": "AH"
 		},
 		"era-narrow": {
-			"0": "AH"
+			"0": "H"
 		}
 	},
 	"ca-japanese": {
@@ -1958,8 +1974,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2382,8 +2403,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2531,18 +2557,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"far.",
+					"ord.",
+					"kho.",
+					"tir",
+					"mor.",
+					"šah.",
+					"mehr",
+					"âbân",
+					"âzar",
+					"dey",
+					"bah.",
+					"esf."
 				],
 				"narrow": [
 					"1",
@@ -2559,34 +2585,34 @@
 					"12"
 				],
 				"wide": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardin",
+					"ordibehešt",
+					"khordâd",
+					"tir",
+					"mordâd",
+					"šahrivar",
+					"mehr",
+					"âbân",
+					"âzar",
+					"dey",
+					"bahman",
+					"esfand"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"far.",
+					"ord.",
+					"kho.",
+					"tir",
+					"mor.",
+					"šah.",
+					"mehr",
+					"âbân",
+					"âzar",
+					"dey",
+					"bah.",
+					"esf."
 				],
 				"narrow": [
 					"1",
@@ -2603,18 +2629,18 @@
 					"12"
 				],
 				"wide": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardin",
+					"ordibehešt",
+					"khordâd",
+					"tir",
+					"mordâd",
+					"šahrivar",
+					"mehr",
+					"âbân",
+					"âzar",
+					"dey",
+					"bahman",
+					"esfand"
 				]
 			}
 		},
@@ -2769,10 +2795,10 @@
 			}
 		},
 		"era-wide": {
-			"0": "AP"
+			"0": "Anno Persico"
 		},
 		"era-abbreviated": {
-			"0": "AP"
+			"0": "A. P."
 		},
 		"era-narrow": {
 			"0": "AP"
@@ -3032,12 +3058,12 @@
 			"displayName": "h",
 			"relative-type-0": "cette heure-ci",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "dans {0}h",
-				"relativeTimePattern-count-other": "dans {0}h"
+				"relativeTimePattern-count-one": "+{0} h",
+				"relativeTimePattern-count-other": "+{0} h"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "il y a {0}h",
-				"relativeTimePattern-count-other": "il y a {0}h"
+				"relativeTimePattern-count-one": "-{0} h",
+				"relativeTimePattern-count-other": "-{0} h"
 			}
 		},
 		"minute-wide": {
@@ -3072,7 +3098,7 @@
 				"relativeTimePattern-count-other": "+{0} min"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "il y a {0}min",
+				"relativeTimePattern-count-one": "-{0} min",
 				"relativeTimePattern-count-other": "-{0} min"
 			}
 		},
@@ -3136,13 +3162,13 @@
 		"1000000000-other": "0 milliards",
 		"10000000000-one": "00 milliard",
 		"10000000000-other": "00 milliards",
-		"100000000000-one": "000 milliards",
+		"100000000000-one": "000 milliard",
 		"100000000000-other": "000 milliards",
 		"1000000000000-one": "0 billion",
 		"1000000000000-other": "0 billions",
-		"10000000000000-one": "00 billions",
+		"10000000000000-one": "00 billion",
 		"10000000000000-other": "00 billions",
-		"100000000000000-one": "000 billions",
+		"100000000000000-one": "000 billion",
 		"100000000000000-other": "000 billions"
 	},
 	"decimalFormat-short": {
@@ -3281,6 +3307,18 @@
 		"middle": "{0}, {1}",
 		"end": "{0} et {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} ou {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} ou {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} ou {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} ou {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} et {1}",
 		"start": "{0}, {1}",
@@ -3305,6 +3343,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3330,11 +3369,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

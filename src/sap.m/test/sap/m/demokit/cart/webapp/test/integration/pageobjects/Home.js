@@ -4,7 +4,12 @@ sap.ui.define([
 	'sap/ui/test/matchers/Properties',
 	'sap/ui/test/matchers/AggregationFilled',
 	'sap/ui/test/actions/Press'
-], function (Opa5, BindingPath, Properties, AggregationFilled, Press) {
+], function (
+	Opa5,
+	BindingPath,
+	Properties,
+	AggregationFilled,
+	Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -20,14 +25,14 @@ sap.ui.define([
 					});
 				},
 
-                iPressOnTheSpeakerCategory : function () {
-                    return this.waitFor({
-                        controlType : "sap.m.StandardListItem",
-                        matchers : new Properties({title : "Speakers"}),
-                        actions : new Press(),
-                        errorMessage : "The category list does not contain required selection"
-                    });
-                },
+				iPressOnTheSpeakerCategory : function () {
+					return this.waitFor({
+						controlType : "sap.m.StandardListItem",
+						matchers : new Properties({title : "Speakers"}),
+						actions : new Press(),
+						errorMessage : "The category list does not contain required selection"
+					});
+				},
 
 				iGoToTheCartPage : function () {
 					return this.waitFor({
@@ -49,7 +54,7 @@ sap.ui.define([
 					});
 				},
 
-                iShouldSeeSomeEntriesInTheCategoryList : function () {
+				iShouldSeeSomeEntriesInTheCategoryList : function () {
 					return this.waitFor({
 						id : "categoryList",
 						matchers: new AggregationFilled({name : "items"}),

@@ -5,7 +5,7 @@
 /**
  * Provides methods for information retrieval from the core.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI', 'sap/ui/thirdparty/URI'],
+sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
 	function (jQuery, ToolsAPI, URI) {
 	"use strict";
 

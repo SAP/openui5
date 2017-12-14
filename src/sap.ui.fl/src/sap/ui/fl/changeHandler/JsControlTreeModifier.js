@@ -247,6 +247,13 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * checks the metadata of the given control and returns the aggregation matching the name
+		 *
+		 * @param {sap.ui.core.Control} oControl control whose aggregation is to be found
+		 * @param {string} sAggregationName name of the aggregation
+		 * @returns {object} Returns the instance of the aggregation or undefined
+		 */
 		findAggregation: function(oControl, sAggregationName) {
 			if (oControl) {
 				if (oControl.getMetadata) {
@@ -259,8 +266,47 @@ sap.ui.define([
 			}
 		},
 
-		addXML: function(oControl, sAggregationName, iIndex, oNewControl, oView, oComponent) {
-			this.insertAggregation(oControl, sAggregationName, oNewControl, iIndex);
+		/**
+		 * Validates if the control has the correct type for the aggregation.
+		 *
+		 * @param {sap.ui.core.Control} oControl control whose type is to be checked
+		 * @param {object} oAggregationMetadata metadata of the aggregation
+		 * @param {sap.ui.core.Control} oParent parent of the control
+		 * @param {string} sFragment path to the fragment that contains the control, whose type is to be checked
+		 * @returns {boolean} Returns true if the type matches
+		 */
+		validateType: function(oControl, oAggregationMetadata, oParent, sFragment) {
+			var sTypeOrInterface = oAggregationMetadata.type;
+
+			// if aggregation is not multiple and already has element inside, then it is not valid for element
+			if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, oAggregationMetadata.name) &&
+					this.getAggregation(oParent, oAggregationMetadata.name).length > 0) {
+				return false;
+			}
+			return Utils.isInstanceOf(oControl, sTypeOrInterface) || Utils.hasInterface(oControl, sTypeOrInterface);
+		},
+
+		/**
+		 * Instantiates a fragment and turns the result into an array of controls
+		 *
+		 * @param {string} sFragment path to the fragment
+		 * @param {string} sChangeId id of the current change
+		 * @param {sap.ui.core.mvc.View} oView view for the fragment
+		 * @param {sap.ui.core.mvc.Controller} oController controller for the fragment
+		 * @returns {array} Returns an array with the controls of the fragment
+		 */
+		instantiateFragment: function(sFragment, sChangeId, oView, oController) {
+			var aNewControls;
+			if (oView) {
+				aNewControls = sap.ui.xmlfragment(oView.getId() + "--" + sChangeId, sFragment, oController);
+			} else {
+				aNewControls = sap.ui.xmlfragment(sChangeId, sFragment);
+			}
+
+			if (!Array.isArray(aNewControls)) {
+				aNewControls = [aNewControls];
+			}
+			return aNewControls;
 		},
 
 		getChangeHandlerModulePath: function(oControl) {

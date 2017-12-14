@@ -24,7 +24,7 @@
 						<uxap:navigationBar>
 							<Bar>
 								<contentLeft>
-									<Button text="Personlization Changes" press=".createChanges" ariaDescribedBy="defaultButtonDescription genericButtonDescription"></Button>
+									<Button text="Personalization Changes" press=".createChanges" ariaDescribedBy="defaultButtonDescription genericButtonDescription"></Button>
 								</contentLeft>
 								<contentRight>
 									<vm:VariantManagement id="variantManagementOrdersTable" for="ObjectPageLayout"></vm:VariantManagement>

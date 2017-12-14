@@ -19,7 +19,7 @@
 				<Bar class="sapContrast" design="SubHeader">
 					<contentLeft>
 						<!--<c:Icon src="sap-icon://sap-ui5" />-->
-						<Image src="../ui/images/Logo_O_22x22.png"></Image>
+						<Image src="../ui/images/Logo_O_22x22.png" densityAware="false"></Image>
 						<Text text="{/constants/SUPPORT_ASSISTANT_NAME}" class="STCustomHeaderInfo" />
 					</contentLeft>
 
@@ -74,8 +74,8 @@
 			<l:flexContent>
 				<NavContainer
 					id="navCon">
-					<mvc:XMLView id="analysis" viewName="sap.ui.support.supportRules.ui.views.Analysis"></mvc:XMLView>
-					<mvc:XMLView id="issues"  viewName="sap.ui.support.supportRules.ui.views.Issues"></mvc:XMLView>
+					<mvc:XMLView id="analysis" viewName="sap.ui.support.supportRules.ui.views.Analysis" async="true"></mvc:XMLView>
+					<mvc:XMLView id="issues"  viewName="sap.ui.support.supportRules.ui.views.Issues" async="true"></mvc:XMLView>
 				</NavContainer>
 			</l:flexContent>
 		</l:FixFlex>

@@ -12,15 +12,13 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			var value = event.getParameter("value");
 			this.byId("containerLayout").setWidth(value + "%");
 		},
-		onWrappingPressed: function(oEvent) {
-			var text = this.byId("textSample");
+		onWrappingChange: function(oEvent) {
+			var text = this.byId("text");
 			text.setWrapping(!text.getWrapping());
-			this.byId("btn1").setText(text.getWrapping() ? "Turn Off Wrapping" : "Turn On Wrapping");
 		},
-		onWhiteSpacePressed: function(oEvent) {
-			var text = this.byId("textSample");
+		onRenderWhitespaceChange: function(oEvent) {
+			var text = this.byId("text");
 			text.setRenderWhitespace(!text.getRenderWhitespace());
-			this.byId("btn2").setText(text.getRenderWhitespace() ? "Turn Off RenderWhitespace" : "Turn On RenderWhitespace");
 		}
 	});
 

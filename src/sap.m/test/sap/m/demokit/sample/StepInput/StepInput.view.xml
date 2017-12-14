@@ -22,6 +22,7 @@
 						width="{width}"
 						step="{step}"
 						largerStep="{largerStep}"
+						stepMode="{stepMode}"
 						valueState="{valueState}"
 						enabled="{enabled}"
 						editable="{editable}"

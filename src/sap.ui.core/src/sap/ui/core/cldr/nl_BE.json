@@ -12,7 +12,7 @@
 		"af": "Afrikaans",
 		"afh": "Afrihili",
 		"agq": "Aghem",
-		"ain": "Ainu",
+		"ain": "Aino",
 		"ak": "Akan",
 		"akk": "Akkadisch",
 		"akz": "Alabama",
@@ -321,6 +321,7 @@
 		"ln": "Lingala",
 		"lo": "Laotiaans",
 		"lol": "Mongo",
+		"lou": "Louisiana-Creools",
 		"loz": "Lozi",
 		"lrc": "Noordelijk Luri",
 		"lt": "Litouws",
@@ -384,7 +385,7 @@
 		"nb": "Noors - Bokmål",
 		"nd": "Noord-Ndebele",
 		"nds": "Nedersaksisch",
-		"nds_NL": "Nedersaksisch (Nederland)",
+		"nds_NL": "Nederduits",
 		"ne": "Nepalees",
 		"new": "Newari",
 		"ng": "Ndonga",
@@ -663,6 +664,7 @@
 		"Geok": "Georgisch Khutsuri",
 		"Geor": "Georgisch",
 		"Glag": "Glagolitisch",
+		"Gonm": "Masaram Gondi",
 		"Goth": "Gothisch",
 		"Gran": "Grantha",
 		"Grek": "Grieks",
@@ -811,6 +813,7 @@
 		"Sind": "Sindhi",
 		"Sinh": "Singalees",
 		"Sora": "Sora Sompeng",
+		"Soyo": "Soyombo",
 		"Sund": "Soendanees",
 		"Sylo": "Syloti Nagri",
 		"Syrc": "Syriac",
@@ -840,6 +843,7 @@
 		"Xpeo": "Oudperzisch",
 		"Xsux": "Sumero-Akkadian Cuneiform",
 		"Yiii": "Yi",
+		"Zanb": "vierkant Zanabazar",
 		"Zinh": "Overgeërfd",
 		"Zmth": "Wiskundige notatie",
 		"Zsye": "emoji",
@@ -856,6 +860,7 @@
 		"151": "Oost-Europa",
 		"154": "Noord-Europa",
 		"155": "West-Europa",
+		"202": "202",
 		"419": "Latijns-Amerika",
 		"001": "wereld",
 		"002": "Afrika",
@@ -926,7 +931,7 @@
 		"CG-alt-variant": "Congo (Republiek)",
 		"CH": "Zwitserland",
 		"CI": "Ivoorkust",
-		"CI-alt-variant": "CI",
+		"CI-alt-variant": "Republiek Ivoorkust",
 		"CK": "Cookeilanden",
 		"CL": "Chili",
 		"CM": "Kameroen",
@@ -939,8 +944,8 @@
 		"CW": "Curaçao",
 		"CX": "Christmaseiland",
 		"CY": "Cyprus",
-		"CZ": "Tsjechische Republiek",
-		"CZ-alt-variant": "Tsjechië",
+		"CZ": "Tsjechië",
+		"CZ-alt-variant": "Tsjechische Republiek",
 		"DE": "Duitsland",
 		"DG": "Diego Garcia",
 		"DJ": "Djibouti",
@@ -957,7 +962,7 @@
 		"ES": "Spanje",
 		"ET": "Ethiopië",
 		"EU": "Europese Unie",
-		"EZ": "EZ",
+		"EZ": "eurozone",
 		"FI": "Finland",
 		"FJ": "Fiji",
 		"FK": "Falklandeilanden",
@@ -998,7 +1003,7 @@
 		"IL": "Israël",
 		"IM": "Isle of Man",
 		"IN": "India",
-		"IO": "Britse Gebieden in de Indische Oceaan",
+		"IO": "Brits Indische Oceaanterritorium",
 		"IQ": "Irak",
 		"IR": "Iran",
 		"IS": "IJsland",
@@ -1119,7 +1124,7 @@
 		"TJ": "Tadzjikistan",
 		"TK": "Tokelau",
 		"TL": "Oost-Timor",
-		"TL-alt-variant": "TL",
+		"TL-alt-variant": "Democratische Republiek Oost-Timor",
 		"TM": "Turkmenistan",
 		"TN": "Tunesië",
 		"TO": "Tonga",
@@ -1131,8 +1136,8 @@
 		"UA": "Oekraïne",
 		"UG": "Oeganda",
 		"UM": "Kleine afgelegen eilanden van de Verenigde Staten",
-		"UN": "verenigde naties",
-		"UN-alt-short": "vn",
+		"UN": "Verenigde Naties",
+		"UN-alt-short": "VN",
 		"US": "Verenigde Staten",
 		"US-alt-short": "VS",
 		"UY": "Uruguay",
@@ -1174,8 +1179,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1214,7 +1224,7 @@
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
 				"MMMMW": "'week' W 'van' MMM",
-				"yw": "'week' w 'in' y"
+				"yw": "'week' w 'in' Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1600,8 +1610,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1993,10 +2008,10 @@
 			"0": "Saʻna Hizjria"
 		},
 		"era-abbreviated": {
-			"0": "Saʻna Hizjria"
+			"0": "AH"
 		},
 		"era-narrow": {
-			"0": "Saʻna Hizjria"
+			"0": "AH"
 		}
 	},
 	"ca-japanese": {
@@ -2018,8 +2033,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2445,8 +2465,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2924,7 +2949,7 @@
 			"relative-type-0": "dit kwartaal",
 			"relative-type-1": "volgend kwartaal",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "over {0} kwartaal",
+				"relativeTimePattern-count-one": "over {0} kw.",
 				"relativeTimePattern-count-other": "over {0} kwartalen"
 			},
 			"relativeTime-type-past": {
@@ -3328,6 +3353,18 @@
 		"middle": "{0}, {1}",
 		"end": "{0} en {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} of {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} of {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} of {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} of {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} en {1}",
 		"start": "{0}, {1}",
@@ -3352,6 +3389,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3377,11 +3415,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

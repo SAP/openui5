@@ -122,7 +122,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 					"sap/ui/core/support/plugins/LocalStorage",
 					"sap/ui/core/support/plugins/Interaction",
 					"sap/ui/core/support/plugins/Performance"
-				]
+				],
+				//Configuration used for rule loading of Support Assistant
+				publicRules:true,
+				internalRules:true
 			}
 		}
 	});

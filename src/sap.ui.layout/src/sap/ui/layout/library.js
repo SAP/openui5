@@ -115,6 +115,11 @@ sap.ui.define([
 					"hideControl": "default",
 					"unhideControl": "default"
 				}
+			},
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				publicRules:true,
+				internalRules:true
 			}
 		}
 	});

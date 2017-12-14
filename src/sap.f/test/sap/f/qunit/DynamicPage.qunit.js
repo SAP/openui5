@@ -90,6 +90,14 @@
 					footer: this.getFooter()
 				});
 			},
+			getDynamicPageWithNavigationActionsAndBreadcrumbs: function () {
+				return new DynamicPage({
+					title: this.getDynamicPageTitleWithNavigationActionsAndBreadcrumbs(),
+					header: this.getDynamicPageHeader(),
+					content: this.getContent(200),
+					footer: this.getFooter()
+				});
+			},
 			getDynamicPageNoTitleAndHeader: function () {
 				return new DynamicPage({
 					content: this.getContent(20)
@@ -116,6 +124,24 @@
 			getDynamicPageTitleWithNavigationActions:  function () {
 				return new DynamicPageTitle({
 					heading:  this.getTitle(),
+					navigationActions: [
+						this.getAction(),
+						this.getAction(),
+						this.getAction()
+					]
+				});
+			},
+			getDynamicPageTitleWithNavigationActionsAndBreadcrumbs: function () {
+				return new DynamicPageTitle({
+					heading:  this.getTitle(),
+					breadcrumbs: new sap.m.Breadcrumbs({
+						links: [
+							new sap.m.Link({text: "link1"}),
+							new sap.m.Link({text: "link2"}),
+							new sap.m.Link({text: "link3"}),
+							new sap.m.Link({text: "link4"})
+						]
+					}),
 					navigationActions: [
 						this.getAction(),
 						this.getAction(),
@@ -267,6 +293,20 @@
 		this.oDynamicPage.setPreserveHeaderStateOnScroll(true);
 		assert.ok(!this.oDynamicPage.getHeaderExpanded(), "The DynamicPage`s headerExpanded is preserved");
 		assert.ok(this.oDynamicPage.getPreserveHeaderStateOnScroll(), "The DynamicPage preserveHeaderStateOnScroll is true");
+	});
+
+	QUnit.test("Using setHeaderExpanded does not make DynamicPageTitle fire stateChange event", function (assert) {
+		// arrange
+		var oTitle = this.oDynamicPage.getTitle(),
+			oStateChangeListener = sinon.spy();
+
+		oTitle.attachEvent("stateChange", oStateChangeListener);
+
+		// act
+		this.oDynamicPage.setHeaderExpanded(!this.oDynamicPage.getHeaderExpanded());
+
+		// assert
+		assert.ok(!oStateChangeListener.called, "stateChange event was not fired");
 	});
 
 	/* --------------------------- DynamicPage Title API ---------------------------------- */
@@ -518,6 +558,19 @@
 
 		// Assert default: primary area is "Begin"
 		assert.equal(oDynamicPageTitle.getPrimaryArea(), sBeginArea, "is the default one");
+	});
+
+	QUnit.test("test areaShrinkRatio", function (assert) {
+		var oDynamicPageTitle = this.oDynamicPageTitle;
+
+		// Assert default: Heading:Content:Actions - "1:1.6:1.6"
+		assert.equal(oDynamicPageTitle.getAreaShrinkRatio(), "1:1.6:1.6", "is the default one");
+
+		// Act
+		oDynamicPageTitle.setAreaShrinkRatio("0:0:0");
+
+		// Assert
+		assert.equal(oDynamicPageTitle.getAreaShrinkRatio(), "0:0:0", "shrink factors are correct");
 	});
 
 	QUnit.test("Adding an OverflowToolbar to the content sets flex-basis and removing it resets it", function (assert) {
@@ -1003,7 +1056,7 @@
 
 		// Arrange
 		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
-		oTitle._onResize(1400);
+		oTitle._onResize(iTitleLargeWidth);
 
 		// Assert
 		// Separator should be rendered.
@@ -1015,7 +1068,6 @@
 		oTitle.addAction(oFactory.getAction());
 
 		// Assert: Separator should be visible as there are both actions and navigationActions
-		assert.ok(oTitlePressSpy.calledOnce, "Actions layout is toggled.");
 		assert.equal(oTitle._shouldShowSeparator(), true,
 			"Toolbar Separator should be visible, there are actions and navigationActions.");
 		assert.equal($oSeparator.hasClass("sapUiHidden"), false, "Toolbar Separator element is visible.");
@@ -1047,14 +1099,14 @@
 			oAction2 = oFactory.getAction(),
 			oAction3 = oFactory.getAction(),
 			oSeparator = oTitle.getAggregation("_navActionsToolbarSeparator"),
-			$oSeparator = oSeparator.$();
+			$oSeparator = oSeparator.$(),
+			iTitleLargeWidth = 1400;
 
 		// Arrange:
-		// stub _bNavigationActionsInTopArea in order to be independent of the actual Title width.
-		// this way we assume the size is over 1280px;
 		oTitle.addAction(oAction1);
 		oTitle.addAction(oAction2);
-		oTitle._bNavigationActionsInTopArea = false;
+		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
+		oTitle._onResize(iTitleLargeWidth);
 
 		// Assert
 		assert.equal(oTitle._shouldShowSeparator(), true,
@@ -1072,6 +1124,8 @@
 
 		// Act: show one of the action (oAction1)
 		oAction1.setVisible(true);
+		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
+		oTitle._onResize(iTitleLargeWidth);
 
 		// Assert
 		assert.equal(oTitle._shouldShowSeparator(), true,
@@ -1090,6 +1144,8 @@
 
 		// Act: add a navigationAction (oAction3)
 		oTitle.addNavigationAction(oAction3);
+		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
+		oTitle._onResize(iTitleLargeWidth);
 
 		// Assert
 		assert.equal(oTitle._shouldShowSeparator(), true,
@@ -1109,6 +1165,72 @@
 		oAction1.destroy();
 		oAction2.destroy();
 		oAction3.destroy();
+	});
+
+	QUnit.module("DynamicPage - Rendering - Title with navigationActions and breadcrumbs", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageWithNavigationActionsAndBreadcrumbs();
+			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+			this.oDynamicPageTitle = null;
+		}
+	});
+
+	QUnit.test("Top area visibility upon breadcrumbs change", function (assert) {
+		var oTitle = this.oDynamicPageTitle,
+			oBreadcrumbs = oTitle.getBreadcrumbs(),
+			$TitleTopArea = oTitle.$("top"),
+			$TitleMainArea = oTitle.$("main"),
+			iTitleLargeWidth = 1400,
+			iTitleSmallWidth = 900;
+
+		// Ensure the Title is bigger than 1280px, then navigationAction are in the Title`s main area.
+		oTitle._onResize(iTitleLargeWidth);
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapUiHidden"), false, "Large screen: Top area should be visible when there are visible breadcrumbs.");
+		assert.equal($TitleMainArea.has(".sapFDynamicPageTitleActionsBar").length, 1, "Large screen: Navigation actions should be in the main title area");
+
+		// Act
+		oBreadcrumbs.setVisible(false);
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true, "Large screen: Top area should not be visible when there are no visible breadcrumbs.");
+
+		// Act
+		oTitle._onResize(iTitleSmallWidth);
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true,
+				"Small screen: Top area should not be visible when there are no visible breadcrumbs and actions");
+		assert.equal($TitleMainArea.has(".sapFDynamicPageTitleActionsBar").length, 1, "Small screen: Navigation actions should be in the main title area");
+
+		// Act
+		oBreadcrumbs.setVisible(true);
+
+		// Assert
+		assert.equal($TitleTopArea.has(".sapFDynamicPageTitleActionsBar").length, 1,
+				"Small screen: Navigation actions should be in the top title area when there are visible breadcrumbs");
+	});
+
+	QUnit.test("Top area visibility upon navigation actions aggregation change", function (assert) {
+		var oTitle = this.oDynamicPageTitle,
+			$TitleTopArea = oTitle.$("top"),
+			iTitleSmallWidth = 900;
+
+		// Ensure the Title is smaller than 1280px, then navigationAction are in the Title`s top area.
+		oTitle._onResize(iTitleSmallWidth);
+
+		// Act
+		oTitle.setBreadcrumbs(null);
+		oTitle.removeAllNavigationActions();
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true, "Top area should not be visible when all aggregations are removed");
 	});
 
 	QUnit.module("DynamicPage - Rendering - Title heading, snappedHeading and expandedHeading");
@@ -1356,9 +1478,11 @@
 	/* --------------------------- DynamicPage Events and Handlers ---------------------------------- */
 	QUnit.module("DynamicPage Events, Handlers", {
 		beforeEach: function () {
+			sinon.config.useFakeTimers = true;
 			this.oDynamicPage = oFactory.getDynamicPageWithBigContent();
 		},
 		afterEach: function () {
+			sinon.config.useFakeTimers = false;
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
 		}
@@ -1372,6 +1496,19 @@
 		oTitle.fireEvent("_titlePress");
 
 		assert.ok(oTitlePressSpy.calledOnce, "Title Pin Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage On Title Press: stateChange event is fired", function (assert) {
+		var oStateChangeListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		this.oDynamicPage.getTitle().attachEvent("stateChange", oStateChangeListenerSpy);
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle.fireEvent("_titlePress");
+
+		assert.ok(oStateChangeListenerSpy.calledOnce, "stateChange event was fired once when title was pressed");
 	});
 
 	QUnit.test("DynamicPage On Pin Button Press", function (assert) {
@@ -1398,6 +1535,38 @@
 		// Assert
 		assert.ok(oCollapseButtonPressSpy.calledOnce, "DPage: Collapse Header Visual Indicator Press Handler is called");
 		assert.ok(oCollapseButtonPressSpy2.calledOnce, "DPageHeader: Collapse Header Visual Indicator Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage On Expand Button Press stateChange event is fired", function (assert) {
+		var oStateChangeListenerSpy = sinon.spy(),
+			oCollapseButton = this.oDynamicPage.getHeader()._getCollapseButton();
+
+		this.oDynamicPage.getTitle().attachEvent("stateChange", oStateChangeListenerSpy);
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Act
+		oCollapseButton.firePress();
+
+		assert.ok(oStateChangeListenerSpy.calledOnce, "stateChange event was fired once when expand button was pressed");
+	});
+
+	QUnit.test("DynamicPage On Collapse Button Press 2", function (assert) {
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		var oDetachScrollHandlerSpy = this.spy(sap.f.DynamicPage.prototype, "_detachScrollHandler"),
+			oAttachScrollHandlerSpy = this.spy(sap.f.DynamicPage.prototype, "_attachScrollHandler");
+
+		// Act
+		this.oDynamicPage._titleExpandCollapseWhenAllowed();
+
+		this.clock.tick(1);
+
+		// Assert
+		assert.strictEqual(oDetachScrollHandlerSpy.callCount, 1, "detachScrollHandler was called");
+		assert.strictEqual(oAttachScrollHandlerSpy.callCount, 1, "attachScrollHandler was called");
 	});
 
 	QUnit.test("DynamicPage On Collapse Button MouseOver", function (assert) {
@@ -1451,6 +1620,21 @@
 
 		assert.ok(oExpandButtonPressSpy.calledOnce, "DPage: Expand Header Visual Indicator Press Handler is called");
 		assert.ok(oExpandButtonPressSpy2.calledOnce, "DPageTitle: Expand Header Visual Indicator Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage On Expand Button Press stateChange event is fired", function (assert) {
+		var oStateChangeListenerSpy = sinon.spy(),
+			oExpandButton = this.oDynamicPage.getTitle()._getExpandButton();
+
+		this.oDynamicPage.getTitle().attachEvent("stateChange", oStateChangeListenerSpy);
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Act
+		oExpandButton.firePress();
+
+		assert.ok(oStateChangeListenerSpy.calledOnce, "stateChange event was fired once when expand button was pressed");
 	});
 
 	QUnit.test("DynamicPage Title MouseOver", function (assert) {

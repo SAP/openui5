@@ -140,7 +140,10 @@ sap.ui.define(['jquery.sap.global'],
 	}
 
 	for (var i = 0; i < aEvents.length; i++) {
-		window.addEventListener(aEvents[i], _act.refresh, true);
+		window.addEventListener(aEvents[i], _act.refresh, {
+			capture: true,
+			passive: true
+		});
 	}
 
 	if (window.MutationObserver) {

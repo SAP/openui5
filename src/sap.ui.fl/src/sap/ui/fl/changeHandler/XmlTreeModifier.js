@@ -4,10 +4,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/changeHandler/BaseTreeModifier",
-	"sap/ui/base/DataType"
+	"sap/ui/base/DataType",
+	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/fl/Utils"
 ], function (
 	BaseTreeModifier,
-	DataType
+	DataType,
+	XMLTemplateProcessor,
+	Utils
 ) {
 
 	"use strict";
@@ -315,8 +319,8 @@ sap.ui.define([
 
 		getBindingTemplate: function (oControl, sAggregationName) {
 			var oAggregationNode = this._findAggregationNode(oControl, sAggregationName);
-			if (oAggregationNode && oAggregationNode.childNodes.length === 1) {
-				return oAggregationNode.childNodes[0];
+			if (oAggregationNode && this._children(oAggregationNode).length === 1) {
+				return this._children(oAggregationNode)[0];
 			}
 
 		},
@@ -382,6 +386,13 @@ sap.ui.define([
 			return sAggregationName;
 		},
 
+		/**
+		 * checks the metadata of the given control and returns the aggregation matching the name
+		 *
+		 * @param {sap.ui.core.Control} oControl control whose aggregation is to be found
+		 * @param {string} sAggregationName name of the aggregation
+		 * @returns {object} Returns the instance of the aggregation or undefined
+		 */
 		findAggregation: function(oControl, sAggregationName) {
 			var oMetadata = this._getControlMetadata(oControl);
 			var oAggregations = oMetadata.getAllAggregations();
@@ -390,17 +401,54 @@ sap.ui.define([
 			}
 		},
 
-		addXML: function(oControl, sAggregationName, iIndex, oNewControl, oView, oAppComponent) {
-			// get properties from the already created new control
-			var sClassName = oNewControl.getMetadata().getName();
-			var sSelector = oNewControl.getId();
-			var mSettings = oNewControl.mProperties;
+		/**
+		 * Validates if the control has the correct type for the aggregation.
+		 *
+		 * @param {sap.ui.core.Control} oControl control whose type is to be checked
+		 * @param {object} oAggregationMetadata metadata of the aggregation
+		 * @param {sap.ui.core.Control} oParent parent of the control
+		 * @param {string} sFragment path to the fragment that contains the control, whose type is to be checked
+		 * @returns {boolean} Returns true if the type matches
+		 */
+		validateType: function(oControl, oAggregationMetadata, oParent, sFragment, iIndex) {
+			var sTypeOrInterface = oAggregationMetadata.type;
 
-			// destroy the control, as the control will be recreated as a node which can be added in XML
-			oNewControl.destroy();
+			// if aggregation is not multiple and already has element inside, then it is not valid for element
+			if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, oAggregationMetadata.name) &&
+					this.getAggregation(oParent, oAggregationMetadata.name).length > 0) {
+				return false;
+			}
+			var aControls = sap.ui.xmlfragment(sFragment);
+			if (!Array.isArray(aControls)) {
+				aControls = [aControls];
+			}
+			var bReturn = Utils.isInstanceOf(aControls[iIndex], sTypeOrInterface) || Utils.hasInterface(aControls[iIndex], sTypeOrInterface);
+			aControls.forEach(function(oFragmentControl) {
+				oFragmentControl.destroy();
+			});
+			return bReturn;
+		},
 
-			oNewControl = this.createControl(sClassName, oAppComponent, oView, sSelector, mSettings);
-			this.insertAggregation(oControl, sAggregationName, oNewControl, iIndex, oView);
+		/**
+		 * Loads a fragment and turns the result into an array of nodes
+		 *
+		 * @param {string} sFragment path to the fragment
+		 * @param {string} sChangeId id of the current change
+		 * @returns {array} Returns an array with the nodes of the controls of the fragment
+		 */
+		instantiateFragment: function(sFragment, sChangeId) {
+			var oControlNodes = XMLTemplateProcessor.loadTemplate(sFragment, "fragment");
+			if (oControlNodes.localName === "FragmentDefinition") {
+				var aNodes = [];
+				for (var i = 0, n = oControlNodes.children.length; i < n; i++) {
+					oControlNodes.children[i].id = sChangeId + "--" + oControlNodes.children[i].id;
+					aNodes.push(oControlNodes.children[i]);
+				}
+				return aNodes;
+			} else {
+				oControlNodes.id = sChangeId + "--" + oControlNodes.id;
+				return [oControlNodes];
+			}
 		},
 
 		getChangeHandlerModulePath: function(oControl) {

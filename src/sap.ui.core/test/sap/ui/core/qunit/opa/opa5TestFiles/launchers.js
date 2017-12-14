@@ -2,8 +2,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/test/Opa5',
 	'sap/ui/thirdparty/URI',
-	'sap/ui/test/autowaiter/_autoWaiter'
-], function ($, Opa5, URI, _autoWaiter) {
+	'sap/ui/test/autowaiter/_autoWaiter',
+	'sap/ui/test/launchers/iFrameLauncher'
+], function ($, Opa5, URI, _autoWaiter, iFrameLauncher) {
 	"use strict";
 
 	QUnit.module("Launchers and teardown");
@@ -158,38 +159,77 @@ sap.ui.define([
 
 	QUnit.module("Launchers and autoWait", {
 		beforeEach: function () {
-			Opa5.extendConfig({
-				autoWait: true
-			});
+			Opa5.resetConfig();
+			this.fnWindowOnError = window.onerror;
+			window.onerror = function () {
+				// suppress iFrame errors in IE11
+				return true;
+			};
 		},
 		afterEach: function () {
 			Opa5.resetConfig();
+			window.onerror = this.fnWindowOnError;
 		}
 	});
 
-	QUnit.test("Should ignore autosync when starting/tearing down an IFrame", function(assert) {
+	QUnit.test("Should use default autoWait:false while starting/tearing down an IFrame", function (assert) {
 		var fnDone = assert.async();
 		var oOpa5 = new Opa5();
-		var oAutoWaiterStub = sinon.stub(_autoWaiter, "hasToWait");
-		oAutoWaiterStub.returns(false);
+		var fnAutoWaiterSpy = sinon.spy();
+		var fnGetAutoWaiterStub = sinon.stub(iFrameLauncher, "_getAutoWaiter");
+		fnGetAutoWaiterStub.returns({
+			hasToWait: fnAutoWaiterSpy,
+			extendConfig: function () {}
+		});
 
-		oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+		Opa5.extendConfig({
+			autoWait: true
+		});
+
+		oOpa5.iStartMyAppInAFrame("../testdata/busyAfterStart.html").done(function () {
+			sinon.assert.notCalled(fnAutoWaiterSpy);
+		});
+
 		oOpa5.iTeardownMyApp();
 
 		Opa5.emptyQueue().done(function () {
 			assert.ok(!$(".opaFrame").length, "IFrame is gone again");
-
-			sinon.assert.notCalled(oAutoWaiterStub);
-			oAutoWaiterStub.restore();
+			fnGetAutoWaiterStub.restore();
 			fnDone();
 		});
 	});
 
-	QUnit.test("Should ignore autosync when starting/tearing down a component", function (assert) {
+	QUnit.test("Should use configured autoWait:true while starting an IFrame", function (assert) {
 		var fnDone = assert.async();
 		var oOpa5 = new Opa5();
-		var oAutoWaiterStub = sinon.stub(_autoWaiter, "hasToWait");
-		oAutoWaiterStub.returns(false);
+		var fnAutoWaiterSpy = sinon.spy();
+		var fnGetAutoWaiterStub = sinon.stub(iFrameLauncher, "_getAutoWaiter");
+		fnGetAutoWaiterStub.returns({
+			hasToWait: fnAutoWaiterSpy,
+			extendConfig: function () {}
+		});
+
+		oOpa5.iStartMyAppInAFrame({source: "../testdata/busyAfterStart.html", autoWait: true}).done(function () {
+			sinon.assert.called(fnAutoWaiterSpy);
+		});
+
+		oOpa5.iTeardownMyApp();
+
+		Opa5.emptyQueue().done(function () {
+			assert.ok(!$(".opaFrame").length, "IFrame is gone again");
+			fnGetAutoWaiterStub.restore();
+			fnDone();
+		});
+	});
+
+	QUnit.test("Should use default autoWait:false while starting/tearing down a component", function (assert) {
+		var fnDone = assert.async();
+		var oOpa5 = new Opa5();
+		var fnAutoWaiterSpy = sinon.spy(_autoWaiter, "hasToWait");
+
+		Opa5.extendConfig({
+			autoWait: true // global truthy value should be ignored on next startup
+		});
 
 		oOpa5.iStartMyUIComponent({
 			componentConfig: {
@@ -201,8 +241,37 @@ sap.ui.define([
 
 		Opa5.emptyQueue().done(function () {
 			assert.ok(!$(".sapUiOpaComponent").length, "Component is gone again");
-			sinon.assert.notCalled(oAutoWaiterStub);
-			oAutoWaiterStub.restore();
+			// waiter in outer frame and launcher is the same
+			sinon.assert.notCalled(fnAutoWaiterSpy);
+			fnAutoWaiterSpy.restore();
+			fnDone();
+		});
+	});
+
+	QUnit.test("Should use configured autoWait:true while starting a component", function (assert) {
+		var fnDone = assert.async();
+		var oOpa5 = new Opa5();
+		// waiter in outer frame and launcher is the same
+		var fnAutoWaiterStub = sinon.stub(_autoWaiter, "hasToWait");
+		fnAutoWaiterStub.returns(false);
+
+		// simple component with nothing to wait after start
+		oOpa5.iStartMyUIComponent({
+			componentConfig: {
+				name: "samples.components.button"
+			},
+			autoWait: true
+		}).done(function () {
+			// autoWait is true, so hasPending will be called once and will return false immediately
+			sinon.assert.calledOnce(fnAutoWaiterStub);
+		});
+
+		oOpa5.iTeardownMyApp();
+
+		Opa5.emptyQueue().done(function () {
+			assert.ok(!$(".sapUiOpaComponent").length, "Component is gone again");
+			sinon.assert.calledOnce(fnAutoWaiterStub);
+			fnAutoWaiterStub.restore();
 			fnDone();
 		});
 	});

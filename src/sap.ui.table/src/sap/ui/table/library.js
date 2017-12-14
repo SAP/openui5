@@ -55,6 +55,10 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 				"sap.ui.table.AnalyticalTable" : {
 					"moveElements": "default"
 				}
+			},
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				publicRules:true
 			}
 		}
 	});

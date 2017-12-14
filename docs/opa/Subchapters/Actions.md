@@ -92,6 +92,44 @@ sap.ui.require(["sap/ui/test/opaQUnit", "sap/ui/test/actions/EnterText"], functi
 });
 ```
 
+## Table Interaction
+
+A Table consists of columns (`sap.m.Column`) and rows. The rows, defined as `sap.m.ColumnListItems`,
+consist of cells. In order to utilize a stable locator which is not expected to change frequently,
+you can use a field/value combination to retrieve and interact with table items.
+
+The following example simulates a click on an item in a table. The name of the field can be found in
+the $metadata file of your odata-service.
+
+```javascript
+iClickOnTableItemByFieldValue: function () {
+                    return this.waitFor({
+                        controlType: "sap.m.ColumnListItem",
+
+                        // Retrieve all list items in the table
+                        matchers: [function(oCandidateListItem) {
+                            var oTableLine = {};
+                            oTableLine = oCandidateListItem.getBindingContext().getObject();
+                            var sFound = false;
+
+                            // Iterate through the list items until the specified cell is found
+                            for (var sName in oTableLine) {
+                                if ((sName === "Field Name") && (oTableLine[sName].toString() === "Cell Value")) {
+                                     QUnit.ok(true, "Cell has been found");
+                                    sFound = true;
+                                    break;
+                                }
+                            }
+                            return sFound;
+                        }],
+
+                        // Click on the specified item
+                        actions: new Press(),
+                        errorMessage: "Cell could not be found in the table"
+                     });
+                }
+```
+
 ## Writing your own action
 
 Since OPA5 uses JavaScript for its execution, you cannot use native browser events to simulate user events.

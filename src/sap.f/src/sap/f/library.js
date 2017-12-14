@@ -67,6 +67,10 @@ sap.ui.define(["sap/ui/base/DataType",
 				"sap.f.semantic.SemanticPage" : {
 					"moveControls": "default"
 				}
+			},
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				internalRules:true
 			}
 		}
 	});
@@ -119,7 +123,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	*/
 	thisLib.DynamicPageTitleShrinkRatio = DataType.createType('sap.f.DynamicPageTitleShrinkRatio', {
 		isValid : function(vValue) {
-			return /^(([1-9]\d*)(\.\d)?:([1-9]\d*)(\.\d)?:([1-9]\d*)(\.\d)?)$/.test(vValue);
+			return /^(([0-9]\d*)(\.\d)?:([0-9]\d*)(\.\d)?:([0-9]\d*)(\.\d)?)$/.test(vValue);
 		}
 
 	}, DataType.getType('string'));

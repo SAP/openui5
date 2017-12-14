@@ -101,7 +101,7 @@
 		"dar": "dargu",
 		"dav": "taitu",
 		"de": "vācu",
-		"de_AT": "Austrijas vācu",
+		"de_AT": "vācu (Austrija)",
 		"de_CH": "Šveices augšvācu",
 		"del": "delavēru",
 		"den": "sleivu",
@@ -125,18 +125,18 @@
 		"el": "grieķu",
 		"elx": "elamiešu",
 		"en": "angļu",
-		"en_AU": "Austrālijas angļu",
-		"en_CA": "Kanādas angļu",
-		"en_GB": "Lielbritānijas angļu",
+		"en_AU": "angļu (Austrālija)",
+		"en_CA": "angļu (Kanāda)",
+		"en_GB": "angļu (Lielbritānija)",
 		"en_GB-alt-short": "angļu (Lielbritānija)",
-		"en_US": "ASV angļu",
+		"en_US": "angļu (Amerikas Savienotās Valstis)",
 		"en_US-alt-short": "angļu (ASV)",
 		"enm": "vidusangļu",
 		"eo": "esperanto",
 		"es": "spāņu",
-		"es_419": "Latīņamerikas spāņu",
-		"es_ES": "Eiropas spāņu",
-		"es_MX": "Meksikas spāņu",
+		"es_419": "spāņu (Latīņamerika)",
+		"es_ES": "spāņu (Spānija)",
+		"es_MX": "spāņu (Meksika)",
 		"et": "igauņu",
 		"eu": "basku",
 		"ewo": "evondu",
@@ -150,8 +150,9 @@
 		"fo": "fēru",
 		"fon": "fonu",
 		"fr": "franču",
-		"fr_CA": "Kanādas franču",
-		"fr_CH": "Šveices franču",
+		"fr_CA": "franču (Kanāda)",
+		"fr_CH": "franču (Šveice)",
+		"frc": "kadžūnu franču",
 		"frm": "vidusfranču",
 		"fro": "senfranču",
 		"frr": "ziemeļfrīzu",
@@ -278,6 +279,7 @@
 		"ln": "lingala",
 		"lo": "laosiešu",
 		"lol": "mongu",
+		"lou": "Luiziānas kreolu",
 		"loz": "lozu",
 		"lrc": "ziemeļluru",
 		"lt": "lietuviešu",
@@ -304,7 +306,7 @@
 		"mfe": "Maurīcijas kreolu",
 		"mg": "malagasu",
 		"mga": "vidusīru",
-		"mgh": "makua-meetto",
+		"mgh": "makua",
 		"mgo": "mgo",
 		"mh": "māršaliešu",
 		"mi": "maoru",
@@ -317,7 +319,7 @@
 		"mni": "manipūru",
 		"moh": "mohauku",
 		"mos": "mosu",
-		"mr": "maratu",
+		"mr": "marathu",
 		"ms": "malajiešu",
 		"mt": "maltiešu",
 		"mua": "mundangu",
@@ -384,8 +386,8 @@
 		"pro": "senprovansiešu",
 		"ps": "puštu",
 		"pt": "portugāļu",
-		"pt_BR": "Brazīlijas portugāļu",
-		"pt_PT": "Eiropas portugāļu",
+		"pt_BR": "portugāļu (Brazīlija)",
+		"pt_PT": "portugāļu (Portugāle)",
 		"qu": "kečvu",
 		"quc": "kiče",
 		"raj": "radžastāņu",
@@ -574,19 +576,20 @@
 		"Ethi": "etiopiešu",
 		"Geor": "gruzīnu",
 		"Glag": "Glag",
+		"Gonm": "Gonm",
 		"Goth": "gotu",
 		"Gran": "Gran",
 		"Grek": "grieķu",
 		"Gujr": "gudžaratu",
 		"Guru": "pandžabu",
-		"Hanb": "ķīniešu hanb",
-		"Hang": "hangila",
+		"Hanb": "haņu ar bopomofo",
+		"Hang": "hangils",
 		"Hani": "ķīniešu",
 		"Hano": "Hano",
 		"Hans": "vienkāršotā",
-		"Hans-alt-stand-alone": "hanu vienkāršotā",
+		"Hans-alt-stand-alone": "haņu vienkāršotā",
 		"Hant": "tradicionālā",
-		"Hant-alt-stand-alone": "hanu tradicionālā",
+		"Hant-alt-stand-alone": "haņu tradicionālā",
 		"Hatr": "Hatr",
 		"Hebr": "ivrits",
 		"Hira": "hiragana",
@@ -636,6 +639,7 @@
 		"Nbat": "Nbat",
 		"Newa": "Newa",
 		"Nkoo": "Nkoo",
+		"Nshu": "Nshu",
 		"Ogam": "ogamiskais raksts",
 		"Olck": "Olck",
 		"Orkh": "Orkh",
@@ -664,6 +668,7 @@
 		"Sind": "Sind",
 		"Sinh": "singāļu",
 		"Sora": "Sora",
+		"Soyo": "Soyo",
 		"Sund": "zundu",
 		"Sylo": "Sylo",
 		"Syrc": "sīriešu",
@@ -679,7 +684,7 @@
 		"Telu": "telugu",
 		"Tfng": "Tfng",
 		"Tglg": "tagalu",
-		"Thaa": "taana",
+		"Thaa": "tāna",
 		"Thai": "taju",
 		"Tibt": "tibetiešu",
 		"Tirh": "Tirh",
@@ -689,6 +694,7 @@
 		"Xpeo": "senperiešu",
 		"Xsux": "šumeru-akadiešu ķīļraksts",
 		"Yiii": "ji",
+		"Zanb": "Zanb",
 		"Zinh": "mantotā",
 		"Zmth": "matemātiskais pieraksts",
 		"Zsye": "emocijzīmes",
@@ -705,6 +711,7 @@
 		"151": "Austrumeiropa",
 		"154": "Ziemeļeiropa",
 		"155": "Rietumeiropa",
+		"202": "202",
 		"419": "Latīņamerika",
 		"001": "pasaule",
 		"002": "Āfrika",
@@ -806,7 +813,7 @@
 		"ES": "Spānija",
 		"ET": "Etiopija",
 		"EU": "Eiropas Savienība",
-		"EZ": "EZ",
+		"EZ": "Eirozona",
 		"FI": "Somija",
 		"FJ": "Fidži",
 		"FK": "Folklenda salas",
@@ -1023,8 +1030,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E, h:mm a",
 				"EHm": "E, HH:mm",
@@ -1065,7 +1077,7 @@
 				"yQQQ": "y. 'g'. QQQ",
 				"yQQQQ": "y. 'g'. QQQQ",
 				"MMMMW": "MMM W. 'nedēļa'",
-				"yw": "y. 'g'. w. 'nedēļa'"
+				"yw": "Y. 'g'. w. 'nedēļa'"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1408,7 +1420,7 @@
 				],
 				"narrow": [
 					"priekšp.",
-					"pēcp."
+					"pēcpusd."
 				],
 				"wide": [
 					"priekšpusdiena",
@@ -1448,13 +1460,18 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E, d.",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y. 'g'. G",
 				"GyMMM": "y. 'g'. MMM G",
 				"GyMMMd": "y. 'g'. d. MMM G",
@@ -1827,7 +1844,7 @@
 				],
 				"narrow": [
 					"priekšp.",
-					"pēcp."
+					"pēcpusd."
 				],
 				"wide": [
 					"priekšpusdiena",
@@ -1836,7 +1853,7 @@
 			}
 		},
 		"era-wide": {
-			"0": "AH"
+			"0": "pēc hidžras"
 		},
 		"era-abbreviated": {
 			"0": "AH"
@@ -1864,13 +1881,18 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E, d.",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y. 'g'. G",
 				"GyMMM": "y. 'g'. MMM G",
 				"GyMMMd": "y. 'g'. d. MMM G",
@@ -2243,7 +2265,7 @@
 				],
 				"narrow": [
 					"priekšp.",
-					"pēcp."
+					"pēcpusd."
 				],
 				"wide": [
 					"priekšpusdiena",
@@ -2289,13 +2311,18 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E, d.",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y. 'g'. G",
 				"GyMMM": "y. 'g'. MMM G",
 				"GyMMMd": "y. 'g'. d. MMM G",
@@ -2439,18 +2466,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardīns",
+					"ordibehešts",
+					"hordāds",
+					"tīrs",
+					"mordāds",
+					"šahrivērs",
+					"mehrs",
+					"abans",
+					"azers",
+					"dejs",
+					"bahmans",
+					"esfands"
 				],
 				"narrow": [
 					"1",
@@ -2467,34 +2494,34 @@
 					"12"
 				],
 				"wide": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardīns",
+					"ordibehešts",
+					"hordāds",
+					"tīrs",
+					"mordāds",
+					"šahrivērs",
+					"mehrs",
+					"abans",
+					"azers",
+					"dejs",
+					"bahmans",
+					"esfands"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardīns",
+					"ordibehešts",
+					"hordāds",
+					"tīrs",
+					"mordāds",
+					"šahrivērs",
+					"mehrs",
+					"abans",
+					"azers",
+					"dejs",
+					"bahmans",
+					"esfands"
 				],
 				"narrow": [
 					"1",
@@ -2511,18 +2538,18 @@
 					"12"
 				],
 				"wide": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardīns",
+					"ordibehešts",
+					"hordāds",
+					"tīrs",
+					"mordāds",
+					"šahrivērs",
+					"mehrs",
+					"abans",
+					"azers",
+					"dejs",
+					"bahmans",
+					"esfands"
 				]
 			}
 		},
@@ -2668,7 +2695,7 @@
 				],
 				"narrow": [
 					"priekšp.",
-					"pēcp."
+					"pēcpusd."
 				],
 				"wide": [
 					"priekšpusdiena",
@@ -2677,13 +2704,13 @@
 			}
 		},
 		"era-wide": {
-			"0": "AP"
+			"0": "persiešu gads"
 		},
 		"era-abbreviated": {
-			"0": "AP"
+			"0": "pers. gads"
 		},
 		"era-narrow": {
-			"0": "AP"
+			"0": "pers. gads"
 		}
 	},
 	"dateFields": {
@@ -2866,7 +2893,7 @@
 				"relativeTimePattern-count-one": "pirms {0} ned.",
 				"relativeTimePattern-count-other": "pirms {0} ned."
 			},
-			"relativePeriod": "{0}. nedēļa"
+			"relativePeriod": "{0}. ned."
 		},
 		"week-narrow": {
 			"displayName": "ned.",
@@ -2883,7 +2910,7 @@
 				"relativeTimePattern-count-one": "pirms {0} ned.",
 				"relativeTimePattern-count-other": "pirms {0} ned."
 			},
-			"relativePeriod": "{0}. nedēļa"
+			"relativePeriod": "{0}. ned."
 		},
 		"day-wide": {
 			"displayName": "diena",
@@ -3076,7 +3103,7 @@
 		"standard": "#,##0.###"
 	},
 	"decimalFormat-long": {
-		"1000-zero": "0 tūkstoši",
+		"1000-zero": "0 tūkstošu",
 		"1000-one": "0 tūkstotis",
 		"1000-other": "0 tūkstoši",
 		"10000-zero": "00 tūkstoši",
@@ -3085,7 +3112,7 @@
 		"100000-zero": "000 tūkstoši",
 		"100000-one": "000 tūkstotis",
 		"100000-other": "000 tūkstoši",
-		"1000000-zero": "0 miljoni",
+		"1000000-zero": "0 miljonu",
 		"1000000-one": "0 miljons",
 		"1000000-other": "0 miljoni",
 		"10000000-zero": "00 miljoni",
@@ -3094,7 +3121,7 @@
 		"100000000-zero": "000 miljoni",
 		"100000000-one": "000 miljons",
 		"100000000-other": "000 miljoni",
-		"1000000000-zero": "0 miljardi",
+		"1000000000-zero": "0 miljardu",
 		"1000000000-one": "0 miljards",
 		"1000000000-other": "0 miljardi",
 		"10000000000-zero": "00 miljardi",
@@ -3103,7 +3130,7 @@
 		"100000000000-zero": "000 miljardi",
 		"100000000000-one": "000 miljards",
 		"100000000000-other": "000 miljardi",
-		"1000000000000-zero": "0 triljoni",
+		"1000000000000-zero": "0 triljonu",
 		"1000000000000-one": "0 triljons",
 		"1000000000000-other": "0 triljoni",
 		"10000000000000-zero": "00 triljoni",
@@ -3254,6 +3281,18 @@
 		"middle": "{0}, {1}",
 		"end": "{0} un {1}"
 	},
+	"listPattern-or-wide": {
+		"2": "{0} vai {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} vai {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} vai {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} vai {1}"
+	},
 	"listPattern-standard-short": {
 		"2": "{0} un {1}",
 		"start": "{0}, {1}",
@@ -3278,6 +3317,7 @@
 		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
+		"DKK": 2,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
@@ -3303,11 +3343,13 @@
 		"MNT": 0,
 		"MRO": 0,
 		"MUR": 0,
+		"NOK": 0,
 		"OMR": 3,
 		"PKR": 0,
 		"PYG": 0,
 		"RSD": 0,
 		"RWF": 0,
+		"SEK": 0,
 		"SLL": 0,
 		"SOS": 0,
 		"STD": 0,

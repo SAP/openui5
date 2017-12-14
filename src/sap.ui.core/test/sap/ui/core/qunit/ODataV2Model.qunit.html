@@ -250,6 +250,38 @@
 		});
 	};
 
+	QUnit.test("getMessagesByEntity", function(assert) {
+		var done = assert.async();
+
+		var oModel = initModel(sURI);
+
+		var oMessage = new sap.ui.core.message.Message({
+			message: "test1",
+			severity: "error",
+			persistent: true,
+			processor: oModel
+		});
+
+		var oMessage2 = new sap.ui.core.message.Message({
+			message: "test2",
+			severity: "error",
+			persistent: false,
+			processor: oModel
+		});
+
+		sap.ui.getCore().getMessageManager().registerMessageProcessor(oModel);
+		oModel.metadataLoaded().then(function() {
+			oContext = oModel.createEntry("/Products");
+			oMessage.setTarget(oContext.getPath());
+			oMessage2.setTarget(oContext.getPath());
+			sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2]);
+			assert.equal(oModel.getMessagesByEntity(oContext.getPath()).length, 2, "all messages returned");
+			assert.equal(oModel.getMessagesByEntity(oContext.getPath(), true).length, 1, "messages that are not persitent returned");
+			sap.ui.getCore().getMessageManager().unregisterMessageProcessor(oModel);
+			done();
+		});
+	});
+
 	QUnit.test("test bindList", function(assert){
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
@@ -4946,6 +4978,7 @@
 		}.bind(this))
 	});
 	QUnit.test("submit again after error", function(assert) {
+		var spy = sinon.spy(this.oModel, "_submitRequest");
 		var done = assert.async();
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
@@ -4957,6 +4990,7 @@
 				that.oModel.detachRequestCompleted(fnCompl);
 				assert.ok(!oInfo.getParameter('success'), "request should fail");
 				assert.ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+				assert.ok(spy.args[0][0].created, "request flagged as created");
 			};
 			var fnFailed = function(oInfo) {
 				that.oModel.detachRequestFailed(fnFailed);
@@ -4971,7 +5005,9 @@
 					var oProduct = that.oModel.getProperty('', oContext);
 					assert.ok(oProduct, "Product still exists");
 					assert.ok(oProduct.__metadata.created, "Product still flagged as created");
+					assert.ok(spy.args[0][0].created, "request flagged as created");
 					assert.ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+					that.oModel._submitRequest.restore();
 					done();
 				});
 				that.oModel.attachRequestCompleted(function(oInfo) {

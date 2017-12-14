@@ -977,7 +977,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 				this._oDateRange.setStartDate(new Date(oDate.getTime()));
 			}
 		} else {
-			var oFocusDate = new Date();
+			var oInitialFocusedDateValue = this.getInitialFocusedDateValue();
+			var oFocusDate = oInitialFocusedDateValue ? oInitialFocusedDateValue : new Date();
 			var iMaxTimeMillis = this._oMaxDate.getTime() + 86400000 /* one day in milliseconds */;
 
 			if (oFocusDate.getTime() < this._oMinDate.getTime() || oFocusDate.getTime() > iMaxTimeMillis) {
