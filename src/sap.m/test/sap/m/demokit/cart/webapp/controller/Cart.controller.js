@@ -154,9 +154,10 @@ sap.ui.define([
 			var oEntry = this.getView().getModel(sCartModelName).getProperty(sPath);
 			var sId = oEntry.ProductId;
 			if (!sap.ui.Device.system.phone) {
-				this._oRouter.getTargets().display("productView", {
+				// Update the URL hash making the products inside the cart bookmarkable
+				this._oRouter.navTo("cartProductView", {
 					productId: sId
-				});
+				}, true); // Don't create a history entry
 			} else {
 				this._oRouter.navTo("cartProduct", {productId: sId});
 			}
