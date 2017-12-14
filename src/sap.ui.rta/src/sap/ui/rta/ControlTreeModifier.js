@@ -220,6 +220,20 @@ sap.ui.define(["sap/ui/fl/changeHandler/JsControlTreeModifier"], function (JsCon
 		},
 
 		/**
+		 * When a fragment is instantiated in JS, a control is created.
+		 * This control has to be destroyed on undo
+		 * @override
+		 */
+		instantiateFragment: function(sFragment, sChangeId, oView, oController) {
+			var aControls = JsControlTreeModifier.instantiateFragment.apply(this, arguments);
+
+			aControls.forEach(function(oControl) {
+				this._saveUndoOperation("destroy", [oControl]);
+			}.bind(this));
+			return aControls;
+		},
+
+		/**
 		 * Controls are never destroyed by the user in RTA (only hidden)
 		 * Therefore, there is no need to record an undo operation for destroy
 		 * This function is to execute the undo operation of createControl
