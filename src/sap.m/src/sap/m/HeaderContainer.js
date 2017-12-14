@@ -574,7 +574,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		HeaderContainer.prototype._getFirstItemOffset = function (sType) {
 			var $firstItem = this.getContent()[0] && this.getContent()[0].$(),
 				$parent = $firstItem && $firstItem.parent(),
-				iFirst = $parent && $parent[0][sType];
+				iFirst = $parent && $parent[0] && $parent[0][sType];
 
 			return iFirst || 0;
 		};
