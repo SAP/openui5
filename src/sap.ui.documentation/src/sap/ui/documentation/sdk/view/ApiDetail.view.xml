@@ -83,7 +83,7 @@
 										</m:MessageStrip>
 
 										<m:Table visible="{/hasChildren}"
-												 items="{ path : '/controlChildren'}"
+												 items="{ path : '/nodes'}"
 												 showSeparators="Inner"
 												 fixedLayout="false"
 												 class="sapUiSmallMarginTop">
@@ -97,8 +97,7 @@
 												<m:ColumnListItem>
 													<m:cells>
 														<m:Link href="{ref}" text="{name}"/>
-														<core:HTML content="{parts: [{path: 'description'}],
-																		 formatter: '._formatChildDescription'}"/>
+														<core:HTML content="{description}"/>
 													</m:cells>
 												</m:ColumnListItem>
 											</m:items>
