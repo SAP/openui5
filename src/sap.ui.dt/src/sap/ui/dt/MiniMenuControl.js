@@ -83,6 +83,7 @@ sap.ui.define([
                 })
             });
 
+            oPopover.oPopup.attachOpened(this._popupOpened, this);
             oPopover.oPopup.attachClosed(this._popupClosed, this);
             this.addDependent(oPopover);
             oPopover.addStyleClass("sapUiDtMiniMenu");
@@ -97,6 +98,8 @@ sap.ui.define([
                     renderType : "Bare"
                 })
             });
+
+            oPopoverExpanded.oPopup.attachOpened(this._popupOpened, this);
             oPopoverExpanded.oPopup.attachClosed(this._popupClosed, this);
             this.addDependent(oPopoverExpanded);
             oPopoverExpanded.addStyleClass("sapUiDtMiniMenu");
@@ -118,6 +121,10 @@ sap.ui.define([
         },
 
         exit: function () {
+            this.getPopover(true).oPopup.detachOpened(this._popupOpened, this);
+            this.getPopover(false).oPopup.detachOpened(this._popupOpened, this);
+            this.getPopover(true).oPopup.detachClosed(this._popupClosed, this);
+            this.getPopover(false).oPopup.detachClosed(this._popupClosed, this);
             this.getPopover(true).detachBrowserEvent("contextmenu", this._onContextMenu, this);
             this.getPopover(false).detachBrowserEvent("contextmenu", this._onContextMenu, this);
             window.removeEventListener("scroll", this._close, {capture: true, once: true});
@@ -133,9 +140,11 @@ sap.ui.define([
          */
         show: function (oSource, bContextMenu, contextMenuPosition) {
 
-            this._close =  this.close.bind(this);
-
-            window.addEventListener("scroll", this._close, {capture: true, once: true});
+            this._close = function (oEvent) {
+                if (oEvent.isTrusted){
+                    this.close();
+                }
+            }.bind(this);
 
             this._openAsContextMenu = bContextMenu;
             this._contextMenuPosition = contextMenuPosition;
@@ -800,6 +809,13 @@ sap.ui.define([
             }
 
             this.isOpen = false;
+        },
+
+        /**
+         * Is called when Popup is opened. Attaches the scroll Listener
+         */
+        _popupOpened : function(){
+            window.addEventListener("scroll", this._close, {capture: true, once: true});
         },
 
         /**
