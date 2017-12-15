@@ -1215,7 +1215,11 @@ sap.ui.define([
 				} else if (vAction === "setTitle"){
 					this._setTitleOnCreatedVariant(vAction);
 				}
-			}.bind(this));
+			}.bind(this))
+
+			// Error handling when a command fails is done in the Stack
+			.catch(function() {
+			});
 		}
 		return Promise.resolve();
 	};
