@@ -43,7 +43,7 @@ sap.ui.define([
 		mSupportedParameters = {
 			annotationURI : true,
 			autoExpandSelect : true,
-			earlyBird : true,
+			earlyRequests : true,
 			groupId : true,
 			groupProperties : true,
 			odataVersion : true,
@@ -76,9 +76,14 @@ sap.ui.define([
 	 *   options from the binding hierarchy.
 	 *   Note: Dynamic changes to the binding hierarchy are not supported.
 	 *   Supported since 1.47.0
-	 * @param {boolean} [mParameters.earlyBird=false]
-	 *   Whether the root $metadata document and annotation files are requested at the earliest
-	 *   convenience, but not yet converted from XML to JSON unless really needed.
+	 * @param {boolean} [mParameters.earlyRequests=false]
+	 *   Whether the following is requested at the earliest convenience:
+	 *   <ul>
+	 *   <li> root $metadata document and annotation files;
+	 *   <li> the security token.
+	 *   </ul>
+	 *   Note: The root $metadata document and annotation files are just requested but not yet
+	 *   converted from XML to JSON unless really needed.
 	 *   Supported since 1.53.0
 	 *   <b>BEWARE:</b> Default value will change to <code>true</code> for 1.55.0!
 	 * @param {string} [mParameters.groupId="$auto"]
@@ -230,9 +235,6 @@ sap.ui.define([
 						_MetadataRequestor.create(mHeaders, sODataVersion, this.mUriParameters),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
-					if (mParameters.earlyBird) {
-						this.oMetaModel.fetchEntityContainer(true);
-					}
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters, {
 							fnFetchEntityContainer :
@@ -249,6 +251,10 @@ sap.ui.define([
 								}
 							}
 						}, sODataVersion);
+					if (mParameters.earlyRequests) {
+						this.oMetaModel.fetchEntityContainer(true);
+						this.initializeSecurityToken();
+					}
 
 					this.aAllBindings = [];
 					this.sDefaultBindingMode = BindingMode.TwoWay;
@@ -969,6 +975,15 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.hasPendingChanges = function () {
 		return this.oRequestor.hasPendingChanges();
+	};
+
+	/**
+	 * Initializes the security token used by this model's requestor.
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.initializeSecurityToken = function () {
+		this.oRequestor.refreshSecurityToken();
 	};
 
 	/**
