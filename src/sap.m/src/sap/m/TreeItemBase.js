@@ -225,6 +225,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			}
 			this._oExpanderControl.setSrc(sSrc);
 			this.$().attr("aria-expanded", this.getExpanded());
+
+			// update the indentation again
+			var iIndentation = this._getPadding(),
+				sStyleRule = sap.ui.getCore().getConfiguration().getRTL() ? "paddingRight" : "paddingLeft";
+			this.$().css(sStyleRule, iIndentation + "rem");
+
 		}
 	};
 
