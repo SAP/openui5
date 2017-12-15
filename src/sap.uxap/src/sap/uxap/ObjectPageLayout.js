@@ -1638,7 +1638,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._scrollTo = function (y, time) {
-		if (this._oScroller && this._bDomReady) {
+		if (this._oScroller && this._bDomReady && !this._bSuppressScroll) {
 			jQuery.sap.log.debug("ObjectPageLayout :: scrolling to " + y);
 
 			if ((time === 0) && this._shouldSnapHeaderOnScroll(y)) {
@@ -3297,6 +3297,32 @@ sap.ui.define([
 			oTitle.attachEvent(ObjectPageLayout.EVENTS.TITLE_MOUSE_OVER, fnOver, oContext);
 			oTitle.attachEvent(ObjectPageLayout.EVENTS.TITLE_MOUSE_OUT, fnOut, oContext);
 			this._bAlreadyAttachedTitleMouseOverOutHandler = true;
+		}
+	};
+
+	/**
+	 * Sets a flag to [temporarily] deactivate any scrolling requested with the <code>sap.uxap.ObjectPageLayout.prototype._scrollTo</code> function
+	 * This flag is used by RTA for the purpose of postponing the auto-scrolling of the ObjectPage to its selected section
+	 * so that the scrolling does not start before RTA operation fully completed
+	 * @sap-restricted
+	 * @private
+	 */
+	ObjectPageLayout.prototype._suppressScroll = function () {
+		this._bSuppressScroll = true;
+	};
+
+	/**
+	 * Un-sets the flag that deactivates scrolling requested with the <code>sap.uxap.ObjectPageLayout.prototype._scrollTo</code> function
+	 * This flag is used by RTA for the purpose of postponing/resuming the auto-scrolling of the ObjectPage to its selected section
+	 * so that the scrolling does not start before RTA operation fully completed
+	 * @param {Boolean} bRestoreState whether to also scroll to the currently selected section. If this value is <code>false</code> then the page will remain in an invalid state, as its scroll position may not comply to its selected section.
+	 * @sap-restricted
+	 * @private
+	 */
+	ObjectPageLayout.prototype._resumeScroll = function (bRestoreState) {
+		this._bSuppressScroll = false;
+		if (bRestoreState) {
+			this.scrollToSection(this.getSelectedSection());
 		}
 	};
 
