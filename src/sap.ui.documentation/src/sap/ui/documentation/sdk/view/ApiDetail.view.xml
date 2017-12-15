@@ -481,7 +481,7 @@
 										<m:Table items="{ path : 'parameters', templateShareable: 'false'}"
 												showSeparators="Inner"
 												fixedLayout="true"
-												visible="{= ${parameters}.length > 0}">
+												visible="{= !!${parameters} &amp;&amp; ${parameters}.length > 0}">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
