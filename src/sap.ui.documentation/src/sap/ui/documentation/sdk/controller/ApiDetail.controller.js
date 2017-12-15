@@ -599,8 +599,6 @@ sap.ui.define([
 			_bindData: function (sTopicId) {
 				var aLibsData = this._aLibsData,
 					oControlData,
-					aTreeData = this.getOwnerComponent().getModel("treeData").getData(),
-					aControlChildren = this._getControlChildren(aTreeData, sTopicId),
 					oModel,
 					oUi5Metadata,
 					iLen,
@@ -614,17 +612,9 @@ sap.ui.define([
 					}
 				}
 
-				if (aControlChildren) {
-					if (!oControlData) {
-						oControlData = {};
-					}
-					oControlData.controlChildren = aControlChildren;
-					this._addChildrenDescription(aLibsData, oControlData.controlChildren);
-				}
-
 				oUi5Metadata = oControlData['ui5-metadata'];
 
-				oControlData.hasChildren = !!oControlData.controlChildren;
+				oControlData.hasChildren = !!oControlData.nodes;
 				oControlData.hasProperties = !!(oControlData.hasOwnProperty('properties') && this.hasVisibleElement(oControlData.properties));
 				oControlData.hasConstructor = oControlData.hasOwnProperty('constructor');
 				oControlData.hasControlProperties = !!(oUi5Metadata && oUi5Metadata.properties && this.hasVisibleElement(oUi5Metadata.properties));
@@ -884,31 +874,6 @@ sap.ui.define([
 				}, this);
 			},
 
-			_getControlChildren: function (aTreeData, sTopicId) {
-				for (var i = 0; i < aTreeData.length; i++) {
-					if (aTreeData[i].name === sTopicId) {
-						return aTreeData[i].nodes;
-					}
-				}
-			},
-
-			_addChildrenDescription: function (aLibsData, aControlChildren) {
-				function getDataByName (sName) {
-					var iLen,
-						i;
-
-					for (i = 0, iLen = aLibsData.length; i < iLen; i++) {
-						if (aLibsData[i].name === sName) {
-							return aLibsData[i];
-						}
-					}
-					return false;
-				}
-				for (var i = 0; i < aControlChildren.length; i++) {
-					aControlChildren[i].description = getDataByName(aControlChildren[i].name).description;
-				}
-			},
-
 			/**
 			 * Retrieves the <code>Entity</code> sample and component data.
 			 * @param {Object} sEntityName
@@ -1060,38 +1025,6 @@ sap.ui.define([
 			},
 
 			subParamPhoneName: '',
-
-			_formatChildDescription: function (description) {
-				if (description) {
-					description = this._extractFirstSentence(description);
-					return "<div>" + description + "<\div>";
-				}
-			},
-
-			_extractFirstSentence: function (description) {
-				var descriptionCopy = description.slice(), iSkipPosition;
-
-				//Control description is not properly formatted and should be skipped.
-				if (description.lastIndexOf("}") > description.lastIndexOf(".")) {
-					return "";
-				}
-
-				descriptionCopy = this._sliceSpecialTags(descriptionCopy, "{", "}");
-				descriptionCopy = this._sliceSpecialTags(descriptionCopy, "<code>", "</code>");
-				iSkipPosition = description.length - descriptionCopy.length;
-				description = description.slice(0, descriptionCopy.indexOf(".") + ".".length + iSkipPosition);
-				return description;
-			},
-
-			_sliceSpecialTags: function (descriptionCopy, startSymbol, endSymbol) {
-				var startIndex, endIndex;
-				while (descriptionCopy.indexOf(startSymbol) !== -1 && descriptionCopy.indexOf(startSymbol) < descriptionCopy.indexOf(".")) {
-					startIndex = descriptionCopy.indexOf(startSymbol);
-					endIndex = descriptionCopy.indexOf(endSymbol);
-					descriptionCopy = descriptionCopy.slice(0, startIndex) + descriptionCopy.slice(endIndex + endSymbol.length, descriptionCopy.length);
-				}
-				return descriptionCopy;
-			},
 
 			/**
 			 * Checks if the list has elements that have public or protected visibility
