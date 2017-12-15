@@ -512,6 +512,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TABLE");
 	};
 
+	// custom footer text announcement is only for tables
+	Table.prototype.getAccessibilityDescription = function() {
+		return ListBase.prototype.getAccessibilityDescription.call(this) + " " + this.getFooterText();
+	};
+
 	Table.prototype._setHeaderAnnouncement = function() {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			sAnnouncement = oBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " ";
