@@ -2266,7 +2266,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		 */
 		function createSuggestionPopupContent(oInput, bTabular) {
 			// only initialize the content once
-			if (oInput._oList) {
+			if (oInput._bIsBeingDestroyed || oInput._oList) {
 				return;
 			}
 
@@ -2715,6 +2715,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @returns {sap.m.Table} Suggestion table.
 	 */
 	Input.prototype._getSuggestionsTable = function() {
+
+		if (this._bIsBeingDestroyed) {
+			return;
+		}
+
 		var that = this;
 
 		if (!this._oSuggestionTable) {
