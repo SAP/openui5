@@ -16,6 +16,7 @@
 					mode="SingleSelectMaster"
 					growing="true"
 					growingThreshold="10"
+					beforeOpenContextMenu="onBeforeOpenContextMenu"
 					items="{
 						path: '/ProductCollection',
 						filters: {path: 'Rank', operator: 'EQ', value1: '0'}
@@ -85,6 +86,7 @@
 					mode="SingleSelectMaster"
 					growing="true"
 					growingThreshold="10"
+					beforeOpenContextMenu="onBeforeOpenContextMenu"
 					items="{
 						path: '/ProductCollection',
 						filters: {path: 'Rank', operator: 'GT', value1: '0'},
