@@ -311,6 +311,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 		};
 
+		Select.prototype._revertSelection = function() {
+			var oItem = this.getSelectedItem();
+
+			if (this._oSelectionOnFocus !== oItem) {
+				this.setSelection(this._oSelectionOnFocus);
+				this.setValue(this._getSelectedItemText());
+			}
+		};
+
 		Select.prototype._getSelectedItemText = function(vItem) {
 			vItem = vItem || this.getSelectedItem();
 
@@ -1007,26 +1016,21 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * @private
 		 */
 		Select.prototype.onsapescape = function(oEvent) {
-			var bSelectionChanged;
 
-			// Prevents escape, when the control is disabled or the <code>SelectList<code/> is closed.
-			// IE11 browser focus non-focusable elements.
-			if (!this.getEnabled() || !this.isOpen()) {
+			// prevents actions from occurring when the control is disabled,
+			// IE11 browser focus non-focusable elements
+			if (!this.getEnabled()) {
 				return;
 			}
 
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
+			if (this.isOpen()) {
 
-			bSelectionChanged = this._oInitiallytSelectedItem && this._oInitiallytSelectedItem !== this.getSelectedItem();
+				// mark the event for components that needs to know if the event was handled
+				oEvent.setMarked();
 
-			if (!bSelectionChanged) {
 				this.close();
-				return;
+				this._revertSelection();
 			}
-
-			this.setSelection(this._oInitiallytSelectedItem);
-			this.setValue(this._getSelectedItemText());
 		};
 
 		/**
@@ -1456,6 +1460,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}).addStyleClass(this.getRenderer().CSS_CLASS + "List-CTX")
 			.addEventDelegate({
 				ontap: function(oEvent) {
+					this._checkSelectionChange();
 					this.close();
 				}
 			}, this)
