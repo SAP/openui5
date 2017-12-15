@@ -1,43 +1,37 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Test Page for ControlTreeModifier</title>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta charset="utf-8">
 
-<style>
-html, body, #qunit-tests {
-	height: 100%;
-}
+		<title>Test Page for sap.ui.rta.ControlTreeModifier</title>
+		<script src="../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].bindingSyntax = 'complex';
+			window['sap-ui-config'].resourceroots = {
+				'sap.ui.rta.test': '../testdata/ObjectPage/'
+			};
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-2-css");
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-</style>
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta]');
 
-<script id="sap-ui-bootstrap"
-	type="text/javascript"
-	data-sap-ui-theme="sap_belize"
-	data-sap-ui-xx-bindingSyntax="complex"
-	data-sap-ui-resourceroots='{"sap.ui.rta.test": "../testdata/ObjectPage/"}'
-	src="../../../../../resources/sap-ui-core.js">
-</script>
+			sap.ui.getCore().loadLibrary('sap.ui.rta');
 
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<script type="text/javascript" src="ControlTreeModifier.qunit.js"></script>
-
-</head>
-<body>
-	<h1 id="qunit-header">QUnit page for ControlTreeModifier</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="test-view"></div>
-</body>
+			jQuery.sap.includeScript('./ControlTreeModifier.qunit.js');
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for ControlTreeModifier</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="test-view"></div>
+	</body>
 </html>
