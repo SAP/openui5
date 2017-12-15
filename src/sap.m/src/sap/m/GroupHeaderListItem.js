@@ -105,6 +105,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		return this.getTitle();
 	};
 
+	// group header has no group announcement
+	GroupHeaderListItem.prototype.getGroupAnnouncement = function() {};
+
 	return GroupHeaderListItem;
 
 }, /* bExport= */ true);

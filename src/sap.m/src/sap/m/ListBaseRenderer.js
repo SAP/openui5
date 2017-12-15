@@ -262,6 +262,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 	ListBaseRenderer.getAccessibilityState = function(oControl) {
 		return {
 			role : this.getAriaRole(oControl),
+			multiselectable : oControl._bSelectionMode ? oControl.getMode() == "MultiSelect" : undefined,
 			labelledby : {
 				value : this.getAriaLabelledBy(oControl),
 				append : true

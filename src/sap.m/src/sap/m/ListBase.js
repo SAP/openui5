@@ -1564,14 +1564,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 
 		sDescription += this.getAccessibilityType() + " ";
 		sDescription += this.getAccessibilityStates() + " ";
-		sDescription += this.getFooterText();
-
-		return sDescription.trim();
+		return sDescription;
 	};
 
 	ListBase.prototype.getAccessibilityInfo = function() {
 		return {
-			description: this.getAccessibilityDescription(),
+			description: this.getAccessibilityDescription().trim(),
 			focusable: true
 		};
 	};
