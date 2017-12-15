@@ -2041,6 +2041,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 	/* lazy loading of the suggestions table */
 	Input.prototype._getSuggestionsTable = function() {
+
+		if (this._bIsBeingDestroyed) {
+			return;
+		}
+
 		var that = this;
 
 		if (!this._oSuggestionTable) {
@@ -2105,10 +2110,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (sAggregationName === "suggestionColumns") {
 			// apply to the internal table (columns)
 			oSuggestionsTable = this._getSuggestionsTable();
+			if (!oSuggestionsTable) {
+				return null;
+			}
 			return oSuggestionsTable[sFunctionName].apply(oSuggestionsTable, ["columns"].concat(aArgs.slice(2)));
 		} else if (sAggregationName === "suggestionRows") {
 			// apply to the internal table (rows = table items)
 			oSuggestionsTable = this._getSuggestionsTable();
+			if (!oSuggestionsTable) {
+				return null;
+			}
 			return oSuggestionsTable[sFunctionName].apply(oSuggestionsTable, ["items"].concat(aArgs.slice(2)));
 		} else {
 			// apply to this control
