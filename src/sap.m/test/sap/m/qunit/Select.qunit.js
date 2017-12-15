@@ -7055,7 +7055,7 @@
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired as escape reverts any changes");
-
+		assert.strictEqual(oSelect.getSelectedKey(), "GER", "The selection is reverted on escape");
 		// cleanup
 		oSelect.destroy();
 	});
@@ -8197,6 +8197,37 @@
 		// assert
 		assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "false");
 		assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+
+		// cleanup
+		oSelect.destroy();
+	});
+
+	QUnit.module("change event");
+
+	QUnit.test("change of selected item onChange should not re-trigger change event", function (assert) {
+		var oItem1 =  new sap.ui.core.Item({key: "1", text : "1"}),
+			oItem2 = new sap.ui.core.Item({key: "2", text : "2"}),
+			oSelect = new sap.m.Select({
+				items: [oItem1, oItem2],
+				change: function () {
+					oSelect.setSelectedKey("1");
+				}
+			}),
+			fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+		// arrange
+		oSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oSelect.focus();
+		oSelect.open();
+
+		// act
+		// select the second item
+		sap.ui.test.qunit.triggerEvent("tap", oItem2.getDomRef());
+
+		// assert
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired once");
+		assert.strictEqual(oSelect.getSelectedItem(), oItem1, "The selected item is correct");
 
 		// cleanup
 		oSelect.destroy();

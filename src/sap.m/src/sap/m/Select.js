@@ -339,6 +339,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 		};
 
+		Select.prototype._revertSelection = function() {
+			var oItem = this.getSelectedItem();
+
+			if (this._oSelectionOnFocus !== oItem) {
+				this.setSelection(this._oSelectionOnFocus);
+				this.setValue(this._getSelectedItemText());
+			}
+		};
+
 		Select.prototype._getSelectedItemText = function(vItem) {
 			vItem = vItem || this.getSelectedItem();
 
@@ -553,9 +562,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			// call the hook to add additional content to the list
 			this.addContent();
-
-			// preserve the initially selected item
-			this._oInitiallytSelectedItem = this.getSelectedItem();
 
 			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
 		};
@@ -841,9 +847,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			// selected item on focus
 			this._oSelectionOnFocus = null;
 
-			// selected item on <code>SelectList</code> open
-			this._oInitiallytSelectedItem = null;
-
 			// to detect when the control is in the rendering phase
 			this.bRenderingPhase = false;
 
@@ -883,7 +886,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		Select.prototype.exit = function() {
 			var oValueStateMessage = this.getValueStateMessage();
 			this._oSelectionOnFocus = null;
-			this._oInitiallytSelectedItem = null;
 
 			if (oValueStateMessage) {
 				this.closeValueStateMessage();
@@ -975,42 +977,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 */
 		Select.prototype.onSelectionChange = function(oControlEvent) {
 			var oItem = oControlEvent.getParameter("selectedItem");
-			this._changeSelection(oItem);
-		};
-
-		/**
-		 * Handles the <code>itemPress</code> event on the <code>SelectList</code>.
-		 *
-		 * <b>Note:</b> <code>change</code> event will be fired if the user taps on an <code>item</code>,
-		 * different from the initially selected item on <code>SelectList</code> open.
-		 * @param {sap.ui.base.Event} oControlEvent
-		 * @private
-		 */
-		Select.prototype.onSelectItemPress = function(oControlEvent) {
-			var oItemPressed = oControlEvent.getParameter("item");
-
-			if (this._oInitiallytSelectedItem !== oItemPressed) {
-				this._changeSelection(oItemPressed);
-			}
-		};
-
-		/**
-		 * Changes the <code>Select</code> selection by:
-		 *
-		 * (1) updating the <code>selectedItem</code> <code>association</code>
-		 * (2) closing the <code>SelectList</code>
-		 * (3) firing the <code>change</code> event
-		 * (4) updating the label value
-		 *
-		 * The method is used in <code>onSelectionChange</code> and <code>onSelectItemPress</code>.
-		 * @param {sap.ui.base.Event} oControlEvent
-		 * @private
-		 */
-		Select.prototype._changeSelection = function(oItem) {
-				this.close();
-				this.setSelection(oItem);
-				this.fireChange({ selectedItem: oItem });
-				this.setValue(this._getSelectedItemText());
+			this.close();
+			this.setSelection(oItem);
+			this.fireChange({ selectedItem: oItem });
+			this.setValue(this._getSelectedItemText());
 		};
 
 		/* ----------------------------------------------------------- */
@@ -1103,26 +1073,21 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * @private
 		 */
 		Select.prototype.onsapescape = function(oEvent) {
-			var bSelectionChanged;
 
-			// Prevents escape, when the control is disabled or the <code>SelectList<code/> is closed.
-			// IE11 browser focus non-focusable elements.
-			if (!this.getEnabled() || !this.isOpen()) {
+			// prevents actions from occurring when the control is disabled,
+			// IE11 browser focus non-focusable elements
+			if (!this.getEnabled()) {
 				return;
 			}
 
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
+			if (this.isOpen()) {
 
-			bSelectionChanged = this._oInitiallytSelectedItem && this._oInitiallytSelectedItem !== this.getSelectedItem();
+				// mark the event for components that needs to know if the event was handled
+				oEvent.setMarked();
 
-			if (!bSelectionChanged) {
 				this.close();
-				return;
+				this._revertSelection();
 			}
-
-			this.setSelection(this._oInitiallytSelectedItem);
-			this.setValue(this._getSelectedItemText());
 		};
 
 		/**
@@ -1552,11 +1517,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}).addStyleClass(this.getRenderer().CSS_CLASS + "List-CTX")
 			.addEventDelegate({
 				ontap: function(oEvent) {
+					this._checkSelectionChange();
 					this.close();
 				}
 			}, this)
-			.attachSelectionChange(this.onSelectionChange, this)
-			.attachItemPress(this.onSelectItemPress, this);
+			.attachSelectionChange(this.onSelectionChange, this);
 			return this._oList;
 		};
 
