@@ -713,4 +713,26 @@ sap.ui.require([
 		oContext.setIndex(23);
 		assert.strictEqual(oContext.getIndex(), 23);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh", function (assert) {
+		var oBinding = {
+				refreshSingle : function () {}
+			},
+			oContext = Context.create({}, oBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(oBinding).expects("refreshSingle")
+			.withExactArgs(sinon.match.same(oContext), "myGroup");
+
+		// code under test
+		oContext.refresh("myGroup");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh, error, no list binding", function (assert) {
+		assert.throws(function () {
+			// code under test
+			Context.create({}, {}, "/EMPLOYEES/42", 42).refresh();
+		}, new Error("Refresh is only supported for contexts of a list binding"));
+	});
 });

@@ -63,21 +63,21 @@ sap.ui.require([
 		When.onTheMainPage.pressSaveSalesOrderButton();
 		When.onTheSuccessInfo.confirm();
 		Then.onTheMainPage.checkSalesOrderItemsCount(1);
-		Then.onTheMainPage.checkNewSalesOrderItemProductName("");
+		Then.onTheMainPage.checkNewSalesOrderItemProductName(bRealOData ? "Notebook Basic 15" : "");
 		// update note of new sales order item
-		When.onTheMainPage.changeSalesOrderLineItemNote(0, "OPA: Changed item note after save");
+		When.onTheMainPage.changeSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
 		When.onTheMainPage.pressSaveSalesOrderButton();
-		Then.onTheMainPage.checkSalesOrderLineItemNote(0, "OPA: Changed item note after save");
+		Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
 
 		if (bRealOData) {
 			// check correct error handling of multiple changes in one $batch
-			When.onTheMainPage.changeSalesOrderLineItemNote(0, "Note changed");
+			When.onTheMainPage.changeSalesOrderLineItemNote(0, "Line Item Note Changed - 2");
 			When.onTheMainPage.changeSalesOrderLineItemQuantity(0, "0.0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheErrorInfo.confirm();
 			When.onTheMainPage.changeSalesOrderLineItemQuantity(0, "2.0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
-			Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Note changed");
+			Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 2");
 
 			// change context should be possible after Line Items were saved
 			// Test only possible with realOData because same GET request for the Line Items with
@@ -85,6 +85,28 @@ sap.ui.require([
 			When.onTheMainPage.selectSalesOrder(1);
 			When.onTheMainPage.selectSalesOrder(0);
 			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
+
+			// try to change the parent Sales Order,
+			// the dependent ODCB should also got its new ETag, check that it can be modified
+			When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 1");
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			// this is only possible if it has got a new ETag via refresh single
+			When.onTheMainPage.changeNote(0, "Sales Order Note Changed - 1");
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+
+			// change again Note in details causes error because of outdated ETag
+			// because refresh on relative bindings is not supported
+			When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 2");
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			When.onTheErrorInfo.confirm();
+
+			// reset changes and refresh single sales order
+			When.onTheMainPage.pressCancelSalesOrderChangesButton();
+			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+
+			// change Note in details afterwarts is now possible again
+			When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 3");
+			When.onTheMainPage.pressSaveSalesOrderButton();
 		}
 
 		// delete persisted sales order item
@@ -98,11 +120,18 @@ sap.ui.require([
 		Then.onAnyPage.checkLog(bRealOData ? [{
 			component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 			level : jQuery.sap.log.Level.ERROR,
-			message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM/-1/Note"
+			message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM"
+			//TODO: enable checkLog to deal with RegExp
 		}, {
 			component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 			level : jQuery.sap.log.Level.ERROR,
-			message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM/-1/Quantity"
+			message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM"
+			//TODO: enable checkLog to deal with RegExp
+		}, {
+			component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+			level : jQuery.sap.log.Level.ERROR,
+			message : "Failed to update path /SalesOrderList/-1/Note"
+			//TODO: enable checkLog to deal with RegExp
 		}] : undefined);
 		Then.iTeardownMyUIComponent();
 	});
