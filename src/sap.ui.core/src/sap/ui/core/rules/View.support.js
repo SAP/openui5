@@ -182,7 +182,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 							if (!sContent.match("<" + sLocalName + ":")) {
 								var sViewName = oXMLView.getViewName().split("\.").pop();
 								oIssueManager.addIssue({
-									severity: Severity.Error,
+									severity: Severity.High,
 									details: "View '" + sViewName + "' (" + oXMLView.getId() + ") contains an unused XML namespace '" + sLocalName + "' referencing library '" + sFullName + "'",
 									context: {
 										id: oXMLView.getId()
