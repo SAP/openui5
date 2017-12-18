@@ -91,7 +91,11 @@ sap.ui.define([
 
 				if (sPreviousHash !== undefined) {
 					// The history contains a previous entry
-					history.go(-1);
+					if (sPreviousHash.indexOf("search/") === 0) {
+						this.getRouter().navTo("search", {searchParam: sPreviousHash.split("/")[1]}, false);
+					} else {
+						history.go(-1);
+					}
 				} else {
 					var sCurrentHash = window.location.hash;
 
