@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @param {object} mParameters parameters
 	 * @param {string} mParameters.id the id of the descriptor variant id to be provided for a new descriptor variant and for deleting a descriptor variant
 	 * @param {string} mParameters.reference the referenced descriptor or descriptor variant id to be provided when creating a new descriptor variant
-	 * @param {boolean} [mParameters.isAppVariantRoot=true]
+	 * @param {boolean} [mParameters.isAppVariantRoot=true] indicator whether this is an app variant, default is true
 	 * @param {object} mFileContent file content of the existing descriptor variant to be provided if descriptor variant shall be created from an existing
 	 * @param {boolean} [bDeletion=false] deletion indicator to be provided if descriptor variant shall be deleted
 	 * @param {sap.ui.fl.registry.Settings} oSettings settings
@@ -229,6 +229,9 @@ sap.ui.define([
 				if ( typeof this._isAppVariantRoot != undefined ) {
 					mResult.isAppVariantRoot = this._isAppVariantRoot;
 				}
+				if (mResult.isAppVariantRoot != undefined && !mResult.isAppVariantRoot) {
+					mResult.fileType = "cdmapp_config";
+				}
 				if ( typeof this._referenceVersion != undefined ) {
 					mResult.referenceVersion = this._referenceVersion;
 				}
@@ -271,7 +274,7 @@ sap.ui.define([
 	 * @param {string} mParameters.reference the referenced descriptor or descriptor variant id
 	 * @param {string} mParameters.id the id for the descriptor variant id
 	 * @param {string} [mParameters.layer='CUSTOMER'] the layer for the descriptor variant
-	 * @param {boolean} [mParameters.isAppVariantRoot=true] if descriptor variant is 'appVariantRoot'
+	 * @param {boolean} [mParameters.isAppVariantRoot=true] indicator whether this is an app variant, default is true
 	 *
 	 * @return {Promise} resolving the new DescriptorVariant instance
 	 *
