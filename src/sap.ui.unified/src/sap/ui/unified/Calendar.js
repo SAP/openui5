@@ -1879,20 +1879,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				sPattern = oLocaleData.getIntervalPattern();
 			}
 			sText = sPattern.replace(/\{0\}/, aMonthNames[aMonths[0]]).replace(/\{1\}/, aMonthNames[aMonths[aMonths.length - 1]]);
-			if (bShort) {
-				sAriaLabel = sPattern.replace(/\{0\}/, aMonthNamesWide[aMonths[0]]).replace(/\{1\}/, aMonthNamesWide[aMonths[aMonths.length - 1]]);
-			}
-		}else {
+			sAriaLabel = aMonthNamesWide.length ? sPattern.replace(/\{0\}/, aMonthNamesWide[aMonths[0]]).replace(/\{1\}/, aMonthNamesWide[aMonths[aMonths.length - 1]]) : sText;
+		} else {
 			sText = aMonthNames[aMonths[0]];
-			if (bShort) {
-				sAriaLabel = aMonthNamesWide[aMonths[0]];
-			}
+			sAriaLabel = aMonthNamesWide[aMonths[0]] || sText;
 		}
 
 		oHeader.setTextButton1(sText);
-		if (bShort) {
-			oHeader.setAriaLabelButton1(sAriaLabel);
-		}
+		oHeader.setAriaLabelButton1(sAriaLabel);
+
 
 		var oFirstDate = new CalendarDate(oDate, sPrimaryCalendarType);
 		oFirstDate.setDate(1); // always use the first of the month to have stable year in Japanese calendar
