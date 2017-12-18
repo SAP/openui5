@@ -61,8 +61,26 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 		return aPluginList.indexOf(sPluginName) > -1;
 	};
 
+	BasePlugin.prototype._isEditableAggregation = function(oOverlay) {
+		var fnCheckBinding = function(oOverlay, sAggregationName){
+			if (sAggregationName && oOverlay.getElementInstance().getBinding(sAggregationName)) {
+				return false;
+			}
+			return oOverlay.isRoot() || fnCheckBinding(
+				oOverlay.getParentElementOverlay(),
+				oOverlay.getElementInstance().sParentAggregationName
+			);
+		};
+
+		if (oOverlay.getElementInstance() && !fnCheckBinding(oOverlay, oOverlay.getElementInstance().sParentAggregationName)) {
+			return false;
+		} else {
+			return true;
+		}
+	};
+
 	BasePlugin.prototype.registerElementOverlay = function(oOverlay) {
-		if (this._isEditable(oOverlay)) {
+		if (this._isEditable(oOverlay) && this._isEditableAggregation(oOverlay)) {
 			this.addToPluginsList(oOverlay);
 		}
 	};
