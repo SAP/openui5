@@ -1405,7 +1405,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				}.bind(this);
 			}
 
-			return oControl;
+			return this;
 		};
 
 		//The public setters and getters should not be documented via JSDoc because they will appear in the explored app
@@ -1494,7 +1494,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			if (oCustomHeader) {
 				oCustomHeader.addStyleClass("sapMDialogTitle");
 			}
-			this.setAggregation("customHeader", oCustomHeader);
+			return this.setAggregation("customHeader", oCustomHeader);
 		};
 
 		Dialog.prototype.setState = function (sState) {
