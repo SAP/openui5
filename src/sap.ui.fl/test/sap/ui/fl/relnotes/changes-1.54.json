@@ -43,6 +43,12 @@
         "type": "FEATURE",
         "text": "sap.ui.fl: Support for instance specific change handlers",
         "references": []
+      },
+      {
+        "id": "ca5b37dada47aa8e9e4b9d01491d4649253217d9",
+        "type": "FIX",
+        "text": " Copy of variants doesn\u0027t copy name",
+        "references": []
       }
     ]
   }

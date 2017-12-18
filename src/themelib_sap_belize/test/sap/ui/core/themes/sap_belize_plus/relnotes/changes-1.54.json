@@ -55,6 +55,18 @@
         "type": "FIX",
         "text": " sap.m.CheckBox: Focus outline fixed in grid and form",
         "references": []
+      },
+      {
+        "id": "ea796c83a9b921f2d33c201a1195aa55082d1ea1",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      },
+      {
+        "id": "aa5e44497461093e3a17b04277f93341dcc24e6a",
+        "type": "FIX",
+        "text": " sap.m.Slider/RangeSlider: Tooltips moved to the static area",
+        "references": []
       }
     ]
   }

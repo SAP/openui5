@@ -73,6 +73,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: Select month and year corrected",
         "references": []
+      },
+      {
+        "id": "a76836736b63dca93121c577bb067a36d0ed0b58",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: days aligned correctly in RTL",
+        "references": []
+      },
+      {
+        "id": "310f9048a505067df1965c1f698696af53b87139",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: remove not needed border in OneMonth view",
+        "references": []
       }
     ]
   }

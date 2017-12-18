@@ -253,6 +253,108 @@
         "type": "FIX",
         "text": " v2.ODataModel createBindingContext",
         "references": []
+      },
+      {
+        "id": "0e271c9db0fbbd8a04b4c5a5a0e6abad8ed11808",
+        "type": "FEATURE",
+        "text": " Async loading of manifest.json for ComponentMetadata",
+        "references": []
+      },
+      {
+        "id": "bd8add674a8d0847d51ebff4419ec2e2bc36aea6",
+        "type": "FEATURE",
+        "text": " Opa: configure autoWait parameters",
+        "references": []
+      },
+      {
+        "id": "fa3e7b4e10188f0f78dd308e1d7cc014a8c2f93c",
+        "type": "FEATURE",
+        "text": " Opa: use autoWait after app start",
+        "references": []
+      },
+      {
+        "id": "9f2bf05c22ea4cb989a625081236163401266657",
+        "type": "FEATURE",
+        "text": " cldr: update cldr version to v32.0.0",
+        "references": []
+      },
+      {
+        "id": "75d7f98dd54b9dd4cbf57a7b37e50ddb3bc38e79",
+        "type": "FIX",
+        "text": " Component/Manifest: Remove css resources on destroy",
+        "references": []
+      },
+      {
+        "id": "e87e32ce755ceed1a9964fe26de68365828517a0",
+        "type": "FIX",
+        "text": " Icon Font: No right-to-left mirroring of text-align icons",
+        "references": []
+      },
+      {
+        "id": "a08ef09f182a38bd97b4ac83bec1ffe8525763ee",
+        "type": "FIX",
+        "text": " Message handling createEntry",
+        "references": []
+      },
+      {
+        "id": "56d06f75999c9a849d377c218b244fdf6dd86842",
+        "type": "FIX",
+        "text": " NumberFormat.parse: support RTL characters",
+        "references": []
+      },
+      {
+        "id": "752961c69dab5e55de62973b4e6579e368a9cc09",
+        "type": "FIX",
+        "text": " NumberFormat: parsing of plural formats",
+        "references": []
+      },
+      {
+        "id": "78e1f7433de04253817cb13458d70d71cd55e69b",
+        "type": "FIX",
+        "text": " ODataListBinding: Change detection in combination with filtering",
+        "references": []
+      },
+      {
+        "id": "797bab33325f9a4d85bcb66517504e9c4379a62e",
+        "type": "FIX",
+        "text": " Opa: fix action focus when IE11 browser is not focused",
+        "references": []
+      },
+      {
+        "id": "f3c5ac17ff8c63343e8d9f1de1538f6db3d3733f",
+        "type": "FIX",
+        "text": " mvc/View: multiple preprocessors in async View",
+        "references": []
+      },
+      {
+        "id": "9a513ead0f828612c8d4fd2f18e73af6a8358f48",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now read by JAWS when focus sap.m.Select",
+        "references": []
+      },
+      {
+        "id": "4709e9a00d5dde52445e8637fa10a77a31ac1979",
+        "type": "FIX",
+        "text": " sap.ui.model.FilterProcessor: null check parameters",
+        "references": []
+      },
+      {
+        "id": "1cb59e78bc16b69228edbd0cc4f2f836c7166c66",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataParentBinding: Auto-$expand/$select works with annotation properties, e.g. @odata.etag",
+        "references": []
+      },
+      {
+        "id": "f170d08c13c828baf8030ecceb402c7cd6780fa7",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._V2Requestor: weaken OData version check",
+        "references": []
+      },
+      {
+        "id": "6e2dcc6f5e0768b58df9739fcece4f52eef640df",
+        "type": "FIX",
+        "text": " v2.ODataModel delete Entry messages",
+        "references": []
       }
     ]
   }

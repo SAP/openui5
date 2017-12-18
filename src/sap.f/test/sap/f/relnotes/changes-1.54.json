@@ -31,6 +31,12 @@
         "type": "FIX",
         "text": " sap.f.Avatar: src property is now escaped",
         "references": []
+      },
+      {
+        "id": "a346d583dbd6ed7d10a523fcd53be93326c65f33",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicPageTitle: Introduced stateChange event",
+        "references": []
       }
     ]
   }
