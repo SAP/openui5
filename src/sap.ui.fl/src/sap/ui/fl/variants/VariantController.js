@@ -197,16 +197,24 @@ sap.ui.define([
 				oVariantData.content[sProperty] = mChangedData[sProperty];
 			}
 		});
-		//remove element
-		aVariants.splice(iPreviousIndex, 1);
 
-		//slice to skip first element, which is the standard variant
-		var iSortedIndex = this._getIndexToSortVariant(aVariants.slice(1), oVariantData);
+		//Standard variant should always be at the first position, all others are sorted alphabetically
+		if (oVariantData.content.fileName !== sVariantManagementReference) {
+			//remove element
+			aVariants.splice(iPreviousIndex, 1);
 
-		//add at sorted index (+1 to accommodate standard variant)
-		aVariants.splice(iSortedIndex + 1, 0, oVariantData);
+			//slice to skip first element, which is the standard variant
+			var iSortedIndex = this._getIndexToSortVariant(aVariants.slice(1), oVariantData);
 
-		return iSortedIndex + 1;
+			//add at sorted index (+1 to accommodate standard variant)
+			aVariants.splice(iSortedIndex + 1, 0, oVariantData);
+
+			return iSortedIndex + 1;
+		} else {
+			aVariants.splice(iPreviousIndex, 1, oVariantData);
+
+			return iPreviousIndex;
+		}
 	};
 
 	VariantController.prototype._updateChangesForVariantManagementInMap = function(oContent, sVariantManagementReference, bAdd) {
