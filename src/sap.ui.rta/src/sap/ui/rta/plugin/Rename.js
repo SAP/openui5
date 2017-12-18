@@ -223,7 +223,7 @@ sap.ui.define([
 	 * @return {object[]}          Returns array containing the items with required data
 	 */
 	Rename.prototype.getMenuItems = function(oOverlay){
-		return this._getMenuItems(oOverlay, {pluginId : "CTX_RENAME", rank : 10, icon: "sap-icon://edit", preventMenu : this._bPreventMenu});
+		return this._getMenuItems(oOverlay, {pluginId : "CTX_RENAME", rank : 10, icon: "sap-icon://edit"});
 	};
 
 	/**
@@ -232,6 +232,14 @@ sap.ui.define([
 	 */
 	Rename.prototype.getActionName = function(){
 		return "rename";
+	};
+
+	/**
+	 * Indicates whether the Plugin is busy
+	 * @return {boolean} true if Plugin is busy
+	 */
+	Rename.prototype.isBusy = function(){
+		return this._bPreventMenu;
 	};
 
 	return Rename;
