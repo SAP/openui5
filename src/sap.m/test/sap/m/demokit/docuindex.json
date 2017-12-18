@@ -886,7 +886,8 @@
 			"sap.m.sample.PlanningCalendarOneLine",
 			"sap.m.sample.PlanningCalendarMinMax",
 			"sap.m.sample.PlanningCalendarModifyAppointments",
-			"sap.m.sample.PlanningCalendarWithLegend"]
+			"sap.m.sample.PlanningCalendarWithLegend",
+			"sap.m.sample.PlanningCalendarDnD"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -2871,6 +2872,11 @@
 		  "id": "sap.m.sample.PlanningCalendarWithLegend",
 		  "name": "Planning Calendar - with legend",
 		  "description": "PlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part. The legend includes calendar and appointments sections."
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarDnD",
+		  "name": "Planning Calendar - Drag and Drop",
+		  "description": "PlanningCalendar with draggable appointments"
 		},
 		{
 		  "id": "sap.m.sample.ImageContent",

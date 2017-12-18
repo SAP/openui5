@@ -319,3 +319,26 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
   vertical-align: middle;
   border-top: 0.0625rem solid @sapUiListBorderColor;
 }
+
+.sapUiCalendarRowAppsPlaceholder {
+	min-height: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	float: left;
+	cursor: default;
+	z-index: 100;
+}
+
+.sapUiCalendarAppDragging {
+	z-index: 2;
+}
+
+.sapUiCalendarRowAppsOverlay {
+	position: absolute;
+	height: 100%;
+	width: 100%
+}
+
+.sapUiCalendarRowAppsOverlayDragging {
+	z-index: 1;
+}

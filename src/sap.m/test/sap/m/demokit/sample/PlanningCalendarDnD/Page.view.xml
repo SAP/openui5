@@ -1,0 +1,38 @@
+<mvc:View
+	controllerName="sap.m.sample.PlanningCalendarDnD.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<PlanningCalendar
+				startDate="{path: '/startDate'}"
+				rows="{path: '/people'}"
+				appointmentsVisualization="Filled"
+				appointmentSelect="handleAppointmentSelect">
+			<toolbarContent>
+				<Title text="Title" titleStyle="H4"/>
+			</toolbarContent>
+			<rows>
+				<PlanningCalendarRow
+						icon="{pic}"
+						title="{name}"
+						text="{role}"
+						enableAppointmentsDragAndDrop="true"
+						appointmentDrop="handleAppointmentDrop"
+						appointments="{path : 'appointments', templateShareable: 'true'}">
+					<appointments>
+						<unified:CalendarAppointment
+								startDate="{start}"
+								endDate="{end}"
+								icon="{pic}"
+								title="{title}"
+								text="{info}"
+								type="{type}"
+								tentative="{tentative}">
+						</unified:CalendarAppointment>
+					</appointments>
+				</PlanningCalendarRow>
+			</rows>
+		</PlanningCalendar>
+	</VBox>
+</mvc:View>
