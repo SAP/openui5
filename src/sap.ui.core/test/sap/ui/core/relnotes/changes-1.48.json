@@ -1063,5 +1063,46 @@
         "references": []
       }
     ]
+  },
+  "1.48.16": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "33556b4f67dd9b9da78b903e75e0cea32ce4a2b2",
+        "type": "FIX",
+        "text": " Component/Manifest: Remove css resources on destroy",
+        "references": []
+      },
+      {
+        "id": "3b45510b0dcc806da6d5b4ba038ebd66c8df8c81",
+        "type": "FIX",
+        "text": " Fallback for libraries without custom theme",
+        "references": []
+      },
+      {
+        "id": "5e459a245ab8df8d47fbc5db051cf8ad9deb982d",
+        "type": "FIX",
+        "text": " Filter/Sorter: Get comparator methods right",
+        "references": []
+      },
+      {
+        "id": "c625a16d6883a9d1ee0e9a9f07effd3d1ac31791",
+        "type": "FIX",
+        "text": " Icon Font: No right-to-left mirroring of text-align icons",
+        "references": []
+      },
+      {
+        "id": "d754f655ff03a1e96219928ab6c58efa2c69df90",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: pass correct container to ExtensionPoint",
+        "references": []
+      },
+      {
+        "id": "c635754e97cbc43b06d174bad5b177a31550aded",
+        "type": "FIX",
+        "text": " v2.ODataModel delete Entry messages",
+        "references": []
+      }
+    ]
   }
 }
