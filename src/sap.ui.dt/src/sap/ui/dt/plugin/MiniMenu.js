@@ -230,7 +230,12 @@ sap.ui.define([
 			this.oMiniMenu.close();
 			oEvent.preventDefault();
 			this._bOpenedByHover = false;
-			document.activeElement.blur();
+
+			//IE sometimes returns null for document.activeElement
+			if (document.activeElement){
+				document.activeElement.blur();
+			}
+
 			clearTimeout(this.hoverTimeout);
 
 			this._touched = false;
