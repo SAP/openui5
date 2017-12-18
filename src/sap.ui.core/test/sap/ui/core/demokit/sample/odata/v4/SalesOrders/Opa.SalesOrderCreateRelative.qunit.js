@@ -100,6 +100,10 @@ sap.ui.require([
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheErrorInfo.confirm();
 
+			// check has pending changes
+			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+			When.onTheRefreshConfirmation.cancel();
+
 			// reset changes and refresh single sales order
 			When.onTheMainPage.pressCancelSalesOrderChangesButton();
 			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();

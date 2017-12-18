@@ -402,6 +402,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns <code>true</code> if there are pending changes for the single entity in a
+	 * {@link sap.ui.model.odata.v4.ODataListBinding} represented by this context or there are
+	 * pending changes in dependent bindings relative to this context.
+	 *
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 *
+	 * @public
+	 * @since 1.53.0
+	 */
+	Context.prototype.hasPendingChanges = function () {
+		return this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
+			return oDependentBinding.hasPendingChanges();
+		});
+	};
+
+	/**
 	 * Returns <code>true</code> if this context is transient, which means that the promise returned
 	 * by {@link #created} is not yet resolved or rejected.
 	 *

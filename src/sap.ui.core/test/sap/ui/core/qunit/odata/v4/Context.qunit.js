@@ -186,6 +186,41 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[
+		{aBindingHasPendingChanges : [true], bResult : true},
+		{aBindingHasPendingChanges : [false, true], bResult : true},
+		{aBindingHasPendingChanges : [false, false], bResult : false}
+	].forEach(function (oFixture, i) {
+		QUnit.test("hasPendingChanges: " + i, function (assert) {
+			var oModel = {
+					getDependentBindings : function () {}
+				},
+				oBinding0 = {
+					hasPendingChanges : function () {}
+				},
+				oBinding1 = {
+					hasPendingChanges : function () {}
+				},
+				oParentBinding = {},
+				oContext = Context.create(oModel, oParentBinding, "/EMPLOYEES('42')", 13);
+
+			this.mock(oModel).expects("getDependentBindings")
+				.withExactArgs(sinon.match.same(oContext))
+				.returns([oBinding0, oBinding1]);
+			this.mock(oBinding0).expects("hasPendingChanges")
+				.withExactArgs()
+				.returns(oFixture.aBindingHasPendingChanges[0]);
+			this.mock(oBinding1).expects("hasPendingChanges")
+				.withExactArgs()
+				.exactly(oFixture.aBindingHasPendingChanges[0] ? 0 : 1)
+				.returns(oFixture.aBindingHasPendingChanges[1]);
+
+			// code under test
+			assert.strictEqual(oContext.hasPendingChanges(), oFixture.bResult);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("isTransient", function (assert) {
 		var oBinding = {},
 			oContext = Context.create(null, oBinding, "/foo", 42),

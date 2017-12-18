@@ -474,10 +474,7 @@ sap.ui.define([
 						oSelectedSalesOrderContext =
 							oObjectPage.getObjectBinding().getContext();
 
-					// TODO: oSelectedSalesOrderContext.hasPendingChanges &&
-					// can be deleted as soon as supported by Context
-					if (oSelectedSalesOrderContext.hasPendingChanges &&
-						oSelectedSalesOrderContext.hasPendingChanges()) {
+					if (oSelectedSalesOrderContext.hasPendingChanges()) {
 						MessageToast.show("Cannot refresh due to unsaved changes"
 								+ ", reset changes before refresh");
 					} else {
@@ -591,9 +588,7 @@ sap.ui.define([
 		 *   is reset.
 		 */
 		refresh : function (oRefreshable, sRefreshableText, aUpdateGroupIds) {
-			// TODO: oRefreshable.hasPendingChanges &&
-			// can be deleted as soon as supported by Context
-			if (oRefreshable.hasPendingChanges && oRefreshable.hasPendingChanges()) {
+			if (oRefreshable.hasPendingChanges()) {
 				MessageBox.confirm(
 					"There are pending changes. Do you really want to refresh " + sRefreshableText
 						+ "?",
