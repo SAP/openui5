@@ -794,7 +794,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ListItemBase.prototype.ontap = function(oEvent) {
 
 		// do not handle already handled events
-		if (this._eventHandledByControl) {
+		if (this._eventHandledByControl || window.getSelection().toString()) {
 			return;
 		}
 
