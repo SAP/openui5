@@ -55,4 +55,31 @@ oOpa.waitFor({
 If you decide to start using autoWait in your existing tests, the easiest way to migrate is to extend OPA config by enabling autoWait, run the tests to see if any
 waitFors time out and then disable autoWait specifically for these waitFors.
 
-For more information about autoWait, checkout the Troubleshooting section and [API documentation](https://openui5nightly.hana.ondemand.com/#/api/sap.ui.test.Opa5/methods/waitFor). In addition, check out the [OPA5 samples](https://openui5nightly.hana.ondemand.com/#/entity/sap.ui.test.Opa5) since most of the tests take advantage of autoWait.
+## AutoWait and App Startup
+Usually, there is a lot of time-consuming work done on app startup which can make the entire app
+noninteractive for a long time.
+
+To ensure that OPA doesn't timeout before the app is fully loaded, the timeout for
+`iStartMyAppInAFrame` and `iStartMyUIComponent` is increased to the default of 80 seconds.
+
+Despite the increase, there are still some tests that timeout. The timeout usually occurs during the
+first test step, which can be misleading regarding the actual cause of failure. `autoWait` is
+recommended in such cases but it is disabled during startup to prevent issues with module loading
+during app launcher initialization.
+
+As of version 1.54, the optional use of `autoWait` after launcher initialization is allowed to make
+sure the app is loaded before the first test step. It is disabled by default for backward
+compatibility as some tests check for busy indicators on app start. You can use the option with both
+app launchers, for example:
+
+```javascript
+Given.iStartMyAppInAFrame({
+    source: "applicationUnderTest/index.html",
+    autoWait: true
+});
+```
+
+For more information, see
+[Pitfalls and Troubleshooting](https://github.com/SAP/openui5/blob/master/docs/opa/Subchapters/Troubleshooting.md),
+the [API Reference](https://openui5nightly.hana.ondemand.com/#/api/sap.ui.test.Opa5)
+and the [Samples](https://openui5nightly.hana.ondemand.com/#/entity/sap.ui.test.Opa5)

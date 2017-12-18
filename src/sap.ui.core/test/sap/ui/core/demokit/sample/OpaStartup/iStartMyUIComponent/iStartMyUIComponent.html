@@ -32,14 +32,14 @@
 				'sap/ui/test/opaQunit',
 				'sap/ui/test/matchers/AggregationFilled'
 			], function (Opa5, opaTest, AggregationFilled) {
-				Opa5.extendConfig({
-					viewNamespace : "sap.ui.sample.appUnderTest.view.",
-					autoWait : true
-				});
-
+			
 				QUnit.module("iStartMyUIComponent");
 
 				opaTest("Should start and teardown a component", function (Given, When, Then) {
+					Opa5.extendConfig({
+						viewNamespace: "sap.ui.sample.appUnderTest.view.",
+						autoWait: true
+					});
 
 					// Loads the component with the given name
 					Given.iStartMyUIComponent({
@@ -63,6 +63,37 @@
 					and.iTeardownMyApp();
 
 				});
+
+				opaTest("Should start a UIComponent and wait for it to load", function (Given, When, Then) {
+					// select a timeout that is less than the time it would take for the application data to load
+					// the current application would take at least 4 seconds
+					Opa5.extendConfig({
+						viewNamespace: "sap.ui.sample.appUnderTest.view.",
+						autoWait: false,
+						timeout: 3
+					});
+
+					Given.iStartMyUIComponent({
+						componentConfig: {
+							name: "sap.ui.sample.appUnderTest"
+						},
+						autoWait: true // the test will fail with OPA timeout if autoWait is not enabled here
+					});
+
+					// should wait for the table to load on application start even though autoWait is disabled globally
+					Then.waitFor({
+						viewName: "Main",
+						id: "productList",
+						matchers: new AggregationFilled({ name: "items" }),
+						success: function () {
+							Opa5.assert.ok(true, "The application was loaded before subsequent test steps");
+						},
+						errorMessage: "The application was not loaded and OPA timeout was reached"
+					});
+
+					Then.iTeardownMyApp();
+				});
+
 				QUnit.start();
 
 			});
