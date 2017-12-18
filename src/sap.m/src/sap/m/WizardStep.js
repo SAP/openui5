@@ -53,7 +53,12 @@ sap.ui.define(["./library", "sap/ui/core/Control", "jquery.sap.global"],
 				 * Indicates whether or not the step is validated.
 				 * When a step is validated a Next button is visualized in the Wizard control.
 				 */
-				validated: {type: "boolean", group: "Behavior", defaultValue: true}
+				validated: {type: "boolean", group: "Behavior", defaultValue: true},
+				/**
+				 * Indicates whether or not the step is optional.
+				 * When a step is optional an "(Optional)" label is displayed under the step's title.
+				 */
+				optional: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			events: {
 				/**
@@ -122,7 +127,6 @@ sap.ui.define(["./library", "sap/ui/core/Control", "jquery.sap.global"],
 
 		return this;
 	};
-
 	/**
 	 * setVisible shouldn't be used on wizard steps.
 	 * If you need to show/hide steps based on some condition - use the branching property instead
