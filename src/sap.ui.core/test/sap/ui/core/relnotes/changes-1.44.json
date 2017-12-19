@@ -1205,5 +1205,40 @@
         "references": []
       }
     ]
+  },
+  "1.44.25": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "74acc62ef29eca5f7817b8432d84bfd8b773638f",
+        "type": "FIX",
+        "text": " Fallback for libraries without custom theme",
+        "references": []
+      },
+      {
+        "id": "d64188f660f76e3ab536df66942d5b46b8b48b22",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: pass correct container to ExtensionPoint",
+        "references": []
+      },
+      {
+        "id": "e79bb23ee1c8644dfeef9477ada15c091ea4d67e",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: avoid the possible duplicate \u0027tap\u0027 event",
+        "references": []
+      },
+      {
+        "id": "6459d43e8d70d93f5303a53113f1d4438907d0e2",
+        "type": "FIX",
+        "text": " mvc/XMLView: apply settings correctly for async views",
+        "references": []
+      },
+      {
+        "id": "a2d6ddeba17befc10db0d2d96d2fadbf1f549218",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: filter for edm types with numbers",
+        "references": []
+      }
+    ]
   }
 }

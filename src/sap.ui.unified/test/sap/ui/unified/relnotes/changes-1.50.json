@@ -249,5 +249,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.8": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "7b32294b7b1c9697320fb75b2708257dd47507da",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: days aligned correctly in RTL",
+        "references": []
+      }
+    ]
   }
 }

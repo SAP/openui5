@@ -1706,5 +1706,130 @@
         "references": []
       }
     ]
+  },
+  "1.50.8": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "a0f88b40ad1d690a10796b193e6aef1b8c9a5904",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: remove extra aria-labelledby attribute",
+        "references": []
+      },
+      {
+        "id": "38e0126857933002d3f11f3d6eaa71b024b3853b",
+        "type": "FIX",
+        "text": " sap.m.Button: fire press event on keydown for \u0027enter\u0027 and keyup for \u0027space\u0027",
+        "references": []
+      },
+      {
+        "id": "e8493dc2febf80197fcc11dd9267b87dc7220785",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Reset search value when FacetFilterList is closed",
+        "references": []
+      },
+      {
+        "id": "f030e957cf245fa703250554bc14407d04f77929",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Select All checkbox behavior fix after a search",
+        "references": []
+      },
+      {
+        "id": "93280fcd36b8d3a0086cf7e8df87ff3a6606f80f",
+        "type": "FIX",
+        "text": " sap.m.Input: showTableSuggestionValueHelp now works correctly on IE",
+        "references": []
+      },
+      {
+        "id": "a74902cb170edd8e86691185ce20530501cbe36a",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now read by JAWS when focus sap.m.Select",
+        "references": []
+      },
+      {
+        "id": "2d13530f57bd2f045b1afd032340d6a2ba98c27b",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Footer text should not be announced twice.",
+        "references": []
+      },
+      {
+        "id": "63a61e4b2f69317e5de059b3abc56e2c24360cc2",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: ObjectAttribute with customContent now omit active property",
+        "references": []
+      },
+      {
+        "id": "193cd136f8d3bfcb583480af7866e7d7fe75d77d",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correctly set text of the customControl aggregation",
+        "references": []
+      },
+      {
+        "id": "74e400e4f47322205c6b336430de3e0304cccefb",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "1041276beb96eff4c975215cfda1cb196d180c32",
+        "type": "FIX",
+        "text": " sap.m.Page: Documentation updated",
+        "references": []
+      },
+      {
+        "id": "02699da23a9854b4555dabada8c6e5c642cc0ec1",
+        "type": "FIX",
+        "text": " sap.m.Page: showHeader property working correctly with floatingFooter",
+        "references": []
+      },
+      {
+        "id": "8ec8be440bfa6945aa4728e9b114cd62e0036d49",
+        "type": "FIX",
+        "text": " sap.m.Panel: Blurred text in IE",
+        "references": []
+      },
+      {
+        "id": "11f0360dc8dd06d92fe8be14416854a13b6501b7",
+        "type": "FIX",
+        "text": " sap.m.Popover: Updated: Show scrollbar when overflowing and out of visible area.",
+        "references": []
+      },
+      {
+        "id": "e9234dcd59cd8d1022957cf0d2f76717e88b479d",
+        "type": "FIX",
+        "text": " sap.m.SearchField: \u0027search\u0027 event is now correctly fired",
+        "references": []
+      },
+      {
+        "id": "fba463474713d93d86a24ee8d0b603a27823d207",
+        "type": "FIX",
+        "text": " sap.m.StepInput - wrong calculation when value precision is changed.",
+        "references": []
+      },
+      {
+        "id": "7cc13234b49f25a1be1f7f2b013332aca17e1a9b",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: fix height of the TabStrip",
+        "references": []
+      },
+      {
+        "id": "0c940d35b9bcdb01313c6090b4bb29d7f131df7c",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: fix removeItem with 0 as a parameter",
+        "references": []
+      },
+      {
+        "id": "6d991d0fc49323f2246d154cad46972e0e01ab92",
+        "type": "FIX",
+        "text": " sap.m.TileContainer - works if initial width/height is 0.",
+        "references": []
+      },
+      {
+        "id": "eabb05178a0428a255e7eba745355ee184f63432",
+        "type": "FIX",
+        "text": " sap.m.Token/Tokenizer: Not editable token text width in Safari",
+        "references": []
+      }
+    ]
   }
 }

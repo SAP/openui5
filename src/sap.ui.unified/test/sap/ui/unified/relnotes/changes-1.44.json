@@ -239,5 +239,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.25": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "a93ab5f07168d4ba3d9a62e54b90f3514b1e999b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: days aligned correctly in RTL",
+        "references": []
+      },
+      {
+        "id": "3eae5fcbaa4459b527cfac359ccb132aa0261199",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select month and year corrected",
+        "references": []
+      },
+      {
+        "id": "a2fb6b6df3edcc03bd94b95d04d1a2ff239594e0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: select date on mouseup when used on touch device",
+        "references": []
+      }
+    ]
   }
 }
