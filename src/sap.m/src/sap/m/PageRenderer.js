@@ -34,9 +34,8 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			oSubHeader = oPage.getSubHeader();
 		}
 
-		if (oPage.getShowFooter()) {
-			oFooter = oPage.getFooter();
-		}
+		oFooter = oPage.getFooter();
+
 		oRm.write("<div");
 		oRm.writeControlData(oPage);
 		oRm.addClass("sapMPage");
@@ -60,7 +59,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 			oRm.addClass("sapMPageBusyCoversAll");
 		}
 
-		if (oPage.getFloatingFooter() && oPage.getShowFooter()) {
+		if (oPage.getFloatingFooter()) {
 			oRm.addClass("sapMPageFloatingFooter");
 		}
 
