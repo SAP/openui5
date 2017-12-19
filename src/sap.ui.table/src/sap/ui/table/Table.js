@@ -281,13 +281,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			footer : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
 
 			/**
-			 * Toolbar of the Table (if not set it will be hidden)
+			 * Toolbar of the Table
+			 * If not set, no toolbar area will be rendered.
+			 * Note: The CSS class sapMTBHeader-CTX is applied on the given toolbar.
 			 * @deprecated Since version 1.38. This aggregation is deprecated, use the <code>extension</code> aggregation instead.
 			 */
 			toolbar : {type : "sap.ui.core.Toolbar", multiple : false, deprecated: true},
 
 			/**
-			 * Extension section of the Table (if not set it will be hidden)
+			 * Extension section of the Table.
+			 * If not set, no extension area will be rendered.
+			 * Note: In case a <code>sap.m.Toolbar</code> is used as header the CSS class sapMTBHeader-CTX should be applied on this toolbar via <code>addStyleClass</code>.
 			 */
 			extension : {type : "sap.ui.core.Control", multiple : true, singularName : "extension"},
 

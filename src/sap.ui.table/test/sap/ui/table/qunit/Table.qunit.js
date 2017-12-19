@@ -1536,6 +1536,18 @@ sap.ui.require([
 		oTable.destroy();
 	});
 
+	QUnit.test("Toolbar has style class sapMTBHeader-CTX", function(assert) {
+		var oToolbar = new Toolbar();
+		var oTable = new Table({
+			toolbar: oToolbar
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oToolbar.hasStyleClass("sapMTBHeader-CTX"), "Toolbar has style class sapMTBHeader-CTX");
+
+		oTable.destroy();
+	});
+
 	QUnit.module("Sorting", {
 		beforeEach: function() {
 			createTable({
