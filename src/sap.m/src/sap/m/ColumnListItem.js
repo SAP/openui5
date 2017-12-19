@@ -163,7 +163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 	 * @protected
 	 */
 	ColumnListItem.prototype.hasPopin = function() {
-		return !!(this._oPopin && this.getTable().hasPopin());
+		return this._oPopin;
 	};
 
 	/**
