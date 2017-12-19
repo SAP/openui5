@@ -1320,7 +1320,7 @@
 		var expectedNumber = 123000000;
 		var sFormatted = oFormat.format(expectedNumber);
 		assert.equal(sFormatted, "123 Millionen", "can be formatted '"+sFormatted+"'");
-		debugger;
+
 		var sParsed = oFormat.parse(sFormatted);
 		assert.equal(sParsed, expectedNumber, "should match input number " + expectedNumber);
 	});
