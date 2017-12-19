@@ -568,6 +568,12 @@
         "type": "FIX",
         "text": " sap.m.Label: Label is now read by JAWS when focus sap.m.Select",
         "references": []
+      },
+      {
+        "id": "5fc6bf4764f325e7d36cd7054a16c16fadc6ec68",
+        "type": "FIX",
+        "text": " v2.ODataModel delete Entry messages",
+        "references": []
       }
     ]
   }
