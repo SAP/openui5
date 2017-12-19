@@ -271,17 +271,9 @@ sap.ui.require([
 			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
 		});
 
-		// during processing of multiple root elements fragments in XML, we use HTMLNode.children,
-		// which is not supported by phantomJS. Therefore we skip these tests in phantomJS.
+		// during processing of multiple root elements fragments in XML, in phantomJS the nodes don't get the correct ID
+		// specified in the XML. Therefore we skip this test in phantomJS.
 		if (!sap.ui.Device.browser.phantomJS) {
-			QUnit.test("When applying the change on a xml control tree with multiple root elements and one invalid type inside", function(assert) {
-				var oHBoxItems = this.oHBox.childNodes[1];
-				this.oChangeSpecificContent.fragment = oFragmentPathMultipleInvalid;
-				this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-				assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
-				assert.equal(oHBoxItems.childNodes.length, 1, "after the change there is still only 1 item in the hbox");
-			});
-
 			QUnit.test("When applying the change on a xml control tree with multiple root elements", function(assert) {
 				var oHBoxItems = this.oHBox.childNodes[1];
 				assert.equal(oHBoxItems.childNodes.length, 1, "initially there is only one child of the HBox");
@@ -291,35 +283,43 @@ sap.ui.require([
 				this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
 
 				assert.equal(oHBoxItems.childNodes.length, 4, "after the change there are 4 items in the hbox");
-				assert.equal(oHBoxItems.childNodes[1].id, "addXMLChange--button", "then the first button in the fragment has the correct index and ID");
-				assert.equal(oHBoxItems.childNodes[2].id, "addXMLChange--button2", "then the second button in the fragment has the correct index and ID");
-				assert.equal(oHBoxItems.childNodes[3].id, "addXMLChange--button3", "then the third button in the fragment has the correct index and ID");
-			});
-
-			QUnit.test("When reverting the change on an xml control tree with multiple root elements", function(assert) {
-				var oHBoxItems = this.oHBox.childNodes[1];
-				assert.equal(oHBoxItems.childNodes.length, 1, "before the change there is only one child of the HBox");
-
-				this.oChangeSpecificContent.fragment = oFragmentPathMultiple;
-				this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-				this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
-				this.oChangeHandler.revertChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
-
-				assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
-				assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
-			});
-
-			QUnit.test("When reverting a failed change on an xml control tree with multiple root elements", function(assert) {
-				var oHBoxItems = this.oHBox.childNodes[1];
-				assert.equal(oHBoxItems.childNodes.length, 1, "before the change there is only one child of the HBox");
-
-				this.oChangeSpecificContent.fragment = oFragmentPathMultipleInvalid;
-				this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-				assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
-				this.oChangeHandler.revertChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
-
-				assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
+				assert.equal(oHBoxItems.childNodes[1].getAttribute("id"), "addXMLChange--button", "then the first button in the fragment has the correct index and ID");
+				assert.equal(oHBoxItems.childNodes[2].getAttribute("id"), "addXMLChange--button2", "then the second button in the fragment has the correct index and ID");
+				assert.equal(oHBoxItems.childNodes[3].getAttribute("id"), "addXMLChange--button3", "then the third button in the fragment has the correct index and ID");
 			});
 		}
+
+		QUnit.test("When applying the change on a xml control tree with multiple root elements and one invalid type inside", function(assert) {
+			var oHBoxItems = this.oHBox.childNodes[1];
+			this.oChangeSpecificContent.fragment = oFragmentPathMultipleInvalid;
+			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
+			assert.equal(oHBoxItems.childNodes.length, 1, "after the change there is still only 1 item in the hbox");
+		});
+
+		QUnit.test("When reverting the change on an xml control tree with multiple root elements", function(assert) {
+			var oHBoxItems = this.oHBox.childNodes[1];
+			assert.equal(oHBoxItems.childNodes.length, 1, "before the change there is only one child of the HBox");
+
+			this.oChangeSpecificContent.fragment = oFragmentPathMultiple;
+			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
+			this.oChangeHandler.revertChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
+
+			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
+			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+		});
+
+		QUnit.test("When reverting a failed change on an xml control tree with multiple root elements", function(assert) {
+			var oHBoxItems = this.oHBox.childNodes[1];
+			assert.equal(oHBoxItems.childNodes.length, 1, "before the change there is only one child of the HBox");
+
+			this.oChangeSpecificContent.fragment = oFragmentPathMultipleInvalid;
+			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
+			this.oChangeHandler.revertChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
+
+			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
+		});
 	});
 });

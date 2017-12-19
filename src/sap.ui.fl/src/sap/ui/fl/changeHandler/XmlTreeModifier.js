@@ -439,14 +439,22 @@ sap.ui.define([
 		instantiateFragment: function(sFragment, sChangeId) {
 			var oControlNodes = XMLTemplateProcessor.loadTemplate(sFragment, "fragment");
 			if (oControlNodes.localName === "FragmentDefinition") {
-				var aNodes = [];
-				for (var i = 0, n = oControlNodes.children.length; i < n; i++) {
-					oControlNodes.children[i].id = sChangeId + "--" + oControlNodes.children[i].id;
-					aNodes.push(oControlNodes.children[i]);
+				// Workaround for IE/Edge as the .children property is not available there
+				var aNodes = oControlNodes.childNodes, aChildren = [];
+				for (var i = 0, n = aNodes.length; i < n; i++) {
+					if (aNodes[i].nodeType === 1) {
+						aChildren.push(aNodes[i]);
+					}
 				}
-				return aNodes;
+
+				for (var j = 0, m = aChildren.length; j < m; j++) {
+					// aChildren[j].id is not available in IE11, therefore using .getAttribute/.setAttribute
+					aChildren[j].setAttribute("id", sChangeId + "--" + aChildren[j].getAttribute("id"));
+				}
+				return aChildren;
 			} else {
-				oControlNodes.id = sChangeId + "--" + oControlNodes.id;
+				// aChildren[j].id is not available in IE11, therefore using .getAttribute/.setAttribute
+				oControlNodes.setAttribute("id", sChangeId + "--" + oControlNodes.getAttribute("id"));
 				return [oControlNodes];
 			}
 		},
