@@ -118,12 +118,12 @@
 								<blocks>
 									<m:Table items="{ path : '/properties'}"
 											 showSeparators="Inner"
-											 fixedLayout="true"
+											 fixedLayout="false"
 											 class="sapUiSmallMarginTop">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
-											<m:Column vAlign="Top" minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+											<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem>
