@@ -555,8 +555,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 				// Wrap the event handler of the other party to add our handler.
 				var fOriginalHandler = oBindingInfo.events[sEventName];
 				oBindingInfo.events[sEventName] = function() {
-					fOriginalHandler.apply(this, arguments);
 					fHandler.apply(this, arguments);
+					fOriginalHandler.apply(this, arguments);
 				};
 			}
 		}
