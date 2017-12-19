@@ -28,6 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.AccessibleRole",
 			"sap.ui.core.AccessibleLandmarkRole",
 			"sap.ui.core.BarColor",
+			"sap.ui.core.BusyIndicatorSize",
 			"sap.ui.core.CalendarType",
 			"sap.ui.core.CSSColor",
 			"sap.ui.core.CSSSize",
@@ -614,6 +615,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		 */
 		NEGATIVE : "NEGATIVE"
 
+	};
+
+	/**
+	 * Configuration options for the BusyIndicator size
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.BusyIndicatorSize = {
+		/**
+		 * Type: automatic size detection
+		 * @public
+		 */
+		Auto : "Auto",
+
+		/**
+		 * Type: small size
+		 * @public
+		 */
+		Small : "Small",
+
+		/**
+		 * Type: Medium size
+		 * @public
+		 */
+		Medium : "Medium",
+
+		/**
+		 * Type: Large size
+		 * @public
+		 */
+		Large : "Large"
 	};
 
 	/**

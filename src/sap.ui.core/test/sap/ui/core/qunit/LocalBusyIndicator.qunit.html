@@ -357,6 +357,43 @@
 			this.oBtn = new sap.ui.commons.Button({
 				text : "Blub",
 				width : "45px",
+				busyIndicatorSize : 'Small',
+				busy : true,
+				busyIndicatorDelay : 0
+			}).placeAt("target1");
+
+			this.oDelegate = {
+				onAfterRendering : function(oEvent) {}
+			}
+			this.oBtn.addDelegate(this.oDelegate);
+			this.oSpy = sinon.spy(this.oDelegate, "onAfterRendering");
+
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function() {
+				var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
+				assert.ok($Animation.length, "Animation exists");
+				assert.ok($Animation.hasClass("sapUiLocalBusyIndicatorAnimSmall"), "Correct CSS class set to DOM");
+
+				assert.equal(this.oSpy.callCount, 1, "Icon should be rendered once");
+
+				this.oSpy.restore();
+				delete this.oSpy;
+				this.oBtn.removeDelegate(this.oDelegate);
+				delete this.oDelegate;
+				this.oBtn.destroy();
+
+				done();
+			}.bind(this), 50);
+		});
+
+		QUnit.test("Check if small Animation is used", function(assert) {
+			var done = assert.async();
+
+			this.oBtn = new sap.ui.commons.Button({
+				text : "Blub",
+				width : "45px",
+				busyIndicatorSize : 'Auto',
 				busy : true,
 				busyIndicatorDelay : 0
 			}).placeAt("target1");
