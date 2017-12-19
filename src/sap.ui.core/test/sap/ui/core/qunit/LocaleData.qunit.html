@@ -70,6 +70,7 @@
 	var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$ US", "$US", "$", "US$", "US$", "$",
 		"US$", "US$", "$", "$", "$", "US$", "US$", "USD", "US$", "US$", "$", "US$", "$", "USD"];
 
+	QUnit.module("Locales");
 	// Run generic test for all supported locales, run custom tests where it is defined
 	jQuery.each(aLocales, function(i, sLocale) {
 		QUnit.test("Locale " + sLocale, function(assert) {
@@ -524,6 +525,26 @@
 		assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
 
+	QUnit.module("Locale data types", {
+		beforeEach: function(assert) {
+
+			//ensure custom unit mappings and custom units are reset
+			this.oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+			this.oFormatSettings.setUnitMappings();
+			this.oFormatSettings.setCustomUnits();
+
+			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
+			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+		}, afterEach: function(assert) {
+			//ensure custom unit mappings and custom units are reset
+			this.oFormatSettings.setUnitMappings();
+			this.oFormatSettings.setCustomUnits();
+
+			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
+			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+		}
+	});
+
 	QUnit.test("Currency digits", function(assert) {
 		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
 		assert.equal(oLocaleData.getCurrencyDigits("USD"), 2, "2 digits fuer USD");
@@ -577,20 +598,156 @@
 		var oLocale = new sap.ui.core.Locale("de_DE");
 		var oLocaleData = new sap.ui.core.LocaleData(oLocale);
 
-		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("duration-hour"), "Std.", "display name 'Std.' is correct");
-		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("mass-gram"), "Gramm", "display name 'Gramm' is correct");
-		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("light-lux"), "Lux", "display name 'Lux' is correct");
-		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("length-light-year"), "Lichtjahre", "display name 'Lichtjahre' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("duration-hour"), "Std.", "display name 'Std.' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("mass-gram"), "Gramm", "display name 'Gramm' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("light-lux"), "Lux", "display name 'Lux' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("length-light-year"), "Lichtjahre", "display name 'Lichtjahre' is correct");
 		// unknown code
-		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("foobar"), "foobar", "display name 'foobar' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("foobar"), "", "display name 'foobar' is correct");
 
 		oLocale = new sap.ui.core.Locale("es_ES");
 		oLocaleData = new sap.ui.core.LocaleData(oLocale);
 
-		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("duration-hour"), "horas", "display name 'horas' is correct");
-		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("mass-gram"), "g", "display name 'g' is correct");
-		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("light-lux"), "lx", "display name 'lx' is correct");
-		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("length-light-year"), "a. l.", "display name 'a. l.' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("duration-hour"), "horas", "display name 'horas' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("mass-gram"), "g", "display name 'g' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("light-lux"), "lx", "display name 'lx' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("length-light-year"), "a. l.", "display name 'a. l.' is correct");
+	});
+
+	QUnit.test("CustomLocaleData with getUnitFormats", function(assert) {
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US-x-sapufmt"));
+
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		oFormatSettings.setCustomUnits({
+			"cats": {
+				"displayName": "kittens",
+				"unitPattern-count-one": "{0} kitten",
+				"unitPattern-count-other": "{0} kittens"
+			}
+		});
+
+		oFormatSettings.setUnitMappings({
+			"CAT": "cats"
+		});
+
+		assert.equal(oLocaleData.getUnitDisplayName("cats"), "kittens");
+		assert.equal(oLocaleData.getUnitDisplayName("length-meter"), "m");
+		assert.equal(oLocaleData.getUnitDisplayName("CAT"), "", "not found");
+
+		// what format does
+		assert.equal(oLocaleData.getUnitFormat("cats").displayName, "kittens", "name is shown");
+		assert.equal(oLocaleData.getUnitFormat("length-meter").displayName, "m", "name is shown");
+		assert.notOk(oLocaleData.getUnitFormat("CAT"), "not found as it does not take mapping into consideration");
+		assert.equal(oLocaleData.getUnitFromMapping("CAT"), "cats", "cats is the respective mapping");
+		assert.equal(oLocaleData.getResolvedUnitFormat("CAT").displayName, "kittens", "kittens is the displayName");
+
+		//reset unit mappings
+		oFormatSettings.setUnitMappings();
+	});
+
+	QUnit.test("Unit Mappings", function(assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+
+		var mUnitMappings = {
+			"CAT": "cats",
+			"KIT": "cats",
+			"TAS": "volume-cups"
+		};
+		oFormatSettings.setUnitMappings(mUnitMappings);
+		assert.deepEqual(oFormatSettings.getUnitMappings(), mUnitMappings, "units must be all specified");
+
+		// set to undefined
+		oFormatSettings.setUnitMappings();
+		assert.deepEqual(oFormatSettings.getUnitMappings(), undefined, "units must be undefined");
+
+
+		oFormatSettings.addUnitMappings(mUnitMappings);
+		assert.deepEqual(oFormatSettings.getUnitMappings(), mUnitMappings, "units must be all specified");
+
+		oFormatSettings.addUnitMappings(null);
+		oFormatSettings.addUnitMappings(undefined);
+		oFormatSettings.addUnitMappings();
+		oFormatSettings.addUnitMappings({});
+
+		//add should not delete mappings
+		assert.deepEqual(oFormatSettings.getUnitMappings(), mUnitMappings, "units must be all specified");
+		assert.equal(oFormatSettings.getUnitMappings()["CAT"], "cats", "unit mapping is initially defined");
+
+		mUnitMappings = {
+			"CAT": "volume-cups",
+			"KIT": "cats",
+			"RAT": "volume-rat"
+		};
+		oFormatSettings.addUnitMappings(mUnitMappings);
+		assert.deepEqual(Object.keys(oFormatSettings.getUnitMappings()), ["CAT", "KIT", "TAS", "RAT"], "unit mappings must be all specified");
+		assert.equal(oFormatSettings.getUnitMappings()["CAT"], "volume-cups", "unit mappings was overwritten");
+
+		oFormatSettings.setUnitMappings(mUnitMappings);
+		assert.deepEqual(Object.keys(oFormatSettings.getUnitMappings()), ["CAT", "KIT", "RAT"], "unit mappings must be all specified");
+	});
+
+	QUnit.test("Custom Units get/set/add", function(assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+
+		var mUnits = {
+			"cats": {
+				"displayName": "kittens",
+				"unitPattern-count-one": "{0} kitten",
+				"unitPattern-count-other": "{0} kittens"
+			},
+			"dogs": {
+				"displayName": "puppies",
+				"unitPattern-count-one": "{0} puppy",
+				"unitPattern-count-other": "{0} puppies"
+			}
+		};
+		oFormatSettings.setCustomUnits(mUnits);
+
+		assert.deepEqual(oFormatSettings.getCustomUnits(), mUnits, "units must be all specified");
+
+
+		// set to undefined
+		oFormatSettings.setCustomUnits();
+		assert.deepEqual(oFormatSettings.getCustomUnits(), undefined, "units must be all specified");
+
+
+		oFormatSettings.addCustomUnits(mUnits);
+		assert.deepEqual(oFormatSettings.getCustomUnits(), mUnits, "units must be all specified");
+
+		mUnits = {
+			"cats": {
+				"displayName": "kitties",
+				"unitPattern-count-one": "{0} kitty",
+				"unitPattern-count-other": "{0} kitties"
+			},
+			"dogs": {
+				"displayName": "puppets",
+				"unitPattern-count-one": "{0} puppy",
+				"unitPattern-count-other": "{0} puppies"
+			}
+		};
+
+		oFormatSettings.addCustomUnits(mUnits);
+		assert.deepEqual(oFormatSettings.getCustomUnits(), mUnits, "units must be all specified");
+
+
+		oFormatSettings.addCustomUnits({
+			"birds": {
+				"displayName": "birds",
+				"unitPattern-count-one": "{0} bird",
+				"unitPattern-count-other": "{0} birds"
+			}
+		});
+		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
+
+		oFormatSettings.addCustomUnits({});
+		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
+
+		oFormatSettings.addCustomUnits();
+		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
+
+		oFormatSettings.setCustomUnits(mUnits);
+		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs"], "units must be all specified");
 	});
 
 	var aDeprecatedLocales = [

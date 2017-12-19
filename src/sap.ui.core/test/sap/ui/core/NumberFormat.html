@@ -47,7 +47,10 @@
 			{key: "currency2", text: "Currency short", type: "Currency", sample: {currencyCode: false, style: "short"} },
 			{key: "unit", text: "Unit long format", type: "Unit", sample: {style: "long"} },
 			{key: "unit2", text: "Unit", type: "Unit", sample: {} },
-			{key: "pattern", text: "Custom pattern", type: "Float", sample: {pattern: "#,##,###.0#"} }
+			{key: "unit3", text: "Unit Custom", type: "Unit", sample: {customUnits:{"electric-inductance": {
+							"unitPattern-count-one": "{0} H",
+							"unitPattern-count-other": "{0} H"}}}, unit: 'electric-inductance' },
+			{key: "pattern", text: "Float Custom pattern", type: "Float", sample: {pattern: "#,##,###.0#"} }
 		],
 		aHashParams = [
 			{name: "formatOptions", default: {}},
@@ -162,6 +165,10 @@
 				type: "boolean",
 				help: "To show currency symbols instead of three letter currency code, set to \"false\""
 			},
+			customUnits: {
+				type: "object",
+				help: "Custom units"
+			},
 			language: {
 				type: "string",
 				help: "Language to enter"
@@ -180,7 +187,7 @@
 	var oModel = new sap.ui.model.json.JSONModel({
 		number: 123456.789,
 		currency: "USD",
-		unitcode: "speed-knot",
+		unit: "speed-knot",
 		formatOptions: {},
 		type: "Integer",
 		locales: aLocales,
@@ -254,7 +261,7 @@
 											}),
 											new sap.m.Input({
 												value: {
-													parts: ["/number", "/currency", "/unitcode", "/type", "/formatOptions", "/locale"],
+													parts: ["/number", "/currency", "/unit", "/type", "/formatOptions", "/locale"],
 													formatter: function(oNumber, sCurrency, sUnitCode, sType, oFormatOptions, sLocale) {
 														var oLocale = new sap.ui.core.Locale(sLocale);
 														var sFunctionName = "get" + sType + "Instance",
@@ -291,7 +298,7 @@
 															oModel.setProperty("/number", aParsed[0]);
 														}
 														if (aParsed[1]) {
-															oModel.setProperty("/unitcode", aParsed[1]);
+															oModel.setProperty("/unit", aParsed[1]);
 														}
 													} else if (aParsed) {
 														oModel.setProperty("/number", aParsed);
@@ -345,6 +352,10 @@
 													var oContext = this.getSelectedItem().getBindingContext();
 													oModel.setProperty("/formatOptions", {});
 													oModel.setProperty("/type", oContext.getProperty("type"));
+													if (oContext.getProperty("unit")) {
+														//if unit is specified in sample
+														oModel.setProperty("/unit", oContext.getProperty("unit"));
+													}
 													oModel.setProperty("/formatOptions", oContext.getProperty("sample"));
 												}
 											}),
@@ -404,7 +415,7 @@
 											new sap.m.Input({
 												showSuggestion: true,
 												suggestionItems: {path: "/cldrEntries", template: new sap.ui.core.Item({"text":"{name}"})},
-												value: "{/unitcode}",
+												value: "{/unit}",
 												visible: {
 													path: "/type",
 													formatter: function(sType) {
@@ -445,7 +456,7 @@
 											template: new LocaleListItem({
 												locale: "{}",
 												text: {
-													parts: ["/number", "/currency", "/unitcode", "/formatOptions", "/type", ""],
+													parts: ["/number", "/currency", "/unit", "/formatOptions", "/type", ""],
 													formatter: function(oNumber, sCurrency, sUnitCode, oFormatOptions, sType, sLocale) {
 														var oLocale = new sap.ui.core.Locale(sLocale),
 															sFunctionName = "get" + sType + "Instance",
