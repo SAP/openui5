@@ -100,15 +100,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/uxap/ObjectPageDynamicHead
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 */
-		ObjectPageDynamicHeaderTitle.prototype.snap = function () {
-			this._toggleState(false);
+		ObjectPageDynamicHeaderTitle.prototype.snap = function (bUserInteraction) {
+			this._toggleState(false, bUserInteraction);
 		};
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 */
-		ObjectPageDynamicHeaderTitle.prototype.unSnap = function () {
-			this._toggleState(true);
+		ObjectPageDynamicHeaderTitle.prototype.unSnap = function (bUserInteraction) {
+			this._toggleState(true, bUserInteraction);
 		};
 
 		/**
