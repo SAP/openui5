@@ -370,6 +370,27 @@ sap.ui.require([
 		this.clock.restore();
 	});
 
+	QUnit.test("Testing onKeyDown function", function (assert) {
+		var _tempListener = function (oEvent){
+			oEvent.keyCode = jQuery.sap.KeyCodes.F10;
+			oEvent.shiftKey = true;
+			oEvent.altKey = false;
+			oEvent.ctrlKey = false;
+
+
+			var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
+			this.oMiniMenuPlugin._onKeyDown(oEvent);
+
+			assert.ok(oMiniMenu.isOpen, "MiniMenu should be open");
+			assert.strictEqual(oMiniMenu.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
+			oMiniMenu = null;
+
+		}.bind(this);
+
+		this.oButton2Overlay.attachBrowserEvent("keydown", _tempListener, this);
+		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keydown");
+	});
+
 
 	QUnit.test("Performing a right click when a Timeout from left-click/hover is active", function (assert) {
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
@@ -542,30 +563,39 @@ sap.ui.require([
         sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 
         var oBtn = {
-            text: "Test",
+            text: "TestText",
             icon: "",
             handler: function () {}
         };
 
         assert.strictEqual(this.oMiniMenu.addButton(oBtn), this.oMiniMenu, "Should return the MiniMenu");
 
-		assert.strictEqual(this.oMiniMenu.getFlexbox().getItems()[this.oMiniMenu.getFlexbox().getItems().length - 1].getText(), oBtn.text, "should add a button");
-    });
+		assert.strictEqual(this.oMiniMenu.getFlexbox(true).getItems()[this.oMiniMenu.getFlexbox(true).getItems().length - 1].getText(), oBtn.text, "Button should be added to Flexbox 1");
+		assert.strictEqual(this.oMiniMenu.getFlexbox(true).getItems()[this.oMiniMenu.getFlexbox(true).getItems().length - 1].getText(), oBtn.text, "Button should be added to Flexbox 2");
+	});
 
     QUnit.test("removing a button", function (assert) {
         sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 
         var oRemovedButton = this.oMiniMenu.removeButton(0);
 
-        var aItems = this.oMiniMenu.getFlexbox().getItems();
+		var aItems = this.oMiniMenu.getFlexbox(true).getItems();
+		var aItems2 = this.oMiniMenu.getFlexbox(false).getItems();
 
         for (var i = 0; i < aItems.length; i++) {
             if (aItems[i] === oRemovedButton) {
                 assert.ok(false, "didn't remove the button");
             }
+		}
+
+		for (var i1 = 0; i1 < aItems2.length; i1++) {
+            if (aItems2[i1] === oRemovedButton) {
+                assert.ok(false, "didn't remove the button");
+            }
         }
 
 		assert.strictEqual(aItems.length, 2,"should remove a button");
+		assert.strictEqual(aItems2.length, 2,"should remove a button");
     });
 
     QUnit.test("removing all buttons", function (assert) {
