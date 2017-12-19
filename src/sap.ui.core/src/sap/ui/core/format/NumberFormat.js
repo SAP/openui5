@@ -943,9 +943,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			sRegExpInt = "^\\s*([" + sPlusMinusSigns + "]?[0-9" + sGroupingSeparator + "]+)\\s*$",
 			oGroupingRegExp = new RegExp(sGroupingSeparator, "g"),
 			oDecimalRegExp = new RegExp(sDecimalSeparator, "g"),
-			sPercentPattern = this.oLocaleData.getPercentPattern(),
 			sPercentSign = this.oLocaleData.getNumberSymbol("percentSign"),
-			oRegExp, bPercent, sRegExpCurrency, sRegExpCurrencyMeasure, aParsed, sMeasure,
+			oRegExp, bPercent, sRegExpCurrency, sRegExpCurrencyMeasure, aParsed, sMeasure, sPercentPattern,
 			vResult = 0,
 			oShort, vEmptyParseValue;
 
@@ -963,6 +962,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			}
 		}
 
+		sPercentPattern = oOptions.type === mNumberType.PERCENT ? oOptions.pattern : this.oLocaleData.getPercentPattern();
 		if (sPercentPattern.charAt(0) === "%") {
 			sRegExpFloat = sRegExpFloat.slice(0, 1) + "%?" + sRegExpFloat.slice(1);
 		} else if (sPercentPattern.charAt(sPercentPattern.length - 1) === "%") {
