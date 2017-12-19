@@ -1,207 +1,213 @@
 <!DOCTYPE html>
-<html style="height: 100%">
-<head>
-	<title>LightBox - sap.m</title>
-<style>
-	.sapMFlexItem {
-		margin:0 0 0 2rem;
-	}
-</style>
-	<script src="shared-config.js"></script>
-	<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.layout">
-	</script>
-
-	<script>
-		var oLightBox = new sap.m.LightBox('lB1', {
-			imageContent: new sap.m.LightBoxItem({
-				imageSrc: 'images/demo/nature/elephant.jpg',
-				title: 'I am a title',
-				subtitle: 'Sample image',
-				alt: 'picture of elephant'
-			})
-		});
-
-		var oLightBoxBig = new sap.m.LightBox('lB2', {
-			imageContent: new sap.m.LightBoxItem({
-				imageSrc: 'images/demo/nature/aLotOfElephants.jpg',
-				title: 'I am a title',
-				subtitle: 'Very big image',
-				alt: 'picture of elephant'
-			})
-		});
-
-		var oLightBoxHorizontal = new sap.m.LightBox('lB3', {
-			imageContent: new sap.m.LightBoxItem({
-				title: 'I am a title',
-				subtitle: 'Big horizontal image',
-				alt: 'picture of elephant',
-				imageSrc: 'images/demo/nature/horses.jpg'
-			})
-		});
-
-		var oLightBoxVertical = new sap.m.LightBox('lB4', {
-			imageContent: new sap.m.LightBoxItem({
-				title: 'I am a title',
-				subtitle: 'Big vertical image',
-				alt: 'picture of flat fish',
-				imageSrc: 'images/demo/nature/flatFish.jpg'
-			})
-		});
-
-		var oLightBoxSquare = new sap.m.LightBox('lB5', {
-			imageContent: new sap.m.LightBoxItem({
-				title: 'I am a title',
-				subtitle: 'Image smaller than the minimal size of the light box',
-				alt: 'picture of elephant',
-				imageSrc: 'images/demo/smallImgs/150x150.jpg'
-			})
-		});
-
-		var oLightBoxVerticalMin = new sap.m.LightBox('lB6', {
-			imageContent: new sap.m.LightBoxItem({
-				title: 'Image with small width but',
-				subtitle: 'height bigger than the min size of the light box',
-				alt: 'picture of elephant',
-				imageSrc: 'images/demo/smallImgs/150x288.jpg'
-			})
-		});
-
-		var oLightBoxHorizontalMin = new sap.m.LightBox('lB7', {
-			imageContent: new sap.m.LightBoxItem({
-				title: 'Image with small height but',
-				subtitle: 'width bigger than the min size of the light box',
-				alt: 'picture of elephant',
-				imageSrc: 'images/demo/smallImgs/320x150.jpg'
-			})
-		});
-
-		var oLightBoxInvalidImage = new sap.m.LightBox('lB8', {
-			imageContent: new sap.m.LightBoxItem({
-				title: 'Light box with invalid image',
-				subtitle: 'Second line',
-				imageSrc: 'invalidSource'
-			})
-		});
-
-		var oLightBoxInvalidImage2 = new sap.m.LightBox('lB9', {
-			imageContent: new sap.m.LightBoxItem({
-				title: 'Light box with invalid image',
-				subtitle: 'Second line',
-				imageSrc: 'invalidSource'
-			})
-		});
-
-		var oImage = new sap.m.Image('image1', {
-			src: 'images/demo/nature/elephant.jpg',
-			alt: 'click to open the lightbox',
-			decorative: false,
-			width: '100px',
-			detailBox: oLightBox,
-			densityAware: false
-		});
-
-		var oImageBigPicture = new sap.m.Image('image2', {
-			src: 'images/demo/nature/ALotOfElephants_small.jpg',
-			alt: 'click to open the lightbox',
-			decorative: false,
-			width: '100px',
-			detailBox: oLightBoxBig,
-			densityAware: false
-		});
-
-		var oImageHorizontal = new sap.m.Image('image3', {
-			src: 'images/demo/nature/horses.jpg',
-			alt: 'click to open the lightbox',
-			decorative: false,
-			width: '100px',
-			detailBox: oLightBoxHorizontal,
-			densityAware: false
-		});
-
-		var oImageVertical = new sap.m.Image('image4', {
-			src: 'images/demo/nature/flatFish.jpg',
-			alt: 'click to open the lightbox',
-			decorative: false,
-			width: '100px',
-			detailBox: oLightBoxVertical,
-			densityAware: false
-		});
-
-		var oImageSquare = new sap.m.Image('image5', {
-			src: 'images/demo/smallImgs/150x150.jpg',
-			alt: 'click to open the lightbox',
-			decorative: false,
-			width: '100px',
-			detailBox: oLightBoxSquare,
-			densityAware: false
-		});
-
-		var oImageVerticalMin = new sap.m.Image('image6', {
-			src: 'images/demo/smallImgs/150x288.jpg',
-			alt: 'click to open the lightbox',
-			decorative: false,
-			width: '100px',
-			detailBox: oLightBoxVerticalMin,
-			densityAware: false
-		});
-
-		var oImageHorizontalMin = new sap.m.Image('image7', {
-			src: 'images/demo/smallImgs/320x150.jpg',
-			alt: 'click to open the lightbox',
-			decorative: false,
-			width: '100px',
-			detailBox: oLightBoxHorizontalMin,
-			densityAware: false
-		});
-
-		var oInvalidImage = new sap.m.Image('image8', {
-			src: 'images/demo/nature/elephant.jpg',
-			alt: 'opens light box with image that has a wrong source set. The lightbox will display an error message',
-			decorative: false,
-			width: '100px',
-			detailBox: oLightBoxInvalidImage,
-			densityAware: false
-		});
-
-		var oInvalidImage2 = new sap.m.Image('image9', {
-			src: 'images/SAPUI5Icon.png',
-			alt: 'opens light box with image that has a wrong source set. The lightbox will display an error message',
-			decorative: false,
-			width: "88px",
-			height: "68px",
-			backgroundPosition: "-74px -14px",
-			mode: sap.m.ImageMode.Background,
-			detailBox: oLightBoxInvalidImage2,
-			densityAware: false
-		});
-
-        var HBox = new sap.m.HBox("vbox1", {
-            alignItems: sap.m.FlexAlignItems.Baseline,
-            items:[
-                oImage,
-                oImageBigPicture,
-                oImageHorizontal,
-                oImageVertical,
-                oImageSquare,
-                oImageVerticalMin,
-                oImageHorizontalMin,
-                oInvalidImage,
-                oInvalidImage2
-            ]
-        }).placeAt("content");
-
-		var compactSizeButton = new sap.m.Button('toggleCompactModeButton', {
-			text : 'Toggle Compact mode',
-			press : function() {
-				jQuery('body').toggleClass('sapUiSizeCompact');
+<html>
+	<head>
+		<title>LightBox - sap.m</title>
+		<style>
+			.sapMFlexItem {
+				margin:0 0 0 2rem;
 			}
-		}).placeAt('content');
-	</script>
+		</style>
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m, sap.ui.layout">
+		</script>
 
-</head>
-<body id="body" class="sapUiBody">
-<div id="content" class="uiArea"></div>
-</body>
+		<script>
+			var oLightBox = new sap.m.LightBox('lB1', {
+				imageContent: new sap.m.LightBoxItem({
+					imageSrc: 'images/demo/nature/elephant.jpg',
+					title: 'I am a title',
+					subtitle: 'Sample image',
+					alt: 'picture of elephant'
+				})
+			});
+
+			var oLightBoxBig = new sap.m.LightBox('lB2', {
+				imageContent: new sap.m.LightBoxItem({
+					imageSrc: 'images/demo/nature/aLotOfElephants.jpg',
+					title: 'I am a title',
+					subtitle: 'Very big image',
+					alt: 'picture of elephant'
+				})
+			});
+
+			var oLightBoxHorizontal = new sap.m.LightBox('lB3', {
+				imageContent: new sap.m.LightBoxItem({
+					title: 'I am a title',
+					subtitle: 'Big horizontal image',
+					alt: 'picture of elephant',
+					imageSrc: 'images/demo/nature/horses.jpg'
+				})
+			});
+
+			var oLightBoxVertical = new sap.m.LightBox('lB4', {
+				imageContent: new sap.m.LightBoxItem({
+					title: 'I am a title',
+					subtitle: 'Big vertical image',
+					alt: 'picture of flat fish',
+					imageSrc: 'images/demo/nature/flatFish.jpg'
+				})
+			});
+
+			var oLightBoxSquare = new sap.m.LightBox('lB5', {
+				imageContent: new sap.m.LightBoxItem({
+					title: 'I am a title',
+					subtitle: 'Image smaller than the minimal size of the light box',
+					alt: 'picture of elephant',
+					imageSrc: 'images/demo/smallImgs/150x150.jpg'
+				})
+			});
+
+			var oLightBoxVerticalMin = new sap.m.LightBox('lB6', {
+				imageContent: new sap.m.LightBoxItem({
+					title: 'Image with small width but',
+					subtitle: 'height bigger than the min size of the light box',
+					alt: 'picture of elephant',
+					imageSrc: 'images/demo/smallImgs/150x288.jpg'
+				})
+			});
+
+			var oLightBoxHorizontalMin = new sap.m.LightBox('lB7', {
+				imageContent: new sap.m.LightBoxItem({
+					title: 'Image with small height but',
+					subtitle: 'width bigger than the min size of the light box',
+					alt: 'picture of elephant',
+					imageSrc: 'images/demo/smallImgs/320x150.jpg'
+				})
+			});
+
+			var oLightBoxInvalidImage = new sap.m.LightBox('lB8', {
+				imageContent: new sap.m.LightBoxItem({
+					title: 'Light box with invalid image',
+					subtitle: 'Second line',
+					imageSrc: 'invalidSource'
+				})
+			});
+
+			var oLightBoxInvalidImage2 = new sap.m.LightBox('lB9', {
+				imageContent: new sap.m.LightBoxItem({
+					title: 'Light box with invalid image',
+					subtitle: 'Second line',
+					imageSrc: 'invalidSource'
+				})
+			});
+
+			var oImage = new sap.m.Image('image1', {
+				src: 'images/demo/nature/elephant.jpg',
+				alt: 'click to open the lightbox',
+				decorative: false,
+				width: '100px',
+				detailBox: oLightBox,
+				densityAware: false
+			});
+
+			var oImageBigPicture = new sap.m.Image('image2', {
+				src: 'images/demo/nature/ALotOfElephants_small.jpg',
+				alt: 'click to open the lightbox',
+				decorative: false,
+				width: '100px',
+				detailBox: oLightBoxBig,
+				densityAware: false
+			});
+
+			var oImageHorizontal = new sap.m.Image('image3', {
+				src: 'images/demo/nature/horses.jpg',
+				alt: 'click to open the lightbox',
+				decorative: false,
+				width: '100px',
+				detailBox: oLightBoxHorizontal,
+				densityAware: false
+			});
+
+			var oImageVertical = new sap.m.Image('image4', {
+				src: 'images/demo/nature/flatFish.jpg',
+				alt: 'click to open the lightbox',
+				decorative: false,
+				width: '100px',
+				detailBox: oLightBoxVertical,
+				densityAware: false
+			});
+
+			var oImageSquare = new sap.m.Image('image5', {
+				src: 'images/demo/smallImgs/150x150.jpg',
+				alt: 'click to open the lightbox',
+				decorative: false,
+				width: '100px',
+				detailBox: oLightBoxSquare,
+				densityAware: false
+			});
+
+			var oImageVerticalMin = new sap.m.Image('image6', {
+				src: 'images/demo/smallImgs/150x288.jpg',
+				alt: 'click to open the lightbox',
+				decorative: false,
+				width: '100px',
+				detailBox: oLightBoxVerticalMin,
+				densityAware: false
+			});
+
+			var oImageHorizontalMin = new sap.m.Image('image7', {
+				src: 'images/demo/smallImgs/320x150.jpg',
+				alt: 'click to open the lightbox',
+				decorative: false,
+				width: '100px',
+				detailBox: oLightBoxHorizontalMin,
+				densityAware: false
+			});
+
+			var oInvalidImage = new sap.m.Image('image8', {
+				src: 'images/demo/nature/elephant.jpg',
+				alt: 'opens light box with image that has a wrong source set. The lightbox will display an error message',
+				decorative: false,
+				width: '100px',
+				detailBox: oLightBoxInvalidImage,
+				densityAware: false
+			});
+
+			var oInvalidImage2 = new sap.m.Image('image9', {
+				src: 'images/SAPUI5Icon.png',
+				alt: 'opens light box with image that has a wrong source set. The lightbox will display an error message',
+				decorative: false,
+				width: "88px",
+				height: "68px",
+				backgroundPosition: "-74px -14px",
+				mode: sap.m.ImageMode.Background,
+				detailBox: oLightBoxInvalidImage2,
+				densityAware: false
+			});
+
+			var compactSizeButton = new sap.m.Button('toggleCompactModeButton', {
+				text : 'Toggle Compact mode',
+				press : function() {
+					jQuery('body').toggleClass('sapUiSizeCompact');
+				}
+			});
+
+			var oPage = new sap.m.Page("myPage", {
+				content: [
+					oImage,
+					oImageBigPicture,
+					oImageHorizontal,
+					oImageVertical,
+					oImageSquare,
+					oImageVerticalMin,
+					oImageHorizontalMin,
+					oInvalidImage,
+					oInvalidImage2,
+					compactSizeButton
+				]
+			});
+
+			var oApp = new sap.m.App("myApp", {
+				initialPage:"myPage"
+			});			
+			oApp.addPage(oPage);
+
+			oApp.placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<!--<div id="content" class="uiArea"></div>-->
+	</body>
 </html>
