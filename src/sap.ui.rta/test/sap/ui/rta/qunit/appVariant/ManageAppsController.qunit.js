@@ -24,9 +24,8 @@ sap.ui.require([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when onInit is called", function(assert) {
+		QUnit.test("when onInit is called in case app variants exist", function(assert) {
 			var oViewStub = new sap.ui.core.Control();
-			var oRootControl = new sap.ui.core.Control();
 			var oManageAppsController = new ManageAppsController();
 
 			sandbox.stub(oManageAppsController, "getView").returns(oViewStub);
@@ -35,8 +34,8 @@ sap.ui.require([
 				getIdRunningApp : function() {
 					return "id1";
 				},
-				getRootControlRunningApp : function() {
-					return oRootControl;
+				getIsOverviewForKeyUser : function() {
+					return true;
 				}
 			};
 
@@ -85,6 +84,38 @@ sap.ui.require([
 			return oManageAppsController.onInit().then(function() {
 				assert.ok(highlightAppVariantSpy.calledOnce, "the _highlightNewCreatedAppVariant method is called once");
 				assert.ok(getAppVariantOverviewSpy.calledOnce, "the getAppVariantOverview method is called once");
+			});
+		});
+
+		QUnit.test("when onInit is called in case no app variants exist", function(assert) {
+			var oViewStub = new sap.ui.core.Control();
+			var oManageAppsController = new ManageAppsController();
+
+			sandbox.stub(oManageAppsController, "getView").returns(oViewStub);
+
+			var fnSimulatedOwnerComponent = {
+				getIdRunningApp : function() {
+					return "id1";
+				},
+				getIsOverviewForKeyUser : function() {
+					return true;
+				}
+			};
+
+			sandbox.stub(oManageAppsController, "getOwnerComponent").returns(fnSimulatedOwnerComponent);
+
+			var highlightAppVariantSpy = sandbox.stub(oManageAppsController, "_highlightNewCreatedAppVariant").returns(Promise.resolve());
+
+			var aAppVariantOverviewAttributes = [];
+
+			var showMessageWhenNoAppVariantsSpy = sandbox.stub(oManageAppsController, "_showMessageWhenNoAppVariantsExist").returns(Promise.resolve());
+
+			var getAppVariantOverviewSpy = sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+
+			return oManageAppsController.onInit().then(function() {
+				assert.notOk(highlightAppVariantSpy.calledOnce, "the _highlightNewCreatedAppVariant method is not called");
+				assert.ok(getAppVariantOverviewSpy.calledOnce, "the getAppVariantOverview method is called once");
+				assert.ok(showMessageWhenNoAppVariantsSpy.calledOnce, "the showMessageWhenNoAppVariantsSpy method is called once");
 			});
 		});
 

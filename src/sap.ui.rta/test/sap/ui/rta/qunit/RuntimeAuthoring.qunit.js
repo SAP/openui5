@@ -316,7 +316,8 @@ sap.ui.require([
 
 		return this.oRta.start().then(function () {
 			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
-			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'Manage Information' Icon Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), false, "then the 'AppVariant Overview' Menu Button is not visible");
 		}.bind(this));
 	});
 

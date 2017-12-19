@@ -49,6 +49,7 @@ function(
 				"transport": {},
 				"modeChange": {},
 				"manageApps": {},
+				"appVariantOverview": {},
 				"saveAs": {}
 			},
 			properties: {
@@ -64,8 +65,14 @@ function(
 					defaultValue: "adaptation"
 				},
 
-				/** Determines whether Message information icon button and 'Save As' button are visible */
-				"appVariantFeaturesSupported": {
+				/** Determines whether Message information icon button and 'Save As' button are visible for a SAP developer */
+				"appVariantFeatureForDeveloperSupported": {
+					"type": "boolean",
+					"defaultValue": false
+				},
+
+				/** Determines whether Message information icon button and 'Save As' button are visible for a key user */
+				"appVariantFeatureForKeyUserSupported": {
 					"type": "boolean",
 					"defaultValue": false
 				}
@@ -140,10 +147,27 @@ function(
 			new Button({
 				type:"Transparent",
 				icon: "sap-icon://message-information",
-				visible: this.getAppVariantFeaturesSupported(),
+				visible: this.getAppVariantFeatureForKeyUserSupported(),
 				tooltip: this.getTextResources().getText("BTN_MANAGE_APPS"),
 				press: this.eventHandler.bind(this, 'ManageApps')
 			}).data('name', 'manageApps'),
+			new sap.m.MenuButton({
+				type:"Transparent",
+				icon: "sap-icon://message-information",
+				visible: this.getAppVariantFeatureForDeveloperSupported(),
+				tooltip: this.getTextResources().getText("BTN_MANAGE_APPS"),
+				menu: new sap.m.Menu({
+					itemSelected: this.eventHandler.bind(this, 'AppVariantOverview'),
+					items: [
+						new sap.m.MenuItem('keyUser', {
+							text: this.getTextResources().getText("MENU_ITEM_KEY_USER")
+						}),
+						new sap.m.MenuItem('developer', {
+							text: this.getTextResources().getText("MENU_ITEM_SAP_DEVELOPER")
+						})
+					]
+				})
+			}).data('name', 'appVariantOverview'),
 			new Button({
 				type: "Transparent",
 				text: this.getTextResources().getText("BTN_RESTORE"),
@@ -163,7 +187,7 @@ function(
 			new Button({
 				type: "Transparent",
 				text: this.getTextResources().getText("BTN_SAVE_AS"),
-				visible: this.getAppVariantFeaturesSupported(),
+				visible: this.getAppVariantFeatureForKeyUserSupported() || this.getAppVariantFeatureForDeveloperSupported(),
 				tooltip: this.getTextResources().getText("TOOLTIP_SAVE_AS"),
 				press: this.eventHandler.bind(this, 'SaveAs')
 			}).data('name', 'saveAs'),

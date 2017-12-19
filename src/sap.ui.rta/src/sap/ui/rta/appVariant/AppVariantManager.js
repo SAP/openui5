@@ -242,7 +242,7 @@ sap.ui.define([
 
 			var fnCancel = function() {
 				if (!bSaveAsTriggeredFromRtaToolbar) {
-					return RtaAppVariantFeature.onGetOverview();
+					return RtaAppVariantFeature.onGetOverview(true);
 				}
 			};
 			//open app variant creation dialog
@@ -401,7 +401,7 @@ sap.ui.define([
 			if (bSaveAsTriggeredFromRtaToolbar) {
 				return this._navigateToFLPHomepage();
 			} else {
-				return RtaAppVariantFeature.onGetOverview();
+				return RtaAppVariantFeature.onGetOverview(true);
 			}
 		}.bind(this));
 	};
