@@ -1998,7 +1998,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef("Tooltip-inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef("LeftTooltip-inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
 
 				// assert
 				assert.strictEqual(oSlider.getValue(), 0.45, "The slider value must be decreased to 0.45");
@@ -2035,7 +2035,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// act
-				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef("Tooltip-inner"), jQuery.sap.KeyCodes.ARROW_UP);
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef("LeftTooltip-inner"), jQuery.sap.KeyCodes.ARROW_UP);
 
 				// assert
 				assert.strictEqual(oSlider.getValue(), 0.55, "The slider value must be increased to 0.55");
