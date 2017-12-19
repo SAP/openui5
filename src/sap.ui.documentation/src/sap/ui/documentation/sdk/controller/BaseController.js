@@ -8,8 +8,9 @@ sap.ui.define([
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/core/routing/History",
 		"sap/ui/Device",
-		"sap/m/library"
-	], function (library, Controller, History, Device, mobileLibrary) {
+		"sap/m/library",
+		"sap/ui/documentation/sdk/controller/util/APIInfo"
+	], function (library, Controller, History, Device, mobileLibrary, APIInfo) {
 		"use strict";
 
 		// shortcut for sap.m.SplitAppMode
@@ -169,7 +170,23 @@ sap.ui.define([
 			 */
 			handleLandingImageLoad: function () {
 				this.getView().byId("landingImageHeadline").setVisible(true);
+			},
+			/**
+			 * Checks if a control has API Reference
+			 * @param {string} sControlName
+			 * @return {Promise} A promise that resolves to {boolean}
+			 */
+            getAPIReferenceCheckPromise: function (sControlName) {
+				return APIInfo.getIndexJsonPromise().then(function (result) {
+					var aFilteredResult;
+
+					aFilteredResult = result.filter(function (element) {
+						return element.name === sControlName;
+					});
+
+					return aFilteredResult && aFilteredResult.length > 0;
+				});
 			}
 		});
-}
+	}
 );

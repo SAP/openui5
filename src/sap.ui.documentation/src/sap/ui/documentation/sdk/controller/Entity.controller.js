@@ -163,26 +163,21 @@ sap.ui.define([
 							this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 							return;
 						}
+						// get view data
+						oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
 
-						APIInfo.getIndexJsonPromise().then(function (result) {
-							var aFilteredResult;
+						this.getAPIReferenceCheckPromise(oData.name).then(function (bHasAPIReference) {
+							oData.bHasAPIReference = bHasAPIReference;
+						});
 
-							// get view data
-							oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
-							aFilteredResult = result.filter(function (element) {
-								return element.name === oData.name;
-							});
-							oData.bHasAPIReference = aFilteredResult && aFilteredResult.length > 0;
+						// set view model
+						this.getView().getModel().setData(oData, false /* no merge with previous data */);
 
-							// set view model
-							this.getView().getModel().setData(oData, false /* no merge with previous data */);
+						// done, we can now switch the id
+						this._sId = sNewId;
 
-							// done, we can now switch the id
-							this._sId = sNewId;
+						updateTabs.call(this);
 
-							updateTabs.call(this);
-
-						}.bind(this));
 					}.bind(this));
 
 				} else {
