@@ -96,7 +96,9 @@ sap.ui.define([
 				this.oSyncCreatePromise = oCreatePromise && SyncPromise.resolve(oCreatePromise);
 				this.iIndex = iIndex;
 			}
-		});
+		}),
+		sClassname = "sap.ui.model.odata.v4.Context",
+		rEndsWithODataBind = /@odata\.bind$/;
 
 	/**
 	 * Updates all dependent bindings of this context.
@@ -517,6 +519,57 @@ sap.ui.define([
 	 */
 	Context.prototype.setIndex = function (iIndex) {
 		this.iIndex = iIndex;
+	};
+
+	/**
+	 * Sets the property value for the given path relative to this context. So far only paths
+	 * to a navigation property annotated with <code>odata.bind</code> are allowed,
+	 * e.g. /TEAMS/0/TEAM_TO_EMPLOYEE@odata.bind.
+	 *
+	 * @param {string} sPath
+	 *   A relative path within the JSON structure
+	 * @param {string|sap.ui.model.odata.v4.Context|[string]|[sap.ui.model.odata.v4.Context]} vValue
+	 *   The <code>vValue</code> for the target has to be either a <code>string</code> with a valid
+	 *   entity-id, e.g. "BussinesspartnerList('4712'), or a {@link sap.ui.model.odata.v4.Context}
+	 *   representing the target entity. If the target is a collection then <code>vValue</code> has
+	 *   to be an array of <code>string</code> or an array of {@link sap.ui.model.odata.v4.Context}
+	 * @throws {Error}
+	 *   If the path does not point to an <code>odata.bind</code> navigation annotation
+	 *
+	 * @public
+	 * @since 1.53.0
+	 */
+	Context.prototype.setProperty = function (sPath, vValue) {
+		var that = this;
+
+		function reportError (oError) {
+			that.oModel.reportError("Failed to set property for path: "
+				+ that.oModel.resolve(sPath, that), sClassname, oError);
+		}
+
+		if (!rEndsWithODataBind.test(sPath)) {
+			throw new Error("Can not set property for path: " + this.oModel.resolve(sPath, that));
+		}
+
+		this.getModel().getMetaModel().fetchUpdateData(sPath, this).then(function (oResult) {
+			var vTargets;
+
+			if (Array.isArray(vValue)) {
+				vTargets = [];
+				vValue.forEach(function (oEntry) {
+					vTargets.push(oEntry.getPath ? oEntry.getPath().slice(1) : oEntry);
+				});
+			} else {
+				vTargets = vValue.getPath ? vValue.getPath().slice(1) : vValue;
+			}
+
+			return that.getBinding().updateValue(that.getUpdateGroupId(), oResult.propertyPath,
+				vTargets, reportError, oResult.editUrl, oResult.entityPath);
+		})["catch"](function (oError) {
+			if (!oError.cancelled) {
+				reportError(oError);
+			}
+		});
 	};
 
 	/**
