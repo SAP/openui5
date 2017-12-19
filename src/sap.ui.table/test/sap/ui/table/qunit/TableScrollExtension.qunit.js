@@ -406,22 +406,10 @@ QUnit.asyncTest("Imitating mouse wheel", function(assert) {
 	function scrollWithMouseWheel(oTarget, iScrollDelta, iExpectedScrollPosition, bValidTarget) {
 		return new Promise(
 			function(resolve) {
-				var sEventType = "wheel";
+				var oEvent = jQuery.Event({type: "wheel"});
 
-				if (Device.browser.firefox) {
-					sEventType = "MozMousePixelScroll";
-				}
-
-				var oEvent = jQuery.Event({type: sEventType});
-
-				oEvent.shiftKey = true;
 				oEvent.originalEvent.shiftKey = true;
-
-				if (Device.browser.firefox) {
-					oEvent.originalEvent.detail = iScrollDelta;
-				} else {
-					oEvent.originalEvent.deltaX = iScrollDelta;
-				}
+				oEvent.originalEvent.deltaX = iScrollDelta;
 
 				jQuery(oTarget).trigger(oEvent);
 
@@ -431,12 +419,6 @@ QUnit.asyncTest("Imitating mouse wheel", function(assert) {
 					if (!bValidTarget) {
 						assert.ok(!oEvent.isDefaultPrevented(), "Target does not support mousewheel scrolling: Default action was not prevented");
 						assert.ok(!oEvent.isPropagationStopped(), "Target does not support mousewheel scrolling: Propagation was not stopped");
-					} else if (iCurrentScrollPosition === 0 && iScrollDelta < 0) {
-						assert.ok(!oEvent.isDefaultPrevented(), "Scroll position is already at the beginning: Default action was not prevented");
-						assert.ok(!oEvent.isPropagationStopped(), "Scroll position is already at the beginning: Propagation was not stopped");
-					} else if (iCurrentScrollPosition === that.oHSb.scrollWidth - that.oHSb.clientWidth && iScrollDelta > 0) {
-						assert.ok(!oEvent.isDefaultPrevented(), "Scroll position is already at the end: Default action was not prevented");
-						assert.ok(!oEvent.isPropagationStopped(), "Scroll position is already at the end: Propagation was not stopped");
 					} else {
 						assert.ok(oEvent.isDefaultPrevented(), "Default action was prevented");
 						assert.ok(oEvent.isPropagationStopped(), "Propagation was stopped");
