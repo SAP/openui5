@@ -383,17 +383,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 					//<link rel="apple-touch-startup-image" href="/startup.png">
 				}
 
-				if (options.preventScroll && Device.os.ios) {
-					$(window).bind("touchmove", function sapInitMobileTouchMoveHandle(oEvent) {
-						if (!oEvent.isMarked()) {
-							oEvent.preventDefault(); // prevent the rubber-band effect
-						}
-					});
-				}
-
 				if (options.useFullScreenHeight) {
 					$(function() {
 						document.documentElement.style.height = "100%"; // set html root tag to 100% height
+					});
+				}
+
+				if (options.preventScroll && Device.os.ios) {
+					$(function() {
+						document.documentElement.style.position = "fixed";
+						document.documentElement.style.overflow = "hidden";
+						document.documentElement.style.height = "100%";
+						document.documentElement.style.width = "100%";
 					});
 				}
 			}
