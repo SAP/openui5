@@ -377,7 +377,6 @@ sap.ui.require([
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
 		assert.ok(!oMiniMenu.isOpen , "MiniMenu should not be opened");
-		oMiniMenu._inTimout = true;
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		assert.ok(oMiniMenu.isOpen, "MiniMenu should be open");
 		assert.strictEqual(oMiniMenu.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
