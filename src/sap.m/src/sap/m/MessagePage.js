@@ -166,7 +166,8 @@ sap.ui.define([
 				 * @since 1.28.1
 				 */
 				navButtonPress : {}
-			}
+			},
+			designtime: "sap/m/designtime/MessagePage.designtime"
 		}});
 
 		MessagePage.prototype.init = function() {

@@ -108,7 +108,8 @@ sap.ui.define([
 			aggregations: {
 				_overflowButton: {type: "sap.m.ToggleButton", multiple: false, visibility: "hidden"},
 				_popover: {type: "sap.m.Popover", multiple: false, visibility: "hidden"}
-			}
+			},
+			designtime: "sap/m/designtime/OverflowToolbar.designtime"
 		}
 	});
 
