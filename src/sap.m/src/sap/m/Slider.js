@@ -494,10 +494,11 @@ sap.ui.define([
 		};
 
 		Slider.prototype._updateAdvancedTooltipDom = function (sNewValue) {
+
 			var bInputTooltips = this.getInputsAsTooltips(),
 				oTooltipsContainer = this.getDomRef("TooltipsContainer"),
 				oTooltip = bInputTooltips && this._oInputTooltip ?
-					this._oInputTooltip.tooltip : this.getDomRef("Tooltip"),
+					this._oInputTooltip.tooltip : this.getDomRef("LeftTooltip"),
 				sAdjustProperty = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
 
 			if (!bInputTooltips) {
@@ -732,7 +733,7 @@ sap.ui.define([
 			if (this.getInputsAsTooltips() && !this._oInputTooltip) {
 				var oSliderLabel = new InvisibleText({text: this._oResourceBundle.getText("SLIDER_HANDLE")});
 				this._oInputTooltip = {
-					tooltip: this._createInputField("Tooltip", oSliderLabel),
+					tooltip: this._createInputField("LeftTooltip", oSliderLabel),
 					label: oSliderLabel
 				};
 			}
