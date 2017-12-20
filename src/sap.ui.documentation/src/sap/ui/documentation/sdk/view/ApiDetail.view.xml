@@ -412,11 +412,7 @@
 											<m:items>
 												<m:ColumnListItem>
 													<m:cells>
-														<custom:ParamText customClass="{parts: [{path: 'isSubProperty'},
-																								{path: 'isSubSubProperty'},
-																								{path: 'appView>/bPhoneSize'}],
-																						formatter: '.formatEventClassName'}"
-																		  text="{name}" phoneText="{phoneName}"/>
+														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
 														<m:Link text="{type}"
 																href="#/api/{type}"
 																enabled="{= !!${linkEnabled} }"/>
