@@ -165,7 +165,8 @@ sap.ui.define(function() {
 					'testdata/core/Element_metadata_selector.qunit',
 					'testdata/core/Element_metadata_dnd.qunit',
 					'testdata/core/Element_sourceInfo.qunit',
-					'testdata/core/ElementMetadata.qunit'
+					'testdata/core/ElementMetadata.qunit',
+					'testdata/core/Element_destroy.qunit'
 				]
 			},
 			Fragment: {
