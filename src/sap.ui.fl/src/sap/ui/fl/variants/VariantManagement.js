@@ -73,6 +73,18 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: true
+				},
+
+				/**
+				 * Determines the binding context.
+				 * <p>
+				 * <b>Note:</b> In a UI adaptation scenario, this property is not used at all because the binding context will be determined
+				 * programmatically.
+				 */
+				contextName: {
+					type: "string",
+					group: "Misc",
+					defaultValue: null
 				}
 			},
 			associations: {
@@ -323,7 +335,7 @@ sap.ui.define([
 	/**
 	 * Sets the new selected variant.
 	 * @public
-	 * @param {String} sKey the variant key whic should be selected.
+	 * @param {String} sKey the variant key which should be selected.
 	 * @returns {sap.ui.fl.variants.VariantManagement} the current instance of {@link sap.ui.fl.variants.VariantManagement}.
 	 */
 	VariantManagement.prototype.setCurrentVariantKey = function(sKey) {
@@ -447,7 +459,11 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._getLocalId = function() {
-		return BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
+		if (this.getContextName()) {
+			return this.getContextName();
+		} else {
+			return BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
+		}
 	};
 
 	VariantManagement.prototype._setModel = function() {

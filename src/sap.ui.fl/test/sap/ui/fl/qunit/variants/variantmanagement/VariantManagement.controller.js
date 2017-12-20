@@ -7,7 +7,7 @@ sap.ui.define([
 
 		onInit: function() {
 			this.oModel = new VariantModel({
-				"__xmlview0--idVariantManagementCtrl": {
+				"MyContext": {
 					currentVariant: "2",
 					defaultVariant: "2",
 					originalDefaultVariant: "2",
@@ -150,9 +150,6 @@ sap.ui.define([
 // }; // overrule default
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
-			this.oVM._getLocalId = function() {
-				return this.getId();
-			};
 			this.oModel.registerToModel = function() {
 			};
 
