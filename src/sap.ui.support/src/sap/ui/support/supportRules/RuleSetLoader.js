@@ -368,5 +368,37 @@ sap.ui.define([
 			});
 		};
 
+		/**
+		 * Creates a map with rules from all rulesets
+		 *
+		 * @public
+		 * @returns {object} A map with all rules
+		 */
+		RuleSetLoader.getAllRules = function () {
+			var mRules = {};
+
+			Object.keys(this._mRuleSets).map(function (sLibName) {
+				mRules = jQuery.extend(mRules, this._mRuleSets[sLibName].ruleset.getRules());
+			}, this);
+
+			return mRules;
+		};
+
+		/**
+		 * Creates an array with rule descriptors (object with the id and the library of the rule)
+		 *
+		 * @public
+		 * @returns {object[]} An array with all rule descriptors
+		 */
+		RuleSetLoader.getAllRuleDescriptors = function () {
+			var mRules = this.getAllRules();
+			return Object.keys(mRules).map(function (sRuleId) {
+				return {
+					libName: mRules[sRuleId].libName,
+					ruleId:  sRuleId
+				};
+			});
+		};
+
 		return RuleSetLoader;
 	}, true);
