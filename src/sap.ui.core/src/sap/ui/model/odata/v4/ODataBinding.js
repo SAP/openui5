@@ -521,8 +521,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calls the given processor with the cache containing this binding's data and the path relative
-	 * to the cache. Adjusts the path if the cache is owned by a parent binding.
+	 * Calls the given processor with the cache containing this binding's data, the path relative
+	 * to the cache and the cache-owning binding. Adjusts the path if the cache is owned by a parent
+	 * binding.
 	 *
 	 * @param {function} fnProcessor The processor
 	 * @param {string} [sPath=""] The path; either relative to the binding or absolute containing
@@ -540,7 +541,7 @@ sap.ui.define([
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					return fnProcessor(oCache, sRelativePath);
+					return fnProcessor(oCache, sRelativePath, that);
 				}
 				// the path did not match, try to find it in the parent cache
 			} else if (that.oOperation) {
