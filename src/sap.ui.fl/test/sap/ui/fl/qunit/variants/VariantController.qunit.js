@@ -664,6 +664,19 @@ sap.ui.require([
 		assert.equal(aVariants[2].content.fileName, "variant0", "then after renaming the title to ZZZ variant moved to index 2");
 	});
 
+	QUnit.test("when calling '_setVariantData' with a changed title and previous index for Standard variant", function(assert) {
+		var mPropertyBag = {
+			title: "ZZZ"
+		};
+
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		assert.equal(aVariants[0].content.fileName, "idMain1--variantManagementOrdersTable", "then before renaming the title variant present at index 0");
+		var iSortedIndex = oVariantController._setVariantData(mPropertyBag, "idMain1--variantManagementOrdersTable", 0);
+		assert.equal(iSortedIndex, 0, "then 0 received as sorted index");
+		assert.equal(aVariants[0].content.fileName, "idMain1--variantManagementOrdersTable", "then after renaming the title to ZZZ variant is still at index 0");
+	});
+
 	QUnit.test("when calling '_getIndexToSortVariant' with all variants (excluding standard variant) and the variant which needs to be re-sorted", function(assert) {
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
 		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
