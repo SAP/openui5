@@ -87,7 +87,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageSection._getClosestSection = function (vSectionBase) {
-		var oSectionBase = (typeof vSectionBase === "string") ? sap.ui.getCore().byId(vSectionBase) : vSectionBase;
+		var oSectionBase = (typeof vSectionBase === "string" && sap.ui.getCore().byId(vSectionBase)) || vSectionBase;
 		return (oSectionBase instanceof ObjectPageSubSection) ? oSectionBase.getParent() : oSectionBase;
 	};
 
