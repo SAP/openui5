@@ -4,6 +4,7 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/m/ColumnListItem",
+	"sap/m/CustomListItem",
 	"sap/m/Text",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/analytics/ODataModelAdapter",
@@ -17,8 +18,9 @@ sap.ui.require([
 	"sap/ui/test/TestUtils",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, ColumnListItem, Text, Controller, ODataModelAdapter, ChangeReason, Filter,
-		FilterOperator, OperationMode, ODataListBinding, ODataModel, Sorter, TestUtils) {
+], function (jQuery, ColumnListItem, CustomListItem, Text, Controller, ODataModelAdapter,
+		ChangeReason, Filter, FilterOperator, OperationMode, ODataListBinding, ODataModel, Sorter,
+		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -3306,34 +3308,65 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: some custom control wants to read all data
+	// Scenario: some custom control wants to read all data, and it gets a lot
 	QUnit.test("read all data", function (assert) {
-		var sView = '\
-<Table id="table">\
-</Table>',
+		var i, n = 5000,
+			aIDs = new Array(n),
+			aValues = new Array(n),
+			sView = '\
+<List id="list">\
+</List>',
 			that = this;
 
-		return this.createView(assert, sView).then(function () {
-			that.expectRequest("TEAMS", {
-					"value" : [{
-						"Team_Id" : "TEAM_00"
-					}, {
-						"Team_Id" : "TEAM_01"
-					}, {
-						"Team_Id" : "TEAM_02"
-					}]
-				});
-				//TODO how to expect changes for template created below?
-//				.expectChange("id", ["TEAM_00", "TEAM_01", "TEAM_02"]);
+		for (i = 0; i < n; i += 1) {
+			aIDs[i] = "TEAM_" + i;
+			aValues[i] = {"Team_Id" : aIDs[i]};
+		}
 
-			that.oView.byId("table").bindItems({
+		return this.createView(assert, sView).then(function () {
+			var oText = new Text("id", {text : "{Team_Id}"});
+
+			that.setFormatterInList(assert, oText, "id");
+			that.expectRequest("TEAMS", {
+					"value" : aValues
+				})
+				.expectChange("id", aIDs);
+
+			that.oView.byId("list").bindItems({
 				length : Infinity, // code under test
 				path : "/TEAMS",
-				template : new ColumnListItem({
-//					cells : [
-//						new Text("id", {text : "{Team_Id}"})
-//					]
-				})
+				template : new CustomListItem({content : [oText]})
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: read all data w/o a control on top
+	QUnit.test("read all data w/o a control on top", function (assert) {
+		var done = assert.async(),
+			i, n = 10000,
+			aIDs = new Array(n),
+			aValues = new Array(n),
+			that = this;
+
+		for (i = 0; i < n; i += 1) {
+			aIDs[i] = "TEAM_" + i;
+			aValues[i] = {"Team_Id" : aIDs[i]};
+		}
+
+		return this.createView(assert, "").then(function () {
+			var oListBinding = that.oModel.bindList("/TEAMS");
+
+			that.expectRequest("TEAMS", {"value" : aValues});
+
+			oListBinding.getContexts(0, Infinity);
+			oListBinding.attachEventOnce("change", function () {
+				oListBinding.getContexts(0, Infinity).forEach(function (oContext, i) {
+					assert.strictEqual(oContext.getProperty("Team_Id"), aIDs[i]);
+				});
+				done();
 			});
 
 			return that.waitForChanges(assert);

@@ -804,6 +804,7 @@ sap.ui.define([
 		this.aElements.$tail = undefined;  // promise for a read w/o $top
 		this.iLimit = Infinity;            // the upper limit for the count (for the case that the
 									       // exact value is unknown)
+		this.oSyncPromiseAll = undefined;
 	}
 
 	// make CollectionCache a Cache
@@ -834,12 +835,15 @@ sap.ui.define([
 		var aElements,
 			that = this;
 
-		// wait for all reads to be finished, this is essential for $count and for finding the index
-		// of a key predicate
-		aElements = this.aElements.$tail
-			? this.aElements.concat(this.aElements.$tail)
-			: this.aElements;
-		return SyncPromise.all(aElements).then(function () {
+		if (!this.oSyncPromiseAll) {
+			// wait for all reads to be finished, this is essential for $count and for finding the
+			// index of a key predicate
+			aElements = this.aElements.$tail
+				? this.aElements.concat(this.aElements.$tail)
+				: this.aElements;
+			this.oSyncPromiseAll = SyncPromise.all(aElements);
+		}
+		return this.oSyncPromiseAll.then(function () {
 			that.checkActive();
 			// register afterwards to avoid that updateCache fires updates before the first response
 			that.registerChange(sPath, oListener);
@@ -874,6 +878,7 @@ sap.ui.define([
 		for (i = iStart; i < iEnd; i++) {
 			this.aElements[i] = oPromise;
 		}
+		this.oSyncPromiseAll = undefined;  // from now on, fetchValue has to wait again
 	};
 
 	/**
