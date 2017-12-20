@@ -61,24 +61,24 @@
 
 				});
 
-				opaTest("Should start an application in a frame and wait for it to load", function (Given, When, Then) {
-					// select a timeout that is less than the time it would take for the application data to load
-					// the current application would take at least 3 seconds
+				opaTest("Should start an application in a frame and wait for it to load fully", function (Given, When, Then) {
 					Opa5.extendConfig({
 						viewNamespace: "view.",
-						autoWait: false,
-						timeout: 2
+						autoWait: false
 					});
 
+					// wait for the application to fully load, including all onInit process
 					Given.iStartMyAppInAFrame({
 						source: "applicationUnderTest/index.html",
-						autoWait: true // the test will fail with OPA timeout if autoWait is not enabled here
+						autoWait: true
 					});
 
-					// should wait for the table to load on application start even though autoWait is disabled globally
+					// should wait for the table to fully load
+					// because the app and the table is fully loaded, there is no need to poll and it matches already at the first check.
 					Then.waitFor({
 						viewName: "Main",
 						id: "productList",
+						timeout: 2,
 						matchers: new AggregationFilled({ name: "items" }),
 						success: function () {
 							Opa5.assert.ok(true, "The application was loaded before subsequent test steps");
