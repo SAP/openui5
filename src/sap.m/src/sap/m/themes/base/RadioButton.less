@@ -13,8 +13,8 @@
 	max-width: 100%;
 
 	> .sapMLabel {
-		// Safari rounds CSS subpixels with about 1px mistake
-		max-width: calc(~"100% - 3rem + 1px");
+		max-width: calc(~"100% - 3rem");
+		padding-right: 0.0625rem;
 	}
 }
 
@@ -66,9 +66,9 @@
 	content: "";
 	display: block;
 	position: absolute;
-	top: .75rem;
-	bottom: .75rem;
-	left: .75rem;
+	top: .625rem;
+	bottom: .625rem;
+	left: .625rem;
 	right: .625rem;
 	pointer-events: none;
 }
@@ -94,9 +94,9 @@
 
 .sapUiSizeCompact {
 	.sapMRb:focus:before {
-		top: .4375rem;
-		bottom: .4375rem;
-		left: .4375rem;
+		top: .375rem;
+		bottom: .375rem;
+		left: .375rem;
 		right: .325rem;
 	}
 
