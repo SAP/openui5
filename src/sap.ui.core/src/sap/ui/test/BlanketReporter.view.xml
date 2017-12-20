@@ -35,7 +35,8 @@
 			visible="{= %{/branchTracking}}"/>
 	</form:SimpleForm>
 	<table:Table id="Files" selectionMode="Single" selectionBehavior="RowOnly" rows="{/files}"
-			rowSelectionChange="onRowSelection" visibleRowCountMode="Interactive">
+			rowSelectionChange="onRowSelection" visibleRowCountMode="Interactive"
+			minAutoRowCount="1" visibleRowCount="{/visible}">
 		<table:extension>
 			<HBox>
 				<CheckBox selected="{/filterThreshold}" text="Below Threshold ({/threshold} %)"
