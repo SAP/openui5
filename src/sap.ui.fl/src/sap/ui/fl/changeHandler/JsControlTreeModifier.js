@@ -298,9 +298,15 @@ sap.ui.define([
 		instantiateFragment: function(sFragment, sChangeId, oView, oController) {
 			var aNewControls;
 			if (oView) {
-				aNewControls = sap.ui.xmlfragment(oView.getId() + "--" + sChangeId, sFragment, oController);
+				aNewControls = sap.ui.xmlfragment({
+					fragmentContent: sFragment,
+					sId: oView.getId() + "--" + sChangeId
+				}, oController);
 			} else {
-				aNewControls = sap.ui.xmlfragment(sChangeId, sFragment);
+				aNewControls = sap.ui.xmlfragment({
+					fragmentContent: sFragment,
+					sId: sChangeId
+				});
 			}
 
 			if (!Array.isArray(aNewControls)) {

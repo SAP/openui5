@@ -418,7 +418,7 @@ sap.ui.define([
 					this.getAggregation(oParent, oAggregationMetadata.name).length > 0) {
 				return false;
 			}
-			var aControls = sap.ui.xmlfragment(sFragment);
+			var aControls = sap.ui.xmlfragment({fragmentContent: sFragment});
 			if (!Array.isArray(aControls)) {
 				aControls = [aControls];
 			}
@@ -437,7 +437,13 @@ sap.ui.define([
 		 * @returns {array} Returns an array with the nodes of the controls of the fragment
 		 */
 		instantiateFragment: function(sFragment, sChangeId) {
-			var oControlNodes = XMLTemplateProcessor.loadTemplate(sFragment, "fragment");
+			var oFragment = jQuery.sap.parseXML(sFragment, "application/xml");
+
+			if (oFragment.parseError.errorCode !== 0) {
+				throw new Error("The XML Fragment could not be instantiated");
+			}
+
+			var oControlNodes = oFragment.documentElement;
 			if (oControlNodes.localName === "FragmentDefinition") {
 				// Workaround for IE/Edge as the .children property is not available there
 				var aNodes = oControlNodes.childNodes, aChildren = [];

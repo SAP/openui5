@@ -42,6 +42,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.view Root view
 	 * @param {object} mPropertyBag.appComponent App component
+	 * @returns {boolean} Returns true if the change got applied successfully
 	 * @public
 	 * @name sap.ui.fl.changeHandler.AddXML#applyChange
 	 */
@@ -136,10 +137,10 @@ sap.ui.define([
 			oChangeDefinition.content = {};
 		}
 
-		if (oSpecificChangeInfo.fragment) {
-			oChangeDefinition.content.fragment = oSpecificChangeInfo.fragment;
+		if (oSpecificChangeInfo.fragmentPath) {
+			oChangeDefinition.content.fragmentPath = oSpecificChangeInfo.fragmentPath;
 		} else {
-			_throwError("fragmemt");
+			_throwError("fragmentPath");
 		}
 
 		if (oSpecificChangeInfo.targetAggregation) {

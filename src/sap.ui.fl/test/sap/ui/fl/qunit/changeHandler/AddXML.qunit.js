@@ -20,10 +20,30 @@ sap.ui.require([
 	'use strict';
 	QUnit.start();
 
-	var oFragmentPath = "sap.ui.fl.test.qunit.changeHandler.AddXMLFragment";
-	var oFragmentPathInvalid = "sap.ui.fl.test.qunit.changeHandler.AddXMLFragmentInvalid";
-	var oFragmentPathMultiple = "sap.ui.fl.test.qunit.changeHandler.AddXMLFragmentMultiple";
-	var oFragmentPathMultipleInvalid = "sap.ui.fl.test.qunit.changeHandler.AddXMLFragmentMultipleInvalid";
+	var oFragment = '<Button xmlns="sap.m" id="button" text="Hello World"></Button>';
+	var oFragmentInvalid = '<ManagedObject xmlns="sap.ui.base"></ManagedObject>';
+	var oFragmentMultiple = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
+								'<Button xmlns="sap.m" id="button" text="Hello World"></Button>' +
+								'<Button xmlns="sap.m" id="button2" text="Hello World"></Button>' +
+								'<Button xmlns="sap.m" id="button3" text="Hello World"></Button>' +
+							'</core:FragmentDefinition>';
+	var oFragmentMultipleInvalid = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:base="sap.ui.base">' +
+										'<Button xmlns="sap.m" id="button" text="Hello World"></Button>' +
+										'<Button xmlns="sap.m" id="button2" text="Hello World"></Button>' +
+										'<base:ManagedObject></base:ManagedObject>' +
+									'</core:FragmentDefinition>';
+
+	var sTypeError = "The Control does not match the type of the targetAggregation.";
+	var sWrongAggregationError = "The given Aggregation is not available in the given control.";
+	var sXmlError = "The XML Fragment could not be instantiated";
+
+	// the completeChangeContent function ignores the fragment property, but in applyChange we still need the information.
+	// that's why we need to patch it in there before a change is applied.
+	// in the code this is done in the command.
+	var fnAddContentToChange = function(oChange, sFragment) {
+		sFragment = sFragment || oFragment;
+		oChange.getDefinition().content.fragment = sFragment;
+	};
 
 	QUnit.module("Given a AddXML Change Handler", {
 		beforeEach : function() {
@@ -42,7 +62,8 @@ sap.ui.require([
 			};
 
 			this.oChangeSpecificContent = {
-				fragment: oFragmentPath,
+				fragment: oFragment,
+				fragmentPath: "fragmentPath",
 				targetAggregation: "items",
 				index: 1
 			};
@@ -54,22 +75,40 @@ sap.ui.require([
 		}
 	}, function() {
 		QUnit.test("When calling 'completeChangeContent' with complete information", function(assert) {
+			var oExpectedChangeContent = {
+				fragmentPath: "fragmentPath",
+				targetAggregation: "items",
+				index: 1
+			};
+
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 			var oSpecificContent = this.oChange.getDefinition().content;
-			assert.deepEqual(oSpecificContent, this.oChangeSpecificContent, "then the change specific content is in the change");
+			assert.deepEqual(oSpecificContent, oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
 			this.oChangeSpecificContent.targetAggregation = null;
-			assert.throws(function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);}, "without targetAggregation 'completeChangeContent' throws an error");
+			assert.throws(
+				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
+				Error("Attribute missing from the change specific content'targetAggregation'"),
+				"without targetAggregation 'completeChangeContent' throws an error"
+			);
 
 			this.oChangeSpecificContent.targetAggregation = "items";
-			this.oChangeSpecificContent.fragment = null;
-			assert.throws(function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);}, "without fragment 'completeChangeContent' throws an error");
+			this.oChangeSpecificContent.fragmentPath = null;
+			assert.throws(
+				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
+				Error("Attribute missing from the change specific content'fragmentPath'"),
+				"without fragmentPath 'completeChangeContent' throws an error"
+			);
 
-			this.oChangeSpecificContent.fragment = oFragmentPath;
+			this.oChangeSpecificContent.fragmentPath = "fragmentPath";
 			this.oChangeSpecificContent.index = undefined;
-			assert.throws(function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);}, "without index 'completeChangeContent' throws an error");
+			assert.throws(
+				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
+				Error("Attribute missing from the change specific content'index'"),
+				"without index 'completeChangeContent' throws an error"
+			);
 		});
 	});
 
@@ -93,7 +132,8 @@ sap.ui.require([
 			};
 
 			this.oChangeSpecificContent = {
-				fragment: oFragmentPath,
+				fragment: oFragment,
+				fragmentPath: "fragmentPath",
 				targetAggregation: "items",
 				index: 1
 			};
@@ -108,33 +148,58 @@ sap.ui.require([
 			assert.equal(this.oHBox.getItems().length, 1, "initially there is only 1 item in the hbox");
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			fnAddContentToChange(this.oChange);
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});
 			assert.equal(this.oHBox.getItems().length, 2, "after the change there are 2 items in the hbox");
+		});
+
+		QUnit.test("When applying the change on a js control tree without setting the fragment", function(assert) {
+			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});},
+				Error(sXmlError),
+				"then apply change throws an error"
+			);
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
 			this.oChangeSpecificContent.targetAggregation = "invalidAggregation";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});}, "then apply change throws an error");
+			fnAddContentToChange(this.oChange);
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});},
+				Error(sWrongAggregationError),
+				"then apply change throws an error"
+			);
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid fragment", function(assert) {
-			this.oChangeSpecificContent.fragment = "invalidFragmentPath";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});}, "then apply change throws an error");
+			fnAddContentToChange(this.oChange, "invalidFragment");
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});},
+				Error(sXmlError),
+				"then apply change throws an error"
+			);
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid type", function(assert) {
-			this.oChangeSpecificContent.fragment = oFragmentPathInvalid;
+			this.oChangeSpecificContent.fragment = oFragmentInvalid;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});}, "then apply change throws an error");
+			fnAddContentToChange(this.oChange, oFragmentInvalid);
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});},
+				Error(sTypeError),
+				"then apply change throws an error"
+			);
 		});
 
 		QUnit.test("When applying the change on a js control tree with multiple root elements", function(assert) {
 			assert.equal(this.oHBox.getItems().length, 1, "initially there is only 1 item in the hbox");
 
-			this.oChangeSpecificContent.fragment = oFragmentPathMultiple;
+			this.oChangeSpecificContent.fragment = oFragmentMultiple;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			fnAddContentToChange(this.oChange, oFragmentMultiple);
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});
 
 			var oItems = this.oHBox.getItems();
@@ -147,15 +212,21 @@ sap.ui.require([
 		QUnit.test("When applying the change on a js control tree with multiple root elements and one invalid type inside", function(assert) {
 			assert.equal(this.oHBox.getItems().length, 1, "initially there is only 1 item in the hbox");
 
-			this.oChangeSpecificContent.fragment = oFragmentPathMultipleInvalid;
+			this.oChangeSpecificContent.fragment = oFragmentMultipleInvalid;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});}, "then apply change throws an error");
+			fnAddContentToChange(this.oChange, oFragmentMultipleInvalid);
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});},
+				Error(sTypeError),
+				"then apply change throws an error"
+			);
 
 			assert.equal(this.oHBox.getItems().length, 1, "after the change there is still only 1 item in the hbox");
 		});
 
 		QUnit.test("When reverting the change on a js control tree", function(assert) {
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			fnAddContentToChange(this.oChange, oFragment);
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});
 			this.oChangeHandler.revertChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});
 			assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
@@ -165,8 +236,8 @@ sap.ui.require([
 		QUnit.test("When reverting the change on a js control tree with multiple root elements", function(assert) {
 			assert.equal(this.oHBox.getItems().length, 1, "before the change there is only one child of the HBox");
 
-			this.oChangeSpecificContent.fragment = oFragmentPathMultiple;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			fnAddContentToChange(this.oChange, oFragmentMultiple);
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});
 			this.oChangeHandler.revertChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});
 
@@ -177,9 +248,13 @@ sap.ui.require([
 		QUnit.test("When reverting a change that failed on a js control tree with multiple root elements", function(assert) {
 			assert.equal(this.oHBox.getItems().length, 1, "before the change there is only one child of the HBox");
 
-			this.oChangeSpecificContent.fragment = oFragmentPathMultipleInvalid;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});}, "then apply change throws an error");
+			fnAddContentToChange(this.oChange, oFragmentMultipleInvalid);
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});},
+				Error(sTypeError),
+				"then apply change throws an error"
+			);
 			this.oChangeHandler.revertChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier});
 
 			assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
@@ -222,7 +297,8 @@ sap.ui.require([
 			};
 
 			this.oChangeSpecificContent = {
-				fragment: oFragmentPath,
+				fragment: oFragment,
+				fragmentPath: "fragmentPath",
 				targetAggregation: "items",
 				index: 1
 			};
@@ -237,26 +313,49 @@ sap.ui.require([
 			var oHBoxItems = this.oHBox.childNodes[1];
 			assert.equal(oHBoxItems.childNodes.length, 1, "initially there is only one child of the HBox");
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			fnAddContentToChange(this.oChange, oFragment);
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
 			assert.equal(oHBoxItems.childNodes.length, 2, "after the addXML there are two children of the HBox");
+		});
+
+		QUnit.test("When applying the change on a xml control tree without setting the fragment", function(assert) {
+			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});},
+				Error(sXmlError),
+				"then apply change throws an error"
+			);
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {
 			this.oChangeSpecificContent.targetAggregation = "invalidAggregation";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
+			fnAddContentToChange(this.oChange);
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});},
+				Error(sWrongAggregationError),
+				"then apply change throws an error"
+			);
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid fragment", function(assert) {
-			this.oChangeSpecificContent.fragment = "invalidFragment";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
+			fnAddContentToChange(this.oChange, "invalidFragment");
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});},
+				Error(sXmlError),
+				"then apply change throws an error"
+			);
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid type", function(assert) {
-			this.oChangeSpecificContent.fragment = oFragmentPathInvalid;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
+			fnAddContentToChange(this.oChange, oFragmentInvalid);
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});},
+				Error(sTypeError),
+				"then apply change throws an error"
+			);
 		});
 
 		QUnit.test("When reverting the change on an xml control tree", function(assert) {
@@ -264,6 +363,7 @@ sap.ui.require([
 			assert.equal(oHBoxItems.childNodes.length, 1, "before the change there is only one child of the HBox");
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			fnAddContentToChange(this.oChange, oFragment);
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
 			this.oChangeHandler.revertChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
 
@@ -278,8 +378,8 @@ sap.ui.require([
 				var oHBoxItems = this.oHBox.childNodes[1];
 				assert.equal(oHBoxItems.childNodes.length, 1, "initially there is only one child of the HBox");
 
-				this.oChangeSpecificContent.fragment = oFragmentPathMultiple;
 				this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+				fnAddContentToChange(this.oChange, oFragmentMultiple);
 				this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
 
 				assert.equal(oHBoxItems.childNodes.length, 4, "after the change there are 4 items in the hbox");
@@ -291,9 +391,13 @@ sap.ui.require([
 
 		QUnit.test("When applying the change on a xml control tree with multiple root elements and one invalid type inside", function(assert) {
 			var oHBoxItems = this.oHBox.childNodes[1];
-			this.oChangeSpecificContent.fragment = oFragmentPathMultipleInvalid;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
+			fnAddContentToChange(this.oChange, oFragmentMultipleInvalid);
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});},
+				Error(sTypeError),
+				"then apply change throws an error"
+			);
 			assert.equal(oHBoxItems.childNodes.length, 1, "after the change there is still only 1 item in the hbox");
 		});
 
@@ -301,8 +405,8 @@ sap.ui.require([
 			var oHBoxItems = this.oHBox.childNodes[1];
 			assert.equal(oHBoxItems.childNodes.length, 1, "before the change there is only one child of the HBox");
 
-			this.oChangeSpecificContent.fragment = oFragmentPathMultiple;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			fnAddContentToChange(this.oChange, oFragmentMultiple);
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
 			this.oChangeHandler.revertChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
 
@@ -314,9 +418,13 @@ sap.ui.require([
 			var oHBoxItems = this.oHBox.childNodes[1];
 			assert.equal(oHBoxItems.childNodes.length, 1, "before the change there is only one child of the HBox");
 
-			this.oChangeSpecificContent.fragment = oFragmentPathMultipleInvalid;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});}, "then apply change throws an error");
+			fnAddContentToChange(this.oChange, oFragmentMultipleInvalid);
+			assert.throws(
+				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});},
+				Error(sTypeError),
+				"then apply change throws an error"
+			);
 			this.oChangeHandler.revertChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
 
 			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
