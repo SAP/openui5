@@ -374,7 +374,8 @@
 				"docuLink": "#docs/guide/bcdbde6911bd4fc68fd435cf8e306ed0.html",
 				"samplesAsSteps": [
 					"Set Up the Initial App",
-					"Data Access and Client-Server Communication"
+					"Data Access and Client-Server Communication",
+					"Automatic Type Detection"
 				]
 			}
 		],
