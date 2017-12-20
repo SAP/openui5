@@ -60,6 +60,20 @@ sap.ui.define([
 	}
 
 	/**
+	 * Tells whether the given value is a function or object with a "then" property. These are the
+	 * candidates for "thenables".
+	 *
+	 * @param {any} vValue
+	 *   Any value
+	 * @returns {boolean}
+	 *   See above
+	 */
+	function hasThen(vValue) {
+		return vValue && (typeof vValue === "function" || typeof vValue === "object")
+			&& "then" in vValue;
+	}
+
+	/**
 	 * Constructor for a SyncPromise which may wrap a thenable (e.g. native <code>Promise</code>)
 	 * in order to observe settlement and provide synchronous access to the result.
 	 *
@@ -85,10 +99,6 @@ sap.ui.define([
 		 */
 		function reject(vReason) {
 			vResult = vReason;
-			jQuery.sap.assert(!iState, function () {
-				return "Must not reject with " + vReason
-					+ "; iState = " + iState + ", vResult = " + vResult;
-			});
 			iState = -1;
 			if (fnReject) {
 				fnReject(vReason);
@@ -118,14 +128,10 @@ sap.ui.define([
 					vResult0 = vResult0.getResult();
 				}
 			}
-			jQuery.sap.assert(!iState, function () {
-				return "Must not resolve with " + vResult0
-					+ "; iState = " + iState + ", vResult = " + vResult;
-			});
 
 			iState = 0;
 			vResult = vResult0;
-			if (vResult && (typeof vResult === "function" || typeof vResult === "object")) {
+			if (hasThen(vResult)) {
 				try {
 					fnThen = vResult.then;
 				} catch (e) {
@@ -276,14 +282,19 @@ sap.ui.define([
 
 			checkFulfilled();
 			aValues = Array.prototype.slice.call(aValues);
-			aValues.forEach(function (oValue, i) {
-				SyncPromise.resolve(oValue).then(function (vResult0) {
-					aValues[i] = vResult0;
+			aValues.forEach(function (vValue, i) {
+				if (hasThen(vValue)) {
+					SyncPromise.resolve(vValue).then(function (vResult0) {
+						aValues[i] = vResult0;
+						iPending -= 1;
+						checkFulfilled();
+					}, function (vReason) {
+						reject(vReason); // Note: 1st reject/resolve wins!
+					});
+				} else { // cannot be a "thenable"
 					iPending -= 1;
 					checkFulfilled();
-				}, function (vReason) {
-					reject(vReason); // Note: 1st reject/resolve wins!
-				});
+				}
 			});
 		});
 	};

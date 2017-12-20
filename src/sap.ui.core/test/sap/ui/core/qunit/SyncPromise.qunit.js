@@ -300,6 +300,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("SyncPromise.all: simple values", function (assert) {
 		assertFulfilled(assert, SyncPromise.all([]), []);
+		assertFulfilled(assert, SyncPromise.all([null]), [null]);
 		assertFulfilled(assert, SyncPromise.all([42]), [42]);
 		assertFulfilled(assert, SyncPromise.all([SyncPromise.resolve(42)]), [42]);
 
@@ -314,6 +315,13 @@ sap.ui.require([
 		return SyncPromise.all([42]).then(function (aAnswers) {
 			assert.deepEqual(aAnswers, [42]);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SyncPromise.all: performance", function (assert) {
+		this.mock(SyncPromise).expects("resolve").never();
+
+		assertFulfilled(assert, SyncPromise.all("42"), ["4", "2"]);
 	});
 
 	//*********************************************************************************************
@@ -602,11 +610,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Resolved, but not yet settled", function (assert) {
-		return new SyncPromise(function (resolve, reject) {
-			resolve(Promise.resolve(42));
-			resolve("Unexpected");
-			reject("Unexpected");
-		}).then(function (vResult) {
+		var oSyncPromise = new SyncPromise(function (resolve, reject) {
+				resolve(Promise.resolve(42));
+				resolve("Unexpected");
+				reject("Unexpected");
+			});
+
+		assertPending(assert, oSyncPromise);
+
+		return oSyncPromise.then(function (vResult) {
 			assert.strictEqual(vResult, 42);
 		});
 	});
@@ -619,15 +631,15 @@ sap.ui.require([
 					resolve("Unexpected");
 					reject("Unexpected");
 				}
-			};
+			},
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				resolve(oThenable);
+				resolve("Unexpected");
+				reject("Unexpected");
+			});
 
-		return new SyncPromise(function (resolve, reject) {
-			resolve(oThenable);
-			resolve("Unexpected");
-			reject("Unexpected");
-		}).then(function (vResult) {
-			assert.strictEqual(vResult, 42);
-		});
+		assertFulfilled(assert, oSyncPromise, 42);
+		assertFulfilled(assert, SyncPromise.all([oThenable]), [42]);
 	});
 
 	//*********************************************************************************************
@@ -638,15 +650,15 @@ sap.ui.require([
 					resolve("Unexpected");
 					reject("Unexpected");
 				}
-			};
+			},
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				resolve(oThenable);
+				resolve("Unexpected");
+				reject("Unexpected");
+			});
 
-		return new SyncPromise(function (resolve, reject) {
-			resolve(oThenable);
-			resolve("Unexpected");
-			reject("Unexpected");
-		}).catch(function (vReason) {
-			assert.strictEqual(vReason, 42);
-		});
+		assertRejected(assert, oSyncPromise, 42);
+		assertRejected(assert, SyncPromise.all([oThenable]), 42);
 	});
 
 	//*********************************************************************************************
@@ -656,20 +668,21 @@ sap.ui.require([
 				get : function () {
 					throw oError;
 				}
+			}),
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				resolve(oThenable);
+				resolve("Unexpected");
+				reject("Unexpected");
 			});
 
-		return new SyncPromise(function (resolve, reject) {
-			resolve(oThenable);
-			resolve("Unexpected");
-			reject("Unexpected");
-		}).catch(function (vReason) {
-			assert.strictEqual(vReason, oError);
-		});
+		assertRejected(assert, oSyncPromise, oError);
+		assertRejected(assert, SyncPromise.all([oThenable]), oError);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("thenables: function", function (assert) {
-		var fnThenable = function () {};
+		var oSyncPromise,
+			fnThenable = function () {};
 
 		fnThenable.then = function (resolve, reject) {
 			resolve(42);
@@ -677,13 +690,14 @@ sap.ui.require([
 			reject("Unexpected");
 		};
 
-		return new SyncPromise(function (resolve, reject) {
+		oSyncPromise = new SyncPromise(function (resolve, reject) {
 			resolve(fnThenable);
 			resolve("Unexpected");
 			reject("Unexpected");
-		}).then(function (vResult) {
-			assert.strictEqual(vResult, 42);
 		});
+
+		assertFulfilled(assert, oSyncPromise, 42);
+		assertFulfilled(assert, SyncPromise.all([fnThenable]), [42]);
 	});
 
 	//*********************************************************************************************
@@ -697,6 +711,7 @@ sap.ui.require([
 			});
 
 		assertPending(assert, oSyncPromise);
+		assertPending(assert, SyncPromise.all([oEverPendingThenable]));
 	});
 });
 //TODO Promise.race
