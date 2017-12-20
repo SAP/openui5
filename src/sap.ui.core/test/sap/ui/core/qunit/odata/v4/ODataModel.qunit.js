@@ -160,6 +160,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Early Bird", function (assert) {
+		var oFetchEntityContainerExpectation
+			= this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer")
+				.withExactArgs(true),
+			oModel;
+
+		// code under test
+		oModel = createModel("", {earlyBird : true});
+
+		assert.ok(oFetchEntityContainerExpectation.alwaysCalledOn(oModel.getMetaModel()));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("supportReferences", function (assert) {
 		createModel("", {supportReferences : false});
 	});

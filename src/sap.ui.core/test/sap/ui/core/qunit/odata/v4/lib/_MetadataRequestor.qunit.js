@@ -4,14 +4,15 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils"
-], function (jQuery, _Helper, _MetadataRequestor, _V2MetadataConverter, _V4MetadataConverter,
-		TestUtils) {
+], function (jQuery, _Helper, _MetadataConverter, _MetadataRequestor, _V2MetadataConverter,
+		_V4MetadataConverter, TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var mFixture = {
@@ -107,13 +108,11 @@ sap.ui.require([
 			this.mock(_Helper).expects("buildQuery")
 				.withExactArgs(sinon.match.same(mQueryParams))
 				.returns("?...");
-
 			oJQueryMock.expects("ajax")
 				.withExactArgs(sUrl + "?...", {
 					headers : sinon.match.same(mHeaders),
 					method : "GET"
 				}).returns(createMock(oExpectedXml));
-
 			if (sODataVersion === "4.0") {
 				this.mock(_V4MetadataConverter.prototype).expects("convertXMLMetadata").twice()
 					.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
@@ -128,9 +127,10 @@ sap.ui.require([
 					.returns(oExpectedJson);
 			}
 
+			// code under test
 			oMetadataRequestor = _MetadataRequestor.create(mHeaders, sODataVersion, mQueryParams);
-			assert.strictEqual(typeof oMetadataRequestor, "object");
 
+			// code under test
 			return oMetadataRequestor.read(sUrl).then(function (oResult) {
 				assert.strictEqual(oResult, oExpectedJson);
 
@@ -179,6 +179,82 @@ sap.ui.require([
 		// code under test
 		return oMetadataRequestor.read(sUrl).then(function (oResult) {
 			assert.deepEqual(oResult, oExpectedResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: bPrefetch", function (assert) {
+		var oConverterMock = this.mock(_MetadataConverter.prototype),
+			sDate = "Tue, 18 Apr 2017 14:40:29 GMT",
+			sETag = 'W/"19700101000000.0000000"',
+			oJQueryMock = this.mock(jQuery),
+			sLastModified = "Fri, 07 Apr 2017 11:21:50 GMT",
+			oExpectedXml = {},
+			mHeaders = {},
+			oMetadataRequestor = _MetadataRequestor.create(mHeaders, "4.0"),
+			sUrl = "/~/";
+
+		oJQueryMock.expects("ajax")
+			.withExactArgs(sUrl, {
+				headers : sinon.match.same(mHeaders),
+				method : "GET"
+			}).returns(createMock(oExpectedXml, false, sDate, sLastModified, sETag));
+		oConverterMock.expects("convertXMLMetadata").never();
+
+		// code under test
+		return oMetadataRequestor.read(sUrl, false, true).then(function (oResult) {
+			var oExpectedJson = {
+					"$Version" : "4.0",
+					"$EntityContainer" : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>"
+				};
+
+			// "...have at least the same properties as..."
+			sinon.assert.match(oResult, sinon.match({
+				"$Date" : sDate,
+				"$ETag" : sETag,
+				"$LastModified" : sLastModified,
+				"$XML" : sinon.match.same(oExpectedXml)
+			}));
+
+			assert.throws(function () {
+				oMetadataRequestor.read(sUrl, false, true);
+			}, new Error("Must not prefetch twice: " + sUrl));
+
+			// Note: no addt'l request
+			oConverterMock.expects("convertXMLMetadata")
+				.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
+				.returns(oExpectedJson);
+
+			// code under test
+			return oMetadataRequestor.read(sUrl, false, false).then(function (oResult) {
+				var oNewExpectedJson = {
+						"$Version" : "4.0",
+						"$EntityContainer" : "NEW!"
+					},
+					oNewExpectedXml = {};
+
+				assert.deepEqual(oResult, {
+					"$Date" : sDate,
+					"$EntityContainer" : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>",
+					"$ETag" : sETag,
+					"$LastModified" : sLastModified,
+					"$Version" : "4.0"
+				});
+
+				oJQueryMock.expects("ajax")
+					.withExactArgs(sUrl, {
+						headers : sinon.match.same(mHeaders),
+						method : "GET"
+					}).returns(createMock(oNewExpectedXml));
+				oConverterMock.expects("convertXMLMetadata")
+					.withExactArgs(sinon.match.same(oNewExpectedXml), sUrl)
+					.returns(oNewExpectedJson);
+
+				// code under test
+				return oMetadataRequestor.read(sUrl).then(function (oNewResult) {
+					assert.deepEqual(oNewResult, oNewExpectedJson);
+				});
+			});
 		});
 	});
 
