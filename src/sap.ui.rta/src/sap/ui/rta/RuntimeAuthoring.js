@@ -569,9 +569,17 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Checks the Publish button and app variant support (i.e. Save As and Overview of App Variants) availability
+	 * @private
+	 * @returns {[bPublishAvaiable, bAppVariantSupportAvailable]} Returns an array of boolean values
+	 * @description The publish button shall not be available if the system is productive and if a merge error occured during merging changes into the view on startup
+	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
+	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
+	 */
 	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
 		return FlexSettings.getInstance().then(function(oSettings) {
-			return RtaAppVariantFeature.isPlatFormEnabled(this.getLayer(), this._oRootControl).then(function(bIsAppVariantSupported) {
+			return RtaAppVariantFeature.isPlatFormEnabled(this._oRootControl, this.getLayer(), this._oSerializer).then(function(bIsAppVariantSupported) {
 				return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
 			});
 		}.bind(this))
@@ -820,8 +828,8 @@ sap.ui.define([
 					undo: this._onUndo.bind(this),
 					redo: this._onRedo.bind(this),
 					modeChange: this._onModeChange.bind(this),
-					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, this._oRootControl),
-					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, this._oRootControl, null)
+					manageApps: RtaAppVariantFeature.onGetOverview.bind(null),
+					saveAs: RtaAppVariantFeature.onSaveAsFromRtaToolbar.bind(null, true, true)
 				}), 'toolbar');
 			}
 

@@ -6,7 +6,7 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	var _sIdRunningApp, _oRootControlRunningApp;
+	var _sIdRunningApp;
 
 	return UIComponent.extend("sap.ui.rta.appVariant.manageApps.webapp.Component", {
 
@@ -15,18 +15,12 @@ sap.ui.define([
 			"library": "sap.ui.rta",
 			"version": "0.9",
 			"properties": {
-				idRunningApp : {
-					type: "string"
-				},
-				rootControlRunningApp : {
-					type: "object"
-				}
+				"idRunningApp" : "string"
 			}
 		},
 
 		constructor: function() {
 			_sIdRunningApp = arguments[1].idRunningApp;
-			_oRootControlRunningApp = arguments[1].rootControlRunningApp;
 			UIComponent.prototype.constructor.apply(this, arguments);
 		},
 
@@ -37,7 +31,6 @@ sap.ui.define([
 		 */
 		init: function() {
 			this.setIdRunningApp(_sIdRunningApp);
-			this.setRootControlRunningApp(_oRootControlRunningApp);
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 		}

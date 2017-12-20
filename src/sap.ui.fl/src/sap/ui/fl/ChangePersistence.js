@@ -707,9 +707,8 @@ sap.ui.define([
 			return aDirtyChangesClone.reduce(function (sequence, oDirtyChange) {
 				var saveAction = sequence.then(this._performSingleSaveAction(oDirtyChange).bind(this));
 				saveAction.then(this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange, bSkipUpdateCache));
-
 				return saveAction;
-			}.bind(this), Promise.resolve(true));
+			}.bind(this), Promise.resolve());
 		}
 	};
 
@@ -736,6 +735,12 @@ sap.ui.define([
 
 				oChange.setNamespace(sNamespace);
 				oChange.setComponent(sReferenceForChange);
+
+				// TODO: This is a temporary solution and will be removed ASAP
+				// Since this is a hook to mark the changes which are going to be taken over by an app variant.
+				// Later to bring the UI of the current app back to the former state, we are triggering undo (LREPSerializer#saveAsCommands) which in the last deletes a change (which was saved for App Variant) permanently in the persistence.
+				// To avoid this, we have a check 'isChangeRelevantForAppVariant' in (Change#markForDeletion), which stops the change to be deleted but manipulates the state of change to be already PERSISTED.
+				oChange.setChangeRelevantForAppVariant(true);
 			});
 
 			return this.saveDirtyChanges(true);

@@ -1577,7 +1577,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		}.bind(this));
 	});
 
-	QUnit.test("(Save As scenario) shall remove the change from the dirty changes, after is has been saved for the new app variant", function (assert) {
+	QUnit.test("(Save As scenario) shall remove the change from the dirty changes, after it has been saved for the new app variant", function (assert) {
 		var oChangeContent = {
 			fileName: "Gizorillus",
 			layer: "VENDOR",
