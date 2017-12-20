@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.write("<span");
 				oRm.addClass(SliderRenderer.CSS_CLASS + "HandleTooltip");
 				oRm.addStyle("width", oSlider._iLongestRangeTextWidth + "px");
-				oRm.writeAttribute("id", oSlider.getId() + "-Tooltip");
+				oRm.writeAttribute("id", oSlider.getId() + "-LeftTooltip");
 
 				oRm.writeClasses();
 				oRm.writeStyles();
