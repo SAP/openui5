@@ -922,31 +922,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * Both, source and target element will return the added elements when asked for the content of the respective aggregation.
 	 * If present, the named (non-generic) aggregation methods will be called for the target aggregation.
 	 *
-	 * @example <caption>A composite control <code>ComboBox</code> internally uses a control <code>List</code> to display the items added to
-	 * its own <code>items</code> aggregation. So it forwards the items to the <code>listItems</code> aggregation of the <code>List</code>.
-	 * At runtime, the internal <code>List</code> is always instantiated in the <code>init()</code> method of the <code>ComboBox</code> control
-	 * and its ID is created as concatenation of the ID of the <code>ComboBox</code> and the suffix "-internalList".</caption>
-	 *
-	 *   ComboBox.getMetadata().forwardAggregation(
-	 *      "items",
-	 *      {
-	 *          idSuffix: "-internalList", // internal control with the ID <control id> + "-internalList" always exists after init() has been called
-	 *          aggregation: "listItems"
-	 *      }
-	 *   );
-	 *
-	 * @example <caption>Same as above, but the internal <code>List</code> is not always instantiated initially. It is only lazily instantiated
-	 * in the method <code>ComboBox.prototype._getInternalList()</code>. Instead of the ID suffix, the getter function can be given.</caption>
-	 *
-	 *   ComboBox.getMetadata().forwardAggregation(
-	 *      "items",
-	 *      {
-	 *          getter: ComboBox.prototype._getInternalList, // the function returning (and instantiating if needed) the target at runtime
-	 *          aggregation: "listItems"
-	 *      }
-	 *   );
-	 *
-	 *
 	 * When the source aggregation is bound, the binding will by default take place there and the add/remove operations will be forwarded to the
 	 * target. However, optionally the binding can also be forwarded. The result is similar - all added/bound items will reside at the target -
 	 * but when the binding is forwarded, the updateAggregation method is called on the target element and the add/remove methods are only called
@@ -970,6 +945,30 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * For any given source aggregation this method may only be called once. Calling it again overrides the previous forwarding, but leaves
 	 * any already forwarded elements at their previous target.
 	 *
+	 * @example <caption>A composite control <code>ComboBox</code> internally uses a control <code>List</code> to display the items added to
+	 * its own <code>items</code> aggregation. So it forwards the items to the <code>listItems</code> aggregation of the <code>List</code>.
+	 * At runtime, the internal <code>List</code> is always instantiated in the <code>init()</code> method of the <code>ComboBox</code> control
+	 * and its ID is created as concatenation of the ID of the <code>ComboBox</code> and the suffix "-internalList".</caption>
+	 *
+	 *   ComboBox.getMetadata().forwardAggregation(
+	 *      "items",
+	 *      {
+	 *          idSuffix: "-internalList", // internal control with the ID <control id> + "-internalList" must always exist after init() has been called
+	 *          aggregation: "listItems"
+	 *      }
+	 *   );
+	 *
+	 * @example <caption>Same as above, but the internal <code>List</code> is not always instantiated initially. It is only lazily instantiated
+	 * in the method <code>ComboBox.prototype._getInternalList()</code>. Instead of the ID suffix, the getter function can be given.</caption>
+	 *
+	 *   ComboBox.getMetadata().forwardAggregation(
+	 *      "items",
+	 *      {
+	 *          getter: ComboBox.prototype._getInternalList, // the function returning (and instantiating if needed) the target list at runtime
+	 *          aggregation: "listItems"
+	 *      }
+	 *   );
+	 *
 	 * @param {string}
 	 *            sForwardedSourceAggregation The name of the aggregation to be forwarded
 	 * @param {object}
@@ -989,8 +988,11 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @since 1.54
 	 *
-	 * @protected
-	 * @experimental
+	 * @private
+	 * @ui5-restricted SAPUI5 Distribution libraries only
+	 * @experimental As of 1.54, this method is still in an experimental state. Its signature might change or it might be removed
+	 *   completely. Controls should prefer to declare aggregation forwarding in the metadata for the aggregation. See property
+	 *   <code>forwarding</code> in the documentation of {@link sap.ui.base.ManagedObject.extend ManagedObject.extend}.
 	 */
 	ManagedObjectMetadata.prototype.forwardAggregation = function(sForwardedSourceAggregation, mOptions) {
 
