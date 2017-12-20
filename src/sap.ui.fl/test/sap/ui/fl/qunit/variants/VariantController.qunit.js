@@ -290,7 +290,6 @@ sap.ui.require([
 
 	QUnit.test("when calling '_setChangeFileContent'", function(assert) {
 		var oVariantController = new VariantController("MyComponent", "1.2.3", {});
-		var fnCompareVariantsSpy = sandbox.spy(oVariantController, "compareVariants");
 		var fnApplyChangesOnVariantManagementSpy = sandbox.spy(oVariantController, "_applyChangesOnVariantManagement");
 		oVariantController._setChangeFileContent(this.oResponse);
 		assert.equal(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants.length, 3, "then 3 variants added to 'idMain1--variantManagementOrdersTable' variant management reference");
@@ -298,7 +297,8 @@ sap.ui.require([
 		assert.ok(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[0].content.content.visible, "then visible property of variant set to true");
 		assert.equal(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].defaultVariant, "variant0", "then visible property of variant set to true");
 		assert.ok(typeof oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variantManagementChanges === 'object', "then variant management changes object exists");
-		assert.equal(fnCompareVariantsSpy.callCount, 3,  "then compare variants function called thrice for the two variant management references");
+		assert.ok(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[1].content.title <
+			oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[2].content.title, "then the variants at indices 1 and 2 are sorted alphabetically");
 		assert.ok(fnApplyChangesOnVariantManagementSpy.calledTwice, "_applyChangesOnVariantManagement called twice, once per variant management reference");
 	});
 
