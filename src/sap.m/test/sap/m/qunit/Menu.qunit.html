@@ -493,6 +493,67 @@
 			sut = null;
 		});
 
+		// BCP: 0020751294 0000616398 2017
+		QUnit.test("Menu with item: removeItem for last item and add new item should recreate the first page", function (assert) {
+			// prepare
+			var oItem = this.newMenuItem(),
+				sut = new sap.m.Menu({ title: "Initial page", items: [oItem] });
+
+			// act
+			sut.openBy();
+			sut.removeItem(oItem);
+			sut.addAggregation("items", this.newMenuItem());
+			sut.openBy();
+
+			// assert
+			assert.equal(sut._getNavContainer().getPages().length, 1, "The menu has 1 page");
+
+			// cleanup
+			sut.destroy();
+		});
+
+		// BCP: 0020751294 0000616398 2017
+		QUnit.test("Menu with items: removeAllItems and add them again should recreate the first page", function (assert) {
+			// prepare
+			var sut = new sap.m.Menu({ title: "Initial page", items: [this.newMenuItem()] });
+
+			// act
+			sut.openBy();
+			sut.removeAllItems();
+			sut.addAggregation("items", this.newMenuItem());
+			sut.openBy();
+
+			// assert
+			assert.equal(sut._getNavContainer().getPages().length, 1, "The menu has 1 page");
+
+			// cleanup
+			sut.destroy();
+		});
+
+		// BCP: 0020751294 0000616398 2017
+		QUnit.test("Menu with items and child items: removeAllItems and add them again should recreate the needed pages", function (assert) {
+			// prepare
+			function createItems() {
+				return new sap.m.MenuItem({
+					text: "Parent item",
+					items: [new sap.m.MenuItem({ text: "Child Item" })]
+				});
+			}
+			var sut = new sap.m.Menu({ title: "Initial page", items: createItems() });
+
+			// act
+			sut.openBy();
+			sut.removeAllItems();
+			sut.addAggregation("items", createItems());
+			sut.openBy();
+
+			// assert
+			assert.equal(sut._getNavContainer().getPages().length, 2, "The menu has 2 pages");
+
+			// cleanup
+			sut.destroy();
+		});
+
 		QUnit.module("Data binding", {
 			beforeEach : function () {
 				this.sut = new sap.m.Menu();
