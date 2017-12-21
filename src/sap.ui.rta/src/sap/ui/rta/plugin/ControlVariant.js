@@ -513,10 +513,11 @@ sap.ui.define([
 		if (this.isRenameAvailable(oOverlay)){
 			aMenuItems.push({
 				id: "CTX_VARIANT_SET_TITLE",
-				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_SET_TITLE'),
+				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_RENAME'),
 				handler: this.renameVariant.bind(this),
 				enabled: this.isRenameEnabled.bind(this),
-				rank: 210
+				rank: 210,
+				icon: "sap-icon://edit"
 			});
 		}
 
@@ -528,7 +529,8 @@ sap.ui.define([
 					return this.duplicateVariant(aOverlays[0]);
 				}.bind(this),
 				enabled: this.isVariantDuplicateEnabled.bind(this),
-				rank: 220
+				rank: 220,
+				icon: "sap-icon://duplicate"
 			});
 		}
 
@@ -539,7 +541,8 @@ sap.ui.define([
 				handler: this.configureVariants.bind(this),
 				enabled: this.isVariantConfigureEnabled.bind(this),
 				startSection: true,
-				rank: 230
+				rank: 230,
+				icon: "sap-icon://action-settings"
 			});
 		}
 
@@ -569,7 +572,8 @@ sap.ui.define([
 					}
 				},
 				type: "subMenuWithBinding",
-				rank: 240
+				rank: 240,
+				icon: "sap-icon://switch-views"
 			});
 		}
 
