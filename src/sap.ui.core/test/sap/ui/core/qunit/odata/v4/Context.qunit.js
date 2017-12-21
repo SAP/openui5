@@ -713,7 +713,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setIndex", function (assert) {
-		var oContext = Context.create(this.oModel, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
 
 		oContext.setIndex(23);
 		assert.strictEqual(oContext.getIndex(), 23);
@@ -747,7 +747,7 @@ sap.ui.require([
 				withCache : function () {}
 			},
 			fnCallback = {},
-			oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('42')", 42),
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42),
 			oResult = {};
 
 		this.mock(oBinding).expects("withCache")
@@ -762,7 +762,7 @@ sap.ui.require([
 				withCache : function () {}
 			},
 			fnCallback = {},
-			oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('42')", 42),
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42),
 			oResult = {};
 
 		this.mock(_Helper).expects("buildPath").withExactArgs("/EMPLOYEES('42')", "foo")
@@ -776,7 +776,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("withCache: virtual context", function (assert) {
 		var oBinding = {},
-			oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES/-2", -2),
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/-2", -2),
 			oResult;
 
 		this.mock(_Helper).expects("buildPath").never();
