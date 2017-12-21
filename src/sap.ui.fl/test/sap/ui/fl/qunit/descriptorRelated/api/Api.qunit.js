@@ -188,6 +188,52 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+    //Test change card with valid input and multiple changes
+    QUnit.test("create_ovp_changeCard multiple changes", function (assert) {
+        return DescriptorInlineChangeFactory.create_ovp_changeCard({
+            "cardId": "sap.existingCard01",
+            "entityPropertyChange": [
+                {
+                    "propertyPath": "/settings/title",
+                    "operation": "UPDATE",
+                    "propertyValue": "New Updated Title"
+                },
+                {
+                    "propertyPath": "/settings/addODataSelect",
+                    "operation": "UPDATE",
+                    "propertyValue": true
+                },
+                {
+                    "propertyPath": "/settings/subTitle",
+                    "operation": "INSERT",
+                    "propertyValue": "New Added Subtitle"
+                }
+            ]
+        }).then(function (oDescriptorInlineChange) {
+            assert.notEqual(oDescriptorInlineChange, null);
+            assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ovp_changeCard");
+        });
+    });
+
+    //Test change card with invalid parameters
+    QUnit.test("create_ovp_changeCard failure", function (assert) {
+        assert.throws(function () {
+            DescriptorInlineChangeFactory.create_ovp_changeCard({
+                "cards": "sap.existingCard01"
+            });
+        });
+        assert.throws(function () {
+            DescriptorInlineChangeFactory.create_ovp_changeCard({
+                "cardId": undefined
+            });
+        });
+        assert.throws(function () {
+            DescriptorInlineChangeFactory.create_ovp_changeCard({
+                "cardId": {}
+            });
+        });
+    });
+
 	QUnit.test("create_app_addNewInbound", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_addNewInbound({
 			"inbound": {
