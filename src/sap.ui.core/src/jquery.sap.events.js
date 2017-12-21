@@ -1840,17 +1840,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', 'jqu
 						if (oDomInfo.excludedDomRefs.indexOf(oEvent.target) === -1 && jQuery.sap.containsOrEquals(oDomInfo.domRef, oEvent.target)) {
 							oEvent.preventDefault();
 							oEvent.stopImmediatePropagation();
-							t1 = window.performance.now();
 							if (bIsLoggable) {
+								t1 = window.performance.now();
 								jQuery.sap.log.debug("Perf: jQuery trigger supression event handler " + oEvent.type + " took " + (t1 - t0) + " milliseconds.");
 							}
 							return false; //prevent further jQuery processing.
 						}
 					}
 				}
-				if (fnOriginalTriggerHook && fnOriginalTriggerHook.call(this, oEvent) === false) {
-					//prevent further jQuery procesing.
-					return false;
+				if (fnOriginalTriggerHook) {
+					return fnOriginalTriggerHook.call(this, oEvent);
 				}
 			};
 		}
@@ -1875,7 +1874,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', 'jqu
 	/**
 	 * Suppress jQuery.trigger events for a given DOM element
 	 *
-	 * mTriggerEventHandler example:
+	 * mTriggerEventInfo example:
 	 *
 	 * mTriggerEventInfo: {
 	 * 		'EventType': {
@@ -1926,6 +1925,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', 'jqu
 	 */
 	jQuery.sap._releaseTriggerEvent = function(oHandler) {
 		if (!oHandler) {
+			jQuery.sap.log.error("Release trigger events must not be called without passing a valid handler!");
 			return;
 		}
 
