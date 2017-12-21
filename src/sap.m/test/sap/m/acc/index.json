@@ -56,11 +56,6 @@
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
-			"control": "sap.m.CustomTile",
-			"url": "../CustomTile.html",
-			"appComponent": "CA-UI5-CTR-BAL"
-		},
-		{
 			"control": "sap.m.DatePicker",
 			"url": "DatePicker.html",
 			"appComponent": "CA-UI5-CTR-BAL"
@@ -461,11 +456,6 @@
 			"control": "sap.m.Tokenizer",
 			"url": "../Tokenizer.html",
 			"appComponent": "CA-UI5-CTR-ROD"
-		},
-		{
-			"control": "sap.m.Tile",
-			"url": "../Tile.html",
-			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.TileContainer",
