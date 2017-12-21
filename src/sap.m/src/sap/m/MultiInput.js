@@ -70,6 +70,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		metadata: {
 
 			library: "sap.m",
+			designtime: "sap/m/designtime/MultiInput.designtime",
 			properties: {
 
 				/**
