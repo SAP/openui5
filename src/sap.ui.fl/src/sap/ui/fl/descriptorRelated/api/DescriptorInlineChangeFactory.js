@@ -55,7 +55,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	var DescriptorInlineChangeFactory = {};
 
 	DescriptorInlineChangeFactory.getDescriptorChangeTypes = function(){
-		return ["appdescr_ovp_addNewCard","appdescr_ovp_removeCard",
+		return ["appdescr_ovp_addNewCard","appdescr_ovp_removeCard","appdescr_ovp_changeCard",
 		        "appdescr_app_addNewInbound", "appdescr_app_changeInbound", "appdescr_app_removeInbound", "appdescr_app_removeAllInboundsExceptOne",
 		        "appdescr_app_addNewOutbound", "appdescr_app_changeOutbound", "appdescr_app_removeOutbound",
 		        "appdescr_app_addNewDataSource", "appdescr_app_changeDataSource", "appdescr_app_removeDataSource",
@@ -152,7 +152,30 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 
 	};
 
-	/**
+    /**
+     * Creates an inline change of change type appdescr_ovp_changeCard
+     *
+     * @param {object} mParameters parameters of the change type
+     * @param {string} mParameters.cardId the id of the card to be changed
+     * @param {object|array} mParameters.entityPropertyChange - the entity property change or an array of multiple changes
+     * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the card (Eg. '/settings/title').
+     * @param {object} mParameters.entityPropertyChange.operation - the operation (INSERT, UPDATE, UPSERT, DELETE)
+     * @param {object} mParameters.entityPropertyChange.propertyValue - the new property value
+     * @param {object} [mTexts] texts for the inline change
+     *
+     * @return {Promise} resolving when creating the descriptor inline change was successful
+     *
+     * @private
+     * @sap-restricted
+     */
+    DescriptorInlineChangeFactory.create_ovp_changeCard = function(mParameters,mTexts) {
+        Utils.checkParameterAndType(mParameters, "cardId", "string");
+        Utils.checkEntityPropertyChange(mParameters);
+        return this._createDescriptorInlineChange('appdescr_ovp_changeCard', mParameters, mTexts);
+
+    };
+
+    /**
 	 * Creates an inline change of change type appdescr_app_addNewInbound
 	 *
 	 * @param {object} mParameters parameters of the change type
