@@ -633,6 +633,12 @@ sap.ui.require([
 			id : "FUNCTION", value : "toupper", type : "Edm.String",
 			parameters : [{value : "foo"}]
 		}
+	}, {
+		string : "contains(foo,bar)",
+		parsed : {
+			id : "FUNCTION", value : "contains", type : "Edm.Boolean",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		}
 	}, { // date functions
 		string : "day(foo)",
 		parsed : {
@@ -692,7 +698,6 @@ sap.ui.require([
 			parseAndRebuild(assert, oFixture.string, oFixture.parsed, oFixture.converted);
 		});
 	});
-	// TODO contains must be converted to substringof
 
 	//*********************************************************************************************
 	// If the operators have equal precedence, then

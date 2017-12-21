@@ -1035,6 +1035,12 @@ sap.ui.require([
 	}, {
 		v4 : "startswith(foo,'bar') eq true",
 		v2 : "startswith(foo,'bar') eq true"
+	}, {
+		v4 : "contains(concat(foo,bar),substring(baz,5,2))",
+		v2 : "substringof(substring(baz,5,2),concat(foo,bar))"
+	}, {
+		v4 : "contains(foo)", // wrong actually, but should not generate a syntax error
+		v2 : "substringof(foo)"
 	}].forEach(function (oFixture) {
 		QUnit.test("convertFilter: " + oFixture.v4, function (assert) {
 			var oProperty = {$Type : "Edm.Double"},

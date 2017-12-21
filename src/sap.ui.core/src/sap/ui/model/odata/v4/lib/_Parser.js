@@ -51,6 +51,9 @@ sap.ui.define([
 			"concat" : {
 				type : "Edm.String"
 			},
+			"contains" : {
+				type : "Edm.Boolean"
+			},
 			"day" : {
 				type : "Edm.Int32",
 				ambiguousParameters : true
