@@ -224,6 +224,17 @@
 		oObjectPageWithHeaderOnly.destroy();
 	});
 
+	QUnit.test("_adaptActions", function (assert) {
+		var oHeader = core.byId("UxAP-ObjectPageHeader--header"),
+			$overflowButton = oHeader._oOverflowButton.$();
+
+		assert.strictEqual($overflowButton.css("display"), "none", "OverflowButton is hidden");
+
+		oHeader._adaptActions(1000);
+
+		assert.strictEqual($overflowButton.css("display"), "none", "OverflowButton is hidden");
+	});
+
 	QUnit.module("Action buttons", {
 		beforeEach: function () {
 			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
