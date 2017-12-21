@@ -216,18 +216,28 @@ sap.ui.define([
 		 */
 		RuleSetLoader._fetchRuleSet = function (sLibName) {
 			try {
-				var sNormalizedLibName = sLibName.replace("." + sCustomSuffix, "").replace(".internal", ""),
-					oLibSupport = jQuery.extend({}, jQuery.sap.getObject(sLibName).library.support),
-					oLibrary = this._mRuleSets[sNormalizedLibName];
+				var sNormalizedLibName,
+					oLibSupportCopy,
+					oLibrary,
+					oLibSupport = jQuery.sap.getObject(sLibName).library.support;
 
-				if (!(oLibSupport.ruleset instanceof RuleSet)) {
-					oLibSupport = this._createRuleSet(oLibSupport);
+				if (!oLibSupport) {
+					// This case usually happens when the library flag bExport is set to true.
+					throw "The library.support file was not fetched successfully.";
+				}
+
+				sNormalizedLibName = sLibName.replace("." + sCustomSuffix, "").replace(".internal", "");
+				oLibSupportCopy = jQuery.extend({}, oLibSupport);
+				oLibrary = this._mRuleSets[sNormalizedLibName];
+
+				if (!(oLibSupportCopy.ruleset instanceof RuleSet)) {
+					oLibSupportCopy = this._createRuleSet(oLibSupportCopy);
 				}
 
 				if (oLibrary) {
-					oLibrary.ruleset._mRules = jQuery.extend(oLibrary.ruleset._mRules, oLibSupport.ruleset._mRules);
+					oLibrary.ruleset._mRules = jQuery.extend(oLibrary.ruleset._mRules, oLibSupportCopy.ruleset._mRules);
 				} else {
-					oLibrary = oLibSupport;
+					oLibrary = oLibSupportCopy;
 				}
 
 				this._mRuleSets[sNormalizedLibName] = oLibrary;

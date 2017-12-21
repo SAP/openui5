@@ -323,4 +323,26 @@ sap.ui.require([
 			jQuery.sap.log.error.restore();
 		});
 
+		QUnit.test("_fetchRuleSet with library and no library.support", function (assert) {
+			// Arrange
+			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+				return {
+					library: {
+						support: undefined
+					}
+				};
+			});
+			sinon.spy(jQuery.sap.log, "error");
+
+			// Act
+			RuleSetLoader._fetchRuleSet("sap.test");
+
+			//Assert
+			assert.notOk(RuleSetLoader._mRuleSets["sap.test"], "Should be undefined");
+			assert.equal(jQuery.sap.log.error.callCount, 1, "should have logged an error");
+
+			jQuery.sap.getObject.restore();
+			jQuery.sap.log.error.restore();
+		});
+
 	});
