@@ -126,8 +126,6 @@
 				control: new Input({
 					showValueHelp: true
 				}),
-				// The Focusleave is fired on an icon not directly on the control
-				skipFocusLeaveCheck: true,
 				event: "ValueHelpRequest"
 			}].forEach(function (oTestCase) {
 						QUnit.test("Should press a " + oTestCase.control.getMetadata().getName(), function (assert) {
@@ -148,9 +146,6 @@
 								setTimeout(function () {
 									sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
 									sinon.assert.called(fnOnSapFocusInSpy);
-									if (!oTestCase.skipFocusLeaveCheck) {
-										sinon.assert.calledOnce(fnOnSapFocusLeaveSpy);
-									}
 									fnDone();
 								}.bind(this), 20);
 							}, this);
@@ -159,13 +154,8 @@
 							if(!oControl.onfocusin) {
 								oControl.onfocusin = $.noop;
 							}
-							if(!oControl.onsapfocusleave) {
-								oControl.onsapfocusleave = $.noop;
-							}
 
 							var fnOnSapFocusInSpy = sinon.spy(oControl, "onfocusin");
-							var fnOnSapFocusLeaveSpy = sinon.spy(oControl, "onsapfocusleave");
-
 							// Act
 							oPressAction.executeOn(oControl);
 						});

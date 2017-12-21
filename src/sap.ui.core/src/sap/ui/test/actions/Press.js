@@ -66,7 +66,8 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				this.getUtils().triggerEvent("selectstart", oActionDomRef);
 				this._createAndDispatchMouseEvent("mouseup", oActionDomRef);
 				this._createAndDispatchMouseEvent("click", oActionDomRef);
-				this._simulateFocusout(oActionDomRef);
+				//Focusout simulation removed in order to fix Press action behavior
+	            //since in real scenario manual press action does not fire focusout event
 			}
 		}
 	});
