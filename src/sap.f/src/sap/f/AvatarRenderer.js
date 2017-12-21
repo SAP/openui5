@@ -35,7 +35,8 @@ sap.ui.define(["sap/f/library", "jquery.sap.global"],
 				sCustomDisplaySize = oAvatar.getCustomDisplaySize(),
 				sCustomFontSize = oAvatar.getCustomFontSize(),
 				sSrc = oAvatar.getSrc(),
-				sAvatarClass = "sapFAvatar";
+				sAvatarClass = "sapFAvatar",
+				sTooltip = oAvatar.getTooltip_AsString();
 
 			oRm.write("<span");
 			oRm.writeControlData(oAvatar);
@@ -59,6 +60,9 @@ sap.ui.define(["sap/f/library", "jquery.sap.global"],
 				oRm.addStyle("width", sCustomDisplaySize);
 				oRm.addStyle("height", sCustomDisplaySize);
 				oRm.addStyle("font-size", sCustomFontSize);
+			}
+			if (sTooltip) {
+				oRm.writeAttributeEscaped("title", sTooltip);
 			}
 			oRm.writeClasses();
 			oRm.writeStyles();
