@@ -313,4 +313,18 @@
 		assert.notStrictEqual($oAvatar.css("background-image"), "none", "src is properly escaped");
 	});
 
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oAvatar = createAvatar({ tooltip: "sampleTooltip" });
+			this.oAvatar.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: teardownFunction
+	});
+
+	QUnit.test("Check if tooltip is present", function (assert) {
+		var $oAvatar = this.oAvatar.$();
+		assert.strictEqual($oAvatar.prop("title"), "sampleTooltip", "Tooltip is present");
+	});
+
 })();
