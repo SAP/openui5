@@ -773,7 +773,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Converts ASCII coding into a string. Required for restoring stored code extinsions
+		 * Converts a string into ASCII coding. Required for restoring stored code extinsions
 		 *
 		 * @param {String} string string which has to be encoded
 		 * @returns {String} ascii imput parsed to ascii numbers seperated by ','

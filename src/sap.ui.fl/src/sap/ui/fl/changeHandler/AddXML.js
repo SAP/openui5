@@ -50,7 +50,12 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 		var oChangeDefinition = oChange.getDefinition();
 		var sAggregationName = oChangeDefinition.content.targetAggregation;
-		var sFragment = oChangeDefinition.content.fragment;
+		// the backend loads the content of the fragment as ascii and adds it to the change specific content.
+		if (!oChangeDefinition.content.fragment) {
+			throw new Error("The content of the fragment is not set. This should happen in the backend");
+		}
+
+		var sFragment = Utils.asciiToString(oChangeDefinition.content.fragment);
 		var iIndex = oChangeDefinition.content.index;
 		var oView = mPropertyBag.view;
 		var oViewInstance = Utils.getViewForControl(oControl);
@@ -60,19 +65,19 @@ sap.ui.define([
 		try {
 			aNewControls = oModifier.instantiateFragment(sFragment, oChange.getId(), oViewInstance, oController);
 		} catch (oError) {
-			throw new Error("The XML Fragment could not be instantiated");
+			throw new Error("The following XML Fragment could not be instantiated: " + sFragment);
 		}
 
 		var oAggregationDefinition = oModifier.findAggregation(oControl, sAggregationName);
 		if (!oAggregationDefinition) {
 			destroyArrayOfControls(aNewControls);
-			throw new Error("The given Aggregation is not available in the given control.");
+			throw new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl));
 		}
 
 		aNewControls.forEach(function(oNewControl, iIterator) {
 			if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment, iIterator)) {
 				destroyArrayOfControls(aNewControls);
-				throw new Error("The Control does not match the type of the targetAggregation.");
+				throw new Error("The content of the xml fragment does not match the type of the targetAggregation: " + oAggregationDefinition.type);
 			}
 		});
 

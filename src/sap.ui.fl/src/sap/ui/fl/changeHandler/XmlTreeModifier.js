@@ -440,7 +440,7 @@ sap.ui.define([
 			var oFragment = jQuery.sap.parseXML(sFragment, "application/xml");
 
 			if (oFragment.parseError.errorCode !== 0) {
-				throw new Error("The XML Fragment could not be instantiated");
+				throw new Error("The XML Fragment could not be instantiated. Reason: " + oFragment.parseError.reason);
 			}
 
 			var oControlNodes = oFragment.documentElement;
