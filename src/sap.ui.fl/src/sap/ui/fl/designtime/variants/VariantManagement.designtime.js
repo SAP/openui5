@@ -23,7 +23,7 @@ sap.ui.define([], function() {
 			editable: {
 				ignore: false
 			},
-			contextName: {
+			modelName: {
 				ignore: false
 			}
 		},
