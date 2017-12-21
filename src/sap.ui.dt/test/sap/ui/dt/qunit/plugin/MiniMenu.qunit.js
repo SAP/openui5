@@ -165,8 +165,7 @@ sap.ui.require([
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		var oMiniMenu = this.oMiniMenuPlugin.oMiniMenu;
 
-		oMiniMenu._openAsContextMenu = true;
-		oMiniMenu.show(this.oButton2);
+		assert.ok(oMiniMenu.isOpen, "MiniMenu should be opened");
 		oMiniMenu._popupClosed();
 		assert.ok(!oMiniMenu.isOpen, "MiniMenu should be closed");
 		oMiniMenu = null;
@@ -891,7 +890,6 @@ sap.ui.require([
 
 		var spyContext = sinon.spy(this.oMiniMenu, "_placeAsContextMenu");
 		var spyMini = sinon.spy(this.oMiniMenu, "_placeAsMiniMenu");
-		// debugger;
 
 		var fakeDiv = this.oMiniMenu._placeMiniMenu(this.oButton2Overlay, true, true);
 
@@ -906,9 +904,669 @@ sap.ui.require([
 		spyContext.reset();
 		spyMini.reset();
 
+		this.oMiniMenu._iButtonsVisible = 3;
 		this.oMiniMenu._placeMiniMenu(this.oButton2Overlay, false, false);
 
 		sinon.assert.calledOnce(spyMini);
 		sinon.assert.notCalled(spyContext);
+
+		spyContext = null;
+		spyMini = null;
+		fakeDiv = null;
+	});
+
+	QUnit.test("comparing the height of an actual rendered sap.m.Button to the return value of _getButtonHeight", function (assert) {
+
+		var oCozyBtn = new sap.m.Button({
+			id : "cozyBtnH",
+			icon : "sap-icon://fridge",
+			text : "Cozy Button"
+		}).placeAt("qunit-fixture");
+
+		var oCompactBtn = new sap.m.Button({
+			id : "compactBtnH",
+			icon : "sap-icon://dishwasher",
+			text : "Compact Button"
+		}).placeAt("compact-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		var fCalculatedCozyHeight = this.oMiniMenu._getButtonHeight(false);
+		var fMeasuredCozyHeight = parseInt(jQuery(oCozyBtn.getDomRef()).css("height"), 10) / 16;
+		var fCalculatedCompactHeight = this.oMiniMenu._getButtonHeight(true);
+		var fMeasuredCompactHeight = parseInt(jQuery(oCompactBtn.getDomRef()).css("height"), 10) / 16;
+
+		assert.strictEqual(fCalculatedCozyHeight, fMeasuredCozyHeight, "To prevent rendering the MiniMenu a bunch of times its height is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons have changed and the return value of _getButtonHeight (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
+		assert.strictEqual(fCalculatedCompactHeight, fMeasuredCompactHeight, "To prevent rendering the MiniMenu a bunch of times height size is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons have changed and the return value of _getButtonHeight (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
+
+		oCozyBtn = null;
+		oCompactBtn = null;
+		fCalculatedCozyHeight = null;
+		fMeasuredCozyHeight = null;
+		fCalculatedCompactHeight = null;
+		fMeasuredCompactHeight = null;
+	});
+
+	QUnit.test("comparing the width of an actual rendered sap.m.Button (icon only) to the return value of _getButtonWidth", function (assert) {
+
+		var oCozyBtn = new sap.m.Button({
+			id : "cozyBtnW",
+			icon : "sap-icon://fridge"
+		}).placeAt("qunit-fixture");
+
+		var oCompactBtn = new sap.m.Button({
+			id : "compactBtnW",
+			icon : "sap-icon://dishwasher"
+		}).placeAt("compact-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		var fCalculatedCozyWidth = this.oMiniMenu._getButtonWidth(false);
+		var fMeasuredCozyWidth = parseInt(jQuery(oCozyBtn.getDomRef()).css("width"), 10) / 16;
+		var fCalculatedCompactWidth = this.oMiniMenu._getButtonWidth(true);
+		var fMeasuredCompactWidth = parseInt(jQuery(oCompactBtn.getDomRef()).css("width"), 10) / 16;
+
+		assert.strictEqual(fCalculatedCozyWidth, fMeasuredCozyWidth, "To prevent rendering the MiniMenu a bunch of times its width is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons have changed and the return value of _getButtonWidth (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
+		assert.strictEqual(fCalculatedCompactWidth, fMeasuredCompactWidth, "To prevent rendering the MiniMenu a bunch of times its width is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons have changed and the return value of _getButtonWidth (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
+
+		oCozyBtn = null;
+		oCompactBtn = null;
+		fCalculatedCozyWidth = null;
+		fMeasuredCozyWidth = null;
+		fCalculatedCompactWidth = null;
+		fMeasuredCompactWidth = null;
+	});
+
+	QUnit.test("comparing the height of the arrow of an actual rendered sap.m.Popover to the return value of _getArrowHeight", function (assert) {
+
+		var oCozyBtn = new sap.m.Button({
+			id : "cozyBtnA",
+			icon : "sap-icon://fridge"
+		}).placeAt("qunit-fixture");
+
+		var oCompactBtn = new sap.m.Button({
+			id : "compactBtnA",
+			icon : "sap-icon://dishwasher"
+		}).placeAt("compact-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		var oCozyPop = new sap.m.Popover({
+			id : "cozyPopA",
+			placement : "Bottom"
+		}).openBy(oCozyBtn);
+
+		var oCompactPop = new sap.m.Popover({
+			id : "compactPopA",
+			placement : "Bottom"
+		}).openBy(oCompactBtn);
+
+		var fCalculatedCozyArrowSize = this.oMiniMenu._getArrowHeight(false);
+		var fMeasuredCozyArrowSize = parseInt(jQuery("#cozyPopA-arrow").css("height"), 10) / 16;
+		var fCalculatedCompactArrowSize = this.oMiniMenu._getArrowHeight(true);
+		var fMeasuredCompactArrowSize = parseInt(jQuery("#compactPopA-arrow").css("height"), 10) / 16;
+
+		oCozyPop.close();
+		oCompactPop.close();
+
+		assert.strictEqual(fCalculatedCozyArrowSize, fMeasuredCozyArrowSize, "To prevent rendering the MiniMenu a bunch of times the size of the Arrow is calculated based on the css values of sap.m.Popover. If this test fails the css values of sap.m.Popover have changed and the return value of _getArrowHeight (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
+		assert.strictEqual(fCalculatedCompactArrowSize, fMeasuredCompactArrowSize, "To prevent rendering the MiniMenu a bunch of times the size of the Arrow is calculated based on the css values of sap.m.Popover. If this test fails the css values of sap.m.Popover have changed and the return value of _getArrowHeight (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
+
+		oCozyBtn = null;
+		oCompactBtn = null;
+		oCozyPop = null;
+		oCompactPop = null;
+		fCalculatedCozyArrowSize = null;
+		fMeasuredCozyArrowSize = null;
+		fCalculatedCompactArrowSize = null;
+		fMeasuredCompactArrowSize = null;
+	});
+
+	QUnit.test("calling _getBaseFontSize", function (assert) {
+
+		var iBaseFontSize = this.oMiniMenu._getBaseFontSize();
+
+		assert.strictEqual(typeof iBaseFontSize, "number", "The base font size should be a number.");
+		assert.ok(!isNaN(iBaseFontSize), "The base font size shouldn't be NaN.");
+
+		iBaseFontSize = null;
+	});
+
+	QUnit.test("calling _makeAllButtonsVisible", function (assert) {
+
+		var aButtons = [
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn0",
+				text: "Button 0",
+				visible : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn1",
+				text: "Button 1",
+				visible : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn2",
+				text: "Button 2",
+				visible : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn3",
+				text: "Button 3",
+				visible : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn4",
+				text: "Button 4",
+				visible : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn5",
+				text: "Button 5",
+				visible : false
+			})
+		];
+
+		this.oMiniMenu._makeAllButtonsVisible(aButtons);
+
+		for (var i = 0; i < aButtons.length; i++) {
+
+			assert.strictEqual(aButtons[i].getVisible(), true, "Button " + i + " should be visible.");
+			assert.strictEqual(aButtons[i].getText(), "Button " + i, "Text should be Button " + i + ".");
+			assert.strictEqual(aButtons[i]._bInOverflow, true, "_bInOverflow of Button " + i + " should be true.");
+		}
+
+		aButtons = null;
+	});
+
+	QUnit.test("calling _getNumberOfEnabledButtons", function (assert) {
+
+		var aButtons = [
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn0E",
+				text: "Button 0",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn1E",
+				text: "Button 1",
+				visible : true,
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn2E",
+				text: "Button 2",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn3E",
+				text: "Button 3",
+				visible : true,
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn4E",
+				text: "Button 4",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn5E",
+				text: "Button 5",
+				visible : true,
+				enabled : true
+			})
+		];
+
+		var iEnabledButtons = this.oMiniMenu._getNumberOfEnabledButtons(aButtons);
+
+		assert.strictEqual(iEnabledButtons, 4, "4 buttons should be enabled");
+
+		iEnabledButtons = null;
+		aButtons = null;
+	});
+
+	QUnit.test("calling _hideDisabledButtons", function (assert) {
+
+		var aButtons = [
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn0D",
+				text: "Button 0",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn1D",
+				text: "Button 1",
+				visible : true,
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn2D",
+				text: "Button 2",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn3D",
+				text: "Button 3",
+				visible : true,
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn4D",
+				text: "Button 4",
+				visible : true,
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn5D",
+				text: "Button 5",
+				visible : true,
+				enabled : true
+			})
+		];
+
+		var iVisibleButtons = this.oMiniMenu._hideDisabledButtons(aButtons);
+
+		assert.strictEqual(iVisibleButtons, 3, "3 Buttons should be visible");
+
+		for (var i = 0; i < aButtons.length; i++) {
+			assert.strictEqual(aButtons[i].getVisible(), aButtons[i].getEnabled(), "Enabled Buttons should be visible. Disabled Buttons should be hidden");
+		}
+
+		iVisibleButtons = null;
+		aButtons = null;
+	});
+
+	QUnit.test("calling _hideButtonsInOverflow", function (assert) {
+
+		var aButtons = [
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn0O",
+				text: "Button 0",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn1O",
+				text: "Button 1",
+				visible : false,
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn2O",
+				text: "Button 2",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn3O",
+				text: "Button 3",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn4O",
+				text: "Button 4",
+				visible : false,
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn5O",
+				text: "Button 5",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn6O",
+				text: "Button 6",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn7O",
+				text: "Button 7",
+				visible : true,
+				enabled : true
+			})
+		];
+
+		var iVisibleButtons = this.oMiniMenu._hideButtonsInOverflow(aButtons);
+
+		assert.strictEqual(iVisibleButtons, 4, "4 Buttons should be visible");
+
+		assert.strictEqual(aButtons[0].getVisible(), true, "should be visible");
+		assert.strictEqual(aButtons[1].getVisible(), false, "should be hidden");
+		assert.strictEqual(aButtons[2].getVisible(), true, "should be visible");
+		assert.strictEqual(aButtons[3].getVisible(), true, "should be visible");
+		assert.strictEqual(aButtons[4].getVisible(), false, "should be hidden");
+		assert.strictEqual(aButtons[5].getVisible(), true, "should be visible");
+		assert.strictEqual(aButtons[6].getVisible(), false, "should be hidden");
+		assert.strictEqual(aButtons[7].getVisible(), false, "should be hidden");
+
+		iVisibleButtons = null;
+		aButtons = null;
+	});
+
+	QUnit.test("calling _hideButtonsInOverflow when no buttons are in overflow", function (assert) {
+
+		var aButtons = [
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn0N",
+				text: "Button 0",
+				visible : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn1N",
+				text: "Button 1",
+				visible : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn2N",
+				text: "Button 2",
+				visible : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn3N",
+				text: "Button 3",
+				visible : true
+			})
+		];
+
+		var iVisibleButtons = this.oMiniMenu._hideButtonsInOverflow(aButtons);
+
+		assert.strictEqual(iVisibleButtons, 4, "4 Buttons should be visible");
+
+		for (var i = 0; i < aButtons.length; i++) {
+			assert.strictEqual(aButtons[i].getVisible(), true, "Button " + i + " should be visible");
+		}
+
+		iVisibleButtons = null;
+		aButtons = null;
+	});
+
+	QUnit.test("calling _replaceLastVisibleButtonWithOverflowButton", function (assert) {
+
+		var aButtons = [
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn0R",
+				text: "Button 0",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn1R",
+				text: "Button 1",
+				visible : false,
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn2R",
+				text: "Button 2",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn3R",
+				text: "Button 3",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn4R",
+				text: "Button 4",
+				visible : false,
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn5R",
+				text: "Button 5",
+				visible : true,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn6R",
+				text: "Button 6",
+				visible : false,
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn7R",
+				text: "Button 7",
+				visible : false,
+				enabled : true
+			})
+		];
+
+		this.oMiniMenu._replaceLastVisibleButtonWithOverflowButton(aButtons);
+
+		assert.strictEqual(aButtons[5].getVisible(), false, "should be hidden");
+
+		var oLastButton = this.oMiniMenu.getButtons()[this.oMiniMenu.getButtons().length - 1];
+
+		assert.strictEqual(oLastButton.getIcon(), "sap-icon://overflow", "Last Button should be the Overflow Button.");
+
+		oLastButton = null;
+		aButtons = null;
+	});
+
+	QUnit.test("calling _setButtonsForMiniMenu with 3 disabled Buttons", function (assert) {
+
+		var aButtons = [
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn0S",
+				text: "Button 0",
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn1S",
+				text: "Button 1",
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn2S",
+				text: "Button 2",
+				enabled : false
+			})
+		];
+
+		var spyEnabledButtons = sinon.spy(this.oMiniMenu, "_getNumberOfEnabledButtons");
+		var spyHideDisabled = sinon.spy(this.oMiniMenu, "_hideDisabledButtons");
+		var spyHideInOverflow = sinon.spy(this.oMiniMenu, "_hideButtonsInOverflow");
+		var spyReplaceLast = sinon.spy(this.oMiniMenu, "_replaceLastVisibleButtonWithOverflowButton");
+		var spyCreateOverflow = sinon.spy(this.oMiniMenu, "_createOverflowButton");
+
+		this.oMiniMenu._setButtonsForMiniMenu(aButtons, new sap.m.Button({id : "btn0_"}));
+
+		for (var i = 0; i < aButtons.length; i++) {
+			assert.notEqual(aButtons[i].getTooltip(), "", "ToolTip shouldn't be empty string");
+		}
+
+		sinon.assert.calledOnce(spyEnabledButtons);
+		sinon.assert.notCalled(spyHideDisabled);
+		sinon.assert.calledOnce(spyHideInOverflow);
+		sinon.assert.notCalled(spyReplaceLast);
+		sinon.assert.notCalled(spyCreateOverflow);
+
+		aButtons = null;
+		spyEnabledButtons = null;
+		spyHideDisabled = null;
+		spyHideInOverflow = null;
+		spyReplaceLast = null;
+		spyCreateOverflow = null;
+	});
+
+	QUnit.test("calling _setButtonsForMiniMenu with 2 enabled and 2 disabled buttons", function (assert) {
+
+		var aButtons = [
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn0B",
+				text: "Button 0",
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn1B",
+				text: "Button 1",
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn2B",
+				text: "Button 2",
+				enabled : false
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn3B",
+				text: "Button 3",
+				enabled : true
+			})
+		];
+
+		var spyEnabledButtons = sinon.spy(this.oMiniMenu, "_getNumberOfEnabledButtons");
+		var spyHideDisabled = sinon.spy(this.oMiniMenu, "_hideDisabledButtons");
+		var spyHideInOverflow = sinon.spy(this.oMiniMenu, "_hideButtonsInOverflow");
+		var spyReplaceLast = sinon.spy(this.oMiniMenu, "_replaceLastVisibleButtonWithOverflowButton");
+		var spyCreateOverflow = sinon.spy(this.oMiniMenu, "_createOverflowButton");
+
+		this.oMiniMenu._setButtonsForMiniMenu(aButtons, new sap.m.Button({id : "btn1_"}));
+
+		sinon.assert.calledOnce(spyEnabledButtons);
+		sinon.assert.calledOnce(spyHideDisabled);
+		sinon.assert.calledOnce(spyHideInOverflow);
+		sinon.assert.notCalled(spyReplaceLast);
+		sinon.assert.calledOnce(spyCreateOverflow);
+
+		aButtons = null;
+		spyEnabledButtons = null;
+		spyHideDisabled = null;
+		spyHideInOverflow = null;
+		spyReplaceLast = null;
+		spyCreateOverflow = null;
+	});
+
+	QUnit.test("calling _setButtonsForMiniMenu with 3 enabled and 1 disabled buttons", function (assert) {
+
+		this.oMiniMenu.setMaxButtonsDisplayed(3);
+
+		var aButtons = [
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn0M",
+				text: "Button 0",
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn1M",
+				text: "Button 1",
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn2M",
+				text: "Button 2",
+				enabled : true
+			}),
+
+			new sap.m.OverflowToolbarButton({
+				id: "btn3M",
+				text: "Button 3",
+				enabled : false
+			})
+		];
+
+		var spyEnabledButtons = sinon.spy(this.oMiniMenu, "_getNumberOfEnabledButtons");
+		var spyHideDisabled = sinon.spy(this.oMiniMenu, "_hideDisabledButtons");
+		var spyHideInOverflow = sinon.spy(this.oMiniMenu, "_hideButtonsInOverflow");
+		var spyReplaceLast = sinon.spy(this.oMiniMenu, "_replaceLastVisibleButtonWithOverflowButton");
+		var spyCreateOverflow = sinon.spy(this.oMiniMenu, "_createOverflowButton");
+
+		this.oMiniMenu._setButtonsForMiniMenu(aButtons, new sap.m.Button({id : "btn2_"}));
+
+		sinon.assert.calledOnce(spyEnabledButtons);
+		sinon.assert.calledOnce(spyHideDisabled);
+		sinon.assert.calledOnce(spyHideInOverflow);
+		sinon.assert.calledOnce(spyReplaceLast);
+		sinon.assert.calledOnce(spyCreateOverflow);
+
+		aButtons = null;
+		spyEnabledButtons = null;
+		spyHideDisabled = null;
+		spyHideInOverflow = null;
+		spyReplaceLast = null;
+		spyCreateOverflow = null;
+	});
+
+	QUnit.test("calling show with contextMenu = true", function (assert) {
+
+		var spyMiniMenu = sinon.spy(this.oMiniMenu, "_setButtonsForMiniMenu");
+		var spyContextMenu = sinon.spy(this.oMiniMenu, "_makeAllButtonsVisible");
+
+		var oBtn = new sap.m.Button({}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		this.oMiniMenu.show(oBtn, true, {x : 0, y : 0});
+
+		sinon.assert.notCalled(spyMiniMenu);
+		sinon.assert.calledOnce(spyContextMenu);
+
+		spyMiniMenu.reset();
+		spyContextMenu.reset();
+
+		this.oMiniMenu.show(oBtn, false);
+
+		sinon.assert.calledOnce(spyMiniMenu);
+		sinon.assert.notCalled(spyContextMenu);
+
+		spyMiniMenu = null;
+		spyContextMenu = null;
 	});
 });
