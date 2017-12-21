@@ -83,7 +83,6 @@ sap.ui.define([
                 })
             });
 
-            oPopover.oPopup.attachOpened(this._popupOpened, this);
             oPopover.oPopup.attachClosed(this._popupClosed, this);
             this.addDependent(oPopover);
             oPopover.addStyleClass("sapUiDtMiniMenu");
@@ -99,7 +98,6 @@ sap.ui.define([
                 })
             });
 
-            oPopoverExpanded.oPopup.attachOpened(this._popupOpened, this);
             oPopoverExpanded.oPopup.attachClosed(this._popupClosed, this);
             this.addDependent(oPopoverExpanded);
             oPopoverExpanded.addStyleClass("sapUiDtMiniMenu");
@@ -127,7 +125,6 @@ sap.ui.define([
             this.getPopover(false).oPopup.detachClosed(this._popupClosed, this);
             this.getPopover(true).detachBrowserEvent("contextmenu", this._onContextMenu, this);
             this.getPopover(false).detachBrowserEvent("contextmenu", this._onContextMenu, this);
-            window.removeEventListener("scroll", this._close, {capture: true, once: true});
         },
 
         /**
@@ -616,7 +613,11 @@ sap.ui.define([
          * @return {float} the height of a popover arrow
          */
         _getArrowHeight : function (bCompact) {
-            return bCompact ? 0.5625 : 0.5625;
+            if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge) {
+                return bCompact ? 0.5 : 0.5;
+            } else {
+                return bCompact ? 0.5625 : 0.5625;
+            }
         },
 
         /**
@@ -688,11 +689,12 @@ sap.ui.define([
             };
 
             var oButton;
+            var oButton2;
 
             if (oSource){
-                oButton = new sap.m.OverflowToolbarButton({
+                oButton = new sap.m.Button({
                     icon: button.icon ? button.icon : "sap-icon://incident",
-                    text: button.getText(oOverlay),
+                    tooltip: button.getText(oOverlay),
                     type: "Transparent",
                     enabled: button.getEnabled(oOverlay),
                     press: handler,
@@ -703,8 +705,30 @@ sap.ui.define([
                     id : button.id
                 });
 
+                oButton2 = new sap.m.Button({
+                    icon: button.icon ? button.icon : "sap-icon://incident",
+                    text: button.getText(oOverlay),
+                    type: "Transparent",
+                    enabled: button.getEnabled(oOverlay),
+                    press: handler,
+                    layoutData: new sap.m.FlexItemData({})
+                });
+
+                oButton2.data({
+                    id : button.id
+                });
+
             } else {
-                oButton = new sap.m.OverflowToolbarButton({
+                oButton = new sap.m.Button({
+                    icon: button.icon,
+                    tooltip: button.getText(oOverlay),
+                    type: "Transparent",
+                    enabled: button.getEnabled(oOverlay),
+                    press: button.handler,
+                    layoutData: new sap.m.FlexItemData({})
+                });
+
+                oButton2 = new sap.m.Button({
                     icon: button.icon,
                     text: button.getText(oOverlay),
                     type: "Transparent",
@@ -715,9 +739,12 @@ sap.ui.define([
             }
 
             this.setProperty("buttons", this.getProperty("buttons").concat(button));
-            this.getFlexbox().addItem(oButton);
+
+            this.getFlexbox(true).addItem(oButton2);
+            this.getFlexbox(false).addItem(oButton);
 
             oButton = null;
+            oButton2 = null;
 
             return this;
         },
@@ -730,9 +757,8 @@ sap.ui.define([
         close : function (){
             if (this.getPopover()) {
 
-                jQuery(this.getPopover().getDomRef()).hide();
-
-                this.getPopover().close();
+                this.getPopover(true).close();
+                this.getPopover(false).close();
 
                 // deletes the overflow button if there is one
                 if (this.getProperty("buttons").length > this.getProperty("maxButtonsDisplayed")){
@@ -756,7 +782,8 @@ sap.ui.define([
         removeButton: function (index) {
             this.setProperty("buttons", this.getProperty("buttons").splice(index, 1));
 
-            return this.getFlexbox().removeItem(index);
+            this.getFlexbox(true).removeItem(index);
+            return this.getFlexbox(false).removeItem(index);
         },
 
         /**
@@ -766,7 +793,8 @@ sap.ui.define([
          */
         removeAllButtons: function () {
             this.setProperty("buttons", []);
-            return this.getFlexbox().removeAllItems();
+            this.getFlexbox(true).removeAllItems();
+            return this.getFlexbox(false).removeAllItems();
         },
 
         /**
@@ -883,25 +911,14 @@ sap.ui.define([
 
             this.fireOverflowButtonPressed();
 
-            var aButtons = this.getButtons();
+           var aButtons = this.getButtons();
 
             this.getPopover().close();
 
             this._bUseExpPop = true;
 
-            this.removeAllButtons();
-
-            aButtons.forEach(function (oButton) {
-                // removes all tooltips
-                // makes the hidden buttons and their text visible
-                oButton.setTooltip("");
-                oButton.setVisible(true);
-                oButton._bInOverflow = true;
-                this.getFlexbox().addItem(oButton);
-            }.bind(this));
-
             // makes the overflow Button invisible
-            aButtons[aButtons.length - 1].setVisible(false);
+            this.getButtons()[aButtons.length - 1].setVisible(false);
 
             // set the placement of the MiniMenu
             var fakeDiv = this._placeMiniMenu(this._oTarget, false, true);
@@ -916,8 +933,6 @@ sap.ui.define([
 	     */
         _popupClosed : function(){
 
-            window.removeEventListener("scroll", this._close, {capture: true, once: true});
-
             if (this.getPopover()){ //in case the Menu was destroyed
 
                 this.fireClosed();
@@ -931,13 +946,6 @@ sap.ui.define([
             }
 
             this.isOpen = false;
-        },
-
-        /**
-         * Is called when Popup is opened. Attaches the scroll Listener
-         */
-        _popupOpened : function(){
-            window.addEventListener("scroll", this._close, {capture: true, once: true});
         },
 
         /**
