@@ -945,6 +945,23 @@ sap.ui.require([
 		fakeDiv = null;
 	});
 
+	QUnit.test("calling _placeMiniMenuWrapper", function (assert) {
+
+		var oBtn = new sap.m.Button({}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		this.oMiniMenu.show(oBtn, false);
+
+		this.oMiniMenu._placeMiniMenuWrapper();
+
+		var oMiniMenuWrapper = document.getElementById("MiniMenuWrapper");
+
+		assert.ok(oMiniMenuWrapper instanceof Element, "The MiniMenu wrapper should be an Element in the DOM");
+
+		oBtn = null;
+	});
+
 	QUnit.test("comparing the height of an actual rendered sap.m.Button to the return value of _getButtonHeight", function (assert) {
 
 		var oCozyBtn = new sap.m.Button({
@@ -966,8 +983,8 @@ sap.ui.require([
 		var fCalculatedCompactHeight = this.oMiniMenu._getButtonHeight(true);
 		var fMeasuredCompactHeight = parseInt(jQuery(oCompactBtn.getDomRef()).css("height"), 10) / 16;
 
-		assert.strictEqual(fCalculatedCozyHeight, fMeasuredCozyHeight, "To prevent rendering the MiniMenu a bunch of times its height is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons have changed and the return value of _getButtonHeight (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
-		assert.strictEqual(fCalculatedCompactHeight, fMeasuredCompactHeight, "To prevent rendering the MiniMenu a bunch of times height size is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons have changed and the return value of _getButtonHeight (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
+		assert.strictEqual(fCalculatedCozyHeight, fMeasuredCozyHeight, "To prevent rendering the MiniMenu a bunch of times its height is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getButtonHeight (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
+		assert.strictEqual(fCalculatedCompactHeight, fMeasuredCompactHeight, "To prevent rendering the MiniMenu a bunch of times height size is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getButtonHeight (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
 
 		oCozyBtn = null;
 		oCompactBtn = null;
@@ -996,8 +1013,8 @@ sap.ui.require([
 		var fCalculatedCompactWidth = this.oMiniMenu._getButtonWidth(true);
 		var fMeasuredCompactWidth = parseInt(jQuery(oCompactBtn.getDomRef()).css("width"), 10) / 16;
 
-		assert.strictEqual(fCalculatedCozyWidth, fMeasuredCozyWidth, "To prevent rendering the MiniMenu a bunch of times its width is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons have changed and the return value of _getButtonWidth (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
-		assert.strictEqual(fCalculatedCompactWidth, fMeasuredCompactWidth, "To prevent rendering the MiniMenu a bunch of times its width is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons have changed and the return value of _getButtonWidth (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
+		assert.strictEqual(fCalculatedCozyWidth, fMeasuredCozyWidth, "To prevent rendering the MiniMenu a bunch of times its width is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getButtonWidth (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
+		assert.strictEqual(fCalculatedCompactWidth, fMeasuredCompactWidth, "To prevent rendering the MiniMenu a bunch of times its width is calculated based on the css values of sap.m.Button. If this test fails the css values of sap.m.Buttons may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getButtonWidth (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
 
 		oCozyBtn = null;
 		oCompactBtn = null;
@@ -1039,8 +1056,8 @@ sap.ui.require([
 		oCozyPop.close();
 		oCompactPop.close();
 
-		assert.strictEqual(fCalculatedCozyArrowSize, fMeasuredCozyArrowSize, "To prevent rendering the MiniMenu a bunch of times the size of the Arrow is calculated based on the css values of sap.m.Popover. If this test fails the css values of sap.m.Popover have changed and the return value of _getArrowHeight (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
-		assert.strictEqual(fCalculatedCompactArrowSize, fMeasuredCompactArrowSize, "To prevent rendering the MiniMenu a bunch of times the size of the Arrow is calculated based on the css values of sap.m.Popover. If this test fails the css values of sap.m.Popover have changed and the return value of _getArrowHeight (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
+		assert.strictEqual(fCalculatedCozyArrowSize, fMeasuredCozyArrowSize, "To prevent rendering the MiniMenu a bunch of times the size of the Popover's Arrow is calculated based on the css values of sap.m.Popover. If this test fails the css values of sap.m.Popover may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getArrowHeight (for bCompact = false) has to be adjusted to whatever the expected value was in this test.");
+		assert.strictEqual(fCalculatedCompactArrowSize, fMeasuredCompactArrowSize, "To prevent rendering the MiniMenu a bunch of times the size of the Popover's Arrow is calculated based on the css values of sap.m.Popover. If this test fails the css values of sap.m.Popover may have changed. Please run this test again to make sure it didn't fail randomly. If it fails again the return value of _getArrowHeight (for bCompact = true) has to be adjusted to whatever the expected value was in this test.");
 
 		oCozyBtn = null;
 		oCompactBtn = null;
@@ -1574,7 +1591,7 @@ sap.ui.require([
 		spyCreateOverflow = null;
 	});
 
-	QUnit.test("calling show with contextMenu = true", function (assert) {
+	QUnit.test("calling show with contextMenu = true and contextMenu = false", function (assert) {
 
 		var spyMiniMenu = sinon.spy(this.oMiniMenu, "_setButtonsForMiniMenu");
 		var spyContextMenu = sinon.spy(this.oMiniMenu, "_makeAllButtonsVisible");
