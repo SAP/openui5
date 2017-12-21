@@ -313,6 +313,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 		this.getBinding("items").expand(iIndex);
 	};
 
+	Tree.prototype.isGrouped = function() {
+		return false;
+	};
+
 	return Tree;
 
 });
