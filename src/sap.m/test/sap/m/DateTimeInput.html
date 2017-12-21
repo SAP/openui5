@@ -75,44 +75,46 @@
 		title : "DateTimeInput Controls",
 		enableScrolling : true,
 		content : [
-			list = new sap.m.List({
-				inset : false,
-				width : "100%",
-				items : [
-					new sap.m.InputListItem({
-						label : "Christmas",
-						content : oDTI1 = new sap.m.DateTimeInput("DTI1", {
-							placeholder : "Date Picker",
-							change : function(e) {
-								var oDate = e.getParameters().newDateValue;
-								if (oDate && oDate.getMonth() == 11 && oDate.getDate() == 25) {
-									oDTI1.setValueState("None");
-								} else {
-									oDTI1.setValueState("Error");
-								}
-							}
-						})
-					}), new sap.m.InputListItem({
-						label : "Duration",
-						content : oDTI2 = new sap.m.DateTimeInput("DTI2", {
-							placeholder : "Time Picker",
-							type : "Time",
-							valueFormat : "HH:mm",
-							value : "11:23",
-							displayFormat : "H'h' m'm'",
-							change : handleChange
-						})
-					}), new sap.m.InputListItem({
-						label : "DateTime",
-						content : oDTI3 = new sap.m.DateTimeInput("DTI3", {
-							placeholder : "DateTime",
-							type : "DateTime",
-							change : handleChange
-						})
-					})
-				]
+			oLabel = new sap.m.Label({
+				text: "Christmas:",
+				labelFor: "oDTI1"
 			}),
-
+			oDTI1 = new sap.m.DateTimeInput("DTI1", {
+				placeholder : "Date Picker",
+				change : function(e) {
+					var oDate = e.getParameters().newDateValue;
+					if (oDate && oDate.getMonth() == 11 && oDate.getDate() == 25) {
+						oDTI1.setValueState("None");
+					} else {
+						oDTI1.setValueState("Error");
+					}
+				}
+			}),
+			oLabel2 = new sap.m.Label({
+				text: "Duration:",
+				labelFor: "oDTI2"
+			}),
+			oDTI2 = new sap.m.DateTimeInput("DTI2", {
+				placeholder : "Time Picker",
+				type : "Time",
+				valueFormat : "HH:mm",
+				value : "11:23",
+				displayFormat : "H'h' m'm'",
+				change : handleChange
+			}),
+			oLabel3 = new sap.m.Label({
+				text: "DateTime:",
+				labelFor: "oDTI3"
+			}),
+			oDTI3 = new sap.m.DateTimeInput("DTI3", {
+				placeholder : "DateTime",
+				type : "DateTime",
+				change : handleChange
+			}),
+			oLabel4 = new sap.m.Label({
+				text: "Free style date value assingment according to valueFormat:",
+				labelFor: "oDTI4"
+			}),
 			// free style date value assingment according to valueFormat
 			oDTI4 = new sap.m.DateTimeInput("DTI4", {
 				value : "29-05, 2012",
@@ -121,7 +123,10 @@
 				width : "20%",
 				change : handleChange
 			}),
-
+			oLabel5 = new sap.m.Label({
+				text: "Formats which includes zones 'Z' can be used for local date time:",
+				labelFor: "oDTI4"
+			}),
 			// formats which includes zones "Z" can be used for local date time
 			oDTI5 = new sap.m.DateTimeInput("DTI5", {
 				width : "99%",
@@ -132,6 +137,9 @@
 				change : handleChange
 			}),
 
+			oTitle = new sap.m.Title({
+				text: "Data binding usage"
+			}),
 			// data binding usage
 			oDTI6 = new sap.m.DateTimeInput("DTI6", {
 				value : {
