@@ -2,7 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(function () {
+sap.ui.define([
+	"sap/ui/rta/Utils"
+], function (Utils) {
 	"use strict";
 
 	return {
@@ -11,7 +13,12 @@ sap.ui.define(function () {
 		},
 		actions: {
 			remove: "hideControl",
-			reveal : "unhideControl"
+			reveal: {
+				changeType: "unhideControl",
+				getLabel: function(oControl) {
+					return Utils.getLabelForElement(oControl.getHeader());
+				}
+			}
 		}
 	};
 }, /* bExport= */ false);
