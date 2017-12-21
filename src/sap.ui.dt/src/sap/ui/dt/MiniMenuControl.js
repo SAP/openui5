@@ -187,6 +187,8 @@ sap.ui.define([
 
             this.getPopover().openBy(this._oTarget);
 
+            this._placeMiniMenuWrapper();
+
             this.getPopover().setVisible(true);
             this.isOpen = true;
             this.openNew = false;
@@ -546,6 +548,27 @@ sap.ui.define([
             iTop /= 2;
 
             return iTop;
+        },
+
+        /**
+         * Places a wrapper behind the MiniMenu to prevent the MiniMenu from being closed by hover
+         */
+        _placeMiniMenuWrapper: function () {
+
+            jQuery("#MiniMenuWrapper").remove();
+
+            var $Popover = jQuery(this.getPopover().getDomRef());
+
+            var iArr = parseInt(jQuery("#" + this.getPopover().getId() + "-arrow").height(), 10);
+
+            var iPopTop = parseInt($Popover.css("top"), 10) - $Popover.position().top - iArr;
+            var iPopLeft = parseInt($Popover.css("left"), 10) - $Popover.position().left - iArr;
+            var iPopWidth = parseInt($Popover.css("width"), 10) + 2 * iArr;
+            var iPopHeight = parseInt($Popover.css("height"), 10) + 2 * iArr;
+            var iPopZIndex = $Popover.css("z-index") - 1;
+
+            jQuery("#sap-ui-static").append("<div id=\"MiniMenuWrapper\" style = \"position:absolute;top:" + iPopTop + "px;left:" + iPopLeft + "px;width:" + iPopWidth + "px;height:" + iPopHeight + "px;z-index:" + iPopZIndex + "\" />");
+
         },
 
         /**
@@ -921,9 +944,9 @@ sap.ui.define([
             this.getButtons()[aButtons.length - 1].setVisible(false);
 
             // set the placement of the MiniMenu
-            var fakeDiv = this._placeMiniMenu(this._oTarget, false, true);
+            var oFakeDiv = this._placeMiniMenu(this._oTarget, false, true);
 
-            this.getPopover().openBy(fakeDiv);
+            this.getPopover().openBy(oFakeDiv);
         },
 
         /**
@@ -932,6 +955,8 @@ sap.ui.define([
          * (A new Menu would show before the direction was set)
 	     */
         _popupClosed : function(){
+
+            jQuery("#MiniMenuWrapper").remove();
 
             if (this.getPopover()){ //in case the Menu was destroyed
 
