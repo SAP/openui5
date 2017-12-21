@@ -2201,6 +2201,64 @@
 		});
 	});
 
+	QUnit.test("Percent format with custom pattern", function(assert) {
+		var oLocale = new sap.ui.core.Locale("tr-TR");
+
+		// no custom pattern
+		var oFormat = sap.ui.core.format.NumberFormat.getPercentInstance(oLocale);
+
+		assert.equal(oFormat.format(.1234567), "%12,34567", ".1234567");
+		assert.equal(oFormat.parse("%12,34567"), 0.1234567, "%12,34567");
+		assert.deepEqual(oFormat.parse("12,34567%"), NaN, "12,34567%");
+
+		// custom pattern
+		oFormat = sap.ui.core.format.NumberFormat.getPercentInstance({
+			pattern: "%#####.#####"
+		}, oLocale);
+
+		assert.equal(oFormat.format(.1234567), "%12,34567", ".1234567");
+		assert.equal(oFormat.parse("%12,34567"), 0.1234567, "%12,34567");
+		assert.deepEqual(oFormat.parse("12,34567%"), NaN, "12,34567%");
+
+		//change pattern such that percent symbol is at the end
+		oFormat = sap.ui.core.format.NumberFormat.getPercentInstance({
+			pattern: "#,##0%"
+		}, oLocale);
+
+		assert.equal(oFormat.format(12), "1.200%", "12");
+		assert.equal(oFormat.format(12.34), "1.234%", "12.34");
+		assert.equal(oFormat.format(.1234567), "12%", ".1234567");
+		assert.equal(oFormat.format(-.1234567), "-12%", "-.1234567");
+		assert.equal(oFormat.format(.1234), "12%", ".1234");
+
+		assert.equal(oFormat.parse("1.200%"), 12, "1.200%");
+		assert.equal(oFormat.parse("1.234%"), 12.34, "1.234%");
+		assert.deepEqual(oFormat.parse("%1.200"), NaN, "NaN because does not match pattern '#,##0%'");
+		assert.deepEqual(oFormat.parse("%12.345%"), NaN, "NaN because does not match pattern '#,##0%'");
+	});
+
+	QUnit.test("Currency with percentage symbol",  function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(oLocale);
+
+		assert.equal(oFormat.format(52.3, "%").toString(), "%\xa052.30", "52.3%");
+		assert.deepEqual(oFormat.parse("%\xa052.30"), [52.3, "%"], "Percentage sign is treated as currency unit");
+
+		assert.equal(oFormat.format(52.3, "xsd").toString(), "xsd\xa052.30", "xsd 52.30");
+		assert.deepEqual(oFormat.parse("xsd\xa052.30"), [52.3, "xsd"], "'xsd' is treated as currency unit");
+	});
+
+	QUnit.test("Float with percentage symbol",  function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getInstance(oLocale);
+
+		assert.equal(oFormat.format(52.3, "%").toString(), "52.3", "52.3%");
+		assert.deepEqual(oFormat.parse("52.3%"), 0.523, "treated as percent");
+
+		assert.equal(oFormat.format(52.3, "xsd").toString(), "52.3", "xsd 52.30");
+		assert.deepEqual(oFormat.parse("52.3xsd"), NaN, "'xsd' cannot be parsed as number");
+	});
+
 	</script>
 
 </head>
