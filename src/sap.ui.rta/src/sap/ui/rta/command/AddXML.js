@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	'jquery.sap.global',
-	 'sap/ui/rta/command/FlexCommand'
+	'sap/ui/rta/command/FlexCommand'
 ], function(
 	jQuery,
 	FlexCommand
@@ -31,6 +31,9 @@ sap.ui.define([
 				fragment : {
 					type : "string"
 				},
+				fragmentPath : {
+					type : "string"
+				},
 				targetAggregation : {
 					type : "string"
 				},
@@ -48,15 +51,26 @@ sap.ui.define([
 	});
 
 	AddXML.prototype._getChangeSpecificData = function() {
-
 		var mSpecificInfo = {
 			changeType : this.getChangeType(),
-			fragment: this.getFragment(),
+			fragmentPath: this.getFragmentPath(),
 			targetAggregation: this.getTargetAggregation(),
 			index: this.getIndex()
 		};
 
 		return mSpecificInfo;
+	};
+
+	/**
+	 * @override
+	 */
+	AddXML.prototype._applyChange = function(vChange, bNotMarkAsAppliedChange) {
+		vChange.getDefinition().content.fragment = this.getFragment();
+		return FlexCommand.prototype._applyChange.apply(this, arguments)
+
+		.then(function() {
+			delete vChange.getDefinition().content.fragment;
+		});
 	};
 
 	return AddXML;
