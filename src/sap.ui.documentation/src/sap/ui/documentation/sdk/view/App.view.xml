@@ -79,7 +79,7 @@
 					<menu>
 						<Menu class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
 							<items>
-								<MenuItem text="{= ${versionData>/isBetaVersion} ? 'Beta' : ''} Version {versionData>/version}" visible="{appView>/bPhoneSize}" />
+								<MenuItem text="{= ${versionData>/isBetaVersion} ? 'Beta' : ''} Version {versionData>/version} {=${versionData>/isDevVersion} ? '- development in progress!' : ''}" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="About" />
 								<MenuItem text="Legal" visible="{=!${versionData>/isOpenUI5}}"/>
