@@ -63,6 +63,7 @@ sap.ui.define([
 
 		this._aMenuItems = [];
 		this._aGroupedItems = [];
+		this._aPluginsWithBusyFunction = [];
 	};
 
 
@@ -137,10 +138,15 @@ sap.ui.define([
 	 * @param {boolean} bBeSubMenu whether the new MiniMenu is a SubMenu opened by a button inside another MiniMenu
 	 */
 	MiniMenu.prototype.open = function (oEvent, oOverlay, bContextMenu, bBeSubMenu) {
+		this._aPluginsWithBusyFunction = [];
 		this.setContextElement(oOverlay.getElementInstance());
 
 		var aPlugins = this.getDesignTime().getPlugins();
-
+		aPlugins.forEach(function (oPlugin) {
+			if (oPlugin.isBusy) {
+				this._aPluginsWithBusyFunction.push(oPlugin);
+			}
+		}.bind(this));
 
 		//Remove all previous entries retrieved by plugins (the list should always be rebuilt)
 		this._aMenuItems = this._aMenuItems.filter(function (mMenuItemEntry) {
@@ -433,21 +439,13 @@ sap.ui.define([
 	 * @private
 	 */
 	MiniMenu.prototype._shouldMiniMenuOpen = function (oEvent, bOverwriteOpenValue, onHover) {
-		if (
-			(
-				(this._currentOverlay == sap.ui.getCore().byId(oEvent.currentTarget.id) &&
-					(this.oMiniMenu.isOpen || bOverwriteOpenValue)
-				) ||
-				(this.isMenuOpeningLocked() && !this._touched)
-			) ||
-			!onHover && !!this._currentOverlay && this._checkForPluginLock(this._currentOverlay)
-		) {
-			return false;
-		} else {
+		if (!this._checkForPluginLock() && (!this.isMenuOpeningLocked() || this._touched)){
 			if (!onHover) {
 				this._currentOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 			}
 			return true;
+		} else {
+			return false;
 		}
 	};
 
@@ -468,7 +466,6 @@ sap.ui.define([
 	 * Unlocks the Opening of the MiniMenu
 	 */
 	MiniMenu.prototype.unlockMenuOpening = function () {
-		this.fireClosedMiniMenu();
 		this._openingLocked = false;
 		if (this._asyncLock) {
 			this.lockMenuOpening(true);
@@ -499,32 +496,19 @@ sap.ui.define([
 	 * @return {boolean} true, if locked; false if not
 	 */
 
-	MiniMenu.prototype._checkForPluginLock = function (oOverlay) {
-		var aPlugins = this.getDesignTime().getPlugins();
+	MiniMenu.prototype._checkForPluginLock = function () {
 
 		//As long as Selection doesn't work correctly on ios we need to ensure that the MiniMenu opens even if a plugin mistakenly locks it
 		if (Device.os.ios) {
 			return false;
-		} else if (oOverlay.getElementInstance() == undefined) { //If the last Overlay was deleted
-			return false;
 		}
 
-		//TODO in some() machen
-
-		for (var i2 = 0; i2 < aPlugins.length; i2++) {
-			var aPluginMenuItems = aPlugins[i2].getMenuItems(oOverlay) || [];
-			for (var i3 = 0; i3 < aPluginMenuItems.length; i3++) {
-				if (aPluginMenuItems[i3].preventMenu != undefined) {
-					if (typeof aPluginMenuItems[i3].preventMenu === "function" &&  aPluginMenuItems[i3].preventMenu() === true) {
-						return true;
-					} else if (aPluginMenuItems[i3].preventMenu === true) {
-						return true;
-					}
-				}
-			}
+		if (this._aPluginsWithBusyFunction.some(function (oPlugin){
+			return (typeof oPlugin.isBusy === "function" && oPlugin.isBusy());
+		})){
+			return true;
 		}
 
-		this.unlockMenuOpening();
 		return false;
 	};
 
