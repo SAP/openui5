@@ -176,11 +176,7 @@
 											<m:items>
 												<m:ColumnListItem>
 													<m:cells>
-														<custom:ParamText customClass="{parts: [{path: 'isSubProperty'},
-																								{path: 'isSubSubProperty'},
-																								{path: 'appView>/bPhoneSize'}],
-																								formatter: '.formatEventClassName'}"
-																		  text="{name}"/>
+														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
 
 														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}">
 															<m:HBox>
