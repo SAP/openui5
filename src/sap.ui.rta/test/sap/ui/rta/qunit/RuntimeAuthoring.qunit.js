@@ -8,6 +8,7 @@ sap.ui.require([
 	'sap/ui/comp/smartform/Group',
 	'sap/ui/comp/smartform/GroupElement',
 	'sap/ui/comp/smartform/SmartForm',
+	"sap/ui/core/BusyIndicator",
 	// internal
 	'sap/ui/Device',
 	'sap/ui/dt/plugin/ContextMenu',
@@ -40,6 +41,7 @@ sap.ui.require([
 	Group,
 	GroupElement,
 	SmartForm,
+	BusyIndicator,
 	Device,
 	ContextMenu,
 	DesignTimeMetadata,
@@ -731,6 +733,49 @@ sap.ui.require([
 		return this.oRta.stop().then(function() {
 			assert.ok(true, "then the promise got resolved");
 		});
+	});
+
+	QUnit.test("when calling '_deleteChanges successfully', ", function(assert){
+		var fnDone = assert.async();
+
+		var fnShowBusyIndicatorSpy = sandbox.spy(BusyIndicator, "show");
+		var fnHideBusyIndicatorSpy = sandbox.spy(BusyIndicator, "hide");
+
+		sandbox.stub(this.oRta._getFlexController(), "discardChanges", function(aChanges){
+			assert.ok(fnShowBusyIndicatorSpy.calledOnce, "then the busy indicator is shown");
+			assert.equal(aChanges.length, 2, "then the changes are correctly passed to the Flex Controller");
+			return Promise.resolve();
+		});
+
+		sandbox.stub(this.oRta, "_reloadPage", function(){
+			assert.ok(fnHideBusyIndicatorSpy.calledOnce, "then the busy indicator is hidden");
+			assert.ok(true, "and page reload is triggered");
+			fnDone();
+		});
+
+		this.oRta._deleteChanges();
+	});
+
+	QUnit.test("when calling '_deleteChanges and there is an error', ", function(assert){
+		var fnDone = assert.async();
+
+		var fnShowBusyIndicatorSpy = sandbox.spy(BusyIndicator, "show");
+		var fnHideBusyIndicatorSpy = sandbox.spy(BusyIndicator, "hide");
+		var fnReloadPageSpy = sandbox.spy(this.oRta, "_reloadPage");
+
+		sandbox.stub(this.oRta._getFlexController(), "discardChanges", function(aChanges){
+			assert.ok(fnShowBusyIndicatorSpy.calledOnce, "then the busy indicator is shown");
+			return Promise.reject("Error");
+		});
+
+		sandbox.stub(RtaUtils, "_showMessageBox", function(sIconType, sHeader, sMessage, sError){
+			assert.ok(fnHideBusyIndicatorSpy.calledOnce, "then the busy indicator is hidden");
+			assert.ok(fnReloadPageSpy.notCalled, "then the page does not reload");
+			assert.equal(sError, "Error", "and a message box shows the error to the user");
+			fnDone();
+		});
+
+		this.oRta._deleteChanges();
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with different plugin sets...", {
