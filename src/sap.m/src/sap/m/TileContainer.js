@@ -452,13 +452,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				},
 				oldCurrentPageIsLast: function() {
 					if (isNaN(iOldCurrentPage)) {
-						return;
+						return false;
 					}
 					return bRtl ? (iOldCurrentPage === 0) : (iOldCurrentPage === iOldCount - 1);
 				},
 				oldCurrentPageIsFirst: function() {
 					if (isNaN(iOldCurrentPage)) {
-						return;
+						return false;
 					}
 					return bRtl ? (iOldCurrentPage === iOldCount - 1) : (iOldCurrentPage === 0);
 				},
