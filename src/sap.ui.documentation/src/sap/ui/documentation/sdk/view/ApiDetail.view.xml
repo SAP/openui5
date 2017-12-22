@@ -74,7 +74,7 @@
 
 										<m:MessageStrip
 											visible="{=${/experimental} !== undefined}"
-											text="Experimental API since version {topics>/experimental/since} {topics>/experimental/text}"
+											text="Experimental API since version {/experimental/since} {/experimental/text}"
 											type="Warning"
 											showIcon="true"
 											showCloseButton="false"
