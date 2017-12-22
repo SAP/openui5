@@ -37,6 +37,10 @@ sap.ui.define([
 				},
 				styleClass: {
 					type: "string"
+				},
+				openOnHover: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			events: {
@@ -63,6 +67,11 @@ sap.ui.define([
 		this._aMenuItems = [];
 		this._aGroupedItems = [];
 		this._aPluginsWithBusyFunction = [];
+
+		this._oMousePosition = {
+			iMouseX: null,
+			iMouseY: null
+		};
 	};
 
 
@@ -136,9 +145,9 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent Event that triggered the menu to open
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @param {boolean} bContextMenu whether the contol should be opened as a context menu
-	 * @param {boolean} bBeSubMenu whether the new MiniMenu is a SubMenu opened by a button inside another MiniMenu
+	 * @param {boolean} bIsSubMenu whether the new MiniMenu is a SubMenu opened by a button inside another MiniMenu
 	 */
-	MiniMenu.prototype.open = function (oEvent, oOverlay, bContextMenu, bBeSubMenu) {
+	MiniMenu.prototype.open = function (oEvent, oOverlay, bContextMenu, bIsSubMenu) {
 		this._aPluginsWithBusyFunction = [];
 		this.setContextElement(oOverlay.getElementInstance());
 
@@ -151,7 +160,7 @@ sap.ui.define([
 
 		//Remove all previous entries retrieved by plugins (the list should always be rebuilt)
 		this._aMenuItems = this._aMenuItems.filter(function (mMenuItemEntry) {
-			if (mMenuItemEntry.bPersistOneTime){
+			if (mMenuItemEntry.bPersistOneTime) {
 				mMenuItemEntry.bPersistOneTime = false;
 				return true;
 			}
@@ -160,7 +169,7 @@ sap.ui.define([
 
 		this._aGroupedItems = [];
 
-		if (!bBeSubMenu){
+		if (!bIsSubMenu) {
 
 			aPlugins.forEach(function (oPlugin) {
 				var aPluginMenuItems = oPlugin.getMenuItems(oOverlay) || [];
@@ -188,7 +197,7 @@ sap.ui.define([
 			this.oMiniMenu.setButtons(aMenuItems, this, oOverlay);
 
 			this.oMiniMenu.setStyleClass(this.getStyleClass());
-			if (bBeSubMenu){
+			if (bIsSubMenu) {
 				this.oMiniMenu.setOpenNew(true);
 			}
 
@@ -234,25 +243,25 @@ sap.ui.define([
 
 		if (oOverlay && oOverlay.isSelectable()) {
 			oEvent.preventDefault();
-			if (!this._touched) {
-				this._currentOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+			if (!this._bTouched) {
+				this._oCurrentOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 				this.oMiniMenu.close();
 				this._bOpenedByHover = false;
 
 				//IE sometimes returns null for document.activeElement
-				if (document.activeElement){
+				if (document.activeElement) {
 					document.activeElement.blur();
 				}
 
 				clearTimeout(this.hoverTimeout);
 
-				this._touched = false;
+				this._bTouched = false;
 				this._ensureSelection(oOverlay);
 
-				clearTimeout(this.timeoutClick);
+				clearTimeout(this.clickTimeout);
 
 				this.lockMenuOpening();
-				this.oMiniMenu.openNew = true;
+				this.oMiniMenu.bOpenNew = true;
 				this.open(oEvent, oOverlay, true);
 				oEvent.stopPropagation();
 			}
@@ -267,7 +276,7 @@ sap.ui.define([
 	 */
 	MiniMenu.prototype._onItemSelected = function (oEvent) {
 		this.oMiniMenu.close();
-		this._ensureSelection(this._currentOverlay);
+		this._ensureSelection(this._oCurrentOverlay);
 		this.setFocusLock(true);
 
 		var aSelection = [],
@@ -298,16 +307,17 @@ sap.ui.define([
 	 * @private
 	 */
 	MiniMenu.prototype._onTouch = function (oEvent) {
+
+		this._bTouched = true;
+
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 		if (oOverlay && oOverlay.isSelectable()) {
-			this._ensureSelection(oOverlay);
 			oEvent.stopPropagation();
-
 			if (this.touchTimeout) {
 				clearTimeout(this.touchTimeout);
 			}
 			this.touchTimeout = setTimeout(function () {
-				this._touched = true;
+				this._bTouched = true;
 				this._startOpening(oEvent);
 			}.bind(this), this.iMenuTouchOpeningDelay);
 		}
@@ -320,22 +330,23 @@ sap.ui.define([
 	 * @private
 	 */
 	MiniMenu.prototype._onClick = function (oEvent) {
+
 		if (!Device.os.ios && !oEvent.ctrlKey) {
 			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 			if (oOverlay && oOverlay.isSelectable()) {
 
-				if (this.isMenuOpeningLocked() && !this._touched) {
+				if (this.isMenuOpeningLocked() && !this._bTouched) {
 					this.resetFocus();
 					sap.ui.getCore().byId(oEvent.currentTarget.id).setSelected(false);
 					this.unlockMenuOpening();
 					this._onHover(oEvent);
-					this._touched = false;
+					this._bTouched = false;
 					this.oMiniMenu.close();
 					return;
 				}
 
-				this._touched = false;
-				this.timeoutClick = setTimeout(function () {
+				this._bTouched = false;
+				this.clickTimeout = setTimeout(function () {
 					this._startOpening(oEvent, true);
 				}.bind(this), this.iMenuLeftclickOpeningDelay);
 				oEvent.stopPropagation();
@@ -356,34 +367,32 @@ sap.ui.define([
 		clearTimeout(this.hoverTimeout);
 		this._bOpenedByHover = false;
 
-		if (this._tempTarget != oEvent.currentTarget.id) {
-			clearTimeout(this.timeoutClick);
-
+		if (this._oTempTarget != oEvent.currentTarget.id) {
+			clearTimeout(this.clickTimeout);
 		}
 
-		this._tempTarget = oEvent.currentTarget.id;
+		this._oTempTarget = oEvent.currentTarget.id;
 
+		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var sTargetClasses = oEvent.target.className;
 
-			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-			var sTargetClasses = oEvent.target.className;
+		if (oOverlay && oOverlay.isSelectable() && sTargetClasses.indexOf("sapUiDtOverlay") > -1 && (!this.isMenuOpeningLocked() || this._bTouched)) {
 
-			if (oOverlay && oOverlay.isSelectable() && sTargetClasses.indexOf("sapUiDtOverlay") > -1 && (!this.isMenuOpeningLocked() || this._touched)) {
+			oEvent.stopPropagation();
 
-				oEvent.stopPropagation();
-
-				if (this._shouldMiniMenuOpen(oEvent, !this.oMiniMenu.isOpen)) {
-					this._ensureSelection(oOverlay);
-					if (this._currentOverlay.isSelected() || Device.os.android) { //<-- Workaround
-						if (bLockOpening) {
-							this.lockMenuOpening();
-						}
-						this.oMiniMenu.openNew = true;
-						this.open(oEvent, oOverlay);
-
-						return true;
+			if (this._shouldMiniMenuOpen(oEvent, !this.oMiniMenu.bOpen)) {
+				this._ensureSelection(oOverlay);
+				if (this._oCurrentOverlay.isSelected() || Device.os.android) {
+					if (bLockOpening) {
+						this.lockMenuOpening();
 					}
+					this.oMiniMenu.bOpenNew = true;
+					this.open(oEvent, oOverlay);
+
+					return true;
 				}
 			}
+		}
 	};
 
 	/**
@@ -392,25 +401,33 @@ sap.ui.define([
 	 * @private
 	 */
 	MiniMenu.prototype._onHover = function (oEvent) {
+		if (this._oMousePosition.iMouseX === oEvent.clientX && this._oMousePosition.iMouseY === oEvent.clientY) {
+			return;
+		}
+
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		if (oOverlay && oOverlay.isSelectable() && !oEvent.ctrlKey) {
+		if (oOverlay && oOverlay.isSelectable() && !oEvent.ctrlKey && this.getOpenOnHover()) {
 			oEvent.stopPropagation();
 			if (this._shouldMiniMenuOpen(oEvent, true, true)) {
-
+				this._oMousePosition = {
+					iMouseX: oEvent.clientX,
+					iMouseY: oEvent.clientY
+				};
 				if (this.iMenuHoverClosingDelay >= this.iMenuHoverOpeningDelay) {
 					jQuery.error("sap.ui.dt MiniMenu iMenuHoverClosingDelay is bigger or equal to iMenuHoverOpeningDelay!");
 				}
 
-				if (this.oMiniMenu.getPopover().isOpen()){
+				if (this.oMiniMenu.getPopover().isOpen()) {
 					this._closingTimeout = setTimeout(function () {
-						if (!this._touched && this.oMiniMenu.getPopover().isOpen()) {
+						if (!this._bTouched && this.oMiniMenu.getPopover().isOpen()) {
 							this.oMiniMenu.close();
 						}
 					}.bind(this), this.iMenuHoverClosingDelay);
 				}
 
 				this.hoverTimeout = setTimeout(function () {
-					if (!this._touched) {
+					if (!this._bTouched) {
+						sap.ui.getCore().byId(oEvent.currentTarget.id).focus();
 						this._startOpening(oEvent);
 						this._bOpenedByHover = true;
 					}
@@ -424,8 +441,8 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
-	MiniMenu.prototype._onHoverExit = function(oEvent){
-		if (this.hoverTimeout){
+	MiniMenu.prototype._onHoverExit = function (oEvent) {
+		if (this.hoverTimeout) {
 			clearTimeout(this.hoverTimeout);
 			this.hoverTimeout = null;
 		}
@@ -439,7 +456,7 @@ sap.ui.define([
 	 *Called when user presses key on keyboard. Opens the MiniMenu for Keyboard Controls
 	 @param {sap.ui.base.Event} oEvent the event which was fired
 	 */
-	MiniMenu.prototype._onKeyDown = function (oEvent){
+	MiniMenu.prototype._onKeyDown = function (oEvent) {
 		if ((oEvent.keyCode === jQuery.sap.KeyCodes.F10) && (oEvent.shiftKey === true) && (oEvent.altKey === false) && (oEvent.ctrlKey === false)) {
 			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 
@@ -447,7 +464,7 @@ sap.ui.define([
 				oEvent.preventDefault();
 
 				oEvent.clientX = oOverlay.$().offset().left + oOverlay.$().width() / 2;
-				oEvent.clientY =  oOverlay.$().offset().top + oOverlay.$().height() / 2;
+				oEvent.clientY = oOverlay.$().offset().top + oOverlay.$().height() / 2;
 
 				this._onContextMenu(oEvent);
 
@@ -459,14 +476,14 @@ sap.ui.define([
 	 * Checks whether a new Minimenu should be opened
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @param {boolean} bOverwriteOpenValue should the check skip the test whether there is already a MiniMenu opened
-	 * @param {boolean} onHover if true, the new overlay doesn't get stored in this._currentOverlay
+	 * @param {boolean} onHover if true, the new overlay doesn't get stored in this._oCurrentOverlay
 	 * @return {boolean} whether the check was sucessfull and a new MiniMenu should be opened
 	 * @private
 	 */
 	MiniMenu.prototype._shouldMiniMenuOpen = function (oEvent, bOverwriteOpenValue, onHover) {
-		if (!this._checkForPluginLock() && (!this.isMenuOpeningLocked() || this._touched)){
+		if (!this._checkForPluginLock() && (!this.isMenuOpeningLocked() || this._bTouched)) {
 			if (!onHover) {
-				this._currentOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+				this._oCurrentOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 			}
 			return true;
 		} else {
@@ -478,7 +495,10 @@ sap.ui.define([
 	 * Called when overflow button is pressed on MiniMenu
 	 */
 	MiniMenu.prototype._pressedOverflowButton = function () {
-		this.lockMenuOpening();
+
+		if (!this._bTouched) {
+			this.lockMenuOpening();
+		}
 		this.setFocusLock(true);
 	};
 
@@ -486,7 +506,7 @@ sap.ui.define([
 	 * Called when MiniMenu gets closed
 	 */
 	MiniMenu.prototype._miniMenuClosed = function () {
-		this._touched = false;
+		this._bTouched = false;
 		this.unlockMenuOpening();
 		this.setFocusLock(false);
 	};
@@ -498,9 +518,9 @@ sap.ui.define([
 	 */
 	MiniMenu.prototype.lockMenuOpening = function (bOverwriteOpenValue) {
 		if ((this.oMiniMenu.getPopover(true).isOpen() || this.oMiniMenu.getPopover(false).isOpen()) && bOverwriteOpenValue !== true) { //sometimes this function needs to be called after the old MiniMenu is closed
-			this._asyncLock = true;
+			this._bAsyncLock = true;
 		} else {
-			this._openingLocked = true;
+			this._bOpeningLocked = true;
 		}
 	};
 
@@ -508,11 +528,11 @@ sap.ui.define([
 	 * Unlocks the Opening of the MiniMenu
 	 */
 	MiniMenu.prototype.unlockMenuOpening = function () {
-		this._openingLocked = false;
-		if (this._asyncLock) {
+		this._bOpeningLocked = false;
+		if (this._bAsyncLock) {
 			this.lockMenuOpening(true);
 		}
-		this._asyncLock = false;
+		this._bAsyncLock = false;
 		this.resetFocus();
 	};
 
@@ -520,7 +540,7 @@ sap.ui.define([
 	 * @return {boolean} wether the Opening is locked or not
 	 */
 	MiniMenu.prototype.isMenuOpeningLocked = function () {
-		return this._openingLocked;
+		return this._bOpeningLocked;
 	};
 
 	/**
@@ -535,9 +555,9 @@ sap.ui.define([
 	 * resets the focus to the Overlay
 	 */
 	MiniMenu.prototype.resetFocus = function () {
-		if (!this._bFocusLocked && this._currentOverlay && document.activeElement && !this._bOpenedByHover){ //IE sometimes doesn't get an active element and throws an error when trying to set focus
-			if (!Device.os.ios && !this._checkForPluginLock()){
-				this._currentOverlay.focus();
+		if (!this._bFocusLocked && this._oCurrentOverlay && document.activeElement) { //IE sometimes doesn't get an active element and throws an error when trying to set focus
+			if (!Device.os.ios && !this._checkForPluginLock()) {
+				this._oCurrentOverlay.focus();
 			}
 		}
 	};
@@ -547,7 +567,7 @@ sap.ui.define([
 	 * @param {object} oOverlay the Overlay which should be checked for
 	 */
 	MiniMenu.prototype._ensureSelection = function (oOverlay) {
-		if ((!this._touched || Device.os.ios) && oOverlay && !oOverlay.isSelected()) {
+		if ((!this._bTouched || Device.os.ios) && oOverlay && !oOverlay.isSelected()) {
 			oOverlay.setSelected(true);
 		}
 	};
@@ -565,9 +585,9 @@ sap.ui.define([
 			return false;
 		}
 
-		if (this._aPluginsWithBusyFunction.some(function (oPlugin){
-			return (typeof oPlugin.isBusy === "function" && oPlugin.isBusy());
-		})){
+		if (this._aPluginsWithBusyFunction.some(function (oPlugin) {
+				return (typeof oPlugin.isBusy === "function" && oPlugin.isBusy());
+			})) {
 			return true;
 		}
 
@@ -580,18 +600,24 @@ sap.ui.define([
 	 * @param {object} mMenuItem The menu item to add to a group
 	 */
 	MiniMenu.prototype._addMenuItemToGroup = function (mMenuItem) {
-		if (this._aGroupedItems.length === 0){
-			this._aGroupedItems.push({sGroupName : mMenuItem.group, aGroupedItems : [mMenuItem]});
+		if (this._aGroupedItems.length === 0) {
+			this._aGroupedItems.push({
+				sGroupName: mMenuItem.group,
+				aGroupedItems: [mMenuItem]
+			});
 		} else {
-			for (var i4 = 0; i4 < this._aGroupedItems.length; i4++){
-				var aGroupedItemEntry = this._aGroupedItems[i4];
+			for (var i = 0; i < this._aGroupedItems.length; i++) {
+				var aGroupedItemEntry = this._aGroupedItems[i];
 
-				if (aGroupedItemEntry.sGroupName === mMenuItem.group){
+				if (aGroupedItemEntry.sGroupName === mMenuItem.group) {
 					aGroupedItemEntry.aGroupedItems.push(mMenuItem);
 					aGroupedItemEntry = null;
 					return;
-				} else if (i4 == this._aGroupedItems.length - 1){
-					this._aGroupedItems.push({sGroupName : mMenuItem.group, aGroupedItems : [mMenuItem]});
+				} else if (i == this._aGroupedItems.length - 1) {
+					this._aGroupedItems.push({
+						sGroupName: mMenuItem.group,
+						aGroupedItems: [mMenuItem]
+					});
 					aGroupedItemEntry = null;
 					return;
 				}
@@ -605,10 +631,10 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay The Overlay on which the MiniMenu was opened
 	 */
 	MiniMenu.prototype._addItemGroupsToMenu = function (oEvent, oOverlay) {
-		this._aGroupedItems.forEach( function (oGroupedItem, iIndex) {
+		this._aGroupedItems.forEach(function (oGroupedItem, iIndex) {
 
 			//If there would would only be a single button in a group we don't need a group
-			if (oGroupedItem.aGroupedItems.length === 1){
+			if (oGroupedItem.aGroupedItems.length === 1) {
 				this.addMenuItem(oGroupedItem.aGroupedItems[0], true, false);
 			} else {
 
@@ -618,7 +644,7 @@ sap.ui.define([
 						return oGroupedItems.aGroupedItems;
 					});
 
-					mGroupedItemsToShow[iIndex].forEach(function (mMenuItem){
+					mGroupedItemsToShow[iIndex].forEach(function (mMenuItem) {
 						this.addMenuItem(mMenuItem, true, true);
 					}.bind(this));
 
@@ -633,14 +659,15 @@ sap.ui.define([
 				};
 
 				this._aMenuItems.push({
-					menuItem : {
-						id : oGroupedItem.sGroupName + "-groupButton",
-						enabled : true,
-						text : oGroupedItem.sGroupName,
-						icon : oGroupedItem.aGroupedItems[0].icon,
-						rank : oGroupedItem.aGroupedItems[0].rank,
-						handler : fHandlerForGroupedButton.bind(this, iIndex, oEvent, oOverlay)},
-					fromPlugin : true
+					menuItem: {
+						id: oGroupedItem.sGroupName + "-groupButton",
+						enabled: true,
+						text: oGroupedItem.sGroupName,
+						icon: oGroupedItem.aGroupedItems[0].icon,
+						rank: oGroupedItem.aGroupedItems[0].rank,
+						handler: fHandlerForGroupedButton.bind(this, iIndex, oEvent, oOverlay)
+					},
+					fromPlugin: true
 				});
 			}
 		}.bind(this));

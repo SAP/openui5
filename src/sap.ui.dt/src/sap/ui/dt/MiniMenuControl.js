@@ -38,13 +38,16 @@ sap.ui.define([
                 /**
                  * Defines the buttons on the MiniMenu
                  * The objects should have the following properties:
-                 * text - for the button text in the expanded verion and the tooltip in the non-expanded version
+                 * text - for the button text in the expanded version and the tooltip in the non-expanded version
                  * icon - the url of the butons icon
                  * handler - the function to call when the button is pressed
                  */
-                "buttons" : {type : "object[]", defaultValue : []},
+                "buttons": {
+                    type: "object[]",
+                    defaultValue: []
+                },
                 /**
-                 * The Style clss which should be added to the MiniMenu
+                 * The Style class which should be added to the MiniMenu
                  */
                 styleClass: {
                     type: "string"
@@ -55,15 +58,15 @@ sap.ui.define([
                 /**
                  * This event is fired after opening the MiniMenu
                  */
-                Opened: { },
+                Opened: {},
                 /**
                  * This event is fired after closing the MiniMenu
                  */
-                Closed: { },
+                Closed: {},
                 /**
-                 * This event is fired when the overfow button gets pressed
+                 * This event is fired when the overfow button is pressed
                  */
-                OverflowButtonPressed: { }
+                OverflowButtonPressed: {}
             }
         },
 
@@ -74,37 +77,39 @@ sap.ui.define([
 
             var sPopId = this.getId() + "-popover";
 
-            var oPopover = new sap.m.Popover(sPopId,{
-                showHeader : false,
-                verticalScrolling : false,
-                horizontalScrolling : false,
-                content : new sap.m.HBox(sPopId + "ContentBox", {
-                    renderType : "Bare"
+            var oPopover = new sap.m.Popover(sPopId, {
+                showHeader: false,
+                verticalScrolling: false,
+                horizontalScrolling: false,
+                content: new sap.m.HBox(sPopId + "ContentBox", {
+                    renderType: "Bare"
                 })
             });
 
+            oPopover.attachBrowserEvent("keydown", this._changeFocusOnArrowKey, this);
             oPopover.oPopup.attachClosed(this._popupClosed, this);
             this.addDependent(oPopover);
             oPopover.addStyleClass("sapUiDtMiniMenu");
 
             var sPopExpId = this.getId() + "-popoverExp";
 
-            var oPopoverExpanded = new sap.m.Popover(sPopExpId,{
-                showHeader : false,
-                verticalScrolling : false,
-                horizontalScrolling : false,
-                content : new sap.m.VBox(sPopExpId + "ContentBox", {
-                    renderType : "Bare"
+            var oPopoverExpanded = new sap.m.Popover(sPopExpId, {
+                showHeader: false,
+                verticalScrolling: false,
+                horizontalScrolling: false,
+                content: new sap.m.VBox(sPopExpId + "ContentBox", {
+                    renderType: "Bare"
                 })
             });
 
+            oPopoverExpanded.attachBrowserEvent("keydown", this._changeFocusOnArrowKey, this);
             oPopoverExpanded.oPopup.attachClosed(this._popupClosed, this);
             this.addDependent(oPopoverExpanded);
             oPopoverExpanded.addStyleClass("sapUiDtMiniMenu");
 
             oPopover.attachBrowserEvent("contextmenu", this._onContextMenu, this);
             oPopoverExpanded.attachBrowserEvent("contextmenu", this._onContextMenu, this);
-            this.onInit = true;
+            this.bOnInit = true;
 
             var oStatic;
             try {
@@ -116,6 +121,7 @@ sap.ui.define([
             }
 
             oStatic.addContent(this, true);
+
         },
 
         exit: function () {
@@ -128,17 +134,17 @@ sap.ui.define([
         },
 
         /**
-	     * Opens the MiniMenu and sets the MiniMenu position by the oSource parameter.
+         * Opens the MiniMenu and sets the MiniMenu position by the oSource parameter.
          * Note: this gets called before the old Menu is closed because of asynchronus animations.
-	     * @param {sap.ui.core.Control} oSource - The control by which the Popover will be placed.
+         * @param {sap.ui.core.Control} oSource - The control by which the Popover will be placed.
          * @param {boolean} bContextMenu - If the MiniMenu should appear as Context Menu
-         * @param {Object} contextMenuPosition - The position of the MiniMenu if it should be opened as Context Menu (only needed if bContextMenu)
+         * @param {Object} oContextMenuPosition - The position of the MiniMenu if it should be opened as Context Menu (only needed if bContextMenu)
          * @public
          */
-        show: function (oSource, bContextMenu, contextMenuPosition) {
+        show: function (oSource, bContextMenu, oContextMenuPosition) {
 
             this._close = function (oEvent) {
-                if (oEvent.isTrusted){
+                if (oEvent.isTrusted) {
                     this.close();
                 }
             }.bind(this);
@@ -147,10 +153,10 @@ sap.ui.define([
                 this._bUseExpPop = !!bContextMenu;
             }
 
-            this._isCompactMode =  jQuery(oSource.getDomRef()).attr("class").indexOf("sapUiSizeCompact") > -1;
+            this._bCompactMode = jQuery(oSource.getDomRef()).attr("class").indexOf("sapUiSizeCompact") > -1;
 
-            this._openAsContextMenu = bContextMenu;
-            this._contextMenuPosition = contextMenuPosition;
+            this._bOpenAsContextMenu = bContextMenu;
+            this._oContextMenuPosition = oContextMenuPosition;
             this.getPopover(true).addStyleClass(this.getStyleClass() || "");
             this.getPopover(false).addStyleClass(this.getStyleClass() || "");
 
@@ -158,7 +164,7 @@ sap.ui.define([
             var aButtons = this.getButtons();
             this._oTarget = oSource;
 
-            if (!this._openAsContextMenu){
+            if (!this._bOpenAsContextMenu) {
 
                 this._setButtonsForMiniMenu(aButtons, oSource);
 
@@ -166,10 +172,10 @@ sap.ui.define([
                 this._makeAllButtonsVisible(aButtons);
             }
 
-            if (this.onInit || !this.getPopover().isOpen()) { // if there was no other MiniMenu open before
+            if (this.bOnInit || !this.getPopover().isOpen()) { // if there was no other MiniMenu open before
 
                 this.finalizeOpening();
-                this.onInit = false;
+                this.bOnInit = false;
             }
         },
 
@@ -177,21 +183,21 @@ sap.ui.define([
          * Finalizes the Opening of the MiniMenu. Is called by "_popupClosed" (when the old Menu is closed) or by "show" if there was no MiniMenu opened before
          * Is needed to prevent flickering (wait for old MiniMenu to close)
          */
-        finalizeOpening : function () {
+        finalizeOpening: function () {
 
-            if (this._openAsContextMenu && this._contextMenuPosition.x === null && this._contextMenuPosition.y === null) {
-                this._openAsContextMenu = false;
+            if (this._bOpenAsContextMenu && this._oContextMenuPosition.x === null && this._oContextMenuPosition.y === null) {
+                this._bOpenAsContextMenu = false;
             }
 
-            this._oTarget = this._placeMiniMenu(this._oTarget, this._openAsContextMenu, this._bUseExpPop);
+            this._oTarget = this._placeMiniMenu(this._oTarget, this._bOpenAsContextMenu, this._bUseExpPop);
 
             this.getPopover().openBy(this._oTarget);
 
             this._placeMiniMenuWrapper();
 
             this.getPopover().setVisible(true);
-            this.isOpen = true;
-            this.openNew = false;
+            this.bOpen = true;
+            this.bOpenNew = false;
 
             // fires the afterOpen event
             this.fireOpened();
@@ -202,7 +208,7 @@ sap.ui.define([
          * @param {array} aButtons some buttons
          * @param {Overlay} oSource the source
          */
-        _setButtonsForMiniMenu : function (aButtons, oSource) {
+        _setButtonsForMiniMenu: function (aButtons, oSource) {
 
             var iButtonsEnabled = this._getNumberOfEnabledButtons(aButtons);
 
@@ -223,21 +229,17 @@ sap.ui.define([
             }
 
             iButtonsEnabled = null;
-
-            for (var i = 0; i < aButtons.length; i++) {
-                aButtons[i].setTooltip(this.getProperty("buttons")[i].getText(oSource));
-            }
         },
 
         /**
          * Makes all buttons and their text visible
          * @param {array} aButtons some buttons
          */
-        _makeAllButtonsVisible : function (aButtons) {
+        _makeAllButtonsVisible: function (aButtons) {
 
-            this._firstVisibleButtonIndex = 0;
+            this._iFirstVisibleButtonIndex = 0;
 
-            aButtons.forEach(function(oButton){
+            aButtons.forEach(function (oButton) {
                 oButton.setVisible(true);
                 oButton._bInOverflow = true;
             });
@@ -249,15 +251,15 @@ sap.ui.define([
          * @param {array} aButtons some buttons
          * @return {int} number of enabled buttons
          */
-        _getNumberOfEnabledButtons : function (aButtons) {
+        _getNumberOfEnabledButtons: function (aButtons) {
 
             var iButtonsEnabled = 0;
 
-            for (var i0 = 0; i0 < aButtons.length; i0++) {
-                if (aButtons[i0].getEnabled()){
+            for (var i = 0; i < aButtons.length; i++) {
+                if (aButtons[i].getEnabled()) {
                     iButtonsEnabled++;
-                    if (!this._firstVisibleButtonIndex){
-                        this._firstVisibleButtonIndex = i0;
+                    if (!this._iFirstVisibleButtonIndex) {
+                        this._iFirstVisibleButtonIndex = i;
                     }
                 }
             }
@@ -270,7 +272,7 @@ sap.ui.define([
          * @param {array} aButtons some Buttons
          * @return {int} the number of visible buttons
          */
-        _hideDisabledButtons : function (aButtons) {
+        _hideDisabledButtons: function (aButtons) {
 
             var iVisibleButtons = 0;
 
@@ -291,7 +293,7 @@ sap.ui.define([
          * @param {array} aButtons some Buttons
          * @return {int} the number of visible buttons
          */
-        _hideButtonsInOverflow : function (aButtons) {
+        _hideButtonsInOverflow: function (aButtons) {
 
             var iVisibleButtons = 0;
 
@@ -311,7 +313,7 @@ sap.ui.define([
          * Hides the last visible button and adds an OverflowButton
          * @param {array} aButtons some buttons
          */
-        _replaceLastVisibleButtonWithOverflowButton : function (aButtons) {
+        _replaceLastVisibleButtonWithOverflowButton: function (aButtons) {
 
             for (var i = aButtons.length - 1; i >= 0; i--) {
                 if (aButtons[i].getVisible()) {
@@ -321,7 +323,7 @@ sap.ui.define([
 
                     return;
                 }
-                }
+            }
         },
 
         /**
@@ -340,19 +342,19 @@ sap.ui.define([
             var sOverlayId = (oSource.getId && oSource.getId()) || oSource.getAttribute("overlay");
 
             var oPopoverDimensions = this._getPopoverDimensions(bExpanded, !bContextMenu);
-            var oOverlayDimenions = this._getOverlayDimensions(sOverlayId);
+            var oOverlayDimensions = this._getOverlayDimensions(sOverlayId);
             var oViewportDimensions = this._getViewportDimensions();
 
             var oPosition = {};
 
             if (bContextMenu) {
-                oPosition = this._placeAsContextMenu(this._contextMenuPosition, oPopoverDimensions, oViewportDimensions);
+                oPosition = this._placeAsContextMenu(this._oContextMenuPosition, oPopoverDimensions, oViewportDimensions);
             } else {
-                oPosition = this._placeAsMiniMenu(oOverlayDimenions, oPopoverDimensions, oViewportDimensions);
+                oPosition = this._placeAsMiniMenu(oOverlayDimensions, oPopoverDimensions, oViewportDimensions);
             }
 
-            oPosition.top -= oOverlayDimenions.top;
-            oPosition.left -= oOverlayDimenions.left;
+            oPosition.top -= oOverlayDimensions.top;
+            oPosition.left -= oOverlayDimensions.left;
 
             jQuery("#fakeDiv").remove();
 
@@ -413,7 +415,10 @@ sap.ui.define([
 
             this.getPopover().setShowArrow(true);
 
-            var oPos = {top: null, left: null};
+            var oPos = {
+                top: null,
+                left: null
+            };
 
             if (oOverlay.top >= oPopover.height && oViewport.width >= oPopover.width) {
                 oPos = this._placeMiniMenuOnTop(oOverlay);
@@ -429,7 +434,7 @@ sap.ui.define([
         },
 
         /**
-         * orks out how the MiniMenu shall be placed at the bottom of the overlay
+         * Works out how the MiniMenu shall be placed on top of the overlay
          * @param {object} oOverlay the dimensions of the overlay
          * @return {object} the position of the "fakeDiv"
          */
@@ -581,7 +586,7 @@ sap.ui.define([
 
             var oPopover = {};
 
-            var bCompact = this._isCompactMode;
+            var bCompact = this._bCompactMode;
 
             var fButtonHeight = this._getButtonHeight(bCompact);
 
@@ -592,7 +597,7 @@ sap.ui.define([
             var iBaseFontsize = this._getBaseFontSize();
 
             oPopover.height = iBaseFontsize * fButtonHeight;
-            this._firstVisibleButtonIndex = null;
+            this._iFirstVisibleButtonIndex = null;
 
             if (bExpanded) {
                 oPopover.height *= this.getButtons().length - 1;
@@ -603,7 +608,7 @@ sap.ui.define([
 
             if (bWithArrow) {
                 var iArr = iBaseFontsize * fArrowHeight;
-                if (iArr){
+                if (iArr) {
                     oPopover.height += 2 * iArr;
                     oPopover.width += 2 * iArr;
                 }
@@ -617,7 +622,7 @@ sap.ui.define([
          * @param {boolean} bCompact wheter MiniMenu is compact
          * @return {float} the height of a button in rem
          */
-        _getButtonHeight : function (bCompact) {
+        _getButtonHeight: function (bCompact) {
             return bCompact ? 2 : 3;
         },
 
@@ -626,7 +631,7 @@ sap.ui.define([
          * @param {boolean} bCompact wheter MiniMenu is compact
          * @return {float} the width of a button in rem
          */
-        _getButtonWidth : function (bCompact) {
+        _getButtonWidth: function (bCompact) {
             return bCompact ? 2 : 2.5;
         },
 
@@ -635,7 +640,7 @@ sap.ui.define([
          * @param {boolean} bCompact wheter MiniMenu is compact
          * @return {float} the height of a popover arrow
          */
-        _getArrowHeight : function (bCompact) {
+        _getArrowHeight: function (bCompact) {
             if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge) {
                 return bCompact ? 0.5 : 0.5;
             } else {
@@ -647,7 +652,7 @@ sap.ui.define([
          * Returns the base font size in px
          * @return {int} the base font size in px
          */
-        _getBaseFontSize : function () {
+        _getBaseFontSize: function () {
             return parseInt(jQuery(document.documentElement).css("fontSize"), 10);
         },
 
@@ -684,89 +689,89 @@ sap.ui.define([
 
         /**
          * Adds a button to the MiniMenu.
-         * @param {Object} button the button to add
+         * @param {Object} oButton the button to add
          * @param {sap.ui.dt.plugin.MiniMenu} oSource the source
          * @param {object} oOverlay the target overlay
          * @return {sap.m.MiniMenu} Reference to this in order to allow method chaining
          * @public
          */
-        addButton: function (button, oSource, oOverlay) {
+        addButton: function (oButton, oSource, oOverlay) {
 
             function handler() {
-                this.isOpen = false;
-                this.openNew = false;
+                this.bOpen = false;
+                this.bOpenNew = false;
                 oSource._onItemSelected(this);
             }
 
-            if (button.icon == null){
-                button.icon = "sap-icon://incident";
+            if (oButton.icon == null) {
+                oButton.icon = "sap-icon://incident";
             }
 
             // if some of the objects properties are functions and can't be shown directly
-            button.getText = function (oOverlay) {
-                return typeof button.text === "function" ? button.text(oOverlay) : button.text;
+            oButton.getText = function (oOverlay) {
+                return typeof oButton.text === "function" ? oButton.text(oOverlay) : oButton.text;
             };
 
-            button.getEnabled = function (oOverlay) {
-                return typeof button.enabled === "function" ? button.enabled(oOverlay) : button.enabled;
+            oButton.getEnabled = function (oOverlay) {
+                return typeof oButton.enabled === "function" ? oButton.enabled(oOverlay) : oButton.enabled;
             };
 
-            var oButton;
+            var oButton1;
             var oButton2;
 
-            if (oSource){
-                oButton = new sap.m.Button({
-                    icon: button.icon ? button.icon : "sap-icon://incident",
-                    tooltip: button.getText(oOverlay),
+            if (oSource) {
+                oButton1 = new sap.m.Button({
+                    icon: oButton.icon ? oButton.icon : "sap-icon://incident",
+                    tooltip: oButton.getText(oOverlay),
                     type: "Transparent",
-                    enabled: button.getEnabled(oOverlay),
+                    enabled: oButton.getEnabled(oOverlay),
                     press: handler,
                     layoutData: new sap.m.FlexItemData({})
                 });
 
-                oButton.data({
-                    id : button.id
+                oButton1.data({
+                    id: oButton.id
                 });
 
                 oButton2 = new sap.m.Button({
-                    icon: button.icon ? button.icon : "sap-icon://incident",
-                    text: button.getText(oOverlay),
+                    icon: oButton.icon ? oButton.icon : "sap-icon://incident",
+                    text: oButton.getText(oOverlay),
                     type: "Transparent",
-                    enabled: button.getEnabled(oOverlay),
+                    enabled: oButton.getEnabled(oOverlay),
                     press: handler,
                     layoutData: new sap.m.FlexItemData({})
                 });
 
                 oButton2.data({
-                    id : button.id
+                    id: oButton.id
                 });
 
             } else {
-                oButton = new sap.m.Button({
-                    icon: button.icon,
-                    tooltip: button.getText(oOverlay),
+                oButton1 = new sap.m.Button({
+                    icon: oButton.icon,
+                    tooltip: oButton.getText(oOverlay),
                     type: "Transparent",
-                    enabled: button.getEnabled(oOverlay),
-                    press: button.handler,
+                    enabled: oButton.getEnabled(oOverlay),
+                    press: oButton.handler,
                     layoutData: new sap.m.FlexItemData({})
                 });
 
                 oButton2 = new sap.m.Button({
-                    icon: button.icon,
-                    text: button.getText(oOverlay),
+                    icon: oButton.icon,
+                    text: oButton.getText(oOverlay),
                     type: "Transparent",
-                    enabled: button.getEnabled(oOverlay),
-                    press: button.handler,
+                    enabled: oButton.getEnabled(oOverlay),
+                    press: oButton.handler,
                     layoutData: new sap.m.FlexItemData({})
                 });
             }
 
-            this.setProperty("buttons", this.getProperty("buttons").concat(button));
+            this.setProperty("buttons", this.getProperty("buttons").concat(oButton));
 
             this.getFlexbox(true).addItem(oButton2);
-            this.getFlexbox(false).addItem(oButton);
+            this.getFlexbox(false).addItem(oButton1);
 
-            oButton = null;
+            oButton1 = null;
             oButton2 = null;
 
             return this;
@@ -776,21 +781,19 @@ sap.ui.define([
          * Closes the MiniMenu.
          * @return {sap.m.MiniMenu} Reference to this in order to allow method chaining
          * @public
-	     */
-        close : function (){
+         */
+        close: function () {
             if (this.getPopover()) {
 
                 this.getPopover(true).close();
                 this.getPopover(false).close();
 
                 // deletes the overflow button if there is one
-                if (this.getProperty("buttons").length > this.getProperty("maxButtonsDisplayed")){
-                    this.setProperty("buttons", this.getProperty("buttons").splice(0,this.getProperty("buttons").length - 1));
+                if (this.getProperty("buttons").length > this.getProperty("maxButtonsDisplayed")) {
+                    this.setProperty("buttons", this.getProperty("buttons").splice(0, this.getProperty("buttons").length - 1));
 
                     this.getFlexbox().removeItem(this.getButtons().length - 1);
                 }
-
-                jQuery("#" + this.sId).fadeOut();
             }
 
             return this;
@@ -798,15 +801,15 @@ sap.ui.define([
 
         /**
          * Removes a button from the MiniMenu.
-         * @param {int} index the button to remove or its index or id
+         * @param {int} iIndex the button to remove or its index or id
          * @return {sap.m.OverflowToolbarButton} The removed button or null
          * @public
          */
-        removeButton: function (index) {
-            this.setProperty("buttons", this.getProperty("buttons").splice(index, 1));
+        removeButton: function (iIndex) {
+            this.setProperty("buttons", this.getProperty("buttons").splice(iIndex, 1));
 
-            this.getFlexbox(true).removeItem(index);
-            return this.getFlexbox(false).removeItem(index);
+            this.getFlexbox(true).removeItem(iIndex);
+            return this.getFlexbox(false).removeItem(iIndex);
         },
 
         /**
@@ -831,32 +834,32 @@ sap.ui.define([
 
         /**
          * Inserts a button to the MiniMenu.
-         * @param {sap.m.OverflowToolbarButton} button the to insert
-         * @param {int} index - the 0-based index the button should be inserted at
+         * @param {sap.m.OverflowToolbarButton} oButton the to insert
+         * @param {int} iIndex - the 0-based index the button should be inserted at
          * @return {sap.m.MiniMenu} Reference to this in order to allow method chaining
          * @public
          */
-        insertButton: function (button, index) {
-            this.getFlexbox().insertItem(button, index);
+        insertButton: function (oButton, iIndex) {
+            this.getFlexbox().insertItem(oButton, iIndex);
             return this;
         },
 
         /**
          * Sets the Buttons of the MiniMenu
-         * @param {Object} _buttons the to insert
+         * @param {Array} _aButtons the Buttons to insert
          * @param {sap.ui.dt.plugin.MiniMenu} oSource - the source
          * @param {object} oOverlay - the target overlay
          * @public
          */
-        setButtons: function (_buttons, oSource, oOverlay) {
+        setButtons: function (_aButtons, oSource, oOverlay) {
             this.removeAllButtons();
 
-            if (oOverlay){
-                _buttons.forEach( function (oButton) {
+            if (oOverlay) {
+                _aButtons.forEach(function (oButton) {
                     this.addButton(oButton, oSource, oOverlay);
                 }.bind(this));
             } else {
-                _buttons.forEach(function (oButton) {
+                _aButtons.forEach(function (oButton) {
                     this.addButton(oButton, oSource);
                 }.bind(this));
             }
@@ -864,17 +867,18 @@ sap.ui.define([
 
         /**
          * Sets the maximum amount of Buttons
-         * @param {int} mBd the maximum amount of buttons to be displayed in the non-expanded version of the Mini-Menu
+         * @param {int} iMBD the maximum amount of buttons to be displayed in the non-expanded version of the Mini-Menu
          * @public
          */
-        setMaxButtonsDisplayed: function (mBd) {
-            if (mBd < 2) {
+        setMaxButtonsDisplayed: function (iMBD) {
+            if (iMBD < 2) {
                 throw Error("maxButtonsDisplayed can't be less than two!");
             }
-            this.setProperty("maxButtonsDisplayed", mBd);
+            this.setProperty("maxButtonsDisplayed", iMBD);
         },
 
         /**
+         * Returns one of the Popovers
          * @param {boolean} bExpanded if undefined return the currently used Popover if true return expanded Popover if false return non-expanded Popover
          * @return {sap.m.Popover} one of the Popovers
          * @public
@@ -882,7 +886,7 @@ sap.ui.define([
         getPopover: function (bExpanded) {
 
             if (bExpanded === undefined) {
-                if (this._bUseExpPop) { // see if this needs to be reset explicitly
+                if (this._bUseExpPop) {
                     return this.getDependents()[1];
                 } else {
                     return this.getDependents()[0];
@@ -895,6 +899,7 @@ sap.ui.define([
         },
 
         /**
+         * Returns one of the Flexboxes
          * @param {boolean} bExpanded if undefined return the currently used FlexBox if true return expanded FlexBox if false return non-expanded FlexBox
          * @return {sap.m.Flexbox} the FlexBox
          * @public
@@ -910,10 +915,10 @@ sap.ui.define([
          */
         _createOverflowButton: function () {
             return {
-                icon : "sap-icon://overflow",
-                type : "Transparent",
-                handler : this._onOverflowPress.bind(this),
-                enabled : true
+                icon: "sap-icon://overflow",
+                type: "Transparent",
+                handler: this._onOverflowPress.bind(this),
+                enabled: true
             };
         },
 
@@ -922,19 +927,19 @@ sap.ui.define([
          * @param {boolean} bValue The value for openNew
          */
         setOpenNew: function (bValue) {
-            this.openNew = bValue;
+            this.bOpenNew = bValue;
         },
 
         /**
          * Expands the MiniMenu
-         * @param {jQuery.Event} evt the press event
+         * @param {jQuery.Event} oEvt the press event
          * @private
          */
-        _onOverflowPress: function (evt) {
+        _onOverflowPress: function (oEvt) {
 
             this.fireOverflowButtonPressed();
 
-           var aButtons = this.getButtons();
+            var aButtons = this.getButtons();
 
             this.getPopover().close();
 
@@ -953,33 +958,146 @@ sap.ui.define([
          * Triggered when MiniMenu is closed
          * needed to prevent flickering when opening up a new MiniMenu
          * (A new Menu would show before the direction was set)
-	     */
-        _popupClosed : function(){
+         */
+        _popupClosed: function () {
 
             jQuery("#MiniMenuWrapper").remove();
 
-            if (this.getPopover()){ //in case the Menu was destroyed
+            if (this.getPopover()) { // in case the Menu was destroyed
 
                 this.fireClosed();
 
-                if (this.openNew){
-                    this.openNew = false;
+                if (this.bOpenNew) {
+                    this.bOpenNew = false;
                     this.finalizeOpening();
                     return;
                 }
 
             }
 
-            this.isOpen = false;
+            this.bOpen = false;
+        },
+
+        /**
+         * Sets the focus on a Button if possible
+         * @param {sap.m.Button} oButton the button on which focus should be set
+         * @returns {boolean} true if focus was set
+         */
+        _setFocusOnButton: function (oButton) {
+            if (oButton.getEnabled() && oButton.getVisible()) {
+                oButton.focus();
+                return true;
+            }
+        },
+
+        /**
+         * Changes the focus inside the MiniMenu if an Arrowkey is pressed
+         * Allows Safari users to navigate through the MiniMenu using tab and tab+shift
+         * @param {jQuery.Event} oEvent the keyboard event
+         */
+        _changeFocusOnKeyStroke: function (oEvent) {
+            if (document.activeElement) {
+
+                var sId = document.activeElement.id;
+
+                switch (oEvent.key) {
+                    case "ArrowRight":
+                        this._changeFocusOnButtons(sId);
+                        break;
+
+                    case "ArrowLeft":
+                        this._changeFocusOnButtons(sId, true);
+                        break;
+
+                    case "ArrowUp":
+                        this._changeFocusOnButtons(sId, true);
+                        break;
+
+                    case "ArrowDown":
+                        this._changeFocusOnButtons(sId);
+                        break;
+
+                    case "Tab":
+                        if (sap.ui.Device.browser.safari) {
+                            if (oEvent.shiftKey) {
+                                this._changeFocusOnButtons(sId, true);
+                            } else {
+                                this._changeFocusOnButtons(sId);
+                            }
+                        }
+                        break;
+
+                    default:
+                        break;
+
+                }
+            }
+        },
+
+        /**
+         * Changes the focus for the Buttons in MiniMenu
+         * @param {string} sId the ID of the currently focused buttons
+         * @param {boolean} bPrevious if true, the previous button is selected instead of the next
+         */
+        _changeFocusOnButtons: function (sId, bPrevious) {
+            this.getButtons().some(function (oButton, iIndex, aArray) {
+                if (sId === oButton.getId()) {
+                    if (bPrevious) {
+                        this._setFocusOnPreviousButton(aArray, iIndex);
+                    } else {
+                        this._setFocusOnNextButton(aArray, iIndex);
+                    }
+                    return true;
+                }
+            }.bind(this));
+        },
+
+        /**
+         * Sets focus on next button
+         * @param {Array} aButtons the array of Buttons
+         * @param {integer} iIndex the index of the currently focused buttons
+         */
+        _setFocusOnNextButton: function (aButtons, iIndex) {
+            for (var i0 = iIndex + 1; i0 < aButtons.length; i0++) {
+                if (this._setFocusOnButton(aButtons[i0])) {
+                    return;
+                }
+            }
+
+            for (var i1 = 0; i1 < iIndex; i1++) {
+                if (this._setFocusOnButton(aButtons[i1])) {
+                    return;
+                }
+            }
+        },
+
+        /**
+         * Sets focus on previous button
+         * @param {Array} aButtons the array of Buttons
+         * @param {integer} iIndex the index of the currently focused buttons
+         */
+        _setFocusOnPreviousButton: function (aButtons, iIndex) {
+
+            for (var i0 = iIndex - 1; i0 >= 0; i0--) {
+                if (this._setFocusOnButton(aButtons[i0])) {
+                    return;
+                }
+            }
+
+            for (var i1 = aButtons.length - 1; i1 >= iIndex; i1--) {
+                if (this._setFocusOnButton(aButtons[i1])) {
+                    return;
+                }
+            }
+
         },
 
         /**
          * Handle Context Menu
-         *
          * @param {sap.ui.base.Event} oEvent event object
          * @private
          */
-        _onContextMenu : function(oEvent) {
+        _onContextMenu: function (oEvent) {
             if (!this.getPopover().isOpen()) {
                 this.detachBrowserEvent("contextmenu");
                 return;
