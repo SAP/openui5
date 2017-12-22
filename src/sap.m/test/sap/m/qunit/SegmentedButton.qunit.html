@@ -2812,81 +2812,147 @@
 		oSegmentedButton.destroy();
 	});
 
-    QUnit.test("Can work with special characters in the ID", function(assert) {
+	QUnit.test("Can work with special characters in the ID", function(assert) {
 
-        // Arrange
-        var oSegmentedButton = new sap.m.SegmentedButton({
-            items: [
-                new sap.m.SegmentedButtonItem({
-                    id: "contains::colon",
-                    text: "Button 1"
-                }),
-                new sap.m.SegmentedButtonItem({
-                    text: "Button 2"
-                }),
-                new sap.m.SegmentedButtonItem({
-                    text: "Button 3"
-                })
-            ]
-        });
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					id: "contains::colon",
+					text: "Button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 2"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 3"
+				})
+			]
+		});
 
-        // System under Test
-        oSegmentedButton.placeAt("qunit-fixture");
-        sap.ui.getCore().applyChanges();
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-        assert.ok(oSegmentedButton.getDomRef(), "SegmentedButton should be rendered");
+		assert.ok(oSegmentedButton.getDomRef(), "SegmentedButton should be rendered");
 
-        oSegmentedButton.destroy();
-    });
+		oSegmentedButton.destroy();
+	});
 
-    QUnit.module("SegmentedButton in communicates changes in its aggregated items/buttons");
+	QUnit.module("SegmentedButton in communicates changes in its aggregated items/buttons");
 
-    QUnit.test("Changing the text property aggregated buttons", function (assert) {
-        // Arrange
-        var oTestItem = new sap.m.Button({text: "Button 1"}),
-            oSegmentedButton = new sap.m.SegmentedButton({buttons: [oTestItem]}),
-            sNewText = "new Text",
-            bChangedHandlerCalled = false;
+	QUnit.test("Changing the text property aggregated buttons", function (assert) {
+		// Arrange
+		var oTestButton = new sap.m.Button({text: "Button 1"}),
+			oSegmentedButton = new sap.m.SegmentedButton({buttons: [oTestButton]}),
+			sNewText = "new Text",
+			fnChangHandler = this.spy();
 
-        oSegmentedButton.placeAt("qunit-fixture");
+		oSegmentedButton.placeAt("qunit-fixture");
 
-        oSegmentedButton.attachEvent("_change", function () {
-            bChangedHandlerCalled = true;
-        });
+		oSegmentedButton.attachEvent("_change", fnChangHandler);
 
-        // Assert
-        assert.ok(!bChangedHandlerCalled, "Initially the change event hasn't been fired");
-        oTestItem.setText(sNewText);
-        assert.strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
-        assert.ok(bChangedHandlerCalled, "The change event has been fired after the button's property has changed");
+		// Assert
+		assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
 
-        // Cleanup
-        oSegmentedButton.destroy();
-    });
+		//Act
+		oTestButton.setText(sNewText);
+
+		//Assert
+		assert.strictEqual(oTestButton.getText(), sNewText, "The internal button has changed its text");
+		assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after the button's property has changed");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
 
 
-    QUnit.test("Changing the text property aggregated items", function (assert) {
-        // Arrange
-        var oTestItem = new sap.m.SegmentedButtonItem({text: "Button 1"}),
-            oSegmentedButton = new sap.m.SegmentedButton({items: [oTestItem]}),
-            sNewText = "new Text",
-            bChangedHandlerCalled = false;
+	QUnit.test("Changing the text property aggregated items", function (assert) {
+		// Arrange
+		var oTestItem = new sap.m.SegmentedButtonItem({text: "Button 1"}),
+			oSegmentedButton = new sap.m.SegmentedButton({items: [oTestItem]}),
+			sNewText = "new Text",
+			fnChangHandler = this.spy();
 
-        oSegmentedButton.placeAt("qunit-fixture");
-        sap.ui.getCore().applyChanges();
-        oSegmentedButton.attachEvent("_change", function () {
-            bChangedHandlerCalled = true;
-        });
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oSegmentedButton.attachEvent("_change", fnChangHandler);
 
-        // Assert
-        assert.ok(!bChangedHandlerCalled, "Initially the change event hasn't been fired");
-        oTestItem.setText(sNewText);
-        assert.strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
-        assert.ok(bChangedHandlerCalled, "The change event has been fired after the button's property has changed");
+		// Assert
+		assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
 
-        // Cleanup
-        oSegmentedButton.destroy();
-    });
+		//Act
+		oTestItem.setText(sNewText);
+
+		//Assert
+		assert.strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
+		assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after the SegmentedButtonItem's property has changed");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	QUnit.test("Adding items (XML view with binding)", function(assert) {
+		// Arrange
+		var fnChangHandler = this.spy(),
+			oView = sap.ui.view({
+				viewContent:  '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">'
+							+ '  <SegmentedButton id="SB" items="{/}">'
+							+ '    <items>'
+							+ '      <SegmentedButtonItem text="{text}"/>'
+							+ '    </items>'
+							+ '  </SegmentedButton>'
+							+ '</core:FragmentDefinition>',
+				type:sap.ui.core.mvc.ViewType.XML
+			});
+
+		oView.setModel(new sap.ui.model.json.JSONModel());
+
+		oView.byId("SB").attachEvent("_change", fnChangHandler);
+
+		// Assert
+		assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
+
+		// Act
+		oView.getModel().setData([{text: "Test"}]);
+
+		// Assert
+		assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after new item is added");
+
+		// Cleanup
+		oView.destroy();
+	});
+
+	QUnit.test("Removing items (XML view with binding)", function(assert) {
+		// Arrange
+		var fnChangHandler = this.spy(),
+			oView = sap.ui.view({
+				viewContent:  '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">'
+				+ '  <SegmentedButton id="SB" items="{/}">'
+				+ '    <items>'
+				+ '      <SegmentedButtonItem text="{text}"/>'
+				+ '    </items>'
+				+ '  </SegmentedButton>'
+				+ '</core:FragmentDefinition>',
+				type:sap.ui.core.mvc.ViewType.XML
+			});
+
+		oView.setModel(new sap.ui.model.json.JSONModel([{text: "Test"}]));
+
+		oView.byId("SB").attachEvent("_change", fnChangHandler);
+
+		// Assert
+		assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
+
+		// Act
+		oView.getModel().setData([]);
+
+		// Assert
+		assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after new item is added");
+
+		// Cleanup
+		oView.destroy();
+	});
 
 	QUnit.module("SegmentedButtonItem", {
 		beforeEach: function () {
