@@ -614,26 +614,59 @@ sap.ui.define([
 
 				oUi5Metadata = oControlData['ui5-metadata'];
 
+				// Defaults
+				oControlData.hasProperties = false;
+				oControlData.hasOwnMethods = false;
+				oControlData.hasControlProperties = false;
+				oControlData.hasAssociations = false;
+				oControlData.hasAggregations = false;
+				oControlData.hasSpecialSettings = false;
+				oControlData.hasAnnotations = false;
+
+				// Filter and leave only visible elements
+				if (oControlData.properties) {
+					oControlData.properties = this.filterElements(oControlData.properties);
+
+					// Are there remaining visible properties?
+					oControlData.hasProperties = !!oControlData.properties.length;
+				}
+
+				if (oControlData.methods) {
+					oControlData.methods = this.filterElements(oControlData.methods);
+
+					// Are there remaining visible methods?
+					oControlData.hasOwnMethods = !!oControlData.methods.length;
+				}
+
+				if (oUi5Metadata) {
+					if (oUi5Metadata.properties) {
+						oUi5Metadata.properties = this.filterElements(oUi5Metadata.properties);
+						oControlData.hasControlProperties = !!oUi5Metadata.properties.length;
+					}
+
+					if (oUi5Metadata.associations) {
+						oUi5Metadata.associations = this.filterElements(oUi5Metadata.associations);
+						oControlData.hasAssociations = !!oUi5Metadata.associations.length;
+					}
+
+					if (oUi5Metadata.aggregations) {
+						oUi5Metadata.aggregations = this.filterElements(oUi5Metadata.aggregations);
+						oControlData.hasAggregations = !!oUi5Metadata.aggregations.length;
+					}
+
+					if (oUi5Metadata.specialSettings) {
+						oUi5Metadata.specialSettings = this.filterElements(oUi5Metadata.specialSettings);
+						oControlData.hasSpecialSettings = !!oUi5Metadata.specialSettings.length;
+					}
+
+					oControlData.hasAnnotations = !!(oUi5Metadata.annotations && oUi5Metadata.annotations.length);
+				}
+
 				oControlData.hasChildren = !!oControlData.nodes;
-				oControlData.hasProperties = !!(oControlData.hasOwnProperty('properties') && this.hasVisibleElement(oControlData.properties));
-				oControlData.hasConstructor = oControlData.hasOwnProperty('constructor');
-				oControlData.hasControlProperties = !!(oUi5Metadata && oUi5Metadata.properties && this.hasVisibleElement(oUi5Metadata.properties));
+				oControlData.hasConstructor = !!oControlData.constructor;
 				oControlData.hasOwnEvents = !!oControlData.events;
-				oControlData.hasOwnMethods = !!(oControlData.hasOwnProperty('methods') && this.hasVisibleElement(oControlData.methods));
 				oControlData.hasEvents = !!(oControlData.hasOwnEvents || (oControlData.borrowed && oControlData.borrowed.events.length > 0));
 				oControlData.hasMethods = !!(oControlData.hasOwnMethods || (oControlData.borrowed && oControlData.borrowed.methods.length > 0));
-				oControlData.hasAssociations = !!(oUi5Metadata && oUi5Metadata.associations && this.hasVisibleElement(oUi5Metadata.associations));
-				oControlData.hasAggregations = !!(oUi5Metadata && oUi5Metadata.aggregations && this.hasVisibleElement(oUi5Metadata.aggregations));
-				oControlData.hasSpecialSettings = !!(oUi5Metadata && oUi5Metadata.specialSettings && this.hasVisibleElement(oUi5Metadata.specialSettings));
-				oControlData.hasAnnotations = !!(oUi5Metadata && oUi5Metadata.annotations &&
-					Object.keys(oUi5Metadata.annotations).length > 0);
-
-				if (oControlData.hasConstructor && oControlData.constructor.parameters) {
-					for (i = 0; i < oControlData.constructor.parameters.length; i++) {
-						this.subParamPhoneName = oControlData.constructor.parameters[i].name;
-					}
-					this.subParamPhoneName = '';
-				}
 
 				if (oControlData.implements && oControlData.implements.length) {
 					oControlData.implementsParsed = oControlData.implements.map(function (item, idx, array) {
@@ -1024,21 +1057,23 @@ sap.ui.define([
 
 			},
 
-			subParamPhoneName: '',
-
 			/**
-			 * Checks if the list has elements that have public or protected visibility
-			 * @param elements - a list of properties/methods/aggregations/associations etc.
-			 * @returns {boolean} - true if the list has at least one public element
+			 * Remove not allowed elements from list
+			 * @param {array} aElements list of elements
+			 * @returns {array} filtered elements list
 			 */
-			hasVisibleElement: function (elements) {
-				for (var i = 0; i < elements.length; i++) {
-					if (this._aAllowedMembers.indexOf(elements[i].visibility) !== -1) {
-						return true;
+			filterElements: function (aElements) {
+				var i = aElements.length,
+					aNewElements = [],
+					oElement;
+
+				while (i--) {
+					oElement = aElements[i];
+					if (this._aAllowedMembers.indexOf(oElement.visibility) >= 0) {
+						aNewElements.push(oElement);
 					}
 				}
-
-				return false;
+				return aNewElements;
 			},
 
 			onAnnotationsLinkPress: function (oEvent) {
