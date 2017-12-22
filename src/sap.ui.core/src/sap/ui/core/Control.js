@@ -648,6 +648,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		rForbiddenTags = /^(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr|tr)$/i,
 		oBusyIndicatorDelegate = {
 			onBeforeRendering: function() {
+				// deregister handler/DomRef as after rendering new handler/DomRef exists and must be registered
 				if (this.getBusy() && this.getDomRef() && !this._busyIndicatorDelayedCallId && this.getDomRef("busyIndicator")) {
 					fnHandleInteraction.call(this, false);
 				}
@@ -762,9 +763,11 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			oBusyTabbable.focus();
 			this.bIgnoreBusyFocus = false;
 			oBusyTabbable.setAttribute("tabindex", 0);
-		} else if (bTargetIsBusyIndicator && (oEvent.type === 'mousedown' || oEvent.type === 'touchdown')) {
+			oEvent.stopImmediatePropagation();
+		} else if (bTargetIsBusyIndicator && (oEvent.type === 'mousedown' || oEvent.type === 'touchstart')) {
 			// Do not "preventDefault" to allow to focus busy indicator
 			jQuery.sap.log.debug("Local Busy Indicator click handled on busy area: " + oEvent.target.id);
+			oEvent.stopImmediatePropagation();
 		} else {
 			jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
 			oEvent.preventDefault();
