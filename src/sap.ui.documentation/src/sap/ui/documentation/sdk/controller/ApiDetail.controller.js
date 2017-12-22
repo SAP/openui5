@@ -1041,28 +1041,6 @@ sap.ui.define([
 				return false;
 			},
 
-			formatEventClassName: function (isSubProperty, isSubSubProperty, bPhoneSize) {
-				if (bPhoneSize && (isSubProperty || isSubSubProperty)) {
-					return "sapUiDocumentationParamPhone";
-				} else if (isSubSubProperty) {
-					return "sapUiDocumentationParamSubSub";
-				} else if (isSubProperty) {
-					return "sapUiDocumentationParamSub";
-				} else {
-					return "sapUiDocumentationParamBold";
-				}
-			},
-
-			formatMethodClassName: function (isSubProperty, bPhoneSize) {
-				if (bPhoneSize && isSubProperty) {
-					return "sapUiDocumentationParamPhone";
-				} else if (isSubProperty) {
-					return "sapUiDocumentationParamSub";
-				} else {
-					return "sapUiDocumentationParamBold";
-				}
-			},
-
 			onAnnotationsLinkPress: function (oEvent) {
 				this._scrollToEntity("annotations", "Summary");
 			},
