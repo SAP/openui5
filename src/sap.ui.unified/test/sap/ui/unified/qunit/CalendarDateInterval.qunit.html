@@ -614,6 +614,30 @@
 				oCalP.destroy();
 			});
 
+			// BCP: 1780521519
+			QUnit.test("Closing the picker will remove the overlay", function (assert) {
+				// arrange
+				var oCalP = new sap.ui.unified.CalendarDateInterval("CalP", {
+						pickerPopup: true
+					}).placeAt("qunit-fixture"),
+					oCloseCalendarPickerStub = this.spy(oCalP, "_closeCalendarPicker"),
+					oHideOverlayStub = this.spy(oCalP, "_hideOverlay");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				qutils.triggerEvent("click", "CalP--Head-B1");
+				oCalP._oPopup.close();
+
+				// assert
+				assert.ok(oCloseCalendarPickerStub.calledOnce, "_closeCalendarPicker method should be called");
+				assert.ok(oHideOverlayStub.calledOnce, "_hideOverlay method should be called");
+				assert.equal(oCalP.$("contentOver").css("display"), "none", "overlay should be with display: none style");
+
+				// cleanup
+				oCloseCalendarPickerStub.restore();
+				oCalP.destroy();
+			});
+
 			QUnit.module("WeekNumbers");
 
 			QUnit.test("DatesRow getWeekNumbers", function(assert) {
