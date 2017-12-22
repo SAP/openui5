@@ -6,33 +6,52 @@
  * Creates a RuleSetLoader that handles the loading of the RuleSets in the different libraries as well as stores the
  * data for the loaded RuleSets
  */
+
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/support/supportRules/RuleSet",
-		"sap/ui/support/supportRules/WindowCommunicationBus",
-		"sap/ui/support/supportRules/WCBChannels",
-		"sap/ui/support/supportRules/RuleSerializer",
-		"sap/ui/support/supportRules/Constants",
-		"sap/ui/support/supportRules/util/Utils",
-		"sap/ui/support/supportRules/library-meta"
-	],
-	function (jQuery, RuleSet, CommunicationBus, channelNames, RuleSerializer, constants, Utils, meta) {
+	"jquery.sap.global",
+	"sap/ui/support/supportRules/RuleSet",
+	"sap/ui/support/supportRules/WindowCommunicationBus",
+	"sap/ui/support/supportRules/WCBChannels",
+	"sap/ui/support/supportRules/RuleSerializer",
+	"sap/ui/support/supportRules/Constants",
+	"sap/ui/support/supportRules/util/Utils"
+],
+	function (jQuery, RuleSet, CommunicationBus, channelNames, RuleSerializer, constants, Utils) {
 		"use strict";
 
+		// can be put in a util container
+		var getAbsoluteUrl = (function () {
+			var a;
+
+			return function (url) {
+				if (!a) {
+					a = document.createElement('a');
+				}
+
+				a.href = url;
+
+				return a.href;
+			};
+		})();
+
 		var sCustomSuffix = "sprt";
+		var sSupportModulePath = jQuery.sap.getModulePath("sap.ui.support");
+		var sSupportModuleRootPath = sSupportModulePath.replace('/sap/ui/support', '');
+		var sAbsUrl = getAbsoluteUrl(sSupportModuleRootPath);
+
 		var RuleSetLoader = {};
 
 		RuleSetLoader._mRuleSets = {};
 
-		RuleSetLoader.getRuleSets = function() {
+		RuleSetLoader.getRuleSets = function () {
 			return this._mRuleSets;
 		};
 
-		RuleSetLoader.addRuleSet = function(sLibName, oRuleSet) {
+		RuleSetLoader.addRuleSet = function (sLibName, oRuleSet) {
 			this._mRuleSets[sLibName] = oRuleSet;
 		};
 
-		RuleSetLoader.getRuleSet = function(sLibName) {
+		RuleSetLoader.getRuleSet = function (sLibName) {
 			return this._mRuleSets[sLibName];
 		};
 
@@ -45,11 +64,12 @@ sap.ui.define([
 		RuleSetLoader._fetchSupportRuleSets = function () {
 			var that = this,
 				mLoadedLibraries = sap.ui.getCore().getLoadedLibraries(),
-				oLibNamesWithRules = this._fetchLibraryNamesWithSupportRules(mLoadedLibraries);
+				oLibNamesWithRulesPromise = this._fetchLibraryNamesWithSupportRules(mLoadedLibraries);
 
 			var oMainPromise = new Promise(function (resolve) {
-					RuleSet.versionInfo = sap.ui.getVersionInfo();
+				RuleSet.versionInfo = sap.ui.getVersionInfo();
 
+				oLibNamesWithRulesPromise.then(function (oLibNamesWithRules) {
 					var libFetchPromises = that._fetchLibraryFiles(oLibNamesWithRules, RuleSetLoader._fetchRuleSet);
 
 					Promise.all(libFetchPromises).then(function () {
@@ -58,6 +78,7 @@ sap.ui.define([
 
 						resolve();
 					});
+				});
 			});
 
 			return oMainPromise;
@@ -84,28 +105,60 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @param {object} oLoadedLibraries Loaded libraries by the application using the Support Assistant
-		 * @returns {object} Object Containing the names of libraries that containing support rules in them
+		 * @returns {Promise} A promise to be resolved when metadata for libraries support files is ready
 		 */
 		RuleSetLoader._fetchLibraryNamesWithSupportRules = function (oLoadedLibraries) {
-			var oLibNames = {
-				publicRules: [],
-				internalRules: []
-			};
+			return new Promise(function (mainResolve) {
 
-			oLoadedLibraries = oLoadedLibraries || {};
+				var oLibNames = {
+					publicRules: [],
+					internalRules: []
+				};
 
-			Object.keys(oLoadedLibraries).forEach(function(sLibName){
-				if (meta[sLibName]) {
-					if (meta[sLibName].publicRules) {
-						oLibNames.publicRules.push(sLibName);
-					}
-					if (meta[sLibName].internalRules) {
-						oLibNames.internalRules.push(sLibName);
-					}
-				}
+				oLoadedLibraries = oLoadedLibraries || {};
+
+				var aAllMetaPromises = [];
+
+				Object.keys(oLoadedLibraries).forEach(function (sLibName) {
+					var oMetaPromise = new Promise(function (resolve) {
+						var rcFilePath = sAbsUrl + "/" + sLibName.replace(/\./g, '/') + "/.supportrc";
+						jQuery.ajax({
+							type: "GET",
+							dataType: "json",
+							url: rcFilePath,
+							success: function (data) {
+								resolve({
+									lib: sLibName,
+									rcData: data
+								});
+							},
+							error: function () {
+								resolve({
+									lib: sLibName,
+									rcData: null
+								});
+							}
+						});
+					});
+
+					aAllMetaPromises.push(oMetaPromise);
+				});
+
+				Promise.all(aAllMetaPromises).then(function (metaArgs) {
+					metaArgs.forEach(function (metaInfo) {
+						if (metaInfo.rcData) {
+							if (metaInfo.rcData.publicRules) {
+								oLibNames.publicRules.push(metaInfo.lib);
+							}
+							if (metaInfo.rcData.internalRules) {
+								oLibNames.internalRules.push(metaInfo.lib);
+							}
+						}
+
+						mainResolve(oLibNames);
+					});
+				});
 			});
-
-			return oLibNames;
 		};
 
 		/**
@@ -158,7 +211,7 @@ sap.ui.define([
 		 * for the internal rules or null if there isn't such a library loaded in the RuleSets array
 		 * @private
 		 */
-		RuleSetLoader._registerLibraryPath = function(libraryName, supportModulePath, supportModulesRoot) {
+		RuleSetLoader._registerLibraryPath = function (libraryName, supportModulePath, supportModulesRoot) {
 			if (this._mRuleSets[libraryName]) {
 				return null;
 			}
@@ -281,7 +334,7 @@ sap.ui.define([
 				aLibNames.push(lib.name);
 			});
 
-			oLibNamesSortedPublicAndInternalRules = {publicRules: aLibNames, internalRules: aLibNames};
+			oLibNamesSortedPublicAndInternalRules = { publicRules: aLibNames, internalRules: aLibNames };
 			var libFetchPromises = RuleSetLoader._fetchLibraryFiles(oLibNamesSortedPublicAndInternalRules, function (sLibraryName) {
 				sLibraryName = sLibraryName.replace("." + sCustomSuffix, "").replace(".internal", "");
 
@@ -291,7 +344,7 @@ sap.ui.define([
 			});
 
 			Promise.all(libFetchPromises).then(function () {
-				CommunicationBus.publish(channelNames.POST_AVAILABLE_LIBRARIES,{
+				CommunicationBus.publish(channelNames.POST_AVAILABLE_LIBRARIES, {
 					libNames: data
 				});
 			});
@@ -395,7 +448,7 @@ sap.ui.define([
 			return Object.keys(mRules).map(function (sRuleId) {
 				return {
 					libName: mRules[sRuleId].libName,
-					ruleId:  sRuleId
+					ruleId: sRuleId
 				};
 			});
 		};
