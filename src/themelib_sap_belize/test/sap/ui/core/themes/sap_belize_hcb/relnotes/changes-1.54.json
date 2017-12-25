@@ -67,6 +67,24 @@
         "type": "FIX",
         "text": " sap.m.Slider/RangeSlider: Tooltips moved to the static area",
         "references": []
+      },
+      {
+        "id": "7b81ef78c54b5bee9ef2d49fe512bf8a1c53e6f8",
+        "type": "FEATURE",
+        "text": " sap.m.MessagePage: Added new property and aggregation",
+        "references": []
+      },
+      {
+        "id": "82984b41bc5e18d70ce8733711179039b91f6f55",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "0e1cdb11481e9f67ecf3b6aa8f64e9f95b07f535",
+        "type": "FIX",
+        "text": " sap.m.Tile: Focus is cleared indicated in HCB and HCW",
+        "references": []
       }
     ]
   }

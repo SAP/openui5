@@ -49,6 +49,18 @@
         "type": "FIX",
         "text": " Copy of variants doesn\u0027t copy name",
         "references": []
+      },
+      {
+        "id": "c0342407fe532b52da845670c2a969ff879a5733",
+        "type": "FIX",
+        "text": " Bug fixes for Delta Variants",
+        "references": []
+      },
+      {
+        "id": "ab822c93bbf93598bba946d730a79cc800c49dfe",
+        "type": "FIX",
+        "text": " Revise VariantController unit test for sorting",
+        "references": []
       }
     ]
   }

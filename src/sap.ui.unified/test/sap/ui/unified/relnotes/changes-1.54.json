@@ -85,6 +85,18 @@
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: remove not needed border in OneMonth view",
         "references": []
+      },
+      {
+        "id": "9063b4f03cff41a7475ead357aee807bb77fe2cf",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Update aria-label for the month button",
+        "references": []
+      },
+      {
+        "id": "dbd5bea964a26d4cbe760cf561c91b89bfaf193b",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: hide content overlay properly",
+        "references": []
       }
     ]
   }

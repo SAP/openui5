@@ -169,6 +169,12 @@
         "type": "FIX",
         "text": "sap.ui.rta: Missing root control should not block application load",
         "references": []
+      },
+      {
+        "id": "7b81ef78c54b5bee9ef2d49fe512bf8a1c53e6f8",
+        "type": "FEATURE",
+        "text": " sap.m.MessagePage: Added new property and aggregation",
+        "references": []
       }
     ]
   }

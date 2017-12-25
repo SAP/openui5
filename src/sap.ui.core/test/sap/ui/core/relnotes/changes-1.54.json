@@ -355,6 +355,42 @@
         "type": "FIX",
         "text": " v2.ODataModel delete Entry messages",
         "references": []
+      },
+      {
+        "id": "26f56ffc63fc0488b9bf9c8317bc6e801d2a45d7",
+        "type": "FEATURE",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "d21b9a6f8183f42f8e81c34f33646a430eb5fb4f",
+        "type": "FEATURE",
+        "text": " NumberFormat: Support for unit of measures",
+        "references": []
+      },
+      {
+        "id": "c9aff73e69929441e6e27096912017d0b3ee13b2",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "dcf7ba46e7301d05557954e3f614674cbd6c0279",
+        "type": "FIX",
+        "text": " NumberFormat: percent with custom pattern",
+        "references": []
+      },
+      {
+        "id": "5124bec17ea3abae6e53ebf4b3e75a661327cf55",
+        "type": "FIX",
+        "text": " Removed debugger statement",
+        "references": []
+      },
+      {
+        "id": "a06e0a96aea5413c682e666311ec9f73d42574ce",
+        "type": "FIX",
+        "text": " sap.ui.model: fix documentation, visibility of Client- \u0026 JSONModel",
+        "references": []
       }
     ]
   }

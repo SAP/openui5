@@ -79,6 +79,24 @@
         "type": "FIX",
         "text": " sap.ui.table.Table - wrong number of displayed rows",
         "references": []
+      },
+      {
+        "id": "55b6b5889715c8f47ef3df265a959c6e42fa098a",
+        "type": "FEATURE",
+        "text": " Tables/List/Tree: Apply header context CSS on toolbar",
+        "references": []
+      },
+      {
+        "id": "c9aff73e69929441e6e27096912017d0b3ee13b2",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "5a9153f7edb24b0119ff002a9e26d70648688d41",
+        "type": "FIX",
+        "text": " Table: Horizontal scrolling with the touchpad",
+        "references": []
       }
     ]
   }

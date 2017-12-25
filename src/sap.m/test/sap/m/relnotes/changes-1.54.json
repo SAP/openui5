@@ -721,6 +721,102 @@
         "type": "FIX",
         "text": " sap.m.Wizard: Acc test page improvement",
         "references": []
+      },
+      {
+        "id": "26f56ffc63fc0488b9bf9c8317bc6e801d2a45d7",
+        "type": "FEATURE",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "55b6b5889715c8f47ef3df265a959c6e42fa098a",
+        "type": "FEATURE",
+        "text": " Tables/List/Tree: Apply header context CSS on toolbar",
+        "references": []
+      },
+      {
+        "id": "7b81ef78c54b5bee9ef2d49fe512bf8a1c53e6f8",
+        "type": "FEATURE",
+        "text": " sap.m.MessagePage: Added new property and aggregation",
+        "references": []
+      },
+      {
+        "id": "c9aff73e69929441e6e27096912017d0b3ee13b2",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "1b53f2964536b709fc5aae716b0b59366b6887f5",
+        "type": "FIX",
+        "text": " ResponsiveTable: View Settings Example should show filter info bar",
+        "references": []
+      },
+      {
+        "id": "85a79e78dbe8d64ed2d1a91787705e22f121e165",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed control layout when used in Toolbar",
+        "references": []
+      },
+      {
+        "id": "23f7637c88f4c5cddd30d0a167f564856e20eb2d",
+        "type": "FIX",
+        "text": " sap.m.Button: Reference to the text content of the button is added to the AriaLabelledBy only when the button has text",
+        "references": []
+      },
+      {
+        "id": "b8d31bb46da5b6b8d4922d78480e5063bcf33d26",
+        "type": "FIX",
+        "text": " sap.m.Button: focus outline on text content removed",
+        "references": []
+      },
+      {
+        "id": "ec6f8e5afa720d823b4c7430b2f89a0dda87fe46",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: ACC example fixed",
+        "references": []
+      },
+      {
+        "id": "31f103b6457b02e148b3a0f2a3eeabc5477b0d63",
+        "type": "FIX",
+        "text": " sap.m.Menu: recreate menu if all items are removed",
+        "references": []
+      },
+      {
+        "id": "4d5793dfa9d103381b2cc42ae4f13af38d802079",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: InitialFocus is not overwritten when details are shown",
+        "references": []
+      },
+      {
+        "id": "82984b41bc5e18d70ce8733711179039b91f6f55",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "40f7b57a05aa4e684d79b2ed579b43712918b8ea",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Focus outline corrected",
+        "references": []
+      },
+      {
+        "id": "0e1cdb11481e9f67ecf3b6aa8f64e9f95b07f535",
+        "type": "FIX",
+        "text": " sap.m.Tile: Focus is cleared indicated in HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "a621530d22685548e2b097697f0bb8af1936ebbd",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: fix failing unit tests",
+        "references": []
+      },
+      {
+        "id": "031145d70e4ed1bfebb0bb5379705232e778a1d0",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsPopover: remove redundat aria-labelledby for the close button",
+        "references": []
       }
     ]
   }
