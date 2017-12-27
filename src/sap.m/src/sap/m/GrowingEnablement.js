@@ -100,7 +100,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				this._oScrollDelegate = null;
 			}
 
-			this._updateTriggerDelayed(false);
+			if (!this._bLoading) {
+				this._updateTriggerDelayed(false);
+			}
 		},
 
 		setTriggerText : function(sText) {
@@ -269,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			}
 
 			// after growing-button gets hidden scroll container should still be scrollable
-			return this._oScrollDelegate.getMaxScrollTop() > this._oControl.$("triggerList").outerHeight();
+			return this._oScrollDelegate.getMaxScrollTop() > 80;
 		},
 
 		// destroy all items in the list and cleanup
@@ -586,7 +588,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				oControl = this._oControl;
 
 			// If there are no visible columns then also hide the trigger.
-			if (!oTrigger || !oControl || !oControl.shouldRenderItems()) {
+			if (!oTrigger || !oControl || !oControl.shouldRenderItems() || !oControl.getDomRef()) {
 				return;
 			}
 
