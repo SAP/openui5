@@ -567,6 +567,7 @@ sap.ui.require([
 				foo : {
 					bar : 42,
 					list : [{}, {}],
+					"navigation@odata.bind" : "EntitySet('4712')",
 					"null" : null
 				}
 			}];
@@ -584,6 +585,8 @@ sap.ui.require([
 		assert.strictEqual(oCache.drillDown(oData, "('a')"), oData[0], "('a')");
 		assert.strictEqual(oCache.drillDown(oData, "0/foo"), oData[0].foo, "0/foo");
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/bar"), oData[0].foo.bar, "0/foo/bar");
+		assert.strictEqual(oCache.drillDown(oData, "0/foo/navigation/any/path"), undefined,
+			"0/foo/navigation/any/path");
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/null/invalid"), undefined,
 			"0/foo/null/invalid");
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/list/$count"), oData[0].foo.list.$count,

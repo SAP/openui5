@@ -392,6 +392,167 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[
+		"BusinessPartner('4712')",
+		[
+			"BusinessPartner('4712')", "BusinessPartner('4713')"
+		],
+		Context.create(null, null, "/BusinessPartner('4712')"),
+		[
+			Context.create(null, null, "/BusinessPartner('4712')"),
+			Context.create(null, null, "/BusinessPartner('4713')")
+		]
+	].forEach(function (vValue) {
+		QUnit.test("setProperty with @odata.bind: " + vValue, function (assert) {
+			var oBinding = {updateValue : function () {}},
+				oMetaModel = {fetchUpdateData : function () {}},
+				oModel = {
+					getMetaModel : function () {
+						return oMetaModel;
+					}
+				},
+				oCreatedContext = Context.create(oModel, oBinding, "/foo"),
+				sPropertyPath = "SO_2_BP@odata.bind",
+				oUpdateData = {
+					editUrl : {/* e.g. "SalesOrderList('1234')" */},
+					entityPath : {/* e.g. "/SalesOrderList/('1234')" */},
+					propertyPath : {/* e.g. "SO_2_BP@odata.bind" */}
+				},
+				vValueExpected = Array.isArray(vValue)
+					? ["BusinessPartner('4712')", "BusinessPartner('4713')"]
+					: "BusinessPartner('4712')",
+				oPromise = SyncPromise.resolve(oUpdateData);
+
+			this.mock(oMetaModel).expects("fetchUpdateData")
+				.withExactArgs(sPropertyPath, oCreatedContext)
+				.returns(oPromise);
+			this.mock(oCreatedContext).expects("getUpdateGroupId")
+				.withExactArgs()
+				.returns("updateGroupId");
+			this.mock(oBinding).expects("updateValue")
+				.withExactArgs("updateGroupId", sinon.match.same(oUpdateData.propertyPath),
+					vValueExpected, sinon.match.func,
+					sinon.match.same(oUpdateData.editUrl),
+					sinon.match.same(oUpdateData.entityPath));
+
+			//code under test
+			oCreatedContext.setProperty(sPropertyPath, vValue);
+
+			return oPromise.then(function () {/*wait until inner success handler is finished*/});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setProperty unqualified: w/o @odata.bind", function (assert) {
+		var oModel = { resolve : function () {}},
+			oCreatedContext = Context.create(oModel, null, "/foo");
+
+		this.mock(oModel).expects("resolve").withExactArgs("bar", oCreatedContext)
+			.returns("resolved path");
+
+		assert.throws(function () {
+			//code under test
+			oCreatedContext.setProperty("bar");
+		}, new Error("Can not set property for path: resolved path"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setProperty with @odata.bind: rejected/throwed/cancelled" , function (assert) {
+		var oBindingMock,
+			oCancelledError = new Error(),
+			oContext,
+			oError = new Error(),
+			oExpection,
+			oMetaModelMock,
+			oModelMock,
+			aPromises = [],
+			oUpdateData = {
+				editUrl : {/* e.g. "SalesOrderList('1234')" */},
+				entityPath : {/* e.g. "/SalesOrderList/('1234')" */},
+				propertyPath : {/* e.g. "SO_2_BP@odata.bind" */}
+			},
+			that = this;
+
+		function prepareTest(bErrorExpected, sGroupId) {
+			var oBinding = {updateValue : function () {}},
+				oMetaModel = {fetchUpdateData : function () {}},
+				oModel = {
+					resolve : function () {},
+					getMetaModel : function () { return oMetaModel; },
+					reportError : function () {}
+				};
+
+			oBindingMock = that.mock(oBinding);
+			oContext = Context.create(oModel, oBinding, "/foo");
+			oMetaModelMock = that.mock(oMetaModel);
+			that.mock(oContext).expects("getUpdateGroupId")
+				.exactly(sGroupId ? 1 : 0)
+				.returns(sGroupId);
+			oModelMock = that.mock(oModel);
+			oModelMock.expects("resolve")
+				.exactly(bErrorExpected ? 1 : 0)
+				.withExactArgs("SO_2_BP@odata.bind", oContext)
+				.returns("resolved path");
+			oModelMock.expects("reportError")
+				.exactly(bErrorExpected ? 1 : 0)
+				.withExactArgs("Failed to set property for path: resolved path",
+					"sap.ui.model.odata.v4.Context", oError);
+
+		}
+
+		function addPromise(oPromise) {
+			aPromises.push(oPromise.then(function () {}, function () {}));
+			return oPromise;
+		}
+
+		oCancelledError.cancelled = true;
+
+		// do not use withExactArgs for already tested function calls; concentrate on error handling
+
+		prepareTest(true);
+		oMetaModelMock.expects("fetchUpdateData").returns(addPromise(SyncPromise.reject(oError)));
+		oBindingMock.expects("updateValue").never();
+
+		// code under test: fetchUpdateData rejected
+		oContext.setProperty("SO_2_BP@odata.bind", "BusinessPartnerList('4712')");
+
+		prepareTest(true, "updateGroupId");
+		oMetaModelMock.expects("fetchUpdateData").returns(SyncPromise.resolve(oUpdateData));
+		oBindingMock.expects("updateValue").returns(addPromise(SyncPromise.reject(oError)));
+
+		//code under test : updateValue rejected
+		oContext.setProperty("SO_2_BP@odata.bind", "BusinessPartnerList('4712')");
+
+		prepareTest(true, "updateGroupId");
+		oMetaModelMock.expects("fetchUpdateData")
+			.returns(addPromise(SyncPromise.resolve(oUpdateData)));
+		oBindingMock.expects("updateValue").throws(oError);
+
+		//code under test : updateValue throws
+		oContext.setProperty("SO_2_BP@odata.bind", "BusinessPartnerList('4712')");
+
+		prepareTest(false, "updateGroupId");
+
+		oMetaModelMock.expects("fetchUpdateData").returns(SyncPromise.resolve(oUpdateData));
+		oBindingMock.expects("updateValue")
+			.returns(addPromise(SyncPromise.reject(oCancelledError)));
+
+		//code under test : updateValue cancelled
+		oContext.setProperty("SO_2_BP@odata.bind", "BusinessPartnerList('4712')");
+
+		prepareTest(true, "updateGroupId");
+		oMetaModelMock.expects("fetchUpdateData").returns(SyncPromise.resolve(oUpdateData));
+		oExpection = oBindingMock.expects("updateValue")
+			.returns(addPromise(SyncPromise.resolve()));
+
+		//code under test : updateValue calls reportErrorCallback
+		oContext.setProperty("SO_2_BP@odata.bind", "BusinessPartnerList('4712')");
+		oExpection.firstCall.args[3](oError);
+
+		return Promise.all(aPromises);
+	});
+
+	//*********************************************************************************************
 	[42, null].forEach(function (vResult) {
 		QUnit.test("requestProperty: primitive result " + vResult, function (assert) {
 			var oContext = Context.create(null, null, "/foo"),

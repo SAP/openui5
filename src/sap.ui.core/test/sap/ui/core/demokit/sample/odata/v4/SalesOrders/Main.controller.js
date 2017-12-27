@@ -8,12 +8,13 @@ sap.ui.define([
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/Item',
 		'sap/ui/core/mvc/Controller',
-		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator",
+		'sap/ui/core/ValueState',
+		'sap/ui/model/Filter',
+		'sap/ui/model/FilterOperator',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/Sorter'
-], function (Dialog, MessageBox, MessageToast, DateFormat, Item, Controller, Filter, FilterOperator,
-		JSONModel, Sorter) {
+], function (Dialog, MessageBox, MessageToast, DateFormat, Item, Controller, ValueState, Filter,
+		FilterOperator, JSONModel, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
@@ -108,6 +109,10 @@ sap.ui.define([
 			this.getView().getModel().resetChanges();
 		},
 
+		onChangeNewBuyerId : function (oEvent) {
+			this.getView().byId("NewBuyerID").setValueState(ValueState.None);
+		},
+
 		onCloseSalesOrderSchedules : function (oEvent) {
 			this.byId("SalesOrderSchedulesDialog").close();
 		},
@@ -135,7 +140,18 @@ sap.ui.define([
 		},
 
 		onCloseSalesOrderDialog : function (oEvent) {
-			var oView = this.getView();
+			var oView = this.getView(),
+				oNewSalesOrderContext = oView.byId("CreateSalesOrderDialog").getBindingContext(),
+				oNewBuyerId = oView.byId("NewBuyerID"),
+				oSelectedBuyerItem = oNewBuyerId.getSuggestionItemByKey(oNewBuyerId.getValue());
+
+			if (!oSelectedBuyerItem) {
+				MessageBox.error("Enter buyer Id");
+				oNewBuyerId.setValueState(ValueState.Error);
+				return;
+			}
+			oNewSalesOrderContext.setProperty("SO_2_BP@odata.bind",
+				oSelectedBuyerItem.getBindingContext());
 
 			oView.byId("CreateSalesOrderDialog").close();
 			// move the focus to the row of the newly created sales order
@@ -152,7 +168,6 @@ sap.ui.define([
 						// key
 						"SalesOrderID" : "",
 						// properties
-						"BuyerID" : "0100000000",
 						"ChangedAt" : "1970-01-01T00:00:00Z",
 						"CreatedAt" : "1970-01-01T00:00:00Z",
 						"CurrencyCode" : "EUR",
@@ -162,7 +177,7 @@ sap.ui.define([
 						"Note" : "A new Sales Order: " + new Date().toLocaleString(),
 						"NoteLanguage" : "E",
 						// navigation property
-						"SO_2_BP" : null
+						"SO_2_BP@odata.bind" : null
 					}),
 				oCreateSalesOrderDialog = oView.byId("CreateSalesOrderDialog"),
 				that = this;
