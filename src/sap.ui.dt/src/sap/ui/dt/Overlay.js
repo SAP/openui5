@@ -666,10 +666,8 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype.isRoot = function() {
 		var oParent = this.getParent();
-		if (oParent) {
-			if (!oParent.getDomRef) {
-				return true;
-			}
+		if (!oParent || !oParent.getDomRef) {
+			return true;
 		}
 	};
 
