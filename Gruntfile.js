@@ -170,6 +170,12 @@ module.exports = function(grunt) {
 		configExtensionFile.split(',').forEach(file => require(path.resolve(file))(grunt, gruntData));
 	}
 
+	// Normalize all library 'path' to individual 'src' and 'test' paths
+	gruntData.allLibraries.forEach(function(library) {
+		library.src = library.src || library.path + "/src";
+		library.test = library.test || library.path + "/test";
+	});
+
 	// determine set of libraries to use (specified by --libs option)
 	gruntData.libraries = !libs ? gruntData.allLibraries : gruntData.allLibraries.filter(function(library) {
 		return libs.indexOf(library.name) > -1;

@@ -78,7 +78,7 @@ module.exports = function(grunt, config) {
 			files: [ {
 				expand: true,
 				dot: true,
-				cwd: library.path + '/src',
+				cwd: library.src,
 				src: [
 					'**',
 					'!testsuite/testframe.html' // only a redirect file. real testsuite is located in /test/testsuite
@@ -93,7 +93,7 @@ module.exports = function(grunt, config) {
 				files: [ {
 					expand: true,
 					dot: true,
-					cwd: library.path + '/test',
+					cwd: library.test,
 					src: '**',
 					dest: 'target/openui5-' + library.name + '/test-resources'
 				} ]
