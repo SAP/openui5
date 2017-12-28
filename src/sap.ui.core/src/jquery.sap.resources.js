@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 		"iw" : "he",
 		"ji" : "yi",
 		"in" : "id",
-		"sn" : "sr"
+		"sh" : "sr"
 	};
 
 	/**

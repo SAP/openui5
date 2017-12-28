@@ -593,6 +593,22 @@
 		assert.equal(oLocaleData.getUnitDisplayNameByCLDRCode("length-light-year"), "a. l.", "display name 'a. l.' is correct");
 	});
 
+	var aDeprecatedLocales = [
+		"in", // -> id
+		"sh", // -> sr
+		//"ji" -> yi not present
+		"iw" // -> he
+	];
+
+	QUnit.test("Deprecated locales support", function(assert) {
+		aDeprecatedLocales.forEach(function(sLocale) {
+			var oLocale = new sap.ui.core.Locale(sLocale),
+				oLocaleData = new sap.ui.core.LocaleData(oLocale);
+			//check retrieval of languages to see if the localeData was successfully loaded
+			assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present for locale: " + sLocale);
+		});
+	});
+
 </script>
 
 </head>
