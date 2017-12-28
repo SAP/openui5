@@ -312,6 +312,29 @@
 				oDPSubclass.destroy();
 			});
 
+			// BCP: 1780526208
+			QUnit.test("setDateValue with iframe's JS date object should set properly the date", function (assert) {
+				// arrange
+				var oDP = new sap.m.DatePicker(),
+						iframe = document.createElement('iframe');
+				document.body.appendChild(iframe);
+				var oWindow = iframe.contentWindow;
+				oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+				// act
+				oDP.setDateValue(oWindow.dateObj);
+
+				// assert
+				assert.ok(true, "setDateValue did not throw an expection with date object from an iframe");
+
+				// cleanup
+				oDP.destroy();
+				document.body.removeChild(iframe);
+				iframe = null;
+				oDP = null;
+			});
+
+
 			QUnit.module("interaction");
 
 			QUnit.test("change date by typing", function(assert) {
