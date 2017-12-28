@@ -22,7 +22,7 @@ sap.ui.define([
 		"sap/m/Title",
 		"sap/m/Panel"
 	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, APIInfo,
-	VerticalLayout, Table, Column, Label, ColumnListItem, Link, ObjectStatus, HTML, Title, Panel) {
+				 VerticalLayout, Table, Column, Label, ColumnListItem, Link, ObjectStatus, HTML, Title, Panel) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -228,7 +228,7 @@ sap.ui.define([
 								});
 
 								this.searchResultsButtonVisibilitySwitch(this.byId("apiDetailBackToSearch"));
-								}.bind(this));
+							}.bind(this));
 					}.bind(this))
 					.catch(function (sReason) {
 						// If the object does not exist in the available libs we redirect to the not found page and
@@ -588,7 +588,7 @@ sap.ui.define([
 					var oEntityData,
 						oEntitySampleData = this._getEntitySampleData(sTopicId, oControlsData);
 
-					oEntityData =  jQuery.extend({}, this._oEntityData, oEntitySampleData);
+					oEntityData = jQuery.extend({}, this._oEntityData, oEntitySampleData);
 
 					// Builds the header layout, when all the needed data is ready
 					this._buildHeaderLayout(this._oModel.getData(), oEntityData);
@@ -699,29 +699,29 @@ sap.ui.define([
 			_getHeaderLayoutUtil: function () {
 				if (!this._oHeaderLayoutUtil) {
 					var _getObjectAttributeBlock = function (sTitle, sText) {
-						return new sap.m.ObjectAttribute({
-							title: sTitle,
-							text: sText
-						}).addStyleClass("sapUiTinyMarginBottom");
-					},
-					_getLink = function(oConfig) {
-						return new sap.m.Link(oConfig || {});
-					},
-					_getText = function(oConfig) {
-						return new sap.m.Text(oConfig || {});
-					},
-					_getLabel = function(oConfig) {
-						return new sap.m.Label(oConfig || {});
-					},
-					_getHBox = function(oConfig, bAddCommonStyles) {
-						var oHBox = new sap.m.HBox(oConfig || {});
+							return new sap.m.ObjectAttribute({
+								title: sTitle,
+								text: sText
+							}).addStyleClass("sapUiTinyMarginBottom");
+						},
+						_getLink = function (oConfig) {
+							return new sap.m.Link(oConfig || {});
+						},
+						_getText = function (oConfig) {
+							return new sap.m.Text(oConfig || {});
+						},
+						_getLabel = function (oConfig) {
+							return new sap.m.Label(oConfig || {});
+						},
+						_getHBox = function (oConfig, bAddCommonStyles) {
+							var oHBox = new sap.m.HBox(oConfig || {});
 
-						if (bAddCommonStyles) {
-							oHBox.addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
-						}
+							if (bAddCommonStyles) {
+								oHBox.addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
+							}
 
-						return oHBox;
-					};
+							return oHBox;
+						};
 
 					this._oHeaderLayoutUtil = {
 
@@ -742,8 +742,12 @@ sap.ui.define([
 						_getDocumentationBlock: function (oControlData, oEntityData) {
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text:"Documentation:"}),
-									_getLink({emphasized: true, text: oControlData.docuLinkText, href: "#/topic/" + oControlData.docuLink})
+									_getLabel({design: "Bold", text: "Documentation:"}),
+									_getLink({
+										emphasized: true,
+										text: oControlData.docuLinkText,
+										href: "#/topic/" + oControlData.docuLink
+									})
 								]
 							}, true);
 						},
@@ -751,7 +755,11 @@ sap.ui.define([
 							return _getHBox({
 								items: [
 									_getLabel({text: "Extends:"}),
-									_getLink({text: oControlData.extendsText, href: "#/api/" + oControlData.extendsText, visible: oControlData.isDerived}),
+									_getLink({
+										text: oControlData.extendsText,
+										href: "#/api/" + oControlData.extendsText,
+										visible: oControlData.isDerived
+									}),
 									_getText({text: oControlData.extendsText, visible: !oControlData.isDerived})
 								]
 							}, true);
@@ -765,7 +773,10 @@ sap.ui.define([
 							if (aSubClasses.length === 1) {
 								oSubClassesLink = _getLink({text: aSubClasses[0], href: "#/api/" + aSubClasses[0]});
 							} else {
-								oSubClassesLink = _getLink({text: oControlData.isClass ? "View subclasses" : "View implementations", press: this._openSubclassesImplementationsPopover.bind(this)});
+								oSubClassesLink = _getLink({
+									text: oControlData.isClass ? "View subclasses" : "View implementations",
+									press: this._openSubclassesImplementationsPopover.bind(this)
+								});
 							}
 
 							return _getHBox({
@@ -776,18 +787,16 @@ sap.ui.define([
 							}, true);
 						},
 						_getImplementsBlock: function (oControlData, oEntityData) {
-							var aItems = [];
+							var aItems = [_getLabel({text: "Implements:"})];
 
 							oControlData.implementsParsed.forEach(function (oElement) {
 								aItems.push(_getLink({text: oElement.name, href: "#/api/" + oElement.href}));
 							});
 
 							return _getHBox({
-								items: [
-									_getLabel({text: "Implements:"}),
-									new sap.m.HBox({items: aItems}).addStyleClass("sapUiDocumentationCommaList")
-								]
-							}, true);
+								items: aItems,
+								wrap: sap.m.FlexWrap.Wrap
+							}, true).addStyleClass("sapUiDocumentationCommaList");
 						},
 						_getModuleBlock: function (oControlData, oEntityData) {
 							return _getObjectAttributeBlock("Module", oControlData.module);
@@ -816,7 +825,10 @@ sap.ui.define([
 			 */
 			_openSubclassesImplementationsPopover: function (oEvent) {
 				var aPopoverContent = this._aSubClasses.map(function (oElement) {
-						return new sap.m.Link({text: oElement, href: "#/api/" + oElement}).addStyleClass("sapUiTinyMarginBottom sapUiTinyMarginEnd");
+					return new sap.m.Link({
+						text: oElement,
+						href: "#/api/" + oElement
+					}).addStyleClass("sapUiTinyMarginBottom sapUiTinyMarginEnd");
 				}), oPopover = this._getSubClassesAndImplementationsPopover(aPopoverContent);
 
 				oPopover.openBy(oEvent.getSource());
@@ -868,10 +880,10 @@ sap.ui.define([
 						{creator: "_getAvailableSinceBlock", exists: true},
 						{creator: "_getApplicationComponentBlock", exists: true}
 					],
-					fnFillHeaderControlsStructure = function() {
+					fnFillHeaderControlsStructure = function () {
 						var iControlsAdded = 0,
 							iIndexToAdd,
-							fnGetIndexToAdd = function(iControlsAdded) {
+							fnGetIndexToAdd = function (iControlsAdded) {
 								// determines the column(1st, 2nd or 3rd), the next entity data key-value should be added to.
 								if (iControlsAdded <= 3) {
 									return 0;
@@ -881,7 +893,7 @@ sap.ui.define([
 								return 2;
 							};
 
-						aHeaderBlocksInfo.forEach(function(oHeaderBlockInfo) {
+						aHeaderBlocksInfo.forEach(function (oHeaderBlockInfo) {
 							var oControlBlock;
 							if (oHeaderBlockInfo.exists) {
 								oControlBlock = oHeaderLayoutUtil[oHeaderBlockInfo.creator].call(this, oControlData, oEntityData);
@@ -896,7 +908,7 @@ sap.ui.define([
 				fnFillHeaderControlsStructure();
 
 				// Wraps each column in a <code>sap.ui.layout.VerticalLayout</code>.
-				aHeaderControls.forEach(function(aHeaderColumn, iIndex) {
+				aHeaderControls.forEach(function (aHeaderColumn, iIndex) {
 					var oVL = this.byId("headerColumn" + iIndex);
 					oVL.removeAllContent();
 
