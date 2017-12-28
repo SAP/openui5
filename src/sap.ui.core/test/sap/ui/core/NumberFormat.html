@@ -162,11 +162,6 @@
 				type: "boolean",
 				help: "To show currency symbols instead of three letter currency code, set to \"false\""
 			},
-			unitCodeType: {
-				type: "enum",
-				values: ["ISO", "CLDR"],
-				help: "Code Format, e.g. ISO"
-			},
 			language: {
 				type: "string",
 				help: "Language to enter"
@@ -185,6 +180,7 @@
 	var oModel = new sap.ui.model.json.JSONModel({
 		number: 123456.789,
 		currency: "USD",
+		unitcode: "speed-knot",
 		formatOptions: {},
 		type: "Integer",
 		locales: aLocales,
@@ -194,8 +190,11 @@
 		samples: aSamples,
 		sample: "custom",
 		locale: sLocale,
-		editMode: "false"
+		editMode: "false",
+		cldrEntries: []
 	});
+
+	oModel.setSizeLimit(Infinity);
 
 	sap.ui.getCore().attachInit(function() {
 		bindHash(oModel, aHashParams, oSupportedOptions);
@@ -203,10 +202,9 @@
 
 	sap.ui.getCore().setModel(oModel);
 
-	sap.ui.require(["sap/ui/core/format/UoMIsoCldrMapping"], function(UoMIsoCldrMapping) {
-		var aValues = [];
-		Object.keys(UoMIsoCldrMapping).forEach(function(sKey) {
-			aValues.push({name: UoMIsoCldrMapping[sKey]});
+	sap.ui.require(["sap/ui/core/LocaleData"], function(oLocaleData) {
+		var aValues = Object.keys(oLocaleData.getInstance(oCurrentLocale).getUnitFormats()).map(function(sUnitCode) {
+			return {name: sUnitCode};
 		});
 		oModel.setProperty("/cldrEntries", aValues);
 	});
@@ -260,7 +258,7 @@
 													formatter: function(oNumber, sCurrency, sUnitCode, sType, oFormatOptions, sLocale) {
 														var oLocale = new sap.ui.core.Locale(sLocale);
 														var sFunctionName = "get" + sType + "Instance",
-															oOptions = Object.assign({}, oFormatOptions),
+															oOptions = jQuery.extend({}, oFormatOptions),
 															oNumberFormat = sap.ui.core.format.NumberFormat[sFunctionName](oOptions, oLocale);
 														var sMeasure;
 														if (sType == "Currency") {
@@ -284,7 +282,7 @@
 													var sType = oModel.getProperty("/type");
 													var sFunctionName = "get" + sType + "Instance";
 													var oLocale = new sap.ui.core.Locale(sLocale);
-													var oOptions = Object.assign({}, oFormatOptions);
+													var oOptions = jQuery.extend({}, oFormatOptions);
 													var oNumberFormat = sap.ui.core.format.NumberFormat[sFunctionName](oOptions, oLocale);
 													var aParsed = oNumberFormat.parse(sValue);
 													if (Array.isArray(aParsed)) {
@@ -451,7 +449,7 @@
 													formatter: function(oNumber, sCurrency, sUnitCode, oFormatOptions, sType, sLocale) {
 														var oLocale = new sap.ui.core.Locale(sLocale),
 															sFunctionName = "get" + sType + "Instance",
-															oOptions = Object.assign({}, oFormatOptions),
+															oOptions = jQuery.extend({}, oFormatOptions),
 															oNumberFormat = sap.ui.core.format.NumberFormat[sFunctionName](oOptions, oLocale);
 														var sMeasure;
 														if (sType == "Currency") {
