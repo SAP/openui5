@@ -466,20 +466,20 @@
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oControl = new sap.m.ObjectStatus({text: "Text", title: "Title"});
+		var oControl = new sap.m.ObjectStatus({text: "Text", title: "Title", tooltip: "Tooltip"});
 		assert.ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, undefined, "AriaRole");
 		assert.strictEqual(oInfo.type, undefined, "Type");
-		assert.strictEqual(oInfo.description, "Title Text", "Description");
+		assert.strictEqual(oInfo.description, "Title Text Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, undefined, "Focusable");
 		assert.strictEqual(oInfo.enabled, undefined, "Enabled");
 		assert.strictEqual(oInfo.editable, undefined, "Editable");
 		oControl.setState("Warning");
 		oControl.setTitle("");
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Text " + sap.ui.core.ValueStateSupport.getAdditionalText(oControl.getState()), "Description");
+		assert.strictEqual(oInfo.description, "Text " + sap.ui.core.ValueStateSupport.getAdditionalText(oControl.getState()) + oControl.getTooltip(), "Description");
 		oControl.destroy();
 	});
 
