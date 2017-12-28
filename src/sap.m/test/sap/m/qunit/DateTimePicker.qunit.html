@@ -328,8 +328,10 @@
 							break;
 						}
 					}
-					aHours[iIndex].focus();
-					qutils.triggerKeyboardEvent(aHours[iIndex], jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+
+					oDTP3._oSliders.getAggregation("_columns")[0].focus();
+					qutils.triggerKeyboardEvent(oDTP3._oSliders.getAggregation("_columns")[0].getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+
 					done();
 				}, 400);
 			});
