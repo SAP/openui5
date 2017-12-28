@@ -999,13 +999,24 @@ sap.ui.define([
 					return oTransportSelection.setTransports(aChanges, this._oRootControl);
 				}
 			}.bind(this)).then(function() {
+				BusyIndicator.show(0);
 				return this._getFlexController().discardChanges(aChanges, sCurrentLayer === "USER");
 			}.bind(this)).then(function() {
-				return window.location.reload();
-			});
+				BusyIndicator.hide();
+				this._reloadPage();
+			}.bind(this));
 		}.bind(this))["catch"](function(oError) {
+			BusyIndicator.hide();
 			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
 		});
+	};
+
+	/**
+	 * Reloads the page.
+	 * @private
+	 */
+	RuntimeAuthoring.prototype._reloadPage = function(){
+		window.location.reload();
 	};
 
 	/**
