@@ -160,8 +160,8 @@ sap.ui.define([
 
 			if (this._bHasButtonsBar) {
 				//remove selection class from the currently selected item
-				this.$().find(".sapUxAPAnchorBarButtonSelected").removeClass("sapUxAPAnchorBarButtonSelected");
-				oButton.$().addClass("sapUxAPAnchorBarButtonSelected");
+				this.$().find(".sapUxAPAnchorBarButtonSelected").removeClass("sapUxAPAnchorBarButtonSelected").attr("aria-pressed", false);
+				oButton.$().addClass("sapUxAPAnchorBarButtonSelected").attr("aria-pressed", true);
 
 				if (oSelectedSectionId) {
 					this.scrollToSection(oSelectedSectionId, AnchorBar.SCROLL_DURATION);
@@ -316,7 +316,6 @@ sap.ui.define([
 					oPopoverState.oLastFirstLevelButton.attachPress(fnPressHandler);
 					this._oPressHandlers[oPopoverState.oLastFirstLevelButton.getId()] = fnPressHandler;
 				}
-
 				oPopoverState.oCurrentPopover.addContent(oButton);
 			} else if (this.getShowPopover()) {
 				jQuery.sap.log.error("sapUxApAnchorBar :: missing parent first level for item " + oButton.getText());
@@ -335,7 +334,8 @@ sap.ui.define([
 					verticalScrolling: true,
 					horizontalScrolling: false,
 					contentWidth: "auto",
-					showArrow: false
+					showArrow: false,
+					afterOpen: this._decorateSubMenuButtons
 				});
 
 				oPopoverState.oCurrentPopover.addStyleClass("sapUxAPAnchorBarPopover");
@@ -352,6 +352,14 @@ sap.ui.define([
 				this._oPressHandlers[oPopoverState.oLastFirstLevelButton.getId()] = fnPressHandler;
 			}
 		}
+	};
+
+	AnchorBar.prototype._decorateSubMenuButtons = function (oEvent) {
+		var aContent = oEvent.getSource().getContent();
+
+		aContent.forEach(function (oButton) {
+			oButton.$().attr("aria-controls", oButton.data("sectionId"));
+		});
 	};
 
 	AnchorBar.prototype._addKeyboardHandling = function (oCurrentPopover) {
@@ -1041,7 +1049,7 @@ sap.ui.define([
 			oContent.$().attr("aria-haspopup", "true");
 		}
 		// set ARIA attributes of main buttons
-		oContent.$().attr("aria-controls", oContent.data("sectionId"));
+		oContent.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-pressed", false);
 
 		var iWidth = oContent.$().outerWidth(true);
 
