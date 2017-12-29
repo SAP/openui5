@@ -1129,8 +1129,6 @@ sap.ui.require([
 			};
 		};
 
-		this.oVariantController = new VariantController("MyComponent", "1.2.3", this.oFakeVariantResponse);
-
 		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
@@ -1173,9 +1171,6 @@ sap.ui.require([
 				}
 			};
 		};
-
-		this.oVariantController = new VariantController("MyComponent", "1.2.3", this.oFakeVariantResponse);
-
 		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
@@ -1183,6 +1178,9 @@ sap.ui.require([
 			this.oFakeVariantResponse.changes.variantSection.variantManagementId2.variants[1].controlChanges);
 
 		assert.deepEqual(aExpectedChanges, aInitialChanges, "then the control changes for the specified variant + default for the other id are combined");
+
+		this.oVariantController._mVariantManagement["variantManagementId2"].variants[0].content.fileName = "variantCheckReference";
+		assert.deepEqual(sap.ui.fl.Cache.getEntry("MyComponent", "1.2.3").file.changes.variantSection, this.oVariantController._mVariantManagement, "then Cache.file.changes has the same structure as VariantController variantSection map, passed by reference");
 	});
 
 });

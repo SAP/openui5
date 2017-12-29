@@ -912,11 +912,10 @@ sap.ui.define([
 			.then(function(oTransportInfo) {
 				if (oTransportInfo) {
 					return this._serializeToLrep().then(function () {
-						return this._getFlexController().getComponentChanges({currentLayer: this.getLayer()}).then(function (aAllLocalChanges) {
+						return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function (aAllLocalChanges) {
 							if (aAllLocalChanges.length > 0) {
 								BusyIndicator.show(0);
-								return this._createAndApplyChanges(aAllLocalChanges)
-									.then(this._transportAllLocalChanges.bind(this, oTransportInfo))
+								return this._transportAllLocalChanges(oTransportInfo)
 										['catch'](fnHandleAllErrors);
 							}
 						}.bind(this));
@@ -936,51 +935,6 @@ sap.ui.define([
 
 	RuntimeAuthoring.prototype._openSelection = function () {
 	   return new TransportSelection().openTransportSelection(null, this._oRootControl, Utils.getRtaStyleClassName());
-	};
-
-	/**
-	 * Create and apply changes
-	 *
-	 * Function is copied from FormP13nHandler. We need all changes for various controls.
-	 * The function is used in the transport handling.
-	 *
-	 * @private
-	 * @param {array} aChangeSpecificData - array of objects with change specific data
-	 * @returns {Promise} promise that resolves with no parameters
-	 */
-	RuntimeAuthoring.prototype._createAndApplyChanges = function(aChangeSpecificData) {
-		var aPromises = [];
-		return Promise.resolve()
-
-		.then(function() {
-			function fnValidChanges(oChangeSpecificData) {
-				return oChangeSpecificData && oChangeSpecificData.selector && oChangeSpecificData.selector.id;
-			}
-			aChangeSpecificData.filter(fnValidChanges).forEach(function(oChangeSpecificData) {
-				var oControl = sap.ui.getCore().byId(oChangeSpecificData.selector.id);
-				var oFlexController = this._getFlexController();
-				aPromises.push(oFlexController.createAndApplyChange.bind(oFlexController, oChangeSpecificData, oControl));
-			}.bind(this));
-			return FlexUtils.execPromiseQueueSequentially(aPromises);
-		}.bind(this))
-
-		.catch(function(oError) {
-			FlexUtils.log.error("Create and apply error: " + oError);
-			return oError;
-		})
-
-		.then(function(oError) {
-			return this._getFlexController().saveAll().then(function() {
-				if (oError) {
-					throw oError;
-				}
-			});
-		}.bind(this))
-
-		.catch(function(oError) {
-			FlexUtils.log.error("Create and apply and/or save error: " + oError);
-			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_APPLYSAVE_ERROR", "MSG_TRANSPORT_APPLYSAVE_ERROR", oError);
-		});
 	};
 
 	/**
@@ -1120,7 +1074,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns a Promise which resolves without parameters
 	 */
 	RuntimeAuthoring.prototype._transportAllLocalChanges = function(mTransportInfo) {
-		return this._getFlexController().getComponentChanges({currentLayer: this.getLayer()}).then(function(aAllLocalChanges) {
+		return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function(aAllLocalChanges) {
 
 			// Pass list of changes to be transported with transport request to backend
 			var oTransports = new Transports();
@@ -1247,7 +1201,8 @@ sap.ui.define([
 			}.bind(this))
 
 			// Error handling when a command fails is done in the Stack
-			.catch(function() {
+			.catch(function(oError) {
+				throw new Error(oError);
 			});
 		}
 		return Promise.resolve();

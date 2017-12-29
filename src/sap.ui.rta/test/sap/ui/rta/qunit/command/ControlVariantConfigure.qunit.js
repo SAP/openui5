@@ -72,13 +72,13 @@ function(
 					"author": "SAP",
 					"key": "variantMgmtId1",
 					"layer": "VENDOR",
-					"readOnly": true,
+					"visible": true,
 					"title": "Standard"
 				}, {
 					"author": "Me",
 					"key": "variant0",
 					"layer": "CUSTOMER",
-					"readOnly": false,
+					"visible": true,
 					"title": "variant A"
 				}
 			]
@@ -90,7 +90,9 @@ function(
 	var oVariant = {
 		"content": {
 			"fileName":"variant0",
-			"title":"variant A",
+			"content": {
+				"title":"variant A"
+			},
 			"layer":"CUSTOMER",
 			"variantReference":"variant00",
 			"reference": "Dummy.Component"

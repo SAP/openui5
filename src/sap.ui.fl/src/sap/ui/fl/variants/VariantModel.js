@@ -179,7 +179,7 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype.getVariantProperty = function(sVariantReference, sProperty) {
-		return this.getVariant(sVariantReference).content[sProperty];
+		return this.getVariant(sVariantReference).content.content[sProperty];
 	};
 
 	VariantModel.prototype.getVariantTitle = function(sVariantReference) {
@@ -416,6 +416,7 @@ sap.ui.define([
 		var oVariant;
 		var oChange = null;
 		var oData = this.getData();
+
 		if (mPropertyBag.variantReference) {
 			iVariantIndex = this.getVariantManagementReference(mPropertyBag.variantReference).variantIndex;
 			oVariant = oData[sVariantManagementReference].variants[iVariantIndex];
@@ -494,6 +495,60 @@ sap.ui.define([
 		this.checkUpdate(true);
 
 		return oChange;
+	};
+
+	VariantModel.prototype._ensureStandardVariantExists = function(sVariantManagementReference) {
+		var oData = this.getData();
+		if (!oData[sVariantManagementReference]) { /*Ensure standard variant exists*/
+			// Set Standard Data to VariantModel
+			oData[sVariantManagementReference] = {
+				currentVariant: sVariantManagementReference,
+				originalCurrentVariant: sVariantManagementReference,
+				defaultVariant: sVariantManagementReference,
+				originalDefaultVariant: sVariantManagementReference,
+				variants: [
+					{
+						//author: "SAP",
+						key: sVariantManagementReference,
+						layer: "VENDOR",
+						title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
+						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
+						favorite: true,
+						originalFavorite: true,
+						visible: true
+					}
+				]
+			};
+			this.setData(oData);
+
+			if (this.oVariantController) {
+				var oVariantControllerData = {changes: { variantSection: {}}};
+
+				var oDefaultObj = {
+					defaultVariant: sVariantManagementReference,
+					variantManagementChanges: {},
+					variants: [
+						{
+							content: {
+								fileName: sVariantManagementReference,
+								fileType: "ctrl_variant",
+								layer: "VENDOR",
+								variantManagementReference: sVariantManagementReference,
+								variantReference: "",
+								content: {
+									title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE")
+								}
+							},
+							controlChanges: [],
+							variantChanges: {}
+						}
+					]
+				};
+				// Set Standard Data to VariantController
+				oVariantControllerData.changes.variantSection[sVariantManagementReference] = oDefaultObj;
+				this.oVariantController._setChangeFileContent(oVariantControllerData, {});
+			}
+		}
 	};
 
 	VariantModel.prototype._setModelPropertiesForControl = function(sVariantManagementReference, bAdaptationMode, oControl) {
@@ -624,65 +679,17 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype.registerToModel = function(oVariantManagementControl) {
-		var oData = this.getData();
-
 		var sVariantManagementReference =
 			this._getLocalId(oVariantManagementControl, Utils.getAppComponentForControl(oVariantManagementControl) || this.oComponent);
 
-		if (!oData[sVariantManagementReference]) { /*Ensure standard variant exists*/
-			// Set Standard Data to Model
+		this._ensureStandardVariantExists(sVariantManagementReference);
 
-			oData[sVariantManagementReference] = {
-				currentVariant: sVariantManagementReference,
-				originalCurrentVariant: sVariantManagementReference,
-				defaultVariant: sVariantManagementReference,
-				originalDefaultVariant: sVariantManagementReference,
-				variants: [
-					{
-						//author: "SAP",
-						key: sVariantManagementReference,
-						layer: "VENDOR",
-						title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
-						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
-						favorite: true,
-						originalFavorite: true,
-						visible: true
-					}
-				]
-			};
-			this.setData(oData);
-
-			// Set Standard Data to VariantController
-			if (this.oVariantController) {
-				var oVariantControllerData = {changes: { variantSection: {}}};
-				oVariantControllerData.changes.variantSection[sVariantManagementReference] = {
-					defaultVariant: sVariantManagementReference,
-					variantManagementChanges: {},
-					variants: [
-						{
-							content: {
-								fileName: sVariantManagementReference,
-								fileType: "ctrl_variant",
-								layer: "VENDOR",
-								variantManagementReference: sVariantManagementReference,
-								variantReference: "",
-								content: {
-									title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE")
-								}
-							},
-							controlChanges: [],
-							variantChanges: {}
-						}
-					]
-				};
-				this.oVariantController._setChangeFileContent(oVariantControllerData, {});
-			}
-		}
 		if (oVariantManagementControl) {
 			//control property updateVariantInURL set initially
-			oData[sVariantManagementReference].updateVariantInURL = oVariantManagementControl.getUpdateVariantInURL();
+			this.oData[sVariantManagementReference].updateVariantInURL = oVariantManagementControl.getUpdateVariantInURL();
 			//attach binding change event on VariantManagement control title
 			oVariantManagementControl.getTitle().getBinding("text").attachChange(this.handleCurrentVariantChange, this);
+
 			this._setModelPropertiesForControl(sVariantManagementReference, false, oVariantManagementControl);
 
 			oVariantManagementControl.attachSave(this.handleSave, this);

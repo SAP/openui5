@@ -117,7 +117,9 @@ sap.ui.require([
 			{
 				content:
 					{
-						title: this.oData["variantMgmtId1"].variants[2].title
+						content: {
+							title: this.oData["variantMgmtId1"].variants[2].title
+						}
 					}
 			}
 		);
