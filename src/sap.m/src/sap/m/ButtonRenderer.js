@@ -81,8 +81,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/library', 'sap
 			mAccProps["describedby"] = {value: sTextId, append: true};
 		}
 
-		if (oButton.getAriaLabelledBy() && oButton.getAriaLabelledBy().length > 0) {
-			mAccProps["labelledby"] = {value: oButton.getId(), append: true };
+		// add reference only to the text content of the button
+		// so it can be read otherwise it causes the issue reported in BCP: 1680223321
+		if (sText && oButton.getAriaLabelledBy() && oButton.getAriaLabelledBy().length > 0) {
+			mAccProps["labelledby"] = {value: oButton.getId() + "-content", append: true };
 		}
 
 		//descendants (e.g. ToggleButton) callback
@@ -197,7 +199,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/library', 'sap
 
 		// write button text
 		if (sText) {
-			oRm.write("<span");
+			// add tabindex = -1 since this causing the issue reported in BCP: 1780428239
+			// which is described here: https://w3c.github.io/using-aria/#label-support
+			oRm.write("<span tabindex=-1");
 			oRm.addClass("sapMBtnContent");
 			// check if textDirection property is not set to default "Inherit" and add "dir" attribute
 			if (sTextDir !== TextDirection.Inherit) {
