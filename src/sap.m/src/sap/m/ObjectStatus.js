@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sState = this.getState() != sap.ui.core.ValueState.None ? ValueStateSupport.getAdditionalText(this.getState()) : "";
 
 		return {
-			description: ((this.getTitle() || "") + " " + (this.getText() || "") + " " + sState).trim()
+			description: ((this.getTitle() || "") + " " + (this.getText() || "") + " " + sState + " " + (this.getTooltip() || "")).trim()
 		};
 	};
 
