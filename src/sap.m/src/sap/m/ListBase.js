@@ -1645,6 +1645,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posInset, mPosition.setSize]) + " ";
 			sDescription += oAccInfo.description;
 			this.updateInvisibleText(sDescription, oItemDomRef);
+			return sDescription;
 		}
 	};
 
