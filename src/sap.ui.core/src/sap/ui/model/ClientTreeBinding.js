@@ -116,28 +116,29 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 
 		var aContexts = [],
 			that = this,
-			oNode = this.oModel._getObject(sContextPath),
+			vNode = this.oModel._getObject(sContextPath),
 			aArrayNames = this.mParameters && this.mParameters.arrayNames,
-			aChildArray;
+			aKeys;
 
-		if (oNode) {
-			if (Array.isArray(aArrayNames)) {
-				aArrayNames.forEach(function(sArrayName){
-					aChildArray = oNode[sArrayName];
-					if (aChildArray) {
-						jQuery.each(aChildArray, function(sSubName, oSubChild) {
-							that._saveSubContext(oSubChild, aContexts, sContextPath, sArrayName + "/" + sSubName);
-						});
-					}
+		if (vNode) {
+			if (Array.isArray(vNode)) {
+				vNode.forEach(function(oSubChild, index) {
+					that._saveSubContext(oSubChild, aContexts, sContextPath, index);
 				});
 			} else {
-				jQuery.sap.each(oNode, function(sName, oChild) {
-					if (Array.isArray(oChild)) {
-						oChild.forEach(function(oSubChild, sSubName) {
-							that._saveSubContext(oSubChild, aContexts, sContextPath, sName + "/" + sSubName);
-						});
-					} else if (typeof oChild == "object") {
-						that._saveSubContext(oChild, aContexts, sContextPath, sName);
+				// vNode is an object
+				aKeys = aArrayNames || Object.keys(vNode);
+
+				aKeys.forEach(function(sKey) {
+					var oChild = vNode[sKey];
+					if (oChild) {
+						if (Array.isArray(oChild)) { // vNode is an object containing one or more arrays
+							oChild.forEach(function(oSubChild, sSubName) {
+								that._saveSubContext(oSubChild, aContexts, sContextPath, sKey + "/" + sSubName);
+							});
+						} else if (typeof oChild == "object") {
+							that._saveSubContext(oChild, aContexts, sContextPath, sKey);
+						}
 					}
 				});
 			}
