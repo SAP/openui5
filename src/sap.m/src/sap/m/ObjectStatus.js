@@ -176,7 +176,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSuppor
 		var sState = this.getState() != ValueState.None ? ValueStateSupport.getAdditionalText(this.getState()) : "";
 
 		return {
-			description: ((this.getTitle() || "") + " " + (this.getText() || "") + " " + sState).trim()
+			description: ((this.getTitle() || "") + " " + (this.getText() || "") + " " + sState + " " + (this.getTooltip() || "")).trim()
 		};
 	};
 
