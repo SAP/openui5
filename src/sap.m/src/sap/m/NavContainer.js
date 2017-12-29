@@ -592,6 +592,9 @@ sap.ui.define([
 		if (this._isInPageStack(pageId)) {
 			return this.backToPage(pageId, data, oTransitionParameters);
 		} else {
+			// when this method calls "to", animation should be "back"
+			data = data || {};
+			data.safeBackToPage = true;
 			return this.to(pageId, transitionName, data, oTransitionParameters);
 		}
 	};
@@ -782,7 +785,10 @@ sap.ui.define([
 				}, fnGetDelay(5000));
 
 				this._bNavigating = true;
-				oTransition.to.call(this, oFromPage, oToPage, jQuery.proxy(function () {
+
+				// check both params since they might have shifted
+				var sTransitionDirection = (data.safeBackToPage || oTransitionParameters.safeBackToPage) ? "back" : "to";
+				oTransition[sTransitionDirection].call(this, oFromPage, oToPage, jQuery.proxy(function () {
 					this._afterTransitionCallback(oNavInfo, data);
 				}, this), oTransitionParameters); // trigger the transition
 
