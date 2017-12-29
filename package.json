@@ -56,5 +56,8 @@
     "selenium-webdriver": "^3.0.1",
     "semver": "^4.3.0",
     "status-bar": "^2.0.2"
-  }
+  },
+  "workspaces": [
+    "src/*"
+  ]
 }
