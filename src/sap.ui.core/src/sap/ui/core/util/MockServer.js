@@ -56,7 +56,7 @@ sap.ui
 						 */
 
 						/**
-						 * Getter for property <code>rootUri</code>.
+						 * Getter for property <code>rootUri</code>. Has to be relative and requires a trailing '/'. It also needs to match the URI set in OData/JSON models or simple XHR calls in order for the mock server to intercept them.
 						 *
 						 * Default value is empty/<code>undefined</code>
 						 *
@@ -151,7 +151,7 @@ sap.ui
 
 
 			/**
-			 * generates a floating-point, pseudo-random number in the range [0, 1[
+			 * Generates a floating-point, pseudo-random number in the range [0, 1[
 			 * using a linear congruential generator with drand48 parameters
 			 * the seed is fixed, so the generated random sequence is always the same
 			 * each property type has a own seed. Valid types are:
