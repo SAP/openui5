@@ -175,6 +175,12 @@
         "type": "FEATURE",
         "text": " sap.m.MessagePage: Added new property and aggregation",
         "references": []
+      },
+      {
+        "id": "60c61d57e8301c11e3a93889251cac9211864495",
+        "type": "FIX",
+        "text": "sap.ui.rta: Show BusyIndicator to block app during reset of changes",
+        "references": []
       }
     ]
   }

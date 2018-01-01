@@ -85,6 +85,12 @@
         "type": "FIX",
         "text": " sap.m.Tile: Focus is cleared indicated in HCB and HCW",
         "references": []
+      },
+      {
+        "id": "88b5e1a7dbbb3e646587544dbbaba324f3547b4f",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: 24:00 value is now supported",
+        "references": []
       }
     ]
   }

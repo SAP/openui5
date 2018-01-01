@@ -391,6 +391,24 @@
         "type": "FIX",
         "text": " sap.ui.model: fix documentation, visibility of Client- \u0026 JSONModel",
         "references": []
+      },
+      {
+        "id": "f13eceb4ca68aff6494b6ad1e8b21874b24d0723",
+        "type": "FIX",
+        "text": " ClientTreeBinding: Incorrect filtering when using \"arrayNames\" constrain",
+        "references": []
+      },
+      {
+        "id": "f8582c2c45bcd93b6d7bcac072a09ef965098de4",
+        "type": "FIX",
+        "text": " NumberFormat: Demo page fix",
+        "references": []
+      },
+      {
+        "id": "5bab41ad00426a1af80ea83e1db49391dcf47723",
+        "type": "FIX",
+        "text": " Theming Parameters: Parse inline params in MS Edge",
+        "references": []
       }
     ]
   }

@@ -817,6 +817,54 @@
         "type": "FIX",
         "text": " sap.m.ViewSettingsPopover: remove redundat aria-labelledby for the close button",
         "references": []
+      },
+      {
+        "id": "88b5e1a7dbbb3e646587544dbbaba324f3547b4f",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: 24:00 value is now supported",
+        "references": []
+      },
+      {
+        "id": "fb8a66db8abed47a5883440ee3b36d35b172a8a6",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: setDateValue accepts JS Date Object from iframe",
+        "references": []
+      },
+      {
+        "id": "fb8c45819333dff535d3786bfec7c736d6944a67",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: fix unit tests",
+        "references": []
+      },
+      {
+        "id": "6900b9d40c7314d39837098723669d21f844b091",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: tabindex of container element removed",
+        "references": []
+      },
+      {
+        "id": "4a05f893a93712a8b765cc3fdd18a29519c5e515",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Positioning in ObjectPage section fixed",
+        "references": []
+      },
+      {
+        "id": "992cd206adeb434342c3fe391d8b866dac0c20f8",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: added space between state and tooltip ina Aria descriprion",
+        "references": []
+      },
+      {
+        "id": "b616789c20257cc2c81314e811e2016337016059",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: getAccessibilityInfo returns the tooltip also",
+        "references": []
+      },
+      {
+        "id": "6421d6a74705aa27124447ad0e3609836675da43",
+        "type": "FIX",
+        "text": " sap.m.Table: Selection column should be hidden from screen readers",
+        "references": []
       }
     ]
   }
