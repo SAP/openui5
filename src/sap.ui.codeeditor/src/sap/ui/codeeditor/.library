@@ -3,9 +3,7 @@
 
 	<name>sap.ui.codeeditor</name>
 	<vendor>SAP SE</vendor>
-	<copyright>SAP UI development toolkit for HTML5 (SAPUI5)
-
-(c) Copyright 2009-2017 SAP SE. All rights reserved</copyright>
+	<copyright>${copyright}</copyright>
 	<version>${version}</version>
 
 	<documentation>UI5 library: sap.ui.codeeditor</documentation>

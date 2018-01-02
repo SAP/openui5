@@ -21,8 +21,8 @@
 					<Image id="aboutLogoSAP" src="./resources/sap/ui/documentation/sdk/images/Logo_B_SAPUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
 					<Image id="aboutLogoUI5" src="./resources/sap/ui/documentation/sdk/images/Logo_B_OpenUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{versionData>/isOpenUI5}"/>
 					<Text text="UI5 Demo Kit - UI Development Toolkit for HTML5" class="sapMTitleStyleH2 sapUiSmallMarginBottom" />
-					<Text text="© Copyright 2009-2017 SAP SE. All rights reserved." class="sapUiMediumMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
-					<Text text="© 2009-2017 SAP SE or an SAP affiliate company." visible="{versionData>/isOpenUI5}"/>
+					<Text text="© Copyright 2009-2018 SAP SE. All rights reserved." class="sapUiMediumMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
+					<Text text="© 2009-2018 SAP SE or an SAP affiliate company." visible="{versionData>/isOpenUI5}"/>
 					<HBox class="sapUiMediumMarginBottom" visible="{versionData>/isOpenUI5}" allowWrapping="true">
 						<Text text="Licensed under the Apache License, Version 2.0 – see"/>
 						<Link text="LICENSE.txt" href="LICENSE.txt" target="_blank" class="aboutLink"/>
