@@ -501,7 +501,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			return;
 		}
 
-		if (!(vRuleDescriptors instanceof Array)) {
+		if (!Array.isArray(vRuleDescriptors)) {
 			vRuleDescriptors = [vRuleDescriptors];
 		}
 
