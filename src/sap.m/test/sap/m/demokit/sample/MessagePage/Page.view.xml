@@ -2,16 +2,6 @@
 	height="100%"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<MessagePage showHeader="false"
-				 text="Warning (this is a sample)"
-				 enableFormattedText="true"
-				 description="This page might not behave as expected because Windows Internet Explorer isn't &lt;em&gt;&lt;u&gt;configured to load unsigned&lt;/u&gt;&lt;/em&gt; &lt;a href='#' target='_self'&gt;ActiveX&lt;/a&gt; controls.Allow this page to install an unsigned ActiveX Control? &lt;em&gt;&lt;strong&gt;Doing so from untrusted sources&lt;/strong&gt; may harm your computer.&lt;/em&gt; &lt;a href='#' target='_self'&gt;Learn more&lt;/a&gt;&lt;ul&gt;&lt;li&gt;Your current security settings prohibit running ActiveX controls on this page, or&lt;/li&gt;&lt;li&gt;You have blocked a publisher of one of the controls.&lt;/li&gt;&lt;li&gt;Learn about ActiveX &lt;a href='#' target='_self'&gt;here&lt;/a&gt;.&lt;/li&gt;&lt;/ul&gt;"
-				 icon="sap-icon://warning">
-		<buttons>
-			<Button text="Change security settings"/>
-			<Button text="Unblock publishers"/>
-			<Button text="Reload page"/>
-			<Button text="Cancel"/>
-		</buttons>
+	<MessagePage showHeader="false">
 	</MessagePage>
 </mvc:View>
