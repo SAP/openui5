@@ -25,6 +25,9 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				appVersion: "1.2.3"
 			};
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
+			this._oComponentInstance = sap.ui.component({
+				name: "sap/ui/fl/qunit/integration/testComponentComplex"
+			});
 			Utils.setMaxLayerParameter("USER");
 		},
 		afterEach: function () {
@@ -68,6 +71,38 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		return this.oChangePersistence.getCacheKey().then(function (oCacheKeyResponse) {
 			assert.equal(oCacheKeyResponse, ChangePersistence.NOTAG);
 		});
+	});
+
+	QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
+			changes: { changes: [] },
+			messagebundle: {"i_123": "translatedKey"}
+		}));
+		var mPropertyBag = {};
+		mPropertyBag.oComponent = this._oComponentInstance;
+		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function() {
+			var oModel = this._oComponentInstance.getModel("i18nFlexVendor");
+			assert.equal(oModel, undefined);
+		}.bind(this));
+	});
+
+	QUnit.test("getChangesForComponent shall bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
+			changes: { changes: [{
+					fileType: "change",
+					selector: {
+						id: "controlId"
+					},
+					layer : "VENDOR"
+				}] },
+			messagebundle: {"i_123": "translatedKey"}
+		}));
+		var mPropertyBag = {};
+		mPropertyBag.oComponent = this._oComponentInstance;
+		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function() {
+			var oModel = this._oComponentInstance.getModel("i18nFlexVendor");
+			assert.notEqual(oModel, undefined);
+		}.bind(this));
 	});
 
 	QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {

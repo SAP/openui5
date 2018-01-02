@@ -426,6 +426,7 @@ sap.ui.define([
 			.then(function(oResponse) {
 				return {
 					changes: oResponse.response,
+					messagebundle: oResponse.response.messagebundle,
 					componentClassName: sComponentName,
 					etag: oResponse.etag
 				};
