@@ -54,6 +54,7 @@ sap.ui.define([
 		this._oVariantController = new VariantController(this._mComponent.name, this._mComponent.appVersion, {});
 		this._oConnector = this._createLrepConnector();
 		this._aDirtyChanges = [];
+		this._oMessagebundle = undefined;
 	};
 
 	/**
@@ -135,21 +136,22 @@ sap.ui.define([
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
-	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
-	 * @param {object} mPropertyBag.appDescriptor - Manifest that belongs to actual component
-	 * @param {string} mPropertyBag.siteId - ID of the site belonging to actual component
-	 * @param {string} [mPropertyBag.sCurrentLayer] - Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
-	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that changes shall be loaded without layer filtering
-	 * @param {boolean} [mPropertyBag.includeVariants] - Indicates that smart variants shall be included
-	 * @param {string} [mPropertyBag.cacheKey] - key to validate the client side stored cache entry
-	 * @param {string} [mPropertyBag.url] - address to which the request for change should be sent in case the data is not cached
+	 * @param {map} mPropertyBag Contains additional data needed for reading changes
+	 * @param {object} mPropertyBag.appDescriptor Manifest that belongs to the current running component
+	 * @param {string} mPropertyBag.siteId ID of the site belonging to the current running component
+	 * @param {string} [mPropertyBag.sCurrentLayer] Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
+	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] Indicates that changes shall be loaded without layer filtering
+	 * @param {boolean} [mPropertyBag.includeVariants] Indicates that smart variants shall be included
+	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
+	 * @param {string} [mPropertyBag.url] Address to which the request for change should be sent in case the data is not cached
+	 * @param {sap.ui.core.Component} [mPropertyBag.oComponent] App component instance of component
 	 * @see sap.ui.fl.Change
-	 * @returns {Promise} Resolving with an array of changes
+	 * @returns {Promise} Promise resolving with an array of changes
 	 * @public
 	 */
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
 		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
-			this._bHasLoadedChangesFromBackEnd = true;
+			var oComponent = mPropertyBag && mPropertyBag.oComponent;
 
 			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
 				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
@@ -160,6 +162,21 @@ sap.ui.define([
 			}
 
 			var aChanges = oWrappedChangeFileContent.changes.changes;
+
+			//Binds a json model of message bundle to the component the first time a change within the vendor layer was detected
+			//It enables the translation of changes
+
+			if (!this._oMessagebundle && oWrappedChangeFileContent.messagebundle && oComponent) {
+				if (!oComponent.getModel("i18nFlexVendor")) {
+					if (aChanges.some(function(oChange) {
+							return oChange.layer === "VENDOR";
+						})) {
+						this._oMessagebundle = oWrappedChangeFileContent.messagebundle;
+						var oModel = new sap.ui.model.json.JSONModel(this._oMessagebundle);
+						oComponent.setModel(oModel, "i18nFlexVendor");
+					}
+				}
+			}
 
 			if (oWrappedChangeFileContent.changes.variantSection && Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0 && !this._oVariantController._getChangeFileContent()) {
 				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent);
@@ -293,6 +310,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
 
+		mPropertyBag.oComponent = oComponent;
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {
