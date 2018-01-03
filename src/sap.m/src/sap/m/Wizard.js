@@ -56,6 +56,7 @@ sap.ui.define([
 		var Wizard = Control.extend("sap.m.Wizard", /** @lends sap.m.Wizard.prototype */ {
 			metadata: {
 				library: "sap.m",
+				designtime: "sap/m/designtime/Wizard.designtime",
 				properties: {
 					/**
 					 * Determines the width of the Wizard.
