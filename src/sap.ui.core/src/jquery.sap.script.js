@@ -3,9 +3,11 @@
  */
 
 // Provides miscellaneous utility functions that might be useful for any script
-sap.ui.define(['jquery.sap.global','jquery.sap.xml'],
+sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";
+
+	/*global Node*/
 
 	/**
 	 * Some private variable used for creation of (pseudo-)unique ids.
@@ -291,7 +293,7 @@ sap.ui.define(['jquery.sap.global','jquery.sap.xml'],
 			if (!contains && Object.keys(a).length !== Object.keys(b).length) {
 				return false;
 			}
-			if (a.nodeName && b.nodeName && a.namespaceURI && b.namespaceURI) {
+			if (a instanceof Node) {
 				return a.isEqualNode(b);
 			}
 			if (a instanceof Date) {
