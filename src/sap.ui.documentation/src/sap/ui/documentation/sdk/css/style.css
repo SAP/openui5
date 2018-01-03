@@ -653,10 +653,6 @@ code {
 	line-height: 1.25rem;
 }
 
-.sapUiDocumentationHeaderNavLinks .sapMFlexItem:nth-child(2) {
-	min-width: 1px !important;
-}
-
 .sapUiDocumentationAnnotationsText .sapMLnk {
 	margin-left: 0.25rem;
 }
@@ -1682,11 +1678,15 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
  */
 
 /* Comma list */
-.sapUiDocumentationCommaList .sapMFlexItem:not(:last-child)::after {
+.sapUiDocumentationCommaList .sapMFlexItem:not(:first-child):not(:last-child)::after {
 	content: ",";
 	margin-right: 1px;
-	vertical-align: top;
 	line-height: 1.5rem;
+}
+
+.sapUiDocumentationCommaList > div {
+    display: flex;
+    flex-wrap: nowrap;
 }
 
 /* Or list */
