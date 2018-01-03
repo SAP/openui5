@@ -57,7 +57,8 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./SliderTooltip", "./SliderUtil
                      * If the value is lower/higher than the allowed minimum/maximum, a warning message will be output to the console.
                      */
                     range: {type: "float[]", group: "Data", defaultValue: [0,100]}
-                }
+                },
+                designtime: "sap/m/designtime/RangeSlider.designtime"
             }
         });
 
