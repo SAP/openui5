@@ -299,7 +299,10 @@ sap.ui.define([],
 				domRef : function(oElement) {
 					return oElement.$("vertSB-sb").get(0);
 				}
-			}]
+			}],
+			templates: {
+				create: "sap/f/designtime/SemanticPage.create.fragment.xml"
+			}
 		};
 
 	}, /* bExport= */ false);

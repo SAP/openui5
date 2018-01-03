@@ -94,7 +94,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						state: { type: "boolean" }
 					}
 				}
-			}
+			},
+			designtime: "sap/m/designtime/Switch.designtime"
 		}});
 
 		IconPool.insertFontFaceStyle();

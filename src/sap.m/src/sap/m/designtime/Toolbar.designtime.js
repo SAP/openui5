@@ -15,6 +15,9 @@ sap.ui.define([],
 					move: "moveControls"
 				}
 			}
+		},
+		templates: {
+			create: "sap/m/designtime/Toolbar.create.fragment.xml"
 		}
 	};
 

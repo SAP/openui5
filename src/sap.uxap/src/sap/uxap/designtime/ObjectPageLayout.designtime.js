@@ -55,7 +55,10 @@ sap.ui.define(["sap/uxap/library"],
 			}
 		}],
 
-		cloneDomRef : ":sap-domref > header"
+		cloneDomRef : ":sap-domref > header",
+		templates: {
+			create: "sap/uxap/designtime/ObjectPageLayout.create.fragment.xml"
+		}
 	};
 
 }, /* bExport= */ false);
