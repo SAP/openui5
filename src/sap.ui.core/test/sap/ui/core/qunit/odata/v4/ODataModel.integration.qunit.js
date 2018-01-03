@@ -179,7 +179,7 @@ sap.ui.require([
 		 * received.
 		 */
 		checkFinish : function () {
-			var sControlId, i;
+			var sControlId, aExpectedValuesPerRow, i;
 
 			if (this.aRequests.length) {
 				return;
@@ -188,14 +188,18 @@ sap.ui.require([
 				if (this.mChanges[sControlId].length) {
 					return;
 				}
+				delete this.mChanges[sControlId];
 			}
 			for (sControlId in this.mListChanges) {
 				// Note: This may be a sparse array
-				for (i in this.mListChanges[sControlId]) {
-					if (this.mListChanges[sControlId][i].length) {
+				aExpectedValuesPerRow = this.mListChanges[sControlId];
+				for (i in aExpectedValuesPerRow) {
+					if (aExpectedValuesPerRow[i].length) {
 						return;
 					}
+					delete aExpectedValuesPerRow[i];
 				}
+				delete this.mListChanges[sControlId];
 			}
 			if (this.resolve) {
 				this.resolve();
@@ -256,7 +260,8 @@ sap.ui.require([
 		 *   ODataMetaModel), otherwise <code>undefined</code>.
 		 */
 		checkValue : function (assert, sValue, sControlId, vRow) {
-			var aExpectedValues = vRow === undefined
+			var sExpectedValue,
+				aExpectedValues = vRow === undefined
 					? this.mChanges[sControlId]
 					: this.mListChanges[sControlId][vRow],
 				sVisibleId = vRow === undefined ? sControlId : sControlId + "[" + vRow + "]";
@@ -264,8 +269,12 @@ sap.ui.require([
 			if (!aExpectedValues || !aExpectedValues.length) {
 				assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
 			} else {
-				assert.strictEqual(sValue, aExpectedValues.shift(),
-					sVisibleId + ": " + JSON.stringify(sValue));
+				sExpectedValue = aExpectedValues.shift();
+				// Note: avoid bad performance of assert.strictEqual(), e.g. DOM manipulation
+				if (sValue !== sExpectedValue || vRow === undefined || vRow < 10) {
+					assert.strictEqual(sValue, sExpectedValue,
+						sVisibleId + ": " + JSON.stringify(sValue));
+				}
 			}
 			this.checkFinish();
 		},
@@ -365,6 +374,10 @@ sap.ui.require([
 					oResponse = oExpectedRequest.response;
 					delete oExpectedRequest.response;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
+				}
+
+				if (!that.aRequests.length) { // waiting may be over after promise has been handled
+					setTimeout(that.checkFinish.bind(that), 0);
 				}
 
 				if (!that.oModel.isDirectGroup(sGroupId)) { // "$batch" support
@@ -582,7 +595,7 @@ sap.ui.require([
 				window.setTimeout(resolve, 3000);
 				that.checkFinish();
 			}).then(function () {
-				var sControlId, i, j;
+				var sControlId, aExpectedValuesPerRow, i, j;
 
 				// Report missing requests
 				that.aRequests.forEach(function (oRequest) {
@@ -597,10 +610,11 @@ sap.ui.require([
 				}
 				for (sControlId in that.mListChanges) {
 					// Note: This may be a sparse array
-					for (i in that.mListChanges[sControlId]) {
-						for (j in that.mListChanges[sControlId][i]) {
+					aExpectedValuesPerRow = that.mListChanges[sControlId];
+					for (i in aExpectedValuesPerRow) {
+						for (j in aExpectedValuesPerRow[i]) {
 							assert.ok(false, sControlId + "[" + i + "]: "
-								+ that.mListChanges[sControlId][i][j] + " (not set)");
+								+ aExpectedValuesPerRow[i][j] + " (not set)");
 						}
 					}
 				}
@@ -3364,7 +3378,12 @@ sap.ui.require([
 			oListBinding.getContexts(0, Infinity);
 			oListBinding.attachEventOnce("change", function () {
 				oListBinding.getContexts(0, Infinity).forEach(function (oContext, i) {
-					assert.strictEqual(oContext.getProperty("Team_Id"), aIDs[i]);
+					var sId = oContext.getProperty("Team_Id");
+
+					// Note: avoid bad performance of assert.strictEqual(), e.g. DOM manipulation
+					if (sId !== aIDs[i]) {
+						assert.strictEqual(sId, aIDs[i]);
+					}
 				});
 				done();
 			});
