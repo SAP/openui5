@@ -449,7 +449,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setProperty: synchronous error cases", function (assert) {
-		var oModel = { resolve : function () {}},
+		var oModel = {resolve : function () {}},
 			oModelMock = this.mock(oModel),
 			oCreatedContext = Context.create(oModel, null,  "/foo/-1", -1);
 
@@ -562,8 +562,8 @@ sap.ui.require([
 			 * With intend we do NOT check withExactArgs because it is done in the success tests
 			 * Errors are always expected if they are no cancellations.
 			*/
-			this.mock(oMetaModel).expects("fetchUpdateData").returns(createPromise(
-				!!oFixture.bFetchupdateDataRejected, oUpdateData));
+			this.mock(oMetaModel).expects("fetchUpdateData")
+				.returns(createPromise(!!oFixture.bFetchupdateDataRejected, oUpdateData));
 
 			oBindingMock.expects("getUpdateGroupId").exactly(oUpdatePromise ? 1 : 0);
 
