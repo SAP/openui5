@@ -173,7 +173,6 @@ pre.sapUiDocumentationAPICode,
 	color: #333;
 	margin: 1.25rem 0;
 	font-size: .875rem;
-	font-family: BentonSansRegular, Arial, sans-serif;
 	line-height: 1.375rem;
 	orphans: 2;
 	padding: 0;
@@ -203,7 +202,6 @@ pre.sapUiDocumentationAPICode,
 	display: block;
 	box-sizing: border-box;
 	font-size: .875rem;
-	font-family: 'Benton Sans', Arial, sans-serif;
 	margin: 1.25rem 0;
 	word-wrap: break-word;
 }
@@ -237,7 +235,6 @@ pre.sapUiDocumentationAPICode,
 	padding-left: 2.5rem;
 	font-weight: 300;
 	color: #000;
-	font-family: 'Benton Sans', Arial, sans-serif;
 }
 
 #d4h5-main-container .restriction .title:before,
@@ -315,7 +312,6 @@ pre.sapUiDocumentationAPICode,
 #d4h5-main-container h2 {
 	break-after: avoid;
 	break-inside: avoid;
-	font-family: 'Open Sans', Arial, sans-serif;
 	font-weight: 600;
 	color: #4a4a4a;
 	font-size: 1.25rem;
@@ -329,7 +325,6 @@ pre.sapUiDocumentationAPICode,
 #d4h5-main-container span.uinolabel,
 #d4h5-main-container .emphasis,
 #d4h5-main-container strong {
-	font-family: 'Open Sans', Arial, sans-serif;
 	font-weight: 600;
 }
 
@@ -394,7 +389,6 @@ code, kbd, pre, samp {
 	page-break-after: avoid;
 	page-break-inside: avoid;
 	white-space: nowrap;
-	font-family: 'Open Sans', Arial, sans-serif;
 	font-size: .625rem;
 	font-weight: 300 !important;
 	margin-left: .125rem;
@@ -407,7 +401,6 @@ code, kbd, pre, samp {
 	font-weight: 300 !important;
 	color: #181818;
 	letter-spacing: -1px;
-	font-family: 'Benton Sans', Arial, sans-serif;
 	font-size: 1.25rem;
 	line-height: 1.75rem;
 	padding: 1rem 1rem .5rem 0;
@@ -416,7 +409,6 @@ code, kbd, pre, samp {
 #d4h5-main-container th .p {
 	margin: 0;
 	font-size: 1rem;
-	font-family: 'Benton Sans', Arial, sans-serif;
 }
 
 #d4h5-main-container td {
@@ -444,7 +436,6 @@ code, kbd, pre, samp {
 
 #d4h5-main-container span.figcap {
 	font-size: .5625rem;
-	font-family: 'Open Sans';
 }
 
 #d4h5-main-container ol,
@@ -454,7 +445,6 @@ code, kbd, pre, samp {
 }
 
 #d4h5-main-container li {
-	font-family: BentonSansRegular, Arial, sans-serif;
 	font-size: .875rem;
 	line-height: 1.375rem;
 	margin: .625rem;
