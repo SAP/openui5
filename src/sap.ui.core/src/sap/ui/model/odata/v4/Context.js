@@ -539,54 +539,67 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the property value for the given path relative to this context. So far only paths
-	 * to a navigation property annotated with <code>odata.bind</code> are allowed,
-	 * e.g. /TEAMS/0/TEAM_TO_EMPLOYEE@odata.bind.
+	 * Sets the property value for the given path. Only a path to a navigation property's
+	 * "@odata.bind" annotation on a transient context is allowed, e.g. "SO_2_BP@odata.bind".
 	 *
 	 * @param {string} sPath
-	 *   A relative path within the JSON structure
-	 * @param {string|sap.ui.model.odata.v4.Context|[string]|[sap.ui.model.odata.v4.Context]} vValue
-	 *   The <code>vValue</code> for the target has to be either a <code>string</code> with a valid
-	 *   entity-id, e.g. "BussinesspartnerList('4712'), or a {@link sap.ui.model.odata.v4.Context}
-	 *   representing the target entity. If the target is a collection then <code>vValue</code> has
-	 *   to be an array of <code>string</code> or an array of {@link sap.ui.model.odata.v4.Context}
+	 *   A relative path within the JSON structure, see {@link #getObject}
+	 * @param {string|sap.ui.model.odata.v4.Context|string[]|sap.ui.model.odata.v4.Context[]} vValue
+	 *   The navigation property now relates to the entities addressed via the given value.
+	 *   <code>vValue</code> has to be either a <code>string</code> with an absolute path,
+	 *   for example "/BusinessPartner('42')", or a {@link sap.ui.model.odata.v4.Context} or, if the
+	 *   navigation property is collection-valued, an array of them.
 	 * @throws {Error}
-	 *   If the path does not point to an <code>odata.bind</code> navigation annotation
+	 *   If the path does not point to an "@odata.bind" navigation property annotation, the
+	 *   context is not transient (see {@link #isTransient}) or <code>vValue</code> contains a
+	 *   relative path.
 	 *
 	 * @public
 	 * @since 1.53.0
 	 */
 	Context.prototype.setProperty = function (sPath, vValue) {
-		var that = this;
+		var vTargets,
+			that = this;
 
 		function reportError (oError) {
 			that.oModel.reportError("Failed to set property for path: "
 				+ that.oModel.resolve(sPath, that), sClassname, oError);
 		}
 
+		function getRelativePathOrThrowError(vTarget) {
+			vTarget = (vTarget.getPath ? vTarget.getPath() : vTarget);
+			if (vTarget[0] === "/") {
+				vTarget = vTarget.slice(1);
+			} else {
+				throw new Error("Value '" + vTarget
+					+ "' is not an absolute path; cannot set property for path: "
+					+ that.oModel.resolve(sPath, that));
+			}
+			return vTarget;
+		}
+
 		if (!rEndsWithODataBind.test(sPath)) {
-			throw new Error("Can not set property for path: " + this.oModel.resolve(sPath, that));
+			throw new Error("Cannot set property for path: " + this.oModel.resolve(sPath, that));
+		}
+
+		if (!this.isTransient()) {
+			throw new Error("Entity is not transient; cannot set property for path: "
+				+ this.oModel.resolve(sPath, that));
+		}
+
+		if (Array.isArray(vValue)) {
+			vTargets = vValue.map(getRelativePathOrThrowError);
+		} else {
+			vTargets = getRelativePathOrThrowError(vValue);
 		}
 
 		this.getModel().getMetaModel().fetchUpdateData(sPath, this).then(function (oResult) {
-			var vTargets;
-
-			if (Array.isArray(vValue)) {
-				vTargets = [];
-				vValue.forEach(function (oEntry) {
-					vTargets.push(oEntry.getPath ? oEntry.getPath().slice(1) : oEntry);
-				});
-			} else {
-				vTargets = vValue.getPath ? vValue.getPath().slice(1) : vValue;
-			}
-
-			return that.getBinding().updateValue(that.getUpdateGroupId(), oResult.propertyPath,
-				vTargets, reportError, oResult.editUrl, oResult.entityPath);
-		})["catch"](function (oError) {
-			if (!oError.cancelled) {
-				reportError(oError);
-			}
-		});
+			return that.getBinding().withCache(function (oCache, sCachePath, oBinding) {
+				oCache.update(oBinding.getUpdateGroupId(),
+					oResult.propertyPath, vTargets, reportError, oResult.editUrl,
+					sCachePath)["catch"](reportError);
+			}, oResult.entityPath);
+		})["catch"](reportError);
 	};
 
 	/**
