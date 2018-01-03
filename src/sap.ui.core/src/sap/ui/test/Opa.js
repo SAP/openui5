@@ -65,7 +65,7 @@ sap.ui.define([
 
 			// Timeout is reached and the check never returned true.
 			// Execute the error function (if provided in the options) and reject the queue promise.
-			addErrorMessageToOptions("Opa timeout", oOptions);
+			addErrorMessageToOptions("Opa timeout after " + oOptions.timeout + " seconds", oOptions);
 
 			if (oOptions.error) {
 				try {
@@ -414,7 +414,7 @@ sap.ui.define([
 			queue = [];
 
 			if (oStopQueueOptions) {
-				var sErrorMessage = oStopQueueOptions.qunitTimeout ? "QUnit timeout" : "Queue was stopped manually";
+				var sErrorMessage = oStopQueueOptions.qunitTimeout ? "QUnit timeout after " + oStopQueueOptions.qunitTimeout + " seconds" : "Queue was stopped manually";
 				// if the queue was running, log the stack of the last executed check before the queue was stopped
 				oOptions._stack = oStopQueueOptions.qunitTimeout && lastInternalWaitStack || createStack(1);
 				addErrorMessageToOptions(sErrorMessage, oOptions);

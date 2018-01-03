@@ -498,7 +498,7 @@ sap.ui.require([
 		setTimeout(function () {
 			// _stopQueue on QUnit timeout is called outside the queue
 			// put this in a timeout to ensure the queue is started
-			Opa._stopQueue({qunitTimeout: true});
+			Opa._stopQueue({qunitTimeout: 30000});
 		}, 50);
 	});
 
