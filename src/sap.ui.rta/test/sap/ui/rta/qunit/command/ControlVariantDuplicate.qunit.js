@@ -122,6 +122,7 @@ function(
 		var done = assert.async();
 
 		var oOverlay = new ElementOverlay();
+		var fnCreateDefaultFileNameSpy = sinon.spy(Utils, "createDefaultFileName");
 		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 		sinon.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
 
@@ -135,6 +136,7 @@ function(
 		assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
 		oControlVariantDuplicateCommand.execute().then( function() {
 			var oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
+			assert.ok(fnCreateDefaultFileNameSpy.calledWith("Copy"), "then Copy appended to the fileName of the duplicate variant");
 			assert.ok(fnGetVariantTitleStub.calledOnce, "'GetVariantTitle' is called");
 			assert.notEqual(oDuplicateVariant.getId().indexOf("_Copy"), -1, "then fileName correctly duplicated");
 			assert.equal(oDuplicateVariant.getVariantReference(), oVariant.content.variantReference, "then variant reference correctly duplicated");

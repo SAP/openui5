@@ -555,7 +555,7 @@ sap.ui.define([
 			return Promise.resolve();
 		} else {
 			// handle triggered "SaveAs" button
-			var sNewVariantReference = Utils.createDefaultFileName(sSourceVariantReference + "_Copy");
+			var sNewVariantReference = Utils.createDefaultFileName("Copy");
 			var mPropertyBag = {
 					variantManagementControl: oVariantManagementControl,
 					appComponent: oAppComponent,
