@@ -7,7 +7,8 @@
 	/*global _$blanket, blanket, falafel */
 
 	var aFileNames = [], // maps a file's index to its name
-		aStatistics = []; // maps a file's index to its "hits" array (and statistics record)
+		aStatistics = [], // maps a file's index to its "hits" array (and statistics record)
+		rWordChar = /\w/; // a "word" (= identifier) character
 
 	/**
 	 * Keep track of branch coverage.
@@ -130,7 +131,9 @@
 	function visit(bBranchTracking, iFileIndex, oNode) {
 		var aHits = aStatistics[iFileIndex],
 			aBranchTracking = aHits.branchTracking,
-			iLine = oNode.loc.start.line;
+			iLine = oNode.loc.start.line,
+			sNewSource,
+			sOldSource;
 
 		function addLineTracking(oNode) {
 			oNode.update("blanket.$l(" + iFileIndex + ", " + iLine + "); " + oNode.source());
@@ -215,10 +218,14 @@
 				}
 				if (oNode.operator === "||" || oNode.operator === "&&") {
 					// Note: (...) around right source!
-					oNode.update("blanket.$b(" + iFileIndex + ", " + aBranchTracking.length + ", "
-						+ oNode.left.source() + ") "
-						+ oNode.operator + " (" + oNode.right.source() + ")"
-					);
+					sOldSource = oNode.left.source();
+					sNewSource = "blanket.$b(" + iFileIndex + ", " + aBranchTracking.length + ", "
+						+ sOldSource + ") " + oNode.operator + " (" + oNode.right.source() + ")";
+					if (!rWordChar.test(sOldSource[0])) {
+						// Note: handle minified code like "return!x||y;"
+						sNewSource = " " + sNewSource;
+					}
+					oNode.update(sNewSource);
 					aBranchTracking.push({
 						alternate : oNode.operator === "&&"
 							? oNode.left.loc
