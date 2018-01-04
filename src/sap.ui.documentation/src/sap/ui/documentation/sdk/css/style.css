@@ -1034,8 +1034,18 @@ html[data-sap-ui-browser="ie9"] .titlesHeader p {
 }
 
 /* correct split container right border */
-.sapUiDemokit .sapMSplitContainerMaster {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemokit .sapMSplitContainerMaster {
 	border-right: 1px solid #4f667a;
+}
+
+html.sapUiTheme-sap_belize_hcb .sapUiDemokit .sapMSplitContainerMaster,
+html.sapUiTheme-sap_belize_hcw .sapUiDemokit .sapMSplitContainerMaster {
+	border-right: none;
+}
+
+html.sapUiTheme-sap_belize_hcb .sapUiDemokit .sapMSplitContainerMaster::before,
+html.sapUiTheme-sap_belize_hcw .sapUiDemokit .sapMSplitContainerMaster::before {
+	height: 100%;
 }
 
 /* control overflow for community links in horizontal layout */
