@@ -78,12 +78,12 @@
 					Then.waitFor({
 						viewName: "Main",
 						id: "productList",
-						timeout: 2,
+						timeout: 3,
 						matchers: new AggregationFilled({ name: "items" }),
 						success: function () {
 							Opa5.assert.ok(true, "The application was loaded before subsequent test steps");
 						},
-						errorMessage: "The application was not loaded and OPA timeout of 2 seconds was reached" 
+						errorMessage: "The application was not loaded and OPA timeout was reached" 
 					});
 
 					Then.iTeardownMyApp();

@@ -37,9 +37,14 @@ sap.ui.define([
 		}
 
 		var startTime = new Date();
-		fnCheck();
+		opaCheck();
 
-		function fnCheck () {
+		function opaCheck () {
+			/* eslint-disable no-console */
+			if (console.timeStamp){
+                console.timeStamp("opa.check");
+			}
+			/* eslint-enable no-console */
 			oLogCollector.getAndClearLog();
 
 			var oResult = fnCallback();
@@ -58,7 +63,7 @@ sap.ui.define([
 			var iPassedSeconds = (new Date() - startTime) / 1000;
 
 			if (oOptions.timeout === 0 || oOptions.timeout > iPassedSeconds) {
-				timeout = setTimeout(fnCheck, oOptions.pollingInterval);
+				timeout = setTimeout(opaCheck, oOptions.pollingInterval);
 				// OPA timeout not yet reached
 				return;
 			}
