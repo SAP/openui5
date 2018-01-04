@@ -1349,6 +1349,59 @@
 			helpers.renderObject(oObjectPage);
 	});
 
+	QUnit.module("Modifying hidden page", {
+
+		beforeEach: function () {
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("Should change selectedSection", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSecondPage = new sap.m.Page(),
+			oNavContainer = new sap.m.App(),
+			oSecondSection = oObjectPage.getSections()[1],
+			iCompleteScrollTimeout = oObjectPage._iScrollToSectionDuration + 100,
+			iCompleteResizeCalculationTimeout = sap.uxap.ObjectPageLayout.HEADER_CALC_DELAY + 100,
+			oExpected,
+			done = assert.async(),
+			fnOnDomReady = function() {
+				oNavContainer.attachEventOnce("afterNavigate", fnOnHideObjectPage);
+				oNavContainer.to(oSecondPage.getId()); // nav to the second page to hide the object page
+			},
+			fnOnHideObjectPage = function() {
+				// act: change selectedSection while page is HIDDEN
+				oObjectPage.setSelectedSection(oSecondSection);
+				setTimeout(fnOnChangedSelection, iCompleteScrollTimeout);
+			},
+			fnOnChangedSelection = function() {
+				oNavContainer.attachEventOnce("afterNavigate", fnOnShowBackObjectPage);
+				oNavContainer.to(oObjectPage.getId()); // nav back to the object page
+			},
+			fnOnShowBackObjectPage = function() {
+				setTimeout(onResizeCheckCompleted, iCompleteResizeCalculationTimeout);
+			},
+			onResizeCheckCompleted = function() {
+				oExpected = {
+					oSelectedSection: oSecondSection,
+					sSelectedTitle: oSecondSection.getSubSections()[0].getTitle(), // the only subsection is promoted
+					bSnapped: true
+				};
+				//check
+				sectionIsSelected(oObjectPage, assert, oExpected);
+				done();
+			};
+
+		assert.expect(5);
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		oNavContainer.addPage(oObjectPage);
+		oNavContainer.addPage(oSecondPage);
+		helpers.renderObject(oNavContainer);
+	});
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;
