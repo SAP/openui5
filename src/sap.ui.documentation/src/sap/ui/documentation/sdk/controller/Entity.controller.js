@@ -119,7 +119,7 @@ sap.ui.define([
 					}
 				});
 
-				return '<span class="sapUiDocumentationJsDoc">' + sFormattedTextBlock + '</span>';
+				return '<span class="sapUiJSD">' + sFormattedTextBlock + '</span>';
 			},
 
 			_TAB_KEYS: ["samples", "about"],
