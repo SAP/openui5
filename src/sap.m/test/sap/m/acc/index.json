@@ -511,6 +511,11 @@
 			"control": "sap.m.Wizard",
 			"url": "Wizard.html",
 			"appComponent": "CA-UI5-CTR-RIL"
+		},
+		{
+			"control": "sap.m.PDFViewer",
+			"url": "PDFViewer.html",
+			"appComponent": "CA-UI5-BS-FCP"
 		}
 	]
 }
