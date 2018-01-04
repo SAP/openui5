@@ -988,6 +988,37 @@
 		}
 	});
 
+	QUnit.test("token update event", function(assert) {
+		var iCount = 0,
+			done = assert.async(),
+			sText;
+
+		assert.expect(2);
+		this.multiInput1.attachTokenUpdate(function() {
+			iCount ++;
+		});
+
+		//arrange
+		this.multiInput1.addValidator(function(args){
+			sText = args.text;
+			var oToken = new sap.m.Token({key:args.text, text:args.text});
+			args.asyncCallback(oToken);
+		});
+
+		//act
+		this.multiInput1.setValue("test");
+		this.multiInput1._validateCurrentText();
+
+		//assert
+		setTimeout(function () {
+			assert.strictEqual(sText, "test", "tokenUpdate event fired with correct text parameter");
+			assert.strictEqual(iCount, 1, "tokenUpdate event should be fired once");
+			done();
+		}, 200);
+
+		this.clock.tick(250);
+	});
+
 	QUnit.test("test suggestionItemSelected event", function(assert) {
 		var testTokenText = "Testtoken";
 		var item = {
