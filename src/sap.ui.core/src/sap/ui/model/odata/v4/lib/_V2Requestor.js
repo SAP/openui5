@@ -235,6 +235,10 @@ sap.ui.define([
 				visitNode(oNode.left);
 				visitNode(oNode.right);
 				if (oNode.parameters) {
+					if (oNode.value === "contains") {
+						oNode.value = "substringof";
+						oNode.parameters.push(oNode.parameters.shift()); // swap the parameters
+					}
 					oNode.parameters.forEach(visitNode);
 				}
 				if (oNode.left && oNode.right) {
