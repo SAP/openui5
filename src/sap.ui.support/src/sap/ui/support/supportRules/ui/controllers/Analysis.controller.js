@@ -63,9 +63,18 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function () {
-			sap.ui.getCore().attachThemeChanged(function () {
+			var fnThemeChangeHandler = function () {
 				CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
-			});
+				sap.ui.getCore().detachThemeChanged(fnThemeChangeHandler);
+			};
+
+			// If the theme is already applied themeChanged event won't be fired.
+			// In IE11 the theme is already applied.
+			if (sap.ui.getCore().isThemeApplied()) {
+				CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
+			} else {
+				sap.ui.getCore().attachThemeChanged(fnThemeChangeHandler);
+			}
 		},
 
 		onAsyncSwitch: function (oEvent) {
