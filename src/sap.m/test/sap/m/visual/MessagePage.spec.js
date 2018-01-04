@@ -57,7 +57,7 @@ describe("sap.m.MessagePage", function() {
 	it("Should test MessagePage with buttons and FormattedText", function () {
 		//show message page in navContainer
 		element(by.id("SLItem4")).click();
-		element(by.id("_pageWithButtons-title-inner")).click(); // wait for message page to show
+		element(by.id("pageWithButtons-title-inner")).click(); // wait for message page to show
 
 		//compare
 		expect(takeScreenshot()).toLookAs("message-page-with-buttons");
