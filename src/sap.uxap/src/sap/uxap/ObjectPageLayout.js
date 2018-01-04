@@ -1298,6 +1298,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._requestAdjustLayoutAndUxRules = function (bImmediate) {
+		this._setSectionInfoIsDirty(true);
 
 		if (!this._oUxRulesTask) {
 			this._oUxRulesTask = new ThrottledTask(
@@ -1349,9 +1350,10 @@ sap.ui.define([
 					}
 					this._adjustSelectedSectionByUXRules(); //section may have changed again from the app before the promise completed => ensure adjustment
 					sSelectedSectionId = this.getSelectedSection();
-					if (!this._isClosestScrolledSection(sSelectedSectionId)) {
+					// if the current scroll position is not at the selected section OR the ScrollEnablement is still scrolling due to an animation
+					if (!this._isClosestScrolledSection(sSelectedSectionId) || this._oScroller._$Container.is(":animated")) {
 						// then change the selection to match the correct section
-						this.scrollToSection(sSelectedSectionId);
+						this.scrollToSection(sSelectedSectionId, null, 0, false, true /* redirect scroll */);
 					}
 				}.bind(this));
 		}
@@ -1444,7 +1446,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked) {
+	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked, bRedirectScroll) {
 		var oSection = this.oCore.byId(sId);
 
 		if (!this.getDomRef()){
@@ -1502,13 +1504,12 @@ sap.ui.define([
 
 		var iScrollTo = this._computeScrollPosition(oSection);
 
-		//avoid triggering twice the scrolling onto the same target section
-		if (this._sCurrentScrollId != sId) {
+		if (this._sCurrentScrollId != sId || bRedirectScroll) {
 			this._sCurrentScrollId = sId;
 
 			if (this._iCurrentScrollTimeout) {
 				clearTimeout(this._iCurrentScrollTimeout);
-				if (this._$contentContainer){
+				if (this._$contentContainer) {
 					this._$contentContainer.parent().stop(true, false);
 				}
 			}
@@ -1526,7 +1527,6 @@ sap.ui.define([
 
 			this._scrollTo(iScrollTo + iOffset, iDuration);
 		}
-
 	};
 
 	ObjectPageLayout.prototype._computeScrollDuration = function (iAppSpecifiedDuration, oTargetSection) {
@@ -1832,6 +1832,9 @@ sap.ui.define([
 		}
 
 		this._updateCustomScrollerHeight(bStickyTitleMode);
+
+		this._setSectionInfoIsDirty(false);
+
 		return true; // return success flag
 	};
 
@@ -2212,6 +2215,11 @@ sap.ui.define([
 		if (iPageHeight === 0) {
 			return; // page is hidden
 		}
+
+		if (this._getSectionInfoIsDirty()) {
+			return;
+		}
+
 		if (bShouldStick && !bShouldPreserveHeaderInTitleArea) {
 			iPageHeight -= (this.iAnchorBarHeight + this.iHeaderTitleHeightStickied);
 		}
@@ -3354,6 +3362,24 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._getWidth = function (oControl) {
 		return !(oControl instanceof Control) ? 0 : oControl.$().outerWidth() || 0;
+	};
+
+	/**
+	 * Returns the bSectionInfoIsDirty flag indicating if the information in the this._oSectionInfo object is valid.
+	 * @returns {boolean}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getSectionInfoIsDirty = function () {
+		return this.bSectionInfoIsDirty;
+	};
+
+	/**
+	 * Sets the bSectionInfoIsDirty flag.
+	 * @param bDirty {boolean}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._setSectionInfoIsDirty = function (bDirty) {
+		this.bSectionInfoIsDirty = bDirty;
 	};
 
 	function exists(vObject) {

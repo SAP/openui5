@@ -272,7 +272,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 		this.setProperty("visible", bValue, true);
 		/* handle invalidation ourselves in adjustLayoutAndUxRules */
-		this._getObjectPageLayout()._requestAdjustLayoutAndUxRules();
+		this._notifyObjectPageLayout();
+
 		this.invalidate();
 		return this;
 	};
