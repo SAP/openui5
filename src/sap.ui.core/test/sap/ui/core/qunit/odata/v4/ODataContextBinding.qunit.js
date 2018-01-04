@@ -1385,9 +1385,7 @@ sap.ui.require([
 			.returns(Promise.resolve({$Parameter : [{$Name : "foo", $IsCollection : true}]}));
 		this.mock(_Cache).expects("createSingle").never();
 		this.mock(this.oModel).expects("reportError").withExactArgs(
-			"Failed to execute " + sPath, sClassName, sinon.match(function (oError) {
-				return oError.message === sMessage;
-			}));
+			"Failed to execute " + sPath, sClassName, sinon.match({message : sMessage}));
 
 		// code under test
 		return oBinding.setParameter("foo", [42]).execute().then(function () {

@@ -1129,9 +1129,7 @@ sap.ui.require([
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
-				sinon.match(function (oError) {
-					return oError.message = "Cannot set value on this binding";
-			}));
+				sinon.match({message : "Cannot set value on this binding"}));
 
 		// code under test
 		oControl.setText("foo");
@@ -1158,9 +1156,7 @@ sap.ui.require([
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
-				sinon.match(function (oError) {
-					return oError.message = "Cannot set value on this binding";
-			}));
+				sinon.match({message : "Cannot set value on this binding"}));
 
 		// code under test
 		oControl.setText("foo");
@@ -1235,9 +1231,7 @@ sap.ui.require([
 
 			oModelMock.expects("reportError")
 				.withExactArgs("Failed to update path /absolute", sClassName,
-					sinon.match(function (oError0) {
-						return oError0.message === oError.message;
-				}));
+					sinon.match({message : oError.message}));
 			this.mock(this.oModel.oMetaModel).expects("fetchUpdateData").never();
 			this.mock(oPropertyBinding).expects("withCache").never();
 
@@ -1382,9 +1376,7 @@ sap.ui.require([
 		this.mock(oPropertyBinding).expects("withCache").never();
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
-				sinon.match(function (oError0) {
-					return oError0.message = oError.message;
-			}));
+				sinon.match({message : oError.message}));
 
 		// code under test
 		assert.throws(function () {
