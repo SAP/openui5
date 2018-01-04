@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Application under test</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta charset="utf-8">
+	<script
+			id='sap-ui-bootstrap'
+			src='../../../../../../resources/sap-ui-core.js'
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-libs='sap.m'
+			data-sap-ui-resourceroots='{
+				"appUnderTest" : "./"
+			}'>
+	</script>
+	<script>
+
+		sap.ui.getCore().attachInit(function () {
+			new sap.m.Shell('Shell', {
+				title: 'Application under test',
+				app: new sap.ui.core.ComponentContainer({
+					name: 'appUnderTest',
+					settings : {
+						id : "appUnderTest"
+					}
+				})
+			}).placeAt('content');
+		});
+	</script>
+</head>
+<body class="sapUiBody" id="content"></body>
+</html>
