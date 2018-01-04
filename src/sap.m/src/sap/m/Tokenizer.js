@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			},
 
 			/**
-			 * Fired when the tokens aggregation changed (add / remove token)
+			 * Fired when the tokens aggregation changed due to a user interaction (add / remove token)
 			 */
 			tokenUpdate: {
 				allowPreventDefault : true,
