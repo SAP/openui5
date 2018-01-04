@@ -51,6 +51,7 @@ sap.ui.define([
 		var oAnalyticalQueryRequest
 				= new odata4analytics.QueryResultRequest(oBinding.oAnalyticalQueryResult),
 			aComputedSelect,
+			sComputedSelect,
 			oDimension,
 			i,
 			j,
@@ -85,17 +86,20 @@ sap.ui.define([
 
 		// at least all selected properties, computed by the binding, are contained in select
 		// binding parameter
-		aComputedSelect = oAnalyticalQueryRequest.getURIQueryOptionValue("$select").split(",");
-		for (i = 0, n = aComputedSelect.length; i < n; i++) {
-			sPropertyName = aComputedSelect[i];
-			j = aSelect.indexOf(sPropertyName);
-			if (j < 0) {
-				jQuery.sap.log.warning("Ignored the 'select' binding parameter, because"
-						+ " it does not contain the property '" + sPropertyName + "'",
-					oBinding.sPath, sClassName);
-				bError = true;
-			} else {
-				aSelect.splice(j, 1);
+		sComputedSelect = oAnalyticalQueryRequest.getURIQueryOptionValue("$select");
+		if (sComputedSelect) {
+			aComputedSelect = sComputedSelect.split(",");
+			for (i = 0, n = aComputedSelect.length; i < n; i++) {
+				sPropertyName = aComputedSelect[i];
+				j = aSelect.indexOf(sPropertyName);
+				if (j < 0) {
+					jQuery.sap.log.warning("Ignored the 'select' binding parameter, because"
+							+ " it does not contain the property '" + sPropertyName + "'",
+						oBinding.sPath, sClassName);
+					bError = true;
+				} else {
+					aSelect.splice(j, 1);
+				}
 			}
 		}
 
@@ -2228,7 +2232,8 @@ sap.ui.define([
 		var sInlineCount = oAnalyticalQueryRequest.getURIQueryOptionValue("$inlinecount");
 
 		if (bAddAdditionalSelects && this.aAdditionalSelects.length > 0) {
-			sSelect = (sSelect.split(",").concat(this.aAdditionalSelects)).join(",");
+			sSelect = (sSelect ? sSelect.split(",") : [])
+				.concat(this.aAdditionalSelects).join(",");
 		}
 
 		if (this.mParameters && this.mParameters["filter"]) {
