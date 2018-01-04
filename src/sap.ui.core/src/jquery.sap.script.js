@@ -570,7 +570,7 @@ sap.ui.define(['jquery.sap.global','jquery.sap.xml'],
 	 *
 	 * This partly implements the algorithm described in "A Technique for Isolating Differences Between Files"
 	 * but instead of working with hashes, it does compare each entry of the old list with each entry of the new
-	 * list, which causes terrible performane on large datasets.
+	 * list, which causes terrible performance on large datasets.
 	 *
 	 * @deprecated As of 1.38, use {@link jQuery.sap.arraySymbolDiff} instead if applicable
 	 * @public
