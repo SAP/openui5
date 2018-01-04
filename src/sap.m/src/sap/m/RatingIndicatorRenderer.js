@@ -117,7 +117,7 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/Device'],
 	};
 
 	RatingIndicatorRenderer.renderAriaLabel = function (oRm, oControl) {
-		oRm.write("<label id='" + this._sLabelID + "' class='sapMRIAriaLabel' aria-hidden='true'>" + oControl._oResourceBundle.getText("RATING_ARIA_NAME") + "</label>");
+		oRm.write("<span id='" + this._sLabelID + "' class='sapUiInvisibleText' aria-hidden='true'>" + oControl._oResourceBundle.getText("RATING_ARIA_NAME") + "</span>");
 	};
 
 	RatingIndicatorRenderer.renderSelectedItems = function (oRm, oControl) {
