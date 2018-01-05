@@ -400,7 +400,6 @@ sap.ui.require([
 		var oExpectedData = {
 			"variantMgmtId1": {
 				"defaultVariant": "variant1",
-				"originalDefaultVariant": "variant1",
 				"variants": [{
 					//"author": "SAP",
 					"favorite": true,
@@ -476,9 +475,7 @@ sap.ui.require([
 		var oExpectedData = {
 			"variantMgmtId1": {
 				"defaultVariant": "variantMgmtId1",
-				"originalDefaultVariant": "variantMgmtId1",
 				"currentVariant": "variant0",
-				"originalCurrentVariant": "variant0",
 				"variants": [{
 //					"author": "SAP",
 					"favorite": true,
@@ -498,7 +495,7 @@ sap.ui.require([
 			}
 		};
 
-		sandbox.stub(Utils, "getTechnicalParameterValuesFromURL").returns(["variant0"]);
+		sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(["variant0"]);
 		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
 		var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
 		var oData = oVariantController._fillVariantModel();
@@ -1106,7 +1103,7 @@ sap.ui.require([
 		this.oComponent.getComponentData = function(){
 			return {
 				technicalParameters: {
-					"sap-ui-fl-control-variant-id" : ["variant0", "variant02"]
+					"sap-ui-fl-control-variant-id" : ["variant0", "variant02", "variantManagementId2"]
 				}
 			};
 		};
@@ -1117,9 +1114,9 @@ sap.ui.require([
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
 		var aExpectedChanges = this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[0].controlChanges.concat(
-			this.oFakeVariantResponse.changes.variantSection.variantManagementId2.variants[0].controlChanges);
+			this.oFakeVariantResponse.changes.variantSection.variantManagementId2.variants[1].controlChanges);
 
-		assert.deepEqual(aExpectedChanges, aInitialChanges, "then the combined control changes are retrieved");
+		assert.deepEqual(aExpectedChanges, aInitialChanges, "then the combined control changes are retrieved, loading changes for the last variant that matches a URL parameter");
 	});
 
 	QUnit.test("when calling '_setChangeFileContent' & 'loadInitialChanges' with one valid URL parameter for a variant management, but two variant management ids exist", function(assert){
