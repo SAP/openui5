@@ -136,6 +136,14 @@
 					]
 				},
 				{
+					"pattern": "cart/{productId}",
+					"name": "cartProductView",
+					"target": [
+						"cart",
+						"productView"
+					]
+				},
+				{
 					"pattern": "checkout",
 					"name": "checkout",
 					"target": "checkout"

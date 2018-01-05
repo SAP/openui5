@@ -79,7 +79,17 @@ sap.ui.define([
                         },
                         errorMessage: "The Smartphone Alpha page was not displayed"
                     });
-                }
+                },
+				iShouldSeeTheRightProduct: function () {
+					return this.waitFor({
+						controlType: "sap.m.ObjectHeader",
+						matchers: new PropertyStrictEquals({name: "title", value: "Bending Screen 21HD"}),
+						success: function () {
+							Opa5.assert.ok(true, "The 'Bending Screen 21HD' product is bookmarakbel");
+						},
+						errorMessage: "The'Bending Screen 21HD' product was not found"
+					});
+				}
 			}
 		}
 	});
